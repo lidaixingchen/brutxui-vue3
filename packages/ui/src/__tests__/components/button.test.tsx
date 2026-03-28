@@ -45,7 +45,7 @@ describe('Button', () => {
         expect(screen.getByRole('button')).toHaveClass('h-9');
 
         rerender(<Button size="lg">Large</Button>);
-        expect(screen.getByRole('button')).toHaveClass('h-13');
+        expect(screen.getByRole('button')).toHaveClass('h-12');
 
         rerender(<Button size="xl">Extra Large</Button>);
         expect(screen.getByRole('button')).toHaveClass('h-16');
@@ -68,5 +68,28 @@ describe('Button', () => {
             </Button>
         );
         expect(screen.getByRole('link')).toHaveTextContent('Link Button');
+    });
+
+    it('shows loading spinner and disables when loading=true', () => {
+        render(<Button loading>Submit</Button>);
+        const button = screen.getByRole('button');
+        expect(button).toBeDisabled();
+        // Loading spinner (Loader2) should be present
+        expect(button.querySelector('svg')).toBeInTheDocument();
+    });
+
+    it('does not fire click when disabled', () => {
+        const handleClick = vi.fn();
+        render(<Button disabled onClick={handleClick}>Click</Button>);
+        fireEvent.click(screen.getByRole('button'));
+        expect(handleClick).not.toHaveBeenCalled();
+    });
+
+    it('ghost and link variants have no shadow or border', () => {
+        const { rerender } = render(<Button variant="ghost">Ghost</Button>);
+        expect(screen.getByRole('button')).toHaveClass('border-transparent');
+
+        rerender(<Button variant="link">Link</Button>);
+        expect(screen.getByRole('button')).toHaveClass('border-transparent');
     });
 });

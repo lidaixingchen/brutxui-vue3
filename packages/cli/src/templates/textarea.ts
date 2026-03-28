@@ -21,7 +21,7 @@ const textareaVariants = cva(
                 error: "border-[#EF476F] focus:shadow-[4px_4px_0px_0px_#EF476F]",
                 success: "border-[#7FB069] focus:shadow-[4px_4px_0px_0px_#7FB069]",
             },
-            textareaSize: {
+            size: {
                 sm: "px-3 py-2 text-sm",
                 default: "px-4 py-3 text-base",
                 lg: "px-5 py-4 text-lg",
@@ -29,20 +29,20 @@ const textareaVariants = cva(
         },
         defaultVariants: {
             variant: "default",
-            textareaSize: "default",
+            size: "default",
         },
     }
 );
 
 export interface TextareaProps
-    extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "size">,
         VariantProps<typeof textareaVariants> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-    ({ className, variant, textareaSize, ...props }, ref) => {
+    ({ className, variant, size, ...props }, ref) => {
         return (
             <textarea
-                className={cn(textareaVariants({ variant, textareaSize, className }))}
+                className={cn(textareaVariants({ variant, size, className }))}
                 ref={ref}
                 {...props}
             />

@@ -29,6 +29,14 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
     disconnect: vi.fn(),
 }));
 
+// Mock Pointer Capture APIs (required by @radix-ui/react-select and others)
+window.HTMLElement.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
+window.HTMLElement.prototype.setPointerCapture = vi.fn();
+window.HTMLElement.prototype.releasePointerCapture = vi.fn();
+
+// Mock scrollIntoView (required by cmdk)
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
+
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
     observe: vi.fn(),
