@@ -143,6 +143,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                 {/* First page button */}
                 {showFirstLast && (
                     <button
+                        type="button"
                         className={cn(
                             paginationButtonVariants({ size: buttonSize, isActive: false })
                         )}
@@ -156,6 +157,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
 
                 {/* Previous button */}
                 <button
+                    type="button"
                     className={cn(paginationButtonVariants({ size: buttonSize, isActive: false }))}
                     onClick={() => onPageChange(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -186,6 +188,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                         return (
                             <button
                                 key={pageNumber}
+                                type="button"
                                 className={cn(
                                     paginationButtonVariants({
                                         size: buttonSize,
@@ -210,6 +213,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
 
                 {/* Next button */}
                 <button
+                    type="button"
                     className={cn(paginationButtonVariants({ size: buttonSize, isActive: false }))}
                     onClick={() => onPageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -221,6 +225,7 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                 {/* Last page button */}
                 {showFirstLast && (
                     <button
+                        type="button"
                         className={cn(
                             paginationButtonVariants({ size: buttonSize, isActive: false })
                         )}

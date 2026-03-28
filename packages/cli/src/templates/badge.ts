@@ -1,24 +1,44 @@
-export const badgeTemplate = (utilsAlias: string) => `import * as React from "react";
+export const badgeTemplate = (utilsAlias: string) => `'use client';
+
+import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "${utilsAlias}";
 
 const badgeVariants = cva(
     [
         "inline-flex items-center",
-        "border-2 border-black",
+        "border-2 border-black dark:border-white",
         "font-bold tracking-wide",
         "transition-colors",
     ],
     {
         variants: {
             variant: {
-                default: "bg-white text-black shadow-[2px_2px_0px_0px_#000000]",
-                primary: "bg-[#FF6B6B] text-black shadow-[2px_2px_0px_0px_#000000]",
-                secondary: "bg-[#4ECDC4] text-black shadow-[2px_2px_0px_0px_#000000]",
-                accent: "bg-[#FFE66D] text-black shadow-[2px_2px_0px_0px_#000000]",
-                danger: "bg-[#EF476F] text-white shadow-[2px_2px_0px_0px_#000000]",
-                success: "bg-[#7FB069] text-black shadow-[2px_2px_0px_0px_#000000]",
-                outline: "bg-transparent text-black",
+                default: [
+                    "bg-white dark:bg-gray-900 text-black dark:text-white",
+                    "shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]",
+                ],
+                primary: [
+                    "bg-[#FF6B6B] text-black",
+                    "shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]",
+                ],
+                secondary: [
+                    "bg-[#4ECDC4] text-black",
+                    "shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]",
+                ],
+                accent: [
+                    "bg-[#FFE66D] text-black",
+                    "shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]",
+                ],
+                danger: [
+                    "bg-[#EF476F] text-white",
+                    "shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]",
+                ],
+                success: [
+                    "bg-[#7FB069] text-black",
+                    "shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]",
+                ],
+                outline: "bg-transparent text-black dark:text-white",
             },
             size: {
                 sm: "px-2 py-0.5 text-xs",

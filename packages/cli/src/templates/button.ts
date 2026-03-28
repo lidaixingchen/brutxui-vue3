@@ -14,7 +14,6 @@ const buttonVariants = cva(
         "transition-all duration-150",
         "focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2",
         "disabled:opacity-50 disabled:pointer-events-none",
-        "active:translate-y-0.5 active:shadow-none",
     ],
     {
         variants: {
@@ -23,37 +22,44 @@ const buttonVariants = cva(
                     "bg-white dark:bg-gray-900 text-black dark:text-white",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 primary: [
                     "bg-[#FF6B6B] text-black",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 secondary: [
                     "bg-[#4ECDC4] text-black",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 accent: [
                     "bg-[#FFE66D] text-black",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 danger: [
                     "bg-[#EF476F] text-white",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 success: [
                     "bg-[#7FB069] text-black",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 outline: [
                     "bg-transparent text-black dark:text-white",
                     "shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]",
                     "hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black",
                     "hover:shadow-[6px_6px_0px_0px_#000000] dark:hover:shadow-[6px_6px_0px_0px_#FFFFFF] hover:-translate-x-0.5 hover:-translate-y-0.5",
+                    "active:translate-y-0.5 active:shadow-none",
                 ],
                 ghost: [
                     "bg-transparent text-black dark:text-white border-transparent",
@@ -69,7 +75,7 @@ const buttonVariants = cva(
             size: {
                 sm: "h-9 px-3 py-1 text-sm",
                 default: "h-11 px-5 py-2 text-base",
-                lg: "h-13 px-8 py-3 text-lg",
+                lg: "h-12 px-8 py-3 text-lg",
                 xl: "h-16 px-10 py-4 text-xl",
                 icon: "h-11 w-11 p-0",
             },

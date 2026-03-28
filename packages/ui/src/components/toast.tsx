@@ -123,10 +123,8 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                 {duration && onClose && (
                     <div className="absolute top-0 left-0 right-0 h-1 bg-black/10 dark:bg-white/10 overflow-hidden">
                         <div
-                            className="h-full bg-black/30 dark:bg-white/30"
-                            style={{
-                                animation: `shrink ${duration}ms linear forwards`,
-                            }}
+                            className="h-full bg-black/30 dark:bg-white/30 animate-nb-shrink"
+                            style={{ animationDuration: `${duration}ms` }}
                         />
                     </div>
                 )}
@@ -154,22 +152,25 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                     {/* Close button */}
                     {onClose && (
                         <button
+                            type="button"
                             onClick={() => {
                                 setIsLeaving(true);
                                 setTimeout(() => onClose(), 200);
                             }}
                             className={cn(
                                 'flex-shrink-0 h-8 w-8 flex items-center justify-center',
-                                'border-2 border-black bg-white',
-                                'shadow-[2px_2px_0px_0px_#000000]',
+                                'border-2 border-black dark:border-white',
+                                'bg-white dark:bg-gray-900',
+                                'text-black dark:text-white',
+                                'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
                                 'transition-all duration-150',
                                 'hover:shadow-[1px_1px_0px_0px_#000000] hover:translate-x-0.5 hover:translate-y-0.5',
                                 'active:shadow-none active:translate-x-1 active:translate-y-1',
-                                'focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2'
+                                'focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2'
                             )}
                             aria-label="Close"
                         >
-                            <X className="h-4 w-4 stroke-[3] dark:text-black" />
+                            <X className="h-4 w-4 stroke-[3]" />
                         </button>
                     )}
                 </div>
@@ -202,25 +203,17 @@ const ToastContainer = React.forwardRef<HTMLDivElement, ToastContainerProps>(
         };
 
         return (
-            <>
-                <style>{`
-                    @keyframes shrink {
-                        from { width: 100%; }
-                        to { width: 0%; }
-                    }
-                `}</style>
-                <div
-                    ref={ref}
-                    className={cn(
-                        'fixed z-50 flex flex-col gap-3 pointer-events-none p-4',
-                        positionClasses[position],
-                        className
-                    )}
-                    {...props}
-                >
-                    {children}
-                </div>
-            </>
+            <div
+                ref={ref}
+                className={cn(
+                    'fixed z-50 flex flex-col gap-3 pointer-events-none p-4',
+                    positionClasses[position],
+                    className
+                )}
+                {...props}
+            >
+                {children}
+            </div>
         );
     }
 );

@@ -96,6 +96,7 @@ function Combobox({
         </Popover>
     );
 }
+Combobox.displayName = 'Combobox';
 
 // Multi-select Combobox
 export interface ComboboxMultiProps {
@@ -194,5 +195,6 @@ function ComboboxMulti({
         </Popover>
     );
 }
+ComboboxMulti.displayName = 'ComboboxMulti';
 
 export { Combobox, ComboboxMulti };
