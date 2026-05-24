@@ -19,6 +19,7 @@ export {
     resolveAliasPath,
     getDefaultAliases,
     resolveImportAlias,
+    isSafePath,
 } from './project.js';
 
 // Package manager

@@ -251,3 +251,13 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
         .replace(/["']@\/components\/(.*)["']/g, `"${config.aliases.components}/$1"`);
 }
 
+/**
+ * Check if a path is safe and stays within the workspace cwd
+ */
+export function isSafePath(targetPath: string, cwd: string): boolean {
+    const resolvedTarget = path.resolve(targetPath);
+    const resolvedCwd = path.resolve(cwd);
+    return resolvedTarget.startsWith(resolvedCwd);
+}
+
+

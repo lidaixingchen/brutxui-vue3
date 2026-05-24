@@ -25,6 +25,7 @@ import {
     getInstallCommand,
     getItem,
     resolveDeps,
+    isSafePath,
     logger,
 } from '../lib/index.js';
 
@@ -159,6 +160,11 @@ async function writeRegistryFiles(
         
         for (const file of item.files) {
             const targetPath = resolveComponentFilePath(file.path, config, cwd);
+            
+            // Security check: path traversal prevention
+            if (!isSafePath(targetPath, cwd)) {
+                throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetPath}".`);
+            }
             
             // Overwrite check
             if (await fs.pathExists(targetPath)) {

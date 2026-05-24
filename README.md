@@ -220,12 +220,16 @@ brutalist-ui/
 │       ├── components/    # Doc site components
 │       └── public/        # Static assets
 ├── packages/
-│   └── ui/                # UI component library
-│       ├── src/
-│       │   ├── components/  # 22 React components
-│       │   ├── lib/         # Utilities (cn, etc.)
-│       │   └── brutalism-plugin.ts
-│       └── dist/          # Built output
+│   ├── ui/                # UI component library
+│   │   ├── src/
+│   │   │   ├── components/  # React components
+│   │   │   └── brutalism-plugin.ts
+│   │   └── dist/          # Built output
+│   ├── cli/               # CLI tool package (brutx)
+│   │   └── src/           # Command implementation (init, add)
+│   └── registry/          # Component registry system
+│       ├── registry/      # Generated component JSON files
+│       └── scripts/       # Automation bundle scripts
 ├── pnpm-workspace.yaml
 └── package.json
 ```
