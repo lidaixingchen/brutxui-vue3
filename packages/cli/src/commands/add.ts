@@ -12,32 +12,21 @@ import path from 'path';
 import {
     // Types
     type AddOptions,
-    type AliasConfig,
+    type BrutalistConfig,
+    type RegistryItem,
     // Constants
-    COMPONENTS,
     AVAILABLE_COMPONENTS,
     UTILS_TEMPLATE,
     // Functions
     detectPackageManager,
     resolveAliasPath,
+    resolveImportAlias,
     installPackages,
     getInstallCommand,
+    getItem,
+    resolveDeps,
     logger,
 } from '../lib/index.js';
-import { getComponentTemplate } from '../templates/index.js';
-
-// ============================================================================
-// Types
-// ============================================================================
-
-interface ComponentsConfig {
-    aliases: AliasConfig;
-}
-
-interface AddResult {
-    added: string[];
-    skipped: string[];
-}
 
 // ============================================================================
 // Validation
@@ -46,7 +35,7 @@ interface AddResult {
 /**
  * Check if project is initialized
  */
-async function ensureInitialized(cwd: string): Promise<ComponentsConfig> {
+async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     const configPath = path.join(cwd, 'components.json');
 
     if (!(await fs.pathExists(configPath))) {
@@ -59,9 +48,9 @@ async function ensureInitialized(cwd: string): Promise<ComponentsConfig> {
 }
 
 /**
- * Validate component names
+ * Validate component names against the list of available components
  */
-function validateComponents(components: string[]): void {
+async function validateComponents(components: string[]): Promise<void> {
     const invalid = components.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
 
     if (invalid.length > 0) {
@@ -111,6 +100,31 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
 }
 
 // ============================================================================
+// File Path Resolution
+// ============================================================================
+
+function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): string {
+    // registryPath: components/ui/button.tsx
+    if (registryPath.startsWith('components/')) {
+        const relative = registryPath.replace('components/', '');
+        const aliasPath = resolveAliasPath(config.aliases.components, cwd);
+        return path.join(aliasPath, relative);
+    }
+    
+    if (registryPath.startsWith('lib/utils')) {
+        return resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+    }
+    
+    if (registryPath.startsWith('lib/')) {
+        const relative = registryPath.replace('lib/', '');
+        const aliasPath = resolveAliasPath(config.aliases.utils, cwd);
+        return path.join(path.dirname(aliasPath), relative);
+    }
+    
+    return path.join(cwd, registryPath);
+}
+
+// ============================================================================
 // File Operations
 // ============================================================================
 
@@ -128,63 +142,52 @@ async function ensureUtilsFile(utilsPath: string): Promise<boolean> {
 }
 
 /**
- * Write a single component file
+ * Write component files resolved from registry
  */
-async function writeComponent(
-    component: string,
-    componentsDir: string,
-    utilsAlias: string,
-    overwrite: boolean
-): Promise<'added' | 'skipped' | 'failed'> {
-    const filePath = path.join(componentsDir, 'ui', `${component}.tsx`);
-
-    // Check existing
-    if ((await fs.pathExists(filePath)) && !overwrite) {
-        return 'skipped';
-    }
-
-    try {
-        const template = getComponentTemplate(component, utilsAlias);
-        await fs.writeFile(filePath, template);
-        return 'added';
-    } catch {
-        return 'failed';
-    }
-}
-
-/**
- * Add multiple components
- */
-async function addComponents(
-    components: string[],
-    componentsDir: string,
-    utilsAlias: string,
-    overwrite: boolean,
+async function writeRegistryFiles(
+    items: RegistryItem[],
+    config: BrutalistConfig,
+    cwd: string,
+    options: AddOptions,
     spinner: Ora | null
-): Promise<AddResult> {
-    const result: AddResult = { added: [], skipped: [] };
+): Promise<{ added: string[]; skipped: string[] }> {
+    const added: string[] = [];
+    const skipped: string[] = [];
 
-    // Ensure directory exists
-    await fs.ensureDir(path.join(componentsDir, 'ui'));
+    for (const item of items) {
+        let itemAdded = false;
+        
+        for (const file of item.files) {
+            const targetPath = resolveComponentFilePath(file.path, config, cwd);
+            
+            // Overwrite check
+            if (await fs.pathExists(targetPath)) {
+                if (!options.overwrite) {
+                    spinner?.info(`Skipping file "${file.path}" for "${item.name}" (already exists). Use --overwrite to overwrite.`);
+                    skipped.push(item.name);
+                    continue;
+                }
+            }
 
-    for (const component of components) {
-        const status = await writeComponent(component, componentsDir, utilsAlias, overwrite);
+            if (options.dryRun) {
+                spinner?.info(`[Dry Run] Would create file: ${targetPath}`);
+                itemAdded = true;
+                continue;
+            }
 
-        switch (status) {
-            case 'added':
-                result.added.push(component);
-                break;
-            case 'skipped':
-                spinner?.info(`Skipping ${component} (already exists)`);
-                result.skipped.push(component);
-                break;
-            case 'failed':
-                spinner?.warn(`Failed to add ${component}`);
-                break;
+            // Real write
+            await fs.ensureDir(path.dirname(targetPath));
+            const resolvedContent = resolveImportAlias(file.content, config);
+            await fs.writeFile(targetPath, resolvedContent, 'utf-8');
+            itemAdded = true;
+        }
+
+        if (itemAdded && !skipped.includes(item.name)) {
+            added.push(item.name);
         }
     }
 
-    return result;
+    return { added, skipped };
 }
 
 // ============================================================================
@@ -192,29 +195,20 @@ async function addComponents(
 // ============================================================================
 
 /**
- * Collect dependencies for added components
- */
-function collectDependencies(components: string[]): string[] {
-    const deps = new Set<string>();
-
-    for (const component of components) {
-        const info = COMPONENTS[component];
-        if (info?.dependencies) {
-            info.dependencies.forEach((dep) => deps.add(dep));
-        }
-    }
-
-    return Array.from(deps);
-}
-
-/**
  * Install component dependencies
  */
-function installComponentDeps(deps: string[], cwd: string): void {
+function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): void {
     if (deps.length === 0) return;
 
     const packageManager = detectPackageManager(cwd);
     logger.newLine();
+    
+    if (dryRun) {
+        logger.bold(`[Dry Run] Would install dependencies using ${packageManager}:`);
+        logger.info(`  ${deps.join(', ')}`);
+        return;
+    }
+
     logger.bold(`Installing dependencies with ${packageManager}...`);
 
     try {
@@ -230,9 +224,6 @@ function installComponentDeps(deps: string[], cwd: string): void {
 // Output Helpers
 // ============================================================================
 
-/**
- * Convert kebab-case to PascalCase
- */
 function toPascalCase(str: string): string {
     return str
         .split('-')
@@ -240,9 +231,6 @@ function toPascalCase(str: string): string {
         .join('');
 }
 
-/**
- * Print usage example
- */
 function printUsageExample(component: string, componentsAlias: string): void {
     const componentName = toPascalCase(component);
     logger.info(`  import { ${componentName} } from "${componentsAlias}/ui/${component}";`);
@@ -270,53 +258,70 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     }
 
     // Validate
-    validateComponents(selectedComponents);
+    await validateComponents(selectedComponents);
 
     // Resolve paths
-    const componentsDir = options.path
-        ? path.join(cwd, options.path)
-        : resolveAliasPath(config.aliases.components, cwd);
-
     const utilsPath = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
 
     // Start adding
-    const spinner = options.silent ? null : ora('Adding components...').start();
+    const spinner = options.silent ? null : ora('Resolving and loading components from registry...').start();
 
-    // Ensure utils exists
-    const utilsCreated = await ensureUtilsFile(utilsPath);
-    if (utilsCreated) {
-        spinner?.info(`Created ${utilsPath}`);
-    }
+    try {
+        // Resolve components and their dependencies from registry
+        const registryItems = await resolveDeps(selectedComponents, options.registry);
+        if (spinner) {
+            spinner.text = `Adding ${registryItems.length} components (including dependencies)...`;
+        }
 
-    // Add components
-    const result = await addComponents(
-        selectedComponents,
-        componentsDir,
-        config.aliases.utils,
-        options.overwrite ?? false,
-        spinner
-    );
+        // Ensure utils exists
+        if (!options.dryRun) {
+            const utilsCreated = await ensureUtilsFile(utilsPath);
+            if (utilsCreated) {
+                spinner?.info(`Created utility file at ${utilsPath}`);
+            }
+        }
 
-    // Summary
-    const summary =
-        result.skipped.length > 0
-            ? `Added ${result.added.length} component(s), skipped ${result.skipped.length}`
-            : `Added ${result.added.length} component(s)`;
+        // Write files
+        const { added, skipped } = await writeRegistryFiles(
+            registryItems,
+            config,
+            cwd,
+            options,
+            spinner
+        );
 
-    spinner?.succeed(summary);
+        // Summary
+        const summary = skipped.length > 0
+            ? `Added ${added.length} component(s), skipped ${skipped.length}`
+            : `Added ${added.length} component(s)`;
 
-    // Install dependencies
-    const deps = collectDependencies(result.added);
-    installComponentDeps(deps, cwd);
+        if (options.dryRun) {
+            spinner?.succeed(`[Dry Run] Simulated: ${summary}`);
+        } else {
+            spinner?.succeed(summary);
+        }
 
-    // Print info
-    logger.newLine();
-    logger.bold('Components added to:');
-    logger.highlight(`  ${path.join(componentsDir, 'ui')}/`);
+        // Collect all npm dependencies from the resolved registry items
+        const allDeps = new Set<string>();
+        for (const item of registryItems) {
+            if (item.dependencies) {
+                item.dependencies.forEach((dep) => allDeps.add(dep));
+            }
+        }
 
-    if (result.added.length > 0) {
-        logger.newLine();
-        logger.bold('Usage:');
-        printUsageExample(result.added[0], config.aliases.components);
+        // Install dependencies
+        installComponentDeps(Array.from(allDeps), cwd, options.dryRun ?? false);
+
+        // Print usage
+        if (added.length > 0) {
+            logger.newLine();
+            logger.bold('Usage:');
+            printUsageExample(added[0], config.aliases.components);
+        }
+
+    } catch (error: any) {
+        spinner?.fail('Failed to add components');
+        logger.error(error?.message || error);
+        process.exit(1);
     }
 }

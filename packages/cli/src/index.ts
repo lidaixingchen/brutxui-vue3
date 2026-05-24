@@ -29,6 +29,8 @@ program
     .option('-p, --path <path>', 'The path to add the component to')
     .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
     .option('-s, --silent', 'Mute output', false)
+    .option('--dry-run', 'Simulate addition without writing files', false)
+    .option('-r, --registry <registry>', 'Specify registry path or URL')
     .action(add);
 
 program.parse();

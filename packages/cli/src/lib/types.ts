@@ -64,13 +64,29 @@ export interface AddOptions {
     cwd?: string;
     yes?: boolean;
     silent?: boolean;
+    dryRun?: boolean;
+    registry?: string;
 }
 
 // ============================================================================
-// Component Types
+// Component & Registry Types
 // ============================================================================
 
 export interface ComponentInfo {
     name: string;
     dependencies: string[];
 }
+
+export interface RegistryFile {
+    path: string;
+    content: string;
+}
+
+export interface RegistryItem {
+    name: string;
+    type: string;
+    dependencies: string[];
+    registryDependencies: string[];
+    files: RegistryFile[];
+}
+

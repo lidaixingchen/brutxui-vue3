@@ -19,12 +19,14 @@ import {
     BRUTALIST_CSS_STYLES,
     SCHEMA_URL,
     DEFAULT_TAILWIND_CONFIG,
+    UTILS_TEMPLATE,
     // Functions
     detectProjectType,
     detectPackageManager,
     findTailwindConfig,
     findCssFile,
     getDefaultAliases,
+    resolveAliasPath,
     installPackages,
     getInstallCommand,
     logger,
@@ -128,19 +130,21 @@ async function createConfigFile(cwd: string, settings: DetectedSettings): Promis
  */
 async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean> {
     const fullPath = path.join(cwd, cssPath);
+    await fs.ensureDir(path.dirname(fullPath));
 
-    if (!(await fs.pathExists(fullPath))) {
-        return false;
+    let content = '';
+    if (await fs.pathExists(fullPath)) {
+        content = await fs.readFile(fullPath, 'utf-8');
+        // Check if already added
+        if (content.includes('shadow-brutal')) {
+            return false;
+        }
+        content += BRUTALIST_CSS_STYLES;
+    } else {
+        // Create new globals.css with Tailwind directives and brutalist styles
+        content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${BRUTALIST_CSS_STYLES}`;
     }
 
-    let content = await fs.readFile(fullPath, 'utf-8');
-
-    // Check if already added
-    if (content.includes('shadow-brutal')) {
-        return false;
-    }
-
-    content += BRUTALIST_CSS_STYLES;
     await fs.writeFile(fullPath, content);
     return true;
 }
@@ -219,10 +223,21 @@ export async function init(options: InitOptions): Promise<void> {
         // Create config file
         await createConfigFile(cwd, settings);
 
+        // Ensure utils.ts exists
+        const utilsPath = resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
+        await fs.ensureDir(path.dirname(utilsPath));
+        await fs.writeFile(utilsPath, UTILS_TEMPLATE);
+        spinner?.info('Created utility helper at ' + settings.aliases.utils);
+
+        // Ensure components/ui dir exists
+        const componentsDir = resolveAliasPath(settings.aliases.components, cwd);
+        await fs.ensureDir(path.join(componentsDir, 'ui'));
+        spinner?.info('Created components/ui directory');
+
         // Add CSS styles
         const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind.css);
         if (stylesAdded) {
-            spinner?.info('Added brutalist styles to your CSS file');
+            spinner?.info('Added brutalist styles to ' + settings.tailwind.css);
         }
 
         spinner?.succeed('Brutalist UI initialized successfully!');

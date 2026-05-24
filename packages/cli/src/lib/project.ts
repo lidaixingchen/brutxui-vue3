@@ -5,7 +5,7 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import type { ProjectType, TsConfig, AliasConfig, PackageManager } from './types.js';
+import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
 
 // ============================================================================
@@ -241,3 +241,13 @@ function resolveByProjectType(cwd: string, relativePath: string): string {
 export function getDefaultAliases(cwd: string): AliasConfig {
     return getAliasFromTsConfig(cwd) ?? { ...DEFAULT_ALIASES };
 }
+
+/**
+ * Resolve import aliases in a file content
+ */
+export function resolveImportAlias(content: string, config: BrutalistConfig): string {
+    return content
+        .replace(/["']@\/lib\/utils["']/g, `"${config.aliases.utils}"`)
+        .replace(/["']@\/components\/(.*)["']/g, `"${config.aliases.components}/$1"`);
+}
+

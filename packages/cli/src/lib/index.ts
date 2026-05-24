@@ -18,6 +18,7 @@ export {
     getAliasFromTsConfig,
     resolveAliasPath,
     getDefaultAliases,
+    resolveImportAlias,
 } from './project.js';
 
 // Package manager
@@ -25,3 +26,6 @@ export { installPackages, getInstallCommand } from './package-manager.js';
 
 // Logger
 export { logger } from './logger.js';
+
+// Registry utilities
+export { getItem, resolveDeps } from './registry.js';

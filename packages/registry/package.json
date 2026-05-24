@@ -1,0 +1,14 @@
+{
+    "name": "brutalist-ui-registry",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsx scripts/build-registry.ts"
+    },
+    "devDependencies": {
+        "tsx": "^4.7.1",
+        "typescript": "^5.3.3",
+        "@types/node": "^20.10.6"
+    }
+}
