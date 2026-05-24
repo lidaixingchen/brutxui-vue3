@@ -260,4 +260,34 @@ export function isSafePath(targetPath: string, cwd: string): boolean {
     return resolvedTarget.startsWith(resolvedCwd);
 }
 
+/**
+ * Detect the version of Tailwind CSS used in the project
+ */
+export function detectTailwindVersion(cwd: string): 'v3' | 'v4' {
+    try {
+        const pkgJsonPath = path.join(cwd, 'package.json');
+        if (fs.existsSync(pkgJsonPath)) {
+            const pkg = fs.readJsonSync(pkgJsonPath);
+            const tailwindVersion = pkg.dependencies?.['tailwindcss'] || pkg.devDependencies?.['tailwindcss'];
+            
+            if (tailwindVersion) {
+                const cleanVersion = tailwindVersion.replace(/^[^0-9]+/, '');
+                if (cleanVersion.startsWith('4')) {
+                    return 'v4';
+                }
+                if (cleanVersion.startsWith('3')) {
+                    return 'v3';
+                }
+            }
+        }
+    } catch {
+        // Fallback if parsing fails
+    }
+
+    // Fallback based on typical config file presence
+    const hasConfig = CONFIG_FILES.tailwind.some(file => fs.existsSync(path.join(cwd, file)));
+    return hasConfig ? 'v3' : 'v4';
+}
+
+
 

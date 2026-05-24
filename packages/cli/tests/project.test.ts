@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs-extra';
-import { resolveImportAlias, detectProjectType, detectPackageManager } from '../src/lib/project.js';
+import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion } from '../src/lib/project.js';
 
 describe('resolveImportAlias', () => {
     it('should correctly resolve import aliases based on config', () => {
@@ -93,3 +93,43 @@ describe('detectProjectType', () => {
         expect(type).toBe('nextjs');
     });
 });
+
+describe('detectTailwindVersion', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('should detect v4 if package.json has tailwindcss v4', () => {
+        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+        vi.spyOn(fs, 'readJsonSync').mockReturnValue({
+            devDependencies: {
+                tailwindcss: '^4.0.0'
+            }
+        });
+
+        const version = detectTailwindVersion('/dummy/path');
+        expect(version).toBe('v4');
+    });
+
+    it('should detect v3 if package.json has tailwindcss v3', () => {
+        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+        vi.spyOn(fs, 'readJsonSync').mockReturnValue({
+            devDependencies: {
+                tailwindcss: '^3.4.1'
+            }
+        });
+
+        const version = detectTailwindVersion('/dummy/path');
+        expect(version).toBe('v3');
+    });
+
+    it('should fallback to v3 if tailwind config file exists', () => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+            return p.toString().endsWith('tailwind.config.js');
+        });
+
+        const version = detectTailwindVersion('/dummy/path');
+        expect(version).toBe('v3');
+    });
+});
+

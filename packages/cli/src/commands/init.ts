@@ -27,6 +27,7 @@ import {
     findCssFile,
     getDefaultAliases,
     resolveAliasPath,
+    detectTailwindVersion,
     installPackages,
     getInstallCommand,
     logger,
@@ -46,6 +47,7 @@ interface DetectedSettings {
  */
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const projectType = detectProjectType(cwd);
+    const tailwindVersion = detectTailwindVersion(cwd);
 
     const tailwindConfig = findTailwindConfig(cwd);
     const cssFile = findCssFile(cwd, projectType);
@@ -56,7 +58,7 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
 
     return {
         tailwind: {
-            config: tailwindConfig ?? DEFAULT_TAILWIND_CONFIG,
+            config: tailwindVersion === 'v4' ? '' : (tailwindConfig ?? DEFAULT_TAILWIND_CONFIG),
             css: cssFile ?? fallbackCss,
         },
         aliases,
@@ -73,6 +75,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
             name: 'tailwindConfig',
             message: 'Where is your tailwind.config located?',
             default: defaults.tailwind.config,
+            when: () => defaults.tailwind.config !== '',
         },
         {
             type: 'input',
@@ -96,7 +99,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
 
     return {
         tailwind: {
-            config: answers.tailwindConfig,
+            config: answers.tailwindConfig ?? defaults.tailwind.config,
             css: answers.globalCss,
         },
         aliases: {

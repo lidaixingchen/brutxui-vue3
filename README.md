@@ -56,7 +56,7 @@ Your support helps keep this project alive and growing! 🚀
 | ♿ **Accessible**           | Built on Radix UI primitives for A11y            |
 | 📱 **Responsive**           | Mobile-first, responsive design                  |
 | 🎯 **TypeScript**           | Full type safety and IntelliSense                |
-| 🎨 **Tailwind CSS**         | Custom plugin with brutalism utilities           |
+| 🎨 **Tailwind CSS**         | Full native support for Tailwind CSS v3 and v4 |
 | ⚡ **Tree-shakeable**       | Import only what you need                        |
 
 ## 📦 Installation

@@ -20,6 +20,7 @@ export {
     getDefaultAliases,
     resolveImportAlias,
     isSafePath,
+    detectTailwindVersion,
 } from './project.js';
 
 // Package manager
