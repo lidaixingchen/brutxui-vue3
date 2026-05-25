@@ -11,7 +11,8 @@ const textareaVariants = cva(
         'placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:font-normal',
         'transition-all duration-150',
         'focus:outline-none focus:shadow-[4px_4px_0px_0px_#000000] dark:focus:shadow-[4px_4px_0px_0px_#FFFFFF]',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800',
+        'focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-150 dark:disabled:bg-gray-800',
         'resize-none',
     ],
     {

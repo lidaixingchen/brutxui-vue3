@@ -39,6 +39,20 @@ module.exports = {
                     DEFAULT: 'hsl(var(--card))',
                     foreground: 'hsl(var(--card-foreground))',
                 },
+                // Brutx Design Tokens mapped to tailwind color utilities
+                brutal: {
+                    bg: 'var(--brutal-bg, #ffffff)',
+                    fg: 'var(--brutal-fg, #000000)',
+                    border: 'var(--brutal-border-color, #000000)',
+                    shadow: 'var(--brutal-shadow-color, #000000)',
+                    primary: 'var(--brutal-primary, #FF6B6B)',
+                    secondary: 'var(--brutal-secondary, #4ECDC4)',
+                    accent: 'var(--brutal-accent, #FFE66D)',
+                    destructive: 'var(--brutal-destructive, #EF476F)',
+                    success: 'var(--brutal-success, #7FB069)',
+                    muted: 'var(--brutal-muted, #f3f4f6)',
+                    ring: 'var(--brutal-ring, #000000)',
+                },
                 // brutalism palette stays for backward compatibility
                 brutalism: {
                     bg: '#FFFFFF',
@@ -54,14 +68,17 @@ module.exports = {
             fontFamily: {
                 brutal: ['Inter', 'system-ui', 'sans-serif'],
             },
+            borderRadius: {
+                brutal: 'var(--brutal-radius, 0px)',
+            },
             boxShadow: {
                 // shadcn-style subtle shadows
                 xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                // brutalism shadows keep working
-                brutal: '4px 4px 0px 0px #000000',
-                'brutal-sm': '2px 2px 0px 0px #000000',
-                'brutal-lg': '6px 6px 0px 0px #000000',
-                'brutal-xl': '8px 8px 0px 0px #000000',
+                // brutalism shadows fully dynamic now
+                brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
+                'brutal-sm': 'calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)',
+                'brutal-lg': 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
+                'brutal-xl': 'calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)',
             },
             borderWidth: {
                 3: '3px',

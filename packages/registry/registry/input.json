@@ -1,12 +1,90 @@
 {
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "input",
   "type": "registry:ui",
+  "title": "Input",
+  "description": "A highly customizable neo-brutalist Input component built with Brutx design tokens.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
     {
       "path": "components/ui/input.tsx",
-      "content": "import * as React from 'react';\nimport { cva, type VariantProps } from 'class-variance-authority';\nimport { cn } from '@/lib/utils';\n\nconst inputVariants = cva(\n    [\n        'flex w-full',\n        'border-3 border-black dark:border-white',\n        'bg-white dark:bg-gray-900 dark:text-white',\n        'font-medium',\n        'placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:font-normal',\n        'transition-all duration-150',\n        'focus:outline-none focus:shadow-[4px_4px_0px_0px_#000000] dark:focus:shadow-[4px_4px_0px_0px_#FFFFFF]',\n        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800',\n    ],\n    {\n        variants: {\n            variant: {\n                default: '',\n                error: 'border-[#EF476F] focus:shadow-[4px_4px_0px_0px_#EF476F]',\n                success: 'border-[#7FB069] focus:shadow-[4px_4px_0px_0px_#7FB069]',\n            },\n            size: {\n                sm: 'h-9 px-3 py-1 text-sm',\n                default: 'h-11 px-4 py-2 text-base',\n                lg: 'h-14 px-5 py-3 text-lg',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n        },\n    }\n);\n\nexport interface InputProps\n    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,\n        VariantProps<typeof inputVariants> {}\n\nconst Input = React.forwardRef<HTMLInputElement, InputProps>(\n    ({ className, variant, size, type, ...props }, ref) => {\n        return (\n            <input\n                type={type}\n                className={cn(inputVariants({ variant, size, className }))}\n                ref={ref}\n                {...props}\n            />\n        );\n    }\n);\nInput.displayName = 'Input';\n\nexport { Input, inputVariants };\n"
+      "content": "import * as React from 'react';\nimport { cva, type VariantProps } from 'class-variance-authority';\nimport { cn } from '@/lib/utils';\n\nconst inputVariants = cva(\n    [\n        'flex w-full',\n        'border-3 border-brutal rounded-brutal',\n        'bg-brutal-bg text-brutal-fg',\n        'font-medium',\n        'placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:font-normal',\n        'transition-all duration-150',\n        'focus:outline-none focus:shadow-brutal',\n        'focus-visible:ring-2 focus-visible:ring-[var(--brutal-ring,#000)] focus-visible:ring-offset-2',\n        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-brutal-muted',\n    ],\n    {\n        variants: {\n            variant: {\n                default: '',\n                error: 'border-[#EF476F] focus:shadow-[4px_4px_0px_0px_#EF476F]',\n                success: 'border-[#7FB069] focus:shadow-[4px_4px_0px_0px_#7FB069]',\n            },\n            size: {\n                sm: 'h-9 px-3 py-1 text-sm',\n                default: 'h-11 px-4 py-2 text-base',\n                lg: 'h-14 px-5 py-3 text-lg',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n        },\n    }\n);\n\nexport interface InputProps\n    extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,\n        VariantProps<typeof inputVariants> {}\n\nconst Input = React.forwardRef<HTMLInputElement, InputProps>(\n    ({ className, variant, size, type, ...props }, ref) => {\n        return (\n            <input\n                type={type}\n                className={cn(inputVariants({ variant, size, className }))}\n                ref={ref}\n                {...props}\n            />\n        );\n    }\n);\nInput.displayName = 'Input';\n\nexport { Input, inputVariants };\n",
+      "type": "registry:ui"
     }
-  ]
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
 }

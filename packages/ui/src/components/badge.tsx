@@ -7,7 +7,7 @@ import { cn } from '../lib/utils';
 const badgeVariants = cva(
     [
         'inline-flex items-center',
-        'border-2 border-black dark:border-white',
+        'border-2 border-brutal rounded-brutal',
         'font-bold tracking-wide',
         'transition-colors',
     ],
@@ -15,30 +15,30 @@ const badgeVariants = cva(
         variants: {
             variant: {
                 default: [
-                    'bg-white dark:bg-gray-900 text-black dark:text-white',
-                    'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'bg-brutal-bg text-brutal-fg',
+                    'shadow-brutal-sm',
                 ],
                 primary: [
-                    'bg-[#FF6B6B] text-black',
-                    'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'bg-brutal-primary text-brutal-fg',
+                    'shadow-brutal-sm',
                 ],
                 secondary: [
-                    'bg-[#4ECDC4] text-black',
-                    'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'bg-brutal-secondary text-brutal-fg',
+                    'shadow-brutal-sm',
                 ],
                 accent: [
-                    'bg-[#FFE66D] text-black',
-                    'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'bg-brutal-accent text-brutal-fg',
+                    'shadow-brutal-sm',
                 ],
                 danger: [
-                    'bg-[#EF476F] text-white',
-                    'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'bg-brutal-destructive text-brutal-fg',
+                    'shadow-brutal-sm',
                 ],
                 success: [
-                    'bg-[#7FB069] text-black',
-                    'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'bg-brutal-success text-brutal-fg',
+                    'shadow-brutal-sm',
                 ],
-                outline: 'bg-transparent text-black dark:text-white',
+                outline: 'bg-transparent text-brutal-fg',
             },
             size: {
                 sm: 'px-2 py-0.5 text-xs',

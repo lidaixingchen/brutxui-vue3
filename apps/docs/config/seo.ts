@@ -178,4 +178,14 @@ export const componentsSEO: Record<string, ComponentSEOProps> = {
         description: 'Custom scrollbar component with neo-brutalist rails.',
         slug: 'scroll-area',
     },
+    'saas-pricing': {
+        name: 'SaaS Pricing',
+        description: 'Premium SaaS pricing plans, features matrix, and billing frequency toggles with stark brutalist design.',
+        slug: 'saas-pricing',
+    },
+    'dashboard-stats': {
+        name: 'Dashboard Stats',
+        description: 'Premium dashboard stat metrics, trends indicators, and interactive sparkline summaries with hard offset shadows.',
+        slug: 'dashboard-stats',
+    },
 };

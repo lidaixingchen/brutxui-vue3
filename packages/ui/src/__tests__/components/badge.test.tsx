@@ -11,7 +11,7 @@ describe('Badge', () => {
     it('renders with default variant', () => {
         render(<Badge data-testid="badge">Default</Badge>);
         const badge = screen.getByTestId('badge');
-        expect(badge).toHaveClass('bg-white');
+        expect(badge).toHaveClass('bg-brutal-bg');
     });
 
     it('renders with primary variant', () => {
@@ -20,7 +20,7 @@ describe('Badge', () => {
                 Primary
             </Badge>
         );
-        expect(screen.getByTestId('badge')).toHaveClass('bg-[#FF6B6B]');
+        expect(screen.getByTestId('badge')).toHaveClass('bg-brutal-primary');
     });
 
     it('renders with secondary variant', () => {
@@ -29,7 +29,7 @@ describe('Badge', () => {
                 Secondary
             </Badge>
         );
-        expect(screen.getByTestId('badge')).toHaveClass('bg-[#4ECDC4]');
+        expect(screen.getByTestId('badge')).toHaveClass('bg-brutal-secondary');
     });
 
     it('renders with accent variant', () => {
@@ -38,7 +38,7 @@ describe('Badge', () => {
                 Accent
             </Badge>
         );
-        expect(screen.getByTestId('badge')).toHaveClass('bg-[#FFE66D]');
+        expect(screen.getByTestId('badge')).toHaveClass('bg-brutal-accent');
     });
 
     it('renders with outline variant', () => {
@@ -63,6 +63,6 @@ describe('Badge', () => {
         render(<Badge data-testid="badge">Styled</Badge>);
         const badge = screen.getByTestId('badge');
         expect(badge).toHaveClass('border-2');
-        expect(badge).toHaveClass('border-black');
+        expect(badge).toHaveClass('border-brutal');
     });
 });

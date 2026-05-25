@@ -26,6 +26,8 @@ export * from './tabs';
 export * from './textarea';
 export * from './toast';
 export * from './tooltip';
+export * from './saas-pricing';
+export * from './dashboard-stats';
 
 // Re-export utils
 export { cn } from '@/lib/utils';

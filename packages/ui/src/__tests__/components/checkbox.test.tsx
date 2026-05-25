@@ -42,6 +42,6 @@ describe('Checkbox', () => {
         render(<Checkbox aria-label="test checkbox" />);
         const checkbox = screen.getByRole('checkbox');
         expect(checkbox).toHaveClass('border-3');
-        expect(checkbox).toHaveClass('border-black');
+        expect(checkbox).toHaveClass('border-brutal');
     });
 });

@@ -8,7 +8,7 @@ const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableE
                 ref={ref}
                 className={cn(
                     'w-full caption-bottom text-sm',
-                    'border-3 border-black dark:border-white',
+                    'border-3 border-brutal',
                     className
                 )}
                 {...props}
@@ -26,7 +26,7 @@ const TableHeader = React.forwardRef<
         ref={ref}
         className={cn(
             'bg-[#FFE66D] dark:bg-gray-800 text-black dark:text-white',
-            '[&_tr]:border-b-3 [&_tr]:border-black dark:[&_tr]:border-white',
+            '[&_tr]:border-b-3 [&_tr]:border-brutal',
             className
         )}
         {...props}
@@ -58,7 +58,7 @@ const TableFooter = React.forwardRef<
     <tfoot
         ref={ref}
         className={cn(
-            'border-t-3 border-black dark:border-white',
+            'border-t-3 border-brutal',
             'bg-[#4ECDC4] dark:bg-gray-700',
             'font-bold dark:text-white',
             '[&>tr]:last:border-b-0',
@@ -74,7 +74,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
         <tr
             ref={ref}
             className={cn(
-                'border-b-3 border-black dark:border-white transition-colors',
+                'border-b-3 border-brutal transition-colors',
                 'hover:bg-[#FFE66D]/30',
                 'data-[state=selected]:bg-[#FFE66D]',
                 className
@@ -93,8 +93,8 @@ const TableHead = React.forwardRef<
         ref={ref}
         className={cn(
             'h-12 px-4 text-left align-middle font-black tracking-wide text-black',
-            '[&:has([role=checkbox])]:pr-0',
-            'border-r-3 border-black last:border-r-0',
+            '[&:_has([role=checkbox])]:pr-0',
+            'border-r-3 border-[var(--brutal-border-color,#000)] last:border-r-0',
             className
         )}
         {...props}
@@ -110,8 +110,8 @@ const TableCell = React.forwardRef<
         ref={ref}
         className={cn(
             'p-4 align-middle font-medium',
-            '[&:has([role=checkbox])]:pr-0',
-            'border-r-3 border-black dark:border-white last:border-r-0',
+            '[&:_has([role=checkbox])]:pr-0',
+            'border-r-3 border-brutal last:border-r-0',
             className
         )}
         {...props}

@@ -67,6 +67,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'monthly' as const,
             priority: 0.85,
         },
+        {
+            url: `${baseUrl}/docs/installation/shadcn`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly' as const,
+            priority: 0.85,
+        },
     ];
 
     return [
@@ -96,6 +102,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
             url: `${baseUrl}/docs/cli`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
+            priority: 0.9,
+        },
+        // Theme & Tokens page - important for custom styling
+        {
+            url: `${baseUrl}/docs/theme`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
             priority: 0.9,
         },
         // Installation pages

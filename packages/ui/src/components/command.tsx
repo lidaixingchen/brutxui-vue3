@@ -62,7 +62,7 @@ function CommandInput({
             data-slot="command-input-wrapper"
             className={cn(
                 'flex h-12 items-center gap-3 px-4',
-                'border-b-3 border-black dark:border-white',
+                'border-b-3 border-brutal',
                 'bg-[#FFE66D]'
             )}
         >
@@ -139,7 +139,7 @@ function CommandSeparator({
     return (
         <CommandPrimitive.Separator
             data-slot="command-separator"
-            className={cn('-mx-1 my-2 h-[3px]', 'bg-black dark:bg-white', className)}
+            className={cn('-mx-1 my-2 h-[3px]', 'bg-[var(--brutal-border-color,#000)]', className)}
             {...props}
         />
     );
@@ -156,8 +156,8 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
                 'border-2 border-transparent',
                 // Hover & Selected states - Neo-Brutalist style
                 'data-[selected=true]:bg-[#4ECDC4] data-[selected=true]:text-black',
-                'data-[selected=true]:border-black data-[selected=true]:font-black',
-                'data-[selected=true]:shadow-[2px_2px_0px_0px_#000000]',
+                'data-[selected=true]:border-brutal data-[selected=true]:font-black',
+                'data-[selected=true]:shadow-brutal-sm',
                 // Disabled
                 'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
                 // Icons
@@ -179,7 +179,7 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) 
                 'ml-auto text-xs font-black tracking-wider',
                 'px-2 py-1',
                 'bg-gray-100 dark:bg-gray-800',
-                'border-2 border-black dark:border-white',
+                'border-2 border-brutal',
                 'text-gray-600 dark:text-gray-300',
                 className
             )}

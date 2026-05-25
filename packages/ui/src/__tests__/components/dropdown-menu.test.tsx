@@ -11,9 +11,6 @@ import {
     DropdownMenuRadioGroup,
     DropdownMenuSeparator,
     DropdownMenuLabel,
-    DropdownMenuSub,
-    DropdownMenuSubTrigger,
-    DropdownMenuSubContent,
 } from '../../components/dropdown-menu';
 
 describe('DropdownMenu', () => {
@@ -131,7 +128,7 @@ describe('DropdownMenu', () => {
         const onCheckedChange = vi.fn((v: boolean) => {
             checked = v;
         });
-        const { rerender } = render(
+        render(
             <DropdownMenu>
                 <DropdownMenuTrigger>Open</DropdownMenuTrigger>
                 <DropdownMenuContent>

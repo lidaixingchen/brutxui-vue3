@@ -1,6 +1,9 @@
 {
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "combobox",
   "type": "registry:ui",
+  "title": "Combobox",
+  "description": "A highly customizable neo-brutalist Combobox component built with Brutx design tokens.",
   "dependencies": [
     "cmdk",
     "@radix-ui/react-popover",
@@ -14,7 +17,82 @@
   "files": [
     {
       "path": "components/ui/combobox.tsx",
-      "content": "'use client';\n\nimport * as React from 'react';\nimport { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';\n\nimport { cn } from '@/lib/utils';\nimport { Button } from '@/components/ui/button';\nimport { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';\nimport {\n    Command,\n    CommandEmpty,\n    CommandGroup,\n    CommandInput,\n    CommandItem,\n    CommandList,\n} from '@/components/ui/command';\n\nexport interface ComboboxOption {\n    value: string;\n    label: string;\n    disabled?: boolean;\n}\n\nexport interface ComboboxProps {\n    options: ComboboxOption[];\n    value?: string;\n    onValueChange?: (value: string) => void;\n    placeholder?: string;\n    searchPlaceholder?: string;\n    emptyText?: string;\n    className?: string;\n    disabled?: boolean;\n}\n\nfunction Combobox({\n    options,\n    value,\n    onValueChange,\n    placeholder = 'Select option...',\n    searchPlaceholder = 'Search...',\n    emptyText = 'No results found.',\n    className,\n    disabled = false,\n}: ComboboxProps) {\n    const [open, setOpen] = React.useState(false);\n\n    const selectedOption = options.find((option) => option.value === value);\n\n    return (\n        <Popover open={open} onOpenChange={setOpen}>\n            <PopoverTrigger asChild>\n                <Button\n                    variant=\"outline\"\n                    role=\"combobox\"\n                    aria-expanded={open}\n                    disabled={disabled}\n                    className={cn(\n                        'w-full justify-between font-semibold',\n                        !value && 'text-gray-500',\n                        className\n                    )}\n                >\n                    {selectedOption ? selectedOption.label : placeholder}\n                    <ChevronsUpDownIcon className=\"ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]\" />\n                </Button>\n            </PopoverTrigger>\n            <PopoverContent className=\"w-[--radix-popover-trigger-width] p-0\" align=\"start\">\n                <Command>\n                    <CommandInput placeholder={searchPlaceholder} />\n                    <CommandList>\n                        <CommandEmpty>{emptyText}</CommandEmpty>\n                        <CommandGroup>\n                            {options.map((option) => (\n                                <CommandItem\n                                    key={option.value}\n                                    value={option.value}\n                                    disabled={option.disabled}\n                                    onSelect={(currentValue) => {\n                                        onValueChange?.(currentValue === value ? '' : currentValue);\n                                        setOpen(false);\n                                    }}\n                                >\n                                    <CheckIcon\n                                        className={cn(\n                                            'mr-2 h-4 w-4 stroke-[3]',\n                                            value === option.value ? 'opacity-100' : 'opacity-0'\n                                        )}\n                                    />\n                                    {option.label}\n                                </CommandItem>\n                            ))}\n                        </CommandGroup>\n                    </CommandList>\n                </Command>\n            </PopoverContent>\n        </Popover>\n    );\n}\nCombobox.displayName = 'Combobox';\n\n// Multi-select Combobox\nexport interface ComboboxMultiProps {\n    options: ComboboxOption[];\n    value?: string[];\n    onValueChange?: (value: string[]) => void;\n    placeholder?: string;\n    searchPlaceholder?: string;\n    emptyText?: string;\n    className?: string;\n    disabled?: boolean;\n    maxDisplay?: number;\n}\n\nfunction ComboboxMulti({\n    options,\n    value = [],\n    onValueChange,\n    placeholder = 'Select options...',\n    searchPlaceholder = 'Search...',\n    emptyText = 'No results found.',\n    className,\n    disabled = false,\n    maxDisplay = 3,\n}: ComboboxMultiProps) {\n    const [open, setOpen] = React.useState(false);\n\n    const selectedOptions = options.filter((option) => value.includes(option.value));\n\n    const displayText = React.useMemo(() => {\n        if (selectedOptions.length === 0) return placeholder;\n        if (selectedOptions.length <= maxDisplay) {\n            return selectedOptions.map((o) => o.label).join(', ');\n        }\n        return `${selectedOptions.length} selected`;\n    }, [selectedOptions, placeholder, maxDisplay]);\n\n    const handleSelect = (optionValue: string) => {\n        const newValue = value.includes(optionValue)\n            ? value.filter((v) => v !== optionValue)\n            : [...value, optionValue];\n        onValueChange?.(newValue);\n    };\n\n    return (\n        <Popover open={open} onOpenChange={setOpen}>\n            <PopoverTrigger asChild>\n                <Button\n                    variant=\"outline\"\n                    role=\"combobox\"\n                    aria-expanded={open}\n                    disabled={disabled}\n                    className={cn(\n                        'w-full justify-between font-semibold',\n                        selectedOptions.length === 0 && 'text-gray-500',\n                        className\n                    )}\n                >\n                    <span className=\"truncate\">{displayText}</span>\n                    <ChevronsUpDownIcon className=\"ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]\" />\n                </Button>\n            </PopoverTrigger>\n            <PopoverContent className=\"w-[--radix-popover-trigger-width] p-0\" align=\"start\">\n                <Command>\n                    <CommandInput placeholder={searchPlaceholder} />\n                    <CommandList>\n                        <CommandEmpty>{emptyText}</CommandEmpty>\n                        <CommandGroup>\n                            {options.map((option) => (\n                                <CommandItem\n                                    key={option.value}\n                                    value={option.value}\n                                    disabled={option.disabled}\n                                    onSelect={() => handleSelect(option.value)}\n                                >\n                                    <div\n                                        className={cn(\n                                            'mr-2 flex h-4 w-4 items-center justify-center',\n                                            'border-2 border-black dark:border-white',\n                                            value.includes(option.value)\n                                                ? 'bg-[#4ECDC4]'\n                                                : 'bg-white dark:bg-gray-900'\n                                        )}\n                                    >\n                                        {value.includes(option.value) && (\n                                            <CheckIcon className=\"h-3 w-3 stroke-[3] text-black\" />\n                                        )}\n                                    </div>\n                                    {option.label}\n                                </CommandItem>\n                            ))}\n                        </CommandGroup>\n                    </CommandList>\n                </Command>\n            </PopoverContent>\n        </Popover>\n    );\n}\nComboboxMulti.displayName = 'ComboboxMulti';\n\nexport { Combobox, ComboboxMulti };\n"
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';\n\nimport { cn } from '@/lib/utils';\nimport { Button } from '@/components/ui/button';\nimport { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';\nimport {\n    Command,\n    CommandEmpty,\n    CommandGroup,\n    CommandInput,\n    CommandItem,\n    CommandList,\n} from '@/components/ui/command';\n\nexport interface ComboboxOption {\n    value: string;\n    label: string;\n    disabled?: boolean;\n}\n\nexport interface ComboboxProps {\n    options: ComboboxOption[];\n    value?: string;\n    onValueChange?: (value: string) => void;\n    placeholder?: string;\n    searchPlaceholder?: string;\n    emptyText?: string;\n    className?: string;\n    disabled?: boolean;\n}\n\nfunction Combobox({\n    options,\n    value,\n    onValueChange,\n    placeholder = 'Select option...',\n    searchPlaceholder = 'Search...',\n    emptyText = 'No results found.',\n    className,\n    disabled = false,\n}: ComboboxProps) {\n    const [open, setOpen] = React.useState(false);\n\n    const selectedOption = options.find((option) => option.value === value);\n\n    return (\n        <Popover open={open} onOpenChange={setOpen}>\n            <PopoverTrigger asChild>\n                <Button\n                    variant=\"outline\"\n                    role=\"combobox\"\n                    aria-expanded={open}\n                    disabled={disabled}\n                    className={cn(\n                        'w-full justify-between font-semibold',\n                        !value && 'text-gray-500',\n                        className\n                    )}\n                >\n                    {selectedOption ? selectedOption.label : placeholder}\n                    <ChevronsUpDownIcon className=\"ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]\" />\n                </Button>\n            </PopoverTrigger>\n            <PopoverContent className=\"w-[--radix-popover-trigger-width] p-0\" align=\"start\">\n                <Command>\n                    <CommandInput placeholder={searchPlaceholder} />\n                    <CommandList>\n                        <CommandEmpty>{emptyText}</CommandEmpty>\n                        <CommandGroup>\n                            {options.map((option) => (\n                                <CommandItem\n                                    key={option.value}\n                                    value={option.value}\n                                    disabled={option.disabled}\n                                    onSelect={(currentValue) => {\n                                        onValueChange?.(currentValue === value ? '' : currentValue);\n                                        setOpen(false);\n                                    }}\n                                >\n                                    <CheckIcon\n                                        className={cn(\n                                            'mr-2 h-4 w-4 stroke-[3]',\n                                            value === option.value ? 'opacity-100' : 'opacity-0'\n                                        )}\n                                    />\n                                    {option.label}\n                                </CommandItem>\n                            ))}\n                        </CommandGroup>\n                    </CommandList>\n                </Command>\n            </PopoverContent>\n        </Popover>\n    );\n}\nCombobox.displayName = 'Combobox';\n\n// Multi-select Combobox\nexport interface ComboboxMultiProps {\n    options: ComboboxOption[];\n    value?: string[];\n    onValueChange?: (value: string[]) => void;\n    placeholder?: string;\n    searchPlaceholder?: string;\n    emptyText?: string;\n    className?: string;\n    disabled?: boolean;\n    maxDisplay?: number;\n}\n\nfunction ComboboxMulti({\n    options,\n    value = [],\n    onValueChange,\n    placeholder = 'Select options...',\n    searchPlaceholder = 'Search...',\n    emptyText = 'No results found.',\n    className,\n    disabled = false,\n    maxDisplay = 3,\n}: ComboboxMultiProps) {\n    const [open, setOpen] = React.useState(false);\n\n    const selectedOptions = options.filter((option) => value.includes(option.value));\n\n    const displayText = React.useMemo(() => {\n        if (selectedOptions.length === 0) return placeholder;\n        if (selectedOptions.length <= maxDisplay) {\n            return selectedOptions.map((o) => o.label).join(', ');\n        }\n        return `${selectedOptions.length} selected`;\n    }, [selectedOptions, placeholder, maxDisplay]);\n\n    const handleSelect = (optionValue: string) => {\n        const newValue = value.includes(optionValue)\n            ? value.filter((v) => v !== optionValue)\n            : [...value, optionValue];\n        onValueChange?.(newValue);\n    };\n\n    return (\n        <Popover open={open} onOpenChange={setOpen}>\n            <PopoverTrigger asChild>\n                <Button\n                    variant=\"outline\"\n                    role=\"combobox\"\n                    aria-expanded={open}\n                    disabled={disabled}\n                    className={cn(\n                        'w-full justify-between font-semibold',\n                        selectedOptions.length === 0 && 'text-gray-500',\n                        className\n                    )}\n                >\n                    <span className=\"truncate\">{displayText}</span>\n                    <ChevronsUpDownIcon className=\"ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]\" />\n                </Button>\n            </PopoverTrigger>\n            <PopoverContent className=\"w-[--radix-popover-trigger-width] p-0\" align=\"start\">\n                <Command>\n                    <CommandInput placeholder={searchPlaceholder} />\n                    <CommandList>\n                        <CommandEmpty>{emptyText}</CommandEmpty>\n                        <CommandGroup>\n                            {options.map((option) => (\n                                <CommandItem\n                                    key={option.value}\n                                    value={option.value}\n                                    disabled={option.disabled}\n                                    onSelect={() => handleSelect(option.value)}\n                                >\n                                    <div\n                                        className={cn(\n                                            'mr-2 flex h-4 w-4 items-center justify-center',\n                                            'border-2 border-brutal',\n                                            value.includes(option.value)\n                                                ? 'bg-[#4ECDC4]'\n                                                : 'bg-white dark:bg-gray-900'\n                                        )}\n                                    >\n                                        {value.includes(option.value) && (\n                                            <CheckIcon className=\"h-3 w-3 stroke-[3] text-black\" />\n                                        )}\n                                    </div>\n                                    {option.label}\n                                </CommandItem>\n                            ))}\n                        </CommandGroup>\n                    </CommandList>\n                </Command>\n            </PopoverContent>\n        </Popover>\n    );\n}\nComboboxMulti.displayName = 'ComboboxMulti';\n\nexport { Combobox, ComboboxMulti };\n",
+      "type": "registry:ui"
     }
-  ]
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
 }

@@ -175,7 +175,7 @@ function ComboboxMulti({
                                     <div
                                         className={cn(
                                             'mr-2 flex h-4 w-4 items-center justify-center',
-                                            'border-2 border-black dark:border-white',
+                                            'border-2 border-brutal',
                                             value.includes(option.value)
                                                 ? 'bg-[#4ECDC4]'
                                                 : 'bg-white dark:bg-gray-900'

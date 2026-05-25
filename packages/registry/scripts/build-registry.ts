@@ -63,17 +63,106 @@ async function run() {
                 }
             }
 
+            const title = name
+                .split('-')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+
+            const description = `A highly customizable neo-brutalist ${title} component built with Brutx design tokens.`;
+
+            const tailwind = {
+                config: {
+                    theme: {
+                        extend: {
+                            borderWidth: {
+                                '3': 'var(--brutal-border-width, 3px)'
+                            },
+                            borderColor: {
+                                brutal: 'var(--brutal-border-color, #000000)'
+                            },
+                            borderRadius: {
+                                brutal: 'var(--brutal-radius, 0px)'
+                            },
+                            colors: {
+                                'brutal-bg': 'var(--brutal-bg, #ffffff)',
+                                'brutal-fg': 'var(--brutal-fg, #000000)',
+                                'brutal-primary': 'var(--brutal-primary, #FF6B6B)',
+                                'brutal-secondary': 'var(--brutal-secondary, #4ECDC4)',
+                                'brutal-accent': 'var(--brutal-accent, #FFE66D)',
+                                'brutal-destructive': 'var(--brutal-destructive, #EF476F)',
+                                'brutal-success': 'var(--brutal-success, #7FB069)',
+                                'brutal-muted': 'var(--brutal-muted, #f3f4f6)',
+                                'brutal-ring': 'var(--brutal-ring, #000000)'
+                            },
+                            boxShadow: {
+                                brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
+                                'brutal-sm': 'calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)',
+                                'brutal-lg': 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
+                                'brutal-xl': 'calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)'
+                            }
+                        }
+                    }
+                }
+            };
+
+            const cssVars = {
+                light: {
+                    'brutal-border-width': '3px',
+                    'brutal-border-color': '#000000',
+                    'brutal-shadow-offset-x': '4px',
+                    'brutal-shadow-offset-y': '4px',
+                    'brutal-shadow-color': '#000000',
+                    'brutal-radius': '0px',
+                    'brutal-pressed-offset': '2px',
+                    'brutal-bg': '#ffffff',
+                    'brutal-fg': '#000000',
+                    'brutal-primary': '#FF6B6B',
+                    'brutal-secondary': '#4ECDC4',
+                    'brutal-accent': '#FFE66D',
+                    'brutal-destructive': '#EF476F',
+                    'brutal-success': '#7FB069',
+                    'brutal-muted': '#f3f4f6',
+                    'brutal-ring': '#000000',
+                    'brutal-info': '#4A90D9'
+                },
+                dark: {
+                    'brutal-border-width': '3px',
+                    'brutal-border-color': '#ffffff',
+                    'brutal-shadow-offset-x': '4px',
+                    'brutal-shadow-offset-y': '4px',
+                    'brutal-shadow-color': '#ffffff',
+                    'brutal-radius': '0px',
+                    'brutal-pressed-offset': '2px',
+                    'brutal-bg': '#111827',
+                    'brutal-fg': '#ffffff',
+                    'brutal-primary': '#FF6B6B',
+                    'brutal-secondary': '#4ECDC4',
+                    'brutal-accent': '#FFE66D',
+                    'brutal-destructive': '#EF476F',
+                    'brutal-success': '#7FB069',
+                    'brutal-muted': '#1f2937',
+                    'brutal-ring': '#ffffff',
+                    'brutal-info': '#4A90D9'
+                }
+            };
+
             const registryItem = {
+                $schema: 'https://ui.shadcn.com/schema/registry-item.json',
                 name: name,
                 type: 'registry:ui',
+                title: title,
+                description: description,
                 dependencies: componentInfo.dependencies || [],
                 registryDependencies: Array.from(registryDeps),
                 files: [
                     {
                         path: `components/ui/${name}.tsx`,
-                        content: code
+                        content: code,
+                        type: 'registry:ui'
                     }
-                ]
+                ],
+                tailwind,
+                cssVars
             };
 
             // Write individual component registry file
@@ -85,13 +174,18 @@ async function run() {
             registryIndex.items.push({
                 name: name,
                 type: 'registry:ui',
+                title: title,
+                description: description,
                 dependencies: componentInfo.dependencies || [],
                 registryDependencies: Array.from(registryDeps),
                 files: [
                     {
-                        path: `components/ui/${name}.tsx`
+                        path: `components/ui/${name}.tsx`,
+                        type: 'registry:ui'
                     }
-                ]
+                ],
+                tailwind,
+                cssVars
             });
         } catch (err: any) {
             console.error(`✗ Failed to process component ${name}:`, err.message || err);

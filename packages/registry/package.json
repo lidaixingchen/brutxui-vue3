@@ -4,7 +4,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "tsx scripts/build-registry.ts"
+        "build": "tsx scripts/build-registry.ts",
+        "validate": "tsx scripts/validate-registry.ts"
     },
     "dependencies": {
         "brutx-shared": "workspace:*"

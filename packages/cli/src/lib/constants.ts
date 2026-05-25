@@ -84,32 +84,43 @@ export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/dev-snake
 
 export const BRUTALIST_CSS_STYLES = `
 /* Brutalist UI Styles */
+:root {
+    --brutal-border-width: 3px;
+    --brutal-border-color: #000000;
+    --brutal-shadow-color: #000000;
+    --brutal-shadow-offset-sm: 2px;
+    --brutal-shadow-offset: 4px;
+    --brutal-shadow-offset-lg: 6px;
+    --brutal-shadow-offset-xl: 8px;
+}
+
+.dark {
+    --brutal-border-color: #ffffff;
+    --brutal-shadow-color: #ffffff;
+}
+
 .border-3 {
-    border-width: 3px;
+    border-width: var(--brutal-border-width, 3px);
+}
+
+.border-brutal {
+    border-color: var(--brutal-border-color, #000000);
 }
 
 .shadow-brutal {
-    box-shadow: 4px 4px 0px 0px #000;
+    box-shadow: var(--brutal-shadow-offset, 4px) var(--brutal-shadow-offset, 4px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-sm {
-    box-shadow: 2px 2px 0px 0px #000;
+    box-shadow: var(--brutal-shadow-offset-sm, 2px) var(--brutal-shadow-offset-sm, 2px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-lg {
-    box-shadow: 6px 6px 0px 0px #000;
+    box-shadow: var(--brutal-shadow-offset-lg, 6px) var(--brutal-shadow-offset-lg, 6px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
-.dark .shadow-brutal {
-    box-shadow: 4px 4px 0px 0px #fff;
-}
-
-.dark .shadow-brutal-sm {
-    box-shadow: 2px 2px 0px 0px #fff;
-}
-
-.dark .shadow-brutal-lg {
-    box-shadow: 6px 6px 0px 0px #fff;
+.shadow-brutal-xl {
+    box-shadow: var(--brutal-shadow-offset-xl, 8px) var(--brutal-shadow-offset-xl, 8px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 `;
 

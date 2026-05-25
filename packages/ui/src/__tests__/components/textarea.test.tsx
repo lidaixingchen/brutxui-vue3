@@ -22,7 +22,7 @@ describe('Textarea', () => {
         render(<Textarea data-testid="textarea" />);
         const textarea = screen.getByTestId('textarea');
         expect(textarea).toHaveClass('border-3');
-        expect(textarea).toHaveClass('border-black');
+        expect(textarea).toHaveClass('border-brutal');
     });
 
     it('renders as disabled', () => {

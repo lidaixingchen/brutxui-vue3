@@ -4,7 +4,7 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 
-const skeletonVariants = cva(['animate-pulse', 'border-3 border-black dark:border-white'], {
+const skeletonVariants = cva(['animate-pulse', 'border-3 border-brutal'], {
     variants: {
         variant: {
             default: 'bg-gray-200 dark:bg-gray-800',
@@ -81,7 +81,7 @@ const SkeletonCard = React.forwardRef<HTMLDivElement, SkeletonProps>(
             <div
                 ref={ref}
                 className={cn(
-                    'p-4 border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]',
+                    'p-4 border-3 border-brutal shadow-brutal',
                     'bg-white dark:bg-gray-900',
                     className
                 )}
@@ -109,17 +109,17 @@ const SkeletonTable = React.forwardRef<
     return (
         <div
             ref={ref}
-            className={cn('border-3 border-black dark:border-white overflow-hidden', className)}
+            className={cn('border-3 border-brutal overflow-hidden', className)}
             {...props}
         >
             {/* Header */}
-            <div className="flex bg-[#FFE66D] border-b-3 border-black dark:border-white">
+            <div className="flex bg-[#FFE66D] border-b-3 border-brutal">
                 {Array.from({ length: columns }).map((_, index) => (
                     <div
                         key={`header-${index}`}
                         className={cn(
                             'flex-1 p-3',
-                            index < columns - 1 && 'border-r-3 border-black dark:border-white'
+                            index < columns - 1 && 'border-r-3 border-brutal'
                         )}
                     >
                         <Skeleton variant={variant} className="h-5 w-3/4 bg-black/20" />
@@ -132,7 +132,7 @@ const SkeletonTable = React.forwardRef<
                     key={`row-${rowIndex}`}
                     className={cn(
                         'flex',
-                        rowIndex < rows - 1 && 'border-b-3 border-black dark:border-white',
+                        rowIndex < rows - 1 && 'border-b-3 border-brutal',
                         rowIndex % 2 === 1 && 'bg-gray-50 dark:bg-gray-800'
                     )}
                 >
@@ -142,7 +142,7 @@ const SkeletonTable = React.forwardRef<
                             className={cn(
                                 'flex-1 p-3',
                                 colIndex < columns - 1 &&
-                                    'border-r-3 border-black dark:border-white'
+                                    'border-r-3 border-brutal'
                             )}
                         >
                             <Skeleton

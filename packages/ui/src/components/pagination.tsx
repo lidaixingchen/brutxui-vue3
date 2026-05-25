@@ -27,7 +27,7 @@ const paginationVariants = cva('flex items-center justify-center', {
 const paginationButtonVariants = cva(
     [
         'inline-flex items-center justify-center font-black',
-        'border-3 border-black dark:border-white',
+        'border-3 border-brutal',
         'transition-all duration-150',
         'focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2',
         'disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none',
@@ -48,9 +48,9 @@ const paginationButtonVariants = cva(
                 ],
                 false: [
                     'bg-white dark:bg-gray-900 text-black dark:text-white',
-                    'shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]',
+                    'shadow-brutal',
                     'hover:bg-gray-100 dark:hover:bg-gray-800',
-                    'hover:shadow-[2px_2px_0px_0px_#000000] dark:hover:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                    'hover:shadow-brutal-sm',
                     'active:shadow-none active:translate-x-1 active:translate-y-1',
                 ],
             },

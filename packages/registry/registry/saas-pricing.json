@@ -1,0 +1,96 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "saas-pricing",
+  "type": "registry:ui",
+  "title": "Saas Pricing",
+  "description": "A highly customizable neo-brutalist Saas Pricing component built with Brutx design tokens.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/ui/saas-pricing.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { Button } from '@/components/ui/button';\nimport { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';\nimport { Badge } from '@/components/ui/badge';\nimport { Check, HelpCircle } from 'lucide-react';\n\nexport interface PricingFeature {\n    text: string;\n    included: boolean;\n}\n\nexport interface PricingPlan {\n    name: string;\n    description: string;\n    priceMonthly: number;\n    priceAnnually: number;\n    features: PricingFeature[];\n    popular?: boolean;\n    buttonText: string;\n    buttonVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'outline';\n}\n\nconst defaultPlans: PricingPlan[] = [\n    {\n        name: 'Starter',\n        description: 'For builders, side-projects, and early prototypes.',\n        priceMonthly: 19,\n        priceAnnually: 15,\n        buttonText: 'Start Free Trial',\n        buttonVariant: 'outline',\n        features: [\n            { text: '3 active projects', included: true },\n            { text: 'Basic analytics dashboard', included: true },\n            { text: '10,000 monthly active users', included: true },\n            { text: 'Community slack support', included: true },\n            { text: 'API endpoints access', included: false },\n            { text: 'Custom brand domains', included: false },\n        ],\n    },\n    {\n        name: 'Pro',\n        description: 'The sweet spot for growing companies and SaaS products.',\n        priceMonthly: 49,\n        priceAnnually: 39,\n        popular: true,\n        buttonText: 'Upgrade to Pro',\n        buttonVariant: 'primary',\n        features: [\n            { text: 'Unlimited active projects', included: true },\n            { text: 'Advanced real-time analytics', included: true },\n            { text: '100,000 monthly active users', included: true },\n            { text: 'Priority 24/7 support email', included: true },\n            { text: 'Full API access', included: true },\n            { text: 'Custom brand domains', included: true },\n        ],\n    },\n    {\n        name: 'Enterprise',\n        description: 'Bespoke security, unlimited scaling, and dedicated resources.',\n        priceMonthly: 149,\n        priceAnnually: 119,\n        buttonText: 'Contact Sales',\n        buttonVariant: 'secondary',\n        features: [\n            { text: 'Dedicated isolated server cluster', included: true },\n            { text: 'Custom SLAs and data policies', included: true },\n            { text: 'Unlimited active users', included: true },\n            { text: 'Dedicated account success manager', included: true },\n            { text: 'Full API access + custom webhooks', included: true },\n            { text: 'White-label custom portal', included: true },\n        ],\n    },\n];\n\nexport interface SaaSPricingProps extends React.HTMLAttributes<HTMLDivElement> {\n    plans?: PricingPlan[];\n    title?: string;\n    subtitle?: string;\n}\n\nexport function SaaSPricing({\n    plans = defaultPlans,\n    title = 'Simple, Unapologetic Pricing',\n    subtitle = 'Choose the tier that fuels your app. No hidden fees, cancel anytime you want.',\n    className,\n    ...props\n}: SaaSPricingProps) {\n    const [billingPeriod, setBillingPeriod] = React.useState<'monthly' | 'annually'>('monthly');\n\n    return (\n        <section\n            className={`w-full py-16 px-4 md:px-8 bg-white dark:bg-gray-950 text-black dark:text-white ${className || ''}`}\n            {...props}\n        >\n            <div className=\"max-w-6xl mx-auto flex flex-col items-center\">\n                {/* Header Section */}\n                <div className=\"text-center max-w-3xl mb-12\">\n                    <Badge variant=\"accent\" className=\"mb-4\">\n                        PRICING PLANS\n                    </Badge>\n                    <h2 className=\"text-4xl md:text-5xl font-black tracking-tight mb-4 uppercase\">\n                        {title}\n                    </h2>\n                    <p className=\"text-lg text-gray-600 dark:text-gray-400 font-medium\">\n                        {subtitle}\n                    </p>\n                </div>\n\n                {/* Period Selector Toggle */}\n                <div className=\"flex items-center gap-4 mb-16 bg-gray-100 dark:bg-gray-900 p-2 border-3 border-brutal shadow-brutal-sm\">\n                    <button\n                        onClick={() => setBillingPeriod('monthly')}\n                        className={`px-4 py-2 font-black transition-all ${\n                            billingPeriod === 'monthly'\n                                ? 'bg-[#FFE66D] text-black border-2 border-black shadow-brutal-sm'\n                                : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'\n                        }`}\n                    >\n                        Monthly Billing\n                    </button>\n                    <button\n                        onClick={() => setBillingPeriod('annually')}\n                        className={`px-4 py-2 font-black transition-all flex items-center gap-2 ${\n                            billingPeriod === 'annually'\n                                ? 'bg-[#FFE66D] text-black border-2 border-black shadow-brutal-sm'\n                                : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'\n                        }`}\n                    >\n                        Annually (Save 20%)\n                        <Badge variant=\"success\" size=\"sm\" className=\"hidden sm:inline-flex\">\n                            PROMO\n                        </Badge>\n                    </button>\n                </div>\n\n                {/* Pricing Grid */}\n                <div className=\"grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start\">\n                    {plans.map((plan) => {\n                        const price = billingPeriod === 'monthly' ? plan.priceMonthly : plan.priceAnnually;\n\n                        return (\n                            <Card\n                                key={plan.name}\n                                variant={plan.popular ? 'interactive' : 'default'}\n                                className={`relative flex flex-col h-full bg-white dark:bg-gray-900 border-3 ${\n                                    plan.popular\n                                        ? 'border-brutal scale-100 md:scale-105 shadow-brutal-lg z-10'\n                                        : 'border-brutal'\n                                }`}\n                            >\n                                {plan.popular && (\n                                    <div className=\"absolute -top-4 left-1/2 -translate-x-1/2 z-20\">\n                                        <Badge variant=\"primary\" className=\"uppercase font-black text-xs border-2\">\n                                            MOST POPULAR\n                                        </Badge>\n                                    </div>\n                                )}\n\n                                <CardHeader className=\"p-6\">\n                                    <CardTitle className=\"text-2xl font-black uppercase tracking-tight\">\n                                        {plan.name}\n                                    </CardTitle>\n                                    <CardDescription className=\"min-h-[48px] mt-2\">\n                                        {plan.description}\n                                    </CardDescription>\n                                </CardHeader>\n\n                                <CardContent className=\"p-6 pt-0 flex-grow\">\n                                    {/* Plan Price */}\n                                    <div className=\"flex items-baseline gap-1 mb-6 border-b-3 border-brutal pb-6\">\n                                        <span className=\"text-5xl font-black tracking-tight\">${price}</span>\n                                        <span className=\"text-gray-600 dark:text-gray-400 font-bold\">\n                                            / month\n                                        </span>\n                                    </div>\n\n                                    {/* Plan Features */}\n                                    <ul className=\"space-y-4\">\n                                        {plan.features.map((feature, idx) => (\n                                            <li key={idx} className=\"flex items-center gap-3\">\n                                                <div\n                                                    className={`p-1 border-2 border-brutal ${\n                                                        feature.included\n                                                            ? 'bg-[#7FB069] text-black'\n                                                            : 'bg-gray-150 dark:bg-gray-800 text-gray-400 dark:text-gray-600'\n                                                    }`}\n                                                >\n                                                    <Check className=\"h-3 w-3 stroke-[3]\" />\n                                                </div>\n                                                <span\n                                                    className={`text-sm font-bold ${\n                                                        feature.included\n                                                            ? 'text-black dark:text-white'\n                                                            : 'text-gray-400 dark:text-gray-600 line-through'\n                                                    }`}\n                                                >\n                                                    {feature.text}\n                                                </span>\n                                            </li>\n                                        ))}\n                                    </ul>\n                                </CardContent>\n\n                                <CardFooter className=\"p-6 border-t-3 border-brutal\">\n                                    <Button\n                                        variant={plan.buttonVariant || 'default'}\n                                        className=\"w-full justify-center text-center font-black py-6 uppercase tracking-wider\"\n                                    >\n                                        {plan.buttonText}\n                                    </Button>\n                                </CardFooter>\n                            </Card>\n                        );\n                    })}\n                </div>\n\n                {/* Guarantee Banner */}\n                <div className=\"mt-16 text-center flex flex-col sm:flex-row items-center gap-4 p-6 bg-white dark:bg-gray-900 border-3 border-brutal shadow-brutal\">\n                    <HelpCircle className=\"h-8 w-8 text-[#FF6B6B]\" />\n                    <p className=\"font-bold text-sm text-left\">\n                        <span className=\"font-black uppercase text-[#FF6B6B] block sm:inline mr-2\">\n                            No risk guarantee:\n                        </span>\n                        Try any tier completely free for 14 days. If you are not satisfied, we will issue a full refund within 30 seconds.\n                    </p>\n                </div>\n            </div>\n        </section>\n    );\n}\nSaaSPricing.displayName = 'SaaSPricing';\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
+}

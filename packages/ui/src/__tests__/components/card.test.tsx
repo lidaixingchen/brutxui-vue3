@@ -19,7 +19,7 @@ describe('Card', () => {
         render(<Card data-testid="card">Card</Card>);
         const card = screen.getByTestId('card');
         expect(card).toHaveClass('border-3');
-        expect(card).toHaveClass('border-black');
+        expect(card).toHaveClass('border-brutal');
     });
 
     it('renders full card structure', () => {

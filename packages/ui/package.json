@@ -50,7 +50,9 @@
     "files": [
         "dist"
     ],
-    "sideEffects": false,
+    "sideEffects": [
+        "**/*.css"
+    ],
     "scripts": {
         "build": "tsup",
         "dev": "tsup --watch",

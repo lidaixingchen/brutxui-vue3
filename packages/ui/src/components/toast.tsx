@@ -8,7 +8,7 @@ import { cn } from '../lib/utils';
 const toastVariants = cva(
     [
         'pointer-events-auto relative w-full overflow-hidden',
-        'border-3 border-black dark:border-white',
+        'border-3 border-brutal',
         'transition-all duration-300 ease-out',
         'animate-in slide-in-from-right-full fade-in-0',
     ],
@@ -17,23 +17,23 @@ const toastVariants = cva(
             variant: {
                 default: [
                     'bg-white dark:bg-gray-900 text-black dark:text-white',
-                    'shadow-[6px_6px_0px_0px_#000000] dark:shadow-[6px_6px_0px_0px_#FFFFFF]',
+                    'shadow-brutal-lg',
                 ],
                 success: [
                     'bg-[#7FB069] text-black dark:bg-[#2d4a28] dark:text-white',
-                    'shadow-[6px_6px_0px_0px_#000000] dark:shadow-[6px_6px_0px_0px_#FFFFFF]',
+                    'shadow-brutal-lg',
                 ],
                 error: [
                     'bg-[#FF6B6B] text-black dark:bg-[#7a2d2d] dark:text-white',
-                    'shadow-[6px_6px_0px_0px_#000000] dark:shadow-[6px_6px_0px_0px_#FFFFFF]',
+                    'shadow-brutal-lg',
                 ],
                 warning: [
                     'bg-[#FFE66D] text-black dark:bg-[#6b5a1f] dark:text-white',
-                    'shadow-[6px_6px_0px_0px_#000000] dark:shadow-[6px_6px_0px_0px_#FFFFFF]',
+                    'shadow-brutal-lg',
                 ],
                 info: [
                     'bg-[#4ECDC4] text-black dark:bg-[#1f5450] dark:text-white',
-                    'shadow-[6px_6px_0px_0px_#000000] dark:shadow-[6px_6px_0px_0px_#FFFFFF]',
+                    'shadow-brutal-lg',
                 ],
             },
             size: {
@@ -159,12 +159,12 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                             }}
                             className={cn(
                                 'flex-shrink-0 h-8 w-8 flex items-center justify-center',
-                                'border-2 border-black dark:border-white',
+                                'border-2 border-brutal',
                                 'bg-white dark:bg-gray-900',
                                 'text-black dark:text-white',
-                                'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
+                                'shadow-brutal-sm',
                                 'transition-all duration-150',
-                                'hover:shadow-[1px_1px_0px_0px_#000000] hover:translate-x-0.5 hover:translate-y-0.5',
+                                'hover:shadow-brutal-sm hover:translate-x-0.5 hover:translate-y-0.5',
                                 'active:shadow-none active:translate-x-1 active:translate-y-1',
                                 'focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2'
                             )}

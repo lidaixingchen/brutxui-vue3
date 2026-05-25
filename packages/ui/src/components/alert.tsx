@@ -4,22 +4,22 @@ import { cn } from '../lib/utils';
 
 const alertVariants = cva(
     [
-        'relative w-full p-4',
-        'border-3 border-black dark:border-white',
-        'shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]',
+        'relative w-full p-4 rounded-brutal',
+        'border-3 border-brutal',
+        'shadow-brutal',
         '[&>svg~*]:pl-8 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4',
         '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[2.5]',
     ],
     {
         variants: {
             variant: {
-                default: 'bg-white dark:bg-gray-900 text-black dark:text-white',
-                primary: 'bg-[#FF6B6B] text-black',
-                secondary: 'bg-[#4ECDC4] text-black',
-                success: 'bg-[#7FB069] text-black',
-                warning: 'bg-[#FFE66D] text-black',
-                danger: 'bg-[#EF476F] text-white',
-                info: 'bg-[#4A90D9] text-white',
+                default: 'bg-brutal-bg text-brutal-fg',
+                primary: 'bg-brutal-primary text-brutal-fg',
+                secondary: 'bg-brutal-secondary text-brutal-fg',
+                success: 'bg-brutal-success text-brutal-fg',
+                warning: 'bg-brutal-accent text-brutal-fg',
+                danger: 'bg-brutal-destructive text-brutal-fg',
+                info: 'bg-[var(--brutal-info,#4A90D9)] text-brutal-fg',
             },
         },
         defaultVariants: {

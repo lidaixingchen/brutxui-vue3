@@ -1,0 +1,42 @@
+# BrutxUI Coding & Styling Rules
+
+These rules are applied to all TypeScript, React, and CSS code in the BrutxUI repository. Follow them closely to maintain consistency across the monorepo.
+
+---
+
+## 🎨 Neo-Brutalist Styling System
+
+1. **Design Tokens & CSS Variables:**
+   - Always use the custom utility classes: `border-3`, `border-brutal`, `shadow-brutal`, `shadow-brutal-sm`, `shadow-brutal-lg`, and `shadow-brutal-xl`.
+   - **Never** use hardcoded black/white offset shadows like `shadow-[4px_4px_0px_0px_#000000]`.
+   - Rely on `--brutal-shadow-color` and `--brutal-border-color` for seamless light/dark mode transitions.
+
+2. **Borders and Outlines:**
+   - All interactive inputs, buttons, badges, alerts, and cards MUST have a thick border (`border-3` or `border-2`).
+   - Use `border-brutal` as the default border color class.
+
+3. **High Contrast Color Scheme:**
+   - Accent colors should represent neo-brutalist themes: Primary Red (`#FF6B6B`), Secondary Teal (`#4ECDC4`), Warning/Accent Yellow (`#FFE66D`), Success Green (`#7FB069`), and Danger Pink (`#EF476F`).
+
+4. **Animations and Active States:**
+   - All clickable elements must transition nicely (e.g. `hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-none`).
+   - Keep interactions sharp and snappy with low duration (`duration-150`).
+
+---
+
+## 💻 TypeScript & React Development
+
+1. **Strict TypeScript Mode:**
+   - Always declare explicit types for props, state, variables, and function return values. No usage of `any`.
+   - Re-use Radix primitives where complex interactions are required (popovers, select fields, dialog modals, tabs) to ensure standard ARIA accessibility compliance.
+
+2. **File & Folder Architecture:**
+   - Component source files live in `packages/ui/src/components/` and are registered in `packages/shared/src/components.ts`.
+   - Never write magic hardcoded import paths; always keep local components importing relatively (e.g. `./button` instead of `@/components/ui/button`) so the registry builder can translate them dynamically.
+
+3. **Workflow & Component Registrations:**
+   - After adding/changing a component:
+     1. Build the UI: `pnpm --filter brutx-ui build`
+     2. Build the Registry: `pnpm --filter brutx-registry build`
+     3. Check type correctness: `pnpm typecheck`
+     4. Check lint compliance: `pnpm lint`

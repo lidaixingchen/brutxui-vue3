@@ -5,13 +5,14 @@ import { cn } from '../lib/utils';
 const inputVariants = cva(
     [
         'flex w-full',
-        'border-3 border-black dark:border-white',
-        'bg-white dark:bg-gray-900 dark:text-white',
+        'border-3 border-brutal rounded-brutal',
+        'bg-brutal-bg text-brutal-fg',
         'font-medium',
         'placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:font-normal',
         'transition-all duration-150',
-        'focus:outline-none focus:shadow-[4px_4px_0px_0px_#000000] dark:focus:shadow-[4px_4px_0px_0px_#FFFFFF]',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-800',
+        'focus:outline-none focus:shadow-brutal',
+        'focus-visible:ring-2 focus-visible:ring-[var(--brutal-ring,#000)] focus-visible:ring-offset-2',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-brutal-muted',
     ],
     {
         variants: {

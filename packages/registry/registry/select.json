@@ -1,6 +1,9 @@
 {
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "select",
   "type": "registry:ui",
+  "title": "Select",
+  "description": "A highly customizable neo-brutalist Select component built with Brutx design tokens.",
   "dependencies": [
     "@radix-ui/react-select",
     "lucide-react"
@@ -9,7 +12,82 @@
   "files": [
     {
       "path": "components/ui/select.tsx",
-      "content": "import * as React from 'react';\nimport * as SelectPrimitive from '@radix-ui/react-select';\nimport { Check, ChevronDown, ChevronUp } from 'lucide-react';\nimport { cn } from '@/lib/utils';\n\nconst Select = SelectPrimitive.Root;\nconst SelectGroup = SelectPrimitive.Group;\nconst SelectValue = SelectPrimitive.Value;\n\nconst SelectTrigger = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Trigger>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>\n>(({ className, children, ...props }, ref) => (\n    <SelectPrimitive.Trigger\n        ref={ref}\n        className={cn(\n            'flex h-11 w-full items-center justify-between px-4 py-2',\n            'bg-white dark:bg-gray-900 border-3 border-black dark:border-white dark:text-white',\n            'font-bold placeholder:text-gray-400',\n            'shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF]',\n            'transition-all duration-150',\n            'focus:outline-none focus:shadow-[6px_6px_0px_0px_#000000] dark:focus:shadow-[6px_6px_0px_0px_#FFFFFF] focus:-translate-x-0.5 focus:-translate-y-0.5',\n            'disabled:cursor-not-allowed disabled:opacity-50',\n            '[&>span]:line-clamp-1',\n            className\n        )}\n        {...props}\n    >\n        {children}\n        <SelectPrimitive.Icon asChild>\n            <ChevronDown className=\"h-5 w-5 stroke-[3]\" />\n        </SelectPrimitive.Icon>\n    </SelectPrimitive.Trigger>\n));\nSelectTrigger.displayName = SelectPrimitive.Trigger.displayName;\n\nconst SelectScrollUpButton = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.ScrollUpButton\n        ref={ref}\n        className={cn(\n            'flex cursor-default items-center justify-center py-1 bg-white dark:bg-gray-900',\n            className\n        )}\n        {...props}\n    >\n        <ChevronUp className=\"h-4 w-4 stroke-[3]\" />\n    </SelectPrimitive.ScrollUpButton>\n));\nSelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;\n\nconst SelectScrollDownButton = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.ScrollDownButton\n        ref={ref}\n        className={cn(\n            'flex cursor-default items-center justify-center py-1 bg-white dark:bg-gray-900',\n            className\n        )}\n        {...props}\n    >\n        <ChevronDown className=\"h-4 w-4 stroke-[3]\" />\n    </SelectPrimitive.ScrollDownButton>\n));\nSelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;\n\nconst SelectContent = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Content>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>\n>(({ className, children, position = 'popper', ...props }, ref) => (\n    <SelectPrimitive.Portal>\n        <SelectPrimitive.Content\n            ref={ref}\n            className={cn(\n                'relative z-50 max-h-96 min-w-[8rem] overflow-hidden',\n                'bg-white dark:bg-gray-900 border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF] dark:text-white',\n                'data-[state=open]:animate-in data-[state=closed]:animate-out',\n                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n                'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n                'data-[side=bottom]:slide-in-from-top-2',\n                'data-[side=left]:slide-in-from-right-2',\n                'data-[side=right]:slide-in-from-left-2',\n                'data-[side=top]:slide-in-from-bottom-2',\n                position === 'popper' &&\n                    'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',\n                className\n            )}\n            position={position}\n            {...props}\n        >\n            <SelectScrollUpButton />\n            <SelectPrimitive.Viewport\n                className={cn(\n                    'p-1',\n                    position === 'popper' &&\n                        'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'\n                )}\n            >\n                {children}\n            </SelectPrimitive.Viewport>\n            <SelectScrollDownButton />\n        </SelectPrimitive.Content>\n    </SelectPrimitive.Portal>\n));\nSelectContent.displayName = SelectPrimitive.Content.displayName;\n\nconst SelectLabel = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Label>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.Label\n        ref={ref}\n        className={cn('px-3 py-2 text-sm font-black tracking-wide', className)}\n        {...props}\n    />\n));\nSelectLabel.displayName = SelectPrimitive.Label.displayName;\n\nconst SelectItem = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Item>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>\n>(({ className, children, ...props }, ref) => (\n    <SelectPrimitive.Item\n        ref={ref}\n        className={cn(\n            'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',\n            'font-bold outline-none',\n            'focus:bg-[#FFE66D] focus:text-black',\n            'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n            'dark:hover:bg-gray-800',\n            className\n        )}\n        {...props}\n    >\n        <span className=\"absolute left-2 flex h-4 w-4 items-center justify-center\">\n            <SelectPrimitive.ItemIndicator>\n                <Check className=\"h-4 w-4 stroke-[3]\" />\n            </SelectPrimitive.ItemIndicator>\n        </span>\n        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>\n    </SelectPrimitive.Item>\n));\nSelectItem.displayName = SelectPrimitive.Item.displayName;\n\nconst SelectSeparator = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Separator>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.Separator\n        ref={ref}\n        className={cn('-mx-1 my-1 h-[3px] bg-black dark:bg-white', className)}\n        {...props}\n    />\n));\nSelectSeparator.displayName = SelectPrimitive.Separator.displayName;\n\nexport {\n    Select,\n    SelectGroup,\n    SelectValue,\n    SelectTrigger,\n    SelectContent,\n    SelectLabel,\n    SelectItem,\n    SelectSeparator,\n    SelectScrollUpButton,\n    SelectScrollDownButton,\n};\n"
+      "content": "import * as React from 'react';\nimport * as SelectPrimitive from '@radix-ui/react-select';\nimport { Check, ChevronDown, ChevronUp } from 'lucide-react';\nimport { cn } from '@/lib/utils';\n\nconst Select = SelectPrimitive.Root;\nconst SelectGroup = SelectPrimitive.Group;\nconst SelectValue = SelectPrimitive.Value;\n\nconst SelectTrigger = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Trigger>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>\n>(({ className, children, ...props }, ref) => (\n    <SelectPrimitive.Trigger\n        ref={ref}\n        className={cn(\n            'flex h-11 w-full items-center justify-between px-4 py-2',\n            'bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal',\n            'font-bold placeholder:text-gray-400',\n            'shadow-brutal',\n            'transition-all duration-150',\n            'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',\n            'disabled:cursor-not-allowed disabled:opacity-50',\n            '[&>span]:line-clamp-1',\n            className\n        )}\n        {...props}\n    >\n        {children}\n        <SelectPrimitive.Icon asChild>\n            <ChevronDown className=\"h-5 w-5 stroke-[3]\" />\n        </SelectPrimitive.Icon>\n    </SelectPrimitive.Trigger>\n));\nSelectTrigger.displayName = SelectPrimitive.Trigger.displayName;\n\nconst SelectScrollUpButton = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.ScrollUpButton\n        ref={ref}\n        className={cn(\n            'flex cursor-default items-center justify-center py-1 bg-brutal-bg text-brutal-fg',\n            className\n        )}\n        {...props}\n    >\n        <ChevronUp className=\"h-4 w-4 stroke-[3]\" />\n    </SelectPrimitive.ScrollUpButton>\n));\nSelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;\n\nconst SelectScrollDownButton = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.ScrollDownButton\n        ref={ref}\n        className={cn(\n            'flex cursor-default items-center justify-center py-1 bg-brutal-bg text-brutal-fg',\n            className\n        )}\n        {...props}\n    >\n        <ChevronDown className=\"h-4 w-4 stroke-[3]\" />\n    </SelectPrimitive.ScrollDownButton>\n));\nSelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;\n\nconst SelectContent = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Content>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>\n>(({ className, children, position = 'popper', ...props }, ref) => (\n    <SelectPrimitive.Portal>\n        <SelectPrimitive.Content\n            ref={ref}\n            className={cn(\n                'relative z-50 max-h-96 min-w-[8rem] overflow-hidden',\n                'bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal',\n                'data-[state=open]:animate-in data-[state=closed]:animate-out',\n                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n                'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n                'data-[side=bottom]:slide-in-from-top-2',\n                'data-[side=left]:slide-in-from-right-2',\n                'data-[side=right]:slide-in-from-left-2',\n                'data-[side=top]:slide-in-from-bottom-2',\n                position === 'popper' &&\n                    'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',\n                className\n            )}\n            position={position}\n            {...props}\n        >\n            <SelectScrollUpButton />\n            <SelectPrimitive.Viewport\n                className={cn(\n                    'p-1',\n                    position === 'popper' &&\n                        'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'\n                )}\n            >\n                {children}\n            </SelectPrimitive.Viewport>\n            <SelectScrollDownButton />\n        </SelectPrimitive.Content>\n    </SelectPrimitive.Portal>\n));\nSelectContent.displayName = SelectPrimitive.Content.displayName;\n\nconst SelectLabel = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Label>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.Label\n        ref={ref}\n        className={cn('px-3 py-2 text-sm font-black tracking-wide', className)}\n        {...props}\n    />\n));\nSelectLabel.displayName = SelectPrimitive.Label.displayName;\n\nconst SelectItem = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Item>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>\n>(({ className, children, ...props }, ref) => (\n    <SelectPrimitive.Item\n        ref={ref}\n        className={cn(\n            'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',\n            'font-bold outline-none',\n            'focus:bg-brutal-accent focus:text-brutal-fg',\n            'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n            'hover:bg-brutal-muted',\n            className\n        )}\n        {...props}\n    >\n        <span className=\"absolute left-2 flex h-4 w-4 items-center justify-center\">\n            <SelectPrimitive.ItemIndicator>\n                <Check className=\"h-4 w-4 stroke-[3]\" />\n            </SelectPrimitive.ItemIndicator>\n        </span>\n        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>\n    </SelectPrimitive.Item>\n));\nSelectItem.displayName = SelectPrimitive.Item.displayName;\n\nconst SelectSeparator = React.forwardRef<\n    React.ElementRef<typeof SelectPrimitive.Separator>,\n    React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>\n>(({ className, ...props }, ref) => (\n    <SelectPrimitive.Separator\n        ref={ref}\n        className={cn('-mx-1 my-1 h-[3px] bg-[var(--brutal-border-color,#000)]', className)}\n        {...props}\n    />\n));\nSelectSeparator.displayName = SelectPrimitive.Separator.displayName;\n\nexport {\n    Select,\n    SelectGroup,\n    SelectValue,\n    SelectTrigger,\n    SelectContent,\n    SelectLabel,\n    SelectItem,\n    SelectSeparator,\n    SelectScrollUpButton,\n    SelectScrollDownButton,\n};\n",
+      "type": "registry:ui"
     }
-  ]
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
 }

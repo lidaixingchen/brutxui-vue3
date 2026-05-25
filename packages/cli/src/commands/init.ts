@@ -135,6 +135,8 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
     const fullPath = path.join(cwd, cssPath);
     await fs.ensureDir(path.dirname(fullPath));
 
+    const tailwindVersion = detectTailwindVersion(cwd);
+
     let content = '';
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
@@ -145,7 +147,11 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
         content += BRUTALIST_CSS_STYLES;
     } else {
         // Create new globals.css with Tailwind directives and brutalist styles
-        content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${BRUTALIST_CSS_STYLES}`;
+        if (tailwindVersion === 'v4') {
+            content = `@import "tailwindcss";\n${BRUTALIST_CSS_STYLES}`;
+        } else {
+            content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${BRUTALIST_CSS_STYLES}`;
+        }
     }
 
     await fs.writeFile(fullPath, content);

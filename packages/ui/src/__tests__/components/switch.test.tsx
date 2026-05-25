@@ -42,6 +42,6 @@ describe('Switch', () => {
         render(<Switch aria-label="test switch" />);
         const switchEl = screen.getByRole('switch');
         expect(switchEl).toHaveClass('border-3');
-        expect(switchEl).toHaveClass('border-black');
+        expect(switchEl).toHaveClass('border-brutal');
     });
 });

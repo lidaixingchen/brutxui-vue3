@@ -19,25 +19,25 @@ describe('Button', () => {
     it('renders with default variant', () => {
         render(<Button>Default</Button>);
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('bg-white');
+        expect(button).toHaveClass('bg-brutal-bg');
     });
 
     it('renders with primary variant', () => {
         render(<Button variant="primary">Primary</Button>);
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('bg-[#FF6B6B]');
+        expect(button).toHaveClass('bg-brutal-primary');
     });
 
     it('renders with secondary variant', () => {
         render(<Button variant="secondary">Secondary</Button>);
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('bg-[#4ECDC4]');
+        expect(button).toHaveClass('bg-brutal-secondary');
     });
 
     it('renders with accent variant', () => {
         render(<Button variant="accent">Accent</Button>);
         const button = screen.getByRole('button');
-        expect(button).toHaveClass('bg-[#FFE66D]');
+        expect(button).toHaveClass('bg-brutal-accent');
     });
 
     it('renders with different sizes', () => {

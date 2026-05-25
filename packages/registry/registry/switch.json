@@ -1,6 +1,9 @@
 {
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "switch",
   "type": "registry:ui",
+  "title": "Switch",
+  "description": "A highly customizable neo-brutalist Switch component built with Brutx design tokens.",
   "dependencies": [
     "@radix-ui/react-switch"
   ],
@@ -8,7 +11,82 @@
   "files": [
     {
       "path": "components/ui/switch.tsx",
-      "content": "'use client';\n\nimport * as React from 'react';\nimport * as SwitchPrimitive from '@radix-ui/react-switch';\nimport { cn } from '@/lib/utils';\n\nconst Switch = React.forwardRef<\n    React.ElementRef<typeof SwitchPrimitive.Root>,\n    React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>\n>(({ className, ...props }, ref) => (\n    <SwitchPrimitive.Root\n        className={cn(\n            'peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center',\n            'border-3 border-black dark:border-white',\n            'transition-colors duration-150',\n            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2',\n            'disabled:cursor-not-allowed disabled:opacity-50',\n            'data-[state=checked]:bg-[#7FB069] data-[state=unchecked]:bg-white dark:data-[state=unchecked]:bg-gray-900',\n            className\n        )}\n        {...props}\n        ref={ref}\n    >\n        <SwitchPrimitive.Thumb\n            className={cn(\n                'pointer-events-none block h-5 w-5',\n                'bg-black dark:bg-white',\n                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',\n                'transition-transform duration-150',\n                'data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0.5'\n            )}\n        />\n    </SwitchPrimitive.Root>\n));\nSwitch.displayName = SwitchPrimitive.Root.displayName;\n\nexport { Switch };\n"
+      "content": "'use client';\n\nimport * as React from 'react';\nimport * as SwitchPrimitive from '@radix-ui/react-switch';\nimport { cn } from '@/lib/utils';\n\nconst Switch = React.forwardRef<\n    React.ElementRef<typeof SwitchPrimitive.Root>,\n    React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>\n>(({ className, ...props }, ref) => (\n    <SwitchPrimitive.Root\n        className={cn(\n            'peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center',\n            'border-3 border-brutal',\n            'transition-colors duration-150',\n            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2',\n            'disabled:cursor-not-allowed disabled:opacity-50',\n            'data-[state=checked]:bg-[#7FB069] data-[state=unchecked]:bg-white dark:data-[state=unchecked]:bg-gray-900',\n            className\n        )}\n        {...props}\n        ref={ref}\n    >\n        <SwitchPrimitive.Thumb\n            className={cn(\n                'pointer-events-none block h-5 w-5',\n                'bg-black dark:bg-white',\n                'shadow-brutal-sm',\n                'transition-transform duration-150',\n                'data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0.5'\n            )}\n        />\n    </SwitchPrimitive.Root>\n));\nSwitch.displayName = SwitchPrimitive.Root.displayName;\n\nexport { Switch };\n",
+      "type": "registry:ui"
     }
-  ]
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
 }

@@ -1,6 +1,9 @@
 {
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "command",
   "type": "registry:ui",
+  "title": "Command",
+  "description": "A highly customizable neo-brutalist Command component built with Brutx design tokens.",
   "dependencies": [
     "cmdk",
     "lucide-react"
@@ -11,7 +14,82 @@
   "files": [
     {
       "path": "components/ui/command.tsx",
-      "content": "'use client';\n\nimport * as React from 'react';\nimport { Command as CommandPrimitive } from 'cmdk';\nimport { SearchIcon } from 'lucide-react';\n\nimport { cn } from '@/lib/utils';\nimport { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';\n\nfunction Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {\n    return (\n        <CommandPrimitive\n            data-slot=\"command\"\n            className={cn(\n                'flex h-full w-full flex-col overflow-hidden',\n                'bg-white dark:bg-gray-900',\n                'text-black dark:text-white',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandDialog({\n    title = 'Command Palette',\n    description = 'Search for a command to run...',\n    children,\n    className,\n    showCloseButton = true,\n    ...props\n}: React.ComponentProps<typeof Dialog> & {\n    title?: string;\n    description?: string;\n    className?: string;\n    showCloseButton?: boolean;\n}) {\n    return (\n        <Dialog {...props}>\n            <DialogContent\n                className={cn('overflow-hidden p-0', className)}\n                showCloseButton={showCloseButton}\n            >\n                <DialogHeader className=\"sr-only\">\n                    <DialogTitle>{title}</DialogTitle>\n                    <DialogDescription>{description}</DialogDescription>\n                </DialogHeader>\n                <Command className=\"[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-black [&_[cmdk-group-heading]]:text-gray-600 dark:[&_[cmdk-group-heading]]:text-gray-400 [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5\">\n                    {children}\n                </Command>\n            </DialogContent>\n        </Dialog>\n    );\n}\n\nfunction CommandInput({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Input>) {\n    return (\n        <div\n            data-slot=\"command-input-wrapper\"\n            className={cn(\n                'flex h-12 items-center gap-3 px-4',\n                'border-b-3 border-black dark:border-white',\n                'bg-[#FFE66D]'\n            )}\n        >\n            <SearchIcon className=\"size-5 shrink-0 stroke-[3] text-black\" />\n            <CommandPrimitive.Input\n                data-slot=\"command-input\"\n                className={cn(\n                    'flex h-full w-full bg-transparent py-3',\n                    'text-sm font-bold text-black placeholder:text-black/60',\n                    'outline-none',\n                    'disabled:cursor-not-allowed disabled:opacity-50',\n                    className\n                )}\n                {...props}\n            />\n        </div>\n    );\n}\n\nfunction CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {\n    return (\n        <CommandPrimitive.List\n            data-slot=\"command-list\"\n            className={cn(\n                'max-h-[300px] overflow-x-hidden overflow-y-auto scroll-py-1',\n                'p-2',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandEmpty({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Empty>) {\n    return (\n        <CommandPrimitive.Empty\n            data-slot=\"command-empty\"\n            className={cn(\n                'py-8 text-center text-sm font-bold',\n                'text-gray-500 dark:text-gray-400',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandGroup({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Group>) {\n    return (\n        <CommandPrimitive.Group\n            data-slot=\"command-group\"\n            className={cn(\n                'overflow-hidden p-1',\n                '[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2',\n                '[&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-black [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider',\n                '[&_[cmdk-group-heading]]:text-gray-500 dark:[&_[cmdk-group-heading]]:text-gray-400',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandSeparator({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Separator>) {\n    return (\n        <CommandPrimitive.Separator\n            data-slot=\"command-separator\"\n            className={cn('-mx-1 my-2 h-[3px]', 'bg-black dark:bg-white', className)}\n            {...props}\n        />\n    );\n}\n\nfunction CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {\n    return (\n        <CommandPrimitive.Item\n            data-slot=\"command-item\"\n            className={cn(\n                'relative flex cursor-pointer items-center gap-3 px-3 py-2',\n                'text-sm font-semibold',\n                'select-none outline-none',\n                'border-2 border-transparent',\n                // Hover & Selected states - Neo-Brutalist style\n                'data-[selected=true]:bg-[#4ECDC4] data-[selected=true]:text-black',\n                'data-[selected=true]:border-black data-[selected=true]:font-black',\n                'data-[selected=true]:shadow-[2px_2px_0px_0px_#000000]',\n                // Disabled\n                'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',\n                // Icons\n                '[&_svg]:pointer-events-none [&_svg]:shrink-0',\n                \"[&_svg:not([class*='size-'])]:size-5\",\n                \"[&_svg:not([class*='text-'])]:text-current\",\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) {\n    return (\n        <span\n            data-slot=\"command-shortcut\"\n            className={cn(\n                'ml-auto text-xs font-black tracking-wider',\n                'px-2 py-1',\n                'bg-gray-100 dark:bg-gray-800',\n                'border-2 border-black dark:border-white',\n                'text-gray-600 dark:text-gray-300',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nexport {\n    Command,\n    CommandDialog,\n    CommandInput,\n    CommandList,\n    CommandEmpty,\n    CommandGroup,\n    CommandItem,\n    CommandShortcut,\n    CommandSeparator,\n};\n"
+      "content": "'use client';\n\nimport * as React from 'react';\nimport { Command as CommandPrimitive } from 'cmdk';\nimport { SearchIcon } from 'lucide-react';\n\nimport { cn } from '@/lib/utils';\nimport { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';\n\nfunction Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {\n    return (\n        <CommandPrimitive\n            data-slot=\"command\"\n            className={cn(\n                'flex h-full w-full flex-col overflow-hidden',\n                'bg-white dark:bg-gray-900',\n                'text-black dark:text-white',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandDialog({\n    title = 'Command Palette',\n    description = 'Search for a command to run...',\n    children,\n    className,\n    showCloseButton = true,\n    ...props\n}: React.ComponentProps<typeof Dialog> & {\n    title?: string;\n    description?: string;\n    className?: string;\n    showCloseButton?: boolean;\n}) {\n    return (\n        <Dialog {...props}>\n            <DialogContent\n                className={cn('overflow-hidden p-0', className)}\n                showCloseButton={showCloseButton}\n            >\n                <DialogHeader className=\"sr-only\">\n                    <DialogTitle>{title}</DialogTitle>\n                    <DialogDescription>{description}</DialogDescription>\n                </DialogHeader>\n                <Command className=\"[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-black [&_[cmdk-group-heading]]:text-gray-600 dark:[&_[cmdk-group-heading]]:text-gray-400 [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5\">\n                    {children}\n                </Command>\n            </DialogContent>\n        </Dialog>\n    );\n}\n\nfunction CommandInput({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Input>) {\n    return (\n        <div\n            data-slot=\"command-input-wrapper\"\n            className={cn(\n                'flex h-12 items-center gap-3 px-4',\n                'border-b-3 border-brutal',\n                'bg-[#FFE66D]'\n            )}\n        >\n            <SearchIcon className=\"size-5 shrink-0 stroke-[3] text-black\" />\n            <CommandPrimitive.Input\n                data-slot=\"command-input\"\n                className={cn(\n                    'flex h-full w-full bg-transparent py-3',\n                    'text-sm font-bold text-black placeholder:text-black/60',\n                    'outline-none',\n                    'disabled:cursor-not-allowed disabled:opacity-50',\n                    className\n                )}\n                {...props}\n            />\n        </div>\n    );\n}\n\nfunction CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {\n    return (\n        <CommandPrimitive.List\n            data-slot=\"command-list\"\n            className={cn(\n                'max-h-[300px] overflow-x-hidden overflow-y-auto scroll-py-1',\n                'p-2',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandEmpty({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Empty>) {\n    return (\n        <CommandPrimitive.Empty\n            data-slot=\"command-empty\"\n            className={cn(\n                'py-8 text-center text-sm font-bold',\n                'text-gray-500 dark:text-gray-400',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandGroup({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Group>) {\n    return (\n        <CommandPrimitive.Group\n            data-slot=\"command-group\"\n            className={cn(\n                'overflow-hidden p-1',\n                '[&_[cmdk-group-heading]]:px-3 [&_[cmdk-group-heading]]:py-2',\n                '[&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-black [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider',\n                '[&_[cmdk-group-heading]]:text-gray-500 dark:[&_[cmdk-group-heading]]:text-gray-400',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandSeparator({\n    className,\n    ...props\n}: React.ComponentProps<typeof CommandPrimitive.Separator>) {\n    return (\n        <CommandPrimitive.Separator\n            data-slot=\"command-separator\"\n            className={cn('-mx-1 my-2 h-[3px]', 'bg-[var(--brutal-border-color,#000)]', className)}\n            {...props}\n        />\n    );\n}\n\nfunction CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {\n    return (\n        <CommandPrimitive.Item\n            data-slot=\"command-item\"\n            className={cn(\n                'relative flex cursor-pointer items-center gap-3 px-3 py-2',\n                'text-sm font-semibold',\n                'select-none outline-none',\n                'border-2 border-transparent',\n                // Hover & Selected states - Neo-Brutalist style\n                'data-[selected=true]:bg-[#4ECDC4] data-[selected=true]:text-black',\n                'data-[selected=true]:border-brutal data-[selected=true]:font-black',\n                'data-[selected=true]:shadow-brutal-sm',\n                // Disabled\n                'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',\n                // Icons\n                '[&_svg]:pointer-events-none [&_svg]:shrink-0',\n                \"[&_svg:not([class*='size-'])]:size-5\",\n                \"[&_svg:not([class*='text-'])]:text-current\",\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nfunction CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) {\n    return (\n        <span\n            data-slot=\"command-shortcut\"\n            className={cn(\n                'ml-auto text-xs font-black tracking-wider',\n                'px-2 py-1',\n                'bg-gray-100 dark:bg-gray-800',\n                'border-2 border-brutal',\n                'text-gray-600 dark:text-gray-300',\n                className\n            )}\n            {...props}\n        />\n    );\n}\n\nexport {\n    Command,\n    CommandDialog,\n    CommandInput,\n    CommandList,\n    CommandEmpty,\n    CommandGroup,\n    CommandItem,\n    CommandShortcut,\n    CommandSeparator,\n};\n",
+      "type": "registry:ui"
     }
-  ]
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
 }

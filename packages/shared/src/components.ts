@@ -46,6 +46,8 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     textarea: { name: 'textarea', dependencies: [] },
     toast: { name: 'toast', dependencies: ['lucide-react'] },
     tooltip: { name: 'tooltip', dependencies: ['@radix-ui/react-tooltip'] },
+    'saas-pricing': { name: 'saas-pricing', dependencies: ['lucide-react'] },
+    'dashboard-stats': { name: 'dashboard-stats', dependencies: ['lucide-react'] },
 } as const;
 
 /** List of all available component names */

@@ -22,7 +22,7 @@ describe('Input', () => {
         render(<Input data-testid="input" />);
         const input = screen.getByTestId('input');
         expect(input).toHaveClass('border-3');
-        expect(input).toHaveClass('border-black');
+        expect(input).toHaveClass('border-brutal');
     });
 
     it('renders as disabled', () => {

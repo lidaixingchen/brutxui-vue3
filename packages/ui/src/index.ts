@@ -27,6 +27,8 @@ export * from './components/skeleton';
 export * from './components/command';
 export * from './components/combobox';
 export * from './components/scroll-area';
+export * from './components/saas-pricing';
+export * from './components/dashboard-stats';
 // Calendar is exported separately to avoid SSR issues with react-day-picker
 // Import from 'brutx-ui/calendar' instead
 // export * from './components/calendar';

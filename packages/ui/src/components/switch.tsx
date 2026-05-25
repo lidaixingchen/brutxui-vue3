@@ -11,7 +11,7 @@ const Switch = React.forwardRef<
     <SwitchPrimitive.Root
         className={cn(
             'peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center',
-            'border-3 border-black dark:border-white',
+            'border-3 border-brutal',
             'transition-colors duration-150',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2',
             'disabled:cursor-not-allowed disabled:opacity-50',
@@ -25,7 +25,7 @@ const Switch = React.forwardRef<
             className={cn(
                 'pointer-events-none block h-5 w-5',
                 'bg-black dark:bg-white',
-                'shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)]',
+                'shadow-brutal-sm',
                 'transition-transform duration-150',
                 'data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0.5'
             )}

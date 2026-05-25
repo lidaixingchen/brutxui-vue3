@@ -12,7 +12,7 @@ const TabsList = React.forwardRef<
         ref={ref}
         className={cn(
             'inline-flex h-12 items-center justify-center p-1 gap-1',
-            'bg-white dark:bg-gray-900 border-3 border-black dark:border-white',
+            'bg-white dark:bg-gray-900 border-3 border-brutal',
             className
         )}
         {...props}
@@ -33,7 +33,7 @@ const TabsTrigger = React.forwardRef<
             'transition-all duration-150',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2',
             'disabled:pointer-events-none disabled:opacity-50',
-            'data-[state=active]:bg-[#FFE66D] data-[state=active]:text-black data-[state=active]:border-black data-[state=active]:shadow-[2px_2px_0px_0px_#000000]',
+            'data-[state=active]:bg-[#FFE66D] data-[state=active]:text-black data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
             'data-[state=inactive]:hover:bg-gray-100 dark:data-[state=inactive]:hover:bg-gray-800',
             className
         )}
@@ -50,7 +50,7 @@ const TabsContent = React.forwardRef<
         ref={ref}
         className={cn(
             'mt-3 p-4',
-            'bg-white dark:bg-gray-900 border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF] dark:text-white',
+            'bg-white dark:bg-gray-900 border-3 border-brutal shadow-brutal dark:text-white',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white focus-visible:ring-offset-2',
             className
         )}
