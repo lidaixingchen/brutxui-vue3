@@ -17,8 +17,9 @@
 
   ### Project Health & Sponsors
   [![License: MIT](https://img.shields.io/badge/License-MIT-4ECDC4.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-  [![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
-  [![React](https://img.shields.io/badge/React-18+-61DAFB.svg?style=flat-square)](https://reactjs.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
+  [![React](https://img.shields.io/badge/React-19+-61DAFB.svg?style=flat-square)](https://reactjs.org/)
+  [![Next.js](https://img.shields.io/badge/Next.js-15+-000000.svg?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
   [![Sponsor](https://img.shields.io/badge/❤️_Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/dev-snake)
   [![Buy Me A Coffee](https://img.shields.io/badge/☕_Buy_Me_A_Coffee-FFE66D?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/devsnake)
 
