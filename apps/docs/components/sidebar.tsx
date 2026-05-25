@@ -116,7 +116,7 @@ export function Sidebar() {
             >
                 <div className="flex items-center justify-between p-6 pb-4">
                     <Link href="/" className="block" onClick={closeSidebar}>
-                        <h1 className="text-xl font-black">Brutalist UI</h1>
+                        <h1 className="text-xl font-black">BrutxUI</h1>
                     </Link>
                     <div className="hidden lg:block">
                         <ThemeToggle />

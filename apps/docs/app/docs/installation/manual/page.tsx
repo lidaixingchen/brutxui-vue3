@@ -174,7 +174,7 @@ module.exports = {
 @tailwind components;
 @tailwind utilities;
 
-/* Brutalist UI utility classes */
+/* BrutxUI utility classes */
 @layer utilities {
   .border-3 {
     border-width: 3px;
@@ -250,12 +250,12 @@ module.exports = {
                 </p>
                 <div className="overflow-x-auto">
                     <table className="w-full border-3 border-black dark:border-white text-sm">
-                        <thead className="bg-[#FFE66D]">
+                        <thead className="bg-brutal-accent dark:bg-gray-800">
                             <tr>
-                                <th className="px-4 py-2 text-left border-r-3 border-b-3 border-black font-black text-black">
+                                <th className="px-4 py-2 text-left border-r-3 border-b-3 border-black dark:border-white font-black text-black dark:text-white">
                                     Component
                                 </th>
-                                <th className="px-4 py-2 text-left border-b-3 border-black font-black text-black">
+                                <th className="px-4 py-2 text-left border-b-3 border-black dark:border-white font-black text-black dark:text-white">
                                     Dependencies
                                 </th>
                             </tr>

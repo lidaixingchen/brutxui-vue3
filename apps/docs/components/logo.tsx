@@ -83,14 +83,14 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
 
                 {/* Letters */}
                 <span className={cn('font-black text-black tracking-tighter', config.letterSize)}>
-                    BU
+                    BX
                 </span>
             </div>
 
             {/* Text */}
             {showText && (
                 <span className={cn('font-black text-black dark:text-white', config.text)}>
-                    Brutalist UI
+                    BrutxUI
                 </span>
             )}
         </div>
@@ -147,7 +147,7 @@ export function LogoHero({ className }: { className?: string }) {
 
                 {/* Main block */}
                 <div className="relative w-32 h-32 bg-[#FFE66D] border-4 border-black flex items-center justify-center">
-                    <span className="text-5xl font-black text-black tracking-tighter">BU</span>
+                    <span className="text-5xl font-black text-black tracking-tighter">BX</span>
                 </div>
             </div>
         </div>

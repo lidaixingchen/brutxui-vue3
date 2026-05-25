@@ -12,7 +12,7 @@ export default function ViteInstallationPage() {
             </Badge>
             <h1 className="text-4xl font-black mb-4">Vite</h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                Install and configure Brutalist UI for Vite + React projects.
+                Install and configure BrutxUI for Vite + React projects.
             </p>
 
             {/* CLI Installation */}

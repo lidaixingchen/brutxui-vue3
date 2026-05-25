@@ -12,7 +12,7 @@ export default function NextJsInstallationPage() {
             </Badge>
             <h1 className="text-4xl font-black mb-4">Next.js</h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                Install and configure Brutalist UI for Next.js (App Router or Pages Router).
+                Install and configure BrutxUI for Next.js (App Router or Pages Router).
             </p>
 
             {/* CLI Installation */}
@@ -88,7 +88,7 @@ export default function Home() {
       <Card>
         <CardContent>
           <Badge variant="accent" className="mb-4">Welcome</Badge>
-          <h1 className="text-2xl font-black mb-4">Hello Brutalist UI!</h1>
+          <h1 className="text-2xl font-black mb-4">Hello BrutxUI!</h1>
           <Button variant="primary">Get Started</Button>
         </CardContent>
       </Card>
@@ -128,7 +128,7 @@ export default function Home() {
                     <h2 className="text-xl font-black">Dark Mode</h2>
                 </div>
                 <p className="mb-4 text-gray-600 dark:text-gray-400">
-                    Brutalist UI supports dark mode out of the box. Add{' '}
+                    BrutxUI supports dark mode out of the box. Add{' '}
                     <code className="bg-gray-200 dark:bg-gray-800 px-1.5 py-0.5 font-mono text-sm">
                         next-themes
                     </code>{' '}

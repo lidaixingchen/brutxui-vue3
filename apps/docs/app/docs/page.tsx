@@ -132,7 +132,7 @@ export default function DocsPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">♿ Accessibility First</h2>
                 <p>
-                    Brutalist UI must not compromise usability. Every BrutxUI component is built with accessibility as a core constraint:
+                    BrutxUI must not compromise usability. Every BrutxUI component is built with accessibility as a core constraint:
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
                     <li><strong>Radix UI Foundation:</strong> Primitives handle proper ARIA state attributes, screen reader interaction traps, focus rings, and browser focus management natively.</li>
