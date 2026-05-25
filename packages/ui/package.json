@@ -1,5 +1,5 @@
 {
-    "name": "brutalist-ui",
+    "name": "brutx-ui",
     "version": "0.2.0",
     "description": "A Neo-Brutalism styled React UI component library",
     "main": "./dist/index.js",
@@ -130,10 +130,10 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dev-snake/brutalist-ui"
+        "url": "https://github.com/dev-snake/brutx"
     },
     "bugs": {
-        "url": "https://github.com/dev-snake/brutalist-ui/issues"
+        "url": "https://github.com/dev-snake/brutx/issues"
     },
-    "homepage": "https://brutalistui.site"
+    "homepage": "https://brutxui.site"
 }

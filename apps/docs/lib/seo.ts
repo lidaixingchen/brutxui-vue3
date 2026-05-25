@@ -11,7 +11,7 @@ export function generateComponentMetadata({
     description,
     slug,
 }: ComponentSEOProps): Metadata {
-    const title = `${name} - Brutalist UI Component`;
+    const title = `${name} - Brutx Component`;
     const fullDescription = `${description} Free Neo-Brutalism styled React ${name} component with TypeScript support.`;
 
     return {
@@ -24,12 +24,12 @@ export function generateComponentMetadata({
             `neo brutalism ${name.toLowerCase()}`,
             `tailwind ${name.toLowerCase()}`,
             'react component',
-            'brutalist ui',
+            'brutx',
         ],
         openGraph: {
             title,
             description: fullDescription,
-            url: `https://brutalistui.site/docs/components/${slug}`,
+            url: `https://brutxui.site/docs/components/${slug}`,
             type: 'article',
         },
         twitter: {
@@ -37,7 +37,7 @@ export function generateComponentMetadata({
             description: fullDescription,
         },
         alternates: {
-            canonical: `https://brutalistui.site/docs/components/${slug}`,
+            canonical: `https://brutxui.site/docs/components/${slug}`,
         },
     };
 }
@@ -122,6 +122,11 @@ export const componentsSEO: Record<string, ComponentSEOProps> = {
         name: 'Spinner',
         description: 'Loading spinners with brutalist, dots, pulse, and bars variants.',
         slug: 'spinner',
+    },
+    'submit-button': {
+        name: 'Submit Button',
+        description: 'Server component-ready form submission handler with brutalist styling.',
+        slug: 'submit-button',
     },
     switch: {
         name: 'Switch',

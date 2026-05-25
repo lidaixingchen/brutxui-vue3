@@ -1,6 +1,6 @@
 # Tailwind CSS Integration Guide
 
-Brutalist UI is built on React and styling is fully powered by **Tailwind CSS**. It is fully compatible with both the traditional **Tailwind CSS v3** and the new CSS-first **Tailwind CSS v4**.
+Brutx is built on React and styling is fully powered by **Tailwind CSS**. It is fully compatible with both the traditional **Tailwind CSS v3** and the new CSS-first **Tailwind CSS v4**.
 
 ---
 
@@ -98,7 +98,7 @@ module.exports = {
 
 ## 🌓 Dark Mode
 
-Brutalist UI fully supports dark mode on both Tailwind v3 and v4:
+Brutx fully supports dark mode on both Tailwind v3 and v4:
 
 - **Tailwind v4:** Dark mode variants are automatically handled. Standard class selectors like `.dark` work out of the box.
 - **Tailwind v3:** If you are using class-based dark mode, ensure you have configured it in `tailwind.config.js`:

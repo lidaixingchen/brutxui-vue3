@@ -122,7 +122,7 @@ export default function CLIPage() {
                             ) copies component source files into your project for full
                             customization. The NPM package (
                             <code className="bg-gray-200 dark:bg-gray-800 px-1 font-mono">
-                                brutalist-ui
+                                brutx-ui
                             </code>
                             ) is a direct dependency import.
                         </p>
@@ -298,7 +298,7 @@ Options:
 
             <CodeBlock className="mb-6">
                 {`{
-  "$schema": "https://brutalistui.site/schema.json",
+  "$schema": "https://brutxui.site/schema.json",
   "style": "brutalism",
   "tailwind": {
     "config": "tailwind.config.js",

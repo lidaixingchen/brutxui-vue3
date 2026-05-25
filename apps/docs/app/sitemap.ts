@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://brutalistui.site';
+    const baseUrl = 'https://brutxui.site';
 
     // Component pages - QUAN TRỌNG: Đây là những trang Google sẽ index cho sitelinks
     const components = [

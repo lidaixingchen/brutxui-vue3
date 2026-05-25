@@ -31,33 +31,33 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
 
 // Pre-defined breadcrumbs for common pages
 export const breadcrumbs = {
-    home: [{ name: 'Brutalist UI', url: 'https://brutalistui.site' }],
+    home: [{ name: 'Brutx', url: 'https://brutxui.site' }],
     docs: [
-        { name: 'Brutalist UI', url: 'https://brutalistui.site' },
-        { name: 'Documentation', url: 'https://brutalistui.site/docs' },
+        { name: 'Brutx', url: 'https://brutxui.site' },
+        { name: 'Documentation', url: 'https://brutxui.site/docs' },
     ],
     installation: [
-        { name: 'Brutalist UI', url: 'https://brutalistui.site' },
-        { name: 'Documentation', url: 'https://brutalistui.site/docs' },
-        { name: 'Installation', url: 'https://brutalistui.site/docs/installation' },
+        { name: 'Brutx', url: 'https://brutxui.site' },
+        { name: 'Documentation', url: 'https://brutxui.site/docs' },
+        { name: 'Installation', url: 'https://brutxui.site/docs/installation' },
     ],
     components: [
-        { name: 'Brutalist UI', url: 'https://brutalistui.site' },
-        { name: 'Documentation', url: 'https://brutalistui.site/docs' },
-        { name: 'Components', url: 'https://brutalistui.site/docs/components' },
+        { name: 'Brutx', url: 'https://brutxui.site' },
+        { name: 'Documentation', url: 'https://brutxui.site/docs' },
+        { name: 'Components', url: 'https://brutxui.site/docs/components' },
     ],
     cli: [
-        { name: 'Brutalist UI', url: 'https://brutalistui.site' },
-        { name: 'Documentation', url: 'https://brutalistui.site/docs' },
-        { name: 'CLI', url: 'https://brutalistui.site/docs/cli' },
+        { name: 'Brutx', url: 'https://brutxui.site' },
+        { name: 'Documentation', url: 'https://brutxui.site/docs' },
+        { name: 'CLI', url: 'https://brutxui.site/docs/cli' },
     ],
 };
 
 export function getComponentBreadcrumb(componentName: string, componentSlug: string) {
     return [
-        { name: 'Brutalist UI', url: 'https://brutalistui.site' },
-        { name: 'Documentation', url: 'https://brutalistui.site/docs' },
-        { name: 'Components', url: 'https://brutalistui.site/docs/components' },
-        { name: componentName, url: `https://brutalistui.site/docs/components/${componentSlug}` },
+        { name: 'Brutx', url: 'https://brutxui.site' },
+        { name: 'Documentation', url: 'https://brutxui.site/docs' },
+        { name: 'Components', url: 'https://brutxui.site/docs/components' },
+        { name: componentName, url: `https://brutxui.site/docs/components/${componentSlug}` },
     ];
 }

@@ -1,6 +1,6 @@
-# Contributing to Brutalist UI
+# Contributing to Brutx
 
-Thank you for your interest in contributing to Brutalist UI! We are excited to build a bold, raw, and accessible Neo-Brutalism design system together.
+Thank you for your interest in contributing to Brutx! We are excited to build a bold, raw, and accessible Neo-Brutalism design system together.
 
 ---
 
@@ -15,8 +15,8 @@ This project is a monorepo managed with **pnpm workspaces**.
 ### 2. Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/dev-snake/brutalist-ui.git
-cd brutalist-ui
+git clone https://github.com/dev-snake/brutx.git
+cd brutx
 
 # Install workspace dependencies
 pnpm install
@@ -48,7 +48,7 @@ To add a new component (e.g., `button`):
 4. **Compile the registry JSON**:
    Run the following script to automatically parse, resolve dependencies, and bundle the React code into registry JSON files:
    ```bash
-   pnpm --filter brutalist-ui-registry build
+   pnpm --filter brutx-registry build
    ```
 5. Commit the generated JSON file under `packages/registry/registry/`.
 

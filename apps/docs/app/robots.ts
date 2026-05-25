@@ -17,7 +17,7 @@ export default function robots(): MetadataRoute.Robots {
                 allow: '/',
             },
         ],
-        sitemap: 'https://brutalistui.site/sitemap.xml',
-        host: 'https://brutalistui.site',
+        sitemap: 'https://brutxui.site/sitemap.xml',
+        host: 'https://brutxui.site',
     };
 }

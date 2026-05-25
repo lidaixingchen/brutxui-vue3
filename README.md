@@ -1,15 +1,15 @@
 <div align="center">
-  <img src="apps/docs/public/favicon.svg" alt="Brutalist UI Logo" width="120" height="120" />
+  <img src="apps/docs/public/favicon.svg" alt="Brutx Logo" width="120" height="120" />
   
-  # Brutalist UI
+  # Brutx
   
   **A Neo-Brutalism styled React UI component library**
   
   Bold. Raw. Unapologetic.
   
-  ### Component Library (`brutalist-ui`)
-  [![npm version](https://img.shields.io/npm/v/brutalist-ui.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutalist-ui)
-  [![npm downloads](https://img.shields.io/npm/dm/brutalist-ui.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutalist-ui)
+  ### Component Library (`brutx-ui`)
+  [![npm version](https://img.shields.io/npm/v/brutx-ui.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui)
+  [![npm downloads](https://img.shields.io/npm/dm/brutx-ui.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx-ui)
   
   ### CLI Tool (`brutx`)
   [![npm version](https://img.shields.io/npm/v/brutx.svg?style=flat-square&color=FFE66D)](https://www.npmjs.com/package/brutx)
@@ -24,15 +24,15 @@
 
   <br />
 
-  [Documentation](https://brutalistui.site) · [NPM Library](https://www.npmjs.com/package/brutalist-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutalist-ui/issues)
+  [Documentation](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutx/issues)
 </div>
 
 
 ---
 
-Brutalist UI is a modern, neo-brutalist inspired React UI library. It implements bold 3px borders, thick black shadows, and high-contrast color palettes to give your application a raw, premium, and distinct character. 
+Brutx is a modern, neo-brutalist inspired React UI library. It implements bold 3px borders, thick black shadows, and high-contrast color palettes to give your application a raw, premium, and distinct character. 
 
-Instead of bloated npm dependencies, Brutalist UI distributes components on-demand via a **dynamic registry system** (similar to shadcn/ui). You copy, paste, and customize the code directly in your workspace.
+Instead of bloated npm dependencies, Brutx distributes components on-demand via a **dynamic registry system** (similar to shadcn/ui). You copy, paste, and customize the code directly in your workspace.
 
 ---
 
@@ -50,10 +50,10 @@ Instead of bloated npm dependencies, Brutalist UI distributes components on-dema
 
 ## 📦 Installation
 
-Use the CLI `brutx` to initialize Brutalist UI and add components to your project:
+Use the CLI `brutx` to initialize Brutx and add components to your project:
 
 ```bash
-# Initialize Brutalist UI configuration
+# Initialize Brutx configuration
 npx brutx@latest init
 
 # Add specific components
@@ -112,7 +112,7 @@ export default function App() {
   return (
     <Card>
       <CardHeader>
-        <h2 className="text-xl font-bold">Brutalist UI App</h2>
+        <h2 className="text-xl font-bold">Brutx App</h2>
         <Badge variant="success">Active</Badge>
       </CardHeader>
       <CardContent>
@@ -130,10 +130,10 @@ export default function App() {
 
 ## 🎨 Custom CSS Utility Classes
 
-During initialization, Brutalist UI appends native CSS custom classes directly to your project's global stylesheet. This guarantees 100% compatibility with both Tailwind CSS v3 and v4:
+During initialization, Brutx appends native CSS custom classes directly to your project's global stylesheet. This guarantees 100% compatibility with both Tailwind CSS v3 and v4:
 
 ```css
-/* Brutalist UI Styles */
+/* Brutx Styles */
 .border-3 {
     border-width: 3px;
 }
@@ -162,7 +162,7 @@ During initialization, Brutalist UI appends native CSS custom classes directly t
 }
 ```
 
-If you import components directly from the compiled npm library (`brutalist-ui`), the following layer components are also available via `styles.css`:
+If you import components directly from the compiled npm library (`brutx-ui`), the following layer components are also available via `styles.css`:
 
 - `.nb-border` - Apply a `3px` solid black border.
 - `.nb-shadow` - Apply a `4px` black offset shadow.
@@ -173,7 +173,7 @@ If you import components directly from the compiled npm library (`brutalist-ui`)
 
 ## 🧩 Supported Components (27 Core Components)
 
-Brutalist UI contains **27 core components** grouped into 5 structural categories:
+Brutx contains **27 core components** grouped into 5 structural categories:
 
 ### 1. Layout & Containers
 | Component | Description | Local Install |
@@ -227,11 +227,11 @@ Brutalist UI contains **27 core components** grouped into 5 structural categorie
 ## 🏗️ Project Monorepo Structure
 
 ```
-brutalist-ui/
+brutx/
 ├── apps/
 │   └── docs/                  # Next.js 15 documentation website
 ├── packages/
-│   ├── ui/                    # Core NPM source library (brutalist-ui)
+│   ├── ui/                    # Core NPM source library (brutx-ui)
 │   │   ├── src/
 │   │   │   ├── components/    # Component sources
 │   │   │   └── styles.css     # UI library base stylesheet
@@ -256,14 +256,14 @@ To test CLI commands or components in a local environment:
 ### 1. Project Initialization & Setup
 ```bash
 # Clone the repository
-git clone https://github.com/dev-snake/brutalist-ui.git
-cd brutalist-ui
+git clone https://github.com/dev-snake/brutx.git
+cd brutx
 
 # Install workspaces dependencies
 pnpm install
 
 # Build the UI library and CLI package
-pnpm --filter brutalist-ui build && pnpm --filter brutx build
+pnpm --filter brutx-ui build && pnpm --filter brutx build
 ```
 
 ### 2. Testing Locally
@@ -275,14 +275,14 @@ pnpm test
 ### 3. Registry Compilation
 To package your modifications in `packages/ui` into the CLI registry:
 ```bash
-pnpm --filter brutalist-ui-registry build
+pnpm --filter brutx-registry build
 ```
 
 ---
 
 ## 💖 Support This Project
 
-If you find Brutalist UI useful, please consider supporting its development:
+If you find Brutx useful, please consider supporting its development:
 
 <a href="https://github.com/sponsors/dev-snake">
   <img src="https://img.shields.io/badge/Sponsor_on_GitHub-❤️-EA4AAA?style=for-the-badge&logo=github" alt="Sponsor on GitHub" />
@@ -300,7 +300,7 @@ Your support helps keep this project alive and growing! 🚀
 
 ## 📄 License
 
-Brutalist UI is open-source software licensed under the [MIT License](LICENSE).
+Brutx is open-source software licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -309,10 +309,9 @@ Brutalist UI is open-source software licensed under the [MIT License](LICENSE).
     <strong>Made with 💛 and bold borders</strong>
   </p>
   <p>
-    <a href="https://www.npmjs.com/package/brutalist-ui">NPM Library</a> •
+    <a href="https://www.npmjs.com/package/brutx-ui">NPM Library</a> •
     <a href="https://www.npmjs.com/package/brutx">NPM CLI</a> •
-    <a href="https://github.com/dev-snake/brutalist-ui">GitHub</a> •
-    <a href="https://brutalistui.site">Docs</a>
+    <a href="https://github.com/dev-snake/brutx">GitHub</a> •
+    <a href="https://brutxui.site">Docs</a>
   </p>
 </div>
-

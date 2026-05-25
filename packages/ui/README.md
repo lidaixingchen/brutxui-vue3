@@ -1,9 +1,9 @@
-# Brutalist UI
+# Brutx UI
 
 Neo-brutalism React component library with CLI support. Copy components into your codebase for full customization control.
 
-[![npm version](https://img.shields.io/npm/v/brutalist-ui.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutalist-ui)
-[![npm downloads](https://img.shields.io/npm/dm/brutalist-ui.svg?style=flat-square)](https://www.npmjs.com/package/brutalist-ui)
+[![npm version](https://img.shields.io/npm/v/brutx-ui.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui)
+[![npm downloads](https://img.shields.io/npm/dm/brutx-ui.svg?style=flat-square)](https://www.npmjs.com/package/brutx-ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-4ECDC4.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
 
@@ -43,7 +43,7 @@ export function Example() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Welcome to Brutalist UI</CardTitle>
+                <CardTitle>Welcome to Brutx</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
                 <Input placeholder="Email" />

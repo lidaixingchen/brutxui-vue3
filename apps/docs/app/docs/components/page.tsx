@@ -3,11 +3,11 @@ import { Card, CardHeader, CardTitle, CardContent, Badge } from '@/components/ui
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'All Components - Brutalist UI | 26 Neo-Brutalism React Components',
+    title: 'All Components - Brutx | 27 Neo-Brutalism React Components',
     description:
-        'Browse 26 Neo-Brutalism React components: Button, Card, Calendar, Command, Combobox, Dialog, Toast, Table, Tabs, Scroll Area and more. Accessible, customizable, with bold borders and offset shadows.',
+        'Browse 27 Neo-Brutalism React components: Button, Card, Calendar, Command, Combobox, Dialog, Toast, Table, Tabs, Scroll Area and more. Accessible, customizable, with bold borders and offset shadows.',
     keywords: [
-        'brutalist ui components',
+        'brutx components',
         'neo-brutalism components',
         'react ui components',
         'brutalism button',
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
         'radix ui components',
     ],
     openGraph: {
-        title: 'All Components - Brutalist UI',
+        title: 'All Components - Brutx',
         description:
-            'Browse 26 Neo-Brutalism React components built with Radix UI and Tailwind CSS.',
-        url: 'https://brutalistui.site/docs/components',
+            'Browse 27 Neo-Brutalism React components built with Radix UI and Tailwind CSS.',
+        url: 'https://brutxui.site/docs/components',
     },
     alternates: {
-        canonical: 'https://brutalistui.site/docs/components',
+        canonical: 'https://brutxui.site/docs/components',
     },
 };
 
@@ -92,6 +92,11 @@ const components = [
         name: 'Spinner',
         href: '/docs/components/spinner',
         description: 'Loading spinner indicators',
+    },
+    {
+        name: 'Submit Button',
+        href: '/docs/components/submit-button',
+        description: 'Server component-ready form submission handler',
     },
     { name: 'Switch', href: '/docs/components/switch', description: 'Toggle switch control' },
     { name: 'Table', href: '/docs/components/table', description: 'Data table display' },

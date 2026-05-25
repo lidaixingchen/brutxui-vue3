@@ -112,9 +112,9 @@ export const DEFAULT_ALIASES = {
 
 export const DEFAULT_TAILWIND_CONFIG = 'tailwind.config.js';
 
-export const SCHEMA_URL = 'https://brutalistui.site/schema.json';
+export const SCHEMA_URL = 'https://brutxui.site/schema.json';
 
-export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/dev-snake/brutalist-ui/main/packages/registry/registry';
+export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/dev-snake/brutx/main/packages/registry/registry';
 
 // ============================================================================
 // Brutalist CSS Styles

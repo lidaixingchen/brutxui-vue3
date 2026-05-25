@@ -40,7 +40,7 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     const configPath = path.join(cwd, 'components.json');
 
     if (!(await fs.pathExists(configPath))) {
-        logger.error('Error: Brutalist UI is not initialized.');
+        logger.error('Error: Brutx is not initialized.');
         logger.warn('Run: npx brutx@latest init');
         process.exit(1);
     }

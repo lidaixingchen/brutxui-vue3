@@ -1,6 +1,6 @@
 {
-  "name": "brutalist-ui",
-  "homepage": "https://brutalistui.site",
+  "name": "brutx",
+  "homepage": "https://brutxui.site",
   "items": [
     {
       "name": "alert",
@@ -60,7 +60,9 @@
         "date-fns",
         "lucide-react"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/calendar.tsx"
@@ -271,7 +273,9 @@
       "name": "submit-button",
       "type": "registry:ui",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/submit-button.tsx"

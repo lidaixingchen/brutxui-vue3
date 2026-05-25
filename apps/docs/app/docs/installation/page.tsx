@@ -3,24 +3,24 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-    title: 'Installation Guide - Brutalist UI | Setup Neo-Brutalism Components',
+    title: 'Installation Guide - Brutx | Setup Neo-Brutalism Components',
     description:
-        'Install Brutalist UI in your React or Next.js project. Step-by-step guide for npm, pnpm, yarn with Tailwind CSS configuration and TypeScript support.',
+        'Install Brutx in your React or Next.js project. Step-by-step guide for npm, pnpm, yarn with Tailwind CSS configuration and TypeScript support.',
     keywords: [
-        'install brutalist-ui',
-        'brutalist ui setup',
+        'install brutx-ui',
+        'brutx setup',
         'neo-brutalism npm',
         'react brutalism install',
         'tailwind brutalism plugin',
     ],
     openGraph: {
-        title: 'Installation Guide - Brutalist UI',
+        title: 'Installation Guide - Brutx',
         description:
-            'Install Brutalist UI in your React or Next.js project with npm, pnpm, or yarn.',
-        url: 'https://brutalistui.site/docs/installation',
+            'Install Brutx in your React or Next.js project with npm, pnpm, or yarn.',
+        url: 'https://brutxui.site/docs/installation',
     },
     alternates: {
-        canonical: 'https://brutalistui.site/docs/installation',
+        canonical: 'https://brutxui.site/docs/installation',
     },
 };
 
@@ -149,7 +149,7 @@ export default function InstallationPage() {
             </Badge>
             <h1 className="text-4xl font-black mb-4">Installation</h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-10">
-                Choose your preferred method to add Brutalist UI to your project.
+                Choose your preferred method to add Brutx to your project.
             </p>
 
             {/* Prerequisites */}
@@ -337,6 +337,10 @@ export default function InstallationPage() {
                         <div className="flex justify-between">
                             <dt className="text-gray-500 dark:text-gray-400">CLI Package</dt>
                             <dd className="font-mono font-bold">brutx</dd>
+                        </div>
+                        <div className="flex justify-between">
+                            <dt className="text-gray-500 dark:text-gray-400">React Package</dt>
+                            <dd className="font-mono font-bold">brutx-ui</dd>
                         </div>
                         <div className="flex justify-between">
                             <dt className="text-gray-500 dark:text-gray-400">Components</dt>

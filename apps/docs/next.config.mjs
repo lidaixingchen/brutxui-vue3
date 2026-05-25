@@ -3,7 +3,7 @@ import createMDX from '@next/mdx';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-    transpilePackages: ['brutalist-ui'],
+    transpilePackages: ['brutx-ui'],
 
     // Next.js 15 optimizations
     experimental: {

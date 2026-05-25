@@ -112,7 +112,6 @@
         animation: nb-shrink linear forwards;
     }
 
-@layer utilities {
     .border-3 {
         border-width: 3px;
     }

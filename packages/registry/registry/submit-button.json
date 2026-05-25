@@ -2,11 +2,13 @@
   "name": "submit-button",
   "type": "registry:ui",
   "dependencies": [],
-  "registryDependencies": [],
+  "registryDependencies": [
+    "button"
+  ],
   "files": [
     {
       "path": "components/ui/submit-button.tsx",
-      "content": "'use client';\n\nimport * as React from 'react';\nimport { useFormStatus } from 'react-dom';\nimport { Button, type ButtonProps } from './button';\n\nexport interface SubmitButtonProps extends ButtonProps {\n    pendingText?: string;\n}\n\n/**\n * A button that automatically shows loading state when inside a form\n * that is being submitted via Server Actions (React 19 feature)\n */\nfunction SubmitButton({ \n    children, \n    pendingText,\n    disabled,\n    ...props \n}: SubmitButtonProps) {\n    const { pending } = useFormStatus();\n    \n    return (\n        <Button\n            type=\"submit\"\n            disabled={disabled || pending}\n            loading={pending}\n            {...props}\n        >\n            {pending && pendingText ? pendingText : children}\n        </Button>\n    );\n}\n\nSubmitButton.displayName = 'SubmitButton';\n\nexport { SubmitButton };\n"
+      "content": "'use client';\n\nimport { useFormStatus } from 'react-dom';\nimport { Button, type ButtonProps } from '@/components/ui/button';\n\nexport interface SubmitButtonProps extends ButtonProps {\n    pendingText?: string;\n}\n\n/**\n * A button that automatically shows loading state when inside a form\n * that is being submitted via Server Actions (React 19 feature)\n */\nfunction SubmitButton({ children, pendingText, disabled, ...props }: SubmitButtonProps) {\n    const { pending } = useFormStatus();\n\n    return (\n        <Button type=\"submit\" disabled={disabled || pending} loading={pending} {...props}>\n            {pending && pendingText ? pendingText : children}\n        </Button>\n    );\n}\n\nSubmitButton.displayName = 'SubmitButton';\n\nexport { SubmitButton };\n"
     }
   ]
 }

@@ -3,4 +3,4 @@ declare module '*.css' {
     export default content;
 }
 
-declare module 'brutalist-ui/styles.css';
+declare module 'brutx-ui/styles.css';

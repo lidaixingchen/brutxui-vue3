@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Calendar } from 'brutalist-ui/calendar';
+import { Calendar } from 'brutx-ui/calendar';
 import { InstallationTabs } from '@/components/installation-tabs';
 
 export default function CalendarPage() {

@@ -3,17 +3,17 @@ import { Heart, Coffee, Github, Star, Zap, Gift } from 'lucide-react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Sponsor Brutalist UI | Support Open Source Neo-Brutalism Components',
+    title: 'Sponsor Brutx | Support Open Source Neo-Brutalism Components',
     description:
-        'Support the development of Brutalist UI, the open-source Neo-Brutalism React component library. Sponsor on GitHub or Buy Me a Coffee.',
-    keywords: ['sponsor brutalist ui', 'support open source', 'github sponsors', 'buy me a coffee'],
+        'Support the development of Brutx, the open-source Neo-Brutalism React component library. Sponsor on GitHub or Buy Me a Coffee.',
+    keywords: ['sponsor brutx', 'support open source', 'github sponsors', 'buy me a coffee'],
     openGraph: {
-        title: 'Sponsor Brutalist UI',
-        description: 'Support the development of Brutalist UI open-source component library.',
-        url: 'https://brutalistui.site/sponsor',
+        title: 'Sponsor Brutx',
+        description: 'Support the development of Brutx open-source component library.',
+        url: 'https://brutxui.site/sponsor',
     },
     alternates: {
-        canonical: 'https://brutalistui.site/sponsor',
+        canonical: 'https://brutxui.site/sponsor',
     },
 };
 
@@ -27,7 +27,7 @@ export default function SponsorPage() {
                         <Heart className="w-10 h-10 text-white" fill="white" />
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black mb-4 dark:text-white">
-                        Support Brutalist UI
+                        Support Brutx
                     </h1>
                     <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                         Help us keep this project alive and growing. Your support enables us to add
@@ -130,7 +130,7 @@ export default function SponsorPage() {
                     </h2>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a
-                            href="https://github.com/dev-snake/brutalist-ui"
+                            href="https://github.com/dev-snake/brutx"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border-3 border-black dark:border-white font-bold hover:shadow-[4px_4px_0px_0px_#000] dark:hover:shadow-[4px_4px_0px_0px_#fff] transition-all dark:text-white"
@@ -139,7 +139,7 @@ export default function SponsorPage() {
                             Star on GitHub
                         </a>
                         <a
-                            href="https://twitter.com/intent/tweet?text=Check%20out%20Brutalist%20UI%20-%20A%20Neo-Brutalism%20styled%20React%20component%20library!%20https://github.com/dev-snake/brutalist-ui"
+                            href="https://twitter.com/intent/tweet?text=Check%20out%20Brutx%20-%20A%20Neo-Brutalism%20styled%20React%20component%20library!%20https://github.com/dev-snake/brutx"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border-3 border-black dark:border-white font-bold hover:shadow-[4px_4px_0px_0px_#000] dark:hover:shadow-[4px_4px_0px_0px_#fff] transition-all dark:text-white"

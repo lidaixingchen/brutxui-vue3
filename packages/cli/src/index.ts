@@ -6,12 +6,12 @@ const program = new Command();
 
 program
     .name('brutx')
-    .description('CLI for adding Brutalist UI components to your project')
-    .version('0.2.2');
+    .description('CLI for adding Brutx components to your project')
+    .version('0.2.3');
 
 program
     .command('init')
-    .description('Initialize Brutalist UI in your project')
+    .description('Initialize Brutx in your project')
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .option('-d, --defaults', 'Use default configuration', false)
     .option('-c, --cwd <cwd>', 'The working directory', process.cwd())

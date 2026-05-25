@@ -19,9 +19,9 @@ export default function Home() {
 
                     {/* 3D Brutalist Logo Text */}
                     <div className="relative mb-6 sm:mb-8">
-                        {/* BRUTALIST text */}
+                        {/* BRUTX text */}
                         <div className="relative inline-block">
-                            <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter select-none">
+                            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-black tracking-tighter select-none">
                                 {/* Deep shadow - darkest */}
                                 <span
                                     className="absolute text-black"
@@ -30,7 +30,7 @@ export default function Home() {
                                     }}
                                     aria-hidden="true"
                                 >
-                                    Brutalist
+                                    Brutx
                                 </span>
                                 {/* Mid shadow - coral red */}
                                 <span
@@ -40,7 +40,7 @@ export default function Home() {
                                     }}
                                     aria-hidden="true"
                                 >
-                                    Brutalist
+                                    Brutx
                                 </span>
                                 {/* Light shadow - teal */}
                                 <span
@@ -50,7 +50,7 @@ export default function Home() {
                                     }}
                                     aria-hidden="true"
                                 >
-                                    Brutalist
+                                    Brutx
                                 </span>
                                 {/* Main text - yellow */}
                                 <span
@@ -60,53 +60,7 @@ export default function Home() {
                                         paintOrder: 'stroke fill',
                                     }}
                                 >
-                                    Brutalist
-                                </span>
-                            </h1>
-                        </div>
-
-                        {/* UI text */}
-                        <div className="relative -mt-2 sm:-mt-6 md:-mt-8 inline-block">
-                            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-black tracking-tighter select-none">
-                                {/* Deep shadow - darkest */}
-                                <span
-                                    className="absolute text-black"
-                                    style={{
-                                        transform: 'translate(10px, 10px)',
-                                    }}
-                                    aria-hidden="true"
-                                >
-                                    UI
-                                </span>
-                                {/* Mid shadow - teal */}
-                                <span
-                                    className="absolute text-[#4ECDC4]"
-                                    style={{
-                                        transform: 'translate(6px, 6px)',
-                                    }}
-                                    aria-hidden="true"
-                                >
-                                    UI
-                                </span>
-                                {/* Light shadow - yellow */}
-                                <span
-                                    className="absolute text-[#FFE66D]"
-                                    style={{
-                                        transform: 'translate(3px, 3px)',
-                                    }}
-                                    aria-hidden="true"
-                                >
-                                    UI
-                                </span>
-                                {/* Main text - coral red */}
-                                <span
-                                    className="relative text-[#FF6B6B]"
-                                    style={{
-                                        WebkitTextStroke: '3px #000',
-                                        paintOrder: 'stroke fill',
-                                    }}
-                                >
-                                    UI
+                                    Brutx
                                 </span>
                             </h1>
                         </div>
@@ -131,7 +85,7 @@ export default function Home() {
                             </Button>
                         </Link>
                         <a
-                            href="https://github.com/dev-snake/brutalist-ui"
+                            href="https://github.com/dev-snake/brutx"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full sm:w-auto"
@@ -293,7 +247,7 @@ function App() {
                         </p>
                         <div className="flex gap-4">
                             <a
-                                href="https://github.com/dev-snake/brutalist-ui"
+                                href="https://github.com/dev-snake/brutx"
                                 className="font-bold hover:underline text-sm sm:text-base"
                             >
                                 GitHub

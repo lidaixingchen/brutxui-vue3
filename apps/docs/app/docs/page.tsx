@@ -3,23 +3,23 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-    title: 'Documentation - Brutalist UI | Neo-Brutalism React Component Library',
+    title: 'Documentation - Brutx | Neo-Brutalism React Component Library',
     description:
-        'Learn how to use Brutalist UI, the Neo-Brutalism React component library. Built on Radix UI and Tailwind CSS with bold borders, offset shadows, and vibrant colors.',
+        'Learn how to use Brutx, the Neo-Brutalism React component library. Built on Radix UI and Tailwind CSS with bold borders, offset shadows, and vibrant colors.',
     keywords: [
-        'brutalist ui docs',
+        'brutx docs',
         'neo-brutalism guide',
         'react component library tutorial',
         'brutalism css documentation',
         'radix ui brutalism',
     ],
     openGraph: {
-        title: 'Documentation - Brutalist UI',
-        description: 'Learn how to use Brutalist UI, the Neo-Brutalism React component library.',
-        url: 'https://brutalistui.site/docs',
+        title: 'Documentation - Brutx',
+        description: 'Learn how to use Brutx, the Neo-Brutalism React component library.',
+        url: 'https://brutxui.site/docs',
     },
     alternates: {
-        canonical: 'https://brutalistui.site/docs',
+        canonical: 'https://brutxui.site/docs',
     },
 };
 
@@ -32,7 +32,7 @@ export default function DocsPage() {
             <h1>Getting Started</h1>
 
             <p>
-                Brutalist UI is a React component library that brings the bold, blocky aesthetic of
+                Brutx is a React component library that brings the bold, blocky aesthetic of
                 Neo-Brutalism to your web applications. Built on top of Radix UI primitives and
                 styled with Tailwind CSS.
             </p>
@@ -61,7 +61,7 @@ export default function DocsPage() {
             </ul>
 
             <h2>How to Use</h2>
-            <p className="mb-4">Use the CLI to add Brutalist UI components to your project:</p>
+            <p className="mb-4">Use the CLI to add Brutx components to your project:</p>
 
             <div className="my-6">
                 <div className="p-5 border-3 border-[#4ECDC4] bg-white dark:bg-gray-900">
@@ -103,7 +103,7 @@ export default function DocsPage() {
                 </div>
             </div>
 
-            <h2>Why Brutalist UI?</h2>
+            <h2>Why Brutx?</h2>
 
             <div className="grid sm:grid-cols-2 gap-4 my-6">
                 <div className="p-5 border-3 border-black dark:border-white bg-white dark:bg-gray-900">
@@ -273,7 +273,7 @@ function MyComponent() {
                     >
                         Installation Guide
                     </Link>{' '}
-                    - Set up Brutalist UI in your project
+                    - Set up Brutx in your project
                 </li>
                 <li>
                     <Link href="/docs/cli" className="font-bold underline hover:text-[#FF6B6B]">

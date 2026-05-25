@@ -12,7 +12,7 @@ export default function ManualInstallationPage() {
             </Badge>
             <h1 className="text-4xl font-black mb-4">Manual Installation</h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-                Add Brutalist UI components manually to any React project.
+                Add Brutx components manually to any React project.
             </p>
 
             {/* CLI Installation */}
@@ -214,7 +214,7 @@ module.exports = {
                     folder:
                 </p>
                 <a
-                    href="https://github.com/dev-snake/brutalist-ui/tree/main/packages/ui/src/components"
+                    href="https://github.com/dev-snake/brutx/tree/main/packages/ui/src/components"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-3 font-bold border-3 border-black dark:border-white bg-white dark:bg-gray-900 hover:bg-[#4ECDC4] hover:shadow-brutal transition-all"

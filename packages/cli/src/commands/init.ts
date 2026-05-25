@@ -1,6 +1,6 @@
 /**
  * Init Command
- * Initialize Brutalist UI in a project
+ * Initialize Brutx in a project
  */
 
 import ora from 'ora';
@@ -171,7 +171,7 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
     }
 
     if (options.yes) {
-        logger.warn('Brutalist UI is already initialized. Use --force to overwrite.');
+        logger.warn('Brutx is already initialized. Use --force to overwrite.');
         return false;
     }
 
@@ -179,7 +179,7 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
         {
             type: 'confirm',
             name: 'overwrite',
-            message: 'Brutalist UI is already initialized. Overwrite?',
+            message: 'Brutx is already initialized. Overwrite?',
             default: false,
         },
     ]);
@@ -204,7 +204,7 @@ export async function init(options: InitOptions): Promise<void> {
     logger.setSilent(options.silent ?? false);
 
     // Header
-    logger.bold('\n🎨 Brutalist UI - Neo-Brutalism Component Library\n');
+    logger.bold('\n🎨 Brutx - Neo-Brutalism Component Library\n');
     logger.info(`   Detected project: ${projectType}\n`);
 
     // Check existing config
@@ -220,7 +220,7 @@ export async function init(options: InitOptions): Promise<void> {
     }
 
     // Initialize
-    const spinner = options.silent ? null : ora('Initializing Brutalist UI...').start();
+    const spinner = options.silent ? null : ora('Initializing Brutx...').start();
 
     try {
         // Create config file
@@ -243,7 +243,7 @@ export async function init(options: InitOptions): Promise<void> {
             spinner?.info('Added brutalist styles to ' + settings.tailwind.css);
         }
 
-        spinner?.succeed('Brutalist UI initialized successfully!');
+        spinner?.succeed('Brutx initialized successfully!');
 
         // Install dependencies
         const packageManager = detectPackageManager(cwd);
@@ -267,9 +267,9 @@ export async function init(options: InitOptions): Promise<void> {
         logger.info('     npx brutx@latest add button');
         logger.info('     npx brutx@latest add --all');
         logger.newLine();
-        logger.dim('Documentation: https://brutalistui.site/docs');
+        logger.dim('Documentation: https://brutxui.site/docs');
     } catch (error) {
-        spinner?.fail('Failed to initialize Brutalist UI');
+        spinner?.fail('Failed to initialize Brutx');
         console.error(error);
         process.exit(1);
     }

@@ -1,6 +1,6 @@
 # Component Registry System
 
-Brutalist UI distributes React components dynamically using a **registry-based architecture**. Instead of installing a massive npm package containing all styles and layouts, users fetch components on-demand directly into their local codebase.
+Brutx distributes React components dynamically using a **registry-based architecture**. Instead of installing a massive npm package containing all styles and layouts, users fetch components on-demand directly into their local codebase.
 
 ---
 
@@ -45,7 +45,7 @@ Each registry item follows this TypeScript schema structure:
 - **`name`** *(string)*: Unique identifier of the component.
 - **`type`** *(string)*: Type of registry item (usually `"registry:ui"`).
 - **`dependencies`** *(string[])*: Third-party npm packages required by this component (e.g. `lucide-react`, `@radix-ui/react-slot`).
-- **`registryDependencies`** *(string[])*: Other Brutalist UI components required by this component.
+- **`registryDependencies`** *(string[])*: Other Brutx components required by this component.
 - **`files`** *(Array)*: List of files to be written to the user's project, containing paths relative to the component alias and the raw file string content.
 
 ---
@@ -67,10 +67,10 @@ To add a new component dynamically:
    ```
 3. Run the automated registry bundler script:
    ```bash
-   pnpm --filter brutalist-ui-registry build
+   pnpm --filter brutx-registry build
    ```
    This script will:
    - Read the template code.
-   - Use Regex to automatically detect any other Brutalist UI components imported in the file (and add them as `registryDependencies`).
+   - Use Regex to automatically detect any other Brutx components imported in the file (and add them as `registryDependencies`).
    - Package everything into a static `.json` schema file inside `packages/registry/registry/`.
 4. Commit your changes and push to GitHub. Once pushed, it becomes instantly available worldwide!

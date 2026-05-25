@@ -7,7 +7,7 @@ const config: Config = {
         './components/**/*.{js,ts,jsx,tsx,mdx}',
         './app/**/*.{js,ts,jsx,tsx,mdx}',
         '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
-        './node_modules/brutalist-ui/**/*.{js,mjs}',
+        './node_modules/brutx-ui/**/*.{js,mjs}',
     ],
     theme: {
         extend: {

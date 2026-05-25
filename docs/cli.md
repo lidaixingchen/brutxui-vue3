@@ -1,6 +1,6 @@
-# Brutalist UI CLI Reference
+# Brutx CLI Reference
 
-The Brutalist UI CLI (`brutx`) is an on-demand tool for project initialization, styles configuration, and component installation.
+The Brutx CLI (`brutx`) is an on-demand tool for project initialization, styles configuration, and component installation.
 
 ---
 
@@ -18,7 +18,7 @@ npx brutx@latest [command] [options]
 
 ### 1. `init`
 
-Initialize Brutalist UI configuration and style system in your local project.
+Initialize Brutx configuration and style system in your local project.
 
 ```bash
 npx brutx@latest init [options]
@@ -57,7 +57,7 @@ npx brutx@latest add [components...] [options]
 
 #### Options:
 - `-y, --yes`: Skip confirmation picker if no components arguments are passed.
-- `-a, --all`: Add all 27 available Brutalist UI components.
+- `-a, --all`: Add all 27 available Brutx components.
 - `-o, --overwrite`: Overwrite existing local components files if they exist.
 - `-p, --path <path>`: Override the path to install components to.
 - `-c, --cwd <cwd>`: Override working directory.
@@ -73,7 +73,7 @@ The CLI reads and writes project settings inside `components.json`:
 
 ```json
 {
-  "$schema": "https://brutalistui.site/schema.json",
+  "$schema": "https://brutxui.site/schema.json",
   "style": "brutalism",
   "tailwind": {
     "config": "tailwind.config.js",

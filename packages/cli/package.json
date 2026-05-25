@@ -1,6 +1,6 @@
 {
     "name": "brutx",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "CLI for adding Brutalist UI components to your project",
     "bin": {
         "brutx": "dist/index.js"
@@ -31,7 +31,7 @@
         "vitest": "^1.3.1"
     },
     "keywords": [
-        "brutalist-ui",
+        "brutx",
         "cli",
         "neo-brutalism",
         "react",
@@ -41,7 +41,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dev-snake/brutalist-ui"
+        "url": "https://github.com/dev-snake/brutx"
     },
-    "homepage": "https://brutalistui.site"
+    "homepage": "https://brutxui.site"
 }

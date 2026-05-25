@@ -6,12 +6,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Constants & Templates paths
-const CLI_LIB_PATH = path.resolve(__dirname, '../../cli/src/lib/constants.ts');
-const CLI_TEMPLATES_PATH = path.resolve(__dirname, '../../cli/src/templates/index.ts');
+// Constants & Paths
+const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
-// Function to resolve ESM imports dynamically or via standard reading
+// Function to build registry components
 async function run() {
     console.log('🚀 Starting registry build...');
 
@@ -22,22 +21,36 @@ async function run() {
 
     // Dynamic imports since we are using tsx
     const { COMPONENTS } = await import('../../cli/src/lib/constants.ts');
-    const { getComponentTemplate } = await import('../../cli/src/templates/index.ts');
 
     const componentNames = Object.keys(COMPONENTS);
     console.log(`📦 Found ${componentNames.length} components to process.`);
 
     const registryIndex: Record<string, any> = {
-        name: 'brutalist-ui',
-        homepage: 'https://brutalistui.site',
+        name: 'brutx',
+        homepage: 'https://brutxui.site',
         items: []
     };
 
     for (const name of componentNames) {
         try {
             const componentInfo = COMPONENTS[name];
-            // Call template with the default shadcn/ui utils alias placeholder: "@/lib/utils"
-            const code = getComponentTemplate(name, '@/lib/utils');
+            const componentFilePath = path.join(UI_COMPONENTS_DIR, `${name}.tsx`);
+
+            if (!fs.existsSync(componentFilePath)) {
+                throw new Error(`Source file not found at ${componentFilePath}`);
+            }
+
+            let code = fs.readFileSync(componentFilePath, 'utf-8');
+
+            // 1. Replace relative utils imports
+            code = code.replace(/['"]\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
+            code = code.replace(/['"]\.\.\/\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
+
+            // 2. Replace local relative component imports like './button'
+            for (const otherName of componentNames) {
+                const relativeImportRegex = new RegExp(`(['"])\\.\\/${otherName}(['"])`, 'g');
+                code = code.replace(relativeImportRegex, `$1@/components/ui/${otherName}$2`);
+            }
 
             // Detect registry dependencies using regex
             const registryDeps = new Set<string>();
@@ -82,8 +95,8 @@ async function run() {
                     }
                 ]
             });
-        } catch (err) {
-            console.error(`✗ Failed to process component ${name}:`, err);
+        } catch (err: any) {
+            console.error(`✗ Failed to process component ${name}:`, err.message || err);
         }
     }
 
