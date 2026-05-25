@@ -251,6 +251,8 @@ export async function init(options: InitOptions): Promise<void> {
         const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind.css);
         if (stylesAdded) {
             spinner?.info('Added brutalist styles to ' + settings.tailwind.css);
+        } else {
+            spinner?.info('Brutalist design tokens already present in ' + settings.tailwind.css + ', skipped duplicate injection.');
         }
 
         spinner?.succeed('Brutx initialized successfully!');

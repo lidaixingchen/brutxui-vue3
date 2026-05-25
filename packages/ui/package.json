@@ -51,7 +51,8 @@
         "dist"
     ],
     "sideEffects": [
-        "**/*.css"
+        "**/*.css",
+        "*.css"
     ],
     "scripts": {
         "build": "tsup",

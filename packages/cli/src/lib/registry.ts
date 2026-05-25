@@ -113,18 +113,32 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
     const visited = new Set<string>();
     const active = new Set<string>();
 
-    async function dfs(name: string) {
-        if (active.has(name)) {
-            throw new Error(`Circular dependency detected: ${name}`);
+    async function dfs(fullName: string) {
+        let cleanName = fullName;
+        let itemSource = source;
+
+        if (fullName.includes('@')) {
+            const parts = fullName.split('@');
+            cleanName = parts[0];
+            const version = parts[1];
+            
+            // If the source is the default hosted registry, point to the version-pinned directory
+            if (source === DEFAULT_REGISTRY_URL) {
+                itemSource = `https://raw.githubusercontent.com/dev-snake/brutxui/${version}/packages/registry/registry`;
+            }
         }
-        if (visited.has(name)) {
+
+        if (active.has(cleanName)) {
+            throw new Error(`Circular dependency detected: ${cleanName}`);
+        }
+        if (visited.has(cleanName)) {
             return;
         }
 
-        active.add(name);
+        active.add(cleanName);
         
         try {
-            const item = await getItem(name, source);
+            const item = await getItem(cleanName, itemSource);
             
             if (item.registryDependencies && item.registryDependencies.length > 0) {
                 for (const dep of item.registryDependencies) {
@@ -132,11 +146,11 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
                 }
             }
 
-            active.delete(name);
-            visited.add(name);
+            active.delete(cleanName);
+            visited.add(cleanName);
             resolved.push(item);
         } catch (err) {
-            active.delete(name);
+            active.delete(cleanName);
             throw err;
         }
     }

@@ -88,4 +88,19 @@ describe('resolveDeps with mocked fetch', () => {
 
         await expect(registry.resolveDeps(['a'], 'https://registry.mock')).rejects.toThrow('Circular dependency detected: a');
     });
+
+    it('should correctly parse version-pinned names like component@version', async () => {
+        vi.stubGlobal('fetch', async (url: string) => {
+            // Assert that the fetched URL is version-pinned
+            expect(url).toContain('/v0.2.1/');
+            const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
+            return {
+                ok: true,
+                json: async () => mockRegistry[name]
+            };
+        });
+
+        const resolved = await registry.resolveDeps(['button@v0.2.1']);
+        expect(resolved.map(r => r.name)).toEqual(['button']);
+    });
 });

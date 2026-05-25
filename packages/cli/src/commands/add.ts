@@ -52,10 +52,13 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
  * Validate component names against the list of available components
  */
 async function validateComponents(components: string[]): Promise<void> {
-    const invalid = components.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
+    const cleanComponents = components.map(c => c.split('@')[0]);
+    const invalid = cleanComponents.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
 
     if (invalid.length > 0) {
+        logger.newLine();
         logger.error(`Unknown components: ${invalid.join(', ')}`);
+        logger.warn('Please choose from the available list or run npx brutx add interactively without arguments.');
         logger.warn(`Available: ${AVAILABLE_COMPONENTS.join(', ')}`);
         process.exit(1);
     }
@@ -151,9 +154,10 @@ async function writeRegistryFiles(
     cwd: string,
     options: AddOptions,
     spinner: Ora | null
-): Promise<{ added: string[]; skipped: string[] }> {
+): Promise<{ added: string[]; skipped: string[]; filesWritten: string[] }> {
     const added: string[] = [];
     const skipped: string[] = [];
+    const filesWritten: string[] = [];
 
     for (const item of items) {
         let itemAdded = false;
@@ -161,7 +165,13 @@ async function writeRegistryFiles(
         for (const file of item.files) {
             const targetPath = resolveComponentFilePath(file.path, config, cwd);
             
-            // Security check: path traversal prevention
+            // Security check: path traversal prevention on file.path itself
+            const normalizedPath = path.normalize(file.path);
+            if (normalizedPath.startsWith('..') || path.isAbsolute(normalizedPath)) {
+                throw new Error(`Security Error: Malicious component file path detected: "${file.path}".`);
+            }
+
+            // Security check: path traversal prevention on resolved target path
             if (!isSafePath(targetPath, cwd)) {
                 throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetPath}".`);
             }
@@ -178,6 +188,7 @@ async function writeRegistryFiles(
             if (options.dryRun) {
                 spinner?.info(`[Dry Run] Would create file: ${targetPath}`);
                 itemAdded = true;
+                filesWritten.push(targetPath);
                 continue;
             }
 
@@ -186,6 +197,7 @@ async function writeRegistryFiles(
             const resolvedContent = resolveImportAlias(file.content, config);
             await fs.writeFile(targetPath, resolvedContent, 'utf-8');
             itemAdded = true;
+            filesWritten.push(targetPath);
         }
 
         if (itemAdded && !skipped.includes(item.name)) {
@@ -193,7 +205,7 @@ async function writeRegistryFiles(
         }
     }
 
-    return { added, skipped };
+    return { added, skipped, filesWritten };
 }
 
 // ============================================================================
@@ -270,13 +282,46 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const utilsPath = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
 
     // Start adding
-    const spinner = options.silent ? null : ora('Resolving and loading components from registry...').start();
+    const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
     try {
         // Resolve components and their dependencies from registry
         const registryItems = await resolveDeps(selectedComponents, options.registry);
+        
         if (spinner) {
-            spinner.text = `Adding ${registryItems.length} components (including dependencies)...`;
+            spinner.stop();
+        }
+
+        // Preview installation plan
+        logger.bold('\n📦 Brutx CLI - Installation Plan:');
+        logger.info(`   Registry source: ${options.registry || 'Default Brutx hosted registry'}`);
+        logger.newLine();
+
+        logger.bold('🧩 Components to install/update:');
+        for (const item of registryItems) {
+            const depsStr = item.registryDependencies && item.registryDependencies.length > 0
+                ? ` (depends on: ${item.registryDependencies.join(', ')})`
+                : '';
+            logger.info(`   - ${item.name}${depsStr}`);
+        }
+        logger.newLine();
+
+        // Collect all npm dependencies from the resolved registry items
+        const allDeps = new Set<string>();
+        for (const item of registryItems) {
+            if (item.dependencies) {
+                item.dependencies.forEach((dep) => allDeps.add(dep));
+            }
+        }
+
+        if (allDeps.size > 0) {
+            logger.bold('📚 Required npm packages:');
+            logger.info(`   ${Array.from(allDeps).join(', ')}`);
+            logger.newLine();
+        }
+
+        if (spinner) {
+            spinner.start('Adding component files...');
         }
 
         // Ensure utils exists
@@ -288,7 +333,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         }
 
         // Write files
-        const { added, skipped } = await writeRegistryFiles(
+        const { added, skipped, filesWritten } = await writeRegistryFiles(
             registryItems,
             config,
             cwd,
@@ -307,11 +352,13 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             spinner?.succeed(summary);
         }
 
-        // Collect all npm dependencies from the resolved registry items
-        const allDeps = new Set<string>();
-        for (const item of registryItems) {
-            if (item.dependencies) {
-                item.dependencies.forEach((dep) => allDeps.add(dep));
+        // Print files summary
+        if (added.length > 0 && filesWritten.length > 0) {
+            logger.newLine();
+            logger.bold('💾 Files written to disk:');
+            for (const filePath of filesWritten) {
+                const relativePath = path.relative(cwd, filePath);
+                logger.success(`   ✓ ${relativePath}`);
             }
         }
 
