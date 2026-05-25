@@ -1,7 +1,7 @@
 {
-    "name": "Brutalist UI",
-    "short_name": "BrutalistUI",
-    "description": "Neo-Brutalism React Component Library - 26+ accessible components with bold borders, offset shadows, and vibrant colors.",
+    "name": "Brutx",
+    "short_name": "Brutx",
+    "description": "Brutx - Neo-Brutalism React Component Library - 27+ accessible components with bold borders, offset shadows, and vibrant colors.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#FFFBF5",

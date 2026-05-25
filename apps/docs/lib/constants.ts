@@ -1,7 +1,7 @@
 export const SITE_CONFIG = {
     name: 'Brutx',
     title: 'Brutx - Neo Brutalism React Component Library',
-    description: 'Brutx UI library for React. 26+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors. Free & open-source. Built with Radix UI, Tailwind CSS. Use CLI: npx brutx@latest init. Best shadcn alternative for brutalist design.',
+    description: 'Brutx UI library for React. 27+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors. Free & open-source. Built with Radix UI, Tailwind CSS. Use CLI: npx brutx@latest init. Best shadcn alternative for brutalist design.',
     url: 'https://brutxui.site',
     github: {
         owner: 'dev-snake',

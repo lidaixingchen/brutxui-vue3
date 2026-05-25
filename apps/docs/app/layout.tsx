@@ -13,7 +13,7 @@ export const metadata: Metadata = {
         template: '%s | Brutx',
     },
     description:
-        'Brutx UI library for React. 26+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors. Free & open-source. Built with Radix UI, Tailwind CSS. Use CLI: npx brutx@latest init. Best shadcn alternative for brutalist design.',
+        'Brutx UI library for React. 27+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors. Free & open-source. Built with Radix UI, Tailwind CSS. Use CLI: npx brutx@latest init. Best shadcn alternative for brutalist design.',
     metadataBase: new URL('https://brutxui.site'),
     keywords: [
         // Primary keywords (exact match từ Google search)
@@ -87,7 +87,7 @@ export const metadata: Metadata = {
         siteName: 'Brutx',
         title: 'Brutx - Neo Brutalism React Component Library',
         description:
-            'Brutx UI library with 26+ Neo Brutalism components. Bold borders, offset shadows, vibrant colors. Free & open-source React UI kit. Best shadcn alternative.',
+            'Brutx UI library with 27+ Neo Brutalism components. Bold borders, offset shadows, vibrant colors. Free & open-source React UI kit. Best shadcn alternative.',
         images: [
             {
                 url: '/og-image.svg',
@@ -102,7 +102,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Brutx - Neo Brutalism React Component Library',
         description:
-            'Brutx UI library with 26+ Neo Brutalism React components. Free & open-source.',
+            'Brutx UI library with 27+ Neo Brutalism React components. Free & open-source.',
         images: ['/og-image.svg'],
         creator: '@devsnake',
     },
@@ -127,7 +127,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         alternateName: ['Brutx UI', 'Neo Brutalism UI', 'BrutxUI'],
         url: 'https://brutxui.site',
         description:
-            'Brutx UI library for React. 26+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors.',
+            'Brutx UI library for React. 27+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors.',
         publisher: {
             '@id': 'https://brutxui.site/#organization',
         },
@@ -168,7 +168,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         applicationSubCategory: 'UI Component Library',
         operatingSystem: 'Any',
         description:
-            'Brutx UI library for React with 26+ Neo Brutalism components. Bold borders, offset shadows, vibrant colors. Free & open-source.',
+            'Brutx UI library for React with 27+ Neo Brutalism components. Bold borders, offset shadows, vibrant colors. Free & open-source.',
         url: 'https://brutxui.site',
         downloadUrl: 'https://www.npmjs.com/package/brutx-ui',
         softwareVersion: '0.1.7',
@@ -211,7 +211,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 '@type': 'SiteNavigationElement',
                 position: 3,
                 name: 'Components',
-                description: 'Browse all 26+ Neo Brutalism UI components',
+                description: 'Browse all 27+ Neo Brutalism UI components',
                 url: 'https://brutxui.site/docs/components',
             },
             {
