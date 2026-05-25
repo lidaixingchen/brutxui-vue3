@@ -15,7 +15,7 @@ export default function SaasPricingPage() {
             <p>Premium SaaS pricing plans, features matrix, and billing frequency toggles with stark Neo-Brutalist design.</p>
 
             <h2>Preview</h2>
-            <ComponentPreview className="flex-col items-stretch gap-4 p-0">
+            <ComponentPreview align="stretch">
                 <SaaSPricing />
             </ComponentPreview>
 

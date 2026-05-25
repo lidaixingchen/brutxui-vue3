@@ -22,7 +22,7 @@ export default function DashboardShellDocPage() {
 
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Interactive Preview</h2>
-                <ComponentPreview>
+                <ComponentPreview align="stretch">
                     <div className="w-full bg-gray-100 dark:bg-gray-900 p-1 border-3 border-black">
                         <DashboardShell 
                             onSignOutClick={() => alert('Signing out of console...')}

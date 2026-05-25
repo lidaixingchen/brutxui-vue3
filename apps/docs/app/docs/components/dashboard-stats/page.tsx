@@ -15,7 +15,7 @@ export default function DashboardStatsPage() {
             <p>Premium dashboard stat metrics, trends indicators, and visual target/progress limits with a heavy neo-brutalist theme.</p>
 
             <h2>Preview</h2>
-            <ComponentPreview className="flex-col items-stretch gap-4 p-0">
+            <ComponentPreview align="stretch">
                 <DashboardStats />
             </ComponentPreview>
 

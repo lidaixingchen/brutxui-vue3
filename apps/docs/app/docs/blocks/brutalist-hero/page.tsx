@@ -22,7 +22,7 @@ export default function BrutalistHeroDocPage() {
 
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Interactive Preview</h2>
-                <ComponentPreview>
+                <ComponentPreview align="stretch">
                     <div className="w-full border-3 border-black p-1 bg-gray-50 dark:bg-gray-900">
                         <BrutalistHero 
                             primaryCtaText="Launch App Console"
