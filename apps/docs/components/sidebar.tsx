@@ -21,6 +21,7 @@ const navigation = [
     },
     { name: 'CLI', href: '/docs/cli' },
     { name: 'Theme & Tokens', href: '/docs/theme' },
+    { name: 'AI Integration', href: '/docs/ai' },
     {
         name: 'Components',
         href: '/docs/components',

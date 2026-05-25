@@ -1,87 +1,41 @@
-# Brutx - Neo-Brutalist React UI Component Registry
+# BrutxUI
 
-Brutx (brutx-ui) is a premium, highly modular React component system using Radix UI primitives and Tailwind CSS, tailored with a bold **neo-brutalist** design language.
+The ultimate copy-paste Neo-Brutalist React & Tailwind CSS component registry. Bold, raw, accessible, and 100% compatible with shadcn/ui.
 
-Instead of heavy NPM dependency trees, components are copied directly into the user's project codebase (similar to shadcn/ui) via the registry-driven CLI tool `brutx`.
+## Philosophy
+BrutxUI distributes components on-demand via a JSON registry CLI rather than a monolithic node dependency. You copy, paste, and own the code.
 
----
+## Visual Styling Rules
+- **Borders:** Thick black outlines using `border-3 border-black` (or `dark:border-white` in dark mode).
+- **Shadows:** Hard offset shadows using `shadow-brutal` (4px 4px 0px 0px #000) or `shadow-brutal-lg` (6px 6px). Avoid standard blurred shadows.
+- **Corners:** Sharp 0px corners via `rounded-none`, or global token parameterized classes like `rounded-brutal`.
+- **Transitions / Press:** Physical press effect translation on active state: `active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#000] transition-all`.
+- **Contrast / Accents:** Neon saturated colors: Coral (`#FF6B6B`), Mint Teal (`#4ECDC4`), Saturated Yellow (`#FFE66D`).
 
-## 🎨 Design System Foundation
+## Directory Structure
+- `apps/docs/`: Next.js 15 documentation website
+- `packages/ui/`: Core React source code modules (`brutx-ui`)
+  - `src/components/ui/`: Direct component files (e.g. `button.tsx`, `card.tsx`)
+- `packages/cli/`: CLI package commands (`brutx`) for `init` and `add`
+- `packages/registry/`: Dynamic JSON component registry builder
 
-BrutxUI features thick solid borders, hard offsets, flat shadows, bold typography, and vibrant pastel/vivid accent colors.
-
-### CSS variables / Design Tokens
-All brutalist attributes are controlled via CSS custom properties defined in your global stylesheet:
-
-```css
-:root {
-    --brutal-border-width: 3px;
-    --brutal-border-color: #000000;
-    --brutal-shadow-color: #000000;
-    --brutal-shadow-offset-sm: 2px;
-    --brutal-shadow-offset: 4px;
-    --brutal-shadow-offset-lg: 6px;
-    --brutal-shadow-offset-xl: 8px;
-}
-
-.dark {
-    --brutal-border-color: #ffffff;
-    --brutal-shadow-color: #ffffff;
-}
-```
-
-### Key Utility Classes
-- `.border-3`: Applies border width defined by `--brutal-border-width`.
-- `.border-brutal`: Applies border color defined by `--brutal-border-color`.
-- `.shadow-brutal`: Applies `4px` (configurable) hard offset shadow responsive to dark mode.
-- `.shadow-brutal-sm`: Applies `2px` hard offset shadow.
-- `.shadow-brutal-lg`: Applies `6px` hard offset shadow.
-- `.shadow-brutal-xl`: Applies `8px` hard offset shadow.
-- `.nb-press`: Standard active scale/transition offset for pressed interactive states.
-
----
-
-## 🧱 Registry Structure & Monorepo
-
-The codebase is organized as a pnpm monorepo workspace:
-
-- `apps/docs/`: Next.js 15 documentation portal.
-- `packages/ui/`: Core react source library and component exports.
-- `packages/cli/`: Binary tool compiling config, installing dependencies, and writing registry TSX files directly to aliases.
-- `packages/registry/`: Component compiler script generating `.json` schemas from `packages/ui` source TSX.
-- `packages/shared/`: Shared component models and metadata maps.
-
----
-
-## ⚙️ Usage & Integration
-
-### CLI Commands
-Initialize Brutx inside a React/NextJS/Vite workspace:
+## Core Commands
 ```bash
+# Initialize BrutxUI
 npx brutx@latest init
+
+# Add atomic components
+npx brutx@latest add button card dialog
+
+# Add all components
+npx brutx@latest add --all
+
+# shadcn compatibility workflow addition
+npx shadcn@latest add https://brutxui.site/registry/button.json
 ```
 
-Add components recursively resolving internal registry dependencies:
-```bash
-# Add a single component (e.g., button)
-npx brutx@latest add button
-
-# Add multiple components
-npx brutx@latest add button card badge
-
-# Force overwrite local overrides
-npx brutx@latest add button --overwrite
-
-# Dry run installation simulation
-npx brutx@latest add button --dry-run
-```
-
----
-
-## 🛡️ Coding Rules & Strict Guidelines
-
-For developers building components or templates for BrutxUI:
-1. **Strict TypeScript:** Prefer exhaustive types, exact interface declarations, and avoid `any`.
-2. **Accessibility (ARIA):** Always use Radix primitives for interactive overlay and complex navigation structures (Dialog, Select, Dropdown, Combobox).
-3. **No magic style overrides:** Prefer using the design token utility classes (`border-3`, `border-brutal`, `shadow-brutal`, etc.) over hard-coded tailwind hex values (`border-[#000]`).
-4. **Preserve Neo-Brutalist Identity:** Keep shadows completely flat (no blur), keep borders thick, and focus on playful, high-contrast hover states.
+## Creating Custom Components
+1. Save React markup in `packages/ui/src/components/ui/my-component.tsx`
+2. Extend class variance authorities (CVA) inside components.
+3. Import the shared class merger utility `cn` from `@/lib/utils` or `../lib/utils` depending on nesting depths.
+4. Keep props predictable, well-typed, and accessible.

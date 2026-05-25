@@ -111,6 +111,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly',
             priority: 0.9,
         },
+        // AI Integration page - modern AI readiness guide
+        {
+            url: `${baseUrl}/docs/ai`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
         // Installation pages
         ...installationPages,
         // Sponsor page
