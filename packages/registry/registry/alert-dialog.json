@@ -1,0 +1,94 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-dialog",
+  "type": "registry:ui",
+  "title": "Alert Dialog",
+  "description": "A highly customizable neo-brutalist Alert Dialog component built with Brutx design tokens.",
+  "dependencies": [
+    "@radix-ui/react-alert-dialog"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/ui/alert-dialog.tsx",
+      "content": "import * as React from 'react';\nimport * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';\n\nimport { cn } from '@/lib/utils';\nimport { buttonVariants } from '@/components/ui/button';\n\nconst AlertDialog = AlertDialogPrimitive.Root;\nconst AlertDialogTrigger = AlertDialogPrimitive.Trigger;\nconst AlertDialogPortal = AlertDialogPrimitive.Portal;\nconst AlertDialogCancel = AlertDialogPrimitive.Cancel;\n\nconst AlertDialogOverlay = React.forwardRef<\n    React.ElementRef<typeof AlertDialogPrimitive.Overlay>,\n    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>\n>(({ className, ...props }, ref) => (\n    <AlertDialogPrimitive.Overlay\n        ref={ref}\n        className={cn(\n            'fixed inset-0 z-50 bg-black/50',\n            'data-[state=open]:animate-in data-[state=closed]:animate-out',\n            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n            className\n        )}\n        {...props}\n    />\n));\nAlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;\n\nconst AlertDialogContent = React.forwardRef<\n    React.ElementRef<typeof AlertDialogPrimitive.Content>,\n    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>\n>(({ className, ...props }, ref) => (\n    <AlertDialogPortal>\n        <AlertDialogOverlay />\n        <AlertDialogPrimitive.Content\n            ref={ref}\n            className={cn(\n                'fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]',\n                'w-full max-w-lg p-6',\n                'bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal-xl',\n                'duration-200',\n                'data-[state=open]:animate-in data-[state=closed]:animate-out',\n                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n                'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n                'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',\n                'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',\n                className\n            )}\n            {...props}\n        />\n    </AlertDialogPortal>\n));\nAlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;\n\nconst AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (\n    <div\n        className={cn('flex flex-col space-y-2 pb-4 border-b-3 border-brutal', className)}\n        {...props}\n    />\n);\nAlertDialogHeader.displayName = 'AlertDialogHeader';\n\nconst AlertDialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (\n    <div\n        className={cn(\n            'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal',\n            className\n        )}\n        {...props}\n    />\n);\nAlertDialogFooter.displayName = 'AlertDialogFooter';\n\nconst AlertDialogTitle = React.forwardRef<\n    React.ElementRef<typeof AlertDialogPrimitive.Title>,\n    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>\n>(({ className, ...props }, ref) => (\n    <AlertDialogPrimitive.Title\n        ref={ref}\n        className={cn('text-xl font-black tracking-tight', className)}\n        {...props}\n    />\n));\nAlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;\n\nconst AlertDialogDescription = React.forwardRef<\n    React.ElementRef<typeof AlertDialogPrimitive.Description>,\n    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>\n>(({ className, ...props }, ref) => (\n    <AlertDialogPrimitive.Description\n        ref={ref}\n        className={cn('text-sm text-gray-600 dark:text-gray-400 font-medium', className)}\n        {...props}\n    />\n));\nAlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;\n\nconst AlertDialogAction = React.forwardRef<\n    React.ElementRef<typeof AlertDialogPrimitive.Action>,\n    React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> & {\n        variant?: 'primary' | 'secondary' | 'accent' | 'destructive' | 'outline';\n    }\n>(({ className, variant = 'primary', ...props }, ref) => (\n    <AlertDialogPrimitive.Action\n        ref={ref}\n        className={cn(buttonVariants({ variant }), className)}\n        {...props}\n    />\n));\nAlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;\n\nexport {\n    AlertDialog,\n    AlertDialogPortal,\n    AlertDialogOverlay,\n    AlertDialogTrigger,\n    AlertDialogContent,\n    AlertDialogHeader,\n    AlertDialogFooter,\n    AlertDialogTitle,\n    AlertDialogDescription,\n    AlertDialogAction,\n    AlertDialogCancel,\n};\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
+}

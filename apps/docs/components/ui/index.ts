@@ -28,6 +28,9 @@ export * from './toast';
 export * from './tooltip';
 export * from './saas-pricing';
 export * from './dashboard-stats';
+export * from './form';
+export * from './alert-dialog';
+export * from './sheet';
 
 // Re-export utils
 export { cn } from '@/lib/utils';

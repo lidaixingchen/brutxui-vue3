@@ -48,6 +48,9 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     tooltip: { name: 'tooltip', dependencies: ['@radix-ui/react-tooltip'] },
     'saas-pricing': { name: 'saas-pricing', dependencies: ['lucide-react'] },
     'dashboard-stats': { name: 'dashboard-stats', dependencies: ['lucide-react'] },
+    form: { name: 'form', dependencies: ['react-hook-form', 'zod', '@radix-ui/react-label', '@radix-ui/react-slot'] },
+    'alert-dialog': { name: 'alert-dialog', dependencies: ['@radix-ui/react-alert-dialog'] },
+    sheet: { name: 'sheet', dependencies: ['@radix-ui/react-dialog', 'lucide-react'] },
 } as const;
 
 /** List of all available component names */

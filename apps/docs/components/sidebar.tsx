@@ -27,6 +27,7 @@ const navigation = [
         href: '/docs/components',
         children: [
             { name: 'Alert', href: '/docs/components/alert' },
+            { name: 'Alert Dialog', href: '/docs/components/alert-dialog' },
             { name: 'Avatar', href: '/docs/components/avatar' },
             { name: 'Badge', href: '/docs/components/badge' },
             { name: 'Button', href: '/docs/components/button' },
@@ -38,6 +39,7 @@ const navigation = [
             {name: 'Dashboard Stats', href: '/docs/components/dashboard-stats'},
             {name: 'Dialog', href: '/docs/components/dialog'},
             {name: 'Dropdown Menu', href: '/docs/components/dropdown-menu'},
+            {name: 'Form', href: '/docs/components/form'},
             {name: 'Input', href: '/docs/components/input'},
             {name: 'Label', href: '/docs/components/label'},
             {name: 'Pagination', href: '/docs/components/pagination'},
@@ -45,6 +47,7 @@ const navigation = [
             {name: 'Scroll Area', href: '/docs/components/scroll-area'},
             {name: 'Select', href: '/docs/components/select'},
             {name: 'Separator', href: '/docs/components/separator'},
+            {name: 'Sheet', href: '/docs/components/sheet'},
             {name: 'Skeleton', href: '/docs/components/skeleton'},
             {name: 'Spinner', href: '/docs/components/spinner'},
             {name: 'Submit Button', href: '/docs/components/submit-button'},

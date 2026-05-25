@@ -6,6 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // Component pages - QUAN TRỌNG: Đây là những trang Google sẽ index cho sitelinks
     const components = [
         'alert',
+        'alert-dialog',
         'avatar',
         'badge',
         'button',
@@ -16,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         'command',
         'dialog',
         'dropdown-menu',
+        'form',
         'input',
         'label',
         'pagination',
@@ -23,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         'scroll-area',
         'select',
         'separator',
+        'sheet',
         'skeleton',
         'spinner',
         'submit-button',
