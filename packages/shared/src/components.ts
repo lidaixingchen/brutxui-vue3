@@ -51,6 +51,11 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     form: { name: 'form', dependencies: ['react-hook-form', 'zod', '@radix-ui/react-label', '@radix-ui/react-slot'] },
     'alert-dialog': { name: 'alert-dialog', dependencies: ['@radix-ui/react-alert-dialog'] },
     sheet: { name: 'sheet', dependencies: ['@radix-ui/react-dialog', 'lucide-react'] },
+    'radio-group': { name: 'radio-group', dependencies: ['@radix-ui/react-radio-group', 'lucide-react'] },
+    slider: { name: 'slider', dependencies: ['@radix-ui/react-slider'] },
+    progress: { name: 'progress', dependencies: ['@radix-ui/react-progress'] },
+    toggle: { name: 'toggle', dependencies: ['@radix-ui/react-toggle'] },
+    'toggle-group': { name: 'toggle-group', dependencies: ['@radix-ui/react-toggle-group'] },
 } as const;
 
 /** List of all available component names */

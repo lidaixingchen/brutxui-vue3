@@ -31,6 +31,11 @@ export * from './dashboard-stats';
 export * from './form';
 export * from './alert-dialog';
 export * from './sheet';
+export * from './radio-group';
+export * from './slider';
+export * from './progress';
+export * from './toggle';
+export * from './toggle-group';
 
 // Re-export utils
 export { cn } from '@/lib/utils';

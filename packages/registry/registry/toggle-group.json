@@ -1,0 +1,94 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "toggle-group",
+  "type": "registry:ui",
+  "title": "Toggle Group",
+  "description": "A highly customizable neo-brutalist Toggle Group component built with Brutx design tokens.",
+  "dependencies": [
+    "@radix-ui/react-toggle-group"
+  ],
+  "registryDependencies": [
+    "toggle"
+  ],
+  "files": [
+    {
+      "path": "components/ui/toggle-group.tsx",
+      "content": "'use client';\n\nimport * as React from 'react';\nimport * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';\nimport { VariantProps } from 'class-variance-authority';\n\nimport { cn } from '@/lib/utils';\nimport { toggleVariants } from '@/components/ui/toggle';\n\nconst ToggleGroupContext = React.createContext<\n    VariantProps<typeof toggleVariants>\n>({\n    size: 'default',\n    variant: 'default',\n});\n\nconst ToggleGroup = React.forwardRef<\n    React.ElementRef<typeof ToggleGroupPrimitive.Root>,\n    React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &\n        VariantProps<typeof toggleVariants>\n>(({ className, variant, size, children, ...props }, ref) => (\n    <ToggleGroupPrimitive.Root\n        ref={ref}\n        className={cn('flex items-center justify-center gap-1.5', className)}\n        {...props}\n    >\n        <ToggleGroupContext.Provider value={{ variant, size }}>\n            {children}\n        </ToggleGroupContext.Provider>\n    </ToggleGroupPrimitive.Root>\n));\n\nToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName;\n\nconst ToggleGroupItem = React.forwardRef<\n    React.ElementRef<typeof ToggleGroupPrimitive.Item>,\n    React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &\n        VariantProps<typeof toggleVariants>\n>(({ className, children, variant, size, ...props }, ref) => {\n    const context = React.useContext(ToggleGroupContext);\n\n    return (\n        <ToggleGroupPrimitive.Item\n            ref={ref}\n            className={cn(\n                toggleVariants({\n                    variant: context.variant || variant,\n                    size: context.size || size,\n                }),\n                className\n            )}\n            {...props}\n        >\n            {children}\n        </ToggleGroupPrimitive.Item>\n    );\n});\n\nToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName;\n\nexport { ToggleGroup, ToggleGroupItem };\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
+}

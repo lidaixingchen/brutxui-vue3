@@ -32,6 +32,11 @@ export * from './components/dashboard-stats';
 export * from './components/form';
 export * from './components/alert-dialog';
 export * from './components/sheet';
+export * from './components/radio-group';
+export * from './components/slider';
+export * from './components/progress';
+export * from './components/toggle';
+export * from './components/toggle-group';
 // Calendar is exported separately to avoid SSR issues with react-day-picker
 // Import from 'brutx-ui/calendar' instead
 // export * from './components/calendar';
