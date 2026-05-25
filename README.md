@@ -24,7 +24,7 @@
 
   <br />
 
-  [Documentation](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutx/issues)
+  [Documentation](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutxui/issues)
 </div>
 
 
@@ -256,8 +256,8 @@ To test CLI commands or components in a local environment:
 ### 1. Project Initialization & Setup
 ```bash
 # Clone the repository
-git clone https://github.com/dev-snake/brutx.git
-cd brutx
+git clone https://github.com/dev-snake/brutxui.git
+cd brutxui
 
 # Install workspaces dependencies
 pnpm install
@@ -311,7 +311,7 @@ Brutx is open-source software licensed under the [MIT License](LICENSE).
   <p>
     <a href="https://www.npmjs.com/package/brutx-ui">NPM Library</a> •
     <a href="https://www.npmjs.com/package/brutx">NPM CLI</a> •
-    <a href="https://github.com/dev-snake/brutx">GitHub</a> •
+    <a href="https://github.com/dev-snake/brutxui">GitHub</a> •
     <a href="https://brutxui.site">Docs</a>
   </p>
 </div>

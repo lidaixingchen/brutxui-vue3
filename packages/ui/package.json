@@ -130,10 +130,10 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dev-snake/brutx"
+        "url": "https://github.com/dev-snake/brutxui"
     },
     "bugs": {
-        "url": "https://github.com/dev-snake/brutx/issues"
+        "url": "https://github.com/dev-snake/brutxui/issues"
     },
     "homepage": "https://brutxui.site"
 }

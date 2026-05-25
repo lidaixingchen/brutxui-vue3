@@ -3,6 +3,7 @@
 import { Badge } from '@/components/ui';
 import Link from 'next/link';
 import { CodeBlock, PackageManagerTabs } from '@/components/code-block';
+import { SITE_CONFIG } from '@/lib/constants';
 
 export default function ManualInstallationPage() {
     return (
@@ -214,7 +215,7 @@ module.exports = {
                     folder:
                 </p>
                 <a
-                    href="https://github.com/dev-snake/brutx/tree/main/packages/ui/src/components"
+                    href={SITE_CONFIG.github.componentsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-3 font-bold border-3 border-black dark:border-white bg-white dark:bg-gray-900 hover:bg-[#4ECDC4] hover:shadow-brutal transition-all"

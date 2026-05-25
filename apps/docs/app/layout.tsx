@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import 'brutx-ui/styles.css';
+import { SITE_CONFIG } from '@/lib/constants';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -152,7 +153,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         url: 'https://brutxui.site',
         logo: 'https://brutxui.site/favicon.svg',
         sameAs: [
-            'https://github.com/dev-snake/brutx',
+            SITE_CONFIG.github.url,
             'https://www.npmjs.com/package/brutx-ui',
         ],
     };

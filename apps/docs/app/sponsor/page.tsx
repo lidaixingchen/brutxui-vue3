@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Heart, Coffee, Github, Star, Zap, Gift } from 'lucide-react';
 import { Metadata } from 'next';
+import { SITE_CONFIG } from '@/lib/constants';
 
 export const metadata: Metadata = {
     title: 'Sponsor Brutx | Support Open Source Neo-Brutalism Components',
@@ -130,7 +131,7 @@ export default function SponsorPage() {
                     </h2>
                     <div className="flex flex-wrap justify-center gap-4">
                         <a
-                            href="https://github.com/dev-snake/brutx"
+                            href={SITE_CONFIG.github.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border-3 border-black dark:border-white font-bold hover:shadow-[4px_4px_0px_0px_#000] dark:hover:shadow-[4px_4px_0px_0px_#fff] transition-all dark:text-white"
@@ -139,7 +140,7 @@ export default function SponsorPage() {
                             Star on GitHub
                         </a>
                         <a
-                            href="https://twitter.com/intent/tweet?text=Check%20out%20Brutx%20-%20A%20Neo-Brutalism%20styled%20React%20component%20library!%20https://github.com/dev-snake/brutx"
+                            href={SITE_CONFIG.social.twitter}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 border-3 border-black dark:border-white font-bold hover:shadow-[4px_4px_0px_0px_#000] dark:hover:shadow-[4px_4px_0px_0px_#fff] transition-all dark:text-white"

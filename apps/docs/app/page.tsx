@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { SITE_CONFIG } from '@/lib/constants';
 
 export default function Home() {
     return (
@@ -85,7 +86,7 @@ export default function Home() {
                             </Button>
                         </Link>
                         <a
-                            href="https://github.com/dev-snake/brutx"
+                            href={SITE_CONFIG.github.url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full sm:w-auto"
@@ -247,7 +248,7 @@ function App() {
                         </p>
                         <div className="flex gap-4">
                             <a
-                                href="https://github.com/dev-snake/brutx"
+                                href={SITE_CONFIG.github.url}
                                 className="font-bold hover:underline text-sm sm:text-base"
                             >
                                 GitHub

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/components/ui';
+import { SITE_CONFIG } from '@/lib/constants';
 
 interface InstallationTabsProps {
     componentName: string;
@@ -330,7 +331,7 @@ export function InstallationTabs({
                             2. Copy the component code from GitHub:
                         </p>
                         <a
-                            href={`https://github.com/dev-snake/brutx/blob/main/packages/ui/src/components/${componentName}.tsx`}
+                            href={`${SITE_CONFIG.github.componentBlobUrl}/${componentName}.tsx`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 px-4 py-2 font-bold border-3 border-black dark:border-white bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
