@@ -56,6 +56,12 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     progress: { name: 'progress', dependencies: ['@radix-ui/react-progress'] },
     toggle: { name: 'toggle', dependencies: ['@radix-ui/react-toggle'] },
     'toggle-group': { name: 'toggle-group', dependencies: ['@radix-ui/react-toggle-group'] },
+    'brutalist-hero': { name: 'brutalist-hero', dependencies: ['lucide-react'] },
+    'pricing-section': { name: 'pricing-section', dependencies: ['lucide-react'] },
+    'auth-card': { name: 'auth-card', dependencies: ['lucide-react'] },
+    'dashboard-shell': { name: 'dashboard-shell', dependencies: ['lucide-react'] },
+    'empty-state': { name: 'empty-state', dependencies: ['lucide-react'] },
+    'waitlist-page': { name: 'waitlist-page', dependencies: ['lucide-react'] },
 } as const;
 
 /** List of all available component names */

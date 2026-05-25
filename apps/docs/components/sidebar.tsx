@@ -65,6 +65,18 @@ const navigation = [
             {name: 'Tooltip', href: '/docs/components/tooltip'},
         ],
     },
+    {
+        name: 'Blocks & Templates',
+        href: '/docs/blocks',
+        children: [
+            { name: 'Brutalist Hero', href: '/docs/blocks/brutalist-hero' },
+            { name: 'Pricing Section', href: '/docs/blocks/pricing-section' },
+            { name: 'Auth Card', href: '/docs/blocks/auth-card' },
+            { name: 'Dashboard Shell', href: '/docs/blocks/dashboard-shell' },
+            { name: 'Empty State', href: '/docs/blocks/empty-state' },
+            { name: 'Waitlist Page', href: '/docs/blocks/waitlist-page' },
+        ],
+    },
 ];
 
 export function Sidebar() {

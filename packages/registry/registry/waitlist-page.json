@@ -1,0 +1,95 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "waitlist-page",
+  "type": "registry:ui",
+  "title": "Waitlist Page",
+  "description": "A highly customizable neo-brutalist Waitlist Page component built with Brutx design tokens.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "input"
+  ],
+  "files": [
+    {
+      "path": "components/ui/waitlist-page.tsx",
+      "content": "import * as React from 'react';\nimport { Sparkles, Users, Star } from 'lucide-react';\nimport { Button } from '@/components/ui/button';\nimport { Input } from '@/components/ui/input';\n\nexport interface WaitlistPageProps extends React.HTMLAttributes<HTMLDivElement> {\n    title?: string;\n    description?: string;\n    ctaText?: string;\n    onSubmit?: (e: React.FormEvent<HTMLFormElement>, email: string) => void;\n}\n\nexport function WaitlistPage({\n    title = 'Join the BrutxUI Waitlist Club',\n    description = 'Get early developer keys to copy premium blocks, customized theme presets, and unlock deep registry CLI integrations before everyone else.',\n    ctaText = 'Secure Priority Access',\n    onSubmit,\n    className,\n    ...props\n}: WaitlistPageProps) {\n    const [email, setEmail] = React.useState('');\n\n    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {\n        e.preventDefault();\n        if (onSubmit) onSubmit(e, email);\n    };\n\n    return (\n        <section\n            className={`w-full py-16 md:py-24 bg-brutal-bg text-brutal-fg border-3 border-brutal transition-colors duration-200 ${className || ''}`}\n            {...props}\n        >\n            <div className=\"container px-4 md:px-6 mx-auto max-w-4xl\">\n                <div className=\"flex flex-col items-center justify-center text-center space-y-8\">\n                    {/* Badge */}\n                    <div className=\"inline-flex items-center space-x-2 bg-brutal-accent text-black px-4 py-1.5 border-3 border-brutal font-black text-xs uppercase tracking-wider rotate-[-1.5deg]\">\n                        <Sparkles className=\"h-4 w-4 stroke-[3] animate-spin\" />\n                        <span>Private Beta Access Open</span>\n                    </div>\n\n                    {/* Headline */}\n                    <div className=\"space-y-4\">\n                        <h1 className=\"text-4xl font-black tracking-tight sm:text-5xl md:text-6xl leading-[1.05]\">\n                            {title}\n                        </h1>\n                        <p className=\"max-w-[640px] text-lg font-bold text-gray-700 dark:text-gray-300 mx-auto leading-relaxed\">\n                            {description}\n                        </p>\n                    </div>\n\n                    {/* Email Form */}\n                    <form \n                        onSubmit={handleSubmit}\n                        className=\"w-full max-w-md flex flex-col sm:flex-row gap-3 pt-2\"\n                    >\n                        <Input\n                            type=\"email\"\n                            placeholder=\"Enter your personal email...\"\n                            required\n                            value={email}\n                            onChange={(e) => setEmail(e.target.value)}\n                            className=\"flex-grow text-base py-6 bg-white dark:bg-gray-800\"\n                        />\n                        <Button\n                            type=\"submit\"\n                            variant=\"primary\"\n                            className=\"font-black text-sm py-6 px-6 shrink-0\"\n                        >\n                            {ctaText}\n                        </Button>\n                    </form>\n\n                    {/* Social Proof */}\n                    <div className=\"w-full border-t-3 border-brutal pt-8 mt-6\">\n                        <div className=\"grid gap-6 sm:grid-cols-2 md:grid-cols-3 items-center justify-center max-w-2xl mx-auto\">\n                            <div className=\"flex items-center justify-center space-x-2 font-black text-sm\">\n                                <Users className=\"h-5 w-5 text-brutal-secondary stroke-[2.5]\" />\n                                <span>1,840+ Developers on waitlist</span>\n                            </div>\n                            <div className=\"flex items-center justify-center space-x-1 font-black text-sm\">\n                                {[...Array(5)].map((_, i) => (\n                                    <Star key={i} className=\"h-4 w-4 fill-brutal-accent text-black stroke-[2.5]\" />\n                                ))}\n                                <span className=\"pl-1\">4.9/5 stars rating</span>\n                            </div>\n                            <div className=\"flex items-center justify-center space-x-2 font-black text-sm sm:col-span-2 md:col-span-1\">\n                                <span className=\"h-2 w-2 rounded-full bg-brutal-success animate-ping\" />\n                                <span>Beta Invites sent daily</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </section>\n    );\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
+}

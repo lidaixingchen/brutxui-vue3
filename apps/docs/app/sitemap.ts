@@ -83,6 +83,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
     ];
 
+    const blocksList = [
+        'brutalist-hero',
+        'pricing-section',
+        'auth-card',
+        'dashboard-shell',
+        'empty-state',
+        'waitlist-page',
+    ];
+
+    const blockPages = blocksList.map((block) => ({
+        url: `${baseUrl}/docs/blocks/${block}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+    }));
+
     return [
         // Homepage - highest priority
         {
@@ -101,6 +117,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
         // Components overview - important for sitelinks
         {
             url: `${baseUrl}/docs/components`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        // Blocks overview
+        {
+            url: `${baseUrl}/docs/blocks`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
@@ -137,5 +160,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         },
         // All component pages
         ...componentPages,
+        // All block pages
+        ...blockPages,
     ];
 }

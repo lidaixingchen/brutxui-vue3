@@ -37,6 +37,12 @@ export * from './components/slider';
 export * from './components/progress';
 export * from './components/toggle';
 export * from './components/toggle-group';
+export * from './components/brutalist-hero';
+export * from './components/pricing-section';
+export * from './components/auth-card';
+export * from './components/dashboard-shell';
+export * from './components/empty-state';
+export * from './components/waitlist-page';
 // Calendar is exported separately to avoid SSR issues with react-day-picker
 // Import from 'brutx-ui/calendar' instead
 // export * from './components/calendar';
