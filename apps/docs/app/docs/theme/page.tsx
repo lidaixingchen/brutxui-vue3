@@ -48,11 +48,11 @@ export default function ThemeTokensPage() {
                 
                 <div className="overflow-x-auto">
                     <table className="w-full border-3 border-black dark:border-white text-sm">
-                        <thead className="bg-[#FFE66D]">
+                        <thead className="bg-brutal-accent dark:bg-gray-800">
                             <tr>
-                                <th className="px-4 py-2 text-left border-r-3 border-b-3 border-black font-black text-black">Token Name</th>
-                                <th className="px-4 py-2 text-left border-r-3 border-b-3 border-black font-black text-black">Default Value</th>
-                                <th className="px-4 py-2 text-left border-b-3 border-black font-black text-black">Description</th>
+                                <th className="px-4 py-2 text-left border-r-3 border-b-3 border-black dark:border-white font-black text-black dark:text-white">Token Name</th>
+                                <th className="px-4 py-2 text-left border-r-3 border-b-3 border-black dark:border-white font-black text-black dark:text-white">Default Value</th>
+                                <th className="px-4 py-2 text-left border-b-3 border-black dark:border-white font-black text-black dark:text-white">Description</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white dark:bg-gray-900">
@@ -167,7 +167,7 @@ export default function ThemeTokensPage() {
                     Neo-brutalism sits on a scale. You can dial it down for a softer SaaS interface or turn it up for a bold game or indie product feel.
                 </p>
                 <div className="grid md:grid-cols-2 gap-4">
-                    <div className="p-5 border-3 border-black dark:border-white bg-[#faf9f6] text-black space-y-3">
+                    <div className="p-5 border-3 border-black dark:border-white bg-[#faf9f6] dark:bg-gray-800 text-black dark:text-white space-y-3">
                         <h4 className="font-black text-sm uppercase tracking-wider text-gray-500">Softer Modern Feel</h4>
                         <p className="text-sm">
                             Reduce visual friction with slightly rounded corners, thinner borders, and soft shadows. Perfect for conventional SaaS dashboard panels.
@@ -223,12 +223,12 @@ export default function ThemeTokensPage() {
                     </div>
 
                     {/* Preset 2 */}
-                    <div className="border-3 border-[#1e1e24] p-5 bg-[#faf9f6] text-[#1e1e24] space-y-3">
+                    <div className="border-3 border-[#1e1e24] dark:border-white p-5 bg-[#faf9f6] dark:bg-gray-800 text-[#1e1e24] dark:text-white space-y-3">
                         <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="bg-[#d6c6e1] text-[#1e1e24] border-[#1e1e24]">Preset</Badge>
-                            <h3 className="font-black text-lg text-[#1e1e24]">Pastel Preset (`.theme-pastel`)</h3>
+                            <Badge variant="outline" className="bg-[#d6c6e1] dark:bg-purple-950 text-[#1e1e24] dark:text-purple-200 border-[#1e1e24] dark:border-white">Preset</Badge>
+                            <h3 className="font-black text-lg text-[#1e1e24] dark:text-white">Pastel Preset (`.theme-pastel`)</h3>
                         </div>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                             A charming, cozy pastel variation. Features soft lavender, mint sage, rounder corners (`8px`), and gentle `2px` slate-gray borders for a playful but clean UI.
                         </p>
                         <pre className="bg-black text-[#d6c6e1] p-4 text-xs font-mono overflow-x-auto">
@@ -240,12 +240,12 @@ export default function ThemeTokensPage() {
                     </div>
 
                     {/* Preset 3 */}
-                    <div className="border-4 border-black p-5 bg-white text-black space-y-3">
+                    <div className="border-4 border-black dark:border-white p-5 bg-white dark:bg-gray-800 text-black dark:text-white space-y-3">
                         <div className="flex items-center gap-2">
-                            <span className="px-2 py-0.5 border-2 border-black font-black text-xs bg-black text-white">Preset</span>
+                            <span className="px-2 py-0.5 border-2 border-black dark:border-white font-black text-xs bg-black dark:bg-white text-white dark:text-black">Preset</span>
                             <h3 className="font-black text-lg">Mono Preset (`.theme-mono`)</h3>
                         </div>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
                             A high-contrast stark layout consisting entirely of grayscale values, heavy `4px` black outlines, and thick `5px` shadows.
                         </p>
                         <pre className="bg-black text-white p-4 text-xs font-mono overflow-x-auto">
