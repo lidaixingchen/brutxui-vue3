@@ -72,10 +72,8 @@ export interface AddOptions {
 // Component & Registry Types
 // ============================================================================
 
-export interface ComponentInfo {
-    name: string;
-    dependencies: string[];
-}
+/** @deprecated Import ComponentMeta from 'brutx-shared' instead */
+export type { ComponentMeta as ComponentInfo } from 'brutx-shared';
 
 export interface RegistryFile {
     path: string;

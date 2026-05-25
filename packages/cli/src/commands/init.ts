@@ -226,11 +226,15 @@ export async function init(options: InitOptions): Promise<void> {
         // Create config file
         await createConfigFile(cwd, settings);
 
-        // Ensure utils.ts exists
+        // Ensure utils.ts exists (do not overwrite if user has customized it)
         const utilsPath = resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
         await fs.ensureDir(path.dirname(utilsPath));
-        await fs.writeFile(utilsPath, UTILS_TEMPLATE);
-        spinner?.info('Created utility helper at ' + settings.aliases.utils);
+        if (!(await fs.pathExists(utilsPath))) {
+            await fs.writeFile(utilsPath, UTILS_TEMPLATE);
+            spinner?.info('Created utility helper at ' + settings.aliases.utils);
+        } else {
+            spinner?.info('Utility helper already exists, skipping.');
+        }
 
         // Ensure components/ui dir exists
         const componentsDir = resolveAliasPath(settings.aliases.components, cwd);

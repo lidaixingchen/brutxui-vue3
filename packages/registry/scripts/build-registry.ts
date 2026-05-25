@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { COMPONENTS } from 'brutx-shared';
 
 // Resolve __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -18,9 +19,6 @@ async function run() {
     if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     }
-
-    // Dynamic imports since we are using tsx
-    const { COMPONENTS } = await import('../../cli/src/lib/constants.ts');
 
     const componentNames = Object.keys(COMPONENTS);
     console.log(`📦 Found ${componentNames.length} components to process.`);

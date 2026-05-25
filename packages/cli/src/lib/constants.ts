@@ -3,7 +3,11 @@
  * All hardcoded values should be centralized here
  */
 
-import type { ProjectType, ComponentInfo } from './types.js';
+import type { ProjectType } from './types.js';
+
+// Re-export component metadata from the shared package (single source of truth)
+export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared';
+export type { ComponentMeta as ComponentInfo } from 'brutx-shared';
 
 // ============================================================================
 // File Patterns - No hardcoding in other files
@@ -47,48 +51,6 @@ export const CSS_LOCATIONS: Record<ProjectType, readonly string[]> = {
         'index.css',
     ],
 } as const;
-
-// ============================================================================
-// Component Registry
-// ============================================================================
-
-export const COMPONENTS: Record<string, ComponentInfo> = {
-    alert: { name: 'alert', dependencies: ['lucide-react'] },
-    avatar: { name: 'avatar', dependencies: ['@radix-ui/react-avatar'] },
-    badge: { name: 'badge', dependencies: [] },
-    button: { name: 'button', dependencies: ['@radix-ui/react-slot'] },
-    calendar: { name: 'calendar', dependencies: ['react-day-picker', 'date-fns', 'lucide-react'] },
-    card: { name: 'card', dependencies: [] },
-    checkbox: { name: 'checkbox', dependencies: ['@radix-ui/react-checkbox', 'lucide-react'] },
-    combobox: {
-        name: 'combobox',
-        dependencies: ['cmdk', '@radix-ui/react-popover', 'lucide-react'],
-    },
-    command: { name: 'command', dependencies: ['cmdk', 'lucide-react'] },
-    dialog: { name: 'dialog', dependencies: ['@radix-ui/react-dialog', 'lucide-react'] },
-    'dropdown-menu': {
-        name: 'dropdown-menu',
-        dependencies: ['@radix-ui/react-dropdown-menu', 'lucide-react'],
-    },
-    input: { name: 'input', dependencies: [] },
-    label: { name: 'label', dependencies: ['@radix-ui/react-label'] },
-    pagination: { name: 'pagination', dependencies: ['lucide-react'] },
-    popover: { name: 'popover', dependencies: ['@radix-ui/react-popover'] },
-    'scroll-area': { name: 'scroll-area', dependencies: ['@radix-ui/react-scroll-area'] },
-    select: { name: 'select', dependencies: ['@radix-ui/react-select', 'lucide-react'] },
-    separator: { name: 'separator', dependencies: ['@radix-ui/react-separator'] },
-    skeleton: { name: 'skeleton', dependencies: [] },
-    spinner: { name: 'spinner', dependencies: [] },
-    'submit-button': { name: 'submit-button', dependencies: [] },
-    switch: { name: 'switch', dependencies: ['@radix-ui/react-switch'] },
-    table: { name: 'table', dependencies: [] },
-    tabs: { name: 'tabs', dependencies: ['@radix-ui/react-tabs'] },
-    textarea: { name: 'textarea', dependencies: [] },
-    toast: { name: 'toast', dependencies: ['lucide-react'] },
-    tooltip: { name: 'tooltip', dependencies: ['@radix-ui/react-tooltip'] },
-} as const;
-
-export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);
 
 // ============================================================================
 // Base Dependencies (installed on init)

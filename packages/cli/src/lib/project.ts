@@ -248,7 +248,7 @@ export function getDefaultAliases(cwd: string): AliasConfig {
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
     return content
         .replace(/["']@\/lib\/utils["']/g, `"${config.aliases.utils}"`)
-        .replace(/["']@\/components\/(.*)["']/g, `"${config.aliases.components}/$1"`);
+        .replace(/["']@\/components\/(.*?)["']/g, `"${config.aliases.components}/$1"`);
 }
 
 /**

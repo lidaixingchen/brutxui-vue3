@@ -32,7 +32,7 @@ pnpm build
 - `packages/ui`: The main React component package.
 - `packages/cli`: The CLI tool (`brutx`) for project initialization and component installation.
 - `packages/registry`: The component distribution registry containing compiled JSON schemas.
-- `apps/docs`: The Next.js 14 based documentation site.
+- `apps/docs`: The Next.js 15 based documentation site.
 
 ---
 
@@ -44,13 +44,12 @@ To add a new component (e.g., `button`):
 
 1. **Implement the component** under `packages/ui/src/components/`.
 2. **Define component metadata** in `packages/cli/src/lib/constants.ts` (under the `COMPONENTS` object). Add any required npm `dependencies`.
-3. **Write/update the component template** under `packages/cli/src/templates/` (if compiling legacy files) or add them directly.
-4. **Compile the registry JSON**:
+3. **Compile the registry JSON**:
    Run the following script to automatically parse, resolve dependencies, and bundle the React code into registry JSON files:
    ```bash
    pnpm --filter brutx-registry build
    ```
-5. Commit the generated JSON file under `packages/registry/registry/`.
+4. Commit the generated JSON file under `packages/registry/registry/`.
 
 ---
 

@@ -158,4 +158,24 @@ export const componentsSEO: Record<string, ComponentSEOProps> = {
         description: 'Hover tooltips for additional information.',
         slug: 'tooltip',
     },
+    calendar: {
+        name: 'Calendar',
+        description: 'Date picker calendar with neo-brutalist styling using react-day-picker.',
+        slug: 'calendar',
+    },
+    command: {
+        name: 'Command',
+        description: 'Command palette and search interface built on cmdk.',
+        slug: 'command',
+    },
+    combobox: {
+        name: 'Combobox',
+        description: 'Autocomplete and multi-select picker with search functionality.',
+        slug: 'combobox',
+    },
+    'scroll-area': {
+        name: 'Scroll Area',
+        description: 'Custom scrollbar component with neo-brutalist rails.',
+        slug: 'scroll-area',
+    },
 };

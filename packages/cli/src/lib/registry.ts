@@ -1,31 +1,109 @@
 import fs from 'fs-extra';
 import path from 'path';
-import type { RegistryItem } from './types.js';
+import type { RegistryItem, RegistryFile } from './types.js';
 import { DEFAULT_REGISTRY_URL } from './constants.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
 }
 
+// ============================================================================
+// Registry Item Validation
+// ============================================================================
+
+/**
+ * Validate that a parsed JSON value conforms to the RegistryItem schema.
+ * This provides runtime safety against corrupted or tampered registry data
+ * before writing files to the user's filesystem.
+ */
+function validateRegistryFile(file: unknown, itemName: string): file is RegistryFile {
+    if (typeof file !== 'object' || file === null) {
+        return false;
+    }
+
+    const f = file as Record<string, unknown>;
+
+    if (typeof f.path !== 'string' || f.path.length === 0) {
+        throw new Error(
+            `Invalid registry file in "${itemName}": "path" must be a non-empty string.`
+        );
+    }
+
+    if (typeof f.content !== 'string') {
+        throw new Error(
+            `Invalid registry file in "${itemName}": "content" must be a string.`
+        );
+    }
+
+    return true;
+}
+
+function validateRegistryItem(data: unknown, name: string): asserts data is RegistryItem {
+    if (typeof data !== 'object' || data === null) {
+        throw new Error(`Invalid registry data for "${name}": expected an object.`);
+    }
+
+    const item = data as Record<string, unknown>;
+
+    if (typeof item.name !== 'string' || item.name.length === 0) {
+        throw new Error(`Invalid registry data for "${name}": "name" must be a non-empty string.`);
+    }
+
+    if (typeof item.type !== 'string') {
+        throw new Error(`Invalid registry data for "${name}": "type" must be a string.`);
+    }
+
+    if (!Array.isArray(item.files)) {
+        throw new Error(`Invalid registry data for "${name}": "files" must be an array.`);
+    }
+
+    for (const file of item.files) {
+        validateRegistryFile(file, name);
+    }
+
+    if (item.dependencies !== undefined && !Array.isArray(item.dependencies)) {
+        throw new Error(`Invalid registry data for "${name}": "dependencies" must be an array.`);
+    }
+
+    if (item.registryDependencies !== undefined && !Array.isArray(item.registryDependencies)) {
+        throw new Error(
+            `Invalid registry data for "${name}": "registryDependencies" must be an array.`
+        );
+    }
+}
+
+// ============================================================================
+// Registry Fetching
+// ============================================================================
+
 /**
  * Fetch a component from the registry (remote URL or local path)
  */
 export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL): Promise<RegistryItem> {
+    let data: unknown;
+
     if (isUrl(source)) {
         const url = `${source}/${name}.json`;
         const res = await fetch(url);
         if (!res.ok) {
             throw new Error(`Failed to fetch component "${name}" from registry: ${res.statusText}`);
         }
-        return res.json() as Promise<RegistryItem>;
+        data = await res.json();
     } else {
         const filePath = path.resolve(source, `${name}.json`);
         if (!(await fs.pathExists(filePath))) {
             throw new Error(`Component "${name}" not found in local registry: ${filePath}`);
         }
-        return fs.readJson(filePath) as Promise<RegistryItem>;
+        data = await fs.readJson(filePath);
     }
+
+    validateRegistryItem(data, name);
+    return data;
 }
+
+// ============================================================================
+// Dependency Resolution
+// ============================================================================
 
 /**
  * Resolve all registry dependencies recursively using DFS to ensure correct topological order

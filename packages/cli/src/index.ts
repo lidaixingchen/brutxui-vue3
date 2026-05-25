@@ -1,13 +1,17 @@
 import { Command } from 'commander';
+import { createRequire } from 'module';
 import { init } from './commands/init.js';
 import { add } from './commands/add.js';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
 
 const program = new Command();
 
 program
     .name('brutx')
     .description('CLI for adding Brutx components to your project')
-    .version('0.2.3');
+    .version(pkg.version);
 
 program
     .command('init')

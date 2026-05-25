@@ -6,6 +6,9 @@
     "scripts": {
         "build": "tsx scripts/build-registry.ts"
     },
+    "dependencies": {
+        "brutx-shared": "workspace:*"
+    },
     "devDependencies": {
         "tsx": "^4.7.1",
         "typescript": "^5.7.2",
