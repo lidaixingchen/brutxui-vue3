@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '@/components/ui';
-import { SITE_CONFIG } from '@/lib/constants';
+import { SITE_CONFIG } from '@/config/constants';
 
 interface InstallationTabsProps {
     componentName: string;

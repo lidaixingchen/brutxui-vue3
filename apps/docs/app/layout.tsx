@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import 'brutx-ui/styles.css';
-import { SITE_CONFIG } from '@/lib/constants';
+import { SITE_CONFIG } from '@/config/constants';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -171,7 +171,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             'Brutx UI library for React with 27+ Neo Brutalism components. Bold borders, offset shadows, vibrant colors. Free & open-source.',
         url: 'https://brutxui.site',
         downloadUrl: 'https://www.npmjs.com/package/brutx-ui',
-        softwareVersion: '0.1.7',
+        softwareVersion: SITE_CONFIG.version,
         programmingLanguage: ['TypeScript', 'React', 'JavaScript'],
         author: {
             '@id': 'https://brutxui.site/#organization',

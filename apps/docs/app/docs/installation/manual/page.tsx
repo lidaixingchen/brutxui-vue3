@@ -3,7 +3,7 @@
 import { Badge } from '@/components/ui';
 import Link from 'next/link';
 import { CodeBlock, PackageManagerTabs } from '@/components/code-block';
-import { SITE_CONFIG } from '@/lib/constants';
+import { SITE_CONFIG } from '@/config/constants';
 
 export default function ManualInstallationPage() {
     return (

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { componentsSEO, generateComponentMetadata } from '@/lib/seo';
+import { componentsSEO, generateComponentMetadata } from '@/config/seo';
 
 export const metadata: Metadata = generateComponentMetadata(componentsSEO.pagination);
 

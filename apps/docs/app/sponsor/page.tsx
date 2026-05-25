@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Heart, Coffee, Github, Star, Zap, Gift } from 'lucide-react';
 import { Metadata } from 'next';
-import { SITE_CONFIG } from '@/lib/constants';
+import { SITE_CONFIG } from '@/config/constants';
 
 export const metadata: Metadata = {
     title: 'Sponsor Brutx | Support Open Source Neo-Brutalism Components',

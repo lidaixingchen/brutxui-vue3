@@ -1,4 +1,7 @@
+import uiPackage from '../../../packages/ui/package.json';
+
 export const SITE_CONFIG = {
+    version: uiPackage.version,
     name: 'Brutx',
     title: 'Brutx - Neo Brutalism React Component Library',
     description: 'Brutx UI library for React. 27+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors. Free & open-source. Built with Radix UI, Tailwind CSS. Use CLI: npx brutx@latest init. Best shadcn alternative for brutalist design.',

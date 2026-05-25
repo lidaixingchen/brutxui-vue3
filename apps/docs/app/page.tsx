@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { SITE_CONFIG } from '@/lib/constants';
+import { SITE_CONFIG } from '@/config/constants';
 
 export default function Home() {
     return (
@@ -15,7 +15,7 @@ export default function Home() {
             <section className="container-brutal py-12 sm:py-20 px-4">
                 <div className="flex flex-col items-center text-center">
                     <Badge variant="primary" size="lg" className="mb-4 sm:mb-6">
-                        v0.1.7
+                        v{SITE_CONFIG.version}
                     </Badge>
 
                     {/* 3D Brutalist Logo Text */}
