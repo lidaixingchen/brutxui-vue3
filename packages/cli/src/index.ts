@@ -5,9 +5,9 @@ import { add } from './commands/add.js';
 const program = new Command();
 
 program
-    .name('brutalist-ui')
+    .name('brutx')
     .description('CLI for adding Brutalist UI components to your project')
-    .version('0.1.3');
+    .version('0.2.2');
 
 program
     .command('init')
