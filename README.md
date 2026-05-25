@@ -1,13 +1,13 @@
 <div align="center">
   <img src="apps/docs/public/favicon.svg" alt="Brutx Logo" width="120" height="120" />
   
-  # Brutx
+  # BrutxUI
   
-  **A Neo-Brutalism styled React UI component library**
+  **The ultimate copy-paste Neo-Brutalist component registry for React & Tailwind CSS.**
   
-  Bold. Raw. Unapologetic.
+  Bold. Raw. Accessible. Compatible.
   
-  ### Component Library (`brutx-ui`)
+  ### Component Registry (`brutx-ui`)
   [![npm version](https://img.shields.io/npm/v/brutx-ui.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui)
   [![npm downloads](https://img.shields.io/npm/dm/brutx-ui.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx-ui)
   
@@ -21,298 +21,143 @@
   [![React](https://img.shields.io/badge/React-19+-61DAFB.svg?style=flat-square)](https://reactjs.org/)
   [![Next.js](https://img.shields.io/badge/Next.js-15+-000000.svg?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
   [![Sponsor](https://img.shields.io/badge/❤️_Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/dev-snake)
-  [![Buy Me A Coffee](https://img.shields.io/badge/☕_Buy_Me_A_Coffee-FFE66D?style=flat-square&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/devsnake)
 
   <br />
 
-  [Documentation](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutxui/issues)
+  [Documentation & Previews](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutxui/issues)
 </div>
 
+---
+
+## ⚡ What is BrutxUI?
+
+BrutxUI is a high-fidelity Neo-Brutalist design registry for bold SaaS apps, indie tools, dashboards, developer portfolios, landing pages, and playful product interfaces.
+
+Rather than being distributed as a monolithic npm dependency that locks down your style choices, **BrutxUI is a copy-paste-first system** (pioneered by `shadcn/ui`). It generates raw, accessible components built on **Radix UI** primitives and **Tailwind CSS** directly into your codebase for 100% style ownership.
 
 ---
 
-Brutx is a modern, neo-brutalist inspired React UI library. It implements bold 3px borders, thick black shadows, and high-contrast color palettes to give your application a raw, premium, and distinct character. 
+## 🎯 Honest Positioning: When to use BrutxUI
 
-Instead of bloated npm dependencies, Brutx distributes components on-demand via a **dynamic registry system** (similar to shadcn/ui). You copy, paste, and customize the code directly in your workspace.
-
----
-
-## ✨ Features
-
-- 🎨 **Neo-Brutalism Design**: Thick 3px borders, high-contrast flat shadows, and vibrant accent colors.
-- 🧱 **27 Production-Ready Components**: A fully realized component kit utilizing Radix UI primitives.
-- 🌓 **Dark Mode Native**: Complete light & dark mode support with automatic dark border and shadow adjustments.
-- ⚡ **Dynamic Registry-Based CLI**: Install components on-demand. Resolves and downloads dependency files recursively.
-- 🚀 **Tailwind CSS v3 & v4 Native**: Native CSS utilities that integrate with JS configurations (v3) and CSS-first configurations (v4).
-- 📱 **Fully Accessible & Responsive**: Compliant with WAI-ARIA standards and mobile-first responsive guidelines.
-- 📦 **Multi-Package Manager Detection**: Detects and uses `npm`, `pnpm`, `yarn`, or `bun` automatically based on your project's lockfiles.
+- **🚀 Perfect For:** Bold SaaS products, analytics dashboards, developer utilities, landing pages, web3 portals, and creative portfolios seeking high-engagement designs.
+- **⚠️ Think Twice For:** Highly conservative enterprise dashboards, patient-facing healthcare records, or traditional corporate banking apps—unless you utilize our built-in **Pastel** or **Monochrome** theme presets to soften outlines and contrast.
 
 ---
 
-## 📦 Installation
+## 🤝 Relationship with `shadcn/ui`
 
-Use the CLI `brutx` to initialize Brutx and add components to your project:
+BrutxUI is **not** designed to replace or attack `shadcn/ui`. Instead, it acts as a **direct companion**:
+* **Shared Workflow:** We use the exact same `components.json` layout schema.
+* **Co-existence:** You can run original `shadcn/ui` for traditional panels alongside `BrutxUI` components for high-impact buttons, headers, or pricing cards in the exact same directory.
+* **Unified Styling:** Merges seamlessly into standard Tailwind CSS layers.
+
+---
+
+## 📦 Installation & Registry CLI Workflows
+
+BrutxUI gives you two flexible ways to install and maintain components:
+
+### Option A: Via Native `brutx` CLI (Recommended)
+Our dedicated CLI automatically handles tailwind detection, CSS token injection, and package managers.
 
 ```bash
-# Initialize Brutx configuration
+# Initialize BrutxUI configs in your project
 npx brutx@latest init
 
 # Add specific components
 npx brutx@latest add button card badge
 
-# Or add all 27 components at once
+# Install all 29 components at once
 npx brutx@latest add --all
 ```
 
----
-
-## 🚀 Quick Start
-
-### 1. Initialize Project
-
-Run the initialization wizard in your project root:
+### Option B: Via Official `shadcn` CLI (Compatibility Workflow)
+Because BrutxUI complies strictly with the shadcn/ui JSON registry schemas, you can install any BrutxUI component directly using the official shadcn CLI:
 
 ```bash
-npx brutx@latest init
-```
+# Install Brutx Button
+npx shadcn@latest add https://brutxui.site/registry/button.json
 
-This will automatically:
-- Detect your project type (`Next.js`, `Vite`, `Remix`, `Create React App`).
-- Auto-detect the package manager (`npm`, `pnpm`, `yarn`, `bun`).
-- Detect your Tailwind CSS version (`v3` or `v4`).
-- Create a `components.json` configuration file.
-- Generate utility helpers (e.g., `lib/utils.ts` with the class merger helper `cn`).
-- Append custom neo-brutalist utility classes directly to your global CSS stylesheet.
-- Install core base dependencies (`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`).
-
-### 2. Add Components
-
-Add components individually or all at once:
-
-```bash
-# Add a single component (e.g., button)
-npx brutx@latest add button
-
-# Add multiple components
-npx brutx@latest add button card dialog
-
-# Force overwrite existing component files
-npx brutx@latest add button --overwrite
-```
-
-### 3. Use in Your Project
-
-Once installed, import and use the components inside your codebase:
-
-```tsx
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-export default function App() {
-  return (
-    <Card>
-      <CardHeader>
-        <h2 className="text-xl font-bold">Brutx App</h2>
-        <Badge variant="success">Active</Badge>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">Bold, raw, and beautiful design patterns.</p>
-        <Button variant="primary" size="default">
-          Get Started
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
+# Install Brutx SaaS Pricing Block
+npx shadcn@latest add https://brutxui.site/registry/saas-pricing.json
 ```
 
 ---
 
-## 🎨 Custom CSS Utility Classes
+## 🎨 Sizing Sytem & Theme Presets
 
-During initialization, Brutx appends native CSS custom classes directly to your project's global stylesheet. This guarantees 100% compatibility with both Tailwind CSS v3 and v4:
+BrutxUI is parameterizable. It exposes standard CSS Custom Properties in your stylesheet, allowing you to soften or strengthen the brutalist look globally in a single line:
 
 ```css
-/* Brutx Styles */
-.border-3 {
-    border-width: 3px;
-}
-
-.shadow-brutal {
-    box-shadow: 4px 4px 0px 0px #000;
-}
-
-.shadow-brutal-sm {
-    box-shadow: 2px 2px 0px 0px #000;
-}
-
-.shadow-brutal-lg {
-    box-shadow: 6px 6px 0px 0px #000;
-}
-
-/* Dark mode overrides */
-.dark .shadow-brutal {
-    box-shadow: 4px 4px 0px 0px #fff;
-}
-.dark .shadow-brutal-sm {
-    box-shadow: 2px 2px 0px 0px #fff;
-}
-.dark .shadow-brutal-lg {
-    box-shadow: 6px 6px 0px 0px #fff;
+:root {
+  --brutal-border-width: 3px;     /* Thickness of layouts */
+  --brutal-radius: 0px;           /* Sharp rectangular corners */
+  --brutal-shadow-offset: 4px;    /* Normal card/button offset */
 }
 ```
 
-If you import components directly from the compiled npm library (`brutx-ui`), the following layer components are also available via `styles.css`:
-
-- `.nb-border` - Apply a `3px` solid black border.
-- `.nb-shadow` - Apply a `4px` black offset shadow.
-- `.nb-press` - Apply a pressed interactive state effect.
-- `.nb-font` - Apply a heavy `900` weight typography styling.
+We ship with 3 built-in visual presets:
+1. **Classic Brutalism (`.theme-classic`):** Deep black shadows, neon accents, and razor-sharp unrounded corners.
+2. **Pastel Neo-Brut (`.theme-pastel`):** Lavenders, peaches, sage greens, and slightly rounded `8px` corners.
+3. **Stark Monochrome (`.theme-mono`):** Grayscale-only colors and heavy `4px` black lines for high-end minimalist interfaces.
 
 ---
 
-## 🧩 Supported Components (27 Core Components)
+## 🧩 Supported Core Components & Blocks (29 Items)
 
-Brutx contains **27 core components** grouped into 5 structural categories:
+BrutxUI offers 29 premium components and layout blocks:
 
-### 1. Layout & Containers
-| Component | Description | Local Install |
-| :--- | :--- | :--- |
-| `Card` | Nested container panels with headers, footers, and content boxes | `npx brutx add card` |
-| `Separator` | Stylized horizontal or vertical separating lines | `npx brutx add separator` |
-| `ScrollArea` | Custom scrollbar component with neo-brutalist rails | `npx brutx add scroll-area` |
+### 🚀 Layout Blocks & Templates (New!)
+* **`saas-pricing`:** A responsive SaaS Pricing page section featuring monthly/yearly billing switches, checklist icons, highlighted grids, and CTA triggers. [Registry URL](https://brutxui.site/registry/saas-pricing.json)
+* **`dashboard-stats`:** A responsive analytics panel showing stats (revenue, conversion) with positive/negative trend badges. [Registry URL](https://brutxui.site/registry/dashboard-stats.json)
 
-### 2. Forms & Inputs
-| Component | Description | Local Install |
-| :--- | :--- | :--- |
-| `Button` | High-contrast actions with loading indicators, sizes, and variants | `npx brutx add button` |
-| `SubmitButton`| Server component-ready form submission handler | `npx brutx add submit-button` |
-| `Input` | Text input boxes with rigid brutalist outlines | `npx brutx add input` |
-| `Textarea` | High-contrast multi-line text input fields | `npx brutx add textarea` |
-| `Checkbox` | Toggle checkmarks with offset borders | `npx brutx add checkbox` |
-| `Switch` | Custom toggle switch wrapper based on Radix Switch | `npx brutx add switch` |
-| `Select` | Dropdown picker with brutalist panels | `npx brutx add select` |
-| `Label` | Rigid, accessible input labeling | `npx brutx add label` |
-
-### 3. Feedback & Status
-| Component | Description | Local Install |
-| :--- | :--- | :--- |
-| `Alert` | Standard status notifications (info, success, warning, error) | `npx brutx add alert` |
-| `Badge` | High-contrast status pill indicators | `npx brutx add badge` |
-| `Toast` | Fully managed snackbar notifications | `npx brutx add toast` |
-| `Spinner` | Neo-brutalist loading animations (pulse, bars, rotate) | `npx brutx add spinner` |
-| `Skeleton` | Content loading layout placeholders | `npx brutx add skeleton` |
-
-### 4. Overlays & Modals
-| Component | Description | Local Install |
-| :--- | :--- | :--- |
-| `Dialog` | Highly polished modal dialog windows | `npx brutx add dialog` |
-| `Popover` | Contextual floating widgets | `npx brutx add popover` |
-| `Tooltip` | Hover informational helpers | `npx brutx add tooltip` |
-| `DropdownMenu` | Floating action trigger list | `npx brutx add dropdown-menu` |
-
-### 5. Navigation & Complex UI
-| Component | Description | Local Install |
-| :--- | :--- | :--- |
-| `Tabs` | Tab-switched panel navigation | `npx brutx add tabs` |
-| `Table` | High-contrast structured data grids | `npx brutx add table` |
-| `Pagination` | Grid routing indicators | `npx brutx add pagination` |
-| `Avatar` | User thumbnail indicators with text fallback | `npx brutx add avatar` |
-| `Calendar` | Day-picker wrapper using `react-day-picker` | `npx brutx add calendar` |
-| `Command` | CmdK-based spotlight search command hub | `npx brutx add command` |
-| `Combobox` | Multiselect/autocomplete picker utilizing command hub | `npx brutx add combobox` |
+### 🧱 Atomic Components
+* **Forms:** `Button`, `SubmitButton` (Server Component safe), `Input`, `Textarea`, `Checkbox`, `Switch`, `Select`, `Label`
+* **Overlays:** `Dialog` (Modal), `Popover`, `Tooltip`, `DropdownMenu`
+* **Data & Lists:** `Table`, `Tabs`, `Command` (spotlight search), `Combobox` (multi-picker), `Pagination`, `ScrollArea`
+* **Feedback:** `Alert`, `Badge`, `Toast` (notifiers), `Spinner` (loaders), `Skeleton`
+* **Display:** `Avatar`, `Calendar`, `Separator`
 
 ---
 
-## 🏗️ Project Monorepo Structure
+## 💻 Contribution & Development
 
-```
-brutx/
-├── apps/
-│   └── docs/                  # Next.js 15 documentation website
-├── packages/
-│   ├── ui/                    # Core NPM source library (brutx-ui)
-│   │   ├── src/
-│   │   │   ├── components/    # Component sources
-│   │   │   └── styles.css     # UI library base stylesheet
-│   │   └── package.json
-│   ├── cli/                   # Dynamic CLI application (brutx)
-│   │   ├── src/               # Commands CLI (`init`, `add`)
-│   │   └── package.json
-│   └── registry/              # Dynamically served Component Registry
-│       ├── registry/          # Packaged components under JSON schemas
-│       └── scripts/           # Build script to generate registry schemas
-├── package.json
-├── pnpm-workspace.yaml
-└── README.md
-```
+We highly welcome contributors! To run, test, and package BrutxUI locally:
 
----
-
-## 🛠️ Development & Contributing Guide
-
-To test CLI commands or components in a local environment:
-
-### 1. Project Initialization & Setup
+### 1. Repository Setup
 ```bash
 # Clone the repository
 git clone https://github.com/dev-snake/brutxui.git
 cd brutxui
 
-# Install workspaces dependencies
+# Install workspace dependencies
 pnpm install
 
-# Build the UI library and CLI package
+# Build UI modules and CLI binaries
 pnpm --filter brutx-ui build && pnpm --filter brutx build
 ```
 
-### 2. Testing Locally
-Run component test suites across the monorepo:
+### 2. Run Test Suites
 ```bash
 pnpm test
 ```
 
-### 3. Registry Compilation
-To package your modifications in `packages/ui` into the CLI registry:
+### 3. Re-compile Component JSON Registry
+If you make changes to core components in `packages/ui/src/components/*.tsx`, compile and validate the schemas:
 ```bash
+# Compile TS to registry JSON files
 pnpm --filter brutx-registry build
+
+# Validate JSON files against shadcn CLI schema
+pnpm --filter brutx-registry validate
 ```
-
----
-
-## 💖 Support This Project
-
-If you find Brutx useful, please consider supporting its development:
-
-<a href="https://github.com/sponsors/dev-snake">
-  <img src="https://img.shields.io/badge/Sponsor_on_GitHub-❤️-EA4AAA?style=for-the-badge&logo=github" alt="Sponsor on GitHub" />
-</a>
-<a href="https://buymeacoffee.com/devsnake">
-  <img src="https://img.shields.io/badge/Buy_Me_A_Coffee-☕-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" />
-</a>
-<a href="https://ko-fi.com/devsnake">
-  <img src="https://img.shields.io/badge/Support_on_Ko--fi-❤️-FF5E5B?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi" />
-</a>
-
-Your support helps keep this project alive and growing! 🚀
 
 ---
 
 ## 📄 License
 
-Brutx is open-source software licensed under the [MIT License](LICENSE).
-
----
+BrutxUI is open-source software licensed under the [MIT License](LICENSE).
 
 <div align="center">
-  <p>
-    <strong>Made with 💛 and bold borders</strong>
-  </p>
-  <p>
-    <a href="https://www.npmjs.com/package/brutx-ui">NPM Library</a> •
-    <a href="https://www.npmjs.com/package/brutx">NPM CLI</a> •
-    <a href="https://github.com/dev-snake/brutxui">GitHub</a> •
-    <a href="https://brutxui.site">Docs</a>
-  </p>
+  <p>Made with 💛 and bold borders by dev-snake and friends.</p>
 </div>
