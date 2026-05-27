@@ -5,7 +5,7 @@ import { resolveImportAlias, detectProjectType, detectPackageManager, detectTail
 describe('resolveImportAlias', () => {
     it('should correctly resolve import aliases based on config', () => {
         const content = `import { Button } from "@/components/ui/button";\nimport { cn } from "@/lib/utils";`;
-        
+
         const config = {
             style: 'brutalism',
             tailwind: { config: 'tailwind.config.js', css: 'src/index.css' },
@@ -16,14 +16,14 @@ describe('resolveImportAlias', () => {
         };
 
         const resolved = resolveImportAlias(content, config);
-        
+
         expect(resolved).toContain('import { Button } from "~/components/ui/button";');
         expect(resolved).toContain('import { cn } from "~/utils/cn";');
     });
 
     it('should preserve original imports if alias config matches default alias', () => {
         const content = `import { Button } from "@/components/ui/button";\nimport { cn } from "@/lib/utils";`;
-        
+
         const config = {
             style: 'brutalism',
             tailwind: { config: 'tailwind.config.js', css: 'src/index.css' },
@@ -34,7 +34,7 @@ describe('resolveImportAlias', () => {
         };
 
         const resolved = resolveImportAlias(content, config);
-        
+
         expect(resolved).toContain('import { Button } from "@/components/ui/button";');
         expect(resolved).toContain('import { cn } from "@/lib/utils";');
     });

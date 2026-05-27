@@ -24,7 +24,7 @@ export default function EmptyStateDocPage() {
                 <h2 className="text-2xl font-black">Interactive Preview</h2>
                 <ComponentPreview>
                     <div className="w-full flex items-center justify-center p-8 bg-gray-50 dark:bg-gray-900 border-3 border-black">
-                        <EmptyState 
+                        <EmptyState
                             onActionClick={() => alert('Launching resource creation modal...')}
                         />
                     </div>

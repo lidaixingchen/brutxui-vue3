@@ -32,7 +32,7 @@ export default function ThemeTokensPage() {
                 </Badge>
                 <h1 className="text-4xl font-black mb-2">Themes & Design Tokens</h1>
                 <p className="text-lg text-gray-700 dark:text-gray-300">
-                    BrutxUI features a highly parameterizable styling system built entirely on CSS Custom Properties (variables). 
+                    BrutxUI features a highly parameterizable styling system built entirely on CSS Custom Properties (variables).
                     Instead of hardcoding colors, borders, and shadows into tailwind classes, you can fully control the visual aggression of the framework in a single CSS layer.
                 </p>
             </div>
@@ -42,10 +42,10 @@ export default function ThemeTokensPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">1. What are the Brutx Tokens?</h2>
                 <p>
-                    BrutxUI exposes a complete set of design tokens within `:root` (for light mode) and `.dark` (for dark mode). 
+                    BrutxUI exposes a complete set of design tokens within `:root` (for light mode) and `.dark` (for dark mode).
                     These tokens map directly to Tailwind CSS utilities such as `bg-brutal-primary`, `border-brutal`, `shadow-brutal-lg`, and `rounded-brutal`.
                 </p>
-                
+
                 <div className="overflow-x-auto">
                     <table className="w-full border-3 border-black dark:border-white text-sm">
                         <thead className="bg-brutal-accent dark:bg-gray-800">
@@ -129,7 +129,7 @@ export default function ThemeTokensPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">2. Customizing Sizing and Outlines</h2>
                 <p>
-                    By overriding these variable settings in your global stylesheet, components instantly adjust. 
+                    By overriding these variable settings in your global stylesheet, components instantly adjust.
                     You can achieve completely different visual styles with tiny tweaks.
                 </p>
 
@@ -205,7 +205,6 @@ export default function ThemeTokensPage() {
                 </p>
 
                 <div className="space-y-6">
-                    {/* Preset 1 */}
                     <div className="border-3 border-black dark:border-white p-5 bg-white dark:bg-gray-900 space-y-3">
                         <div className="flex items-center gap-2">
                             <Badge variant="primary">Preset</Badge>
@@ -222,7 +221,6 @@ export default function ThemeTokensPage() {
                         </pre>
                     </div>
 
-                    {/* Preset 2 */}
                     <div className="border-3 border-[#1e1e24] dark:border-white p-5 bg-[#faf9f6] dark:bg-gray-800 text-[#1e1e24] dark:text-white space-y-3">
                         <div className="flex items-center gap-2">
                             <Badge variant="outline" className="bg-[#d6c6e1] dark:bg-purple-950 text-[#1e1e24] dark:text-purple-200 border-[#1e1e24] dark:border-white">Preset</Badge>
@@ -239,7 +237,6 @@ export default function ThemeTokensPage() {
                         </pre>
                     </div>
 
-                    {/* Preset 3 */}
                     <div className="border-4 border-black dark:border-white p-5 bg-white dark:bg-gray-800 text-black dark:text-white space-y-3">
                         <div className="flex items-center gap-2">
                             <span className="px-2 py-0.5 border-2 border-black dark:border-white font-black text-xs bg-black dark:bg-white text-white dark:text-black">Preset</span>

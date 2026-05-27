@@ -40,7 +40,6 @@ describe('Input', () => {
         expect(screen.getByRole('textbox')).toHaveAttribute('type', 'email');
 
         rerender(<Input type="password" />);
-        // Password inputs don't have textbox role
         expect(document.querySelector('input[type="password"]')).toBeInTheDocument();
     });
 

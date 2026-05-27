@@ -26,10 +26,8 @@ export default function SaasPricingPage() {
             <pre className="bg-gray-900 text-white p-4 border-3 border-black dark:border-white shadow-brutal overflow-x-auto text-sm">
                 {`import { SaaSPricing } from "@/components/ui/saas-pricing"
 
-// Basic Usage
 <SaaSPricing />
 
-// Custom Plans Usage
 const customPlans = [
   {
     name: "Hobby",
@@ -60,9 +58,9 @@ const customPlans = [
   }
 ];
 
-<SaaSPricing 
-  plans={customPlans} 
-  title="Choose Your Power" 
+<SaaSPricing
+  plans={customPlans}
+  title="Choose Your Power"
   subtitle="Start scaling with Neo-Brutalist confidence today."
 />`}
             </pre>

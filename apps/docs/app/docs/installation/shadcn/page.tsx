@@ -30,7 +30,7 @@ export default function ShadcnIntegrationPage() {
                 </Badge>
                 <h1 className="text-4xl font-black mb-2">shadcn/ui CLI Integration</h1>
                 <p className="text-lg text-gray-700 dark:text-gray-300">
-                    BrutxUI features standard shadcn/ui-compatible registry JSON schemas. 
+                    BrutxUI features standard shadcn/ui-compatible registry JSON schemas.
                     This allows you to copy-paste or install Brutx components directly into your codebase using the official <code>shadcn</code> CLI in addition to our native <code>brutx</code> CLI tool.
                 </p>
             </div>
@@ -40,7 +40,7 @@ export default function ShadcnIntegrationPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">1. How it works</h2>
                 <p>
-                    Each component in BrutxUI maps to a standalone, self-describing JSON file containing all source code files, npm packages, tailwind styles, and CSS custom variables. 
+                    Each component in BrutxUI maps to a standalone, self-describing JSON file containing all source code files, npm packages, tailwind styles, and CSS custom variables.
                     When you run the <code>shadcn add</code> command pointing to our hosted registry, the shadcn CLI will:
                 </p>
                 <ul className="list-disc pl-5 space-y-2">
@@ -91,7 +91,7 @@ npx shadcn@latest add https://brutxui.site/registry/dashboard-stats.json`}
 
                 <div className="border-3 border-black dark:border-white p-5 bg-white dark:bg-gray-900 space-y-4">
                     <h3 className="font-black text-lg">Registry Build Pipeline</h3>
-                    
+
                     <div>
                         <h4 className="font-bold text-sm uppercase tracking-wider text-[#FF6B6B] mb-1">Step 1: Edit Component Source</h4>
                         <p className="text-sm">

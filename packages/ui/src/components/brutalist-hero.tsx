@@ -34,15 +34,15 @@ export function BrutalistHero({
                             <Sparkles className="h-4 w-4 stroke-[3]" />
                             <span>V0.2.1 Release</span>
                         </div>
-                        
+
                         <h1 className="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05]">
                             {title}
                         </h1>
-                        
+
                         <p className="max-w-[600px] text-lg md:text-xl font-bold text-gray-700 dark:text-gray-300 leading-relaxed">
                             {subtitle}
                         </p>
-                        
+
                         <div className="flex flex-col sm:flex-row gap-4 pt-4">
                             <Button
                                 size="lg"
@@ -63,7 +63,7 @@ export function BrutalistHero({
                             </Button>
                         </div>
                     </div>
-                    
+
                     <div className="relative mx-auto w-full max-w-[500px] lg:max-w-none">
                         <div className="absolute inset-0 bg-brutal-secondary translate-x-3 translate-y-3 border-3 border-brutal rounded-none" />
                         <Card className="relative z-10 border-3 border-brutal bg-white dark:bg-gray-800 rounded-none shadow-none p-2">

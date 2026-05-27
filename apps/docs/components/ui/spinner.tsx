@@ -4,7 +4,6 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
-// Modern brutalist spinner with thick border
 const spinnerVariants = cva(
     ['inline-block rounded-full', 'border-4 border-black dark:border-white', 'animate-spin'],
     {
@@ -52,7 +51,6 @@ const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
 );
 Spinner.displayName = 'Spinner';
 
-// Brutalist block spinner - 4 animated squares
 const blockSpinnerVariants = cva('grid grid-cols-2 gap-1', {
     variants: {
         size: {
@@ -116,7 +114,6 @@ const BlockSpinner = React.forwardRef<
 });
 BlockSpinner.displayName = 'BlockSpinner';
 
-// Dots spinner - 3 bouncing dots
 const DotsSpinner = React.forwardRef<
     HTMLDivElement,
     Omit<SpinnerProps, 'variant'> & { color?: 'default' | 'primary' | 'secondary' | 'accent' }
@@ -171,7 +168,6 @@ const DotsSpinner = React.forwardRef<
 });
 DotsSpinner.displayName = 'DotsSpinner';
 
-// Bars spinner - 5 animated bars
 const BarsSpinner = React.forwardRef<
     HTMLDivElement,
     Omit<SpinnerProps, 'variant'> & {

@@ -70,7 +70,6 @@
         box-shadow: 8px 8px 0px 0px #FFFFFF;
     }
 
-    /* 3D Concrete Text Effect */
     .text-3d-concrete {
         position: relative;
         display: inline-block;
@@ -98,7 +97,6 @@
     }
 }
 
-/* MDX Content Styles */
 .mdx-content h1 {
     @apply text-3xl sm:text-4xl font-black tracking-tight mb-4;
 }
@@ -139,7 +137,6 @@
     @apply border-l-4 border-black dark:border-white pl-3 sm:pl-4 italic my-4 bg-yellow-100 dark:bg-yellow-900/30 py-2 text-sm sm:text-base;
 }
 
-/* Responsive table wrapper */
 .mdx-content .table-wrapper {
     @apply overflow-x-auto -mx-4 sm:mx-0;
 }

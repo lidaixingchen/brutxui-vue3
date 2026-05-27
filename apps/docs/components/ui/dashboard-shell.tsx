@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { 
-    LayoutDashboard, 
-    Settings, 
-    Users, 
-    Layers, 
-    Bell, 
+import {
+    LayoutDashboard,
+    Settings,
+    Users,
+    Layers,
+    Bell,
     Search,
     Menu,
     LogOut,
@@ -38,12 +38,11 @@ export function DashboardShell({
     const [sidebarOpen, setSidebarOpen] = React.useState(true);
 
     return (
-        <div 
+        <div
             className={`min-h-[600px] flex bg-brutal-bg text-brutal-fg border-3 border-brutal transition-colors duration-200 overflow-hidden ${className || ''}`}
             {...props}
         >
-            {/* Sidebar */}
-            <aside 
+            <aside
                 className={`w-64 border-r-3 border-brutal bg-gray-50 dark:bg-gray-900 transition-all duration-200 flex flex-col shrink-0 ${sidebarOpen ? 'block' : 'hidden md:flex'}`}
             >
                 <div className="p-4 border-b-3 border-brutal flex items-center justify-between bg-brutal-accent/20">
@@ -58,7 +57,7 @@ export function DashboardShell({
                         <LayoutDashboard className="h-4 w-4 stroke-[3]" />
                         <span>Overview</span>
                     </button>
-                    
+
                     <button className="w-full flex items-center space-x-3 px-3 py-2.5 hover:bg-brutal-muted text-brutal-fg font-bold text-sm text-left border-3 border-transparent transition-all">
                         <Layers className="h-4 w-4 stroke-[2.5]" />
                         <span>Deployments</span>
@@ -82,9 +81,9 @@ export function DashboardShell({
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Owner Account</span>
                         </div>
                     </div>
-                    <Button 
-                        variant="danger" 
-                        size="sm" 
+                    <Button
+                        variant="danger"
+                        size="sm"
                         className="w-full gap-2 py-4 font-black"
                         onClick={onSignOutClick}
                     >
@@ -94,12 +93,10 @@ export function DashboardShell({
                 </div>
             </aside>
 
-            {/* Main Content Area */}
             <div className="flex-grow flex flex-col min-w-0 bg-white dark:bg-gray-800/20">
-                {/* Topbar Header */}
                 <header className="h-16 border-b-3 border-brutal flex items-center justify-between px-6 bg-white dark:bg-gray-800 z-10">
                     <div className="flex items-center space-x-4">
-                        <button 
+                        <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
                             className="p-1.5 border-3 border-brutal bg-white text-black shadow-brutal-sm active:translate-y-[2px] active:shadow-none transition-all"
                         >
@@ -107,8 +104,8 @@ export function DashboardShell({
                         </button>
                         <div className="relative hidden sm:block">
                             <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 stroke-[2.5]" />
-                            <input 
-                                placeholder="Global workspace search..." 
+                            <input
+                                placeholder="Global workspace search..."
                                 className="pl-9 pr-4 py-1.5 border-3 border-brutal bg-gray-50 text-sm font-bold text-black focus:outline-none w-64"
                             />
                         </div>
@@ -125,9 +122,7 @@ export function DashboardShell({
                     </div>
                 </header>
 
-                {/* Dashboard Inner Workspace Content */}
                 <main className="flex-grow p-6 space-y-6 overflow-y-auto max-w-[1200px] w-full mx-auto">
-                    {/* Stat Card Grids */}
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         <Card className="border-3 border-brutal bg-white dark:bg-gray-800 shadow-brutal rounded-none p-4">
                             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -165,7 +160,6 @@ export function DashboardShell({
                         </Card>
                     </div>
 
-                    {/* Table Card */}
                     <Card className="border-3 border-brutal bg-white dark:bg-gray-800 shadow-brutal rounded-none">
                         <CardHeader className="border-b-3 border-brutal p-4 bg-gray-50 dark:bg-gray-900/50">
                             <CardTitle className="text-lg font-black leading-none">Recent Transaction Ledgers</CardTitle>

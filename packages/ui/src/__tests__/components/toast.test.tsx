@@ -24,7 +24,6 @@ describe('Toast', () => {
         const onClose = vi.fn();
         render(<Toast title="Toast" onClose={onClose} />);
         await userEvent.click(screen.getByRole('button', { name: /close/i }));
-        // Allow 200ms leaving animation via fake timers is complex — just assert onClose is eventually called
         await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1), { timeout: 500 });
     });
 
@@ -38,7 +37,6 @@ describe('Toast', () => {
 
     it('renders progress bar when duration and onClose are provided', () => {
         const { container } = render(<Toast title="Progress" onClose={vi.fn()} duration={3000} />);
-        // The progress bar div exists inside the toast
         const progressBar = container.querySelector('.animate-nb-shrink');
         expect(progressBar).toBeInTheDocument();
     });

@@ -61,7 +61,7 @@ export default function FormPage() {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-md w-full p-6 bg-white dark:bg-gray-950 border-3 border-black dark:border-white shadow-brutal dark:shadow-brutal-white">
                             <h3 className="text-lg font-black border-b-3 border-black pb-2">User Registration</h3>
-                            
+
                             <FormField
                                 control={form.control}
                                 name="username"

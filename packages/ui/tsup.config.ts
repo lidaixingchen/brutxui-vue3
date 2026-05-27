@@ -22,7 +22,6 @@ export default defineConfig({
         };
     },
     onSuccess: async () => {
-        // Copy styles.css to dist
         copyFileSync('src/styles.css', 'dist/styles.css');
     },
 });

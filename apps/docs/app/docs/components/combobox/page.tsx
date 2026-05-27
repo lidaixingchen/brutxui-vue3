@@ -45,7 +45,6 @@ export default function ComboboxPage() {
 
     return (
         <div className="space-y-12">
-            {/* Header */}
             <div className="space-y-4">
                 <h1 className="text-4xl font-black">Combobox</h1>
                 <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -54,7 +53,6 @@ export default function ComboboxPage() {
                 </p>
             </div>
 
-            {/* Basic Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Basic Combobox</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -78,7 +76,6 @@ export default function ComboboxPage() {
                 </div>
             </section>
 
-            {/* With Disabled Options */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">With Disabled Options</h2>
                 <p className="text-gray-600 dark:text-gray-400">Some options can be disabled.</p>
@@ -102,7 +99,6 @@ export default function ComboboxPage() {
                 </div>
             </section>
 
-            {/* With Emoji */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">With Custom Labels</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -126,7 +122,6 @@ export default function ComboboxPage() {
                 </div>
             </section>
 
-            {/* Multi-select */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Multi-Select Combobox</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -153,7 +148,6 @@ export default function ComboboxPage() {
                 </div>
             </section>
 
-            {/* Multi-select with max display */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Multi-Select with Max Display</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -184,7 +178,6 @@ export default function ComboboxPage() {
                 </div>
             </section>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Installation</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -195,7 +188,6 @@ export default function ComboboxPage() {
                 </div>
             </section>
 
-            {/* Props */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Props</h2>
                 <h3 className="text-xl font-black mt-6">Combobox</h3>

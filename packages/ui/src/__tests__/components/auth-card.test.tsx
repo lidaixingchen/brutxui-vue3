@@ -8,10 +8,10 @@ describe('AuthCard', () => {
         render(<AuthCard title="Login Gateway" description="Demo description" />);
         expect(screen.getByText('Login Gateway')).toBeInTheDocument();
         expect(screen.getByText('Demo description')).toBeInTheDocument();
-        
+
         expect(screen.getByLabelText('Email Address')).toBeInTheDocument();
         expect(screen.getByLabelText('Password')).toBeInTheDocument();
-        
+
         expect(screen.getByRole('button', { name: 'Google' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: 'GitHub' })).toBeInTheDocument();
     });

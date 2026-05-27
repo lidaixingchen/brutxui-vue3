@@ -1,20 +1,13 @@
 const plugin = require('tailwindcss/plugin');
 
-/**
- * Brutalism Plugin for Tailwind CSS
- * Provides Neo-Brutalism utility classes
- */
 const brutalismPlugin = plugin(
     function ({ addUtilities, addComponents, theme }) {
-        // Base utilities
         const utilities = {
-            // nb-border: 3px solid black border
             '.nb-border': {
                 borderWidth: '3px',
                 borderStyle: 'solid',
                 borderColor: '#000000',
             },
-            // nb-border variants
             '.nb-border-2': {
                 borderWidth: '2px',
                 borderStyle: 'solid',
@@ -25,7 +18,6 @@ const brutalismPlugin = plugin(
                 borderStyle: 'solid',
                 borderColor: '#000000',
             },
-            // nb-shadow: 4px offset shadow
             '.nb-shadow': {
                 boxShadow: '4px 4px 0px 0px #000000',
             },
@@ -38,7 +30,6 @@ const brutalismPlugin = plugin(
             '.nb-shadow-xl': {
                 boxShadow: '8px 8px 0px 0px #000000',
             },
-            // nb-press: pressed state
             '.nb-press': {
                 transform: 'translateY(2px)',
                 boxShadow: 'none',
@@ -51,7 +42,6 @@ const brutalismPlugin = plugin(
                 transform: 'translateY(3px)',
                 boxShadow: 'none',
             },
-            // nb-font: bold 900 weight with letter spacing
             '.nb-font': {
                 fontWeight: '900',
                 letterSpacing: '0.025em',
@@ -64,7 +54,6 @@ const brutalismPlugin = plugin(
                 fontWeight: '700',
                 letterSpacing: '0.015em',
             },
-            // Additional brutalism utilities
             '.nb-no-radius': {
                 borderRadius: '0px',
             },
@@ -75,23 +64,19 @@ const brutalismPlugin = plugin(
             },
         };
 
-        // Interactive states
         const interactiveUtilities = {
-            // Hover effect for buttons
             '.nb-hover': {
                 '&:hover': {
                     transform: 'translate(-2px, -2px)',
                     boxShadow: '6px 6px 0px 0px #000000',
                 },
             },
-            // Active/pressed effect
             '.nb-active': {
                 '&:active': {
                     transform: 'translateY(2px)',
                     boxShadow: 'none',
                 },
             },
-            // Focus ring
             '.nb-focus': {
                 '&:focus': {
                     outline: '3px solid #000000',
@@ -102,7 +87,6 @@ const brutalismPlugin = plugin(
                     outlineOffset: '2px',
                 },
             },
-            // Disabled state
             '.nb-disabled': {
                 '&:disabled': {
                     opacity: '0.5',
@@ -112,9 +96,7 @@ const brutalismPlugin = plugin(
             },
         };
 
-        // Component patterns
         const components = {
-            // Base button style
             '.nb-btn': {
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -145,7 +127,6 @@ const brutalismPlugin = plugin(
                     pointerEvents: 'none',
                 },
             },
-            // Base card style
             '.nb-card': {
                 borderWidth: '3px',
                 borderStyle: 'solid',
@@ -155,7 +136,6 @@ const brutalismPlugin = plugin(
                 borderRadius: '0px',
                 padding: '1rem',
             },
-            // Base input style
             '.nb-input': {
                 borderWidth: '3px',
                 borderStyle: 'solid',
@@ -179,7 +159,6 @@ const brutalismPlugin = plugin(
         addComponents(components);
     },
     {
-        // Plugin configuration with theme extensions
         theme: {
             extend: {
                 colors: {

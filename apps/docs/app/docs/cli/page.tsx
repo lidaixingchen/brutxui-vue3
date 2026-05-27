@@ -94,7 +94,6 @@ export default function CLIPage() {
                 Use the CLI to add components directly to your project source code.
             </p>
 
-            {/* Info box about CLI vs NPM */}
             <div className="mb-10 p-5 border-3 border-black dark:border-white bg-gray-50 dark:bg-gray-900">
                 <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-[#FF6B6B] border-3 border-black flex items-center justify-center">
@@ -136,7 +135,6 @@ export default function CLIPage() {
                 </div>
             </div>
 
-            {/* init command */}
             <h2 id="init" className="text-2xl font-black mb-4 mt-10">
                 init
             </h2>
@@ -170,7 +168,6 @@ Options:
   -h, --help         display help for command`}
             </CodeBlock>
 
-            {/* add command */}
             <h2 id="add" className="text-2xl font-black mb-4 mt-10">
                 add
             </h2>
@@ -203,7 +200,6 @@ Options:
   -h, --help         display help for command`}
             </CodeBlock>
 
-            {/* Examples */}
             <h2 id="examples" className="text-2xl font-black mb-4 mt-10">
                 Examples
             </h2>
@@ -225,7 +221,6 @@ Options:
             <h3 className="text-lg font-black mb-3">Overwrite existing files</h3>
             <CodeBlock className="mb-6">npx brutx@latest add button --overwrite</CodeBlock>
 
-            {/* Available Components */}
             <h2 id="components" className="text-2xl font-black mb-4 mt-10">
                 Available Components
             </h2>
@@ -284,7 +279,6 @@ Options:
                 </div>
             </div>
 
-            {/* Configuration */}
             <h2 id="configuration" className="text-2xl font-black mb-4 mt-10">
                 components.json
             </h2>
@@ -356,7 +350,6 @@ Options:
                 </table>
             </div>
 
-            {/* Troubleshooting */}
             <h2 id="troubleshooting" className="text-2xl font-black mb-4 mt-10">
                 Troubleshooting
             </h2>
@@ -398,7 +391,6 @@ Options:
                 </div>
             </div>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center pt-8 border-t-3 border-black dark:border-white mt-12">
                 <Link
                     href="/docs/installation/manual"

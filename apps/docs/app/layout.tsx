@@ -16,14 +16,12 @@ export const metadata: Metadata = {
         'Brutx UI library for React. 27+ Neo Brutalism UI components with bold borders, offset shadows, vibrant colors. Free & open-source. Built with Radix UI, Tailwind CSS. Use CLI: npx brutx@latest init. Best shadcn alternative for brutalist design.',
     metadataBase: new URL('https://brutxui.site'),
     keywords: [
-        // Primary keywords (exact match từ Google search)
         'brutalism ui',
         'brutalist ui',
         'neo brutalism ui',
         'neo brutalism',
         'neubrutalism',
 
-        // Library/Components keywords
         'brutalism ui library',
         'brutalism ui components',
         'neo brutalism ui components',
@@ -31,7 +29,6 @@ export const metadata: Metadata = {
         'brutalist ui kit',
         'neobrutalism components',
 
-        // React specific
         'brutalism react',
         'neo brutalism react',
         'brutalist react components',
@@ -39,20 +36,17 @@ export const metadata: Metadata = {
         'react ui library',
         'react component library',
 
-        // Design keywords
         'brutalism design',
         'brutalist design',
         'neo brutalist',
         'neubrutalism design',
         'brutalism web design',
 
-        // Tech stack
         'tailwind brutalism',
         'radix ui brutalism',
         'shadcn alternative',
         'shadcn brutalism',
 
-        // Features
         'bold ui components',
         'offset shadow ui',
         'vibrant colors ui',
@@ -118,7 +112,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-    // WebSite Schema - QUAN TRỌNG cho Sitelinks và Search Box
     const websiteJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
@@ -144,7 +137,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         inLanguage: 'en-US',
     };
 
-    // Organization Schema - Cho Logo và Brand
     const organizationJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Organization',
@@ -158,7 +150,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         ],
     };
 
-    // SoftwareApplication Schema
     const softwareJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
@@ -186,7 +177,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             'brutx, neo brutalism, brutx ui, neubrutalism, react components, ui library',
     };
 
-    // SiteNavigationElement Schema - QUAN TRỌNG cho Sitelinks
     const navigationJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'ItemList',
@@ -241,12 +231,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                {/* Favicon - Dùng trực tiếp favicon.svg */}
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
                 <link rel="apple-touch-icon" href="/favicon.svg" />
 
-                {/* Schema.org JSON-LD - Order matters! */}
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}

@@ -13,7 +13,6 @@ interface InstallationTabsProps {
 type TabType = 'cli' | 'manual';
 type PackageManager = 'pnpm' | 'npm' | 'yarn' | 'bun';
 
-// Component dependencies mapping
 const componentDependencies: Record<string, string[]> = {
     button: ['@radix-ui/react-slot', 'class-variance-authority'],
     card: ['class-variance-authority'],
@@ -44,7 +43,6 @@ const componentDependencies: Record<string, string[]> = {
     'scroll-area': ['@radix-ui/react-scroll-area'],
 };
 
-// Component import mappings (what gets exported from each component)
 const componentImports: Record<string, string[]> = {
     button: ['Button', 'buttonVariants'],
     card: ['Card', 'CardHeader', 'CardTitle', 'CardDescription', 'CardContent', 'CardFooter'],
@@ -230,7 +228,6 @@ export function InstallationTabs({
         bun: `bunx brutx@latest add ${componentName}`,
     };
 
-    // Get dependencies for manual install
     const deps = customDependencies || componentDependencies[componentName] || [];
     const allDeps = ['clsx', 'tailwind-merge', ...deps];
 
@@ -241,7 +238,6 @@ export function InstallationTabs({
         bun: `bun add ${allDeps.join(' ')}`,
     };
 
-    // Get imports for this component
     const imports = customImports ||
         componentImports[componentName] || [
             componentName
@@ -257,7 +253,6 @@ export function InstallationTabs({
 
     return (
         <div className="space-y-4">
-            {/* Tab Buttons */}
             <div className="flex border-3 border-black dark:border-white w-fit">
                 <button
                     onClick={() => setActiveTab('cli')}
@@ -283,7 +278,6 @@ export function InstallationTabs({
                 </button>
             </div>
 
-            {/* Package Manager Selector */}
             <div className="flex border-3 border-black dark:border-white w-fit">
                 {(['pnpm', 'npm', 'yarn', 'bun'] as PackageManager[]).map((pm, index) => (
                     <button
@@ -302,7 +296,6 @@ export function InstallationTabs({
                 ))}
             </div>
 
-            {/* Content */}
             {activeTab === 'cli' ? (
                 <div className="space-y-4">
                     <div className="relative">

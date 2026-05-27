@@ -6,7 +6,7 @@ import { BrutalistHero } from '../../components/brutalist-hero';
 describe('BrutalistHero', () => {
     it('renders heading, description text, and mock visual component', () => {
         render(
-            <BrutalistHero 
+            <BrutalistHero
                 title="Bold Hero Title"
                 subtitle="Neon brutalist card subheadings."
             />
@@ -21,7 +21,7 @@ describe('BrutalistHero', () => {
         const onSecondary = vi.fn();
 
         render(
-            <BrutalistHero 
+            <BrutalistHero
                 primaryCtaText="Join Priority"
                 secondaryCtaText="Learn More"
                 onPrimaryCtaClick={onPrimary}

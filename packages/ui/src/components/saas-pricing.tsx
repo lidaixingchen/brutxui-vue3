@@ -95,7 +95,6 @@ export function SaaSPricing({
             {...props}
         >
             <div className="max-w-6xl mx-auto flex flex-col items-center">
-                {/* Header Section */}
                 <div className="text-center max-w-3xl mb-12">
                     <Badge variant="accent" className="mb-4">
                         PRICING PLANS
@@ -108,7 +107,6 @@ export function SaaSPricing({
                     </p>
                 </div>
 
-                {/* Period Selector Toggle */}
                 <div className="flex items-center gap-4 mb-16 bg-gray-100 dark:bg-gray-900 p-2 border-3 border-brutal shadow-brutal-sm">
                     <button
                         onClick={() => setBillingPeriod('monthly')}
@@ -135,7 +133,6 @@ export function SaaSPricing({
                     </button>
                 </div>
 
-                {/* Pricing Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full items-start">
                     {plans.map((plan) => {
                         const price = billingPeriod === 'monthly' ? plan.priceMonthly : plan.priceAnnually;
@@ -168,7 +165,6 @@ export function SaaSPricing({
                                 </CardHeader>
 
                                 <CardContent className="p-6 pt-0 flex-grow">
-                                    {/* Plan Price */}
                                     <div className="flex items-baseline gap-1 mb-6 border-b-3 border-brutal pb-6">
                                         <span className="text-5xl font-black tracking-tight">${price}</span>
                                         <span className="text-gray-600 dark:text-gray-400 font-bold">
@@ -176,7 +172,6 @@ export function SaaSPricing({
                                         </span>
                                     </div>
 
-                                    {/* Plan Features */}
                                     <ul className="space-y-4">
                                         {plan.features.map((feature, idx) => (
                                             <li key={idx} className="flex items-center gap-3">
@@ -216,7 +211,6 @@ export function SaaSPricing({
                     })}
                 </div>
 
-                {/* Guarantee Banner */}
                 <div className="mt-16 text-center flex flex-col sm:flex-row items-center gap-4 p-6 bg-white dark:bg-gray-900 border-3 border-brutal shadow-brutal">
                     <HelpCircle className="h-8 w-8 text-[#FF6B6B]" />
                     <p className="font-bold text-sm text-left">

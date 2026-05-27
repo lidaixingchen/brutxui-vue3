@@ -50,7 +50,6 @@
         --ring: 240 5.9% 10%;
         --radius: 0.5rem;
 
-        /* Brutx Design Tokens - Default Light Mode */
         --brutal-border-width: 3px;
         --brutal-border-color: #000000;
         --brutal-shadow-offset-x: 4px;
@@ -90,7 +89,6 @@
         --destructive-foreground: 0 85.7% 97.3%;
         --ring: 240 4.9% 83.9%;
 
-        /* Brutx Design Tokens - Default Dark Mode */
         --brutal-border-width: 3px;
         --brutal-border-color: #ffffff;
         --brutal-shadow-offset-x: 4px;
@@ -109,9 +107,6 @@
         --brutal-pressed-offset: 2px;
     }
 
-    /* --- Presets --- */
-
-    /* 1. Classic Brutalist Preset */
     .theme-classic {
         --brutal-border-width: 3px;
         --brutal-border-color: #000000;
@@ -137,7 +132,6 @@
         --brutal-ring: #ffffff;
     }
 
-    /* 2. Pastel Brutalist Preset */
     .theme-pastel {
         --brutal-border-width: 2px;
         --brutal-border-color: #1e1e24;
@@ -169,7 +163,6 @@
         --brutal-ring: #e5e5e5;
     }
 
-    /* 3. Mono Brutalist Preset */
     .theme-mono {
         --brutal-border-width: 4px;
         --brutal-border-color: #000000;
@@ -204,7 +197,6 @@
 
 @layer components {
 
-    /* Neo-Brutalism base styles */
     .nb-border {
         border-width: var(--brutal-border-width, 3px);
         border-style: solid;
@@ -265,7 +257,6 @@
     }
 }
 
-/* Animation keyframes for Radix */
 @keyframes fadeIn {
     from {
         opacity: 0;

@@ -85,9 +85,7 @@ describe('Combobox', () => {
         render(<Combobox options={fruits} value="apple" onValueChange={vi.fn()} />);
         await userEvent.click(screen.getByRole('combobox'));
         await waitFor(() => screen.getByRole('option', { name: 'Apple' }));
-        // The selected option has aria-selected=true (set by cmdk)
         expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('aria-selected', 'true');
-        // The check icon on the selected option has opacity-100
         const checkIcon = screen.getByRole('option', { name: 'Apple' }).querySelector('svg');
         expect(checkIcon).toHaveClass('opacity-100');
     });

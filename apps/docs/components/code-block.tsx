@@ -120,7 +120,6 @@ export function PackageManagerTabs({ commands }: PackageManagerTabsProps) {
 
     return (
         <div className="space-y-0">
-            {/* Package Manager Selector */}
             <div className="flex border-3 border-b-0 border-black dark:border-white w-fit">
                 {managers.map((pm, index) => (
                     <button
@@ -139,7 +138,6 @@ export function PackageManagerTabs({ commands }: PackageManagerTabsProps) {
                 ))}
             </div>
 
-            {/* Code Block */}
             <div className="relative group">
                 <button
                     onClick={copyToClipboard}

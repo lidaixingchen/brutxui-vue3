@@ -13,13 +13,11 @@ export default function AvatarPage() {
                 </p>
             </div>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Installation</h2>
                 <InstallationTabs componentName="avatar" />
             </section>
 
-            {/* Basic Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Basic Usage</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -55,7 +53,6 @@ export default function AvatarPage() {
                 </pre>
             </section>
 
-            {/* Sizes */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Sizes</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -86,7 +83,6 @@ export default function AvatarPage() {
                 </pre>
             </section>
 
-            {/* Shape */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Shape</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -107,7 +103,6 @@ export default function AvatarPage() {
                 </pre>
             </section>
 
-            {/* With Fallback */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Fallback</h2>
                 <p className="text-gray-600 dark:text-gray-300">
@@ -146,7 +141,6 @@ export default function AvatarPage() {
   </AvatarFallback>
 </Avatar>
 
-{/* With image that may fail */}
 <Avatar>
   <AvatarImage src="/user-avatar.jpg" alt="User" />
   <AvatarFallback className="bg-[#4ECDC4] text-white">AB</AvatarFallback>
@@ -154,7 +148,6 @@ export default function AvatarPage() {
                 </pre>
             </section>
 
-            {/* Group */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Avatar Group</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -186,7 +179,6 @@ export default function AvatarPage() {
     <AvatarImage src="https://i.pravatar.cc/150?img=21" alt="User" />
     <AvatarFallback className="bg-[#4ECDC4] text-white">B</AvatarFallback>
   </Avatar>
-  {/* ... */}
 </div>`}</code>
                 </pre>
             </section>

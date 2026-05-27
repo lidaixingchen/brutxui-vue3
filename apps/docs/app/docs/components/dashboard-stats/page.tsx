@@ -27,10 +27,8 @@ export default function DashboardStatsPage() {
                 {`import { DashboardStats } from "@/components/ui/dashboard-stats"
 import { TrendingUp, Award, Activity } from "lucide-react"
 
-// Basic Usage
 <DashboardStats />
 
-// Custom Stats Usage
 const myStats = [
   {
     title: "Page Performance",
@@ -54,9 +52,9 @@ const myStats = [
   }
 ];
 
-<DashboardStats 
-  stats={myStats} 
-  title="Real-Time Health Status" 
+<DashboardStats
+  stats={myStats}
+  title="Real-Time Health Status"
   subtitle="Crucial indicators representing the real-time wellness of backend workloads."
 />`}
             </pre>

@@ -24,7 +24,7 @@ export default function BrutalistHeroDocPage() {
                 <h2 className="text-2xl font-black">Interactive Preview</h2>
                 <ComponentPreview align="stretch">
                     <div className="w-full border-3 border-black p-1 bg-gray-50 dark:bg-gray-900">
-                        <BrutalistHero 
+                        <BrutalistHero
                             primaryCtaText="Launch App Console"
                             secondaryCtaText="Read Documentation"
                         />

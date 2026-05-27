@@ -26,7 +26,6 @@ export default function SubmitButtonPage() {
         </Button>
     );
 
-    // Simulate form submission
     const handleDemoSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -36,14 +35,11 @@ export default function SubmitButtonPage() {
 
     const usageCode = `import { SubmitButton } from '@/components/ui/submit-button';`;
 
-    const basicExampleCode = `// Server Action example (Next.js)
-async function submitAction(formData: FormData) {
+    const basicExampleCode = `async function submitAction(formData: FormData) {
     'use server';
-    // Handle form submission
     await saveToDatabase(formData);
 }
 
-// Client Component
 export function ContactForm() {
     return (
         <form action={submitAction}>
@@ -64,8 +60,7 @@ export function ContactForm() {
 <SubmitButton variant="danger">Delete</SubmitButton>
 <SubmitButton variant="outline">Outline</SubmitButton>`;
 
-    const manualInstallCode = `// components/ui/submit-button.tsx
-'use client';
+    const manualInstallCode = `'use client';
 
 import { useFormStatus } from 'react-dom';
 import { Button, type ButtonProps } from './button';
@@ -74,14 +69,14 @@ export interface SubmitButtonProps extends ButtonProps {
     pendingText?: string;
 }
 
-function SubmitButton({ 
-    children, 
+function SubmitButton({
+    children,
     pendingText,
     disabled,
-    ...props 
+    ...props
 }: SubmitButtonProps) {
     const { pending } = useFormStatus();
-    
+
     return (
         <Button
             type="submit"
@@ -100,7 +95,6 @@ export { SubmitButton };`;
 
     return (
         <div className="space-y-8">
-            {/* Header */}
             <div className="space-y-4">
                 <div className="flex items-center gap-3">
                     <h1 className="text-4xl font-black">Submit Button</h1>
@@ -114,7 +108,6 @@ export { SubmitButton };`;
                 </p>
             </div>
 
-            {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className="p-4 border-2 border-black dark:border-white shadow-[4px_4px_0_0_#000] dark:shadow-[4px_4px_0_0_#fff]">
                     <div className="flex items-center gap-2 mb-2">
@@ -145,7 +138,6 @@ export { SubmitButton };`;
                 </Card>
             </div>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Installation</h2>
 
@@ -193,7 +185,6 @@ export { SubmitButton };`;
                 </Tabs>
             </section>
 
-            {/* Usage */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Usage</h2>
                 <div className="relative">
@@ -204,7 +195,6 @@ export { SubmitButton };`;
                 </div>
             </section>
 
-            {/* Demo */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Demo</h2>
                 <Card className="p-6 border-2 border-black dark:border-white shadow-[4px_4px_0_0_#000] dark:shadow-[4px_4px_0_0_#fff]">
@@ -219,11 +209,9 @@ export { SubmitButton };`;
                 </Card>
             </section>
 
-            {/* Examples */}
             <section className="space-y-6">
                 <h2 className="text-2xl font-black">Examples</h2>
 
-                {/* Basic with Server Action */}
                 <div className="space-y-3">
                     <h3 className="text-lg font-bold">With Server Actions</h3>
                     <div className="relative">
@@ -234,7 +222,6 @@ export { SubmitButton };`;
                     </div>
                 </div>
 
-                {/* Pending Text */}
                 <div className="space-y-3">
                     <h3 className="text-lg font-bold">Custom Pending Text</h3>
                     <div className="relative">
@@ -245,7 +232,6 @@ export { SubmitButton };`;
                     </div>
                 </div>
 
-                {/* Variants */}
                 <div className="space-y-3">
                     <h3 className="text-lg font-bold">All Variants</h3>
                     <Card className="p-6 border-2 border-black dark:border-white shadow-[4px_4px_0_0_#000] dark:shadow-[4px_4px_0_0_#fff]">
@@ -265,7 +251,6 @@ export { SubmitButton };`;
                 </div>
             </section>
 
-            {/* Props */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Props</h2>
                 <div className="overflow-x-auto">
@@ -312,7 +297,6 @@ export { SubmitButton };`;
                 </div>
             </section>
 
-            {/* Requirements */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Requirements</h2>
                 <Card className="p-4 border-2 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">

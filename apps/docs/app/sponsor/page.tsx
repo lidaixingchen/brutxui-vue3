@@ -22,7 +22,6 @@ export default function SponsorPage() {
     return (
         <div className="min-h-screen bg-[#FFFBF5] dark:bg-gray-900">
             <div className="max-w-4xl mx-auto px-6 py-16">
-                {/* Header */}
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center justify-center w-20 h-20 bg-[#FF6B6B] border-3 border-black dark:border-white mb-6">
                         <Heart className="w-10 h-10 text-white" fill="white" />
@@ -36,9 +35,7 @@ export default function SponsorPage() {
                     </p>
                 </div>
 
-                {/* Sponsor Options */}
                 <div className="grid md:grid-cols-2 gap-6 mb-16">
-                    {/* GitHub Sponsors */}
                     <a
                         href="https://github.com/sponsors/dev-snake"
                         target="_blank"
@@ -61,7 +58,6 @@ export default function SponsorPage() {
                         </div>
                     </a>
 
-                    {/* Buy Me A Coffee */}
                     <a
                         href="https://buymeacoffee.com/devsnake"
                         target="_blank"
@@ -84,7 +80,6 @@ export default function SponsorPage() {
                     </a>
                 </div>
 
-                {/* Why Sponsor */}
                 <div className="bg-[#4ECDC4] border-3 border-black dark:border-white p-8 mb-16">
                     <h2 className="text-3xl font-black mb-6 text-black">Why Sponsor?</h2>
                     <div className="grid md:grid-cols-3 gap-6">
@@ -124,7 +119,6 @@ export default function SponsorPage() {
                     </div>
                 </div>
 
-                {/* Other Ways */}
                 <div className="text-center">
                     <h2 className="text-2xl font-black mb-6 dark:text-white">
                         Other Ways to Support
@@ -153,7 +147,6 @@ export default function SponsorPage() {
                     </p>
                 </div>
 
-                {/* Back to Docs */}
                 <div className="mt-16 text-center">
                     <Link
                         href="/docs/components"

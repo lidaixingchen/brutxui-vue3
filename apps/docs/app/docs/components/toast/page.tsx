@@ -43,7 +43,7 @@ function MyComponent() {
       <Button onClick={() => success('Saved!', 'Changes saved successfully.')}>
         Save
       </Button>
-      
+
       <ToastContainer position="bottom-right">
         {toasts.map((toast) => (
           <Toast

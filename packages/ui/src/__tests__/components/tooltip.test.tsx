@@ -3,13 +3,6 @@ import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../components/tooltip';
 
-// Radix Tooltip requires a Provider ancestor.
-// In tests, we wrap in TooltipProvider with delayDuration=0 to skip the hover delay.
-// Note: Radix renders tooltip content in two places —
-//   1. A visible styled <div> (our TooltipContent)
-//   2. A visually-hidden <span role="tooltip"> (the ARIA widget)
-// We use getByRole('tooltip') / queryByRole('tooltip') throughout.
-
 function TestTooltip({
     content = 'Tooltip text',
     delayDuration = 0,
@@ -58,10 +51,8 @@ describe('Tooltip', () => {
 
     it('hides content when trigger loses focus', async () => {
         render(<TestTooltip delayDuration={0} />);
-        // Open via focus
         await act(async () => screen.getByText('Hover me').focus());
         await waitFor(() => screen.getByRole('tooltip'));
-        // Close via blur
         await act(async () => screen.getByText('Hover me').blur());
         await waitFor(() =>
             expect(screen.getByText('Hover me')).toHaveAttribute('data-state', 'closed')
@@ -79,7 +70,6 @@ describe('Tooltip', () => {
         await act(async () => screen.getByText('Hover me').focus());
         await waitFor(() => screen.getByRole('tooltip'));
         await act(async () => screen.getByText('Hover me').blur());
-        // Radix keeps content mounted during exit animation; verify trigger closed state
         await waitFor(() =>
             expect(screen.getByText('Hover me')).toHaveAttribute('data-state', 'closed')
         );
@@ -117,20 +107,17 @@ describe('Tooltip', () => {
                 </Tooltip>
             </TooltipProvider>
         );
-        // The visually-hidden role="tooltip" span contains the text content
         expect(screen.getByRole('tooltip')).toHaveTextContent('Bold tip');
     });
 
     it('applies brutalist styling classes to content', () => {
         render(<TestTooltip open content="Styled tip" />);
-        // The hidden <span role="tooltip"> is a child of the visible styled <div>
         const tooltipSpan = screen.getByRole('tooltip');
         const visibleContent = tooltipSpan.parentElement!;
         expect(visibleContent).toHaveClass('bg-black', 'text-white', 'font-bold', 'border-2');
     });
 
     it('TooltipProvider is required — Radix throws without it', () => {
-        // Radix v2 enforces Provider context — this documents the requirement
         expect(() =>
             render(
                 <Tooltip>

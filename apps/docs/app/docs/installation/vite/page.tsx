@@ -15,7 +15,6 @@ export default function ViteInstallationPage() {
                 Install and configure BrutxUI for Vite + React projects.
             </p>
 
-            {/* CLI Installation */}
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-[#4ECDC4] border-3 border-black flex items-center justify-center">
@@ -122,7 +121,6 @@ function App() {
 export default App;`}</CodeBlock>
             </section>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center pt-8 border-t-3 border-black dark:border-white mt-12">
                 <Link
                     href="/docs/installation/nextjs"

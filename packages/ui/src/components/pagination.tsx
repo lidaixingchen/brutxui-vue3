@@ -140,7 +140,6 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                 className={cn(paginationVariants({ variant, size, className }))}
                 {...props}
             >
-                {/* First page button */}
                 {showFirstLast && (
                     <button
                         type="button"
@@ -155,7 +154,6 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                     </button>
                 )}
 
-                {/* Previous button */}
                 <button
                     type="button"
                     className={cn(paginationButtonVariants({ size: buttonSize, isActive: false }))}
@@ -166,7 +164,6 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                     <ChevronLeft className="h-4 w-4 stroke-[3]" />
                 </button>
 
-                {/* Page numbers */}
                 {showPageNumbers &&
                     paginationRange.map((pageNumber, index) => {
                         if (pageNumber === 'dots') {
@@ -204,14 +201,12 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                         );
                     })}
 
-                {/* Page indicator for minimal mode */}
                 {!showPageNumbers && (
                     <span className="px-4 font-black text-black dark:text-white">
                         {currentPage} / {totalPages}
                     </span>
                 )}
 
-                {/* Next button */}
                 <button
                     type="button"
                     className={cn(paginationButtonVariants({ size: buttonSize, isActive: false }))}
@@ -222,7 +217,6 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
                     <ChevronRight className="h-4 w-4 stroke-[3]" />
                 </button>
 
-                {/* Last page button */}
                 {showFirstLast && (
                     <button
                         type="button"

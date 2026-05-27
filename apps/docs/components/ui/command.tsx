@@ -154,13 +154,10 @@ function CommandItem({ className, ...props }: React.ComponentProps<typeof Comman
                 'text-sm font-semibold',
                 'select-none outline-none',
                 'border-2 border-transparent',
-                // Hover & Selected states - Neo-Brutalist style
                 'data-[selected=true]:bg-[#4ECDC4] data-[selected=true]:text-black',
                 'data-[selected=true]:border-black data-[selected=true]:font-black',
                 'data-[selected=true]:shadow-[2px_2px_0px_0px_#000000]',
-                // Disabled
                 'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
-                // Icons
                 '[&_svg]:pointer-events-none [&_svg]:shrink-0',
                 "[&_svg:not([class*='size-'])]:size-5",
                 "[&_svg:not([class*='text-'])]:text-current",

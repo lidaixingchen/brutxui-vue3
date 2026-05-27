@@ -101,7 +101,7 @@ export function PricingSection({
                                         </Badge>
                                     </div>
                                 )}
-                                
+
                                 <Card className={`flex flex-col h-full border-3 border-brutal rounded-none shadow-brutal hover:-translate-x-1 hover:-translate-y-1 hover:shadow-brutal-lg transition-all duration-150 ${plan.popular ? 'bg-yellow-50/20' : 'bg-white dark:bg-gray-800'}`}>
                                     <CardHeader className="space-y-2 pb-6 border-b-3 border-brutal">
                                         <CardTitle className="text-2xl font-black leading-none">{plan.name}</CardTitle>
@@ -113,7 +113,7 @@ export function PricingSection({
                                             {plan.description}
                                         </CardDescription>
                                     </CardHeader>
-                                    
+
                                     <CardContent className="flex-grow pt-6 space-y-4">
                                         <p className="font-black text-xs uppercase tracking-wider text-gray-500">What's included:</p>
                                         <ul className="space-y-3">
@@ -127,7 +127,7 @@ export function PricingSection({
                                             ))}
                                         </ul>
                                     </CardContent>
-                                    
+
                                     <CardFooter className="pt-6 border-t-3 border-brutal mt-auto bg-gray-50 dark:bg-gray-900/50 p-6">
                                         <Button
                                             className="w-full font-black text-base py-6"

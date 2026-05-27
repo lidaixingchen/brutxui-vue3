@@ -13,13 +13,11 @@ export default function SeparatorPage() {
                 </p>
             </div>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Installation</h2>
                 <InstallationTabs componentName="separator" />
             </section>
 
-            {/* Basic Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Basic Usage</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -38,7 +36,6 @@ export default function SeparatorPage() {
                 </pre>
             </section>
 
-            {/* Horizontal */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Horizontal Separator</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -64,7 +61,6 @@ export default function SeparatorPage() {
                 </pre>
             </section>
 
-            {/* Vertical */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Vertical Separator</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -87,7 +83,6 @@ export default function SeparatorPage() {
                 </pre>
             </section>
 
-            {/* Custom Styling */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Custom Styling</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white space-y-4">

@@ -1,26 +1,18 @@
-/**
- * Init Command
- * Initialize Brutx in a project
- */
-
 import ora from 'ora';
 import inquirer from 'inquirer';
 import fs from 'fs-extra';
 import path from 'path';
 
 import {
-    // Types
     type InitOptions,
     type BrutalistConfig,
     type TailwindConfig,
     type AliasConfig,
-    // Constants
     BASE_DEPENDENCIES,
     BRUTALIST_CSS_STYLES,
     SCHEMA_URL,
     DEFAULT_TAILWIND_CONFIG,
     UTILS_TEMPLATE,
-    // Functions
     detectProjectType,
     detectPackageManager,
     findTailwindConfig,
@@ -33,18 +25,11 @@ import {
     logger,
 } from '../lib/index.js';
 
-// ============================================================================
-// Configuration Builder
-// ============================================================================
-
 interface DetectedSettings {
     tailwind: TailwindConfig;
     aliases: AliasConfig;
 }
 
-/**
- * Auto-detect project settings
- */
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const projectType = detectProjectType(cwd);
     const tailwindVersion = detectTailwindVersion(cwd);
@@ -53,7 +38,6 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const cssFile = findCssFile(cwd, projectType);
     const aliases = getDefaultAliases(cwd);
 
-    // Determine fallback CSS path based on project type
     const fallbackCss = projectType.includes('src') ? 'src/index.css' : 'app/globals.css';
 
     return {
@@ -65,9 +49,6 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
     };
 }
 
-/**
- * Prompt user for configuration
- */
 async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSettings> {
     const answers = await inquirer.prompt([
         {
@@ -109,13 +90,6 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
     };
 }
 
-// ============================================================================
-// File Operations
-// ============================================================================
-
-/**
- * Create components.json configuration file
- */
 async function createConfigFile(cwd: string, settings: DetectedSettings): Promise<void> {
     const config: BrutalistConfig = {
         $schema: SCHEMA_URL,
@@ -128,9 +102,6 @@ async function createConfigFile(cwd: string, settings: DetectedSettings): Promis
     await fs.writeJson(configPath, config, { spaces: 2 });
 }
 
-/**
- * Add brutalist styles to global CSS file
- */
 async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean> {
     const fullPath = path.join(cwd, cssPath);
     await fs.ensureDir(path.dirname(fullPath));
@@ -140,13 +111,11 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
     let content = '';
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
-        // Check if already added
         if (content.includes('shadow-brutal')) {
             return false;
         }
         content += BRUTALIST_CSS_STYLES;
     } else {
-        // Create new globals.css with Tailwind directives and brutalist styles
         if (tailwindVersion === 'v4') {
             content = `@import "tailwindcss";\n${BRUTALIST_CSS_STYLES}`;
         } else {
@@ -158,13 +127,6 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
     return true;
 }
 
-// ============================================================================
-// Overwrite Handling
-// ============================================================================
-
-/**
- * Check if config exists and handle overwrite
- */
 async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean> {
     const configPath = path.join(cwd, 'components.json');
 
@@ -198,41 +160,30 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
     return true;
 }
 
-// ============================================================================
-// Main Command
-// ============================================================================
-
 export async function init(options: InitOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
     const projectType = detectProjectType(cwd);
 
-    // Setup logger
     logger.setSilent(options.silent ?? false);
 
-    // Header
     logger.bold('\n🎨 Brutx - Neo-Brutalism Component Library\n');
     logger.info(`   Detected project: ${projectType}\n`);
 
-    // Check existing config
     if (!(await shouldProceed(cwd, options))) {
         return;
     }
 
-    // Get configuration
     let settings = await detectSettings(cwd);
 
     if (!options.yes && !options.defaults) {
         settings = await promptForConfig(settings);
     }
 
-    // Initialize
     const spinner = options.silent ? null : ora('Initializing Brutx...').start();
 
     try {
-        // Create config file
         await createConfigFile(cwd, settings);
 
-        // Ensure utils.ts exists (do not overwrite if user has customized it)
         const utilsPath = resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
         await fs.ensureDir(path.dirname(utilsPath));
         if (!(await fs.pathExists(utilsPath))) {
@@ -242,12 +193,10 @@ export async function init(options: InitOptions): Promise<void> {
             spinner?.info('Utility helper already exists, skipping.');
         }
 
-        // Ensure components/ui dir exists
         const componentsDir = resolveAliasPath(settings.aliases.components, cwd);
         await fs.ensureDir(path.join(componentsDir, 'ui'));
         spinner?.info('Created components/ui directory');
 
-        // Add CSS styles
         const stylesAdded = await addBrutalistStyles(cwd, settings.tailwind.css);
         if (stylesAdded) {
             spinner?.info('Added brutalist styles to ' + settings.tailwind.css);
@@ -257,7 +206,6 @@ export async function init(options: InitOptions): Promise<void> {
 
         spinner?.succeed('Brutx initialized successfully!');
 
-        // Install dependencies
         const packageManager = detectPackageManager(cwd);
         logger.newLine();
         logger.bold(`Installing dependencies with ${packageManager}...`);
@@ -272,7 +220,6 @@ export async function init(options: InitOptions): Promise<void> {
             );
         }
 
-        // Next steps
         logger.newLine();
         logger.bold('Next steps:');
         logger.highlight('  1. Add components:');

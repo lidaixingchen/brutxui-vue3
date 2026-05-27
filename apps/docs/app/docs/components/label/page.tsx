@@ -13,13 +13,11 @@ export default function LabelPage() {
                 </p>
             </div>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Installation</h2>
                 <InstallationTabs componentName="label" />
             </section>
 
-            {/* Basic Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Basic Usage</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -37,7 +35,6 @@ import { Input } from "@/components/ui/input"
                 </pre>
             </section>
 
-            {/* With Checkbox */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">With Checkbox</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -54,7 +51,6 @@ import { Input } from "@/components/ui/input"
                 </pre>
             </section>
 
-            {/* Required */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Required Field</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -73,7 +69,6 @@ import { Input } from "@/components/ui/input"
                 </pre>
             </section>
 
-            {/* With Helper Text */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">With Helper Text</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -92,7 +87,6 @@ import { Input } from "@/components/ui/input"
                 </pre>
             </section>
 
-            {/* Form Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Form Example</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">

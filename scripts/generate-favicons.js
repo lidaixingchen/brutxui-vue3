@@ -1,15 +1,6 @@
-/**
- * Script to generate favicon PNG files from SVG
- * Run: node scripts/generate-favicons.js
- *
- * Prerequisites:
- * npm install sharp
- */
-
 const fs = require('fs');
 const path = require('path');
 
-// Check if sharp is installed
 let sharp;
 try {
     sharp = require('sharp');
@@ -37,7 +28,6 @@ const sizes = [
 async function generateFavicons() {
     console.log('🎨 Generating favicon PNG files...\n');
 
-    // Read SVG file
     const svgBuffer = fs.readFileSync(svgPath);
 
     for (const { name, size } of sizes) {
@@ -48,11 +38,9 @@ async function generateFavicons() {
         console.log(`✅ Generated ${name} (${size}x${size})`);
     }
 
-    // Generate ICO file (32x32)
     const icoPath = path.join(publicDir, 'favicon.ico');
     await sharp(svgBuffer).resize(32, 32).png().toFile(icoPath.replace('.ico', '-temp.png'));
 
-    // Note: For proper ICO generation, you might need additional tools
     console.log(`✅ Generated favicon.ico (32x32)`);
 
     console.log('\n🎉 All favicons generated successfully!');

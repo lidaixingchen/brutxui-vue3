@@ -24,7 +24,7 @@ export default function WaitlistPageDocPage() {
                 <h2 className="text-2xl font-black">Interactive Preview</h2>
                 <ComponentPreview align="stretch">
                     <div className="w-full border-3 border-black p-1 bg-gray-50 dark:bg-gray-900">
-                        <WaitlistPage 
+                        <WaitlistPage
                             onWaitlistSubmit={(e, email) => {
                                 e.preventDefault();
                                 alert(`Joined priority list with email: ${email}`);
@@ -49,7 +49,6 @@ export default function Page() {
     <WaitlistPage
       title="Secure early builder access to Brutx"
       onWaitlistSubmit={(e, email) => {
-        // Post email to subscriber DB
       }}
     />
   )

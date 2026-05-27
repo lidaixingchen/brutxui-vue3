@@ -58,7 +58,6 @@ describe('resolveDeps with mocked fetch', () => {
 
     it('should recursively resolve registry dependencies in correct topological order', async () => {
         vi.stubGlobal('fetch', async (url: string) => {
-            // Extract component name from url e.g. "https://registry.mock/button.json" -> "button"
             const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
             if (mockRegistry[name]) {
                 return {
@@ -73,7 +72,7 @@ describe('resolveDeps with mocked fetch', () => {
         });
 
         const resolved = await registry.resolveDeps(['combobox'], 'https://registry.mock');
-        
+
         expect(resolved.map(r => r.name)).toEqual(['button', 'popover', 'combobox']);
     });
 
@@ -91,7 +90,6 @@ describe('resolveDeps with mocked fetch', () => {
 
     it('should correctly parse version-pinned names like component@version', async () => {
         vi.stubGlobal('fetch', async (url: string) => {
-            // Assert that the fetched URL is version-pinned
             expect(url).toContain('/v0.2.1/');
             const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
             return {

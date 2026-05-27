@@ -21,8 +21,8 @@ export function ComponentPreview({ children, className, align = 'center' }: Comp
         >
             <div className={cn(
                 "w-full gap-2 sm:gap-4",
-                align === 'center' 
-                  ? "flex items-center justify-center flex-wrap" 
+                align === 'center'
+                  ? "flex items-center justify-center flex-wrap"
                   : "flex flex-col items-stretch"
             )}>
                 {children}

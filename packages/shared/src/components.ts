@@ -1,15 +1,3 @@
-/**
- * Component Registry Metadata
- *
- * This is the canonical source of truth for all Brutx components.
- * Both the CLI and the registry build script consume this data.
- *
- * To add a new component:
- * 1. Add an entry here with its name and npm dependencies
- * 2. Create the component in packages/ui/src/components/
- * 3. Run `pnpm --filter brutx-registry build` to generate the registry JSON
- */
-
 import type { ComponentMeta } from './types.js';
 
 export const COMPONENTS: Record<string, ComponentMeta> = {
@@ -64,5 +52,4 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'waitlist-page': { name: 'waitlist-page', dependencies: ['lucide-react'] },
 } as const;
 
-/** List of all available component names */
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

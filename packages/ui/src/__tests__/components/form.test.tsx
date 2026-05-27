@@ -67,7 +67,7 @@ describe('Form', () => {
         render(<TestForm onSubmit={onSubmit} />);
 
         await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
-        
+
         await waitFor(() => {
             expect(screen.getByText('Username too short')).toBeInTheDocument();
         });

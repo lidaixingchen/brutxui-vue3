@@ -13,13 +13,11 @@ export default function TextareaPage() {
                 </p>
             </div>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Installation</h2>
                 <InstallationTabs componentName="textarea" />
             </section>
 
-            {/* Basic Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Basic Usage</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -32,7 +30,6 @@ export default function TextareaPage() {
                 </pre>
             </section>
 
-            {/* Sizes */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Sizes</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white space-y-4">
@@ -47,7 +44,6 @@ export default function TextareaPage() {
                 </pre>
             </section>
 
-            {/* Variants */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Variants</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white space-y-4">
@@ -62,7 +58,6 @@ export default function TextareaPage() {
                 </pre>
             </section>
 
-            {/* Disabled */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Disabled</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">
@@ -73,7 +68,6 @@ export default function TextareaPage() {
                 </pre>
             </section>
 
-            {/* With Rows */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-bold">Custom Rows</h2>
                 <div className="p-6 bg-white dark:bg-gray-900 border-3 border-black dark:border-white">

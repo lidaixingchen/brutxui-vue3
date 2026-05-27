@@ -8,8 +8,10 @@ export interface SubmitButtonProps extends ButtonProps {
 }
 
 /**
- * A button that automatically shows loading state when inside a form
- * that is being submitted via Server Actions (React 19 feature)
+ * Renders a submit button that follows React form pending state.
+ *
+ * @param props - Submit button props.
+ * @returns Submit button with pending state.
  */
 function SubmitButton({ children, pendingText, disabled, ...props }: SubmitButtonProps) {
     const { pending } = useFormStatus();

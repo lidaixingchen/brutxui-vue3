@@ -15,7 +15,6 @@ export default function NextJsInstallationPage() {
                 Install and configure BrutxUI for Next.js (App Router or Pages Router).
             </p>
 
-            {/* CLI Installation */}
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-[#4ECDC4] border-3 border-black flex items-center justify-center">
@@ -113,7 +112,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Dark Mode */}
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-gray-900 dark:bg-white border-3 border-black dark:border-white flex items-center justify-center">
@@ -157,7 +155,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
                 </div>
             </section>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center pt-8 border-t-3 border-black dark:border-white mt-12">
                 <Link
                     href="/docs/installation"

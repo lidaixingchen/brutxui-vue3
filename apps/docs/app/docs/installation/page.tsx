@@ -152,7 +152,6 @@ export default function InstallationPage() {
                 Choose your preferred method to add Brutx to your project.
             </p>
 
-            {/* Prerequisites */}
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-[#FFE66D] border-3 border-black flex items-center justify-center font-black text-black">
@@ -179,7 +178,6 @@ export default function InstallationPage() {
                 </div>
             </section>
 
-            {/* CLI Installation */}
             <section className="mb-12">
                 <h2 className="text-2xl font-black mb-6">Installation Method</h2>
                 <div className="max-w-xl">
@@ -250,7 +248,6 @@ export default function InstallationPage() {
                 </div>
             </section>
 
-            {/* Quick Start */}
             <section className="mb-12 p-6 border-3 border-black dark:border-white bg-gray-50 dark:bg-gray-900">
                 <h2 className="text-xl font-black mb-4">Quick Start</h2>
                 <div className="grid gap-4">
@@ -290,7 +287,6 @@ export default function InstallationPage() {
                 </div>
             </section>
 
-            {/* Framework Guides */}
             <section className="mb-12">
                 <h2 className="text-2xl font-black mb-6">Framework Guides</h2>
                 <div className="grid gap-3">
@@ -327,7 +323,6 @@ export default function InstallationPage() {
                 </div>
             </section>
 
-            {/* Package Info */}
             <section className="grid sm:grid-cols-2 gap-6">
                 <div className="p-6 border-3 border-black dark:border-white">
                     <h3 className="font-black mb-4 pb-2 border-b-2 border-black dark:border-white">

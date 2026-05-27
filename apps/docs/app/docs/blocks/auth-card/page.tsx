@@ -24,7 +24,7 @@ export default function AuthCardDocPage() {
                 <h2 className="text-2xl font-black">Interactive Preview</h2>
                 <ComponentPreview>
                     <div className="w-full flex items-center justify-center p-8 bg-gray-100 dark:bg-gray-900 border-3 border-black">
-                        <AuthCard 
+                        <AuthCard
                             onLoginSubmit={(e) => {
                                 e.preventDefault();
                                 alert('Credentials submitted successfully!');
@@ -49,7 +49,6 @@ export default function Page() {
     <AuthCard
       title="Secure Admin Gateway"
       onLoginSubmit={(e) => {
-        // Handle database authentication
       }}
     />
   )

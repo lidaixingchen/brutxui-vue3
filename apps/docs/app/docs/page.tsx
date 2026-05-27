@@ -33,7 +33,7 @@ export default function DocsPage() {
                 </Badge>
                 <h1 className="text-4xl font-black mb-2">Getting Started</h1>
                 <p className="text-lg text-gray-700 dark:text-gray-300">
-                    BrutxUI is a high-fidelity React component registry built with a Neo-Brutalist design language. 
+                    BrutxUI is a high-fidelity React component registry built with a Neo-Brutalist design language.
                     Rather than operating as a heavy node dependency, BrutxUI is a <strong>copy-paste-first component library</strong> (inspired by shadcn/ui) designed for full customization, performance, and accessibility.
                 </p>
             </div>
@@ -77,7 +77,7 @@ export default function DocsPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">🎨 System Customizability (CSS Variables & Presets)</h2>
                 <p>
-                    BrutxUI features a unified theme and tokens design system built around standard CSS custom properties. 
+                    BrutxUI features a unified theme and tokens design system built around standard CSS custom properties.
                     You can configure borders, shadows, and base colors globally in your global CSS file.
                 </p>
 

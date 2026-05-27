@@ -6,24 +6,19 @@ import { SITE_CONFIG } from '@/config/constants';
 export default function Home() {
     return (
         <main className="min-h-screen overflow-x-hidden bg-white dark:bg-gray-950">
-            {/* Theme Toggle - Fixed Position */}
             <div className="fixed top-4 right-4 z-50">
                 <ThemeToggle />
             </div>
 
-            {/* Hero Section  */}
             <section className="container-brutal py-12 sm:py-20 px-4">
                 <div className="flex flex-col items-center text-center">
                     <Badge variant="primary" size="lg" className="mb-4 sm:mb-6">
                         v{SITE_CONFIG.version}
                     </Badge>
 
-                    {/* 3D Brutalist Logo Text */}
                     <div className="relative mb-6 sm:mb-8">
-                        {/* BRUTX text */}
                         <div className="relative inline-block">
                             <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-black tracking-tighter select-none">
-                                {/* Deep shadow - darkest */}
                                 <span
                                     className="absolute text-black"
                                     style={{
@@ -33,7 +28,6 @@ export default function Home() {
                                 >
                                     Brutx
                                 </span>
-                                {/* Mid shadow - coral red */}
                                 <span
                                     className="absolute text-[#FF6B6B]"
                                     style={{
@@ -43,7 +37,6 @@ export default function Home() {
                                 >
                                     Brutx
                                 </span>
-                                {/* Light shadow - teal */}
                                 <span
                                     className="absolute text-[#4ECDC4]"
                                     style={{
@@ -53,7 +46,6 @@ export default function Home() {
                                 >
                                     Brutx
                                 </span>
-                                {/* Main text - yellow */}
                                 <span
                                     className="relative text-[#FFE66D]"
                                     style={{
@@ -108,7 +100,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Features Section */}
             <section className="container-brutal py-12 sm:py-16 px-4">
                 <h2 className="text-3xl sm:text-4xl font-black text-center mb-8 sm:mb-12">
                     Features
@@ -191,7 +182,6 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* Quick Start */}
             <section className="container-brutal py-12 sm:py-16 px-4">
                 <h2 className="text-3xl sm:text-4xl font-black text-center mb-8 sm:mb-12">
                     Quick Start
@@ -239,7 +229,6 @@ function App() {
                 </Card>
             </section>
 
-            {/* Footer */}
             <footer className="border-t-3 border-black dark:border-white mt-12 sm:mt-16">
                 <div className="container-brutal py-6 sm:py-8 px-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">

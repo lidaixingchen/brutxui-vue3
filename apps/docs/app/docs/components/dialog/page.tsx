@@ -88,7 +88,6 @@ import { Button } from "@/components/ui/button"
       </DialogDescription>
     </DialogHeader>
     <div>
-      {/* Content */}
     </div>
     <DialogFooter>
       <Button variant="outline">Cancel</Button>

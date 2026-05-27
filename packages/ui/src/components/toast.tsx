@@ -119,7 +119,6 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                 role="alert"
                 {...props}
             >
-                {/* Progress bar */}
                 {duration && onClose && (
                     <div className="absolute top-0 left-0 right-0 h-1 bg-black/10 dark:bg-white/10 overflow-hidden">
                         <div
@@ -130,12 +129,10 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                 )}
 
                 <div className="flex items-start gap-4 p-4 pt-5">
-                    {/* Icon */}
                     {(icon || defaultIcon) && (
                         <div className="flex-shrink-0 mt-0.5">{icon || defaultIcon}</div>
                     )}
 
-                    {/* Content */}
                     <div className="flex-1 min-w-0">
                         {title && <p className="font-black text-base leading-tight">{title}</p>}
                         {description && (
@@ -145,11 +142,9 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
                         )}
                         {children}
 
-                        {/* Action button */}
                         {action && <div className="mt-3">{action}</div>}
                     </div>
 
-                    {/* Close button */}
                     {onClose && (
                         <button
                             type="button"
@@ -180,7 +175,6 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 );
 Toast.displayName = 'Toast';
 
-// Toast Container for positioning
 interface ToastContainerProps extends React.HTMLAttributes<HTMLDivElement> {
     position?:
         | 'top-left'
@@ -219,7 +213,6 @@ const ToastContainer = React.forwardRef<HTMLDivElement, ToastContainerProps>(
 );
 ToastContainer.displayName = 'ToastContainer';
 
-// Simple toast hook
 interface ToastItem {
     id: string;
     variant?: ToastProps['variant'];
@@ -246,7 +239,6 @@ function useToast() {
         setToasts([]);
     }, []);
 
-    // Shorthand methods
     const success = React.useCallback(
         (title: string, description?: string) => {
             return addToast({ variant: 'success', title, description });

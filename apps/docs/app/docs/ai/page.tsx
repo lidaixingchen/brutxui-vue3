@@ -31,8 +31,8 @@ export default function AIDocsPage() {
                 </Badge>
                 <h1 className="text-4xl font-black mb-2">Using BrutxUI with AI</h1>
                 <p className="text-lg text-gray-700 dark:text-gray-300">
-                    BrutxUI is designed to be highly AI-ready. By providing precise design tokens, 
-                    clear structures, and clean registry metadata, AI coding agents (such as Cursor, GitHub Copilot, Claude, and GPT-4o) 
+                    BrutxUI is designed to be highly AI-ready. By providing precise design tokens,
+                    clear structures, and clean registry metadata, AI coding agents (such as Cursor, GitHub Copilot, Claude, and GPT-4o)
                     can generate flawless, fully compatible components, custom blocks, and landing pages on the first try.
                 </p>
             </div>
@@ -56,7 +56,7 @@ export default function AIDocsPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">🧩 Blueprint for a BrutxUI Component</h2>
                 <p>
-                    Every BrutxUI component follows a standard React + Tailwind CSS + Radix UI primitive composability structure. 
+                    Every BrutxUI component follows a standard React + Tailwind CSS + Radix UI primitive composability structure.
                     Share this blueprint template with your AI assistant:
                 </p>
 
@@ -150,14 +150,14 @@ Card.displayName = 'Card';`}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">🛠️ Custom Blocks & Registry Metadata</h2>
                 <p>
-                    When creating custom landing page blocks (e.g. <code>saas-pricing</code> or <code>dashboard-stats</code>), 
+                    When creating custom landing page blocks (e.g. <code>saas-pricing</code> or <code>dashboard-stats</code>),
                     they must be registered in the component directory manifest so they can be parsed by our registry compiler and validator scripts.
                 </p>
 
                 <div className="border-3 border-black dark:border-white p-5 bg-white dark:bg-gray-900 space-y-3">
                     <h4 className="font-black text-base">Step 1: Save Component File</h4>
                     <p className="text-xs text-gray-600 dark:text-gray-400">Save your component under: <code>packages/ui/src/components/ui/my-block.tsx</code></p>
-                    
+
                     <h4 className="font-black text-base mt-4">Step 2: Declare in Registry Manifest</h4>
                     <p className="text-xs text-gray-600 dark:text-gray-400">Add the block configuration to <code>packages/registry/registry.json</code>:</p>
                     <pre className="bg-black text-[#FFE66D] p-3 text-xs font-mono overflow-x-auto">
@@ -191,29 +191,27 @@ pnpm --filter brutx-registry validate`}
                 </p>
 
                 <div className="space-y-4">
-                    {/* Prompt 1 */}
                     <div className="border-3 border-black dark:border-white p-5 bg-white dark:bg-gray-900 space-y-2">
                         <h4 className="font-bold text-sm text-[#FF6B6B] uppercase tracking-wider">Prompt A: Creating atomic components</h4>
                         <p className="text-xs text-gray-600 dark:text-gray-400">Use this to generate custom atomic elements like alerts or custom form triggers:</p>
                         <blockquote className="border-l-4 border-[#FF6B6B] pl-4 text-xs italic bg-gray-100 dark:bg-gray-800 p-3">
-                            "Build a custom [Component Name] React component for my project using Tailwind CSS and Radix UI. 
-                            The component must adhere strictly to BrutxUI's Neo-Brutalist design tokens. 
-                            Ensure it uses class-variance-authority (cva) for variants, accepts a custom className merged via our local 'cn' utility from '@/lib/utils', 
-                            features a 3px border outline ('border-3 border-black'), unrounded corners ('rounded-none'), a solid offset shadow ('shadow-brutal'), 
-                            and translates downwards and rightward when active ('active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#000]'). 
+                            "Build a custom [Component Name] React component for my project using Tailwind CSS and Radix UI.
+                            The component must adhere strictly to BrutxUI's Neo-Brutalist design tokens.
+                            Ensure it uses class-variance-authority (cva) for variants, accepts a custom className merged via our local 'cn' utility from '@/lib/utils',
+                            features a 3px border outline ('border-3 border-black'), unrounded corners ('rounded-none'), a solid offset shadow ('shadow-brutal'),
+                            and translates downwards and rightward when active ('active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#000]').
                             Support full keyboard navigation focus outlines and make it completely responsive and dark mode safe."
                         </blockquote>
                     </div>
 
-                    {/* Prompt 2 */}
                     <div className="border-3 border-black dark:border-white p-5 bg-white dark:bg-gray-900 space-y-2">
                         <h4 className="font-bold text-sm text-[#4ECDC4] uppercase tracking-wider">Prompt B: Creating SaaS Blocks</h4>
                         <p className="text-xs text-gray-600 dark:text-gray-400">Use this to generate pricing sections, call-to-actions, or dashboard widgets:</p>
                         <blockquote className="border-l-4 border-[#4ECDC4] pl-4 text-xs italic bg-gray-100 dark:bg-gray-800 p-3">
-                            "Generate a high-conversion, responsive [Pricing section / Hero block / Feature list] using React and Tailwind CSS. 
-                            Compose the layout entirely using BrutxUI components: Card, Button, Badge, Switch, and Checkbox. 
-                            The visual style must feel bold and premium with thick borders, sharp edges, and high contrast accents. 
-                            Include subtle hover scale transitions, neon yellow/teal/coral badge pill highlights, structured grids, 
+                            "Generate a high-conversion, responsive [Pricing section / Hero block / Feature list] using React and Tailwind CSS.
+                            Compose the layout entirely using BrutxUI components: Card, Button, Badge, Switch, and Checkbox.
+                            The visual style must feel bold and premium with thick borders, sharp edges, and high contrast accents.
+                            Include subtle hover scale transitions, neon yellow/teal/coral badge pill highlights, structured grids,
                             and interactive states. Write standard, accessible, and clean Tailwind markup without external dependencies."
                         </blockquote>
                     </div>

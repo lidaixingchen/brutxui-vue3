@@ -1,11 +1,3 @@
-/**
- * Core type definitions for the CLI
- */
-
-// ============================================================================
-// Project Types
-// ============================================================================
-
 export type ProjectType =
     | 'nextjs'
     | 'nextjs-src'
@@ -16,10 +8,6 @@ export type ProjectType =
     | 'unknown';
 
 export type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
-
-// ============================================================================
-// Configuration Types
-// ============================================================================
 
 export interface TsConfig {
     compilerOptions?: {
@@ -45,10 +33,6 @@ export interface BrutalistConfig {
     aliases: AliasConfig;
 }
 
-// ============================================================================
-// Command Options
-// ============================================================================
-
 export interface InitOptions {
     yes?: boolean;
     defaults?: boolean;
@@ -68,11 +52,9 @@ export interface AddOptions {
     registry?: string;
 }
 
-// ============================================================================
-// Component & Registry Types
-// ============================================================================
-
-/** @deprecated Import ComponentMeta from 'brutx-shared' instead */
+/**
+ * @deprecated Import ComponentMeta from 'brutx-shared' instead.
+ */
 export type { ComponentMeta as ComponentInfo } from 'brutx-shared';
 
 export interface RegistryFile {

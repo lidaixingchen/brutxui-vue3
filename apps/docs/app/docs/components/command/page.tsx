@@ -45,7 +45,6 @@ export default function CommandPage() {
 
     return (
         <div className="space-y-12">
-            {/* Header */}
             <div className="space-y-4">
                 <h1 className="text-4xl font-black">Command</h1>
                 <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -53,7 +52,6 @@ export default function CommandPage() {
                 </p>
             </div>
 
-            {/* Basic Example */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Basic Command</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -101,7 +99,6 @@ export default function CommandPage() {
                 </div>
             </section>
 
-            {/* Command Dialog */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Command Dialog</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -177,7 +174,6 @@ export default function CommandPage() {
                 </CommandDialog>
             </section>
 
-            {/* With Disabled Items */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">With Disabled Items</h2>
                 <p className="text-gray-600 dark:text-gray-400">Some items can be disabled.</p>
@@ -205,7 +201,6 @@ export default function CommandPage() {
                 </div>
             </section>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Installation</h2>
                 <div className="bg-gray-900 text-gray-100 p-4 border-3 border-black dark:border-white font-mono text-sm overflow-x-auto">
@@ -220,7 +215,6 @@ export default function CommandPage() {
                 </div>
             </section>
 
-            {/* Props */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Components</h2>
                 <div className="overflow-x-auto">

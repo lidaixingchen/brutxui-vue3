@@ -11,7 +11,6 @@ const config: Config = {
     ],
     theme: {
         extend: {
-            // shadcn-style tokens so package components render correctly
             colors: {
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',

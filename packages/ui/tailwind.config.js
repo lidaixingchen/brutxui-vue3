@@ -1,11 +1,12 @@
-/** @type {import('tailwindcss').Config} */
+/**
+ * @type {import('tailwindcss').Config}
+ */
 module.exports = {
     darkMode: ['class'],
     content: ['./src/**/*.{js,ts,jsx,tsx}'],
     theme: {
         extend: {
             colors: {
-                // shadcn/ui tokens
                 border: 'hsl(var(--border))',
                 input: 'hsl(var(--input))',
                 ring: 'hsl(var(--ring))',
@@ -39,7 +40,6 @@ module.exports = {
                     DEFAULT: 'hsl(var(--card))',
                     foreground: 'hsl(var(--card-foreground))',
                 },
-                // Brutx Design Tokens mapped to tailwind color utilities
                 brutal: {
                     bg: 'var(--brutal-bg, #ffffff)',
                     fg: 'var(--brutal-fg, #000000)',
@@ -53,7 +53,6 @@ module.exports = {
                     muted: 'var(--brutal-muted, #f3f4f6)',
                     ring: 'var(--brutal-ring, #000000)',
                 },
-                // brutalism palette stays for backward compatibility
                 brutalism: {
                     bg: '#FFFFFF',
                     text: '#000000',
@@ -72,9 +71,7 @@ module.exports = {
                 brutal: 'var(--brutal-radius, 0px)',
             },
             boxShadow: {
-                // shadcn-style subtle shadows
                 xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                // brutalism shadows fully dynamic now
                 brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
                 'brutal-sm': 'calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)',
                 'brutal-lg': 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',

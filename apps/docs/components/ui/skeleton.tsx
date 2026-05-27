@@ -31,7 +31,6 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
 );
 Skeleton.displayName = 'Skeleton';
 
-// Pre-built skeleton components for common use cases
 const SkeletonText = React.forwardRef<
     HTMLDivElement,
     SkeletonProps & { lines?: number; lastLineWidth?: string }
@@ -112,7 +111,6 @@ const SkeletonTable = React.forwardRef<
             className={cn('border-3 border-black dark:border-white overflow-hidden', className)}
             {...props}
         >
-            {/* Header */}
             <div className="flex bg-[#FFE66D] border-b-3 border-black dark:border-white">
                 {Array.from({ length: columns }).map((_, index) => (
                     <div
@@ -126,7 +124,6 @@ const SkeletonTable = React.forwardRef<
                     </div>
                 ))}
             </div>
-            {/* Body */}
             {Array.from({ length: rows }).map((_, rowIndex) => (
                 <div
                     key={`row-${rowIndex}`}

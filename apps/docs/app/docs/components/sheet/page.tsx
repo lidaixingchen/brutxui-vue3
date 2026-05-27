@@ -37,7 +37,6 @@ export default function SheetPage() {
                 <h2 className="text-2xl font-black">Preview</h2>
                 <ComponentPreview>
                     <div className="flex flex-wrap gap-2">
-                        {/* Right */}
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button variant="primary">Slide Right (Default)</Button>
@@ -63,7 +62,6 @@ export default function SheetPage() {
                             </SheetContent>
                         </Sheet>
 
-                        {/* Left */}
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button variant="secondary">Slide Left</Button>
@@ -83,7 +81,6 @@ export default function SheetPage() {
                             </SheetContent>
                         </Sheet>
 
-                        {/* Top */}
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button variant="accent">Slide Top</Button>
@@ -103,7 +100,6 @@ export default function SheetPage() {
                             </SheetContent>
                         </Sheet>
 
-                        {/* Bottom */}
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button variant="outline">Slide Bottom</Button>
@@ -158,7 +154,6 @@ import { Button } from "@/components/ui/button"
       </SheetDescription>
     </SheetHeader>
     <div className="py-4">
-      {/* Forms/Content */}
     </div>
     <SheetFooter>
       <SheetClose asChild>

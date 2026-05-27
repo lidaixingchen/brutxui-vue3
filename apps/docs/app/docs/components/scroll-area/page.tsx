@@ -25,7 +25,6 @@ export default function ScrollAreaPage() {
                 <code>{`import { ScrollArea } from "@/components/ui/scroll-area"
 
 <ScrollArea className="h-[200px] w-[350px] border-3 border-black p-4">
-  {/* Your scrollable content here */}
 </ScrollArea>`}</code>
             </pre>
 

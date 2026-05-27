@@ -1,15 +1,14 @@
 import createMDX from '@next/mdx';
 
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
     pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
     transpilePackages: ['brutx-ui'],
 
-    // Next.js 15 optimizations
     experimental: {
-        // Enable React Compiler for automatic memoization
         reactCompiler: true,
-        // Optimize package imports for faster builds
         optimizePackageImports: [
             'lucide-react',
             '@radix-ui/react-dialog',
@@ -41,7 +40,6 @@ const nextConfig = {
         ],
     },
 
-    // Enable Turbopack for faster dev builds
     turbopack: {
         rules: {
             '*.svg': {

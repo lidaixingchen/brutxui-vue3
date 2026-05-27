@@ -41,7 +41,7 @@ export default function PricingSectionDocPage() {
 
 export default function Page() {
   return (
-    <PricingSection 
+    <PricingSection
       title="Scale Your Workstation"
       subtitle="Unlock premium tools for high-intensity SaaS creation."
     />

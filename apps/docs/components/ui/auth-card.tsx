@@ -40,9 +40,8 @@ export function AuthCard({
                         {description}
                     </CardDescription>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-6 pt-6">
-                    {/* Social OAuth Buttons */}
                     <div className="grid grid-cols-2 gap-3">
                         <Button
                             variant="outline"
@@ -116,7 +115,7 @@ export function AuthCard({
                         </Button>
                     </form>
                 </CardContent>
-                
+
                 <CardFooter className="pt-4 border-t-3 border-brutal bg-gray-50 dark:bg-gray-900/50 p-4 justify-center">
                     <p className="text-xs font-bold text-gray-600 dark:text-gray-400">
                         Don't have an account?{' '}

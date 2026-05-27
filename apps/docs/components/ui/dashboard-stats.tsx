@@ -70,7 +70,6 @@ export function DashboardStats({
             {...props}
         >
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                     <div>
                         <h2 className="text-3xl font-black uppercase tracking-tight flex items-center gap-2">
@@ -92,7 +91,6 @@ export function DashboardStats({
                     </div>
                 </div>
 
-                {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {stats.map((stat, idx) => {
                         const Icon = stat.icon;
@@ -136,7 +134,6 @@ export function DashboardStats({
                                         </Badge>
                                     </div>
 
-                                    {/* Mini visual indicator (Progress Bar) */}
                                     {stat.progress !== undefined && (
                                         <div className="mt-4 pt-4 border-t-2 border-dashed border-gray-200 dark:border-gray-800">
                                             <div className="flex justify-between text-xs font-bold mb-1.5">
@@ -160,7 +157,6 @@ export function DashboardStats({
                     })}
                 </div>
 
-                {/* Footer Insight Block */}
                 <div className="mt-8 p-5 bg-[#4ECDC4] text-black border-3 border-black shadow-brutal flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <span className="font-black uppercase mr-2 text-xs border-2 border-black px-2 py-0.5 bg-white">

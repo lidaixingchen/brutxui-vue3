@@ -32,13 +32,11 @@ export function WaitlistPage({
         >
             <div className="container px-4 md:px-6 mx-auto max-w-4xl">
                 <div className="flex flex-col items-center justify-center text-center space-y-8">
-                    {/* Badge */}
                     <div className="inline-flex items-center space-x-2 bg-brutal-accent text-black px-4 py-1.5 border-3 border-brutal font-black text-xs uppercase tracking-wider rotate-[-1.5deg]">
                         <Sparkles className="h-4 w-4 stroke-[3] animate-spin" />
                         <span>Private Beta Access Open</span>
                     </div>
 
-                    {/* Headline */}
                     <div className="space-y-4">
                         <h1 className="text-4xl font-black tracking-tight sm:text-5xl md:text-6xl leading-[1.05]">
                             {title}
@@ -48,8 +46,7 @@ export function WaitlistPage({
                         </p>
                     </div>
 
-                    {/* Email Form */}
-                    <form 
+                    <form
                         onSubmit={handleSubmit}
                         className="w-full max-w-md flex flex-col sm:flex-row gap-3 pt-2"
                     >
@@ -70,7 +67,6 @@ export function WaitlistPage({
                         </Button>
                     </form>
 
-                    {/* Social Proof */}
                     <div className="w-full border-t-3 border-brutal pt-8 mt-6">
                         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 items-center justify-center max-w-2xl mx-auto">
                             <div className="flex items-center justify-center space-x-2 font-black text-sm">

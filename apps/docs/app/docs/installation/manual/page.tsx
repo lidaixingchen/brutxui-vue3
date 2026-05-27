@@ -16,7 +16,6 @@ export default function ManualInstallationPage() {
                 Add Brutx components manually to any React project.
             </p>
 
-            {/* CLI Installation */}
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-[#4ECDC4] border-3 border-black flex items-center justify-center">
@@ -86,7 +85,6 @@ function MyComponent() {
 }`}</CodeBlock>
             </section>
 
-            {/* Manual Copy (Alternative) */}
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-[#FF6B6B] border-3 border-black flex items-center justify-center">
@@ -174,26 +172,24 @@ module.exports = {
 @tailwind components;
 @tailwind utilities;
 
-/* BrutxUI utility classes */
 @layer utilities {
   .border-3 {
     border-width: 3px;
   }
-  
+
   .shadow-brutal {
     box-shadow: 4px 4px 0px 0px #000;
   }
-  
+
   .shadow-brutal-sm {
     box-shadow: 2px 2px 0px 0px #000;
   }
-  
+
   .shadow-brutal-lg {
     box-shadow: 6px 6px 0px 0px #000;
   }
 }
 
-/* Dark mode shadows */
 .dark .shadow-brutal {
   box-shadow: 4px 4px 0px 0px #fff;
 }
@@ -242,7 +238,6 @@ module.exports = {
                 </div>
             </section>
 
-            {/* Component Dependencies */}
             <section className="mb-12">
                 <h2 className="text-xl font-black mb-4">Component Dependencies</h2>
                 <p className="mb-4 text-gray-600 dark:text-gray-400">
@@ -312,7 +307,6 @@ module.exports = {
                 </div>
             </section>
 
-            {/* Usage */}
             <section className="mb-12">
                 <h2 className="text-xl font-black mb-4">Usage Example</h2>
                 <CodeBlock language="tsx">{`import { Button } from "@/components/ui/button";
@@ -339,7 +333,6 @@ export default function App() {
 }`}</CodeBlock>
             </section>
 
-            {/* Navigation */}
             <div className="flex justify-between items-center pt-8 border-t-3 border-black dark:border-white mt-12">
                 <Link
                     href="/docs/installation/vite"

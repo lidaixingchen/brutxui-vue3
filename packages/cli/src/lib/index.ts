@@ -1,14 +1,7 @@
-/**
- * Lib barrel export
- */
-
-// Types
 export * from './types.js';
 
-// Constants
 export * from './constants.js';
 
-// Project utilities
 export {
     detectProjectType,
     detectPackageManager,
@@ -23,11 +16,8 @@ export {
     detectTailwindVersion,
 } from './project.js';
 
-// Package manager
 export { installPackages, getInstallCommand } from './package-manager.js';
 
-// Logger
 export { logger } from './logger.js';
 
-// Registry utilities
 export { getItem, resolveDeps } from './registry.js';

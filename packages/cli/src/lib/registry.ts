@@ -7,15 +7,6 @@ function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
 }
 
-// ============================================================================
-// Registry Item Validation
-// ============================================================================
-
-/**
- * Validate that a parsed JSON value conforms to the RegistryItem schema.
- * This provides runtime safety against corrupted or tampered registry data
- * before writing files to the user's filesystem.
- */
 function validateRegistryFile(file: unknown, itemName: string): file is RegistryFile {
     if (typeof file !== 'object' || file === null) {
         return false;
@@ -72,13 +63,6 @@ function validateRegistryItem(data: unknown, name: string): asserts data is Regi
     }
 }
 
-// ============================================================================
-// Registry Fetching
-// ============================================================================
-
-/**
- * Fetch a component from the registry (remote URL or local path)
- */
 export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL): Promise<RegistryItem> {
     let data: unknown;
 
@@ -101,13 +85,6 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
     return data;
 }
 
-// ============================================================================
-// Dependency Resolution
-// ============================================================================
-
-/**
- * Resolve all registry dependencies recursively using DFS to ensure correct topological order
- */
 export async function resolveDeps(names: string[], source: string = DEFAULT_REGISTRY_URL): Promise<RegistryItem[]> {
     const resolved: RegistryItem[] = [];
     const visited = new Set<string>();
@@ -121,8 +98,7 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
             const parts = fullName.split('@');
             cleanName = parts[0];
             const version = parts[1];
-            
-            // If the source is the default hosted registry, point to the version-pinned directory
+
             if (source === DEFAULT_REGISTRY_URL) {
                 itemSource = `https://raw.githubusercontent.com/dev-snake/brutxui/${version}/packages/registry/registry`;
             }
@@ -136,10 +112,10 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
         }
 
         active.add(cleanName);
-        
+
         try {
             const item = await getItem(cleanName, itemSource);
-            
+
             if (item.registryDependencies && item.registryDependencies.length > 0) {
                 for (const dep of item.registryDependencies) {
                     await dfs(dep);

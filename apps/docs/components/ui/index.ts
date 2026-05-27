@@ -1,4 +1,3 @@
-// UI Components
 export * from './alert';
 export * from './avatar';
 export * from './badge';
@@ -37,5 +36,4 @@ export * from './progress';
 export * from './toggle';
 export * from './toggle-group';
 
-// Re-export utils
 export { cn } from '@/lib/utils';

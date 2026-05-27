@@ -232,16 +232,13 @@ function CalendarDayButton({
                 'text-[10px] sm:text-xs font-semibold transition-all duration-100',
                 'hover:bg-[#DDA0DD] hover:text-black hover:font-bold',
                 'focus:outline-none focus:ring-1 focus:ring-black focus:ring-offset-1',
-                // Selected single day
                 'data-[selected-single=true]:bg-[#FF6B6B] data-[selected-single=true]:text-black',
                 'data-[selected-single=true]:border sm:data-[selected-single=true]:border-2 data-[selected-single=true]:border-black',
                 'data-[selected-single=true]:shadow-[1px_1px_0px_0px_#000000] sm:data-[selected-single=true]:shadow-[2px_2px_0px_0px_#000000]',
                 'data-[selected-single=true]:font-black',
-                // Range styles
                 'data-[range-start=true]:bg-[#FF6B6B] data-[range-start=true]:text-black data-[range-start=true]:font-black',
                 'data-[range-end=true]:bg-[#FF6B6B] data-[range-end=true]:text-black data-[range-end=true]:font-black',
                 'data-[range-middle=true]:bg-[#FFE66D] data-[range-middle=true]:text-black',
-                // Disabled
                 'disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent',
                 defaultClassNames.day,
                 className

@@ -30,15 +30,15 @@ export function EmptyState({
                     {icon || <FolderOpen className="h-8 w-8 stroke-[2.5]" />}
                 </div>
             </div>
-            
+
             <h3 className="text-2xl font-black mb-3 tracking-tight text-brutal-fg leading-none">
                 {title}
             </h3>
-            
+
             <p className="max-w-[440px] text-sm font-bold text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
                 {description}
             </p>
-            
+
             <Button
                 variant="primary"
                 className="font-black text-sm gap-2"

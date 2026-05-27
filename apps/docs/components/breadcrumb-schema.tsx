@@ -29,7 +29,6 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
     );
 }
 
-// Pre-defined breadcrumbs for common pages
 export const breadcrumbs = {
     home: [{ name: 'Brutx', url: 'https://brutxui.site' }],
     docs: [

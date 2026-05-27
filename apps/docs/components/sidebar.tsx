@@ -88,7 +88,6 @@ export function Sidebar() {
 
     return (
         <>
-            {/* Mobile Menu Button */}
             <button
                 onClick={toggleSidebar}
                 className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-900 border-3 border-black dark:border-white shadow-brutal"
@@ -97,17 +96,14 @@ export function Sidebar() {
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
-            {/* Theme Toggle for Mobile */}
             <div className="lg:hidden fixed top-4 right-4 z-50">
                 <ThemeToggle />
             </div>
 
-            {/* Overlay for mobile */}
             {isOpen && (
                 <div className="lg:hidden fixed inset-0 bg-black/50 z-30" onClick={closeSidebar} />
             )}
 
-            {/* Sidebar */}
             <aside
                 className={cn(
                     'fixed lg:sticky top-0 left-0 z-40 w-64 border-r-3 border-black dark:border-white h-screen bg-white dark:bg-gray-950 transition-transform duration-300 ease-in-out',
@@ -160,7 +156,6 @@ export function Sidebar() {
                             </div>
                         ))}
 
-                        {/* Sponsor Button */}
                         <div className="pt-4 mt-4 border-t-2 border-gray-200 dark:border-gray-700">
                             <Link
                                 href="/sponsor"

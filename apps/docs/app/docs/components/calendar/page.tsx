@@ -16,7 +16,6 @@ export default function CalendarPage() {
 
     return (
         <div className="space-y-12">
-            {/* Header */}
             <div className="space-y-4">
                 <h1 className="text-4xl font-black">Calendar</h1>
                 <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -25,13 +24,11 @@ export default function CalendarPage() {
                 </p>
             </div>
 
-            {/* Installation */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Installation</h2>
                 <InstallationTabs componentName="calendar" dependencies={['react-day-picker']} />
             </section>
 
-            {/* Basic Calendar */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Basic Calendar</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -45,7 +42,6 @@ export default function CalendarPage() {
                 )}
             </section>
 
-            {/* Range Selection */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Range Selection</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -71,7 +67,6 @@ export default function CalendarPage() {
                 )}
             </section>
 
-            {/* With Week Numbers */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">With Week Numbers</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -82,7 +77,6 @@ export default function CalendarPage() {
                 </div>
             </section>
 
-            {/* Disabled Dates */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Disabled Dates</h2>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -92,8 +86,8 @@ export default function CalendarPage() {
                     <Calendar
                         mode="single"
                         disabled={[
-                            { dayOfWeek: [0, 6] }, // Disable weekends
-                            { before: new Date() }, // Disable past dates
+                            { dayOfWeek: [0, 6] },
+                            { before: new Date() },
                         ]}
                     />
                 </div>
@@ -102,7 +96,6 @@ export default function CalendarPage() {
                 </p>
             </section>
 
-            {/* Props */}
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Props</h2>
                 <div className="overflow-x-auto">

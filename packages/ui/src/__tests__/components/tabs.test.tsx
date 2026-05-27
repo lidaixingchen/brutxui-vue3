@@ -65,7 +65,6 @@ describe('Tabs', () => {
         render(<TestTabs onValueChange={onValueChange} />);
         await userEvent.click(screen.getByRole('tab', { name: 'Tab 3' }));
         expect(onValueChange).not.toHaveBeenCalled();
-        // Tab 1 content should remain active
         expect(screen.getByRole('tab', { name: 'Tab 1' })).toHaveAttribute('aria-selected', 'true');
     });
 

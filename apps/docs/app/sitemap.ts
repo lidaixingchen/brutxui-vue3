@@ -3,7 +3,6 @@ import { MetadataRoute } from 'next';
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://brutxui.site';
 
-    // Component pages - QUAN TRỌNG: Đây là những trang Google sẽ index cho sitelinks
     const components = [
         'alert',
         'alert-dialog',
@@ -49,7 +48,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.8,
     }));
 
-    // Installation sub-pages
     const installationPages = [
         {
             url: `${baseUrl}/docs/installation`,
@@ -100,67 +98,56 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }));
 
     return [
-        // Homepage - highest priority
         {
             url: baseUrl,
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 1,
         },
-        // Main documentation - second highest
         {
             url: `${baseUrl}/docs`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.95,
         },
-        // Components overview - important for sitelinks
         {
             url: `${baseUrl}/docs/components`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
-        // Blocks overview
         {
             url: `${baseUrl}/docs/blocks`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
-        // CLI page - important for developers
         {
             url: `${baseUrl}/docs/cli`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.9,
         },
-        // Theme & Tokens page - important for custom styling
         {
             url: `${baseUrl}/docs/theme`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
-        // AI Integration page - modern AI readiness guide
         {
             url: `${baseUrl}/docs/ai`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,
         },
-        // Installation pages
         ...installationPages,
-        // Sponsor page
         {
             url: `${baseUrl}/sponsor`,
             lastModified: new Date(),
             changeFrequency: 'monthly',
             priority: 0.5,
         },
-        // All component pages
         ...componentPages,
-        // All block pages
         ...blockPages,
     ];
 }

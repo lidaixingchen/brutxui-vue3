@@ -6,13 +6,11 @@ describe('PricingSection', () => {
     it('renders plans correctly', () => {
         render(<PricingSection title="Custom Plans Title" />);
         expect(screen.getByText('Custom Plans Title')).toBeInTheDocument();
-        
-        // Check default tier names
+
         expect(screen.getByText('Indie Creator')).toBeInTheDocument();
         expect(screen.getByText('Pro Developer')).toBeInTheDocument();
         expect(screen.getByText('Team Studio')).toBeInTheDocument();
 
-        // Check prices
         expect(screen.getByText('$9')).toBeInTheDocument();
         expect(screen.getByText('$29')).toBeInTheDocument();
         expect(screen.getByText('$99')).toBeInTheDocument();

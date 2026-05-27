@@ -98,7 +98,6 @@ function Combobox({
 }
 Combobox.displayName = 'Combobox';
 
-// Multi-select Combobox
 export interface ComboboxMultiProps {
     options: ComboboxOption[];
     value?: string[];

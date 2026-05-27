@@ -44,7 +44,6 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
 
     return (
         <div className={cn('flex items-center gap-3', className)}>
-            {/* Logo Icon - Brutalist "BU" */}
             <div
                 className={cn(
                     'relative flex items-center justify-center font-black',
@@ -57,7 +56,6 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
                     boxShadow: `${config.shadow} ${config.shadow} 0px 0px #000000`,
                 }}
             >
-                {/* 3D Effect layers */}
                 <div
                     className={cn(
                         'absolute inset-0 bg-[#FF6B6B]',
@@ -81,13 +79,11 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
                     }}
                 />
 
-                {/* Letters */}
                 <span className={cn('font-black text-black tracking-tighter', config.letterSize)}>
                     BX
                 </span>
             </div>
 
-            {/* Text */}
             {showText && (
                 <span className={cn('font-black text-black dark:text-white', config.text)}>
                     BrutxUI
@@ -97,7 +93,6 @@ export function Logo({ size = 'md', showText = true, className }: LogoProps) {
     );
 }
 
-// Alternative: Stacked blocks logo
 export function LogoStacked({ size = 'md', className }: Omit<LogoProps, 'showText'>) {
     const sizeConfig = {
         sm: { block: 'w-3 h-3', gap: 'gap-0.5', border: 'border', container: 'w-8 h-8' },
@@ -129,13 +124,10 @@ export function LogoStacked({ size = 'md', className }: Omit<LogoProps, 'showTex
     );
 }
 
-// Hero Logo - For main page
 export function LogoHero({ className }: { className?: string }) {
     return (
         <div className={cn('flex flex-col items-center', className)}>
-            {/* Main 3D Block Logo */}
             <div className="relative mb-6">
-                {/* Shadow layers */}
                 <div
                     className="absolute w-32 h-32 bg-[#FF6B6B] border-4 border-black"
                     style={{ transform: 'translate(12px, 12px)' }}
@@ -145,7 +137,6 @@ export function LogoHero({ className }: { className?: string }) {
                     style={{ transform: 'translate(6px, 6px)' }}
                 />
 
-                {/* Main block */}
                 <div className="relative w-32 h-32 bg-[#FFE66D] border-4 border-black flex items-center justify-center">
                     <span className="text-5xl font-black text-black tracking-tighter">BX</span>
                 </div>

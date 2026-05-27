@@ -13,10 +13,6 @@ import {
     CommandDialog,
 } from '../../components/command';
 
-// ---------------------------------------------------------------------------
-// Standalone Command palette
-// ---------------------------------------------------------------------------
-
 function TestCommand({
     onSelect,
 }: {
@@ -118,10 +114,6 @@ describe('Command', () => {
     });
 });
 
-// ---------------------------------------------------------------------------
-// CommandDialog
-// ---------------------------------------------------------------------------
-
 describe('CommandDialog', () => {
     it('is closed by default', () => {
         render(
@@ -150,7 +142,6 @@ describe('CommandDialog', () => {
 
     it('renders default accessible title (screen-reader only)', () => {
         render(<CommandDialog open title="My Palette" />);
-        // The title is visually hidden (sr-only) but present in DOM
         expect(screen.getByText('My Palette')).toBeInTheDocument();
     });
 

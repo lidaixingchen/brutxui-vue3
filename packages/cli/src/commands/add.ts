@@ -1,8 +1,3 @@
-/**
- * Add Command
- * Add components to user's project
- */
-
 import type { Ora } from 'ora';
 import ora from 'ora';
 import inquirer from 'inquirer';
@@ -10,14 +5,11 @@ import fs from 'fs-extra';
 import path from 'path';
 
 import {
-    // Types
     type AddOptions,
     type BrutalistConfig,
     type RegistryItem,
-    // Constants
     AVAILABLE_COMPONENTS,
     UTILS_TEMPLATE,
-    // Functions
     detectPackageManager,
     resolveAliasPath,
     resolveImportAlias,
@@ -29,13 +21,6 @@ import {
     logger,
 } from '../lib/index.js';
 
-// ============================================================================
-// Validation
-// ============================================================================
-
-/**
- * Check if project is initialized
- */
 async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     const configPath = path.join(cwd, 'components.json');
 
@@ -48,9 +33,6 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     return fs.readJson(configPath);
 }
 
-/**
- * Validate component names against the list of available components
- */
 async function validateComponents(components: string[]): Promise<void> {
     const cleanComponents = components.map(c => c.split('@')[0]);
     const invalid = cleanComponents.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
@@ -64,32 +46,21 @@ async function validateComponents(components: string[]): Promise<void> {
     }
 }
 
-// ============================================================================
-// Component Selection
-// ============================================================================
-
-/**
- * Get components to add (from args, --all flag, or interactive picker)
- */
 async function selectComponents(inputComponents: string[], options: AddOptions): Promise<string[]> {
-    // --all flag
     if (options.all) {
         return [...AVAILABLE_COMPONENTS];
     }
 
-    // Components provided as arguments
     if (inputComponents.length > 0) {
         return inputComponents;
     }
 
-    // Non-interactive mode without components
     if (options.yes) {
         logger.error('Error: No components specified.');
         logger.warn('Use: npx brutx@latest add [component] or --all');
         process.exit(1);
     }
 
-    // Interactive picker
     const { selected } = await inquirer.prompt([
         {
             type: 'checkbox',
@@ -103,38 +74,26 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
     return selected;
 }
 
-// ============================================================================
-// File Path Resolution
-// ============================================================================
-
 function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): string {
-    // registryPath: components/ui/button.tsx
     if (registryPath.startsWith('components/')) {
         const relative = registryPath.replace('components/', '');
         const aliasPath = resolveAliasPath(config.aliases.components, cwd);
         return path.join(aliasPath, relative);
     }
-    
+
     if (registryPath.startsWith('lib/utils')) {
         return resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     }
-    
+
     if (registryPath.startsWith('lib/')) {
         const relative = registryPath.replace('lib/', '');
         const aliasPath = resolveAliasPath(config.aliases.utils, cwd);
         return path.join(path.dirname(aliasPath), relative);
     }
-    
+
     return path.join(cwd, registryPath);
 }
 
-// ============================================================================
-// File Operations
-// ============================================================================
-
-/**
- * Ensure utils.ts exists
- */
 async function ensureUtilsFile(utilsPath: string): Promise<boolean> {
     if (await fs.pathExists(utilsPath)) {
         return false;
@@ -145,9 +104,6 @@ async function ensureUtilsFile(utilsPath: string): Promise<boolean> {
     return true;
 }
 
-/**
- * Write component files resolved from registry
- */
 async function writeRegistryFiles(
     items: RegistryItem[],
     config: BrutalistConfig,
@@ -161,22 +117,19 @@ async function writeRegistryFiles(
 
     for (const item of items) {
         let itemAdded = false;
-        
+
         for (const file of item.files) {
             const targetPath = resolveComponentFilePath(file.path, config, cwd);
-            
-            // Security check: path traversal prevention on file.path itself
+
             const normalizedPath = path.normalize(file.path);
             if (normalizedPath.startsWith('..') || path.isAbsolute(normalizedPath)) {
                 throw new Error(`Security Error: Malicious component file path detected: "${file.path}".`);
             }
 
-            // Security check: path traversal prevention on resolved target path
             if (!isSafePath(targetPath, cwd)) {
                 throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetPath}".`);
             }
-            
-            // Overwrite check
+
             if (await fs.pathExists(targetPath)) {
                 if (!options.overwrite) {
                     spinner?.info(`Skipping file "${file.path}" for "${item.name}" (already exists). Use --overwrite to overwrite.`);
@@ -192,7 +145,6 @@ async function writeRegistryFiles(
                 continue;
             }
 
-            // Real write
             await fs.ensureDir(path.dirname(targetPath));
             const resolvedContent = resolveImportAlias(file.content, config);
             await fs.writeFile(targetPath, resolvedContent, 'utf-8');
@@ -208,19 +160,12 @@ async function writeRegistryFiles(
     return { added, skipped, filesWritten };
 }
 
-// ============================================================================
-// Dependencies
-// ============================================================================
-
-/**
- * Install component dependencies
- */
 function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): void {
     if (deps.length === 0) return;
 
     const packageManager = detectPackageManager(cwd);
     logger.newLine();
-    
+
     if (dryRun) {
         logger.bold(`[Dry Run] Would install dependencies using ${packageManager}:`);
         logger.info(`  ${deps.join(', ')}`);
@@ -238,10 +183,6 @@ function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): voi
     }
 }
 
-// ============================================================================
-// Output Helpers
-// ============================================================================
-
 function toPascalCase(str: string): string {
     return str
         .split('-')
@@ -254,20 +195,13 @@ function printUsageExample(component: string, componentsAlias: string): void {
     logger.info(`  import { ${componentName} } from "${componentsAlias}/ui/${component}";`);
 }
 
-// ============================================================================
-// Main Command
-// ============================================================================
-
 export async function add(components: string[], options: AddOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
 
-    // Setup logger
     logger.setSilent(options.silent ?? false);
 
-    // Ensure initialized
     const config = await ensureInitialized(cwd);
 
-    // Get components to add
     const selectedComponents = await selectComponents(components, options);
 
     if (selectedComponents.length === 0) {
@@ -275,24 +209,19 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         return;
     }
 
-    // Validate
     await validateComponents(selectedComponents);
 
-    // Resolve paths
     const utilsPath = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
 
-    // Start adding
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
     try {
-        // Resolve components and their dependencies from registry
         const registryItems = await resolveDeps(selectedComponents, options.registry);
-        
+
         if (spinner) {
             spinner.stop();
         }
 
-        // Preview installation plan
         logger.bold('\n📦 Brutx CLI - Installation Plan:');
         logger.info(`   Registry source: ${options.registry || 'Default Brutx hosted registry'}`);
         logger.newLine();
@@ -306,7 +235,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         }
         logger.newLine();
 
-        // Collect all npm dependencies from the resolved registry items
         const allDeps = new Set<string>();
         for (const item of registryItems) {
             if (item.dependencies) {
@@ -324,7 +252,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             spinner.start('Adding component files...');
         }
 
-        // Ensure utils exists
         if (!options.dryRun) {
             const utilsCreated = await ensureUtilsFile(utilsPath);
             if (utilsCreated) {
@@ -332,7 +259,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             }
         }
 
-        // Write files
         const { added, skipped, filesWritten } = await writeRegistryFiles(
             registryItems,
             config,
@@ -341,7 +267,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             spinner
         );
 
-        // Summary
         const summary = skipped.length > 0
             ? `Added ${added.length} component(s), skipped ${skipped.length}`
             : `Added ${added.length} component(s)`;
@@ -352,7 +277,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             spinner?.succeed(summary);
         }
 
-        // Print files summary
         if (added.length > 0 && filesWritten.length > 0) {
             logger.newLine();
             logger.bold('💾 Files written to disk:');
@@ -362,10 +286,8 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             }
         }
 
-        // Install dependencies
         installComponentDeps(Array.from(allDeps), cwd, options.dryRun ?? false);
 
-        // Print usage
         if (added.length > 0) {
             logger.newLine();
             logger.bold('Usage:');

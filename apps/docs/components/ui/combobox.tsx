@@ -97,7 +97,6 @@ function Combobox({
     );
 }
 
-// Multi-select Combobox
 export interface ComboboxMultiProps {
     options: ComboboxOption[];
     value?: string[];
