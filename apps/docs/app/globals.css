@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,7 +25,7 @@
 
     .dark body,
     html.dark body {
-        @apply bg-gray-950 text-white;
+        @apply bg-gray-950 text-gray-200;
     }
 }
 
@@ -55,19 +57,19 @@
     }
 
     .dark .shadow-brutal {
-        box-shadow: 4px 4px 0px 0px #FFFFFF;
+        box-shadow: 4px 4px 0px 0px #64748b;
     }
 
     .dark .shadow-brutal-sm {
-        box-shadow: 2px 2px 0px 0px #FFFFFF;
+        box-shadow: 2px 2px 0px 0px #64748b;
     }
 
     .dark .shadow-brutal-lg {
-        box-shadow: 6px 6px 0px 0px #FFFFFF;
+        box-shadow: 6px 6px 0px 0px #64748b;
     }
 
     .dark .shadow-brutal-xl {
-        box-shadow: 8px 8px 0px 0px #FFFFFF;
+        box-shadow: 8px 8px 0px 0px #64748b;
     }
 
     .text-3d-concrete {
@@ -103,6 +105,34 @@
 
 .mdx-content > [class*='max-w-'] {
     max-width: none;
+}
+
+.dark .mdx-content {
+    color: rgb(229 231 235);
+}
+
+.dark .mdx-content :where(.dark\:text-white) {
+    color: rgb(229 231 235);
+}
+
+.dark .mdx-content :where(.dark\:border-white) {
+    border-color: rgb(75 85 99);
+}
+
+.dark .mdx-content :where(h1, h2, h3, h4, h5, h6, strong) {
+    color: rgb(243 244 246);
+}
+
+.dark .mdx-content :where(p, li, td) {
+    color: rgb(209 213 219);
+}
+
+.dark .mdx-content :where(pre, pre code) {
+    color: rgb(229 231 235);
+}
+
+.dark .mdx-content :where([class*='text-black']) {
+    color: rgb(17 24 39);
 }
 
 .mdx-content h2 {

@@ -210,7 +210,7 @@ import { Button } from "@/components/ui/button"
                         <div className="py-4">
                             <div className="p-4 bg-red-50 dark:bg-red-950 border-3 border-red-500">
                                 <p className="font-bold text-red-600 dark:text-red-400">
-                                    ⚠️ Warning: This will permanently delete the item.
+                                    Warning: This will permanently delete the item.
                                 </p>
                             </div>
                         </div>

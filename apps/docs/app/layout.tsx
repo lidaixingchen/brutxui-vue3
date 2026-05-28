@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import 'brutx-ui/styles.css';
 import { SITE_CONFIG } from '@/config/constants';
 
-const inter = Inter({ subsets: ['latin'] });
+const spaceGrotesk = Space_Grotesk({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
     title: {
@@ -252,7 +252,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }}
                 />
             </head>
-            <body className={inter.className}>
+            <body className={spaceGrotesk.className}>
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"

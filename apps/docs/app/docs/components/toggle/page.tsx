@@ -122,7 +122,7 @@ import { Bold } from "lucide-react"
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Accessibility</h2>
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border-3 border-black dark:border-white space-y-2 text-sm">
-                    <p className="font-bold text-black dark:text-white">⌨️ Keyboard & Screen Reader Rules:</p>
+                    <p className="font-bold text-black dark:text-white">Keyboard & Screen Reader Rules:</p>
                     <ul className="list-disc pl-5 space-y-1">
                         <li><code>Space / Enter</code>: Triggers and toggles the active selection state.</li>
                         <li>Uses WAI-ARIA <code>aria-pressed</code> to clearly announce active status to screen reader agents.</li>

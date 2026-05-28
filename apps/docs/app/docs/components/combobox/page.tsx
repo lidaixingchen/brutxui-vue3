@@ -26,14 +26,14 @@ const languages = [
 ];
 
 const countries = [
-    { value: 'us', label: '🇺🇸 United States' },
-    { value: 'uk', label: '🇬🇧 United Kingdom' },
-    { value: 'ca', label: '🇨🇦 Canada' },
-    { value: 'au', label: '🇦🇺 Australia' },
-    { value: 'de', label: '🇩🇪 Germany' },
-    { value: 'fr', label: '🇫🇷 France' },
-    { value: 'jp', label: '🇯🇵 Japan' },
-    { value: 'vn', label: '🇻🇳 Vietnam' },
+    { value: 'us', label: 'United States' },
+    { value: 'uk', label: 'United Kingdom' },
+    { value: 'ca', label: 'Canada' },
+    { value: 'au', label: 'Australia' },
+    { value: 'de', label: 'Germany' },
+    { value: 'fr', label: 'France' },
+    { value: 'jp', label: 'Japan' },
+    { value: 'vn', label: 'Vietnam' },
 ];
 
 export default function ComboboxPage() {
@@ -102,7 +102,7 @@ export default function ComboboxPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">With Custom Labels</h2>
                 <p className="text-gray-600 dark:text-gray-400">
-                    Labels can include emojis or any custom content.
+                    Labels can include any custom text content.
                 </p>
                 <div className="flex flex-col items-center gap-4 p-8 bg-gray-100 dark:bg-gray-800 border-3 border-black dark:border-white">
                     <div className="w-full max-w-xs">

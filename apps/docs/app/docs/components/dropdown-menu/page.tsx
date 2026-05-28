@@ -67,28 +67,28 @@ export default function DropdownMenuPage() {
                         <DropdownMenuItem>
                             <User className="mr-2 h-4 w-4" />
                             Profile
-                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                            <DropdownMenuShortcut>⇧P</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <CreditCard className="mr-2 h-4 w-4" />
                             Billing
-                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                            <DropdownMenuShortcut>B</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <Settings className="mr-2 h-4 w-4" />
                             Settings
-                            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                            <DropdownMenuShortcut>S</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                             <Keyboard className="mr-2 h-4 w-4" />
                             Keyboard shortcuts
-                            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
+                            <DropdownMenuShortcut>K</DropdownMenuShortcut>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
                             <LogOut className="mr-2 h-4 w-4" />
                             Log out
-                            <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                            <DropdownMenuShortcut>⇧Q</DropdownMenuShortcut>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

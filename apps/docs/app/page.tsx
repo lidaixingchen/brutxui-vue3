@@ -93,7 +93,7 @@ export default function Home() {
                         </a>
                         <Link href="/sponsor" className="w-full sm:w-auto">
                             <Button variant="danger" size="lg" className="w-full sm:w-auto">
-                                ❤️ Sponsor
+                                Sponsor
                             </Button>
                         </Link>
                     </div>
@@ -108,7 +108,7 @@ export default function Home() {
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
                             <CardTitle className="text-base sm:text-lg">
-                                🎨 Neo-Brutalism Design
+                                Neo-Brutalism Design
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -121,7 +121,7 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">♿ Accessible</CardTitle>
+                            <CardTitle className="text-base sm:text-lg"> Accessible</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -134,7 +134,7 @@ export default function Home() {
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
                             <CardTitle className="text-base sm:text-lg">
-                                🎯 TypeScript First
+                                TypeScript First
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -147,7 +147,7 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">🎛️ Customizable</CardTitle>
+                            <CardTitle className="text-base sm:text-lg">Customizable</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -159,7 +159,7 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">📦 CLI Tool</CardTitle>
+                            <CardTitle className="text-base sm:text-lg"> CLI Tool</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -170,7 +170,7 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">🚀 Modern Stack</CardTitle>
+                            <CardTitle className="text-base sm:text-lg"> Modern Stack</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -233,7 +233,7 @@ function App() {
                 <div className="container-brutal py-6 sm:py-8 px-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                         <p className="font-bold text-sm sm:text-base">
-                            Built with ❤️ using React, Tailwind CSS & Radix UI
+                            Built with React, Tailwind CSS & Radix UI
                         </p>
                         <div className="flex gap-4">
                             <a

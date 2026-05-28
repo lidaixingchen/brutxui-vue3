@@ -71,7 +71,7 @@ export default function SponsorPage() {
                             <h2 className="text-2xl font-black dark:text-white">Buy Me A Coffee</h2>
                         </div>
                         <p className="text-gray-600 dark:text-gray-300 mb-4">
-                            Quick and easy one-time donations. Every coffee counts! ☕
+                            Quick and easy one-time donations. Every contribution counts.
                         </p>
                         <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#FFDD00] text-black font-bold border-2 border-black group-hover:shadow-[4px_4px_0px_0px_#000] transition-all">
                             <Coffee className="w-4 h-4" />
@@ -143,7 +143,7 @@ export default function SponsorPage() {
                         </a>
                     </div>
                     <p className="mt-6 text-gray-500 dark:text-gray-400">
-                        Every star, share, and contribution helps! 💛
+                        Every star, share, and contribution helps.
                     </p>
                 </div>
 

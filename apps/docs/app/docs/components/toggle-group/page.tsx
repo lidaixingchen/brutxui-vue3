@@ -129,7 +129,7 @@ import { AlignLeft, AlignCenter, AlignRight } from "lucide-react"
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Accessibility</h2>
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border-3 border-black dark:border-white space-y-2 text-sm">
-                    <p className="font-bold text-black dark:text-white">⌨️ Keyboard Navigation Rules:</p>
+                    <p className="font-bold text-black dark:text-white">Keyboard Navigation Rules:</p>
                     <ul className="list-disc pl-5 space-y-1">
                         <li><code>Tab</code>: Moves keyboard focus into the toggle group (focuses first or active item).</li>
                         <li><code>ArrowRight / ArrowDown</code>: Moves focus to the next group item button.</li>

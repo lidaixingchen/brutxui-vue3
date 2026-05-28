@@ -40,7 +40,7 @@ export default function AIDocsPage() {
             <hr className="border-t-3 border-black dark:border-white" />
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🎨 Neo-Brutalist Styling Rules for AI</h2>
+                <h2 className="text-2xl font-black"> Neo-Brutalist Styling Rules for AI</h2>
                 <p>
                     When instructing an AI to style components inside a BrutxUI project, emphasize the following visual design variables:
                 </p>
@@ -54,7 +54,7 @@ export default function AIDocsPage() {
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🧩 Blueprint for a BrutxUI Component</h2>
+                <h2 className="text-2xl font-black"> Blueprint for a BrutxUI Component</h2>
                 <p>
                     Every BrutxUI component follows a standard React + Tailwind CSS + Radix UI primitive composability structure.
                     Share this blueprint template with your AI assistant:
@@ -108,7 +108,7 @@ Card.displayName = 'Card';`}
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">❌ Anti-Patterns to Avoid (What NOT to do)</h2>
+                <h2 className="text-2xl font-black"> Anti-Patterns to Avoid (What NOT to do)</h2>
                 <p>
                     Ensure your AI assistant does not emit these anti-patterns, which violate our core brutalist visual language:
                 </p>
@@ -148,7 +148,7 @@ Card.displayName = 'Card';`}
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🛠️ Custom Blocks & Registry Metadata</h2>
+                <h2 className="text-2xl font-black">Custom Blocks & Registry Metadata</h2>
                 <p>
                     When creating custom landing page blocks (e.g. <code>saas-pricing</code> or <code>dashboard-stats</code>),
                     they must be registered in the component directory manifest so they can be parsed by our registry compiler and validator scripts.
@@ -185,7 +185,7 @@ pnpm --filter brutx-registry validate`}
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">💬 Prompt Templates for AI Coding</h2>
+                <h2 className="text-2xl font-black"> Prompt Templates for AI Coding</h2>
                 <p>
                     Copy-paste these context prompts directly into your AI assistant chat box to guarantee beautiful, compliant outputs.
                 </p>

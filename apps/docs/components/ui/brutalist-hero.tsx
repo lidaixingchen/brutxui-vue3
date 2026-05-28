@@ -81,13 +81,13 @@ export function BrutalistHero({
                                     <span className="text-brutal-secondary font-black">$</span>
                                     <span>npx brutx init</span>
                                 </p>
-                                <p className="text-gray-500 font-medium">✓ Custom Tailwind design tokens configured</p>
-                                <p className="text-gray-500 font-medium">✓ Global CSS token layer synchronized</p>
+                                <p className="text-gray-500 font-medium">Custom Tailwind design tokens configured</p>
+                                <p className="text-gray-500 font-medium">Global CSS token layer synchronized</p>
                                 <p className="flex items-center gap-2">
                                     <span className="text-brutal-secondary font-black">$</span>
                                     <span>npx brutx add hero pricing auth-card</span>
                                 </p>
-                                <p className="text-brutal-success font-black">✓ Successfully added 3 blocks into /components/ui!</p>
+                                <p className="text-brutal-success font-black">Successfully added 3 blocks into /components/ui!</p>
                             </CardContent>
                         </Card>
                     </div>

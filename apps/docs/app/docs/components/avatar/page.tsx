@@ -128,7 +128,7 @@ export default function AvatarPage() {
                         </Avatar>
                         <Avatar size="lg">
                             <AvatarFallback className="bg-purple-500 text-white font-bold">
-                                👤
+                                UI
                             </AvatarFallback>
                         </Avatar>
                     </div>

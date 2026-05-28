@@ -118,7 +118,7 @@ import { Label } from "@/components/ui/label"
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Accessibility</h2>
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border-3 border-black dark:border-white space-y-2">
-                    <p className="font-bold text-black dark:text-white">⌨️ Keyboard Navigation Key Rules:</p>
+                    <p className="font-bold text-black dark:text-white">Keyboard Navigation Key Rules:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm">
                         <li><code>Tab</code>: Moves focus to the selected radio button in the group.</li>
                         <li><code>ArrowDown / ArrowRight</code>: Moves focus and checks the next radio button in the group.</li>

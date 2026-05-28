@@ -74,9 +74,9 @@ export default function SheetPage() {
                                     </SheetDescription>
                                 </SheetHeader>
                                 <div className="space-y-2 py-4">
-                                    <Button variant="outline" className="w-full justify-start font-black">🏠 Home</Button>
-                                    <Button variant="outline" className="w-full justify-start font-black">📊 Analytics</Button>
-                                    <Button variant="outline" className="w-full justify-start font-black">⚙️ Settings</Button>
+                                    <Button variant="outline" className="w-full justify-start font-black">Home</Button>
+                                    <Button variant="outline" className="w-full justify-start font-black">Analytics</Button>
+                                    <Button variant="outline" className="w-full justify-start font-black">Settings</Button>
                                 </div>
                             </SheetContent>
                         </Sheet>
@@ -94,7 +94,7 @@ export default function SheetPage() {
                                 </SheetHeader>
                                 <div className="py-4">
                                     <div className="p-4 bg-yellow-100 border-3 border-black dark:text-black">
-                                        🚀 BrutxUI registry just expanded to 32 active items!
+                                        BrutxUI registry just expanded to 32 active items!
                                     </div>
                                 </div>
                             </SheetContent>

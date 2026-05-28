@@ -118,7 +118,7 @@ export default function SliderPage() {
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Accessibility</h2>
                 <div className="p-4 bg-yellow-50 dark:bg-yellow-950 border-3 border-black dark:border-white space-y-2">
-                    <p className="font-bold text-black dark:text-white">⌨️ Keyboard Navigation Key Rules:</p>
+                    <p className="font-bold text-black dark:text-white">Keyboard Navigation Key Rules:</p>
                     <ul className="list-disc pl-5 space-y-1 text-sm">
                         <li><code>ArrowRight / ArrowUp</code>: Increments the value by one step.</li>
                         <li><code>ArrowLeft / ArrowDown</code>: Decrements the value by one step.</li>

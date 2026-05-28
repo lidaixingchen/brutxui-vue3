@@ -41,20 +41,20 @@ export default function DocsPage() {
             <hr className="border-t-3 border-black dark:border-white" />
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🎯 Honest Positioning & Use Cases</h2>
+                <h2 className="text-2xl font-black"> Honest Positioning & Use Cases</h2>
                 <p>
                     Neo-Brutalism is distinct, loud, and high-contrast. We built BrutxUI with a clear purpose in mind:
                 </p>
                 <div className="grid sm:grid-cols-2 gap-4">
                     <div className="p-5 border-3 border-black dark:border-white bg-[#4ECDC4]/10 dark:bg-[#4ECDC4]/5 space-y-2">
-                        <h3 className="font-black text-[#4ECDC4] dark:text-[#6EE7B7] text-lg">🚀 Where BrutxUI Shines</h3>
+                        <h3 className="font-black text-[#4ECDC4] dark:text-[#6EE7B7] text-lg"> Where BrutxUI Shines</h3>
                         <p className="text-sm">
                             Best suited for bold SaaS projects, developer portals, indie hacker utilities, creative portfolios, analytics dashboards, web3 landing pages, and consumer tools trying to break through generic template noise.
                         </p>
                     </div>
 
                     <div className="p-5 border-3 border-black dark:border-white bg-[#FF6B6B]/10 dark:bg-[#FF6B6B]/5 space-y-2">
-                        <h3 className="font-black text-[#FF6B6B] dark:text-[#FFA3A3] text-lg">⚠️ Where to Soften It</h3>
+                        <h3 className="font-black text-[#FF6B6B] dark:text-[#FFA3A3] text-lg">Where to Soften It</h3>
                         <p className="text-sm">
                             May not be ideal out-of-the-box for highly conservative enterprise intranets, medical records, or traditional corporate fintech systems—unless you leverage our built-in <strong>Pastel</strong> or <strong>Monochrome</strong> theme presets to soften the contrast.
                         </p>
@@ -63,7 +63,7 @@ export default function DocsPage() {
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">💫 Why copy-paste over npm dependencies?</h2>
+                <h2 className="text-2xl font-black"> Why copy-paste over npm dependencies?</h2>
                 <p>
                     Following the shadcn/ui workflow philosophy, you install BrutxUI components directly into your local components folder (e.g. <code>components/ui/</code>).
                 </p>
@@ -75,7 +75,7 @@ export default function DocsPage() {
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🎨 System Customizability (CSS Variables & Presets)</h2>
+                <h2 className="text-2xl font-black"> System Customizability (CSS Variables & Presets)</h2>
                 <p>
                     BrutxUI features a unified theme and tokens design system built around standard CSS custom properties.
                     You can configure borders, shadows, and base colors globally in your global CSS file.
@@ -98,7 +98,7 @@ export default function DocsPage() {
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🛠️ Customization Presets</h2>
+                <h2 className="text-2xl font-black">Customization Presets</h2>
                 <p>
                     Easily adjust the visual aggression level of BrutxUI components by wrapping your application in one of our built-in preset classes:
                 </p>
@@ -119,7 +119,7 @@ export default function DocsPage() {
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">🤖 AI-First Integration (Cursor / LLMs)</h2>
+                <h2 className="text-2xl font-black"> AI-First Integration (Cursor / LLMs)</h2>
                 <p>
                     We provide first-class support for AI coding assistants. If you use Cursor, VSCode, or other LLMs, they can seamlessly digest our registry structure:
                 </p>
@@ -130,7 +130,7 @@ export default function DocsPage() {
             </section>
 
             <section className="space-y-4">
-                <h2 className="text-2xl font-black">♿ Accessibility First</h2>
+                <h2 className="text-2xl font-black"> Accessibility First</h2>
                 <p>
                     BrutxUI must not compromise usability. Every BrutxUI component is built with accessibility as a core constraint:
                 </p>
@@ -145,12 +145,12 @@ export default function DocsPage() {
                 <h2 className="text-3xl font-black">Next Steps</h2>
                 <div className="grid sm:grid-cols-2 gap-4">
                     <Link href="/docs/installation" className="p-4 border-3 border-black hover:bg-gray-100 dark:hover:bg-gray-800 block">
-                        <h4 className="font-bold text-lg mb-1">🏁 Installation Guide</h4>
+                        <h4 className="font-bold text-lg mb-1"> Installation Guide</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400">Initialize BrutxUI in your project and copy components via CLI.</p>
                     </Link>
 
                     <Link href="/docs/theme" className="p-4 border-3 border-black hover:bg-gray-100 dark:hover:bg-gray-800 block">
-                        <h4 className="font-bold text-lg mb-1">🎨 Customizing Theming</h4>
+                        <h4 className="font-bold text-lg mb-1"> Customizing Theming</h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400">Master custom variables, dark modes, and the token layer.</p>
                     </Link>
                 </div>

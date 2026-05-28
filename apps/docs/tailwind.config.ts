@@ -58,7 +58,7 @@ const config: Config = {
                 },
             },
             fontFamily: {
-                brutal: ['Inter', 'system-ui', 'sans-serif'],
+                brutal: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
             },
             boxShadow: {
                 xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

@@ -81,17 +81,17 @@ export default function CommandPage() {
                                 <CommandItem>
                                     <User className="mr-2 h-4 w-4" />
                                     <span>Profile</span>
-                                    <CommandShortcut>⌘P</CommandShortcut>
+                                    <CommandShortcut>P</CommandShortcut>
                                 </CommandItem>
                                 <CommandItem>
                                     <CreditCard className="mr-2 h-4 w-4" />
                                     <span>Billing</span>
-                                    <CommandShortcut>⌘B</CommandShortcut>
+                                    <CommandShortcut>B</CommandShortcut>
                                 </CommandItem>
                                 <CommandItem>
                                     <Settings className="mr-2 h-4 w-4" />
                                     <span>Settings</span>
-                                    <CommandShortcut>⌘S</CommandShortcut>
+                                    <CommandShortcut>S</CommandShortcut>
                                 </CommandItem>
                             </CommandGroup>
                         </CommandList>
@@ -104,7 +104,7 @@ export default function CommandPage() {
                 <p className="text-gray-600 dark:text-gray-400">
                     Press{' '}
                     <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-800 border-2 border-black dark:border-white font-mono text-sm">
-                        ⌘K
+                        K
                     </kbd>{' '}
                     or click the button to open the command palette.
                 </p>
@@ -113,7 +113,7 @@ export default function CommandPage() {
                         onClick={() => setOpen(true)}
                         className="px-4 py-2 bg-white dark:bg-gray-900 border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF] font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000000] transition-all"
                     >
-                        Open Command Palette (⌘K)
+                        Open Command Palette (K)
                     </button>
                 </div>
                 <CommandDialog open={open} onOpenChange={setOpen}>
@@ -139,12 +139,12 @@ export default function CommandPage() {
                             <CommandItem onSelect={() => setOpen(false)}>
                                 <User className="mr-2 h-4 w-4" />
                                 <span>Profile</span>
-                                <CommandShortcut>⌘P</CommandShortcut>
+                                <CommandShortcut>P</CommandShortcut>
                             </CommandItem>
                             <CommandItem onSelect={() => setOpen(false)}>
                                 <Settings className="mr-2 h-4 w-4" />
                                 <span>Settings</span>
-                                <CommandShortcut>⌘,</CommandShortcut>
+                                <CommandShortcut>,</CommandShortcut>
                             </CommandItem>
                         </CommandGroup>
                         <CommandSeparator />
@@ -167,7 +167,7 @@ export default function CommandPage() {
                             <CommandItem onSelect={() => setOpen(false)}>
                                 <Keyboard className="mr-2 h-4 w-4" />
                                 <span>Keyboard Shortcuts</span>
-                                <CommandShortcut>⌘K</CommandShortcut>
+                                <CommandShortcut>K</CommandShortcut>
                             </CommandItem>
                         </CommandGroup>
                     </CommandList>
