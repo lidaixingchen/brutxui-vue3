@@ -1,4 +1,5 @@
 import { Badge, Card, CardContent } from '@/components/ui';
+import { ChevronRight, Code2, Terminal } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
@@ -127,16 +128,7 @@ const frameworks = [
     {
         name: 'Manual',
         href: '/docs/installation/manual',
-        icon: (
-            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                />
-            </svg>
-        ),
+        icon: <Code2 className="w-10 h-10 stroke-[2.5]" />,
         description: 'Add components manually to your project',
     },
 ];
@@ -184,19 +176,7 @@ export default function InstallationPage() {
                     <Card variant="default" padding="default" className="h-full border-[#4ECDC4]">
                         <CardContent className="p-6">
                             <div className="w-12 h-12 bg-[#4ECDC4] border-3 border-black flex items-center justify-center mb-4">
-                                <svg
-                                    className="w-6 h-6"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth={2.5}
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                </svg>
+                                <Terminal className="w-6 h-6 stroke-[2.5]" />
                             </div>
                             <h3 className="text-xl font-black mb-2">CLI Tool</h3>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -229,19 +209,7 @@ export default function InstallationPage() {
                                 className="inline-flex items-center text-sm font-bold hover:text-[#4ECDC4] transition-colors"
                             >
                                 CLI Reference
-                                <svg
-                                    className="w-4 h-4 ml-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M9 5l7 7-7 7"
-                                    />
-                                </svg>
+                                <ChevronRight className="w-4 h-4 ml-1 stroke-[2.5]" />
                             </Link>
                         </CardContent>
                     </Card>
@@ -305,19 +273,7 @@ export default function InstallationPage() {
                                     {framework.description}
                                 </p>
                             </div>
-                            <svg
-                                className="w-5 h-5 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 5l7 7-7 7"
-                                />
-                            </svg>
+                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors stroke-[2.5]" />
                         </Link>
                     ))}
                 </div>

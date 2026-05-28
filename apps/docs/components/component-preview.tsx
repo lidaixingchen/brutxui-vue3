@@ -19,27 +19,16 @@ export function ComponentPreview({ children, className, align = 'center' }: Comp
             )}
             variant="flat"
         >
-            <div className={cn(
-                "w-full gap-2 sm:gap-4",
-                align === 'center'
-                  ? "flex items-center justify-center flex-wrap"
-                  : "flex flex-col items-stretch"
-            )}>
+            <div
+                className={cn(
+                    'w-full gap-2 sm:gap-4',
+                    align === 'center'
+                        ? 'flex items-center justify-center flex-wrap'
+                        : 'flex flex-col items-stretch'
+                )}
+            >
                 {children}
             </div>
         </Card>
-    );
-}
-
-interface CodeBlockProps {
-    children: string;
-    language?: string;
-}
-
-export function CodeBlock({ children, language = 'tsx' }: CodeBlockProps) {
-    return (
-        <pre className="bg-gray-900 text-white p-3 sm:p-4 border-3 border-black dark:border-white shadow-brutal overflow-x-auto my-4 text-xs sm:text-sm">
-            <code className={`language-${language}`}>{children}</code>
-        </pre>
     );
 }

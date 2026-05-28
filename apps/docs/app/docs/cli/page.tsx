@@ -1,6 +1,8 @@
 'use client';
 
+import { CodeBlock } from '@/components/code-block';
 import { Badge } from '@/components/ui';
+import { ChevronLeft, ChevronRight, Terminal } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -29,30 +31,6 @@ const commands: Record<PackageManager, { init: string; add: string; addAll: stri
         addAll: 'bunx brutx@latest add --all',
     },
 };
-
-function CodeBlock({ children, className }: { children: string; className?: string }) {
-    const [copied, setCopied] = useState(false);
-
-    const copy = () => {
-        navigator.clipboard.writeText(children);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-    };
-
-    return (
-        <div className={`relative group ${className}`}>
-            <pre className="bg-gray-900 text-white p-4 border-3 border-black dark:border-white shadow-brutal overflow-x-auto text-sm font-mono">
-                {children}
-            </pre>
-            <button
-                onClick={copy}
-                className="absolute top-2 right-2 p-2 bg-gray-800 hover:bg-gray-700 border border-gray-600 text-white text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-                {copied ? 'Copied!' : 'Copy'}
-            </button>
-        </div>
-    );
-}
 
 function PackageManagerTabs({ command }: { command: 'init' | 'add' | 'addAll' }) {
     const [pm, setPm] = useState<PackageManager>('pnpm');
@@ -97,19 +75,7 @@ export default function CLIPage() {
             <div className="mb-10 p-5 border-3 border-black dark:border-white bg-gray-50 dark:bg-gray-900">
                 <div className="flex items-start gap-4">
                     <div className="flex-shrink-0 w-10 h-10 bg-[#FF6B6B] border-3 border-black flex items-center justify-center">
-                        <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                        </svg>
+                        <Terminal className="w-5 h-5 stroke-[2.5]" />
                     </div>
                     <div>
                         <h3 className="font-black mb-2">CLI vs NPM Package</h3>
@@ -396,14 +362,7 @@ Options:
                     href="/docs/installation/manual"
                     className="flex items-center gap-2 font-bold hover:text-[#FF6B6B] transition-colors"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M15 19l-7-7 7-7"
-                        />
-                    </svg>
+                    <ChevronLeft className="w-4 h-4 stroke-[3]" />
                     Manual Installation
                 </Link>
                 <Link
@@ -411,14 +370,7 @@ Options:
                     className="flex items-center gap-2 font-bold hover:text-[#FF6B6B] transition-colors"
                 >
                     Components
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M9 5l7 7-7 7"
-                        />
-                    </svg>
+                    <ChevronRight className="w-4 h-4 stroke-[3]" />
                 </Link>
             </div>
         </div>

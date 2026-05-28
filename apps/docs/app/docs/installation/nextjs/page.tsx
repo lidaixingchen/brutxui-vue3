@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui';
+import { ChevronLeft, ChevronRight, Moon, Terminal } from 'lucide-react';
 import Link from 'next/link';
 import { CodeBlock, PackageManagerTabs } from '@/components/code-block';
 
@@ -18,19 +19,7 @@ export default function NextJsInstallationPage() {
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-[#4ECDC4] border-3 border-black flex items-center justify-center">
-                        <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2.5}
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                            />
-                        </svg>
+                        <Terminal className="w-5 h-5 stroke-[2.5]" />
                     </div>
                     <div>
                         <h2 className="text-xl font-black">CLI Installation</h2>
@@ -115,13 +104,7 @@ export default function Home() {
             <section className="mb-12">
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-8 h-8 bg-gray-900 dark:bg-white border-3 border-black dark:border-white flex items-center justify-center">
-                        <svg
-                            className="w-4 h-4 text-white dark:text-black"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
-                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                        </svg>
+                        <Moon className="w-4 h-4 text-white dark:text-black" fill="currentColor" />
                     </div>
                     <h2 className="text-xl font-black">Dark Mode</h2>
                 </div>
@@ -160,14 +143,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     href="/docs/installation"
                     className="flex items-center gap-2 font-bold hover:text-[#FF6B6B] transition-colors"
                 >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M15 19l-7-7 7-7"
-                        />
-                    </svg>
+                    <ChevronLeft className="w-4 h-4 stroke-[3]" />
                     Installation
                 </Link>
                 <Link
@@ -175,14 +151,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                     className="flex items-center gap-2 font-bold hover:text-[#FF6B6B] transition-colors"
                 >
                     Vite
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={3}
-                            d="M9 5l7 7-7 7"
-                        />
-                    </svg>
+                    <ChevronRight className="w-4 h-4 stroke-[3]" />
                 </Link>
             </div>
         </div>

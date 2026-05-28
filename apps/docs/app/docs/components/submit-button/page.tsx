@@ -1,30 +1,13 @@
 'use client';
 
+import { CodeBlock } from '@/components/code-block';
 import { Button, Badge, Tabs, TabsContent, TabsList, TabsTrigger, Card } from '@/components/ui';
-import { Copy, Check, Rocket, Zap, Loader2 } from 'lucide-react';
+import { Rocket, Zap, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 export default function SubmitButtonPage() {
-    const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const copyToClipboard = (text: string, id: string) => {
-        navigator.clipboard.writeText(text);
-        setCopiedStates((prev) => ({ ...prev, [id]: true }));
-        setTimeout(() => setCopiedStates((prev) => ({ ...prev, [id]: false })), 2000);
-    };
-
-    const CopyButton = ({ text, id }: { text: string; id: string }) => (
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={() => copyToClipboard(text, id)}
-            className="absolute top-3 right-3 h-8 w-8 p-0 bg-white text-black dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
-        >
-            {copiedStates[id] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        </Button>
-    );
 
     const handleDemoSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -152,12 +135,9 @@ export { SubmitButton };`;
                     </TabsList>
 
                     <TabsContent value="cli" className="mt-4">
-                        <div className="relative">
-                            <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg border-2 border-black overflow-x-auto">
-                                <code>npx brutx@latest add submit-button</code>
-                            </pre>
-                            <CopyButton text="npx brutx@latest add submit-button" id="cli" />
-                        </div>
+                        <CodeBlock preClassName="rounded-lg border-2">
+                            {'npx brutx@latest add submit-button'}
+                        </CodeBlock>
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                             Note: This will also add the{' '}
                             <Link href="/docs/components/button" className="underline">
@@ -175,24 +155,14 @@ export { SubmitButton };`;
                             </Link>{' '}
                             component installed first.
                         </p>
-                        <div className="relative">
-                            <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg border-2 border-black overflow-x-auto text-sm">
-                                <code>{manualInstallCode}</code>
-                            </pre>
-                            <CopyButton text={manualInstallCode} id="manual" />
-                        </div>
+                        <CodeBlock preClassName="rounded-lg border-2 text-sm">{manualInstallCode}</CodeBlock>
                     </TabsContent>
                 </Tabs>
             </section>
 
             <section className="space-y-4">
                 <h2 className="text-2xl font-black">Usage</h2>
-                <div className="relative">
-                    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg border-2 border-black overflow-x-auto">
-                        <code>{usageCode}</code>
-                    </pre>
-                    <CopyButton text={usageCode} id="usage" />
-                </div>
+                <CodeBlock preClassName="rounded-lg border-2">{usageCode}</CodeBlock>
             </section>
 
             <section className="space-y-4">
@@ -214,22 +184,12 @@ export { SubmitButton };`;
 
                 <div className="space-y-3">
                     <h3 className="text-lg font-bold">With Server Actions</h3>
-                    <div className="relative">
-                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg border-2 border-black overflow-x-auto text-sm">
-                            <code>{basicExampleCode}</code>
-                        </pre>
-                        <CopyButton text={basicExampleCode} id="basic" />
-                    </div>
+                    <CodeBlock preClassName="rounded-lg border-2 text-sm">{basicExampleCode}</CodeBlock>
                 </div>
 
                 <div className="space-y-3">
                     <h3 className="text-lg font-bold">Custom Pending Text</h3>
-                    <div className="relative">
-                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg border-2 border-black overflow-x-auto">
-                            <code>{pendingTextCode}</code>
-                        </pre>
-                        <CopyButton text={pendingTextCode} id="pending" />
-                    </div>
+                    <CodeBlock preClassName="rounded-lg border-2">{pendingTextCode}</CodeBlock>
                 </div>
 
                 <div className="space-y-3">
@@ -242,12 +202,7 @@ export { SubmitButton };`;
                             <Button variant="outline">Outline</Button>
                         </div>
                     </Card>
-                    <div className="relative">
-                        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg border-2 border-black overflow-x-auto">
-                            <code>{variantsCode}</code>
-                        </pre>
-                        <CopyButton text={variantsCode} id="variants" />
-                    </div>
+                    <CodeBlock preClassName="rounded-lg border-2">{variantsCode}</CodeBlock>
                 </div>
             </section>
 
