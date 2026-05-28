@@ -25,7 +25,7 @@ function Calendar({
         <DayPicker
             showOutsideDays={showOutsideDays}
             className={cn(
-                'p-2 sm:p-3 bg-[#FFFEF0] dark:bg-[#1a1a2e]',
+                'p-2 sm:p-3 bg-[#FFFEF0] text-black dark:bg-gray-900 dark:text-gray-100',
                 'border-2 sm:border-3 border-black dark:border-white',
                 'shadow-[3px_3px_0px_0px_#000000] sm:shadow-[4px_4px_0px_0px_#000000]',
                 'dark:shadow-[3px_3px_0px_0px_#FFFFFF] sm:dark:shadow-[4px_4px_0px_0px_#FFFFFF]',
@@ -67,7 +67,7 @@ function Calendar({
                 ),
                 month_caption: cn(
                     'flex items-center justify-center h-6 sm:h-7 relative',
-                    'font-black text-xs sm:text-sm tracking-tight uppercase',
+                    'font-black text-xs sm:text-sm tracking-tight uppercase text-black dark:text-gray-100',
                     defaultClassNames.month_caption
                 ),
                 dropdowns: cn(
@@ -75,7 +75,7 @@ function Calendar({
                     defaultClassNames.dropdowns
                 ),
                 dropdown_root: cn(
-                    'relative border-2 border-black dark:border-white bg-white dark:bg-gray-800',
+                    'relative border-2 border-black dark:border-white bg-white text-black dark:bg-gray-800 dark:text-gray-100',
                     'shadow-[2px_2px_0px_0px_#000000] dark:shadow-[2px_2px_0px_0px_#FFFFFF]',
                     'focus-within:ring-2 focus-within:ring-offset-1 focus-within:ring-black',
                     defaultClassNames.dropdown_root
@@ -85,7 +85,7 @@ function Calendar({
                     defaultClassNames.dropdown
                 ),
                 caption_label: cn(
-                    'select-none font-black tracking-tight',
+                    'select-none font-black tracking-tight text-black dark:text-gray-100',
                     captionLayout === 'label'
                         ? 'text-xs sm:text-sm'
                         : 'pl-1 sm:pl-1.5 pr-0.5 flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs h-6 sm:h-7 [&>svg]:size-2.5 sm:[&>svg]:size-3',
@@ -114,7 +114,7 @@ function Calendar({
                 ),
                 day: cn(
                     'relative h-6 w-6 sm:h-8 sm:w-8 p-0 text-center select-none',
-                    'border border-black/10 dark:border-white/10',
+                    'text-black dark:text-gray-100 border border-black/10 dark:border-white/10',
                     defaultClassNames.day
                 ),
                 range_start: cn(

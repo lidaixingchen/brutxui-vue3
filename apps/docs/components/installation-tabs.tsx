@@ -174,8 +174,9 @@ function CopyButton({ text }: { text: string }) {
             onClick={copyToClipboard}
             className={cn(
                 'absolute top-2 right-2 p-1.5 border-2 border-white font-bold text-xs transition-all duration-200',
-                'bg-gray-800 hover:bg-[#4ECDC4] hover:border-black hover:text-black',
-                copied && 'bg-[#4ECDC4] border-black text-black'
+                copied
+                    ? 'bg-[#4ECDC4] border-black text-black'
+                    : 'bg-gray-800 text-gray-100 hover:bg-[#4ECDC4] hover:border-black hover:text-black'
             )}
             title={copied ? 'Copied!' : 'Copy to clipboard'}
         >

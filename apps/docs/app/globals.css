@@ -131,8 +131,16 @@
     color: rgb(229 231 235);
 }
 
-.dark .mdx-content :where([class*='text-black']) {
-    color: rgb(17 24 39);
+.dark .mdx-content :where(.text-brutal-fg) {
+    color: rgb(229 231 235);
+}
+
+.dark .mdx-content :where(.bg-brutal-bg) {
+    background-color: rgb(17 24 39);
+}
+
+.dark .mdx-content :where(.border-brutal) {
+    border-color: rgb(75 85 99);
 }
 
 .mdx-content h2 {

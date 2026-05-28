@@ -20,7 +20,7 @@ export default function SubmitButtonPage() {
             variant="outline"
             size="sm"
             onClick={() => copyToClipboard(text, id)}
-            className="absolute top-3 right-3 h-8 w-8 p-0"
+            className="absolute top-3 right-3 h-8 w-8 p-0 bg-white text-black dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
         >
             {copiedStates[id] ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         </Button>

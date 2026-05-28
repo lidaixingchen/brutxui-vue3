@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 const alertVariants = cva(
     [
         'relative w-full p-4 rounded-brutal',
-        'border-3 border-brutal',
+        'border-3 border-brutal dark:border-gray-600',
         'shadow-brutal',
         '[&>svg~*]:pl-8 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4',
         '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[2.5]',
@@ -13,13 +13,13 @@ const alertVariants = cva(
     {
         variants: {
             variant: {
-                default: 'bg-brutal-bg text-brutal-fg',
-                primary: 'bg-brutal-primary text-brutal-fg',
-                secondary: 'bg-brutal-secondary text-brutal-fg',
-                success: 'bg-brutal-success text-brutal-fg',
-                warning: 'bg-brutal-accent text-brutal-fg',
-                danger: 'bg-brutal-destructive text-brutal-fg',
-                info: 'bg-[var(--brutal-info,#4A90D9)] text-brutal-fg',
+                default: 'bg-brutal-bg text-brutal-fg dark:bg-gray-900 dark:text-gray-100',
+                primary: 'bg-brutal-primary text-black',
+                secondary: 'bg-brutal-secondary text-black',
+                success: 'bg-brutal-success text-black',
+                warning: 'bg-brutal-accent text-black',
+                danger: 'bg-brutal-destructive text-white',
+                info: 'bg-[var(--brutal-info,#4A90D9)] text-white',
             },
         },
         defaultVariants: {

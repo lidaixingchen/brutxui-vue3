@@ -34,10 +34,10 @@ export function CodeBlock({
                 onClick={copyToClipboard}
                 className={cn(
                     'absolute top-2 right-2 p-2 border-2 border-black dark:border-white font-bold text-xs transition-all duration-200',
-                    'bg-white dark:bg-gray-800 hover:bg-[#4ECDC4] hover:shadow-[2px_2px_0px_0px_#000] dark:hover:shadow-[2px_2px_0px_0px_#fff]',
+                    copied
+                        ? 'bg-[#4ECDC4] text-black shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#fff]'
+                        : 'bg-white text-black dark:bg-gray-800 dark:text-gray-100 hover:bg-[#4ECDC4] hover:text-black hover:shadow-[2px_2px_0px_0px_#000] dark:hover:shadow-[2px_2px_0px_0px_#fff]',
                     'opacity-0 group-hover:opacity-100 focus:opacity-100',
-                    copied &&
-                        'bg-[#4ECDC4] shadow-[2px_2px_0px_0px_#000] dark:shadow-[2px_2px_0px_0px_#fff]'
                 )}
                 title={copied ? 'Copied!' : 'Copy to clipboard'}
             >
@@ -143,8 +143,9 @@ export function PackageManagerTabs({ commands }: PackageManagerTabsProps) {
                     onClick={copyToClipboard}
                     className={cn(
                         'absolute top-3 right-3 p-2 border-2 border-white font-bold text-xs transition-all duration-200 z-10',
-                        'bg-gray-800 hover:bg-[#4ECDC4] hover:border-black hover:text-black',
-                        copied && 'bg-[#4ECDC4] border-black text-black'
+                        copied
+                            ? 'bg-[#4ECDC4] border-black text-black'
+                            : 'bg-gray-800 text-gray-100 hover:bg-[#4ECDC4] hover:border-black hover:text-black'
                     )}
                     title={copied ? 'Copied!' : 'Copy to clipboard'}
                 >
