@@ -101,6 +101,10 @@
     @apply text-3xl sm:text-4xl font-black tracking-tight mb-4;
 }
 
+.mdx-content > [class*='max-w-'] {
+    max-width: none;
+}
+
 .mdx-content h2 {
     @apply text-xl sm:text-2xl font-black tracking-tight mt-6 sm:mt-8 mb-4 pb-2 border-b-3 border-black dark:border-white;
 }
