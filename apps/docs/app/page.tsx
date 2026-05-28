@@ -1,4 +1,19 @@
 import Link from 'next/link';
+import {
+    ArrowRight,
+    Blocks,
+    BookOpen,
+    Github,
+    HeartHandshake,
+    Keyboard,
+    Layers3,
+    Palette,
+    Settings2,
+    ShieldCheck,
+    Sparkles,
+    TerminalSquare,
+    Type,
+} from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge } from '@/components/ui';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SITE_CONFIG } from '@/config/constants';
@@ -65,7 +80,9 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center w-full sm:w-auto px-4 sm:px-0">
                         <Link href="/docs" className="w-full sm:w-auto">
                             <Button variant="primary" size="lg" className="w-full sm:w-auto">
+                                <BookOpen className="h-5 w-5" aria-hidden="true" />
                                 Get Started
+                                <ArrowRight className="h-5 w-5" aria-hidden="true" />
                             </Button>
                         </Link>
                         <Link href="/docs/components" className="w-full sm:w-auto">
@@ -74,6 +91,7 @@ export default function Home() {
                                 size="lg"
                                 className="w-full sm:w-auto dark:border-white dark:text-white dark:hover:bg-gray-800"
                             >
+                                <Blocks className="h-5 w-5" aria-hidden="true" />
                                 Components
                             </Button>
                         </Link>
@@ -88,11 +106,13 @@ export default function Home() {
                                 size="lg"
                                 className="w-full sm:w-auto dark:bg-white dark:text-black"
                             >
+                                <Github className="h-5 w-5" aria-hidden="true" />
                                 GitHub
                             </Button>
                         </a>
                         <Link href="/sponsor" className="w-full sm:w-auto">
                             <Button variant="danger" size="lg" className="w-full sm:w-auto">
+                                <HeartHandshake className="h-5 w-5" aria-hidden="true" />
                                 Sponsor
                             </Button>
                         </Link>
@@ -107,7 +127,8 @@ export default function Home() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <Palette className="h-5 w-5 text-[#FF6B6B]" aria-hidden="true" />
                                 Neo-Brutalism Design
                             </CardTitle>
                         </CardHeader>
@@ -121,7 +142,13 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg"> Accessible</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <ShieldCheck
+                                    className="h-5 w-5 text-[#4ECDC4]"
+                                    aria-hidden="true"
+                                />
+                                Accessible
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -133,7 +160,8 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <Type className="h-5 w-5 text-[#FFE66D]" aria-hidden="true" />
                                 TypeScript First
                             </CardTitle>
                         </CardHeader>
@@ -147,7 +175,10 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg">Customizable</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <Settings2 className="h-5 w-5 text-[#FF6B6B]" aria-hidden="true" />
+                                Customizable
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -159,7 +190,13 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg"> CLI Tool</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <TerminalSquare
+                                    className="h-5 w-5 text-[#4ECDC4]"
+                                    aria-hidden="true"
+                                />
+                                CLI Tool
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -170,7 +207,10 @@ export default function Home() {
 
                     <Card variant="default" className="dark:bg-gray-900 dark:border-white">
                         <CardHeader>
-                            <CardTitle className="text-base sm:text-lg"> Modern Stack</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                <Layers3 className="h-5 w-5 text-[#FFE66D]" aria-hidden="true" />
+                                Modern Stack
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <p className="font-medium text-gray-700 dark:text-gray-300 text-sm sm:text-base">
@@ -184,7 +224,10 @@ export default function Home() {
 
             <section className="container-brutal py-12 sm:py-16 px-4">
                 <h2 className="text-3xl sm:text-4xl font-black text-center mb-8 sm:mb-12">
-                    Quick Start
+                    <span className="inline-flex items-center justify-center gap-3">
+                        <Keyboard className="h-8 w-8" aria-hidden="true" />
+                        Quick Start
+                    </span>
                 </h2>
                 <Card className="max-w-3xl mx-auto dark:bg-gray-900 dark:border-white">
                     <CardContent className="pt-4 sm:pt-6">
@@ -238,14 +281,16 @@ function App() {
                         <div className="flex gap-4">
                             <a
                                 href={SITE_CONFIG.github.url}
-                                className="font-bold hover:underline text-sm sm:text-base"
+                                className="inline-flex items-center gap-2 font-bold hover:underline text-sm sm:text-base"
                             >
+                                <Github className="h-4 w-4" aria-hidden="true" />
                                 GitHub
                             </a>
                             <a
                                 href="/docs"
-                                className="font-bold hover:underline text-sm sm:text-base"
+                                className="inline-flex items-center gap-2 font-bold hover:underline text-sm sm:text-base"
                             >
+                                <Sparkles className="h-4 w-4" aria-hidden="true" />
                                 Documentation
                             </a>
                         </div>

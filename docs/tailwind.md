@@ -1,17 +1,17 @@
 # Tailwind CSS Integration Guide
 
-Brutx is built on React and styling is fully powered by **Tailwind CSS**. It is fully compatible with both the traditional **Tailwind CSS v3** and the new CSS-first **Tailwind CSS v4**.
+Brutx is built on React and uses **Tailwind CSS** for styling. It supports both **Tailwind CSS v3** and the CSS-first **Tailwind CSS v4** workflow.
 
 ---
 
-## 🎨 Tailwind CSS v4 Configuration (CSS-First)
+## Tailwind CSS v4 Configuration (CSS-First)
 
-Tailwind CSS v4 introduces a fully CSS-first configuration pipeline. There is **no longer a need** for a `tailwind.config.js` file.
+Tailwind CSS v4 introduces a CSS-first configuration pipeline. In most v4 projects, you no longer need a `tailwind.config.js` file.
 
 ### 1. Style Integration on `init`
 When you run `npx brutx@latest init` in a Tailwind v4 project, the CLI automatically detects the version and configures your `components.json` with an empty config value (`"config": ""`).
 
-It automatically appends the Neo-Brutalist design tokens directly to your main CSS file (`globals.css`):
+It appends the Neo-Brutalist design tokens directly to your main CSS file (`globals.css`):
 
 ```css
 @import "tailwindcss";
@@ -46,7 +46,7 @@ It automatically appends the Neo-Brutalist design tokens directly to your main C
 }
 ```
 
-Since these utility classes are written in native CSS, they are automatically parsed and compatible with Tailwind v4!
+Because these utility classes are written in native CSS, Tailwind v4 can parse them directly.
 
 ### 2. Customizing Theme Colors in Tailwind v4
 To customize theme colors in Tailwind v4, declare them inside the `@theme` directive in your `globals.css`:
@@ -65,11 +65,11 @@ To customize theme colors in Tailwind v4, declare them inside the `@theme` direc
 }
 ```
 
-Now you can use `bg-coral`, `text-teal`, `border-yellow` inside your project!
+You can then use `bg-coral`, `text-teal`, and `border-yellow` inside your project.
 
 ---
 
-## 🎨 Tailwind CSS v3 Configuration (JS-Based)
+## Tailwind CSS v3 Configuration (JS-Based)
 
 Tailwind CSS v3 relies on JavaScript config files.
 
@@ -77,7 +77,7 @@ Tailwind CSS v3 relies on JavaScript config files.
 Running `npx brutx@latest init` creates/updates `tailwind.config.js` and appends the Neo-Brutalist CSS utilities inside your globals CSS file.
 
 ### 2. Customizing Theme Colors in Tailwind v3
-To custom colors in Tailwind v3, add them inside `tailwind.config.js`:
+To customize colors in Tailwind v3, add them inside `tailwind.config.js`:
 
 ```javascript
 /** @type {import('tailwindcss').Config} */
@@ -96,7 +96,7 @@ module.exports = {
 
 ---
 
-## 🌓 Dark Mode
+## Dark Mode
 
 Brutx fully supports dark mode on both Tailwind v3 and v4:
 

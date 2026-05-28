@@ -1,10 +1,10 @@
 # Contributing to Brutx
 
-Thank you for your interest in contributing to Brutx! We are excited to build a bold, raw, and accessible Neo-Brutalism design system together.
+Thanks for taking the time to contribute to Brutx. This project focuses on a bold, accessible Neo-Brutalist component system for React and Tailwind CSS.
 
 ---
 
-## 🛠️ Development Setup
+## Development Setup
 
 This project is a monorepo managed with **pnpm workspaces**.
 
@@ -27,7 +27,7 @@ pnpm build
 
 ---
 
-## 📦 Monorepo Packages
+## Monorepo Packages
 
 - `packages/ui`: The main React component package.
 - `packages/cli`: The CLI tool (`brutx`) for project initialization and component installation.
@@ -36,7 +36,7 @@ pnpm build
 
 ---
 
-## 🧩 Adding or Modifying Components
+## Adding or Modifying Components
 
 We use a **registry-based architecture** similar to shadcn/ui. Components are distributed dynamically as JSON files.
 
@@ -53,7 +53,7 @@ To add a new component (e.g., `button`):
 
 ---
 
-## 💻 Testing the CLI locally
+## Testing the CLI Locally
 
 You can test the CLI locally against a test project:
 
@@ -73,7 +73,7 @@ You can test the CLI locally against a test project:
 
 ---
 
-## 🧪 Testing and Linting
+## Testing and Linting
 
 Before pushing your changes, please ensure all checks pass:
 

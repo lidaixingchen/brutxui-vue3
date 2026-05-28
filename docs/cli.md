@@ -4,7 +4,7 @@ The Brutx CLI (`brutx`) is an on-demand tool for project initialization, styles 
 
 ---
 
-## 🛠️ Usage
+## Usage
 
 Execute commands via `npx`:
 
@@ -14,7 +14,7 @@ npx brutx@latest [command] [options]
 
 ---
 
-## 📌 Commands
+## Commands
 
 ### 1. `init`
 
@@ -24,15 +24,15 @@ Initialize Brutx configuration and style system in your local project.
 npx brutx@latest init [options]
 ```
 
-#### What it does:
+#### What it does
 - Detects project structure (Next.js, Vite, Create React App, Remix, etc.) and package managers (npm, pnpm, yarn, bun).
 - Creates `components.json` in the root folder.
-- Automatically generates the utility file `lib/utils.ts` containing the standard class merger helper (`cn`).
+- Generates the utility file `lib/utils.ts` containing the standard class merger helper (`cn`).
 - Creates a `components/ui/` directory.
 - Appends Neo-Brutalist styles and utility classes (such as `.shadow-brutal`, `.border-3`) to your globals CSS.
-- Automatically installs base dependencies (`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`).
+- Installs base dependencies (`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-react`).
 
-#### Options:
+#### Options
 - `-y, --yes`: Skip all confirmation prompts and use detected configurations.
 - `-d, --defaults`: Initialize with default tailwind settings.
 - `-f, --force`: Force overwrite existing configuration file.
@@ -49,25 +49,25 @@ Add components and all of their dependencies to your project.
 npx brutx@latest add [components...] [options]
 ```
 
-#### What it does:
-- Automatically resolves and downloads all sub-components (`registryDependencies`) recursively.
+#### What it does
+- Resolves and downloads all sub-components (`registryDependencies`) recursively.
 - Replaces import paths matching registry defaults with your workspace custom aliases (e.g. `@/lib/utils` is replaced with `~/utils/cn`).
 - Writes component files and recursively ensures target folders are created safely.
-- Auto-detects and installs required npm dependencies.
+- Detects and installs required npm dependencies.
 
-#### Options:
+#### Options
 - `-y, --yes`: Skip confirmation picker if no components arguments are passed.
-- `-a, --all`: Add all 27 available Brutx components.
+- `-a, --all`: Add every available Brutx component.
 - `-o, --overwrite`: Overwrite existing local components files if they exist.
 - `-p, --path <path>`: Override the path to install components to.
 - `-c, --cwd <cwd>`: Override working directory.
 - `-s, --silent`: Mute all logs.
 - `--dry-run`: Simulate files generation and dependency installation without writing files to disk (useful for dry runs and testing configurations).
-- `-r, --registry <registry>`: Specify a custom registry URL or local file-based path (excellent for offline setups and testing).
+- `-r, --registry <registry>`: Specify a custom registry URL or local file-based path for offline setups and testing.
 
 ---
 
-## ⚙️ Configuration File (`components.json`)
+## Configuration File (`components.json`)
 
 The CLI reads and writes project settings inside `components.json`:
 
@@ -86,7 +86,7 @@ The CLI reads and writes project settings inside `components.json`:
 }
 ```
 
-### Fields:
+### Fields
 - **`style`**: Design style token (default is `"brutalism"`).
 - **`tailwind.config`**: Path to the Tailwind configuration file.
 - **`tailwind.css`**: Path to the global CSS file of your project.

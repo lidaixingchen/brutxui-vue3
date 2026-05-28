@@ -3,9 +3,9 @@
   
   # BrutxUI
   
-  **The ultimate copy-paste Neo-Brutalist component registry for React & Tailwind CSS.**
+  **A copy-paste Neo-Brutalist component registry for React and Tailwind CSS.**
   
-  Bold. Raw. Accessible. Compatible.
+  Use it when you want visible borders, strong shadows, accessible primitives, and component code you can edit directly.
   
   ### Component Registry (`brutx-ui`)
   [![npm version](https://img.shields.io/npm/v/brutx-ui.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui)
@@ -20,7 +20,7 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
   [![React](https://img.shields.io/badge/React-19+-61DAFB.svg?style=flat-square)](https://reactjs.org/)
   [![Next.js](https://img.shields.io/badge/Next.js-15+-000000.svg?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-  [![Sponsor](https://img.shields.io/badge/❤️_Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/dev-snake)
+  [![Sponsor](https://img.shields.io/badge/Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/dev-snake)
 
   <br />
 
@@ -29,36 +29,36 @@
 
 ---
 
-## ⚡ What is BrutxUI?
+## What is BrutxUI?
 
-BrutxUI is a high-fidelity Neo-Brutalist design registry for bold SaaS apps, indie tools, dashboards, developer portfolios, landing pages, and playful product interfaces.
+BrutxUI is a Neo-Brutalist design registry for SaaS apps, indie tools, dashboards, developer portfolios, landing pages, and product interfaces that need a stronger visual tone.
 
-Rather than being distributed as a monolithic npm dependency that locks down your style choices, **BrutxUI is a copy-paste-first system** (pioneered by `shadcn/ui`). It generates raw, accessible components built on **Radix UI** primitives and **Tailwind CSS** directly into your codebase for 100% style ownership.
-
----
-
-## 🎯 Honest Positioning: When to use BrutxUI
-
-- **🚀 Perfect For:** Bold SaaS products, analytics dashboards, developer utilities, landing pages, web3 portals, and creative portfolios seeking high-engagement designs.
-- **⚠️ Think Twice For:** Highly conservative enterprise dashboards, patient-facing healthcare records, or traditional corporate banking apps—unless you utilize our built-in **Pastel** or **Monochrome** theme presets to soften outlines and contrast.
+Instead of shipping as a single npm dependency that hides the implementation, **BrutxUI is copy-paste-first**. It follows the workflow popularized by `shadcn/ui`: components are generated into your project, built on **Radix UI** primitives and **Tailwind CSS**, so you can own the code and change it freely.
 
 ---
 
-## 🤝 Relationship with `shadcn/ui`
+## When to Use BrutxUI
 
-BrutxUI is **not** designed to replace or attack `shadcn/ui`. Instead, it acts as a **direct companion**:
-* **Shared Workflow:** We use the exact same `components.json` layout schema.
-* **Co-existence:** You can run original `shadcn/ui` for traditional panels alongside `BrutxUI` components for high-impact buttons, headers, or pricing cards in the exact same directory.
-* **Unified Styling:** Merges seamlessly into standard Tailwind CSS layers.
+- **Good fit:** SaaS products, analytics dashboards, developer utilities, landing pages, web3 portals, and creative portfolios that can support a bold interface style.
+- **Use with care:** Conservative enterprise dashboards, patient-facing healthcare records, and traditional banking apps. The **Pastel** and **Monochrome** presets can soften the contrast when the default style feels too loud.
 
 ---
 
-## 📦 Installation & Registry CLI Workflows
+## Relationship with `shadcn/ui`
 
-BrutxUI gives you two flexible ways to install and maintain components:
+BrutxUI is meant to work alongside `shadcn/ui`, not replace it:
+* **Shared workflow:** BrutxUI uses the same `components.json` layout schema.
+* **Co-existence:** You can use `shadcn/ui` components for quieter UI surfaces and BrutxUI components for buttons, headers, pricing sections, or other high-contrast areas in the same project.
+* **Tailwind styling:** The generated files merge into standard Tailwind CSS layers.
 
-### Option A: Via Native `brutx` CLI (Recommended)
-Our dedicated CLI automatically handles tailwind detection, CSS token injection, and package managers.
+---
+
+## Installation and Registry Workflows
+
+There are two common ways to install BrutxUI components:
+
+### Option A: Brutx CLI (Recommended)
+The Brutx CLI handles Tailwind detection, CSS token injection, and package manager detection.
 
 ```bash
 # Initialize BrutxUI configs in your project
@@ -71,8 +71,8 @@ npx brutx@latest add button card badge
 npx brutx@latest add --all
 ```
 
-### Option B: Via Official `shadcn` CLI (Compatibility Workflow)
-Because BrutxUI complies strictly with the shadcn/ui JSON registry schemas, you can install any BrutxUI component directly using the official shadcn CLI:
+### Option B: Official `shadcn` CLI
+Because BrutxUI follows the shadcn/ui JSON registry schema, you can install BrutxUI components with the official shadcn CLI:
 
 ```bash
 # Install Brutx Button
@@ -84,9 +84,9 @@ npx shadcn@latest add https://brutxui.site/registry/saas-pricing.json
 
 ---
 
-## 🎨 Sizing Sytem & Theme Presets
+## Sizing System and Theme Presets
 
-BrutxUI is parameterizable. It exposes standard CSS Custom Properties in your stylesheet, allowing you to soften or strengthen the brutalist look globally in a single line:
+BrutxUI exposes CSS custom properties in your stylesheet, so you can soften or strengthen the brutalist style globally:
 
 ```css
 :root {
@@ -96,22 +96,22 @@ BrutxUI is parameterizable. It exposes standard CSS Custom Properties in your st
 }
 ```
 
-We ship with 3 built-in visual presets:
-1. **Classic Brutalism (`.theme-classic`):** Deep black shadows, neon accents, and razor-sharp unrounded corners.
-2. **Pastel Neo-Brut (`.theme-pastel`):** Lavenders, peaches, sage greens, and slightly rounded `8px` corners.
-3. **Stark Monochrome (`.theme-mono`):** Grayscale-only colors and heavy `4px` black lines for high-end minimalist interfaces.
+There are three built-in visual presets:
+1. **Classic Brutalism (`.theme-classic`):** Deep black shadows, neon accents, and sharp corners.
+2. **Pastel Neo-Brut (`.theme-pastel`):** Softer colors, lighter contrast, and `8px` corners.
+3. **Stark Monochrome (`.theme-mono`):** Grayscale colors and heavier black lines for minimal interfaces.
 
 ---
 
-## 🧩 Supported Core Components & Blocks (29 Items)
+## Supported Components and Blocks
 
-BrutxUI offers 29 premium components and layout blocks:
+BrutxUI includes components and layout blocks for common product UI work:
 
-### 🚀 Layout Blocks & Templates (New!)
-* **`saas-pricing`:** A responsive SaaS Pricing page section featuring monthly/yearly billing switches, checklist icons, highlighted grids, and CTA triggers. [Registry URL](https://brutxui.site/registry/saas-pricing.json)
-* **`dashboard-stats`:** A responsive analytics panel showing stats (revenue, conversion) with positive/negative trend badges. [Registry URL](https://brutxui.site/registry/dashboard-stats.json)
+### Layout Blocks and Templates
+* **`saas-pricing`:** A responsive SaaS pricing section with monthly/yearly billing switches, checklist icons, highlighted plans, and CTA buttons. [Registry URL](https://brutxui.site/registry/saas-pricing.json)
+* **`dashboard-stats`:** A responsive analytics panel for metrics such as revenue and conversion, with positive/negative trend badges. [Registry URL](https://brutxui.site/registry/dashboard-stats.json)
 
-### 🧱 Atomic Components
+### Atomic Components
 * **Forms:** `Button`, `SubmitButton` (Server Component safe), `Input`, `Textarea`, `Checkbox`, `Switch`, `Select`, `Label`
 * **Overlays:** `Dialog` (Modal), `Popover`, `Tooltip`, `DropdownMenu`
 * **Data & Lists:** `Table`, `Tabs`, `Command` (spotlight search), `Combobox` (multi-picker), `Pagination`, `ScrollArea`
@@ -120,9 +120,9 @@ BrutxUI offers 29 premium components and layout blocks:
 
 ---
 
-## 💻 Contribution & Development
+## Contribution and Development
 
-We highly welcome contributors! To run, test, and package BrutxUI locally:
+To run, test, and package BrutxUI locally:
 
 ### 1. Repository Setup
 ```bash
@@ -142,7 +142,7 @@ pnpm --filter brutx-ui build && pnpm --filter brutx build
 pnpm test
 ```
 
-### 3. Re-compile Component JSON Registry
+### 3. Recompile Component JSON Registry
 If you make changes to core components in `packages/ui/src/components/*.tsx`, compile and validate the schemas:
 ```bash
 # Compile TS to registry JSON files
@@ -154,10 +154,10 @@ pnpm --filter brutx-registry validate
 
 ---
 
-## 📄 License
+## License
 
 BrutxUI is open-source software licensed under the [MIT License](LICENSE).
 
 <div align="center">
-  <p>Made with 💛 and bold borders by dev-snake and friends.</p>
+  <p>Built by dev-snake and contributors.</p>
 </div>

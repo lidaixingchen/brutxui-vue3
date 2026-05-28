@@ -1,10 +1,10 @@
 # Component Registry System
 
-Brutx distributes React components dynamically using a **registry-based architecture**. Instead of installing a massive npm package containing all styles and layouts, users fetch components on-demand directly into their local codebase.
+Brutx distributes React components through a **registry-based architecture**. Instead of installing one large npm package with every style and layout, users fetch the components they need directly into their local codebase.
 
 ---
 
-## 🏗️ How it Works
+## How it Works
 
 Every component is defined as a static JSON file stored in `packages/registry/registry/[name].json`. 
 
@@ -16,7 +16,7 @@ When a user runs `npx brutx add [component]`, the CLI:
 
 ---
 
-## 📋 Registry JSON Schema
+## Registry JSON Schema
 
 Each registry item follows this TypeScript schema structure:
 
@@ -41,7 +41,7 @@ Each registry item follows this TypeScript schema structure:
 }
 ```
 
-### Fields Description:
+### Fields
 - **`name`** *(string)*: Unique identifier of the component.
 - **`type`** *(string)*: Type of registry item (usually `"registry:ui"`).
 - **`dependencies`** *(string[])*: Third-party npm packages required by this component (e.g. `lucide-react`, `@radix-ui/react-slot`).
@@ -50,7 +50,7 @@ Each registry item follows this TypeScript schema structure:
 
 ---
 
-## 🛠️ Adding a New Component to the Registry
+## Adding a New Component to the Registry
 
 To add a new component dynamically:
 
@@ -71,6 +71,6 @@ To add a new component dynamically:
    ```
    This script will:
    - Read the template code.
-   - Use Regex to automatically detect any other Brutx components imported in the file (and add them as `registryDependencies`).
+   - Use regex to detect other Brutx components imported in the file and add them as `registryDependencies`.
    - Package everything into a static `.json` schema file inside `packages/registry/registry/`.
-4. Commit your changes and push to GitHub. Once pushed, it becomes instantly available worldwide!
+4. Commit your changes and push to GitHub. Once the registry is published, the component is available from the remote registry.
