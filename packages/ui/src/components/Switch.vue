@@ -5,6 +5,7 @@ import { SwitchRoot, SwitchThumb } from 'reka-ui'
 
 interface SwitchProps {
     class?: string
+    modelValue?: boolean
     defaultValue?: boolean
     disabled?: boolean
 }
@@ -31,6 +32,7 @@ const classes = computed(() =>
 <template>
     <SwitchRoot
         :class="classes"
+        :checked="modelValue"
         :default-checked="defaultValue"
         :disabled="disabled"
         @update:checked="emit('update:modelValue', $event)"

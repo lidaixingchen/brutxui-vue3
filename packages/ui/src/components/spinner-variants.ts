@@ -37,3 +37,31 @@ export const blockSpinnerVariants = cva('grid grid-cols-2 gap-1', {
         size: 'default',
     },
 })
+
+export const barsSpinnerVariants = cva('flex items-end gap-0.5', {
+    variants: {
+        size: {
+            sm: 'h-4',
+            default: 'h-6',
+            lg: 'h-8',
+            xl: 'h-12',
+        },
+    },
+    defaultVariants: {
+        size: 'default',
+    },
+})
+
+export const dotsSpinnerVariants = cva('flex items-center', {
+    variants: {
+        size: {
+            sm: 'gap-1',
+            default: 'gap-2',
+            lg: 'gap-3',
+            xl: 'gap-4',
+        },
+    },
+    defaultVariants: {
+        size: 'default',
+    },
+})

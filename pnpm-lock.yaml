@@ -234,6 +234,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.0
         version: 3.4.18
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.18)
       typescript:
         specifier: ^5.7.2
         version: 5.9.3
@@ -8773,6 +8776,14 @@ packages:
     resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
     dev: false
 
+  /tailwindcss-animate@1.0.7(tailwindcss@3.4.18):
+    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+    dependencies:
+      tailwindcss: 3.4.18
+    dev: true
+
   /tailwindcss@3.4.18:
     resolution: {integrity: sha512-6A2rnmW5xZMdw11LYjhcI5846rt9pbLSabY5XPxo+XWdxwZaFEn47Go4NzFiHu9sNNmr/kXivP1vStfvMaK1GQ==}
     engines: {node: '>=14.0.0'}
@@ -9628,7 +9639,7 @@ packages:
       eslint-scope: 9.1.2
       eslint-visitor-keys: 5.0.1
       espree: 11.2.0
-      esquery: 1.6.0
+      esquery: 1.7.0
       semver: 7.7.4
     transitivePeerDependencies:
       - supports-color

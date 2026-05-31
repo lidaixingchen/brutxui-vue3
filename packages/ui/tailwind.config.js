@@ -32,5 +32,5 @@ module.exports = {
             },
         },
     },
-    plugins: [require('./src/lib/brutalism-plugin')],
+    plugins: [require('tailwindcss-animate'), require('./src/lib/brutalism-plugin')],
 }

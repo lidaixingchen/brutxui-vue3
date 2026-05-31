@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
-import { blockSpinnerVariants } from './spinner-variants'
+import { barsSpinnerVariants } from './spinner-variants'
 
-type BarsSpinnerSize = NonNullable<VariantProps<typeof blockSpinnerVariants>['size']>
+type BarsSpinnerSize = NonNullable<VariantProps<typeof barsSpinnerVariants>['size']>
 
 interface BarsSpinnerProps {
     size?: BarsSpinnerSize
@@ -18,13 +18,6 @@ const props = withDefaults(defineProps<BarsSpinnerProps>(), {
     color: 'default',
     label: 'Loading...',
 })
-
-const heightMap: Record<string, string> = {
-    sm: 'h-4',
-    default: 'h-6',
-    lg: 'h-8',
-    xl: 'h-12',
-}
 
 const barWidthMap: Record<string, string> = {
     sm: 'w-1',
@@ -44,10 +37,14 @@ const colorMap: Record<string, string[]> = {
 const bars = computed(() => colorMap[props.color])
 
 const barHeights = [0.7, 0.55, 0.85, 0.6, 0.75]
+
+const containerClasses = computed(() =>
+    cn(barsSpinnerVariants({ size: props.size }), props.class)
+)
 </script>
 
 <template>
-    <div :class="cn('flex items-end gap-0.5', heightMap[props.size ?? 'default'], props.class)" role="status" :aria-label="label">
+    <div :class="containerClasses" role="status" :aria-label="label">
         <div
             v-for="(barColor, i) in bars"
             :key="i"

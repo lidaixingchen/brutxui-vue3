@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
-import { blockSpinnerVariants } from './spinner-variants'
+import { dotsSpinnerVariants } from './spinner-variants'
 
-type DotsSpinnerSize = NonNullable<VariantProps<typeof blockSpinnerVariants>['size']>
+type DotsSpinnerSize = NonNullable<VariantProps<typeof dotsSpinnerVariants>['size']>
 
 interface DotsSpinnerProps {
     size?: DotsSpinnerSize
@@ -25,23 +26,20 @@ const sizeMap: Record<string, string> = {
     xl: 'h-5 w-5',
 }
 
-const gapMap: Record<string, string> = {
-    sm: 'gap-1',
-    default: 'gap-2',
-    lg: 'gap-3',
-    xl: 'gap-4',
-}
-
 const colorMap: Record<string, string> = {
     default: 'bg-black dark:bg-white',
     primary: 'bg-[#FF6B6B]',
     secondary: 'bg-[#4ECDC4]',
     accent: 'bg-[#FFE66D]',
 }
+
+const containerClasses = computed(() =>
+    cn(dotsSpinnerVariants({ size: props.size }), props.class)
+)
 </script>
 
 <template>
-    <div :class="cn('flex items-center', gapMap[props.size ?? 'default'], props.class)" role="status" :aria-label="label">
+    <div :class="containerClasses" role="status" :aria-label="label">
         <div
             v-for="i in 3"
             :key="i"
