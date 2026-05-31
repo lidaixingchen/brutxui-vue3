@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<ProgressProps>(), {
 const classes = computed(() =>
     cn(
         'relative h-6 w-full overflow-hidden rounded-brutal',
-        'border-3 border-brutal bg-white dark:bg-gray-800',
+        'border-3 border-brutal bg-brutal-bg',
         'shadow-brutal-sm',
         props.class
     )

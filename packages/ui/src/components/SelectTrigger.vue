@@ -14,7 +14,7 @@ const classes = computed(() =>
     cn(
         'flex h-11 w-full items-center justify-between px-4 py-2',
         'bg-brutal-bg text-brutal-fg border-3 border-brutal',
-        'font-bold placeholder:text-gray-400',
+        'font-bold placeholder:text-brutal-placeholder',
         'shadow-brutal',
         'transition-all duration-150',
         'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
@@ -26,7 +26,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <SelectTriggerPrimitive :class="classes">
+    <SelectTriggerPrimitive :class="classes" aria-haspopup="listbox">
         <slot />
         <SelectIconPrimitive as-child>
             <ChevronDown class="h-5 w-5 stroke-[3]" />

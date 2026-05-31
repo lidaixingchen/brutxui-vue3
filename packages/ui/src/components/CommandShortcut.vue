@@ -13,15 +13,15 @@ const classes = computed(() =>
         'ml-auto text-xs font-black tracking-wider',
         'px-2 py-1',
         'bg-brutal-muted',
-        'border-2 border-brutal',
-        'text-gray-600 dark:text-gray-300',
+        'border-3 border-brutal',
+        'text-brutal-muted-foreground',
         props.class
     )
 )
 </script>
 
 <template>
-    <span :class="classes">
+    <span :class="classes" data-slot="command-shortcut">
         <slot />
     </span>
 </template>

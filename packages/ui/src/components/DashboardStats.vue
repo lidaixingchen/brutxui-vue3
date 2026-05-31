@@ -8,6 +8,17 @@ import CardContent from './CardContent.vue'
 import CardDescription from './CardDescription.vue'
 import Badge from './Badge.vue'
 
+type AccentColorKey = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
+
+const ACCENT_COLOR_MAP: Record<AccentColorKey, string> = {
+    primary: 'bg-brutal-primary',
+    secondary: 'bg-brutal-secondary',
+    accent: 'bg-brutal-accent',
+    destructive: 'bg-brutal-destructive',
+    success: 'bg-brutal-success',
+    info: 'bg-brutal-info',
+}
+
 export interface StatItem {
     title: string
     value: string
@@ -15,7 +26,7 @@ export interface StatItem {
     change: string
     trend: 'up' | 'down' | 'neutral'
     icon: Component
-    accentColor: string
+    accentColor?: AccentColorKey
     progress?: number
 }
 
@@ -38,7 +49,7 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
     <div :class="rootClasses">
         <div class="mb-8">
             <h2 class="text-2xl font-black tracking-tight">{{ title }}</h2>
-            <p v-if="subtitle" class="mt-1 text-gray-600 dark:text-gray-400 font-medium">{{ subtitle }}</p>
+            <p v-if="subtitle" class="mt-1 text-brutal-muted-foreground font-medium">{{ subtitle }}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -46,7 +57,7 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
                 <CardHeader class="pb-2">
                     <div class="flex items-center justify-between">
                         <CardDescription>{{ stat.title }}</CardDescription>
-                        <div class="h-8 w-8 flex items-center justify-center border-2 border-brutal" :style="{ backgroundColor: stat.accentColor }">
+                        <div :class="cn('h-8 w-8 flex items-center justify-center border-3 border-brutal', stat.accentColor ? ACCENT_COLOR_MAP[stat.accentColor] : 'bg-brutal-primary')">
                             <component :is="stat.icon" class="h-4 w-4 stroke-[3]" />
                         </div>
                     </div>
@@ -57,9 +68,9 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
                         <component :is="stat.trend === 'up' ? ArrowUpRight : ArrowDownRight" :class="cn('h-4 w-4 stroke-[3]', stat.trend === 'up' ? 'text-brutal-success' : 'text-brutal-destructive')" />
                         <Badge :variant="stat.trend === 'up' ? 'success' : stat.trend === 'down' ? 'danger' : 'default'" size="sm">{{ stat.change }}</Badge>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1 font-medium">{{ stat.description }}</p>
-                    <div v-if="stat.progress !== undefined" class="mt-3 h-2 bg-brutal-muted border border-brutal overflow-hidden">
-                        <div class="h-full transition-all" :style="{ width: `${stat.progress}%`, backgroundColor: stat.accentColor }" />
+                    <p class="text-xs text-brutal-muted-foreground mt-1 font-medium">{{ stat.description }}</p>
+                    <div v-if="stat.progress !== undefined" class="mt-3 h-2 bg-brutal-muted border-3 border-brutal overflow-hidden">
+                        <div :class="cn('h-full transition-all', stat.accentColor ? ACCENT_COLOR_MAP[stat.accentColor] : 'bg-brutal-primary')" :style="{ width: `${stat.progress}%` }" />
                     </div>
                 </CardContent>
             </Card>

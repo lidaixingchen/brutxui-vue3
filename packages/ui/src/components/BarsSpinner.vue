@@ -27,28 +27,32 @@ const barWidthMap: Record<string, string> = {
 }
 
 const colorMap: Record<string, string[]> = {
-    default: ['bg-black dark:bg-white', 'bg-black dark:bg-white', 'bg-black dark:bg-white', 'bg-black dark:bg-white', 'bg-black dark:bg-white'],
-    primary: ['bg-[#FF6B6B]', 'bg-[#FF6B6B]', 'bg-[#FF6B6B]', 'bg-[#FF6B6B]', 'bg-[#FF6B6B]'],
-    secondary: ['bg-[#4ECDC4]', 'bg-[#4ECDC4]', 'bg-[#4ECDC4]', 'bg-[#4ECDC4]', 'bg-[#4ECDC4]'],
-    accent: ['bg-[#FFE66D]', 'bg-[#FFE66D]', 'bg-[#FFE66D]', 'bg-[#FFE66D]', 'bg-[#FFE66D]'],
-    mixed: ['bg-[#FF6B6B]', 'bg-[#4ECDC4]', 'bg-[#FFE66D]', 'bg-[#A855F7]', 'bg-[#FF6B6B]'],
+    default: ['bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg'],
+    primary: ['bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary'],
+    secondary: ['bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary'],
+    accent: ['bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent'],
+    mixed: ['bg-brutal-primary', 'bg-brutal-secondary', 'bg-brutal-accent', 'bg-brutal-info', 'bg-brutal-primary'],
 }
-
-const bars = computed(() => colorMap[props.color])
 
 const barHeights = [0.7, 0.55, 0.85, 0.6, 0.75]
 
 const containerClasses = computed(() =>
     cn(barsSpinnerVariants({ size: props.size }), props.class)
 )
+
+const barClasses = computed(() =>
+    colorMap[props.color].map(barColor =>
+        cn(barWidthMap[props.size ?? 'default'], 'border-3 border-brutal', barColor, 'animate-pulse origin-bottom')
+    )
+)
 </script>
 
 <template>
     <div :class="containerClasses" role="status" :aria-label="label">
         <div
-            v-for="(barColor, i) in bars"
+            v-for="(barClass, i) in barClasses"
             :key="i"
-            :class="cn(barWidthMap[props.size ?? 'default'], 'border border-black dark:border-white', barColor, 'animate-pulse origin-bottom')"
+            :class="barClass"
             :style="{
                 height: `${barHeights[i] * 100}%`,
                 animationDelay: `${i * 100}ms`,

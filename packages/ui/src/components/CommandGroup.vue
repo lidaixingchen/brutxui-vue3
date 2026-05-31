@@ -19,14 +19,14 @@ const classes = computed(() =>
 const headingClasses = computed(() =>
     cn(
         'px-3 py-2 text-xs font-black uppercase tracking-wider',
-        'text-gray-500 dark:text-gray-400'
+        'text-brutal-muted-foreground'
     )
 )
 </script>
 
 <template>
-    <div :class="classes" role="group">
-        <div v-if="heading" :class="headingClasses">
+    <div :class="classes" data-slot="command-group" role="group">
+        <div v-if="heading" :class="headingClasses" data-slot="command-group-heading">
             {{ heading }}
         </div>
         <slot />

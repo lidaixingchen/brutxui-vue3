@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { AvatarFallback as AvatarFallbackPrimitive } from 'reka-ui'
 import { cn } from '../lib/utils'
 
 interface AvatarFallbackProps {
@@ -9,12 +10,12 @@ interface AvatarFallbackProps {
 const props = defineProps<AvatarFallbackProps>()
 
 const classes = computed(() =>
-    cn('flex h-full w-full items-center justify-center bg-gray-200 font-bold', props.class)
+    cn('flex h-full w-full items-center justify-center bg-brutal-muted font-bold', props.class)
 )
 </script>
 
 <template>
-    <span :class="classes">
+    <AvatarFallbackPrimitive :class="classes">
         <slot />
-    </span>
+    </AvatarFallbackPrimitive>
 </template>

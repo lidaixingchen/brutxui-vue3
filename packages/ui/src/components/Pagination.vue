@@ -7,6 +7,11 @@ import { paginationVariants, paginationButtonVariants } from './pagination-varia
 
 type PaginationVariantProps = VariantProps<typeof paginationVariants>
 
+const FIRST_PAGE = 1
+const MIN_PAGE_THRESHOLD = 2
+const FIRST_PAGES_COUNT = 3
+const ELLIPSIS_COUNT = 1
+
 interface PaginationProps {
     currentPage: number
     totalPages: number
@@ -34,39 +39,38 @@ function range(start: number, end: number) {
 }
 
 const paginationRange = computed(() => {
-    const totalPageNumbers = props.siblingCount + 5
+    const totalPageNumbers = props.siblingCount * 2 + FIRST_PAGES_COUNT + ELLIPSIS_COUNT * 2
 
     if (totalPageNumbers >= props.totalPages) {
-        return range(1, props.totalPages)
+        return range(FIRST_PAGE, props.totalPages)
     }
 
-    const leftSiblingIndex = Math.max(props.currentPage - props.siblingCount, 1)
+    const leftSiblingIndex = Math.max(props.currentPage - props.siblingCount, FIRST_PAGE)
     const rightSiblingIndex = Math.min(props.currentPage + props.siblingCount, props.totalPages)
 
-    const shouldShowLeftDots = leftSiblingIndex > 2
-    const shouldShowRightDots = rightSiblingIndex < props.totalPages - 2
+    const shouldShowLeftDots = leftSiblingIndex > MIN_PAGE_THRESHOLD
+    const shouldShowRightDots = rightSiblingIndex < props.totalPages - MIN_PAGE_THRESHOLD
 
-    const firstPageIndex = 1
     const lastPageIndex = props.totalPages
 
     if (!shouldShowLeftDots && shouldShowRightDots) {
-        const leftItemCount = 3 + 2 * props.siblingCount
-        const leftRange = range(1, leftItemCount)
+        const leftEndIndex = FIRST_PAGES_COUNT + 2 * props.siblingCount
+        const leftRange = range(FIRST_PAGE, leftEndIndex)
         return [...leftRange, 'dots' as const, props.totalPages]
     }
 
     if (shouldShowLeftDots && !shouldShowRightDots) {
-        const rightItemCount = 3 + 2 * props.siblingCount
-        const rightRange = range(props.totalPages - rightItemCount + 1, props.totalPages)
-        return [firstPageIndex, 'dots' as const, ...rightRange]
+        const rightEndIndex = FIRST_PAGES_COUNT + 2 * props.siblingCount
+        const rightRange = range(props.totalPages - rightEndIndex + 1, props.totalPages)
+        return [FIRST_PAGE, 'dots' as const, ...rightRange]
     }
 
     if (shouldShowLeftDots && shouldShowRightDots) {
         const middleRange = range(leftSiblingIndex, rightSiblingIndex)
-        return [firstPageIndex, 'dots' as const, ...middleRange, 'dots' as const, lastPageIndex]
+        return [FIRST_PAGE, 'dots' as const, ...middleRange, 'dots' as const, lastPageIndex]
     }
 
-    return range(1, props.totalPages)
+    return range(FIRST_PAGE, props.totalPages)
 })
 
 const navClasses = computed(() =>
@@ -81,6 +85,30 @@ const dotsSizeClasses = computed(() => {
     return 'h-10 w-10'
 })
 
+const firstButtonClasses = computed(() =>
+    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+)
+
+const prevButtonClasses = computed(() =>
+    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+)
+
+const nextButtonClasses = computed(() =>
+    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+)
+
+const lastButtonClasses = computed(() =>
+    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+)
+
+const dotsClasses = computed(() =>
+    cn('flex items-center justify-center font-black text-brutal-fg', dotsSizeClasses.value)
+)
+
+function pageButtonClasses(pageNumber: number) {
+    return cn(paginationButtonVariants({ size: buttonSize.value, isActive: props.currentPage === pageNumber }))
+}
+
 function onPageChange(page: number) {
     emit('update:currentPage', page)
 }
@@ -90,7 +118,7 @@ function onPageChange(page: number) {
     <nav role="navigation" aria-label="pagination" :class="navClasses">
         <button
             v-if="showFirstLast"
-            :class="cn(paginationButtonVariants({ size: buttonSize, isActive: false }))"
+            :class="firstButtonClasses"
             :disabled="currentPage === 1"
             aria-label="Go to first page"
             @click="onPageChange(1)"
@@ -99,7 +127,7 @@ function onPageChange(page: number) {
         </button>
 
         <button
-            :class="cn(paginationButtonVariants({ size: buttonSize, isActive: false }))"
+            :class="prevButtonClasses"
             :disabled="currentPage === 1"
             aria-label="Go to previous page"
             @click="onPageChange(currentPage - 1)"
@@ -111,13 +139,13 @@ function onPageChange(page: number) {
             <template v-for="(pageNumber, index) in paginationRange" :key="index">
                 <span
                     v-if="pageNumber === 'dots'"
-                    :class="cn('flex items-center justify-center font-black text-brutal-fg', dotsSizeClasses)"
+                    :class="dotsClasses"
                 >
                     •••
                 </span>
                 <button
                     v-else
-                    :class="cn(paginationButtonVariants({ size: buttonSize, isActive: currentPage === pageNumber }))"
+                    :class="pageButtonClasses(pageNumber as number)"
                     :aria-label="`Go to page ${pageNumber}`"
                     :aria-current="currentPage === pageNumber ? 'page' : undefined"
                     @click="onPageChange(pageNumber as number)"
@@ -132,7 +160,7 @@ function onPageChange(page: number) {
         </span>
 
         <button
-            :class="cn(paginationButtonVariants({ size: buttonSize, isActive: false }))"
+            :class="nextButtonClasses"
             :disabled="currentPage === totalPages"
             aria-label="Go to next page"
             @click="onPageChange(currentPage + 1)"
@@ -142,7 +170,7 @@ function onPageChange(page: number) {
 
         <button
             v-if="showFirstLast"
-            :class="cn(paginationButtonVariants({ size: buttonSize, isActive: false }))"
+            :class="lastButtonClasses"
             :disabled="currentPage === totalPages"
             aria-label="Go to last page"
             @click="onPageChange(totalPages)"

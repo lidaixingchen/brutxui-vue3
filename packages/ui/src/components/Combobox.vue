@@ -12,11 +12,7 @@ import CommandEmpty from './CommandEmpty.vue'
 import CommandGroup from './CommandGroup.vue'
 import CommandItem from './CommandItem.vue'
 
-export interface ComboboxOption {
-    value: string
-    label: string
-    disabled?: boolean
-}
+import { type ComboboxOption } from './combobox-types'
 
 interface ComboboxProps {
     options: ComboboxOption[]
@@ -35,7 +31,7 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     disabled: false,
 })
 
-const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+const emit = defineEmits<{ 'update:modelValue': [value: string | undefined] }>()
 
 const open = ref(false)
 const searchQuery = ref('')
@@ -56,13 +52,13 @@ const triggerClasses = computed(() =>
     cn(
         buttonVariants({ variant: 'outline' }),
         'w-full justify-between font-semibold',
-        !props.modelValue && 'text-gray-500',
+        !props.modelValue && 'text-brutal-muted-foreground',
         props.class
     )
 )
 
 function handleSelect(value: string) {
-    emit('update:modelValue', value === props.modelValue ? '' : value)
+    emit('update:modelValue', value === props.modelValue ? undefined : value)
     open.value = false
     searchQuery.value = ''
 }
@@ -97,7 +93,7 @@ function handleSelect(value: string) {
                             <Check
                                 :class="cn(
                                     'mr-2 h-4 w-4 stroke-[3]',
-                                    modelValue === option.value ? 'opacity-100' : 'opacity-0'
+                                    props.modelValue === option.value ? 'opacity-100' : 'opacity-0'
                                 )"
                             />
                             {{ option.label }}

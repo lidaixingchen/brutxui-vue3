@@ -95,16 +95,16 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
     <div :class="rootClasses">
         <div class="text-center mb-10">
             <h2 class="text-3xl font-black tracking-tight">{{ title }}</h2>
-            <p v-if="subtitle" class="mt-2 text-gray-600 dark:text-gray-400 font-medium">{{ subtitle }}</p>
+            <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">{{ subtitle }}</p>
             <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1">
                 <button
-                    :class="cn('px-4 py-2 font-black text-sm transition-all', billing === 'monthly' ? 'bg-brutal-accent text-black shadow-brutal-sm' : 'text-gray-600')"
+                    :class="cn('px-4 py-2 font-black text-sm transition-all', billing === 'monthly' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground')"
                     @click="billing = 'monthly'"
                 >
                     Monthly
                 </button>
                 <button
-                    :class="cn('px-4 py-2 font-black text-sm transition-all', billing === 'annually' ? 'bg-brutal-accent text-black shadow-brutal-sm' : 'text-gray-600')"
+                    :class="cn('px-4 py-2 font-black text-sm transition-all', billing === 'annually' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground')"
                     @click="billing = 'annually'"
                 >
                     Annually
@@ -125,17 +125,17 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
                     <CardContent>
                         <div class="mb-6">
                             <span class="text-4xl font-black">{{ billing === 'monthly' ? plan.priceMonthly : plan.priceAnnually }}</span>
-                            <span class="text-sm font-bold text-gray-500">/{{ billing === 'monthly' ? 'mo' : 'mo (billed annually)' }}</span>
+                            <span class="text-sm font-bold text-brutal-muted-foreground">/{{ billing === 'monthly' ? 'mo' : 'mo (billed annually)' }}</span>
                         </div>
                         <ul class="space-y-3">
                             <li v-for="feature in plan.features" :key="feature.text" class="flex items-center gap-2">
-                                <div v-if="feature.included" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-black">
+                                <div v-if="feature.included" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
                                     <Check class="h-3 w-3 stroke-[3]" />
                                 </div>
-                                <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-gray-400">
+                                <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-brutal-muted-foreground">
                                     <HelpCircle class="h-3 w-3 stroke-[3]" />
                                 </div>
-                                <span :class="cn('text-sm font-medium', !feature.included && 'line-through text-gray-400')">{{ feature.text }}</span>
+                                <span :class="cn('text-sm font-medium', !feature.included && 'line-through text-brutal-muted-foreground')">{{ feature.text }}</span>
                             </li>
                         </ul>
                     </CardContent>

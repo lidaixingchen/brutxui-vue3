@@ -10,7 +10,7 @@ const props = defineProps<CommandListProps>()
 
 const classes = computed(() =>
     cn(
-        'max-h-[300px] overflow-x-hidden overflow-y-auto scroll-py-1',
+        'max-h-80 overflow-x-hidden overflow-y-auto scroll-py-1',
         'p-2',
         props.class
     )
@@ -18,7 +18,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" data-slot="command-list">
         <slot />
     </div>
 </template>

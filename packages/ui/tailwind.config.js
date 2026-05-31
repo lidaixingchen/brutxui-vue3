@@ -5,9 +5,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                brutalism: {
+                brutal: {
                     bg: 'var(--brutal-bg)',
-                    text: 'var(--brutal-fg)',
                     fg: 'var(--brutal-fg)',
                     primary: 'var(--brutal-primary)',
                     secondary: 'var(--brutal-secondary)',
@@ -15,7 +14,11 @@ module.exports = {
                     destructive: 'var(--brutal-destructive)',
                     success: 'var(--brutal-success)',
                     muted: 'var(--brutal-muted)',
+                    'muted-foreground': 'var(--brutal-muted-foreground)',
                     ring: 'var(--brutal-ring)',
+                    info: 'var(--brutal-info)',
+                    overlay: 'var(--brutal-overlay)',
+                    placeholder: 'var(--brutal-placeholder)',
                 },
             },
             boxShadow: {

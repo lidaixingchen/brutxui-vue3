@@ -20,7 +20,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <p v-if="body" :id="itemContext.formMessageId" :class="classes">
+    <p v-if="body" :id="itemContext.formMessageId" role="alert" :class="classes">
         {{ body }}
     </p>
 </template>

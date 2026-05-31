@@ -19,9 +19,9 @@ const classes = computed(() =>
     cn(
         'flex touch-none select-none transition-colors',
         props.orientation === 'vertical' &&
-            'h-full w-3 border-l-2 border-brutal p-[1px]',
+            'h-full w-3 border-l-3 border-brutal p-[1px]',
         props.orientation === 'horizontal' &&
-            'h-3 flex-col border-t-2 border-brutal p-[1px]',
+            'h-3 flex-col border-t-3 border-brutal p-[1px]',
         props.class
     )
 )

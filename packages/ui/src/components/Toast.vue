@@ -7,12 +7,14 @@ import { toastVariants } from './toast-variants'
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
 
+const DEFAULT_DURATION = 5000
+const LEAVE_ANIMATION_DELAY = 200
+
 interface ToastProps {
     variant?: NonNullable<ToastVariantProps['variant']>
     size?: NonNullable<ToastVariantProps['size']>
     title?: string
     description?: string
-    onClose?: () => void
     duration?: number
     class?: string
 }
@@ -20,8 +22,10 @@ interface ToastProps {
 const props = withDefaults(defineProps<ToastProps>(), {
     variant: 'default',
     size: 'default',
-    duration: 5000,
+    duration: DEFAULT_DURATION,
 })
+
+const emit = defineEmits<{ close: [] }>()
 
 const isLeaving = ref(false)
 let timer: number | undefined
@@ -29,12 +33,12 @@ let timer: number | undefined
 function startLeave() {
     isLeaving.value = true
     window.setTimeout(() => {
-        props.onClose?.()
-    }, 200)
+        emit('close')
+    }, LEAVE_ANIMATION_DELAY)
 }
 
 onMounted(() => {
-    if (props.duration && props.onClose) {
+    if (props.duration) {
         timer = window.setTimeout(() => {
             startLeave()
         }, props.duration)
@@ -70,7 +74,7 @@ const closeClasses = computed(() =>
         'shadow-brutal-sm',
         'transition-all duration-150',
         'hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',
-        'active:translate-x-1 active:translate-y-1 active:shadow-none',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2'
     )
 )
@@ -78,10 +82,10 @@ const closeClasses = computed(() =>
 
 <template>
     <div :class="classes" role="alert">
-        <div v-if="duration && onClose" class="absolute top-0 left-0 right-0 h-1 bg-black/10 dark:bg-white/10 overflow-hidden">
+        <div v-if="duration" class="absolute top-0 left-0 right-0 h-1 bg-brutal-fg/10 overflow-hidden">
             <div
-                class="h-full bg-black/30 dark:bg-white/30"
-                :style="{ animation: `toast-shrink ${duration}ms linear forwards` }"
+                class="h-full bg-brutal-fg/30 animate-nb-shrink"
+                :style="{ animationDuration: `${duration}ms` }"
             />
         </div>
 
@@ -96,16 +100,9 @@ const closeClasses = computed(() =>
                 <slot />
             </div>
 
-            <button v-if="onClose" :class="closeClasses" aria-label="Close" @click="startLeave">
+            <button :class="closeClasses" aria-label="Close" @click="startLeave">
                 <X class="h-4 w-4 stroke-[3]" />
             </button>
         </div>
     </div>
 </template>
-
-<style>
-@keyframes toast-shrink {
-    from { width: 100%; }
-    to { width: 0%; }
-}
-</style>

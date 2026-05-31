@@ -13,7 +13,9 @@ function copyStylesPlugin(): Plugin {
                     resolve(__dirname, 'src/styles.css'),
                     resolve(__dirname, 'dist/styles.css')
                 )
-            } catch {}
+            } catch (e) {
+                console.warn('Failed to copy styles.css:', e)
+            }
         },
     }
 }

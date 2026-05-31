@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import VCalendar from 'v-calendar'
 import { cn } from '../lib/utils'
 
 interface CalendarProps {
@@ -7,6 +8,11 @@ interface CalendarProps {
     isRange?: boolean
     disabled?: boolean
     class?: string
+}
+
+interface DateRangeValue {
+    start: Date
+    end: Date
 }
 
 const props = withDefaults(defineProps<CalendarProps>(), {
@@ -21,51 +27,64 @@ const emit = defineEmits<{
 const rootClasses = computed(() =>
     cn(
         'p-2 sm:p-3',
-        'bg-[#FFFEF0] dark:bg-gray-900 text-black dark:text-gray-100',
-        'border-2 sm:border-3 border-brutal',
+        'bg-brutal-bg text-brutal-fg',
+        'border-3 border-brutal',
         'shadow-brutal',
         'w-fit max-w-full overflow-x-auto',
         props.class
     )
 )
 
-function onDayClick(day: { id: number; date: Date }) {
+const vCalendarModelValue = computed<Date | DateRangeValue | null>(() => {
+    if (props.isRange && Array.isArray(props.modelValue) && props.modelValue.length === 2) {
+        return { start: props.modelValue[0], end: props.modelValue[1] }
+    }
+    if (props.isRange) return null
+    if (props.modelValue instanceof Date) return props.modelValue
+    return null
+})
+
+function handleUpdate(value: Date | DateRangeValue | null) {
     if (props.disabled) return
     if (props.isRange) {
-        emit('update:modelValue', day.date as unknown as Date[])
+        if (value && typeof value === 'object' && 'start' in value && 'end' in value) {
+            emit('update:modelValue', [value.start, value.end])
+        } else {
+            emit('update:modelValue', null)
+        }
     } else {
-        emit('update:modelValue', day.date)
+        emit('update:modelValue', value as Date | null)
     }
 }
 </script>
 
 <template>
     <VCalendar
-        :model-value="modelValue"
+        :model-value="vCalendarModelValue"
         :is-range="isRange"
         :disabled="disabled"
         :class="rootClasses"
         :attributes="[]"
         trim-weeks
         :first-day-of-week="1"
-        @dayclick="onDayClick"
+        @update:model-value="handleUpdate"
     >
         <template #default="{ page }">
             <div class="vc-header flex items-center justify-between mb-2">
-                <div class="vc-title font-black text-xs sm:text-sm tracking-tight uppercase text-black dark:text-gray-100">
+                <div class="vc-title font-black text-xs sm:text-sm tracking-tight uppercase text-brutal-fg">
                     {{ page.monthLabel }} {{ page.yearLabel }}
                 </div>
             </div>
         </template>
         <template #day-content="{ day }">
             <div
-                class="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-[#DDA0DD] hover:text-black hover:font-bold cursor-pointer border border-black/10 dark:border-white/10"
+                class="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold cursor-pointer border-3 border-brutal/10"
                 :class="{
-                    'bg-brutal-primary text-black font-black border-2 border-brutal shadow-brutal-sm': day.isSelected && !day.isInRange,
-                    'bg-brutal-accent text-black': day.isInRange && !day.isStart && !day.isEnd,
-                    'bg-brutal-secondary text-black font-black border-2 border-brutal shadow-brutal-sm': day.isStart || day.isEnd,
-                    'bg-brutal-secondary text-black font-black border-2 border-brutal': day.isToday,
-                    'text-gray-400 dark:text-gray-600 opacity-40': day.isOutside,
+                    'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm': day.isSelected && !day.isInRange,
+                    'bg-brutal-accent text-brutal-fg': day.isInRange && !day.isStart && !day.isEnd,
+                    'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm': day.isStart || day.isEnd,
+                    'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal': day.isToday,
+                    'text-brutal-muted-foreground opacity-40': day.isOutside,
                     'opacity-40 cursor-not-allowed': day.isDisabled,
                 }"
             >

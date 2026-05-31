@@ -9,7 +9,7 @@ interface TableCaptionProps {
 const props = defineProps<TableCaptionProps>()
 
 const classes = computed(() =>
-    cn('mt-4 text-sm font-bold text-gray-600 dark:text-gray-400', props.class)
+    cn('mt-4 text-sm font-bold text-brutal-muted-foreground', props.class)
 )
 </script>
 

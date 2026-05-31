@@ -9,7 +9,7 @@ type ToggleVariantProps = VariantProps<typeof toggleVariants>
 
 interface ToggleProps {
     defaultValue?: boolean
-    modelValue?: boolean
+    pressed?: boolean
     variant?: NonNullable<ToggleVariantProps['variant']>
     size?: NonNullable<ToggleVariantProps['size']>
     disabled?: boolean
@@ -32,7 +32,7 @@ const classes = computed(() =>
 <template>
     <Toggle
         :default-value="defaultValue"
-        :model-value="modelValue"
+        :pressed="pressed"
         :disabled="disabled"
         :class="classes"
         @update:pressed="emit('update:pressed', $event)"

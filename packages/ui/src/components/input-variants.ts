@@ -6,7 +6,7 @@ export const inputVariants = cva(
         'border-3 border-brutal',
         'bg-brutal-bg text-brutal-fg',
         'font-medium',
-        'placeholder:text-gray-400 placeholder:font-normal',
+        'placeholder:text-brutal-placeholder placeholder:font-normal',
         'transition-all duration-150',
         'focus:outline-none focus:shadow-brutal',
         'focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',

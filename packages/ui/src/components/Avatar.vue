@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { AvatarRoot } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 import { avatarVariants } from './avatar-variants'
@@ -23,7 +24,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <span :class="classes">
+    <AvatarRoot :class="classes">
         <slot />
-    </span>
+    </AvatarRoot>
 </template>

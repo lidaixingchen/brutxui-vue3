@@ -9,12 +9,14 @@ interface WaitlistPageProps {
     title?: string
     description?: string
     ctaText?: string
+    waitlistCount?: number
     class?: string
 }
 
 const props = withDefaults(defineProps<WaitlistPageProps>(), {
     title: 'Join the BrutxUI Waitlist Club',
     ctaText: 'Secure Priority Access',
+    waitlistCount: 0,
 })
 
 const emit = defineEmits<{
@@ -34,23 +36,23 @@ function handleSubmit() {
 
 <template>
     <div :class="rootClasses">
-        <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-2 border-brutal rotate-[-1deg]">
+        <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-3 border-brutal rotate-[-1deg]">
             <Sparkles class="h-4 w-4 stroke-[3] animate-spin" />
             <span class="font-black text-sm">Early Access</span>
         </div>
 
         <h1 class="text-3xl font-black tracking-tight">{{ title }}</h1>
-        <p v-if="description" class="mt-3 text-gray-600 dark:text-gray-400 font-medium">{{ description }}</p>
+        <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium">{{ description }}</p>
 
         <form class="mt-8 flex flex-col sm:flex-row gap-3" @submit.prevent="handleSubmit">
             <Input v-model="email" type="email" placeholder="you@example.com" class="flex-1" />
             <Button type="submit" variant="primary">{{ ctaText }}</Button>
         </form>
 
-        <div class="mt-8 flex items-center justify-center gap-6 text-sm font-bold text-gray-500">
-            <div class="flex items-center gap-1">
+        <div class="mt-8 flex items-center justify-center gap-6 text-sm font-bold text-brutal-muted-foreground">
+            <div v-if="waitlistCount > 0" class="flex items-center gap-1">
                 <Users class="h-4 w-4 stroke-[3]" />
-                <span>2,847 on waitlist</span>
+                <span>{{ waitlistCount.toLocaleString() }} on waitlist</span>
             </div>
             <div class="flex items-center gap-1">
                 <Star v-for="i in 5" :key="i" class="h-3 w-3 fill-brutal-accent text-brutal-accent" />

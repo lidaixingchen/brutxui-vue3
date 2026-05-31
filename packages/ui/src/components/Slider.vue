@@ -32,7 +32,7 @@ const rootClasses = computed(() =>
 
 const trackClasses = computed(() =>
     cn(
-        'relative h-5 w-full grow overflow-hidden rounded-full',
+        'relative h-5 w-full grow overflow-hidden rounded-brutal',
         'border-3 border-brutal bg-brutal-bg',
         'shadow-brutal-sm'
     )

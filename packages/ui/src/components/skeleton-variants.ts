@@ -1,14 +1,14 @@
 import { cva } from 'class-variance-authority'
 
 export const skeletonVariants = cva(
-    ['animate-pulse', 'border-3 border-black dark:border-white'],
+    ['animate-pulse', 'border-3 border-brutal'],
     {
         variants: {
             variant: {
-                default: 'bg-gray-200 dark:bg-gray-800',
-                primary: 'bg-[#FF6B6B]/30',
-                secondary: 'bg-[#4ECDC4]/30',
-                accent: 'bg-[#FFE66D]/30',
+                default: 'bg-brutal-muted',
+                primary: 'bg-brutal-primary/30',
+                secondary: 'bg-brutal-secondary/30',
+                accent: 'bg-brutal-accent/30',
             },
         },
         defaultVariants: {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { AvatarImage as AvatarImagePrimitive } from 'reka-ui'
 import { cn } from '../lib/utils'
 
 interface AvatarImageProps {
@@ -16,5 +17,5 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <img :src="src" :alt="alt" :class="classes" />
+    <AvatarImagePrimitive v-if="src" :src="src" :alt="alt" :class="classes" />
 </template>

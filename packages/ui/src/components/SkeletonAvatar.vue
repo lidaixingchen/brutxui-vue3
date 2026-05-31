@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 import { skeletonVariants } from './skeleton-variants'
@@ -23,8 +24,10 @@ const sizeClasses: Record<string, string> = {
     lg: 'h-12 w-12',
     xl: 'h-16 w-16',
 }
+
+const classes = computed(() => cn(sizeClasses[props.size], props.class))
 </script>
 
 <template>
-    <Skeleton :variant="variant" :class="cn(sizeClasses[props.size], props.class)" />
+    <Skeleton :variant="variant" :class="classes" />
 </template>

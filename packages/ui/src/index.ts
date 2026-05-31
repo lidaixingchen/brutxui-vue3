@@ -147,7 +147,7 @@ export { default as CommandShortcut } from './components/CommandShortcut.vue'
 
 export { default as Combobox } from './components/Combobox.vue'
 export { default as ComboboxMulti } from './components/ComboboxMulti.vue'
-export type { ComboboxOption } from './components/Combobox.vue'
+export type { ComboboxOption } from './components/combobox-types'
 
 export { default as Form } from './components/Form.vue'
 export { default as FormField } from './components/FormField.vue'

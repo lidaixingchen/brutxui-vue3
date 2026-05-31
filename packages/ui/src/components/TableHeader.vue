@@ -9,7 +9,7 @@ interface TableHeaderProps {
 const props = defineProps<TableHeaderProps>()
 
 const classes = computed(() =>
-    cn('bg-brutal-accent text-black [&_tr]:border-b-3 [&_tr]:border-brutal', props.class)
+    cn('bg-brutal-accent text-brutal-fg [&_tr]:border-b-3 [&_tr]:border-brutal', props.class)
 )
 </script>
 

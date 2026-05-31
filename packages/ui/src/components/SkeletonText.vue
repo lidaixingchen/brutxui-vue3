@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 import { skeletonVariants } from './skeleton-variants'
@@ -18,10 +19,12 @@ const props = withDefaults(defineProps<SkeletonTextProps>(), {
     lines: 3,
     lastLineWidth: '60%',
 })
+
+const classes = computed(() => cn('space-y-2', props.class))
 </script>
 
 <template>
-    <div :class="cn('space-y-2', props.class)">
+    <div :class="classes">
         <Skeleton
             v-for="index in props.lines"
             :key="index"

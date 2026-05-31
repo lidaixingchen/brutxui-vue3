@@ -4,7 +4,7 @@ export const paginationVariants = cva('flex items-center justify-center', {
     variants: {
         variant: {
             default: '',
-            rounded: '[&_button]:rounded-none',
+            rounded: '[&_button]:rounded-brutal',
             minimal: '[&_button]:border-0 [&_button]:shadow-none',
         },
         size: {

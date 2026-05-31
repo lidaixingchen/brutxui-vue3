@@ -11,7 +11,7 @@ import CommandList from './CommandList.vue'
 import CommandEmpty from './CommandEmpty.vue'
 import CommandGroup from './CommandGroup.vue'
 import CommandItem from './CommandItem.vue'
-import type { ComboboxOption } from './Combobox.vue'
+import { type ComboboxOption } from './combobox-types'
 
 interface ComboboxMultiProps {
     options: ComboboxOption[]
@@ -62,7 +62,7 @@ const triggerClasses = computed(() =>
     cn(
         buttonVariants({ variant: 'outline' }),
         'w-full justify-between font-semibold',
-        selectedOptions.value.length === 0 && 'text-gray-500',
+        selectedOptions.value.length === 0 && 'text-brutal-muted-foreground',
         props.class
     )
 )
@@ -104,13 +104,13 @@ function handleSelect(optionValue: string) {
                             <div
                                 :class="cn(
                                     'mr-2 flex h-4 w-4 items-center justify-center',
-                                    'border-2 border-brutal',
-                                    modelValue.includes(option.value)
+                                    'border-3 border-brutal',
+                                    props.modelValue.includes(option.value)
                                         ? 'bg-brutal-secondary'
                                         : 'bg-brutal-bg'
                                 )"
                             >
-                                <Check v-if="modelValue.includes(option.value)" class="h-3 w-3 stroke-[3] text-black" />
+                                <Check v-if="props.modelValue.includes(option.value)" class="h-3 w-3 stroke-[3] text-brutal-fg" />
                             </div>
                             {{ option.label }}
                         </CommandItem>

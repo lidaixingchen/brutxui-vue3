@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { Menu } from 'lucide-vue-next'
 import { cn } from '../lib/utils'
 
 interface DashboardShellProps {
@@ -35,8 +36,8 @@ const rootClasses = computed(() => cn('flex h-screen bg-brutal-bg', props.class)
 
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="border-b-3 border-brutal bg-brutal-bg px-6 py-3 flex items-center justify-between">
-                <button class="md:hidden h-8 w-8 flex items-center justify-center border-2 border-brutal shadow-brutal-sm" @click="sidebarOpen = !sidebarOpen">
-                    <span class="font-black text-sm">☰</span>
+                <button class="md:hidden h-8 w-8 flex items-center justify-center border-3 border-brutal shadow-brutal-sm" @click="sidebarOpen = !sidebarOpen">
+                    <Menu class="h-4 w-4 stroke-[3]" />
                 </button>
                 <slot name="header" />
             </header>

@@ -11,14 +11,14 @@ const props = defineProps<CommandEmptyProps>()
 const classes = computed(() =>
     cn(
         'py-8 text-center text-sm font-bold',
-        'text-gray-500 dark:text-gray-400',
+        'text-brutal-muted-foreground',
         props.class
     )
 )
 </script>
 
 <template>
-    <p :class="classes">
+    <p :class="classes" data-slot="command-empty">
         <slot>No results found.</slot>
     </p>
 </template>

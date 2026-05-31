@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 import { skeletonVariants } from './skeleton-variants'
@@ -20,33 +21,55 @@ const props = withDefaults(defineProps<SkeletonTableProps>(), {
 })
 
 const cellWidths = [0.85, 0.7, 0.9, 0.65]
+
+const containerClasses = computed(() =>
+    cn('border-3 border-brutal overflow-hidden', props.class)
+)
+
+const headerCellClasses = computed(() =>
+    Array.from({ length: props.columns }, (_, i) =>
+        cn('flex-1 p-3', i < props.columns - 1 && 'border-r-3 border-brutal')
+    )
+)
+
+const rowClasses = computed(() =>
+    Array.from({ length: props.rows }, (_, i) =>
+        cn('flex', i < props.rows - 1 && 'border-b-3 border-brutal', i % 2 === 0 && 'bg-brutal-muted')
+    )
+)
+
+const cellClasses = computed(() =>
+    Array.from({ length: props.columns }, (_, i) =>
+        cn('flex-1 p-3', i < props.columns - 1 && 'border-r-3 border-brutal')
+    )
+)
 </script>
 
 <template>
-    <div :class="cn('border-3 border-black dark:border-white overflow-hidden', props.class)">
-        <div class="flex bg-[#FFE66D] border-b-3 border-black dark:border-white">
+    <div :class="containerClasses">
+        <div class="flex bg-brutal-accent border-b-3 border-brutal">
             <div
-                v-for="colIndex in props.columns"
+                v-for="(headerClass, colIndex) in headerCellClasses"
                 :key="`header-${colIndex}`"
-                :class="cn('flex-1 p-3', colIndex < props.columns && 'border-r-3 border-black dark:border-white')"
+                :class="headerClass"
             >
-                <Skeleton :variant="variant" class="h-5 w-3/4 bg-black/20" />
+                <Skeleton :variant="variant" class="h-5 w-3/4 bg-brutal-fg/20" />
             </div>
         </div>
         <div
-            v-for="rowIndex in props.rows"
+            v-for="(rowClass, rowIndex) in rowClasses"
             :key="`row-${rowIndex}`"
-            :class="cn('flex', rowIndex < props.rows && 'border-b-3 border-black dark:border-white', rowIndex % 2 === 0 && 'bg-gray-50 dark:bg-gray-800')"
+            :class="rowClass"
         >
             <div
-                v-for="colIndex in props.columns"
+                v-for="(cellClass, colIndex) in cellClasses"
                 :key="`cell-${rowIndex}-${colIndex}`"
-                :class="cn('flex-1 p-3', colIndex < props.columns && 'border-r-3 border-black dark:border-white')"
+                :class="cellClass"
             >
                 <Skeleton
                     :variant="variant"
                     class="h-4"
-                    :style="{ width: `${(cellWidths[(colIndex - 1) % cellWidths.length] ?? 0.75) * 100}%` }"
+                    :style="{ width: `${(cellWidths[colIndex % cellWidths.length] ?? 0.75) * 100}%` }"
                 />
             </div>
         </div>

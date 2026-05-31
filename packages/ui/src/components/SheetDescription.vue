@@ -10,7 +10,7 @@ interface SheetDescriptionProps {
 const props = defineProps<SheetDescriptionProps>()
 
 const classes = computed(() =>
-    cn('text-sm text-gray-600 dark:text-gray-400 font-medium', props.class)
+    cn('text-sm text-brutal-muted-foreground font-medium', props.class)
 )
 </script>
 

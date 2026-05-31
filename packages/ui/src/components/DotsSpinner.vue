@@ -27,14 +27,18 @@ const sizeMap: Record<string, string> = {
 }
 
 const colorMap: Record<string, string> = {
-    default: 'bg-black dark:bg-white',
-    primary: 'bg-[#FF6B6B]',
-    secondary: 'bg-[#4ECDC4]',
-    accent: 'bg-[#FFE66D]',
+    default: 'bg-brutal-fg',
+    primary: 'bg-brutal-primary',
+    secondary: 'bg-brutal-secondary',
+    accent: 'bg-brutal-accent',
 }
 
 const containerClasses = computed(() =>
     cn(dotsSpinnerVariants({ size: props.size }), props.class)
+)
+
+const dotClasses = computed(() =>
+    cn(sizeMap[props.size ?? 'default'], 'border-3 border-brutal', colorMap[props.color], 'animate-bounce')
 )
 </script>
 
@@ -43,7 +47,7 @@ const containerClasses = computed(() =>
         <div
             v-for="i in 3"
             :key="i"
-            :class="cn(sizeMap[props.size ?? 'default'], 'border-2 border-black dark:border-white', colorMap[props.color], 'animate-bounce')"
+            :class="dotClasses"
             :style="{ animationDelay: `${(i - 1) * 100}ms`, animationDuration: '500ms' }"
         />
         <span class="sr-only">{{ label }}</span>

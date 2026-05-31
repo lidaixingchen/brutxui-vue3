@@ -15,8 +15,8 @@ export default defineConfig({
         include: ['src/**/*.{test,spec}.{ts,tsx}'],
         coverage: {
             provider: 'v8',
-            include: ['src/**/*.{ts,vue}'],
-            exclude: ['src/**/*.d.ts'],
+            include: ['src/components/**/*.{ts,vue}', 'src/composables/**/*.ts', 'src/lib/utils.ts'],
+            exclude: ['src/**/*.d.ts', 'src/components/combobox-types.ts'],
         },
     },
 })

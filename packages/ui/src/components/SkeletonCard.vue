@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 import { skeletonVariants } from './skeleton-variants'
@@ -15,10 +16,14 @@ interface SkeletonCardProps {
 const props = withDefaults(defineProps<SkeletonCardProps>(), {
     variant: 'default',
 })
+
+const classes = computed(() =>
+    cn('p-4 border-3 border-brutal shadow-brutal bg-brutal-bg', props.class)
+)
 </script>
 
 <template>
-    <div :class="cn('p-4 border-3 border-black dark:border-white shadow-[4px_4px_0px_0px_#000000] dark:shadow-[4px_4px_0px_0px_#FFFFFF] bg-white dark:bg-gray-900', props.class)">
+    <div :class="classes">
         <div class="space-y-4">
             <Skeleton :variant="variant" class="h-32 w-full" />
             <Skeleton :variant="variant" class="h-6 w-3/4" />

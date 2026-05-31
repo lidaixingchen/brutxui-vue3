@@ -19,8 +19,8 @@ const classes = computed(() =>
         'relative flex cursor-pointer items-center gap-3 px-3 py-2',
         'text-sm font-semibold',
         'select-none outline-none',
-        'border-2 border-transparent',
-        'data-[selected=true]:bg-brutal-secondary data-[selected=true]:text-black',
+        'border-3 border-transparent',
+        'data-[selected=true]:bg-brutal-secondary data-[selected=true]:text-brutal-fg',
         'data-[selected=true]:border-brutal data-[selected=true]:font-black',
         'data-[selected=true]:shadow-brutal-sm',
         'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
@@ -47,6 +47,7 @@ function handleClick() {
 <template>
     <div
         :class="classes"
+        data-slot="command-item"
         :data-selected="isSelected"
         :data-disabled="disabled"
         @mouseenter="handleMouseEnter"

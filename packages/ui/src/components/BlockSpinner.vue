@@ -20,31 +20,30 @@ const props = withDefaults(defineProps<BlockSpinnerProps>(), {
 })
 
 const colorMap: Record<string, string[]> = {
-    default: [
-        'bg-black dark:bg-white',
-        'bg-black dark:bg-white',
-        'bg-black dark:bg-white',
-        'bg-black dark:bg-white',
-    ],
-    primary: ['bg-[#FF6B6B]', 'bg-[#FF6B6B]', 'bg-[#FF6B6B]', 'bg-[#FF6B6B]'],
-    secondary: ['bg-[#4ECDC4]', 'bg-[#4ECDC4]', 'bg-[#4ECDC4]', 'bg-[#4ECDC4]'],
-    accent: ['bg-[#FFE66D]', 'bg-[#FFE66D]', 'bg-[#FFE66D]', 'bg-[#FFE66D]'],
-    mixed: ['bg-[#FF6B6B]', 'bg-[#4ECDC4]', 'bg-[#FFE66D]', 'bg-[#A855F7]'],
+    default: ['bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg'],
+    primary: ['bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary'],
+    secondary: ['bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary'],
+    accent: ['bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent'],
+    mixed: ['bg-brutal-primary', 'bg-brutal-secondary', 'bg-brutal-accent', 'bg-brutal-info'],
 }
 
 const classes = computed(() =>
     cn(blockSpinnerVariants({ size: props.size }), props.class)
 )
 
-const blocks = computed(() => colorMap[props.color])
+const blockClasses = computed(() =>
+    colorMap[props.color].map(blockColor =>
+        cn('border-3 border-brutal', blockColor, 'animate-pulse')
+    )
+)
 </script>
 
 <template>
     <div :class="classes" role="status" :aria-label="label">
         <div
-            v-for="(blockColor, i) in blocks"
+            v-for="(blockClass, i) in blockClasses"
             :key="i"
-            :class="cn('border-2 border-black dark:border-white', blockColor, 'animate-pulse')"
+            :class="blockClass"
             :style="{ animationDelay: `${i * 150}ms`, animationDuration: '600ms' }"
         />
         <span class="sr-only">{{ label }}</span>

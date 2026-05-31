@@ -12,12 +12,12 @@ export const alertVariants = cva(
         variants: {
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg',
-                primary: 'bg-brutal-primary text-black',
-                secondary: 'bg-brutal-secondary text-black',
-                success: 'bg-brutal-success text-black',
-                warning: 'bg-brutal-accent text-black',
-                danger: 'bg-brutal-destructive text-white',
-                info: 'bg-[var(--brutal-info,#4A90D9)] text-white',
+                primary: 'bg-brutal-primary text-brutal-fg',
+                secondary: 'bg-brutal-secondary text-brutal-fg',
+                success: 'bg-brutal-success text-brutal-fg',
+                warning: 'bg-brutal-accent text-brutal-fg',
+                danger: 'bg-brutal-destructive text-brutal-fg',
+                info: 'bg-brutal-info text-brutal-fg',
             },
         },
         defaultVariants: {
