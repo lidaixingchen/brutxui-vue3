@@ -15,6 +15,7 @@ build
 .idea
 .trae
 .cursor
+.cursorrules
 *.swp
 *.swo
 
