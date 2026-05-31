@@ -34,7 +34,7 @@ const classes = computed(() =>
 
 <template>
     <Primitive
-        as="button"
+        :as="asChild ? 'template' : 'button'"
         :as-child="asChild"
         :class="classes"
         :disabled="isDisabled"
