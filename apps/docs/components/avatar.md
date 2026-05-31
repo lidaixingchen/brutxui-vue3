@@ -1,0 +1,111 @@
+# Avatar
+
+新粗野主义风格的头像组件，用于显示用户头像图片，支持回退显示。
+
+## 预览
+
+<ComponentPreview>
+  <div class="flex items-center gap-4">
+    <div class="relative flex shrink-0 overflow-hidden h-8 w-8 border-3 border-brutal bg-brutal-muted">
+      <span class="flex h-full w-full items-center justify-center bg-brutal-primary font-black text-sm">JD</span>
+    </div>
+    <div class="relative flex shrink-0 overflow-hidden h-10 w-10 border-3 border-brutal bg-brutal-muted">
+      <span class="flex h-full w-full items-center justify-center bg-brutal-secondary font-black">AB</span>
+    </div>
+    <div class="relative flex shrink-0 overflow-hidden h-14 w-14 border-3 border-brutal bg-brutal-muted">
+      <span class="flex h-full w-full items-center justify-center bg-brutal-accent font-black text-lg">XY</span>
+    </div>
+  </div>
+</ComponentPreview>
+
+## 安装
+
+<InstallationTabs componentName="avatar" />
+
+## 用法
+
+```vue
+<script setup>
+import Avatar from '@/components/ui/Avatar.vue'
+import AvatarImage from '@/components/ui/AvatarImage.vue'
+import AvatarFallback from '@/components/ui/AvatarFallback.vue'
+</script>
+
+<template>
+    <Avatar size="default" shape="square">
+        <AvatarImage src="/avatar.jpg" alt="User avatar" />
+        <AvatarFallback>JD</AvatarFallback>
+    </Avatar>
+</template>
+```
+
+## 尺寸
+
+| 尺寸 | 大小 |
+|------|------|
+| `sm` | `h-8 w-8`（32px） |
+| `default` | `h-10 w-10`（40px） |
+| `lg` | `h-14 w-14`（56px） |
+| `xl` | `h-20 w-20`（80px） |
+
+## 形状
+
+| 形状 | 说明 |
+|------|------|
+| `square` | 无圆角（默认） |
+| `rounded` | 使用 `--brutal-radius` 令牌 |
+
+```vue
+<script setup>
+import Avatar from '@/components/ui/Avatar.vue'
+import AvatarFallback from '@/components/ui/AvatarFallback.vue'
+</script>
+
+<template>
+    <Avatar size="lg" shape="rounded">
+        <AvatarFallback>JD</AvatarFallback>
+    </Avatar>
+</template>
+```
+
+## 回退行为
+
+当图片加载失败时，`AvatarFallback` 会自动显示：
+
+```vue
+<script setup>
+import Avatar from '@/components/ui/Avatar.vue'
+import AvatarImage from '@/components/ui/AvatarImage.vue'
+import AvatarFallback from '@/components/ui/AvatarFallback.vue'
+</script>
+
+<template>
+    <Avatar>
+        <AvatarImage src="/broken-url.jpg" alt="User" />
+        <AvatarFallback>JD</AvatarFallback>
+    </Avatar>
+</template>
+```
+
+## Props
+
+### Avatar
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` |
+| `shape` | `'square' \| 'rounded'` | `'square'` |
+| `class` | `string` | — |
+
+### AvatarImage
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `src` | `string` | — |
+| `alt` | `string` | — |
+
+### AvatarFallback
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |

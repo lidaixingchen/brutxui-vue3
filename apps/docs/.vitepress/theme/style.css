@@ -1,0 +1,165 @@
+@import 'brutx-ui-vue/styles.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --vp-c-brand-1: var(--brutal-primary);
+    --vp-c-brand-2: var(--brutal-secondary);
+    --vp-c-brand-3: var(--brutal-accent);
+    --vp-c-brand-soft: var(--brutal-muted);
+    --vp-font-family-base: 'Space Grotesk', system-ui, sans-serif;
+    --vp-button-brand-border: var(--brutal-border-color);
+    --vp-button-brand-text: var(--brutal-fg);
+    --vp-home-hero-name-color: var(--brutal-primary);
+    --vp-home-hero-image-background-image: linear-gradient(
+        -45deg,
+        var(--brutal-primary) 50%,
+        var(--brutal-secondary) 50%
+    );
+    --vp-home-hero-image-filter: blur(44px);
+}
+
+body {
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+}
+
+.dark {
+    --vp-c-brand-1: var(--brutal-primary);
+    --vp-c-brand-2: var(--brutal-secondary);
+    --vp-c-brand-3: var(--brutal-accent);
+    --vp-c-brand-soft: var(--brutal-muted);
+}
+
+.VPNav {
+    border-bottom: var(--brutal-border-width) solid var(--brutal-border-color);
+}
+
+.VPSidebar {
+    border-right: var(--brutal-border-width) solid var(--brutal-border-color);
+}
+
+.VPButton.brand {
+    border-width: var(--brutal-border-width);
+    border-style: solid;
+    border-color: var(--brutal-border-color);
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 0 var(--brutal-shadow-color);
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.VPButton.brand:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--brutal-shadow-offset-x) * 1.5) calc(var(--brutal-shadow-offset-y) * 1.5) 0 0 var(--brutal-shadow-color);
+}
+
+.VPButton.brand:active {
+    transform: translateY(var(--brutal-pressed-offset));
+    box-shadow: none;
+}
+
+.vp-doc div[class*='language-'] {
+    border: var(--brutal-border-width) solid var(--brutal-border-color);
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 0 var(--brutal-shadow-color);
+    border-radius: var(--brutal-radius);
+}
+
+.vp-doc div[class*='language-'] > button {
+    border: 2px solid var(--brutal-border-color);
+    border-radius: var(--brutal-radius);
+}
+
+.vp-doc table {
+    border: var(--brutal-border-width) solid var(--brutal-border-color);
+    border-collapse: collapse;
+}
+
+.vp-doc table th,
+.vp-doc table td {
+    border: var(--brutal-border-width) solid var(--brutal-border-color);
+    padding: 0.5rem 1rem;
+}
+
+.vp-doc table th {
+    background-color: var(--brutal-muted);
+    font-weight: 700;
+}
+
+.vp-doc a {
+    color: var(--brutal-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+
+.vp-doc a:hover {
+    color: var(--brutal-secondary);
+}
+
+.vp-doc blockquote {
+    border-left: var(--brutal-border-width) solid var(--brutal-primary);
+    background-color: var(--brutal-muted);
+    padding: 0.75rem 1rem;
+}
+
+.vp-doc code {
+    background-color: var(--brutal-muted);
+    border: 1px solid var(--brutal-border-color);
+    border-radius: var(--brutal-radius);
+    padding: 0.125rem 0.375rem;
+    font-weight: 600;
+}
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+}
+
+.vp-doc h2 {
+    border-bottom: var(--brutal-border-width) solid var(--brutal-border-color);
+    padding-bottom: 0.5rem;
+}
+
+.VPSidebarItem .item .link:hover .text {
+    color: var(--brutal-primary);
+}
+
+.VPLocalNavOutlineDropdown .items {
+    border: var(--brutal-border-width) solid var(--brutal-border-color);
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 0 var(--brutal-shadow-color);
+}
+
+.custom-block.tip {
+    border: var(--brutal-border-width) solid var(--brutal-primary);
+    background-color: var(--brutal-muted);
+}
+
+.custom-block.warning {
+    border: var(--brutal-border-width) solid var(--brutal-accent);
+    background-color: var(--brutal-muted);
+}
+
+.custom-block.danger {
+    border: var(--brutal-border-width) solid var(--brutal-destructive);
+    background-color: var(--brutal-muted);
+}
+
+.custom-block.info {
+    border: var(--brutal-border-width) solid var(--brutal-info);
+    background-color: var(--brutal-muted);
+}
+
+.VPSwitch {
+    border: 2px solid var(--brutal-border-color);
+}
+
+.VPSocialLink:hover {
+    color: var(--brutal-primary);
+}

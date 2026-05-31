@@ -100,7 +100,7 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
             const version = parts[1];
 
             if (source === DEFAULT_REGISTRY_URL) {
-                itemSource = `https://raw.githubusercontent.com/dev-snake/brutxui/${version}/packages/registry/registry`;
+                itemSource = `https://raw.githubusercontent.com/lidaixingchen/brutxui/${version}/packages/registry/registry`;
             }
         }
 

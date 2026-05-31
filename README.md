@@ -20,11 +20,11 @@
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
   [![React](https://img.shields.io/badge/React-19+-61DAFB.svg?style=flat-square)](https://reactjs.org/)
   [![Next.js](https://img.shields.io/badge/Next.js-15+-000000.svg?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-  [![Sponsor](https://img.shields.io/badge/Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/dev-snake)
+  [![Sponsor](https://img.shields.io/badge/Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/lidaixingchen)
 
   <br />
 
-  [Documentation & Previews](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/dev-snake/brutxui/issues)
+  [Documentation & Previews](https://brutxui.site) · [NPM Library](https://www.npmjs.com/package/brutx-ui) · [NPM CLI](https://www.npmjs.com/package/brutx) · [Report Bug](https://github.com/lidaixingchen/brutxui/issues)
 </div>
 
 ---
@@ -127,7 +127,7 @@ To run, test, and package BrutxUI locally:
 ### 1. Repository Setup
 ```bash
 # Clone the repository
-git clone https://github.com/dev-snake/brutxui.git
+git clone https://github.com/lidaixingchen/brutxui.git
 cd brutxui
 
 # Install workspace dependencies
@@ -159,5 +159,5 @@ pnpm --filter brutx-registry validate
 BrutxUI is open-source software licensed under the [MIT License](LICENSE).
 
 <div align="center">
-  <p>Built by dev-snake and contributors.</p>
+  <p>Built by lidaixingchen and contributors.</p>
 </div>

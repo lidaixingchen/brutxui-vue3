@@ -1,0 +1,75 @@
+# Badge
+
+新粗野主义风格的行内徽章组件，用于标签、状态和分类。
+
+## 预览
+
+<ComponentPreview>
+  <div class="flex flex-wrap items-center gap-3">
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-bg text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Default</span>
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-primary text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Primary</span>
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-secondary text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Secondary</span>
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-accent text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Accent</span>
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-destructive text-white shadow-brutal-sm px-3 py-1 text-sm">Danger</span>
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-success text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Success</span>
+    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-transparent text-brutal-fg px-3 py-1 text-sm">Outline</span>
+  </div>
+</ComponentPreview>
+
+## 安装
+
+<InstallationTabs componentName="badge" />
+
+## 用法
+
+```vue
+<script setup>
+import Badge from '@/components/ui/Badge.vue'
+</script>
+
+<template>
+    <Badge variant="default">Default</Badge>
+    <Badge variant="primary">Primary</Badge>
+    <Badge variant="success">Success</Badge>
+</template>
+```
+
+## 变体
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 背景色，带小阴影 |
+| `primary` | Primary（珊瑚色）背景 |
+| `secondary` | Secondary（薄荷青）背景 |
+| `accent` | Accent（黄色）背景 |
+| `danger` | Destructive（红色）背景 |
+| `success` | Success（绿色）背景 |
+| `outline` | 透明背景，无阴影 |
+
+## 尺寸
+
+| 尺寸 | 内边距 | 字体大小 |
+|------|--------|----------|
+| `sm` | `px-2 py-0.5` | `text-xs` |
+| `default` | `px-3 py-1` | `text-sm` |
+| `lg` | `px-4 py-1.5` | `text-base` |
+
+```vue
+<script setup>
+import Badge from '@/components/ui/Badge.vue'
+</script>
+
+<template>
+    <Badge variant="primary" size="sm">Small</Badge>
+    <Badge variant="primary" size="default">Default</Badge>
+    <Badge variant="primary" size="lg">Large</Badge>
+</template>
+```
+
+## Props
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline'` | `'default'` |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `class` | `string` | — |

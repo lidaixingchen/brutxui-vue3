@@ -106,14 +106,14 @@
         "accessible",
         "dark-mode"
     ],
-    "author": "dev-snake",
+    "author": "lidaixingchen",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dev-snake/brutxui"
+        "url": "https://github.com/lidaixingchen/brutxui"
     },
     "bugs": {
-        "url": "https://github.com/dev-snake/brutxui/issues"
+        "url": "https://github.com/lidaixingchen/brutxui/issues"
     },
     "homepage": "https://brutxui.site"
 }

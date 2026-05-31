@@ -1,0 +1,64 @@
+# Progress
+
+基于 reka-ui 的 Progress 原语构建的新粗野主义风格进度条。
+
+## 预览
+
+<ComponentPreview>
+  <div class="space-y-4 max-w-sm">
+    <div class="relative h-6 w-full overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
+      <div class="h-full w-full flex-1 bg-brutal-primary transition-all duration-300 ease-out" style="transform: translateX(-30%)"></div>
+    </div>
+    <div class="relative h-6 w-full overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
+      <div class="h-full w-full flex-1 bg-brutal-primary transition-all duration-300 ease-out" style="transform: translateX(-70%)"></div>
+    </div>
+  </div>
+</ComponentPreview>
+
+## 安装
+
+<InstallationTabs componentName="progress" />
+
+## 用法
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import Progress from '@/components/ui/Progress.vue'
+
+const progress = ref(45)
+</script>
+
+<template>
+    <Progress v-model="progress" />
+</template>
+```
+
+## 带最大值
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import Progress from '@/components/ui/Progress.vue'
+
+const progress = ref(75)
+</script>
+
+<template>
+    <Progress v-model="progress" :max="100" />
+</template>
+```
+
+## 属性
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `modelValue` | `number` | `0` |
+| `max` | `number` | `100` |
+| `class` | `string` | — |
+
+## 样式
+
+- 轨道使用 `border-3 border-brutal` 搭配 `shadow-brutal-sm`
+- 指示器使用 `bg-brutal-primary` 搭配平滑的 transform 过渡
+- 填充通过 `translateX` 实现平滑动画

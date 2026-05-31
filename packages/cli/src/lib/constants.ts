@@ -54,7 +54,7 @@ export const DEFAULT_TAILWIND_CONFIG = 'tailwind.config.js';
 
 export const SCHEMA_URL = 'https://brutxui.site/schema.json';
 
-export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/dev-snake/brutxui/main/packages/registry/registry';
+export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/lidaixingchen/brutxui/main/packages/registry/registry';
 
 export const BRUTALIST_CSS_STYLES = `
 :root {

@@ -38,11 +38,11 @@
         "react",
         "components"
     ],
-    "author": "dev-snake",
+    "author": "lidaixingchen",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/dev-snake/brutxui"
+        "url": "https://github.com/lidaixingchen/brutxui"
     },
     "homepage": "https://brutxui.site"
 }

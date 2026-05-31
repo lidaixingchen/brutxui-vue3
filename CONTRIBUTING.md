@@ -15,7 +15,7 @@ This project is a monorepo managed with **pnpm workspaces**.
 ### 2. Quick Start
 ```bash
 # Clone the repository
-git clone https://github.com/dev-snake/brutxui.git
+git clone https://github.com/lidaixingchen/brutxui.git
 cd brutxui
 
 # Install workspace dependencies

@@ -1,0 +1,167 @@
+import { defineConfig } from 'vitepress'
+import tailwindcss from 'tailwindcss'
+import autoprefixer from 'autoprefixer'
+import { resolve } from 'path'
+
+const tailwindConfig = resolve(__dirname, '../tailwind.config.cjs')
+
+export default defineConfig({
+    title: 'BrutxUI',
+    description: 'Neo-Brutalism 风格 Vue 3 组件库',
+    base: '/brutxui-vue3/',
+    sitemap: {
+        hostname: 'https://lidaixingchen.github.io/brutxui-vue3/',
+    },
+    head: [
+        ['link', { rel: 'icon', type: 'image/svg+xml', href: '/brutxui-vue3/favicon.svg' }],
+        ['meta', { name: 'theme-color', content: '#FF6B6B' }],
+        ['meta', { property: 'og:type', content: 'website' }],
+        ['meta', { property: 'og:title', content: 'BrutxUI' }],
+        ['meta', { property: 'og:description', content: 'Neo-Brutalism 风格 Vue 3 组件库' }],
+        ['meta', { property: 'og:image', content: '/brutxui-vue3/og-image.svg' }],
+        ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+        ['meta', { name: 'twitter:title', content: 'BrutxUI' }],
+        ['meta', { name: 'twitter:description', content: 'Neo-Brutalism 风格 Vue 3 组件库' }],
+        ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+        ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+        ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap' }],
+        ['link', { rel: 'manifest', href: '/brutxui-vue3/manifest.json' }],
+    ],
+    transformHead(context) {
+        let pageUrl = context.page.replace(/\.md$/, '')
+        if (pageUrl === 'index') pageUrl = ''
+        const canonicalUrl = `https://lidaixingchen.github.io/brutxui-vue3/${pageUrl}`
+
+        return [
+            ['link', { rel: 'canonical', href: canonicalUrl }],
+            [
+                'script',
+                { type: 'application/ld+json' },
+                JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'SoftwareSourceCode',
+                    name: 'BrutxUI',
+                    description: 'Neo-Brutalism 风格 Vue 3 组件库',
+                    url: 'https://lidaixingchen.github.io/brutxui-vue3/',
+                    codeRepository: 'https://github.com/lidaixingchen/brutxui-vue3',
+                    programmingLanguage: 'Vue',
+                    license: 'MIT',
+                }),
+            ],
+        ]
+    },
+    themeConfig: {
+        logo: '/favicon.svg',
+        nav: [
+            { text: '指南', link: '/guide/getting-started' },
+            { text: '组件', link: '/components/alert' },
+            {
+                text: 'GitHub',
+                link: 'https://github.com/lidaixingchen/brutxui-vue3',
+            },
+        ],
+        sidebar: [
+            {
+                text: '快速开始',
+                link: '/guide/getting-started',
+            },
+            {
+                text: '安装',
+                items: [
+                    { text: 'Vite', link: '/guide/installation-vite' },
+                    { text: '手动安装', link: '/guide/installation-manual' },
+                ],
+            },
+            {
+                text: 'CLI 工具',
+                link: '/guide/cli',
+            },
+            {
+                text: '主题与令牌',
+                link: '/guide/theme',
+            },
+            {
+                text: 'AI 集成',
+                link: '/guide/ai',
+            },
+            {
+                text: '组件',
+                items: [
+                    { text: 'Alert 提示', link: '/components/alert' },
+                    { text: 'Alert Dialog 提示对话框', link: '/components/alert-dialog' },
+                    { text: 'Avatar 头像', link: '/components/avatar' },
+                    { text: 'Badge 徽标', link: '/components/badge' },
+                    { text: 'Button 按钮', link: '/components/button' },
+                    { text: 'Calendar 日历', link: '/components/calendar' },
+                    { text: 'Card 卡片', link: '/components/card' },
+                    { text: 'Checkbox 复选框', link: '/components/checkbox' },
+                    { text: 'Combobox 组合框', link: '/components/combobox' },
+                    { text: 'Command 命令面板', link: '/components/command' },
+                    { text: 'Dashboard Stats 仪表盘统计', link: '/components/dashboard-stats' },
+                    { text: 'Dialog 对话框', link: '/components/dialog' },
+                    { text: 'Dropdown Menu 下拉菜单', link: '/components/dropdown-menu' },
+                    { text: 'Form 表单', link: '/components/form' },
+                    { text: 'Input 输入框', link: '/components/input' },
+                    { text: 'Label 标签', link: '/components/label' },
+                    { text: 'Pagination 分页', link: '/components/pagination' },
+                    { text: 'Popover 弹出层', link: '/components/popover' },
+                    { text: 'Progress 进度条', link: '/components/progress' },
+                    { text: 'Radio Group 单选组', link: '/components/radio-group' },
+                    { text: 'SaaS Pricing 定价', link: '/components/saas-pricing' },
+                    { text: 'Scroll Area 滚动区域', link: '/components/scroll-area' },
+                    { text: 'Select 选择器', link: '/components/select' },
+                    { text: 'Separator 分隔线', link: '/components/separator' },
+                    { text: 'Sheet 抽屉', link: '/components/sheet' },
+                    { text: 'Skeleton 骨架屏', link: '/components/skeleton' },
+                    { text: 'Slider 滑块', link: '/components/slider' },
+                    { text: 'Spinner 加载指示器', link: '/components/spinner' },
+                    { text: 'Submit Button 提交按钮', link: '/components/submit-button' },
+                    { text: 'Switch 开关', link: '/components/switch' },
+                    { text: 'Table 表格', link: '/components/table' },
+                    { text: 'Tabs 标签页', link: '/components/tabs' },
+                    { text: 'Textarea 文本域', link: '/components/textarea' },
+                    { text: 'Toast 轻提示', link: '/components/toast' },
+                    { text: 'Toggle 切换', link: '/components/toggle' },
+                    { text: 'Toggle Group 切换组', link: '/components/toggle-group' },
+                    { text: 'Tooltip 工具提示', link: '/components/tooltip' },
+                ],
+            },
+            {
+                text: '区块与模板',
+                items: [
+                    { text: 'Brutalist Hero 英雄区', link: '/blocks/brutalist-hero' },
+                    { text: 'Pricing Section 定价区', link: '/blocks/pricing-section' },
+                    { text: 'Auth Card 认证卡片', link: '/blocks/auth-card' },
+                    { text: 'Dashboard Shell 仪表盘框架', link: '/blocks/dashboard-shell' },
+                    { text: 'Empty State 空状态', link: '/blocks/empty-state' },
+                    { text: 'Waitlist Page 等候列表页', link: '/blocks/waitlist-page' },
+                ],
+            },
+        ],
+        search: {
+            provider: 'local',
+        },
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
+        ],
+        editLink: {
+            pattern: 'https://github.com/lidaixingchen/brutxui-vue3/edit/main/apps/docs/:path',
+            text: '在 GitHub 上编辑此页',
+        },
+    },
+    vite: {
+        resolve: {
+            alias: {
+                '@': new URL('./.vitepress', import.meta.url).pathname,
+            },
+        },
+        css: {
+            postcss: {
+                plugins: [
+                    tailwindcss(tailwindConfig),
+                    autoprefixer(),
+                ],
+            },
+        },
+    },
+})
