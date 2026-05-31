@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
 
 export default tseslint.config(
     {
@@ -15,9 +16,17 @@ export default tseslint.config(
             parserOptions: {
                 parser: tseslint.parser,
             },
+            globals: {
+                ...globals.browser,
+            },
         },
     },
     {
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+            },
+        },
         rules: {
             'vue/multi-word-component-names': 'off',
             'vue/max-attributes-per-line': 'off',

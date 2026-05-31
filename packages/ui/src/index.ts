@@ -135,6 +135,59 @@ export { default as CardContent } from './components/CardContent.vue'
 export { default as CardFooter } from './components/CardFooter.vue'
 export { cardVariants } from './components/card-variants'
 
+export { default as Command } from './components/Command.vue'
+export { default as CommandDialog } from './components/CommandDialog.vue'
+export { default as CommandInput } from './components/CommandInput.vue'
+export { default as CommandList } from './components/CommandList.vue'
+export { default as CommandEmpty } from './components/CommandEmpty.vue'
+export { default as CommandGroup } from './components/CommandGroup.vue'
+export { default as CommandItem } from './components/CommandItem.vue'
+export { default as CommandSeparator } from './components/CommandSeparator.vue'
+export { default as CommandShortcut } from './components/CommandShortcut.vue'
+
+export { default as Combobox } from './components/Combobox.vue'
+export { default as ComboboxMulti } from './components/ComboboxMulti.vue'
+export type { ComboboxOption } from './components/Combobox.vue'
+
+export { default as Form } from './components/Form.vue'
+export { default as FormField } from './components/FormField.vue'
+export { default as FormItem } from './components/FormItem.vue'
+export { default as FormLabel } from './components/FormLabel.vue'
+export { default as FormControl } from './components/FormControl.vue'
+export { default as FormDescription } from './components/FormDescription.vue'
+export { default as FormMessage } from './components/FormMessage.vue'
+export { formFieldKey, formItemKey } from './components/form-context'
+export type { FormFieldContext, FormItemContext } from './components/form-context'
+
+export { default as SubmitButton } from './components/SubmitButton.vue'
+
+export { default as Calendar } from './components/Calendar.vue'
+
+export { default as Toast } from './components/Toast.vue'
+export { default as ToastContainer } from './components/ToastContainer.vue'
+export { toastVariants } from './components/toast-variants'
+export { useToast } from './composables/useToast'
+export type { ToastItem } from './composables/useToast'
+
+export { default as SaaSPricing } from './components/SaaSPricing.vue'
+export type { PricingPlan, PricingFeature } from './components/SaaSPricing.vue'
+
+export { default as DashboardStats } from './components/DashboardStats.vue'
+export type { StatItem } from './components/DashboardStats.vue'
+
+export { default as DashboardShell } from './components/DashboardShell.vue'
+
+export { default as BrutalistHero } from './components/BrutalistHero.vue'
+
+export { default as AuthCard } from './components/AuthCard.vue'
+
+export { default as EmptyState } from './components/EmptyState.vue'
+
+export { default as PricingSection } from './components/PricingSection.vue'
+export type { BrutalistPricingPlan } from './components/PricingSection.vue'
+
+export { default as WaitlistPage } from './components/WaitlistPage.vue'
+
 export * from './lib/utils'
 
 export type { VariantProps } from 'class-variance-authority'

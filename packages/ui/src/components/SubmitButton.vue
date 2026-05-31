@@ -1,36 +1,40 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { cva } from 'class-variance-authority'
+import { Loader2 } from 'lucide-vue-next'
 import { cn } from '../lib/utils'
+import { buttonVariants } from './button-variants'
+import { type VariantProps } from 'class-variance-authority'
 
-const submitButtonVariants = cva(
-    [
-        'inline-flex items-center justify-center gap-2',
-        'border-3 border-brutal rounded-brutal',
-        'font-black tracking-wide',
-        'transition-all duration-150',
-        'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
-    ],
-    {
-        variants: {},
-        defaultVariants: {},
-    }
-)
+type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
 interface SubmitButtonProps {
-    class?: string
+    variant?: NonNullable<ButtonVariantProps['variant']>
+    size?: NonNullable<ButtonVariantProps['size']>
+    pendingText?: string
+    loading?: boolean
     disabled?: boolean
+    class?: string
 }
 
-const props = defineProps<SubmitButtonProps>()
+const props = withDefaults(defineProps<SubmitButtonProps>(), {
+    variant: 'default',
+    size: 'default',
+    pendingText: 'Submitting...',
+    loading: false,
+    disabled: false,
+})
+
+const isDisabled = computed(() => props.disabled || props.loading)
 
 const classes = computed(() =>
-    cn(submitButtonVariants(), props.class)
+    cn(buttonVariants({ variant: props.variant, size: props.size }), props.class)
 )
 </script>
 
 <template>
-    <button type="submit" :class="classes" :disabled="disabled">
-        <slot />
+    <button type="submit" :class="classes" :disabled="isDisabled">
+        <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
+        <template v-if="loading && pendingText">{{ pendingText }}</template>
+        <slot v-else />
     </button>
 </template>

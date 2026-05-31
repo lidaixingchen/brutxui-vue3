@@ -8,7 +8,7 @@ interface CardContentProps {
 
 const props = defineProps<CardContentProps>()
 
-const classes = computed(() => cn('', props.class))
+const classes = computed(() => cn(props.class))
 </script>
 
 <template>
