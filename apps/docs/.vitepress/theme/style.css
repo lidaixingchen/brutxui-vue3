@@ -162,6 +162,7 @@ body {
 .VPNav {
     border-bottom: 4px solid var(--brutal-border-color) !important;
     backdrop-filter: none !important;
+    padding-right: var(--scrollbar-width, 0px) !important;
 }
 
 .VPNavBar {
@@ -212,6 +213,19 @@ body {
     border-right: 4px solid var(--brutal-border-color) !important;
     background-color: var(--vp-sidebar-bg-color) !important;
     padding-top: 0 !important;
+}
+
+@media (min-width: 960px) {
+    .VPSidebar {
+        padding-top: var(--vp-nav-height) !important;
+    }
+}
+
+@media (min-width: 1440px) {
+    .VPSidebar {
+        padding-left: max(32px, calc((100% - var(--scrollbar-width, 0px) - (var(--vp-layout-max-width) - 64px)) / 2)) !important;
+        width: calc((100% - var(--scrollbar-width, 0px) - (var(--vp-layout-max-width) - 64px)) / 2 + var(--vp-sidebar-width) - 32px) !important;
+    }
 }
 
 /* Colored accent bar at top of sidebar */
@@ -612,8 +626,9 @@ body {
     border: 3px solid var(--brutal-border-color);
     border-collapse: separate;
     border-spacing: 0;
-    display: block;
-    overflow-x: auto;
+    display: table;
+    width: 100%;
+    min-width: 600px;
     box-shadow: 4px 4px 0 0 var(--brutal-border-color);
 }
 

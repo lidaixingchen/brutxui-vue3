@@ -76,7 +76,10 @@ function rewriteImports(code: string, _componentName: string): string {
     code = code.replace(/['"]\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
-    code = code.replace(/['"]\.\.\/components\/([^'"]+)['"]/g, "'@/components/ui/$1'");
+    code = code.replace(
+        /['"]\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)['"]/g,
+        (m, comp, rest) => (COMPONENT_FILES[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
+    );
 
     const allFiles = Object.keys(FILE_TO_COMPONENT);
 

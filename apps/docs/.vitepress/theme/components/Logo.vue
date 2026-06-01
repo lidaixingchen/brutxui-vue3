@@ -58,7 +58,7 @@ const layer3Class = computed(() =>
             <div :class="layer1Class" />
             <div :class="layer2Class" />
             <div :class="layer3Class" />
-            <span class="relative z-10 font-brutal font-black text-brutal-fg" :class="sizeConfig.text">
+            <span class="relative z-10 font-brutal font-black text-brutal-fg" :class="sizeConfig.value.text">
                 BX
             </span>
         </div>
