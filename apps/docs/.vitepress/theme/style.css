@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   Design Tokens
+   ============================================ */
+
 :root {
     --vp-c-brand-1: var(--brutal-primary);
     --vp-c-brand-2: var(--brutal-secondary);
@@ -20,14 +24,12 @@
         var(--brutal-secondary) 50%
     );
     --vp-home-hero-image-filter: blur(44px);
+    --vp-code-block-bg: #111827;
+    --vp-code-block-color: #f3f4f6;
 }
 
 body {
     font-family: 'Space Grotesk', system-ui, sans-serif !important;
-}
-
-.VPContent {
-    scrollbar-gutter: stable;
 }
 
 .dark {
@@ -37,6 +39,14 @@ body {
     --vp-c-brand-soft: var(--brutal-muted);
 }
 
+/* ============================================
+   Layout
+   ============================================ */
+
+.VPContent {
+    scrollbar-gutter: stable;
+}
+
 .VPNav {
     border-bottom: var(--brutal-border-width) solid var(--brutal-border-color);
 }
@@ -44,6 +54,76 @@ body {
 .VPSidebar {
     border-right: var(--brutal-border-width) solid var(--brutal-border-color);
 }
+
+/* ============================================
+   Sidebar
+   ============================================ */
+
+/* Hide VitePress default left indicator */
+.VPSidebarItem .indicator {
+    display: none !important;
+}
+
+/* Remove nested left border on sub-items */
+.VPSidebarItem .items {
+    border-left: none !important;
+    padding-left: 0;
+}
+
+/* Inactive sidebar links */
+.VPSidebarItem.level-0 > .item > .link,
+.VPSidebarItem.level-1 > .item > .link,
+.VPSidebarItem.level-2 > .item > .link {
+    border: 3px solid transparent;
+    border-radius: 0;
+    transition: background-color 150ms, border-color 150ms;
+}
+
+.VPSidebarItem.level-0 > .item > .link:hover,
+.VPSidebarItem.level-1 > .item > .link:hover,
+.VPSidebarItem.level-2 > .item > .link:hover {
+    background-color: #f3f4f6;
+}
+
+.dark .VPSidebarItem.level-0 > .item > .link:hover,
+.dark .VPSidebarItem.level-1 > .item > .link:hover,
+.dark .VPSidebarItem.level-2 > .item > .link:hover {
+    background-color: #1f2937;
+}
+
+/* Active sidebar links - yellow bg, black text, brutal border + shadow */
+.VPSidebarItem.is-active > .item > .link {
+    background-color: #FFE66D !important;
+    color: #000000 !important;
+    border: 3px solid #000000 !important;
+    box-shadow: 2px 2px 0px 0px #000000 !important;
+    border-radius: 0;
+}
+
+.VPSidebarItem.is-active > .item > .link > .text {
+    color: #000000 !important;
+    font-weight: 700;
+}
+
+.dark .VPSidebarItem.is-active > .item > .link {
+    background-color: #FFE66D !important;
+    color: #000000 !important;
+    border-color: #ffffff !important;
+    box-shadow: 2px 2px 0px 0px #ffffff !important;
+}
+
+.dark .VPSidebarItem.is-active > .item > .link > .text {
+    color: #000000 !important;
+}
+
+/* Hover text color override */
+.VPSidebarItem .item .link:hover .text {
+    color: var(--brutal-primary);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
 
 .VPButton.brand {
     border-width: var(--brutal-border-width);
@@ -66,6 +146,10 @@ body {
     box-shadow: none;
 }
 
+/* ============================================
+   Code Blocks
+   ============================================ */
+
 .vp-doc div[class*='language-'] {
     border: var(--brutal-border-width) solid var(--brutal-border-color);
     box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 0 var(--brutal-shadow-color);
@@ -77,20 +161,66 @@ body {
     border-radius: var(--brutal-radius);
 }
 
+/* ============================================
+   Tables
+   ============================================ */
+
 .vp-doc table {
     border: var(--brutal-border-width) solid var(--brutal-border-color);
     border-collapse: collapse;
+    display: block;
+    overflow-x: auto;
 }
 
 .vp-doc table th,
 .vp-doc table td {
-    border: var(--brutal-border-width) solid var(--brutal-border-color);
+    border-right: var(--brutal-border-width) solid var(--brutal-border-color);
+    border-bottom: var(--brutal-border-width) solid var(--brutal-border-color);
     padding: 0.5rem 1rem;
 }
 
+.vp-doc table th:last-child,
+.vp-doc table td:last-child {
+    border-right: none;
+}
+
+.vp-doc table tr:last-child td {
+    border-bottom: none;
+}
+
 .vp-doc table th {
-    background-color: var(--brutal-muted);
-    font-weight: 700;
+    background-color: #FFE66D;
+    font-weight: 900;
+    color: #000000;
+}
+
+.dark .vp-doc table th {
+    background-color: #FFE66D;
+    color: #000000;
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 900;
+    letter-spacing: 0.025em;
+}
+
+.vp-doc h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    border-top: none !important;
+    border-bottom: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
 }
 
 .vp-doc a {
@@ -125,28 +255,50 @@ body {
     padding: 0;
 }
 
-.vp-doc h1,
-.vp-doc h2,
-.vp-doc h3,
-.vp-doc h4 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+/* ============================================
+   Category Badges
+   ============================================ */
+
+.vp-doc .VPBadge {
+    display: inline-block;
+    padding: 2px 10px;
+    border: 2px solid #000000;
+    border-radius: 0;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: #FF6B6B;
+    color: #000000;
+    box-shadow: 2px 2px 0px 0px #000000;
 }
 
-.vp-doc h2 {
-    border-bottom: var(--brutal-border-width) solid var(--brutal-border-color);
-    padding-bottom: 0.5rem;
+.vp-doc .VPBadge.tip {
+    background-color: #FF6B6B;
+    border-color: #000000;
+    color: #000000;
 }
 
-.VPSidebarItem .item .link:hover .text {
-    color: var(--brutal-primary);
+.vp-doc .VPBadge.info {
+    background-color: #FFE66D;
+    border-color: #000000;
+    color: #000000;
 }
+
+/* ============================================
+   Outline / TOC
+   ============================================ */
 
 .VPLocalNavOutlineDropdown .items {
     border: var(--brutal-border-width) solid var(--brutal-border-color);
     box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 0 var(--brutal-shadow-color);
 }
+
+/* ============================================
+   Custom Blocks
+   ============================================ */
 
 .custom-block.tip {
     border: var(--brutal-border-width) solid var(--brutal-primary);
@@ -167,6 +319,10 @@ body {
     border: var(--brutal-border-width) solid var(--brutal-info);
     background-color: var(--brutal-muted);
 }
+
+/* ============================================
+   Misc
+   ============================================ */
 
 .VPSwitch {
     border: 2px solid var(--brutal-border-color);
