@@ -9,6 +9,7 @@ interface ToastContainerProps {
 
 const props = withDefaults(defineProps<ToastContainerProps>(), {
     position: 'bottom-right',
+    class: '',
 })
 
 const positionMap: Record<string, string> = {

@@ -16,9 +16,12 @@ interface TextareaProps {
 }
 
 const props = withDefaults(defineProps<TextareaProps>(), {
+    modelValue: undefined,
     variant: 'default',
     textareaSize: 'default',
     disabled: false,
+    placeholder: '',
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()

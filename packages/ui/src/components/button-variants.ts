@@ -34,7 +34,7 @@ export const buttonVariants = cva(
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
                 danger: [
-                    'bg-brutal-destructive text-white',
+                    'bg-brutal-destructive text-brutal-fg',
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],

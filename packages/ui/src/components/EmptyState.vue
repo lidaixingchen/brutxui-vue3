@@ -14,7 +14,10 @@ interface EmptyStateProps {
 
 const props = withDefaults(defineProps<EmptyStateProps>(), {
     title: 'No active deployments found',
+    description: '',
     actionText: 'Deploy New App',
+    icon: undefined,
+    class: '',
 })
 
 const emit = defineEmits<{
@@ -32,8 +35,12 @@ const rootClasses = computed(() => cn('flex flex-col items-center justify-center
                 <component :is="icon || FolderOpen" class="h-10 w-10 stroke-[2.5]" />
             </div>
         </div>
-        <h3 class="text-xl font-black tracking-tight">{{ title }}</h3>
-        <p v-if="description" class="mt-2 text-sm text-gray-600 dark:text-gray-400 font-medium text-center max-w-md">{{ description }}</p>
+        <h3 class="text-xl font-black tracking-tight">
+{{ title }}
+</h3>
+        <p v-if="description" class="mt-2 text-sm text-gray-600 dark:text-gray-400 font-medium text-center max-w-md">
+{{ description }}
+</p>
         <Button v-if="actionText" variant="primary" class="mt-6" @click="emit('action')">
             <Plus class="mr-2 h-4 w-4 stroke-[3]" />
             {{ actionText }}

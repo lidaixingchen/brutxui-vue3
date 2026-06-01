@@ -31,6 +31,7 @@ const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     emptyText: 'No results found.',
     disabled: false,
     maxDisplay: 3,
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
@@ -73,6 +74,16 @@ function handleSelect(optionValue: string) {
         : [...props.modelValue, optionValue]
     emit('update:modelValue', newValue)
 }
+
+function getCheckboxClasses(optionValue: string) {
+    return cn(
+        'mr-2 flex h-4 w-4 items-center justify-center',
+        'border-3 border-brutal',
+        props.modelValue.includes(optionValue)
+            ? 'bg-brutal-secondary'
+            : 'bg-brutal-bg'
+    )
+}
 </script>
 
 <template>
@@ -102,13 +113,7 @@ function handleSelect(optionValue: string) {
                             @select="handleSelect"
                         >
                             <div
-                                :class="cn(
-                                    'mr-2 flex h-4 w-4 items-center justify-center',
-                                    'border-3 border-brutal',
-                                    props.modelValue.includes(option.value)
-                                        ? 'bg-brutal-secondary'
-                                        : 'bg-brutal-bg'
-                                )"
+                                :class="getCheckboxClasses(option.value)"
                             >
                                 <Check v-if="props.modelValue.includes(option.value)" class="h-3 w-3 stroke-[3] text-brutal-fg" />
                             </div>

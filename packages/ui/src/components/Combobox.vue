@@ -25,10 +25,12 @@ interface ComboboxProps {
 }
 
 const props = withDefaults(defineProps<ComboboxProps>(), {
+    modelValue: undefined,
     placeholder: 'Select option...',
     searchPlaceholder: 'Search...',
     emptyText: 'No results found.',
     disabled: false,
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | undefined] }>()
@@ -62,6 +64,13 @@ function handleSelect(value: string) {
     open.value = false
     searchQuery.value = ''
 }
+
+function getCheckClasses(optionValue: string) {
+    return cn(
+        'mr-2 h-4 w-4 stroke-[3]',
+        props.modelValue === optionValue ? 'opacity-100' : 'opacity-0'
+    )
+}
 </script>
 
 <template>
@@ -91,10 +100,7 @@ function handleSelect(value: string) {
                             @select="handleSelect"
                         >
                             <Check
-                                :class="cn(
-                                    'mr-2 h-4 w-4 stroke-[3]',
-                                    props.modelValue === option.value ? 'opacity-100' : 'opacity-0'
-                                )"
+                                :class="getCheckClasses(option.value)"
                             />
                             {{ option.label }}
                         </CommandItem>

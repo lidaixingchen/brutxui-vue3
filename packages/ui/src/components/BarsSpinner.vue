@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<BarsSpinnerProps>(), {
     size: 'default',
     color: 'default',
     label: 'Loading...',
+    class: '',
 })
 
 const barWidthMap: Record<string, string> = {

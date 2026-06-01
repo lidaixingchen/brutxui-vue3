@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<DotsSpinnerProps>(), {
     size: 'default',
     color: 'default',
     label: 'Loading...',
+    class: '',
 })
 
 const sizeMap: Record<string, string> = {

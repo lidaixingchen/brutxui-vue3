@@ -16,8 +16,10 @@ interface BrutalistHeroProps {
 
 const props = withDefaults(defineProps<BrutalistHeroProps>(), {
     title: 'Build Bold Interfaces Faster with BrutxUI',
+    subtitle: '',
     primaryCtaText: 'Get Started Now',
     secondaryCtaText: 'View Component Registry',
+    class: '',
 })
 
 const emit = defineEmits<{
@@ -36,14 +38,20 @@ const rootClasses = computed(() => cn('w-full', props.class))
                     <Sparkles class="h-4 w-4 stroke-[3]" />
                     <span class="font-black text-sm">Neo-Brutalism UI</span>
                 </div>
-                <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">{{ title }}</h1>
-                <p v-if="subtitle" class="mt-4 text-lg text-gray-600 dark:text-gray-400 font-medium">{{ subtitle }}</p>
+                <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
+{{ title }}
+</h1>
+                <p v-if="subtitle" class="mt-4 text-lg text-gray-600 dark:text-gray-400 font-medium">
+{{ subtitle }}
+</p>
                 <div class="mt-8 flex flex-wrap gap-4">
                     <Button variant="primary" size="lg" @click="emit('primaryCta')">
                         {{ primaryCtaText }}
                         <ArrowRight class="ml-2 h-5 w-5 stroke-[3]" />
                     </Button>
-                    <Button variant="outline" size="lg" @click="emit('secondaryCta')">{{ secondaryCtaText }}</Button>
+                    <Button variant="outline" size="lg" @click="emit('secondaryCta')">
+{{ secondaryCtaText }}
+</Button>
                 </div>
             </div>
 
@@ -52,13 +60,27 @@ const rootClasses = computed(() => cn('w-full', props.class))
                 <Card variant="default" padding="default" class="relative bg-brutal-bg font-mono text-sm">
                     <CardContent>
                         <div class="space-y-1">
-                            <p class="text-gray-500">$ npx brutxui init</p>
-                            <p class="text-brutal-success font-bold">✓ Project initialized</p>
-                            <p class="text-gray-500">$ npx brutxui add button</p>
-                            <p class="text-brutal-success font-bold">✓ Button component added</p>
-                            <p class="text-gray-500">$ npx brutxui add card dialog</p>
-                            <p class="text-brutal-success font-bold">✓ 2 components added</p>
-                            <p class="text-brutal-accent font-bold animate-pulse">█</p>
+                            <p class="text-gray-500">
+$ npx brutxui init
+</p>
+                            <p class="text-brutal-success font-bold">
+✓ Project initialized
+</p>
+                            <p class="text-gray-500">
+$ npx brutxui add button
+</p>
+                            <p class="text-brutal-success font-bold">
+✓ Button component added
+</p>
+                            <p class="text-gray-500">
+$ npx brutxui add card dialog
+</p>
+                            <p class="text-brutal-success font-bold">
+✓ 2 components added
+</p>
+                            <p class="text-brutal-accent font-bold animate-pulse">
+█
+</p>
                         </div>
                     </CardContent>
                 </Card>

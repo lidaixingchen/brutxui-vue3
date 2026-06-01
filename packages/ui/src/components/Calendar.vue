@@ -16,8 +16,10 @@ interface DateRangeValue {
 }
 
 const props = withDefaults(defineProps<CalendarProps>(), {
+    modelValue: undefined,
     isRange: false,
     disabled: false,
+    class: '',
 })
 
 const emit = defineEmits<{

@@ -10,6 +10,7 @@ interface DashboardShellProps {
 
 const props = withDefaults(defineProps<DashboardShellProps>(), {
     userEmail: 'creator@brutxui.site',
+    class: '',
 })
 
 const emit = defineEmits<{
@@ -19,18 +20,31 @@ const emit = defineEmits<{
 const sidebarOpen = ref(true)
 
 const rootClasses = computed(() => cn('flex h-screen bg-brutal-bg', props.class))
+
+const sidebarClasses = computed(() =>
+    cn(
+        'border-r-3 border-brutal bg-brutal-bg p-4 flex flex-col',
+        sidebarOpen.value ? 'w-64' : 'w-0 overflow-hidden md:w-64'
+    )
+)
 </script>
 
 <template>
     <div :class="rootClasses">
-        <aside :class="cn('border-r-3 border-brutal bg-brutal-bg p-4 flex flex-col', sidebarOpen ? 'w-64' : 'w-0 overflow-hidden md:w-64')">
-            <div class="font-black text-lg tracking-tight mb-8">BrutxUI</div>
+        <aside :class="sidebarClasses">
+            <div class="font-black text-lg tracking-tight mb-8">
+BrutxUI
+</div>
             <nav class="flex-1 space-y-1">
                 <slot name="sidebar" />
             </nav>
             <div class="border-t-3 border-brutal pt-4 mt-4">
-                <div class="text-sm font-bold truncate">{{ userEmail }}</div>
-                <button class="text-sm font-bold text-brutal-destructive mt-1" @click="emit('signOut')">Sign out</button>
+                <div class="text-sm font-bold truncate">
+{{ userEmail }}
+</div>
+                <button class="text-sm font-bold text-brutal-destructive mt-1" @click="emit('signOut')">
+Sign out
+</button>
             </div>
         </aside>
 

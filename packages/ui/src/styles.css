@@ -246,6 +246,14 @@
     .shadow-brutal-xl {
         box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
     }
+
+    .shadow-brutal-primary {
+        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary);
+    }
+
+    .shadow-brutal-secondary {
+        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary);
+    }
 }
 
 @keyframes fadeIn {

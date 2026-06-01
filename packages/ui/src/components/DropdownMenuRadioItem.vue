@@ -18,7 +18,7 @@ const classes = computed(() =>
     cn(
         'relative flex cursor-pointer select-none items-center py-2 pl-8 pr-3',
         'font-bold outline-none transition-colors',
-        'focus:bg-brutal-accent focus:text-black',
+        'focus:bg-brutal-accent focus:text-brutal-fg',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         props.class
     )

@@ -16,6 +16,7 @@ interface AvatarProps {
 const props = withDefaults(defineProps<AvatarProps>(), {
     size: 'default',
     shape: 'square',
+    class: '',
 })
 
 const classes = computed(() =>

@@ -13,6 +13,7 @@ interface DropdownMenuContentProps {
 
 const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
     sideOffset: 6,
+    class: '',
 })
 
 const classes = computed(() =>

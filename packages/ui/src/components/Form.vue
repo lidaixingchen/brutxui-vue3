@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { provide } from 'vue'
-import { useForm } from 'vee-validate'
+import { useForm, type FormContext as VeeFormContext } from 'vee-validate'
 import { formContextKey } from './form-context'
 
 interface FormProps {
@@ -24,7 +24,7 @@ const onSubmit = handleSubmit((values) => {
     emit('submit', values)
 })
 
-provide(formContextKey, formContext as any)
+provide(formContextKey, formContext as unknown as VeeFormContext)
 </script>
 
 <template>

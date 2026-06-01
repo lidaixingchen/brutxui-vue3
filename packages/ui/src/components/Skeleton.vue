@@ -13,6 +13,7 @@ interface SkeletonProps {
 
 const props = withDefaults(defineProps<SkeletonProps>(), {
     variant: 'default',
+    class: '',
 })
 
 const classes = computed(() =>

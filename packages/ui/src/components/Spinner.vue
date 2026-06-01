@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<SpinnerProps>(), {
     size: 'default',
     variant: 'default',
     label: 'Loading...',
+    class: '',
 })
 
 const classes = computed(() =>

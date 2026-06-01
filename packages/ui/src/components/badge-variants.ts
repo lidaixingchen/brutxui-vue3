@@ -14,7 +14,7 @@ export const badgeVariants = cva(
                 primary: 'bg-brutal-primary text-brutal-fg shadow-brutal-sm',
                 secondary: 'bg-brutal-secondary text-brutal-fg shadow-brutal-sm',
                 accent: 'bg-brutal-accent text-brutal-fg shadow-brutal-sm',
-                danger: 'bg-brutal-destructive text-white shadow-brutal-sm',
+                danger: 'bg-brutal-destructive text-brutal-fg shadow-brutal-sm',
                 success: 'bg-brutal-success text-brutal-fg shadow-brutal-sm',
                 outline: 'bg-transparent text-brutal-fg',
             },

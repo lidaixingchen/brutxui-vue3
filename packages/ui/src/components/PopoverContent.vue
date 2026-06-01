@@ -15,6 +15,7 @@ interface PopoverContentProps {
 const props = withDefaults(defineProps<PopoverContentProps>(), {
     align: 'center',
     sideOffset: 8,
+    class: '',
 })
 
 const classes = computed(() =>

@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<BlockSpinnerProps>(), {
     size: 'default',
     color: 'default',
     label: 'Loading...',
+    class: '',
 })
 
 const colorMap: Record<string, string[]> = {

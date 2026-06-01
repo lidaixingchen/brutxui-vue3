@@ -6,7 +6,7 @@ import AvatarFallback from './AvatarFallback.vue'
 
 const AvatarWithImage = defineComponent({
     components: { Avatar, AvatarImage },
-    props: { src: String, alt: String, imageClass: String },
+    props: { src: { type: String, default: '' }, alt: { type: String, default: '' }, imageClass: { type: String, default: '' } },
     template: `
         <Avatar>
             <AvatarImage :src="src" :alt="alt" :class="imageClass" />
@@ -16,7 +16,7 @@ const AvatarWithImage = defineComponent({
 
 const AvatarWithFallback = defineComponent({
     components: { Avatar, AvatarFallback },
-    props: { fallbackClass: String },
+    props: { fallbackClass: { type: String, default: '' } },
     template: `
         <Avatar>
             <AvatarFallback :class="fallbackClass">JD</AvatarFallback>

@@ -15,6 +15,7 @@ interface SkeletonCardProps {
 
 const props = withDefaults(defineProps<SkeletonCardProps>(), {
     variant: 'default',
+    class: '',
 })
 
 const classes = computed(() =>

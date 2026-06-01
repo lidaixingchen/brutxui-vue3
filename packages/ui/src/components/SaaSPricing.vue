@@ -35,7 +35,6 @@ interface SaaSPricingProps {
 }
 
 const props = withDefaults(defineProps<SaaSPricingProps>(), {
-    title: 'Simple, Unapologetic Pricing',
     plans: () => [
         {
             name: 'Starter',
@@ -84,27 +83,56 @@ const props = withDefaults(defineProps<SaaSPricingProps>(), {
             buttonVariant: 'secondary' as const,
         },
     ],
+    title: 'Simple, Unapologetic Pricing',
+    subtitle: '',
+    class: '',
 })
 
 const billing = ref<'monthly' | 'annually'>('monthly')
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
+
+const monthlyBtnClasses = computed(() =>
+    cn(
+        'px-4 py-2 font-black text-sm transition-all',
+        billing.value === 'monthly' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground'
+    )
+)
+
+const annuallyBtnClasses = computed(() =>
+    cn(
+        'px-4 py-2 font-black text-sm transition-all',
+        billing.value === 'annually' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground'
+    )
+)
+
+function getPlanCardClasses(plan: PricingPlan) {
+    return cn(plan.popular && 'scale-105 shadow-brutal-lg')
+}
+
+function getFeatureClasses(feature: PricingFeature) {
+    return cn('text-sm font-medium', !feature.included && 'line-through text-brutal-muted-foreground')
+}
 </script>
 
 <template>
     <div :class="rootClasses">
         <div class="text-center mb-10">
-            <h2 class="text-3xl font-black tracking-tight">{{ title }}</h2>
-            <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">{{ subtitle }}</p>
+            <h2 class="text-3xl font-black tracking-tight">
+{{ title }}
+</h2>
+            <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">
+{{ subtitle }}
+</p>
             <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1">
                 <button
-                    :class="cn('px-4 py-2 font-black text-sm transition-all', billing === 'monthly' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground')"
+                    :class="monthlyBtnClasses"
                     @click="billing = 'monthly'"
                 >
                     Monthly
                 </button>
                 <button
-                    :class="cn('px-4 py-2 font-black text-sm transition-all', billing === 'annually' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground')"
+                    :class="annuallyBtnClasses"
                     @click="billing = 'annually'"
                 >
                     Annually
@@ -115,11 +143,15 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div v-for="plan in plans" :key="plan.name" class="relative">
                 <div v-if="plan.popular" class="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                    <Badge variant="primary" class="animate-pulse">MOST POPULAR</Badge>
+                    <Badge variant="primary" class="animate-pulse">
+MOST POPULAR
+</Badge>
                 </div>
-                <Card :variant="plan.popular ? 'interactive' : 'default'" :class="cn(plan.popular && 'scale-105 shadow-brutal-lg')">
+                <Card :variant="plan.popular ? 'interactive' : 'default'" :class="getPlanCardClasses(plan)">
                     <CardHeader>
-                        <CardTitle class="text-xl">{{ plan.name }}</CardTitle>
+                        <CardTitle class="text-xl">
+{{ plan.name }}
+</CardTitle>
                         <CardDescription>{{ plan.description }}</CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -135,12 +167,14 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
                                 <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-brutal-muted-foreground">
                                     <HelpCircle class="h-3 w-3 stroke-[3]" />
                                 </div>
-                                <span :class="cn('text-sm font-medium', !feature.included && 'line-through text-brutal-muted-foreground')">{{ feature.text }}</span>
+                                <span :class="getFeatureClasses(feature)">{{ feature.text }}</span>
                             </li>
                         </ul>
                     </CardContent>
                     <CardFooter>
-                        <Button :variant="plan.buttonVariant || 'default'" class="w-full">{{ plan.buttonText }}</Button>
+                        <Button :variant="plan.buttonVariant || 'default'" class="w-full">
+{{ plan.buttonText }}
+</Button>
                     </CardFooter>
                 </Card>
             </div>

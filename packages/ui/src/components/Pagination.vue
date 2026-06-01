@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
     showPageNumbers: true,
     variant: 'default',
     size: 'default',
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:currentPage': [page: number] }>()

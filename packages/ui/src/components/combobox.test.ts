@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import Combobox from './Combobox.vue'
 import ComboboxMulti from './ComboboxMulti.vue'
 
@@ -8,9 +9,26 @@ const options = [
     { value: 'cherry', label: 'Cherry' },
 ]
 
+let wrapper: ReturnType<typeof mount> | null = null
+
+afterEach(() => {
+    if (wrapper) {
+        wrapper.unmount()
+        wrapper = null
+    }
+    document.body.innerHTML = ''
+})
+
+async function openCombobox(w: ReturnType<typeof mount>) {
+    const trigger = w.find('[role="combobox"]')
+    await trigger.trigger('click')
+    await nextTick()
+    await nextTick()
+}
+
 describe('Combobox', () => {
     it('renders with options prop', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options },
             attachTo: document.body,
         })
@@ -19,7 +37,7 @@ describe('Combobox', () => {
     })
 
     it('applies custom class', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options, class: 'custom-combobox' },
             attachTo: document.body,
         })
@@ -28,7 +46,7 @@ describe('Combobox', () => {
     })
 
     it('shows placeholder text', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options, placeholder: 'Pick a fruit...' },
             attachTo: document.body,
         })
@@ -37,7 +55,7 @@ describe('Combobox', () => {
     })
 
     it('shows default placeholder text', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options },
             attachTo: document.body,
         })
@@ -46,7 +64,7 @@ describe('Combobox', () => {
     })
 
     it('shows selected option label', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options, modelValue: 'banana' },
             attachTo: document.body,
         })
@@ -55,15 +73,36 @@ describe('Combobox', () => {
     })
 
     it('emits update:modelValue when option selected', async () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options },
             attachTo: document.body,
         })
-        expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+        await openCombobox(wrapper)
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(options.length)
+        const firstItem = items[0] as HTMLElement
+        firstItem.click()
+        await nextTick()
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual(['apple'])
+    })
+
+    it('emits undefined when selecting same option again', async () => {
+        wrapper = mount(Combobox, {
+            props: { options, modelValue: 'apple' },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        const firstItem = items[0] as HTMLElement
+        firstItem.click()
+        await nextTick()
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([undefined])
     })
 
     it('has aria-expanded attribute', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options },
             attachTo: document.body,
         })
@@ -72,18 +111,99 @@ describe('Combobox', () => {
     })
 
     it('is disabled when disabled prop is true', () => {
-        const wrapper = mount(Combobox, {
+        wrapper = mount(Combobox, {
             props: { options, disabled: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
         expect(trigger.attributes('disabled')).toBeDefined()
     })
+
+    it('filters options by search query', async () => {
+        wrapper = mount(Combobox, {
+            props: { options },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        expect(input).toBeTruthy()
+        input.value = 'ban'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].textContent).toContain('Banana')
+    })
+
+    it('shows all options when search query is cleared', async () => {
+        wrapper = mount(Combobox, {
+            props: { options },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'ban'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        input.value = ''
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(options.length)
+    })
+
+    it('shows empty text when no options match search', async () => {
+        wrapper = mount(Combobox, {
+            props: { options, emptyText: 'Nothing found!' },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'xyz'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        expect(document.body.textContent).toContain('Nothing found!')
+    })
+
+    it('clears search query after selection', async () => {
+        wrapper = mount(Combobox, {
+            props: { options },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'ban'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        const bananaItem = items[0] as HTMLElement
+        bananaItem.click()
+        await nextTick()
+        expect(input.value).toBe('')
+    })
+
+    it('applies muted foreground class when no value selected', () => {
+        wrapper = mount(Combobox, {
+            props: { options },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.classes()).toContain('text-brutal-muted-foreground')
+    })
+
+    it('does not apply muted foreground class when value is selected', () => {
+        wrapper = mount(Combobox, {
+            props: { options, modelValue: 'apple' },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.classes()).not.toContain('text-brutal-muted-foreground')
+    })
 })
 
 describe('ComboboxMulti', () => {
     it('renders with options prop', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options },
             attachTo: document.body,
         })
@@ -92,7 +212,7 @@ describe('ComboboxMulti', () => {
     })
 
     it('applies custom class', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options, class: 'custom-multi' },
             attachTo: document.body,
         })
@@ -101,7 +221,7 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows placeholder text when no selection', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options, placeholder: 'Pick fruits...' },
             attachTo: document.body,
         })
@@ -110,7 +230,7 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows default placeholder text', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options },
             attachTo: document.body,
         })
@@ -119,7 +239,7 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows selected option labels', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options, modelValue: ['apple', 'banana'] },
             attachTo: document.body,
         })
@@ -129,7 +249,7 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows count when selections exceed maxDisplay', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options, modelValue: ['apple', 'banana', 'cherry'], maxDisplay: 2 },
             attachTo: document.body,
         })
@@ -138,7 +258,7 @@ describe('ComboboxMulti', () => {
     })
 
     it('emits update:modelValue when options selected', async () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options },
             attachTo: document.body,
         })
@@ -146,11 +266,90 @@ describe('ComboboxMulti', () => {
     })
 
     it('is disabled when disabled prop is true', () => {
-        const wrapper = mount(ComboboxMulti, {
+        wrapper = mount(ComboboxMulti, {
             props: { options, disabled: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
         expect(trigger.attributes('disabled')).toBeDefined()
+    })
+
+    it('adds option to selection when unselected item is clicked', async () => {
+        wrapper = mount(ComboboxMulti, {
+            props: { options, modelValue: [] },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        const firstItem = items[0] as HTMLElement
+        firstItem.click()
+        await nextTick()
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([['apple']])
+    })
+
+    it('removes option from selection when selected item is clicked', async () => {
+        wrapper = mount(ComboboxMulti, {
+            props: { options, modelValue: ['apple', 'banana'] },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        const firstItem = items[0] as HTMLElement
+        firstItem.click()
+        await nextTick()
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([['banana']])
+    })
+
+    it('filters options by search query', async () => {
+        wrapper = mount(ComboboxMulti, {
+            props: { options },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        expect(input).toBeTruthy()
+        input.value = 'cher'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].textContent).toContain('Cherry')
+    })
+
+    it('shows all options when search query is cleared', async () => {
+        wrapper = mount(ComboboxMulti, {
+            props: { options },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'cher'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        input.value = ''
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(options.length)
+    })
+
+    it('applies muted foreground class when no value selected', () => {
+        wrapper = mount(ComboboxMulti, {
+            props: { options },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.classes()).toContain('text-brutal-muted-foreground')
+    })
+
+    it('does not apply muted foreground class when values are selected', () => {
+        wrapper = mount(ComboboxMulti, {
+            props: { options, modelValue: ['apple'] },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.classes()).not.toContain('text-brutal-muted-foreground')
     })
 })

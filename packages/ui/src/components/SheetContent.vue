@@ -20,6 +20,7 @@ interface SheetContentProps {
 
 const props = withDefaults(defineProps<SheetContentProps>(), {
     side: 'right',
+    class: '',
 })
 
 const overlayClasses = computed(() =>

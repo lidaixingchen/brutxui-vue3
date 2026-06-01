@@ -10,6 +10,7 @@ interface ProgressProps {
 }
 
 const props = withDefaults(defineProps<ProgressProps>(), {
+    class: '',
     modelValue: 0,
     max: 100,
 })

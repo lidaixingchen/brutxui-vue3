@@ -15,19 +15,19 @@ export const toastVariants = cva(
                     'shadow-brutal-lg',
                 ],
                 success: [
-                    'bg-brutal-success text-black',
+                    'bg-brutal-success text-brutal-fg',
                     'shadow-brutal-lg',
                 ],
                 error: [
-                    'bg-brutal-destructive text-white',
+                    'bg-brutal-destructive text-brutal-fg',
                     'shadow-brutal-lg',
                 ],
                 warning: [
-                    'bg-brutal-accent text-black',
+                    'bg-brutal-accent text-brutal-fg',
                     'shadow-brutal-lg',
                 ],
                 info: [
-                    'bg-brutal-secondary text-black',
+                    'bg-brutal-secondary text-brutal-fg',
                     'shadow-brutal-lg',
                 ],
             },

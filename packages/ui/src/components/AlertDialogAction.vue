@@ -14,6 +14,7 @@ interface AlertDialogActionProps {
 
 const props = withDefaults(defineProps<AlertDialogActionProps>(), {
     variant: 'primary',
+    class: '',
 })
 
 const classes = computed(() =>

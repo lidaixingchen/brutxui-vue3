@@ -10,6 +10,7 @@ interface TooltipContentProps {
 
 const props = withDefaults(defineProps<TooltipContentProps>(), {
     sideOffset: 6,
+    class: '',
 })
 
 const classes = computed(() =>

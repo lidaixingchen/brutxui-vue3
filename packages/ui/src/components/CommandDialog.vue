@@ -14,13 +14,14 @@ interface CommandDialogProps {
 const props = withDefaults(defineProps<CommandDialogProps>(), {
     title: 'Command Palette',
     description: 'Search for a command to run...',
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
 const overlayClasses = computed(() =>
     cn(
-        'fixed inset-0 z-50 bg-black/50',
+        'fixed inset-0 z-50 bg-brutal-overlay',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
     )
@@ -30,7 +31,7 @@ const contentClasses = computed(() =>
     cn(
         'fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]',
         'w-full max-w-lg overflow-hidden p-0',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal-xl',
+        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal-xl rounded-brutal',
         'duration-200',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',

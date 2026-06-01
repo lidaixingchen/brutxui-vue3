@@ -30,27 +30,41 @@ interface PricingSectionProps {
 
 const props = withDefaults(defineProps<PricingSectionProps>(), {
     title: 'Simple, Transparent Brutalist Plans',
+    subtitle: '',
     plans: () => [],
+    class: '',
 })
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
+
+function getPlanCardClasses(plan: BrutalistPricingPlan) {
+    return cn(plan.popular && 'bg-brutal-accent/20')
+}
 </script>
 
 <template>
     <div :class="rootClasses">
         <div class="text-center mb-10">
-            <h2 class="text-3xl font-black tracking-tight">{{ title }}</h2>
-            <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">{{ subtitle }}</p>
+            <h2 class="text-3xl font-black tracking-tight">
+{{ title }}
+</h2>
+            <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">
+{{ subtitle }}
+</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div v-for="plan in plans" :key="plan.name" class="relative">
                 <div v-if="plan.popular" class="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rotate-[1.5deg]">
-                    <Badge variant="primary" class="animate-pulse">Most Popular Tier</Badge>
+                    <Badge variant="primary" class="animate-pulse">
+Most Popular Tier
+</Badge>
                 </div>
-                <Card :variant="plan.variant" :class="cn(plan.popular && 'bg-brutal-accent/20')">
+                <Card :variant="plan.variant" :class="getPlanCardClasses(plan)">
                     <CardHeader>
-                        <CardTitle class="text-xl">{{ plan.name }}</CardTitle>
+                        <CardTitle class="text-xl">
+{{ plan.name }}
+</CardTitle>
                         <CardDescription>{{ plan.description }}</CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -68,7 +82,9 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
                         </ul>
                     </CardContent>
                     <CardFooter>
-                        <Button :variant="plan.variant === 'default' ? 'outline' : plan.variant" class="w-full">{{ plan.ctaText }}</Button>
+                        <Button :variant="plan.variant === 'default' ? 'outline' : plan.variant" class="w-full">
+{{ plan.ctaText }}
+</Button>
                     </CardFooter>
                 </Card>
             </div>

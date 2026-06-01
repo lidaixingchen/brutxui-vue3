@@ -23,6 +23,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
     asChild: false,
     loading: false,
     disabled: false,
+    class: '',
 })
 
 const isDisabled = computed(() => props.disabled || props.loading)

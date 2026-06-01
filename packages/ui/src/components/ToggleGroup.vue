@@ -19,8 +19,11 @@ interface ToggleGroupProps {
 
 const props = withDefaults(defineProps<ToggleGroupProps>(), {
     type: 'single',
+    defaultValue: undefined,
+    modelValue: undefined,
     variant: 'default',
     size: 'default',
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | string[]] }>()

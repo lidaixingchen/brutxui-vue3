@@ -16,6 +16,7 @@ interface SkeletonAvatarProps {
 const props = withDefaults(defineProps<SkeletonAvatarProps>(), {
     variant: 'default',
     size: 'default',
+    class: '',
 })
 
 const sizeClasses: Record<string, string> = {

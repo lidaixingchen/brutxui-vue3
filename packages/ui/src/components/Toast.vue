@@ -22,7 +22,10 @@ interface ToastProps {
 const props = withDefaults(defineProps<ToastProps>(), {
     variant: 'default',
     size: 'default',
+    title: '',
+    description: '',
     duration: DEFAULT_DURATION,
+    class: '',
 })
 
 const emit = defineEmits<{ close: [] }>()
@@ -95,8 +98,12 @@ const closeClasses = computed(() =>
             </div>
 
             <div class="flex-1 min-w-0">
-                <p v-if="title" class="font-black text-base leading-tight">{{ title }}</p>
-                <p v-if="description" class="font-medium text-sm mt-1 opacity-80 leading-snug">{{ description }}</p>
+                <p v-if="title" class="font-black text-base leading-tight">
+{{ title }}
+</p>
+                <p v-if="description" class="font-medium text-sm mt-1 opacity-80 leading-snug">
+{{ description }}
+</p>
                 <slot />
             </div>
 

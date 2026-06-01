@@ -9,7 +9,9 @@ interface CommandInputProps {
 }
 
 const props = withDefaults(defineProps<CommandInputProps>(), {
+    modelValue: undefined,
     placeholder: 'Type a command or search...',
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
@@ -45,6 +47,6 @@ const inputClasses = computed(() =>
             :placeholder="placeholder"
             :class="inputClasses"
             @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-        />
+        >
     </div>
 </template>

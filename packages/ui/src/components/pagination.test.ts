@@ -1,6 +1,18 @@
 import { mount } from '@vue/test-utils'
 import Pagination from './Pagination.vue'
 
+const FIRST_PAGE = 1
+const FIRST_PAGES_COUNT = 3
+const DEFAULT_SIBLING_COUNT = 1
+
+function getPageNumbers(wrapper: ReturnType<typeof mount>) {
+    return wrapper.findAll('button[aria-label^="Go to page"]').map((btn) => Number(btn.text()))
+}
+
+function getDotsCount(wrapper: ReturnType<typeof mount>) {
+    return wrapper.findAll('span').filter((el) => el.text().includes('•••')).length
+}
+
 describe('Pagination', () => {
     it('renders with default props', () => {
         const wrapper = mount(Pagination, {
@@ -126,5 +138,99 @@ describe('Pagination', () => {
         })
         await wrapper.find('button[aria-label="Go to previous page"]').trigger('click')
         expect(wrapper.emitted('update:currentPage')![0]).toEqual([2])
+    })
+
+    it('shows right dots only when current page is near start', () => {
+        const totalPages = 10
+        const currentPage = FIRST_PAGE
+        const wrapper = mount(Pagination, {
+            props: { totalPages, currentPage },
+        })
+        const leftEndIndex = FIRST_PAGES_COUNT + 2 * DEFAULT_SIBLING_COUNT
+        const expectedPages = [
+            ...Array.from({ length: leftEndIndex }, (_, i) => i + FIRST_PAGE),
+            totalPages,
+        ]
+        expect(getPageNumbers(wrapper)).toEqual(expectedPages)
+        expect(getDotsCount(wrapper)).toBe(1)
+    })
+
+    it('shows left dots only when current page is near end', () => {
+        const totalPages = 10
+        const currentPage = totalPages
+        const wrapper = mount(Pagination, {
+            props: { totalPages, currentPage },
+        })
+        const rightEndIndex = FIRST_PAGES_COUNT + 2 * DEFAULT_SIBLING_COUNT
+        const expectedPages = [
+            FIRST_PAGE,
+            ...Array.from({ length: rightEndIndex }, (_, i) => totalPages - rightEndIndex + i + 1),
+        ]
+        expect(getPageNumbers(wrapper)).toEqual(expectedPages)
+        expect(getDotsCount(wrapper)).toBe(1)
+    })
+
+    it('shows both left and right dots when current page is in the middle', () => {
+        const totalPages = 10
+        const currentPage = 5
+        const wrapper = mount(Pagination, {
+            props: { totalPages, currentPage },
+        })
+        const leftSiblingIndex = currentPage - DEFAULT_SIBLING_COUNT
+        const rightSiblingIndex = currentPage + DEFAULT_SIBLING_COUNT
+        const middlePages = Array.from(
+            { length: rightSiblingIndex - leftSiblingIndex + 1 },
+            (_, i) => leftSiblingIndex + i
+        )
+        const expectedPages = [FIRST_PAGE, ...middlePages, totalPages]
+        expect(getPageNumbers(wrapper)).toEqual(expectedPages)
+        expect(getDotsCount(wrapper)).toBe(2)
+    })
+
+    it('applies rounded variant classes', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, variant: 'rounded' },
+        })
+        expect(wrapper.find('nav').classes()).toContain('[&_button]:rounded-brutal')
+    })
+
+    it('applies minimal variant classes', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, variant: 'minimal' },
+        })
+        expect(wrapper.find('nav').classes()).toContain('[&_button]:border-0')
+        expect(wrapper.find('nav').classes()).toContain('[&_button]:shadow-none')
+    })
+
+    it('applies sm size classes', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, size: 'sm' },
+        })
+        expect(wrapper.find('nav').classes()).toContain('gap-1')
+    })
+
+    it('applies lg size classes', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, size: 'lg' },
+        })
+        expect(wrapper.find('nav').classes()).toContain('gap-3')
+    })
+
+    it('respects siblingCount prop for wider middle range', () => {
+        const siblingCount = 2
+        const totalPages = 20
+        const currentPage = 10
+        const wrapper = mount(Pagination, {
+            props: { totalPages, currentPage, siblingCount },
+        })
+        const leftSiblingIndex = currentPage - siblingCount
+        const rightSiblingIndex = currentPage + siblingCount
+        const middlePages = Array.from(
+            { length: rightSiblingIndex - leftSiblingIndex + 1 },
+            (_, i) => leftSiblingIndex + i
+        )
+        const expectedPages = [FIRST_PAGE, ...middlePages, totalPages]
+        expect(getPageNumbers(wrapper)).toEqual(expectedPages)
+        expect(getDotsCount(wrapper)).toBe(2)
     })
 })

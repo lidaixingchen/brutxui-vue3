@@ -19,9 +19,12 @@ interface SliderProps {
 }
 
 const props = withDefaults(defineProps<SliderProps>(), {
+    defaultValue: undefined,
+    modelValue: undefined,
     min: 0,
     max: 100,
     step: 1,
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()

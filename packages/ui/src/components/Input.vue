@@ -18,9 +18,12 @@ interface InputProps {
 
 const props = withDefaults(defineProps<InputProps>(), {
     type: 'text',
+    modelValue: undefined,
     variant: 'default',
     inputSize: 'default',
     disabled: false,
+    placeholder: '',
+    class: '',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | number] }>()
