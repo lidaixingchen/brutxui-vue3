@@ -57,6 +57,7 @@ function scrollTo(index: number) {
 }
 
 function startAutoplay() {
+    stopAutoplay();
     if (!props.autoplay) return;
     autoplayTimer = setInterval(() => {
         if (emblaApi.value) {

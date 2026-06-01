@@ -63,6 +63,9 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'tree-view': { name: 'tree-view', dependencies: ['reka-ui', 'lucide-vue-next'] },
     kanban: { name: 'kanban', dependencies: ['lucide-vue-next'] },
     'chat-bubble': { name: 'chat-bubble', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    kbd: { name: 'kbd', dependencies: [] },
+    counter: { name: 'counter', dependencies: [] },
+    stepper: { name: 'stepper', dependencies: ['lucide-vue-next'] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

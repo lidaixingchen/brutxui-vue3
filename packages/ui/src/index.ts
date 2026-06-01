@@ -247,8 +247,16 @@ export { kanbanColumnVariants, kanbanCardVariants } from './components/kanban/ka
 export { default as ChatBubble } from './components/chat-bubble/ChatBubble.vue'
 export { chatBubbleVariants, chatAvatarVariants } from './components/chat-bubble/chat-bubble-variants'
 
+export { default as Kbd } from './components/kbd/Kbd.vue'
+export { kbdVariants } from './components/kbd/kbd-variants'
+
+export { default as Counter } from './components/counter/Counter.vue'
+export { counterVariants } from './components/counter/counter-variants'
+
+export { default as Stepper } from './components/stepper/Stepper.vue'
+export type { StepperStep } from './components/stepper/Stepper.vue'
+export { stepperDotVariants, stepperConnectorVariants, stepperItemVariants } from './components/stepper/stepper-variants'
+
 export * from './lib/utils'
 
 export type { VariantProps } from 'class-variance-authority'
-
-

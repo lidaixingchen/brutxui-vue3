@@ -72,6 +72,9 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts'] },
     kanban: { files: ['KanbanBoard.vue', 'kanban-variants.ts'] },
     'chat-bubble': { files: ['ChatBubble.vue', 'chat-bubble-variants.ts'] },
+    kbd: { files: ['Kbd.vue', 'kbd-variants.ts'] },
+    counter: { files: ['Counter.vue', 'counter-variants.ts'] },
+    stepper: { files: ['Stepper.vue', 'stepper-variants.ts'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};

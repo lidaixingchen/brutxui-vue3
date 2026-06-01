@@ -56,6 +56,9 @@ import CarouselDemo from './components/demos/CarouselDemo.vue'
 import TreeViewDemo from './components/demos/TreeViewDemo.vue'
 import KanbanBoardDemo from './components/demos/KanbanBoardDemo.vue'
 import ChatBubbleDemo from './components/demos/ChatBubbleDemo.vue'
+import KbdDemo from './components/demos/KbdDemo.vue'
+import CounterDemo from './components/demos/CounterDemo.vue'
+import StepperDemo from './components/demos/StepperDemo.vue'
 import './style.css'
 
 export default {
@@ -117,5 +120,8 @@ export default {
         app.component('TreeViewDemo', TreeViewDemo)
         app.component('KanbanBoardDemo', KanbanBoardDemo)
         app.component('ChatBubbleDemo', ChatBubbleDemo)
+        app.component('KbdDemo', KbdDemo)
+        app.component('CounterDemo', CounterDemo)
+        app.component('StepperDemo', StepperDemo)
     },
 } satisfies Theme
