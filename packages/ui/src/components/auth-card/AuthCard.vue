@@ -98,7 +98,7 @@ Sign In
         </CardContent>
         <CardFooter class="justify-center">
             <p class="text-sm font-medium text-brutal-muted-foreground">
-                Don't have an account? <span class="font-bold text-brutal-primary cursor-pointer">Register</span>
+                Don't have an account? <button type="button" class="font-bold text-brutal-primary cursor-pointer">Register</button>
             </p>
         </CardFooter>
     </Card>

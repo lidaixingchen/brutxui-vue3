@@ -16,9 +16,14 @@ interface ToggleGroupItemProps {
     class?: string
 }
 
-const props = defineProps<ToggleGroupItemProps>()
+const props = withDefaults(defineProps<ToggleGroupItemProps>(), {
+    variant: 'default',
+    size: 'default',
+    disabled: false,
+    class: '',
+})
 
-const context = inject(toggleGroupKey, { variant: computed(() => undefined), size: computed(() => undefined) })
+const context = inject(toggleGroupKey, { variant: computed<NonNullable<ToggleVariantProps['variant']> | undefined>(() => undefined), size: computed<NonNullable<ToggleVariantProps['size']> | undefined>(() => undefined) })
 
 const classes = computed(() =>
     cn(

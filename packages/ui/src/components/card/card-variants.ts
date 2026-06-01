@@ -17,8 +17,8 @@ export const cardVariants = cva(
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                     'cursor-pointer',
                 ],
-                primary: 'shadow-brutal-primary border-brutal-primary',
-                secondary: 'shadow-brutal-secondary border-brutal-secondary',
+                primary: 'shadow-brutal-primary border-[var(--brutal-primary)]',
+                secondary: 'shadow-brutal-secondary border-[var(--brutal-secondary)]',
             },
             padding: {
                 none: 'p-0',

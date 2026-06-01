@@ -198,7 +198,7 @@ describe('Pagination', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, variant: 'minimal' },
         })
-        expect(wrapper.find('nav').classes()).toContain('[&_button]:border-0')
+        expect(wrapper.find('nav').classes()).toContain('[&_button]:border-transparent')
         expect(wrapper.find('nav').classes()).toContain('[&_button]:shadow-none')
     })
 

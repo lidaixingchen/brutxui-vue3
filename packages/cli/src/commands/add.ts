@@ -30,7 +30,13 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
         process.exit(1);
     }
 
-    return fs.readJson(configPath);
+    const config = await fs.readJson(configPath);
+    if (!config?.aliases?.components || !config?.aliases?.utils) {
+        logger.error('Error: Invalid components.json. Missing required "aliases.components" or "aliases.utils".');
+        logger.warn('Run: npx brutx@latest init --force to regenerate.');
+        process.exit(1);
+    }
+    return config;
 }
 
 async function validateComponents(components: string[]): Promise<void> {
@@ -86,7 +92,7 @@ function resolveComponentFilePath(registryPath: string, config: BrutalistConfig,
     }
 
     if (registryPath.startsWith('lib/')) {
-        const relative = registryPath.replace('lib/', '');
+        const relative = registryPath.slice(4);
         const aliasPath = resolveAliasPath(config.aliases.utils, cwd);
         return path.join(path.dirname(aliasPath), relative);
     }
@@ -112,7 +118,7 @@ async function writeRegistryFiles(
     spinner: Ora | null
 ): Promise<{ added: string[]; skipped: string[]; filesWritten: string[] }> {
     const added: string[] = [];
-    const skipped: string[] = [];
+    const skippedSet = new Set<string>();
     const filesWritten: string[] = [];
 
     for (const item of items) {
@@ -133,7 +139,7 @@ async function writeRegistryFiles(
             if (await fs.pathExists(targetPath)) {
                 if (!options.overwrite) {
                     spinner?.info(`Skipping file "${file.path}" for "${item.name}" (already exists). Use --overwrite to overwrite.`);
-                    skipped.push(item.name);
+                    skippedSet.add(item.name);
                     continue;
                 }
             }
@@ -152,12 +158,12 @@ async function writeRegistryFiles(
             filesWritten.push(targetPath);
         }
 
-        if (itemAdded && !skipped.includes(item.name)) {
+        if (itemAdded && !skippedSet.has(item.name)) {
             added.push(item.name);
         }
     }
 
-    return { added, skipped, filesWritten };
+    return { added, skipped: Array.from(skippedSet), filesWritten };
 }
 
 function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): void {
@@ -202,14 +208,14 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     const config = await ensureInitialized(cwd);
 
+    await validateComponents(components);
+
     const selectedComponents = await selectComponents(components, options);
 
     if (selectedComponents.length === 0) {
         logger.warn('No components selected.');
         return;
     }
-
-    await validateComponents(selectedComponents);
 
     const utilsPath = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
 

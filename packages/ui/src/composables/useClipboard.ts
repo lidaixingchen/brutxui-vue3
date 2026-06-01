@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 
 export function useClipboard(options: { duration?: number } = {}) {
     const duration = options.duration ?? 2000
@@ -6,6 +6,10 @@ export function useClipboard(options: { duration?: number } = {}) {
     const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)
 
     let timeoutId: number | null = null
+
+    onUnmounted(() => {
+        if (timeoutId) clearTimeout(timeoutId)
+    })
 
     async function copy(text: string) {
         if (!isSupported.value) return false

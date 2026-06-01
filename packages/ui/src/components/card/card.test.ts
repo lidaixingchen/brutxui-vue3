@@ -36,11 +36,11 @@ describe('Card', () => {
             }
             if (variant === 'primary') {
                 expect(wrapper.classes()).toContain('shadow-brutal-primary')
-                expect(wrapper.classes()).toContain('border-brutal-primary')
+                expect(wrapper.classes()).toContain('border-[var(--brutal-primary)]')
             }
             if (variant === 'secondary') {
                 expect(wrapper.classes()).toContain('shadow-brutal-secondary')
-                expect(wrapper.classes()).toContain('border-brutal-secondary')
+                expect(wrapper.classes()).toContain('border-[var(--brutal-secondary)]')
             }
         }
     })

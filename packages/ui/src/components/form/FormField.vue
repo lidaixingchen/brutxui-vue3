@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide } from 'vue'
+import { provide, computed } from 'vue'
 import { useField } from 'vee-validate'
 import { formFieldKey } from './form-context'
 
@@ -9,7 +9,8 @@ interface FormFieldProps {
 
 const props = defineProps<FormFieldProps>()
 
-const { errorMessage } = useField(() => props.name)
+const fieldName = computed(() => props.name)
+const { errorMessage } = useField(fieldName)
 
 provide(formFieldKey, {
     name: props.name,

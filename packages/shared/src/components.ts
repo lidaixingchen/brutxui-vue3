@@ -59,6 +59,6 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'before-after': { name: 'before-after', dependencies: [] },
     'code-block': { name: 'code-block', dependencies: ['lucide-vue-next'] },
     timeline: { name: 'timeline', dependencies: ['reka-ui', 'lucide-vue-next'] },
-} as const;
+};
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

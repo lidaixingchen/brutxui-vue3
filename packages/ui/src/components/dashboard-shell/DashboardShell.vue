@@ -31,7 +31,7 @@ const sidebarClasses = computed(() =>
 
 <template>
     <div :class="rootClasses">
-        <aside :class="sidebarClasses">
+        <aside :class="sidebarClasses" aria-label="Sidebar navigation">
             <div class="font-black text-lg tracking-tight mb-8">
 BrutxUI
 </div>

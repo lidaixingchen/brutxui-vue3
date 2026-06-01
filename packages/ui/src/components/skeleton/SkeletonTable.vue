@@ -21,7 +21,8 @@ const props = withDefaults(defineProps<SkeletonTableProps>(), {
     class: '',
 })
 
-const cellWidths = [0.85, 0.7, 0.9, 0.65]
+const DEFAULT_CELL_WIDTH_RATIOS = [0.85, 0.7, 0.9, 0.65]
+const FALLBACK_CELL_WIDTH_RATIO = 0.75
 
 const containerClasses = computed(() =>
     cn('border-3 border-brutal overflow-hidden', props.class)
@@ -70,7 +71,7 @@ const cellClasses = computed(() =>
                 <Skeleton
                     :variant="variant"
                     class="h-4"
-                    :style="{ width: `${(cellWidths[colIndex % cellWidths.length] ?? 0.75) * 100}%` }"
+                    :style="{ width: `${(DEFAULT_CELL_WIDTH_RATIOS[colIndex % DEFAULT_CELL_WIDTH_RATIOS.length] ?? FALLBACK_CELL_WIDTH_RATIO) * 100}%` }"
                 />
             </div>
         </div>

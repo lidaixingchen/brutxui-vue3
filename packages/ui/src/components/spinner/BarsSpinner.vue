@@ -35,7 +35,9 @@ const colorMap: Record<string, string[]> = {
     mixed: ['bg-brutal-primary', 'bg-brutal-secondary', 'bg-brutal-accent', 'bg-brutal-info', 'bg-brutal-primary'],
 }
 
-const barHeights = [0.7, 0.55, 0.85, 0.6, 0.75]
+const BAR_HEIGHT_RATIOS = [0.7, 0.55, 0.85, 0.6, 0.75]
+const ANIMATION_DELAY_INCREMENT_MS = 100
+const ANIMATION_DURATION_MS = 400
 
 const containerClasses = computed(() =>
     cn(barsSpinnerVariants({ size: props.size }), props.class)
@@ -55,9 +57,9 @@ const barClasses = computed(() =>
             :key="i"
             :class="barClass"
             :style="{
-                height: `${barHeights[i] * 100}%`,
-                animationDelay: `${i * 100}ms`,
-                animationDuration: '400ms',
+                height: `${BAR_HEIGHT_RATIOS[i] * 100}%`,
+                animationDelay: `${i * ANIMATION_DELAY_INCREMENT_MS}ms`,
+                animationDuration: `${ANIMATION_DURATION_MS}ms`,
             }"
         />
         <span class="sr-only">{{ label }}</span>

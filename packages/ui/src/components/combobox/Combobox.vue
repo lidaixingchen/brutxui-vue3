@@ -80,6 +80,7 @@ function getCheckClasses(optionValue: string) {
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
+                aria-haspopup="listbox"
                 :class="triggerClasses"
             >
                 <span>{{ selectedOption ? selectedOption.label : placeholder }}</span>

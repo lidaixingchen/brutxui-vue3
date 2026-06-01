@@ -11,11 +11,13 @@ import DialogOverlay from './DialogOverlay.vue'
 
 interface DialogContentProps {
     showCloseButton?: boolean
+    forceMount?: boolean
     class?: string
 }
 
 const props = withDefaults(defineProps<DialogContentProps>(), {
     showCloseButton: true,
+    forceMount: undefined,
     class: '',
 })
 

@@ -55,7 +55,11 @@ function handleUpdate(value: Date | DateRangeValue | null) {
             emit('update:modelValue', null)
         }
     } else {
-        emit('update:modelValue', value as Date | null)
+        if (value instanceof Date || value === null) {
+            emit('update:modelValue', value)
+        } else {
+            emit('update:modelValue', null)
+        }
     }
 }
 
@@ -84,7 +88,7 @@ function getDayClasses(day: {
 <template>
     <VCalendar
         :model-value="vCalendarModelValue"
-        :is-range="isRange"
+        :mode="isRange ? 'range' : 'date'"
         :disabled="disabled"
         :class="rootClasses"
         :attributes="[]"

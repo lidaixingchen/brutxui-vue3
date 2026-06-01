@@ -12,6 +12,7 @@ function getThemeClass(name: ThemeName): string {
 
 function applyTheme(name: ThemeName) {
     if (typeof document === 'undefined') return;
+    if (name === theme.value) return;
     const root = document.documentElement
     root.classList.remove(getThemeClass(theme.value))
     root.classList.add(getThemeClass(name))
@@ -41,14 +42,20 @@ function setTheme(name: ThemeName) {
 
 function initTheme() {
     if (typeof localStorage === 'undefined') return;
-    const savedTheme = localStorage.getItem('brutx-theme') as ThemeName | null
-    const savedMode = localStorage.getItem('brutx-color-mode') as ColorMode | null
+    const VALID_THEMES: ThemeName[] = ['classic', 'pastel', 'mono']
+    const VALID_MODES: ColorMode[] = ['light', 'dark']
+    const savedThemeRaw = localStorage.getItem('brutx-theme')
+    const savedTheme = (savedThemeRaw && VALID_THEMES.includes(savedThemeRaw as ThemeName)) ? savedThemeRaw as ThemeName : null
+    const savedModeRaw = localStorage.getItem('brutx-color-mode')
+    const savedMode = (savedModeRaw && VALID_MODES.includes(savedModeRaw as ColorMode)) ? savedModeRaw as ColorMode : null
 
-    if (savedTheme && ['classic', 'pastel', 'mono'].includes(savedTheme)) {
+    if (savedTheme) {
         applyTheme(savedTheme)
+    } else {
+        applyTheme(theme.value)
     }
 
-    if (savedMode && ['light', 'dark'].includes(savedMode)) {
+    if (savedMode) {
         applyColorMode(savedMode)
     } else if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         applyColorMode('dark')

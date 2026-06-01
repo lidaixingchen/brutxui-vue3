@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, type Ref } from 'vue'
+import { inject, ref, type Ref } from 'vue'
 import { formFieldKey, formItemKey } from './form-context'
 
 interface FormControlProps {
@@ -8,7 +8,7 @@ interface FormControlProps {
 
 defineProps<FormControlProps>()
 
-const fieldContext = inject(formFieldKey, { name: '', error: { value: undefined } as Ref<string | undefined> })
+const fieldContext = inject(formFieldKey, { name: '', error: ref<string | undefined>(undefined) as Ref<string | undefined> })
 const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
 </script>
 

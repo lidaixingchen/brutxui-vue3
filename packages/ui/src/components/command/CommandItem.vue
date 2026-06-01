@@ -47,12 +47,17 @@ function handleClick() {
 <template>
     <div
         :class="classes"
+        role="option"
+        :aria-selected="isSelected"
+        :aria-disabled="disabled || undefined"
         data-slot="command-item"
         :data-selected="isSelected"
         :data-disabled="disabled"
+        tabindex="-1"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         @click="handleClick"
+        @keydown.enter="handleClick"
     >
         <slot />
     </div>

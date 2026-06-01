@@ -124,14 +124,18 @@ function getFeatureClasses(feature: PricingFeature) {
             <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">
 {{ subtitle }}
 </p>
-            <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1">
+            <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1" role="tablist" aria-label="Billing period">
                 <button
+                    role="tab"
+                    :aria-selected="billing === 'monthly'"
                     :class="monthlyBtnClasses"
                     @click="billing = 'monthly'"
                 >
                     Monthly
                 </button>
                 <button
+                    role="tab"
+                    :aria-selected="billing === 'annually'"
                     :class="annuallyBtnClasses"
                     @click="billing = 'annually'"
                 >

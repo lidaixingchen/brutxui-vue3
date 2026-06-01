@@ -66,7 +66,7 @@ export function readTsConfig(cwd: string): TsConfig | null {
 
         try {
             const content = fs.readFileSync(configPath, 'utf-8');
-            const jsonContent = content.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '');
+            const jsonContent = content.replace(/\/\*[\s\S]*?\*\/|(?<!:)\/\/.*/g, '');
             return JSON.parse(jsonContent);
         } catch {
             continue;

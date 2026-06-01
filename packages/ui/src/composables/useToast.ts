@@ -16,9 +16,13 @@ const TOAST_KEY: InjectionKey<ReturnType<typeof createToast>> = Symbol('brutx-to
 
 export function createToast() {
     const toasts = ref<ToastItem[]>([])
+    const MAX_TOASTS = 10
 
     function addToast(toast: Omit<ToastItem, 'id'>) {
-        const id = Math.random().toString(36).substring(2, 11)
+        const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+        if (toasts.value.length >= MAX_TOASTS) {
+            toasts.value = toasts.value.slice(1)
+        }
         toasts.value = [...toasts.value, { ...toast, id }]
         const duration = toast.duration ?? 5000
         if (duration > 0 && typeof window !== 'undefined') {

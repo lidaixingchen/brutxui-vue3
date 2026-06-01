@@ -27,10 +27,12 @@ const emit = defineEmits<{
 
 const email = ref('')
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const rootClasses = computed(() => cn('w-full max-w-lg mx-auto text-center', props.class))
 
 function handleSubmit() {
-    if (email.value) {
+    if (email.value && EMAIL_REGEX.test(email.value)) {
         emit('submit', email.value)
     }
 }

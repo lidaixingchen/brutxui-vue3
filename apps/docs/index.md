@@ -4,7 +4,7 @@ layout: home
 hero:
   name: BrutxUI
   text: Neo-Brutalism Vue 3 组件库
-  tagline: 粗边框。硬阴影。零妥协。为 Vue 3 + Tailwind CSS 打造的复制粘贴优先组件库，每一个像素都遵循新粗野主义设计哲学。
+  tagline: 粗边框。硬阴影。零妥协。\n为 Vue 3 + Tailwind CSS 打造的复制粘贴优先组件库，每一个像素都遵循新粗野主义设计哲学。
   actions:
     - theme: brand
       text: 快速开始 →

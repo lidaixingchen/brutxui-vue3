@@ -19,7 +19,7 @@ const { dayRef } = vi.hoisted(() => ({
 vi.mock('v-calendar', () => ({
     default: {
         name: 'VCalendar',
-        props: ['modelValue', 'isRange', 'disabled', 'class', 'attributes', 'trimWeeks', 'firstDayOfWeek'],
+        props: ['modelValue', 'isRange', 'mode', 'disabled', 'class', 'attributes', 'trimWeeks', 'firstDayOfWeek'],
         emits: ['update:model-value'],
         data() {
             return { day: { ...dayRef } }
@@ -227,10 +227,10 @@ describe('Calendar', () => {
             expect(wrapper.find('.cursor-not-allowed').exists()).toBe(true)
         })
 
-        it('passes isRange prop to VCalendar', () => {
+        it('passes mode prop to VCalendar based on isRange', () => {
             const wrapper = mountCalendar({ isRange: true })
             const stub = findVCalendar(wrapper)
-            expect(stub.props('isRange')).toBe(true)
+            expect(stub.props('mode')).toBe('range')
         })
 
         it('passes disabled prop to VCalendar', () => {

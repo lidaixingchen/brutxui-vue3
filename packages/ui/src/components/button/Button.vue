@@ -35,10 +35,11 @@ const classes = computed(() =>
 
 <template>
     <Primitive
-        :as="asChild ? 'template' : 'button'"
+        :as="asChild ? undefined : 'button'"
         :as-child="asChild"
         :class="classes"
-        :disabled="isDisabled"
+        :disabled="!asChild && isDisabled"
+        :aria-disabled="asChild && isDisabled ? true : undefined"
     >
         <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
         <slot />

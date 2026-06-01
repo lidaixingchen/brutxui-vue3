@@ -41,7 +41,7 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
 
     const fallbackCss = projectType === 'nuxt'
         ? 'assets/css/main.css'
-        : (projectType.includes('src') ? 'src/index.css' : 'src/index.css');
+        : (projectType.includes('src') ? 'src/index.css' : 'index.css');
 
     return {
         tailwind: {

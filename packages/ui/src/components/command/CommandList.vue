@@ -18,7 +18,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes" data-slot="command-list">
+    <div :class="classes" role="listbox" data-slot="command-list">
         <slot />
     </div>
 </template>

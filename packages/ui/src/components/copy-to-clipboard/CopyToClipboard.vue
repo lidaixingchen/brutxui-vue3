@@ -45,11 +45,11 @@ const classes = computed(() =>
         <slot :copied="copied">
             <template v-if="copied">
                 <Check class="h-4 w-4 stroke-[3]" />
-                <span>已复制</span>
+                <span>Copied</span>
             </template>
             <template v-else>
                 <Copy class="h-4 w-4 stroke-[3]" />
-                <span>复制</span>
+                <span>Copy</span>
             </template>
         </slot>
     </button>

@@ -12,6 +12,7 @@ interface CommandDialogProps {
 }
 
 const props = withDefaults(defineProps<CommandDialogProps>(), {
+    open: false,
     title: 'Command Palette',
     description: 'Search for a command to run...',
     class: '',
@@ -42,7 +43,7 @@ const contentClasses = computed(() =>
 </script>
 
 <template>
-    <DialogRoot :open="open" @update:open="emit('update:open', $event)">
+    <DialogRoot :open="props.open" @update:open="emit('update:open', $event)">
         <DialogPortal>
             <DialogOverlay :class="overlayClasses" />
             <DialogContent :class="contentClasses">
