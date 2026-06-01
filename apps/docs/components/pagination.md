@@ -1,9 +1,9 @@
 ---
-title: Pagination
+title: Pagination 分页
 description: 分页控制组件，带硬质翻页按钮，适配各种列表和数据表格场景。
 ---
 
-# Pagination
+# Pagination 分页
 
 新粗野主义风格的分页组件，内置计算分页算法，支持兄弟页数和首页/末页导航。
 

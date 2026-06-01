@@ -1,9 +1,9 @@
 ---
-title: Toggle Group
+title: Toggle Group 切换组
 description: 切换按钮组，支持单选或多选组合，适合控制视图或排版。
 ---
 
-# Toggle Group
+# Toggle Group 切换组
 
 基于 reka-ui 的 ToggleGroup 原语构建的新粗野主义风格切换按钮组，支持单选或多选。
 

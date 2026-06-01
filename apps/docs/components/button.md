@@ -1,9 +1,9 @@
 ---
-title: Button
+title: Button 按钮
 description: 新粗野主义风格的按钮组件，提供9种颜色变体、加载动画与键盘导航。
 ---
 
-# Button
+# Button 按钮
 
 新粗野主义风格的按钮组件，支持 9 种变体、5 种尺寸、加载状态和 `asChild` 组合支持。
 

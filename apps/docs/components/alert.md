@@ -1,9 +1,9 @@
 ---
-title: Alert
+title: Alert 提示
 description: 新粗野主义风格的警告框组件，支持多种变体、状态色以及自定义图标。
 ---
 
-# Alert
+# Alert 提示
 
 新粗野主义风格的警告组件，用于显示状态消息，支持 7 种颜色变体。
 

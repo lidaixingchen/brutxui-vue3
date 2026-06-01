@@ -1,9 +1,9 @@
 ---
-title: Popover
+title: Popover 弹出层
 description: 浮层弹出框，支持在指定元素周围展示复杂的气泡内容。
 ---
 
-# Popover
+# Popover 弹出层
 
 新粗野主义风格的弹出层组件，用于显示锚定到触发元素的浮动内容。
 

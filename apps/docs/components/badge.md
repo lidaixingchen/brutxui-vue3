@@ -1,9 +1,9 @@
 ---
-title: Badge
+title: Badge 徽标
 description: 徽标组件，用于显示状态、分类标签，提供高对比度的亮色或暗色视觉。
 ---
 
-# Badge
+# Badge 徽标
 
 新粗野主义风格的行内徽章组件，用于标签、状态和分类。
 

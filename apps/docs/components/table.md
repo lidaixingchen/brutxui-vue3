@@ -1,9 +1,9 @@
 ---
-title: Table
+title: Table 表格
 description: 数据表格，拥有高对比度表头、斑马纹行和硬边缘网格线。
 ---
 
-# Table
+# Table 表格
 
 新粗野主义风格数据表格，包含 8 个可组合子组件，用于结构化表格数据展示。
 

@@ -1,9 +1,9 @@
 ---
-title: Combobox
+title: Combobox 组合框
 description: 组合框（下拉搜索选择）组件，支持多选、单选，支持大数据量过滤。
 ---
 
-# Combobox
+# Combobox 组合框
 
 新粗野主义风格的可搜索选择组件。提供单选（`Combobox`）和多选（`ComboboxMulti`）两种模式。
 

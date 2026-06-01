@@ -1,9 +1,9 @@
 ---
-title: Dialog
+title: Dialog 对话框
 description: 模态对话框，支持焦点锁定、无障碍角色标记，硬边缘遮罩设计。
 ---
 
-# Dialog
+# Dialog 对话框
 
 新粗野主义风格的模态对话框，基于 reka-ui 的 Dialog 原语构建。支持遮罩层、关闭按钮和可组合的子组件。
 

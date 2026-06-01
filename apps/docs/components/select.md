@@ -1,9 +1,9 @@
 ---
-title: Select
+title: Select 选择器
 description: 选择器组件，可替代浏览器原生下拉，提供更好的无障碍支持。
 ---
 
-# Select
+# Select 选择器
 
 基于 reka-ui 的 Select 原语构建的新粗野主义风格下拉选择框，完整支持子组件。
 

@@ -1,9 +1,9 @@
 ---
-title: Textarea
+title: Textarea 文本域
 description: 多行文本输入域，支持自适应高度或固定行高，硬边框外观。
 ---
 
-# Textarea
+# Textarea 文本域
 
 新粗野主义风格多行文本输入框，支持变体、尺寸和 v-model。
 

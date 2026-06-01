@@ -1,9 +1,9 @@
 ---
-title: Checkbox
+title: Checkbox 复选框
 description: 复选框组件，带有厚边框和鲜明勾选图标，实现完全的键盘操作支持。
 ---
 
-# Checkbox
+# Checkbox 复选框
 
 新粗野主义风格的复选框，基于 reka-ui 的 CheckboxRoot 原语构建，带勾选指示器。
 

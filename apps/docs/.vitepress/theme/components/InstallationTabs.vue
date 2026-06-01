@@ -128,13 +128,13 @@ const cliCommand = computed(() => {
     const name = props.componentName
     switch (activePackageManager.value) {
         case 'pnpm':
-            return `pnpm dlx brutx@latest add ${name}`
+            return `pnpm dlx brutx-vue@latest add ${name}`
         case 'npm':
-            return `npx brutx@latest add ${name}`
+            return `npx brutx-vue@latest add ${name}`
         case 'yarn':
-            return `yarn dlx brutx@latest add ${name}`
+            return `yarn dlx brutx-vue@latest add ${name}`
         case 'bun':
-            return `bunx brutx@latest add ${name}`
+            return `bunx brutx-vue@latest add ${name}`
     }
 })
 

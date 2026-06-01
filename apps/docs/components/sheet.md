@@ -1,9 +1,9 @@
 ---
-title: Sheet
+title: Sheet 抽屉
 description: 滑动抽屉组件，支持从上、下、左、右四个方向滑出。
 ---
 
-# Sheet
+# Sheet 抽屉
 
 新粗野主义风格的侧边面板组件，可从任意边缘滑入。基于 reka-ui 的 Dialog 原语构建。
 

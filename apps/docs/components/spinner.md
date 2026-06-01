@@ -1,9 +1,9 @@
 ---
-title: Spinner
+title: Spinner 加载指示器
 description: 加载指示器组件，提供旋转点、旋转线等多种经典粗野主义加载动画。
 ---
 
-# Spinner
+# Spinner 加载指示器
 
 新粗野主义风格加载旋转器，提供 4 种视觉变体：标准、方块、圆点和条形。
 

@@ -1,9 +1,9 @@
 ---
-title: Toast
+title: Toast 轻提示
 description: 全局通知气泡组件，支持成功、失败、信息等多种类型的通知分发。
 ---
 
-# Toast
+# Toast 轻提示
 
 新粗野主义风格通知提示系统，提供 `useToast` 组合式函数、5 种变体和 `ToastContainer` 用于渲染。
 

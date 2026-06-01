@@ -1,9 +1,9 @@
 ---
-title: Form
+title: Form 表单
 description: 完整的表单字段包装器，集成了 Vee-Validate 与 Zod 模式校验支持。
 ---
 
-# Form
+# Form 表单
 
 新粗野主义风格的表单系统，基于 vee-validate 构建，提供可组合的子组件用于结构化表单布局。
 

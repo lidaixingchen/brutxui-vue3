@@ -1,9 +1,9 @@
 ---
-title: Toggle
+title: Toggle 切换
 description: 独立切换按钮，用于表示启用/关闭或选中/未选中状态。
 ---
 
-# Toggle
+# Toggle 切换
 
 基于 reka-ui 的 Toggle 原语构建的新粗野主义风格切换按钮，支持按下状态。
 

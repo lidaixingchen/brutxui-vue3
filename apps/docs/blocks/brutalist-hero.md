@@ -25,7 +25,7 @@ description: 新粗野主义落地页 Hero 区段模板，包含标题、CTA 和
       <div class="relative">
         <div class="absolute inset-0 bg-brutal-primary border-3 border-brutal translate-x-3 translate-y-3"></div>
         <div class="relative border-3 border-brutal bg-brutal-bg p-5 font-mono text-sm shadow-brutal">
-          <p class="text-brutal-muted-foreground">$ npx brutx init</p>
+          <p class="text-brutal-muted-foreground">$ npx brutx-vue init</p>
           <p class="text-brutal-success font-bold">Project initialized</p>
         </div>
       </div>
@@ -36,7 +36,7 @@ description: 新粗野主义落地页 Hero 区段模板，包含标题、CTA 和
 ## 安装
 
 ```bash
-npx brutx@latest add --block brutalist-hero
+npx brutx-vue@latest add --block brutalist-hero
 ```
 
 ## 用法

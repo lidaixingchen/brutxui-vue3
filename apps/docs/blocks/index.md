@@ -18,13 +18,13 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 使用 CLI 添加区块：
 
 ```bash
-npx brutx@latest add --block auth-card
+npx brutx-vue@latest add --block auth-card
 ```
 
 或同时添加多个区块：
 
 ```bash
-npx brutx@latest add --block brutalist-hero pricing-section
+npx brutx-vue@latest add --block brutalist-hero pricing-section
 ```
 
 ## 自定义

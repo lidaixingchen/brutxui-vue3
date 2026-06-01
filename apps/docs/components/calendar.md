@@ -1,9 +1,9 @@
 ---
-title: Calendar
+title: Calendar 日历
 description: 日历组件，支持日期选择、标记，结合新粗野主义边框与硬质阴影设计。
 ---
 
-# Calendar
+# Calendar 日历
 
 新粗野主义风格的日历组件，基于 v-calendar 构建，支持单日期和日期范围选择。
 

@@ -1,9 +1,9 @@
 ---
-title: Tooltip
+title: Tooltip 工具提示
 description: 工具提示浮层组件，悬停或聚焦时快速展示辅助文本。
 ---
 
-# Tooltip
+# Tooltip 工具提示
 
 基于 reka-ui 的 Tooltip 原语构建的新粗野主义风格工具提示，悬停时显示信息文字。
 

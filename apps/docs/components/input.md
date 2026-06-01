@@ -1,9 +1,9 @@
 ---
-title: Input
+title: Input 输入框
 description: 单行文本输入框，带新粗野主义高亮外边框和自定义占位符。
 ---
 
-# Input
+# Input 输入框
 
 新粗野主义风格的文本输入框，支持变体、尺寸和 v-model 双向绑定。
 

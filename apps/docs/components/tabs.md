@@ -1,9 +1,9 @@
 ---
-title: Tabs
+title: Tabs 标签页
 description: 选项卡组件，提供按压切换动画和极高辨识度的激活状态边框。
 ---
 
-# Tabs
+# Tabs 标签页
 
 基于 reka-ui 的 Tabs 原语构建的新粗野主义风格标签页导航组件。
 

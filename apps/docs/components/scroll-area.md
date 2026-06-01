@@ -1,9 +1,9 @@
 ---
-title: Scroll Area
+title: Scroll Area 滚动区域
 description: 自定义滚动区域组件，提供符合新粗野主义外观的厚滚动条。
 ---
 
-# Scroll Area
+# Scroll Area 滚动区域
 
 基于 reka-ui 的 ScrollArea 原语构建的新粗野主义风格滚动区域，带有自定义滚动条样式。
 

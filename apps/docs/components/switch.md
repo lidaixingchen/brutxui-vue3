@@ -1,9 +1,9 @@
 ---
-title: Switch
+title: Switch 开关
 description: 开关选择器组件，用于快捷切换 true/false 布尔值状态。
 ---
 
-# Switch
+# Switch 开关
 
 基于 reka-ui 的 Switch 原语构建的新粗野主义风格切换开关，支持 v-model。
 

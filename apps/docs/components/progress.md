@@ -1,9 +1,9 @@
 ---
-title: Progress
+title: Progress 进度条
 description: 进度条组件，支持动画过渡和自定义指示器色块，粗边缘设计。
 ---
 
-# Progress
+# Progress 进度条
 
 基于 reka-ui 的 Progress 原语构建的新粗野主义风格进度条。
 

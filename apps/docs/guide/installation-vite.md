@@ -55,7 +55,7 @@ export default {
 运行 init 命令来设置粗野主义插件和样式：
 
 ```bash
-npx brutx@latest init
+npx brutx-vue@latest init
 ```
 
 此命令将：
@@ -69,15 +69,15 @@ npx brutx@latest init
 只添加你需要的组件：
 
 ```bash
-npx brutx@latest add button
-npx brutx@latest add card dialog
-npx brutx@latest add input label checkbox
+npx brutx-vue@latest add button
+npx brutx-vue@latest add card dialog
+npx brutx-vue@latest add input label checkbox
 ```
 
 或者一次性添加所有组件：
 
 ```bash
-npx brutx@latest add --all
+npx brutx-vue@latest add --all
 ```
 
 ## 第 5 步：导入样式
@@ -92,7 +92,7 @@ import './style.css'
 createApp(App).mount('#app')
 ```
 
-`brutx init` 命令会将所需的 CSS 添加到你的 `style.css` 文件中，包括 `--brutal-*` CSS 自定义属性和 Tailwind 层。
+`brutx-vue init` 命令会将所需的 CSS 添加到你的 `style.css` 文件中，包括 `--brutal-*` CSS 自定义属性和 Tailwind 层。
 
 ## 第 6 步：使用组件
 

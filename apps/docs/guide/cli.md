@@ -1,21 +1,21 @@
 # CLI
 
-`brutx` CLI 帮助你在项目中初始化 BrutxUI，并通过单条命令添加组件。
+`brutx-vue` CLI 帮助你在项目中初始化 BrutxUI，并通过单条命令添加组件。
 
 ## 概览
 
 ```bash
-npx brutx@latest <command>
+npx brutx-vue@latest <command>
 ```
 
 CLI 会自动处理依赖安装、文件创建和配置更新。
 
-## brutx init
+## brutx-vue init
 
 在你的项目中初始化 BrutxUI。它会设置基础配置：
 
 ```bash
-npx brutx@latest init
+npx brutx-vue@latest init
 ```
 
 init 命令将：
@@ -34,12 +34,12 @@ init 命令将：
 | `--yes` / `-y` | 跳过提示并使用默认值 | `false` |
 | `--cwd <path>` | 设置工作目录 | 当前目录 |
 
-## brutx add
+## brutx-vue add
 
 向项目中添加单个组件：
 
 ```bash
-npx brutx@latest add <component...>
+npx brutx-vue@latest add <component...>
 ```
 
 ### 示例
@@ -47,19 +47,19 @@ npx brutx@latest add <component...>
 添加单个组件：
 
 ```bash
-npx brutx@latest add button
+npx brutx-vue@latest add button
 ```
 
 添加多个组件：
 
 ```bash
-npx brutx@latest add button card dialog input
+npx brutx-vue@latest add button card dialog input
 ```
 
 添加所有可用组件：
 
 ```bash
-npx brutx@latest add --all
+npx brutx-vue@latest add --all
 ```
 
 ### 选项
@@ -82,5 +82,5 @@ brutalist-hero, pricing-section, auth-card, dashboard-shell, empty-state, waitli
 添加区块：
 
 ```bash
-npx brutx@latest add --block auth-card
+npx brutx-vue@latest add --block auth-card
 ```

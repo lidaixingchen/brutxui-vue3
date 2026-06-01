@@ -1,9 +1,9 @@
 ---
-title: Command
+title: Command 命令面板
 description: 命令面板组件，支持键盘快捷键、分组过滤和快捷指令执行。
 ---
 
-# Command
+# Command 命令面板
 
 新粗野主义风格的命令面板组件，用于搜索和导航。基于 cmdk，通过 reka-ui 模式构建。
 

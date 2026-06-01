@@ -1,9 +1,9 @@
 ---
-title: Dropdown Menu
+title: Dropdown Menu 下拉菜单
 description: 下拉菜单组件，支持嵌套子菜单、复选菜单项、单选菜单项。
 ---
 
-# Dropdown Menu
+# Dropdown Menu 下拉菜单
 
 新粗野主义风格的下拉菜单，基于 reka-ui 的 DropdownMenu 原语构建，支持菜单项、复选框、单选组、子菜单和快捷键。
 

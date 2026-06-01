@@ -1,9 +1,9 @@
 ---
-title: Separator
+title: Separator 分隔线
 description: 分隔线组件，用于在粗野主义布局中进行模块化视觉分割。
 ---
 
-# Separator
+# Separator 分隔线
 
 新粗野主义风格的视觉分隔线，支持水平和垂直方向。
 

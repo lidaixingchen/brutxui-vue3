@@ -1,9 +1,9 @@
 ---
-title: Alert Dialog
+title: Alert Dialog 提示对话框
 description: 提示对话框组件，用于需要用户明确确认的操作，无障碍适配良好。
 ---
 
-# Alert Dialog
+# Alert Dialog 提示对话框
 
 新粗野主义风格的确认对话框，需要用户交互。基于 reka-ui 的 AlertDialog 原语构建。
 

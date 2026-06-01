@@ -1,9 +1,9 @@
 ---
-title: Radio Group
+title: Radio Group 单选组
 description: 单选按钮组组件，用于在互斥选项中进行单项选择。
 ---
 
-# Radio Group
+# Radio Group 单选组
 
 基于 reka-ui 的 RadioGroup 原语构建的新粗野主义风格单选组，用于单项选择。
 

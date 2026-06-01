@@ -1,9 +1,9 @@
 ---
-title: Avatar
+title: Avatar 头像
 description: 头像组件，支持图片、回退文字以及多种形状和尺寸的粗野主义边框。
 ---
 
-# Avatar
+# Avatar 头像
 
 新粗野主义风格的头像组件，用于显示用户头像图片，支持回退显示。
 

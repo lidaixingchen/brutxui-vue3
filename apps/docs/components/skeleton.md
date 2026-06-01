@@ -1,9 +1,9 @@
 ---
-title: Skeleton
+title: Skeleton 骨架屏
 description: 骨架屏占位组件，支持圆形、文本行、卡片等多种布局预览。
 ---
 
-# Skeleton
+# Skeleton 骨架屏
 
 新粗野主义风格的骨架屏加载组件，提供子组件用于常见加载模式。
 

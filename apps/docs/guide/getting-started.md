@@ -113,6 +113,6 @@ BrutxUI 旨在与 AI 编码助手无缝协作：
 
 - 在你的 Vite + Vue 3 项目中[安装 BrutxUI](/guide/installation-vite)
 - 其他配置方式请参考[手动安装](/guide/installation-manual)
-- [CLI 参考](/guide/cli)了解 `brutx` 命令行工具
+- [CLI 参考](/guide/cli)了解 `brutx-vue` 命令行工具
 - [主题与令牌](/guide/theme)进行深度定制
 - [浏览组件](/components/alert)查看可用组件

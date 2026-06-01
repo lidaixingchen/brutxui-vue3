@@ -1,9 +1,9 @@
 ---
-title: Submit Button
+title: Submit Button 提交按钮
 description: 提交按钮，自带防重复提交逻辑与加载中状态切换。
 ---
 
-# Submit Button
+# Submit Button 提交按钮
 
 新粗野主义风格提交按钮，内置加载和等待状态，专为表单提交设计。
 

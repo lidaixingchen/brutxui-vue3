@@ -1,9 +1,9 @@
 ---
-title: Slider
+title: Slider 滑块
 description: 滑动输入条组件，用于连续数值的区间调节或拖动输入。
 ---
 
-# Slider
+# Slider 滑块
 
 基于 reka-ui 的 Slider 原语构建的新粗野主义风格滑块，支持 v-model。
 

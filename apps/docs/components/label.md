@@ -1,9 +1,9 @@
 ---
-title: Label
+title: Label 标签
 description: 关联表单项的文本标签，支持禁用状态与点击聚焦特性。
 ---
 
-# Label
+# Label 标签
 
 新粗野主义风格的标签组件，用于表单字段，支持变体。
 
