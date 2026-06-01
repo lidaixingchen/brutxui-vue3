@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<MarqueeProps>(), {
 })
 
 const containerClasses = computed(() =>
-    cn(marqueeContainerVariants(), props.class)
+    cn(marqueeContainerVariants({ fade: props.fade || undefined }), props.class)
 )
 
 const trackClasses = computed(() =>
@@ -31,16 +31,9 @@ const trackClasses = computed(() =>
     )
 )
 
-const containerStyle = computed(() => {
-    const style: Record<string, string> = {
-        '--speed': `${props.speed}s`,
-    }
-    if (props.fade) {
-        style['mask-image'] = 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
-        style['-webkit-mask-image'] = 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'
-    }
-    return style
-})
+const containerStyle = computed(() => ({
+    '--speed': `${props.speed}s`,
+}))
 </script>
 
 <template>

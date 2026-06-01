@@ -56,6 +56,34 @@ import { TooltipProvider } from '@/components/ui'
 </template>
 ```
 
+## 触发延迟
+
+通过 `TooltipProvider` 的 `delayDuration` 属性控制从指针进入触发元素到工具提示打开的延迟时间（毫秒）。也可以在单个 `Tooltip` 上通过 `delayDuration` 覆盖全局设置。
+
+```vue
+<TooltipProvider :delay-duration="0">
+    <Tooltip>
+        <TooltipTrigger>
+            <Button>立即显示</Button>
+        </TooltipTrigger>
+        <TooltipContent>
+            <p>无延迟</p>
+        </TooltipContent>
+    </Tooltip>
+</TooltipProvider>
+
+<TooltipProvider :delay-duration="700">
+    <Tooltip :delay-duration="1500">
+        <TooltipTrigger>
+            <Button>长延迟</Button>
+        </TooltipTrigger>
+        <TooltipContent>
+            <p>覆盖为 1500ms</p>
+        </TooltipContent>
+    </Tooltip>
+</TooltipProvider>
+```
+
 ## 子组件
 
 | 组件 | 说明 |
@@ -66,6 +94,23 @@ import { TooltipProvider } from '@/components/ui'
 | `TooltipContent` | 工具提示内容面板 |
 
 ## 属性
+
+### TooltipProvider
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `delayDuration` | `number` | `700` | 指针进入触发元素后到工具提示打开的延迟时间（毫秒） |
+| `skipDelayDuration` | `number` | `300` | 从一个工具提示移到另一个时跳过延迟的时间窗口（毫秒） |
+| `disableHoverableContent` | `boolean` | `false` | 为 `true` 时，指针移入内容区域会关闭工具提示 |
+
+### Tooltip
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `delayDuration` | `number` | `700` | 覆盖 Provider 的延迟时间，针对单个工具提示自定义 |
+| `disableHoverableContent` | `boolean` | `false` | 继承自 Provider，可单独覆盖 |
+| `disableClosingTrigger` | `boolean` | `false` | 为 `true` 时，点击触发元素不会关闭工具提示 |
+| `disabled` | `boolean` | `false` | 为 `true` 时，禁用工具提示 |
 
 ### TooltipContent
 

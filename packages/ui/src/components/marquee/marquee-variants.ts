@@ -5,7 +5,15 @@ export const marqueeContainerVariants = cva(
         'relative flex overflow-hidden w-full',
         'border-y-3 border-brutal bg-brutal-accent text-brutal-fg',
         'font-black uppercase py-4 text-xl tracking-widest select-none',
-    ].join(' ')
+    ].join(' '),
+    {
+        variants: {
+            fade: {
+                true: '[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
+                false: '',
+            },
+        },
+    }
 )
 
 export const marqueeTrackVariants = cva(

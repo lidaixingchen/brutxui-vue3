@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import VCalendar from 'v-calendar'
+import { Calendar as VCalendar } from 'v-calendar'
 import { cn } from '../../lib/utils'
 
 interface CalendarProps {

@@ -1,15 +1,15 @@
 import { cva } from 'class-variance-authority'
 
 export const breadcrumbListVariants = cva(
-    'flex flex-wrap items-center gap-1.5 break-words text-sm font-black text-brutal-fg sm:gap-2.5'
+    'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4'
 )
 
 export const breadcrumbItemVariants = cva(
-    'inline-flex items-center gap-1.5'
+    'list-none inline-flex items-center gap-1.5'
 )
 
 export const breadcrumbLinkVariants = cva(
-    'transition-colors hover:text-brutal-primary hover:underline cursor-pointer'
+    'font-semibold transition-colors hover:text-brutal-primary hover:underline cursor-pointer'
 )
 
 export const breadcrumbPageVariants = cva(
@@ -17,7 +17,7 @@ export const breadcrumbPageVariants = cva(
 )
 
 export const breadcrumbSeparatorVariants = cva(
-    '[&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-brutal-fg/60'
+    'list-none [&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-brutal-fg/60'
 )
 
 export const breadcrumbEllipsisVariants = cva(

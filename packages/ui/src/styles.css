@@ -30,6 +30,18 @@
         -moz-osx-font-smoothing: grayscale;
     }
 
+    /* Breadcrumb list reset to prevent style pollution from external markdown renderers (like VitePress) */
+    nav[aria-label="breadcrumb"] ol,
+    nav[aria-label="breadcrumb"] li {
+        list-style: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    nav[aria-label="breadcrumb"] li::before,
+    nav[aria-label="breadcrumb"] li::after {
+        content: none !important;
+    }
+
     :root {
         --brutal-border-width: 3px;
         --brutal-border-color: #000000;
