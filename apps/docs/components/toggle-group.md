@@ -1,3 +1,8 @@
+---
+title: Toggle Group
+description: 切换按钮组，支持单选或多选组合，适合控制视图或排版。
+---
+
 # Toggle Group
 
 基于 reka-ui 的 ToggleGroup 原语构建的新粗野主义风格切换按钮组，支持单选或多选。
@@ -19,8 +24,8 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import ToggleGroup from '@/components/ui/ToggleGroup.vue'
-import ToggleGroupItem from '@/components/ui/ToggleGroupItem.vue'
+import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue'
+import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue'
 import { Bold, Italic, Underline } from 'lucide-vue-next'
 
 const selected = ref('bold')
@@ -46,8 +51,8 @@ const selected = ref('bold')
 ```vue
 <script setup>
 import { ref } from 'vue'
-import ToggleGroup from '@/components/ui/ToggleGroup.vue'
-import ToggleGroupItem from '@/components/ui/ToggleGroupItem.vue'
+import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue'
+import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue'
 import { Bold, Italic, Underline } from 'lucide-vue-next'
 
 const selected = ref(['bold'])

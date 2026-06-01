@@ -1,3 +1,8 @@
+---
+title: Waitlist Page
+description: 候补名单收集页模板，用于新品发布的邮箱预约收集。
+---
+
 # Waitlist Page
 
 新粗野主义风格的候补注册页面，包含邮箱输入、CTA 按钮和社交证明指标。
@@ -12,7 +17,7 @@
     <h1 class="text-3xl font-black tracking-tight">Join the BrutxUI Waitlist Club</h1>
     <form class="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
       <input class="flex-1 h-11 px-4 py-2 text-base border-3 border-brutal bg-brutal-bg text-brutal-fg font-medium focus:outline-none focus:shadow-brutal" placeholder="you@example.com" />
-      <button type="submit" class="px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black tracking-wide active:translate-y-[2px] active:shadow-none transition-all">Secure Priority Access</button>
+      <button type="submit" class="px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black tracking-wide active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">Secure Priority Access</button>
     </form>
     <div class="mt-8 flex items-center justify-center gap-6 text-sm font-bold text-brutal-muted-foreground">
       <div class="flex items-center gap-1">
@@ -36,7 +41,7 @@ npx brutx@latest add --block waitlist-page
 
 ```vue
 <script setup>
-import WaitlistPage from '@/components/ui/WaitlistPage.vue'
+import WaitlistPage from '@/components/ui/waitlist-page/WaitlistPage.vue'
 
 function handleSubmit(email) {
     console.log('Waitlist signup:', email)

@@ -151,15 +151,20 @@ const installCommand = computed(() => {
 const importStatement = computed(() => {
     const names = resolvedImports.value
     if (names.length === 0) return ''
-    const pascalName = props.componentName
-        .split('-')
-        .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
-        .join('')
-    if (names.length === 1) {
-        return `import { ${names[0]} } from '@/components/ui/${props.componentName}.vue'`
-    }
-    const imports = names.join(', ')
-    return `import { ${imports} } from '@/components/ui/${props.componentName}'`
+    const compName = props.componentName
+
+    return names
+        .map((name) => {
+            if (name === 'useToast') {
+                return "import { useToast } from '@/composables/useToast'"
+            }
+            if (name.endsWith('Variants') || name.endsWith('Key')) {
+                const file = name.endsWith('Key') ? `${compName}-key` : `${compName}-variants`
+                return `import { ${name} } from '@/components/ui/${compName}/${file}'`
+            }
+            return `import ${name} from '@/components/ui/${compName}/${name}.vue'`
+        })
+        .join('\n')
 })
 
 const githubUrl = computed(
@@ -167,24 +172,20 @@ const githubUrl = computed(
         `https://github.com/lidaixingchen/brutxui-vue3/tree/main/packages/ui/src/components/${props.componentName}`,
 )
 
-const tabClass = (tab: InstallTab) =>
-    computed(() =>
-        cn(
-            'relative px-4 py-2 text-sm font-black uppercase tracking-wider border-3 border-brutal transition-all duration-150',
-            activeTab.value === tab
-                ? 'bg-brutal-primary text-black shadow-brutal before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-brutal-accent'
-                : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
-        ),
+const getTabClass = (tab: InstallTab) =>
+    cn(
+        'relative px-4 py-2 text-sm font-black uppercase tracking-wider border-3 border-brutal transition-all duration-150',
+        activeTab.value === tab
+            ? 'bg-brutal-primary text-black shadow-brutal before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-brutal-accent'
+            : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
     )
 
-const pmTabClass = (pm: PackageManager) =>
-    computed(() =>
-        cn(
-            'px-3 py-1.5 text-xs font-black uppercase tracking-wider border-2 border-brutal transition-all duration-150',
-            activePackageManager.value === pm
-                ? 'bg-brutal-secondary text-black shadow-brutal-sm'
-                : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
-        ),
+const getPmTabClass = (pm: PackageManager) =>
+    cn(
+        'px-3 py-1.5 text-xs font-black uppercase tracking-wider border-2 border-brutal transition-all duration-150',
+        activePackageManager.value === pm
+            ? 'bg-brutal-secondary text-black shadow-brutal-sm'
+            : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
     )
 </script>
 
@@ -193,14 +194,14 @@ const pmTabClass = (pm: PackageManager) =>
         <div class="flex border-b-3 border-brutal">
             <button
                 type="button"
-                :class="tabClass('cli').value"
+                :class="getTabClass('cli')"
                 @click="activeTab = 'cli'"
             >
                 CLI
             </button>
             <button
                 type="button"
-                :class="tabClass('manual').value"
+                :class="getTabClass('manual')"
                 @click="activeTab = 'manual'"
             >
                 Manual
@@ -213,7 +214,7 @@ const pmTabClass = (pm: PackageManager) =>
                     v-for="pm in packageManagers"
                     :key="pm.key"
                     type="button"
-                    :class="pmTabClass(pm.key).value"
+                    :class="getPmTabClass(pm.key)"
                     @click="activePackageManager = pm.key"
                 >
                     {{ pm.label }}
@@ -225,7 +226,7 @@ const pmTabClass = (pm: PackageManager) =>
                     <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ cliCommand }}</code></pre>
                     <CopyButton
                         :text="cliCommand"
-                        class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-[2px_2px_0px_0px_var(--brutal-border-color)]"
+                        class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-brutal-sm"
                     />
                 </div>
             </div>
@@ -239,7 +240,7 @@ const pmTabClass = (pm: PackageManager) =>
                         <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ installCommand }}</code></pre>
                         <CopyButton
                             :text="installCommand"
-                            class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-[2px_2px_0px_0px_var(--brutal-border-color)]"
+                            class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-brutal-sm"
                         />
                     </div>
                 </div>
@@ -263,7 +264,7 @@ const pmTabClass = (pm: PackageManager) =>
                     <h4 class="text-sm font-bold mb-2">
                         {{ resolvedDeps.length > 0 ? '3' : '2' }}. Save to your project
                     </h4>
-                    <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>src/components/ui/{{ componentName }}.vue</code></pre>
+                    <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>src/components/ui/{{ componentName }}/</code></pre>
                 </div>
 
                 <div v-if="resolvedImports.length > 0">
@@ -274,7 +275,7 @@ const pmTabClass = (pm: PackageManager) =>
                         <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ importStatement }}</code></pre>
                         <CopyButton
                             :text="importStatement"
-                            class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-[2px_2px_0px_0px_var(--brutal-border-color)]"
+                            class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-brutal-sm"
                         />
                     </div>
                 </div>

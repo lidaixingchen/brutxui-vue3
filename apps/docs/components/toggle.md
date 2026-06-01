@@ -1,3 +1,8 @@
+---
+title: Toggle
+description: 独立切换按钮，用于表示启用/关闭或选中/未选中状态。
+---
+
 # Toggle
 
 基于 reka-ui 的 Toggle 原语构建的新粗野主义风格切换按钮，支持按下状态。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Toggle from '@/components/ui/Toggle.vue'
+import Toggle from '@/components/ui/toggle/Toggle.vue'
 import { Bold, Italic, Underline } from 'lucide-vue-next'
 
 const bold = ref(false)

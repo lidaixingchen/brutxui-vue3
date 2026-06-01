@@ -1,3 +1,8 @@
+---
+title: Calendar
+description: 日历组件，支持日期选择、标记，结合新粗野主义边框与硬质阴影设计。
+---
+
 # Calendar
 
 新粗野主义风格的日历组件，基于 v-calendar 构建，支持单日期和日期范围选择。
@@ -27,7 +32,7 @@ pnpm add v-calendar
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Calendar from '@/components/ui/Calendar.vue'
+import Calendar from '@/components/ui/calendar/Calendar.vue'
 
 const date = ref(null)
 </script>
@@ -42,7 +47,7 @@ const date = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Calendar from '@/components/ui/Calendar.vue'
+import Calendar from '@/components/ui/calendar/Calendar.vue'
 
 const dateRange = ref(null)
 </script>

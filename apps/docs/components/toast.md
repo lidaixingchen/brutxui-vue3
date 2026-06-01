@@ -1,3 +1,8 @@
+---
+title: Toast
+description: 全局通知气泡组件，支持成功、失败、信息等多种类型的通知分发。
+---
+
 # Toast
 
 新粗野主义风格通知提示系统，提供 `useToast` 组合式函数、5 种变体和 `ToastContainer` 用于渲染。
@@ -20,7 +25,7 @@
 
 ```vue
 <script setup>
-import ToastContainer from '@/components/ui/ToastContainer.vue'
+import ToastContainer from '@/components/ui/toast/ToastContainer.vue'
 </script>
 
 <template>

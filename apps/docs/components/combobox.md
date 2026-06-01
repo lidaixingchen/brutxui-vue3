@@ -1,3 +1,8 @@
+---
+title: Combobox
+description: 组合框（下拉搜索选择）组件，支持多选、单选，支持大数据量过滤。
+---
+
 # Combobox
 
 新粗野主义风格的可搜索选择组件。提供单选（`Combobox`）和多选（`ComboboxMulti`）两种模式。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Combobox from '@/components/ui/Combobox.vue'
+import Combobox from '@/components/ui/combobox/Combobox.vue'
 
 const selected = ref(undefined)
 
@@ -44,7 +49,7 @@ const options = [
 ```vue
 <script setup>
 import { ref } from 'vue'
-import ComboboxMulti from '@/components/ui/ComboboxMulti.vue'
+import ComboboxMulti from '@/components/ui/combobox/ComboboxMulti.vue'
 
 const selected = ref([])
 

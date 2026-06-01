@@ -1,3 +1,8 @@
+---
+title: Table
+description: 数据表格，拥有高对比度表头、斑马纹行和硬边缘网格线。
+---
+
 # Table
 
 新粗野主义风格数据表格，包含 8 个可组合子组件，用于结构化表格数据展示。
@@ -16,14 +21,14 @@
 
 ```vue
 <script setup>
-import Table from '@/components/ui/Table.vue'
-import TableHeader from '@/components/ui/TableHeader.vue'
-import TableBody from '@/components/ui/TableBody.vue'
-import TableHead from '@/components/ui/TableHead.vue'
-import TableRow from '@/components/ui/TableRow.vue'
-import TableCell from '@/components/ui/TableCell.vue'
-import TableCaption from '@/components/ui/TableCaption.vue'
-import TableFooter from '@/components/ui/TableFooter.vue'
+import Table from '@/components/ui/table/Table.vue'
+import TableHeader from '@/components/ui/table/TableHeader.vue'
+import TableBody from '@/components/ui/table/TableBody.vue'
+import TableHead from '@/components/ui/table/TableHead.vue'
+import TableRow from '@/components/ui/table/TableRow.vue'
+import TableCell from '@/components/ui/table/TableCell.vue'
+import TableCaption from '@/components/ui/table/TableCaption.vue'
+import TableFooter from '@/components/ui/table/TableFooter.vue'
 </script>
 
 <template>

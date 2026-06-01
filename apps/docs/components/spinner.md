@@ -1,3 +1,8 @@
+---
+title: Spinner
+description: 加载指示器组件，提供旋转点、旋转线等多种经典粗野主义加载动画。
+---
+
 # Spinner
 
 新粗野主义风格加载旋转器，提供 4 种视觉变体：标准、方块、圆点和条形。
@@ -18,7 +23,7 @@
 
 ```vue
 <script setup>
-import Spinner from '@/components/ui/Spinner.vue'
+import Spinner from '@/components/ui/spinner/Spinner.vue'
 </script>
 
 <template>
@@ -30,7 +35,7 @@ import Spinner from '@/components/ui/Spinner.vue'
 
 ```vue
 <script setup>
-import BlockSpinner from '@/components/ui/BlockSpinner.vue'
+import BlockSpinner from '@/components/ui/spinner/BlockSpinner.vue'
 </script>
 
 <template>
@@ -42,7 +47,7 @@ import BlockSpinner from '@/components/ui/BlockSpinner.vue'
 
 ```vue
 <script setup>
-import DotsSpinner from '@/components/ui/DotsSpinner.vue'
+import DotsSpinner from '@/components/ui/spinner/DotsSpinner.vue'
 </script>
 
 <template>
@@ -54,7 +59,7 @@ import DotsSpinner from '@/components/ui/DotsSpinner.vue'
 
 ```vue
 <script setup>
-import BarsSpinner from '@/components/ui/BarsSpinner.vue'
+import BarsSpinner from '@/components/ui/spinner/BarsSpinner.vue'
 </script>
 
 <template>

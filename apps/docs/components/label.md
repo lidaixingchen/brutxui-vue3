@@ -1,3 +1,8 @@
+---
+title: Label
+description: 关联表单项的文本标签，支持禁用状态与点击聚焦特性。
+---
+
 # Label
 
 新粗野主义风格的标签组件，用于表单字段，支持变体。
@@ -16,8 +21,8 @@
 
 ```vue
 <script setup>
-import Label from '@/components/ui/Label.vue'
-import Input from '@/components/ui/Input.vue'
+import Label from '@/components/ui/label/Label.vue'
+import Input from '@/components/ui/input/Input.vue'
 </script>
 
 <template>

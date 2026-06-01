@@ -1,3 +1,8 @@
+---
+title: Saas Pricing
+description: 完整的 SaaS 定价页面模板，包含周期切换和方案功能清单对比。
+---
+
 # SaaS 定价
 
 新粗野主义风格的 SaaS 定价区块，支持月付/年付切换和功能对比。
@@ -16,7 +21,7 @@
 
 ```vue
 <script setup>
-import SaaSPricing from '@/components/ui/SaaSPricing.vue'
+import SaaSPricing from '@/components/ui/saas-pricing/SaaSPricing.vue'
 
 const plans = [
     {

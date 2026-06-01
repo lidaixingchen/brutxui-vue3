@@ -26,7 +26,7 @@ const wrapperClass = computed(() => cn('relative group codeblock-wrapper', props
 const copyClass = computed(() =>
     cn(
         'absolute top-2 right-2 z-10 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100',
-        'border-2 border-brutal shadow-[2px_2px_0px_0px_var(--brutal-border-color)]',
+        'border-2 border-brutal shadow-brutal-sm',
         props.copyButtonClassName,
     ),
 )

@@ -29,8 +29,8 @@ const buttonClass = computed(() =>
         'inline-flex items-center justify-center border-2 border-brutal font-black text-xs',
         'transition-all duration-150',
         copied.value
-            ? 'bg-brutal-accent text-black shadow-[2px_2px_0px_0px_var(--brutal-border-color)]'
-            : 'bg-brutal-secondary text-black shadow-[2px_2px_0px_0px_var(--brutal-border-color)] hover:bg-brutal-accent hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_var(--brutal-border-color)] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+            ? 'bg-brutal-accent text-black shadow-brutal-sm'
+            : 'bg-brutal-secondary text-black shadow-brutal-sm hover:bg-brutal-accent hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         props.class,
     ),
 )

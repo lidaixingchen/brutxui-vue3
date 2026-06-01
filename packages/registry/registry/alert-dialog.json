@@ -7,18 +7,16 @@
   "dependencies": [
     "reka-ui"
   ],
-  "registryDependencies": [
-    "button"
-  ],
+  "registryDependencies": [],
   "files": [
     {
       "path": "components/ui/alert-dialog/AlertDialogAction.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AlertDialogAction as AlertDialogActionPrimitive } from 'reka-ui'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { buttonVariants } from '@/components/ui/button/button-variants'\n\ntype ButtonVariantProps = VariantProps<typeof buttonVariants>\n\ninterface AlertDialogActionProps {\n    variant?: NonNullable<ButtonVariantProps['variant']>\n    class?: string\n}\n\nconst props = withDefaults(defineProps<AlertDialogActionProps>(), {\n    variant: 'primary',\n    class: '',\n})\n\nconst classes = computed(() =>\n    cn(buttonVariants({ variant: props.variant }), props.class)\n)\n</script>\n\n<template>\n    <AlertDialogActionPrimitive :class=\"classes\">\n        <slot />\n    </AlertDialogActionPrimitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AlertDialogAction as AlertDialogActionPrimitive } from 'reka-ui'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { buttonVariants } from '../button/button-variants'\n\ntype ButtonVariantProps = VariantProps<typeof buttonVariants>\n\ninterface AlertDialogActionProps {\n    variant?: NonNullable<ButtonVariantProps['variant']>\n    class?: string\n}\n\nconst props = withDefaults(defineProps<AlertDialogActionProps>(), {\n    variant: 'primary',\n    class: '',\n})\n\nconst classes = computed(() =>\n    cn(buttonVariants({ variant: props.variant }), props.class)\n)\n</script>\n\n<template>\n    <AlertDialogActionPrimitive :class=\"classes\">\n        <slot />\n    </AlertDialogActionPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {
       "path": "components/ui/alert-dialog/AlertDialogCancel.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AlertDialogCancel as AlertDialogCancelPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { buttonVariants } from '@/components/ui/button/button-variants'\n\ninterface AlertDialogCancelProps {\n    class?: string\n}\n\nconst props = defineProps<AlertDialogCancelProps>()\n\nconst classes = computed(() =>\n    cn(buttonVariants({ variant: 'outline' }), props.class)\n)\n</script>\n\n<template>\n    <AlertDialogCancelPrimitive :class=\"classes\">\n        <slot />\n    </AlertDialogCancelPrimitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AlertDialogCancel as AlertDialogCancelPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { buttonVariants } from '../button/button-variants'\n\ninterface AlertDialogCancelProps {\n    class?: string\n}\n\nconst props = defineProps<AlertDialogCancelProps>()\n\nconst classes = computed(() =>\n    cn(buttonVariants({ variant: 'outline' }), props.class)\n)\n</script>\n\n<template>\n    <AlertDialogCancelPrimitive :class=\"classes\">\n        <slot />\n    </AlertDialogCancelPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {

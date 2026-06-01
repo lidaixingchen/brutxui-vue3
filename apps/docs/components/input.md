@@ -1,3 +1,8 @@
+---
+title: Input
+description: 单行文本输入框，带新粗野主义高亮外边框和自定义占位符。
+---
+
 # Input
 
 新粗野主义风格的文本输入框，支持变体、尺寸和 v-model 双向绑定。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Input from '@/components/ui/Input.vue'
+import Input from '@/components/ui/input/Input.vue'
 
 const value = ref('')
 </script>
@@ -48,8 +53,8 @@ const value = ref('')
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Input from '@/components/ui/Input.vue'
-import Label from '@/components/ui/Label.vue'
+import Input from '@/components/ui/input/Input.vue'
+import Label from '@/components/ui/label/Label.vue'
 
 const email = ref('')
 </script>
@@ -66,7 +71,7 @@ const email = ref('')
 
 ```vue
 <script setup>
-import Input from '@/components/ui/Input.vue'
+import Input from '@/components/ui/input/Input.vue'
 </script>
 
 <template>

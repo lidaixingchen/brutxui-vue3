@@ -1,3 +1,8 @@
+---
+title: Tooltip
+description: 工具提示浮层组件，悬停或聚焦时快速展示辅助文本。
+---
+
 # Tooltip
 
 基于 reka-ui 的 Tooltip 原语构建的新粗野主义风格工具提示，悬停时显示信息文字。
@@ -17,8 +22,8 @@
 ```vue
 <script setup>
 import { TooltipProvider, Tooltip, TooltipTrigger } from '@/components/ui'
-import TooltipContent from '@/components/ui/TooltipContent.vue'
-import Button from '@/components/ui/Button.vue'
+import TooltipContent from '@/components/ui/tooltip/TooltipContent.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>

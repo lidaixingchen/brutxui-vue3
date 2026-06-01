@@ -1,3 +1,8 @@
+---
+title: Radio Group
+description: 单选按钮组组件，用于在互斥选项中进行单项选择。
+---
+
 # Radio Group
 
 基于 reka-ui 的 RadioGroup 原语构建的新粗野主义风格单选组，用于单项选择。
@@ -17,9 +22,9 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import RadioGroup from '@/components/ui/RadioGroup.vue'
-import RadioGroupItem from '@/components/ui/RadioGroupItem.vue'
-import Label from '@/components/ui/Label.vue'
+import RadioGroup from '@/components/ui/radio-group/RadioGroup.vue'
+import RadioGroupItem from '@/components/ui/radio-group/RadioGroupItem.vue'
+import Label from '@/components/ui/label/Label.vue'
 
 const selected = ref('comfortable')
 </script>

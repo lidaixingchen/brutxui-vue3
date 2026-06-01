@@ -1,3 +1,8 @@
+---
+title: Dropdown Menu
+description: 下拉菜单组件，支持嵌套子菜单、复选菜单项、单选菜单项。
+---
+
 # Dropdown Menu
 
 新粗野主义风格的下拉菜单，基于 reka-ui 的 DropdownMenu 原语构建，支持菜单项、复选框、单选组、子菜单和快捷键。
@@ -25,7 +30,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuShortcut,
 } from '@/components/ui'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>
@@ -62,7 +67,7 @@ import {
     DropdownMenuContent,
     DropdownMenuCheckboxItem,
 } from '@/components/ui'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 
 const showStatusBar = ref(true)
 const showActivityBar = ref(false)
@@ -97,7 +102,7 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuRadioGroup,
 } from '@/components/ui'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 
 const position = ref('bottom')
 </script>

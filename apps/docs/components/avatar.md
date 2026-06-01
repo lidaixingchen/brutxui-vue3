@@ -1,3 +1,8 @@
+---
+title: Avatar
+description: 头像组件，支持图片、回退文字以及多种形状和尺寸的粗野主义边框。
+---
+
 # Avatar
 
 新粗野主义风格的头像组件，用于显示用户头像图片，支持回退显示。
@@ -16,9 +21,9 @@
 
 ```vue
 <script setup>
-import Avatar from '@/components/ui/Avatar.vue'
-import AvatarImage from '@/components/ui/AvatarImage.vue'
-import AvatarFallback from '@/components/ui/AvatarFallback.vue'
+import Avatar from '@/components/ui/avatar/Avatar.vue'
+import AvatarImage from '@/components/ui/avatar/AvatarImage.vue'
+import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
 </script>
 
 <template>
@@ -47,8 +52,8 @@ import AvatarFallback from '@/components/ui/AvatarFallback.vue'
 
 ```vue
 <script setup>
-import Avatar from '@/components/ui/Avatar.vue'
-import AvatarFallback from '@/components/ui/AvatarFallback.vue'
+import Avatar from '@/components/ui/avatar/Avatar.vue'
+import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
 </script>
 
 <template>
@@ -64,9 +69,9 @@ import AvatarFallback from '@/components/ui/AvatarFallback.vue'
 
 ```vue
 <script setup>
-import Avatar from '@/components/ui/Avatar.vue'
-import AvatarImage from '@/components/ui/AvatarImage.vue'
-import AvatarFallback from '@/components/ui/AvatarFallback.vue'
+import Avatar from '@/components/ui/avatar/Avatar.vue'
+import AvatarImage from '@/components/ui/avatar/AvatarImage.vue'
+import AvatarFallback from '@/components/ui/avatar/AvatarFallback.vue'
 </script>
 
 <template>

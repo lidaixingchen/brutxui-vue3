@@ -1,3 +1,8 @@
+---
+title: Slider
+description: 滑动输入条组件，用于连续数值的区间调节或拖动输入。
+---
+
 # Slider
 
 基于 reka-ui 的 Slider 原语构建的新粗野主义风格滑块，支持 v-model。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Slider from '@/components/ui/Slider.vue'
+import Slider from '@/components/ui/slider/Slider.vue'
 
 const value = ref([50])
 </script>
@@ -32,7 +37,7 @@ const value = ref([50])
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Slider from '@/components/ui/Slider.vue'
+import Slider from '@/components/ui/slider/Slider.vue'
 
 const range = ref([25, 75])
 </script>
@@ -47,7 +52,7 @@ const range = ref([25, 75])
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Slider from '@/components/ui/Slider.vue'
+import Slider from '@/components/ui/slider/Slider.vue'
 
 const value = ref([500])
 </script>
@@ -62,7 +67,7 @@ const value = ref([500])
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Slider from '@/components/ui/Slider.vue'
+import Slider from '@/components/ui/slider/Slider.vue'
 
 const value = ref([50])
 </script>

@@ -1,3 +1,8 @@
+---
+title: Form
+description: 完整的表单字段包装器，集成了 Vee-Validate 与 Zod 模式校验支持。
+---
+
 # Form
 
 新粗野主义风格的表单系统，基于 vee-validate 构建，提供可组合的子组件用于结构化表单布局。
@@ -24,15 +29,15 @@ pnpm add vee-validate @vee-validate/zod zod
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import Form from '@/components/ui/Form.vue'
-import FormField from '@/components/ui/FormField.vue'
-import FormItem from '@/components/ui/FormItem.vue'
-import FormLabel from '@/components/ui/FormLabel.vue'
-import FormControl from '@/components/ui/FormControl.vue'
-import FormDescription from '@/components/ui/FormDescription.vue'
-import FormMessage from '@/components/ui/FormMessage.vue'
-import Input from '@/components/ui/Input.vue'
-import SubmitButton from '@/components/ui/SubmitButton.vue'
+import Form from '@/components/ui/form/Form.vue'
+import FormField from '@/components/ui/form/FormField.vue'
+import FormItem from '@/components/ui/form/FormItem.vue'
+import FormLabel from '@/components/ui/form/FormLabel.vue'
+import FormControl from '@/components/ui/form/FormControl.vue'
+import FormDescription from '@/components/ui/form/FormDescription.vue'
+import FormMessage from '@/components/ui/form/FormMessage.vue'
+import Input from '@/components/ui/input/Input.vue'
+import SubmitButton from '@/components/ui/submit-button/SubmitButton.vue'
 
 const schema = toTypedSchema(z.object({
     username: z.string().min(2).max(50),

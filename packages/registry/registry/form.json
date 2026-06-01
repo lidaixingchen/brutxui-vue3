@@ -10,9 +10,7 @@
     "zod",
     "reka-ui"
   ],
-  "registryDependencies": [
-    "label"
-  ],
+  "registryDependencies": [],
   "files": [
     {
       "path": "components/ui/form/Form.vue",
@@ -41,7 +39,7 @@
     },
     {
       "path": "components/ui/form/FormLabel.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\nimport LabelRoot from '@/components/ui/label/Label.vue'\nimport { formFieldKey, formItemKey } from '@/components/ui/form/form-context'\n\ninterface FormLabelProps {\n    class?: string\n}\n\nconst props = defineProps<FormLabelProps>()\n\nconst fieldContext = inject(formFieldKey, { name: '', error: computed(() => undefined) })\nconst itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })\n\nconst classes = computed(() =>\n    cn(\n        fieldContext.error.value && 'text-brutal-destructive',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <LabelRoot :class=\"classes\" :for=\"itemContext.formItemId\">\n        <slot />\n    </LabelRoot>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\nimport LabelRoot from '../label/Label.vue'\nimport { formFieldKey, formItemKey } from '@/components/ui/form/form-context'\n\ninterface FormLabelProps {\n    class?: string\n}\n\nconst props = defineProps<FormLabelProps>()\n\nconst fieldContext = inject(formFieldKey, { name: '', error: computed(() => undefined) })\nconst itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })\n\nconst classes = computed(() =>\n    cn(\n        fieldContext.error.value && 'text-brutal-destructive',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <LabelRoot :class=\"classes\" :for=\"itemContext.formItemId\">\n        <slot />\n    </LabelRoot>\n</template>\n",
       "type": "registry:ui"
     },
     {

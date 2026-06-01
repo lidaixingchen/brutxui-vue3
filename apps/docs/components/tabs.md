@@ -1,3 +1,8 @@
+---
+title: Tabs
+description: 选项卡组件，提供按压切换动画和极高辨识度的激活状态边框。
+---
+
 # Tabs
 
 基于 reka-ui 的 Tabs 原语构建的新粗野主义风格标签页导航组件。
@@ -17,9 +22,9 @@
 ```vue
 <script setup>
 import { Tabs } from '@/components/ui'
-import TabsList from '@/components/ui/TabsList.vue'
-import TabsTrigger from '@/components/ui/TabsTrigger.vue'
-import TabsContent from '@/components/ui/TabsContent.vue'
+import TabsList from '@/components/ui/tabs/TabsList.vue'
+import TabsTrigger from '@/components/ui/tabs/TabsTrigger.vue'
+import TabsContent from '@/components/ui/tabs/TabsContent.vue'
 </script>
 
 <template>

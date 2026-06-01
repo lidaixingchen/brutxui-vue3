@@ -1,3 +1,8 @@
+---
+title: Skeleton
+description: 骨架屏占位组件，支持圆形、文本行、卡片等多种布局预览。
+---
+
 # Skeleton
 
 新粗野主义风格的骨架屏加载组件，提供子组件用于常见加载模式。
@@ -18,7 +23,7 @@
 
 ```vue
 <script setup>
-import Skeleton from '@/components/ui/Skeleton.vue'
+import Skeleton from '@/components/ui/skeleton/Skeleton.vue'
 </script>
 
 <template>
@@ -30,7 +35,7 @@ import Skeleton from '@/components/ui/Skeleton.vue'
 
 ```vue
 <script setup>
-import SkeletonText from '@/components/ui/SkeletonText.vue'
+import SkeletonText from '@/components/ui/skeleton/SkeletonText.vue'
 </script>
 
 <template>
@@ -42,7 +47,7 @@ import SkeletonText from '@/components/ui/SkeletonText.vue'
 
 ```vue
 <script setup>
-import SkeletonAvatar from '@/components/ui/SkeletonAvatar.vue'
+import SkeletonAvatar from '@/components/ui/skeleton/SkeletonAvatar.vue'
 </script>
 
 <template>
@@ -54,7 +59,7 @@ import SkeletonAvatar from '@/components/ui/SkeletonAvatar.vue'
 
 ```vue
 <script setup>
-import SkeletonCard from '@/components/ui/SkeletonCard.vue'
+import SkeletonCard from '@/components/ui/skeleton/SkeletonCard.vue'
 </script>
 
 <template>
@@ -66,7 +71,7 @@ import SkeletonCard from '@/components/ui/SkeletonCard.vue'
 
 ```vue
 <script setup>
-import SkeletonTable from '@/components/ui/SkeletonTable.vue'
+import SkeletonTable from '@/components/ui/skeleton/SkeletonTable.vue'
 </script>
 
 <template>

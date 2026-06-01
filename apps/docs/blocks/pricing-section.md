@@ -1,3 +1,8 @@
+---
+title: Pricing Section
+description: 简化版定价对比区块，支持多列方案并排和热门方案强调。
+---
+
 # Pricing Section
 
 新粗野主义风格的定价区段，包含功能列表和热门方案高亮。是 SaaSPricing 的简化替代方案，无需计费切换。
@@ -34,7 +39,7 @@ npx brutx@latest add --block pricing-section
 
 ```vue
 <script setup>
-import PricingSection from '@/components/ui/PricingSection.vue'
+import PricingSection from '@/components/ui/pricing-section/PricingSection.vue'
 
 const plans = [
     {

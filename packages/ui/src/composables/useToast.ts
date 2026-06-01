@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import type { VariantProps } from 'class-variance-authority'
-import { toastVariants } from '../components/toast-variants'
+import { toastVariants } from '../components/toast/toast-variants'
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
 

@@ -1,3 +1,8 @@
+---
+title: Dashboard Shell
+description: 仪表盘外壳框架，提供左侧边栏、顶部导航和响应式内容区域。
+---
+
 # Dashboard Shell
 
 新粗野主义风格的仪表盘布局，包含可折叠侧边栏、顶部栏和主内容区域。
@@ -34,7 +39,7 @@ npx brutx@latest add --block dashboard-shell
 
 ```vue
 <script setup>
-import DashboardShell from '@/components/ui/DashboardShell.vue'
+import DashboardShell from '@/components/ui/dashboard-shell/DashboardShell.vue'
 
 function handleSignOut() {
     console.log('Sign out clicked')

@@ -1,3 +1,8 @@
+---
+title: Empty State
+description: 数据空状态占位区块，带有大图标、副标题和主操作按钮。
+---
+
 # Empty State
 
 新粗野主义风格的空状态占位符，包含装饰性图标、标题、描述和操作按钮。
@@ -13,8 +18,8 @@
       </div>
     </div>
     <h3 class="text-xl font-black tracking-tight">No active deployments found</h3>
-    <p class="mt-2 text-sm text-gray-500 font-medium text-center max-w-md">Get started by deploying your first application.</p>
-    <button class="mt-6 px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black text-sm active:translate-y-[2px] active:shadow-none transition-all">Deploy New App</button>
+    <p class="mt-2 text-sm text-brutal-muted-foreground font-medium text-center max-w-md">Get started by deploying your first application.</p>
+    <button class="mt-6 px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black text-sm active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">Deploy New App</button>
   </div>
 </ComponentPreview>
 
@@ -28,7 +33,7 @@ npx brutx@latest add --block empty-state
 
 ```vue
 <script setup>
-import EmptyState from '@/components/ui/EmptyState.vue'
+import EmptyState from '@/components/ui/empty-state/EmptyState.vue'
 import { Server } from 'lucide-vue-next'
 
 function handleAction() {
@@ -51,7 +56,7 @@ function handleAction() {
 
 ```vue
 <script setup>
-import EmptyState from '@/components/ui/EmptyState.vue'
+import EmptyState from '@/components/ui/empty-state/EmptyState.vue'
 import { Inbox } from 'lucide-vue-next'
 </script>
 

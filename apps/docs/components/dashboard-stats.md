@@ -1,3 +1,8 @@
+---
+title: Dashboard Stats
+description: 仪表盘统计卡片，以大号数字、对比标签展示核心业务指标数据。
+---
+
 # Dashboard Stats
 
 新粗野主义风格的仪表盘统计块，用于展示关键指标，支持趋势、图标和进度条。
@@ -16,7 +21,7 @@
 
 ```vue
 <script setup>
-import DashboardStats from '@/components/ui/DashboardStats.vue'
+import DashboardStats from '@/components/ui/dashboard-stats/DashboardStats.vue'
 import { DollarSign, Users, Activity } from 'lucide-vue-next'
 
 const stats = [

@@ -1,3 +1,8 @@
+---
+title: Textarea
+description: 多行文本输入域，支持自适应高度或固定行高，硬边框外观。
+---
+
 # Textarea
 
 新粗野主义风格多行文本输入框，支持变体、尺寸和 v-model。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Textarea from '@/components/ui/Textarea.vue'
+import Textarea from '@/components/ui/textarea/Textarea.vue'
 
 const message = ref('')
 </script>
@@ -48,8 +53,8 @@ const message = ref('')
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Textarea from '@/components/ui/Textarea.vue'
-import Label from '@/components/ui/Label.vue'
+import Textarea from '@/components/ui/textarea/Textarea.vue'
+import Label from '@/components/ui/label/Label.vue'
 
 const bio = ref('')
 </script>
@@ -66,7 +71,7 @@ const bio = ref('')
 
 ```vue
 <script setup>
-import Textarea from '@/components/ui/Textarea.vue'
+import Textarea from '@/components/ui/textarea/Textarea.vue'
 </script>
 
 <template>
@@ -97,7 +102,7 @@ Textarea 默认设置了 `resize-none`。如需允许调整大小，可通过自
 
 ```vue
 <script setup>
-import Textarea from '@/components/ui/Textarea.vue'
+import Textarea from '@/components/ui/textarea/Textarea.vue'
 </script>
 
 <template>

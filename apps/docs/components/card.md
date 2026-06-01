@@ -1,3 +1,8 @@
+---
+title: Card
+description: 卡片容器组件，支持多种内边距与可组合的头部、标题、描述和底部块。
+---
+
 # Card
 
 新粗野主义风格的卡片容器，支持 6 种变体和可组合的子组件，用于结构化内容展示。
@@ -16,13 +21,13 @@
 
 ```vue
 <script setup>
-import Card from '@/components/ui/Card.vue'
-import CardHeader from '@/components/ui/CardHeader.vue'
-import CardTitle from '@/components/ui/CardTitle.vue'
-import CardDescription from '@/components/ui/CardDescription.vue'
-import CardContent from '@/components/ui/CardContent.vue'
-import CardFooter from '@/components/ui/CardFooter.vue'
-import Button from '@/components/ui/Button.vue'
+import Card from '@/components/ui/card/Card.vue'
+import CardHeader from '@/components/ui/card/CardHeader.vue'
+import CardTitle from '@/components/ui/card/CardTitle.vue'
+import CardDescription from '@/components/ui/card/CardDescription.vue'
+import CardContent from '@/components/ui/card/CardContent.vue'
+import CardFooter from '@/components/ui/card/CardFooter.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>

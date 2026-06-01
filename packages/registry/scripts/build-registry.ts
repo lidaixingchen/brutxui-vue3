@@ -224,7 +224,7 @@ async function run() {
             const files: { path: string; content: string; type: string }[] = [];
 
             for (const fileName of fileMapping.files) {
-                const filePath = path.join(UI_COMPONENTS_DIR, fileName);
+                const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
 
                 if (!fs.existsSync(filePath)) {
                     throw new Error(`Source file not found at ${filePath}`);

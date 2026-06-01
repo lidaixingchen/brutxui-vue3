@@ -1,3 +1,8 @@
+---
+title: Command
+description: 命令面板组件，支持键盘快捷键、分组过滤和快捷指令执行。
+---
+
 # Command
 
 新粗野主义风格的命令面板组件，用于搜索和导航。基于 cmdk，通过 reka-ui 模式构建。
@@ -16,14 +21,14 @@
 
 ```vue
 <script setup>
-import Command from '@/components/ui/Command.vue'
-import CommandInput from '@/components/ui/CommandInput.vue'
-import CommandList from '@/components/ui/CommandList.vue'
-import CommandEmpty from '@/components/ui/CommandEmpty.vue'
-import CommandGroup from '@/components/ui/CommandGroup.vue'
-import CommandItem from '@/components/ui/CommandItem.vue'
-import CommandSeparator from '@/components/ui/CommandSeparator.vue'
-import CommandShortcut from '@/components/ui/CommandShortcut.vue'
+import Command from '@/components/ui/command/Command.vue'
+import CommandInput from '@/components/ui/command/CommandInput.vue'
+import CommandList from '@/components/ui/command/CommandList.vue'
+import CommandEmpty from '@/components/ui/command/CommandEmpty.vue'
+import CommandGroup from '@/components/ui/command/CommandGroup.vue'
+import CommandItem from '@/components/ui/command/CommandItem.vue'
+import CommandSeparator from '@/components/ui/command/CommandSeparator.vue'
+import CommandShortcut from '@/components/ui/command/CommandShortcut.vue'
 </script>
 
 <template>
@@ -54,12 +59,12 @@ import CommandShortcut from '@/components/ui/CommandShortcut.vue'
 ```vue
 <script setup>
 import { ref } from 'vue'
-import CommandDialog from '@/components/ui/CommandDialog.vue'
-import CommandInput from '@/components/ui/CommandInput.vue'
-import CommandList from '@/components/ui/CommandList.vue'
-import CommandEmpty from '@/components/ui/CommandEmpty.vue'
-import CommandGroup from '@/components/ui/CommandGroup.vue'
-import CommandItem from '@/components/ui/CommandItem.vue'
+import CommandDialog from '@/components/ui/command/CommandDialog.vue'
+import CommandInput from '@/components/ui/command/CommandInput.vue'
+import CommandList from '@/components/ui/command/CommandList.vue'
+import CommandEmpty from '@/components/ui/command/CommandEmpty.vue'
+import CommandGroup from '@/components/ui/command/CommandGroup.vue'
+import CommandItem from '@/components/ui/command/CommandItem.vue'
 
 const open = ref(false)
 </script>

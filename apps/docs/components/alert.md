@@ -1,3 +1,8 @@
+---
+title: Alert
+description: 新粗野主义风格的警告框组件，支持多种变体、状态色以及自定义图标。
+---
+
 # Alert
 
 新粗野主义风格的警告组件，用于显示状态消息，支持 7 种颜色变体。
@@ -16,9 +21,9 @@
 
 ```vue
 <script setup>
-import Alert from '@/components/ui/Alert.vue'
-import AlertTitle from '@/components/ui/AlertTitle.vue'
-import AlertDescription from '@/components/ui/AlertDescription.vue'
+import Alert from '@/components/ui/alert/Alert.vue'
+import AlertTitle from '@/components/ui/alert/AlertTitle.vue'
+import AlertDescription from '@/components/ui/alert/AlertDescription.vue'
 </script>
 
 <template>
@@ -43,7 +48,7 @@ import AlertDescription from '@/components/ui/AlertDescription.vue'
 
 ```vue
 <script setup>
-import Alert from '@/components/ui/Alert.vue'
+import Alert from '@/components/ui/alert/Alert.vue'
 </script>
 
 <template>
@@ -59,9 +64,9 @@ Alert 支持通过 SVG 子元素放置图标。图标绝对定位于左侧：
 
 ```vue
 <script setup>
-import Alert from '@/components/ui/Alert.vue'
-import AlertTitle from '@/components/ui/AlertTitle.vue'
-import AlertDescription from '@/components/ui/AlertDescription.vue'
+import Alert from '@/components/ui/alert/Alert.vue'
+import AlertTitle from '@/components/ui/alert/AlertTitle.vue'
+import AlertDescription from '@/components/ui/alert/AlertDescription.vue'
 import { Terminal } from 'lucide-vue-next'
 </script>
 

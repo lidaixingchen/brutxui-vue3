@@ -1,3 +1,8 @@
+---
+title: Button
+description: 新粗野主义风格的按钮组件，提供9种颜色变体、加载动画与键盘导航。
+---
+
 # Button
 
 新粗野主义风格的按钮组件，支持 9 种变体、5 种尺寸、加载状态和 `asChild` 组合支持。
@@ -16,7 +21,7 @@
 
 ```vue
 <script setup>
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>
@@ -55,7 +60,7 @@ import Button from '@/components/ui/Button.vue'
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 
 const isLoading = ref(false)
 
@@ -77,7 +82,7 @@ async function handleSubmit() {
 
 ```vue
 <script setup>
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>
@@ -93,7 +98,7 @@ import Button from '@/components/ui/Button.vue'
 
 ```vue
 <script setup>
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 import { RouterLink } from 'vue-router'
 </script>
 

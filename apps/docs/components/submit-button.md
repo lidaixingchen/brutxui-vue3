@@ -1,3 +1,8 @@
+---
+title: Submit Button
+description: 提交按钮，自带防重复提交逻辑与加载中状态切换。
+---
+
 # Submit Button
 
 新粗野主义风格提交按钮，内置加载和等待状态，专为表单提交设计。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import SubmitButton from '@/components/ui/SubmitButton.vue'
+import SubmitButton from '@/components/ui/submit-button/SubmitButton.vue'
 
 const isLoading = ref(false)
 
@@ -42,8 +47,8 @@ async function handleSubmit() {
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Form from '@/components/ui/Form.vue'
-import SubmitButton from '@/components/ui/SubmitButton.vue'
+import Form from '@/components/ui/form/Form.vue'
+import SubmitButton from '@/components/ui/submit-button/SubmitButton.vue'
 
 const isLoading = ref(false)
 
@@ -70,7 +75,7 @@ function onSubmit(values) {
 
 ```vue
 <script setup>
-import SubmitButton from '@/components/ui/SubmitButton.vue'
+import SubmitButton from '@/components/ui/submit-button/SubmitButton.vue'
 </script>
 
 <template>

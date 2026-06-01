@@ -1,3 +1,8 @@
+---
+title: Alert Dialog
+description: 提示对话框组件，用于需要用户明确确认的操作，无障碍适配良好。
+---
+
 # Alert Dialog
 
 新粗野主义风格的确认对话框，需要用户交互。基于 reka-ui 的 AlertDialog 原语构建。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from '@/components/ui'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>

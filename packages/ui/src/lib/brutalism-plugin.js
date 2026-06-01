@@ -187,6 +187,12 @@ const brutalismPlugin = plugin(
                 borderWidth: {
                     3: '3px',
                 },
+                borderRadius: {
+                    brutal: 'var(--brutal-radius, 0px)',
+                },
+                borderColor: {
+                    brutal: 'var(--brutal-border-color, #000000)',
+                },
             },
         },
     }

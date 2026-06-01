@@ -1,3 +1,8 @@
+---
+title: Sheet
+description: 滑动抽屉组件，支持从上、下、左、右四个方向滑出。
+---
+
 # Sheet
 
 新粗野主义风格的侧边面板组件，可从任意边缘滑入。基于 reka-ui 的 Dialog 原语构建。
@@ -26,7 +31,7 @@ import {
     SheetDescription,
     SheetClose,
 } from '@/components/ui'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>
@@ -67,7 +72,7 @@ import Button from '@/components/ui/Button.vue'
 ```vue
 <script setup>
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui'
-import Button from '@/components/ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>

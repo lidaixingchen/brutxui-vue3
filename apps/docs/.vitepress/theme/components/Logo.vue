@@ -38,21 +38,27 @@ const boxClass = computed(() =>
 const labelClass = computed(() =>
     cn('text-brutal-fg font-brutal font-black', sizeConfig.value.text),
 )
+
+const layer1Class = computed(() =>
+    cn('absolute -top-1 -left-1 bg-brutal-primary border-2 border-brutal', sizeConfig.value.layers),
+)
+
+const layer2Class = computed(() =>
+    cn('absolute -bottom-1 -right-1 bg-brutal-secondary border-2 border-brutal', sizeConfig.value.layers),
+)
+
+const layer3Class = computed(() =>
+    cn('absolute -top-1 -right-1 bg-brutal-accent border-2 border-brutal', sizeConfig.value.layers),
+)
 </script>
 
 <template>
     <div :class="wrapperClass">
         <div :class="boxClass">
-            <div
-                :class="cn('absolute -top-1 -left-1 bg-brutal-primary border-2 border-brutal', sizeConfig.layers)"
-            />
-            <div
-                :class="cn('absolute -bottom-1 -right-1 bg-brutal-secondary border-2 border-brutal', sizeConfig.layers)"
-            />
-            <div
-                :class="cn('absolute -top-1 -right-1 bg-brutal-accent border-2 border-brutal', sizeConfig.layers)"
-            />
-            <span class="relative z-10 font-brutal font-black text-brutal-fg" :class="sizeConfig.text">
+            <div :class="layer1Class" />
+            <div :class="layer2Class" />
+            <div :class="layer3Class" />
+            <span class="relative z-10 font-brutal font-black text-brutal-fg" :class="sizeConfig.value.text">
                 BX
             </span>
         </div>

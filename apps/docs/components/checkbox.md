@@ -1,3 +1,8 @@
+---
+title: Checkbox
+description: 复选框组件，带有厚边框和鲜明勾选图标，实现完全的键盘操作支持。
+---
+
 # Checkbox
 
 新粗野主义风格的复选框，基于 reka-ui 的 CheckboxRoot 原语构建，带勾选指示器。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Checkbox from '@/components/ui/Checkbox.vue'
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue'
 
 const checked = ref(false)
 </script>
@@ -35,8 +40,8 @@ const checked = ref(false)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Checkbox from '@/components/ui/Checkbox.vue'
-import Label from '@/components/ui/Label.vue'
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue'
+import Label from '@/components/ui/label/Label.vue'
 
 const checked = ref(false)
 </script>
@@ -53,7 +58,7 @@ const checked = ref(false)
 
 ```vue
 <script setup>
-import Checkbox from '@/components/ui/Checkbox.vue'
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue'
 </script>
 
 <template>

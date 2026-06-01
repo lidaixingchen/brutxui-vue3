@@ -1,3 +1,8 @@
+---
+title: Pagination
+description: 分页控制组件，带硬质翻页按钮，适配各种列表和数据表格场景。
+---
+
 # Pagination
 
 新粗野主义风格的分页组件，内置计算分页算法，支持兄弟页数和首页/末页导航。
@@ -17,7 +22,7 @@
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Pagination from '@/components/ui/Pagination.vue'
+import Pagination from '@/components/ui/pagination/Pagination.vue'
 
 const currentPage = ref(1)
 const totalPages = 10
@@ -52,7 +57,7 @@ const totalPages = 10
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Pagination from '@/components/ui/Pagination.vue'
+import Pagination from '@/components/ui/pagination/Pagination.vue'
 
 const currentPage = ref(1)
 </script>
@@ -75,7 +80,7 @@ const currentPage = ref(1)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Pagination from '@/components/ui/Pagination.vue'
+import Pagination from '@/components/ui/pagination/Pagination.vue'
 
 const currentPage = ref(1)
 </script>

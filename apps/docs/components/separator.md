@@ -1,3 +1,8 @@
+---
+title: Separator
+description: 分隔线组件，用于在粗野主义布局中进行模块化视觉分割。
+---
+
 # Separator
 
 新粗野主义风格的视觉分隔线，支持水平和垂直方向。
@@ -16,7 +21,7 @@
 
 ```vue
 <script setup>
-import Separator from '@/components/ui/Separator.vue'
+import Separator from '@/components/ui/separator/Separator.vue'
 </script>
 
 <template>
@@ -34,7 +39,7 @@ import Separator from '@/components/ui/Separator.vue'
 
 ```vue
 <script setup>
-import Separator from '@/components/ui/Separator.vue'
+import Separator from '@/components/ui/separator/Separator.vue'
 </script>
 
 <template>
@@ -46,7 +51,7 @@ import Separator from '@/components/ui/Separator.vue'
 
 ```vue
 <script setup>
-import Separator from '@/components/ui/Separator.vue'
+import Separator from '@/components/ui/separator/Separator.vue'
 </script>
 
 <template>

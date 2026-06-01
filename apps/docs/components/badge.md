@@ -1,3 +1,8 @@
+---
+title: Badge
+description: 徽标组件，用于显示状态、分类标签，提供高对比度的亮色或暗色视觉。
+---
+
 # Badge
 
 新粗野主义风格的行内徽章组件，用于标签、状态和分类。
@@ -16,7 +21,7 @@
 
 ```vue
 <script setup>
-import Badge from '@/components/ui/Badge.vue'
+import Badge from '@/components/ui/badge/Badge.vue'
 </script>
 
 <template>
@@ -48,7 +53,7 @@ import Badge from '@/components/ui/Badge.vue'
 
 ```vue
 <script setup>
-import Badge from '@/components/ui/Badge.vue'
+import Badge from '@/components/ui/badge/Badge.vue'
 </script>
 
 <template>

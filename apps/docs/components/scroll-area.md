@@ -1,3 +1,8 @@
+---
+title: Scroll Area
+description: 自定义滚动区域组件，提供符合新粗野主义外观的厚滚动条。
+---
+
 # Scroll Area
 
 基于 reka-ui 的 ScrollArea 原语构建的新粗野主义风格滚动区域，带有自定义滚动条样式。
@@ -16,7 +21,7 @@
 
 ```vue
 <script setup>
-import ScrollArea from '@/components/ui/ScrollArea.vue'
+import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
 </script>
 
 <template>
@@ -37,8 +42,8 @@ import ScrollArea from '@/components/ui/ScrollArea.vue'
 
 ```vue
 <script setup>
-import ScrollArea from '@/components/ui/ScrollArea.vue'
-import ScrollBar from '@/components/ui/ScrollBar.vue'
+import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue'
+import ScrollBar from '@/components/ui/scroll-area/ScrollBar.vue'
 </script>
 
 <template>

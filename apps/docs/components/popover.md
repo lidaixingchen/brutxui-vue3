@@ -1,3 +1,8 @@
+---
+title: Popover
+description: 浮层弹出框，支持在指定元素周围展示复杂的气泡内容。
+---
+
 # Popover
 
 新粗野主义风格的弹出层组件，用于显示锚定到触发元素的浮动内容。
@@ -17,8 +22,8 @@
 ```vue
 <script setup>
 import { Popover, PopoverTrigger, PopoverAnchor } from '@/components/ui'
-import PopoverContent from '@/components/ui/PopoverContent.vue'
-import Button from '@/components/ui/Button.vue'
+import PopoverContent from '@/components/ui/popover/PopoverContent.vue'
+import Button from '@/components/ui/button/Button.vue'
 </script>
 
 <template>
