@@ -11,6 +11,7 @@ import {
 } from 'reka-ui'
 import { Plus, Minus, ChevronUp, ChevronDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
 
 interface NumberInputProps extends NumberFieldRootProps {
     layout?: 'split' | 'stacked'
@@ -34,51 +35,50 @@ const delegatedProps = computed(() => {
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
 
 const containerClasses = computed(() =>
-    cn(
-        'flex items-stretch border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal overflow-hidden transition-all duration-150 focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2',
-        props.class
-    )
+    cn(numberInputRootVariants({ layout: props.layout }), props.class)
+)
+
+const decrementClasses = computed(() =>
+    cn(numberInputButtonVariants({ position: 'decrement', layout: props.layout }))
+)
+
+const incrementClasses = computed(() =>
+    cn(numberInputButtonVariants({ position: 'increment', layout: props.layout }))
+)
+
+const fieldClasses = computed(() =>
+    cn(numberInputFieldVariants({ layout: props.layout }))
 )
 </script>
 
 <template>
     <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
-        <!-- Split Layout: Minus on left, input in middle, Plus on right -->
         <template v-if="layout === 'split'">
-            <NumberFieldDecrement
-                class="px-4 border-r-3 border-brutal flex items-center justify-center bg-brutal-accent hover:bg-brutal-muted active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer"
-            >
+            <NumberFieldDecrement :class="decrementClasses">
                 <Minus class="h-4 w-4 stroke-[3]" />
             </NumberFieldDecrement>
 
             <NumberFieldInput
                 :placeholder="placeholder"
-                class="flex-1 min-w-0 bg-transparent text-center font-black py-2 px-3 text-base placeholder:text-brutal-placeholder placeholder:font-normal focus:outline-none"
+                :class="fieldClasses"
             />
 
-            <NumberFieldIncrement
-                class="px-4 border-l-3 border-brutal flex items-center justify-center bg-brutal-primary hover:bg-brutal-muted active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer"
-            >
+            <NumberFieldIncrement :class="incrementClasses">
                 <Plus class="h-4 w-4 stroke-[3]" />
             </NumberFieldIncrement>
         </template>
 
-        <!-- Stacked Layout: Input on left, small increment/decrement vertically stacked on right -->
         <template v-else>
             <NumberFieldInput
                 :placeholder="placeholder"
-                class="flex-1 min-w-0 bg-transparent font-black py-2 px-4 text-base placeholder:text-brutal-placeholder placeholder:font-normal focus:outline-none"
+                :class="fieldClasses"
             />
 
             <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
-                <NumberFieldIncrement
-                    class="flex-1 flex items-center justify-center border-b-3 border-brutal bg-brutal-accent hover:bg-brutal-muted active:translate-y-[1px] transition-all duration-75 disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer"
-                >
+                <NumberFieldIncrement :class="incrementClasses">
                     <ChevronUp class="h-4 w-4 stroke-[3]" />
                 </NumberFieldIncrement>
-                <NumberFieldDecrement
-                    class="flex-1 flex items-center justify-center bg-brutal-primary hover:bg-brutal-muted active:translate-y-[1px] transition-all duration-75 disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer"
-                >
+                <NumberFieldDecrement :class="decrementClasses">
                     <ChevronDown class="h-4 w-4 stroke-[3]" />
                 </NumberFieldDecrement>
             </div>

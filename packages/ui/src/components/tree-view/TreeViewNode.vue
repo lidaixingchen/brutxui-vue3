@@ -5,6 +5,9 @@ import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
 import type { TreeNode } from './TreeView.vue';
 
+const INDENT_PER_DEPTH = 20
+const BASE_INDENT = 4
+
 interface TreeViewNodeProps {
     node: TreeNode;
     selectedId?: string | null;
@@ -31,35 +34,30 @@ const itemClass = computed(() =>
 );
 
 const indentStyle = computed(() => ({
-    paddingLeft: `${props.depth * 20 + 4}px`,
+    paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
 }));
 </script>
 
 <template>
     <div role="treeitem" :aria-expanded="!isLeaf ? isExpanded : undefined" :aria-selected="isSelected">
-        <!-- Row -->
         <div
             :class="itemClass"
             :style="indentStyle"
             @click="isLeaf ? emit('select', node) : (emit('toggle', node.id), emit('select', node))"
         >
-            <!-- Expand chevron -->
             <ChevronRight
                 v-if="!isLeaf"
                 :class="cn('w-4 h-4 flex-shrink-0 transition-transform duration-150', isExpanded && 'rotate-90')"
             />
             <span v-else class="w-4 flex-shrink-0" />
 
-            <!-- Icon -->
             <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0 text-brutal-primary" />
             <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
             <File v-else class="w-4 h-4 flex-shrink-0 opacity-60" />
 
-            <!-- Label -->
             <span class="truncate">{{ node.label }}</span>
         </div>
 
-        <!-- Children -->
         <Transition name="tree-expand">
             <div v-if="!isLeaf && isExpanded" role="group">
                 <TreeViewNode
@@ -80,13 +78,14 @@ const indentStyle = computed(() => ({
 <style scoped>
 .tree-expand-enter-active,
 .tree-expand-leave-active {
-    transition: opacity 0.15s ease, max-height 0.2s ease;
+    transition: opacity 0.15s ease, grid-template-rows 0.2s ease;
     overflow: hidden;
-    max-height: 1000px;
+    display: grid;
+    grid-template-rows: 1fr;
 }
 .tree-expand-enter-from,
 .tree-expand-leave-to {
     opacity: 0;
-    max-height: 0;
+    grid-template-rows: 0fr;
 }
 </style>

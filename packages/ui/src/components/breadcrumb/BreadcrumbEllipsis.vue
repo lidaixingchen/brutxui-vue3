@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { MoreHorizontal } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { breadcrumbEllipsisVariants } from './breadcrumb-variants'
 
 interface BreadcrumbEllipsisProps {
     class?: string
@@ -12,10 +13,7 @@ const props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {
 })
 
 const classes = computed(() =>
-    cn(
-        'flex h-7 w-7 items-center justify-center border-2 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm rounded-sm transition-all hover:bg-brutal-muted active:translate-y-[1px] active:shadow-none select-none cursor-pointer',
-        props.class
-    )
+    cn(breadcrumbEllipsisVariants(), props.class)
 )
 </script>
 

@@ -2,6 +2,7 @@
 import { AccordionContent, type AccordionContentProps } from 'reka-ui'
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { accordionContentVariants } from './accordion-variants'
 
 const props = defineProps<AccordionContentProps & { class?: string }>()
 
@@ -11,7 +12,7 @@ const delegatedProps = computed(() => {
 })
 
 const classes = computed(() =>
-    cn('border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg', props.class)
+    cn(accordionContentVariants(), props.class)
 )
 </script>
 

@@ -3,13 +3,15 @@ import { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwa
 import { computed } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { accordionTriggerVariants } from './accordion-variants'
 
 const props = defineProps<AccordionTriggerProps & { class?: string }>()
 const forwarded = useForwardProps(props)
 
 const classes = computed(() =>
     cn(
-        'flex flex-1 items-center justify-between py-4 px-6 text-left font-black tracking-wide transition-all hover:bg-brutal-muted [&[data-state=open]>svg]:rotate-180',
+        accordionTriggerVariants(),
+        '[&[data-state=open]>svg]:rotate-180',
         props.class
     )
 )

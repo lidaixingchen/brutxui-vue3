@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 import { counterVariants } from './counter-variants';
+
+const DEFAULT_COUNTER_DURATION = 2000
 
 type CounterVariantProps = VariantProps<typeof counterVariants>;
 
@@ -22,7 +24,7 @@ interface CounterProps {
 
 const props = withDefaults(defineProps<CounterProps>(), {
     from: 0,
-    duration: 2000,
+    duration: DEFAULT_COUNTER_DURATION,
     decimals: 0,
     prefix: '',
     suffix: '',

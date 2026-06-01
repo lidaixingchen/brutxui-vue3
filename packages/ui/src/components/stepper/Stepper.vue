@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Check } from 'lucide-vue-next';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
 
 export interface StepperStep {
@@ -9,6 +9,8 @@ export interface StepperStep {
     title: string;
     description?: string;
 }
+
+const MIN_VERTICAL_CONNECTOR_HEIGHT = '2rem'
 
 interface StepperProps {
     steps: StepperStep[];
@@ -69,7 +71,7 @@ function connectorClass(index: number) {
 </script>
 
 <template>
-    <div :class="rootClass" role="list" aria-label="步骤进度">
+    <div :class="rootClass" role="list" aria-label="Progress steps">
         <template v-for="(step, index) in steps" :key="step.id">
             <!-- Step Item -->
             <div
@@ -92,7 +94,7 @@ function connectorClass(index: number) {
                     <button
                         :class="dotClass(index)"
                         type="button"
-                        :aria-label="`步骤 ${index + 1}：${step.title}`"
+                        :aria-label="`Step ${index + 1}: ${step.title}`"
                         @click="clickStep(index)"
                     >
                         <Check v-if="getState(index) === 'completed'" class="w-4 h-4" />
@@ -125,7 +127,7 @@ function connectorClass(index: number) {
                         <button
                             :class="dotClass(index)"
                             type="button"
-                            :aria-label="`步骤 ${index + 1}：${step.title}`"
+                            :aria-label="`Step ${index + 1}: ${step.title}`"
                             @click="clickStep(index)"
                         >
                             <Check v-if="getState(index) === 'completed'" class="w-4 h-4" />
@@ -135,7 +137,7 @@ function connectorClass(index: number) {
                         <div
                             v-if="index < steps.length - 1"
                             :class="connectorClass(index)"
-                            style="min-height: 2rem;"
+                            :style="{ minHeight: MIN_VERTICAL_CONNECTOR_HEIGHT }"
                         />
                     </div>
 

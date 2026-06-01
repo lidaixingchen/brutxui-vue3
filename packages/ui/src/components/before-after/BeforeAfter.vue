@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { MoveHorizontal } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { beforeAfterRootVariants, beforeAfterHandleVariants } from './before-after-variants'
+
+const DEFAULT_SLIDER_POSITION = 50
 
 interface BeforeAfterProps {
     before: string
@@ -15,7 +19,7 @@ interface BeforeAfterProps {
 const props = withDefaults(defineProps<BeforeAfterProps>(), {
     beforeAlt: 'Before',
     afterAlt: 'After',
-    defaultValue: 50,
+    defaultValue: DEFAULT_SLIDER_POSITION,
     disabled: false,
     class: '',
 })
@@ -33,18 +37,24 @@ const sliderStyle = computed(() => {
         left: `${sliderVal.value}%`,
     }
 })
+
+const rootClasses = computed(() =>
+    cn(beforeAfterRootVariants(), props.class)
+)
+
+const handleClasses = computed(() =>
+    cn(beforeAfterHandleVariants())
+)
 </script>
 
 <template>
-    <div :class="cn('relative overflow-hidden w-full aspect-video border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal select-none', props.class)">
-        <!-- Before Image (Base layer) -->
+    <div :class="rootClasses">
         <img
             :src="before"
             :alt="beforeAlt"
             class="absolute inset-0 w-full h-full object-cover pointer-events-none"
         />
 
-        <!-- After Image (Overlay, clipped from the left based on slider position) -->
         <div
             class="absolute inset-0 w-full h-full pointer-events-none"
             :style="clipStyle"
@@ -56,24 +66,18 @@ const sliderStyle = computed(() => {
             />
         </div>
 
-        <!-- Divider Bar Line -->
         <div
             class="absolute top-0 bottom-0 w-[4px] bg-brutal-fg -translate-x-1/2 pointer-events-none z-10"
             :style="sliderStyle"
         />
 
-        <!-- Slider Drag Handle -->
         <div
-            class="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-10 w-10 border-3 border-brutal bg-brutal-primary rounded-brutal shadow-brutal-sm flex items-center justify-center pointer-events-none z-20 select-none"
+            :class="handleClasses"
             :style="sliderStyle"
         >
-            <!-- Double arrow indicator icon -->
-            <span class="flex items-center justify-center font-black text-xs text-brutal-fg">
-                ◀▶
-            </span>
+            <MoveHorizontal class="h-4 w-4 stroke-[3] text-brutal-fg" />
         </div>
 
-        <!-- Native Range Input overlay to capture all touch/mouse drag gestures -->
         <input
             type="range"
             min="0"

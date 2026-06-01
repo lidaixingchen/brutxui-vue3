@@ -54,7 +54,7 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 </script>
 
 <template>
-    <div :class="rootClass" role="tree" aria-label="目录树">
+    <div :class="rootClass" role="tree" aria-label="File tree">
         <TreeViewNode
             v-for="node in nodes"
             :key="node.id"

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { breadcrumbItemVariants } from './breadcrumb-variants'
 
 interface BreadcrumbItemProps {
     class?: string
@@ -11,7 +12,7 @@ const props = withDefaults(defineProps<BreadcrumbItemProps>(), {
 })
 
 const classes = computed(() =>
-    cn('inline-flex items-center gap-1.5', props.class)
+    cn(breadcrumbItemVariants(), props.class)
 )
 </script>
 

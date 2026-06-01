@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { cn } from '../../lib/utils';
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
 
+const DEFAULT_AUTOPLAY_DELAY = 3000
+
 interface CarouselProps {
     loop?: boolean;
     autoplay?: boolean;
@@ -18,7 +20,7 @@ interface CarouselProps {
 const props = withDefaults(defineProps<CarouselProps>(), {
     loop: false,
     autoplay: false,
-    autoplayDelay: 3000,
+    autoplayDelay: DEFAULT_AUTOPLAY_DELAY,
     showArrows: true,
     showDots: true,
     size: 'auto',
@@ -92,9 +94,7 @@ watch(() => props.autoplay, (val) => {
 });
 
 watch(() => props.loop, () => {
-    if (emblaApi.value) {
-        emblaApi.value.reInit({ loop: props.loop });
-    }
+    if (emblaApi.value) emblaApi.value.reInit({ loop: props.loop });
 });
 
 onUnmounted(() => {
@@ -116,36 +116,32 @@ const nextButtonClass = computed(() =>
 
 <template>
     <div :class="rootClass" @mouseenter="stopAutoplay" @mouseleave="startAutoplay">
-        <!-- Embla viewport -->
         <div ref="emblaRef" class="overflow-hidden h-full">
             <div class="flex h-full">
                 <slot />
             </div>
         </div>
 
-        <!-- Prev Button -->
         <button
             v-if="showArrows"
             :class="prevButtonClass"
             :disabled="!canScrollPrev"
-            aria-label="上一张"
+            aria-label="Previous slide"
             @click="scrollPrev"
         >
             <ChevronLeft class="w-5 h-5" />
         </button>
 
-        <!-- Next Button -->
         <button
             v-if="showArrows"
             :class="nextButtonClass"
             :disabled="!canScrollNext"
-            aria-label="下一张"
+            aria-label="Next slide"
             @click="scrollNext"
         >
             <ChevronRight class="w-5 h-5" />
         </button>
 
-        <!-- Dots -->
         <div
             v-if="showDots && scrollSnaps.length > 1"
             class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10"
@@ -153,7 +149,7 @@ const nextButtonClass = computed(() =>
             <button
                 v-for="(_, i) in scrollSnaps"
                 :key="i"
-                :aria-label="`跳转到第 ${i + 1} 张`"
+                :aria-label="`Go to slide ${i + 1}`"
                 :class="cn(
                     'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
                     i === selectedIndex ? 'bg-brutal-primary shadow-brutal' : 'bg-brutal-bg hover:bg-brutal-muted'

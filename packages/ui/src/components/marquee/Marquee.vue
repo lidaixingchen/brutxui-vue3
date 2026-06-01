@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { marqueeContainerVariants, marqueeTrackVariants } from './marquee-variants'
+
+const DEFAULT_SPEED = 20
 
 interface MarqueeProps {
     direction?: 'left' | 'right'
-    speed?: number // Speed in seconds for a full loop
+    speed?: number
     pauseOnHover?: boolean
     fade?: boolean
     class?: string
@@ -12,24 +15,19 @@ interface MarqueeProps {
 
 const props = withDefaults(defineProps<MarqueeProps>(), {
     direction: 'left',
-    speed: 20,
+    speed: DEFAULT_SPEED,
     pauseOnHover: false,
     fade: false,
     class: '',
 })
 
 const containerClasses = computed(() =>
-    cn(
-        'relative flex overflow-hidden w-full border-y-3 border-brutal bg-brutal-accent text-brutal-fg font-black uppercase py-4 text-xl tracking-widest select-none',
-        props.class
-    )
+    cn(marqueeContainerVariants({ fade: props.fade || undefined }), props.class)
 )
 
 const trackClasses = computed(() =>
     cn(
-        'flex min-w-full shrink-0 items-center justify-around gap-4',
-        props.direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right',
-        props.pauseOnHover && 'hover:[animation-play-state:paused]'
+        marqueeTrackVariants({ direction: props.direction, pauseOnHover: props.pauseOnHover || undefined })
     )
 )
 

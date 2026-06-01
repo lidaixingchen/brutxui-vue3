@@ -2,6 +2,7 @@
 import { Primitive, type PrimitiveProps } from 'reka-ui'
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { breadcrumbLinkVariants } from './breadcrumb-variants'
 
 interface BreadcrumbLinkProps extends PrimitiveProps {
     class?: string
@@ -13,7 +14,7 @@ const props = withDefaults(defineProps<BreadcrumbLinkProps>(), {
 })
 
 const classes = computed(() =>
-    cn('transition-colors hover:text-brutal-primary hover:underline cursor-pointer', props.class)
+    cn(breadcrumbLinkVariants(), props.class)
 )
 </script>
 

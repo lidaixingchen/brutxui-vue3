@@ -195,7 +195,7 @@ export { default as Accordion } from './components/accordion/Accordion.vue'
 export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
 export { default as AccordionTrigger } from './components/accordion/AccordionTrigger.vue'
 export { default as AccordionContent } from './components/accordion/AccordionContent.vue'
-export { accordionItemVariants } from './components/accordion/accordion-variants'
+export { accordionItemVariants, accordionTriggerVariants, accordionContentVariants } from './components/accordion/accordion-variants'
 
 export { default as TagsInput } from './components/tags-input/TagsInput.vue'
 export { default as TagsInputInput } from './components/tags-input/TagsInputInput.vue'
@@ -205,8 +205,10 @@ export { default as TagsInputItemDelete } from './components/tags-input/TagsInpu
 export { tagsInputItemVariants } from './components/tags-input/tags-input-variants'
 
 export { default as NumberInput } from './components/number-input/NumberInput.vue'
+export { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './components/number-input/number-input-variants'
 
 export { default as CopyToClipboard } from './components/copy-to-clipboard/CopyToClipboard.vue'
+export { copyToClipboardVariants } from './components/copy-to-clipboard/copy-to-clipboard-variants'
 export { useClipboard } from './composables/useClipboard'
 
 export { default as Breadcrumb } from './components/breadcrumb/Breadcrumb.vue'
@@ -216,12 +218,16 @@ export { default as BreadcrumbLink } from './components/breadcrumb/BreadcrumbLin
 export { default as BreadcrumbPage } from './components/breadcrumb/BreadcrumbPage.vue'
 export { default as BreadcrumbSeparator } from './components/breadcrumb/BreadcrumbSeparator.vue'
 export { default as BreadcrumbEllipsis } from './components/breadcrumb/BreadcrumbEllipsis.vue'
+export { breadcrumbListVariants, breadcrumbItemVariants, breadcrumbLinkVariants, breadcrumbPageVariants, breadcrumbSeparatorVariants, breadcrumbEllipsisVariants } from './components/breadcrumb/breadcrumb-variants'
 
 export { default as Marquee } from './components/marquee/Marquee.vue'
+export { marqueeContainerVariants, marqueeTrackVariants } from './components/marquee/marquee-variants'
 
 export { default as BeforeAfter } from './components/before-after/BeforeAfter.vue'
+export { beforeAfterRootVariants, beforeAfterHandleVariants } from './components/before-after/before-after-variants'
 
 export { default as CodeBlock } from './components/code-block/CodeBlock.vue'
+export { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants } from './components/code-block/code-block-variants'
 
 export { default as Timeline } from './components/timeline/Timeline.vue'
 export { default as TimelineItem } from './components/timeline/TimelineItem.vue'

@@ -22,3 +22,27 @@ export const accordionItemVariants = cva(
         },
     }
 )
+
+export const accordionTriggerVariants = cva(
+    [
+        'flex flex-1 items-center justify-between py-4 px-6',
+        'text-left font-black tracking-wide transition-all',
+    ],
+    {
+        variants: {
+            variant: {
+                default: 'hover:bg-brutal-muted',
+                flat: 'hover:bg-brutal-muted',
+                ghost: 'hover:bg-brutal-muted',
+                interactive: 'hover:bg-brutal-muted',
+            },
+        },
+        defaultVariants: {
+            variant: 'default',
+        },
+    }
+)
+
+export const accordionContentVariants = cva(
+    'border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg'
+)

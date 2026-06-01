@@ -157,7 +157,7 @@ function cardClass(card: KanbanCard) {
                     v-if="col.cards.length === 0"
                     class="flex items-center justify-center h-16 border-3 border-dashed border-brutal rounded-brutal text-xs font-medium opacity-40"
                 >
-                    拖拽卡片到此处
+                    Drop cards here
                 </div>
             </div>
 
