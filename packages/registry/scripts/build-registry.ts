@@ -63,6 +63,11 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'tags-input': { files: ['TagsInput.vue', 'TagsInputInput.vue', 'TagsInputItem.vue', 'TagsInputItemText.vue', 'TagsInputItemDelete.vue', 'tags-input-variants.ts'] },
     'number-input': { files: ['NumberInput.vue'] },
     'copy-to-clipboard': { files: ['CopyToClipboard.vue'], composables: ['useClipboard.ts'] },
+    breadcrumb: { files: ['Breadcrumb.vue', 'BreadcrumbList.vue', 'BreadcrumbItem.vue', 'BreadcrumbLink.vue', 'BreadcrumbPage.vue', 'BreadcrumbSeparator.vue', 'BreadcrumbEllipsis.vue'] },
+    marquee: { files: ['Marquee.vue'] },
+    'before-after': { files: ['BeforeAfter.vue'] },
+    'code-block': { files: ['CodeBlock.vue'] },
+    timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-variants.ts'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};

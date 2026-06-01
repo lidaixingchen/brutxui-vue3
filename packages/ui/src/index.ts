@@ -209,6 +209,28 @@ export { default as NumberInput } from './components/number-input/NumberInput.vu
 export { default as CopyToClipboard } from './components/copy-to-clipboard/CopyToClipboard.vue'
 export { useClipboard } from './composables/useClipboard'
 
+export { default as Breadcrumb } from './components/breadcrumb/Breadcrumb.vue'
+export { default as BreadcrumbList } from './components/breadcrumb/BreadcrumbList.vue'
+export { default as BreadcrumbItem } from './components/breadcrumb/BreadcrumbItem.vue'
+export { default as BreadcrumbLink } from './components/breadcrumb/BreadcrumbLink.vue'
+export { default as BreadcrumbPage } from './components/breadcrumb/BreadcrumbPage.vue'
+export { default as BreadcrumbSeparator } from './components/breadcrumb/BreadcrumbSeparator.vue'
+export { default as BreadcrumbEllipsis } from './components/breadcrumb/BreadcrumbEllipsis.vue'
+
+export { default as Marquee } from './components/marquee/Marquee.vue'
+
+export { default as BeforeAfter } from './components/before-after/BeforeAfter.vue'
+
+export { default as CodeBlock } from './components/code-block/CodeBlock.vue'
+
+export { default as Timeline } from './components/timeline/Timeline.vue'
+export { default as TimelineItem } from './components/timeline/TimelineItem.vue'
+export { default as TimelineSeparator } from './components/timeline/TimelineSeparator.vue'
+export { default as TimelineDot } from './components/timeline/TimelineDot.vue'
+export { default as TimelineConnector } from './components/timeline/TimelineConnector.vue'
+export { default as TimelineContent } from './components/timeline/TimelineContent.vue'
+export { timelineDotVariants } from './components/timeline/timeline-variants'
+
 export * from './lib/utils'
 
 export type { VariantProps } from 'class-variance-authority'

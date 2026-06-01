@@ -1,0 +1,90 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "marquee",
+  "type": "registry:ui",
+  "title": "Marquee",
+  "description": "A highly customizable neo-brutalist Marquee component built with Brutx design tokens for Vue 3.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/marquee/Marquee.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface MarqueeProps {\n    direction?: 'left' | 'right'\n    speed?: number // Speed in seconds for a full loop\n    pauseOnHover?: boolean\n    fade?: boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<MarqueeProps>(), {\n    direction: 'left',\n    speed: 20,\n    pauseOnHover: false,\n    fade: false,\n    class: '',\n})\n\nconst containerClasses = computed(() =>\n    cn(\n        'relative flex overflow-hidden w-full border-y-3 border-brutal bg-brutal-accent text-brutal-fg font-black uppercase py-4 text-xl tracking-widest select-none',\n        props.class\n    )\n)\n\nconst trackClasses = computed(() =>\n    cn(\n        'flex min-w-full shrink-0 items-center justify-around gap-4',\n        props.direction === 'left' ? 'animate-marquee-left' : 'animate-marquee-right',\n        props.pauseOnHover && 'hover:[animation-play-state:paused]'\n    )\n)\n\nconst containerStyle = computed(() => {\n    const style: Record<string, string> = {\n        '--speed': `${props.speed}s`,\n    }\n    if (props.fade) {\n        style['mask-image'] = 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'\n        style['-webkit-mask-image'] = 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)'\n    }\n    return style\n})\n</script>\n\n<template>\n    <div :class=\"containerClasses\" :style=\"containerStyle\">\n        <div :class=\"trackClasses\">\n            <slot />\n        </div>\n        <div :class=\"trackClasses\" aria-hidden=\"true\">\n            <slot />\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
+}

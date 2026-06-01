@@ -54,6 +54,11 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'tags-input': { name: 'tags-input', dependencies: ['reka-ui', 'lucide-vue-next'] },
     'number-input': { name: 'number-input', dependencies: ['reka-ui', 'lucide-vue-next'] },
     'copy-to-clipboard': { name: 'copy-to-clipboard', dependencies: ['lucide-vue-next'] },
+    breadcrumb: { name: 'breadcrumb', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    marquee: { name: 'marquee', dependencies: [] },
+    'before-after': { name: 'before-after', dependencies: [] },
+    'code-block': { name: 'code-block', dependencies: ['lucide-vue-next'] },
+    timeline: { name: 'timeline', dependencies: ['reka-ui', 'lucide-vue-next'] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

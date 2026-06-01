@@ -47,6 +47,11 @@ import AccordionDemo from './components/demos/AccordionDemo.vue'
 import TagsInputDemo from './components/demos/TagsInputDemo.vue'
 import NumberInputDemo from './components/demos/NumberInputDemo.vue'
 import CopyToClipboardDemo from './components/demos/CopyToClipboardDemo.vue'
+import BreadcrumbDemo from './components/demos/BreadcrumbDemo.vue'
+import MarqueeDemo from './components/demos/MarqueeDemo.vue'
+import BeforeAfterDemo from './components/demos/BeforeAfterDemo.vue'
+import CodeBlockDemo from './components/demos/CodeBlockDemo.vue'
+import TimelineDemo from './components/demos/TimelineDemo.vue'
 import './style.css'
 
 export default {
@@ -99,5 +104,10 @@ export default {
         app.component('TagsInputDemo', TagsInputDemo)
         app.component('NumberInputDemo', NumberInputDemo)
         app.component('CopyToClipboardDemo', CopyToClipboardDemo)
+        app.component('BreadcrumbDemo', BreadcrumbDemo)
+        app.component('MarqueeDemo', MarqueeDemo)
+        app.component('BeforeAfterDemo', BeforeAfterDemo)
+        app.component('CodeBlockDemo', CodeBlockDemo)
+        app.component('TimelineDemo', TimelineDemo)
     },
 } satisfies Theme

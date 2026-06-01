@@ -350,3 +350,30 @@
     animation: accordion-up 0.2s ease-out;
 }
 
+@keyframes marquee-left {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes marquee-right {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0%);
+    }
+}
+
+.animate-marquee-left {
+    animation: marquee-left var(--speed, 20s) linear infinite;
+}
+
+.animate-marquee-right {
+    animation: marquee-right var(--speed, 20s) linear infinite;
+}
+
+
