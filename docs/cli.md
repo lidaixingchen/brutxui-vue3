@@ -73,7 +73,7 @@ CLI 在 `components.json` 中读写项目设置：
 
 ```json
 {
-  "$schema": "https://brutxui.site/schema.json",
+  "$schema": "https://lidaixingchen.github.io/brutxui-vue3/schema.json",
   "style": "brutalism",
   "tailwind": {
     "config": "tailwind.config.js",

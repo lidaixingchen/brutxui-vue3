@@ -1,6 +1,6 @@
 # AGENTS.md — BrutxUI Vue 3
 
-面向 Vue 3 + Tailwind CSS 的 Neo-Brutalist UI 组件库。原始 React BrutxUI 的 Vue 3 移植版。
+面向 Vue 3 + Tailwind CSS 的 Neo-Brutalist UI 组件库。独立维护的 Vue 3 版本。
 
 ## 单体仓库
 

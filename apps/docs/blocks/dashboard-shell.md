@@ -43,7 +43,7 @@ function handleSignOut() {
 
 <template>
     <DashboardShell
-        user-email="creator@brutxui.site"
+        user-email="user@example.com"
         @sign-out="handleSignOut"
     >
         <template #sidebar>
@@ -65,7 +65,7 @@ function handleSignOut() {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `userEmail` | `string` | `'creator@brutxui.site'` |
+| `userEmail` | `string` | `'user@example.com'` |
 | `class` | `string` | — |
 
 ## 事件

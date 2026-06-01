@@ -61,7 +61,7 @@ BrutxUI 旨在与 `shadcn/ui` 协同工作，而非替代它：
 
 Brutx CLI 负责 Tailwind 检测、CSS 令牌注入和包管理器检测。
 
-> ⚠️ CLI 尚未发布到 npm，以下命令暂不可用。
+> 💡 CLI 尚未发布到 npm，可从源码构建使用，或使用方式 B。
 
 ```bash
 # 在项目中初始化 BrutxUI 配置

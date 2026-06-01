@@ -9,7 +9,7 @@ interface DashboardShellProps {
 }
 
 const props = withDefaults(defineProps<DashboardShellProps>(), {
-    userEmail: 'creator@brutxui.site',
+    userEmail: 'user@example.com',
     class: '',
 })
 

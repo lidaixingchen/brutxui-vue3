@@ -11,7 +11,7 @@ describe('DashboardShell', () => {
 
     it('shows default user email', () => {
         const wrapper = mount(DashboardShell)
-        expect(wrapper.text()).toContain('creator@brutxui.site')
+        expect(wrapper.text()).toContain('user@example.com')
     })
 
     it('shows custom user email', () => {
