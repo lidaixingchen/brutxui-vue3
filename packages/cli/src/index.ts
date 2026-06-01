@@ -15,7 +15,7 @@ program
 
 program
     .command('init')
-    .description('Initialize Brutx in your project')
+    .description('Initialize Brutx-Vue in your project')
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .option('-d, --defaults', 'Use default configuration', false)
     .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
