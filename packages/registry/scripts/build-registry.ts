@@ -76,6 +76,7 @@ function rewriteImports(code: string, _componentName: string): string {
     code = code.replace(/['"]\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
+    code = code.replace(/['"]\.\.\/components\/([^'"]+)['"]/g, "'@/components/ui/$1'");
 
     const allFiles = Object.keys(FILE_TO_COMPONENT);
 
@@ -83,6 +84,7 @@ function rewriteImports(code: string, _componentName: string): string {
         const targetComponent = FILE_TO_COMPONENT[file];
         const baseName = file.replace(/\.(vue|ts)$/, '');
 
+        // Match ./baseName (same-directory sibling imports)
         const relativeImportWithExt = new RegExp(
             `(['"])\\.\\/${baseName}\\.vue(['"])`,
             'g'
@@ -98,6 +100,25 @@ function rewriteImports(code: string, _componentName: string): string {
         );
         code = code.replace(
             relativeImportWithoutExt,
+            `$1@/components/ui/${targetComponent}/${baseName}$2`
+        );
+
+        // Match ../component/baseName (cross-component imports)
+        const crossComponentWithExt = new RegExp(
+            `(['"])\\.\\.\\/[a-zA-Z0-9-]+\\/${baseName}\\.vue(['"])`,
+            'g'
+        );
+        code = code.replace(
+            crossComponentWithExt,
+            `$1@/components/ui/${targetComponent}/${baseName}.vue$2`
+        );
+
+        const crossComponentWithoutExt = new RegExp(
+            `(['"])\\.\\.\\/[a-zA-Z0-9-]+\\/${baseName}(['"])`,
+            'g'
+        );
+        code = code.replace(
+            crossComponentWithoutExt,
             `$1@/components/ui/${targetComponent}/${baseName}$2`
         );
     }
@@ -252,7 +273,7 @@ async function run() {
                     }
 
                     let code = readComponentSource(composablePath);
-                    code = code.replace(/['"]\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
+                    code = rewriteImports(code, name);
 
                     files.push({
                         path: `composables/${composableName}`,
