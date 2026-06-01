@@ -113,6 +113,13 @@ body {
     font-weight: 600;
 }
 
+/* InstallationTabs 内的 <code> 继承 <pre> 的深色背景 */
+.vp-doc pre[style] code {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
 .vp-doc h1,
 .vp-doc h2,
 .vp-doc h3,
