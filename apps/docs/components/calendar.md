@@ -5,7 +5,9 @@
 ## 预览
 
 <ComponentPreview>
-  <CalendarDemo />
+  <ClientOnly>
+    <CalendarDemo />
+  </ClientOnly>
 </ComponentPreview>
 
 ## 安装
