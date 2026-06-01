@@ -47,7 +47,7 @@ coverage
 *.tsbuildinfo
 
 # VitePress
-.vitepress/cache
+**/.vitepress/cache
 
 # Next.js
 next-env.d.ts
