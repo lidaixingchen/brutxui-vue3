@@ -25,7 +25,7 @@ const sizeConfig = computed(() => {
 })
 
 const wrapperClass = computed(() =>
-    cn('inline-flex items-center font-brutal font-bold', sizeConfig.value.gap, props.class),
+    cn('inline-flex items-center font-brutal font-black', sizeConfig.value.gap, props.class),
 )
 
 const boxClass = computed(() =>
@@ -36,7 +36,7 @@ const boxClass = computed(() =>
 )
 
 const labelClass = computed(() =>
-    cn('text-brutal-fg font-brutal font-bold', sizeConfig.value.text),
+    cn('text-brutal-fg font-brutal font-black', sizeConfig.value.text),
 )
 </script>
 

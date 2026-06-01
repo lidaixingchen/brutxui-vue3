@@ -21,12 +21,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const codeText = computed(() => props.code)
 
-const wrapperClass = computed(() => cn('relative group', props.class))
+const wrapperClass = computed(() => cn('relative group codeblock-wrapper', props.class))
 
 const copyClass = computed(() =>
     cn(
         'absolute top-2 right-2 z-10 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100',
-        'shadow-[2px_2px_0px_0px_var(--brutal-border-color)]',
+        'border-2 border-brutal shadow-[2px_2px_0px_0px_var(--brutal-border-color)]',
         props.copyButtonClassName,
     ),
 )
@@ -48,7 +48,7 @@ const preClass = computed(() =>
         />
         <span
             v-if="language"
-            class="absolute top-2 left-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase"
+            class="absolute top-2 left-3 text-[0.6rem] font-black text-brutal-accent uppercase tracking-[0.12em] z-10"
         >
             {{ language }}
         </span>

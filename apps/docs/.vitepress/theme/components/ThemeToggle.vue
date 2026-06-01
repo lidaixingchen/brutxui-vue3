@@ -23,10 +23,10 @@ function toggleAppearance() {
 
 const buttonClass = computed(() =>
     cn(
-        'inline-flex items-center justify-center h-9 w-9 border-3 border-brutal bg-brutal-bg shadow-brutal',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+        'inline-flex items-center justify-center h-10 w-10 border-3 border-brutal bg-brutal-bg shadow-brutal',
+        'hover:bg-brutal-accent hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'transition-all',
+        'transition-all duration-150',
         props.class,
     ),
 )

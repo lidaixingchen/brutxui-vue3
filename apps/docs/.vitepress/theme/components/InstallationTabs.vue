@@ -170,9 +170,9 @@ const githubUrl = computed(
 const tabClass = (tab: InstallTab) =>
     computed(() =>
         cn(
-            'px-4 py-2 text-sm font-bold border-3 border-brutal transition-all duration-150',
+            'relative px-4 py-2 text-sm font-black uppercase tracking-wider border-3 border-brutal transition-all duration-150',
             activeTab.value === tab
-                ? 'bg-brutal-primary text-black shadow-brutal'
+                ? 'bg-brutal-primary text-black shadow-brutal before:absolute before:top-0 before:left-0 before:right-0 before:h-[3px] before:bg-brutal-accent'
                 : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
         ),
     )
@@ -180,7 +180,7 @@ const tabClass = (tab: InstallTab) =>
 const pmTabClass = (pm: PackageManager) =>
     computed(() =>
         cn(
-            'px-3 py-1.5 text-xs font-bold border-2 border-brutal transition-all duration-150',
+            'px-3 py-1.5 text-xs font-black uppercase tracking-wider border-2 border-brutal transition-all duration-150',
             activePackageManager.value === pm
                 ? 'bg-brutal-secondary text-black shadow-brutal-sm'
                 : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted',
@@ -189,7 +189,7 @@ const pmTabClass = (pm: PackageManager) =>
 </script>
 
 <template>
-    <div class="rounded-brutal border-3 border-brutal shadow-brutal overflow-hidden">
+    <div class="border-3 border-brutal shadow-brutal overflow-hidden">
         <div class="flex border-b-3 border-brutal">
             <button
                 type="button"

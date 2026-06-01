@@ -14,7 +14,7 @@ export default defineConfig({
     },
     head: [
         ['link', { rel: 'icon', type: 'image/svg+xml', href: '/brutxui-vue3/favicon.svg' }],
-        ['meta', { name: 'theme-color', content: '#FF6B6B' }],
+        ['meta', { name: 'theme-color', content: '#FFE66D' }],
         ['meta', { property: 'og:type', content: 'website' }],
         ['meta', { property: 'og:title', content: 'BrutxUI' }],
         ['meta', { property: 'og:description', content: 'Neo-Brutalism 风格 Vue 3 组件库' }],
@@ -24,7 +24,7 @@ export default defineConfig({
         ['meta', { name: 'twitter:description', content: 'Neo-Brutalism 风格 Vue 3 组件库' }],
         ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
-        ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap' }],
+        ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&display=swap' }],
         ['link', { rel: 'manifest', href: '/brutxui-vue3/manifest.json' }],
     ],
     transformHead(context) {
@@ -145,6 +145,10 @@ export default defineConfig({
         socialLinks: [
             { icon: 'github', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
         ],
+        footer: {
+            message: 'Built with brute force.',
+            copyright: `© ${new Date().getFullYear()} BrutxUI · MIT License`,
+        },
         editLink: {
             pattern: 'https://github.com/lidaixingchen/brutxui-vue3/edit/main/apps/docs/:path',
             text: '在 GitHub 上编辑此页',

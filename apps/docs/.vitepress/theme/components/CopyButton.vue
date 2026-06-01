@@ -26,10 +26,11 @@ async function handleCopy() {
 
 const buttonClass = computed(() =>
     cn(
-        'inline-flex items-center justify-center border-2 font-bold text-xs transition-all duration-200',
+        'inline-flex items-center justify-center border-2 border-brutal font-black text-xs',
+        'transition-all duration-150',
         copied.value
-            ? 'border-brutal bg-brutal-secondary text-black'
-            : 'border-white bg-gray-800 text-gray-100 hover:border-black hover:bg-brutal-secondary hover:text-black',
+            ? 'bg-brutal-accent text-black shadow-[2px_2px_0px_0px_var(--brutal-border-color)]'
+            : 'bg-brutal-secondary text-black shadow-[2px_2px_0px_0px_var(--brutal-border-color)] hover:bg-brutal-accent hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0px_0px_var(--brutal-border-color)] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         props.class,
     ),
 )
@@ -43,7 +44,7 @@ const buttonClass = computed(() =>
         :aria-label="copied ? 'Copied' : 'Copy to clipboard'"
         @click="handleCopy"
     >
-        <Check v-if="copied" :size="iconSize" :stroke-width="2.5" />
-        <Copy v-else :size="iconSize" :stroke-width="2.5" />
+        <Check v-if="copied" :size="iconSize" :stroke-width="3" />
+        <Copy v-else :size="iconSize" :stroke-width="3" />
     </button>
 </template>
