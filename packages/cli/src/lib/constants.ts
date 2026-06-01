@@ -1,7 +1,7 @@
 import type { ProjectType } from './types.js';
 
-export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared';
-export type { ComponentMeta as ComponentInfo } from 'brutx-shared';
+export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared-vue';
+export type { ComponentMeta as ComponentInfo } from 'brutx-shared-vue';
 
 export const CONFIG_FILES = {
     vite: ['vite.config.js', 'vite.config.ts', 'vite.config.mjs'],

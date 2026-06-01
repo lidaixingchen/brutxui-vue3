@@ -1,14 +1,6 @@
 import { mount } from '@vue/test-utils'
 import Slider from './Slider.vue'
 
-class ResizeObserverMock {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-}
-
-global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver
-
 describe('Slider', () => {
     it('renders with default props', () => {
         const wrapper = mount(Slider, {

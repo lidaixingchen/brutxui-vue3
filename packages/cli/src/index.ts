@@ -9,8 +9,8 @@ const pkg = require('../package.json');
 const program = new Command();
 
 program
-    .name('brutx')
-    .description('CLI for adding Brutx components to your project')
+    .name('brutx-vue')
+    .description('CLI for adding Brutx-Vue components to your project')
     .version(pkg.version);
 
 program

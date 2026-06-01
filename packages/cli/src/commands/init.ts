@@ -147,7 +147,7 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
     }
 
     if (options.yes) {
-        logger.warn('Brutx is already initialized. Use --force to overwrite.');
+        logger.warn('Brutx-Vue is already initialized. Use --force to overwrite.');
         return false;
     }
 
@@ -155,7 +155,7 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
         {
             type: 'confirm',
             name: 'overwrite',
-            message: 'Brutx is already initialized. Overwrite?',
+            message: 'Brutx-Vue is already initialized. Overwrite?',
             default: false,
         },
     ]);
@@ -174,7 +174,7 @@ export async function init(options: InitOptions): Promise<void> {
 
     logger.setSilent(options.silent ?? false);
 
-    logger.bold('\n🎨 Brutx - Neo-Brutalism Vue 3 Component Library\n');
+    logger.bold('\n🎨 Brutx-Vue - Neo-Brutalism Vue 3 Component Library\n');
     logger.info(`   Detected project: ${projectType}\n`);
 
     if (!(await shouldProceed(cwd, options))) {
@@ -187,7 +187,7 @@ export async function init(options: InitOptions): Promise<void> {
         settings = await promptForConfig(settings);
     }
 
-    const spinner = options.silent ? null : ora('Initializing Brutx...').start();
+    const spinner = options.silent ? null : ora('Initializing Brutx-Vue...').start();
 
     try {
         await createConfigFile(cwd, settings);
@@ -212,7 +212,7 @@ export async function init(options: InitOptions): Promise<void> {
             spinner?.info('Brutalist design tokens already present in ' + settings.tailwind.css + ', skipped duplicate injection.');
         }
 
-        spinner?.succeed('Brutx initialized successfully!');
+        spinner?.succeed('Brutx-Vue initialized successfully!');
 
         const packageManager = detectPackageManager(cwd);
         logger.newLine();
@@ -231,12 +231,12 @@ export async function init(options: InitOptions): Promise<void> {
         logger.newLine();
         logger.bold('Next steps:');
         logger.highlight('  1. Add components:');
-        logger.info('     npx brutx@latest add button');
-        logger.info('     npx brutx@latest add --all');
+        logger.info('     npx brutx-vue@latest add button');
+        logger.info('     npx brutx-vue@latest add --all');
         logger.newLine();
         logger.dim('Documentation: https://lidaixingchen.github.io/brutxui-vue3/');
     } catch (error) {
-        spinner?.fail('Failed to initialize Brutx');
+        spinner?.fail('Failed to initialize Brutx-Vue');
         console.error(error);
         process.exit(1);
     }

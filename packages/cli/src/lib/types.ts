@@ -49,7 +49,7 @@ export interface AddOptions {
     registry?: string;
 }
 
-export type { ComponentMeta as ComponentInfo } from 'brutx-shared';
+export type { ComponentMeta as ComponentInfo } from 'brutx-shared-vue';
 
 export interface RegistryFile {
     path: string;

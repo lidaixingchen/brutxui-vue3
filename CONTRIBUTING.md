@@ -30,7 +30,7 @@ pnpm build
 ## Monorepo 包结构
 
 - `packages/ui`：核心 Vue 3 组件包。
-- `packages/cli`：CLI 工具 (`brutx`)，用于项目初始化和组件安装。
+- `packages/cli`：CLI 工具 (`brutx-vue`)，用于项目初始化和组件安装。
 - `packages/registry`：组件分发注册表，包含编译后的 JSON 模式。
 - `apps/docs`：VitePress 文档站点。
 
@@ -47,7 +47,7 @@ pnpm build
 3. **编译注册表 JSON**：
    运行以下脚本，自动解析、解析依赖并将 Vue 代码打包为注册表 JSON 文件：
    ```bash
-   pnpm --filter brutx-registry build
+   pnpm --filter brutx-registry-vue build
    ```
 4. 提交 `packages/registry/registry/` 下生成的 JSON 文件。
 
@@ -59,7 +59,7 @@ pnpm build
 
 1. 构建 CLI 包：
    ```bash
-   pnpm --filter brutx build
+   pnpm --filter brutx-vue build
    ```
 2. 在工作区内或外创建临时文件夹（例如 `temp-test-project`）。
 3. 从测试文件夹运行编译后的 CLI：

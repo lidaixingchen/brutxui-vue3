@@ -1,6 +1,10 @@
 import { mount } from '@vue/test-utils'
 import Counter from './Counter.vue'
 
+function getDisplaySpan(wrapper: ReturnType<typeof mount>) {
+    return wrapper.find('[aria-live="polite"]')
+}
+
 describe('Counter', () => {
     let rafCallCount: number
 
@@ -22,7 +26,8 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100 },
         })
-        const classes = wrapper.classes()
+        const display = getDisplaySpan(wrapper)
+        const classes = display.classes()
         expect(classes).toContain('inline-flex')
         expect(classes).toContain('items-baseline')
         expect(classes).toContain('tabular-nums')
@@ -35,28 +40,28 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 50, size: 'sm' },
         })
-        expect(wrapper.classes()).toContain('text-2xl')
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-2xl')
     })
 
     it('applies lg size variant classes', () => {
         const wrapper = mount(Counter, {
             props: { to: 50, size: 'lg' },
         })
-        expect(wrapper.classes()).toContain('text-6xl')
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-6xl')
     })
 
     it('applies xl size variant classes', () => {
         const wrapper = mount(Counter, {
             props: { to: 50, size: 'xl' },
         })
-        expect(wrapper.classes()).toContain('text-8xl')
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-8xl')
     })
 
     it('applies custom class', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, class: 'my-counter' },
         })
-        expect(wrapper.classes()).toContain('my-counter')
+        expect(getDisplaySpan(wrapper).classes()).toContain('my-counter')
     })
 
     it('shows prefix in display', () => {
@@ -77,14 +82,14 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100 },
         })
-        expect(wrapper.attributes('aria-live')).toBe('polite')
+        expect(getDisplaySpan(wrapper).attributes('aria-live')).toBe('polite')
     })
 
     it('has aria-label attribute', () => {
         const wrapper = mount(Counter, {
             props: { to: 100 },
         })
-        expect(wrapper.attributes('aria-label')).toBeTruthy()
+        expect(getDisplaySpan(wrapper).attributes('aria-label')).toBeTruthy()
     })
 
     it('renders as span element', () => {

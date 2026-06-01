@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { COMPONENTS } from 'brutx-shared';
+import { COMPONENTS } from 'brutx-shared-vue';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -257,7 +257,7 @@ async function run() {
     console.log(`📦 Found ${componentNames.length} components to process.`);
 
     const registryIndex: Record<string, any> = {
-        name: 'brutx',
+        name: 'brutx-vue',
         homepage: 'https://lidaixingchen.github.io/brutxui-vue3/',
         items: []
     };

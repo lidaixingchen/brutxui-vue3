@@ -59,8 +59,8 @@ describe('Marquee', () => {
             slots: { default: 'Item' },
         })
         const container = wrapper.find('div')
-        const style = container.attributes('style') ?? ''
-        expect(style).toContain('mask-image')
+        const classList = container.classes().join(' ')
+        expect(classList).toContain('mask-image')
     })
 
     it('does not apply mask-image when fade is false', () => {
@@ -69,8 +69,8 @@ describe('Marquee', () => {
             slots: { default: 'Item' },
         })
         const container = wrapper.find('div')
-        const style = container.attributes('style') ?? ''
-        expect(style).not.toContain('mask-image')
+        const classList = container.classes().join(' ')
+        expect(classList).not.toContain('mask-image')
     })
 
     it('applies custom class', () => {

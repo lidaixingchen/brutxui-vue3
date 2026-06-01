@@ -38,7 +38,7 @@ describe('BreadcrumbList', () => {
         expect(wrapper.classes()).toContain('flex')
         expect(wrapper.classes()).toContain('items-center')
         expect(wrapper.classes()).toContain('text-sm')
-        expect(wrapper.classes()).toContain('font-black')
+        expect(wrapper.classes()).toContain('font-medium')
     })
 
     it('renders slot content', () => {

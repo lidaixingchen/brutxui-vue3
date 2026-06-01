@@ -7,9 +7,9 @@
 | 包名 | 路径 | 说明 |
 |---------|------|------|
 | `brutx-ui-vue` | `packages/ui/` | 核心 Vue 3 组件库 |
-| `brutx` | `packages/cli/` | 用于 `init` 和 `add` 的 CLI |
-| `brutx-registry` | `packages/registry/` | 编译后的 JSON 注册表 |
-| `brutx-shared` | `packages/shared/` | 共享类型和元数据 |
+| `brutx-vue` | `packages/cli/` | 用于 `init` 和 `add` 的 CLI |
+| `brutx-registry-vue` | `packages/registry/` | 编译后的 JSON 注册表 |
+| `brutx-shared-vue` | `packages/shared/` | 共享类型和元数据 |
 | `docs` | `apps/docs/` | VitePress 文档站点 |
 
 ## 命令
@@ -126,4 +126,4 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 
 ## 注册表模式
 
-- 创建新组件或块时，始终将其配置模式追加到 `packages/registry/registry/`。然后通过 `pnpm --filter brutx-registry build` 和 `pnpm --filter brutx-registry validate` 编译并验证模式。
+- 创建新组件或块时，始终将其配置模式追加到 `packages/registry/registry/`。然后通过 `pnpm --filter brutx-registry-vue build` 和 `pnpm --filter brutx-registry-vue validate` 编译并验证模式。

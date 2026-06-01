@@ -17,7 +17,7 @@ const { dayRef } = vi.hoisted(() => ({
 }))
 
 vi.mock('v-calendar', () => ({
-    default: {
+    Calendar: {
         name: 'VCalendar',
         props: ['modelValue', 'isRange', 'mode', 'disabled', 'class', 'attributes', 'trimWeeks', 'firstDayOfWeek'],
         emits: ['update:model-value'],

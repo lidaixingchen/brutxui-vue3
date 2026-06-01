@@ -25,15 +25,15 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     const configPath = path.join(cwd, 'components.json');
 
     if (!(await fs.pathExists(configPath))) {
-        logger.error('Error: Brutx is not initialized.');
-        logger.warn('Run: npx brutx@latest init');
+        logger.error('Error: Brutx-Vue is not initialized.');
+        logger.warn('Run: npx brutx-vue@latest init');
         process.exit(1);
     }
 
     const config = await fs.readJson(configPath);
     if (!config?.aliases?.components || !config?.aliases?.utils) {
         logger.error('Error: Invalid components.json. Missing required "aliases.components" or "aliases.utils".');
-        logger.warn('Run: npx brutx@latest init --force to regenerate.');
+        logger.warn('Run: npx brutx-vue@latest init --force to regenerate.');
         process.exit(1);
     }
     return config;
@@ -46,7 +46,7 @@ async function validateComponents(components: string[]): Promise<void> {
     if (invalid.length > 0) {
         logger.newLine();
         logger.error(`Unknown components: ${invalid.join(', ')}`);
-        logger.warn('Please choose from the available list or run npx brutx add interactively without arguments.');
+        logger.warn('Please choose from the available list or run npx brutx-vue add interactively without arguments.');
         logger.warn(`Available: ${AVAILABLE_COMPONENTS.join(', ')}`);
         process.exit(1);
     }
@@ -63,7 +63,7 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
 
     if (options.yes) {
         logger.error('Error: No components specified.');
-        logger.warn('Use: npx brutx@latest add [component] or --all');
+        logger.warn('Use: npx brutx-vue@latest add [component] or --all');
         process.exit(1);
     }
 
@@ -233,8 +233,8 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             spinner.stop();
         }
 
-        logger.bold('\n📦 Brutx CLI - Installation Plan:');
-        logger.info(`   Registry source: ${options.registry || 'Default Brutx hosted registry'}`);
+        logger.bold('\n📦 Brutx-Vue CLI - Installation Plan:');
+        logger.info(`   Registry source: ${options.registry || 'Default Brutx-Vue hosted registry'}`);
         logger.newLine();
 
         logger.bold('🧩 Components to install/update:');

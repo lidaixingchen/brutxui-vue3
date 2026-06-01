@@ -11,9 +11,9 @@
   [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
   [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx-ui-vue)
 
-  ### CLI 工具 (`brutx-ui-vue`)
-  [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FFE66D)](https://www.npmjs.com/package/brutx-ui-vue)
-  [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx-ui-vue)
+  ### CLI 工具 (`brutx-vue`)
+  [![npm version](https://img.shields.io/npm/v/brutx-vue.svg?style=flat-square&color=FFE66D)](https://www.npmjs.com/package/brutx-vue)
+  [![npm downloads](https://img.shields.io/npm/dm/brutx-vue.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx-vue)
 
   ### 项目健康度
   [![License: MIT](https://img.shields.io/badge/License-MIT-4ECDC4.svg?style=flat-square)](https://opensource.org/licenses/MIT)
@@ -24,7 +24,7 @@
 
   <br />
 
-  [文档与预览](https://lidaixingchen.github.io/brutxui-vue3/) · [NPM 组件库](https://www.npmjs.com/package/brutx-ui-vue) · [NPM CLI](https://www.npmjs.com/package/brutx) · [报告问题](https://github.com/lidaixingchen/brutxui-vue3/issues)
+  [文档与预览](https://lidaixingchen.github.io/brutxui-vue3/) · [NPM 组件库](https://www.npmjs.com/package/brutx-ui-vue) · [NPM CLI](https://www.npmjs.com/package/brutx-vue) · [报告问题](https://github.com/lidaixingchen/brutxui-vue3/issues)
 </div>
 
 ---
@@ -57,19 +57,19 @@ BrutxUI 旨在与 `shadcn/ui` 协同工作，而非替代它：
 
 安装 BrutxUI 组件有两种常见方式：
 
-### 方式 A：Brutx CLI（推荐）
+### 方式 A：Brutx-Vue CLI（推荐）
 
-Brutx CLI 负责 Tailwind 检测、CSS 令牌注入和包管理器检测。
+Brutx-Vue CLI 负责 Tailwind 检测、CSS 令牌注入和包管理器检测。
 
 ```bash
 # 在项目中初始化 BrutxUI 配置
-npx brutx@latest init
+npx brutx-vue@latest init
 
 # 添加指定组件
-npx brutx@latest add button card badge
+npx brutx-vue@latest add button card badge
 
 # 一次性安装全部组件
-npx brutx@latest add --all
+npx brutx-vue@latest add --all
 ```
 
 ### 方式 B：官方 `shadcn` CLI
@@ -136,7 +136,7 @@ cd brutxui-vue3
 pnpm install
 
 # 构建 UI 模块和 CLI 二进制文件
-pnpm --filter brutx-ui-vue build && pnpm --filter brutx build
+pnpm --filter brutx-ui-vue build && pnpm --filter brutx-vue build
 ```
 
 ### 2. 运行测试套件
@@ -148,10 +148,10 @@ pnpm test
 如果你修改了 `packages/ui/src/components/*.vue` 中的核心组件，请编译并验证模式：
 ```bash
 # 编译为注册表 JSON 文件
-pnpm --filter brutx-registry build
+pnpm --filter brutx-registry-vue build
 
 # 根据 shadcn CLI 模式验证 JSON 文件
-pnpm --filter brutx-registry validate
+pnpm --filter brutx-registry-vue validate
 ```
 
 ---

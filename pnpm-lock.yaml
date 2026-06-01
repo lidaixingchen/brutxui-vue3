@@ -57,7 +57,7 @@ importers:
 
   packages/cli:
     dependencies:
-      brutx-shared:
+      brutx-shared-vue:
         specifier: workspace:*
         version: link:../shared
       chalk:
@@ -94,7 +94,7 @@ importers:
 
   packages/registry:
     dependencies:
-      brutx-shared:
+      brutx-shared-vue:
         specifier: workspace:*
         version: link:../shared
     devDependencies:
