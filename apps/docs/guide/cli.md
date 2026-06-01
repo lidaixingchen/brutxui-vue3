@@ -2,8 +2,8 @@
 
 `brutx` CLI 帮助你在项目中初始化 BrutxUI，并通过单条命令添加组件。
 
-::: warning 尚未发布
-`brutx` CLI 包尚未发布到 npm，`npx brutx@latest` 命令暂不可用。请使用[手动安装](/guide/installation-manual)方式设置 BrutxUI，或从 `packages/ui/src/components/` 直接复制组件文件到你的项目中。
+::: tip 本地使用
+`brutx` CLI 尚未发布到 npm。如需使用，请从源码构建：在项目根目录运行 `pnpm --filter brutx build`，然后通过 `node packages/cli/dist/index.js` 调用。或使用[手动安装](/guide/installation-manual)方式设置 BrutxUI。
 :::
 
 ## 概览

@@ -129,6 +129,7 @@ export default defineConfig({
             {
                 text: '区块与模板',
                 items: [
+                    { text: '概览', link: '/blocks/' },
                     { text: 'Brutalist Hero 英雄区', link: '/blocks/brutalist-hero' },
                     { text: 'Pricing Section 定价区', link: '/blocks/pricing-section' },
                     { text: 'Auth Card 认证卡片', link: '/blocks/auth-card' },

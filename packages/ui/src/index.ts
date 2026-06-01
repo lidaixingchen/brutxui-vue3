@@ -169,6 +169,9 @@ export { toastVariants } from './components/toast-variants'
 export { useToast } from './composables/useToast'
 export type { ToastItem } from './composables/useToast'
 
+export { useTheme } from './composables/useTheme'
+export type { ThemeName, ColorMode } from './composables/useTheme'
+
 export { default as SaaSPricing } from './components/SaaSPricing.vue'
 export type { PricingPlan, PricingFeature } from './components/SaaSPricing.vue'
 
