@@ -54,6 +54,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 | `--brutal-accent` | `#FFE66D` | `#FFE66D` | 强调色（黄色） |
 | `--brutal-destructive` | `#EF476F` | `#EF476F` | 危险色 |
 | `--brutal-success` | `#7FB069` | `#7FB069` | 成功色 |
+| `--brutal-info` | `#4A90D9` | `#3B82F6` | 信息提示色 |
 | `--brutal-muted` | `#f3f4f6` | `#1e1e1e` | 柔和背景 |
 | `--brutal-ring` | `#000000` | `#ffffff` | 焦点环 |
 | `--brutal-pressed-offset` | `2px` | `2px` | 激活按压偏移 |
@@ -71,7 +72,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 
 - 边框：`border-3`、`border-brutal`、`rounded-brutal`
 - 阴影：`shadow-brutal`、`shadow-brutal-sm`、`shadow-brutal-lg`、`shadow-brutal-xl`
-- 颜色：`bg-brutal-bg`、`text-brutal-fg`、`bg-brutal-primary`、`bg-brutal-secondary`、`bg-brutal-accent`、`bg-brutal-destructive`、`bg-brutal-success`、`bg-brutal-muted`
+- 颜色：`bg-brutal-bg`、`text-brutal-fg`、`bg-brutal-primary`、`bg-brutal-secondary`、`bg-brutal-accent`、`bg-brutal-destructive`、`bg-brutal-success`、`bg-brutal-info`、`bg-brutal-muted`
 
 ### 主题预设
 

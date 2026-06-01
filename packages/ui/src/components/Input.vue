@@ -41,5 +41,5 @@ const classes = computed(() =>
         :placeholder="placeholder"
         :class="classes"
         @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    />
+    >
 </template>

@@ -58,6 +58,27 @@ function handleUpdate(value: Date | DateRangeValue | null) {
         emit('update:modelValue', value as Date | null)
     }
 }
+
+function getDayClasses(day: {
+    isSelected: boolean
+    isInRange: boolean
+    isStart: boolean
+    isEnd: boolean
+    isToday: boolean
+    isOutside: boolean
+    isDisabled: boolean
+}) {
+    return cn(
+        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold cursor-pointer border-3 border-brutal/10',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
+        day.isSelected && !day.isInRange && 'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm',
+        day.isInRange && !day.isStart && !day.isEnd && 'bg-brutal-accent text-brutal-fg',
+        (day.isStart || day.isEnd) && 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm',
+        day.isToday && 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal',
+        day.isOutside && 'text-brutal-muted-foreground opacity-40',
+        day.isDisabled && 'opacity-40 cursor-not-allowed'
+    )
+}
 </script>
 
 <template>
@@ -80,15 +101,7 @@ function handleUpdate(value: Date | DateRangeValue | null) {
         </template>
         <template #day-content="{ day }">
             <div
-                class="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold cursor-pointer border-3 border-brutal/10"
-                :class="{
-                    'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm': day.isSelected && !day.isInRange,
-                    'bg-brutal-accent text-brutal-fg': day.isInRange && !day.isStart && !day.isEnd,
-                    'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm': day.isStart || day.isEnd,
-                    'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal': day.isToday,
-                    'text-brutal-muted-foreground opacity-40': day.isOutside,
-                    'opacity-40 cursor-not-allowed': day.isDisabled,
-                }"
+                :class="getDayClasses(day)"
             >
                 {{ day.label }}
             </div>

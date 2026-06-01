@@ -18,6 +18,7 @@ const classes = computed(() =>
         'shadow-brutal',
         'transition-all duration-150',
         'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none',
         'disabled:cursor-not-allowed disabled:opacity-50',
         '[&>span]:line-clamp-1',
         props.class

@@ -9,7 +9,7 @@
   "files": [
     {
       "path": "components/ui/table/Table.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TableProps {\n    class?: string\n}\n\nconst props = defineProps<TableProps>()\n\nconst classes = computed(() =>\n    cn('w-full caption-bottom text-sm', 'border-3 border-brutal', props.class)\n)\n</script>\n\n<template>\n    <div class=\"relative w-full overflow-auto\">\n        <table :class=\"classes\">\n            <slot />\n        </table>\n    </div>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TableProps {\n    class?: string\n}\n\nconst props = defineProps<TableProps>()\n\nconst classes = computed(() =>\n    cn('w-full caption-bottom text-sm', 'border-3 border-brutal', props.class)\n)\n</script>\n\n<template>\n    <div class=\"relative w-full overflow-x-auto\">\n        <table :class=\"classes\">\n            <slot />\n        </table>\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -34,7 +34,7 @@
     },
     {
       "path": "components/ui/table/TableHead.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TableHeadProps {\n    class?: string\n}\n\nconst props = defineProps<TableHeadProps>()\n\nconst classes = computed(() =>\n    cn(\n        'h-12 px-4 text-left align-middle font-black tracking-wide text-brutal-fg',\n        '[&:has([role=checkbox])]:pr-0',\n        'border-r-3 border-brutal last:border-r-0',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <th :class=\"classes\">\n        <slot />\n    </th>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TableHeadProps {\n    class?: string\n}\n\nconst props = defineProps<TableHeadProps>()\n\nconst classes = computed(() =>\n    cn(\n        'h-12 px-4 text-left align-middle font-black tracking-wide text-brutal-fg bg-brutal-accent',\n        '[&:has([role=checkbox])]:pr-0',\n        'border-r-3 border-brutal last:border-r-0',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <th :class=\"classes\">\n        <slot />\n    </th>\n</template>\n",
       "type": "registry:ui"
     },
     {
