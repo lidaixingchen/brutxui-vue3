@@ -89,9 +89,9 @@ interface ComboboxOption {
 |------|------|--------|
 | `options` | `ComboboxOption[]` | —（必填） |
 | `modelValue` | `string \| undefined` | — |
-| `placeholder` | `string` | `'Select option...'` |
-| `searchPlaceholder` | `string` | `'Search...'` |
-| `emptyText` | `string` | `'No results found.'` |
+| `placeholder` | `string` | locale: `combobox.placeholder` |
+| `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` |
+| `emptyText` | `string` | locale: `combobox.emptyText` |
 | `disabled` | `boolean` | `false` |
 | `class` | `string` | — |
 
@@ -101,9 +101,9 @@ interface ComboboxOption {
 |------|------|--------|
 | `options` | `ComboboxOption[]` | —（必填） |
 | `modelValue` | `string[]` | `[]` |
-| `placeholder` | `string` | `'Select options...'` |
-| `searchPlaceholder` | `string` | `'Search...'` |
-| `emptyText` | `string` | `'No results found.'` |
+| `placeholder` | `string` | locale: `combobox.multiPlaceholder` |
+| `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` |
+| `emptyText` | `string` | locale: `combobox.emptyText` |
 | `disabled` | `boolean` | `false` |
 | `maxDisplay` | `number` | `3` |
 | `class` | `string` | — |

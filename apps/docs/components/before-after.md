@@ -49,8 +49,8 @@ const modified = '/images/after.jpg'
 |------|------|--------|------|
 | `before` | `string` | — | 左侧/底层原始图片的 URL (必填) |
 | `after` | `string` | — | 右侧/表层对比图片的 URL (必填) |
-| `beforeAlt` | `string` | `'Before'` | 原始图片的 `alt` 属性 |
-| `afterAlt` | `string` | `'After'` | 对比图片的 `alt` 属性 |
+| `beforeAlt` | `string` | locale: `beforeAfter.before` | 原始图片的 `alt` 属性 |
+| `afterAlt` | `string` | locale: `beforeAfter.after` | 对比图片的 `alt` 属性 |
 | `defaultValue` | `number` | `50` | 初始状态下分割线所处的百分比位置 (0-100) |
 | `disabled` | `boolean` | `false` | 是否禁用拖拽交互 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |

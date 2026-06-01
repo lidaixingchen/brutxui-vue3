@@ -55,6 +55,8 @@ export const zhCN: Locale = {
         register: '注册',
     },
     waitlistPage: {
+        title: '加入 BrutxUI 等候俱乐部',
+        ctaText: '获取优先访问权',
         earlyAccess: '抢先体验',
         onWaitlist: '{count} 人已加入等候',
         live: '在线',
@@ -64,9 +66,13 @@ export const zhCN: Locale = {
         signOut: '退出登录',
     },
     brutalistHero: {
+        title: '用 BrutxUI 更快地构建大胆界面',
+        primaryCtaText: '立即开始',
+        secondaryCtaText: '查看组件注册表',
         neoBrutalismUI: '新粗野主义 UI',
     },
     saasPricing: {
+        title: '简单，不妥协的定价',
         monthly: '按月',
         annually: '按年',
         mostPopular: '最受欢迎',

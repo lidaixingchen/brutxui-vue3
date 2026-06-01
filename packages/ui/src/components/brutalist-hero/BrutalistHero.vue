@@ -16,14 +16,18 @@ interface BrutalistHeroProps {
 }
 
 const props = withDefaults(defineProps<BrutalistHeroProps>(), {
-    title: 'Build Bold Interfaces Faster with BrutxUI',
+    title: undefined,
     subtitle: '',
-    primaryCtaText: 'Get Started Now',
-    secondaryCtaText: 'View Component Registry',
+    primaryCtaText: undefined,
+    secondaryCtaText: undefined,
     class: '',
 })
 
 const { t } = useLocale()
+
+const resolvedTitle = computed(() => props.title ?? t('brutalistHero.title'))
+const resolvedPrimaryCtaText = computed(() => props.primaryCtaText ?? t('brutalistHero.primaryCtaText'))
+const resolvedSecondaryCtaText = computed(() => props.secondaryCtaText ?? t('brutalistHero.secondaryCtaText'))
 
 const emit = defineEmits<{
     primaryCta: []
@@ -42,18 +46,18 @@ const rootClasses = computed(() => cn('w-full', props.class))
                     <span class="font-black text-sm">{{ t('brutalistHero.neoBrutalismUI') }}</span>
                 </div>
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-{{ title }}
+{{ resolvedTitle }}
 </h1>
                 <p v-if="subtitle" class="mt-4 text-lg text-brutal-muted-foreground font-medium">
 {{ subtitle }}
 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
                     <Button variant="primary" size="lg" @click="emit('primaryCta')">
-                        {{ primaryCtaText }}
+                        {{ resolvedPrimaryCtaText }}
                         <ArrowRight class="ml-2 h-5 w-5 stroke-[3]" />
                     </Button>
                     <Button variant="outline" size="lg" @click="emit('secondaryCta')">
-{{ secondaryCtaText }}
+{{ resolvedSecondaryCtaText }}
 </Button>
                 </div>
             </div>

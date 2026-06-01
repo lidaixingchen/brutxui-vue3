@@ -63,9 +63,9 @@ function handleSubmit(email) {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `title` | `string` | `'Join the BrutxUI Waitlist Club'` |
+| `title` | `string` | locale: `waitlistPage.title` |
 | `description` | `string` | — |
-| `ctaText` | `string` | `'Secure Priority Access'` |
+| `ctaText` | `string` | locale: `waitlistPage.ctaText` |
 | `waitlistCount` | `number` | `0` |
 | `class` | `string` | — |
 

@@ -73,8 +73,9 @@ function handleGithub() {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `title` | `string` | `'Welcome back'` |
-| `description` | `string` | `'Sign in to your account to continue'` |
+| `title` | `string` | locale: `authCard.welcomeBack` |
+| `description` | `string` | locale: `authCard.signInToContinue` |
+| `texts` | `AuthCardTexts` | `{}` |
 | `class` | `string` | — |
 
 ## 事件

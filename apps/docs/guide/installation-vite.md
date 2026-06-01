@@ -120,3 +120,20 @@ import CardContent from '@/components/ui/CardContent.vue'
     </Card>
 </template>
 ```
+
+## 配置语言（可选）
+
+BrutxUI 默认显示中文文本。如需切换为英文或其他语言，在 `main.ts` 中配置 `BrutxUIPlugin`：
+
+```ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import { BrutxUIPlugin, en } from 'brutx-ui-vue'
+import './style.css'
+
+const app = createApp(App)
+app.use(BrutxUIPlugin, { locale: en })
+app.mount('#app')
+```
+
+更多语言配置选项请参考[国际化](/guide/locale)指南。

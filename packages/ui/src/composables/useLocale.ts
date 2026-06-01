@@ -23,7 +23,7 @@ function resolveByPath(obj: unknown, path: string): string | undefined {
 function interpolate(template: string, params?: Record<string, string | number>): string {
     if (!params) return template
     return Object.entries(params).reduce(
-        (str, [k, v]) => str.replace(`{${k}}`, String(v)),
+        (str, [k, v]) => str.split(`{${k}}`).join(String(v)),
         template,
     )
 }

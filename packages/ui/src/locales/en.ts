@@ -55,6 +55,8 @@ export const en: Locale = {
         register: 'Register',
     },
     waitlistPage: {
+        title: 'Join the BrutxUI Waitlist Club',
+        ctaText: 'Secure Priority Access',
         earlyAccess: 'Early Access',
         onWaitlist: '{count} on waitlist',
         live: 'Live',
@@ -64,9 +66,13 @@ export const en: Locale = {
         signOut: 'Sign out',
     },
     brutalistHero: {
+        title: 'Build Bold Interfaces Faster with BrutxUI',
+        primaryCtaText: 'Get Started Now',
+        secondaryCtaText: 'View Component Registry',
         neoBrutalismUI: 'Neo-Brutalism UI',
     },
     saasPricing: {
+        title: 'Simple, Unapologetic Pricing',
         monthly: 'Monthly',
         annually: 'Annually',
         mostPopular: 'MOST POPULAR',

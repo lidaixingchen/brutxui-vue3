@@ -74,9 +74,9 @@ import { Inbox } from 'lucide-vue-next'
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `title` | `string` | `'No active deployments found'` |
+| `title` | `string` | locale: `emptyState.defaultTitle` |
 | `description` | `string` | — |
-| `actionText` | `string` | `'Deploy New App'` |
+| `actionText` | `string` | locale: `emptyState.defaultActionText` |
 | `icon` | `Component` | `FolderOpen`（来自 lucide-vue-next） |
 | `class` | `string` | — |
 

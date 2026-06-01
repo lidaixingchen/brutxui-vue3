@@ -6,7 +6,7 @@ export const buttonVariants = cva(
         'border-3 border-brutal',
         'font-black tracking-wide',
         'transition-all duration-150',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
+        'focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2',
         'disabled:opacity-50 disabled:pointer-events-none',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
     ],

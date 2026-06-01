@@ -91,7 +91,7 @@ import SubmitButton from '@/components/ui/submit-button/SubmitButton.vue'
 |------|------|--------|
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` |
-| `pendingText` | `string` | `'Submitting...'` |
+| `pendingText` | `string` | locale: `submitButton.submitting` |
 | `loading` | `boolean` | `false` |
 | `disabled` | `boolean` | `false` |
 | `class` | `string` | — |

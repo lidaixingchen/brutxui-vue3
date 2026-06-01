@@ -34,6 +34,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 - 始终使用 `computed()` 进行动态类合并——切勿在模板中调用 `cn()`
 - 始终使用 `reka-ui` 实现无障碍无头原语
 - 始终从 `src/index.ts` 导出新组件
+- 文本 props 默认值设为 `undefined`，通过 `useLocale()` 的 `t()` 函数提供默认文本；优先级链为 `props > t() > zh-CN 回退`
 
 ## Neo-Brutalist 视觉系统
 
@@ -95,10 +96,12 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 - 内部：相对路径（`../lib/utils`）
 - 无头原语：`import { Primitive } from 'reka-ui'`
 - 图标：`import { Loader2 } from 'lucide-vue-next'`
+- 国际化：`import { useLocale } from '@/composables/useLocale'`
 
 ## 代码风格
 
 - 除非要求否则不写注释 · 无魔法数字 · 无硬编码值
+- 可翻译文本使用 `t('componentName.key')` 访问，含插值的使用 `t('key', { param: value })`
 - 4 空格缩进 · 单引号 · PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
 
 ## 安全
@@ -113,6 +116,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 - **核心包：** `packages/ui/`
   - 组件文件：`packages/ui/src/components/`
   - 组合式函数：`packages/ui/src/composables/`
+  - 语言包：`packages/ui/src/locales/`
   - 工具函数：`packages/ui/src/lib/utils.ts`
   - 测试文件：`packages/ui/src/components/*.test.ts`
   - 构建产物：`packages/ui/dist/`

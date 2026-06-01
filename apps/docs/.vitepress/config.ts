@@ -81,6 +81,10 @@ export default defineConfig({
                 link: '/guide/theme',
             },
             {
+                text: '国际化',
+                link: '/guide/locale',
+            },
+            {
                 text: 'AI 集成',
                 link: '/guide/ai',
             },

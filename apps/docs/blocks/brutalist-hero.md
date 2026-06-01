@@ -70,10 +70,10 @@ function handleSecondary() {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `title` | `string` | `'Build Bold Interfaces Faster with BrutxUI'` |
+| `title` | `string` | locale: `brutalistHero.title` |
 | `subtitle` | `string` | — |
-| `primaryCtaText` | `string` | `'Get Started Now'` |
-| `secondaryCtaText` | `string` | `'View Component Registry'` |
+| `primaryCtaText` | `string` | locale: `brutalistHero.primaryCtaText` |
+| `secondaryCtaText` | `string` | locale: `brutalistHero.secondaryCtaText` |
 | `class` | `string` | — |
 
 ## 事件

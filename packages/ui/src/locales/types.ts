@@ -61,6 +61,8 @@ export interface AuthCardLocale {
 }
 
 export interface WaitlistPageLocale {
+    title: string
+    ctaText: string
     earlyAccess: string
     onWaitlist: string
     live: string
@@ -72,10 +74,14 @@ export interface DashboardShellLocale {
 }
 
 export interface BrutalistHeroLocale {
+    title: string
+    primaryCtaText: string
+    secondaryCtaText: string
     neoBrutalismUI: string
 }
 
 export interface SaaSPricingLocale {
+    title: string
     monthly: string
     annually: string
     mostPopular: string

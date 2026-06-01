@@ -15,14 +15,17 @@ interface WaitlistPageProps {
 }
 
 const props = withDefaults(defineProps<WaitlistPageProps>(), {
-    title: 'Join the BrutxUI Waitlist Club',
+    title: undefined,
     description: '',
-    ctaText: 'Secure Priority Access',
+    ctaText: undefined,
     waitlistCount: 0,
     class: '',
 })
 
 const { t } = useLocale()
+
+const resolvedTitle = computed(() => props.title ?? t('waitlistPage.title'))
+const resolvedCtaText = computed(() => props.ctaText ?? t('waitlistPage.ctaText'))
 
 const emit = defineEmits<{
     submit: [email: string]
@@ -49,7 +52,7 @@ function handleSubmit() {
         </div>
 
         <h1 class="text-3xl font-black tracking-tight">
-{{ title }}
+{{ resolvedTitle }}
 </h1>
         <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium">
 {{ description }}
@@ -58,7 +61,7 @@ function handleSubmit() {
         <form class="mt-8 flex flex-col sm:flex-row gap-3" @submit.prevent="handleSubmit">
             <Input v-model="email" type="email" placeholder="you@example.com" class="flex-1" />
             <Button type="submit" variant="primary">
-{{ ctaText }}
+{{ resolvedCtaText }}
 </Button>
         </form>
 

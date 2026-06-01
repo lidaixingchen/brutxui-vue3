@@ -84,13 +84,15 @@ const props = withDefaults(defineProps<SaaSPricingProps>(), {
             buttonVariant: 'secondary' as const,
         },
     ],
-    title: 'Simple, Unapologetic Pricing',
+    title: undefined,
     subtitle: '',
     class: '',
 })
 
 const billing = ref<'monthly' | 'annually'>('monthly')
 const { t } = useLocale()
+
+const resolvedTitle = computed(() => props.title ?? t('saasPricing.title'))
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
@@ -121,7 +123,7 @@ function getFeatureClasses(feature: PricingFeature) {
     <div :class="rootClasses">
         <div class="text-center mb-10">
             <h2 class="text-3xl font-black tracking-tight">
-{{ title }}
+{{ resolvedTitle }}
 </h2>
             <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">
 {{ subtitle }}
