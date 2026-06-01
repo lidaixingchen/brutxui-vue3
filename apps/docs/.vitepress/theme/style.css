@@ -23,6 +23,7 @@
 
 body {
     font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    scrollbar-gutter: stable;
 }
 
 .dark {

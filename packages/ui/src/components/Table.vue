@@ -14,7 +14,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div class="relative w-full overflow-auto">
+    <div class="relative w-full">
         <table :class="classes">
             <slot />
         </table>

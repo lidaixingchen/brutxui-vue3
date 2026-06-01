@@ -24,12 +24,12 @@ describe('Table', () => {
         expect(wrapper.find('table').text()).toBe('Data')
     })
 
-    it('wraps table in overflow container', () => {
+    it('wraps table in container', () => {
         const wrapper = mount(Table)
         const container = wrapper.find('div')
         expect(container.exists()).toBe(true)
         expect(container.classes()).toContain('relative')
-        expect(container.classes()).toContain('overflow-auto')
+        expect(container.classes()).toContain('w-full')
     })
 
     it('applies custom class', () => {

@@ -10,7 +10,7 @@ interface AvatarFallbackProps {
 const props = defineProps<AvatarFallbackProps>()
 
 const classes = computed(() =>
-    cn('flex h-full w-full items-center justify-center bg-brutal-muted font-bold', props.class)
+    cn('flex h-full w-full items-center justify-center bg-brutal-muted text-brutal-muted-foreground font-bold', props.class)
 )
 </script>
 
