@@ -73,7 +73,7 @@ const iconComponent = computed(() => {
 const closeClasses = computed(() =>
     cn(
         'flex-shrink-0 h-8 w-8 flex items-center justify-center',
-        'border-2 border-brutal bg-brutal-bg',
+        'border-3 border-brutal bg-brutal-bg',
         'shadow-brutal-sm',
         'transition-all duration-150',
         'hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',

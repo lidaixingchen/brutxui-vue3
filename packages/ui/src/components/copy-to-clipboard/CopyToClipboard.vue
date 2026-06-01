@@ -1,5 +1,6 @@
 <script setup lang="ts">
 
+import { computed } from 'vue'
 import { Check, Copy } from 'lucide-vue-next'
 import { useClipboard } from '../../composables/useClipboard'
 import { cn } from '../../lib/utils'
@@ -22,6 +23,16 @@ const handleCopy = () => {
         copy(props.text)
     }
 }
+
+const classes = computed(() =>
+    cn(
+        'inline-flex items-center justify-center gap-2 font-black tracking-wide border-3 border-brutal transition-all duration-150 h-11 px-5 rounded-brutal shadow-brutal select-none cursor-pointer disabled:opacity-50 disabled:pointer-events-none',
+        copied.value
+            ? 'bg-brutal-success text-brutal-fg translate-y-[var(--brutal-pressed-offset,2px)] shadow-none'
+            : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        props.class
+    )
+)
 </script>
 
 <template>
@@ -29,13 +40,7 @@ const handleCopy = () => {
         type="button"
         :disabled="!isSupported"
         @click="handleCopy"
-        :class="cn(
-            'inline-flex items-center justify-center gap-2 font-black tracking-wide border-3 border-brutal transition-all duration-150 h-11 px-5 rounded-brutal shadow-brutal select-none cursor-pointer disabled:opacity-50 disabled:pointer-events-none',
-            copied
-                ? 'bg-brutal-success text-brutal-fg translate-y-[var(--brutal-pressed-offset,2px)] shadow-none'
-                : 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-            props.class
-        )"
+        :class="classes"
     >
         <slot :copied="copied">
             <template v-if="copied">

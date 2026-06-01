@@ -3,12 +3,12 @@ import { ref } from 'vue'
 export function useClipboard(options: { duration?: number } = {}) {
     const duration = options.duration ?? 2000
     const copied = ref(false)
-    const isSupported = typeof navigator !== 'undefined' && 'clipboard' in navigator
+    const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)
 
     let timeoutId: number | null = null
 
     async function copy(text: string) {
-        if (!isSupported) return false
+        if (!isSupported.value) return false
 
         try {
             await navigator.clipboard.writeText(text)

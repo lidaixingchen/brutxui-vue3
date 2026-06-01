@@ -63,7 +63,7 @@ function handleSubmit() {
 <div class="w-full border-t-3 border-brutal" />
 </div>
                 <div class="relative flex justify-center text-xs">
-<span class="bg-brutal-bg px-2 font-bold text-gray-500">or email login</span>
+<span class="bg-brutal-bg px-2 font-bold text-brutal-muted-foreground">or email login</span>
 </div>
             </div>
 
@@ -73,7 +73,7 @@ function handleSubmit() {
 Email
 </LabelRoot>
                     <div class="relative">
-                        <Mail class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-gray-400" />
+                        <Mail class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
                         <Input id="email" type="email" placeholder="you@example.com" input-size="default" class="pl-10" />
                     </div>
                 </div>
@@ -87,7 +87,7 @@ Forgot password?
 </button>
                     </div>
                     <div class="relative">
-                        <Lock class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-gray-400" />
+                        <Lock class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
                         <Input id="password" type="password" placeholder="••••••••" input-size="default" class="pl-10" />
                     </div>
                 </div>
@@ -97,7 +97,7 @@ Sign In
             </form>
         </CardContent>
         <CardFooter class="justify-center">
-            <p class="text-sm font-medium text-gray-500">
+            <p class="text-sm font-medium text-brutal-muted-foreground">
                 Don't have an account? <span class="font-bold text-brutal-primary cursor-pointer">Register</span>
             </p>
         </CardFooter>

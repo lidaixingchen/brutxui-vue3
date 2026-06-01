@@ -85,6 +85,7 @@ function rewriteImports(code: string, _componentName: string): string {
     code = code.replace(/['"]\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
+    code = code.replace(/['"]\.\.\/\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
     code = code.replace(
         /['"]\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)['"]/g,
         (m, comp, rest) => (COMPONENT_FILES[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
@@ -174,7 +175,11 @@ const TAILWIND_CONFIG = {
                     'brutal-destructive': 'var(--brutal-destructive, #EF476F)',
                     'brutal-success': 'var(--brutal-success, #7FB069)',
                     'brutal-muted': 'var(--brutal-muted, #f3f4f6)',
-                    'brutal-ring': 'var(--brutal-ring, #000000)'
+                    'brutal-ring': 'var(--brutal-ring, #000000)',
+                    'brutal-info': 'var(--brutal-info, #4A90D9)',
+                    'brutal-muted-foreground': 'var(--brutal-muted-foreground, #4B5563)',
+                    'brutal-overlay': 'var(--brutal-overlay, rgba(0, 0, 0, 0.5))',
+                    'brutal-placeholder': 'var(--brutal-placeholder, #9CA3AF)'
                 },
                 boxShadow: {
                     brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
@@ -205,7 +210,10 @@ const CSS_VARS = {
         'brutal-success': '#7FB069',
         'brutal-muted': '#f3f4f6',
         'brutal-ring': '#000000',
-        'brutal-info': '#4A90D9'
+        'brutal-info': '#4A90D9',
+        'brutal-muted-foreground': '#4B5563',
+        'brutal-overlay': 'rgba(0, 0, 0, 0.5)',
+        'brutal-placeholder': '#9CA3AF'
     },
     dark: {
         'brutal-border-width': '3px',
@@ -215,16 +223,19 @@ const CSS_VARS = {
         'brutal-shadow-color': '#ffffff',
         'brutal-radius': '0px',
         'brutal-pressed-offset': '2px',
-        'brutal-bg': '#111827',
+        'brutal-bg': '#141414',
         'brutal-fg': '#ffffff',
         'brutal-primary': '#FF6B6B',
         'brutal-secondary': '#4ECDC4',
         'brutal-accent': '#FFE66D',
         'brutal-destructive': '#EF476F',
         'brutal-success': '#7FB069',
-        'brutal-muted': '#1f2937',
+        'brutal-muted': '#1e1e1e',
         'brutal-ring': '#ffffff',
-        'brutal-info': '#4A90D9'
+        'brutal-info': '#3B82F6',
+        'brutal-muted-foreground': '#9CA3AF',
+        'brutal-overlay': 'rgba(0, 0, 0, 0.7)',
+        'brutal-placeholder': '#6B7280'
     }
 };
 

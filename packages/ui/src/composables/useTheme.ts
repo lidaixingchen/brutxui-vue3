@@ -11,6 +11,7 @@ function getThemeClass(name: ThemeName): string {
 }
 
 function applyTheme(name: ThemeName) {
+    if (typeof document === 'undefined') return;
     const root = document.documentElement
     root.classList.remove(getThemeClass(theme.value))
     root.classList.add(getThemeClass(name))
@@ -19,6 +20,7 @@ function applyTheme(name: ThemeName) {
 }
 
 function applyColorMode(mode: ColorMode) {
+    if (typeof document === 'undefined') return;
     const root = document.documentElement
     if (mode === 'dark') {
         root.classList.add('dark')
@@ -38,6 +40,7 @@ function setTheme(name: ThemeName) {
 }
 
 function initTheme() {
+    if (typeof localStorage === 'undefined') return;
     const savedTheme = localStorage.getItem('brutx-theme') as ThemeName | null
     const savedMode = localStorage.getItem('brutx-color-mode') as ColorMode | null
 
@@ -47,7 +50,7 @@ function initTheme() {
 
     if (savedMode && ['light', 'dark'].includes(savedMode)) {
         applyColorMode(savedMode)
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    } else if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         applyColorMode('dark')
     }
 }

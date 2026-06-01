@@ -119,12 +119,12 @@ async function writeRegistryFiles(
         let itemAdded = false;
 
         for (const file of item.files) {
-            const targetPath = resolveComponentFilePath(file.path, config, cwd);
-
             const normalizedPath = path.normalize(file.path);
             if (normalizedPath.startsWith('..') || path.isAbsolute(normalizedPath)) {
                 throw new Error(`Security Error: Malicious component file path detected: "${file.path}".`);
             }
+
+            const targetPath = resolveComponentFilePath(file.path, config, cwd);
 
             if (!isSafePath(targetPath, cwd)) {
                 throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetPath}".`);

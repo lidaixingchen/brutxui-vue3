@@ -51,7 +51,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -81,7 +85,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -91,16 +98,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -153,7 +163,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -183,7 +197,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -193,16 +210,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -245,7 +265,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -275,7 +299,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -285,16 +312,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -304,7 +334,8 @@
       "title": "Button",
       "description": "A highly customizable neo-brutalist Button component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "reka-ui"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
@@ -339,7 +370,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -369,7 +404,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -379,16 +417,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -430,7 +471,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -460,7 +505,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -470,16 +518,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -542,7 +593,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -572,7 +627,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -582,16 +640,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -633,7 +694,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -663,7 +728,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -673,16 +741,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -736,7 +807,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -766,7 +841,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -776,16 +854,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -795,7 +876,7 @@
       "title": "Command",
       "description": "A highly customizable neo-brutalist Command component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-vue-next"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
@@ -858,7 +939,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -888,7 +973,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -898,16 +986,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -969,7 +1060,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -999,7 +1094,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1009,16 +1107,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1092,7 +1193,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1122,7 +1227,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1132,16 +1240,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1184,7 +1295,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1214,7 +1329,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1224,16 +1342,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1278,7 +1399,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1308,7 +1433,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1318,16 +1446,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1372,7 +1503,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1402,7 +1537,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1412,16 +1550,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1462,7 +1603,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1492,7 +1637,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1502,16 +1650,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1556,7 +1707,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1586,7 +1741,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1596,16 +1754,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1671,7 +1832,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1701,7 +1866,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1711,16 +1879,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1765,7 +1936,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1795,7 +1970,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1805,16 +1983,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1873,7 +2054,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -1903,7 +2088,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -1913,16 +2101,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -1977,7 +2168,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2007,7 +2202,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2017,16 +2215,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2035,7 +2236,9 @@
       "type": "registry:ui",
       "title": "Submit Button",
       "description": "A highly customizable neo-brutalist Submit Button component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "dependencies": [
+        "lucide-vue-next"
+      ],
       "registryDependencies": [
         "button"
       ],
@@ -2067,7 +2270,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2097,7 +2304,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2107,16 +2317,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2157,7 +2370,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2187,7 +2404,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2197,16 +2417,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2273,7 +2496,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2303,7 +2530,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2313,16 +2543,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2371,7 +2604,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2401,7 +2638,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2411,16 +2651,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2463,7 +2706,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2493,7 +2740,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2503,16 +2753,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2565,7 +2818,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2595,7 +2852,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2605,16 +2865,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2655,7 +2918,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2685,7 +2952,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2695,16 +2965,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2749,7 +3022,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2779,7 +3056,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2789,16 +3069,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2842,7 +3125,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2872,7 +3159,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -2882,16 +3172,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -2965,7 +3258,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -2995,7 +3292,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3005,16 +3305,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3081,7 +3384,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3111,7 +3418,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3121,16 +3431,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3192,7 +3505,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3222,7 +3539,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3232,16 +3552,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3287,7 +3610,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3317,7 +3644,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3327,16 +3657,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3377,7 +3710,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3407,7 +3744,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3417,16 +3757,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3467,7 +3810,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3497,7 +3844,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3507,16 +3857,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3561,7 +3914,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3591,7 +3948,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3601,16 +3961,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3661,7 +4024,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3691,7 +4058,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3701,16 +4071,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3754,7 +4127,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3784,7 +4161,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3794,16 +4174,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3848,7 +4231,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3878,7 +4265,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3888,16 +4278,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -3943,7 +4336,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -3973,7 +4370,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -3983,16 +4383,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4033,7 +4436,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4063,7 +4470,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4073,16 +4483,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4125,7 +4538,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4155,7 +4572,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4165,16 +4585,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4218,7 +4641,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4248,7 +4675,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4258,16 +4688,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4325,7 +4758,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4355,7 +4792,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4365,16 +4805,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4436,7 +4879,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4466,7 +4913,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4476,16 +4926,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4527,7 +4980,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4557,7 +5014,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4567,16 +5027,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4621,7 +5084,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4651,7 +5118,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4661,16 +5131,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4736,7 +5209,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4766,7 +5243,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4776,16 +5256,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4824,7 +5307,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4854,7 +5341,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4864,16 +5354,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -4912,7 +5405,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -4942,7 +5439,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -4952,16 +5452,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -5004,7 +5507,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -5034,7 +5541,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -5044,16 +5554,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     },
@@ -5119,7 +5632,11 @@
                 "brutal-destructive": "var(--brutal-destructive, #EF476F)",
                 "brutal-success": "var(--brutal-success, #7FB069)",
                 "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)"
+                "brutal-ring": "var(--brutal-ring, #000000)",
+                "brutal-info": "var(--brutal-info, #4A90D9)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
               },
               "boxShadow": {
                 "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -5149,7 +5666,10 @@
           "brutal-success": "#7FB069",
           "brutal-muted": "#f3f4f6",
           "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
         },
         "dark": {
           "brutal-border-width": "3px",
@@ -5159,16 +5679,19 @@
           "brutal-shadow-color": "#ffffff",
           "brutal-radius": "0px",
           "brutal-pressed-offset": "2px",
-          "brutal-bg": "#111827",
+          "brutal-bg": "#141414",
           "brutal-fg": "#ffffff",
           "brutal-primary": "#FF6B6B",
           "brutal-secondary": "#4ECDC4",
           "brutal-accent": "#FFE66D",
           "brutal-destructive": "#EF476F",
           "brutal-success": "#7FB069",
-          "brutal-muted": "#1f2937",
+          "brutal-muted": "#1e1e1e",
           "brutal-ring": "#ffffff",
-          "brutal-info": "#4A90D9"
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
         }
       }
     }

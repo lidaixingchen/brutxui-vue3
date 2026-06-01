@@ -1,20 +1,20 @@
-import { useToast } from './useToast'
+import { createToast } from './useToast'
 
 describe('useToast', () => {
     beforeEach(() => {
-        const { clearToasts } = useToast()
+        const { clearToasts } = createToast()
         clearToasts()
     })
 
     it('addToast adds a toast to the list', () => {
-        const { toasts, addToast } = useToast()
+        const { toasts, addToast } = createToast()
         addToast({ title: 'Test Toast' })
         expect(toasts.value.length).toBe(1)
         expect(toasts.value[0].title).toBe('Test Toast')
     })
 
     it('removeToast removes a toast by id', () => {
-        const { toasts, addToast, removeToast } = useToast()
+        const { toasts, addToast, removeToast } = createToast()
         const id = addToast({ title: 'Test Toast' })
         expect(toasts.value.length).toBe(1)
         removeToast(id)
@@ -22,7 +22,7 @@ describe('useToast', () => {
     })
 
     it('clearToasts removes all toasts', () => {
-        const { toasts, addToast, clearToasts } = useToast()
+        const { toasts, addToast, clearToasts } = createToast()
         addToast({ title: 'Toast 1' })
         addToast({ title: 'Toast 2' })
         addToast({ title: 'Toast 3' })
@@ -32,7 +32,7 @@ describe('useToast', () => {
     })
 
     it('success helper adds correct variant', () => {
-        const { toasts, success } = useToast()
+        const { toasts, success } = createToast()
         success('Success!', 'It worked')
         expect(toasts.value.length).toBe(1)
         expect(toasts.value[0].variant).toBe('success')
@@ -41,7 +41,7 @@ describe('useToast', () => {
     })
 
     it('error helper adds correct variant', () => {
-        const { toasts, error } = useToast()
+        const { toasts, error } = createToast()
         error('Error!', 'Something went wrong')
         expect(toasts.value.length).toBe(1)
         expect(toasts.value[0].variant).toBe('error')
@@ -50,7 +50,7 @@ describe('useToast', () => {
     })
 
     it('warning helper adds correct variant', () => {
-        const { toasts, warning } = useToast()
+        const { toasts, warning } = createToast()
         warning('Warning!', 'Be careful')
         expect(toasts.value.length).toBe(1)
         expect(toasts.value[0].variant).toBe('warning')
@@ -59,7 +59,7 @@ describe('useToast', () => {
     })
 
     it('info helper adds correct variant', () => {
-        const { toasts, info } = useToast()
+        const { toasts, info } = createToast()
         info('Info', 'For your information')
         expect(toasts.value.length).toBe(1)
         expect(toasts.value[0].variant).toBe('info')
@@ -68,7 +68,7 @@ describe('useToast', () => {
     })
 
     it('each toast gets a unique id', () => {
-        const { toasts, addToast } = useToast()
+        const { toasts, addToast } = createToast()
         addToast({ title: 'Toast 1' })
         addToast({ title: 'Toast 2' })
         const ids = toasts.value.map((t) => t.id)
@@ -76,14 +76,14 @@ describe('useToast', () => {
     })
 
     it('addToast returns the toast id', () => {
-        const { addToast } = useToast()
+        const { addToast } = createToast()
         const id = addToast({ title: 'Test' })
         expect(typeof id).toBe('string')
         expect(id.length).toBeGreaterThan(0)
     })
 
     it('removeToast only removes the specified toast', () => {
-        const { toasts, addToast, removeToast } = useToast()
+        const { toasts, addToast, removeToast } = createToast()
         const id1 = addToast({ title: 'Toast 1' })
         const id2 = addToast({ title: 'Toast 2' })
         removeToast(id1)
@@ -92,13 +92,13 @@ describe('useToast', () => {
     })
 
     it('supports toast with description', () => {
-        const { toasts, addToast } = useToast()
+        const { toasts, addToast } = createToast()
         addToast({ title: 'Test', description: 'A description' })
         expect(toasts.value[0].description).toBe('A description')
     })
 
     it('supports toast with duration', () => {
-        const { toasts, addToast } = useToast()
+        const { toasts, addToast } = createToast()
         addToast({ title: 'Test', duration: 3000 })
         expect(toasts.value[0].duration).toBe(3000)
     })

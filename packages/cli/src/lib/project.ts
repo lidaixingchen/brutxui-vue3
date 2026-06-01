@@ -170,9 +170,9 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
 }
 
 export function isSafePath(targetPath: string, cwd: string): boolean {
-    const resolvedTarget = path.resolve(targetPath);
-    const resolvedCwd = path.resolve(cwd);
-    return resolvedTarget.startsWith(resolvedCwd);
+    const resolvedTarget = path.resolve(targetPath).toLowerCase();
+    const resolvedCwd = path.resolve(cwd).toLowerCase();
+    return resolvedTarget.startsWith(resolvedCwd + path.sep) || resolvedTarget === resolvedCwd;
 }
 
 export function detectTailwindVersion(cwd: string): 'v3' | 'v4' {

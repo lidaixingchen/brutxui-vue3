@@ -13,7 +13,7 @@
   "files": [
     {
       "path": "components/ui/code-block/CodeBlock.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport CopyToClipboard from '@/components/ui/copy-to-clipboard/CopyToClipboard.vue'\nimport { cn } from '@/lib/utils'\n\ninterface CodeBlockProps {\n    code: string\n    language?: string\n    filename?: string\n    showLineNumbers?: boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<CodeBlockProps>(), {\n    language: 'plaintext',\n    filename: '',\n    showLineNumbers: false,\n    class: '',\n})\n\nconst lines = computed(() => {\n    return props.code.split('\\n')\n})\n</script>\n\n<template>\n    <div :class=\"cn('border-3 border-brutal bg-brutal-bg text-brutal-fg rounded-brutal shadow-brutal overflow-hidden', props.class)\">\n        <!-- Header Bar -->\n        <div class=\"bg-brutal-muted border-b-3 border-brutal flex justify-between items-center px-4 py-2 text-xs font-black select-none\">\n            <div class=\"flex items-center gap-2\">\n                <span class=\"bg-brutal-accent text-brutal-fg border-2 border-brutal rounded-sm px-1.5 py-0.5 text-[10px] uppercase font-black tracking-wider\">\n                    {{ language }}\n                </span>\n                <span v-if=\"filename\" class=\"text-brutal-fg/80 font-black\">\n                    {{ filename }}\n                </span>\n            </div>\n            <!-- Copy Button Integration -->\n            <CopyToClipboard\n                :text=\"code\"\n                class=\"h-7 px-3 text-xs border-2 shadow-brutal-sm active:translate-y-[1px] bg-brutal-bg hover:bg-brutal-muted\"\n            >\n                <template #default=\"{ copied }\">\n                    <span>{{ copied ? '已复制' : '复制' }}</span>\n                </template>\n            </CopyToClipboard>\n        </div>\n\n        <!-- Code Body -->\n        <div class=\"relative flex items-stretch p-4 overflow-x-auto text-sm font-mono bg-brutal-bg\">\n            <!-- Line Numbers Column -->\n            <div\n                v-if=\"showLineNumbers\"\n                class=\"flex flex-col text-right text-brutal-fg/40 select-none pr-4 mr-4 border-r-2 border-brutal font-bold\"\n            >\n                <span v-for=\"(_, i) in lines\" :key=\"i\">{{ i + 1 }}</span>\n            </div>\n\n            <!-- Raw Code Display -->\n            <pre class=\"flex-1 min-w-0 m-0\"><code class=\"block whitespace-pre font-bold\"><slot>{{ code }}</slot></code></pre>\n        </div>\n    </div>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport CopyToClipboard from '@/components/ui/copy-to-clipboard/CopyToClipboard.vue'\nimport { cn } from '@/lib/utils'\n\ninterface CodeBlockProps {\n    code: string\n    language?: string\n    filename?: string\n    showLineNumbers?: boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<CodeBlockProps>(), {\n    language: 'plaintext',\n    filename: '',\n    showLineNumbers: false,\n    class: '',\n})\n\nconst lines = computed(() => {\n    return props.code.split('\\n')\n})\n</script>\n\n<template>\n    <div :class=\"cn('border-3 border-brutal bg-brutal-bg text-brutal-fg rounded-brutal shadow-brutal overflow-hidden', props.class)\">\n        <!-- Header Bar -->\n        <div class=\"bg-brutal-muted border-b-3 border-brutal flex justify-between items-center px-4 py-2 text-xs font-black select-none\">\n            <div class=\"flex items-center gap-2\">\n                <span class=\"bg-brutal-accent text-brutal-fg border-2 border-brutal rounded-sm px-1.5 py-0.5 text-[10px] uppercase font-black tracking-wider\">\n                    {{ language }}\n                </span>\n                <span v-if=\"filename\" class=\"text-brutal-fg/80 font-black\">\n                    {{ filename }}\n                </span>\n            </div>\n            <!-- Copy Button Integration -->\n            <CopyToClipboard\n                :text=\"code\"\n                class=\"h-7 px-3 text-xs border-2 shadow-brutal-sm active:translate-y-[1px] bg-brutal-bg hover:bg-brutal-muted\"\n            >\n                <template #default=\"{ copied }\">\n                    <span>{{ copied ? '已复制' : '复制' }}</span>\n                </template>\n            </CopyToClipboard>\n        </div>\n\n        <!-- Code Body -->\n        <div class=\"relative flex items-stretch p-4 overflow-x-auto text-sm font-mono bg-brutal-bg\">\n            <!-- Line Numbers Column -->\n            <div\n                v-if=\"showLineNumbers\"\n                class=\"flex flex-col text-right text-brutal-fg/40 select-none pr-4 mr-4 border-r-2 border-brutal font-bold\"\n            >\n                <span v-for=\"(_, i) in lines\" :key=\"i\">{{ i + 1 }}</span>\n            </div>\n\n            <!-- Raw Code Display -->\n            <pre class=\"flex-1 min-w-0 m-0\"><code class=\"block whitespace-pre font-bold\"><slot v-if=\"$slots.default\"></slot><template v-else>{{ code }}</template></code></pre>\n        </div>\n    </div>\n</template>\n",
       "type": "registry:ui"
     }
   ],
@@ -39,7 +39,11 @@
             "brutal-destructive": "var(--brutal-destructive, #EF476F)",
             "brutal-success": "var(--brutal-success, #7FB069)",
             "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-            "brutal-ring": "var(--brutal-ring, #000000)"
+            "brutal-ring": "var(--brutal-ring, #000000)",
+            "brutal-info": "var(--brutal-info, #4A90D9)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+            "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+            "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
           },
           "boxShadow": {
             "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
@@ -69,7 +73,10 @@
       "brutal-success": "#7FB069",
       "brutal-muted": "#f3f4f6",
       "brutal-ring": "#000000",
-      "brutal-info": "#4A90D9"
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
     },
     "dark": {
       "brutal-border-width": "3px",
@@ -79,16 +86,19 @@
       "brutal-shadow-color": "#ffffff",
       "brutal-radius": "0px",
       "brutal-pressed-offset": "2px",
-      "brutal-bg": "#111827",
+      "brutal-bg": "#141414",
       "brutal-fg": "#ffffff",
       "brutal-primary": "#FF6B6B",
       "brutal-secondary": "#4ECDC4",
       "brutal-accent": "#FFE66D",
       "brutal-destructive": "#EF476F",
       "brutal-success": "#7FB069",
-      "brutal-muted": "#1f2937",
+      "brutal-muted": "#1e1e1e",
       "brutal-ring": "#ffffff",
-      "brutal-info": "#4A90D9"
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
     }
   }
 }

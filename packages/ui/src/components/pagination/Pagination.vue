@@ -111,7 +111,9 @@ function pageButtonClasses(pageNumber: number) {
 }
 
 function onPageChange(page: number) {
-    emit('update:currentPage', page)
+    if (page >= FIRST_PAGE && page <= props.totalPages) {
+        emit('update:currentPage', page)
+    }
 }
 </script>
 
@@ -119,6 +121,7 @@ function onPageChange(page: number) {
     <nav role="navigation" aria-label="pagination" :class="navClasses">
         <button
             v-if="showFirstLast"
+            type="button"
             :class="firstButtonClasses"
             :disabled="currentPage === 1"
             aria-label="Go to first page"
@@ -128,6 +131,7 @@ function onPageChange(page: number) {
         </button>
 
         <button
+            type="button"
             :class="prevButtonClasses"
             :disabled="currentPage === 1"
             aria-label="Go to previous page"
@@ -146,6 +150,7 @@ function onPageChange(page: number) {
                 </span>
                 <button
                     v-else
+                    type="button"
                     :class="pageButtonClasses(pageNumber as number)"
                     :aria-label="`Go to page ${pageNumber}`"
                     :aria-current="currentPage === pageNumber ? 'page' : undefined"
@@ -161,6 +166,7 @@ function onPageChange(page: number) {
         </span>
 
         <button
+            type="button"
             :class="nextButtonClasses"
             :disabled="currentPage === totalPages"
             aria-label="Go to next page"
@@ -171,6 +177,7 @@ function onPageChange(page: number) {
 
         <button
             v-if="showFirstLast"
+            type="button"
             :class="lastButtonClasses"
             :disabled="currentPage === totalPages"
             aria-label="Go to last page"

@@ -15,7 +15,7 @@ interface DropdownMenuCheckboxItemProps {
 const props = defineProps<DropdownMenuCheckboxItemProps>()
 
 const emit = defineEmits<{
-    'update:modelValue': [value: boolean]
+    'update:modelValue': [value: boolean | 'indeterminate']
 }>()
 
 const classes = computed(() =>

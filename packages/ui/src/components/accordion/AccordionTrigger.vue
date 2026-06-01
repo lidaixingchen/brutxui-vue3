@@ -25,7 +25,7 @@ const classes = computed(() =>
             <slot />
             <slot name="icon">
                 <ChevronDown
-                    class="h-5 w-5 shrink-0 transition-transform duration-200 border-2 border-brutal rounded-sm bg-brutal-bg p-0.5 shadow-brutal-sm"
+                    class="h-5 w-5 shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm"
                 />
             </slot>
         </AccordionTrigger>

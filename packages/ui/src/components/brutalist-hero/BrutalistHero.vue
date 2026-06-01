@@ -34,14 +34,14 @@ const rootClasses = computed(() => cn('w-full', props.class))
     <div :class="rootClasses">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-                <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-2 border-brutal rotate-[-1deg]">
+                <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-3 border-brutal rotate-[-1deg]">
                     <Sparkles class="h-4 w-4 stroke-[3]" />
                     <span class="font-black text-sm">Neo-Brutalism UI</span>
                 </div>
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
 {{ title }}
 </h1>
-                <p v-if="subtitle" class="mt-4 text-lg text-gray-600 dark:text-gray-400 font-medium">
+                <p v-if="subtitle" class="mt-4 text-lg text-brutal-muted-foreground font-medium">
 {{ subtitle }}
 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
@@ -60,19 +60,19 @@ const rootClasses = computed(() => cn('w-full', props.class))
                 <Card variant="default" padding="default" class="relative bg-brutal-bg font-mono text-sm">
                     <CardContent>
                         <div class="space-y-1">
-                            <p class="text-gray-500">
+                            <p class="text-brutal-muted-foreground">
 $ npx brutxui init
 </p>
                             <p class="text-brutal-success font-bold">
 ✓ Project initialized
 </p>
-                            <p class="text-gray-500">
+                            <p class="text-brutal-muted-foreground">
 $ npx brutxui add button
 </p>
                             <p class="text-brutal-success font-bold">
 ✓ Button component added
 </p>
-                            <p class="text-gray-500">
+                            <p class="text-brutal-muted-foreground">
 $ npx brutxui add card dialog
 </p>
                             <p class="text-brutal-success font-bold">

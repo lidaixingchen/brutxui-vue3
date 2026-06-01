@@ -8,7 +8,7 @@ type InputVariantProps = VariantProps<typeof inputVariants>
 
 interface InputProps {
     type?: string
-    modelValue?: string | number
+    modelValue?: string
     variant?: NonNullable<InputVariantProps['variant']>
     inputSize?: NonNullable<InputVariantProps['inputSize']>
     disabled?: boolean
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<InputProps>(), {
     class: '',
 })
 
-const emit = defineEmits<{ 'update:modelValue': [value: string | number] }>()
+const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const classes = computed(() =>
     cn(inputVariants({ variant: props.variant, inputSize: props.inputSize }), props.class)

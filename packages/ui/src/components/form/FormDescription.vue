@@ -12,7 +12,7 @@ const props = defineProps<FormDescriptionProps>()
 const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
 
 const classes = computed(() =>
-    cn('text-sm text-gray-500 dark:text-gray-400 font-medium', props.class)
+    cn('text-sm text-brutal-muted-foreground font-medium', props.class)
 )
 </script>
 

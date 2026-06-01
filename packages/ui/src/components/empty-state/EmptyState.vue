@@ -38,7 +38,7 @@ const rootClasses = computed(() => cn('flex flex-col items-center justify-center
         <h3 class="text-xl font-black tracking-tight">
 {{ title }}
 </h3>
-        <p v-if="description" class="mt-2 text-sm text-gray-600 dark:text-gray-400 font-medium text-center max-w-md">
+        <p v-if="description" class="mt-2 text-sm text-brutal-muted-foreground font-medium text-center max-w-md">
 {{ description }}
 </p>
         <Button v-if="actionText" variant="primary" class="mt-6" @click="emit('action')">

@@ -22,6 +22,7 @@ import {
     detectTailwindVersion,
     installPackages,
     getInstallCommand,
+    isSafePath,
     logger,
 } from '../lib/index.js';
 
@@ -106,6 +107,11 @@ async function createConfigFile(cwd: string, settings: DetectedSettings): Promis
 
 async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean> {
     const fullPath = path.join(cwd, cssPath);
+
+    if (!isSafePath(fullPath, cwd)) {
+        throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullPath}".`);
+    }
+
     await fs.ensureDir(path.dirname(fullPath));
 
     const tailwindVersion = detectTailwindVersion(cwd);
