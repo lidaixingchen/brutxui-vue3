@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { dotsSpinnerVariants } from './spinner-variants'
 
 type DotsSpinnerSize = NonNullable<VariantProps<typeof dotsSpinnerVariants>['size']>
@@ -16,9 +17,13 @@ interface DotsSpinnerProps {
 const props = withDefaults(defineProps<DotsSpinnerProps>(), {
     size: 'default',
     color: 'default',
-    label: 'Loading...',
+    label: undefined,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
 
 const sizeMap: Record<string, string> = {
     sm: 'h-1.5 w-1.5',
@@ -44,13 +49,13 @@ const dotClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="containerClasses" role="status" :aria-label="label">
+    <div :class="containerClasses" role="status" :aria-label="resolvedLabel">
         <div
             v-for="i in 3"
             :key="i"
             :class="dotClasses"
             :style="{ animationDelay: `${(i - 1) * 100}ms`, animationDuration: '500ms' }"
         />
-        <span class="sr-only">{{ label }}</span>
+        <span class="sr-only">{{ resolvedLabel }}</span>
     </div>
 </template>

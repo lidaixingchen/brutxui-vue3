@@ -1,7 +1,11 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import TreeView from './TreeView.vue'
 import TreeViewNode from './TreeViewNode.vue'
 import type { TreeNode } from './TreeView.vue'
+
+const localeProvide = { [LOCALE_INJECTION_KEY]: en }
 
 const sampleNodes: TreeNode[] = [
     {
@@ -24,6 +28,7 @@ describe('TreeView', () => {
     it('renders with role="tree"', () => {
         const wrapper = mount(TreeView, {
             props: { nodes: sampleNodes },
+            global: { provide: localeProvide },
         })
         expect(wrapper.attributes('role')).toBe('tree')
     })
@@ -31,6 +36,7 @@ describe('TreeView', () => {
     it('renders nodes', () => {
         const wrapper = mount(TreeView, {
             props: { nodes: sampleNodes },
+            global: { provide: localeProvide },
         })
         const items = wrapper.findAll('[role="treeitem"]')
         expect(items.length).toBeGreaterThanOrEqual(2)
@@ -41,6 +47,7 @@ describe('TreeView', () => {
     it('applies custom class', () => {
         const wrapper = mount(TreeView, {
             props: { nodes: [], class: 'custom-tree' },
+            global: { provide: localeProvide },
         })
         expect(wrapper.classes()).toContain('custom-tree')
         expect(wrapper.classes()).toContain('flex')
@@ -50,6 +57,7 @@ describe('TreeView', () => {
     it('emits select event', async () => {
         const wrapper = mount(TreeView, {
             props: { nodes: sampleNodes },
+            global: { provide: localeProvide },
         })
         const treeItems = wrapper.findAll('[role="treeitem"]')
         await treeItems[treeItems.length - 1].find('div').trigger('click')
@@ -62,6 +70,7 @@ describe('TreeView', () => {
     it('has aria-label="File tree"', () => {
         const wrapper = mount(TreeView, {
             props: { nodes: sampleNodes },
+            global: { provide: localeProvide },
         })
         expect(wrapper.attributes('aria-label')).toBe('File tree')
     })

@@ -11,6 +11,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
+import { useLocale } from '@/composables/useLocale'
 import { type ComboboxOption } from './combobox-types'
 
 interface ComboboxMultiProps {
@@ -26,13 +27,19 @@ interface ComboboxMultiProps {
 
 const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     modelValue: () => [],
-    placeholder: 'Select options...',
-    searchPlaceholder: 'Search...',
-    emptyText: 'No results found.',
+    placeholder: undefined,
+    searchPlaceholder: undefined,
+    emptyText: undefined,
     disabled: false,
     maxDisplay: 3,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('combobox.multiPlaceholder'))
+const resolvedSearchPlaceholder = computed(() => props.searchPlaceholder ?? t('combobox.searchPlaceholder'))
+const resolvedEmptyText = computed(() => props.emptyText ?? t('combobox.emptyText'))
 
 const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
 
@@ -44,11 +51,11 @@ const selectedOptions = computed(() =>
 )
 
 const displayText = computed(() => {
-    if (selectedOptions.value.length === 0) return props.placeholder
+    if (selectedOptions.value.length === 0) return resolvedPlaceholder.value
     if (selectedOptions.value.length <= props.maxDisplay) {
         return selectedOptions.value.map((o) => o.label).join(', ')
     }
-    return `${selectedOptions.value.length} selected`
+    return t('combobox.selectedCount', { count: selectedOptions.value.length })
 })
 
 const filteredOptions = computed(() => {
@@ -101,9 +108,9 @@ function getCheckboxClasses(optionValue: string) {
         </PopoverTrigger>
         <PopoverContent class="w-[var(--reka-popover-trigger-width)] p-0" align="start">
             <Command>
-                <CommandInput v-model="searchQuery" :placeholder="searchPlaceholder" />
+                <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
-                    <CommandEmpty>{{ emptyText }}</CommandEmpty>
+                    <CommandEmpty>{{ resolvedEmptyText }}</CommandEmpty>
                     <CommandGroup>
                         <CommandItem
                             v-for="option in filteredOptions"

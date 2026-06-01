@@ -1,9 +1,12 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Pagination from './Pagination.vue'
 
 const FIRST_PAGE = 1
 const FIRST_PAGES_COUNT = 3
 const DEFAULT_SIBLING_COUNT = 1
+const globalProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 function getPageNumbers(wrapper: ReturnType<typeof mount>) {
     return wrapper.findAll('button[aria-label^="Go to page"]').map((btn) => Number(btn.text()))
@@ -17,6 +20,7 @@ describe('Pagination', () => {
     it('renders with default props', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1 },
+            ...globalProvide,
         })
         expect(wrapper.find('nav').exists()).toBe(true)
         expect(wrapper.find('nav').attributes('role')).toBe('navigation')
@@ -26,6 +30,7 @@ describe('Pagination', () => {
     it('emits update:currentPage when page is clicked', async () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1 },
+            ...globalProvide,
         })
         const pageButtons = wrapper.findAll('button[aria-label^="Go to page"]')
         expect(pageButtons.length).toBeGreaterThan(0)
@@ -37,6 +42,7 @@ describe('Pagination', () => {
     it('shows correct page numbers', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3 },
+            ...globalProvide,
         })
         const pageButtons = wrapper.findAll('button[aria-label^="Go to page"]')
         const pageNumbers = pageButtons.map((btn) => btn.text())
@@ -48,6 +54,7 @@ describe('Pagination', () => {
     it('applies custom class', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, class: 'custom-pagination' },
+            ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('custom-pagination')
     })
@@ -55,6 +62,7 @@ describe('Pagination', () => {
     it('highlights current page', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3 },
+            ...globalProvide,
         })
         const activePage = wrapper.find('button[aria-current="page"]')
         expect(activePage.exists()).toBe(true)
@@ -64,6 +72,7 @@ describe('Pagination', () => {
     it('disables previous button on first page', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1 },
+            ...globalProvide,
         })
         const prevButton = wrapper.find('button[aria-label="Go to previous page"]')
         expect(prevButton.attributes('disabled')).toBeDefined()
@@ -72,6 +81,7 @@ describe('Pagination', () => {
     it('disables next button on last page', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 5 },
+            ...globalProvide,
         })
         const nextButton = wrapper.find('button[aria-label="Go to next page"]')
         expect(nextButton.attributes('disabled')).toBeDefined()
@@ -80,6 +90,7 @@ describe('Pagination', () => {
     it('shows first and last buttons when showFirstLast is true', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, showFirstLast: true },
+            ...globalProvide,
         })
         expect(wrapper.find('button[aria-label="Go to first page"]').exists()).toBe(true)
         expect(wrapper.find('button[aria-label="Go to last page"]').exists()).toBe(true)
@@ -88,6 +99,7 @@ describe('Pagination', () => {
     it('hides first and last buttons when showFirstLast is false', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, showFirstLast: false },
+            ...globalProvide,
         })
         expect(wrapper.find('button[aria-label="Go to first page"]').exists()).toBe(false)
         expect(wrapper.find('button[aria-label="Go to last page"]').exists()).toBe(false)
@@ -96,6 +108,7 @@ describe('Pagination', () => {
     it('shows page counter when showPageNumbers is false', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3, showPageNumbers: false },
+            ...globalProvide,
         })
         expect(wrapper.text()).toContain('3 / 5')
     })
@@ -103,6 +116,7 @@ describe('Pagination', () => {
     it('shows dots for large page ranges', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 20, currentPage: 10 },
+            ...globalProvide,
         })
         const dots = wrapper.findAll('span').filter((el) => el.text().includes('•••'))
         expect(dots.length).toBeGreaterThan(0)
@@ -111,6 +125,7 @@ describe('Pagination', () => {
     it('emits correct page when first button clicked', async () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3, showFirstLast: true },
+            ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to first page"]').trigger('click')
         expect(wrapper.emitted('update:currentPage')![0]).toEqual([1])
@@ -119,6 +134,7 @@ describe('Pagination', () => {
     it('emits correct page when last button clicked', async () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3, showFirstLast: true },
+            ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to last page"]').trigger('click')
         expect(wrapper.emitted('update:currentPage')![0]).toEqual([5])
@@ -127,6 +143,7 @@ describe('Pagination', () => {
     it('emits correct page when next button clicked', async () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3 },
+            ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to next page"]').trigger('click')
         expect(wrapper.emitted('update:currentPage')![0]).toEqual([4])
@@ -135,6 +152,7 @@ describe('Pagination', () => {
     it('emits correct page when previous button clicked', async () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 3 },
+            ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to previous page"]').trigger('click')
         expect(wrapper.emitted('update:currentPage')![0]).toEqual([2])
@@ -145,6 +163,7 @@ describe('Pagination', () => {
         const currentPage = FIRST_PAGE
         const wrapper = mount(Pagination, {
             props: { totalPages, currentPage },
+            ...globalProvide,
         })
         const leftEndIndex = FIRST_PAGES_COUNT + 2 * DEFAULT_SIBLING_COUNT
         const expectedPages = [
@@ -160,6 +179,7 @@ describe('Pagination', () => {
         const currentPage = totalPages
         const wrapper = mount(Pagination, {
             props: { totalPages, currentPage },
+            ...globalProvide,
         })
         const rightEndIndex = FIRST_PAGES_COUNT + 2 * DEFAULT_SIBLING_COUNT
         const expectedPages = [
@@ -175,6 +195,7 @@ describe('Pagination', () => {
         const currentPage = 5
         const wrapper = mount(Pagination, {
             props: { totalPages, currentPage },
+            ...globalProvide,
         })
         const leftSiblingIndex = currentPage - DEFAULT_SIBLING_COUNT
         const rightSiblingIndex = currentPage + DEFAULT_SIBLING_COUNT
@@ -190,6 +211,7 @@ describe('Pagination', () => {
     it('applies rounded variant classes', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, variant: 'rounded' },
+            ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('[&_button]:rounded-brutal')
     })
@@ -197,6 +219,7 @@ describe('Pagination', () => {
     it('applies minimal variant classes', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, variant: 'minimal' },
+            ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('[&_button]:border-transparent')
         expect(wrapper.find('nav').classes()).toContain('[&_button]:shadow-none')
@@ -205,6 +228,7 @@ describe('Pagination', () => {
     it('applies sm size classes', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, size: 'sm' },
+            ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('gap-1')
     })
@@ -212,6 +236,7 @@ describe('Pagination', () => {
     it('applies lg size classes', () => {
         const wrapper = mount(Pagination, {
             props: { totalPages: 5, currentPage: 1, size: 'lg' },
+            ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('gap-3')
     })
@@ -222,6 +247,7 @@ describe('Pagination', () => {
         const currentPage = 10
         const wrapper = mount(Pagination, {
             props: { totalPages, currentPage, siblingCount },
+            ...globalProvide,
         })
         const leftSiblingIndex = currentPage - siblingCount
         const rightSiblingIndex = currentPage + siblingCount

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 
 interface CommandEmptyProps {
     class?: string
 }
 
 const props = defineProps<CommandEmptyProps>()
+
+const { t } = useLocale()
 
 const classes = computed(() =>
     cn(
@@ -19,6 +22,6 @@ const classes = computed(() =>
 
 <template>
     <p :class="classes" data-slot="command-empty">
-        <slot>No results found.</slot>
+        <slot>{{ t('command.emptyText') }}</slot>
     </p>
 </template>

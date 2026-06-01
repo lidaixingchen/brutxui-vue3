@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Menu } from 'lucide-vue-next'
+import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 
 interface DashboardShellProps {
@@ -17,6 +18,8 @@ const emit = defineEmits<{
     signOut: []
 }>()
 
+const { t } = useLocale()
+
 const sidebarOpen = ref(true)
 
 const rootClasses = computed(() => cn('flex h-screen bg-brutal-bg', props.class))
@@ -31,7 +34,7 @@ const sidebarClasses = computed(() =>
 
 <template>
     <div :class="rootClasses">
-        <aside :class="sidebarClasses" aria-label="Sidebar navigation">
+        <aside :class="sidebarClasses" :aria-label="t('dashboardShell.sidebarNavigation')">
             <div class="font-black text-lg tracking-tight mb-8">
 BrutxUI
 </div>
@@ -43,7 +46,7 @@ BrutxUI
 {{ userEmail }}
 </div>
                 <button class="text-sm font-bold text-brutal-destructive mt-1" @click="emit('signOut')">
-Sign out
+{{ t('dashboardShell.signOut') }}
 </button>
             </div>
         </aside>

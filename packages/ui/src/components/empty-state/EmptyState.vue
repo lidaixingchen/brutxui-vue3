@@ -2,6 +2,7 @@
 import { computed, type Component } from 'vue'
 import { FolderOpen, Plus } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 
 interface EmptyStateProps {
@@ -13,12 +14,17 @@ interface EmptyStateProps {
 }
 
 const props = withDefaults(defineProps<EmptyStateProps>(), {
-    title: 'No active deployments found',
+    title: undefined,
     description: '',
-    actionText: 'Deploy New App',
+    actionText: undefined,
     icon: undefined,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedTitle = computed(() => props.title ?? t('emptyState.defaultTitle'))
+const resolvedActionText = computed(() => props.actionText ?? t('emptyState.defaultActionText'))
 
 const emit = defineEmits<{
     action: []
@@ -36,14 +42,14 @@ const rootClasses = computed(() => cn('flex flex-col items-center justify-center
             </div>
         </div>
         <h3 class="text-xl font-black tracking-tight">
-{{ title }}
+{{ resolvedTitle }}
 </h3>
         <p v-if="description" class="mt-2 text-sm text-brutal-muted-foreground font-medium text-center max-w-md">
 {{ description }}
 </p>
-        <Button v-if="actionText" variant="primary" class="mt-6" @click="emit('action')">
+        <Button v-if="resolvedActionText" variant="primary" class="mt-6" @click="emit('action')">
             <Plus class="mr-2 h-4 w-4 stroke-[3]" />
-            {{ actionText }}
+            {{ resolvedActionText }}
         </Button>
     </div>
 </template>

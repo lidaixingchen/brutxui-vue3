@@ -9,6 +9,10 @@ import CommandGroup from './CommandGroup.vue'
 import CommandItem from './CommandItem.vue'
 import CommandSeparator from './CommandSeparator.vue'
 import CommandShortcut from './CommandShortcut.vue'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('Command', () => {
     it('renders with default classes', () => {
@@ -40,7 +44,7 @@ describe('Command', () => {
 
 describe('CommandInput', () => {
     it('renders with default classes', () => {
-        const wrapper = mount(CommandInput)
+        const wrapper = mount(CommandInput, { ...localeProvide })
         const wrapperDiv = wrapper.find('[data-slot="command-input"]')
         expect(wrapperDiv.exists()).toBe(true)
         expect(wrapperDiv.classes()).toContain('flex')
@@ -51,7 +55,7 @@ describe('CommandInput', () => {
     })
 
     it('has search input placeholder', () => {
-        const wrapper = mount(CommandInput)
+        const wrapper = mount(CommandInput, { ...localeProvide })
         const input = wrapper.find('input')
         expect(input.exists()).toBe(true)
         expect(input.attributes('placeholder')).toBe('Type a command or search...')
@@ -59,6 +63,7 @@ describe('CommandInput', () => {
 
     it('applies custom class to input', () => {
         const wrapper = mount(CommandInput, {
+            ...localeProvide,
             props: { class: 'custom-input-class' },
         })
         const input = wrapper.find('input')
@@ -66,7 +71,7 @@ describe('CommandInput', () => {
     })
 
     it('emits update:modelValue on input', async () => {
-        const wrapper = mount(CommandInput)
+        const wrapper = mount(CommandInput, { ...localeProvide })
         const input = wrapper.find('input')
         await input.setValue('test query')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
@@ -75,6 +80,7 @@ describe('CommandInput', () => {
 
     it('uses custom placeholder', () => {
         const wrapper = mount(CommandInput, {
+            ...localeProvide,
             props: { placeholder: 'Search items...' },
         })
         const input = wrapper.find('input')
@@ -84,7 +90,7 @@ describe('CommandInput', () => {
 
 describe('CommandList', () => {
     it('renders with default classes', () => {
-        const wrapper = mount(CommandList)
+        const wrapper = mount(CommandList, { ...localeProvide })
         expect(wrapper.classes()).toContain('max-h-80')
         expect(wrapper.classes()).toContain('overflow-y-auto')
         expect(wrapper.classes()).toContain('overflow-x-hidden')
@@ -92,6 +98,7 @@ describe('CommandList', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(CommandList, {
+            ...localeProvide,
             props: { class: 'custom-list' },
         })
         expect(wrapper.classes()).toContain('custom-list')
@@ -99,6 +106,7 @@ describe('CommandList', () => {
 
     it('renders slot content', () => {
         const wrapper = mount(CommandList, {
+            ...localeProvide,
             slots: { default: '<div class="list-item">Item</div>' },
         })
         expect(wrapper.find('.list-item').exists()).toBe(true)
@@ -107,7 +115,7 @@ describe('CommandList', () => {
 
 describe('CommandEmpty', () => {
     it('renders with default classes', () => {
-        const wrapper = mount(CommandEmpty)
+        const wrapper = mount(CommandEmpty, { ...localeProvide })
         expect(wrapper.classes()).toContain('py-8')
         expect(wrapper.classes()).toContain('text-center')
         expect(wrapper.classes()).toContain('text-sm')
@@ -115,12 +123,13 @@ describe('CommandEmpty', () => {
     })
 
     it('shows default empty message', () => {
-        const wrapper = mount(CommandEmpty)
+        const wrapper = mount(CommandEmpty, { ...localeProvide })
         expect(wrapper.text()).toBe('No results found.')
     })
 
     it('applies custom class', () => {
         const wrapper = mount(CommandEmpty, {
+            ...localeProvide,
             props: { class: 'custom-empty' },
         })
         expect(wrapper.classes()).toContain('custom-empty')
@@ -128,6 +137,7 @@ describe('CommandEmpty', () => {
 
     it('renders custom slot content', () => {
         const wrapper = mount(CommandEmpty, {
+            ...localeProvide,
             slots: { default: 'Nothing here!' },
         })
         expect(wrapper.text()).toBe('Nothing here!')
@@ -137,6 +147,7 @@ describe('CommandEmpty', () => {
 describe('CommandGroup', () => {
     it('renders with heading', () => {
         const wrapper = mount(CommandGroup, {
+            ...localeProvide,
             props: { heading: 'Suggestions' },
         })
         const heading = wrapper.find('[data-slot="command-group-heading"]')
@@ -145,13 +156,14 @@ describe('CommandGroup', () => {
     })
 
     it('renders without heading', () => {
-        const wrapper = mount(CommandGroup)
+        const wrapper = mount(CommandGroup, { ...localeProvide })
         const heading = wrapper.find('[data-slot="command-group-heading"]')
         expect(heading.exists()).toBe(false)
     })
 
     it('renders slot content', () => {
         const wrapper = mount(CommandGroup, {
+            ...localeProvide,
             slots: { default: '<div class="group-item">Item</div>' },
         })
         expect(wrapper.find('.group-item').exists()).toBe(true)
@@ -159,13 +171,14 @@ describe('CommandGroup', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(CommandGroup, {
+            ...localeProvide,
             props: { class: 'custom-group' },
         })
         expect(wrapper.classes()).toContain('custom-group')
     })
 
     it('has group role', () => {
-        const wrapper = mount(CommandGroup)
+        const wrapper = mount(CommandGroup, { ...localeProvide })
         expect(wrapper.attributes('role')).toBe('group')
     })
 })
@@ -173,6 +186,7 @@ describe('CommandGroup', () => {
 describe('CommandItem', () => {
     it('renders slot content', () => {
         const wrapper = mount(CommandItem, {
+            ...localeProvide,
             props: { value: 'test' },
             slots: { default: 'Item text' },
         })
@@ -181,6 +195,7 @@ describe('CommandItem', () => {
 
     it('has cursor-pointer class', () => {
         const wrapper = mount(CommandItem, {
+            ...localeProvide,
             props: { value: 'test' },
         })
         expect(wrapper.classes()).toContain('cursor-pointer')
@@ -188,6 +203,7 @@ describe('CommandItem', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(CommandItem, {
+            ...localeProvide,
             props: { value: 'test', class: 'custom-item' },
         })
         expect(wrapper.classes()).toContain('custom-item')
@@ -195,6 +211,7 @@ describe('CommandItem', () => {
 
     it('emits select event on click', async () => {
         const wrapper = mount(CommandItem, {
+            ...localeProvide,
             props: { value: 'test-value' },
         })
         await wrapper.trigger('click')
@@ -204,6 +221,7 @@ describe('CommandItem', () => {
 
     it('does not emit select when disabled', async () => {
         const wrapper = mount(CommandItem, {
+            ...localeProvide,
             props: { value: 'test-value', disabled: true },
         })
         await wrapper.trigger('click')
@@ -212,6 +230,7 @@ describe('CommandItem', () => {
 
     it('sets data-disabled attribute when disabled', () => {
         const wrapper = mount(CommandItem, {
+            ...localeProvide,
             props: { value: 'test', disabled: true },
         })
         expect(wrapper.attributes('data-disabled')).toBe('true')
@@ -263,6 +282,7 @@ describe('CommandShortcut', () => {
 describe('CommandDialog', () => {
     it('renders within Dialog context', () => {
         const wrapper = mount(CommandDialog, {
+            ...localeProvide,
             props: { open: true },
             attachTo: document.body,
         })
@@ -271,6 +291,7 @@ describe('CommandDialog', () => {
 
     it('uses default title and description', async () => {
         const wrapper = mount(CommandDialog, {
+            ...localeProvide,
             props: { open: true },
             attachTo: document.body,
         })
@@ -284,6 +305,7 @@ describe('CommandDialog', () => {
 
     it('uses custom title and description', async () => {
         const wrapper = mount(CommandDialog, {
+            ...localeProvide,
             props: {
                 open: true,
                 title: 'Custom Title',
@@ -303,6 +325,7 @@ describe('CommandDialog', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(CommandDialog, {
+            ...localeProvide,
             props: { open: true, class: 'custom-dialog' },
             attachTo: document.body,
         })

@@ -1,0 +1,101 @@
+import type { Locale } from './types'
+
+export const zhCN: Locale = {
+    command: {
+        placeholder: '输入命令或搜索...',
+        emptyText: '未找到结果。',
+        dialogTitle: '命令面板',
+        dialogDescription: '搜索要运行的命令...',
+    },
+    combobox: {
+        placeholder: '选择选项...',
+        multiPlaceholder: '选择多个选项...',
+        searchPlaceholder: '搜索...',
+        emptyText: '未找到结果。',
+        selectedCount: '已选 {count} 项',
+    },
+    pagination: {
+        firstPage: '转到第一页',
+        previousPage: '转到上一页',
+        nextPage: '转到下一页',
+        lastPage: '转到最后一页',
+        page: '第 {number} 页',
+        label: '分页导航',
+    },
+    carousel: {
+        previousSlide: '上一张幻灯片',
+        nextSlide: '下一张幻灯片',
+        goToSlide: '跳转到第 {index} 张幻灯片',
+    },
+    spinner: {
+        loading: '加载中...',
+    },
+    submitButton: {
+        submitting: '提交中...',
+    },
+    copyToClipboard: {
+        copy: '复制',
+        copied: '已复制',
+    },
+    beforeAfter: {
+        before: '之前',
+        after: '之后',
+    },
+    authCard: {
+        welcomeBack: '欢迎回来',
+        signInToContinue: '登录您的账户以继续',
+        google: 'Google',
+        github: 'GitHub',
+        orEmailLogin: '或使用邮箱登录',
+        email: '邮箱',
+        password: '密码',
+        forgotPassword: '忘记密码？',
+        signIn: '登录',
+        noAccount: '还没有账户？',
+        register: '注册',
+    },
+    waitlistPage: {
+        earlyAccess: '抢先体验',
+        onWaitlist: '{count} 人已加入等候',
+        live: '在线',
+    },
+    dashboardShell: {
+        sidebarNavigation: '侧边栏导航',
+        signOut: '退出登录',
+    },
+    brutalistHero: {
+        neoBrutalismUI: '新粗野主义 UI',
+    },
+    saasPricing: {
+        monthly: '按月',
+        annually: '按年',
+        mostPopular: '最受欢迎',
+        perMonth: '/月',
+        perMonthBilledAnnually: '每月（按年计费）',
+        billingPeriod: '计费周期',
+    },
+    toast: {
+        close: '关闭',
+    },
+    dialog: {
+        close: '关闭',
+    },
+    sheet: {
+        close: '关闭',
+    },
+    breadcrumb: {
+        label: '面包屑导航',
+        more: '更多',
+    },
+    treeView: {
+        fileTree: '文件树',
+    },
+    stepper: {
+        progressSteps: '进度步骤',
+        step: '第 {index} 步：{title}',
+    },
+    emptyState: {
+        defaultTitle: '未找到活跃的部署',
+        defaultActionText: '部署新应用',
+    },
+}

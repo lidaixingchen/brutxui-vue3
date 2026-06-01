@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { MoveHorizontal } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { beforeAfterRootVariants, beforeAfterHandleVariants } from './before-after-variants'
 
 const DEFAULT_SLIDER_POSITION = 50
@@ -17,12 +18,17 @@ interface BeforeAfterProps {
 }
 
 const props = withDefaults(defineProps<BeforeAfterProps>(), {
-    beforeAlt: 'Before',
-    afterAlt: 'After',
+    beforeAlt: undefined,
+    afterAlt: undefined,
     defaultValue: DEFAULT_SLIDER_POSITION,
     disabled: false,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedBeforeAlt = computed(() => props.beforeAlt ?? t('beforeAfter.before'))
+const resolvedAfterAlt = computed(() => props.afterAlt ?? t('beforeAfter.after'))
 
 const sliderVal = ref(props.defaultValue)
 
@@ -51,7 +57,7 @@ const handleClasses = computed(() =>
     <div :class="rootClasses">
         <img
             :src="before"
-            :alt="beforeAlt"
+            :alt="resolvedBeforeAlt"
             class="absolute inset-0 w-full h-full object-cover pointer-events-none"
         />
 
@@ -61,7 +67,7 @@ const handleClasses = computed(() =>
         >
             <img
                 :src="after"
-                :alt="afterAlt"
+                :alt="resolvedAfterAlt"
                 class="absolute inset-0 w-full h-full object-cover pointer-events-none"
             />
         </div>

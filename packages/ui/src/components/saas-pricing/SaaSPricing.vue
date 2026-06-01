@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { Check, HelpCircle } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
 import CardHeader from '../card/CardHeader.vue'
@@ -89,6 +90,7 @@ const props = withDefaults(defineProps<SaaSPricingProps>(), {
 })
 
 const billing = ref<'monthly' | 'annually'>('monthly')
+const { t } = useLocale()
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
@@ -124,14 +126,14 @@ function getFeatureClasses(feature: PricingFeature) {
             <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">
 {{ subtitle }}
 </p>
-            <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1" role="tablist" aria-label="Billing period">
+            <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1" role="tablist" :aria-label="t('saasPricing.billingPeriod')">
                 <button
                     role="tab"
                     :aria-selected="billing === 'monthly'"
                     :class="monthlyBtnClasses"
                     @click="billing = 'monthly'"
                 >
-                    Monthly
+                    {{ t('saasPricing.monthly') }}
                 </button>
                 <button
                     role="tab"
@@ -139,7 +141,7 @@ function getFeatureClasses(feature: PricingFeature) {
                     :class="annuallyBtnClasses"
                     @click="billing = 'annually'"
                 >
-                    Annually
+                    {{ t('saasPricing.annually') }}
                 </button>
             </div>
         </div>
@@ -148,7 +150,7 @@ function getFeatureClasses(feature: PricingFeature) {
             <div v-for="plan in plans" :key="plan.name" class="relative">
                 <div v-if="plan.popular" class="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                     <Badge variant="primary" class="animate-pulse">
-MOST POPULAR
+{{ t('saasPricing.mostPopular') }}
 </Badge>
                 </div>
                 <Card :variant="plan.popular ? 'interactive' : 'default'" :class="getPlanCardClasses(plan)">
@@ -161,7 +163,7 @@ MOST POPULAR
                     <CardContent>
                         <div class="mb-6">
                             <span class="text-4xl font-black">{{ billing === 'monthly' ? plan.priceMonthly : plan.priceAnnually }}</span>
-                            <span class="text-sm font-bold text-brutal-muted-foreground">/{{ billing === 'monthly' ? 'mo' : 'mo (billed annually)' }}</span>
+                            <span class="text-sm font-bold text-brutal-muted-foreground">{{ billing === 'monthly' ? t('saasPricing.perMonth') : t('saasPricing.perMonthBilledAnnually') }}</span>
                         </div>
                         <ul class="space-y-3">
                             <li v-for="feature in plan.features" :key="feature.text" class="flex items-center gap-2">

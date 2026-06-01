@@ -4,6 +4,7 @@ import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from 'lucide-vu
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { toastVariants } from './toast-variants'
+import { useLocale } from '@/composables/useLocale'
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
 
@@ -29,6 +30,8 @@ const props = withDefaults(defineProps<ToastProps>(), {
 })
 
 const emit = defineEmits<{ close: [] }>()
+
+const { t } = useLocale()
 
 const isLeaving = ref(false)
 const timer = ref<number | undefined>(undefined)
@@ -107,7 +110,7 @@ const closeClasses = computed(() =>
                 <slot />
             </div>
 
-            <button :class="closeClasses" aria-label="Close" @click="startLeave">
+            <button :class="closeClasses" :aria-label="t('toast.close')" @click="startLeave">
                 <X class="h-4 w-4 stroke-[3]" />
             </button>
         </div>

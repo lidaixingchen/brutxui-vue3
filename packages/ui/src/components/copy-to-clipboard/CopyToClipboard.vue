@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Check, Copy } from 'lucide-vue-next'
 import { useClipboard } from '../../composables/useClipboard'
+import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import { copyToClipboardVariants } from './copy-to-clipboard-variants'
 
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<CopyToClipboardProps>(), {
     class: '',
 })
 
+const { t } = useLocale()
 const { copy, copied, isSupported } = useClipboard({ duration: props.duration })
 
 const handleCopy = () => {
@@ -44,11 +46,11 @@ const classes = computed(() =>
         <slot :copied="copied">
             <template v-if="copied">
                 <Check class="h-4 w-4 stroke-[3]" />
-                <span>Copied</span>
+                <span>{{ t('copyToClipboard.copied') }}</span>
             </template>
             <template v-else>
                 <Copy class="h-4 w-4 stroke-[3]" />
-                <span>Copy</span>
+                <span>{{ t('copyToClipboard.copy') }}</span>
             </template>
         </slot>
     </button>

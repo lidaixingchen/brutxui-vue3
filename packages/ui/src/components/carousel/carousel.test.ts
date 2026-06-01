@@ -2,6 +2,10 @@ import { mount } from '@vue/test-utils'
 import { ref } from 'vue'
 import Carousel from './Carousel.vue'
 import CarouselItem from './CarouselItem.vue'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 vi.mock('embla-carousel-vue', () => ({
     default: () => [ref(null), ref(null)],
@@ -9,7 +13,7 @@ vi.mock('embla-carousel-vue', () => ({
 
 describe('Carousel', () => {
     it('renders with default classes', () => {
-        const wrapper = mount(Carousel)
+        const wrapper = mount(Carousel, { ...localeProvide })
         expect(wrapper.find('[ref="emblaRef"]').exists() || wrapper.find('.overflow-hidden').exists()).toBe(true)
         expect(wrapper.classes()).toContain('relative')
         expect(wrapper.classes()).toContain('overflow-hidden')
@@ -27,7 +31,7 @@ describe('Carousel', () => {
             { size: 'full' as const, expectedClass: 'h-full' },
         ]
 
-        const wrapper = mount(Carousel)
+        const wrapper = mount(Carousel, { ...localeProvide })
         for (const { size, expectedClass } of sizes) {
             await wrapper.setProps({ size })
             expect(wrapper.classes()).toContain(expectedClass)
@@ -35,7 +39,7 @@ describe('Carousel', () => {
     })
 
     it('renders arrow buttons by default', () => {
-        const wrapper = mount(Carousel)
+        const wrapper = mount(Carousel, { ...localeProvide })
         const buttons = wrapper.findAll('button[aria-label]')
         const arrowButtons = buttons.filter(b =>
             b.attributes('aria-label') === 'Previous slide' ||
@@ -46,6 +50,7 @@ describe('Carousel', () => {
 
     it('hides arrows when showArrows=false', () => {
         const wrapper = mount(Carousel, {
+            ...localeProvide,
             props: { showArrows: false },
         })
         const buttons = wrapper.findAll('button[aria-label]')
@@ -58,6 +63,7 @@ describe('Carousel', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(Carousel, {
+            ...localeProvide,
             props: { class: 'custom-carousel' },
         })
         expect(wrapper.classes()).toContain('custom-carousel')
@@ -65,6 +71,7 @@ describe('Carousel', () => {
 
     it('renders slot content', () => {
         const wrapper = mount(Carousel, {
+            ...localeProvide,
             slots: {
                 default: '<div class="slide-content">Slide 1</div>',
             },

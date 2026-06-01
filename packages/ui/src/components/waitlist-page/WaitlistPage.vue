@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Sparkles, Users, Star } from 'lucide-vue-next'
+import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
@@ -20,6 +21,8 @@ const props = withDefaults(defineProps<WaitlistPageProps>(), {
     waitlistCount: 0,
     class: '',
 })
+
+const { t } = useLocale()
 
 const emit = defineEmits<{
     submit: [email: string]
@@ -42,7 +45,7 @@ function handleSubmit() {
     <div :class="rootClasses">
         <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-3 border-brutal rotate-[-1deg]">
             <Sparkles class="h-4 w-4 stroke-[3] animate-spin" />
-            <span class="font-black text-sm">Early Access</span>
+            <span class="font-black text-sm">{{ t('waitlistPage.earlyAccess') }}</span>
         </div>
 
         <h1 class="text-3xl font-black tracking-tight">
@@ -62,14 +65,14 @@ function handleSubmit() {
         <div class="mt-8 flex items-center justify-center gap-6 text-sm font-bold text-brutal-muted-foreground">
             <div v-if="waitlistCount > 0" class="flex items-center gap-1">
                 <Users class="h-4 w-4 stroke-[3]" />
-                <span>{{ waitlistCount.toLocaleString() }} on waitlist</span>
+                <span>{{ t('waitlistPage.onWaitlist', { count: waitlistCount.toLocaleString() }) }}</span>
             </div>
             <div class="flex items-center gap-1">
                 <Star v-for="i in 5" :key="i" class="h-3 w-3 fill-brutal-accent text-brutal-accent" />
             </div>
             <div class="flex items-center gap-1">
                 <div class="h-2 w-2 rounded-full bg-brutal-success animate-pulse" />
-                <span>Live</span>
+                <span>{{ t('waitlistPage.live') }}</span>
             </div>
         </div>
     </div>

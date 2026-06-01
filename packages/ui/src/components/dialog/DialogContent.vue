@@ -8,6 +8,7 @@ import {
 import { X } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
+import { useLocale } from '@/composables/useLocale'
 
 interface DialogContentProps {
     showCloseButton?: boolean
@@ -20,6 +21,8 @@ const props = withDefaults(defineProps<DialogContentProps>(), {
     forceMount: undefined,
     class: '',
 })
+
+const { t } = useLocale()
 
 const contentClasses = computed(() =>
     cn(
@@ -58,7 +61,7 @@ const closeClasses = computed(() =>
             <slot />
             <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
                 <X class="h-4 w-4 stroke-[3]" />
-                <span class="sr-only">Close</span>
+                <span class="sr-only">{{ t('dialog.close') }}</span>
             </DialogClosePrimitive>
         </DialogContentPrimitive>
     </DialogPortalPrimitive>

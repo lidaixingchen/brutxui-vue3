@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { DialogRoot, DialogPortal, DialogOverlay, DialogContent, DialogTitle, DialogDescription } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import Command from './Command.vue'
 
 interface CommandDialogProps {
@@ -13,10 +14,15 @@ interface CommandDialogProps {
 
 const props = withDefaults(defineProps<CommandDialogProps>(), {
     open: false,
-    title: 'Command Palette',
-    description: 'Search for a command to run...',
+    title: undefined,
+    description: undefined,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedTitle = computed(() => props.title ?? t('command.dialogTitle'))
+const resolvedDescription = computed(() => props.description ?? t('command.dialogDescription'))
 
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
@@ -48,8 +54,8 @@ const contentClasses = computed(() =>
             <DialogOverlay :class="overlayClasses" />
             <DialogContent :class="contentClasses">
                 <div class="sr-only">
-                    <DialogTitle>{{ title }}</DialogTitle>
-                    <DialogDescription>{{ description }}</DialogDescription>
+                    <DialogTitle>{{ resolvedTitle }}</DialogTitle>
+                    <DialogDescription>{{ resolvedDescription }}</DialogDescription>
                 </div>
                 <Command class="[&_[data-slot=command-group-heading]]:px-2 [&_[data-slot=command-group-heading]]:font-black [&_[data-slot=command-group-heading]]:text-brutal-muted-foreground [&_[data-slot=command-group]]:px-2 [&_[data-slot=command-input]]:h-12 [&_[data-slot=command-item]]:px-3 [&_[data-slot=command-item]]:py-3">
                     <slot />

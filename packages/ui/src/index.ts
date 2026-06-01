@@ -266,3 +266,10 @@ export { stepperDotVariants, stepperConnectorVariants, stepperItemVariants } fro
 export * from './lib/utils'
 
 export type { VariantProps } from 'class-variance-authority'
+
+export { BrutxUIPlugin } from './plugin'
+export type { BrutxUIPluginOptions } from './plugin'
+export { useLocale, provideLocale } from './composables/useLocale'
+export type { TranslateFunction } from './composables/useLocale'
+export { zhCN, en, mergeLocale } from './locales'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale } from './locales/types'

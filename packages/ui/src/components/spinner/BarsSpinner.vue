@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { barsSpinnerVariants } from './spinner-variants'
 
 type BarsSpinnerSize = NonNullable<VariantProps<typeof barsSpinnerVariants>['size']>
@@ -16,9 +17,13 @@ interface BarsSpinnerProps {
 const props = withDefaults(defineProps<BarsSpinnerProps>(), {
     size: 'default',
     color: 'default',
-    label: 'Loading...',
+    label: undefined,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
 
 const barWidthMap: Record<string, string> = {
     sm: 'w-1',
@@ -51,7 +56,7 @@ const barClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="containerClasses" role="status" :aria-label="label">
+    <div :class="containerClasses" role="status" :aria-label="resolvedLabel">
         <div
             v-for="(barClass, i) in barClasses"
             :key="i"
@@ -62,6 +67,6 @@ const barClasses = computed(() =>
                 animationDuration: `${ANIMATION_DURATION_MS}ms`,
             }"
         />
-        <span class="sr-only">{{ label }}</span>
+        <span class="sr-only">{{ resolvedLabel }}</span>
     </div>
 </template>

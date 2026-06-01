@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { blockSpinnerVariants } from './spinner-variants'
 
 type BlockSpinnerSize = NonNullable<VariantProps<typeof blockSpinnerVariants>['size']>
@@ -16,9 +17,13 @@ interface BlockSpinnerProps {
 const props = withDefaults(defineProps<BlockSpinnerProps>(), {
     size: 'default',
     color: 'default',
-    label: 'Loading...',
+    label: undefined,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
 
 const colorMap: Record<string, string[]> = {
     default: ['bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg'],
@@ -40,13 +45,13 @@ const blockClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="classes" role="status" :aria-label="label">
+    <div :class="classes" role="status" :aria-label="resolvedLabel">
         <div
             v-for="(blockClass, i) in blockClasses"
             :key="i"
             :class="blockClass"
             :style="{ animationDelay: `${i * 150}ms`, animationDuration: '600ms' }"
         />
-        <span class="sr-only">{{ label }}</span>
+        <span class="sr-only">{{ resolvedLabel }}</span>
     </div>
 </template>

@@ -1,5 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import SaaSPricing from './SaaSPricing.vue'
+
+const globalProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('SaaSPricing', () => {
     const defaultPlans = [
@@ -31,7 +35,7 @@ describe('SaaSPricing', () => {
     ]
 
     it('renders with default props', () => {
-        const wrapper = mount(SaaSPricing)
+        const wrapper = mount(SaaSPricing, globalProvide)
         expect(wrapper.find('h2').text()).toBe('Simple, Unapologetic Pricing')
         expect(wrapper.findAll('.grid > div').length).toBe(3)
     })
@@ -39,6 +43,7 @@ describe('SaaSPricing', () => {
     it('shows plan names and prices', () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: defaultPlans },
+            ...globalProvide,
         })
         expect(wrapper.text()).toContain('Starter')
         expect(wrapper.text()).toContain('Pro')
@@ -49,6 +54,7 @@ describe('SaaSPricing', () => {
     it('shows monthly prices by default', () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: defaultPlans },
+            ...globalProvide,
         })
         expect(wrapper.text()).toContain('$19')
         expect(wrapper.text()).toContain('/mo')
@@ -57,6 +63,7 @@ describe('SaaSPricing', () => {
     it('switches to annual prices when annually toggle is clicked', async () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: defaultPlans },
+            ...globalProvide,
         })
         const buttons = wrapper.findAll('button')
         const annualButton = buttons.find(b => b.text() === 'Annually')
@@ -69,6 +76,7 @@ describe('SaaSPricing', () => {
     it('switches back to monthly when monthly toggle is clicked', async () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: defaultPlans },
+            ...globalProvide,
         })
         const buttons = wrapper.findAll('button')
         const annualButton = buttons.find(b => b.text() === 'Annually')
@@ -83,6 +91,7 @@ describe('SaaSPricing', () => {
     it('shows popular badge for popular plans', () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: defaultPlans },
+            ...globalProvide,
         })
         expect(wrapper.text()).toContain('MOST POPULAR')
     })
@@ -90,6 +99,7 @@ describe('SaaSPricing', () => {
     it('renders custom title', () => {
         const wrapper = mount(SaaSPricing, {
             props: { title: 'Custom Title' },
+            ...globalProvide,
         })
         expect(wrapper.find('h2').text()).toBe('Custom Title')
     })
@@ -97,6 +107,7 @@ describe('SaaSPricing', () => {
     it('renders subtitle when provided', () => {
         const wrapper = mount(SaaSPricing, {
             props: { subtitle: 'Custom subtitle' },
+            ...globalProvide,
         })
         expect(wrapper.text()).toContain('Custom subtitle')
     })
@@ -104,6 +115,7 @@ describe('SaaSPricing', () => {
     it('does not render subtitle when not provided', () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: [] },
+            ...globalProvide,
         })
         const subtitleEl = wrapper.find('.text-center > p')
         expect(subtitleEl.exists()).toBe(false)
@@ -112,6 +124,7 @@ describe('SaaSPricing', () => {
     it('renders feature text for each plan', () => {
         const wrapper = mount(SaaSPricing, {
             props: { plans: defaultPlans },
+            ...globalProvide,
         })
         expect(wrapper.text()).toContain('5 components')
         expect(wrapper.text()).toContain('Priority updates')
@@ -120,6 +133,7 @@ describe('SaaSPricing', () => {
     it('applies custom class', () => {
         const wrapper = mount(SaaSPricing, {
             props: { class: 'my-pricing' },
+            ...globalProvide,
         })
         expect(wrapper.classes()).toContain('my-pricing')
     })

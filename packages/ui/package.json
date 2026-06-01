@@ -30,6 +30,11 @@
             "import": "./dist/brutalism-plugin.mjs",
             "require": "./dist/brutalism-plugin.cjs"
         },
+        "./locales": {
+            "types": "./dist/locales/index.d.ts",
+            "import": "./dist/locales/index.mjs",
+            "require": "./dist/locales/index.cjs"
+        },
         "./styles.css": "./dist/styles.css"
     },
     "files": [

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Check } from 'lucide-vue-next';
 import { cn } from '../../lib/utils';
 import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
+import { useLocale } from '@/composables/useLocale';
 
 export interface StepperStep {
     id: string | number;
@@ -22,6 +23,8 @@ interface StepperProps {
 const props = withDefaults(defineProps<StepperProps>(), {
     orientation: 'horizontal',
 });
+
+const { t } = useLocale();
 
 const emit = defineEmits<{
     'update:modelValue': [step: number];
@@ -71,7 +74,7 @@ function connectorClass(index: number) {
 </script>
 
 <template>
-    <div :class="rootClass" role="list" aria-label="Progress steps">
+    <div :class="rootClass" role="list" :aria-label="t('stepper.progressSteps')">
         <template v-for="(step, index) in steps" :key="step.id">
             <!-- Step Item -->
             <div
@@ -94,7 +97,7 @@ function connectorClass(index: number) {
                     <button
                         :class="dotClass(index)"
                         type="button"
-                        :aria-label="`Step ${index + 1}: ${step.title}`"
+                        :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                         @click="clickStep(index)"
                     >
                         <Check v-if="getState(index) === 'completed'" class="w-4 h-4" />
@@ -127,7 +130,7 @@ function connectorClass(index: number) {
                         <button
                             :class="dotClass(index)"
                             type="button"
-                            :aria-label="`Step ${index + 1}: ${step.title}`"
+                            :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                             @click="clickStep(index)"
                         >
                             <Check v-if="getState(index) === 'completed'" class="w-4 h-4" />

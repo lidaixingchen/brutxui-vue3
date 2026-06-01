@@ -1,10 +1,14 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Toast from './Toast.vue'
 import ToastContainer from './ToastContainer.vue'
 
+const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
+
 describe('Toast', () => {
     it('renders with default variant', () => {
-        const wrapper = mount(Toast)
+        const wrapper = mount(Toast, { global: globalProvide })
         expect(wrapper.classes()).toContain('border-3')
         expect(wrapper.classes()).toContain('border-brutal')
         expect(wrapper.classes()).toContain('bg-brutal-bg')
@@ -17,19 +21,21 @@ describe('Toast', () => {
                 title: 'Test Title',
                 description: 'Test Description',
             },
+            global: globalProvide,
         })
         expect(wrapper.text()).toContain('Test Title')
         expect(wrapper.text()).toContain('Test Description')
     })
 
     it('has role="alert"', () => {
-        const wrapper = mount(Toast)
+        const wrapper = mount(Toast, { global: globalProvide })
         expect(wrapper.attributes('role')).toBe('alert')
     })
 
     it('applies custom class', () => {
         const wrapper = mount(Toast, {
             props: { class: 'custom-toast' },
+            global: globalProvide,
         })
         expect(wrapper.classes()).toContain('custom-toast')
     })
@@ -37,6 +43,7 @@ describe('Toast', () => {
     it('renders success variant', () => {
         const wrapper = mount(Toast, {
             props: { variant: 'success' },
+            global: globalProvide,
         })
         expect(wrapper.classes()).toContain('bg-brutal-success')
     })
@@ -44,6 +51,7 @@ describe('Toast', () => {
     it('renders error variant', () => {
         const wrapper = mount(Toast, {
             props: { variant: 'error' },
+            global: globalProvide,
         })
         expect(wrapper.classes()).toContain('bg-brutal-destructive')
     })
@@ -51,6 +59,7 @@ describe('Toast', () => {
     it('renders warning variant', () => {
         const wrapper = mount(Toast, {
             props: { variant: 'warning' },
+            global: globalProvide,
         })
         expect(wrapper.classes()).toContain('bg-brutal-accent')
     })
@@ -58,6 +67,7 @@ describe('Toast', () => {
     it('renders info variant', () => {
         const wrapper = mount(Toast, {
             props: { variant: 'info' },
+            global: globalProvide,
         })
         expect(wrapper.classes()).toContain('bg-brutal-secondary')
     })
@@ -67,6 +77,7 @@ describe('Toast', () => {
         for (const variant of variants) {
             const wrapper = mount(Toast, {
                 props: { variant },
+                global: globalProvide,
             })
             const svg = wrapper.find('svg')
             expect(svg.exists()).toBe(true)
@@ -74,14 +85,14 @@ describe('Toast', () => {
     })
 
     it('shows close button', () => {
-        const wrapper = mount(Toast)
+        const wrapper = mount(Toast, { global: globalProvide })
         const closeButton = wrapper.find('button[aria-label="Close"]')
         expect(closeButton.exists()).toBe(true)
     })
 
     it('emits close event when close button clicked', async () => {
         vi.useFakeTimers()
-        const wrapper = mount(Toast)
+        const wrapper = mount(Toast, { global: globalProvide })
         const closeButton = wrapper.find('button[aria-label="Close"]')
         await closeButton.trigger('click')
         vi.advanceTimersByTime(300)
@@ -92,6 +103,7 @@ describe('Toast', () => {
     it('renders size variants', () => {
         const wrapper = mount(Toast, {
             props: { size: 'sm' },
+            global: globalProvide,
         })
         expect(wrapper.classes()).toContain('max-w-xs')
     })
@@ -99,6 +111,7 @@ describe('Toast', () => {
     it('renders slot content', () => {
         const wrapper = mount(Toast, {
             slots: { default: '<div class="slot-content">Custom</div>' },
+            global: globalProvide,
         })
         expect(wrapper.find('.slot-content').exists()).toBe(true)
     })

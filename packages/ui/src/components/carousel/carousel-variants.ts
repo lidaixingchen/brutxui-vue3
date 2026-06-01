@@ -26,7 +26,7 @@ export const carouselButtonVariants = cva(
         'w-10 h-10 cursor-pointer',
         'transition-all duration-150',
         'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)]',
-        'active:-translate-y-[calc(50%-var(--brutal-pressed-offset,2px))] active:shadow-none',
+        'active:translate-y-[calc(-50%+var(--brutal-pressed-offset,2px))] active:shadow-none',
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-brutal',
     ].join(' '),
     {

@@ -4,6 +4,9 @@ import { type VariantProps } from 'class-variance-authority'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 
 type PaginationVariantProps = VariantProps<typeof paginationVariants>
 
@@ -118,13 +121,13 @@ function onPageChange(page: number) {
 </script>
 
 <template>
-    <nav role="navigation" aria-label="pagination" :class="navClasses">
+    <nav role="navigation" :aria-label="t('pagination.label')" :class="navClasses">
         <button
             v-if="showFirstLast"
             type="button"
             :class="firstButtonClasses"
             :disabled="currentPage === 1"
-            aria-label="Go to first page"
+            :aria-label="t('pagination.firstPage')"
             @click="onPageChange(1)"
         >
             <ChevronsLeft class="h-4 w-4 stroke-[3]" />
@@ -134,7 +137,7 @@ function onPageChange(page: number) {
             type="button"
             :class="prevButtonClasses"
             :disabled="currentPage === 1"
-            aria-label="Go to previous page"
+            :aria-label="t('pagination.previousPage')"
             @click="onPageChange(currentPage - 1)"
         >
             <ChevronLeft class="h-4 w-4 stroke-[3]" />
@@ -152,7 +155,7 @@ function onPageChange(page: number) {
                     v-else
                     type="button"
                     :class="pageButtonClasses(pageNumber as number)"
-                    :aria-label="`Go to page ${pageNumber}`"
+                    :aria-label="t('pagination.page', { number: pageNumber as number })"
                     :aria-current="currentPage === pageNumber ? 'page' : undefined"
                     @click="onPageChange(pageNumber as number)"
                 >
@@ -169,7 +172,7 @@ function onPageChange(page: number) {
             type="button"
             :class="nextButtonClasses"
             :disabled="currentPage === totalPages"
-            aria-label="Go to next page"
+            :aria-label="t('pagination.nextPage')"
             @click="onPageChange(currentPage + 1)"
         >
             <ChevronRight class="h-4 w-4 stroke-[3]" />
@@ -180,7 +183,7 @@ function onPageChange(page: number) {
             type="button"
             :class="lastButtonClasses"
             :disabled="currentPage === totalPages"
-            aria-label="Go to last page"
+            :aria-label="t('pagination.lastPage')"
             @click="onPageChange(totalPages)"
         >
             <ChevronsRight class="h-4 w-4 stroke-[3]" />

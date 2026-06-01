@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { ArrowRight, Sparkles } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
@@ -22,6 +23,8 @@ const props = withDefaults(defineProps<BrutalistHeroProps>(), {
     class: '',
 })
 
+const { t } = useLocale()
+
 const emit = defineEmits<{
     primaryCta: []
     secondaryCta: []
@@ -36,7 +39,7 @@ const rootClasses = computed(() => cn('w-full', props.class))
             <div>
                 <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-3 border-brutal rotate-[-1deg]">
                     <Sparkles class="h-4 w-4 stroke-[3]" />
-                    <span class="font-black text-sm">Neo-Brutalism UI</span>
+                    <span class="font-black text-sm">{{ t('brutalistHero.neoBrutalismUI') }}</span>
                 </div>
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
 {{ title }}

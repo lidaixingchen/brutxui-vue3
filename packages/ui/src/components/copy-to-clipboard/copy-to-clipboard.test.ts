@@ -1,7 +1,11 @@
 import { ref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import CopyToClipboard from './CopyToClipboard.vue'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 const mockCopy = vi.fn()
 const mockCopied = ref(false)
@@ -25,6 +29,7 @@ describe('CopyToClipboard', () => {
     it('renders a button element', () => {
         const wrapper = mount(CopyToClipboard, {
             props: { text: 'hello' },
+            ...localeProvide,
         })
         expect(wrapper.find('button').exists()).toBe(true)
         expect(wrapper.find('button').attributes('type')).toBe('button')
@@ -33,6 +38,7 @@ describe('CopyToClipboard', () => {
     it('shows Copy text by default', () => {
         const wrapper = mount(CopyToClipboard, {
             props: { text: 'hello' },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Copy')
     })
@@ -40,6 +46,7 @@ describe('CopyToClipboard', () => {
     it('applies custom class', () => {
         const wrapper = mount(CopyToClipboard, {
             props: { text: 'hello', class: 'custom-class' },
+            ...localeProvide,
         })
         expect(wrapper.find('button').classes()).toContain('custom-class')
     })
@@ -47,6 +54,7 @@ describe('CopyToClipboard', () => {
     it('applies idle variant classes by default', () => {
         const wrapper = mount(CopyToClipboard, {
             props: { text: 'hello' },
+            ...localeProvide,
         })
         const button = wrapper.find('button')
         expect(button.classes()).toContain('bg-brutal-bg')
@@ -59,6 +67,7 @@ describe('CopyToClipboard', () => {
         mockIsSupported.value = false
         const wrapper = mount(CopyToClipboard, {
             props: { text: 'hello' },
+            ...localeProvide,
         })
         const button = wrapper.find('button')
         expect(button.attributes('disabled')).toBeDefined()
@@ -70,6 +79,7 @@ describe('CopyToClipboard', () => {
             slots: {
                 default: '<span>Custom slot</span>',
             },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Custom slot')
     })

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 
 interface CommandInputProps {
     modelValue?: string
@@ -10,9 +11,13 @@ interface CommandInputProps {
 
 const props = withDefaults(defineProps<CommandInputProps>(), {
     modelValue: undefined,
-    placeholder: 'Type a command or search...',
+    placeholder: undefined,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('command.placeholder'))
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
@@ -44,7 +49,7 @@ const inputClasses = computed(() =>
         <input
             type="text"
             :value="modelValue"
-            :placeholder="placeholder"
+            :placeholder="resolvedPlaceholder"
             :class="inputClasses"
             @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
         >

@@ -10,6 +10,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { X } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { sheetVariants } from './sheet-variants'
+import { useLocale } from '@/composables/useLocale'
 
 type SheetVariantProps = VariantProps<typeof sheetVariants>
 
@@ -22,6 +23,8 @@ const props = withDefaults(defineProps<SheetContentProps>(), {
     side: 'right',
     class: '',
 })
+
+const { t } = useLocale()
 
 const overlayClasses = computed(() =>
     cn(
@@ -57,7 +60,7 @@ const closeClasses = computed(() =>
             <slot />
             <DialogClosePrimitive :class="closeClasses">
                 <X class="h-4 w-4 stroke-[3]" />
-                <span class="sr-only">Close</span>
+                <span class="sr-only">{{ t('sheet.close') }}</span>
             </DialogClosePrimitive>
         </DialogContentPrimitive>
     </DialogPortalPrimitive>

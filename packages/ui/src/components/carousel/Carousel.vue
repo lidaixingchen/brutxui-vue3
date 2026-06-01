@@ -4,6 +4,9 @@ import useEmblaCarousel from 'embla-carousel-vue';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { cn } from '../../lib/utils';
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
+import { useLocale } from '@/composables/useLocale';
+
+const { t } = useLocale();
 
 const DEFAULT_AUTOPLAY_DELAY = 3000
 
@@ -126,7 +129,7 @@ const nextButtonClass = computed(() =>
             v-if="showArrows"
             :class="prevButtonClass"
             :disabled="!canScrollPrev"
-            aria-label="Previous slide"
+            :aria-label="t('carousel.previousSlide')"
             @click="scrollPrev"
         >
             <ChevronLeft class="w-5 h-5" />
@@ -136,7 +139,7 @@ const nextButtonClass = computed(() =>
             v-if="showArrows"
             :class="nextButtonClass"
             :disabled="!canScrollNext"
-            aria-label="Next slide"
+            :aria-label="t('carousel.nextSlide')"
             @click="scrollNext"
         >
             <ChevronRight class="w-5 h-5" />
@@ -149,7 +152,7 @@ const nextButtonClass = computed(() =>
             <button
                 v-for="(_, i) in scrollSnaps"
                 :key="i"
-                :aria-label="`Go to slide ${i + 1}`"
+                :aria-label="t('carousel.goToSlide', { index: i + 1 })"
                 :class="cn(
                     'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
                     i === selectedIndex ? 'bg-brutal-primary shadow-brutal' : 'bg-brutal-bg hover:bg-brutal-muted'

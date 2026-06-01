@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { cn } from '../../lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
+import { useLocale } from '@/composables/useLocale';
 
 export interface TreeNode {
     id: string;
@@ -29,6 +30,8 @@ const emit = defineEmits<{
     'expand': [id: string, expanded: boolean];
 }>();
 
+const { t } = useLocale();
+
 const expandedIds = ref<Set<string>>(new Set(props.defaultExpanded));
 
 watch(() => props.defaultExpanded, (newVal) => {
@@ -54,7 +57,7 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 </script>
 
 <template>
-    <div :class="rootClass" role="tree" aria-label="File tree">
+    <div :class="rootClass" role="tree" :aria-label="t('treeView.fileTree')">
         <TreeViewNode
             v-for="node in nodes"
             :key="node.id"

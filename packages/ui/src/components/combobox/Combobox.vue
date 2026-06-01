@@ -11,6 +11,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
+import { useLocale } from '@/composables/useLocale'
 
 import { type ComboboxOption } from './combobox-types'
 
@@ -26,12 +27,18 @@ interface ComboboxProps {
 
 const props = withDefaults(defineProps<ComboboxProps>(), {
     modelValue: undefined,
-    placeholder: 'Select option...',
-    searchPlaceholder: 'Search...',
-    emptyText: 'No results found.',
+    placeholder: undefined,
+    searchPlaceholder: undefined,
+    emptyText: undefined,
     disabled: false,
     class: '',
 })
+
+const { t } = useLocale()
+
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('combobox.placeholder'))
+const resolvedSearchPlaceholder = computed(() => props.searchPlaceholder ?? t('combobox.searchPlaceholder'))
+const resolvedEmptyText = computed(() => props.emptyText ?? t('combobox.emptyText'))
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | undefined] }>()
 
@@ -83,15 +90,15 @@ function getCheckClasses(optionValue: string) {
                 aria-haspopup="listbox"
                 :class="triggerClasses"
             >
-                <span>{{ selectedOption ? selectedOption.label : placeholder }}</span>
+                <span>{{ selectedOption ? selectedOption.label : resolvedPlaceholder }}</span>
                 <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]" />
             </button>
         </PopoverTrigger>
         <PopoverContent class="w-[var(--reka-popover-trigger-width)] p-0" align="start">
             <Command>
-                <CommandInput v-model="searchQuery" :placeholder="searchPlaceholder" />
+                <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
-                    <CommandEmpty>{{ emptyText }}</CommandEmpty>
+                    <CommandEmpty>{{ resolvedEmptyText }}</CommandEmpty>
                     <CommandGroup>
                         <CommandItem
                             v-for="option in filteredOptions"

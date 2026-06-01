@@ -2,6 +2,10 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Combobox from './Combobox.vue'
 import ComboboxMulti from './ComboboxMulti.vue'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 const options = [
     { value: 'apple', label: 'Apple' },
@@ -29,6 +33,7 @@ async function openCombobox(w: ReturnType<typeof mount>) {
 describe('Combobox', () => {
     it('renders with options prop', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -38,6 +43,7 @@ describe('Combobox', () => {
 
     it('applies custom class', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, class: 'custom-combobox' },
             attachTo: document.body,
         })
@@ -47,6 +53,7 @@ describe('Combobox', () => {
 
     it('shows placeholder text', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, placeholder: 'Pick a fruit...' },
             attachTo: document.body,
         })
@@ -56,6 +63,7 @@ describe('Combobox', () => {
 
     it('shows default placeholder text', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -65,6 +73,7 @@ describe('Combobox', () => {
 
     it('shows selected option label', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, modelValue: 'banana' },
             attachTo: document.body,
         })
@@ -74,6 +83,7 @@ describe('Combobox', () => {
 
     it('emits update:modelValue when option selected', async () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -89,6 +99,7 @@ describe('Combobox', () => {
 
     it('emits undefined when selecting same option again', async () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, modelValue: 'apple' },
             attachTo: document.body,
         })
@@ -103,6 +114,7 @@ describe('Combobox', () => {
 
     it('has aria-expanded attribute', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -112,6 +124,7 @@ describe('Combobox', () => {
 
     it('is disabled when disabled prop is true', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, disabled: true },
             attachTo: document.body,
         })
@@ -121,6 +134,7 @@ describe('Combobox', () => {
 
     it('filters options by search query', async () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -137,6 +151,7 @@ describe('Combobox', () => {
 
     it('shows all options when search query is cleared', async () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -154,6 +169,7 @@ describe('Combobox', () => {
 
     it('shows empty text when no options match search', async () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, emptyText: 'Nothing found!' },
             attachTo: document.body,
         })
@@ -167,6 +183,7 @@ describe('Combobox', () => {
 
     it('clears search query after selection', async () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -184,6 +201,7 @@ describe('Combobox', () => {
 
     it('applies muted foreground class when no value selected', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -193,6 +211,7 @@ describe('Combobox', () => {
 
     it('does not apply muted foreground class when value is selected', () => {
         wrapper = mount(Combobox, {
+            ...localeProvide,
             props: { options, modelValue: 'apple' },
             attachTo: document.body,
         })
@@ -204,6 +223,7 @@ describe('Combobox', () => {
 describe('ComboboxMulti', () => {
     it('renders with options prop', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -213,6 +233,7 @@ describe('ComboboxMulti', () => {
 
     it('applies custom class', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, class: 'custom-multi' },
             attachTo: document.body,
         })
@@ -222,6 +243,7 @@ describe('ComboboxMulti', () => {
 
     it('shows placeholder text when no selection', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, placeholder: 'Pick fruits...' },
             attachTo: document.body,
         })
@@ -231,6 +253,7 @@ describe('ComboboxMulti', () => {
 
     it('shows default placeholder text', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -240,6 +263,7 @@ describe('ComboboxMulti', () => {
 
     it('shows selected option labels', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, modelValue: ['apple', 'banana'] },
             attachTo: document.body,
         })
@@ -250,6 +274,7 @@ describe('ComboboxMulti', () => {
 
     it('shows count when selections exceed maxDisplay', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, modelValue: ['apple', 'banana', 'cherry'], maxDisplay: 2 },
             attachTo: document.body,
         })
@@ -259,6 +284,7 @@ describe('ComboboxMulti', () => {
 
     it('emits update:modelValue when options selected', async () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -267,6 +293,7 @@ describe('ComboboxMulti', () => {
 
     it('is disabled when disabled prop is true', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, disabled: true },
             attachTo: document.body,
         })
@@ -276,6 +303,7 @@ describe('ComboboxMulti', () => {
 
     it('adds option to selection when unselected item is clicked', async () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, modelValue: [] },
             attachTo: document.body,
         })
@@ -290,6 +318,7 @@ describe('ComboboxMulti', () => {
 
     it('removes option from selection when selected item is clicked', async () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, modelValue: ['apple', 'banana'] },
             attachTo: document.body,
         })
@@ -304,6 +333,7 @@ describe('ComboboxMulti', () => {
 
     it('filters options by search query', async () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -320,6 +350,7 @@ describe('ComboboxMulti', () => {
 
     it('shows all options when search query is cleared', async () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -337,6 +368,7 @@ describe('ComboboxMulti', () => {
 
     it('applies muted foreground class when no value selected', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options },
             attachTo: document.body,
         })
@@ -346,6 +378,7 @@ describe('ComboboxMulti', () => {
 
     it('does not apply muted foreground class when values are selected', () => {
         wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
             props: { options, modelValue: ['apple'] },
             attachTo: document.body,
         })

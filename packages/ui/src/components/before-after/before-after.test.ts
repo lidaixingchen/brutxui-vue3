@@ -1,5 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import BeforeAfter from './BeforeAfter.vue'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('BeforeAfter', () => {
     it('renders before and after images', () => {
@@ -8,6 +12,7 @@ describe('BeforeAfter', () => {
                 before: '/before.jpg',
                 after: '/after.jpg',
             },
+            ...localeProvide,
         })
         const imgs = wrapper.findAll('img')
         expect(imgs).toHaveLength(2)
@@ -21,6 +26,7 @@ describe('BeforeAfter', () => {
                 before: '/before.jpg',
                 after: '/after.jpg',
             },
+            ...localeProvide,
         })
         const classes = wrapper.classes()
         expect(classes).toContain('relative')
@@ -37,6 +43,7 @@ describe('BeforeAfter', () => {
                 before: '/before.jpg',
                 after: '/after.jpg',
             },
+            ...localeProvide,
         })
         const input = wrapper.find('input[type="range"]')
         expect(input.exists()).toBe(true)
@@ -50,6 +57,7 @@ describe('BeforeAfter', () => {
                 before: '/before.jpg',
                 after: '/after.jpg',
             },
+            ...localeProvide,
         })
         const imgs = wrapper.findAll('img')
         expect(imgs[0].attributes('alt')).toBe('Before')
@@ -64,6 +72,7 @@ describe('BeforeAfter', () => {
                 beforeAlt: 'Original',
                 afterAlt: 'Modified',
             },
+            ...localeProvide,
         })
         const imgs = wrapper.findAll('img')
         expect(imgs[0].attributes('alt')).toBe('Original')
@@ -76,6 +85,7 @@ describe('BeforeAfter', () => {
                 before: '/before.jpg',
                 after: '/after.jpg',
             },
+            ...localeProvide,
         })
         const input = wrapper.find('input[type="range"]')
         expect((input.element as HTMLInputElement).value).toBe('50')
@@ -88,6 +98,7 @@ describe('BeforeAfter', () => {
                 after: '/after.jpg',
                 defaultValue: 75,
             },
+            ...localeProvide,
         })
         const input = wrapper.find('input[type="range"]')
         expect((input.element as HTMLInputElement).value).toBe('75')
@@ -100,6 +111,7 @@ describe('BeforeAfter', () => {
                 after: '/after.jpg',
                 disabled: true,
             },
+            ...localeProvide,
         })
         const input = wrapper.find('input[type="range"]')
         expect((input.element as HTMLInputElement).disabled).toBe(true)
@@ -111,6 +123,7 @@ describe('BeforeAfter', () => {
                 before: '/before.jpg',
                 after: '/after.jpg',
             },
+            ...localeProvide,
         })
         const handle = wrapper.find('.absolute.top-1\\/2')
         expect(handle.exists()).toBe(true)
@@ -123,6 +136,7 @@ describe('BeforeAfter', () => {
                 after: '/after.jpg',
                 class: 'custom-class',
             },
+            ...localeProvide,
         })
         expect(wrapper.classes()).toContain('custom-class')
     })
