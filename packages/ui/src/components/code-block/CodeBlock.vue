@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import { cn } from '../../lib/utils'
-import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants } from './code-block-variants'
+import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
 
 interface CodeBlockProps {
     code: string
@@ -41,7 +41,7 @@ const rootClasses = computed(() =>
             </div>
             <CopyToClipboard
                 :text="code"
-                class="h-7 px-3 text-xs border-2 shadow-brutal-sm active:translate-y-[1px] bg-brutal-bg hover:bg-brutal-muted"
+                :class="codeBlockCopyButtonVariants()"
             >
                 <template #default="{ copied }">
                     <span>{{ copied ? 'Copied' : 'Copy' }}</span>

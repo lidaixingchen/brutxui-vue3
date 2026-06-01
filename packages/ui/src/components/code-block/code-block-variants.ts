@@ -19,3 +19,7 @@ export const codeBlockBodyVariants = cva(
 export const codeBlockLineNumbersVariants = cva(
     'flex flex-col text-right text-brutal-fg/40 select-none pr-4 mr-4 border-r-3 border-brutal font-bold'
 )
+
+export const codeBlockCopyButtonVariants = cva(
+    'h-7 px-3 text-xs border-2 shadow-brutal-sm active:translate-y-[1px] bg-brutal-bg hover:bg-brutal-muted'
+)

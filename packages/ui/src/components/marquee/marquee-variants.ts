@@ -5,15 +5,7 @@ export const marqueeContainerVariants = cva(
         'relative flex overflow-hidden w-full',
         'border-y-3 border-brutal bg-brutal-accent text-brutal-fg',
         'font-black uppercase py-4 text-xl tracking-widest select-none',
-    ].join(' '),
-    {
-        variants: {
-            fade: {
-                true: '',
-                false: '',
-            },
-        },
-    }
+    ].join(' ')
 )
 
 export const marqueeTrackVariants = cva(

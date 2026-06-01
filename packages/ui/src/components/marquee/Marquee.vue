@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<MarqueeProps>(), {
 })
 
 const containerClasses = computed(() =>
-    cn(marqueeContainerVariants({ fade: props.fade || undefined }), props.class)
+    cn(marqueeContainerVariants(), props.class)
 )
 
 const trackClasses = computed(() =>
