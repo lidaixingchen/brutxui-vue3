@@ -94,8 +94,7 @@ BrutxUI 内置三套主题预设，你可以通过在根元素上添加类名来
 
 BrutxUI 旨在与 AI 编码助手无缝协作：
 
-- **llms.txt** — 位于 `/llms.txt` 的机器可读文档
-- **.cursorrules** — 用于 Cursor AI 集成的项目规则
+- **AGENTS.md** — 项目根目录的统一 AI 配置文件，为所有 AI 工具提供项目指令
 - **结构化 Props** — AI 可以理解和生成的 TypeScript 接口
 
 详见 [AI 集成](/guide/ai)指南。
