@@ -1,3 +1,4 @@
+@import 'v-calendar/dist/style.css';
 @import 'brutx-ui-vue/styles.css';
 
 @tailwind base;
@@ -23,6 +24,9 @@
 
 body {
     font-family: 'Space Grotesk', system-ui, sans-serif !important;
+}
+
+.VPContent {
     scrollbar-gutter: stable;
 }
 

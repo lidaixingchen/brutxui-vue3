@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const containerClass = computed(() =>
     cn(
-        'p-4 sm:p-8 flex min-h-[150px] sm:min-h-[200px] bg-brutal-muted border-3 border-brutal shadow-brutal overflow-x-auto',
+        'p-4 sm:p-8 flex min-h-[150px] sm:min-h-[200px] bg-brutal-muted border-3 border-brutal shadow-brutal',
         props.align === 'center'
             ? 'items-center justify-center'
             : props.align === 'start'
