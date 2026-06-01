@@ -5,25 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-5xl mx-auto">
-    <div class="mb-8">
-      <h2 class="text-2xl font-black tracking-tight">Overview Performance</h2>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="border-3 border-brutal bg-brutal-bg shadow-brutal p-5">
-        <div class="pb-2 flex items-center justify-between">
-          <span class="text-sm text-brutal-muted-foreground">Revenue</span>
-          <div class="h-8 w-8 flex items-center justify-center border-3 border-brutal bg-brutal-primary">$</div>
-        </div>
-        <div class="pt-2">
-          <div class="text-2xl font-black">$45,231</div>
-          <div class="flex items-center gap-2 mt-1">
-            <span class="inline-flex items-center border-3 border-brutal font-bold bg-brutal-success text-brutal-fg shadow-brutal-sm px-2 py-0.5 text-xs">+20.1%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <DashboardStatsDemo />
 </ComponentPreview>
 
 ## 安装

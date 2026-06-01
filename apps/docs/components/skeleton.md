@@ -5,15 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-6 max-w-sm">
-    <div class="flex items-center gap-4">
-      <div class="h-12 w-12 border-3 border-brutal bg-brutal-muted animate-pulse"></div>
-      <div class="space-y-2 flex-1">
-        <div class="h-4 bg-brutal-muted border-3 border-brutal animate-pulse w-3/4"></div>
-        <div class="h-3 bg-brutal-muted border-3 border-brutal animate-pulse w-1/2"></div>
-      </div>
-    </div>
-  </div>
+  <SkeletonDemo />
 </ComponentPreview>
 
 ## 安装

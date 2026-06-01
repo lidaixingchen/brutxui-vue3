@@ -5,15 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-4">
-    <div>
-      <p class="text-sm font-medium">Content above</p>
-    </div>
-    <div class="h-[3px] w-full bg-brutal-fg"></div>
-    <div>
-      <p class="text-sm font-medium">Content below</p>
-    </div>
-  </div>
+  <SeparatorDemo />
 </ComponentPreview>
 
 ## 安装

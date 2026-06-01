@@ -5,10 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center gap-2">
-    <button class="inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide border-3 border-brutal rounded-brutal transition-all duration-150 h-10 px-3 min-w-10 bg-brutal-bg text-brutal-fg shadow-brutal-sm hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal">Bold</button>
-    <button class="inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide border-3 border-brutal rounded-brutal transition-all duration-150 h-10 px-3 min-w-10 bg-brutal-primary text-brutal-fg shadow-none translate-y-[2px]">Italic</button>
-  </div>
+  <ToggleDemo />
 </ComponentPreview>
 
 ## 安装

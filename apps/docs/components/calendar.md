@@ -5,18 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="p-3 bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal w-fit">
-    <div class="text-center font-black text-sm tracking-tight uppercase mb-2">June 2026</div>
-    <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold">
-      <span class="text-brutal-muted-foreground">Mo</span>
-      <span class="text-brutal-muted-foreground">Tu</span>
-      <span class="text-brutal-muted-foreground">We</span>
-      <span class="text-brutal-muted-foreground">Th</span>
-      <span class="text-brutal-muted-foreground">Fr</span>
-      <span class="text-brutal-muted-foreground">Sa</span>
-      <span class="text-brutal-muted-foreground">Su</span>
-    </div>
-  </div>
+  <CalendarDemo />
 </ComponentPreview>
 
 ## 安装

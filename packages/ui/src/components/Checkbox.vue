@@ -6,10 +6,16 @@ import { Check } from 'lucide-vue-next'
 
 interface CheckboxProps {
     class?: string
+    checked?: boolean
+    defaultChecked?: boolean
     disabled?: boolean
 }
 
 const props = defineProps<CheckboxProps>()
+
+const emit = defineEmits<{
+    'update:checked': [value: boolean]
+}>()
 
 const classes = computed(() =>
     cn(
@@ -32,7 +38,13 @@ const checkClasses = computed(() =>
 </script>
 
 <template>
-    <CheckboxRoot :class="classes" :disabled="disabled">
+    <CheckboxRoot
+        :class="classes"
+        :checked="checked"
+        :default-checked="defaultChecked"
+        :disabled="disabled"
+        @update:checked="emit('update:checked', $event)"
+    >
         <CheckboxIndicator class="flex items-center justify-center text-current">
             <Check :class="checkClasses" />
         </CheckboxIndicator>

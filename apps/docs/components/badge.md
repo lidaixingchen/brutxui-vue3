@@ -5,15 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex flex-wrap items-center gap-3">
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-bg text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Default</span>
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-primary text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Primary</span>
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-secondary text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Secondary</span>
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-accent text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Accent</span>
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-destructive text-white shadow-brutal-sm px-3 py-1 text-sm">Danger</span>
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-brutal-success text-brutal-fg shadow-brutal-sm px-3 py-1 text-sm">Success</span>
-    <span class="inline-flex items-center border-3 border-brutal font-bold tracking-wide bg-transparent text-brutal-fg px-3 py-1 text-sm">Outline</span>
-  </div>
+  <BadgeDemo />
 </ComponentPreview>
 
 ## 安装

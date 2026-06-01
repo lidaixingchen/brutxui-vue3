@@ -5,19 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="border-3 border-brutal bg-brutal-bg shadow-brutal-xl p-6 max-w-md">
-    <div class="mb-4">
-      <h2 class="text-lg font-black tracking-tight">Edit Profile</h2>
-      <p class="text-sm text-brutal-muted-foreground mt-1">Make changes to your profile here.</p>
-    </div>
-    <div class="py-4">
-      <p class="text-sm">Dialog content goes here.</p>
-    </div>
-    <div class="flex justify-end gap-3 pt-4">
-      <button class="px-4 py-2 border-3 border-brutal shadow-brutal font-bold text-sm active:translate-y-[2px] active:shadow-none transition-all">Cancel</button>
-      <button class="px-4 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-bold text-sm active:translate-y-[2px] active:shadow-none transition-all">Save</button>
-    </div>
-  </div>
+  <DialogDemo />
 </ComponentPreview>
 
 ## 安装

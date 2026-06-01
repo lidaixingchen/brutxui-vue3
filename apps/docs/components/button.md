@@ -5,13 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex flex-wrap items-center gap-3">
-    <button class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-bg text-brutal-fg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base">Default</button>
-    <button class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-primary text-brutal-fg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base">Primary</button>
-    <button class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-secondary text-brutal-fg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base">Secondary</button>
-    <button class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-accent text-brutal-fg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base">Accent</button>
-    <button class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-destructive text-white shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base">Danger</button>
-  </div>
+  <ButtonDemo />
 </ComponentPreview>
 
 ## 安装

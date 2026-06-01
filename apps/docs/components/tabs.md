@@ -5,15 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div>
-    <div class="inline-flex h-11 items-center gap-2 border-b-3 border-brutal bg-brutal-muted p-1">
-      <button class="inline-flex items-center justify-center px-3 py-1.5 font-black text-sm bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal-sm">Account</button>
-      <button class="inline-flex items-center justify-center px-3 py-1.5 font-bold text-sm text-brutal-muted-foreground">Password</button>
-    </div>
-    <div class="mt-4 p-4 border-3 border-brutal bg-brutal-bg shadow-brutal">
-      <p class="text-sm">Tab content goes here.</p>
-    </div>
-  </div>
+  <TabsDemo />
 </ComponentPreview>
 
 ## 安装

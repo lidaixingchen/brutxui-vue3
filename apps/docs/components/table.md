@@ -5,29 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full border-3 border-brutal shadow-brutal">
-    <table class="w-full caption-bottom text-sm">
-      <thead class="border-b-3 border-brutal bg-brutal-muted">
-        <tr>
-          <th class="h-12 px-4 text-left font-black">Name</th>
-          <th class="h-12 px-4 text-left font-black">Status</th>
-          <th class="h-12 px-4 text-right font-black">Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="border-b-3 border-brutal">
-          <td class="p-4 font-medium">Project Alpha</td>
-          <td class="p-4"><span class="inline-flex items-center border-3 border-brutal font-bold bg-brutal-success text-brutal-fg shadow-brutal-sm px-2 py-0.5 text-xs">Active</span></td>
-          <td class="p-4 text-right font-bold">$2,500</td>
-        </tr>
-        <tr class="border-b-3 border-brutal">
-          <td class="p-4 font-medium">Project Beta</td>
-          <td class="p-4"><span class="inline-flex items-center border-3 border-brutal font-bold bg-brutal-accent text-brutal-fg shadow-brutal-sm px-2 py-0.5 text-xs">Pending</span></td>
-          <td class="p-4 text-right font-bold">$1,200</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <TableDemo />
 </ComponentPreview>
 
 ## 安装

@@ -5,11 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="inline-flex items-center gap-1 border-3 border-brutal bg-brutal-muted p-1">
-    <button class="inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide border-3 border-brutal rounded-brutal transition-all duration-150 h-8 px-2 min-w-8 text-xs bg-brutal-primary text-brutal-fg shadow-none translate-y-[2px]">B</button>
-    <button class="inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide border-3 border-brutal rounded-brutal transition-all duration-150 h-8 px-2 min-w-8 text-xs bg-brutal-bg text-brutal-fg shadow-brutal-sm hover:bg-brutal-muted">I</button>
-    <button class="inline-flex items-center justify-center gap-2 text-sm font-black tracking-wide border-3 border-brutal rounded-brutal transition-all duration-150 h-8 px-2 min-w-8 text-xs bg-brutal-bg text-brutal-fg shadow-brutal-sm hover:bg-brutal-muted">U</button>
-  </div>
+  <ToggleGroupDemo />
 </ComponentPreview>
 
 ## 安装

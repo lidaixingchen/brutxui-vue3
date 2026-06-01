@@ -5,17 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center gap-4">
-    <div class="relative flex shrink-0 overflow-hidden h-8 w-8 border-3 border-brutal bg-brutal-muted">
-      <span class="flex h-full w-full items-center justify-center bg-brutal-primary font-black text-sm">JD</span>
-    </div>
-    <div class="relative flex shrink-0 overflow-hidden h-10 w-10 border-3 border-brutal bg-brutal-muted">
-      <span class="flex h-full w-full items-center justify-center bg-brutal-secondary font-black">AB</span>
-    </div>
-    <div class="relative flex shrink-0 overflow-hidden h-14 w-14 border-3 border-brutal bg-brutal-muted">
-      <span class="flex h-full w-full items-center justify-center bg-brutal-accent font-black text-lg">XY</span>
-    </div>
-  </div>
+  <AvatarDemo />
 </ComponentPreview>
 
 ## 安装

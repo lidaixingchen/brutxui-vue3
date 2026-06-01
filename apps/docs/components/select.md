@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="max-w-sm">
-    <button class="flex w-full items-center justify-between h-11 px-4 py-2 text-base border-3 border-brutal bg-brutal-bg text-brutal-fg font-medium shadow-brutal">
-      <span>Select a fruit...</span>
-      <span class="opacity-50">&#9660;</span>
-    </button>
-  </div>
+  <SelectDemo />
 </ComponentPreview>
 
 ## 安装

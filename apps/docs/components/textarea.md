@@ -5,9 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="max-w-sm">
-    <textarea class="flex min-h-[100px] w-full px-4 py-3 text-base border-3 border-brutal bg-brutal-bg text-brutal-fg font-medium placeholder:text-brutal-placeholder placeholder:font-normal transition-all duration-150 focus:outline-none focus:shadow-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 resize-none" placeholder="Type your message here..."></textarea>
-  </div>
+  <TextareaDemo />
 </ComponentPreview>
 
 ## 安装

@@ -5,20 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center gap-8">
-    <div class="h-8 w-8 border-3 border-brutal rounded-full animate-spin border-t-transparent border-r-transparent"></div>
-    <div class="grid grid-cols-2 gap-1 h-8 w-8">
-      <div class="bg-brutal-primary animate-pulse"></div>
-      <div class="bg-brutal-secondary animate-pulse" style="animation-delay:0.15s"></div>
-      <div class="bg-brutal-secondary animate-pulse" style="animation-delay:0.3s"></div>
-      <div class="bg-brutal-accent animate-pulse" style="animation-delay:0.45s"></div>
-    </div>
-    <div class="flex items-end gap-0.5 h-6">
-      <div class="w-1.5 bg-brutal-primary animate-pulse"></div>
-      <div class="w-1.5 bg-brutal-secondary animate-pulse" style="animation-delay:0.1s"></div>
-      <div class="w-1.5 bg-brutal-accent animate-pulse" style="animation-delay:0.2s"></div>
-    </div>
-  </div>
+  <SpinnerDemo />
 </ComponentPreview>
 
 ## 安装

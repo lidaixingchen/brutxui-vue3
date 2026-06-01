@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="relative inline-block">
-    <button class="px-4 py-2 border-3 border-brutal shadow-brutal font-bold bg-brutal-bg text-brutal-fg active:translate-y-[2px] active:shadow-none transition-all">Open</button>
-    <div class="absolute top-full left-0 mt-2 border-3 border-brutal bg-brutal-bg shadow-brutal-xl p-4 z-50 min-w-[200px]">
-      <p class="text-sm font-medium">Popover content goes here.</p>
-    </div>
-  </div>
+  <PopoverDemo />
 </ComponentPreview>
 
 ## 安装

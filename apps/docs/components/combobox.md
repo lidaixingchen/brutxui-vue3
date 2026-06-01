@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex flex-col gap-4 max-w-sm">
-    <div class="inline-flex items-center justify-between w-full border-3 border-brutal bg-transparent text-brutal-fg shadow-brutal font-semibold h-11 px-5 py-2 text-base">
-      <span>Select option...</span>
-      <span class="opacity-50">&#9650;&#9660;</span>
-    </div>
-  </div>
+  <ComboboxDemo />
 </ComponentPreview>
 
 ## 安装

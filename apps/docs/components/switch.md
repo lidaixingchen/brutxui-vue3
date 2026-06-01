@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center gap-3">
-    <div class="peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center border-3 border-brutal transition-colors duration-150 bg-brutal-success">
-      <div class="pointer-events-none block h-5 w-5 bg-brutal-fg shadow-brutal-sm transition-transform duration-150 translate-x-5"></div>
-    </div>
-    <span class="text-sm font-bold">Enabled</span>
-  </div>
+  <SwitchDemo />
 </ComponentPreview>
 
 ## 安装

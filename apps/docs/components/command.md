@@ -5,16 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="border-3 border-brutal bg-brutal-bg shadow-brutal max-w-md">
-    <div class="flex items-center border-b-3 border-brutal px-3">
-      <input class="flex h-11 w-full bg-transparent py-3 text-sm outline-none placeholder:text-brutal-muted-foreground" placeholder="Type a command or search..." />
-    </div>
-    <div class="p-2">
-      <div class="px-2 py-1.5 text-xs font-bold text-brutal-muted-foreground">Suggestions</div>
-      <div class="px-2 py-1.5 text-sm cursor-pointer hover:bg-brutal-muted font-medium">Component Library</div>
-      <div class="px-2 py-1.5 text-sm cursor-pointer hover:bg-brutal-muted font-medium">Installation</div>
-    </div>
-  </div>
+  <CommandDemo />
 </ComponentPreview>
 
 ## 安装

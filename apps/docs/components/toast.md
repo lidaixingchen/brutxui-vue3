@@ -5,20 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-3 max-w-sm">
-    <div class="pointer-events-auto relative w-full overflow-hidden border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-lg p-4">
-      <p class="font-black text-sm">Default Toast</p>
-      <p class="text-xs text-brutal-muted-foreground mt-1">This is a default notification.</p>
-    </div>
-    <div class="pointer-events-auto relative w-full overflow-hidden border-3 border-brutal bg-brutal-success text-black shadow-brutal-lg p-4">
-      <p class="font-black text-sm">Success!</p>
-      <p class="text-xs mt-1">Operation completed successfully.</p>
-    </div>
-    <div class="pointer-events-auto relative w-full overflow-hidden border-3 border-brutal bg-brutal-destructive text-white shadow-brutal-lg p-4">
-      <p class="font-black text-sm">Error</p>
-      <p class="text-xs mt-1">Something went wrong.</p>
-    </div>
-  </div>
+  <ToastDemo />
 </ComponentPreview>
 
 ## 安装

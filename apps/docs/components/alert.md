@@ -5,20 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-4 w-full">
-    <div class="relative w-full p-4 border-3 border-brutal shadow-brutal bg-brutal-bg text-brutal-fg" role="alert">
-      <p class="font-bold">Default Alert</p>
-      <p class="text-sm mt-1">This is a default alert message.</p>
-    </div>
-    <div class="relative w-full p-4 border-3 border-brutal shadow-brutal bg-brutal-primary text-brutal-fg" role="alert">
-      <p class="font-bold">Primary Alert</p>
-      <p class="text-sm mt-1">This is a primary alert message.</p>
-    </div>
-    <div class="relative w-full p-4 border-3 border-brutal shadow-brutal bg-brutal-destructive text-white" role="alert">
-      <p class="font-bold">Danger Alert</p>
-      <p class="text-sm mt-1">Something went wrong. Please try again.</p>
-    </div>
-  </div>
+  <AlertDemo />
 </ComponentPreview>
 
 ## 安装

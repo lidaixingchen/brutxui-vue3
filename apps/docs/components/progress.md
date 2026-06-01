@@ -5,14 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-4 max-w-sm">
-    <div class="relative h-6 w-full overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
-      <div class="h-full w-full flex-1 bg-brutal-primary transition-all duration-300 ease-out" style="transform: translateX(-30%)"></div>
-    </div>
-    <div class="relative h-6 w-full overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
-      <div class="h-full w-full flex-1 bg-brutal-primary transition-all duration-300 ease-out" style="transform: translateX(-70%)"></div>
-    </div>
-  </div>
+  <ProgressDemo />
 </ComponentPreview>
 
 ## 安装

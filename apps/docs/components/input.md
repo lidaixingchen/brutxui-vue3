@@ -5,10 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-3 max-w-sm">
-    <input class="flex w-full h-11 px-4 py-2 text-base border-3 border-brutal bg-brutal-bg text-brutal-fg font-medium placeholder:text-brutal-placeholder placeholder:font-normal transition-all duration-150 focus:outline-none focus:shadow-brutal focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2" placeholder="Default input" />
-    <input class="flex w-full h-11 px-4 py-2 text-base border-3 border-brutal-destructive bg-brutal-bg text-brutal-fg font-medium placeholder:text-brutal-placeholder placeholder:font-normal transition-all duration-150 focus:outline-none focus:shadow-brutal-primary focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2" placeholder="Error input" />
-  </div>
+  <InputDemo />
 </ComponentPreview>
 
 ## 安装

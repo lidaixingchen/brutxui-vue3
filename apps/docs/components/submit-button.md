@@ -5,10 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center gap-3">
-    <button type="submit" class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-primary text-brutal-fg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base">Submit</button>
-    <button type="submit" disabled class="inline-flex items-center justify-center gap-2 border-3 border-brutal font-black tracking-wide transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:translate-y-[2px] active:shadow-none bg-brutal-primary text-brutal-fg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 h-11 px-5 py-2 text-base opacity-50">Submitting...</button>
-  </div>
+  <SubmitButtonDemo />
 </ComponentPreview>
 
 ## 安装

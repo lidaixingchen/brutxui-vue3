@@ -5,15 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center justify-center gap-2">
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-bg text-brutal-fg shadow-brutal opacity-40 cursor-not-allowed" disabled>&laquo;&laquo;</button>
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-bg text-brutal-fg shadow-brutal opacity-40 cursor-not-allowed" disabled>&laquo;</button>
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-fg text-brutal-bg shadow-brutal-primary">1</button>
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-bg text-brutal-fg shadow-brutal">2</button>
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-bg text-brutal-fg shadow-brutal">3</button>
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-bg text-brutal-fg shadow-brutal">&raquo;</button>
-    <button class="inline-flex items-center justify-center font-black border-3 border-brutal transition-all duration-150 h-10 min-w-10 text-base px-3 bg-brutal-bg text-brutal-fg shadow-brutal">&raquo;&raquo;</button>
-  </div>
+  <PaginationDemo />
 </ComponentPreview>
 
 ## 安装

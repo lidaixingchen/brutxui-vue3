@@ -8,11 +8,15 @@ import { Check } from 'lucide-vue-next'
 import { cn } from '../lib/utils'
 
 interface DropdownMenuCheckboxItemProps {
-    checked?: boolean | 'indeterminate'
+    modelValue?: boolean | 'indeterminate'
     class?: string
 }
 
 const props = defineProps<DropdownMenuCheckboxItemProps>()
+
+const emit = defineEmits<{
+    'update:modelValue': [value: boolean]
+}>()
 
 const classes = computed(() =>
     cn(
@@ -26,7 +30,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <DropdownMenuCheckboxItemPrimitive :checked="checked" :class="classes">
+    <DropdownMenuCheckboxItemPrimitive :model-value="modelValue" :class="classes" @update:model-value="emit('update:modelValue', $event)">
         <span class="absolute left-2 flex h-4 w-4 items-center justify-center">
             <DropdownMenuItemIndicatorPrimitive>
                 <Check class="h-4 w-4 stroke-[3]" />

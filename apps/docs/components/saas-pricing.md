@@ -5,13 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-5xl mx-auto text-center">
-    <h2 class="text-3xl font-black tracking-tight">Simple, Unapologetic Pricing</h2>
-    <div class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1">
-      <button class="px-4 py-2 font-black text-sm bg-brutal-accent text-brutal-fg shadow-brutal-sm">Monthly</button>
-      <button class="px-4 py-2 font-black text-sm text-brutal-muted-foreground">Annually</button>
-    </div>
-  </div>
+  <SaaSPricingDemo />
 </ComponentPreview>
 
 ## 安装

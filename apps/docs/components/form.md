@@ -5,17 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="max-w-sm space-y-4">
-    <div class="space-y-2">
-      <label class="text-sm font-bold tracking-wide leading-none text-brutal-fg">Email</label>
-      <input class="flex w-full h-11 px-4 py-2 text-base border-3 border-brutal bg-brutal-bg text-brutal-fg font-medium focus:outline-none focus:shadow-brutal" placeholder="you@example.com" />
-    </div>
-    <div class="space-y-2">
-      <label class="text-sm font-bold tracking-wide leading-none text-brutal-fg">Password</label>
-      <input type="password" class="flex w-full h-11 px-4 py-2 text-base border-3 border-brutal bg-brutal-bg text-brutal-fg font-medium focus:outline-none focus:shadow-brutal" placeholder="••••••••" />
-    </div>
-    <button class="w-full h-11 px-5 py-2 text-base bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black tracking-wide active:translate-y-[2px] active:shadow-none transition-all">Sign In</button>
-  </div>
+  <FormDemo />
 </ComponentPreview>
 
 ## 安装

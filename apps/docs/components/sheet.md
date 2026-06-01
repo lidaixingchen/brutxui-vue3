@@ -5,15 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="relative h-48 border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden">
-    <div class="absolute right-0 top-0 h-full w-3/4 max-w-xs border-l-3 border-brutal bg-brutal-bg p-6 shadow-brutal-xl">
-      <div class="mb-4">
-        <h3 class="font-black tracking-tight">Sheet Title</h3>
-        <p class="text-sm text-brutal-muted-foreground mt-1">Sheet description</p>
-      </div>
-      <p class="text-sm">Sheet content goes here.</p>
-    </div>
-  </div>
+  <SheetDemo />
 </ComponentPreview>
 
 ## 安装

@@ -5,11 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="relative overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal h-48 w-72">
-    <div class="p-4 space-y-2">
-      <div v-for="i in 8" class="h-8 bg-brutal-muted border-2 border-brutal"></div>
-    </div>
-  </div>
+  <ScrollAreaDemo />
 </ComponentPreview>
 
 ## 安装

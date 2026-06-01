@@ -5,22 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="grid gap-2">
-    <div class="flex items-center gap-3">
-      <div class="h-6 w-6 border-3 border-brutal bg-brutal-bg flex items-center justify-center shadow-brutal-sm">
-        <div class="h-3 w-3 bg-brutal-primary"></div>
-      </div>
-      <span class="text-sm font-bold">Option 1</span>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="h-6 w-6 border-3 border-brutal bg-brutal-bg shadow-brutal-sm"></div>
-      <span class="text-sm font-bold">Option 2</span>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="h-6 w-6 border-3 border-brutal bg-brutal-bg shadow-brutal-sm"></div>
-      <span class="text-sm font-bold">Option 3</span>
-    </div>
-  </div>
+  <RadioGroupDemo />
 </ComponentPreview>
 
 ## 安装

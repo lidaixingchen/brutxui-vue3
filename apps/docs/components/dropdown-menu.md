@@ -5,13 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="border-3 border-brutal bg-brutal-bg shadow-brutal p-2 min-w-[200px]">
-    <div class="px-2 py-1.5 text-xs font-bold text-brutal-muted-foreground">Actions</div>
-    <div class="px-3 py-2 text-sm font-medium cursor-pointer hover:bg-brutal-muted">Edit</div>
-    <div class="px-3 py-2 text-sm font-medium cursor-pointer hover:bg-brutal-muted">Duplicate</div>
-    <div class="h-[3px] bg-brutal-fg my-1"></div>
-    <div class="px-3 py-2 text-sm font-medium cursor-pointer hover:bg-brutal-muted text-brutal-destructive">Delete</div>
-  </div>
+  <DropdownMenuDemo />
 </ComponentPreview>
 
 ## 安装

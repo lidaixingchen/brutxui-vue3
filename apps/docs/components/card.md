@@ -5,18 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal p-5 max-w-sm">
-    <div class="pb-2">
-      <h3 class="font-black tracking-tight text-lg">Card Title</h3>
-      <p class="text-sm text-brutal-muted-foreground">Card description goes here</p>
-    </div>
-    <div class="pt-2">
-      <p class="text-sm">Card content with some example text.</p>
-    </div>
-    <div class="pt-4 flex justify-end">
-      <button class="px-4 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-bold text-sm active:translate-y-[2px] active:shadow-none transition-all">Action</button>
-    </div>
-  </div>
+  <CardDemo />
 </ComponentPreview>
 
 ## 安装

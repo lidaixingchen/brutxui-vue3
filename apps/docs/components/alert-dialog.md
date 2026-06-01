@@ -5,14 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="border-3 border-brutal shadow-brutal bg-brutal-bg p-6 max-w-md">
-    <div class="text-lg font-black mb-2">Are you absolutely sure?</div>
-    <p class="text-sm text-brutal-muted-foreground mb-6">This action cannot be undone. This will permanently delete your account.</p>
-    <div class="flex justify-end gap-3">
-      <button class="px-4 py-2 border-3 border-brutal shadow-brutal font-bold active:translate-y-[2px] active:shadow-none transition-all">Cancel</button>
-      <button class="px-4 py-2 bg-brutal-destructive text-white border-3 border-brutal shadow-brutal font-bold active:translate-y-[2px] active:shadow-none transition-all">Delete</button>
-    </div>
-  </div>
+  <AlertDialogDemo />
 </ComponentPreview>
 
 ## 安装

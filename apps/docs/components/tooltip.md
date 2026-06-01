@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="relative inline-block">
-    <button class="px-4 py-2 border-3 border-brutal shadow-brutal font-bold bg-brutal-bg text-brutal-fg text-sm">Hover me</button>
-    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 border-3 border-brutal bg-brutal-fg text-brutal-bg text-xs font-bold shadow-brutal-sm whitespace-nowrap">
-      Tooltip content
-    </div>
-  </div>
+  <TooltipDemo />
 </ComponentPreview>
 
 ## 安装

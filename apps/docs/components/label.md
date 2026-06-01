@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="space-y-2">
-    <label class="text-sm font-bold tracking-wide leading-none text-brutal-fg">Default Label</label>
-    <label class="text-sm font-bold tracking-wide leading-none text-brutal-destructive">Error Label</label>
-    <label class="text-sm font-bold tracking-wide leading-none text-brutal-success">Success Label</label>
-    <label class="text-sm font-bold tracking-wide leading-none text-brutal-muted-foreground">Muted Label</label>
-  </div>
+  <LabelDemo />
 </ComponentPreview>
 
 ## 安装

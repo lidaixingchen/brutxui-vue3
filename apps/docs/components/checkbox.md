@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center gap-3">
-    <div class="peer h-6 w-6 shrink-0 border-3 border-brutal bg-brutal-bg flex items-center justify-center shadow-brutal-sm">
-      <span class="text-brutal-fg font-black text-xs">&#10003;</span>
-    </div>
-    <span class="text-sm font-bold">Accept terms and conditions</span>
-  </div>
+  <CheckboxDemo />
 </ComponentPreview>
 
 ## 安装

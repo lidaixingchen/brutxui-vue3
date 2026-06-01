@@ -5,12 +5,7 @@
 ## 预览
 
 <ComponentPreview>
-  <div class="relative flex w-full touch-none select-none items-center max-w-sm">
-    <div class="relative h-5 w-full grow overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
-      <div class="absolute h-full bg-brutal-secondary" style="width: 60%"></div>
-    </div>
-    <div class="block h-6 w-6 rounded-full border-3 border-brutal bg-brutal-accent shadow-brutal-sm ml-[-6px]"></div>
-  </div>
+  <SliderDemo />
 </ComponentPreview>
 
 ## 安装
