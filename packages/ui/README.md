@@ -19,8 +19,6 @@
 
 使用 CLI 将组件添加到你的项目：
 
-> ⚠️ CLI 尚未发布到 npm，以下命令暂不可用。
-
 ```bash
 # 初始化你的项目
 npx brutx@latest init

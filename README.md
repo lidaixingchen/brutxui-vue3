@@ -15,12 +15,12 @@
   [![npm version](https://img.shields.io/npm/v/brutx.svg?style=flat-square&color=FFE66D)](https://www.npmjs.com/package/brutx)
   [![npm downloads](https://img.shields.io/npm/dm/brutx.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx)
 
-  ### 项目健康度与赞助
+  ### 项目健康度
   [![License: MIT](https://img.shields.io/badge/License-MIT-4ECDC4.svg?style=flat-square)](https://opensource.org/licenses/MIT)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
   [![Vue 3](https://img.shields.io/badge/Vue_3-3.5+-4FC08D.svg?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
   [![Vite](https://img.shields.io/badge/Vite-6+-646CFF.svg?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
-  [![Sponsor](https://img.shields.io/badge/Sponsor-FF6B6B?style=flat-square&logo=github&logoColor=white)](https://github.com/sponsors/lidaixingchen)
+
 
   <br />
 
@@ -60,8 +60,6 @@ BrutxUI 旨在与 `shadcn/ui` 协同工作，而非替代它：
 ### 方式 A：Brutx CLI（推荐）
 
 Brutx CLI 负责 Tailwind 检测、CSS 令牌注入和包管理器检测。
-
-> 💡 CLI 尚未发布到 npm，可从源码构建使用，或使用方式 B。
 
 ```bash
 # 在项目中初始化 BrutxUI 配置

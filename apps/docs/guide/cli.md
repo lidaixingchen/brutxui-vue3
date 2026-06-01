@@ -2,10 +2,6 @@
 
 `brutx` CLI 帮助你在项目中初始化 BrutxUI，并通过单条命令添加组件。
 
-::: tip 本地使用
-`brutx` CLI 尚未发布到 npm。如需使用，请从源码构建：在项目根目录运行 `pnpm --filter brutx build`，然后通过 `node packages/cli/dist/index.js` 调用。或使用[手动安装](/guide/installation-manual)方式设置 BrutxUI。
-:::
-
 ## 概览
 
 ```bash

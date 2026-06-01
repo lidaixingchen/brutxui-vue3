@@ -52,10 +52,6 @@ export default {
 
 ## 第 3 步：初始化 BrutxUI
 
-::: tip 本地使用
-`brutx` CLI 尚未发布到 npm。如需使用，请从源码构建，或跳至[手动安装](/guide/installation-manual)页面完成后续步骤。
-:::
-
 运行 init 命令来设置粗野主义插件和样式：
 
 ```bash
