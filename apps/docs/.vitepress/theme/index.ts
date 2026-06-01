@@ -52,6 +52,10 @@ import MarqueeDemo from './components/demos/MarqueeDemo.vue'
 import BeforeAfterDemo from './components/demos/BeforeAfterDemo.vue'
 import CodeBlockDemo from './components/demos/CodeBlockDemo.vue'
 import TimelineDemo from './components/demos/TimelineDemo.vue'
+import CarouselDemo from './components/demos/CarouselDemo.vue'
+import TreeViewDemo from './components/demos/TreeViewDemo.vue'
+import KanbanBoardDemo from './components/demos/KanbanBoardDemo.vue'
+import ChatBubbleDemo from './components/demos/ChatBubbleDemo.vue'
 import './style.css'
 
 export default {
@@ -109,5 +113,9 @@ export default {
         app.component('BeforeAfterDemo', BeforeAfterDemo)
         app.component('CodeBlockDemo', CodeBlockDemo)
         app.component('TimelineDemo', TimelineDemo)
+        app.component('CarouselDemo', CarouselDemo)
+        app.component('TreeViewDemo', TreeViewDemo)
+        app.component('KanbanBoardDemo', KanbanBoardDemo)
+        app.component('ChatBubbleDemo', ChatBubbleDemo)
     },
 } satisfies Theme

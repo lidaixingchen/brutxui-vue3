@@ -68,6 +68,9 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
 5. **悬停：** `hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`
 6. **颜色：** 使用 `--brutal-*` CSS 变量——禁止硬编码任意颜色
 
+## CVA 变体文件
+[CVA.md](CVA.md)
+
 ### Tailwind 工具类
 
 - 边框：`border-3`、`border-brutal`、`rounded-brutal`

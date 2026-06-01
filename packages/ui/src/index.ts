@@ -231,7 +231,24 @@ export { default as TimelineConnector } from './components/timeline/TimelineConn
 export { default as TimelineContent } from './components/timeline/TimelineContent.vue'
 export { timelineDotVariants } from './components/timeline/timeline-variants'
 
+export { default as Carousel } from './components/carousel/Carousel.vue'
+export { default as CarouselItem } from './components/carousel/CarouselItem.vue'
+export { carouselRootVariants, carouselButtonVariants } from './components/carousel/carousel-variants'
+
+export { default as TreeView } from './components/tree-view/TreeView.vue'
+export { default as TreeViewNode } from './components/tree-view/TreeViewNode.vue'
+export type { TreeNode } from './components/tree-view/TreeView.vue'
+export { treeItemVariants } from './components/tree-view/tree-view-variants'
+
+export { default as KanbanBoard } from './components/kanban/KanbanBoard.vue'
+export type { KanbanCard, KanbanColumn } from './components/kanban/KanbanBoard.vue'
+export { kanbanColumnVariants, kanbanCardVariants } from './components/kanban/kanban-variants'
+
+export { default as ChatBubble } from './components/chat-bubble/ChatBubble.vue'
+export { chatBubbleVariants, chatAvatarVariants } from './components/chat-bubble/chat-bubble-variants'
+
 export * from './lib/utils'
 
 export type { VariantProps } from 'class-variance-authority'
+
 

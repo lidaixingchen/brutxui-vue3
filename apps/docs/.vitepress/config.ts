@@ -107,6 +107,9 @@ export default defineConfig({
                     { text: 'Dropdown Menu 下拉菜单', link: '/components/dropdown-menu' },
                     { text: 'Form 表单', link: '/components/form' },
                     { text: 'Input 输入框', link: '/components/input' },
+                    { text: 'Carousel 轮播图', link: '/components/carousel' },
+                    { text: 'ChatBubble 聊天气泡', link: '/components/chat-bubble' },
+                    { text: 'KanbanBoard 看板', link: '/components/kanban-board' },
                     { text: 'Label 标签', link: '/components/label' },
                     { text: 'Marquee 跑马灯', link: '/components/marquee' },
                     { text: 'NumberInput 数字输入框', link: '/components/number-input' },
@@ -133,6 +136,7 @@ export default defineConfig({
                     { text: 'Toggle 切换', link: '/components/toggle' },
                     { text: 'Toggle Group 切换组', link: '/components/toggle-group' },
                     { text: 'Tooltip 工具提示', link: '/components/tooltip' },
+                    { text: 'TreeView 树形目录', link: '/components/tree-view' },
                 ],
             },
             {

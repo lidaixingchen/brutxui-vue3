@@ -21,7 +21,7 @@
     },
     {
       "path": "components/ui/form/FormControl.vue",
-      "content": "<script setup lang=\"ts\">\nimport { inject, type Ref } from 'vue'\nimport { formFieldKey, formItemKey } from '@/components/ui/form/form-context'\n\ninterface FormControlProps {\n    class?: string\n}\n\ndefineProps<FormControlProps>()\n\nconst fieldContext = inject(formFieldKey, { name: '', error: { value: undefined } as Ref<string | undefined> })\nconst itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })\n</script>\n\n<template>\n    <slot\n        :id=\"itemContext.formItemId\"\n        :aria-describedby=\"!fieldContext.error?.value ? itemContext.formDescriptionId : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`\"\n        :aria-invalid=\"!!fieldContext.error?.value\"\n    />\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { inject, ref, type Ref } from 'vue'\nimport { formFieldKey, formItemKey } from '@/components/ui/form/form-context'\n\ninterface FormControlProps {\n    class?: string\n}\n\ndefineProps<FormControlProps>()\n\nconst fieldContext = inject(formFieldKey, { name: '', error: ref<string | undefined>(undefined) as Ref<string | undefined> })\nconst itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })\n</script>\n\n<template>\n    <slot\n        :id=\"itemContext.formItemId\"\n        :aria-describedby=\"!fieldContext.error?.value ? itemContext.formDescriptionId : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`\"\n        :aria-invalid=\"!!fieldContext.error?.value\"\n    />\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -31,7 +31,7 @@
     },
     {
       "path": "components/ui/form/FormField.vue",
-      "content": "<script setup lang=\"ts\">\nimport { provide } from 'vue'\nimport { useField } from 'vee-validate'\nimport { formFieldKey } from '@/components/ui/form/form-context'\n\ninterface FormFieldProps {\n    name: string\n}\n\nconst props = defineProps<FormFieldProps>()\n\nconst { errorMessage } = useField(() => props.name)\n\nprovide(formFieldKey, {\n    name: props.name,\n    error: errorMessage,\n})\n</script>\n\n<template>\n    <slot />\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { provide, computed } from 'vue'\nimport { useField } from 'vee-validate'\nimport { formFieldKey } from '@/components/ui/form/form-context'\n\ninterface FormFieldProps {\n    name: string\n}\n\nconst props = defineProps<FormFieldProps>()\n\nconst fieldName = computed(() => props.name)\nconst { errorMessage } = useField(fieldName)\n\nprovide(formFieldKey, {\n    name: props.name,\n    error: errorMessage,\n})\n</script>\n\n<template>\n    <slot />\n</template>\n",
       "type": "registry:ui"
     },
     {

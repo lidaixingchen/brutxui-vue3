@@ -68,6 +68,10 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'before-after': { files: ['BeforeAfter.vue'] },
     'code-block': { files: ['CodeBlock.vue'] },
     timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-variants.ts'] },
+    carousel: { files: ['Carousel.vue', 'CarouselItem.vue', 'carousel-variants.ts'] },
+    'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts'] },
+    kanban: { files: ['KanbanBoard.vue', 'kanban-variants.ts'] },
+    'chat-bubble': { files: ['ChatBubble.vue', 'chat-bubble-variants.ts'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};
