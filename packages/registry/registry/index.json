@@ -1,19 +1,31 @@
 {
   "name": "brutx",
-  "homepage": "https://brutxui.site",
+  "homepage": "https://lidaixingchen.github.io/brutxui-vue3/",
   "items": [
     {
       "name": "alert",
       "type": "registry:ui",
       "title": "Alert",
-      "description": "A highly customizable neo-brutalist Alert component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Alert component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/alert.tsx",
+          "path": "components/ui/alert/Alert.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert/AlertDescription.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert/AlertTitle.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert/alert-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -96,14 +108,26 @@
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar",
-      "description": "A highly customizable neo-brutalist Avatar component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Avatar component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-avatar"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/avatar.tsx",
+          "path": "components/ui/avatar/Avatar.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/avatar/AvatarFallback.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/avatar/AvatarImage.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/avatar/avatar-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -186,12 +210,16 @@
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
-      "description": "A highly customizable neo-brutalist Badge component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Badge component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/badge.tsx",
+          "path": "components/ui/badge/Badge.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/badge/badge-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -274,14 +302,18 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A highly customizable neo-brutalist Button component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Button component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-slot"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/button.tsx",
+          "path": "components/ui/button/Button.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/button/button-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -364,18 +396,15 @@
       "name": "calendar",
       "type": "registry:ui",
       "title": "Calendar",
-      "description": "A highly customizable neo-brutalist Calendar component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Calendar component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "react-day-picker",
-        "date-fns",
-        "lucide-react"
+        "v-calendar",
+        "lucide-vue-next"
       ],
-      "registryDependencies": [
-        "button"
-      ],
+      "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/calendar.tsx",
+          "path": "components/ui/calendar/Calendar.vue",
           "type": "registry:ui"
         }
       ],
@@ -458,12 +487,36 @@
       "name": "card",
       "type": "registry:ui",
       "title": "Card",
-      "description": "A highly customizable neo-brutalist Card component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Card component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/card.tsx",
+          "path": "components/ui/card/Card.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/card/CardContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/card/CardDescription.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/card/CardFooter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/card/CardHeader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/card/CardTitle.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/card/card-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -546,15 +599,15 @@
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
-      "description": "A highly customizable neo-brutalist Checkbox component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Checkbox component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-checkbox",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/checkbox.tsx",
+          "path": "components/ui/checkbox/Checkbox.vue",
           "type": "registry:ui"
         }
       ],
@@ -637,11 +690,10 @@
       "name": "combobox",
       "type": "registry:ui",
       "title": "Combobox",
-      "description": "A highly customizable neo-brutalist Combobox component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Combobox component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "cmdk",
-        "@radix-ui/react-popover",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button",
@@ -650,7 +702,15 @@
       ],
       "files": [
         {
-          "path": "components/ui/combobox.tsx",
+          "path": "components/ui/combobox/Combobox.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/combobox/ComboboxMulti.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/combobox/combobox-types.ts",
           "type": "registry:ui"
         }
       ],
@@ -733,17 +793,46 @@
       "name": "command",
       "type": "registry:ui",
       "title": "Command",
-      "description": "A highly customizable neo-brutalist Command component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Command component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "cmdk",
-        "lucide-react"
+        "lucide-vue-next"
       ],
-      "registryDependencies": [
-        "dialog"
-      ],
+      "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/command.tsx",
+          "path": "components/ui/command/Command.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandDialog.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandEmpty.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandGroup.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandInput.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandList.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandSeparator.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/CommandShortcut.vue",
           "type": "registry:ui"
         }
       ],
@@ -826,15 +915,35 @@
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
-      "description": "A highly customizable neo-brutalist Dialog component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Dialog component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-dialog",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/dialog.tsx",
+          "path": "components/ui/dialog/DialogContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dialog/DialogDescription.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dialog/DialogFooter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dialog/DialogHeader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dialog/DialogOverlay.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dialog/DialogTitle.vue",
           "type": "registry:ui"
         }
       ],
@@ -917,15 +1026,47 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown Menu",
-      "description": "A highly customizable neo-brutalist Dropdown Menu component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Dropdown Menu component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-dropdown-menu",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/dropdown-menu.tsx",
+          "path": "components/ui/dropdown-menu/DropdownMenuCheckboxItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuLabel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuRadioItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuSeparator.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuShortcut.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuSubContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/DropdownMenuSubTrigger.vue",
           "type": "registry:ui"
         }
       ],
@@ -1008,12 +1149,16 @@
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "A highly customizable neo-brutalist Input component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Input component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/input.tsx",
+          "path": "components/ui/input/Input.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/input/input-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1096,14 +1241,18 @@
       "name": "label",
       "type": "registry:ui",
       "title": "Label",
-      "description": "A highly customizable neo-brutalist Label component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Label component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-label"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/label.tsx",
+          "path": "components/ui/label/Label.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/label/label-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1186,14 +1335,18 @@
       "name": "pagination",
       "type": "registry:ui",
       "title": "Pagination",
-      "description": "A highly customizable neo-brutalist Pagination component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Pagination component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/pagination.tsx",
+          "path": "components/ui/pagination/Pagination.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/pagination/pagination-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1276,14 +1429,14 @@
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
-      "description": "A highly customizable neo-brutalist Popover component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Popover component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-popover"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/popover.tsx",
+          "path": "components/ui/popover/PopoverContent.vue",
           "type": "registry:ui"
         }
       ],
@@ -1366,14 +1519,18 @@
       "name": "scroll-area",
       "type": "registry:ui",
       "title": "Scroll Area",
-      "description": "A highly customizable neo-brutalist Scroll Area component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Scroll Area component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-scroll-area"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/scroll-area.tsx",
+          "path": "components/ui/scroll-area/ScrollArea.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/scroll-area/ScrollBar.vue",
           "type": "registry:ui"
         }
       ],
@@ -1456,15 +1613,39 @@
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
-      "description": "A highly customizable neo-brutalist Select component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Select component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-select",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/select.tsx",
+          "path": "components/ui/select/SelectContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/SelectItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/SelectLabel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/SelectScrollDownButton.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/SelectScrollUpButton.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/SelectSeparator.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/SelectTrigger.vue",
           "type": "registry:ui"
         }
       ],
@@ -1547,14 +1728,18 @@
       "name": "separator",
       "type": "registry:ui",
       "title": "Separator",
-      "description": "A highly customizable neo-brutalist Separator component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Separator component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-separator"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/separator.tsx",
+          "path": "components/ui/separator/Separator.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/separator/separator-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1637,12 +1822,32 @@
       "name": "skeleton",
       "type": "registry:ui",
       "title": "Skeleton",
-      "description": "A highly customizable neo-brutalist Skeleton component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Skeleton component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/skeleton.tsx",
+          "path": "components/ui/skeleton/Skeleton.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/skeleton/SkeletonAvatar.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/skeleton/SkeletonCard.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/skeleton/SkeletonTable.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/skeleton/SkeletonText.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/skeleton/skeleton-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1725,12 +1930,28 @@
       "name": "spinner",
       "type": "registry:ui",
       "title": "Spinner",
-      "description": "A highly customizable neo-brutalist Spinner component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Spinner component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/spinner.tsx",
+          "path": "components/ui/spinner/Spinner.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/spinner/BarsSpinner.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/spinner/BlockSpinner.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/spinner/DotsSpinner.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/spinner/spinner-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1813,14 +2034,14 @@
       "name": "submit-button",
       "type": "registry:ui",
       "title": "Submit Button",
-      "description": "A highly customizable neo-brutalist Submit Button component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Submit Button component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [
         "button"
       ],
       "files": [
         {
-          "path": "components/ui/submit-button.tsx",
+          "path": "components/ui/submit-button/SubmitButton.vue",
           "type": "registry:ui"
         }
       ],
@@ -1903,14 +2124,14 @@
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
-      "description": "A highly customizable neo-brutalist Switch component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Switch component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-switch"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/switch.tsx",
+          "path": "components/ui/switch/Switch.vue",
           "type": "registry:ui"
         }
       ],
@@ -1993,12 +2214,40 @@
       "name": "table",
       "type": "registry:ui",
       "title": "Table",
-      "description": "A highly customizable neo-brutalist Table component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Table component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/table.tsx",
+          "path": "components/ui/table/Table.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableBody.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableCaption.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableCell.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableFooter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableHead.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableHeader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/TableRow.vue",
           "type": "registry:ui"
         }
       ],
@@ -2081,14 +2330,22 @@
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "A highly customizable neo-brutalist Tabs component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Tabs component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-tabs"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/tabs.tsx",
+          "path": "components/ui/tabs/TabsContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/tabs/TabsList.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/tabs/TabsTrigger.vue",
           "type": "registry:ui"
         }
       ],
@@ -2171,12 +2428,16 @@
       "name": "textarea",
       "type": "registry:ui",
       "title": "Textarea",
-      "description": "A highly customizable neo-brutalist Textarea component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Textarea component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/textarea.tsx",
+          "path": "components/ui/textarea/Textarea.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/textarea/textarea-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -2259,14 +2520,26 @@
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "A highly customizable neo-brutalist Toast component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Toast component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/toast.tsx",
+          "path": "components/ui/toast/Toast.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/toast/ToastContainer.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/toast/toast-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useToast.ts",
           "type": "registry:ui"
         }
       ],
@@ -2349,14 +2622,14 @@
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",
-      "description": "A highly customizable neo-brutalist Tooltip component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Tooltip component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-tooltip"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/tooltip.tsx",
+          "path": "components/ui/tooltip/TooltipContent.vue",
           "type": "registry:ui"
         }
       ],
@@ -2439,9 +2712,9 @@
       "name": "saas-pricing",
       "type": "registry:ui",
       "title": "Saas Pricing",
-      "description": "A highly customizable neo-brutalist Saas Pricing component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Saas Pricing component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button",
@@ -2450,7 +2723,7 @@
       ],
       "files": [
         {
-          "path": "components/ui/saas-pricing.tsx",
+          "path": "components/ui/saas-pricing/SaaSPricing.vue",
           "type": "registry:ui"
         }
       ],
@@ -2533,9 +2806,9 @@
       "name": "dashboard-stats",
       "type": "registry:ui",
       "title": "Dashboard Stats",
-      "description": "A highly customizable neo-brutalist Dashboard Stats component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Dashboard Stats component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "card",
@@ -2543,7 +2816,7 @@
       ],
       "files": [
         {
-          "path": "components/ui/dashboard-stats.tsx",
+          "path": "components/ui/dashboard-stats/DashboardStats.vue",
           "type": "registry:ui"
         }
       ],
@@ -2626,19 +2899,47 @@
       "name": "form",
       "type": "registry:ui",
       "title": "Form",
-      "description": "A highly customizable neo-brutalist Form component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Form component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "react-hook-form",
+        "vee-validate",
+        "@vee-validate/zod",
         "zod",
-        "@radix-ui/react-label",
-        "@radix-ui/react-slot"
+        "reka-ui"
       ],
       "registryDependencies": [
         "label"
       ],
       "files": [
         {
-          "path": "components/ui/form.tsx",
+          "path": "components/ui/form/Form.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormControl.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormDescription.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormField.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormLabel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormMessage.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/form-context.ts",
           "type": "registry:ui"
         }
       ],
@@ -2721,16 +3022,40 @@
       "name": "alert-dialog",
       "type": "registry:ui",
       "title": "Alert Dialog",
-      "description": "A highly customizable neo-brutalist Alert Dialog component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Alert Dialog component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-alert-dialog"
+        "reka-ui"
       ],
       "registryDependencies": [
         "button"
       ],
       "files": [
         {
-          "path": "components/ui/alert-dialog.tsx",
+          "path": "components/ui/alert-dialog/AlertDialogAction.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/AlertDialogCancel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/AlertDialogContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/AlertDialogDescription.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/AlertDialogFooter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/AlertDialogHeader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/AlertDialogTitle.vue",
           "type": "registry:ui"
         }
       ],
@@ -2813,15 +3138,35 @@
       "name": "sheet",
       "type": "registry:ui",
       "title": "Sheet",
-      "description": "A highly customizable neo-brutalist Sheet component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Sheet component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-dialog",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/sheet.tsx",
+          "path": "components/ui/sheet/SheetContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/sheet/SheetDescription.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/sheet/SheetFooter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/sheet/SheetHeader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/sheet/SheetTitle.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/sheet/sheet-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -2904,15 +3249,19 @@
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "A highly customizable neo-brutalist Radio Group component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Radio Group component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-radio-group",
-        "lucide-react"
+        "reka-ui",
+        "lucide-vue-next"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/radio-group.tsx",
+          "path": "components/ui/radio-group/RadioGroup.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/radio-group/RadioGroupItem.vue",
           "type": "registry:ui"
         }
       ],
@@ -2995,14 +3344,14 @@
       "name": "slider",
       "type": "registry:ui",
       "title": "Slider",
-      "description": "A highly customizable neo-brutalist Slider component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Slider component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-slider"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/slider.tsx",
+          "path": "components/ui/slider/Slider.vue",
           "type": "registry:ui"
         }
       ],
@@ -3085,14 +3434,14 @@
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "A highly customizable neo-brutalist Progress component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Progress component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-progress"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/progress.tsx",
+          "path": "components/ui/progress/Progress.vue",
           "type": "registry:ui"
         }
       ],
@@ -3175,14 +3524,18 @@
       "name": "toggle",
       "type": "registry:ui",
       "title": "Toggle",
-      "description": "A highly customizable neo-brutalist Toggle component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Toggle component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-toggle"
+        "reka-ui"
       ],
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/toggle.tsx",
+          "path": "components/ui/toggle/Toggle.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/toggle/toggle-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -3265,16 +3618,24 @@
       "name": "toggle-group",
       "type": "registry:ui",
       "title": "Toggle Group",
-      "description": "A highly customizable neo-brutalist Toggle Group component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Toggle Group component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "@radix-ui/react-toggle-group"
+        "reka-ui"
       ],
       "registryDependencies": [
         "toggle"
       ],
       "files": [
         {
-          "path": "components/ui/toggle-group.tsx",
+          "path": "components/ui/toggle-group/ToggleGroup.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/toggle-group/ToggleGroupItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/toggle-group/toggle-group-key.ts",
           "type": "registry:ui"
         }
       ],
@@ -3357,9 +3718,9 @@
       "name": "brutalist-hero",
       "type": "registry:ui",
       "title": "Brutalist Hero",
-      "description": "A highly customizable neo-brutalist Brutalist Hero component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Brutalist Hero component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button",
@@ -3367,7 +3728,7 @@
       ],
       "files": [
         {
-          "path": "components/ui/brutalist-hero.tsx",
+          "path": "components/ui/brutalist-hero/BrutalistHero.vue",
           "type": "registry:ui"
         }
       ],
@@ -3450,9 +3811,9 @@
       "name": "pricing-section",
       "type": "registry:ui",
       "title": "Pricing Section",
-      "description": "A highly customizable neo-brutalist Pricing Section component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Pricing Section component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button",
@@ -3461,7 +3822,7 @@
       ],
       "files": [
         {
-          "path": "components/ui/pricing-section.tsx",
+          "path": "components/ui/pricing-section/PricingSection.vue",
           "type": "registry:ui"
         }
       ],
@@ -3544,9 +3905,9 @@
       "name": "auth-card",
       "type": "registry:ui",
       "title": "Auth Card",
-      "description": "A highly customizable neo-brutalist Auth Card component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Auth Card component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button",
@@ -3556,7 +3917,7 @@
       ],
       "files": [
         {
-          "path": "components/ui/auth-card.tsx",
+          "path": "components/ui/auth-card/AuthCard.vue",
           "type": "registry:ui"
         }
       ],
@@ -3639,19 +4000,14 @@
       "name": "dashboard-shell",
       "type": "registry:ui",
       "title": "Dashboard Shell",
-      "description": "A highly customizable neo-brutalist Dashboard Shell component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Dashboard Shell component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
-      "registryDependencies": [
-        "card",
-        "table",
-        "badge",
-        "button"
-      ],
+      "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/dashboard-shell.tsx",
+          "path": "components/ui/dashboard-shell/DashboardShell.vue",
           "type": "registry:ui"
         }
       ],
@@ -3734,16 +4090,16 @@
       "name": "empty-state",
       "type": "registry:ui",
       "title": "Empty State",
-      "description": "A highly customizable neo-brutalist Empty State component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Empty State component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button"
       ],
       "files": [
         {
-          "path": "components/ui/empty-state.tsx",
+          "path": "components/ui/empty-state/EmptyState.vue",
           "type": "registry:ui"
         }
       ],
@@ -3826,9 +4182,9 @@
       "name": "waitlist-page",
       "type": "registry:ui",
       "title": "Waitlist Page",
-      "description": "A highly customizable neo-brutalist Waitlist Page component built with Brutx design tokens.",
+      "description": "A highly customizable neo-brutalist Waitlist Page component built with Brutx design tokens for Vue 3.",
       "dependencies": [
-        "lucide-react"
+        "lucide-vue-next"
       ],
       "registryDependencies": [
         "button",
@@ -3836,7 +4192,7 @@
       ],
       "files": [
         {
-          "path": "components/ui/waitlist-page.tsx",
+          "path": "components/ui/waitlist-page/WaitlistPage.vue",
           "type": "registry:ui"
         }
       ],

@@ -192,7 +192,7 @@ function toPascalCase(str: string): string {
 
 function printUsageExample(component: string, componentsAlias: string): void {
     const componentName = toPascalCase(component);
-    logger.info(`  import { ${componentName} } from "${componentsAlias}/ui/${component}";`);
+    logger.info(`  import ${componentName} from "${componentsAlias}/ui/${component}/${componentName}.vue"`);
 }
 
 export async function add(components: string[], options: AddOptions): Promise<void> {

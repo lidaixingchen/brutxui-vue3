@@ -1,10 +1,7 @@
 export type ProjectType =
-    | 'nextjs'
-    | 'nextjs-src'
-    | 'vite'
-    | 'vite-src'
-    | 'cra'
-    | 'remix'
+    | 'vite-vue'
+    | 'vite-vue-src'
+    | 'nuxt'
     | 'unknown';
 
 export type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
@@ -52,9 +49,6 @@ export interface AddOptions {
     registry?: string;
 }
 
-/**
- * @deprecated Import ComponentMeta from 'brutx-shared' instead.
- */
 export type { ComponentMeta as ComponentInfo } from 'brutx-shared';
 
 export interface RegistryFile {
@@ -69,4 +63,3 @@ export interface RegistryItem {
     registryDependencies: string[];
     files: RegistryFile[];
 }
-

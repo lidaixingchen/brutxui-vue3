@@ -38,7 +38,9 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const cssFile = findCssFile(cwd, projectType);
     const aliases = getDefaultAliases(cwd);
 
-    const fallbackCss = projectType.includes('src') ? 'src/index.css' : 'app/globals.css';
+    const fallbackCss = projectType === 'nuxt'
+        ? 'assets/css/main.css'
+        : (projectType.includes('src') ? 'src/index.css' : 'src/index.css');
 
     return {
         tailwind: {
@@ -166,7 +168,7 @@ export async function init(options: InitOptions): Promise<void> {
 
     logger.setSilent(options.silent ?? false);
 
-    logger.bold('\n🎨 Brutx - Neo-Brutalism Component Library\n');
+    logger.bold('\n🎨 Brutx - Neo-Brutalism Vue 3 Component Library\n');
     logger.info(`   Detected project: ${projectType}\n`);
 
     if (!(await shouldProceed(cwd, options))) {
@@ -226,7 +228,7 @@ export async function init(options: InitOptions): Promise<void> {
         logger.info('     npx brutx@latest add button');
         logger.info('     npx brutx@latest add --all');
         logger.newLine();
-        logger.dim('Documentation: https://brutxui.site/docs');
+        logger.dim('Documentation: https://lidaixingchen.github.io/brutxui-vue3/');
     } catch (error) {
         spinner?.fail('Failed to initialize Brutx');
         console.error(error);
