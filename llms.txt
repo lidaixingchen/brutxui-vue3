@@ -1,41 +1,41 @@
 # BrutxUI
 
-The ultimate copy-paste Neo-Brutalist React & Tailwind CSS component registry. Bold, raw, accessible, and 100% compatible with shadcn/ui.
+极致的复制粘贴式 Neo-Brutalist Vue 3 & Tailwind CSS 组件库。大胆、原始、无障碍，100% 兼容 shadcn/ui 理念。
 
-## Philosophy
-BrutxUI distributes components on-demand via a JSON registry CLI rather than a monolithic node dependency. You copy, paste, and own the code.
+## 理念
+BrutxUI 通过 JSON 注册表 CLI 按需分发组件，而非作为单体 node 依赖。你复制、粘贴、拥有代码。
 
-## Visual Styling Rules
-- **Borders:** Thick black outlines using `border-3 border-black` (or `dark:border-white` in dark mode).
-- **Shadows:** Hard offset shadows using `shadow-brutal` (4px 4px 0px 0px #000) or `shadow-brutal-lg` (6px 6px). Avoid standard blurred shadows.
-- **Corners:** Sharp 0px corners via `rounded-none`, or global token parameterized classes like `rounded-brutal`.
-- **Transitions / Press:** Physical press effect translation on active state: `active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#000] transition-all`.
-- **Contrast / Accents:** Neon saturated colors: Coral (`#FF6B6B`), Mint Teal (`#4ECDC4`), Saturated Yellow (`#FFE66D`).
+## 视觉样式规则
+- **边框：** 使用 `border-3 border-brutal` 的粗边框（使用 CSS 变量 `--brutal-border-color`，暗色模式自动切换）。
+- **阴影：** 使用 `shadow-brutal`（4px 偏移）或 `shadow-brutal-lg`（6px 偏移）的硬偏移阴影。避免标准模糊阴影。
+- **圆角：** 通过 `rounded-none` 实现锐利 0px 圆角，或使用全局令牌参数化类如 `rounded-brutal`。
+- **过渡 / 按压：** 激活状态的物理按压位移效果：`active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all`。
+- **对比度 / 强调色：** 霓虹饱和色：珊瑚红（`#FF6B6B`）、薄荷青（`#4ECDC4`）、饱和黄（`#FFE66D`）。
 
-## Directory Structure
-- `apps/docs/`: Next.js 15 documentation website
-- `packages/ui/`: Core React source code modules (`brutx-ui`)
-  - `src/components/ui/`: Direct component files (e.g. `button.tsx`, `card.tsx`)
-- `packages/cli/`: CLI package commands (`brutx`) for `init` and `add`
-- `packages/registry/`: Dynamic JSON component registry builder
+## 目录结构
+- `apps/docs/`：VitePress 文档网站
+- `packages/ui/`：核心 Vue 3 源代码模块（`brutx-ui-vue`）
+  - `src/components/`：组件文件（如 `Button.vue`、`Card.vue`）
+  - `src/composables/`：Vue 组合式函数（如 `useToast.ts`）
+- `packages/cli/`：CLI 包命令（`brutx`），用于 `init` 和 `add`
+- `packages/registry/`：动态 JSON 组件注册表构建器
 
-## Core Commands
+## 核心命令
 ```bash
-# Initialize BrutxUI
+# 初始化 BrutxUI
 npx brutx@latest init
 
-# Add atomic components
+# 添加原子组件
 npx brutx@latest add button card dialog
 
-# Add all components
+# 添加所有组件
 npx brutx@latest add --all
-
-# shadcn compatibility workflow addition
-npx shadcn@latest add https://brutxui.site/registry/button.json
 ```
 
-## Creating Custom Components
-1. Save React markup in `packages/ui/src/components/ui/my-component.tsx`
-2. Extend class variance authorities (CVA) inside components.
-3. Import the shared class merger utility `cn` from `@/lib/utils` or `../lib/utils` depending on nesting depths.
-4. Keep props predictable, well-typed, and accessible.
+## 创建自定义组件
+1. 将 Vue SFC 标记保存在 `packages/ui/src/components/MyComponent.vue`
+2. 在同目录的 `my-component-variants.ts` 文件中扩展类变体权限（CVA）。
+3. 根据嵌套深度从 `@/lib/utils` 或 `../lib/utils` 导入共享类合并工具 `cn`。
+4. 使用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
+5. 始终使用 `computed()` 进行动态类合并——切勿在模板中调用 `cn()`。
+6. 保持 props 可预测、类型完善，并通过 reka-ui 原语实现无障碍访问。

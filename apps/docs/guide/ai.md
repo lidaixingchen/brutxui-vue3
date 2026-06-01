@@ -2,9 +2,22 @@
 
 BrutxUI 旨在与 AI 编码助手无缝协作。组件库提供结构化的、类型安全的 API，AI 工具可以理解并据此生成代码。
 
+## AGENTS.md
+
+项目根目录的 `AGENTS.md` 是 AI 编码助手的统一配置文件，为所有 AI 工具（Cursor、Copilot、Windsurf、Claude Code 等）提供项目特定的指令，包括：
+
+- Monorepo 结构与命令
+- Vue 3 `<script setup>` 组件约定
+- 导入路径别名（`@/` 映射）
+- CVA 变体模式与 `cn()` 类名合并工具
+- 新粗野主义设计令牌与视觉规则
+- 反模式清单（禁止软阴影、圆角边框等）
+- 代码风格规则（4 空格缩进、单引号、无注释）
+- 安全要求与 Registry Schema 规范
+
 ## llms.txt
 
-BrutxUI 在仓库根目录提供了 `llms.txt` 文件。这个机器可读文件以针对大语言模型优化的格式描述了组件库的 API、约定和使用模式。
+BrutxUI 在仓库根目录提供了 `llms.txt` 和 `llms-full.txt` 文件。这些机器可读文件以针对大语言模型优化的格式描述了组件库的 API、约定和使用模式。
 
 AI 助手可以使用此文件来：
 
@@ -15,14 +28,7 @@ AI 助手可以使用此文件来：
 
 ## .cursorrules
 
-项目根目录的 `.cursorrules` 文件为 Cursor AI 提供了项目特定的指令，包括：
-
-- Vue 3 `<script setup>` 约定
-- 导入路径别名（`@/` 映射）
-- CVA 变体模式
-- `cn()` 类名合并工具
-- 新粗野主义设计令牌用法
-- 代码风格规则（4 空格缩进、单引号、无注释）
+项目根目录的 `.cursorrules` 文件为 Cursor AI 提供了项目特定的指令。该文件与 `AGENTS.md` 保持同步，内容涵盖视觉风格指南、组件约定、安全路径校验和 Registry Schema 规范。
 
 ## AI 助手如何使用 BrutxUI
 
@@ -131,3 +137,6 @@ function handleError() {
 5. 使用 `ref()` 和 `computed()` 而非 `useState` 和 `useMemo`
 6. 使用 `cn()` 合并类名，绝不拼接字符串
 7. 使用 `--brutal-*` CSS 变量，绝不硬编码颜色
+8. 禁止使用软阴影（`shadow-md`、`shadow-lg`），只使用 `shadow-brutal*`
+9. 禁止使用圆角（`rounded-md`、`rounded-lg`），只使用 `rounded-brutal`
+10. 交互元素必须有按压反馈（`active:translate-y` + `active:shadow-none`）

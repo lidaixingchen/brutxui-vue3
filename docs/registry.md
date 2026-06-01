@@ -1,24 +1,24 @@
-# Component Registry System
+# 组件注册表系统
 
-Brutx distributes React components through a **registry-based architecture**. Instead of installing one large npm package with every style and layout, users fetch the components they need directly into their local codebase.
-
----
-
-## How it Works
-
-Every component is defined as a static JSON file stored in `packages/registry/registry/[name].json`. 
-
-When a user runs `npx brutx add [component]`, the CLI:
-1. Resolves all dependencies and sub-components (`registryDependencies`) recursively using a DFS topological sort.
-2. Fetches the JSON file from the GitHub remote registry (or reads it locally in offline mode).
-3. Resolves import aliases (e.g., `@/lib/utils` and `@/components`) to match the user's custom workspace configuration.
-4. Writes files to the local disk and triggers the project's package manager to install npm dependencies.
+Brutx 通过**基于注册表的架构**分发 Vue 3 组件。用户无需安装一个包含所有样式和布局的大型 npm 包，而是直接将所需组件拉取到本地代码库中。
 
 ---
 
-## Registry JSON Schema
+## 工作原理
 
-Each registry item follows this TypeScript schema structure:
+每个组件定义为存储在 `packages/registry/registry/[name].json` 中的静态 JSON 文件。
+
+当用户运行 `npx brutx add [component]` 时，CLI 会：
+1. 使用 DFS 拓扑排序递归解析所有依赖和子组件（`registryDependencies`）。
+2. 从 GitHub 远程注册表获取 JSON 文件（或在离线模式下从本地读取）。
+3. 解析导入别名（例如 `@/lib/utils` 和 `@/components`），使其匹配用户自定义的工作区配置。
+4. 将文件写入本地磁盘，并触发项目的包管理器安装 npm 依赖。
+
+---
+
+## 注册表 JSON Schema
+
+每个注册表项遵循以下 TypeScript Schema 结构：
 
 ```json
 {
@@ -34,28 +34,28 @@ Each registry item follows this TypeScript schema structure:
   ],
   "files": [
     {
-      "path": "components/ui/combobox.tsx",
-      "content": "'use client';\n\nimport * as React from 'react';\n..."
+      "path": "components/ui/Combobox.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\n..."
     }
   ]
 }
 ```
 
-### Fields
-- **`name`** *(string)*: Unique identifier of the component.
-- **`type`** *(string)*: Type of registry item (usually `"registry:ui"`).
-- **`dependencies`** *(string[])*: Third-party npm packages required by this component (e.g. `lucide-react`, `@radix-ui/react-slot`).
-- **`registryDependencies`** *(string[])*: Other Brutx components required by this component.
-- **`files`** *(Array)*: List of files to be written to the user's project, containing paths relative to the component alias and the raw file string content.
+### 字段说明
+- **`name`** *(string)*：组件的唯一标识符。
+- **`type`** *(string)*：注册表项的类型（通常为 `"registry:ui"`）。
+- **`dependencies`** *(string[])*：此组件所需的第三方 npm 包（例如 `lucide-vue-next`、`reka-ui`）。
+- **`registryDependencies`** *(string[])*：此组件所需的其他 Brutx 组件。
+- **`files`** *(Array)*：要写入用户项目的文件列表，包含相对于组件别名的路径和原始文件字符串内容。
 
 ---
 
-## Adding a New Component to the Registry
+## 向注册表添加新组件
 
-To add a new component dynamically:
+要动态添加新组件：
 
-1. Create your React component in `packages/ui/src/components/[name].tsx` or `packages/ui/src/components/ui/[name].tsx`.
-2. Declare it inside the CLI `COMPONENTS` metadata constant within `packages/cli/src/lib/constants.ts`:
+1. 在 `packages/ui/src/components/[name].vue` 或 `packages/ui/src/components/ui/[name].vue` 中创建 Vue 3 组件。
+2. 在 `packages/cli/src/lib/constants.ts` 的 CLI `COMPONENTS` 元数据常量中声明它：
    ```typescript
    export const COMPONENTS = {
      // ...
@@ -65,12 +65,12 @@ To add a new component dynamically:
      }
    }
    ```
-3. Run the automated registry bundler script:
+3. 运行自动化注册表打包脚本：
    ```bash
    pnpm --filter brutx-registry build
    ```
-   This script will:
-   - Read the template code.
-   - Use regex to detect other Brutx components imported in the file and add them as `registryDependencies`.
-   - Package everything into a static `.json` schema file inside `packages/registry/registry/`.
-4. Commit your changes and push to GitHub. Once the registry is published, the component is available from the remote registry.
+   此脚本将：
+   - 读取模板代码。
+   - 使用正则表达式检测文件中导入的其他 Brutx 组件，并将它们添加为 `registryDependencies`。
+   - 将所有内容打包为 `packages/registry/registry/` 中的静态 `.json` Schema 文件。
+4. 提交更改并推送到 GitHub。注册表发布后，该组件即可从远程注册表获取。

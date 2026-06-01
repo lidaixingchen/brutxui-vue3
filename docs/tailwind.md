@@ -1,17 +1,17 @@
-# Tailwind CSS Integration Guide
+# Tailwind CSS 集成指南
 
-Brutx is built on React and uses **Tailwind CSS** for styling. It supports both **Tailwind CSS v3** and the CSS-first **Tailwind CSS v4** workflow.
+Brutx 基于 Vue 3 构建，使用 **Tailwind CSS** 进行样式管理。同时支持 **Tailwind CSS v3** 和 CSS 优先的 **Tailwind CSS v4** 工作流。
 
 ---
 
-## Tailwind CSS v4 Configuration (CSS-First)
+## Tailwind CSS v4 配置（CSS 优先）
 
-Tailwind CSS v4 introduces a CSS-first configuration pipeline. In most v4 projects, you no longer need a `tailwind.config.js` file.
+Tailwind CSS v4 引入了 CSS 优先的配置流程。在大多数 v4 项目中，你不再需要 `tailwind.config.js` 文件。
 
-### 1. Style Integration on `init`
-When you run `npx brutx@latest init` in a Tailwind v4 project, the CLI automatically detects the version and configures your `components.json` with an empty config value (`"config": ""`).
+### 1. `init` 时的样式集成
+在 Tailwind v4 项目中运行 `npx brutx@latest init` 时，CLI 会自动检测版本，并在 `components.json` 中将配置值设为空（`"config": ""`）。
 
-It appends the Neo-Brutalist design tokens directly to your main CSS file (`globals.css`):
+它会将 Neo-Brutalist 设计令牌直接追加到主 CSS 文件（`globals.css`）中：
 
 ```css
 @import "tailwindcss";
@@ -46,10 +46,10 @@ It appends the Neo-Brutalist design tokens directly to your main CSS file (`glob
 }
 ```
 
-Because these utility classes are written in native CSS, Tailwind v4 can parse them directly.
+由于这些工具类以原生 CSS 编写，Tailwind v4 可以直接解析它们。
 
-### 2. Customizing Theme Colors in Tailwind v4
-To customize theme colors in Tailwind v4, declare them inside the `@theme` directive in your `globals.css`:
+### 2. 在 Tailwind v4 中自定义主题颜色
+要在 Tailwind v4 中自定义主题颜色，请在 `globals.css` 的 `@theme` 指令中声明：
 
 ```css
 @import "tailwindcss";
@@ -59,25 +59,25 @@ To customize theme colors in Tailwind v4, declare them inside the `@theme` direc
   --color-coral: #FF6B6B;
   --color-teal: #4ECDC4;
   --color-yellow: #FFE66D;
-  
+
   /* Configure custom font */
   --font-sans: 'Outfit', sans-serif;
 }
 ```
 
-You can then use `bg-coral`, `text-teal`, and `border-yellow` inside your project.
+然后你可以在项目中使用 `bg-coral`、`text-teal` 和 `border-yellow`。
 
 ---
 
-## Tailwind CSS v3 Configuration (JS-Based)
+## Tailwind CSS v3 配置（基于 JS）
 
-Tailwind CSS v3 relies on JavaScript config files.
+Tailwind CSS v3 依赖 JavaScript 配置文件。
 
-### 1. Configuration on `init`
-Running `npx brutx@latest init` creates/updates `tailwind.config.js` and appends the Neo-Brutalist CSS utilities inside your globals CSS file.
+### 1. `init` 时的配置
+运行 `npx brutx@latest init` 会创建/更新 `tailwind.config.js`，并在全局 CSS 文件中追加 Neo-Brutalist CSS 工具类。
 
-### 2. Customizing Theme Colors in Tailwind v3
-To customize colors in Tailwind v3, add them inside `tailwind.config.js`:
+### 2. 在 Tailwind v3 中自定义主题颜色
+要在 Tailwind v3 中自定义颜色，请在 `tailwind.config.js` 中添加：
 
 ```javascript
 /** @type {import('tailwindcss').Config} */
@@ -96,12 +96,12 @@ module.exports = {
 
 ---
 
-## Dark Mode
+## 暗色模式
 
-Brutx fully supports dark mode on both Tailwind v3 and v4:
+Brutx 在 Tailwind v3 和 v4 上均完全支持暗色模式：
 
-- **Tailwind v4:** Dark mode variants are automatically handled. Standard class selectors like `.dark` work out of the box.
-- **Tailwind v3:** If you are using class-based dark mode, ensure you have configured it in `tailwind.config.js`:
+- **Tailwind v4**：暗色模式变体会自动处理。标准的类选择器如 `.dark` 开箱即用。
+- **Tailwind v3**：如果你使用基于类的暗色模式，请确保在 `tailwind.config.js` 中进行了配置：
   ```javascript
   module.exports = {
     darkMode: 'class',

@@ -52,6 +52,10 @@ export default {
 
 ## 第 3 步：初始化 BrutxUI
 
+::: warning CLI 尚未发布
+`brutx` CLI 包尚未发布到 npm，以下 `npx brutx` 命令暂不可用。请跳至[手动安装](/guide/installation-manual)页面完成后续步骤。
+:::
+
 运行 init 命令来设置粗野主义插件和样式：
 
 ```bash
