@@ -6,7 +6,6 @@ export function mountComponent(
     options?: MountingOptions<Record<string, unknown>>
 ) {
     return mount(component, {
-        attachTo: document.body,
         ...options,
     })
 }
@@ -24,6 +23,7 @@ export function mountWithSlots(
 
 export function createSlotComponent(content: string) {
     return {
+        name: 'SlotComponent',
         render() {
             return h('span', content)
         },

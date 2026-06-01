@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<ToastProps>(), {
 const emit = defineEmits<{ close: [] }>()
 
 const isLeaving = ref(false)
-let timer: number | undefined
+const timer = ref<number | undefined>(undefined)
 
 function startLeave() {
     isLeaving.value = true
@@ -42,14 +42,14 @@ function startLeave() {
 
 onMounted(() => {
     if (props.duration) {
-        timer = window.setTimeout(() => {
+        timer.value = window.setTimeout(() => {
             startLeave()
         }, props.duration)
     }
 })
 
 onUnmounted(() => {
-    if (timer) window.clearTimeout(timer)
+    if (timer.value) window.clearTimeout(timer.value)
 })
 
 const classes = computed(() =>

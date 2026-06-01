@@ -1,15 +1,11 @@
 <script setup lang="ts">
-import { AccordionHeader, AccordionTrigger, type AccordionTriggerProps } from 'reka-ui'
+import { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'
 import { computed } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 
 const props = defineProps<AccordionTriggerProps & { class?: string }>()
-
-const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props
-    return delegated
-})
+const forwarded = useForwardProps(props)
 
 const classes = computed(() =>
     cn(
@@ -21,7 +17,7 @@ const classes = computed(() =>
 
 <template>
     <AccordionHeader class="flex">
-        <AccordionTrigger v-bind="delegatedProps" :class="classes">
+        <AccordionTrigger v-bind="forwarded" :class="classes">
             <slot />
             <slot name="icon">
                 <ChevronDown

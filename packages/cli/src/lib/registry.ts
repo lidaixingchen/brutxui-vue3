@@ -75,7 +75,7 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         data = await res.json();
     } else {
         const filePath = path.resolve(source, `${name}.json`);
-        if (!filePath.startsWith(path.resolve(source) + path.sep) && filePath !== path.resolve(source)) {
+        if (!filePath.startsWith(path.resolve(source) + path.sep)) {
             throw new Error(`Security Error: Path traversal detected in component name "${name}".`);
         }
         if (!(await fs.pathExists(filePath))) {

@@ -203,6 +203,11 @@ function printUsageExample(component: string, componentsAlias: string): void {
 
 export async function add(components: string[], options: AddOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
+    const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
+
+    if (options.path && !isSafePath(targetCwd, cwd)) {
+        throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`);
+    }
 
     logger.setSilent(options.silent ?? false);
 
@@ -217,7 +222,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         return;
     }
 
-    const utilsPath = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+    const utilsPath = resolveAliasPath(config.aliases.utils, targetCwd) + '.ts';
 
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
@@ -268,7 +273,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         const { added, skipped, filesWritten } = await writeRegistryFiles(
             registryItems,
             config,
-            cwd,
+            targetCwd,
             options,
             spinner
         );
@@ -287,7 +292,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             logger.newLine();
             logger.bold('💾 Files written to disk:');
             for (const filePath of filesWritten) {
-                const relativePath = path.relative(cwd, filePath);
+                const relativePath = path.relative(targetCwd, filePath);
                 logger.success(`   ✓ ${relativePath}`);
             }
         }

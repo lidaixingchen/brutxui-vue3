@@ -67,7 +67,7 @@ const brutalismPlugin = plugin(
         const interactiveUtilities = {
             '.nb-hover': {
                 '&:hover': {
-                    transform: 'translate(-2px, -2px)',
+                    transform: 'translate(calc(var(--brutal-shadow-offset-x, 4px) / -2), calc(var(--brutal-shadow-offset-y, 4px) / -2))',
                     boxShadow: 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
                 },
             },
@@ -114,7 +114,7 @@ const brutalismPlugin = plugin(
                 transitionDuration: '150ms',
                 cursor: 'pointer',
                 '&:hover': {
-                    transform: 'translate(-2px, -2px)',
+                    transform: 'translate(calc(var(--brutal-shadow-offset-x, 4px) / -2), calc(var(--brutal-shadow-offset-y, 4px) / -2))',
                     boxShadow: 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
                 },
                 '&:active': {
