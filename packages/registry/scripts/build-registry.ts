@@ -59,6 +59,10 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'dashboard-shell': { files: ['DashboardShell.vue'] },
     'empty-state': { files: ['EmptyState.vue'] },
     'waitlist-page': { files: ['WaitlistPage.vue'] },
+    accordion: { files: ['Accordion.vue', 'AccordionItem.vue', 'AccordionTrigger.vue', 'AccordionContent.vue', 'accordion-variants.ts'] },
+    'tags-input': { files: ['TagsInput.vue', 'TagsInputInput.vue', 'TagsInputItem.vue', 'TagsInputItemText.vue', 'TagsInputItemDelete.vue', 'tags-input-variants.ts'] },
+    'number-input': { files: ['NumberInput.vue'] },
+    'copy-to-clipboard': { files: ['CopyToClipboard.vue'], composables: ['useClipboard.ts'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};

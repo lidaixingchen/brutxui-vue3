@@ -229,7 +229,7 @@ const getPmTabClass = (pm: PackageManager) =>
 
             <div v-if="activeTab === 'cli'">
                 <div class="relative group">
-                    <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ cliCommand }}</code></pre>
+                    <pre class="p-4 border-2 border-brutal shadow-brutal-sm overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ cliCommand }}</code></pre>
                     <CopyButton
                         :text="cliCommand"
                         class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-brutal-sm"
@@ -243,7 +243,7 @@ const getPmTabClass = (pm: PackageManager) =>
                         1. Install dependencies
                     </h4>
                     <div class="relative group">
-                        <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ installCommand }}</code></pre>
+                        <pre class="p-4 border-2 border-brutal shadow-brutal-sm overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ installCommand }}</code></pre>
                         <CopyButton
                             :text="installCommand"
                             class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-brutal-sm"
@@ -270,7 +270,7 @@ const getPmTabClass = (pm: PackageManager) =>
                     <h4 class="text-sm font-bold mb-2">
                         {{ resolvedDeps.length > 0 ? '3' : '2' }}. Save to your project
                     </h4>
-                    <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>src/components/ui/{{ componentName }}/</code></pre>
+                    <pre class="p-4 border-2 border-brutal shadow-brutal-sm overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>src/components/ui/{{ componentName }}/</code></pre>
                 </div>
 
                 <div v-if="resolvedImports.length > 0">
@@ -278,7 +278,7 @@ const getPmTabClass = (pm: PackageManager) =>
                         {{ resolvedDeps.length > 0 ? '4' : '3' }}. Import and use
                     </h4>
                     <div class="relative group">
-                        <pre class="p-4 border-3 border-brutal shadow-brutal overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ importStatement }}</code></pre>
+                        <pre class="p-4 border-2 border-brutal shadow-brutal-sm overflow-x-auto font-mono text-sm" style="background-color: #111827; color: #f3f4f6;"><code>{{ importStatement }}</code></pre>
                         <CopyButton
                             :text="importStatement"
                             class="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 focus:opacity-100 shadow-brutal-sm"

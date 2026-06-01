@@ -43,6 +43,10 @@ import ToastDemo from './components/demos/ToastDemo.vue'
 import ToggleDemo from './components/demos/ToggleDemo.vue'
 import ToggleGroupDemo from './components/demos/ToggleGroupDemo.vue'
 import TooltipDemo from './components/demos/TooltipDemo.vue'
+import AccordionDemo from './components/demos/AccordionDemo.vue'
+import TagsInputDemo from './components/demos/TagsInputDemo.vue'
+import NumberInputDemo from './components/demos/NumberInputDemo.vue'
+import CopyToClipboardDemo from './components/demos/CopyToClipboardDemo.vue'
 import './style.css'
 
 export default {
@@ -91,5 +95,9 @@ export default {
         app.component('ToggleDemo', ToggleDemo)
         app.component('ToggleGroupDemo', ToggleGroupDemo)
         app.component('TooltipDemo', TooltipDemo)
+        app.component('AccordionDemo', AccordionDemo)
+        app.component('TagsInputDemo', TagsInputDemo)
+        app.component('NumberInputDemo', NumberInputDemo)
+        app.component('CopyToClipboardDemo', CopyToClipboardDemo)
     },
 } satisfies Theme

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "accordion",
+  "type": "registry:ui",
+  "title": "Accordion",
+  "description": "A highly customizable neo-brutalist Accordion component built with Brutx design tokens for Vue 3.",
+  "dependencies": [
+    "reka-ui",
+    "lucide-vue-next"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/accordion/Accordion.vue",
+      "content": "<script setup lang=\"ts\">\nimport { AccordionRoot, type AccordionRootProps, type AccordionRootEmits, useForwardPropsEmits } from 'reka-ui'\nimport { computed } from 'vue'\n\nconst props = defineProps<AccordionRootProps & { class?: string }>()\nconst emits = defineEmits<AccordionRootEmits>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst forwarded = useForwardPropsEmits(delegatedProps, emits)\n</script>\n\n<template>\n    <AccordionRoot v-bind=\"forwarded\" :class=\"props.class\">\n        <slot />\n    </AccordionRoot>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/accordion/AccordionItem.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AccordionItem, type AccordionItemProps, useForwardProps } from 'reka-ui'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { accordionItemVariants } from '@/components/ui/accordion/accordion-variants'\n\ntype AccordionItemVariantProps = VariantProps<typeof accordionItemVariants>\n\ninterface Props extends AccordionItemProps {\n    variant?: NonNullable<AccordionItemVariantProps['variant']>\n    class?: string\n}\n\nconst props = withDefaults(defineProps<Props>(), {\n    variant: 'default',\n    class: '',\n})\n\nconst delegatedProps = computed(() => {\n    const { class: _, variant: __, ...delegated } = props\n    return delegated\n})\n\nconst forwardedProps = useForwardProps(delegatedProps)\n\nconst classes = computed(() =>\n    cn(accordionItemVariants({ variant: props.variant }), props.class)\n)\n</script>\n\n<template>\n    <AccordionItem v-bind=\"forwardedProps\" :class=\"classes\">\n        <slot />\n    </AccordionItem>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/accordion/AccordionTrigger.vue",
+      "content": "<script setup lang=\"ts\">\nimport { AccordionHeader, AccordionTrigger, type AccordionTriggerProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { ChevronDown } from 'lucide-vue-next'\nimport { cn } from '@/lib/utils'\n\nconst props = defineProps<AccordionTriggerProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(\n        'flex flex-1 items-center justify-between py-4 px-6 text-left font-black tracking-wide transition-all hover:bg-brutal-muted [&[data-state=open]>svg]:rotate-180',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <AccordionHeader class=\"flex\">\n        <AccordionTrigger v-bind=\"delegatedProps\" :class=\"classes\">\n            <slot />\n            <slot name=\"icon\">\n                <ChevronDown\n                    class=\"h-5 w-5 shrink-0 transition-transform duration-200 border-2 border-brutal rounded-sm bg-brutal-bg p-0.5 shadow-brutal-sm\"\n                />\n            </slot>\n        </AccordionTrigger>\n    </AccordionHeader>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/accordion/AccordionContent.vue",
+      "content": "<script setup lang=\"ts\">\nimport { AccordionContent, type AccordionContentProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\nconst props = defineProps<AccordionContentProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn('border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg', props.class)\n)\n</script>\n\n<template>\n    <AccordionContent\n        v-bind=\"delegatedProps\"\n        class=\"overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down\"\n    >\n        <div :class=\"classes\">\n            <slot />\n        </div>\n    </AccordionContent>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/accordion/accordion-variants.ts",
+      "content": "import { cva } from 'class-variance-authority'\n\nexport const accordionItemVariants = cva(\n    [\n        'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n        'transition-all duration-150',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'shadow-brutal mb-4',\n                flat: 'shadow-none mb-4',\n                ghost: 'border-transparent shadow-none mb-2',\n                interactive: [\n                    'shadow-brutal mb-4',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#111827",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1f2937",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#4A90D9"
+    }
+  }
+}

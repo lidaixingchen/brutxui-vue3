@@ -191,6 +191,25 @@ export type { BrutalistPricingPlan } from './components/pricing-section/PricingS
 
 export { default as WaitlistPage } from './components/waitlist-page/WaitlistPage.vue'
 
+export { default as Accordion } from './components/accordion/Accordion.vue'
+export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
+export { default as AccordionTrigger } from './components/accordion/AccordionTrigger.vue'
+export { default as AccordionContent } from './components/accordion/AccordionContent.vue'
+export { accordionItemVariants } from './components/accordion/accordion-variants'
+
+export { default as TagsInput } from './components/tags-input/TagsInput.vue'
+export { default as TagsInputInput } from './components/tags-input/TagsInputInput.vue'
+export { default as TagsInputItem } from './components/tags-input/TagsInputItem.vue'
+export { default as TagsInputItemText } from './components/tags-input/TagsInputItemText.vue'
+export { default as TagsInputItemDelete } from './components/tags-input/TagsInputItemDelete.vue'
+export { tagsInputItemVariants } from './components/tags-input/tags-input-variants'
+
+export { default as NumberInput } from './components/number-input/NumberInput.vue'
+
+export { default as CopyToClipboard } from './components/copy-to-clipboard/CopyToClipboard.vue'
+export { useClipboard } from './composables/useClipboard'
+
 export * from './lib/utils'
 
 export type { VariantProps } from 'class-variance-authority'
+

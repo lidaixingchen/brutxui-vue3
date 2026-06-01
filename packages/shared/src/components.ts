@@ -50,6 +50,10 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'dashboard-shell': { name: 'dashboard-shell', dependencies: ['lucide-vue-next'] },
     'empty-state': { name: 'empty-state', dependencies: ['lucide-vue-next'] },
     'waitlist-page': { name: 'waitlist-page', dependencies: ['lucide-vue-next'] },
+    accordion: { name: 'accordion', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'tags-input': { name: 'tags-input', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'number-input': { name: 'number-input', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'copy-to-clipboard': { name: 'copy-to-clipboard', dependencies: ['lucide-vue-next'] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

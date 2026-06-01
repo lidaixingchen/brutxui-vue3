@@ -567,8 +567,8 @@ body {
    ============================================ */
 
 .vp-doc div[class*='language-'] {
-    border: 3px solid var(--brutal-border-color) !important;
-    box-shadow: 4px 4px 0 0 var(--brutal-border-color) !important;
+    border: 2px solid var(--brutal-border-color) !important;
+    box-shadow: 2px 2px 0 0 var(--brutal-border-color) !important;
     position: relative;
 }
 
@@ -615,7 +615,7 @@ body {
 
 /* Line numbers */
 .vp-doc div[class*='language-'].line-numbers-mode .line-numbers {
-    border-right: 3px solid var(--brutal-border-color) !important;
+    border-right: 2px solid var(--brutal-border-color) !important;
 }
 
 /* ============================================

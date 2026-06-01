@@ -1,0 +1,34 @@
+import { ref } from 'vue'
+
+export function useClipboard(options: { duration?: number } = {}) {
+    const duration = options.duration ?? 2000
+    const copied = ref(false)
+    const isSupported = typeof navigator !== 'undefined' && 'clipboard' in navigator
+
+    let timeoutId: number | null = null
+
+    async function copy(text: string) {
+        if (!isSupported) return false
+
+        try {
+            await navigator.clipboard.writeText(text)
+            copied.value = true
+
+            if (timeoutId) clearTimeout(timeoutId)
+            timeoutId = window.setTimeout(() => {
+                copied.value = false
+            }, duration)
+
+            return true
+        } catch (err) {
+            console.error('Failed to copy text: ', err)
+            return false
+        }
+    }
+
+    return {
+        copy,
+        copied,
+        isSupported,
+    }
+}
