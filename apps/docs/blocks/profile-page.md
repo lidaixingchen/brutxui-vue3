@@ -10,34 +10,7 @@ description: 带有头像、表单编辑和保存操作的个人资料页面区�
 ## 预览
 
 <ComponentPreview>
-  <div class="min-h-screen bg-brutal-bg p-4 sm:p-8">
-    <div class="w-full max-w-2xl mx-auto">
-      <h1 class="text-3xl font-black tracking-tight mb-8">Profile</h1>
-      <div class="bg-brutal-bg border-3 border-brutal shadow-brutal-lg">
-        <div class="p-6 flex flex-col items-center text-center border-b-3 border-brutal">
-          <div class="h-16 w-16 flex items-center justify-center bg-brutal-primary border-3 border-brutal shadow-brutal text-xl font-black">JD</div>
-          <h3 class="mt-4 text-xl font-black">John Doe</h3>
-        </div>
-        <div class="p-6 space-y-6">
-          <div class="space-y-2">
-            <label class="font-bold text-sm">Name</label>
-            <input class="w-full px-3 py-2 border-3 border-brutal bg-brutal-bg font-medium" value="John Doe">
-          </div>
-          <div class="space-y-2">
-            <label class="font-bold text-sm">Email</label>
-            <input class="w-full px-3 py-2 border-3 border-brutal bg-brutal-bg font-medium" type="email" value="john@example.com">
-          </div>
-          <div class="space-y-2">
-            <label class="font-bold text-sm">Bio</label>
-            <textarea class="w-full px-3 py-2 border-3 border-brutal bg-brutal-bg font-medium min-h-[80px]">Developer</textarea>
-          </div>
-          <div class="flex justify-end">
-            <button class="px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black text-sm active:translate-y-[2px] active:shadow-none transition-all">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ProfilePageDemo />
 </ComponentPreview>
 
 ## 安装

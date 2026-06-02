@@ -10,28 +10,7 @@ description: 统计卡片组区块，用于仪表盘中的关键指标展示。
 ## 预览
 
 <ComponentPreview>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal p-4">
-      <div class="text-sm font-bold text-brutal-muted-foreground">Total Users</div>
-      <div class="text-2xl font-black mt-1">1,234</div>
-      <div class="text-xs font-bold text-brutal-success mt-1">+12.5%</div>
-    </div>
-    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal p-4">
-      <div class="text-sm font-bold text-brutal-muted-foreground">Revenue</div>
-      <div class="text-2xl font-black mt-1">$45.6K</div>
-      <div class="text-xs font-bold text-brutal-success mt-1">+8.2%</div>
-    </div>
-    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal p-4">
-      <div class="text-sm font-bold text-brutal-muted-foreground">Active Projects</div>
-      <div class="text-2xl font-black mt-1">89</div>
-      <div class="text-xs font-bold text-brutal-destructive mt-1">-3.1%</div>
-    </div>
-    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal p-4">
-      <div class="text-sm font-bold text-brutal-muted-foreground">Conversion</div>
-      <div class="text-2xl font-black mt-1">24.8%</div>
-      <div class="text-xs font-bold text-brutal-accent mt-1">0%</div>
-    </div>
-  </div>
+  <DashboardStatsDemo />
 </ComponentPreview>
 
 ## 安装

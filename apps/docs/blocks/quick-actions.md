@@ -10,30 +10,7 @@ description: 快捷操作面板，含图标按钮网格和标题徽标。
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-md border-3 border-brutal bg-brutal-bg shadow-brutal">
-    <div class="p-6 pb-2">
-      <div class="flex items-center gap-2">
-        <span class="px-2 py-0.5 bg-brutal-accent border-2 border-brutal text-xs font-black">Quick</span>
-        <h3 class="text-lg font-black tracking-tight">Quick Actions</h3>
-      </div>
-    </div>
-    <div class="p-6 pt-2">
-      <div class="grid grid-cols-3 gap-3">
-        <button class="flex flex-col items-center gap-2 h-auto py-3 px-2 border-3 border-brutal shadow-brutal font-bold text-sm bg-transparent text-brutal-fg hover:bg-brutal-fg hover:text-brutal-bg transition-all">
-          <span class="text-lg">&#9997;</span>
-          <span class="text-xs font-bold">New Post</span>
-        </button>
-        <button class="flex flex-col items-center gap-2 h-auto py-3 px-2 border-3 border-brutal shadow-brutal font-bold text-sm bg-transparent text-brutal-fg hover:bg-brutal-fg hover:text-brutal-bg transition-all">
-          <span class="text-lg">&#128228;</span>
-          <span class="text-xs font-bold">Upload</span>
-        </button>
-        <button class="flex flex-col items-center gap-2 h-auto py-3 px-2 border-3 border-brutal shadow-brutal font-bold text-sm bg-transparent text-brutal-fg hover:bg-brutal-fg hover:text-brutal-bg transition-all">
-          <span class="text-lg">&#128269;</span>
-          <span class="text-xs font-bold">Search</span>
-        </button>
-      </div>
-    </div>
-  </div>
+  <QuickActionsDemo />
 </ComponentPreview>
 
 ## 安装

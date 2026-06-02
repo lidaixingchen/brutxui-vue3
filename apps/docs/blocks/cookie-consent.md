@@ -10,23 +10,7 @@ description: Cookie 同意横幅区块，固定在页面底部，带有接受和
 ## 预览
 
 <ComponentPreview>
-  <div class="relative min-h-[200px] flex items-end justify-center p-4">
-    <div class="w-full max-w-4xl border-3 border-brutal bg-brutal-bg shadow-brutal-lg p-4">
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div class="flex items-start gap-3">
-          <span class="text-2xl">&#127850;</span>
-          <div>
-            <h3 class="text-base font-black tracking-tight">We use cookies</h3>
-            <p class="mt-1 text-sm text-brutal-muted-foreground font-medium">By continuing, you agree to our cookie policy.</p>
-          </div>
-        </div>
-        <div class="flex flex-col gap-2 sm:flex-row sm:shrink-0">
-          <button class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-transparent active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">Decline</button>
-          <button class="px-3 py-1 text-sm font-bold bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">Accept</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <CookieConsentDemo />
 </ComponentPreview>
 
 ## 安装

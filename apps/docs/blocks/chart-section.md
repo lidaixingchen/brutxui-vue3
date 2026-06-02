@@ -10,26 +10,7 @@ description: 带有标签页切换的图表展示区块，支持柱状图、折�
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-4xl mx-auto">
-    <div class="mb-6">
-      <h2 class="text-3xl font-black tracking-tight">Analytics</h2>
-      <p class="mt-2 text-brutal-muted-foreground font-medium">Monthly performance overview</p>
-    </div>
-    <div class="flex border-3 border-brutal">
-      <button class="flex-1 px-4 py-2 bg-brutal-primary text-brutal-fg font-black text-sm border-r-3 border-brutal">Bar</button>
-      <button class="flex-1 px-4 py-2 bg-brutal-muted font-bold text-sm border-r-3 border-brutal">Line</button>
-      <button class="flex-1 px-4 py-2 bg-brutal-muted font-bold text-sm">Pie</button>
-    </div>
-    <div class="border-3 border-t-0 border-brutal p-4">
-      <div class="h-48 flex items-end gap-2">
-        <div class="flex-1 bg-brutal-primary border-2 border-brutal" style="height:60%"></div>
-        <div class="flex-1 bg-brutal-secondary border-2 border-brutal" style="height:80%"></div>
-        <div class="flex-1 bg-brutal-accent border-2 border-brutal" style="height:45%"></div>
-        <div class="flex-1 bg-brutal-primary border-2 border-brutal" style="height:90%"></div>
-        <div class="flex-1 bg-brutal-secondary border-2 border-brutal" style="height:70%"></div>
-      </div>
-    </div>
-  </div>
+  <ChartSectionDemo />
 </ComponentPreview>
 
 ## 安装

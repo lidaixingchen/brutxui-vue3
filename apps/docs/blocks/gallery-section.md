@@ -10,19 +10,7 @@ description: 带有轮播图和图片卡片的画廊展示区块。
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-4xl mx-auto">
-    <div class="mb-6">
-      <h2 class="text-3xl font-black tracking-tight">Gallery</h2>
-    </div>
-    <div class="bg-brutal-bg border-3 border-brutal p-4">
-      <div class="flex flex-col items-center justify-center p-4">
-        <div class="w-full border-3 border-brutal shadow-brutal overflow-hidden bg-brutal-bg">
-          <div class="w-full h-48 bg-brutal-muted flex items-center justify-center font-bold text-brutal-fg">Image</div>
-        </div>
-        <p class="mt-3 text-sm font-bold text-brutal-fg text-center">Sample caption</p>
-      </div>
-    </div>
-  </div>
+  <GallerySectionDemo />
 </ComponentPreview>
 
 ## 安装

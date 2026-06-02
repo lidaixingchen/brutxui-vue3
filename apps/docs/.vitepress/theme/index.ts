@@ -64,6 +64,37 @@ import GlitchTextDemo from './components/demos/GlitchTextDemo.vue'
 import ScratchCardDemo from './components/demos/ScratchCardDemo.vue'
 import SketchyChartDemo from './components/demos/SketchyChartDemo.vue'
 import HardcoreInputDemo from './components/demos/HardcoreInputDemo.vue'
+import BrutalistHeroDemo from './components/demos/BrutalistHeroDemo.vue'
+import PricingSectionDemo from './components/demos/PricingSectionDemo.vue'
+import AuthCardDemo from './components/demos/AuthCardDemo.vue'
+import DashboardShellDemo from './components/demos/DashboardShellDemo.vue'
+import EmptyStateDemo from './components/demos/EmptyStateDemo.vue'
+import WaitlistPageDemo from './components/demos/WaitlistPageDemo.vue'
+import NotFoundPageDemo from './components/demos/NotFoundPageDemo.vue'
+import LoadingPageDemo from './components/demos/LoadingPageDemo.vue'
+import ErrorCardDemo from './components/demos/ErrorCardDemo.vue'
+import SuccessCardDemo from './components/demos/SuccessCardDemo.vue'
+import CookieConsentDemo from './components/demos/CookieConsentDemo.vue'
+import HeaderSectionDemo from './components/demos/HeaderSectionDemo.vue'
+import FooterSectionDemo from './components/demos/FooterSectionDemo.vue'
+import FaqSectionDemo from './components/demos/FaqSectionDemo.vue'
+import TestimonialCardDemo from './components/demos/TestimonialCardDemo.vue'
+import BlogCardDemo from './components/demos/BlogCardDemo.vue'
+import FileCardDemo from './components/demos/FileCardDemo.vue'
+import QuickActionsDemo from './components/demos/QuickActionsDemo.vue'
+import TabsNavDemo from './components/demos/TabsNavDemo.vue'
+import SearchWidgetDemo from './components/demos/SearchWidgetDemo.vue'
+import FeedbackFormDemo from './components/demos/FeedbackFormDemo.vue'
+import StepperSectionDemo from './components/demos/StepperSectionDemo.vue'
+import DataTableSectionDemo from './components/demos/DataTableSectionDemo.vue'
+import SettingsPageDemo from './components/demos/SettingsPageDemo.vue'
+import BlogListPageDemo from './components/demos/BlogListPageDemo.vue'
+import ActivityLogPageDemo from './components/demos/ActivityLogPageDemo.vue'
+import ProfilePageDemo from './components/demos/ProfilePageDemo.vue'
+import ChartSectionDemo from './components/demos/ChartSectionDemo.vue'
+import GallerySectionDemo from './components/demos/GallerySectionDemo.vue'
+import UploadCardDemo from './components/demos/UploadCardDemo.vue'
+import OverviewPageDemo from './components/demos/OverviewPageDemo.vue'
 import './style.css'
 
 export default {
@@ -133,5 +164,36 @@ export default {
         app.component('ScratchCardDemo', ScratchCardDemo)
         app.component('SketchyChartDemo', SketchyChartDemo)
         app.component('HardcoreInputDemo', HardcoreInputDemo)
+        app.component('BrutalistHeroDemo', BrutalistHeroDemo)
+        app.component('PricingSectionDemo', PricingSectionDemo)
+        app.component('AuthCardDemo', AuthCardDemo)
+        app.component('DashboardShellDemo', DashboardShellDemo)
+        app.component('EmptyStateDemo', EmptyStateDemo)
+        app.component('WaitlistPageDemo', WaitlistPageDemo)
+        app.component('NotFoundPageDemo', NotFoundPageDemo)
+        app.component('LoadingPageDemo', LoadingPageDemo)
+        app.component('ErrorCardDemo', ErrorCardDemo)
+        app.component('SuccessCardDemo', SuccessCardDemo)
+        app.component('CookieConsentDemo', CookieConsentDemo)
+        app.component('HeaderSectionDemo', HeaderSectionDemo)
+        app.component('FooterSectionDemo', FooterSectionDemo)
+        app.component('FaqSectionDemo', FaqSectionDemo)
+        app.component('TestimonialCardDemo', TestimonialCardDemo)
+        app.component('BlogCardDemo', BlogCardDemo)
+        app.component('FileCardDemo', FileCardDemo)
+        app.component('QuickActionsDemo', QuickActionsDemo)
+        app.component('TabsNavDemo', TabsNavDemo)
+        app.component('SearchWidgetDemo', SearchWidgetDemo)
+        app.component('FeedbackFormDemo', FeedbackFormDemo)
+        app.component('StepperSectionDemo', StepperSectionDemo)
+        app.component('DataTableSectionDemo', DataTableSectionDemo)
+        app.component('SettingsPageDemo', SettingsPageDemo)
+        app.component('BlogListPageDemo', BlogListPageDemo)
+        app.component('ActivityLogPageDemo', ActivityLogPageDemo)
+        app.component('ProfilePageDemo', ProfilePageDemo)
+        app.component('ChartSectionDemo', ChartSectionDemo)
+        app.component('GallerySectionDemo', GallerySectionDemo)
+        app.component('UploadCardDemo', UploadCardDemo)
+        app.component('OverviewPageDemo', OverviewPageDemo)
     },
 } satisfies Theme

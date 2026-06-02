@@ -10,41 +10,7 @@ description: 数据表格区块，带有搜索、排序和分页功能。
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center justify-center p-8">
-    <div class="w-full max-w-5xl">
-      <div class="mb-6">
-        <h2 class="text-3xl font-black tracking-tight">Data Table</h2>
-      </div>
-      <div class="mb-4">
-        <div class="h-10 border-3 border-brutal bg-brutal-bg px-3 flex items-center">
-          <span class="text-sm text-brutal-muted-foreground font-medium">Search...</span>
-        </div>
-      </div>
-      <div class="border-3 border-brutal">
-        <table class="w-full">
-          <thead>
-            <tr class="border-b-3 border-brutal bg-brutal-muted">
-              <th class="p-3 text-left text-sm font-black">Name</th>
-              <th class="p-3 text-left text-sm font-black">Email</th>
-              <th class="p-3 text-left text-sm font-black">Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b-3 border-brutal cursor-pointer">
-              <td class="p-3 text-sm font-medium">Alice</td>
-              <td class="p-3 text-sm font-medium">alice@example.com</td>
-              <td class="p-3 text-sm font-medium">Admin</td>
-            </tr>
-            <tr class="cursor-pointer">
-              <td class="p-3 text-sm font-medium">Bob</td>
-              <td class="p-3 text-sm font-medium">bob@example.com</td>
-              <td class="p-3 text-sm font-medium">User</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <DataTableSectionDemo />
 </ComponentPreview>
 
 ## 安装

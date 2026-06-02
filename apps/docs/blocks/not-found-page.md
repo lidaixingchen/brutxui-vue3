@@ -10,22 +10,7 @@ description: 404 错误页面区块，带有故障文本效果和返回按钮。
 ## 预览
 
 <ComponentPreview>
-  <div class="min-h-[320px] flex items-center justify-center bg-brutal-bg p-4">
-    <div class="w-full max-w-lg text-center relative">
-      <div class="relative border-3 border-brutal bg-brutal-bg shadow-brutal p-8">
-        <div class="absolute -top-4 -left-4 h-16 w-16 bg-brutal-accent border-3 border-brutal rotate-12 shadow-brutal-sm"></div>
-        <div class="absolute -bottom-3 -right-3 h-12 w-12 bg-brutal-secondary border-3 border-brutal -rotate-6 shadow-brutal-sm"></div>
-        <div class="mb-6">
-          <span class="text-7xl font-black text-brutal-primary">404</span>
-        </div>
-        <h1 class="text-2xl font-black tracking-tight text-brutal-fg">Page Not Found</h1>
-        <p class="mt-3 text-brutal-muted-foreground font-medium">The page you are looking for does not exist or has been removed.</p>
-        <div class="mt-8">
-          <button class="px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black text-sm active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">Go Back Home</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <NotFoundPageDemo />
 </ComponentPreview>
 
 ## 安装

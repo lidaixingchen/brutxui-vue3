@@ -10,26 +10,7 @@ description: 常见问题折叠面板区块，含编号徽标和手风琴交互�
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-3xl mx-auto">
-    <div class="text-center mb-8">
-      <h2 class="text-3xl font-black tracking-tight">Frequently Asked Questions</h2>
-      <p class="mt-2 text-brutal-muted-foreground font-medium">Find the answers you need</p>
-    </div>
-    <div class="border-3 border-brutal bg-brutal-bg">
-      <div class="border-b-3 border-brutal p-4 flex items-center justify-between cursor-pointer">
-        <span class="flex items-center gap-3">
-          <span class="px-2 py-0.5 bg-brutal-secondary border-2 border-brutal text-xs font-black">1</span>
-          <span class="font-bold">What is BrutxUI?</span>
-        </span>
-      </div>
-      <div class="border-b-3 border-brutal p-4 flex items-center justify-between cursor-pointer">
-        <span class="flex items-center gap-3">
-          <span class="px-2 py-0.5 bg-brutal-secondary border-2 border-brutal text-xs font-black">2</span>
-          <span class="font-bold">How do I get started?</span>
-        </span>
-      </div>
-    </div>
-  </div>
+  <FaqSectionDemo />
 </ComponentPreview>
 
 ## 安装

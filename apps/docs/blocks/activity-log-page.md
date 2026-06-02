@@ -10,37 +10,7 @@ description: 带有表格、类型徽标和分页的活动日志页面区块。
 ## 预览
 
 <ComponentPreview>
-  <div class="min-h-screen bg-brutal-bg p-4 sm:p-8">
-    <div class="w-full max-w-4xl mx-auto">
-      <h1 class="text-3xl font-black tracking-tight mb-8">Activity Log</h1>
-      <div class="border-3 border-brutal">
-        <table class="w-full">
-          <thead>
-            <tr class="bg-brutal-muted border-b-3 border-brutal">
-              <th class="p-3 text-left font-black text-sm">Action</th>
-              <th class="p-3 text-left font-black text-sm">User</th>
-              <th class="p-3 text-left font-black text-sm">Timestamp</th>
-              <th class="p-3 text-left font-black text-sm">Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b-3 border-brutal cursor-pointer">
-              <td class="p-3"><span class="px-2 py-0.5 bg-brutal-muted border-2 border-brutal font-bold text-xs mr-2">info</span><span class="font-bold">Login</span></td>
-              <td class="p-3 font-medium">admin</td>
-              <td class="p-3 font-medium">2024-01-15 10:00</td>
-              <td class="p-3 font-medium">—</td>
-            </tr>
-            <tr class="cursor-pointer">
-              <td class="p-3"><span class="px-2 py-0.5 bg-brutal-accent border-2 border-brutal font-bold text-xs mr-2">warning</span><span class="font-bold">Config Update</span></td>
-              <td class="p-3 font-medium">system</td>
-              <td class="p-3 font-medium">2024-01-15 09:30</td>
-              <td class="p-3 font-medium">Rate limit changed</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+  <ActivityLogPageDemo />
 </ComponentPreview>
 
 ## 安装

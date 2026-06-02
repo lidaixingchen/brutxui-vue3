@@ -10,16 +10,7 @@ description: 搜索组件区块，带有输入框和分组建议列表。
 ## 预览
 
 <ComponentPreview>
-  <div class="flex items-center justify-center p-8">
-    <div class="w-full max-w-lg border-3 border-brutal bg-brutal-bg shadow-brutal">
-      <div class="p-0">
-        <div class="flex items-center border-b-3 border-brutal px-3 py-2">
-          <span class="mr-2 text-sm">&#128269;</span>
-          <span class="text-sm text-brutal-muted-foreground font-medium">Search...</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <SearchWidgetDemo />
 </ComponentPreview>
 
 ## 安装

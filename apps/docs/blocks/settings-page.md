@@ -10,37 +10,7 @@ description: 设置页面区块，带有标签页导航和表单控件。
 ## 预览
 
 <ComponentPreview>
-  <div class="min-h-[320px] bg-brutal-bg p-8">
-    <div class="w-full max-w-3xl mx-auto">
-      <div class="mb-8">
-        <h1 class="text-3xl font-black tracking-tight">Settings</h1>
-      </div>
-      <div class="flex border-3 border-brutal">
-        <button class="flex-1 px-4 py-2 text-sm font-black bg-brutal-primary border-r-3 border-brutal">General</button>
-        <button class="flex-1 px-4 py-2 text-sm font-bold border-r-3 border-brutal">Notifications</button>
-        <button class="flex-1 px-4 py-2 text-sm font-bold">Security</button>
-      </div>
-      <div class="border-3 border-brutal border-t-0 bg-brutal-bg p-4">
-        <h3 class="text-lg font-black mb-4">General</h3>
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-sm">Name</label>
-            <div class="h-10 w-48 border-3 border-brutal bg-brutal-bg px-3 flex items-center">
-              <span class="text-sm text-brutal-muted-foreground">Enter name</span>
-            </div>
-          </div>
-          <div class="h-1 bg-brutal-muted border-2 border-brutal"></div>
-          <div class="flex items-center justify-between">
-            <label class="font-bold text-sm">Notifications</label>
-            <div class="h-6 w-11 border-3 border-brutal bg-brutal-muted"></div>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6 flex justify-end">
-        <button class="px-5 py-2 bg-brutal-primary text-brutal-fg border-3 border-brutal shadow-brutal font-black text-sm active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">Save</button>
-      </div>
-    </div>
-  </div>
+  <SettingsPageDemo />
 </ComponentPreview>
 
 ## 安装

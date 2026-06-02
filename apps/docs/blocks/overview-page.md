@@ -10,36 +10,7 @@ description: 带有统计卡片和活动面板的仪表盘概览页面区块。
 ## 预览
 
 <ComponentPreview>
-  <div class="w-full max-w-6xl mx-auto p-6">
-    <h1 class="text-3xl font-black tracking-tight mb-8">Overview</h1>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="p-4 bg-brutal-bg border-3 border-brutal shadow-brutal">
-        <div class="text-sm font-bold text-brutal-fg">Revenue</div>
-        <div class="text-2xl font-black mt-1">$12,500</div>
-        <div class="text-xs font-bold text-brutal-success mt-1">+12.5%</div>
-      </div>
-      <div class="p-4 bg-brutal-bg border-3 border-brutal shadow-brutal">
-        <div class="text-sm font-bold text-brutal-fg">Users</div>
-        <div class="text-2xl font-black mt-1">1,234</div>
-        <div class="text-xs font-bold text-brutal-success mt-1">+8.2%</div>
-      </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-      <div class="bg-brutal-bg border-3 border-brutal shadow-brutal">
-        <div class="p-4 border-b-3 border-brutal font-black">Recent Activity</div>
-        <div class="p-4 text-sm font-medium text-brutal-muted-foreground">Activity items here</div>
-      </div>
-      <div class="bg-brutal-bg border-3 border-brutal shadow-brutal">
-        <div class="p-4 border-b-3 border-brutal font-black">Quick Stats</div>
-        <div class="p-4 space-y-3">
-          <div class="flex items-center justify-between p-3 bg-brutal-muted border-3 border-brutal shadow-brutal-sm">
-            <span class="font-bold text-sm">Revenue</span>
-            <span class="font-black">$12,500</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <OverviewPageDemo />
 </ComponentPreview>
 
 ## 安装
