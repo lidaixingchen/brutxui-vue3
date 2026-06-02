@@ -918,3 +918,11 @@ body {
         border-bottom-width: 3px !important;
     }
 }
+
+/* BrutxUI focus ring override - ensure buttons show outline focus ring even on click in the docs */
+.vp-doc button:focus,
+.vp-doc button:focus-visible {
+    outline: 3px solid var(--brutal-ring, #000000) !important;
+    outline-offset: 2px !important;
+}
+
