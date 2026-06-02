@@ -98,6 +98,13 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'cookie-consent': { files: ['CookieConsent.vue'] },
     'data-table-section': { files: ['DataTableSection.vue'] },
     'settings-page': { files: ['SettingsPage.vue'] },
+    'blog-list-page': { files: ['BlogListPage.vue'] },
+    'activity-log-page': { files: ['ActivityLogPage.vue'] },
+    'profile-page': { files: ['ProfilePage.vue'] },
+    'chart-section': { files: ['ChartSection.vue'] },
+    'gallery-section': { files: ['GallerySection.vue'] },
+    'upload-card': { files: ['UploadCard.vue'] },
+    'overview-page': { files: ['OverviewPage.vue'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};

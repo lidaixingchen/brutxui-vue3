@@ -174,6 +174,7 @@ export interface ErrorCardLocale {
     defaultTitle: string
     defaultDescription: string
     defaultRetryText: string
+    dismiss: string
 }
 
 export interface SuccessCardLocale {
@@ -218,6 +219,49 @@ export interface SettingsPageLocale {
     saveText: string
 }
 
+export interface UploadCardLocale {
+    defaultTitle: string
+    defaultDescription: string
+    browseText: string
+    dropText: string
+}
+
+export interface OverviewPageLocale {
+    defaultTitle: string
+    recentActivity: string
+}
+
+export interface BlogListPageLocale {
+    defaultTitle: string
+    searchPlaceholder: string
+    allCategories: string
+}
+
+export interface ActivityLogPageLocale {
+    defaultTitle: string
+    action: string
+    user: string
+    timestamp: string
+    details: string
+}
+
+export interface ProfilePageLocale {
+    defaultTitle: string
+    nameLabel: string
+    emailLabel: string
+    bioLabel: string
+    saveText: string
+}
+
+export interface ChartSectionLocale {
+    defaultTitle: string
+    defaultSubtitle: string
+}
+
+export interface GallerySectionLocale {
+    defaultTitle: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -256,4 +300,11 @@ export interface Locale {
     cookieConsent: CookieConsentLocale
     dataTableSection: DataTableSectionLocale
     settingsPage: SettingsPageLocale
+    uploadCard: UploadCardLocale
+    overviewPage: OverviewPageLocale
+    blogListPage: BlogListPageLocale
+    activityLogPage: ActivityLogPageLocale
+    profilePage: ProfilePageLocale
+    chartSection: ChartSectionLocale
+    gallerySection: GallerySectionLocale
 }

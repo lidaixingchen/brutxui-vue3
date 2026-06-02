@@ -148,6 +148,7 @@ export const en: Locale = {
         defaultTitle: 'Something went wrong',
         defaultDescription: 'The operation could not be completed. Please try again.',
         defaultRetryText: 'Retry',
+        dismiss: 'Dismiss',
     },
     successCard: {
         defaultTitle: 'Success',
@@ -183,5 +184,41 @@ export const en: Locale = {
     settingsPage: {
         defaultTitle: 'Settings',
         saveText: 'Save Changes',
+    },
+    uploadCard: {
+        defaultTitle: 'Upload Files',
+        defaultDescription: 'Drag and drop your files here',
+        browseText: 'Browse Files',
+        dropText: 'Drop files here',
+    },
+    overviewPage: {
+        defaultTitle: 'Overview',
+        recentActivity: 'Recent Activity',
+    },
+    blogListPage: {
+        defaultTitle: 'Blog',
+        searchPlaceholder: 'Search posts...',
+        allCategories: 'All',
+    },
+    activityLogPage: {
+        defaultTitle: 'Activity Log',
+        action: 'Action',
+        user: 'User',
+        timestamp: 'Timestamp',
+        details: 'Details',
+    },
+    profilePage: {
+        defaultTitle: 'Profile',
+        nameLabel: 'Name',
+        emailLabel: 'Email',
+        bioLabel: 'Bio',
+        saveText: 'Save',
+    },
+    chartSection: {
+        defaultTitle: 'Data Visualization',
+        defaultSubtitle: 'View data trends',
+    },
+    gallerySection: {
+        defaultTitle: 'Gallery',
     },
 }

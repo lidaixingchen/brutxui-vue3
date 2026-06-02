@@ -54,7 +54,7 @@ describe('ErrorCard', () => {
     it('emits dismiss when dismiss button is clicked', async () => {
         const wrapper = mount(ErrorCard, { ...localeProvide })
         const buttons = wrapper.findAll('button')
-        const dismissButton = buttons.find(b => b.text().includes('errorCard.dismiss'))
+        const dismissButton = buttons.find(b => b.text().includes('Dismiss'))
         expect(dismissButton).toBeTruthy()
         await dismissButton!.trigger('click')
         expect(wrapper.emitted('dismiss')).toBeTruthy()

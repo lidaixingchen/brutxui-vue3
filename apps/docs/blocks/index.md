@@ -30,6 +30,13 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [Cookie Consent](/blocks/cookie-consent) | 固定在页面底部的 Cookie 同意横幅 |
 | [Data Table Section](/blocks/data-table-section) | 带有搜索、排序和分页功能的数据表格区块 |
 | [Settings Page](/blocks/settings-page) | 带有标签页导航和表单控件的设置页面 |
+| [Blog List Page](/blocks/blog-list-page) | 带有搜索、分类筛选和分页的博客文章列表页面 |
+| [Activity Log Page](/blocks/activity-log-page) | 带有表格、类型徽标和分页的活动日志页面 |
+| [Profile Page](/blocks/profile-page) | 带有头像、表单编辑和保存操作的个人资料页面 |
+| [Chart Section](/blocks/chart-section) | 带有标签页切换的图表展示区块 |
+| [Gallery Section](/blocks/gallery-section) | 带有轮播图和图片卡片的画廊展示区块 |
+| [Upload Card](/blocks/upload-card) | 带有拖拽上传、进度条和旋转指示器的文件上传卡片 |
+| [Overview Page](/blocks/overview-page) | 带有统计卡片和活动面板的仪表盘概览页面 |
 
 ## 安装
 

@@ -148,6 +148,7 @@ export const zhCN: Locale = {
         defaultTitle: '发生错误',
         defaultDescription: '操作未能完成，请重试。',
         defaultRetryText: '重试',
+        dismiss: '关闭',
     },
     successCard: {
         defaultTitle: '操作成功',
@@ -183,5 +184,41 @@ export const zhCN: Locale = {
     settingsPage: {
         defaultTitle: '设置',
         saveText: '保存更改',
+    },
+    uploadCard: {
+        defaultTitle: '上传文件',
+        defaultDescription: '拖拽文件到此处',
+        browseText: '浏览文件',
+        dropText: '释放文件以上传',
+    },
+    overviewPage: {
+        defaultTitle: '概览',
+        recentActivity: '最近活动',
+    },
+    blogListPage: {
+        defaultTitle: '博客',
+        searchPlaceholder: '搜索文章...',
+        allCategories: '全部',
+    },
+    activityLogPage: {
+        defaultTitle: '活动日志',
+        action: '操作',
+        user: '用户',
+        timestamp: '时间',
+        details: '详情',
+    },
+    profilePage: {
+        defaultTitle: '个人资料',
+        nameLabel: '姓名',
+        emailLabel: '邮箱',
+        bioLabel: '简介',
+        saveText: '保存',
+    },
+    chartSection: {
+        defaultTitle: '数据可视化',
+        defaultSubtitle: '查看数据趋势',
+    },
+    gallerySection: {
+        defaultTitle: '画廊',
     },
 }

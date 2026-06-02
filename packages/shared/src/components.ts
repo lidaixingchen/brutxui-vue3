@@ -89,6 +89,13 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'cookie-consent': { name: 'cookie-consent', dependencies: ['lucide-vue-next'] },
     'data-table-section': { name: 'data-table-section', dependencies: ['lucide-vue-next'] },
     'settings-page': { name: 'settings-page', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'blog-list-page': { name: 'blog-list-page', dependencies: ['lucide-vue-next'] },
+    'activity-log-page': { name: 'activity-log-page', dependencies: ['lucide-vue-next'] },
+    'profile-page': { name: 'profile-page', dependencies: ['lucide-vue-next'] },
+    'chart-section': { name: 'chart-section', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'gallery-section': { name: 'gallery-section', dependencies: ['embla-carousel-vue', 'lucide-vue-next'] },
+    'upload-card': { name: 'upload-card', dependencies: ['lucide-vue-next'] },
+    'overview-page': { name: 'overview-page', dependencies: ['lucide-vue-next'] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);
