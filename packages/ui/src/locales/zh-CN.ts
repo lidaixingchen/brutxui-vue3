@@ -144,4 +144,44 @@ export const zhCN: Locale = {
         defaultTitle: '加载中',
         defaultDescription: '请稍候，内容正在加载...',
     },
+    errorCard: {
+        defaultTitle: '发生错误',
+        defaultDescription: '操作未能完成，请重试。',
+        defaultRetryText: '重试',
+    },
+    successCard: {
+        defaultTitle: '操作成功',
+        defaultDescription: '您的操作已成功完成。',
+        defaultConfirmText: '确认',
+    },
+    searchWidget: {
+        defaultPlaceholder: '搜索...',
+    },
+    feedbackForm: {
+        defaultTitle: '发送反馈',
+        defaultDescription: '我们很乐意听取您的意见',
+        defaultSubmitText: '提交反馈',
+        nameLabel: '姓名',
+        emailLabel: '邮箱',
+        subjectLabel: '主题',
+        messageLabel: '消息',
+    },
+    stepperSection: {
+        defaultTitle: '步骤',
+    },
+    cookieConsent: {
+        defaultTitle: '我们使用 Cookie',
+        defaultDescription: '本网站使用 Cookie 来提升您的浏览体验。',
+        defaultAcceptText: '接受',
+        defaultDeclineText: '拒绝',
+    },
+    dataTableSection: {
+        defaultTitle: '数据列表',
+        searchPlaceholder: '搜索...',
+        noResults: '未找到匹配结果',
+    },
+    settingsPage: {
+        defaultTitle: '设置',
+        saveText: '保存更改',
+    },
 }

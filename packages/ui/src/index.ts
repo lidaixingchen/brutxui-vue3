@@ -216,6 +216,26 @@ export { default as NotFoundPage } from './components/not-found-page/NotFoundPag
 
 export { default as LoadingPage } from './components/loading-page/LoadingPage.vue'
 
+export { default as ErrorCard } from './components/error-card/ErrorCard.vue'
+
+export { default as SuccessCard } from './components/success-card/SuccessCard.vue'
+
+export { default as SearchWidget } from './components/search-widget/SearchWidget.vue'
+export type { SearchSuggestion } from './components/search-widget/SearchWidget.vue'
+
+export { default as FeedbackForm } from './components/feedback-form/FeedbackForm.vue'
+
+export { default as StepperSection } from './components/stepper-section/StepperSection.vue'
+export type { StepperStepItem } from './components/stepper-section/StepperSection.vue'
+
+export { default as CookieConsent } from './components/cookie-consent/CookieConsent.vue'
+
+export { default as DataTableSection } from './components/data-table-section/DataTableSection.vue'
+export type { ColumnDef } from './components/data-table-section/DataTableSection.vue'
+
+export { default as SettingsPage } from './components/settings-page/SettingsPage.vue'
+export type { SettingsTab } from './components/settings-page/SettingsPage.vue'
+
 export { default as Accordion } from './components/accordion/Accordion.vue'
 export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
 export { default as AccordionTrigger } from './components/accordion/AccordionTrigger.vue'
@@ -297,7 +317,7 @@ export type { BrutxUIPluginOptions } from './plugin'
 export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, SettingsPageLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'

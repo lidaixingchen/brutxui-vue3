@@ -90,6 +90,14 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'footer-section': { files: ['FooterSection.vue'] },
     'not-found-page': { files: ['NotFoundPage.vue'] },
     'loading-page': { files: ['LoadingPage.vue'] },
+    'error-card': { files: ['ErrorCard.vue'] },
+    'success-card': { files: ['SuccessCard.vue'] },
+    'search-widget': { files: ['SearchWidget.vue'] },
+    'feedback-form': { files: ['FeedbackForm.vue'] },
+    'stepper-section': { files: ['StepperSection.vue'] },
+    'cookie-consent': { files: ['CookieConsent.vue'] },
+    'data-table-section': { files: ['DataTableSection.vue'] },
+    'settings-page': { files: ['SettingsPage.vue'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};

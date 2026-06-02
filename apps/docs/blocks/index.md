@@ -22,6 +22,14 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [File Card](/blocks/file-card) | 带有文件图标和下载按钮的文件信息卡片 |
 | [Quick Actions](/blocks/quick-actions) | 带有图标按钮网格的快捷操作面板 |
 | [Tabs Nav](/blocks/tabs-nav) | 带有标签触发器和内容面板的标签页导航 |
+| [Error Card](/blocks/error-card) | 带有警告提示和重试/关闭按钮的错误状态卡片 |
+| [Success Card](/blocks/success-card) | 带有勾选图标和确认按钮的成功状态卡片 |
+| [Search Widget](/blocks/search-widget) | 带有输入框和分组建议列表的搜索组件 |
+| [Feedback Form](/blocks/feedback-form) | 带有姓名、邮箱、主题和消息字段的反馈表单 |
+| [Stepper Section](/blocks/stepper-section) | 带有水平步骤条和前后导航按钮的步骤导航区块 |
+| [Cookie Consent](/blocks/cookie-consent) | 固定在页面底部的 Cookie 同意横幅 |
+| [Data Table Section](/blocks/data-table-section) | 带有搜索、排序和分页功能的数据表格区块 |
+| [Settings Page](/blocks/settings-page) | 带有标签页导航和表单控件的设置页面 |
 
 ## 安装
 

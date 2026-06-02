@@ -144,4 +144,44 @@ export const en: Locale = {
         defaultTitle: 'Loading',
         defaultDescription: 'Please wait while content is loading...',
     },
+    errorCard: {
+        defaultTitle: 'Something went wrong',
+        defaultDescription: 'The operation could not be completed. Please try again.',
+        defaultRetryText: 'Retry',
+    },
+    successCard: {
+        defaultTitle: 'Success',
+        defaultDescription: 'Your action has been completed successfully.',
+        defaultConfirmText: 'Confirm',
+    },
+    searchWidget: {
+        defaultPlaceholder: 'Search...',
+    },
+    feedbackForm: {
+        defaultTitle: 'Send Feedback',
+        defaultDescription: "We'd love to hear from you",
+        defaultSubmitText: 'Submit Feedback',
+        nameLabel: 'Name',
+        emailLabel: 'Email',
+        subjectLabel: 'Subject',
+        messageLabel: 'Message',
+    },
+    stepperSection: {
+        defaultTitle: 'Steps',
+    },
+    cookieConsent: {
+        defaultTitle: 'We use cookies',
+        defaultDescription: 'This website uses cookies to enhance your browsing experience.',
+        defaultAcceptText: 'Accept',
+        defaultDeclineText: 'Decline',
+    },
+    dataTableSection: {
+        defaultTitle: 'Data Table',
+        searchPlaceholder: 'Search...',
+        noResults: 'No matching results found',
+    },
+    settingsPage: {
+        defaultTitle: 'Settings',
+        saveText: 'Save Changes',
+    },
 }

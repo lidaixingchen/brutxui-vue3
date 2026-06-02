@@ -170,6 +170,54 @@ export interface LoadingPageLocale {
     defaultDescription: string
 }
 
+export interface ErrorCardLocale {
+    defaultTitle: string
+    defaultDescription: string
+    defaultRetryText: string
+}
+
+export interface SuccessCardLocale {
+    defaultTitle: string
+    defaultDescription: string
+    defaultConfirmText: string
+}
+
+export interface SearchWidgetLocale {
+    defaultPlaceholder: string
+}
+
+export interface FeedbackFormLocale {
+    defaultTitle: string
+    defaultDescription: string
+    defaultSubmitText: string
+    nameLabel: string
+    emailLabel: string
+    subjectLabel: string
+    messageLabel: string
+}
+
+export interface StepperSectionLocale {
+    defaultTitle: string
+}
+
+export interface CookieConsentLocale {
+    defaultTitle: string
+    defaultDescription: string
+    defaultAcceptText: string
+    defaultDeclineText: string
+}
+
+export interface DataTableSectionLocale {
+    defaultTitle: string
+    searchPlaceholder: string
+    noResults: string
+}
+
+export interface SettingsPageLocale {
+    defaultTitle: string
+    saveText: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -200,4 +248,12 @@ export interface Locale {
     footerSection: FooterSectionLocale
     notFoundPage: NotFoundPageLocale
     loadingPage: LoadingPageLocale
+    errorCard: ErrorCardLocale
+    successCard: SuccessCardLocale
+    searchWidget: SearchWidgetLocale
+    feedbackForm: FeedbackFormLocale
+    stepperSection: StepperSectionLocale
+    cookieConsent: CookieConsentLocale
+    dataTableSection: DataTableSectionLocale
+    settingsPage: SettingsPageLocale
 }
