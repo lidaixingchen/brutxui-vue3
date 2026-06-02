@@ -104,4 +104,44 @@ export const zhCN: Locale = {
         defaultTitle: '未找到活跃的部署',
         defaultActionText: '部署新应用',
     },
+    testimonialCard: {
+        defaultQuote: '这款产品彻底改变了我们的工作流程。',
+        defaultAuthor: '张明',
+        defaultRole: '产品经理',
+    },
+    blogCard: {
+        defaultTitle: 'BrutxUI 入门指南',
+        defaultExcerpt: '了解如何使用我们的组件库构建大胆的界面。',
+        readMore: '阅读更多',
+    },
+    fileCard: {
+        defaultFileName: '文档.pdf',
+        download: '下载',
+    },
+    quickActions: {
+        defaultTitle: '快捷操作',
+    },
+    faqSection: {
+        defaultTitle: '常见问题',
+        defaultSubtitle: '查找您需要的答案',
+    },
+    headerSection: {
+        defaultLogoText: 'BrutxUI',
+        defaultCtaText: '开始使用',
+        menuLabel: '菜单',
+    },
+    footerSection: {
+        defaultLogoText: 'BrutxUI',
+        defaultDescription: '面向 Vue 3 的新粗野主义 UI 组件库',
+        defaultCopyright: '© 2026 BrutxUI. 保留所有权利。',
+    },
+    notFoundPage: {
+        defaultTitle: '页面未找到',
+        defaultDescription: '您访问的页面不存在或已被移除。',
+        defaultBackText: '返回首页',
+    },
+    loadingPage: {
+        defaultTitle: '加载中',
+        defaultDescription: '请稍候，内容正在加载...',
+    },
 }

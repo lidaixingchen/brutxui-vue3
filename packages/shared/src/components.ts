@@ -71,6 +71,16 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'scratch-card': { name: 'scratch-card', dependencies: [] },
     'sketchy-chart': { name: 'sketchy-chart', dependencies: [] },
     'hardcore-input': { name: 'hardcore-input', dependencies: [] },
+    'testimonial-card': { name: 'testimonial-card', dependencies: ['lucide-vue-next'] },
+    'blog-card': { name: 'blog-card', dependencies: ['lucide-vue-next'] },
+    'file-card': { name: 'file-card', dependencies: ['lucide-vue-next'] },
+    'quick-actions': { name: 'quick-actions', dependencies: ['lucide-vue-next'] },
+    'faq-section': { name: 'faq-section', dependencies: ['lucide-vue-next'] },
+    'tabs-nav': { name: 'tabs-nav', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'header-section': { name: 'header-section', dependencies: ['reka-ui', 'lucide-vue-next'] },
+    'footer-section': { name: 'footer-section', dependencies: ['lucide-vue-next'] },
+    'not-found-page': { name: 'not-found-page', dependencies: ['lucide-vue-next'] },
+    'loading-page': { name: 'loading-page', dependencies: ['lucide-vue-next'] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

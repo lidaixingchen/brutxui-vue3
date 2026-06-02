@@ -14,7 +14,7 @@
     },
     {
       "path": "components/ui/card-3d/card-3d-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const card3dVariants = cva(\n    [\n        'relative',\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'bg-brutal-bg text-brutal-fg',\n        'transition-transform duration-200 ease-out',\n    ],\n    {\n        variants: {\n            shadow: {\n                default: '',\n                lg: '',\n                xl: '',\n            },\n        },\n        defaultVariants: {\n            shadow: 'default',\n        },\n    }\n)\n\nexport const card3dShadowVariants = cva(\n    [\n        'absolute inset-0',\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'bg-brutal-fg',\n        'transition-transform duration-200 ease-out',\n        '-z-10',\n    ]\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\n\nexport const card3dVariants = cva(\n    [\n        'relative',\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'bg-brutal-bg text-brutal-fg',\n        'transition-transform duration-200 ease-out',\n    ],\n    {\n        variants: {\n            shadow: {\n                default: 'shadow-brutal',\n                lg: 'shadow-brutal-lg',\n                xl: 'shadow-brutal-xl',\n            },\n        },\n        defaultVariants: {\n            shadow: 'default',\n        },\n    }\n)\n\nexport const card3dShadowVariants = cva(\n    [\n        'absolute inset-0',\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'bg-brutal-fg',\n        'transition-transform duration-200 ease-out',\n        '-z-10',\n    ]\n)\n",
       "type": "registry:ui"
     },
     {

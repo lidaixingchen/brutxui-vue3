@@ -104,4 +104,44 @@ export const en: Locale = {
         defaultTitle: 'No active deployments found',
         defaultActionText: 'Deploy New App',
     },
+    testimonialCard: {
+        defaultQuote: 'This product has completely transformed our workflow.',
+        defaultAuthor: 'Alex Johnson',
+        defaultRole: 'Product Manager',
+    },
+    blogCard: {
+        defaultTitle: 'Getting Started with BrutxUI',
+        defaultExcerpt: 'Learn how to build bold interfaces with our component library.',
+        readMore: 'Read more',
+    },
+    fileCard: {
+        defaultFileName: 'document.pdf',
+        download: 'Download',
+    },
+    quickActions: {
+        defaultTitle: 'Quick Actions',
+    },
+    faqSection: {
+        defaultTitle: 'Frequently Asked Questions',
+        defaultSubtitle: 'Find the answers you need',
+    },
+    headerSection: {
+        defaultLogoText: 'BrutxUI',
+        defaultCtaText: 'Get Started',
+        menuLabel: 'Menu',
+    },
+    footerSection: {
+        defaultLogoText: 'BrutxUI',
+        defaultDescription: 'Neo-Brutalist UI component library for Vue 3',
+        defaultCopyright: '© 2026 BrutxUI. All rights reserved.',
+    },
+    notFoundPage: {
+        defaultTitle: 'Page Not Found',
+        defaultDescription: 'The page you are looking for does not exist or has been removed.',
+        defaultBackText: 'Go Back Home',
+    },
+    loadingPage: {
+        defaultTitle: 'Loading',
+        defaultDescription: 'Please wait while content is loading...',
+    },
 }

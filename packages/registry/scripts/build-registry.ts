@@ -80,6 +80,16 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'scratch-card': { files: ['ScratchCard.vue', 'scratch-card-variants.ts'], composables: ['useReducedMotion.ts'] },
     'sketchy-chart': { files: ['SketchyChart.vue', 'sketchy-chart-variants.ts'] },
     'hardcore-input': { files: ['HardcoreInput.vue', 'hardcore-input-variants.ts'], composables: ['useAudioEngine.ts'] },
+    'testimonial-card': { files: ['TestimonialCard.vue'] },
+    'blog-card': { files: ['BlogCard.vue'] },
+    'file-card': { files: ['FileCard.vue'] },
+    'quick-actions': { files: ['QuickActions.vue'] },
+    'faq-section': { files: ['FaqSection.vue'] },
+    'tabs-nav': { files: ['TabsNav.vue'] },
+    'header-section': { files: ['HeaderSection.vue'] },
+    'footer-section': { files: ['FooterSection.vue'] },
+    'not-found-page': { files: ['NotFoundPage.vue'] },
+    'loading-page': { files: ['LoadingPage.vue'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};

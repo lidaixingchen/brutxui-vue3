@@ -12,6 +12,16 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [Dashboard Shell](/blocks/dashboard-shell) | 带有侧边栏和顶栏的完整仪表盘布局 |
 | [Empty State](/blocks/empty-state) | 带有图标和操作按钮的空状态占位符 |
 | [Waitlist Page](/blocks/waitlist-page) | 带有邮箱输入和社交证明的候补注册页面 |
+| [Not Found Page](/blocks/not-found-page) | 带有故障文本效果的 404 错误页面 |
+| [Loading Page](/blocks/loading-page) | 带有旋转指示器和可选进度条的全页加载状态 |
+| [Header Section](/blocks/header-section) | 带有导航链接和移动端菜单的顶部导航栏 |
+| [Footer Section](/blocks/footer-section) | 带有链接组和版权声明的底部信息栏 |
+| [FAQ Section](/blocks/faq-section) | 带有编号徽标的手风琴常见问题区块 |
+| [Testimonial Card](/blocks/testimonial-card) | 带有头像和验证徽标的用户评价卡片 |
+| [Blog Card](/blocks/blog-card) | 带有分类徽标和阅读更多的博客文章预览卡片 |
+| [File Card](/blocks/file-card) | 带有文件图标和下载按钮的文件信息卡片 |
+| [Quick Actions](/blocks/quick-actions) | 带有图标按钮网格的快捷操作面板 |
+| [Tabs Nav](/blocks/tabs-nav) | 带有标签触发器和内容面板的标签页导航 |
 
 ## 安装
 

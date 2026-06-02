@@ -191,6 +191,31 @@ export type { BrutalistPricingPlan } from './components/pricing-section/PricingS
 
 export { default as WaitlistPage } from './components/waitlist-page/WaitlistPage.vue'
 
+export { default as TestimonialCard } from './components/testimonial-card/TestimonialCard.vue'
+
+export { default as BlogCard } from './components/blog-card/BlogCard.vue'
+
+export { default as FileCard } from './components/file-card/FileCard.vue'
+
+export { default as QuickActions } from './components/quick-actions/QuickActions.vue'
+export type { ActionItem } from './components/quick-actions/QuickActions.vue'
+
+export { default as FaqSection } from './components/faq-section/FaqSection.vue'
+export type { FaqItem } from './components/faq-section/FaqSection.vue'
+
+export { default as TabsNav } from './components/tabs-nav/TabsNav.vue'
+export type { TabItem } from './components/tabs-nav/TabsNav.vue'
+
+export { default as HeaderSection } from './components/header-section/HeaderSection.vue'
+export type { NavItem } from './components/header-section/HeaderSection.vue'
+
+export { default as FooterSection } from './components/footer-section/FooterSection.vue'
+export type { FooterLinkGroup, FooterLink } from './components/footer-section/FooterSection.vue'
+
+export { default as NotFoundPage } from './components/not-found-page/NotFoundPage.vue'
+
+export { default as LoadingPage } from './components/loading-page/LoadingPage.vue'
+
 export { default as Accordion } from './components/accordion/Accordion.vue'
 export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
 export { default as AccordionTrigger } from './components/accordion/AccordionTrigger.vue'
@@ -272,7 +297,7 @@ export type { BrutxUIPluginOptions } from './plugin'
 export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'

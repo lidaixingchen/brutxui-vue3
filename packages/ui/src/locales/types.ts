@@ -121,6 +121,55 @@ export interface EmptyStateLocale {
     defaultActionText: string
 }
 
+export interface TestimonialCardLocale {
+    defaultQuote: string
+    defaultAuthor: string
+    defaultRole: string
+}
+
+export interface BlogCardLocale {
+    defaultTitle: string
+    defaultExcerpt: string
+    readMore: string
+}
+
+export interface FileCardLocale {
+    defaultFileName: string
+    download: string
+}
+
+export interface QuickActionsLocale {
+    defaultTitle: string
+}
+
+export interface FaqSectionLocale {
+    defaultTitle: string
+    defaultSubtitle: string
+}
+
+export interface HeaderSectionLocale {
+    defaultLogoText: string
+    defaultCtaText: string
+    menuLabel: string
+}
+
+export interface FooterSectionLocale {
+    defaultLogoText: string
+    defaultDescription: string
+    defaultCopyright: string
+}
+
+export interface NotFoundPageLocale {
+    defaultTitle: string
+    defaultDescription: string
+    defaultBackText: string
+}
+
+export interface LoadingPageLocale {
+    defaultTitle: string
+    defaultDescription: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -142,4 +191,13 @@ export interface Locale {
     treeView: TreeViewLocale
     stepper: StepperLocale
     emptyState: EmptyStateLocale
+    testimonialCard: TestimonialCardLocale
+    blogCard: BlogCardLocale
+    fileCard: FileCardLocale
+    quickActions: QuickActionsLocale
+    faqSection: FaqSectionLocale
+    headerSection: HeaderSectionLocale
+    footerSection: FooterSectionLocale
+    notFoundPage: NotFoundPageLocale
+    loadingPage: LoadingPageLocale
 }
