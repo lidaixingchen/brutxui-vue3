@@ -2,6 +2,7 @@ import { cva } from 'class-variance-authority'
 
 export const glitchTextVariants = cva(
     [
+        'glitch-text',
         'relative inline-block',
         'font-black tracking-wide',
         'text-brutal-fg',
