@@ -1,0 +1,110 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scratch-card",
+  "type": "registry:ui",
+  "title": "Scratch Card",
+  "description": "A highly customizable neo-brutalist Scratch Card component built with Brutx design tokens for Vue 3.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/scratch-card/ScratchCard.vue",
+      "content": "<script setup lang=\"ts\">\nimport { ref, computed, onMounted, onUnmounted } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { useReducedMotion } from '@/composables/useReducedMotion'\nimport { scratchCardVariants } from '@/components/ui/scratch-card/scratch-card-variants'\n\ninterface ScratchCardProps {\n    percentage?: number\n    brushRadius?: number\n    overlayColor?: string\n    fadeDuration?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<ScratchCardProps>(), {\n    percentage: 50,\n    brushRadius: 20,\n    overlayColor: undefined,\n    fadeDuration: 300,\n    class: '',\n})\n\nconst emit = defineEmits<{\n    progress: [percent: number]\n    completed: []\n}>()\n\nconst containerRef = ref<HTMLDivElement | null>(null)\nconst canvasRef = ref<HTMLCanvasElement | null>(null)\nconst ctx = ref<CanvasRenderingContext2D | null>(null)\nconst isRevealed = ref(false)\nconst prefersReducedMotion = useReducedMotion()\n\nlet isScratching = false\nlet resizeObserver: ResizeObserver | null = null\nlet drawFrameCount = 0\n\n// 绘制遮罩层\nconst drawOverlay = () => {\n    const canvasVal = canvasRef.value\n    const ctxVal = ctx.value\n    if (!canvasVal || !ctxVal) return\n\n    const dpr = window.devicePixelRatio || 1\n    const w = canvasVal.width / dpr\n    const h = canvasVal.height / dpr\n\n    ctxVal.clearRect(0, 0, w, h)\n\n    if (props.overlayColor) {\n        ctxVal.fillStyle = props.overlayColor\n        ctxVal.fillRect(0, 0, w, h)\n    } else {\n        // 读取 Neobrutalist 的全局颜色设计令牌\n        let primary = '#FF6B6B'\n        let secondary = '#4ECDC4'\n        let fg = '#000000'\n        if (typeof document !== 'undefined') {\n            const rootStyle = getComputedStyle(document.documentElement)\n            primary = rootStyle.getPropertyValue('--brutal-primary').trim() || primary\n            secondary = rootStyle.getPropertyValue('--brutal-secondary').trim() || secondary\n            fg = rootStyle.getPropertyValue('--brutal-fg').trim() || fg\n        }\n\n        // 背景\n        ctxVal.fillStyle = secondary\n        ctxVal.fillRect(0, 0, w, h)\n\n        // 45 度交替条纹\n        ctxVal.strokeStyle = primary\n        ctxVal.lineWidth = 10\n        const spacing = 20\n        for (let i = -h; i < w + h; i += spacing) {\n            ctxVal.beginPath()\n            ctxVal.moveTo(i, 0)\n            ctxVal.lineTo(i + h, h)\n            ctxVal.stroke()\n        }\n\n        // 条纹之间的黑色分隔描边\n        ctxVal.strokeStyle = fg\n        ctxVal.lineWidth = 2\n        for (let i = -h; i < w + h; i += spacing) {\n            ctxVal.beginPath()\n            ctxVal.moveTo(i + 5, 0)\n            ctxVal.lineTo(i + 5 + h, h)\n            ctxVal.stroke()\n        }\n    }\n}\n\n// 同步尺寸并支持 Retina 高清屏\nconst syncCanvasSize = () => {\n    const container = containerRef.value\n    const canvas = canvasRef.value\n    if (!container || !canvas) return\n\n    const rect = container.getBoundingClientRect()\n    const dpr = window.devicePixelRatio || 1\n\n    canvas.width = rect.width * dpr\n    canvas.height = rect.height * dpr\n    canvas.style.width = `${rect.width}px`\n    canvas.style.height = `${rect.height}px`\n\n    ctx.value = canvas.getContext('2d')\n    if (ctx.value) {\n        ctx.value.scale(dpr, dpr)\n        drawOverlay()\n    }\n}\n\n// 统计擦除进度\nlet lastProgressTime = 0\nconst SAMPLE_GRID_SIZE = 8 // 降采样网格大小\n\nconst calculateProgress = () => {\n    const canvas = canvasRef.value\n    const ctxVal = ctx.value\n    if (!canvas || !ctxVal) return 0\n\n    const w = canvas.width\n    const h = canvas.height\n    const imageData = ctxVal.getImageData(0, 0, w, h)\n    const pixels = imageData.data\n\n    let totalSampled = 0\n    let cleared = 0\n\n    // 采用网格降采样进行像素统计，保证流畅度\n    for (let y = 0; y < h; y += SAMPLE_GRID_SIZE) {\n        for (let x = 0; x < w; x += SAMPLE_GRID_SIZE) {\n            const idx = (y * w + x) * 4 + 3 // alpha 通道\n            totalSampled++\n            if (pixels[idx] === 0) {\n                cleared++\n            }\n        }\n    }\n\n    const percent = Math.round((cleared / totalSampled) * 100)\n    return percent\n}\n\nconst checkProgress = () => {\n    const percent = calculateProgress()\n    emit('progress', percent)\n\n    if (percent >= props.percentage) {\n        revealAll()\n    }\n}\n\n// 刮除操作\nconst scratch = (clientX: number, clientY: number) => {\n    const canvas = canvasRef.value\n    const ctxVal = ctx.value\n    if (!canvas || !ctxVal || isRevealed.value) return\n\n    const rect = canvas.getBoundingClientRect()\n    const x = clientX - rect.left\n    const y = clientY - rect.top\n\n    ctxVal.save()\n    ctxVal.globalCompositeOperation = 'destination-out'\n    ctxVal.beginPath()\n    ctxVal.arc(x, y, props.brushRadius, 0, Math.PI * 2)\n    ctxVal.fill()\n    ctxVal.restore()\n\n    drawFrameCount++\n    if (drawFrameCount % 10 === 0) {\n        const now = Date.now()\n        if (now - lastProgressTime > 150) {\n            checkProgress()\n            lastProgressTime = now\n        }\n    }\n}\n\n// 彻底刮开/揭晓全部\nconst revealAll = () => {\n    if (isRevealed.value) return\n    isRevealed.value = true\n\n    const duration = prefersReducedMotion.value ? 0 : props.fadeDuration\n    setTimeout(() => {\n        const canvas = canvasRef.value\n        if (canvas) {\n            canvas.remove()\n        }\n        emit('completed')\n    }, duration)\n}\n\n// 指针和触摸事件处理\nconst handlePointerDown = (e: PointerEvent) => {\n    isScratching = true\n    scratch(e.clientX, e.clientY)\n}\n\nconst handlePointerMove = (e: PointerEvent) => {\n    if (!isScratching) return\n    scratch(e.clientX, e.clientY)\n}\n\nconst handlePointerUp = () => {\n    if (isScratching) {\n        isScratching = false\n        checkProgress() // 释放时强制再统计一次\n    }\n}\n\nconst handleTouchStart = (e: TouchEvent) => {\n    isScratching = true\n    if (e.touches[0]) {\n        scratch(e.touches[0].clientX, e.touches[0].clientY)\n    }\n}\n\nconst handleTouchMove = (e: TouchEvent) => {\n    if (!isScratching) return\n    if (e.touches[0]) {\n        scratch(e.touches[0].clientX, e.touches[0].clientY)\n    }\n}\n\nconst handleTouchEnd = () => {\n    if (isScratching) {\n        isScratching = false\n        checkProgress()\n    }\n}\n\nonMounted(() => {\n    syncCanvasSize()\n    if (containerRef.value) {\n        resizeObserver = new ResizeObserver(syncCanvasSize)\n        resizeObserver.observe(containerRef.value)\n    }\n})\n\nonUnmounted(() => {\n    if (resizeObserver) {\n        resizeObserver.disconnect()\n    }\n})\n\ndefineExpose({\n    isRevealed,\n    revealAll,\n})\n\nconst containerClasses = computed(() =>\n    cn(scratchCardVariants(), props.class)\n)\n\nconst canvasStyle = computed(() => ({\n    transition: `opacity ${props.fadeDuration}ms ease-out`,\n    opacity: isRevealed.value ? 0 : 1,\n}))\n</script>\n\n<template>\n    <div\n        ref=\"containerRef\"\n        :class=\"containerClasses\"\n        role=\"region\"\n        aria-label=\"刮刮卡\"\n        tabindex=\"0\"\n        @keydown.enter=\"revealAll\"\n        @keydown.space.prevent=\"revealAll\"\n    >\n        <!-- 底稿内容插槽 -->\n        <div class=\"scratch-card-content w-full h-full\">\n            <slot />\n        </div>\n        <!-- 覆盖层 Canvas -->\n        <canvas\n            v-if=\"!isRevealed || !prefersReducedMotion\"\n            ref=\"canvasRef\"\n            class=\"absolute inset-0 cursor-crosshair touch-none select-none z-10\"\n            :style=\"canvasStyle\"\n            @pointerdown=\"handlePointerDown\"\n            @pointermove=\"handlePointerMove\"\n            @pointerup=\"handlePointerUp\"\n            @pointercancel=\"handlePointerUp\"\n            @touchstart.passive=\"handleTouchStart\"\n            @touchmove.passive=\"handleTouchMove\"\n            @touchend=\"handleTouchEnd\"\n        />\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/scratch-card/scratch-card-variants.ts",
+      "content": "import { cva } from 'class-variance-authority'\n\nexport const scratchCardVariants = cva(\n    [\n        'relative',\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'overflow-hidden',\n        'bg-brutal-bg',\n    ]\n)\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "composables/useReducedMotion.ts",
+      "content": "import { onMounted, onUnmounted, ref } from 'vue'\n\nexport function useReducedMotion() {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (typeof window !== 'undefined') {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg, #ffffff)",
+            "brutal-fg": "var(--brutal-fg, #000000)",
+            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
+            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
+            "brutal-accent": "var(--brutal-accent, #FFE66D)",
+            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
+            "brutal-success": "var(--brutal-success, #7FB069)",
+            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
+            "brutal-ring": "var(--brutal-ring, #000000)",
+            "brutal-info": "var(--brutal-info, #4A90D9)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
+            "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
+            "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  }
+}

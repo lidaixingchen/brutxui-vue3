@@ -273,3 +273,24 @@ export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
 export { zhCN, en, mergeLocale } from './locales'
 export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale } from './locales/types'
+
+// 新增新粗野主义交互与数据可视化组件导出
+export { default as Card3D } from './components/card-3d/Card3D.vue'
+export { card3dVariants, card3dShadowVariants } from './components/card-3d/card-3d-variants'
+
+export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
+export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'
+
+export { default as ScratchCard } from './components/scratch-card/ScratchCard.vue'
+export { scratchCardVariants } from './components/scratch-card/scratch-card-variants'
+
+export { default as SketchyChart } from './components/sketchy-chart/SketchyChart.vue'
+export { sketchyChartVariants } from './components/sketchy-chart/sketchy-chart-variants'
+
+export { default as HardcoreInput } from './components/hardcore-input/HardcoreInput.vue'
+export { hardcoreInputVariants, hardcoreInputFaceVariants } from './components/hardcore-input/hardcore-input-variants'
+
+export { useReducedMotion } from './composables/useReducedMotion'
+export { useAudioEngine } from './composables/useAudioEngine'
+export { useCanvasInteraction } from './composables/useCanvasInteraction'
+

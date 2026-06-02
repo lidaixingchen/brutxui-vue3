@@ -66,6 +66,11 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     kbd: { name: 'kbd', dependencies: [] },
     counter: { name: 'counter', dependencies: [] },
     stepper: { name: 'stepper', dependencies: ['lucide-vue-next'] },
+    'card-3d': { name: 'card-3d', dependencies: [] },
+    'glitch-text': { name: 'glitch-text', dependencies: [] },
+    'scratch-card': { name: 'scratch-card', dependencies: [] },
+    'sketchy-chart': { name: 'sketchy-chart', dependencies: [] },
+    'hardcore-input': { name: 'hardcore-input', dependencies: [] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

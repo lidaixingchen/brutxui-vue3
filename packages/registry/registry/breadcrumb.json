@@ -12,7 +12,7 @@
   "files": [
     {
       "path": "components/ui/breadcrumb/Breadcrumb.vue",
-      "content": "<script setup lang=\"ts\">\ninterface BreadcrumbProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbProps>(), {\n    class: '',\n})\n</script>\n\n<template>\n    <nav aria-label=\"breadcrumb\" :class=\"props.class\">\n        <slot />\n    </nav>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { useLocale } from '@/composables/useLocale'\n\ninterface BreadcrumbProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbProps>(), {\n    class: '',\n})\n\nconst { t } = useLocale()\n</script>\n\n<template>\n    <nav :aria-label=\"t('breadcrumb.label')\" :class=\"props.class\">\n        <slot />\n    </nav>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "path": "components/ui/breadcrumb/BreadcrumbEllipsis.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { MoreHorizontal } from 'lucide-vue-next'\nimport { cn } from '@/lib/utils'\nimport { breadcrumbEllipsisVariants } from './breadcrumb-variants'\n\ninterface BreadcrumbEllipsisProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {\n    class: '',\n})\n\nconst classes = computed(() =>\n    cn(breadcrumbEllipsisVariants(), props.class)\n)\n</script>\n\n<template>\n    <span\n        role=\"presentation\"\n        aria-hidden=\"true\"\n        :class=\"classes\"\n    >\n        <slot>\n            <MoreHorizontal class=\"h-4 w-4 stroke-[3]\" />\n        </slot>\n        <span class=\"sr-only\">More</span>\n    </span>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { MoreHorizontal } from 'lucide-vue-next'\nimport { cn } from '@/lib/utils'\nimport { breadcrumbEllipsisVariants } from './breadcrumb-variants'\nimport { useLocale } from '@/composables/useLocale'\n\ninterface BreadcrumbEllipsisProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {\n    class: '',\n})\n\nconst { t } = useLocale()\n\nconst classes = computed(() =>\n    cn(breadcrumbEllipsisVariants(), props.class)\n)\n</script>\n\n<template>\n    <span\n        role=\"presentation\"\n        aria-hidden=\"true\"\n        :class=\"classes\"\n    >\n        <slot>\n            <MoreHorizontal class=\"h-4 w-4 stroke-[3]\" />\n        </slot>\n        <span class=\"sr-only\">{{ t('breadcrumb.more') }}</span>\n    </span>\n</template>\n",
       "type": "registry:ui"
     }
   ],

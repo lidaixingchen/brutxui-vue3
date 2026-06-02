@@ -75,6 +75,11 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     kbd: { files: ['Kbd.vue', 'kbd-variants.ts'] },
     counter: { files: ['Counter.vue', 'counter-variants.ts'] },
     stepper: { files: ['Stepper.vue', 'stepper-variants.ts'] },
+    'card-3d': { files: ['Card3D.vue', 'card-3d-variants.ts'], composables: ['useReducedMotion.ts'] },
+    'glitch-text': { files: ['GlitchText.vue', 'glitch-text-variants.ts'], composables: ['useReducedMotion.ts'] },
+    'scratch-card': { files: ['ScratchCard.vue', 'scratch-card-variants.ts'], composables: ['useReducedMotion.ts'] },
+    'sketchy-chart': { files: ['SketchyChart.vue', 'sketchy-chart-variants.ts'] },
+    'hardcore-input': { files: ['HardcoreInput.vue', 'hardcore-input-variants.ts'], composables: ['useAudioEngine.ts'] },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};
