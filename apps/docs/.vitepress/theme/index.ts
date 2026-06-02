@@ -59,6 +59,11 @@ import ChatBubbleDemo from './components/demos/ChatBubbleDemo.vue'
 import KbdDemo from './components/demos/KbdDemo.vue'
 import CounterDemo from './components/demos/CounterDemo.vue'
 import StepperDemo from './components/demos/StepperDemo.vue'
+import Card3DDemo from './components/demos/Card3DDemo.vue'
+import GlitchTextDemo from './components/demos/GlitchTextDemo.vue'
+import ScratchCardDemo from './components/demos/ScratchCardDemo.vue'
+import SketchyChartDemo from './components/demos/SketchyChartDemo.vue'
+import HardcoreInputDemo from './components/demos/HardcoreInputDemo.vue'
 import './style.css'
 
 export default {
@@ -123,5 +128,10 @@ export default {
         app.component('KbdDemo', KbdDemo)
         app.component('CounterDemo', CounterDemo)
         app.component('StepperDemo', StepperDemo)
+        app.component('Card3DDemo', Card3DDemo)
+        app.component('GlitchTextDemo', GlitchTextDemo)
+        app.component('ScratchCardDemo', ScratchCardDemo)
+        app.component('SketchyChartDemo', SketchyChartDemo)
+        app.component('HardcoreInputDemo', HardcoreInputDemo)
     },
 } satisfies Theme
