@@ -32,13 +32,14 @@ const props = withDefaults(defineProps<OverviewPageProps>(), {
 const { t } = useLocale()
 
 const emit = defineEmits<{
-    statClick: [index: number]
+    'stat-click': [index: number]
 }>()
 
 const rootClasses = computed(() => cn('w-full max-w-6xl mx-auto p-6', props.class))
 
 const resolvedTitle = computed(() => props.title ?? t('overviewPage.defaultTitle'))
 const resolvedRecentActivity = computed(() => t('overviewPage.recentActivity'))
+const resolvedQuickStats = computed(() => t('overviewPage.quickStats'))
 
 const dashboardStats = computed<StatItem[]>(() =>
     props.stats.map((stat) => ({
@@ -58,7 +59,7 @@ function handleStatsClick(event: MouseEvent) {
     const cards = Array.from(grid.children)
     for (let i = 0; i < cards.length; i++) {
         if (cards[i].contains(target)) {
-            emit('statClick', i)
+            emit('stat-click', i)
             return
         }
     }
@@ -88,7 +89,7 @@ function handleStatsClick(event: MouseEvent) {
             </Card>
             <Card variant="default">
                 <CardHeader>
-                    <CardTitle>Quick Stats</CardTitle>
+                    <CardTitle>{{ resolvedQuickStats }}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div class="space-y-3">
@@ -96,7 +97,7 @@ function handleStatsClick(event: MouseEvent) {
                             v-for="(stat, index) in stats"
                             :key="stat.title"
                             class="flex items-center justify-between p-3 bg-brutal-muted border-3 border-brutal shadow-brutal-sm cursor-pointer hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none transition-all"
-                            @click="emit('statClick', index)"
+                            @click="emit('stat-click', index)"
                         >
                             <span class="font-bold text-sm">{{ stat.title }}</span>
                             <span class="font-black">{{ stat.value }}</span>

@@ -42,6 +42,9 @@ const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('settingsPage.defaultTitle'))
 const resolvedSaveText = computed(() => t('settingsPage.saveText'))
+const resolvedNameLabel = computed(() => t('settingsPage.nameLabel'))
+const resolvedNamePlaceholder = computed(() => t('settingsPage.namePlaceholder'))
+const resolvedNotificationsLabel = computed(() => t('settingsPage.notificationsLabel'))
 
 const activeTab = ref(props.defaultTab ?? (props.tabs.length > 0 ? props.tabs[0].value : ''))
 
@@ -107,18 +110,18 @@ const rootClasses = computed(() =>
                                     <slot :name="`tab-${tab.value}`" :values="getTabValues(tab.value)" :set-value="(key: string, val: unknown) => setTabValue(tab.value, key, val)">
                                         <div class="space-y-4">
                                             <div class="flex items-center justify-between">
-                                                <label class="font-bold text-sm" :for="`setting-${tab.value}-name`">Name</label>
+                                                <label class="font-bold text-sm" :for="`setting-${tab.value}-name`">{{ resolvedNameLabel }}</label>
                                                 <Input
                                                     :id="`setting-${tab.value}-name`"
                                                     :model-value="String(getTabValues(tab.value).name ?? '')"
-                                                    placeholder="Enter name"
+                                                    :placeholder="resolvedNamePlaceholder"
                                                     class="max-w-xs"
                                                     @update:model-value="setTabValue(tab.value, 'name', $event)"
                                                 />
                                             </div>
                                             <Separator />
                                             <div class="flex items-center justify-between">
-                                                <label class="font-bold text-sm" :for="`setting-${tab.value}-notifications`">Notifications</label>
+                                                <label class="font-bold text-sm" :for="`setting-${tab.value}-notifications`">{{ resolvedNotificationsLabel }}</label>
                                                 <Switch
                                                     :model-value="Boolean(getTabValues(tab.value).notifications ?? false)"
                                                     @update:model-value="setTabValue(tab.value, 'notifications', $event)"

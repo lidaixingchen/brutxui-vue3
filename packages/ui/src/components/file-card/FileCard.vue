@@ -59,6 +59,7 @@ const resolvedDownload = computed(() => t('fileCard.download'))
                 <Download class="mr-2 h-4 w-4 stroke-[3]" />
                 {{ resolvedDownload }}
             </Button>
+            <slot name="actions" />
         </CardContent>
     </Card>
 </template>

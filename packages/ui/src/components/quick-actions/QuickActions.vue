@@ -35,13 +35,14 @@ const emit = defineEmits<{
 const rootClasses = computed(() => cn('w-full max-w-md', props.class))
 
 const resolvedTitle = computed(() => props.title ?? t('quickActions.defaultTitle'))
+const resolvedBadge = computed(() => t('quickActions.badge'))
 </script>
 
 <template>
     <Card :class="rootClasses" variant="default">
         <CardHeader>
             <div class="flex items-center gap-2">
-                <Badge variant="accent" size="sm">Quick</Badge>
+                <Badge variant="accent" size="sm">{{ resolvedBadge }}</Badge>
                 <h3 class="text-lg font-black tracking-tight">
 {{ resolvedTitle }}
 </h3>
@@ -60,6 +61,7 @@ const resolvedTitle = computed(() => props.title ?? t('quickActions.defaultTitle
                     <span class="text-xs font-bold">{{ action.label }}</span>
                 </Button>
             </div>
+            <slot name="actions" />
         </CardContent>
     </Card>
 </template>

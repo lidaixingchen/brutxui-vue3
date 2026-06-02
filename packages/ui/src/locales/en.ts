@@ -108,6 +108,7 @@ export const en: Locale = {
         defaultQuote: 'This product has completely transformed our workflow.',
         defaultAuthor: 'Alex Johnson',
         defaultRole: 'Product Manager',
+        verified: 'Verified',
     },
     blogCard: {
         defaultTitle: 'Getting Started with BrutxUI',
@@ -120,6 +121,7 @@ export const en: Locale = {
     },
     quickActions: {
         defaultTitle: 'Quick Actions',
+        badge: 'Quick',
     },
     faqSection: {
         defaultTitle: 'Frequently Asked Questions',
@@ -169,6 +171,8 @@ export const en: Locale = {
     },
     stepperSection: {
         defaultTitle: 'Steps',
+        previous: 'Previous',
+        next: 'Next',
     },
     cookieConsent: {
         defaultTitle: 'We use cookies',
@@ -184,6 +188,9 @@ export const en: Locale = {
     settingsPage: {
         defaultTitle: 'Settings',
         saveText: 'Save Changes',
+        nameLabel: 'Name',
+        namePlaceholder: 'Enter name',
+        notificationsLabel: 'Notifications',
     },
     uploadCard: {
         defaultTitle: 'Upload Files',
@@ -194,11 +201,13 @@ export const en: Locale = {
     overviewPage: {
         defaultTitle: 'Overview',
         recentActivity: 'Recent Activity',
+        quickStats: 'Quick Stats',
     },
     blogListPage: {
         defaultTitle: 'Blog',
         searchPlaceholder: 'Search posts...',
         allCategories: 'All',
+        noPostsFound: 'No posts found',
     },
     activityLogPage: {
         defaultTitle: 'Activity Log',
@@ -206,6 +215,7 @@ export const en: Locale = {
         user: 'User',
         timestamp: 'Timestamp',
         details: 'Details',
+        noActivityFound: 'No activity found',
     },
     profilePage: {
         defaultTitle: 'Profile',
@@ -217,8 +227,12 @@ export const en: Locale = {
     chartSection: {
         defaultTitle: 'Data Visualization',
         defaultSubtitle: 'View data trends',
+        bar: 'Bar',
+        line: 'Line',
+        pie: 'Pie',
     },
     gallerySection: {
         defaultTitle: 'Gallery',
+        noItems: 'No items to display',
     },
 }

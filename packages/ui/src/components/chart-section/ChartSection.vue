@@ -35,6 +35,9 @@ const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('chartSection.defaultTitle'))
 const resolvedSubtitle = computed(() => props.subtitle ?? t('chartSection.defaultSubtitle'))
+const resolvedBar = computed(() => t('chartSection.bar'))
+const resolvedLine = computed(() => t('chartSection.line'))
+const resolvedPie = computed(() => t('chartSection.pie'))
 
 const activeTab = ref<string>(props.chartType === 'pie' ? 'bar' : props.chartType)
 
@@ -59,15 +62,15 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                 <TabsList class="w-full">
                     <TabsTrigger value="bar">
                         <BarChart3 class="w-4 h-4 mr-2" />
-                        Bar
+                        {{ resolvedBar }}
                     </TabsTrigger>
                     <TabsTrigger value="line">
                         <TrendingUp class="w-4 h-4 mr-2" />
-                        Line
+                        {{ resolvedLine }}
                     </TabsTrigger>
                     <TabsTrigger value="pie">
                         <PieChart class="w-4 h-4 mr-2" />
-                        Pie
+                        {{ resolvedPie }}
                     </TabsTrigger>
                 </TabsList>
 

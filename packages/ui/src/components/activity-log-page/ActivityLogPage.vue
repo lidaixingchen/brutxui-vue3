@@ -43,6 +43,7 @@ const resolvedAction = computed(() => t('activityLogPage.action'))
 const resolvedUser = computed(() => t('activityLogPage.user'))
 const resolvedTimestamp = computed(() => t('activityLogPage.timestamp'))
 const resolvedDetails = computed(() => t('activityLogPage.details'))
+const resolvedNoActivityFound = computed(() => t('activityLogPage.noActivityFound'))
 
 const PAGE_SIZE = 10
 
@@ -103,7 +104,7 @@ const rootClasses = computed(() =>
                         <TableRow
                             v-for="entry in paginatedActivities"
                             :key="entry.id"
-                            class="cursor-pointer"
+                            class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleEntryClick(entry.id)"
                         >
                             <TableCell>
@@ -129,7 +130,7 @@ const rootClasses = computed(() =>
                 </Table>
 
                 <div v-if="activities.length === 0" class="text-center py-12">
-                    <p class="text-lg font-bold text-brutal-fg">No activity found</p>
+                    <p class="text-lg font-bold text-brutal-fg">{{ resolvedNoActivityFound }}</p>
                 </div>
 
                 <div v-if="totalPages > 1" class="mt-8 flex justify-center">

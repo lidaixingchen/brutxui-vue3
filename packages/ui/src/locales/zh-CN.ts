@@ -108,6 +108,7 @@ export const zhCN: Locale = {
         defaultQuote: '这款产品彻底改变了我们的工作流程。',
         defaultAuthor: '张明',
         defaultRole: '产品经理',
+        verified: '已认证',
     },
     blogCard: {
         defaultTitle: 'BrutxUI 入门指南',
@@ -120,6 +121,7 @@ export const zhCN: Locale = {
     },
     quickActions: {
         defaultTitle: '快捷操作',
+        badge: '快捷',
     },
     faqSection: {
         defaultTitle: '常见问题',
@@ -169,6 +171,8 @@ export const zhCN: Locale = {
     },
     stepperSection: {
         defaultTitle: '步骤',
+        previous: '上一步',
+        next: '下一步',
     },
     cookieConsent: {
         defaultTitle: '我们使用 Cookie',
@@ -184,6 +188,9 @@ export const zhCN: Locale = {
     settingsPage: {
         defaultTitle: '设置',
         saveText: '保存更改',
+        nameLabel: '姓名',
+        namePlaceholder: '输入姓名',
+        notificationsLabel: '通知',
     },
     uploadCard: {
         defaultTitle: '上传文件',
@@ -194,11 +201,13 @@ export const zhCN: Locale = {
     overviewPage: {
         defaultTitle: '概览',
         recentActivity: '最近活动',
+        quickStats: '快速统计',
     },
     blogListPage: {
         defaultTitle: '博客',
         searchPlaceholder: '搜索文章...',
         allCategories: '全部',
+        noPostsFound: '未找到文章',
     },
     activityLogPage: {
         defaultTitle: '活动日志',
@@ -206,6 +215,7 @@ export const zhCN: Locale = {
         user: '用户',
         timestamp: '时间',
         details: '详情',
+        noActivityFound: '未找到活动记录',
     },
     profilePage: {
         defaultTitle: '个人资料',
@@ -217,8 +227,12 @@ export const zhCN: Locale = {
     chartSection: {
         defaultTitle: '数据可视化',
         defaultSubtitle: '查看数据趋势',
+        bar: '柱状图',
+        line: '折线图',
+        pie: '饼图',
     },
     gallerySection: {
         defaultTitle: '画廊',
+        noItems: '暂无内容',
     },
 }

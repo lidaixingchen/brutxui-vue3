@@ -50,7 +50,7 @@ describe('OverviewPage', () => {
         expect(wrapper.text()).toContain('Quick Stats')
     })
 
-    it('emits statClick when quick stat item is clicked', async () => {
+    it('emits stat-click when quick stat item is clicked', async () => {
         const wrapper = mount(OverviewPage, {
             props: { stats: mockStats },
             ...localeProvide,
@@ -58,8 +58,8 @@ describe('OverviewPage', () => {
         const statItems = wrapper.findAll('.cursor-pointer')
         expect(statItems.length).toBeGreaterThan(0)
         await statItems[0].trigger('click')
-        expect(wrapper.emitted('statClick')).toBeTruthy()
-        expect(wrapper.emitted('statClick')![0]).toEqual([0])
+        expect(wrapper.emitted('stat-click')).toBeTruthy()
+        expect(wrapper.emitted('stat-click')![0]).toEqual([0])
     })
 
     it('renders header slot', () => {

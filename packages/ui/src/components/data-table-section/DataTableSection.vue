@@ -107,6 +107,12 @@ function handleSearch() {
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
+const columnClasses = computed(() =>
+    props.columns.map(col =>
+        cn(col.sortable && 'cursor-pointer select-none active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all')
+    )
+)
+
 function sortIcon(key: string) {
     if (sortKey.value !== key) return ArrowUpDown
     return sortDirection.value === 'asc' ? ArrowUp : ArrowDown
@@ -136,9 +142,9 @@ function sortIcon(key: string) {
                 <TableHeader>
                     <TableRow>
                         <TableHead
-                            v-for="col in columns"
+                            v-for="(col, index) in columns"
                             :key="col.key"
-                            :class="col.sortable ? 'cursor-pointer select-none' : ''"
+                            :class="columnClasses[index]"
                             @click="col.sortable && handleSort(col.key)"
                         >
                             <span class="inline-flex items-center gap-1">
@@ -157,7 +163,7 @@ function sortIcon(key: string) {
                         <TableRow
                             v-for="(row, rowIndex) in paginatedRows"
                             :key="rowIndex"
-                            class="cursor-pointer"
+                            class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleRowClick(row)"
                         >
                             <TableCell v-for="col in columns" :key="col.key">

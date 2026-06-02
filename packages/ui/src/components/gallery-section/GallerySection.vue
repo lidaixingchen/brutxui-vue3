@@ -32,6 +32,7 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('gallerySection.defaultTitle'))
+const resolvedNoItems = computed(() => t('gallerySection.noItems'))
 
 function handleItemClick(index: number) {
     emit('item-click', index)
@@ -62,7 +63,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                         :key="index"
                     >
                         <div
-                            class="flex flex-col items-center justify-center p-4 cursor-pointer"
+                            class="flex flex-col items-center justify-center p-4 cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleItemClick(index)"
                         >
                             <div class="w-full border-3 border-brutal shadow-brutal overflow-hidden bg-brutal-bg">
@@ -83,7 +84,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                 <div v-if="items.length === 0" class="flex flex-col items-center justify-center py-12 text-brutal-muted-foreground">
                     <ImageIcon class="w-12 h-12 mb-3 stroke-[2]" />
                     <p class="font-bold">
-                        No items to display
+                        {{ resolvedNoItems }}
                     </p>
                 </div>
             </Card>

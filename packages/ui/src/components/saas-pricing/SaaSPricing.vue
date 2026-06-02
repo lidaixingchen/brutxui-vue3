@@ -98,14 +98,14 @@ const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
 const monthlyBtnClasses = computed(() =>
     cn(
-        'px-4 py-2 font-black text-sm transition-all',
+        'px-4 py-2 font-black text-sm transition-all active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         billing.value === 'monthly' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground'
     )
 )
 
 const annuallyBtnClasses = computed(() =>
     cn(
-        'px-4 py-2 font-black text-sm transition-all',
+        'px-4 py-2 font-black text-sm transition-all active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         billing.value === 'annually' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground'
     )
 )

@@ -31,6 +31,8 @@ const resolvedQuote = computed(() => props.quote ?? t('testimonialCard.defaultQu
 const resolvedAuthor = computed(() => props.author ?? t('testimonialCard.defaultAuthor'))
 const resolvedRole = computed(() => props.role ?? t('testimonialCard.defaultRole'))
 
+const resolvedVerified = computed(() => t('testimonialCard.verified'))
+
 const initials = computed(() => {
     return resolvedAuthor.value
         .split(' ')
@@ -65,11 +67,12 @@ const initials = computed(() => {
 </p>
                         </div>
                         <Badge variant="secondary" size="sm">
-                            Verified
+                            {{ resolvedVerified }}
                         </Badge>
                     </div>
                 </div>
             </div>
+            <slot name="actions" />
         </CardContent>
     </Card>
 </template>

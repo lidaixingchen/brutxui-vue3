@@ -47,6 +47,7 @@ const { t } = useLocale()
 const resolvedTitle = computed(() => props.title ?? t('blogListPage.defaultTitle'))
 const resolvedSearchPlaceholder = computed(() => t('blogListPage.searchPlaceholder'))
 const resolvedAllCategories = computed(() => t('blogListPage.allCategories'))
+const resolvedNoPostsFound = computed(() => t('blogListPage.noPostsFound'))
 
 const searchQuery = ref('')
 const activeCategory = ref('')
@@ -161,7 +162,7 @@ const rootClasses = computed(() =>
                 </div>
 
                 <div v-if="filteredPosts.length === 0" class="text-center py-12">
-                    <p class="text-lg font-bold text-brutal-fg">No posts found</p>
+                    <p class="text-lg font-bold text-brutal-fg">{{ resolvedNoPostsFound }}</p>
                 </div>
 
                 <div v-if="totalPages > 1" class="mt-8 flex justify-center">

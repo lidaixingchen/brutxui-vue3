@@ -125,6 +125,7 @@ export interface TestimonialCardLocale {
     defaultQuote: string
     defaultAuthor: string
     defaultRole: string
+    verified: string
 }
 
 export interface BlogCardLocale {
@@ -140,6 +141,7 @@ export interface FileCardLocale {
 
 export interface QuickActionsLocale {
     defaultTitle: string
+    badge: string
 }
 
 export interface FaqSectionLocale {
@@ -199,6 +201,8 @@ export interface FeedbackFormLocale {
 
 export interface StepperSectionLocale {
     defaultTitle: string
+    previous: string
+    next: string
 }
 
 export interface CookieConsentLocale {
@@ -217,6 +221,9 @@ export interface DataTableSectionLocale {
 export interface SettingsPageLocale {
     defaultTitle: string
     saveText: string
+    nameLabel: string
+    namePlaceholder: string
+    notificationsLabel: string
 }
 
 export interface UploadCardLocale {
@@ -229,12 +236,14 @@ export interface UploadCardLocale {
 export interface OverviewPageLocale {
     defaultTitle: string
     recentActivity: string
+    quickStats: string
 }
 
 export interface BlogListPageLocale {
     defaultTitle: string
     searchPlaceholder: string
     allCategories: string
+    noPostsFound: string
 }
 
 export interface ActivityLogPageLocale {
@@ -243,6 +252,7 @@ export interface ActivityLogPageLocale {
     user: string
     timestamp: string
     details: string
+    noActivityFound: string
 }
 
 export interface ProfilePageLocale {
@@ -256,10 +266,14 @@ export interface ProfilePageLocale {
 export interface ChartSectionLocale {
     defaultTitle: string
     defaultSubtitle: string
+    bar: string
+    line: string
+    pie: string
 }
 
 export interface GallerySectionLocale {
     defaultTitle: string
+    noItems: string
 }
 
 export interface Locale {

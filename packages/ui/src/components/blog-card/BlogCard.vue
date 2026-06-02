@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<BlogCardProps>(), {
 })
 
 const emit = defineEmits<{
-    readMore: []
+    'read-more': []
 }>()
 
 const { t } = useLocale()
@@ -73,9 +73,10 @@ const initials = computed(() => {
                 </div>
                 <span v-if="date" class="text-xs text-brutal-muted-foreground font-medium">{{ date }}</span>
             </div>
-            <button class="mt-3 text-sm font-bold text-brutal-primary cursor-pointer hover:underline" @click="emit('readMore')">
+            <button class="mt-3 text-sm font-bold text-brutal-primary cursor-pointer hover:underline active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('read-more')">
                 {{ resolvedReadMore }}
             </button>
+            <slot name="actions" />
         </CardContent>
     </Card>
 </template>

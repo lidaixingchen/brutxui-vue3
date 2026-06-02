@@ -33,6 +33,8 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('stepperSection.defaultTitle'))
+const resolvedPrevious = computed(() => t('stepperSection.previous'))
+const resolvedNext = computed(() => t('stepperSection.next'))
 
 const stepperSteps = computed(() =>
     props.steps.map((step, index) => ({
@@ -95,14 +97,14 @@ function handleNext() {
                     @click="handlePrevious"
                 >
                     <ChevronLeft class="h-4 w-4 mr-1" />
-                    Previous
+                    {{ resolvedPrevious }}
                 </Button>
                 <Button
                     variant="primary"
                     :disabled="!canGoNext"
                     @click="handleNext"
                 >
-                    Next
+                    {{ resolvedNext }}
                     <ChevronRight class="h-4 w-4 ml-1" />
                 </Button>
             </div>
