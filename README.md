@@ -122,15 +122,84 @@ app.use(BrutxUIPlugin, { locale: en })
 BrutxUI 包含常见产品 UI 所需的组件和布局区块：
 
 ### 布局区块与模板
-* **`saas-pricing`：** 响应式 SaaS 定价区域，支持月付/年付切换、清单图标、高亮方案和 CTA 按钮。[注册表 URL](https://lidaixingchen.github.io/brutxui-vue3/registry/saas-pricing.json)
-* **`dashboard-stats`：** 响应式分析面板，用于收入和转化等指标，带正/负趋势徽章。[注册表 URL](https://lidaixingchen.github.io/brutxui-vue3/registry/dashboard-stats.json)
+
+#### 落地页/营销
+
+`BrutalistHero`、`PricingSection`、`SaaSPricing`、`FaqSection`、`TestimonialCard`、`WaitlistPage`
+
+#### 仪表盘
+
+`DashboardShell`、`DashboardStats`、`OverviewPage`、`ChartSection`、`DataTableSection`
+
+#### 页面
+
+`AuthCard`、`SettingsPage`、`ProfilePage`、`BlogListPage`、`ActivityLogPage`、`NotFoundPage`、`LoadingPage`
+
+#### 导航
+
+`HeaderSection`、`FooterSection`、`TabsNav`
+
+#### 卡片/组件
+
+`BlogCard`、`FileCard`、`UploadCard`、`ErrorCard`、`SuccessCard`、`EmptyState`
+
+#### 交互
+
+`QuickActions`、`SearchWidget`、`FeedbackForm`、`CookieConsent`、`StepperSection`、`GallerySection`
 
 ### 原子组件
-* **表单：** `Button`、`Input`、`Textarea`、`Checkbox`、`Switch`、`Select`、`Label`
-* **浮层：** `Dialog`（模态框）、`Popover`、`Tooltip`、`DropdownMenu`
-* **数据与列表：** `Table`、`Tabs`、`Command`（快速搜索）、`Combobox`（多选器）、`Pagination`、`ScrollArea`
-* **反馈：** `Alert`、`Badge`、`Toast`（通知）、`Spinner`（加载）、`Skeleton`
-* **展示：** `Avatar`、`Calendar`、`Separator`
+
+#### 表单
+
+`Button`、`SubmitButton`、`Input`、`NumberInput`、`HardcoreInput`、`Textarea`、`Checkbox`、`Switch`、`RadioGroup`、`Select`、`Combobox`、`Slider`、`Toggle`、`ToggleGroup`、`TagsInput`、`Calendar`、`Form`
+
+#### 布局与容器
+
+`Card`、`Separator`、`ScrollArea`、`Sheet`、`Tabs`、`Accordion`、`Breadcrumb`、`Stepper`、`Timeline`、`Carousel`、`TreeView`
+
+#### 数据展示
+
+`Table`、`Badge`、`Avatar`、`Progress`、`Pagination`、`Counter`、`Kbd`、`CodeBlock`、`Marquee`、`BeforeAfter`、`ChatBubble`、`Skeleton`、`Spinner`
+
+#### 反馈与浮层
+
+`Dialog`、`AlertDialog`、`Alert`、`Toast`、`Popover`、`Tooltip`、`DropdownMenu`、`Command`
+
+#### 新粗野主义特色
+
+`Card3D`、`GlitchText`、`ScratchCard`、`SketchyChart`、`CopyToClipboard`、`KanbanBoard`
+
+#### 区块/页面
+
+`SaaSPricing`、`PricingSection`、`DashboardStats`、`DashboardShell`、`BrutalistHero`、`AuthCard`、`HeaderSection`、`FooterSection`、`FaqSection`、`TestimonialCard`、`BlogCard`、`BlogListPage`、`FileCard`、`UploadCard`、`DataTableSection`、`SettingsPage`、`ProfilePage`、`ActivityLogPage`、`OverviewPage`、`ChartSection`、`GallerySection`、`StepperSection`、`EmptyState`、`ErrorCard`、`SuccessCard`、`NotFoundPage`、`LoadingPage`、`WaitlistPage`、`CookieConsent`、`QuickActions`、`TabsNav`、`SearchWidget`、`FeedbackForm`
+
+---
+
+## Claude Code Skill
+
+BrutxUI 提供了 Claude Code Skill，让 AI 助手能够根据 BrutxUI 设计规范生成组件代码。
+
+### 安装方式
+
+将 `skills/brutxui/` 目录复制到你的全局 Claude Code 配置目录：
+
+```bash
+# Windows
+xcopy /E /I skills\brutxui %USERPROFILE%\.claude\skills\brutxui
+
+# macOS / Linux
+cp -r skills/brutxui ~/.claude/skills/brutxui
+```
+
+### 使用方式
+
+安装后，在 Claude Code 中直接描述你的需求即可：
+
+- "用 BrutxUI 创建一个登录表单"
+- "帮我做一个新粗野主义风格的定价页面"
+- "BrutxUI 的 Button 组件怎么用？"
+
+Claude 会自动参考组件文档、样式规范和代码模板，生成符合 BrutxUI 设计规范的代码。
 
 ---
 
