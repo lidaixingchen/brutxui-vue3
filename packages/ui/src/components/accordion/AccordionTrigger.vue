@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { ChevronDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { accordionTriggerVariants } from './accordion-variants'
+import { accordionItemKey } from './accordion-key'
 
 const props = defineProps<AccordionTriggerProps & { class?: string }>()
+
+const context = inject(accordionItemKey, { variant: computed(() => undefined) })
 
 const delegatedProps = computed(() => {
     const { class: _, ...delegated } = props
@@ -16,7 +19,7 @@ const forwarded = useForwardProps(delegatedProps)
 
 const classes = computed(() =>
     cn(
-        accordionTriggerVariants(),
+        accordionTriggerVariants({ variant: context.variant.value }),
         '[&[data-state=open]>svg]:rotate-180',
         props.class
     )

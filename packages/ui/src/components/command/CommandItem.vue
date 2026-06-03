@@ -20,9 +20,9 @@ const classes = computed(() =>
         'text-sm font-semibold',
         'select-none outline-none',
         'border-3 border-transparent',
-        'data-[selected=true]:bg-brutal-secondary data-[selected=true]:text-brutal-fg',
-        'data-[selected=true]:border-brutal data-[selected=true]:font-black',
-        'data-[selected=true]:shadow-brutal-sm',
+        'data-[highlighted=true]:bg-brutal-secondary data-[highlighted=true]:text-brutal-fg',
+        'data-[highlighted=true]:border-brutal data-[highlighted=true]:font-black',
+        'data-[highlighted=true]:shadow-brutal-sm',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
@@ -43,22 +43,29 @@ function handleClick() {
         emit('select', props.value)
     }
 }
+
+function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleClick()
+    }
+}
 </script>
 
 <template>
     <div
         :class="classes"
         role="option"
-        :aria-selected="isSelected"
+        :aria-selected="undefined"
         :aria-disabled="disabled || undefined"
         data-slot="command-item"
-        :data-selected="isSelected"
+        :data-highlighted="isSelected"
         :data-disabled="disabled"
         tabindex="-1"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         @click="handleClick"
-        @keydown.enter="handleClick"
+        @keydown="handleKeydown"
     >
         <slot />
     </div>

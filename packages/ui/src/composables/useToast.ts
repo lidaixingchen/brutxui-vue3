@@ -13,10 +13,12 @@ export interface ToastItem {
 }
 
 const TOAST_KEY: InjectionKey<ReturnType<typeof createToast>> = Symbol('brutx-toast')
+const DEFAULT_TOAST_DURATION = 5000
 
 export function createToast() {
     const toasts = ref<ToastItem[]>([])
     const MAX_TOASTS = 10
+    const timerMap = new Map<string, number>()
 
     function addToast(toast: Omit<ToastItem, 'id'>) {
         const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
@@ -24,18 +26,26 @@ export function createToast() {
             toasts.value = toasts.value.slice(1)
         }
         toasts.value = [...toasts.value, { ...toast, id }]
-        const duration = toast.duration ?? 5000
+        const duration = toast.duration ?? DEFAULT_TOAST_DURATION
         if (duration > 0 && typeof window !== 'undefined') {
-            setTimeout(() => removeToast(id), duration)
+            const timerId = window.setTimeout(() => removeToast(id), duration)
+            timerMap.set(id, timerId)
         }
         return id
     }
 
     function removeToast(id: string) {
+        const timerId = timerMap.get(id)
+        if (timerId !== undefined) {
+            clearTimeout(timerId)
+            timerMap.delete(id)
+        }
         toasts.value = toasts.value.filter((t) => t.id !== id)
     }
 
     function clearToasts() {
+        timerMap.forEach((timerId) => clearTimeout(timerId))
+        timerMap.clear()
         toasts.value = []
     }
 
@@ -76,5 +86,8 @@ export function provideToast() {
 export function useToast() {
     const toast = inject(TOAST_KEY)
     if (toast) return toast
+    if (typeof console !== 'undefined') {
+        console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to isolated instance. Call provideToast() in your root component.')
+    }
     return createToast()
 }

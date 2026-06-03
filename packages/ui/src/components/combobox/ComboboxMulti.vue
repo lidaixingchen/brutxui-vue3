@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../button/button-variants'
@@ -85,6 +85,12 @@ function handleSelect(optionValue: string) {
 const checkboxBaseClasses = cn('mr-2 flex h-4 w-4 items-center justify-center', 'border-3 border-brutal')
 const checkboxSelectedClasses = cn(checkboxBaseClasses, 'bg-brutal-secondary')
 const checkboxUnselectedClasses = cn(checkboxBaseClasses, 'bg-brutal-bg')
+
+watch(open, (isOpen) => {
+    if (!isOpen) {
+        searchQuery.value = ''
+    }
+})
 </script>
 
 <template>

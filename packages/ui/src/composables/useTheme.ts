@@ -52,7 +52,11 @@ function initTheme() {
     if (savedTheme) {
         applyTheme(savedTheme)
     } else {
-        applyTheme(theme.value)
+        // 确保默认主题 class 存在于 DOM 上
+        if (typeof document !== 'undefined') {
+            document.documentElement.classList.add(getThemeClass(theme.value))
+        }
+        localStorage.setItem('brutx-theme', theme.value)
     }
 
     if (savedMode) {

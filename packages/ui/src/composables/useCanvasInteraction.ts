@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 const SAMPLE_GRID_SIZE = 8
 const PROGRESS_CHECK_INTERVAL = 10
 const PROGRESS_THROTTLE_MS = 150
+const REVEAL_COMPLETED_FALLBACK_DURATION = 0
 
 interface UseCanvasInteractionOptions {
     containerRef: Ref<HTMLDivElement | null>
@@ -36,6 +37,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
     let resizeObserver: ResizeObserver | null = null
     let drawFrameCount = 0
     let lastProgressTime = 0
+    let revealTimerId: ReturnType<typeof setTimeout> | null = null
 
     const syncCanvasSize = () => {
         const container = containerRef.value
@@ -66,6 +68,8 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
 
         const w = canvas.width
         const h = canvas.height
+        if (w === 0 || h === 0) return 0
+
         const imageData = ctxVal.getImageData(0, 0, w, h)
         const pixels = imageData.data
 
@@ -82,6 +86,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
             }
         }
 
+        if (totalSampled === 0) return 0
         return Math.round((cleared / totalSampled) * 100)
     }
 
@@ -124,9 +129,10 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         if (isRevealed.value) return
         isRevealed.value = true
 
-        const duration = prefersReducedMotion.value ? 0 : fadeDuration.value
-        setTimeout(() => {
+        const duration = prefersReducedMotion.value ? REVEAL_COMPLETED_FALLBACK_DURATION : fadeDuration.value
+        revealTimerId = setTimeout(() => {
             onCompleted()
+            revealTimerId = null
         }, duration)
     }
 
@@ -147,29 +153,6 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         }
     }
 
-    const handleTouchStart = (e: TouchEvent) => {
-        e.preventDefault()
-        isScratching = true
-        if (e.touches[0]) {
-            scratch(e.touches[0].clientX, e.touches[0].clientY)
-        }
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-        e.preventDefault()
-        if (!isScratching) return
-        if (e.touches[0]) {
-            scratch(e.touches[0].clientX, e.touches[0].clientY)
-        }
-    }
-
-    const handleTouchEnd = () => {
-        if (isScratching) {
-            isScratching = false
-            checkProgress()
-        }
-    }
-
     onMounted(() => {
         syncCanvasSize()
         if (containerRef.value) {
@@ -182,6 +165,10 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         if (resizeObserver) {
             resizeObserver.disconnect()
         }
+        if (revealTimerId) {
+            clearTimeout(revealTimerId)
+            revealTimerId = null
+        }
     })
 
     return {
@@ -192,8 +179,6 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         handlePointerDown,
         handlePointerMove,
         handlePointerUp,
-        handleTouchStart,
-        handleTouchMove,
-        handleTouchEnd,
+        touchAction: 'none' as const,
     }
 }

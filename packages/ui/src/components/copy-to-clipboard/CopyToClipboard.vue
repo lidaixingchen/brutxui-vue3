@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, toRef } from 'vue'
 import { Check, Copy } from 'lucide-vue-next'
 import { useClipboard } from '../../composables/useClipboard'
 import { useLocale } from '@/composables/useLocale'
@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<CopyToClipboardProps>(), {
 })
 
 const { t } = useLocale()
-const { copy, copied, isSupported } = useClipboard({ duration: props.duration })
+const { copy, copied, isSupported } = useClipboard({ duration: toRef(props, 'duration') })
 
 const handleCopy = () => {
     if (isSupported) {

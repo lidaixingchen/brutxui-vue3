@@ -10,7 +10,9 @@ interface SwitchProps {
     disabled?: boolean
 }
 
-const props = defineProps<SwitchProps>()
+const props = withDefaults(defineProps<SwitchProps>(), {
+    disabled: false,
+})
 
 const emit = defineEmits<{
     'update:modelValue': [value: boolean]

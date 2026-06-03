@@ -79,9 +79,7 @@ const {
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
+    touchAction,
 } = useCanvasInteraction({
     containerRef,
     canvasRef,
@@ -125,15 +123,12 @@ const canvasStyle = computed(() => ({
         <canvas
             v-if="!isRevealed || !prefersReducedMotion"
             ref="canvasRef"
-            class="absolute inset-0 cursor-crosshair touch-none select-none z-10"
-            :style="canvasStyle"
+            class="absolute inset-0 cursor-crosshair select-none z-10"
+            :style="{ ...canvasStyle, touchAction }"
             @pointerdown="handlePointerDown"
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
             @pointercancel="handlePointerUp"
-            @touchstart="handleTouchStart"
-            @touchmove="handleTouchMove"
-            @touchend="handleTouchEnd"
         />
     </div>
 </template>

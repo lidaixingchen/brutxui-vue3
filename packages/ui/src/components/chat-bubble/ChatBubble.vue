@@ -39,6 +39,10 @@ const bubbleClass = computed(() =>
 
 const avatarClass = computed(() => cn(chatAvatarVariants()));
 
+const contentWrapperClass = computed(() =>
+    cn('flex flex-col gap-1', isSent.value ? 'items-end' : 'items-start')
+);
+
 const initials = computed(() => {
     const name = props.message.name ?? '?';
     return name.slice(0, 2).toUpperCase();
@@ -63,7 +67,7 @@ const initials = computed(() => {
         </div>
 
         <!-- Content -->
-        <div :class="cn('flex flex-col gap-1', isSent ? 'items-end' : 'items-start')">
+        <div :class="contentWrapperClass">
             <span v-if="message.name && !isSystem" class="text-xs font-bold text-brutal-fg opacity-60 px-1">
                 {{ message.name }}
             </span>

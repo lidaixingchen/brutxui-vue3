@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, provide, toRef } from 'vue'
 import { AccordionItem, type AccordionItemProps, useForwardProps } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { accordionItemVariants } from './accordion-variants'
+import { accordionItemKey } from './accordion-key'
 
 type AccordionItemVariantProps = VariantProps<typeof accordionItemVariants>
 
@@ -27,6 +28,8 @@ const forwardedProps = useForwardProps(delegatedProps)
 const classes = computed(() =>
     cn(accordionItemVariants({ variant: props.variant }), props.class)
 )
+
+provide(accordionItemKey, { variant: toRef(props, 'variant') })
 </script>
 
 <template>

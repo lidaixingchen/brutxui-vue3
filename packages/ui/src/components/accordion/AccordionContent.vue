@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { AccordionContent, type AccordionContentProps } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { cn } from '../../lib/utils'
 import { accordionContentVariants } from './accordion-variants'
+import { accordionItemKey } from './accordion-key'
 
 const props = defineProps<AccordionContentProps & { class?: string }>()
+
+const context = inject(accordionItemKey, { variant: computed(() => undefined) })
 
 const delegatedProps = computed(() => {
     const { class: _, ...delegated } = props
@@ -12,7 +15,7 @@ const delegatedProps = computed(() => {
 })
 
 const classes = computed(() =>
-    cn(accordionContentVariants(), props.class)
+    cn(accordionContentVariants({ variant: context.variant.value }), props.class)
 )
 </script>
 

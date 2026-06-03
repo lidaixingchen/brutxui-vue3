@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { onUnmounted, type Ref } from 'vue'
 
 const TYPE_SOUND_THROTTLE_MS = 50
 const TYPE_BASE_FREQ = 220
@@ -22,7 +22,7 @@ const FAIL_DURATION = 0.2
 
 export function useAudioEngine(enabled: Ref<boolean>) {
     let audioCtx: AudioContext | null = null
-    const lastTypeSoundTime = ref(0)
+    let lastTypeSoundTime = 0
 
     const getCtx = () => {
         if (!audioCtx && typeof window !== 'undefined') {
@@ -38,8 +38,8 @@ export function useAudioEngine(enabled: Ref<boolean>) {
         if (!enabled.value) return
         if (type === 'type') {
             const now = Date.now()
-            if (now - lastTypeSoundTime.value < TYPE_SOUND_THROTTLE_MS) return
-            lastTypeSoundTime.value = now
+            if (now - lastTypeSoundTime < TYPE_SOUND_THROTTLE_MS) return
+            lastTypeSoundTime = now
         }
         
         const ctx = getCtx()
@@ -84,6 +84,10 @@ export function useAudioEngine(enabled: Ref<boolean>) {
         audioCtx?.close()
         audioCtx = null
     }
+
+    onUnmounted(() => {
+        dispose()
+    })
 
     return { playSound, dispose }
 }

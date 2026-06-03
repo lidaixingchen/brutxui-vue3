@@ -33,6 +33,10 @@ const itemClass = computed(() =>
     cn(treeItemVariants({ selected: isSelected.value }))
 );
 
+const chevronClass = computed(() =>
+    cn('w-4 h-4 flex-shrink-0 transition-transform duration-150', isExpanded.value && 'rotate-90')
+)
+
 const indentStyle = computed(() => ({
     paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
 }));
@@ -47,7 +51,7 @@ const indentStyle = computed(() => ({
         >
             <ChevronRight
                 v-if="!isLeaf"
-                :class="cn('w-4 h-4 flex-shrink-0 transition-transform duration-150', isExpanded && 'rotate-90')"
+                :class="chevronClass"
             />
             <span v-else class="w-4 flex-shrink-0" />
 

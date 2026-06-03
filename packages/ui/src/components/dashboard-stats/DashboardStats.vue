@@ -2,6 +2,7 @@
 import { computed, type Component } from 'vue'
 import { ArrowUpRight, ArrowDownRight } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import Card from '../card/Card.vue'
 import CardHeader from '../card/CardHeader.vue'
 import CardContent from '../card/CardContent.vue'
@@ -38,8 +39,8 @@ interface DashboardStatsProps {
 }
 
 const props = withDefaults(defineProps<DashboardStatsProps>(), {
-    title: 'Overview Performance',
-    subtitle: '',
+    title: undefined,
+    subtitle: undefined,
     stats: () => [],
     class: '',
 })
@@ -47,6 +48,10 @@ const props = withDefaults(defineProps<DashboardStatsProps>(), {
 const emit = defineEmits<{
     'stat-click': [index: number]
 }>()
+
+const { t } = useLocale()
+const resolvedTitle = computed(() => props.title ?? t('dashboardStats.defaultTitle'))
+const resolvedSubtitle = computed(() => props.subtitle ?? '')
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
@@ -76,10 +81,10 @@ function getProgressClasses(stat: StatItem) {
     <div :class="rootClasses">
         <div class="mb-8">
             <h2 class="text-2xl font-black tracking-tight">
-{{ title }}
+{{ resolvedTitle }}
 </h2>
-            <p v-if="subtitle" class="mt-1 text-brutal-muted-foreground font-medium">
-{{ subtitle }}
+            <p v-if="resolvedSubtitle" class="mt-1 text-brutal-muted-foreground font-medium">
+{{ resolvedSubtitle }}
 </p>
         </div>
 

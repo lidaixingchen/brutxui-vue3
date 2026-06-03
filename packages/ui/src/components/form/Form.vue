@@ -15,16 +15,16 @@ const emit = defineEmits<{
     submit: [values: Record<string, unknown>]
 }>()
 
-const { handleSubmit, ...formContext } = useForm({
+const form = useForm({
     initialValues: props.initialValues,
     validationSchema: props.validationSchema,
 })
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = form.handleSubmit((values) => {
     emit('submit', values)
 })
 
-provide(formContextKey, formContext as unknown as VeeFormContext)
+provide(formContextKey, form as unknown as VeeFormContext)
 </script>
 
 <template>

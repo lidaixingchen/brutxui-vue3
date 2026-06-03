@@ -39,7 +39,7 @@ const resolvedBar = computed(() => t('chartSection.bar'))
 const resolvedLine = computed(() => t('chartSection.line'))
 const resolvedPie = computed(() => t('chartSection.pie'))
 
-const activeTab = ref<string>(props.chartType === 'pie' ? 'bar' : props.chartType)
+const activeTab = ref<string>(props.chartType)
 
 const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
 </script>
@@ -58,7 +58,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
         </slot>
 
         <slot>
-            <TabsRoot v-model="activeTab" :default-value="chartType">
+            <TabsRoot v-model="activeTab">
                 <TabsList class="w-full">
                     <TabsTrigger value="bar">
                         <BarChart3 class="w-4 h-4 mr-2" />

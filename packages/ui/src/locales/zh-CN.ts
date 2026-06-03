@@ -257,7 +257,19 @@ export const zhCN: Locale = {
         copied: '已复制',
         copy: '复制',
     },
+    calendar: {
+        previousMonth: '上一月',
+        nextMonth: '下一月',
+    },
     kanban: {
         dropCardsHere: '拖放卡片到此处',
+    },
+    pricingSection: {
+        defaultTitle: '简单、透明的粗野主义方案',
+        mostPopular: '最受欢迎',
+        perLifetime: '/ 终身',
+    },
+    dashboardStats: {
+        defaultTitle: '概览性能',
     },
 }

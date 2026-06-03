@@ -193,24 +193,24 @@ const faceClasses = computed(() =>
                         <svg v-if="validationState === 'success'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <circle cx="12" cy="12" r="10" fill="var(--brutal-accent, #FFE66D)" stroke="currentColor" stroke-width="2.5" />
                             <!-- 墨镜 -->
-                            <rect x="6" y="8" width="5" height="4" rx="1.5" fill="black" stroke="black" stroke-width="1" />
-                            <rect x="13" y="8" width="5" height="4" rx="1.5" fill="black" stroke="black" stroke-width="1" />
-                            <line x1="11" y1="10" x2="13" y2="10" stroke="black" stroke-width="2" />
+                            <rect x="6" y="8" width="5" height="4" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1" />
+                            <rect x="13" y="8" width="5" height="4" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1" />
+                            <line x1="11" y1="10" x2="13" y2="10" stroke="currentColor" stroke-width="2" />
                             <!-- 微笑嘴巴 -->
-                            <path d="M8 15 Q12 19 16 15" stroke="black" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                            <path d="M8 15 Q12 19 16 15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none" />
                         </svg>
                         
                         <!-- 错误 (😠) SVG -->
                         <svg v-if="validationState === 'error'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <circle cx="12" cy="12" r="10" fill="var(--brutal-destructive, #EF476F)" stroke="currentColor" stroke-width="2.5" />
                             <!-- 倒八字愤怒眉毛 -->
-                            <line x1="6" y1="8" x2="10" y2="10" stroke="black" stroke-width="2.5" stroke-linecap="round" />
-                            <line x1="18" y1="8" x2="14" y2="10" stroke="black" stroke-width="2.5" stroke-linecap="round" />
+                            <line x1="6" y1="8" x2="10" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+                            <line x1="18" y1="8" x2="14" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                             <!-- 怒气眼睛 -->
-                            <circle cx="8" cy="12" r="1.5" fill="black" />
-                            <circle cx="16" cy="12" r="1.5" fill="black" />
+                            <circle cx="8" cy="12" r="1.5" fill="currentColor" />
+                            <circle cx="16" cy="12" r="1.5" fill="currentColor" />
                             <!-- 嘟起向下的嘴巴 -->
-                            <path d="M9 17 Q12 14 15 17" stroke="black" stroke-width="2.5" stroke-linecap="round" fill="none" />
+                            <path d="M9 17 Q12 14 15 17" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none" />
                         </svg>
                     </div>
                 </slot>

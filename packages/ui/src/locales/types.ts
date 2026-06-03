@@ -303,8 +303,23 @@ export interface CodeBlockLocale {
     copy: string
 }
 
+export interface CalendarLocale {
+    previousMonth: string
+    nextMonth: string
+}
+
 export interface KanbanLocale {
     dropCardsHere: string
+}
+
+export interface PricingSectionLocale {
+    defaultTitle: string
+    mostPopular: string
+    perLifetime: string
+}
+
+export interface DashboardStatsLocale {
+    defaultTitle: string
 }
 
 export interface Locale {
@@ -357,5 +372,8 @@ export interface Locale {
     card3d: Card3dLocale
     hardcoreInput: HardcoreInputLocale
     codeBlock: CodeBlockLocale
+    calendar: CalendarLocale
     kanban: KanbanLocale
+    pricingSection: PricingSectionLocale
+    dashboardStats: DashboardStatsLocale
 }

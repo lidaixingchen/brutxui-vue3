@@ -11,7 +11,9 @@ interface CheckboxProps {
     disabled?: boolean
 }
 
-const props = defineProps<CheckboxProps>()
+const props = withDefaults(defineProps<CheckboxProps>(), {
+    disabled: false,
+})
 
 const emit = defineEmits<{
     'update:checked': [value: boolean]

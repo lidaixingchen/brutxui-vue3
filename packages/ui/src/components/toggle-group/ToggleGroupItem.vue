@@ -28,8 +28,8 @@ const context = inject(toggleGroupKey, { variant: computed<NonNullable<ToggleVar
 const classes = computed(() =>
     cn(
         toggleVariants({
-            variant: context.variant.value || props.variant,
-            size: context.size.value || props.size,
+            variant: context.variant.value ?? props.variant,
+            size: context.size.value ?? props.size,
         }),
         props.class
     )

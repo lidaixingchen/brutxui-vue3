@@ -105,7 +105,12 @@ watch(() => props.autoplayDelay, () => {
 });
 
 onUnmounted(() => {
-    stopAutoplay();
+    stopAutoplay()
+    if (emblaApi.value) {
+        emblaApi.value.off('init', onInit)
+        emblaApi.value.off('select', onSelect)
+        emblaApi.value.off('reInit', onInit)
+    }
 });
 
 const rootClass = computed(() =>

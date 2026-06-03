@@ -45,5 +45,18 @@ export const accordionTriggerVariants = cva(
 )
 
 export const accordionContentVariants = cva(
-    'border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg'
+    'border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg',
+    {
+        variants: {
+            variant: {
+                default: '',
+                flat: '',
+                ghost: '',
+                interactive: '',
+            },
+        },
+        defaultVariants: {
+            variant: 'default',
+        },
+    }
 )

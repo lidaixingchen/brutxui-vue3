@@ -40,8 +40,8 @@ function updateDisplayText() {
 onMounted(updateDisplayText)
 onUpdated(updateDisplayText)
 
-let autoplayTimer: any = null
-let autoplayStopTimer: any = null
+let autoplayTimer: ReturnType<typeof setInterval> | null = null
+let autoplayStopTimer: ReturnType<typeof setTimeout> | null = null
 
 const startAutoplay = () => {
     stopAutoplay()

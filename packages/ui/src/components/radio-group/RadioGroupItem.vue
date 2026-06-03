@@ -10,7 +10,9 @@ interface RadioGroupItemProps {
     class?: string
 }
 
-const props = defineProps<RadioGroupItemProps>()
+const props = withDefaults(defineProps<RadioGroupItemProps>(), {
+    disabled: false,
+})
 
 const classes = computed(() =>
     cn(

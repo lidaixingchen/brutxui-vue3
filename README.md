@@ -7,6 +7,8 @@
 
   当你需要可见边框、强烈阴影、无障碍原语以及可直接编辑的组件代码时，就用它。
 
+  [English](README_EN.md) · 中文
+
   ### 组件注册表 (`brutx-ui-vue`)
   [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
   [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square&color=4ECDC4)](https://www.npmjs.com/package/brutx-ui-vue)

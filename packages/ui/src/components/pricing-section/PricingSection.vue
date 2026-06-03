@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Check } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
 import CardHeader from '../card/CardHeader.vue'
@@ -29,8 +30,8 @@ interface PricingSectionProps {
 }
 
 const props = withDefaults(defineProps<PricingSectionProps>(), {
-    title: 'Simple, Transparent Brutalist Plans',
-    subtitle: '',
+    title: undefined,
+    subtitle: undefined,
     plans: () => [],
     class: '',
 })
@@ -38,6 +39,10 @@ const props = withDefaults(defineProps<PricingSectionProps>(), {
 const emit = defineEmits<{
     'plan-select': [planName: string]
 }>()
+
+const { t } = useLocale()
+const resolvedTitle = computed(() => props.title ?? t('pricingSection.defaultTitle'))
+const resolvedSubtitle = computed(() => props.subtitle ?? '')
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
@@ -50,10 +55,10 @@ function getPlanCardClasses(plan: BrutalistPricingPlan) {
     <div :class="rootClasses">
         <div class="text-center mb-10">
             <h2 class="text-3xl font-black tracking-tight">
-{{ title }}
+{{ resolvedTitle }}
 </h2>
-            <p v-if="subtitle" class="mt-2 text-brutal-muted-foreground font-medium">
-{{ subtitle }}
+            <p v-if="resolvedSubtitle" class="mt-2 text-brutal-muted-foreground font-medium">
+{{ resolvedSubtitle }}
 </p>
         </div>
 
@@ -61,7 +66,7 @@ function getPlanCardClasses(plan: BrutalistPricingPlan) {
             <div v-for="plan in plans" :key="plan.name" class="relative">
                 <div v-if="plan.popular" class="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rotate-[1.5deg]">
                     <Badge variant="primary" class="animate-pulse">
-Most Popular Tier
+{{ t('pricingSection.mostPopular') }}
 </Badge>
                 </div>
                 <Card :variant="plan.variant" :class="getPlanCardClasses(plan)">
@@ -74,7 +79,7 @@ Most Popular Tier
                     <CardContent>
                         <div class="mb-6">
                             <span class="text-4xl font-black">{{ plan.price }}</span>
-                            <span class="text-sm font-bold text-brutal-muted-foreground">/ lifetime</span>
+                            <span class="text-sm font-bold text-brutal-muted-foreground">{{ t('pricingSection.perLifetime') }}</span>
                         </div>
                         <ul class="space-y-3">
                             <li v-for="feature in plan.features" :key="feature" class="flex items-center gap-2">

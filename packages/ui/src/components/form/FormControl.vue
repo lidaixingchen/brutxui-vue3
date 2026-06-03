@@ -6,7 +6,7 @@ interface FormControlProps {
     class?: string
 }
 
-defineProps<FormControlProps>()
+const props = defineProps<FormControlProps>()
 
 const fieldContext = inject(formFieldKey, {
     name: '',
@@ -20,6 +20,7 @@ const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptio
 <template>
     <slot
         :id="itemContext.formItemId"
+        :class="props.class"
         :aria-describedby="!fieldContext.error?.value ? itemContext.formDescriptionId : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`"
         :aria-invalid="!!fieldContext.error?.value"
     />

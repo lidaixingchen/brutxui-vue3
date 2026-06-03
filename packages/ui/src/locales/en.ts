@@ -257,7 +257,19 @@ export const en: Locale = {
         copied: 'Copied',
         copy: 'Copy',
     },
+    calendar: {
+        previousMonth: 'Previous month',
+        nextMonth: 'Next month',
+    },
     kanban: {
         dropCardsHere: 'Drop cards here',
+    },
+    pricingSection: {
+        defaultTitle: 'Simple, Transparent Brutalist Plans',
+        mostPopular: 'Most Popular Tier',
+        perLifetime: '/ lifetime',
+    },
+    dashboardStats: {
+        defaultTitle: 'Overview Performance',
     },
 }
