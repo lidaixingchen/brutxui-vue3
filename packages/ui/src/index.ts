@@ -11,6 +11,7 @@ export { default as Label } from './components/label/Label.vue'
 export { labelVariants } from './components/label/label-variants'
 
 export { default as Switch } from './components/switch/Switch.vue'
+export { switchRootVariants, switchThumbVariants } from './components/switch/switch-variants'
 
 export { default as Checkbox } from './components/checkbox/Checkbox.vue'
 

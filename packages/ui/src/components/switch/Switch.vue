@@ -1,17 +1,25 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
+import { switchRootVariants, switchThumbVariants } from './switch-variants'
+
+type SwitchRootVariantProps = VariantProps<typeof switchRootVariants>
 
 interface SwitchProps {
     class?: string
     modelValue?: boolean
     defaultValue?: boolean
     disabled?: boolean
+    variant?: NonNullable<SwitchRootVariantProps['variant']>
+    size?: NonNullable<SwitchRootVariantProps['size']>
 }
 
 const props = withDefaults(defineProps<SwitchProps>(), {
     disabled: false,
+    variant: 'default',
+    size: 'default',
 })
 
 const emit = defineEmits<{
@@ -19,22 +27,11 @@ const emit = defineEmits<{
 }>()
 
 const classes = computed(() =>
-    cn(
-        'peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center',
-        'border-3 border-brutal rounded-full shadow-brutal-sm',
-        'transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        'data-[state=checked]:bg-brutal-success data-[state=unchecked]:bg-brutal-bg',
-        props.class
-    )
+    cn(switchRootVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
 const thumbClasses = computed(() =>
-    cn(
-        'pointer-events-none block h-5 w-5 bg-brutal-fg shadow-brutal-sm transition-transform duration-150',
-        'data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0.5'
-    )
+    cn(switchThumbVariants({ size: props.size }))
 )
 </script>
 

@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import Switch from './Switch.vue'
+import { switchRootVariants, switchThumbVariants } from './switch-variants'
 
 describe('Switch', () => {
     it('renders with default props', () => {
@@ -40,5 +41,45 @@ describe('Switch', () => {
             attachTo: document.body,
         })
         expect(wrapper.find('[role="switch"]').classes()).toContain('custom-class')
+    })
+
+    it('applies variant classes', () => {
+        const wrapper = mount(Switch, {
+            props: { variant: 'primary' },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        const expected = switchRootVariants({ variant: 'primary' })
+        expected.split(' ').forEach((cls) => {
+            if (cls) expect(el.classes()).toContain(cls)
+        })
+    })
+
+    it('applies size classes to root and thumb', () => {
+        const wrapper = mount(Switch, {
+            props: { size: 'lg' },
+            attachTo: document.body,
+        })
+        const root = wrapper.find('[role="switch"]')
+        const thumb = root.find('span')
+        const expectedRoot = switchRootVariants({ size: 'lg' })
+        const expectedThumb = switchThumbVariants({ size: 'lg' })
+        expectedRoot.split(' ').forEach((cls) => {
+            if (cls) expect(root.classes()).toContain(cls)
+        })
+        expectedThumb.split(' ').forEach((cls) => {
+            if (cls) expect(thumb.classes()).toContain(cls)
+        })
+    })
+
+    it('uses default variant and size when not specified', () => {
+        const wrapper = mount(Switch, {
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="switch"]')
+        const expected = switchRootVariants({ variant: 'default', size: 'default' })
+        expected.split(' ').forEach((cls) => {
+            if (cls) expect(el.classes()).toContain(cls)
+        })
     })
 })
