@@ -333,6 +333,8 @@
     }
 
     to {
+        transform: translateY(-4px);
+        opacity: 0;
     }
 }
 

@@ -58,7 +58,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
         </slot>
 
         <slot>
-            <TabsRoot v-model="activeTab" :default-value="chartType === 'pie' ? 'bar' : chartType">
+            <TabsRoot v-model="activeTab" :default-value="chartType">
                 <TabsList class="w-full">
                     <TabsTrigger value="bar">
                         <BarChart3 class="w-4 h-4 mr-2" />
@@ -95,7 +95,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                 <TabsContent value="pie">
                     <Card variant="flat" class="p-4">
                         <SketchyChart
-                            type="bar"
+                            type="pie"
                             :data="data"
                         />
                     </Card>

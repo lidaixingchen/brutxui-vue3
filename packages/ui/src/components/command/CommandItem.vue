@@ -23,6 +23,7 @@ const classes = computed(() =>
         'data-[selected=true]:bg-brutal-secondary data-[selected=true]:text-brutal-fg',
         'data-[selected=true]:border-brutal data-[selected=true]:font-black',
         'data-[selected=true]:shadow-brutal-sm',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
         props.class

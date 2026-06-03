@@ -58,6 +58,8 @@ export interface AuthCardLocale {
     signIn: string
     noAccount: string
     register: string
+    emailPlaceholder: string
+    passwordPlaceholder: string
 }
 
 export interface WaitlistPageLocale {
@@ -71,6 +73,7 @@ export interface WaitlistPageLocale {
 export interface DashboardShellLocale {
     sidebarNavigation: string
     signOut: string
+    defaultEmail: string
 }
 
 export interface BrutalistHeroLocale {
@@ -92,6 +95,7 @@ export interface SaaSPricingLocale {
 
 export interface ToastLocale {
     close: string
+    container: string
 }
 
 export interface DialogLocale {
@@ -276,6 +280,33 @@ export interface GallerySectionLocale {
     noItems: string
 }
 
+export interface ScratchCardLocale {
+    ariaLabel: string
+}
+
+export interface SketchyChartLocale {
+    lineAriaLabel: string
+    barAriaLabel: string
+    pieAriaLabel: string
+}
+
+export interface Card3dLocale {
+    ariaLabel: string
+}
+
+export interface HardcoreInputLocale {
+    invalidInput: string
+}
+
+export interface CodeBlockLocale {
+    copied: string
+    copy: string
+}
+
+export interface KanbanLocale {
+    dropCardsHere: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -321,4 +352,10 @@ export interface Locale {
     profilePage: ProfilePageLocale
     chartSection: ChartSectionLocale
     gallerySection: GallerySectionLocale
+    scratchCard: ScratchCardLocale
+    sketchyChart: SketchyChartLocale
+    card3d: Card3dLocale
+    hardcoreInput: HardcoreInputLocale
+    codeBlock: CodeBlockLocale
+    kanban: KanbanLocale
 }

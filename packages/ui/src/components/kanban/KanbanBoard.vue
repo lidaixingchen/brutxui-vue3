@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { cn } from '../../lib/utils';
+import { useLocale } from '@/composables/useLocale';
 import { kanbanColumnVariants, kanbanCardVariants } from './kanban-variants';
 
 export interface KanbanCard {
@@ -29,6 +30,8 @@ const emit = defineEmits<{
     'update:modelValue': [columns: KanbanColumn[]];
     'card-move': [cardId: string, fromColumn: string, toColumn: string];
 }>();
+
+const { t } = useLocale();
 
 const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null);
 const dragOverColumn = ref<string | null>(null);
@@ -93,13 +96,23 @@ function onDrop(toColumnId: string) {
 
 const boardClass = computed(() => cn('flex gap-4 overflow-x-auto pb-4', props.class));
 
-function columnClass(col: KanbanColumn) {
-    return cn(kanbanColumnVariants({ dragOver: dragOverColumn.value === col.id }));
-}
+const columnClassesMap = computed(() => {
+    const map = new Map<string, string>()
+    columns.value.forEach((col) => {
+        map.set(col.id, cn(kanbanColumnVariants({ dragOver: dragOverColumn.value === col.id })))
+    })
+    return map
+})
 
-function cardClass(card: KanbanCard) {
-    return cn(kanbanCardVariants({ dragging: draggingCard.value?.cardId === card.id }));
-}
+const cardClassesMap = computed(() => {
+    const map = new Map<string, string>()
+    columns.value.forEach((col) => {
+        col.cards.forEach((card) => {
+            map.set(card.id, cn(kanbanCardVariants({ dragging: draggingCard.value?.cardId === card.id })))
+        })
+    })
+    return map
+})
 </script>
 
 <template>
@@ -107,7 +120,7 @@ function cardClass(card: KanbanCard) {
         <div
             v-for="col in columns"
             :key="col.id"
-            :class="columnClass(col)"
+            :class="columnClassesMap.get(col.id)"
             @dragover="onDragOver($event, col.id)"
             @dragleave="onDragLeave(col.id)"
             @drop="onDrop(col.id)"
@@ -132,7 +145,7 @@ function cardClass(card: KanbanCard) {
                 <div
                     v-for="card in col.cards"
                     :key="card.id"
-                    :class="cardClass(card)"
+                    :class="cardClassesMap.get(card.id)"
                     draggable="true"
                     @dragstart="onDragStart(card.id, col.id)"
                     @dragend="onDragEnd"
@@ -157,7 +170,7 @@ function cardClass(card: KanbanCard) {
                     v-if="col.cards.length === 0"
                     class="flex items-center justify-center h-16 border-3 border-dashed border-brutal rounded-brutal text-xs font-medium opacity-40"
                 >
-                    Drop cards here
+                    {{ t('kanban.dropCardsHere') }}
                 </div>
             </div>
 

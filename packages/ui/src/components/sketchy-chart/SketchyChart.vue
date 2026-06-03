@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { sketchyChartVariants } from './sketchy-chart-variants'
 
 interface ChartDataItem {
@@ -9,7 +10,7 @@ interface ChartDataItem {
 }
 
 interface SketchyChartProps {
-    type?: 'line' | 'bar'
+    type?: 'line' | 'bar' | 'pie'
     data?: ChartDataItem[]
     sketchiness?: number
     grid?: boolean
@@ -41,6 +42,13 @@ const getUniqueId = () => {
 const uid = getUniqueId()
 const filterId = `brutal-sketch-filter-${uid}`
 const hatchId = `hatch-pattern-${uid}`
+const { t } = useLocale()
+
+const chartAriaLabel = computed(() => {
+    if (props.type === 'line') return t('sketchyChart.lineAriaLabel')
+    if (props.type === 'bar') return t('sketchyChart.barAriaLabel')
+    return t('sketchyChart.pieAriaLabel')
+})
 
 // 手绘抖动强度对应的基准频率
 const BASE_FREQUENCY_FACTOR = 0.015
@@ -119,6 +127,52 @@ const getBarX = (index: number) => {
     return CHART_PADDING.left + index * slotWidth + (slotWidth - barWidth.value) / 2
 }
 
+// 饼图计算
+const PIE_COLORS = [
+    'var(--brutal-primary, #FF6B6B)',
+    'var(--brutal-secondary, #4ECDC4)',
+    'var(--brutal-accent, #FFE66D)',
+    'var(--brutal-info, #4A90D9)',
+    'var(--brutal-success, #7FB069)',
+    'var(--brutal-destructive, #EF476F)',
+]
+
+const pieSlices = computed(() => {
+    if (processedData.value.length === 0) return []
+    const total = processedData.value.reduce((sum, d) => sum + d.value, 0)
+    if (total === 0) return []
+    const cx = props.width / 2
+    const cy = props.height / 2
+    const radius = Math.min(cx, cy) * 0.7
+    let currentAngle = -Math.PI / 2
+    return processedData.value.map((d, i) => {
+        const sliceAngle = (d.value / total) * Math.PI * 2
+        const startAngle = currentAngle
+        const endAngle = currentAngle + sliceAngle
+        const largeArc = sliceAngle > Math.PI ? 1 : 0
+        const x1 = cx + radius * Math.cos(startAngle)
+        const y1 = cy + radius * Math.sin(startAngle)
+        const x2 = cx + radius * Math.cos(endAngle)
+        const y2 = cy + radius * Math.sin(endAngle)
+        const path = [
+            `M ${cx} ${cy}`,
+            `L ${x1} ${y1}`,
+            `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+            'Z',
+        ].join(' ')
+        currentAngle = endAngle
+        return {
+            path,
+            color: PIE_COLORS[i % PIE_COLORS.length],
+            label: d.label,
+            midAngle: (startAngle + endAngle) / 2,
+            cx,
+            cy,
+            labelRadius: radius * 0.55,
+        }
+    })
+})
+
 // 自动生成 Y 轴 5 等分刻度
 const yTicks = computed(() => {
     const ticks = []
@@ -142,11 +196,11 @@ const containerClasses = computed(() =>
     <div :class="containerClasses">
         <svg
             role="img"
-            :aria-label="type === 'line' ? '手绘风格折线图' : '手绘风格柱状图'"
+            :aria-label="chartAriaLabel"
             :viewBox="`0 0 ${width} ${height}`"
             class="w-full h-auto overflow-visible select-none"
         >
-            <title>{{ type === 'line' ? '手绘风格折线图' : '手绘风格柱状图' }}</title>
+            <title>{{ chartAriaLabel }}</title>
             
             <defs>
                 <!-- 手绘波动滤镜 -->
@@ -270,6 +324,18 @@ const containerClasses = computed(() =>
                             :width="barWidth"
                             :height="height - CHART_PADDING.bottom - dataToSvgY(d.value)"
                             :fill="`url(#${hatchId})`"
+                            stroke="var(--brutal-border-color, #000000)"
+                            stroke-width="3"
+                        />
+                    </g>
+                </template>
+
+                <!-- 3. 饼图 -->
+                <template v-if="type === 'pie' && pieSlices.length > 0">
+                    <g v-for="(slice, i) in pieSlices" :key="'pie-' + i">
+                        <path
+                            :d="slice.path"
+                            :fill="slice.color"
                             stroke="var(--brutal-border-color, #000000)"
                             stroke-width="3"
                         />

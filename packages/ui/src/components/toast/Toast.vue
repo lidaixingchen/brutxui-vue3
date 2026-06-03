@@ -9,7 +9,7 @@ import { useLocale } from '@/composables/useLocale'
 type ToastVariantProps = VariantProps<typeof toastVariants>
 
 const DEFAULT_DURATION = 5000
-const LEAVE_ANIMATION_DELAY = 200
+const LEAVE_ANIMATION_DELAY = 300
 
 interface ToastProps {
     variant?: NonNullable<ToastVariantProps['variant']>
@@ -35,10 +35,11 @@ const { t } = useLocale()
 
 const isLeaving = ref(false)
 const timer = ref<number | undefined>(undefined)
+const leaveTimer = ref<number | undefined>(undefined)
 
 function startLeave() {
     isLeaving.value = true
-    window.setTimeout(() => {
+    leaveTimer.value = window.setTimeout(() => {
         emit('close')
     }, LEAVE_ANIMATION_DELAY)
 }
@@ -53,6 +54,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     if (timer.value) window.clearTimeout(timer.value)
+    if (leaveTimer.value) window.clearTimeout(leaveTimer.value)
 })
 
 const classes = computed(() =>
@@ -79,7 +81,7 @@ const closeClasses = computed(() =>
         'border-3 border-brutal bg-brutal-bg',
         'shadow-brutal-sm',
         'transition-all duration-150',
-        'hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2'
     )

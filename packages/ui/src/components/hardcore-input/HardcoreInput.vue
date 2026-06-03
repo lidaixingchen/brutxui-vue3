@@ -2,6 +2,7 @@
 import { ref, computed, toRef, inject, onUnmounted, useId } from 'vue'
 import { cn } from '../../lib/utils'
 import { useAudioEngine } from '../../composables/useAudioEngine'
+import { useLocale } from '@/composables/useLocale'
 import { hardcoreInputVariants, hardcoreInputFaceVariants } from './hardcore-input-variants'
 import { formFieldKey, type FormFieldContext } from '../form/form-context'
 
@@ -52,6 +53,7 @@ const errorMessage = ref<string>('')
 const triggerShake = ref(false)
 
 const audioEngine = useAudioEngine(toRef(props, 'sound'))
+const { t } = useLocale()
 
 const formField = inject<FormFieldContext | null>(formFieldKey, null)
 
@@ -76,7 +78,7 @@ const validate = (value: string) => {
         const result = rule(value)
         if (result !== true) {
             isOk = false
-            errText = typeof result === 'string' ? result : '输入内容无效'
+            errText = typeof result === 'string' ? result : t('hardcoreInput.invalidInput')
             break
         }
     }

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
 
 interface CodeBlockProps {
@@ -22,6 +23,8 @@ const props = withDefaults(defineProps<CodeBlockProps>(), {
 const lines = computed(() => {
     return props.code.split('\n')
 })
+
+const { t } = useLocale()
 
 const rootClasses = computed(() =>
     cn(codeBlockRootVariants(), props.class)
@@ -44,7 +47,7 @@ const rootClasses = computed(() =>
                 :class="codeBlockCopyButtonVariants()"
             >
                 <template #default="{ copied }">
-                    <span>{{ copied ? 'Copied' : 'Copy' }}</span>
+                    <span>{{ copied ? t('codeBlock.copied') : t('codeBlock.copy') }}</span>
                 </template>
             </CopyToClipboard>
         </div>

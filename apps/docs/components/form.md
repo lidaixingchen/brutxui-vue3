@@ -82,12 +82,27 @@ function onSubmit(values) {
 | 组件 | 说明 |
 |------|------|
 | `Form` | 根表单组件，集成 vee-validate |
-| `FormField` | 字段包装器，连接表单状态 |
+| `FormField` | 字段包装器，连接表单状态，提供 `value` 和 `setValue` |
 | `FormItem` | 标签、控件和消息的布局容器 |
-| `FormLabel` | 支持错误状态的标签 |
-| `FormControl` | 输入控件的包装器 |
+| `FormLabel` | 支持错误状态的标签，注入字段上下文 |
+| `FormControl` | 输入控件的包装器，注入字段上下文 |
 | `FormDescription` | 输入框下方的辅助文本 |
-| `FormMessage` | 验证错误消息 |
+| `FormMessage` | 验证错误消息，注入字段上下文 |
+
+## 字段上下文
+
+`FormField` 通过 `provide/inject` 向子组件提供 `FormFieldContext`：
+
+```ts
+interface FormFieldContext {
+    name: string
+    error: Ref<string | undefined>
+    value: Ref<unknown>        // 字段当前值
+    setValue: (value: unknown) => void  // 设置字段值
+}
+```
+
+`FormControl`、`FormLabel`、`FormMessage` 均注入此上下文，可直接访问字段值和错误状态。
 
 ## Props
 

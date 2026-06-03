@@ -16,6 +16,8 @@ const classes = computed(() =>
         'flex cursor-pointer select-none items-center px-3 py-2',
         'font-bold outline-none',
         'focus:bg-brutal-accent focus:text-brutal-fg data-[state=open]:bg-brutal-accent data-[state=open]:text-brutal-fg',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        'focus-visible:ring-2 focus-visible:ring-brutal-ring',
         props.inset && 'pl-8',
         props.class
     )

@@ -3,6 +3,7 @@ import { ref, computed, toRef } from 'vue'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { useCanvasInteraction } from '../../composables/useCanvasInteraction'
+import { useLocale } from '@/composables/useLocale'
 import { scratchCardVariants } from './scratch-card-variants'
 
 interface ScratchCardProps {
@@ -29,6 +30,7 @@ const emit = defineEmits<{
 const containerRef = ref<HTMLDivElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const prefersReducedMotion = useReducedMotion()
+const { t } = useLocale()
 
 const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => {
     ctxVal.clearRect(0, 0, w, h)
@@ -112,7 +114,7 @@ const canvasStyle = computed(() => ({
         ref="containerRef"
         :class="containerClasses"
         role="region"
-        aria-label="刮刮卡"
+        :aria-label="t('scratchCard.ariaLabel')"
         tabindex="0"
         @keydown.enter="revealAll"
         @keydown.space.prevent="revealAll"

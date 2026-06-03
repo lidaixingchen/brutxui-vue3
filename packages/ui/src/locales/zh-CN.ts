@@ -53,6 +53,8 @@ export const zhCN: Locale = {
         signIn: '登录',
         noAccount: '还没有账户？',
         register: '注册',
+        emailPlaceholder: 'you@example.com',
+        passwordPlaceholder: '••••••••',
     },
     waitlistPage: {
         title: '加入 BrutxUI 等候俱乐部',
@@ -64,6 +66,7 @@ export const zhCN: Locale = {
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
         signOut: '退出登录',
+        defaultEmail: 'user@example.com',
     },
     brutalistHero: {
         title: '用 BrutxUI 更快地构建大胆界面',
@@ -82,6 +85,7 @@ export const zhCN: Locale = {
     },
     toast: {
         close: '关闭',
+        container: '通知',
     },
     dialog: {
         close: '关闭',
@@ -234,5 +238,26 @@ export const zhCN: Locale = {
     gallerySection: {
         defaultTitle: '画廊',
         noItems: '暂无内容',
+    },
+    scratchCard: {
+        ariaLabel: '刮刮卡',
+    },
+    sketchyChart: {
+        lineAriaLabel: '手绘风格折线图',
+        barAriaLabel: '手绘风格柱状图',
+        pieAriaLabel: '手绘风格饼图',
+    },
+    card3d: {
+        ariaLabel: '3D 交互卡片',
+    },
+    hardcoreInput: {
+        invalidInput: '输入内容无效',
+    },
+    codeBlock: {
+        copied: '已复制',
+        copy: '复制',
+    },
+    kanban: {
+        dropCardsHere: '拖放卡片到此处',
     },
 }

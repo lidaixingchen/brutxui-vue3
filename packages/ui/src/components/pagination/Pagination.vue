@@ -109,9 +109,13 @@ const dotsClasses = computed(() =>
     cn('flex items-center justify-center font-black text-brutal-fg', dotsSizeClasses.value)
 )
 
-function pageButtonClasses(pageNumber: number) {
-    return cn(paginationButtonVariants({ size: buttonSize.value, isActive: props.currentPage === pageNumber }))
-}
+const pageButtonActiveClasses = computed(() =>
+    cn(paginationButtonVariants({ size: buttonSize.value, isActive: true }))
+)
+
+const pageButtonInactiveClasses = computed(() =>
+    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+)
 
 function onPageChange(page: number) {
     if (page >= FIRST_PAGE && page <= props.totalPages) {
@@ -154,7 +158,7 @@ function onPageChange(page: number) {
                 <button
                     v-else
                     type="button"
-                    :class="pageButtonClasses(pageNumber as number)"
+                    :class="currentPage === pageNumber ? pageButtonActiveClasses : pageButtonInactiveClasses"
                     :aria-label="t('pagination.page', { number: pageNumber as number })"
                     :aria-current="currentPage === pageNumber ? 'page' : undefined"
                     @click="onPageChange(pageNumber as number)"

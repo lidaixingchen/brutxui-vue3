@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
+import { useLocale } from '@/composables/useLocale'
 import { card3dVariants, card3dShadowVariants } from './card-3d-variants'
 
 type Card3DVariantProps = VariantProps<typeof card3dVariants>
@@ -33,6 +34,7 @@ const ry = ref(0)
 const isHovered = ref(false)
 
 const prefersReducedMotion = useReducedMotion()
+const { t } = useLocale()
 
 // 静态/初始阴影偏移量
 const initialOffset = computed(() => {
@@ -117,7 +119,7 @@ const shadowClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="containerClasses" role="region" aria-label="3D 交互卡片">
+    <div :class="containerClasses" role="region" :aria-label="t('card3d.ariaLabel')">
         <div
             ref="cardRef"
             :class="cardClasses"

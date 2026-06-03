@@ -6,7 +6,13 @@ import { cn } from '../../lib/utils'
 import { accordionTriggerVariants } from './accordion-variants'
 
 const props = defineProps<AccordionTriggerProps & { class?: string }>()
-const forwarded = useForwardProps(props)
+
+const delegatedProps = computed(() => {
+    const { class: _, ...delegated } = props
+    return delegated
+})
+
+const forwarded = useForwardProps(delegatedProps)
 
 const classes = computed(() =>
     cn(

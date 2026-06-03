@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 
 interface ToastContainerProps {
     position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
@@ -31,7 +34,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" aria-live="polite" :aria-label="t('toast.container')">
         <slot />
     </div>
 </template>

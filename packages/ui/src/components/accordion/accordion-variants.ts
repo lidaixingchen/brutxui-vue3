@@ -27,6 +27,7 @@ export const accordionTriggerVariants = cva(
     [
         'flex flex-1 items-center justify-between py-4 px-6',
         'text-left font-black tracking-wide transition-all',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
     ],
     {
         variants: {

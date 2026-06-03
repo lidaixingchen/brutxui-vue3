@@ -16,7 +16,7 @@
     },
     {
       "path": "components/ui/tabs/TabsList.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { TabsList as TabsListPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\n\ninterface TabsListProps {\n    class?: string\n}\n\nconst props = defineProps<TabsListProps>()\n\nconst classes = computed(() =>\n    cn(\n        'inline-flex h-12 items-center justify-center p-1 gap-1',\n        'bg-brutal-bg border-3 border-brutal',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <TabsListPrimitive :class=\"classes\">\n        <slot />\n    </TabsListPrimitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { TabsList as TabsListPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\n\ninterface TabsListProps {\n    class?: string\n}\n\nconst props = defineProps<TabsListProps>()\n\nconst classes = computed(() =>\n    cn(\n        'inline-flex h-12 items-center justify-center p-1 gap-1',\n        'bg-brutal-bg border-3 border-brutal shadow-brutal',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <TabsListPrimitive :class=\"classes\">\n        <slot />\n    </TabsListPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {

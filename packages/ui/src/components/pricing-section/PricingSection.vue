@@ -35,6 +35,10 @@ const props = withDefaults(defineProps<PricingSectionProps>(), {
     class: '',
 })
 
+const emit = defineEmits<{
+    'plan-select': [planName: string]
+}>()
+
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
 function getPlanCardClasses(plan: BrutalistPricingPlan) {
@@ -82,7 +86,7 @@ Most Popular Tier
                         </ul>
                     </CardContent>
                     <CardFooter>
-                        <Button :variant="plan.variant === 'default' ? 'outline' : plan.variant" class="w-full">
+                        <Button :variant="plan.variant === 'default' ? 'outline' : plan.variant" class="w-full" @click="emit('plan-select', plan.name)">
 {{ plan.ctaText }}
 </Button>
                     </CardFooter>

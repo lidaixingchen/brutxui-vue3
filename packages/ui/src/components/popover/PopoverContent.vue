@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<PopoverContentProps>(), {
 const classes = computed(() =>
     cn(
         'z-50 w-72 p-4',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal',
+        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
         'outline-none',
         'data-[state=open]:animate-in data-[state=closed]:animate-out',
         'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',

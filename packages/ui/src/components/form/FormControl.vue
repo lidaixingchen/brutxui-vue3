@@ -8,7 +8,12 @@ interface FormControlProps {
 
 defineProps<FormControlProps>()
 
-const fieldContext = inject(formFieldKey, { name: '', error: ref<string | undefined>(undefined) as Ref<string | undefined> })
+const fieldContext = inject(formFieldKey, {
+    name: '',
+    error: ref<string | undefined>(undefined) as Ref<string | undefined>,
+    value: ref<unknown>(undefined),
+    setValue: () => {},
+})
 const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
 </script>
 

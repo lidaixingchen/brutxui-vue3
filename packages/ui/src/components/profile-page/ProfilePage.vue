@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Avatar from '../avatar/Avatar.vue'
@@ -43,6 +43,10 @@ const resolvedSaveText = computed(() => t('profilePage.saveText'))
 const formName = ref(props.name ?? '')
 const formEmail = ref(props.email ?? '')
 const formBio = ref(props.bio ?? '')
+
+watch(() => props.name, (val) => { formName.value = val ?? '' })
+watch(() => props.email, (val) => { formEmail.value = val ?? '' })
+watch(() => props.bio, (val) => { formBio.value = val ?? '' })
 
 const avatarInitials = computed(() => {
     if (!formName.value) return ''

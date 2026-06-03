@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import KanbanBoard from './KanbanBoard.vue'
 import type { KanbanCard, KanbanColumn } from './KanbanBoard.vue'
+import { zhCN } from '@/locales/zh-CN'
 
 const card1: KanbanCard = {
     id: 'card-1',
@@ -76,7 +77,7 @@ describe('KanbanBoard', () => {
         const wrapper = mount(KanbanBoard, {
             props: { modelValue: columns },
         })
-        expect(wrapper.text()).toContain('Drop cards here')
+        expect(wrapper.text()).toContain(zhCN.kanban.dropCardsHere)
     })
 
     it('renders card tags', () => {

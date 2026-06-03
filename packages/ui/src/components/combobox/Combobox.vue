@@ -72,12 +72,8 @@ function handleSelect(value: string) {
     searchQuery.value = ''
 }
 
-function getCheckClasses(optionValue: string) {
-    return cn(
-        'mr-2 h-4 w-4 stroke-[3]',
-        props.modelValue === optionValue ? 'opacity-100' : 'opacity-0'
-    )
-}
+const checkSelectedClasses = cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-100')
+const checkUnselectedClasses = cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-0')
 </script>
 
 <template>
@@ -108,7 +104,7 @@ function getCheckClasses(optionValue: string) {
                             @select="handleSelect"
                         >
                             <Check
-                                :class="getCheckClasses(option.value)"
+                                :class="props.modelValue === option.value ? checkSelectedClasses : checkUnselectedClasses"
                             />
                             {{ option.label }}
                         </CommandItem>

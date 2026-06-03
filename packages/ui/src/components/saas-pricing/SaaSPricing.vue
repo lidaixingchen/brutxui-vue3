@@ -92,6 +92,10 @@ const props = withDefaults(defineProps<SaaSPricingProps>(), {
 const billing = ref<'monthly' | 'annually'>('monthly')
 const { t } = useLocale()
 
+const emit = defineEmits<{
+    'plan-select': [planName: string]
+}>()
+
 const resolvedTitle = computed(() => props.title ?? t('saasPricing.title'))
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
@@ -180,7 +184,7 @@ function getFeatureClasses(feature: PricingFeature) {
                         </ul>
                     </CardContent>
                     <CardFooter>
-                        <Button :variant="plan.buttonVariant || 'default'" class="w-full">
+                        <Button :variant="plan.buttonVariant || 'default'" class="w-full" @click="emit('plan-select', plan.name)">
 {{ plan.buttonText }}
 </Button>
                     </CardFooter>

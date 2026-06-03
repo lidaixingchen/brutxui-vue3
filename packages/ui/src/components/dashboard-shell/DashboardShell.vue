@@ -10,7 +10,7 @@ interface DashboardShellProps {
 }
 
 const props = withDefaults(defineProps<DashboardShellProps>(), {
-    userEmail: 'user@example.com',
+    userEmail: undefined,
     class: '',
 })
 
@@ -21,6 +21,8 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const sidebarOpen = ref(true)
+
+const displayEmail = computed(() => props.userEmail ?? t('dashboardShell.defaultEmail'))
 
 const rootClasses = computed(() => cn('flex h-screen bg-brutal-bg', props.class))
 
@@ -43,7 +45,7 @@ BrutxUI
             </nav>
             <div class="border-t-3 border-brutal pt-4 mt-4">
                 <div class="text-sm font-bold truncate">
-{{ userEmail }}
+{{ displayEmail }}
 </div>
                 <button class="text-sm font-bold text-brutal-destructive mt-1 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('signOut')">
 {{ t('dashboardShell.signOut') }}

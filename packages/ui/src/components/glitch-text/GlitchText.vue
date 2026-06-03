@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, onUpdated } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
@@ -27,13 +27,18 @@ const elementRef = ref<HTMLElement | null>(null)
 const isActive = ref(false)
 const prefersReducedMotion = useReducedMotion()
 
-// 优先读取插槽内容，其次是 text prop
-const displayText = computed(() => {
+const displayText = ref(props.text)
+
+function updateDisplayText() {
     if (elementRef.value) {
-        return elementRef.value.textContent || props.text
+        displayText.value = elementRef.value.textContent || props.text
+    } else {
+        displayText.value = props.text
     }
-    return props.text
-})
+}
+
+onMounted(updateDisplayText)
+onUpdated(updateDisplayText)
 
 let autoplayTimer: any = null
 let autoplayStopTimer: any = null

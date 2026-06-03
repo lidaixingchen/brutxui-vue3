@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Mail, Lock } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { useId } from 'vue'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
 import CardHeader from '../card/CardHeader.vue'
@@ -44,13 +45,19 @@ const props = withDefaults(defineProps<AuthCardProps>(), {
 const { t } = useLocale()
 
 const emit = defineEmits<{
-    loginSubmit: []
+    loginSubmit: [payload: { email: string; password: string }]
     forgotPassword: []
     googleClick: []
     githubClick: []
 }>()
 
 const rootClasses = computed(() => cn('w-full max-w-md mx-auto', props.class))
+
+const emailId = useId()
+const passwordId = useId()
+
+const email = ref('')
+const password = ref('')
 
 const resolvedTitle = computed(() => props.title ?? props.texts.welcomeBack ?? t('authCard.welcomeBack'))
 const resolvedDescription = computed(() => props.description ?? props.texts.signInToContinue ?? t('authCard.signInToContinue'))
@@ -65,7 +72,7 @@ const resolvedNoAccount = computed(() => props.texts.noAccount ?? t('authCard.no
 const resolvedRegister = computed(() => props.texts.register ?? t('authCard.register'))
 
 function handleSubmit() {
-    emit('loginSubmit')
+    emit('loginSubmit', { email: email.value, password: password.value })
 }
 </script>
 
@@ -100,17 +107,17 @@ function handleSubmit() {
 
             <form class="space-y-4" @submit.prevent="handleSubmit">
                 <div class="space-y-2">
-                    <LabelRoot for="email">
+                    <LabelRoot :for="emailId">
 {{ resolvedEmail }}
 </LabelRoot>
                     <div class="relative">
                         <Mail class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
-                        <Input id="email" type="email" placeholder="you@example.com" input-size="default" class="pl-10" />
+                        <Input :id="emailId" v-model="email" type="email" :placeholder="t('authCard.emailPlaceholder')" input-size="default" class="pl-10" />
                     </div>
                 </div>
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <LabelRoot for="password">
+                        <LabelRoot :for="passwordId">
 {{ resolvedPassword }}
 </LabelRoot>
                         <button type="button" class="text-sm font-bold text-brutal-primary active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('forgotPassword')">
@@ -119,7 +126,7 @@ function handleSubmit() {
                     </div>
                     <div class="relative">
                         <Lock class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
-                        <Input id="password" type="password" placeholder="••••••••" input-size="default" class="pl-10" />
+                        <Input :id="passwordId" v-model="password" type="password" :placeholder="t('authCard.passwordPlaceholder')" input-size="default" class="pl-10" />
                     </div>
                 </div>
                 <Button type="submit" variant="primary" class="w-full">

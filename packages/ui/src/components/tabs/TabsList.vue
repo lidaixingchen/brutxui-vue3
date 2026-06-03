@@ -12,7 +12,7 @@ const props = defineProps<TabsListProps>()
 const classes = computed(() =>
     cn(
         'inline-flex h-12 items-center justify-center p-1 gap-1',
-        'bg-brutal-bg border-3 border-brutal',
+        'bg-brutal-bg border-3 border-brutal shadow-brutal',
         props.class
     )
 )

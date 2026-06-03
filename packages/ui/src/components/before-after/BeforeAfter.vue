@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { MoveHorizontal } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -31,6 +31,10 @@ const resolvedBeforeAlt = computed(() => props.beforeAlt ?? t('beforeAfter.befor
 const resolvedAfterAlt = computed(() => props.afterAlt ?? t('beforeAfter.after'))
 
 const sliderVal = ref(props.defaultValue)
+
+watch(() => props.defaultValue, (val) => {
+    if (val !== undefined) sliderVal.value = val
+})
 
 const clipStyle = computed(() => {
     return {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Search } from 'lucide-vue-next'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
@@ -51,6 +51,10 @@ const resolvedNoPostsFound = computed(() => t('blogListPage.noPostsFound'))
 
 const searchQuery = ref('')
 const activeCategory = ref('')
+
+watch(searchQuery, () => {
+    currentPage.value = 1
+})
 
 const filteredPosts = computed(() => {
     let result = props.posts
@@ -129,7 +133,7 @@ const rootClasses = computed(() =>
                             :key="category"
                             :variant="activeCategory === category ? 'primary' : 'default'"
                             size="sm"
-                            class="cursor-pointer active:translate-y-[2px] active:shadow-none transition-all"
+                            class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleCategoryFilter(category)"
                         >
                             {{ category }}
@@ -142,7 +146,7 @@ const rootClasses = computed(() =>
                         v-for="post in paginatedPosts"
                         :key="post.slug"
                         variant="elevated"
-                        class="cursor-pointer hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none transition-all"
+                        class="cursor-pointer hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                         @click="handlePostClick(post.slug)"
                     >
                         <CardHeader>

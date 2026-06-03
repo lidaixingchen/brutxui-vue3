@@ -51,26 +51,53 @@ const rootClass = computed(() =>
     )
 );
 
-function stepWrapClass() {
-    return cn(
+const stepWrapClasses = computed(() =>
+    cn(
         props.orientation === 'horizontal'
             ? 'flex flex-col items-center flex-1 min-w-0'
             : 'flex flex-row items-start gap-3'
-    );
-}
+    )
+)
 
-function dotClass(index: number) {
-    return cn(stepperDotVariants({ state: getState(index) }), 'cursor-pointer');
-}
+const dotCompletedClasses = computed(() =>
+    cn(stepperDotVariants({ state: 'completed' }), 'cursor-pointer')
+)
 
-function connectorClass(index: number) {
-    return cn(
-        stepperConnectorVariants({
-            orientation: props.orientation,
-            completed: index < props.modelValue,
-        })
-    );
-}
+const dotActiveClasses = computed(() =>
+    cn(stepperDotVariants({ state: 'active' }), 'cursor-pointer')
+)
+
+const dotUpcomingClasses = computed(() =>
+    cn(stepperDotVariants({ state: 'upcoming' }), 'cursor-pointer')
+)
+
+const connectorCompletedClasses = computed(() =>
+    cn(stepperConnectorVariants({ orientation: props.orientation, completed: true }))
+)
+
+const connectorIncompleteClasses = computed(() =>
+    cn(stepperConnectorVariants({ orientation: props.orientation, completed: false }))
+)
+
+const dotClassesMap = computed(() => {
+    const map = new Map<number, string>()
+    props.steps.forEach((_, index) => {
+        const state = getState(index)
+        if (state === 'completed') map.set(index, dotCompletedClasses.value)
+        else if (state === 'active') map.set(index, dotActiveClasses.value)
+        else map.set(index, dotUpcomingClasses.value)
+    })
+    return map
+})
+
+const connectorClassesMap = computed(() => {
+    const map = new Map<number, string>()
+    props.steps.forEach((_, index) => {
+        const completed = index < props.modelValue
+        map.set(index, completed ? connectorCompletedClasses.value : connectorIncompleteClasses.value)
+    })
+    return map
+})
 </script>
 
 <template>
@@ -78,7 +105,7 @@ function connectorClass(index: number) {
         <template v-for="(step, index) in steps" :key="step.id">
             <!-- Step Item -->
             <div
-                :class="stepWrapClass()"
+                :class="stepWrapClasses"
                 role="listitem"
                 :aria-current="index === modelValue ? 'step' : undefined"
             >
@@ -90,12 +117,12 @@ function connectorClass(index: number) {
                     <!-- Left connector (not for first) -->
                     <div
                         v-if="index > 0"
-                        :class="connectorClass(index)"
+                        :class="connectorClassesMap.get(index)"
                     />
 
                     <!-- Dot -->
                     <button
-                        :class="dotClass(index)"
+                        :class="dotClassesMap.get(index)"
                         type="button"
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                         @click="clickStep(index)"
@@ -107,7 +134,7 @@ function connectorClass(index: number) {
                     <!-- Right connector (not for last) -->
                     <div
                         v-if="index < steps.length - 1"
-                        :class="connectorClass(index)"
+                        :class="connectorClassesMap.get(index)"
                     />
                 </div>
 
@@ -128,7 +155,7 @@ function connectorClass(index: number) {
                     <div class="flex flex-col items-center">
                         <!-- Dot -->
                         <button
-                            :class="dotClass(index)"
+                            :class="dotClassesMap.get(index)"
                             type="button"
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                             @click="clickStep(index)"
@@ -139,7 +166,7 @@ function connectorClass(index: number) {
                         <!-- Vertical connector below dot -->
                         <div
                             v-if="index < steps.length - 1"
-                            :class="connectorClass(index)"
+                            :class="connectorClassesMap.get(index)"
                             :style="{ minHeight: MIN_VERTICAL_CONNECTOR_HEIGHT }"
                         />
                     </div>

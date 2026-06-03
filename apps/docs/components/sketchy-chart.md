@@ -1,6 +1,6 @@
 ---
 title: SketchyChart 手绘图表
-description: SVG + 分形噪声滤镜驱动的手绘感折线/柱状图表，零外部依赖。
+description: SVG + 分形噪声滤镜驱动的手绘感折线/柱状/饼图表，零外部依赖。
 ---
 
 # SketchyChart 手绘图表
@@ -41,6 +41,7 @@ const data = [
 |------|------|
 | `line` | 折线图，带阴影填充区和拐点圆圈 |
 | `bar` | 柱状图，带 Hatch 斜线填充和硬投影 |
+| `pie` | 饼图，使用设计令牌色板和粗黑边框 |
 
 ## 手绘抖动
 
@@ -65,7 +66,7 @@ const data = [
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `type` | `'line' \| 'bar'` | `'line'` | 图表类型 |
+| `type` | `'line' \| 'bar' \| 'pie'` | `'line'` | 图表类型 |
 | `data` | `Array<{ label: string, value: number }>` | `[]` | 图表数据源 |
 | `sketchiness` | `number` | `2` | 手绘抖动幅度 (0-10) |
 | `grid` | `boolean` | `true` | 是否绘制背景网格 |

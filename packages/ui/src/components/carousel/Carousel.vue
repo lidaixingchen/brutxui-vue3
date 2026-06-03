@@ -100,6 +100,10 @@ watch(() => props.loop, () => {
     if (emblaApi.value) emblaApi.value.reInit({ loop: props.loop });
 });
 
+watch(() => props.autoplayDelay, () => {
+    if (props.autoplay) startAutoplay();
+});
+
 onUnmounted(() => {
     stopAutoplay();
 });
@@ -115,6 +119,16 @@ const prevButtonClass = computed(() =>
 const nextButtonClass = computed(() =>
     cn(carouselButtonVariants({ direction: 'next' }))
 );
+
+const dotActiveClasses = cn(
+    'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
+    'bg-brutal-primary shadow-brutal'
+)
+
+const dotInactiveClasses = cn(
+    'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
+    'bg-brutal-bg hover:bg-brutal-muted'
+);
 </script>
 
 <template>
@@ -127,6 +141,7 @@ const nextButtonClass = computed(() =>
 
         <button
             v-if="showArrows"
+            type="button"
             :class="prevButtonClass"
             :disabled="!canScrollPrev"
             :aria-label="t('carousel.previousSlide')"
@@ -137,6 +152,7 @@ const nextButtonClass = computed(() =>
 
         <button
             v-if="showArrows"
+            type="button"
             :class="nextButtonClass"
             :disabled="!canScrollNext"
             :aria-label="t('carousel.nextSlide')"
@@ -152,11 +168,9 @@ const nextButtonClass = computed(() =>
             <button
                 v-for="(_, i) in scrollSnaps"
                 :key="i"
+                type="button"
                 :aria-label="t('carousel.goToSlide', { index: i + 1 })"
-                :class="cn(
-                    'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
-                    i === selectedIndex ? 'bg-brutal-primary shadow-brutal' : 'bg-brutal-bg hover:bg-brutal-muted'
-                )"
+                :class="i === selectedIndex ? dotActiveClasses : dotInactiveClasses"
                 @click="scrollTo(i)"
             />
         </div>

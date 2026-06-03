@@ -63,26 +63,17 @@ function handleUpdate(value: Date | DateRangeValue | null) {
     }
 }
 
-function getDayClasses(day: {
-    isSelected: boolean
-    isInRange: boolean
-    isStart: boolean
-    isEnd: boolean
-    isToday: boolean
-    isOutside: boolean
-    isDisabled: boolean
-}) {
-    return cn(
-        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold cursor-pointer border-3 border-brutal/10',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
-        day.isSelected && !day.isInRange && 'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm',
-        day.isInRange && !day.isStart && !day.isEnd && 'bg-brutal-accent text-brutal-fg',
-        (day.isStart || day.isEnd) && 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm',
-        day.isToday && 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal',
-        day.isOutside && 'text-brutal-muted-foreground opacity-40',
-        day.isDisabled && 'opacity-40 cursor-not-allowed'
-    )
-}
+const dayBaseClasses = cn(
+    'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold cursor-pointer border-3 border-brutal/10',
+    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all'
+)
+
+const daySelectedClasses = 'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm'
+const dayInRangeClasses = 'bg-brutal-accent text-brutal-fg'
+const dayRangeEndpointClasses = 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm'
+const dayTodayClasses = 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal'
+const dayOutsideClasses = 'text-brutal-muted-foreground opacity-40'
+const dayDisabledClasses = 'opacity-40 cursor-not-allowed'
 </script>
 
 <template>
@@ -105,7 +96,15 @@ function getDayClasses(day: {
         </template>
         <template #day-content="{ day }">
             <div
-                :class="getDayClasses(day)"
+                :class="[
+                    dayBaseClasses,
+                    day.isSelected && !day.isInRange ? daySelectedClasses : '',
+                    day.isInRange && !day.isStart && !day.isEnd ? dayInRangeClasses : '',
+                    (day.isStart || day.isEnd) ? dayRangeEndpointClasses : '',
+                    day.isToday ? dayTodayClasses : '',
+                    day.isOutside ? dayOutsideClasses : '',
+                    day.isDisabled ? dayDisabledClasses : '',
+                ]"
             >
                 {{ day.label }}
             </div>

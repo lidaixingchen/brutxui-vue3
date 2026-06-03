@@ -136,7 +136,7 @@ onUnmounted(() => {
     }
 });
 
-watch(() => props.to, () => {
+watch(() => [props.to, props.from] as const, () => {
     if (props.autoStart) start();
 });
 

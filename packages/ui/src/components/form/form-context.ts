@@ -4,6 +4,8 @@ import type { FormContext as VeeFormContext } from 'vee-validate'
 export interface FormFieldContext {
     name: string
     error: Ref<string | undefined>
+    value: Ref<unknown>
+    setValue: (value: unknown) => void
 }
 
 export interface FormItemContext {

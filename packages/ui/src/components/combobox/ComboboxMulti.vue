@@ -82,15 +82,9 @@ function handleSelect(optionValue: string) {
     emit('update:modelValue', newValue)
 }
 
-function getCheckboxClasses(optionValue: string) {
-    return cn(
-        'mr-2 flex h-4 w-4 items-center justify-center',
-        'border-3 border-brutal',
-        props.modelValue.includes(optionValue)
-            ? 'bg-brutal-secondary'
-            : 'bg-brutal-bg'
-    )
-}
+const checkboxBaseClasses = cn('mr-2 flex h-4 w-4 items-center justify-center', 'border-3 border-brutal')
+const checkboxSelectedClasses = cn(checkboxBaseClasses, 'bg-brutal-secondary')
+const checkboxUnselectedClasses = cn(checkboxBaseClasses, 'bg-brutal-bg')
 </script>
 
 <template>
@@ -120,7 +114,7 @@ function getCheckboxClasses(optionValue: string) {
                             @select="handleSelect"
                         >
                             <div
-                                :class="getCheckboxClasses(option.value)"
+                                :class="props.modelValue.includes(option.value) ? checkboxSelectedClasses : checkboxUnselectedClasses"
                             >
                                 <Check v-if="props.modelValue.includes(option.value)" class="h-3 w-3 stroke-[3] text-brutal-fg" />
                             </div>

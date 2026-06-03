@@ -126,10 +126,6 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
 
         const duration = prefersReducedMotion.value ? 0 : fadeDuration.value
         setTimeout(() => {
-            const canvas = canvasRef.value
-            if (canvas) {
-                canvas.remove()
-            }
             onCompleted()
         }, duration)
     }

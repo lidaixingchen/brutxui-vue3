@@ -25,8 +25,8 @@ npx brutx-vue@latest add --block auth-card
 <script setup>
 import AuthCard from '@/components/ui/auth-card/AuthCard.vue'
 
-function handleLogin() {
-    console.log('Login submitted')
+function handleLogin({ email, password }) {
+    console.log('Login submitted:', email, password)
 }
 
 function handleForgotPassword() {
@@ -67,7 +67,7 @@ function handleGithub() {
 
 | 事件 | 载荷 |
 |------|------|
-| `loginSubmit` | `[]` |
+| `loginSubmit` | `{ email: string, password: string }` |
 | `forgotPassword` | `[]` |
 | `googleClick` | `[]` |
 | `githubClick` | `[]` |
@@ -81,3 +81,8 @@ AuthCard 包含：
 - **邮箱表单**：带图标的邮箱输入框、带图标的密码输入框、忘记密码链接
 - **提交按钮**：primary 变体，全宽
 - **底部**：注册链接
+
+## 可访问性
+
+- 使用 `useId()` 为邮箱和密码输入框生成唯一 ID，与 `<label>` 正确关联
+- 邮箱和密码字段通过 `v-model` 实现双向绑定，`loginSubmit` 事件携带 `{ email, password }` 表单数据

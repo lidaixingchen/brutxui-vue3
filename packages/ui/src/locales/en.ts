@@ -53,6 +53,8 @@ export const en: Locale = {
         signIn: 'Sign In',
         noAccount: "Don't have an account?",
         register: 'Register',
+        emailPlaceholder: 'you@example.com',
+        passwordPlaceholder: '••••••••',
     },
     waitlistPage: {
         title: 'Join the BrutxUI Waitlist Club',
@@ -64,6 +66,7 @@ export const en: Locale = {
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
         signOut: 'Sign out',
+        defaultEmail: 'user@example.com',
     },
     brutalistHero: {
         title: 'Build Bold Interfaces Faster with BrutxUI',
@@ -82,6 +85,7 @@ export const en: Locale = {
     },
     toast: {
         close: 'Close',
+        container: 'Notifications',
     },
     dialog: {
         close: 'Close',
@@ -234,5 +238,26 @@ export const en: Locale = {
     gallerySection: {
         defaultTitle: 'Gallery',
         noItems: 'No items to display',
+    },
+    scratchCard: {
+        ariaLabel: 'Scratch Card',
+    },
+    sketchyChart: {
+        lineAriaLabel: 'Sketchy Line Chart',
+        barAriaLabel: 'Sketchy Bar Chart',
+        pieAriaLabel: 'Sketchy Pie Chart',
+    },
+    card3d: {
+        ariaLabel: '3D Interactive Card',
+    },
+    hardcoreInput: {
+        invalidInput: 'Invalid input',
+    },
+    codeBlock: {
+        copied: 'Copied',
+        copy: 'Copy',
+    },
+    kanban: {
+        dropCardsHere: 'Drop cards here',
     },
 }
