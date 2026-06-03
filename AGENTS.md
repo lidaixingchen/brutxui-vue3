@@ -127,6 +127,9 @@ Vue 3.5+（`<script setup>`）· TypeScript 5.7+（strict）· Tailwind CSS 3.4+
   - 组件 JSON：`packages/registry/registry/`
   - 构建脚本：`packages/registry/scripts/`
 - **共享类型：** `packages/shared/`
+- **为此UI库创建的Skills：** `skills/`
+  - BrutxUI Skill：`skills/brutxui/`
+  - 参考文档：`skills/brutxui/references/`
 
 ## 注册表模式
 
