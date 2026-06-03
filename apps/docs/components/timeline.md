@@ -59,6 +59,48 @@ import {
 </template>
 ```
 
+### 水平时间线
+
+设置 `orientation="horizontal"` 可切换为水平布局。水平模式下建议在 `TimelineContent` 上添加 `text-center` 使文本与图标对齐：
+
+```vue
+<template>
+    <Timeline orientation="horizontal">
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="primary" shape="circle">1</TimelineDot>
+                <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent class="text-center">
+                <div class="font-black text-sm">需求分析</div>
+                <div class="text-xs text-brutal-fg/60 mt-1">2026-06-01</div>
+            </TimelineContent>
+        </TimelineItem>
+
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="accent" shape="square">2</TimelineDot>
+                <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent class="text-center">
+                <div class="font-black text-sm">设计开发</div>
+                <div class="text-xs text-brutal-fg/60 mt-1">2026-06-15</div>
+            </TimelineContent>
+        </TimelineItem>
+
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="success" shape="circle">3</TimelineDot>
+            </TimelineSeparator>
+            <TimelineContent class="text-center">
+                <div class="font-black text-sm">测试发布</div>
+                <div class="text-xs text-brutal-fg/60 mt-1">2026-07-01</div>
+            </TimelineContent>
+        </TimelineItem>
+    </Timeline>
+</template>
+```
+
 ## 节点属性配置
 
 `TimelineDot` 支持多样化的新粗野主义几何设计与颜色主题，通过 `shape` 和 `variant` 进行自定义：

@@ -37,6 +37,7 @@ const classes = computed(() =>
 provide(toggleGroupKey, {
     variant: computed(() => props.variant),
     size: computed(() => props.size),
+    disabled: computed(() => props.disabled),
 })
 </script>
 

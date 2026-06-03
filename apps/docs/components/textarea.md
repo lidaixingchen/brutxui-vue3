@@ -32,6 +32,30 @@ const message = ref('')
 </template>
 ```
 
+### 变体
+
+通过 `variant` 属性设置不同的边框样式：
+
+```vue
+<template>
+    <Textarea variant="default" placeholder="Default variant" />
+    <Textarea variant="error" placeholder="Error variant" />
+    <Textarea variant="success" placeholder="Success variant" />
+</template>
+```
+
+### 尺寸
+
+通过 `textarea-size` 属性设置不同的尺寸：
+
+```vue
+<template>
+    <Textarea textarea-size="sm" placeholder="Small size" />
+    <Textarea textarea-size="default" placeholder="Default size" />
+    <Textarea textarea-size="lg" placeholder="Large size" />
+</template>
+```
+
 ## 变体
 
 | 变体 | 说明 |

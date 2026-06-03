@@ -113,7 +113,7 @@ const styles = ref([])
 | `value` | `string` | —（必填） |
 | `variant` | `'default' \| 'outline'` | 继承 ToggleGroup |
 | `size` | `'sm' \| 'default' \| 'lg'` | 继承 ToggleGroup |
-| `disabled` | `boolean` | `false` |
+| `disabled` | `boolean` | `false`（继承 ToggleGroup） |
 | `class` | `string` | — |
 
 ## 事件

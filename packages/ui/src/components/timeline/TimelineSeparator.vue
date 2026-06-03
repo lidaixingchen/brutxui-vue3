@@ -15,8 +15,8 @@ const orientation = inject(timelineOrientationKey, computed(() => 'vertical' as 
 
 const classes = computed(() =>
     cn(
-        'flex items-center shrink-0',
-        orientation.value === 'vertical' ? 'flex-col' : 'flex-row w-full',
+        'relative flex items-center shrink-0',
+        orientation.value === 'vertical' ? 'flex-col' : 'flex-row w-full justify-center',
         props.class
     )
 )

@@ -23,7 +23,13 @@ const props = withDefaults(defineProps<ToggleGroupItemProps>(), {
     class: undefined,
 })
 
-const context = inject(toggleGroupKey, { variant: computed<NonNullable<ToggleVariantProps['variant']> | undefined>(() => undefined), size: computed<NonNullable<ToggleVariantProps['size']> | undefined>(() => undefined) })
+const context = inject(toggleGroupKey, {
+    variant: computed<NonNullable<ToggleVariantProps['variant']> | undefined>(() => undefined),
+    size: computed<NonNullable<ToggleVariantProps['size']> | undefined>(() => undefined),
+    disabled: computed(() => false),
+})
+
+const disabled = computed(() => context.disabled.value || props.disabled)
 
 const classes = computed(() =>
     cn(

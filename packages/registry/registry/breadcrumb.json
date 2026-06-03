@@ -17,7 +17,7 @@
     },
     {
       "path": "components/ui/breadcrumb/BreadcrumbList.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { breadcrumbListVariants } from './breadcrumb-variants'\n\ninterface BreadcrumbListProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbListProps>(), {\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(breadcrumbListVariants(), props.class)\n)\n</script>\n\n<template>\n    <ol :class=\"classes\">\n        <slot />\n    </ol>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { breadcrumbListVariants } from './breadcrumb-variants'\n\ninterface BreadcrumbListProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbListProps>(), {\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(breadcrumbListVariants(), props.class)\n)\n</script>\n\n<template>\n    <ol class=\"breadcrumb-list\" :class=\"classes\">\n        <slot />\n    </ol>\n</template>\n",
       "type": "registry:ui"
     },
     {

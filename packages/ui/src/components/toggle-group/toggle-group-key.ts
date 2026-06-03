@@ -7,4 +7,5 @@ type ToggleVariantProps = VariantProps<typeof toggleVariants>
 export const toggleGroupKey: InjectionKey<{
     variant: Ref<NonNullable<ToggleVariantProps['variant']> | undefined>
     size: Ref<NonNullable<ToggleVariantProps['size']> | undefined>
+    disabled: Ref<boolean>
 }> = Symbol('toggleGroup')
