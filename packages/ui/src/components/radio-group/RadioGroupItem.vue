@@ -1,30 +1,29 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import { RadioGroupItem as RadioGroupItemPrimitive, RadioGroupIndicator as RadioGroupIndicatorPrimitive } from 'reka-ui'
 import { Circle } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { radioGroupItemVariants } from './radio-group-variants'
+
+type RadioGroupItemVariantProps = VariantProps<typeof radioGroupItemVariants>
 
 interface RadioGroupItemProps {
     value: string
     disabled?: boolean
     class?: string
+    variant?: NonNullable<RadioGroupItemVariantProps['variant']>
+    size?: NonNullable<RadioGroupItemVariantProps['size']>
 }
 
 const props = withDefaults(defineProps<RadioGroupItemProps>(), {
     disabled: false,
+    variant: 'default',
+    size: 'default',
 })
 
 const classes = computed(() =>
-    cn(
-        'peer aspect-square h-6 w-6 rounded-full',
-        'border-3 border-brutal bg-brutal-bg text-brutal-fg',
-        'shadow-brutal-sm',
-        'transition-all duration-150',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        'data-[state=checked]:bg-brutal-primary',
-        props.class
-    )
+    cn(radioGroupItemVariants({ variant: props.variant, size: props.size }), props.class)
 )
 </script>
 

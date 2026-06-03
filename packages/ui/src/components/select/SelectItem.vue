@@ -1,26 +1,28 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import { SelectItem as SelectItemPrimitive, SelectItemIndicator as SelectItemIndicatorPrimitive, SelectItemText as SelectItemTextPrimitive } from 'reka-ui'
 import { Check } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
+import { selectItemVariants } from './select-variants'
+
+type SelectItemVariantProps = VariantProps<typeof selectItemVariants>
 
 interface SelectItemProps {
     value: string
     disabled?: boolean
+    variant?: NonNullable<SelectItemVariantProps['variant']>
     class?: string
 }
 
-const props = defineProps<SelectItemProps>()
+const props = withDefaults(defineProps<SelectItemProps>(), {
+    disabled: false,
+    variant: 'default',
+    class: undefined,
+})
 
 const classes = computed(() =>
-    cn(
-        'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',
-        'font-bold outline-none',
-        'focus:bg-brutal-accent focus:text-brutal-fg',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        props.class
-    )
+    cn(selectItemVariants({ variant: props.variant }), props.class)
 )
 </script>
 

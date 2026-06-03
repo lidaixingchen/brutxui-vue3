@@ -14,7 +14,7 @@
     },
     {
       "path": "components/ui/glitch-text/glitch-text-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const glitchTextVariants = cva(\n    [\n        'glitch-text',\n        'relative inline-block',\n        'font-black tracking-wide',\n        'text-brutal-fg',\n    ],\n    {\n        variants: {\n            speed: {\n                slow: '[--glitch-duration:800ms]',\n                medium: '[--glitch-duration:300ms]',\n                fast: '[--glitch-duration:100ms]',\n            },\n        },\n        defaultVariants: {\n            speed: 'medium',\n        },\n    }\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\n\nexport const glitchTextVariants = cva(\n    [\n        'glitch-text',\n        'relative inline-block',\n        'font-black tracking-wide',\n        'text-brutal-fg',\n        'transition-all duration-150',\n        'hover:shadow-brutal hover:-translate-y-0.5',\n        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n    ],\n    {\n        variants: {\n            speed: {\n                slow: '[--glitch-duration:800ms]',\n                medium: '[--glitch-duration:300ms]',\n                fast: '[--glitch-duration:100ms]',\n            },\n        },\n        defaultVariants: {\n            speed: 'medium',\n        },\n    }\n)\n",
       "type": "registry:ui"
     },
     {

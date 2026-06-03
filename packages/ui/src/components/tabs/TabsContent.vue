@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { TabsContent as TabsContentPrimitive } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { tabsContentVariants } from './tabs-variants'
 
 interface TabsContentProps {
     value: string
@@ -11,12 +12,7 @@ interface TabsContentProps {
 const props = defineProps<TabsContentProps>()
 
 const classes = computed(() =>
-    cn(
-        'mt-3 p-4',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        props.class
-    )
+    cn(tabsContentVariants(), props.class)
 )
 </script>
 

@@ -44,7 +44,7 @@ const resolvedCopyright = computed(() => props.copyright ?? t('footerSection.def
 const rootClasses = computed(() =>
     cn(
         'w-full',
-        'bg-brutal-bg border-3 border-t border-brutal',
+        'bg-brutal-bg border-t-3 border-brutal',
         props.class
     )
 )

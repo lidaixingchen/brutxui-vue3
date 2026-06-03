@@ -15,6 +15,7 @@ export const cardVariants = cva(
                 interactive: [
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
                     'cursor-pointer',
                 ],
                 primary: 'shadow-brutal-primary border-[var(--brutal-primary)]',

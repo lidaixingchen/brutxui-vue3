@@ -1,20 +1,24 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import { TabsList as TabsListPrimitive } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { tabsListVariants } from './tabs-variants'
+
+type TabsListVariantProps = VariantProps<typeof tabsListVariants>
 
 interface TabsListProps {
+    size?: NonNullable<TabsListVariantProps['size']>
     class?: string
 }
 
-const props = defineProps<TabsListProps>()
+const props = withDefaults(defineProps<TabsListProps>(), {
+    size: 'default',
+    class: undefined,
+})
 
 const classes = computed(() =>
-    cn(
-        'inline-flex h-12 items-center justify-center p-1 gap-1',
-        'bg-brutal-bg border-3 border-brutal shadow-brutal',
-        props.class
-    )
+    cn(tabsListVariants({ size: props.size }), props.class)
 )
 </script>
 

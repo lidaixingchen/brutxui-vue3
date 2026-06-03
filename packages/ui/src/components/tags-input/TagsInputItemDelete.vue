@@ -13,7 +13,7 @@ const delegatedProps = computed(() => {
 
 const classes = computed(() =>
     cn(
-        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg rounded-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         props.class
     )
 )

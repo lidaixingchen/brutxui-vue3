@@ -45,7 +45,7 @@ export const paginationButtonVariants = cva(
                     'bg-brutal-bg text-brutal-fg',
                     'shadow-brutal',
                     'hover:bg-brutal-muted',
-                    'hover:shadow-brutal-sm',
+                    'hover:shadow-brutal hover:-translate-y-0.5',
                     'active:shadow-none active:translate-y-[var(--brutal-pressed-offset,2px)]',
                 ],
             },

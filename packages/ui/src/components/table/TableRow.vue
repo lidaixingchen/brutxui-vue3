@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { tableRowVariants } from './table-variants'
 
 interface TableRowProps {
     class?: string
@@ -9,12 +10,7 @@ interface TableRowProps {
 const props = defineProps<TableRowProps>()
 
 const classes = computed(() =>
-    cn(
-        'border-b-3 border-brutal transition-colors',
-        'hover:bg-brutal-accent/30',
-        'data-[state=selected]:bg-brutal-accent',
-        props.class
-    )
+    cn(tableRowVariants(), props.class)
 )
 </script>
 

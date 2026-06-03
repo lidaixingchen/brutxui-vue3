@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { Search } from 'lucide-vue-next'
+import { commandInputWrapperVariants } from './command-variants'
 
 interface CommandInputProps {
     modelValue?: string
@@ -23,11 +24,7 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('command.place
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const wrapperClasses = computed(() =>
-    cn(
-        'flex h-12 items-center gap-3 px-4',
-        'border-b-3 border-brutal',
-        'bg-brutal-accent'
-    )
+    cn(commandInputWrapperVariants())
 )
 
 const inputClasses = computed(() =>

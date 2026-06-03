@@ -87,7 +87,7 @@ describe('HeaderSection', () => {
         const wrapper = mount(HeaderSection, { ...localeProvide })
         const header = wrapper.find('header')
         expect(header.classes()).toContain('sticky')
-        expect(header.classes()).toContain('border-3')
+        expect(header.classes()).toContain('border-b-3')
         expect(header.classes()).toContain('border-brutal')
     })
 })

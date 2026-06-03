@@ -39,9 +39,9 @@ export const switchThumbVariants = cva(
     {
         variants: {
             size: {
-                sm: 'h-4 w-4 data-[state=checked]:translate-x-[18px] data-[state=unchecked]:translate-x-0.5',
-                default: 'h-5 w-5 data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0.5',
-                lg: 'h-7 w-7 data-[state=checked]:translate-x-[30px] data-[state=unchecked]:translate-x-0.5',
+                sm: 'h-4 w-4 data-[state=checked]:translate-x-[16px] data-[state=unchecked]:translate-x-[2px]',
+                default: 'h-5 w-5 data-[state=checked]:translate-x-[20px] data-[state=unchecked]:translate-x-[2px]',
+                lg: 'h-7 w-7 data-[state=checked]:translate-x-[28px] data-[state=unchecked]:translate-x-[2px]',
             },
         },
         defaultVariants: {

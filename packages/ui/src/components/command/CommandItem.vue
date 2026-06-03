@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, inject, type ComponentPublicInstance } from 'vue'
 import { cn } from '../../lib/utils'
+import { commandItemVariants } from './command-variants'
 
 interface CommandItemProps {
     value: string
@@ -15,19 +16,7 @@ const emit = defineEmits<{ select: [value: string] }>()
 const isSelected = ref(false)
 
 const classes = computed(() =>
-    cn(
-        'relative flex cursor-pointer items-center gap-3 px-3 py-2',
-        'text-sm font-semibold',
-        'select-none outline-none',
-        'border-3 border-transparent',
-        'data-[highlighted=true]:bg-brutal-secondary data-[highlighted=true]:text-brutal-fg',
-        'data-[highlighted=true]:border-brutal data-[highlighted=true]:font-black',
-        'data-[highlighted=true]:shadow-brutal-sm',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
-        'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
-        '[&_svg]:pointer-events-none [&_svg]:shrink-0',
-        props.class
-    )
+    cn(commandItemVariants(), props.class)
 )
 
 function handleMouseEnter() {
@@ -44,7 +33,6 @@ function handleClick() {
     }
 }
 
-// 键盘方向键导航
 const commandListEl = inject<HTMLElement | null>('command-list-el', null)
 let itemEl: HTMLElement | null = null
 

@@ -89,7 +89,7 @@ function getProgressClasses(stat: StatItem) {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card v-for="(stat, index) in stats" :key="stat.title" variant="default" class="cursor-pointer" @click="emit('stat-click', index)">
+            <Card v-for="(stat, index) in stats" :key="stat.title" variant="interactive" @click="emit('stat-click', index)">
                 <CardHeader class="pb-2">
                     <div class="flex items-center justify-between">
                         <CardDescription>{{ stat.title }}</CardDescription>

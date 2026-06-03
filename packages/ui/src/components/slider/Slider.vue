@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import {
     SliderRoot as SliderRootPrimitive,
     SliderTrack as SliderTrackPrimitive,
@@ -7,6 +8,10 @@ import {
     SliderThumb as SliderThumbPrimitive,
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { sliderTrackVariants, sliderThumbVariants, sliderRangeVariants } from './slider-variants'
+
+type SliderTrackVariantProps = VariantProps<typeof sliderTrackVariants>
+type SliderThumbVariantProps = VariantProps<typeof sliderThumbVariants>
 
 interface SliderProps {
     defaultValue?: number[]
@@ -15,6 +20,8 @@ interface SliderProps {
     max?: number
     step?: number
     disabled?: boolean
+    size?: NonNullable<SliderTrackVariantProps['size']>
+    variant?: NonNullable<SliderThumbVariantProps['variant']>
     class?: string
 }
 
@@ -24,6 +31,9 @@ const props = withDefaults(defineProps<SliderProps>(), {
     min: 0,
     max: 100,
     step: 1,
+    disabled: false,
+    size: 'default',
+    variant: 'default',
     class: undefined,
 })
 
@@ -34,24 +44,15 @@ const rootClasses = computed(() =>
 )
 
 const trackClasses = computed(() =>
-    cn(
-        'relative h-5 w-full grow overflow-hidden rounded-brutal',
-        'border-3 border-brutal bg-brutal-bg',
-        'shadow-brutal-sm'
-    )
+    cn(sliderTrackVariants({ size: props.size }))
 )
 
 const thumbClasses = computed(() =>
-    cn(
-        'block h-6 w-6 rounded-full',
-        'border-3 border-brutal bg-brutal-accent',
-        'shadow-brutal-sm',
-        'transition-all duration-150',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'disabled:pointer-events-none disabled:opacity-50',
-        'hover:scale-110 active:scale-95',
-        'cursor-grab active:cursor-grabbing'
-    )
+    cn(sliderThumbVariants({ size: props.size, variant: props.variant }))
+)
+
+const rangeClasses = computed(() =>
+    cn(sliderRangeVariants({ variant: props.variant }))
 )
 </script>
 
@@ -67,7 +68,7 @@ const thumbClasses = computed(() =>
         @update:model-value="emit('update:modelValue', $event!)"
     >
         <SliderTrackPrimitive :class="trackClasses">
-            <SliderRangePrimitive class="absolute h-full bg-brutal-secondary" />
+            <SliderRangePrimitive :class="rangeClasses" />
         </SliderTrackPrimitive>
         <SliderThumbPrimitive :class="thumbClasses" />
     </SliderRootPrimitive>

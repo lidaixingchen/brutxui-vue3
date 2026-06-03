@@ -50,6 +50,8 @@ const dropZoneClasses = computed(() =>
     cn(
         'flex flex-col items-center justify-center p-8 border-3 border-dashed border-brutal rounded-brutal transition-all cursor-pointer',
         isDragging.value ? 'bg-brutal-muted shadow-brutal' : 'bg-brutal-bg',
+        'hover:shadow-brutal hover:-translate-y-0.5',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         props.uploading && 'pointer-events-none'
     )
 )

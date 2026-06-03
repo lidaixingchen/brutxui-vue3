@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { tableVariants } from './table-variants'
 
 interface TableProps {
     class?: string
@@ -9,7 +10,7 @@ interface TableProps {
 const props = defineProps<TableProps>()
 
 const classes = computed(() =>
-    cn('w-full caption-bottom text-sm', 'border-3 border-brutal', props.class)
+    cn(tableVariants(), props.class)
 )
 </script>
 

@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { CheckboxRoot, CheckboxIndicator } from 'reka-ui'
 import { Check } from 'lucide-vue-next'
+import { checkboxVariants, checkboxIndicatorVariants } from './checkbox-variants'
+
+type CheckboxVariantProps = VariantProps<typeof checkboxVariants>
 
 interface CheckboxProps {
     class?: string
     checked?: boolean
     defaultChecked?: boolean
     disabled?: boolean
+    variant?: NonNullable<CheckboxVariantProps['variant']>
+    size?: NonNullable<CheckboxVariantProps['size']>
 }
 
 const props = withDefaults(defineProps<CheckboxProps>(), {
     disabled: false,
+    variant: 'default',
+    size: 'default',
 })
 
 const emit = defineEmits<{
@@ -20,22 +28,11 @@ const emit = defineEmits<{
 }>()
 
 const classes = computed(() =>
-    cn(
-        'peer h-6 w-6 shrink-0',
-        'border-3 border-brutal',
-        'bg-brutal-bg',
-        'flex items-center justify-center',
-        'transition-all duration-150',
-        'shadow-brutal-sm',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-50',
-        'data-[state=checked]:bg-brutal-success',
-        props.class
-    )
+    cn(checkboxVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
 const checkClasses = computed(() =>
-    cn('h-4 w-4 stroke-[3] text-brutal-fg')
+    cn(checkboxIndicatorVariants({ size: props.size }))
 )
 </script>
 
@@ -47,8 +44,8 @@ const checkClasses = computed(() =>
         :disabled="disabled"
         @update:checked="emit('update:checked', $event)"
     >
-        <CheckboxIndicator class="flex items-center justify-center text-current">
-            <Check :class="checkClasses" />
+        <CheckboxIndicator :class="checkClasses">
+            <Check class="h-full w-full" />
         </CheckboxIndicator>
     </CheckboxRoot>
 </template>

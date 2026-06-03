@@ -46,7 +46,7 @@ const mobileMenuOpen = ref(false)
 const rootClasses = computed(() =>
     cn(
         'sticky top-0 z-40 w-full',
-        'bg-brutal-bg border-3 border-b border-brutal shadow-brutal-sm',
+        'bg-brutal-bg border-b-3 border-brutal shadow-brutal-sm',
         props.class
     )
 )

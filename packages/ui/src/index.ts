@@ -14,8 +14,10 @@ export { default as Switch } from './components/switch/Switch.vue'
 export { switchRootVariants, switchThumbVariants } from './components/switch/switch-variants'
 
 export { default as Checkbox } from './components/checkbox/Checkbox.vue'
+export { checkboxVariants, checkboxIndicatorVariants } from './components/checkbox/checkbox-variants'
 
 export { default as Progress } from './components/progress/Progress.vue'
+export { progressRootVariants, progressIndicatorVariants } from './components/progress/progress-variants'
 
 export { default as Spinner } from './components/spinner/Spinner.vue'
 export { default as BlockSpinner } from './components/spinner/BlockSpinner.vue'
@@ -37,6 +39,7 @@ export { default as DialogHeader } from './components/dialog/DialogHeader.vue'
 export { default as DialogFooter } from './components/dialog/DialogFooter.vue'
 export { default as DialogTitle } from './components/dialog/DialogTitle.vue'
 export { default as DialogDescription } from './components/dialog/DialogDescription.vue'
+export { dialogContentVariants, dialogCloseVariants } from './components/dialog/dialog-variants'
 
 export { AlertDialogRoot as AlertDialog, AlertDialogTrigger, AlertDialogPortal } from 'reka-ui'
 export { default as AlertDialogContent } from './components/alert-dialog/AlertDialogContent.vue'
@@ -57,9 +60,11 @@ export { sheetVariants } from './components/sheet/sheet-variants'
 
 export { PopoverRoot as Popover, PopoverTrigger, PopoverAnchor } from 'reka-ui'
 export { default as PopoverContent } from './components/popover/PopoverContent.vue'
+export { popoverContentVariants } from './components/popover/popover-variants'
 
 export { TooltipProvider, TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 export { default as TooltipContent } from './components/tooltip/TooltipContent.vue'
+export { tooltipContentVariants } from './components/tooltip/tooltip-variants'
 
 export { SelectRoot as Select, SelectGroup, SelectValue } from 'reka-ui'
 export { default as SelectTrigger } from './components/select/SelectTrigger.vue'
@@ -69,6 +74,7 @@ export { default as SelectLabel } from './components/select/SelectLabel.vue'
 export { default as SelectSeparator } from './components/select/SelectSeparator.vue'
 export { default as SelectScrollUpButton } from './components/select/SelectScrollUpButton.vue'
 export { default as SelectScrollDownButton } from './components/select/SelectScrollDownButton.vue'
+export { selectTriggerVariants, selectContentVariants, selectItemVariants } from './components/select/select-variants'
 
 export { DropdownMenuRoot as DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSub, DropdownMenuRadioGroup } from 'reka-ui'
 export { default as DropdownMenuContent } from './components/dropdown-menu/DropdownMenuContent.vue'
@@ -80,11 +86,14 @@ export { default as DropdownMenuSeparator } from './components/dropdown-menu/Dro
 export { default as DropdownMenuShortcut } from './components/dropdown-menu/DropdownMenuShortcut.vue'
 export { default as DropdownMenuSubTrigger } from './components/dropdown-menu/DropdownMenuSubTrigger.vue'
 export { default as DropdownMenuSubContent } from './components/dropdown-menu/DropdownMenuSubContent.vue'
+export { dropdownMenuContentVariants, dropdownMenuItemVariants } from './components/dropdown-menu/dropdown-menu-variants'
 
 export { default as RadioGroup } from './components/radio-group/RadioGroup.vue'
 export { default as RadioGroupItem } from './components/radio-group/RadioGroupItem.vue'
+export { radioGroupItemVariants } from './components/radio-group/radio-group-variants'
 
 export { default as Slider } from './components/slider/Slider.vue'
+export { sliderTrackVariants, sliderThumbVariants, sliderRangeVariants } from './components/slider/slider-variants'
 
 export { default as Toggle } from './components/toggle/Toggle.vue'
 export { toggleVariants } from './components/toggle/toggle-variants'
@@ -96,6 +105,7 @@ export { TabsRoot as Tabs } from 'reka-ui'
 export { default as TabsList } from './components/tabs/TabsList.vue'
 export { default as TabsTrigger } from './components/tabs/TabsTrigger.vue'
 export { default as TabsContent } from './components/tabs/TabsContent.vue'
+export { tabsListVariants, tabsTriggerVariants, tabsContentVariants } from './components/tabs/tabs-variants'
 
 export { default as Avatar } from './components/avatar/Avatar.vue'
 export { default as AvatarImage } from './components/avatar/AvatarImage.vue'
@@ -113,6 +123,7 @@ export { default as TableRow } from './components/table/TableRow.vue'
 export { default as TableHead } from './components/table/TableHead.vue'
 export { default as TableCell } from './components/table/TableCell.vue'
 export { default as TableCaption } from './components/table/TableCaption.vue'
+export { tableVariants, tableHeaderVariants, tableHeadVariants, tableFooterVariants, tableRowVariants, tableCellVariants } from './components/table/table-variants'
 
 export { default as Alert } from './components/alert/Alert.vue'
 export { default as AlertTitle } from './components/alert/AlertTitle.vue'
@@ -145,6 +156,7 @@ export { default as CommandGroup } from './components/command/CommandGroup.vue'
 export { default as CommandItem } from './components/command/CommandItem.vue'
 export { default as CommandSeparator } from './components/command/CommandSeparator.vue'
 export { default as CommandShortcut } from './components/command/CommandShortcut.vue'
+export { commandInputWrapperVariants, commandItemVariants } from './components/command/command-variants'
 
 export { default as Combobox } from './components/combobox/Combobox.vue'
 export { default as ComboboxMulti } from './components/combobox/ComboboxMulti.vue'

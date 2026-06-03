@@ -123,7 +123,7 @@ describe('FooterSection', () => {
     it('has border styling', () => {
         const wrapper = mount(FooterSection, { ...localeProvide })
         const footer = wrapper.find('footer')
-        expect(footer.classes()).toContain('border-3')
+        expect(footer.classes()).toContain('border-t-3')
         expect(footer.classes()).toContain('border-brutal')
     })
 })

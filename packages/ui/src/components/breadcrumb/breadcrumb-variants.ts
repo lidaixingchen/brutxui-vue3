@@ -9,7 +9,7 @@ export const breadcrumbItemVariants = cva(
 )
 
 export const breadcrumbLinkVariants = cva(
-    'font-semibold transition-colors hover:text-brutal-primary hover:underline cursor-pointer'
+    'font-semibold transition-colors hover:text-brutal-primary hover:underline hover:shadow-brutal-sm hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer'
 )
 
 export const breadcrumbPageVariants = cva(

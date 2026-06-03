@@ -79,7 +79,7 @@ function navigateNext() {
 
 const dayBaseClasses = computed(() =>
     cn(
-        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold cursor-pointer border-3 border-brutal/10',
+        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all'
     )
 )
