@@ -56,6 +56,21 @@ BrutxUI 采用复制粘贴组件模式，而非传统的 npm 包方式：
 }
 ```
 
+BrutxUI 还提供了 `useTheme` 组合式函数，用于在运行时切换主题和暗色模式：
+
+```vue
+<script setup>
+import { useTheme } from 'brutx-ui-vue'
+
+const { theme, colorMode, setTheme, toggleColorMode, initTheme } = useTheme()
+
+// 在应用入口恢复用户偏好
+initTheme()
+</script>
+```
+
+详见[主题与令牌](/guide/theme)指南。
+
 ## 定制预设
 
 BrutxUI 内置三套主题预设，你可以通过在根元素上添加类名来应用：

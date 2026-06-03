@@ -21,7 +21,7 @@ description: Canvas 覆盖层驱动的刮刮卡组件，支持自定义覆盖层
 
 ```vue
 <script setup>
-import ScratchCard from '@/components/ui/scratch-card/ScratchCard.vue'
+import { ScratchCard } from 'brutx-ui-vue'
 </script>
 
 <template>

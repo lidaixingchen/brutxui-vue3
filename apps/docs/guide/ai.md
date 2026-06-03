@@ -31,7 +31,7 @@ AI 助手可以按照既定模式生成 BrutxUI 组件：
 
 ```vue
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { cn } from '@/lib/utils'
 import Button from '@/components/ui/Button.vue'
 

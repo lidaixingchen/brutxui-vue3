@@ -92,7 +92,7 @@ function handleStatClick(index) {
 
 | 事件 | 载荷 |
 |------|------|
-| `statClick` | `[index: number]` |
+| `stat-click` | `[index: number]` |
 
 ## 插槽
 

@@ -21,7 +21,7 @@ description: 新粗野主义风格的按钮组件，提供9种颜色变体、加
 
 ```vue
 <script setup>
-import Button from '@/components/ui/button/Button.vue'
+import { Button } from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -60,7 +60,7 @@ import Button from '@/components/ui/button/Button.vue'
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Button from '@/components/ui/button/Button.vue'
+import { Button } from 'brutx-ui-vue'
 
 const isLoading = ref(false)
 
@@ -82,7 +82,7 @@ async function handleSubmit() {
 
 ```vue
 <script setup>
-import Button from '@/components/ui/button/Button.vue'
+import { Button } from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -98,7 +98,7 @@ import Button from '@/components/ui/button/Button.vue'
 
 ```vue
 <script setup>
-import Button from '@/components/ui/button/Button.vue'
+import { Button } from 'brutx-ui-vue'
 import { RouterLink } from 'vue-router'
 </script>
 

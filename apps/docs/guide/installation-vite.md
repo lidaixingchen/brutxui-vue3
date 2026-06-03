@@ -52,7 +52,7 @@ export default {
 
 ## 第 3 步：初始化 BrutxUI
 
-运行 init 命令来设置粗野主义插件和样式：
+运行 init 命令来注入 CSS 自定义属性和样式：
 
 ```bash
 npx brutx-vue@latest init
@@ -60,9 +60,9 @@ npx brutx-vue@latest init
 
 此命令将：
 - 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`lucide-vue-next`）
-- 配置 Tailwind 粗野主义插件
+- 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
 - 创建 `cn()` 工具函数
-- 将 BrutxUI 样式添加到你的 CSS 中
+- 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 CSS 中
 
 ## 第 4 步：添加组件
 

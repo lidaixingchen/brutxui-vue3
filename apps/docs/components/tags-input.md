@@ -28,7 +28,7 @@ import {
     TagsInputItem,
     TagsInputItemText,
     TagsInputItemDelete
-} from '@/components/ui/tags-input'
+} from 'brutx-ui-vue'
 
 const tags = ref(['vue', 'css'])
 </script>

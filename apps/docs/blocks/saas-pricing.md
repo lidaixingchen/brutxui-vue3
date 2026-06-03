@@ -104,7 +104,7 @@ interface PricingPlan {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `title` | `string` | `'Simple, Unapologetic Pricing'` |
+| `title` | `string` | locale: `saasPricing.title` |
 | `subtitle` | `string` | — |
 | `plans` | `PricingPlan[]` | 内置 3 个方案 |
 | `class` | `string` | — |

@@ -96,7 +96,7 @@ interface BrutalistPricingPlan {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `title` | `string` | `'Simple, Transparent Brutalist Plans'` |
+| `title` | `string` | locale: `pricingSection.defaultTitle` |
 | `subtitle` | `string` | — |
 | `plans` | `BrutalistPricingPlan[]` | `[]` |
 | `class` | `string` | — |

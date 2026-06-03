@@ -23,8 +23,8 @@ init 命令将：
 1. 检测你的项目框架（Vite、Nuxt 等）
 2. 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`lucide-vue-next`）
 3. 在 `src/lib/utils.ts` 创建 `cn()` 工具函数
-4. 配置 Tailwind CSS 粗野主义插件
-5. 将 BrutxUI CSS 自定义属性添加到你的样式表中
+4. 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
+5. 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 CSS 中
 6. 设置组件目录结构
 
 ### 选项
@@ -32,7 +32,10 @@ init 命令将：
 | 标志 | 描述 | 默认值 |
 |------|------|--------|
 | `--yes` / `-y` | 跳过提示并使用默认值 | `false` |
+| `--defaults` / `-d` | 使用默认配置 | `false` |
 | `--cwd <path>` | 设置工作目录 | 当前目录 |
+| `--force` / `-f` | 强制覆盖已有配置 | `false` |
+| `--silent` / `-s` | 静默输出 | `false` |
 
 ## brutx-vue add
 
@@ -70,17 +73,11 @@ npx brutx-vue@latest add --all
 | `--yes` / `-y` | 跳过确认提示 | `false` |
 | `--cwd <path>` | 设置工作目录 | 当前目录 |
 | `--overwrite` | 覆盖已有的组件文件 | `false` |
+| `--path <path>` / `-p` | 指定组件添加路径 | — |
+| `--silent` / `-s` | 静默输出 | `false` |
+| `--dry-run` | 模拟添加，不写入文件 | `false` |
+| `--registry <registry>` / `-r` | 指定注册表路径或 URL | — |
 
 ### 可用组件
 
-alert, alert-dialog, avatar, badge, button, calendar, card, checkbox, combobox, command, dashboard-stats, dialog, dropdown-menu, form, input, label, pagination, popover, progress, radio-group, saas-pricing, scroll-area, select, separator, sheet, skeleton, slider, spinner, submit-button, switch, table, tabs, textarea, toast, toggle, toggle-group, tooltip
-
-### 可用区块
-
-brutalist-hero, pricing-section, auth-card, dashboard-shell, empty-state, waitlist-page
-
-添加区块：
-
-```bash
-npx brutx-vue@latest add --block auth-card
-```
+accordion, activity-log-page, alert, alert-dialog, auth-card, avatar, badge, before-after, blog-card, blog-list-page, breadcrumb, brutalist-hero, button, calendar, card, card-3d, carousel, chat-bubble, checkbox, code-block, combobox, command, cookie-consent, copy-to-clipboard, counter, dashboard-shell, dashboard-stats, data-table-section, dialog, dropdown-menu, empty-state, error-card, faq-section, feedback-form, file-card, footer-section, form, gallery-section, glitch-text, hardcore-input, header-section, input, kbd, kanban, loading-page, marquee, not-found-page, number-input, overview-page, pagination, popover, pricing-section, profile-page, progress, quick-actions, radio-group, saas-pricing, scratch-card, scroll-area, search-widget, select, separator, settings-page, sheet, skeleton, sketchy-chart, slider, spinner, stepper, stepper-section, submit-button, success-card, switch, table, tabs, tabs-nav, tags-input, testimonial-card, textarea, timeline, toast, toggle, toggle-group, tooltip, tree-view, upload-card, waitlist-page

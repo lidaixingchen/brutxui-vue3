@@ -21,7 +21,7 @@ description: 基于 requestAnimationFrame 的数字滚动动画组件，支持�
 
 ```vue
 <script setup>
-import { Counter } from '@/components/ui/counter'
+import { Counter } from 'brutx-ui-vue'
 import { ref } from 'vue'
 
 const counterRef = ref()

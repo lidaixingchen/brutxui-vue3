@@ -21,8 +21,8 @@ description: 多步骤进度指示组件，支持水平与垂直方向，完成/
 
 ```vue
 <script setup>
-import { Stepper } from '@/components/ui/stepper'
-import type { StepperStep } from '@/components/ui/stepper'
+import { Stepper } from 'brutx-ui-vue'
+import type { StepperStep } from 'brutx-ui-vue'
 import { ref } from 'vue'
 
 const steps: StepperStep[] = [

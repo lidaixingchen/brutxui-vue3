@@ -30,8 +30,8 @@ import {
     SheetTitle,
     SheetDescription,
     SheetClose,
-} from '@/components/ui'
-import Button from '@/components/ui/button/Button.vue'
+    Button,
+} from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -71,8 +71,7 @@ import Button from '@/components/ui/button/Button.vue'
 
 ```vue
 <script setup>
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui'
-import Button from '@/components/ui/button/Button.vue'
+import { Sheet, SheetTrigger, SheetContent, Button } from 'brutx-ui-vue'
 </script>
 
 <template>

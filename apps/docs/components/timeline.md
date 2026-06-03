@@ -28,7 +28,7 @@ import {
     TimelineDot,
     TimelineConnector,
     TimelineContent
-} from '@/components/ui/timeline'
+} from 'brutx-ui-vue'
 </script>
 
 <template>

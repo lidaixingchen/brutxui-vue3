@@ -73,10 +73,12 @@ const stats = [
 interface StatItem {
     title: string
     value: string
-    description?: string
-    change?: string
-    trend?: 'up' | 'down' | 'neutral'
-    icon?: Component
+    description: string
+    change: string
+    trend: 'up' | 'down' | 'neutral'
+    icon: Component
+    accentColor?: 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
+    progress?: number
 }
 ```
 
@@ -85,11 +87,21 @@ interface StatItem {
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `stats` | `StatItem[]` | `[]` |
+| `title` | `string` | locale: `dashboardStats.defaultTitle` |
+| `subtitle` | `string` | — |
 | `class` | `string` | — |
+
+## 事件
+
+| 事件 | 载荷 |
+|------|------|
+| `stat-click` | `[index: number]` |
 
 ## 特性
 
 - **趋势指示**：根据 `trend` 值显示不同颜色（up=成功色，down=危险色，neutral=强调色）
 - **图标支持**：每个统计卡片可配置 Lucide 图标
-- **响应式网格**：移动端单列，平板双列，桌面四列
-- **变化百分比**：可选的 `change` 字段展示趋势变化
+- **响应式网格**：移动端单列，平板双列，桌面三列
+- **变化百分比**：`change` 字段展示趋势变化
+- **强调色**：可选 `accentColor` 字段自定义图标和进度条颜色
+- **进度条**：可选 `progress` 字段显示进度指示

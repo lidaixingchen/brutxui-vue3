@@ -29,8 +29,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuLabel,
     DropdownMenuShortcut,
-} from '@/components/ui'
-import Button from '@/components/ui/button/Button.vue'
+} from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -66,8 +66,8 @@ import {
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuCheckboxItem,
-} from '@/components/ui'
-import Button from '@/components/ui/button/Button.vue'
+} from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
 
 const showStatusBar = ref(true)
 const showActivityBar = ref(false)
@@ -101,8 +101,8 @@ import {
     DropdownMenuContent,
     DropdownMenuRadioItem,
     DropdownMenuRadioGroup,
-} from '@/components/ui'
-import Button from '@/components/ui/button/Button.vue'
+} from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
 
 const position = ref('bottom')
 </script>
@@ -142,3 +142,66 @@ const position = ref('bottom')
 | `DropdownMenuSubTrigger` | 子菜单触发器 |
 | `DropdownMenuSubContent` | 子菜单内容 |
 | `DropdownMenuGroup` | 菜单项分组 |
+
+## Props
+
+### DropdownMenuContent
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `sideOffset` | `number` | `6` |
+| `class` | `string` | — |
+
+### DropdownMenuItem
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuCheckboxItem
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuRadioItem
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuRadioGroup
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuLabel
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuSeparator
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuShortcut
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuSubTrigger
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### DropdownMenuSubContent
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |

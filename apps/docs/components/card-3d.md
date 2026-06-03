@@ -21,7 +21,7 @@ description: 3D 物理悬浮卡片，鼠标悬停时产生 3D 旋转偏转与反
 
 ```vue
 <script setup>
-import Card3D from '@/components/ui/card-3d/Card3D.vue'
+import { Card3D } from 'brutx-ui-vue'
 </script>
 
 <template>

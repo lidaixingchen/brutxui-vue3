@@ -21,7 +21,7 @@ description: 键盘按键样式组件，用于展示快捷键提示，配合 Com
 
 ```vue
 <script setup>
-import { Kbd } from '@/components/ui/kbd'
+import { Kbd } from 'brutx-ui-vue'
 </script>
 
 <template>

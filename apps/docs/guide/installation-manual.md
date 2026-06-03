@@ -27,13 +27,15 @@ pnpm add reka-ui class-variance-authority clsx tailwind-merge lucide-vue-next
 可选依赖：
 
 ```bash
-pnpm add v-calendar vee-validate
+pnpm add v-calendar vee-validate @vee-validate/zod zod
 ```
 
 | 包名 | 用途 |
 |---------|---------|
 | `v-calendar` | 日历组件 |
 | `vee-validate` | 表单验证 |
+| `@vee-validate/zod` | Zod schema 适配器（Form 组件） |
+| `zod` | Schema 验证（Form 组件） |
 
 ## 第 2 步：创建 cn() 工具函数
 
@@ -50,11 +52,9 @@ export function cn(...inputs: ClassValue[]) {
 
 ## 第 3 步：配置 Tailwind CSS
 
-创建或更新 `tailwind.config.js`，添加 BrutxUI 的内容路径和插件：
+创建或更新 `tailwind.config.js`，添加 BrutxUI 的内容路径和颜色配置：
 
 ```js
-import brutalism from './src/lib/brutalism-plugin.js'
-
 /** @type {import('tailwindcss').Config} */
 export default {
     darkMode: 'class',
@@ -85,7 +85,7 @@ export default {
             },
         },
     },
-    plugins: [brutalism],
+    plugins: [],
 }
 ```
 
@@ -123,15 +123,60 @@ export default {
     }
 
     .dark {
+        --brutal-border-width: 3px;
         --brutal-border-color: #ffffff;
+        --brutal-shadow-offset-x: 4px;
+        --brutal-shadow-offset-y: 4px;
         --brutal-shadow-color: #ffffff;
+        --brutal-radius: 0px;
         --brutal-bg: #141414;
         --brutal-fg: #ffffff;
+        --brutal-primary: #FF6B6B;
+        --brutal-secondary: #4ECDC4;
+        --brutal-accent: #FFE66D;
+        --brutal-destructive: #EF476F;
+        --brutal-success: #7FB069;
+        --brutal-muted: #1e1e1e;
         --brutal-muted-foreground: #9CA3AF;
         --brutal-ring: #ffffff;
+        --brutal-pressed-offset: 2px;
         --brutal-info: #3B82F6;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #6B7280;
+    }
+}
+
+@layer utilities {
+    .border-3 {
+        border-width: var(--brutal-border-width, 3px);
+    }
+
+    .border-brutal {
+        border-color: var(--brutal-border-color, #000000);
+    }
+
+    .shadow-brutal {
+        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+    }
+
+    .shadow-brutal-sm {
+        box-shadow: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
+    }
+
+    .shadow-brutal-lg {
+        box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
+    }
+
+    .shadow-brutal-xl {
+        box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
+    }
+
+    .shadow-brutal-primary {
+        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary);
+    }
+
+    .shadow-brutal-secondary {
+        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary);
     }
 }
 ```

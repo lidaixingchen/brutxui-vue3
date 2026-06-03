@@ -29,7 +29,7 @@ import {
     SelectValue,
     SelectGroup,
     SelectLabel,
-} from '@/components/ui'
+} from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -61,7 +61,7 @@ import {
     SelectContent,
     SelectItem,
     SelectValue,
-} from '@/components/ui'
+} from 'brutx-ui-vue'
 
 const selectedFruit = ref('')
 </script>

@@ -70,6 +70,12 @@ const testimonials = [
 | `role` | `string` | locale: `testimonialCard.defaultRole` |
 | `class` | `string` | — |
 
+## 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `actions` | 卡片底部操作区域 |
+
 ## 布局
 
 TestimonialCard 包含：

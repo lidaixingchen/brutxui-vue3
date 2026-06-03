@@ -29,15 +29,7 @@ pnpm add vee-validate @vee-validate/zod zod
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import Form from '@/components/ui/form/Form.vue'
-import FormField from '@/components/ui/form/FormField.vue'
-import FormItem from '@/components/ui/form/FormItem.vue'
-import FormLabel from '@/components/ui/form/FormLabel.vue'
-import FormControl from '@/components/ui/form/FormControl.vue'
-import FormDescription from '@/components/ui/form/FormDescription.vue'
-import FormMessage from '@/components/ui/form/FormMessage.vue'
-import Input from '@/components/ui/input/Input.vue'
-import SubmitButton from '@/components/ui/submit-button/SubmitButton.vue'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, SubmitButton } from 'brutx-ui-vue'
 
 const schema = toTypedSchema(z.object({
     username: z.string().min(2).max(50),

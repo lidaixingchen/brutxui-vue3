@@ -21,7 +21,7 @@ description: 折叠面板组件，用于在一个垂直堆叠的列表中展示�
 
 ```vue
 <script setup>
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion'
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'brutx-ui-vue'
 </script>
 
 <template>

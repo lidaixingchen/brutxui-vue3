@@ -29,7 +29,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
     BreadcrumbEllipsis
-} from '@/components/ui/breadcrumb'
+} from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -78,15 +78,52 @@ import {
 
 ## Props / 插槽
 
+### Breadcrumb
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
+
+### BreadcrumbList
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
+
+### BreadcrumbItem
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
+
 ### BreadcrumbLink Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `as` | `string` | `'a'` | 渲染的 HTML 标签，如 `'a'`、`'button'` 等 |
 | `asChild` | `boolean` | `false` | 是否开启 Reka UI 的 asChild，以便配合 Vue-Router 的 `<router-link>` 渲染 |
+| `class` | `string` | — | 自定义样式类 |
+
+### BreadcrumbPage
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
+
+### BreadcrumbSeparator
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 ### BreadcrumbSeparator Slots
 
 | 插槽名 | 说明 |
 |--------|------|
 | `default` | 默认渲染正斜杠 `/`，可放入自定义的小图标组件 |
+
+### BreadcrumbEllipsis
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |

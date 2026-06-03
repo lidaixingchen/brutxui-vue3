@@ -71,6 +71,12 @@ interface ActionItem {
 |------|------|
 | `action-click` | `[index: number]` |
 
+## 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `actions` | 操作网格下方操作区域 |
+
 ## 布局
 
 QuickActions 包含：

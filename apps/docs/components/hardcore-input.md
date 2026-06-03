@@ -22,7 +22,7 @@ description: 带 8-bit 复古音效、表情反馈和物理震动的表单校验
 ```vue
 <script setup>
 import { ref } from 'vue'
-import HardcoreInput from '@/components/ui/hardcore-input/HardcoreInput.vue'
+import { HardcoreInput } from 'brutx-ui-vue'
 
 const value = ref('')
 

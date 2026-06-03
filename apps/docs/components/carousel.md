@@ -21,7 +21,7 @@ description: 基于 Embla Carousel 的高性能轮播组件，支持自动播放
 
 ```vue
 <script setup>
-import { Carousel, CarouselItem } from '@/components/ui/carousel'
+import { Carousel, CarouselItem } from 'brutx-ui-vue'
 </script>
 
 <template>

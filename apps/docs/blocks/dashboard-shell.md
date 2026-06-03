@@ -54,7 +54,7 @@ function handleSignOut() {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `userEmail` | `string` | `'user@example.com'` |
+| `userEmail` | `string` | locale: `dashboardShell.defaultEmail` |
 | `class` | `string` | — |
 
 ## 事件

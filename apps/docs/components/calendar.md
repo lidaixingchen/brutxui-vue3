@@ -32,7 +32,7 @@ pnpm add v-calendar
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Calendar from '@/components/ui/calendar/Calendar.vue'
+import { Calendar } from 'brutx-ui-vue'
 
 const date = ref(null)
 </script>
@@ -47,7 +47,7 @@ const date = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import Calendar from '@/components/ui/calendar/Calendar.vue'
+import { Calendar } from 'brutx-ui-vue'
 
 const dateRange = ref(null)
 </script>
