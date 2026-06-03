@@ -3,7 +3,7 @@ title: Cookie Consent
 description: Cookie 同意横幅区块，固定在页面底部，带有接受和拒绝按钮。
 ---
 
-# Cookie Consent
+# Cookie Consent Cookie 同意
 
 新粗野主义风格的 Cookie 同意横幅，固定在页面底部，包含 Cookie 图标、标题、描述以及接受/拒绝按钮。
 

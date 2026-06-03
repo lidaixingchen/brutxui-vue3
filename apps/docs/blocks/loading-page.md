@@ -3,7 +3,7 @@ title: Loading Page
 description: 全页加载状态区块，带有旋转指示器、骨架屏装饰和可选进度条。
 ---
 
-# Loading Page
+# Loading Page 加载页
 
 新粗野主义风格的全页加载状态，包含 Spinner 旋转指示器、Skeleton 装饰元素和可选的 Progress 进度条。
 

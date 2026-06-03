@@ -3,7 +3,7 @@ title: Blog List Page
 description: 带有搜索、分类筛选和分页的博客文章列表页面区块。
 ---
 
-# Blog List Page
+# Blog List Page 博客列表页
 
 新粗野主义风格的博客列表页面，包含搜索框、分类标签筛选、文章卡片网格和分页组件。
 

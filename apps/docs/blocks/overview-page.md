@@ -3,7 +3,7 @@ title: Overview Page
 description: 带有统计卡片和活动面板的仪表盘概览页面区块。
 ---
 
-# Overview Page
+# Overview Page 概览页
 
 新粗野主义风格的仪表盘概览页面，包含统计卡片网格和活动面板。
 

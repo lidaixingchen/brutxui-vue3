@@ -3,7 +3,7 @@ title: Quick Actions
 description: 快捷操作面板，含图标按钮网格和标题徽标。
 ---
 
-# Quick Actions
+# Quick Actions 快捷操作
 
 新粗野主义风格的快捷操作面板，包含标题徽标和图标按钮网格。
 

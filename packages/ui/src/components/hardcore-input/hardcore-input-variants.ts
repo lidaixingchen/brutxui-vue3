@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 export const hardcoreInputVariants = cva(
     [
         'w-full',
-        'border-3 border-brutal',
+        'border-3',
         'rounded-brutal',
         'bg-brutal-bg text-brutal-fg',
         'shadow-brutal',
@@ -17,7 +17,7 @@ export const hardcoreInputVariants = cva(
     {
         variants: {
             validationState: {
-                default: '',
+                default: 'border-brutal',
                 success: 'border-brutal-success',
                 error: 'border-brutal-destructive',
             },

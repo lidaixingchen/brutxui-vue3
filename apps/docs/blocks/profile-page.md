@@ -3,7 +3,7 @@ title: Profile Page
 description: 带有头像、表单编辑和保存操作的个人资料页面区块。
 ---
 
-# Profile Page
+# Profile Page 个人资料页
 
 新粗野主义风格的个人资料页面，包含头像、姓名/邮箱/简介表单和保存按钮。
 

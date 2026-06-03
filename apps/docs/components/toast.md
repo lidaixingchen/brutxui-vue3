@@ -69,11 +69,11 @@ function handleError() {
 
 ## 尺寸
 
-| 尺寸 | 最大宽度 |
-|------|----------|
-| `sm` | `max-w-xs` |
-| `default` | `max-w-sm` |
-| `lg` | `max-w-md` |
+| 尺寸 | 宽度 |
+|------|------|
+| `sm` | `w-72` (288px) |
+| `default` | `w-80` (320px) |
+| `lg` | `w-96` (384px) |
 
 ## useToast API
 

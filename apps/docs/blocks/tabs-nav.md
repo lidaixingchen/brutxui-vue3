@@ -3,7 +3,7 @@ title: Tabs Nav
 description: 带内容的标签页导航区块，含标签触发器和内容面板。
 ---
 
-# Tabs Nav
+# Tabs Nav 标签导航
 
 新粗野主义风格的标签页导航区块，包含标签触发器和对应内容面板，基于 reka-ui Tabs 原语构建。
 

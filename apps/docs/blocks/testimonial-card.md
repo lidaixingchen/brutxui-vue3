@@ -3,7 +3,7 @@ title: Testimonial Card
 description: 用户评价推荐卡片，含头像、引文、署名和验证徽标。
 ---
 
-# Testimonial Card
+# Testimonial Card 评价卡片
 
 新粗野主义风格的用户评价卡片，包含头像、引文图标、评价文本、作者信息和验证徽标。
 

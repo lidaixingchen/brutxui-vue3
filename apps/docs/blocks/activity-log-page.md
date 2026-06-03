@@ -3,7 +3,7 @@ title: Activity Log Page
 description: 带有表格、类型徽标和分页的活动日志页面区块。
 ---
 
-# Activity Log Page
+# Activity Log Page 活动日志页
 
 新粗野主义风格的活动日志页面，包含表格视图、类型徽标和分页组件。
 

@@ -3,7 +3,7 @@ title: Chart Section
 description: 带有标签页切换的图表展示区块，支持柱状图、折线图和饼图。
 ---
 
-# Chart Section
+# Chart Section 图表区
 
 新粗野主义风格的图表展示区块，包含标签页切换视图，支持柱状图、折线图和饼图。
 

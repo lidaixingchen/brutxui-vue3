@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<TimelineContentProps>(), {
 })
 
 const classes = computed(() =>
-    cn('flex-1 pb-4 text-sm font-bold text-brutal-fg', props.class)
+    cn('flex-1 min-w-0 pb-4 text-sm font-bold text-brutal-fg', props.class)
 )
 </script>
 

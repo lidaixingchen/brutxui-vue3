@@ -3,7 +3,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="w-full space-y-8">
         <div>
             <h3 class="text-sm font-black mb-4">垂直时间线 — 所有 Dot 变体</h3>
             <Timeline orientation="vertical">

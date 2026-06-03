@@ -3,7 +3,7 @@ title: Gallery Section
 description: 带有轮播图和图片卡片的画廊展示区块。
 ---
 
-# Gallery Section
+# Gallery Section 画廊区
 
 新粗野主义风格的画廊展示区块，包含轮播图组件和图片卡片。
 

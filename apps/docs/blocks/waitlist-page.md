@@ -3,7 +3,7 @@ title: Waitlist Page
 description: 候补名单收集页模板，用于新品发布的邮箱预约收集。
 ---
 
-# Waitlist Page
+# Waitlist Page 等候列表页
 
 新粗野主义风格的候补注册页面，包含邮箱输入、CTA 按钮和社交证明指标。
 

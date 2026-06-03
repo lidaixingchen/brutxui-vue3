@@ -3,7 +3,7 @@ title: Search Widget
 description: 搜索组件区块，带有输入框和分组建议列表。
 ---
 
-# Search Widget
+# Search Widget 搜索组件
 
 新粗野主义风格的搜索组件，包含 Command 输入框和分组建议列表，支持实时过滤和选择。
 

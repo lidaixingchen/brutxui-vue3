@@ -3,7 +3,7 @@ title: Not Found Page
 description: 404 错误页面区块，带有故障文本效果和返回按钮。
 ---
 
-# Not Found Page
+# Not Found Page 404 页面
 
 新粗野主义风格的 404 页面，包含 GlitchText 故障效果、装饰性方块和返回首页按钮。
 

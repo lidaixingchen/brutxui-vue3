@@ -3,7 +3,7 @@ title: Auth Card
 description: 用户认证登录卡片，内置邮箱输入、社交登录按钮及选项卡切换。
 ---
 
-# Auth Card
+# Auth Card 认证卡片
 
 新粗野主义风格的认证卡片，包含社交登录按钮、邮箱/密码表单和忘记密码链接。
 

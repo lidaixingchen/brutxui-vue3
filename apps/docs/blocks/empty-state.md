@@ -3,7 +3,7 @@ title: Empty State
 description: 数据空状态占位区块，带有大图标、副标题和主操作按钮。
 ---
 
-# Empty State
+# Empty State 空状态
 
 新粗野主义风格的空状态占位符，包含装饰性图标、标题、描述和操作按钮。
 

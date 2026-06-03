@@ -105,7 +105,7 @@ describe('Toast', () => {
             props: { size: 'sm' },
             global: globalProvide,
         })
-        expect(wrapper.classes()).toContain('max-w-xs')
+        expect(wrapper.classes()).toContain('w-72')
     })
 
     it('renders slot content', () => {

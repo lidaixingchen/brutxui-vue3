@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 export const textareaVariants = cva(
     [
         'flex min-h-[100px] w-full',
-        'border-3 border-brutal',
+        'border-3',
         'bg-brutal-bg text-brutal-fg',
         'font-medium',
         'placeholder:text-brutal-placeholder placeholder:font-normal',
@@ -16,7 +16,7 @@ export const textareaVariants = cva(
     {
         variants: {
             variant: {
-                default: '',
+                default: 'border-brutal',
                 error: 'border-brutal-destructive focus:shadow-brutal-primary',
                 success: 'border-brutal-success focus:shadow-brutal-secondary',
             },

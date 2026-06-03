@@ -3,7 +3,7 @@ title: Dashboard Shell
 description: 仪表盘外壳框架，提供左侧边栏、顶部导航和响应式内容区域。
 ---
 
-# Dashboard Shell
+# Dashboard Shell 仪表盘框架
 
 新粗野主义风格的仪表盘布局，包含可折叠侧边栏、顶部栏和主内容区域。
 

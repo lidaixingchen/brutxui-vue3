@@ -3,7 +3,7 @@ title: FAQ Section
 description: 常见问题折叠面板区块，含编号徽标和手风琴交互。
 ---
 
-# FAQ Section
+# FAQ Section 常见问题
 
 新粗野主义风格的常见问题区块，包含标题、副标题和带编号徽标的手风琴折叠面板。
 

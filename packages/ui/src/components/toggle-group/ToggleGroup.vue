@@ -14,6 +14,7 @@ interface ToggleGroupProps {
     modelValue?: string | string[]
     variant?: NonNullable<ToggleVariantProps['variant']>
     size?: NonNullable<ToggleVariantProps['size']>
+    disabled?: boolean
     class?: string
 }
 
@@ -23,6 +24,7 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
     modelValue: undefined,
     variant: 'default',
     size: 'default',
+    disabled: false,
     class: undefined,
 })
 
@@ -43,6 +45,7 @@ provide(toggleGroupKey, {
         :type="type"
         :default-value="defaultValue"
         :model-value="modelValue"
+        :disabled="disabled"
         :class="classes"
         @update:model-value="emit('update:modelValue', $event as string | string[])"
     >

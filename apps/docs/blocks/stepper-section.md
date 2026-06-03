@@ -3,7 +3,7 @@ title: Stepper Section
 description: 步骤导航区块，带有水平步骤条、内容卡片和前后导航按钮。
 ---
 
-# Stepper Section
+# Stepper Section 步骤导航
 
 新粗野主义风格的步骤导航区块，包含水平 Stepper、内容卡片和上一步/下一步按钮。
 

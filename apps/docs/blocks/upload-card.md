@@ -3,7 +3,7 @@ title: Upload Card
 description: 带有拖拽上传、进度条和旋转指示器的文件上传卡片区块。
 ---
 
-# Upload Card
+# Upload Card 上传卡片
 
 新粗野主义风格的文件上传卡片，支持拖拽上传、浏览文件、上传进度显示和旋转指示器。
 

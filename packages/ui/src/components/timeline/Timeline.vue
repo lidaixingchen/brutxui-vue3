@@ -17,7 +17,7 @@ provide(timelineOrientationKey, computed(() => props.orientation))
 
 const classes = computed(() =>
     cn(
-        'flex w-full',
+        'flex w-full min-w-0',
         props.orientation === 'vertical' ? 'flex-col gap-6' : 'flex-row gap-6 items-start overflow-x-auto',
         props.class
     )

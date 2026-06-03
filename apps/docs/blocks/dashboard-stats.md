@@ -3,7 +3,7 @@ title: Dashboard Stats
 description: 统计卡片组区块，用于仪表盘中的关键指标展示。
 ---
 
-# Dashboard Stats
+# Dashboard Stats 仪表盘统计
 
 新粗野主义风格的统计卡片组，展示关键业务指标和趋势变化。
 

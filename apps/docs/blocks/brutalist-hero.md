@@ -3,7 +3,7 @@ title: Brutalist Hero
 description: 新粗野主义落地页 Hero 区段模板，包含标题、CTA 和装饰性卡片。
 ---
 
-# Brutalist Hero
+# Brutalist Hero 英雄区
 
 新粗野主义风格的 Hero 区段，适用于落地页，包含标题、副标题、CTA 按钮和装饰性代码预览卡片。
 

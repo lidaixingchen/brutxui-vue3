@@ -3,7 +3,7 @@ title: Footer Section
 description: 页面底部信息栏区块，含 Logo、描述、链接组和版权声明。
 ---
 
-# Footer Section
+# Footer Section 底部信息栏
 
 新粗野主义风格的页面底部信息栏，包含 Logo 文本、描述、链接组和版权声明。
 

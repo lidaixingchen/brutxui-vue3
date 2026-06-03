@@ -3,7 +3,7 @@ title: Settings Page
 description: 设置页面区块，带有标签页导航和表单控件。
 ---
 
-# Settings Page
+# Settings Page 设置页
 
 新粗野主义风格的设置页面，包含标签页导航、表单控件（Input 和 Switch）和保存按钮。
 

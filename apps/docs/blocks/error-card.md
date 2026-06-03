@@ -3,7 +3,7 @@ title: Error Card
 description: 错误状态卡片区块，带有警告提示、重试和关闭按钮。
 ---
 
-# Error Card
+# Error Card 错误卡片
 
 新粗野主义风格的错误卡片，包含 Alert 危险提示、标题、描述以及重试/关闭操作按钮。
 

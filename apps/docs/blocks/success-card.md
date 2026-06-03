@@ -3,7 +3,7 @@ title: Success Card
 description: 成功状态卡片区块，带有勾选图标、标题、描述和确认按钮。
 ---
 
-# Success Card
+# Success Card 成功卡片
 
 新粗野主义风格的成功卡片，包含成功色顶部条、装饰性勾选图标、标题、描述和确认按钮。
 

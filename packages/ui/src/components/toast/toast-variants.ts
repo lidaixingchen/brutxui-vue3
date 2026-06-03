@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 
 export const toastVariants = cva(
     [
-        'pointer-events-auto relative w-full overflow-hidden',
+        'pointer-events-auto relative overflow-hidden',
         'border-3 border-brutal',
         'transition-all duration-300 ease-out',
         'animate-in slide-in-from-right-full fade-in-0',
@@ -32,9 +32,9 @@ export const toastVariants = cva(
                 ],
             },
             size: {
-                sm: 'max-w-xs',
-                default: 'max-w-sm',
-                lg: 'max-w-md',
+                sm: 'w-72',
+                default: 'w-80',
+                lg: 'w-96',
             },
         },
         defaultVariants: {

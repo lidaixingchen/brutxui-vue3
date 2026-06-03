@@ -3,7 +3,7 @@ title: Data Table Section
 description: 数据表格区块，带有搜索、排序和分页功能。
 ---
 
-# Data Table Section
+# Data Table Section 数据表格
 
 新粗野主义风格的数据表格区块，包含搜索过滤、列排序和分页功能。
 
