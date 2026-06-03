@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, inject, type ComponentPublicInstance } from 'vue'
 import { cn } from '../../lib/utils'
 
 interface CommandItemProps {
@@ -23,7 +23,7 @@ const classes = computed(() =>
         'data-[highlighted=true]:bg-brutal-secondary data-[highlighted=true]:text-brutal-fg',
         'data-[highlighted=true]:border-brutal data-[highlighted=true]:font-black',
         'data-[highlighted=true]:shadow-brutal-sm',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
         'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
         props.class
@@ -44,8 +44,35 @@ function handleClick() {
     }
 }
 
-function handleKeydown(e: KeyboardEvent) {
-    if (e.key === 'Enter' || e.key === ' ') {
+// 键盘方向键导航
+const commandListEl = inject<HTMLElement | null>('command-list-el', null)
+let itemEl: HTMLElement | null = null
+
+function setItemRef(el: Element | ComponentPublicInstance | null) {
+    itemEl = el as HTMLElement | null
+}
+
+function focusItem(direction: 'up' | 'down') {
+    const container = commandListEl || itemEl?.parentElement
+    if (!container) return
+    const items = Array.from(container.querySelectorAll<HTMLElement>('[data-slot="command-item"]:not([data-disabled="true"])'))
+    const currentIndex = items.indexOf(itemEl!)
+    if (currentIndex === -1) return
+    const nextIndex = direction === 'down'
+        ? (currentIndex + 1) % items.length
+        : (currentIndex - 1 + items.length) % items.length
+    items[nextIndex]?.focus()
+    isSelected.value = false
+}
+
+function handleItemKeydown(e: KeyboardEvent) {
+    if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        focusItem('down')
+    } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        focusItem('up')
+    } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault()
         handleClick()
     }
@@ -54,9 +81,10 @@ function handleKeydown(e: KeyboardEvent) {
 
 <template>
     <div
+        :ref="setItemRef"
         :class="classes"
         role="option"
-        :aria-selected="undefined"
+        :aria-selected="isSelected"
         :aria-disabled="disabled || undefined"
         data-slot="command-item"
         :data-highlighted="isSelected"
@@ -65,7 +93,7 @@ function handleKeydown(e: KeyboardEvent) {
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
         @click="handleClick"
-        @keydown="handleKeydown"
+        @keydown="handleItemKeydown"
     >
         <slot />
     </div>

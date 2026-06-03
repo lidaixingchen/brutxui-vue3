@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Check, ChevronsUpDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../button/button-variants'
@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     searchPlaceholder: undefined,
     emptyText: undefined,
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()
@@ -71,6 +71,12 @@ function handleSelect(value: string) {
     open.value = false
     searchQuery.value = ''
 }
+
+watch(open, (isOpen) => {
+    if (!isOpen) {
+        searchQuery.value = ''
+    }
+})
 
 const checkSelectedClasses = cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-100')
 const checkUnselectedClasses = cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-0')

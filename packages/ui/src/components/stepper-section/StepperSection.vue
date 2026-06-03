@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<StepperSectionProps>(), {
     title: undefined,
     steps: () => [],
     currentStep: 0,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

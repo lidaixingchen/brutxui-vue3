@@ -21,8 +21,8 @@ const emit = defineEmits<{
 const classes = computed(() =>
     cn(
         'peer inline-flex h-7 w-12 shrink-0 cursor-pointer items-center',
-        'border-3 border-brutal',
-        'transition-colors duration-150',
+        'border-3 border-brutal rounded-full shadow-brutal-sm',
+        'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-50',
         'data-[state=checked]:bg-brutal-success data-[state=unchecked]:bg-brutal-bg',

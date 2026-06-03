@@ -7,7 +7,7 @@ interface TimelineContentProps {
 }
 
 const props = withDefaults(defineProps<TimelineContentProps>(), {
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

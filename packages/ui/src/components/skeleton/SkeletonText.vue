@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<SkeletonTextProps>(), {
     variant: 'default',
     lines: 3,
     lastLineWidth: '60%',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() => cn('space-y-2', props.class))

@@ -1,10 +1,12 @@
 import { mount } from '@vue/test-utils'
+import { computed } from 'vue'
 import Timeline from './Timeline.vue'
 import TimelineItem from './TimelineItem.vue'
 import TimelineSeparator from './TimelineSeparator.vue'
 import TimelineDot from './TimelineDot.vue'
 import TimelineConnector from './TimelineConnector.vue'
 import TimelineContent from './TimelineContent.vue'
+import { timelineOrientationKey } from './timeline-key'
 
 describe('Timeline', () => {
     it('renders with default vertical orientation', () => {
@@ -50,7 +52,7 @@ describe('TimelineItem', () => {
         const wrapper = mount(TimelineItem, {
             global: {
                 provide: {
-                    'timeline-orientation': { value: 'horizontal' },
+                    [timelineOrientationKey as symbol]: computed(() => 'horizontal'),
                 },
             },
         })
@@ -85,7 +87,7 @@ describe('TimelineSeparator', () => {
         const wrapper = mount(TimelineSeparator, {
             global: {
                 provide: {
-                    'timeline-orientation': { value: 'horizontal' },
+                    [timelineOrientationKey as symbol]: computed(() => 'horizontal'),
                 },
             },
         })
@@ -198,7 +200,7 @@ describe('TimelineConnector', () => {
         const wrapper = mount(TimelineConnector, {
             global: {
                 provide: {
-                    'timeline-orientation': { value: 'horizontal' },
+                    [timelineOrientationKey as symbol]: computed(() => 'horizontal'),
                 },
             },
         })

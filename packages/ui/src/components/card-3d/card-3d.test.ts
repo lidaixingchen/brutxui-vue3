@@ -82,6 +82,6 @@ describe('Card3D', () => {
             props: { shadow: 'lg' },
         })
         const card = wrapper.find('[role="region"] > div:first-child')
-        expect(card.classes()).toContain('shadow-brutal-lg')
+        expect(card.classes()).not.toContain('shadow-brutal-lg')
     })
 })

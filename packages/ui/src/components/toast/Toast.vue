@@ -23,10 +23,10 @@ interface ToastProps {
 const props = withDefaults(defineProps<ToastProps>(), {
     variant: 'default',
     size: 'default',
-    title: '',
-    description: '',
+    title: undefined,
+    description: undefined,
     duration: DEFAULT_DURATION,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{ close: [] }>()
@@ -82,7 +82,7 @@ const closeClasses = computed(() =>
         'shadow-brutal-sm',
         'transition-all duration-150',
         'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2'
     )
 )

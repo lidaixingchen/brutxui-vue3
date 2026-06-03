@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { inject, computed, type ComputedRef } from 'vue'
+import { inject, computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { timelineOrientationKey } from './timeline-key'
 
 interface TimelineConnectorProps {
     class?: string
 }
 
 const props = withDefaults(defineProps<TimelineConnectorProps>(), {
-    class: '',
+    class: undefined,
 })
 
-const orientation = inject<ComputedRef<'vertical' | 'horizontal'>>('timeline-orientation', computed(() => 'vertical'))
+const orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))
 
 const classes = computed(() =>
     cn(

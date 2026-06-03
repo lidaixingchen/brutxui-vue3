@@ -9,7 +9,7 @@
   "files": [
     {
       "path": "components/ui/card/Card.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { cardVariants } from '@/components/ui/card/card-variants'\n\ntype CardVariantProps = VariantProps<typeof cardVariants>\n\ninterface CardProps {\n    variant?: NonNullable<CardVariantProps['variant']>\n    padding?: NonNullable<CardVariantProps['padding']>\n    class?: string\n}\n\nconst props = withDefaults(defineProps<CardProps>(), {\n    variant: 'default',\n    padding: 'default',\n    class: '',\n})\n\nconst classes = computed(() =>\n    cn(cardVariants({ variant: props.variant, padding: props.padding }), props.class)\n)\n</script>\n\n<template>\n    <div :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { cardVariants } from '@/components/ui/card/card-variants'\n\ntype CardVariantProps = VariantProps<typeof cardVariants>\n\ninterface CardProps {\n    variant?: NonNullable<CardVariantProps['variant']>\n    padding?: NonNullable<CardVariantProps['padding']>\n    class?: string\n}\n\nconst props = withDefaults(defineProps<CardProps>(), {\n    variant: 'default',\n    padding: 'default',\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(cardVariants({ variant: props.variant, padding: props.padding }), props.class)\n)\n</script>\n\n<template>\n    <div :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {

@@ -13,7 +13,7 @@ interface AlertProps {
 
 const props = withDefaults(defineProps<AlertProps>(), {
     variant: 'default',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

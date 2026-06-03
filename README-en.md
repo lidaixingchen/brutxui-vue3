@@ -72,7 +72,12 @@ npx brutx-vue@latest add button card badge
 
 # Install all components at once
 npx brutx-vue@latest add --all
+
+# Upgrade installed components (use --overwrite to overwrite local files)
+npx brutx-vue@latest add --all --overwrite
 ```
+
+> **Upgrade Tip:** Always use `npx brutx-vue@latest` to ensure you're running the latest CLI version. When upgrading components, adding `--overwrite` will overwrite local modifications — make sure to back up or use version control beforehand.
 
 ### Option B: Official `shadcn` CLI
 

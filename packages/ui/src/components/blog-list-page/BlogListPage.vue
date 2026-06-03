@@ -34,7 +34,7 @@ const props = withDefaults(defineProps<BlogListPageProps>(), {
     posts: () => [],
     categories: () => [],
     pageSize: 6,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

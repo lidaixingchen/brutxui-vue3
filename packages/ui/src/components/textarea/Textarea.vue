@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { textareaVariants } from './textarea-variants'
+import { useLocale } from '@/composables/useLocale'
 
 type TextareaVariantProps = VariantProps<typeof textareaVariants>
 
@@ -20,11 +21,15 @@ const props = withDefaults(defineProps<TextareaProps>(), {
     variant: 'default',
     textareaSize: 'default',
     disabled: false,
-    placeholder: '',
-    class: '',
+    placeholder: undefined,
+    class: undefined,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+
+const { t } = useLocale()
+
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))
 
 const classes = computed(() =>
     cn(textareaVariants({ variant: props.variant, textareaSize: props.textareaSize }), props.class)
@@ -35,7 +40,7 @@ const classes = computed(() =>
     <textarea
         :value="modelValue"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="resolvedPlaceholder"
         :class="classes"
         @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />

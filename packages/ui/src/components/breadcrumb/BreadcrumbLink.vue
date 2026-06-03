@@ -10,7 +10,7 @@ interface BreadcrumbLinkProps extends PrimitiveProps {
 
 const props = withDefaults(defineProps<BreadcrumbLinkProps>(), {
     as: 'a',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

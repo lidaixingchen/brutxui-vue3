@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<DashboardStatsProps>(), {
     title: undefined,
     subtitle: undefined,
     stats: () => [],
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

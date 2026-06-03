@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<LoadingPageProps>(), {
     title: undefined,
     description: undefined,
     progress: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

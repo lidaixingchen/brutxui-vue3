@@ -34,6 +34,20 @@ npx brutx@latest add button card badge
 npx brutx@latest add --all
 ```
 
+## Upgrading
+
+When a new version of BrutxUI is released, re-run the init command to upgrade:
+
+```bash
+npx brutx@latest init
+```
+
+You can also update individual components:
+
+```bash
+npx brutx@latest add button --overwrite
+```
+
 ## Usage
 
 After adding components, import them from your project:

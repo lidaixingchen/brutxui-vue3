@@ -86,7 +86,7 @@ const props = withDefaults(defineProps<SaaSPricingProps>(), {
     ],
     title: undefined,
     subtitle: '',
-    class: '',
+    class: undefined,
 })
 
 const billing = ref<'monthly' | 'annually'>('monthly')

@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<CookieConsentProps>(), {
     description: undefined,
     acceptText: undefined,
     declineText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

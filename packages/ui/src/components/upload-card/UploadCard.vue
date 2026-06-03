@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<UploadCardProps>(), {
     maxSize: undefined,
     uploading: false,
     progress: 0,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

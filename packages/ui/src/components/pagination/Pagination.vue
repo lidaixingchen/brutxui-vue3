@@ -32,7 +32,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
     showPageNumbers: true,
     variant: 'default',
     size: 'default',
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{ 'update:currentPage': [page: number] }>()
@@ -43,6 +43,8 @@ function range(start: number, end: number) {
 }
 
 const paginationRange = computed(() => {
+    if (props.totalPages <= 0) return []
+
     const totalPageNumbers = props.siblingCount * 2 + FIRST_PAGES_COUNT + ELLIPSIS_COUNT * 2
 
     if (totalPageNumbers >= props.totalPages) {
@@ -134,7 +136,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.firstPage')"
             @click="onPageChange(1)"
         >
-            <ChevronsLeft class="h-4 w-4 stroke-[3]" />
+            <ChevronsLeft class="h-4 w-4" />
         </button>
 
         <button
@@ -144,7 +146,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.previousPage')"
             @click="onPageChange(currentPage - 1)"
         >
-            <ChevronLeft class="h-4 w-4 stroke-[3]" />
+            <ChevronLeft class="h-4 w-4" />
         </button>
 
         <template v-if="showPageNumbers">
@@ -179,7 +181,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.nextPage')"
             @click="onPageChange(currentPage + 1)"
         >
-            <ChevronRight class="h-4 w-4 stroke-[3]" />
+            <ChevronRight class="h-4 w-4" />
         </button>
 
         <button
@@ -190,7 +192,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.lastPage')"
             @click="onPageChange(totalPages)"
         >
-            <ChevronsRight class="h-4 w-4 stroke-[3]" />
+            <ChevronsRight class="h-4 w-4" />
         </button>
     </nav>
 </template>

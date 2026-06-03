@@ -15,7 +15,7 @@ interface BadgeProps {
 const props = withDefaults(defineProps<BadgeProps>(), {
     variant: 'default',
     size: 'default',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

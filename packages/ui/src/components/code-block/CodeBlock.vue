@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<CodeBlockProps>(), {
     language: 'plaintext',
     filename: '',
     showLineNumbers: false,
-    class: '',
+    class: undefined,
 })
 
 const lines = computed(() => {

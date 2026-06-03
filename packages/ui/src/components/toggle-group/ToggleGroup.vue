@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
     modelValue: undefined,
     variant: 'default',
     size: 'default',
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string | string[]] }>()

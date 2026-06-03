@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<FileCardProps>(), {
     fileName: undefined,
     fileSize: '',
     fileType: '',
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

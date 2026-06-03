@@ -6,7 +6,7 @@ interface BreadcrumbProps {
 }
 
 const props = withDefaults(defineProps<BreadcrumbProps>(), {
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

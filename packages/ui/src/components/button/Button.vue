@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
     asChild: false,
     loading: false,
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const isDisabled = computed(() => props.disabled || props.loading)
@@ -40,6 +40,7 @@ const classes = computed(() =>
         :class="classes"
         :disabled="!asChild && isDisabled"
         :aria-disabled="asChild && isDisabled ? true : undefined"
+        :aria-busy="loading || undefined"
     >
         <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
         <slot />

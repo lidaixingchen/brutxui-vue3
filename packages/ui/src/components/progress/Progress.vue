@@ -10,7 +10,7 @@ interface ProgressProps {
 }
 
 const props = withDefaults(defineProps<ProgressProps>(), {
-    class: '',
+    class: undefined,
     modelValue: 0,
     max: 100,
 })
@@ -24,7 +24,12 @@ const classes = computed(() =>
     )
 )
 
-const percentage = computed(() => props.modelValue ?? 0)
+const percentage = computed(() => {
+    const max = props.max ?? 100
+    const value = props.modelValue ?? 0
+    const raw = max > 0 ? (value / max) * 100 : 0
+    return Math.min(100, Math.max(0, raw))
+})
 </script>
 
 <template>

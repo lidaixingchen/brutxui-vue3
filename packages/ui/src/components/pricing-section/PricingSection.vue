@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<PricingSectionProps>(), {
     title: undefined,
     subtitle: undefined,
     plans: () => [],
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

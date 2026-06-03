@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<SkeletonTableProps>(), {
     variant: 'default',
     rows: 5,
     columns: 4,
-    class: '',
+    class: undefined,
 })
 
 const DEFAULT_CELL_WIDTH_RATIOS = [0.85, 0.7, 0.9, 0.65]

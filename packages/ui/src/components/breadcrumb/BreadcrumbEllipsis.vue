@@ -10,7 +10,7 @@ interface BreadcrumbEllipsisProps {
 }
 
 const props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()
@@ -27,7 +27,7 @@ const classes = computed(() =>
         :class="classes"
     >
         <slot>
-            <MoreHorizontal class="h-4 w-4 stroke-[3]" />
+            <MoreHorizontal class="h-4 w-4" />
         </slot>
         <span class="sr-only">{{ t('breadcrumb.more') }}</span>
     </span>

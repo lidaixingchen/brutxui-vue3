@@ -72,7 +72,12 @@ npx brutx-vue@latest add button card badge
 
 # 一次性安装全部组件
 npx brutx-vue@latest add --all
+
+# 升级已安装的组件（使用 --overwrite 覆盖本地文件）
+npx brutx-vue@latest add --all --overwrite
 ```
+
+> **升级提示：** 始终使用 `npx brutx-vue@latest` 确保运行最新版 CLI。升级组件时加 `--overwrite` 会覆盖本地修改，请提前备份或使用版本控制。
 
 ### 方式 B：官方 `shadcn` CLI
 

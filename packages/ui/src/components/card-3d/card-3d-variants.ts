@@ -11,9 +11,9 @@ export const card3dVariants = cva(
     {
         variants: {
             shadow: {
-                default: 'shadow-brutal',
-                lg: 'shadow-brutal-lg',
-                xl: 'shadow-brutal-xl',
+                default: '',
+                lg: '',
+                xl: '',
             },
         },
         defaultVariants: {

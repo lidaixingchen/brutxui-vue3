@@ -15,7 +15,7 @@ interface CardProps {
 const props = withDefaults(defineProps<CardProps>(), {
     variant: 'default',
     padding: 'default',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

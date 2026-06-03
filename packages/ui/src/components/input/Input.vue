@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { inputVariants } from './input-variants'
+import { useLocale } from '@/composables/useLocale'
 
 type InputVariantProps = VariantProps<typeof inputVariants>
 
@@ -22,11 +23,15 @@ const props = withDefaults(defineProps<InputProps>(), {
     variant: 'default',
     inputSize: 'default',
     disabled: false,
-    placeholder: '',
-    class: '',
+    placeholder: undefined,
+    class: undefined,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+
+const { t } = useLocale()
+
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('input.placeholder'))
 
 const classes = computed(() =>
     cn(inputVariants({ variant: props.variant, inputSize: props.inputSize }), props.class)
@@ -38,7 +43,7 @@ const classes = computed(() =>
         :type="type"
         :value="modelValue"
         :disabled="disabled"
-        :placeholder="placeholder"
+        :placeholder="resolvedPlaceholder"
         :class="classes"
         @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >

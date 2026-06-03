@@ -114,7 +114,7 @@ describe('SelectSeparator', () => {
         const wrapper = mount(SelectSeparator, {
             global: { stubs: { SelectSeparator: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('h-[3px]')
+        expect(wrapper.classes()).toContain('h-[var(--brutal-border-width,3px)]')
         expect(wrapper.classes()).toContain('bg-brutal-fg')
     })
 

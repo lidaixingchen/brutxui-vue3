@@ -8,7 +8,7 @@ interface BreadcrumbSeparatorProps {
 }
 
 const props = withDefaults(defineProps<BreadcrumbSeparatorProps>(), {
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

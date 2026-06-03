@@ -11,7 +11,7 @@ interface DashboardShellProps {
 
 const props = withDefaults(defineProps<DashboardShellProps>(), {
     userEmail: undefined,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

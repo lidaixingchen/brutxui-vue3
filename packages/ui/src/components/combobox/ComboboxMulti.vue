@@ -14,6 +14,8 @@ import CommandItem from '../command/CommandItem.vue'
 import { useLocale } from '@/composables/useLocale'
 import { type ComboboxOption } from './combobox-types'
 
+const DEFAULT_MAX_DISPLAY = 3
+
 interface ComboboxMultiProps {
     options: ComboboxOption[]
     modelValue?: string[]
@@ -31,8 +33,8 @@ const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     searchPlaceholder: undefined,
     emptyText: undefined,
     disabled: false,
-    maxDisplay: 3,
-    class: '',
+    maxDisplay: DEFAULT_MAX_DISPLAY,
+    class: undefined,
 })
 
 const { t } = useLocale()
@@ -100,6 +102,7 @@ watch(open, (isOpen) => {
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
+                aria-haspopup="listbox"
                 :class="triggerClasses"
             >
                 <span class="truncate">{{ displayText }}</span>

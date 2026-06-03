@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<FaqSectionProps>(), {
     title: undefined,
     subtitle: undefined,
     items: () => [],
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

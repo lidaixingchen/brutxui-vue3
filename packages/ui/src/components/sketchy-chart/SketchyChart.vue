@@ -26,20 +26,11 @@ const props = withDefaults(defineProps<SketchyChartProps>(), {
     grid: true,
     width: 600,
     height: 400,
-    class: '',
+    class: undefined,
 })
 
-// 回退版唯一 ID 保证兼容性
-const getUniqueId = () => {
-    try {
-        const id = useId()
-        return id.replace(/:/g, '-') // 去除 ID 中可能的冒号
-    } catch {
-        return Math.random().toString(36).substring(2, 9)
-    }
-}
-
-const uid = getUniqueId()
+// Vue 3.5+ 始终可用 useId
+const uid = useId().replace(/:/g, '-')
 const filterId = `brutal-sketch-filter-${uid}`
 const hatchId = `hatch-pattern-${uid}`
 const { t } = useLocale()

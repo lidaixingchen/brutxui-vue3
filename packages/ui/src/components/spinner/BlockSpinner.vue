@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<BlockSpinnerProps>(), {
     size: 'default',
     color: 'default',
     label: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()
@@ -32,6 +32,9 @@ const colorMap: Record<string, string[]> = {
     accent: ['bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent'],
     mixed: ['bg-brutal-primary', 'bg-brutal-secondary', 'bg-brutal-accent', 'bg-brutal-info'],
 }
+
+const BLOCK_ANIMATION_DELAY_INCREMENT_MS = 150
+const BLOCK_ANIMATION_DURATION_MS = 600
 
 const classes = computed(() =>
     cn(blockSpinnerVariants({ size: props.size }), props.class)
@@ -50,7 +53,7 @@ const blockClasses = computed(() =>
             v-for="(blockClass, i) in blockClasses"
             :key="i"
             :class="blockClass"
-            :style="{ animationDelay: `${i * 150}ms`, animationDuration: '600ms' }"
+            :style="{ animationDelay: `${i * BLOCK_ANIMATION_DELAY_INCREMENT_MS}ms`, animationDuration: `${BLOCK_ANIMATION_DURATION_MS}ms` }"
         />
         <span class="sr-only">{{ resolvedLabel }}</span>
     </div>

@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<ErrorCardProps>(), {
     title: undefined,
     description: undefined,
     retryText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

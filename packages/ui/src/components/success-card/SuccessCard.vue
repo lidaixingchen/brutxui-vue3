@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<SuccessCardProps>(), {
     title: undefined,
     description: undefined,
     confirmText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

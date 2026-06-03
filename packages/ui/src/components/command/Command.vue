@@ -18,7 +18,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes" role="combobox">
+    <div :class="classes" role="combobox" aria-expanded="true" aria-haspopup="listbox">
         <slot />
     </div>
 </template>

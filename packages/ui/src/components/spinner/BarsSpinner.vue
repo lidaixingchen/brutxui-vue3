@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<BarsSpinnerProps>(), {
     size: 'default',
     color: 'default',
     label: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

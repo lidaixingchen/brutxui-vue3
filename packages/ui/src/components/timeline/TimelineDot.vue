@@ -15,7 +15,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     variant: 'accent',
     shape: 'circle',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

@@ -17,7 +17,7 @@ export const stepperDotVariants = cva(
         variants: {
             state: {
                 completed: 'bg-brutal-success text-brutal-fg shadow-brutal w-8 h-8',
-                active: 'bg-brutal-primary text-brutal-fg shadow-brutal-lg w-8 h-8 -translate-x-0.5 -translate-y-0.5',
+                active: 'bg-brutal-primary text-brutal-fg shadow-brutal-lg w-8 h-8',
                 upcoming: 'bg-brutal-bg text-brutal-fg shadow-brutal-sm w-8 h-8 opacity-60',
             },
         },
@@ -35,7 +35,7 @@ export const stepperConnectorVariants = cva(
         variants: {
             orientation: {
                 horizontal: 'flex-1 h-[3px] mx-2',
-                vertical: 'w-[3px] flex-1 my-2 ml-[14px]',
+                vertical: 'w-[var(--brutal-border-width,3px)] flex-1 my-2 ml-[calc(var(--brutal-border-width,3px)/2+1rem/2-3px/2)]',
             },
             completed: {
                 true: 'bg-brutal-success',

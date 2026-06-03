@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<FeedbackFormProps>(), {
     title: undefined,
     description: undefined,
     submitText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

@@ -26,7 +26,7 @@ interface OverviewPageProps {
 const props = withDefaults(defineProps<OverviewPageProps>(), {
     title: undefined,
     stats: () => [],
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

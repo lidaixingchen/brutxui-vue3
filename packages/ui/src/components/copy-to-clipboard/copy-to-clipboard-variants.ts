@@ -6,7 +6,7 @@ export const copyToClipboardVariants = cva(
         'border-3 border-brutal transition-all duration-150',
         'h-11 px-5 rounded-brutal shadow-brutal select-none cursor-pointer',
         'disabled:opacity-50 disabled:pointer-events-none',
-    ].join(' '),
+    ],
     {
         variants: {
             state: {

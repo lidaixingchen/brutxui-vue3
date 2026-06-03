@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<WaitlistPageProps>(), {
     description: '',
     ctaText: undefined,
     waitlistCount: 0,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

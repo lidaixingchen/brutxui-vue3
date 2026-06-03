@@ -21,5 +21,5 @@ export const codeBlockLineNumbersVariants = cva(
 )
 
 export const codeBlockCopyButtonVariants = cva(
-    'h-7 px-3 text-xs border-3 border-brutal shadow-brutal-sm active:translate-y-[1px] bg-brutal-bg hover:bg-brutal-muted'
+    'h-7 px-3 text-xs border-3 border-brutal shadow-brutal-sm active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all bg-brutal-bg hover:bg-brutal-muted'
 )

@@ -6,14 +6,16 @@ import {
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
+const DEFAULT_SIDE_OFFSET = 6
+
 interface DropdownMenuContentProps {
     sideOffset?: number
     class?: string
 }
 
 const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
-    sideOffset: 6,
-    class: '',
+    sideOffset: DEFAULT_SIDE_OFFSET,
+    class: undefined,
 })
 
 const classes = computed(() =>

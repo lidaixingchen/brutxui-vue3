@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<ToggleProps>(), {
     variant: 'default',
     size: 'default',
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{ 'update:pressed': [value: boolean] }>()

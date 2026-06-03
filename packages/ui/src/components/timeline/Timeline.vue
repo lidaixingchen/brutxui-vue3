@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { provide, computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { timelineOrientationKey, type TimelineOrientation } from './timeline-key'
 
 interface TimelineProps {
-    orientation?: 'vertical' | 'horizontal'
+    orientation?: TimelineOrientation
     class?: string
 }
 
 const props = withDefaults(defineProps<TimelineProps>(), {
     orientation: 'vertical',
-    class: '',
+    class: undefined,
 })
 
-provide('timeline-orientation', computed(() => props.orientation))
+provide(timelineOrientationKey, computed(() => props.orientation))
 
 const classes = computed(() =>
     cn(

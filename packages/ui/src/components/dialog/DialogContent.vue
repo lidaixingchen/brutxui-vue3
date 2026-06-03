@@ -19,7 +19,7 @@ interface DialogContentProps {
 const props = withDefaults(defineProps<DialogContentProps>(), {
     showCloseButton: true,
     forceMount: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

@@ -27,7 +27,7 @@ interface SearchWidgetProps {
 const props = withDefaults(defineProps<SearchWidgetProps>(), {
     placeholder: undefined,
     suggestions: () => [],
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

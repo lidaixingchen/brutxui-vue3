@@ -44,7 +44,7 @@ const contentWrapperClass = computed(() =>
 );
 
 const initials = computed(() => {
-    const name = props.message.name ?? '?';
+    const name = props.message.name || '?';
     return name.slice(0, 2).toUpperCase();
 });
 </script>

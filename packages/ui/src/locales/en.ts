@@ -272,4 +272,10 @@ export const en: Locale = {
     dashboardStats: {
         defaultTitle: 'Overview Performance',
     },
+    input: {
+        placeholder: 'Type here...',
+    },
+    textarea: {
+        placeholder: 'Type here...',
+    },
 }

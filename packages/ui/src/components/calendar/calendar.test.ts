@@ -3,16 +3,15 @@ import { nextTick } from 'vue'
 import { vi } from 'vitest'
 import Calendar from './Calendar.vue'
 
+const testDate = new Date(2026, 5, 15)
+
 const { dayRef } = vi.hoisted(() => ({
     dayRef: {
-        label: '1',
-        isSelected: false,
-        isInRange: false,
-        isStart: false,
-        isEnd: false,
+        label: '15',
         isToday: false,
-        isOutside: false,
         isDisabled: false,
+        inMonth: true,
+        startDate: new Date(2026, 5, 15),
     },
 }))
 
@@ -34,18 +33,15 @@ vi.mock('v-calendar', () => ({
 }))
 
 const defaultDay = {
-    label: '1',
-    isSelected: false,
-    isInRange: false,
-    isStart: false,
-    isEnd: false,
+    label: '15',
     isToday: false,
-    isOutside: false,
     isDisabled: false,
+    inMonth: true,
+    startDate: new Date(2026, 5, 15),
 }
 
 function resetDay() {
-    Object.assign(dayRef, defaultDay)
+    Object.assign(dayRef, { ...defaultDay, startDate: new Date(2026, 5, 15) })
 }
 
 function mountCalendar(props = {}) {
@@ -179,33 +175,36 @@ describe('Calendar', () => {
 
         it('renders day-content slot with day label', () => {
             const wrapper = mountCalendar()
-            expect(wrapper.text()).toContain('1')
+            expect(wrapper.text()).toContain('15')
         })
 
-        it('applies primary style for selected day not in range', () => {
-            dayRef.isSelected = true
-            dayRef.isInRange = false
-            const wrapper = mountCalendar()
+        it('applies primary style for selected day (modelValue matches startDate)', () => {
+            dayRef.startDate = new Date(2026, 5, 15)
+            const wrapper = mountCalendar({ modelValue: testDate })
             expect(wrapper.find('.bg-brutal-primary').exists()).toBe(true)
         })
 
         it('applies accent style for in-range day', () => {
-            dayRef.isInRange = true
-            dayRef.isStart = false
-            dayRef.isEnd = false
-            const wrapper = mountCalendar()
+            const start = new Date(2026, 5, 10)
+            const end = new Date(2026, 5, 20)
+            dayRef.startDate = new Date(2026, 5, 15)
+            const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
             expect(wrapper.find('.bg-brutal-accent').exists()).toBe(true)
         })
 
-        it('applies secondary style with shadow for start day', () => {
-            dayRef.isStart = true
-            const wrapper = mountCalendar()
+        it('applies secondary style with shadow for range start day', () => {
+            const start = new Date(2026, 5, 15)
+            const end = new Date(2026, 5, 20)
+            dayRef.startDate = new Date(2026, 5, 15)
+            const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
             expect(wrapper.find('.bg-brutal-secondary.shadow-brutal-sm').exists()).toBe(true)
         })
 
-        it('applies secondary style with shadow for end day', () => {
-            dayRef.isEnd = true
-            const wrapper = mountCalendar()
+        it('applies secondary style with shadow for range end day', () => {
+            const start = new Date(2026, 5, 10)
+            const end = new Date(2026, 5, 15)
+            dayRef.startDate = new Date(2026, 5, 15)
+            const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
             expect(wrapper.find('.bg-brutal-secondary.shadow-brutal-sm').exists()).toBe(true)
         })
 
@@ -215,8 +214,8 @@ describe('Calendar', () => {
             expect(wrapper.find('.bg-brutal-secondary').exists()).toBe(true)
         })
 
-        it('applies muted style for outside day', () => {
-            dayRef.isOutside = true
+        it('applies muted style for outside day (inMonth=false)', () => {
+            dayRef.inMonth = false
             const wrapper = mountCalendar()
             expect(wrapper.find('.opacity-40').exists()).toBe(true)
         })

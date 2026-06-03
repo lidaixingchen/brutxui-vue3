@@ -6,6 +6,8 @@ import {
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
+const DEFAULT_SIDE_OFFSET = 8
+
 interface PopoverContentProps {
     align?: 'center' | 'start' | 'end'
     sideOffset?: number
@@ -14,8 +16,8 @@ interface PopoverContentProps {
 
 const props = withDefaults(defineProps<PopoverContentProps>(), {
     align: 'center',
-    sideOffset: 8,
-    class: '',
+    sideOffset: DEFAULT_SIDE_OFFSET,
+    class: undefined,
 })
 
 const classes = computed(() =>

@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
     trigger: 'hover',
     interval: 3000,
     speed: 'medium',
-    class: '',
+    class: undefined,
 })
 
 const elementRef = ref<HTMLElement | null>(null)
@@ -40,6 +40,8 @@ function updateDisplayText() {
 onMounted(updateDisplayText)
 onUpdated(updateDisplayText)
 
+const AUTOPLAY_ACTIVE_DURATION_MS = 1000
+
 let autoplayTimer: ReturnType<typeof setInterval> | null = null
 let autoplayStopTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -48,10 +50,9 @@ const startAutoplay = () => {
     autoplayTimer = setInterval(() => {
         if (prefersReducedMotion.value) return
         isActive.value = true
-        // 开启抖动 1 秒后自动关闭，等待下一个周期，产生节奏感
         autoplayStopTimer = setTimeout(() => {
             isActive.value = false
-        }, 1000)
+        }, AUTOPLAY_ACTIVE_DURATION_MS)
     }, props.interval)
 }
 

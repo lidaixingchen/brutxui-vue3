@@ -272,4 +272,10 @@ export const zhCN: Locale = {
     dashboardStats: {
         defaultTitle: '概览性能',
     },
+    input: {
+        placeholder: '请输入...',
+    },
+    textarea: {
+        placeholder: '请输入...',
+    },
 }

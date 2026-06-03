@@ -21,7 +21,7 @@ const props = withDefaults(defineProps<CalendarProps>(), {
     modelValue: undefined,
     isRange: false,
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{
@@ -83,7 +83,6 @@ const dayBaseClasses = computed(() =>
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all'
     )
 )
-
 const daySelectedClasses = computed(() => 'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm')
 const dayInRangeClasses = computed(() => 'bg-brutal-accent text-brutal-fg')
 const dayRangeEndpointClasses = computed(() => 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm')
@@ -91,14 +90,36 @@ const dayTodayClasses = computed(() => 'bg-brutal-secondary text-brutal-fg font-
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
 const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
 
-function getDayClasses(day: { isSelected?: boolean; isInRange?: boolean; isStart?: boolean; isEnd?: boolean; isToday?: boolean; isOutside?: boolean; isDisabled?: boolean }) {
+function isSameDay(a: Date, b: Date): boolean {
+    return a.getFullYear() === b.getFullYear()
+        && a.getMonth() === b.getMonth()
+        && a.getDate() === b.getDate()
+}
+
+function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean; startDate: Date }) {
+    const isOutside = !day.inMonth
+    let isSelected = false
+    let isInRange = false
+    let isStart = false
+    let isEnd = false
+
+    if (props.isRange && Array.isArray(props.modelValue) && props.modelValue.length === 2) {
+        const [rangeStart, rangeEnd] = props.modelValue
+        isStart = isSameDay(day.startDate, rangeStart)
+        isEnd = isSameDay(day.startDate, rangeEnd)
+        isInRange = day.startDate > rangeStart && day.startDate < rangeEnd
+        isSelected = isStart || isEnd
+    } else if (props.modelValue instanceof Date) {
+        isSelected = isSameDay(day.startDate, props.modelValue)
+    }
+
     return cn(
         dayBaseClasses.value,
-        day.isSelected && !day.isInRange ? daySelectedClasses.value : '',
-        day.isInRange && !day.isStart && !day.isEnd ? dayInRangeClasses.value : '',
-        (day.isStart || day.isEnd) ? dayRangeEndpointClasses.value : '',
+        isSelected && !isInRange ? daySelectedClasses.value : '',
+        isInRange && !isStart && !isEnd ? dayInRangeClasses.value : '',
+        (isStart || isEnd) ? dayRangeEndpointClasses.value : '',
         day.isToday ? dayTodayClasses.value : '',
-        day.isOutside ? dayOutsideClasses.value : '',
+        isOutside ? dayOutsideClasses.value : '',
         day.isDisabled ? dayDisabledClasses.value : '',
     )
 }

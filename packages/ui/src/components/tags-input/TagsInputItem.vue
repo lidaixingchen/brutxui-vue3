@@ -14,7 +14,7 @@ interface Props extends TagsInputItemProps {
 
 const props = withDefaults(defineProps<Props>(), {
     variant: 'primary',
-    class: '',
+    class: undefined,
 })
 
 const delegatedProps = computed(() => {

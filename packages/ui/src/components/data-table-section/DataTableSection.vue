@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<DataTableSectionProps>(), {
     rows: () => [],
     searchable: true,
     pageSize: DEFAULT_PAGE_SIZE,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

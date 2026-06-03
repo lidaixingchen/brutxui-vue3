@@ -3,14 +3,16 @@ import { computed } from 'vue'
 import { TooltipPortal, TooltipContent as TooltipContentPrimitive } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
+const DEFAULT_SIDE_OFFSET = 6
+
 interface TooltipContentProps {
     sideOffset?: number
     class?: string
 }
 
 const props = withDefaults(defineProps<TooltipContentProps>(), {
-    sideOffset: 6,
-    class: '',
+    sideOffset: DEFAULT_SIDE_OFFSET,
+    class: undefined,
 })
 
 const classes = computed(() =>

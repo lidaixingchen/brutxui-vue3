@@ -12,6 +12,7 @@ import {
 import { Plus, Minus, ChevronUp, ChevronDown } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
+import { useLocale } from '@/composables/useLocale'
 
 interface NumberInputProps extends NumberFieldRootProps {
     layout?: 'split' | 'stacked'
@@ -21,11 +22,15 @@ interface NumberInputProps extends NumberFieldRootProps {
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
     layout: 'split',
-    placeholder: '',
-    class: '',
+    placeholder: undefined,
+    class: undefined,
 })
 
 const emits = defineEmits<NumberFieldRootEmits>()
+
+const { t } = useLocale()
+
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('input.placeholder'))
 
 const delegatedProps = computed(() => {
     const { class: _, layout: __, placeholder: ___, ...delegated } = props
@@ -59,7 +64,7 @@ const fieldClasses = computed(() =>
             </NumberFieldDecrement>
 
             <NumberFieldInput
-                :placeholder="placeholder"
+                :placeholder="resolvedPlaceholder"
                 :class="fieldClasses"
             />
 
@@ -70,7 +75,7 @@ const fieldClasses = computed(() =>
 
         <template v-else>
             <NumberFieldInput
-                :placeholder="placeholder"
+                :placeholder="resolvedPlaceholder"
                 :class="fieldClasses"
             />
 

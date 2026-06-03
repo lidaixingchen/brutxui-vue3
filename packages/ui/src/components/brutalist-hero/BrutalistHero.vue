@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<BrutalistHeroProps>(), {
     subtitle: '',
     primaryCtaText: undefined,
     secondaryCtaText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

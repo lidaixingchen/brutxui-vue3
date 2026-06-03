@@ -14,7 +14,7 @@
     },
     {
       "path": "components/ui/counter/counter-variants.ts",
-      "content": "import { cva } from 'class-variance-authority';\n\nexport const counterVariants = cva(\n    [\n        'inline-flex items-baseline tabular-nums whitespace-nowrap',\n        'font-black text-brutal-fg',\n        'max-w-full min-w-0',\n    ].join(' '),\n    {\n        variants: {\n            size: {\n                sm: 'text-2xl',\n                md: 'text-4xl',\n                lg: 'text-6xl',\n                xl: 'text-8xl',\n            },\n        },\n        defaultVariants: {\n            size: 'md',\n        },\n    }\n);\n",
+      "content": "import { cva } from 'class-variance-authority';\n\nexport const counterVariants = cva(\n    [\n        'inline-flex items-baseline tabular-nums whitespace-nowrap',\n        'font-black text-brutal-fg',\n        'max-w-full min-w-0',\n    ],\n    {\n        variants: {\n            size: {\n                sm: 'text-2xl',\n                md: 'text-4xl',\n                lg: 'text-6xl',\n                xl: 'text-8xl',\n            },\n        },\n        defaultVariants: {\n            size: 'md',\n        },\n    }\n);\n",
       "type": "registry:ui"
     }
   ],

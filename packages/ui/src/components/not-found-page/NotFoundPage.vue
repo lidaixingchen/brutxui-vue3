@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<NotFoundPageProps>(), {
     title: undefined,
     description: undefined,
     backText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

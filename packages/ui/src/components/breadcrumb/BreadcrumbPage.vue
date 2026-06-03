@@ -8,7 +8,7 @@ interface BreadcrumbPageProps {
 }
 
 const props = withDefaults(defineProps<BreadcrumbPageProps>(), {
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

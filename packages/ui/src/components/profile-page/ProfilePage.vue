@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<ProfilePageProps>(), {
     name: undefined,
     email: undefined,
     bio: undefined,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

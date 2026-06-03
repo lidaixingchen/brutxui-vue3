@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<AuthCardProps>(), {
     title: undefined,
     description: undefined,
     texts: () => ({}),
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

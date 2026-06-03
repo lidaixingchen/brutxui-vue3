@@ -22,7 +22,7 @@ interface GallerySectionProps {
 const props = withDefaults(defineProps<GallerySectionProps>(), {
     title: undefined,
     items: () => [],
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

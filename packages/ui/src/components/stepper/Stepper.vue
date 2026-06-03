@@ -114,12 +114,6 @@ const connectorClassesMap = computed(() => {
                     v-if="orientation === 'horizontal'"
                     class="flex items-center w-full"
                 >
-                    <!-- Left connector (not for first) -->
-                    <div
-                        v-if="index > 0"
-                        :class="connectorClassesMap.get(index)"
-                    />
-
                     <!-- Dot -->
                     <button
                         :class="dotClassesMap.get(index)"

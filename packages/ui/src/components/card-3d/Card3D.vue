@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<Card3DProps>(), {
     shadowOffset: 10,
     shadow: 'default',
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const cardRef = ref<HTMLDivElement | null>(null)
@@ -36,15 +36,19 @@ const isHovered = ref(false)
 const prefersReducedMotion = useReducedMotion()
 const { t } = useLocale()
 
-// 静态/初始阴影偏移量
+// 阴影偏移量与 shadow variant 对应
+const SHADOW_OFFSET_DEFAULT = 4
+const SHADOW_OFFSET_LG = 6
+const SHADOW_OFFSET_XL = 8
+
 const initialOffset = computed(() => {
     switch (props.shadow) {
         case 'lg':
-            return 6
+            return SHADOW_OFFSET_LG
         case 'xl':
-            return 8
+            return SHADOW_OFFSET_XL
         default:
-            return 4
+            return SHADOW_OFFSET_DEFAULT
     }
 })
 

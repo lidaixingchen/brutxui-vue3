@@ -23,7 +23,7 @@ interface QuickActionsProps {
 const props = withDefaults(defineProps<QuickActionsProps>(), {
     title: undefined,
     actions: () => [],
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

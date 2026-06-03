@@ -322,6 +322,14 @@ export interface DashboardStatsLocale {
     defaultTitle: string
 }
 
+export interface InputLocale {
+    placeholder: string
+}
+
+export interface TextareaLocale {
+    placeholder: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -376,4 +384,6 @@ export interface Locale {
     kanban: KanbanLocale
     pricingSection: PricingSectionLocale
     dashboardStats: DashboardStatsLocale
+    input: InputLocale
+    textarea: TextareaLocale
 }

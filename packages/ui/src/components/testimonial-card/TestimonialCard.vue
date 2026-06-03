@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<TestimonialCardProps>(), {
     quote: undefined,
     author: undefined,
     role: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

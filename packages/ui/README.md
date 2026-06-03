@@ -34,6 +34,20 @@ npx brutx@latest add button card badge
 npx brutx@latest add --all
 ```
 
+## 升级
+
+当 BrutxUI 发布新版本时，重新运行 init 命令即可升级：
+
+```bash
+npx brutx@latest init
+```
+
+你也可以单独更新已有组件：
+
+```bash
+npx brutx@latest add button --overwrite
+```
+
 ## 用法
 
 添加组件后，从你的项目中导入它们：

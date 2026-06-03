@@ -20,16 +20,16 @@ interface HardcoreInputProps {
 }
 
 const props = withDefaults(defineProps<HardcoreInputProps>(), {
-    modelValue: '',
+    modelValue: undefined,
     sound: true,
     rules: () => [],
     shakeOnError: true,
     type: 'text',
-    placeholder: '',
+    placeholder: undefined,
     disabled: false,
     readonly: false,
     validateOn: 'blur',
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{
@@ -37,20 +37,12 @@ const emit = defineEmits<{
     'validationChange': [state: 'default' | 'success' | 'error', message?: string]
 }>()
 
-const getUniqueId = () => {
-    try {
-        const id = useId()
-        return id.replace(/:/g, '-')
-    } catch {
-        return Math.random().toString(36).substring(2, 9)
-    }
-}
-
-const errorId = `input-error-${getUniqueId()}`
+const errorId = `input-error-${useId().replace(/:/g, '-')}`
 
 const validationState = ref<'default' | 'success' | 'error'>('default')
 const errorMessage = ref<string>('')
 const triggerShake = ref(false)
+const shakeTimer = ref<number | undefined>(undefined)
 
 const audioEngine = useAudioEngine(toRef(props, 'sound'))
 const { t } = useLocale()
@@ -59,6 +51,7 @@ const formField = inject<FormFieldContext | null>(formFieldKey, null)
 
 onUnmounted(() => {
     audioEngine.dispose()
+    if (shakeTimer.value) clearTimeout(shakeTimer.value)
 })
 
 const validate = (value: string) => {
@@ -95,7 +88,8 @@ const validate = (value: string) => {
         
         if (props.shakeOnError) {
             triggerShake.value = false
-            setTimeout(() => {
+            if (shakeTimer.value) clearTimeout(shakeTimer.value)
+            shakeTimer.value = window.setTimeout(() => {
                 triggerShake.value = true
             }, 10)
         }
@@ -129,7 +123,7 @@ const onInput = (e: Event) => {
 
 const onBlur = () => {
     if (props.validateOn === 'blur') {
-        validate(props.modelValue)
+        validate(props.modelValue ?? '')
     }
 }
 
@@ -139,7 +133,7 @@ const onAnimationEnd = () => {
 
 // 暴露外部主动校验接口
 const triggerValidate = () => {
-    validate(props.modelValue)
+    validate(props.modelValue ?? '')
 }
 
 defineExpose({
@@ -163,7 +157,7 @@ const faceClasses = computed(() =>
     cn(
         hardcoreInputFaceVariants(),
         validationState.value === 'success' ? 'bg-brutal-success' : '',
-        validationState.value === 'error' ? 'bg-brutal-destructive text-white animate-bounce-short' : ''
+        validationState.value === 'error' ? 'bg-brutal-destructive text-brutal-fg animate-bounce-short' : ''
     )
 )
 </script>

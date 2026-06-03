@@ -21,7 +21,7 @@ interface TabsNavProps {
 const props = withDefaults(defineProps<TabsNavProps>(), {
     tabs: () => [],
     defaultValue: undefined,
-    class: '',
+    class: undefined,
 })
 
 const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))

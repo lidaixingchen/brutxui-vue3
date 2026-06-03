@@ -13,7 +13,7 @@ const props = defineProps<DropdownMenuItemProps>()
 const classes = computed(() =>
     cn(
         'relative flex cursor-pointer select-none items-center px-3 py-2',
-        'font-bold outline-none transition-colors',
+        'font-bold outline-none transition-all rounded-brutal',
         'focus:bg-brutal-accent focus:text-brutal-fg',
         'focus-visible:ring-2 focus-visible:ring-brutal-ring',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',

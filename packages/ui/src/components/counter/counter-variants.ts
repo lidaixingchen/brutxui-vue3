@@ -5,7 +5,7 @@ export const counterVariants = cva(
         'inline-flex items-baseline tabular-nums whitespace-nowrap',
         'font-black text-brutal-fg',
         'max-w-full min-w-0',
-    ].join(' '),
+    ],
     {
         variants: {
             size: {

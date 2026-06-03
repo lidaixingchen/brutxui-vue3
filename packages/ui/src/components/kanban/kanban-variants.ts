@@ -6,7 +6,7 @@ export const kanbanColumnVariants = cva(
         'border-3 border-brutal shadow-brutal rounded-brutal',
         'bg-brutal-muted p-3',
         'transition-shadow duration-200',
-    ].join(' '),
+    ],
     {
         variants: {
             dragOver: {
@@ -27,7 +27,8 @@ export const kanbanCardVariants = cva(
         'cursor-grab active:cursor-grabbing',
         'transition-all duration-150',
         'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-    ].join(' '),
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+    ],
     {
         variants: {
             dragging: {

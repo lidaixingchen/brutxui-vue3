@@ -12,10 +12,10 @@ interface ToastContainerProps {
 
 const props = withDefaults(defineProps<ToastContainerProps>(), {
     position: 'bottom-right',
-    class: '',
+    class: undefined,
 })
 
-const positionMap: Record<string, string> = {
+const positionMap: Record<NonNullable<ToastContainerProps['position']>, string> = {
     'top-left': 'top-4 left-4 items-start',
     'top-center': 'top-4 left-1/2 -translate-x-1/2 items-center',
     'top-right': 'top-4 right-4 items-end',

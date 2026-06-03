@@ -16,7 +16,7 @@ interface SelectContentProps {
 
 const props = withDefaults(defineProps<SelectContentProps>(), {
     position: 'popper',
-    class: '',
+    class: undefined,
 })
 
 const contentClasses = computed(() =>

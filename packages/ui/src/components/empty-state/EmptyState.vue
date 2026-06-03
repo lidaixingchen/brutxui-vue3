@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<EmptyStateProps>(), {
     description: '',
     actionText: undefined,
     icon: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

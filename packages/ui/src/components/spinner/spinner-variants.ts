@@ -7,8 +7,8 @@ export const spinnerVariants = cva(
             size: {
                 sm: 'h-5 w-5',
                 default: 'h-8 w-8',
-                lg: 'h-12 w-12 border-[5px]',
-                xl: 'h-16 w-16 border-[6px]',
+                lg: 'h-12 w-12 border-[var(--brutal-border-width,3px)]',
+                xl: 'h-16 w-16 border-[var(--brutal-border-width,3px)]',
             },
             variant: {
                 default: 'border-t-transparent border-r-transparent',

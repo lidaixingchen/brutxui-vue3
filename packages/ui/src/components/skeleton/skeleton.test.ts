@@ -101,15 +101,15 @@ describe('SkeletonAvatar', () => {
     it('applies lg size classes', () => {
         const wrapper = mount(SkeletonAvatar, { props: { size: 'lg' } })
         const skeleton = wrapper.findComponent(Skeleton)
-        expect(skeleton.classes()).toContain('h-12')
-        expect(skeleton.classes()).toContain('w-12')
+        expect(skeleton.classes()).toContain('h-14')
+        expect(skeleton.classes()).toContain('w-14')
     })
 
     it('applies xl size classes', () => {
         const wrapper = mount(SkeletonAvatar, { props: { size: 'xl' } })
         const skeleton = wrapper.findComponent(Skeleton)
-        expect(skeleton.classes()).toContain('h-16')
-        expect(skeleton.classes()).toContain('w-16')
+        expect(skeleton.classes()).toContain('h-20')
+        expect(skeleton.classes()).toContain('w-20')
     })
 
     it('applies variant to child skeleton', () => {

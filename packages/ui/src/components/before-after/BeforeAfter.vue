@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<BeforeAfterProps>(), {
     afterAlt: undefined,
     defaultValue: DEFAULT_SLIDER_POSITION,
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()
@@ -38,7 +38,7 @@ watch(() => props.defaultValue, (val) => {
 
 const clipStyle = computed(() => {
     return {
-        clipPath: `inset(0 0 0 ${sliderVal.value}%)`,
+        clipPath: `inset(0 ${100 - sliderVal.value}% 0 0)`,
     }
 })
 

@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<DotsSpinnerProps>(), {
     size: 'default',
     color: 'default',
     label: undefined,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()
@@ -39,6 +39,9 @@ const colorMap: Record<string, string> = {
     accent: 'bg-brutal-accent',
 }
 
+const DOT_ANIMATION_DELAY_INCREMENT_MS = 100
+const DOT_ANIMATION_DURATION_MS = 500
+
 const containerClasses = computed(() =>
     cn(dotsSpinnerVariants({ size: props.size }), props.class)
 )
@@ -54,7 +57,7 @@ const dotClasses = computed(() =>
             v-for="i in 3"
             :key="i"
             :class="dotClasses"
-            :style="{ animationDelay: `${(i - 1) * 100}ms`, animationDuration: '500ms' }"
+            :style="{ animationDelay: `${(i - 1) * DOT_ANIMATION_DELAY_INCREMENT_MS}ms`, animationDuration: `${DOT_ANIMATION_DURATION_MS}ms` }"
         />
         <span class="sr-only">{{ resolvedLabel }}</span>
     </div>

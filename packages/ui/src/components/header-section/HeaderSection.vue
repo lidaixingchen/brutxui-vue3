@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<HeaderSectionProps>(), {
     logoText: undefined,
     navItems: () => [],
     ctaText: undefined,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

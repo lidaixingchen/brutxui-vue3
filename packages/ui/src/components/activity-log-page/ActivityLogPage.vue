@@ -29,7 +29,7 @@ interface ActivityLogPageProps {
 const props = withDefaults(defineProps<ActivityLogPageProps>(), {
     title: undefined,
     activities: () => [],
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

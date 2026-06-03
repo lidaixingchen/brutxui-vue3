@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<SettingsPageProps>(), {
     title: undefined,
     tabs: () => [],
     defaultTab: undefined,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

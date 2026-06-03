@@ -7,7 +7,7 @@ describe('Separator', () => {
         const classes = wrapper.classes()
         expect(classes).toContain('shrink-0')
         expect(classes).toContain('bg-brutal-fg')
-        expect(classes).toContain('h-[3px]')
+        expect(classes).toContain('h-[var(--brutal-border-width,3px)]')
         expect(classes).toContain('w-full')
     })
 
@@ -39,7 +39,7 @@ describe('Separator', () => {
         })
         const classes = wrapper.classes()
         expect(classes).toContain('h-full')
-        expect(classes).toContain('w-[3px]')
+        expect(classes).toContain('w-[var(--brutal-border-width,3px)]')
     })
 
     it('has vertical data-orientation when set', () => {

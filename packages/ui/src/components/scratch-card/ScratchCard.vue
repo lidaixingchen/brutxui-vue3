@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<ScratchCardProps>(), {
     brushRadius: 20,
     overlayColor: undefined,
     fadeDuration: 300,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

@@ -13,7 +13,7 @@ interface ScrollBarProps {
 
 const props = withDefaults(defineProps<ScrollBarProps>(), {
     orientation: 'vertical',
-    class: '',
+    class: undefined,
 })
 
 const classes = computed(() =>

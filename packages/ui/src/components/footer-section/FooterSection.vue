@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<FooterSectionProps>(), {
     description: undefined,
     linkGroups: () => [],
     copyright: undefined,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{

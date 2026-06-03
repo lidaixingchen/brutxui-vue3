@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<ChartSectionProps>(), {
     subtitle: undefined,
     chartType: 'bar',
     data: () => [],
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<SubmitButtonProps>(), {
     pendingText: undefined,
     loading: false,
     disabled: false,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

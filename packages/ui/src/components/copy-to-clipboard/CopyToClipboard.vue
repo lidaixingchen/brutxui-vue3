@@ -16,7 +16,7 @@ interface CopyToClipboardProps {
 
 const props = withDefaults(defineProps<CopyToClipboardProps>(), {
     duration: DEFAULT_COPY_DURATION,
-    class: '',
+    class: undefined,
 })
 
 const { t } = useLocale()

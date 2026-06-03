@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<MarqueeProps>(), {
     speed: DEFAULT_SPEED,
     pauseOnHover: false,
     fade: false,
-    class: '',
+    class: undefined,
 })
 
 const containerClasses = computed(() =>

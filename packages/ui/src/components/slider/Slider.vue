@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
     min: 0,
     max: 100,
     step: 1,
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()

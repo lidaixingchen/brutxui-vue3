@@ -15,7 +15,7 @@ interface Props extends AccordionItemProps {
 
 const props = withDefaults(defineProps<Props>(), {
     variant: 'default',
-    class: '',
+    class: undefined,
 })
 
 const delegatedProps = computed(() => {

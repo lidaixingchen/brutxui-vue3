@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<BlogCardProps>(), {
     author: '',
     date: '',
     category: '',
-    class: '',
+    class: undefined,
 })
 
 const emit = defineEmits<{
