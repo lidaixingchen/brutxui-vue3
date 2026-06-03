@@ -63,7 +63,7 @@ const handleClasses = computed(() =>
             :src="before"
             :alt="resolvedBeforeAlt"
             class="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />
+        >
 
         <div
             class="absolute inset-0 w-full h-full pointer-events-none"

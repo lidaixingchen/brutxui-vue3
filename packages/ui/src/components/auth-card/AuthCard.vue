@@ -136,7 +136,10 @@ function handleSubmit() {
         </CardContent>
         <CardFooter class="justify-center">
             <p class="text-sm font-medium text-brutal-muted-foreground">
-                {{ resolvedNoAccount }} <button type="button" class="font-bold text-brutal-primary cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">{{ resolvedRegister }}</button>
+                {{ resolvedNoAccount }}
+                <button type="button" class="font-bold text-brutal-primary cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">
+                    {{ resolvedRegister }}
+                </button>
             </p>
         </CardFooter>
     </Card>

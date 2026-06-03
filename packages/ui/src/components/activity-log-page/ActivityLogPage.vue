@@ -130,7 +130,9 @@ const rootClasses = computed(() =>
                 </Table>
 
                 <div v-if="activities.length === 0" class="text-center py-12">
-                    <p class="text-lg font-bold text-brutal-fg">{{ resolvedNoActivityFound }}</p>
+                    <p class="text-lg font-bold text-brutal-fg">
+                        {{ resolvedNoActivityFound }}
+                    </p>
                 </div>
 
                 <div v-if="totalPages > 1" class="mt-8 flex justify-center">

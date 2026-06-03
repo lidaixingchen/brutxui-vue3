@@ -28,7 +28,7 @@ export default tseslint.config(
             'vue/multi-word-component-names': 'off',
             'vue/max-attributes-per-line': 'off',
             'vue/html-indent': 'off',
-            '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' }],
             '@typescript-eslint/no-explicit-any': 'warn',
         },
     },

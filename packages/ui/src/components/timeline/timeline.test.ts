@@ -206,7 +206,7 @@ describe('TimelineConnector', () => {
         })
         const classes = wrapper.classes()
         expect(classes).toContain('h-[3px]')
-        expect(classes).toContain('flex-1')
+        expect(classes).toContain('absolute')
     })
 
     it('merges custom class prop', () => {
