@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { GlitchText } from 'brutx-ui-vue'
+import { GlitchText, Button } from 'brutx-ui-vue'
+
+const glitchRef = ref<InstanceType<typeof GlitchText> | null>(null)
 </script>
 
 <template>
@@ -26,6 +28,20 @@ import { GlitchText } from 'brutx-ui-vue'
                 <GlitchText text="SLOW" trigger="click" speed="slow" class="text-2xl" />
                 <GlitchText text="MEDIUM" trigger="click" speed="medium" class="text-2xl" />
                 <GlitchText text="FAST" trigger="click" speed="fast" class="text-2xl" />
+            </div>
+        </div>
+
+        <div>
+            <p class="text-sm font-bold mb-2">自定义间隔 (interval=1000ms)</p>
+            <GlitchText text="SLOW INTERVAL" trigger="autoplay" :interval="1000" speed="medium" class="text-3xl" />
+        </div>
+
+        <div>
+            <p class="text-sm font-bold mb-2">手动控制 (trigger="none")</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <GlitchText ref="glitchRef" text="MANUAL" trigger="none" speed="fast" class="text-3xl" />
+                <Button size="sm" @click="glitchRef?.play()">Play</Button>
+                <Button size="sm" variant="outline" @click="glitchRef?.stop()">Stop</Button>
             </div>
         </div>
     </div>

@@ -2,7 +2,7 @@
 
 > CLI for adding Neo-Brutalist Vue 3 UI components to your project.
 >
-> [中文](./README.md)
+> [中文](/packages/cli/README.md)
 
 ## Installation
 

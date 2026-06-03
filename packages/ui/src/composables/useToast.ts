@@ -7,6 +7,7 @@ type ToastVariantProps = VariantProps<typeof toastVariants>
 export interface ToastItem {
     id: string
     variant?: NonNullable<ToastVariantProps['variant']>
+    size?: NonNullable<ToastVariantProps['size']>
     title?: string
     description?: string
     duration?: number

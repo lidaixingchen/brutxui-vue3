@@ -2,7 +2,7 @@
 
 > 将 Neo-Brutalist 风格的 Vue 3 UI 组件添加到你的项目中。
 >
-> [English](./README-en.md)
+> [English](/packages/cli/README-en.md)
 
 ## 安装
 

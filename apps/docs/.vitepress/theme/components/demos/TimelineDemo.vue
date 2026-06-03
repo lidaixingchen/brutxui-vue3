@@ -3,21 +3,88 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
 </script>
 
 <template>
-    <div class="flex flex-col gap-8 w-full max-w-[500px]">
+    <div class="space-y-8">
         <div>
-            <h3 class="text-sm font-black mb-4">垂直时间线</h3>
+            <h3 class="text-sm font-black mb-4">垂直时间线 — 所有 Dot 变体</h3>
             <Timeline orientation="vertical">
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="default" shape="circle">1</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">Default 变体</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">默认白底黑字圆点样式。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="primary" shape="circle">2</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">Primary 变体</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">珊瑚红主色圆点样式。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="secondary" shape="square">3</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">Secondary 变体</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">薄荷青辅助色方形样式。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="accent" shape="diamond">4</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">Accent 变体</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">黄色强调色菱形样式。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="success" shape="circle">5</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">Success 变体</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">绿色成功色圆点样式。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="danger" shape="circle">6</TimelineDot>
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">Danger 变体</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">红色危险色圆点样式。</p>
+                    </TimelineContent>
+                </TimelineItem>
+            </Timeline>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-4">水平时间线</h3>
+            <Timeline orientation="horizontal">
                 <TimelineItem>
                     <TimelineSeparator>
                         <TimelineDot variant="primary" shape="circle">1</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
-                    <TimelineContent class="pl-2">
-                        <div class="font-black text-base">BrutxUI 项目立项</div>
+                    <TimelineContent class="text-center">
+                        <div class="font-black text-sm">需求分析</div>
                         <div class="text-xs text-brutal-fg/60 mt-1">2026-06-01</div>
-                        <p class="text-sm text-brutal-fg/80 mt-2 font-normal">
-                            启动新一代 Neo-Brutalist Vue 3 组件库项目，确定基础元数据及重度边框与实心阴影设计规范。
-                        </p>
                     </TimelineContent>
                 </TimelineItem>
 
@@ -26,25 +93,30 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineDot variant="accent" shape="square">2</TimelineDot>
                         <TimelineConnector />
                     </TimelineSeparator>
-                    <TimelineContent class="pl-2">
-                        <div class="font-black text-base">发布首个 Alpha 版本</div>
+                    <TimelineContent class="text-center">
+                        <div class="font-black text-sm">设计开发</div>
                         <div class="text-xs text-brutal-fg/60 mt-1">2026-06-15</div>
-                        <p class="text-sm text-brutal-fg/80 mt-2 font-normal">
-                            完成核心 UI 组件的编写与 CLI 初始化安装工具打包，并在 npm 仓库进行发布。
-                        </p>
                     </TimelineContent>
                 </TimelineItem>
 
                 <TimelineItem>
                     <TimelineSeparator>
                         <TimelineDot variant="success" shape="diamond">3</TimelineDot>
+                        <TimelineConnector />
                     </TimelineSeparator>
-                    <TimelineContent class="pl-2">
-                        <div class="font-black text-base">正式版首发 (V1.0.0)</div>
+                    <TimelineContent class="text-center">
+                        <div class="font-black text-sm">测试发布</div>
                         <div class="text-xs text-brutal-fg/60 mt-1">2026-07-01</div>
-                        <p class="text-sm text-brutal-fg/80 mt-2 font-normal">
-                            完善组件文档与预览网站，并支持 AI 代码生成一键集成。
-                        </p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="danger" shape="circle">4</TimelineDot>
+                    </TimelineSeparator>
+                    <TimelineContent class="text-center">
+                        <div class="font-black text-sm">迭代优化</div>
+                        <div class="text-xs text-brutal-fg/60 mt-1">2026-07-15</div>
                     </TimelineContent>
                 </TimelineItem>
             </Timeline>

@@ -2,7 +2,7 @@
 
 新粗野主义 Vue 3 组件库，支持 CLI 工具。将组件复制到你的代码库中，获得完全的自定义控制权。
 
-**[English](./README-en.md)**
+**[English](/packages/ui/README-en.md)**
 
 [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
 [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square)](https://www.npmjs.com/package/brutx-ui-vue)

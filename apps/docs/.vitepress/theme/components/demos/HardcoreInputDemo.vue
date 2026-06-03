@@ -4,6 +4,9 @@ import { HardcoreInput } from 'brutx-ui-vue'
 
 const value1 = ref('')
 const value2 = ref('')
+const value3 = ref('')
+const value4 = ref('')
+const value5 = ref('只读内容')
 
 const minLength = (val: string) => val.length >= 5 || '至少需要 5 个字符'
 const hasNumber = (val: string) => /\d/.test(val) || '必须包含数字'
@@ -37,6 +40,25 @@ const hasNumber = (val: string) => /\d/.test(val) || '必须包含数字'
                 placeholder="静默输入..."
                 :sound="false"
                 :rules="[minLength]"
+            />
+        </div>
+
+        <div>
+            <p class="text-sm font-bold mb-2">关闭抖动 (shakeOnError=false)</p>
+            <HardcoreInput
+                v-model="value3"
+                placeholder="输入不会抖动..."
+                :rules="[minLength]"
+                :shake-on-error="false"
+                validate-on="blur"
+            />
+        </div>
+
+        <div>
+            <p class="text-sm font-bold mb-2">只读状态 (readonly)</p>
+            <HardcoreInput
+                v-model="value5"
+                readonly
             />
         </div>
     </div>
