@@ -81,7 +81,7 @@ const navClasses = computed(() =>
     cn(paginationVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
-const buttonSize = computed(() => props.size)
+const buttonSize = computed(() => props.size ?? 'default')
 
 const dotsSizeClasses = computed(() => {
     if (buttonSize.value === 'sm') return 'h-8 w-8'

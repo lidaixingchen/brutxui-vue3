@@ -1,5 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import PricingSection from './PricingSection.vue'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('PricingSection', () => {
     const mockPlans = [
@@ -31,13 +35,14 @@ describe('PricingSection', () => {
     ]
 
     it('renders with default props', () => {
-        const wrapper = mount(PricingSection)
+        const wrapper = mount(PricingSection, { ...localeProvide })
         expect(wrapper.find('h2').text()).toBe('Simple, Transparent Brutalist Plans')
     })
 
     it('renders with plans prop', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },
+            ...localeProvide,
         })
         const cards = wrapper.findAll('.grid > div')
         expect(cards.length).toBe(3)
@@ -46,6 +51,7 @@ describe('PricingSection', () => {
     it('shows plan names', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Basic')
         expect(wrapper.text()).toContain('Pro')
@@ -55,6 +61,7 @@ describe('PricingSection', () => {
     it('shows plan prices', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('$9')
         expect(wrapper.text()).toContain('$29')
@@ -64,6 +71,7 @@ describe('PricingSection', () => {
     it('shows plan features', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('1 project')
         expect(wrapper.text()).toContain('Priority support')
@@ -73,6 +81,7 @@ describe('PricingSection', () => {
     it('shows popular badge for popular plans', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Most Popular Tier')
     })
@@ -80,6 +89,7 @@ describe('PricingSection', () => {
     it('renders custom title', () => {
         const wrapper = mount(PricingSection, {
             props: { title: 'Custom Pricing Title' },
+            ...localeProvide,
         })
         expect(wrapper.find('h2').text()).toBe('Custom Pricing Title')
     })
@@ -87,12 +97,13 @@ describe('PricingSection', () => {
     it('renders subtitle when provided', () => {
         const wrapper = mount(PricingSection, {
             props: { subtitle: 'Choose your plan' },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Choose your plan')
     })
 
     it('does not render subtitle when not provided', () => {
-        const wrapper = mount(PricingSection)
+        const wrapper = mount(PricingSection, { ...localeProvide })
         const subtitleEl = wrapper.find('p.text-brutal-muted-foreground')
         expect(subtitleEl.exists()).toBe(false)
     })
@@ -100,6 +111,7 @@ describe('PricingSection', () => {
     it('renders with empty plans array', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: [] },
+            ...localeProvide,
         })
         const cards = wrapper.findAll('.grid > div')
         expect(cards.length).toBe(0)
@@ -108,6 +120,7 @@ describe('PricingSection', () => {
     it('shows lifetime pricing label', () => {
         const wrapper = mount(PricingSection, {
             props: { plans: mockPlans },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('/ lifetime')
     })
@@ -115,6 +128,7 @@ describe('PricingSection', () => {
     it('applies custom class', () => {
         const wrapper = mount(PricingSection, {
             props: { class: 'my-pricing' },
+            ...localeProvide,
         })
         expect(wrapper.classes()).toContain('my-pricing')
     })

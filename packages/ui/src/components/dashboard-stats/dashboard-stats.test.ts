@@ -1,6 +1,10 @@
 import { mount } from '@vue/test-utils'
 import { Activity } from 'lucide-vue-next'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DashboardStats from './DashboardStats.vue'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('DashboardStats', () => {
     const mockStats = [
@@ -33,13 +37,14 @@ describe('DashboardStats', () => {
     ]
 
     it('renders with default props', () => {
-        const wrapper = mount(DashboardStats)
+        const wrapper = mount(DashboardStats, { ...localeProvide })
         expect(wrapper.find('h2').text()).toBe('Overview Performance')
     })
 
     it('renders with stats prop', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },
+            ...localeProvide,
         })
         const cards = wrapper.findAll('.grid > div')
         expect(cards.length).toBe(3)
@@ -48,6 +53,7 @@ describe('DashboardStats', () => {
     it('shows stat labels', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Revenue')
         expect(wrapper.text()).toContain('Users')
@@ -57,6 +63,7 @@ describe('DashboardStats', () => {
     it('shows stat values', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('$12,345')
         expect(wrapper.text()).toContain('1,234')
@@ -66,6 +73,7 @@ describe('DashboardStats', () => {
     it('shows stat change values', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('+12%')
         expect(wrapper.text()).toContain('-5%')
@@ -74,6 +82,7 @@ describe('DashboardStats', () => {
     it('shows stat descriptions', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Total revenue this month')
         expect(wrapper.text()).toContain('Active users')
@@ -82,6 +91,7 @@ describe('DashboardStats', () => {
     it('renders custom title', () => {
         const wrapper = mount(DashboardStats, {
             props: { title: 'My Dashboard' },
+            ...localeProvide,
         })
         expect(wrapper.find('h2').text()).toBe('My Dashboard')
     })
@@ -89,12 +99,13 @@ describe('DashboardStats', () => {
     it('renders subtitle when provided', () => {
         const wrapper = mount(DashboardStats, {
             props: { subtitle: 'Monthly overview' },
+            ...localeProvide,
         })
         expect(wrapper.text()).toContain('Monthly overview')
     })
 
     it('does not render subtitle when not provided', () => {
-        const wrapper = mount(DashboardStats)
+        const wrapper = mount(DashboardStats, { ...localeProvide })
         const subtitleEl = wrapper.find('p.text-brutal-muted-foreground')
         expect(subtitleEl.exists()).toBe(false)
     })
@@ -102,6 +113,7 @@ describe('DashboardStats', () => {
     it('renders progress bar when progress is defined', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },
+            ...localeProvide,
         })
         const progressBar = wrapper.find('[style]')
         expect(progressBar.exists()).toBe(true)
@@ -110,6 +122,7 @@ describe('DashboardStats', () => {
     it('renders with empty stats array', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: [] },
+            ...localeProvide,
         })
         const cards = wrapper.findAll('.grid > div')
         expect(cards.length).toBe(0)
@@ -118,6 +131,7 @@ describe('DashboardStats', () => {
     it('applies custom class', () => {
         const wrapper = mount(DashboardStats, {
             props: { class: 'my-stats' },
+            ...localeProvide,
         })
         expect(wrapper.classes()).toContain('my-stats')
     })
