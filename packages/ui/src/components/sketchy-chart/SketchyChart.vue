@@ -231,7 +231,7 @@ const containerClasses = computed(() =>
             </defs>
 
             <!-- 背景网格线 -->
-            <g v-if="grid" class="chart-grid">
+            <g v-if="grid && type !== 'pie'" class="chart-grid">
                 <line
                     v-for="tick in yTicks"
                     :key="'grid-' + tick.value"
@@ -246,7 +246,7 @@ const containerClasses = computed(() =>
             </g>
 
             <!-- 坐标轴 -->
-            <g :filter="`url(#${filterId})`" class="chart-axes">
+            <g v-if="type !== 'pie'" :filter="`url(#${filterId})`" class="chart-axes">
                 <!-- Y 轴 -->
                 <line
                     :x1="CHART_PADDING.left"
@@ -335,7 +335,7 @@ const containerClasses = computed(() =>
             </g>
 
             <!-- 坐标轴文本与刻度标签 -->
-            <g class="chart-labels" fill="var(--brutal-fg, #000000)" font-size="12" font-weight="bold">
+            <g v-if="type !== 'pie'" class="chart-labels" fill="var(--brutal-fg, #000000)" font-size="12" font-weight="bold">
                 <!-- Y 轴刻度标签 -->
                 <text
                     v-for="tick in yTicks"

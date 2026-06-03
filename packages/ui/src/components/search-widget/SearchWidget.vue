@@ -75,7 +75,7 @@ function handleSelect(value: string) {
 <template>
     <Card :class="rootClasses" variant="default">
         <CardContent class="p-0">
-            <Command>
+            <Command disable-filter>
                 <CommandInput
                     :placeholder="resolvedPlaceholder"
                     :model-value="query"

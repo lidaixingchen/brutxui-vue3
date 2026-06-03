@@ -53,7 +53,7 @@ const data = [
 
 ## 数据处理
 
-- **空数组**：渲染空图表框架（仅坐标轴）
+- **空数组**：折线/柱状图渲染空图表框架（仅坐标轴），饼图渲染空白
 - **负值**：取绝对值
 - **大数据集**（>30 项）：自动降采样
 
@@ -69,7 +69,7 @@ const data = [
 | `type` | `'line' \| 'bar' \| 'pie'` | `'line'` | 图表类型 |
 | `data` | `Array<{ label: string, value: number }>` | `[]` | 图表数据源 |
 | `sketchiness` | `number` | `2` | 手绘抖动幅度 (0-10) |
-| `grid` | `boolean` | `true` | 是否绘制背景网格 |
+| `grid` | `boolean` | `true` | 是否绘制背景网格（饼图下无效） |
 | `width` | `number` | `600` | 图表宽度 (px) |
 | `height` | `number` | `400` | 图表高度 (px) |
 | `class` | `string` | — | 外部类覆盖 |

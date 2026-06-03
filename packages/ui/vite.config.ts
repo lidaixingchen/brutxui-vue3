@@ -2,19 +2,27 @@ import { defineConfig, type Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
-import { copyFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 
-function copyStylesPlugin(): Plugin {
+function mergeStylesPlugin(): Plugin {
     return {
-        name: 'copy-styles',
+        name: 'merge-styles',
         writeBundle() {
             try {
-                copyFileSync(
-                    resolve(__dirname, 'src/styles.css'),
-                    resolve(__dirname, 'dist/styles.css')
+                const tokensCss = readFileSync(resolve(__dirname, 'src/styles.css'), 'utf-8')
+                const componentCssPath = resolve(__dirname, 'dist/brutx-ui-vue.css')
+                let componentCss = ''
+                try {
+                    componentCss = readFileSync(componentCssPath, 'utf-8')
+                } catch {
+                    // No component CSS generated
+                }
+                writeFileSync(
+                    resolve(__dirname, 'dist/styles.css'),
+                    componentCss ? `${componentCss}\n${tokensCss}` : tokensCss
                 )
             } catch (e) {
-                console.warn('Failed to copy styles.css:', e)
+                console.warn('Failed to merge styles.css:', e)
             }
         },
     }
@@ -28,7 +36,7 @@ export default defineConfig({
             include: ['src/**/*.ts', 'src/**/*.vue'],
             outDir: 'dist',
         }),
-        copyStylesPlugin(),
+        mergeStylesPlugin(),
     ],
     build: {
         lib: {

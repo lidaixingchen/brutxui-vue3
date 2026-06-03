@@ -6,9 +6,13 @@ import { provideCommandRootContext } from './command-context'
 
 interface CommandProps {
     class?: string
+    disableFilter?: boolean
 }
 
-const props = defineProps<CommandProps>()
+const props = withDefaults(defineProps<CommandProps>(), {
+    class: undefined,
+    disableFilter: false,
+})
 
 const allItems = ref<Map<string, string>>(new Map())
 const allGroups = ref<Map<string, Set<string>>>(new Map())
@@ -21,7 +25,7 @@ const filterState = computed<{
     items: Map<string, number>
     groups: Set<string>
 }>(() => {
-    if (!filterSearch.value) {
+    if (props.disableFilter || !filterSearch.value) {
         return {
             count: allItems.value.size,
             items: new Map(),

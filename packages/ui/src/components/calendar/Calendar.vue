@@ -34,6 +34,7 @@ const rootClasses = computed(() =>
         'border-3 border-brutal',
         'shadow-brutal',
         'w-fit max-w-full overflow-x-auto',
+        props.disabled ? 'opacity-50 pointer-events-none' : '',
         props.class
     )
 )
@@ -102,8 +103,8 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 <template>
     <DatePicker
         :model-value="vCalendarModelValue"
-        :mode="isRange ? 'range' : 'date'"
-        :disabled="disabled"
+        mode="date"
+        :is-range="isRange"
         :class="rootClasses"
         :select-attribute="selectAttribute"
         :drag-attribute="dragAttribute"
@@ -111,6 +112,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
         :first-day-of-week="1"
         :popover="false"
         @update:model-value="handleUpdate"
+        @drag="handleUpdate"
     >
         <template #header-prev-button>
             <ChevronLeft class="w-4 h-4" />

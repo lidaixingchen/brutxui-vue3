@@ -28,7 +28,7 @@ const rangeDate = ref<Date[] | null>(null)
                 <span v-if="rangeDate && rangeDate.length === 2" class="text-xs font-bold">
                     {{ rangeDate[0].toLocaleDateString() }} — {{ rangeDate[1].toLocaleDateString() }}
                 </span>
-                <span v-else class="text-xs font-bold opacity-60">请选择起止日期</span>
+                <span v-else class="text-xs font-bold opacity-60">点击选择起始日期，再点击选择结束日期</span>
                 <Calendar v-model="rangeDate" :is-range="true" />
             </div>
         </div>

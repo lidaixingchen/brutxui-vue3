@@ -16,8 +16,8 @@ const { dayRef } = vi.hoisted(() => ({
 vi.mock('v-calendar', () => ({
     DatePicker: {
         name: 'VDatePicker',
-        props: ['modelValue', 'mode', 'disabled', 'class', 'selectAttribute', 'dragAttribute', 'trimWeeks', 'firstDayOfWeek', 'popover'],
-        emits: ['update:model-value'],
+        props: ['modelValue', 'mode', 'isRange', 'disabled', 'class', 'selectAttribute', 'dragAttribute', 'trimWeeks', 'firstDayOfWeek', 'popover'],
+        emits: ['update:model-value', 'drag'],
         data() {
             return { day: { ...dayRef } }
         },
@@ -195,16 +195,36 @@ describe('Calendar', () => {
             expect(wrapper.find('.cursor-not-allowed').exists()).toBe(true)
         })
 
-        it('passes mode prop to VDatePicker based on isRange', () => {
-            const wrapper = mountCalendar({ isRange: true })
+        it('passes mode="date" to VDatePicker always', () => {
+            const wrapper = mountCalendar()
             const stub = findVDatePicker(wrapper)
-            expect(stub.props('mode')).toBe('range')
+            expect(stub.props('mode')).toBe('date')
         })
 
-        it('passes disabled prop to VDatePicker', () => {
-            const wrapper = mountCalendar({ disabled: true })
+        it('passes isRange prop to VDatePicker', () => {
+            const wrapper = mountCalendar({ isRange: true })
             const stub = findVDatePicker(wrapper)
-            expect(stub.props('disabled')).toBe(true)
+            expect(stub.props('isRange')).toBe(true)
+        })
+
+        it('passes isRange=false by default', () => {
+            const wrapper = mountCalendar()
+            const stub = findVDatePicker(wrapper)
+            expect(stub.props('isRange')).toBe(false)
+        })
+
+        it('applies disabled styles to rootClasses when disabled', () => {
+            const wrapper = mountCalendar({ disabled: true })
+            const vm = wrapper.vm as unknown as { rootClasses: string }
+            expect(vm.rootClasses).toContain('opacity-50')
+            expect(vm.rootClasses).toContain('pointer-events-none')
+        })
+
+        it('does not apply disabled styles when not disabled', () => {
+            const wrapper = mountCalendar()
+            const vm = wrapper.vm as unknown as { rootClasses: string }
+            expect(vm.rootClasses).not.toContain('opacity-50')
+            expect(vm.rootClasses).not.toContain('pointer-events-none')
         })
 
         it('applies rootClasses to the VDatePicker class prop', () => {
@@ -228,6 +248,16 @@ describe('Calendar', () => {
             const stub = findVDatePicker(wrapper)
             expect(stub.props('dragAttribute')).toBeDefined()
             expect((stub.props('dragAttribute') as Record<string, unknown>).highlight).toBeDefined()
+        })
+
+        it('handles drag event for range selection', async () => {
+            const start = new Date(2026, 0, 1)
+            const end = new Date(2026, 0, 15)
+            const wrapper = mountCalendar({ isRange: true })
+            const stub = findVDatePicker(wrapper)
+            stub.vm.$emit('drag', { start, end })
+            await nextTick()
+            expect(wrapper.emitted('update:modelValue')![0]).toEqual([[start, end]])
         })
     })
 })

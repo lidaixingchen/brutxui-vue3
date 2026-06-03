@@ -74,6 +74,28 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 </Command>
 ```
 
+### 禁用内部过滤
+
+当外部组件自行处理过滤逻辑时（如 Combobox、SearchWidget），可使用 `disable-filter` 禁用 Command 的内部搜索过滤，避免双重过滤冲突：
+
+```vue
+<Command disable-filter>
+    <CommandInput v-model="searchQuery" />
+    <CommandList>
+        <CommandEmpty />
+        <CommandGroup>
+            <CommandItem
+                v-for="item in filteredItems"
+                :key="item.value"
+                :value="item.value"
+            >
+                {{ item.label }}
+            </CommandItem>
+        </CommandGroup>
+    </CommandList>
+</Command>
+```
+
 ## 命令对话框
 
 使用 `CommandDialog` 实现模态命令面板：
@@ -129,9 +151,10 @@ const open = ref(false)
 
 ### Command
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | — |
+| `disableFilter` | `boolean` | `false` | 禁用内部搜索过滤，适用于外部自行过滤的场景 |
 
 ### CommandInput
 

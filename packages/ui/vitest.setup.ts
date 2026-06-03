@@ -5,3 +5,5 @@ class ResizeObserverMock {
 }
 
 globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver
+
+Element.prototype.scrollIntoView = function scrollIntoView() {}

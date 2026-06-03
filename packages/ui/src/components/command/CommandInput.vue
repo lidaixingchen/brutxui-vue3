@@ -41,9 +41,7 @@ const inputClasses = computed(() =>
 )
 
 function handleInput(event: InputEvent) {
-    const value = (event.target as HTMLInputElement).value
-    rootContext.filterSearch.value = value
-    emit('update:modelValue', value)
+    rootContext.filterSearch.value = (event.target as HTMLInputElement).value
 }
 </script>
 

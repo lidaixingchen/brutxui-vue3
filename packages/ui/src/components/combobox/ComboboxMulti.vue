@@ -110,7 +110,7 @@ watch(open, (isOpen) => {
             </button>
         </PopoverTrigger>
         <PopoverContent class="w-[var(--reka-popover-trigger-width)] p-0" align="start">
-            <Command>
+            <Command disable-filter>
                 <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
                     <CommandEmpty>{{ resolvedEmptyText }}</CommandEmpty>
