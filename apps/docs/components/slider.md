@@ -87,6 +87,8 @@ const value = ref([50])
 | `max` | `number` | `100` |
 | `step` | `number` | `1` |
 | `disabled` | `boolean` | — |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` |
 | `class` | `string` | — |
 
 ## 事件
@@ -97,8 +99,8 @@ const value = ref([50])
 
 ## 样式
 
-- **轨道**：`border-3 border-brutal` 搭配 `shadow-brutal-sm`
-- **范围**：`bg-brutal-secondary` 填充
-- **滑块**：`bg-brutal-accent` 搭配 `border-3 border-brutal` 和 `shadow-brutal-sm`
-- **悬停**：滑块放大
-- **激活**：滑块缩小并显示抓取光标
+- **轨道**：`border-3 border-brutal` 搭配 `shadow-brutal-sm`，`rounded-brutal`
+- **范围**：根据 variant 使用不同颜色（default: `bg-brutal-secondary`）
+- **滑块**：根据 variant 使用不同颜色（default: `bg-brutal-accent`），`rounded-brutal`
+- **悬停**：阴影增大，轻微上移
+- **按压**：向下位移，阴影消失，光标变为抓取

@@ -5,6 +5,7 @@ import { Slider } from 'brutx-ui-vue'
 const value = ref([60])
 const rangedValue = ref([25])
 const disabledValue = ref([50])
+const variantValue = ref([50])
 </script>
 
 <template>
@@ -22,6 +23,14 @@ const disabledValue = ref([50])
             <Slider v-model="rangedValue" :min="0" :max="200" :step="10" />
             <p class="text-sm font-bold text-brutal-muted-foreground">
                 Value: {{ rangedValue[0] }}
+            </p>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold">颜色变体 (variant=primary)</p>
+            <Slider v-model="variantValue" variant="primary" />
+            <p class="text-sm font-bold text-brutal-muted-foreground">
+                Value: {{ variantValue[0] }}
             </p>
         </div>
 

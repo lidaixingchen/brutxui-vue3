@@ -60,7 +60,9 @@ const selected = ref('comfortable')
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `value` | `string` | —（必填） |
-| `disabled` | `boolean` | — |
+| `disabled` | `boolean` | `false` |
+| `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `class` | `string` | — |
 
 ## 事件

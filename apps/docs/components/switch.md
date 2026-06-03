@@ -71,7 +71,9 @@ import { Switch } from 'brutx-ui-vue'
 |------|------|--------|
 | `modelValue` | `boolean` | — |
 | `defaultValue` | `boolean` | — |
-| `disabled` | `boolean` | — |
+| `disabled` | `boolean` | `false` |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `class` | `string` | — |
 
 ## 事件
@@ -83,7 +85,9 @@ import { Switch } from 'brutx-ui-vue'
 ## 样式
 
 - **未选中**：`bg-brutal-bg` 背景，滑块在左侧
-- **选中**：`bg-brutal-success` 背景，滑块向右平移
-- **滑块**：`bg-brutal-fg` 搭配 `shadow-brutal-sm`
+- **选中**：根据 variant 使用不同颜色（default: `bg-brutal-success`，primary: `bg-brutal-primary` 等），滑块向右平移
+- **滑块**：`bg-brutal-fg` 搭配 `shadow-brutal-sm`，`rounded-brutal`
+- **悬停**：阴影增大 `shadow-brutal`，轻微上移 `-translate-y-0.5`
+- **按压**：向下位移 `translate-y-[var(--brutal-pressed-offset,2px)]`，阴影消失
 - **禁用**：降低不透明度，显示禁止光标
 - **聚焦**：使用 `--brutal-ring` 令牌显示可见聚焦环

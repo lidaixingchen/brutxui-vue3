@@ -9,15 +9,15 @@ const selected = ref('option-1')
     <RadioGroup v-model="selected" default-value="option-1">
         <div class="flex items-center gap-3">
             <RadioGroupItem value="option-1" />
-            <span class="text-sm font-bold">Option 1</span>
+            <span class="text-sm font-bold">Default</span>
         </div>
         <div class="flex items-center gap-3">
-            <RadioGroupItem value="option-2" />
-            <span class="text-sm font-bold">Option 2</span>
+            <RadioGroupItem value="option-2" variant="secondary" />
+            <span class="text-sm font-bold">Secondary</span>
         </div>
         <div class="flex items-center gap-3">
-            <RadioGroupItem value="option-3" />
-            <span class="text-sm font-bold">Option 3</span>
+            <RadioGroupItem value="option-3" variant="danger" />
+            <span class="text-sm font-bold">Danger</span>
         </div>
     </RadioGroup>
 </template>

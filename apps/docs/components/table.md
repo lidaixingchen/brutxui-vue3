@@ -76,3 +76,17 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `class` | `string` | — |
+
+### TableHeader / TableHead
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` |
+| `class` | `string` | — |
+
+### TableFooter
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` |
+| `class` | `string` | — |

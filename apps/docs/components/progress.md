@@ -53,10 +53,12 @@ const progress = ref(75)
 |------|------|--------|
 | `modelValue` | `number` | `0` |
 | `max` | `number` | `100` |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` |
 | `class` | `string` | — |
 
 ## 样式
 
-- 轨道使用 `border-3 border-brutal` 搭配 `shadow-brutal-sm`
-- 指示器使用 `bg-brutal-primary` 搭配平滑的 transform 过渡
+- 轨道使用 `border-3 border-brutal` 搭配 `shadow-brutal-sm`，`rounded-brutal`
+- 指示器根据 variant 使用不同颜色（default: `bg-brutal-primary`）搭配平滑的 transform 过渡
 - 填充通过 `translateX` 实现平滑动画

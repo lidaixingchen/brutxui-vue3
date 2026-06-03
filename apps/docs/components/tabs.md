@@ -64,6 +64,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from 'brutx-ui-vue'
 |------|------|--------|
 | `value` | `string` | —（必填） |
 | `disabled` | `boolean` | — |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` |
 | `class` | `string` | — |
 
 ### TabsContent
@@ -77,6 +78,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `class` | `string` | — |
 
 ## 无障碍

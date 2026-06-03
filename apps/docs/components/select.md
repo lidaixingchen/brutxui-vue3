@@ -101,6 +101,7 @@ const selectedFruit = ref('')
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `class` | `string` | — |
 
 ### SelectContent
@@ -116,6 +117,7 @@ const selectedFruit = ref('')
 |------|------|--------|
 | `value` | `string` | —（必填） |
 | `disabled` | `boolean` | — |
+| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` |
 | `class` | `string` | — |
 
 ### SelectLabel
