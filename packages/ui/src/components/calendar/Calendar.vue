@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { Calendar as VCalendar } from 'v-calendar'
+import { computed } from 'vue'
+import { DatePicker } from 'v-calendar'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import { cn } from '../../lib/utils'
-import { useLocale } from '@/composables/useLocale'
 
 interface CalendarProps {
     modelValue?: Date | Date[] | null
@@ -65,17 +64,19 @@ function handleUpdate(value: Date | DateRangeValue | null) {
     }
 }
 
-const { t } = useLocale()
+const selectAttribute = computed(() => ({
+    highlight: {
+        class: 'brutal-selected',
+        contentClass: 'brutal-selected-content',
+    },
+}))
 
-const calendarRef = ref<InstanceType<typeof VCalendar> | null>(null)
-
-function navigatePrev() {
-    calendarRef.value?.move(-1)
-}
-
-function navigateNext() {
-    calendarRef.value?.move(1)
-}
+const dragAttribute = computed(() => ({
+    highlight: {
+        class: 'brutal-range',
+        contentClass: 'brutal-range-content',
+    },
+}))
 
 const dayBaseClasses = computed(() =>
     cn(
@@ -83,42 +84,15 @@ const dayBaseClasses = computed(() =>
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all'
     )
 )
-const daySelectedClasses = computed(() => 'bg-brutal-primary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm')
-const dayInRangeClasses = computed(() => 'bg-brutal-accent text-brutal-fg')
-const dayRangeEndpointClasses = computed(() => 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal shadow-brutal-sm')
-const dayTodayClasses = computed(() => 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal')
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
 const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
 
-function isSameDay(a: Date, b: Date): boolean {
-    return a.getFullYear() === b.getFullYear()
-        && a.getMonth() === b.getMonth()
-        && a.getDate() === b.getDate()
-}
-
-function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean; startDate: Date }) {
+function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }) {
     const isOutside = !day.inMonth
-    let isSelected = false
-    let isInRange = false
-    let isStart = false
-    let isEnd = false
-
-    if (props.isRange && Array.isArray(props.modelValue) && props.modelValue.length === 2) {
-        const [rangeStart, rangeEnd] = props.modelValue
-        isStart = isSameDay(day.startDate, rangeStart)
-        isEnd = isSameDay(day.startDate, rangeEnd)
-        isInRange = day.startDate > rangeStart && day.startDate < rangeEnd
-        isSelected = isStart || isEnd
-    } else if (props.modelValue instanceof Date) {
-        isSelected = isSameDay(day.startDate, props.modelValue)
-    }
 
     return cn(
         dayBaseClasses.value,
-        isSelected && !isInRange ? daySelectedClasses.value : '',
-        isInRange && !isStart && !isEnd ? dayInRangeClasses.value : '',
-        (isStart || isEnd) ? dayRangeEndpointClasses.value : '',
-        day.isToday ? dayTodayClasses.value : '',
+        day.isToday ? 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal' : '',
         isOutside ? dayOutsideClasses.value : '',
         day.isDisabled ? dayDisabledClasses.value : '',
     )
@@ -126,46 +100,155 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 </script>
 
 <template>
-    <VCalendar
-        ref="calendarRef"
+    <DatePicker
         :model-value="vCalendarModelValue"
         :mode="isRange ? 'range' : 'date'"
         :disabled="disabled"
         :class="rootClasses"
-        :attributes="[]"
+        :select-attribute="selectAttribute"
+        :drag-attribute="dragAttribute"
         trim-weeks
         :first-day-of-week="1"
+        :popover="false"
         @update:model-value="handleUpdate"
     >
-        <template #default="{ page }">
-            <div class="vc-header flex items-center justify-between mb-2">
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center h-6 w-6 border-3 border-brutal rounded-brutal bg-brutal-bg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
-                    @click="navigatePrev"
-                    :aria-label="t('calendar.previousMonth')"
-                >
-                    <ChevronLeft class="w-4 h-4" />
-                </button>
-                <div class="vc-title font-black text-xs sm:text-sm tracking-tight uppercase text-brutal-fg">
-                    {{ page.monthLabel }} {{ page.yearLabel }}
-                </div>
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center h-6 w-6 border-3 border-brutal rounded-brutal bg-brutal-bg shadow-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
-                    @click="navigateNext"
-                    :aria-label="t('calendar.nextMonth')"
-                >
-                    <ChevronRight class="w-4 h-4" />
-                </button>
-            </div>
+        <template #header-prev-button>
+            <ChevronLeft class="w-4 h-4" />
         </template>
-        <template #day-content="{ day }">
+        <template #header-title="{ title }">
+            <span class="font-black text-xs sm:text-sm tracking-tight uppercase text-brutal-fg">
+                {{ title }}
+            </span>
+        </template>
+        <template #header-next-button>
+            <ChevronRight class="w-4 h-4" />
+        </template>
+        <template #day-content="{ day, dayProps, dayEvents }">
             <div
-                :class="getDayClasses(day)"
+                v-bind="dayProps"
+                v-on="dayEvents"
+                :class="cn(dayProps.class, getDayClasses(day))"
             >
                 {{ day.label }}
             </div>
         </template>
-    </VCalendar>
+    </DatePicker>
 </template>
+
+<style>
+.brutal-selected {
+    background-color: var(--brutal-primary) !important;
+    border: 3px solid var(--brutal-border-color) !important;
+    border-radius: var(--brutal-radius) !important;
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color) !important;
+    width: calc(var(--brutal-day-size, 2rem) + 2px) !important;
+    height: calc(var(--brutal-day-size, 2rem) + 2px) !important;
+}
+
+@media (min-width: 640px) {
+    .brutal-selected {
+        width: calc(var(--brutal-day-size-sm, 2rem) + 2px) !important;
+        height: calc(var(--brutal-day-size-sm, 2rem) + 2px) !important;
+    }
+}
+
+.brutal-selected-content {
+    color: var(--brutal-fg) !important;
+    font-weight: 900 !important;
+}
+
+.brutal-range {
+    background-color: var(--brutal-accent) !important;
+    border-radius: var(--brutal-radius) !important;
+}
+
+.brutal-range-content {
+    color: var(--brutal-fg) !important;
+}
+
+.vc-container {
+    --vc-rounded-full: var(--brutal-radius);
+    --vc-highlight-solid-bg: var(--brutal-primary);
+    --vc-highlight-light-bg: var(--brutal-accent);
+    --vc-highlight-outline-bg: var(--brutal-bg);
+    --vc-highlight-outline-border: var(--brutal-border-color);
+    --vc-highlight-solid-content-color: var(--brutal-fg);
+    --vc-highlight-light-content-color: var(--brutal-fg);
+    --vc-highlight-outline-content-color: var(--brutal-fg);
+}
+
+.vc-day-layer.vc-day-box-center-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vc-highlights .vc-highlight,
+.vc-highlight-bg-solid,
+.vc-highlight-bg-light,
+.vc-highlight-bg-outline {
+    border-radius: var(--brutal-radius) !important;
+}
+
+.vc-container .vc-arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 3px solid var(--brutal-border-color);
+    border-radius: var(--brutal-radius);
+    background-color: var(--brutal-bg);
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color);
+    transition: all 0.15s ease;
+    color: var(--brutal-fg);
+}
+
+.vc-container .vc-arrow:hover {
+    box-shadow: calc(var(--brutal-shadow-offset-x) + 2px) calc(var(--brutal-shadow-offset-y) + 2px) 0 var(--brutal-shadow-color);
+    transform: translate(-1px, -1px);
+}
+
+.vc-container .vc-arrow:active {
+    transform: translateY(var(--brutal-pressed-offset, 2px));
+    box-shadow: none !important;
+}
+
+.vc-container .vc-arrow.vc-prev svg,
+.vc-container .vc-arrow.vc-next svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.vc-container .vc-title {
+    font-weight: 900;
+    font-size: 0.75rem;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    color: var(--brutal-fg);
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.vc-container .vc-title:hover {
+    color: var(--brutal-primary);
+}
+
+.vc-container .vc-weekday {
+    font-weight: 900;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    color: var(--brutal-fg);
+    padding: 0.25rem 0;
+    border-bottom: 3px solid var(--brutal-border-color);
+}
+
+.vc-container .vc-weeks {
+    min-width: 0;
+}
+
+.vc-container .vc-day {
+    min-width: 0;
+}
+</style>

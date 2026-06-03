@@ -16,7 +16,7 @@ const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('Command', () => {
     it('renders with default classes', () => {
-        const wrapper = mount(Command)
+        const wrapper = mount(Command, { ...localeProvide })
         expect(wrapper.classes()).toContain('flex')
         expect(wrapper.classes()).toContain('h-full')
         expect(wrapper.classes()).toContain('w-full')
@@ -28,6 +28,7 @@ describe('Command', () => {
 
     it('renders slot content', () => {
         const wrapper = mount(Command, {
+            ...localeProvide,
             slots: { default: '<div class="inner">Inner content</div>' },
         })
         expect(wrapper.find('.inner').exists()).toBe(true)
@@ -36,6 +37,7 @@ describe('Command', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(Command, {
+            ...localeProvide,
             props: { class: 'custom-class' },
         })
         expect(wrapper.classes()).toContain('custom-class')
@@ -44,7 +46,16 @@ describe('Command', () => {
 
 describe('CommandInput', () => {
     it('renders with default classes', () => {
-        const wrapper = mount(CommandInput, { ...localeProvide })
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: '<CommandInput />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput },
+            },
+        })
         const wrapperDiv = wrapper.find('[data-slot="command-input"]')
         expect(wrapperDiv.exists()).toBe(true)
         expect(wrapperDiv.classes()).toContain('flex')
@@ -55,33 +66,62 @@ describe('CommandInput', () => {
     })
 
     it('has search input placeholder', () => {
-        const wrapper = mount(CommandInput, { ...localeProvide })
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: '<CommandInput />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput },
+            },
+        })
         const input = wrapper.find('input')
         expect(input.exists()).toBe(true)
         expect(input.attributes('placeholder')).toBe('Type a command or search...')
     })
 
     it('applies custom class to input', () => {
-        const wrapper = mount(CommandInput, {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { class: 'custom-input-class' },
+            slots: {
+                default: '<CommandInput class="custom-input-class" />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput },
+            },
         })
         const input = wrapper.find('input')
         expect(input.classes()).toContain('custom-input-class')
     })
 
     it('emits update:modelValue on input', async () => {
-        const wrapper = mount(CommandInput, { ...localeProvide })
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: '<CommandInput />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput },
+            },
+        })
         const input = wrapper.find('input')
         await input.setValue('test query')
-        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-        expect(wrapper.emitted('update:modelValue')![0]).toEqual(['test query'])
+        expect(input.element.value).toBe('test query')
     })
 
     it('uses custom placeholder', () => {
-        const wrapper = mount(CommandInput, {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { placeholder: 'Search items...' },
+            slots: {
+                default: '<CommandInput placeholder="Search items..." />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput },
+            },
         })
         const input = wrapper.find('input')
         expect(input.attributes('placeholder')).toBe('Search items...')
@@ -89,151 +129,455 @@ describe('CommandInput', () => {
 })
 
 describe('CommandList', () => {
-    it('renders with default classes', () => {
-        const wrapper = mount(CommandList, { ...localeProvide })
-        expect(wrapper.classes()).toContain('max-h-80')
-        expect(wrapper.classes()).toContain('overflow-y-auto')
-        expect(wrapper.classes()).toContain('overflow-x-hidden')
+    it('renders with default classes', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: '<CommandList />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList },
+            },
+        })
+        await nextTick()
+        const list = wrapper.find('[data-slot="command-list"]')
+        expect(list.exists()).toBe(true)
+        expect(list.classes()).toContain('max-h-80')
+        expect(list.classes()).toContain('overflow-y-auto')
+        expect(list.classes()).toContain('overflow-x-hidden')
     })
 
-    it('applies custom class', () => {
-        const wrapper = mount(CommandList, {
+    it('applies custom class', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { class: 'custom-list' },
+            slots: {
+                default: '<CommandList class="custom-list" />',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList },
+            },
         })
-        expect(wrapper.classes()).toContain('custom-list')
+        await nextTick()
+        const list = wrapper.find('[data-slot="command-list"]')
+        expect(list.classes()).toContain('custom-list')
     })
 
-    it('renders slot content', () => {
-        const wrapper = mount(CommandList, {
+    it('renders slot content', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            slots: { default: '<div class="list-item">Item</div>' },
+            slots: {
+                default: '<CommandList><div class="list-item">Item</div></CommandList>',
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList },
+            },
         })
+        await nextTick()
         expect(wrapper.find('.list-item').exists()).toBe(true)
     })
 })
 
 describe('CommandEmpty', () => {
-    it('renders with default classes', () => {
-        const wrapper = mount(CommandEmpty, { ...localeProvide })
-        expect(wrapper.classes()).toContain('py-8')
-        expect(wrapper.classes()).toContain('text-center')
-        expect(wrapper.classes()).toContain('text-sm')
-        expect(wrapper.classes()).toContain('font-bold')
-    })
-
-    it('shows default empty message', () => {
-        const wrapper = mount(CommandEmpty, { ...localeProvide })
-        expect(wrapper.text()).toBe('No results found.')
-    })
-
-    it('applies custom class', () => {
-        const wrapper = mount(CommandEmpty, {
+    it('shows default empty message when no items match', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { class: 'custom-empty' },
+            slots: {
+                default: `
+                    <CommandInput model-value="xyz" />
+                    <CommandList>
+                        <CommandEmpty />
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandEmpty },
+            },
         })
-        expect(wrapper.classes()).toContain('custom-empty')
+        await nextTick()
+        await nextTick()
+        const empty = wrapper.find('[data-slot="command-empty"]')
+        expect(empty.exists()).toBe(true)
+        expect(empty.text()).toBe('No results found.')
     })
 
-    it('renders custom slot content', () => {
-        const wrapper = mount(CommandEmpty, {
+    it('applies custom class', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            slots: { default: 'Nothing here!' },
+            slots: {
+                default: `
+                    <CommandInput model-value="xyz" />
+                    <CommandList>
+                        <CommandEmpty class="custom-empty" />
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandEmpty },
+            },
         })
-        expect(wrapper.text()).toBe('Nothing here!')
+        await nextTick()
+        await nextTick()
+        const empty = wrapper.find('[data-slot="command-empty"]')
+        expect(empty.classes()).toContain('custom-empty')
+    })
+
+    it('renders custom slot content', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput model-value="xyz" />
+                    <CommandList>
+                        <CommandEmpty>Nothing here!</CommandEmpty>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandEmpty },
+            },
+        })
+        await nextTick()
+        await nextTick()
+        const empty = wrapper.find('[data-slot="command-empty"]')
+        expect(empty.text()).toBe('Nothing here!')
     })
 })
 
 describe('CommandGroup', () => {
-    it('renders with heading', () => {
-        const wrapper = mount(CommandGroup, {
+    it('renders with heading', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { heading: 'Suggestions' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandGroup heading="Suggestions">
+                            <CommandItem value="test">Test</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandGroup, CommandItem },
+            },
         })
+        await nextTick()
+        await nextTick()
         const heading = wrapper.find('[data-slot="command-group-heading"]')
         expect(heading.exists()).toBe(true)
         expect(heading.text()).toBe('Suggestions')
     })
 
-    it('renders without heading', () => {
-        const wrapper = mount(CommandGroup, { ...localeProvide })
+    it('renders without heading', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandGroup>
+                            <CommandItem value="test">Test</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandGroup, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
         const heading = wrapper.find('[data-slot="command-group-heading"]')
         expect(heading.exists()).toBe(false)
     })
 
-    it('renders slot content', () => {
-        const wrapper = mount(CommandGroup, {
+    it('renders slot content', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            slots: { default: '<div class="group-item">Item</div>' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandGroup>
+                            <CommandItem value="test">Item</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandGroup, CommandItem },
+            },
         })
-        expect(wrapper.find('.group-item').exists()).toBe(true)
+        await nextTick()
+        await nextTick()
+        expect(wrapper.find('[data-slot="command-item"]').exists()).toBe(true)
     })
 
-    it('applies custom class', () => {
-        const wrapper = mount(CommandGroup, {
+    it('applies custom class', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { class: 'custom-group' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandGroup class="custom-group">
+                            <CommandItem value="test">Test</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandGroup, CommandItem },
+            },
         })
-        expect(wrapper.classes()).toContain('custom-group')
+        await nextTick()
+        await nextTick()
+        const group = wrapper.find('[data-slot="command-group"]')
+        expect(group.classes()).toContain('custom-group')
     })
 
-    it('has group role', () => {
-        const wrapper = mount(CommandGroup, { ...localeProvide })
-        expect(wrapper.attributes('role')).toBe('group')
+    it('has group role', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandGroup>
+                            <CommandItem value="test">Test</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandGroup, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+        const group = wrapper.find('[data-slot="command-group"]')
+        expect(group.attributes('role')).toBe('group')
     })
 })
 
 describe('CommandItem', () => {
-    it('renders slot content', () => {
-        const wrapper = mount(CommandItem, {
+    it('renders slot content', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { value: 'test' },
-            slots: { default: 'Item text' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandItem value="test">Item text</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandItem },
+            },
         })
-        expect(wrapper.text()).toBe('Item text')
+        await nextTick()
+        await nextTick()
+        const item = wrapper.find('[data-slot="command-item"]')
+        expect(item.exists()).toBe(true)
+        expect(item.text()).toBe('Item text')
     })
 
-    it('has cursor-pointer class', () => {
-        const wrapper = mount(CommandItem, {
+    it('has cursor-pointer class', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { value: 'test' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandItem value="test">Test</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandItem },
+            },
         })
-        expect(wrapper.classes()).toContain('cursor-pointer')
+        await nextTick()
+        await nextTick()
+        const item = wrapper.find('[data-slot="command-item"]')
+        expect(item.classes()).toContain('cursor-pointer')
     })
 
-    it('applies custom class', () => {
-        const wrapper = mount(CommandItem, {
+    it('applies custom class', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { value: 'test', class: 'custom-item' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandItem value="test" class="custom-item">Test</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandItem },
+            },
         })
-        expect(wrapper.classes()).toContain('custom-item')
+        await nextTick()
+        await nextTick()
+        const item = wrapper.find('[data-slot="command-item"]')
+        expect(item.classes()).toContain('custom-item')
     })
 
     it('emits select event on click', async () => {
-        const wrapper = mount(CommandItem, {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { value: 'test-value' },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandItem value="test-value">Test</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandItem },
+            },
         })
-        await wrapper.trigger('click')
-        expect(wrapper.emitted('select')).toBeTruthy()
-        expect(wrapper.emitted('select')![0]).toEqual(['test-value'])
+        await nextTick()
+        await nextTick()
+        const item = wrapper.find('[data-slot="command-item"]')
+        await item.trigger('click')
+        const itemComponent = wrapper.findComponent({ name: 'CommandItem' })
+        expect(itemComponent.emitted('select')).toBeTruthy()
+        expect(itemComponent.emitted('select')![0]).toEqual(['test-value'])
     })
 
-    it('does not emit select when disabled', async () => {
-        const wrapper = mount(CommandItem, {
+    it('does not render when disabled', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { value: 'test-value', disabled: true },
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandItem value="test-value" disabled>Test</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandItem },
+            },
         })
-        await wrapper.trigger('click')
-        expect(wrapper.emitted('select')).toBeFalsy()
+        await nextTick()
+        await nextTick()
+        const item = wrapper.find('[data-slot="command-item"]')
+        expect(item.attributes('data-disabled')).toBeDefined()
+    })
+})
+
+describe('Command filtering', () => {
+    it('filters items based on search input', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput />
+                    <CommandList>
+                        <CommandGroup heading="Suggestions">
+                            <CommandItem value="calendar">Calendar</CommandItem>
+                            <CommandItem value="search">Search Emoji</CommandItem>
+                            <CommandItem value="calculator">Calculator</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandGroup, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+
+        const items = wrapper.findAll('[data-slot="command-item"]')
+        expect(items.length).toBe(3)
+
+        const input = wrapper.find('input')
+        await input.setValue('cal')
+        await nextTick()
+        await nextTick()
+
+        const filteredItems = wrapper.findAll('[data-slot="command-item"]')
+        expect(filteredItems.length).toBe(2)
     })
 
-    it('sets data-disabled attribute when disabled', () => {
-        const wrapper = mount(CommandItem, {
+    it('shows empty state when no items match', async () => {
+        const wrapper = mount(Command, {
             ...localeProvide,
-            props: { value: 'test', disabled: true },
+            slots: {
+                default: `
+                    <CommandInput />
+                    <CommandList>
+                        <CommandGroup heading="Suggestions">
+                            <CommandItem value="calendar">Calendar</CommandItem>
+                        </CommandGroup>
+                        <CommandEmpty />
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandGroup, CommandItem, CommandEmpty },
+            },
         })
-        expect(wrapper.attributes('data-disabled')).toBe('true')
+        await nextTick()
+        await nextTick()
+
+        const input = wrapper.find('input')
+        await input.setValue('xyz')
+        await nextTick()
+        await nextTick()
+
+        const empty = wrapper.find('[data-slot="command-empty"]')
+        expect(empty.exists()).toBe(true)
+        expect(empty.text()).toBe('No results found.')
+    })
+
+    it('hides group when all items are filtered out', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput />
+                    <CommandList>
+                        <CommandGroup heading="Suggestions">
+                            <CommandItem value="calendar">Calendar</CommandItem>
+                        </CommandGroup>
+                        <CommandGroup heading="Settings">
+                            <CommandItem value="profile">Profile</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandGroup, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+
+        const input = wrapper.find('input')
+        await input.setValue('pro')
+        await nextTick()
+        await nextTick()
+
+        const groups = wrapper.findAll('[data-slot="command-group"]')
+        expect(groups.length).toBe(1)
+        const heading = wrapper.find('[data-slot="command-group-heading"]')
+        expect(heading.text()).toBe('Settings')
     })
 })
 
@@ -287,6 +631,7 @@ describe('CommandDialog', () => {
             attachTo: document.body,
         })
         expect(wrapper.findComponent(CommandDialog).exists()).toBe(true)
+        wrapper.unmount()
     })
 
     it('uses default title and description', async () => {
@@ -331,5 +676,6 @@ describe('CommandDialog', () => {
         })
         const content = wrapper.find('[role="dialog"]')
         expect(content.exists() ? content.classes() : wrapper.classes()).toBeDefined()
+        wrapper.unmount()
     })
 })

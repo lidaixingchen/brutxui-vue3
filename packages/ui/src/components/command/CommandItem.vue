@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, inject, type ComponentPublicInstance } from 'vue'
+import { computed, onMounted, onUnmounted, ref, type ComponentPublicInstance } from 'vue'
+import { ListboxItem, useId } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import { commandItemVariants } from './command-variants'
+import { injectCommandRootContext, injectCommandGroupContext } from './command-context'
 
 interface CommandItemProps {
     value: string
@@ -13,76 +15,61 @@ const props = defineProps<CommandItemProps>()
 
 const emit = defineEmits<{ select: [value: string] }>()
 
-const isSelected = ref(false)
+const rootContext = injectCommandRootContext()
+const groupContext = injectCommandGroupContext(null)
+const id = useId(undefined, 'brutx-command-item')
+
+const itemRef = ref<ComponentPublicInstance | null>(null)
+
+const isRender = computed(() => {
+    if (!rootContext.filterSearch.value) return true
+    const filteredCurrentItem = rootContext.filterState.value.items.get(id)
+    if (filteredCurrentItem === undefined) return true
+    return filteredCurrentItem > 0
+})
 
 const classes = computed(() =>
     cn(commandItemVariants(), props.class)
 )
 
-function handleMouseEnter() {
-    isSelected.value = true
-}
+onMounted(() => {
+    const el = itemRef.value?.$el as HTMLElement | undefined
+    rootContext.allItems.value.set(
+        id,
+        el?.textContent || el?.innerText || props.value
+    )
 
-function handleMouseLeave() {
-    isSelected.value = false
-}
-
-function handleClick() {
-    if (!props.disabled) {
-        emit('select', props.value)
+    const groupId = groupContext?.id
+    if (groupId) {
+        if (!rootContext.allGroups.value.has(groupId)) {
+            rootContext.allGroups.value.set(groupId, new Set([id]))
+        }
+        else {
+            rootContext.allGroups.value.get(groupId)?.add(id)
+        }
     }
-}
+})
 
-const commandListEl = inject<HTMLElement | null>('command-list-el', null)
-let itemEl: HTMLElement | null = null
-
-function setItemRef(el: Element | ComponentPublicInstance | null) {
-    itemEl = el as HTMLElement | null
-}
-
-function focusItem(direction: 'up' | 'down') {
-    const container = commandListEl || itemEl?.parentElement
-    if (!container) return
-    const items = Array.from(container.querySelectorAll<HTMLElement>('[data-slot="command-item"]:not([data-disabled="true"])'))
-    const currentIndex = items.indexOf(itemEl!)
-    if (currentIndex === -1) return
-    const nextIndex = direction === 'down'
-        ? (currentIndex + 1) % items.length
-        : (currentIndex - 1 + items.length) % items.length
-    items[nextIndex]?.focus()
-    isSelected.value = false
-}
-
-function handleItemKeydown(e: KeyboardEvent) {
-    if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        focusItem('down')
-    } else if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        focusItem('up')
-    } else if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault()
-        handleClick()
+onUnmounted(() => {
+    rootContext.allItems.value.delete(id)
+    const groupId = groupContext?.id
+    if (groupId) {
+        rootContext.allGroups.value.get(groupId)?.delete(id)
     }
-}
+})
 </script>
 
 <template>
-    <div
-        :ref="setItemRef"
+    <ListboxItem
+        v-if="isRender"
+        :id="id"
+        ref="itemRef"
+        :value="value"
+        :disabled="disabled"
         :class="classes"
-        role="option"
-        :aria-selected="isSelected"
-        :aria-disabled="disabled || undefined"
         data-slot="command-item"
-        :data-highlighted="isSelected"
-        :data-disabled="disabled"
-        tabindex="-1"
-        @mouseenter="handleMouseEnter"
-        @mouseleave="handleMouseLeave"
-        @click="handleClick"
-        @keydown="handleItemKeydown"
+        @select="emit('select', value)"
     >
         <slot />
-    </div>
+    </ListboxItem>
 </template>

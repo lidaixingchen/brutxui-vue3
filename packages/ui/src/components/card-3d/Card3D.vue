@@ -110,7 +110,7 @@ const shadowStyles = computed(() => {
 })
 
 const containerClasses = computed(() =>
-    cn('relative inline-block w-full', props.class)
+    cn('relative z-0 inline-block w-full', props.class)
 )
 
 const cardClasses = computed(() =>

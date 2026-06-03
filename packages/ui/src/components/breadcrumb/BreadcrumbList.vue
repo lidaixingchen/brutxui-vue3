@@ -17,7 +17,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <ol :class="classes">
+    <ol class="breadcrumb-list" :class="classes">
         <slot />
     </ol>
 </template>

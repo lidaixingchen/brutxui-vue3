@@ -1,11 +1,11 @@
 ---
 title: Calendar 日历
-description: 日历组件，支持日期选择、标记，结合新粗野主义边框与硬质阴影设计。
+description: 日历组件，支持日期选择与范围选择，结合新粗野主义边框与硬质阴影设计。
 ---
 
 # Calendar 日历
 
-新粗野主义风格的日历组件，基于 v-calendar 构建，支持单日期和日期范围选择。
+新粗野主义风格的日历组件，基于 v-calendar DatePicker 构建，支持单日期和日期范围选择。
 
 ## 预览
 
@@ -57,27 +57,46 @@ const dateRange = ref(null)
 </template>
 ```
 
+### 禁用状态
+
+```vue
+<template>
+    <Calendar :disabled="true" />
+</template>
+```
+
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `modelValue` | `Date \| Date[] \| null` | — |
-| `isRange` | `boolean` | `false` |
-| `disabled` | `boolean` | `false` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `Date \| Date[] \| null` | — | 选中的日期，支持 v-model 绑定 |
+| `isRange` | `boolean` | `false` | 是否启用日期范围选择模式 |
+| `disabled` | `boolean` | `false` | 是否禁用日期选择 |
+| `class` | `string` | — | 自定义 CSS 类名 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `update:modelValue` | `Date \| Date[] \| null` |
+| 事件 | 载荷 | 说明 |
+|------|------|------|
+| `update:modelValue` | `Date \| Date[] \| null` | 选中日期变化时触发 |
 
 ## 样式
 
-Calendar 组件对所有日期单元格使用新粗野主义样式：
+Calendar 组件对所有日期单元格使用新粗野主义样式，通过覆盖 v-calendar 的 CSS 变量实现：
 
-- **选中日期**：Primary 背景色，带边框和阴影
-- **范围日期**：范围内使用 Accent 背景色，起止日期使用 Secondary 背景色
-- **今天**：Secondary 背景色，带边框
-- **非当月日期**：柔和前景色，降低透明度
-- **禁用状态**：降低透明度，显示禁止光标
+- **选中日期**：Primary 背景色，粗边框 + 硬质阴影
+- **范围日期**：范围内使用 Accent 背景色
+- **今天**：Secondary 背景色，粗边框
+- **非当月日期**：降低透明度
+- **禁用状态**：降低透明度，禁止光标
+- **导航按钮**：粗边框 + 硬质阴影，悬停时阴影增大，按下时位移反馈
+- **星期标题**：粗体大写，底部粗边框分隔
+
+组件内部覆盖了以下 v-calendar CSS 变量以适配 brutal 风格：
+
+| 变量 | 覆盖值 | 用途 |
+|------|--------|------|
+| `--vc-rounded-full` | `var(--brutal-radius)` | 圆角（默认 9999px → 0px） |
+| `--vc-highlight-solid-bg` | `var(--brutal-primary)` | 选中日期背景色 |
+| `--vc-highlight-light-bg` | `var(--brutal-accent)` | 范围日期背景色 |
+| `--vc-highlight-solid-content-color` | `var(--brutal-fg)` | 选中日期文字颜色 |

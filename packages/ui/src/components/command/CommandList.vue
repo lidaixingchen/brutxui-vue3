@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { ListboxContent } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
 interface CommandListProps {
@@ -18,7 +19,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes" role="listbox" data-slot="command-list">
+    <ListboxContent :class="classes" data-slot="command-list">
         <slot />
-    </div>
+    </ListboxContent>
 </template>

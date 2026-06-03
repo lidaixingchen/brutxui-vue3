@@ -31,14 +31,14 @@
     }
 
     /* Breadcrumb list reset to prevent style pollution from external markdown renderers (like VitePress) */
-    nav[aria-label="breadcrumb"] ol,
-    nav[aria-label="breadcrumb"] li {
+    .breadcrumb-list,
+    .breadcrumb-list > li {
         list-style: none !important;
         margin: 0 !important;
         padding: 0 !important;
     }
-    nav[aria-label="breadcrumb"] li::before,
-    nav[aria-label="breadcrumb"] li::after {
+    .breadcrumb-list > li::before,
+    .breadcrumb-list > li::after {
         content: none !important;
     }
 

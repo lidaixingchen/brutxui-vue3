@@ -3,8 +3,6 @@ import { nextTick } from 'vue'
 import { vi } from 'vitest'
 import Calendar from './Calendar.vue'
 
-const testDate = new Date(2026, 5, 15)
-
 const { dayRef } = vi.hoisted(() => ({
     dayRef: {
         label: '15',
@@ -16,17 +14,19 @@ const { dayRef } = vi.hoisted(() => ({
 }))
 
 vi.mock('v-calendar', () => ({
-    Calendar: {
-        name: 'VCalendar',
-        props: ['modelValue', 'isRange', 'mode', 'disabled', 'class', 'attributes', 'trimWeeks', 'firstDayOfWeek'],
+    DatePicker: {
+        name: 'VDatePicker',
+        props: ['modelValue', 'mode', 'disabled', 'class', 'selectAttribute', 'dragAttribute', 'trimWeeks', 'firstDayOfWeek', 'popover'],
         emits: ['update:model-value'],
         data() {
             return { day: { ...dayRef } }
         },
         template: `
-            <div class="v-calendar-stub">
-                <slot :page="{ monthLabel: 'June', yearLabel: '2026' }"></slot>
-                <slot name="day-content" :day="day"></slot>
+            <div class="v-date-picker-stub">
+                <slot name="header-prev-button"></slot>
+                <slot name="header-title" :title="'June 2026'"></slot>
+                <slot name="header-next-button"></slot>
+                <slot name="day-content" :day="day" :day-props="{ class: 'vc-day' }" :day-events="{}"></slot>
             </div>
         `,
     },
@@ -48,8 +48,8 @@ function mountCalendar(props = {}) {
     return mount(Calendar, { props })
 }
 
-function findVCalendar(wrapper: ReturnType<typeof mountCalendar>) {
-    return wrapper.findComponent({ name: 'VCalendar' })
+function findVDatePicker(wrapper: ReturnType<typeof mountCalendar>) {
+    return wrapper.findComponent({ name: 'VDatePicker' })
 }
 
 describe('Calendar', () => {
@@ -80,38 +80,38 @@ describe('Calendar', () => {
             const start = new Date(2026, 0, 1)
             const end = new Date(2026, 0, 31)
             const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toEqual({ start, end })
         })
 
         it('returns null when isRange and modelValue is not an array', () => {
             const wrapper = mountCalendar({ isRange: true, modelValue: new Date(2026, 0, 1) })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toBeNull()
         })
 
         it('returns null when isRange and modelValue is an empty array', () => {
             const wrapper = mountCalendar({ isRange: true, modelValue: [] as Date[] })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toBeNull()
         })
 
         it('returns Date when modelValue is a Date instance and not isRange', () => {
             const date = new Date(2026, 5, 15)
             const wrapper = mountCalendar({ modelValue: date })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toBe(date)
         })
 
         it('returns null when modelValue is null', () => {
             const wrapper = mountCalendar({ modelValue: null })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toBeNull()
         })
 
         it('returns null when modelValue is undefined', () => {
             const wrapper = mountCalendar({ modelValue: undefined })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toBeNull()
         })
     })
@@ -119,7 +119,7 @@ describe('Calendar', () => {
     describe('handleUpdate', () => {
         it('does not emit when disabled', async () => {
             const wrapper = mountCalendar({ disabled: true })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             stub.vm.$emit('update:model-value', new Date(2026, 5, 15))
             await nextTick()
             expect(wrapper.emitted('update:modelValue')).toBeUndefined()
@@ -129,7 +129,7 @@ describe('Calendar', () => {
             const start = new Date(2026, 0, 1)
             const end = new Date(2026, 0, 31)
             const wrapper = mountCalendar({ isRange: true })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             stub.vm.$emit('update:model-value', { start, end })
             await nextTick()
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([[start, end]])
@@ -137,7 +137,7 @@ describe('Calendar', () => {
 
         it('emits null when isRange and value is null', async () => {
             const wrapper = mountCalendar({ isRange: true })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             stub.vm.$emit('update:model-value', null)
             await nextTick()
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([null])
@@ -146,7 +146,7 @@ describe('Calendar', () => {
         it('emits Date when not isRange and value is a Date', async () => {
             const date = new Date(2026, 5, 15)
             const wrapper = mountCalendar()
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             stub.vm.$emit('update:model-value', date)
             await nextTick()
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([date])
@@ -154,7 +154,7 @@ describe('Calendar', () => {
 
         it('emits null when not isRange and value is null', async () => {
             const wrapper = mountCalendar()
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             stub.vm.$emit('update:model-value', null)
             await nextTick()
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([null])
@@ -162,50 +162,19 @@ describe('Calendar', () => {
     })
 
     describe('template rendering', () => {
-        it('renders the VCalendar stub', () => {
+        it('renders the VDatePicker stub', () => {
             const wrapper = mountCalendar()
-            expect(wrapper.find('.v-calendar-stub').exists()).toBe(true)
+            expect(wrapper.find('.v-date-picker-stub').exists()).toBe(true)
         })
 
-        it('renders header slot with month and year labels', () => {
+        it('renders header-title slot with title text', () => {
             const wrapper = mountCalendar()
-            expect(wrapper.text()).toContain('June')
-            expect(wrapper.text()).toContain('2026')
+            expect(wrapper.text()).toContain('June 2026')
         })
 
         it('renders day-content slot with day label', () => {
             const wrapper = mountCalendar()
             expect(wrapper.text()).toContain('15')
-        })
-
-        it('applies primary style for selected day (modelValue matches startDate)', () => {
-            dayRef.startDate = new Date(2026, 5, 15)
-            const wrapper = mountCalendar({ modelValue: testDate })
-            expect(wrapper.find('.bg-brutal-primary').exists()).toBe(true)
-        })
-
-        it('applies accent style for in-range day', () => {
-            const start = new Date(2026, 5, 10)
-            const end = new Date(2026, 5, 20)
-            dayRef.startDate = new Date(2026, 5, 15)
-            const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
-            expect(wrapper.find('.bg-brutal-accent').exists()).toBe(true)
-        })
-
-        it('applies secondary style with shadow for range start day', () => {
-            const start = new Date(2026, 5, 15)
-            const end = new Date(2026, 5, 20)
-            dayRef.startDate = new Date(2026, 5, 15)
-            const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
-            expect(wrapper.find('.bg-brutal-secondary.shadow-brutal-sm').exists()).toBe(true)
-        })
-
-        it('applies secondary style with shadow for range end day', () => {
-            const start = new Date(2026, 5, 10)
-            const end = new Date(2026, 5, 15)
-            dayRef.startDate = new Date(2026, 5, 15)
-            const wrapper = mountCalendar({ isRange: true, modelValue: [start, end] })
-            expect(wrapper.find('.bg-brutal-secondary.shadow-brutal-sm').exists()).toBe(true)
         })
 
         it('applies secondary style for today', () => {
@@ -226,25 +195,39 @@ describe('Calendar', () => {
             expect(wrapper.find('.cursor-not-allowed').exists()).toBe(true)
         })
 
-        it('passes mode prop to VCalendar based on isRange', () => {
+        it('passes mode prop to VDatePicker based on isRange', () => {
             const wrapper = mountCalendar({ isRange: true })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('mode')).toBe('range')
         })
 
-        it('passes disabled prop to VCalendar', () => {
+        it('passes disabled prop to VDatePicker', () => {
             const wrapper = mountCalendar({ disabled: true })
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             expect(stub.props('disabled')).toBe(true)
         })
 
-        it('applies rootClasses to the VCalendar class prop', () => {
+        it('applies rootClasses to the VDatePicker class prop', () => {
             const wrapper = mountCalendar()
-            const stub = findVCalendar(wrapper)
+            const stub = findVDatePicker(wrapper)
             const classProp = stub.props('class') as string
             expect(classProp).toContain('border-3')
             expect(classProp).toContain('border-brutal')
             expect(classProp).toContain('shadow-brutal')
+        })
+
+        it('passes selectAttribute to VDatePicker', () => {
+            const wrapper = mountCalendar()
+            const stub = findVDatePicker(wrapper)
+            expect(stub.props('selectAttribute')).toBeDefined()
+            expect((stub.props('selectAttribute') as Record<string, unknown>).highlight).toBeDefined()
+        })
+
+        it('passes dragAttribute to VDatePicker', () => {
+            const wrapper = mountCalendar()
+            const stub = findVDatePicker(wrapper)
+            expect(stub.props('dragAttribute')).toBeDefined()
+            expect((stub.props('dragAttribute') as Record<string, unknown>).highlight).toBeDefined()
         })
     })
 })

@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
+import { ListboxGroup, useId } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { injectCommandRootContext, provideCommandGroupContext } from './command-context'
 
 interface CommandGroupProps {
     heading?: string
@@ -8,6 +10,14 @@ interface CommandGroupProps {
 }
 
 const props = defineProps<CommandGroupProps>()
+
+const rootContext = injectCommandRootContext()
+const id = useId(undefined, 'brutx-command-group')
+
+const isRender = computed(() => {
+    if (!rootContext.filterSearch.value) return true
+    return rootContext.filterState.value.groups.has(id)
+})
 
 const classes = computed(() =>
     cn(
@@ -22,13 +32,30 @@ const headingClasses = computed(() =>
         'text-brutal-muted-foreground'
     )
 )
+
+provideCommandGroupContext({ id })
+
+onMounted(() => {
+    if (!rootContext.allGroups.value.has(id))
+        rootContext.allGroups.value.set(id, new Set())
+})
+
+onUnmounted(() => {
+    rootContext.allGroups.value.delete(id)
+})
 </script>
 
 <template>
-    <div :class="classes" data-slot="command-group" role="group">
+    <ListboxGroup
+        v-if="isRender"
+        :id="id"
+        :class="classes"
+        data-slot="command-group"
+        role="group"
+    >
         <div v-if="heading" :class="headingClasses" data-slot="command-group-heading">
             {{ heading }}
         </div>
         <slot />
-    </div>
+    </ListboxGroup>
 </template>

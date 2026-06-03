@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { ListboxFilter } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { Search } from 'lucide-vue-next'
 import { commandInputWrapperVariants } from './command-variants'
+import { injectCommandRootContext } from './command-context'
 
 interface CommandInputProps {
     modelValue?: string
@@ -18,6 +20,7 @@ const props = withDefaults(defineProps<CommandInputProps>(), {
 })
 
 const { t } = useLocale()
+const rootContext = injectCommandRootContext()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('command.placeholder'))
 
@@ -36,17 +39,24 @@ const inputClasses = computed(() =>
         props.class
     )
 )
+
+function handleInput(event: InputEvent) {
+    const value = (event.target as HTMLInputElement).value
+    rootContext.filterSearch.value = value
+    emit('update:modelValue', value)
+}
 </script>
 
 <template>
     <div :class="wrapperClasses" data-slot="command-input">
         <Search class="size-5 shrink-0 stroke-[3] text-brutal-fg" />
-        <input
-            type="text"
-            :value="modelValue"
+        <ListboxFilter
+            :model-value="modelValue"
             :placeholder="resolvedPlaceholder"
             :class="inputClasses"
-            @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-        >
+            auto-focus
+            @input="handleInput"
+            @update:model-value="emit('update:modelValue', $event)"
+        />
     </div>
 </template>
