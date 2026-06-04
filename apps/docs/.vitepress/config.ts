@@ -1,9 +1,5 @@
 import { defineConfig } from 'vitepress'
-import tailwindcss from 'tailwindcss'
-import autoprefixer from 'autoprefixer'
-import { resolve } from 'path'
-
-const tailwindConfig = resolve(__dirname, '../tailwind.config.cjs')
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
     title: 'BrutxUI',
@@ -210,13 +206,8 @@ export default defineConfig({
                 '@': new URL('./.vitepress', import.meta.url).pathname,
             },
         },
-        css: {
-            postcss: {
-                plugins: [
-                    tailwindcss(tailwindConfig),
-                    autoprefixer(),
-                ],
-            },
-        },
+        plugins: [
+            tailwindcss(),
+        ],
     },
 })

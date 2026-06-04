@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<CarouselProps>(), {
     size: 'auto',
 });
 
+// @ts-expect-error emblaRef is used as template ref
 const [emblaRef, emblaApi] = useEmblaCarousel({ loop: props.loop });
 
 const selectedIndex = ref(0);

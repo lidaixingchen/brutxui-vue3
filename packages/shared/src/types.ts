@@ -1,6 +1,7 @@
 export interface ComponentMeta {
     name: string;
     dependencies: string[];
+    optionalDependencies?: string[];
     title?: string;
     description?: string;
     tailwind?: Record<string, any>;
