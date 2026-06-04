@@ -11,8 +11,8 @@
         "brutx-shared-vue": "workspace:*"
     },
     "devDependencies": {
+        "@types/node": "^22.19.19",
         "tsx": "^4.7.1",
-        "typescript": "^5.7.2",
-        "@types/node": "^20.17.15"
+        "typescript": "^5.7.2"
     }
 }
