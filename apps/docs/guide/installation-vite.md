@@ -4,9 +4,9 @@
 
 ## 前提条件
 
-- **Node.js** 18+
+- **Node.js** 22.5+
 - **Vue** 3.5+
-- **Tailwind CSS** 3.4+
+- **Tailwind CSS** 4.3+
 
 ## 第 1 步：创建 Vite 项目
 
@@ -19,35 +19,31 @@ cd my-app
 
 ## 第 2 步：安装 Tailwind CSS
 
-安装并配置 Tailwind CSS：
+安装 Tailwind CSS 4.x 和 Vite 插件：
 
 ```bash
-pnpm add -D tailwindcss postcss autoprefixer
-pnpm exec tailwindcss init -p
+pnpm add -D tailwindcss @tailwindcss/vite
 ```
 
-更新 `tailwind.config.js`：
+在 `vite.config.ts` 中添加 Tailwind CSS 插件：
 
-```js
-/** @type {import('tailwindcss').Config} */
-export default {
-    content: [
-        './index.html',
-        './src/**/*.{vue,js,ts,jsx,tsx}',
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+    plugins: [
+        vue(),
+        tailwindcss(),
     ],
-    theme: {
-        extend: {},
-    },
-    plugins: [],
-}
+})
 ```
 
-将 Tailwind 指令添加到 `src/style.css`：
+将 Tailwind 导入添加到 `src/style.css`：
 
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 ```
 
 ## 第 3 步：初始化 BrutxUI
@@ -59,6 +55,7 @@ npx brutx-vue@latest init
 ```
 
 此命令将：
+
 - 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`lucide-vue-next`）
 - 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
 - 创建 `cn()` 工具函数

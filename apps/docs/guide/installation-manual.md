@@ -4,9 +4,9 @@
 
 ## 前提条件
 
-- **Node.js** 18+
+- **Node.js** 22.5+
 - **Vue** 3.5+
-- **Tailwind CSS** 3.4+
+- **Tailwind CSS** 4.3+
 
 ## 第 1 步：安装依赖
 
@@ -16,13 +16,13 @@
 pnpm add reka-ui class-variance-authority clsx tailwind-merge lucide-vue-next
 ```
 
-| 包名 | 用途 |
-|---------|---------|
-| `reka-ui` | 无障碍无头原语 |
-| `class-variance-authority` | CVA 变体系统 |
-| `clsx` | 条件类名 |
-| `tailwind-merge` | 合并 Tailwind 类名避免冲突 |
-| `lucide-vue-next` | 图标库 |
+| 包名                       | 用途                       |
+| -------------------------- | -------------------------- |
+| `reka-ui`                  | 无障碍无头原语             |
+| `class-variance-authority` | CVA 变体系统               |
+| `clsx`                     | 条件类名                   |
+| `tailwind-merge`           | 合并 Tailwind 类名避免冲突 |
+| `lucide-vue-next`          | 图标库                     |
 
 可选依赖：
 
@@ -30,12 +30,12 @@ pnpm add reka-ui class-variance-authority clsx tailwind-merge lucide-vue-next
 pnpm add v-calendar vee-validate @vee-validate/zod zod
 ```
 
-| 包名 | 用途 |
-|---------|---------|
-| `v-calendar` | 日历组件 |
-| `vee-validate` | 表单验证 |
+| 包名                | 用途                           |
+| ------------------- | ------------------------------ |
+| `v-calendar`        | 日历组件                       |
+| `vee-validate`      | 表单验证                       |
 | `@vee-validate/zod` | Zod schema 适配器（Form 组件） |
-| `zod` | Schema 验证（Form 组件） |
+| `zod`               | Schema 验证（Form 组件）       |
 
 ## 第 2 步：创建 cn() 工具函数
 
@@ -52,41 +52,25 @@ export function cn(...inputs: ClassValue[]) {
 
 ## 第 3 步：配置 Tailwind CSS
 
-创建或更新 `tailwind.config.js`，添加 BrutxUI 的内容路径和颜色配置：
+安装 Tailwind CSS 4.x 和 Vite 插件：
 
-```js
-/** @type {import('tailwindcss').Config} */
-export default {
-    darkMode: 'class',
-    content: [
-        './index.html',
-        './src/**/*.{vue,js,ts,jsx,tsx}',
+```bash
+pnpm add -D tailwindcss @tailwindcss/vite
+```
+
+在 `vite.config.ts` 中添加 Tailwind CSS 插件：
+
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
+
+export default defineConfig({
+    plugins: [
+        vue(),
+        tailwindcss(),
     ],
-    theme: {
-        extend: {
-            colors: {
-                brutal: {
-                    bg: 'var(--brutal-bg)',
-                    fg: 'var(--brutal-fg)',
-                    primary: 'var(--brutal-primary)',
-                    secondary: 'var(--brutal-secondary)',
-                    accent: 'var(--brutal-accent)',
-                    destructive: 'var(--brutal-destructive)',
-                    success: 'var(--brutal-success)',
-                    muted: 'var(--brutal-muted)',
-                    'muted-foreground': 'var(--brutal-muted-foreground)',
-                    ring: 'var(--brutal-ring)',
-                    info: 'var(--brutal-info)',
-                    placeholder: 'var(--brutal-placeholder)',
-                },
-            },
-            borderRadius: {
-                brutal: 'var(--brutal-radius, 0px)',
-            },
-        },
-    },
-    plugins: [],
-}
+})
 ```
 
 ## 第 4 步：导入样式
@@ -94,9 +78,7 @@ export default {
 将 BrutxUI CSS 自定义属性添加到你的主 CSS 文件中（例如 `src/style.css`）：
 
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
 @layer base {
     :root {

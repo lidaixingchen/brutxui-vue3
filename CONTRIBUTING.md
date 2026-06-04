@@ -9,10 +9,15 @@
 本项目是使用 **pnpm workspaces** 管理的 monorepo。
 
 ### 1. 前置条件
-- **Node.js** >= 18.0.0
-- **pnpm** >= 8.0.0
+
+- **Node.js** >= 22.5.0（推荐，pnpm 11.x 依赖 `node:sqlite` 内置模块）
+- **Node.js** >= 18.12.0（最低要求，仅支持 pnpm 9.x）
+- **pnpm** >= 9.0.0（推荐 11.x）
+
+> **注意：** pnpm 11 需要 Node.js 22.5+，pnpm 9 可在 Node.js 18.12+ 上运行。如果使用 pnpm 9，需要在 `.npmrc` 中移除 `allowBuilds` 配置。
 
 ### 2. 快速开始
+
 ```bash
 # 克隆仓库
 git clone https://github.com/lidaixingchen/brutxui-vue3.git
@@ -46,9 +51,11 @@ pnpm build
 2. **定义组件元数据**，在 `packages/cli/src/lib/constants.ts` 的 `COMPONENTS` 对象中添加，并声明所需的 npm `dependencies`。
 3. **编译注册表 JSON**：
    运行以下脚本，自动解析、解析依赖并将 Vue 代码打包为注册表 JSON 文件：
+
    ```bash
    pnpm --filter brutx-registry-vue build
    ```
+
 4. 提交 `packages/registry/registry/` 下生成的 JSON 文件。
 
 ---
@@ -58,11 +65,15 @@ pnpm build
 你可以在测试项目中本地测试 CLI：
 
 1. 构建 CLI 包：
+
    ```bash
    pnpm --filter brutx-vue build
    ```
+
 2. 在工作区内或外创建临时文件夹（例如 `temp-test-project`）。
+
 3. 从测试文件夹运行编译后的 CLI：
+
    ```bash
    # 初始化 CLI
    node ../packages/cli/dist/index.js init --defaults
