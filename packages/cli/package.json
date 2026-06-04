@@ -1,6 +1,6 @@
 {
     "name": "brutx-vue",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "description": "CLI for adding Neo-Brutalist Vue 3 UI components to your project",
     "bin": {
         "brutx-vue": "dist/index.js"
@@ -17,7 +17,6 @@
         "test": "vitest run"
     },
     "dependencies": {
-        "brutx-shared-vue": "workspace:*",
         "chalk": "^5.3.0",
         "commander": "^12.0.0",
         "fs-extra": "^11.2.0",
