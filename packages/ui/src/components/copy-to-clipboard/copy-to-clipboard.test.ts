@@ -14,8 +14,8 @@ const _mockIsSupported = ref(true)
 vi.mock('../../composables/useClipboard', () => ({
     useClipboard: () => ({
         copy: mockCopy,
-        get copied() { return _mockCopied.value },
-        get isSupported() { return _mockIsSupported.value },
+        copied: _mockCopied,
+        isSupported: _mockIsSupported,
     }),
 }))
 
@@ -70,7 +70,7 @@ describe('CopyToClipboard', () => {
             ...localeProvide,
         })
         const button = wrapper.find('button')
-        expect(button.element.disabled).toBe(true)
+        expect(button.attributes('disabled')).toBeDefined()
     })
 
     it('renders slot content', () => {
