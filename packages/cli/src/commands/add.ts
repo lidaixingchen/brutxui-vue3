@@ -1,6 +1,6 @@
 import type { Ora } from 'ora';
 import ora from 'ora';
-import inquirer from 'inquirer';
+import { checkbox } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
 
@@ -67,15 +67,11 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
         process.exit(1);
     }
 
-    const { selected } = await inquirer.prompt([
-        {
-            type: 'checkbox',
-            name: 'selected',
-            message: 'Which components would you like to add?',
-            choices: AVAILABLE_COMPONENTS.map((name) => ({ name, value: name })),
-            pageSize: 15,
-        },
-    ]);
+    const selected = await checkbox({
+        message: 'Which components would you like to add?',
+        choices: AVAILABLE_COMPONENTS.map((name) => ({ name, value: name })),
+        pageSize: 15,
+    });
 
     return selected;
 }

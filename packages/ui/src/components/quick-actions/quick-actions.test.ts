@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { Plus, Settings, Trash2 } from 'lucide-vue-next'
+import { Plus, Settings, Trash2 } from '@lucide/vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import QuickActions from './QuickActions.vue'

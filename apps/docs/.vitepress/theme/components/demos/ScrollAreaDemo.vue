@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ScrollArea, ScrollBar } from 'brutx-ui-vue'
-import { User, Bell, Mail, Star, Heart, Zap, Shield, Flame, Coffee, Rocket } from 'lucide-vue-next'
+import { User, Bell, Mail, Star, Heart, Zap, Shield, Flame, Coffee, Rocket } from '@lucide/vue'
 
 const notifications = [
     { icon: Bell, name: 'Alice Chen', action: 'liked your post', time: '2m ago', accent: 'bg-brutal-primary' },

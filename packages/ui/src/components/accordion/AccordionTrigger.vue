@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'
 import { computed, inject } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { accordionTriggerVariants } from './accordion-variants'
 import { accordionItemKey } from './accordion-key'

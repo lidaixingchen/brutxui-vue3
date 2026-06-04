@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Sparkles, Users, Star } from 'lucide-vue-next'
+import { Sparkles, Users, Star } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Button from '../button/Button.vue'

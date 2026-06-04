@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Menu } from 'lucide-vue-next'
+import { Menu } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 

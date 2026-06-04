@@ -1,5 +1,5 @@
 import ora from 'ora';
-import inquirer from 'inquirer';
+import { input, confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
 
@@ -53,42 +53,36 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
 }
 
 async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSettings> {
-    const answers = await inquirer.prompt([
-        {
-            type: 'input',
-            name: 'tailwindConfig',
+    const tailwindConfig = defaults.tailwind.config !== ''
+        ? await input({
             message: 'Where is your tailwind.config located?',
             default: defaults.tailwind.config,
-            when: () => defaults.tailwind.config !== '',
-        },
-        {
-            type: 'input',
-            name: 'globalCss',
-            message: 'Where is your global CSS file?',
-            default: defaults.tailwind.css,
-        },
-        {
-            type: 'input',
-            name: 'componentsAlias',
-            message: 'Configure the import alias for components:',
-            default: defaults.aliases.components,
-        },
-        {
-            type: 'input',
-            name: 'utilsAlias',
-            message: 'Configure the import alias for utils:',
-            default: defaults.aliases.utils,
-        },
-    ]);
+        })
+        : defaults.tailwind.config;
+
+    const globalCss = await input({
+        message: 'Where is your global CSS file?',
+        default: defaults.tailwind.css,
+    });
+
+    const componentsAlias = await input({
+        message: 'Configure the import alias for components:',
+        default: defaults.aliases.components,
+    });
+
+    const utilsAlias = await input({
+        message: 'Configure the import alias for utils:',
+        default: defaults.aliases.utils,
+    });
 
     return {
         tailwind: {
-            config: answers.tailwindConfig ?? defaults.tailwind.config,
-            css: answers.globalCss,
+            config: tailwindConfig,
+            css: globalCss,
         },
         aliases: {
-            components: answers.componentsAlias,
-            utils: answers.utilsAlias,
+            components: componentsAlias,
+            utils: utilsAlias,
         },
     };
 }
@@ -151,14 +145,10 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
         return false;
     }
 
-    const { overwrite } = await inquirer.prompt([
-        {
-            type: 'confirm',
-            name: 'overwrite',
-            message: 'Brutx-Vue is already initialized. Overwrite?',
-            default: false,
-        },
-    ]);
+    const overwrite = await confirm({
+        message: 'Brutx-Vue is already initialized. Overwrite?',
+        default: false,
+    });
 
     if (!overwrite) {
         logger.warn('Aborted.');

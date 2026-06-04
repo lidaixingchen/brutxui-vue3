@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { Github } from 'lucide-vue-next'
+import { Github } from '@lucide/vue'
 import CopyButton from './CopyButton.vue'
 import { cn } from '../lib/utils'
 

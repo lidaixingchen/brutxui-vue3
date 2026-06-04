@@ -36,7 +36,7 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     tooltip: { name: 'tooltip', dependencies: ['reka-ui'] },
     'saas-pricing': { name: 'saas-pricing', dependencies: ['lucide-vue-next'] },
     'dashboard-stats': { name: 'dashboard-stats', dependencies: ['lucide-vue-next'] },
-    form: { name: 'form', dependencies: ['vee-validate', '@vee-validate/zod', 'zod', 'reka-ui'] },
+    form: { name: 'form', dependencies: ['vee-validate', 'reka-ui'], optionalDependencies: ['zod', '@vee-validate/zod'] },
     'alert-dialog': { name: 'alert-dialog', dependencies: ['reka-ui'] },
     sheet: { name: 'sheet', dependencies: ['reka-ui', 'lucide-vue-next'] },
     'radio-group': { name: 'radio-group', dependencies: ['reka-ui', 'lucide-vue-next'] },

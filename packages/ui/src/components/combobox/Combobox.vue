@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Check, ChevronsUpDown } from 'lucide-vue-next'
+import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../button/button-variants'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { QuickActions } from 'brutx-ui-vue'
-import { Plus, Upload, Download, Settings, Bell, Search } from 'lucide-vue-next'
+import { Plus, Upload, Download, Settings, Bell, Search } from '@lucide/vue'
 import type { ActionItem } from 'brutx-ui-vue'
 
 const actions: ActionItem[] = [

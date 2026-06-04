@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { MoveHorizontal } from 'lucide-vue-next'
+import { MoveHorizontal } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { beforeAfterRootVariants, beforeAfterHandleVariants } from './before-after-variants'

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { ChevronRight, File, Folder, FolderOpen } from 'lucide-vue-next';
+import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
 import type { TreeNode } from './TreeView.vue';

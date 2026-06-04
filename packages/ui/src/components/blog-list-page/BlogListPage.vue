@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { Search } from 'lucide-vue-next'
+import { Search } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Card from '../card/Card.vue'

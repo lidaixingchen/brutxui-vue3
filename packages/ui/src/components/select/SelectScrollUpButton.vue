@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { SelectScrollUpButton as SelectScrollUpButtonPrimitive } from 'reka-ui'
-import { ChevronUp } from 'lucide-vue-next'
+import { ChevronUp } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 
 interface SelectScrollUpButtonProps {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useData } from 'vitepress'
-import { Sun, Moon } from 'lucide-vue-next'
+import { Sun, Moon } from '@lucide/vue'
 import { cn } from '../lib/utils'
 
 interface Props {

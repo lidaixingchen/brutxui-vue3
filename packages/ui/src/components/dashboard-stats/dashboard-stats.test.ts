@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { Activity } from 'lucide-vue-next'
+import { Activity } from '@lucide/vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DashboardStats from './DashboardStats.vue'

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { FolderOpen } from 'lucide-vue-next'
+import { FolderOpen } from '@lucide/vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import EmptyState from './EmptyState.vue'

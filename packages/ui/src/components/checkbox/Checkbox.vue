@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { CheckboxRoot, CheckboxIndicator } from 'reka-ui'
-import { Check } from 'lucide-vue-next'
+import { Check } from '@lucide/vue'
 import { checkboxVariants, checkboxIndicatorVariants } from './checkbox-variants'
 
 type CheckboxVariantProps = VariantProps<typeof checkboxVariants>

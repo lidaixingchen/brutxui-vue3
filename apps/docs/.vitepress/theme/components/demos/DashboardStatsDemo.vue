@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DashboardStats } from 'brutx-ui-vue'
-import { DollarSign, Users, Activity, ShoppingCart } from 'lucide-vue-next'
+import { DollarSign, Users, Activity, ShoppingCart } from '@lucide/vue'
 import type { StatItem } from 'brutx-ui-vue'
 
 const stats: StatItem[] = [

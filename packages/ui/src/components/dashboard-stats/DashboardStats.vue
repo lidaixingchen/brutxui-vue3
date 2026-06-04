@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type Component } from 'vue'
-import { ArrowUpRight, ArrowDownRight } from 'lucide-vue-next'
+import { ArrowUpRight, ArrowDownRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Card from '../card/Card.vue'

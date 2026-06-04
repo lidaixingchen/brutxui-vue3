@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Toggle } from 'brutx-ui-vue'
-import { Bold, Italic, Underline } from 'lucide-vue-next'
+import { Bold, Italic, Underline } from '@lucide/vue'
 
 const boldPressed = ref(false)
 const italicPressed = ref(false)

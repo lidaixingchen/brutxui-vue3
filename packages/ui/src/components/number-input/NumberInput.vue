@@ -9,7 +9,7 @@ import {
     NumberFieldDecrement,
     useForwardPropsEmits
 } from 'reka-ui'
-import { Plus, Minus, ChevronUp, ChevronDown } from 'lucide-vue-next'
+import { Plus, Minus, ChevronUp, ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
 import { useLocale } from '@/composables/useLocale'

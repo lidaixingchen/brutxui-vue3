@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type Component } from 'vue'
-import { Activity } from 'lucide-vue-next'
+import { Activity } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import DashboardStats from '../dashboard-stats/DashboardStats.vue'

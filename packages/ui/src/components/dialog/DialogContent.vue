@@ -5,7 +5,7 @@ import {
     DialogContent as DialogContentPrimitive,
     DialogClose as DialogClosePrimitive,
 } from 'reka-ui'
-import { X } from 'lucide-vue-next'
+import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'

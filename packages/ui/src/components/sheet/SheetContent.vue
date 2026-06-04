@@ -7,7 +7,7 @@ import {
     DialogClose as DialogClosePrimitive,
 } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
-import { X } from 'lucide-vue-next'
+import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { sheetVariants } from './sheet-variants'
 import { useLocale } from '@/composables/useLocale'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import useEmblaCarousel from 'embla-carousel-vue';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
 import { useLocale } from '@/composables/useLocale';

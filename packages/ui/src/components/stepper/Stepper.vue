@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Check } from 'lucide-vue-next';
+import { Check } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
 import { useLocale } from '@/composables/useLocale';

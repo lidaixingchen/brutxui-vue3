@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { SelectTrigger as SelectTriggerPrimitive, SelectIcon as SelectIconPrimitive } from 'reka-ui'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { selectTriggerVariants } from './select-variants'
 

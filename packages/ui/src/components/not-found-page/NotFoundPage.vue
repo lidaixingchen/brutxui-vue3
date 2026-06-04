@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowLeft } from 'lucide-vue-next'
+import { ArrowLeft } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Button from '../button/Button.vue'

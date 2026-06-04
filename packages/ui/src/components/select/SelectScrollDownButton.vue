@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { SelectScrollDownButton as SelectScrollDownButtonPrimitive } from 'reka-ui'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 
 interface SelectScrollDownButtonProps {

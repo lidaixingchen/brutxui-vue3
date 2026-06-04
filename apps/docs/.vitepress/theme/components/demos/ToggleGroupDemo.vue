@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ToggleGroup, ToggleGroupItem } from 'brutx-ui-vue'
-import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from 'lucide-vue-next'
+import { Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from '@lucide/vue'
 
 const singleValue = ref('left')
 const multipleValue = ref<string[]>([])

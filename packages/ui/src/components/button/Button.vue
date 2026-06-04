@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
-import { Loader2 } from 'lucide-vue-next'
+import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
 import { buttonVariants } from './button-variants'
 

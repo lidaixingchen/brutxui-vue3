@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
 import { useLocale } from '@/composables/useLocale'

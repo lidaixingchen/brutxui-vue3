@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from 'lucide-vue-next'
+import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from '@lucide/vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { toastVariants } from './toast-variants'

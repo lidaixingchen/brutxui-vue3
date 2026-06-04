@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { ListboxFilter } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { Search } from 'lucide-vue-next'
+import { Search } from '@lucide/vue'
 import { commandInputWrapperVariants } from './command-variants'
 import { injectCommandRootContext } from './command-context'
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowRight, Sparkles } from 'lucide-vue-next'
+import { ArrowRight, Sparkles } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'

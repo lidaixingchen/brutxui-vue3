@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { TabsRoot } from 'reka-ui'
-import { BarChart3, TrendingUp, PieChart } from 'lucide-vue-next'
+import { BarChart3, TrendingUp, PieChart } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import SketchyChart from '../sketchy-chart/SketchyChart.vue'

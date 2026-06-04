@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Check, HelpCircle } from 'lucide-vue-next'
+import { Check, HelpCircle } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'

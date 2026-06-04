@@ -45,7 +45,7 @@ export default defineConfig({
             formats: ['es', 'cjs'],
         },
         rollupOptions: {
-            external: ['vue', 'tailwindcss', /^reka-ui/, /^@vueuse/, /^v-calendar/, /^vee-validate/, /^@vee-validate/],
+            external: ['vue', 'tailwindcss', /^reka-ui/, /^@vueuse/, /^v-calendar/, /^vee-validate/, /^@vee-validate/, /^@lucide/],
             output: {
                 globals: {
                     vue: 'Vue',

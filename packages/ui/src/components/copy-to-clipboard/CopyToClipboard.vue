@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, toRef } from 'vue'
-import { Check, Copy } from 'lucide-vue-next'
+import { Check, Copy } from '@lucide/vue'
 import { useClipboard } from '../../composables/useClipboard'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
