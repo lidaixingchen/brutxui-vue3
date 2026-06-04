@@ -4,7 +4,7 @@ import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
-import { Prism, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'
+import { Prism, resolveLanguage, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'
 
 interface CodeBlockProps {
     code: string
@@ -34,22 +34,7 @@ const lines = computed(() => props.code.split('\n'))
 
 const highlightedHtml = ref('')
 
-const resolvedPrismLang = computed(() => {
-    const lang = resolvedLanguage.value
-    if (isLanguageLoaded(lang)) return lang
-    const aliases: Record<string, string> = {
-        js: 'javascript',
-        ts: 'typescript',
-        sh: 'bash',
-        yml: 'yaml',
-        md: 'markdown',
-        py: 'python',
-        shell: 'shell-session',
-    }
-    const resolved = aliases[lang]
-    if (resolved && isLanguageLoaded(resolved)) return resolved
-    return lang
-})
+const resolvedPrismLang = computed(() => resolveLanguage(resolvedLanguage.value))
 
 watch(
     [() => props.code, resolvedPrismLang],

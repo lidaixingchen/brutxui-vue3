@@ -1,7 +1,6 @@
 import Prism from 'prismjs'
 import type { Grammar } from 'prismjs'
 
-// Prism 组件文件依赖全局 Prism 对象来注册语法
 if (typeof globalThis !== 'undefined' && !(globalThis as Record<string, unknown>).Prism) {
     (globalThis as Record<string, unknown>).Prism = Prism
 }
@@ -38,32 +37,70 @@ const languageLoaders: Record<string, () => Promise<unknown>> = {
     shell: () => import('prismjs/components/prism-shell-session'),
 }
 
+const canonicalNames: Record<string, string> = {
+    markup: 'markup',
+    html: 'markup',
+    xml: 'markup',
+    svg: 'markup',
+    css: 'css',
+    clike: 'clike',
+    javascript: 'javascript',
+    js: 'javascript',
+    typescript: 'typescript',
+    ts: 'typescript',
+    jsx: 'jsx',
+    tsx: 'tsx',
+    json: 'json',
+    bash: 'bash',
+    sh: 'bash',
+    python: 'python',
+    py: 'python',
+    sql: 'sql',
+    java: 'java',
+    c: 'c',
+    cpp: 'cpp',
+    go: 'go',
+    rust: 'rust',
+    scss: 'scss',
+    yaml: 'yaml',
+    yml: 'yaml',
+    markdown: 'markdown',
+    md: 'markdown',
+    shell: 'shell-session',
+}
+
 const loadedLanguages = new Set<string>()
+
+export function resolveLanguage(lang: string): string {
+    return canonicalNames[lang] || lang
+}
 
 export async function loadLanguage(lang: string): Promise<string> {
     if (lang === 'plaintext') return 'plaintext'
 
-    if (loadedLanguages.has(lang)) return lang
+    const canonical = resolveLanguage(lang)
+    if (loadedLanguages.has(canonical)) return canonical
 
     const loader = languageLoaders[lang]
     if (!loader) return 'plaintext'
 
     try {
         await loader()
-        loadedLanguages.add(lang)
-        return lang
+        loadedLanguages.add(canonical)
+        return canonical
     } catch {
         return 'plaintext'
     }
 }
 
 export function isLanguageLoaded(lang: string): boolean {
-    return lang === 'plaintext' || loadedLanguages.has(lang)
+    if (lang === 'plaintext') return true
+    return loadedLanguages.has(resolveLanguage(lang))
 }
 
 export function getGrammar(lang: string): Grammar | undefined {
     if (lang === 'plaintext') return undefined
-    return Prism.languages[lang] as Grammar | undefined
+    return Prism.languages[resolveLanguage(lang)] as Grammar | undefined
 }
 
 export { Prism }
