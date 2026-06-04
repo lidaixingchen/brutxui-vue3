@@ -1,6 +1,10 @@
-@import 'v-calendar/dist/style.css';
-@import 'brutx-ui-vue/styles.css';
+@layer vitepress-theme, v-calendar-theme, theme, base, components, utilities;
+
 @import 'tailwindcss';
+@import 'v-calendar/dist/style.css';
+@import '../../node_modules/brutx-ui-vue/dist/styles.css';
+
+
 
 /* ============================================
    DESIGN TOKENS — Override VitePress defaults
@@ -587,11 +591,16 @@ body {
     z-index: 10;
 }
 
+.vp-doc div[class*='language-'] pre {
+    padding-top: 1.5rem !important;
+}
+
 .vp-doc div[class*='language-'] > button {
     border: 2px solid var(--brutal-border-color) !important;
     background-color: var(--brutal-secondary) !important;
     color: #000000 !important;
     font-weight: 700;
+    top: 1.7rem !important;
 }
 
 .vp-doc div[class*='language-'] > button:hover {
@@ -614,6 +623,10 @@ body {
     left: 0 !important;
     right: 0 !important;
     z-index: 1;
+}
+
+.vp-doc div[class*='language-']:hover > span.lang {
+    opacity: 1 !important;
 }
 
 /* Line numbers */

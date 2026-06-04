@@ -205,6 +205,26 @@ export default defineConfig({
                 '@': new URL('./.vitepress', import.meta.url).pathname,
             },
         },
-        plugins: [],
+        plugins: [
+            {
+                name: 'vitepress-styles-layer-plugin',
+                enforce: 'pre',
+                transform(code: string, id: string) {
+                    const normalizedId = id.replace(/\\/g, '/')
+                    if (normalizedId.includes('theme-default/styles/')) {
+                        return {
+                            code: `@layer vitepress-theme {\n${code}\n}`,
+                            map: null
+                        }
+                    }
+                    if (normalizedId.includes('v-calendar/dist/style.css')) {
+                        return {
+                            code: `@layer v-calendar-theme {\n${code}\n}`,
+                            map: null
+                        }
+                    }
+                }
+            }
+        ],
     },
 })
