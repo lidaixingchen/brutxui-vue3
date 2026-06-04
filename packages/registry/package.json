@@ -11,8 +11,10 @@
         "brutx-shared-vue": "workspace:*"
     },
     "devDependencies": {
-        "@types/node": "^22.19.19",
-        "tsx": "^4.7.1",
-        "typescript": "^5.7.2"
+        "@types/node": "^25.9.1",
+        "@vitejs/plugin-vue": "^6.0.7",
+        "tsx": "^4.22.4",
+        "typescript": "^5.7.2",
+        "vite": "^8.0.16"
     }
 }

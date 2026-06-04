@@ -7,6 +7,14 @@ vi.mock('../../composables/useReducedMotion', () => ({
     useReducedMotion: () => ref(false)
 }))
 
+function createPointerEvent(type: string, props: PointerEventInit = {}): PointerEvent {
+    return new PointerEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        ...props,
+    })
+}
+
 describe('Card3D', () => {
     it('renders with default variant classes', () => {
         const wrapper = mount(Card3D)
@@ -34,12 +42,11 @@ describe('Card3D', () => {
         const wrapper = mount(Card3D)
         const card = wrapper.find('[role="region"] > div:first-child')
 
-        await card.trigger('pointermove', {
-            clientX: 100,
-            clientY: 100,
-        })
+        card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
+        await wrapper.vm.$nextTick()
 
-        await card.trigger('pointerleave')
+        card.element.dispatchEvent(createPointerEvent('pointerleave'))
+        await wrapper.vm.$nextTick()
 
         const style = card.attributes('style') || ''
         expect(style).toContain('rotateX(0deg)')
@@ -52,10 +59,8 @@ describe('Card3D', () => {
         })
         const card = wrapper.find('[role="region"] > div:first-child')
 
-        await card.trigger('pointermove', {
-            clientX: 100,
-            clientY: 100,
-        })
+        card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
+        await wrapper.vm.$nextTick()
 
         const style = card.attributes('style') || ''
         expect(style).toBe('')
@@ -67,10 +72,8 @@ describe('Card3D', () => {
         })
         const card = wrapper.find('[role="region"] > div:first-child')
 
-        await card.trigger('pointermove', {
-            clientX: 100,
-            clientY: 100,
-        })
+        card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
+        await wrapper.vm.$nextTick()
 
         const style = card.attributes('style') || ''
         expect(style).not.toContain('rotateX')

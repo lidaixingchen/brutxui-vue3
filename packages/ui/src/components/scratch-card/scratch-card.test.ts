@@ -7,6 +7,14 @@ vi.mock('../../composables/useReducedMotion', () => ({
     useReducedMotion: () => ref(false)
 }))
 
+function createPointerEvent(type: string, props: PointerEventInit = {}): PointerEvent {
+    return new PointerEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        ...props,
+    })
+}
+
 beforeAll(() => {
     HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
         clearRect: vi.fn(),
@@ -56,17 +64,14 @@ describe('ScratchCard', () => {
         })
 
         const canvas = wrapper.find('canvas')
-        await canvas.trigger('pointerdown', {
-            clientX: 50,
-            clientY: 50,
-        })
+        canvas.element.dispatchEvent(createPointerEvent('pointerdown', { clientX: 50, clientY: 50 }))
+        await wrapper.vm.$nextTick()
 
-        await canvas.trigger('pointermove', {
-            clientX: 60,
-            clientY: 60,
-        })
+        canvas.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 60, clientY: 60 }))
+        await wrapper.vm.$nextTick()
 
-        await canvas.trigger('pointerup')
+        canvas.element.dispatchEvent(createPointerEvent('pointerup'))
+        await wrapper.vm.$nextTick()
 
         const progressEvents = wrapper.emitted('progress')
         expect(progressEvents).toBeTruthy()

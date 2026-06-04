@@ -16,11 +16,13 @@
         "test:coverage": "pnpm --filter brutx-ui-vue test:coverage"
     },
     "devDependencies": {
-        "typescript": "^5.7.2"
+        "@vitejs/plugin-vue": "^6.0.7",
+        "typescript": "^5.7.2",
+        "vite": "^8.0.16"
     },
     "engines": {
-        "node": ">=18.0.0",
-        "pnpm": ">=8.0.0"
+        "node": ">=20.0.0",
+        "pnpm": ">=9.0.0"
     },
-    "packageManager": "pnpm@9.15.4"
+    "packageManager": "pnpm@11.5.1"
 }
