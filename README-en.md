@@ -246,6 +246,12 @@ pnpm --filter brutx-registry-vue validate
 
 ---
 
+## Acknowledgements / Credits
+
+This project is developed and maintained based on the original neo-brutalist project [BrutxUI (dev-snake/brutxui)](https://github.com/dev-snake/brutxui) by [dev-snake](https://github.com/dev-snake). Special thanks for the outstanding design and creativity.
+
+---
+
 ## License
 
 BrutxUI is open-source software licensed under the [MIT License](LICENSE).

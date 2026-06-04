@@ -246,6 +246,12 @@ pnpm --filter brutx-registry-vue validate
 
 ---
 
+## 致谢 / Credits
+
+本项目基于原作者 [dev-snake](https://github.com/dev-snake) 的新粗野主义项目 [BrutxUI (dev-snake/brutxui)](https://github.com/dev-snake/brutxui) 进行移植、开发与维护。非常感谢其优秀的设计和创意。
+
+---
+
 ## 许可证
 
 BrutxUI 是基于 [MIT 许可证](LICENSE) 的开源软件。
