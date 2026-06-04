@@ -14,8 +14,8 @@ const _mockIsSupported = ref(true)
 vi.mock('../../composables/useClipboard', () => ({
     useClipboard: () => ({
         copy: mockCopy,
-        get copied() { return _mockCopied },
-        get isSupported() { return _mockIsSupported },
+        get copied() { return _mockCopied.value },
+        get isSupported() { return _mockIsSupported.value },
     }),
 }))
 

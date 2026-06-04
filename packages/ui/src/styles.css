@@ -1,5 +1,6 @@
 @import 'v-calendar/dist/style.css';
 @import "tailwindcss";
+@import "./components/code-block/brutx-prism.css";
 
 @source "../**/*.vue";
 @source "../**/*.ts";

@@ -510,7 +510,7 @@ describe('Command filtering', () => {
         await nextTick()
 
         const visibleItems = wrapper.findAll('[data-slot="command-item"]')
-            .filter(el => el.element.style.display !== 'none')
+            .filter(el => (el.element as HTMLElement).style.display !== 'none')
         expect(visibleItems.length).toBe(2)
     })
 
@@ -576,7 +576,7 @@ describe('Command filtering', () => {
         await nextTick()
 
         const visibleGroups = wrapper.findAll('[data-slot="command-group"]')
-            .filter(el => el.element.style.display !== 'none')
+            .filter(el => (el.element as HTMLElement).style.display !== 'none')
         expect(visibleGroups.length).toBe(1)
         const heading = visibleGroups[0].find('[data-slot="command-group-heading"]')
         expect(heading.text()).toBe('Settings')

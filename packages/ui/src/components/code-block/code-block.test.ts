@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { vi } from 'vitest'
 import CodeBlock from './CodeBlock.vue'
 
 describe('CodeBlock', () => {
@@ -104,5 +105,60 @@ describe('CodeBlock', () => {
             props: { code: 'test', class: 'custom-class' },
         })
         expect(wrapper.classes()).toContain('custom-class')
+    })
+
+    it('escapes HTML entities in plaintext mode', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: '<script>alert("xss")</script>' },
+        })
+        const codeEl = wrapper.find('code')
+        expect(codeEl.text()).toContain('<script>')
+        expect(wrapper.find('script').exists()).toBe(false)
+    })
+
+    it('applies syntax highlighting for known language', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'const x = 1', language: 'javascript' },
+        })
+        await vi.waitFor(() => {
+            expect(wrapper.find('.token').exists()).toBe(true)
+        })
+        expect(wrapper.find('.token.keyword').exists()).toBe(true)
+    })
+
+    it('falls back to plaintext for unknown language', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: '+++---', language: 'brainfuck' },
+        })
+        await vi.waitFor(() => {
+            expect(wrapper.find('code').text()).toBe('+++---')
+        })
+        expect(wrapper.find('.token').exists()).toBe(false)
+    })
+
+    it('re-highlights when code prop changes', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'const x = 1', language: 'javascript' },
+        })
+        await vi.waitFor(() => {
+            expect(wrapper.find('.token').exists()).toBe(true)
+        })
+        await wrapper.setProps({ code: 'let y = 2' })
+        await vi.waitFor(() => {
+            expect(wrapper.find('code').text()).toContain('let y = 2')
+        })
+    })
+
+    it('re-highlights when language prop changes', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'const x = 1', language: 'javascript' },
+        })
+        await vi.waitFor(() => {
+            expect(wrapper.find('.token').exists()).toBe(true)
+        })
+        await wrapper.setProps({ language: 'typescript' })
+        await vi.waitFor(() => {
+            expect(wrapper.find('code').classes()).toContain('language-typescript')
+        })
     })
 })

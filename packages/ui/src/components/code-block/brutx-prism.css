@@ -1,0 +1,110 @@
+/**
+ * BrutxUI Prism Theme — Neo-Brutalist Syntax Highlighting
+ *
+ * 使用专用 --brutal-code-* 变量控制 token 颜色，
+ * 与 --brutal-primary 等设计令牌解耦，确保所有主题下对比度达标。
+ * 消费者可通过覆盖 --brutal-code-* 变量自定义高亮配色。
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: var(--brutal-code-foreground, var(--brutal-fg));
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    line-height: 1.7;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    tab-size: 4;
+    hyphens: none;
+}
+
+/* --- Token 颜色映射 --- */
+/* 所有颜色均通过 --brutal-code-* 变量，默认值确保 WCAG AA 对比度 >= 4.5:1 */
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: var(--brutal-code-comment, #6b7280);
+    font-style: italic;
+}
+
+.token.punctuation {
+    color: var(--brutal-code-punctuation, #4b5563);
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: var(--brutal-code-number, #c0392b);
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: var(--brutal-code-string, #2e7d32);
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+    color: var(--brutal-code-operator, #1565c0);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: var(--brutal-code-keyword, #00838f);
+}
+
+.token.function,
+.token.class-name {
+    color: var(--brutal-code-function, #c62828);
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: var(--brutal-code-variable, #9c27b0);
+}
+
+/* --- 暗色模式覆盖 --- */
+
+.dark {
+    --brutal-code-comment: #9ca3af;
+    --brutal-code-punctuation: #d1d5db;
+    --brutal-code-number: #ef5350;
+    --brutal-code-string: #66bb6a;
+    --brutal-code-operator: #42a5f5;
+    --brutal-code-keyword: #26c6da;
+    --brutal-code-function: #ff7043;
+    --brutal-code-variable: #ce93d8;
+}
+
+/* --- 行号样式（Prism 插件兼容） --- */
+
+.line-numbers .line-numbers-rows {
+    border-right: var(--brutal-border-width, 3px) solid var(--brutal-border-color);
+    padding-right: 1rem;
+    margin-right: 1rem;
+}
+
+.line-numbers-rows > span::before {
+    color: var(--brutal-fg);
+    opacity: 0.3;
+}
+
+/* --- 高亮行（Prism line-highlight 插件兼容） --- */
+
+.line-highlight {
+    background: var(--brutal-accent);
+    opacity: 0.15;
+}

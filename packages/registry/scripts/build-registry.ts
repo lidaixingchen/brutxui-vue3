@@ -66,7 +66,7 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     breadcrumb: { files: ['Breadcrumb.vue', 'BreadcrumbList.vue', 'BreadcrumbItem.vue', 'BreadcrumbLink.vue', 'BreadcrumbPage.vue', 'BreadcrumbSeparator.vue', 'BreadcrumbEllipsis.vue'] },
     marquee: { files: ['Marquee.vue'] },
     'before-after': { files: ['BeforeAfter.vue'] },
-    'code-block': { files: ['CodeBlock.vue'] },
+    'code-block': { files: ['CodeBlock.vue', 'prism-languages.ts', 'brutx-prism.css'] },
     timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-variants.ts'] },
     carousel: { files: ['Carousel.vue', 'CarouselItem.vue', 'carousel-variants.ts'] },
     'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts'] },

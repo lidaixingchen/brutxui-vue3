@@ -14,7 +14,7 @@
     },
     {
       "path": "components/ui/kbd/kbd-variants.ts",
-      "content": "import { cva } from 'class-variance-authority';\n\nexport const kbdVariants = cva(\n    [\n        'inline-flex items-center justify-center',\n        'font-mono font-black text-brutal-fg',\n        'border-3 border-brutal rounded-brutal',\n        'bg-brutal-muted shadow-brutal-sm',\n        'select-none whitespace-nowrap',\n    ].join(' '),\n    {\n        variants: {\n            size: {\n                sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',\n                md: 'px-2 py-1 text-sm min-w-[1.75rem]',\n                lg: 'px-3 py-1.5 text-base min-w-[2.25rem]',\n            },\n        },\n        defaultVariants: {\n            size: 'md',\n        },\n    }\n);\n",
+      "content": "import { cva } from 'class-variance-authority';\n\nexport const kbdVariants = cva(\n    [\n        'inline-flex items-center justify-center',\n        'font-mono font-black text-brutal-fg',\n        'border-3 border-brutal rounded-brutal',\n        'bg-brutal-muted shadow-brutal-sm',\n        'select-none whitespace-nowrap',\n    ],\n    {\n        variants: {\n            size: {\n                sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',\n                md: 'px-2 py-1 text-sm min-w-[1.75rem]',\n                lg: 'px-3 py-1.5 text-base min-w-[2.25rem]',\n            },\n        },\n        defaultVariants: {\n            size: 'md',\n        },\n    }\n);\n",
       "type": "registry:ui"
     }
   ],

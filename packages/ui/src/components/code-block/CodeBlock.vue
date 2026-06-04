@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
+import { Prism, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'
 
 interface CodeBlockProps {
     code: string
@@ -20,10 +21,6 @@ const props = withDefaults(defineProps<CodeBlockProps>(), {
     class: undefined,
 })
 
-const lines = computed(() => {
-    return props.code.split('\n')
-})
-
 const { t } = useLocale()
 
 const resolvedLanguage = computed(() => props.language ?? t('codeBlock.defaultLanguage'))
@@ -32,6 +29,61 @@ const resolvedFilename = computed(() => props.filename ?? t('codeBlock.defaultFi
 const rootClasses = computed(() =>
     cn(codeBlockRootVariants(), props.class)
 )
+
+const lines = computed(() => props.code.split('\n'))
+
+const highlightedHtml = ref('')
+
+const resolvedPrismLang = computed(() => {
+    const lang = resolvedLanguage.value
+    if (isLanguageLoaded(lang)) return lang
+    const aliases: Record<string, string> = {
+        js: 'javascript',
+        ts: 'typescript',
+        sh: 'bash',
+        yml: 'yaml',
+        md: 'markdown',
+        py: 'python',
+        shell: 'shell-session',
+    }
+    const resolved = aliases[lang]
+    if (resolved && isLanguageLoaded(resolved)) return resolved
+    return lang
+})
+
+watch(
+    [() => props.code, resolvedPrismLang],
+    async ([code, lang]) => {
+        if (lang === 'plaintext') {
+            highlightedHtml.value = escapeHtml(code)
+            return
+        }
+
+        if (!isLanguageLoaded(lang)) {
+            const loaded = await loadLanguage(lang)
+            if (loaded === 'plaintext') {
+                highlightedHtml.value = escapeHtml(code)
+                return
+            }
+        }
+
+        const grammar = getGrammar(lang)
+        if (grammar) {
+            highlightedHtml.value = Prism.highlight(code, grammar, lang)
+        } else {
+            highlightedHtml.value = escapeHtml(code)
+        }
+    },
+    { immediate: true }
+)
+
+function escapeHtml(str: string): string {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+}
 </script>
 
 <template>
@@ -63,7 +115,8 @@ const rootClasses = computed(() =>
                 <span v-for="(_, i) in lines" :key="i">{{ i + 1 }}</span>
             </div>
 
-            <pre class="flex-1 min-w-0 m-0"><code class="block whitespace-pre font-bold"><slot v-if="$slots.default"></slot><template v-else>{{ code }}</template></code></pre>
+            <pre v-if="$slots.default" class="flex-1 min-w-0 m-0"><code class="block whitespace-pre font-bold"><slot></slot></code></pre>
+            <pre v-else class="flex-1 min-w-0 m-0"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" v-html="highlightedHtml"></code></pre>
         </div>
     </div>
 </template>

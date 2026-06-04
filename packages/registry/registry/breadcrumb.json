@@ -12,7 +12,7 @@
   "files": [
     {
       "path": "components/ui/breadcrumb/Breadcrumb.vue",
-      "content": "<script setup lang=\"ts\">\nimport { useLocale } from '@/composables/useLocale'\n\ninterface BreadcrumbProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbProps>(), {\n    class: undefined,\n})\n\nconst { t } = useLocale()\n</script>\n\n<template>\n    <nav :aria-label=\"t('breadcrumb.label')\" :class=\"props.class\">\n        <slot />\n    </nav>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { useLocale } from '@/composables/useLocale'\n\ninterface BreadcrumbProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbProps>(), {\n    class: undefined,\n})\n\nconst { t } = useLocale()\n\nconst rootClasses = computed(() => cn('', props.class))\n</script>\n\n<template>\n    <nav :aria-label=\"t('breadcrumb.label')\" :class=\"rootClasses\">\n        <slot />\n    </nav>\n</template>\n",
       "type": "registry:ui"
     },
     {

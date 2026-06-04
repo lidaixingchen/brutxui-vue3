@@ -5481,6 +5481,14 @@
         {
           "path": "components/ui/code-block/CodeBlock.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/code-block/prism-languages.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/code-block/brutx-prism.css",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
