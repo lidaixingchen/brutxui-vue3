@@ -6,6 +6,7 @@ import {
 } from 'reka-ui'
 import { Check } from '@lucide/vue'
 import { cn } from '../../lib/utils'
+import { dropdownMenuItemVariants } from './dropdown-menu-variants'
 
 interface DropdownMenuCheckboxItemProps {
     modelValue?: boolean | 'indeterminate'
@@ -19,16 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const classes = computed(() =>
-    cn(
-        'relative flex cursor-pointer select-none items-center py-2 pl-8 pr-3',
-        'font-bold outline-none transition-all rounded-brutal',
-        'focus:bg-brutal-accent focus:text-brutal-fg',
-        'hover:shadow-brutal-sm',
-        'focus-visible:ring-2 focus-visible:ring-brutal-ring',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-        props.class
-    )
+    cn(dropdownMenuItemVariants(), 'pl-8', props.class)
 )
 </script>
 

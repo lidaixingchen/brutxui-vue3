@@ -21,9 +21,9 @@ interface BlogCardProps {
 const props = withDefaults(defineProps<BlogCardProps>(), {
     title: undefined,
     excerpt: undefined,
-    author: '',
-    date: '',
-    category: '',
+    author: undefined,
+    date: undefined,
+    category: undefined,
     class: undefined,
 })
 

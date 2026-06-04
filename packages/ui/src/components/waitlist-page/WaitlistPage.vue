@@ -16,7 +16,7 @@ interface WaitlistPageProps {
 
 const props = withDefaults(defineProps<WaitlistPageProps>(), {
     title: undefined,
-    description: '',
+    description: undefined,
     ctaText: undefined,
     waitlistCount: 0,
     class: undefined,
@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<WaitlistPageProps>(), {
 const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('waitlistPage.title'))
+const resolvedDescription = computed(() => props.description ?? t('waitlistPage.defaultDescription'))
 const resolvedCtaText = computed(() => props.ctaText ?? t('waitlistPage.ctaText'))
 
 const emit = defineEmits<{
@@ -54,8 +55,8 @@ function handleSubmit() {
         <h1 class="text-3xl font-black tracking-tight">
 {{ resolvedTitle }}
 </h1>
-        <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium">
-{{ description }}
+        <p v-if="resolvedDescription" class="mt-3 text-brutal-muted-foreground font-medium">
+{{ resolvedDescription }}
 </p>
 
         <form class="mt-8 flex flex-col sm:flex-row gap-3" @submit.prevent="handleSubmit">

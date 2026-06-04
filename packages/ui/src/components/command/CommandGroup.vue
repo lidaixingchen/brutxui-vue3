@@ -47,7 +47,7 @@ onUnmounted(() => {
 
 <template>
     <ListboxGroup
-        v-if="isRender"
+        v-show="isRender"
         :id="id"
         :class="classes"
         data-slot="command-group"

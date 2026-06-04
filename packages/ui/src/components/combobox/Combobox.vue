@@ -78,18 +78,19 @@ watch(open, (isOpen) => {
     }
 })
 
-const checkSelectedClasses = cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-100')
-const checkUnselectedClasses = cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-0')
+const checkSelectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-100'))
+const checkUnselectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-0'))
 </script>
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child :disabled="disabled">
+        <PopoverTrigger as-child>
             <button
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
                 aria-haspopup="listbox"
+                :disabled="disabled"
                 :class="triggerClasses"
             >
                 <span>{{ selectedOption ? selectedOption.label : resolvedPlaceholder }}</span>

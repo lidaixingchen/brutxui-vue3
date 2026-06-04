@@ -26,7 +26,7 @@ export const numberInputButtonVariants = cva(
         'disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'hover:shadow-brutal-sm hover:-translate-y-0.5',
-    ].join(' '),
+    ],
     {
         variants: {
             position: {
@@ -53,7 +53,7 @@ export const numberInputButtonVariants = cva(
 export const numberInputFieldVariants = cva(
     [
         'bg-transparent font-black placeholder:text-brutal-placeholder placeholder:font-normal focus:outline-none',
-    ].join(' '),
+    ],
     {
         variants: {
             layout: {

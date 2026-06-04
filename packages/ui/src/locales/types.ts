@@ -68,6 +68,7 @@ export interface WaitlistPageLocale {
     earlyAccess: string
     onWaitlist: string
     live: string
+    defaultDescription: string
 }
 
 export interface DashboardShellLocale {
@@ -81,6 +82,7 @@ export interface BrutalistHeroLocale {
     primaryCtaText: string
     secondaryCtaText: string
     neoBrutalismUI: string
+    defaultSubtitle: string
 }
 
 export interface SaaSPricingLocale {
@@ -123,6 +125,7 @@ export interface StepperLocale {
 export interface EmptyStateLocale {
     defaultTitle: string
     defaultActionText: string
+    defaultDescription: string
 }
 
 export interface TestimonialCardLocale {
@@ -301,6 +304,8 @@ export interface HardcoreInputLocale {
 export interface CodeBlockLocale {
     copied: string
     copy: string
+    defaultLanguage: string
+    defaultFilename: string
 }
 
 export interface CalendarLocale {
@@ -323,6 +328,10 @@ export interface DashboardStatsLocale {
 }
 
 export interface InputLocale {
+    placeholder: string
+}
+
+export interface NumberInputLocale {
     placeholder: string
 }
 
@@ -385,5 +394,6 @@ export interface Locale {
     pricingSection: PricingSectionLocale
     dashboardStats: DashboardStatsLocale
     input: InputLocale
+    numberInput: NumberInputLocale
     textarea: TextareaLocale
 }

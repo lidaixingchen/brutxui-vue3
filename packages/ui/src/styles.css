@@ -7,29 +7,34 @@
 @plugin "./lib/brutalism-plugin.js";
 
 @theme {
-    --color-brutal-bg: #ffffff;
-    --color-brutal-fg: #000000;
+    /* Dynamic: resolve at runtime via --brutal-* for dark mode support */
+    --color-brutal-bg: var(--brutal-bg);
+    --color-brutal-fg: var(--brutal-fg);
+    --color-brutal-muted: var(--brutal-muted);
+    --color-brutal-muted-foreground: var(--brutal-muted-foreground);
+    --color-brutal-ring: var(--brutal-ring);
+    --color-brutal-overlay: var(--brutal-overlay);
+    --color-brutal-placeholder: var(--brutal-placeholder);
+
+    /* Static: same in light/dark */
     --color-brutal-primary: #FF6B6B;
     --color-brutal-secondary: #4ECDC4;
     --color-brutal-accent: #FFE66D;
     --color-brutal-destructive: #EF476F;
     --color-brutal-success: #7FB069;
-    --color-brutal-muted: #f3f4f6;
-    --color-brutal-muted-foreground: #4B5563;
-    --color-brutal-ring: #000000;
     --color-brutal-info: #4A90D9;
-    --color-brutal-overlay: rgba(0, 0, 0, 0.5);
-    --color-brutal-placeholder: #9CA3AF;
 
-    --shadow-brutal: 4px 4px 0px 0px #000000;
-    --shadow-brutal-sm: 2px 2px 0px 0px #000000;
-    --shadow-brutal-lg: 6px 6px 0px 0px #000000;
-    --shadow-brutal-xl: 8px 8px 0px 0px #000000;
-    --shadow-brutal-primary: 4px 4px 0px 0px #FF6B6B;
-    --shadow-brutal-secondary: 4px 4px 0px 0px #4ECDC4;
+    /* Dynamic: shadows use --brutal-shadow-* for dark mode */
+    --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+    --shadow-brutal-sm: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
+    --shadow-brutal-lg: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
+    --shadow-brutal-xl: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
+    --shadow-brutal-primary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary);
+    --shadow-brutal-secondary: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary);
 
-    --border-width-3: 3px;
-    --radius-brutal: 0px;
+    /* Dynamic: border/radius use --brutal-* for theme support */
+    --border-width-3: var(--brutal-border-width, 3px);
+    --radius-brutal: var(--brutal-radius, 0px);
 }
 
 @layer base {

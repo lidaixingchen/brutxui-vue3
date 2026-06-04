@@ -88,11 +88,12 @@ const dayBaseClasses = computed(() =>
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
 const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
 
-function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }) {
+function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }, dayPropsClass?: string) {
     const isOutside = !day.inMonth
 
     return cn(
         dayBaseClasses.value,
+        dayPropsClass,
         day.isToday ? 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal' : '',
         isOutside ? dayOutsideClasses.value : '',
         day.isDisabled ? dayDisabledClasses.value : '',
@@ -112,7 +113,6 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
         :first-day-of-week="1"
         :popover="false"
         @update:model-value="handleUpdate"
-        @drag="handleUpdate"
     >
         <template #header-prev-button>
             <ChevronLeft class="w-4 h-4" />
@@ -129,7 +129,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
             <div
                 v-bind="dayProps"
                 v-on="dayEvents"
-                :class="cn(dayProps.class, getDayClasses(day))"
+                :class="getDayClasses(day, dayProps.class)"
             >
                 {{ day.label }}
             </div>

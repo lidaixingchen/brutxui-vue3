@@ -15,7 +15,7 @@ interface EmptyStateProps {
 
 const props = withDefaults(defineProps<EmptyStateProps>(), {
     title: undefined,
-    description: '',
+    description: undefined,
     actionText: undefined,
     icon: undefined,
     class: undefined,
@@ -24,6 +24,7 @@ const props = withDefaults(defineProps<EmptyStateProps>(), {
 const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('emptyState.defaultTitle'))
+const resolvedDescription = computed(() => props.description ?? t('emptyState.defaultDescription'))
 const resolvedActionText = computed(() => props.actionText ?? t('emptyState.defaultActionText'))
 
 const emit = defineEmits<{
@@ -44,8 +45,8 @@ const rootClasses = computed(() => cn('flex flex-col items-center justify-center
         <h3 class="text-xl font-black tracking-tight">
 {{ resolvedTitle }}
 </h3>
-        <p v-if="description" class="mt-2 text-sm text-brutal-muted-foreground font-medium text-center max-w-md">
-{{ description }}
+        <p v-if="resolvedDescription" class="mt-2 text-sm text-brutal-muted-foreground font-medium text-center max-w-md">
+{{ resolvedDescription }}
 </p>
         <Button v-if="resolvedActionText" variant="primary" class="mt-6" @click="emit('action')">
             <Plus class="mr-2 h-4 w-4 stroke-[3]" />

@@ -39,13 +39,14 @@ watch(() => props.defaultExpanded, (newVal) => {
 });
 
 function toggleExpand(id: string) {
-    const next = !expandedIds.value.has(id);
-    if (next) {
-        expandedIds.value.add(id);
+    const nextSet = new Set(expandedIds.value)
+    if (nextSet.has(id)) {
+        nextSet.delete(id)
     } else {
-        expandedIds.value.delete(id);
+        nextSet.add(id)
     }
-    emit('expand', id, next);
+    expandedIds.value = nextSet
+    emit('expand', id, nextSet.has(id))
 }
 
 function selectNode(node: TreeNode) {

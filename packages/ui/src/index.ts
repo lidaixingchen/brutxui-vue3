@@ -306,7 +306,7 @@ export { default as BeforeAfter } from './components/before-after/BeforeAfter.vu
 export { beforeAfterRootVariants, beforeAfterHandleVariants } from './components/before-after/before-after-variants'
 
 export { default as CodeBlock } from './components/code-block/CodeBlock.vue'
-export { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants } from './components/code-block/code-block-variants'
+export { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './components/code-block/code-block-variants'
 
 export { default as Timeline } from './components/timeline/Timeline.vue'
 export { default as TimelineItem } from './components/timeline/TimelineItem.vue'

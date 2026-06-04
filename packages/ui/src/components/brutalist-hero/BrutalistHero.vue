@@ -17,7 +17,7 @@ interface BrutalistHeroProps {
 
 const props = withDefaults(defineProps<BrutalistHeroProps>(), {
     title: undefined,
-    subtitle: '',
+    subtitle: undefined,
     primaryCtaText: undefined,
     secondaryCtaText: undefined,
     class: undefined,
@@ -26,6 +26,7 @@ const props = withDefaults(defineProps<BrutalistHeroProps>(), {
 const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('brutalistHero.title'))
+const resolvedSubtitle = computed(() => props.subtitle ?? t('brutalistHero.defaultSubtitle'))
 const resolvedPrimaryCtaText = computed(() => props.primaryCtaText ?? t('brutalistHero.primaryCtaText'))
 const resolvedSecondaryCtaText = computed(() => props.secondaryCtaText ?? t('brutalistHero.secondaryCtaText'))
 
@@ -48,8 +49,8 @@ const rootClasses = computed(() => cn('w-full', props.class))
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
 {{ resolvedTitle }}
 </h1>
-                <p v-if="subtitle" class="mt-4 text-lg text-brutal-muted-foreground font-medium">
-{{ subtitle }}
+                <p v-if="resolvedSubtitle" class="mt-4 text-lg text-brutal-muted-foreground font-medium">
+{{ resolvedSubtitle }}
 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
                     <Button variant="primary" size="lg" @click="emit('primaryCta')">

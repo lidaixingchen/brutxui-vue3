@@ -39,10 +39,10 @@ const checkClasses = computed(() =>
 <template>
     <CheckboxRoot
         :class="classes"
-        :checked="checked"
-        :default-checked="defaultChecked"
+        :model-value="checked"
+        :default-value="defaultChecked"
         :disabled="disabled"
-        @update:checked="emit('update:checked', $event)"
+        @update:model-value="(val: boolean | 'indeterminate') => emit('update:checked', val === 'indeterminate' ? false : val)"
     >
         <CheckboxIndicator :class="checkClasses">
             <Check class="h-full w-full" />

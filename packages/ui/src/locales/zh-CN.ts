@@ -62,6 +62,7 @@ export const zhCN: Locale = {
         earlyAccess: '抢先体验',
         onWaitlist: '{count} 人已加入等候',
         live: '在线',
+        defaultDescription: '加入等候列表，成为首批体验者。',
     },
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
@@ -73,6 +74,7 @@ export const zhCN: Locale = {
         primaryCtaText: '立即开始',
         secondaryCtaText: '查看组件注册表',
         neoBrutalismUI: '新粗野主义 UI',
+        defaultSubtitle: '',
     },
     saasPricing: {
         title: '简单，不妥协的定价',
@@ -107,6 +109,7 @@ export const zhCN: Locale = {
     emptyState: {
         defaultTitle: '未找到活跃的部署',
         defaultActionText: '部署新应用',
+        defaultDescription: '暂无内容可显示。',
     },
     testimonialCard: {
         defaultQuote: '这款产品彻底改变了我们的工作流程。',
@@ -256,6 +259,8 @@ export const zhCN: Locale = {
     codeBlock: {
         copied: '已复制',
         copy: '复制',
+        defaultLanguage: 'plaintext',
+        defaultFilename: '',
     },
     calendar: {
         previousMonth: '上一月',
@@ -274,6 +279,9 @@ export const zhCN: Locale = {
     },
     input: {
         placeholder: '请输入...',
+    },
+    numberInput: {
+        placeholder: '请输入数字...',
     },
     textarea: {
         placeholder: '请输入...',

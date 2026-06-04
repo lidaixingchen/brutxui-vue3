@@ -62,6 +62,7 @@ export const en: Locale = {
         earlyAccess: 'Early Access',
         onWaitlist: '{count} on waitlist',
         live: 'Live',
+        defaultDescription: 'Join the waitlist to be among the first to try it.',
     },
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
@@ -73,6 +74,7 @@ export const en: Locale = {
         primaryCtaText: 'Get Started Now',
         secondaryCtaText: 'View Component Registry',
         neoBrutalismUI: 'Neo-Brutalism UI',
+        defaultSubtitle: '',
     },
     saasPricing: {
         title: 'Simple, Unapologetic Pricing',
@@ -107,6 +109,7 @@ export const en: Locale = {
     emptyState: {
         defaultTitle: 'No active deployments found',
         defaultActionText: 'Deploy New App',
+        defaultDescription: 'Nothing to display at the moment.',
     },
     testimonialCard: {
         defaultQuote: 'This product has completely transformed our workflow.',
@@ -256,6 +259,8 @@ export const en: Locale = {
     codeBlock: {
         copied: 'Copied',
         copy: 'Copy',
+        defaultLanguage: 'plaintext',
+        defaultFilename: '',
     },
     calendar: {
         previousMonth: 'Previous month',
@@ -274,6 +279,9 @@ export const en: Locale = {
     },
     input: {
         placeholder: 'Type here...',
+    },
+    numberInput: {
+        placeholder: 'Enter a number...',
     },
     textarea: {
         placeholder: 'Type here...',

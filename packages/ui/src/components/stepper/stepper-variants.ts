@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority';
 export const stepperItemVariants = cva(
     [
         'flex items-center gap-3 relative',
-    ].join(' ')
+    ]
 );
 
 export const stepperDotVariants = cva(
@@ -14,7 +14,7 @@ export const stepperDotVariants = cva(
         'hover:shadow-brutal hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'z-10 relative',
-    ].join(' '),
+    ],
     {
         variants: {
             state: {
@@ -32,7 +32,7 @@ export const stepperDotVariants = cva(
 export const stepperConnectorVariants = cva(
     [
         'transition-all duration-300',
-    ].join(' '),
+    ],
     {
         variants: {
             orientation: {

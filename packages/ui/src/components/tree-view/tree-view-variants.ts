@@ -8,7 +8,7 @@ export const treeItemVariants = cva(
         'transition-all duration-150',
         'hover:border-brutal hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-    ].join(' '),
+    ],
     {
         variants: {
             selected: {

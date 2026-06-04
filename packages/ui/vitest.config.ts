@@ -14,6 +14,8 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: ['./vitest.setup.ts'],
         include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        maxWorkers: 4,
+        minWorkers: 1,
         coverage: {
             provider: 'v8',
             include: ['src/components/**/*.{ts,vue}', 'src/composables/**/*.ts', 'src/lib/utils.ts'],

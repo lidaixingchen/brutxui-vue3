@@ -61,7 +61,7 @@ onUnmounted(() => {
 
 <template>
     <ListboxItem
-        v-if="isRender"
+        v-show="isRender"
         :id="id"
         ref="itemRef"
         :value="value"

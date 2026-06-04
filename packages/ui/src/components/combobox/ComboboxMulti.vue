@@ -84,9 +84,9 @@ function handleSelect(optionValue: string) {
     emit('update:modelValue', newValue)
 }
 
-const checkboxBaseClasses = cn('mr-2 flex h-4 w-4 items-center justify-center', 'border-3 border-brutal')
-const checkboxSelectedClasses = cn(checkboxBaseClasses, 'bg-brutal-secondary')
-const checkboxUnselectedClasses = cn(checkboxBaseClasses, 'bg-brutal-bg')
+const checkboxBaseClasses = computed(() => cn('mr-2 flex h-4 w-4 items-center justify-center', 'border-3 border-brutal'))
+const checkboxSelectedClasses = computed(() => cn(checkboxBaseClasses.value, 'bg-brutal-secondary'))
+const checkboxUnselectedClasses = computed(() => cn(checkboxBaseClasses.value, 'bg-brutal-bg'))
 
 watch(open, (isOpen) => {
     if (!isOpen) {
@@ -97,12 +97,13 @@ watch(open, (isOpen) => {
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child :disabled="disabled">
+        <PopoverTrigger as-child>
             <button
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
                 aria-haspopup="listbox"
+                :disabled="disabled"
                 :class="triggerClasses"
             >
                 <span class="truncate">{{ displayText }}</span>

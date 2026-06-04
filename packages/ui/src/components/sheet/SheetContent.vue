@@ -41,7 +41,7 @@ const contentClasses = computed(() =>
 const closeClasses = computed(() =>
     cn(
         'absolute top-4',
-        props.side === 'left' ? 'right-4' : 'right-4',
+        props.side === 'left' ? 'left-4' : 'right-4',
         'h-8 w-8 flex items-center justify-center',
         'border-3 border-brutal bg-brutal-bg text-brutal-fg',
         'shadow-brutal-sm',

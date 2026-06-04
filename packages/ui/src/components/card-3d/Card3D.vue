@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
@@ -86,6 +86,13 @@ const handlePointerLeave = () => {
 // 初始化时设定阴影位置
 sx.value = initialOffset.value
 sy.value = initialOffset.value
+
+watch(initialOffset, (newVal) => {
+    if (!isHovered.value) {
+        sx.value = newVal
+        sy.value = newVal
+    }
+})
 
 const cardStyles = computed(() => {
     if (props.disabled || prefersReducedMotion.value) {

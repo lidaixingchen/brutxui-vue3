@@ -11,7 +11,6 @@ export const hardcoreInputVariants = cva(
         'font-bold',
         'transition-all duration-150',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'placeholder:text-brutal-placeholder placeholder:font-normal',
     ],
     {

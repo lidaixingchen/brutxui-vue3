@@ -33,10 +33,10 @@ const classes = computed(() =>
 <template>
     <Toggle
         :default-value="defaultValue"
-        :pressed="pressed"
+        :model-value="pressed"
         :disabled="disabled"
         :class="classes"
-        @update:pressed="emit('update:pressed', $event)"
+        @update:model-value="emit('update:pressed', $event)"
     >
         <slot />
     </Toggle>

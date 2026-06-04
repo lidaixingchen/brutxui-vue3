@@ -38,10 +38,10 @@ const thumbClasses = computed(() =>
 <template>
     <SwitchRoot
         :class="classes"
-        :checked="modelValue"
-        :default-checked="defaultValue"
+        :model-value="modelValue"
+        :default-value="defaultValue"
         :disabled="disabled"
-        @update:checked="emit('update:modelValue', $event)"
+        @update:model-value="emit('update:modelValue', $event)"
     >
         <SwitchThumb :class="thumbClasses" />
     </SwitchRoot>

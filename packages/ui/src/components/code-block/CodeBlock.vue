@@ -14,8 +14,8 @@ interface CodeBlockProps {
 }
 
 const props = withDefaults(defineProps<CodeBlockProps>(), {
-    language: 'plaintext',
-    filename: '',
+    language: undefined,
+    filename: undefined,
     showLineNumbers: false,
     class: undefined,
 })
@@ -25,6 +25,9 @@ const lines = computed(() => {
 })
 
 const { t } = useLocale()
+
+const resolvedLanguage = computed(() => props.language ?? t('codeBlock.defaultLanguage'))
+const resolvedFilename = computed(() => props.filename ?? t('codeBlock.defaultFilename'))
 
 const rootClasses = computed(() =>
     cn(codeBlockRootVariants(), props.class)
@@ -36,10 +39,10 @@ const rootClasses = computed(() =>
         <div :class="codeBlockHeaderVariants()">
             <div class="flex items-center gap-2">
                 <span :class="codeBlockLanguageVariants()">
-                    {{ language }}
+                    {{ resolvedLanguage }}
                 </span>
-                <span v-if="filename" class="text-brutal-fg/80 font-black">
-                    {{ filename }}
+                <span v-if="resolvedFilename" class="text-brutal-fg/80 font-black">
+                    {{ resolvedFilename }}
                 </span>
             </div>
             <CopyToClipboard

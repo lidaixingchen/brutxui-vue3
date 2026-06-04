@@ -30,7 +30,7 @@ const emits = defineEmits<NumberFieldRootEmits>()
 
 const { t } = useLocale()
 
-const resolvedPlaceholder = computed(() => props.placeholder ?? t('input.placeholder'))
+const resolvedPlaceholder = computed(() => props.placeholder ?? t('numberInput.placeholder'))
 
 const delegatedProps = computed(() => {
     const { class: _, layout: __, placeholder: ___, ...delegated } = props

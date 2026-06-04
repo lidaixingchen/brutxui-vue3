@@ -7,7 +7,7 @@ export const kbdVariants = cva(
         'border-3 border-brutal rounded-brutal',
         'bg-brutal-muted shadow-brutal-sm',
         'select-none whitespace-nowrap',
-    ].join(' '),
+    ],
     {
         variants: {
             size: {

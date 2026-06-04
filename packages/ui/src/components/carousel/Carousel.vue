@@ -126,18 +126,22 @@ const nextButtonClass = computed(() =>
     cn(carouselButtonVariants({ direction: 'next' }))
 );
 
-const dotActiveClasses = cn(
-    'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
-    'bg-brutal-primary shadow-brutal',
-    'hover:shadow-brutal-lg hover:-translate-y-0.5',
-    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
+const dotActiveClasses = computed(() =>
+    cn(
+        'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
+        'bg-brutal-primary shadow-brutal',
+        'hover:shadow-brutal-lg hover:-translate-y-0.5',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
+    )
 )
 
-const dotInactiveClasses = cn(
-    'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
-    'bg-brutal-bg hover:bg-brutal-muted',
-    'hover:shadow-brutal hover:-translate-y-0.5',
-    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
+const dotInactiveClasses = computed(() =>
+    cn(
+        'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
+        'bg-brutal-bg hover:bg-brutal-muted',
+        'hover:shadow-brutal hover:-translate-y-0.5',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
+    )
 );
 </script>
 

@@ -1,8 +1,8 @@
-import type { InjectionKey, Ref } from 'vue'
+import type { InjectionKey, Ref, ComputedRef } from 'vue'
 import type { FormContext as VeeFormContext } from 'vee-validate'
 
 export interface FormFieldContext {
-    name: string
+    name: ComputedRef<string>
     error: Ref<string | undefined>
     value: Ref<unknown>
     setValue: (value: unknown) => void

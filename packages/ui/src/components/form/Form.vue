@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { provide } from 'vue'
+import { provide, computed } from 'vue'
 import { useForm, type FormContext as VeeFormContext } from 'vee-validate'
+import { cn } from '../../lib/utils'
 import { formContextKey } from './form-context'
 
 interface FormProps {
@@ -24,11 +25,13 @@ const onSubmit = form.handleSubmit((values) => {
     emit('submit', values)
 })
 
+const rootClasses = computed(() => cn('', props.class))
+
 provide(formContextKey, form as unknown as VeeFormContext)
 </script>
 
 <template>
-    <form :class="props.class" @submit="onSubmit">
+    <form :class="rootClasses" @submit="onSubmit">
         <slot />
     </form>
 </template>

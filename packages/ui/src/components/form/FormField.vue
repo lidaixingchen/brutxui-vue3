@@ -13,7 +13,7 @@ const fieldName = computed(() => props.name)
 const { errorMessage, value, setValue } = useField(fieldName)
 
 provide(formFieldKey, {
-    name: props.name,
+    name: fieldName,
     error: errorMessage,
     value,
     setValue,
