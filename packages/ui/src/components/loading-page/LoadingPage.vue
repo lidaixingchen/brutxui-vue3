@@ -42,7 +42,7 @@ const rootClasses = computed(() =>
                 <Skeleton variant="secondary" class="absolute -bottom-3 -right-3 h-6 w-32" />
 
                 <div class="flex justify-center mb-6">
-                    <Spinner size="lg" />
+                    <Spinner size="lg" variant="primary" />
                 </div>
 
                 <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-brutal-fg">

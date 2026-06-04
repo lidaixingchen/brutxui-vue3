@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { RadioGroupItem as RadioGroupItemPrimitive, RadioGroupIndicator as RadioGroupIndicatorPrimitive } from 'reka-ui'
-import { Circle } from '@lucide/vue'
+import { Square } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { radioGroupItemVariants } from './radio-group-variants'
 
@@ -30,7 +30,7 @@ const classes = computed(() =>
 <template>
     <RadioGroupItemPrimitive :value="value" :disabled="disabled" :class="classes">
         <RadioGroupIndicatorPrimitive class="flex items-center justify-center">
-            <Circle class="h-2.5 w-2.5 fill-current stroke-none" />
+            <Square class="h-2.5 w-2.5 fill-current stroke-none" />
         </RadioGroupIndicatorPrimitive>
     </RadioGroupItemPrimitive>
 </template>

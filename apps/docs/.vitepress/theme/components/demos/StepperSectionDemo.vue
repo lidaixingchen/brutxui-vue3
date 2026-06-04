@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { StepperSection } from 'brutx-ui-vue'
 import type { StepperStepItem } from 'brutx-ui-vue'
 
@@ -8,8 +9,18 @@ const steps: StepperStepItem[] = [
     { title: '确认订单', description: '核对订单详情并确认' },
     { title: '完成', description: '订阅已激活，开始使用' },
 ]
+
+const currentStep = ref(1)
+
+function handleStepClick(index: number) {
+    currentStep.value = index
+}
 </script>
 
 <template>
-    <StepperSection :steps="steps" :current-step="1" />
+    <StepperSection
+        :steps="steps"
+        :current-step="currentStep"
+        @step-click="handleStepClick"
+    />
 </template>

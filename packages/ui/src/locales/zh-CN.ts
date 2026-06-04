@@ -70,7 +70,7 @@ export const zhCN: Locale = {
         defaultEmail: 'user@example.com',
     },
     brutalistHero: {
-        title: '用 BrutxUI 更快地构建大胆界面',
+        title: '用 BrutxUI 更快构建大胆界面',
         primaryCtaText: '立即开始',
         secondaryCtaText: '查看组件注册表',
         neoBrutalismUI: '新粗野主义 UI',

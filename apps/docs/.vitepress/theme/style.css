@@ -583,6 +583,7 @@ body {
 
 .vp-doc div[class*='language-'] {
     border: 2px solid var(--brutal-border-color) !important;
+    border-radius: 0 !important;
     box-shadow: 2px 2px 0 0 var(--brutal-border-color) !important;
     position: relative;
 }

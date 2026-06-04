@@ -10,7 +10,6 @@ import CardTitle from '../card/CardTitle.vue'
 import Pagination from '../pagination/Pagination.vue'
 import Badge from '../badge/Badge.vue'
 import Input from '../input/Input.vue'
-import Button from '../button/Button.vue'
 
 export interface BlogPost {
     title: string
@@ -121,13 +120,14 @@ const rootClasses = computed(() =>
                         />
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <Button
-                            :variant="activeCategory === '' ? 'primary' : 'outline'"
+                        <Badge
+                            :variant="activeCategory === '' ? 'primary' : 'default'"
                             size="sm"
+                            class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleCategoryFilter('')"
                         >
                             {{ resolvedAllCategories }}
-                        </Button>
+                        </Badge>
                         <Badge
                             v-for="category in categories"
                             :key="category"

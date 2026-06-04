@@ -70,8 +70,9 @@ const rootClasses = computed(() =>
                         <h3 class="font-black text-sm tracking-wide text-brutal-fg mb-3">
                             {{ group.title }}
                         </h3>
-                        <ul class="space-y-2">
-                            <li v-for="(link, linkIndex) in group.links" :key="linkIndex">
+                        <ul class="space-y-2 list-none">
+                            <li v-for="(link, linkIndex) in group.links" :key="linkIndex" class="flex items-center gap-2">
+                                <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0"></span>
                                 <Button
                                     variant="ghost"
                                     size="sm"

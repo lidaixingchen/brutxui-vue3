@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 
 export const spinnerVariants = cva(
-    ['inline-block rounded-full', 'border-3 border-brutal', 'animate-spin'],
+    ['inline-block rounded-full', 'border-3', 'animate-spin'],
     {
         variants: {
             size: {
@@ -11,7 +11,7 @@ export const spinnerVariants = cva(
                 xl: 'h-16 w-16',
             },
             variant: {
-                default: 'border-t-transparent border-r-transparent',
+                default: 'border-brutal border-t-transparent border-r-transparent',
                 primary: 'border-brutal-primary border-t-transparent border-r-transparent',
                 secondary: 'border-brutal-secondary border-t-transparent border-r-transparent',
                 accent: 'border-brutal-accent border-t-brutal-fg border-r-brutal-fg',
