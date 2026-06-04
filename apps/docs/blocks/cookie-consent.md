@@ -92,7 +92,7 @@ import CookieConsent from '@/components/ui/cookie-consent/CookieConsent.vue'
 
 CookieConsent 包含：
 - **固定定位**：`fixed bottom-0 left-0 right-0 z-50`，始终显示在页面底部
-- **Cookie 图标**：lucide-vue-next 的 Cookie 图标
+- **Cookie 图标**：@lucide/vue 的 Cookie 图标
 - **标题和描述**：左侧文本区域
 - **操作按钮**：拒绝（outline 变体）和接受（primary 变体），响应式排列
 - **扩展插槽**：`actions` slot 用于添加自定义操作按钮

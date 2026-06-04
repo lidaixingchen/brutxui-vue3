@@ -5,7 +5,7 @@
   "title": "Footer Section",
   "description": "A highly customizable neo-brutalist Footer Section component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [
     "button",

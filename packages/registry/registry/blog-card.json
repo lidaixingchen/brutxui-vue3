@@ -5,7 +5,7 @@
   "title": "Blog Card",
   "description": "A highly customizable neo-brutalist Blog Card component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [
     "card",

@@ -21,7 +21,7 @@ npx brutx-vue@latest init
 init 命令将：
 
 1. 检测你的项目框架（Vite、Nuxt 等）
-2. 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`lucide-vue-next`）
+2. 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）
 3. 在 `src/lib/utils.ts` 创建 `cn()` 工具函数
 4. 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
 5. 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 CSS 中

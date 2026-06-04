@@ -63,7 +63,7 @@ Alert 支持通过 SVG 子元素放置图标。图标绝对定位于左侧：
 ```vue
 <script setup>
 import { Alert, AlertTitle, AlertDescription } from 'brutx-ui-vue'
-import { Terminal } from 'lucide-vue-next'
+import { Terminal } from '@lucide/vue'
 </script>
 
 <template>

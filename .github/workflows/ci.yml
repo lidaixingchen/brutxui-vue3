@@ -21,10 +21,16 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
+            - run: pnpm -r typecheck
+
+            - run: pnpm -r lint
+
             - run: pnpm --filter brutx-ui-vue build
 
-            - run: pnpm --filter brutx-ui-vue typecheck
+            - run: pnpm --filter brutx-vue build
 
-            - run: pnpm --filter brutx-ui-vue lint
+            - run: pnpm --filter brutx-registry-vue validate
 
             - run: pnpm --filter brutx-ui-vue test
+
+            - run: pnpm --filter brutx-vue test

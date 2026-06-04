@@ -24,7 +24,7 @@ npx brutx-vue@latest add --block quick-actions
 ```vue
 <script setup>
 import QuickActions from '@/components/ui/quick-actions/QuickActions.vue'
-import { Plus, Upload, Search, Settings } from 'lucide-vue-next'
+import { Plus, Upload, Search, Settings } from '@lucide/vue'
 
 const actions = [
     { label: 'New Post', icon: Plus, variant: 'primary' },

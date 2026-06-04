@@ -97,7 +97,7 @@ const rootClasses = computed(() =>
                     </TabsList>
 
                     <TabsContent
-                        v-for="tab in tabs"
+                        v-for="tab in props.tabs"
                         :key="tab.value"
                         :value="tab.value"
                     >

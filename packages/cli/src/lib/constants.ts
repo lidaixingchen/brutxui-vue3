@@ -37,7 +37,7 @@ export const BASE_DEPENDENCIES = [
     'clsx',
     'tailwind-merge',
     'class-variance-authority',
-    'lucide-vue-next',
+    '@lucide/vue',
     'reka-ui',
 ] as const;
 

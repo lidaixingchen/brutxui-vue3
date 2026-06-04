@@ -104,6 +104,6 @@ import UploadCard from '@/components/ui/upload-card/UploadCard.vue'
 
 UploadCard 包含：
 - **拖拽区域**：虚线边框的拖放目标区域，支持点击浏览文件
-- **上传图标**：Upload 图标（来自 lucide-vue-next）
+- **上传图标**：Upload 图标（来自 @lucide/vue）
 - **浏览按钮**：primary 变体按钮，触发文件选择器
 - **上传中状态**：旋转指示器 + 进度条，拖拽区域变为不可交互

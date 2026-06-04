@@ -95,7 +95,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - `@/` → `src/`
 - 内部：相对路径（`../lib/utils`）
 - 无头原语：`import { Primitive } from 'reka-ui'`
-- 图标：`import { Loader2 } from 'lucide-vue-next'`
+- 图标：`import { Loader2 } from '@lucide/vue'`
 - 国际化：`import { useLocale } from '@/composables/useLocale'`
 
 ## 代码风格

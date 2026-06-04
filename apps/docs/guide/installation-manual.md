@@ -13,7 +13,7 @@
 安装所需的包：
 
 ```bash
-pnpm add reka-ui class-variance-authority clsx tailwind-merge lucide-vue-next
+pnpm add reka-ui class-variance-authority clsx tailwind-merge @lucide/vue
 ```
 
 | 包名                       | 用途                       |
@@ -22,7 +22,7 @@ pnpm add reka-ui class-variance-authority clsx tailwind-merge lucide-vue-next
 | `class-variance-authority` | CVA 变体系统               |
 | `clsx`                     | 条件类名                   |
 | `tailwind-merge`           | 合并 Tailwind 类名避免冲突 |
-| `lucide-vue-next`          | 图标库                     |
+| `@lucide/vue`          | 图标库                     |
 
 可选依赖：
 

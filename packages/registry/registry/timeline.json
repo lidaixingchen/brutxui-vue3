@@ -6,7 +6,7 @@
   "description": "A highly customizable neo-brutalist Timeline component built with Brutx design tokens for Vue 3.",
   "dependencies": [
     "reka-ui",
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [],
   "files": [

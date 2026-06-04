@@ -5,7 +5,7 @@
   "title": "Kanban",
   "description": "A highly customizable neo-brutalist Kanban component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [],
   "files": [

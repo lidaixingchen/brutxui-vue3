@@ -1,6 +1,6 @@
 {
     "name": "brutx-vue",
-    "version": "0.3.4",
+    "version": "0.4.0",
     "description": "CLI for adding Neo-Brutalist Vue 3 UI components to your project",
     "bin": {
         "brutx-vue": "dist/index.js"
@@ -12,8 +12,10 @@
     ],
     "scripts": {
         "build": "tsup",
+        "prepack": "tsup",
         "dev": "tsup --watch",
         "start": "node dist/index.js",
+        "typecheck": "tsc --noEmit",
         "test": "vitest run"
     },
     "dependencies": {
@@ -26,11 +28,10 @@
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^25.9.1",
-        "@vitejs/plugin-vue": "^6.0.7",
-        "@vitest/coverage-v8": "4",
+        "@vitest/coverage-v8": "^4.1.8",
+        "brutx-shared-vue": "workspace:*",
         "tsup": "^8.0.1",
         "typescript": "^6.0.3",
-        "vite": "^8.0.16",
         "vitest": "^4.1.8"
     },
     "keywords": [
@@ -47,6 +48,9 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/lidaixingchen/brutxui-vue3"
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "homepage": "https://lidaixingchen.github.io/brutxui-vue3/"
 }

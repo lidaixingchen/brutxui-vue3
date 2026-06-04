@@ -39,7 +39,7 @@ Initialize BrutxUI in your project. This command will:
 5. Generate `components.json` config file
 6. Create the `cn()` utility function (`clsx` + `tailwind-merge`)
 7. Inject Neo-Brutalist CSS design tokens and utility classes into your global CSS
-8. Install base dependencies (`clsx`, `tailwind-merge`, `class-variance-authority`, `lucide-vue-next`, `reka-ui`)
+8. Install base dependencies (`clsx`, `tailwind-merge`, `class-variance-authority`, `@lucide/vue`, `reka-ui`)
 
 ```bash
 brutx-vue init [options]

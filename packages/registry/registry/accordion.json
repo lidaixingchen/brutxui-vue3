@@ -6,7 +6,7 @@
   "description": "A highly customizable neo-brutalist Accordion component built with Brutx design tokens for Vue 3.",
   "dependencies": [
     "reka-ui",
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [],
   "files": [
@@ -22,7 +22,7 @@
     },
     {
       "path": "components/ui/accordion/AccordionTrigger.vue",
-      "content": "<script setup lang=\"ts\">\nimport { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'\nimport { computed, inject } from 'vue'\nimport { ChevronDown } from 'lucide-vue-next'\nimport { cn } from '@/lib/utils'\nimport { accordionTriggerVariants } from '@/components/ui/accordion/accordion-variants'\nimport { accordionItemKey } from './accordion-key'\n\nconst props = defineProps<AccordionTriggerProps & { class?: string }>()\n\nconst context = inject(accordionItemKey, { variant: computed(() => undefined) })\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst forwarded = useForwardProps(delegatedProps)\n\nconst classes = computed(() =>\n    cn(\n        accordionTriggerVariants({ variant: context.variant.value }),\n        '[&[data-state=open]>svg]:rotate-180',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <AccordionHeader class=\"flex\">\n        <AccordionTrigger v-bind=\"forwarded\" :class=\"classes\">\n            <slot />\n            <slot name=\"icon\">\n                <ChevronDown\n                    class=\"h-5 w-5 shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm\"\n                />\n            </slot>\n        </AccordionTrigger>\n    </AccordionHeader>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'\nimport { computed, inject } from 'vue'\nimport { ChevronDown } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { accordionTriggerVariants } from '@/components/ui/accordion/accordion-variants'\nimport { accordionItemKey } from './accordion-key'\n\nconst props = defineProps<AccordionTriggerProps & { class?: string }>()\n\nconst context = inject(accordionItemKey, { variant: computed(() => undefined) })\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst forwarded = useForwardProps(delegatedProps)\n\nconst classes = computed(() =>\n    cn(\n        accordionTriggerVariants({ variant: context.variant.value }),\n        '[&[data-state=open]>svg]:rotate-180',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <AccordionHeader class=\"flex\">\n        <AccordionTrigger v-bind=\"forwarded\" :class=\"classes\">\n            <slot />\n            <slot name=\"icon\">\n                <ChevronDown\n                    class=\"h-5 w-5 shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm\"\n                />\n            </slot>\n        </AccordionTrigger>\n    </AccordionHeader>\n</template>\n",
       "type": "registry:ui"
     },
     {

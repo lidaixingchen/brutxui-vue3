@@ -1,19 +1,19 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
+        "target": "ES2022",
         "module": "ESNext",
         "moduleResolution": "bundler",
         "strict": true,
         "jsx": "preserve",
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "lib": ["ES2022", "DOM", "DOM.Iterable"],
         "skipLibCheck": true,
         "noEmit": true,
         "paths": {
             "@/*": ["./.vitepress/*"]
         }
     },
-    "include": [".vitepress/**/*.ts", ".vitepress/**/*.vue"],
+    "include": ["env.d.ts", ".vitepress/**/*.ts", ".vitepress/**/*.vue"],
     "exclude": ["node_modules"]
 }

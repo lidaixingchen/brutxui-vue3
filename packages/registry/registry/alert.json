@@ -5,7 +5,7 @@
   "title": "Alert",
   "description": "A highly customizable neo-brutalist Alert component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [],
   "files": [

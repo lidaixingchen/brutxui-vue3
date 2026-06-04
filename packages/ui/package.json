@@ -1,39 +1,41 @@
 {
     "name": "brutx-ui-vue",
-    "version": "0.5.7",
+    "version": "0.6.0",
     "description": "A Neo-Brutalism styled Vue 3 UI component library",
+    "type": "module",
     "main": "./dist/index.cjs",
-    "module": "./dist/index.mjs",
+    "module": "./dist/index.js",
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/index.mjs",
+            "import": "./dist/index.js",
             "require": "./dist/index.cjs"
         },
         "./calendar": {
             "types": "./dist/calendar.d.ts",
-            "import": "./dist/calendar.mjs",
+            "import": "./dist/calendar.js",
             "require": "./dist/calendar.cjs"
         },
         "./submit-button": {
             "types": "./dist/submit-button.d.ts",
-            "import": "./dist/submit-button.mjs",
+            "import": "./dist/submit-button.js",
             "require": "./dist/submit-button.cjs"
         },
         "./hooks": {
             "types": "./dist/hooks.d.ts",
-            "import": "./dist/hooks.mjs",
+            "import": "./dist/hooks.js",
             "require": "./dist/hooks.cjs"
         },
         "./brutalism-plugin": {
-            "import": "./dist/brutalism-plugin.mjs",
+            "types": "./dist/brutalism-plugin.d.ts",
+            "import": "./dist/brutalism-plugin.js",
             "require": "./dist/brutalism-plugin.cjs"
         },
         "./locales": {
-            "types": "./dist/locales/index.d.ts",
-            "import": "./dist/locales/index.mjs",
-            "require": "./dist/locales/index.cjs"
+            "types": "./dist/locales.d.ts",
+            "import": "./dist/locales.js",
+            "require": "./dist/locales.cjs"
         },
         "./styles.css": "./dist/styles.css"
     },
@@ -46,6 +48,7 @@
     ],
     "scripts": {
         "build": "vite build",
+        "prepack": "vite build",
         "dev": "vite build --watch",
         "clean": "rimraf dist",
         "typecheck": "vue-tsc --noEmit",
@@ -56,7 +59,7 @@
     },
     "peerDependencies": {
         "@lucide/vue": ">=1.0.0",
-        "tailwindcss": ">=3.0.0",
+        "tailwindcss": ">=4.0.0",
         "vee-validate": ">=4.0.0",
         "vue": ">=3.5.0",
         "zod": ">=3.0.0"
@@ -85,7 +88,6 @@
         "@vitejs/plugin-vue": "^6.0.7",
         "@vitest/coverage-v8": "^4.1.8",
         "@vue/test-utils": "^2.4.0",
-        "autoprefixer": "^10.5.0",
         "eslint": "^10.4.1",
         "eslint-plugin-vue": "^10.9.2",
         "globals": "^17.6.0",
@@ -126,6 +128,9 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/lidaixingchen/brutxui-vue3"
+    },
+    "publishConfig": {
+        "access": "public"
     },
     "bugs": {
         "url": "https://github.com/lidaixingchen/brutxui-vue3/issues"

@@ -39,7 +39,7 @@ npx brutx-vue@latest init
 5. 生成 `components.json` 配置文件
 6. 创建 `cn()` 工具函数（`clsx` + `tailwind-merge`）
 7. 将 Neo-Brutalist CSS 设计令牌和工具类注入全局 CSS
-8. 安装基础依赖（`clsx`、`tailwind-merge`、`class-variance-authority`、`lucide-vue-next`、`reka-ui`）
+8. 安装基础依赖（`clsx`、`tailwind-merge`、`class-variance-authority`、`@lucide/vue`、`reka-ui`）
 
 ```bash
 brutx-vue init [options]

@@ -6,8 +6,6 @@
   "description": "A highly customizable neo-brutalist Form component built with Brutx design tokens for Vue 3.",
   "dependencies": [
     "vee-validate",
-    "@vee-validate/zod",
-    "zod",
     "reka-ui"
   ],
   "registryDependencies": [

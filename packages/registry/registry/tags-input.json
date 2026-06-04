@@ -6,7 +6,7 @@
   "description": "A highly customizable neo-brutalist Tags Input component built with Brutx design tokens for Vue 3.",
   "dependencies": [
     "reka-ui",
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [],
   "files": [
@@ -32,7 +32,7 @@
     },
     {
       "path": "components/ui/tags-input/TagsInputItemDelete.vue",
-      "content": "<script setup lang=\"ts\">\nimport { TagsInputItemDelete, type TagsInputItemDeleteProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { X } from 'lucide-vue-next'\nimport { cn } from '@/lib/utils'\n\nconst props = defineProps<TagsInputItemDeleteProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(\n        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <TagsInputItemDelete v-bind=\"delegatedProps\" :class=\"classes\">\n        <slot>\n            <X class=\"h-3.5 w-3.5 stroke-[3]\" />\n        </slot>\n    </TagsInputItemDelete>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { TagsInputItemDelete, type TagsInputItemDeleteProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { X } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\n\nconst props = defineProps<TagsInputItemDeleteProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(\n        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <TagsInputItemDelete v-bind=\"delegatedProps\" :class=\"classes\">\n        <slot>\n            <X class=\"h-3.5 w-3.5 stroke-[3]\" />\n        </slot>\n    </TagsInputItemDelete>\n</template>\n",
       "type": "registry:ui"
     },
     {

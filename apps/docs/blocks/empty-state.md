@@ -24,7 +24,7 @@ npx brutx-vue@latest add --block empty-state
 ```vue
 <script setup>
 import EmptyState from '@/components/ui/empty-state/EmptyState.vue'
-import { Server } from 'lucide-vue-next'
+import { Server } from '@lucide/vue'
 
 function handleAction() {
     console.log('Action clicked')
@@ -47,7 +47,7 @@ function handleAction() {
 ```vue
 <script setup>
 import EmptyState from '@/components/ui/empty-state/EmptyState.vue'
-import { Inbox } from 'lucide-vue-next'
+import { Inbox } from '@lucide/vue'
 </script>
 
 <template>
@@ -67,7 +67,7 @@ import { Inbox } from 'lucide-vue-next'
 | `title` | `string` | locale: `emptyState.defaultTitle` |
 | `description` | `string` | — |
 | `actionText` | `string` | locale: `emptyState.defaultActionText` |
-| `icon` | `Component` | `FolderOpen`（来自 lucide-vue-next） |
+| `icon` | `Component` | `FolderOpen`（来自 @lucide/vue） |
 | `class` | `string` | — |
 
 ## 事件

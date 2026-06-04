@@ -6,7 +6,7 @@
   "description": "A highly customizable neo-brutalist Breadcrumb component built with Brutx design tokens for Vue 3.",
   "dependencies": [
     "reka-ui",
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [],
   "files": [
@@ -42,7 +42,7 @@
     },
     {
       "path": "components/ui/breadcrumb/BreadcrumbEllipsis.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { MoreHorizontal } from 'lucide-vue-next'\nimport { cn } from '@/lib/utils'\nimport { breadcrumbEllipsisVariants } from './breadcrumb-variants'\nimport { useLocale } from '@/composables/useLocale'\n\ninterface BreadcrumbEllipsisProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {\n    class: undefined,\n})\n\nconst { t } = useLocale()\n\nconst classes = computed(() =>\n    cn(breadcrumbEllipsisVariants(), props.class)\n)\n</script>\n\n<template>\n    <span\n        role=\"presentation\"\n        aria-hidden=\"true\"\n        :class=\"classes\"\n    >\n        <slot>\n            <MoreHorizontal class=\"h-4 w-4\" />\n        </slot>\n        <span class=\"sr-only\">{{ t('breadcrumb.more') }}</span>\n    </span>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { MoreHorizontal } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { breadcrumbEllipsisVariants } from './breadcrumb-variants'\nimport { useLocale } from '@/composables/useLocale'\n\ninterface BreadcrumbEllipsisProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {\n    class: undefined,\n})\n\nconst { t } = useLocale()\n\nconst classes = computed(() =>\n    cn(breadcrumbEllipsisVariants(), props.class)\n)\n</script>\n\n<template>\n    <span\n        role=\"presentation\"\n        aria-hidden=\"true\"\n        :class=\"classes\"\n    >\n        <slot>\n            <MoreHorizontal class=\"h-4 w-4\" />\n        </slot>\n        <span class=\"sr-only\">{{ t('breadcrumb.more') }}</span>\n    </span>\n</template>\n",
       "type": "registry:ui"
     }
   ],

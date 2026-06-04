@@ -5,7 +5,7 @@
   "title": "Profile Page",
   "description": "A highly customizable neo-brutalist Profile Page component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [
     "avatar",

@@ -15,7 +15,7 @@ function validate() {
         process.exit(1);
     }
 
-    const files = fs.readdirSync(REGISTRY_DIR).filter(file => file.endsWith('.json') && file !== 'index.json');
+    const files = fs.readdirSync(REGISTRY_DIR).filter((file: string) => file.endsWith('.json') && file !== 'index.json');
     console.log(`📋 Found ${files.length} registry items to validate.`);
 
     let errorCount = 0;

@@ -24,7 +24,7 @@ npx brutx-vue@latest add --block dashboard-stats
 ```vue
 <script setup>
 import DashboardStats from '@/components/ui/dashboard-stats/DashboardStats.vue'
-import { Users, DollarSign, FolderOpen, TrendingUp } from 'lucide-vue-next'
+import { Users, DollarSign, FolderOpen, TrendingUp } from '@lucide/vue'
 
 const stats = [
     {

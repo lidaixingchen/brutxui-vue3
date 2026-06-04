@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress'
-import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
     title: 'BrutxUI',
@@ -206,8 +205,6 @@ export default defineConfig({
                 '@': new URL('./.vitepress', import.meta.url).pathname,
             },
         },
-        plugins: [
-            tailwindcss(),
-        ],
+        plugins: [],
     },
 })

@@ -5,7 +5,7 @@
   "title": "Faq Section",
   "description": "A highly customizable neo-brutalist Faq Section component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [
     "accordion",

@@ -5,7 +5,7 @@
   "title": "Activity Log Page",
   "description": "A highly customizable neo-brutalist Activity Log Page component built with Brutx design tokens for Vue 3.",
   "dependencies": [
-    "lucide-vue-next"
+    "@lucide/vue"
   ],
   "registryDependencies": [
     "table",
