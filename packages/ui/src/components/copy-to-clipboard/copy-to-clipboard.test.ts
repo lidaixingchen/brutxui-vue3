@@ -1,4 +1,3 @@
-import { ref } from 'vue'
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
 import { en } from '@/locales/en'
@@ -7,15 +6,17 @@ import CopyToClipboard from './CopyToClipboard.vue'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
-const mockCopy = vi.fn()
-const _mockCopied = ref(false)
-const _mockIsSupported = ref(true)
+const { mockCopy, _mockCopied, _mockIsSupported } = vi.hoisted(() => ({
+    mockCopy: vi.fn(),
+    _mockCopied: { value: false },
+    _mockIsSupported: { value: true },
+}))
 
 vi.mock('../../composables/useClipboard', () => ({
     useClipboard: () => ({
         copy: mockCopy,
-        copied: _mockCopied,
-        isSupported: _mockIsSupported,
+        get copied() { return _mockCopied.value },
+        get isSupported() { return _mockIsSupported.value },
     }),
 }))
 
