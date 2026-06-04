@@ -23,7 +23,8 @@ describe('Switch', () => {
         })
         const el = wrapper.find('[role="switch"]')
         await el.trigger('click')
-        expect(el.attributes('data-state')).toBe('checked')
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([true])
     })
 
     it('is disabled when disabled=true', () => {

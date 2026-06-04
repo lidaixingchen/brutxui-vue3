@@ -248,9 +248,9 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | CopyToClipboard | `copyToClipboard.copy`、`copyToClipboard.copied` | — |
 | BeforeAfter | `beforeAfter.before`、`beforeAfter.after` | — |
 | AuthCard | `authCard.welcomeBack`、`authCard.signInToContinue`、`authCard.google`、`authCard.github`、`authCard.orEmailLogin`、`authCard.email`、`authCard.password`、`authCard.forgotPassword`、`authCard.signIn`、`authCard.noAccount`、`authCard.register`、`authCard.emailPlaceholder`、`authCard.passwordPlaceholder` | — |
-| WaitlistPage | `waitlistPage.title`、`waitlistPage.ctaText`、`waitlistPage.earlyAccess`、`waitlistPage.onWaitlist`、`waitlistPage.live` | `onWaitlist`: `{count}` |
+| WaitlistPage | `waitlistPage.title`、`waitlistPage.ctaText`、`waitlistPage.earlyAccess`、`waitlistPage.onWaitlist`、`waitlistPage.live`、`waitlistPage.defaultDescription` | `onWaitlist`: `{count}` |
 | DashboardShell | `dashboardShell.sidebarNavigation`、`dashboardShell.signOut`、`dashboardShell.defaultEmail` | — |
-| BrutalistHero | `brutalistHero.title`、`brutalistHero.primaryCtaText`、`brutalistHero.secondaryCtaText`、`brutalistHero.neoBrutalismUI` | — |
+| BrutalistHero | `brutalistHero.title`、`brutalistHero.primaryCtaText`、`brutalistHero.secondaryCtaText`、`brutalistHero.neoBrutalismUI`、`brutalistHero.defaultSubtitle` | — |
 | SaaSPricing | `saasPricing.title`、`saasPricing.monthly`、`saasPricing.annually`、`saasPricing.mostPopular`、`saasPricing.perMonth`、`saasPricing.perMonthBilledAnnually`、`saasPricing.billingPeriod` | — |
 | Toast | `toast.close`、`toast.container` | — |
 | Dialog | `dialog.close` | — |
@@ -258,7 +258,7 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | Breadcrumb | `breadcrumb.label`、`breadcrumb.more` | — |
 | TreeView | `treeView.fileTree` | — |
 | Stepper | `stepper.progressSteps`、`stepper.step` | `step`: `{index}`、`{title}` |
-| EmptyState | `emptyState.defaultTitle`、`emptyState.defaultActionText` | — |
+| EmptyState | `emptyState.defaultTitle`、`emptyState.defaultActionText`、`emptyState.defaultDescription` | — |
 | TestimonialCard | `testimonialCard.defaultQuote`、`testimonialCard.defaultAuthor`、`testimonialCard.defaultRole`、`testimonialCard.verified` | — |
 | BlogCard | `blogCard.defaultTitle`、`blogCard.defaultExcerpt`、`blogCard.readMore` | — |
 | FileCard | `fileCard.defaultFileName`、`fileCard.download` | — |
@@ -285,12 +285,13 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | GallerySection | `gallerySection.defaultTitle`、`gallerySection.noItems` | — |
 | ScratchCard | `scratchCard.ariaLabel` | — |
 | SketchyChart | `sketchyChart.lineAriaLabel`、`sketchyChart.barAriaLabel`、`sketchyChart.pieAriaLabel` | — |
-| Card3d | `card3d.ariaLabel` | — |
+| Card3D | `card3d.ariaLabel` | — |
 | HardcoreInput | `hardcoreInput.invalidInput` | — |
-| CodeBlock | `codeBlock.copied`、`codeBlock.copy` | — |
+| CodeBlock | `codeBlock.copied`、`codeBlock.copy`、`codeBlock.defaultLanguage`、`codeBlock.defaultFilename` | — |
 | Calendar | `calendar.previousMonth`、`calendar.nextMonth` | — |
 | Kanban | `kanban.dropCardsHere` | — |
 | PricingSection | `pricingSection.defaultTitle`、`pricingSection.mostPopular`、`pricingSection.perLifetime` | — |
 | DashboardStats | `dashboardStats.defaultTitle` | — |
 | Input | `input.placeholder` | — |
+| NumberInput | `numberInput.placeholder` | — |
 | Textarea | `textarea.placeholder` | — |

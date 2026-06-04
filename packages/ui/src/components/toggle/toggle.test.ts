@@ -41,7 +41,8 @@ describe('Toggle', () => {
             attachTo: document.body,
         })
         await wrapper.trigger('click')
-        expect(wrapper.attributes('data-state')).toBe('on')
+        expect(wrapper.emitted('update:pressed')).toBeTruthy()
+        expect(wrapper.emitted('update:pressed')![0]).toEqual([true])
     })
 
     it('is disabled when disabled=true', () => {

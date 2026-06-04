@@ -509,8 +509,9 @@ describe('Command filtering', () => {
         await nextTick()
         await nextTick()
 
-        const filteredItems = wrapper.findAll('[data-slot="command-item"]')
-        expect(filteredItems.length).toBe(2)
+        const visibleItems = wrapper.findAll('[data-slot="command-item"]')
+            .filter(el => el.element.style.display !== 'none')
+        expect(visibleItems.length).toBe(2)
     })
 
     it('shows empty state when no items match', async () => {
@@ -574,9 +575,10 @@ describe('Command filtering', () => {
         await nextTick()
         await nextTick()
 
-        const groups = wrapper.findAll('[data-slot="command-group"]')
-        expect(groups.length).toBe(1)
-        const heading = wrapper.find('[data-slot="command-group-heading"]')
+        const visibleGroups = wrapper.findAll('[data-slot="command-group"]')
+            .filter(el => el.element.style.display !== 'none')
+        expect(visibleGroups.length).toBe(1)
+        const heading = visibleGroups[0].find('[data-slot="command-group-heading"]')
         expect(heading.text()).toBe('Settings')
     })
 })

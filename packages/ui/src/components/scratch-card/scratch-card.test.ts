@@ -15,6 +15,8 @@ function createPointerEvent(type: string, props: PointerEventInit = {}): Pointer
     })
 }
 
+const originalGetContext = HTMLCanvasElement.prototype.getContext
+
 beforeAll(() => {
     HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
         clearRect: vi.fn(),
@@ -32,6 +34,14 @@ beforeAll(() => {
             data: new Uint8ClampedArray(400)
         })
     }) as any
+})
+
+afterAll(() => {
+    HTMLCanvasElement.prototype.getContext = originalGetContext
+})
+
+afterEach(() => {
+    vi.useRealTimers()
 })
 
 describe('ScratchCard', () => {
@@ -89,8 +99,6 @@ describe('ScratchCard', () => {
         await vi.advanceTimersByTimeAsync(500)
 
         expect(wrapper.emitted('completed')).toBeTruthy()
-
-        vi.useRealTimers()
     })
 
     it('cleans up resize observer on unmount', () => {

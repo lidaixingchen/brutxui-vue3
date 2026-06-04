@@ -28,10 +28,11 @@ describe('EmptyState', () => {
         expect(wrapper.text()).toContain('Try creating a new item')
     })
 
-    it('does not render description when not provided', () => {
+    it('renders default description when not provided', () => {
         const wrapper = mount(EmptyState, { ...localeProvide })
         const descEl = wrapper.find('p')
-        expect(descEl.exists()).toBe(false)
+        expect(descEl.exists()).toBe(true)
+        expect(descEl.text()).toBe('Nothing to display at the moment.')
     })
 
     it('shows default action text', () => {

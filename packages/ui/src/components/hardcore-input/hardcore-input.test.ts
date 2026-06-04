@@ -10,6 +10,10 @@ vi.mock('../../composables/useAudioEngine', () => ({
 }))
 
 describe('HardcoreInput', () => {
+    afterEach(() => {
+        vi.doUnmock('../../composables/useAudioEngine')
+    })
+
     it('supports v-model and updates binding value', async () => {
         const wrapper = mount(HardcoreInput, {
             props: { modelValue: 'hello' }
@@ -99,7 +103,5 @@ describe('HardcoreInput', () => {
             (call: any[]) => call[0] === 'type'
         )
         expect(typeCalls.length).toBeLessThanOrEqual(3)
-
-        vi.doUnmock('../../composables/useAudioEngine')
     })
 })

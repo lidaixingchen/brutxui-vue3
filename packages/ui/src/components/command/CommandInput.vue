@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { ListboxFilter } from 'reka-ui'
+import { computed, ref, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { Search } from '@lucide/vue'
@@ -26,6 +25,21 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('command.place
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
+const searchValue = ref(props.modelValue ?? '')
+
+watch(() => props.modelValue, (val) => {
+    searchValue.value = val ?? ''
+})
+
+watch(searchValue, (val) => {
+    rootContext.filterSearch.value = val
+    emit('update:modelValue', val)
+})
+
+function handleInput(event: Event) {
+    searchValue.value = (event.target as HTMLInputElement).value
+}
+
 const wrapperClasses = computed(() =>
     cn(commandInputWrapperVariants())
 )
@@ -39,22 +53,19 @@ const inputClasses = computed(() =>
         props.class
     )
 )
-
-function handleInput(event: InputEvent) {
-    rootContext.filterSearch.value = (event.target as HTMLInputElement).value
-}
 </script>
 
 <template>
     <div :class="wrapperClasses" data-slot="command-input">
         <Search class="size-5 shrink-0 stroke-[3] text-brutal-fg" />
-        <ListboxFilter
-            :model-value="modelValue"
+        <input
+            :value="searchValue"
             :placeholder="resolvedPlaceholder"
             :class="inputClasses"
-            auto-focus
+            type="text"
+            role="searchbox"
+            aria-autocomplete="list"
             @input="handleInput"
-            @update:model-value="emit('update:modelValue', $event)"
         />
     </div>
 </template>

@@ -11,11 +11,28 @@ export default defineConfig({
     },
     test: {
         globals: true,
-        environment: 'jsdom',
+        environment: 'happy-dom',
         setupFiles: ['./vitest.setup.ts'],
         include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        pool: 'threads',
+        isolate: false,
         maxWorkers: 4,
-        minWorkers: 1,
+        deps: {
+            optimizer: {
+                web: {
+                    enabled: true,
+                    include: [
+                        'reka-ui',
+                        '@lucide/vue',
+                        'v-calendar',
+                        'class-variance-authority',
+                        'clsx',
+                        'tailwind-merge',
+                        'embla-carousel-vue',
+                    ],
+                },
+            },
+        },
         coverage: {
             provider: 'v8',
             include: ['src/components/**/*.{ts,vue}', 'src/composables/**/*.ts', 'src/lib/utils.ts'],

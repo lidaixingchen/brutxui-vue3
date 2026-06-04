@@ -87,7 +87,7 @@ function onSubmit(values) {
 
 ```ts
 interface FormFieldContext {
-    name: string
+    name: ComputedRef<string>
     error: Ref<string | undefined>
     value: Ref<unknown>        // 字段当前值
     setValue: (value: unknown) => void  // 设置字段值

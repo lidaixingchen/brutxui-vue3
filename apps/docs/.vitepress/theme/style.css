@@ -404,6 +404,7 @@ body {
    ============================================ */
 
 .VPHero .name {
+    display: block !important;
     font-weight: 900 !important;
     letter-spacing: -0.03em !important;
 }
@@ -841,6 +842,11 @@ body {
     border: 3px solid var(--brutal-border-color) !important;
 }
 
+.VPSwitch .check,
+.VPSwitch .icon {
+    border-radius: 0 !important;
+}
+
 .VPSwitch:hover {
     box-shadow: 2px 2px 0 0 var(--brutal-border-color);
 }
@@ -953,20 +959,133 @@ body {
 /* ==========================================================================
    SPECIFICITY OVERRIDES FOR COMPONENT PREVIEWS
    Force BrutxUI token utilities inside .vp-raw to override un-layered resets
+
+   VitePress base.css applies these unlayered resets (highest cascade priority):
+     button, input, optgroup, select, textarea { border: 0; padding: 0; line-height: inherit; color: inherit; }
+     button { padding: 0; font-family: inherit; background-color: transparent; background-image: none; }
+     a { color: inherit; text-decoration: inherit; }
+     input { background-color: transparent; }
+     textarea { resize: vertical; }
+     table { border-collapse: collapse; }
+
+   These override Tailwind's @layer utilities. revert-layer falls back to the
+   utilities layer where BrutxUI's classes are defined.
    ========================================================================== */
 .vp-raw {
-    /* Counteract VitePress's unlayered button resets that override Tailwind's layered utilities */
     & button {
         border-width: revert-layer;
         border-style: revert-layer;
+        border-color: revert-layer;
         padding: revert-layer;
         background-color: revert-layer;
         background-image: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
     }
 
     & a {
         color: revert-layer;
-        text-decoration: revert-layer;
+        text-decoration-color: revert-layer;
+        text-decoration-line: revert-layer;
+        text-decoration-style: revert-layer;
+        text-decoration-thickness: revert-layer;
+    }
+
+    & input {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+    }
+
+    & textarea {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+        resize: revert-layer;
+    }
+
+    & select {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+        appearance: revert-layer;
+    }
+
+    & table {
+        border-collapse: revert-layer;
+    }
+}
+
+/* Teleported BrutxUI components (Dialog, Popover, DropdownMenu, etc.)
+   reka-ui teleports overlay/content to <body>, outside .vp-raw.
+   These elements still suffer from VitePress unlayered resets. */
+body > [id^="reka-"],
+body > [data-reka-popper-content-wrapper] {
+    & button {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        background-image: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+    }
+
+    & a {
+        color: revert-layer;
+        text-decoration-color: revert-layer;
+        text-decoration-line: revert-layer;
+        text-decoration-style: revert-layer;
+        text-decoration-thickness: revert-layer;
+    }
+
+    & input {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+    }
+
+    & textarea {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+        resize: revert-layer;
+    }
+
+    & select {
+        border-width: revert-layer;
+        border-style: revert-layer;
+        border-color: revert-layer;
+        padding: revert-layer;
+        background-color: revert-layer;
+        color: revert-layer;
+        line-height: revert-layer;
+        appearance: revert-layer;
+    }
+
+    & table {
+        border-collapse: revert-layer;
     }
 }
 

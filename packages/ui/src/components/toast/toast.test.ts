@@ -7,6 +7,10 @@ import ToastContainer from './ToastContainer.vue'
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
 
 describe('Toast', () => {
+    afterEach(() => {
+        vi.useRealTimers()
+    })
+
     it('renders with default variant', () => {
         const wrapper = mount(Toast, { global: globalProvide })
         expect(wrapper.classes()).toContain('border-3')
@@ -97,7 +101,6 @@ describe('Toast', () => {
         await closeButton.trigger('click')
         vi.advanceTimersByTime(300)
         expect(wrapper.emitted('close')).toBeTruthy()
-        vi.useRealTimers()
     })
 
     it('renders size variants', () => {

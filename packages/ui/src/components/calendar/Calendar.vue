@@ -65,6 +65,13 @@ function handleUpdate(value: Date | DateRangeValue | null) {
     }
 }
 
+function handleDrag(value: DateRangeValue) {
+    if (props.disabled) return
+    if (value && typeof value === 'object' && 'start' in value && 'end' in value) {
+        emit('update:modelValue', [value.start, value.end])
+    }
+}
+
 const selectAttribute = computed(() => ({
     highlight: {
         class: 'brutal-selected',
@@ -113,6 +120,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
         :first-day-of-week="1"
         :popover="false"
         @update:model-value="handleUpdate"
+        @drag="handleDrag"
     >
         <template #header-prev-button>
             <ChevronLeft class="w-4 h-4" />

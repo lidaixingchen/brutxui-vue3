@@ -27,10 +27,11 @@ describe('WaitlistPage', () => {
         expect(wrapper.text()).toContain('Be the first to know')
     })
 
-    it('does not render description when not provided', () => {
+    it('renders default description when not provided', () => {
         const wrapper = mount(WaitlistPage, { global: { provide: localeProvide } })
         const descEl = wrapper.find('p.text-brutal-muted-foreground')
-        expect(descEl.exists()).toBe(false)
+        expect(descEl.exists()).toBe(true)
+        expect(descEl.text()).toBe('Join the waitlist to be among the first to try it.')
     })
 
     it('shows default CTA text', () => {
