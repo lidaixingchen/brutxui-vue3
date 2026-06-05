@@ -42,6 +42,7 @@
 ```
 
 继承 reka-ui `NumberFieldRootProps`，额外：
+
 - `layout`: `'split' | 'stacked'` — 默认 `'split'`
 - `placeholder`: `string`
 
@@ -208,20 +209,102 @@
 
 ## Form
 
+完整的表单系统，集成 vee-validate 和 Zod 校验。
+
+### 基本用法
+
 ```vue
-<Form :initial-values="form" :validation-schema="schema">
-  <FormField name="email">
-    <FormItem>
-      <FormLabel>邮箱</FormLabel>
-      <FormControl><Input placeholder="请输入邮箱" /></FormControl>
-      <FormDescription>我们不会分享您的邮箱</FormDescription>
-      <FormMessage />
-    </FormItem>
-  </FormField>
-</Form>
+<script setup lang="ts">
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, SubmitButton } from 'brutx-ui-vue'
+
+const schema = toTypedSchema(z.object({
+  username: z.string().min(2).max(50),
+  email: z.string().email(),
+}))
+
+function onSubmit(values: Record<string, unknown>) {
+  console.log('Form submitted:', values)
+}
+</script>
+
+<template>
+  <Form :validation-schema="schema" @submit="onSubmit">
+    <FormField name="username" v-slot="{ componentField }">
+      <FormItem>
+        <FormLabel>用户名</FormLabel>
+        <FormControl>
+          <Input v-bind="componentField" placeholder="请输入用户名" />
+        </FormControl>
+        <FormDescription>这是您的公开显示名称。</FormDescription>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <FormField name="email" v-slot="{ componentField }">
+      <FormItem>
+        <FormLabel>邮箱</FormLabel>
+        <FormControl>
+          <Input v-bind="componentField" type="email" placeholder="you@example.com" />
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    </FormField>
+
+    <SubmitButton variant="primary">提交</SubmitButton>
+  </Form>
+</template>
 ```
 
-子组件：Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage
+### 子组件
 
-- `initialValues`: `Record<string, unknown>`
-- `validationSchema`: `unknown`
+| 组件 | 说明 |
+| --- | --- |
+| `Form` | 根表单组件，集成 vee-validate |
+| `FormField` | 字段包装器，连接表单状态，提供 `value` 和 `setValue` |
+| `FormItem` | 标签、控件和消息的布局容器 |
+| `FormLabel` | 支持错误状态的标签，注入字段上下文 |
+| `FormControl` | 输入控件的包装器，注入字段上下文 |
+| `FormDescription` | 输入框下方的辅助文本 |
+| `FormMessage` | 验证错误消息，注入字段上下文 |
+
+### 字段上下文
+
+`FormField` 通过 `provide/inject` 向子组件提供 `FormFieldContext`：
+
+```typescript
+interface FormFieldContext {
+  name: ComputedRef<string>
+  error: Ref<string | undefined>
+  value: Ref<unknown>
+  setValue: (value: unknown) => void
+}
+```
+
+### Form Props
+
+| 属性 | 类型 | 默认值 |
+| --- | --- | --- |
+| `class` | `string` | — |
+| `initialValues` | `Record<string, unknown>` | — |
+| `validationSchema` | `unknown` | — |
+
+### FormField Props
+
+| 属性 | 类型 | 默认值 |
+| --- | --- | --- |
+| `name` | `string` | —（必填） |
+
+### FormLabel Props
+
+| 属性 | 类型 | 默认值 |
+| --- | --- | --- |
+| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` |
+| `class` | `string` | — |
+
+### Form Events
+
+| 事件 | 载荷 |
+| --- | --- |
+| `submit` | `Record<string, unknown>` |
