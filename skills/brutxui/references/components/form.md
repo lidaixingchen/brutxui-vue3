@@ -157,10 +157,13 @@
 ```
 
 - `modelValue`: `number[]`
+- `defaultValue`: `number[]`
 - `min`: `number` — 默认 `0`
 - `max`: `number` — 默认 `100`
 - `step`: `number` — 默认 `1`
 - `disabled`: `boolean`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `variant`: `'default' | 'primary' | 'secondary' | 'success'` — 默认 `'default'`
 
 ## Toggle
 
@@ -203,9 +206,16 @@
 
 ## Calendar
 
+基于 v-calendar DatePicker 构建，支持单日期和日期范围选择。需要额外安装 `v-calendar`。
+
 ```vue
 <Calendar v-model="selectedDate" />
+<Calendar v-model="dateRange" :is-range="true" />
 ```
+
+- `modelValue`: `Date | Date[] | null`
+- `isRange`: `boolean` — 默认 `false`
+- `disabled`: `boolean` — 默认 `false`
 
 ## Form
 

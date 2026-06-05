@@ -4,14 +4,27 @@
 
 ```vue
 <DashboardStats
+  title="Overview Performance"
+  subtitle="Key metrics for this month"
   :stats="[
-    { label: '总收入', value: '¥125,000', change: '+12.5%', trend: 'up' },
-    { label: '用户数', value: '8,549', change: '+5.2%', trend: 'up' },
+    { title: 'Revenue', value: '$45,231', description: 'Total revenue this month', change: '+20.1%', trend: 'up', icon: DollarSign, accentColor: 'primary', progress: 75 },
+    { title: 'Users', value: '+2,350', description: 'New users this month', change: '+12.5%', trend: 'up', icon: Users, accentColor: 'secondary', progress: 60 },
   ]"
 />
 ```
 
-- `stats`: `StatItem[]` — `{ label: string; value: string; change: string; trend: 'up' | 'down' }[]`
+- `title`: `string`
+- `subtitle`: `string`
+- `stats`: `StatItem[]`
+  ```typescript
+  interface StatItem {
+    title: string; value: string; description: string; change: string
+    trend: 'up' | 'down' | 'neutral'
+    icon: Component
+    accentColor?: 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
+    progress?: number
+  }
+  ```
 
 ## OverviewPage
 

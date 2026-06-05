@@ -2,13 +2,24 @@
 
 ## AuthCard
 
-登录/注册卡片，内置国际化文案。
+登录/注册卡片，内置国际化文案，通过 `useLocale()` 自动适配语言。
 
 ```vue
 <AuthCard />
 ```
 
-通过 `useLocale()` 自动适配语言，无需传参。
+无需传参即可使用。也可以通过 `texts` prop 批量覆盖文案：
+
+```vue
+<AuthCard :texts="{
+    google: '使用 Google 登录',
+    github: '使用 GitHub 登录',
+    orEmailLogin: '或使用邮箱登录',
+    signIn: '登 录',
+}" />
+```
+
+- `texts`: `Partial<AuthCardTexts>` — 批量覆盖内置文案
 
 ## ProfilePage
 

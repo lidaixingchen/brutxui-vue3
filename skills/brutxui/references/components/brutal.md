@@ -32,7 +32,7 @@
 
 ## ScratchCard
 
-刮刮卡。
+刮刮卡，Canvas 覆盖层擦除。
 
 ```vue
 <ScratchCard :percentage="50" :brush-radius="20" :fade-duration="300">
@@ -42,8 +42,10 @@
 
 - `percentage`: `number` — 默认 `50`，刮开多少比例自动显示全部
 - `brushRadius`: `number` — 默认 `20`
-- `overlayColor`: `string`
+- `overlayColor`: `string` — 设置纯色覆盖层，不设则默认双色条纹
 - `fadeDuration`: `number` — 默认 `300`
+- Events: `@progress(percent: number)`, `@completed`
+- 暴露: `isRevealed` (Ref<boolean>), `revealAll()` (方法)
 
 ## SketchyChart
 
@@ -107,10 +109,15 @@
 ## KanbanBoard
 
 ```vue
-<KanbanBoard v-model="columns" />
+<KanbanBoard
+  v-model="columns"
+  @card-move="(id, from, to) => console.log(id, from, to)"
+/>
 ```
 
 - `modelValue`: `KanbanColumn[]` — 必填
+- Events: `update:modelValue`, `card-move(cardId, fromColumn, toColumn)`
+- 插槽: `add-{columnId}` 在列底部插入自定义内容
 
 ```typescript
 interface KanbanColumn {

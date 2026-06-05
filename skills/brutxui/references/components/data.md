@@ -19,9 +19,12 @@
 
 ```vue
 <Badge variant="success">已完成</Badge>
+<Badge variant="primary" size="sm">Small</Badge>
+<Badge variant="primary" size="lg">Large</Badge>
 ```
 
 - `variant`: `'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline'`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 
 ## Avatar
 

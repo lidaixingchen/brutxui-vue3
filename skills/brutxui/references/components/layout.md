@@ -115,6 +115,20 @@
 - `steps`: `StepperStep[]` — `{ id: string|number; title: string; description?: string }[]`
 - `modelValue`: `number`（0-indexed）
 - `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`
+- Events: `update:modelValue`, `step-click`（点击步骤节点时触发）
+
+垂直模式支持内容插槽：
+
+```vue
+<Stepper v-model="current" :steps="steps" orientation="vertical">
+  <template #step-1>
+    <p>第一步的内容...</p>
+  </template>
+  <template #step-2>
+    <p>第二步的内容...</p>
+  </template>
+</Stepper>
+```
 
 ## Timeline
 

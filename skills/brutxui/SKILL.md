@@ -11,22 +11,36 @@ description: >
 
 BrutxUI 是面向 Vue 3 + Tailwind CSS 的新粗野主义（Neo-Brutalist）UI 组件库，采用**复制粘贴式**工作流。
 
-**技术栈：** Vue 3.5+ · TypeScript 5.7+ · Tailwind CSS 3.4+ · reka-ui 2.9+ · CVA 0.7+ · vee-validate 4+
+**技术栈：** Vue 3.5+ · TypeScript 6.0+ · Tailwind CSS 4.3+ · reka-ui 2.9+ · CVA 0.7+ · vee-validate 4+
 
 ## 核心原则
 
 1. **优先使用 BrutxUI 组件**，不要从头创建相似功能的组件
 2. **遵循新粗野主义设计规范**，使用正确的边框、阴影和颜色系统
-3. **支持国际化**，使用 `useLocale()` 获取文本，不要硬编码文案
+3. **支持国际化**，使用 `useLocale()` 获取文本，不要硬编码文案。默认语言为中文（zh-CN）
 4. **保持无障碍性**，组件基于 reka-ui 无障碍原语构建
 5. **支持主题切换**，使用 CSS 变量和 `useTheme()` 组合式函数
 
 ## 导入方式
 
+BrutxUI 支持两种导入方式：
+
+### npm 包导入（推荐用于快速原型）
+
 ```typescript
 import { Button, Card, Badge, cn } from 'brutx-ui-vue'
 import type { PricingPlan, TreeNode, KanbanColumn } from 'brutx-ui-vue'
 ```
+
+### 复制粘贴导入（推荐用于生产项目）
+
+```typescript
+import Button from '@/components/ui/Button.vue'
+import Card from '@/components/ui/Card.vue'
+import { cn } from '@/lib/utils'
+```
+
+> 复制粘贴模式下，使用 CLI 添加组件：`npx brutx-vue@latest add button card`
 
 ## 组件列表
 
@@ -45,11 +59,11 @@ import type { PricingPlan, TreeNode, KanbanColumn } from 'brutx-ui-vue'
 | RadioGroup | 单选组 | 支持 v-model |
 | Select | 选择器 | 支持子组件组合 |
 | Combobox | 搜索选择器 | 可搜索的单选/多选 |
-| Slider | 滑块 | 支持 v-model |
+| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式 |
 | Toggle | 切换按钮 | 支持 v-model:pressed |
 | ToggleGroup | 切换按钮组 | 支持单选/多选 |
 | TagsInput | 标签输入 | 支持子组件组合 |
-| Calendar | 日历 | 日期选择器 |
+| Calendar | 日历 | 日期选择器，支持范围模式 |
 | Form | 表单 | 集成 vee-validate + Zod 校验 |
 | Label | 标签 | 表单字段标签 |
 
@@ -60,12 +74,12 @@ import type { PricingPlan, TreeNode, KanbanColumn } from 'brutx-ui-vue'
 | Card | 卡片 | 6 种变体，支持 Header/Title/Description/Content/Footer |
 | Card3D | 3D 卡片 | 3D 物理悬浮，鼠标悬停偏转与反向阴影 |
 | Separator | 分隔线 | 支持水平/垂直方向 |
-| ScrollArea | 滚动区域 | 自定义滚动条 |
+| ScrollArea | 滚动区域 | 自定义滚动条，支持 ScrollBar 子组件 |
 | Sheet | 侧边抽屉 | 4 个方向变体（top/right/bottom/left） |
 | Tabs | 标签页 | 支持 list/trigger/content |
 | Accordion | 手风琴 | 支持单选/多选模式 |
 | Breadcrumb | 面包屑 | 支持 Link/Page/Separator/Ellipsis |
-| Stepper | 步骤条 | 支持水平/垂直方向 |
+| Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽 |
 | Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状 |
 | Carousel | 轮播 | 支持循环/自动播放/箭头/圆点 |
 | TreeView | 树形视图 | 支持展开/选中 |
@@ -75,7 +89,7 @@ import type { PricingPlan, TreeNode, KanbanColumn } from 'brutx-ui-vue'
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
 | Table | 表格 | 8 个子组件（Header/Body/Footer/Row/Head/Cell/Caption） |
-| Badge | 徽章 | 7 种变体 |
+| Badge | 徽章 | 7 种变体、3 种尺寸（sm/default/lg） |
 | Avatar | 头像 | 支持 image/fallback、尺寸、形状 |
 | Progress | 进度条 | 支持 v-model |
 | Pagination | 分页 | 支持计算算法、首尾页 |
@@ -128,7 +142,7 @@ import type { PricingPlan, TreeNode, KanbanColumn } from 'brutx-ui-vue'
 | ChartSection | 图表区块 | 内置柱状/折线/饼图切换 |
 | ActivityLogPage | 活动日志 | 支持时间戳/类型标记 |
 | StepperSection | 步骤区块 | 支持当前步骤 |
-| AuthCard | 登录卡片 | 内置国际化文案 |
+| AuthCard | 登录卡片 | 内置国际化文案，支持 texts prop 批量覆盖 |
 | ProfilePage | 个人资料 | 支持头像/邮箱/简介 |
 | SettingsPage | 设置页面 | 支持标签切换 |
 | WaitlistPage | 等待名单 | 支持等待人数 |
@@ -238,20 +252,76 @@ toggleColorMode()
 
 ## 国际化
 
+BrutxUI 内置轻量多语言支持，**默认语言为中文（zh-CN）**，同时提供英文（en）语言包。
+
+### 优先级链
+
+```
+组件 props > 全局 locale 配置 > 默认中文（zh-CN）
+```
+
+### 全局切换语言
+
+通过 `BrutxUIPlugin` 的 `locale` 选项切换：
+
+```typescript
+import { createApp } from 'vue'
+import { BrutxUIPlugin, en } from 'brutx-ui-vue'
+
+const app = createApp(App)
+app.use(BrutxUIPlugin, { locale: en })
+app.mount('#app')
+```
+
+### 局部子树覆盖
+
+使用 `provideLocale` 在某个组件子树内使用不同语言：
+
+```vue
+<script setup>
+import { provideLocale, en } from 'brutx-ui-vue'
+
+provideLocale(en)
+</script>
+```
+
+### useLocale 组合式函数
+
 ```typescript
 import { useLocale } from 'brutx-ui-vue'
 
 const { t, locale } = useLocale()
 
-// 使用翻译
+// 使用翻译（点号路径）
 const title = t('saasPricing.title')
 
 // 带插值
-const message = t('welcome', { name: '用户' })
+const message = t('combobox.selectedCount', { count: 3 })
+```
 
-// 切换语言
-locale.value = en  // 英文
-locale.value = zh  // 中文
+### 自定义语言包
+
+```typescript
+import { zhCN, mergeLocale } from 'brutx-ui-vue/locales'
+
+const customLocale = mergeLocale(zhCN, {
+    command: { placeholder: '请输入...' },
+})
+app.use(BrutxUIPlugin, { locale: customLocale })
+```
+
+### 通过 props 或 texts 覆盖
+
+```vue
+<!-- 单个 prop 覆盖 -->
+<CommandInput placeholder="自定义搜索..." />
+
+<!-- texts prop 批量覆盖 -->
+<AuthCard :texts="{
+    google: '使用 Google 登录',
+    github: '使用 GitHub 登录',
+    signIn: '登 录',
+}" />
 ```
 
 ## 代码模板
@@ -365,7 +435,7 @@ const chartData = [
 1. **优先使用 BrutxUI 组件**，不要从头创建功能相同的组件
 2. **遵循样式规范**，使用 `border-3`、`shadow-brutal`、`rounded-brutal` 和设计令牌颜色
 3. **添加交互效果**，所有可交互元素必须有 `hover` 和 `active` 状态
-4. **支持国际化**，使用 `useLocale()` 的 `t()` 函数获取文案，不要硬编码
+4. **支持国际化**，使用 `useLocale()` 的 `t()` 函数获取文案，不要硬编码。默认中文
 5. **使用 `cn()` 合并类名**，不要拼接字符串
 6. **使用 `computed()` 处理动态类**，不要在模板中直接调用 `cn()`
 7. **支持主题切换**，使用 CSS 变量而非硬编码颜色值

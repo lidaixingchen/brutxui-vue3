@@ -274,54 +274,156 @@ const { theme, colorMode, setTheme, toggleColorMode } = useTheme()
 
 ## 国际化
 
-BrutxUI 内置国际化支持，通过 `useLocale()` composable 实现。
+BrutxUI 内置轻量多语言支持，**默认语言为中文（zh-CN）**，同时提供英文（en）语言包。无需安装 `vue-i18n`，开箱即用。
 
-### 基本用法
+### 优先级链
+
+```
+组件 props > 全局 locale 配置 > 默认中文（zh-CN）
+```
+
+### 全局切换语言
+
+通过 `BrutxUIPlugin` 的 `locale` 选项切换：
+
+```typescript
+import { createApp } from 'vue'
+import { BrutxUIPlugin, en } from 'brutx-ui-vue'
+
+const app = createApp(App)
+app.use(BrutxUIPlugin, { locale: en })
+app.mount('#app')
+```
+
+locale 支持响应式值，切换时组件自动更新：
+
+```typescript
+import { ref, computed } from 'vue'
+import { BrutxUIPlugin, zhCN, en } from 'brutx-ui-vue'
+
+const isEnglish = ref(false)
+const locale = computed(() => isEnglish.value ? en : zhCN)
+app.use(BrutxUIPlugin, { locale })
+```
+
+### 局部子树覆盖
+
+使用 `provideLocale` 在某个组件子树内使用不同语言，不影响全局：
+
+```vue
+<script setup>
+import { provideLocale, en } from 'brutx-ui-vue'
+
+provideLocale(en)
+</script>
+```
+
+### useLocale 组合式函数
 
 ```typescript
 import { useLocale } from 'brutx-ui-vue'
 
 const { t, locale } = useLocale()
 
-// 使用翻译
+// 使用翻译（点号路径）
 const title = t('saasPricing.title')
-const subtitle = t('saasPricing.subtitle')
 
-// 带插值的翻译
-const message = t('welcome', { name: '用户' })
+// 带插值
+const message = t('combobox.selectedCount', { count: 3 })
 ```
 
-### 切换语言
+### 通过 props 或 texts 覆盖
 
-```typescript
-import { useLocale } from 'brutx-ui-vue'
-import { en, zh } from 'brutx-ui-vue'
-
-const { locale } = useLocale()
-
-// 切换到英文
-locale.value = en
-
-// 切换到中文
-locale.value = zh
-```
-
-### 在组件中使用
+props 优先级最高，可以覆盖任何 locale 文本：
 
 ```vue
-<script setup lang="ts">
-import { useLocale } from 'brutx-ui-vue'
+<!-- 单个 prop 覆盖 -->
+<CommandInput placeholder="自定义搜索..." />
 
+<!-- texts prop 批量覆盖（适用于 AuthCard 等大量文本组件） -->
+<AuthCard :texts="{
+    google: '使用 Google 登录',
+    github: '使用 GitHub 登录',
+    signIn: '登 录',
+}" />
+```
+
+### 自定义语言包
+
+```typescript
+import { zhCN, mergeLocale } from 'brutx-ui-vue/locales'
+
+// 部分覆盖
+const customLocale = mergeLocale(zhCN, {
+    command: { placeholder: '请输入...' },
+})
+app.use(BrutxUIPlugin, { locale: customLocale })
+```
+
+创建全新语言包：
+
+```typescript
+import type { Locale } from 'brutx-ui-vue'
+import { zhCN } from 'brutx-ui-vue/locales'
+
+const jaJP: Locale = {
+    command: {
+        placeholder: 'コマンドを入力...',
+        emptyText: '結果が見つかりません。',
+        dialogTitle: 'コマンドパレット',
+        dialogDescription: '実行するコマンドを検索...',
+    },
+    // ... 其他组件的翻译
+}
+
+app.use(BrutxUIPlugin, { locale: jaJP })
+```
+
+### t() 翻译函数
+
+`useLocale()` 返回的 `t()` 函数支持点号路径访问和插值参数：
+
+```typescript
 const { t } = useLocale()
-</script>
 
-<template>
-  <SaaSPricing
-    :plans="plans"
-    :title="t('saasPricing.title')"
-    :subtitle="t('saasPricing.subtitle')"
-  />
-</template>
+t('command.placeholder')
+// → '输入命令或搜索...'
+
+t('combobox.selectedCount', { count: 3 })
+// → '已选 3 项'
+
+t('pagination.page', { number: 5 })
+// → '第 5 页'
+```
+
+### 回退链
+
+1. 当前 locale 中查找 `path` 对应的值
+2. 不存在 → 回退到 zh-CN 语言包中 `path` 对应的值
+3. 仍不存在 → 返回路径字符串 `path` 本身
+
+### API 参考
+
+| API | 说明 |
+|-----|------|
+| `BrutxUIPlugin` | Vue 插件，用于全局配置 locale：`app.use(BrutxUIPlugin, { locale: en })` |
+| `provideLocale(locale)` | 在组件子树内注入 locale 配置 |
+| `useLocale()` | 返回 `{ locale, t }`，`t(path, params?)` 支持点号路径和插值 |
+| `mergeLocale(base, override)` | 深合并语言包，用于部分覆盖 |
+| `zhCN` | 简体中文语言包（默认） |
+| `en` | 英文语言包 |
+
+### 与 vue-i18n 共存
+
+```typescript
+import { watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { provideLocale, zhCN, en } from 'brutx-ui-vue'
+
+const LOCALE_MAP = { 'zh-CN': zhCN, en }
+
+const { locale } = useI18n()
+provideLocale(computed(() => LOCALE_MAP[locale.value] ?? zhCN))
 ```
 
 ### 最佳实践
