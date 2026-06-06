@@ -8,17 +8,22 @@ const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 const mockState = vi.hoisted(() => ({
     copy: vi.fn(),
-    copied: { __v_isRef: true as const, value: false },
-    isSupported: { __v_isRef: true as const, value: true },
+    copied: null as any,
+    isSupported: null as any,
 }))
 
-vi.mock('../../composables/useClipboard', () => ({
-    useClipboard: () => ({
-        copy: mockState.copy,
-        copied: mockState.copied,
-        isSupported: mockState.isSupported,
-    }),
-}))
+vi.mock('../../composables/useClipboard', async () => {
+    const { ref } = await import('vue')
+    mockState.copied = ref(false)
+    mockState.isSupported = ref(true)
+    return {
+        useClipboard: () => ({
+            copy: mockState.copy,
+            copied: mockState.copied,
+            isSupported: mockState.isSupported,
+        }),
+    }
+})
 
 describe('CopyToClipboard', () => {
     beforeEach(() => {
