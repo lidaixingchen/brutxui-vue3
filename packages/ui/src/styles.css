@@ -148,6 +148,12 @@
         --brutal-shadow-color: #ffffff;
         --brutal-bg: #141414;
         --brutal-fg: #ffffff;
+        --brutal-primary: #FF6B6B;
+        --brutal-secondary: #4ECDC4;
+        --brutal-accent: #FFE66D;
+        --brutal-destructive: #EF476F;
+        --brutal-success: #7FB069;
+        --brutal-muted: #1e1e1e;
         --brutal-muted-foreground: #9CA3AF;
         --brutal-ring: #ffffff;
         --brutal-info: #3B82F6;
@@ -302,126 +308,124 @@
     .shadow-brutal-secondary {
         box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary);
     }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes zoomOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        to {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(-4px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        to {
+            transform: translateY(-4px);
+            opacity: 0;
+        }
+    }
+
+    @keyframes accordion-down {
+        from {
+            height: 0;
+        }
+        to {
+            height: var(--reka-accordion-content-height);
+        }
+    }
+
+    @keyframes accordion-up {
+        from {
+            height: var(--reka-accordion-content-height);
+        }
+        to {
+            height: 0;
+        }
+    }
+
+    .animate-accordion-down {
+        animation: accordion-down 0.2s ease-out;
+    }
+
+    .animate-accordion-up {
+        animation: accordion-up 0.2s ease-out;
+    }
+
+    @keyframes marquee-left {
+        from {
+            transform: translateX(0%);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }
+
+    @keyframes marquee-right {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(0%);
+        }
+    }
+
+    .animate-marquee-left {
+        animation: marquee-left var(--speed, 20s) linear infinite;
+    }
+
+    .animate-marquee-right {
+        animation: marquee-right var(--speed, 20s) linear infinite;
+    }
 }
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    from {
-        opacity: 1;
-    }
-
-    to {
-        opacity: 0;
-    }
-}
-
-@keyframes zoomIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes zoomOut {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    to {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-4px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slideOut {
-    from {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    to {
-        transform: translateY(-4px);
-        opacity: 0;
-    }
-}
-
-@keyframes accordion-down {
-    from {
-        height: 0;
-    }
-    to {
-        height: var(--reka-accordion-content-height);
-    }
-}
-
-@keyframes accordion-up {
-    from {
-        height: var(--reka-accordion-content-height);
-    }
-    to {
-        height: 0;
-    }
-}
-
-.animate-accordion-down {
-    animation: accordion-down 0.2s ease-out;
-}
-
-.animate-accordion-up {
-    animation: accordion-up 0.2s ease-out;
-}
-
-@keyframes marquee-left {
-    from {
-        transform: translateX(0%);
-    }
-    to {
-        transform: translateX(-100%);
-    }
-}
-
-@keyframes marquee-right {
-    from {
-        transform: translateX(-100%);
-    }
-    to {
-        transform: translateX(0%);
-    }
-}
-
-.animate-marquee-left {
-    animation: marquee-left var(--speed, 20s) linear infinite;
-}
-
-.animate-marquee-right {
-    animation: marquee-right var(--speed, 20s) linear infinite;
-}
-
-

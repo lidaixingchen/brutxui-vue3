@@ -1,4 +1,4 @@
-import { ref, inject, provide, type InjectionKey } from 'vue'
+import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey } from 'vue'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
 
@@ -19,11 +19,23 @@ const DEFAULT_TOAST_DURATION = 5000
 export function createToast() {
     const toasts = ref<ToastItem[]>([])
     const MAX_TOASTS = 10
-    const timerMap = new Map<string, number>()
+    const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
+
+    function clearTimer(id: string) {
+        const timerId = timerMap.get(id)
+        if (timerId !== undefined) {
+            clearTimeout(timerId)
+            timerMap.delete(id)
+        }
+    }
 
     function addToast(toast: Omit<ToastItem, 'id'>) {
         const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
         if (toasts.value.length >= MAX_TOASTS) {
+            const removed = toasts.value[0]
+            if (removed) {
+                clearTimer(removed.id)
+            }
             toasts.value = toasts.value.slice(1)
         }
         toasts.value = [...toasts.value, { ...toast, id }]
@@ -36,11 +48,7 @@ export function createToast() {
     }
 
     function removeToast(id: string) {
-        const timerId = timerMap.get(id)
-        if (timerId !== undefined) {
-            clearTimeout(timerId)
-            timerMap.delete(id)
-        }
+        clearTimer(id)
         toasts.value = toasts.value.filter((t) => t.id !== id)
     }
 
@@ -48,6 +56,12 @@ export function createToast() {
         timerMap.forEach((timerId) => clearTimeout(timerId))
         timerMap.clear()
         toasts.value = []
+    }
+
+    if (getCurrentScope()) {
+        onScopeDispose(() => {
+            clearToasts()
+        })
     }
 
     function success(title: string, description?: string) {
@@ -78,6 +92,8 @@ export function createToast() {
     }
 }
 
+let fallbackInstance: ReturnType<typeof createToast> | null = null
+
 export function provideToast() {
     const toast = createToast()
     provide(TOAST_KEY, toast)
@@ -88,7 +104,10 @@ export function useToast() {
     const toast = inject(TOAST_KEY)
     if (toast) return toast
     if (typeof console !== 'undefined') {
-        console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to isolated instance. Call provideToast() in your root component.')
+        console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to shared singleton. Call provideToast() in your root component.')
     }
-    return createToast()
+    if (!fallbackInstance) {
+        fallbackInstance = createToast()
+    }
+    return fallbackInstance
 }

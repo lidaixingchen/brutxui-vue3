@@ -6,7 +6,7 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
     const copied = ref(false)
     const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)
 
-    let timeoutId: number | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     onUnmounted(() => {
         if (timeoutId) clearTimeout(timeoutId)

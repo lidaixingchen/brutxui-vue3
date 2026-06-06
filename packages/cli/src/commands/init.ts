@@ -225,9 +225,10 @@ export async function init(options: InitOptions): Promise<void> {
         logger.info('     npx brutx-vue@latest add --all');
         logger.newLine();
         logger.dim('Documentation: https://lidaixingchen.github.io/brutxui-vue3/');
-    } catch (error) {
+    } catch (error: unknown) {
         spinner?.fail('Failed to initialize Brutx-Vue');
-        console.error(error);
+        const message = error instanceof Error ? error.message : String(error);
+        logger.error(message);
         process.exit(1);
     }
 }

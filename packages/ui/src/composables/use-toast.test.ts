@@ -2,8 +2,11 @@ import { createToast } from './useToast'
 
 describe('useToast', () => {
     beforeEach(() => {
-        const { clearToasts } = createToast()
-        clearToasts()
+        vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+        vi.useRealTimers()
     })
 
     it('addToast adds a toast to the list', () => {

@@ -37,10 +37,6 @@ export function detectProjectType(cwd: string): ProjectType {
 
     if (hasNuxt) return 'nuxt';
 
-    if (hasVite && hasVueDependency(cwd)) {
-        return hasSrc ? 'vite-vue-src' : 'vite-vue';
-    }
-
     if (hasVueDependency(cwd)) {
         return hasSrc ? 'vite-vue-src' : 'vite-vue';
     }
@@ -58,6 +54,63 @@ export function detectPackageManager(cwd: string): PackageManager {
     return 'npm';
 }
 
+function stripJsonComments(content: string): string {
+    let result = '';
+    let inString = false;
+    let stringChar = '';
+    let i = 0;
+
+    while (i < content.length) {
+        const char = content[i];
+        const next = content[i + 1];
+
+        if (inString) {
+            result += char;
+            if (char === '\\' && i + 1 < content.length) {
+                result += content[i + 1];
+                i += 2;
+                continue;
+            }
+            if (char === stringChar) {
+                inString = false;
+            }
+            i++;
+            continue;
+        }
+
+        if (char === '"' || char === "'") {
+            inString = true;
+            stringChar = char;
+            result += char;
+            i++;
+            continue;
+        }
+
+        if (char === '/' && next === '/') {
+            while (i < content.length && content[i] !== '\n') {
+                i++;
+            }
+            continue;
+        }
+
+        if (char === '/' && next === '*') {
+            i += 2;
+            while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) {
+                i++;
+            }
+            if (i < content.length) {
+                i += 2;
+            }
+            continue;
+        }
+
+        result += char;
+        i++;
+    }
+
+    return result;
+}
+
 export function readTsConfig(cwd: string): TsConfig | null {
     for (const configFile of CONFIG_FILES.tsconfig) {
         const configPath = path.join(cwd, configFile);
@@ -66,7 +119,7 @@ export function readTsConfig(cwd: string): TsConfig | null {
 
         try {
             const content = fs.readFileSync(configPath, 'utf-8');
-            const jsonContent = content.replace(/\/\*[\s\S]*?\*\/|(?<!:)\/\/.*/g, '');
+            const jsonContent = stripJsonComments(content);
             return JSON.parse(jsonContent);
         } catch {
             continue;
@@ -165,8 +218,8 @@ export function getDefaultAliases(cwd: string): AliasConfig {
 
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
     return content
-        .replace(/["']@\/lib\/utils["']/g, `"${config.aliases.utils}"`)
-        .replace(/["']@\/components\/(.*?)["']/g, `"${config.aliases.components}/$1"`);
+        .replace(/(["'])@\/lib\/utils\1/g, `$1${config.aliases.utils}$1`)
+        .replace(/(["'])@\/components\/(.*?)\1/g, `$1${config.aliases.components}/$2$1`);
 }
 
 export function isSafePath(targetPath: string, cwd: string): boolean {

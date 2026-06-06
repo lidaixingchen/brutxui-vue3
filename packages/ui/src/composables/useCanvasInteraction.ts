@@ -166,8 +166,14 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
     }
 
     const handlePointerDown = (e: PointerEvent) => {
+        if (!(e.target instanceof Element)) return
         isScratching = true
-        ;(e.target as Element).setPointerCapture(e.pointerId)
+        try {
+            e.target.setPointerCapture(e.pointerId)
+        } catch {
+            isScratching = false
+            return
+        }
         scratch(e.clientX, e.clientY)
     }
 
@@ -178,7 +184,13 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
 
     const handlePointerUp = (e: PointerEvent) => {
         if (isScratching) {
-            ;(e.target as Element).releasePointerCapture(e.pointerId)
+            if (e.target instanceof Element) {
+                try {
+                    e.target.releasePointerCapture(e.pointerId)
+                } catch {
+                    // Pointer may not be captured
+                }
+            }
             isScratching = false
             checkProgress()
         }

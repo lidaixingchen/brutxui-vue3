@@ -154,7 +154,7 @@ async function writeRegistryFiles(
             filesWritten.push(targetPath);
         }
 
-        if (itemAdded && !skippedSet.has(item.name)) {
+        if (itemAdded) {
             added.push(item.name);
         }
     }
@@ -293,7 +293,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             }
         }
 
-        installComponentDeps(Array.from(allDeps), cwd, options.dryRun ?? false);
+        installComponentDeps(Array.from(allDeps), targetCwd, options.dryRun ?? false);
 
         if (added.length > 0) {
             logger.newLine();
@@ -301,9 +301,10 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             printUsageExample(added[0], config.aliases.components);
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         spinner?.fail('Failed to add components');
-        logger.error(error?.message || error);
+        const message = error instanceof Error ? error.message : String(error);
+        logger.error(message);
         process.exit(1);
     }
 }

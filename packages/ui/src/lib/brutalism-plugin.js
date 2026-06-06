@@ -1,7 +1,7 @@
 const plugin = require('tailwindcss/plugin');
 
 const brutalismPlugin = plugin(
-    function ({ addUtilities, addComponents, theme }) {
+    function ({ addUtilities, addComponents }) {
         const utilities = {
             '.nb-border': {
                 borderWidth: 'var(--brutal-border-width, 3px)',

@@ -6,25 +6,25 @@ import CopyToClipboard from './CopyToClipboard.vue'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
-const { mockCopy, _mockCopied, _mockIsSupported } = vi.hoisted(() => ({
-    mockCopy: vi.fn(),
-    _mockCopied: { value: false },
-    _mockIsSupported: { value: true },
+const mockState = vi.hoisted(() => ({
+    copy: vi.fn(),
+    copied: { __v_isRef: true as const, value: false },
+    isSupported: { __v_isRef: true as const, value: true },
 }))
 
 vi.mock('../../composables/useClipboard', () => ({
     useClipboard: () => ({
-        copy: mockCopy,
-        get copied() { return _mockCopied.value },
-        get isSupported() { return _mockIsSupported.value },
+        copy: mockState.copy,
+        copied: mockState.copied,
+        isSupported: mockState.isSupported,
     }),
 }))
 
 describe('CopyToClipboard', () => {
     beforeEach(() => {
-        _mockCopied.value = false
-        _mockIsSupported.value = true
-        mockCopy.mockReset()
+        mockState.copied.value = false
+        mockState.isSupported.value = true
+        mockState.copy.mockReset()
     })
 
     it('renders a button element', () => {
@@ -65,7 +65,7 @@ describe('CopyToClipboard', () => {
     })
 
     it('has disabled attribute when clipboard not supported', () => {
-        _mockIsSupported.value = false
+        mockState.isSupported.value = false
         const wrapper = mount(CopyToClipboard, {
             props: { text: 'hello' },
             ...localeProvide,

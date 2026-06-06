@@ -26,7 +26,7 @@ export function useAudioEngine(enabled: Ref<boolean>) {
 
     const getCtx = () => {
         if (!audioCtx && typeof window !== 'undefined') {
-            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+            const AudioContextClass = window.AudioContext || (window as unknown as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
             if (AudioContextClass) {
                 audioCtx = new AudioContextClass()
             }
@@ -46,13 +46,18 @@ export function useAudioEngine(enabled: Ref<boolean>) {
         if (!ctx) return
         
         if (ctx.state === 'suspended') {
-            ctx.resume()
+            void ctx.resume()
         }
 
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
         osc.connect(gain)
         gain.connect(ctx.destination)
+
+        osc.onended = () => {
+            osc.disconnect()
+            gain.disconnect()
+        }
 
         if (type === 'type') {
             osc.type = 'triangle'

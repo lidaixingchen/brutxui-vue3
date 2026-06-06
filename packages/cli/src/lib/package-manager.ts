@@ -8,6 +8,10 @@ const INSTALL_COMMANDS: Record<PackageManager, string> = {
     npm: 'npm install',
 };
 
+function sanitizePackageName(name: string): string {
+    return name.replace(/[^a-zA-Z0-9@/._-]/g, '');
+}
+
 export function installPackages(
     packageManager: PackageManager,
     packages: string[],
@@ -15,10 +19,14 @@ export function installPackages(
 ): void {
     if (packages.length === 0) return;
 
+    const sanitized = packages.map(sanitizePackageName).filter(Boolean);
+    if (sanitized.length === 0) return;
+
     const [command, ...baseArgs] = INSTALL_COMMANDS[packageManager].split(' ');
-    execFileSync(command, [...baseArgs, ...packages], { stdio: 'inherit', cwd });
+    execFileSync(command, [...baseArgs, '--', ...sanitized], { stdio: 'inherit', cwd });
 }
 
 export function getInstallCommand(packageManager: PackageManager, packages: string[]): string {
-    return `${INSTALL_COMMANDS[packageManager]} ${packages.join(' ')}`;
+    const sanitized = packages.map(sanitizePackageName).filter(Boolean);
+    return `${INSTALL_COMMANDS[packageManager]} -- ${sanitized.join(' ')}`;
 }

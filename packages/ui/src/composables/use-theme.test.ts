@@ -1,4 +1,4 @@
-import { useTheme } from './useTheme'
+import { useTheme, createTheme } from './useTheme'
 
 describe('useTheme', () => {
     beforeEach(() => {
@@ -11,50 +11,50 @@ describe('useTheme', () => {
     })
 
     it('returns theme and colorMode refs', () => {
-        const { theme, colorMode } = useTheme()
+        const { theme, colorMode } = createTheme()
         expect(theme.value).toBeDefined()
         expect(colorMode.value).toBeDefined()
     })
 
     it('returns setTheme function', () => {
-        const { setTheme } = useTheme()
+        const { setTheme } = createTheme()
         expect(typeof setTheme).toBe('function')
     })
 
     it('returns toggleColorMode function', () => {
-        const { toggleColorMode } = useTheme()
+        const { toggleColorMode } = createTheme()
         expect(typeof toggleColorMode).toBe('function')
     })
 
     it('returns applyColorMode function', () => {
-        const { applyColorMode } = useTheme()
+        const { applyColorMode } = createTheme()
         expect(typeof applyColorMode).toBe('function')
     })
 
     it('returns initTheme function', () => {
-        const { initTheme } = useTheme()
+        const { initTheme } = createTheme()
         expect(typeof initTheme).toBe('function')
     })
 
     it('default theme is classic', () => {
-        const { theme } = useTheme()
+        const { theme } = createTheme()
         expect(theme.value).toBe('classic')
     })
 
     it('default color mode is light', () => {
-        const { colorMode } = useTheme()
+        const { colorMode } = createTheme()
         expect(colorMode.value).toBe('light')
     })
 
     it('setTheme changes theme value', () => {
-        const { theme, setTheme } = useTheme()
+        const { theme, setTheme } = createTheme()
         setTheme('pastel')
         expect(theme.value).toBe('pastel')
         expect(document.documentElement.classList.contains('theme-pastel')).toBe(true)
     })
 
     it('toggleColorMode switches between light and dark', () => {
-        const { colorMode, toggleColorMode } = useTheme()
+        const { colorMode, toggleColorMode } = createTheme()
         expect(colorMode.value).toBe('light')
         toggleColorMode()
         expect(colorMode.value).toBe('dark')
@@ -65,7 +65,7 @@ describe('useTheme', () => {
     })
 
     it('applyColorMode sets dark mode', () => {
-        const { colorMode, applyColorMode } = useTheme()
+        const { colorMode, applyColorMode } = createTheme()
         applyColorMode('dark')
         expect(colorMode.value).toBe('dark')
         expect(document.documentElement.classList.contains('dark')).toBe(true)
@@ -74,7 +74,7 @@ describe('useTheme', () => {
     it('initTheme restores saved theme from localStorage', () => {
         localStorage.setItem('brutx-theme', 'mono')
         localStorage.setItem('brutx-color-mode', 'dark')
-        const { theme, colorMode, initTheme } = useTheme()
+        const { theme, colorMode, initTheme } = createTheme()
         initTheme()
         expect(theme.value).toBe('mono')
         expect(colorMode.value).toBe('dark')

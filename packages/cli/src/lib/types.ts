@@ -59,7 +59,7 @@ export interface RegistryFile {
 export interface RegistryItem {
     name: string;
     type: string;
-    dependencies: string[];
-    registryDependencies: string[];
+    dependencies?: string[];
+    registryDependencies?: string[];
     files: RegistryFile[];
 }

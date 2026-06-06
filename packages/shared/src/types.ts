@@ -4,7 +4,7 @@ export interface ComponentMeta {
     optionalDependencies?: string[];
     title?: string;
     description?: string;
-    tailwind?: Record<string, any>;
+    tailwind?: Record<string, unknown>;
     cssVars?: {
         light?: Record<string, string>;
         dark?: Record<string, string>;
