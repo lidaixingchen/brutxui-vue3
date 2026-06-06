@@ -23,7 +23,7 @@ const { t } = useLocale()
 const { copy, copied, isSupported } = useClipboard({ duration: toRef(props, 'duration') })
 
 const handleCopy = () => {
-    if (isSupported) {
+    if (isSupported.value) {
         copy(props.text)
     }
 }

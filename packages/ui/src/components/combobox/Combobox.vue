@@ -22,6 +22,7 @@ interface ComboboxProps {
     searchPlaceholder?: string
     emptyText?: string
     disabled?: boolean
+    ariaLabel?: string
     class?: string
 }
 
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     searchPlaceholder: undefined,
     emptyText: undefined,
     disabled: false,
+    ariaLabel: undefined,
     class: undefined,
 })
 
@@ -89,6 +91,7 @@ const checkUnselectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opa
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
+                :aria-label="ariaLabel"
                 aria-haspopup="listbox"
                 :disabled="disabled"
                 :class="triggerClasses"

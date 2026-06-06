@@ -51,19 +51,6 @@ const dashboardStats = computed<StatItem[]>(() =>
         icon: Activity as Component,
     }))
 )
-
-function handleStatsClick(event: MouseEvent) {
-    const target = event.target as HTMLElement
-    const grid = (event.currentTarget as HTMLElement).querySelector('.grid')
-    if (!grid) return
-    const cards = Array.from(grid.children)
-    for (let i = 0; i < cards.length; i++) {
-        if (cards[i].contains(target)) {
-            emit('stat-click', i)
-            return
-        }
-    }
-}
 </script>
 
 <template>
@@ -74,9 +61,7 @@ function handleStatsClick(event: MouseEvent) {
 </h1>
         </slot>
 
-        <div @click="handleStatsClick">
-            <DashboardStats :stats="dashboardStats" />
-        </div>
+        <DashboardStats :stats="dashboardStats" @stat-click="(index) => emit('stat-click', index)" />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             <Card variant="default">

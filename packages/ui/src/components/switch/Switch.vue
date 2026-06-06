@@ -38,8 +38,7 @@ const thumbClasses = computed(() =>
 <template>
     <SwitchRoot
         :class="classes"
-        :model-value="modelValue"
-        :default-value="defaultValue"
+        v-bind="modelValue !== undefined ? { 'model-value': modelValue } : { 'default-value': defaultValue }"
         :disabled="disabled"
         @update:model-value="emit('update:modelValue', $event)"
     >

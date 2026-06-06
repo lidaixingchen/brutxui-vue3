@@ -48,12 +48,13 @@ const cellClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="containerClasses">
-        <div class="flex bg-brutal-accent border-b-3 border-brutal">
+    <div :class="containerClasses" role="table" aria-busy="true">
+        <div class="flex bg-brutal-accent border-b-3 border-brutal" role="row">
             <div
                 v-for="(headerClass, colIndex) in headerCellClasses"
                 :key="`header-${colIndex}`"
                 :class="headerClass"
+                role="columnheader"
             >
                 <Skeleton :variant="variant" class="h-5 w-3/4 bg-brutal-fg/20" />
             </div>
@@ -62,11 +63,13 @@ const cellClasses = computed(() =>
             v-for="(rowClass, rowIndex) in rowClasses"
             :key="`row-${rowIndex}`"
             :class="rowClass"
+            role="row"
         >
             <div
                 v-for="(cellClass, colIndex) in cellClasses"
                 :key="`cell-${rowIndex}-${colIndex}`"
                 :class="cellClass"
+                role="cell"
             >
                 <Skeleton
                     :variant="variant"

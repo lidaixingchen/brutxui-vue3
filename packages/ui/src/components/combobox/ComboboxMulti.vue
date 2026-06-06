@@ -23,6 +23,7 @@ interface ComboboxMultiProps {
     searchPlaceholder?: string
     emptyText?: string
     disabled?: boolean
+    ariaLabel?: string
     maxDisplay?: number
     class?: string
 }
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     searchPlaceholder: undefined,
     emptyText: undefined,
     disabled: false,
+    ariaLabel: undefined,
     maxDisplay: DEFAULT_MAX_DISPLAY,
     class: undefined,
 })
@@ -102,6 +104,7 @@ watch(open, (isOpen) => {
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
+                :aria-label="ariaLabel"
                 aria-haspopup="listbox"
                 :disabled="disabled"
                 :class="triggerClasses"

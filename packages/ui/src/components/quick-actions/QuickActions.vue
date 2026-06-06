@@ -52,7 +52,7 @@ const resolvedBadge = computed(() => t('quickActions.badge'))
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <Button
                     v-for="(action, index) in actions"
-                    :key="index"
+                    :key="action.label"
                     :variant="action.variant ?? 'outline'"
                     class="flex flex-col items-center gap-2 h-auto py-3 px-2"
                     @click="emit('action-click', index)"

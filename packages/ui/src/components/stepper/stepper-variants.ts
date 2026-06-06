@@ -1,11 +1,5 @@
 import { cva } from 'class-variance-authority';
 
-export const stepperItemVariants = cva(
-    [
-        'flex items-center gap-3 relative',
-    ]
-);
-
 export const stepperDotVariants = cva(
     [
         'flex-shrink-0 flex items-center justify-center',

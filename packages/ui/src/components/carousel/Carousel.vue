@@ -66,7 +66,7 @@ function startAutoplay() {
     stopAutoplay();
     if (!props.autoplay) return;
     autoplayTimer = setInterval(() => {
-        if (emblaApi.value) {
+        if (emblaApi.value && scrollSnaps.value.length > 0) {
             if (!props.loop && selectedIndex.value === scrollSnaps.value.length - 1) {
                 emblaApi.value.scrollTo(0);
             } else {

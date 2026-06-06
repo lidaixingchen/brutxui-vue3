@@ -49,6 +49,7 @@ const emit = defineEmits<{
     forgotPassword: []
     googleClick: []
     githubClick: []
+    registerClick: []
 }>()
 
 const rootClasses = computed(() => cn('w-full max-w-md mx-auto', props.class))
@@ -137,7 +138,7 @@ function handleSubmit() {
         <CardFooter class="justify-center">
             <p class="text-sm font-medium text-brutal-muted-foreground">
                 {{ resolvedNoAccount }}
-                <button type="button" class="font-bold text-brutal-primary cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all">
+                <button type="button" class="font-bold text-brutal-primary cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('registerClick')">
                     {{ resolvedRegister }}
                 </button>
             </p>

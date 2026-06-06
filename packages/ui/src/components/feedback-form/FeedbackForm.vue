@@ -4,10 +4,7 @@ import { Send } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Card from '../card/Card.vue'
-import CardHeader from '../card/CardHeader.vue'
 import CardContent from '../card/CardContent.vue'
-import CardTitle from '../card/CardTitle.vue'
-import CardDescription from '../card/CardDescription.vue'
 import Input from '../input/Input.vue'
 import Textarea from '../textarea/Textarea.vue'
 import Button from '../button/Button.vue'
@@ -72,15 +69,7 @@ function handleSubmit() {
 
         <slot>
             <Card variant="default">
-                <CardHeader>
-                    <CardTitle class="text-xl">
-                        {{ resolvedTitle }}
-                    </CardTitle>
-                    <CardDescription v-if="resolvedDescription">
-                        {{ resolvedDescription }}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
+                <CardContent class="pt-6">
                     <form class="space-y-4" @submit.prevent="handleSubmit">
                         <div class="space-y-2">
                             <label class="text-sm font-bold text-brutal-fg">

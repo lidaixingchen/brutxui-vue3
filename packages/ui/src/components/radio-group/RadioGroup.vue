@@ -6,6 +6,9 @@ import { cn } from '../../lib/utils'
 interface RadioGroupProps {
     defaultValue?: string
     modelValue?: string
+    name?: string
+    disabled?: boolean
+    orientation?: 'horizontal' | 'vertical'
     class?: string
 }
 
@@ -16,7 +19,15 @@ const classes = computed(() => cn('grid gap-2', props.class))
 </script>
 
 <template>
-    <RadioGroupRoot :default-value="defaultValue" :model-value="modelValue" :class="classes" @update:model-value="emit('update:modelValue', $event as string)">
+    <RadioGroupRoot
+        :default-value="defaultValue"
+        :model-value="modelValue"
+        :name="name"
+        :disabled="disabled"
+        :orientation="orientation"
+        :class="classes"
+        @update:model-value="emit('update:modelValue', $event as string)"
+    >
         <slot />
     </RadioGroupRoot>
 </template>

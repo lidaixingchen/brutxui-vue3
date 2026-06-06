@@ -22,7 +22,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" role="status" aria-busy="true">
         <slot />
     </div>
 </template>

@@ -145,8 +145,8 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     </DatePicker>
 </template>
 
-<style>
-.brutal-selected {
+<style scoped>
+:global(.brutal-selected) {
     background-color: var(--brutal-primary) !important;
     border: 3px solid var(--brutal-border-color) !important;
     border-radius: var(--brutal-radius) !important;
@@ -156,27 +156,27 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 @media (min-width: 640px) {
-    .brutal-selected {
+    :global(.brutal-selected) {
         width: calc(var(--brutal-day-size-sm, 2rem) + 2px) !important;
         height: calc(var(--brutal-day-size-sm, 2rem) + 2px) !important;
     }
 }
 
-.brutal-selected-content {
+:global(.brutal-selected-content) {
     color: var(--brutal-fg) !important;
     font-weight: 900 !important;
 }
 
-.brutal-range {
+:global(.brutal-range) {
     background-color: var(--brutal-accent) !important;
     border-radius: var(--brutal-radius) !important;
 }
 
-.brutal-range-content {
+:global(.brutal-range-content) {
     color: var(--brutal-fg) !important;
 }
 
-.vc-container {
+:deep(.vc-container) {
     --vc-rounded-full: var(--brutal-radius);
     --vc-highlight-solid-bg: var(--brutal-primary);
     --vc-highlight-light-bg: var(--brutal-accent);
@@ -187,20 +187,20 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     --vc-highlight-outline-content-color: var(--brutal-fg);
 }
 
-.vc-day-layer.vc-day-box-center-center {
+:deep(.vc-day-layer.vc-day-box-center-center) {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.vc-highlights .vc-highlight,
-.vc-highlight-bg-solid,
-.vc-highlight-bg-light,
-.vc-highlight-bg-outline {
+:deep(.vc-highlights .vc-highlight),
+:deep(.vc-highlight-bg-solid),
+:deep(.vc-highlight-bg-light),
+:deep(.vc-highlight-bg-outline) {
     border-radius: var(--brutal-radius) !important;
 }
 
-.vc-container .vc-arrow {
+:deep(.vc-container .vc-arrow) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -214,23 +214,23 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     color: var(--brutal-fg);
 }
 
-.vc-container .vc-arrow:hover {
+:deep(.vc-container .vc-arrow:hover) {
     box-shadow: calc(var(--brutal-shadow-offset-x) + 2px) calc(var(--brutal-shadow-offset-y) + 2px) 0 var(--brutal-shadow-color);
     transform: translate(-1px, -1px);
 }
 
-.vc-container .vc-arrow:active {
+:deep(.vc-container .vc-arrow:active) {
     transform: translateY(var(--brutal-pressed-offset, 2px));
     box-shadow: none !important;
 }
 
-.vc-container .vc-arrow.vc-prev svg,
-.vc-container .vc-arrow.vc-next svg {
+:deep(.vc-container .vc-arrow.vc-prev svg),
+:deep(.vc-container .vc-arrow.vc-next svg) {
     width: 1rem;
     height: 1rem;
 }
 
-.vc-container .vc-title {
+:deep(.vc-container .vc-title) {
     font-weight: 900;
     font-size: 0.75rem;
     letter-spacing: -0.025em;
@@ -241,11 +241,11 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     padding: 0;
 }
 
-.vc-container .vc-title:hover {
+:deep(.vc-container .vc-title:hover) {
     color: var(--brutal-primary);
 }
 
-.vc-container .vc-weekday {
+:deep(.vc-container .vc-weekday) {
     font-weight: 900;
     font-size: 0.625rem;
     text-transform: uppercase;
@@ -254,11 +254,11 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     border-bottom: 3px solid var(--brutal-border-color);
 }
 
-.vc-container .vc-weeks {
+:deep(.vc-container .vc-weeks) {
     min-width: 0;
 }
 
-.vc-container .vc-day {
+:deep(.vc-container .vc-day) {
     min-width: 0;
 }
 </style>

@@ -40,6 +40,7 @@ export const zhCN: Locale = {
     beforeAfter: {
         before: '之前',
         after: '之后',
+        comparisonSlider: '对比滑块',
     },
     authCard: {
         welcomeBack: '欢迎回来',

@@ -10,11 +10,13 @@ type SelectTriggerVariantProps = VariantProps<typeof selectTriggerVariants>
 
 interface SelectTriggerProps {
     size?: NonNullable<SelectTriggerVariantProps['size']>
+    disabled?: boolean
     class?: string
 }
 
 const props = withDefaults(defineProps<SelectTriggerProps>(), {
     size: 'default',
+    disabled: false,
     class: undefined,
 })
 
@@ -24,7 +26,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <SelectTriggerPrimitive :class="classes" aria-haspopup="listbox">
+    <SelectTriggerPrimitive :class="classes" :disabled="disabled" aria-haspopup="listbox">
         <slot />
         <SelectIconPrimitive as-child>
             <ChevronDown class="h-5 w-5 stroke-[3]" />

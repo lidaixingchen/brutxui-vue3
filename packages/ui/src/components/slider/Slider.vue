@@ -20,6 +20,7 @@ interface SliderProps {
     max?: number
     step?: number
     disabled?: boolean
+    ariaLabel?: string
     size?: NonNullable<SliderTrackVariantProps['size']>
     variant?: NonNullable<SliderThumbVariantProps['variant']>
     class?: string
@@ -32,6 +33,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
     max: 100,
     step: 1,
     disabled: false,
+    ariaLabel: undefined,
     size: 'default',
     variant: 'default',
     class: undefined,
@@ -54,6 +56,12 @@ const thumbClasses = computed(() =>
 const rangeClasses = computed(() =>
     cn(sliderRangeVariants({ variant: props.variant }))
 )
+
+const thumbCount = computed(() => {
+    if (props.modelValue) return props.modelValue.length
+    if (props.defaultValue) return props.defaultValue.length
+    return 1
+})
 </script>
 
 <template>
@@ -64,12 +72,17 @@ const rangeClasses = computed(() =>
         :max="max"
         :step="step"
         :disabled="disabled"
+        :aria-label="ariaLabel"
         :class="rootClasses"
-        @update:model-value="emit('update:modelValue', $event!)"
+        @update:model-value="emit('update:modelValue', $event ?? [0])"
     >
         <SliderTrackPrimitive :class="trackClasses">
             <SliderRangePrimitive :class="rangeClasses" />
         </SliderTrackPrimitive>
-        <SliderThumbPrimitive :class="thumbClasses" />
+        <SliderThumbPrimitive
+            v-for="(_, index) in thumbCount"
+            :key="index"
+            :class="thumbClasses"
+        />
     </SliderRootPrimitive>
 </template>

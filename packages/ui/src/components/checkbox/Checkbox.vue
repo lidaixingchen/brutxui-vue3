@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
 })
 
 const emit = defineEmits<{
-    'update:checked': [value: boolean]
+    'update:checked': [value: boolean | 'indeterminate']
 }>()
 
 const classes = computed(() =>
@@ -39,10 +39,9 @@ const checkClasses = computed(() =>
 <template>
     <CheckboxRoot
         :class="classes"
-        :model-value="checked"
-        :default-value="defaultChecked"
+        v-bind="checked !== undefined ? { 'model-value': checked } : { 'default-value': defaultChecked }"
         :disabled="disabled"
-        @update:model-value="(val: boolean | 'indeterminate') => emit('update:checked', val === 'indeterminate' ? false : val)"
+        @update:model-value="(val: boolean | 'indeterminate') => emit('update:checked', val)"
     >
         <CheckboxIndicator :class="checkClasses">
             <Check class="h-full w-full" />

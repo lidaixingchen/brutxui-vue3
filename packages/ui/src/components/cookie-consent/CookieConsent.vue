@@ -8,6 +8,7 @@ import CardContent from '../card/CardContent.vue'
 import Button from '../button/Button.vue'
 
 interface CookieConsentProps {
+    modelValue?: boolean
     title?: string
     description?: string
     acceptText?: string
@@ -16,6 +17,7 @@ interface CookieConsentProps {
 }
 
 const props = withDefaults(defineProps<CookieConsentProps>(), {
+    modelValue: true,
     title: undefined,
     description: undefined,
     acceptText: undefined,
@@ -26,9 +28,20 @@ const props = withDefaults(defineProps<CookieConsentProps>(), {
 const { t } = useLocale()
 
 const emit = defineEmits<{
+    'update:modelValue': [value: boolean]
     accept: []
     decline: []
 }>()
+
+function handleAccept() {
+    emit('accept')
+    emit('update:modelValue', false)
+}
+
+function handleDecline() {
+    emit('decline')
+    emit('update:modelValue', false)
+}
 
 const rootClasses = computed(() =>
     cn(
@@ -51,30 +64,45 @@ const resolvedDeclineText = computed(() => props.declineText ?? t('cookieConsent
 </script>
 
 <template>
-    <div :class="rootClasses">
-        <Card :class="cardClasses" variant="default">
-            <CardContent class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div class="flex items-start gap-3">
-                    <Cookie class="h-6 w-6 shrink-0 stroke-[2.5] mt-0.5" />
-                    <div>
-                        <h3 class="text-base font-black tracking-tight">
+    <Transition name="cookie-slide-up">
+        <div v-if="modelValue" :class="rootClasses">
+            <Card :class="cardClasses" variant="default">
+                <CardContent class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex items-start gap-3">
+                        <Cookie class="h-6 w-6 shrink-0 stroke-[2.5] mt-0.5" />
+                        <div>
+                            <h3 class="text-base font-black tracking-tight">
 {{ resolvedTitle }}
 </h3>
-                        <p class="mt-1 text-sm text-brutal-muted-foreground font-medium">
+                            <p class="mt-1 text-sm text-brutal-muted-foreground font-medium">
 {{ resolvedDescription }}
 </p>
+                        </div>
                     </div>
-                </div>
-                <div class="flex flex-col gap-2 sm:flex-row sm:shrink-0">
-                    <Button variant="outline" size="sm" @click="emit('decline')">
-                        {{ resolvedDeclineText }}
-                    </Button>
-                    <Button variant="primary" size="sm" @click="emit('accept')">
-                        {{ resolvedAcceptText }}
-                    </Button>
-                </div>
-                <slot name="actions" />
-            </CardContent>
-        </Card>
-    </div>
+                    <div class="flex flex-col gap-2 sm:flex-row sm:shrink-0">
+                        <Button variant="outline" size="sm" @click="handleDecline">
+                            {{ resolvedDeclineText }}
+                        </Button>
+                        <Button variant="primary" size="sm" @click="handleAccept">
+                            {{ resolvedAcceptText }}
+                        </Button>
+                    </div>
+                    <slot name="actions" />
+                </CardContent>
+            </Card>
+        </div>
+    </Transition>
 </template>
+
+<style scoped>
+.cookie-slide-up-enter-active,
+.cookie-slide-up-leave-active {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.cookie-slide-up-enter-from,
+.cookie-slide-up-leave-to {
+    transform: translateY(100%);
+    opacity: 0;
+}
+</style>

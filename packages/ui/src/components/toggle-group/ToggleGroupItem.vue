@@ -17,8 +17,8 @@ interface ToggleGroupItemProps {
 }
 
 const props = withDefaults(defineProps<ToggleGroupItemProps>(), {
-    variant: 'default',
-    size: 'default',
+    variant: undefined,
+    size: undefined,
     disabled: false,
     class: undefined,
 })
@@ -34,8 +34,8 @@ const disabled = computed(() => context.disabled.value || props.disabled)
 const classes = computed(() =>
     cn(
         toggleVariants({
-            variant: context.variant.value ?? props.variant,
-            size: context.size.value ?? props.size,
+            variant: props.variant ?? context.variant.value ?? 'default',
+            size: props.size ?? context.size.value ?? 'default',
         }),
         props.class
     )

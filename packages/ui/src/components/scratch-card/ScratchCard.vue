@@ -121,7 +121,7 @@ const canvasStyle = computed(() => ({
             <slot />
         </div>
         <canvas
-            v-if="!isRevealed || !prefersReducedMotion"
+            v-if="!isRevealed"
             ref="canvasRef"
             class="absolute inset-0 cursor-crosshair select-none z-10"
             :style="{ ...canvasStyle, touchAction }"

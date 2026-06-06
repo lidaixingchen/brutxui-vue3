@@ -45,6 +45,7 @@ const percentage = computed(() => {
         <ProgressIndicator
             :class="indicatorClasses"
             :style="{ transform: `translateX(-${100 - percentage}%)` }"
+            aria-hidden="true"
         />
     </ProgressRoot>
 </template>

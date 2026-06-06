@@ -83,6 +83,10 @@ const navClasses = computed(() =>
     cn(paginationVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
+const safeCurrentPage = computed(() =>
+    Math.min(Math.max(props.currentPage, FIRST_PAGE), Math.max(props.totalPages, FIRST_PAGE))
+)
+
 const buttonSize = computed(() => props.size ?? 'default')
 
 const dotsSizeClasses = computed(() => {
@@ -132,7 +136,7 @@ function onPageChange(page: number) {
             v-if="showFirstLast"
             type="button"
             :class="firstButtonClasses"
-            :disabled="currentPage === 1"
+            :disabled="safeCurrentPage <= FIRST_PAGE"
             :aria-label="t('pagination.firstPage')"
             @click="onPageChange(1)"
         >
@@ -142,9 +146,9 @@ function onPageChange(page: number) {
         <button
             type="button"
             :class="prevButtonClasses"
-            :disabled="currentPage === 1"
+            :disabled="safeCurrentPage <= FIRST_PAGE"
             :aria-label="t('pagination.previousPage')"
-            @click="onPageChange(currentPage - 1)"
+            @click="onPageChange(safeCurrentPage - 1)"
         >
             <ChevronLeft class="h-4 w-4" />
         </button>
@@ -160,9 +164,9 @@ function onPageChange(page: number) {
                 <button
                     v-else
                     type="button"
-                    :class="currentPage === pageNumber ? pageButtonActiveClasses : pageButtonInactiveClasses"
+                    :class="safeCurrentPage === pageNumber ? pageButtonActiveClasses : pageButtonInactiveClasses"
                     :aria-label="t('pagination.page', { number: pageNumber as number })"
-                    :aria-current="currentPage === pageNumber ? 'page' : undefined"
+                    :aria-current="safeCurrentPage === pageNumber ? 'page' : undefined"
                     @click="onPageChange(pageNumber as number)"
                 >
                     {{ pageNumber }}
@@ -171,15 +175,15 @@ function onPageChange(page: number) {
         </template>
 
         <span v-if="!showPageNumbers" class="px-4 font-black text-brutal-fg">
-            {{ currentPage }} / {{ totalPages }}
+            {{ safeCurrentPage }} / {{ totalPages }}
         </span>
 
         <button
             type="button"
             :class="nextButtonClasses"
-            :disabled="currentPage === totalPages"
+            :disabled="safeCurrentPage >= props.totalPages"
             :aria-label="t('pagination.nextPage')"
-            @click="onPageChange(currentPage + 1)"
+            @click="onPageChange(safeCurrentPage + 1)"
         >
             <ChevronRight class="h-4 w-4" />
         </button>
@@ -188,7 +192,7 @@ function onPageChange(page: number) {
             v-if="showFirstLast"
             type="button"
             :class="lastButtonClasses"
-            :disabled="currentPage === totalPages"
+            :disabled="safeCurrentPage >= props.totalPages"
             :aria-label="t('pagination.lastPage')"
             @click="onPageChange(totalPages)"
         >

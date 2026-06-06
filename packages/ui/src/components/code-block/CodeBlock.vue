@@ -36,9 +36,13 @@ const highlightedHtml = ref('')
 
 const resolvedPrismLang = computed(() => resolveLanguage(resolvedLanguage.value))
 
+let highlightVersion = 0
+
 watch(
     [() => props.code, resolvedPrismLang],
     async ([code, lang]) => {
+        const version = ++highlightVersion
+
         if (lang === 'plaintext') {
             highlightedHtml.value = escapeHtml(code)
             return
@@ -46,6 +50,7 @@ watch(
 
         if (!isLanguageLoaded(lang)) {
             const loaded = await loadLanguage(lang)
+            if (version !== highlightVersion) return
             if (loaded === 'plaintext') {
                 highlightedHtml.value = escapeHtml(code)
                 return

@@ -40,6 +40,7 @@ export const en: Locale = {
     beforeAfter: {
         before: 'Before',
         after: 'After',
+        comparisonSlider: 'Comparison slider',
     },
     authCard: {
         welcomeBack: 'Welcome back',

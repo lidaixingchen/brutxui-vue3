@@ -38,8 +38,8 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <button type="submit" :class="classes" :disabled="isDisabled">
-        <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
+    <button type="submit" :class="classes" :disabled="isDisabled" :aria-busy="loading">
+        <Loader2 v-if="loading" class="h-4 w-4 animate-spin" aria-hidden="true" />
         <template v-if="loading && resolvedPendingText">
 {{ resolvedPendingText }}
 </template>

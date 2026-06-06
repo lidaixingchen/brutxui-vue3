@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, type Component } from 'vue'
-import { ArrowUpRight, ArrowDownRight } from '@lucide/vue'
+import { ArrowUpRight, ArrowDownRight, Minus } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Card from '../card/Card.vue'
@@ -65,7 +65,7 @@ function getIconClasses(stat: StatItem) {
 function getTrendIconClasses(stat: StatItem) {
     return cn(
         'h-4 w-4 stroke-[3]',
-        stat.trend === 'up' ? 'text-brutal-success' : 'text-brutal-destructive'
+        stat.trend === 'up' ? 'text-brutal-success' : stat.trend === 'down' ? 'text-brutal-destructive' : 'text-brutal-muted-foreground'
     )
 }
 
@@ -103,7 +103,7 @@ function getProgressClasses(stat: StatItem) {
 {{ stat.value }}
 </div>
                     <div class="flex items-center gap-2 mt-1">
-                        <component :is="stat.trend === 'up' ? ArrowUpRight : ArrowDownRight" :class="getTrendIconClasses(stat)" />
+                        <component :is="stat.trend === 'up' ? ArrowUpRight : stat.trend === 'down' ? ArrowDownRight : Minus" :class="getTrendIconClasses(stat)" />
                         <Badge :variant="stat.trend === 'up' ? 'success' : stat.trend === 'down' ? 'danger' : 'default'" size="sm">
 {{ stat.change }}
 </Badge>

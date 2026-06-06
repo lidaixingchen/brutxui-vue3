@@ -44,8 +44,13 @@ const contentWrapperClass = computed(() =>
 );
 
 const initials = computed(() => {
-    const name = props.message.name || '?';
-    return name.slice(0, 2).toUpperCase();
+    const name = props.message.name?.trim();
+    if (!name) return '?';
+    const words = name.split(/\s+/).filter(Boolean);
+    if (words.length === 1) {
+        return words[0].slice(0, 2).toUpperCase();
+    }
+    return words.map(w => w[0]).join('').slice(0, 2).toUpperCase();
 });
 </script>
 

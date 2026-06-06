@@ -76,7 +76,7 @@ function handleNext() {
             </div>
         </slot>
 
-        <slot>
+        <slot name="content">
             <Stepper
                 :steps="stepperSteps"
                 :model-value="currentStep"

@@ -85,7 +85,7 @@ const rootClasses = computed(() =>
             </slot>
 
             <slot>
-                <TabsRoot v-model="activeTab" :default-value="props.defaultTab">
+                <TabsRoot v-model="activeTab">
                     <TabsList class="w-full">
                         <TabsTrigger
                             v-for="tab in props.tabs"

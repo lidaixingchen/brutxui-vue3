@@ -32,8 +32,7 @@ const classes = computed(() =>
 
 <template>
     <Toggle
-        :default-value="defaultValue"
-        :model-value="pressed"
+        v-bind="pressed !== undefined ? { 'model-value': pressed } : { 'default-value': defaultValue }"
         :disabled="disabled"
         :class="classes"
         @update:model-value="emit('update:pressed', $event)"

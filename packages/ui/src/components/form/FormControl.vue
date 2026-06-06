@@ -24,7 +24,7 @@ const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptio
     <slot
         :id="itemContext.formItemId"
         :class="rootClasses"
-        :aria-describedby="!fieldContext.error?.value ? itemContext.formDescriptionId : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`"
-        :aria-invalid="!!fieldContext.error?.value"
+        :aria-describedby="!fieldContext.error.value ? itemContext.formDescriptionId : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`"
+        :aria-invalid="!!fieldContext.error.value"
     />
 </template>

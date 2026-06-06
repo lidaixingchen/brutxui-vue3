@@ -340,7 +340,7 @@ export { counterVariants } from './components/counter/counter-variants'
 
 export { default as Stepper } from './components/stepper/Stepper.vue'
 export type { StepperStep } from './components/stepper/Stepper.vue'
-export { stepperDotVariants, stepperConnectorVariants, stepperItemVariants } from './components/stepper/stepper-variants'
+export { stepperDotVariants, stepperConnectorVariants } from './components/stepper/stepper-variants'
 
 export * from './lib/utils'
 

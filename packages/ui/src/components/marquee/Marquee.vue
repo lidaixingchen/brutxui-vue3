@@ -41,7 +41,7 @@ const containerStyle = computed(() => ({
         <div :class="trackClasses">
             <slot />
         </div>
-        <div :class="trackClasses" aria-hidden="true">
+        <div :class="trackClasses" aria-hidden="true" inert>
             <slot />
         </div>
     </div>

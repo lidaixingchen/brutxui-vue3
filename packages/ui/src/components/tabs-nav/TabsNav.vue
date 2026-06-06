@@ -14,30 +14,41 @@ export interface TabItem {
 
 interface TabsNavProps {
     tabs?: TabItem[]
+    modelValue?: string
     defaultValue?: string
     class?: string
 }
 
 const props = withDefaults(defineProps<TabsNavProps>(), {
     tabs: () => [],
+    modelValue: undefined,
     defaultValue: undefined,
     class: undefined,
 })
 
+const emit = defineEmits<{
+    'update:modelValue': [value: string]
+}>()
+
 const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
 
-const activeDefaultValue = computed(() => {
+const activeValue = computed(() => {
+    if (props.modelValue !== undefined) return props.modelValue
     if (props.defaultValue) return props.defaultValue
     if (props.tabs.length > 0) return props.tabs[0].value
     return ''
 })
+
+function handleUpdateModelValue(value: string) {
+    emit('update:modelValue', value)
+}
 </script>
 
 <template>
     <div :class="rootClasses">
         <slot name="header" />
 
-        <TabsRoot :default-value="activeDefaultValue" class="w-full">
+        <TabsRoot :model-value="activeValue" class="w-full" @update:model-value="handleUpdateModelValue">
             <TabsList class="w-full flex">
                 <TabsTrigger
                     v-for="tab in tabs"

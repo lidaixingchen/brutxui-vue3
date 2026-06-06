@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { provide, computed } from 'vue'
-import { useForm, type FormContext as VeeFormContext } from 'vee-validate'
+import { provide, computed, watch } from 'vue'
+import { useForm } from 'vee-validate'
 import { cn } from '../../lib/utils'
 import { formContextKey } from './form-context'
 
@@ -27,7 +27,17 @@ const onSubmit = form.handleSubmit((values) => {
 
 const rootClasses = computed(() => cn('', props.class))
 
-provide(formContextKey, form as unknown as VeeFormContext)
+watch(
+    () => props.initialValues,
+    (newValues) => {
+        if (newValues) {
+            form.resetForm({ values: newValues })
+        }
+    },
+    { deep: true }
+)
+
+provide(formContextKey, form)
 </script>
 
 <template>

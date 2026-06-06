@@ -55,7 +55,9 @@ function onDragOver(e: DragEvent, columnId: string) {
     dragOverColumn.value = columnId;
 }
 
-function onDragLeave(columnId: string) {
+function onDragLeave(e: DragEvent, columnId: string) {
+    const el = e.currentTarget as HTMLElement
+    if (el.contains(e.relatedTarget as Node)) return
     if (dragOverColumn.value === columnId) {
         dragOverColumn.value = null;
     }
@@ -122,7 +124,7 @@ const cardClassesMap = computed(() => {
             :key="col.id"
             :class="columnClassesMap.get(col.id)"
             @dragover="onDragOver($event, col.id)"
-            @dragleave="onDragLeave(col.id)"
+            @dragleave="onDragLeave($event, col.id)"
             @drop="onDrop(col.id)"
         >
             <!-- Column Header -->

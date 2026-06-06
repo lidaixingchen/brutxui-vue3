@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { inputVariants } from './input-variants'
-import { useLocale } from '@/composables/useLocale'
 
 type InputVariantProps = VariantProps<typeof inputVariants>
 
@@ -29,9 +28,7 @@ const props = withDefaults(defineProps<InputProps>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const { t } = useLocale()
-
-const resolvedPlaceholder = computed(() => props.placeholder ?? t('input.placeholder'))
+const isComposing = ref(false)
 
 const classes = computed(() =>
     cn(inputVariants({ variant: props.variant, inputSize: props.inputSize }), props.class)
@@ -43,8 +40,10 @@ const classes = computed(() =>
         :type="type"
         :value="modelValue"
         :disabled="disabled"
-        :placeholder="resolvedPlaceholder"
+        :placeholder="placeholder"
         :class="classes"
-        @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+        @compositionstart="isComposing = true"
+        @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
+        @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
 </template>

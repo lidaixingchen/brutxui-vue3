@@ -50,7 +50,6 @@ const { t } = useLocale()
 const formField = inject<FormFieldContext | null>(formFieldKey, null)
 
 onUnmounted(() => {
-    audioEngine.dispose()
     if (shakeTimer.value) clearTimeout(shakeTimer.value)
 })
 
@@ -113,6 +112,10 @@ const onInput = (e: Event) => {
     const value = (e.target as HTMLInputElement).value
     emit('update:modelValue', value)
     
+    if (formField) {
+        formField.setValue(value)
+    }
+
     // 键盘打字音效
     audioEngine.playSound('type')
 

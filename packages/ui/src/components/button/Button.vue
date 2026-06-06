@@ -29,8 +29,21 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 const isDisabled = computed(() => props.disabled || props.loading)
 
 const classes = computed(() =>
-    cn(buttonVariants({ variant: props.variant, size: props.size }), props.class)
+    cn(
+        buttonVariants({ variant: props.variant, size: props.size }),
+        props.asChild && isDisabled.value && 'pointer-events-none',
+        props.class,
+    )
 )
+
+const LOADER_SIZE_MAP: Record<string, string> = {
+    sm: 'h-3 w-3',
+    default: 'h-4 w-4',
+    lg: 'h-5 w-5',
+    xl: 'h-6 w-6',
+} as const
+
+const loaderSize = computed(() => LOADER_SIZE_MAP[props.size] ?? LOADER_SIZE_MAP.default)
 </script>
 
 <template>
@@ -42,7 +55,7 @@ const classes = computed(() =>
         :aria-disabled="asChild && isDisabled ? true : undefined"
         :aria-busy="loading || undefined"
     >
-        <Loader2 v-if="loading" class="h-4 w-4 animate-spin" />
+        <Loader2 v-if="loading" :class="cn(loaderSize, 'animate-spin')" />
         <slot />
     </Primitive>
 </template>

@@ -44,6 +44,7 @@ export interface CopyToClipboardLocale {
 export interface BeforeAfterLocale {
     before: string
     after: string
+    comparisonSlider: string
 }
 
 export interface AuthCardLocale {

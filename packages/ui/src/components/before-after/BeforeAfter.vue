@@ -94,6 +94,7 @@ const handleClasses = computed(() =>
             max="100"
             v-model="sliderVal"
             :disabled="disabled"
+            :aria-label="t('beforeAfter.comparisonSlider')"
             class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 disabled:cursor-not-allowed"
         />
     </div>

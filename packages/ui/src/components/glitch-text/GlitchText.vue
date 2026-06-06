@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, onUpdated } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
@@ -23,22 +23,10 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
     class: undefined,
 })
 
-const elementRef = ref<HTMLElement | null>(null)
 const isActive = ref(false)
 const prefersReducedMotion = useReducedMotion()
 
-const displayText = ref(props.text)
-
-function updateDisplayText() {
-    if (elementRef.value) {
-        displayText.value = elementRef.value.textContent || props.text
-    } else {
-        displayText.value = props.text
-    }
-}
-
-onMounted(updateDisplayText)
-onUpdated(updateDisplayText)
+const displayText = computed(() => props.text)
 
 const AUTOPLAY_ACTIVE_DURATION_MS = 1000
 
@@ -127,7 +115,6 @@ const classes = computed(() =>
 
 <template>
     <span
-        ref="elementRef"
         :class="classes"
         :data-text="displayText"
         @mouseenter="onMouseEnter"

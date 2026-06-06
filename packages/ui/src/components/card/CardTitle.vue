@@ -3,10 +3,14 @@ import { computed } from 'vue'
 import { cn } from '../../lib/utils'
 
 interface CardTitleProps {
+    as?: string
     class?: string
 }
 
-const props = defineProps<CardTitleProps>()
+const props = withDefaults(defineProps<CardTitleProps>(), {
+    as: 'h3',
+    class: undefined,
+})
 
 const classes = computed(() =>
     cn('text-2xl font-black tracking-tight leading-none', props.class)
@@ -14,7 +18,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <h3 :class="classes">
+    <component :is="as" :class="classes">
         <slot />
-    </h3>
+    </component>
 </template>

@@ -44,6 +44,28 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         const canvas = canvasRef.value
         if (!container || !canvas) return
 
+        // 保存当前 canvas 内容到临时 canvas，防止 resize 清除已刮除区域
+        let tempCanvas: HTMLCanvasElement | null = null
+        let hasOldContent = false
+        const oldCtx = canvas.getContext('2d')
+        const oldDpr = canvas.width > 0 ? canvas.width / parseFloat(canvas.style.width || '1') : (window.devicePixelRatio || 1)
+        if (oldCtx && canvas.width > 0 && canvas.height > 0) {
+            try {
+                tempCanvas = document.createElement('canvas')
+                tempCanvas.width = canvas.width
+                tempCanvas.height = canvas.height
+                const tempCtx = tempCanvas.getContext('2d')
+                if (tempCtx && typeof tempCtx.drawImage === 'function') {
+                    tempCtx.drawImage(canvas, 0, 0)
+                    hasOldContent = true
+                } else {
+                    tempCanvas = null
+                }
+            } catch {
+                tempCanvas = null
+            }
+        }
+
         const rect = container.getBoundingClientRect()
         const dpr = window.devicePixelRatio || 1
 
@@ -57,7 +79,14 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
             ctx.value.scale(dpr, dpr)
             const w = canvas.width / dpr
             const h = canvas.height / dpr
-            drawOverlay(ctx.value, w, h)
+
+            if (hasOldContent && tempCanvas) {
+                // 恢复之前保存的内容，保留用户已刮除的进度
+                ctx.value.drawImage(tempCanvas, 0, 0, tempCanvas.width / oldDpr, tempCanvas.height / oldDpr, 0, 0, w, h)
+            } else {
+                // 首次初始化，绘制覆盖层
+                drawOverlay(ctx.value, w, h)
+            }
         }
     }
 
@@ -138,6 +167,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
 
     const handlePointerDown = (e: PointerEvent) => {
         isScratching = true
+        ;(e.target as Element).setPointerCapture(e.pointerId)
         scratch(e.clientX, e.clientY)
     }
 
@@ -146,8 +176,9 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         scratch(e.clientX, e.clientY)
     }
 
-    const handlePointerUp = () => {
+    const handlePointerUp = (e: PointerEvent) => {
         if (isScratching) {
+            ;(e.target as Element).releasePointerCapture(e.pointerId)
             isScratching = false
             checkProgress()
         }

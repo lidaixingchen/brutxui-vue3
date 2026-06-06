@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, nextTick } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
@@ -23,7 +23,13 @@ const props = withDefaults(defineProps<TreeViewNodeProps>(), {
 const emit = defineEmits<{
     'toggle': [id: string];
     'select': [node: TreeNode];
+    'focus-prev': [];
+    'focus-next': [];
+    'focus-parent': [];
+    'focus-first-child': [];
 }>();
+
+const treeItemRef = ref<HTMLDivElement | null>(null);
 
 const isLeaf = computed(() => !props.node.children || props.node.children.length === 0);
 const isExpanded = computed(() => props.expandedIds.has(props.node.id));
@@ -40,10 +46,66 @@ const chevronClass = computed(() =>
 const indentStyle = computed(() => ({
     paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
 }));
+
+const handleKeydown = (e: KeyboardEvent) => {
+    switch (e.key) {
+        case 'Enter':
+        case ' ':
+            e.preventDefault();
+            if (isLeaf.value) {
+                emit('select', props.node);
+            } else {
+                emit('toggle', props.node.id);
+                emit('select', props.node);
+            }
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            if (!isLeaf.value && !isExpanded.value) {
+                emit('toggle', props.node.id);
+                emit('select', props.node);
+            } else if (!isLeaf.value && isExpanded.value) {
+                emit('focus-first-child');
+            }
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            if (!isLeaf.value && isExpanded.value) {
+                emit('toggle', props.node.id);
+                emit('select', props.node);
+            } else {
+                emit('focus-parent');
+            }
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            emit('focus-prev');
+            break;
+        case 'ArrowDown':
+            e.preventDefault();
+            emit('focus-next');
+            break;
+    }
+};
+
+const focus = () => {
+    nextTick(() => {
+        treeItemRef.value?.focus();
+    });
+};
+
+defineExpose({ focus, nodeId: props.node.id });
 </script>
 
 <template>
-    <div role="treeitem" :aria-expanded="!isLeaf ? isExpanded : undefined" :aria-selected="isSelected">
+    <div
+        ref="treeItemRef"
+        role="treeitem"
+        :tabindex="isSelected ? 0 : -1"
+        :aria-expanded="!isLeaf ? isExpanded : undefined"
+        :aria-selected="isSelected"
+        @keydown="handleKeydown"
+    >
         <div
             :class="itemClass"
             :style="indentStyle"
@@ -73,6 +135,10 @@ const indentStyle = computed(() => ({
                     :depth="depth + 1"
                     @toggle="emit('toggle', $event)"
                     @select="emit('select', $event)"
+                    @focus-prev="emit('focus-prev')"
+                    @focus-next="emit('focus-next')"
+                    @focus-parent="emit('focus-parent')"
+                    @focus-first-child="emit('focus-first-child')"
                 />
             </div>
         </Transition>
