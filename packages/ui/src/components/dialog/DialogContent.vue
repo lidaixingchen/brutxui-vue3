@@ -37,7 +37,7 @@ const closeClasses = computed(() =>
 <template>
     <DialogPortalPrimitive>
         <DialogOverlay />
-        <DialogContentPrimitive :class="contentClasses" :force-mount="props.forceMount">
+        <DialogContentPrimitive :class="contentClasses" :force-mount="props.forceMount === true ? true : undefined">
             <slot />
             <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
                 <X class="h-4 w-4 stroke-[3]" />

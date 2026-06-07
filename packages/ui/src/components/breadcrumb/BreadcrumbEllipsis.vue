@@ -23,12 +23,13 @@ const classes = computed(() =>
 <template>
     <span
         role="presentation"
-        aria-hidden="true"
         :class="classes"
     >
-        <slot>
-            <MoreHorizontal class="h-4 w-4" />
-        </slot>
+        <span aria-hidden="true">
+            <slot>
+                <MoreHorizontal class="h-4 w-4" />
+            </slot>
+        </span>
         <span class="sr-only">{{ t('breadcrumb.more') }}</span>
     </span>
 </template>

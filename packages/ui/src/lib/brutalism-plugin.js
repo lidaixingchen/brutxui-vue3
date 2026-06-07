@@ -144,7 +144,7 @@ const brutalismPlugin = plugin(
                 borderRadius: 'var(--brutal-radius, 0px)',
                 fontWeight: '500',
                 '&:focus': {
-                    outline: '2px solid var(--brutal-ring, #000000)',
+                    outline: '3px solid var(--brutal-ring, #000000)',
                     outlineOffset: '2px',
                     boxShadow: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
                 },

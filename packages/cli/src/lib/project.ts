@@ -32,7 +32,6 @@ function hasVueDependency(cwd: string): boolean {
 
 export function detectProjectType(cwd: string): ProjectType {
     const hasNuxt = hasAnyFile(cwd, CONFIG_FILES.nuxt);
-    const hasVite = hasAnyFile(cwd, CONFIG_FILES.vite);
     const hasSrc = fs.existsSync(path.join(cwd, 'src'));
 
     if (hasNuxt) return 'nuxt';
@@ -149,6 +148,7 @@ export function getAliasFromTsConfig(cwd: string): AliasConfig | null {
             return {
                 components: `${prefix}/components`,
                 utils: `${prefix}/lib/utils`,
+                composables: `${prefix}/composables`,
             };
         }
     }
@@ -219,7 +219,8 @@ export function getDefaultAliases(cwd: string): AliasConfig {
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
     return content
         .replace(/(["'])@\/lib\/utils\1/g, `$1${config.aliases.utils}$1`)
-        .replace(/(["'])@\/components\/(.*?)\1/g, `$1${config.aliases.components}/$2$1`);
+        .replace(/(["'])@\/components\/(.*?)\1/g, `$1${config.aliases.components}/$2$1`)
+        .replace(/(["'])@\/composables\/(.*?)\1/g, `$1${config.aliases.composables}/$2$1`);
 }
 
 export function isSafePath(targetPath: string, cwd: string): boolean {

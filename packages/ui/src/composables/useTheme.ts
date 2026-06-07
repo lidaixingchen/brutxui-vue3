@@ -71,7 +71,13 @@ export function createTheme() {
         const savedMode = (savedModeRaw && VALID_MODES.includes(savedModeRaw as ColorMode)) ? savedModeRaw as ColorMode : null
 
         if (savedTheme) {
-            applyTheme(savedTheme)
+            const root = document.documentElement
+            if (savedTheme !== theme.value) {
+                root.classList.remove(getThemeClass(theme.value))
+            }
+            root.classList.add(getThemeClass(savedTheme))
+            theme.value = savedTheme
+            safeSetStorageItem('brutx-theme', savedTheme)
         } else {
             if (typeof document !== 'undefined') {
                 document.documentElement.classList.add(getThemeClass(theme.value))

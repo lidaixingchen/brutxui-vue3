@@ -81,22 +81,51 @@ function handleFocusNext() {
     focusAdjacent(1)
 }
 
+function handleFocusParent() {
+    const items = getVisibleTreeItems()
+    if (items.length === 0) return
+    const activeEl = document.activeElement as HTMLElement | null
+    if (!activeEl) return
+    const currentItem = activeEl.closest('[role="treeitem"]') as HTMLElement
+    if (!currentItem) return
+    const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]') as HTMLElement | null
+    if (parentGroup) {
+        parentGroup.focus()
+    }
+}
+
+function handleFocusFirstChild() {
+    const items = getVisibleTreeItems()
+    if (items.length === 0) return
+    const activeEl = document.activeElement as HTMLElement | null
+    if (!activeEl) return
+    const currentItem = activeEl.closest('[role="treeitem"]') as HTMLElement
+    if (!currentItem) return
+    const currentIndex = items.indexOf(currentItem)
+    if (currentIndex >= 0 && currentIndex < items.length - 1) {
+        items[currentIndex + 1].focus()
+    }
+}
+
 const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 </script>
 
 <template>
     <div ref="treeRootRef" :class="rootClass" role="tree" :aria-label="t('treeView.fileTree')">
         <TreeViewNode
-            v-for="node in nodes"
+            v-for="(node, index) in nodes"
             :key="node.id"
             :node="node"
             :selected-id="modelValue"
             :expanded-ids="expandedIds"
             :depth="0"
+            :is-first-root="index === 0 && !modelValue"
             @toggle="toggleExpand"
             @select="selectNode"
             @focus-prev="handleFocusPrev"
             @focus-next="handleFocusNext"
+            @focus-parent="handleFocusParent"
+            @focus-first-child="handleFocusFirstChild"
         />
     </div>
 </template>

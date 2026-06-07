@@ -36,6 +36,9 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
         logger.warn('Run: npx brutx-vue@latest init --force to regenerate.');
         process.exit(1);
     }
+    if (!config.aliases.composables) {
+        config.aliases.composables = config.aliases.utils.replace(/\/utils$/, '/composables');
+    }
     return config;
 }
 
@@ -80,6 +83,12 @@ function resolveComponentFilePath(registryPath: string, config: BrutalistConfig,
     if (registryPath.startsWith('components/')) {
         const relative = registryPath.replace('components/', '');
         const aliasPath = resolveAliasPath(config.aliases.components, cwd);
+        return path.join(aliasPath, relative);
+    }
+
+    if (registryPath.startsWith('composables/')) {
+        const relative = registryPath.slice('composables/'.length);
+        const aliasPath = resolveAliasPath(config.aliases.composables, cwd);
         return path.join(aliasPath, relative);
     }
 

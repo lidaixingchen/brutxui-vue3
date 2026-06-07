@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import TabsList from '../tabs/TabsList.vue'
@@ -32,14 +32,18 @@ const emit = defineEmits<{
 
 const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
 
+const internalValue = ref<string>('')
+
 const activeValue = computed(() => {
     if (props.modelValue !== undefined) return props.modelValue
+    if (internalValue.value) return internalValue.value
     if (props.defaultValue) return props.defaultValue
     if (props.tabs.length > 0) return props.tabs[0].value
     return ''
 })
 
 function handleUpdateModelValue(value: string) {
+    internalValue.value = value
     emit('update:modelValue', value)
 }
 </script>

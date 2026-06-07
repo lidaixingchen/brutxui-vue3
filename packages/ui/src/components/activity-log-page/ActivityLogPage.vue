@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Table from '../table/Table.vue'
@@ -48,6 +48,9 @@ const resolvedNoActivityFound = computed(() => t('activityLogPage.noActivityFoun
 const PAGE_SIZE = 10
 
 const currentPage = ref(1)
+watch(() => props.activities, () => {
+    currentPage.value = 1
+})
 const totalPages = computed(() => Math.max(1, Math.ceil(props.activities.length / PAGE_SIZE)))
 
 const paginatedActivities = computed(() => {

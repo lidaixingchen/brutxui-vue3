@@ -30,7 +30,7 @@ const rootClasses = computed(() => cn('', props.class))
 watch(
     () => props.initialValues,
     (newValues) => {
-        if (newValues) {
+        if (newValues && !form.meta.value.dirty) {
             form.resetForm({ values: newValues })
         }
     },

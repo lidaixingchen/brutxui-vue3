@@ -13,11 +13,13 @@ interface TreeViewNodeProps {
     selectedId?: string | null;
     expandedIds: Set<string>;
     depth?: number;
+    isFirstRoot?: boolean;
 }
 
 const props = withDefaults(defineProps<TreeViewNodeProps>(), {
     selectedId: null,
     depth: 0,
+    isFirstRoot: false,
 });
 
 const emit = defineEmits<{
@@ -101,7 +103,7 @@ defineExpose({ focus, nodeId: props.node.id });
     <div
         ref="treeItemRef"
         role="treeitem"
-        :tabindex="isSelected ? 0 : -1"
+        :tabindex="isSelected ? 0 : (isFirstRoot ? 0 : -1)"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-selected="isSelected"
         @keydown="handleKeydown"

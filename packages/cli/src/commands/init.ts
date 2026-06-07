@@ -75,6 +75,11 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
         default: defaults.aliases.utils,
     });
 
+    const composablesAlias = await input({
+        message: 'Configure the import alias for composables:',
+        default: defaults.aliases.composables,
+    });
+
     return {
         tailwind: {
             config: tailwindConfig,
@@ -83,6 +88,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
         aliases: {
             components: componentsAlias,
             utils: utilsAlias,
+            composables: composablesAlias,
         },
     };
 }

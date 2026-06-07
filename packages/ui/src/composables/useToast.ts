@@ -52,9 +52,13 @@ export function createToast() {
         toasts.value = toasts.value.filter((t) => t.id !== id)
     }
 
-    function clearToasts() {
+    function clearAllTimers() {
         timerMap.forEach((timerId) => clearTimeout(timerId))
         timerMap.clear()
+    }
+
+    function clearToasts() {
+        clearAllTimers()
         toasts.value = []
     }
 
@@ -85,6 +89,7 @@ export function createToast() {
         addToast,
         removeToast,
         clearToasts,
+        clearAllTimers,
         success,
         error,
         warning,
@@ -93,6 +98,13 @@ export function createToast() {
 }
 
 let fallbackInstance: ReturnType<typeof createToast> | null = null
+
+function destroyFallback() {
+    if (fallbackInstance) {
+        fallbackInstance.clearAllTimers()
+        fallbackInstance = null
+    }
+}
 
 export function provideToast() {
     const toast = createToast()
@@ -111,3 +123,5 @@ export function useToast() {
     }
     return fallbackInstance
 }
+
+export { destroyFallback }

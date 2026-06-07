@@ -63,7 +63,7 @@ function onDragLeave(e: DragEvent, columnId: string) {
     }
 }
 
-function onDrop(toColumnId: string) {
+function onDrop(e: DragEvent, toColumnId: string) {
     if (!draggingCard.value) return;
     const { cardId, fromColumn } = draggingCard.value;
     if (fromColumn === toColumnId) {
@@ -80,12 +80,26 @@ function onDrop(toColumnId: string) {
         return;
     }
 
+    const columnEl = e.currentTarget as HTMLElement
+    const cardEls = Array.from(columnEl.querySelectorAll('[data-card-id]'))
+    let insertIndex = cardEls.length
+    const mouseY = e.clientY
+    for (let i = 0; i < cardEls.length; i++) {
+        const rect = cardEls[i].getBoundingClientRect()
+        if (mouseY < rect.top + rect.height / 2) {
+            insertIndex = i
+            break
+        }
+    }
+
     const newColumns = columns.value.map((col) => {
         if (col.id === fromColumn) {
             return { ...col, cards: col.cards.filter((c) => c.id !== cardId) };
         }
         if (col.id === toColumnId) {
-            return { ...col, cards: [...col.cards, card] };
+            const newCards = [...col.cards]
+            newCards.splice(insertIndex, 0, card)
+            return { ...col, cards: newCards }
         }
         return col;
     });
@@ -125,7 +139,7 @@ const cardClassesMap = computed(() => {
             :class="columnClassesMap.get(col.id)"
             @dragover="onDragOver($event, col.id)"
             @dragleave="onDragLeave($event, col.id)"
-            @drop="onDrop(col.id)"
+            @drop="onDrop($event, col.id)"
         >
             <!-- Column Header -->
             <div class="flex items-center justify-between mb-1">
@@ -147,6 +161,7 @@ const cardClassesMap = computed(() => {
                 <div
                     v-for="card in col.cards"
                     :key="card.id"
+                    :data-card-id="card.id"
                     :class="cardClassesMap.get(card.id)"
                     draggable="true"
                     @dragstart="onDragStart(card.id, col.id)"

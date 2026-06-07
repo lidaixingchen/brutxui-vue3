@@ -44,6 +44,7 @@ export const BASE_DEPENDENCIES = [
 export const DEFAULT_ALIASES = {
     components: '@/components',
     utils: '@/lib/utils',
+    composables: '@/composables',
 } as const;
 
 export const DEFAULT_TAILWIND_CONFIG = 'tailwind.config.js';
@@ -57,10 +58,14 @@ export const BRUTALIST_CSS_STYLES = `
     --brutal-border-width: 3px;
     --brutal-border-color: #000000;
     --brutal-shadow-color: #000000;
-    --brutal-shadow-offset-sm: 2px;
-    --brutal-shadow-offset: 4px;
-    --brutal-shadow-offset-lg: 6px;
-    --brutal-shadow-offset-xl: 8px;
+    --brutal-shadow-offset-x: 4px;
+    --brutal-shadow-offset-y: 4px;
+    --brutal-shadow-offset-sm-x: 2px;
+    --brutal-shadow-offset-sm-y: 2px;
+    --brutal-shadow-offset-lg-x: 6px;
+    --brutal-shadow-offset-lg-y: 6px;
+    --brutal-shadow-offset-xl-x: 8px;
+    --brutal-shadow-offset-xl-y: 8px;
 }
 
 .dark {
@@ -77,19 +82,19 @@ export const BRUTALIST_CSS_STYLES = `
 }
 
 .shadow-brutal {
-    box-shadow: var(--brutal-shadow-offset, 4px) var(--brutal-shadow-offset, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+    box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-sm {
-    box-shadow: var(--brutal-shadow-offset-sm, 2px) var(--brutal-shadow-offset-sm, 2px) 0px 0px var(--brutal-shadow-color, #000000);
+    box-shadow: var(--brutal-shadow-offset-sm-x, 2px) var(--brutal-shadow-offset-sm-y, 2px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-lg {
-    box-shadow: var(--brutal-shadow-offset-lg, 6px) var(--brutal-shadow-offset-lg, 6px) 0px 0px var(--brutal-shadow-color, #000000);
+    box-shadow: var(--brutal-shadow-offset-lg-x, 6px) var(--brutal-shadow-offset-lg-y, 6px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 
 .shadow-brutal-xl {
-    box-shadow: var(--brutal-shadow-offset-xl, 8px) var(--brutal-shadow-offset-xl, 8px) 0px 0px var(--brutal-shadow-color, #000000);
+    box-shadow: var(--brutal-shadow-offset-xl-x, 8px) var(--brutal-shadow-offset-xl-y, 8px) 0px 0px var(--brutal-shadow-color, #000000);
 }
 `;
 

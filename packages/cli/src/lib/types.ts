@@ -16,6 +16,7 @@ export interface TsConfig {
 export interface AliasConfig {
     components: string;
     utils: string;
+    composables: string;
 }
 
 export interface TailwindConfig {

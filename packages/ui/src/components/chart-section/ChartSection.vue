@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { BarChart3, TrendingUp, PieChart } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
@@ -40,6 +40,10 @@ const resolvedLine = computed(() => t('chartSection.line'))
 const resolvedPie = computed(() => t('chartSection.pie'))
 
 const activeTab = ref<string>(props.chartType)
+
+watch(() => props.chartType, (val) => {
+    if (val) activeTab.value = val
+})
 
 const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
 </script>

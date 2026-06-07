@@ -29,6 +29,7 @@ const emit = defineEmits<{
 
 const containerRef = ref<HTMLDivElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+const canvasRemoved = ref(false)
 const prefersReducedMotion = useReducedMotion()
 const { t } = useLocale()
 
@@ -121,7 +122,7 @@ const canvasStyle = computed(() => ({
             <slot />
         </div>
         <canvas
-            v-if="!isRevealed"
+            v-show="!canvasRemoved"
             ref="canvasRef"
             class="absolute inset-0 cursor-crosshair select-none z-10"
             :style="{ ...canvasStyle, touchAction }"
@@ -129,6 +130,7 @@ const canvasStyle = computed(() => ({
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
             @pointercancel="handlePointerUp"
+            @transitionend="canvasRemoved = true"
         />
     </div>
 </template>
