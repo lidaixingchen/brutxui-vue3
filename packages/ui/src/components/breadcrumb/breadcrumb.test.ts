@@ -207,7 +207,8 @@ describe('BreadcrumbEllipsis', () => {
     it('applies aria attributes', () => {
         const wrapper = mount(BreadcrumbEllipsis, { ...localeProvide })
         expect(wrapper.attributes('role')).toBe('presentation')
-        expect(wrapper.attributes('aria-hidden')).toBe('true')
+        const innerSpan = wrapper.find('span[aria-hidden="true"]')
+        expect(innerSpan.exists()).toBe(true)
     })
 
     it('renders sr-only text', () => {

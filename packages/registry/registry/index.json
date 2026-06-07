@@ -670,118 +670,9 @@
         {
           "path": "components/ui/checkbox/Checkbox.vue",
           "type": "registry:ui"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg, #ffffff)",
-                "brutal-fg": "var(--brutal-fg, #000000)",
-                "brutal-primary": "var(--brutal-primary, #FF6B6B)",
-                "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
-                "brutal-accent": "var(--brutal-accent, #FFE66D)",
-                "brutal-destructive": "var(--brutal-destructive, #EF476F)",
-                "brutal-success": "var(--brutal-success, #7FB069)",
-                "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-                "brutal-ring": "var(--brutal-ring, #000000)",
-                "brutal-info": "var(--brutal-info, #4A90D9)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
-                "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
-                "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      }
-    },
-    {
-      "name": "combobox",
-      "type": "registry:ui",
-      "title": "Combobox",
-      "description": "A highly customizable neo-brutalist Combobox component built with Brutx design tokens for Vue 3.",
-      "dependencies": [
-        "reka-ui",
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button",
-        "popover",
-        "command"
-      ],
-      "files": [
-        {
-          "path": "components/ui/combobox/Combobox.vue",
-          "type": "registry:ui"
         },
         {
-          "path": "components/ui/combobox/ComboboxMulti.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/combobox/combobox-types.ts",
+          "path": "components/ui/checkbox/checkbox-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -915,6 +806,18 @@
         {
           "path": "components/ui/command/CommandShortcut.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/command-context.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/command/command-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -1035,6 +938,10 @@
         },
         {
           "path": "components/ui/dialog/DialogTitle.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dialog/dialog-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1168,6 +1075,10 @@
         },
         {
           "path": "components/ui/dropdown-menu/DropdownMenuSubTrigger.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/dropdown-menu/dropdown-menu-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1479,6 +1390,10 @@
         {
           "path": "components/ui/pagination/pagination-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -1578,6 +1493,10 @@
       "files": [
         {
           "path": "components/ui/popover/PopoverContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/popover/popover-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1807,6 +1726,10 @@
         },
         {
           "path": "components/ui/select/SelectTrigger.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/select/select-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -2144,6 +2067,10 @@
         {
           "path": "components/ui/spinner/spinner-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2246,6 +2173,10 @@
         {
           "path": "components/ui/submit-button/SubmitButton.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2345,6 +2276,10 @@
       "files": [
         {
           "path": "components/ui/switch/Switch.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/switch/switch-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -2472,6 +2407,10 @@
         {
           "path": "components/ui/table/TableRow.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/table/table-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2580,6 +2519,10 @@
         {
           "path": "components/ui/tabs/TabsTrigger.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/tabs/tabs-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2681,6 +2624,10 @@
         },
         {
           "path": "components/ui/textarea/textarea-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -2794,6 +2741,10 @@
         {
           "path": "composables/useToast.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2893,6 +2844,10 @@
       "files": [
         {
           "path": "components/ui/tooltip/TooltipContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/tooltip/tooltip-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -3100,6 +3055,10 @@
       "files": [
         {
           "path": "components/ui/dashboard-stats/DashboardStats.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -3479,6 +3438,10 @@
         {
           "path": "components/ui/sheet/sheet-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3584,6 +3547,10 @@
         {
           "path": "components/ui/radio-group/RadioGroupItem.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/radio-group/radio-group-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3684,6 +3651,10 @@
         {
           "path": "components/ui/slider/Slider.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/slider/slider-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3783,6 +3754,10 @@
       "files": [
         {
           "path": "components/ui/progress/Progress.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/progress/progress-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -4101,6 +4076,10 @@
         {
           "path": "components/ui/brutalist-hero/BrutalistHero.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4310,6 +4289,10 @@
         {
           "path": "components/ui/auth-card/AuthCard.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4512,6 +4495,10 @@
         {
           "path": "components/ui/empty-state/EmptyState.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4614,6 +4601,10 @@
       "files": [
         {
           "path": "components/ui/waitlist-page/WaitlistPage.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -4727,6 +4718,10 @@
         },
         {
           "path": "components/ui/accordion/AccordionContent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/accordion/accordion-key.ts",
           "type": "registry:ui"
         },
         {
@@ -4954,6 +4949,14 @@
         {
           "path": "components/ui/number-input/NumberInput.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/number-input/number-input-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5056,7 +5059,15 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/copy-to-clipboard/copy-to-clipboard-variants.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "composables/useClipboard.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -5183,6 +5194,14 @@
         {
           "path": "components/ui/breadcrumb/BreadcrumbEllipsis.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/breadcrumb/breadcrumb-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5281,6 +5300,10 @@
         {
           "path": "components/ui/marquee/Marquee.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/marquee/marquee-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5378,6 +5401,14 @@
       "files": [
         {
           "path": "components/ui/before-after/BeforeAfter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/before-after/before-after-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -5488,6 +5519,14 @@
         },
         {
           "path": "components/ui/code-block/brutx-prism.css",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/code-block/code-block-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -5612,6 +5651,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/timeline/timeline-key.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/timeline/timeline-variants.ts",
           "type": "registry:ui"
         }
@@ -5723,6 +5766,10 @@
         {
           "path": "components/ui/carousel/carousel-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5832,6 +5879,10 @@
         {
           "path": "components/ui/tree-view/tree-view-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5935,6 +5986,10 @@
         },
         {
           "path": "components/ui/kanban/kanban-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -6349,6 +6404,10 @@
         {
           "path": "components/ui/stepper/stepper-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -6454,6 +6513,10 @@
         },
         {
           "path": "composables/useReducedMotion.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -6667,6 +6730,14 @@
         {
           "path": "composables/useReducedMotion.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useCanvasInteraction.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -6877,6 +6948,10 @@
         {
           "path": "composables/useAudioEngine.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -6981,6 +7056,10 @@
         {
           "path": "components/ui/testimonial-card/TestimonialCard.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -7084,6 +7163,10 @@
       "files": [
         {
           "path": "components/ui/blog-card/BlogCard.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -7292,6 +7375,10 @@
       "files": [
         {
           "path": "components/ui/quick-actions/QuickActions.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -7709,6 +7796,10 @@
         {
           "path": "components/ui/footer-section/FooterSection.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -7917,6 +8008,10 @@
         {
           "path": "components/ui/loading-page/LoadingPage.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -8123,6 +8218,10 @@
       "files": [
         {
           "path": "components/ui/success-card/SuccessCard.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -8332,6 +8431,10 @@
         {
           "path": "components/ui/feedback-form/FeedbackForm.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -8436,6 +8539,10 @@
         {
           "path": "components/ui/stepper-section/StepperSection.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -8538,6 +8645,10 @@
       "files": [
         {
           "path": "components/ui/cookie-consent/CookieConsent.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -8642,6 +8753,10 @@
       "files": [
         {
           "path": "components/ui/data-table-section/DataTableSection.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -8751,6 +8866,10 @@
         {
           "path": "components/ui/settings-page/SettingsPage.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -8850,12 +8969,15 @@
         "card",
         "pagination",
         "badge",
-        "input",
-        "button"
+        "input"
       ],
       "files": [
         {
           "path": "components/ui/blog-list-page/BlogListPage.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],
@@ -9381,6 +9503,10 @@
         {
           "path": "components/ui/upload-card/UploadCard.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -9483,6 +9609,10 @@
       "files": [
         {
           "path": "components/ui/overview-page/OverviewPage.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:ui"
         }
       ],

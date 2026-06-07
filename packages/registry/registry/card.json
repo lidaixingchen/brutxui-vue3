@@ -34,7 +34,7 @@
     },
     {
       "path": "components/ui/card/CardTitle.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface CardTitleProps {\n    class?: string\n}\n\nconst props = defineProps<CardTitleProps>()\n\nconst classes = computed(() =>\n    cn('text-2xl font-black tracking-tight leading-none', props.class)\n)\n</script>\n\n<template>\n    <h3 :class=\"classes\">\n        <slot />\n    </h3>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface CardTitleProps {\n    as?: string\n    class?: string\n}\n\nconst props = withDefaults(defineProps<CardTitleProps>(), {\n    as: 'h3',\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn('text-2xl font-black tracking-tight leading-none', props.class)\n)\n</script>\n\n<template>\n    <component :is=\"as\" :class=\"classes\">\n        <slot />\n    </component>\n</template>\n",
       "type": "registry:ui"
     },
     {
