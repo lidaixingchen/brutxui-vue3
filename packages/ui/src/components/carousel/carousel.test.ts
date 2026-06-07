@@ -14,7 +14,7 @@ vi.mock('embla-carousel-vue', () => ({
 describe('Carousel', () => {
     it('renders with default classes', () => {
         const wrapper = mount(Carousel, { ...localeProvide })
-        expect(wrapper.find('[ref="emblaRef"]').exists() || wrapper.find('.overflow-hidden').exists()).toBe(true)
+        expect(wrapper.find('.overflow-hidden').exists()).toBe(true)
         expect(wrapper.classes()).toContain('relative')
         expect(wrapper.classes()).toContain('overflow-hidden')
         expect(wrapper.classes()).toContain('border-3')

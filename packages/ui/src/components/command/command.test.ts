@@ -110,6 +110,9 @@ describe('CommandInput', () => {
         const input = wrapper.find('input')
         await input.setValue('test query')
         expect(input.element.value).toBe('test query')
+        const inputComp = wrapper.findComponent(CommandInput)
+        expect(inputComp.emitted('update:modelValue')).toBeTruthy()
+        expect(inputComp.emitted('update:modelValue')![0]).toEqual(['test query'])
     })
 
     it('uses custom placeholder', () => {

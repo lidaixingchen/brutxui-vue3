@@ -46,28 +46,28 @@ describe('ScrollBar', () => {
     it('computes vertical orientation classes', () => {
         const classes = cn(
             'flex touch-none select-none transition-colors',
-            'h-full w-3 border-l-2 border-brutal p-[1px]'
+            'h-full w-3 border-l-3 border-brutal p-[1px]'
         )
         expect(classes).toContain('h-full')
         expect(classes).toContain('w-3')
-        expect(classes).toContain('border-l-2')
+        expect(classes).toContain('border-l-3')
         expect(classes).toContain('touch-none')
     })
 
     it('computes horizontal orientation classes', () => {
         const classes = cn(
             'flex touch-none select-none transition-colors',
-            'h-3 flex-col border-t-2 border-brutal p-[1px]'
+            'h-3 flex-col border-t-3 border-brutal p-[1px]'
         )
         expect(classes).toContain('h-3')
         expect(classes).toContain('flex-col')
-        expect(classes).toContain('border-t-2')
+        expect(classes).toContain('border-t-3')
     })
 
     it('computes classes with custom class merged', () => {
         const classes = cn(
             'flex touch-none select-none transition-colors',
-            'h-full w-3 border-l-2 border-brutal p-[1px]',
+            'h-full w-3 border-l-3 border-brutal p-[1px]',
             'my-scrollbar'
         )
         expect(classes).toContain('my-scrollbar')

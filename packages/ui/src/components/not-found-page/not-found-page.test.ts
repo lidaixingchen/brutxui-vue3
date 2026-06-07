@@ -13,8 +13,8 @@ const mockLocale = {
     ...en,
     notFoundPage: {
         defaultTitle: 'Page Not Found',
-        defaultDescription: 'The page you are looking for does not exist.',
-        defaultBackText: 'Go Back',
+        defaultDescription: 'The page you are looking for does not exist or has been removed.',
+        defaultBackText: 'Go Back Home',
     },
 }
 
@@ -24,8 +24,8 @@ describe('NotFoundPage', () => {
     it('renders with default props', () => {
         const wrapper = mount(NotFoundPage, { global: { provide: localeProvide } })
         expect(wrapper.find('h1').text()).toBe('Page Not Found')
-        expect(wrapper.text()).toContain('The page you are looking for does not exist.')
-        expect(wrapper.text()).toContain('Go Back')
+        expect(wrapper.text()).toContain('The page you are looking for does not exist or has been removed.')
+        expect(wrapper.text()).toContain('Go Back Home')
     })
 
     it('shows custom title', () => {

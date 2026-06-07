@@ -7,7 +7,7 @@ const mockLocale = {
     ...en,
     loadingPage: {
         defaultTitle: 'Loading',
-        defaultDescription: 'Please wait while we load your content.',
+        defaultDescription: 'Please wait while content is loading...',
     },
 }
 
@@ -17,7 +17,7 @@ describe('LoadingPage', () => {
     it('renders with default props', () => {
         const wrapper = mount(LoadingPage, { global: { provide: localeProvide } })
         expect(wrapper.find('h1').text()).toBe('Loading')
-        expect(wrapper.text()).toContain('Please wait while we load your content.')
+        expect(wrapper.text()).toContain('Please wait while content is loading...')
     })
 
     it('shows custom title', () => {
