@@ -17,13 +17,13 @@
     --color-brutal-overlay: var(--brutal-overlay);
     --color-brutal-placeholder: var(--brutal-placeholder);
 
-    /* Static: same in light/dark */
-    --color-brutal-primary: #FF6B6B;
-    --color-brutal-secondary: #4ECDC4;
-    --color-brutal-accent: #FFE66D;
-    --color-brutal-destructive: #EF476F;
-    --color-brutal-success: #7FB069;
-    --color-brutal-info: #4A90D9;
+    /* Dynamic: resolve at runtime so theme presets can override accents */
+    --color-brutal-primary: var(--brutal-primary);
+    --color-brutal-secondary: var(--brutal-secondary);
+    --color-brutal-accent: var(--brutal-accent);
+    --color-brutal-destructive: var(--brutal-destructive);
+    --color-brutal-success: var(--brutal-success);
+    --color-brutal-info: var(--brutal-info);
 
     /* Dynamic: shadows use --brutal-shadow-* for dark mode */
     --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
@@ -427,5 +427,192 @@
 
     .animate-marquee-right {
         animation: marquee-right var(--speed, 20s) linear infinite;
+    }
+
+    .animate-in {
+        animation-name: enter;
+        animation-duration: 150ms;
+        --tw-enter-opacity: initial;
+        --tw-enter-scale: initial;
+        --tw-enter-translate-x: initial;
+        --tw-enter-translate-y: initial;
+    }
+
+    .animate-out {
+        animation-name: exit;
+        animation-duration: 150ms;
+        --tw-exit-opacity: initial;
+        --tw-exit-scale: initial;
+        --tw-exit-translate-x: initial;
+        --tw-exit-translate-y: initial;
+    }
+
+    @keyframes enter {
+        from {
+            opacity: var(--tw-enter-opacity, 1);
+            transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1));
+        }
+    }
+
+    @keyframes exit {
+        to {
+            opacity: var(--tw-exit-opacity, 1);
+            transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1));
+        }
+    }
+
+    .fade-in-0 {
+        --tw-enter-opacity: 0;
+    }
+
+    .fade-out-0 {
+        --tw-exit-opacity: 0;
+    }
+
+    .zoom-in-95 {
+        --tw-enter-scale: 0.95;
+    }
+
+    .zoom-out-95 {
+        --tw-exit-scale: 0.95;
+    }
+
+    .slide-in-from-top,
+    .slide-in-from-top-2 {
+        --tw-enter-translate-y: -0.5rem;
+    }
+
+    .slide-in-from-bottom,
+    .slide-in-from-bottom-2 {
+        --tw-enter-translate-y: 0.5rem;
+    }
+
+    .slide-in-from-left,
+    .slide-in-from-left-2 {
+        --tw-enter-translate-x: -0.5rem;
+    }
+
+    .slide-in-from-right,
+    .slide-in-from-right-2 {
+        --tw-enter-translate-x: 0.5rem;
+    }
+
+    .slide-in-from-left-1\/2 {
+        --tw-enter-translate-x: -50%;
+    }
+
+    .slide-in-from-top-\[48\%\] {
+        --tw-enter-translate-y: -48%;
+    }
+
+    .slide-out-to-top {
+        --tw-exit-translate-y: -0.5rem;
+    }
+
+    .slide-out-to-bottom {
+        --tw-exit-translate-y: 0.5rem;
+    }
+
+    .slide-out-to-left {
+        --tw-exit-translate-x: -0.5rem;
+    }
+
+    .slide-out-to-right,
+    .slide-out-to-right-full {
+        --tw-exit-translate-x: 100%;
+    }
+
+    .slide-out-to-left-1\/2 {
+        --tw-exit-translate-x: -50%;
+    }
+
+    .slide-out-to-top-\[48\%\] {
+        --tw-exit-translate-y: -48%;
+    }
+
+    .data-\[state\=open\]\:animate-in[data-state="open"] {
+        animation-name: enter;
+        animation-duration: 150ms;
+    }
+
+    .data-\[state\=closed\]\:animate-out[data-state="closed"] {
+        animation-name: exit;
+        animation-duration: 150ms;
+    }
+
+    .data-\[state\=open\]\:animate-accordion-down[data-state="open"] {
+        animation: accordion-down 0.2s ease-out;
+    }
+
+    .data-\[state\=closed\]\:animate-accordion-up[data-state="closed"] {
+        animation: accordion-up 0.2s ease-out;
+    }
+
+    .data-\[state\=open\]\:fade-in-0[data-state="open"] {
+        --tw-enter-opacity: 0;
+    }
+
+    .data-\[state\=closed\]\:fade-out-0[data-state="closed"] {
+        --tw-exit-opacity: 0;
+    }
+
+    .data-\[state\=open\]\:zoom-in-95[data-state="open"] {
+        --tw-enter-scale: 0.95;
+    }
+
+    .data-\[state\=closed\]\:zoom-out-95[data-state="closed"] {
+        --tw-exit-scale: 0.95;
+    }
+
+    .data-\[state\=open\]\:slide-in-from-top[data-state="open"],
+    .data-\[side\=bottom\]\:slide-in-from-top-2[data-side="bottom"] {
+        --tw-enter-translate-y: -0.5rem;
+    }
+
+    .data-\[state\=open\]\:slide-in-from-bottom[data-state="open"],
+    .data-\[side\=top\]\:slide-in-from-bottom-2[data-side="top"] {
+        --tw-enter-translate-y: 0.5rem;
+    }
+
+    .data-\[state\=open\]\:slide-in-from-left[data-state="open"],
+    .data-\[side\=right\]\:slide-in-from-left-2[data-side="right"] {
+        --tw-enter-translate-x: -0.5rem;
+    }
+
+    .data-\[state\=open\]\:slide-in-from-right[data-state="open"],
+    .data-\[side\=left\]\:slide-in-from-right-2[data-side="left"] {
+        --tw-enter-translate-x: 0.5rem;
+    }
+
+    .data-\[state\=open\]\:slide-in-from-left-1\/2[data-state="open"] {
+        --tw-enter-translate-x: -50%;
+    }
+
+    .data-\[state\=open\]\:slide-in-from-top-\[48\%\][data-state="open"] {
+        --tw-enter-translate-y: -48%;
+    }
+
+    .data-\[state\=closed\]\:slide-out-to-top[data-state="closed"] {
+        --tw-exit-translate-y: -0.5rem;
+    }
+
+    .data-\[state\=closed\]\:slide-out-to-bottom[data-state="closed"] {
+        --tw-exit-translate-y: 0.5rem;
+    }
+
+    .data-\[state\=closed\]\:slide-out-to-left[data-state="closed"] {
+        --tw-exit-translate-x: -0.5rem;
+    }
+
+    .data-\[state\=closed\]\:slide-out-to-right[data-state="closed"] {
+        --tw-exit-translate-x: 0.5rem;
+    }
+
+    .data-\[state\=closed\]\:slide-out-to-left-1\/2[data-state="closed"] {
+        --tw-exit-translate-x: -50%;
+    }
+
+    .data-\[state\=closed\]\:slide-out-to-top-\[48\%\][data-state="closed"] {
+        --tw-exit-translate-y: -48%;
     }
 }

@@ -21,6 +21,7 @@ const languageLoaders: Record<string, () => Promise<unknown>> = {
     json: () => import('prismjs/components/prism-json'),
     bash: () => import('prismjs/components/prism-bash'),
     sh: () => import('prismjs/components/prism-bash'),
+    'shell-session': () => import('prismjs/components/prism-shell-session'),
     python: () => import('prismjs/components/prism-python'),
     py: () => import('prismjs/components/prism-python'),
     sql: () => import('prismjs/components/prism-sql'),
@@ -81,7 +82,7 @@ export async function loadLanguage(lang: string): Promise<string> {
     const canonical = resolveLanguage(lang)
     if (loadedLanguages.has(canonical)) return canonical
 
-    const loader = languageLoaders[lang]
+    const loader = languageLoaders[lang] ?? languageLoaders[canonical]
     if (!loader) return 'plaintext'
 
     try {

@@ -8,11 +8,13 @@ const __dirname = path.dirname(__filename);
 
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
 const UI_COMPOSABLES_DIR = path.resolve(__dirname, '../../ui/src/composables');
+const UI_LOCALES_DIR = path.resolve(__dirname, '../../ui/src/locales');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
 interface ComponentFileMapping {
     files: string[];
     composables?: string[];
+    locales?: string[];
 }
 
 const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
@@ -23,7 +25,7 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     calendar: { files: ['Calendar.vue'] },
     card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
-    combobox: { files: ['Combobox.vue', 'ComboboxMulti.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts'] },
+    combobox: { files: ['Combobox.vue', 'ComboboxMulti.vue', 'combobox-types.ts'], composables: ['useLocale.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
     dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts'] },
     'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },
@@ -123,6 +125,8 @@ function rewriteImports(code: string, _componentName: string): string {
     code = code.replace(/['"]\.\.\/\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
     code = code.replace(/['"]\.\.\/\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
+    code = code.replace(/['"]\.\.\/locales\/([^'"]+)['"]/g, "'@/locales/$1'");
+    code = code.replace(/['"]\.\.\/\.\.\/locales\/([^'"]+)['"]/g, "'@/locales/$1'");
     code = code.replace(
         /['"]\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)['"]/g,
         (m, comp, rest) => (COMPONENT_FILES[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
@@ -176,6 +180,42 @@ function rewriteImports(code: string, _componentName: string): string {
     return code;
 }
 
+function extractComposableDeps(code: string): string[] {
+    const deps = new Set<string>();
+    const patterns = [
+        /@\/composables\/([^'";\s]+)/g,
+        /\.\.\/\.\.\/composables\/([^'";\s]+)/g,
+        /\.\.\/composables\/([^'";\s]+)/g,
+    ];
+
+    for (const pattern of patterns) {
+        for (const match of code.matchAll(pattern)) {
+            const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
+            deps.add(fileName);
+        }
+    }
+
+    return Array.from(deps);
+}
+
+function extractLocaleDeps(code: string): string[] {
+    const deps = new Set<string>();
+    const patterns = [
+        /@\/locales\/([^'";\s]+)/g,
+        /\.\.\/\.\.\/locales\/([^'";\s]+)/g,
+        /\.\.\/locales\/([^'";\s]+)/g,
+    ];
+
+    for (const pattern of patterns) {
+        for (const match of code.matchAll(pattern)) {
+            const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
+            deps.add(fileName);
+        }
+    }
+
+    return Array.from(deps);
+}
+
 function extractRegistryDeps(code: string, componentName: string): string[] {
     const deps = new Set<string>();
     const matches = code.match(/@\/components\/ui\/([a-zA-Z0-9-]+)/g);
@@ -204,25 +244,27 @@ const TAILWIND_CONFIG = {
                     brutal: 'var(--brutal-radius, 0px)'
                 },
                 colors: {
-                    'brutal-bg': 'var(--brutal-bg, #ffffff)',
-                    'brutal-fg': 'var(--brutal-fg, #000000)',
-                    'brutal-primary': 'var(--brutal-primary, #FF6B6B)',
-                    'brutal-secondary': 'var(--brutal-secondary, #4ECDC4)',
-                    'brutal-accent': 'var(--brutal-accent, #FFE66D)',
-                    'brutal-destructive': 'var(--brutal-destructive, #EF476F)',
-                    'brutal-success': 'var(--brutal-success, #7FB069)',
-                    'brutal-muted': 'var(--brutal-muted, #f3f4f6)',
-                    'brutal-ring': 'var(--brutal-ring, #000000)',
-                    'brutal-info': 'var(--brutal-info, #4A90D9)',
-                    'brutal-muted-foreground': 'var(--brutal-muted-foreground, #4B5563)',
-                    'brutal-overlay': 'var(--brutal-overlay, rgba(0, 0, 0, 0.5))',
-                    'brutal-placeholder': 'var(--brutal-placeholder, #9CA3AF)'
+                    'brutal-bg': 'var(--brutal-bg)',
+                    'brutal-fg': 'var(--brutal-fg)',
+                    'brutal-primary': 'var(--brutal-primary)',
+                    'brutal-secondary': 'var(--brutal-secondary)',
+                    'brutal-accent': 'var(--brutal-accent)',
+                    'brutal-destructive': 'var(--brutal-destructive)',
+                    'brutal-success': 'var(--brutal-success)',
+                    'brutal-muted': 'var(--brutal-muted)',
+                    'brutal-ring': 'var(--brutal-ring)',
+                    'brutal-info': 'var(--brutal-info)',
+                    'brutal-muted-foreground': 'var(--brutal-muted-foreground)',
+                    'brutal-overlay': 'var(--brutal-overlay)',
+                    'brutal-placeholder': 'var(--brutal-placeholder)'
                 },
                 boxShadow: {
                     brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
                     'brutal-sm': 'calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)',
                     'brutal-lg': 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-xl': 'calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)'
+                    'brutal-xl': 'calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)',
+                    'brutal-primary': 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)',
+                    'brutal-secondary': 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)'
                 }
             }
         }
@@ -285,6 +327,7 @@ async function run() {
 
     const componentNames = Object.keys(COMPONENT_FILES);
     console.log(`📦 Found ${componentNames.length} components to process.`);
+    let errorCount = 0;
 
     const registryIndex: Record<string, any> = {
         name: 'brutx-vue',
@@ -303,6 +346,8 @@ async function run() {
 
             const allRegistryDeps = new Set<string>();
             const files: { path: string; content: string; type: string }[] = [];
+            const composableDeps = new Set(fileMapping.composables ?? []);
+            const localeDeps = new Set(fileMapping.locales ?? []);
 
             for (const fileName of fileMapping.files) {
                 const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
@@ -316,6 +361,8 @@ async function run() {
 
                 const deps = extractRegistryDeps(code, name);
                 deps.forEach(d => allRegistryDeps.add(d));
+                extractComposableDeps(code).forEach(d => composableDeps.add(d));
+                extractLocaleDeps(code).forEach(d => localeDeps.add(d));
 
                 files.push({
                     path: `components/ui/${name}/${fileName}`,
@@ -324,8 +371,11 @@ async function run() {
                 });
             }
 
-            if (fileMapping.composables) {
-                for (const composableName of fileMapping.composables) {
+            const addedComposables = new Set<string>();
+            while (addedComposables.size < composableDeps.size) {
+                const pendingComposables = Array.from(composableDeps).filter((name) => !addedComposables.has(name));
+
+                for (const composableName of pendingComposables) {
                     const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
 
                     if (!fs.existsSync(composablePath)) {
@@ -334,13 +384,32 @@ async function run() {
 
                     let code = readComponentSource(composablePath);
                     code = rewriteImports(code, name);
+                    extractComposableDeps(code).forEach(d => composableDeps.add(d));
+                    extractLocaleDeps(code).forEach(d => localeDeps.add(d));
 
                     files.push({
                         path: `composables/${composableName}`,
                         content: code,
                         type: 'registry:ui'
                     });
+                    addedComposables.add(composableName);
                 }
+            }
+
+            for (const localeName of localeDeps) {
+                const localePath = path.join(UI_LOCALES_DIR, localeName);
+
+                if (!fs.existsSync(localePath)) {
+                    throw new Error(`Locale file not found at ${localePath}`);
+                }
+
+                const code = rewriteImports(readComponentSource(localePath), name);
+
+                files.push({
+                    path: `locales/${localeName}`,
+                    content: code,
+                    type: 'registry:ui'
+                });
             }
 
             const title = name
@@ -383,7 +452,12 @@ async function run() {
             });
         } catch (err: any) {
             console.error(`✗ Failed to process component ${name}:`, err.message || err);
+            errorCount++;
         }
+    }
+
+    if (errorCount > 0) {
+        throw new Error(`Registry build failed with ${errorCount} component error(s).`);
     }
 
     const indexPath = path.join(OUTPUT_DIR, 'index.json');

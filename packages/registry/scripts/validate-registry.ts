@@ -64,8 +64,8 @@ function validate() {
                         errorCount++;
                     }
 
-                    if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/')) {
-                        console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/" or "composables/".`);
+                    if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/')) {
+                        console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", or "locales/".`);
                         errorCount++;
                     }
                 }

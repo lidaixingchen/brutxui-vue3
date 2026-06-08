@@ -32,25 +32,27 @@
             "brutal": "var(--brutal-radius, 0px)"
           },
           "colors": {
-            "brutal-bg": "var(--brutal-bg, #ffffff)",
-            "brutal-fg": "var(--brutal-fg, #000000)",
-            "brutal-primary": "var(--brutal-primary, #FF6B6B)",
-            "brutal-secondary": "var(--brutal-secondary, #4ECDC4)",
-            "brutal-accent": "var(--brutal-accent, #FFE66D)",
-            "brutal-destructive": "var(--brutal-destructive, #EF476F)",
-            "brutal-success": "var(--brutal-success, #7FB069)",
-            "brutal-muted": "var(--brutal-muted, #f3f4f6)",
-            "brutal-ring": "var(--brutal-ring, #000000)",
-            "brutal-info": "var(--brutal-info, #4A90D9)",
-            "brutal-muted-foreground": "var(--brutal-muted-foreground, #4B5563)",
-            "brutal-overlay": "var(--brutal-overlay, rgba(0, 0, 0, 0.5))",
-            "brutal-placeholder": "var(--brutal-placeholder, #9CA3AF)"
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
           },
           "boxShadow": {
             "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
             "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
             "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)"
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
           }
         }
       }

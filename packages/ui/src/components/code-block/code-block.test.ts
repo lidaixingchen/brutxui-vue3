@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
 import CodeBlock from './CodeBlock.vue'
+import { loadLanguage } from './prism-languages'
 
 describe('CodeBlock', () => {
     it('renders code content', () => {
@@ -134,6 +135,10 @@ describe('CodeBlock', () => {
             expect(wrapper.find('code').text()).toBe('+++---')
         })
         expect(wrapper.find('.token').exists()).toBe(false)
+    })
+
+    it('loads shell-session when the canonical shell language is requested directly', async () => {
+        await expect(loadLanguage('shell-session')).resolves.toBe('shell-session')
     })
 
     it('re-highlights when code prop changes', async () => {

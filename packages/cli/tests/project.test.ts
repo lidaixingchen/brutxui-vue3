@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs-extra';
-import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion } from '../src/lib/project.js';
+import os from 'os';
+import path from 'path';
+import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion, getAliasFromTsConfig, resolveAliasPath } from '../src/lib/project.js';
 
 describe('resolveImportAlias', () => {
     it('should correctly resolve import aliases based on config', () => {
@@ -37,6 +39,55 @@ describe('resolveImportAlias', () => {
 
         expect(resolved).toContain('import { Button } from "@/components/ui/button";');
         expect(resolved).toContain('import { cn } from "@/lib/utils";');
+    });
+
+    it('should resolve composables and sibling locales aliases', () => {
+        const content = `import { useLocale } from "@/composables/useLocale";\nimport { zhCN } from "@/locales/zh-CN";`;
+
+        const config = {
+            style: 'brutalism',
+            tailwind: { config: 'tailwind.config.js', css: 'src/index.css' },
+            aliases: {
+                components: '~/components',
+                utils: '~/shared/cn',
+                composables: '~/shared/composables'
+            }
+        };
+
+        const resolved = resolveImportAlias(content, config);
+
+        expect(resolved).toContain('import { useLocale } from "~/shared/composables/useLocale";');
+        expect(resolved).toContain('import { zhCN } from "~/shared/locales/zh-CN";');
+    });
+});
+
+describe('tsconfig alias parsing', () => {
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it('should parse JSONC tsconfig files with trailing commas', async () => {
+        const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-project-'));
+        try {
+            await fs.writeFile(path.join(cwd, 'tsconfig.json'), `{
+                // common Vue alias
+                "compilerOptions": {
+                    "baseUrl": ".",
+                    "paths": {
+                        "@/*": ["./src/*",],
+                    },
+                },
+            }`);
+
+            expect(getAliasFromTsConfig(cwd)).toEqual({
+                components: '@/components',
+                utils: '@/lib/utils',
+                composables: '@/composables',
+            });
+            expect(resolveAliasPath('@/components', cwd)).toBe(path.join(cwd, 'src', 'components'));
+        } finally {
+            await fs.remove(cwd);
+        }
     });
 });
 
@@ -172,4 +223,3 @@ describe('detectTailwindVersion', () => {
         expect(version).toBe('v3');
     });
 });
-

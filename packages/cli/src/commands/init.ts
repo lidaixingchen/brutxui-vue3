@@ -119,7 +119,10 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
     let content = '';
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
-        if (content.includes('shadow-brutal')) {
+        const hasCompleteBrutalistStyles = content.includes('--color-brutal-bg')
+            && content.includes('.bg-brutal-primary')
+            && content.includes('.animate-in');
+        if (hasCompleteBrutalistStyles) {
             return false;
         }
         content += BRUTALIST_CSS_STYLES;

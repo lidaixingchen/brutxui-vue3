@@ -92,6 +92,12 @@ function resolveComponentFilePath(registryPath: string, config: BrutalistConfig,
         return path.join(aliasPath, relative);
     }
 
+    if (registryPath.startsWith('locales/')) {
+        const relative = registryPath.slice('locales/'.length);
+        const composablesPath = resolveAliasPath(config.aliases.composables, cwd);
+        return path.join(path.dirname(composablesPath), 'locales', relative);
+    }
+
     if (registryPath.startsWith('lib/utils')) {
         return resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     }

@@ -110,6 +110,55 @@ function stripJsonComments(content: string): string {
     return result;
 }
 
+function stripJsonTrailingCommas(content: string): string {
+    let result = '';
+    let inString = false;
+    let stringChar = '';
+    let i = 0;
+
+    while (i < content.length) {
+        const char = content[i];
+
+        if (inString) {
+            result += char;
+            if (char === '\\' && i + 1 < content.length) {
+                result += content[i + 1];
+                i += 2;
+                continue;
+            }
+            if (char === stringChar) {
+                inString = false;
+            }
+            i++;
+            continue;
+        }
+
+        if (char === '"' || char === "'") {
+            inString = true;
+            stringChar = char;
+            result += char;
+            i++;
+            continue;
+        }
+
+        if (char === ',') {
+            let j = i + 1;
+            while (j < content.length && /\s/.test(content[j])) {
+                j++;
+            }
+            if (content[j] === '}' || content[j] === ']') {
+                i++;
+                continue;
+            }
+        }
+
+        result += char;
+        i++;
+    }
+
+    return result;
+}
+
 export function readTsConfig(cwd: string): TsConfig | null {
     for (const configFile of CONFIG_FILES.tsconfig) {
         const configPath = path.join(cwd, configFile);
@@ -118,7 +167,7 @@ export function readTsConfig(cwd: string): TsConfig | null {
 
         try {
             const content = fs.readFileSync(configPath, 'utf-8');
-            const jsonContent = stripJsonComments(content);
+            const jsonContent = stripJsonTrailingCommas(stripJsonComments(content));
             return JSON.parse(jsonContent);
         } catch {
             continue;
@@ -217,10 +266,14 @@ export function getDefaultAliases(cwd: string): AliasConfig {
 }
 
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
+    const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
+    const localesAlias = `${path.dirname(composablesAlias)}/locales`;
+
     return content
         .replace(/(["'])@\/lib\/utils\1/g, `$1${config.aliases.utils}$1`)
         .replace(/(["'])@\/components\/(.*?)\1/g, `$1${config.aliases.components}/$2$1`)
-        .replace(/(["'])@\/composables\/(.*?)\1/g, `$1${config.aliases.composables}/$2$1`);
+        .replace(/(["'])@\/composables\/(.*?)\1/g, `$1${composablesAlias}/$2$1`)
+        .replace(/(["'])@\/locales\/(.*?)\1/g, `$1${localesAlias}/$2$1`);
 }
 
 export function isSafePath(targetPath: string, cwd: string): boolean {

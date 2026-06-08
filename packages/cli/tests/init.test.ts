@@ -1,0 +1,34 @@
+import { describe, it, expect, vi } from 'vitest';
+import fs from 'fs-extra';
+import os from 'os';
+import path from 'path';
+
+vi.mock('../src/lib/package-manager.js', () => ({
+    installPackages: vi.fn(),
+    getInstallCommand: vi.fn(() => 'npm install'),
+}));
+
+describe('init', () => {
+    it('should append complete brutalist styles when an older partial style block exists', async () => {
+        const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-init-'));
+
+        try {
+            await fs.ensureDir(path.join(cwd, 'src'));
+            await fs.writeJson(path.join(cwd, 'package.json'), {
+                dependencies: { vue: '^3.5.0', tailwindcss: '^4.0.0' },
+            });
+            await fs.writeFile(path.join(cwd, 'src', 'index.css'), '.shadow-brutal { box-shadow: 4px 4px 0 #000; }');
+
+            const { init } = await import('../src/commands/init.js');
+            await init({ cwd, yes: true, force: true, silent: true });
+
+            const content = await fs.readFile(path.join(cwd, 'src', 'index.css'), 'utf-8');
+            expect(content).toContain('.shadow-brutal { box-shadow: 4px 4px 0 #000; }');
+            expect(content).toContain('--color-brutal-bg');
+            expect(content).toContain('.bg-brutal-primary');
+            expect(content).toContain('.animate-in');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+});
