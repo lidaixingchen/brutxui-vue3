@@ -22,6 +22,21 @@ pnpm test           # 运行 UI 测试
 pnpm test:watch     # 监视模式运行测试
 ```
 
+## 发布流程
+
+- 提交信息格式固定为 `release: bump version to <ui-version> for ui and <cli-version> for cli`。如果只发布其中一个包，仍保持该格式，并填写当前实际版本。
+- 哪个 NPM 包版本发生变化就发布哪个包；当前公开发布包为 `brutx-ui-vue`（`packages/ui/`）和 `brutx-vue`（`packages/cli/`）。
+- tag 命名固定以 UI 包版本为主，格式为 `v<ui-version>`，例如 `v0.6.6`。CLI 版本不单独创建 tag。
+- 推送 `main` 和对应的 `v*` tag 后，由云端自动发布。
+- 发布前必须执行完整检查：`pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、`pnpm --filter brutx-registry-vue build`、`pnpm --filter brutx-registry-vue validate`。
+- 发布前必须检查 `pnpm-lock.yaml` 是否需要同步。若只修改包自身 `version` 且运行 pnpm 后 lockfile 无变化，可以不提交 lockfile；若修改 `dependencies`、`devDependencies`、`peerDependencies` 或 lockfile 自动变化，必须提交同步后的 `pnpm-lock.yaml`。
+
+## AGENTS.md 维护约定
+
+- 编写或修改本文件时，如果对项目约定、发布流程、命令用途、包职责或用户偏好有不确定之处，先询问用户，不要自行补全。
+- 只记录已确认的事实和约定；从历史提交、tag 或现有文件推断出的内容，应先向用户确认后再写入。
+- 不要把一次性的操作经验写成本项目长期规则，除非用户明确确认。
+
 ## 技术栈
 
 Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+ · reka-ui 2.9+（无头原语）· CVA 0.7+（变体）· clsx + tailwind-merge 通过 `cn()` · Vite 8+ · Vitest 4+ · pnpm 11+ · Node.js 22.5+

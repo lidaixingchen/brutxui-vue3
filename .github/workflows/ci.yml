@@ -48,3 +48,5 @@ jobs:
                       packages/ui/test-results
 
             - run: pnpm --filter brutx-vue test
+
+            - run: pnpm --filter brutx-vue test:integration
