@@ -76,6 +76,10 @@ export default defineConfig({
                 link: '/guide/theme',
             },
             {
+                text: '主题实验室',
+                link: '/guide/theme-playground',
+            },
+            {
                 text: '国际化',
                 link: '/guide/locale',
             },

@@ -4,6 +4,7 @@ import ComponentPreview from './components/ComponentPreview.vue'
 import CopyButton from './components/CopyButton.vue'
 import InstallationTabs from './components/InstallationTabs.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
+import ThemePlayground from './components/ThemePlayground.vue'
 import Logo from './components/Logo.vue'
 import AlertDemo from './components/demos/AlertDemo.vue'
 import AlertDialogDemo from './components/demos/AlertDialogDemo.vue'
@@ -103,6 +104,7 @@ export default {
         app.component('CopyButton', CopyButton)
         app.component('InstallationTabs', InstallationTabs)
         app.component('ThemeToggle', ThemeToggle)
+        app.component('ThemePlayground', ThemePlayground)
         app.component('Logo', Logo)
         app.component('AlertDemo', AlertDemo)
         app.component('AlertDialogDemo', AlertDialogDemo)
