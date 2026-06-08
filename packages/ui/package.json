@@ -55,7 +55,10 @@
         "lint": "eslint src",
         "test": "vitest run",
         "test:watch": "vitest",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "visual:dev": "vite --config visual/vite.config.ts --host 127.0.0.1",
+        "test:visual": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts",
+        "test:visual:update": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts --update-snapshots"
     },
     "peerDependencies": {
         "@lucide/vue": ">=1.0.0",
@@ -86,6 +89,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@playwright/test": "^1.60.0",
         "@tailwindcss/postcss": "^4.3.0",
         "@tailwindcss/vite": "^4.3.0",
         "@types/node": "^25.9.1",

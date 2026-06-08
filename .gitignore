@@ -42,6 +42,8 @@ lerna-debug.log*
 
 # Testing
 coverage
+playwright-report
+test-results
 
 # Cache
 .cache
@@ -50,6 +52,7 @@ coverage
 
 # VitePress
 **/.vitepress/cache
+packages/ui/visual/dist
 
 # Next.js
 next-env.d.ts

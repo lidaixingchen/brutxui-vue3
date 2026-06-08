@@ -23,6 +23,8 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
+            - run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
+
             - run: pnpm --filter brutx-ui-vue build
 
             - run: pnpm -r typecheck
@@ -34,5 +36,15 @@ jobs:
             - run: pnpm --filter brutx-registry-vue validate
 
             - run: pnpm --filter brutx-ui-vue test
+
+            - run: pnpm --filter brutx-ui-vue test:visual
+
+            - uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                  name: playwright-visual-report
+                  path: |
+                      packages/ui/playwright-report
+                      packages/ui/test-results
 
             - run: pnpm --filter brutx-vue test

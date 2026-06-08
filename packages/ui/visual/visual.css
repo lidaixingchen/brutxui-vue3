@@ -1,0 +1,17 @@
+.visual-shell,
+.visual-suite {
+    --color-brutal-bg: var(--brutal-bg);
+    --color-brutal-fg: var(--brutal-fg);
+    --color-brutal-muted: var(--brutal-muted);
+    --color-brutal-muted-foreground: var(--brutal-muted-foreground);
+    --color-brutal-ring: var(--brutal-ring);
+    --color-brutal-overlay: var(--brutal-overlay);
+    --color-brutal-placeholder: var(--brutal-placeholder);
+    --color-brutal-primary: var(--brutal-primary);
+    --color-brutal-secondary: var(--brutal-secondary);
+    --color-brutal-accent: var(--brutal-accent);
+    --color-brutal-destructive: var(--brutal-destructive);
+    --color-brutal-success: var(--brutal-success);
+    --color-brutal-info: var(--brutal-info);
+}
+
