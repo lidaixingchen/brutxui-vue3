@@ -3184,9 +3184,7 @@
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "button",
-        "card",
-        "badge"
+        "pricing-section"
       ],
       "files": [
         {

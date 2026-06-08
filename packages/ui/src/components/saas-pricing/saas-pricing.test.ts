@@ -130,6 +130,16 @@ describe('SaaSPricing', () => {
         expect(wrapper.text()).toContain('Priority updates')
     })
 
+    it('emits plan-select from wrapped PricingSection', async () => {
+        const wrapper = mount(SaaSPricing, {
+            props: { plans: defaultPlans },
+            ...globalProvide,
+        })
+        const proButton = wrapper.findAll('button').find(button => button.text() === 'Go Pro')
+        await proButton!.trigger('click')
+        expect(wrapper.emitted('plan-select')).toEqual([['Pro']])
+    })
+
     it('applies custom class', () => {
         const wrapper = mount(SaaSPricing, {
             props: { class: 'my-pricing' },

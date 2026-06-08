@@ -34,6 +34,34 @@ describe('PricingSection', () => {
         },
     ]
 
+    const subscriptionPlans = [
+        {
+            name: 'Starter',
+            description: 'For side projects',
+            priceMonthly: '$0',
+            priceAnnually: '$0',
+            features: [
+                { text: '5 components', included: true },
+                { text: 'Priority updates', included: false },
+            ],
+            buttonText: 'Get Started',
+            buttonVariant: 'outline' as const,
+        },
+        {
+            name: 'Pro',
+            description: 'For professionals',
+            priceMonthly: '$19',
+            priceAnnually: '$15',
+            features: [
+                { text: 'All components', included: true },
+                { text: 'Priority updates', included: true },
+            ],
+            popular: true,
+            buttonText: 'Go Pro',
+            buttonVariant: 'primary' as const,
+        },
+    ]
+
     it('renders with default props', () => {
         const wrapper = mount(PricingSection, { ...localeProvide })
         expect(wrapper.find('h2').text()).toBe('Simple, Transparent Brutalist Plans')
@@ -123,6 +151,50 @@ describe('PricingSection', () => {
             ...localeProvide,
         })
         expect(wrapper.text()).toContain('/ lifetime')
+    })
+
+    it('supports subscription pricing with billing toggle', async () => {
+        const wrapper = mount(PricingSection, {
+            props: { plans: subscriptionPlans, billingMode: 'toggle' },
+            ...localeProvide,
+        })
+        expect(wrapper.text()).toContain('$19')
+        expect(wrapper.text()).toContain('/mo')
+
+        const annualButton = wrapper.findAll('button').find(button => button.text() === 'Annually')
+        await annualButton!.trigger('click')
+
+        expect(wrapper.text()).toContain('$15')
+        expect(wrapper.text()).toContain('billed annually')
+    })
+
+    it('auto-enables billing toggle when requested and subscription prices exist', () => {
+        const wrapper = mount(PricingSection, {
+            props: { plans: subscriptionPlans, billingMode: 'auto' },
+            ...localeProvide,
+        })
+        expect(wrapper.text()).toContain('Monthly')
+        expect(wrapper.text()).toContain('Annually')
+    })
+
+    it('renders excluded subscription features as unavailable', () => {
+        const wrapper = mount(PricingSection, {
+            props: { plans: subscriptionPlans, billingMode: 'toggle' },
+            ...localeProvide,
+        })
+        const unavailableFeature = wrapper.find('.line-through')
+        expect(unavailableFeature.exists()).toBe(true)
+        expect(unavailableFeature.text()).toBe('Priority updates')
+    })
+
+    it('emits plan-select when plan button is clicked', async () => {
+        const wrapper = mount(PricingSection, {
+            props: { plans: mockPlans },
+            ...localeProvide,
+        })
+        const basicButton = wrapper.findAll('button').find(button => button.text() === 'Start Basic')
+        await basicButton!.trigger('click')
+        expect(wrapper.emitted('plan-select')).toEqual([['Basic']])
     })
 
     it('applies custom class', () => {

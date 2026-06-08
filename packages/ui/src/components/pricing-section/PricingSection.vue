@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { Check } from '@lucide/vue'
+import { computed, ref } from 'vue'
+import { Check, HelpCircle } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
@@ -12,20 +12,37 @@ import CardDescription from '../card/CardDescription.vue'
 import CardFooter from '../card/CardFooter.vue'
 import Badge from '../badge/Badge.vue'
 
+type ButtonVariant = 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
+type CardVariant = 'default' | 'elevated' | 'flat' | 'interactive' | 'primary' | 'secondary'
+type BillingPeriod = 'monthly' | 'annually'
+type BillingMode = 'none' | 'toggle' | 'auto'
+
+export interface PricingFeature {
+    text: string
+    included?: boolean
+}
+
 export interface BrutalistPricingPlan {
     name: string
-    price: string
+    price?: string
+    priceMonthly?: string
+    priceAnnually?: string
     description: string
-    features: string[]
-    ctaText: string
+    features: Array<string | PricingFeature>
+    ctaText?: string
+    buttonText?: string
     popular?: boolean
-    variant: 'primary' | 'secondary' | 'default'
+    variant?: Extract<CardVariant, 'primary' | 'secondary' | 'default' | 'interactive' | 'elevated' | 'flat'>
+    buttonVariant?: ButtonVariant
 }
 
 interface PricingSectionProps {
     title?: string
     subtitle?: string
     plans?: BrutalistPricingPlan[]
+    billingMode?: BillingMode
+    defaultBilling?: BillingPeriod
+    popularText?: string
     class?: string
 }
 
@@ -33,6 +50,9 @@ const props = withDefaults(defineProps<PricingSectionProps>(), {
     title: undefined,
     subtitle: undefined,
     plans: () => [],
+    billingMode: 'auto',
+    defaultBilling: 'monthly',
+    popularText: undefined,
     class: undefined,
 })
 
@@ -41,13 +61,82 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useLocale()
+const billing = ref<BillingPeriod>(props.defaultBilling)
+
 const resolvedTitle = computed(() => props.title ?? t('pricingSection.defaultTitle'))
 const resolvedSubtitle = computed(() => props.subtitle ?? '')
+const resolvedPopularText = computed(() => props.popularText ?? t('pricingSection.mostPopular'))
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
+const hasBillingPlans = computed(() =>
+    props.plans.some(plan => plan.priceMonthly !== undefined || plan.priceAnnually !== undefined)
+)
+
+const showBillingToggle = computed(() =>
+    props.billingMode === 'toggle' || (props.billingMode === 'auto' && hasBillingPlans.value)
+)
+
+const monthlyBtnClasses = computed(() =>
+    cn(
+        'px-4 py-2 font-black text-sm transition-all active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        billing.value === 'monthly' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground'
+    )
+)
+
+const annuallyBtnClasses = computed(() =>
+    cn(
+        'px-4 py-2 font-black text-sm transition-all active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        billing.value === 'annually' ? 'bg-brutal-accent text-brutal-fg shadow-brutal-sm' : 'text-brutal-muted-foreground'
+    )
+)
+
+const popularBadgeWrapClasses = computed(() =>
+    cn('absolute -top-3 left-1/2 -translate-x-1/2 z-10', !showBillingToggle.value && 'rotate-[1.5deg]')
+)
+
 function getPlanCardClasses(plan: BrutalistPricingPlan) {
-    return cn(plan.popular && 'bg-brutal-accent/20')
+    return cn(showBillingToggle.value ? plan.popular && 'scale-105 shadow-brutal-lg' : plan.popular && 'bg-brutal-accent/20')
+}
+
+function getPlanCardVariant(plan: BrutalistPricingPlan): CardVariant {
+    if (showBillingToggle.value && plan.popular) return 'interactive'
+    return plan.variant ?? 'default'
+}
+
+function getPlanPrice(plan: BrutalistPricingPlan) {
+    if (!showBillingToggle.value) return plan.price ?? plan.priceMonthly ?? plan.priceAnnually ?? ''
+    if (billing.value === 'monthly') return plan.priceMonthly ?? plan.price ?? plan.priceAnnually ?? ''
+    return plan.priceAnnually ?? plan.priceMonthly ?? plan.price ?? ''
+}
+
+function getPriceLabel(plan: BrutalistPricingPlan) {
+    if (!showBillingToggle.value) return t('pricingSection.perLifetime')
+    if (billing.value === 'monthly') return t('saasPricing.perMonth')
+    return plan.priceAnnually !== undefined ? t('saasPricing.perMonthBilledAnnually') : t('saasPricing.perMonth')
+}
+
+function getFeatureText(feature: string | PricingFeature) {
+    return typeof feature === 'string' ? feature : feature.text
+}
+
+function isFeatureIncluded(feature: string | PricingFeature) {
+    return typeof feature === 'string' ? true : feature.included !== false
+}
+
+function getFeatureClasses(feature: string | PricingFeature) {
+    return cn('text-sm font-medium', !isFeatureIncluded(feature) && 'line-through text-brutal-muted-foreground')
+}
+
+function getButtonText(plan: BrutalistPricingPlan) {
+    return plan.buttonText ?? plan.ctaText ?? ''
+}
+
+function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
+    if (plan.buttonVariant) return plan.buttonVariant
+    if (plan.variant === 'default') return 'outline'
+    if (plan.variant === 'primary' || plan.variant === 'secondary') return plan.variant
+    return 'default'
 }
 </script>
 
@@ -60,16 +149,34 @@ function getPlanCardClasses(plan: BrutalistPricingPlan) {
             <p v-if="resolvedSubtitle" class="mt-2 text-brutal-muted-foreground font-medium">
 {{ resolvedSubtitle }}
 </p>
+            <div v-if="showBillingToggle" class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1" role="tablist" :aria-label="t('saasPricing.billingPeriod')">
+                <button
+                    role="tab"
+                    :aria-selected="billing === 'monthly'"
+                    :class="monthlyBtnClasses"
+                    @click="billing = 'monthly'"
+                >
+                    {{ t('saasPricing.monthly') }}
+                </button>
+                <button
+                    role="tab"
+                    :aria-selected="billing === 'annually'"
+                    :class="annuallyBtnClasses"
+                    @click="billing = 'annually'"
+                >
+                    {{ t('saasPricing.annually') }}
+                </button>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div v-for="plan in plans" :key="plan.name" class="relative">
-                <div v-if="plan.popular" class="absolute -top-3 left-1/2 -translate-x-1/2 z-10 rotate-[1.5deg]">
+                <div v-if="plan.popular" :class="popularBadgeWrapClasses">
                     <Badge variant="primary" class="animate-pulse">
-{{ t('pricingSection.mostPopular') }}
+{{ resolvedPopularText }}
 </Badge>
                 </div>
-                <Card :variant="plan.variant" :class="getPlanCardClasses(plan)">
+                <Card :variant="getPlanCardVariant(plan)" :class="getPlanCardClasses(plan)">
                     <CardHeader>
                         <CardTitle class="text-xl">
 {{ plan.name }}
@@ -78,21 +185,24 @@ function getPlanCardClasses(plan: BrutalistPricingPlan) {
                     </CardHeader>
                     <CardContent>
                         <div class="mb-6">
-                            <span class="text-4xl font-black">{{ plan.price }}</span>
-                            <span class="text-sm font-bold text-brutal-muted-foreground">{{ t('pricingSection.perLifetime') }}</span>
+                            <span class="text-4xl font-black">{{ getPlanPrice(plan) }}</span>
+                            <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
                         </div>
                         <ul class="space-y-3">
-                            <li v-for="feature in plan.features" :key="feature" class="flex items-center gap-2">
-                                <div class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
+                            <li v-for="feature in plan.features" :key="getFeatureText(feature)" class="flex items-center gap-2">
+                                <div v-if="isFeatureIncluded(feature)" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
                                     <Check class="h-3 w-3 stroke-[3]" />
                                 </div>
-                                <span class="text-sm font-medium">{{ feature }}</span>
+                                <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-brutal-muted-foreground">
+                                    <HelpCircle class="h-3 w-3 stroke-[3]" />
+                                </div>
+                                <span :class="getFeatureClasses(feature)">{{ getFeatureText(feature) }}</span>
                             </li>
                         </ul>
                     </CardContent>
                     <CardFooter>
-                        <Button :variant="plan.variant === 'default' ? 'outline' : plan.variant" class="w-full" @click="emit('plan-select', plan.name)">
-{{ plan.ctaText }}
+                        <Button :variant="getButtonVariant(plan)" class="w-full" @click="emit('plan-select', plan.name)">
+{{ getButtonText(plan) }}
 </Button>
                     </CardFooter>
                 </Card>
