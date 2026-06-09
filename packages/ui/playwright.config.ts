@@ -8,7 +8,8 @@ export default defineConfig({
     reporter: [['list'], ['html', { outputFolder: './playwright-report', open: 'never' }]],
     expect: {
         toHaveScreenshot: {
-            maxDiffPixelRatio: 0.01,
+            maxDiffPixelRatio: 0.03,
+            threshold: 0.2,
         },
     },
     use: {

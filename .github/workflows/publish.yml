@@ -34,6 +34,14 @@ jobs:
             - name: Release reliability check
               run: pnpm release:check
 
+            - uses: actions/upload-artifact@v4
+              if: failure()
+              with:
+                  name: playwright-visual-report
+                  path: |
+                      packages/ui/playwright-report
+                      packages/ui/test-results
+
             - name: Publish brutx-ui-vue
               working-directory: packages/ui
               run: pnpm publish --no-git-checks --access public --provenance || echo "::warning::brutx-ui-vue version already exists, skipped"
