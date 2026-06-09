@@ -797,6 +797,19 @@ body {
     font-weight: 800;
 }
 
+/* Theme Playground is a full tool surface, not a narrow prose page. */
+.theme-playground-page .VPDoc .container {
+    max-width: 1280px !important;
+}
+
+.theme-playground-page .VPDoc .content {
+    max-width: none !important;
+}
+
+.theme-playground-page .VPDoc .content-container {
+    max-width: none !important;
+}
+
 /* ============================================
    SEARCH BOX — Brutalist search
    ============================================ */

@@ -103,3 +103,7 @@ pnpm release:check
 ```bash
 RELEASE_TAG=v0.6.6 pnpm release:check
 ```
+
+### 视觉回归基线
+
+视觉测试基线必须在与 CI 一致的 Ubuntu + Chromium + Inter 字体环境中生成。需要更新截图时，请手动触发 GitHub Actions 中的 `Update Visual Baselines` workflow，下载 `updated-visual-baselines` artifact，将其中 PNG 文件替换到 `packages/ui/visual/baselines/` 后再提交。不要直接提交本地 Windows 或 macOS 生成的视觉基线。

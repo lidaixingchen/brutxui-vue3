@@ -188,7 +188,7 @@ async function copyCss() {
             </p>
         </div>
 
-        <div class="grid gap-5 xl:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
+        <div class="grid gap-5 2xl:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
             <aside class="space-y-5 border-3 border-brutal bg-brutal-bg p-4 shadow-brutal">
                 <div class="space-y-3">
                     <div>
@@ -347,7 +347,7 @@ async function copyCss() {
                         </div>
                     </div>
 
-                    <div class="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]">
+                    <div class="grid gap-4">
                         <Card class="bg-brutal-bg">
                             <CardHeader>
                                 <div class="flex flex-wrap items-start justify-between gap-3">
@@ -379,12 +379,12 @@ async function copyCss() {
                                     </div>
                                 </div>
 
-                                <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+                                <div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_max-content]">
                                     <div class="relative">
                                         <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" />
                                         <Input v-model="sampleEmail" class="pl-9" placeholder="Filter customers" />
                                     </div>
-                                    <Button type="button" variant="primary">Create segment</Button>
+                                    <Button type="button" variant="primary" class="whitespace-nowrap">Create segment</Button>
                                 </div>
 
                                 <div class="overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
@@ -419,7 +419,7 @@ async function copyCss() {
                         </Card>
 
                         <div class="space-y-4">
-                            <Card class="bg-brutal-bg">
+                            <Card class="bg-brutal-bg min-w-0">
                                 <CardHeader>
                                     <CardTitle>Component Matrix</CardTitle>
                                     <CardDescription>
@@ -427,7 +427,7 @@ async function copyCss() {
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent class="space-y-4">
-                                    <div class="grid gap-2 sm:grid-cols-2">
+                                    <div class="grid gap-2 xl:grid-cols-2">
                                         <Button type="button">Default</Button>
                                         <Button type="button" variant="primary">Primary</Button>
                                         <Button type="button" variant="accent">Accent</Button>
@@ -459,14 +459,14 @@ async function copyCss() {
                                 <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
                                     Swatches
                                 </p>
-                                <div class="mt-3 grid grid-cols-3 gap-2">
+                                <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                                     <div
                                         v-for="control in colorControls"
                                         :key="control.key"
-                                        class="min-h-16 border-3 border-brutal p-2 shadow-brutal-sm"
+                                        class="min-h-16 min-w-0 border-3 border-brutal p-2 shadow-brutal-sm"
                                         :style="{ backgroundColor: currentTokens[control.key], color: currentTokens.fg }"
                                     >
-                                        <p class="m-0 break-words text-[0.65rem] font-black uppercase leading-tight">
+                                        <p class="m-0 break-all text-[0.62rem] font-black uppercase leading-tight">
                                             {{ control.label }}
                                         </p>
                                     </div>
