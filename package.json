@@ -13,7 +13,8 @@
         "typecheck": "pnpm -r typecheck",
         "test": "pnpm --filter brutx-ui-vue test",
         "test:watch": "pnpm --filter brutx-ui-vue test:watch",
-        "test:coverage": "pnpm --filter brutx-ui-vue test:coverage"
+        "test:coverage": "pnpm --filter brutx-ui-vue test:coverage",
+        "release:check": "node scripts/release/check-release.mjs"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.7",

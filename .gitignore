@@ -63,3 +63,5 @@ next-env.d.ts
 # Development docs (internal only)
 DEVELOPMENT.md
 DEV_*.md
+
+docs/superpowers/specs

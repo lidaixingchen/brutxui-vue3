@@ -69,7 +69,7 @@ initTheme()
 </script>
 ```
 
-详见[主题与令牌](/guide/theme)指南。
+详见[主题与令牌](/guide/theme)指南。也可以先打开[主题实验室](/guide/theme-playground)，通过实时预览、对比度检查和 token 覆盖率生成一份可复制的 `.theme-custom` CSS。
 
 ## 定制预设
 
@@ -130,5 +130,6 @@ BrutxUI 旨在与 AI 编码助手无缝协作：
 - 其他配置方式请参考[手动安装](/guide/installation-manual)
 - [CLI 参考](/guide/cli)了解 `brutx-vue` 命令行工具
 - [主题与令牌](/guide/theme)进行深度定制
+- [主题实验室](/guide/theme-playground)可视化调试主题 CSS 变量
 - [国际化](/guide/locale)配置多语言支持
 - [浏览组件](/components/alert)查看可用组件

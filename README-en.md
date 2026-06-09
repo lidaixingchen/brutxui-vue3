@@ -89,8 +89,8 @@ Since BrutxUI follows the shadcn/ui JSON registry pattern, you can use the offic
 # Install Brutx Button
 npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/button.json
 
-# Install Brutx SaaS Pricing block
-npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/saas-pricing.json
+# Install Brutx Pricing Section block
+npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/pricing-section.json
 ```
 
 ---
@@ -111,6 +111,8 @@ Three built-in visual presets:
 1. **Classic Brutalist (`.theme-classic`):** Deep black shadows, neon accents, sharp corners.
 2. **Pastel Neo-Brutal (`.theme-pastel`):** Soft colors, lighter contrast, `8px` border radius.
 3. **Monochrome (`.theme-mono`):** Grayscale colors and thicker black lines for minimal interfaces.
+
+If you want to tune a theme visually first, open the [Theme Playground](https://lidaixingchen.github.io/brutxui-vue3/guide/theme-playground). It provides a product preview, component matrix, contrast checks, token coverage, and generated `.theme-custom` CSS.
 
 ---
 
@@ -135,6 +137,8 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 #### Landing Page / Marketing
 
 `BrutalistHero`, `PricingSection`, `SaaSPricing`, `FaqSection`, `TestimonialCard`, `WaitlistPage`
+
+`PricingSection` is the unified pricing implementation for lifetime and subscription pricing. `SaaSPricing` remains a SaaS compatibility preset powered by it.
 
 #### Dashboard
 
@@ -180,7 +184,7 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Blocks / Pages
 
-`SaaSPricing`, `PricingSection`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `UploadCard`, `DataTableSection`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `StepperSection`, `EmptyState`, `ErrorCard`, `SuccessCard`, `NotFoundPage`, `LoadingPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `TabsNav`, `SearchWidget`, `FeedbackForm`
+`PricingSection`, `SaaSPricing`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `UploadCard`, `DataTableSection`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `StepperSection`, `EmptyState`, `ErrorCard`, `SuccessCard`, `NotFoundPage`, `LoadingPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `TabsNav`, `SearchWidget`, `FeedbackForm`
 
 ---
 
@@ -242,6 +246,17 @@ pnpm --filter brutx-registry-vue build
 
 # Validate JSON files against shadcn CLI schema
 pnpm --filter brutx-registry-vue validate
+```
+
+### 4. Full Pre-Release Check
+Before publishing, or when changing release artifacts, the CLI, registry, or docs build, run the shared gate:
+```bash
+pnpm release:check
+```
+
+To verify that the release tag matches the UI package version, pass `RELEASE_TAG`:
+```bash
+RELEASE_TAG=v0.6.6 pnpm release:check
 ```
 
 ---

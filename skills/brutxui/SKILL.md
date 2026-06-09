@@ -130,8 +130,8 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
-| SaaSPricing | SaaS 定价 | 支持月付/年付切换 |
-| PricingSection | 定价区域 | 更简洁的定价展示 |
+| PricingSection | 统一定价区域 | 支持一次性价格、订阅切换和功能状态 |
+| SaaSPricing | SaaS 定价 | 基于 PricingSection 的 SaaS 兼容封装 |
 | BrutalistHero | 英雄区块 | 支持主/次操作按钮 |
 | HeaderSection | 页头导航 | 支持导航项/Logo |
 | FooterSection | 页脚 | 支持链接分组/版权 |
@@ -222,6 +222,10 @@ class="hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 acti
 | Classic | `theme-classic` | 粗 3px 边框、硬 4px 阴影、零圆角、鲜艳色彩 |
 | Pastel | `theme-pastel` | 2px 边框、3px 阴影、8px 圆角、柔和粉彩 |
 | Mono | `theme-mono` | 4px 边框、5px 阴影、零圆角、黑白灰度 |
+
+### 主题实验室
+
+当用户想调试自定义主题、生成 CSS 变量、检查主题对比度或确认 token 覆盖率时，引导使用 docs 的“主题实验室”（`/guide/theme-playground`）。主题实验室是 docs-only 工具，输出 `.theme-custom` CSS，不改变 `useTheme()` 的 `classic | pastel | mono` 内置主题类型。
 
 ### 暗色模式
 

@@ -28,6 +28,7 @@ export default defineConfig({
         dts({
             insertTypesEntry: true,
             include: ['src/**/*.ts', 'src/**/*.vue'],
+            exclude: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
             outDir: 'dist',
         }),
         copyStylesPlugin(),

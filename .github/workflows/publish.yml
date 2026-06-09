@@ -26,19 +26,8 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
-            - name: Build UI library
-              run: pnpm --filter brutx-ui-vue build
-
-            - name: Build CLI
-              run: pnpm --filter brutx-vue build
-
-            - run: pnpm -r typecheck
-
-            - run: pnpm -r lint
-
-            - run: pnpm --filter brutx-ui-vue test
-
-            - run: pnpm --filter brutx-vue test
+            - name: Release reliability check
+              run: pnpm release:check
 
             - name: Publish brutx-ui-vue
               working-directory: packages/ui

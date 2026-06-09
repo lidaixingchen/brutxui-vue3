@@ -91,3 +91,15 @@ pnpm build
 - **类型检查**：`pnpm typecheck`
 - **代码检查**：`pnpm lint`
 - **单元/集成测试**：`pnpm test`
+
+如果改动会影响发布产物、CLI 安装、注册表 JSON、文档构建或包内容，请在本地运行完整发布门禁：
+
+```bash
+pnpm release:check
+```
+
+发布 tag 检查会读取 `RELEASE_TAG` 或 GitHub Actions 的 `GITHUB_REF_NAME`，并要求 tag 与 UI 包版本一致，例如：
+
+```bash
+RELEASE_TAG=v0.6.6 pnpm release:check
+```
