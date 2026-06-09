@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
-import { Check, Copy, RotateCcw } from '@lucide/vue'
+import { Check, Copy, RotateCcw, Search, ShieldCheck, ShieldAlert } from '@lucide/vue'
 import {
     Alert,
     AlertDescription,
@@ -15,268 +15,27 @@ import {
     CardTitle,
     Input,
 } from 'brutx-ui-vue'
+import {
+    clonePreset,
+    colorControls,
+    formatThemeCss,
+    getContrastChecks,
+    getThemeCoverage,
+    isValidHex,
+    lengthControls,
+    modeOptions,
+    themeOptions,
+    themePresets,
+    toCssVariableObject,
+    type ColorMode,
+    type ColorTokenKey,
+    type ContrastCheckResult,
+    type LengthTokenKey,
+    type ThemeName,
+    type ThemeTokens,
+} from '../lib/theme-playground'
 
-type ThemeName = 'classic' | 'pastel' | 'mono'
-type ColorMode = 'light' | 'dark'
 type CopyState = 'idle' | 'success' | 'error'
-
-interface ThemeTokens {
-    borderWidth: string
-    borderColor: string
-    shadowOffsetX: string
-    shadowOffsetY: string
-    shadowColor: string
-    radius: string
-    bg: string
-    fg: string
-    primary: string
-    secondary: string
-    accent: string
-    destructive: string
-    success: string
-    muted: string
-    mutedForeground: string
-    ring: string
-    pressedOffset: string
-    info: string
-    overlay: string
-    placeholder: string
-}
-
-type ColorTokenKey = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
-type LengthTokenKey = 'borderWidth' | 'radius' | 'shadowOffsetX' | 'shadowOffsetY'
-
-interface ThemePreset {
-    label: string
-    description: string
-    modes: Record<ColorMode, ThemeTokens>
-}
-
-const themePresets: Record<ThemeName, ThemePreset> = {
-    classic: {
-        label: 'Classic',
-        description: '粗边框、硬阴影、零圆角和高饱和强调色。',
-        modes: {
-            light: {
-                borderWidth: '3px',
-                borderColor: '#000000',
-                shadowOffsetX: '4px',
-                shadowOffsetY: '4px',
-                shadowColor: '#000000',
-                radius: '0px',
-                bg: '#ffffff',
-                fg: '#000000',
-                primary: '#FF6B6B',
-                secondary: '#4ECDC4',
-                accent: '#FFE66D',
-                destructive: '#EF476F',
-                success: '#7FB069',
-                muted: '#f3f4f6',
-                mutedForeground: '#4B5563',
-                ring: '#000000',
-                pressedOffset: '2px',
-                info: '#4A90D9',
-                overlay: 'rgba(0, 0, 0, 0.5)',
-                placeholder: '#9CA3AF',
-            },
-            dark: {
-                borderWidth: '3px',
-                borderColor: '#ffffff',
-                shadowOffsetX: '4px',
-                shadowOffsetY: '4px',
-                shadowColor: '#ffffff',
-                radius: '0px',
-                bg: '#141414',
-                fg: '#ffffff',
-                primary: '#FF6B6B',
-                secondary: '#4ECDC4',
-                accent: '#FFE66D',
-                destructive: '#EF476F',
-                success: '#7FB069',
-                muted: '#1e1e1e',
-                mutedForeground: '#9CA3AF',
-                ring: '#ffffff',
-                pressedOffset: '2px',
-                info: '#3B82F6',
-                overlay: 'rgba(0, 0, 0, 0.7)',
-                placeholder: '#6B7280',
-            },
-        },
-    },
-    pastel: {
-        label: 'Pastel',
-        description: '更柔和的色调、轻一些的边框和 8px 圆角。',
-        modes: {
-            light: {
-                borderWidth: '2px',
-                borderColor: '#1e1e24',
-                shadowOffsetX: '3px',
-                shadowOffsetY: '3px',
-                shadowColor: '#1e1e24',
-                radius: '8px',
-                bg: '#faf9f6',
-                fg: '#1e1e24',
-                primary: '#d6c6e1',
-                secondary: '#c5ded9',
-                accent: '#fbe3b5',
-                destructive: '#f3b0b0',
-                success: '#cce2cb',
-                muted: '#eae8e1',
-                mutedForeground: '#6b6b78',
-                ring: '#1e1e24',
-                pressedOffset: '2px',
-                info: '#a8c8e8',
-                overlay: 'rgba(0, 0, 0, 0.4)',
-                placeholder: '#b0aeb5',
-            },
-            dark: {
-                borderWidth: '2px',
-                borderColor: '#e5e5e5',
-                shadowOffsetX: '3px',
-                shadowOffsetY: '3px',
-                shadowColor: '#e5e5e5',
-                radius: '8px',
-                bg: '#18171c',
-                fg: '#e5e5e5',
-                primary: '#8a739b',
-                secondary: '#6e8e88',
-                accent: '#b28e56',
-                destructive: '#9b5a5a',
-                success: '#678465',
-                muted: '#27252f',
-                mutedForeground: '#8a8a99',
-                ring: '#e5e5e5',
-                pressedOffset: '2px',
-                info: '#5a7a9b',
-                overlay: 'rgba(0, 0, 0, 0.7)',
-                placeholder: '#5a5866',
-            },
-        },
-    },
-    mono: {
-        label: 'Mono',
-        description: '黑白灰极限对比，更粗的线条和更强的阴影偏移。',
-        modes: {
-            light: {
-                borderWidth: '4px',
-                borderColor: '#000000',
-                shadowOffsetX: '5px',
-                shadowOffsetY: '5px',
-                shadowColor: '#000000',
-                radius: '0px',
-                bg: '#ffffff',
-                fg: '#000000',
-                primary: '#000000',
-                secondary: '#ffffff',
-                accent: '#7a7a7a',
-                destructive: '#333333',
-                success: '#dddddd',
-                muted: '#f0f0f0',
-                mutedForeground: '#555555',
-                ring: '#000000',
-                pressedOffset: '2px',
-                info: '#666666',
-                overlay: 'rgba(0, 0, 0, 0.5)',
-                placeholder: '#888888',
-            },
-            dark: {
-                borderWidth: '4px',
-                borderColor: '#ffffff',
-                shadowOffsetX: '5px',
-                shadowOffsetY: '5px',
-                shadowColor: '#ffffff',
-                radius: '0px',
-                bg: '#000000',
-                fg: '#ffffff',
-                primary: '#ffffff',
-                secondary: '#000000',
-                accent: '#888888',
-                destructive: '#cccccc',
-                success: '#222222',
-                muted: '#1a1a1a',
-                mutedForeground: '#aaaaaa',
-                ring: '#ffffff',
-                pressedOffset: '2px',
-                info: '#999999',
-                overlay: 'rgba(0, 0, 0, 0.7)',
-                placeholder: '#777777',
-            },
-        },
-    },
-}
-
-const tokenKeys: (keyof ThemeTokens)[] = [
-    'borderWidth',
-    'borderColor',
-    'shadowOffsetX',
-    'shadowOffsetY',
-    'shadowColor',
-    'radius',
-    'bg',
-    'fg',
-    'primary',
-    'secondary',
-    'accent',
-    'destructive',
-    'success',
-    'muted',
-    'mutedForeground',
-    'ring',
-    'pressedOffset',
-    'info',
-    'overlay',
-    'placeholder',
-]
-
-const cssVariableNames: Record<keyof ThemeTokens, string> = {
-    borderWidth: '--brutal-border-width',
-    borderColor: '--brutal-border-color',
-    shadowOffsetX: '--brutal-shadow-offset-x',
-    shadowOffsetY: '--brutal-shadow-offset-y',
-    shadowColor: '--brutal-shadow-color',
-    radius: '--brutal-radius',
-    bg: '--brutal-bg',
-    fg: '--brutal-fg',
-    primary: '--brutal-primary',
-    secondary: '--brutal-secondary',
-    accent: '--brutal-accent',
-    destructive: '--brutal-destructive',
-    success: '--brutal-success',
-    muted: '--brutal-muted',
-    mutedForeground: '--brutal-muted-foreground',
-    ring: '--brutal-ring',
-    pressedOffset: '--brutal-pressed-offset',
-    info: '--brutal-info',
-    overlay: '--brutal-overlay',
-    placeholder: '--brutal-placeholder',
-}
-
-const colorControls: { key: ColorTokenKey; label: string }[] = [
-    { key: 'primary', label: 'Primary' },
-    { key: 'secondary', label: 'Secondary' },
-    { key: 'accent', label: 'Accent' },
-    { key: 'destructive', label: 'Destructive' },
-    { key: 'success', label: 'Success' },
-    { key: 'info', label: 'Info' },
-]
-
-const lengthControls: { key: LengthTokenKey; label: string; min: number; max: number; step: number }[] = [
-    { key: 'borderWidth', label: 'Border', min: 1, max: 8, step: 1 },
-    { key: 'radius', label: 'Radius', min: 0, max: 24, step: 1 },
-    { key: 'shadowOffsetX', label: 'Shadow X', min: 0, max: 12, step: 1 },
-    { key: 'shadowOffsetY', label: 'Shadow Y', min: 0, max: 12, step: 1 },
-]
-
-const themeOptions: { value: ThemeName; label: string }[] = [
-    { value: 'classic', label: 'Classic' },
-    { value: 'pastel', label: 'Pastel' },
-    { value: 'mono', label: 'Mono' },
-]
-
-const modeOptions: { value: ColorMode; label: string }[] = [
-    { value: 'light', label: 'Light' },
-    { value: 'dark', label: 'Dark' },
-]
 
 const segmentBaseClass = 'border-3 border-brutal px-3 py-2 text-xs font-black uppercase tracking-wide transition-all duration-150 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
 const segmentActiveClass = 'bg-brutal-primary text-black shadow-brutal'
@@ -293,22 +52,19 @@ let copyTimer: ReturnType<typeof setTimeout> | null = null
 const currentTokens = computed(() => themeTokens.value[colorMode.value])
 const currentPreset = computed(() => themePresets[baseTheme.value])
 const previewStyle = computed(() => toCssVariableObject(currentTokens.value))
-const generatedCss = computed(() => [
-    formatCssBlock(['.theme-custom'], themeTokens.value.light),
-    formatCssBlock(['.dark .theme-custom', '.theme-custom.dark'], themeTokens.value.dark),
-].join('\n\n'))
-
-function cloneTokens(tokens: ThemeTokens): ThemeTokens {
-    return { ...tokens }
-}
-
-function clonePreset(name: ThemeName): Record<ColorMode, ThemeTokens> {
-    const preset = themePresets[name]
+const generatedCss = computed(() => formatThemeCss(themeTokens.value))
+const themeCoverage = computed(() => getThemeCoverage(themeTokens.value))
+const contrastChecks = computed(() => getContrastChecks(currentTokens.value))
+const contrastSummary = computed(() => {
+    const warnings = contrastChecks.value.filter((item) => item.status === 'warn').length
+    const unavailable = contrastChecks.value.filter((item) => item.status === 'unavailable').length
     return {
-        light: cloneTokens(preset.modes.light),
-        dark: cloneTokens(preset.modes.dark),
+        warnings,
+        unavailable,
+        passed: contrastChecks.value.length - warnings - unavailable,
+        total: contrastChecks.value.length,
     }
-}
+})
 
 function selectBaseTheme(name: ThemeName) {
     baseTheme.value = name
@@ -323,10 +79,6 @@ function selectColorMode(mode: ColorMode) {
 function resetCurrentPreset() {
     themeTokens.value = clonePreset(baseTheme.value)
     validationErrors.value = {}
-}
-
-function isValidHex(value: string): boolean {
-    return /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.trim())
 }
 
 function updateColorToken(key: ColorTokenKey, value: string) {
@@ -372,25 +124,30 @@ function numberFromPx(value: string): number {
     return Number.isFinite(parsed) ? parsed : 0
 }
 
-function toCssVariableObject(tokens: ThemeTokens): Record<string, string> {
-    return tokenKeys.reduce<Record<string, string>>((result, key) => {
-        result[cssVariableNames[key]] = tokens[key]
-        return result
-    }, {})
-}
-
-function formatCssBlock(selectors: string[], tokens: ThemeTokens): string {
-    const body = tokenKeys
-        .map((key) => `    ${cssVariableNames[key]}: ${tokens[key]};`)
-        .join('\n')
-    return `${selectors.join(',\n')} {\n${body}\n}`
-}
-
 function getSegmentClass(active: boolean): string[] {
     return [
         segmentBaseClass,
         active ? segmentActiveClass : segmentIdleClass,
     ]
+}
+
+function getContrastStatusClass(status: ContrastCheckResult['status']): string[] {
+    return [
+        'border-3 border-brutal p-3 shadow-brutal-sm',
+        status === 'pass' && 'bg-brutal-success text-brutal-fg',
+        status === 'warn' && 'bg-brutal-accent text-brutal-fg',
+        status === 'unavailable' && 'bg-brutal-muted text-brutal-fg',
+    ].filter(Boolean) as string[]
+}
+
+function getContrastStatusLabel(status: ContrastCheckResult['status']): string {
+    if (status === 'pass') return '通过'
+    if (status === 'warn') return '偏低'
+    return '不可检查'
+}
+
+function formatContrastRatio(ratio: number | null): string {
+    return ratio === null ? 'N/A' : `${ratio.toFixed(1)}:1`
 }
 
 async function copyCss() {
@@ -570,7 +327,7 @@ async function copyCss() {
 
             <div class="space-y-5">
                 <section
-                    class="min-h-[560px] border-3 border-brutal bg-brutal-bg p-4 text-brutal-fg shadow-brutal transition-all duration-150 sm:p-5"
+                    class="border-3 border-brutal bg-brutal-bg p-4 text-brutal-fg shadow-brutal transition-all duration-150 sm:p-5"
                     :class="colorMode === 'dark' ? 'dark' : ''"
                     :style="previewStyle"
                 >
@@ -590,44 +347,73 @@ async function copyCss() {
                         </div>
                     </div>
 
-                    <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(260px,360px)]">
+                    <div class="grid gap-4 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]">
                         <Card class="bg-brutal-bg">
                             <CardHeader>
-                                <CardTitle>Launch Console</CardTitle>
-                                <CardDescription>
-                                    A compact product surface using your current token set.
-                                </CardDescription>
+                                <div class="flex flex-wrap items-start justify-between gap-3">
+                                    <div>
+                                        <CardTitle>Launch Console</CardTitle>
+                                        <CardDescription>
+                                            产品控制台预览，用来判断主题在真实界面里的整体气质。
+                                        </CardDescription>
+                                    </div>
+                                    <Badge variant="success">Live</Badge>
+                                </div>
                             </CardHeader>
                             <CardContent class="space-y-4">
-                                <div class="grid gap-3 sm:grid-cols-3">
-                                    <div class="border-3 border-brutal bg-brutal-primary p-3 text-black shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide">Primary</p>
-                                        <p class="m-0 break-words font-mono text-lg font-black">{{ currentTokens.primary }}</p>
+                                <div class="grid gap-3 md:grid-cols-3">
+                                    <div class="border-3 border-brutal bg-brutal-primary p-3 shadow-brutal-sm">
+                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">Revenue</p>
+                                        <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">42.8K</p>
+                                        <p class="m-0 text-xs font-bold text-brutal-fg">+18% this week</p>
                                     </div>
-                                    <div class="border-3 border-brutal bg-brutal-secondary p-3 text-black shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide">Radius</p>
-                                        <p class="m-0 font-mono text-lg font-black">{{ currentTokens.radius }}</p>
+                                    <div class="border-3 border-brutal bg-brutal-secondary p-3 shadow-brutal-sm">
+                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">Active</p>
+                                        <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">1,284</p>
+                                        <p class="m-0 text-xs font-bold text-brutal-fg">Users online</p>
                                     </div>
-                                    <div class="border-3 border-brutal bg-brutal-accent p-3 text-black shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide">Shadow</p>
-                                        <p class="m-0 font-mono text-lg font-black">{{ currentTokens.shadowOffsetX }}</p>
+                                    <div class="border-3 border-brutal bg-brutal-accent p-3 shadow-brutal-sm">
+                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">Shadow</p>
+                                        <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">{{ currentTokens.shadowOffsetX }}</p>
+                                        <p class="m-0 text-xs font-bold text-brutal-fg">Hard offset</p>
                                     </div>
                                 </div>
 
-                                <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-                                    <Input v-model="sampleEmail" placeholder="hello@brutx.dev" />
-                                    <Button type="button" variant="primary">Invite</Button>
+                                <div class="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto]">
+                                    <div class="relative">
+                                        <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" />
+                                        <Input v-model="sampleEmail" class="pl-9" placeholder="Filter customers" />
+                                    </div>
+                                    <Button type="button" variant="primary">Create segment</Button>
                                 </div>
 
-                                <Alert variant="primary">
-                                    <AlertTitle>Token driven</AlertTitle>
-                                    <AlertDescription>
-                                        Border, color, radius and shadow are inherited from the preview container.
-                                    </AlertDescription>
-                                </Alert>
+                                <div class="overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
+                                    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 border-b-3 border-brutal bg-brutal-muted p-3 text-xs font-black uppercase tracking-wide text-brutal-muted-foreground">
+                                        <span>Account</span>
+                                        <span>Status</span>
+                                        <span>Risk</span>
+                                    </div>
+                                    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 border-b-3 border-brutal p-3">
+                                        <div class="min-w-0">
+                                            <p class="m-0 truncate text-sm font-black text-brutal-fg">brutal-studio.io</p>
+                                            <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">hello@brutx.dev</p>
+                                        </div>
+                                        <Badge variant="success" size="sm">Healthy</Badge>
+                                        <Badge variant="outline" size="sm">Low</Badge>
+                                    </div>
+                                    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-3">
+                                        <div class="min-w-0">
+                                            <p class="m-0 truncate text-sm font-black text-brutal-fg">mono-labs.dev</p>
+                                            <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">ops@brutx.dev</p>
+                                        </div>
+                                        <Badge variant="primary" size="sm">Trial</Badge>
+                                        <Badge variant="danger" size="sm">High</Badge>
+                                    </div>
+                                </div>
                             </CardContent>
                             <CardFooter class="flex flex-wrap gap-3">
                                 <Button type="button" variant="secondary">Ship preset</Button>
+                                <Button type="button" variant="danger">Pause account</Button>
                                 <Button type="button" variant="outline">View CSS</Button>
                             </CardFooter>
                         </Card>
@@ -635,23 +421,37 @@ async function copyCss() {
                         <div class="space-y-4">
                             <Card class="bg-brutal-bg">
                                 <CardHeader>
-                                    <CardTitle>Component Stack</CardTitle>
+                                    <CardTitle>Component Matrix</CardTitle>
                                     <CardDescription>
-                                        Core primitives reacting to the same local variables.
+                                        快速扫一眼常用组件状态是否清晰。
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent class="space-y-4">
-                                    <div class="flex flex-wrap gap-2">
+                                    <div class="grid gap-2 sm:grid-cols-2">
                                         <Button type="button">Default</Button>
+                                        <Button type="button" variant="primary">Primary</Button>
                                         <Button type="button" variant="accent">Accent</Button>
-                                        <Button type="button" variant="success">Success</Button>
+                                        <Button type="button" variant="danger">Danger</Button>
                                     </div>
-                                    <div class="border-3 border-brutal bg-brutal-muted p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-sm font-black text-brutal-fg">Static toast preview</p>
-                                        <p class="m-0 mt-1 text-xs font-bold text-brutal-muted-foreground">
-                                            Copy succeeded with the current theme.
-                                        </p>
+                                    <Input placeholder="Token-aware input" />
+                                    <div class="flex flex-wrap gap-2">
+                                        <Badge>Default</Badge>
+                                        <Badge variant="primary">Primary</Badge>
+                                        <Badge variant="success">Success</Badge>
+                                        <Badge variant="danger">Danger</Badge>
                                     </div>
+                                    <Alert variant="info">
+                                        <AlertTitle>Info surface</AlertTitle>
+                                        <AlertDescription>
+                                            Alerts, cards and badges all inherit the local theme variables.
+                                        </AlertDescription>
+                                    </Alert>
+                                    <Alert variant="danger">
+                                        <AlertTitle>Danger surface</AlertTitle>
+                                        <AlertDescription>
+                                            Destructive color contrast is checked below.
+                                        </AlertDescription>
+                                    </Alert>
                                 </CardContent>
                             </Card>
 
@@ -664,7 +464,7 @@ async function copyCss() {
                                         v-for="control in colorControls"
                                         :key="control.key"
                                         class="min-h-16 border-3 border-brutal p-2 shadow-brutal-sm"
-                                        :style="{ backgroundColor: currentTokens[control.key], color: control.key === 'secondary' || control.key === 'accent' || control.key === 'success' ? '#000000' : currentTokens.fg }"
+                                        :style="{ backgroundColor: currentTokens[control.key], color: currentTokens.fg }"
                                     >
                                         <p class="m-0 break-words text-[0.65rem] font-black uppercase leading-tight">
                                             {{ control.label }}
@@ -676,29 +476,93 @@ async function copyCss() {
                     </div>
                 </section>
 
-                <section class="border-3 border-brutal bg-brutal-bg shadow-brutal">
-                    <div class="flex flex-wrap items-center justify-between gap-3 border-b-3 border-brutal bg-brutal-muted p-3">
-                        <div>
+                <section class="grid gap-5 lg:grid-cols-[minmax(300px,0.9fr)_minmax(0,1.1fr)]">
+                    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
+                        <div class="border-b-3 border-brutal bg-brutal-muted p-3">
                             <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                Generated CSS
+                                Quality checks
                             </p>
                             <p class="m-0 text-sm font-bold text-brutal-fg">
-                                复制到项目 CSS 中即可使用 `.theme-custom`。
+                                {{ contrastSummary.passed }}/{{ contrastSummary.total }} 通过，{{ contrastSummary.warnings }} 个偏低。
                             </p>
                         </div>
-                        <Button type="button" variant="primary" class="gap-2" @click="copyCss">
-                            <Check v-if="copyState === 'success'" class="h-4 w-4" />
-                            <Copy v-else class="h-4 w-4" />
-                            {{ copyState === 'success' ? '已复制' : '复制 CSS' }}
-                        </Button>
+
+                        <div class="space-y-3 p-3">
+                            <div
+                                class="border-3 border-brutal p-3 shadow-brutal-sm"
+                                :class="themeCoverage.isComplete ? 'bg-brutal-success text-brutal-fg' : 'bg-brutal-accent text-brutal-fg'"
+                            >
+                                <div class="flex items-start gap-3">
+                                    <ShieldCheck v-if="themeCoverage.isComplete" class="mt-0.5 h-5 w-5 shrink-0" />
+                                    <ShieldAlert v-else class="mt-0.5 h-5 w-5 shrink-0" />
+                                    <div class="min-w-0">
+                                        <p class="m-0 text-sm font-black">
+                                            CSS 覆盖率 {{ themeCoverage.covered }}/{{ themeCoverage.total }} tokens
+                                        </p>
+                                        <p class="m-0 mt-1 text-xs font-bold">
+                                            {{ themeCoverage.isComplete ? 'light 和 dark 输出都覆盖完整。' : '存在缺失变量，请检查输出。' }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <ul v-if="!themeCoverage.isComplete" class="m-0 mt-2 list-none p-0 text-xs font-black">
+                                    <li v-for="item in themeCoverage.missing" :key="item">
+                                        {{ item }}
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <div
+                                    v-for="check in contrastChecks"
+                                    :key="check.id"
+                                    :class="getContrastStatusClass(check.status)"
+                                >
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="m-0 text-sm font-black">{{ check.label }}</p>
+                                            <p class="m-0 text-xs font-bold">{{ check.usage }}</p>
+                                        </div>
+                                        <span class="shrink-0 border-3 border-brutal bg-brutal-bg px-2 py-1 text-[0.65rem] font-black text-brutal-fg">
+                                            {{ getContrastStatusLabel(check.status) }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-3 flex items-end justify-between gap-3">
+                                        <p class="m-0 font-mono text-xl font-black">
+                                            {{ formatContrastRatio(check.ratio) }}
+                                        </p>
+                                        <p class="m-0 text-right text-xs font-bold">
+                                            target {{ check.threshold }}:1
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <textarea
-                        ref="cssOutput"
-                        :value="generatedCss"
-                        readonly
-                        class="block min-h-[320px] w-full resize-y border-0 bg-brutal-fg p-4 font-mono text-xs font-bold leading-6 text-brutal-bg outline-none sm:text-sm"
-                        aria-label="Generated theme CSS"
-                    />
+
+                    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
+                        <div class="flex flex-wrap items-center justify-between gap-3 border-b-3 border-brutal bg-brutal-muted p-3">
+                            <div>
+                                <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
+                                    Generated CSS
+                                </p>
+                                <p class="m-0 text-sm font-bold text-brutal-fg">
+                                    复制到项目 CSS 中即可使用 `.theme-custom`。
+                                </p>
+                            </div>
+                            <Button type="button" variant="primary" class="gap-2" @click="copyCss">
+                                <Check v-if="copyState === 'success'" class="h-4 w-4" />
+                                <Copy v-else class="h-4 w-4" />
+                                {{ copyState === 'success' ? '已复制' : '复制 CSS' }}
+                            </Button>
+                        </div>
+                        <textarea
+                            ref="cssOutput"
+                            :value="generatedCss"
+                            readonly
+                            class="block min-h-[360px] w-full resize-y border-0 bg-brutal-fg p-4 font-mono text-xs font-bold leading-6 text-brutal-bg outline-none sm:text-sm"
+                            aria-label="Generated theme CSS"
+                        />
+                    </div>
                 </section>
             </div>
         </div>
