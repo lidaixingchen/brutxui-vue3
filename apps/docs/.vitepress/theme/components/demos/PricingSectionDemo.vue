@@ -5,42 +5,49 @@ import type { BrutalistPricingPlan } from 'brutx-ui-vue'
 const plans: BrutalistPricingPlan[] = [
     {
         name: 'Starter',
-        price: '$0',
+        priceMonthly: '$0',
+        priceAnnually: '$0',
         description: 'For individuals getting started',
         features: [
-            '5 components',
-            'Classic theme',
-            'Community support',
+            { text: '5 components', included: true },
+            { text: 'Classic theme', included: true },
+            { text: 'Community support', included: true },
+            { text: 'Priority updates', included: false },
         ],
-        ctaText: 'Get Started',
+        buttonText: 'Get Started',
+        buttonVariant: 'outline',
         variant: 'default',
     },
     {
         name: 'Pro',
-        price: '$29',
+        priceMonthly: '$19',
+        priceAnnually: '$15',
         description: 'For professional developers',
         features: [
-            'All components',
-            'All themes',
-            'Priority support',
-            'CLI tool access',
+            { text: 'All components', included: true },
+            { text: 'All themes', included: true },
+            { text: 'Priority support', included: true },
+            { text: 'CLI tool access', included: true },
         ],
-        ctaText: 'Go Pro',
+        buttonText: 'Go Pro',
+        buttonVariant: 'primary',
         popular: true,
         variant: 'primary',
     },
     {
         name: 'Enterprise',
-        price: '$99',
+        priceMonthly: '$49',
+        priceAnnually: '$39',
         description: 'For teams and organizations',
         features: [
-            'All components',
-            'All themes',
-            'Dedicated support',
-            'Custom themes',
-            'SLA guarantee',
+            { text: 'All components', included: true },
+            { text: 'All themes', included: true },
+            { text: 'Dedicated support', included: true },
+            { text: 'Custom themes', included: true },
+            { text: 'SLA guarantee', included: true },
         ],
-        ctaText: 'Contact Sales',
+        buttonText: 'Contact Sales',
+        buttonVariant: 'secondary',
         variant: 'secondary',
     },
 ]
@@ -49,9 +56,11 @@ const plans: BrutalistPricingPlan[] = [
 <template>
     <div class="w-full overflow-x-auto">
         <PricingSection
-            title="Simple, Transparent Brutalist Plans"
-            subtitle="One-time payment. Lifetime access."
+            title="Unified Brutalist Pricing"
+            subtitle="One component for lifetime offers or monthly and annual billing."
             :plans="plans"
+            default-billing="monthly"
+            popular-text="Best Value"
         />
     </div>
 </template>

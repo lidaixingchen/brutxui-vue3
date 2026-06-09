@@ -1,11 +1,11 @@
 ---
 title: Pricing Section
-description: 简化版定价对比区块，支持多列方案并排和热门方案强调。
+description: 统一定价区块，支持一次性价格、月付/年付切换、多方案对比和热门方案强调。
 ---
 
 # Pricing Section 定价区
 
-新粗野主义风格的定价区段，包含功能列表和热门方案高亮。是 SaaSPricing 的简化替代方案，无需计费切换。
+新粗野主义风格的统一定价区段，包含功能列表、热门方案高亮和可选的月付/年付切换。它既可以展示一次性价格，也可以展示 SaaS 订阅价格；`SaaSPricing` 现在是基于它的兼容封装。
 
 ## 预览
 
@@ -28,42 +28,49 @@ import PricingSection from '@/components/ui/pricing-section/PricingSection.vue'
 const plans = [
     {
         name: 'Starter',
-        price: '$0',
+        priceMonthly: '$0',
+        priceAnnually: '$0',
         description: 'For individuals getting started',
         features: [
-            '5 components',
-            'Classic theme',
-            'Community support',
+            { text: '5 components', included: true },
+            { text: 'Classic theme', included: true },
+            { text: 'Community support', included: true },
+            { text: 'Priority updates', included: false },
         ],
-        ctaText: 'Get Started',
+        buttonText: 'Get Started',
+        buttonVariant: 'outline',
         variant: 'default',
     },
     {
         name: 'Pro',
-        price: '$29',
+        priceMonthly: '$19',
+        priceAnnually: '$15',
         description: 'For professional developers',
         features: [
-            'All components',
-            'All themes',
-            'Priority support',
-            'CLI tool access',
+            { text: 'All components', included: true },
+            { text: 'All themes', included: true },
+            { text: 'Priority support', included: true },
+            { text: 'CLI tool access', included: true },
         ],
-        ctaText: 'Go Pro',
+        buttonText: 'Go Pro',
+        buttonVariant: 'primary',
         popular: true,
         variant: 'primary',
     },
     {
         name: 'Enterprise',
-        price: '$99',
+        priceMonthly: '$49',
+        priceAnnually: '$39',
         description: 'For teams and organizations',
         features: [
-            'All components',
-            'All themes',
-            'Dedicated support',
-            'Custom themes',
-            'SLA guarantee',
+            { text: 'All components', included: true },
+            { text: 'All themes', included: true },
+            { text: 'Dedicated support', included: true },
+            { text: 'Custom themes', included: true },
+            { text: 'SLA guarantee', included: true },
         ],
-        ctaText: 'Contact Sales',
+        buttonText: 'Contact Sales',
+        buttonVariant: 'secondary',
         variant: 'secondary',
     },
 ]
@@ -71,9 +78,11 @@ const plans = [
 
 <template>
     <PricingSection
-        title="Simple, Transparent Brutalist Plans"
-        subtitle="One-time payment. Lifetime access."
+        title="Unified Brutalist Pricing"
+        subtitle="One component for lifetime offers or monthly and annual billing."
         :plans="plans"
+        default-billing="monthly"
+        popular-text="Best Value"
     />
 </template>
 ```
@@ -81,14 +90,23 @@ const plans = [
 ## BrutalistPricingPlan 类型
 
 ```ts
+interface PricingFeature {
+    text: string
+    included?: boolean
+}
+
 interface BrutalistPricingPlan {
     name: string
-    price: string
+    price?: string
+    priceMonthly?: string
+    priceAnnually?: string
     description: string
-    features: string[]
-    ctaText: string
+    features: Array<string | PricingFeature>
+    ctaText?: string
+    buttonText?: string
     popular?: boolean
-    variant: 'primary' | 'secondary' | 'default'
+    variant?: 'primary' | 'secondary' | 'default' | 'interactive' | 'elevated' | 'flat'
+    buttonVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
 }
 ```
 
@@ -99,10 +117,21 @@ interface BrutalistPricingPlan {
 | `title` | `string` | locale: `pricingSection.defaultTitle` |
 | `subtitle` | `string` | — |
 | `plans` | `BrutalistPricingPlan[]` | `[]` |
+| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` |
+| `defaultBilling` | `'monthly' \| 'annually'` | `'monthly'` |
+| `popularText` | `string` | locale: `pricingSection.mostPopular` |
 | `class` | `string` | — |
+
+## Events
+
+| 事件 | 参数 |
+|------|------|
+| `plan-select` | `planName: string` |
 
 ## 特性
 
-- **热门徽章**：设置了 `popular: true` 的方案会显示旋转徽章和强调色背景色调
-- **功能勾选图标**：所有功能项显示绿色勾选图标
-- **卡片变体**：使用 Card 的 variant 属性进行样式设置（primary、secondary、default）
+- **统一计费模式**：`billingMode="auto"` 会在方案包含 `priceMonthly` 或 `priceAnnually` 时自动显示切换按钮
+- **一次性价格兼容**：只传 `price` 时不显示计费切换，并使用 lifetime 文案
+- **热门徽章**：设置 `popular: true` 的方案会显示强调徽章，可通过 `popularText` 覆盖文案
+- **功能状态**：字符串功能默认视为包含；对象功能可通过 `included: false` 显示未包含状态
+- **按钮兼容**：支持旧字段 `ctaText`，也支持和 `SaaSPricing` 一致的 `buttonText` / `buttonVariant`

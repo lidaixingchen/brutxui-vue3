@@ -7,7 +7,7 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | 区块 | 描述 |
 |------|------|
 | [Brutalist Hero](/blocks/brutalist-hero) | 带有 CTA 按钮和代码预览的落地页 Hero 区段 |
-| [Pricing Section](/blocks/pricing-section) | 带有功能对比的定价表格 |
+| [Pricing Section](/blocks/pricing-section) | 支持一次性价格和订阅切换的统一定价表格 |
 | [Auth Card](/blocks/auth-card) | 带有社交登录和邮箱表单的登录/注册卡片 |
 | [Dashboard Shell](/blocks/dashboard-shell) | 带有侧边栏和顶栏的完整仪表盘布局 |
 | [Empty State](/blocks/empty-state) | 带有图标和操作按钮的空状态占位符 |
