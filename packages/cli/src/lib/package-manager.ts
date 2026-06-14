@@ -23,7 +23,12 @@ export function installPackages(
     if (sanitized.length === 0) return;
 
     const [command, ...baseArgs] = INSTALL_COMMANDS[packageManager].split(' ');
-    execFileSync(command, [...baseArgs, '--', ...sanitized], { stdio: 'inherit', cwd });
+    const isWindows = process.platform === 'win32';
+    execFileSync(command, [...baseArgs, '--', ...sanitized], {
+        stdio: 'inherit',
+        cwd,
+        shell: isWindows,
+    });
 }
 
 export function getInstallCommand(packageManager: PackageManager, packages: string[]): string {
