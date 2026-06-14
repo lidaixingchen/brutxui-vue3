@@ -49,6 +49,17 @@ const copyState = ref<CopyState>('idle')
 const cssOutput = ref<HTMLTextAreaElement | null>(null)
 let copyTimer: ReturnType<typeof setTimeout> | null = null
 
+const swatchRoles = [
+    { bgKey: 'bg', fgKey: 'fg', label: 'Base' },
+    { bgKey: 'muted', fgKey: 'mutedForeground', label: 'Muted' },
+    { bgKey: 'primary', fgKey: 'primaryForeground', label: 'Primary' },
+    { bgKey: 'secondary', fgKey: 'secondaryForeground', label: 'Secondary' },
+    { bgKey: 'accent', fgKey: 'accentForeground', label: 'Accent' },
+    { bgKey: 'destructive', fgKey: 'destructiveForeground', label: 'Destructive' },
+    { bgKey: 'success', fgKey: 'successForeground', label: 'Success' },
+    { bgKey: 'info', fgKey: 'infoForeground', label: 'Info' },
+] as const
+
 const currentTokens = computed(() => themeTokens.value[colorMode.value])
 const currentPreset = computed(() => themePresets[baseTheme.value])
 const previewStyle = computed(() => toCssVariableObject(currentTokens.value))
@@ -233,14 +244,14 @@ async function copyCss() {
                     <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
                         Color tokens
                     </p>
-                    <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
                         <label
                             v-for="control in colorControls"
                             :key="control.key"
-                            class="grid gap-2"
+                            class="grid gap-1.5"
                         >
-                            <span class="text-sm font-black text-brutal-fg">{{ control.label }}</span>
-                            <span class="grid grid-cols-[52px_minmax(0,1fr)] gap-2">
+                            <span class="text-xs font-black text-brutal-fg truncate">{{ control.label }}</span>
+                            <span class="grid grid-cols-[38px_minmax(0,1fr)] gap-1.5">
                                 <input
                                     type="color"
                                     :value="currentTokens[control.key]"
@@ -251,14 +262,14 @@ async function copyCss() {
                                 <input
                                     type="text"
                                     :value="currentTokens[control.key]"
-                                    class="h-10 min-w-0 border-3 border-brutal bg-brutal-bg px-3 font-mono text-sm font-black text-brutal-fg shadow-brutal-sm outline-none focus:ring-3 focus:ring-brutal-ring"
+                                    class="h-10 min-w-0 border-3 border-brutal bg-brutal-bg px-2 font-mono text-xs font-black text-brutal-fg shadow-brutal-sm outline-none focus:ring-3 focus:ring-brutal-ring"
                                     :aria-label="`${control.label} hex value`"
                                     @input="updateColorToken(control.key, ($event.target as HTMLInputElement).value)"
                                 >
                             </span>
                             <span
                                 v-if="validationErrors[control.key]"
-                                class="text-xs font-bold text-brutal-destructive"
+                                class="text-[10px] font-bold leading-tight text-brutal-destructive"
                             >
                                 {{ validationErrors[control.key] }}
                             </span>
@@ -459,16 +470,24 @@ async function copyCss() {
                                 <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
                                     Swatches
                                 </p>
-                                <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                                     <div
-                                        v-for="control in colorControls"
-                                        :key="control.key"
-                                        class="min-h-16 min-w-0 border-3 border-brutal p-2 shadow-brutal-sm"
-                                        :style="{ backgroundColor: currentTokens[control.key], color: currentTokens.fg }"
+                                        v-for="swatch in swatchRoles"
+                                        :key="swatch.label"
+                                        class="min-h-16 min-w-0 border-3 border-brutal p-2 shadow-brutal-sm flex flex-col justify-between"
+                                        :style="{ backgroundColor: currentTokens[swatch.bgKey], color: currentTokens[swatch.fgKey] }"
                                     >
-                                        <p class="m-0 break-all text-[0.62rem] font-black uppercase leading-tight">
-                                            {{ control.label }}
+                                        <p class="m-0 break-all text-[0.62rem] font-black uppercase leading-tight mb-1">
+                                            {{ swatch.label }}
                                         </p>
+                                        <div>
+                                            <p class="m-0 font-mono text-[0.55rem] font-black leading-none opacity-80">
+                                                BG: {{ currentTokens[swatch.bgKey] }}
+                                            </p>
+                                            <p class="m-0 font-mono text-[0.55rem] font-black leading-none opacity-80 mt-0.5">
+                                                FG: {{ currentTokens[swatch.fgKey] }}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -11,20 +11,38 @@ export interface ThemeTokens {
     bg: string
     fg: string
     primary: string
+    primaryForeground: string
     secondary: string
+    secondaryForeground: string
     accent: string
+    accentForeground: string
     destructive: string
+    destructiveForeground: string
     success: string
+    successForeground: string
     muted: string
     mutedForeground: string
     ring: string
     pressedOffset: string
     info: string
+    infoForeground: string
     overlay: string
     placeholder: string
 }
 
-export type ColorTokenKey = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
+export type ColorTokenKey =
+    | 'primary'
+    | 'primaryForeground'
+    | 'secondary'
+    | 'secondaryForeground'
+    | 'accent'
+    | 'accentForeground'
+    | 'destructive'
+    | 'destructiveForeground'
+    | 'success'
+    | 'successForeground'
+    | 'info'
+    | 'infoForeground'
 export type LengthTokenKey = 'borderWidth' | 'radius' | 'shadowOffsetX' | 'shadowOffsetY'
 
 export interface ThemePreset {
@@ -87,35 +105,51 @@ const contrastPairs: ContrastPair[] = [
     },
     {
         id: 'primary',
-        label: '主强调',
-        usage: 'primary / bg',
-        foregroundToken: 'primary',
-        backgroundToken: 'bg',
-        threshold: 3,
+        label: '主强调色文本',
+        usage: 'primaryForeground / primary',
+        foregroundToken: 'primaryForeground',
+        backgroundToken: 'primary',
+        threshold: 4.5,
+    },
+    {
+        id: 'secondary',
+        label: '辅助色文本',
+        usage: 'secondaryForeground / secondary',
+        foregroundToken: 'secondaryForeground',
+        backgroundToken: 'secondary',
+        threshold: 4.5,
+    },
+    {
+        id: 'accent',
+        label: '强调色文本',
+        usage: 'accentForeground / accent',
+        foregroundToken: 'accentForeground',
+        backgroundToken: 'accent',
+        threshold: 4.5,
     },
     {
         id: 'destructive',
-        label: '危险强调',
-        usage: 'destructive / bg',
-        foregroundToken: 'destructive',
-        backgroundToken: 'bg',
-        threshold: 3,
+        label: '危险色文本',
+        usage: 'destructiveForeground / destructive',
+        foregroundToken: 'destructiveForeground',
+        backgroundToken: 'destructive',
+        threshold: 4.5,
     },
     {
         id: 'success',
-        label: '成功强调',
-        usage: 'success / bg',
-        foregroundToken: 'success',
-        backgroundToken: 'bg',
-        threshold: 3,
+        label: '成功色文本',
+        usage: 'successForeground / success',
+        foregroundToken: 'successForeground',
+        backgroundToken: 'success',
+        threshold: 4.5,
     },
     {
         id: 'info',
-        label: '信息强调',
-        usage: 'info / bg',
-        foregroundToken: 'info',
-        backgroundToken: 'bg',
-        threshold: 3,
+        label: '信息色文本',
+        usage: 'infoForeground / info',
+        foregroundToken: 'infoForeground',
+        backgroundToken: 'info',
+        threshold: 4.5,
     },
 ]
 
@@ -134,15 +168,21 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
                 bg: '#ffffff',
                 fg: '#000000',
                 primary: '#FF6B6B',
+                primaryForeground: '#000000',
                 secondary: '#4ECDC4',
+                secondaryForeground: '#000000',
                 accent: '#FFE66D',
+                accentForeground: '#000000',
                 destructive: '#EF476F',
+                destructiveForeground: '#ffffff',
                 success: '#7FB069',
+                successForeground: '#000000',
                 muted: '#f3f4f6',
                 mutedForeground: '#4B5563',
                 ring: '#000000',
                 pressedOffset: '2px',
                 info: '#4A90D9',
+                infoForeground: '#ffffff',
                 overlay: 'rgba(0, 0, 0, 0.5)',
                 placeholder: '#9CA3AF',
             },
@@ -156,15 +196,21 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
                 bg: '#141414',
                 fg: '#ffffff',
                 primary: '#FF6B6B',
+                primaryForeground: '#000000',
                 secondary: '#4ECDC4',
+                secondaryForeground: '#000000',
                 accent: '#FFE66D',
+                accentForeground: '#000000',
                 destructive: '#EF476F',
+                destructiveForeground: '#ffffff',
                 success: '#7FB069',
+                successForeground: '#000000',
                 muted: '#1e1e1e',
                 mutedForeground: '#9CA3AF',
                 ring: '#ffffff',
                 pressedOffset: '2px',
                 info: '#3B82F6',
+                infoForeground: '#ffffff',
                 overlay: 'rgba(0, 0, 0, 0.7)',
                 placeholder: '#6B7280',
             },
@@ -184,15 +230,21 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
                 bg: '#faf9f6',
                 fg: '#1e1e24',
                 primary: '#d6c6e1',
+                primaryForeground: '#1e1e24',
                 secondary: '#c5ded9',
+                secondaryForeground: '#1e1e24',
                 accent: '#fbe3b5',
+                accentForeground: '#1e1e24',
                 destructive: '#f3b0b0',
+                destructiveForeground: '#1e1e24',
                 success: '#cce2cb',
+                successForeground: '#1e1e24',
                 muted: '#eae8e1',
                 mutedForeground: '#6b6b78',
                 ring: '#1e1e24',
                 pressedOffset: '2px',
                 info: '#a8c8e8',
+                infoForeground: '#1e1e24',
                 overlay: 'rgba(0, 0, 0, 0.4)',
                 placeholder: '#b0aeb5',
             },
@@ -206,15 +258,21 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
                 bg: '#18171c',
                 fg: '#e5e5e5',
                 primary: '#8a739b',
+                primaryForeground: '#ffffff',
                 secondary: '#6e8e88',
+                secondaryForeground: '#ffffff',
                 accent: '#b28e56',
+                accentForeground: '#18171c',
                 destructive: '#9b5a5a',
+                destructiveForeground: '#ffffff',
                 success: '#678465',
+                successForeground: '#ffffff',
                 muted: '#27252f',
                 mutedForeground: '#8a8a99',
                 ring: '#e5e5e5',
                 pressedOffset: '2px',
                 info: '#5a7a9b',
+                infoForeground: '#ffffff',
                 overlay: 'rgba(0, 0, 0, 0.7)',
                 placeholder: '#5a5866',
             },
@@ -234,15 +292,21 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
                 bg: '#ffffff',
                 fg: '#000000',
                 primary: '#000000',
+                primaryForeground: '#ffffff',
                 secondary: '#ffffff',
+                secondaryForeground: '#000000',
                 accent: '#7a7a7a',
+                accentForeground: '#ffffff',
                 destructive: '#333333',
+                destructiveForeground: '#ffffff',
                 success: '#dddddd',
+                successForeground: '#000000',
                 muted: '#f0f0f0',
                 mutedForeground: '#555555',
                 ring: '#000000',
                 pressedOffset: '2px',
                 info: '#666666',
+                infoForeground: '#ffffff',
                 overlay: 'rgba(0, 0, 0, 0.5)',
                 placeholder: '#888888',
             },
@@ -256,15 +320,21 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
                 bg: '#000000',
                 fg: '#ffffff',
                 primary: '#ffffff',
+                primaryForeground: '#000000',
                 secondary: '#000000',
+                secondaryForeground: '#ffffff',
                 accent: '#888888',
+                accentForeground: '#000000',
                 destructive: '#cccccc',
+                destructiveForeground: '#000000',
                 success: '#222222',
+                successForeground: '#ffffff',
                 muted: '#1a1a1a',
                 mutedForeground: '#aaaaaa',
                 ring: '#ffffff',
                 pressedOffset: '2px',
                 info: '#999999',
+                infoForeground: '#000000',
                 overlay: 'rgba(0, 0, 0, 0.7)',
                 placeholder: '#777777',
             },
@@ -282,15 +352,21 @@ export const tokenKeys: (keyof ThemeTokens)[] = [
     'bg',
     'fg',
     'primary',
+    'primaryForeground',
     'secondary',
+    'secondaryForeground',
     'accent',
+    'accentForeground',
     'destructive',
+    'destructiveForeground',
     'success',
+    'successForeground',
     'muted',
     'mutedForeground',
     'ring',
     'pressedOffset',
     'info',
+    'infoForeground',
     'overlay',
     'placeholder',
 ]
@@ -305,26 +381,38 @@ export const cssVariableNames: Record<keyof ThemeTokens, string> = {
     bg: '--brutal-bg',
     fg: '--brutal-fg',
     primary: '--brutal-primary',
+    primaryForeground: '--brutal-primary-foreground',
     secondary: '--brutal-secondary',
+    secondaryForeground: '--brutal-secondary-foreground',
     accent: '--brutal-accent',
+    accentForeground: '--brutal-accent-foreground',
     destructive: '--brutal-destructive',
+    destructiveForeground: '--brutal-destructive-foreground',
     success: '--brutal-success',
+    successForeground: '--brutal-success-foreground',
     muted: '--brutal-muted',
     mutedForeground: '--brutal-muted-foreground',
     ring: '--brutal-ring',
     pressedOffset: '--brutal-pressed-offset',
     info: '--brutal-info',
+    infoForeground: '--brutal-info-foreground',
     overlay: '--brutal-overlay',
     placeholder: '--brutal-placeholder',
 }
 
 export const colorControls: { key: ColorTokenKey; label: string }[] = [
     { key: 'primary', label: 'Primary' },
+    { key: 'primaryForeground', label: 'Primary FG' },
     { key: 'secondary', label: 'Secondary' },
+    { key: 'secondaryForeground', label: 'Secondary FG' },
     { key: 'accent', label: 'Accent' },
+    { key: 'accentForeground', label: 'Accent FG' },
     { key: 'destructive', label: 'Destructive' },
+    { key: 'destructiveForeground', label: 'Destructive FG' },
     { key: 'success', label: 'Success' },
+    { key: 'successForeground', label: 'Success FG' },
     { key: 'info', label: 'Info' },
+    { key: 'infoForeground', label: 'Info FG' },
 ]
 
 export const lengthControls: { key: LengthTokenKey; label: string; min: number; max: number; step: number }[] = [
