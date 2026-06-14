@@ -16,7 +16,7 @@
     },
     {
       "path": "components/ui/avatar/AvatarFallback.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AvatarFallback as AvatarFallbackPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\n\ninterface AvatarFallbackProps {\n    class?: string\n}\n\nconst props = defineProps<AvatarFallbackProps>()\n\nconst classes = computed(() =>\n    cn('flex h-full w-full items-center justify-center bg-brutal-primary text-brutal-fg font-bold', props.class)\n)\n</script>\n\n<template>\n    <AvatarFallbackPrimitive :class=\"classes\">\n        <slot />\n    </AvatarFallbackPrimitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AvatarFallback as AvatarFallbackPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\n\ninterface AvatarFallbackProps {\n    class?: string\n}\n\nconst props = defineProps<AvatarFallbackProps>()\n\nconst classes = computed(() =>\n    cn('flex h-full w-full items-center justify-center bg-brutal-primary text-brutal-primary-foreground font-bold', props.class)\n)\n</script>\n\n<template>\n    <AvatarFallbackPrimitive :class=\"classes\">\n        <slot />\n    </AvatarFallbackPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {

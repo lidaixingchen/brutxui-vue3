@@ -9,14 +9,14 @@ export const tableVariants = cva(
 
 export const tableHeaderVariants = cva(
     [
-        'text-brutal-fg [&_tr]:border-b-3 [&_tr]:border-brutal',
+        '[&_tr]:border-b-3 [&_tr]:border-brutal',
     ],
     {
         variants: {
             variant: {
-                default: 'bg-brutal-accent',
-                primary: 'bg-brutal-primary',
-                secondary: 'bg-brutal-secondary',
+                default: 'bg-brutal-accent text-brutal-accent-foreground',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground',
+                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
             },
         },
         defaultVariants: {
@@ -27,16 +27,16 @@ export const tableHeaderVariants = cva(
 
 export const tableHeadVariants = cva(
     [
-        'h-12 px-4 text-left align-middle font-black tracking-wide text-brutal-fg',
+        'h-12 px-4 text-left align-middle font-black tracking-wide',
         '[&:has([role=checkbox])]:pr-0',
         'border-r-3 border-brutal last:border-r-0',
     ],
     {
         variants: {
             variant: {
-                default: 'bg-brutal-accent',
-                primary: 'bg-brutal-primary',
-                secondary: 'bg-brutal-secondary',
+                default: 'bg-brutal-accent text-brutal-accent-foreground',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground',
+                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
             },
         },
         defaultVariants: {
@@ -52,9 +52,9 @@ export const tableFooterVariants = cva(
     {
         variants: {
             variant: {
-                default: 'bg-brutal-secondary',
-                primary: 'bg-brutal-primary',
-                accent: 'bg-brutal-accent',
+                default: 'bg-brutal-secondary text-brutal-secondary-foreground',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground',
+                accent: 'bg-brutal-accent text-brutal-accent-foreground',
             },
         },
         defaultVariants: {
@@ -65,9 +65,9 @@ export const tableFooterVariants = cva(
 
 export const tableRowVariants = cva(
     [
-        'border-b-3 border-brutal transition-colors',
+        'border-b-3 border-brutal transition-colors text-brutal-fg',
         'hover:bg-brutal-accent/30',
-        'data-[state=selected]:bg-brutal-accent',
+        'data-[state=selected]:bg-brutal-accent data-[state=selected]:text-brutal-accent-foreground',
     ]
 )
 

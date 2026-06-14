@@ -85,7 +85,7 @@ const handleClasses = computed(() =>
             :class="handleClasses"
             :style="sliderStyle"
         >
-            <MoveHorizontal class="h-4 w-4 stroke-[3] text-brutal-fg" />
+            <MoveHorizontal class="h-4 w-4 stroke-[3] text-brutal-primary-foreground" />
         </div>
 
         <input

@@ -19,27 +19,27 @@ export const buttonVariants = cva(
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
                 primary: [
-                    'bg-brutal-primary text-brutal-fg',
+                    'bg-brutal-primary text-brutal-primary-foreground',
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
                 secondary: [
-                    'bg-brutal-secondary text-brutal-fg',
+                    'bg-brutal-secondary text-brutal-secondary-foreground',
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
                 accent: [
-                    'bg-brutal-accent text-brutal-fg',
+                    'bg-brutal-accent text-brutal-accent-foreground',
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
                 danger: [
-                    'bg-brutal-destructive text-brutal-fg',
+                    'bg-brutal-destructive text-brutal-destructive-foreground',
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
                 success: [
-                    'bg-brutal-success text-brutal-fg',
+                    'bg-brutal-success text-brutal-success-foreground',
                     'shadow-brutal',
                     'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],

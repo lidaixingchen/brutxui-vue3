@@ -19,11 +19,17 @@
 
     /* Dynamic: resolve at runtime so theme presets can override accents */
     --color-brutal-primary: var(--brutal-primary);
+    --color-brutal-primary-foreground: var(--brutal-primary-foreground);
     --color-brutal-secondary: var(--brutal-secondary);
+    --color-brutal-secondary-foreground: var(--brutal-secondary-foreground);
     --color-brutal-accent: var(--brutal-accent);
+    --color-brutal-accent-foreground: var(--brutal-accent-foreground);
     --color-brutal-destructive: var(--brutal-destructive);
+    --color-brutal-destructive-foreground: var(--brutal-destructive-foreground);
     --color-brutal-success: var(--brutal-success);
+    --color-brutal-success-foreground: var(--brutal-success-foreground);
     --color-brutal-info: var(--brutal-info);
+    --color-brutal-info-foreground: var(--brutal-info-foreground);
 
     /* Dynamic: shadows use --brutal-shadow-* for dark mode */
     --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
@@ -86,15 +92,21 @@
         --brutal-bg: #ffffff;
         --brutal-fg: #000000;
         --brutal-primary: #FF6B6B;
+        --brutal-primary-foreground: #000000;
         --brutal-secondary: #4ECDC4;
+        --brutal-secondary-foreground: #000000;
         --brutal-accent: #FFE66D;
+        --brutal-accent-foreground: #000000;
         --brutal-destructive: #EF476F;
+        --brutal-destructive-foreground: #ffffff;
         --brutal-success: #7FB069;
+        --brutal-success-foreground: #000000;
         --brutal-muted: #f3f4f6;
         --brutal-muted-foreground: #4B5563;
         --brutal-ring: #000000;
         --brutal-pressed-offset: 2px;
         --brutal-info: #4A90D9;
+        --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #9CA3AF;
     }
@@ -109,15 +121,21 @@
         --brutal-bg: #141414;
         --brutal-fg: #ffffff;
         --brutal-primary: #FF6B6B;
+        --brutal-primary-foreground: #000000;
         --brutal-secondary: #4ECDC4;
+        --brutal-secondary-foreground: #000000;
         --brutal-accent: #FFE66D;
+        --brutal-accent-foreground: #000000;
         --brutal-destructive: #EF476F;
+        --brutal-destructive-foreground: #ffffff;
         --brutal-success: #7FB069;
+        --brutal-success-foreground: #000000;
         --brutal-muted: #1e1e1e;
         --brutal-muted-foreground: #9CA3AF;
         --brutal-ring: #ffffff;
         --brutal-pressed-offset: 2px;
         --brutal-info: #3B82F6;
+        --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #6B7280;
     }
@@ -132,14 +150,20 @@
         --brutal-bg: #ffffff;
         --brutal-fg: #000000;
         --brutal-primary: #FF6B6B;
+        --brutal-primary-foreground: #000000;
         --brutal-secondary: #4ECDC4;
+        --brutal-secondary-foreground: #000000;
         --brutal-accent: #FFE66D;
+        --brutal-accent-foreground: #000000;
         --brutal-destructive: #EF476F;
+        --brutal-destructive-foreground: #ffffff;
         --brutal-success: #7FB069;
+        --brutal-success-foreground: #000000;
         --brutal-muted: #f3f4f6;
         --brutal-muted-foreground: #4B5563;
         --brutal-ring: #000000;
         --brutal-info: #4A90D9;
+        --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #9CA3AF;
     }
@@ -149,14 +173,20 @@
         --brutal-bg: #141414;
         --brutal-fg: #ffffff;
         --brutal-primary: #FF6B6B;
+        --brutal-primary-foreground: #000000;
         --brutal-secondary: #4ECDC4;
+        --brutal-secondary-foreground: #000000;
         --brutal-accent: #FFE66D;
+        --brutal-accent-foreground: #000000;
         --brutal-destructive: #EF476F;
+        --brutal-destructive-foreground: #ffffff;
         --brutal-success: #7FB069;
+        --brutal-success-foreground: #000000;
         --brutal-muted: #1e1e1e;
         --brutal-muted-foreground: #9CA3AF;
         --brutal-ring: #ffffff;
         --brutal-info: #3B82F6;
+        --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #6B7280;
     }
@@ -171,14 +201,20 @@
         --brutal-bg: #faf9f6;
         --brutal-fg: #1e1e24;
         --brutal-primary: #d6c6e1;
+        --brutal-primary-foreground: #1e1e24;
         --brutal-secondary: #c5ded9;
+        --brutal-secondary-foreground: #1e1e24;
         --brutal-accent: #fbe3b5;
+        --brutal-accent-foreground: #1e1e24;
         --brutal-destructive: #f3b0b0;
+        --brutal-destructive-foreground: #1e1e24;
         --brutal-success: #cce2cb;
+        --brutal-success-foreground: #1e1e24;
         --brutal-muted: #eae8e1;
         --brutal-muted-foreground: #6b6b78;
         --brutal-ring: #1e1e24;
         --brutal-info: #a8c8e8;
+        --brutal-info-foreground: #1e1e24;
         --brutal-overlay: rgba(0, 0, 0, 0.4);
         --brutal-placeholder: #b0aeb5;
     }
@@ -188,14 +224,20 @@
         --brutal-bg: #18171c;
         --brutal-fg: #e5e5e5;
         --brutal-primary: #8a739b;
+        --brutal-primary-foreground: #ffffff;
         --brutal-secondary: #6e8e88;
+        --brutal-secondary-foreground: #ffffff;
         --brutal-accent: #b28e56;
+        --brutal-accent-foreground: #18171c;
         --brutal-destructive: #9b5a5a;
+        --brutal-destructive-foreground: #ffffff;
         --brutal-success: #678465;
+        --brutal-success-foreground: #ffffff;
         --brutal-muted: #27252f;
         --brutal-muted-foreground: #8a8a99;
         --brutal-ring: #e5e5e5;
         --brutal-info: #5a7a9b;
+        --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #5a5866;
     }
@@ -210,14 +252,20 @@
         --brutal-bg: #ffffff;
         --brutal-fg: #000000;
         --brutal-primary: #000000;
+        --brutal-primary-foreground: #ffffff;
         --brutal-secondary: #ffffff;
+        --brutal-secondary-foreground: #000000;
         --brutal-accent: #7a7a7a;
+        --brutal-accent-foreground: #ffffff;
         --brutal-destructive: #333333;
+        --brutal-destructive-foreground: #ffffff;
         --brutal-success: #dddddd;
+        --brutal-success-foreground: #000000;
         --brutal-muted: #f0f0f0;
         --brutal-muted-foreground: #555555;
         --brutal-ring: #000000;
         --brutal-info: #666666;
+        --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #888888;
     }
@@ -227,14 +275,20 @@
         --brutal-bg: #000000;
         --brutal-fg: #ffffff;
         --brutal-primary: #ffffff;
+        --brutal-primary-foreground: #000000;
         --brutal-secondary: #000000;
+        --brutal-secondary-foreground: #ffffff;
         --brutal-accent: #888888;
+        --brutal-accent-foreground: #000000;
         --brutal-destructive: #cccccc;
+        --brutal-destructive-foreground: #000000;
         --brutal-success: #222222;
+        --brutal-success-foreground: #ffffff;
         --brutal-muted: #1a1a1a;
         --brutal-muted-foreground: #aaaaaa;
         --brutal-ring: #ffffff;
         --brutal-info: #999999;
+        --brutal-info-foreground: #000000;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #777777;
     }

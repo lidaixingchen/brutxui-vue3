@@ -10,7 +10,7 @@ export const chatBubbleVariants = cva(
     {
         variants: {
             variant: {
-                sent: 'bg-brutal-primary text-brutal-fg ml-auto',
+                sent: 'bg-brutal-primary text-brutal-primary-foreground ml-auto',
                 received: 'bg-brutal-bg text-brutal-fg mr-auto',
                 system: 'bg-brutal-muted text-brutal-fg mx-auto text-center text-xs italic border-dashed shadow-none',
             },
@@ -25,6 +25,6 @@ export const chatAvatarVariants = cva(
     [
         'flex-shrink-0 w-8 h-8 rounded-brutal border-3 border-brutal',
         'flex items-center justify-center font-bold text-xs',
-        'bg-brutal-secondary text-brutal-fg',
+        'bg-brutal-secondary text-brutal-secondary-foreground',
     ]
 );

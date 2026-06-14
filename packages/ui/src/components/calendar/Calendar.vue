@@ -88,7 +88,7 @@ const dragAttribute = computed(() => ({
 
 const dayBaseClasses = computed(() =>
     cn(
-        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-fg hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
+        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all'
     )
 )
@@ -101,7 +101,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     return cn(
         dayBaseClasses.value,
         dayPropsClass,
-        day.isToday ? 'bg-brutal-secondary text-brutal-fg font-black border-3 border-brutal' : '',
+        day.isToday ? 'bg-brutal-secondary text-brutal-secondary-foreground font-black border-3 border-brutal' : '',
         isOutside ? dayOutsideClasses.value : '',
         day.isDisabled ? dayDisabledClasses.value : '',
     )
@@ -163,7 +163,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 :global(.brutal-selected-content) {
-    color: var(--brutal-fg) !important;
+    color: var(--brutal-primary-foreground) !important;
     font-weight: 900 !important;
 }
 
@@ -173,7 +173,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 :global(.brutal-range-content) {
-    color: var(--brutal-fg) !important;
+    color: var(--brutal-accent-foreground) !important;
 }
 
 :deep(.vc-container) {
@@ -182,8 +182,8 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     --vc-highlight-light-bg: var(--brutal-accent);
     --vc-highlight-outline-bg: var(--brutal-bg);
     --vc-highlight-outline-border: var(--brutal-border-color);
-    --vc-highlight-solid-content-color: var(--brutal-fg);
-    --vc-highlight-light-content-color: var(--brutal-fg);
+    --vc-highlight-solid-content-color: var(--brutal-primary-foreground);
+    --vc-highlight-light-content-color: var(--brutal-accent-foreground);
     --vc-highlight-outline-content-color: var(--brutal-fg);
 }
 

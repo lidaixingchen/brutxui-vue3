@@ -10,11 +10,11 @@ export const tagsInputItemVariants = cva(
         variants: {
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg',
-                primary: 'bg-brutal-primary text-brutal-fg',
-                secondary: 'bg-brutal-secondary text-brutal-fg',
-                accent: 'bg-brutal-accent text-brutal-fg',
-                danger: 'bg-brutal-destructive text-brutal-fg',
-                success: 'bg-brutal-success text-brutal-fg',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground',
+                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
+                accent: 'bg-brutal-accent text-brutal-accent-foreground',
+                danger: 'bg-brutal-destructive text-brutal-destructive-foreground',
+                success: 'bg-brutal-success text-brutal-success-foreground',
             },
         },
         defaultVariants: {

@@ -14,12 +14,12 @@ export const toggleVariants = cva(
                 default: [
                     'bg-brutal-bg text-brutal-fg shadow-brutal-sm',
                     'hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal',
-                    'data-[state=on]:bg-brutal-primary data-[state=on]:text-brutal-fg data-[state=on]:shadow-none data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]',
+                    'data-[state=on]:bg-brutal-primary data-[state=on]:text-brutal-primary-foreground data-[state=on]:shadow-none data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]',
                 ],
                 outline: [
                     'bg-transparent text-brutal-fg border-3 border-brutal shadow-brutal-sm',
                     'hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal',
-                    'data-[state=on]:bg-brutal-secondary data-[state=on]:shadow-none data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]',
+                    'data-[state=on]:bg-brutal-secondary data-[state=on]:text-brutal-secondary-foreground data-[state=on]:shadow-none data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]',
                 ],
             },
             size: {

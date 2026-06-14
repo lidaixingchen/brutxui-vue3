@@ -51,9 +51,9 @@ export const selectItemVariants = cva(
     {
         variants: {
             variant: {
-                default: 'focus:bg-brutal-accent focus:text-brutal-fg',
-                primary: 'focus:bg-brutal-primary focus:text-brutal-fg',
-                secondary: 'focus:bg-brutal-secondary focus:text-brutal-fg',
+                default: 'focus:bg-brutal-accent focus:text-brutal-accent-foreground',
+                primary: 'focus:bg-brutal-primary focus:text-brutal-primary-foreground',
+                secondary: 'focus:bg-brutal-secondary focus:text-brutal-secondary-foreground',
             },
         },
         defaultVariants: {

@@ -8,11 +8,11 @@ export const timelineDotVariants = cva(
         variants: {
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg shadow-brutal-sm',
-                primary: 'bg-brutal-primary text-brutal-fg shadow-brutal-sm',
-                secondary: 'bg-brutal-secondary text-brutal-fg shadow-brutal-sm',
-                accent: 'bg-brutal-accent text-brutal-fg shadow-brutal-sm',
-                success: 'bg-brutal-success text-brutal-fg shadow-brutal-sm',
-                danger: 'bg-brutal-destructive text-brutal-fg shadow-brutal-sm',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm',
+                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground shadow-brutal-sm',
+                accent: 'bg-brutal-accent text-brutal-accent-foreground shadow-brutal-sm',
+                success: 'bg-brutal-success text-brutal-success-foreground shadow-brutal-sm',
+                danger: 'bg-brutal-destructive text-brutal-destructive-foreground shadow-brutal-sm',
             },
             shape: {
                 circle: 'rounded-full h-8 w-8',

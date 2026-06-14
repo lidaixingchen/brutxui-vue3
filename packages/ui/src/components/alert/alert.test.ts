@@ -16,12 +16,12 @@ describe('Alert', () => {
     it('applies variant classes', () => {
         const variantMap: Record<string, string[]> = {
             default: ['bg-brutal-bg', 'text-brutal-fg'],
-            primary: ['bg-brutal-primary', 'text-brutal-fg'],
-            secondary: ['bg-brutal-secondary', 'text-brutal-fg'],
-            success: ['bg-brutal-success', 'text-brutal-fg'],
-            warning: ['bg-brutal-accent', 'text-brutal-fg'],
-            danger: ['bg-brutal-destructive', 'text-brutal-fg'],
-            info: ['bg-brutal-info', 'text-brutal-fg'],
+            primary: ['bg-brutal-primary', 'text-brutal-primary-foreground'],
+            secondary: ['bg-brutal-secondary', 'text-brutal-secondary-foreground'],
+            success: ['bg-brutal-success', 'text-brutal-success-foreground'],
+            warning: ['bg-brutal-accent', 'text-brutal-accent-foreground'],
+            danger: ['bg-brutal-destructive', 'text-brutal-destructive-foreground'],
+            info: ['bg-brutal-info', 'text-brutal-info-foreground'],
         }
 
         Object.entries(variantMap).forEach(([variant, expectedClasses]) => {

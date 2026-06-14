@@ -90,7 +90,7 @@ describe('TagsInputItem', () => {
         expect(classes).toContain('shadow-brutal-sm')
         expect(classes).toContain('transition-all')
         expect(classes).toContain('bg-brutal-primary')
-        expect(classes).toContain('text-brutal-fg')
+        expect(classes).toContain('text-brutal-primary-foreground')
     })
 
     it('applies default variant classes', () => {
