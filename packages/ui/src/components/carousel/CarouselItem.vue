@@ -6,7 +6,9 @@ interface CarouselItemProps {
     class?: string;
 }
 
-const props = withDefaults(defineProps<CarouselItemProps>(), {});
+const props = withDefaults(defineProps<CarouselItemProps>(), {
+    class: undefined,
+});
 
 const itemClass = computed(() =>
     cn('flex-none w-full h-full', props.class)

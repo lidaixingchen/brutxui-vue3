@@ -86,7 +86,9 @@ const rootClasses = computed(() =>
                         <Avatar size="lg">
                             <AvatarFallback>{{ avatarInitials }}</AvatarFallback>
                         </Avatar>
-                        <CardTitle class="mt-4">{{ formName || resolvedNameLabel }}</CardTitle>
+                        <CardTitle class="mt-4">
+{{ formName || resolvedNameLabel }}
+</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div class="space-y-6">

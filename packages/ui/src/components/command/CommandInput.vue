@@ -66,6 +66,6 @@ const inputClasses = computed(() =>
             role="searchbox"
             aria-autocomplete="list"
             @input="handleInput"
-        />
+        >
     </div>
 </template>

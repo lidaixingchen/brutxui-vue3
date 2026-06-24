@@ -73,7 +73,7 @@ const handleClasses = computed(() =>
                 :src="after"
                 :alt="resolvedAfterAlt"
                 class="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            />
+            >
         </div>
 
         <div
@@ -89,13 +89,13 @@ const handleClasses = computed(() =>
         </div>
 
         <input
+            v-model="sliderVal"
             type="range"
             min="0"
             max="100"
-            v-model="sliderVal"
             :disabled="disabled"
             :aria-label="t('beforeAfter.comparisonSlider')"
             class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 disabled:cursor-not-allowed"
-        />
+        >
     </div>
 </template>

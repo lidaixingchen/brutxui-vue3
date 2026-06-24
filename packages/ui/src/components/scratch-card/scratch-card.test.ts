@@ -3,6 +3,11 @@ import { describe, it, expect, vi, beforeAll } from 'vitest'
 import { ref } from 'vue'
 import ScratchCard from './ScratchCard.vue'
 
+interface ScratchCardExposed {
+    isRevealed: { value: boolean }
+    revealAll: () => void
+}
+
 vi.mock('../../composables/useReducedMotion', () => ({
     useReducedMotion: () => ref(false)
 }))
@@ -33,6 +38,7 @@ beforeAll(() => {
         getImageData: vi.fn().mockReturnValue({
             data: new Uint8ClampedArray(400)
         })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Mock 不需要完全匹配 CanvasRenderingContext2D 的类型
     }) as any
 })
 
@@ -54,18 +60,20 @@ describe('ScratchCard', () => {
 
     it('reveals content on Enter key press', async () => {
         const wrapper = mount(ScratchCard)
-        expect((wrapper.vm as any).isRevealed).toBe(false)
+        const vm = wrapper.vm as unknown as ScratchCardExposed
+        expect(vm.isRevealed).toBe(false)
 
         await wrapper.trigger('keydown', { key: 'Enter' })
-        expect((wrapper.vm as any).isRevealed).toBe(true)
+        expect(vm.isRevealed).toBe(true)
     })
 
     it('reveals content on Space key press', async () => {
         const wrapper = mount(ScratchCard)
-        expect((wrapper.vm as any).isRevealed).toBe(false)
+        const vm = wrapper.vm as unknown as ScratchCardExposed
+        expect(vm.isRevealed).toBe(false)
 
         await wrapper.trigger('keydown', { key: ' ' })
-        expect((wrapper.vm as any).isRevealed).toBe(true)
+        expect(vm.isRevealed).toBe(true)
     })
 
     it('emits progress event when scratching', async () => {
@@ -94,7 +102,8 @@ describe('ScratchCard', () => {
             slots: { default: 'Content' }
         })
 
-        ;(wrapper.vm as any).revealAll()
+        const vm = wrapper.vm as unknown as ScratchCardExposed
+        vm.revealAll()
 
         await vi.advanceTimersByTimeAsync(500)
 

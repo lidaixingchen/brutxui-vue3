@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
     disabled: false,
     variant: 'default',
     size: 'default',
+    class: undefined,
 })
 
 const emit = defineEmits<{

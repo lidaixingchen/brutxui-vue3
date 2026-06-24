@@ -277,8 +277,11 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
 }
 
 export function isSafePath(targetPath: string, cwd: string): boolean {
-    const resolvedTarget = path.resolve(targetPath).toLowerCase();
-    const resolvedCwd = path.resolve(cwd).toLowerCase();
+    const normalize = process.platform === 'win32'
+        ? (s: string) => s.toLowerCase()
+        : (s: string) => s;
+    const resolvedTarget = normalize(path.resolve(targetPath));
+    const resolvedCwd = normalize(path.resolve(cwd));
     return resolvedTarget.startsWith(resolvedCwd + path.sep) || resolvedTarget === resolvedCwd;
 }
 

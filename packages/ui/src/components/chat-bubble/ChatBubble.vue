@@ -20,6 +20,7 @@ interface ChatBubbleProps {
 
 const props = withDefaults(defineProps<ChatBubbleProps>(), {
     showAvatar: true,
+    class: undefined,
 });
 
 const isSent = computed(() => props.message.variant === 'sent');
@@ -67,7 +68,7 @@ const initials = computed(() => {
                 :src="message.avatar"
                 :alt="message.name"
                 class="w-full h-full object-cover rounded-brutal"
-            />
+            >
             <span v-else>{{ initials }}</span>
         </div>
 

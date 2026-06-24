@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<RadioGroupItemProps>(), {
     disabled: false,
     variant: 'default',
     size: 'default',
+    class: undefined,
 })
 
 const classes = computed(() =>

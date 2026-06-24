@@ -180,7 +180,7 @@ const faceClasses = computed(() =>
                 @input="onInput"
                 @blur="onBlur"
                 @animationend="onAnimationEnd"
-            />
+            >
             
             <!-- 右侧校验反馈表情 -->
             <div class="absolute right-3 flex items-center z-10 pointer-events-none select-none">

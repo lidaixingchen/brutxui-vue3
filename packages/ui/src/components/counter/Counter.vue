@@ -32,6 +32,7 @@ const props = withDefaults(defineProps<CounterProps>(), {
     easing: 'ease-out',
     autoStart: true,
     size: 'md',
+    class: undefined,
 });
 
 const emit = defineEmits<{

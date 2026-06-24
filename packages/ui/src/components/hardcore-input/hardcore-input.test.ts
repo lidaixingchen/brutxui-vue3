@@ -2,6 +2,11 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import HardcoreInput from './HardcoreInput.vue'
 
+interface HardcoreInputExposed {
+    validationState: 'default' | 'success' | 'error'
+    errorMessage: string
+}
+
 vi.mock('../../composables/useAudioEngine', () => ({
     useAudioEngine: () => ({
         playSound: vi.fn(),
@@ -38,8 +43,9 @@ describe('HardcoreInput', () => {
         const input = wrapper.find('input')
         await input.trigger('blur')
 
-        expect((wrapper.vm as any).validationState).toBe('error')
-        expect((wrapper.vm as any).errorMessage).toBe('Too short!')
+        const vm = wrapper.vm as unknown as HardcoreInputExposed
+        expect(vm.validationState).toBe('error')
+        expect(vm.errorMessage).toBe('Too short!')
         expect(wrapper.text()).toContain('Too short!')
     })
 
@@ -56,8 +62,9 @@ describe('HardcoreInput', () => {
         const input = wrapper.find('input')
         await input.trigger('blur')
 
-        expect((wrapper.vm as any).validationState).toBe('success')
-        expect((wrapper.vm as any).errorMessage).toBe('')
+        const vm = wrapper.vm as unknown as HardcoreInputExposed
+        expect(vm.validationState).toBe('success')
+        expect(vm.errorMessage).toBe('')
     })
 
     it('does not create multiple AudioContext instances', () => {
@@ -100,7 +107,7 @@ describe('HardcoreInput', () => {
         await input.setValue('c')
 
         const typeCalls = playSoundMock.mock.calls.filter(
-            (call: any[]) => call[0] === 'type'
+            (call: unknown[]) => (call[0] as string) === 'type'
         )
         expect(typeCalls.length).toBeLessThanOrEqual(3)
     })

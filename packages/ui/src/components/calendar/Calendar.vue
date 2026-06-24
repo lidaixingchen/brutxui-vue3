@@ -136,8 +136,8 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
         <template #day-content="{ day, dayProps, dayEvents }">
             <div
                 v-bind="dayProps"
-                v-on="dayEvents"
                 :class="getDayClasses(day, dayProps.class)"
+                v-on="dayEvents"
             >
                 {{ day.label }}
             </div>

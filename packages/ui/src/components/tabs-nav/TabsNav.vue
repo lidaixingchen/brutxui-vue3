@@ -71,7 +71,9 @@ function handleUpdateModelValue(value: string) {
                     :value="tab.value"
                 >
                     <Card variant="flat">
-                        <p class="text-brutal-muted-foreground font-medium">{{ tab.label }}</p>
+                        <p class="text-brutal-muted-foreground font-medium">
+{{ tab.label }}
+</p>
                     </Card>
                 </TabsContent>
             </slot>

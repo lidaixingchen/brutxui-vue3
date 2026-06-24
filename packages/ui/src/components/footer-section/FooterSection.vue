@@ -72,7 +72,7 @@ const rootClasses = computed(() =>
                         </h3>
                         <ul class="space-y-2 list-none">
                             <li v-for="(link, linkIndex) in group.links" :key="linkIndex" class="flex items-center gap-2">
-                                <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0"></span>
+                                <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0" />
                                 <a
                                     v-if="link.href"
                                     :href="link.href"

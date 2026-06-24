@@ -13,6 +13,7 @@ interface KbdProps {
 
 const props = withDefaults(defineProps<KbdProps>(), {
     size: 'md',
+    class: undefined,
 });
 
 const classes = computed(() =>

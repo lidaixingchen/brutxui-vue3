@@ -149,7 +149,9 @@ const cardClassesMap = computed(() => {
                         class="inline-block w-3 h-3 rounded-brutal border-3 border-brutal"
                         :style="{ background: col.color }"
                     />
-                    <h3 class="font-black text-sm tracking-wide uppercase text-brutal-fg">{{ col.title }}</h3>
+                    <h3 class="font-black text-sm tracking-wide uppercase text-brutal-fg">
+{{ col.title }}
+</h3>
                 </div>
                 <span class="text-xs font-bold border-3 border-brutal px-1.5 py-0.5 rounded-brutal bg-brutal-bg shadow-brutal">
                     {{ col.cards.length }}
@@ -167,7 +169,9 @@ const cardClassesMap = computed(() => {
                     @dragstart="onDragStart(card.id, col.id)"
                     @dragend="onDragEnd"
                 >
-                    <p class="font-bold text-sm text-brutal-fg">{{ card.title }}</p>
+                    <p class="font-bold text-sm text-brutal-fg">
+{{ card.title }}
+</p>
                     <p v-if="card.description" class="text-xs text-brutal-fg opacity-70 mt-1">
                         {{ card.description }}
                     </p>

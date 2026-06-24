@@ -40,8 +40,8 @@ const classes = computed(() =>
     <button
         type="button"
         :disabled="!isSupported"
-        @click="handleCopy"
         :class="classes"
+        @click="handleCopy"
     >
         <slot :copied="copied">
             <template v-if="copied">

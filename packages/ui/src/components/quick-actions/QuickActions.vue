@@ -42,7 +42,9 @@ const resolvedBadge = computed(() => t('quickActions.badge'))
     <Card :class="rootClasses" variant="default">
         <CardHeader>
             <div class="flex items-center gap-2">
-                <Badge variant="accent" size="sm">{{ resolvedBadge }}</Badge>
+                <Badge variant="accent" size="sm">
+{{ resolvedBadge }}
+</Badge>
                 <h3 class="text-lg font-black tracking-tight">
 {{ resolvedTitle }}
 </h3>

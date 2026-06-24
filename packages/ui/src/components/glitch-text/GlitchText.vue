@@ -117,11 +117,11 @@ const classes = computed(() =>
     <span
         :class="classes"
         :data-text="displayText"
+        role="status"
+        aria-live="polite"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
         @click="onClick"
-        role="status"
-        aria-live="polite"
     >
         <slot>{{ text }}</slot>
     </span>

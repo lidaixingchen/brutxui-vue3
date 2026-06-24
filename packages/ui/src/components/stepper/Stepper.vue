@@ -22,6 +22,7 @@ interface StepperProps {
 
 const props = withDefaults(defineProps<StepperProps>(), {
     orientation: 'horizontal',
+    class: undefined,
 });
 
 const { t } = useLocale();
@@ -138,7 +139,9 @@ const connectorClassesMap = computed(() => {
                     class="mt-2 text-center px-1"
                     :class="getState(index) === 'upcoming' ? 'opacity-50' : ''"
                 >
-                    <p class="text-xs font-black tracking-wide truncate">{{ step.title }}</p>
+                    <p class="text-xs font-black tracking-wide truncate">
+{{ step.title }}
+</p>
                     <p v-if="step.description" class="text-xs font-medium opacity-60 mt-0.5 truncate">
                         {{ step.description }}
                     </p>
@@ -170,7 +173,9 @@ const connectorClassesMap = computed(() => {
                         class="pb-6 min-w-0 flex-1"
                         :class="getState(index) === 'upcoming' ? 'opacity-50' : ''"
                     >
-                        <p class="text-sm font-black tracking-wide">{{ step.title }}</p>
+                        <p class="text-sm font-black tracking-wide">
+{{ step.title }}
+</p>
                         <p v-if="step.description" class="text-xs font-medium opacity-60 mt-0.5">
                             {{ step.description }}
                         </p>

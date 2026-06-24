@@ -151,13 +151,19 @@ const rootClasses = computed(() =>
                     >
                         <CardHeader>
                             <div class="flex items-center justify-between">
-                                <Badge variant="accent" size="sm">{{ post.category }}</Badge>
+                                <Badge variant="accent" size="sm">
+{{ post.category }}
+</Badge>
                                 <span class="text-xs font-bold text-brutal-fg">{{ post.date }}</span>
                             </div>
-                            <CardTitle class="text-lg">{{ post.title }}</CardTitle>
+                            <CardTitle class="text-lg">
+{{ post.title }}
+</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p class="text-sm font-medium text-brutal-fg line-clamp-3">{{ post.excerpt }}</p>
+                            <p class="text-sm font-medium text-brutal-fg line-clamp-3">
+{{ post.excerpt }}
+</p>
                             <div class="mt-3 text-xs font-bold text-brutal-fg">
                                 {{ post.author }}
                             </div>
@@ -166,7 +172,9 @@ const rootClasses = computed(() =>
                 </div>
 
                 <div v-if="filteredPosts.length === 0" class="text-center py-12">
-                    <p class="text-lg font-bold text-brutal-fg">{{ resolvedNoPostsFound }}</p>
+                    <p class="text-lg font-bold text-brutal-fg">
+{{ resolvedNoPostsFound }}
+</p>
                 </div>
 
                 <div v-if="totalPages > 1" class="mt-8 flex justify-center">

@@ -27,9 +27,13 @@ const props = withDefaults(defineProps<CarouselProps>(), {
     showArrows: true,
     showDots: true,
     size: 'auto',
+    class: undefined,
 });
 
-// @ts-expect-error emblaRef is used as template ref
+// @ts-expect-error vue-tsc does not recognize string-based template ref "emblaRef" as a usage of the script variable,
+// causing TS6133 (declared but never read). This is a known vue-tsc limitation with <script setup>.
+// Using `:ref="emblaRef"` instead is not viable because embla-carousel-vue's `Ref<HTMLElement | undefined>`
+// is incompatible with Vue's `VNodeRef` type expected by the ref directive.
 const [emblaRef, emblaApi] = useEmblaCarousel({ loop: props.loop });
 
 const selectedIndex = ref(0);

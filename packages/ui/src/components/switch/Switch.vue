@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<SwitchProps>(), {
     disabled: false,
     variant: 'default',
     size: 'default',
+    class: undefined,
 })
 
 const emit = defineEmits<{

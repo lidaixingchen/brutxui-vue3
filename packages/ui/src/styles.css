@@ -140,6 +140,9 @@
         --brutal-placeholder: #6B7280;
     }
 
+    /* Classic theme: intentionally re-declares all variables identical to :root defaults.
+       This is required so that switching from another theme (e.g. .theme-pastel) back
+       to .theme-classic correctly overrides inherited custom properties. */
     .theme-classic {
         --brutal-border-width: 3px;
         --brutal-border-color: #000000;
@@ -167,6 +170,8 @@
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #9CA3AF;
     }
+    /* Dark classic: only overrides variables that change between light/dark.
+       Variables unchanged (border-width, shadow-offset-x/y, radius) inherit from .theme-classic. */
     .dark .theme-classic, .theme-classic.dark {
         --brutal-border-color: #ffffff;
         --brutal-shadow-color: #ffffff;

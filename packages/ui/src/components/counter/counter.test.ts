@@ -1,6 +1,11 @@
 import { mount } from '@vue/test-utils'
 import Counter from './Counter.vue'
 
+interface CounterExposed {
+    start: () => void
+    stop: () => void
+}
+
 function getDisplaySpan(wrapper: ReturnType<typeof mount>) {
     return wrapper.find('[aria-live="polite"]')
 }
@@ -103,7 +108,8 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100 },
         })
-        expect(typeof (wrapper.vm as any).start).toBe('function')
-        expect(typeof (wrapper.vm as any).stop).toBe('function')
+        const vm = wrapper.vm as unknown as CounterExposed
+        expect(typeof vm.start).toBe('function')
+        expect(typeof vm.stop).toBe('function')
     })
 })

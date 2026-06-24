@@ -50,7 +50,7 @@ const baseFrequency = computed(() =>
 // 数据预处理（空数组、大容量降采样、负数取绝对值）
 const processedData = computed(() => {
     if (!props.data || props.data.length === 0) return []
-    
+
     // 负数取绝对值
     let items = props.data.map(d => ({
         label: d.label,
@@ -67,6 +67,18 @@ const processedData = computed(() => {
 })
 
 const CHART_PADDING = { top: 30, right: 30, bottom: 40, left: 60 }
+
+// SVG 样式常量
+const CHART_STROKE_WIDTH = 3
+const POINT_RADIUS = 6
+const DASH_PATTERN = '4 4'
+
+// 饼图布局比例
+const WIDTH_RATIO = 0.7
+const HEIGHT_RATIO = 0.55
+
+// 柱状图阴影偏移 & 标签偏移量
+const LABEL_OFFSET = 4
 
 const plotWidth = computed(() => props.width - CHART_PADDING.left - CHART_PADDING.right)
 const plotHeight = computed(() => props.height - CHART_PADDING.top - CHART_PADDING.bottom)
@@ -134,7 +146,7 @@ const pieSlices = computed(() => {
     if (total === 0) return []
     const cx = props.width / 2
     const cy = props.height / 2
-    const radius = Math.min(cx, cy) * 0.7
+    const radius = Math.min(cx, cy) * WIDTH_RATIO
     let currentAngle = -Math.PI / 2
     return processedData.value.map((d, i) => {
         const sliceAngle = (d.value / total) * Math.PI * 2
@@ -159,7 +171,7 @@ const pieSlices = computed(() => {
             midAngle: (startAngle + endAngle) / 2,
             cx,
             cy,
-            labelRadius: radius * 0.55,
+            labelRadius: radius * HEIGHT_RATIO,
         }
     })
 })
@@ -192,7 +204,7 @@ const containerClasses = computed(() =>
             class="w-full h-auto overflow-visible select-none"
         >
             <title>{{ chartAriaLabel }}</title>
-            
+
             <defs>
                 <!-- 手绘波动滤镜 -->
                 <filter :id="filterId">
@@ -210,7 +222,7 @@ const containerClasses = computed(() =>
                         yChannelSelector="G"
                     />
                 </filter>
-                
+
                 <!-- 斜向条纹 Hatch Fill -->
                 <pattern
                     :id="hatchId"
@@ -241,7 +253,7 @@ const containerClasses = computed(() =>
                     :y2="tick.y"
                     stroke="var(--brutal-muted, #f3f4f6)"
                     stroke-width="1.5"
-                    stroke-dasharray="4 4"
+                    :stroke-dasharray="DASH_PATTERN"
                 />
             </g>
 
@@ -254,7 +266,7 @@ const containerClasses = computed(() =>
                     :x2="CHART_PADDING.left"
                     :y2="height - CHART_PADDING.bottom"
                     stroke="var(--brutal-border-color, #000000)"
-                    stroke-width="3"
+                    :stroke-width="CHART_STROKE_WIDTH"
                 />
                 <!-- X 轴 -->
                 <line
@@ -263,7 +275,7 @@ const containerClasses = computed(() =>
                     :x2="width - CHART_PADDING.right"
                     :y2="height - CHART_PADDING.bottom"
                     stroke="var(--brutal-border-color, #000000)"
-                    stroke-width="3"
+                    :stroke-width="CHART_STROKE_WIDTH"
                 />
             </g>
 
@@ -290,7 +302,7 @@ const containerClasses = computed(() =>
                         :key="'dot-' + i"
                         :cx="dataToSvgX(i)"
                         :cy="dataToSvgY(d.value)"
-                        r="6"
+                        :r="POINT_RADIUS"
                         fill="var(--brutal-accent, #FFE66D)"
                         stroke="var(--brutal-border-color, #000000)"
                         stroke-width="2.5"
@@ -302,8 +314,8 @@ const containerClasses = computed(() =>
                     <g v-for="(d, i) in processedData" :key="'bar-' + i">
                         <!-- 柱体硬影子（Neobrutalist 偏移底色块） -->
                         <rect
-                            :x="getBarX(i) + 4"
-                            :y="dataToSvgY(d.value) + 4"
+                            :x="getBarX(i) + LABEL_OFFSET"
+                            :y="dataToSvgY(d.value) + LABEL_OFFSET"
                             :width="barWidth"
                             :height="height - CHART_PADDING.bottom - dataToSvgY(d.value)"
                             fill="var(--brutal-border-color, #000000)"
@@ -316,7 +328,7 @@ const containerClasses = computed(() =>
                             :height="height - CHART_PADDING.bottom - dataToSvgY(d.value)"
                             :fill="`url(#${hatchId})`"
                             stroke="var(--brutal-border-color, #000000)"
-                            stroke-width="3"
+                            :stroke-width="CHART_STROKE_WIDTH"
                         />
                     </g>
                 </template>
@@ -328,7 +340,7 @@ const containerClasses = computed(() =>
                             :d="slice.path"
                             :fill="slice.color"
                             stroke="var(--brutal-border-color, #000000)"
-                            stroke-width="3"
+                            :stroke-width="CHART_STROKE_WIDTH"
                         />
                     </g>
                 </template>
@@ -341,7 +353,7 @@ const containerClasses = computed(() =>
                     v-for="tick in yTicks"
                     :key="'lbl-y-' + tick.value"
                     :x="CHART_PADDING.left - 12"
-                    :y="tick.y + 4"
+                    :y="tick.y + LABEL_OFFSET"
                     text-anchor="end"
                 >
                     {{ tick.value }}

@@ -22,6 +22,7 @@ interface TreeViewProps {
 const props = withDefaults(defineProps<TreeViewProps>(), {
     modelValue: null,
     defaultExpanded: () => [],
+    class: undefined,
 });
 
 const emit = defineEmits<{
