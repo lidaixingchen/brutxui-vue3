@@ -9,7 +9,7 @@
   "files": [
     {
       "path": "components/ui/kbd/Kbd.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue';\nimport { type VariantProps } from 'class-variance-authority';\nimport { cn } from '@/lib/utils';\nimport { kbdVariants } from '@/components/ui/kbd/kbd-variants';\n\ntype KbdVariantProps = VariantProps<typeof kbdVariants>;\n\ninterface KbdProps {\n    size?: NonNullable<KbdVariantProps['size']>;\n    class?: string;\n}\n\nconst props = withDefaults(defineProps<KbdProps>(), {\n    size: 'md',\n});\n\nconst classes = computed(() =>\n    cn(kbdVariants({ size: props.size }), props.class)\n);\n</script>\n\n<template>\n    <kbd :class=\"classes\">\n        <slot />\n    </kbd>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue';\nimport { type VariantProps } from 'class-variance-authority';\nimport { cn } from '@/lib/utils';\nimport { kbdVariants } from '@/components/ui/kbd/kbd-variants';\n\ntype KbdVariantProps = VariantProps<typeof kbdVariants>;\n\ninterface KbdProps {\n    size?: NonNullable<KbdVariantProps['size']>;\n    class?: string;\n}\n\nconst props = withDefaults(defineProps<KbdProps>(), {\n    size: 'md',\n    class: undefined,\n});\n\nconst classes = computed(() =>\n    cn(kbdVariants({ size: props.size }), props.class)\n);\n</script>\n\n<template>\n    <kbd :class=\"classes\">\n        <slot />\n    </kbd>\n</template>\n",
       "type": "registry:ui"
     },
     {
