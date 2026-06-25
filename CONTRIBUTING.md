@@ -127,7 +127,7 @@ pnpm build
 添加新组件（例如 `button`）的步骤：
 
 1. **实现组件**，放在 `packages/ui/src/components/` 下。
-2. **定义组件元数据**，在 `packages/cli/src/lib/constants.ts` 的 `COMPONENTS` 对象中添加，并声明所需的 npm `dependencies`。
+2. **定义组件元数据**，在 `packages/shared/src/components.ts` 的 `COMPONENTS` 对象中添加，并声明所需的 npm `dependencies`（`packages/cli/src/lib/constants.ts` 仅做 re-export，由 tsup 内联进 CLI 产物，因此该改动需要重新发布 CLI）。
 3. **登记到注册表映射表**，在 `packages/registry/scripts/component-files.ts` 的 `COMPONENT_FILES` 中追加条目，声明组件的 `files`（及 `composables`、`locales` 等依赖）。未登记的组件不会生成 JSON、不会进入 `index.json`，CLI 也无法安装。
 4. **编译注册表 JSON**：
    运行以下脚本，从源码读取、重写导入路径、提取依赖并生成注册表 JSON：
