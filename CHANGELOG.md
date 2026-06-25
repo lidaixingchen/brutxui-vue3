@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-06-26
+
+### Fixed
+
+- 添加 color-mode-switcher 和 data-table 组件到 registry
+
 ## [0.7.0] - 2026-06-26
 
 ### Added

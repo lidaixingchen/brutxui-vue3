@@ -1,6 +1,6 @@
 {
     "name": "brutx-vue",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "CLI for adding Neo-Brutalist Vue 3 UI components to your project",
     "bin": {
         "brutx-vue": "dist/index.js"
