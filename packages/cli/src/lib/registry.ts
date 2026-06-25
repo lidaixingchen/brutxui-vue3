@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
-import type { RegistryItem, RegistryFile } from './types.js';
-import { DEFAULT_REGISTRY_URL } from './constants.js';
+import type { RegistryItem, RegistryFile, BrutalistConfig } from './types.js';
+import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG } from './constants.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
@@ -86,6 +86,34 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
 
     validateRegistryItem(data, name);
     return data;
+}
+
+export async function readConfig(cwd: string): Promise<BrutalistConfig> {
+    const configPath = path.join(cwd, 'components.json');
+    if (!(await fs.pathExists(configPath))) {
+        throw new Error('components.json not found. Run `brutx-vue init` first.');
+    }
+
+    let config: Record<string, unknown>;
+    try {
+        config = await fs.readJson(configPath);
+    } catch (error) {
+        throw new Error(`Failed to parse components.json: invalid JSON. ${error instanceof Error ? error.message : ''}`);
+    }
+
+    return {
+        $schema: (config.$schema as string) ?? SCHEMA_URL,
+        style: (config.style as string) ?? 'brutalism',
+        tailwind: {
+            config: ((config.tailwind as Record<string, string>)?.config) ?? DEFAULT_TAILWIND_CONFIG,
+            css: ((config.tailwind as Record<string, string>)?.css) ?? '@/styles/globals.css',
+        },
+        aliases: {
+            components: ((config.aliases as Record<string, string>)?.components) ?? DEFAULT_ALIASES.components,
+            utils: ((config.aliases as Record<string, string>)?.utils) ?? DEFAULT_ALIASES.utils,
+            composables: ((config.aliases as Record<string, string>)?.composables) ?? DEFAULT_ALIASES.composables,
+        },
+    };
 }
 
 export async function resolveDeps(names: string[], source: string = DEFAULT_REGISTRY_URL): Promise<RegistryItem[]> {

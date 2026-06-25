@@ -153,6 +153,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - **为此UI库创建的Skills：** `skills/`
   - BrutxUI Skill：`skills/brutxui/`
   - 参考文档：`skills/brutxui/references/`
+- **方案文档：** `docs/`
 
 ## 注册表模式
 

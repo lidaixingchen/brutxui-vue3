@@ -14,7 +14,12 @@
         "test": "pnpm --filter brutx-ui-vue test",
         "test:watch": "pnpm --filter brutx-ui-vue test:watch",
         "test:coverage": "pnpm --filter brutx-ui-vue test:coverage",
-        "release:check": "node scripts/release/check-release.mjs"
+        "release:check": "node scripts/release/check-release.mjs",
+        "changelog": "node scripts/release/generate-changelog.mjs",
+        "changelog:dry": "node scripts/release/generate-changelog.mjs --dry-run",
+        "changelog:full": "node scripts/release/generate-changelog.mjs --full-history",
+        "changelog:ui": "node scripts/release/generate-changelog.mjs --scope ui",
+        "changelog:cli": "node scripts/release/generate-changelog.mjs --scope cli"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^6.0.7",

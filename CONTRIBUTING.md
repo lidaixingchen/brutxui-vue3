@@ -4,6 +4,85 @@
 
 ---
 
+## Commit 规范
+
+本项目使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范，请确保您的 commit message 符合以下格式：
+
+```text
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+### Type 类型
+
+| Type | 说明 |
+| --- | --- |
+| `feat` | 新功能 |
+| `fix` | Bug 修复 |
+| `docs` | 文档更新 |
+| `style` | 代码风格（不影响功能） |
+| `refactor` | 代码重构 |
+| `perf` | 性能优化 |
+| `test` | 测试相关 |
+| `build` | 构建系统或外部依赖变更 |
+| `ci` | CI 配置变更 |
+| `chore` | 其他杂项 |
+| `revert` | 回滚之前的 commit |
+| `release` | 版本发布（不出现在 CHANGELOG 中） |
+
+### Scope 范围
+
+Scope 是可选的，用于标识变更影响的包：
+
+| Scope | 说明 |
+| --- | --- |
+| `ui` | 影响 `packages/ui` |
+| `cli` | 影响 `packages/cli` |
+| `docs` | 影响文档 |
+| `registry` | 影响注册表 |
+| `shared` | 影响共享包 |
+| `theme` | 影响主题 |
+
+### 示例
+
+```bash
+# 新功能
+feat(ui): 新增 ColorPicker 组件
+feat(cli): 新增 doctor 命令
+
+# Bug 修复
+fix(cli): 修复 Windows 下路径分隔符问题
+fix(ui): 修复 Button 在暗色模式下的样式
+
+# 文档
+docs: 更新主题实验室文档
+docs(ui): 更新 Button 组件使用说明
+
+# 重构
+refactor(ui)!: 重命名 Button variant 属性
+
+# Breaking Change
+feat(ui)!: change Button API
+```
+
+### Breaking Changes
+
+有两种方式标记 Breaking Change：
+
+1. **在 type 后加 `!`**：`feat(ui)!: change Button API`
+2. **在 commit body 中写 `BREAKING CHANGE:`**：
+
+```
+feat(ui): change Button API
+
+BREAKING CHANGE: Button 的 variant 属性重命名为 type
+```
+
+---
+
 ## 开发环境设置
 
 本项目是使用 **pnpm workspaces** 管理的 monorepo。

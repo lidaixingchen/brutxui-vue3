@@ -41,6 +41,12 @@ class Logger {
         this.log(chalk.dim(message));
     }
 
+    debug(message: string): void {
+        if (process.env.DEBUG) {
+            this.log(chalk.gray(`[DEBUG] ${message}`));
+        }
+    }
+
     newLine(): void {
         this.log('');
     }

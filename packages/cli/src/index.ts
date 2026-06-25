@@ -2,6 +2,8 @@ import { Command } from 'commander';
 import { createRequire } from 'module';
 import { init } from './commands/init.js';
 import { add } from './commands/add.js';
+import { doctor } from './commands/doctor.js';
+import { diff } from './commands/diff.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -36,5 +38,26 @@ program
     .option('--dry-run', 'Simulate addition without writing files', false)
     .option('-r, --registry <registry>', 'Specify registry path or URL')
     .action(add);
+
+program
+    .command('doctor')
+    .description('Check project health and diagnose configuration issues')
+    .option('--cwd <cwd>', 'The working directory', process.cwd())
+    .option('--fix', 'Automatically fix fixable issues', false)
+    .option('--json', 'Output JSON report', false)
+    .option('-y, --yes', 'Skip confirmation prompts', false)
+    .option('-s, --silent', 'Mute output', false)
+    .action(doctor);
+
+program
+    .command('diff')
+    .description('Compare local components with registry latest version')
+    .argument('[components...]', 'Components to compare')
+    .option('--all', 'Compare all installed components', false)
+    .option('--cwd <cwd>', 'The working directory', process.cwd())
+    .option('-r, --registry <registry>', 'Specify local registry path')
+    .option('--json', 'Output JSON format', false)
+    .option('-s, --silent', 'Mute output', false)
+    .action(diff);
 
 program.parse();

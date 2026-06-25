@@ -20,4 +20,4 @@ export { installPackages, getInstallCommand } from './package-manager.js';
 
 export { logger } from './logger.js';
 
-export { getItem, resolveDeps } from './registry.js';
+export { getItem, resolveDeps, readConfig } from './registry.js';

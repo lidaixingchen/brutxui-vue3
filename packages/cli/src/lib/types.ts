@@ -64,3 +64,45 @@ export interface RegistryItem {
     registryDependencies?: string[];
     files: RegistryFile[];
 }
+
+export interface DoctorOptions {
+    cwd?: string;
+    fix?: boolean;
+    json?: boolean;
+    silent?: boolean;
+    yes?: boolean;
+}
+
+export interface DiffOptions {
+    components?: string[];
+    all?: boolean;
+    cwd?: string;
+    registry?: string;
+    json?: boolean;
+    silent?: boolean;
+}
+
+export type CheckStatus = 'pass' | 'warn' | 'error';
+
+export interface CheckResult {
+    name: string;
+    status: CheckStatus;
+    message: string;
+    fixDescription?: string;
+}
+
+export type DiffFileStatus = 'unchanged' | 'modified' | 'added' | 'removed';
+
+export interface FileDiff {
+    path: string;
+    status: DiffFileStatus;
+    patch?: string;
+}
+
+export type DiffComponentStatus = 'up-to-date' | 'modified' | 'not-installed' | 'local-only';
+
+export interface DiffResult {
+    component: string;
+    status: DiffComponentStatus;
+    files: FileDiff[];
+}
