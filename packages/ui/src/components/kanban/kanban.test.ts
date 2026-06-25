@@ -145,6 +145,63 @@ describe('KanbanBoard', () => {
         expect(todoCards.map((c) => c.id)).toEqual(['card-2', 'card-1'])
     })
 
+    it('reorders card backward within same column on drop', async () => {
+        const fourCardColumns: KanbanColumn[] = [
+            {
+                id: 'todo',
+                title: 'To Do',
+                cards: [
+                    { id: 'card-a', title: 'A' },
+                    { id: 'card-b', title: 'B' },
+                    { id: 'card-c', title: 'C' },
+                    { id: 'card-d', title: 'D' },
+                ],
+            },
+        ]
+
+        const wrapper = mount(KanbanBoard, {
+            props: { modelValue: fourCardColumns },
+        })
+
+        const mockRect = (top: number, height: number): DOMRect =>
+            ({
+                top,
+                bottom: top + height,
+                left: 0,
+                right: 100,
+                width: 100,
+                height,
+                x: 0,
+                y: top,
+                toJSON: () => ({}),
+            }) as DOMRect
+
+        const cardAEl = wrapper.find('[data-card-id="card-a"]').element as HTMLElement
+        const cardBEl = wrapper.find('[data-card-id="card-b"]').element as HTMLElement
+        const cardCEl = wrapper.find('[data-card-id="card-c"]').element as HTMLElement
+        const cardDEl = wrapper.find('[data-card-id="card-d"]').element as HTMLElement
+        const todoColumnEl = cardAEl.parentElement!.parentElement as HTMLElement
+
+        cardAEl.getBoundingClientRect = () => mockRect(0, 50)
+        cardBEl.getBoundingClientRect = () => mockRect(50, 50)
+        cardCEl.getBoundingClientRect = () => mockRect(100, 50)
+        cardDEl.getBoundingClientRect = () => mockRect(150, 50)
+
+        const cardCWrapper = wrapper.find('[data-card-id="card-c"]')
+        await cardCWrapper.trigger('dragstart')
+
+        const dropEvent = new MouseEvent('drop', { bubbles: true, clientY: 60 })
+        todoColumnEl.dispatchEvent(dropEvent)
+
+        await wrapper.vm.$nextTick()
+
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+        const newColumns = emitted![0][0] as KanbanColumn[]
+        const todoCards = newColumns.find((c) => c.id === 'todo')!.cards
+        expect(todoCards.map((c) => c.id)).toEqual(['card-a', 'card-c', 'card-b', 'card-d'])
+    })
+
     it('moves card to different column on drop', async () => {
         const wrapper = mount(KanbanBoard, {
             props: { modelValue: columns },

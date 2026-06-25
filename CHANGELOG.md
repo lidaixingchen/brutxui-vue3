@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-06-26
+
+### Added
+
+- **ColorPicker 组件**: 支持 HEX/RGB/HSL 色彩空间转换、预设色板与历史记录
+- **DatePicker 组件**: 支持日期/日期范围/日期时间/周/月/年多种选择模式
+- 注册表新增 `color-picker.json` 与 `date-picker.json` 项
+- 新增 ColorPicker 与 DatePicker 组件文档与路由
+
+### Changed
+
+- 重构 Calendar 组件样式隔离，使用 `brutx-calendar` 类 + `:global()` 选择器解决 v-calendar `inheritAttrs: false` 导致的 scoped CSS 失效
+- 优化注册表校验脚本，新增 `lib/*` 目录路径匹配与依赖提取
+- 简化主题初始化逻辑
+
+### Fixed
+
+- 修复 DatePickerPanel/DatePickerRangePanel/DateTimePickerPanel/WeekPickerPanel 日期居中样式
+- 修复 DialogEnhanced 弹窗拖拽 document 事件监听器泄漏
+- 修复 DataTable 过滤后 `currentPage` 未重置导致空表问题，并补充测试用例
+- 修复 KanbanBoard 同列内卡片无法重排序，重构拖拽排序逻辑并补充测试用例
+- 修复 ScratchCard 画布初始化判断逻辑（误用 `canvas.width/height` 而非 `style.width/height`）
+- 修复 Form 组件路径导入问题与 FormWizard 错误提示排版
+
 ## [0.7.1] - 2026-06-26
 
 ### Fixed
