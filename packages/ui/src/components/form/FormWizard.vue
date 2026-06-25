@@ -211,7 +211,9 @@ const rootClasses = computed(() =>
 
         <!-- Error Display -->
         <div v-if="getStepErrors(currentStep)" class="p-4 border-3 border-brutal bg-brutal-destructive/10 text-brutal-destructive">
-            <p class="font-bold">{{ t('formWizard.validationErrors') }}</p>
+            <p class="font-bold">
+                {{ t('formWizard.validationErrors') }}
+            </p>
             <ul class="mt-2 list-disc list-inside">
                 <li v-for="(error, field) in getStepErrors(currentStep)" :key="field">
                     {{ error }}

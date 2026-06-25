@@ -82,11 +82,6 @@ function onCardKeydown(e: KeyboardEvent, card: KanbanCard, columnId: string) {
 function onDrop(e: DragEvent, toColumnId: string) {
     if (!draggingCard.value) return;
     const { cardId, fromColumn } = draggingCard.value;
-    if (fromColumn === toColumnId) {
-        dragOverColumn.value = null;
-        draggingCard.value = null;
-        return;
-    }
 
     const sourceColumn = columns.value.find((col) => col.id === fromColumn);
     const card = sourceColumn?.cards.find((c) => c.id === cardId);
@@ -108,14 +103,23 @@ function onDrop(e: DragEvent, toColumnId: string) {
         }
     }
 
+    const isSameColumn = fromColumn === toColumnId
+
     const newColumns = columns.value.map((col) => {
+        if (col.id === toColumnId) {
+            const newCards = col.cards.filter((c) => c.id !== cardId)
+            let adjustedIndex = insertIndex
+            if (isSameColumn) {
+                const originalIndex = col.cards.findIndex((c) => c.id === cardId)
+                if (originalIndex !== -1 && originalIndex < insertIndex) {
+                    adjustedIndex = insertIndex - 1
+                }
+            }
+            newCards.splice(adjustedIndex, 0, card)
+            return { ...col, cards: newCards }
+        }
         if (col.id === fromColumn) {
             return { ...col, cards: col.cards.filter((c) => c.id !== cardId) };
-        }
-        if (col.id === toColumnId) {
-            const newCards = [...col.cards]
-            newCards.splice(insertIndex, 0, card)
-            return { ...col, cards: newCards }
         }
         return col;
     });

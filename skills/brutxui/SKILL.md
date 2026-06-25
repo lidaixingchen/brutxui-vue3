@@ -64,6 +64,8 @@ import { cn } from '@/lib/utils'
 | ToggleGroup | 切换按钮组 | 支持单选/多选 |
 | TagsInput | 标签输入 | 支持子组件组合 |
 | Calendar | 日历 | 日期选择器，支持范围模式 |
+| ColorPicker | 颜色选择器 | 支持 HEX/RGB/HSL、透明度、预设与历史记录 |
+| DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，含快捷选项 |
 | Form | 表单 | 集成 vee-validate + Zod 校验 |
 | Label | 标签 | 表单字段标签 |
 

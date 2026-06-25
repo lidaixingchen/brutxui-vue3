@@ -235,4 +235,33 @@ describe('DataTable', () => {
         const ageHeader = wrapper.findAll('th')[2]
         expect(ageHeader.classes()).toContain('text-right')
     })
+
+    it('clamps current page when filter reduces total pages', async () => {
+        const largeData = Array.from({ length: 25 }, (_, i) => ({
+            id: i + 1,
+            name: `User ${i + 1}`,
+            email: `user${i + 1}@example.com`,
+            age: 20 + i,
+        }))
+
+        const wrapper = mount(DataTable, {
+            props: {
+                data: largeData,
+                columns: testColumns,
+                rowKey: 'id',
+                paginated: true,
+                filterable: true,
+                pageSize: 10,
+            },
+            global: globalProvide,
+        })
+
+        await wrapper.find('button[aria-label="Next page"]').trigger('click')
+        await wrapper.find('button[aria-label="Next page"]').trigger('click')
+
+        await wrapper.find('input[type="text"]').setValue('User 25')
+
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('User 25')
+    })
 })

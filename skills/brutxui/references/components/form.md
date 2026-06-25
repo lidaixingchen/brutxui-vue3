@@ -217,6 +217,92 @@
 - `isRange`: `boolean` — 默认 `false`
 - `disabled`: `boolean` — 默认 `false`
 
+## ColorPicker
+
+颜色选择器，基于 reka-ui Popover 构建。支持 HEX/RGB/HSL 格式、透明度、预设颜色和历史记录。
+
+```vue
+<ColorPicker v-model="color" format="hex" :show-alpha="true" />
+<ColorPicker v-model="color" :presets="['#FF6B6B', '#4ECDC4']" :show-history="true" />
+```
+
+- `modelValue`: `string | null`
+- `format`: `'hex' | 'rgb' | 'hsl'` — 默认 `'hex'`
+- `showAlpha`: `boolean` — 默认 `false`
+- `presets`: `string[] | ColorPreset[]`
+- `showPresets`: `boolean` — 默认 `true`
+- `showHistory`: `boolean` — 默认 `false`
+- `historyMax`: `number` — 默认 `10`
+- `historyStorageKey`: `string`
+- `disabled`: `boolean` — 默认 `false`
+- `clearable`: `boolean` — 默认 `false`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+
+## DatePicker
+
+日期选择器组件族，基于 v-calendar + reka-ui Popover。需要额外安装 `v-calendar`。包含 7 个组件：
+
+```vue
+<DatePicker v-model="date" :shortcuts="shortcuts" :clearable="true" />
+<DatePickerRange v-model="range" start-placeholder="开始" end-placeholder="结束" />
+<DateTimePicker v-model="dt" :show-seconds="true" :time-step="{ minute: 15 }" />
+<TimePicker v-model="time" :show-seconds="true" />
+<WeekPicker v-model="week" :week-starts-on="1" />
+<MonthPicker v-model="month" />
+<YearPicker v-model="year" />
+```
+
+### DatePicker
+
+- `modelValue`: `Date | null`
+- `mode`: `'date' | 'week' | 'month' | 'year'` — 默认 `'date'`
+- `displayFormat`: `string` — 默认 `'YYYY-MM-DD'`，支持 YYYY/YY/MM/DD/HH/mm/ss/WW token
+- `valueFormat`: `'date' | 'timestamp' | string` — 默认 `'date'`
+- `minDate` / `maxDate`: `Date`
+- `disabled` / `readonly` / `clearable`: `boolean`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `variant`: `'default' | 'error' | 'success'`
+- `shortcuts`: `DatePickerShortcut[]` — `{ label: string; value: Date | (() => Date) }`
+
+### DatePickerRange
+
+- `modelValue`: `[Date, Date] | null`
+- `startPlaceholder` / `endPlaceholder` / `separator`: `string`
+- `shortcuts`: `DatePickerRangeShortcut[]` — `{ label: string; value: [Date, Date] | (() => [Date, Date]) }`
+
+### DateTimePicker
+
+- `modelValue`: `Date | null`
+- `displayFormat`: `string` — 默认 `'YYYY-MM-DD HH:mm'`（showSeconds 时含 ss）
+- `showSeconds`: `boolean` — 默认 `false`
+- `timeStep`: `{ hour?: number; minute?: number; second?: number }`
+- `shortcuts`: `DatePickerShortcut[]`
+
+### TimePicker
+
+- `modelValue`: `Date | null`
+- `showSeconds`: `boolean` — 默认 `false`
+- `timeStep`: `{ hour?: number; minute?: number; second?: number }`
+
+### WeekPicker
+
+- `modelValue`: `Date | null`（自动对齐到周起始日，整周高亮）
+- `displayFormat`: `string` — 默认 `'YYYY-WW'`
+- `weekStartsOn`: `0 | 1` — 默认 `1`（0=周日，1=周一）
+- `shortcuts`: `DatePickerShortcut[]`
+
+### MonthPicker
+
+- `modelValue`: `Date | null`
+- `displayFormat`: `string` — 默认 `'YYYY-MM'`
+
+### YearPicker
+
+- `modelValue`: `Date | null`
+- `displayFormat`: `string` — 默认 `'YYYY'`
+
+所有组件共享事件：`update:modelValue`、`change`、`open`、`close`。
+
 ## Form
 
 完整的表单系统，集成 vee-validate 和 Zod 校验。

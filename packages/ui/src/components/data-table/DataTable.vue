@@ -251,6 +251,12 @@ watch(() => props.pageSize, (newSize) => {
     currentPageSize.value = newSize
 })
 
+watch(totalPages, (newTotal) => {
+    if (currentPage.value > newTotal) {
+        currentPage.value = Math.max(1, newTotal)
+    }
+})
+
 const rootClasses = computed(() =>
     cn(dataTableRootVariants({}), props.class)
 )
@@ -378,7 +384,9 @@ const rootStyle = computed(() => {
                                 role="gridcell"
                             >
                                 <slot name="empty">
-                                    <p class="font-bold">{{ emptyMessage || t('dataTable.noData') }}</p>
+                                    <p class="font-bold">
+                                        {{ emptyMessage || t('dataTable.noData') }}
+                                    </p>
                                 </slot>
                             </td>
                         </tr>

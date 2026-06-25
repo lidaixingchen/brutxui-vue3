@@ -103,4 +103,87 @@ describe('KanbanBoard', () => {
         const cards = wrapper.findAll('[draggable="true"]')
         expect(cards.length).toBe(3)
     })
+
+    it('reorders card within same column on drop', async () => {
+        const wrapper = mount(KanbanBoard, {
+            props: { modelValue: columns },
+        })
+
+        const mockRect = (top: number, height: number): DOMRect =>
+            ({
+                top,
+                bottom: top + height,
+                left: 0,
+                right: 100,
+                width: 100,
+                height,
+                x: 0,
+                y: top,
+                toJSON: () => ({}),
+            }) as DOMRect
+
+        const card1Wrapper = wrapper.find('[data-card-id="card-1"]')
+        const card2Wrapper = wrapper.find('[data-card-id="card-2"]')
+        const card1El = card1Wrapper.element as HTMLElement
+        const card2El = card2Wrapper.element as HTMLElement
+        const todoColumnEl = card1El.parentElement!.parentElement as HTMLElement
+
+        card1El.getBoundingClientRect = () => mockRect(0, 50)
+        card2El.getBoundingClientRect = () => mockRect(50, 50)
+
+        await card1Wrapper.trigger('dragstart')
+
+        const dropEvent = new MouseEvent('drop', { bubbles: true, clientY: 100 })
+        todoColumnEl.dispatchEvent(dropEvent)
+
+        await wrapper.vm.$nextTick()
+
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+        const newColumns = emitted![0][0] as KanbanColumn[]
+        const todoCards = newColumns.find((c) => c.id === 'todo')!.cards
+        expect(todoCards.map((c) => c.id)).toEqual(['card-2', 'card-1'])
+    })
+
+    it('moves card to different column on drop', async () => {
+        const wrapper = mount(KanbanBoard, {
+            props: { modelValue: columns },
+        })
+
+        const mockRect = (top: number, height: number): DOMRect =>
+            ({
+                top,
+                bottom: top + height,
+                left: 0,
+                right: 100,
+                width: 100,
+                height,
+                x: 0,
+                y: top,
+                toJSON: () => ({}),
+            }) as DOMRect
+
+        const card3Wrapper = wrapper.find('[data-card-id="card-3"]')
+        const card1El = wrapper.find('[data-card-id="card-1"]').element as HTMLElement
+        const card2El = wrapper.find('[data-card-id="card-2"]').element as HTMLElement
+        const todoColumnEl = card1El.parentElement!.parentElement as HTMLElement
+
+        card1El.getBoundingClientRect = () => mockRect(0, 50)
+        card2El.getBoundingClientRect = () => mockRect(50, 50)
+
+        await card3Wrapper.trigger('dragstart')
+
+        const dropEvent = new MouseEvent('drop', { bubbles: true, clientY: 100 })
+        todoColumnEl.dispatchEvent(dropEvent)
+
+        await wrapper.vm.$nextTick()
+
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+        const newColumns = emitted![0][0] as KanbanColumn[]
+        const todoCards = newColumns.find((c) => c.id === 'todo')!.cards
+        expect(todoCards.map((c) => c.id)).toEqual(['card-1', 'card-2', 'card-3'])
+        const inProgressCards = newColumns.find((c) => c.id === 'in-progress')!.cards
+        expect(inProgressCards).toHaveLength(0)
+    })
 })

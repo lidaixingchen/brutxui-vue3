@@ -268,5 +268,8 @@ const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg
 
 :deep(.vc-container .vc-day) {
     min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

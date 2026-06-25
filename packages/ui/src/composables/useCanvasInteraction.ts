@@ -45,24 +45,34 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
         if (!container || !canvas) return
 
         // 保存当前 canvas 内容到临时 canvas，防止 resize 清除已刮除区域
+        // 注意：新建 canvas 的默认尺寸是 300x150（非 0），但内容为空。
+        // 必须通过 style.width/height 是否被显式设置来判断是否已初始化过，
+        // 否则首次调用会误把空内容当作"旧内容"保存，导致 drawOverlay 永远不被调用。
         let tempCanvas: HTMLCanvasElement | null = null
         let hasOldContent = false
-        const oldCtx = canvas.getContext('2d')
-        const oldDpr = canvas.width > 0 ? canvas.width / parseFloat(canvas.style.width || '1') : (window.devicePixelRatio || 1)
-        if (oldCtx && canvas.width > 0 && canvas.height > 0) {
-            try {
-                tempCanvas = document.createElement('canvas')
-                tempCanvas.width = canvas.width
-                tempCanvas.height = canvas.height
-                const tempCtx = tempCanvas.getContext('2d')
-                if (tempCtx && typeof tempCtx.drawImage === 'function') {
-                    tempCtx.drawImage(canvas, 0, 0)
-                    hasOldContent = true
-                } else {
+        let oldDpr = window.devicePixelRatio || 1
+        const hasBeenSized = canvas.style.width !== '' && canvas.style.height !== ''
+        if (hasBeenSized) {
+            const oldCtx = canvas.getContext('2d')
+            const parsedStyleWidth = parseFloat(canvas.style.width)
+            oldDpr = (oldCtx && canvas.width > 0 && Number.isFinite(parsedStyleWidth) && parsedStyleWidth > 0)
+                ? canvas.width / parsedStyleWidth
+                : (window.devicePixelRatio || 1)
+            if (oldCtx && canvas.width > 0 && canvas.height > 0) {
+                try {
+                    tempCanvas = document.createElement('canvas')
+                    tempCanvas.width = canvas.width
+                    tempCanvas.height = canvas.height
+                    const tempCtx = tempCanvas.getContext('2d')
+                    if (tempCtx && typeof tempCtx.drawImage === 'function') {
+                        tempCtx.drawImage(canvas, 0, 0)
+                        hasOldContent = true
+                    } else {
+                        tempCanvas = null
+                    }
+                } catch {
                     tempCanvas = null
                 }
-            } catch {
-                tempCanvas = null
             }
         }
 

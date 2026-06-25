@@ -29,6 +29,7 @@ const emit = defineEmits<{
 
 const rootClasses = computed(() =>
     cn(
+        'brutx-calendar',
         'p-2 sm:p-3',
         'bg-brutal-bg text-brutal-fg',
         'border-3 border-brutal',
@@ -151,15 +152,6 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     border: 3px solid var(--brutal-border-color) !important;
     border-radius: var(--brutal-radius) !important;
     box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color) !important;
-    width: calc(var(--brutal-day-size, 2rem) + 2px) !important;
-    height: calc(var(--brutal-day-size, 2rem) + 2px) !important;
-}
-
-@media (min-width: 640px) {
-    :global(.brutal-selected) {
-        width: calc(var(--brutal-day-size-sm, 2rem) + 2px) !important;
-        height: calc(var(--brutal-day-size-sm, 2rem) + 2px) !important;
-    }
 }
 
 :global(.brutal-selected-content) {
@@ -176,7 +168,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     color: var(--brutal-accent-foreground) !important;
 }
 
-:deep(.vc-container) {
+:global(.brutx-calendar) {
     --vc-rounded-full: var(--brutal-radius);
     --vc-highlight-solid-bg: var(--brutal-primary);
     --vc-highlight-light-bg: var(--brutal-accent);
@@ -187,20 +179,20 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     --vc-highlight-outline-content-color: var(--brutal-fg);
 }
 
-:deep(.vc-day-layer.vc-day-box-center-center) {
+:global(.brutx-calendar .vc-day-layer.vc-day-box-center-center) {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-:deep(.vc-highlights .vc-highlight),
-:deep(.vc-highlight-bg-solid),
-:deep(.vc-highlight-bg-light),
-:deep(.vc-highlight-bg-outline) {
+:global(.brutx-calendar .vc-highlights .vc-highlight),
+:global(.brutx-calendar .vc-highlight-bg-solid),
+:global(.brutx-calendar .vc-highlight-bg-light),
+:global(.brutx-calendar .vc-highlight-bg-outline) {
     border-radius: var(--brutal-radius) !important;
 }
 
-:deep(.vc-container .vc-arrow) {
+:global(.brutx-calendar .vc-arrow) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -214,23 +206,23 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     color: var(--brutal-fg);
 }
 
-:deep(.vc-container .vc-arrow:hover) {
+:global(.brutx-calendar .vc-arrow:hover) {
     box-shadow: calc(var(--brutal-shadow-offset-x) + 2px) calc(var(--brutal-shadow-offset-y) + 2px) 0 var(--brutal-shadow-color);
     transform: translate(-1px, -1px);
 }
 
-:deep(.vc-container .vc-arrow:active) {
+:global(.brutx-calendar .vc-arrow:active) {
     transform: translateY(var(--brutal-pressed-offset, 2px));
     box-shadow: none !important;
 }
 
-:deep(.vc-container .vc-arrow.vc-prev svg),
-:deep(.vc-container .vc-arrow.vc-next svg) {
+:global(.brutx-calendar .vc-arrow.vc-prev svg),
+:global(.brutx-calendar .vc-arrow.vc-next svg) {
     width: 1rem;
     height: 1rem;
 }
 
-:deep(.vc-container .vc-title) {
+:global(.brutx-calendar .vc-title) {
     font-weight: 900;
     font-size: 0.75rem;
     letter-spacing: -0.025em;
@@ -241,11 +233,11 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     padding: 0;
 }
 
-:deep(.vc-container .vc-title:hover) {
+:global(.brutx-calendar .vc-title:hover) {
     color: var(--brutal-primary);
 }
 
-:deep(.vc-container .vc-weekday) {
+:global(.brutx-calendar .vc-weekday) {
     font-weight: 900;
     font-size: 0.625rem;
     text-transform: uppercase;
@@ -254,11 +246,14 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     border-bottom: 3px solid var(--brutal-border-color);
 }
 
-:deep(.vc-container .vc-weeks) {
+:global(.brutx-calendar .vc-weeks) {
     min-width: 0;
 }
 
-:deep(.vc-container .vc-day) {
+:global(.brutx-calendar .vc-day) {
     min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

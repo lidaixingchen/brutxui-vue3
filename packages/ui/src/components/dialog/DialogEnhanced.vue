@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import {
     DialogPortal as DialogPortalPrimitive,
     DialogContent as DialogContentPrimitive,
@@ -261,6 +261,13 @@ watch(() => props.initialPosition, (newPos) => {
 onMounted(() => {
     initPosition()
     initSize()
+})
+
+onUnmounted(() => {
+    document.removeEventListener('mousemove', onDragMove)
+    document.removeEventListener('mouseup', onDragEnd)
+    document.removeEventListener('mousemove', onResizeMove)
+    document.removeEventListener('mouseup', onResizeEnd)
 })
 </script>
 
