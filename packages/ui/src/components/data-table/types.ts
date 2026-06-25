@@ -1,4 +1,4 @@
-import type { VNode, Component } from 'vue'
+import type { VNode } from 'vue'
 
 export interface DataTableVirtualScroll {
     enabled?: boolean

@@ -297,6 +297,62 @@
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #777777;
     }
+
+    /* Warm Brutalism theme: raw/原始感与温暖的视觉体验 */
+    .theme-warm {
+        --brutal-border-width: 3px;
+        --brutal-border-color: #5C3D2E;
+        --brutal-shadow-offset-x: 4px;
+        --brutal-shadow-offset-y: 4px;
+        --brutal-shadow-color: #5C3D2E;
+        --brutal-radius: 4px;
+        --brutal-bg: #FFF8F0;
+        --brutal-fg: #2D1810;
+        --brutal-primary: #E8722A;
+        --brutal-primary-foreground: #FFFFFF;
+        --brutal-secondary: #8B6F47;
+        --brutal-secondary-foreground: #FFFFFF;
+        --brutal-accent: #F2C078;
+        --brutal-accent-foreground: #2D1810;
+        --brutal-destructive: #C0392B;
+        --brutal-destructive-foreground: #FFFFFF;
+        --brutal-success: #7B8B3A;
+        --brutal-success-foreground: #FFFFFF;
+        --brutal-muted: #F5EDE3;
+        --brutal-muted-foreground: #6B5B4F;
+        --brutal-ring: #E8722A;
+        --brutal-info: #D4956A;
+        --brutal-info-foreground: #FFFFFF;
+        --brutal-overlay: rgba(45, 24, 16, 0.5);
+        --brutal-placeholder: #B8A898;
+    }
+    .dark .theme-warm, .theme-warm.dark {
+        --brutal-border-width: 3px;
+        --brutal-border-color: #C4A882;
+        --brutal-shadow-offset-x: 4px;
+        --brutal-shadow-offset-y: 4px;
+        --brutal-shadow-color: #C4A882;
+        --brutal-radius: 4px;
+        --brutal-bg: #1A1410;
+        --brutal-fg: #F5E6D3;
+        --brutal-primary: #F59E4C;
+        --brutal-primary-foreground: #1A1410;
+        --brutal-secondary: #B8956A;
+        --brutal-secondary-foreground: #1A1410;
+        --brutal-accent: #FFD89B;
+        --brutal-accent-foreground: #1A1410;
+        --brutal-destructive: #E74C3C;
+        --brutal-destructive-foreground: #FFFFFF;
+        --brutal-success: #A3B556;
+        --brutal-success-foreground: #1A1410;
+        --brutal-muted: #2A2018;
+        --brutal-muted-foreground: #B8A898;
+        --brutal-ring: #F59E4C;
+        --brutal-info: #E8B88A;
+        --brutal-info-foreground: #1A1410;
+        --brutal-overlay: rgba(0, 0, 0, 0.7);
+        --brutal-placeholder: #6B5B4F;
+    }
 }
 
 @layer components {
@@ -673,5 +729,176 @@
 
     .data-\[state\=closed\]\:slide-out-to-top-\[48\%\][data-state="closed"] {
         --tw-exit-translate-y: -48%;
+    }
+
+    /* ============================================
+       Brutalism Animation Presets
+       ============================================ */
+
+    /* 通用动画配置 */
+    .animate-brutal-shake {
+        animation: brutal-shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    .animate-brutal-bounce {
+        animation: brutal-bounce 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    .animate-brutal-pulse {
+        animation: brutal-pulse 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+    }
+
+    .animate-brutal-flip {
+        animation: brutal-flip 0.4s ease-out both;
+    }
+
+    .animate-brutal-slide-up {
+        animation: brutal-slide-up 0.3s ease-out both;
+    }
+
+    .animate-brutal-slide-down {
+        animation: brutal-slide-down 0.3s ease-out both;
+    }
+
+    .animate-brutal-slide-left {
+        animation: brutal-slide-left 0.3s ease-out both;
+    }
+
+    .animate-brutal-slide-right {
+        animation: brutal-slide-right 0.3s ease-out both;
+    }
+
+    .animate-brutal-pop {
+        animation: brutal-pop 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    .animate-brutal-rotate {
+        animation: brutal-rotate 0.6s linear both;
+    }
+
+    .animate-brutal-swing {
+        animation: brutal-swing 0.5s ease-out both;
+    }
+
+    .animate-brutal-jello {
+        animation: brutal-jello 0.5s ease-out both;
+    }
+
+    .animate-brutal-heartbeat {
+        animation: brutal-heartbeat 1s ease-out infinite;
+    }
+
+    /* 延迟工具类 */
+    .animation-delay-100 { animation-delay: 100ms; }
+    .animation-delay-200 { animation-delay: 200ms; }
+    .animation-delay-300 { animation-delay: 300ms; }
+    .animation-delay-500 { animation-delay: 500ms; }
+
+    /* 重复次数 */
+    .animation-once { animation-iteration-count: 1; }
+    .animation-infinite { animation-iteration-count: infinite; }
+
+    /* ============================================
+       Brutalism Keyframes
+       ============================================ */
+
+    @keyframes brutal-shake {
+        10%, 90% { transform: translateX(-1px); }
+        20%, 80% { transform: translateX(2px); }
+        30%, 50%, 70% { transform: translateX(-4px); }
+        40%, 60% { transform: translateX(4px); }
+    }
+
+    @keyframes brutal-bounce {
+        0%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-20px); }
+        60% { transform: translateY(-10px); }
+    }
+
+    @keyframes brutal-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    @keyframes brutal-flip {
+        0% { transform: perspective(400px) rotateY(0); }
+        100% { transform: perspective(400px) rotateY(180deg); }
+    }
+
+    @keyframes brutal-slide-up {
+        0% { transform: translateY(20px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes brutal-slide-down {
+        0% { transform: translateY(-20px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes brutal-slide-left {
+        0% { transform: translateX(20px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes brutal-slide-right {
+        0% { transform: translateX(-20px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes brutal-pop {
+        0% { transform: scale(0.8); opacity: 0; }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes brutal-rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes brutal-swing {
+        20% { transform: rotate(15deg); }
+        40% { transform: rotate(-10deg); }
+        60% { transform: rotate(5deg); }
+        80% { transform: rotate(-5deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    @keyframes brutal-jello {
+        0%, 100% { transform: skewX(0deg) skewY(0deg); }
+        30% { transform: skewX(-12deg) skewY(-12deg); }
+        40% { transform: skewX(6deg) skewY(6deg); }
+        50% { transform: skewX(-3deg) skewY(-3deg); }
+        65% { transform: skewX(2deg) skewY(2deg); }
+        75% { transform: skewX(-1deg) skewY(-1deg); }
+    }
+
+    @keyframes brutal-heartbeat {
+        0% { transform: scale(1); }
+        14% { transform: scale(1.15); }
+        28% { transform: scale(1); }
+        42% { transform: scale(1.15); }
+        70% { transform: scale(1); }
+    }
+
+    /* ============================================
+       Reduced Motion Support
+       ============================================ */
+    @media (prefers-reduced-motion: reduce) {
+        .animate-brutal-shake,
+        .animate-brutal-bounce,
+        .animate-brutal-pulse,
+        .animate-brutal-flip,
+        .animate-brutal-slide-up,
+        .animate-brutal-slide-down,
+        .animate-brutal-slide-left,
+        .animate-brutal-slide-right,
+        .animate-brutal-pop,
+        .animate-brutal-rotate,
+        .animate-brutal-swing,
+        .animate-brutal-jello,
+        .animate-brutal-heartbeat {
+            animation: none !important;
+        }
     }
 }

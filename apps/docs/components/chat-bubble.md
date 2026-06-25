@@ -50,8 +50,11 @@ interface ChatMessage {
     variant?: 'sent' | 'received' | 'system'  // 默认 'received'
     avatar?: string      // 头像图片 URL
     name?: string        // 发送者姓名
-    timestamp?: string   // 时间戳文本
+    timestamp?: string | Date  // 时间戳文本或 Date 对象
+    status?: MessageStatus     // 消息状态
 }
+
+type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 ```
 
 ## Props
@@ -62,6 +65,9 @@ interface ChatMessage {
 |------|------|--------|------|
 | `message` | `ChatMessage` | — | 消息数据对象 |
 | `showAvatar` | `boolean` | `true` | 是否显示头像区域 |
+| `showStatus` | `boolean` | `true` | 是否显示消息状态图标（仅 sent 消息） |
+| `showTimestamp` | `boolean` | `true` | 是否显示时间戳 |
+| `dateFormat` | `(date: Date) => string` | — | 自定义日期格式化函数 |
 | `class` | `string` | — | 气泡自定义样式类 |
 
 ## 变体说明
@@ -77,3 +83,36 @@ interface ChatMessage {
 | 插槽名 | 说明 |
 |--------|------|
 | `default` | 自定义气泡内容（默认显示 `message.content`） |
+
+---
+
+## ChatContainer 聊天容器
+
+支持时间分组的聊天消息容器：
+
+```vue
+<script setup>
+import { ChatContainer } from 'brutx-ui-vue'
+
+const messages = [
+    { id: '1', variant: 'received', name: 'Alex', content: '你好！', timestamp: new Date() },
+    { id: '2', variant: 'sent', content: '嘿！', timestamp: new Date(), status: 'read' },
+]
+</script>
+
+<template>
+    <ChatContainer :messages="messages" group-by-time show-status />
+</template>
+```
+
+### ChatContainer Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `messages` | `ChatMessage[]` | — | 消息数组（必填） |
+| `groupByTime` | `boolean` | `false` | 是否按时间分组（今天/昨天/日期） |
+| `showAvatar` | `boolean` | `true` | 是否显示头像 |
+| `showStatus` | `boolean` | `true` | 是否显示消息状态 |
+| `showTimestamp` | `boolean` | `true` | 是否显示时间戳 |
+| `dateFormat` | `(date: Date) => string` | — | 自定义日期格式化函数 |
+| `class` | `string` | — | 自定义样式类 |

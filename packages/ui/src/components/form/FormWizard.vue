@@ -1,27 +1,12 @@
-<script setup lang="ts">
-import { ref, computed, provide, inject, type InjectionKey, type Component } from 'vue'
-import { cn } from '../../lib/utils'
-import { Stepper } from '../stepper'
-import type { StepperStep } from '../stepper'
-import { useLocale } from '@/composables/useLocale'
+<script lang="ts">
+import { inject } from 'vue'
+import { formWizardContextKey } from './form-context'
+import type { FormStep, FormWizardContext } from './form-wizard-types'
 
-const { t } = useLocale()
+export { formWizardContextKey }
+export type { FormStep, FormWizardContext }
 
-export interface FormStep {
-    id: string
-    title: string
-    description?: string
-    icon?: Component
-    validator?: (values: Record<string, unknown>) => ValidationResult
-    optional?: boolean
-}
-
-export interface ValidationResult {
-    valid: boolean
-    errors: Record<string, string>
-}
-
-interface FormWizardProps {
+export interface FormWizardProps {
     steps: FormStep[]
     initialStep?: number
     validateOnNext?: boolean
@@ -30,6 +15,24 @@ interface FormWizardProps {
     modelValue?: Record<string, unknown>
     class?: string
 }
+
+export function useFormWizard() {
+    const context = inject(formWizardContextKey)
+    if (!context) {
+        throw new Error('[BrutxUI] useFormWizard() must be used within a FormWizard component.')
+    }
+    return context
+}
+</script>
+
+<script setup lang="ts">
+import { ref, computed, provide } from 'vue'
+import { cn } from '../../lib/utils'
+import { Stepper } from '../stepper'
+import type { StepperStep } from '../stepper'
+import { useLocale } from '@/composables/useLocale'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<FormWizardProps>(), {
     initialStep: 0,
@@ -52,7 +55,7 @@ const completedSteps = ref<Set<number>>(new Set())
 const stepErrors = ref<Map<number, Record<string, string>>>(new Map())
 
 const stepperSteps = computed<StepperStep[]>(() =>
-    props.steps.map((step, index) => ({
+    props.steps.map((step) => ({
         id: step.id,
         title: step.title,
         description: step.description,
@@ -150,35 +153,6 @@ const rootClasses = computed(() =>
 )
 </script>
 
-<script lang="ts">
-import { formWizardContextKey } from './form-context'
-
-export { formWizardContextKey }
-
-export interface FormWizardContext {
-    currentStep: import('vue').Ref<number>
-    steps: import('vue').ComputedRef<FormStep[]>
-    values: import('vue').ComputedRef<Record<string, unknown>>
-    updateValues: (values: Record<string, unknown>) => void
-    nextStep: () => void
-    previousStep: () => void
-    goToStep: (step: number) => void
-    complete: () => void
-    getStepErrors: (step: number) => Record<string, string> | undefined
-    isFirstStep: import('vue').ComputedRef<boolean>
-    isLastStep: import('vue').ComputedRef<boolean>
-    canGoNext: import('vue').ComputedRef<boolean>
-}
-
-export function useFormWizard() {
-    const context = inject(formWizardContextKey)
-    if (!context) {
-        throw new Error('[BrutxUI] useFormWizard() must be used within a FormWizard component.')
-    }
-    return context
-}
-</script>
-
 <template>
     <div :class="rootClasses" role="form" :aria-label="t('formWizard.label')">
         <!-- Step Indicator -->
@@ -190,7 +164,7 @@ export function useFormWizard() {
         />
 
         <!-- Step Content -->
-        <div class="min-h-[200px]">
+        <div class="min-h-50">
             <template v-for="(step, index) in steps" :key="step.id">
                 <div v-show="index === currentStep" role="tabpanel" :aria-label="step.title">
                     <slot :name="`step-${step.id}`" :step="step" :index="index" />

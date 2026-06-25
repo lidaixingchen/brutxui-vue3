@@ -5,7 +5,7 @@ import DataTable from './DataTable.vue'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
 
-interface TestRow {
+interface TestRow extends Record<string, unknown> {
     id: number
     name: string
     email: string
@@ -216,7 +216,7 @@ describe('DataTable', () => {
             props: {
                 data: testData,
                 columns: testColumns,
-                rowKey: (row: TestRow) => `row-${row.id}`,
+                rowKey: (row: Record<string, unknown>) => `row-${(row as TestRow).id}`,
             },
             global: globalProvide,
         })

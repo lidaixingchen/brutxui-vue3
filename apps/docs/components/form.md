@@ -126,3 +126,136 @@ interface FormFieldContext {
 | 事件 | 载荷 |
 |------|------|
 | `submit` | `Record<string, unknown>` |
+
+---
+
+## FormWizard 多步骤表单
+
+基于 `Stepper` 组件构建的向导式表单，支持步骤验证、线性导航和自定义步骤内容。
+
+### 用法
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { FormWizard, FormStep, Input } from 'brutx-ui-vue'
+
+const values = ref({})
+
+const steps = [
+    { id: 'personal', title: '个人信息' },
+    { id: 'address', title: '地址' },
+    { id: 'review', title: '确认' },
+]
+
+function onComplete(finalValues) {
+    console.log('提交:', finalValues)
+}
+</script>
+
+<template>
+    <FormWizard
+        v-model="values"
+        :steps="steps"
+        @complete="onComplete"
+    >
+        <template #step-personal>
+            <Input v-model="values.name" placeholder="姓名" />
+        </template>
+        <template #step-address>
+            <Input v-model="values.address" placeholder="地址" />
+        </template>
+        <template #step-review>
+            <p>确认信息：{{ values }}</p>
+        </template>
+    </FormWizard>
+</template>
+```
+
+### FormWizard Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `steps` | `FormStep[]` | — | 步骤配置数组（必填） |
+| `modelValue` | `Record<string, unknown>` | `{}` | 表单数据（v-model） |
+| `initialStep` | `number` | `0` | 初始步骤索引 |
+| `validateOnNext` | `boolean` | `true` | 是否在下一步时验证 |
+| `showIndicator` | `boolean` | `true` | 是否显示步骤指示器 |
+| `linear` | `boolean` | `true` | 是否必须按顺序完成 |
+| `class` | `string` | — | 自定义样式类 |
+
+### FormStep 类型
+
+```ts
+interface FormStep {
+    id: string
+    title: string
+    description?: string
+    icon?: Component
+    validator?: (values: Record<string, unknown>) => ValidationResult
+    optional?: boolean
+}
+
+interface ValidationResult {
+    valid: boolean
+    errors: Record<string, string>
+}
+```
+
+### FormWizard 事件
+
+| 事件 | 载荷 | 说明 |
+|------|------|------|
+| `update:modelValue` | `Record<string, unknown>` | 表单数据更新 |
+| `stepChange` | `[step: number, previousStep: number]` | 步骤切换 |
+| `complete` | `Record<string, unknown>` | 表单完成 |
+| `validationError` | `[step: number, errors: Record<string, string>]` | 验证失败 |
+
+### useFormWizard
+
+在 FormWizard 子组件中获取向导上下文：
+
+```ts
+const {
+    currentStep,    // Ref<number> - 当前步骤
+    steps,          // ComputedRef<FormStep[]> - 步骤配置
+    values,         // ComputedRef<Record<string, unknown>> - 表单数据
+    nextStep,       // () => void - 下一步
+    previousStep,   // () => void - 上一步
+    goToStep,       // (step: number) => void - 跳转步骤
+    complete,       // () => void - 完成表单
+    isFirstStep,    // ComputedRef<boolean>
+    isLastStep,     // ComputedRef<boolean>
+    canGoNext,      // ComputedRef<boolean>
+} = useFormWizard()
+```
+
+---
+
+## FormConditional 条件字段
+
+根据表单值动态显示/隐藏字段组：
+
+```vue
+<template>
+    <Form v-model="values">
+        <FormField name="type" />
+
+        <FormConditional :when="(v) => v.type === 'company'">
+            <FormField name="companyName" />
+            <FormField name="taxId" />
+        </FormConditional>
+
+        <FormConditional :when="(v) => v.type === 'personal'">
+            <FormField name="idNumber" />
+        </FormConditional>
+    </Form>
+</template>
+```
+
+### FormConditional Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `when` | `(values: Record<string, unknown>) => boolean` | — | 条件判断函数（必填） |
+| `class` | `string` | — | 自定义样式类 |

@@ -78,9 +78,56 @@ import { Button } from 'brutx-ui-vue'
 |------|------|--------|
 | `class` | `string` | — |
 
+## DialogEnhanced 增强对话框
+
+支持可拖拽和可调整大小的增强版对话框：
+
+```vue
+<script setup>
+import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <Dialog>
+        <DialogTrigger>打开可拖拽对话框</DialogTrigger>
+        <DialogEnhanced
+            draggable
+            resizable
+            :min-width="300"
+            :min-height="200"
+            drag-handle=".dialog-header"
+        >
+            <DialogHeader class="dialog-header">
+                <DialogTitle>可拖拽对话框</DialogTitle>
+            </DialogHeader>
+            <p>拖拽标题栏移动，拖拽边缘调整大小</p>
+        </DialogEnhanced>
+    </Dialog>
+</template>
+```
+
+### DialogEnhanced Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `draggable` | `boolean` | `false` | 是否可拖拽 |
+| `dragHandle` | `string \| HTMLElement` | — | 拖拽手柄（CSS 选择器或元素） |
+| `bounds` | `'parent' \| 'viewport' \| { top, left, right, bottom }` | `'viewport'` | 拖拽边界 |
+| `initialPosition` | `{ x: number; y: number }` | — | 初始位置 |
+| `resizable` | `boolean` | `false` | 是否可调整大小 |
+| `minWidth` | `number` | `200` | 最小宽度 |
+| `minHeight` | `number` | `150` | 最小高度 |
+| `maxWidth` | `number` | — | 最大宽度 |
+| `maxHeight` | `number` | — | 最大高度 |
+| `aspectRatio` | `number` | — | 宽高比锁定 |
+| `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
+| `forceMount` | `boolean` | — | 强制渲染 |
+| `class` | `string` | — | 自定义样式类 |
+
 ## 无障碍
 
 - 对话框打开时，焦点被限制在对话框内
 - 按 `Escape` 关闭对话框
 - 点击遮罩层关闭对话框
 - 关闭按钮包含屏幕阅读器文本
+- 拖拽时自动排除交互元素（Input、Button 等）

@@ -19,9 +19,7 @@ const shouldShow = computed(() => {
     try {
         return props.when(form.values.value)
     } catch (e) {
-        if (import.meta.env.DEV) {
-            console.warn('[BrutxUI] FormConditional: Error in when callback:', e)
-        }
+        console.warn('[BrutxUI] FormConditional: Error in when callback:', e)
         return false
     }
 })

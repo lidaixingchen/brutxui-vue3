@@ -50,11 +50,35 @@ const counterRef = ref()
 | `decimals` | `number` | `0` | 小数位数 |
 | `prefix` | `string` | `''` | 数字前缀（如 `¥` `$`） |
 | `suffix` | `string` | `''` | 数字后缀（如 `+` `%`） |
+| `prefixComponent` | `Component` | — | 自定义前缀组件 |
+| `suffixComponent` | `Component` | — | 自定义后缀组件 |
+| `animatePrefix` | `boolean` | `true` | 是否显示自定义前缀组件（false 时显示文本前缀） |
+| `animateSuffix` | `boolean` | `true` | 是否显示自定义后缀组件（false 时显示文本后缀） |
 | `separator` | `string` | `','` | 千位分隔符，传空字符串可禁用 |
 | `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | 缓动函数 |
 | `autoStart` | `boolean` | `true` | 是否挂载后自动播放 |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 字号预设 |
 | `class` | `string` | — | 自定义样式类 |
+
+### 自定义组件前缀/后缀
+
+```vue
+<script setup>
+import { Counter } from 'brutx-ui-vue'
+import { DollarSign, Percent } from 'lucide-vue-next'
+</script>
+
+<template>
+    <!-- 使用组件作为前缀 -->
+    <Counter :to="12800" :prefix-component="DollarSign" />
+
+    <!-- 使用文本作为后缀 -->
+    <Counter :to="99.9" :decimals="1" suffix="%" />
+
+    <!-- 混合使用：组件前缀 + 文本后缀 -->
+    <Counter :to="500" :prefix-component="DollarSign" suffix="万" :animate-suffix="false" />
+</template>
+```
 
 ## 事件
 

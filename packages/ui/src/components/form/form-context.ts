@@ -1,6 +1,6 @@
 import type { InjectionKey, Ref, ComputedRef } from 'vue'
 import type { FormContext as VeeFormContext } from 'vee-validate'
-import type { FormWizardContext } from './FormWizard.vue'
+import type { FormWizardContext } from './form-wizard-types'
 
 export interface FormFieldContext {
     name: ComputedRef<string>

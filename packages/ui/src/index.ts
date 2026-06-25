@@ -176,7 +176,7 @@ export { default as FormWizard } from './components/form/FormWizard.vue'
 export { default as FormConditional } from './components/form/FormConditional.vue'
 export { formFieldKey, formItemKey, formContextKey, formWizardContextKey } from './components/form/form-context'
 export type { FormFieldContext, FormItemContext } from './components/form/form-context'
-export type { FormStep, ValidationResult, FormWizardContext } from './components/form/FormWizard.vue'
+export type { FormStep, ValidationResult, FormWizardContext } from './components/form/form-wizard-types'
 export { useFormWizard } from './components/form/FormWizard.vue'
 
 export { default as SubmitButton } from './components/submit-button/SubmitButton.vue'
@@ -190,7 +190,9 @@ export { useToast, provideToast, createToast } from './composables/useToast'
 export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './composables/useToast'
 
 export { useTheme, provideTheme, createTheme } from './composables/useTheme'
-export type { ThemeName, ColorMode } from './composables/useTheme'
+export type { ThemeName, ColorMode, ResolvedColorMode } from './composables/useTheme'
+
+export { default as ColorModeSwitcher } from './components/color-mode-switcher/ColorModeSwitcher.vue'
 
 export { default as SaaSPricing } from './components/saas-pricing/SaaSPricing.vue'
 export type { PricingPlan, PricingFeature } from './components/saas-pricing/SaaSPricing.vue'

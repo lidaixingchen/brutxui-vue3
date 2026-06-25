@@ -1,5 +1,52 @@
 # 新粗野主义特色组件
 
+## ColorModeSwitcher
+
+颜色模式切换组件，支持三种显示模式。
+
+```vue
+<script setup>
+import { ColorModeSwitcher } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <!-- 图标模式（默认） -->
+    <ColorModeSwitcher />
+
+    <!-- 按钮模式 -->
+    <ColorModeSwitcher display="button" />
+
+    <!-- 下拉选择模式 -->
+    <ColorModeSwitcher display="select" />
+
+    <!-- 不显示 system 选项 -->
+    <ColorModeSwitcher :show-system="false" />
+</template>
+```
+
+- `display`: `'icon' | 'button' | 'select'` — 默认 `'icon'`
+- `showSystem`: `boolean` — 默认 `true`
+
+## CSS 动画预设
+
+13 个粗野主义风格动画工具类：
+
+| 类名 | 效果 |
+| --- | --- |
+| `animate-brutal-shake` | 左右抖动 |
+| `animate-brutal-bounce` | 弹跳 |
+| `animate-brutal-pulse` | 脉冲缩放 |
+| `animate-brutal-flip` | 水平翻转 |
+| `animate-brutal-slide-up/down/left/right` | 滑入 |
+| `animate-brutal-pop` | 弹出放大 |
+| `animate-brutal-rotate` | 旋转 360° |
+| `animate-brutal-swing` | 钟摆摆动 |
+| `animate-brutal-jello` | 果冻抖动 |
+| `animate-brutal-heartbeat` | 心跳 |
+
+延迟：`animation-delay-100/200/300/500`
+重复：`animation-once` / `animation-infinite`
+
 ## Card3D
 
 3D 悬浮卡片，鼠标移动时产生 3D 倾斜效果。

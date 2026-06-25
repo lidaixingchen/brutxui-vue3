@@ -318,3 +318,75 @@ interface FormFieldContext {
 | 事件 | 载荷 |
 | --- | --- |
 | `submit` | `Record<string, unknown>` |
+
+## FormWizard 多步骤表单
+
+基于 Stepper 组件的向导式表单，支持步骤验证和线性导航。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { FormWizard, Input } from 'brutx-ui-vue'
+
+const values = ref({})
+const steps = [
+    { id: 'personal', title: '个人信息' },
+    { id: 'address', title: '地址' },
+]
+</script>
+
+<template>
+    <FormWizard v-model="values" :steps="steps" @complete="onComplete">
+        <template #step-personal>
+            <Input v-model="values.name" placeholder="姓名" />
+        </template>
+        <template #step-address>
+            <Input v-model="values.address" placeholder="地址" />
+        </template>
+    </FormWizard>
+</template>
+```
+
+### FormWizard Props
+
+- `steps`: `FormStep[]` — 步骤配置数组（必填）
+- `modelValue`: `Record<string, unknown>` — 表单数据（v-model）
+- `initialStep`: `number` — 初始步骤索引，默认 `0`
+- `validateOnNext`: `boolean` — 下一步时验证，默认 `true`
+- `showIndicator`: `boolean` — 显示步骤指示器，默认 `true`
+- `linear`: `boolean` — 必须按顺序完成，默认 `true`
+
+### FormStep 类型
+
+```typescript
+interface FormStep {
+    id: string
+    title: string
+    description?: string
+    validator?: (values: Record<string, unknown>) => ValidationResult
+    optional?: boolean
+}
+```
+
+### useFormWizard
+
+在 FormWizard 子组件中获取向导上下文：
+
+```typescript
+const { currentStep, nextStep, previousStep, goToStep, complete, isFirstStep, isLastStep } = useFormWizard()
+```
+
+## FormConditional 条件字段
+
+根据表单值动态显示/隐藏字段组：
+
+```vue
+<Form v-model="values">
+    <FormField name="type" />
+    <FormConditional :when="(v) => v.type === 'company'">
+        <FormField name="companyName" />
+    </FormConditional>
+</Form>
+```
+
+- `when`: `(values: Record<string, unknown>) => boolean` — 条件判断函数（必填）

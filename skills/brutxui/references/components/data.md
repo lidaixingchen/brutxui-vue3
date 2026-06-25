@@ -81,10 +81,57 @@
 - `decimals`: `number` — 默认 `0`
 - `prefix`: `string`
 - `suffix`: `string`
+- `prefixComponent`: `Component` — 自定义前缀组件
+- `suffixComponent`: `Component` — 自定义后缀组件
+- `animatePrefix`: `boolean` — 默认 `true`（false 时显示文本前缀）
+- `animateSuffix`: `boolean` — 默认 `true`（false 时显示文本后缀）
 - `separator`: `string` — 默认 `','`
 - `easing`: `'linear' | 'ease-out' | 'ease-in-out'` — 默认 `'ease-out'`
 - `autoStart`: `boolean` — 默认 `true`
 - `size`: `'sm' | 'md' | 'lg'`
+
+## DataTable
+
+高级数据表格组件，支持排序、筛选、分页、行选择。
+
+```vue
+<script setup lang="ts">
+import { DataTable } from 'brutx-ui-vue'
+
+const columns = [
+    { id: 'name', header: '姓名', accessorKey: 'name', sortable: true },
+    { id: 'email', header: '邮箱', accessorKey: 'email' },
+]
+
+const data = [
+    { id: 1, name: '张三', email: 'zhang@example.com' },
+]
+</script>
+
+<template>
+    <DataTable
+        :data="data"
+        :columns="columns"
+        :paginated="true"
+        :page-size="10"
+        sortable
+        filterable
+        selectable
+    />
+</template>
+```
+
+- `data`: `T[]` — 数据数组（必填）
+- `columns`: `DataTableColumn<T>[]` — 列配置（必填）
+- `rowKey`: `keyof T | ((row: T) => string | number)` — 行唯一标识（必填）
+- `sortable`: `boolean` — 默认 `false`
+- `filterable`: `boolean` — 默认 `false`
+- `selectable`: `boolean` — 默认 `false`
+- `paginated`: `boolean` — 默认 `false`
+- `pageSize`: `number` — 默认 `10`
+- `pageSizeOptions`: `number[]` — 默认 `[10, 20, 50, 100]`
+- `loading`: `boolean` — 默认 `false`
+- `emptyMessage`: `string` — 空数据提示
 
 ## Kbd
 
@@ -138,11 +185,28 @@
 ## ChatBubble
 
 ```vue
-<ChatBubble :message="{ id: '1', content: '你好！', variant: 'sent', name: '我', timestamp: '10:30' }" />
+<ChatBubble :message="{ id: '1', content: '你好！', variant: 'sent', name: '我', timestamp: '10:30', status: 'read' }" />
 ```
 
-- `message`: `ChatMessage` — `{ id: string; content: string; variant?: 'sent'|'received'|'system'; avatar?: string; name?: string; timestamp?: string }`
+- `message`: `ChatMessage` — `{ id: string; content: string; variant?: 'sent'|'received'|'system'; avatar?: string; name?: string; timestamp?: string | Date; status?: 'sending'|'sent'|'delivered'|'read'|'failed' }`
 - `showAvatar`: `boolean` — 默认 `true`
+- `showStatus`: `boolean` — 默认 `true`
+- `showTimestamp`: `boolean` — 默认 `true`
+- `dateFormat`: `(date: Date) => string` — 自定义日期格式化
+
+## ChatContainer
+
+聊天消息容器，支持时间分组。
+
+```vue
+<ChatContainer :messages="messages" group-by-time show-status />
+```
+
+- `messages`: `ChatMessage[]` — 消息数组（必填）
+- `groupByTime`: `boolean` — 默认 `false`
+- `showAvatar`: `boolean` — 默认 `true`
+- `showStatus`: `boolean` — 默认 `true`
+- `showTimestamp`: `boolean` — 默认 `true`
 
 ## Skeleton
 

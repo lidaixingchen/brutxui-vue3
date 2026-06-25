@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import FormWizard from './FormWizard.vue'
-import type { FormStep } from './FormWizard.vue'
+import type { FormStep } from './form-wizard-types'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
 

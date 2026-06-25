@@ -9,13 +9,12 @@ import {
     dataTableBodyVariants,
     dataTableRowVariants,
     dataTableCellVariants,
-    dataTableFooterVariants,
     dataTableToolbarVariants,
     dataTablePaginationVariants,
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableSortState, DataTableFilterState, DataTablePaginationState, DataTableVirtualScroll } from './types'
+import type { DataTableColumn, DataTableSortState, DataTableFilterState, DataTableVirtualScroll } from './types'
 import { Loader2, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
 
 const { t } = useLocale()
