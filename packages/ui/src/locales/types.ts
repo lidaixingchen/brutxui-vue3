@@ -352,6 +352,54 @@ export interface CalendarLocale {
     nextMonth: string
 }
 
+export interface DatePickerLocale {
+    placeholder: string
+    datePlaceholder: string
+    weekPlaceholder: string
+    monthPlaceholder: string
+    yearPlaceholder: string
+    dateTimePlaceholder: string
+    timePlaceholder: string
+    startPlaceholder: string
+    endPlaceholder: string
+    separator: string
+    today: string
+    tomorrow: string
+    nextWeek: string
+    thisMonth: string
+    lastMonth: string
+    confirm: string
+    clear: string
+    week: string
+    weeks: string
+    hour: string
+    minute: string
+    second: string
+    previousYear: string
+    nextYear: string
+    previousDecade: string
+    nextDecade: string
+    months: string[]
+    yearRange: string
+}
+
+export interface ColorPickerLocale {
+    placeholder: string
+    confirm: string
+    clear: string
+    presets: string
+    history: string
+    clearHistory: string
+    hex: string
+    red: string
+    green: string
+    blue: string
+    hue: string
+    saturation: string
+    brightness: string
+    alpha: string
+}
+
 export interface KanbanLocale {
     dropCardsHere: string
 }
@@ -432,6 +480,8 @@ export interface Locale {
     hardcoreInput: HardcoreInputLocale
     codeBlock: CodeBlockLocale
     calendar: CalendarLocale
+    datePicker: DatePickerLocale
+    colorPicker: ColorPickerLocale
     kanban: KanbanLocale
     pricingSection: PricingSectionLocale
     dashboardStats: DashboardStatsLocale

@@ -9,7 +9,10 @@ const __dirname = path.dirname(__filename);
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
 const UI_COMPOSABLES_DIR = path.resolve(__dirname, '../../ui/src/composables');
 const UI_LOCALES_DIR = path.resolve(__dirname, '../../ui/src/locales');
+const UI_LIB_DIR = path.resolve(__dirname, '../../ui/src/lib');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
+
+const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 
 interface ComponentFileMapping {
     files: string[];
@@ -107,6 +110,30 @@ const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'gallery-section': { files: ['GallerySection.vue'] },
     'upload-card': { files: ['UploadCard.vue'], composables: ['useLocale.ts'] },
     'overview-page': { files: ['OverviewPage.vue'], composables: ['useLocale.ts'] },
+    'color-picker': {
+        files: ['ColorPicker.vue', 'ColorPickerPanel.vue', 'ColorPickerSwatch.vue', 'ColorPickerInput.vue', 'ColorPickerHistory.vue', 'color-picker-variants.ts', 'types.ts'],
+        composables: ['useLocale.ts', 'useColorHistory.ts'],
+    },
+    'date-picker': {
+        files: [
+            'DatePicker.vue',
+            'DatePickerPanel.vue',
+            'DatePickerRange.vue',
+            'DatePickerRangePanel.vue',
+            'TimePicker.vue',
+            'DateTimePicker.vue',
+            'DateTimePickerPanel.vue',
+            'WeekPicker.vue',
+            'WeekPickerPanel.vue',
+            'MonthPicker.vue',
+            'MonthPickerPanel.vue',
+            'YearPicker.vue',
+            'YearPickerPanel.vue',
+            'date-picker-variants.ts',
+            'types.ts',
+        ],
+        composables: ['useLocale.ts'],
+    },
 };
 
 const FILE_TO_COMPONENT: Record<string, string> = {};
@@ -120,9 +147,9 @@ function readComponentSource(filePath: string): string {
     return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
 }
 
-function rewriteImports(code: string, _componentName: string): string {
-    code = code.replace(/['"]\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
-    code = code.replace(/['"]\.\.\/\.\.\/lib\/utils['"]/g, "'@/lib/utils'");
+function rewriteImports(code: string, componentName: string): string {
+    code = code.replace(/['"]\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
+    code = code.replace(/['"]\.\.\/\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
     code = code.replace(/['"]\.\.\/\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
     code = code.replace(/['"]\.\.\/locales\/([^'"]+)['"]/g, "'@/locales/$1'");
@@ -132,50 +159,19 @@ function rewriteImports(code: string, _componentName: string): string {
         (m, comp, rest) => (COMPONENT_FILES[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
     );
 
-    const allFiles = Object.keys(FILE_TO_COMPONENT);
+    // Rewrite cross-component imports: ../{component}/{file} → @/components/ui/{component}/{file}
+    // Extract the component name directly from the path to avoid filename collision issues.
+    code = code.replace(
+        /(['"])\.\.\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
+        (m, quote, comp, rest) => (COMPONENT_FILES[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
+    );
 
-    for (const file of allFiles) {
-        const targetComponent = FILE_TO_COMPONENT[file];
-        const baseName = file.replace(/\.(vue|ts)$/, '');
-
-        // Match ./baseName (same-directory sibling imports)
-        const relativeImportWithExt = new RegExp(
-            `(['"])\\.\\/${baseName}\\.vue(['"])`,
-            'g'
-        );
-        code = code.replace(
-            relativeImportWithExt,
-            `$1@/components/ui/${targetComponent}/${baseName}.vue$2`
-        );
-
-        const relativeImportWithoutExt = new RegExp(
-            `(['"])\\.\\/${baseName}(['"])`,
-            'g'
-        );
-        code = code.replace(
-            relativeImportWithoutExt,
-            `$1@/components/ui/${targetComponent}/${baseName}$2`
-        );
-
-        // Match ../component/baseName (cross-component imports)
-        const crossComponentWithExt = new RegExp(
-            `(['"])\\.\\.\\/[a-zA-Z0-9-]+\\/${baseName}\\.vue(['"])`,
-            'g'
-        );
-        code = code.replace(
-            crossComponentWithExt,
-            `$1@/components/ui/${targetComponent}/${baseName}.vue$2`
-        );
-
-        const crossComponentWithoutExt = new RegExp(
-            `(['"])\\.\\.\\/[a-zA-Z0-9-]+\\/${baseName}(['"])`,
-            'g'
-        );
-        code = code.replace(
-            crossComponentWithoutExt,
-            `$1@/components/ui/${targetComponent}/${baseName}$2`
-        );
-    }
+    // Rewrite same-directory imports: ./{file} → @/components/ui/{componentName}/{file}
+    // Use the current component name to avoid collisions between components sharing file names (e.g. types.ts).
+    code = code.replace(
+        /(['"])\.\/([^'"]+)\1/g,
+        `$1@/components/ui/${componentName}/$2$1`
+    );
 
     return code;
 }
@@ -186,6 +182,24 @@ function extractComposableDeps(code: string): string[] {
         /@\/composables\/([^'";\s]+)/g,
         /\.\.\/\.\.\/composables\/([^'";\s]+)/g,
         /\.\.\/composables\/([^'";\s]+)/g,
+    ];
+
+    for (const pattern of patterns) {
+        for (const match of code.matchAll(pattern)) {
+            const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
+            deps.add(fileName);
+        }
+    }
+
+    return Array.from(deps);
+}
+
+function extractLibDeps(code: string): string[] {
+    const deps = new Set<string>();
+    const patterns = [
+        /@\/lib\/([^'";\s]+)/g,
+        /\.\.\/\.\.\/lib\/([^'";\s]+)/g,
+        /\.\.\/lib\/([^'";\s]+)/g,
     ];
 
     for (const pattern of patterns) {
@@ -348,6 +362,7 @@ async function run() {
             const files: { path: string; content: string; type: string }[] = [];
             const composableDeps = new Set(fileMapping.composables ?? []);
             const localeDeps = new Set(fileMapping.locales ?? []);
+            const libDeps = new Set<string>();
 
             for (const fileName of fileMapping.files) {
                 const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
@@ -363,6 +378,7 @@ async function run() {
                 deps.forEach(d => allRegistryDeps.add(d));
                 extractComposableDeps(code).forEach(d => composableDeps.add(d));
                 extractLocaleDeps(code).forEach(d => localeDeps.add(d));
+                extractLibDeps(code).forEach(d => libDeps.add(d));
 
                 files.push({
                     path: `components/ui/${name}/${fileName}`,
@@ -386,6 +402,7 @@ async function run() {
                     code = rewriteImports(code, name);
                     extractComposableDeps(code).forEach(d => composableDeps.add(d));
                     extractLocaleDeps(code).forEach(d => localeDeps.add(d));
+                    extractLibDeps(code).forEach(d => libDeps.add(d));
 
                     files.push({
                         path: `composables/${composableName}`,
@@ -407,6 +424,24 @@ async function run() {
 
                 files.push({
                     path: `locales/${localeName}`,
+                    content: code,
+                    type: 'registry:ui'
+                });
+            }
+
+            for (const libName of libDeps) {
+                if (LIB_FILE_EXCLUDE.has(libName)) continue;
+
+                const libPath = path.join(UI_LIB_DIR, libName);
+
+                if (!fs.existsSync(libPath)) {
+                    throw new Error(`Lib file not found at ${libPath}`);
+                }
+
+                const code = rewriteImports(readComponentSource(libPath), name);
+
+                files.push({
+                    path: `lib/${libName}`,
                     content: code,
                     type: 'registry:ui'
                 });

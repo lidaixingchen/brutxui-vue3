@@ -107,35 +107,21 @@ export function createTheme() {
         if (initialized) return
         initialized = true
 
-        const savedThemeRaw = safeGetStorageItem('brutx-theme')
-        const savedTheme = (savedThemeRaw && VALID_THEMES.includes(savedThemeRaw as ThemeName)) ? savedThemeRaw as ThemeName : null
-        const savedModeRaw = safeGetStorageItem('brutx-color-mode')
-        const savedMode = (savedModeRaw && VALID_MODES.includes(savedModeRaw as ColorMode)) ? savedModeRaw as ColorMode : null
-
-        // 应用主题
-        if (savedTheme) {
-            const root = document.documentElement
-            if (savedTheme !== theme.value) {
-                root.classList.remove(getThemeClass(theme.value))
-            }
-            root.classList.add(getThemeClass(savedTheme))
-            theme.value = savedTheme
-            safeSetStorageItem('brutx-theme', savedTheme)
-        } else {
-            if (typeof document !== 'undefined') {
-                document.documentElement.classList.add(getThemeClass(theme.value))
-            }
-            safeSetStorageItem('brutx-theme', theme.value)
-        }
-
-        // 初始化系统暗色模式检测（必须在 applyColorMode 之前）
+        // 第一步：初始化系统暗色模式检测（必须在应用颜色模式之前，isSystemDark 需先就绪）
         if (typeof window !== 'undefined') {
             mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
             isSystemDark.value = mediaQuery.matches
             mediaQuery.addEventListener('change', onSystemDarkChange)
         }
 
-        // 应用颜色模式
+        // 第二步：应用保存的主题（复用 applyTheme，避免重复 DOM 操作与持久化逻辑）
+        const savedThemeRaw = safeGetStorageItem('brutx-theme')
+        const savedTheme = (savedThemeRaw && VALID_THEMES.includes(savedThemeRaw as ThemeName)) ? savedThemeRaw as ThemeName : null
+        applyTheme(savedTheme ?? theme.value)
+
+        // 第三步：应用保存的颜色模式（复用 applyColorMode，避免重复逻辑）
+        const savedModeRaw = safeGetStorageItem('brutx-color-mode')
+        const savedMode = (savedModeRaw && VALID_MODES.includes(savedModeRaw as ColorMode)) ? savedModeRaw as ColorMode : null
         if (savedMode) {
             applyColorMode(savedMode)
         } else if (isSystemDark.value) {

@@ -10488,6 +10488,337 @@
           "brutal-placeholder": "#6B7280"
         }
       }
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "Color Picker",
+      "description": "A highly customizable neo-brutalist Color Picker component built with Brutx design tokens for Vue 3.",
+      "dependencies": [
+        "reka-ui",
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "components/ui/color-picker/ColorPicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/ColorPickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/ColorPickerSwatch.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/ColorPickerInput.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/ColorPickerHistory.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/color-picker-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useColorHistory.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/color.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/default-presets.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      }
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "A highly customizable neo-brutalist Date Picker component built with Brutx design tokens for Vue 3.",
+      "dependencies": [
+        "v-calendar",
+        "@lucide/vue",
+        "reka-ui"
+      ],
+      "registryDependencies": [
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "components/ui/date-picker/DatePicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/DatePickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/DatePickerRange.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/DatePickerRangePanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/TimePicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/DateTimePicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/DateTimePickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/WeekPicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/WeekPickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/MonthPicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/MonthPickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/YearPicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/YearPickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/date-picker-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/date.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      }
     }
   ]
 }

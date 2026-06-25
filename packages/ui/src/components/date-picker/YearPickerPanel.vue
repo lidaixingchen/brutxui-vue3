@@ -1,0 +1,161 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { ChevronLeft, ChevronRight } from '@lucide/vue'
+import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
+import { datePickerPanelVariants, datePickerFooterVariants } from './date-picker-variants'
+
+interface YearPickerPanelProps {
+    modelValue?: Date | null
+    minDate?: Date
+    maxDate?: Date
+    clearable?: boolean
+    ariaLabel?: string
+}
+
+const props = withDefaults(defineProps<YearPickerPanelProps>(), {
+    modelValue: null,
+    minDate: undefined,
+    maxDate: undefined,
+    clearable: true,
+    ariaLabel: undefined,
+})
+
+const emit = defineEmits<{
+    'update:modelValue': [value: Date | null]
+    confirm: [value: Date | null]
+    clear: []
+}>()
+
+const { t } = useLocale()
+
+const currentYear = props.modelValue?.getFullYear() ?? new Date().getFullYear()
+const viewDecadeStart = ref<number>(Math.floor(currentYear / 10) * 10)
+
+watch(() => props.modelValue, (value) => {
+    if (value) {
+        viewDecadeStart.value = Math.floor(value.getFullYear() / 10) * 10
+    }
+})
+
+const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.yearPlaceholder'))
+const resolvedClearLabel = computed(() => t('datePicker.clear'))
+const resolvedConfirmLabel = computed(() => t('datePicker.confirm'))
+
+const panelClasses = computed(() => cn(datePickerPanelVariants()))
+
+const years = computed(() => {
+    const result: number[] = []
+    for (let i = 0; i < 12; i++) {
+        result.push(viewDecadeStart.value + i)
+    }
+    return result
+})
+
+const decadeRange = computed(() =>
+    t('datePicker.yearRange', { start: viewDecadeStart.value, end: viewDecadeStart.value + 11 })
+)
+
+function isYearActive(year: number): boolean {
+    if (!props.modelValue) return false
+    return props.modelValue.getFullYear() === year
+}
+
+function isYearDisabled(year: number): boolean {
+    const testDate = new Date(year, 11, 31)
+    if (props.minDate && testDate < props.minDate) return true
+    const startOfYear = new Date(year, 0, 1)
+    if (props.maxDate && startOfYear > props.maxDate) return true
+    return false
+}
+
+function handleYearSelect(year: number) {
+    if (isYearDisabled(year)) return
+    const date = new Date(year, 0, 1)
+    emit('update:modelValue', date)
+}
+
+function handlePrevDecade() {
+    viewDecadeStart.value -= 10
+}
+
+function handleNextDecade() {
+    viewDecadeStart.value += 10
+}
+
+function handleConfirm() {
+    emit('confirm', props.modelValue)
+}
+
+function handleClear() {
+    emit('clear')
+    emit('update:modelValue', null)
+}
+</script>
+
+<template>
+    <div :class="panelClasses" role="dialog" aria-modal="true" :aria-label="resolvedAriaLabel">
+        <div class="flex flex-col">
+            <div class="flex items-center justify-between p-2 border-b-3 border-brutal bg-brutal-bg">
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center w-7 h-7 border-3 border-brutal bg-brutal-bg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                    :aria-label="t('datePicker.previousDecade')"
+                    @click="handlePrevDecade"
+                >
+                    <ChevronLeft class="w-4 h-4 stroke-[3]" />
+                </button>
+                <span class="font-black text-sm tracking-tight uppercase text-brutal-fg">
+                    {{ decadeRange }}
+                </span>
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center w-7 h-7 border-3 border-brutal bg-brutal-bg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                    :aria-label="t('datePicker.nextDecade')"
+                    @click="handleNextDecade"
+                >
+                    <ChevronRight class="w-4 h-4 stroke-[3]" />
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-1 p-2 bg-brutal-bg" role="grid">
+                <button
+                    v-for="year in years"
+                    :key="`year-${year}`"
+                    type="button"
+                    role="gridcell"
+                    :aria-selected="isYearActive(year)"
+                    :disabled="isYearDisabled(year)"
+                    :class="cn(
+                        'h-10 w-full flex items-center justify-center text-xs font-bold tracking-tight cursor-pointer',
+                        'border-3 border-brutal/10 transition-all duration-100',
+                        'hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-black hover:shadow-brutal-sm hover:border-brutal',
+                        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+                        isYearActive(year) && 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm font-black',
+                        isYearDisabled(year) && 'opacity-40 cursor-not-allowed hover:bg-brutal-bg hover:text-brutal-fg hover:shadow-none hover:border-brutal/10 hover:font-bold'
+                    )"
+                    @click="handleYearSelect(year)"
+                >
+                    {{ year }}
+                </button>
+            </div>
+
+            <div v-if="clearable" :class="cn(datePickerFooterVariants())">
+                <button
+                    type="button"
+                    class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                    @click="handleClear"
+                >
+                    {{ resolvedClearLabel }}
+                </button>
+                <button
+                    type="button"
+                    class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                    @click="handleConfirm"
+                >
+                    {{ resolvedConfirmLabel }}
+                </button>
+            </div>
+        </div>
+    </div>
+</template>

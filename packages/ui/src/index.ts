@@ -183,6 +183,30 @@ export { default as SubmitButton } from './components/submit-button/SubmitButton
 
 export { default as Calendar } from './components/calendar/Calendar.vue'
 
+export { default as DatePicker } from './components/date-picker/DatePicker.vue'
+export { default as DatePickerPanel } from './components/date-picker/DatePickerPanel.vue'
+export { default as DatePickerRange } from './components/date-picker/DatePickerRange.vue'
+export { default as DatePickerRangePanel } from './components/date-picker/DatePickerRangePanel.vue'
+export { default as TimePicker } from './components/date-picker/TimePicker.vue'
+export { default as DateTimePicker } from './components/date-picker/DateTimePicker.vue'
+export { default as DateTimePickerPanel } from './components/date-picker/DateTimePickerPanel.vue'
+export { default as WeekPicker } from './components/date-picker/WeekPicker.vue'
+export { default as WeekPickerPanel } from './components/date-picker/WeekPickerPanel.vue'
+export { default as MonthPicker } from './components/date-picker/MonthPicker.vue'
+export { default as MonthPickerPanel } from './components/date-picker/MonthPickerPanel.vue'
+export { default as YearPicker } from './components/date-picker/YearPicker.vue'
+export { default as YearPickerPanel } from './components/date-picker/YearPickerPanel.vue'
+export { datePickerTriggerVariants, datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants, timePickerVariants } from './components/date-picker/date-picker-variants'
+export type { DatePickerProps, DatePickerEmits, DatePickerMode, DatePickerSize, DatePickerVariant, DatePickerShortcut, DatePickerRangeProps, DatePickerRangeEmits, DatePickerRangeShortcut, DateRange, DateTimePickerProps, DateTimePickerEmits, WeekPickerProps, WeekPickerEmits, MonthPickerProps, MonthPickerEmits, YearPickerProps, YearPickerEmits } from './components/date-picker/types'
+
+export { default as ColorPicker } from './components/color-picker/ColorPicker.vue'
+export { default as ColorPickerPanel } from './components/color-picker/ColorPickerPanel.vue'
+export { default as ColorPickerSwatch } from './components/color-picker/ColorPickerSwatch.vue'
+export { default as ColorPickerInput } from './components/color-picker/ColorPickerInput.vue'
+export { default as ColorPickerHistory } from './components/color-picker/ColorPickerHistory.vue'
+export { colorPickerTriggerVariants, colorPickerSwatchVariants, colorPickerPanelVariants, colorPickerInputVariants } from './components/color-picker/color-picker-variants'
+export type { ColorPickerProps, ColorPickerEmits, ColorPickerSize, ColorPickerFormat } from './components/color-picker/types'
+
 export { default as Toast } from './components/toast/Toast.vue'
 export { default as ToastContainer } from './components/toast/ToastContainer.vue'
 export { toastVariants } from './components/toast/toast-variants'
@@ -357,6 +381,10 @@ export type { StepperStep } from './components/stepper/Stepper.vue'
 export { stepperDotVariants, stepperConnectorVariants } from './components/stepper/stepper-variants'
 
 export * from './lib/utils'
+export * from './lib/color'
+export * from './lib/date'
+export { DEFAULT_COLOR_PRESETS } from './lib/default-presets'
+export type { ColorPreset } from './lib/default-presets'
 
 export type { VariantProps } from 'class-variance-authority'
 
@@ -364,8 +392,10 @@ export { BrutxUIPlugin } from './plugin'
 export type { BrutxUIPluginOptions } from './plugin'
 export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
+export { useColorHistory } from './composables/useColorHistory'
+export type { UseColorHistoryOptions, UseColorHistoryReturn } from './composables/useColorHistory'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'

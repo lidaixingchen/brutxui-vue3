@@ -96,6 +96,8 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'gallery-section': { name: 'gallery-section', dependencies: ['embla-carousel-vue', '@lucide/vue'] },
     'upload-card': { name: 'upload-card', dependencies: ['@lucide/vue'] },
     'overview-page': { name: 'overview-page', dependencies: ['@lucide/vue'] },
+    'color-picker': { name: 'color-picker', dependencies: ['reka-ui', '@lucide/vue'] },
+    'date-picker': { name: 'date-picker', dependencies: ['v-calendar', '@lucide/vue', 'reka-ui'] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);
