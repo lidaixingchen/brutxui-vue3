@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { Check, CheckCheck, AlertCircle, Loader2 } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { chatBubbleVariants, chatAvatarVariants } from './chat-bubble-variants';
+
+export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
 
 interface ChatMessage {
     id: string;
@@ -9,17 +12,24 @@ interface ChatMessage {
     variant?: 'sent' | 'received' | 'system';
     avatar?: string;
     name?: string;
-    timestamp?: string;
+    timestamp?: string | Date;
+    status?: MessageStatus;
 }
 
 interface ChatBubbleProps {
     message: ChatMessage;
     showAvatar?: boolean;
+    showStatus?: boolean;
+    showTimestamp?: boolean;
+    dateFormat?: (date: Date) => string;
     class?: string;
 }
 
 const props = withDefaults(defineProps<ChatBubbleProps>(), {
     showAvatar: true,
+    showStatus: true,
+    showTimestamp: true,
+    dateFormat: undefined,
     class: undefined,
 });
 
@@ -53,6 +63,37 @@ const initials = computed(() => {
     }
     return words.map(w => w[0]).join('').slice(0, 2).toUpperCase();
 });
+
+const formattedTimestamp = computed(() => {
+    if (!props.message.timestamp) return '';
+    if (typeof props.message.timestamp === 'string') return props.message.timestamp;
+    if (props.dateFormat) return props.dateFormat(props.message.timestamp);
+    return props.message.timestamp.toLocaleString();
+});
+
+const statusIcon = computed(() => {
+    if (!props.message.status) return null;
+    switch (props.message.status) {
+        case 'sending': return Loader2;
+        case 'sent': return Check;
+        case 'delivered': return CheckCheck;
+        case 'read': return CheckCheck;
+        case 'failed': return AlertCircle;
+        default: return null;
+    }
+});
+
+const statusClass = computed(() => {
+    if (!props.message.status) return '';
+    switch (props.message.status) {
+        case 'sending': return 'text-brutal-fg/50 animate-spin';
+        case 'sent': return 'text-brutal-fg/50';
+        case 'delivered': return 'text-brutal-fg/70';
+        case 'read': return 'text-brutal-primary';
+        case 'failed': return 'text-brutal-destructive';
+        default: return '';
+    }
+});
 </script>
 
 <template>
@@ -80,9 +121,18 @@ const initials = computed(() => {
             <div :class="bubbleClass">
                 <slot>{{ message.content }}</slot>
             </div>
-            <span v-if="message.timestamp" class="text-xs opacity-40 font-medium px-1">
-                {{ message.timestamp }}
-            </span>
+            <div v-if="showTimestamp || showStatus" class="flex items-center gap-1 px-1">
+                <span v-if="showTimestamp && formattedTimestamp" class="text-xs opacity-40 font-medium">
+                    {{ formattedTimestamp }}
+                </span>
+                <component
+                    :is="statusIcon"
+                    v-if="showStatus && isSent && statusIcon"
+                    :class="cn('w-3 h-3', statusClass)"
+                    :aria-label="message.status"
+                    role="img"
+                />
+            </div>
         </div>
     </div>
 </template>

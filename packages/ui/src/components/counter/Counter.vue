@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, type Component } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 import { counterVariants } from './counter-variants';
@@ -15,6 +15,10 @@ interface CounterProps {
     decimals?: number;
     prefix?: string;
     suffix?: string;
+    prefixComponent?: Component;
+    suffixComponent?: Component;
+    animatePrefix?: boolean;
+    animateSuffix?: boolean;
     separator?: string;
     easing?: 'linear' | 'ease-out' | 'ease-in-out';
     autoStart?: boolean;
@@ -28,6 +32,10 @@ const props = withDefaults(defineProps<CounterProps>(), {
     decimals: 0,
     prefix: '',
     suffix: '',
+    prefixComponent: undefined,
+    suffixComponent: undefined,
+    animatePrefix: true,
+    animateSuffix: true,
     separator: ',',
     easing: 'ease-out',
     autoStart: true,
@@ -153,6 +161,9 @@ const finalDisplayValue = computed(() =>
     `${props.prefix}${formatNumber(props.to)}${props.suffix}`
 );
 
+const hasCustomPrefix = computed(() => !!props.prefixComponent);
+const hasCustomSuffix = computed(() => !!props.suffixComponent);
+
 const scaleStyle = computed(() => {
     if (scaleFactor.value >= 1) return undefined;
     return {
@@ -171,12 +182,20 @@ const measureClasses = computed(() =>
 </script>
 
 <template>
-    <span class="relative inline-flex max-w-full min-w-0">
+    <span class="relative inline-flex max-w-full min-w-0 items-center">
         <span ref="measureRef" :class="measureClasses" aria-hidden="true">
             {{ finalDisplayValue }}
         </span>
         <span ref="rootRef" :class="classes" :style="scaleStyle" aria-live="polite" :aria-label="displayValue">
-            {{ displayValue }}
+            <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
+                <component :is="prefixComponent" />
+            </span>
+            <span v-else-if="prefix">{{ prefix }}</span>
+            {{ formatNumber(current) }}
+            <span v-if="animateSuffix && hasCustomSuffix" class="inline-flex">
+                <component :is="suffixComponent" />
+            </span>
+            <span v-else-if="suffix">{{ suffix }}</span>
         </span>
     </span>
 </template>

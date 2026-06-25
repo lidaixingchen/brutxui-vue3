@@ -226,6 +226,44 @@ export interface DataTableSectionLocale {
     noResults: string
 }
 
+export interface DataTableLocale {
+    label: string
+    filterPlaceholder: string
+    noData: string
+    exportCsv: string
+    exportJson: string
+    selectedRows: string
+    pageInfo: string
+    perPage: string
+    firstPage: string
+    previousPage: string
+    nextPage: string
+    lastPage: string
+    sortAscending: string
+    sortDescending: string
+    clearSort: string
+}
+
+export interface FormWizardLocale {
+    label: string
+    previousStep: string
+    nextStep: string
+    complete: string
+    stepOf: string
+    validationErrors: string
+}
+
+export interface ChatBubbleLocale {
+    chatLog: string
+    today: string
+    yesterday: string
+    sending: string
+    sent: string
+    delivered: string
+    read: string
+    failed: string
+}
+
 export interface SettingsPageLocale {
     defaultTitle: string
     saveText: string
@@ -377,6 +415,9 @@ export interface Locale {
     stepperSection: StepperSectionLocale
     cookieConsent: CookieConsentLocale
     dataTableSection: DataTableSectionLocale
+    dataTable: DataTableLocale
+    formWizard: FormWizardLocale
+    chatBubble: ChatBubbleLocale
     settingsPage: SettingsPageLocale
     uploadCard: UploadCardLocale
     overviewPage: OverviewPageLocale

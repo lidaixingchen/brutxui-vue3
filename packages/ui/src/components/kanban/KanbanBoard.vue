@@ -29,12 +29,14 @@ const props = defineProps<KanbanBoardProps>();
 const emit = defineEmits<{
     'update:modelValue': [columns: KanbanColumn[]];
     'card-move': [cardId: string, fromColumn: string, toColumn: string];
+    'card-click': [card: KanbanCard, columnId: string];
 }>();
 
 const { t } = useLocale();
 
 const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null);
 const dragOverColumn = ref<string | null>(null);
+const isDragging = ref(false);
 
 const columns = computed({
     get: () => props.modelValue,
@@ -43,11 +45,13 @@ const columns = computed({
 
 function onDragStart(cardId: string, fromColumn: string) {
     draggingCard.value = { cardId, fromColumn };
+    isDragging.value = true;
 }
 
 function onDragEnd() {
     draggingCard.value = null;
     dragOverColumn.value = null;
+    setTimeout(() => { isDragging.value = false }, 0);
 }
 
 function onDragOver(e: DragEvent, columnId: string) {
@@ -60,6 +64,18 @@ function onDragLeave(e: DragEvent, columnId: string) {
     if (el.contains(e.relatedTarget as Node)) return
     if (dragOverColumn.value === columnId) {
         dragOverColumn.value = null;
+    }
+}
+
+function onCardClick(card: KanbanCard, columnId: string) {
+    if (isDragging.value) return;
+    emit('card-click', card, columnId);
+}
+
+function onCardKeydown(e: KeyboardEvent, card: KanbanCard, columnId: string) {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onCardClick(card, columnId);
     }
 }
 
@@ -165,9 +181,14 @@ const cardClassesMap = computed(() => {
                     :key="card.id"
                     :data-card-id="card.id"
                     :class="cardClassesMap.get(card.id)"
+                    :tabindex="0"
+                    role="button"
+                    :aria-label="card.title"
                     draggable="true"
                     @dragstart="onDragStart(card.id, col.id)"
                     @dragend="onDragEnd"
+                    @click="onCardClick(card, col.id)"
+                    @keydown="onCardKeydown($event, card, col.id)"
                 >
                     <p class="font-bold text-sm text-brutal-fg">
 {{ card.title }}

@@ -1,5 +1,6 @@
 import type { InjectionKey, Ref, ComputedRef } from 'vue'
 import type { FormContext as VeeFormContext } from 'vee-validate'
+import type { FormWizardContext } from './FormWizard.vue'
 
 export interface FormFieldContext {
     name: ComputedRef<string>
@@ -18,3 +19,4 @@ export interface FormItemContext {
 export const formContextKey: InjectionKey<VeeFormContext> = Symbol('formContext')
 export const formFieldKey: InjectionKey<FormFieldContext> = Symbol('formField')
 export const formItemKey: InjectionKey<FormItemContext> = Symbol('formItem')
+export const formWizardContextKey: InjectionKey<FormWizardContext> = Symbol('formWizardContext')

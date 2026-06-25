@@ -37,6 +37,7 @@ export { skeletonVariants } from './components/skeleton/skeleton-variants'
 export { DialogRoot as Dialog, DialogTrigger, DialogPortal, DialogClose } from 'reka-ui'
 export { default as DialogOverlay } from './components/dialog/DialogOverlay.vue'
 export { default as DialogContent } from './components/dialog/DialogContent.vue'
+export { default as DialogEnhanced } from './components/dialog/DialogEnhanced.vue'
 export { default as DialogHeader } from './components/dialog/DialogHeader.vue'
 export { default as DialogFooter } from './components/dialog/DialogFooter.vue'
 export { default as DialogTitle } from './components/dialog/DialogTitle.vue'
@@ -171,8 +172,12 @@ export { default as FormLabel } from './components/form/FormLabel.vue'
 export { default as FormControl } from './components/form/FormControl.vue'
 export { default as FormDescription } from './components/form/FormDescription.vue'
 export { default as FormMessage } from './components/form/FormMessage.vue'
-export { formFieldKey, formItemKey, formContextKey } from './components/form/form-context'
+export { default as FormWizard } from './components/form/FormWizard.vue'
+export { default as FormConditional } from './components/form/FormConditional.vue'
+export { formFieldKey, formItemKey, formContextKey, formWizardContextKey } from './components/form/form-context'
 export type { FormFieldContext, FormItemContext } from './components/form/form-context'
+export type { FormStep, ValidationResult, FormWizardContext } from './components/form/FormWizard.vue'
+export { useFormWizard } from './components/form/FormWizard.vue'
 
 export { default as SubmitButton } from './components/submit-button/SubmitButton.vue'
 
@@ -182,7 +187,7 @@ export { default as Toast } from './components/toast/Toast.vue'
 export { default as ToastContainer } from './components/toast/ToastContainer.vue'
 export { toastVariants } from './components/toast/toast-variants'
 export { useToast, provideToast, createToast } from './composables/useToast'
-export type { ToastItem } from './composables/useToast'
+export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './composables/useToast'
 
 export { useTheme, provideTheme, createTheme } from './composables/useTheme'
 export type { ThemeName, ColorMode } from './composables/useTheme'
@@ -247,6 +252,10 @@ export { default as CookieConsent } from './components/cookie-consent/CookieCons
 
 export { default as DataTableSection } from './components/data-table-section/DataTableSection.vue'
 export type { ColumnDef } from './components/data-table-section/DataTableSection.vue'
+
+export { default as DataTable } from './components/data-table/DataTable.vue'
+export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, dataTableBodyVariants, dataTableRowVariants, dataTableCellVariants, dataTableFooterVariants, dataTableToolbarVariants, dataTablePaginationVariants, dataTableEmptyVariants, dataTableLoadingVariants } from './components/data-table/data-table-variants'
+export type { DataTableColumn, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
 
 export { default as SettingsPage } from './components/settings-page/SettingsPage.vue'
 export type { SettingsTab } from './components/settings-page/SettingsPage.vue'
@@ -317,6 +326,7 @@ export { default as TimelineContent } from './components/timeline/TimelineConten
 export { timelineDotVariants } from './components/timeline/timeline-variants'
 
 export { default as Carousel } from './components/carousel/Carousel.vue'
+export { default as CarouselEnhanced } from './components/carousel/CarouselEnhanced.vue'
 export { default as CarouselItem } from './components/carousel/CarouselItem.vue'
 export { carouselRootVariants, carouselButtonVariants } from './components/carousel/carousel-variants'
 
@@ -330,7 +340,9 @@ export type { KanbanCard, KanbanColumn } from './components/kanban/KanbanBoard.v
 export { kanbanColumnVariants, kanbanCardVariants } from './components/kanban/kanban-variants'
 
 export { default as ChatBubble } from './components/chat-bubble/ChatBubble.vue'
+export { default as ChatContainer } from './components/chat-bubble/ChatContainer.vue'
 export { chatBubbleVariants, chatAvatarVariants } from './components/chat-bubble/chat-bubble-variants'
+export type { MessageStatus } from './components/chat-bubble/ChatBubble.vue'
 
 export { default as Kbd } from './components/kbd/Kbd.vue'
 export { kbdVariants } from './components/kbd/kbd-variants'
@@ -351,7 +363,7 @@ export type { BrutxUIPluginOptions } from './plugin'
 export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'

@@ -13,6 +13,31 @@ export interface ToastItem {
     duration?: number
 }
 
+export interface ToastStackOptions {
+    maxVisible?: number
+    gap?: number
+    expandDirection?: 'down' | 'up'
+}
+
+export type ToastPosition =
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
+    | { x: number; y: number; anchor?: 'top-left' | 'bottom-left' | 'top-right' | 'bottom-right' }
+
+export interface PromiseToastOptions<T> {
+    loading: string
+    success: string | ((data: T) => string)
+    error: string | ((error: Error) => string)
+    duration?: number
+    loadingVariant?: NonNullable<ToastVariantProps['variant']>
+    successVariant?: NonNullable<ToastVariantProps['variant']>
+    errorVariant?: NonNullable<ToastVariantProps['variant']>
+}
+
 const TOAST_KEY: InjectionKey<ReturnType<typeof createToast>> = Symbol('brutx-toast')
 const DEFAULT_TOAST_DURATION = 5000
 
@@ -84,6 +109,44 @@ export function createToast() {
         return addToast({ variant: 'info', title, description })
     }
 
+    async function promise<T>(
+        promiseOrFn: Promise<T> | (() => Promise<T>),
+        options: PromiseToastOptions<T>
+    ): Promise<T> {
+        const promiseValue = typeof promiseOrFn === 'function' ? promiseOrFn() : promiseOrFn
+        const loadingId = addToast({
+            variant: options.loadingVariant ?? 'default',
+            title: options.loading,
+            duration: 0,
+        })
+
+        try {
+            const data = await promiseValue
+            removeToast(loadingId)
+            const successMessage = typeof options.success === 'function'
+                ? options.success(data)
+                : options.success
+            addToast({
+                variant: options.successVariant ?? 'success',
+                title: successMessage,
+                duration: options.duration,
+            })
+            return data
+        } catch (err) {
+            removeToast(loadingId)
+            const errorObj = err instanceof Error ? err : new Error(String(err))
+            const errorMessage = typeof options.error === 'function'
+                ? options.error(errorObj)
+                : options.error
+            addToast({
+                variant: options.errorVariant ?? 'error',
+                title: errorMessage,
+                duration: options.duration,
+            })
+            throw err
+        }
+    }
+
     return {
         toasts,
         addToast,
@@ -94,6 +157,7 @@ export function createToast() {
         error,
         warning,
         info,
+        promise,
     }
 }
 
