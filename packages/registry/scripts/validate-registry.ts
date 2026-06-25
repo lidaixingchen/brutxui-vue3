@@ -1,11 +1,88 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { COMPONENT_FILES } from './component-files';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const REGISTRY_DIR = path.resolve(__dirname, '../registry');
+const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
+
+function validateIndexConsistency(files: string[]): number {
+    const indexPath = path.join(REGISTRY_DIR, 'index.json');
+    if (!fs.existsSync(indexPath)) {
+        console.error('✗ index.json is missing. Run pnpm build first.');
+        return 1;
+    }
+
+    let indexNames: Set<string>;
+    try {
+        const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+        const items = Array.isArray(indexData?.items) ? indexData.items : [];
+        indexNames = new Set(items.map((item: any) => item?.name).filter((n: unknown) => typeof n === 'string'));
+    } catch (err: any) {
+        console.error('✗ Failed to parse index.json:', err.message || err);
+        return 1;
+    }
+
+    const fileNames = new Set(files.map((f) => path.basename(f, '.json')));
+    let consistencyErrors = 0;
+
+    for (const name of fileNames) {
+        if (!indexNames.has(name)) {
+            console.error(`✗ [${name}.json] Exists in registry directory but is missing from index.json. Register it in COMPONENT_FILES and run pnpm build.`);
+            consistencyErrors++;
+        }
+    }
+    for (const name of indexNames) {
+        if (!fileNames.has(name)) {
+            console.error(`✗ [${name}] Listed in index.json but no corresponding ${name}.json file exists in registry directory.`);
+            consistencyErrors++;
+        }
+    }
+
+    if (consistencyErrors === 0) {
+        console.log(`✓ index.json is consistent with registry directory (${fileNames.size} items).`);
+    }
+
+    return consistencyErrors;
+}
+
+function validateSourceConsistency(): number {
+    if (!fs.existsSync(UI_COMPONENTS_DIR)) {
+        console.error(`✗ UI components source directory not found: ${UI_COMPONENTS_DIR}`);
+        return 1;
+    }
+
+    const sourceDirs = new Set(
+        fs.readdirSync(UI_COMPONENTS_DIR, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => entry.name)
+    );
+    const registered = new Set(Object.keys(COMPONENT_FILES));
+
+    let sourceErrors = 0;
+
+    for (const name of sourceDirs) {
+        if (!registered.has(name)) {
+            console.error(`✗ [${name}] Source directory exists at packages/ui/src/components/${name}/ but is not registered in COMPONENT_FILES. Add an entry and run pnpm build.`);
+            sourceErrors++;
+        }
+    }
+    for (const name of registered) {
+        if (!sourceDirs.has(name)) {
+            console.error(`✗ [${name}] Registered in COMPONENT_FILES but no source directory exists at packages/ui/src/components/${name}/.`);
+            sourceErrors++;
+        }
+    }
+
+    if (sourceErrors === 0) {
+        console.log(`✓ Source directories are consistent with COMPONENT_FILES (${sourceDirs.size} components).`);
+    }
+
+    return sourceErrors;
+}
 
 function validate() {
     console.log('🔍 Validating registry files...');
@@ -101,6 +178,9 @@ function validate() {
             errorCount++;
         }
     }
+
+    errorCount += validateIndexConsistency(files);
+    errorCount += validateSourceConsistency();
 
     console.log(`\n📊 Total files across all registry items: ${totalFiles}`);
 

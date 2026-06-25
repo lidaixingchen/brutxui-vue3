@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { COMPONENTS } from 'brutx-shared-vue';
+import { COMPONENT_FILES } from './component-files';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,128 +14,6 @@ const UI_LIB_DIR = path.resolve(__dirname, '../../ui/src/lib');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
 const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
-
-interface ComponentFileMapping {
-    files: string[];
-    composables?: string[];
-    locales?: string[];
-}
-
-const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
-    alert: { files: ['Alert.vue', 'AlertDescription.vue', 'AlertTitle.vue', 'alert-variants.ts'] },
-    avatar: { files: ['Avatar.vue', 'AvatarFallback.vue', 'AvatarImage.vue', 'avatar-variants.ts'] },
-    badge: { files: ['Badge.vue', 'badge-variants.ts'] },
-    button: { files: ['Button.vue', 'button-variants.ts'] },
-    calendar: { files: ['Calendar.vue'] },
-    card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
-    checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
-    combobox: { files: ['Combobox.vue', 'ComboboxMulti.vue', 'combobox-types.ts'], composables: ['useLocale.ts'] },
-    command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
-    dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts'] },
-    'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },
-    input: { files: ['Input.vue', 'input-variants.ts'] },
-    label: { files: ['Label.vue', 'label-variants.ts'] },
-    pagination: { files: ['Pagination.vue', 'pagination-variants.ts'], composables: ['useLocale.ts'] },
-    popover: { files: ['PopoverContent.vue', 'popover-variants.ts'] },
-    'scroll-area': { files: ['ScrollArea.vue', 'ScrollBar.vue'] },
-    select: { files: ['SelectContent.vue', 'SelectItem.vue', 'SelectLabel.vue', 'SelectScrollDownButton.vue', 'SelectScrollUpButton.vue', 'SelectSeparator.vue', 'SelectTrigger.vue', 'select-variants.ts'] },
-    separator: { files: ['Separator.vue', 'separator-variants.ts'] },
-    skeleton: { files: ['Skeleton.vue', 'SkeletonAvatar.vue', 'SkeletonCard.vue', 'SkeletonTable.vue', 'SkeletonText.vue', 'skeleton-variants.ts'] },
-    spinner: { files: ['Spinner.vue', 'BarsSpinner.vue', 'BlockSpinner.vue', 'DotsSpinner.vue', 'spinner-variants.ts'], composables: ['useLocale.ts'] },
-    'submit-button': { files: ['SubmitButton.vue'], composables: ['useLocale.ts'] },
-    switch: { files: ['Switch.vue', 'switch-variants.ts'] },
-    table: { files: ['Table.vue', 'TableBody.vue', 'TableCaption.vue', 'TableCell.vue', 'TableFooter.vue', 'TableHead.vue', 'TableHeader.vue', 'TableRow.vue', 'table-variants.ts'] },
-    tabs: { files: ['TabsContent.vue', 'TabsList.vue', 'TabsTrigger.vue', 'tabs-variants.ts'] },
-    textarea: { files: ['Textarea.vue', 'textarea-variants.ts'], composables: ['useLocale.ts'] },
-    toast: { files: ['Toast.vue', 'ToastContainer.vue', 'toast-variants.ts'], composables: ['useToast.ts', 'useLocale.ts'] },
-    tooltip: { files: ['TooltipContent.vue', 'tooltip-variants.ts'] },
-    'saas-pricing': { files: ['SaaSPricing.vue'] },
-    'dashboard-stats': { files: ['DashboardStats.vue'], composables: ['useLocale.ts'] },
-    form: { files: ['Form.vue', 'FormControl.vue', 'FormDescription.vue', 'FormField.vue', 'FormItem.vue', 'FormLabel.vue', 'FormMessage.vue', 'form-context.ts'] },
-    'alert-dialog': { files: ['AlertDialogAction.vue', 'AlertDialogCancel.vue', 'AlertDialogContent.vue', 'AlertDialogDescription.vue', 'AlertDialogFooter.vue', 'AlertDialogHeader.vue', 'AlertDialogTitle.vue'] },
-    sheet: { files: ['SheetContent.vue', 'SheetDescription.vue', 'SheetFooter.vue', 'SheetHeader.vue', 'SheetTitle.vue', 'sheet-variants.ts'], composables: ['useLocale.ts'] },
-    'radio-group': { files: ['RadioGroup.vue', 'RadioGroupItem.vue', 'radio-group-variants.ts'] },
-    slider: { files: ['Slider.vue', 'slider-variants.ts'] },
-    progress: { files: ['Progress.vue', 'progress-variants.ts'] },
-    toggle: { files: ['Toggle.vue', 'toggle-variants.ts'] },
-    'toggle-group': { files: ['ToggleGroup.vue', 'ToggleGroupItem.vue', 'toggle-group-key.ts'] },
-    'brutalist-hero': { files: ['BrutalistHero.vue'], composables: ['useLocale.ts'] },
-    'pricing-section': { files: ['PricingSection.vue'] },
-    'auth-card': { files: ['AuthCard.vue'], composables: ['useLocale.ts'] },
-    'dashboard-shell': { files: ['DashboardShell.vue'] },
-    'empty-state': { files: ['EmptyState.vue'], composables: ['useLocale.ts'] },
-    'waitlist-page': { files: ['WaitlistPage.vue'], composables: ['useLocale.ts'] },
-    accordion: { files: ['Accordion.vue', 'AccordionItem.vue', 'AccordionTrigger.vue', 'AccordionContent.vue', 'accordion-key.ts', 'accordion-variants.ts'] },
-    'tags-input': { files: ['TagsInput.vue', 'TagsInputInput.vue', 'TagsInputItem.vue', 'TagsInputItemText.vue', 'TagsInputItemDelete.vue', 'tags-input-variants.ts'] },
-    'number-input': { files: ['NumberInput.vue', 'number-input-variants.ts'], composables: ['useLocale.ts'] },
-    'copy-to-clipboard': { files: ['CopyToClipboard.vue', 'copy-to-clipboard-variants.ts'], composables: ['useClipboard.ts', 'useLocale.ts'] },
-    breadcrumb: { files: ['Breadcrumb.vue', 'BreadcrumbList.vue', 'BreadcrumbItem.vue', 'BreadcrumbLink.vue', 'BreadcrumbPage.vue', 'BreadcrumbSeparator.vue', 'BreadcrumbEllipsis.vue', 'breadcrumb-variants.ts'], composables: ['useLocale.ts'] },
-    marquee: { files: ['Marquee.vue', 'marquee-variants.ts'] },
-    'before-after': { files: ['BeforeAfter.vue', 'before-after-variants.ts'], composables: ['useLocale.ts'] },
-    'code-block': { files: ['CodeBlock.vue', 'prism-languages.ts', 'brutx-prism.css', 'code-block-variants.ts'], composables: ['useLocale.ts'] },
-    timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-key.ts', 'timeline-variants.ts'] },
-    carousel: { files: ['Carousel.vue', 'CarouselItem.vue', 'carousel-variants.ts'], composables: ['useLocale.ts'] },
-    'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts'], composables: ['useLocale.ts'] },
-    kanban: { files: ['KanbanBoard.vue', 'kanban-variants.ts'], composables: ['useLocale.ts'] },
-    'chat-bubble': { files: ['ChatBubble.vue', 'chat-bubble-variants.ts'] },
-    kbd: { files: ['Kbd.vue', 'kbd-variants.ts'] },
-    counter: { files: ['Counter.vue', 'counter-variants.ts'] },
-    stepper: { files: ['Stepper.vue', 'stepper-variants.ts'], composables: ['useLocale.ts'] },
-    'card-3d': { files: ['Card3D.vue', 'card-3d-variants.ts'], composables: ['useReducedMotion.ts', 'useLocale.ts'] },
-    'glitch-text': { files: ['GlitchText.vue', 'glitch-text-variants.ts'], composables: ['useReducedMotion.ts'] },
-    'scratch-card': { files: ['ScratchCard.vue', 'scratch-card-variants.ts'], composables: ['useReducedMotion.ts', 'useCanvasInteraction.ts', 'useLocale.ts'] },
-    'sketchy-chart': { files: ['SketchyChart.vue', 'sketchy-chart-variants.ts'] },
-    'hardcore-input': { files: ['HardcoreInput.vue', 'hardcore-input-variants.ts'], composables: ['useAudioEngine.ts', 'useLocale.ts'] },
-    'testimonial-card': { files: ['TestimonialCard.vue'], composables: ['useLocale.ts'] },
-    'blog-card': { files: ['BlogCard.vue'], composables: ['useLocale.ts'] },
-    'file-card': { files: ['FileCard.vue'] },
-    'quick-actions': { files: ['QuickActions.vue'], composables: ['useLocale.ts'] },
-    'faq-section': { files: ['FaqSection.vue'] },
-    'tabs-nav': { files: ['TabsNav.vue'] },
-    'header-section': { files: ['HeaderSection.vue'] },
-    'footer-section': { files: ['FooterSection.vue'], composables: ['useLocale.ts'] },
-    'not-found-page': { files: ['NotFoundPage.vue'] },
-    'loading-page': { files: ['LoadingPage.vue'], composables: ['useLocale.ts'] },
-    'error-card': { files: ['ErrorCard.vue'] },
-    'success-card': { files: ['SuccessCard.vue'], composables: ['useLocale.ts'] },
-    'search-widget': { files: ['SearchWidget.vue'] },
-    'feedback-form': { files: ['FeedbackForm.vue'], composables: ['useLocale.ts'] },
-    'stepper-section': { files: ['StepperSection.vue'], composables: ['useLocale.ts'] },
-    'cookie-consent': { files: ['CookieConsent.vue'], composables: ['useLocale.ts'] },
-    'data-table-section': { files: ['DataTableSection.vue'], composables: ['useLocale.ts'] },
-    'settings-page': { files: ['SettingsPage.vue'], composables: ['useLocale.ts'] },
-    'blog-list-page': { files: ['BlogListPage.vue'], composables: ['useLocale.ts'] },
-    'activity-log-page': { files: ['ActivityLogPage.vue'] },
-    'profile-page': { files: ['ProfilePage.vue'] },
-    'chart-section': { files: ['ChartSection.vue'] },
-    'gallery-section': { files: ['GallerySection.vue'] },
-    'upload-card': { files: ['UploadCard.vue'], composables: ['useLocale.ts'] },
-    'overview-page': { files: ['OverviewPage.vue'], composables: ['useLocale.ts'] },
-    'color-picker': {
-        files: ['ColorPicker.vue', 'ColorPickerPanel.vue', 'ColorPickerSwatch.vue', 'ColorPickerInput.vue', 'ColorPickerHistory.vue', 'color-picker-variants.ts', 'types.ts'],
-        composables: ['useLocale.ts', 'useColorHistory.ts'],
-    },
-    'date-picker': {
-        files: [
-            'DatePicker.vue',
-            'DatePickerPanel.vue',
-            'DatePickerRange.vue',
-            'DatePickerRangePanel.vue',
-            'TimePicker.vue',
-            'DateTimePicker.vue',
-            'DateTimePickerPanel.vue',
-            'WeekPicker.vue',
-            'WeekPickerPanel.vue',
-            'MonthPicker.vue',
-            'MonthPickerPanel.vue',
-            'YearPicker.vue',
-            'YearPickerPanel.vue',
-            'date-picker-variants.ts',
-            'types.ts',
-        ],
-        composables: ['useLocale.ts'],
-    },
-};
 
 const FILE_TO_COMPONENT: Record<string, string> = {};
 for (const [compName, mapping] of Object.entries(COMPONENT_FILES)) {

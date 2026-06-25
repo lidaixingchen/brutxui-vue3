@@ -128,14 +128,23 @@ pnpm build
 
 1. **实现组件**，放在 `packages/ui/src/components/` 下。
 2. **定义组件元数据**，在 `packages/cli/src/lib/constants.ts` 的 `COMPONENTS` 对象中添加，并声明所需的 npm `dependencies`。
-3. **编译注册表 JSON**：
-   运行以下脚本，自动解析、解析依赖并将 Vue 代码打包为注册表 JSON 文件：
+3. **登记到注册表映射表**，在 `packages/registry/scripts/component-files.ts` 的 `COMPONENT_FILES` 中追加条目，声明组件的 `files`（及 `composables`、`locales` 等依赖）。未登记的组件不会生成 JSON、不会进入 `index.json`，CLI 也无法安装。
+4. **编译注册表 JSON**：
+   运行以下脚本，从源码读取、重写导入路径、提取依赖并生成注册表 JSON：
 
    ```bash
    pnpm --filter brutx-registry-vue build
    ```
 
-4. 提交 `packages/registry/registry/` 下生成的 JSON 文件。
+5. **校验注册表**：
+
+   ```bash
+   pnpm --filter brutx-registry-vue validate
+   ```
+
+   会执行三道一致性校验（源码目录 ↔ `COMPONENT_FILES`、`{name}.json` ↔ `index.json`、字段完整性）。
+
+6. 提交 `packages/registry/registry/` 下生成的 JSON 文件。
 
 ---
 
