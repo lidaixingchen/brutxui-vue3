@@ -7,7 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.3] - 2026-06-06
+## [0.7.0] - 2026-06-26
+
+### Added
+
+- **暖色主题系统**: 新增 Warm 主题配色方案
+- **ColorModeSwitcher 组件**: 支持亮色/暗色/系统模式切换
+- **CSS 动画预设**: 内置常用动画效果（淡入、滑入、缩放等）
+- **DataTable 组件**: 功能丰富的数据表格，支持排序、筛选、分页
+- **主题实验室 (Theme Playground)**: 交互式主题预览和调试工具
+- **CLI doctor 命令**: 检查项目配置和依赖问题
+- **CLI diff 命令**: 对比组件版本差异
+
+### Changed
+
+- 引入语义化前景色变量，优化 Mono 主题及暗色模式下的可读性
+- 合并定价组件实现，统一代码结构
+- 全面优化 ESLint 配置，消除项目警告
+
+### Fixed
+
+- 修复 40+ 组件的控制/非受控模式冲突
+- 修复 Input 组件的 CJK 输入法组合事件处理
+- 修复 CodeBlock 快速切换语言时的异步竞态问题
+- 修复 ScratchCard 揭示后的画布交互阻塞
+- 修复 CLI 安装包时的 Windows shell 兼容性
+- 修复 Registry 安装流程问题
+
+### Testing
+
+- 添加视觉回归测试覆盖
+- 添加 CLI 注册表安装修复回归测试
+- 修复和优化多个组件的单元测试
+
+## [0.6.3] - 2026-06-06 (Previous Release)
 
 ### Fixed
 
