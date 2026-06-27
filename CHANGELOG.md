@@ -91,54 +91,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 添加 CLI 注册表安装修复回归测试
 - 修复和优化多个组件的单元测试
 
-## [0.6.3] - 2026-06-06 (Previous Release)
+## [0.6.3] - 2026-06-06
 
 ### Fixed
 
-- Comprehensive bug fixes across 40+ components:
-  - Fixed controlled/uncontrolled mode conflicts in Checkbox, Switch, Toggle
-  - Added IME composition event handling in Input for CJK input methods
-  - Fixed async race condition in CodeBlock when rapidly switching languages
-  - Fixed canvas interaction blocking after reveal in ScratchCard
-  - Fixed canvas progress reset on resize in useCanvasInteraction composable
-  - Added missing event binding for AuthCard register button
-  - Removed duplicate title/description rendering in FeedbackForm
-  - Replaced fragile DOM traversal with component event in OverviewPage
-  - Fixed Ref object boolean check in CopyToClipboard (`isSupported.value`)
-  - Fixed drag-and-drop visual flickering in KanbanBoard
-  - Added accessibility improvements: aria-label for Combobox/Slider, aria-busy for Skeleton/SubmitButton, keyboard navigation for TreeView
-  - Exposed missing props: disabled for SelectTrigger, name/disabled/orientation for RadioGroup, ariaLabel for Slider
-  - Added v-model visibility control and transition animation to CookieConsent
-  - Converted Calendar styles to scoped with :deep() penetration
-  - Added Pagination currentPage boundary validation
-  - Fixed ChatBubble initials calculation for multi-word names
-  - Fixed DataTableSection v-for key using row index
-  - Added FooterSection href support (renders as <a> when href exists)
-  - Added TabsNav modelValue prop for controlled mode
-  - Fixed StepperSection slot conflict with built-in components
-  - Added CardTitle dynamic tag support via `as` prop
-  - Removed dead code `stepperItemVariants` from stepper
-  - Added Marquee inert attribute to duplicate slot
-  - Added BeforeAfter range input aria-label with i18n support
-  - Fixed QuickActions v-for key using action label
-  - Added Carousel scrollSnaps empty array guard
-  - Removed GlitchText unnecessary onUpdated lifecycle hook
-  - Added pointer capture to useCanvasInteraction for drag-out-of-bounds
-  - Fixed SettingsPage TabsRoot v-model/default-value conflict
-  - Fixed DashboardStats neutral trend icon and color
-  - Fixed Form initialValues reactivity with watch
-  - Removed Form double type assertion
-  - Removed FormControl redundant optional chaining
-  - Fixed Slider to render multiple thumbs matching modelValue length
-  - Fixed HardcoreInput FormField value sync and duplicate dispose
-  - Added Button asChild disabled pointer-events-none
-  - Added dynamic Loader2 icon size based on Button size prop
-  - Changed Badge root element from div to span
-  - Added Checkbox indeterminate state support in emit type
-  - Removed Input placeholder auto-fallback to i18n text
+- 修复 40+ 个组件的综合问题：
+  - 修复 Checkbox、Switch、Toggle 受控/非受控模式冲突
+  - Input 新增 IME 组合事件处理，支持中日韩输入法
+  - 修复 CodeBlock 快速切换语言时的异步竞态条件
+  - 修复 ScratchCard 揭示后 Canvas 交互阻塞
+  - 修复 useCanvasInteraction 窗口调整大小时进度重置
+  - 修复 AuthCard 注册按钮缺失事件绑定
+  - 移除 FeedbackForm 重复的标题/描述渲染
+  - OverviewPage 用组件事件替代脆弱的 DOM 遍历
+  - 修复 CopyToClipboard Ref 对象布尔检查（`isSupported.value`）
+  - 修复 KanbanBoard 拖拽视觉闪烁
+  - 无障碍改进：Combobox/Slider 添加 aria-label，Skeleton/SubmitButton 添加 aria-busy，TreeView 键盘导航
+  - 暴露缺失属性：SelectTrigger 的 disabled，RadioGroup 的 name/disabled/orientation，Slider 的 ariaLabel
+  - CookieConsent 新增 v-model 可见性控制和过渡动画
+  - Calendar 样式转为 scoped 并使用 :deep() 穿透
+  - Pagination 新增 currentPage 边界验证
+  - 修复 ChatBubble 多单词姓名首字母计算
+  - 修复 DataTableSection v-for 使用行索引作为 key
+  - FooterSection 新增 href 支持（存在时渲染为 `<a>`）
+  - TabsNav 新增 modelValue 属性支持受控模式
+  - 修复 StepperSection 与内置组件的插槽冲突
+  - CardTitle 新增 `as` 属性支持动态标签
+  - 移除 stepper 死代码 `stepperItemVariants`
+  - Marquee 重复插槽添加 inert 属性
+  - BeforeAfter 范围输入添加 aria-label 并支持国际化
+  - 修复 QuickActions v-for 使用 action label 作为 key
+  - Carousel 添加 scrollSnaps 空数组防护
+  - 移除 GlitchText 不必要的 onUpdated 生命周期钩子
+  - useCanvasInteraction 添加指针捕获防止拖拽越界
+  - 修复 SettingsPage TabsRoot v-model/default-value 冲突
+  - 修复 DashboardStats 中性趋势图标和颜色
+  - 修复 Form initialValues 响应性（使用 watch）
+  - 移除 Form 双重类型断言
+  - 移除 FormControl 冗余可选链
+  - 修复 Slider 根据 modelValue 长度渲染多个滑块
+  - 修复 HardcoreInput FormField 值同步和重复 dispose
+  - Button asChild 禁用时添加 pointer-events-none
+  - Button Loader2 图标大小根据 size 属性动态调整
+  - Badge 根元素从 div 改为 span
+  - Checkbox emit 类型添加 indeterminate 状态支持
+  - 移除 Input placeholder 自动回退到国际化文本
 
 ## [0.5.7] - 2026-06-03
 
-### Previous release
+### 早期版本
 
-See git history for changes prior to this version.
+详见 git 历史记录。
