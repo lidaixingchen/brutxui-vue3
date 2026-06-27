@@ -108,3 +108,4 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 - 新增组件时，在 `packages/registry/scripts/component-files.ts` 的 `COMPONENT_FILES` 中追加条目（声明 `files`、`composables` 等），然后运行 `pnpm --filter brutx-registry-vue build` 生成 JSON。
 - `pnpm --filter brutx-registry-vue validate` 会执行三道一致性校验：① 源码目录 ↔ `COMPONENT_FILES`（防止新增组件忘登记）；② `{name}.json` ↔ `index.json`（防止手写孤儿 JSON）；③ 字段完整性。
+- ⚠️ **CI 会强制检查**：`validate` 脚本会扫描 `packages/ui/src/components/` 下所有目录，与 `COMPONENT_FILES` 比对。漏登记会导致 CI 失败，必须先登记再提交。
