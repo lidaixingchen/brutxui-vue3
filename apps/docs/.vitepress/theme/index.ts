@@ -95,6 +95,12 @@ import ChartSectionDemo from './components/demos/ChartSectionDemo.vue'
 import GallerySectionDemo from './components/demos/GallerySectionDemo.vue'
 import UploadCardDemo from './components/demos/UploadCardDemo.vue'
 import OverviewPageDemo from './components/demos/OverviewPageDemo.vue'
+import VirtualScrollDemo from './components/demos/VirtualScrollDemo.vue'
+import GlitchButtonDemo from './components/demos/GlitchButtonDemo.vue'
+import DatePickerDemo from './components/demos/DatePickerDemo.vue'
+import ColorPickerDemo from './components/demos/ColorPickerDemo.vue'
+import ColorModeSwitcherDemo from './components/demos/ColorModeSwitcherDemo.vue'
+import DataTableDemo from './components/demos/DataTableDemo.vue'
 import './style.css'
 
 export default {
@@ -195,5 +201,11 @@ export default {
         app.component('GallerySectionDemo', GallerySectionDemo)
         app.component('UploadCardDemo', UploadCardDemo)
         app.component('OverviewPageDemo', OverviewPageDemo)
+        app.component('VirtualScrollDemo', VirtualScrollDemo)
+        app.component('GlitchButtonDemo', GlitchButtonDemo)
+        app.component('DatePickerDemo', DatePickerDemo)
+        app.component('ColorPickerDemo', ColorPickerDemo)
+        app.component('ColorModeSwitcherDemo', ColorModeSwitcherDemo)
+        app.component('DataTableDemo', DataTableDemo)
     },
 } satisfies Theme

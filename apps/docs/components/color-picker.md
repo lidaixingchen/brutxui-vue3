@@ -9,6 +9,10 @@ description: 新粗野主义风格的颜色选择器组件，支持 HEX/RGB/HSL 
 
 ## 预览
 
+<ComponentPreview>
+  <ColorPickerDemo />
+</ComponentPreview>
+
 颜色选择器提供饱和度/亮度选择区域、色相滑块、透明度滑块、HEX 输入框、预设颜色和历史记录。
 
 ## 安装

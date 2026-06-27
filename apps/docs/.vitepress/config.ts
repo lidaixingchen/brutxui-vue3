@@ -147,6 +147,7 @@ export default defineConfig({
                     { text: 'ChatBubble 聊天气泡', link: '/components/chat-bubble' },
                     { text: 'TreeView 树形目录', link: '/components/tree-view' },
                     { text: 'Dashboard Stats 仪表盘统计', link: '/components/dashboard-stats' },
+                    { text: 'DataTable 数据表格', link: '/components/data-table' },
                 ],
             },
             {
@@ -187,6 +188,7 @@ export default defineConfig({
                     { text: 'ScratchCard 刮刮卡', link: '/components/scratch-card' },
                     { text: 'SaaS Pricing 定价', link: '/components/saas-pricing' },
                     { text: 'KanbanBoard 看板', link: '/components/kanban-board' },
+                    { text: 'ColorModeSwitcher 颜色模式切换', link: '/components/color-mode-switcher' },
                 ],
             },
             {
