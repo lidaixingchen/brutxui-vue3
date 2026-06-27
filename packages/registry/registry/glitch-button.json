@@ -1,0 +1,112 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "glitch-button",
+  "type": "registry:ui",
+  "title": "Glitch Button",
+  "description": "A highly customizable neo-brutalist Glitch Button component built with Brutx design tokens for Vue 3.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/glitch-button/GlitchButton.vue",
+      "content": "<script setup lang=\"ts\">\nimport { ref, computed, watch, onMounted, onUnmounted } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { useReducedMotion } from '@/composables/useReducedMotion'\nimport { Loader2 } from '@lucide/vue'\nimport { Primitive } from 'reka-ui'\nimport { glitchButtonVariants } from '@/components/ui/glitch-button/glitch-button-variants'\n\ntype GlitchButtonVariantProps = VariantProps<typeof glitchButtonVariants>\n\ninterface GlitchButtonProps {\n    variant?: NonNullable<GlitchButtonVariantProps['variant']>\n    size?: NonNullable<GlitchButtonVariantProps['size']>\n    speed?: NonNullable<GlitchButtonVariantProps['speed']>\n    trigger?: 'hover' | 'click' | 'autoplay' | 'none'\n    interval?: number\n    asChild?: boolean\n    loading?: boolean\n    disabled?: boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<GlitchButtonProps>(), {\n    variant: 'default',\n    size: 'default',\n    speed: 'medium',\n    trigger: 'hover',\n    interval: 3000,\n    asChild: false,\n    loading: false,\n    disabled: false,\n    class: undefined,\n})\n\nconst isActive = ref(false)\nconst isDisabled = computed(() => props.disabled || props.loading)\nconst prefersReducedMotion = useReducedMotion()\n\nconst AUTOPLAY_ACTIVE_DURATION_MS = 1000\n\nlet autoplayTimer: ReturnType<typeof setInterval> | null = null\nlet autoplayStopTimer: ReturnType<typeof setTimeout> | null = null\n\nconst startAutoplay = () => {\n    stopAutoplay()\n    const interval = Math.max(Number(props.interval) || 3000, 100)\n    autoplayTimer = setInterval(() => {\n        if (prefersReducedMotion.value) return\n        isActive.value = true\n        autoplayStopTimer = setTimeout(() => {\n            isActive.value = false\n        }, AUTOPLAY_ACTIVE_DURATION_MS)\n    }, interval)\n}\n\nconst stopAutoplay = () => {\n    if (autoplayTimer) {\n        clearInterval(autoplayTimer)\n        autoplayTimer = null\n    }\n    if (autoplayStopTimer) {\n        clearTimeout(autoplayStopTimer)\n        autoplayStopTimer = null\n    }\n}\n\nonMounted(() => {\n    if (props.trigger === 'autoplay') {\n        startAutoplay()\n    }\n})\n\nonUnmounted(() => {\n    stopAutoplay()\n})\n\nwatch(() => props.trigger, (newTrigger, oldTrigger) => {\n    if (oldTrigger === 'autoplay') {\n        stopAutoplay()\n        isActive.value = false\n    }\n    if (newTrigger === 'autoplay') {\n        startAutoplay()\n    }\n})\n\nwatch(() => props.interval, () => {\n    if (props.trigger === 'autoplay') {\n        startAutoplay()\n    }\n})\n\nwatch(prefersReducedMotion, (prefersReduced) => {\n    if (prefersReduced) {\n        isActive.value = false\n        if (props.trigger === 'autoplay') {\n            stopAutoplay()\n        }\n    } else if (props.trigger === 'autoplay') {\n        startAutoplay()\n    }\n})\n\nconst onMouseEnter = () => {\n    if (isDisabled.value) return\n    if (props.trigger === 'hover') {\n        isActive.value = true\n    } else if (props.trigger === 'autoplay') {\n        isActive.value = false\n        stopAutoplay()\n    }\n}\n\nconst onMouseLeave = () => {\n    if (isDisabled.value) return\n    if (props.trigger === 'hover') {\n        isActive.value = false\n    } else if (props.trigger === 'autoplay') {\n        startAutoplay()\n    }\n}\n\nconst onClick = () => {\n    if (isDisabled.value) return\n    if (props.trigger === 'click') {\n        isActive.value = !isActive.value\n    }\n}\n\nconst play = () => {\n    isActive.value = true\n}\n\nconst stop = () => {\n    isActive.value = false\n}\n\ndefineExpose({\n    play,\n    stop,\n})\n\nconst LOADER_SIZE_MAP: Record<string, string> = {\n    sm: 'h-3 w-3',\n    default: 'h-4 w-4',\n    lg: 'h-5 w-5',\n    xl: 'h-6 w-6',\n    icon: 'h-4 w-4',\n} as const\n\nconst loaderSize = computed(() => LOADER_SIZE_MAP[props.size] ?? LOADER_SIZE_MAP.default)\n\nconst classes = computed(() =>\n    cn(\n        glitchButtonVariants({\n            variant: props.variant,\n            size: props.size,\n            speed: props.speed,\n        }),\n        isActive.value && !prefersReducedMotion.value ? 'is-glitching' : '',\n        props.asChild && isDisabled.value && 'pointer-events-none',\n        props.class,\n    )\n)\n</script>\n\n<template>\n    <Primitive\n        :as=\"asChild ? undefined : 'button'\"\n        :as-child=\"asChild\"\n        :class=\"classes\"\n        :disabled=\"!asChild && isDisabled\"\n        :aria-disabled=\"asChild && isDisabled ? true : undefined\"\n        :aria-busy=\"loading || undefined\"\n        @mouseenter=\"onMouseEnter\"\n        @mouseleave=\"onMouseLeave\"\n        @click=\"onClick\"\n    >\n        <Loader2 v-if=\"loading\" :class=\"cn(loaderSize, 'animate-spin')\" />\n        <slot />\n    </Primitive>\n</template>\n\n<style scoped>\n.glitch-button::before,\n.glitch-button::after {\n    display: none;\n    content: attr(data-text);\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background: transparent;\n    clip-path: inset(0 0 0 0);\n    pointer-events: none;\n}\n\n.glitch-button.is-glitching::before,\n.glitch-button.is-glitching::after {\n    display: block;\n}\n\n.glitch-button.is-glitching::before {\n    left: 2px;\n    text-shadow: -2px 0 var(--brutal-destructive, #EF476F);\n    animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;\n}\n\n.glitch-button.is-glitching::after {\n    left: -2px;\n    text-shadow: -2px 0 var(--brutal-info, #4A90D9);\n    animation: glitch-anim-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;\n}\n\n.glitch-button.is-glitching {\n    animation: glitch-skew var(--glitch-duration, 300ms) infinite linear alternate-reverse;\n}\n\n@keyframes glitch-skew {\n    0% {\n        transform: skew(-2deg);\n    }\n    20% {\n        transform: skew(3deg);\n    }\n    40% {\n        transform: skew(-1deg);\n    }\n    60% {\n        transform: skew(2deg);\n    }\n    80% {\n        transform: skew(-3deg);\n    }\n    100% {\n        transform: skew(1deg);\n    }\n}\n\n@keyframes glitch-anim-1 {\n    0% {\n        clip-path: inset(20% 0 70% 0);\n        transform: skew(-5deg);\n    }\n    20% {\n        clip-path: inset(60% 0 10% 0);\n        transform: skew(5deg);\n    }\n    40% {\n        clip-path: inset(40% 0 50% 0);\n        transform: skew(-2deg);\n    }\n    60% {\n        clip-path: inset(80% 0 5% 0);\n        transform: skew(3deg);\n    }\n    80% {\n        clip-path: inset(10% 0 85% 0);\n        transform: skew(-4deg);\n    }\n    100% {\n        clip-path: inset(50% 0 35% 0);\n        transform: skew(1deg);\n    }\n}\n\n@keyframes glitch-anim-2 {\n    0% {\n        clip-path: inset(10% 0 85% 0);\n        transform: skew(4deg);\n    }\n    25% {\n        clip-path: inset(40% 0 45% 0);\n        transform: skew(-3deg);\n    }\n    50% {\n        clip-path: inset(70% 0 15% 0);\n        transform: skew(5deg);\n    }\n    75% {\n        clip-path: inset(25% 0 60% 0);\n        transform: skew(-2deg);\n    }\n    100% {\n        clip-path: inset(90% 0 2% 0);\n        transform: skew(3deg);\n    }\n}\n\n@media (prefers-reduced-motion: reduce) {\n    .glitch-button::before,\n    .glitch-button::after,\n    .glitch-button.is-glitching::before,\n    .glitch-button.is-glitching::after {\n        display: none !important;\n        animation: none !important;\n    }\n\n    .glitch-button.is-glitching {\n        animation: none !important;\n        transform: none !important;\n    }\n}\n</style>",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/glitch-button/glitch-button-variants.ts",
+      "content": "import { cva } from 'class-variance-authority'\n\nexport const glitchButtonVariants = cva(\n    [\n        'glitch-button',\n        'relative inline-flex items-center justify-center gap-2',\n        'border-3 border-brutal',\n        'font-black tracking-wide',\n        'transition-all duration-150',\n        'focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2',\n        'disabled:opacity-50 disabled:pointer-events-none',\n        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n    ],\n    {\n        variants: {\n            variant: {\n                default: [\n                    'bg-brutal-bg text-brutal-fg',\n                    'shadow-brutal',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                primary: [\n                    'bg-brutal-primary text-brutal-primary-foreground',\n                    'shadow-brutal',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                secondary: [\n                    'bg-brutal-secondary text-brutal-secondary-foreground',\n                    'shadow-brutal',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                accent: [\n                    'bg-brutal-accent text-brutal-accent-foreground',\n                    'shadow-brutal',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                danger: [\n                    'bg-brutal-destructive text-brutal-destructive-foreground',\n                    'shadow-brutal',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                success: [\n                    'bg-brutal-success text-brutal-success-foreground',\n                    'shadow-brutal',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                outline: [\n                    'bg-transparent text-brutal-fg',\n                    'shadow-brutal',\n                    'hover:bg-brutal-fg hover:text-brutal-bg',\n                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n                ],\n                ghost: [\n                    'bg-transparent text-brutal-fg border-transparent',\n                    'shadow-none',\n                    'hover:bg-brutal-muted hover:border-brutal',\n                ],\n                link: [\n                    'bg-transparent text-brutal-fg border-transparent',\n                    'shadow-none underline-offset-4',\n                    'hover:underline',\n                ],\n            },\n            size: {\n                sm: 'h-9 px-3 py-1 text-sm',\n                default: 'h-11 px-5 py-2 text-base',\n                lg: 'h-14 px-8 py-3 text-lg',\n                xl: 'h-16 px-10 py-4 text-xl',\n                icon: 'h-11 w-11 p-0',\n            },\n            speed: {\n                slow: '[--glitch-duration:800ms]',\n                medium: '[--glitch-duration:300ms]',\n                fast: '[--glitch-duration:100ms]',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            speed: 'medium',\n        },\n    }\n)",
+      "type": "registry:ui"
+    },
+    {
+      "path": "composables/useReducedMotion.ts",
+      "content": "import { ref, onMounted, onUnmounted } from 'vue'\n\nexport function useReducedMotion() {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (typeof window !== 'undefined') {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  }
+}
