@@ -27,11 +27,27 @@
 
 ```vue
 <Input v-model="value" placeholder="请输入..." type="email" />
+
+<!-- 无障碍属性 -->
+<Input
+  v-model="email"
+  aria-label="邮箱地址"
+  aria-describedby="email-hint"
+  :aria-invalid="hasError"
+  :aria-required="true"
+/>
 ```
 
 - `type`: `string`
 - `placeholder`: `string`
 - `disabled`: `boolean`
+- `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
+- `inputSize`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `ariaLabel`: `string` — 无障碍标签
+- `ariaLabelledby`: `string` — 关联的标签元素 ID
+- `ariaDescribedby`: `string` — 描述元素 ID
+- `ariaInvalid`: `boolean` — 是否无效
+- `ariaRequired`: `boolean` — 是否必填
 
 ## NumberInput
 
@@ -74,11 +90,27 @@
 
 ```vue
 <Textarea v-model="content" placeholder="请输入..." :rows="4" />
+
+<!-- 无障碍属性 -->
+<Textarea
+  v-model="bio"
+  aria-label="个人简介"
+  aria-describedby="bio-hint"
+  :aria-invalid="hasError"
+  :aria-required="true"
+/>
 ```
 
 - `placeholder`: `string`
 - `rows`: `number`
 - `disabled`: `boolean`
+- `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
+- `textareaSize`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `ariaLabel`: `string` — 无障碍标签
+- `ariaLabelledby`: `string` — 关联的标签元素 ID
+- `ariaDescribedby`: `string` — 描述元素 ID
+- `ariaInvalid`: `boolean` — 是否无效
+- `ariaRequired`: `boolean` — 是否必填
 
 ## Label
 

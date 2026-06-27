@@ -50,8 +50,8 @@ import { cn } from '@/lib/utils'
 |------|--------|------|
 | Button | 按钮 | 9 种变体、5 种尺寸、加载状态 |
 | SubmitButton | 提交按钮 | 支持加载/等待状态 |
-| Input | 输入框 | 支持变体和尺寸 |
-| Textarea | 文本域 | 多行文本输入 |
+| Input | 输入框 | 支持变体/尺寸/ARIA 无障碍属性 |
+| Textarea | 文本域 | 多行文本输入，支持 ARIA 无障碍属性 |
 | NumberInput | 数字输入框 | 带 +/- 按钮，支持 split/stacked 布局 |
 | HardcoreInput | 硬核输入框 | 8-bit 音效 + 表情反馈 + 物理震动 |
 | Checkbox | 复选框 | 通过 v-model:checked 绑定 |
@@ -92,6 +92,8 @@ import { cn } from '@/lib/utils'
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
 | Table | 表格 | 8 个子组件（Header/Body/Footer/Row/Head/Cell/Caption） |
+| DataTable | 数据表格 | 支持排序/筛选/分页/选择/虚拟滚动 |
+| VirtualScroll | 虚拟滚动 | 基于 @tanstack/vue-virtual，支持大数据列表高性能滚动 |
 | Badge | 徽章 | 7 种变体、3 种尺寸（sm/default/lg） |
 | Avatar | 头像 | 支持 image/fallback、尺寸、形状 |
 | Progress | 进度条 | 支持 v-model |
@@ -124,6 +126,7 @@ import { cn } from '@/lib/utils'
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
 | GlitchText | 故障文字 | CSS clip-path 驱动，支持 hover/click/autoplay |
+| GlitchButton | 故障按钮 | 继承 Button 所有变体，支持 hover/click/autoplay 触发故障动画 |
 | TypewriterText | 打字机文本 | 逐字符显示动画，支持循环/光标/尺寸/粗细 |
 | NoiseBackground | 噪点背景 | SVG feTurbulence 滤镜，支持动画/类型/圆角 |
 | ScratchCard | 刮刮卡 | Canvas 覆盖层擦除 |

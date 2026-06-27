@@ -77,6 +77,36 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 - `interval`: `number` — 默认 `3000`
 - `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
 
+## GlitchButton
+
+故障效果按钮，继承 Button 的所有变体和尺寸，支持故障动画效果。
+
+```vue
+<GlitchButton variant="primary" trigger="hover" speed="medium">
+  点击我
+</GlitchButton>
+
+<!-- 自动播放模式 -->
+<GlitchButton trigger="autoplay" :interval="5000" speed="slow">
+  自动故障
+</GlitchButton>
+
+<!-- 加载状态 -->
+<GlitchButton :loading="true">提交中...</GlitchButton>
+```
+
+- `variant`: `'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'` — 默认 `'default'`
+- `size`: `'sm' | 'default' | 'lg' | 'xl' | 'icon'` — 默认 `'default'`
+- `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
+- `trigger`: `'hover' | 'click' | 'autoplay' | 'none'` — 默认 `'hover'`
+- `interval`: `number` — 自动播放间隔（毫秒），最小 100，默认 `3000`
+- `asChild`: `boolean` — 默认 `false`
+- `loading`: `boolean` — 默认 `false`
+- `disabled`: `boolean` — 默认 `false`
+- 方法: `play()`, `stop()`
+
+> 注意：当用户启用 prefers-reduced-motion 时，动画会自动禁用以支持无障碍。
+
 ## TypewriterText
 
 打字机效果文本，逐字符显示。

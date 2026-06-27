@@ -133,6 +133,55 @@ const data = [
 - `loading`: `boolean` — 默认 `false`
 - `emptyMessage`: `string` — 空数据提示
 
+## VirtualScroll
+
+虚拟滚动组件，基于 @tanstack/vue-virtual 实现，适用于大数据列表的高性能滚动。
+
+```vue
+<script setup lang="ts">
+import { VirtualScroll } from 'brutx-ui-vue'
+
+const items = Array.from({ length: 10000 }, (_, i) => ({
+  id: i,
+  name: `项目 ${i + 1}`,
+}))
+</script>
+
+<template>
+  <VirtualScroll
+    :items="items"
+    :item-height="48"
+    size="default"
+    variant="striped"
+    @scroll-end="loadMore"
+  >
+    <template #default="{ item, index }">
+      <div class="p-4 border-b-2 border-brutal">
+        {{ item.name }}
+      </div>
+    </template>
+  </VirtualScroll>
+</template>
+```
+
+- `items`: `VirtualScrollItem[]` — 数据数组（必填），每项必须有 `id` 字段
+- `itemHeight`: `number` — 每项高度（像素），默认 `48`
+- `size`: `'sm' | 'default' | 'lg' | 'xl' | 'full'` — 容器尺寸变体，默认 `'default'`
+- `variant`: `'default' | 'striped' | 'bordered'` — 列表项样式变体，默认 `'default'`
+- `overscan`: `number` — 可视区域外预渲染的项目数量，默认 `5`
+- `scrollEndThreshold`: `number` — 滚动到底部检测阈值（像素），默认 `50`
+- Events: `scroll(scrollTop: number)`, `scroll-end`
+- 插槽: `default`（列表项）、`empty`（空状态）、`loading`（加载更多）
+
+```typescript
+interface VirtualScrollItem {
+  id: string | number
+  [key: string]: unknown
+}
+```
+
+> 注意：组件会自动支持 prefers-reduced-motion，当用户启用减少动画时会禁用动画效果。
+
 ## Kbd
 
 键盘按键展示。
