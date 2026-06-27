@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.8] - 2026-06-28
+
 ### Added
 
 - **DataTable 组合式函数**: 新增 `useDataTableSort`、`useDataTableFilter`、`useDataTableSelection`、`useDataTablePagination` 四个组合式函数，实现完整的排序、筛选、选择、分页能力
