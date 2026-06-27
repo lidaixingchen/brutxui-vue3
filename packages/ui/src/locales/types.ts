@@ -426,6 +426,10 @@ export interface KanbanLocale {
     dropCardsHere: string
 }
 
+export interface TabsNavLocale {
+    emptyTitle: string
+}
+
 export interface PricingSectionLocale {
     defaultTitle: string
     mostPopular: string
@@ -435,6 +439,7 @@ export interface PricingSectionLocale {
 
 export interface DashboardStatsLocale {
     defaultTitle: string
+    emptyTitle: string
 }
 
 export interface InputLocale {
@@ -512,6 +517,7 @@ export interface Locale {
     datePicker: DatePickerLocale
     colorPicker: ColorPickerLocale
     kanban: KanbanLocale
+    tabsNav: TabsNavLocale
     pricingSection: PricingSectionLocale
     dashboardStats: DashboardStatsLocale
     input: InputLocale

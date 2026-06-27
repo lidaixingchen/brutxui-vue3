@@ -372,6 +372,9 @@ export const zhCN: Locale = {
     kanban: {
         dropCardsHere: '拖放卡片到此处',
     },
+    tabsNav: {
+        emptyTitle: '暂无标签页',
+    },
     pricingSection: {
         defaultTitle: '简单、透明的粗野主义方案',
         mostPopular: '最受欢迎',
@@ -380,6 +383,7 @@ export const zhCN: Locale = {
     },
     dashboardStats: {
         defaultTitle: '概览性能',
+        emptyTitle: '暂无统计数据',
     },
     input: {
         placeholder: '请输入...',

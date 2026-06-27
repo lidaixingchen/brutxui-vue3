@@ -372,6 +372,9 @@ export const en: Locale = {
     kanban: {
         dropCardsHere: 'Drop cards here',
     },
+    tabsNav: {
+        emptyTitle: 'No tabs available',
+    },
     pricingSection: {
         defaultTitle: 'Simple, Transparent Brutalist Plans',
         mostPopular: 'Most Popular Tier',
@@ -380,6 +383,7 @@ export const en: Locale = {
     },
     dashboardStats: {
         defaultTitle: 'Overview Performance',
+        emptyTitle: 'No statistics available',
     },
     input: {
         placeholder: 'Type here...',

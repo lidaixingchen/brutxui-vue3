@@ -8,6 +8,7 @@ import CardHeader from '../card/CardHeader.vue'
 import CardContent from '../card/CardContent.vue'
 import CardDescription from '../card/CardDescription.vue'
 import Badge from '../badge/Badge.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 type AccentColorKey = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
 
@@ -92,34 +93,37 @@ function clampProgress(value: number): number {
 </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card v-for="(stat, index) in stats" :key="index" variant="interactive" @click="emit('stat-click', index)">
-                <CardHeader class="pb-2">
-                    <div class="flex items-center justify-between">
-                        <CardDescription>{{ stat.title }}</CardDescription>
-                        <div :class="getIconClasses(stat)">
-                            <component :is="stat.icon" class="h-4 w-4 stroke-[3]" />
+        <template v-if="stats.length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card v-for="(stat, index) in stats" :key="index" variant="interactive" @click="emit('stat-click', index)">
+                    <CardHeader class="pb-2">
+                        <div class="flex items-center justify-between">
+                            <CardDescription>{{ stat.title }}</CardDescription>
+                            <div :class="getIconClasses(stat)">
+                                <component :is="stat.icon" class="h-4 w-4 stroke-[3]" />
+                            </div>
                         </div>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div class="text-2xl font-black">
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-2xl font-black">
 {{ stat.value }}
 </div>
-                    <div class="flex items-center gap-2 mt-1">
-                        <component :is="stat.trend === 'up' ? ArrowUpRight : stat.trend === 'down' ? ArrowDownRight : Minus" :class="getTrendIconClasses(stat)" />
-                        <Badge :variant="stat.trend === 'up' ? 'success' : stat.trend === 'down' ? 'danger' : 'default'" size="sm">
+                        <div class="flex items-center gap-2 mt-1">
+                            <component :is="stat.trend === 'up' ? ArrowUpRight : stat.trend === 'down' ? ArrowDownRight : Minus" :class="getTrendIconClasses(stat)" />
+                            <Badge :variant="stat.trend === 'up' ? 'success' : stat.trend === 'down' ? 'danger' : 'default'" size="sm">
 {{ stat.change }}
 </Badge>
-                    </div>
-                    <p class="text-xs text-brutal-muted-foreground mt-1 font-medium">
+                        </div>
+                        <p class="text-xs text-brutal-muted-foreground mt-1 font-medium">
 {{ stat.description }}
 </p>
-                    <div v-if="stat.progress !== undefined" class="mt-3 h-2 bg-brutal-muted border-3 border-brutal overflow-hidden">
-                        <div :class="getProgressClasses(stat)" :style="{ width: `${clampProgress(stat.progress!)}%` }" />
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                        <div v-if="stat.progress !== undefined" class="mt-3 h-2 bg-brutal-muted border-3 border-brutal overflow-hidden">
+                            <div :class="getProgressClasses(stat)" :style="{ width: `${clampProgress(stat.progress!)}%` }" />
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        </template>
+        <EmptyState v-else :title="t('dashboardStats.emptyTitle')" />
     </div>
 </template>

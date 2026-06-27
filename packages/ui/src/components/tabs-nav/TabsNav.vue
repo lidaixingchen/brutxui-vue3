@@ -2,10 +2,12 @@
 import { computed, ref } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import TabsList from '../tabs/TabsList.vue'
 import TabsTrigger from '../tabs/TabsTrigger.vue'
 import TabsContent from '../tabs/TabsContent.vue'
 import Card from '../card/Card.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface TabItem {
     label: string
@@ -30,6 +32,8 @@ const emit = defineEmits<{
     'update:modelValue': [value: string]
 }>()
 
+const { t } = useLocale()
+
 const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
 
 const internalValue = ref<string>('')
@@ -52,32 +56,35 @@ function handleUpdateModelValue(value: string) {
     <div :class="rootClasses">
         <slot name="header" />
 
-        <TabsRoot :model-value="activeValue" class="w-full" @update:model-value="handleUpdateModelValue">
-            <TabsList class="w-full flex">
-                <TabsTrigger
-                    v-for="tab in tabs"
-                    :key="tab.value"
-                    :value="tab.value"
-                    class="flex-1"
-                >
-                    {{ tab.label }}
-                </TabsTrigger>
-            </TabsList>
+        <template v-if="tabs.length > 0">
+            <TabsRoot :model-value="activeValue" class="w-full" @update:model-value="handleUpdateModelValue">
+                <TabsList class="w-full flex">
+                    <TabsTrigger
+                        v-for="tab in tabs"
+                        :key="tab.value"
+                        :value="tab.value"
+                        class="flex-1"
+                    >
+                        {{ tab.label }}
+                    </TabsTrigger>
+                </TabsList>
 
-            <slot>
-                <TabsContent
-                    v-for="tab in tabs"
-                    :key="tab.value"
-                    :value="tab.value"
-                >
-                    <Card variant="flat">
-                        <p class="text-brutal-muted-foreground font-medium">
+                <slot>
+                    <TabsContent
+                        v-for="tab in tabs"
+                        :key="tab.value"
+                        :value="tab.value"
+                    >
+                        <Card variant="flat">
+                            <p class="text-brutal-muted-foreground font-medium">
 {{ tab.label }}
 </p>
-                    </Card>
-                </TabsContent>
-            </slot>
-        </TabsRoot>
+                        </Card>
+                    </TabsContent>
+                </slot>
+            </TabsRoot>
+        </template>
+        <EmptyState v-else :title="t('tabsNav.emptyTitle')" />
 
         <slot name="footer" />
     </div>

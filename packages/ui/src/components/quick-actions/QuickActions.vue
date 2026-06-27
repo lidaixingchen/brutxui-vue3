@@ -65,9 +65,9 @@ const resolvedBadge = computed(() => t('quickActions.badge'))
                         <span class="text-xs font-bold">{{ action.label }}</span>
                     </Button>
                 </div>
+                <slot name="actions" />
             </template>
             <EmptyState v-else :title="t('quickActions.emptyTitle')" />
-            <slot name="actions" />
         </CardContent>
     </Card>
 </template>
