@@ -98,6 +98,9 @@ export const COMPONENTS: Record<string, ComponentMeta> = {
     'overview-page': { name: 'overview-page', dependencies: ['@lucide/vue'] },
     'color-picker': { name: 'color-picker', dependencies: ['reka-ui', '@lucide/vue'] },
     'date-picker': { name: 'date-picker', dependencies: ['v-calendar', '@lucide/vue', 'reka-ui'] },
+    'tree-select': { name: 'tree-select', dependencies: ['reka-ui', '@lucide/vue'] },
+    'typewriter-text': { name: 'typewriter-text', dependencies: [] },
+    'noise-background': { name: 'noise-background', dependencies: [] },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);
