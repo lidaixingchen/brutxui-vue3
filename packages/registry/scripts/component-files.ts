@@ -126,4 +126,15 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
         files: ['DataTable.vue', 'data-table-variants.ts', 'types.ts'],
         composables: ['useLocale.ts'],
     },
+    'tree-select': {
+        files: ['TreeSelect.vue', 'TreeSelectNode.vue', 'tree-select-variants.ts', 'tree-select-types.ts'],
+        composables: ['useLocale.ts'],
+    },
+    'typewriter-text': {
+        files: ['TypewriterText.vue', 'typewriter-text-variants.ts'],
+        composables: ['useReducedMotion.ts'],
+    },
+    'noise-background': {
+        files: ['NoiseBackground.vue', 'noise-background-variants.ts'],
+    },
 };

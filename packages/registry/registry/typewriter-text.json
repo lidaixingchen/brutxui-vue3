@@ -1,0 +1,112 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "typewriter-text",
+  "type": "registry:ui",
+  "title": "Typewriter Text",
+  "description": "A highly customizable neo-brutalist Typewriter Text component built with Brutx design tokens for Vue 3.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/typewriter-text/TypewriterText.vue",
+      "content": "<script setup lang=\"ts\">\nimport { ref, computed, watch, onMounted, onUnmounted } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { useReducedMotion } from '@/composables/useReducedMotion'\nimport { typewriterTextVariants } from '@/components/ui/typewriter-text/typewriter-text-variants'\n\ntype TypewriterTextVariantProps = VariantProps<typeof typewriterTextVariants>\n\ninterface TypewriterTextProps {\n    /** 要显示的文本 */\n    text: string\n    /** 打字速度（毫秒/字符） */\n    speed?: number\n    /** 开始延迟（毫秒） */\n    delay?: number\n    /** 是否循环播放 */\n    loop?: boolean\n    /** 是否显示光标 */\n    cursor?: boolean\n    /** 文本尺寸 */\n    size?: NonNullable<TypewriterTextVariantProps['size']>\n    /** 文本粗细 */\n    weight?: NonNullable<TypewriterTextVariantProps['weight']>\n    /** 自定义类名 */\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TypewriterTextProps>(), {\n    speed: 50,\n    delay: 0,\n    loop: false,\n    cursor: true,\n    size: 'default',\n    weight: 'normal',\n    class: undefined,\n})\n\nconst emit = defineEmits<{\n    complete: []\n    start: []\n}>()\n\nconst prefersReducedMotion = useReducedMotion()\n\nconst displayedText = ref('')\nconst currentIndex = ref(0)\nconst isTyping = ref(false)\nlet typeTimer: ReturnType<typeof setTimeout> | null = null\nlet startTimer: ReturnType<typeof setTimeout> | null = null\n\nfunction clearAllTimers() {\n    if (typeTimer) {\n        clearTimeout(typeTimer)\n        typeTimer = null\n    }\n    if (startTimer) {\n        clearTimeout(startTimer)\n        startTimer = null\n    }\n}\n\nfunction reset() {\n    clearAllTimers()\n    displayedText.value = ''\n    currentIndex.value = 0\n    isTyping.value = false\n}\n\nfunction typeNextChar() {\n    if (currentIndex.value < props.text.length) {\n        displayedText.value += props.text[currentIndex.value]\n        currentIndex.value++\n        typeTimer = setTimeout(typeNextChar, props.speed)\n    } else {\n        isTyping.value = false\n        emit('complete')\n        if (props.loop) {\n            typeTimer = setTimeout(() => {\n                reset()\n                startTyping()\n            }, props.delay)\n        }\n    }\n}\n\nfunction startTyping() {\n    if (prefersReducedMotion.value) {\n        // 如果用户偏好减少动画，直接显示完整文本\n        isTyping.value = true\n        emit('start')\n        displayedText.value = props.text\n        currentIndex.value = props.text.length\n        isTyping.value = false\n        emit('complete')\n        return\n    }\n\n    isTyping.value = true\n    emit('start')\n    typeNextChar()\n}\n\nfunction init() {\n    reset()\n    if (props.delay > 0) {\n        startTimer = setTimeout(startTyping, props.delay)\n    } else {\n        startTyping()\n    }\n}\n\n// 监听 text 变化重新开始\nwatch(() => props.text, () => {\n    init()\n})\n\nonMounted(() => {\n    if (props.text) {\n        init()\n    }\n})\n\nonUnmounted(() => {\n    clearAllTimers()\n})\n\nconst classes = computed(() =>\n    cn(typewriterTextVariants({ size: props.size, weight: props.weight }), props.class)\n)\n\n// 光标高度映射表，提升可读性\nconst cursorHeightMap: Record<string, string> = {\n    sm: 'h-3',\n    default: 'h-4',\n    lg: 'h-5',\n    xl: 'h-6',\n    '2xl': 'h-7',\n}\n\nconst cursorClasses = computed(() =>\n    cn(\n        'inline-block w-[2px] ml-0.5 animate-blink',\n        'bg-brutal-fg',\n        cursorHeightMap[props.size] ?? 'h-4'\n    )\n)\n</script>\n\n<template>\n    <span :class=\"classes\" aria-live=\"polite\">\n        <span>{{ displayedText }}</span>\n        <span\n            v-if=\"cursor && (isTyping || displayedText.length < text.length)\"\n            :class=\"cursorClasses\"\n            aria-hidden=\"true\"\n        />\n    </span>\n</template>\n\n<style scoped>\n@keyframes blink {\n    0%, 50% {\n        opacity: 1;\n    }\n    51%, 100% {\n        opacity: 0;\n    }\n}\n\n.animate-blink {\n    animation: blink 1s infinite;\n}\n</style>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/typewriter-text/typewriter-text-variants.ts",
+      "content": "import { cva } from 'class-variance-authority'\n\nexport const typewriterTextVariants = cva(\n    [\n        'inline-block',\n    ],\n    {\n        variants: {\n            size: {\n                sm: 'text-sm',\n                default: 'text-base',\n                lg: 'text-lg',\n                xl: 'text-xl',\n                '2xl': 'text-2xl',\n            },\n            weight: {\n                normal: 'font-normal',\n                medium: 'font-medium',\n                bold: 'font-bold',\n                black: 'font-black',\n            },\n        },\n        defaultVariants: {\n            size: 'default',\n            weight: 'normal',\n        },\n    }\n)\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "composables/useReducedMotion.ts",
+      "content": "import { ref, onMounted, onUnmounted } from 'vue'\n\nexport function useReducedMotion() {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (typeof window !== 'undefined') {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  }
+}

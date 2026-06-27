@@ -77,6 +77,46 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 - `interval`: `number` — 默认 `3000`
 - `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
 
+## TypewriterText
+
+打字机效果文本，逐字符显示。
+
+```vue
+<TypewriterText
+  text="欢迎使用 BrutxUI！"
+  :speed="80"
+  cursor
+  loop
+/>
+```
+
+- `text`: `string` — 必填
+- `speed`: `number` — 打字速度（毫秒/字符），默认 `50`
+- `delay`: `number` — 开始延迟（毫秒），默认 `0`
+- `loop`: `boolean` — 是否循环，默认 `false`
+- `cursor`: `boolean` — 是否显示光标，默认 `true`
+- `size`: `'sm' | 'default' | 'lg' | 'xl' | '2xl'` — 默认 `'default'`
+- `weight`: `'normal' | 'medium' | 'bold' | 'black'` — 默认 `'normal'`
+- Events: `start`, `complete`
+
+## NoiseBackground
+
+噪点纹理背景，基于 SVG feTurbulence 滤镜。
+
+```vue
+<NoiseBackground :opacity="0.3" animated>
+  <div class="p-8">带噪点背景的内容</div>
+</NoiseBackground>
+```
+
+- `type`: `'fractalNoise' | 'turbulence'` — 默认 `'fractalNoise'`
+- `frequency`: `number` — 噪点频率，默认 `0.65`
+- `octaves`: `number` — 噪点层数，默认 `3`
+- `opacity`: `number` — 不透明度，默认 `0.5`
+- `animated`: `boolean` — 是否启用动画，默认 `false`
+- `animationDuration`: `number` — 动画周期（秒），默认 `8`
+- `rounded`: `'none' | 'default' | 'lg' | 'full'` — 默认 `'none'`
+
 ## ScratchCard
 
 刮刮卡，Canvas 覆盖层擦除。

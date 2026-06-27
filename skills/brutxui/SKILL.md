@@ -59,6 +59,7 @@ import { cn } from '@/lib/utils'
 | RadioGroup | 单选组 | 支持 v-model |
 | Select | 选择器 | 支持子组件组合 |
 | Combobox | 搜索选择器 | 可搜索的单选/多选 |
+| TreeSelect | 树形选择器 | 支持单选/多选/搜索/任意深度树结构 |
 | Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式 |
 | Toggle | 切换按钮 | 支持 v-model:pressed |
 | ToggleGroup | 切换按钮组 | 支持单选/多选 |
@@ -123,6 +124,8 @@ import { cn } from '@/lib/utils'
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
 | GlitchText | 故障文字 | CSS clip-path 驱动，支持 hover/click/autoplay |
+| TypewriterText | 打字机文本 | 逐字符显示动画，支持循环/光标/尺寸/粗细 |
+| NoiseBackground | 噪点背景 | SVG feTurbulence 滤镜，支持动画/类型/圆角 |
 | ScratchCard | 刮刮卡 | Canvas 覆盖层擦除 |
 | SketchyChart | 手绘图表 | 支持折线/柱状/饼图，SVG + 分形噪声 |
 | CopyToClipboard | 复制到剪贴板 | 支持自定义持续时间 |

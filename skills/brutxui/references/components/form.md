@@ -150,6 +150,41 @@
 - `emptyText`: `string`
 - `disabled`: `boolean`
 
+## TreeSelect
+
+树形下拉选择器，基于 Popover + 递归节点组件构建。
+
+```vue
+<TreeSelect
+  :nodes="[
+    { id: '1', label: '文档', children: [
+      { id: '1-1', label: '指南' },
+      { id: '1-2', label: 'API' },
+    ]},
+    { id: '2', label: '源码' },
+  ]"
+  v-model="selected"
+  placeholder="选择节点..."
+  searchable
+  clearable
+/>
+```
+
+- `nodes`: `TreeNode[]` — 树形数据
+- `modelValue`: `string | string[]` — 单选为 string，多选为 string[]
+- `multiple`: `boolean` — 默认 `false`
+- `searchable`: `boolean` — 默认 `true`
+- `clearable`: `boolean` — 默认 `false`
+- `placeholder`: `string`
+- `searchPlaceholder`: `string`
+- `emptyText`: `string`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `maxDisplay`: `number` — 多选时最多显示标签数，默认 `3`
+- `maxHeight`: `string` — 下拉列表最大高度，默认 `'15rem'`
+- `disabled`: `boolean`
+
+TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolean; icon?: string; data?: unknown }`
+
 ## Slider
 
 ```vue

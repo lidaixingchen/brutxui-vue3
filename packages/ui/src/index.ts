@@ -395,7 +395,7 @@ export type { TranslateFunction } from './composables/useLocale'
 export { useColorHistory } from './composables/useColorHistory'
 export type { UseColorHistoryOptions, UseColorHistoryReturn } from './composables/useColorHistory'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'
@@ -403,6 +403,18 @@ export { card3dVariants, card3dShadowVariants } from './components/card-3d/card-
 
 export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
 export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'
+
+// 第一优先级新增组件
+export { default as TreeSelect } from './components/tree-select/TreeSelect.vue'
+export { default as TreeSelectNode } from './components/tree-select/TreeSelectNode.vue'
+export { treeSelectTriggerVariants, treeSelectNodeVariants } from './components/tree-select/tree-select-variants'
+export type { TreeNode as TreeSelectTreeNode } from './components/tree-select/tree-select-types'
+
+export { default as TypewriterText } from './components/typewriter-text/TypewriterText.vue'
+export { typewriterTextVariants } from './components/typewriter-text/typewriter-text-variants'
+
+export { default as NoiseBackground } from './components/noise-background/NoiseBackground.vue'
+export { noiseBackgroundVariants } from './components/noise-background/noise-background-variants'
 
 export { default as ScratchCard } from './components/scratch-card/ScratchCard.vue'
 export { scratchCardVariants } from './components/scratch-card/scratch-card-variants'

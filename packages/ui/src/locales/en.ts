@@ -103,6 +103,13 @@ export const en: Locale = {
     treeView: {
         fileTree: 'File tree',
     },
+    treeSelect: {
+        placeholder: 'Select node...',
+        searchPlaceholder: 'Search...',
+        emptyText: 'No results found.',
+        selectedCount: '{count} selected',
+        clear: 'Clear',
+    },
     stepper: {
         progressSteps: 'Progress steps',
         step: 'Step {index}: {title}',

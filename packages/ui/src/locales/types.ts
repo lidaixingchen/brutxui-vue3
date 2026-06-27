@@ -118,6 +118,14 @@ export interface TreeViewLocale {
     fileTree: string
 }
 
+export interface TreeSelectLocale {
+    placeholder: string
+    searchPlaceholder: string
+    emptyText: string
+    selectedCount: string
+    clear: string
+}
+
 export interface StepperLocale {
     progressSteps: string
     step: string
@@ -445,6 +453,7 @@ export interface Locale {
     sheet: SheetLocale
     breadcrumb: BreadcrumbLocale
     treeView: TreeViewLocale
+    treeSelect: TreeSelectLocale
     stepper: StepperLocale
     emptyState: EmptyStateLocale
     testimonialCard: TestimonialCardLocale

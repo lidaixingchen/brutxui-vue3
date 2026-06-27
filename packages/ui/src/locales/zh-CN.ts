@@ -103,6 +103,13 @@ export const zhCN: Locale = {
     treeView: {
         fileTree: '文件树',
     },
+    treeSelect: {
+        placeholder: '选择节点...',
+        searchPlaceholder: '搜索...',
+        emptyText: '未找到结果。',
+        selectedCount: '已选 {count} 项',
+        clear: '清除',
+    },
     stepper: {
         progressSteps: '进度步骤',
         step: '第 {index} 步：{title}',
