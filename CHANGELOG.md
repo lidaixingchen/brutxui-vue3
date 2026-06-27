@@ -11,24 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **TreeSelect 组件**: 树形下拉选择器，支持单选/多选/搜索过滤/任意深度树结构
-- **TypewriterText 组件**: 打字机效果文本，支持循环播放/光标闪烁/尺寸粗细变体
-- **NoiseBackground 组件**: 噪点纹理背景，基于 SVG feTurbulence 滤镜，支持动画效果
+- **TreeSelect 组件**: 树形下拉选择器，支持单选/多选/搜索过滤/任意深度树结构，基于 reka-ui Popover + 递归节点组件
+- **TypewriterText 组件**: 打字机效果文本，支持循环播放/光标闪烁/尺寸粗细变体，兼容 prefers-reduced-motion
+- **NoiseBackground 组件**: 噪点纹理背景，基于 SVG feTurbulence 滤镜，支持动画效果和 SSR
 - 注册表新增 `tree-select.json`、`typewriter-text.json`、`noise-background.json` 项
 - 新增 TreeSelect、TypewriterText、NoiseBackground 组件文档与路由
 - 国际化支持：新增 `treeSelect` 命名空间（中英文）
 - CLI 支持安装新组件：`npx brutx-vue@latest add tree-select typewriter-text noise-background`
 
-### Fixed
+## [0.7.3] - 2026-06-27
 
-- 修复 TreeSelect 递归组件支持任意深度树结构（原实现仅支持两层）
-- 修复 TreeSelect 嵌套 button 无效 HTML 结构
-- 修复 TreeSelect 多选模式下空数组样式判断逻辑
-- 修复 TypewriterText 减少动画模式下缺少 start 事件
-- 修复 NoiseBackground 动画不响应属性动态变化
-- 修复 NoiseBackground 直接 DOM 操作改为 Vue ref
-- 修复 NoiseBackground SSR 兼容性问题
-- 修复 TreeSelect ARIA 属性不完整问题
+### Changed
+
+- 重构注册表实现，统一组件配置管理
+- 新增 `component-files.ts` 集中声明组件文件映射
+- 新增 `validate-registry.ts` 注册表一致性校验脚本
+- 简化 `build-registry.ts` 构建逻辑
 
 ## [0.7.2] - 2026-06-26
 
