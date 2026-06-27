@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { colorPickerInputVariants } from './color-picker-variants'
-import { isValidColor, normalizeColor } from '../../lib/color'
+import { formatColor, isValidColor, parseColor } from '../../lib/color'
 
 interface ColorPickerInputProps {
     modelValue?: string | null
@@ -27,9 +27,15 @@ const emit = defineEmits<{
 
 const text = ref('')
 
+function formatToProp(color: string): string | null {
+    const hsv = parseColor(color)
+    if (!hsv) return null
+    return formatColor(hsv, props.format, props.showAlpha)
+}
+
 function syncFromModel() {
     if (props.modelValue && isValidColor(props.modelValue)) {
-        text.value = normalizeColor(props.modelValue) ?? ''
+        text.value = formatToProp(props.modelValue) ?? ''
     } else {
         text.value = ''
     }
@@ -51,13 +57,13 @@ function handleInput(event: Event) {
     const value = (event.target as HTMLInputElement).value
     text.value = value
     if (isValidColor(value)) {
-        emit('update:modelValue', normalizeColor(value))
+        emit('update:modelValue', formatToProp(value))
     }
 }
 
 function handleBlur() {
     if (text.value && isValidColor(text.value)) {
-        const normalized = normalizeColor(text.value)
+        const normalized = formatToProp(text.value)
         text.value = normalized ?? ''
         emit('confirm', normalized)
     } else if (!text.value) {

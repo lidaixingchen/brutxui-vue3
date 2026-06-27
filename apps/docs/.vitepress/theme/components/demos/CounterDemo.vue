@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Counter } from 'brutx-ui-vue'
+import { RotateCcw } from '@lucide/vue'
 
 const stats = [
     { to: 12800, suffix: '+', label: '组件安装次数', size: 'lg' as const },
@@ -42,10 +43,11 @@ function onComplete() {
             </div>
             <div class="flex justify-center mt-4">
                 <button
-                    class="text-xs font-bold border-3 border-brutal px-3 py-1.5 rounded-brutal shadow-brutal bg-brutal-muted transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none"
+                    class="inline-flex items-center gap-1.5 text-xs font-bold border-3 border-brutal px-3 py-1.5 rounded-brutal shadow-brutal bg-brutal-muted transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-none"
                     @click="restart"
                 >
-                    🔄 重新播放动画
+                    <RotateCcw class="h-3.5 w-3.5 stroke-[3]" />
+                    重新播放动画
                 </button>
             </div>
         </div>

@@ -201,6 +201,7 @@ const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg
                 :model-value="modelValue"
                 :show-seconds="showSeconds"
                 :time-step="timeStep"
+                :embedded="true"
                 :aria-label="t('datePicker.timePlaceholder')"
                 @update:model-value="handleTimeUpdate"
             />

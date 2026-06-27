@@ -10,7 +10,7 @@ type CheckboxVariantProps = VariantProps<typeof checkboxVariants>
 
 interface CheckboxProps {
     class?: string
-    checked?: boolean
+    checked?: boolean | 'indeterminate'
     defaultChecked?: boolean
     disabled?: boolean
     variant?: NonNullable<CheckboxVariantProps['variant']>

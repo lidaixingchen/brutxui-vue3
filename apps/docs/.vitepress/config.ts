@@ -126,6 +126,7 @@ export default defineConfig({
                     { text: 'Toggle Group 切换组', link: '/components/toggle-group' },
                     { text: 'Select 选择器', link: '/components/select' },
                     { text: 'Combobox 组合框', link: '/components/combobox' },
+                    { text: 'TreeSelect 树形选择器', link: '/components/tree-select' },
                     { text: 'Slider 滑块', link: '/components/slider' },
                     { text: 'TagsInput 标签输入', link: '/components/tags-input' },
                     { text: 'ColorPicker 颜色选择器', link: '/components/color-picker' },
@@ -184,8 +185,10 @@ export default defineConfig({
                 items: [
                     { text: 'GlitchText 故障文本', link: '/components/glitch-text' },
                     { text: 'GlitchButton 故障按钮', link: '/components/glitch-button' },
+                    { text: 'TypewriterText 打字机文本', link: '/components/typewriter-text' },
                     { text: 'BeforeAfter 对比滑块', link: '/components/before-after' },
                     { text: 'ScratchCard 刮刮卡', link: '/components/scratch-card' },
+                    { text: 'NoiseBackground 噪点背景', link: '/components/noise-background' },
                     { text: 'SaaS Pricing 定价', link: '/components/saas-pricing' },
                     { text: 'KanbanBoard 看板', link: '/components/kanban-board' },
                     { text: 'ColorModeSwitcher 颜色模式切换', link: '/components/color-mode-switcher' },

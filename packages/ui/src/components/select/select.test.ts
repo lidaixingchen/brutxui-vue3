@@ -31,6 +31,26 @@ describe('SelectTrigger', () => {
         })
         expect(wrapper.classes()).toContain('custom-trigger')
     })
+
+    it('applies default icon classes to chevron', () => {
+        const wrapper = mount(SelectTrigger, {
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-5')
+        expect(icon.classes()).toContain('w-5')
+    })
+
+    it('overrides icon size via iconClass prop', () => {
+        const wrapper = mount(SelectTrigger, {
+            props: { iconClass: 'h-3 w-3' },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-3')
+        expect(icon.classes()).toContain('w-3')
+        expect(icon.classes()).not.toContain('h-5')
+    })
 })
 
 describe('SelectContent', () => {
@@ -88,6 +108,40 @@ describe('SelectItem', () => {
             global: { stubs: itemStubs },
         })
         expect(wrapper.classes()).toContain('custom-item')
+    })
+
+    it('applies default indicator classes', () => {
+        const wrapper = mount(SelectItem, {
+            props: { value: 'test' },
+            global: { stubs: itemStubs },
+        })
+        const indicator = wrapper.find('span.absolute')
+        expect(indicator.classes()).toContain('left-2')
+        expect(indicator.classes()).toContain('h-4')
+        expect(indicator.classes()).toContain('w-4')
+    })
+
+    it('overrides indicator layout via indicatorClass prop', () => {
+        const wrapper = mount(SelectItem, {
+            props: { value: 'test', indicatorClass: 'left-1 h-3 w-3' },
+            global: { stubs: itemStubs },
+        })
+        const indicator = wrapper.find('span.absolute')
+        expect(indicator.classes()).toContain('left-1')
+        expect(indicator.classes()).toContain('h-3')
+        expect(indicator.classes()).toContain('w-3')
+        expect(indicator.classes()).not.toContain('left-2')
+    })
+
+    it('overrides check icon size via iconClass prop', () => {
+        const wrapper = mount(SelectItem, {
+            props: { value: 'test', iconClass: 'h-3 w-3' },
+            global: { stubs: itemStubs },
+        })
+        const icon = wrapper.find('span.absolute svg')
+        expect(icon.classes()).toContain('h-3')
+        expect(icon.classes()).toContain('w-3')
+        expect(icon.classes()).not.toContain('h-4')
     })
 })
 

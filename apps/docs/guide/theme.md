@@ -371,7 +371,7 @@ const { theme, colorMode, setTheme, toggleColorMode } = useTheme()
         <option value="warm">Warm</option>
     </select>
     <button @click="toggleColorMode">
-        {{ colorMode === 'light' ? '☀️ 亮色' : colorMode === 'dark' ? '🌙 暗色' : '💻 系统' }}
+        {{ colorMode === 'light' ? '亮色' : colorMode === 'dark' ? '暗色' : '系统' }}
     </button>
 </template>
 ```

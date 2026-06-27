@@ -13,24 +13,36 @@ interface SelectItemProps {
     disabled?: boolean
     variant?: NonNullable<SelectItemVariantProps['variant']>
     class?: string
+    indicatorClass?: string
+    iconClass?: string
 }
 
 const props = withDefaults(defineProps<SelectItemProps>(), {
     disabled: false,
     variant: 'default',
     class: undefined,
+    indicatorClass: undefined,
+    iconClass: undefined,
 })
 
 const classes = computed(() =>
     cn(selectItemVariants({ variant: props.variant }), props.class)
 )
+
+const indicatorClasses = computed(() =>
+    cn('absolute left-2 flex h-4 w-4 items-center justify-center', props.indicatorClass)
+)
+
+const iconClasses = computed(() =>
+    cn('h-4 w-4 stroke-[3]', props.iconClass)
+)
 </script>
 
 <template>
     <SelectItemPrimitive :value="value" :disabled="disabled" :class="classes">
-        <span class="absolute left-2 flex h-4 w-4 items-center justify-center">
+        <span :class="indicatorClasses">
             <SelectItemIndicatorPrimitive>
-                <Check class="h-4 w-4 stroke-[3]" />
+                <Check :class="iconClasses" />
             </SelectItemIndicatorPrimitive>
         </span>
         <SelectItemTextPrimitive>

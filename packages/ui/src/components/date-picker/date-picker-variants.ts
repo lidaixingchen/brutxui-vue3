@@ -66,13 +66,22 @@ export const datePickerFooterVariants = cva([
     'border-t-3 border-brutal',
 ])
 
-export const timePickerVariants = cva([
-    'w-12 h-9 text-center text-sm font-bold font-mono',
-    'border-3 border-brutal rounded-brutal',
-    'bg-brutal-bg text-brutal-fg',
-    'shadow-brutal-sm',
-    'transition-all duration-100',
+export const timePickerPanelVariants = cva(
+    ['items-center gap-1 p-2 border-brutal'],
+    {
+        variants: {
+            embedded: {
+                true: 'flex border-t-3',
+                false: 'inline-flex border-3 rounded-brutal bg-brutal-bg shadow-brutal-lg',
+            },
+        },
+        defaultVariants: {
+            embedded: false,
+        },
+    }
+)
+
+export const timePickerTriggerVariants = cva([
+    'w-12 px-0 justify-center gap-0.5 font-mono text-sm rounded-brutal shadow-brutal-sm',
     'hover:shadow-brutal',
-    'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring',
-    'disabled:opacity-50 disabled:pointer-events-none',
 ])

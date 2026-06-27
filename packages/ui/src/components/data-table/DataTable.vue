@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import Checkbox from '../checkbox/Checkbox.vue'
 import {
     dataTableRootVariants,
     dataTableHeaderVariants,
@@ -300,13 +301,12 @@ const rootStyle = computed(() => {
                 <thead :class="cn(dataTableHeaderVariants())">
                     <tr>
                         <th v-if="selectable" class="w-12 px-4 py-3 text-center">
-                            <input
-                                type="checkbox"
-                                :checked="isAllSelected"
-                                :indeterminate="isIndeterminate"
-                                class="w-4 h-4 border-2 border-brutal cursor-pointer"
-                                @change="toggleAllSelection"
-                            >
+                            <Checkbox
+                                :checked="isIndeterminate ? 'indeterminate' : isAllSelected"
+                                size="sm"
+                                class="cursor-pointer"
+                                @update:checked="toggleAllSelection"
+                            />
                         </th>
                         <th
                             v-for="column in visibleColumns"
@@ -349,12 +349,12 @@ const rootStyle = computed(() => {
                             :aria-selected="selectedRows.has(getRowKey(row)) || undefined"
                         >
                             <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
-                                <input
-                                    type="checkbox"
+                                <Checkbox
                                     :checked="selectedRows.has(getRowKey(row))"
-                                    class="w-4 h-4 border-2 border-brutal cursor-pointer"
-                                    @change="toggleRowSelection(row)"
-                                >
+                                    size="sm"
+                                    class="cursor-pointer"
+                                    @update:checked="toggleRowSelection(row)"
+                                />
                             </td>
                             <td
                                 v-for="column in visibleColumns"

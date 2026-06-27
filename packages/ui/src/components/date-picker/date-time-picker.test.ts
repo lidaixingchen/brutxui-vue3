@@ -428,8 +428,8 @@ describe('DateTimePicker', () => {
             attachTo: document.body,
         })
         await openPanel(wrapper)
-        const selects = document.body.querySelectorAll('[role="dialog"] select')
-        expect(selects.length).toBe(2)
+        const comboboxes = document.body.querySelectorAll('[role="dialog"] [role="combobox"]')
+        expect(comboboxes.length).toBe(2)
     })
 
     it('renders second select in panel when showSeconds is true', async () => {
@@ -439,8 +439,8 @@ describe('DateTimePicker', () => {
             attachTo: document.body,
         })
         await openPanel(wrapper)
-        const selects = document.body.querySelectorAll('[role="dialog"] select')
-        expect(selects.length).toBe(3)
+        const comboboxes = document.body.querySelectorAll('[role="dialog"] [role="combobox"]')
+        expect(comboboxes.length).toBe(3)
     })
 
     it('passes minDate and maxDate to panel', async () => {
@@ -653,8 +653,8 @@ describe('DateTimePickerPanel', () => {
             props: { showSeconds: true },
             attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        expect(selects).toHaveLength(3)
+        const comboboxes = wrapper.findAll('[role="group"] [role="combobox"]')
+        expect(comboboxes).toHaveLength(3)
     })
 
     it('emits update:modelValue when time changes preserving date', async () => {
@@ -665,8 +665,8 @@ describe('DateTimePickerPanel', () => {
             },
             attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        await selects[0].setValue('15')
+        const timePicker = wrapper.findComponent({ name: 'TimePicker' })
+        timePicker.vm.$emit('update:modelValue', new Date(2026, 5, 26, 15, 0, 0))
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const value = emitted![0][0] as Date

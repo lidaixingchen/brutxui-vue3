@@ -10653,7 +10653,8 @@
         "reka-ui"
       ],
       "registryDependencies": [
-        "popover"
+        "popover",
+        "select"
       ],
       "files": [
         {
@@ -10930,7 +10931,9 @@
       "title": "Data Table",
       "description": "A highly customizable neo-brutalist Data Table component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "checkbox"
+      ],
       "files": [
         {
           "path": "components/ui/data-table/DataTable.vue",

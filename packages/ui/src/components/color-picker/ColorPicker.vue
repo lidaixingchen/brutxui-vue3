@@ -5,7 +5,7 @@ import { ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { normalizeColor } from '../../lib/color'
+import { formatColor, parseColor } from '../../lib/color'
 import { type ColorPreset } from '../../lib/default-presets'
 import PopoverContent from '../popover/PopoverContent.vue'
 import { colorPickerTriggerVariants } from './color-picker-variants'
@@ -65,7 +65,9 @@ watch(() => props.modelValue, (value) => {
 
 const normalizedDisplay = computed(() => {
     if (!props.modelValue) return null
-    return normalizeColor(props.modelValue)
+    const hsv = parseColor(props.modelValue)
+    if (!hsv) return null
+    return formatColor(hsv, props.format, props.showAlpha)
 })
 
 const swatchStyle = computed(() => ({

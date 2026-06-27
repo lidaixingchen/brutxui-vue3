@@ -275,7 +275,7 @@ const { theme, colorMode, setTheme, toggleColorMode } = useTheme()
     <option value="mono">单色</option>
   </select>
   <button @click="toggleColorMode">
-    {{ colorMode === 'dark' ? '☀️ 亮色模式' : '🌙 暗色模式' }}
+    {{ colorMode === 'dark' ? '亮色模式' : '暗色模式' }}
   </button>
 </template>
 ```

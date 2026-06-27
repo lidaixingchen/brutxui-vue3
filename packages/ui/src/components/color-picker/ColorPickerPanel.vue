@@ -127,14 +127,12 @@ function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
     emitUpdate()
 }
 
-function handlePointerDown(target: 'sv' | 'hue' | 'alpha') {
-    return (event: PointerEvent) => {
-        event.preventDefault()
-        dragging.value = target
-        const el = event.currentTarget as HTMLElement
-        el.setPointerCapture(event.pointerId)
-        updateFromPointer(target, event)
-    }
+function handlePointerDown(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
+    event.preventDefault()
+    dragging.value = target
+    const el = event.currentTarget as HTMLElement
+    el.setPointerCapture(event.pointerId)
+    updateFromPointer(target, event)
 }
 
 function handlePointerMove(event: PointerEvent) {
@@ -286,13 +284,13 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
             aria-valuemax="100"
             class="relative w-full h-32 border-3 border-brutal cursor-crosshair overflow-hidden"
             :style="{ backgroundColor: svBackground }"
-            @pointerdown="handlePointerDown('sv')"
+            @pointerdown="handlePointerDown('sv', $event)"
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
             @keydown="handleKeydownSv"
         >
-            <div class="absolute inset-0" style="background: linear-gradient(to right, #fff, rgba(255,255,255,0))" />
-            <div class="absolute inset-0" style="background: linear-gradient(to top, #000, rgba(0,0,0,0))" />
+            <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to right, #fff, rgba(255,255,255,0))" />
+            <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to top, #000, rgba(0,0,0,0))" />
             <div
                 class="absolute w-3 h-3 border-2 border-brutal rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                 :style="{ ...svThumbStyle, backgroundColor: hexPreview || '#fff' }"
@@ -310,7 +308,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 aria-valuemax="360"
                 class="relative h-4 w-full border-3 border-brutal cursor-pointer"
                 style="background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)"
-                @pointerdown="handlePointerDown('hue')"
+                @pointerdown="handlePointerDown('hue', $event)"
                 @pointermove="handlePointerMove"
                 @pointerup="handlePointerUp"
                 @keydown="handleKeydownHue"
@@ -332,7 +330,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 aria-valuemax="100"
                 class="relative h-4 w-full border-3 border-brutal cursor-pointer"
                 :style="{ background: alphaTrackBackground }"
-                @pointerdown="handlePointerDown('alpha')"
+                @pointerdown="handlePointerDown('alpha', $event)"
                 @pointermove="handlePointerMove"
                 @pointerup="handlePointerUp"
                 @keydown="handleKeydownAlpha"

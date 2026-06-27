@@ -11,10 +11,10 @@ export const spinnerVariants = cva(
                 xl: 'h-16 w-16',
             },
             variant: {
-                default: 'border-brutal border-t-transparent border-r-transparent',
-                primary: 'border-brutal-primary border-t-transparent border-r-transparent',
-                secondary: 'border-brutal-secondary border-t-transparent border-r-transparent',
-                accent: 'border-brutal-accent border-t-brutal-fg border-r-brutal-fg',
+                default: 'border-b-brutal border-l-brutal border-t-transparent border-r-transparent',
+                primary: 'border-b-brutal-primary border-l-brutal-primary border-t-transparent border-r-transparent',
+                secondary: 'border-b-brutal-secondary border-l-brutal-secondary border-t-transparent border-r-transparent',
+                accent: 'border-b-brutal-accent border-l-brutal-accent border-t-brutal-fg border-r-brutal-fg',
             },
         },
         defaultVariants: {

@@ -16,7 +16,10 @@ describe('Spinner', () => {
         expect(classes).toContain('rounded-full')
         expect(classes).toContain('animate-spin')
         expect(classes).toContain('border-3')
-        expect(classes).toContain('border-brutal')
+        expect(classes).toContain('border-b-brutal')
+        expect(classes).toContain('border-l-brutal')
+        expect(classes).toContain('border-t-transparent')
+        expect(classes).toContain('border-r-transparent')
         expect(classes).toContain('h-8')
         expect(classes).toContain('w-8')
     })
@@ -35,7 +38,8 @@ describe('Spinner', () => {
 
     it('applies variant classes', () => {
         const wrapper = mount(Spinner, { props: { variant: 'primary' }, global: globalProvide })
-        expect(wrapper.classes()).toContain('border-brutal-primary')
+        expect(wrapper.classes()).toContain('border-b-brutal-primary')
+        expect(wrapper.classes()).toContain('border-l-brutal-primary')
     })
 
     it('applies size classes', () => {

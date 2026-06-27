@@ -3,6 +3,7 @@ import { nextTick } from 'vue'
 import ColorPicker from './ColorPicker.vue'
 import ColorPickerSwatch from './ColorPickerSwatch.vue'
 import ColorPickerInput from './ColorPickerInput.vue'
+import ColorPickerPanel from './ColorPickerPanel.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
@@ -67,6 +68,28 @@ describe('ColorPicker', () => {
         })
         const trigger = wrapper.find('[role="combobox"]')
         expect(trigger.text()).toContain('#ff6b6b')
+    })
+
+    it('shows rgb format in trigger when format is rgb', () => {
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', format: 'rgb' },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.text()).toContain('rgb(255, 0, 0)')
+        expect(trigger.text()).not.toContain('#ff0000')
+    })
+
+    it('shows hsl format in trigger when format is hsl', () => {
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', format: 'hsl' },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.text()).toContain('hsl(0, 100%, 50%)')
+        expect(trigger.text()).not.toContain('#ff0000')
     })
 
     it('applies muted foreground class when no value', () => {
@@ -415,5 +438,122 @@ describe('ColorPickerInput', () => {
         const emitted = wrapper.emitted('confirm')
         expect(emitted).toBeTruthy()
         expect(emitted![0]).toEqual([null])
+    })
+
+    it('displays RGB format when format is rgb', () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', format: 'rgb' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        expect((input.element as HTMLInputElement).value).toBe('rgb(255, 0, 0)')
+    })
+
+    it('displays HSL format when format is hsl', () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', format: 'hsl' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        expect((input.element as HTMLInputElement).value).toBe('hsl(0, 100%, 50%)')
+    })
+
+    it('emits update:modelValue in RGB format when format is rgb', async () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', format: 'rgb' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        await input.setValue('#00ff00')
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+        expect(emitted![0]).toEqual(['rgb(0, 255, 0)'])
+    })
+
+    it('emits update:modelValue in HSL format when format is hsl', async () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', format: 'hsl' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        await input.setValue('#00ff00')
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+        expect(emitted![0]).toEqual(['hsl(120, 100%, 50%)'])
+    })
+})
+
+describe('ColorPickerPanel pointer interaction', () => {
+    it('emits update:modelValue when sv pad is clicked', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        await nextTick()
+
+        const svSlider = wrapper.find('[aria-label="Saturation"]')
+        expect(svSlider.exists()).toBe(true)
+
+        await svSlider.trigger('pointerdown', {
+            pointerId: 1,
+            pointerType: 'mouse',
+            clientX: 0,
+            clientY: 0,
+        })
+        await nextTick()
+
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+    })
+
+    it('emits update:modelValue when hue slider is clicked', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        await nextTick()
+
+        const hueSlider = wrapper.find('[aria-label="Hue"]')
+        expect(hueSlider.exists()).toBe(true)
+
+        await hueSlider.trigger('pointerdown', {
+            pointerId: 2,
+            pointerType: 'mouse',
+            clientX: 50,
+            clientY: 0,
+        })
+        await nextTick()
+
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+    })
+
+    it('emits update:modelValue when alpha slider is clicked', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000', showAlpha: true },
+            attachTo: document.body,
+        })
+        await nextTick()
+
+        const alphaSlider = wrapper.find('[aria-label="Alpha"]')
+        expect(alphaSlider.exists()).toBe(true)
+
+        await alphaSlider.trigger('pointerdown', {
+            pointerId: 3,
+            pointerType: 'mouse',
+            clientX: 50,
+            clientY: 0,
+        })
+        await nextTick()
+
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
     })
 })

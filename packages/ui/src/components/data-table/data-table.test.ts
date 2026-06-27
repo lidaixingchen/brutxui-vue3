@@ -116,7 +116,7 @@ describe('DataTable', () => {
             },
             global: globalProvide,
         })
-        const checkboxes = wrapper.findAll('input[type="checkbox"]')
+        const checkboxes = wrapper.findAll('[role="checkbox"]')
         expect(checkboxes.length).toBe(4) // 1 header + 3 rows
     })
 

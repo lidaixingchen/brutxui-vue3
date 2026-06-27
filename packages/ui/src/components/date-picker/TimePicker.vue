@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
+import { SelectRoot, SelectValue } from 'reka-ui'
+import SelectTrigger from '../select/SelectTrigger.vue'
+import SelectContent from '../select/SelectContent.vue'
+import SelectItem from '../select/SelectItem.vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { timePickerVariants } from './date-picker-variants'
+import { timePickerPanelVariants, timePickerTriggerVariants } from './date-picker-variants'
 
 interface TimePickerProps {
     modelValue?: Date | null
     showSeconds?: boolean
     timeStep?: { hour?: number; minute?: number; second?: number }
     disabled?: boolean
+    embedded?: boolean
     ariaLabel?: string
 }
 
@@ -17,6 +22,7 @@ const props = withDefaults(defineProps<TimePickerProps>(), {
     showSeconds: false,
     timeStep: () => ({ hour: 1, minute: 1, second: 1 }),
     disabled: false,
+    embedded: false,
     ariaLabel: undefined,
 })
 
@@ -56,97 +62,151 @@ function ensureDate(): Date {
     return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
 }
 
-function handleHourChange(event: Event) {
+function handleHourChange(value: string) {
     if (props.disabled) return
-    const target = event.target as HTMLSelectElement
     const date = ensureDate()
-    date.setHours(parseInt(target.value, 10))
+    date.setHours(parseInt(value, 10))
     emit('update:modelValue', date)
 }
 
-function handleMinuteChange(event: Event) {
+function handleMinuteChange(value: string) {
     if (props.disabled) return
-    const target = event.target as HTMLSelectElement
     const date = ensureDate()
-    date.setMinutes(parseInt(target.value, 10))
+    date.setMinutes(parseInt(value, 10))
     emit('update:modelValue', date)
 }
 
-function handleSecondChange(event: Event) {
+function handleSecondChange(value: string) {
     if (props.disabled) return
-    const target = event.target as HTMLSelectElement
     const date = ensureDate()
-    date.setSeconds(parseInt(target.value, 10))
+    date.setSeconds(parseInt(value, 10))
     emit('update:modelValue', date)
 }
 
-const selectClasses = computed(() =>
-    cn(
-        timePickerVariants(),
-        'cursor-pointer appearance-none bg-brutal-bg',
-        props.disabled && 'opacity-50 pointer-events-none'
-    )
-)
+const hourValue = computed(() => String(currentHour.value))
+const minuteValue = computed(() => String(currentMinute.value))
+const secondValue = computed(() => String(currentSecond.value))
 
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.timePlaceholder'))
+
+const hourId = `time-picker-hour-${useId()}`
+const minuteId = `time-picker-minute-${useId()}`
+const secondId = `time-picker-second-${useId()}`
+
+const rootClasses = computed(() => cn(timePickerPanelVariants({ embedded: props.embedded })))
+
+const triggerClass = timePickerTriggerVariants()
+const triggerIconClass = 'h-3 w-3'
+const contentClass = 'max-h-48 min-w-[3rem]'
+const itemClass = 'justify-center font-mono py-1.5 pl-6 pr-3'
+const itemIndicatorClass = 'left-1 h-3 w-3'
+const itemIconClass = 'h-3 w-3'
 </script>
 
 <template>
     <div
-        class="flex items-center gap-1 p-2 border-t-3 border-brutal"
+        :class="rootClasses"
         role="group"
         :aria-label="resolvedAriaLabel"
     >
         <div class="flex flex-col items-center">
-            <label class="text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5">
+            <label :for="hourId" class="text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5">
                 {{ t('datePicker.hour') }}
             </label>
-            <select
-                :value="currentHour"
+            <SelectRoot
+                :model-value="hourValue"
                 :disabled="disabled"
-                :aria-label="t('datePicker.hour')"
-                :class="selectClasses"
-                @change="handleHourChange"
+                @update:model-value="handleHourChange"
             >
-                <option v-for="h in hourOptions" :key="h" :value="h">
-                    {{ pad2(h) }}
-                </option>
-            </select>
+                <SelectTrigger
+                    :id="hourId"
+                    size="sm"
+                    :class="triggerClass"
+                    :icon-class="triggerIconClass"
+                    :aria-label="t('datePicker.hour')"
+                >
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent :class="contentClass">
+                    <SelectItem
+                        v-for="h in hourOptions"
+                        :key="h"
+                        :value="String(h)"
+                        :class="itemClass"
+                        :indicator-class="itemIndicatorClass"
+                        :icon-class="itemIconClass"
+                    >
+                        {{ pad2(h) }}
+                    </SelectItem>
+                </SelectContent>
+            </SelectRoot>
         </div>
         <span class="font-black text-lg text-brutal-fg mt-3">:</span>
         <div class="flex flex-col items-center">
-            <label class="text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5">
+            <label :for="minuteId" class="text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5">
                 {{ t('datePicker.minute') }}
             </label>
-            <select
-                :value="currentMinute"
+            <SelectRoot
+                :model-value="minuteValue"
                 :disabled="disabled"
-                :aria-label="t('datePicker.minute')"
-                :class="selectClasses"
-                @change="handleMinuteChange"
+                @update:model-value="handleMinuteChange"
             >
-                <option v-for="m in minuteOptions" :key="m" :value="m">
-                    {{ pad2(m) }}
-                </option>
-            </select>
+                <SelectTrigger
+                    :id="minuteId"
+                    size="sm"
+                    :class="triggerClass"
+                    :icon-class="triggerIconClass"
+                    :aria-label="t('datePicker.minute')"
+                >
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent :class="contentClass">
+                    <SelectItem
+                        v-for="m in minuteOptions"
+                        :key="m"
+                        :value="String(m)"
+                        :class="itemClass"
+                        :indicator-class="itemIndicatorClass"
+                        :icon-class="itemIconClass"
+                    >
+                        {{ pad2(m) }}
+                    </SelectItem>
+                </SelectContent>
+            </SelectRoot>
         </div>
         <template v-if="showSeconds">
             <span class="font-black text-lg text-brutal-fg mt-3">:</span>
             <div class="flex flex-col items-center">
-                <label class="text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5">
+                <label :for="secondId" class="text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5">
                     {{ t('datePicker.second') }}
                 </label>
-                <select
-                    :value="currentSecond"
+                <SelectRoot
+                    :model-value="secondValue"
                     :disabled="disabled"
-                    :aria-label="t('datePicker.second')"
-                    :class="selectClasses"
-                    @change="handleSecondChange"
+                    @update:model-value="handleSecondChange"
                 >
-                    <option v-for="s in secondOptions" :key="s" :value="s">
-                        {{ pad2(s) }}
-                    </option>
-                </select>
+                    <SelectTrigger
+                        :id="secondId"
+                        size="sm"
+                        :class="triggerClass"
+                        :icon-class="triggerIconClass"
+                        :aria-label="t('datePicker.second')"
+                    >
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent :class="contentClass">
+                        <SelectItem
+                            v-for="s in secondOptions"
+                            :key="s"
+                            :value="String(s)"
+                            :class="itemClass"
+                            :indicator-class="itemIndicatorClass"
+                            :icon-class="itemIconClass"
+                        >
+                            {{ pad2(s) }}
+                        </SelectItem>
+                    </SelectContent>
+                </SelectRoot>
             </div>
         </template>
     </div>

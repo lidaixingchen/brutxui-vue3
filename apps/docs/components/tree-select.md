@@ -7,6 +7,12 @@ description: 基于 TreeView 和 Popover 的树形下拉选择器，支持单选
 
 新粗野主义风格的树形下拉选择组件，结合了 `TreeView` 的层级展示能力和 `Popover` 的下拉交互模式。支持单选、多选、搜索过滤，适用于文件选择、分类选择、组织架构等场景。
 
+## 预览
+
+<ComponentPreview>
+    <TreeSelectDemo />
+</ComponentPreview>
+
 ## 安装
 
 <InstallationTabs componentName="tree-select" />

@@ -5,6 +5,45 @@ import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
+const selectStubs = {
+    SelectRoot: {
+        name: 'SelectRoot',
+        props: ['modelValue', 'disabled'],
+        emits: ['update:modelValue'],
+        template: '<div class="select-root" :data-model-value="modelValue" :data-disabled="disabled"><slot /></div>',
+    },
+    SelectTrigger: {
+        name: 'SelectTrigger',
+        template: '<div class="select-trigger" role="combobox"><slot /><span class="select-icon"></span></div>',
+    },
+    SelectValue: {
+        name: 'SelectValue',
+        template: '<span class="select-value"><slot /></span>',
+    },
+    SelectContent: {
+        name: 'SelectContent',
+        template: '<div class="select-content"><slot /></div>',
+    },
+    SelectItem: {
+        name: 'SelectItem',
+        props: ['value'],
+        template: '<div class="select-item" :data-value="value"><span class="select-item-indicator"></span><span class="select-item-text"><slot /></span></div>',
+    },
+}
+
+function mountTimePicker(options: Record<string, unknown> = {}) {
+    return mount(TimePicker, {
+        attachTo: document.body,
+        ...localeProvide,
+        ...options,
+        global: {
+            ...localeProvide.global,
+            stubs: selectStubs,
+            ...(options.global as Record<string, unknown> | undefined),
+        },
+    })
+}
+
 let wrapper: ReturnType<typeof mount> | null = null
 
 afterEach(() => {
@@ -17,57 +56,45 @@ afterEach(() => {
 
 describe('TimePicker', () => {
     it('renders with group role', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
+        wrapper = mountTimePicker()
         const group = wrapper.find('[role="group"]')
         expect(group.exists()).toBe(true)
     })
 
     it('renders hour and minute selects by default', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
-        const selects = wrapper.findAll('select')
-        expect(selects).toHaveLength(2)
+        wrapper = mountTimePicker()
+        const roots = wrapper.findAll('.select-root')
+        expect(roots).toHaveLength(2)
     })
 
     it('renders second select when showSeconds is true', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
-            props: { showSeconds: true },
-            attachTo: document.body,
-        })
-        const selects = wrapper.findAll('select')
-        expect(selects).toHaveLength(3)
+        wrapper = mountTimePicker({ props: { showSeconds: true } })
+        const roots = wrapper.findAll('.select-root')
+        expect(roots).toHaveLength(3)
     })
 
-    it('displays current hour from modelValue', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+    it('reflects current hour from modelValue on SelectRoot', () => {
+        wrapper = mountTimePicker({
             props: { modelValue: new Date(2026, 0, 5, 14, 30, 45) },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        expect(selects[0].element.value).toBe('14')
-        expect(selects[1].element.value).toBe('30')
+        const roots = wrapper.findAll('.select-root')
+        expect(roots[0].attributes('data-model-value')).toBe('14')
+        expect(roots[1].attributes('data-model-value')).toBe('30')
     })
 
-    it('displays zero hour when modelValue is null', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
-            props: { modelValue: null },
-            attachTo: document.body,
-        })
-        const selects = wrapper.findAll('select')
-        expect(selects[0].element.value).toBe('0')
-        expect(selects[1].element.value).toBe('0')
+    it('reflects zero hour when modelValue is null', () => {
+        wrapper = mountTimePicker({ props: { modelValue: null } })
+        const roots = wrapper.findAll('.select-root')
+        expect(roots[0].attributes('data-model-value')).toBe('0')
+        expect(roots[1].attributes('data-model-value')).toBe('0')
     })
 
     it('emits update:modelValue when hour changes', async () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+        wrapper = mountTimePicker({
             props: { modelValue: new Date(2026, 0, 5, 10, 30, 0) },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        await selects[0].setValue('15')
+        const roots = wrapper.findAllComponents({ name: 'SelectRoot' })
+        await roots[0].vm.$emit('update:modelValue', '15')
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const value = emitted![0][0] as Date
@@ -76,13 +103,11 @@ describe('TimePicker', () => {
     })
 
     it('emits update:modelValue when minute changes', async () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+        wrapper = mountTimePicker({
             props: { modelValue: new Date(2026, 0, 5, 10, 30, 0) },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        await selects[1].setValue('45')
+        const roots = wrapper.findAllComponents({ name: 'SelectRoot' })
+        await roots[1].vm.$emit('update:modelValue', '45')
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const value = emitted![0][0] as Date
@@ -91,16 +116,14 @@ describe('TimePicker', () => {
     })
 
     it('emits update:modelValue when second changes', async () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+        wrapper = mountTimePicker({
             props: {
                 modelValue: new Date(2026, 0, 5, 10, 30, 0),
                 showSeconds: true,
             },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        await selects[2].setValue('30')
+        const roots = wrapper.findAllComponents({ name: 'SelectRoot' })
+        await roots[2].vm.$emit('update:modelValue', '30')
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const value = emitted![0][0] as Date
@@ -108,14 +131,11 @@ describe('TimePicker', () => {
     })
 
     it('preserves date when modelValue exists and time changes', async () => {
-        const original = new Date(2026, 5, 15, 10, 30, 0)
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
-            props: { modelValue: original },
-            attachTo: document.body,
+        wrapper = mountTimePicker({
+            props: { modelValue: new Date(2026, 5, 15, 10, 30, 0) },
         })
-        const selects = wrapper.findAll('select')
-        await selects[0].setValue('20')
+        const roots = wrapper.findAllComponents({ name: 'SelectRoot' })
+        await roots[0].vm.$emit('update:modelValue', '20')
         const emitted = wrapper.emitted('update:modelValue')
         const value = emitted![0][0] as Date
         expect(value.getFullYear()).toBe(2026)
@@ -125,117 +145,132 @@ describe('TimePicker', () => {
     })
 
     it('respects hour timeStep', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+        wrapper = mountTimePicker({
             props: {
                 timeStep: { hour: 6, minute: 1, second: 1 },
             },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        const hourOptions = selects[0].findAll('option')
-        const hourValues = hourOptions.map((o) => o.element.value)
+        const roots = wrapper.findAll('.select-root')
+        const hourItems = roots[0].findAll('.select-item')
+        const hourValues = hourItems.map((i) => i.attributes('data-value'))
         expect(hourValues).toEqual(['0', '6', '12', '18'])
     })
 
     it('respects minute timeStep', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+        wrapper = mountTimePicker({
             props: {
                 timeStep: { hour: 1, minute: 15, second: 1 },
             },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        const minuteOptions = selects[1].findAll('option')
-        const minuteValues = minuteOptions.map((o) => o.element.value)
+        const roots = wrapper.findAll('.select-root')
+        const minuteItems = roots[1].findAll('.select-item')
+        const minuteValues = minuteItems.map((i) => i.attributes('data-value'))
         expect(minuteValues).toEqual(['0', '15', '30', '45'])
     })
 
     it('renders hour label', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
+        wrapper = mountTimePicker()
         expect(wrapper.text()).toContain('Hour')
     })
 
     it('renders minute label', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
+        wrapper = mountTimePicker()
         expect(wrapper.text()).toContain('Minute')
     })
 
     it('renders second label when showSeconds', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
-            props: { showSeconds: true },
-            attachTo: document.body,
-        })
+        wrapper = mountTimePicker({ props: { showSeconds: true } })
         expect(wrapper.text()).toContain('Second')
     })
 
     it('does not render second label when showSeconds is false', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
+        wrapper = mountTimePicker()
         expect(wrapper.text()).not.toContain('Second')
     })
 
     it('is disabled when disabled prop is true', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
-            props: { disabled: true },
-            attachTo: document.body,
-        })
-        const selects = wrapper.findAll('select')
-        selects.forEach((s) => {
-            expect(s.attributes('disabled')).toBeDefined()
+        wrapper = mountTimePicker({ props: { disabled: true } })
+        const roots = wrapper.findAll('.select-root')
+        roots.forEach((r) => {
+            expect(r.attributes('data-disabled')).toBe('true')
         })
     })
 
     it('does not emit when disabled and value changes', async () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
+        wrapper = mountTimePicker({
             props: {
                 modelValue: new Date(2026, 0, 5, 10, 30, 0),
                 disabled: true,
             },
-            attachTo: document.body,
         })
-        const selects = wrapper.findAll('select')
-        await selects[0].setValue('15')
+        const roots = wrapper.findAllComponents({ name: 'SelectRoot' })
+        await roots[0].vm.$emit('update:modelValue', '15')
         expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
 
     it('has aria-label on group', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
+        wrapper = mountTimePicker()
         const group = wrapper.find('[role="group"]')
         expect(group.attributes('aria-label')).toBeDefined()
     })
 
     it('uses custom aria-label when provided', () => {
-        wrapper = mount(TimePicker, {
-            ...localeProvide,
-            props: { ariaLabel: 'Custom time' },
-            attachTo: document.body,
-        })
+        wrapper = mountTimePicker({ props: { ariaLabel: 'Custom time' } })
         const group = wrapper.find('[role="group"]')
         expect(group.attributes('aria-label')).toBe('Custom time')
     })
 
     it('has 24 hour options by default', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
-        const selects = wrapper.findAll('select')
-        const hourOptions = selects[0].findAll('option')
-        expect(hourOptions).toHaveLength(24)
+        wrapper = mountTimePicker()
+        const roots = wrapper.findAll('.select-root')
+        const hourItems = roots[0].findAll('.select-item')
+        expect(hourItems).toHaveLength(24)
     })
 
     it('has 60 minute options by default', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
-        const selects = wrapper.findAll('select')
-        const minuteOptions = selects[1].findAll('option')
-        expect(minuteOptions).toHaveLength(60)
+        wrapper = mountTimePicker()
+        const roots = wrapper.findAll('.select-root')
+        const minuteItems = roots[1].findAll('.select-item')
+        expect(minuteItems).toHaveLength(60)
     })
 
     it('pads option labels with leading zeros', () => {
-        wrapper = mount(TimePicker, { ...localeProvide, attachTo: document.body })
-        const selects = wrapper.findAll('select')
-        const firstHourOption = selects[0].find('option')
-        expect(firstHourOption.text()).toBe('00')
+        wrapper = mountTimePicker()
+        const roots = wrapper.findAll('.select-root')
+        const firstHourItem = roots[0].find('.select-item-text')
+        expect(firstHourItem.text()).toBe('00')
+    })
+
+    it('applies brutalist panel framing when standalone', () => {
+        wrapper = mountTimePicker()
+        const group = wrapper.find('[role="group"]')
+        expect(group.classes()).toContain('border-3')
+        expect(group.classes()).toContain('border-brutal')
+        expect(group.classes()).toContain('shadow-brutal-lg')
+        expect(group.classes()).toContain('rounded-brutal')
+    })
+
+    it('uses embedded separator style when embedded prop is true', () => {
+        wrapper = mountTimePicker({ props: { embedded: true } })
+        const group = wrapper.find('[role="group"]')
+        expect(group.classes()).toContain('border-t-3')
+        expect(group.classes()).not.toContain('shadow-brutal-lg')
+    })
+
+    it('renders dropdown chevron icon on each trigger', () => {
+        wrapper = mountTimePicker()
+        const triggers = wrapper.findAll('.select-trigger')
+        triggers.forEach((trigger) => {
+            expect(trigger.find('.select-icon').exists()).toBe(true)
+        })
+    })
+
+    it('renders check indicator inside each option', () => {
+        wrapper = mountTimePicker()
+        const items = wrapper.findAll('.select-item')
+        expect(items.length).toBeGreaterThan(0)
+        items.forEach((item) => {
+            expect(item.find('.select-item-indicator').exists()).toBe(true)
+        })
     })
 })

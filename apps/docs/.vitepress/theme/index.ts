@@ -99,6 +99,9 @@ import VirtualScrollDemo from './components/demos/VirtualScrollDemo.vue'
 import GlitchButtonDemo from './components/demos/GlitchButtonDemo.vue'
 import DatePickerDemo from './components/demos/DatePickerDemo.vue'
 import ColorPickerDemo from './components/demos/ColorPickerDemo.vue'
+import NoiseBackgroundDemo from './components/demos/NoiseBackgroundDemo.vue'
+import TreeSelectDemo from './components/demos/TreeSelectDemo.vue'
+import TypewriterTextDemo from './components/demos/TypewriterTextDemo.vue'
 import ColorModeSwitcherDemo from './components/demos/ColorModeSwitcherDemo.vue'
 import DataTableDemo from './components/demos/DataTableDemo.vue'
 import './style.css'
@@ -207,5 +210,8 @@ export default {
         app.component('ColorPickerDemo', ColorPickerDemo)
         app.component('ColorModeSwitcherDemo', ColorModeSwitcherDemo)
         app.component('DataTableDemo', DataTableDemo)
+        app.component('NoiseBackgroundDemo', NoiseBackgroundDemo)
+        app.component('TreeSelectDemo', TreeSelectDemo)
+        app.component('TypewriterTextDemo', TypewriterTextDemo)
     },
 } satisfies Theme
