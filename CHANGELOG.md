@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 注册表新增 `tree-select.json`、`typewriter-text.json`、`noise-background.json` 项
 - 新增 TreeSelect、TypewriterText、NoiseBackground 组件文档与路由
 - 国际化支持：新增 `treeSelect` 命名空间（中英文）
+- CLI 支持安装新组件：`npx brutx-vue@latest add tree-select typewriter-text noise-background`
 
 ### Fixed
 

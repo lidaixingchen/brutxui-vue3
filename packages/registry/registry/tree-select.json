@@ -4,7 +4,10 @@
   "type": "registry:ui",
   "title": "Tree Select",
   "description": "A highly customizable neo-brutalist Tree Select component built with Brutx design tokens for Vue 3.",
-  "dependencies": [],
+  "dependencies": [
+    "reka-ui",
+    "@lucide/vue"
+  ],
   "registryDependencies": [
     "popover"
   ],
