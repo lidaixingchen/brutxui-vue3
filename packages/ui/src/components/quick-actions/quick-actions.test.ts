@@ -61,8 +61,8 @@ describe('QuickActions', () => {
             props: { actions: [] },
             ...localeProvide,
         })
-        const buttons = wrapper.findAll('button')
-        expect(buttons.length).toBe(0)
+        // When actions is empty, EmptyState is displayed instead of buttons
+        expect(wrapper.text()).toContain('No quick actions available')
     })
 
     it('renders Quick badge', () => {

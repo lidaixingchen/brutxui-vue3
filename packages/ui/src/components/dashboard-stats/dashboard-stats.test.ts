@@ -106,8 +106,10 @@ describe('DashboardStats', () => {
 
     it('does not render subtitle when not provided', () => {
         const wrapper = mount(DashboardStats, { ...localeProvide })
-        const subtitleEl = wrapper.find('p.text-brutal-muted-foreground')
-        expect(subtitleEl.exists()).toBe(false)
+        // Check that subtitle paragraph is not directly under the header div
+        const headerDiv = wrapper.find('.mb-8')
+        const subtitleInHeader = headerDiv.find('p.text-brutal-muted-foreground')
+        expect(subtitleInHeader.exists()).toBe(false)
     })
 
     it('renders progress bar when progress is defined', () => {

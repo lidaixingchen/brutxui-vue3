@@ -70,6 +70,7 @@ describe('TabsNav', () => {
 
     it('renders default slot', () => {
         const wrapper = mount(TabsNav, {
+            props: { tabs: mockTabs },
             slots: { default: '<div class="custom-content">Custom Content</div>' },
             global: { stubs: globalStubs },
         })

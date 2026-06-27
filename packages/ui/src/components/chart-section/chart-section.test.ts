@@ -36,7 +36,10 @@ describe('ChartSection', () => {
     })
 
     it('renders chart type tabs', () => {
-        const wrapper = mount(ChartSection, { ...localeProvide })
+        const wrapper = mount(ChartSection, {
+            props: { data: mockData },
+            ...localeProvide,
+        })
         expect(wrapper.text()).toContain('Bar')
         expect(wrapper.text()).toContain('Line')
         expect(wrapper.text()).toContain('Pie')
