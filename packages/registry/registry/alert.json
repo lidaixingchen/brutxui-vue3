@@ -21,7 +21,7 @@
     },
     {
       "path": "components/ui/alert/AlertTitle.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface AlertTitleProps {\n    class?: string\n}\n\nconst props = defineProps<AlertTitleProps>()\n\nconst classes = computed(() =>\n    cn('mb-1 font-black tracking-tight leading-none', props.class)\n)\n</script>\n\n<template>\n    <h5 :class=\"classes\">\n        <slot />\n    </h5>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { Primitive, type PrimitiveProps } from 'reka-ui'\nimport { cn } from '@/lib/utils'\n\ninterface AlertTitleProps extends PrimitiveProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<AlertTitleProps>(), {\n    as: 'h5',\n    asChild: undefined,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn('mb-1 font-black tracking-tight leading-none', props.class)\n)\n</script>\n\n<template>\n    <Primitive :as=\"props.as\" :as-child=\"props.asChild\" :class=\"classes\">\n        <slot />\n    </Primitive>\n</template>\n",
       "type": "registry:ui"
     },
     {
