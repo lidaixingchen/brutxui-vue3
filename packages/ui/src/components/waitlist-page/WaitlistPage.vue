@@ -33,6 +33,7 @@ const emit = defineEmits<{
 }>()
 
 const email = ref('')
+const errorMessage = ref('')
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -40,7 +41,10 @@ const rootClasses = computed(() => cn('w-full max-w-lg mx-auto text-center', pro
 
 function handleSubmit() {
     if (email.value && EMAIL_REGEX.test(email.value)) {
+        errorMessage.value = ''
         emit('submit', email.value)
+    } else {
+        errorMessage.value = t('waitlistPage.invalidEmail')
     }
 }
 </script>
@@ -65,6 +69,10 @@ function handleSubmit() {
 {{ resolvedCtaText }}
 </Button>
         </form>
+
+        <p v-if="errorMessage" class="mt-3 text-sm font-bold text-brutal-destructive">
+{{ errorMessage }}
+</p>
 
         <div class="mt-8 flex items-center justify-center gap-6 text-sm font-bold text-brutal-muted-foreground">
             <div v-if="waitlistCount > 0" class="flex items-center gap-1">

@@ -38,10 +38,7 @@ const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null);
 const dragOverColumn = ref<string | null>(null);
 const isDragging = ref(false);
 
-const columns = computed({
-    get: () => props.modelValue,
-    set: (val) => emit('update:modelValue', val),
-});
+const columns = computed(() => props.modelValue);
 
 function onDragStart(cardId: string, fromColumn: string) {
     draggingCard.value = { cardId, fromColumn };

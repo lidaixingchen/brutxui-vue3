@@ -33,7 +33,7 @@ const resolvedAfterAlt = computed(() => props.afterAlt ?? t('beforeAfter.after')
 const sliderVal = ref(props.defaultValue)
 
 watch(() => props.defaultValue, (val) => {
-    if (val !== undefined) sliderVal.value = val
+    sliderVal.value = val
 })
 
 const clipStyle = computed(() => {

@@ -56,6 +56,10 @@ export const en: Locale = {
         register: 'Register',
         emailPlaceholder: 'you@example.com',
         passwordPlaceholder: '••••••••',
+        invalidEmail: 'Please enter a valid email address',
+        passwordRequired: 'Please enter your password',
+        showPassword: 'Show password',
+        hidePassword: 'Hide password',
     },
     waitlistPage: {
         title: 'Join the BrutxUI Waitlist Club',
@@ -64,6 +68,7 @@ export const en: Locale = {
         onWaitlist: '{count} on waitlist',
         live: 'Live',
         defaultDescription: 'Join the waitlist to be among the first to try it.',
+        invalidEmail: 'Please enter a valid email address',
     },
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
@@ -106,6 +111,7 @@ export const en: Locale = {
     treeSelect: {
         placeholder: 'Select node...',
         searchPlaceholder: 'Search...',
+        search: 'Search nodes',
         emptyText: 'No results found.',
         selectedCount: '{count} selected',
         clear: 'Clear',

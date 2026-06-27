@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Check, HelpCircle } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -62,6 +62,8 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 const billing = ref<BillingPeriod>(props.defaultBilling)
+
+watch(() => props.defaultBilling, (val) => { billing.value = val })
 
 const resolvedTitle = computed(() => props.title ?? t('pricingSection.defaultTitle'))
 const resolvedSubtitle = computed(() => props.subtitle ?? '')
@@ -149,10 +151,20 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
             <p v-if="resolvedSubtitle" class="mt-2 text-brutal-muted-foreground font-medium">
 {{ resolvedSubtitle }}
 </p>
-            <div v-if="showBillingToggle" class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1" role="tablist" :aria-label="t('saasPricing.billingPeriod')">
+            <div
+                v-if="showBillingToggle"
+                class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1"
+                role="tablist"
+                :aria-label="t('saasPricing.billingPeriod')"
+                @keydown.left.prevent="billing = 'monthly'"
+                @keydown.right.prevent="billing = 'annually'"
+                @keydown.home.prevent="billing = 'monthly'"
+                @keydown.end.prevent="billing = 'annually'"
+            >
                 <button
                     role="tab"
                     :aria-selected="billing === 'monthly'"
+                    :tabindex="billing === 'monthly' ? 0 : -1"
                     :class="monthlyBtnClasses"
                     @click="billing = 'monthly'"
                 >
@@ -161,6 +173,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                 <button
                     role="tab"
                     :aria-selected="billing === 'annually'"
+                    :tabindex="billing === 'annually' ? 0 : -1"
                     :class="annuallyBtnClasses"
                     @click="billing = 'annually'"
                 >
@@ -189,7 +202,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                             <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
                         </div>
                         <ul class="space-y-3">
-                            <li v-for="feature in plan.features" :key="getFeatureText(feature)" class="flex items-center gap-2">
+                            <li v-for="(feature, index) in plan.features" :key="index" class="flex items-center gap-2">
                                 <div v-if="isFeatureIncluded(feature)" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
                                     <Check class="h-3 w-3 stroke-[3]" />
                                 </div>

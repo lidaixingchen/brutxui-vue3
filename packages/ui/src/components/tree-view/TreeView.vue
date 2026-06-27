@@ -96,15 +96,14 @@ function handleFocusParent() {
 }
 
 function handleFocusFirstChild() {
-    const items = getVisibleTreeItems()
-    if (items.length === 0) return
     const activeEl = document.activeElement as HTMLElement | null
     if (!activeEl) return
-    const currentItem = activeEl.closest('[role="treeitem"]') as HTMLElement
+    const currentItem = activeEl.closest('[role="treeitem"]') as HTMLElement | null
     if (!currentItem) return
-    const currentIndex = items.indexOf(currentItem)
-    if (currentIndex >= 0 && currentIndex < items.length - 1) {
-        items[currentIndex + 1].focus()
+    const childGroup = currentItem.querySelector('[role="group"]')
+    if (childGroup) {
+        const firstChild = childGroup.querySelector('[role="treeitem"]') as HTMLElement | null
+        firstChild?.focus()
     }
 }
 

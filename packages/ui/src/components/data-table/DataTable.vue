@@ -245,7 +245,7 @@ function getHeaderLabel(column: DataTableColumn<T>): string {
 watch(() => props.data, () => {
     selectedRows.value = new Set()
     currentPage.value = 1
-})
+}, { deep: true })
 
 watch(() => props.pageSize, (newSize) => {
     currentPageSize.value = newSize
@@ -363,12 +363,7 @@ const rootStyle = computed(() => {
                                 role="gridcell"
                             >
                                 <slot :name="`cell-${column.id}`" :row="row" :value="getCellValue(row, column)">
-                                    <template v-if="column.cell">
-                                        <template v-if="typeof column.cell({ row, value: getCellValue(row, column) }) === 'string'">
-                                            {{ column.cell({ row, value: getCellValue(row, column) }) }}
-                                        </template>
-                                        <component :is="() => column.cell!({ row, value: getCellValue(row, column) })" v-else />
-                                    </template>
+                                    <component :is="() => column.cell!({ row, value: getCellValue(row, column) })" v-if="column.cell" />
                                     <template v-else>
                                         {{ getCellValue(row, column) }}
                                     </template>

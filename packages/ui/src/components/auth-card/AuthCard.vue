@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Mail, Lock } from '@lucide/vue'
+import { Mail, Lock, Eye, EyeOff } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { useId } from 'vue'
@@ -59,6 +59,15 @@ const passwordId = useId()
 
 const email = ref('')
 const password = ref('')
+const emailError = ref('')
+const passwordError = ref('')
+const showPassword = ref(false)
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const passwordType = computed(() => showPassword.value ? 'text' : 'password')
+const passwordToggleIcon = computed(() => showPassword.value ? EyeOff : Eye)
+const passwordToggleLabel = computed(() => showPassword.value ? t('authCard.hidePassword') : t('authCard.showPassword'))
 
 const resolvedTitle = computed(() => props.title ?? props.texts.welcomeBack ?? t('authCard.welcomeBack'))
 const resolvedDescription = computed(() => props.description ?? props.texts.signInToContinue ?? t('authCard.signInToContinue'))
@@ -73,6 +82,18 @@ const resolvedNoAccount = computed(() => props.texts.noAccount ?? t('authCard.no
 const resolvedRegister = computed(() => props.texts.register ?? t('authCard.register'))
 
 function handleSubmit() {
+    emailError.value = ''
+    passwordError.value = ''
+    let valid = true
+    if (!email.value || !EMAIL_REGEX.test(email.value)) {
+        emailError.value = t('authCard.invalidEmail')
+        valid = false
+    }
+    if (!password.value) {
+        passwordError.value = t('authCard.passwordRequired')
+        valid = false
+    }
+    if (!valid) return
     emit('loginSubmit', { email: email.value, password: password.value })
 }
 </script>
@@ -115,6 +136,9 @@ function handleSubmit() {
                         <Mail class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
                         <Input :id="emailId" v-model="email" type="email" :placeholder="t('authCard.emailPlaceholder')" input-size="default" class="pl-10" />
                     </div>
+                    <p v-if="emailError" class="text-sm font-bold text-brutal-destructive">
+{{ emailError }}
+</p>
                 </div>
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
@@ -127,8 +151,14 @@ function handleSubmit() {
                     </div>
                     <div class="relative">
                         <Lock class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
-                        <Input :id="passwordId" v-model="password" type="password" :placeholder="t('authCard.passwordPlaceholder')" input-size="default" class="pl-10" />
+                        <Input :id="passwordId" v-model="password" :type="passwordType" :placeholder="t('authCard.passwordPlaceholder')" input-size="default" class="pl-10 pr-10" />
+                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-brutal-muted-foreground active:translate-y-[calc(-50%+var(--brutal-pressed-offset,2px))] active:shadow-none transition-all" :aria-label="passwordToggleLabel" @click="showPassword = !showPassword">
+                            <component :is="passwordToggleIcon" class="h-4 w-4 stroke-[3]" />
+                        </button>
                     </div>
+                    <p v-if="passwordError" class="text-sm font-bold text-brutal-destructive">
+{{ passwordError }}
+</p>
                 </div>
                 <Button type="submit" variant="primary" class="w-full">
 {{ resolvedSignIn }}

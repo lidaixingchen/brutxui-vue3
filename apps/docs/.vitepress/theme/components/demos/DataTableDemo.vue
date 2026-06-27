@@ -3,6 +3,7 @@ import { DataTable } from 'brutx-ui-vue'
 import type { DataTableColumn } from 'brutx-ui-vue'
 
 interface User {
+    [key: string]: unknown
     id: number
     name: string
     email: string

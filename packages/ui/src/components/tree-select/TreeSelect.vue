@@ -294,6 +294,7 @@ const triggerClasses = computed(() =>
                         v-model="searchQuery"
                         type="text"
                         :placeholder="resolvedSearchPlaceholder"
+                        :aria-label="t('treeSelect.search')"
                         class="w-full px-2 py-1.5 text-sm border-2 border-brutal rounded-brutal bg-brutal-bg text-brutal-fg placeholder:text-brutal-muted-foreground focus:outline-none focus:ring-2 focus:ring-brutal-ring"
                     >
                 </div>

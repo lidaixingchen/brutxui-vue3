@@ -49,10 +49,101 @@ function handleClick() {
         emit('toggle', props.node.id)
     }
 }
+
+function getVisibleTreeItems(): HTMLElement[] {
+    const tree = document.activeElement?.closest('[role="tree"]')
+    if (!tree) return []
+    return Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+}
+
+function focusAdjacent(direction: -1 | 1) {
+    const items = getVisibleTreeItems()
+    if (items.length === 0) return
+    const activeEl = document.activeElement as HTMLElement | null
+    const currentIndex = activeEl ? items.indexOf(activeEl) : -1
+    const nextIndex = currentIndex + direction
+    if (nextIndex >= 0 && nextIndex < items.length) {
+        items[nextIndex].focus()
+    }
+}
+
+function focusParent() {
+    const activeEl = document.activeElement as HTMLElement | null
+    if (!activeEl) return
+    const currentItem = activeEl.closest('[role="treeitem"]')
+    if (!currentItem) return
+    const parentGroup = (currentItem.parentElement as HTMLElement | null)?.closest('[role="treeitem"]')
+    if (parentGroup) (parentGroup as HTMLElement).focus()
+}
+
+function focusFirstChild() {
+    const activeEl = document.activeElement as HTMLElement | null
+    if (!activeEl) return
+    const currentItem = activeEl.closest('[role="treeitem"]')
+    if (!currentItem) return
+    const childGroup = currentItem.querySelector('[role="group"]')
+    if (childGroup) {
+        const firstChild = childGroup.querySelector('[role="treeitem"]') as HTMLElement | null
+        firstChild?.focus()
+    }
+}
+
+function handleKeydown(e: KeyboardEvent) {
+    if (props.node.disabled) return
+    switch (e.key) {
+        case 'Enter':
+        case ' ':
+            e.preventDefault()
+            handleClick()
+            break
+        case 'ArrowRight':
+            e.preventDefault()
+            if (!isLeaf.value && !isExpanded.value) {
+                emit('toggle', props.node.id)
+            } else if (!isLeaf.value && isExpanded.value) {
+                focusFirstChild()
+            }
+            break
+        case 'ArrowLeft':
+            e.preventDefault()
+            if (!isLeaf.value && isExpanded.value) {
+                emit('toggle', props.node.id)
+            } else {
+                focusParent()
+            }
+            break
+        case 'ArrowDown':
+            e.preventDefault()
+            focusAdjacent(1)
+            break
+        case 'ArrowUp':
+            e.preventDefault()
+            focusAdjacent(-1)
+            break
+        case 'Home': {
+            e.preventDefault()
+            const items = getVisibleTreeItems()
+            if (items.length > 0) items[0].focus()
+            break
+        }
+        case 'End': {
+            e.preventDefault()
+            const items = getVisibleTreeItems()
+            if (items.length > 0) items[items.length - 1].focus()
+            break
+        }
+    }
+}
 </script>
 
 <template>
-    <div role="treeitem" :aria-expanded="!isLeaf ? isExpanded : undefined">
+    <div
+        role="treeitem"
+        tabindex="0"
+        :aria-expanded="!isLeaf ? isExpanded : undefined"
+        :aria-selected="isSelected"
+        @keydown="handleKeydown"
+    >
         <div
             :class="itemClass"
             :style="indentStyle"

@@ -50,8 +50,8 @@ watch(open, (isOpen) => {
     if (isOpen) emit('open')
     else {
         emit('close')
-        if (displayValue.value !== props.modelValue) {
-            emit('change', props.modelValue)
+        if (displayValue.value?.getTime() !== props.modelValue?.getTime()) {
+            emit('change', displayValue.value)
         }
     }
 })

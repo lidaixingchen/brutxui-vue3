@@ -56,6 +56,10 @@ export const zhCN: Locale = {
         register: '注册',
         emailPlaceholder: 'you@example.com',
         passwordPlaceholder: '••••••••',
+        invalidEmail: '请输入有效的邮箱地址',
+        passwordRequired: '请输入密码',
+        showPassword: '显示密码',
+        hidePassword: '隐藏密码',
     },
     waitlistPage: {
         title: '加入 BrutxUI 等候俱乐部',
@@ -64,6 +68,7 @@ export const zhCN: Locale = {
         onWaitlist: '{count} 人已加入等候',
         live: '在线',
         defaultDescription: '加入等候列表，成为首批体验者。',
+        invalidEmail: '请输入有效的邮箱地址',
     },
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
@@ -106,6 +111,7 @@ export const zhCN: Locale = {
     treeSelect: {
         placeholder: '选择节点...',
         searchPlaceholder: '搜索...',
+        search: '搜索节点',
         emptyText: '未找到结果。',
         selectedCount: '已选 {count} 项',
         clear: '清除',

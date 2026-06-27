@@ -54,6 +54,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
         <slot>
             <Card variant="flat" class="p-4">
                 <Carousel
+                    v-if="items.length > 0"
                     :show-arrows="true"
                     :show-dots="true"
                     size="full"
@@ -81,7 +82,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                     </CarouselItem>
                 </Carousel>
 
-                <div v-if="items.length === 0" class="flex flex-col items-center justify-center py-12 text-brutal-muted-foreground">
+                <div v-else class="flex flex-col items-center justify-center py-12 text-brutal-muted-foreground">
                     <ImageIcon class="w-12 h-12 mb-3 stroke-[2]" />
                     <p class="font-bold">
                         {{ resolvedNoItems }}

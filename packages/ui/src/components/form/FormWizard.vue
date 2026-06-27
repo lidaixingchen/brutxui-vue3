@@ -48,6 +48,7 @@ const emit = defineEmits<{
     stepChange: [step: number, previousStep: number]
     complete: [values: Record<string, unknown>]
     validationError: [step: number, errors: Record<string, string>]
+    'navigation-blocked': [targetStep: number, blockedStep: number]
 }>()
 
 const currentStep = ref(props.initialStep)
@@ -94,6 +95,7 @@ function goToStep(step: number) {
     if (props.linear && step > currentStep.value) {
         for (let i = 0; i < step; i++) {
             if (!completedSteps.value.has(i) && !props.steps[i].optional) {
+                emit('navigation-blocked', step, i)
                 return
             }
         }

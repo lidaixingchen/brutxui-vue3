@@ -54,8 +54,13 @@ watch(open, (isOpen) => {
     if (isOpen) emit('open')
     else {
         emit('close')
-        if (displayValue.value !== props.modelValue) {
-            emit('change', props.modelValue)
+        const display = displayValue.value
+        const model = props.modelValue
+        if (
+            display?.[0]?.getTime() !== model?.[0]?.getTime() ||
+            display?.[1]?.getTime() !== model?.[1]?.getTime()
+        ) {
+            emit('change', displayValue.value)
         }
     }
 })

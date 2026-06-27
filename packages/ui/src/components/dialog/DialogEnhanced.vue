@@ -222,6 +222,8 @@ function onResizeMove(e: MouseEvent) {
 
     if (props.aspectRatio) {
         newHeight = newWidth / props.aspectRatio
+        if (props.minHeight) newHeight = Math.max(props.minHeight, newHeight)
+        if (props.maxHeight) newHeight = Math.min(props.maxHeight, newHeight)
     }
 
     size.value = { width: newWidth, height: newHeight }

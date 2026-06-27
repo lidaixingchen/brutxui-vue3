@@ -94,7 +94,7 @@ const rootClasses = computed(() =>
             </slot>
 
             <slot>
-                <Table>
+                <Table v-if="activities.length > 0">
                     <TableHeader>
                         <TableRow>
                             <TableHead>{{ resolvedAction }}</TableHead>
@@ -107,8 +107,10 @@ const rootClasses = computed(() =>
                         <TableRow
                             v-for="entry in paginatedActivities"
                             :key="entry.id"
+                            tabindex="0"
                             class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleEntryClick(entry.id)"
+                            @keydown.enter="handleEntryClick(entry.id)"
                         >
                             <TableCell>
                                 <div class="flex items-center gap-2">
@@ -132,7 +134,7 @@ const rootClasses = computed(() =>
                     </TableBody>
                 </Table>
 
-                <div v-if="activities.length === 0" class="text-center py-12">
+                <div v-else class="text-center py-12">
                     <p class="text-lg font-bold text-brutal-fg">
                         {{ resolvedNoActivityFound }}
                     </p>

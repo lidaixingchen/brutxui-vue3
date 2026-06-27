@@ -229,8 +229,6 @@ function handleConfirm() {
 
 function handleClear() {
     emit('clear')
-    emit('update:modelValue', null)
-    emit('confirm', null)
 }
 
 const panelClasses = computed(() => cn(colorPickerPanelVariants()))

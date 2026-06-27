@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { noiseBackgroundVariants } from './noise-background-variants'
@@ -39,8 +39,8 @@ const props = withDefaults(defineProps<NoiseBackgroundProps>(), {
 // 使用 Vue ref 替代直接 DOM 访问
 const turbulenceRef = ref<SVGFETurbulenceElement | null>(null)
 
-// 生成唯一 ID（结合时间戳降低碰撞风险）
-const filterId = ref(`noise-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`)
+// 使用 useId 生成 SSR 安全且稳定的唯一 ID
+const filterId = `noise-${useId()}`
 
 // 动画相关
 let animationFrame: number | null = null
@@ -48,7 +48,7 @@ const currentFrequency = ref(props.frequency)
 
 function startAnimation() {
     // SSR 兼容性检查
-    if (!props.animated || typeof window === 'undefined') return
+    if (!props.animated || typeof window === 'undefined' || props.animationDuration <= 0) return
 
     stopAnimation()
 

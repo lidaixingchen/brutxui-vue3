@@ -61,6 +61,10 @@ export interface AuthCardLocale {
     register: string
     emailPlaceholder: string
     passwordPlaceholder: string
+    invalidEmail: string
+    passwordRequired: string
+    showPassword: string
+    hidePassword: string
 }
 
 export interface WaitlistPageLocale {
@@ -70,6 +74,7 @@ export interface WaitlistPageLocale {
     onWaitlist: string
     live: string
     defaultDescription: string
+    invalidEmail: string
 }
 
 export interface DashboardShellLocale {
@@ -121,6 +126,7 @@ export interface TreeViewLocale {
 export interface TreeSelectLocale {
     placeholder: string
     searchPlaceholder: string
+    search: string
     emptyText: string
     selectedCount: string
     clear: string

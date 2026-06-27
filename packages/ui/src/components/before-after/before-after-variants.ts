@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+// 手柄使用 pointer-events-none，交互由底层透明 range input 处理，请勿移除 range input
+
 export const beforeAfterRootVariants = cva(
     'relative overflow-hidden w-full aspect-video border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal select-none'
 )

@@ -134,13 +134,15 @@ const rootClasses = computed(() =>
                         </Card>
                     </TabsContent>
                 </TabsRoot>
+            </slot>
 
-                <div class="mt-6 flex justify-end">
+            <div class="mt-6 flex justify-end">
+                <slot name="save-button">
                     <Button variant="primary" @click="handleSave">
                         {{ resolvedSaveText }}
                     </Button>
-                </div>
-            </slot>
+                </slot>
+            </div>
 
             <slot name="footer" />
         </div>

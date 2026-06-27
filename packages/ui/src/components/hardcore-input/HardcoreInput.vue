@@ -35,6 +35,7 @@ const props = withDefaults(defineProps<HardcoreInputProps>(), {
 const emit = defineEmits<{
     'update:modelValue': [value: string]
     'validationChange': [state: 'default' | 'success' | 'error', message?: string]
+    'error-change': [error: string | undefined]
 }>()
 
 const errorId = `input-error-${useId().replace(/:/g, '-')}`
@@ -86,9 +87,10 @@ const validate = (value: string) => {
         }
         
         if (props.shakeOnError) {
-            triggerShake.value = false
             if (shakeTimer.value) clearTimeout(shakeTimer.value)
+            triggerShake.value = false
             shakeTimer.value = window.setTimeout(() => {
+                shakeTimer.value = undefined
                 triggerShake.value = true
             }, 10)
         }
@@ -104,7 +106,7 @@ const validate = (value: string) => {
     }
 
     if (formField) {
-        formField.error.value = !isOk ? errText : undefined
+        emit('error-change', !isOk ? errText : undefined)
     }
 }
 
@@ -131,6 +133,7 @@ const onBlur = () => {
 }
 
 const onAnimationEnd = () => {
+    if (shakeTimer.value) return
     triggerShake.value = false
 }
 

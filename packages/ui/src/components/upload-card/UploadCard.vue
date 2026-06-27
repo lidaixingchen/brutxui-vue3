@@ -75,7 +75,7 @@ function handleDragLeave(event: DragEvent) {
 function handleDrop(event: DragEvent) {
     event.preventDefault()
     isDragging.value = false
-    const files = Array.from(event.dataTransfer?.files ?? [])
+    const files = filterBySize(Array.from(event.dataTransfer?.files ?? []))
     if (files.length > 0) {
         emit('drop', files)
     }
@@ -87,11 +87,16 @@ function handleBrowse() {
 
 function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement
-    const files = Array.from(target.files ?? [])
+    const files = filterBySize(Array.from(target.files ?? []))
     if (files.length > 0) {
         emit('upload', files)
     }
     target.value = ''
+}
+
+function filterBySize(files: File[]): File[] {
+    if (!props.maxSize) return files
+    return files.filter(f => f.size <= props.maxSize!)
 }
 </script>
 

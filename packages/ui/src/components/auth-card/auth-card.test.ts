@@ -72,12 +72,50 @@ describe('AuthCard', () => {
         expect(wrapper.emitted('forgotPassword')!.length).toBe(1)
     })
 
-    it('emits loginSubmit when form is submitted', async () => {
+    it('emits loginSubmit when form is submitted with valid credentials', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('test@example.com')
+        await inputs[1].setValue('password123')
         const form = wrapper.find('form')
         await form.trigger('submit')
         expect(wrapper.emitted('loginSubmit')).toBeTruthy()
         expect(wrapper.emitted('loginSubmit')!.length).toBe(1)
+        expect(wrapper.emitted('loginSubmit')![0]).toEqual([{ email: 'test@example.com', password: 'password123' }])
+    })
+
+    it('does not emit loginSubmit when form is submitted with empty fields', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const form = wrapper.find('form')
+        await form.trigger('submit')
+        expect(wrapper.emitted('loginSubmit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Please enter a valid email address')
+        expect(wrapper.text()).toContain('Please enter your password')
+    })
+
+    it('does not emit loginSubmit when email format is invalid', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('invalid-email')
+        await inputs[1].setValue('password123')
+        const form = wrapper.find('form')
+        await form.trigger('submit')
+        expect(wrapper.emitted('loginSubmit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Please enter a valid email address')
+    })
+
+    it('toggles password visibility when toggle button is clicked', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const passwordInput = wrapper.findAll('input')[1]
+        expect(passwordInput.attributes('type')).toBe('password')
+        const toggleButton = wrapper.find('button[aria-label="Show password"]')
+        expect(toggleButton.exists()).toBe(true)
+        await toggleButton.trigger('click')
+        expect(passwordInput.attributes('type')).toBe('text')
+        const hideButton = wrapper.find('button[aria-label="Hide password"]')
+        expect(hideButton.exists()).toBe(true)
+        await hideButton.trigger('click')
+        expect(passwordInput.attributes('type')).toBe('password')
     })
 
     it('renders Sign In submit button', () => {
