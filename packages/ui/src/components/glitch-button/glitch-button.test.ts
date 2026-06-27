@@ -109,4 +109,54 @@ describe('GlitchButton', () => {
         expect(wrapper.attributes('disabled')).toBeDefined()
         expect(wrapper.attributes('aria-busy')).toBe('true')
     })
+
+    it('defaults direction to horizontal', () => {
+        const wrapper = mount(GlitchButton)
+        expect(wrapper.classes()).toContain('glitch-horizontal')
+    })
+
+    it('applies direction variant classes', () => {
+        const vWrapper = mount(GlitchButton, {
+            props: { direction: 'vertical' }
+        })
+        expect(vWrapper.classes()).toContain('glitch-vertical')
+
+        const bWrapper = mount(GlitchButton, {
+            props: { direction: 'both' }
+        })
+        expect(bWrapper.classes()).toContain('glitch-both')
+    })
+
+    it('keeps direction class stable after play() and stop()', async () => {
+        const wrapper = mount(GlitchButton, {
+            props: { trigger: 'none', direction: 'vertical' }
+        })
+        expect(wrapper.classes()).toContain('glitch-vertical')
+        expect(wrapper.classes()).not.toContain('is-glitching')
+
+        wrapper.vm.play()
+        await nextTick()
+        expect(wrapper.classes()).toContain('is-glitching')
+        expect(wrapper.classes()).toContain('glitch-vertical')
+
+        wrapper.vm.stop()
+        await nextTick()
+        expect(wrapper.classes()).not.toContain('is-glitching')
+        expect(wrapper.classes()).toContain('glitch-vertical')
+    })
+
+    it('combines direction with variant, size and speed', () => {
+        const wrapper = mount(GlitchButton, {
+            props: {
+                direction: 'both',
+                variant: 'primary',
+                size: 'lg',
+                speed: 'fast'
+            }
+        })
+        expect(wrapper.classes()).toContain('glitch-both')
+        expect(wrapper.classes()).toContain('bg-brutal-primary')
+        expect(wrapper.classes()).toContain('h-14')
+        expect(wrapper.classes()).toContain('[--glitch-duration:100ms]')
+    })
 })

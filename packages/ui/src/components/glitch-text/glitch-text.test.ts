@@ -66,4 +66,55 @@ describe('GlitchText', () => {
         })
         expect(wrapper2.classes()).toContain('[--glitch-duration:100ms]')
     })
+
+    it('defaults direction to horizontal', () => {
+        const wrapper = mount(GlitchText, {
+            props: { text: 'Default' }
+        })
+        expect(wrapper.classes()).toContain('glitch-horizontal')
+    })
+
+    it('applies direction variant classes', () => {
+        const vWrapper = mount(GlitchText, {
+            props: { text: 'Vertical', direction: 'vertical' }
+        })
+        expect(vWrapper.classes()).toContain('glitch-vertical')
+
+        const bWrapper = mount(GlitchText, {
+            props: { text: 'Both', direction: 'both' }
+        })
+        expect(bWrapper.classes()).toContain('glitch-both')
+    })
+
+    it('keeps direction class stable after play() and stop()', async () => {
+        const wrapper = mount(GlitchText, {
+            props: { trigger: 'none', text: 'Manual', direction: 'vertical' }
+        })
+        expect(wrapper.classes()).toContain('glitch-vertical')
+        expect(wrapper.classes()).not.toContain('is-glitching')
+
+        wrapper.vm.play()
+        await nextTick()
+        expect(wrapper.classes()).toContain('is-glitching')
+        expect(wrapper.classes()).toContain('glitch-vertical')
+
+        wrapper.vm.stop()
+        await nextTick()
+        expect(wrapper.classes()).not.toContain('is-glitching')
+        expect(wrapper.classes()).toContain('glitch-vertical')
+    })
+
+    it('combines direction with speed and custom class', () => {
+        const wrapper = mount(GlitchText, {
+            props: {
+                text: 'Combo',
+                direction: 'both',
+                speed: 'fast',
+                class: 'custom-class'
+            }
+        })
+        expect(wrapper.classes()).toContain('glitch-both')
+        expect(wrapper.classes()).toContain('[--glitch-duration:100ms]')
+        expect(wrapper.classes()).toContain('custom-class')
+    })
 })

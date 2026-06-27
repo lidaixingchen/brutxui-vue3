@@ -910,7 +910,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "dialog"
+      ],
       "files": [
         {
           "path": "components/ui/command/Command.vue",
@@ -2951,7 +2953,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/toast/Toast.vue",
@@ -4355,6 +4359,7 @@
       ],
       "registryDependencies": [
         "button",
+        "badge",
         "card"
       ],
       "files": [
@@ -4707,7 +4712,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/dashboard-shell/DashboardShell.vue",
@@ -4939,6 +4946,7 @@
       ],
       "registryDependencies": [
         "button",
+        "badge",
         "input"
       ],
       "files": [
@@ -7674,7 +7682,8 @@
       "registryDependencies": [
         "card",
         "badge",
-        "avatar"
+        "avatar",
+        "button"
       ],
       "files": [
         {
@@ -10499,7 +10508,8 @@
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "popover"
+        "popover",
+        "button"
       ],
       "files": [
         {
@@ -10654,6 +10664,7 @@
       ],
       "registryDependencies": [
         "popover",
+        "button",
         "select"
       ],
       "files": [
@@ -10827,7 +10838,10 @@
       "title": "Color Mode Switcher",
       "description": "A highly customizable neo-brutalist Color Mode Switcher component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button",
+        "select"
+      ],
       "files": [
         {
           "path": "components/ui/color-mode-switcher/ColorModeSwitcher.vue",
@@ -10932,7 +10946,9 @@
       "description": "A highly customizable neo-brutalist Data Table component built with Brutx design tokens for Vue 3.",
       "dependencies": [],
       "registryDependencies": [
-        "checkbox"
+        "input",
+        "button",
+        "select"
       ],
       "files": [
         {
@@ -10949,6 +10965,22 @@
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useDataTableSort.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useDataTableFilter.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useDataTableSelection.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useDataTablePagination.ts",
           "type": "registry:ui"
         },
         {

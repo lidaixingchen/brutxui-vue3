@@ -436,3 +436,12 @@ export { useReducedMotion } from './composables/useReducedMotion'
 export { useAudioEngine } from './composables/useAudioEngine'
 export { useCanvasInteraction } from './composables/useCanvasInteraction'
 
+export { useDataTableSort } from './composables/useDataTableSort'
+export type { UseDataTableSortOptions } from './composables/useDataTableSort'
+export { useDataTableFilter } from './composables/useDataTableFilter'
+export type { UseDataTableFilterOptions } from './composables/useDataTableFilter'
+export { useDataTableSelection } from './composables/useDataTableSelection'
+export type { UseDataTableSelectionOptions } from './composables/useDataTableSelection'
+export { useDataTablePagination } from './composables/useDataTablePagination'
+export type { UseDataTablePaginationOptions } from './composables/useDataTablePagination'
+

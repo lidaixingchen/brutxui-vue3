@@ -124,7 +124,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     },
     'data-table': {
         files: ['DataTable.vue', 'data-table-variants.ts', 'types.ts'],
-        composables: ['useLocale.ts'],
+        composables: ['useLocale.ts', 'useDataTableSort.ts', 'useDataTableFilter.ts', 'useDataTableSelection.ts', 'useDataTablePagination.ts'],
     },
     'tree-select': {
         files: ['TreeSelect.vue', 'TreeSelectNode.vue', 'tree-select-variants.ts', 'tree-select-types.ts'],

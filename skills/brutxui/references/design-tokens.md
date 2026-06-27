@@ -263,20 +263,36 @@ createApp(App).mount('#app')
 
 ```vue
 <script setup lang="ts">
-import { useTheme } from 'brutx-ui-vue'
+import { useTheme, Select, SelectTrigger, SelectContent, SelectItem, SelectValue, Button } from 'brutx-ui-vue'
+import type { AcceptableValue } from 'reka-ui'
 
 const { theme, colorMode, setTheme, toggleColorMode } = useTheme()
+
+const themes = [
+    { value: 'classic', label: '经典' },
+    { value: 'pastel', label: '柔和' },
+    { value: 'mono', label: '单色' },
+]
+
+function handleThemeChange(value: AcceptableValue) {
+    if (typeof value === 'string') setTheme(value)
+}
 </script>
 
 <template>
-  <select :value="theme" @change="setTheme(($event.target as HTMLSelectElement).value)">
-    <option value="classic">经典</option>
-    <option value="pastel">柔和</option>
-    <option value="mono">单色</option>
-  </select>
-  <button @click="toggleColorMode">
+  <Select :model-value="theme" @update:model-value="handleThemeChange">
+    <SelectTrigger size="sm" class="w-auto min-w-[8rem]">
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem v-for="t in themes" :key="t.value" :value="t.value">
+        {{ t.label }}
+      </SelectItem>
+    </SelectContent>
+  </Select>
+  <Button variant="default" size="sm" @click="toggleColorMode">
     {{ colorMode === 'dark' ? '亮色模式' : '暗色模式' }}
-  </button>
+  </Button>
 </template>
 ```
 

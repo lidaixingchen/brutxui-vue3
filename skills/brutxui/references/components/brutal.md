@@ -66,44 +66,48 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 
 ## GlitchText
 
-故障风格文字。
+故障风格文字，支持横向/纵向/双向撕裂。
 
 ```vue
-<GlitchText text="GLITCH" trigger="hover" speed="medium" />
+<GlitchText text="GLITCH" trigger="hover" speed="medium" direction="horizontal" />
 ```
 
 - `text`: `string`
 - `trigger`: `'hover' | 'click' | 'autoplay' | 'none'` — 默认 `'hover'`
 - `interval`: `number` — 默认 `3000`
 - `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
+- `direction`: `'horizontal' | 'vertical' | 'both'` — 默认 `'horizontal'`，控制撕裂方向
 
 ## GlitchButton
 
-故障效果按钮，继承 Button 的所有变体和尺寸，支持故障动画效果。
+故障效果按钮，继承 Button 的所有变体和尺寸，支持横向/纵向/双向撕裂。
 
 ```vue
-<GlitchButton variant="primary" trigger="hover" speed="medium">
+<GlitchButton variant="primary" trigger="hover" speed="medium" direction="horizontal" data-text="点击我">
   点击我
 </GlitchButton>
 
 <!-- 自动播放模式 -->
-<GlitchButton trigger="autoplay" :interval="5000" speed="slow">
+<GlitchButton trigger="autoplay" :interval="5000" speed="slow" data-text="自动故障">
   自动故障
 </GlitchButton>
 
 <!-- 加载状态 -->
-<GlitchButton :loading="true">提交中...</GlitchButton>
+<GlitchButton :loading="true" data-text="提交中...">提交中...</GlitchButton>
 ```
 
 - `variant`: `'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'` — 默认 `'default'`
 - `size`: `'sm' | 'default' | 'lg' | 'xl' | 'icon'` — 默认 `'default'`
 - `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
+- `direction`: `'horizontal' | 'vertical' | 'both'` — 默认 `'horizontal'`，控制撕裂方向
 - `trigger`: `'hover' | 'click' | 'autoplay' | 'none'` — 默认 `'hover'`
 - `interval`: `number` — 自动播放间隔（毫秒），最小 100，默认 `3000`
 - `asChild`: `boolean` — 默认 `false`
 - `loading`: `boolean` — 默认 `false`
 - `disabled`: `boolean` — 默认 `false`
 - 方法: `play()`, `stop()`
+
+> 注意：GlitchButton 的撕裂效果通过伪元素 `content: attr(data-text)` 复制文本实现，需通过 `data-text` 属性传入与按钮内容一致的文本，否则伪元素复制层为空。GlitchText 自动从 `text` prop 绑定 `data-text`，无需手动传。
 
 > 注意：当用户启用 prefers-reduced-motion 时，动画会自动禁用以支持无障碍。
 

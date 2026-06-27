@@ -12,6 +12,7 @@ interface GlitchTextProps {
     trigger?: 'hover' | 'click' | 'autoplay' | 'none'
     interval?: number
     speed?: NonNullable<GlitchTextVariantProps['speed']>
+    direction?: NonNullable<GlitchTextVariantProps['direction']>
     class?: string
 }
 
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
     trigger: 'hover',
     interval: 3000,
     speed: 'medium',
+    direction: 'horizontal',
     class: undefined,
 })
 
@@ -105,7 +107,7 @@ defineExpose({
 
 const classes = computed(() =>
     cn(
-        glitchTextVariants({ speed: props.speed }),
+        glitchTextVariants({ speed: props.speed, direction: props.direction }),
         isActive.value && !prefersReducedMotion.value ? 'is-glitching' : '',
         props.class
     )
@@ -145,16 +147,40 @@ const classes = computed(() =>
     display: block;
 }
 
-.glitch-text.is-glitching::before {
+.glitch-text.is-glitching.glitch-horizontal::before {
     left: 2px;
     text-shadow: -2px 0 var(--brutal-destructive, #EF476F);
     animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
-.glitch-text.is-glitching::after {
+.glitch-text.is-glitching.glitch-horizontal::after {
     left: -2px;
     text-shadow: -2px 0 var(--brutal-info, #4A90D9);
     animation: glitch-anim-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-text.is-glitching.glitch-vertical::before {
+    top: 2px;
+    text-shadow: 0 -2px var(--brutal-destructive, #EF476F);
+    animation: glitch-anim-vertical-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-text.is-glitching.glitch-vertical::after {
+    top: -2px;
+    text-shadow: 0 -2px var(--brutal-info, #4A90D9);
+    animation: glitch-anim-vertical-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-text.is-glitching.glitch-both::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--brutal-destructive, #EF476F);
+    animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-text.is-glitching.glitch-both::after {
+    top: -2px;
+    text-shadow: 0 -2px var(--brutal-info, #4A90D9);
+    animation: glitch-anim-vertical-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
 @keyframes glitch-anim-1 {
@@ -204,6 +230,56 @@ const classes = computed(() =>
     100% {
         clip-path: inset(90% 0 2% 0);
         transform: skew(3deg);
+    }
+}
+
+@keyframes glitch-anim-vertical-1 {
+    0% {
+        clip-path: inset(0 20% 0 70%);
+        transform: skewY(-5deg);
+    }
+    20% {
+        clip-path: inset(0 60% 0 10%);
+        transform: skewY(5deg);
+    }
+    40% {
+        clip-path: inset(0 40% 0 50%);
+        transform: skewY(-2deg);
+    }
+    60% {
+        clip-path: inset(0 80% 0 5%);
+        transform: skewY(3deg);
+    }
+    80% {
+        clip-path: inset(0 10% 0 85%);
+        transform: skewY(-4deg);
+    }
+    100% {
+        clip-path: inset(0 50% 0 35%);
+        transform: skewY(1deg);
+    }
+}
+
+@keyframes glitch-anim-vertical-2 {
+    0% {
+        clip-path: inset(0 10% 0 85%);
+        transform: skewY(4deg);
+    }
+    25% {
+        clip-path: inset(0 40% 0 45%);
+        transform: skewY(-3deg);
+    }
+    50% {
+        clip-path: inset(0 70% 0 15%);
+        transform: skewY(5deg);
+    }
+    75% {
+        clip-path: inset(0 25% 0 60%);
+        transform: skewY(-2deg);
+    }
+    100% {
+        clip-path: inset(0 90% 0 2%);
+        transform: skewY(3deg);
     }
 }
 

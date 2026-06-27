@@ -17,9 +17,15 @@ export const glitchTextVariants = cva(
                 medium: '[--glitch-duration:300ms]',
                 fast: '[--glitch-duration:100ms]',
             },
+            direction: {
+                horizontal: 'glitch-horizontal',
+                vertical: 'glitch-vertical',
+                both: 'glitch-both',
+            },
         },
         defaultVariants: {
             speed: 'medium',
+            direction: 'horizontal',
         },
     }
 )

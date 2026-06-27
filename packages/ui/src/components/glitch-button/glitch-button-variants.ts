@@ -73,11 +73,17 @@ export const glitchButtonVariants = cva(
                 medium: '[--glitch-duration:300ms]',
                 fast: '[--glitch-duration:100ms]',
             },
+            direction: {
+                horizontal: 'glitch-horizontal',
+                vertical: 'glitch-vertical',
+                both: 'glitch-both',
+            },
         },
         defaultVariants: {
             variant: 'default',
             size: 'default',
             speed: 'medium',
+            direction: 'horizontal',
         },
     }
 )

@@ -4,6 +4,7 @@ import { Sparkles, Users, Star } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Button from '../button/Button.vue'
+import Badge from '../badge/Badge.vue'
 import Input from '../input/Input.vue'
 
 interface WaitlistPageProps {
@@ -51,10 +52,10 @@ function handleSubmit() {
 
 <template>
     <div :class="rootClasses">
-        <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-3 border-brutal rotate-[-1deg]">
+        <Badge variant="accent" class="mb-6 gap-2 rotate-[-1deg] font-black">
             <Sparkles class="h-4 w-4 stroke-[3] animate-spin" />
-            <span class="font-black text-sm">{{ t('waitlistPage.earlyAccess') }}</span>
-        </div>
+            <span>{{ t('waitlistPage.earlyAccess') }}</span>
+        </Badge>
 
         <h1 class="text-3xl font-black tracking-tight">
 {{ resolvedTitle }}

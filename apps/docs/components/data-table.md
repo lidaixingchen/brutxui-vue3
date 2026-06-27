@@ -211,7 +211,71 @@ const columns: DataTableColumn<User>[] = [
 </template>
 ```
 
-设置 `loading` 为 `true` 时，表格上方会显示旋转加载动画遮罩。
+设置 `loading` 为 `true` 时，表格上方会显示旋转加载动画遮罩。也可通过 `loading` 具名插槽自定义加载态内容。
+
+## 尺寸与密度
+
+```vue
+<template>
+    <!-- 小尺寸 + 紧凑密度，适合信息密集型表格 -->
+    <DataTable
+        :data="data"
+        :columns="columns"
+        :sortable="true"
+        size="sm"
+        :dense="true"
+        row-key="id"
+    />
+
+    <!-- 大尺寸，适合展示型表格 -->
+    <DataTable
+        :data="data"
+        :columns="columns"
+        size="lg"
+        row-key="id"
+    />
+</template>
+```
+
+`size` 控制字体大小与单元格纵向 padding（`sm` → `py-2`、`default` → `py-3`、`lg` → `py-4`）；`dense` 进一步压缩行高至 `py-1.5`，与 `size` 正交，可单独或组合使用。
+
+## 条纹控制
+
+```vue
+<template>
+    <!-- 默认开启条纹（偶数行 bg-brutal-muted/50） -->
+    <DataTable
+        :data="data"
+        :columns="columns"
+        row-key="id"
+    />
+
+    <!-- 显式关闭条纹 -->
+    <DataTable
+        :data="data"
+        :columns="columns"
+        :striped="false"
+        row-key="id"
+    />
+</template>
+```
+
+`striped` 默认 `true`，偶数行应用 `bg-brutal-muted/50` 形成奇偶交替。若需要纯净外观或配合自定义行背景，可设为 `false`。
+
+## 粘性表头
+
+```vue
+<template>
+    <DataTable
+        :data="largeData"
+        :columns="columns"
+        :sticky-header="true"
+        row-key="id"
+    />
+</template>
+```
+
+启用 `stickyHeader` 后，`<thead>` 会添加 `sticky top-0 z-10`，在长表格垂直滚动时表头始终可见。建议配合固定高度的滚动容器使用。
 
 ## Props
 
@@ -230,6 +294,10 @@ const columns: DataTableColumn<User>[] = [
 | `loading` | `boolean` | `false` |
 | `emptyMessage` | `string` | locale: `dataTable.noData` |
 | `virtualScroll` | `DataTableVirtualScroll` | — |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `dense` | `boolean` | `false` |
+| `striped` | `boolean` | `true` |
+| `stickyHeader` | `boolean` | `false` |
 | `class` | `string` | — |
 
 ### DataTableColumn 类型
@@ -276,3 +344,49 @@ const columns: DataTableColumn<User>[] = [
 | `toolbar` | — | 工具栏区域，位于筛选框右侧 |
 | `cell-{columnId}` | `{ row: T; value: unknown }` | 自定义特定列的单元格渲染 |
 | `empty` | — | 数据为空时的自定义空状态 |
+| `loading` | — | 自定义加载态内容，仅在 `loading` 为 `true` 时渲染 |
+
+## 迁移指南
+
+### 从旧版本升级
+
+本次更新对 DataTable 进行了 Neo-Brutalist 视觉规范对齐与 API 补全，绝大多数调用方零改动即可升级。以下为需要注意的变化：
+
+### `striped` 默认值变更（行为变更）
+
+**旧版本**：DataTable 不提供条纹，所有行背景一致。
+
+**新版本**：`striped` 默认 `true`，偶数行自动应用 `bg-brutal-muted/50` 形成奇偶交替条纹。
+
+**影响**：如果你依赖"无条纹"的纯净外观，或通过自定义行背景实现类似效果，需显式关闭：
+
+```vue
+<DataTable
+    :data="data"
+    :columns="columns"
+    :striped="false"
+    row-key="id"
+/>
+```
+
+### 内联样式替换为组件复用（视觉变更）
+
+工具栏的筛选输入框、导出按钮、分页按钮、每页条数选择器已从裸 HTML 元素 + 内联 Tailwind 类替换为项目内置的 `Input` / `Button` / `Select` 组件。视觉上会更统一（粗边框、阴影、按压反馈），但若你曾通过 `:deep()` 或全局 CSS 覆盖这些内部元素的样式，可能需要调整选择器。
+
+### 新增 `loading` 具名插槽
+
+旧版本加载态仅渲染固定的旋转图标。新版本暴露 `loading` 具名插槽，允许自定义加载态内容：
+
+```vue
+<DataTable :data="data" :columns="columns" :loading="true" row-key="id">
+    <template #loading>
+        <div class="flex items-center gap-2 text-brutal-primary font-black">
+            <span class="animate-pulse">加载中...</span>
+        </div>
+    </template>
+</DataTable>
+```
+
+### 新增视觉 props（可选增强）
+
+`size`、`dense`、`stickyHeader` 三个新 props 全部为可选、有默认值，旧调用无需修改。如需进一步控制表格密度或长表格体验，可按需启用。

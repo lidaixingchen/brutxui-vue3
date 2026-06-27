@@ -13,6 +13,7 @@ interface GlitchButtonProps {
     variant?: NonNullable<GlitchButtonVariantProps['variant']>
     size?: NonNullable<GlitchButtonVariantProps['size']>
     speed?: NonNullable<GlitchButtonVariantProps['speed']>
+    direction?: NonNullable<GlitchButtonVariantProps['direction']>
     trigger?: 'hover' | 'click' | 'autoplay' | 'none'
     interval?: number
     asChild?: boolean
@@ -25,6 +26,7 @@ const props = withDefaults(defineProps<GlitchButtonProps>(), {
     variant: 'default',
     size: 'default',
     speed: 'medium',
+    direction: 'horizontal',
     trigger: 'hover',
     interval: 3000,
     asChild: false,
@@ -157,6 +159,7 @@ const classes = computed(() =>
             variant: props.variant,
             size: props.size,
             speed: props.speed,
+            direction: props.direction,
         }),
         isActive.value && !prefersReducedMotion.value ? 'is-glitching' : '',
         props.asChild && isDisabled.value && 'pointer-events-none',
@@ -202,23 +205,51 @@ const classes = computed(() =>
     display: block;
 }
 
-.glitch-button.is-glitching::before {
+.glitch-button.is-glitching.glitch-horizontal::before {
     left: 2px;
     text-shadow: -2px 0 var(--brutal-destructive, #EF476F);
     animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
-.glitch-button.is-glitching::after {
+.glitch-button.is-glitching.glitch-horizontal::after {
     left: -2px;
     text-shadow: -2px 0 var(--brutal-info, #4A90D9);
     animation: glitch-anim-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
-.glitch-button.is-glitching {
-    animation: glitch-skew var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+.glitch-button.is-glitching.glitch-vertical::before {
+    top: 2px;
+    text-shadow: 0 -2px var(--brutal-destructive, #EF476F);
+    animation: glitch-anim-vertical-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
-@keyframes glitch-skew {
+.glitch-button.is-glitching.glitch-vertical::after {
+    top: -2px;
+    text-shadow: 0 -2px var(--brutal-info, #4A90D9);
+    animation: glitch-anim-vertical-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-button.is-glitching.glitch-both::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--brutal-destructive, #EF476F);
+    animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-button.is-glitching.glitch-both::after {
+    top: -2px;
+    text-shadow: 0 -2px var(--brutal-info, #4A90D9);
+    animation: glitch-anim-vertical-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-button.is-glitching.glitch-horizontal {
+    animation: glitch-skew-x var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+.glitch-button.is-glitching.glitch-vertical {
+    animation: glitch-skew-y var(--glitch-duration, 300ms) infinite linear alternate-reverse;
+}
+
+@keyframes glitch-skew-x {
     0% {
         transform: skew(-2deg);
     }
@@ -236,6 +267,27 @@ const classes = computed(() =>
     }
     100% {
         transform: skew(1deg);
+    }
+}
+
+@keyframes glitch-skew-y {
+    0% {
+        transform: skewY(-2deg);
+    }
+    20% {
+        transform: skewY(3deg);
+    }
+    40% {
+        transform: skewY(-1deg);
+    }
+    60% {
+        transform: skewY(2deg);
+    }
+    80% {
+        transform: skewY(-3deg);
+    }
+    100% {
+        transform: skewY(1deg);
     }
 }
 
@@ -286,6 +338,56 @@ const classes = computed(() =>
     100% {
         clip-path: inset(90% 0 2% 0);
         transform: skew(3deg);
+    }
+}
+
+@keyframes glitch-anim-vertical-1 {
+    0% {
+        clip-path: inset(0 20% 0 70%);
+        transform: skewY(-5deg);
+    }
+    20% {
+        clip-path: inset(0 60% 0 10%);
+        transform: skewY(5deg);
+    }
+    40% {
+        clip-path: inset(0 40% 0 50%);
+        transform: skewY(-2deg);
+    }
+    60% {
+        clip-path: inset(0 80% 0 5%);
+        transform: skewY(3deg);
+    }
+    80% {
+        clip-path: inset(0 10% 0 85%);
+        transform: skewY(-4deg);
+    }
+    100% {
+        clip-path: inset(0 50% 0 35%);
+        transform: skewY(1deg);
+    }
+}
+
+@keyframes glitch-anim-vertical-2 {
+    0% {
+        clip-path: inset(0 10% 0 85%);
+        transform: skewY(4deg);
+    }
+    25% {
+        clip-path: inset(0 40% 0 45%);
+        transform: skewY(-3deg);
+    }
+    50% {
+        clip-path: inset(0 70% 0 15%);
+        transform: skewY(5deg);
+    }
+    75% {
+        clip-path: inset(0 25% 0 60%);
+        transform: skewY(-2deg);
+    }
+    100% {
+        clip-path: inset(0 90% 0 2%);
+        transform: skewY(3deg);
     }
 }
 

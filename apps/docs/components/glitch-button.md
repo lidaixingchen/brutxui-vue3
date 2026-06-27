@@ -1,11 +1,11 @@
 ---
 title: GlitchButton 故障效果按钮
-description: 继承 Button 所有变体和尺寸的故障效果按钮，支持多种触发模式和动画速度控制。
+description: 继承 Button 所有变体和尺寸的故障效果按钮，支持横向/纵向/双向撕裂、多种触发模式和动画速度控制。
 ---
 
 # GlitchButton 故障效果按钮
 
-新粗野主义风格的故障效果按钮，继承 Button 组件的所有变体和尺寸，在按钮文本上应用 CSS `clip-path` 故障动画效果。
+新粗野主义风格的故障效果按钮，继承 Button 组件的所有变体和尺寸，在按钮文本上应用 CSS `clip-path` 故障动画效果。支持横向、纵向、双向三种撕裂方向。
 
 ## 预览
 
@@ -48,6 +48,26 @@ import { GlitchButton } from 'brutx-ui-vue'
 | `medium` | `--glitch-duration: 300ms`（默认） |
 | `fast` | `--glitch-duration: 100ms` |
 
+## 撕裂方向
+
+通过 `direction` prop 控制撕裂切缝与错位方向：
+
+| 方向 | 说明 |
+|------|------|
+| `horizontal` | 横向撕裂（默认）。切缝水平，文本切成上下横条，条带左右错位；按钮整体附加 `skewX` 倾斜 |
+| `vertical` | 纵向撕裂。切缝垂直，文本切成左右竖条，条带上下错位；按钮整体附加 `skewY` 倾斜 |
+| `both` | 双向撕裂。`::before` 走横向红、`::after` 走纵向蓝，两层叠加；**不应用**整体倾斜以避免过度动荡 |
+
+```vue
+<GlitchButton direction="horizontal" data-text="HORIZONTAL" trigger="click">HORIZONTAL</GlitchButton>
+<GlitchButton direction="vertical" data-text="VERTICAL" trigger="click">VERTICAL</GlitchButton>
+<GlitchButton direction="both" data-text="BOTH" trigger="click">BOTH</GlitchButton>
+```
+
+> **`data-text` 属性**：GlitchButton 的撕裂效果通过伪元素 `content: attr(data-text)` 复制文本实现，因此需要通过 `data-text` 属性传入与按钮内容一致的文本，否则伪元素复制层为空。这是与 GlitchText（自动从 `text` prop 绑定 `data-text`）的关键差异。
+
+> `both` 模式下两个伪元素都覆盖在原文上，色块叠加可能降低可读性，按需选用。
+
 ## 按钮变体
 
 GlitchButton 继承 Button 的所有变体：
@@ -87,6 +107,7 @@ GlitchButton 继承 Button 的所有变体：
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | 按钮尺寸 |
 | `speed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 故障动画速度 |
+| `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向（横向/纵向/双向） |
 | `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 动画触发时机 |
 | `interval` | `number` | `3000` | 自动播放间隔 (ms)，最小 100 |
 | `asChild` | `boolean` | `false` | 作为子组件渲染 |

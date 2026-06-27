@@ -3,6 +3,7 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from '@lucide/vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import Button from '../button/Button.vue'
 import { toastVariants } from './toast-variants'
 import { useLocale } from '@/composables/useLocale'
 
@@ -75,18 +76,6 @@ const iconComponent = computed(() => {
         default: return Zap
     }
 })
-
-const closeClasses = computed(() =>
-    cn(
-        'flex-shrink-0 h-8 w-8 flex items-center justify-center',
-        'border-3 border-brutal bg-brutal-bg',
-        'shadow-brutal-sm',
-        'transition-all duration-150',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2'
-    )
-)
 </script>
 
 <template>
@@ -113,9 +102,15 @@ const closeClasses = computed(() =>
                 <slot />
             </div>
 
-            <button :class="closeClasses" :aria-label="t('toast.close')" @click="startLeave">
+            <Button
+                variant="default"
+                size="icon"
+                class="h-8 w-8 shrink-0"
+                :aria-label="t('toast.close')"
+                @click="startLeave"
+            >
                 <X class="h-4 w-4 stroke-[3]" />
-            </button>
+            </Button>
         </div>
     </div>
 </template>

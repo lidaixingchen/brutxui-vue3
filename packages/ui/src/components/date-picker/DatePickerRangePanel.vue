@@ -6,6 +6,7 @@ import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
 import { type DatePickerRangeShortcut, type DateRange, resolveRangeShortcutValue } from './types'
+import Button from '../button/Button.vue'
 import './panel-styles.css'
 
 interface DatePickerRangePanelProps {
@@ -190,20 +191,12 @@ const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg
             </div>
 
             <div v-if="clearable" :class="cn(datePickerFooterVariants())">
-                <button
-                    type="button"
-                    class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
-                    @click="handleClear"
-                >
+                <Button variant="default" size="sm" @click="handleClear">
                     {{ resolvedClearLabel }}
-                </button>
-                <button
-                    type="button"
-                    class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
-                    @click="handleConfirm"
-                >
+                </Button>
+                <Button variant="primary" size="sm" @click="handleConfirm">
                     {{ resolvedConfirmLabel }}
-                </button>
+                </Button>
             </div>
         </div>
     </div>

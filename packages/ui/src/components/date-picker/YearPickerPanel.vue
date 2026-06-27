@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerFooterVariants } from './date-picker-variants'
+import Button from '../button/Button.vue'
 
 const DEFAULT_YEAR_RANGE = 12
 
@@ -101,25 +102,27 @@ function handleClear() {
     <div :class="panelClasses" role="dialog" aria-modal="true" :aria-label="resolvedAriaLabel">
         <div class="flex flex-col">
             <div class="flex items-center justify-between p-2 border-b-3 border-brutal bg-brutal-bg">
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center w-7 h-7 border-3 border-brutal bg-brutal-bg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                <Button
+                    variant="default"
+                    size="sm"
+                    class="w-7 h-7 p-0"
                     :aria-label="t('datePicker.previousDecade')"
                     @click="handlePrevDecade"
                 >
                     <ChevronLeft class="w-4 h-4 stroke-[3]" />
-                </button>
+                </Button>
                 <span class="font-black text-sm tracking-tight uppercase text-brutal-fg">
                     {{ decadeRange }}
                 </span>
-                <button
-                    type="button"
-                    class="inline-flex items-center justify-center w-7 h-7 border-3 border-brutal bg-brutal-bg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                <Button
+                    variant="default"
+                    size="sm"
+                    class="w-7 h-7 p-0"
                     :aria-label="t('datePicker.nextDecade')"
                     @click="handleNextDecade"
                 >
                     <ChevronRight class="w-4 h-4 stroke-[3]" />
-                </button>
+                </Button>
             </div>
 
             <div class="grid grid-cols-3 gap-1 p-2 bg-brutal-bg" role="grid">
@@ -145,20 +148,12 @@ function handleClear() {
             </div>
 
             <div v-if="clearable" :class="cn(datePickerFooterVariants())">
-                <button
-                    type="button"
-                    class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
-                    @click="handleClear"
-                >
+                <Button variant="default" size="sm" @click="handleClear">
                     {{ resolvedClearLabel }}
-                </button>
-                <button
-                    type="button"
-                    class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
-                    @click="handleConfirm"
-                >
+                </Button>
+                <Button variant="primary" size="sm" @click="handleConfirm">
                     {{ resolvedConfirmLabel }}
-                </button>
+                </Button>
             </div>
         </div>
     </div>

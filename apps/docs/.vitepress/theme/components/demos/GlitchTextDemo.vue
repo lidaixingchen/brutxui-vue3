@@ -32,6 +32,15 @@ const glitchRef = ref<InstanceType<typeof GlitchText> | null>(null)
         </div>
 
         <div>
+            <p class="text-sm font-bold mb-2">Direction 撕裂方向（Click 切换查看）</p>
+            <div class="flex flex-wrap gap-6 items-center">
+                <GlitchText text="HORIZONTAL" trigger="click" direction="horizontal" class="text-3xl" />
+                <GlitchText text="VERTICAL" trigger="click" direction="vertical" class="text-3xl" />
+                <GlitchText text="BOTH" trigger="click" direction="both" class="text-3xl" />
+            </div>
+        </div>
+
+        <div>
             <p class="text-sm font-bold mb-2">自定义间隔 (interval=1000ms)</p>
             <GlitchText text="SLOW INTERVAL" trigger="autoplay" :interval="1000" speed="medium" class="text-3xl" />
         </div>

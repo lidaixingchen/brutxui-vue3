@@ -1,8 +1,11 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>">
-import { ref, computed, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import Checkbox from '../checkbox/Checkbox.vue'
+import { useDataTableSort } from '@/composables/useDataTableSort'
+import { useDataTableFilter } from '@/composables/useDataTableFilter'
+import { useDataTableSelection } from '@/composables/useDataTableSelection'
+import { useDataTablePagination } from '@/composables/useDataTablePagination'
 import {
     dataTableRootVariants,
     dataTableHeaderVariants,
@@ -15,8 +18,24 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableSortState, DataTableFilterState, DataTableVirtualScroll } from './types'
-import { Loader2, ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
+import type { DataTableColumn, DataTableVirtualScroll, DataTableFilterState } from './types'
+import Input from '../input/Input.vue'
+import Button from '../button/Button.vue'
+import { SelectRoot, SelectValue } from 'reka-ui'
+import SelectTrigger from '../select/SelectTrigger.vue'
+import SelectContent from '../select/SelectContent.vue'
+import SelectItem from '../select/SelectItem.vue'
+import {
+    Loader2,
+    ArrowUpDown,
+    ArrowUp,
+    ArrowDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Inbox,
+} from '@lucide/vue'
 
 const { t } = useLocale()
 
@@ -34,6 +53,10 @@ const props = withDefaults(defineProps<{
     emptyMessage?: string
     rowKey: keyof T | ((row: T) => string | number)
     virtualScroll?: DataTableVirtualScroll
+    size?: 'sm' | 'default' | 'lg'
+    dense?: boolean
+    striped?: boolean
+    stickyHeader?: boolean
     class?: string
 }>(), {
     sortable: false,
@@ -46,6 +69,10 @@ const props = withDefaults(defineProps<{
     loading: false,
     emptyMessage: undefined,
     virtualScroll: undefined,
+    size: 'default',
+    dense: false,
+    striped: true,
+    stickyHeader: false,
     class: undefined,
 })
 
@@ -58,167 +85,80 @@ const emit = defineEmits<{
     export: [format: 'csv' | 'json']
 }>()
 
-const sortState = ref<DataTableSortState>({ column: '', direction: null })
-const filterState = ref<DataTableFilterState>({ global: '', columns: {} })
-const selectedRows = ref<Set<string | number>>(new Set())
-const currentPage = ref(1)
-const currentPageSize = ref(props.pageSize)
-
-function getRowKey(row: T): string | number {
-    if (typeof props.rowKey === 'function') {
-        return props.rowKey(row)
-    }
-    return row[props.rowKey] as string | number
-}
-
 const visibleColumns = computed(() =>
-    props.columns.filter((col) => !col.hidden)
+    props.columns.filter((col) => !col.hidden),
 )
 
-const filteredData = computed(() => {
-    let result = [...props.data]
-
-    if (filterState.value.global) {
-        const search = filterState.value.global.toLowerCase()
-        result = result.filter((row) =>
-            visibleColumns.value.some((col) => {
-                const value = col.accessorFn
-                    ? col.accessorFn(row)
-                    : col.accessorKey
-                        ? row[col.accessorKey]
-                        : ''
-                return String(value).toLowerCase().includes(search)
-            })
-        )
-    }
-
-    Object.entries(filterState.value.columns).forEach(([columnId, filterValue]) => {
-        if (filterValue === undefined || filterValue === null || filterValue === '') return
-        const col = visibleColumns.value.find((c) => c.id === columnId)
-        if (!col) return
-        result = result.filter((row) => {
-            const value = col.accessorFn
-                ? col.accessorFn(row)
-                : col.accessorKey
-                    ? row[col.accessorKey]
-                    : ''
-            return String(value).toLowerCase().includes(String(filterValue).toLowerCase())
-        })
-    })
-
-    return result
+const filter = useDataTableFilter<T>({
+    columns: () => props.columns,
+    filterable: () => props.filterable,
 })
 
-const sortedData = computed(() => {
-    if (!sortState.value.column || !sortState.value.direction) {
-        return filteredData.value
-    }
-
-    const col = visibleColumns.value.find((c) => c.id === sortState.value.column)
-    if (!col) return filteredData.value
-
-    return [...filteredData.value].sort((a, b) => {
-        const valueA = col.accessorFn
-            ? col.accessorFn(a)
-            : col.accessorKey
-                ? a[col.accessorKey]
-                : ''
-        const valueB = col.accessorFn
-            ? col.accessorFn(b)
-            : col.accessorKey
-                ? b[col.accessorKey]
-                : ''
-
-        if (valueA === valueB) return 0
-        if (valueA === null || valueA === undefined) return 1
-        if (valueB === null || valueB === undefined) return -1
-
-        const comparison = valueA < valueB ? -1 : 1
-        return sortState.value.direction === 'asc' ? comparison : -comparison
-    })
+const sort = useDataTableSort<T>({
+    columns: () => props.columns,
+    sortable: () => props.sortable,
 })
 
-const totalItems = computed(() => filteredData.value.length)
-const totalPages = computed(() => Math.ceil(totalItems.value / currentPageSize.value))
+const filtered = computed(() => filter.filteredData(props.data))
+const sorted = computed(() => sort.sortedData(filtered.value))
 
-const paginatedData = computed(() => {
-    if (!props.paginated) return sortedData.value
-    const start = (currentPage.value - 1) * currentPageSize.value
-    return sortedData.value.slice(start, start + currentPageSize.value)
+const pagination = useDataTablePagination({
+    paginated: () => props.paginated,
+    pageSize: () => props.pageSize,
+    totalItems: () => filtered.value.length,
 })
 
-const displayData = computed(() => paginatedData.value)
+const displayData = computed(() => pagination.paginatedData(sorted.value))
 
-const isAllSelected = computed(() => {
-    if (displayData.value.length === 0) return false
-    return displayData.value.every((row) => selectedRows.value.has(getRowKey(row)))
+const selection = useDataTableSelection<T>({
+    selectable: () => props.selectable,
+    rowKey: () => props.rowKey,
+    displayData: () => displayData.value,
+    data: () => props.data,
 })
 
-const isIndeterminate = computed(() => {
-    if (isAllSelected.value) return false
-    return displayData.value.some((row) => selectedRows.value.has(getRowKey(row)))
+const activeColumnId = computed(() => {
+    const { column, direction } = sort.sortState.value
+    return column && direction ? column : null
 })
 
-function toggleSort(columnId: string) {
+function getCellValue(row: T, column: DataTableColumn<T>): unknown {
+    if (column.accessorFn) return column.accessorFn(row)
+    if (column.accessorKey) return row[column.accessorKey]
+    return undefined
+}
+
+function getHeaderLabel(column: DataTableColumn<T>): string {
+    if (typeof column.header === 'function') return column.header(column)
+    return column.header
+}
+
+function handleSort(columnId: string) {
     if (!props.sortable) return
     const col = visibleColumns.value.find((c) => c.id === columnId)
     if (!col || col.sortable === false) return
-
-    if (sortState.value.column === columnId) {
-        if (sortState.value.direction === 'asc') {
-            sortState.value = { column: columnId, direction: 'desc' }
-        } else if (sortState.value.direction === 'desc') {
-            sortState.value = { column: '', direction: null }
-        } else {
-            sortState.value = { column: columnId, direction: 'asc' }
-        }
-    } else {
-        sortState.value = { column: columnId, direction: 'asc' }
-    }
-    emit('sort', sortState.value.column, sortState.value.direction)
+    sort.toggleSort(columnId)
+    emit('sort', sort.sortState.value.column, sort.sortState.value.direction)
 }
 
-function toggleRowSelection(row: T) {
-    if (!props.selectable) return
-    const key = getRowKey(row)
-    const newSelection = new Set(selectedRows.value)
-    if (newSelection.has(key)) {
-        newSelection.delete(key)
-    } else {
-        newSelection.add(key)
-    }
-    selectedRows.value = newSelection
-    emitSelectEvent()
+function handleToggleRow(row: T) {
+    selection.toggleRowSelection(row)
+    emit('select', selection.getSelectedRows())
 }
 
-function toggleAllSelection() {
-    if (!props.selectable) return
-    if (isAllSelected.value) {
-        selectedRows.value = new Set()
-    } else {
-        const newSelection = new Set(selectedRows.value)
-        displayData.value.forEach((row) => newSelection.add(getRowKey(row)))
-        selectedRows.value = newSelection
-    }
-    emitSelectEvent()
+function handleToggleAll() {
+    selection.toggleAllSelection()
+    emit('select', selection.getSelectedRows())
 }
 
-function emitSelectEvent() {
-    const selected = props.data.filter((row) => selectedRows.value.has(getRowKey(row)))
-    emit('select', selected)
-}
-
-function goToPage(page: number) {
-    const newPage = Math.max(1, Math.min(page, totalPages.value))
-    if (newPage !== currentPage.value) {
-        currentPage.value = newPage
-        emit('pageChange', currentPage.value)
+function handleGoToPage(page: number) {
+    if (pagination.goToPage(page)) {
+        emit('pageChange', pagination.currentPage.value)
     }
 }
 
-function setPageSize(size: number) {
-    currentPageSize.value = size
-    currentPage.value = 1
+function handleSetPageSize(size: number) {
+    pagination.setPageSize(size)
     emit('pageSizeChange', size)
 }
 
@@ -226,40 +166,13 @@ function exportData(format: 'csv' | 'json') {
     emit('export', format)
 }
 
-function getCellValue(row: T, column: DataTableColumn<T>): unknown {
-    if (column.accessorFn) {
-        return column.accessorFn(row)
-    }
-    if (column.accessorKey) {
-        return row[column.accessorKey]
-    }
-    return undefined
-}
-
-function getHeaderLabel(column: DataTableColumn<T>): string {
-    if (typeof column.header === 'function') {
-        return column.header(column)
-    }
-    return column.header
-}
-
 watch(() => props.data, () => {
-    selectedRows.value = new Set()
-    currentPage.value = 1
+    selection.clearSelection()
+    pagination.currentPage.value = 1
 }, { deep: true })
 
-watch(() => props.pageSize, (newSize) => {
-    currentPageSize.value = newSize
-})
-
-watch(totalPages, (newTotal) => {
-    if (currentPage.value > newTotal) {
-        currentPage.value = Math.max(1, newTotal)
-    }
-})
-
 const rootClasses = computed(() =>
-    cn(dataTableRootVariants({}), props.class)
+    cn(dataTableRootVariants({ size: props.size }), props.class),
 )
 
 const rootStyle = computed(() => {
@@ -275,22 +188,23 @@ const rootStyle = computed(() => {
         <!-- Toolbar -->
         <div v-if="filterable || $slots.toolbar" :class="cn(dataTableToolbarVariants())">
             <div v-if="filterable" class="flex items-center gap-2">
-                <input
-                    v-model="filterState.global"
-                    type="text"
+                <Input
+                    v-model="filter.filterState.value.global"
+                    input-size="sm"
                     :placeholder="t('dataTable.filterPlaceholder')"
-                    class="px-3 py-2 border-3 border-brutal bg-brutal-bg text-brutal-fg placeholder-brutal-fg/50 focus:outline-none focus:ring-2 focus:ring-brutal-ring"
-                >
+                    :aria-label="t('dataTable.filterPlaceholder')"
+                />
             </div>
             <div class="flex items-center gap-2">
                 <slot name="toolbar" />
-                <button
-                    v-if="selectable && selectedRows.size > 0"
-                    class="px-3 py-2 border-3 border-brutal bg-brutal-primary text-brutal-fg font-bold hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-0 active:shadow-none transition-all"
+                <Button
+                    v-if="selectable && selection.selectedRows.value.size > 0"
+                    variant="primary"
+                    size="sm"
                     @click="exportData('csv')"
                 >
                     {{ t('dataTable.exportCsv') }}
-                </button>
+                </Button>
             </div>
         </div>
 
@@ -298,15 +212,18 @@ const rootStyle = computed(() => {
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">
                 <!-- Header -->
-                <thead :class="cn(dataTableHeaderVariants())">
+                <thead :class="cn(dataTableHeaderVariants(), stickyHeader && 'sticky top-0 z-10')">
                     <tr>
                         <th v-if="selectable" class="w-12 px-4 py-3 text-center">
-                            <Checkbox
-                                :checked="isIndeterminate ? 'indeterminate' : isAllSelected"
-                                size="sm"
-                                class="cursor-pointer"
-                                @update:checked="toggleAllSelection"
-                            />
+                            <input
+                                type="checkbox"
+                                role="checkbox"
+                                :checked="selection.isAllSelected.value"
+                                :indeterminate="selection.isIndeterminate.value"
+                                :aria-checked="selection.isAllSelected.value"
+                                class="w-4 h-4 border-3 border-brutal accent-brutal-primary cursor-pointer"
+                                @change="handleToggleAll"
+                            >
                         </th>
                         <th
                             v-for="column in visibleColumns"
@@ -315,6 +232,7 @@ const rootStyle = computed(() => {
                                 dataTableHeadVariants({
                                     sortable: sortable && column.sortable !== false,
                                     align: column.align,
+                                    active: activeColumnId === column.id,
                                 })
                             )"
                             :style="{
@@ -323,15 +241,15 @@ const rootStyle = computed(() => {
                                 maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
                             }"
                             role="columnheader"
-                            :aria-sort="sortState.column === column.id ? (sortState.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-                            @click="sortable && column.sortable !== false ? toggleSort(column.id) : undefined"
+                            :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
+                            @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
                         >
                             <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                 <span>{{ getHeaderLabel(column) }}</span>
-                                <span v-if="sortable && column.sortable !== false" class="inline-flex">
-                                    <ArrowUp v-if="sortState.column === column.id && sortState.direction === 'asc'" class="w-4 h-4" />
-                                    <ArrowDown v-else-if="sortState.column === column.id && sortState.direction === 'desc'" class="w-4 h-4" />
-                                    <ArrowUpDown v-else class="w-4 h-4 opacity-30" />
+                                <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
+                                    <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
+                                    <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
+                                    <ArrowUpDown v-else class="w-4 h-4" />
                                 </span>
                             </div>
                         </th>
@@ -343,23 +261,37 @@ const rootStyle = computed(() => {
                     <template v-if="displayData.length > 0">
                         <tr
                             v-for="row in displayData"
-                            :key="getRowKey(row)"
-                            :class="cn(dataTableRowVariants({ selected: selectedRows.has(getRowKey(row)) }))"
+                            :key="selection.getRowKey(row)"
+                            :class="cn(
+                                dataTableRowVariants({
+                                    selected: selection.selectedRows.value.has(selection.getRowKey(row)),
+                                    striped: striped,
+                                })
+                            )"
                             role="row"
-                            :aria-selected="selectedRows.has(getRowKey(row)) || undefined"
+                            :aria-selected="selection.selectedRows.value.has(selection.getRowKey(row)) || undefined"
                         >
                             <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
-                                <Checkbox
-                                    :checked="selectedRows.has(getRowKey(row))"
-                                    size="sm"
-                                    class="cursor-pointer"
-                                    @update:checked="toggleRowSelection(row)"
-                                />
+                                <input
+                                    type="checkbox"
+                                    role="checkbox"
+                                    :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
+                                    :aria-checked="selection.selectedRows.value.has(selection.getRowKey(row))"
+                                    class="w-4 h-4 border-3 border-brutal accent-brutal-primary cursor-pointer"
+                                    @change="handleToggleRow(row)"
+                                >
                             </td>
                             <td
                                 v-for="column in visibleColumns"
                                 :key="column.id"
-                                :class="cn(dataTableCellVariants({ align: column.align }))"
+                                :class="cn(
+                                    dataTableCellVariants({
+                                        align: column.align,
+                                        size,
+                                        dense,
+                                        active: activeColumnId === column.id,
+                                    })
+                                )"
                                 role="gridcell"
                             >
                                 <slot :name="`cell-${column.id}`" :row="row" :value="getCellValue(row, column)">
@@ -379,7 +311,10 @@ const rootStyle = computed(() => {
                                 role="gridcell"
                             >
                                 <slot name="empty">
-                                    <p class="font-bold">
+                                    <span class="inline-flex items-center justify-center border-3 border-brutal shadow-brutal p-3">
+                                        <Inbox class="w-6 h-6" />
+                                    </span>
+                                    <p class="font-black">
                                         {{ emptyMessage || t('dataTable.noData') }}
                                     </p>
                                 </slot>
@@ -391,65 +326,88 @@ const rootStyle = computed(() => {
         </div>
 
         <!-- Pagination -->
-        <div v-if="paginated && totalPages > 1" :class="cn(dataTablePaginationVariants())">
+        <div v-if="paginated && pagination.totalPages.value > 1" :class="cn(dataTablePaginationVariants())">
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium">
-                    {{ t('dataTable.pageInfo', { current: currentPage, total: totalPages }) }}
+                    {{ t('dataTable.pageInfo', { current: pagination.currentPage.value, total: pagination.totalPages.value }) }}
                 </span>
-                <select
-                    :value="currentPageSize"
-                    class="px-2 py-1 border-2 border-brutal bg-brutal-bg text-brutal-fg text-sm"
-                    @change="setPageSize(Number(($event.target as HTMLSelectElement).value))"
+                <SelectRoot
+                    :model-value="String(pagination.currentPageSize.value)"
+                    @update:model-value="handleSetPageSize(Number($event))"
                 >
-                    <option v-for="size in pageSizeOptions" :key="size" :value="size">
-                        {{ size }} {{ t('dataTable.perPage') }}
-                    </option>
-                </select>
+                    <SelectTrigger
+                        size="sm"
+                        class="w-auto"
+                        :aria-label="t('dataTable.perPage')"
+                    >
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem
+                            v-for="sizeOption in pageSizeOptions"
+                            :key="sizeOption"
+                            :value="String(sizeOption)"
+                        >
+                            {{ sizeOption }} {{ t('dataTable.perPage') }}
+                        </SelectItem>
+                    </SelectContent>
+                </SelectRoot>
             </div>
             <div class="flex items-center gap-1">
-                <button
-                    class="p-2 border-2 border-brutal bg-brutal-bg hover:bg-brutal-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    :disabled="currentPage === 1"
+                <Button
+                    variant="default"
+                    size="icon"
+                    :disabled="pagination.currentPage.value === 1"
                     :aria-label="t('dataTable.firstPage')"
-                    @click="goToPage(1)"
+                    @click="handleGoToPage(1)"
                 >
                     <ChevronsLeft class="w-4 h-4" />
-                </button>
-                <button
-                    class="p-2 border-2 border-brutal bg-brutal-bg hover:bg-brutal-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    :disabled="currentPage === 1"
+                </Button>
+                <Button
+                    variant="default"
+                    size="icon"
+                    :disabled="pagination.currentPage.value === 1"
                     :aria-label="t('dataTable.previousPage')"
-                    @click="goToPage(currentPage - 1)"
+                    @click="handleGoToPage(pagination.currentPage.value - 1)"
                 >
                     <ChevronLeft class="w-4 h-4" />
-                </button>
-                <button
-                    class="p-2 border-2 border-brutal bg-brutal-bg hover:bg-brutal-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    :disabled="currentPage === totalPages"
+                </Button>
+                <Button
+                    variant="default"
+                    size="icon"
+                    :disabled="pagination.currentPage.value === pagination.totalPages.value"
                     :aria-label="t('dataTable.nextPage')"
-                    @click="goToPage(currentPage + 1)"
+                    @click="handleGoToPage(pagination.currentPage.value + 1)"
                 >
                     <ChevronRight class="w-4 h-4" />
-                </button>
-                <button
-                    class="p-2 border-2 border-brutal bg-brutal-bg hover:bg-brutal-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    :disabled="currentPage === totalPages"
+                </Button>
+                <Button
+                    variant="default"
+                    size="icon"
+                    :disabled="pagination.currentPage.value === pagination.totalPages.value"
                     :aria-label="t('dataTable.lastPage')"
-                    @click="goToPage(totalPages)"
+                    @click="handleGoToPage(pagination.totalPages.value)"
                 >
                     <ChevronsRight class="w-4 h-4" />
-                </button>
+                </Button>
             </div>
         </div>
 
         <!-- Loading Overlay -->
         <div v-if="loading" :class="cn(dataTableLoadingVariants())">
-            <Loader2 class="w-8 h-8 animate-spin text-brutal-primary" />
+            <slot name="loading">
+                <span class="inline-flex items-center justify-center border-3 border-brutal bg-brutal-bg p-2 shadow-brutal">
+                    <Loader2 class="w-8 h-8 animate-spin text-brutal-primary" />
+                </span>
+            </slot>
         </div>
 
         <!-- Selection Info -->
-        <div v-if="selectable && selectedRows.size > 0" class="px-4 py-2 border-t-2 border-brutal bg-brutal-primary/10 text-sm font-bold">
-            {{ t('dataTable.selectedRows', { count: selectedRows.size }) }}
+        <div
+            v-if="selectable && selection.selectedRows.value.size > 0"
+            class="sticky bottom-0 px-4 py-2 border-t-3 border-brutal bg-brutal-primary text-brutal-primary-foreground text-sm font-black"
+        >
+            {{ t('dataTable.selectedRows', { count: selection.selectedRows.value.size }) }}
         </div>
     </div>
 </template>

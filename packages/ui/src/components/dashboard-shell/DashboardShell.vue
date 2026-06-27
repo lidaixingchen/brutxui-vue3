@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { Menu } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
+import Button from '../button/Button.vue'
 
 interface DashboardShellProps {
     userEmail?: string
@@ -47,17 +48,17 @@ BrutxUI
                 <div class="text-sm font-bold truncate">
 {{ displayEmail }}
 </div>
-                <button class="text-sm font-bold text-brutal-destructive mt-1 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('signOut')">
+                <Button variant="link" class="text-sm font-bold text-brutal-destructive mt-1 hover:no-underline" @click="emit('signOut')">
 {{ t('dashboardShell.signOut') }}
-</button>
+</Button>
             </div>
         </aside>
 
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="border-b-3 border-brutal bg-brutal-bg px-6 py-3 flex items-center justify-between">
-                <button class="md:hidden h-8 w-8 flex items-center justify-center border-3 border-brutal shadow-brutal-sm active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5" @click="sidebarOpen = !sidebarOpen">
+                <Button variant="default" size="icon" class="md:hidden h-8 w-8" @click="sidebarOpen = !sidebarOpen">
                     <Menu class="h-4 w-4 stroke-[3]" />
-                </button>
+                </Button>
                 <slot name="header" />
             </header>
 

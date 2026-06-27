@@ -357,22 +357,38 @@ createApp(App).mount('#app')
 在组件中切换主题和暗色模式：
 
 ```vue
-<script setup>
-import { useTheme } from 'brutx-ui-vue'
+<script setup lang="ts">
+import { useTheme, Select, SelectTrigger, SelectContent, SelectItem, SelectValue, Button } from 'brutx-ui-vue'
+import type { AcceptableValue } from 'reka-ui'
 
 const { theme, colorMode, setTheme, toggleColorMode } = useTheme()
+
+const themes = [
+    { value: 'classic', label: 'Classic' },
+    { value: 'pastel', label: 'Pastel' },
+    { value: 'mono', label: 'Mono' },
+    { value: 'warm', label: 'Warm' },
+]
+
+function handleThemeChange(value: AcceptableValue) {
+    if (typeof value === 'string') setTheme(value)
+}
 </script>
 
 <template>
-    <select :value="theme" @change="setTheme(($event.target as HTMLSelectElement).value)">
-        <option value="classic">Classic</option>
-        <option value="pastel">Pastel</option>
-        <option value="mono">Mono</option>
-        <option value="warm">Warm</option>
-    </select>
-    <button @click="toggleColorMode">
+    <Select :model-value="theme" @update:model-value="handleThemeChange">
+        <SelectTrigger size="sm" class="w-auto min-w-[8rem]">
+            <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+            <SelectItem v-for="t in themes" :key="t.value" :value="t.value">
+                {{ t.label }}
+            </SelectItem>
+        </SelectContent>
+    </Select>
+    <Button variant="default" size="sm" @click="toggleColorMode">
         {{ colorMode === 'light' ? '亮色' : colorMode === 'dark' ? '暗色' : '系统' }}
-    </button>
+    </Button>
 </template>
 ```
 

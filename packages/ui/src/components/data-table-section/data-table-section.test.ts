@@ -153,3 +153,55 @@ describe('DataTableSection', () => {
         expect(wrapper.find('nav').exists()).toBe(true)
     })
 })
+
+// === Visual Compliance Tests (spec §7.5) ===
+
+describe('DataTableSection visual compliance', () => {
+    it('container has shadow-brutal-lg and rounded-brutal', () => {
+        const wrapper = mount(DataTableSection, {
+            props: { columns: mockColumns, rows: mockRows },
+            ...localeProvide,
+        })
+        expect(wrapper.classes()).toContain('shadow-brutal-lg')
+        expect(wrapper.classes()).toContain('rounded-brutal')
+    })
+
+    it('container has border-3 border-brutal', () => {
+        const wrapper = mount(DataTableSection, {
+            props: { columns: mockColumns, rows: mockRows },
+            ...localeProvide,
+        })
+        expect(wrapper.classes()).toContain('border-3')
+        expect(wrapper.classes()).toContain('border-brutal')
+    })
+
+    it('title area has border-b-3 separator', () => {
+        const wrapper = mount(DataTableSection, {
+            props: { title: 'Test Title', columns: mockColumns, rows: mockRows },
+            ...localeProvide,
+        })
+        const titleArea = wrapper.find('h2').element.parentElement
+        expect(titleArea?.classList.contains('border-b-3')).toBe(true)
+        expect(titleArea?.classList.contains('border-brutal')).toBe(true)
+    })
+
+    it('title uses font-black and tracking-wide', () => {
+        const wrapper = mount(DataTableSection, {
+            props: { title: 'Test Title' },
+            ...localeProvide,
+        })
+        const title = wrapper.find('h2')
+        expect(title.classes()).toContain('font-black')
+        expect(title.classes()).toContain('tracking-wide')
+    })
+
+    it('empty state uses text-brutal-fg not text-brutal-muted-foreground', () => {
+        const wrapper = mount(DataTableSection, {
+            props: { columns: mockColumns, rows: [] },
+            ...localeProvide,
+        })
+        const html = wrapper.html()
+        expect(html).toContain('text-brutal-fg')
+        expect(html).not.toContain('text-brutal-muted-foreground')
+    })
+})

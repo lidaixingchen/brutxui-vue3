@@ -19,6 +19,7 @@ import { colorPickerPanelVariants } from './color-picker-variants'
 import ColorPickerSwatch from './ColorPickerSwatch.vue'
 import ColorPickerInput from './ColorPickerInput.vue'
 import ColorPickerHistory from './ColorPickerHistory.vue'
+import Button from '../button/Button.vue'
 import { type ColorPickerSize, normalizePresets } from './types'
 
 interface ColorPickerPanelProps {
@@ -390,21 +391,21 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
         </div>
 
         <div v-if="clearable || showInput" class="mt-3 flex items-center justify-end gap-2">
-            <button
+            <Button
                 v-if="clearable"
-                type="button"
-                class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+                variant="default"
+                size="sm"
                 @click="handleClear"
             >
                 {{ resolvedClearLabel }}
-            </button>
-            <button
-                type="button"
-                class="px-3 py-1 text-sm font-bold border-3 border-brutal bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none"
+            </Button>
+            <Button
+                variant="primary"
+                size="sm"
                 @click="handleConfirm"
             >
                 {{ resolvedConfirmLabel }}
-            </button>
+            </Button>
         </div>
     </div>
 </template>

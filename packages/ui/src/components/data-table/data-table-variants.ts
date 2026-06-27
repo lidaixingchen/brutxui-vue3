@@ -2,9 +2,9 @@ import { cva } from 'class-variance-authority'
 
 export const dataTableRootVariants = cva(
     [
-        'w-full border-3 border-brutal',
+        'w-full border-3 border-brutal rounded-brutal',
         'bg-brutal-bg text-brutal-fg',
-        'shadow-brutal-lg',
+        'shadow-brutal-lg relative',
     ],
     {
         variants: {
@@ -17,7 +17,7 @@ export const dataTableRootVariants = cva(
         defaultVariants: {
             size: 'default',
         },
-    }
+    },
 )
 
 export const dataTableHeaderVariants = cva(
@@ -25,66 +25,66 @@ export const dataTableHeaderVariants = cva(
         'border-b-3 border-brutal',
         'bg-brutal-muted',
         'font-black',
-    ]
+    ],
 )
 
 export const dataTableHeadVariants = cva(
     [
         'px-4 py-3 text-left',
-        'border-r-2 border-brutal/20',
-        'last:border-r-0',
+        'first:border-l-0',
     ],
     {
         variants: {
             sortable: {
-                true: 'cursor-pointer select-none hover:bg-brutal-muted/80',
+                true: 'cursor-pointer select-none hover:bg-brutal-accent/40 active:translate-y-[var(--brutal-pressed-offset,2px)] active:bg-brutal-accent',
                 false: '',
             },
             align: {
                 left: 'text-left',
                 center: 'text-center',
                 right: 'text-right',
+            },
+            active: {
+                true: 'bg-brutal-accent',
+                false: '',
             },
         },
         defaultVariants: {
             sortable: false,
             align: 'left',
+            active: false,
         },
-    }
+    },
 )
 
-export const dataTableBodyVariants = cva(
-    ['divide-y-2 divide-brutal/10']
-)
+export const dataTableBodyVariants = cva([])
 
 export const dataTableRowVariants = cva(
     [
         'transition-colors duration-150',
-        'hover:bg-brutal-muted/50',
+        'hover:bg-brutal-muted',
     ],
     {
         variants: {
             selected: {
-                true: 'bg-brutal-primary/10',
+                true: 'bg-brutal-primary text-brutal-primary-foreground',
                 false: '',
             },
             striped: {
-                true: 'even:bg-brutal-muted/30',
+                true: 'even:bg-brutal-muted/50',
                 false: '',
             },
         },
         defaultVariants: {
             selected: false,
-            striped: false,
+            striped: true,
         },
-    }
+    },
 )
 
 export const dataTableCellVariants = cva(
     [
         'px-4 py-3',
-        'border-r-2 border-brutal/10',
-        'last:border-r-0',
     ],
     {
         variants: {
@@ -93,11 +93,27 @@ export const dataTableCellVariants = cva(
                 center: 'text-center',
                 right: 'text-right',
             },
+            size: {
+                sm: 'py-2',
+                default: 'py-3',
+                lg: 'py-4',
+            },
+            dense: {
+                true: 'py-1.5',
+                false: '',
+            },
+            active: {
+                true: 'bg-brutal-accent/20',
+                false: '',
+            },
         },
         defaultVariants: {
             align: 'left',
+            size: 'default',
+            dense: false,
+            active: false,
         },
-    }
+    },
 )
 
 export const dataTableFooterVariants = cva(
@@ -105,7 +121,7 @@ export const dataTableFooterVariants = cva(
         'border-t-3 border-brutal',
         'bg-brutal-muted',
         'px-4 py-3',
-    ]
+    ],
 )
 
 export const dataTableToolbarVariants = cva(
@@ -113,7 +129,7 @@ export const dataTableToolbarVariants = cva(
         'flex items-center justify-between gap-4 p-4',
         'border-b-3 border-brutal',
         'bg-brutal-bg',
-    ]
+    ],
 )
 
 export const dataTablePaginationVariants = cva(
@@ -121,26 +137,28 @@ export const dataTablePaginationVariants = cva(
         'flex items-center justify-between gap-4 p-4',
         'border-t-3 border-brutal',
         'bg-brutal-muted',
-    ]
+    ],
 )
 
 export const dataTableFilterVariants = cva(
     [
         'flex items-center gap-2',
-    ]
+    ],
 )
 
 export const dataTableEmptyVariants = cva(
     [
-        'flex flex-col items-center justify-center',
-        'py-12 text-brutal-fg/50',
-    ]
+        'flex flex-col items-center justify-center gap-3',
+        'py-12 px-4',
+        'text-brutal-fg',
+        'border-t-3 border-brutal',
+    ],
 )
 
 export const dataTableLoadingVariants = cva(
     [
         'absolute inset-0 flex items-center justify-center',
-        'bg-brutal-bg/80 backdrop-blur-sm',
+        'bg-brutal-bg',
         'z-10',
-    ]
+    ],
 )

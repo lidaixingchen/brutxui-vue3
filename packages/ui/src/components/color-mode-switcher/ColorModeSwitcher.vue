@@ -3,12 +3,13 @@ import { computed, type Component } from 'vue'
 import { Sun, Moon, Monitor } from '@lucide/vue'
 import {
     SelectRoot,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
     SelectValue,
     type AcceptableValue,
 } from 'reka-ui'
+import Button from '../button/Button.vue'
+import SelectTrigger from '../select/SelectTrigger.vue'
+import SelectContent from '../select/SelectContent.vue'
+import SelectItem from '../select/SelectItem.vue'
 import { useTheme } from '../../composables/useTheme'
 import type { ColorMode } from '../../composables/useTheme'
 
@@ -73,24 +74,27 @@ const handleValueChange = (value: AcceptableValue) => {
 
 <template>
     <!-- 图标模式：点击循环切换 -->
-    <button
+    <Button
         v-if="display === 'icon'"
-        class="nb-border nb-shadow nb-press p-2 rounded-brutal bg-brutal-bg hover:bg-brutal-muted transition-colors"
+        variant="default"
+        size="icon"
+        class="p-2"
         :title="`Current: ${currentLabel}. Click to toggle.`"
         @click="toggleColorModeLocal"
     >
         <component :is="currentIcon" :size="20" :stroke-width="2.5" class="text-brutal-fg" />
-    </button>
+    </Button>
 
     <!-- 按钮模式：循环切换 -->
-    <button
+    <Button
         v-else-if="display === 'button'"
-        class="nb-border nb-shadow nb-press px-3 py-1.5 rounded-brutal bg-brutal-bg hover:bg-brutal-muted transition-colors font-bold text-sm inline-flex items-center gap-1.5"
+        variant="default"
+        size="sm"
         @click="toggleColorModeLocal"
     >
         <component :is="currentIcon" :size="16" :stroke-width="2.5" class="text-brutal-fg" />
         {{ currentLabel }}
-    </button>
+    </Button>
 
     <!-- 下拉选择模式 -->
     <SelectRoot

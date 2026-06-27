@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
+import Badge from '../badge/Badge.vue'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 
@@ -42,10 +43,10 @@ const rootClasses = computed(() => cn('w-full', props.class))
     <div :class="rootClasses">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-                <div class="inline-flex items-center gap-2 mb-6 bg-brutal-accent px-3 py-1 border-3 border-brutal rotate-[-1deg]">
+                <Badge variant="accent" class="mb-6 gap-2 rotate-[-1deg] font-black">
                     <Sparkles class="h-4 w-4 stroke-[3]" />
-                    <span class="font-black text-sm">{{ t('brutalistHero.neoBrutalismUI') }}</span>
-                </div>
+                    <span>{{ t('brutalistHero.neoBrutalismUI') }}</span>
+                </Badge>
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
 {{ resolvedTitle }}
 </h1>

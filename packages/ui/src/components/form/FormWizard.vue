@@ -30,6 +30,7 @@ import { ref, computed, provide } from 'vue'
 import { cn } from '../../lib/utils'
 import { Stepper } from '../stepper'
 import type { StepperStep } from '../stepper'
+import Button from '../button/Button.vue'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()
@@ -176,14 +177,13 @@ const rootClasses = computed(() =>
 
         <!-- Navigation -->
         <div class="flex items-center justify-between gap-4 pt-4 border-t-3 border-brutal">
-            <button
+            <Button
                 v-if="!isFirstStep"
-                type="button"
-                class="px-6 py-3 border-3 border-brutal bg-brutal-bg text-brutal-fg font-bold hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="default"
                 @click="previousStep"
             >
                 {{ t('formWizard.previousStep') }}
-            </button>
+            </Button>
             <div v-else />
 
             <div class="flex items-center gap-2">
@@ -192,23 +192,21 @@ const rootClasses = computed(() =>
                 </span>
             </div>
 
-            <button
+            <Button
                 v-if="!isLastStep"
-                type="button"
-                class="px-6 py-3 border-3 border-brutal bg-brutal-primary text-brutal-fg font-bold hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-0 active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="primary"
                 :disabled="!canGoNext"
                 @click="nextStep"
             >
                 {{ t('formWizard.nextStep') }}
-            </button>
-            <button
+            </Button>
+            <Button
                 v-else
-                type="button"
-                class="px-6 py-3 border-3 border-brutal bg-brutal-success text-brutal-fg font-bold hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-0 active:shadow-none transition-all"
+                variant="success"
                 @click="complete"
             >
                 {{ t('formWizard.complete') }}
-            </button>
+            </Button>
         </div>
 
         <!-- Error Display -->

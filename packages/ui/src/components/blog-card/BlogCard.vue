@@ -8,6 +8,7 @@ import CardHeader from '../card/CardHeader.vue'
 import Badge from '../badge/Badge.vue'
 import Avatar from '../avatar/Avatar.vue'
 import AvatarFallback from '../avatar/AvatarFallback.vue'
+import Button from '../button/Button.vue'
 
 interface BlogCardProps {
     title?: string
@@ -77,9 +78,9 @@ const initials = computed(() => {
                 </div>
                 <span v-if="date" class="text-xs text-brutal-muted-foreground font-medium">{{ date }}</span>
             </div>
-            <button class="mt-3 text-sm font-bold text-brutal-primary cursor-pointer hover:underline active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('read-more')">
+            <Button variant="link" class="mt-3 text-sm font-bold text-brutal-primary" @click="emit('read-more')">
                 {{ resolvedReadMore }}
-            </button>
+            </Button>
             <slot name="actions" />
         </CardContent>
     </Card>

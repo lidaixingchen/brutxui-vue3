@@ -39,6 +39,15 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
         </div>
 
         <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">撕裂方向（Click 切换查看）</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <GlitchButton trigger="click" direction="horizontal" data-text="HORIZONTAL">HORIZONTAL</GlitchButton>
+                <GlitchButton trigger="click" direction="vertical" data-text="VERTICAL">VERTICAL</GlitchButton>
+                <GlitchButton trigger="click" direction="both" data-text="BOTH">BOTH</GlitchButton>
+            </div>
+        </div>
+
+        <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex flex-wrap items-center gap-3">
                 <GlitchButton size="sm" variant="secondary">Small</GlitchButton>

@@ -145,9 +145,9 @@ function handleSubmit() {
                         <LabelRoot :for="passwordId">
 {{ resolvedPassword }}
 </LabelRoot>
-                        <button type="button" class="text-sm font-bold text-brutal-primary active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('forgotPassword')">
+                        <Button type="button" variant="link" class="text-sm font-bold text-brutal-primary" @click="emit('forgotPassword')">
 {{ resolvedForgotPassword }}
-</button>
+</Button>
                     </div>
                     <div class="relative">
                         <Lock class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-muted-foreground" />
@@ -168,9 +168,9 @@ function handleSubmit() {
         <CardFooter class="justify-center">
             <p class="text-sm font-medium text-brutal-muted-foreground">
                 {{ resolvedNoAccount }}
-                <button type="button" class="font-bold text-brutal-primary cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all" @click="emit('registerClick')">
+                <Button type="button" variant="link" class="font-bold text-brutal-primary" @click="emit('registerClick')">
                     {{ resolvedRegister }}
-                </button>
+                </Button>
             </p>
         </CardFooter>
     </Card>

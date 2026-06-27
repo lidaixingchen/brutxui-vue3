@@ -105,7 +105,11 @@ function handleSearch() {
     currentPage.value = 1
 }
 
-const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
+const rootClasses = computed(() => cn(
+    'w-full max-w-5xl mx-auto',
+    'border-3 border-brutal rounded-brutal shadow-brutal-lg bg-brutal-bg overflow-hidden',
+    props.class,
+))
 
 const columnClasses = computed(() =>
     props.columns.map(col =>
@@ -122,69 +126,71 @@ function sortIcon(key: string) {
 <template>
     <div :class="rootClasses">
         <slot name="header">
-            <div class="mb-6">
-                <h2 class="text-3xl font-black tracking-tight">
+            <div class="border-b-3 border-brutal px-6 py-4">
+                <h2 class="text-3xl font-black tracking-wide">
                     {{ resolvedTitle }}
                 </h2>
             </div>
         </slot>
 
         <slot>
-            <div v-if="searchable" class="mb-4">
-                <Input
-                    v-model="searchQuery"
-                    :placeholder="resolvedSearchPlaceholder"
-                    @update:model-value="handleSearch"
-                />
-            </div>
+            <div class="p-6">
+                <div v-if="searchable" class="mb-4">
+                    <Input
+                        v-model="searchQuery"
+                        :placeholder="resolvedSearchPlaceholder"
+                        @update:model-value="handleSearch"
+                    />
+                </div>
 
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead
-                            v-for="(col, index) in columns"
-                            :key="col.key"
-                            :class="columnClasses[index]"
-                            @click="col.sortable && handleSort(col.key)"
-                        >
-                            <span class="inline-flex items-center gap-1">
-                                {{ col.label }}
-                                <component
-                                    :is="sortIcon(col.key)"
-                                    v-if="col.sortable"
-                                    class="h-4 w-4 stroke-[3]"
-                                />
-                            </span>
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <template v-if="paginatedRows.length > 0">
-                        <TableRow
-                            v-for="(row, rowIndex) in paginatedRows"
-                            :key="(row.id as PropertyKey) ?? rowIndex"
-                            class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
-                            @click="handleRowClick(row)"
-                        >
-                            <TableCell v-for="col in columns" :key="col.key">
-                                {{ row[col.key] }}
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead
+                                v-for="(col, index) in columns"
+                                :key="col.key"
+                                :class="columnClasses[index]"
+                                @click="col.sortable && handleSort(col.key)"
+                            >
+                                <span class="inline-flex items-center gap-1">
+                                    {{ col.label }}
+                                    <component
+                                        :is="sortIcon(col.key)"
+                                        v-if="col.sortable"
+                                        class="h-4 w-4 stroke-[3]"
+                                    />
+                                </span>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <template v-if="paginatedRows.length > 0">
+                            <TableRow
+                                v-for="(row, rowIndex) in paginatedRows"
+                                :key="(row.id as PropertyKey) ?? rowIndex"
+                                class="cursor-pointer transition-colors"
+                                @click="handleRowClick(row)"
+                            >
+                                <TableCell v-for="col in columns" :key="col.key">
+                                    {{ row[col.key] }}
+                                </TableCell>
+                            </TableRow>
+                        </template>
+                        <TableRow v-else>
+                            <TableCell :colspan="columns.length || 1" class="text-center text-brutal-fg font-black py-8">
+                                {{ resolvedNoResults }}
                             </TableCell>
                         </TableRow>
-                    </template>
-                    <TableRow v-else>
-                        <TableCell :colspan="columns.length || 1" class="text-center text-brutal-muted-foreground font-bold py-8">
-                            {{ resolvedNoResults }}
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
+                    </TableBody>
+                </Table>
 
-            <div v-if="totalPages > 1" class="mt-4 flex justify-center">
-                <Pagination
-                    :current-page="currentPage"
-                    :total-pages="totalPages"
-                    @update:current-page="currentPage = $event"
-                />
+                <div v-if="totalPages > 1" class="mt-4 flex justify-center">
+                    <Pagination
+                        :current-page="currentPage"
+                        :total-pages="totalPages"
+                        @update:current-page="currentPage = $event"
+                    />
+                </div>
             </div>
         </slot>
 

@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Loader2 } from '@lucide/vue'
-import { cn } from '../../lib/utils'
-import { useLocale } from '@/composables/useLocale'
-import { buttonVariants } from '../button/button-variants'
 import { type VariantProps } from 'class-variance-authority'
+import { useLocale } from '@/composables/useLocale'
+import Button from '../button/Button.vue'
+import { buttonVariants } from '../button/button-variants'
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
@@ -29,20 +28,20 @@ const props = withDefaults(defineProps<SubmitButtonProps>(), {
 const { t } = useLocale()
 
 const resolvedPendingText = computed(() => props.pendingText ?? t('submitButton.submitting'))
-
-const isDisabled = computed(() => props.disabled || props.loading)
-
-const classes = computed(() =>
-    cn(buttonVariants({ variant: props.variant, size: props.size }), props.class)
-)
 </script>
 
 <template>
-    <button type="submit" :class="classes" :disabled="isDisabled" :aria-busy="loading">
-        <Loader2 v-if="loading" class="h-4 w-4 animate-spin" aria-hidden="true" />
+    <Button
+        type="submit"
+        :variant="variant"
+        :size="size"
+        :loading="loading"
+        :disabled="disabled"
+        :class="props.class"
+    >
         <template v-if="loading && resolvedPendingText">
-{{ resolvedPendingText }}
-</template>
+            {{ resolvedPendingText }}
+        </template>
         <slot v-else />
-    </button>
+    </Button>
 </template>
