@@ -26,9 +26,8 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
 const isActive = ref(false)
 const prefersReducedMotion = useReducedMotion()
 
-const displayText = computed(() => props.text)
-
 const AUTOPLAY_ACTIVE_DURATION_MS = 1000
+const MIN_INTERVAL_MS = 50
 
 let autoplayTimer: ReturnType<typeof setInterval> | null = null
 let autoplayStopTimer: ReturnType<typeof setTimeout> | null = null
@@ -41,7 +40,7 @@ const startAutoplay = () => {
         autoplayStopTimer = setTimeout(() => {
             isActive.value = false
         }, AUTOPLAY_ACTIVE_DURATION_MS)
-    }, props.interval)
+    }, Math.max(props.interval, MIN_INTERVAL_MS))
 }
 
 const stopAutoplay = () => {
@@ -116,7 +115,7 @@ const classes = computed(() =>
 <template>
     <span
         :class="classes"
-        :data-text="displayText"
+        :data-text="text"
         role="status"
         aria-live="polite"
         @mouseenter="onMouseEnter"

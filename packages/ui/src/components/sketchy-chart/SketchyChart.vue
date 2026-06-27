@@ -43,9 +43,7 @@ const chartAriaLabel = computed(() => {
 
 // 手绘抖动强度对应的基准频率
 const BASE_FREQUENCY_FACTOR = 0.015
-const baseFrequency = computed(() =>
-    (props.sketchiness * BASE_FREQUENCY_FACTOR).toFixed(3)
-)
+const baseFrequency = computed(() => props.sketchiness * BASE_FREQUENCY_FACTOR)
 
 // 数据预处理（空数组、大容量降采样、负数取绝对值）
 const processedData = computed(() => {

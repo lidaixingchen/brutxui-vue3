@@ -7,6 +7,7 @@ import { useLocale } from '@/composables/useLocale'
 import { getWeekStartDate } from '../../lib/date'
 import { datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
 import { type DatePickerShortcut, resolveShortcutValue } from './types'
+import './panel-styles.css'
 
 interface WeekPickerPanelProps {
     modelValue?: Date | null
@@ -203,18 +204,6 @@ const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg
 </template>
 
 <style scoped>
-:global(.brutal-selected) {
-    background-color: var(--brutal-primary) !important;
-    border: 3px solid var(--brutal-border-color) !important;
-    border-radius: var(--brutal-radius) !important;
-    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color) !important;
-}
-
-:global(.brutal-selected-content) {
-    color: var(--brutal-primary-foreground) !important;
-    font-weight: 900 !important;
-}
-
 :global(.brutal-week-range) {
     background-color: var(--brutal-accent) !important;
     border-radius: var(--brutal-radius) !important;

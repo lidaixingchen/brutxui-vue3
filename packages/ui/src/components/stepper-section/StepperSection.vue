@@ -15,6 +15,7 @@ export interface StepperStepItem {
 interface StepperSectionProps {
     title?: string
     steps?: StepperStepItem[]
+    modelValue?: number
     currentStep?: number
     class?: string
 }
@@ -22,11 +23,13 @@ interface StepperSectionProps {
 const props = withDefaults(defineProps<StepperSectionProps>(), {
     title: undefined,
     steps: () => [],
+    modelValue: undefined,
     currentStep: 0,
     class: undefined,
 })
 
 const emit = defineEmits<{
+    'update:modelValue': [step: number]
     'step-click': [index: number]
 }>()
 
@@ -44,24 +47,30 @@ const stepperSteps = computed(() =>
     }))
 )
 
-const canGoPrevious = computed(() => props.currentStep > 0)
-const canGoNext = computed(() => props.currentStep < props.steps.length - 1)
+const activeStep = computed(() => props.modelValue ?? props.currentStep)
+const canGoPrevious = computed(() => activeStep.value > 0)
+const canGoNext = computed(() => activeStep.value < props.steps.length - 1)
 
 const rootClasses = computed(() => cn('w-full max-w-3xl mx-auto', props.class))
 
 function handleStepClick(index: number) {
+    emit('update:modelValue', index)
     emit('step-click', index)
 }
 
 function handlePrevious() {
     if (canGoPrevious.value) {
-        emit('step-click', props.currentStep - 1)
+        const prev = activeStep.value - 1
+        emit('update:modelValue', prev)
+        emit('step-click', prev)
     }
 }
 
 function handleNext() {
     if (canGoNext.value) {
-        emit('step-click', props.currentStep + 1)
+        const next = activeStep.value + 1
+        emit('update:modelValue', next)
+        emit('step-click', next)
     }
 }
 </script>
@@ -79,7 +88,7 @@ function handleNext() {
         <slot name="content">
             <Stepper
                 :steps="stepperSteps"
-                :model-value="currentStep"
+                :model-value="activeStep"
                 orientation="horizontal"
                 @step-click="handleStepClick"
             />

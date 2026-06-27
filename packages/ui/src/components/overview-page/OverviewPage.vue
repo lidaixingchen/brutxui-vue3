@@ -82,7 +82,9 @@ const dashboardStats = computed<StatItem[]>(() =>
                             v-for="(stat, index) in stats"
                             :key="stat.title"
                             class="flex items-center justify-between p-3 bg-brutal-muted border-3 border-brutal shadow-brutal-sm cursor-pointer hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
+                            tabindex="0"
                             @click="emit('stat-click', index)"
+                            @keydown.enter="emit('stat-click', index)"
                         >
                             <span class="font-bold text-sm">{{ stat.title }}</span>
                             <span class="font-black">{{ stat.value }}</span>

@@ -58,8 +58,8 @@ const rangeClasses = computed(() =>
 )
 
 const thumbCount = computed(() => {
-    if (props.modelValue) return props.modelValue.length
-    if (props.defaultValue) return props.defaultValue.length
+    if (props.modelValue && props.modelValue.length > 0) return props.modelValue.length
+    if (props.defaultValue && props.defaultValue.length > 0) return props.defaultValue.length
     return 1
 })
 </script>

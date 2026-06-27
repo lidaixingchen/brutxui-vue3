@@ -149,6 +149,15 @@ watch(() => [props.to, props.from] as const, () => {
     if (props.autoStart) start();
 });
 
+watch(() => props.duration, (newDuration, oldDuration) => {
+    if (startTime === null || rafId === null) return;
+    if (!newDuration || !oldDuration) return;
+    const now = performance.now();
+    const elapsed = now - startTime;
+    const oldProgress = Math.min(elapsed / oldDuration, 1);
+    startTime = now - oldProgress * newDuration;
+});
+
 watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decimals, props.size] as const, () => {
     scheduleUpdateScale();
 });

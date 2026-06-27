@@ -35,7 +35,6 @@ const props = withDefaults(defineProps<HardcoreInputProps>(), {
 const emit = defineEmits<{
     'update:modelValue': [value: string]
     'validationChange': [state: 'default' | 'success' | 'error', message?: string]
-    'error-change': [error: string | undefined]
 }>()
 
 const errorId = `input-error-${useId().replace(/:/g, '-')}`
@@ -106,7 +105,7 @@ const validate = (value: string) => {
     }
 
     if (formField) {
-        emit('error-change', !isOk ? errText : undefined)
+        formField.setError(!isOk ? errText : undefined)
     }
 }
 

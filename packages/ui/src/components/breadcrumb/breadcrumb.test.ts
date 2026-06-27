@@ -226,7 +226,6 @@ describe('BreadcrumbEllipsis', () => {
         expect(wrapper.classes()).toContain('rounded-brutal')
         expect(wrapper.classes()).toContain('shadow-brutal-sm')
         expect(wrapper.classes()).toContain('select-none')
-        expect(wrapper.classes()).toContain('cursor-pointer')
     })
 
     it('renders custom slot content', () => {

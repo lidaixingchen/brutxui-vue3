@@ -49,11 +49,12 @@ watch(() => props.email, (val) => { formEmail.value = val ?? '' })
 watch(() => props.bio, (val) => { formBio.value = val ?? '' })
 
 const avatarInitials = computed(() => {
-    if (!formName.value) return ''
-    const parts = formName.value.trim().split(/\s+/)
+    const trimmed = formName.value.trim()
+    if (!trimmed) return ''
+    const parts = trimmed.split(/\s+/).filter(w => w)
     return parts.length >= 2
         ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-        : formName.value.slice(0, 2).toUpperCase()
+        : trimmed.slice(0, 2).toUpperCase()
 })
 
 function handleSave() {

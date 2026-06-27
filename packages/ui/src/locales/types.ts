@@ -3,6 +3,7 @@ export interface CommandLocale {
     emptyText: string
     dialogTitle: string
     dialogDescription: string
+    searchLabel: string
 }
 
 export interface ComboboxLocale {
@@ -159,6 +160,7 @@ export interface BlogCardLocale {
 export interface FileCardLocale {
     defaultFileName: string
     download: string
+    downloadAriaLabel: string
 }
 
 export interface QuickActionsLocale {

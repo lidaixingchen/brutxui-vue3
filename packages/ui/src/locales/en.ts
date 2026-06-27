@@ -6,6 +6,7 @@ export const en: Locale = {
         emptyText: 'No results found.',
         dialogTitle: 'Command Palette',
         dialogDescription: 'Search for a command to run...',
+        searchLabel: 'Search commands',
     },
     combobox: {
         placeholder: 'Select option...',
@@ -139,6 +140,7 @@ export const en: Locale = {
     fileCard: {
         defaultFileName: 'document.pdf',
         download: 'Download',
+        downloadAriaLabel: 'Download {fileName}',
     },
     quickActions: {
         defaultTitle: 'Quick Actions',

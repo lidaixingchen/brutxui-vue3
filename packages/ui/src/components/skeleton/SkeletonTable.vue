@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
-import { skeletonVariants } from './skeleton-variants'
+import { type SkeletonVariantProps } from './skeleton-variants'
 import Skeleton from './Skeleton.vue'
-
-type SkeletonVariantProps = VariantProps<typeof skeletonVariants>
 
 interface SkeletonTableProps {
     variant?: NonNullable<SkeletonVariantProps['variant']>

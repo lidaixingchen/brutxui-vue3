@@ -7,6 +7,7 @@ export interface FormFieldContext {
     error: Ref<string | undefined>
     value: Ref<unknown>
     setValue: (value: unknown) => void
+    setError: (message: string | undefined) => void
 }
 
 export interface FormItemContext {

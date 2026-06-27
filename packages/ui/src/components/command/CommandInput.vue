@@ -65,6 +65,7 @@ const inputClasses = computed(() =>
             type="text"
             role="searchbox"
             aria-autocomplete="list"
+            :aria-label="t('command.searchLabel')"
             @input="handleInput"
         >
     </div>

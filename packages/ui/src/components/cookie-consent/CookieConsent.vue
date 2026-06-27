@@ -65,7 +65,7 @@ const resolvedDeclineText = computed(() => props.declineText ?? t('cookieConsent
 
 <template>
     <Transition name="cookie-slide-up">
-        <div v-if="modelValue" :class="rootClasses">
+        <div v-if="modelValue" :class="rootClasses" aria-live="polite">
             <Card :class="cardClasses" variant="default">
                 <CardContent class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-start gap-3">

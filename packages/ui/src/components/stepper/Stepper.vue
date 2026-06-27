@@ -80,25 +80,20 @@ const connectorIncompleteClasses = computed(() =>
     cn(stepperConnectorVariants({ orientation: props.orientation, completed: false }))
 )
 
-const dotClassesMap = computed(() => {
-    const map = new Map<number, string>()
-    props.steps.forEach((_, index) => {
+const dotClasses = computed(() =>
+    props.steps.map((_, index) => {
         const state = getState(index)
-        if (state === 'completed') map.set(index, dotCompletedClasses.value)
-        else if (state === 'active') map.set(index, dotActiveClasses.value)
-        else map.set(index, dotUpcomingClasses.value)
+        if (state === 'completed') return dotCompletedClasses.value
+        if (state === 'active') return dotActiveClasses.value
+        return dotUpcomingClasses.value
     })
-    return map
-})
+)
 
-const connectorClassesMap = computed(() => {
-    const map = new Map<number, string>()
-    props.steps.forEach((_, index) => {
-        const completed = index < props.modelValue
-        map.set(index, completed ? connectorCompletedClasses.value : connectorIncompleteClasses.value)
-    })
-    return map
-})
+const connectorClasses = computed(() =>
+    props.steps.map((_, index) =>
+        index < props.modelValue ? connectorCompletedClasses.value : connectorIncompleteClasses.value
+    )
+)
 </script>
 
 <template>
@@ -117,7 +112,7 @@ const connectorClassesMap = computed(() => {
                 >
                     <!-- Dot -->
                     <button
-                        :class="dotClassesMap.get(index)"
+                        :class="dotClasses[index]"
                         type="button"
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                         @click="clickStep(index)"
@@ -129,7 +124,7 @@ const connectorClassesMap = computed(() => {
                     <!-- Right connector (not for last) -->
                     <div
                         v-if="index < steps.length - 1"
-                        :class="connectorClassesMap.get(index)"
+                        :class="connectorClasses[index]"
                     />
                 </div>
 
@@ -152,7 +147,7 @@ const connectorClassesMap = computed(() => {
                     <div class="flex flex-col items-center">
                         <!-- Dot -->
                         <button
-                            :class="dotClassesMap.get(index)"
+                            :class="dotClasses[index]"
                             type="button"
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                             @click="clickStep(index)"
@@ -163,7 +158,7 @@ const connectorClassesMap = computed(() => {
                         <!-- Vertical connector below dot -->
                         <div
                             v-if="index < steps.length - 1"
-                            :class="connectorClassesMap.get(index)"
+                            :class="connectorClasses[index]"
                             :style="{ minHeight: MIN_VERTICAL_CONNECTOR_HEIGHT }"
                         />
                     </div>

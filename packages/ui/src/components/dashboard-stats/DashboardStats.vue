@@ -75,6 +75,10 @@ function getProgressClasses(stat: StatItem) {
         stat.accentColor ? ACCENT_COLOR_MAP[stat.accentColor] : 'bg-brutal-primary'
     )
 }
+
+function clampProgress(value: number): number {
+    return Math.min(100, Math.max(0, value))
+}
 </script>
 
 <template>
@@ -89,7 +93,7 @@ function getProgressClasses(stat: StatItem) {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card v-for="(stat, index) in stats" :key="stat.title" variant="interactive" @click="emit('stat-click', index)">
+            <Card v-for="(stat, index) in stats" :key="index" variant="interactive" @click="emit('stat-click', index)">
                 <CardHeader class="pb-2">
                     <div class="flex items-center justify-between">
                         <CardDescription>{{ stat.title }}</CardDescription>
@@ -112,7 +116,7 @@ function getProgressClasses(stat: StatItem) {
 {{ stat.description }}
 </p>
                     <div v-if="stat.progress !== undefined" class="mt-3 h-2 bg-brutal-muted border-3 border-brutal overflow-hidden">
-                        <div :class="getProgressClasses(stat)" :style="{ width: `${stat.progress}%` }" />
+                        <div :class="getProgressClasses(stat)" :style="{ width: `${clampProgress(stat.progress!)}%` }" />
                     </div>
                 </CardContent>
             </Card>

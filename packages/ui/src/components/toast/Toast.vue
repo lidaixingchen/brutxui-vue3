@@ -38,6 +38,7 @@ const timer = ref<number | undefined>(undefined)
 const leaveTimer = ref<number | undefined>(undefined)
 
 function startLeave() {
+    if (isLeaving.value) return
     isLeaving.value = true
     leaveTimer.value = window.setTimeout(() => {
         emit('close')

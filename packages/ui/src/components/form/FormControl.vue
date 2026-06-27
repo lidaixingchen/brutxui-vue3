@@ -16,6 +16,7 @@ const fieldContext = inject(formFieldKey, {
     error: ref<string | undefined>(undefined) as Ref<string | undefined>,
     value: ref<unknown>(undefined),
     setValue: () => {},
+    setError: () => {},
 })
 const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
 </script>

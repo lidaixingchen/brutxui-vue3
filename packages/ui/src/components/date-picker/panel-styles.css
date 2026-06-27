@@ -1,0 +1,11 @@
+.brutal-selected {
+    background-color: var(--brutal-primary) !important;
+    border: 3px solid var(--brutal-border-color) !important;
+    border-radius: var(--brutal-radius) !important;
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color) !important;
+}
+
+.brutal-selected-content {
+    color: var(--brutal-primary-foreground) !important;
+    font-weight: 900 !important;
+}

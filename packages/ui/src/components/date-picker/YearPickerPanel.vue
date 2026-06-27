@@ -5,11 +5,14 @@ import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerFooterVariants } from './date-picker-variants'
 
+const DEFAULT_YEAR_RANGE = 12
+
 interface YearPickerPanelProps {
     modelValue?: Date | null
     minDate?: Date
     maxDate?: Date
     clearable?: boolean
+    yearRange?: number
     ariaLabel?: string
 }
 
@@ -18,6 +21,7 @@ const props = withDefaults(defineProps<YearPickerPanelProps>(), {
     minDate: undefined,
     maxDate: undefined,
     clearable: true,
+    yearRange: DEFAULT_YEAR_RANGE,
     ariaLabel: undefined,
 })
 
@@ -46,14 +50,14 @@ const panelClasses = computed(() => cn(datePickerPanelVariants()))
 
 const years = computed(() => {
     const result: number[] = []
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < props.yearRange; i++) {
         result.push(viewDecadeStart.value + i)
     }
     return result
 })
 
 const decadeRange = computed(() =>
-    t('datePicker.yearRange', { start: viewDecadeStart.value, end: viewDecadeStart.value + 11 })
+    t('datePicker.yearRange', { start: viewDecadeStart.value, end: viewDecadeStart.value + props.yearRange - 1 })
 )
 
 function isYearActive(year: number): boolean {

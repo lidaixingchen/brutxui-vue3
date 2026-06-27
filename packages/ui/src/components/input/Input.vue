@@ -6,8 +6,32 @@ import { inputVariants } from './input-variants'
 
 type InputVariantProps = VariantProps<typeof inputVariants>
 
+type HTMLInputType =
+    | 'button'
+    | 'checkbox'
+    | 'color'
+    | 'date'
+    | 'datetime-local'
+    | 'email'
+    | 'file'
+    | 'hidden'
+    | 'image'
+    | 'month'
+    | 'number'
+    | 'password'
+    | 'radio'
+    | 'range'
+    | 'reset'
+    | 'search'
+    | 'submit'
+    | 'tel'
+    | 'text'
+    | 'time'
+    | 'url'
+    | 'week'
+
 interface InputProps {
-    type?: string
+    type?: HTMLInputType
     modelValue?: string
     variant?: NonNullable<InputVariantProps['variant']>
     inputSize?: NonNullable<InputVariantProps['inputSize']>

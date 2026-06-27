@@ -162,7 +162,7 @@ function sortIcon(key: string) {
                     <template v-if="paginatedRows.length > 0">
                         <TableRow
                             v-for="(row, rowIndex) in paginatedRows"
-                            :key="(row.id as PropertyKey) ?? JSON.stringify(row) + rowIndex"
+                            :key="(row.id as PropertyKey) ?? rowIndex"
                             class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                             @click="handleRowClick(row)"
                         >

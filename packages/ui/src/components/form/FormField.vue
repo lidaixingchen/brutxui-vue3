@@ -10,13 +10,18 @@ interface FormFieldProps {
 const props = defineProps<FormFieldProps>()
 
 const fieldName = computed(() => props.name)
-const { errorMessage, value, setValue } = useField(fieldName)
+const { errorMessage, value, setValue, setErrors } = useField(fieldName)
+
+function setError(message: string | undefined) {
+    setErrors(message === undefined ? [] : message)
+}
 
 provide(formFieldKey, {
     name: fieldName,
     error: errorMessage,
     value,
     setValue,
+    setError,
 })
 </script>
 

@@ -36,6 +36,7 @@ const resolvedVerified = computed(() => t('testimonialCard.verified'))
 const initials = computed(() => {
     return resolvedAuthor.value
         .split(' ')
+        .filter(w => w)
         .map(w => w[0])
         .join('')
         .slice(0, 2)

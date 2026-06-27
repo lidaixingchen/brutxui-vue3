@@ -55,6 +55,10 @@ watch(searchQuery, () => {
     currentPage.value = 1
 })
 
+watch(() => props.posts, () => {
+    currentPage.value = 1
+})
+
 const filteredPosts = computed(() => {
     let result = props.posts
     if (activeCategory.value) {

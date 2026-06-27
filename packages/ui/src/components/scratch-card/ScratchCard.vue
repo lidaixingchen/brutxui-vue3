@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, toRef } from 'vue'
+import { ref, computed, toRef, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { useCanvasInteraction } from '../../composables/useCanvasInteraction'
@@ -106,6 +106,24 @@ const canvasStyle = computed(() => ({
     transition: `opacity ${props.fadeDuration}ms ease-out`,
     opacity: isRevealed.value ? 0 : 1,
 }))
+
+function resetCanvasOverlay() {
+    const canvas = canvasRef.value
+    if (!canvas) return
+    const ctxVal = canvas.getContext('2d')
+    if (!ctxVal) return
+    const dpr = window.devicePixelRatio || 1
+    const w = canvas.width / dpr
+    const h = canvas.height / dpr
+    drawOverlay(ctxVal, w, h)
+}
+
+watch(isRevealed, (revealed) => {
+    if (!revealed) {
+        canvasRemoved.value = false
+        resetCanvasOverlay()
+    }
+})
 </script>
 
 <template>

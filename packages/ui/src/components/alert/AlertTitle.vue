@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { Primitive, type PrimitiveProps } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
-interface AlertTitleProps {
+interface AlertTitleProps extends PrimitiveProps {
     class?: string
 }
 
-const props = defineProps<AlertTitleProps>()
+const props = withDefaults(defineProps<AlertTitleProps>(), {
+    as: 'h5',
+    asChild: undefined,
+    class: undefined,
+})
 
 const classes = computed(() =>
     cn('mb-1 font-black tracking-tight leading-none', props.class)
@@ -14,7 +19,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <h5 :class="classes">
+    <Primitive :as="props.as" :as-child="props.asChild" :class="classes">
         <slot />
-    </h5>
+    </Primitive>
 </template>

@@ -55,7 +55,7 @@ const resolvedDownload = computed(() => t('fileCard.download'))
                     </div>
                 </div>
             </div>
-            <Button variant="primary" size="sm" class="mt-4 w-full" @click="emit('download')">
+            <Button variant="primary" size="sm" class="mt-4 w-full" :aria-label="t('fileCard.downloadAriaLabel', { fileName: resolvedFileName })" @click="emit('download')">
                 <Download class="mr-2 h-4 w-4 stroke-[3]" />
                 {{ resolvedDownload }}
             </Button>

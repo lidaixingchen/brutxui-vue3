@@ -10,7 +10,7 @@ interface FormLabelProps {
 
 const props = defineProps<FormLabelProps>()
 
-const fieldContext = inject(formFieldKey, { name: computed(() => ''), error: ref<string | undefined>(undefined) as Ref<string | undefined>, value: ref<unknown>(undefined), setValue: () => {} })
+const fieldContext = inject(formFieldKey, { name: computed(() => ''), error: ref<string | undefined>(undefined) as Ref<string | undefined>, value: ref<unknown>(undefined), setValue: () => {}, setError: () => {} })
 const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
 
 const classes = computed(() =>

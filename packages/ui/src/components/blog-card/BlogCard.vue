@@ -39,10 +39,14 @@ const resolvedTitle = computed(() => props.title ?? t('blogCard.defaultTitle'))
 const resolvedExcerpt = computed(() => props.excerpt ?? t('blogCard.defaultExcerpt'))
 const resolvedReadMore = computed(() => t('blogCard.readMore'))
 
+const titleClasses = computed(() => cn('text-lg font-black tracking-tight leading-snug line-clamp-2'))
+const excerptClasses = computed(() => cn('text-sm text-brutal-muted-foreground font-medium leading-relaxed line-clamp-3'))
+
 const initials = computed(() => {
     if (!props.author) return ''
     return props.author
         .split(' ')
+        .filter(w => w)
         .map(w => w[0])
         .join('')
         .slice(0, 2)
@@ -56,12 +60,12 @@ const initials = computed(() => {
             <Badge v-if="category" variant="primary" size="sm" class="w-fit mb-2">
                 {{ category }}
             </Badge>
-            <h3 class="text-lg font-black tracking-tight leading-snug">
+            <h3 :class="titleClasses">
 {{ resolvedTitle }}
 </h3>
         </CardHeader>
         <CardContent>
-            <p class="text-sm text-brutal-muted-foreground font-medium leading-relaxed">
+            <p :class="excerptClasses">
 {{ resolvedExcerpt }}
 </p>
             <div class="mt-4 flex items-center justify-between">

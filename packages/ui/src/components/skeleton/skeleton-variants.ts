@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority'
+import { cva, type VariantProps } from 'class-variance-authority'
 
 export const skeletonVariants = cva(
     ['animate-pulse', 'border-3 border-brutal'],
@@ -16,3 +16,5 @@ export const skeletonVariants = cva(
         },
     }
 )
+
+export type SkeletonVariantProps = VariantProps<typeof skeletonVariants>

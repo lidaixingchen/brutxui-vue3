@@ -77,7 +77,9 @@ const rootClasses = computed(() =>
         <!-- 空状态 -->
         <div v-if="isEmpty" class="flex items-center justify-center p-8 text-brutal-fg/50">
             <slot name="empty">
-                <p class="font-bold">{{ t('virtualScroll.empty') }}</p>
+                <p class="font-bold">
+                    {{ t('virtualScroll.empty') }}
+                </p>
             </slot>
         </div>
 

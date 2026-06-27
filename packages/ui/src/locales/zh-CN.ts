@@ -6,6 +6,7 @@ export const zhCN: Locale = {
         emptyText: '未找到结果。',
         dialogTitle: '命令面板',
         dialogDescription: '搜索要运行的命令...',
+        searchLabel: '搜索命令',
     },
     combobox: {
         placeholder: '选择选项...',
@@ -139,6 +140,7 @@ export const zhCN: Locale = {
     fileCard: {
         defaultFileName: '文档.pdf',
         download: '下载',
+        downloadAriaLabel: '下载 {fileName}',
     },
     quickActions: {
         defaultTitle: '快捷操作',
