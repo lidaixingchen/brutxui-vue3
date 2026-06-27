@@ -140,10 +140,10 @@ const monthButtonClasses = computed(() =>
             </div>
 
             <div v-if="clearable" :class="cn(datePickerFooterVariants())">
-                <Button variant="default" size="sm" @click="handleClear">
+                <Button variant="default" size="sm" type="button" @click="handleClear">
                     {{ resolvedClearLabel }}
                 </Button>
-                <Button variant="primary" size="sm" @click="handleConfirm">
+                <Button variant="primary" size="sm" type="button" @click="handleConfirm">
                     {{ resolvedConfirmLabel }}
                 </Button>
             </div>

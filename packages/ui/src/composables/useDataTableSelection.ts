@@ -15,7 +15,12 @@ export function useDataTableSelection<T extends Record<string, unknown>>(
     function getRowKey(row: T): string | number {
         const key = toValue(options.rowKey)
         if (typeof key === 'function') return key(row)
-        return row[key] as string | number
+        const value = row[key]
+        if (typeof value !== 'string' && typeof value !== 'number') {
+            console.warn(`[useDataTableSelection] rowKey property "${String(key)}" returned a non-string/number value. Using String conversion.`)
+            return String(value)
+        }
+        return value
     }
 
     const isAllSelected = computed(() => {

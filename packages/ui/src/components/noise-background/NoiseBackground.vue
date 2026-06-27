@@ -19,6 +19,8 @@ interface NoiseBackgroundProps {
     animated?: boolean
     /** 动画速度（秒） */
     animationDuration?: number
+    /** 动画频率变化范围 */
+    animationRange?: number
     /** 圆角 */
     rounded?: NonNullable<NoiseBackgroundVariantProps['rounded']>
     /** 自定义类名 */
@@ -32,6 +34,7 @@ const props = withDefaults(defineProps<NoiseBackgroundProps>(), {
     opacity: 0.5,
     animated: false,
     animationDuration: 8,
+    animationRange: 0.1,
     rounded: 'none',
     class: undefined,
 })
@@ -54,7 +57,7 @@ function startAnimation() {
 
     const startTime = performance.now()
     const baseFrequency = props.frequency
-    const frequencyRange = 0.1
+    const frequencyRange = props.animationRange
 
     function step(currentTime: number) {
         const elapsed = (currentTime - startTime) / 1000

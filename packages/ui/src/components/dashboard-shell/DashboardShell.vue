@@ -56,7 +56,7 @@ BrutxUI
 
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="border-b-3 border-brutal bg-brutal-bg px-6 py-3 flex items-center justify-between">
-                <Button variant="default" size="icon" class="md:hidden h-8 w-8" @click="sidebarOpen = !sidebarOpen">
+                <Button variant="default" size="icon" class="md:hidden h-8 w-8 shadow-brutal-sm" @click="sidebarOpen = !sidebarOpen">
                     <Menu class="h-4 w-4 stroke-[3]" />
                 </Button>
                 <slot name="header" />

@@ -127,7 +127,7 @@ function sortIcon(key: string) {
     <div :class="rootClasses">
         <slot name="header">
             <div class="border-b-3 border-brutal px-6 py-4">
-                <h2 class="text-3xl font-black tracking-wide">
+                <h2 class="text-3xl font-black tracking-tight">
                     {{ resolvedTitle }}
                 </h2>
             </div>
@@ -168,7 +168,7 @@ function sortIcon(key: string) {
                             <TableRow
                                 v-for="(row, rowIndex) in paginatedRows"
                                 :key="(row.id as PropertyKey) ?? rowIndex"
-                                class="cursor-pointer transition-colors"
+                                class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                                 @click="handleRowClick(row)"
                             >
                                 <TableCell v-for="col in columns" :key="col.key">

@@ -78,7 +78,6 @@ const handleValueChange = (value: AcceptableValue) => {
         v-if="display === 'icon'"
         variant="default"
         size="icon"
-        class="p-2"
         :title="`Current: ${currentLabel}. Click to toggle.`"
         @click="toggleColorModeLocal"
     >

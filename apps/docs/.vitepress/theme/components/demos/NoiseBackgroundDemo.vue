@@ -16,7 +16,7 @@ import { NoiseBackground } from 'brutx-ui-vue'
 
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">动态噪点（animated）</p>
-            <NoiseBackground :opacity="0.4" animated :animation-duration="6" rounded="default">
+            <NoiseBackground :opacity="0.5" animated :animation-duration="3" :animation-range="0.3" rounded="default">
                 <div class="p-6 text-center">
                     <h3 class="text-lg font-black">动态噪点背景</h3>
                 </div>
@@ -26,13 +26,13 @@ import { NoiseBackground } from 'brutx-ui-vue'
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
                 <p class="text-sm font-bold tracking-wide">fractalNoise（默认）</p>
-                <NoiseBackground type="fractalNoise" :frequency="0.65" :opacity="0.4" rounded="default">
+                <NoiseBackground type="fractalNoise" :frequency="0.65" :opacity="0.6" rounded="default">
                     <div class="p-4 text-sm font-bold">分形噪声</div>
                 </NoiseBackground>
             </div>
             <div class="space-y-2">
                 <p class="text-sm font-bold tracking-wide">turbulence</p>
-                <NoiseBackground type="turbulence" :frequency="0.8" :opacity="0.4" rounded="default">
+                <NoiseBackground type="turbulence" :frequency="0.05" :opacity="0.6" rounded="default">
                     <div class="p-4 text-sm font-bold">湍流效果</div>
                 </NoiseBackground>
             </div>

@@ -37,7 +37,7 @@ export function useDataTableSort<T extends Record<string, unknown>>(
     function getCellValue(row: T, column: DataTableColumn<T>): unknown {
         if (column.accessorFn) return column.accessorFn(row)
         if (column.accessorKey) return row[column.accessorKey]
-        return undefined
+        return ''
     }
 
     function sortedData(data: T[]): T[] {
@@ -51,6 +51,12 @@ export function useDataTableSort<T extends Record<string, unknown>>(
             if (valueA === valueB) return 0
             if (valueA === null || valueA === undefined) return 1
             if (valueB === null || valueB === undefined) return -1
+
+            if (valueA instanceof Date && valueB instanceof Date) {
+                const comparison = valueA.getTime() - valueB.getTime()
+                return sortState.value.direction === 'asc' ? comparison : -comparison
+            }
+
             const comparison = valueA < valueB ? -1 : 1
             return sortState.value.direction === 'asc' ? comparison : -comparison
         })

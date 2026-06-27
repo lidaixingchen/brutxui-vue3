@@ -180,6 +180,7 @@ const rootClasses = computed(() =>
             <Button
                 v-if="!isFirstStep"
                 variant="default"
+                type="button"
                 @click="previousStep"
             >
                 {{ t('formWizard.previousStep') }}
@@ -195,6 +196,7 @@ const rootClasses = computed(() =>
             <Button
                 v-if="!isLastStep"
                 variant="primary"
+                type="button"
                 :disabled="!canGoNext"
                 @click="nextStep"
             >
@@ -203,6 +205,7 @@ const rootClasses = computed(() =>
             <Button
                 v-else
                 variant="success"
+                type="button"
                 @click="complete"
             >
                 {{ t('formWizard.complete') }}

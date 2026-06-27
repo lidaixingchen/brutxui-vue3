@@ -395,6 +395,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 v-if="clearable"
                 variant="default"
                 size="sm"
+                type="button"
                 @click="handleClear"
             >
                 {{ resolvedClearLabel }}
@@ -402,6 +403,7 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
             <Button
                 variant="primary"
                 size="sm"
+                type="button"
                 @click="handleConfirm"
             >
                 {{ resolvedConfirmLabel }}

@@ -4,9 +4,7 @@
   "type": "registry:ui",
   "title": "Submit Button",
   "description": "A highly customizable neo-brutalist Submit Button component built with Brutx design tokens for Vue 3.",
-  "dependencies": [
-    "@lucide/vue"
-  ],
+  "dependencies": [],
   "registryDependencies": [
     "button"
   ],

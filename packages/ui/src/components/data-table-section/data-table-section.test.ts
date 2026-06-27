@@ -185,14 +185,14 @@ describe('DataTableSection visual compliance', () => {
         expect(titleArea?.classList.contains('border-brutal')).toBe(true)
     })
 
-    it('title uses font-black and tracking-wide', () => {
+    it('title uses font-black and tracking-tight', () => {
         const wrapper = mount(DataTableSection, {
             props: { title: 'Test Title' },
             ...localeProvide,
         })
         const title = wrapper.find('h2')
         expect(title.classes()).toContain('font-black')
-        expect(title.classes()).toContain('tracking-wide')
+        expect(title.classes()).toContain('tracking-tight')
     })
 
     it('empty state uses text-brutal-fg not text-brutal-muted-foreground', () => {

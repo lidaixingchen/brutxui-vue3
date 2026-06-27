@@ -359,14 +359,12 @@ describe('DataTable visual compliance', () => {
             props: { data: testData, columns: testColumns, rowKey: 'id', selectable: true, filterable: true },
             global: globalProvide,
         })
-        expect(wrapper.find('button').exists()).toBe(false)
         const rowCheckboxes = wrapper.findAll('[role="checkbox"]')
-        const checkboxEl = rowCheckboxes[1].element as HTMLInputElement
-        checkboxEl.checked = true
-        await rowCheckboxes[1].trigger('change')
-        const exportBtn = wrapper.find('button')
-        expect(exportBtn.exists()).toBe(true)
-        expect(exportBtn.text()).toContain('Export CSV')
+        await rowCheckboxes[1].trigger('click')
+        await wrapper.vm.$nextTick()
+        const exportBtn = wrapper.findAll('button').find(btn => btn.text().includes('Export CSV'))
+        expect(exportBtn).toBeDefined()
+        expect(exportBtn!.text()).toContain('Export CSV')
     })
 
     it('loading state has no backdrop-blur class', () => {
@@ -383,10 +381,9 @@ describe('DataTable visual compliance', () => {
             global: globalProvide,
         })
         const rowCheckboxes = wrapper.findAll('[role="checkbox"]')
-        const checkboxEl = rowCheckboxes[1].element as HTMLInputElement
-        checkboxEl.checked = true
-        await rowCheckboxes[1].trigger('change')
-        expect(wrapper.html()).toContain('border-t-3 border-brutal bg-brutal-primary text-brutal-primary-foreground')
+        await rowCheckboxes[1].trigger('click')
+        await wrapper.vm.$nextTick()
+        expect(wrapper.html()).toContain('bg-brutal-primary text-brutal-primary-foreground')
     })
 
     it('stickyHeader applies sticky top-0 to thead', () => {

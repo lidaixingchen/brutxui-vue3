@@ -21,6 +21,7 @@ import {
 import type { DataTableColumn, DataTableVirtualScroll, DataTableFilterState } from './types'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
+import Checkbox from '../checkbox/Checkbox.vue'
 import { SelectRoot, SelectValue } from 'reka-ui'
 import SelectTrigger from '../select/SelectTrigger.vue'
 import SelectContent from '../select/SelectContent.vue'
@@ -125,7 +126,7 @@ const activeColumnId = computed(() => {
 function getCellValue(row: T, column: DataTableColumn<T>): unknown {
     if (column.accessorFn) return column.accessorFn(row)
     if (column.accessorKey) return row[column.accessorKey]
-    return undefined
+    return ''
 }
 
 function getHeaderLabel(column: DataTableColumn<T>): string {
@@ -168,8 +169,8 @@ function exportData(format: 'csv' | 'json') {
 
 watch(() => props.data, () => {
     selection.clearSelection()
-    pagination.currentPage.value = 1
-}, { deep: true })
+    pagination.goToPage(1)
+})
 
 const rootClasses = computed(() =>
     cn(dataTableRootVariants({ size: props.size }), props.class),
@@ -215,15 +216,12 @@ const rootStyle = computed(() => {
                 <thead :class="cn(dataTableHeaderVariants(), stickyHeader && 'sticky top-0 z-10')">
                     <tr>
                         <th v-if="selectable" class="w-12 px-4 py-3 text-center">
-                            <input
-                                type="checkbox"
-                                role="checkbox"
-                                :checked="selection.isAllSelected.value"
-                                :indeterminate="selection.isIndeterminate.value"
-                                :aria-checked="selection.isAllSelected.value"
-                                class="w-4 h-4 border-3 border-brutal accent-brutal-primary cursor-pointer"
-                                @change="handleToggleAll"
-                            >
+                            <Checkbox
+                                :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
+                                size="sm"
+                                class="cursor-pointer"
+                                @update:checked="handleToggleAll"
+                            />
                         </th>
                         <th
                             v-for="column in visibleColumns"
@@ -272,14 +270,12 @@ const rootStyle = computed(() => {
                             :aria-selected="selection.selectedRows.value.has(selection.getRowKey(row)) || undefined"
                         >
                             <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
-                                <input
-                                    type="checkbox"
-                                    role="checkbox"
+                                <Checkbox
                                     :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
-                                    :aria-checked="selection.selectedRows.value.has(selection.getRowKey(row))"
-                                    class="w-4 h-4 border-3 border-brutal accent-brutal-primary cursor-pointer"
-                                    @change="handleToggleRow(row)"
-                                >
+                                    size="sm"
+                                    class="cursor-pointer"
+                                    @update:checked="handleToggleRow(row)"
+                                />
                             </td>
                             <td
                                 v-for="column in visibleColumns"

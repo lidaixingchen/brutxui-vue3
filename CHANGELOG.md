@@ -7,6 +7,89 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **DataTable 组合式函数**: 新增 `useDataTableSort`、`useDataTableFilter`、`useDataTableSelection`、`useDataTablePagination` 四个组合式函数，实现完整的排序、筛选、选择、分页能力
+- **GlitchButton 方向控制**: 新增 `direction` 属性，支持横向/纵向/双向撕裂效果
+- **GlitchText 方向控制**: 新增 `direction` 属性，支持横向/纵向/双向撕裂效果
+- 新增大量单元测试与视觉合规性测试用例
+
+### Changed
+
+- 重构颜色模式切换器、博客卡片、认证卡片等组件，统一使用内置 Button/Badge 组件替换原生元素
+- 重构 SubmitButton 组件，复用 Button 组件并简化实现逻辑
+- 统一 Toast、日期选择器等组件的按钮样式，替换原生按钮为内置组件
+- 更新文档与指南示例，替换原生 select 为 Select 组件
+- 更新全局组件注册与依赖配置，补全数据表格相关导出
+
+## [0.7.7] - 2026-06-28
+
+### Added
+
+- 为多个组件文档添加预览区块
+- 新增打字机、噪点背景、树形选择器组件文档与示例
+
+### Changed
+
+- 重构颜色模式切换器，替换 emoji 为 lucide 图标
+- 优化数据表格组件实现，替换原生 checkbox 为组件
+- 完善颜色选择器的格式处理与交互逻辑
+- 调整 Select 组件支持自定义图标与样式类
+
+### Fixed
+
+- 修复 Checkbox、Spinner、DatePicker 等组件样式与逻辑问题
+- 更新组件注册信息与测试用例
+
+## [0.7.6] - 2026-06-28
+
+### Added
+
+- 新增表单上下文 `setError` 方法并完善表单校验逻辑
+- 为 AuthCard 添加密码可见性切换、表单校验和测试用例
+- 为 DialogEnhanced 添加宽高限制逻辑
+- 为 TreeSelectNode 添加完整的键盘交互支持
+- 为 TreeSelect 添加搜索框 aria-label
+- 为 FormWizard 添加导航拦截事件
+- 为 UploadCard 添加文件大小过滤
+- 为 HardcoreInput 添加 error-change 事件
+- 为 PricingSection 添加键盘导航和 watch 监听默认计费周期
+- 为 WaitlistPage 添加邮箱格式校验提示
+- 新增日期选择器样式抽离文件 `panel-styles.css`
+- 新增 ScratchCard 重置逻辑、Stepper v-model 支持
+
+### Changed
+
+- 重构颜色选择器清空逻辑，移除多余的 modelValue 和 confirm 事件
+- 重构 SettingsPage 插槽结构
+- 重构 DataTable 单元格渲染逻辑并添加深度监听
+- 优化 CommandInput 无障碍属性
+- 优化 BlogListPage 分页重置逻辑
+- 简化手绘图表计算逻辑，重构骨架屏类型定义
+- 优化滑块组件空值判断、虚拟滚动空状态格式
+- 优化头像首字母生成、文件卡片无障碍标签、输入框类型提示
+- 优化 NoiseBackground 的 ID 生成和动画判断
+- 移除 KanbanBoard 的双向绑定，改为只读 computed
+
+### Fixed
+
+- 修复 Toast 重复触发动画、ColorPicker 清空逻辑
+- 修复多个日期选择器组件的变更事件触发逻辑
+- 修复滑块组件空值判断
+- 修复计数器时长变化时的进度计算、故障文本动画间隔限制
+- 修复 GallerySection 空状态显示逻辑
+- 修复 ActivityLogPage 的空状态和交互
+
+## [0.7.5] - 2026-06-27
+
+### Added
+
+- **GlitchButton 组件**: 故障效果按钮，支持多种触发模式（hover/click/autoplay/none）和动画速度控制（slow/medium/fast），继承 Button 的所有变体和尺寸
+- **VirtualScroll 组件**: 虚拟滚动组件，封装 @tanstack/vue-virtual，支持多种尺寸变体和列表项样式变体
+- Input 组件添加 ARIA 无障碍属性（ariaLabel、ariaLabelledby、ariaDescribedby、ariaInvalid、ariaRequired）
+- Textarea 组件添加 ARIA 无障碍属性（ariaLabel、ariaLabelledby、ariaDescribedby、ariaInvalid、ariaRequired）
+- VirtualScroll 组件国际化支持
+
 ## [0.7.4] - 2026-06-27
 
 ### Added

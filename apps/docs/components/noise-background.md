@@ -39,9 +39,10 @@ import { NoiseBackground } from 'brutx-ui-vue'
 ```vue
 <template>
     <NoiseBackground
-        :opacity="0.4"
+        :opacity="0.5"
         animated
-        :animation-duration="6"
+        :animation-duration="3"
+        :animation-range="0.3"
     >
         <div class="p-8 text-center">
             <h2>动态噪点背景</h2>
@@ -55,12 +56,12 @@ import { NoiseBackground } from 'brutx-ui-vue'
 ```vue
 <template>
     <!-- 分形噪声（默认） -->
-    <NoiseBackground type="fractalNoise" :frequency="0.65">
+    <NoiseBackground type="fractalNoise" :frequency="0.65" :opacity="0.6">
         <div class="p-4">分形噪声</div>
     </NoiseBackground>
 
     <!-- 湍流 -->
-    <NoiseBackground type="turbulence" :frequency="0.8">
+    <NoiseBackground type="turbulence" :frequency="0.05" :opacity="0.6">
         <div class="p-4">湍流效果</div>
     </NoiseBackground>
 </template>
@@ -90,6 +91,7 @@ import { NoiseBackground } from 'brutx-ui-vue'
 | `opacity` | `number` | `0.5` | 噪点不透明度（0-1） |
 | `animated` | `boolean` | `false` | 是否启用动画效果 |
 | `animationDuration` | `number` | `8` | 动画周期（秒） |
+| `animationRange` | `number` | `0.1` | 动画频率变化范围 |
 | `rounded` | `'none' \| 'default' \| 'lg' \| 'full'` | `'none'` | 圆角变体 |
 | `class` | `string` | — | 自定义类名 |
 
