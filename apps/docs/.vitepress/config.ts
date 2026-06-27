@@ -137,6 +137,7 @@ export default defineConfig({
                 text: '数据展示',
                 items: [
                     { text: 'Table 表格', link: '/components/table' },
+                    { text: 'VirtualScroll 虚拟滚动', link: '/components/virtual-scroll' },
                     { text: 'Timeline 时间线', link: '/components/timeline' },
                     { text: 'Progress 进度条', link: '/components/progress' },
                     { text: 'Counter 数字滚动', link: '/components/counter' },
@@ -181,6 +182,7 @@ export default defineConfig({
                 text: '其他',
                 items: [
                     { text: 'GlitchText 故障文本', link: '/components/glitch-text' },
+                    { text: 'GlitchButton 故障按钮', link: '/components/glitch-button' },
                     { text: 'BeforeAfter 对比滑块', link: '/components/before-after' },
                     { text: 'ScratchCard 刮刮卡', link: '/components/scratch-card' },
                     { text: 'SaaS Pricing 定价', link: '/components/saas-pricing' },
