@@ -145,10 +145,12 @@ export const en: Locale = {
     quickActions: {
         defaultTitle: 'Quick Actions',
         badge: 'Quick',
+        emptyTitle: 'No quick actions available',
     },
     faqSection: {
         defaultTitle: 'Frequently Asked Questions',
         defaultSubtitle: 'Find the answers you need',
+        emptyTitle: 'No frequently asked questions',
     },
     headerSection: {
         defaultLogoText: 'BrutxUI',
@@ -196,6 +198,7 @@ export const en: Locale = {
         defaultTitle: 'Steps',
         previous: 'Previous',
         next: 'Next',
+        emptyTitle: 'No steps available',
     },
     cookieConsent: {
         defaultTitle: 'We use cookies',
@@ -249,6 +252,7 @@ export const en: Locale = {
         nameLabel: 'Name',
         namePlaceholder: 'Enter name',
         notificationsLabel: 'Notifications',
+        emptyTitle: 'No settings available',
     },
     uploadCard: {
         defaultTitle: 'Upload Files',
@@ -260,6 +264,7 @@ export const en: Locale = {
         defaultTitle: 'Overview',
         recentActivity: 'Recent Activity',
         quickStats: 'Quick Stats',
+        emptyTitle: 'No statistics available',
     },
     blogListPage: {
         defaultTitle: 'Blog',
@@ -288,6 +293,7 @@ export const en: Locale = {
         bar: 'Bar',
         line: 'Line',
         pie: 'Pie',
+        emptyTitle: 'No chart data available',
     },
     gallerySection: {
         defaultTitle: 'Gallery',
@@ -370,6 +376,7 @@ export const en: Locale = {
         defaultTitle: 'Simple, Transparent Brutalist Plans',
         mostPopular: 'Most Popular Tier',
         perLifetime: '/ lifetime',
+        emptyTitle: 'No pricing plans available',
     },
     dashboardStats: {
         defaultTitle: 'Overview Performance',

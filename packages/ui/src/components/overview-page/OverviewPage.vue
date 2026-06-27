@@ -9,6 +9,7 @@ import Card from '../card/Card.vue'
 import CardHeader from '../card/CardHeader.vue'
 import CardTitle from '../card/CardTitle.vue'
 import CardContent from '../card/CardContent.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface OverviewStat {
     title: string
@@ -77,19 +78,22 @@ const dashboardStats = computed<StatItem[]>(() =>
                     <CardTitle>{{ resolvedQuickStats }}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div class="space-y-3">
-                        <div
-                            v-for="(stat, index) in stats"
-                            :key="stat.title"
-                            class="flex items-center justify-between p-3 bg-brutal-muted border-3 border-brutal shadow-brutal-sm cursor-pointer hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
-                            tabindex="0"
-                            @click="emit('stat-click', index)"
-                            @keydown.enter="emit('stat-click', index)"
-                        >
-                            <span class="font-bold text-sm">{{ stat.title }}</span>
-                            <span class="font-black">{{ stat.value }}</span>
+                    <template v-if="stats.length > 0">
+                        <div class="space-y-3">
+                            <div
+                                v-for="(stat, index) in stats"
+                                :key="stat.title"
+                                class="flex items-center justify-between p-3 bg-brutal-muted border-3 border-brutal shadow-brutal-sm cursor-pointer hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
+                                tabindex="0"
+                                @click="emit('stat-click', index)"
+                                @keydown.enter="emit('stat-click', index)"
+                            >
+                                <span class="font-bold text-sm">{{ stat.title }}</span>
+                                <span class="font-black">{{ stat.value }}</span>
+                            </div>
                         </div>
-                    </div>
+                    </template>
+                    <EmptyState v-else :title="t('overviewPage.emptyTitle')" />
                 </CardContent>
             </Card>
         </div>

@@ -166,11 +166,13 @@ export interface FileCardLocale {
 export interface QuickActionsLocale {
     defaultTitle: string
     badge: string
+    emptyTitle: string
 }
 
 export interface FaqSectionLocale {
     defaultTitle: string
     defaultSubtitle: string
+    emptyTitle: string
 }
 
 export interface HeaderSectionLocale {
@@ -227,6 +229,7 @@ export interface StepperSectionLocale {
     defaultTitle: string
     previous: string
     next: string
+    emptyTitle: string
 }
 
 export interface CookieConsentLocale {
@@ -286,6 +289,7 @@ export interface SettingsPageLocale {
     nameLabel: string
     namePlaceholder: string
     notificationsLabel: string
+    emptyTitle: string
 }
 
 export interface UploadCardLocale {
@@ -299,6 +303,7 @@ export interface OverviewPageLocale {
     defaultTitle: string
     recentActivity: string
     quickStats: string
+    emptyTitle: string
 }
 
 export interface BlogListPageLocale {
@@ -331,6 +336,7 @@ export interface ChartSectionLocale {
     bar: string
     line: string
     pie: string
+    emptyTitle: string
 }
 
 export interface GallerySectionLocale {
@@ -424,6 +430,7 @@ export interface PricingSectionLocale {
     defaultTitle: string
     mostPopular: string
     perLifetime: string
+    emptyTitle: string
 }
 
 export interface DashboardStatsLocale {

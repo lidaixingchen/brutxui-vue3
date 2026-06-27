@@ -9,6 +9,7 @@ import Card from '../card/Card.vue'
 import TabsList from '../tabs/TabsList.vue'
 import TabsTrigger from '../tabs/TabsTrigger.vue'
 import TabsContent from '../tabs/TabsContent.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface ChartDataPoint {
     label: string
@@ -62,49 +63,52 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
         </slot>
 
         <slot>
-            <TabsRoot v-model="activeTab">
-                <TabsList class="w-full">
-                    <TabsTrigger value="bar">
-                        <BarChart3 class="w-4 h-4 mr-2" />
-                        {{ resolvedBar }}
-                    </TabsTrigger>
-                    <TabsTrigger value="line">
-                        <TrendingUp class="w-4 h-4 mr-2" />
-                        {{ resolvedLine }}
-                    </TabsTrigger>
-                    <TabsTrigger value="pie">
-                        <PieChart class="w-4 h-4 mr-2" />
-                        {{ resolvedPie }}
-                    </TabsTrigger>
-                </TabsList>
+            <template v-if="data.length > 0">
+                <TabsRoot v-model="activeTab">
+                    <TabsList class="w-full">
+                        <TabsTrigger value="bar">
+                            <BarChart3 class="w-4 h-4 mr-2" />
+                            {{ resolvedBar }}
+                        </TabsTrigger>
+                        <TabsTrigger value="line">
+                            <TrendingUp class="w-4 h-4 mr-2" />
+                            {{ resolvedLine }}
+                        </TabsTrigger>
+                        <TabsTrigger value="pie">
+                            <PieChart class="w-4 h-4 mr-2" />
+                            {{ resolvedPie }}
+                        </TabsTrigger>
+                    </TabsList>
 
-                <TabsContent value="bar">
-                    <Card variant="flat" class="p-4">
-                        <SketchyChart
-                            type="bar"
-                            :data="data"
-                        />
-                    </Card>
-                </TabsContent>
+                    <TabsContent value="bar">
+                        <Card variant="flat" class="p-4">
+                            <SketchyChart
+                                type="bar"
+                                :data="data"
+                            />
+                        </Card>
+                    </TabsContent>
 
-                <TabsContent value="line">
-                    <Card variant="flat" class="p-4">
-                        <SketchyChart
-                            type="line"
-                            :data="data"
-                        />
-                    </Card>
-                </TabsContent>
+                    <TabsContent value="line">
+                        <Card variant="flat" class="p-4">
+                            <SketchyChart
+                                type="line"
+                                :data="data"
+                            />
+                        </Card>
+                    </TabsContent>
 
-                <TabsContent value="pie">
-                    <Card variant="flat" class="p-4">
-                        <SketchyChart
-                            type="pie"
-                            :data="data"
-                        />
-                    </Card>
-                </TabsContent>
-            </TabsRoot>
+                    <TabsContent value="pie">
+                        <Card variant="flat" class="p-4">
+                            <SketchyChart
+                                type="pie"
+                                :data="data"
+                            />
+                        </Card>
+                    </TabsContent>
+                </TabsRoot>
+            </template>
+            <EmptyState v-else :title="t('chartSection.emptyTitle')" />
         </slot>
 
         <slot name="footer" />

@@ -145,10 +145,12 @@ export const zhCN: Locale = {
     quickActions: {
         defaultTitle: '快捷操作',
         badge: '快捷',
+        emptyTitle: '暂无快捷操作',
     },
     faqSection: {
         defaultTitle: '常见问题',
         defaultSubtitle: '查找您需要的答案',
+        emptyTitle: '暂无常见问题',
     },
     headerSection: {
         defaultLogoText: 'BrutxUI',
@@ -196,6 +198,7 @@ export const zhCN: Locale = {
         defaultTitle: '步骤',
         previous: '上一步',
         next: '下一步',
+        emptyTitle: '暂无步骤',
     },
     cookieConsent: {
         defaultTitle: '我们使用 Cookie',
@@ -249,6 +252,7 @@ export const zhCN: Locale = {
         nameLabel: '姓名',
         namePlaceholder: '输入姓名',
         notificationsLabel: '通知',
+        emptyTitle: '暂无设置项',
     },
     uploadCard: {
         defaultTitle: '上传文件',
@@ -260,6 +264,7 @@ export const zhCN: Locale = {
         defaultTitle: '概览',
         recentActivity: '最近活动',
         quickStats: '快速统计',
+        emptyTitle: '暂无统计数据',
     },
     blogListPage: {
         defaultTitle: '博客',
@@ -288,6 +293,7 @@ export const zhCN: Locale = {
         bar: '柱状图',
         line: '折线图',
         pie: '饼图',
+        emptyTitle: '暂无图表数据',
     },
     gallerySection: {
         defaultTitle: '画廊',
@@ -370,6 +376,7 @@ export const zhCN: Locale = {
         defaultTitle: '简单、透明的粗野主义方案',
         mostPopular: '最受欢迎',
         perLifetime: '/ 终身',
+        emptyTitle: '暂无定价方案',
     },
     dashboardStats: {
         defaultTitle: '概览性能',

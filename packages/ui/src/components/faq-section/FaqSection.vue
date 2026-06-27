@@ -8,6 +8,7 @@ import AccordionTrigger from '../accordion/AccordionTrigger.vue'
 import AccordionContent from '../accordion/AccordionContent.vue'
 import Card from '../card/Card.vue'
 import Badge from '../badge/Badge.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface FaqItem {
     question: string
@@ -54,31 +55,34 @@ const rootClasses = computed(() => cn('w-full max-w-3xl mx-auto', props.class))
         </slot>
 
         <slot>
-            <Card variant="flat" class="p-0">
-                <Accordion type="single" collapsible class="w-full">
-                    <AccordionItem
-                        v-for="(item, index) in items"
-                        :key="index"
-                        :value="String(index)"
-                        class="mb-0 last:mb-0"
-                        @click="emit('item-click', index)"
-                    >
-                        <AccordionTrigger>
-                            <span class="flex items-center gap-3 text-left">
-                                <Badge variant="secondary" class="shrink-0">
-                                    {{ index + 1 }}
-                                </Badge>
-                                <span class="font-bold">{{ item.question }}</span>
-                            </span>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                            <p class="text-brutal-muted-foreground font-medium pl-10">
-                                {{ item.answer }}
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
-                </Accordion>
-            </Card>
+            <template v-if="items.length > 0">
+                <Card variant="flat" class="p-0">
+                    <Accordion type="single" collapsible class="w-full">
+                        <AccordionItem
+                            v-for="(item, index) in items"
+                            :key="index"
+                            :value="String(index)"
+                            class="mb-0 last:mb-0"
+                            @click="emit('item-click', index)"
+                        >
+                            <AccordionTrigger>
+                                <span class="flex items-center gap-3 text-left">
+                                    <Badge variant="secondary" class="shrink-0">
+                                        {{ index + 1 }}
+                                    </Badge>
+                                    <span class="font-bold">{{ item.question }}</span>
+                                </span>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <p class="text-brutal-muted-foreground font-medium pl-10">
+                                    {{ item.answer }}
+                                </p>
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                </Card>
+            </template>
+            <EmptyState v-else :title="t('faqSection.emptyTitle')" />
         </slot>
 
         <slot name="footer" />

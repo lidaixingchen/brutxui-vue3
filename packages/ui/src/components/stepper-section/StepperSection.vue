@@ -6,6 +6,7 @@ import { useLocale } from '@/composables/useLocale'
 import Stepper from '../stepper/Stepper.vue'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface StepperStepItem {
     title: string
@@ -86,37 +87,40 @@ function handleNext() {
         </slot>
 
         <slot name="content">
-            <Stepper
-                :steps="stepperSteps"
-                :model-value="activeStep"
-                orientation="horizontal"
-                @step-click="handleStepClick"
-            />
+            <template v-if="steps.length > 0">
+                <Stepper
+                    :steps="stepperSteps"
+                    :model-value="activeStep"
+                    orientation="horizontal"
+                    @step-click="handleStepClick"
+                />
 
-            <Card variant="default" class="mt-6">
-                <div class="p-6">
-                    <slot name="default" />
+                <Card variant="default" class="mt-6">
+                    <div class="p-6">
+                        <slot name="default" />
+                    </div>
+                </Card>
+
+                <div class="flex items-center justify-between mt-6">
+                    <Button
+                        variant="outline"
+                        :disabled="!canGoPrevious"
+                        @click="handlePrevious"
+                    >
+                        <ChevronLeft class="h-4 w-4 mr-1" />
+                        {{ resolvedPrevious }}
+                    </Button>
+                    <Button
+                        variant="primary"
+                        :disabled="!canGoNext"
+                        @click="handleNext"
+                    >
+                        {{ resolvedNext }}
+                        <ChevronRight class="h-4 w-4 ml-1" />
+                    </Button>
                 </div>
-            </Card>
-
-            <div class="flex items-center justify-between mt-6">
-                <Button
-                    variant="outline"
-                    :disabled="!canGoPrevious"
-                    @click="handlePrevious"
-                >
-                    <ChevronLeft class="h-4 w-4 mr-1" />
-                    {{ resolvedPrevious }}
-                </Button>
-                <Button
-                    variant="primary"
-                    :disabled="!canGoNext"
-                    @click="handleNext"
-                >
-                    {{ resolvedNext }}
-                    <ChevronRight class="h-4 w-4 ml-1" />
-                </Button>
-            </div>
+            </template>
+            <EmptyState v-else :title="t('stepperSection.emptyTitle')" />
         </slot>
 
         <slot name="footer" />

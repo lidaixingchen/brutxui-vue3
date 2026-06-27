@@ -11,6 +11,7 @@ import CardTitle from '../card/CardTitle.vue'
 import CardDescription from '../card/CardDescription.vue'
 import CardFooter from '../card/CardFooter.vue'
 import Badge from '../badge/Badge.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 type ButtonVariant = 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
 type CardVariant = 'default' | 'elevated' | 'flat' | 'interactive' | 'primary' | 'secondary'
@@ -182,44 +183,47 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div v-for="plan in plans" :key="plan.name" class="relative">
-                <div v-if="plan.popular" :class="popularBadgeWrapClasses">
-                    <Badge variant="primary" class="animate-pulse">
+        <template v-if="plans.length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div v-for="plan in plans" :key="plan.name" class="relative">
+                    <div v-if="plan.popular" :class="popularBadgeWrapClasses">
+                        <Badge variant="primary" class="animate-pulse">
 {{ resolvedPopularText }}
 </Badge>
-                </div>
-                <Card :variant="getPlanCardVariant(plan)" :class="getPlanCardClasses(plan)">
-                    <CardHeader>
-                        <CardTitle class="text-xl">
+                    </div>
+                    <Card :variant="getPlanCardVariant(plan)" :class="getPlanCardClasses(plan)">
+                        <CardHeader>
+                            <CardTitle class="text-xl">
 {{ plan.name }}
 </CardTitle>
-                        <CardDescription>{{ plan.description }}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="mb-6">
-                            <span class="text-4xl font-black">{{ getPlanPrice(plan) }}</span>
-                            <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
-                        </div>
-                        <ul class="space-y-3">
-                            <li v-for="(feature, index) in plan.features" :key="index" class="flex items-center gap-2">
-                                <div v-if="isFeatureIncluded(feature)" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
-                                    <Check class="h-3 w-3 stroke-[3]" />
-                                </div>
-                                <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-brutal-muted-foreground">
-                                    <HelpCircle class="h-3 w-3 stroke-[3]" />
-                                </div>
-                                <span :class="getFeatureClasses(feature)">{{ getFeatureText(feature) }}</span>
-                            </li>
-                        </ul>
-                    </CardContent>
-                    <CardFooter>
-                        <Button :variant="getButtonVariant(plan)" class="w-full" @click="emit('plan-select', plan.name)">
+                            <CardDescription>{{ plan.description }}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div class="mb-6">
+                                <span class="text-4xl font-black">{{ getPlanPrice(plan) }}</span>
+                                <span class="text-sm font-bold text-brutal-muted-foreground">{{ getPriceLabel(plan) }}</span>
+                            </div>
+                            <ul class="space-y-3">
+                                <li v-for="(feature, index) in plan.features" :key="index" class="flex items-center gap-2">
+                                    <div v-if="isFeatureIncluded(feature)" class="flex h-5 w-5 items-center justify-center bg-brutal-success text-brutal-fg">
+                                        <Check class="h-3 w-3 stroke-[3]" />
+                                    </div>
+                                    <div v-else class="flex h-5 w-5 items-center justify-center bg-brutal-muted text-brutal-muted-foreground">
+                                        <HelpCircle class="h-3 w-3 stroke-[3]" />
+                                    </div>
+                                    <span :class="getFeatureClasses(feature)">{{ getFeatureText(feature) }}</span>
+                                </li>
+                            </ul>
+                        </CardContent>
+                        <CardFooter>
+                            <Button :variant="getButtonVariant(plan)" class="w-full" @click="emit('plan-select', plan.name)">
 {{ getButtonText(plan) }}
 </Button>
-                    </CardFooter>
-                </Card>
+                        </CardFooter>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </template>
+        <EmptyState v-else :title="t('pricingSection.emptyTitle')" />
     </div>
 </template>

@@ -322,7 +322,7 @@ const rootStyle = computed(() => {
         </div>
 
         <!-- Pagination -->
-        <div v-if="paginated && pagination.totalPages.value > 1" :class="cn(dataTablePaginationVariants())">
+        <div v-if="paginated" :class="cn(dataTablePaginationVariants())">
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium">
                     {{ t('dataTable.pageInfo', { current: pagination.currentPage.value, total: pagination.totalPages.value }) }}

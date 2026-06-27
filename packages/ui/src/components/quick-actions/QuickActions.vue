@@ -7,6 +7,7 @@ import CardContent from '../card/CardContent.vue'
 import CardHeader from '../card/CardHeader.vue'
 import Button from '../button/Button.vue'
 import Badge from '../badge/Badge.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface ActionItem {
     label: string
@@ -51,18 +52,21 @@ const resolvedBadge = computed(() => t('quickActions.badge'))
             </div>
         </CardHeader>
         <CardContent>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <Button
-                    v-for="(action, index) in actions"
-                    :key="action.label"
-                    :variant="action.variant ?? 'outline'"
-                    class="flex flex-col items-center gap-2 h-auto py-3 px-2"
-                    @click="emit('action-click', index)"
-                >
-                    <component :is="action.icon" class="h-5 w-5 stroke-[2.5]" />
-                    <span class="text-xs font-bold">{{ action.label }}</span>
-                </Button>
-            </div>
+            <template v-if="actions.length > 0">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <Button
+                        v-for="(action, index) in actions"
+                        :key="action.label"
+                        :variant="action.variant ?? 'outline'"
+                        class="flex flex-col items-center gap-2 h-auto py-3 px-2"
+                        @click="emit('action-click', index)"
+                    >
+                        <component :is="action.icon" class="h-5 w-5 stroke-[2.5]" />
+                        <span class="text-xs font-bold">{{ action.label }}</span>
+                    </Button>
+                </div>
+            </template>
+            <EmptyState v-else :title="t('quickActions.emptyTitle')" />
             <slot name="actions" />
         </CardContent>
     </Card>

@@ -14,6 +14,7 @@ import Input from '../input/Input.vue'
 import Switch from '../switch/Switch.vue'
 import Button from '../button/Button.vue'
 import Separator from '../separator/Separator.vue'
+import EmptyState from '../empty-state/EmptyState.vue'
 
 export interface SettingsTab {
     label: string
@@ -85,55 +86,58 @@ const rootClasses = computed(() =>
             </slot>
 
             <slot>
-                <TabsRoot v-model="activeTab">
-                    <TabsList class="w-full">
-                        <TabsTrigger
+                <template v-if="tabs.length > 0">
+                    <TabsRoot v-model="activeTab">
+                        <TabsList class="w-full">
+                            <TabsTrigger
+                                v-for="tab in props.tabs"
+                                :key="tab.value"
+                                :value="tab.value"
+                            >
+                                {{ tab.label }}
+                            </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent
                             v-for="tab in props.tabs"
                             :key="tab.value"
                             :value="tab.value"
                         >
-                            {{ tab.label }}
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent
-                        v-for="tab in props.tabs"
-                        :key="tab.value"
-                        :value="tab.value"
-                    >
-                        <Card variant="flat">
-                            <CardHeader>
-                                <CardTitle>{{ tab.label }}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="space-y-6">
-                                    <slot :name="`tab-${tab.value}`" :values="getTabValues(tab.value)" :set-value="(key: string, val: unknown) => setTabValue(tab.value, key, val)">
-                                        <div class="space-y-4">
-                                            <div class="flex items-center justify-between">
-                                                <label class="font-bold text-sm" :for="`setting-${tab.value}-name`">{{ resolvedNameLabel }}</label>
-                                                <Input
-                                                    :id="`setting-${tab.value}-name`"
-                                                    :model-value="String(getTabValues(tab.value).name ?? '')"
-                                                    :placeholder="resolvedNamePlaceholder"
-                                                    class="max-w-xs"
-                                                    @update:model-value="setTabValue(tab.value, 'name', $event)"
-                                                />
+                            <Card variant="flat">
+                                <CardHeader>
+                                    <CardTitle>{{ tab.label }}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <div class="space-y-6">
+                                        <slot :name="`tab-${tab.value}`" :values="getTabValues(tab.value)" :set-value="(key: string, val: unknown) => setTabValue(tab.value, key, val)">
+                                            <div class="space-y-4">
+                                                <div class="flex items-center justify-between">
+                                                    <label class="font-bold text-sm" :for="`setting-${tab.value}-name`">{{ resolvedNameLabel }}</label>
+                                                    <Input
+                                                        :id="`setting-${tab.value}-name`"
+                                                        :model-value="String(getTabValues(tab.value).name ?? '')"
+                                                        :placeholder="resolvedNamePlaceholder"
+                                                        class="max-w-xs"
+                                                        @update:model-value="setTabValue(tab.value, 'name', $event)"
+                                                    />
+                                                </div>
+                                                <Separator />
+                                                <div class="flex items-center justify-between">
+                                                    <label class="font-bold text-sm" :for="`setting-${tab.value}-notifications`">{{ resolvedNotificationsLabel }}</label>
+                                                    <Switch
+                                                        :model-value="Boolean(getTabValues(tab.value).notifications ?? false)"
+                                                        @update:model-value="setTabValue(tab.value, 'notifications', $event)"
+                                                    />
+                                                </div>
                                             </div>
-                                            <Separator />
-                                            <div class="flex items-center justify-between">
-                                                <label class="font-bold text-sm" :for="`setting-${tab.value}-notifications`">{{ resolvedNotificationsLabel }}</label>
-                                                <Switch
-                                                    :model-value="Boolean(getTabValues(tab.value).notifications ?? false)"
-                                                    @update:model-value="setTabValue(tab.value, 'notifications', $event)"
-                                                />
-                                            </div>
-                                        </div>
-                                    </slot>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-                </TabsRoot>
+                                        </slot>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+                    </TabsRoot>
+                </template>
+                <EmptyState v-else :title="t('settingsPage.emptyTitle')" />
             </slot>
 
             <div class="mt-6 flex justify-end">
