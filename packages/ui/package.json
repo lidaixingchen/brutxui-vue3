@@ -80,6 +80,7 @@
         }
     },
     "dependencies": {
+        "@tanstack/vue-virtual": "^3.13.30",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.0",
         "embla-carousel-vue": "^8.6.0",

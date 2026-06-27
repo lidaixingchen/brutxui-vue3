@@ -13,6 +13,16 @@ interface TextareaProps {
     textareaSize?: NonNullable<TextareaVariantProps['textareaSize']>
     disabled?: boolean
     placeholder?: string
+    /** 无障碍标签 */
+    ariaLabel?: string
+    /** 关联的标签元素 ID */
+    ariaLabelledby?: string
+    /** 描述元素 ID */
+    ariaDescribedby?: string
+    /** 是否无效 */
+    ariaInvalid?: boolean
+    /** 是否必填 */
+    ariaRequired?: boolean
     class?: string
 }
 
@@ -22,6 +32,11 @@ const props = withDefaults(defineProps<TextareaProps>(), {
     textareaSize: 'default',
     disabled: false,
     placeholder: undefined,
+    ariaLabel: undefined,
+    ariaLabelledby: undefined,
+    ariaDescribedby: undefined,
+    ariaInvalid: undefined,
+    ariaRequired: undefined,
     class: undefined,
 })
 
@@ -42,6 +57,11 @@ const classes = computed(() =>
         :disabled="disabled"
         :placeholder="resolvedPlaceholder"
         :class="classes"
+        :aria-label="ariaLabel"
+        :aria-labelledby="ariaLabelledby"
+        :aria-describedby="ariaDescribedby"
+        :aria-invalid="ariaInvalid"
+        :aria-required="ariaRequired"
         @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />
 </template>

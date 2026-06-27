@@ -13,6 +13,16 @@ interface InputProps {
     inputSize?: NonNullable<InputVariantProps['inputSize']>
     disabled?: boolean
     placeholder?: string
+    /** 无障碍标签 */
+    ariaLabel?: string
+    /** 关联的标签元素 ID */
+    ariaLabelledby?: string
+    /** 描述元素 ID */
+    ariaDescribedby?: string
+    /** 是否无效 */
+    ariaInvalid?: boolean
+    /** 是否必填 */
+    ariaRequired?: boolean
     class?: string
 }
 
@@ -23,6 +33,11 @@ const props = withDefaults(defineProps<InputProps>(), {
     inputSize: 'default',
     disabled: false,
     placeholder: undefined,
+    ariaLabel: undefined,
+    ariaLabelledby: undefined,
+    ariaDescribedby: undefined,
+    ariaInvalid: undefined,
+    ariaRequired: undefined,
     class: undefined,
 })
 
@@ -42,6 +57,11 @@ const classes = computed(() =>
         :disabled="disabled"
         :placeholder="placeholder"
         :class="classes"
+        :aria-label="ariaLabel"
+        :aria-labelledby="ariaLabelledby"
+        :aria-describedby="ariaDescribedby"
+        :aria-invalid="ariaInvalid"
+        :aria-required="ariaRequired"
         @compositionstart="isComposing = true"
         @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
         @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"

@@ -404,6 +404,13 @@ export { card3dVariants, card3dShadowVariants } from './components/card-3d/card-
 export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
 export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'
 
+export { default as GlitchButton } from './components/glitch-button/GlitchButton.vue'
+export { glitchButtonVariants } from './components/glitch-button/glitch-button-variants'
+
+export { default as VirtualScroll } from './components/virtual-scroll/VirtualScroll.vue'
+export { virtualScrollRootVariants, virtualScrollItemVariants } from './components/virtual-scroll/virtual-scroll-variants'
+export type { VirtualScrollItem, VirtualScrollProps, VirtualScrollEmits } from './components/virtual-scroll/types'
+
 // 第一优先级新增组件
 export { default as TreeSelect } from './components/tree-select/TreeSelect.vue'
 export { default as TreeSelectNode } from './components/tree-select/TreeSelectNode.vue'

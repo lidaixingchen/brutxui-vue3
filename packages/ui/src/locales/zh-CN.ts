@@ -375,4 +375,8 @@ export const zhCN: Locale = {
     textarea: {
         placeholder: '请输入...',
     },
+    virtualScroll: {
+        label: '虚拟滚动列表',
+        empty: '暂无数据',
+    },
 }

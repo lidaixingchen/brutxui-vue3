@@ -434,6 +434,11 @@ export interface TextareaLocale {
     placeholder: string
 }
 
+export interface VirtualScrollLocale {
+    label: string
+    empty: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -497,4 +502,5 @@ export interface Locale {
     input: InputLocale
     numberInput: NumberInputLocale
     textarea: TextareaLocale
+    virtualScroll: VirtualScrollLocale
 }

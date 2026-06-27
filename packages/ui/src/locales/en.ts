@@ -375,4 +375,8 @@ export const en: Locale = {
     textarea: {
         placeholder: 'Type here...',
     },
+    virtualScroll: {
+        label: 'Virtual scroll list',
+        empty: 'No data available',
+    },
 }
