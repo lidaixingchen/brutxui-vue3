@@ -146,7 +146,11 @@ onUnmounted(() => {
 });
 
 watch(() => [props.to, props.from] as const, () => {
-    if (props.autoStart) start();
+    if (props.autoStart) {
+        start();
+    } else {
+        current.value = props.from;
+    }
 });
 
 watch(() => props.duration, (newDuration, oldDuration) => {
@@ -162,8 +166,10 @@ watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decima
     scheduleUpdateScale();
 });
 
+const formattedCurrent = computed(() => formatNumber(current.value));
+
 const displayValue = computed(() =>
-    `${props.prefix}${formatNumber(current.value)}${props.suffix}`
+    `${props.prefix}${formattedCurrent.value}${props.suffix}`
 );
 
 const finalDisplayValue = computed(() =>
@@ -200,7 +206,7 @@ const measureClasses = computed(() =>
                 <component :is="prefixComponent" />
             </span>
             <span v-else-if="prefix">{{ prefix }}</span>
-            {{ formatNumber(current) }}
+            {{ formattedCurrent }}
             <span v-if="animateSuffix && hasCustomSuffix" class="inline-flex">
                 <component :is="suffixComponent" />
             </span>

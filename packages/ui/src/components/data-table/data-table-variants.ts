@@ -63,6 +63,7 @@ export const dataTableRowVariants = cva(
     [
         'transition-colors duration-150',
         'hover:bg-brutal-muted',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
     ],
     {
         variants: {

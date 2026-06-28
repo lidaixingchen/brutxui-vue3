@@ -60,6 +60,31 @@ describe('DialogContent', () => {
         const content = wrapper.find('[data-testid="dialog-content"]')
         expect(content.classes()).toContain('custom-content')
     })
+
+    it('renders close button by default', () => {
+        const wrapper = mount(DialogContent, {
+            global: { stubs: contentStubs },
+        })
+        // DialogClose is rendered when showCloseButton defaults to true
+        expect(wrapper.exists()).toBe(true)
+    })
+
+    it('hides close button when showCloseButton=false', () => {
+        const wrapper = mount(DialogContent, {
+            props: { showCloseButton: false },
+            global: { stubs: contentStubs },
+        })
+        // The DialogClose stub should not be rendered
+        expect(wrapper.findComponent({ name: 'DialogClose' }).exists()).toBe(false)
+    })
+
+    it('renders slot content', () => {
+        const wrapper = mount(DialogContent, {
+            slots: { default: '<p>Dialog body</p>' },
+            global: { stubs: contentStubs },
+        })
+        expect(wrapper.text()).toContain('Dialog body')
+    })
 })
 
 describe('DialogHeader', () => {

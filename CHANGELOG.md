@@ -7,6 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **CLI 安全**: `resolveAliasPath` 内置 `isSafePath` 路径遍历防护，自动保护所有调用方
+- **CLI 安全**: `readConfig` 添加运行时类型验证，防止恶意 `components.json` 注入
+- **CLI 安全**: `resolveComponentFilePath` 添加 `isSafePath` 自保护验证
+- **CLI 安全**: `isSafePath` 添加磁盘根目录边界检查
+- **注册表**: 补充 `form-wizard-types.ts`、`panel-styles.css`、`types.ts` 文件声明
+- **注册表**: 为 16 个组件补充 `useLocale` composable 声明
+- **注册表**: 重新构建全部 98 个组件 JSON
+- **可访问性**: UploadCard 拖放区域添加键盘支持（role="button"、tabindex、Enter/Space 键）
+- **可访问性**: TreeSelectNode 实现 roving tabindex 规范
+- **可访问性**: DataTable 可排序列头添加键盘支持（tabindex、Enter 键）
+- **可访问性**: TypewriterText 移除 `aria-live="polite"` 避免逐字播报
+- **可访问性**: FeedbackForm label 与 input 正确关联
+- **可访问性**: Stepper 添加方向键/Home/End 键盘导航
+- **可访问性**: Card3D 改为 `role="presentation"` 避免装饰性地标
+- **可访问性**: ToastContainer 改为 `aria-live="off"` 避免频繁播报
+- **TypeScript**: `mergeLocale` 消除 4 处 `as unknown as` 双重断言
+- **TypeScript**: `useDataTableSort` 移除 `unknown` 类型 `<` 比较
+- **TypeScript**: 提取 `getCellValue` 为共享工具函数 `@/lib/data-table-utils`
+- **TypeScript**: `DataTableFilterState.columns` 收窄为 `Record<string, string>`
+- **TypeScript**: `registryIndex` 使用 `RegistryIndex` 接口替代 `Record<string, any>`
+- **TypeScript**: 多处隐式 `any` 添加显式类型注解
+- **Vue 组件**: DataTable `filter` 事件现在正确触发
+- **Vue 组件**: DataTable `export` 事件现在携带选中行数据
+- **Vue 组件**: DataTable `props.data` watch 添加 `{ deep: true }`
+- **Vue 组件**: Form `validationSchema` 改为 computed 保持响应式
+- **Vue 组件**: Counter `autoStart=false` 时 `from` 变化正确更新 `current`
+- **Vue 组件**: FeedbackForm 添加必填验证和邮箱格式验证
+- **性能**: Counter 模板中 `formatNumber` 提取为 computed
+- **性能**: Stepper 预计算 `stepStates` 数组
+- **性能**: Calendar 添加 `dayClassesCache` 缓存
+- **性能**: DataTable `handleSort` 使用 `nextTick` 确保 emit 最新值
+- **测试**: 新增 color-mode-switcher 测试文件（5 个用例）
+- **测试**: 重写 tooltip 测试，从测试工具函数改为挂载组件
+- **测试**: 合并 checkbox/slider/switch 重复用例
+- **测试**: 补充 14 个组件的功能测试（tabs、dialog、dropdown-menu、select、form、accordion 等）
+- **测试**: 总计 1796 个测试通过
+
 ## [0.7.8] - 2026-06-28
 
 ### Added

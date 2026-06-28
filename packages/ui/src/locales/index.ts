@@ -9,13 +9,17 @@ type DeepPartial<T> = {
 }
 
 export function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale {
-    const result = { ...base } as unknown as Record<string, unknown>
-    for (const key of Object.keys(override)) {
-        const overrideVal = (override as unknown as Record<string, unknown>)[key]
-        if (overrideVal && typeof overrideVal === 'object' && !Array.isArray(overrideVal)) {
-            const baseVal = (base as unknown as Record<string, unknown>)[key] as Record<string, unknown>
-            result[key] = { ...baseVal, ...overrideVal }
+    const result = structuredClone(base)
+    for (const key of Object.keys(override) as Array<keyof Locale>) {
+        const overrideVal = override[key]
+        if (overrideVal !== undefined && typeof overrideVal === 'object' && !Array.isArray(overrideVal)) {
+            const baseVal = result[key]
+            if (typeof baseVal === 'object' && baseVal !== null && !Array.isArray(baseVal)) {
+                // Both are locale sub-objects (flat objects with string/string[] values).
+                // Object.assign merges the partial override into the complete base in-place.
+                Object.assign(baseVal, overrideVal)
+            }
         }
     }
-    return result as unknown as Locale
+    return result
 }

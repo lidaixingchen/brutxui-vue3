@@ -63,4 +63,38 @@ describe('Input', () => {
         })
         expect(wrapper.classes()).toContain('custom-class')
     })
+
+    it('supports readonly attribute', () => {
+        const wrapper = mount(Input, {
+            attrs: { readonly: '' },
+        })
+        expect(wrapper.attributes('readonly')).toBeDefined()
+    })
+
+    it('supports type="password"', () => {
+        const wrapper = mount(Input, {
+            props: { type: 'password' },
+        })
+        expect(wrapper.attributes('type')).toBe('password')
+    })
+
+    it('supports type="email"', () => {
+        const wrapper = mount(Input, {
+            props: { type: 'email' },
+        })
+        expect(wrapper.attributes('type')).toBe('email')
+    })
+
+    it('supports type="number"', () => {
+        const wrapper = mount(Input, {
+            props: { type: 'number' },
+        })
+        expect(wrapper.attributes('type')).toBe('number')
+    })
+
+    it('has default border-brutal class', () => {
+        const wrapper = mount(Input)
+        expect(wrapper.classes()).toContain('border-brutal')
+        expect(wrapper.classes()).toContain('bg-brutal-bg')
+    })
 })

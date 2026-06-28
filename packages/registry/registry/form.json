@@ -51,6 +51,11 @@
       "path": "components/ui/form/form-context.ts",
       "content": "import type { InjectionKey, Ref, ComputedRef } from 'vue'\nimport type { FormContext as VeeFormContext } from 'vee-validate'\nimport type { FormWizardContext } from '@/components/ui/form/form-wizard-types'\n\nexport interface FormFieldContext {\n    name: ComputedRef<string>\n    error: Ref<string | undefined>\n    value: Ref<unknown>\n    setValue: (value: unknown) => void\n    setError: (message: string | undefined) => void\n}\n\nexport interface FormItemContext {\n    id: string\n    formItemId: string\n    formDescriptionId: string\n    formMessageId: string\n}\n\nexport const formContextKey: InjectionKey<VeeFormContext> = Symbol('formContext')\nexport const formFieldKey: InjectionKey<FormFieldContext> = Symbol('formField')\nexport const formItemKey: InjectionKey<FormItemContext> = Symbol('formItem')\nexport const formWizardContextKey: InjectionKey<FormWizardContext> = Symbol('formWizardContext')\n",
       "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/form/form-wizard-types.ts",
+      "content": "import type { Component, Ref, ComputedRef } from 'vue'\n\nexport interface FormStep {\n    id: string\n    title: string\n    description?: string\n    icon?: Component\n    validator?: (values: Record<string, unknown>) => ValidationResult\n    optional?: boolean\n}\n\nexport interface ValidationResult {\n    valid: boolean\n    errors: Record<string, string>\n}\n\nexport interface FormWizardContext {\n    currentStep: Ref<number>\n    steps: ComputedRef<FormStep[]>\n    values: ComputedRef<Record<string, unknown>>\n    updateValues: (values: Record<string, unknown>) => void\n    nextStep: () => void\n    previousStep: () => void\n    goToStep: (step: number) => void\n    complete: () => void\n    getStepErrors: (step: number) => Record<string, string> | undefined\n    isFirstStep: ComputedRef<boolean>\n    isLastStep: ComputedRef<boolean>\n    canGoNext: ComputedRef<boolean>\n}\n",
+      "type": "registry:ui"
     }
   ],
   "tailwind": {

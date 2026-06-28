@@ -68,7 +68,7 @@ export interface DataTableSortState {
 
 export interface DataTableFilterState {
     global?: string
-    columns: Record<string, unknown>
+    columns: Record<string, string>
 }
 
 export interface DataTablePaginationState {

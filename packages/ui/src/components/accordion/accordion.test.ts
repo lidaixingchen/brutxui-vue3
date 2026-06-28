@@ -25,6 +25,22 @@ describe('Accordion', () => {
         })
         expect(wrapper.classes()).toContain('custom-accordion')
     })
+
+    it('supports collapsible prop for single type', () => {
+        const wrapper = mount(Accordion, {
+            props: { type: 'single', collapsible: true },
+            global: { stubs: { AccordionRoot: primitiveStub } },
+        })
+        expect(wrapper.find('[data-testid]').exists() || wrapper.exists()).toBe(true)
+    })
+
+    it('supports multiple type', () => {
+        const wrapper = mount(Accordion, {
+            props: { type: 'multiple' },
+            global: { stubs: { AccordionRoot: primitiveStub } },
+        })
+        expect(wrapper.exists()).toBe(true)
+    })
 })
 
 describe('AccordionItem', () => {

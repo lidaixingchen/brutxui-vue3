@@ -18,7 +18,7 @@ function findFirstExisting(cwd: string, files: readonly string[]): string | null
 
 function hasVueDependency(cwd: string): boolean {
     try {
-        const packageJson = fs.readJsonSync(path.join(cwd, 'package.json'));
+        const packageJson: Record<string, Record<string, string> | undefined> = fs.readJsonSync(path.join(cwd, 'package.json'));
         return Boolean(
             packageJson.dependencies?.['vue'] ||
                 packageJson.devDependencies?.['vue'] ||
@@ -208,16 +208,23 @@ export function getAliasFromTsConfig(cwd: string): AliasConfig | null {
 export function resolveAliasPath(alias: string, cwd: string): string {
     const match = alias.match(/^(@[^/]*|~)\/(.*)/);
 
+    let resolvedPath: string;
+
     if (!match) {
-        return path.join(cwd, alias);
+        resolvedPath = path.join(cwd, alias);
+    } else {
+        const [, aliasPrefix, relativePath] = match;
+        const resolvedFromConfig = resolveFromTsConfig(cwd, aliasPrefix, relativePath);
+        resolvedPath = resolvedFromConfig ?? resolveByProjectType(cwd, relativePath);
     }
 
-    const [, aliasPrefix, relativePath] = match;
+    if (!isSafePath(resolvedPath, cwd)) {
+        throw new Error(
+            `安全检查失败：解析后的路径 "${resolvedPath}" 超出了项目目录 "${cwd}" 的范围。这可能是路径遍历攻击。`
+        );
+    }
 
-    const resolvedFromConfig = resolveFromTsConfig(cwd, aliasPrefix, relativePath);
-    if (resolvedFromConfig) return resolvedFromConfig;
-
-    return resolveByProjectType(cwd, relativePath);
+    return resolvedPath;
 }
 
 function resolveFromTsConfig(
@@ -282,6 +289,12 @@ export function isSafePath(targetPath: string, cwd: string): boolean {
         : (s: string) => s;
     const resolvedTarget = normalize(path.resolve(targetPath));
     const resolvedCwd = normalize(path.resolve(cwd));
+
+    // 磁盘根目录作为 cwd 不安全，因为它允许访问整个磁盘
+    if (resolvedCwd === normalize(path.parse(resolvedCwd).root)) {
+        return false;
+    }
+
     return resolvedTarget.startsWith(resolvedCwd + path.sep) || resolvedTarget === resolvedCwd;
 }
 
@@ -289,7 +302,7 @@ export function detectTailwindVersion(cwd: string): 'v3' | 'v4' {
     try {
         const pkgJsonPath = path.join(cwd, 'package.json');
         if (fs.existsSync(pkgJsonPath)) {
-            const pkg = fs.readJsonSync(pkgJsonPath);
+            const pkg: Record<string, Record<string, string> | undefined> = fs.readJsonSync(pkgJsonPath);
             const tailwindVersion = pkg.dependencies?.['tailwindcss'] || pkg.devDependencies?.['tailwindcss'];
 
             if (tailwindVersion) {

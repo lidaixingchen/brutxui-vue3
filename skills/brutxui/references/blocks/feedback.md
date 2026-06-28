@@ -38,7 +38,9 @@
 ## FeedbackForm
 
 ```vue
-<FeedbackForm title="给我们反馈" description="帮助改进" submit-text="提交" />
+<FeedbackForm title="给我们反馈" description="帮助改进" submit-text="提交" @submit="handleSubmit" />
 ```
 
 - `title`/`description`/`submitText`: `string`
+- 内置必填验证（姓名、邮箱、主题、消息）和邮箱格式验证
+- 验证失败时输入框显示 error 样式，不触发 submit 事件

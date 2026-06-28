@@ -3305,7 +3305,8 @@
       ],
       "registryDependencies": [
         "card",
-        "badge"
+        "badge",
+        "empty-state"
       ],
       "files": [
         {
@@ -3455,6 +3456,10 @@
         },
         {
           "path": "components/ui/form/form-context.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/form-wizard-types.ts",
           "type": "registry:ui"
         }
       ],
@@ -4478,7 +4483,8 @@
       "registryDependencies": [
         "button",
         "card",
-        "badge"
+        "badge",
+        "empty-state"
       ],
       "files": [
         {
@@ -7919,7 +7925,8 @@
       "registryDependencies": [
         "card",
         "button",
-        "badge"
+        "badge",
+        "empty-state"
       ],
       "files": [
         {
@@ -8037,7 +8044,8 @@
       "registryDependencies": [
         "accordion",
         "card",
-        "badge"
+        "badge",
+        "empty-state"
       ],
       "files": [
         {
@@ -8155,11 +8163,24 @@
       ],
       "registryDependencies": [
         "tabs",
-        "card"
+        "card",
+        "empty-state"
       ],
       "files": [
         {
           "path": "components/ui/tabs-nav/TabsNav.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
           "type": "registry:ui"
         }
       ],
@@ -9204,7 +9225,8 @@
       "registryDependencies": [
         "stepper",
         "button",
-        "card"
+        "card",
+        "empty-state"
       ],
       "files": [
         {
@@ -9447,6 +9469,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/data-table-section/types.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "composables/useLocale.ts",
           "type": "registry:ui"
         },
@@ -9561,7 +9587,8 @@
         "input",
         "switch",
         "button",
-        "separator"
+        "separator",
+        "empty-state"
       ],
       "files": [
         {
@@ -10037,7 +10064,8 @@
       "registryDependencies": [
         "sketchy-chart",
         "card",
-        "tabs"
+        "tabs",
+        "empty-state"
       ],
       "files": [
         {
@@ -10391,7 +10419,8 @@
       ],
       "registryDependencies": [
         "dashboard-stats",
-        "card"
+        "card",
+        "empty-state"
       ],
       "files": [
         {
@@ -10726,6 +10755,10 @@
         },
         {
           "path": "components/ui/date-picker/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/panel-styles.css",
           "type": "registry:ui"
         },
         {

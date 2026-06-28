@@ -4,6 +4,7 @@ export const badgeVariants = cva(
     [
         'inline-flex items-center',
         'border-3 border-brutal',
+        'rounded-brutal',
         'font-bold tracking-wide',
         'transition-colors',
     ],

@@ -16,9 +16,11 @@ const emit = defineEmits<{
     submit: [values: Record<string, unknown>]
 }>()
 
+const validationSchema = computed(() => props.validationSchema)
+
 const form = useForm({
     initialValues: props.initialValues,
-    validationSchema: props.validationSchema,
+    validationSchema,
 })
 
 const onSubmit = form.handleSubmit((values) => {

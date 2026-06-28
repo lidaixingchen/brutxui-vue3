@@ -96,6 +96,19 @@ function handleClear() {
     emit('clear')
     emit('update:modelValue', null)
 }
+
+const footerClasses = computed(() => cn(datePickerFooterVariants()))
+
+function getYearClasses(year: number): string {
+    return cn(
+        'h-10 w-full flex items-center justify-center text-xs font-bold tracking-tight cursor-pointer',
+        'border-3 border-brutal/10 transition-all duration-100',
+        'hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-black hover:shadow-brutal-sm hover:border-brutal',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        isYearActive(year) && 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm font-black',
+        isYearDisabled(year) && 'opacity-40 cursor-not-allowed hover:bg-brutal-bg hover:text-brutal-fg hover:shadow-none hover:border-brutal/10 hover:font-bold',
+    )
+}
 </script>
 
 <template>
@@ -133,21 +146,14 @@ function handleClear() {
                     role="gridcell"
                     :aria-selected="isYearActive(year)"
                     :disabled="isYearDisabled(year)"
-                    :class="cn(
-                        'h-10 w-full flex items-center justify-center text-xs font-bold tracking-tight cursor-pointer',
-                        'border-3 border-brutal/10 transition-all duration-100',
-                        'hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-black hover:shadow-brutal-sm hover:border-brutal',
-                        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-                        isYearActive(year) && 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm font-black',
-                        isYearDisabled(year) && 'opacity-40 cursor-not-allowed hover:bg-brutal-bg hover:text-brutal-fg hover:shadow-none hover:border-brutal/10 hover:font-bold'
-                    )"
+                    :class="getYearClasses(year)"
                     @click="handleYearSelect(year)"
                 >
                     {{ year }}
                 </button>
             </div>
 
-            <div v-if="clearable" :class="cn(datePickerFooterVariants())">
+            <div v-if="clearable" :class="footerClasses">
                 <Button variant="default" size="sm" type="button" @click="handleClear">
                     {{ resolvedClearLabel }}
                 </Button>

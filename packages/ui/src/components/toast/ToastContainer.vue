@@ -90,7 +90,7 @@ const gapStyle = computed(() => ({
 </script>
 
 <template>
-    <div :class="classes" :style="{ ...positionStyle, ...gapStyle }" aria-live="polite" :aria-label="t('toast.container')">
+    <div :class="classes" :style="{ ...positionStyle, ...gapStyle }" aria-live="off" :aria-label="t('toast.container')">
         <slot />
     </div>
 </template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { alertDialogFooterVariants } from './alert-dialog-variants'
 
 interface AlertDialogFooterProps {
     class?: string
@@ -9,7 +10,7 @@ interface AlertDialogFooterProps {
 const props = defineProps<AlertDialogFooterProps>()
 
 const classes = computed(() =>
-    cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal', props.class)
+    cn(alertDialogFooterVariants(), props.class)
 )
 </script>
 

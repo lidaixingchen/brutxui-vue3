@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { alertDialogHeaderVariants } from './alert-dialog-variants'
 
 interface AlertDialogHeaderProps {
     class?: string
@@ -9,7 +10,7 @@ interface AlertDialogHeaderProps {
 const props = defineProps<AlertDialogHeaderProps>()
 
 const classes = computed(() =>
-    cn('flex flex-col space-y-2 pb-4 border-b-3 border-brutal', props.class)
+    cn(alertDialogHeaderVariants(), props.class)
 )
 </script>
 

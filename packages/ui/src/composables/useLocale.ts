@@ -14,7 +14,7 @@ function resolveByPath(obj: unknown, path: string): string | undefined {
     const keys = path.split('.')
     let result: unknown = obj
     for (const key of keys) {
-        if (result == null || typeof result !== 'object') return undefined
+        if (typeof result !== 'object' || result === null) return undefined
         result = (result as Record<string, unknown>)[key]
     }
     return typeof result === 'string' ? result : undefined

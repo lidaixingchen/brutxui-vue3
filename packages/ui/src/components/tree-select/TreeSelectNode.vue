@@ -14,16 +14,19 @@ interface TreeSelectNodeProps {
     expandedIds: Set<string>
     depth?: number
     multiple?: boolean
+    focusedId?: string
 }
 
 const props = withDefaults(defineProps<TreeSelectNodeProps>(), {
     depth: 0,
     multiple: false,
+    focusedId: undefined,
 })
 
 const emit = defineEmits<{
     toggle: [id: string]
     select: [node: TreeNode]
+    focus: [id: string]
 }>()
 
 const isLeaf = computed(() => !props.node.children || props.node.children.length === 0)
@@ -139,9 +142,10 @@ function handleKeydown(e: KeyboardEvent) {
 <template>
     <div
         role="treeitem"
-        tabindex="0"
+        :tabindex="focusedId === node.id ? 0 : -1"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-selected="isSelected"
+        @focus="emit('focus', node.id)"
         @keydown="handleKeydown"
     >
         <div
@@ -176,8 +180,10 @@ function handleKeydown(e: KeyboardEvent) {
                 :expanded-ids="expandedIds"
                 :depth="depth + 1"
                 :multiple="multiple"
+                :focused-id="focusedId"
                 @toggle="emit('toggle', $event)"
                 @select="emit('select', $event)"
+                @focus="emit('focus', $event)"
             />
         </div>
     </div>

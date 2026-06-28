@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { AlertDialogDescription as AlertDialogDescriptionPrimitive } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { alertDialogDescriptionVariants } from './alert-dialog-variants'
 
 interface AlertDialogDescriptionProps {
     class?: string
@@ -10,7 +11,7 @@ interface AlertDialogDescriptionProps {
 const props = defineProps<AlertDialogDescriptionProps>()
 
 const classes = computed(() =>
-    cn('text-sm text-brutal-muted-foreground font-medium', props.class)
+    cn(alertDialogDescriptionVariants(), props.class)
 )
 </script>
 

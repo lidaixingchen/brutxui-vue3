@@ -28,6 +28,7 @@ export function useFormWizard() {
 <script setup lang="ts">
 import { ref, computed, provide } from 'vue'
 import { cn } from '../../lib/utils'
+import { formWizardRootVariants, formWizardNavigationVariants, formWizardStepInfoVariants, formWizardStepCounterVariants, formWizardErrorPanelVariants, formWizardErrorTitleVariants } from './form-wizard-variants'
 import { Stepper } from '../stepper'
 import type { StepperStep } from '../stepper'
 import Button from '../button/Button.vue'
@@ -152,8 +153,14 @@ provide(formWizardContextKey, {
 })
 
 const rootClasses = computed(() =>
-    cn('flex flex-col gap-6', props.class)
+    cn(formWizardRootVariants(), props.class)
 )
+
+const navigationClasses = computed(() => formWizardNavigationVariants())
+const stepInfoClasses = computed(() => formWizardStepInfoVariants())
+const stepCounterClasses = computed(() => formWizardStepCounterVariants())
+const errorPanelClasses = computed(() => formWizardErrorPanelVariants())
+const errorTitleClasses = computed(() => formWizardErrorTitleVariants())
 </script>
 
 <template>
@@ -176,7 +183,7 @@ const rootClasses = computed(() =>
         </div>
 
         <!-- Navigation -->
-        <div class="flex items-center justify-between gap-4 pt-4 border-t-3 border-brutal">
+        <div :class="navigationClasses">
             <Button
                 v-if="!isFirstStep"
                 variant="default"
@@ -187,8 +194,8 @@ const rootClasses = computed(() =>
             </Button>
             <div v-else />
 
-            <div class="flex items-center gap-2">
-                <span class="text-sm font-medium text-brutal-fg/60">
+            <div :class="stepInfoClasses">
+                <span :class="stepCounterClasses">
                     {{ t('formWizard.stepOf', { current: currentStep + 1, total: steps.length }) }}
                 </span>
             </div>
@@ -213,8 +220,8 @@ const rootClasses = computed(() =>
         </div>
 
         <!-- Error Display -->
-        <div v-if="getStepErrors(currentStep)" class="p-4 border-3 border-brutal bg-brutal-destructive/10 text-brutal-destructive">
-            <p class="font-bold">
+        <div v-if="getStepErrors(currentStep)" :class="errorPanelClasses">
+            <p :class="errorTitleClasses">
                 {{ t('formWizard.validationErrors') }}
             </p>
             <ul class="mt-2 list-disc list-inside">

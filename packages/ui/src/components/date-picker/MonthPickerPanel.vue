@@ -91,6 +91,16 @@ const monthButtonClasses = computed(() =>
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
     )
 )
+
+const footerClasses = computed(() => cn(datePickerFooterVariants()))
+
+function getMonthClasses(monthIndex: number): string {
+    return cn(
+        monthButtonClasses.value,
+        isMonthActive(monthIndex) && 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm font-black',
+        isMonthDisabled(monthIndex) && 'opacity-40 cursor-not-allowed hover:bg-brutal-bg hover:text-brutal-fg hover:shadow-none hover:border-brutal/10 hover:font-bold',
+    )
+}
 </script>
 
 <template>
@@ -128,18 +138,14 @@ const monthButtonClasses = computed(() =>
                     role="gridcell"
                     :aria-selected="isMonthActive(index)"
                     :disabled="isMonthDisabled(index)"
-                    :class="cn(
-                        monthButtonClasses,
-                        isMonthActive(index) && 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm font-black',
-                        isMonthDisabled(index) && 'opacity-40 cursor-not-allowed hover:bg-brutal-bg hover:text-brutal-fg hover:shadow-none hover:border-brutal/10 hover:font-bold'
-                    )"
+                    :class="getMonthClasses(index)"
                     @click="handleMonthSelect(index)"
                 >
                     {{ month }}
                 </button>
             </div>
 
-            <div v-if="clearable" :class="cn(datePickerFooterVariants())">
+            <div v-if="clearable" :class="footerClasses">
                 <Button variant="default" size="sm" type="button" @click="handleClear">
                     {{ resolvedClearLabel }}
                 </Button>

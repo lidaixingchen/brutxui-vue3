@@ -148,7 +148,7 @@ const cursorClasses = computed(() =>
 </script>
 
 <template>
-    <span :class="classes" aria-live="polite">
+    <span :class="classes" aria-live="off">
         <span>{{ displayedText }}</span>
         <span
             v-if="cursor && (isTyping || displayedText.length < text.length)"

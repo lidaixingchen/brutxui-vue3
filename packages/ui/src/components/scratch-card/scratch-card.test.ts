@@ -22,24 +22,34 @@ function createPointerEvent(type: string, props: PointerEventInit = {}): Pointer
 
 const originalGetContext = HTMLCanvasElement.prototype.getContext
 
+/** Mock 仅实现 ScratchCard 实际使用的 CanvasRenderingContext2D 方法 */
+type MockCanvasContext = Pick<CanvasRenderingContext2D,
+    'clearRect' | 'fillRect' | 'beginPath' | 'moveTo' | 'lineTo' |
+    'stroke' | 'save' | 'restore' | 'scale' | 'arc' | 'fill' | 'getImageData'
+>
+
+const mockCanvasContext: MockCanvasContext = {
+    clearRect: vi.fn(),
+    fillRect: vi.fn(),
+    beginPath: vi.fn(),
+    moveTo: vi.fn(),
+    lineTo: vi.fn(),
+    stroke: vi.fn(),
+    save: vi.fn(),
+    restore: vi.fn(),
+    scale: vi.fn(),
+    arc: vi.fn(),
+    fill: vi.fn(),
+    getImageData: vi.fn().mockReturnValue({
+        data: new Uint8ClampedArray(400)
+    }),
+}
+
 beforeAll(() => {
-    HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
-        clearRect: vi.fn(),
-        fillRect: vi.fn(),
-        beginPath: vi.fn(),
-        moveTo: vi.fn(),
-        lineTo: vi.fn(),
-        stroke: vi.fn(),
-        save: vi.fn(),
-        restore: vi.fn(),
-        scale: vi.fn(),
-        arc: vi.fn(),
-        fill: vi.fn(),
-        getImageData: vi.fn().mockReturnValue({
-            data: new Uint8ClampedArray(400)
-        })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Mock 不需要完全匹配 CanvasRenderingContext2D 的类型
-    }) as any
+    // getContext 的重载签名无法通过 vi.fn() 直接推断，使用精确的双重断言
+    HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(
+        mockCanvasContext,
+    ) as unknown as typeof originalGetContext
 })
 
 afterAll(() => {

@@ -84,6 +84,17 @@ describe('SelectContent', () => {
         const content = wrapper.find('[data-testid="select-content"]')
         expect(content.classes()).toContain('custom-content')
     })
+
+    it('applies popper positioning classes', () => {
+        const wrapper = mount(SelectContent, {
+            props: { position: 'popper' },
+            global: { stubs: contentStubs },
+        })
+        const content = wrapper.find('[data-testid="select-content"]')
+        // Popper position adds translate classes for offset
+        const classes = content.classes().join(' ')
+        expect(classes).toContain('data-[side=bottom]:translate-y-1')
+    })
 })
 
 describe('SelectItem', () => {

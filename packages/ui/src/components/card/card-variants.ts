@@ -3,6 +3,7 @@ import { cva } from 'class-variance-authority'
 export const cardVariants = cva(
     [
         'border-3 border-brutal',
+        'rounded-brutal',
         'bg-brutal-bg text-brutal-fg',
         'transition-all duration-150',
     ],

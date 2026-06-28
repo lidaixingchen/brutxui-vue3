@@ -1,5 +1,6 @@
 import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
 import type { DataTableColumn, DataTableSortState } from '@/components/data-table/types'
+import { getCellValue } from '@/lib/data-table-utils'
 
 export interface UseDataTableSortOptions<T extends object> {
     columns: MaybeRefOrGetter<DataTableColumn<T>[]>
@@ -34,12 +35,6 @@ export function useDataTableSort<T extends object>(
         }
     }
 
-    function getCellValue(row: T, column: DataTableColumn<T>): unknown {
-        if (column.accessorFn) return column.accessorFn(row)
-        if (column.accessorKey) return row[column.accessorKey]
-        return ''
-    }
-
     function sortedData(data: T[]): T[] {
         if (!sortState.value.column || !sortState.value.direction) return data
         const col = visibleColumns.value.find((c) => c.id === sortState.value.column)
@@ -57,7 +52,14 @@ export function useDataTableSort<T extends object>(
                 return sortState.value.direction === 'asc' ? comparison : -comparison
             }
 
-            const comparison = valueA < valueB ? -1 : 1
+            if (typeof valueA === 'number' && typeof valueB === 'number') {
+                const comparison = valueA - valueB
+                return sortState.value.direction === 'asc' ? comparison : -comparison
+            }
+
+            const strA = String(valueA)
+            const strB = String(valueB)
+            const comparison = strA.localeCompare(strB, undefined, { numeric: true })
             return sortState.value.direction === 'asc' ? comparison : -comparison
         })
     }

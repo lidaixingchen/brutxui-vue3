@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority'
 export const tabsListVariants = cva(
     [
         'inline-flex items-center justify-center p-1 gap-1',
-        'bg-brutal-bg border-3 border-brutal shadow-brutal',
+        'bg-brutal-bg border-3 border-brutal shadow-brutal rounded-brutal',
     ],
     {
         variants: {
@@ -24,13 +24,14 @@ export const tabsTriggerVariants = cva(
         'inline-flex items-center justify-center whitespace-nowrap px-4 py-2',
         'font-bold text-sm tracking-wide',
         'border-3 border-transparent',
+        'rounded-brutal',
         'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'disabled:pointer-events-none disabled:opacity-50',
         'data-[state=active]:text-brutal-fg data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
         'data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none',
-        'hover:shadow-brutal-sm hover:-translate-y-0.5',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
     ],
     {
         variants: {
@@ -50,7 +51,7 @@ export const tabsTriggerVariants = cva(
 export const tabsContentVariants = cva(
     [
         'mt-3 p-4',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal',
+        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
     ]
 )

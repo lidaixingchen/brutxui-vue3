@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { AlertDialogTitle as AlertDialogTitlePrimitive } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { alertDialogTitleVariants } from './alert-dialog-variants'
 
 interface AlertDialogTitleProps {
     class?: string
@@ -10,7 +11,7 @@ interface AlertDialogTitleProps {
 const props = defineProps<AlertDialogTitleProps>()
 
 const classes = computed(() =>
-    cn('text-lg font-black tracking-tight text-brutal-fg', props.class)
+    cn(alertDialogTitleVariants(), props.class)
 )
 </script>
 

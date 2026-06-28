@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, reactive } from 'vue'
 import { Send } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -44,7 +44,35 @@ const message = ref('')
 
 const rootClasses = computed(() => cn('w-full max-w-2xl mx-auto', props.class))
 
+const errors = reactive({
+    name: '',
+    email: '',
+    message: '',
+})
+
+function validate(): boolean {
+    errors.name = ''
+    errors.email = ''
+    errors.message = ''
+
+    if (!name.value.trim()) {
+        errors.name = t('feedbackForm.nameRequired')
+    }
+    if (!email.value.trim()) {
+        errors.email = t('feedbackForm.emailRequired')
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        errors.email = t('feedbackForm.emailInvalid')
+    }
+    if (!message.value.trim()) {
+        errors.message = t('feedbackForm.messageRequired')
+    }
+
+    return !errors.name && !errors.email && !errors.message
+}
+
 function handleSubmit() {
+    if (!validate()) return
+
     emit('submit', {
         name: name.value,
         email: email.value,
@@ -72,28 +100,31 @@ function handleSubmit() {
                 <CardContent class="pt-6">
                     <form class="space-y-4" @submit.prevent="handleSubmit">
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-brutal-fg">
+                            <label for="feedback-name" class="text-sm font-bold text-brutal-fg">
                                 {{ nameLabel }}
                             </label>
-                            <Input v-model="name" :placeholder="nameLabel" />
+                            <Input id="feedback-name" v-model="name" :placeholder="nameLabel" :variant="errors.name ? 'error' : 'default'" />
+                            <p v-if="errors.name" class="text-sm text-red-500 font-medium">{{ errors.name }}</p>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-brutal-fg">
+                            <label for="feedback-email" class="text-sm font-bold text-brutal-fg">
                                 {{ emailLabel }}
                             </label>
-                            <Input v-model="email" type="email" :placeholder="emailLabel" />
+                            <Input id="feedback-email" v-model="email" type="email" :placeholder="emailLabel" :variant="errors.email ? 'error' : 'default'" />
+                            <p v-if="errors.email" class="text-sm text-red-500 font-medium">{{ errors.email }}</p>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-brutal-fg">
+                            <label for="feedback-subject" class="text-sm font-bold text-brutal-fg">
                                 {{ subjectLabel }}
                             </label>
-                            <Input v-model="subject" :placeholder="subjectLabel" />
+                            <Input id="feedback-subject" v-model="subject" :placeholder="subjectLabel" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-sm font-bold text-brutal-fg">
+                            <label for="feedback-message" class="text-sm font-bold text-brutal-fg">
                                 {{ messageLabel }}
                             </label>
-                            <Textarea v-model="message" :placeholder="messageLabel" />
+                            <Textarea id="feedback-message" v-model="message" :placeholder="messageLabel" :variant="errors.message ? 'error' : 'default'" />
+                            <p v-if="errors.message" class="text-sm text-red-500 font-medium">{{ errors.message }}</p>
                         </div>
                         <Button variant="primary" type="submit" class="w-full">
                             <Send class="h-4 w-4 mr-2" />

@@ -59,6 +59,23 @@ describe('DropdownMenuItem', () => {
         })
         expect(wrapper.classes()).toContain('custom-item')
     })
+
+    it('applies inset class when inset prop is true', () => {
+        const wrapper = mount(DropdownMenuItem, {
+            props: { inset: true },
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('pl-8')
+    })
+
+    it('handles click event', async () => {
+        const wrapper = mount(DropdownMenuItem, {
+            slots: { default: 'Clickable item' },
+            global: { stubs: { DropdownMenuItem: primitiveStub } },
+        })
+        await wrapper.trigger('click')
+        expect(wrapper.emitted()).toBeTruthy()
+    })
 })
 
 describe('DropdownMenuCheckboxItem', () => {

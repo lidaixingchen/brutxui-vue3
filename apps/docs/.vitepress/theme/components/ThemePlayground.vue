@@ -39,7 +39,7 @@ type CopyState = 'idle' | 'success' | 'error'
 
 const segmentBaseClass = 'border-3 border-brutal px-3 py-2 text-xs font-black uppercase tracking-wide transition-all duration-150 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
 const segmentActiveClass = 'bg-brutal-primary text-black shadow-brutal'
-const segmentIdleClass = 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal'
+const segmentIdleClass = 'bg-brutal-bg text-brutal-fg hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg'
 const sampleEmail = ref('hello@brutx.dev')
 const baseTheme = ref<ThemeName>('classic')
 const colorMode = ref<ColorMode>('light')

@@ -43,6 +43,41 @@ function clickStep(index: number) {
     emit('step-click', index);
 }
 
+function handleStepKeydown(event: KeyboardEvent) {
+    const target = event.target as HTMLElement
+    if (target.tagName !== 'BUTTON') return
+
+    const container = target.closest('[role="list"]')
+    if (!container) return
+
+    const buttons = Array.from(container.querySelectorAll<HTMLElement>('button'))
+    const currentIndex = buttons.indexOf(target)
+    if (currentIndex === -1) return
+
+    let nextIndex: number | null = null
+    switch (event.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+            nextIndex = currentIndex + 1
+            break
+        case 'ArrowLeft':
+        case 'ArrowUp':
+            nextIndex = currentIndex - 1
+            break
+        case 'Home':
+            nextIndex = 0
+            break
+        case 'End':
+            nextIndex = buttons.length - 1
+            break
+    }
+
+    if (nextIndex !== null && nextIndex >= 0 && nextIndex < buttons.length) {
+        event.preventDefault()
+        ;(buttons[nextIndex] as HTMLElement).focus()
+    }
+}
+
 const rootClass = computed(() =>
     cn(
         props.orientation === 'horizontal'
@@ -80,9 +115,12 @@ const connectorIncompleteClasses = computed(() =>
     cn(stepperConnectorVariants({ orientation: props.orientation, completed: false }))
 )
 
+const stepStates = computed(() =>
+    props.steps.map((_, i) => getState(i))
+)
+
 const dotClasses = computed(() =>
-    props.steps.map((_, index) => {
-        const state = getState(index)
+    stepStates.value.map((state) => {
         if (state === 'completed') return dotCompletedClasses.value
         if (state === 'active') return dotActiveClasses.value
         return dotUpcomingClasses.value
@@ -90,14 +128,14 @@ const dotClasses = computed(() =>
 )
 
 const connectorClasses = computed(() =>
-    props.steps.map((_, index) =>
-        index < props.modelValue ? connectorCompletedClasses.value : connectorIncompleteClasses.value
+    stepStates.value.map((state) =>
+        state === 'completed' ? connectorCompletedClasses.value : connectorIncompleteClasses.value
     )
 )
 </script>
 
 <template>
-    <div :class="rootClass" role="list" :aria-label="t('stepper.progressSteps')">
+    <div :class="rootClass" role="list" :aria-label="t('stepper.progressSteps')" @keydown="handleStepKeydown">
         <template v-for="(step, index) in steps" :key="step.id">
             <!-- Step Item -->
             <div
@@ -117,7 +155,7 @@ const connectorClasses = computed(() =>
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                         @click="clickStep(index)"
                     >
-                        <Check v-if="getState(index) === 'completed'" class="w-4 h-4" />
+                        <Check v-if="stepStates[index] === 'completed'" class="w-4 h-4" />
                         <span v-else>{{ index + 1 }}</span>
                     </button>
 
@@ -132,7 +170,7 @@ const connectorClasses = computed(() =>
                 <div
                     v-if="orientation === 'horizontal'"
                     class="mt-2 text-center px-1"
-                    :class="getState(index) === 'upcoming' ? 'opacity-50' : ''"
+                    :class="stepStates[index] === 'upcoming' ? 'opacity-50' : ''"
                 >
                     <p class="text-xs font-black tracking-wide truncate">
 {{ step.title }}
@@ -152,7 +190,7 @@ const connectorClasses = computed(() =>
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                             @click="clickStep(index)"
                         >
-                            <Check v-if="getState(index) === 'completed'" class="w-4 h-4" />
+                            <Check v-if="stepStates[index] === 'completed'" class="w-4 h-4" />
                             <span v-else>{{ index + 1 }}</span>
                         </button>
                         <!-- Vertical connector below dot -->
@@ -166,7 +204,7 @@ const connectorClasses = computed(() =>
                     <!-- Label right of dot -->
                     <div
                         class="pb-6 min-w-0 flex-1"
-                        :class="getState(index) === 'upcoming' ? 'opacity-50' : ''"
+                        :class="stepStates[index] === 'upcoming' ? 'opacity-50' : ''"
                     >
                         <p class="text-sm font-black tracking-wide">
 {{ step.title }}

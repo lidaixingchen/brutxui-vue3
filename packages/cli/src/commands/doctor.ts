@@ -121,7 +121,7 @@ function checkAliases(cwd: string, config: BrutalistConfig): CheckResult[] {
 function checkDependencies(cwd: string): CheckResult[] {
     const results: CheckResult[] = [];
 
-    let packageJson: Record<string, Record<string, string>> = {};
+    let packageJson: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> } = {};
     try {
         packageJson = fs.readJsonSync(path.join(cwd, 'package.json'));
     } catch {

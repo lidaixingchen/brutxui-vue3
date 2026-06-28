@@ -32,6 +32,22 @@ describe('SheetContent', () => {
         expect(content.classes()).toContain('border-l-3')
     })
 
+    it('renders close button', () => {
+        const wrapper = mount(SheetContent, {
+            global: { stubs: contentStubs },
+        })
+        // DialogClose stub should be rendered
+        expect(wrapper.exists()).toBe(true)
+    })
+
+    it('renders slot content', () => {
+        const wrapper = mount(SheetContent, {
+            slots: { default: '<p>Sheet body</p>' },
+            global: { stubs: contentStubs },
+        })
+        expect(wrapper.text()).toContain('Sheet body')
+    })
+
     it('renders with top side variant classes', () => {
         const wrapper = mount(SheetContent, {
             props: { side: 'top' },

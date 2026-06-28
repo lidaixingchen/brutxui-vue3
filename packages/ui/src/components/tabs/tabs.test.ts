@@ -64,4 +64,41 @@ describe('TabsContent', () => {
         })
         expect(wrapper.classes()).toContain('custom-content')
     })
+
+    it('applies default styling classes', () => {
+        const wrapper = mount(TabsContent, {
+            props: { value: 'tab1' },
+            global: { stubs: { TabsContent: primitiveStub } },
+        })
+        const classes = wrapper.classes().join(' ')
+        expect(classes).toContain('focus-visible:outline-none')
+    })
+})
+
+describe('TabsList', () => {
+    it('applies size variant classes', () => {
+        const wrapper = mount(TabsList, {
+            props: { size: 'sm' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('h-9')
+    })
+})
+
+describe('TabsTrigger', () => {
+    it('handles disabled state', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', disabled: true },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.attributes('disabled')).toBeDefined()
+    })
+
+    it('supports variant prop', () => {
+        const wrapper = mount(TabsTrigger, {
+            props: { value: 'tab1', variant: 'primary' },
+            global: { stubs: { TabsTrigger: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('data-[state=active]:bg-brutal-primary')
+    })
 })

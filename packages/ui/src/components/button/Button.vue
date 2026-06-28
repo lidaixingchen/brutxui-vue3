@@ -44,6 +44,8 @@ const LOADER_SIZE_MAP: Record<string, string> = {
 } as const
 
 const loaderSize = computed(() => LOADER_SIZE_MAP[props.size] ?? LOADER_SIZE_MAP.default)
+
+const loaderClasses = computed(() => cn(loaderSize.value, 'animate-spin'))
 </script>
 
 <template>
@@ -55,7 +57,7 @@ const loaderSize = computed(() => LOADER_SIZE_MAP[props.size] ?? LOADER_SIZE_MAP
         :aria-disabled="asChild && isDisabled ? true : undefined"
         :aria-busy="loading || undefined"
     >
-        <Loader2 v-if="loading" :class="cn(loaderSize, 'animate-spin')" />
+        <Loader2 v-if="loading" :class="loaderClasses" />
         <slot />
     </Primitive>
 </template>

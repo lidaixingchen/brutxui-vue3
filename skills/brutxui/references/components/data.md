@@ -133,6 +133,21 @@ const data = [
 - `loading`: `boolean` — 默认 `false`
 - `emptyMessage`: `string` — 空数据提示
 
+### Events
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `sort` | `[column: string, direction: 'asc' \| 'desc' \| null]` | 排序变化时触发 |
+| `filter` | `[filters: DataTableFilterState]` | 筛选状态变化时触发 |
+| `select` | `[rows: T[]]` | 行选择变化时触发 |
+| `pageChange` | `[page: number]` | 页码变化时触发 |
+| `pageSizeChange` | `[size: number]` | 每页条数变化时触发 |
+| `export` | `[format: 'csv' \| 'json', selectedRows: T[]]` | 导出时触发，携带选中行数据 |
+
+### 工具函数
+
+`getCellValue` 已提取为共享工具函数，位于 `@/lib/data-table-utils`，可在自定义 composable 中复用。
+
 ## VirtualScroll
 
 虚拟滚动组件，基于 @tanstack/vue-virtual 实现，适用于大数据列表的高性能滚动。

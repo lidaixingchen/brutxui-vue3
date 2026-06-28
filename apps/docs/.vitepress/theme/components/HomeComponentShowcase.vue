@@ -12,21 +12,21 @@
     <div class="showcase-grid">
       <div class="showcase-item">
         <div class="showcase-label">Button 按钮</div>
-        <div class="showcase-content">
+        <div class="showcase-content vp-raw">
           <ButtonDemo />
         </div>
       </div>
 
       <div class="showcase-item">
         <div class="showcase-label">Badge 徽标</div>
-        <div class="showcase-content">
+        <div class="showcase-content vp-raw">
           <BadgeDemo />
         </div>
       </div>
 
       <div class="showcase-item showcase-item-wide">
         <div class="showcase-label">Card 卡片</div>
-        <div class="showcase-content">
+        <div class="showcase-content vp-raw">
           <CardDemo />
         </div>
       </div>

@@ -7,6 +7,7 @@ export const selectTriggerVariants = cva(
         'font-bold placeholder:text-brutal-placeholder',
         'shadow-brutal',
         'transition-all duration-150',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none',
         'disabled:cursor-not-allowed disabled:opacity-50',
@@ -44,7 +45,7 @@ export const selectItemVariants = cva(
     [
         'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',
         'font-bold outline-none',
-        'hover:shadow-brutal-sm',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
     ],

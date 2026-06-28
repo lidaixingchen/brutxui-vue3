@@ -211,6 +211,29 @@ const CSS_VARS = {
     }
 };
 
+interface RegistryIndexFile {
+    path: string;
+    type: string;
+}
+
+interface RegistryIndexItem {
+    name: string;
+    type: string;
+    title: string;
+    description: string;
+    dependencies: string[];
+    registryDependencies: string[];
+    files: RegistryIndexFile[];
+    tailwind: typeof TAILWIND_CONFIG;
+    cssVars: typeof CSS_VARS;
+}
+
+interface RegistryIndex {
+    name: string;
+    homepage: string;
+    items: RegistryIndexItem[];
+}
+
 async function run() {
     console.log('🚀 Starting registry build...');
 
@@ -222,7 +245,7 @@ async function run() {
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
 
-    const registryIndex: Record<string, any> = {
+    const registryIndex: RegistryIndex = {
         name: 'brutx-vue',
         homepage: 'https://lidaixingchen.github.io/brutxui-vue3/',
         items: []

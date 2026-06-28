@@ -22,7 +22,7 @@ export const dialogCloseVariants = cva(
         'shadow-brutal-sm',
         'transition-all duration-150',
         'hover:bg-brutal-destructive hover:text-brutal-fg',
-        'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
     ]

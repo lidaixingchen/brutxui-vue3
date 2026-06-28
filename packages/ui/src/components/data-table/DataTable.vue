@@ -1,7 +1,8 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, watch } from 'vue'
+import { computed, watch, nextTick } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { getCellValue } from '@/lib/data-table-utils'
 import { useDataTableSort } from '@/composables/useDataTableSort'
 import { useDataTableFilter } from '@/composables/useDataTableFilter'
 import { useDataTableSelection } from '@/composables/useDataTableSelection'
@@ -83,7 +84,7 @@ const emit = defineEmits<{
     select: [rows: T[]]
     pageChange: [page: number]
     pageSizeChange: [size: number]
-    export: [format: 'csv' | 'json']
+    export: [format: 'csv' | 'json', selectedRows: T[]]
 }>()
 
 const visibleColumns = computed(() =>
@@ -123,12 +124,6 @@ const activeColumnId = computed(() => {
     return column && direction ? column : null
 })
 
-function getCellValue(row: T, column: DataTableColumn<T>): unknown {
-    if (column.accessorFn) return column.accessorFn(row)
-    if (column.accessorKey) return row[column.accessorKey]
-    return ''
-}
-
 function getHeaderLabel(column: DataTableColumn<T>): string {
     if (typeof column.header === 'function') {
         return column.header({
@@ -142,11 +137,12 @@ function getHeaderLabel(column: DataTableColumn<T>): string {
     return column.header
 }
 
-function handleSort(columnId: string) {
+async function handleSort(columnId: string) {
     if (!props.sortable) return
     const col = visibleColumns.value.find((c) => c.id === columnId)
     if (!col || col.sortable === false) return
     sort.toggleSort(columnId)
+    await nextTick()
     emit('sort', sort.sortState.value.column, sort.sortState.value.direction)
 }
 
@@ -172,13 +168,18 @@ function handleSetPageSize(size: number) {
 }
 
 function exportData(format: 'csv' | 'json') {
-    emit('export', format)
+    const selectedData = selection.getSelectedRows()
+    emit('export', format, selectedData)
 }
 
 watch(() => props.data, () => {
     selection.clearSelection()
     pagination.goToPage(1)
-})
+}, { deep: true })
+
+watch(() => filter.filterState.value, (newState) => {
+    emit('filter', newState)
+}, { deep: true })
 
 const rootClasses = computed(() =>
     cn(dataTableRootVariants({ size: props.size }), props.class),
@@ -190,12 +191,53 @@ const rootStyle = computed(() => {
         '--row-height': `${props.virtualScroll.rowHeight ?? 48}px`,
     }
 })
+
+const toolbarClasses = computed(() => cn(dataTableToolbarVariants()))
+const headerClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-10'))
+const bodyClasses = computed(() => cn(dataTableBodyVariants()))
+const emptyClasses = computed(() => cn(dataTableEmptyVariants()))
+const paginationClasses = computed(() => cn(dataTablePaginationVariants()))
+const loadingClasses = computed(() => cn(dataTableLoadingVariants()))
+
+function getHeadClasses(column: DataTableColumn<T>): string {
+    return cn(
+        dataTableHeadVariants({
+            sortable: props.sortable && column.sortable !== false,
+            align: column.align,
+            active: activeColumnId.value === column.id,
+        }),
+    )
+}
+
+function getRowClasses(row: T): string {
+    return cn(
+        dataTableRowVariants({
+            selected: selection.selectedRows.value.has(selection.getRowKey(row)),
+            striped: props.striped,
+        }),
+    )
+}
+
+function CellRenderer(props: { cellFn: (ctx: { row: T; value: unknown }) => ReturnType<NonNullable<DataTableColumn<T>['cell']>>; row: T; value: unknown }) {
+    return props.cellFn({ row: props.row, value: props.value })
+}
+
+function getCellClasses(column: DataTableColumn<T>): string {
+    return cn(
+        dataTableCellVariants({
+            align: column.align,
+            size: props.size,
+            dense: props.dense,
+            active: activeColumnId.value === column.id,
+        }),
+    )
+}
 </script>
 
 <template>
     <div :class="rootClasses" :style="rootStyle" role="grid" :aria-label="t('dataTable.label')">
         <!-- Toolbar -->
-        <div v-if="filterable || $slots.toolbar" :class="cn(dataTableToolbarVariants())">
+        <div v-if="filterable || $slots.toolbar" :class="toolbarClasses">
             <div v-if="filterable" class="flex items-center gap-2">
                 <Input
                     v-model="filter.filterState.value.global"
@@ -221,7 +263,7 @@ const rootStyle = computed(() => {
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">
                 <!-- Header -->
-                <thead :class="cn(dataTableHeaderVariants(), stickyHeader && 'sticky top-0 z-10')">
+                <thead :class="headerClasses">
                     <tr>
                         <th v-if="selectable" class="w-12 px-4 py-3 text-center">
                             <Checkbox
@@ -234,21 +276,17 @@ const rootStyle = computed(() => {
                         <th
                             v-for="column in visibleColumns"
                             :key="column.id"
-                            :class="cn(
-                                dataTableHeadVariants({
-                                    sortable: sortable && column.sortable !== false,
-                                    align: column.align,
-                                    active: activeColumnId === column.id,
-                                })
-                            )"
+                            :class="getHeadClasses(column)"
                             :style="{
                                 width: column.width ? (typeof column.width === 'number' ? `${column.width}px` : column.width) : undefined,
                                 minWidth: column.minWidth ? `${column.minWidth}px` : undefined,
                                 maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
                             }"
                             role="columnheader"
+                            :tabindex="sortable && column.sortable !== false ? 0 : undefined"
                             :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                             @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                            @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
                         >
                             <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                 <span>{{ getHeaderLabel(column) }}</span>
@@ -263,17 +301,12 @@ const rootStyle = computed(() => {
                 </thead>
 
                 <!-- Body -->
-                <tbody :class="cn(dataTableBodyVariants())">
+                <tbody :class="bodyClasses">
                     <template v-if="displayData.length > 0">
                         <tr
                             v-for="row in displayData"
                             :key="selection.getRowKey(row)"
-                            :class="cn(
-                                dataTableRowVariants({
-                                    selected: selection.selectedRows.value.has(selection.getRowKey(row)),
-                                    striped: striped,
-                                })
-                            )"
+                            :class="getRowClasses(row)"
                             role="row"
                             :aria-selected="selection.selectedRows.value.has(selection.getRowKey(row)) || undefined"
                         >
@@ -288,18 +321,11 @@ const rootStyle = computed(() => {
                             <td
                                 v-for="column in visibleColumns"
                                 :key="column.id"
-                                :class="cn(
-                                    dataTableCellVariants({
-                                        align: column.align,
-                                        size,
-                                        dense,
-                                        active: activeColumnId === column.id,
-                                    })
-                                )"
+                                :class="getCellClasses(column)"
                                 role="gridcell"
                             >
                                 <slot :name="`cell-${column.id}`" :row="row" :value="getCellValue(row, column)">
-                                    <component :is="() => column.cell!({ row, value: getCellValue(row, column) })" v-if="column.cell" />
+                                    <CellRenderer v-if="column.cell" :cell-fn="column.cell" :row="row" :value="getCellValue(row, column)" />
                                     <template v-else>
                                         {{ getCellValue(row, column) }}
                                     </template>
@@ -311,7 +337,7 @@ const rootStyle = computed(() => {
                         <tr>
                             <td
                                 :colspan="visibleColumns.length + (selectable ? 1 : 0)"
-                                :class="cn(dataTableEmptyVariants())"
+                                :class="emptyClasses"
                                 role="gridcell"
                             >
                                 <slot name="empty">
@@ -330,7 +356,7 @@ const rootStyle = computed(() => {
         </div>
 
         <!-- Pagination -->
-        <div v-if="paginated" :class="cn(dataTablePaginationVariants())">
+        <div v-if="paginated" :class="paginationClasses">
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium">
                     {{ t('dataTable.pageInfo', { current: pagination.currentPage.value, total: pagination.totalPages.value }) }}
@@ -398,7 +424,7 @@ const rootStyle = computed(() => {
         </div>
 
         <!-- Loading Overlay -->
-        <div v-if="loading" :class="cn(dataTableLoadingVariants())">
+        <div v-if="loading" :class="loadingClasses">
             <slot name="loading">
                 <span class="inline-flex items-center justify-center border-3 border-brutal bg-brutal-bg p-2 shadow-brutal">
                     <Loader2 class="w-8 h-8 animate-spin text-brutal-primary" />

@@ -81,7 +81,8 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 ## 安全
 
-- CLI：规范化路径，使用 `isSafePath` 验证，禁止相对路径遍历（`..`）逃逸安全工作区
+- CLI：`resolveAliasPath` 内置 `isSafePath` 验证，所有路径解析自动受保护；`resolveComponentFilePath` 也有独立验证；磁盘根目录边界已处理
+- CLI：`readConfig` 包含运行时类型验证，防止恶意 `components.json` 注入
 - CSS：`styles.css` 中无重复令牌
 - 禁止硬编码密钥
 
@@ -92,7 +93,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - 组件文件：`packages/ui/src/components/`
   - 组合式函数：`packages/ui/src/composables/`
   - 语言包：`packages/ui/src/locales/`
-  - 工具函数：`packages/ui/src/lib/utils.ts`
+  - 工具函数：`packages/ui/src/lib/utils.ts`、`packages/ui/src/lib/data-table-utils.ts`
   - 测试文件：`packages/ui/src/components/*.test.ts`
   - 构建产物：`packages/ui/dist/`
 - **CLI 工具：** `packages/cli/`

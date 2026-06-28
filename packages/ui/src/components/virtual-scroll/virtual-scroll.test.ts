@@ -64,18 +64,17 @@ describe('VirtualScroll', () => {
         expect(wrapper.classes()).toContain('max-h-[32rem]')
     })
 
-    it('applies item variant classes', () => {
+    it('applies item variant classes for default variant', () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
-                variant: 'striped',
+                variant: 'default',
             },
         })
 
-        // 检查容器存在且应用了正确的变体类
+        // With mocked virtualizer, check container renders
         expect(wrapper.exists()).toBe(true)
-        // 由于使用了 mock，虚拟项可能没有正确渲染变体类
-        // 这里主要测试组件能正常挂载
+        expect(wrapper.find('[role="list"]').exists()).toBe(true)
     })
 
     it('has correct accessibility attributes', () => {

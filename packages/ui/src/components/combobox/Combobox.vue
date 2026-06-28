@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../button/button-variants'
+import { comboboxTriggerVariants, comboboxContentVariants } from './combobox-variants'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Command from '../command/Command.vue'
@@ -62,11 +63,12 @@ const filteredOptions = computed(() => {
 const triggerClasses = computed(() =>
     cn(
         buttonVariants({ variant: 'outline' }),
-        'w-full justify-between font-semibold',
-        !props.modelValue && 'text-brutal-muted-foreground',
+        comboboxTriggerVariants({ hasValue: !!props.modelValue }),
         props.class
     )
 )
+
+const contentClasses = computed(() => comboboxContentVariants())
 
 function handleSelect(value: string) {
     emit('update:modelValue', value === props.modelValue ? undefined : value)
@@ -100,7 +102,7 @@ const checkUnselectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opa
                 <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]" />
             </button>
         </PopoverTrigger>
-        <PopoverContent class="w-[var(--reka-popover-trigger-width)] p-0" align="start">
+        <PopoverContent :class="contentClasses" align="start">
             <Command disable-filter>
                 <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>

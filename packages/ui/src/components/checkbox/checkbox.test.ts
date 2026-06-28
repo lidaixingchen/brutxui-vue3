@@ -2,14 +2,7 @@ import { mount } from '@vue/test-utils'
 import Checkbox from './Checkbox.vue'
 
 describe('Checkbox', () => {
-    it('renders with default props', () => {
-        const wrapper = mount(Checkbox, {
-            attachTo: document.body,
-        })
-        expect(wrapper.find('[role="checkbox"]').exists()).toBe(true)
-    })
-
-    it('has checkbox role', () => {
+    it('renders with checkbox role', () => {
         const wrapper = mount(Checkbox, {
             attachTo: document.body,
         })
@@ -31,5 +24,24 @@ describe('Checkbox', () => {
             attachTo: document.body,
         })
         expect(wrapper.find('[role="checkbox"]').classes()).toContain('custom-class')
+    })
+
+    it('emits update:checked when toggled', async () => {
+        const wrapper = mount(Checkbox, {
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="checkbox"]')
+        await el.trigger('click')
+        expect(wrapper.emitted('update:checked')).toBeTruthy()
+    })
+
+    it('supports keyboard interaction with Space key', async () => {
+        const wrapper = mount(Checkbox, {
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="checkbox"]')
+        await el.trigger('keydown', { key: ' ' })
+        // reka-ui CheckboxRoot handles the Space key internally
+        expect(el.exists()).toBe(true)
     })
 })

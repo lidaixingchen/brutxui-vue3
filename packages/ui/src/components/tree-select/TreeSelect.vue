@@ -77,6 +77,7 @@ const emit = defineEmits<{
 const open = ref(false)
 const searchQuery = ref('')
 const expandedIds = ref<Set<string>>(new Set())
+const focusedId = ref<string | undefined>(undefined)
 
 // 迭代式扁平化所有节点（用于查找）- 避免递归栈溢出
 function flattenNodes(nodes: TreeNode[]): TreeNode[] {
@@ -178,6 +179,11 @@ const filteredNodes = computed(() => {
     return filterTree(props.nodes, searchQuery.value)
 })
 
+// 更新焦点节点（roving tabindex）
+function handleNodeFocus(id: string) {
+    focusedId.value = id
+}
+
 // 切换展开
 function toggleExpand(id: string) {
     const nextSet = new Set(expandedIds.value)
@@ -230,6 +236,13 @@ watch(open, (isOpen) => {
     emit('open-change', isOpen)
     if (!isOpen) {
         searchQuery.value = ''
+        focusedId.value = undefined
+    } else {
+        // 打开时设置第一个节点为焦点节点（roving tabindex）
+        const firstNode = filteredNodes.value[0]
+        if (firstNode) {
+            focusedId.value = firstNode.id
+        }
     }
 })
 
@@ -315,8 +328,10 @@ const triggerClasses = computed(() =>
                             :selected-ids="selectedIds"
                             :expanded-ids="expandedIds"
                             :multiple="multiple"
+                            :focused-id="focusedId"
                             @toggle="toggleExpand"
                             @select="handleSelect"
+                            @focus="handleNodeFocus"
                         />
                     </template>
                     <div v-else class="px-2 py-4 text-sm text-brutal-muted-foreground text-center">

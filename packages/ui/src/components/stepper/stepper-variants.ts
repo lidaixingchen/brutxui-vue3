@@ -5,7 +5,7 @@ export const stepperDotVariants = cva(
         'flex-shrink-0 flex items-center justify-center',
         'border-3 border-brutal rounded-brutal font-black text-sm',
         'transition-all duration-200',
-        'hover:shadow-brutal hover:-translate-y-0.5',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'z-10 relative',
     ],

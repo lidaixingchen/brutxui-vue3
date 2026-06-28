@@ -17,29 +17,25 @@ import {
     getInstallCommand,
     getItem,
     resolveDeps,
+    readConfig,
     isSafePath,
     logger,
 } from '../lib/index.js';
 
 async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
-    const configPath = path.join(cwd, 'components.json');
-
-    if (!(await fs.pathExists(configPath))) {
-        logger.error('Error: Brutx-Vue is not initialized.');
-        logger.warn('Run: npx brutx-vue@latest init');
+    try {
+        return await readConfig(cwd);
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        if (message.includes('not found')) {
+            logger.error('Error: Brutx-Vue is not initialized.');
+            logger.warn('Run: npx brutx-vue@latest init');
+        } else {
+            logger.error(`Error: Invalid components.json. ${message}`);
+            logger.warn('Run: npx brutx-vue@latest init --force to regenerate.');
+        }
         process.exit(1);
     }
-
-    const config = await fs.readJson(configPath);
-    if (!config?.aliases?.components || !config?.aliases?.utils) {
-        logger.error('Error: Invalid components.json. Missing required "aliases.components" or "aliases.utils".');
-        logger.warn('Run: npx brutx-vue@latest init --force to regenerate.');
-        process.exit(1);
-    }
-    if (!config.aliases.composables) {
-        config.aliases.composables = config.aliases.utils.replace(/\/utils$/, '/composables');
-    }
-    return config;
 }
 
 async function validateComponents(components: string[]): Promise<void> {
@@ -80,35 +76,35 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
 }
 
 function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): string {
+    let resolved: string;
+
     if (registryPath.startsWith('components/')) {
         const relative = registryPath.replace('components/', '');
         const aliasPath = resolveAliasPath(config.aliases.components, cwd);
-        return path.join(aliasPath, relative);
-    }
-
-    if (registryPath.startsWith('composables/')) {
+        resolved = path.join(aliasPath, relative);
+    } else if (registryPath.startsWith('composables/')) {
         const relative = registryPath.slice('composables/'.length);
         const aliasPath = resolveAliasPath(config.aliases.composables, cwd);
-        return path.join(aliasPath, relative);
-    }
-
-    if (registryPath.startsWith('locales/')) {
+        resolved = path.join(aliasPath, relative);
+    } else if (registryPath.startsWith('locales/')) {
         const relative = registryPath.slice('locales/'.length);
         const composablesPath = resolveAliasPath(config.aliases.composables, cwd);
-        return path.join(path.dirname(composablesPath), 'locales', relative);
-    }
-
-    if (registryPath.startsWith('lib/utils')) {
-        return resolveAliasPath(config.aliases.utils, cwd) + '.ts';
-    }
-
-    if (registryPath.startsWith('lib/')) {
+        resolved = path.join(path.dirname(composablesPath), 'locales', relative);
+    } else if (registryPath.startsWith('lib/utils')) {
+        resolved = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+    } else if (registryPath.startsWith('lib/')) {
         const relative = registryPath.slice(4);
         const aliasPath = resolveAliasPath(config.aliases.utils, cwd);
-        return path.join(path.dirname(aliasPath), relative);
+        resolved = path.join(path.dirname(aliasPath), relative);
+    } else {
+        resolved = path.join(cwd, registryPath);
     }
 
-    return path.join(cwd, registryPath);
+    if (!isSafePath(resolved, cwd)) {
+        throw new Error(`Security Error: Resolved path "${resolved}" is outside the project directory.`);
+    }
+
+    return resolved;
 }
 
 async function ensureUtilsFile(utilsPath: string): Promise<boolean> {

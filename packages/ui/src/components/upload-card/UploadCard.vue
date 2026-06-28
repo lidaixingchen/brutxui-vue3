@@ -105,11 +105,15 @@ function filterBySize(files: File[]): File[] {
         <CardContent class="pt-6">
             <div
                 :class="dropZoneClasses"
+                role="button"
+                tabindex="0"
                 @dragenter="handleDragEnter"
                 @dragover="handleDragOver"
                 @dragleave="handleDragLeave"
                 @drop="handleDrop"
                 @click="handleBrowse"
+                @keydown.enter="handleBrowse"
+                @keydown.space="handleBrowse"
             >
                 <input
                     ref="fileInput"

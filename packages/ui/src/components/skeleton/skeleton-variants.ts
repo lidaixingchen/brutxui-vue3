@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export const skeletonVariants = cva(
-    ['animate-pulse', 'border-3 border-brutal'],
+    ['animate-pulse', 'border-3 border-brutal', 'rounded-brutal'],
     {
         variants: {
             variant: {

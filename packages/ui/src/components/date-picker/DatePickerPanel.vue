@@ -100,6 +100,11 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg'))
+const footerClasses = computed(() => cn(datePickerFooterVariants()))
+
+function getShortcutClasses(shortcut: DatePickerShortcut): string {
+    return cn(datePickerShortcutVariants({ active: isShortcutActive(shortcut) }))
+}
 </script>
 
 <template>
@@ -116,7 +121,7 @@ const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg
                 type="button"
                 role="option"
                 :aria-selected="isShortcutActive(shortcut)"
-                :class="cn(datePickerShortcutVariants({ active: isShortcutActive(shortcut) }))"
+                :class="getShortcutClasses(shortcut)"
                 @click="handleShortcutSelect(shortcut)"
             >
                 {{ shortcut.label }}
@@ -159,7 +164,7 @@ const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg
                 </DatePicker>
             </div>
 
-            <div v-if="clearable" :class="cn(datePickerFooterVariants())">
+            <div v-if="clearable" :class="footerClasses">
                 <Button variant="default" size="sm" type="button" @click="handleClear">
                     {{ resolvedClearLabel }}
                 </Button>

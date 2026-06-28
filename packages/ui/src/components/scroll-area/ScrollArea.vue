@@ -6,6 +6,7 @@ import {
     ScrollAreaCorner as ScrollAreaCornerPrimitive,
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { scrollAreaRootVariants } from './scroll-area-variants'
 import ScrollBar from './ScrollBar.vue'
 
 interface ScrollAreaProps {
@@ -15,7 +16,7 @@ interface ScrollAreaProps {
 const props = defineProps<ScrollAreaProps>()
 
 const classes = computed(() =>
-    cn('relative overflow-hidden', props.class)
+    cn(scrollAreaRootVariants(), props.class)
 )
 </script>
 

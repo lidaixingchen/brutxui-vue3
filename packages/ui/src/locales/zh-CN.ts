@@ -193,6 +193,10 @@ export const zhCN: Locale = {
         emailLabel: '邮箱',
         subjectLabel: '主题',
         messageLabel: '消息',
+        nameRequired: '请输入姓名',
+        emailRequired: '请输入邮箱',
+        emailInvalid: '请输入有效的邮箱地址',
+        messageRequired: '请输入消息内容',
     },
     stepperSection: {
         defaultTitle: '步骤',

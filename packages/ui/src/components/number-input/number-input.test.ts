@@ -67,4 +67,35 @@ describe('NumberInput', () => {
         expect(root.classes()).toContain('overflow-hidden')
         expect(root.classes()).toContain('transition-all')
     })
+
+    it('has input with spinbutton role', () => {
+        const wrapper = mount(NumberInput, {
+            attachTo: document.body,
+        })
+        const input = wrapper.find('[role="spinbutton"]')
+        expect(input.exists()).toBe(true)
+    })
+
+    it('displays initial modelValue', () => {
+        const wrapper = mount(NumberInput, {
+            props: { modelValue: 42 },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        expect((input.element as HTMLInputElement).value).toBe('42')
+    })
+
+    it('increment button has correct aria-label', () => {
+        const wrapper = mount(NumberInput, {
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[aria-label="Increase"]').exists()).toBe(true)
+    })
+
+    it('decrement button has correct aria-label', () => {
+        const wrapper = mount(NumberInput, {
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[aria-label="Decrease"]').exists()).toBe(true)
+    })
 })

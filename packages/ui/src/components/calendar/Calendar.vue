@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { DatePicker } from 'v-calendar'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
@@ -96,16 +96,28 @@ const dayBaseClasses = computed(() =>
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
 const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
 
-function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }, dayPropsClass?: string) {
-    const isOutside = !day.inMonth
+const dayClassesCache = new Map<string, string>()
 
-    return cn(
+watch([dayBaseClasses, dayOutsideClasses, dayDisabledClasses], () => {
+    dayClassesCache.clear()
+})
+
+function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }, dayPropsClass?: string) {
+    const key = `${day.isToday}-${day.isDisabled}-${day.inMonth}-${dayPropsClass}`
+    const cached = dayClassesCache.get(key)
+    if (cached !== undefined) return cached
+
+    const isOutside = !day.inMonth
+    const result = cn(
         dayBaseClasses.value,
         dayPropsClass,
         day.isToday ? 'bg-brutal-secondary text-brutal-secondary-foreground font-black border-3 border-brutal' : '',
         isOutside ? dayOutsideClasses.value : '',
         day.isDisabled ? dayDisabledClasses.value : '',
     )
+
+    dayClassesCache.set(key, result)
+    return result
 }
 </script>
 

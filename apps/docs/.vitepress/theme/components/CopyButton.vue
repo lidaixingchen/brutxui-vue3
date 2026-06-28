@@ -26,11 +26,11 @@ async function handleCopy() {
 
 const buttonClass = computed(() =>
     cn(
-        'inline-flex items-center justify-center border-2 border-brutal font-black text-xs',
+        'inline-flex items-center justify-center border-3 border-brutal font-black text-xs',
         'transition-all duration-150',
         copied.value
             ? 'bg-brutal-accent text-black shadow-brutal-sm'
-            : 'bg-brutal-secondary text-black shadow-brutal-sm hover:bg-brutal-accent hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+            : 'bg-brutal-secondary text-black shadow-brutal-sm hover:bg-brutal-accent hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         props.class,
     ),
 )

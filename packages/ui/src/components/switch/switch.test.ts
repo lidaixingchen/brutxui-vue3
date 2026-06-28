@@ -3,14 +3,7 @@ import Switch from './Switch.vue'
 import { switchRootVariants, switchThumbVariants } from './switch-variants'
 
 describe('Switch', () => {
-    it('renders with default props', () => {
-        const wrapper = mount(Switch, {
-            attachTo: document.body,
-        })
-        expect(wrapper.find('[role="switch"]').exists()).toBe(true)
-    })
-
-    it('has switch role', () => {
+    it('renders with switch role', () => {
         const wrapper = mount(Switch, {
             attachTo: document.body,
         })

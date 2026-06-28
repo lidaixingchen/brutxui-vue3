@@ -1,5 +1,6 @@
 import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
 import type { DataTableColumn, DataTableFilterState } from '@/components/data-table/types'
+import { getCellValue } from '@/lib/data-table-utils'
 
 export interface UseDataTableFilterOptions<T extends object> {
     columns: MaybeRefOrGetter<DataTableColumn<T>[]>
@@ -15,12 +16,6 @@ export function useDataTableFilter<T extends object>(
         toValue(options.columns).filter((col) => !col.hidden),
     )
     const isFilterable = computed(() => toValue(options.filterable) === true)
-
-    function getCellValue(row: T, column: DataTableColumn<T>): unknown {
-        if (column.accessorFn) return column.accessorFn(row)
-        if (column.accessorKey) return row[column.accessorKey]
-        return ''
-    }
 
     function filteredData(data: T[]): T[] {
         if (!isFilterable.value) return data

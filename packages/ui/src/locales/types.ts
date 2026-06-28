@@ -223,6 +223,10 @@ export interface FeedbackFormLocale {
     emailLabel: string
     subjectLabel: string
     messageLabel: string
+    nameRequired: string
+    emailRequired: string
+    emailInvalid: string
+    messageRequired: string
 }
 
 export interface StepperSectionLocale {

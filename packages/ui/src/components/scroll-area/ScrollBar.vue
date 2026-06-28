@@ -5,6 +5,7 @@ import {
     ScrollAreaThumb as ScrollAreaThumbPrimitive,
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { scrollAreaScrollbarVariants, scrollAreaThumbVariants } from './scroll-area-variants'
 
 interface ScrollBarProps {
     orientation?: 'vertical' | 'horizontal'
@@ -17,19 +18,14 @@ const props = withDefaults(defineProps<ScrollBarProps>(), {
 })
 
 const classes = computed(() =>
-    cn(
-        'flex touch-none select-none transition-colors',
-        props.orientation === 'vertical' &&
-            'h-full w-3 border-l-3 border-brutal p-[1px]',
-        props.orientation === 'horizontal' &&
-            'h-3 flex-col border-t-3 border-brutal p-[1px]',
-        props.class
-    )
+    cn(scrollAreaScrollbarVariants({ orientation: props.orientation }), props.class)
 )
+
+const thumbClasses = computed(() => scrollAreaThumbVariants())
 </script>
 
 <template>
     <ScrollAreaScrollbarPrimitive :orientation="orientation" :class="classes">
-        <ScrollAreaThumbPrimitive class="relative flex-1 bg-brutal-fg" />
+        <ScrollAreaThumbPrimitive :class="thumbClasses" />
     </ScrollAreaScrollbarPrimitive>
 </template>

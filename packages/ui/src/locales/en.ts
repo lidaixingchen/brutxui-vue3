@@ -193,6 +193,10 @@ export const en: Locale = {
         emailLabel: 'Email',
         subjectLabel: 'Subject',
         messageLabel: 'Message',
+        nameRequired: 'Name is required',
+        emailRequired: 'Email is required',
+        emailInvalid: 'Please enter a valid email address',
+        messageRequired: 'Message is required',
     },
     stepperSection: {
         defaultTitle: 'Steps',

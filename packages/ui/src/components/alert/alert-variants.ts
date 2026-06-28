@@ -4,6 +4,7 @@ export const alertVariants = cva(
     [
         'relative w-full p-4',
         'border-3 border-brutal',
+        'rounded-brutal',
         'shadow-brutal',
         '[&>svg~*]:pl-8 [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4',
         '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[2.5]',

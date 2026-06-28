@@ -335,7 +335,7 @@ const columns: DataTableColumn<User>[] = [
 | `select` | `[rows: T[]]` | 选中行变化时触发 |
 | `pageChange` | `[page: number]` | 页码变化时触发 |
 | `pageSizeChange` | `[size: number]` | 每页条数变化时触发 |
-| `export` | `[format: 'csv' \| 'json']` | 导出操作触发（需启用 selectable） |
+| `export` | `[format: 'csv' \| 'json', selectedRows: T[]]` | 导出操作触发，携带选中行数据（需启用 selectable） |
 
 ## 插槽
 
