@@ -2,6 +2,9 @@ import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import ComponentPreview from './components/ComponentPreview.vue'
 import CopyButton from './components/CopyButton.vue'
+import HomeCodePreview from './components/HomeCodePreview.vue'
+import HomeComponentShowcase from './components/HomeComponentShowcase.vue'
+import HomeStats from './components/HomeStats.vue'
 import InstallationTabs from './components/InstallationTabs.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ThemePlayground from './components/ThemePlayground.vue'
@@ -111,6 +114,9 @@ export default {
     enhanceApp({ app }) {
         app.component('ComponentPreview', ComponentPreview)
         app.component('CopyButton', CopyButton)
+        app.component('HomeCodePreview', HomeCodePreview)
+        app.component('HomeComponentShowcase', HomeComponentShowcase)
+        app.component('HomeStats', HomeStats)
         app.component('InstallationTabs', InstallationTabs)
         app.component('ThemeToggle', ThemeToggle)
         app.component('ThemePlayground', ThemePlayground)

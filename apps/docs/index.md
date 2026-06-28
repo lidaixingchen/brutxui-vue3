@@ -12,12 +12,6 @@ hero:
     - theme: alt
       text: 浏览组件
       link: /components/alert
-    - theme: alt
-      text: 区块与模板
-      link: /blocks/
-    - theme: alt
-      text: GitHub
-      link: https://github.com/lidaixingchen/brutxui-vue3
 
 features:
   - title: 粗野主义设计系统
@@ -33,3 +27,9 @@ features:
   - title: 现代技术栈
     details: Vue 3.5+ script setup、Tailwind CSS 3.4+、Vite 6+、Vitest 3+、pnpm。为现代 Vue 生态而生。
 ---
+
+<HomeComponentShowcase />
+
+<HomeCodePreview />
+
+<HomeStats />
