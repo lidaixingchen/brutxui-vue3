@@ -1,5 +1,4 @@
 import { mount } from '@vue/test-utils'
-import { cn } from '../../lib/utils'
 import TooltipContent from './TooltipContent.vue'
 
 const primitiveStub = {
