@@ -60,6 +60,7 @@ export default defineConfig({
         nav: [
             { text: '指南', link: '/guide/getting-started' },
             { text: '组件', link: '/components/alert' },
+            { text: '区块与模板', link: '/blocks/' },
             {
                 text: 'GitHub',
                 link: 'https://github.com/lidaixingchen/brutxui-vue3',

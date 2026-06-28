@@ -1,15 +1,15 @@
-export interface ColumnDef<T extends object = Record<string, unknown>> {
-    key: keyof T & string
+export interface ColumnDef {
+    key: string
     label: string
     sortable?: boolean
 }
 
 export interface DataTableSectionProps<T extends object = Record<string, unknown>> {
     title?: string
-    columns?: ColumnDef<T>[]
+    columns?: ColumnDef[]
     rows?: T[]
     searchable?: boolean
     pageSize?: number
-    rowKey?: keyof T & string
+    rowKey?: string
     class?: string
 }

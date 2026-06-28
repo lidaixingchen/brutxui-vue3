@@ -1,27 +1,15 @@
 <script setup lang="ts">
 import { DataTableSection } from 'brutx-ui-vue'
+import type { ColumnDef } from 'brutx-ui-vue'
 
-interface Employee extends Record<string, unknown> {
-    name: string
-    email: string
-    role: string
-    status: string
-}
-
-interface ColumnDefinition {
-    key: keyof Employee & string
-    label: string
-    sortable?: boolean
-}
-
-const columns: ColumnDefinition[] = [
+const columns: ColumnDef[] = [
     { key: 'name', label: '姓名', sortable: true },
     { key: 'email', label: '邮箱', sortable: true },
     { key: 'role', label: '角色', sortable: true },
     { key: 'status', label: '状态' },
 ]
 
-const data: Employee[] = [
+const data = [
     { name: '张三', email: 'zhangsan@example.com', role: '管理员', status: '活跃' },
     { name: '李四', email: 'lisi@example.com', role: '编辑', status: '活跃' },
     { name: '王五', email: 'wangwu@example.com', role: '访客', status: '未激活' },

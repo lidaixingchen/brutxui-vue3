@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DataTableSection from './DataTableSection.vue'
-import type { ColumnDef } from './DataTableSection.vue'
+import type { ColumnDef } from './types'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -12,7 +12,7 @@ interface TestEmployee {
     role: string
 }
 
-const mockColumns: ColumnDef<TestEmployee>[] = [
+const mockColumns: ColumnDef[] = [
     { key: 'name', label: 'Name', sortable: true },
     { key: 'email', label: 'Email' },
     { key: 'role', label: 'Role', sortable: true },

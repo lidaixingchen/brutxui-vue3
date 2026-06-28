@@ -13,6 +13,9 @@ hero:
       text: 浏览组件
       link: /components/alert
     - theme: alt
+      text: 区块与模板
+      link: /blocks/
+    - theme: alt
       text: GitHub
       link: https://github.com/lidaixingchen/brutxui-vue3
 
