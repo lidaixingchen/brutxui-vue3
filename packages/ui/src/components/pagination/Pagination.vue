@@ -4,6 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()
@@ -89,6 +90,16 @@ const safeCurrentPage = computed(() =>
 
 const buttonSize = computed(() => props.size ?? 'default')
 
+const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']>, IconSize> = {
+    sm: 'sm',
+    default: 'default',
+    lg: 'lg',
+}
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: PAGINATION_SIZE_TO_ICON[buttonSize.value] }))
+)
+
 const dotsSizeClasses = computed(() => {
     if (buttonSize.value === 'sm') return 'h-8 w-8'
     if (buttonSize.value === 'lg') return 'h-12 w-12'
@@ -140,7 +151,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.firstPage')"
             @click="onPageChange(1)"
         >
-            <ChevronsLeft class="h-4 w-4" />
+            <ChevronsLeft :class="iconClasses" />
         </button>
 
         <button
@@ -150,7 +161,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.previousPage')"
             @click="onPageChange(safeCurrentPage - 1)"
         >
-            <ChevronLeft class="h-4 w-4" />
+            <ChevronLeft :class="iconClasses" />
         </button>
 
         <template v-if="showPageNumbers">
@@ -185,7 +196,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.nextPage')"
             @click="onPageChange(safeCurrentPage + 1)"
         >
-            <ChevronRight class="h-4 w-4" />
+            <ChevronRight :class="iconClasses" />
         </button>
 
         <button
@@ -196,7 +207,7 @@ function onPageChange(page: number) {
             :aria-label="t('pagination.lastPage')"
             @click="onPageChange(totalPages)"
         >
-            <ChevronsRight class="h-4 w-4" />
+            <ChevronsRight :class="iconClasses" />
         </button>
     </nav>
 </template>

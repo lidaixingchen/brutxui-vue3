@@ -352,6 +352,10 @@
         {
           "path": "components/ui/button/button-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -686,6 +690,10 @@
         {
           "path": "components/ui/checkbox/checkbox-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -812,6 +820,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1108,6 +1120,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -1246,6 +1262,10 @@
         },
         {
           "path": "components/ui/dropdown-menu/dropdown-menu-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1575,6 +1595,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -1787,6 +1811,10 @@
         {
           "path": "components/ui/scroll-area/ScrollBar.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/scroll-area/scroll-area-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -1917,6 +1945,10 @@
         },
         {
           "path": "components/ui/select/select-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -2984,6 +3016,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3324,6 +3360,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3423,7 +3463,8 @@
         "reka-ui"
       ],
       "registryDependencies": [
-        "label"
+        "label",
+        "button"
       ],
       "files": [
         {
@@ -3459,7 +3500,27 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/form/FormWizard.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/form/form-wizard-types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/form-wizard-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
           "type": "registry:ui"
         }
       ],
@@ -3588,6 +3649,10 @@
         },
         {
           "path": "components/ui/alert-dialog/AlertDialogTitle.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/alert-dialog/alert-dialog-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -3723,6 +3788,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -4383,6 +4452,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4621,6 +4694,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4736,6 +4813,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -4971,6 +5052,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5093,6 +5178,10 @@
         },
         {
           "path": "components/ui/accordion/accordion-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -5336,6 +5425,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5457,6 +5550,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -5600,6 +5697,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -5822,6 +5923,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -7588,6 +7693,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -7825,6 +7934,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -7943,6 +8056,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -8301,6 +8418,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -8535,6 +8656,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -8772,6 +8897,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -8889,6 +9018,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -9005,6 +9138,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -9125,6 +9262,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -9244,6 +9385,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -9360,6 +9505,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -9482,6 +9631,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -9724,6 +9877,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -11024,6 +11181,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/data-table-utils.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -11152,6 +11313,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -11472,6 +11637,10 @@
         },
         {
           "path": "composables/useReducedMotion.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],

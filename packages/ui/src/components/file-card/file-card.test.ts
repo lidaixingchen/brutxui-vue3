@@ -59,6 +59,27 @@ describe('FileCard', () => {
         expect(svgs.length).toBeGreaterThanOrEqual(1)
     })
 
+    it('renders file icon with default xl size from shared iconSizeVariants', () => {
+        const wrapper = mount(FileCard, { ...localeProvide })
+        const fileIcon = wrapper.find('svg')
+        expect(fileIcon.classes()).toContain('h-6')
+        expect(fileIcon.classes()).toContain('w-6')
+    })
+
+    it('keeps download chrome icon at fixed default size regardless of iconSize', () => {
+        const wrapper = mount(FileCard, {
+            props: { iconSize: '2xl' },
+            ...localeProvide,
+        })
+        const fileIcon = wrapper.find('svg')
+        expect(fileIcon.classes()).toContain('h-8')
+        const downloadIcon = wrapper.find('button svg')
+        expect(downloadIcon.exists()).toBe(true)
+        expect(downloadIcon.classes()).toContain('h-4')
+        expect(downloadIcon.classes()).toContain('w-4')
+        expect(downloadIcon.classes()).not.toContain('h-8')
+    })
+
     it('applies custom class', () => {
         const wrapper = mount(FileCard, {
             props: { class: 'my-file' },

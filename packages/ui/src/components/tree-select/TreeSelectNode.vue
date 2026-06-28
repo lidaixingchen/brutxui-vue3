@@ -3,10 +3,12 @@ import { computed } from 'vue'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
+import { iconSizeVariants } from '../../lib/icon-size-variants'
 import type { TreeNode } from './tree-select-types'
 
 const INDENT_PER_DEPTH = 20
 const BASE_INDENT = 8
+const ICON_SIZE_CLASSES = iconSizeVariants({ size: 'default' })
 
 interface TreeSelectNodeProps {
     node: TreeNode
@@ -43,6 +45,14 @@ const itemClass = computed(() =>
 const indentStyle = computed(() => ({
     paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
 }))
+
+const chevronClasses = computed(() =>
+    cn(ICON_SIZE_CLASSES, 'flex-shrink-0 transition-transform duration-150', isExpanded.value && 'rotate-90')
+)
+const folderOpenClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0 text-brutal-primary')
+const folderClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0')
+const checkClasses = cn(ICON_SIZE_CLASSES, 'stroke-[3] flex-shrink-0')
+const spacerClasses = cn(ICON_SIZE_CLASSES, 'flex-shrink-0')
 
 function handleClick() {
     if (props.node.disabled) return
@@ -155,19 +165,18 @@ function handleKeydown(e: KeyboardEvent) {
         >
             <ChevronRight
                 v-if="!isLeaf"
-                class="w-4 h-4 flex-shrink-0 transition-transform duration-150"
-                :class="isExpanded && 'rotate-90'"
+                :class="chevronClasses"
             />
-            <span v-else class="w-4 flex-shrink-0" />
+            <span v-else :class="spacerClasses" />
 
-            <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0 text-brutal-primary" />
-            <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
-            <span v-else class="w-4 flex-shrink-0" />
+            <FolderOpen v-if="!isLeaf && isExpanded" :class="folderOpenClasses" />
+            <Folder v-else-if="!isLeaf" :class="folderClasses" />
+            <span v-else :class="spacerClasses" />
 
             <span class="truncate flex-1">{{ node.label }}</span>
             <Check
                 v-if="isSelected"
-                class="h-4 w-4 stroke-[3] flex-shrink-0"
+                :class="checkClasses"
             />
         </div>
 

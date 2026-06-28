@@ -5,14 +5,15 @@ import { ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { accordionTriggerVariants } from './accordion-variants'
 import { accordionItemKey } from './accordion-key'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
-const props = defineProps<AccordionTriggerProps & { class?: string }>()
+const props = defineProps<AccordionTriggerProps & { class?: string; iconSize?: IconSize }>()
 
 const context = inject(accordionItemKey, { variant: computed(() => undefined) })
 
 const delegatedProps = computed(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { class: _, ...delegated } = props
+    const { class: _, iconSize: __, ...delegated } = props
     return delegated
 })
 
@@ -25,6 +26,13 @@ const classes = computed(() =>
         props.class
     )
 )
+
+const iconClasses = computed(() =>
+    cn(
+        iconSizeVariants({ size: props.iconSize ?? 'lg' }),
+        'shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm'
+    )
+)
 </script>
 
 <template>
@@ -32,9 +40,7 @@ const classes = computed(() =>
         <AccordionTrigger v-bind="forwarded" :class="classes">
             <slot />
             <slot name="icon">
-                <ChevronDown
-                    class="h-5 w-5 shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm"
-                />
+                <ChevronDown :class="iconClasses" />
             </slot>
         </AccordionTrigger>
     </AccordionHeader>

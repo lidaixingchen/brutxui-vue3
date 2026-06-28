@@ -61,6 +61,34 @@ describe('Button', () => {
         expect(svg.classes()).toContain('animate-spin')
     })
 
+    it('links loader icon size to button size via shared iconSizeVariants', async () => {
+        const cases = [
+            { size: 'sm' as const, expected: ['h-3', 'w-3'] },
+            { size: 'default' as const, expected: ['h-4', 'w-4'] },
+            { size: 'lg' as const, expected: ['h-5', 'w-5'] },
+            { size: 'xl' as const, expected: ['h-6', 'w-6'] },
+        ]
+        const wrapper = mount(Button, {
+            props: { loading: true },
+        })
+        for (const { size, expected } of cases) {
+            await wrapper.setProps({ size })
+            const svg = wrapper.find('svg')
+            for (const cls of expected) {
+                expect(svg.classes()).toContain(cls)
+            }
+        }
+    })
+
+    it('falls back to default icon size for icon button', () => {
+        const wrapper = mount(Button, {
+            props: { loading: true, size: 'icon' },
+        })
+        const svg = wrapper.find('svg')
+        expect(svg.classes()).toContain('h-4')
+        expect(svg.classes()).toContain('w-4')
+    })
+
     it('is disabled when disabled=true', () => {
         const wrapper = mount(Button, {
             props: { disabled: true },

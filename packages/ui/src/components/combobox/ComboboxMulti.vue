@@ -12,6 +12,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { type ComboboxOption } from './combobox-types'
 
@@ -27,6 +28,7 @@ interface ComboboxMultiProps {
     ariaLabel?: string
     maxDisplay?: number
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<ComboboxMultiProps>(), {
@@ -38,6 +40,7 @@ const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     ariaLabel: undefined,
     maxDisplay: DEFAULT_MAX_DISPLAY,
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -91,6 +94,12 @@ function handleSelect(optionValue: string) {
 const checkboxSelectedClasses = comboboxCheckboxVariants({ selected: true })
 const checkboxUnselectedClasses = comboboxCheckboxVariants({ selected: false })
 
+const triggerIconClasses = computed(() =>
+    cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))
+)
+
+const checkIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
+
 watch(open, (isOpen) => {
     if (!isOpen) {
         searchQuery.value = ''
@@ -111,7 +120,7 @@ watch(open, (isOpen) => {
                 :class="triggerClasses"
             >
                 <span class="truncate">{{ displayText }}</span>
-                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]" />
+                <ChevronsUpDown :class="triggerIconClasses" />
             </button>
         </PopoverTrigger>
         <PopoverContent :class="contentClasses" align="start">
@@ -130,7 +139,7 @@ watch(open, (isOpen) => {
                             <div
                                 :class="props.modelValue.includes(option.value) ? checkboxSelectedClasses : checkboxUnselectedClasses"
                             >
-                                <Check v-if="props.modelValue.includes(option.value)" class="h-3 w-3 stroke-[3] text-brutal-fg" />
+                                <Check v-if="props.modelValue.includes(option.value)" :class="checkIconClasses" />
                             </div>
                             {{ option.label }}
                         </CommandItem>

@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { Search } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import CardHeader from '../card/CardHeader.vue'
@@ -26,6 +27,7 @@ interface BlogListPageProps {
     categories?: string[]
     pageSize?: number
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<BlogListPageProps>(), {
@@ -34,6 +36,7 @@ const props = withDefaults(defineProps<BlogListPageProps>(), {
     categories: () => [],
     pageSize: 6,
     class: undefined,
+    iconSize: 'default',
 })
 
 const emit = defineEmits<{
@@ -100,6 +103,14 @@ function handlePageChange(page: number) {
 const rootClasses = computed(() =>
     cn('min-h-screen bg-brutal-bg p-4 sm:p-8', props.class)
 )
+
+const searchIconClasses = computed(() =>
+    cn(
+        'absolute left-3 top-1/2 -translate-y-1/2 text-brutal-fg',
+        iconSizeVariants({ size: props.iconSize }),
+        'stroke-[3]'
+    )
+)
 </script>
 
 <template>
@@ -116,7 +127,7 @@ const rootClasses = computed(() =>
             <slot>
                 <div class="mb-6 flex flex-col sm:flex-row gap-4">
                     <div class="relative flex-1">
-                        <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 stroke-[3] text-brutal-fg" />
+                        <Search :class="searchIconClasses" />
                         <Input
                             v-model="searchQuery"
                             :placeholder="resolvedSearchPlaceholder"

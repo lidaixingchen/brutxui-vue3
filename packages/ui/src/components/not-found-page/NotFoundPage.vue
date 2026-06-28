@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { ArrowLeft } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
 import GlitchText from '../glitch-text/GlitchText.vue'
@@ -12,6 +13,7 @@ interface NotFoundPageProps {
     description?: string
     backText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<NotFoundPageProps>(), {
@@ -19,6 +21,7 @@ const props = withDefaults(defineProps<NotFoundPageProps>(), {
     description: undefined,
     backText: undefined,
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -33,6 +36,10 @@ const emit = defineEmits<{
 
 const rootClasses = computed(() =>
     cn('min-h-screen flex items-center justify-center bg-brutal-bg p-4', props.class)
+)
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
 )
 </script>
 
@@ -61,7 +68,7 @@ const rootClasses = computed(() =>
 
                 <div class="mt-8">
                     <Button variant="primary" @click="emit('back')">
-                        <ArrowLeft class="h-4 w-4 stroke-[3]" />
+                        <ArrowLeft :class="iconClasses" />
                         {{ resolvedBackText }}
                     </Button>
                 </div>

@@ -38,17 +38,6 @@ export const checkboxVariants = cva(
 export const checkboxIndicatorVariants = cva(
     [
         'flex items-center justify-center text-current',
-    ],
-    {
-        variants: {
-            size: {
-                sm: 'h-3 w-3 stroke-[3]',
-                default: 'h-4 w-4 stroke-[3]',
-                lg: 'h-5 w-5 stroke-[3]',
-            },
-        },
-        defaultVariants: {
-            size: 'default',
-        },
-    }
+        'stroke-[3]',
+    ]
 )

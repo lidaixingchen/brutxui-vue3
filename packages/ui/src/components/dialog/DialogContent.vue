@@ -9,6 +9,7 @@ import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
+import { iconSizeVariants } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 interface DialogContentProps {
@@ -32,6 +33,8 @@ const contentClasses = computed(() =>
 const closeClasses = computed(() =>
     cn(dialogCloseVariants())
 )
+
+const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 </script>
 
 <template>
@@ -40,7 +43,7 @@ const closeClasses = computed(() =>
         <DialogContentPrimitive :class="contentClasses" :force-mount="props.forceMount === true ? true : undefined">
             <slot />
             <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
-                <X class="h-4 w-4 stroke-[3]" />
+                <X :class="closeIconClasses" />
                 <span class="sr-only">{{ t('dialog.close') }}</span>
             </DialogClosePrimitive>
         </DialogContentPrimitive>

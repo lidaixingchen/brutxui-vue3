@@ -241,6 +241,47 @@ describe('Pagination', () => {
         expect(wrapper.find('nav').classes()).toContain('gap-3')
     })
 
+    it('links nav icon size to default pagination size', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, showFirstLast: true },
+            ...globalProvide,
+        })
+        const icons = wrapper.findAll('nav button[aria-label] svg')
+        expect(icons.length).toBeGreaterThan(0)
+        for (const icon of icons) {
+            expect(icon.classes()).toContain('h-4')
+            expect(icon.classes()).toContain('w-4')
+        }
+    })
+
+    it('links nav icon size to sm pagination size', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, size: 'sm', showFirstLast: true },
+            ...globalProvide,
+        })
+        const icons = wrapper.findAll('nav button[aria-label] svg')
+        expect(icons.length).toBeGreaterThan(0)
+        for (const icon of icons) {
+            expect(icon.classes()).toContain('h-3')
+            expect(icon.classes()).toContain('w-3')
+            expect(icon.classes()).not.toContain('h-4')
+        }
+    })
+
+    it('links nav icon size to lg pagination size', () => {
+        const wrapper = mount(Pagination, {
+            props: { totalPages: 5, currentPage: 1, size: 'lg', showFirstLast: true },
+            ...globalProvide,
+        })
+        const icons = wrapper.findAll('nav button[aria-label] svg')
+        expect(icons.length).toBeGreaterThan(0)
+        for (const icon of icons) {
+            expect(icon.classes()).toContain('h-5')
+            expect(icon.classes()).toContain('w-5')
+            expect(icon.classes()).not.toContain('h-4')
+        }
+    })
+
     it('respects siblingCount prop for wider middle range', () => {
         const siblingCount = 2
         const totalPages = 20

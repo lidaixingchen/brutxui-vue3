@@ -5,6 +5,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import Button from '../button/Button.vue'
 import { toastVariants } from './toast-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
@@ -19,6 +20,7 @@ interface ToastProps {
     description?: string
     duration?: number
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<ToastProps>(), {
@@ -28,6 +30,7 @@ const props = withDefaults(defineProps<ToastProps>(), {
     description: undefined,
     duration: DEFAULT_DURATION,
     class: undefined,
+    iconSize: 'xl',
 })
 
 const emit = defineEmits<{ close: [] }>()
@@ -76,6 +79,12 @@ const iconComponent = computed(() => {
         default: return Zap
     }
 })
+
+const mainIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[2.5]')
+)
+
+const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 </script>
 
 <template>
@@ -89,7 +98,7 @@ const iconComponent = computed(() => {
 
         <div class="flex items-start gap-4 p-4 pt-5">
             <div class="flex-shrink-0 mt-0.5">
-                <component :is="iconComponent" class="h-6 w-6 stroke-[2.5]" />
+                <component :is="iconComponent" :class="mainIconClasses" />
             </div>
 
             <div class="flex-1 min-w-0">
@@ -109,7 +118,7 @@ const iconComponent = computed(() => {
                 :aria-label="t('toast.close')"
                 @click="startLeave"
             >
-                <X class="h-4 w-4 stroke-[3]" />
+                <X :class="closeIconClasses" />
             </Button>
         </div>
     </div>

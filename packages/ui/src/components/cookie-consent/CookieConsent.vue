@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Cookie } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Button from '../button/Button.vue'
@@ -14,6 +15,7 @@ interface CookieConsentProps {
     acceptText?: string
     declineText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<CookieConsentProps>(), {
@@ -23,6 +25,7 @@ const props = withDefaults(defineProps<CookieConsentProps>(), {
     acceptText: undefined,
     declineText: undefined,
     class: undefined,
+    iconSize: 'xl',
 })
 
 const { t } = useLocale()
@@ -61,6 +64,10 @@ const resolvedTitle = computed(() => props.title ?? t('cookieConsent.defaultTitl
 const resolvedDescription = computed(() => props.description ?? t('cookieConsent.defaultDescription'))
 const resolvedAcceptText = computed(() => props.acceptText ?? t('cookieConsent.defaultAcceptText'))
 const resolvedDeclineText = computed(() => props.declineText ?? t('cookieConsent.defaultDeclineText'))
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'shrink-0 stroke-[2.5] mt-0.5')
+)
 </script>
 
 <template>
@@ -69,7 +76,7 @@ const resolvedDeclineText = computed(() => props.declineText ?? t('cookieConsent
             <Card :class="cardClasses" variant="default">
                 <CardContent class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex items-start gap-3">
-                        <Cookie class="h-6 w-6 shrink-0 stroke-[2.5] mt-0.5" />
+                        <Cookie :class="iconClasses" />
                         <div>
                             <h3 class="text-base font-black tracking-tight">
 {{ resolvedTitle }}

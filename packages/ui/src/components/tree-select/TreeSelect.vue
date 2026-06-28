@@ -8,6 +8,7 @@ import { useLocale } from '@/composables/useLocale'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
 import { type VariantProps } from 'class-variance-authority'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import TreeSelectNode from './TreeSelectNode.vue'
 
 type TreeSelectVariantProps = VariantProps<typeof treeSelectTriggerVariants>
@@ -43,6 +44,8 @@ interface TreeSelectProps {
     dropdownClass?: string
     /** 自定义类名 */
     class?: string
+    /** 主图标尺寸 */
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<TreeSelectProps>(), {
@@ -60,6 +63,7 @@ const props = withDefaults(defineProps<TreeSelectProps>(), {
     maxHeight: '15rem',
     dropdownClass: undefined,
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -274,6 +278,12 @@ const triggerClasses = computed(() =>
         props.class
     )
 )
+
+const triggerIconClasses = computed(() =>
+    cn('shrink-0 opacity-50 stroke-3', iconSizeVariants({ size: props.iconSize }))
+)
+
+const clearIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')
 </script>
 
 <template>
@@ -306,9 +316,9 @@ const triggerClasses = computed(() =>
                         @keydown.enter="handleClear"
                         @keydown.space="handleClear"
                     >
-                        <X class="h-3 w-3 stroke-3" />
+                        <X :class="clearIconClasses" />
                     </span>
-                    <ChevronsUpDown class="h-4 w-4 shrink-0 opacity-50 stroke-3" />
+                    <ChevronsUpDown :class="triggerIconClasses" />
                 </span>
             </div>
         </PopoverTrigger>

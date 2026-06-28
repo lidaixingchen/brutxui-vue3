@@ -4,6 +4,7 @@ import { MoveHorizontal } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { beforeAfterRootVariants, beforeAfterHandleVariants } from './before-after-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 const DEFAULT_SLIDER_POSITION = 50
 
@@ -15,6 +16,7 @@ interface BeforeAfterProps {
     defaultValue?: number
     disabled?: boolean
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<BeforeAfterProps>(), {
@@ -23,6 +25,7 @@ const props = withDefaults(defineProps<BeforeAfterProps>(), {
     defaultValue: DEFAULT_SLIDER_POSITION,
     disabled: false,
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -55,6 +58,10 @@ const rootClasses = computed(() =>
 const handleClasses = computed(() =>
     cn(beforeAfterHandleVariants())
 )
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3] text-brutal-primary-foreground')
+)
 </script>
 
 <template>
@@ -85,7 +92,7 @@ const handleClasses = computed(() =>
             :class="handleClasses"
             :style="sliderStyle"
         >
-            <MoveHorizontal class="h-4 w-4 stroke-[3] text-brutal-primary-foreground" />
+            <MoveHorizontal :class="iconClasses" />
         </div>
 
         <input

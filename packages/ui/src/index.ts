@@ -385,6 +385,8 @@ export * from './lib/color'
 export * from './lib/date'
 export { DEFAULT_COLOR_PRESETS } from './lib/default-presets'
 export type { ColorPreset } from './lib/default-presets'
+export { iconSizeVariants } from './lib/icon-size-variants'
+export type { IconSize } from './lib/icon-size-variants'
 
 export type { VariantProps } from 'class-variance-authority'
 

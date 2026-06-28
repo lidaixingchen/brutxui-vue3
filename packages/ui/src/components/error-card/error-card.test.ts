@@ -69,6 +69,29 @@ describe('ErrorCard', () => {
         expect(wrapper.text()).toContain('Custom Action')
     })
 
+    it('renders alert icon with default lg size from shared iconSizeVariants', () => {
+        const wrapper = mount(ErrorCard, { ...localeProvide })
+        const alertIcon = wrapper.find('svg')
+        expect(alertIcon.classes()).toContain('h-5')
+        expect(alertIcon.classes()).toContain('w-5')
+    })
+
+    it('keeps button chrome icons at fixed default size regardless of iconSize', () => {
+        const wrapper = mount(ErrorCard, {
+            props: { iconSize: 'xl' },
+            ...localeProvide,
+        })
+        const alertIcon = wrapper.find('svg')
+        expect(alertIcon.classes()).toContain('h-6')
+        const buttonIcons = wrapper.findAll('button svg')
+        expect(buttonIcons.length).toBe(2)
+        for (const icon of buttonIcons) {
+            expect(icon.classes()).toContain('h-4')
+            expect(icon.classes()).toContain('w-4')
+            expect(icon.classes()).not.toContain('h-6')
+        }
+    })
+
     it('applies custom class', () => {
         const wrapper = mount(ErrorCard, {
             props: { class: 'my-error' },

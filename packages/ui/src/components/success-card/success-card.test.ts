@@ -54,6 +54,24 @@ describe('SuccessCard', () => {
         expect(wrapper.find('svg').exists()).toBe(true)
     })
 
+    it('renders check icon with default 2xl size from shared iconSizeVariants', () => {
+        const wrapper = mount(SuccessCard, { ...localeProvide })
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-8')
+        expect(icon.classes()).toContain('w-8')
+    })
+
+    it('links icon size to xl via iconSize prop', () => {
+        const wrapper = mount(SuccessCard, {
+            props: { iconSize: 'xl' },
+            ...localeProvide,
+        })
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-6')
+        expect(icon.classes()).toContain('w-6')
+        expect(icon.classes()).not.toContain('h-8')
+    })
+
     it('renders actions slot', () => {
         const wrapper = mount(SuccessCard, {
             slots: { actions: '<div class="custom-action">Custom Action</div>' },

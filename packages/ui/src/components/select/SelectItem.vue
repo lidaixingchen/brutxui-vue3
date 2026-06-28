@@ -5,6 +5,7 @@ import { SelectItem as SelectItemPrimitive, SelectItemIndicator as SelectItemInd
 import { Check } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { selectItemVariants } from './select-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 type SelectItemVariantProps = VariantProps<typeof selectItemVariants>
 
@@ -15,6 +16,7 @@ interface SelectItemProps {
     class?: string
     indicatorClass?: string
     iconClass?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<SelectItemProps>(), {
@@ -23,6 +25,7 @@ const props = withDefaults(defineProps<SelectItemProps>(), {
     class: undefined,
     indicatorClass: undefined,
     iconClass: undefined,
+    iconSize: 'default',
 })
 
 const classes = computed(() =>
@@ -34,7 +37,7 @@ const indicatorClasses = computed(() =>
 )
 
 const iconClasses = computed(() =>
-    cn('h-4 w-4 stroke-[3]', props.iconClass)
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]', props.iconClass)
 )
 </script>
 

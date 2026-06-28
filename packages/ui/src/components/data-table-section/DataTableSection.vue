@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { ArrowUpDown, ArrowUp, ArrowDown } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
+import { iconSizeVariants } from '../../lib/icon-size-variants'
 import Table from '../table/Table.vue'
 import TableHeader from '../table/TableHeader.vue'
 import TableBody from '../table/TableBody.vue'
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<DataTableSectionProps>(), {
     searchable: true,
     pageSize: DEFAULT_PAGE_SIZE,
     class: undefined,
+    iconSize: 'default',
 })
 
 const emit = defineEmits<{
@@ -99,6 +101,10 @@ const rootClasses = computed(() => cn(
     props.class,
 ))
 
+const sortIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
+
 const columnClasses = computed(() =>
     props.columns.map(col =>
         cn(col.sortable && 'cursor-pointer select-none active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all')
@@ -145,7 +151,7 @@ function sortIcon(key: string) {
                                     <component
                                         :is="sortIcon(col.key)"
                                         v-if="col.sortable"
-                                        class="h-4 w-4 stroke-[3]"
+                                        :class="sortIconClasses"
                                     />
                                 </span>
                             </TableHead>

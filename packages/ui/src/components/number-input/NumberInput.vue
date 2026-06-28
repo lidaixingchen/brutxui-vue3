@@ -12,18 +12,21 @@ import {
 import { Plus, Minus, ChevronUp, ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 interface NumberInputProps extends NumberFieldRootProps {
     layout?: 'split' | 'stacked'
     placeholder?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
     layout: 'split',
     placeholder: undefined,
     class: undefined,
+    iconSize: 'default',
 })
 
 const emits = defineEmits<NumberFieldRootEmits>()
@@ -55,13 +58,17 @@ const incrementClasses = computed(() =>
 const fieldClasses = computed(() =>
     cn(numberInputFieldVariants({ layout: props.layout }))
 )
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
 </script>
 
 <template>
     <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
         <template v-if="layout === 'split'">
             <NumberFieldDecrement :class="decrementClasses">
-                <Minus class="h-4 w-4 stroke-[3]" />
+                <Minus :class="iconClasses" />
             </NumberFieldDecrement>
 
             <NumberFieldInput
@@ -70,7 +77,7 @@ const fieldClasses = computed(() =>
             />
 
             <NumberFieldIncrement :class="incrementClasses">
-                <Plus class="h-4 w-4 stroke-[3]" />
+                <Plus :class="iconClasses" />
             </NumberFieldIncrement>
         </template>
 
@@ -82,10 +89,10 @@ const fieldClasses = computed(() =>
 
             <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
                 <NumberFieldIncrement :class="incrementClasses">
-                    <ChevronUp class="h-4 w-4 stroke-[3]" />
+                    <ChevronUp :class="iconClasses" />
                 </NumberFieldIncrement>
                 <NumberFieldDecrement :class="decrementClasses">
-                    <ChevronDown class="h-4 w-4 stroke-[3]" />
+                    <ChevronDown :class="iconClasses" />
                 </NumberFieldDecrement>
             </div>
         </template>

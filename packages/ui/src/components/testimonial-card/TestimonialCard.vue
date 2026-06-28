@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Quote } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Avatar from '../avatar/Avatar.vue'
@@ -14,6 +15,7 @@ interface TestimonialCardProps {
     author?: string
     role?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<TestimonialCardProps>(), {
@@ -21,6 +23,7 @@ const props = withDefaults(defineProps<TestimonialCardProps>(), {
     author: undefined,
     role: undefined,
     class: undefined,
+    iconSize: '2xl',
 })
 
 const { t } = useLocale()
@@ -42,6 +45,10 @@ const initials = computed(() => {
         .slice(0, 2)
         .toUpperCase()
 })
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[2.5] text-brutal-primary mb-2')
+)
 </script>
 
 <template>
@@ -54,7 +61,7 @@ const initials = computed(() => {
                     </Avatar>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <Quote class="h-8 w-8 stroke-[2.5] text-brutal-primary mb-2" />
+                    <Quote :class="iconClasses" />
                     <p class="text-base font-bold leading-relaxed">
 {{ resolvedQuote }}
 </p>

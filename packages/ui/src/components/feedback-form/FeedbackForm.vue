@@ -3,6 +3,7 @@ import { computed, ref, reactive } from 'vue'
 import { Send } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Input from '../input/Input.vue'
@@ -14,6 +15,7 @@ interface FeedbackFormProps {
     description?: string
     submitText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<FeedbackFormProps>(), {
@@ -21,6 +23,7 @@ const props = withDefaults(defineProps<FeedbackFormProps>(), {
     description: undefined,
     submitText: undefined,
     class: undefined,
+    iconSize: 'default',
 })
 
 const emit = defineEmits<{
@@ -43,6 +46,10 @@ const subject = ref('')
 const message = ref('')
 
 const rootClasses = computed(() => cn('w-full max-w-2xl mx-auto', props.class))
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'mr-2')
+)
 
 const errors = reactive({
     name: '',
@@ -127,7 +134,7 @@ function handleSubmit() {
                             <p v-if="errors.message" class="text-sm text-red-500 font-medium">{{ errors.message }}</p>
                         </div>
                         <Button variant="primary" type="submit" class="w-full">
-                            <Send class="h-4 w-4 mr-2" />
+                            <Send :class="iconClasses" />
                             {{ resolvedSubmitText }}
                         </Button>
                     </form>

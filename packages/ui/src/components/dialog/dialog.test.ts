@@ -85,6 +85,17 @@ describe('DialogContent', () => {
         })
         expect(wrapper.text()).toContain('Dialog body')
     })
+
+    it('renders close icon with default iconSize classes from shared CVA', () => {
+        const wrapper = mount(DialogContent, {
+            global: { stubs: contentStubs },
+        })
+        const closeIcon = wrapper.find('svg')
+        expect(closeIcon.exists()).toBe(true)
+        expect(closeIcon.classes()).toContain('h-4')
+        expect(closeIcon.classes()).toContain('w-4')
+        expect(closeIcon.classes()).toContain('stroke-[3]')
+    })
 })
 
 describe('DialogHeader', () => {

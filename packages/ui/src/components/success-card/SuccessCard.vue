@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { Check } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Button from '../button/Button.vue'
@@ -12,6 +13,7 @@ interface SuccessCardProps {
     description?: string
     confirmText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<SuccessCardProps>(), {
@@ -19,6 +21,7 @@ const props = withDefaults(defineProps<SuccessCardProps>(), {
     description: undefined,
     confirmText: undefined,
     class: undefined,
+    iconSize: '2xl',
 })
 
 const { t } = useLocale()
@@ -32,6 +35,10 @@ const rootClasses = computed(() => cn('w-full max-w-md', props.class))
 const resolvedTitle = computed(() => props.title ?? t('successCard.defaultTitle'))
 const resolvedDescription = computed(() => props.description ?? t('successCard.defaultDescription'))
 const resolvedConfirmText = computed(() => props.confirmText ?? t('successCard.defaultConfirmText'))
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
 </script>
 
 <template>
@@ -42,7 +49,7 @@ const resolvedConfirmText = computed(() => props.confirmText ?? t('successCard.d
                 <div class="relative mb-4">
                     <div class="absolute inset-0 bg-brutal-muted border-3 border-brutal translate-x-2 translate-y-2" />
                     <div class="relative h-16 w-16 flex items-center justify-center bg-brutal-success border-3 border-brutal shadow-brutal">
-                        <Check class="h-8 w-8 stroke-[3]" />
+                        <Check :class="iconClasses" />
                     </div>
                 </div>
                 <h3 class="text-xl font-black tracking-tight">

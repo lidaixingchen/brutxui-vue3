@@ -3,6 +3,7 @@ import { computed, type Component } from 'vue'
 import { ArrowUpRight, ArrowDownRight, Minus } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardHeader from '../card/CardHeader.vue'
 import CardContent from '../card/CardContent.vue'
@@ -37,6 +38,7 @@ interface DashboardStatsProps {
     title?: string
     subtitle?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<DashboardStatsProps>(), {
@@ -44,6 +46,7 @@ const props = withDefaults(defineProps<DashboardStatsProps>(), {
     subtitle: undefined,
     stats: () => [],
     class: undefined,
+    iconSize: 'default',
 })
 
 const emit = defineEmits<{
@@ -56,6 +59,10 @@ const resolvedSubtitle = computed(() => props.subtitle ?? '')
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
+const statIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
+
 function getIconClasses(stat: StatItem) {
     return cn(
         'h-8 w-8 flex items-center justify-center border-3 border-brutal',
@@ -65,7 +72,8 @@ function getIconClasses(stat: StatItem) {
 
 function getTrendIconClasses(stat: StatItem) {
     return cn(
-        'h-4 w-4 stroke-[3]',
+        iconSizeVariants({ size: 'default' }),
+        'stroke-[3]',
         stat.trend === 'up' ? 'text-brutal-success' : stat.trend === 'down' ? 'text-brutal-destructive' : 'text-brutal-muted-foreground'
     )
 }
@@ -100,7 +108,7 @@ function clampProgress(value: number): number {
                         <div class="flex items-center justify-between">
                             <CardDescription>{{ stat.title }}</CardDescription>
                             <div :class="getIconClasses(stat)">
-                                <component :is="stat.icon" class="h-4 w-4 stroke-[3]" />
+                                <component :is="stat.icon" :class="statIconClasses" />
                             </div>
                         </div>
                     </CardHeader>

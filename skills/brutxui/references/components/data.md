@@ -92,18 +92,25 @@
 
 ## DataTable
 
-高级数据表格组件，支持排序、筛选、分页、行选择。
+高级数据表格组件，支持排序、筛选、分页、行选择。内部通过 4 个独立 composables 管理状态，可直接复用。
 
 ```vue
 <script setup lang="ts">
 import { DataTable } from 'brutx-ui-vue'
+import type { DataTableColumn } from 'brutx-ui-vue'
 
-const columns = [
+interface User {
+    id: number
+    name: string
+    email: string
+}
+
+const columns: DataTableColumn<User>[] = [
     { id: 'name', header: '姓名', accessorKey: 'name', sortable: true },
     { id: 'email', header: '邮箱', accessorKey: 'email' },
 ]
 
-const data = [
+const data: User[] = [
     { id: 1, name: '张三', email: 'zhang@example.com' },
 ]
 </script>
@@ -112,6 +119,7 @@ const data = [
     <DataTable
         :data="data"
         :columns="columns"
+        row-key="id"
         :paginated="true"
         :page-size="10"
         sortable
@@ -132,6 +140,20 @@ const data = [
 - `pageSizeOptions`: `number[]` — 默认 `[10, 20, 50, 100]`
 - `loading`: `boolean` — 默认 `false`
 - `emptyMessage`: `string` — 空数据提示
+- `size`: `'sm' | 'default' | 'lg'` — 字体与单元格 padding，默认 `'default'`
+- `dense`: `boolean` — 进一步压缩行高（与 `size` 正交），默认 `false`
+- `striped`: `boolean` — 奇偶行交替背景，默认 `true`
+- `stickyHeader`: `boolean` — 表头吸顶，默认 `false`
+- `virtualScroll`: `DataTableVirtualScroll` — 虚拟滚动配置
+
+### Slots
+
+| Slot | 作用域 | 用途 |
+| --- | --- | --- |
+| `toolbar` | — | 工具栏区域，位于筛选框右侧 |
+| `cell-{columnId}` | `{ row: T; value: unknown }` | 自定义特定列的单元格渲染 |
+| `empty` | — | 数据为空时的自定义空状态 |
+| `loading` | — | 自定义加载态内容，仅在 `loading` 为 `true` 时渲染 |
 
 ### Events
 
@@ -142,7 +164,18 @@ const data = [
 | `select` | `[rows: T[]]` | 行选择变化时触发 |
 | `pageChange` | `[page: number]` | 页码变化时触发 |
 | `pageSizeChange` | `[size: number]` | 每页条数变化时触发 |
-| `export` | `[format: 'csv' \| 'json', selectedRows: T[]]` | 导出时触发，携带选中行数据 |
+| `export` | `[format: 'csv' \| 'json']` | 导出时触发 |
+
+### Composables
+
+DataTable 内部由 4 个独立 composables 驱动，均已从 `brutx-ui-vue` 导出，可在自定义表格中单独复用：
+
+- `useDataTableSort` — 三态排序（asc → desc → null）
+- `useDataTableFilter` — 全局 + 列级过滤
+- `useDataTableSelection` — 行选择与全选（跨页保留）
+- `useDataTablePagination` — 分页状态与导航
+
+数据流为单向管道：`filter → sort → pagination → selection`，`useDataTableSelection` 接收 `displayData`（分页后数据）作为参数以避免环依赖。
 
 ### 工具函数
 

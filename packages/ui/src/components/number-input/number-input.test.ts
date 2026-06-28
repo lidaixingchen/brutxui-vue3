@@ -98,4 +98,29 @@ describe('NumberInput', () => {
         })
         expect(wrapper.find('[aria-label="Decrease"]').exists()).toBe(true)
     })
+
+    it('applies default icon size to increment/decrement icons', () => {
+        const wrapper = mount(NumberInput, {
+            props: { layout: 'split' },
+        })
+        const icons = wrapper.findAll('[role="group"] svg')
+        expect(icons.length).toBeGreaterThan(0)
+        for (const icon of icons) {
+            expect(icon.classes()).toContain('h-4')
+            expect(icon.classes()).toContain('w-4')
+        }
+    })
+
+    it('links icon size to lg via iconSize prop', () => {
+        const wrapper = mount(NumberInput, {
+            props: { layout: 'split', iconSize: 'lg' },
+        })
+        const icons = wrapper.findAll('[role="group"] svg')
+        expect(icons.length).toBeGreaterThan(0)
+        for (const icon of icons) {
+            expect(icon.classes()).toContain('h-5')
+            expect(icon.classes()).toContain('w-5')
+            expect(icon.classes()).not.toContain('h-4')
+        }
+    })
 })

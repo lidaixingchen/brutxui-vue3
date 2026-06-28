@@ -12,6 +12,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 import { type ComboboxOption } from './combobox-types'
@@ -25,6 +26,7 @@ interface ComboboxProps {
     disabled?: boolean
     ariaLabel?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<ComboboxProps>(), {
@@ -35,6 +37,7 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     disabled: false,
     ariaLabel: undefined,
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -82,8 +85,12 @@ watch(open, (isOpen) => {
     }
 })
 
-const checkSelectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-100'))
-const checkUnselectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opacity-0'))
+const checkSelectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: 'default' }), 'stroke-[3]', 'opacity-100'))
+const checkUnselectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: 'default' }), 'stroke-[3]', 'opacity-0'))
+
+const triggerIconClasses = computed(() =>
+    cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))
+)
 </script>
 
 <template>
@@ -99,7 +106,7 @@ const checkUnselectedClasses = computed(() => cn('mr-2 h-4 w-4 stroke-[3]', 'opa
                 :class="triggerClasses"
             >
                 <span>{{ selectedOption ? selectedOption.label : resolvedPlaceholder }}</span>
-                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50 stroke-[3]" />
+                <ChevronsUpDown :class="triggerIconClasses" />
             </button>
         </PopoverTrigger>
         <PopoverContent :class="contentClasses" align="start">

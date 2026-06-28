@@ -89,6 +89,27 @@ describe('BrutalistHero', () => {
         expect(wrapper.text()).toContain('npx brutxui init')
     })
 
+    it('renders primary CTA icon with default lg size from shared iconSizeVariants', () => {
+        const wrapper = mount(BrutalistHero, { ...localeProvide })
+        const ctaIcon = wrapper.find('button svg')
+        expect(ctaIcon.classes()).toContain('h-5')
+        expect(ctaIcon.classes()).toContain('w-5')
+    })
+
+    it('keeps badge chrome icon at fixed default size regardless of iconSize', () => {
+        const wrapper = mount(BrutalistHero, {
+            props: { iconSize: 'xl' },
+            ...localeProvide,
+        })
+        const badgeIcon = wrapper.find('svg')
+        expect(badgeIcon.classes()).toContain('h-4')
+        expect(badgeIcon.classes()).toContain('w-4')
+        expect(badgeIcon.classes()).not.toContain('h-6')
+        const ctaIcon = wrapper.find('button svg')
+        expect(ctaIcon.classes()).toContain('h-6')
+        expect(ctaIcon.classes()).toContain('w-6')
+    })
+
     it('applies custom class', () => {
         const wrapper = mount(BrutalistHero, {
             props: { class: 'my-hero' },

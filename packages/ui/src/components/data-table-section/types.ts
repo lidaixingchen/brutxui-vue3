@@ -1,3 +1,5 @@
+import type { IconSize } from '../../lib/icon-size-variants'
+
 export interface ColumnDef {
     key: string
     label: string
@@ -12,4 +14,5 @@ export interface DataTableSectionProps<T extends object = Record<string, unknown
     pageSize?: number
     rowKey?: string
     class?: string
+    iconSize?: IconSize
 }

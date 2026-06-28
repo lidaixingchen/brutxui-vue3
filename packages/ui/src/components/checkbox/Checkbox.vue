@@ -5,6 +5,7 @@ import { cn } from '../../lib/utils'
 import { CheckboxRoot, CheckboxIndicator } from 'reka-ui'
 import { Check } from '@lucide/vue'
 import { checkboxVariants, checkboxIndicatorVariants } from './checkbox-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 type CheckboxVariantProps = VariantProps<typeof checkboxVariants>
 
@@ -28,12 +29,21 @@ const emit = defineEmits<{
     'update:checked': [value: boolean | 'indeterminate']
 }>()
 
+const CHECKBOX_SIZE_TO_ICON: Record<NonNullable<CheckboxVariantProps['size']>, IconSize> = {
+    sm: 'sm',
+    default: 'default',
+    lg: 'lg',
+}
+
 const classes = computed(() =>
     cn(checkboxVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
 const checkClasses = computed(() =>
-    cn(checkboxIndicatorVariants({ size: props.size }))
+    cn(
+        checkboxIndicatorVariants(),
+        iconSizeVariants({ size: CHECKBOX_SIZE_TO_ICON[props.size] })
+    )
 )
 </script>
 

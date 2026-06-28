@@ -5,6 +5,7 @@ import { SelectTrigger as SelectTriggerPrimitive, SelectIcon as SelectIconPrimit
 import { ChevronDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { selectTriggerVariants } from './select-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 type SelectTriggerVariantProps = VariantProps<typeof selectTriggerVariants>
 
@@ -22,12 +23,22 @@ const props = withDefaults(defineProps<SelectTriggerProps>(), {
     iconClass: undefined,
 })
 
+const SIZE_TO_ICON: Record<NonNullable<SelectTriggerVariantProps['size']>, IconSize> = {
+    sm: 'sm',
+    default: 'default',
+    lg: 'lg',
+}
+
 const classes = computed(() =>
     cn(selectTriggerVariants({ size: props.size }), props.class)
 )
 
 const iconClasses = computed(() =>
-    cn('h-5 w-5 stroke-[3]', props.iconClass)
+    cn(
+        iconSizeVariants({ size: SIZE_TO_ICON[props.size] }),
+        'stroke-[3]',
+        props.iconClass,
+    )
 )
 </script>
 

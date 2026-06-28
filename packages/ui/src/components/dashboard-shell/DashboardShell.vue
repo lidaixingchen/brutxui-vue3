@@ -4,15 +4,18 @@ import { Menu } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import Button from '../button/Button.vue'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 interface DashboardShellProps {
     userEmail?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<DashboardShellProps>(), {
     userEmail: undefined,
     class: undefined,
+    iconSize: 'default',
 })
 
 const emit = defineEmits<{
@@ -32,6 +35,10 @@ const sidebarClasses = computed(() =>
         'border-r-3 border-brutal bg-brutal-bg p-4 flex flex-col',
         sidebarOpen.value ? 'w-64' : 'w-0 overflow-hidden md:w-64'
     )
+)
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
 )
 </script>
 
@@ -57,7 +64,7 @@ BrutxUI
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="border-b-3 border-brutal bg-brutal-bg px-6 py-3 flex items-center justify-between">
                 <Button variant="default" size="icon" class="md:hidden h-8 w-8 shadow-brutal-sm" @click="sidebarOpen = !sidebarOpen">
-                    <Menu class="h-4 w-4 stroke-[3]" />
+                    <Menu :class="iconClasses" />
                 </Button>
                 <slot name="header" />
             </header>

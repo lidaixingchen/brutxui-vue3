@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { Search } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Command from '../command/Command.vue'
@@ -22,12 +23,14 @@ interface SearchWidgetProps {
     placeholder?: string
     suggestions?: SearchSuggestion[]
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<SearchWidgetProps>(), {
     placeholder: undefined,
     suggestions: () => [],
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -70,6 +73,10 @@ function handleSelect(value: string) {
         emit('select', suggestion)
     }
 }
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
 </script>
 
 <template>
@@ -94,7 +101,7 @@ function handleSelect(value: string) {
                             :value="suggestion.value"
                             @select="handleSelect"
                         >
-                            <Search class="h-4 w-4 stroke-[3]" />
+                            <Search :class="iconClasses" />
                             {{ suggestion.label }}
                         </CommandItem>
                     </CommandGroup>

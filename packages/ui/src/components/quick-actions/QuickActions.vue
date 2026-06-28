@@ -2,6 +2,7 @@
 import { computed, type Component } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import CardHeader from '../card/CardHeader.vue'
@@ -19,12 +20,14 @@ interface QuickActionsProps {
     title?: string
     actions?: ActionItem[]
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<QuickActionsProps>(), {
     title: undefined,
     actions: () => [],
     class: undefined,
+    iconSize: 'lg',
 })
 
 const { t } = useLocale()
@@ -37,6 +40,10 @@ const rootClasses = computed(() => cn('w-full max-w-md', props.class))
 
 const resolvedTitle = computed(() => props.title ?? t('quickActions.defaultTitle'))
 const resolvedBadge = computed(() => t('quickActions.badge'))
+
+const actionIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[2.5]')
+)
 </script>
 
 <template>
@@ -61,7 +68,7 @@ const resolvedBadge = computed(() => t('quickActions.badge'))
                         class="flex flex-col items-center gap-2 h-auto py-3 px-2"
                         @click="emit('action-click', index)"
                     >
-                        <component :is="action.icon" class="h-5 w-5 stroke-[2.5]" />
+                        <component :is="action.icon" :class="actionIconClasses" />
                         <span class="text-xs font-bold">{{ action.label }}</span>
                     </Button>
                 </div>

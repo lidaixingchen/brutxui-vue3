@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { AlertTriangle, RotateCw, X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Button from '../button/Button.vue'
@@ -15,6 +16,7 @@ interface ErrorCardProps {
     description?: string
     retryText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<ErrorCardProps>(), {
@@ -22,6 +24,7 @@ const props = withDefaults(defineProps<ErrorCardProps>(), {
     description: undefined,
     retryText: undefined,
     class: undefined,
+    iconSize: 'lg',
 })
 
 const { t } = useLocale()
@@ -36,23 +39,29 @@ const rootClasses = computed(() => cn('w-full max-w-md', props.class))
 const resolvedTitle = computed(() => props.title ?? t('errorCard.defaultTitle'))
 const resolvedDescription = computed(() => props.description ?? t('errorCard.defaultDescription'))
 const resolvedRetryText = computed(() => props.retryText ?? t('errorCard.defaultRetryText'))
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }))
+)
+
+const buttonIconClasses = cn(iconSizeVariants({ size: 'default' }), 'mr-1 stroke-[3]')
 </script>
 
 <template>
     <Card :class="rootClasses" variant="default">
         <Alert variant="danger" class="mb-4">
-            <AlertTriangle class="h-5 w-5" />
+            <AlertTriangle :class="iconClasses" />
             <AlertTitle>{{ resolvedTitle }}</AlertTitle>
             <AlertDescription>{{ resolvedDescription }}</AlertDescription>
         </Alert>
         <CardContent>
             <div class="flex items-center justify-end gap-3">
                 <Button variant="ghost" size="sm" @click="emit('dismiss')">
-                    <X class="mr-1 h-4 w-4 stroke-[3]" />
+                    <X :class="buttonIconClasses" />
                     {{ t('errorCard.dismiss') }}
                 </Button>
                 <Button variant="primary" size="sm" @click="emit('retry')">
-                    <RotateCw class="mr-1 h-4 w-4 stroke-[3]" />
+                    <RotateCw :class="buttonIconClasses" />
                     {{ resolvedRetryText }}
                 </Button>
             </div>

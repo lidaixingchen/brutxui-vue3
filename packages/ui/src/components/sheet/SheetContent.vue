@@ -10,6 +10,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { sheetVariants } from './sheet-variants'
+import { iconSizeVariants } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type SheetVariantProps = VariantProps<typeof sheetVariants>
@@ -52,6 +53,8 @@ const closeClasses = computed(() =>
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2'
     )
 )
+
+const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 </script>
 
 <template>
@@ -60,7 +63,7 @@ const closeClasses = computed(() =>
         <DialogContentPrimitive :class="contentClasses">
             <slot />
             <DialogClosePrimitive :class="closeClasses">
-                <X class="h-4 w-4 stroke-[3]" />
+                <X :class="closeIconClasses" />
                 <span class="sr-only">{{ t('sheet.close') }}</span>
             </DialogClosePrimitive>
         </DialogContentPrimitive>

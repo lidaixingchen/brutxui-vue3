@@ -98,6 +98,30 @@ describe('WaitlistPage', () => {
         expect(stars.length).toBeGreaterThan(0)
     })
 
+    it('renders sparkles icon with default size from shared iconSizeVariants', () => {
+        const wrapper = mount(WaitlistPage, { global: { provide: localeProvide } })
+        const sparkles = wrapper.find('svg')
+        expect(sparkles.classes()).toContain('h-4')
+        expect(sparkles.classes()).toContain('w-4')
+    })
+
+    it('keeps star decoration at fixed sm size regardless of iconSize', () => {
+        const wrapper = mount(WaitlistPage, {
+            props: { iconSize: 'xl' },
+            global: { provide: localeProvide },
+        })
+        const sparkles = wrapper.find('svg')
+        expect(sparkles.classes()).toContain('h-6')
+        expect(sparkles.classes()).toContain('w-6')
+        const stars = wrapper.findAll('svg').filter(el => el.classes().some(c => c.includes('brutal-accent')))
+        expect(stars.length).toBe(5)
+        for (const star of stars) {
+            expect(star.classes()).toContain('h-3')
+            expect(star.classes()).toContain('w-3')
+            expect(star.classes()).not.toContain('h-6')
+        }
+    })
+
     it('renders Live indicator', () => {
         const wrapper = mount(WaitlistPage, { global: { provide: localeProvide } })
         expect(wrapper.text()).toContain('Live')

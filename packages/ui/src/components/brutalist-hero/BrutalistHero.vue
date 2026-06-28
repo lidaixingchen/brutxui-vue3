@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { ArrowRight, Sparkles } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Button from '../button/Button.vue'
 import Badge from '../badge/Badge.vue'
 import Card from '../card/Card.vue'
@@ -14,6 +15,7 @@ interface BrutalistHeroProps {
     primaryCtaText?: string
     secondaryCtaText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<BrutalistHeroProps>(), {
@@ -22,6 +24,7 @@ const props = withDefaults(defineProps<BrutalistHeroProps>(), {
     primaryCtaText: undefined,
     secondaryCtaText: undefined,
     class: undefined,
+    iconSize: 'lg',
 })
 
 const { t } = useLocale()
@@ -37,6 +40,12 @@ const emit = defineEmits<{
 }>()
 
 const rootClasses = computed(() => cn('w-full', props.class))
+
+const primaryCtaIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'ml-2 stroke-[3]')
+)
+
+const badgeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 </script>
 
 <template>
@@ -44,7 +53,7 @@ const rootClasses = computed(() => cn('w-full', props.class))
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
                 <Badge variant="accent" class="mb-6 gap-2 rotate-[-1deg] font-black">
-                    <Sparkles class="h-4 w-4 stroke-[3]" />
+                    <Sparkles :class="badgeIconClasses" />
                     <span>{{ t('brutalistHero.neoBrutalismUI') }}</span>
                 </Badge>
                 <h1 class="text-4xl lg:text-5xl font-black tracking-tight leading-tight">
@@ -56,7 +65,7 @@ const rootClasses = computed(() => cn('w-full', props.class))
                 <div class="mt-8 flex flex-wrap gap-4">
                     <Button variant="primary" size="lg" @click="emit('primaryCta')">
                         {{ resolvedPrimaryCtaText }}
-                        <ArrowRight class="ml-2 h-5 w-5 stroke-[3]" />
+                        <ArrowRight :class="primaryCtaIconClasses" />
                     </Button>
                     <Button variant="outline" size="lg" @click="emit('secondaryCta')">
 {{ resolvedSecondaryCtaText }}

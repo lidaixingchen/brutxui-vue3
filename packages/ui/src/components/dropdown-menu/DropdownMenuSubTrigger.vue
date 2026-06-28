@@ -4,13 +4,19 @@ import { DropdownMenuSubTrigger as DropdownMenuSubTriggerPrimitive } from 'reka-
 import { ChevronRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { dropdownMenuItemVariants } from './dropdown-menu-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 interface DropdownMenuSubTriggerProps {
     inset?: boolean
     class?: string
+    iconSize?: IconSize
 }
 
-const props = defineProps<DropdownMenuSubTriggerProps>()
+const props = withDefaults(defineProps<DropdownMenuSubTriggerProps>(), {
+    inset: undefined,
+    class: undefined,
+    iconSize: 'default',
+})
 
 const classes = computed(() =>
     cn(
@@ -20,11 +26,15 @@ const classes = computed(() =>
         props.class
     )
 )
+
+const iconClasses = computed(() =>
+    cn('ml-auto', iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
 </script>
 
 <template>
     <DropdownMenuSubTriggerPrimitive :class="classes">
         <slot />
-        <ChevronRight class="ml-auto h-4 w-4 stroke-[3]" />
+        <ChevronRight :class="iconClasses" />
     </DropdownMenuSubTriggerPrimitive>
 </template>

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Stepper from '../stepper/Stepper.vue'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
@@ -19,6 +20,7 @@ interface StepperSectionProps {
     modelValue?: number
     currentStep?: number
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<StepperSectionProps>(), {
@@ -27,6 +29,7 @@ const props = withDefaults(defineProps<StepperSectionProps>(), {
     modelValue: undefined,
     currentStep: 0,
     class: undefined,
+    iconSize: 'default',
 })
 
 const emit = defineEmits<{
@@ -53,6 +56,14 @@ const canGoPrevious = computed(() => activeStep.value > 0)
 const canGoNext = computed(() => activeStep.value < props.steps.length - 1)
 
 const rootClasses = computed(() => cn('w-full max-w-3xl mx-auto', props.class))
+
+const previousIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'mr-1')
+)
+
+const nextIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'ml-1')
+)
 
 function handleStepClick(index: number) {
     emit('update:modelValue', index)
@@ -107,7 +118,7 @@ function handleNext() {
                         :disabled="!canGoPrevious"
                         @click="handlePrevious"
                     >
-                        <ChevronLeft class="h-4 w-4 mr-1" />
+                        <ChevronLeft :class="previousIconClasses" />
                         {{ resolvedPrevious }}
                     </Button>
                     <Button
@@ -116,7 +127,7 @@ function handleNext() {
                         @click="handleNext"
                     >
                         {{ resolvedNext }}
-                        <ChevronRight class="h-4 w-4 ml-1" />
+                        <ChevronRight :class="nextIconClasses" />
                     </Button>
                 </div>
             </template>

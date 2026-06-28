@@ -32,13 +32,35 @@ describe('SelectTrigger', () => {
         expect(wrapper.classes()).toContain('custom-trigger')
     })
 
-    it('applies default icon classes to chevron', () => {
+    it('applies default icon classes to chevron linked to size prop', () => {
         const wrapper = mount(SelectTrigger, {
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-4')
+        expect(icon.classes()).toContain('w-4')
+    })
+
+    it('links chevron icon size to sm trigger size', () => {
+        const wrapper = mount(SelectTrigger, {
+            props: { size: 'sm' },
+            global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
+        })
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-3')
+        expect(icon.classes()).toContain('w-3')
+        expect(icon.classes()).not.toContain('h-4')
+    })
+
+    it('links chevron icon size to lg trigger size', () => {
+        const wrapper = mount(SelectTrigger, {
+            props: { size: 'lg' },
             global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
         })
         const icon = wrapper.find('svg')
         expect(icon.classes()).toContain('h-5')
         expect(icon.classes()).toContain('w-5')
+        expect(icon.classes()).not.toContain('h-4')
     })
 
     it('overrides icon size via iconClass prop', () => {

@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { FileIcon, Download } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Badge from '../badge/Badge.vue'
@@ -13,6 +14,7 @@ interface FileCardProps {
     fileSize?: string
     fileType?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<FileCardProps>(), {
@@ -20,6 +22,7 @@ const props = withDefaults(defineProps<FileCardProps>(), {
     fileSize: '',
     fileType: '',
     class: undefined,
+    iconSize: 'xl',
 })
 
 const { t } = useLocale()
@@ -32,6 +35,12 @@ const rootClasses = computed(() => cn('w-full max-w-sm', props.class))
 
 const resolvedFileName = computed(() => props.fileName ?? t('fileCard.defaultFileName'))
 const resolvedDownload = computed(() => t('fileCard.download'))
+
+const iconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[2.5]')
+)
+
+const downloadIconClasses = cn(iconSizeVariants({ size: 'default' }), 'mr-2 stroke-[3]')
 </script>
 
 <template>
@@ -39,7 +48,7 @@ const resolvedDownload = computed(() => t('fileCard.download'))
         <CardContent>
             <div class="flex items-start gap-4">
                 <div class="shrink-0 h-12 w-12 flex items-center justify-center bg-brutal-accent border-3 border-brutal shadow-brutal-sm">
-                    <FileIcon class="h-6 w-6 stroke-[2.5]" />
+                    <FileIcon :class="iconClasses" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-black text-sm truncate">
@@ -56,7 +65,7 @@ const resolvedDownload = computed(() => t('fileCard.download'))
                 </div>
             </div>
             <Button variant="primary" size="sm" class="mt-4 w-full" :aria-label="t('fileCard.downloadAriaLabel', { fileName: resolvedFileName })" @click="emit('download')">
-                <Download class="mr-2 h-4 w-4 stroke-[3]" />
+                <Download :class="downloadIconClasses" />
                 {{ resolvedDownload }}
             </Button>
             <slot name="actions" />

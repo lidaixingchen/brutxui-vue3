@@ -5,6 +5,7 @@ import { cn } from '../../lib/utils'
 import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
 import { buttonVariants } from './button-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
@@ -36,16 +37,17 @@ const classes = computed(() =>
     )
 )
 
-const LOADER_SIZE_MAP: Record<string, string> = {
-    sm: 'h-3 w-3',
-    default: 'h-4 w-4',
-    lg: 'h-5 w-5',
-    xl: 'h-6 w-6',
-} as const
+const BUTTON_SIZE_TO_ICON: Record<NonNullable<ButtonVariantProps['size']>, IconSize> = {
+    sm: 'sm',
+    default: 'default',
+    lg: 'lg',
+    xl: 'xl',
+    icon: 'default',
+}
 
-const loaderSize = computed(() => LOADER_SIZE_MAP[props.size] ?? LOADER_SIZE_MAP.default)
-
-const loaderClasses = computed(() => cn(loaderSize.value, 'animate-spin'))
+const loaderClasses = computed(() =>
+    cn(iconSizeVariants({ size: BUTTON_SIZE_TO_ICON[props.size] }), 'animate-spin')
+)
 </script>
 
 <template>

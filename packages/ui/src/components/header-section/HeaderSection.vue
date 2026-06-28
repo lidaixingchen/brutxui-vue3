@@ -4,6 +4,7 @@ import { DialogRoot } from 'reka-ui'
 import { Menu } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Button from '../button/Button.vue'
 import SheetContent from '../sheet/SheetContent.vue'
 import SheetHeader from '../sheet/SheetHeader.vue'
@@ -21,6 +22,7 @@ interface HeaderSectionProps {
     navItems?: NavItem[]
     ctaText?: string
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<HeaderSectionProps>(), {
@@ -28,6 +30,7 @@ const props = withDefaults(defineProps<HeaderSectionProps>(), {
     navItems: () => [],
     ctaText: undefined,
     class: undefined,
+    iconSize: 'lg',
 })
 
 const emit = defineEmits<{
@@ -50,6 +53,8 @@ const rootClasses = computed(() =>
         props.class
     )
 )
+
+const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }))
 </script>
 
 <template>
@@ -93,7 +98,7 @@ const rootClasses = computed(() =>
                     class="md:hidden"
                     @click="mobileMenuOpen = true"
                 >
-                    <Menu class="h-5 w-5" />
+                    <Menu :class="menuIconClasses" />
                     <span class="sr-only">{{ menuLabel }}</span>
                 </Button>
             </div>

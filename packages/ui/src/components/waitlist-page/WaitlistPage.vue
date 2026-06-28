@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { Sparkles, Users, Star } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import Button from '../button/Button.vue'
 import Badge from '../badge/Badge.vue'
 import Input from '../input/Input.vue'
@@ -13,6 +14,7 @@ interface WaitlistPageProps {
     ctaText?: string
     waitlistCount?: number
     class?: string
+    iconSize?: IconSize
 }
 
 const props = withDefaults(defineProps<WaitlistPageProps>(), {
@@ -21,6 +23,7 @@ const props = withDefaults(defineProps<WaitlistPageProps>(), {
     ctaText: undefined,
     waitlistCount: 0,
     class: undefined,
+    iconSize: 'default',
 })
 
 const { t } = useLocale()
@@ -40,6 +43,19 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const rootClasses = computed(() => cn('w-full max-w-lg mx-auto text-center', props.class))
 
+const sparklesIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3] animate-spin')
+)
+
+const usersIconClasses = computed(() =>
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
+)
+
+const starIconClasses = cn(
+    iconSizeVariants({ size: 'sm' }),
+    'fill-brutal-accent text-brutal-accent'
+)
+
 function handleSubmit() {
     if (email.value && EMAIL_REGEX.test(email.value)) {
         errorMessage.value = ''
@@ -53,7 +69,7 @@ function handleSubmit() {
 <template>
     <div :class="rootClasses">
         <Badge variant="accent" class="mb-6 gap-2 rotate-[-1deg] font-black">
-            <Sparkles class="h-4 w-4 stroke-[3] animate-spin" />
+            <Sparkles :class="sparklesIconClasses" />
             <span>{{ t('waitlistPage.earlyAccess') }}</span>
         </Badge>
 
@@ -77,11 +93,11 @@ function handleSubmit() {
 
         <div class="mt-8 flex items-center justify-center gap-6 text-sm font-bold text-brutal-muted-foreground">
             <div v-if="waitlistCount > 0" class="flex items-center gap-1">
-                <Users class="h-4 w-4 stroke-[3]" />
+                <Users :class="usersIconClasses" />
                 <span>{{ t('waitlistPage.onWaitlist', { count: waitlistCount.toLocaleString() }) }}</span>
             </div>
             <div class="flex items-center gap-1">
-                <Star v-for="i in 5" :key="i" class="h-3 w-3 fill-brutal-accent text-brutal-accent" />
+                <Star v-for="i in 5" :key="i" :class="starIconClasses" />
             </div>
             <div class="flex items-center gap-1">
                 <div class="h-2 w-2 rounded-full bg-brutal-success animate-pulse" />

@@ -44,4 +44,27 @@ describe('Checkbox', () => {
         // reka-ui CheckboxRoot handles the Space key internally
         expect(el.exists()).toBe(true)
     })
+
+    it('links indicator size to checkbox size via shared iconSizeVariants', async () => {
+        const cases = [
+            { size: 'sm' as const, expected: ['h-3', 'w-3'] },
+            { size: 'default' as const, expected: ['h-4', 'w-4'] },
+            { size: 'lg' as const, expected: ['h-5', 'w-5'] },
+        ]
+        const wrapper = mount(Checkbox, {
+            props: { checked: true },
+            attachTo: document.body,
+        })
+        for (const { size, expected } of cases) {
+            await wrapper.setProps({ size })
+            const svg = wrapper.find('svg')
+            expect(svg.exists()).toBe(true)
+            const indicator = svg.element.parentElement as HTMLElement
+            for (const cls of expected) {
+                expect(indicator.classList.contains(cls)).toBe(true)
+            }
+            // stroke-[3] base preserved from checkboxIndicatorVariants
+            expect(indicator.classList.contains('stroke-[3]')).toBe(true)
+        }
+    })
 })

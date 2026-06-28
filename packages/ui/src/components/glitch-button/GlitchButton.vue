@@ -6,6 +6,7 @@ import { useReducedMotion } from '../../composables/useReducedMotion'
 import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
 import { glitchButtonVariants } from './glitch-button-variants'
+import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 type GlitchButtonVariantProps = VariantProps<typeof glitchButtonVariants>
 
@@ -143,15 +144,15 @@ defineExpose({
     stop,
 })
 
-const LOADER_SIZE_MAP: Record<string, string> = {
-    sm: 'h-3 w-3',
-    default: 'h-4 w-4',
-    lg: 'h-5 w-5',
-    xl: 'h-6 w-6',
-    icon: 'h-4 w-4',
-} as const
+const GLITCH_BUTTON_SIZE_TO_ICON: Record<NonNullable<GlitchButtonVariantProps['size']>, IconSize> = {
+    sm: 'sm',
+    default: 'default',
+    lg: 'lg',
+    xl: 'xl',
+    icon: 'default',
+}
 
-const loaderSize = computed(() => LOADER_SIZE_MAP[props.size] ?? LOADER_SIZE_MAP.default)
+const loaderSize = computed(() => iconSizeVariants({ size: GLITCH_BUTTON_SIZE_TO_ICON[props.size] }))
 
 const classes = computed(() =>
     cn(
