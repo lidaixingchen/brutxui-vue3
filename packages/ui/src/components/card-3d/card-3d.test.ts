@@ -18,7 +18,7 @@ function createPointerEvent(type: string, props: PointerEventInit = {}): Pointer
 describe('Card3D', () => {
     it('renders with default variant classes', () => {
         const wrapper = mount(Card3D)
-        const card = wrapper.find('[role="presentation"]').find('div')
+        const card = wrapper.find('[role="group"]').find('div')
         expect(card.classes()).toContain('border-3')
         expect(card.classes()).toContain('border-brutal')
         expect(card.classes()).toContain('rounded-brutal')
@@ -40,7 +40,7 @@ describe('Card3D', () => {
 
     it('resets rotation on pointer leave', async () => {
         const wrapper = mount(Card3D)
-        const card = wrapper.find('[role="presentation"] > div:first-child')
+        const card = wrapper.find('[role="group"] > div:first-child')
 
         card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
         await wrapper.vm.$nextTick()
@@ -57,7 +57,7 @@ describe('Card3D', () => {
         const wrapper = mount(Card3D, {
             props: { disabled: true },
         })
-        const card = wrapper.find('[role="presentation"] > div:first-child')
+        const card = wrapper.find('[role="group"] > div:first-child')
 
         card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
         await wrapper.vm.$nextTick()
@@ -70,7 +70,7 @@ describe('Card3D', () => {
         const wrapper = mount(Card3D, {
             props: { disabled: true },
         })
-        const card = wrapper.find('[role="presentation"] > div:first-child')
+        const card = wrapper.find('[role="group"] > div:first-child')
 
         card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
         await wrapper.vm.$nextTick()
@@ -84,7 +84,7 @@ describe('Card3D', () => {
         const wrapper = mount(Card3D, {
             props: { shadow: 'lg' },
         })
-        const card = wrapper.find('[role="presentation"] > div:first-child')
+        const card = wrapper.find('[role="group"] > div:first-child')
         expect(card.classes()).not.toContain('shadow-brutal-lg')
     })
 })

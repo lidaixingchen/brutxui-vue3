@@ -130,7 +130,7 @@ const shadowClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="containerClasses" role="presentation" :aria-label="t('card3d.ariaLabel')">
+    <div :class="containerClasses" role="group" :aria-label="t('card3d.ariaLabel')">
         <div
             ref="cardRef"
             :class="cardClasses"

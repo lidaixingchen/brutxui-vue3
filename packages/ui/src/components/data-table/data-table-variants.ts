@@ -61,15 +61,14 @@ export const dataTableBodyVariants = cva([])
 
 export const dataTableRowVariants = cva(
     [
-        'transition-colors duration-150',
-        'hover:bg-brutal-muted',
+        'transition-all duration-150',
         'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
     ],
     {
         variants: {
             selected: {
-                true: 'bg-brutal-primary text-brutal-primary-foreground',
-                false: '',
+                true: 'bg-brutal-primary text-brutal-primary-foreground hover:bg-brutal-primary/80',
+                false: 'hover:bg-brutal-muted',
             },
             striped: {
                 true: 'even:bg-brutal-muted/50',

@@ -179,6 +179,19 @@ const filteredNodes = computed(() => {
     return filterTree(props.nodes, searchQuery.value)
 })
 
+// 更新焦点节点当搜索结果变化时
+watch(filteredNodes, (nodes) => {
+    if (open.value && focusedId.value) {
+        // 检查当前焦点节点是否仍在过滤结果中
+        const isFocusedVisible = nodes.some(node => node.id === focusedId.value)
+        if (!isFocusedVisible) {
+            // 焦点节点不在过滤结果中，重置为第一个节点
+            const firstNode = nodes[0]
+            focusedId.value = firstNode?.id
+        }
+    }
+})
+
 // 更新焦点节点（roving tabindex）
 function handleNodeFocus(id: string) {
     focusedId.value = id

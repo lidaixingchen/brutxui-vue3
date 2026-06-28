@@ -15,13 +15,6 @@ const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
 const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 
-const FILE_TO_COMPONENT: Record<string, string> = {};
-for (const [compName, mapping] of Object.entries(COMPONENT_FILES)) {
-    for (const file of mapping.files) {
-        FILE_TO_COMPONENT[file] = compName;
-    }
-}
-
 function readComponentSource(filePath: string): string {
     return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
 }
@@ -291,7 +284,7 @@ async function run() {
 
             const addedComposables = new Set<string>();
             while (addedComposables.size < composableDeps.size) {
-                const pendingComposables = Array.from(composableDeps).filter((name) => !addedComposables.has(name));
+                const pendingComposables = Array.from(composableDeps).filter((composableName) => !addedComposables.has(composableName));
 
                 for (const composableName of pendingComposables) {
                     const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
@@ -387,8 +380,9 @@ async function run() {
                 tailwind: TAILWIND_CONFIG,
                 cssVars: CSS_VARS
             });
-        } catch (err: any) {
-            console.error(`✗ Failed to process component ${name}:`, err.message || err);
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+            console.error(`✗ Failed to process component ${name}:`, errorMessage);
             errorCount++;
         }
     }

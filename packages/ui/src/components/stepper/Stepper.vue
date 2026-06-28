@@ -57,12 +57,24 @@ function handleStepKeydown(event: KeyboardEvent) {
     let nextIndex: number | null = null
     switch (event.key) {
         case 'ArrowRight':
+            if (props.orientation === 'horizontal') {
+                nextIndex = currentIndex + 1
+            }
+            break
         case 'ArrowDown':
-            nextIndex = currentIndex + 1
+            if (props.orientation === 'vertical') {
+                nextIndex = currentIndex + 1
+            }
             break
         case 'ArrowLeft':
+            if (props.orientation === 'horizontal') {
+                nextIndex = currentIndex - 1
+            }
+            break
         case 'ArrowUp':
-            nextIndex = currentIndex - 1
+            if (props.orientation === 'vertical') {
+                nextIndex = currentIndex - 1
+            }
             break
         case 'Home':
             nextIndex = 0
@@ -135,7 +147,7 @@ const connectorClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="rootClass" role="list" :aria-label="t('stepper.progressSteps')" @keydown="handleStepKeydown">
+    <div :class="rootClass" role="list" :aria-label="t('stepper.progressSteps')" :aria-orientation="orientation" @keydown="handleStepKeydown">
         <template v-for="(step, index) in steps" :key="step.id">
             <!-- Step Item -->
             <div

@@ -149,6 +149,7 @@ watch(() => [props.to, props.from] as const, () => {
     if (props.autoStart) {
         start();
     } else {
+        stop(); // Stop any ongoing animation
         current.value = props.from;
     }
 });

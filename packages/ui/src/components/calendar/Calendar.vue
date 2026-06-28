@@ -103,7 +103,7 @@ watch([dayBaseClasses, dayOutsideClasses, dayDisabledClasses], () => {
 })
 
 function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }, dayPropsClass?: string) {
-    const key = `${day.isToday}-${day.isDisabled}-${day.inMonth}-${dayPropsClass}`
+    const key = `${day.isToday}-${day.isDisabled}-${day.inMonth}-${dayPropsClass ?? ''}`
     const cached = dayClassesCache.get(key)
     if (cached !== undefined) return cached
 

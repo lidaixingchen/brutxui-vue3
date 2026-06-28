@@ -287,8 +287,19 @@ export function isSafePath(targetPath: string, cwd: string): boolean {
     const normalize = process.platform === 'win32'
         ? (s: string) => s.toLowerCase()
         : (s: string) => s;
-    const resolvedTarget = normalize(path.resolve(targetPath));
-    const resolvedCwd = normalize(path.resolve(cwd));
+
+    // Resolve symlinks to prevent symlink-based path traversal attacks
+    let resolvedTarget: string;
+    let resolvedCwd: string;
+    try {
+        // Use realpathSync to resolve symlinks
+        resolvedTarget = normalize(fs.realpathSync(path.resolve(targetPath)));
+        resolvedCwd = normalize(fs.realpathSync(path.resolve(cwd)));
+    } catch {
+        // If realpathSync fails (e.g., path doesn't exist), fall back to path.resolve
+        resolvedTarget = normalize(path.resolve(targetPath));
+        resolvedCwd = normalize(path.resolve(cwd));
+    }
 
     // 磁盘根目录作为 cwd 不安全，因为它允许访问整个磁盘
     if (resolvedCwd === normalize(path.parse(resolvedCwd).root)) {

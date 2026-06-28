@@ -21,6 +21,7 @@ const FAIL_GAIN_END = 0.001
 const FAIL_DURATION = 0.2
 
 interface WindowWithWebkitAudio extends Window {
+    AudioContext?: typeof AudioContext
     webkitAudioContext?: typeof AudioContext
 }
 
@@ -31,7 +32,7 @@ export function useAudioEngine(enabled: Ref<boolean>) {
     const getCtx = () => {
         if (!audioCtx && typeof window !== 'undefined') {
             const win = window as WindowWithWebkitAudio
-            const AudioContextClass = window.AudioContext ?? win.webkitAudioContext
+            const AudioContextClass = win.AudioContext ?? win.webkitAudioContext
             if (AudioContextClass) {
                 audioCtx = new AudioContextClass()
             }

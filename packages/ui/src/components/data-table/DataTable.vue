@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, watch, nextTick } from 'vue'
+import { computed, watch, markRaw } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
@@ -84,7 +84,7 @@ const emit = defineEmits<{
     select: [rows: T[]]
     pageChange: [page: number]
     pageSizeChange: [size: number]
-    export: [format: 'csv' | 'json', selectedRows: T[]]
+    export: [format: 'csv' | 'json', selectedRows?: T[]]
 }>()
 
 const visibleColumns = computed(() =>
@@ -137,12 +137,11 @@ function getHeaderLabel(column: DataTableColumn<T>): string {
     return column.header
 }
 
-async function handleSort(columnId: string) {
+function handleSort(columnId: string) {
     if (!props.sortable) return
     const col = visibleColumns.value.find((c) => c.id === columnId)
     if (!col || col.sortable === false) return
     sort.toggleSort(columnId)
-    await nextTick()
     emit('sort', sort.sortState.value.column, sort.sortState.value.direction)
 }
 
@@ -177,9 +176,9 @@ watch(() => props.data, () => {
     pagination.goToPage(1)
 }, { deep: true })
 
-watch(() => filter.filterState.value, (newState) => {
-    emit('filter', newState)
-}, { deep: true })
+watch(() => filter.filterState.value.global, () => {
+    emit('filter', filter.filterState.value)
+})
 
 const rootClasses = computed(() =>
     cn(dataTableRootVariants({ size: props.size }), props.class),
@@ -218,9 +217,12 @@ function getRowClasses(row: T): string {
     )
 }
 
-function CellRenderer(props: { cellFn: (ctx: { row: T; value: unknown }) => ReturnType<NonNullable<DataTableColumn<T>['cell']>>; row: T; value: unknown }) {
-    return props.cellFn({ row: props.row, value: props.value })
-}
+const CellRenderer = markRaw({
+    props: ['cellFn', 'row', 'value'],
+    setup(props: { cellFn: (ctx: { row: T; value: unknown }) => ReturnType<NonNullable<DataTableColumn<T>['cell']>>; row: T; value: unknown }) {
+        return () => props.cellFn({ row: props.row, value: props.value })
+    },
+})
 
 function getCellClasses(column: DataTableColumn<T>): string {
     return cn(
