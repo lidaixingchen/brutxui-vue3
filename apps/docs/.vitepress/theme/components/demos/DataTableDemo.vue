@@ -2,7 +2,7 @@
 import { DataTable } from 'brutx-ui-vue'
 import type { DataTableColumn } from 'brutx-ui-vue'
 
-interface User {
+interface User extends Record<string, unknown> {
     id: number
     name: string
     email: string

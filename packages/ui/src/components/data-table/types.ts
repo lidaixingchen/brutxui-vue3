@@ -23,7 +23,7 @@ export interface DataTableVirtualScroll {
     threshold?: number
 }
 
-export interface DataTableColumn<T extends object> {
+export interface DataTableColumn<T extends object = Record<string, unknown>> {
     id: string
     /** 函数签名已更新：回调参数从 DataTableColumn<T> 改为 DataTableColumnHeaderContext */
     header: string | ((ctx: DataTableColumnHeaderContext) => string)
