@@ -34,7 +34,13 @@ const classes = computed(() => {
     return cn(variantClasses, circleWidth, props.class)
 })
 
-const style = computed(() => props.width ? { width: props.width } : undefined)
+const style = computed(() => {
+    if (!props.width) return undefined
+    if (props.shape === 'circle') {
+        return { width: props.width, height: props.width }
+    }
+    return { width: props.width }
+})
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
+import Button from '../button/Button.vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
@@ -11,6 +12,7 @@ interface CodeBlockProps {
     language?: string
     filename?: string
     showLineNumbers?: boolean
+    maxLines?: number
     class?: string
 }
 
@@ -18,6 +20,7 @@ const props = withDefaults(defineProps<CodeBlockProps>(), {
     language: undefined,
     filename: undefined,
     showLineNumbers: false,
+    maxLines: undefined,
     class: undefined,
 })
 
@@ -31,6 +34,31 @@ const rootClasses = computed(() =>
 )
 
 const lines = computed(() => props.code.split('\n'))
+
+const LINE_HEIGHT_REM = 1.25
+
+const expanded = ref(false)
+
+const showToggleButton = computed(() =>
+    props.maxLines !== undefined &&
+    lines.value.length > props.maxLines
+)
+
+const needsClipping = computed(() =>
+    showToggleButton.value && !expanded.value
+)
+
+const clipStyle = computed<Record<string, string> | undefined>(() => {
+    if (!needsClipping.value || props.maxLines === undefined) return undefined
+    return {
+        maxHeight: `${props.maxLines * LINE_HEIGHT_REM}rem`,
+        overflow: 'hidden',
+    }
+})
+
+const toggleExpand = () => {
+    expanded.value = !expanded.value
+}
 
 const highlightedHtml = ref('')
 
@@ -101,13 +129,20 @@ function escapeHtml(str: string): string {
             <div
                 v-if="showLineNumbers"
                 :class="codeBlockLineNumbersVariants()"
+                :style="clipStyle"
             >
                 <span v-for="(_, i) in lines" :key="i">{{ i + 1 }}</span>
             </div>
 
-            <pre v-if="$slots.default" class="flex-1 min-w-0 m-0"><code class="block whitespace-pre font-bold"><slot /></code></pre>
+            <pre v-if="$slots.default" class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold"><slot /></code></pre>
             <!-- eslint-disable-next-line vue/no-v-html -- 安全假设：prismjs highlight() 已对用户输入进行 HTML 转义 -->
-            <pre v-else class="flex-1 min-w-0 m-0"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" v-html="highlightedHtml" /></pre>
+            <pre v-else class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" v-html="highlightedHtml" /></pre>
+        </div>
+
+        <div v-if="showToggleButton" class="flex justify-center border-t-3 border-brutal bg-brutal-muted py-2">
+            <Button variant="outline" size="sm" @click="toggleExpand">
+                {{ expanded ? t('codeBlock.collapse') : t('codeBlock.expand') }}
+            </Button>
         </div>
     </div>
 </template>

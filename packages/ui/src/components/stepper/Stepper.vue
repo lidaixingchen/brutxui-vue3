@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { type VariantProps } from 'class-variance-authority';
 import { Check } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
@@ -11,17 +12,25 @@ export interface StepperStep {
     description?: string;
 }
 
+type StepperDotVariantProps = VariantProps<typeof stepperDotVariants>;
+
 const MIN_VERTICAL_CONNECTOR_HEIGHT = '2rem'
 
 interface StepperProps {
     steps: StepperStep[];
     modelValue: number; // 0-indexed current step
     orientation?: 'horizontal' | 'vertical';
+    size?: NonNullable<StepperDotVariantProps['size']>;
+    variant?: NonNullable<StepperDotVariantProps['variant']>;
+    clickable?: boolean;
     class?: string;
 }
 
 const props = withDefaults(defineProps<StepperProps>(), {
     orientation: 'horizontal',
+    size: 'default',
+    variant: 'default',
+    clickable: true,
     class: undefined,
 });
 
@@ -39,6 +48,7 @@ function getState(index: number): 'completed' | 'active' | 'upcoming' {
 }
 
 function clickStep(index: number) {
+    if (!props.clickable) return;
     emit('update:modelValue', index);
     emit('step-click', index);
 }
@@ -107,17 +117,17 @@ const stepWrapClasses = computed(() =>
     )
 )
 
-const dotCompletedClasses = computed(() =>
-    cn(stepperDotVariants({ state: 'completed' }), 'cursor-pointer')
+const stepStates = computed(() =>
+    props.steps.map((_, i) => getState(i))
 )
 
-const dotActiveClasses = computed(() =>
-    cn(stepperDotVariants({ state: 'active' }), 'cursor-pointer')
-)
-
-const dotUpcomingClasses = computed(() =>
-    cn(stepperDotVariants({ state: 'upcoming' }), 'cursor-pointer')
-)
+function getDotClasses(state: 'completed' | 'active' | 'upcoming') {
+    const variant = state === 'active' ? props.variant : undefined
+    return cn(
+        stepperDotVariants({ state, size: props.size, variant }),
+        props.clickable ? 'cursor-pointer' : 'pointer-events-none'
+    )
+}
 
 const connectorCompletedClasses = computed(() =>
     cn(stepperConnectorVariants({ orientation: props.orientation, completed: true }))
@@ -127,16 +137,8 @@ const connectorIncompleteClasses = computed(() =>
     cn(stepperConnectorVariants({ orientation: props.orientation, completed: false }))
 )
 
-const stepStates = computed(() =>
-    props.steps.map((_, i) => getState(i))
-)
-
 const dotClasses = computed(() =>
-    stepStates.value.map((state) => {
-        if (state === 'completed') return dotCompletedClasses.value
-        if (state === 'active') return dotActiveClasses.value
-        return dotUpcomingClasses.value
-    })
+    stepStates.value.map((state) => getDotClasses(state))
 )
 
 const connectorClasses = computed(() =>

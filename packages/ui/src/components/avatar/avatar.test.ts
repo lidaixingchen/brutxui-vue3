@@ -123,6 +123,13 @@ describe('Avatar', () => {
         const statusDot = wrapper.find('.absolute.rounded-full')
         expect(root.element.contains(statusDot.element)).toBe(false)
     })
+
+    it('status indicator has role and aria-label for accessibility', () => {
+        const wrapper = mount(Avatar, { props: { status: 'busy' } })
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.attributes('role')).toBe('status')
+        expect(statusDot.attributes('aria-label')).toBe('Status: busy')
+    })
 })
 
 describe('AvatarImage', () => {
@@ -162,8 +169,8 @@ describe('AvatarFallback', () => {
     it('applies default variant fallback background', () => {
         const wrapper = mount(AvatarWithFallback)
         const fallback = wrapper.find('.font-bold')
-        expect(fallback.classes()).toContain('bg-brutal-primary')
-        expect(fallback.classes()).toContain('text-brutal-primary-foreground')
+        expect(fallback.classes()).toContain('bg-brutal-muted')
+        expect(fallback.classes()).toContain('text-brutal-muted-foreground')
     })
 
     it('applies secondary variant fallback background', () => {

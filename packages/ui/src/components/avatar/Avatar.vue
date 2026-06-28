@@ -61,6 +61,6 @@ provide(avatarKey, {
         <AvatarRoot :class="classes">
             <slot />
         </AvatarRoot>
-        <span v-if="status !== 'none'" :class="statusClasses" />
+        <span v-if="status !== 'none'" :class="statusClasses" role="status" :aria-label="`Status: ${status}`" />
     </span>
 </template>

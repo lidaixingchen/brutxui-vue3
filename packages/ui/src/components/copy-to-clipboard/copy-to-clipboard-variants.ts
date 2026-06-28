@@ -16,7 +16,7 @@ export const copyToClipboardVariants = cva(
             },
             size: {
                 sm: 'h-9 px-3 text-sm',
-                default: 'h-11 px-5',
+                default: 'h-11 px-5 text-base',
                 lg: 'h-14 px-7 text-lg',
             },
             state: {

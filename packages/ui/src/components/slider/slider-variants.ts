@@ -1,21 +1,43 @@
 import { cva } from 'class-variance-authority'
 
+const sliderTrackSizeVariants = {
+    sm: '[--slider-thickness:0.75rem]',
+    default: '[--slider-thickness:1.25rem]',
+    lg: '[--slider-thickness:1.75rem]',
+}
+
+export const sliderRootVariants = cva(
+    ['relative flex touch-none select-none'],
+    {
+        variants: {
+            orientation: {
+                horizontal: 'w-full items-center',
+                vertical: 'flex-col h-full justify-center',
+            },
+        },
+        defaultVariants: {
+            orientation: 'horizontal',
+        },
+    }
+)
+
 export const sliderTrackVariants = cva(
     [
-        'relative w-full grow overflow-hidden rounded-brutal',
+        'relative grow overflow-hidden rounded-brutal',
         'border-3 border-brutal bg-brutal-bg',
         'shadow-brutal-sm',
     ],
     {
         variants: {
-            size: {
-                sm: 'h-3',
-                default: 'h-5',
-                lg: 'h-7',
+            size: sliderTrackSizeVariants,
+            orientation: {
+                horizontal: 'w-full h-[var(--slider-thickness,1.25rem)]',
+                vertical: 'h-full w-[var(--slider-thickness,1.25rem)]',
             },
         },
         defaultVariants: {
             size: 'default',
+            orientation: 'horizontal',
         },
     }
 )
@@ -56,7 +78,7 @@ export const sliderThumbVariants = cva(
 
 export const sliderRangeVariants = cva(
     [
-        'absolute h-full',
+        'absolute',
     ],
     {
         variants: {
@@ -67,9 +89,39 @@ export const sliderRangeVariants = cva(
                 accent: 'bg-brutal-accent',
                 success: 'bg-brutal-success',
             },
+            orientation: {
+                horizontal: 'h-full',
+                vertical: 'w-full',
+            },
         },
         defaultVariants: {
             variant: 'default',
+            orientation: 'horizontal',
         },
     }
+)
+
+export const sliderMarkVariants = cva(
+    ['absolute bg-brutal-fg/60 pointer-events-none'],
+    {
+        variants: {
+            orientation: {
+                horizontal: 'w-0.5 h-2',
+                vertical: 'h-0.5 w-2',
+            },
+        },
+        defaultVariants: {
+            orientation: 'horizontal',
+        },
+    }
+)
+
+export const sliderTooltipVariants = cva(
+    [
+        'absolute pointer-events-none z-10',
+        'px-2 py-1 text-xs font-bold',
+        'bg-brutal-fg text-brutal-bg',
+        'border-3 border-brutal rounded-brutal',
+        'shadow-brutal-sm whitespace-nowrap',
+    ]
 )

@@ -5,7 +5,6 @@ export const card3dVariants = cva(
         'relative',
         'border-3 border-brutal',
         'rounded-brutal',
-        'bg-brutal-bg text-brutal-fg',
         'transition-transform duration-200 ease-out',
     ],
     {
@@ -15,9 +14,16 @@ export const card3dVariants = cva(
                 lg: '',
                 xl: '',
             },
+            variant: {
+                default: 'bg-brutal-bg text-brutal-fg',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground',
+                accent: 'bg-brutal-accent text-brutal-accent-foreground',
+                muted: 'bg-brutal-muted text-brutal-muted-foreground',
+            },
         },
         defaultVariants: {
             shadow: 'default',
+            variant: 'default',
         },
     }
 )

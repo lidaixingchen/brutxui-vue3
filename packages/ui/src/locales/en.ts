@@ -322,6 +322,8 @@ export const en: Locale = {
         copy: 'Copy',
         defaultLanguage: 'plaintext',
         defaultFilename: '',
+        expand: 'Expand',
+        collapse: 'Collapse',
     },
     calendar: {
         previousMonth: 'Previous month',

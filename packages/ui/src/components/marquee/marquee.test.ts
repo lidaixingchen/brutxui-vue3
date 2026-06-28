@@ -98,4 +98,77 @@ describe('Marquee', () => {
         })
         expect(wrapper.text()).toContain('MarqueeItem')
     })
+
+    describe('variant', () => {
+        it('applies accent variant by default', () => {
+            const wrapper = mount(Marquee, {
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('bg-brutal-accent')
+            expect(container.classes()).toContain('text-brutal-fg')
+        })
+
+        it('applies primary variant', () => {
+            const wrapper = mount(Marquee, {
+                props: { variant: 'primary' },
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('bg-brutal-primary')
+            expect(container.classes()).toContain('text-brutal-primary-foreground')
+        })
+
+        it('applies muted variant', () => {
+            const wrapper = mount(Marquee, {
+                props: { variant: 'muted' },
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('bg-brutal-muted')
+            expect(container.classes()).toContain('text-brutal-muted-foreground')
+        })
+
+        it('applies default variant', () => {
+            const wrapper = mount(Marquee, {
+                props: { variant: 'default' },
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('bg-brutal-bg')
+        })
+    })
+
+    describe('size', () => {
+        it('applies default size classes by default', () => {
+            const wrapper = mount(Marquee, {
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('py-4')
+            expect(container.classes()).toContain('text-xl')
+            expect(container.classes()).toContain('tracking-widest')
+        })
+
+        it('applies sm size classes', () => {
+            const wrapper = mount(Marquee, {
+                props: { size: 'sm' },
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('py-2')
+            expect(container.classes()).toContain('text-sm')
+            expect(container.classes()).toContain('tracking-wider')
+        })
+
+        it('applies lg size classes', () => {
+            const wrapper = mount(Marquee, {
+                props: { size: 'lg' },
+                slots: { default: 'Item' },
+            })
+            const container = wrapper.find('div')
+            expect(container.classes()).toContain('py-6')
+            expect(container.classes()).toContain('text-2xl')
+        })
+    })
 })

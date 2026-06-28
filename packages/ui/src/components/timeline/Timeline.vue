@@ -1,19 +1,36 @@
 <script setup lang="ts">
-import { provide, computed } from 'vue'
+import { provide, computed, useSlots, cloneVNode, type VNode } from 'vue'
 import { cn } from '../../lib/utils'
-import { timelineOrientationKey, type TimelineOrientation } from './timeline-key'
+import { timelineOrientationKey, timelineAlternateKey, type TimelineOrientation } from './timeline-key'
+import TimelineItem from './TimelineItem.vue'
 
 interface TimelineProps {
     orientation?: TimelineOrientation
+    alternate?: boolean
     class?: string
 }
 
 const props = withDefaults(defineProps<TimelineProps>(), {
     orientation: 'vertical',
+    alternate: false,
     class: undefined,
 })
 
 provide(timelineOrientationKey, computed(() => props.orientation))
+provide(timelineAlternateKey, computed(() => props.alternate && props.orientation === 'vertical'))
+
+const slots = useSlots()
+
+const RenderItems = () => {
+    const vnodes = slots.default?.() ?? []
+    let itemIndex = 0
+    return vnodes.map((vnode: VNode) => {
+        if (vnode.type === TimelineItem) {
+            return cloneVNode(vnode, { index: itemIndex++ })
+        }
+        return vnode
+    })
+}
 
 const classes = computed(() =>
     cn(
@@ -26,6 +43,6 @@ const classes = computed(() =>
 
 <template>
     <div :class="classes">
-        <slot />
+        <RenderItems />
     </div>
 </template>

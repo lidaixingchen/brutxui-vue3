@@ -158,4 +158,122 @@ describe('Stepper', () => {
         expect(items[1].attributes('aria-current')).toBe('step')
         expect(items[2].attributes('aria-current')).toBeUndefined()
     })
+
+    describe('size', () => {
+        it('applies default size classes by default', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0 },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[0].classes()).toContain('w-8')
+            expect(buttons[0].classes()).toContain('h-8')
+            expect(buttons[0].classes()).toContain('text-sm')
+        })
+
+        it('applies sm size classes', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0, size: 'sm' },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[0].classes()).toContain('w-6')
+            expect(buttons[0].classes()).toContain('h-6')
+            expect(buttons[0].classes()).toContain('text-xs')
+        })
+
+        it('applies lg size classes', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0, size: 'lg' },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[0].classes()).toContain('w-10')
+            expect(buttons[0].classes()).toContain('h-10')
+            expect(buttons[0].classes()).toContain('text-base')
+        })
+    })
+
+    describe('variant', () => {
+        it('applies primary color to active step by default', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 1 },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[1].classes()).toContain('bg-brutal-primary')
+            expect(buttons[1].classes()).toContain('text-brutal-primary-foreground')
+        })
+
+        it('applies accent color to active step when variant=accent', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 1, variant: 'accent' },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[1].classes()).toContain('bg-brutal-accent')
+            expect(buttons[1].classes()).toContain('text-brutal-accent-foreground')
+        })
+
+        it('does not affect completed step color', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 2, variant: 'accent' },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[0].classes()).toContain('bg-brutal-success')
+            expect(buttons[0].classes()).not.toContain('bg-brutal-accent')
+        })
+
+        it('does not affect upcoming step color', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0, variant: 'accent' },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[2].classes()).toContain('bg-brutal-bg')
+            expect(buttons[2].classes()).not.toContain('bg-brutal-accent')
+        })
+    })
+
+    describe('clickable', () => {
+        it('applies cursor-pointer by default', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0 },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[0].classes()).toContain('cursor-pointer')
+        })
+
+        it('applies pointer-events-none when clickable=false', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0, clickable: false },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            expect(buttons[0].classes()).toContain('pointer-events-none')
+            expect(buttons[0].classes()).not.toContain('cursor-pointer')
+        })
+
+        it('does not emit update:modelValue when clickable=false', async () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0, clickable: false },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            await buttons[1].trigger('click')
+            expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+        })
+
+        it('does not emit step-click when clickable=false', async () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 0, clickable: false },
+                global: { provide: localeProvide },
+            })
+            const buttons = wrapper.findAll('button')
+            await buttons[2].trigger('click')
+            expect(wrapper.emitted('step-click')).toBeFalsy()
+        })
+    })
 })

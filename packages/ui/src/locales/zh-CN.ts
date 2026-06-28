@@ -322,6 +322,8 @@ export const zhCN: Locale = {
         copy: '复制',
         defaultLanguage: 'plaintext',
         defaultFilename: '',
+        expand: '展开',
+        collapse: '收起',
     },
     calendar: {
         previousMonth: '上一月',

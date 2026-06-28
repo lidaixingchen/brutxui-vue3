@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { type VariantProps } from 'class-variance-authority';
 import { Check, CheckCheck, AlertCircle, Loader2 } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { chatBubbleVariants, chatAvatarVariants } from './chat-bubble-variants';
+
+type ChatBubbleCvaProps = VariantProps<typeof chatBubbleVariants>;
 
 export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
 
@@ -18,6 +21,8 @@ interface ChatMessage {
 
 interface ChatBubbleProps {
     message: ChatMessage;
+    color?: NonNullable<ChatBubbleCvaProps['color']>;
+    size?: NonNullable<ChatBubbleCvaProps['size']>;
     showAvatar?: boolean;
     showStatus?: boolean;
     showTimestamp?: boolean;
@@ -26,6 +31,8 @@ interface ChatBubbleProps {
 }
 
 const props = withDefaults(defineProps<ChatBubbleProps>(), {
+    color: 'default',
+    size: 'default',
     showAvatar: true,
     showStatus: true,
     showTimestamp: true,
@@ -45,10 +52,17 @@ const wrapperClass = computed(() =>
 );
 
 const bubbleClass = computed(() =>
-    cn(chatBubbleVariants({ variant: props.message.variant ?? 'received' }), props.class)
+    cn(
+        chatBubbleVariants({
+            variant: props.message.variant ?? 'received',
+            color: props.color,
+            size: props.size,
+        }),
+        props.class
+    )
 );
 
-const avatarClass = computed(() => cn(chatAvatarVariants()));
+const avatarClass = computed(() => cn(chatAvatarVariants({ size: props.size })));
 
 const contentWrapperClass = computed(() =>
     cn('flex flex-col gap-1', isSent.value ? 'items-end' : 'items-start')

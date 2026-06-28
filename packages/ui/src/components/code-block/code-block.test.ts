@@ -167,3 +167,90 @@ describe('CodeBlock', () => {
         })
     })
 })
+
+describe('CodeBlock maxLines', () => {
+    const multilineCode = 'line1\nline2\nline3\nline4\nline5'
+
+    it('does not show toggle button when maxLines is not set', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode },
+        })
+        const toggleContainer = wrapper.find('.border-t-3.bg-brutal-muted')
+        expect(toggleContainer.exists()).toBe(false)
+    })
+
+    it('does not show toggle button when lines <= maxLines', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'line1\nline2\nline3', maxLines: 5 },
+        })
+        const toggleContainer = wrapper.find('.border-t-3.bg-brutal-muted')
+        expect(toggleContainer.exists()).toBe(false)
+    })
+
+    it('shows expand button when lines > maxLines', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const toggleContainer = wrapper.find('.border-t-3.bg-brutal-muted')
+        expect(toggleContainer.exists()).toBe(true)
+        expect(toggleContainer.text()).toContain('展开')
+    })
+
+    it('clips code area with maxHeight when collapsed', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const pre = wrapper.find('pre')
+        const style = pre.attributes('style') || ''
+        expect(style).toContain('max-height')
+        expect(style).toContain('overflow: hidden')
+    })
+
+    it('removes clip style when expanded', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const toggleButton = wrapper.find('.border-t-3.bg-brutal-muted button')
+        await toggleButton.trigger('click')
+
+        const pre = wrapper.find('pre')
+        const style = pre.attributes('style') || ''
+        expect(style).not.toContain('max-height')
+    })
+
+    it('changes button text to collapse when expanded', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const toggleButton = wrapper.find('.border-t-3.bg-brutal-muted button')
+        expect(toggleButton.text()).toContain('展开')
+        await toggleButton.trigger('click')
+        expect(toggleButton.text()).toContain('收起')
+    })
+
+    it('clips line numbers column when collapsed', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3, showLineNumbers: true },
+        })
+        const lineNumbersCol = wrapper.find('[class*="border-r-3"]')
+        const style = lineNumbersCol.attributes('style') || ''
+        expect(style).toContain('max-height')
+    })
+
+    it('collapses again when toggle clicked twice', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const toggleButton = wrapper.find('.border-t-3.bg-brutal-muted button')
+
+        await toggleButton.trigger('click')
+        expect(toggleButton.text()).toContain('收起')
+
+        await toggleButton.trigger('click')
+        expect(toggleButton.text()).toContain('展开')
+
+        const pre = wrapper.find('pre')
+        const style = pre.attributes('style') || ''
+        expect(style).toContain('max-height')
+    })
+})

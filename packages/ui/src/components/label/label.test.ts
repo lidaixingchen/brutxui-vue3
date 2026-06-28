@@ -112,4 +112,17 @@ describe('Label', () => {
         })
         expect(wrapper.find('span.text-brutal-destructive').attributes('aria-hidden')).toBe('true')
     })
+
+    it('sets aria-required when required is true', () => {
+        const wrapper = mount(Label, {
+            props: { required: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-required')).toBe('true')
+    })
+
+    it('does not set aria-required by default', () => {
+        const wrapper = mount(Label, { attachTo: document.body })
+        expect(wrapper.attributes('aria-required')).toBeUndefined()
+    })
 })

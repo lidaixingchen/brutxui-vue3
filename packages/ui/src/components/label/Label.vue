@@ -29,7 +29,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <LabelRoot :class="classes" :for="props.for">
+    <LabelRoot :class="classes" :for="props.for" :aria-required="required || undefined">
         <slot />
         <span v-if="required" class="text-brutal-destructive" aria-hidden="true">*</span>
     </LabelRoot>

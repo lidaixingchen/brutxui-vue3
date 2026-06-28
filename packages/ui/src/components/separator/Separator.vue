@@ -46,7 +46,7 @@ const wrapperClasses = computed(() =>
     <div
         v-if="isTextSeparator"
         :class="wrapperClasses"
-        role="separator"
+        :role="decorative ? 'none' : 'separator'"
         data-orientation="horizontal"
     >
         <div :class="lineClasses" />

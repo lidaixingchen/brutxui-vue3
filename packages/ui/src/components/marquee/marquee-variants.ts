@@ -3,8 +3,8 @@ import { cva } from 'class-variance-authority'
 export const marqueeContainerVariants = cva(
     [
         'relative flex overflow-hidden w-full',
-        'border-y-3 border-brutal bg-brutal-accent text-brutal-fg',
-        'font-black uppercase py-4 text-xl tracking-widest select-none',
+        'border-y-3 border-brutal',
+        'font-black uppercase select-none',
     ],
     {
         variants: {
@@ -12,6 +12,22 @@ export const marqueeContainerVariants = cva(
                 true: '[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
                 false: '',
             },
+            variant: {
+                default: 'bg-brutal-bg text-brutal-fg',
+                primary: 'bg-brutal-primary text-brutal-primary-foreground',
+                accent: 'bg-brutal-accent text-brutal-fg',
+                muted: 'bg-brutal-muted text-brutal-muted-foreground',
+            },
+            size: {
+                sm: 'py-2 text-sm tracking-wider',
+                default: 'py-4 text-xl tracking-widest',
+                lg: 'py-6 text-2xl tracking-widest',
+            },
+        },
+        defaultVariants: {
+            fade: false,
+            variant: 'accent',
+            size: 'default',
         },
     }
 )

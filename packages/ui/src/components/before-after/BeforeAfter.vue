@@ -15,6 +15,7 @@ interface BeforeAfterProps {
     afterAlt?: string
     defaultValue?: number
     disabled?: boolean
+    orientation?: 'horizontal' | 'vertical'
     class?: string
     iconSize?: IconSize
 }
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<BeforeAfterProps>(), {
     afterAlt: undefined,
     defaultValue: DEFAULT_SLIDER_POSITION,
     disabled: false,
+    orientation: 'horizontal',
     class: undefined,
     iconSize: 'default',
 })
@@ -40,28 +42,57 @@ watch(() => props.defaultValue, (val) => {
 })
 
 const clipStyle = computed(() => {
-    return {
-        clipPath: `inset(0 ${100 - sliderVal.value}% 0 0)`,
+    if (props.orientation === 'vertical') {
+        return { clipPath: `inset(0 0 ${100 - sliderVal.value}% 0)` }
     }
+    return { clipPath: `inset(0 ${100 - sliderVal.value}% 0 0)` }
 })
 
 const sliderStyle = computed(() => {
-    return {
-        left: `${sliderVal.value}%`,
+    if (props.orientation === 'vertical') {
+        return { top: `${sliderVal.value}%` }
     }
+    return { left: `${sliderVal.value}%` }
 })
+
+const sliderLineClasses = computed(() =>
+    cn(
+        'absolute bg-brutal-fg pointer-events-none z-10',
+        props.orientation === 'vertical'
+            ? 'left-0 right-0 h-[4px] -translate-y-1/2'
+            : 'top-0 bottom-0 w-[4px] -translate-x-1/2'
+    )
+)
 
 const rootClasses = computed(() =>
     cn(beforeAfterRootVariants(), props.class)
 )
 
 const handleClasses = computed(() =>
-    cn(beforeAfterHandleVariants())
+    cn(beforeAfterHandleVariants({ orientation: props.orientation }))
 )
 
 const iconClasses = computed(() =>
-    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3] text-brutal-primary-foreground')
+    cn(
+        iconSizeVariants({ size: props.iconSize }),
+        'stroke-[3] text-brutal-primary-foreground',
+        props.orientation === 'vertical' && 'rotate-90'
+    )
 )
+
+const inputClasses = computed(() =>
+    cn(
+        'absolute inset-0 w-full h-full opacity-0 z-30 disabled:cursor-not-allowed',
+        props.orientation === 'vertical' ? 'cursor-ns-resize' : 'cursor-ew-resize'
+    )
+)
+
+const inputStyle = computed(() => {
+    if (props.orientation === 'vertical') {
+        return { writingMode: 'vertical-lr' as const }
+    }
+    return undefined
+})
 </script>
 
 <template>
@@ -84,7 +115,7 @@ const iconClasses = computed(() =>
         </div>
 
         <div
-            class="absolute top-0 bottom-0 w-[4px] bg-brutal-fg -translate-x-1/2 pointer-events-none z-10"
+            :class="sliderLineClasses"
             :style="sliderStyle"
         />
 
@@ -102,7 +133,8 @@ const iconClasses = computed(() =>
             max="100"
             :disabled="disabled"
             :aria-label="t('beforeAfter.comparisonSlider')"
-            class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 disabled:cursor-not-allowed"
+            :class="inputClasses"
+            :style="inputStyle"
         >
     </div>
 </template>

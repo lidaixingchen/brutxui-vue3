@@ -371,6 +371,8 @@ export interface CodeBlockLocale {
     copy: string
     defaultLanguage: string
     defaultFilename: string
+    expand: string
+    collapse: string
 }
 
 export interface CalendarLocale {

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { marqueeContainerVariants, marqueeTrackVariants } from './marquee-variants'
+
+type MarqueeContainerVariantProps = VariantProps<typeof marqueeContainerVariants>
 
 const DEFAULT_SPEED = 20
 
@@ -10,6 +13,8 @@ interface MarqueeProps {
     speed?: number
     pauseOnHover?: boolean
     fade?: boolean
+    variant?: NonNullable<MarqueeContainerVariantProps['variant']>
+    size?: NonNullable<MarqueeContainerVariantProps['size']>
     class?: string
 }
 
@@ -18,11 +23,20 @@ const props = withDefaults(defineProps<MarqueeProps>(), {
     speed: DEFAULT_SPEED,
     pauseOnHover: false,
     fade: false,
+    variant: 'accent',
+    size: 'default',
     class: undefined,
 })
 
 const containerClasses = computed(() =>
-    cn(marqueeContainerVariants({ fade: props.fade || undefined }), props.class)
+    cn(
+        marqueeContainerVariants({
+            fade: props.fade || undefined,
+            variant: props.variant,
+            size: props.size,
+        }),
+        props.class
+    )
 )
 
 const trackClasses = computed(() =>

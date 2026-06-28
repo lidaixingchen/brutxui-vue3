@@ -111,6 +111,15 @@ describe('Skeleton', () => {
         })
         expect(wrapper.attributes('style')).toContain('width: 200px')
     })
+
+    it('circle shape applies width as both width and height to keep circle', () => {
+        const wrapper = mount(Skeleton, {
+            props: { shape: 'circle', width: '200px' },
+        })
+        const style = wrapper.attributes('style')
+        expect(style).toContain('width: 200px')
+        expect(style).toContain('height: 200px')
+    })
 })
 
 describe('SkeletonText', () => {

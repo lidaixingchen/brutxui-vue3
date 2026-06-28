@@ -6031,7 +6031,8 @@
         "prismjs"
       ],
       "registryDependencies": [
-        "copy-to-clipboard"
+        "copy-to-clipboard",
+        "button"
       ],
       "files": [
         {

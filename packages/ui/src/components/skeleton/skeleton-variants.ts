@@ -29,11 +29,13 @@ export const skeletonVariants = cva(
     }
 )
 
-export const skeletonCircleWidthVariants = {
+type SkeletonSize = NonNullable<VariantProps<typeof skeletonVariants>['size']>
+
+export const skeletonCircleWidthVariants: Record<SkeletonSize, string> = {
     sm: 'w-8',
     default: 'w-10',
     lg: 'w-14',
     xl: 'w-20',
-} as const
+}
 
 export type SkeletonVariantProps = VariantProps<typeof skeletonVariants>

@@ -114,10 +114,19 @@ describe('Separator', () => {
             attachTo: document.body,
         })
         expect(wrapper.text()).toContain('OR')
-        expect(wrapper.attributes('role')).toBe('separator')
+        expect(wrapper.attributes('role')).toBe('none')
         expect(wrapper.attributes('data-orientation')).toBe('horizontal')
         const lines = wrapper.findAll('div.flex-1')
         expect(lines.length).toBe(2)
+    })
+
+    it('text separator respects decorative=false role', () => {
+        const wrapper = mount(Separator, {
+            props: { decorative: false },
+            slots: { default: 'OR' },
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('role')).toBe('separator')
     })
 
     it('renders plain separator without label slot', () => {

@@ -14,7 +14,9 @@ interface Card3DProps {
     scale?: number
     shadowOffset?: number
     shadow?: NonNullable<Card3DVariantProps['shadow']>
+    variant?: NonNullable<Card3DVariantProps['variant']>
     disabled?: boolean
+    clickable?: boolean
     class?: string
 }
 
@@ -24,9 +26,15 @@ const props = withDefaults(defineProps<Card3DProps>(), {
     scale: 1.02,
     shadowOffset: 10,
     shadow: 'default',
+    variant: 'default',
     disabled: false,
+    clickable: false,
     class: undefined,
 })
+
+const emit = defineEmits<{
+    click: [event: MouseEvent]
+}>()
 
 const cardRef = ref<HTMLDivElement | null>(null)
 const rx = ref(0)
@@ -121,8 +129,16 @@ const containerClasses = computed(() =>
 )
 
 const cardClasses = computed(() =>
-    cn(card3dVariants({ shadow: props.shadow }))
+    cn(
+        card3dVariants({ shadow: props.shadow, variant: props.variant }),
+        props.clickable && 'cursor-pointer',
+    )
 )
+
+const handleClick = (event: MouseEvent) => {
+    if (!props.clickable) return
+    emit('click', event)
+}
 
 const shadowClasses = computed(() =>
     cn(card3dShadowVariants())
@@ -137,6 +153,7 @@ const shadowClasses = computed(() =>
             :style="cardStyles"
             @pointermove="handlePointerMove"
             @pointerleave="handlePointerLeave"
+            @click="handleClick"
         >
             <slot />
         </div>

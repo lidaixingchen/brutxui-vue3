@@ -392,6 +392,19 @@
         animation: nb-shrink linear forwards;
     }
 
+    @keyframes indeterminate {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(200%);
+        }
+    }
+
+    .animate-indeterminate {
+        animation: indeterminate 1.5s ease-in-out infinite;
+    }
+
     .border-3 {
         border-width: var(--brutal-border-width, 3px);
     }
@@ -897,7 +910,10 @@
         .animate-brutal-rotate,
         .animate-brutal-swing,
         .animate-brutal-jello,
-        .animate-brutal-heartbeat {
+        .animate-brutal-heartbeat,
+        .animate-indeterminate,
+        .animate-marquee-left,
+        .animate-marquee-right {
             animation: none !important;
         }
     }

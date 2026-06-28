@@ -88,3 +88,61 @@ describe('Card3D', () => {
         expect(card.classes()).not.toContain('shadow-brutal-lg')
     })
 })
+
+describe('Card3D variant', () => {
+    it('renders default variant with bg-brutal-bg', () => {
+        const wrapper = mount(Card3D)
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.classes()).toContain('bg-brutal-bg')
+        expect(card.classes()).toContain('text-brutal-fg')
+    })
+
+    it('renders primary variant', () => {
+        const wrapper = mount(Card3D, { props: { variant: 'primary' } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.classes()).toContain('bg-brutal-primary')
+        expect(card.classes()).toContain('text-brutal-primary-foreground')
+    })
+
+    it('renders accent variant', () => {
+        const wrapper = mount(Card3D, { props: { variant: 'accent' } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.classes()).toContain('bg-brutal-accent')
+        expect(card.classes()).toContain('text-brutal-accent-foreground')
+    })
+
+    it('renders muted variant', () => {
+        const wrapper = mount(Card3D, { props: { variant: 'muted' } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.classes()).toContain('bg-brutal-muted')
+        expect(card.classes()).toContain('text-brutal-muted-foreground')
+    })
+})
+
+describe('Card3D clickable', () => {
+    it('does not add cursor-pointer by default', () => {
+        const wrapper = mount(Card3D)
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.classes()).not.toContain('cursor-pointer')
+    })
+
+    it('adds cursor-pointer when clickable is true', () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.classes()).toContain('cursor-pointer')
+    })
+
+    it('emits click event when clickable and clicked', async () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        await card.trigger('click')
+        expect(wrapper.emitted('click')).toHaveLength(1)
+    })
+
+    it('does not emit click when not clickable', async () => {
+        const wrapper = mount(Card3D)
+        const card = wrapper.find('[role="group"] > div:first-child')
+        await card.trigger('click')
+        expect(wrapper.emitted('click')).toBeUndefined()
+    })
+})

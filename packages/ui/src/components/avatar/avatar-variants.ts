@@ -32,7 +32,7 @@ export const avatarVariants = cva(
 )
 
 const avatarFallbackColorVariants = {
-    default: 'bg-brutal-primary text-brutal-primary-foreground',
+    default: 'bg-brutal-muted text-brutal-muted-foreground',
     primary: 'bg-brutal-primary text-brutal-primary-foreground',
     secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
     accent: 'bg-brutal-accent text-brutal-accent-foreground',

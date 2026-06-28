@@ -40,6 +40,56 @@ describe('Timeline', () => {
     })
 })
 
+describe('Timeline alternate', () => {
+    const mountWithItems = (props: Record<string, unknown> = {}) => mount(Timeline, {
+        props,
+        slots: {
+            default: '<TimelineItem><span>Item 0</span></TimelineItem><TimelineItem><span>Item 1</span></TimelineItem>',
+        },
+        global: {
+            components: { TimelineItem },
+        },
+    })
+
+    it('passes index to TimelineItem children', () => {
+        const wrapper = mountWithItems({ alternate: true })
+        const items = wrapper.findAllComponents(TimelineItem)
+        expect(items).toHaveLength(2)
+        expect(items[0].props('index')).toBe(0)
+        expect(items[1].props('index')).toBe(1)
+    })
+
+    it('applies flex-row-reverse for even index in alternate mode', () => {
+        const wrapper = mountWithItems({ alternate: true })
+        const items = wrapper.findAllComponents(TimelineItem)
+        expect(items[0].classes()).toContain('flex-row-reverse')
+    })
+
+    it('applies flex-row for odd index in alternate mode', () => {
+        const wrapper = mountWithItems({ alternate: true })
+        const items = wrapper.findAllComponents(TimelineItem)
+        expect(items[0].classes()).toContain('flex-row-reverse')
+        expect(items[1].classes()).toContain('flex-row')
+        expect(items[1].classes()).not.toContain('flex-row-reverse')
+    })
+
+    it('does not apply alternate when alternate is false', () => {
+        const wrapper = mountWithItems()
+        const items = wrapper.findAllComponents(TimelineItem)
+        expect(items[0].classes()).toContain('flex-row')
+        expect(items[0].classes()).not.toContain('flex-row-reverse')
+        expect(items[1].classes()).toContain('flex-row')
+        expect(items[1].classes()).not.toContain('flex-row-reverse')
+    })
+
+    it('does not apply alternate when orientation is horizontal', () => {
+        const wrapper = mountWithItems({ alternate: true, orientation: 'horizontal' })
+        const items = wrapper.findAllComponents(TimelineItem)
+        expect(items[0].classes()).toContain('flex-col')
+        expect(items[1].classes()).toContain('flex-col')
+    })
+})
+
 describe('TimelineItem', () => {
     it('renders with vertical orientation by default', () => {
         const wrapper = mount(TimelineItem)

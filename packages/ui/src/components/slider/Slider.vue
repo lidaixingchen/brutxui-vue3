@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import {
     SliderRoot as SliderRootPrimitive,
@@ -8,8 +8,16 @@ import {
     SliderThumb as SliderThumbPrimitive,
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
-import { sliderTrackVariants, sliderThumbVariants, sliderRangeVariants } from './slider-variants'
+import {
+    sliderRootVariants,
+    sliderTrackVariants,
+    sliderThumbVariants,
+    sliderRangeVariants,
+    sliderMarkVariants,
+    sliderTooltipVariants,
+} from './slider-variants'
 
+type SliderRootVariantProps = VariantProps<typeof sliderRootVariants>
 type SliderTrackVariantProps = VariantProps<typeof sliderTrackVariants>
 type SliderThumbVariantProps = VariantProps<typeof sliderThumbVariants>
 
@@ -23,6 +31,9 @@ interface SliderProps {
     ariaLabel?: string
     size?: NonNullable<SliderTrackVariantProps['size']>
     variant?: NonNullable<SliderThumbVariantProps['variant']>
+    orientation?: NonNullable<SliderRootVariantProps['orientation']>
+    marks?: number[]
+    showTooltip?: boolean
     class?: string
 }
 
@@ -36,17 +47,22 @@ const props = withDefaults(defineProps<SliderProps>(), {
     ariaLabel: undefined,
     size: 'default',
     variant: 'default',
+    orientation: 'horizontal',
+    marks: undefined,
+    showTooltip: false,
     class: undefined,
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()
 
+const activeThumb = ref(-1)
+
 const rootClasses = computed(() =>
-    cn('relative flex w-full touch-none select-none items-center', props.class)
+    cn(sliderRootVariants({ orientation: props.orientation }), props.class)
 )
 
 const trackClasses = computed(() =>
-    cn(sliderTrackVariants({ size: props.size }))
+    cn(sliderTrackVariants({ size: props.size, orientation: props.orientation }))
 )
 
 const thumbClasses = computed(() =>
@@ -54,7 +70,15 @@ const thumbClasses = computed(() =>
 )
 
 const rangeClasses = computed(() =>
-    cn(sliderRangeVariants({ variant: props.variant }))
+    cn(sliderRangeVariants({ variant: props.variant, orientation: props.orientation }))
+)
+
+const markClasses = computed(() =>
+    cn(sliderMarkVariants({ orientation: props.orientation }))
+)
+
+const tooltipClasses = computed(() =>
+    cn(sliderTooltipVariants())
 )
 
 const thumbCount = computed(() => {
@@ -62,6 +86,65 @@ const thumbCount = computed(() => {
     if (props.defaultValue && props.defaultValue.length > 0) return props.defaultValue.length
     return 1
 })
+
+const currentValues = computed(() => {
+    if (props.modelValue && props.modelValue.length > 0) return props.modelValue
+    if (props.defaultValue && props.defaultValue.length > 0) return props.defaultValue
+    return [0]
+})
+
+function valueToPercentage(value: number): number {
+    const range = props.max - props.min
+    if (range <= 0) return 0
+    return ((value - props.min) / range) * 100
+}
+
+function markStyle(mark: number): Record<string, string> {
+    const pct = valueToPercentage(mark)
+    if (props.orientation === 'vertical') {
+        return {
+            bottom: `${pct}%`,
+            left: '50%',
+            transform: 'translate(-50%, 50%)',
+        }
+    }
+    return {
+        left: `${pct}%`,
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+    }
+}
+
+const tooltipStyle = computed<Record<string, string> | undefined>(() => {
+    if (activeThumb.value < 0) return undefined
+    const value = currentValues.value[activeThumb.value]
+    if (value === undefined) return undefined
+    const pct = valueToPercentage(value)
+    const style: Record<string, string> = { transform: '' }
+    if (props.orientation === 'vertical') {
+        style.bottom = `${pct}%`
+        style.left = '0'
+        style.transform = 'translate(-100%, 50%)'
+    } else {
+        style.left = `${pct}%`
+        style.top = '0'
+        style.transform = 'translate(-50%, -100%)'
+    }
+    return style
+})
+
+const tooltipText = computed(() => {
+    if (activeThumb.value < 0) return ''
+    const value = currentValues.value[activeThumb.value]
+    return value === undefined ? '' : String(value)
+})
+
+function handleThumbFocus(index: number) {
+    activeThumb.value = index
+}
+function handleThumbBlur() {
+    activeThumb.value = -1
+}
 </script>
 
 <template>
@@ -72,17 +155,35 @@ const thumbCount = computed(() => {
         :max="max"
         :step="step"
         :disabled="disabled"
+        :orientation="orientation"
         :aria-label="ariaLabel"
         :class="rootClasses"
         @update:model-value="emit('update:modelValue', $event ?? [0])"
     >
         <SliderTrackPrimitive :class="trackClasses">
             <SliderRangePrimitive :class="rangeClasses" />
+            <span
+                v-for="(mark, index) in marks"
+                :key="`mark-${index}`"
+                :class="markClasses"
+                :style="markStyle(mark)"
+                aria-hidden="true"
+            />
         </SliderTrackPrimitive>
         <SliderThumbPrimitive
             v-for="(_, index) in thumbCount"
             :key="index"
             :class="thumbClasses"
+            @focus="handleThumbFocus(index)"
+            @blur="handleThumbBlur()"
+            @pointerenter="handleThumbFocus(index)"
+            @pointerleave="handleThumbBlur()"
         />
+        <span
+            v-if="showTooltip && activeThumb >= 0"
+            :class="tooltipClasses"
+            :style="tooltipStyle"
+            role="tooltip"
+        >{{ tooltipText }}</span>
     </SliderRootPrimitive>
 </template>
