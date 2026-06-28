@@ -12,6 +12,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
+import Spinner from '../spinner/Spinner.vue'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { type ComboboxOption } from './combobox-types'
@@ -25,6 +26,8 @@ interface ComboboxMultiProps {
     searchPlaceholder?: string
     emptyText?: string
     disabled?: boolean
+    loading?: boolean
+    creative?: boolean
     ariaLabel?: string
     maxDisplay?: number
     class?: string
@@ -37,6 +40,8 @@ const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     searchPlaceholder: undefined,
     emptyText: undefined,
     disabled: false,
+    loading: false,
+    creative: false,
     ariaLabel: undefined,
     maxDisplay: DEFAULT_MAX_DISPLAY,
     class: undefined,
@@ -49,7 +54,10 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('combobox.mult
 const resolvedSearchPlaceholder = computed(() => props.searchPlaceholder ?? t('combobox.searchPlaceholder'))
 const resolvedEmptyText = computed(() => props.emptyText ?? t('combobox.emptyText'))
 
-const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
+const emit = defineEmits<{
+    'update:modelValue': [value: string[]]
+    'create': [value: string]
+}>()
 
 const open = ref(false)
 const searchQuery = ref('')
@@ -74,6 +82,14 @@ const filteredOptions = computed(() => {
     )
 })
 
+const showCreateItem = computed(() =>
+    props.creative && filteredOptions.value.length === 0 && !!searchQuery.value.trim()
+)
+
+const createItemLabel = computed(() =>
+    t('combobox.create', { query: searchQuery.value })
+)
+
 const triggerClasses = computed(() =>
     cn(
         buttonVariants({ variant: 'outline' }),
@@ -89,6 +105,12 @@ function handleSelect(optionValue: string) {
         ? props.modelValue.filter((v) => v !== optionValue)
         : [...props.modelValue, optionValue]
     emit('update:modelValue', newValue)
+}
+
+function handleCreate() {
+    if (!searchQuery.value.trim()) return
+    emit('create', searchQuery.value)
+    searchQuery.value = ''
 }
 
 const checkboxSelectedClasses = comboboxCheckboxVariants({ selected: true })
@@ -127,7 +149,16 @@ watch(open, (isOpen) => {
             <Command disable-filter>
                 <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
-                    <CommandEmpty>{{ resolvedEmptyText }}</CommandEmpty>
+                    <CommandEmpty v-if="!showCreateItem">
+                        {{ resolvedEmptyText }}
+                    </CommandEmpty>
+                    <CommandItem
+                        v-if="showCreateItem"
+                        :value="searchQuery"
+                        @select="handleCreate"
+                    >
+                        {{ createItemLabel }}
+                    </CommandItem>
                     <CommandGroup>
                         <CommandItem
                             v-for="option in filteredOptions"
@@ -144,6 +175,9 @@ watch(open, (isOpen) => {
                             {{ option.label }}
                         </CommandItem>
                     </CommandGroup>
+                    <div v-if="loading" class="flex items-center justify-center py-2">
+                        <Spinner size="sm" />
+                    </div>
                 </CommandList>
             </Command>
         </PopoverContent>

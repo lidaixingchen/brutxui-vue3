@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { Plus } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { useLocale } from '@/composables/useLocale';
-import { kanbanColumnVariants, kanbanCardVariants } from './kanban-variants';
+import { iconSizeVariants } from '../../lib/icon-size-variants';
+import { kanbanColumnVariants, kanbanCardVariants, kanbanColumnHeaderVariants } from './kanban-variants';
+import Button from '../button/Button.vue';
 
 export interface KanbanCard {
     id: string;
@@ -30,17 +33,22 @@ const emit = defineEmits<{
     'update:modelValue': [columns: KanbanColumn[]];
     'card-move': [cardId: string, fromColumn: string, toColumn: string];
     'card-click': [card: KanbanCard, columnId: string];
+    'column-move': [columnId: string, fromIndex: number, toIndex: number];
+    'add-card': [columnId: string];
 }>();
 
 const { t } = useLocale();
 
 const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null);
+const draggingColumn = ref<string | null>(null);
 const dragOverColumn = ref<string | null>(null);
+const dragOverColumnHeader = ref<string | null>(null);
 const isDragging = ref(false);
 
 const columns = computed(() => props.modelValue);
 
 function onDragStart(cardId: string, fromColumn: string) {
+    if (draggingColumn.value) return;
     draggingCard.value = { cardId, fromColumn };
     isDragging.value = true;
 }
@@ -52,6 +60,7 @@ function onDragEnd() {
 }
 
 function onDragOver(e: DragEvent, columnId: string) {
+    if (draggingColumn.value) return;
     e.preventDefault();
     dragOverColumn.value = columnId;
 }
@@ -77,6 +86,7 @@ function onCardKeydown(e: KeyboardEvent, card: KanbanCard, columnId: string) {
 }
 
 function onDrop(e: DragEvent, toColumnId: string) {
+    if (draggingColumn.value) return;
     if (!draggingCard.value) return;
     const { cardId, fromColumn } = draggingCard.value;
 
@@ -127,6 +137,57 @@ function onDrop(e: DragEvent, toColumnId: string) {
     dragOverColumn.value = null;
 }
 
+function onColumnDragStart(e: DragEvent, columnId: string) {
+    if (draggingCard.value) {
+        e.preventDefault();
+        return;
+    }
+    draggingColumn.value = columnId;
+    if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+    }
+}
+
+function onColumnDragEnd() {
+    draggingColumn.value = null;
+    dragOverColumnHeader.value = null;
+}
+
+function onColumnDragOver(e: DragEvent, columnId: string) {
+    if (!draggingColumn.value) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (dragOverColumnHeader.value !== columnId) {
+        dragOverColumnHeader.value = columnId;
+    }
+}
+
+function onColumnDrop(e: DragEvent, toColumnId: string) {
+    if (!draggingColumn.value) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const fromId = draggingColumn.value;
+    dragOverColumnHeader.value = null;
+    draggingColumn.value = null;
+
+    if (fromId === toColumnId) return;
+
+    const fromIndex = columns.value.findIndex((col) => col.id === fromId);
+    const toIndex = columns.value.findIndex((col) => col.id === toColumnId);
+    if (fromIndex === -1 || toIndex === -1) return;
+
+    const newColumns = [...columns.value];
+    const [moved] = newColumns.splice(fromIndex, 1);
+    newColumns.splice(toIndex, 0, moved);
+
+    emit('update:modelValue', newColumns);
+    emit('column-move', fromId, fromIndex, toIndex);
+}
+
+function onAddCard(columnId: string) {
+    emit('add-card', columnId);
+}
+
 const boardClass = computed(() => cn('flex gap-4 overflow-x-auto pb-4', props.class));
 
 const columnClassesMap = computed(() => {
@@ -146,6 +207,19 @@ const cardClassesMap = computed(() => {
     })
     return map
 })
+
+const columnHeaderClassesMap = computed(() => {
+    const map = new Map<string, string>()
+    columns.value.forEach((col) => {
+        map.set(col.id, cn(kanbanColumnHeaderVariants({
+            dragging: draggingColumn.value === col.id,
+            dragOver: dragOverColumnHeader.value === col.id && draggingColumn.value !== col.id,
+        })))
+    })
+    return map
+})
+
+const addIconClasses = iconSizeVariants({ size: 'sm' });
 </script>
 
 <template>
@@ -158,17 +232,26 @@ const cardClassesMap = computed(() => {
             @dragleave="onDragLeave($event, col.id)"
             @drop="onDrop($event, col.id)"
         >
-            <!-- Column Header -->
-            <div class="flex items-center justify-between mb-1">
+            <!-- Column Header (draggable for column sorting) -->
+            <div
+                data-slot="kanban-column-header"
+                :data-column-id="col.id"
+                :class="columnHeaderClassesMap.get(col.id)"
+                draggable="true"
+                @dragstart="onColumnDragStart($event, col.id)"
+                @dragend="onColumnDragEnd"
+                @dragover="onColumnDragOver($event, col.id)"
+                @drop="onColumnDrop($event, col.id)"
+            >
                 <div class="flex items-center gap-2">
                     <span
                         v-if="col.color"
                         class="inline-block w-3 h-3 rounded-brutal border-3 border-brutal"
                         :style="{ background: col.color }"
                     />
-                    <h3 class="font-black text-sm tracking-wide uppercase text-brutal-fg">
-{{ col.title }}
-</h3>
+                    <h3 class="font-black text-sm tracking-wide uppercase text-brutal-fg cursor-grab active:cursor-grabbing">
+                        {{ col.title }}
+                    </h3>
                 </div>
                 <span class="text-xs font-bold border-3 border-brutal px-1.5 py-0.5 rounded-brutal bg-brutal-bg shadow-brutal">
                     {{ col.cards.length }}
@@ -217,8 +300,19 @@ const cardClassesMap = computed(() => {
                 </div>
             </div>
 
-            <!-- Add Card Slot -->
-            <slot :name="`add-${col.id}`" />
+            <!-- Add Card Slot (with default + button fallback) -->
+            <slot :name="`add-${col.id}`" :column-id="col.id">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    class="w-full"
+                    :aria-label="t('kanban.addCard')"
+                    @click="onAddCard(col.id)"
+                >
+                    <Plus :class="addIconClasses" />
+                    {{ t('kanban.addCard') }}
+                </Button>
+            </slot>
         </div>
     </div>
 </template>

@@ -14,6 +14,7 @@ export const en: Locale = {
         searchPlaceholder: 'Search...',
         emptyText: 'No results found.',
         selectedCount: '{count} selected',
+        create: "Create '{query}'",
     },
     pagination: {
         firstPage: 'Go to first page',
@@ -184,6 +185,7 @@ export const en: Locale = {
     },
     searchWidget: {
         defaultPlaceholder: 'Search...',
+        recentSearches: 'Recent searches',
     },
     feedbackForm: {
         defaultTitle: 'Send Feedback',
@@ -377,6 +379,7 @@ export const en: Locale = {
     },
     kanban: {
         dropCardsHere: 'Drop cards here',
+        addCard: 'Add card',
     },
     tabsNav: {
         emptyTitle: 'No tabs available',

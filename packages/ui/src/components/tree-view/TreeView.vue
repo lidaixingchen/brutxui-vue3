@@ -4,31 +4,42 @@ import { cn } from '../../lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
 import { useLocale } from '@/composables/useLocale';
 
+export type SelectionMode = 'single' | 'checkbox';
+
+export type CheckState = 'checked' | 'unchecked' | 'indeterminate';
+
 export interface TreeNode {
     id: string;
     label: string;
     icon?: string;
     children?: TreeNode[];
     data?: unknown;
+    disabled?: boolean;
 }
 
 interface TreeViewProps {
     nodes: TreeNode[];
     modelValue?: string | null;
+    checkedIds?: string[];
+    selectionMode?: SelectionMode;
     defaultExpanded?: string[];
     class?: string;
 }
 
 const props = withDefaults(defineProps<TreeViewProps>(), {
     modelValue: null,
+    checkedIds: () => [],
+    selectionMode: 'single',
     defaultExpanded: () => [],
     class: undefined,
 });
 
 const emit = defineEmits<{
     'update:modelValue': [id: string | null];
+    'update:checkedIds': [ids: string[]];
     'select': [node: TreeNode];
     'expand': [id: string, expanded: boolean];
+    'check': [node: TreeNode, checked: boolean];
 }>();
 
 const { t } = useLocale();
@@ -40,6 +51,8 @@ const expandedIds = ref<Set<string>>(new Set(props.defaultExpanded));
 watch(() => props.defaultExpanded, (newVal) => {
     expandedIds.value = new Set(newVal);
 });
+
+const checkedSet = computed(() => new Set(props.checkedIds));
 
 function toggleExpand(id: string) {
     const nextSet = new Set(expandedIds.value)
@@ -55,6 +68,42 @@ function toggleExpand(id: string) {
 function selectNode(node: TreeNode) {
     emit('update:modelValue', node.id);
     emit('select', node);
+}
+
+function getAllDescendantIds(node: TreeNode): string[] {
+    const result: string[] = [node.id]
+    if (node.children) {
+        for (const child of node.children) {
+            result.push(...getAllDescendantIds(child))
+        }
+    }
+    return result
+}
+
+function getCheckState(node: TreeNode): CheckState {
+    const descendantIds = getAllDescendantIds(node)
+    const checkedCount = descendantIds.filter(id => checkedSet.value.has(id)).length
+
+    if (checkedCount === descendantIds.length) return 'checked'
+    if (checkedCount === 0) return 'unchecked'
+    return 'indeterminate'
+}
+
+function toggleCheck(node: TreeNode) {
+    if (node.disabled) return
+    const state = getCheckState(node)
+    const descendantIds = getAllDescendantIds(node)
+    const currentSet = new Set(checkedSet.value)
+
+    if (state === 'checked' || state === 'indeterminate') {
+        descendantIds.forEach(id => currentSet.delete(id))
+    } else {
+        descendantIds.forEach(id => currentSet.add(id))
+    }
+
+    const newIds = Array.from(currentSet)
+    emit('update:checkedIds', newIds)
+    emit('check', node, state === 'unchecked')
 }
 
 function getVisibleTreeItems(): HTMLElement[] {
@@ -120,8 +169,12 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
             :expanded-ids="expandedIds"
             :depth="0"
             :is-first-root="index === 0 && !modelValue"
+            :selection-mode="selectionMode"
+            :checked-ids="checkedSet"
+            :disabled="node.disabled ?? false"
             @toggle="toggleExpand"
             @select="selectNode"
+            @check="toggleCheck"
             @focus-prev="handleFocusPrev"
             @focus-next="handleFocusNext"
             @focus-parent="handleFocusParent"

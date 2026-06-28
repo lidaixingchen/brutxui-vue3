@@ -65,6 +65,12 @@ onUnmounted(() => {
 const rootClasses = computed(() =>
     cn(virtualScrollRootVariants({ size: props.size }), props.class)
 )
+
+function scrollToIndex(index: number) {
+    virtualizer.value.scrollToIndex(index)
+}
+
+defineExpose({ scrollToIndex })
 </script>
 
 <template>

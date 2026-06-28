@@ -218,6 +218,122 @@ describe('Combobox', () => {
         const trigger = wrapper.find('[role="combobox"]')
         expect(trigger.classes()).not.toContain('text-brutal-muted-foreground')
     })
+
+    it('renders Spinner when loading is true', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, loading: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const spinner = document.body.querySelector('[role="status"]')
+        expect(spinner).toBeTruthy()
+    })
+
+    it('does not render Spinner when loading is false', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, loading: false },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const spinner = document.body.querySelector('[role="status"]')
+        expect(spinner).toBeNull()
+    })
+
+    it('renders create item when creative is true and no matches', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'xyz'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].textContent).toContain('Create')
+        expect(items[0].textContent).toContain('xyz')
+    })
+
+    it('does not render create item when creative is false', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: false },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'xyz'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(0)
+    })
+
+    it('does not render create item when search query is empty', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(options.length)
+    })
+
+    it('does not render create item when matches exist', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'app'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].textContent).toContain('Apple')
+    })
+
+    it('emits create event when create item is selected', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'mango'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const createItem = document.body.querySelector('[data-slot="command-item"]') as HTMLElement
+        createItem.click()
+        await nextTick()
+        const createEvents = wrapper.emitted('create')
+        expect(createEvents).toBeTruthy()
+        expect(createEvents![0]).toEqual(['mango'])
+    })
+
+    it('shows CommandEmpty instead of create item when creative is false', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: false, emptyText: 'No results' },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'xyz'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        expect(document.body.textContent).toContain('No results')
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(0)
+    })
 })
 
 describe('ComboboxMulti', () => {
@@ -384,5 +500,96 @@ describe('ComboboxMulti', () => {
         })
         const trigger = wrapper.find('[role="combobox"]')
         expect(trigger.classes()).not.toContain('text-brutal-muted-foreground')
+    })
+
+    it('renders Spinner when loading is true', async () => {
+        wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
+            props: { options, loading: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const spinner = document.body.querySelector('[role="status"]')
+        expect(spinner).toBeTruthy()
+    })
+
+    it('does not render Spinner when loading is false', async () => {
+        wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
+            props: { options, loading: false },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const spinner = document.body.querySelector('[role="status"]')
+        expect(spinner).toBeNull()
+    })
+
+    it('renders create item when creative is true and no matches', async () => {
+        wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'xyz'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].textContent).toContain('Create')
+        expect(items[0].textContent).toContain('xyz')
+    })
+
+    it('does not render create item when creative is false', async () => {
+        wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
+            props: { options, creative: false },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'xyz'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(0)
+    })
+
+    it('emits create event when create item is selected', async () => {
+        wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'mango'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const createItem = document.body.querySelector('[data-slot="command-item"]') as HTMLElement
+        createItem.click()
+        await nextTick()
+        const createEvents = wrapper.emitted('create')
+        expect(createEvents).toBeTruthy()
+        expect(createEvents![0]).toEqual(['mango'])
+    })
+
+    it('keeps dropdown open after create in multi mode', async () => {
+        wrapper = mount(ComboboxMulti, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'mango'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const createItem = document.body.querySelector('[data-slot="command-item"]') as HTMLElement
+        createItem.click()
+        await nextTick()
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-expanded')).toBe('true')
     })
 })

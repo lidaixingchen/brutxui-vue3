@@ -14,6 +14,7 @@ export const zhCN: Locale = {
         searchPlaceholder: '搜索...',
         emptyText: '未找到结果。',
         selectedCount: '已选 {count} 项',
+        create: "创建 '{query}'",
     },
     pagination: {
         firstPage: '转到第一页',
@@ -184,6 +185,7 @@ export const zhCN: Locale = {
     },
     searchWidget: {
         defaultPlaceholder: '搜索...',
+        recentSearches: '最近搜索',
     },
     feedbackForm: {
         defaultTitle: '发送反馈',
@@ -377,6 +379,7 @@ export const zhCN: Locale = {
     },
     kanban: {
         dropCardsHere: '拖放卡片到此处',
+        addCard: '添加卡片',
     },
     tabsNav: {
         emptyTitle: '暂无标签页',

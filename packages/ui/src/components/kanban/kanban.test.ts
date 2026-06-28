@@ -100,7 +100,7 @@ describe('KanbanBoard', () => {
         const wrapper = mount(KanbanBoard, {
             props: { modelValue: columns },
         })
-        const cards = wrapper.findAll('[draggable="true"]')
+        const cards = wrapper.findAll('[data-card-id]')
         expect(cards.length).toBe(3)
     })
 

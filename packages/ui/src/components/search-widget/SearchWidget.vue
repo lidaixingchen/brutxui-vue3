@@ -12,6 +12,7 @@ import CommandList from '../command/CommandList.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
+import Spinner from '../spinner/Spinner.vue'
 
 export interface SearchSuggestion {
     label: string
@@ -22,6 +23,8 @@ export interface SearchSuggestion {
 interface SearchWidgetProps {
     placeholder?: string
     suggestions?: SearchSuggestion[]
+    recent?: SearchSuggestion[]
+    loading?: boolean
     class?: string
     iconSize?: IconSize
 }
@@ -29,6 +32,8 @@ interface SearchWidgetProps {
 const props = withDefaults(defineProps<SearchWidgetProps>(), {
     placeholder: undefined,
     suggestions: () => [],
+    recent: () => [],
+    loading: false,
     class: undefined,
     iconSize: 'default',
 })
@@ -74,9 +79,19 @@ function handleSelect(value: string) {
     }
 }
 
+function handleRecentSelect(value: string) {
+    const suggestion = props.recent.find(s => s.value === value)
+    if (!suggestion) return
+    query.value = suggestion.label
+    emit('select', suggestion)
+}
+
 const iconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
 )
+
+const showRecent = computed(() => !query.value && props.recent.length > 0)
+const showSuggestions = computed(() => !!query.value)
 </script>
 
 <template>
@@ -88,7 +103,7 @@ const iconClasses = computed(() =>
                     :model-value="query"
                     @update:model-value="handleSearch"
                 />
-                <CommandList v-if="query">
+                <CommandList v-if="showSuggestions">
                     <CommandEmpty />
                     <CommandGroup
                         v-for="(groupSuggestions, groupKey) in groupedSuggestions"
@@ -103,6 +118,22 @@ const iconClasses = computed(() =>
                         >
                             <Search :class="iconClasses" />
                             {{ suggestion.label }}
+                        </CommandItem>
+                    </CommandGroup>
+                    <div v-if="loading" class="flex items-center justify-center py-2">
+                        <Spinner size="sm" />
+                    </div>
+                </CommandList>
+                <CommandList v-else-if="showRecent">
+                    <CommandGroup :heading="t('searchWidget.recentSearches')">
+                        <CommandItem
+                            v-for="item in recent"
+                            :key="item.value"
+                            :value="item.value"
+                            @select="handleRecentSelect"
+                        >
+                            <Search :class="iconClasses" />
+                            {{ item.label }}
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>

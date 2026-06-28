@@ -9,11 +9,17 @@ import CardContent from '../card/CardContent.vue'
 import Input from '../input/Input.vue'
 import Textarea from '../textarea/Textarea.vue'
 import Button from '../button/Button.vue'
+import SuccessCard from '../success-card/SuccessCard.vue'
 
 interface FeedbackFormProps {
     title?: string
     description?: string
     submitText?: string
+    loading?: boolean
+    success?: boolean
+    successTitle?: string
+    successDescription?: string
+    successConfirmText?: string
     class?: string
     iconSize?: IconSize
 }
@@ -22,12 +28,18 @@ const props = withDefaults(defineProps<FeedbackFormProps>(), {
     title: undefined,
     description: undefined,
     submitText: undefined,
+    loading: false,
+    success: false,
+    successTitle: undefined,
+    successDescription: undefined,
+    successConfirmText: undefined,
     class: undefined,
     iconSize: 'default',
 })
 
 const emit = defineEmits<{
     submit: [payload: { name: string; email: string; subject: string; message: string }]
+    'success-confirm': []
 }>()
 
 const { t } = useLocale()
@@ -78,6 +90,7 @@ function validate(): boolean {
 }
 
 function handleSubmit() {
+    if (props.loading) return
     if (!validate()) return
 
     emit('submit', {
@@ -87,61 +100,76 @@ function handleSubmit() {
         message: message.value,
     })
 }
+
+function handleSuccessConfirm() {
+    emit('success-confirm')
+}
 </script>
 
 <template>
     <div :class="rootClasses">
-        <slot name="header">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-black tracking-tight">
-                    {{ resolvedTitle }}
-                </h2>
-                <p v-if="resolvedDescription" class="mt-2 text-brutal-muted-foreground font-medium">
-                    {{ resolvedDescription }}
-                </p>
-            </div>
-        </slot>
+        <SuccessCard
+            v-if="success"
+            :title="successTitle"
+            :description="successDescription"
+            :confirm-text="successConfirmText"
+            :icon-size="iconSize"
+            @confirm="handleSuccessConfirm"
+        />
 
-        <slot>
-            <Card variant="default">
-                <CardContent class="pt-6">
-                    <form class="space-y-4" @submit.prevent="handleSubmit">
-                        <div class="space-y-2">
-                            <label for="feedback-name" class="text-sm font-bold text-brutal-fg">
-                                {{ nameLabel }}
-                            </label>
-                            <Input id="feedback-name" v-model="name" :placeholder="nameLabel" :variant="errors.name ? 'error' : 'default'" />
-                            <p v-if="errors.name" class="text-sm text-red-500 font-medium">{{ errors.name }}</p>
-                        </div>
-                        <div class="space-y-2">
-                            <label for="feedback-email" class="text-sm font-bold text-brutal-fg">
-                                {{ emailLabel }}
-                            </label>
-                            <Input id="feedback-email" v-model="email" type="email" :placeholder="emailLabel" :variant="errors.email ? 'error' : 'default'" />
-                            <p v-if="errors.email" class="text-sm text-red-500 font-medium">{{ errors.email }}</p>
-                        </div>
-                        <div class="space-y-2">
-                            <label for="feedback-subject" class="text-sm font-bold text-brutal-fg">
-                                {{ subjectLabel }}
-                            </label>
-                            <Input id="feedback-subject" v-model="subject" :placeholder="subjectLabel" />
-                        </div>
-                        <div class="space-y-2">
-                            <label for="feedback-message" class="text-sm font-bold text-brutal-fg">
-                                {{ messageLabel }}
-                            </label>
-                            <Textarea id="feedback-message" v-model="message" :placeholder="messageLabel" :variant="errors.message ? 'error' : 'default'" />
-                            <p v-if="errors.message" class="text-sm text-red-500 font-medium">{{ errors.message }}</p>
-                        </div>
-                        <Button variant="primary" type="submit" class="w-full">
-                            <Send :class="iconClasses" />
-                            {{ resolvedSubmitText }}
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
-        </slot>
+        <template v-else>
+            <slot name="header">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-black tracking-tight">
+                        {{ resolvedTitle }}
+                    </h2>
+                    <p v-if="resolvedDescription" class="mt-2 text-brutal-muted-foreground font-medium">
+                        {{ resolvedDescription }}
+                    </p>
+                </div>
+            </slot>
 
-        <slot name="footer" />
+            <slot>
+                <Card variant="default">
+                    <CardContent class="pt-6">
+                        <form class="space-y-4" @submit.prevent="handleSubmit">
+                            <div class="space-y-2">
+                                <label for="feedback-name" class="text-sm font-bold text-brutal-fg">
+                                    {{ nameLabel }}
+                                </label>
+                                <Input id="feedback-name" v-model="name" :placeholder="nameLabel" :variant="errors.name ? 'error' : 'default'" />
+                                <p v-if="errors.name" class="text-sm text-red-500 font-medium">{{ errors.name }}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label for="feedback-email" class="text-sm font-bold text-brutal-fg">
+                                    {{ emailLabel }}
+                                </label>
+                                <Input id="feedback-email" v-model="email" type="email" :placeholder="emailLabel" :variant="errors.email ? 'error' : 'default'" />
+                                <p v-if="errors.email" class="text-sm text-red-500 font-medium">{{ errors.email }}</p>
+                            </div>
+                            <div class="space-y-2">
+                                <label for="feedback-subject" class="text-sm font-bold text-brutal-fg">
+                                    {{ subjectLabel }}
+                                </label>
+                                <Input id="feedback-subject" v-model="subject" :placeholder="subjectLabel" />
+                            </div>
+                            <div class="space-y-2">
+                                <label for="feedback-message" class="text-sm font-bold text-brutal-fg">
+                                    {{ messageLabel }}
+                                </label>
+                                <Textarea id="feedback-message" v-model="message" :placeholder="messageLabel" :variant="errors.message ? 'error' : 'default'" />
+                                <p v-if="errors.message" class="text-sm text-red-500 font-medium">{{ errors.message }}</p>
+                            </div>
+                            <Button variant="primary" type="submit" class="w-full" :loading="loading">
+                                <Send :class="iconClasses" />
+                                {{ resolvedSubmitText }}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </slot>
+
+            <slot name="footer" />
+        </template>
     </div>
 </template>

@@ -20,6 +20,30 @@ export const kanbanColumnVariants = cva(
     }
 );
 
+export const kanbanColumnHeaderVariants = cva(
+    [
+        'flex items-center justify-between mb-1',
+        'select-none',
+        'transition-opacity duration-150',
+    ],
+    {
+        variants: {
+            dragging: {
+                true: 'opacity-40',
+                false: '',
+            },
+            dragOver: {
+                true: 'border-3 border-brutal-primary rounded-brutal',
+                false: '',
+            },
+        },
+        defaultVariants: {
+            dragging: false,
+            dragOver: false,
+        },
+    }
+);
+
 export const kanbanCardVariants = cva(
     [
         'border-3 border-brutal shadow-brutal rounded-brutal',

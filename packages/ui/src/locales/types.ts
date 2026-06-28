@@ -12,6 +12,7 @@ export interface ComboboxLocale {
     searchPlaceholder: string
     emptyText: string
     selectedCount: string
+    create: string
 }
 
 export interface PaginationLocale {
@@ -213,6 +214,7 @@ export interface SuccessCardLocale {
 
 export interface SearchWidgetLocale {
     defaultPlaceholder: string
+    recentSearches: string
 }
 
 export interface FeedbackFormLocale {
@@ -430,6 +432,7 @@ export interface ColorPickerLocale {
 
 export interface KanbanLocale {
     dropCardsHere: string
+    addCard: string
 }
 
 export interface TabsNavLocale {

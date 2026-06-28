@@ -3,7 +3,8 @@ import { computed, ref, nextTick } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
-import type { TreeNode } from './TreeView.vue';
+import Checkbox from '../checkbox/Checkbox.vue';
+import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
 
 const INDENT_PER_DEPTH = 20
 const BASE_INDENT = 4
@@ -14,17 +15,24 @@ interface TreeViewNodeProps {
     expandedIds: Set<string>;
     depth?: number;
     isFirstRoot?: boolean;
+    selectionMode?: SelectionMode;
+    checkedIds?: Set<string>;
+    disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<TreeViewNodeProps>(), {
     selectedId: null,
     depth: 0,
     isFirstRoot: false,
+    selectionMode: 'single',
+    checkedIds: () => new Set(),
+    disabled: false,
 });
 
 const emit = defineEmits<{
     'toggle': [id: string];
     'select': [node: TreeNode];
+    'check': [node: TreeNode];
     'focus-prev': [];
     'focus-next': [];
     'focus-parent': [];
@@ -36,6 +44,35 @@ const treeItemRef = ref<HTMLDivElement | null>(null);
 const isLeaf = computed(() => !props.node.children || props.node.children.length === 0);
 const isExpanded = computed(() => props.expandedIds.has(props.node.id));
 const isSelected = computed(() => props.selectedId === props.node.id);
+const isCheckboxMode = computed(() => props.selectionMode === 'checkbox');
+
+function getAllDescendantIds(node: TreeNode): string[] {
+    const result: string[] = [node.id]
+    if (node.children) {
+        for (const child of node.children) {
+            result.push(...getAllDescendantIds(child))
+        }
+    }
+    return result
+}
+
+const checkState = computed<CheckState>(() => {
+    if (!isCheckboxMode.value) return 'unchecked'
+    const descendantIds = getAllDescendantIds(props.node)
+    const checkedCount = descendantIds.filter(id => props.checkedIds.has(id)).length
+    if (checkedCount === descendantIds.length) return 'checked'
+    if (checkedCount === 0) return 'unchecked'
+    return 'indeterminate'
+})
+
+const isChecked = computed(() => checkState.value === 'checked');
+const isIndeterminate = computed(() => checkState.value === 'indeterminate');
+
+const ariaChecked = computed(() => {
+    if (!isCheckboxMode.value) return undefined
+    if (isIndeterminate.value) return 'mixed'
+    return isChecked.value
+})
 
 const itemClass = computed(() =>
     cn(treeItemVariants({ selected: isSelected.value }))
@@ -49,10 +86,24 @@ const indentStyle = computed(() => ({
     paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
 }));
 
+function handleCheckboxUpdate() {
+    if (!props.disabled) emit('check', props.node)
+}
+
 const handleKeydown = (e: KeyboardEvent) => {
     switch (e.key) {
-        case 'Enter':
         case ' ':
+            e.preventDefault();
+            if (isCheckboxMode.value) {
+                if (!props.disabled) emit('check', props.node)
+            } else if (isLeaf.value) {
+                emit('select', props.node);
+            } else {
+                emit('toggle', props.node.id);
+                emit('select', props.node);
+            }
+            break;
+        case 'Enter':
             e.preventDefault();
             if (isLeaf.value) {
                 emit('select', props.node);
@@ -90,6 +141,16 @@ const handleKeydown = (e: KeyboardEvent) => {
     }
 };
 
+const handleClick = () => {
+    if (props.disabled) return
+    if (isLeaf.value) {
+        emit('select', props.node);
+    } else {
+        emit('toggle', props.node.id);
+        emit('select', props.node);
+    }
+}
+
 const focus = () => {
     nextTick(() => {
         treeItemRef.value?.focus();
@@ -106,18 +167,29 @@ defineExpose({ focus, nodeId: props.node.id });
         :tabindex="isSelected ? 0 : (isFirstRoot ? 0 : -1)"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-selected="isSelected"
+        :aria-checked="ariaChecked"
+        :aria-disabled="disabled || undefined"
         @keydown="handleKeydown"
     >
         <div
             :class="itemClass"
             :style="indentStyle"
-            @click="isLeaf ? emit('select', node) : (emit('toggle', node.id), emit('select', node))"
+            @click="handleClick"
         >
             <ChevronRight
                 v-if="!isLeaf"
                 :class="chevronClass"
             />
             <span v-else class="w-4 flex-shrink-0" />
+
+            <Checkbox
+                v-if="isCheckboxMode"
+                :checked="isChecked ? true : (isIndeterminate ? 'indeterminate' : false)"
+                :disabled="disabled"
+                size="sm"
+                class="flex-shrink-0"
+                @update:checked="handleCheckboxUpdate"
+            />
 
             <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0 text-brutal-primary" />
             <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
@@ -135,8 +207,12 @@ defineExpose({ focus, nodeId: props.node.id });
                     :selected-id="selectedId"
                     :expanded-ids="expandedIds"
                     :depth="depth + 1"
+                    :selection-mode="selectionMode"
+                    :checked-ids="checkedIds"
+                    :disabled="child.disabled ?? false"
                     @toggle="emit('toggle', $event)"
                     @select="emit('select', $event)"
+                    @check="emit('check', $event)"
                     @focus-prev="emit('focus-prev')"
                     @focus-next="emit('focus-next')"
                     @focus-parent="emit('focus-parent')"

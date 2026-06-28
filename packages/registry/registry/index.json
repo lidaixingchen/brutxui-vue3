@@ -799,7 +799,8 @@
       "registryDependencies": [
         "button",
         "popover",
-        "command"
+        "command",
+        "spinner"
       ],
       "files": [
         {
@@ -6414,7 +6415,9 @@
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "checkbox"
+      ],
       "files": [
         {
           "path": "components/ui/tree-view/TreeView.vue",
@@ -6536,7 +6539,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/kanban/KanbanBoard.vue",
@@ -6556,6 +6561,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -9126,7 +9135,8 @@
       ],
       "registryDependencies": [
         "card",
-        "command"
+        "command",
+        "spinner"
       ],
       "files": [
         {
@@ -9249,7 +9259,8 @@
         "card",
         "input",
         "textarea",
-        "button"
+        "button",
+        "success-card"
       ],
       "files": [
         {
