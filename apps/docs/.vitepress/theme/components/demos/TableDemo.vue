@@ -4,8 +4,8 @@ import {
 } from 'brutx-ui-vue'
 
 const rows = [
-    { name: 'Invoice #001', status: 'Paid', amount: '$250.00' },
-    { name: 'Invoice #002', status: 'Pending', amount: '$150.00' },
+    { name: '发票 #001', status: '已支付', amount: '$250.00' },
+    { name: '发票 #002', status: '待处理', amount: '$150.00' },
 ]
 </script>
 
@@ -13,9 +13,9 @@ const rows = [
     <Table>
         <TableHeader>
             <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Amount</TableHead>
+                <TableHead>名称</TableHead>
+                <TableHead>状态</TableHead>
+                <TableHead>金额</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>

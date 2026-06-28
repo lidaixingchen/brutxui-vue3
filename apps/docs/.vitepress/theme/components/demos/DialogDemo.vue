@@ -15,24 +15,23 @@ import {
 <template>
     <Dialog>
         <DialogTrigger as-child>
-            <Button variant="primary">Open</Button>
+            <Button variant="primary">打开</Button>
         </DialogTrigger>
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Edit Profile</DialogTitle>
+                <DialogTitle>编辑资料</DialogTitle>
                 <DialogDescription>
-                    Make changes to your profile here. Click save when you are done.
+                    在此处修改您的个人资料。完成后请点击保存。
                 </DialogDescription>
             </DialogHeader>
             <p class="text-sm font-medium">
-                This is the dialog content area. You can add form fields or other
-                interactive elements here.
+                这是对话框内容区域。您可以在此处添加表单字段或其他交互元素。
             </p>
             <DialogFooter>
                 <DialogClose as-child>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline">取消</Button>
                 </DialogClose>
-                <Button variant="primary">Save</Button>
+                <Button variant="primary">保存</Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>

@@ -16,7 +16,7 @@ const password = ref('')
 
 function onSubmit() {
     // eslint-disable-next-line no-alert
-    alert(`Email: ${email.value}, Password: ${password.value}`)
+    alert(`邮箱: ${email.value}, 密码: ${password.value}`)
 }
 </script>
 
@@ -25,12 +25,12 @@ function onSubmit() {
         <Form class="space-y-4" @submit="onSubmit">
             <FormField name="email">
                 <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>邮箱</FormLabel>
                     <FormControl>
                         <Input
                             v-model="email"
                             type="email"
-                            placeholder="you@example.com"
+                            placeholder="请输入邮箱地址"
                         />
                     </FormControl>
                     <FormMessage />
@@ -38,19 +38,19 @@ function onSubmit() {
             </FormField>
             <FormField name="password">
                 <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>密码</FormLabel>
                     <FormControl>
                         <Input
                             v-model="password"
                             type="password"
-                            placeholder="Enter your password"
+                            placeholder="请输入密码"
                         />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
             </FormField>
             <Button type="submit" class="w-full">
-                Sign In
+                登录
             </Button>
         </Form>
     </div>

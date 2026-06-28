@@ -23,14 +23,14 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">触发模式</p>
             <div class="flex flex-wrap items-center gap-3">
-                <GlitchButton variant="primary" trigger="hover">Hover 触发</GlitchButton>
-                <GlitchButton variant="primary" trigger="click">Click 切换</GlitchButton>
-                <GlitchButton variant="primary" trigger="autoplay" :interval="2000">Autoplay 自动</GlitchButton>
+                <GlitchButton variant="primary" trigger="hover">悬停触发</GlitchButton>
+                <GlitchButton variant="primary" trigger="click">点击切换</GlitchButton>
+                <GlitchButton variant="primary" trigger="autoplay" :interval="2000">自动播放</GlitchButton>
             </div>
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">速度变体（Click 切换查看）</p>
+            <p class="text-sm font-bold tracking-wide">速度变体（点击查看）</p>
             <div class="flex flex-wrap items-center gap-3">
                 <GlitchButton trigger="click" speed="slow">慢</GlitchButton>
                 <GlitchButton trigger="click" speed="medium">中</GlitchButton>
@@ -39,11 +39,11 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">撕裂方向（Click 切换查看）</p>
+            <p class="text-sm font-bold tracking-wide">撕裂方向（点击查看）</p>
             <div class="flex flex-wrap items-center gap-3">
-                <GlitchButton trigger="click" direction="horizontal" data-text="HORIZONTAL">HORIZONTAL</GlitchButton>
-                <GlitchButton trigger="click" direction="vertical" data-text="VERTICAL">VERTICAL</GlitchButton>
-                <GlitchButton trigger="click" direction="both" data-text="BOTH">BOTH</GlitchButton>
+                <GlitchButton trigger="click" direction="horizontal" data-text="水平">水平</GlitchButton>
+                <GlitchButton trigger="click" direction="vertical" data-text="垂直">垂直</GlitchButton>
+                <GlitchButton trigger="click" direction="both" data-text="双向">双向</GlitchButton>
             </div>
         </div>
 
@@ -61,10 +61,10 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
             <p class="text-sm font-bold tracking-wide">手动控制（trigger="none"）</p>
             <div class="flex flex-wrap items-center gap-3">
                 <GlitchButton ref="glitchRef" variant="accent" trigger="none" speed="fast">
-                    MANUAL
+                    手动
                 </GlitchButton>
-                <Button size="sm" @click="glitchRef?.play()">Play</Button>
-                <Button size="sm" variant="outline" @click="glitchRef?.stop()">Stop</Button>
+                <Button size="sm" @click="glitchRef?.play()">播放</Button>
+                <Button size="sm" variant="outline" @click="glitchRef?.stop()">停止</Button>
             </div>
         </div>
 

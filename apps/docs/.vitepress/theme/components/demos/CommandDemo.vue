@@ -24,32 +24,32 @@ function handleSelect(_value: string) {
         <div>
             <h3 class="mb-4 text-lg font-black">基础用法</h3>
             <Command class="w-full max-w-md border-3 border-brutal shadow-brutal">
-                <CommandInput placeholder="Type a command or search..." />
+                <CommandInput placeholder="输入命令或搜索..." />
                 <CommandList>
                     <CommandEmpty />
-                    <CommandGroup heading="Suggestions">
+                    <CommandGroup heading="建议">
                         <CommandItem value="calendar" @select="handleSelect">
-                            Calendar
+                            日历
                         </CommandItem>
                         <CommandItem value="search-emoji" @select="handleSelect">
-                            Search Emoji
+                            搜索表情
                         </CommandItem>
                         <CommandItem value="calculator" @select="handleSelect">
-                            Calculator
+                            计算器
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
-                    <CommandGroup heading="Settings">
+                    <CommandGroup heading="设置">
                         <CommandItem value="profile" @select="handleSelect">
-                            Profile
+                            个人资料
                             <CommandShortcut>⌘P</CommandShortcut>
                         </CommandItem>
                         <CommandItem value="billing" @select="handleSelect">
-                            Billing
+                            账单
                             <CommandShortcut>⌘B</CommandShortcut>
                         </CommandItem>
                         <CommandItem value="settings" @select="handleSelect">
-                            Settings
+                            设置
                             <CommandShortcut>⌘S</CommandShortcut>
                         </CommandItem>
                     </CommandGroup>
@@ -63,33 +63,33 @@ function handleSelect(_value: string) {
                 class="border-3 border-brutal bg-brutal-primary px-4 py-2 font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
                 @click="dialogOpen = true"
             >
-                Open Command Palette
+                打开命令面板
             </button>
             <CommandDialog v-model:open="dialogOpen">
-                <CommandInput placeholder="Type a command..." />
+                <CommandInput placeholder="输入命令..." />
                 <CommandList>
                     <CommandEmpty />
-                    <CommandGroup heading="Actions">
+                    <CommandGroup heading="操作">
                         <CommandItem value="new-file" @select="handleSelect">
-                            New File
+                            新建文件
                             <CommandShortcut>⌘N</CommandShortcut>
                         </CommandItem>
                         <CommandItem value="open-file" @select="handleSelect">
-                            Open File
+                            打开文件
                             <CommandShortcut>⌘O</CommandShortcut>
                         </CommandItem>
                         <CommandItem value="save-file" @select="handleSelect">
-                            Save
+                            保存
                             <CommandShortcut>⌘S</CommandShortcut>
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
-                    <CommandGroup heading="Navigation">
+                    <CommandGroup heading="导航">
                         <CommandItem value="go-home" @select="handleSelect">
-                            Go to Home
+                            前往首页
                         </CommandItem>
                         <CommandItem value="go-settings" @select="handleSelect">
-                            Go to Settings
+                            前往设置
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>

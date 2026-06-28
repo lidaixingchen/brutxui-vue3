@@ -14,12 +14,12 @@ import {
             <Popover>
                 <PopoverTrigger as-child>
                     <Button variant="outline">
-                        Open
+                        打开
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent>
                     <p class="text-sm font-medium">
-                        Popover content goes here.
+                        弹出框内容在此显示。
                     </p>
                 </PopoverContent>
             </Popover>
@@ -30,7 +30,7 @@ import {
             <div class="flex flex-wrap items-center gap-3">
                 <Popover>
                     <PopoverTrigger as-child>
-                        <Button variant="outline">Center</Button>
+                        <Button variant="outline">居中</Button>
                     </PopoverTrigger>
                     <PopoverContent align="center">
                         <p class="text-sm font-medium">align="center"</p>
@@ -39,7 +39,7 @@ import {
 
                 <Popover>
                     <PopoverTrigger as-child>
-                        <Button variant="outline">Start</Button>
+                        <Button variant="outline">起始</Button>
                     </PopoverTrigger>
                     <PopoverContent align="start">
                         <p class="text-sm font-medium">align="start"</p>
@@ -48,7 +48,7 @@ import {
 
                 <Popover>
                     <PopoverTrigger as-child>
-                        <Button variant="outline">End</Button>
+                        <Button variant="outline">结束</Button>
                     </PopoverTrigger>
                     <PopoverContent align="end">
                         <p class="text-sm font-medium">align="end"</p>
@@ -61,7 +61,7 @@ import {
             <p class="text-sm font-bold mb-2">偏移距离 (sideOffset=20)</p>
             <Popover>
                 <PopoverTrigger as-child>
-                    <Button variant="outline">Large Offset</Button>
+                    <Button variant="outline">大偏移</Button>
                 </PopoverTrigger>
                 <PopoverContent :side-offset="20">
                     <p class="text-sm font-medium">sideOffset=20</p>

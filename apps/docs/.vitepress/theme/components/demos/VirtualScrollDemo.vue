@@ -17,14 +17,14 @@ const items = ref<Item[]>(
 const stripedItems = ref<Item[]>(
     Array.from({ length: 2000 }, (_, i) => ({
         id: i,
-        name: `Striped Item ${i + 1}`,
+        name: `条纹项目 ${i + 1}`,
     }))
 )
 
 const borderedItems = ref<Item[]>(
     Array.from({ length: 1000 }, (_, i) => ({
         id: i,
-        name: `Bordered Row ${i + 1}`,
+        name: `带边框行 ${i + 1}`,
     }))
 )
 </script>

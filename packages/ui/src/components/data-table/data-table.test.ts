@@ -2,10 +2,11 @@ import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DataTable from './DataTable.vue'
+import type { DataTableColumn, DataTableProps } from './types'
 
 const globalProvide = { provide: { [LOCALE_INJECTION_KEY]: en } }
 
-interface TestRow extends Record<string, unknown> {
+interface TestRow {
     id: number
     name: string
     email: string
@@ -18,34 +19,36 @@ const testData: TestRow[] = [
     { id: 3, name: 'Charlie', email: 'charlie@example.com', age: 35 },
 ]
 
-const testColumns = [
-    { id: 'name', header: 'Name', accessorKey: 'name' as const, sortable: true },
-    { id: 'email', header: 'Email', accessorKey: 'email' as const },
-    { id: 'age', header: 'Age', accessorKey: 'age' as const, sortable: true, align: 'right' as const },
+const testColumns: DataTableColumn<TestRow>[] = [
+    { id: 'name', header: 'Name', accessorKey: 'name', sortable: true },
+    { id: 'email', header: 'Email', accessorKey: 'email' },
+    { id: 'age', header: 'Age', accessorKey: 'age', sortable: true, align: 'right' },
 ]
+
+// Helper to mount DataTable with proper generic typing
+function mountDataTable(props: Partial<DataTableProps<TestRow>> & { data: TestRow[]; columns: DataTableColumn<TestRow>[]; rowKey: keyof TestRow | ((row: TestRow) => string | number) }) {
+    return mount(DataTable as unknown as Parameters<typeof mount>[0], {
+        props: props as Record<string, unknown>,
+        global: globalProvide,
+    })
+}
 
 describe('DataTable', () => {
     it('renders with data', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
         })
         expect(wrapper.find('table').exists()).toBe(true)
         expect(wrapper.findAll('tbody tr')).toHaveLength(3)
     })
 
     it('renders column headers', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
         })
         const headers = wrapper.findAll('th')
         expect(headers[0].text()).toBe('Name')
@@ -54,13 +57,10 @@ describe('DataTable', () => {
     })
 
     it('renders cell values', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
         })
         const rows = wrapper.findAll('tbody tr')
         expect(rows[0].findAll('td')[0].text()).toBe('Alice')
@@ -69,66 +69,51 @@ describe('DataTable', () => {
     })
 
     it('shows empty message when no data', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: [],
-                columns: testColumns,
-                rowKey: 'id',
-                emptyMessage: 'No records found',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: [],
+            columns: testColumns,
+            rowKey: 'id',
+            emptyMessage: 'No records found',
         })
         expect(wrapper.text()).toContain('No records found')
     })
 
     it('applies custom class', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-                class: 'custom-table',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            class: 'custom-table',
         })
         expect(wrapper.classes()).toContain('custom-table')
     })
 
     it('has role="grid"', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
         })
         expect(wrapper.attributes('role')).toBe('grid')
     })
 
     it('renders checkbox when selectable', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-                selectable: true,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            selectable: true,
         })
         const checkboxes = wrapper.findAll('[role="checkbox"]')
         expect(checkboxes.length).toBe(4) // 1 header + 3 rows
     })
 
     it('emits sort event when clicking sortable column', async () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-                sortable: true,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            sortable: true,
         })
         const nameHeader = wrapper.findAll('th')[0]
         await nameHeader.trigger('click')
@@ -137,43 +122,37 @@ describe('DataTable', () => {
     })
 
     it('renders pagination when paginated', () => {
-        const largeData = Array.from({ length: 25 }, (_, i) => ({
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
             id: i + 1,
             name: `User ${i + 1}`,
             email: `user${i + 1}@example.com`,
             age: 20 + i,
         }))
 
-        const wrapper = mount(DataTable, {
-            props: {
-                data: largeData,
-                columns: testColumns,
-                rowKey: 'id',
-                paginated: true,
-                pageSize: 10,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: largeData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 10,
         })
         expect(wrapper.findAll('tbody tr')).toHaveLength(10)
     })
 
     it('emits pageChange event', async () => {
-        const largeData = Array.from({ length: 25 }, (_, i) => ({
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
             id: i + 1,
             name: `User ${i + 1}`,
             email: `user${i + 1}@example.com`,
             age: 20 + i,
         }))
 
-        const wrapper = mount(DataTable, {
-            props: {
-                data: largeData,
-                columns: testColumns,
-                rowKey: 'id',
-                paginated: true,
-                pageSize: 10,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: largeData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 10,
         })
         const nextButton = wrapper.find('button[aria-label="Next page"]')
         await nextButton.trigger('click')
@@ -182,78 +161,63 @@ describe('DataTable', () => {
     })
 
     it('shows loading overlay when loading', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-                loading: true,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            loading: true,
         })
         expect(wrapper.find('.animate-spin').exists()).toBe(true)
     })
 
     it('renders hidden columns as hidden', () => {
-        const columnsWithHidden = [
+        const columnsWithHidden: DataTableColumn<TestRow>[] = [
             ...testColumns,
-            { id: 'hidden', header: 'Hidden', accessorKey: 'id' as const, hidden: true },
+            { id: 'hidden', header: 'Hidden', accessorKey: 'id', hidden: true },
         ]
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: columnsWithHidden,
-                rowKey: 'id',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: columnsWithHidden,
+            rowKey: 'id',
         })
         const headers = wrapper.findAll('th')
         expect(headers).toHaveLength(3) // Only visible columns
     })
 
     it('supports custom row key function', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: (row: Record<string, unknown>) => `row-${(row as TestRow).id}`,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: (row: TestRow) => `row-${row.id}`,
         })
         expect(wrapper.findAll('tbody tr')).toHaveLength(3)
     })
 
     it('applies column alignment', () => {
-        const wrapper = mount(DataTable, {
-            props: {
-                data: testData,
-                columns: testColumns,
-                rowKey: 'id',
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
         })
         const ageHeader = wrapper.findAll('th')[2]
         expect(ageHeader.classes()).toContain('text-right')
     })
 
     it('clamps current page when filter reduces total pages', async () => {
-        const largeData = Array.from({ length: 25 }, (_, i) => ({
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
             id: i + 1,
             name: `User ${i + 1}`,
             email: `user${i + 1}@example.com`,
             age: 20 + i,
         }))
 
-        const wrapper = mount(DataTable, {
-            props: {
-                data: largeData,
-                columns: testColumns,
-                rowKey: 'id',
-                paginated: true,
-                filterable: true,
-                pageSize: 10,
-            },
-            global: globalProvide,
+        const wrapper = mountDataTable({
+            data: largeData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            filterable: true,
+            pageSize: 10,
         })
 
         await wrapper.find('button[aria-label="Next page"]').trigger('click')
@@ -270,56 +234,38 @@ describe('DataTable', () => {
 
 describe('DataTable visual compliance', () => {
     it('striped default true applies even:bg-brutal-muted/50 to rows', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id' },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id' })
         const rows = wrapper.findAll('tbody tr')
         expect(rows[0].classes()).toContain('even:bg-brutal-muted/50')
     })
 
     it('striped false removes even:bg-brutal-muted/50 from rows', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', striped: false },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', striped: false })
         const rows = wrapper.findAll('tbody tr')
         expect(rows[0].classes()).not.toContain('even:bg-brutal-muted/50')
     })
 
     it('size="sm" applies py-2 to body cells', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', size: 'sm' },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', size: 'sm' })
         const cell = wrapper.find('tbody td')
         expect(cell.classes()).toContain('py-2')
     })
 
     it('dense applies py-1.5 to body cells', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', dense: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', dense: true })
         const cell = wrapper.find('tbody td')
         expect(cell.classes()).toContain('py-1.5')
     })
 
     it('highlights active sort column header with bg-brutal-accent', async () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', sortable: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', sortable: true })
         await wrapper.findAll('th')[0].trigger('click')
         const nameHeader = wrapper.findAll('th')[0]
         expect(nameHeader.classes()).toContain('bg-brutal-accent')
     })
 
     it('highlights active sort column cells with bg-brutal-accent/20', async () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', sortable: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', sortable: true })
         await wrapper.findAll('th')[0].trigger('click')
         const rows = wrapper.findAll('tbody tr')
         rows.forEach(row => {
@@ -330,13 +276,10 @@ describe('DataTable visual compliance', () => {
     })
 
     it('pagination buttons have pressed feedback class', () => {
-        const largeData = Array.from({ length: 25 }, (_, i) => ({
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
             id: i + 1, name: `User ${i + 1}`, email: `user${i + 1}@example.com`, age: 20 + i,
         }))
-        const wrapper = mount(DataTable, {
-            props: { data: largeData, columns: testColumns, rowKey: 'id', paginated: true, pageSize: 10 },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: largeData, columns: testColumns, rowKey: 'id', paginated: true, pageSize: 10 })
         const buttons = wrapper.findAll('button[aria-label]')
         expect(buttons.length).toBeGreaterThan(0)
         buttons.forEach(btn => {
@@ -345,20 +288,14 @@ describe('DataTable visual compliance', () => {
     })
 
     it('filter input is rendered with Input component classes (border-3 border-brutal)', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', filterable: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', filterable: true })
         const input = wrapper.find('input[type="text"]')
         expect(input.classes()).toContain('border-3')
         expect(input.classes()).toContain('border-brutal')
     })
 
     it('export button renders as Button component after row selection', async () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', selectable: true, filterable: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', selectable: true, filterable: true })
         const rowCheckboxes = wrapper.findAll('[role="checkbox"]')
         await rowCheckboxes[1].trigger('click')
         await wrapper.vm.$nextTick()
@@ -368,18 +305,12 @@ describe('DataTable visual compliance', () => {
     })
 
     it('loading state has no backdrop-blur class', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', loading: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', loading: true })
         expect(wrapper.html()).not.toContain('backdrop-blur')
     })
 
     it('selection info bar has bg-brutal-primary and text-brutal-primary-foreground', async () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', selectable: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', selectable: true })
         const rowCheckboxes = wrapper.findAll('[role="checkbox"]')
         await rowCheckboxes[1].trigger('click')
         await wrapper.vm.$nextTick()
@@ -387,10 +318,7 @@ describe('DataTable visual compliance', () => {
     })
 
     it('stickyHeader applies sticky top-0 to thead', () => {
-        const wrapper = mount(DataTable, {
-            props: { data: testData, columns: testColumns, rowKey: 'id', stickyHeader: true },
-            global: globalProvide,
-        })
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', stickyHeader: true })
         const thead = wrapper.find('thead')
         expect(thead.classes()).toContain('sticky')
         expect(thead.classes()).toContain('top-0')
@@ -407,26 +335,23 @@ describe('DataTable style guard', () => {
     }
 
     function mountComprehensive() {
-        const largeData = Array.from({ length: 25 }, (_, i) => ({
+        const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
             id: i + 1, name: `User ${i + 1}`, email: `user${i + 1}@example.com`, age: 20 + i,
         }))
-        return mount(DataTable, {
-            props: {
-                data: largeData,
-                columns: testColumns,
-                rowKey: 'id',
-                sortable: true,
-                filterable: true,
-                selectable: true,
-                paginated: true,
-                pageSize: 10,
-                loading: true,
-                size: 'sm',
-                dense: true,
-                striped: true,
-                stickyHeader: true,
-            },
-            global: globalProvide,
+        return mountDataTable({
+            data: largeData,
+            columns: testColumns,
+            rowKey: 'id',
+            sortable: true,
+            filterable: true,
+            selectable: true,
+            paginated: true,
+            pageSize: 10,
+            loading: true,
+            size: 'sm',
+            dense: true,
+            striped: true,
+            stickyHeader: true,
         })
     }
 

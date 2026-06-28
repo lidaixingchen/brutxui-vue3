@@ -13,7 +13,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent class="pl-2">
-                        <div class="font-black text-base">Default 变体</div>
+                        <div class="font-black text-base">默认 (default) 变体</div>
                         <p class="text-sm text-brutal-fg/80 mt-1 font-normal">默认白底黑字圆点样式。</p>
                     </TimelineContent>
                 </TimelineItem>
@@ -24,7 +24,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent class="pl-2">
-                        <div class="font-black text-base">Primary 变体</div>
+                        <div class="font-black text-base">主要 (primary) 变体</div>
                         <p class="text-sm text-brutal-fg/80 mt-1 font-normal">珊瑚红主色圆点样式。</p>
                     </TimelineContent>
                 </TimelineItem>
@@ -35,7 +35,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent class="pl-2">
-                        <div class="font-black text-base">Secondary 变体</div>
+                        <div class="font-black text-base">次要 (secondary) 变体</div>
                         <p class="text-sm text-brutal-fg/80 mt-1 font-normal">薄荷青辅助色方形样式。</p>
                     </TimelineContent>
                 </TimelineItem>
@@ -46,7 +46,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent class="pl-2">
-                        <div class="font-black text-base">Accent 变体</div>
+                        <div class="font-black text-base">强调 (accent) 变体</div>
                         <p class="text-sm text-brutal-fg/80 mt-1 font-normal">黄色强调色菱形样式。</p>
                     </TimelineContent>
                 </TimelineItem>
@@ -57,7 +57,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineConnector />
                     </TimelineSeparator>
                     <TimelineContent class="pl-2">
-                        <div class="font-black text-base">Success 变体</div>
+                        <div class="font-black text-base">成功 (success) 变体</div>
                         <p class="text-sm text-brutal-fg/80 mt-1 font-normal">绿色成功色圆点样式。</p>
                     </TimelineContent>
                 </TimelineItem>
@@ -67,7 +67,7 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                         <TimelineDot variant="danger" shape="circle">6</TimelineDot>
                     </TimelineSeparator>
                     <TimelineContent class="pl-2">
-                        <div class="font-black text-base">Danger 变体</div>
+                        <div class="font-black text-base">危险 (danger) 变体</div>
                         <p class="text-sm text-brutal-fg/80 mt-1 font-normal">红色危险色圆点样式。</p>
                     </TimelineContent>
                 </TimelineItem>

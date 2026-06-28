@@ -7,9 +7,9 @@ type PageKey = 'dashboard' | 'analytics' | 'settings'
 const activePage = ref<PageKey>('dashboard')
 
 const pages: Record<PageKey, { title: string; content: string }> = {
-    dashboard: { title: 'Dashboard', content: 'Welcome back! This is your dashboard overview.' },
-    analytics: { title: 'Analytics', content: 'View your analytics and statistics here.' },
-    settings: { title: 'Settings', content: 'Manage your account settings and preferences.' },
+    dashboard: { title: '仪表盘', content: '欢迎回来！这是您的仪表盘概览。' },
+    analytics: { title: '数据分析', content: '在此查看您的分析和统计数据。' },
+    settings: { title: '设置', content: '管理您的账户设置和偏好。' },
 }
 
 function handleSignOut() {

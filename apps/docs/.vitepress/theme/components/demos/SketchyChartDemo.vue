@@ -2,12 +2,12 @@
 import { SketchyChart } from 'brutx-ui-vue'
 
 const lineData = [
-    { label: 'Jan', value: 30 },
-    { label: 'Feb', value: 65 },
-    { label: 'Mar', value: 45 },
-    { label: 'Apr', value: 80 },
-    { label: 'May', value: 55 },
-    { label: 'Jun', value: 90 },
+    { label: '一月', value: 30 },
+    { label: '二月', value: 65 },
+    { label: '三月', value: 45 },
+    { label: '四月', value: 80 },
+    { label: '五月', value: 55 },
+    { label: '六月', value: 90 },
 ]
 
 const barData = [
@@ -18,10 +18,10 @@ const barData = [
 ]
 
 const pieData = [
-    { label: 'Desktop', value: 45 },
-    { label: 'Mobile', value: 35 },
-    { label: 'Tablet', value: 15 },
-    { label: 'Other', value: 5 },
+    { label: '桌面端', value: 45 },
+    { label: '移动端', value: 35 },
+    { label: '平板', value: 15 },
+    { label: '其他', value: 5 },
 ]
 </script>
 

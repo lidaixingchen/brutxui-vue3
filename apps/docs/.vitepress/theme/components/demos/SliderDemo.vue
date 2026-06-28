@@ -14,7 +14,7 @@ const variantValue = ref([50])
             <p class="text-sm font-bold">基础用法</p>
             <Slider v-model="value" :default-value="[60]" />
             <p class="text-sm font-bold text-brutal-muted-foreground">
-                Value: {{ value[0] }}
+                值：{{ value[0] }}
             </p>
         </div>
 
@@ -22,7 +22,7 @@ const variantValue = ref([50])
             <p class="text-sm font-bold">自定义范围 (min=0, max=200, step=10)</p>
             <Slider v-model="rangedValue" :min="0" :max="200" :step="10" />
             <p class="text-sm font-bold text-brutal-muted-foreground">
-                Value: {{ rangedValue[0] }}
+                值：{{ rangedValue[0] }}
             </p>
         </div>
 
@@ -30,7 +30,7 @@ const variantValue = ref([50])
             <p class="text-sm font-bold">颜色变体 (variant=primary)</p>
             <Slider v-model="variantValue" variant="primary" />
             <p class="text-sm font-bold text-brutal-muted-foreground">
-                Value: {{ variantValue[0] }}
+                值：{{ variantValue[0] }}
             </p>
         </div>
 

@@ -5,7 +5,7 @@ import { Spinner, BlockSpinner, BarsSpinner, DotsSpinner } from 'brutx-ui-vue'
 <template>
     <div class="space-y-8">
         <div class="space-y-2">
-            <p class="font-black text-sm">Spinner Types</p>
+            <p class="font-black text-sm">加载器类型</p>
             <div class="flex flex-wrap items-center gap-8">
                 <div class="flex flex-col items-center gap-2">
                     <Spinner />
@@ -27,7 +27,7 @@ import { Spinner, BlockSpinner, BarsSpinner, DotsSpinner } from 'brutx-ui-vue'
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Spinner Sizes</p>
+            <p class="font-black text-sm">加载器尺寸</p>
             <div class="flex flex-wrap items-end gap-6">
                 <div class="flex flex-col items-center gap-2">
                     <Spinner size="sm" />
@@ -49,7 +49,7 @@ import { Spinner, BlockSpinner, BarsSpinner, DotsSpinner } from 'brutx-ui-vue'
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Spinner Variants</p>
+            <p class="font-black text-sm">加载器变体</p>
             <div class="flex flex-wrap items-end gap-6">
                 <div class="flex flex-col items-center gap-2">
                     <Spinner variant="default" />

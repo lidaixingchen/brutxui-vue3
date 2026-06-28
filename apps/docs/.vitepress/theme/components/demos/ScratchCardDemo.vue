@@ -45,7 +45,7 @@ const scratchRef = ref<InstanceType<typeof ScratchCard> | null>(null)
                         <p class="text-2xl font-black">一键揭示</p>
                     </div>
                 </ScratchCard>
-                <Button size="sm" @click="scratchRef?.revealAll()">Reveal All</Button>
+                <Button size="sm" @click="scratchRef?.revealAll()">全部揭示</Button>
             </div>
         </div>
     </div>

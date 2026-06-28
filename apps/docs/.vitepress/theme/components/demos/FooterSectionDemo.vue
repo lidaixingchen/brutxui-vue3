@@ -42,6 +42,6 @@ const linkGroups: FooterLinkGroup[] = [
         logo-text="BrutxUI"
         description="面向 Vue 3 的 Neo-Brutalist UI 组件库"
         :link-groups="linkGroups"
-        copyright="© 2026 BrutxUI. All rights reserved."
+        copyright="© 2026 BrutxUI. 版权所有。"
     />
 </template>

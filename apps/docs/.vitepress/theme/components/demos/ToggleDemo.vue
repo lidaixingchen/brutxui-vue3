@@ -13,10 +13,10 @@ const outlinePressed = ref(false)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">默认变体</p>
             <div class="flex gap-2">
-                <Toggle v-model:pressed="boldPressed" aria-label="Bold">
+                <Toggle v-model:pressed="boldPressed" aria-label="加粗">
                     <Bold class="h-4 w-4" />
                 </Toggle>
-                <Toggle v-model:pressed="italicPressed" aria-label="Italic">
+                <Toggle v-model:pressed="italicPressed" aria-label="斜体">
                     <Italic class="h-4 w-4" />
                 </Toggle>
             </div>
@@ -25,7 +25,7 @@ const outlinePressed = ref(false)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">轮廓变体</p>
             <div class="flex gap-2">
-                <Toggle v-model:pressed="outlinePressed" variant="outline" aria-label="Underline">
+                <Toggle v-model:pressed="outlinePressed" variant="outline" aria-label="下划线">
                     <Underline class="h-4 w-4" />
                 </Toggle>
             </div>
@@ -34,13 +34,13 @@ const outlinePressed = ref(false)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex items-center gap-2">
-                <Toggle size="sm" aria-label="Small">
+                <Toggle size="sm" aria-label="小">
                     <Bold class="h-3 w-3" />
                 </Toggle>
-                <Toggle size="default" aria-label="Default">
+                <Toggle size="default" aria-label="默认">
                     <Bold class="h-4 w-4" />
                 </Toggle>
-                <Toggle size="lg" aria-label="Large">
+                <Toggle size="lg" aria-label="大">
                     <Bold class="h-5 w-5" />
                 </Toggle>
             </div>
@@ -49,10 +49,10 @@ const outlinePressed = ref(false)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">禁用</p>
             <div class="flex items-center gap-2">
-                <Toggle disabled aria-label="Disabled">
+                <Toggle disabled aria-label="禁用">
                     <Bold class="h-4 w-4" />
                 </Toggle>
-                <Toggle disabled :pressed="true" aria-label="Disabled pressed">
+                <Toggle disabled :pressed="true" aria-label="已按下(禁用)">
                     <Italic class="h-4 w-4" />
                 </Toggle>
             </div>

@@ -1,12 +1,12 @@
 import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
 import type { DataTableColumn, DataTableSortState } from '@/components/data-table/types'
 
-export interface UseDataTableSortOptions<T extends Record<string, unknown>> {
+export interface UseDataTableSortOptions<T extends object> {
     columns: MaybeRefOrGetter<DataTableColumn<T>[]>
     sortable: MaybeRefOrGetter<boolean | undefined>
 }
 
-export function useDataTableSort<T extends Record<string, unknown>>(
+export function useDataTableSort<T extends object>(
     options: UseDataTableSortOptions<T>,
 ) {
     const sortState = ref<DataTableSortState>({ column: '', direction: null })

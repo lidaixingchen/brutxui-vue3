@@ -1,13 +1,13 @@
 import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
 
-export interface UseDataTableSelectionOptions<T extends Record<string, unknown>> {
+export interface UseDataTableSelectionOptions<T extends object> {
     selectable: MaybeRefOrGetter<boolean | undefined>
     rowKey: MaybeRefOrGetter<keyof T | ((row: T) => string | number)>
     displayData: MaybeRefOrGetter<T[]>
     data: MaybeRefOrGetter<T[]>
 }
 
-export function useDataTableSelection<T extends Record<string, unknown>>(
+export function useDataTableSelection<T extends object>(
     options: UseDataTableSelectionOptions<T>,
 ) {
     const selectedRows = ref<Set<string | number>>(new Set())

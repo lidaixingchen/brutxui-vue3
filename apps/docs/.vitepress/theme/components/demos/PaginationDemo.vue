@@ -20,7 +20,7 @@ const currentPageMinimal = ref(7)
         </div>
 
         <div>
-            <h3 class="text-sm font-black mb-3">变体：Default / Rounded / Minimal</h3>
+            <h3 class="text-sm font-black mb-3">变体：默认 / 圆角 / 极简</h3>
             <div class="space-y-4">
                 <Pagination
                     v-model:current-page="currentPageLarge"
@@ -41,7 +41,7 @@ const currentPageMinimal = ref(7)
         </div>
 
         <div>
-            <h3 class="text-sm font-black mb-3">尺寸：SM / Default / LG</h3>
+            <h3 class="text-sm font-black mb-3">尺寸：小 / 默认 / 大</h3>
             <div class="space-y-4">
                 <Pagination
                     v-model:current-page="currentPageLarge"

@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends Record<string, unknown>">
+<script setup lang="ts" generic="T extends object">
 import { computed, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -130,7 +130,15 @@ function getCellValue(row: T, column: DataTableColumn<T>): unknown {
 }
 
 function getHeaderLabel(column: DataTableColumn<T>): string {
-    if (typeof column.header === 'function') return column.header(column)
+    if (typeof column.header === 'function') {
+        return column.header({
+            id: column.id,
+            sortable: column.sortable,
+            sortDirection: sort.sortState.value.column === column.id ? sort.sortState.value.direction : null,
+            accessorKey: column.accessorKey,
+            align: column.align,
+        })
+    }
     return column.header
 }
 

@@ -17,8 +17,8 @@ const options = [
         <Combobox
             v-model="selected"
             :options="options"
-            placeholder="Select a framework..."
-            search-placeholder="Search frameworks..."
+            placeholder="请选择框架..."
+            search-placeholder="搜索框架..."
         />
     </div>
 </template>

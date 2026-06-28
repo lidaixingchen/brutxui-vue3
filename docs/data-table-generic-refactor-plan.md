@@ -91,6 +91,10 @@ export interface DataTableColumnHeaderContext {
     sortable?: boolean
     /** 当前列是否正在排序 */
     sortDirection?: 'asc' | 'desc' | null
+    /** 当前列的 accessorKey（如果有） */
+    accessorKey?: string
+    /** 当前列的对齐方式 */
+    align?: 'left' | 'center' | 'right'
 }
 
 export interface DataTableVirtualScroll {
@@ -180,7 +184,13 @@ export interface DataTablePaginationState {
 
 <!-- 修改后 -->
 <template v-if="typeof column.header === 'function'">
-    {{ column.header({ id: column.id, sortable: column.sortable, sortDirection: getSortDirection(column.id) }) }}
+    {{ column.header({
+        id: column.id,
+        sortable: column.sortable,
+        sortDirection: getSortDirection(column.id),
+        accessorKey: column.accessorKey,
+        align: column.align
+    }) }}
 </template>
 ```
 
@@ -226,10 +236,10 @@ export function useDataTableSelection<T extends object>(...) { ... }
 <script setup lang="ts">
 
 // 修改后
-<script setup lang="ts" generic="T extends Record<string, unknown>">
+<script setup lang="ts" generic="T extends object">
 
 // ColumnDef 泛型化
-export interface ColumnDef<T extends Record<string, unknown> = Record<string, unknown>> {
+export interface ColumnDef<T extends object = Record<string, unknown>> {
     key: keyof T & string
     label: string
     sortable?: boolean
@@ -354,6 +364,18 @@ const columns: DataTableColumn<User>[] = [
         accessorKey: 'name',
     },
 ]
+
+// 如果需要访问更多列信息
+const columns: DataTableColumn<User>[] = [
+    {
+        id: 'name',
+        header: (ctx) => {
+            // ctx 包含: id, sortable, sortDirection, accessorKey, align
+            return ctx.accessorKey ? `Sort by ${ctx.accessorKey}` : ctx.id
+        },
+        accessorKey: 'name',
+    },
+]
 ```
 
 ---
@@ -367,23 +389,54 @@ export interface DataTableColumn<T extends object> {
     id: string                                                              // 不含 T
     header: string | ((ctx: DataTableColumnHeaderContext) => string)         // 不含 T ✓
     accessorKey?: keyof T                                                    // T 协变 ✓
-    accessorFn?: (row: T) => unknown                                        // T 逆变
-    cell?: (props: { row: T; value: unknown }) => VNode | string            // T 逆变
+    accessorFn?: (row: T) => unknown                                        // T 逆变 ⚠️
+    cell?: (props: { row: T; value: unknown }) => VNode | string            // T 逆变 ⚠️
     // ...
 }
 ```
 
-`accessorFn` 和 `cell` 仍包含 `T` 在逆变位置，但由于：
-1. 这些字段都是可选的（`?`）
-2. `T extends object` 约束下，TypeScript 对于可选字段的型变检查更宽松
-3. 实际使用中 `T` 通常由数据数组显式提供，而非由列定义推导
+### 逆变字段的处理策略
 
-因此在实际使用场景中不会出现型变不兼容问题。如果仍有问题，可以对这两个字段也使用 `NoInfer<T>`：
+`accessorFn` 和 `cell` 仍包含 `T` 在逆变位置。**注意：可选字段（`?`）并不会放宽型变检查**，TypeScript 的型变规则对可选和必需字段是一致的。
+
+**实际使用中的缓解因素**：
+
+1. 实际使用中 `T` 通常由 `data` 数组显式提供，而非由列定义推导
+2. `DataTableColumn<T>[]` 通常在同一处定义 `data` 和 `columns`，TypeScript 可以直接推导 `T`
+
+**如果仍出现型变不兼容问题**，可以使用以下方案：
+
+#### 方案 A：使用条件类型包装（推荐）
 
 ```typescript
-accessorFn?: (row: NoInfer<T>) => unknown
-cell?: (props: { row: NoInfer<T>; value: unknown }) => VNode | string
+export interface DataTableColumn<T extends object> {
+    accessorFn?: (row: T extends unknown ? T : never) => unknown
+    cell?: (props: { row: T extends unknown ? T : never; value: unknown }) => VNode | string
+}
 ```
+
+#### 方案 B：分离列定义和数据类型
+
+```typescript
+// 列定义不含 T，通过 accessorKey 关联
+export interface DataTableColumn {
+    id: string
+    header: string | ((ctx: DataTableColumnHeaderContext) => string)
+    accessorKey?: string
+    accessorFn?: (row: Record<string, unknown>) => unknown
+    cell?: (props: { row: Record<string, unknown>; value: unknown }) => VNode | string
+    // ...
+}
+
+// 数据类型通过 Props 约束
+export interface DataTableProps<T extends object> {
+    data: T[]
+    columns: DataTableColumn[]
+    rowKey: keyof T | ((row: T) => string | number)
+}
+```
+
+**注意**：方案 B 会丢失 `accessorKey` 的类型检查，需要根据实际需求权衡。
 
 ---
 
@@ -392,9 +445,11 @@ cell?: (props: { row: NoInfer<T>; value: unknown }) => VNode | string
 | 阶段 | 内容 | 版本 |
 |------|------|------|
 | 1 | 新增 `DataTableColumnHeaderContext` 类型 | 当前版本（非破坏性） |
-| 2 | 弃用 `header: (column: DataTableColumn<T>) => string` 签名，添加 console.warn | 当前版本（非破坏性） |
+| 2 | 使用 `@deprecated` JSDoc 标记旧签名 `header: (column: DataTableColumn<T>) => string`，IDE 中显示删除线提示 | 当前版本（非破坏性） |
 | 3 | 移除旧签名，切换到 `header: (ctx: DataTableColumnHeaderContext) => string` | 下一个主版本（Breaking Change） |
 | 4 | 泛型约束从 `Record<string, unknown>` 改为 `object` | 下一个主版本（Breaking Change） |
+
+> **关于阶段 2 的说明**：TypeScript 类型系统不支持编译时弃用警告。使用 `@deprecated` JSDoc 标记后，IDE 会在用户使用旧签名时显示删除线，但不会产生编译错误。这是目前最可行的渐进式迁移方案。
 
 ---
 

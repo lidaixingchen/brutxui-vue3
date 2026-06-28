@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends object">
 import { computed, ref } from 'vue'
 import { ArrowUpDown, ArrowUp, ArrowDown } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
@@ -12,18 +12,19 @@ import TableCell from '../table/TableCell.vue'
 import Pagination from '../pagination/Pagination.vue'
 import Input from '../input/Input.vue'
 
-export interface ColumnDef {
-    key: string
+export interface ColumnDef<T extends object = Record<string, unknown>> {
+    key: keyof T & string
     label: string
     sortable?: boolean
 }
 
-interface DataTableSectionProps {
+export interface DataTableSectionProps<T extends object = Record<string, unknown>> {
     title?: string
-    columns?: ColumnDef[]
-    rows?: Record<string, unknown>[]
+    columns?: ColumnDef<T>[]
+    rows?: T[]
     searchable?: boolean
     pageSize?: number
+    rowKey?: keyof T & string
     class?: string
 }
 
@@ -39,8 +40,8 @@ const props = withDefaults(defineProps<DataTableSectionProps>(), {
 })
 
 const emit = defineEmits<{
-    'row-click': [row: Record<string, unknown>]
-    'sort': [payload: { key: string; direction: 'asc' | 'desc' }]
+    'row-click': [row: T]
+    'sort': [payload: { key: keyof T & string; direction: 'asc' | 'desc' }]
 }>()
 
 const { t } = useLocale()
@@ -50,7 +51,7 @@ const resolvedSearchPlaceholder = computed(() => t('dataTableSection.searchPlace
 const resolvedNoResults = computed(() => t('dataTableSection.noResults'))
 
 const searchQuery = ref('')
-const sortKey = ref('')
+const sortKey = ref<keyof T | ''>('')
 const sortDirection = ref<'asc' | 'desc'>('asc')
 const currentPage = ref(1)
 
@@ -66,7 +67,7 @@ const filteredRows = computed(() => {
 
 const sortedRows = computed(() => {
     if (!sortKey.value) return filteredRows.value
-    const key = sortKey.value
+    const key = sortKey.value as keyof T & string
     const dir = sortDirection.value
     return [...filteredRows.value].sort((a, b) => {
         const aVal = a[key]
@@ -90,15 +91,15 @@ function handleSort(key: string) {
     if (sortKey.value === key) {
         sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
     } else {
-        sortKey.value = key
+        sortKey.value = key as keyof T
         sortDirection.value = 'asc'
     }
     currentPage.value = 1
-    emit('sort', { key, direction: sortDirection.value })
+    emit('sort', { key: key as keyof T & string, direction: sortDirection.value })
 }
 
-function handleRowClick(row: Record<string, unknown>) {
-    emit('row-click', row)
+function handleRowClick(row: unknown) {
+    emit('row-click', row as T)
 }
 
 function handleSearch() {
@@ -167,7 +168,7 @@ function sortIcon(key: string) {
                         <template v-if="paginatedRows.length > 0">
                             <TableRow
                                 v-for="(row, rowIndex) in paginatedRows"
-                                :key="(row.id as PropertyKey) ?? rowIndex"
+                                :key="rowKey ? String(row[rowKey]) : rowIndex"
                                 class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                                 @click="handleRowClick(row)"
                             >

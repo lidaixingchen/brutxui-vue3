@@ -5,9 +5,9 @@ import type { StatItem } from 'brutx-ui-vue'
 
 const stats: StatItem[] = [
     {
-        title: 'Revenue',
+        title: '收入',
         value: '$45,231',
-        description: 'from last month',
+        description: '较上月',
         change: '+20.1%',
         trend: 'up',
         icon: DollarSign,
@@ -15,9 +15,9 @@ const stats: StatItem[] = [
         progress: 72,
     },
     {
-        title: 'Users',
+        title: '用户',
         value: '2,350',
-        description: 'from last week',
+        description: '较上周',
         change: '+12.5%',
         trend: 'up',
         icon: Users,
@@ -25,9 +25,9 @@ const stats: StatItem[] = [
         progress: 58,
     },
     {
-        title: 'Bounce Rate',
+        title: '跳出率',
         value: '18.2%',
-        description: 'from last month',
+        description: '较上月',
         change: '-3.1%',
         trend: 'down',
         icon: Activity,
@@ -35,9 +35,9 @@ const stats: StatItem[] = [
         progress: 18,
     },
     {
-        title: 'Orders',
+        title: '订单',
         value: '1,247',
-        description: 'from last week',
+        description: '较上周',
         change: '+8.7%',
         trend: 'up',
         icon: ShoppingCart,
@@ -49,8 +49,8 @@ const stats: StatItem[] = [
 
 <template>
     <DashboardStats
-        title="Dashboard Overview"
-        subtitle="Key metrics for this quarter"
+        title="仪表盘概览"
+        subtitle="本季度关键指标"
         :stats="stats"
     />
 </template>

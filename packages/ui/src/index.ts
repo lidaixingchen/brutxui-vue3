@@ -277,11 +277,11 @@ export type { StepperStepItem } from './components/stepper-section/StepperSectio
 export { default as CookieConsent } from './components/cookie-consent/CookieConsent.vue'
 
 export { default as DataTableSection } from './components/data-table-section/DataTableSection.vue'
-export type { ColumnDef } from './components/data-table-section/DataTableSection.vue'
+export type { ColumnDef, DataTableSectionProps } from './components/data-table-section/DataTableSection.vue'
 
 export { default as DataTable } from './components/data-table/DataTable.vue'
 export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, dataTableBodyVariants, dataTableRowVariants, dataTableCellVariants, dataTableFooterVariants, dataTableToolbarVariants, dataTablePaginationVariants, dataTableEmptyVariants, dataTableLoadingVariants } from './components/data-table/data-table-variants'
-export type { DataTableColumn, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
+export type { DataTableColumn, DataTableColumnHeaderContext, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
 
 export { default as SettingsPage } from './components/settings-page/SettingsPage.vue'
 export type { SettingsTab } from './components/settings-page/SettingsPage.vue'

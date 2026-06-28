@@ -15,17 +15,17 @@ import {
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
             <Button variant="outline">
-                Open Menu
+                打开菜单
             </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
             <DropdownMenuGroup>
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                <DropdownMenuLabel>操作</DropdownMenuLabel>
+                <DropdownMenuItem>编辑</DropdownMenuItem>
+                <DropdownMenuItem>复制</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem class="text-brutal-destructive">
-                    Delete
+                    删除
                 </DropdownMenuItem>
             </DropdownMenuGroup>
         </DropdownMenuContent>

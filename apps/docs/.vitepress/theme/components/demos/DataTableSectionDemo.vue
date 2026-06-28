@@ -2,14 +2,21 @@
 import { DataTableSection } from 'brutx-ui-vue'
 import type { ColumnDef } from 'brutx-ui-vue'
 
-const columns: ColumnDef[] = [
+interface Employee {
+    name: string
+    email: string
+    role: string
+    status: string
+}
+
+const columns: ColumnDef<Employee>[] = [
     { key: 'name', label: '姓名', sortable: true },
     { key: 'email', label: '邮箱', sortable: true },
     { key: 'role', label: '角色', sortable: true },
     { key: 'status', label: '状态' },
 ]
 
-const data: Record<string, unknown>[] = [
+const data: Employee[] = [
     { name: '张三', email: 'zhangsan@example.com', role: '管理员', status: '活跃' },
     { name: '李四', email: 'lisi@example.com', role: '编辑', status: '活跃' },
     { name: '王五', email: 'wangwu@example.com', role: '访客', status: '未激活' },

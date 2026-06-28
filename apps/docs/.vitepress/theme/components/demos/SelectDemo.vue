@@ -6,12 +6,12 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from 'b
     <div class="w-full max-w-sm">
         <Select>
             <SelectTrigger>
-                <SelectValue placeholder="Select a fruit..." />
+                <SelectValue placeholder="请选择一个水果..." />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="cherry">Cherry</SelectItem>
+                <SelectItem value="apple">苹果</SelectItem>
+                <SelectItem value="banana">香蕉</SelectItem>
+                <SelectItem value="cherry">樱桃</SelectItem>
             </SelectContent>
         </Select>
     </div>

@@ -1,12 +1,12 @@
 import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
 import type { DataTableColumn, DataTableFilterState } from '@/components/data-table/types'
 
-export interface UseDataTableFilterOptions<T extends Record<string, unknown>> {
+export interface UseDataTableFilterOptions<T extends object> {
     columns: MaybeRefOrGetter<DataTableColumn<T>[]>
     filterable: MaybeRefOrGetter<boolean | undefined>
 }
 
-export function useDataTableFilter<T extends Record<string, unknown>>(
+export function useDataTableFilter<T extends object>(
     options: UseDataTableFilterOptions<T>,
 ) {
     const filterState = ref<DataTableFilterState>({ global: '', columns: {} })

@@ -4,9 +4,9 @@ import { Label } from 'brutx-ui-vue'
 
 <template>
     <div class="flex flex-col gap-4">
-        <Label>Default Label</Label>
-        <Label variant="error">Error Label</Label>
-        <Label variant="success">Success Label</Label>
-        <Label variant="muted">Muted Label</Label>
+        <Label>默认标签</Label>
+        <Label variant="error">错误标签</Label>
+        <Label variant="success">成功标签</Label>
+        <Label variant="muted">弱化标签</Label>
     </div>
 </template>

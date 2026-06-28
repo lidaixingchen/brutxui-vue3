@@ -8,16 +8,16 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex items-center gap-4">
                 <Avatar size="sm">
-                    <AvatarFallback>SM</AvatarFallback>
+                    <AvatarFallback>小</AvatarFallback>
                 </Avatar>
                 <Avatar size="default">
-                    <AvatarFallback>DF</AvatarFallback>
+                    <AvatarFallback>默认</AvatarFallback>
                 </Avatar>
                 <Avatar size="lg">
-                    <AvatarFallback>LG</AvatarFallback>
+                    <AvatarFallback>大</AvatarFallback>
                 </Avatar>
                 <Avatar size="xl">
-                    <AvatarFallback>XL</AvatarFallback>
+                    <AvatarFallback>特大</AvatarFallback>
                 </Avatar>
             </div>
         </div>
@@ -26,10 +26,10 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
             <p class="text-sm font-bold tracking-wide">形状</p>
             <div class="flex items-center gap-4">
                 <Avatar size="lg" shape="square">
-                    <AvatarFallback>SQ</AvatarFallback>
+                    <AvatarFallback>方形</AvatarFallback>
                 </Avatar>
                 <Avatar size="lg" shape="rounded">
-                    <AvatarFallback>RD</AvatarFallback>
+                    <AvatarFallback>圆角</AvatarFallback>
                 </Avatar>
             </div>
         </div>
@@ -38,12 +38,12 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
             <p class="text-sm font-bold tracking-wide">带图片</p>
             <div class="flex items-center gap-4">
                 <Avatar size="lg">
-                    <AvatarImage src="https://i.pravatar.cc/150?img=32" alt="User avatar" />
-                    <AvatarFallback>UA</AvatarFallback>
+                    <AvatarImage src="https://i.pravatar.cc/150?img=32" alt="用户头像" />
+                    <AvatarFallback>用户</AvatarFallback>
                 </Avatar>
                 <Avatar size="lg" shape="rounded">
-                    <AvatarImage src="https://i.pravatar.cc/150?img=44" alt="User avatar" />
-                    <AvatarFallback>UA</AvatarFallback>
+                    <AvatarImage src="https://i.pravatar.cc/150?img=44" alt="用户头像" />
+                    <AvatarFallback>用户</AvatarFallback>
                 </Avatar>
             </div>
         </div>

@@ -3,7 +3,6 @@ import { DataTable } from 'brutx-ui-vue'
 import type { DataTableColumn } from 'brutx-ui-vue'
 
 interface User {
-    [key: string]: unknown
     id: number
     name: string
     email: string
@@ -12,25 +11,25 @@ interface User {
 }
 
 const users: User[] = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'Editor', status: 'Active' },
-    { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'Viewer', status: 'Inactive' },
-    { id: 4, name: 'Alice Brown', email: 'alice@example.com', role: 'Editor', status: 'Active' },
-    { id: 5, name: 'Charlie Wilson', email: 'charlie@example.com', role: 'Admin', status: 'Inactive' },
-    { id: 6, name: 'Diana Miller', email: 'diana@example.com', role: 'Viewer', status: 'Active' },
-    { id: 7, name: 'Edward Davis', email: 'edward@example.com', role: 'Editor', status: 'Inactive' },
-    { id: 8, name: 'Fiona Garcia', email: 'fiona@example.com', role: 'Viewer', status: 'Active' },
-    { id: 9, name: 'George Lee', email: 'george@example.com', role: 'Admin', status: 'Active' },
-    { id: 10, name: 'Hannah Kim', email: 'hannah@example.com', role: 'Editor', status: 'Inactive' },
-    { id: 11, name: 'Ian Martinez', email: 'ian@example.com', role: 'Viewer', status: 'Active' },
-    { id: 12, name: 'Julia Taylor', email: 'julia@example.com', role: 'Admin', status: 'Inactive' },
+    { id: 1, name: '张三', email: 'zhangsan@example.com', role: '管理员', status: '活跃' },
+    { id: 2, name: '李四', email: 'lisi@example.com', role: '编辑', status: '活跃' },
+    { id: 3, name: '王五', email: 'wangwu@example.com', role: '查看者', status: '未活跃' },
+    { id: 4, name: '赵六', email: 'zhaoliu@example.com', role: '编辑', status: '活跃' },
+    { id: 5, name: '孙七', email: 'sunqi@example.com', role: '管理员', status: '未活跃' },
+    { id: 6, name: '周八', email: 'zhouba@example.com', role: '查看者', status: '活跃' },
+    { id: 7, name: '吴九', email: 'wujiu@example.com', role: '编辑', status: '未活跃' },
+    { id: 8, name: '郑十', email: 'zhengshi@example.com', role: '查看者', status: '活跃' },
+    { id: 9, name: '钱十一', email: 'qian11@example.com', role: '管理员', status: '活跃' },
+    { id: 10, name: '陈十二', email: 'chen12@example.com', role: '编辑', status: '未活跃' },
+    { id: 11, name: '林十三', email: 'lin13@example.com', role: '查看者', status: '活跃' },
+    { id: 12, name: '黄十四', email: 'huang14@example.com', role: '管理员', status: '未活跃' },
 ]
 
 const columns: DataTableColumn<User>[] = [
-    { id: 'name', header: 'Name', accessorKey: 'name', sortable: true },
-    { id: 'email', header: 'Email', accessorKey: 'email', sortable: true },
-    { id: 'role', header: 'Role', accessorKey: 'role', sortable: true },
-    { id: 'status', header: 'Status', accessorKey: 'status', sortable: true },
+    { id: 'name', header: '姓名', accessorKey: 'name', sortable: true },
+    { id: 'email', header: '邮箱', accessorKey: 'email', sortable: true },
+    { id: 'role', header: '角色', accessorKey: 'role', sortable: true },
+    { id: 'status', header: '状态', accessorKey: 'status', sortable: true },
 ]
 </script>
 
