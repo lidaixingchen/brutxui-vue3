@@ -28,6 +28,57 @@ AI 助手可以使用 `AGENTS.md` 来：
 - 避免反模式（软阴影、圆角边框等）
 - 正确使用导入路径和类名合并工具
 
+## BrutxUI Skill
+
+BrutxUI 提供了一个专用的 AI Skill 文件（`skills/brutxui/SKILL.md`），为 AI 编码助手提供完整的组件库知识。与 `AGENTS.md` 的项目级指令不同，Skill 专注于**代码生成**——告诉 AI 如何正确使用 BrutxUI 的每个组件。
+
+### 使用方式
+
+在支持 Skill 的 AI 工具中（如 Claude Code），输入 `/brutxui` 即可激活。Skill 会自动加载以下内容：
+
+- 完整的组件列表（40+ 组件 + 30+ 区块模板）
+- 导入方式（npm 包导入 / 复制粘贴导入）
+- 样式规范（必须使用 / 禁止使用的类名）
+- 主题系统（Classic / Pastel / Mono / Warm 四套预设）
+- 国际化配置（`useLocale()`、语言切换、自定义语言包）
+- 代码模板（表单、时间线、图表等常见场景）
+- 分类参考文件（表单、布局、数据展示、反馈、区块等）
+
+### Skill 与 AGENTS.md 的区别
+
+| 维度 | AGENTS.md | BrutxUI Skill |
+| --- | --- | --- |
+| 作用范围 | 项目级（monorepo 结构、命令、发布流程） | 组件级（代码生成、样式规范、API 用法） |
+| 触发方式 | 自动加载 | `/brutxui` 命令触发 |
+| 适用场景 | 了解项目结构、运行命令 | 生成组件代码、选择正确的变体和样式 |
+| 内容粒度 | 粗（约定和规则） | 细（每个组件的 Props/Events/Slots） |
+
+### 参考文件结构
+
+Skill 附带的参考文件按组件类别组织：
+
+```text
+skills/brutxui/
+├── SKILL.md                          # 主文件（组件列表、规范、模板）
+└── references/
+    ├── design-tokens.md              # 设计令牌、主题、国际化
+    ├── components/
+    │   ├── form.md                   # 表单组件 Props
+    │   ├── layout.md                 # 布局容器 Props
+    │   ├── data.md                   # 数据展示 Props
+    │   ├── feedback.md               # 浮层反馈 Props
+    │   └── brutal.md                 # 新粗野特色组件 Props
+    └── blocks/
+        ├── layout-nav.md             # 页头/页脚/仪表盘外壳
+        ├── marketing.md              # 英雄区/定价/博客/FAQ
+        ├── dashboard.md              # 统计/图表/数据表格
+        ├── pages.md                  # 登录/设置/404 等页面
+        ├── feedback.md               # 空状态/错误/成功/反馈
+        └── interactive.md            # 搜索/上传/快捷操作
+```
+
+AI 助手在生成代码时会根据场景自动读取对应的参考文件，确保生成的代码符合组件 API。
+
 ## AI 助手如何使用 BrutxUI
 
 ### 组件生成
