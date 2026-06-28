@@ -19,5 +19,23 @@ import { Separator } from 'brutx-ui-vue'
             <Separator orientation="vertical" />
             <span class="text-sm">右侧</span>
         </div>
+
+        <p class="text-sm font-bold tracking-wide">变体</p>
+        <div class="space-y-2">
+            <Separator variant="default" />
+            <Separator variant="primary" />
+            <Separator variant="muted" />
+        </div>
+
+        <p class="text-sm font-bold tracking-wide">尺寸</p>
+        <div class="space-y-2">
+            <Separator size="sm" />
+            <Separator size="default" />
+            <Separator size="lg" />
+        </div>
+
+        <p class="text-sm font-bold tracking-wide">文字分隔线</p>
+        <Separator>章节标题</Separator>
+        <Separator variant="primary" size="lg">主色标题</Separator>
     </div>
 </template>

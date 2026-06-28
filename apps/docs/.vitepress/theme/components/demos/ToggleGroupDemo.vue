@@ -8,6 +8,7 @@ const multipleValue = ref<string[]>([])
 const outlineValue = ref('bold')
 const smValue = ref('bold')
 const lgValue = ref('bold')
+const verticalValue = ref<string[]>([])
 </script>
 
 <template>
@@ -76,6 +77,40 @@ const lgValue = ref('bold')
                         <Italic class="h-5 w-5" />
                     </ToggleGroupItem>
                 </ToggleGroup>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">方向</p>
+            <div class="flex items-start gap-8">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">水平</span>
+                    <ToggleGroup type="multiple" v-model="multipleValue" orientation="horizontal">
+                        <ToggleGroupItem value="bold" aria-label="加粗">
+                            <Bold class="h-4 w-4" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="italic" aria-label="斜体">
+                            <Italic class="h-4 w-4" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="underline" aria-label="下划线">
+                            <Underline class="h-4 w-4" />
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">垂直</span>
+                    <ToggleGroup type="multiple" v-model="verticalValue" orientation="vertical">
+                        <ToggleGroupItem value="bold" aria-label="加粗">
+                            <Bold class="h-4 w-4" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="italic" aria-label="斜体">
+                            <Italic class="h-4 w-4" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem value="underline" aria-label="下划线">
+                            <Underline class="h-4 w-4" />
+                        </ToggleGroupItem>
+                    </ToggleGroup>
+                </div>
             </div>
         </div>
 

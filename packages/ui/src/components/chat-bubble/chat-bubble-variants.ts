@@ -31,6 +31,10 @@ export const chatBubbleVariants = cva(
                 color: 'accent',
                 class: 'bg-brutal-accent text-brutal-accent-foreground',
             },
+            {
+                variant: 'system',
+                class: 'text-xs',
+            },
         ],
         defaultVariants: {
             variant: 'received',

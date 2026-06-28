@@ -3,6 +3,7 @@ import { computed, provide } from 'vue'
 import { AvatarRoot } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import { useLocale } from '@/composables/useLocale'
 import { avatarVariants } from './avatar-variants'
 import { avatarKey } from './avatar-key'
 
@@ -31,6 +32,19 @@ const statusColorMap: Record<Exclude<AvatarStatus, 'none'>, string> = {
     offline: 'bg-brutal-muted',
     busy: 'bg-brutal-destructive',
 }
+
+const statusLocaleKeyMap: Record<Exclude<AvatarStatus, 'none'>, string> = {
+    online: 'avatar.statusOnline',
+    offline: 'avatar.statusOffline',
+    busy: 'avatar.statusBusy',
+}
+
+const { t } = useLocale()
+
+const statusLabel = computed(() => {
+    if (props.status === 'none') return undefined
+    return t(statusLocaleKeyMap[props.status])
+})
 
 const classes = computed(() =>
     cn(
@@ -61,6 +75,6 @@ provide(avatarKey, {
         <AvatarRoot :class="classes">
             <slot />
         </AvatarRoot>
-        <span v-if="status !== 'none'" :class="statusClasses" role="status" :aria-label="`Status: ${status}`" />
+        <span v-if="status !== 'none'" :class="statusClasses" role="status" :aria-label="statusLabel" />
     </span>
 </template>

@@ -65,6 +65,12 @@ import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
 | `title` | `string` | locale: `feedbackForm.defaultTitle` |
 | `description` | `string` | locale: `feedbackForm.defaultDescription` |
 | `submitText` | `string` | locale: `feedbackForm.defaultSubmitText` |
+| `loading` | `boolean` | `false` |
+| `success` | `boolean` | `false` |
+| `successTitle` | `string` | locale: `successCard.defaultTitle` |
+| `successDescription` | `string` | locale: `successCard.defaultDescription` |
+| `successConfirmText` | `string` | locale: `successCard.defaultConfirmText` |
+| `iconSize` | `IconSize` | `'default'` |
 | `class` | `string` | — |
 
 ## 事件
@@ -72,6 +78,67 @@ import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
 | 事件 | 载荷 |
 |------|------|
 | `submit` | `[{ name: string; email: string; subject: string; message: string }]` |
+| `success-confirm` | `[]` |
+
+## 加载状态
+
+设置 `loading` 为 `true` 时，提交按钮进入 loading 态并显示 spinner，期间禁止重复提交。`submit` 事件仍正常触发，由调用方在异步请求结束后将 `loading` 置回 `false`。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
+
+const loading = ref(false)
+
+async function handleSubmit(payload) {
+    loading.value = true
+    await sendFeedback(payload)
+    loading.value = false
+}
+</script>
+
+<template>
+    <FeedbackForm :loading="loading" @submit="handleSubmit" />
+</template>
+```
+
+## 成功状态
+
+设置 `success` 为 `true` 时，表单被 `SuccessCard` 替换，展示成功标题、描述与确认按钮。点击确认按钮触发 `success-confirm` 事件，由调用方决定后续行为（如重置表单、跳转）。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
+
+const loading = ref(false)
+const success = ref(false)
+
+async function handleSubmit(payload) {
+    loading.value = true
+    await sendFeedback(payload)
+    loading.value = false
+    success.value = true
+}
+
+function handleSuccessConfirm() {
+    success.value = false
+}
+</script>
+
+<template>
+    <FeedbackForm
+        :loading="loading"
+        :success="success"
+        success-title="反馈已收到"
+        success-description="感谢您的反馈，我们会尽快处理"
+        success-confirm-text="继续填写"
+        @submit="handleSubmit"
+        @success-confirm="handleSuccessConfirm"
+    />
+</template>
+```
 
 ## 插槽
 

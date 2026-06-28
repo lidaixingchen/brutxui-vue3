@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Card3D } from 'brutx-ui-vue'
+
+const clickCount = ref(0)
+function onClick() {
+    clickCount.value++
+}
 </script>
 
 <template>
@@ -52,5 +58,34 @@ import { Card3D } from 'brutx-ui-vue'
                 <p class="text-sm">禁用 3D 效果，卡片不会响应鼠标移动。</p>
             </div>
         </Card3D>
+
+        <div class="space-y-2 w-full max-w-sm">
+            <p class="text-sm font-bold tracking-wide">颜色变体</p>
+            <Card3D variant="primary">
+                <div class="p-6">
+                    <h3 class="text-lg font-black mb-2">主色 (primary)</h3>
+                </div>
+            </Card3D>
+            <Card3D variant="accent">
+                <div class="p-6">
+                    <h3 class="text-lg font-black mb-2">强调 (accent)</h3>
+                </div>
+            </Card3D>
+            <Card3D variant="muted">
+                <div class="p-6">
+                    <h3 class="text-lg font-black mb-2">静音 (muted)</h3>
+                </div>
+            </Card3D>
+        </div>
+
+        <div class="space-y-2 w-full max-w-sm">
+            <p class="text-sm font-bold tracking-wide">可点击</p>
+            <Card3D clickable @click="onClick">
+                <div class="p-6">
+                    <h3 class="text-lg font-black mb-2">点击我</h3>
+                    <p class="text-sm">clickable=true，点击触发 click 事件。已点击 {{ clickCount }} 次。</p>
+                </div>
+            </Card3D>
+        </div>
     </div>
 </template>

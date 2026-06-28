@@ -316,6 +316,11 @@ export const zhCN: Locale = {
     card3d: {
         ariaLabel: '3D 交互卡片',
     },
+    avatar: {
+        statusOnline: '在线',
+        statusOffline: '离线',
+        statusBusy: '忙碌',
+    },
     hardcoreInput: {
         invalidInput: '输入内容无效',
     },

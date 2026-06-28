@@ -92,6 +92,37 @@ interface VirtualScrollItem {
 | `scroll` | `scrollTop: number` | 滚动时触发 |
 | `scroll-end` | — | 滚动到底部时触发 |
 
+## 暴露方法
+
+通过 `ref` 引用组件后可调用以下方法（经 `defineExpose` 暴露）：
+
+| 方法 | 参数 | 说明 |
+|------|------|------|
+| `scrollToIndex` | `index: number` | 滚动到指定索引位置的列表项 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { VirtualScroll } from 'brutx-ui-vue'
+
+const listRef = ref(null)
+const items = Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `项目 ${i + 1}` }))
+
+function jumpToMiddle() {
+    listRef.value?.scrollToIndex(Math.floor(items.length / 2))
+}
+</script>
+
+<template>
+    <Button @click="jumpToMiddle">跳转到中间</Button>
+    <VirtualScroll ref="listRef" :items="items" :item-height="48">
+        <template #default="{ item }">
+            <div class="p-4">{{ item.name }}</div>
+        </template>
+    </VirtualScroll>
+</template>
+```
+
 ## 插槽
 
 | 插槽 | 参数 | 说明 |

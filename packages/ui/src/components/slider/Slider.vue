@@ -87,12 +87,6 @@ const thumbCount = computed(() => {
     return 1
 })
 
-const currentValues = computed(() => {
-    if (props.modelValue && props.modelValue.length > 0) return props.modelValue
-    if (props.defaultValue && props.defaultValue.length > 0) return props.defaultValue
-    return [0]
-})
-
 function valueToPercentage(value: number): number {
     const range = props.max - props.min
     if (range <= 0) return 0
@@ -115,9 +109,15 @@ function markStyle(mark: number): Record<string, string> {
     }
 }
 
-const tooltipStyle = computed<Record<string, string> | undefined>(() => {
-    if (activeThumb.value < 0) return undefined
-    const value = currentValues.value[activeThumb.value]
+function tooltipTextFor(values: number[] | null | undefined): string {
+    if (activeThumb.value < 0 || !values || values.length === 0) return ''
+    const value = values[activeThumb.value]
+    return value === undefined ? '' : String(value)
+}
+
+function tooltipStyleFor(values: number[] | null | undefined): Record<string, string> | undefined {
+    if (activeThumb.value < 0 || !values || values.length === 0) return undefined
+    const value = values[activeThumb.value]
     if (value === undefined) return undefined
     const pct = valueToPercentage(value)
     const style: Record<string, string> = { transform: '' }
@@ -131,19 +131,17 @@ const tooltipStyle = computed<Record<string, string> | undefined>(() => {
         style.transform = 'translate(-50%, -100%)'
     }
     return style
-})
-
-const tooltipText = computed(() => {
-    if (activeThumb.value < 0) return ''
-    const value = currentValues.value[activeThumb.value]
-    return value === undefined ? '' : String(value)
-})
+}
 
 function handleThumbFocus(index: number) {
     activeThumb.value = index
 }
-function handleThumbBlur() {
-    activeThumb.value = -1
+function handleThumbBlur(index: number) {
+    Promise.resolve().then(() => {
+        if (activeThumb.value === index) {
+            activeThumb.value = -1
+        }
+    })
 }
 </script>
 
@@ -160,30 +158,32 @@ function handleThumbBlur() {
         :class="rootClasses"
         @update:model-value="emit('update:modelValue', $event ?? [0])"
     >
-        <SliderTrackPrimitive :class="trackClasses">
-            <SliderRangePrimitive :class="rangeClasses" />
-            <span
-                v-for="(mark, index) in marks"
-                :key="`mark-${index}`"
-                :class="markClasses"
-                :style="markStyle(mark)"
-                aria-hidden="true"
+        <template #default="{ modelValue: slotValues }">
+            <SliderTrackPrimitive :class="trackClasses">
+                <SliderRangePrimitive :class="rangeClasses" />
+                <span
+                    v-for="(mark, index) in marks"
+                    :key="`mark-${index}`"
+                    :class="markClasses"
+                    :style="markStyle(mark)"
+                    aria-hidden="true"
+                />
+            </SliderTrackPrimitive>
+            <SliderThumbPrimitive
+                v-for="(_, index) in thumbCount"
+                :key="index"
+                :class="thumbClasses"
+                @focus="handleThumbFocus(index)"
+                @blur="handleThumbBlur(index)"
+                @pointerenter="handleThumbFocus(index)"
+                @pointerleave="handleThumbBlur(index)"
             />
-        </SliderTrackPrimitive>
-        <SliderThumbPrimitive
-            v-for="(_, index) in thumbCount"
-            :key="index"
-            :class="thumbClasses"
-            @focus="handleThumbFocus(index)"
-            @blur="handleThumbBlur()"
-            @pointerenter="handleThumbFocus(index)"
-            @pointerleave="handleThumbBlur()"
-        />
-        <span
-            v-if="showTooltip && activeThumb >= 0"
-            :class="tooltipClasses"
-            :style="tooltipStyle"
-            role="tooltip"
-        >{{ tooltipText }}</span>
+            <span
+                v-if="showTooltip && activeThumb >= 0"
+                :class="tooltipClasses"
+                :style="tooltipStyleFor(slotValues)"
+                role="tooltip"
+            >{{ tooltipTextFor(slotValues) }}</span>
+        </template>
     </SliderRootPrimitive>
 </template>

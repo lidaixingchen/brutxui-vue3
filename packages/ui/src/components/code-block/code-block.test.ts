@@ -228,6 +228,23 @@ describe('CodeBlock maxLines', () => {
         expect(toggleButton.text()).toContain('收起')
     })
 
+    it('sets aria-expanded false when collapsed', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const toggleButton = wrapper.find('.border-t-3.bg-brutal-muted button')
+        expect(toggleButton.attributes('aria-expanded')).toBe('false')
+    })
+
+    it('sets aria-expanded true when expanded', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: multilineCode, maxLines: 3 },
+        })
+        const toggleButton = wrapper.find('.border-t-3.bg-brutal-muted button')
+        await toggleButton.trigger('click')
+        expect(toggleButton.attributes('aria-expanded')).toBe('true')
+    })
+
     it('clips line numbers column when collapsed', () => {
         const wrapper = mount(CodeBlock, {
             props: { code: multilineCode, maxLines: 3, showLineNumbers: true },

@@ -145,6 +145,7 @@ function onColumnDragStart(e: DragEvent, columnId: string) {
     draggingColumn.value = columnId;
     if (e.dataTransfer) {
         e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', columnId);
     }
 }
 
@@ -219,7 +220,7 @@ const columnHeaderClassesMap = computed(() => {
     return map
 })
 
-const addIconClasses = iconSizeVariants({ size: 'sm' });
+const addIconClasses = computed(() => iconSizeVariants({ size: 'sm' }));
 </script>
 
 <template>

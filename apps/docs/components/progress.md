@@ -47,6 +47,37 @@ const progress = ref(75)
 </template>
 ```
 
+## 不确定状态
+
+当无法确定具体进度时，设置 `indeterminate` 为 `true`，进度条会忽略 `modelValue`，指示器以 CSS 动画在轨道内循环滑动。
+
+```vue
+<script setup>
+import { Progress } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <Progress indeterminate />
+</template>
+```
+
+## 显示百分比标签
+
+设置 `showLabel` 为 `true` 时，会在进度条中央显示当前百分比文字（基于 `modelValue` 与 `max` 计算，四舍五入取整）。不确定状态下不显示标签。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Progress } from 'brutx-ui-vue'
+
+const progress = ref(65)
+</script>
+
+<template>
+    <Progress v-model="progress" show-label />
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -55,6 +86,8 @@ const progress = ref(75)
 | `max` | `number` | `100` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `variant` | `'default' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'default'` |
+| `indeterminate` | `boolean` | `false` |
+| `showLabel` | `boolean` | `false` |
 | `class` | `string` | — |
 
 ## 样式

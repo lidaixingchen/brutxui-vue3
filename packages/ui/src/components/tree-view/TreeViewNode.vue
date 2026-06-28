@@ -3,6 +3,7 @@ import { computed, ref, nextTick } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
+import { getAllDescendantIds } from './tree-view-utils';
 import Checkbox from '../checkbox/Checkbox.vue';
 import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
 
@@ -45,16 +46,6 @@ const isLeaf = computed(() => !props.node.children || props.node.children.length
 const isExpanded = computed(() => props.expandedIds.has(props.node.id));
 const isSelected = computed(() => props.selectedId === props.node.id);
 const isCheckboxMode = computed(() => props.selectionMode === 'checkbox');
-
-function getAllDescendantIds(node: TreeNode): string[] {
-    const result: string[] = [node.id]
-    if (node.children) {
-        for (const child of node.children) {
-            result.push(...getAllDescendantIds(child))
-        }
-    }
-    return result
-}
 
 const checkState = computed<CheckState>(() => {
     if (!isCheckboxMode.value) return 'unchecked'
@@ -188,6 +179,7 @@ defineExpose({ focus, nodeId: props.node.id });
                 :disabled="disabled"
                 size="sm"
                 class="flex-shrink-0"
+                @click.stop
                 @update:checked="handleCheckboxUpdate"
             />
 

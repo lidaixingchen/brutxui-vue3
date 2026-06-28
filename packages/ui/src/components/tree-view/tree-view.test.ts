@@ -424,6 +424,35 @@ describe('TreeViewNode checkbox mode', () => {
         expect(checkEvents).toBeTruthy()
     })
 
+    it('does not emit select when clicking the checkbox in checkbox mode', async () => {
+        const wrapper = mount(TreeViewNode, {
+            props: {
+                node: { id: 'file.ts', label: 'file.ts' },
+                expandedIds: emptyExpandedIds,
+                selectionMode: 'checkbox',
+                checkedIds: new Set<string>(),
+            },
+        })
+        const checkbox = wrapper.findComponent({ name: 'Checkbox' })
+        await checkbox.trigger('click')
+        expect(wrapper.emitted('select')).toBeFalsy()
+        expect(wrapper.emitted('toggle')).toBeFalsy()
+    })
+
+    it('still emits select when clicking row label in checkbox mode', async () => {
+        const wrapper = mount(TreeViewNode, {
+            props: {
+                node: { id: 'file.ts', label: 'file.ts' },
+                expandedIds: emptyExpandedIds,
+                selectionMode: 'checkbox',
+                checkedIds: new Set<string>(),
+            },
+        })
+        const rowLabel = wrapper.find('.truncate')
+        await rowLabel.trigger('click')
+        expect(wrapper.emitted('select')).toBeTruthy()
+    })
+
     it('sets aria-disabled when disabled prop is true', () => {
         const wrapper = mount(TreeViewNode, {
             props: {

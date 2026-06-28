@@ -43,6 +43,19 @@ const modified = '/images/after.jpg'
 2. **零依赖**：不需要额外加载任何外部手势交互 JS 库，包体积近乎于零。
 3. **完美排版**：底层的 `clip-path: inset(...)` 裁剪方式不会破坏图片的宽高比，确保布局在多端始终对齐。
 
+## 方向
+
+通过 `orientation` 属性切换分割线方向。默认 `horizontal` 为左右拖拽；设置为 `vertical` 时，分割线变为水平方向上下拖拽，裁剪从下到上进行（`clip-path: inset(0 0 ...)`），手柄图标自动旋转 90 度。
+
+```vue
+<BeforeAfter
+    :before="original"
+    :after="modified"
+    orientation="vertical"
+    :default-value="50"
+/>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -53,4 +66,5 @@ const modified = '/images/after.jpg'
 | `afterAlt` | `string` | locale: `beforeAfter.after` | 对比图片的 `alt` 属性 |
 | `defaultValue` | `number` | `50` | 初始状态下分割线所处的百分比位置 (0-100) |
 | `disabled` | `boolean` | `false` | 是否禁用拖拽交互 |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 分割线方向，vertical 时从下到上裁剪 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |

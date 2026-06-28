@@ -46,5 +46,23 @@ function next() { if (current.value < steps.length - 1) current.value++ }
             <p class="text-xs font-bold opacity-50 mb-4 uppercase tracking-widest">垂直</p>
             <Stepper v-model="current" :steps="steps" orientation="vertical" />
         </div>
+
+        <!-- 变体 -->
+        <div class="border-3 border-brutal shadow-brutal rounded-brutal p-5 bg-brutal-bg">
+            <p class="text-xs font-bold opacity-50 mb-4 uppercase tracking-widest">变体 (accent)</p>
+            <Stepper v-model="current" :steps="steps" orientation="horizontal" variant="accent" />
+        </div>
+
+        <!-- 尺寸 -->
+        <div class="border-3 border-brutal shadow-brutal rounded-brutal p-5 bg-brutal-bg">
+            <p class="text-xs font-bold opacity-50 mb-4 uppercase tracking-widest">尺寸 (lg)</p>
+            <Stepper v-model="current" :steps="steps" orientation="horizontal" size="lg" />
+        </div>
+
+        <!-- 不可点击 -->
+        <div class="border-3 border-brutal shadow-brutal rounded-brutal p-5 bg-brutal-bg">
+            <p class="text-xs font-bold opacity-50 mb-4 uppercase tracking-widest">不可点击</p>
+            <Stepper v-model="current" :steps="steps" orientation="horizontal" :clickable="false" />
+        </div>
     </div>
 </template>

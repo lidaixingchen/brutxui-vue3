@@ -59,5 +59,32 @@ import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTable } f
                 <SkeletonTable :rows="4" :columns="4" />
             </div>
         </div>
+
+        <div class="space-y-2">
+            <p class="font-black text-sm">基础尺寸</p>
+            <div class="space-y-2">
+                <Skeleton size="sm" width="200px" />
+                <Skeleton size="default" width="200px" />
+                <Skeleton size="lg" width="200px" />
+                <Skeleton size="xl" width="200px" />
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="font-black text-sm">形状</p>
+            <div class="flex items-center gap-4">
+                <Skeleton shape="rect" size="lg" width="80px" />
+                <Skeleton shape="circle" size="lg" />
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="font-black text-sm">自定义宽度</p>
+            <div class="space-y-2 w-full">
+                <Skeleton width="100%" />
+                <Skeleton width="75%" />
+                <Skeleton width="50%" />
+            </div>
+        </div>
     </div>
 </template>

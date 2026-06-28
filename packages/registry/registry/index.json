@@ -145,6 +145,18 @@
         {
           "path": "components/ui/avatar/avatar-key.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {

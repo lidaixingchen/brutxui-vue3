@@ -88,6 +88,70 @@ import { SkeletonTable } from 'brutx-ui-vue'
 | `secondary` | 辅助色，30% 不透明度 |
 | `accent` | 强调色，30% 不透明度 |
 
+## 尺寸
+
+| 尺寸 | 高度 |
+|------|------|
+| `sm` | `h-8` |
+| `default` | `h-10` |
+| `lg` | `h-14` |
+| `xl` | `h-20` |
+
+当 `shape="circle"` 时，宽度与高度保持一致（`w-8`/`w-10`/`w-14`/`w-20`）。
+
+```vue
+<script setup>
+import { Skeleton } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <div class="space-y-2">
+        <Skeleton size="sm" width="200px" />
+        <Skeleton size="default" width="200px" />
+        <Skeleton size="lg" width="200px" />
+        <Skeleton size="xl" width="200px" />
+    </div>
+</template>
+```
+
+## 形状
+
+| 形状 | 说明 |
+|------|------|
+| `rect` | 圆角矩形（`rounded-brutal`） |
+| `circle` | 圆形（`rounded-full`），宽高相等 |
+
+```vue
+<script setup>
+import { Skeleton } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <div class="flex items-center gap-4">
+        <Skeleton shape="rect" size="lg" width="80px" />
+        <Skeleton shape="circle" size="lg" />
+    </div>
+</template>
+```
+
+## 自定义宽度
+
+`width` 接受任意 CSS 宽度字符串，包括百分比；当 `shape="circle"` 时同时设置高度。
+
+```vue
+<script setup>
+import { Skeleton } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <div class="space-y-2 w-full">
+        <Skeleton width="100%" />
+        <Skeleton width="75%" />
+        <Skeleton width="50%" />
+    </div>
+</template>
+```
+
 ## 子组件
 
 | 组件 | 说明 |
@@ -102,10 +166,13 @@ import { SkeletonTable } from 'brutx-ui-vue'
 
 ### Skeleton
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 控制高度（`circle` 时同步控制宽度） |
+| `shape` | `'rect' \| 'circle'` | `'rect'` | 形状；`circle` 时 `rounded-full` 且宽高相等 |
+| `width` | `string` | — | 自定义宽度，支持百分比如 `'100%'`；`circle` 时同时设置高度 |
+| `class` | `string` | — | 附加类名 |
 
 ### SkeletonText
 

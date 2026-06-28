@@ -79,6 +79,9 @@ const suggestions = [
 |------|------|--------|
 | `placeholder` | `string` | locale: `searchWidget.defaultPlaceholder` |
 | `suggestions` | `SearchSuggestion[]` | `[]` |
+| `recent` | `SearchSuggestion[]` | `[]` |
+| `loading` | `boolean` | `false` |
+| `iconSize` | `IconSize` | `'default'` |
 | `class` | `string` | — |
 
 ### SearchSuggestion 类型
@@ -95,6 +98,48 @@ const suggestions = [
 |------|------|
 | `search` | `[value: string]` |
 | `select` | `[suggestion: SearchSuggestion]` |
+
+## 最近搜索
+
+当输入框为空且 `recent` 非空时，下拉列表展示「最近搜索」分组（标题取自 locale `searchWidget.recentSearches`）。点击某项会将输入框回填为该项 `label` 并触发 `select` 事件。
+
+```vue
+<script setup>
+import SearchWidget from '@/components/ui/search-widget/SearchWidget.vue'
+import type { SearchSuggestion } from 'brutx-ui-vue'
+
+const recent: SearchSuggestion[] = [
+    { label: 'Button 按钮', value: 'button' },
+    { label: '主题配置', value: 'theming' },
+]
+</script>
+
+<template>
+    <SearchWidget :recent="recent" @select="(s) => console.log(s)" />
+</template>
+```
+
+## 加载状态
+
+设置 `loading` 为 `true` 时，建议列表底部显示 `Spinner`，用于异步搜索场景。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import SearchWidget from '@/components/ui/search-widget/SearchWidget.vue'
+
+const loading = ref(false)
+
+function handleSearch(value) {
+    loading.value = true
+    fetchResults(value).finally(() => { loading.value = false })
+}
+</script>
+
+<template>
+    <SearchWidget :loading="loading" :suggestions="suggestions" @search="handleSearch" />
+</template>
+```
 
 ## 插槽
 

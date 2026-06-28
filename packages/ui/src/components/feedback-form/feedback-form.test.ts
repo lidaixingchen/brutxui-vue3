@@ -90,6 +90,29 @@ describe('FeedbackForm', () => {
         expect(confirmEvents!.length).toBe(1)
     })
 
+    it('resets form fields after success-confirm', async () => {
+        const wrapper = mount(FeedbackForm, {
+            props: { success: false },
+            ...localeProvide,
+        })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('Alice')
+        await inputs[1].setValue('alice@example.com')
+        await wrapper.find('textarea').setValue('Great work!')
+
+        await wrapper.setProps({ success: true })
+        const successCard = wrapper.findComponent({ name: 'SuccessCard' })
+        successCard.vm.$emit('confirm')
+        await wrapper.vm.$nextTick()
+
+        await wrapper.setProps({ success: false })
+
+        const restoredInputs = wrapper.findAll('input')
+        expect((restoredInputs[0].element as HTMLInputElement).value).toBe('')
+        expect((restoredInputs[1].element as HTMLInputElement).value).toBe('')
+        expect((wrapper.find('textarea').element as HTMLTextAreaElement).value).toBe('')
+    })
+
     it('renders title prop in header', () => {
         const wrapper = mount(FeedbackForm, {
             props: { title: 'Contact Us' },

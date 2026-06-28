@@ -102,6 +102,13 @@ function handleSubmit() {
 }
 
 function handleSuccessConfirm() {
+    name.value = ''
+    email.value = ''
+    subject.value = ''
+    message.value = ''
+    errors.name = ''
+    errors.email = ''
+    errors.message = ''
     emit('success-confirm')
 }
 </script>

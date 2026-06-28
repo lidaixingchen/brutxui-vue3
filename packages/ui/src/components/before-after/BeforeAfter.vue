@@ -89,7 +89,7 @@ const inputClasses = computed(() =>
 
 const inputStyle = computed(() => {
     if (props.orientation === 'vertical') {
-        return { writingMode: 'vertical-lr' as const }
+        return { writingMode: 'vertical-rl' as const }
     }
     return undefined
 })

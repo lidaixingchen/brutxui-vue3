@@ -77,6 +77,59 @@ const value = ref([50])
 </template>
 ```
 
+## 方向
+
+通过 `orientation` 属性切换水平 (`horizontal`) 或垂直 (`vertical`) 布局，该属性透传给 reka-ui 原语。垂直模式需要为容器设定高度。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Slider } from 'brutx-ui-vue'
+
+const value = ref([50])
+</script>
+
+<template>
+    <div class="h-48">
+        <Slider v-model="value" orientation="vertical" />
+    </div>
+</template>
+```
+
+## 刻度标记
+
+通过 `marks` 属性传入数值数组，会在轨道对应位置渲染刻度小标记。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Slider } from 'brutx-ui-vue'
+
+const value = ref([50])
+</script>
+
+<template>
+    <Slider v-model="value" :marks="[0, 25, 50, 75, 100]" />
+</template>
+```
+
+## 拖拽提示
+
+开启 `showTooltip` 后，拖拽或悬停滑块时会在拇指附近显示当前值。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Slider } from 'brutx-ui-vue'
+
+const value = ref([50])
+</script>
+
+<template>
+    <Slider v-model="value" show-tooltip />
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -89,6 +142,9 @@ const value = ref([50])
 | `disabled` | `boolean` | — |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `marks` | `number[]` | — |
+| `showTooltip` | `boolean` | `false` |
 | `class` | `string` | — |
 
 ## 事件

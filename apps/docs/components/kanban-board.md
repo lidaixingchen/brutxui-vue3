@@ -82,11 +82,66 @@ interface KanbanColumn {
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
-| `update:modelValue` | `KanbanColumn[]` | 列数据更新（卡片移动后） |
+| `update:modelValue` | `KanbanColumn[]` | 列数据更新（卡片移动或列排序后） |
 | `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | 卡片跨列移动完成时触发 |
+| `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | 拖拽列标题完成排序时触发 |
+| `add-card` | `columnId: string` | 点击默认「添加卡片」按钮时触发 |
 
 ## 插槽
 
-| 插槽名 | 说明 |
-|--------|------|
-| `add-{columnId}` | 在指定列底部插入自定义内容（如「添加卡片」按钮） |
+| 插槽名 | 参数 | 说明 |
+|--------|------|------|
+| `add-{columnId}` | `columnId: string` | 在指定列底部自定义「添加卡片」入口；未提供时渲染默认 `Button`（`variant="outline"` `size="sm"`）并触发 `add-card` 事件 |
+
+## 列排序
+
+拖拽列标题即可在列之间重新排序，排序结果通过 `v-model` 同步，并触发 `column-move` 事件。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
+
+const columns = ref([
+    { id: 'todo', title: '待办', cards: [] },
+    { id: 'done', title: '已完成', cards: [] },
+])
+
+function handleColumnMove(columnId, fromIndex, toIndex) {
+    console.log('列', columnId, '从', fromIndex, '移动到', toIndex)
+}
+</script>
+
+<template>
+    <KanbanBoard v-model="columns" @column-move="handleColumnMove" />
+</template>
+```
+
+## 自定义添加卡片入口
+
+每列底部默认渲染一个 `outline` 风格的「添加卡片」按钮，点击触发 `add-card` 事件。通过 `#add-{columnId}` 插槽可替换为自定义入口。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard, Button } from 'brutx-ui-vue'
+
+const columns = ref([
+    { id: 'todo', title: '待办', cards: [] },
+])
+
+function handleAddCard(columnId) {
+    columns.value[0].cards.push({ id: Date.now().toString(), title: '新卡片' })
+}
+</script>
+
+<template>
+    <KanbanBoard v-model="columns" @add-card="handleAddCard">
+        <template #add-todo="{ columnId }">
+            <Button variant="primary" size="sm" class="w-full" @click="handleAddCard(columnId)">
+                新建任务
+            </Button>
+        </template>
+    </KanbanBoard>
+</template>
+```

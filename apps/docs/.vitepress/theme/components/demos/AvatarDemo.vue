@@ -47,5 +47,41 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
                 </Avatar>
             </div>
         </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">变体</p>
+            <div class="flex items-center gap-4">
+                <Avatar size="lg" variant="default">
+                    <AvatarFallback>默</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" variant="primary">
+                    <AvatarFallback>主</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" variant="secondary">
+                    <AvatarFallback>次</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" variant="accent">
+                    <AvatarFallback>强</AvatarFallback>
+                </Avatar>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">状态</p>
+            <div class="flex items-center gap-4">
+                <Avatar size="lg" status="online">
+                    <AvatarFallback>在</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" status="offline">
+                    <AvatarFallback>离</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" status="busy">
+                    <AvatarFallback>忙</AvatarFallback>
+                </Avatar>
+                <Avatar size="lg" status="none">
+                    <AvatarFallback>无</AvatarFallback>
+                </Avatar>
+            </div>
+        </div>
     </div>
 </template>

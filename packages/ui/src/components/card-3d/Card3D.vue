@@ -136,7 +136,7 @@ const cardClasses = computed(() =>
 )
 
 const handleClick = (event: MouseEvent) => {
-    if (!props.clickable) return
+    if (props.disabled || !props.clickable) return
     emit('click', event)
 }
 

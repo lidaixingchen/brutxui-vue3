@@ -110,5 +110,31 @@ function onComplete() {
                 </span>
             </div>
         </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-3">变体（仅文字颜色）</h3>
+            <div class="flex flex-wrap items-end gap-6">
+                <div class="flex flex-col items-center gap-1">
+                    <Counter :key="key" :to="128" variant="default" size="lg" :duration="RESET_DELAY" />
+                    <span class="text-xs font-bold opacity-60">default</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <Counter :key="key" :to="128" variant="primary" size="lg" :duration="RESET_DELAY" />
+                    <span class="text-xs font-bold opacity-60">primary</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <Counter :key="key" :to="128" variant="accent" size="lg" :duration="RESET_DELAY" />
+                    <span class="text-xs font-bold opacity-60">accent</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <Counter :key="key" :to="128" variant="success" size="lg" :duration="RESET_DELAY" />
+                    <span class="text-xs font-bold opacity-60">success</span>
+                </div>
+                <div class="flex flex-col items-center gap-1">
+                    <Counter :key="key" :to="128" variant="danger" size="lg" :duration="RESET_DELAY" />
+                    <span class="text-xs font-bold opacity-60">danger</span>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

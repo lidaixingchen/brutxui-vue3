@@ -221,13 +221,13 @@ describe('BeforeAfter orientation', () => {
         expect(input.attributes('style')).toBeUndefined()
     })
 
-    it('applies writing-mode vertical-lr for vertical range input', () => {
+    it('applies writing-mode vertical-rl for vertical range input', () => {
         const wrapper = mount(BeforeAfter, {
             props: { ...baseProps, orientation: 'vertical' },
             ...localeProvide,
         })
         const input = wrapper.find('input[type="range"]')
-        expect(input.attributes('style')).toContain('writing-mode: vertical-lr')
+        expect(input.attributes('style')).toContain('writing-mode: vertical-rl')
     })
 
     it('does not rotate handle icon in horizontal mode', () => {

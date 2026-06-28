@@ -316,6 +316,11 @@ export const en: Locale = {
     card3d: {
         ariaLabel: '3D Interactive Card',
     },
+    avatar: {
+        statusOnline: 'Online',
+        statusOffline: 'Offline',
+        statusBusy: 'Busy',
+    },
     hardcoreInput: {
         invalidInput: 'Invalid input',
     },

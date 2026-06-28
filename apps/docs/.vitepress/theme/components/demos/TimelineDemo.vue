@@ -121,5 +121,53 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
                 </TimelineItem>
             </Timeline>
         </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-4">垂直交替布局 — alternate</h3>
+            <Timeline orientation="vertical" alternate>
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="primary" shape="circle">1</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">立项启动</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">确定产品方向与核心目标。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="accent" shape="square">2</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">设计开发</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">完成视觉设计与首轮开发。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="success" shape="diamond">3</TimelineDot>
+                        <TimelineConnector />
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">测试验收</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">回归测试与性能调优。</p>
+                    </TimelineContent>
+                </TimelineItem>
+
+                <TimelineItem>
+                    <TimelineSeparator>
+                        <TimelineDot variant="danger" shape="circle">4</TimelineDot>
+                    </TimelineSeparator>
+                    <TimelineContent class="pl-2">
+                        <div class="font-black text-base">正式发布</div>
+                        <p class="text-sm text-brutal-fg/80 mt-1 font-normal">面向全量用户开放。</p>
+                    </TimelineContent>
+                </TimelineItem>
+            </Timeline>
+        </div>
     </div>
 </template>

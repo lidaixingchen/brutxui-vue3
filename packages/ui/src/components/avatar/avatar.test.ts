@@ -124,11 +124,23 @@ describe('Avatar', () => {
         expect(root.element.contains(statusDot.element)).toBe(false)
     })
 
-    it('status indicator has role and aria-label for accessibility', () => {
+    it('status indicator has role and localized aria-label for accessibility', () => {
         const wrapper = mount(Avatar, { props: { status: 'busy' } })
         const statusDot = wrapper.find('.absolute.rounded-full')
         expect(statusDot.attributes('role')).toBe('status')
-        expect(statusDot.attributes('aria-label')).toBe('Status: busy')
+        expect(statusDot.attributes('aria-label')).toBe('忙碌')
+    })
+
+    it('status indicator aria-label is localized for online', () => {
+        const wrapper = mount(Avatar, { props: { status: 'online' } })
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.attributes('aria-label')).toBe('在线')
+    })
+
+    it('status indicator aria-label is localized for offline', () => {
+        const wrapper = mount(Avatar, { props: { status: 'offline' } })
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.attributes('aria-label')).toBe('离线')
     })
 })
 

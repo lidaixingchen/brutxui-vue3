@@ -93,6 +93,10 @@ interface ComboboxOption {
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` |
 | `emptyText` | `string` | locale: `combobox.emptyText` |
 | `disabled` | `boolean` | `false` |
+| `loading` | `boolean` | `false` |
+| `creative` | `boolean` | `false` |
+| `ariaLabel` | `string` | — |
+| `iconSize` | `IconSize` | `'default'` |
 | `class` | `string` | — |
 
 ### ComboboxMulti（多选）
@@ -105,7 +109,11 @@ interface ComboboxOption {
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` |
 | `emptyText` | `string` | locale: `combobox.emptyText` |
 | `disabled` | `boolean` | `false` |
+| `loading` | `boolean` | `false` |
+| `creative` | `boolean` | `false` |
+| `ariaLabel` | `string` | — |
 | `maxDisplay` | `number` | `3` |
+| `iconSize` | `IconSize` | `'default'` |
 | `class` | `string` | — |
 
 ## 事件
@@ -115,9 +123,69 @@ interface ComboboxOption {
 | 事件 | 载荷 |
 |------|------|
 | `update:modelValue` | `string \| undefined` |
+| `create` | `[value: string]` |
 
 ### ComboboxMulti
 
 | 事件 | 载荷 |
 |------|------|
 | `update:modelValue` | `string[]` |
+| `create` | `[value: string]` |
+
+## 加载状态
+
+设置 `loading` 为 `true` 时，下拉列表底部显示 `Spinner`，适用于异步加载选项的场景。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Combobox } from 'brutx-ui-vue'
+
+const loading = ref(false)
+const options = ref([])
+
+async function handleOpen() {
+    loading.value = true
+    options.value = await fetchOptions()
+    loading.value = false
+}
+</script>
+
+<template>
+    <Combobox v-model="selected" :options="options" :loading="loading" />
+</template>
+```
+
+## 创建选项
+
+设置 `creative` 为 `true` 时，若搜索无匹配项且输入框非空，列表顶部显示「创建 '{query}'」选项（文本取自 locale `combobox.create`）。点击该项触发 `create` 事件，参数为当前搜索文本。
+
+- `Combobox`：创建后关闭下拉。
+- `ComboboxMulti`：创建后**不关闭**下拉，便于继续选择或创建多项。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Combobox, ComboboxMulti } from 'brutx-ui-vue'
+
+const selected = ref(undefined)
+const options = ref([
+    { value: 'vue', label: 'Vue' },
+    { value: 'react', label: 'React' },
+])
+
+function handleCreate(value) {
+    options.value.push({ value: value.toLowerCase(), label: value })
+    selected.value = value.toLowerCase()
+}
+</script>
+
+<template>
+    <Combobox
+        v-model="selected"
+        :options="options"
+        creative
+        @create="handleCreate"
+    />
+</template>
+```

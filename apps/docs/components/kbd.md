@@ -42,10 +42,35 @@ import { Kbd } from 'brutx-ui-vue'
 </template>
 ```
 
+## 变体
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 中性背景，标准前景色文字 |
+| `primary` | Primary（珊瑚色）背景，高对比前景色 |
+| `secondary` | Secondary（薄荷青）背景 |
+| `accent` | Accent（黄色）背景 |
+
+```vue
+<script setup>
+import { Kbd } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <div class="flex items-center gap-2">
+        <Kbd variant="default">Esc</Kbd>
+        <Kbd variant="primary">Enter</Kbd>
+        <Kbd variant="secondary">Tab</Kbd>
+        <Kbd variant="accent">Space</Kbd>
+    </div>
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 按键颜色变体 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 按键尺寸 |
 | `class` | `string` | — | 自定义样式类 |
 

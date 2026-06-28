@@ -38,5 +38,16 @@ import { Kbd } from 'brutx-ui-vue'
                 <Kbd size="lg">Space</Kbd>
             </div>
         </div>
+
+        <!-- 变体对比 -->
+        <div class="flex flex-col gap-3">
+            <p class="text-sm font-bold opacity-60">变体</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <Kbd variant="default">Esc</Kbd>
+                <Kbd variant="primary">Enter</Kbd>
+                <Kbd variant="secondary">Tab</Kbd>
+                <Kbd variant="accent">Space</Kbd>
+            </div>
+        </div>
     </div>
 </template>

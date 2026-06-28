@@ -236,5 +236,18 @@ describe('Slider', () => {
             const tooltip = wrapper.find('[role="tooltip"]')
             expect(tooltip.classes()).toContain('pointer-events-none')
         })
+
+        it('tooltip updates value when modelValue prop changes', async () => {
+            const wrapper = mount(Slider, {
+                props: { showTooltip: true, modelValue: [50], min: 0, max: 100, step: 1 },
+                attachTo: document.body,
+            })
+            const thumb = wrapper.find('[role="slider"]')
+            await thumb.trigger('focus')
+            expect(wrapper.find('[role="tooltip"]').text()).toBe('50')
+
+            await wrapper.setProps({ modelValue: [75] })
+            expect(wrapper.find('[role="tooltip"]').text()).toBe('75')
+        })
     })
 })

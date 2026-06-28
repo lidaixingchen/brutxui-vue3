@@ -35,6 +35,18 @@ describe('ChatBubble', () => {
         expect(bubble.classes()).toContain('shadow-none')
     })
 
+    it('system message uses text-xs regardless of size prop', () => {
+        const wrapper = mount(ChatBubble, {
+            props: {
+                message: { id: '3', content: 'User joined', variant: 'system' },
+                size: 'lg',
+            },
+        })
+        const bubble = wrapper.find('[class*="border-dashed"]')
+        expect(bubble.classes()).toContain('text-xs')
+        expect(bubble.classes()).not.toContain('text-base')
+    })
+
     it('shows avatar when showAvatar is true', () => {
         const wrapper = mount(ChatBubble, {
             props: {

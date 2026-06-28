@@ -6,11 +6,24 @@ const afterImg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg
 </script>
 
 <template>
-    <div class="w-full max-w-[500px]">
-        <BeforeAfter
-            :before="beforeImg"
-            :after="afterImg"
-            :default-value="40"
-        />
+    <div class="space-y-6 w-full max-w-[500px]">
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">水平方向</p>
+            <BeforeAfter
+                :before="beforeImg"
+                :after="afterImg"
+                :default-value="40"
+            />
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">垂直方向</p>
+            <BeforeAfter
+                :before="beforeImg"
+                :after="afterImg"
+                orientation="vertical"
+                :default-value="40"
+            />
+        </div>
     </div>
 </template>

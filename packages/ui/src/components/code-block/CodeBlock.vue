@@ -140,7 +140,7 @@ function escapeHtml(str: string): string {
         </div>
 
         <div v-if="showToggleButton" class="flex justify-center border-t-3 border-brutal bg-brutal-muted py-2">
-            <Button variant="outline" size="sm" @click="toggleExpand">
+            <Button variant="outline" size="sm" :aria-expanded="expanded" @click="toggleExpand">
                 {{ expanded ? t('codeBlock.collapse') : t('codeBlock.expand') }}
             </Button>
         </div>

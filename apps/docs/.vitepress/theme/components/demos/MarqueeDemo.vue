@@ -15,5 +15,29 @@ import { Marquee } from 'brutx-ui-vue'
             <span>🛠️ 从构建到发布</span>
             <span>🌟 开源</span>
         </Marquee>
+
+        <div class="space-y-2 pt-2">
+            <p class="text-sm font-bold tracking-wide">变体</p>
+            <Marquee :speed="20" variant="default">
+                <span>默认变体</span>
+                <span>DEFAULT</span>
+            </Marquee>
+            <Marquee :speed="20" variant="muted">
+                <span>静音变体</span>
+                <span>MUTED</span>
+            </Marquee>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">尺寸</p>
+            <Marquee :speed="20" size="sm">
+                <span>小尺寸</span>
+                <span>SMALL</span>
+            </Marquee>
+            <Marquee :speed="20" size="lg">
+                <span>大尺寸</span>
+                <span>LARGE</span>
+            </Marquee>
+        </div>
     </div>
 </template>

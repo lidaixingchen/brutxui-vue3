@@ -39,6 +39,39 @@ import { Marquee } from 'brutx-ui-vue'
 - **悬停暂停**：开启 `pauseOnHover` 属性后，鼠标悬停时滚动会自动暂停，方便用户阅读。
 - **边缘淡化**：配置 `fade` 属性，会在组件左右两侧生成透明度渐变遮罩，使内容过渡更为柔和。
 
+## 变体
+
+通过 `variant` 属性控制跑马灯的背景色与文字色。
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 背景色背景，深色文字 |
+| `primary` | 主色（珊瑚红）背景 |
+| `accent` | 强调色（黄色）背景 |
+| `muted` | 静音色（灰）背景 |
+
+```vue
+<Marquee variant="primary">
+    <span>主色跑马灯</span>
+</Marquee>
+```
+
+## 尺寸
+
+通过 `size` 属性控制文字大小与内边距。
+
+| 尺寸 | 说明 |
+|------|------|
+| `sm` | 小号文字，紧凑内边距 |
+| `default` | 默认大小 |
+| `lg` | 大号文字，宽松内边距 |
+
+```vue
+<Marquee size="lg">
+    <span>大号跑马灯</span>
+</Marquee>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -47,4 +80,6 @@ import { Marquee } from 'brutx-ui-vue'
 | `speed` | `number` | `20` | 单次循环所耗费的秒数（数值越小速度越快） |
 | `pauseOnHover` | `boolean` | `false` | 鼠标悬停时是否暂停动画 |
 | `fade` | `boolean` | `false` | 是否开启左右边缘淡入淡出遮罩效果 |
+| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'accent'` | 背景与文字颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 文字大小与内边距 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |

@@ -364,6 +364,12 @@ export interface Card3dLocale {
     ariaLabel: string
 }
 
+export interface AvatarLocale {
+    statusOnline: string
+    statusOffline: string
+    statusBusy: string
+}
+
 export interface HardcoreInputLocale {
     invalidInput: string
 }
@@ -520,6 +526,7 @@ export interface Locale {
     scratchCard: ScratchCardLocale
     sketchyChart: SketchyChartLocale
     card3d: Card3dLocale
+    avatar: AvatarLocale
     hardcoreInput: HardcoreInputLocale
     codeBlock: CodeBlockLocale
     calendar: CalendarLocale

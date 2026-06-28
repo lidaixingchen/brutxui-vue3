@@ -145,4 +145,11 @@ describe('Card3D clickable', () => {
         await card.trigger('click')
         expect(wrapper.emitted('click')).toBeUndefined()
     })
+
+    it('does not emit click when disabled even if clickable', async () => {
+        const wrapper = mount(Card3D, { props: { clickable: true, disabled: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        await card.trigger('click')
+        expect(wrapper.emitted('click')).toBeUndefined()
+    })
 })

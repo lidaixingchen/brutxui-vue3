@@ -92,29 +92,54 @@ const styles = ref([])
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
 
+## 方向
+
+| 方向 | 说明 |
+|------|------|
+| `horizontal` | 水平排列（默认），容器 `flex items-center` |
+| `vertical` | 垂直排列，容器 `flex-col`，同时透传给 reka-ui 原语设置 `aria-orientation` |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { ToggleGroup, ToggleGroupItem } from 'brutx-ui-vue'
+
+const styles = ref([])
+</script>
+
+<template>
+    <ToggleGroup type="multiple" v-model="styles" orientation="vertical">
+        <ToggleGroupItem value="bold">加粗</ToggleGroupItem>
+        <ToggleGroupItem value="italic">斜体</ToggleGroupItem>
+        <ToggleGroupItem value="underline">下划线</ToggleGroupItem>
+    </ToggleGroup>
+</template>
+```
+
 ## Props
 
 ### ToggleGroup
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `type` | `'single' \| 'multiple'` | `'single'` |
-| `modelValue` | `string \| string[]` | — |
-| `defaultValue` | `string \| string[]` | — |
-| `variant` | `'default' \| 'outline'` | `'default'` |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `disabled` | `boolean` | `false` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `type` | `'single' \| 'multiple'` | `'single'` | 单选或多选 |
+| `modelValue` | `string \| string[]` | — | v-model 值 |
+| `defaultValue` | `string \| string[]` | — | 默认值（非受控） |
+| `variant` | `'default' \| 'outline'` | `'default'` | 变体，下发给子项 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸，下发给子项 |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 排列方向；`vertical` 时容器 `flex-col` 并透传给 reka-ui 原语 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `class` | `string` | — | 附加类名 |
 
 ### ToggleGroupItem
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `value` | `string` | —（必填） |
-| `variant` | `'default' \| 'outline'` | 继承 ToggleGroup |
-| `size` | `'sm' \| 'default' \| 'lg'` | 继承 ToggleGroup |
-| `disabled` | `boolean` | `false`（继承 ToggleGroup） |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | `string` | —（必填） | 子项值 |
+| `variant` | `'default' \| 'outline'` | 继承 ToggleGroup | 变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | 继承 ToggleGroup | 尺寸 |
+| `disabled` | `boolean` | `false`（继承 ToggleGroup） | 是否禁用 |
+| `class` | `string` | — | 附加类名 |
 
 ## 事件
 

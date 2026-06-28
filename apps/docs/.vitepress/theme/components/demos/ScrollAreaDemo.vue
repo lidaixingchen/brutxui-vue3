@@ -66,5 +66,65 @@ const tags = Array.from({ length: 20 }, (_, i) => [`标签 ${i + 1}`, ['primary'
                 <ScrollBar orientation="horizontal" />
             </ScrollArea>
         </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-2">变体</h3>
+            <div class="flex flex-wrap gap-4">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">default</span>
+                    <ScrollArea variant="default" class="h-48 w-40 rounded-brutal border-3 border-brutal">
+                        <div class="p-3 space-y-1">
+                            <div v-for="n in 12" :key="n" class="text-xs font-medium">项目 {{ n }}</div>
+                        </div>
+                    </ScrollArea>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">primary</span>
+                    <ScrollArea variant="primary" class="h-48 w-40 rounded-brutal border-3 border-brutal">
+                        <div class="p-3 space-y-1">
+                            <div v-for="n in 12" :key="n" class="text-xs font-medium">项目 {{ n }}</div>
+                        </div>
+                    </ScrollArea>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">accent</span>
+                    <ScrollArea variant="accent" class="h-48 w-40 rounded-brutal border-3 border-brutal">
+                        <div class="p-3 space-y-1">
+                            <div v-for="n in 12" :key="n" class="text-xs font-medium">项目 {{ n }}</div>
+                        </div>
+                    </ScrollArea>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-2">尺寸</h3>
+            <div class="flex flex-wrap items-start gap-4">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">sm</span>
+                    <ScrollArea size="sm" class="h-48 w-40 rounded-brutal border-3 border-brutal">
+                        <div class="p-3 space-y-1">
+                            <div v-for="n in 12" :key="n" class="text-xs font-medium">项目 {{ n }}</div>
+                        </div>
+                    </ScrollArea>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">default</span>
+                    <ScrollArea size="default" class="h-48 w-40 rounded-brutal border-3 border-brutal">
+                        <div class="p-3 space-y-1">
+                            <div v-for="n in 12" :key="n" class="text-xs font-medium">项目 {{ n }}</div>
+                        </div>
+                    </ScrollArea>
+                </div>
+                <div class="space-y-1">
+                    <span class="text-xs font-bold">lg</span>
+                    <ScrollArea size="lg" class="h-48 w-40 rounded-brutal border-3 border-brutal">
+                        <div class="p-3 space-y-1">
+                            <div v-for="n in 12" :key="n" class="text-xs font-medium">项目 {{ n }}</div>
+                        </div>
+                    </ScrollArea>
+                </div>
+            </div>
+        </div>
     </div>
 </template>

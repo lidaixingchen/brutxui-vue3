@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import { cn } from '../../lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
+import { getAllDescendantIds } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 
 export type SelectionMode = 'single' | 'checkbox';
@@ -68,16 +69,6 @@ function toggleExpand(id: string) {
 function selectNode(node: TreeNode) {
     emit('update:modelValue', node.id);
     emit('select', node);
-}
-
-function getAllDescendantIds(node: TreeNode): string[] {
-    const result: string[] = [node.id]
-    if (node.children) {
-        for (const child of node.children) {
-            result.push(...getAllDescendantIds(child))
-        }
-    }
-    return result
 }
 
 function getCheckState(node: TreeNode): CheckState {

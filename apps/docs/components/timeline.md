@@ -101,6 +101,63 @@ import {
 </template>
 ```
 
+### 交替布局
+
+设置 `alternate` 属性为 `true` 后，垂直时间线的内容会沿分隔线左右交替排列：偶数项（第 0、2、4... 项）内容在左侧，奇数项（第 1、3、5... 项）内容在右侧，形成对称的交替节奏。该属性仅在 `orientation="vertical"` 时生效，水平模式下会被自动忽略。
+
+```vue
+<template>
+    <Timeline orientation="vertical" alternate>
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="primary" shape="circle">1</TimelineDot>
+                <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent class="pl-2">
+                <div class="font-black text-base">立项启动</div>
+                <p class="text-sm text-brutal-fg/80 mt-1 font-normal">确定产品方向与核心目标。</p>
+            </TimelineContent>
+        </TimelineItem>
+
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="accent" shape="square">2</TimelineDot>
+                <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent class="pl-2">
+                <div class="font-black text-base">设计开发</div>
+                <p class="text-sm text-brutal-fg/80 mt-1 font-normal">完成视觉设计与首轮开发。</p>
+            </TimelineContent>
+        </TimelineItem>
+
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="success" shape="diamond">3</TimelineDot>
+                <TimelineConnector />
+            </TimelineSeparator>
+            <TimelineContent class="pl-2">
+                <div class="font-black text-base">测试验收</div>
+                <p class="text-sm text-brutal-fg/80 mt-1 font-normal">回归测试与性能调优。</p>
+            </TimelineContent>
+        </TimelineItem>
+
+        <TimelineItem>
+            <TimelineSeparator>
+                <TimelineDot variant="danger" shape="circle">4</TimelineDot>
+            </TimelineSeparator>
+            <TimelineContent class="pl-2">
+                <div class="font-black text-base">正式发布</div>
+                <p class="text-sm text-brutal-fg/80 mt-1 font-normal">面向全量用户开放。</p>
+            </TimelineContent>
+        </TimelineItem>
+    </Timeline>
+</template>
+```
+
+::: tip 说明
+交替布局的索引由 `Timeline` 自动按 `TimelineItem` 出现顺序从 0 开始注入，无需手动指定；`alternate` 与 `horizontal` 同时设置时，水平模式优先生效，`alternate` 不会产生任何效果。
+:::
+
 ## 节点属性配置
 
 `TimelineDot` 支持多样化的新粗野主义几何设计与颜色主题，通过 `shape` 和 `variant` 进行自定义：
@@ -120,6 +177,7 @@ import {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 时间线排版布局朝向 |
+| `alternate` | `boolean` | `false` | 是否启用交替布局；仅 `orientation='vertical'` 时生效，偶数项内容在左、奇数项在右 |
 | `class` | `string` | `""` | 整体包裹容器自定义样式类 |
 
 ### TimelineDot Props

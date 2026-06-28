@@ -54,6 +54,42 @@ const current = ref(0)
 </template>
 ```
 
+## 变体
+
+通过 `variant` 属性控制激活步骤的颜色。
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 主色（珊瑚红）背景 |
+| `primary` | 主色（珊瑚红）背景 |
+| `accent` | 强调色（黄色）背景 |
+
+```vue
+<Stepper v-model="current" :steps="steps" variant="accent" />
+```
+
+## 尺寸
+
+通过 `size` 属性控制步骤点尺寸。
+
+| 尺寸 | 说明 |
+|------|------|
+| `sm` | 小尺寸节点 |
+| `default` | 默认尺寸节点 |
+| `lg` | 大尺寸节点 |
+
+```vue
+<Stepper v-model="current" :steps="steps" size="lg" />
+```
+
+## 不可点击
+
+设置 `clickable` 为 `false` 可禁用步骤点的点击跳转，仅作展示用。
+
+```vue
+<Stepper v-model="current" :steps="steps" :clickable="false" />
+```
+
 ## StepperStep 类型
 
 ```ts
@@ -71,6 +107,9 @@ interface StepperStep {
 | `steps` | `StepperStep[]` | — | 步骤数据列表 |
 | `modelValue` | `number` | — | 当前步骤索引（0 开始，v-model） |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 布局方向 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 步骤点尺寸 |
+| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 激活步骤的颜色变体 |
+| `clickable` | `boolean` | `true` | 是否允许点击步骤点跳转 |
 | `class` | `string` | — | 根节点自定义样式类 |
 
 ## 事件

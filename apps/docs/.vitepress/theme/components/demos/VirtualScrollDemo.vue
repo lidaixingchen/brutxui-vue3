@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { VirtualScroll } from 'brutx-ui-vue'
+import { VirtualScroll, Button } from 'brutx-ui-vue'
 
 interface Item {
     id: number
@@ -27,6 +27,27 @@ const borderedItems = ref<Item[]>(
         name: `带边框行 ${i + 1}`,
     }))
 )
+
+const scrollRef = ref<{ scrollToIndex: (index: number) => void } | null>(null)
+
+const jumpItems = ref<Item[]>(
+    Array.from({ length: 3000 }, (_, i) => ({
+        id: i,
+        name: `条目 ${i + 1}`,
+    }))
+)
+
+function jumpToStart() {
+    scrollRef.value?.scrollToIndex(0)
+}
+
+function jumpToMiddle() {
+    scrollRef.value?.scrollToIndex(Math.floor(jumpItems.value.length / 2))
+}
+
+function jumpToEnd() {
+    scrollRef.value?.scrollToIndex(jumpItems.value.length - 1)
+}
 </script>
 
 <template>
@@ -62,6 +83,20 @@ const borderedItems = ref<Item[]>(
                         </span>
                         <span class="font-bold">{{ item.name }}</span>
                     </div>
+                </template>
+            </VirtualScroll>
+        </div>
+
+        <div>
+            <p class="text-sm font-bold tracking-wide mb-2">滚动到指定索引（scrollToIndex）</p>
+            <div class="flex flex-wrap gap-2 mb-3">
+                <Button variant="outline" size="sm" @click="jumpToStart">跳到开头</Button>
+                <Button variant="outline" size="sm" @click="jumpToMiddle">跳到中间</Button>
+                <Button variant="outline" size="sm" @click="jumpToEnd">跳到末尾</Button>
+            </div>
+            <VirtualScroll ref="scrollRef" :items="jumpItems" :item-height="40" size="sm">
+                <template #default="{ item, index }">
+                    <div class="px-4 py-2 text-sm font-bold">{{ item.name }}（#{{ index + 1 }}）</div>
                 </template>
             </VirtualScroll>
         </div>

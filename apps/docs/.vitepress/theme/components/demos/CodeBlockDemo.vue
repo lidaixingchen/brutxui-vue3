@@ -33,6 +33,17 @@ const pythonCode = `def fibonacci(n: int) -> list[int]:
 
 # Print first 10 Fibonacci numbers
 print(fibonacci(10))`
+
+const longCode = `function quickSort(arr) {
+    if (arr.length <= 1) return arr
+    const pivot = arr[0]
+    const left = arr.slice(1).filter(x => x < pivot)
+    const right = arr.slice(1).filter(x => x >= pivot)
+    return [...quickSort(left), pivot, ...quickSort(right)]
+}
+
+const sorted = quickSort([3, 1, 4, 1, 5, 9, 2, 6])
+console.log(sorted)`
 </script>
 
 <template>
@@ -62,6 +73,17 @@ print(fibonacci(10))`
                 :code="pythonCode"
                 language="python"
                 filename="fibonacci.py"
+                show-line-numbers
+            />
+        </div>
+
+        <div>
+            <p class="text-sm font-bold mb-2">折叠与展开（maxLines）</p>
+            <CodeBlock
+                :code="longCode"
+                language="javascript"
+                filename="quicksort.js"
+                :max-lines="6"
                 show-line-numbers
             />
         </div>

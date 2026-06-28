@@ -40,6 +40,34 @@ const counterRef = ref()
 </template>
 ```
 
+## 变体
+
+`variant` 仅影响数字文字颜色，方便在不同背景上突出展示统计数值。
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 标准前景色文字 |
+| `primary` | Primary（珊瑚色）文字 |
+| `accent` | Accent（黄色）文字 |
+| `success` | Success（绿色）文字 |
+| `danger` | Destructive（红色）文字 |
+
+```vue
+<script setup>
+import { Counter } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <div class="flex flex-wrap items-end gap-6">
+        <Counter :to="128" variant="default" size="lg" />
+        <Counter :to="128" variant="primary" size="lg" />
+        <Counter :to="128" variant="accent" size="lg" />
+        <Counter :to="128" variant="success" size="lg" />
+        <Counter :to="128" variant="danger" size="lg" />
+    </div>
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -58,6 +86,7 @@ const counterRef = ref()
 | `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | 缓动函数 |
 | `autoStart` | `boolean` | `true` | 是否挂载后自动播放 |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 字号预设 |
+| `variant` | `'default' \| 'primary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | 文字颜色变体（仅影响文字颜色，不改变背景） |
 | `class` | `string` | — | 自定义样式类 |
 
 ### 自定义组件前缀/后缀
