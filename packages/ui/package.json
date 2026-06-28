@@ -1,6 +1,6 @@
 {
     "name": "brutx-ui-vue",
-    "version": "0.7.8",
+    "version": "0.8.0",
     "description": "A Neo-Brutalism styled Vue 3 UI component library",
     "type": "module",
     "main": "./dist/index.cjs",

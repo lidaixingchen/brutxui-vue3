@@ -42,7 +42,7 @@ const statusLocaleKeyMap: Record<Exclude<AvatarStatus, 'none'>, string> = {
 const { t } = useLocale()
 
 const statusLabel = computed(() => {
-    if (props.status === 'none') return undefined
+    if (props.status === 'none') return ''
     return t(statusLocaleKeyMap[props.status])
 })
 

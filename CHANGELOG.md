@@ -7,21 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-06-29
+
+### Added
+
+- **图标尺寸 CVA 系统**: 新增 `iconSizeVariants` 共享配置（xs/h-2.5 → 2xl/h-8），统一全组件库图标尺寸，为 DataTable/Card/Form 等组件新增 `iconSize` 属性
+- **Stepper 增强**: 新增 `size`、`variant`、`clickable` 属性，支持方向键/Home/End 键盘导航
+- **Marquee 增强**: 新增 `variant`、`size` 属性
+- **BeforeAfter 方向**: 新增 `orientation` 属性（horizontal/vertical），支持纵向对比模式
+- **Card3D 增强**: 新增 `variant`、`clickable` 属性，支持点击交互
+- **CodeBlock 行裁剪**: 新增 `maxLines` 属性，超出内容可展开/收起
+- **Timeline 交替布局**: 新增 `timelineAlternateKey` 交替排列模式
+- **ChatBubble 样式**: 新增 `color`（default/primary/accent）和 `size`（sm/default/lg）变体
+- **TreeView 多选**: 新增 checkbox 选择模式，支持级联选择/半选状态/Space 键
+- **KanbanBoard 列操作**: 新增列拖拽排序（`column-move` 事件）和默认 `add-card` 按钮
+- **VirtualScroll 滚动**: 新增 `scrollToIndex` 暴露方法
+- **FeedbackForm 状态**: 新增 `loading`、`success` 状态及对应文案
+- **SearchWidget 增强**: 新增 `loading` 状态和 `recent` 搜索分组
+- **Combobox 增强**: 新增 `loading` 状态和 `creative` 创建模式（`create` 事件）
+- **Avatar 增强**: 新增注入键与状态标识，重构变体样式
+- **Label/Kbd/Counter 增强**: 新增 `variant` 和 `size` 属性支持
+- **Separator 文本**: 新增文本分隔器样式与布局支持
+- **空状态支持**: 为 Tabs、DashboardStats 等区块组件新增空状态提示
+- **变体文件**: 新增 `alert-dialog-variants.ts`、`scroll-area-variants.ts`、`combobox-variants.ts`、`form-wizard-variants.ts` 四个 CVA 变体文件
+
+### Changed
+
+- **视觉规范统一**: 8 个变体文件补全 `rounded-brutal` 类，7 个变体文件统一悬停效果为 `hover:shadow-brutal-lg`，2 个变体文件补充 `active` 按压反馈
+- **模板 cn() 重构**: DataTable、DatePicker 系列、Button 等 8 个组件将模板内 `cn()` 调用提取为 computed/函数
+- **ScrollBar/ToggleGroup**: 重构组件逻辑，优化样式与交互
+- **NumberInput**: 修复属性透传，新增属性过滤
+- **Separator**: 装饰性分隔符使用 `role="none"`（ARIA 1.2 标准）
+- **Card3D**: `role="presentation"` 改为 `role="group"` 更准确的角色语义
+- **DataTable**: 定义稳定 `CellRenderer` 替代箭头函数避免组件重建，`export` 事件参数改为可选
+
 ### Fixed
 
+- **CLI 安全**: `isSafePath` 添加符号链接解析，防止路径遍历绕过
 - **CLI 安全**: `resolveAliasPath` 内置 `isSafePath` 路径遍历防护，自动保护所有调用方
 - **CLI 安全**: `readConfig` 添加运行时类型验证，防止恶意 `components.json` 注入
 - **CLI 安全**: `resolveComponentFilePath` 添加 `isSafePath` 自保护验证
 - **CLI 安全**: `isSafePath` 添加磁盘根目录边界检查
-- **注册表**: 补充 `form-wizard-types.ts`、`panel-styles.css`、`types.ts` 文件声明
+- **注册表**: 补充 `form-wizard-types.ts`、`panel-styles.css`、`types.ts`、`alert-dialog-variants.ts`、`scroll-area-variants.ts`、`form-wizard-variants.ts` 文件声明
 - **注册表**: 为 16 个组件补充 `useLocale` composable 声明
 - **注册表**: 重新构建全部 98 个组件 JSON
+- **注册表**: 修复 `build-registry.ts` 变量名遮蔽，移除 `FILE_TO_COMPONENT` 死代码
 - **可访问性**: UploadCard 拖放区域添加键盘支持（role="button"、tabindex、Enter/Space 键）
-- **可访问性**: TreeSelectNode 实现 roving tabindex 规范
+- **可访问性**: TreeSelectNode 实现 roving tabindex 规范，搜索过滤后自动重置焦点节点
 - **可访问性**: DataTable 可排序列头添加键盘支持（tabindex、Enter 键）
 - **可访问性**: TypewriterText 移除 `aria-live="polite"` 避免逐字播报
 - **可访问性**: FeedbackForm label 与 input 正确关联
-- **可访问性**: Stepper 添加方向键/Home/End 键盘导航
+- **可访问性**: Stepper 添加方向键/Home/End 键盘导航和 `aria-orientation` 属性
 - **可访问性**: Card3D 改为 `role="presentation"` 避免装饰性地标
 - **可访问性**: ToastContainer 改为 `aria-live="off"` 避免频繁播报
 - **TypeScript**: `mergeLocale` 消除 4 处 `as unknown as` 双重断言
@@ -29,22 +65,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **TypeScript**: 提取 `getCellValue` 为共享工具函数 `@/lib/data-table-utils`
 - **TypeScript**: `DataTableFilterState.columns` 收窄为 `Record<string, string>`
 - **TypeScript**: `registryIndex` 使用 `RegistryIndex` 接口替代 `Record<string, any>`
-- **TypeScript**: 多处隐式 `any` 添加显式类型注解
-- **Vue 组件**: DataTable `filter` 事件现在正确触发
+- **TypeScript**: 多处隐式 `any` 添加显式类型注解，catch 块 `any` → `unknown`
+- **Vue 组件**: DataTable `filter` 事件现在正确触发，filter watcher 从 deep 改为监听特定属性
 - **Vue 组件**: DataTable `export` 事件现在携带选中行数据
 - **Vue 组件**: DataTable `props.data` watch 添加 `{ deep: true }`
 - **Vue 组件**: Form `validationSchema` 改为 computed 保持响应式
-- **Vue 组件**: Counter `autoStart=false` 时 `from` 变化正确更新 `current`
+- **Vue 组件**: Counter `autoStart=false` 时 `from` 变化正确更新 `current`，修复竞态条件
 - **Vue 组件**: FeedbackForm 添加必填验证和邮箱格式验证
+- **Vue 组件**: Calendar 缓存键添加 null 合并避免碰撞
+- **Vue 组件**: `useAudioEngine` 统一使用 `win.AudioContext`
 - **性能**: Counter 模板中 `formatNumber` 提取为 computed
 - **性能**: Stepper 预计算 `stepStates` 数组
 - **性能**: Calendar 添加 `dayClassesCache` 缓存
-- **性能**: DataTable `handleSort` 使用 `nextTick` 确保 emit 最新值
+- **性能**: DataTable `handleSort` 使用 `nextTick` 确保 emit 最新值，`CellRenderer` 使用 `markRaw`
 - **测试**: 新增 color-mode-switcher 测试文件（5 个用例）
 - **测试**: 重写 tooltip 测试，从测试工具函数改为挂载组件
 - **测试**: 合并 checkbox/slider/switch 重复用例
 - **测试**: 补充 14 个组件的功能测试（tabs、dialog、dropdown-menu、select、form、accordion 等）
-- **测试**: 总计 1796 个测试通过
+- **测试**: 总计 2058 个测试通过
 
 ## [0.7.8] - 2026-06-28
 
