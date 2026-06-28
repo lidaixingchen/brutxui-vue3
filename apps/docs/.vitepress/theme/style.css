@@ -634,11 +634,8 @@
     border: 3px solid var(--brutal-border-color);
     border-collapse: separate;
     border-spacing: 0;
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    display: table;
     width: 100%;
-    min-width: 600px;
     box-shadow: 4px 4px 0 0 var(--brutal-border-color);
 }
 

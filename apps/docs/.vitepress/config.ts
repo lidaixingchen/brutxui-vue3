@@ -59,7 +59,7 @@ export default defineConfig({
         logo: '/favicon.svg',
         nav: [
             { text: '指南', link: '/guide/getting-started' },
-            { text: '组件', link: '/components/alert' },
+            { text: '组件', link: '/components/' },
             { text: '区块与模板', link: '/blocks/' },
             {
                 text: 'GitHub',
