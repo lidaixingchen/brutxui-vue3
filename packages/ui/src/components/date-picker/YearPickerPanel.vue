@@ -97,7 +97,7 @@ function handleClear() {
     emit('update:modelValue', null)
 }
 
-const footerClasses = computed(() => cn(datePickerFooterVariants()))
+const footerClasses = cn(datePickerFooterVariants())
 
 function getYearClasses(year: number): string {
     return cn(

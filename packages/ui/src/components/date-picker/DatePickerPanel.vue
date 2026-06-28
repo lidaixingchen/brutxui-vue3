@@ -100,7 +100,7 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 const rootClasses = computed(() => cn('p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg'))
-const footerClasses = computed(() => cn(datePickerFooterVariants()))
+const footerClasses = cn(datePickerFooterVariants())
 
 function getShortcutClasses(shortcut: DatePickerShortcut): string {
     return cn(datePickerShortcutVariants({ active: isShortcutActive(shortcut) }))

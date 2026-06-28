@@ -92,7 +92,7 @@ const monthButtonClasses = computed(() =>
     )
 )
 
-const footerClasses = computed(() => cn(datePickerFooterVariants()))
+const footerClasses = cn(datePickerFooterVariants())
 
 function getMonthClasses(monthIndex: number): string {
     return cn(

@@ -79,7 +79,7 @@ const triggerClasses = computed(() =>
     )
 )
 
-const contentClasses = computed(() => comboboxContentVariants())
+const contentClasses = comboboxContentVariants()
 
 function handleSelect(optionValue: string) {
     const newValue = props.modelValue.includes(optionValue)
@@ -88,8 +88,8 @@ function handleSelect(optionValue: string) {
     emit('update:modelValue', newValue)
 }
 
-const checkboxSelectedClasses = computed(() => comboboxCheckboxVariants({ selected: true }))
-const checkboxUnselectedClasses = computed(() => comboboxCheckboxVariants({ selected: false }))
+const checkboxSelectedClasses = comboboxCheckboxVariants({ selected: true })
+const checkboxUnselectedClasses = comboboxCheckboxVariants({ selected: false })
 
 watch(open, (isOpen) => {
     if (!isOpen) {

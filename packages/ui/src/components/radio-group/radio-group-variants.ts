@@ -6,7 +6,7 @@ export const radioGroupItemVariants = cva(
         'border-3 border-brutal bg-brutal-bg text-brutal-fg',
         'shadow-brutal-sm',
         'transition-all duration-150',
-        'hover:shadow-brutal hover:-translate-y-0.5',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',

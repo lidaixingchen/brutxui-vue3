@@ -68,7 +68,7 @@ const triggerClasses = computed(() =>
     )
 )
 
-const contentClasses = computed(() => comboboxContentVariants())
+const contentClasses = comboboxContentVariants()
 
 function handleSelect(value: string) {
     emit('update:modelValue', value === props.modelValue ? undefined : value)
