@@ -13,7 +13,7 @@ const pages: Record<PageKey, { title: string; content: string }> = {
 }
 
 function handleSignOut() {
-    console.log('Sign out clicked')
+    // 处理登出事件
 }
 </script>
 

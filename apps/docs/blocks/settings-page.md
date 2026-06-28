@@ -104,7 +104,7 @@ const tabs = [
 |------|------|
 | `save` | `[{ tab: string; values: Record<string, unknown> }]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

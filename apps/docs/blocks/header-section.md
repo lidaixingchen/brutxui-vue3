@@ -76,7 +76,7 @@ interface NavItem {
 | `cta-click` | `[]` |
 | `nav-click` | `[index: number]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

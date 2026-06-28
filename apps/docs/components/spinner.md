@@ -87,7 +87,7 @@ import { BarsSpinner } from 'brutx-ui-vue'
 | `lg` | `h-12 w-12` | `h-12 w-12` | `h-8` | `gap-3` |
 | `xl` | `h-16 w-16` | `h-16 w-16` | `h-12` | `gap-4` |
 
-## 属性
+## Props
 
 ### Spinner
 

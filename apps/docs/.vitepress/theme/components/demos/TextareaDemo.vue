@@ -11,7 +11,7 @@ const modelValue = ref('')
 <template>
     <div class="space-y-6 w-full max-w-sm">
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Variants</p>
+            <p class="text-sm font-bold tracking-wide">变体</p>
             <div class="flex flex-col gap-3">
                 <Textarea v-model="value" placeholder="Default textarea" />
                 <Textarea v-model="errorValue" variant="error" placeholder="Error textarea" />
@@ -20,7 +20,7 @@ const modelValue = ref('')
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Sizes</p>
+            <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex flex-col gap-3">
                 <Textarea textarea-size="sm" placeholder="Small textarea" />
                 <Textarea textarea-size="default" placeholder="Default textarea" />
@@ -29,14 +29,14 @@ const modelValue = ref('')
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">States</p>
+            <p class="text-sm font-bold tracking-wide">状态</p>
             <div class="flex flex-col gap-3">
                 <Textarea disabled placeholder="Disabled textarea" />
             </div>
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">v-model Binding</p>
+            <p class="text-sm font-bold tracking-wide">v-model 绑定</p>
             <div class="flex flex-col gap-2">
                 <Textarea v-model="modelValue" placeholder="Type something..." />
                 <p class="text-xs font-medium text-brutal-fg">Value: {{ modelValue }}</p>

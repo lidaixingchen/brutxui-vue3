@@ -5,7 +5,6 @@ import { HardcoreInput } from 'brutx-ui-vue'
 const value1 = ref('')
 const value2 = ref('')
 const value3 = ref('')
-const value4 = ref('')
 const value5 = ref('只读内容')
 
 const minLength = (val: string) => val.length >= 5 || '至少需要 5 个字符'

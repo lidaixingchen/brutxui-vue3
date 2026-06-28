@@ -82,7 +82,7 @@ import CookieConsent from '@/components/ui/cookie-consent/CookieConsent.vue'
 | `accept` | `[]` |
 | `decline` | `[]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

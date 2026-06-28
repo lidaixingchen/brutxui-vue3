@@ -104,7 +104,7 @@ import DataTableSection from '@/components/ui/data-table-section/DataTableSectio
 | `row-click` | `[row: Record<string, unknown>]` |
 | `sort` | `[{ key: string; direction: 'asc' \| 'desc' }]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

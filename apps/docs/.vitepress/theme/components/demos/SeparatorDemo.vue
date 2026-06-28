@@ -6,18 +6,18 @@ import { Separator } from 'brutx-ui-vue'
     <div class="space-y-4">
         <p class="text-sm font-bold">水平分隔线</p>
         <div>
-            <p class="text-sm">Content above</p>
+            <p class="text-sm">上方内容</p>
             <Separator />
-            <p class="text-sm">Content below</p>
+            <p class="text-sm">下方内容</p>
         </div>
 
         <p class="text-sm font-bold">垂直分隔线</p>
         <div class="flex items-center h-8">
-            <span class="text-sm">Left</span>
+            <span class="text-sm">左侧</span>
             <Separator orientation="vertical" />
-            <span class="text-sm">Center</span>
+            <span class="text-sm">中间</span>
             <Separator orientation="vertical" />
-            <span class="text-sm">Right</span>
+            <span class="text-sm">右侧</span>
         </div>
     </div>
 </template>

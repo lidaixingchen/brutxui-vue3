@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vitepress dev",
+        "prebuild": "pnpm --filter brutx-ui-vue build",
         "build": "vitepress build",
         "preview": "vitepress preview",
         "typecheck": "vue-tsc --noEmit"

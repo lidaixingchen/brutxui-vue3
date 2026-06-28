@@ -79,7 +79,7 @@ interface FaqItem {
 |------|------|
 | `item-click` | `[index: number]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

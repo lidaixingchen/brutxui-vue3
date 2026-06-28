@@ -212,7 +212,7 @@ const open = ref(false)
 | `description` | `string` | `t('command.dialogDescription')` |
 | `class` | `string` | — |
 
-## Events
+## 事件
 
 ### CommandInput
 

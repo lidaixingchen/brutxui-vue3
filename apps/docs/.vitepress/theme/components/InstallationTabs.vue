@@ -196,18 +196,28 @@ const getPmTabClass = (pm: PackageManager) =>
 
 <template>
     <div class="border-3 border-brutal shadow-brutal overflow-hidden vp-raw">
-        <div class="flex border-b-3 border-brutal">
+        <div class="flex border-b-3 border-brutal" role="tablist">
             <button
                 type="button"
+                role="tab"
+                :aria-selected="activeTab === 'cli'"
+                :tabindex="activeTab === 'cli' ? 0 : -1"
                 :class="getTabClass('cli')"
                 @click="activeTab = 'cli'"
+                @keydown.arrow-right="activeTab = 'manual'"
+                @keydown.arrow-left="activeTab = 'manual'"
             >
                 CLI
             </button>
             <button
                 type="button"
+                role="tab"
+                :aria-selected="activeTab === 'manual'"
+                :tabindex="activeTab === 'manual' ? 0 : -1"
                 :class="getTabClass('manual')"
                 @click="activeTab = 'manual'"
+                @keydown.arrow-right="activeTab = 'cli'"
+                @keydown.arrow-left="activeTab = 'cli'"
             >
                 Manual
             </button>

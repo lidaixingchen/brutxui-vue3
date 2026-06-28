@@ -104,7 +104,7 @@ const steps = [
 |------|------|
 | `step-click` | `[index: number]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

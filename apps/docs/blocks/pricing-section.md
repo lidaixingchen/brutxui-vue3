@@ -122,7 +122,7 @@ interface BrutalistPricingPlan {
 | `popularText` | `string` | locale: `pricingSection.mostPopular` |
 | `class` | `string` | — |
 
-## Events
+## 事件
 
 | 事件 | 参数 |
 |------|------|

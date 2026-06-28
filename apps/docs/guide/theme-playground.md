@@ -1,4 +1,6 @@
 ---
+title: 主题实验室
+description: 可视化调试 BrutxUI 主题 CSS 变量的交互式工具
 aside: false
 pageClass: theme-playground-page
 ---

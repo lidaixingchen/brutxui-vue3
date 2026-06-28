@@ -1,3 +1,8 @@
+---
+title: AI 集成
+description: 了解如何将 BrutxUI 与 AI 编码助手集成
+---
+
 # AI 集成
 
 BrutxUI 旨在与 AI 编码助手无缝协作。组件库提供结构化的、类型安全的 API，AI 工具可以理解并据此生成代码。

@@ -1,3 +1,8 @@
+---
+title: 手动安装
+description: 手动安装和配置 BrutxUI 组件库
+---
+
 # 手动安装
 
 不使用 CLI 手动设置 BrutxUI，适用于需要对安装过程完全控制的项目。

@@ -1,3 +1,8 @@
+---
+title: 安装（Vite）
+description: 在 Vite + Vue 3 项目中安装和配置 BrutxUI
+---
+
 # 安装（Vite）
 
 在新建或现有的 Vite + Vue 3 项目中设置 BrutxUI。
@@ -59,7 +64,7 @@ npx brutx-vue@latest init
 - 安装所需依赖（`reka-ui`、`class-variance-authority`、`clsx`、`tailwind-merge`、`@lucide/vue`）
 - 将 `--brutal-*` CSS 自定义属性注入到你的样式表中
 - 创建 `cn()` 工具函数
-- 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 CSS 中
+- 将 BrutxUI 样式（包括 Tailwind 工具类层）添加到你的 `style.css` 中（`main.ts` 中已有的 `import './style.css'` 会自动加载这些样式）
 
 ## 第 4 步：添加组件
 
@@ -77,21 +82,7 @@ npx brutx-vue@latest add input label checkbox
 npx brutx-vue@latest add --all
 ```
 
-## 第 5 步：导入样式
-
-确保在你的 `src/main.ts` 中导入了 BrutxUI 样式：
-
-```ts
-import { createApp } from 'vue'
-import App from './App.vue'
-import './style.css'
-
-createApp(App).mount('#app')
-```
-
-`brutx-vue init` 命令会将所需的 CSS 添加到你的 `style.css` 文件中，包括 `--brutal-*` CSS 自定义属性和 Tailwind 层。
-
-## 第 6 步：使用组件
+## 第 5 步：使用组件
 
 在你的 Vue 文件中导入并使用组件：
 

@@ -72,7 +72,7 @@ import SuccessCard from '@/components/ui/success-card/SuccessCard.vue'
 |------|------|
 | `confirm` | `[]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

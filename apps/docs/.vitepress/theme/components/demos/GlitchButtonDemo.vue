@@ -8,15 +8,15 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
 <template>
     <div class="space-y-6">
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Variants</p>
+            <p class="text-sm font-bold tracking-wide">变体</p>
             <div class="flex flex-wrap items-center gap-3">
-                <GlitchButton>Default</GlitchButton>
-                <GlitchButton variant="primary">Primary</GlitchButton>
-                <GlitchButton variant="secondary">Secondary</GlitchButton>
-                <GlitchButton variant="accent">Accent</GlitchButton>
-                <GlitchButton variant="danger">Danger</GlitchButton>
-                <GlitchButton variant="success">Success</GlitchButton>
-                <GlitchButton variant="outline">Outline</GlitchButton>
+                <GlitchButton>默认</GlitchButton>
+                <GlitchButton variant="primary">主要</GlitchButton>
+                <GlitchButton variant="secondary">次要</GlitchButton>
+                <GlitchButton variant="accent">强调</GlitchButton>
+                <GlitchButton variant="danger">危险</GlitchButton>
+                <GlitchButton variant="success">成功</GlitchButton>
+                <GlitchButton variant="outline">轮廓</GlitchButton>
             </div>
         </div>
 
@@ -32,9 +32,9 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">速度变体（Click 切换查看）</p>
             <div class="flex flex-wrap items-center gap-3">
-                <GlitchButton trigger="click" speed="slow">Slow</GlitchButton>
-                <GlitchButton trigger="click" speed="medium">Medium</GlitchButton>
-                <GlitchButton trigger="click" speed="fast">Fast</GlitchButton>
+                <GlitchButton trigger="click" speed="slow">慢</GlitchButton>
+                <GlitchButton trigger="click" speed="medium">中</GlitchButton>
+                <GlitchButton trigger="click" speed="fast">快</GlitchButton>
             </div>
         </div>
 
@@ -50,10 +50,10 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex flex-wrap items-center gap-3">
-                <GlitchButton size="sm" variant="secondary">Small</GlitchButton>
-                <GlitchButton size="default" variant="secondary">Default</GlitchButton>
-                <GlitchButton size="lg" variant="secondary">Large</GlitchButton>
-                <GlitchButton size="xl" variant="secondary">Extra Large</GlitchButton>
+                <GlitchButton size="sm" variant="secondary">小</GlitchButton>
+                <GlitchButton size="default" variant="secondary">默认</GlitchButton>
+                <GlitchButton size="lg" variant="secondary">大</GlitchButton>
+                <GlitchButton size="xl" variant="secondary">超大</GlitchButton>
             </div>
         </div>
 
@@ -71,8 +71,8 @@ const glitchRef = ref<InstanceType<typeof GlitchButton> | null>(null)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">状态</p>
             <div class="flex flex-wrap items-center gap-3">
-                <GlitchButton :loading="true" variant="primary">Loading</GlitchButton>
-                <GlitchButton disabled variant="primary">Disabled</GlitchButton>
+                <GlitchButton :loading="true" variant="primary">加载中</GlitchButton>
+                <GlitchButton disabled variant="primary">禁用</GlitchButton>
             </div>
         </div>
     </div>

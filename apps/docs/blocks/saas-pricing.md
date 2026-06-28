@@ -111,7 +111,7 @@ interface PricingPlan {
 | `plans` | `PricingPlan[]` | 内置 3 个方案 |
 | `class` | `string` | — |
 
-## Events
+## 事件
 
 | 事件 | 参数 |
 |------|------|

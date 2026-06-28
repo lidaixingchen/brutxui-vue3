@@ -45,7 +45,7 @@ const selected = ref('comfortable')
 </template>
 ```
 
-## 属性
+## Props
 
 ### RadioGroup
 

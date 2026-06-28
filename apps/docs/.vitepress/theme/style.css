@@ -146,10 +146,6 @@
    GLOBAL RESETS — Kill all rounded corners
    ============================================ */
 
-body {
-    font-family: 'Space Grotesk', system-ui, sans-serif !important;
-}
-
 /* VitePress UI elements: kill rounded corners for brutalist aesthetic */
 .VPButton,
 .VPFeature,
@@ -297,14 +293,6 @@ body {
     padding-left: calc(0.75rem - 1px);
 }
 
-.dark .VPSidebarItem.level-0 > .item > .link:hover,
-.dark .VPSidebarItem.level-1 > .item > .link:hover,
-.dark .VPSidebarItem.level-2 > .item > .link:hover {
-    background-color: var(--brutal-muted);
-    border-left: 4px solid var(--brutal-primary);
-    padding-left: calc(0.75rem - 1px);
-}
-
 /* Active sidebar links - accent bg, bold text, brutal border + shadow */
 .VPSidebarItem.is-active > .item > .link {
     background-color: var(--brutal-accent) !important;
@@ -392,6 +380,7 @@ body {
 .dark .VPButton.alt {
     border-color: var(--brutal-border-color) !important;
     box-shadow: 4px 4px 0 0 var(--brutal-border-color) !important;
+    color: var(--brutal-fg) !important;
 }
 
 .dark .VPButton.brand:hover,
@@ -506,7 +495,6 @@ body {
 .vp-doc h2,
 .vp-doc h3,
 .vp-doc h4 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
     font-weight: 900;
     letter-spacing: 0.01em;
 }
@@ -588,18 +576,6 @@ body {
     position: relative;
 }
 
-/* CodeBlock accent bar via pseudo-element (no extra DOM node) */
-.codeblock-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background-color: var(--brutal-primary);
-    z-index: 10;
-}
-
 .vp-doc div[class*='language-'] pre {
     padding-top: 2.5rem !important;
 }
@@ -658,7 +634,9 @@ body {
     border: 3px solid var(--brutal-border-color);
     border-collapse: separate;
     border-spacing: 0;
-    display: table;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     width: 100%;
     min-width: 600px;
     box-shadow: 4px 4px 0 0 var(--brutal-border-color);
@@ -739,6 +717,17 @@ body {
     background-color: var(--brutal-destructive);
     border-color: #000000;
     color: #000000;
+}
+
+/* Dark mode badges */
+.dark .vp-doc .VPBadge,
+.dark .vp-doc .VPBadge.tip,
+.dark .vp-doc .VPBadge.info,
+.dark .vp-doc .VPBadge.warning,
+.dark .vp-doc .VPBadge.danger {
+    border-color: var(--brutal-border-color);
+    box-shadow: 2px 2px 0px 0px var(--brutal-border-color);
+    color: var(--brutal-fg);
 }
 
 /* ============================================
@@ -941,6 +930,25 @@ body {
         box-shadow: 3px 3px 0 0 #000000 !important;
     }
 
+    /* Dark mode mobile overrides */
+    .dark .VPFeature {
+        box-shadow: 2px 2px 0 0 var(--brutal-border-color) !important;
+    }
+
+    .dark .VPFeature:hover {
+        box-shadow: 3px 3px 0 0 var(--brutal-border-color) !important;
+    }
+
+    .dark .VPButton.brand,
+    .dark .VPButton.alt {
+        box-shadow: 2px 2px 0 0 var(--brutal-border-color) !important;
+    }
+
+    .dark .VPButton.brand:hover,
+    .dark .VPButton.alt:hover {
+        box-shadow: 3px 3px 0 0 var(--brutal-border-color) !important;
+    }
+
     .vp-doc div[class*='language-'] {
         border-width: 2px !important;
         box-shadow: 2px 2px 0 0 var(--brutal-border-color) !important;
@@ -970,81 +978,12 @@ body {
     outline-offset: 2px !important;
 }
 
-/* ==========================================================================
-   SPECIFICITY OVERRIDES FOR COMPONENT PREVIEWS
-   Force BrutxUI token utilities inside .vp-raw to override un-layered resets
-
-   VitePress base.css applies these unlayered resets (highest cascade priority):
-     button, input, optgroup, select, textarea { border: 0; padding: 0; line-height: inherit; color: inherit; }
-     button { padding: 0; font-family: inherit; background-color: transparent; background-image: none; }
-     a { color: inherit; text-decoration: inherit; }
-     input { background-color: transparent; }
-     textarea { resize: vertical; }
-     table { border-collapse: collapse; }
-
-   These override Tailwind's @layer utilities. revert-layer falls back to the
-   utilities layer where BrutxUI's classes are defined.
-   ========================================================================== */
-.vp-raw {
-    & button {
-        border-width: revert-layer;
-        border-style: revert-layer;
-        border-color: revert-layer;
-        padding: revert-layer;
-        background-color: revert-layer;
-        background-image: revert-layer;
-        color: revert-layer;
-        line-height: revert-layer;
-    }
-
-    & a {
-        color: revert-layer;
-        text-decoration-color: revert-layer;
-        text-decoration-line: revert-layer;
-        text-decoration-style: revert-layer;
-        text-decoration-thickness: revert-layer;
-    }
-
-    & input {
-        border-width: revert-layer;
-        border-style: revert-layer;
-        border-color: revert-layer;
-        padding: revert-layer;
-        background-color: revert-layer;
-        color: revert-layer;
-        line-height: revert-layer;
-    }
-
-    & textarea {
-        border-width: revert-layer;
-        border-style: revert-layer;
-        border-color: revert-layer;
-        padding: revert-layer;
-        background-color: revert-layer;
-        color: revert-layer;
-        line-height: revert-layer;
-        resize: revert-layer;
-    }
-
-    & select {
-        border-width: revert-layer;
-        border-style: revert-layer;
-        border-color: revert-layer;
-        padding: revert-layer;
-        background-color: revert-layer;
-        color: revert-layer;
-        line-height: revert-layer;
-        appearance: revert-layer;
-    }
-
-    & table {
-        border-collapse: revert-layer;
-    }
-}
-
-/* Teleported BrutxUI components (Dialog, Popover, DropdownMenu, etc.)
+/* Specifity overrides for component previews (.vp-raw) and
+   teleported BrutxUI components (Dialog, Popover, DropdownMenu, etc.)
    reka-ui teleports overlay/content to <body>, outside .vp-raw.
-   These elements still suffer from VitePress unlayered resets. */
+   Both contexts suffer from VitePress unlayered resets.
+   revert-layer falls back to the utilities layer where BrutxUI's classes are defined. */
+.vp-raw,
 body > [id^="reka-"],
 body > [data-reka-popper-content-wrapper] {
     & button {
@@ -1100,6 +1039,32 @@ body > [data-reka-popper-content-wrapper] {
 
     & table {
         border-collapse: revert-layer;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY — Reduced motion support
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* OS-level dark mode fallback — prevents flash when .dark class is not yet applied */
+@media (prefers-color-scheme: dark) {
+    :root:not(.dark) {
+        --vp-c-bg: #141414;
+        --vp-c-bg-alt: #1a1a1a;
+        --vp-c-bg-elv: #1e1e1e;
+        --vp-c-bg-soft: #252525;
+        --vp-c-text-1: #ffffff;
+        --vp-c-text-2: #e5e5e5;
+        --vp-c-text-3: #cccccc;
     }
 }
 

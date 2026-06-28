@@ -1,3 +1,8 @@
+---
+title: CLI
+description: 了解 brutx-vue 命令行工具的使用方法
+---
+
 # CLI
 
 `brutx-vue` CLI 帮助你在项目中初始化 BrutxUI，并通过单条命令添加组件。

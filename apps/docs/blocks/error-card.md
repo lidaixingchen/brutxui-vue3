@@ -79,7 +79,7 @@ import ErrorCard from '@/components/ui/error-card/ErrorCard.vue'
 | `retry` | `[]` |
 | `dismiss` | `[]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

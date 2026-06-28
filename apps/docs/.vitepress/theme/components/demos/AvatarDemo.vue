@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
 <template>
     <div class="space-y-6">
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Sizes</p>
+            <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex items-center gap-4">
                 <Avatar size="sm">
                     <AvatarFallback>SM</AvatarFallback>
@@ -23,7 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Shapes</p>
+            <p class="text-sm font-bold tracking-wide">形状</p>
             <div class="flex items-center gap-4">
                 <Avatar size="lg" shape="square">
                     <AvatarFallback>SQ</AvatarFallback>
@@ -35,7 +35,7 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">With Image</p>
+            <p class="text-sm font-bold tracking-wide">带图片</p>
             <div class="flex items-center gap-4">
                 <Avatar size="lg">
                     <AvatarImage src="https://i.pravatar.cc/150?img=32" alt="User avatar" />

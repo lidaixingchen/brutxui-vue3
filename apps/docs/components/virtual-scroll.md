@@ -85,7 +85,7 @@ interface VirtualScrollItem {
 }
 ```
 
-## Events
+## 事件
 
 | 事件 | 参数 | 说明 |
 |------|------|------|

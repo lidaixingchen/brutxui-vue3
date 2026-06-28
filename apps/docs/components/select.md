@@ -95,7 +95,7 @@ const selectedFruit = ref('')
 | `SelectScrollUpButton` | 向上滚动指示器 |
 | `SelectScrollDownButton` | 向下滚动指示器 |
 
-## 属性
+## Props
 
 ### SelectTrigger
 

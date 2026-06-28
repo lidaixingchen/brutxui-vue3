@@ -11,15 +11,15 @@ const dangerChecked = ref(false)
     <div class="flex flex-col gap-3">
         <div class="flex items-center gap-3">
             <Checkbox v-model:checked="checked" />
-            <span class="text-sm font-bold">Default</span>
+            <span class="text-sm font-bold">默认</span>
         </div>
         <div class="flex items-center gap-3">
             <Checkbox v-model:checked="primaryChecked" variant="primary" />
-            <span class="text-sm font-bold">Primary</span>
+            <span class="text-sm font-bold">主要</span>
         </div>
         <div class="flex items-center gap-3">
             <Checkbox v-model:checked="dangerChecked" variant="danger" />
-            <span class="text-sm font-bold">Danger</span>
+            <span class="text-sm font-bold">危险</span>
         </div>
     </div>
 </template>

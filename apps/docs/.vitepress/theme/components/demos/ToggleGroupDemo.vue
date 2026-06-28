@@ -13,7 +13,7 @@ const lgValue = ref('bold')
 <template>
     <div class="space-y-6">
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Single (单选)</p>
+            <p class="text-sm font-bold tracking-wide">单选</p>
             <ToggleGroup type="single" v-model="singleValue" variant="default">
                 <ToggleGroupItem value="left" aria-label="Align Left">
                     <AlignLeft class="h-4 w-4" />
@@ -28,7 +28,7 @@ const lgValue = ref('bold')
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Multiple (多选)</p>
+            <p class="text-sm font-bold tracking-wide">多选</p>
             <ToggleGroup type="multiple" v-model="multipleValue" variant="default">
                 <ToggleGroupItem value="bold" aria-label="Bold">
                     <Bold class="h-4 w-4" />
@@ -43,7 +43,7 @@ const lgValue = ref('bold')
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Outline Variant</p>
+            <p class="text-sm font-bold tracking-wide">轮廓变体</p>
             <ToggleGroup type="single" v-model="outlineValue" variant="outline">
                 <ToggleGroupItem value="bold" aria-label="Bold">
                     <Bold class="h-4 w-4" />
@@ -58,7 +58,7 @@ const lgValue = ref('bold')
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Sizes</p>
+            <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex items-center gap-4">
                 <ToggleGroup type="single" v-model="smValue" size="sm">
                     <ToggleGroupItem value="bold" aria-label="Small">
@@ -80,7 +80,7 @@ const lgValue = ref('bold')
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Disabled</p>
+            <p class="text-sm font-bold tracking-wide">禁用</p>
             <ToggleGroup type="single" model-value="bold" disabled>
                 <ToggleGroupItem value="bold" aria-label="Bold">
                     <Bold class="h-4 w-4" />

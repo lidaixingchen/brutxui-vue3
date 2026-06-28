@@ -60,7 +60,7 @@ const progress = ref(65)
 | `progress` | `number` | — |
 | `class` | `string` | — |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

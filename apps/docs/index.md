@@ -18,7 +18,7 @@ hero:
 
 features:
   - title: 粗野主义设计系统
-    details: 3px 粗边框、4px 硬阴影、零圆角、鲜艳色彩。每个组件都基于 CSS 自定义属性令牌构建，支持 Classic / Pastel / Mono 三套主题预设。
+    details: 3px 粗边框、4px 硬阴影、零圆角、鲜艳色彩。每个组件都基于 CSS 自定义属性令牌构建，支持 Classic / Pastel / Mono / Warm 四套主题预设。
   - title: 无障碍优先
     details: 基于 reka-ui 无头原语构建。正确的 ARIA 属性、键盘导航、焦点管理和屏幕阅读器兼容性，符合 WCAG 标准。
   - title: TypeScript 严格模式

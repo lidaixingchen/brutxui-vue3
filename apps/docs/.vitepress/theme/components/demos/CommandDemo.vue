@@ -14,8 +14,8 @@ import {
 
 const dialogOpen = ref(false)
 
-function handleSelect(value: string) {
-    console.log('Selected:', value)
+function handleSelect(_value: string) {
+    // 处理选择事件
 }
 </script>
 

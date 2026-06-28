@@ -60,7 +60,7 @@ const underline = ref(false)
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
 
-## 属性
+## Props
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|

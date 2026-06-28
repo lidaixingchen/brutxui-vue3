@@ -95,7 +95,7 @@ interface FooterLink {
 |------|------|
 | `link-click` | `[{ groupIndex: number; linkIndex: number }]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

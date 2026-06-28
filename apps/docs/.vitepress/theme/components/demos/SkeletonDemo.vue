@@ -5,7 +5,7 @@ import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTable } f
 <template>
     <div class="space-y-8">
         <div class="space-y-2">
-            <p class="font-black text-sm">Variants</p>
+            <p class="font-black text-sm">变体</p>
             <div class="flex flex-wrap items-center gap-3">
                 <Skeleton variant="default" class="h-12 w-32" />
                 <Skeleton variant="primary" class="h-12 w-32" />
@@ -15,7 +15,7 @@ import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTable } f
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Avatar Sizes</p>
+            <p class="font-black text-sm">头像尺寸</p>
             <div class="flex flex-wrap items-end gap-3">
                 <div class="flex flex-col items-center gap-2">
                     <SkeletonAvatar size="sm" />
@@ -37,7 +37,7 @@ import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTable } f
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Skeleton Text</p>
+            <p class="font-black text-sm">骨架文本</p>
             <div class="flex items-center gap-4">
                 <SkeletonAvatar />
                 <div class="flex-1">
@@ -47,14 +47,14 @@ import { Skeleton, SkeletonAvatar, SkeletonText, SkeletonCard, SkeletonTable } f
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Skeleton Card</p>
+            <p class="font-black text-sm">骨架卡片</p>
             <div class="max-w-sm">
                 <SkeletonCard />
             </div>
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Skeleton Table</p>
+            <p class="font-black text-sm">骨架表格</p>
             <div class="max-w-lg">
                 <SkeletonTable :rows="4" :columns="4" />
             </div>

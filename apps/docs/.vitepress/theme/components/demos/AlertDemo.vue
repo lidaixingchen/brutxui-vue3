@@ -5,16 +5,16 @@ import { Alert, AlertTitle, AlertDescription } from 'brutx-ui-vue'
 <template>
     <div class="flex flex-col gap-4 w-full max-w-lg">
         <Alert variant="default">
-            <AlertTitle>Default</AlertTitle>
-            <AlertDescription>This is a default alert with some information.</AlertDescription>
+            <AlertTitle>默认</AlertTitle>
+            <AlertDescription>这是一条默认提示信息。</AlertDescription>
         </Alert>
         <Alert variant="primary">
-            <AlertTitle>Primary</AlertTitle>
-            <AlertDescription>This is a primary alert for important messages.</AlertDescription>
+            <AlertTitle>主要</AlertTitle>
+            <AlertDescription>这是一条重要提示信息。</AlertDescription>
         </Alert>
         <Alert variant="danger">
-            <AlertTitle>Destructive</AlertTitle>
-            <AlertDescription>This is a destructive alert for critical warnings.</AlertDescription>
+            <AlertTitle>危险</AlertTitle>
+            <AlertDescription>这是一条危险警告信息。</AlertDescription>
         </Alert>
     </div>
 </template>

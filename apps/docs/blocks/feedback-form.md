@@ -73,7 +73,7 @@ import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
 |------|------|
 | `submit` | `[{ name: string; email: string; subject: string; message: string }]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

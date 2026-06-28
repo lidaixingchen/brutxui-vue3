@@ -337,7 +337,7 @@ const columns: DataTableColumn<User>[] = [
 | `pageSizeChange` | `[size: number]` | 每页条数变化时触发 |
 | `export` | `[format: 'csv' \| 'json']` | 导出操作触发（需启用 selectable） |
 
-## Slots
+## 插槽
 
 | Slot | 作用域 | 用途 |
 |------|------|------|

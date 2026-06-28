@@ -102,7 +102,7 @@ import { Textarea } from 'brutx-ui-vue'
 </template>
 ```
 
-## 属性
+## Props
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|

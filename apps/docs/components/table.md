@@ -69,7 +69,7 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 | `TableCell` | 数据单元格（`<td>`） |
 | `TableCaption` | 表格标题（`<caption>`） |
 
-## 属性
+## Props
 
 所有子组件均接受：
 

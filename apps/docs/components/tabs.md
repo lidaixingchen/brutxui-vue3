@@ -49,7 +49,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from 'brutx-ui-vue'
 | `TabsTrigger` | 可点击的标签按钮 |
 | `TabsContent` | 每个标签的内容面板 |
 
-## 属性
+## Props
 
 ### Tabs
 

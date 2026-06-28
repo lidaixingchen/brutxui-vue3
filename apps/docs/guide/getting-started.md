@@ -1,3 +1,8 @@
+---
+title: 快速开始
+description: 了解如何开始使用 BrutxUI 组件库
+---
+
 # 快速开始
 
 BrutxUI 是一个**以复制粘贴为核心**的 Neo-Brutalism 组件库，专为 Vue 3 + Tailwind CSS 打造。它提供大胆、无障碍且高度可定制的 UI 组件，遵循新粗野主义设计哲学。
@@ -73,7 +78,7 @@ initTheme()
 
 ## 定制预设
 
-BrutxUI 内置三套主题预设，你可以通过在根元素上添加类名来应用：
+BrutxUI 内置四套主题预设，你可以通过在根元素上添加类名来应用：
 
 ### Classic（默认）
 

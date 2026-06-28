@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Carousel, CarouselItem } from 'brutx-ui-vue'
 
 const slides = [

@@ -96,7 +96,7 @@ const suggestions = [
 | `search` | `[value: string]` |
 | `select` | `[suggestion: SearchSuggestion]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

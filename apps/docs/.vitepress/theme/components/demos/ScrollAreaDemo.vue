@@ -21,7 +21,7 @@ const tags = Array.from({ length: 20 }, (_, i) => [`Tag ${i + 1}`, ['primary', '
 <template>
     <div class="flex flex-col gap-6 w-full max-w-2xl">
         <div>
-            <h3 class="text-sm font-black mb-2">Notifications</h3>
+            <h3 class="text-sm font-black mb-2">通知</h3>
             <ScrollArea class="h-72 w-full rounded-brutal border-3 border-brutal">
                 <div class="p-4 space-y-1">
                     <div
@@ -45,7 +45,7 @@ const tags = Array.from({ length: 20 }, (_, i) => [`Tag ${i + 1}`, ['primary', '
         </div>
 
         <div>
-            <h3 class="text-sm font-black mb-2">Tags</h3>
+            <h3 class="text-sm font-black mb-2">标签</h3>
             <ScrollArea class="w-full rounded-brutal border-3 border-brutal">
                 <div class="flex gap-2 p-4">
                     <span

@@ -37,6 +37,8 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [Gallery Section](/blocks/gallery-section) | 带有轮播图和图片卡片的画廊展示区块 |
 | [Upload Card](/blocks/upload-card) | 带有拖拽上传、进度条和旋转指示器的文件上传卡片 |
 | [Overview Page](/blocks/overview-page) | 带有统计卡片和活动面板的仪表盘概览页面 |
+| [Dashboard Stats](/blocks/dashboard-stats) | 带有统计卡片和计数器的仪表盘统计面板 |
+| [SaaS Pricing](/blocks/saas-pricing) | 带有切换开关和特性列表的 SaaS 定价区块 |
 
 ## 安装
 

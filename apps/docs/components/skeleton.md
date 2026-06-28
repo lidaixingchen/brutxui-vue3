@@ -98,7 +98,7 @@ import { SkeletonTable } from 'brutx-ui-vue'
 | `SkeletonCard` | 完整卡片骨架，包含头部、内容、底部 |
 | `SkeletonTable` | 表格骨架，包含行和列 |
 
-## 属性
+## Props
 
 ### Skeleton
 

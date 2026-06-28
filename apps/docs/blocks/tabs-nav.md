@@ -80,7 +80,7 @@ interface TabItem {
 }
 ```
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|

@@ -10,7 +10,7 @@ const activeGhost = ref('ghost-1')
 <template>
     <div class="w-full max-w-[500px] space-y-8">
         <div class="space-y-2">
-            <p class="font-black text-sm">Default</p>
+            <p class="font-black text-sm">默认</p>
             <Accordion type="single" collapsible v-model="activeItem">
                 <AccordionItem value="item-1">
                     <AccordionTrigger>什么是 BrutxUI？</AccordionTrigger>
@@ -34,7 +34,7 @@ const activeGhost = ref('ghost-1')
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Flat</p>
+            <p class="font-black text-sm">扁平</p>
             <Accordion type="single" collapsible v-model="activeFlat">
                 <AccordionItem value="flat-1" variant="flat">
                     <AccordionTrigger>什么是 BrutxUI？</AccordionTrigger>
@@ -52,7 +52,7 @@ const activeGhost = ref('ghost-1')
         </div>
 
         <div class="space-y-2">
-            <p class="font-black text-sm">Ghost</p>
+            <p class="font-black text-sm">幽灵</p>
             <Accordion type="single" collapsible v-model="activeGhost">
                 <AccordionItem value="ghost-1" variant="ghost">
                     <AccordionTrigger>什么是 BrutxUI？</AccordionTrigger>

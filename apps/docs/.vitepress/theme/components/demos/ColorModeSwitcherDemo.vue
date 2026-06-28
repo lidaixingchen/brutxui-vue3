@@ -5,22 +5,22 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 <template>
     <div class="space-y-6">
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Icon Mode (default)</p>
+            <p class="text-sm font-bold tracking-wide">图标模式（默认）</p>
             <ColorModeSwitcher />
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Button Mode</p>
+            <p class="text-sm font-bold tracking-wide">按钮模式</p>
             <ColorModeSwitcher display="button" />
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Select Mode</p>
+            <p class="text-sm font-bold tracking-wide">选择模式</p>
             <ColorModeSwitcher display="select" />
         </div>
 
         <div class="space-y-2">
-            <p class="text-sm font-bold tracking-wide">Without System Option</p>
+            <p class="text-sm font-bold tracking-wide">不包含系统选项</p>
             <ColorModeSwitcher display="button" :show-system="false" />
         </div>
     </div>

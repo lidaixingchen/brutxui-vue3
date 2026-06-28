@@ -91,7 +91,7 @@ import { TooltipProvider } from 'brutx-ui-vue'
 | `TooltipTrigger` | 悬停时触发工具提示的元素 |
 | `TooltipContent` | 工具提示内容面板 |
 
-## 属性
+## Props
 
 ### TooltipProvider
 

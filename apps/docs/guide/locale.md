@@ -1,3 +1,8 @@
+---
+title: 国际化
+description: 了解 BrutxUI 的多语言支持配置
+---
+
 # 国际化（i18n）
 
 BrutxUI 内置轻量多语言支持，**默认语言为中文（zh-CN）**，同时提供英文（en）语言包。无需安装 `vue-i18n`，开箱即用。

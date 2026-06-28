@@ -11,15 +11,15 @@ const dangerEnabled = ref(false)
     <div class="flex flex-col gap-4">
         <div class="flex items-center gap-3">
             <Switch v-model="enabled" />
-            <span class="text-sm font-bold">{{ enabled ? 'Enabled' : 'Disabled' }}</span>
+            <span class="text-sm font-bold">{{ enabled ? '已启用' : '已禁用' }}</span>
         </div>
         <div class="flex items-center gap-3">
             <Switch v-model="primaryEnabled" variant="primary" />
-            <span class="text-sm font-bold">Primary</span>
+            <span class="text-sm font-bold">主要</span>
         </div>
         <div class="flex items-center gap-3">
             <Switch v-model="dangerEnabled" variant="danger" />
-            <span class="text-sm font-bold">Danger</span>
+            <span class="text-sm font-bold">危险</span>
         </div>
     </div>
 </template>

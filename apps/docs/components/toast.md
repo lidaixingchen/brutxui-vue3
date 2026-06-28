@@ -156,7 +156,7 @@ interface ToastItem {
 }
 ```
 
-## 属性
+## Props
 
 ### Toast
 

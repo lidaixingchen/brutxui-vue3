@@ -99,7 +99,7 @@ import { Sheet, SheetTrigger, SheetContent, Button } from 'brutx-ui-vue'
 | `SheetDescription` | 面板描述文字 |
 | `SheetClose` | 关闭按钮 |
 
-## 属性
+## Props
 
 ### SheetContent
 

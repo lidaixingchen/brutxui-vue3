@@ -64,7 +64,7 @@ import { ScrollArea, ScrollBar } from 'brutx-ui-vue'
 | `ScrollArea` | 根可滚动容器 |
 | `ScrollBar` | 自定义滚动条（默认垂直，支持水平） |
 
-## 属性
+## Props
 
 ### ScrollArea
 

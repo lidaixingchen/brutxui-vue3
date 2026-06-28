@@ -44,7 +44,9 @@ function handleBack() {
 
 ```vue
 <script setup>
+import { useRouter } from 'vue-router'
 import NotFoundPage from '@/components/ui/not-found-page/NotFoundPage.vue'
+const router = useRouter()
 </script>
 
 <template>
@@ -52,7 +54,7 @@ import NotFoundPage from '@/components/ui/not-found-page/NotFoundPage.vue'
         title="Oops!"
         description="Something went wrong."
         back-text="Take me home"
-        @back="() => $router.push('/')"
+        @back="() => router.push('/')"
     />
 </template>
 ```
@@ -72,7 +74,7 @@ import NotFoundPage from '@/components/ui/not-found-page/NotFoundPage.vue'
 |------|------|
 | `back` | `[]` |
 
-## Slots
+## 插槽
 
 | Slot | 用途 |
 |------|------|
