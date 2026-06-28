@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { defineComponent } from 'vue'
+import { AvatarRoot } from 'reka-ui'
 import Avatar from './Avatar.vue'
 import AvatarImage from './AvatarImage.vue'
 import AvatarFallback from './AvatarFallback.vue'
@@ -16,9 +17,12 @@ const AvatarWithImage = defineComponent({
 
 const AvatarWithFallback = defineComponent({
     components: { Avatar, AvatarFallback },
-    props: { fallbackClass: { type: String, default: '' } },
+    props: {
+        fallbackClass: { type: String, default: '' },
+        variant: { type: String, default: 'default' },
+    },
     template: `
-        <Avatar>
+        <Avatar :variant="variant">
             <AvatarFallback :class="fallbackClass">JD</AvatarFallback>
         </Avatar>
     `,
@@ -27,8 +31,9 @@ const AvatarWithFallback = defineComponent({
 describe('Avatar', () => {
     it('renders with default size and shape', () => {
         const wrapper = mount(Avatar)
-        expect(wrapper.classes()).toContain('h-10')
-        expect(wrapper.classes()).toContain('w-10')
+        const root = wrapper.findComponent(AvatarRoot)
+        expect(root.classes()).toContain('h-10')
+        expect(root.classes()).toContain('w-10')
     })
 
     it('applies size classes', () => {
@@ -37,7 +42,8 @@ describe('Avatar', () => {
 
         sizes.forEach((size, i) => {
             const wrapper = mount(Avatar, { props: { size } })
-            const classes = wrapper.classes()
+            const root = wrapper.findComponent(AvatarRoot)
+            const classes = root.classes()
             expected[i].split(' ').forEach((cls) => {
                 expect(classes).toContain(cls)
             })
@@ -46,10 +52,10 @@ describe('Avatar', () => {
 
     it('applies shape classes', () => {
         const squareWrapper = mount(Avatar, { props: { shape: 'square' } })
-        expect(squareWrapper.classes()).not.toContain('rounded-brutal')
+        expect(squareWrapper.findComponent(AvatarRoot).classes()).not.toContain('rounded-brutal')
 
         const roundedWrapper = mount(Avatar, { props: { shape: 'rounded' } })
-        expect(roundedWrapper.classes()).toContain('rounded-brutal')
+        expect(roundedWrapper.findComponent(AvatarRoot).classes()).toContain('rounded-brutal')
     })
 
     it('renders slot content', () => {
@@ -59,9 +65,63 @@ describe('Avatar', () => {
         expect(wrapper.text()).toBe('AB')
     })
 
-    it('applies custom class', () => {
+    it('applies custom class to AvatarRoot', () => {
         const wrapper = mount(Avatar, { props: { class: 'my-avatar' } })
-        expect(wrapper.classes()).toContain('my-avatar')
+        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('my-avatar')
+    })
+
+    it('applies default variant background', () => {
+        const wrapper = mount(Avatar)
+        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('bg-brutal-muted')
+    })
+
+    it('applies primary variant background', () => {
+        const wrapper = mount(Avatar, { props: { variant: 'primary' } })
+        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('bg-brutal-primary/20')
+    })
+
+    it('applies secondary variant background', () => {
+        const wrapper = mount(Avatar, { props: { variant: 'secondary' } })
+        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('bg-brutal-secondary/20')
+    })
+
+    it('applies accent variant background', () => {
+        const wrapper = mount(Avatar, { props: { variant: 'accent' } })
+        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('bg-brutal-accent/20')
+    })
+
+    it('does not render status indicator by default', () => {
+        const wrapper = mount(Avatar)
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.exists()).toBe(false)
+    })
+
+    it('renders online status indicator', () => {
+        const wrapper = mount(Avatar, { props: { status: 'online' } })
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.exists()).toBe(true)
+        expect(statusDot.classes()).toContain('bg-brutal-success')
+    })
+
+    it('renders offline status indicator', () => {
+        const wrapper = mount(Avatar, { props: { status: 'offline' } })
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.exists()).toBe(true)
+        expect(statusDot.classes()).toContain('bg-brutal-muted')
+    })
+
+    it('renders busy status indicator', () => {
+        const wrapper = mount(Avatar, { props: { status: 'busy' } })
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(statusDot.exists()).toBe(true)
+        expect(statusDot.classes()).toContain('bg-brutal-destructive')
+    })
+
+    it('status indicator is outside AvatarRoot to avoid clipping', () => {
+        const wrapper = mount(Avatar, { props: { status: 'online' } })
+        const root = wrapper.findComponent(AvatarRoot)
+        const statusDot = wrapper.find('.absolute.rounded-full')
+        expect(root.element.contains(statusDot.element)).toBe(false)
     })
 })
 
@@ -97,5 +157,30 @@ describe('AvatarFallback', () => {
         })
         const fallback = wrapper.find('.font-bold')
         expect(fallback.classes()).toContain('my-fallback')
+    })
+
+    it('applies default variant fallback background', () => {
+        const wrapper = mount(AvatarWithFallback)
+        const fallback = wrapper.find('.font-bold')
+        expect(fallback.classes()).toContain('bg-brutal-primary')
+        expect(fallback.classes()).toContain('text-brutal-primary-foreground')
+    })
+
+    it('applies secondary variant fallback background', () => {
+        const wrapper = mount(AvatarWithFallback, {
+            props: { variant: 'secondary' },
+        })
+        const fallback = wrapper.find('.font-bold')
+        expect(fallback.classes()).toContain('bg-brutal-secondary')
+        expect(fallback.classes()).toContain('text-brutal-secondary-foreground')
+    })
+
+    it('applies accent variant fallback background', () => {
+        const wrapper = mount(AvatarWithFallback, {
+            props: { variant: 'accent' },
+        })
+        const fallback = wrapper.find('.font-bold')
+        expect(fallback.classes()).toContain('bg-brutal-accent')
+        expect(fallback.classes()).toContain('text-brutal-accent-foreground')
     })
 })

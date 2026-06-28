@@ -22,6 +22,7 @@ interface CounterProps {
     separator?: string;
     easing?: 'linear' | 'ease-out' | 'ease-in-out';
     autoStart?: boolean;
+    variant?: NonNullable<CounterVariantProps['variant']>;
     size?: NonNullable<CounterVariantProps['size']>;
     class?: string;
 }
@@ -39,6 +40,7 @@ const props = withDefaults(defineProps<CounterProps>(), {
     separator: ',',
     easing: 'ease-out',
     autoStart: true,
+    variant: 'default',
     size: 'md',
     class: undefined,
 });
@@ -163,7 +165,7 @@ watch(() => props.duration, (newDuration, oldDuration) => {
     startTime = now - oldProgress * newDuration;
 });
 
-watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decimals, props.size] as const, () => {
+watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decimals, props.size, props.variant] as const, () => {
     scheduleUpdateScale();
 });
 
@@ -189,11 +191,11 @@ const scaleStyle = computed(() => {
 });
 
 const classes = computed(() =>
-    cn(counterVariants({ size: props.size }), props.class)
+    cn(counterVariants({ variant: props.variant, size: props.size }), props.class)
 );
 
 const measureClasses = computed(() =>
-    cn(counterVariants({ size: props.size }), props.class, 'absolute invisible whitespace-nowrap !max-w-none')
+    cn(counterVariants({ variant: props.variant, size: props.size }), props.class, 'absolute invisible whitespace-nowrap !max-w-none')
 );
 </script>
 

@@ -112,4 +112,39 @@ describe('Counter', () => {
         expect(typeof vm.start).toBe('function')
         expect(typeof vm.stop).toBe('function')
     })
+
+    it('applies default variant classes', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100 },
+        })
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-fg')
+    })
+
+    it('applies primary variant classes', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100, variant: 'primary' },
+        })
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-primary')
+    })
+
+    it('applies accent variant classes', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100, variant: 'accent' },
+        })
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-accent')
+    })
+
+    it('applies success variant classes', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100, variant: 'success' },
+        })
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-success')
+    })
+
+    it('applies danger variant classes', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100, variant: 'danger' },
+        })
+        expect(getDisplaySpan(wrapper).classes()).toContain('text-brutal-destructive')
+    })
 })

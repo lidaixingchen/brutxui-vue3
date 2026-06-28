@@ -141,6 +141,10 @@
         {
           "path": "components/ui/avatar/avatar-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/avatar/avatar-key.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {

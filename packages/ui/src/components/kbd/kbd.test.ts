@@ -60,4 +60,49 @@ describe('Kbd', () => {
         expect(classes).toContain('rounded-brutal')
         expect(classes).toContain('shadow-brutal-sm')
     })
+
+    it('applies default variant classes', () => {
+        const wrapper = mount(Kbd)
+        const classes = wrapper.classes()
+        expect(classes).toContain('bg-brutal-muted')
+        expect(classes).toContain('text-brutal-fg')
+    })
+
+    it('applies primary variant classes', () => {
+        const wrapper = mount(Kbd, {
+            props: { variant: 'primary' },
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('bg-brutal-primary')
+        expect(classes).toContain('text-brutal-primary-foreground')
+    })
+
+    it('applies secondary variant classes', () => {
+        const wrapper = mount(Kbd, {
+            props: { variant: 'secondary' },
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('bg-brutal-secondary')
+        expect(classes).toContain('text-brutal-secondary-foreground')
+    })
+
+    it('applies accent variant classes', () => {
+        const wrapper = mount(Kbd, {
+            props: { variant: 'accent' },
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('bg-brutal-accent')
+        expect(classes).toContain('text-brutal-accent-foreground')
+    })
+
+    it('combines variant and size', () => {
+        const wrapper = mount(Kbd, {
+            props: { variant: 'primary', size: 'lg' },
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('bg-brutal-primary')
+        expect(classes).toContain('text-brutal-primary-foreground')
+        expect(classes).toContain('px-3')
+        expect(classes).toContain('text-base')
+    })
 })

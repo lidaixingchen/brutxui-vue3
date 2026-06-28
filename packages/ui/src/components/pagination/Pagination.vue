@@ -88,8 +88,6 @@ const safeCurrentPage = computed(() =>
     Math.min(Math.max(props.currentPage, FIRST_PAGE), Math.max(props.totalPages, FIRST_PAGE))
 )
 
-const buttonSize = computed(() => props.size ?? 'default')
-
 const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']>, IconSize> = {
     sm: 'sm',
     default: 'default',
@@ -97,29 +95,29 @@ const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']
 }
 
 const iconClasses = computed(() =>
-    cn(iconSizeVariants({ size: PAGINATION_SIZE_TO_ICON[buttonSize.value] }))
+    cn(iconSizeVariants({ size: PAGINATION_SIZE_TO_ICON[props.size] }))
 )
 
 const dotsSizeClasses = computed(() => {
-    if (buttonSize.value === 'sm') return 'h-8 w-8'
-    if (buttonSize.value === 'lg') return 'h-12 w-12'
+    if (props.size === 'sm') return 'h-8 w-8'
+    if (props.size === 'lg') return 'h-12 w-12'
     return 'h-10 w-10'
 })
 
 const firstButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+    cn(paginationButtonVariants({ size: props.size, isActive: false }))
 )
 
 const prevButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+    cn(paginationButtonVariants({ size: props.size, isActive: false }))
 )
 
 const nextButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+    cn(paginationButtonVariants({ size: props.size, isActive: false }))
 )
 
 const lastButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+    cn(paginationButtonVariants({ size: props.size, isActive: false }))
 )
 
 const dotsClasses = computed(() =>
@@ -127,11 +125,11 @@ const dotsClasses = computed(() =>
 )
 
 const pageButtonActiveClasses = computed(() =>
-    cn(paginationButtonVariants({ size: buttonSize.value, isActive: true }))
+    cn(paginationButtonVariants({ size: props.size, isActive: true }))
 )
 
 const pageButtonInactiveClasses = computed(() =>
-    cn(paginationButtonVariants({ size: buttonSize.value, isActive: false }))
+    cn(paginationButtonVariants({ size: props.size, isActive: false }))
 )
 
 function onPageChange(page: number) {

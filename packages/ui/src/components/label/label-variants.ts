@@ -2,7 +2,7 @@ import { cva } from 'class-variance-authority'
 
 export const labelVariants = cva(
     [
-        'text-sm font-bold tracking-wide leading-none',
+        'font-bold tracking-wide',
         'peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
     ],
     {
@@ -13,9 +13,15 @@ export const labelVariants = cva(
                 success: 'text-brutal-success',
                 muted: 'text-brutal-muted-foreground',
             },
+            size: {
+                sm: 'text-xs leading-none',
+                default: 'text-sm leading-none',
+                lg: 'text-base leading-none',
+            },
         },
         defaultVariants: {
             variant: 'default',
+            size: 'default',
         },
     }
 )

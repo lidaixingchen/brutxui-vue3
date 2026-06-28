@@ -6,7 +6,7 @@ export interface ComponentFileMapping {
 
 export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     alert: { files: ['Alert.vue', 'AlertDescription.vue', 'AlertTitle.vue', 'alert-variants.ts'] },
-    avatar: { files: ['Avatar.vue', 'AvatarFallback.vue', 'AvatarImage.vue', 'avatar-variants.ts'] },
+    avatar: { files: ['Avatar.vue', 'AvatarFallback.vue', 'AvatarImage.vue', 'avatar-variants.ts', 'avatar-key.ts'] },
     badge: { files: ['Badge.vue', 'badge-variants.ts'] },
     button: { files: ['Button.vue', 'button-variants.ts'] },
     calendar: { files: ['Calendar.vue'] },

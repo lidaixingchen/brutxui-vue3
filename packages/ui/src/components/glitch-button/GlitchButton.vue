@@ -152,7 +152,9 @@ const GLITCH_BUTTON_SIZE_TO_ICON: Record<NonNullable<GlitchButtonVariantProps['s
     icon: 'default',
 }
 
-const loaderSize = computed(() => iconSizeVariants({ size: GLITCH_BUTTON_SIZE_TO_ICON[props.size] }))
+const loaderClasses = computed(() =>
+    cn(iconSizeVariants({ size: GLITCH_BUTTON_SIZE_TO_ICON[props.size] }), 'animate-spin')
+)
 
 const classes = computed(() =>
     cn(
@@ -181,7 +183,7 @@ const classes = computed(() =>
         @mouseleave="onMouseLeave"
         @click="onClick"
     >
-        <Loader2 v-if="loading" :class="cn(loaderSize, 'animate-spin')" />
+        <Loader2 v-if="loading" :class="loaderClasses" />
         <slot />
     </Primitive>
 </template>

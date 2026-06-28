@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { AvatarFallback as AvatarFallbackPrimitive } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { avatarFallbackVariants } from './avatar-variants'
+import { avatarKey } from './avatar-key'
 
 interface AvatarFallbackProps {
     class?: string
@@ -9,8 +11,15 @@ interface AvatarFallbackProps {
 
 const props = defineProps<AvatarFallbackProps>()
 
+const avatarContext = inject(avatarKey, {
+    variant: computed(() => 'default' as const),
+})
+
 const classes = computed(() =>
-    cn('flex h-full w-full items-center justify-center bg-brutal-primary text-brutal-primary-foreground font-bold', props.class)
+    cn(
+        avatarFallbackVariants({ variant: avatarContext.variant.value }),
+        props.class,
+    )
 )
 </script>
 

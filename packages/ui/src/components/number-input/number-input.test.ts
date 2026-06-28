@@ -123,4 +123,13 @@ describe('NumberInput', () => {
             expect(icon.classes()).not.toContain('h-4')
         }
     })
+
+    it('does not leak iconSize as an unknown attribute onto the root element', () => {
+        const wrapper = mount(NumberInput, {
+            props: { layout: 'split', iconSize: 'lg' },
+        })
+        const root = wrapper.find('[role="group"]')
+        expect(root.attributes('iconsize')).toBeUndefined()
+        expect(root.attributes('iconSize')).toBeUndefined()
+    })
 })

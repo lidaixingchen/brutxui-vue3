@@ -68,4 +68,48 @@ describe('Label', () => {
         })
         expect(wrapper.attributes('for')).toBe('input-field')
     })
+
+    it('applies default size classes', () => {
+        const wrapper = mount(Label, { attachTo: document.body })
+        expect(wrapper.classes()).toContain('text-sm')
+    })
+
+    it('applies sm size classes', () => {
+        const wrapper = mount(Label, {
+            props: { size: 'sm' },
+            attachTo: document.body,
+        })
+        expect(wrapper.classes()).toContain('text-xs')
+    })
+
+    it('applies lg size classes', () => {
+        const wrapper = mount(Label, {
+            props: { size: 'lg' },
+            attachTo: document.body,
+        })
+        expect(wrapper.classes()).toContain('text-base')
+    })
+
+    it('does not render required indicator by default', () => {
+        const wrapper = mount(Label, { attachTo: document.body })
+        expect(wrapper.find('span.text-brutal-destructive').exists()).toBe(false)
+    })
+
+    it('renders required indicator when required is true', () => {
+        const wrapper = mount(Label, {
+            props: { required: true },
+            attachTo: document.body,
+        })
+        const indicator = wrapper.find('span.text-brutal-destructive')
+        expect(indicator.exists()).toBe(true)
+        expect(indicator.text()).toBe('*')
+    })
+
+    it('marks required indicator as aria-hidden', () => {
+        const wrapper = mount(Label, {
+            props: { required: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('span.text-brutal-destructive').attributes('aria-hidden')).toBe('true')
+    })
 })

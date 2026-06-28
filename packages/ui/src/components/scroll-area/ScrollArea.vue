@@ -10,10 +10,16 @@ import { scrollAreaRootVariants } from './scroll-area-variants'
 import ScrollBar from './ScrollBar.vue'
 
 interface ScrollAreaProps {
+    variant?: 'default' | 'primary' | 'accent'
+    size?: 'sm' | 'default' | 'lg'
     class?: string
 }
 
-const props = defineProps<ScrollAreaProps>()
+const props = withDefaults(defineProps<ScrollAreaProps>(), {
+    variant: 'default',
+    size: 'default',
+    class: undefined,
+})
 
 const classes = computed(() =>
     cn(scrollAreaRootVariants(), props.class)
@@ -25,7 +31,7 @@ const classes = computed(() =>
         <ScrollAreaViewportPrimitive class="h-full w-full rounded-[inherit]">
             <slot />
         </ScrollAreaViewportPrimitive>
-        <ScrollBar />
+        <ScrollBar :variant="variant" :size="size" />
         <ScrollAreaCornerPrimitive />
     </ScrollAreaRootPrimitive>
 </template>

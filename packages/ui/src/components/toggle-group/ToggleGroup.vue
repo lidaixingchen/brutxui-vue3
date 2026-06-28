@@ -14,6 +14,7 @@ interface ToggleGroupProps {
     modelValue?: string | string[]
     variant?: NonNullable<ToggleVariantProps['variant']>
     size?: NonNullable<ToggleVariantProps['size']>
+    orientation?: 'horizontal' | 'vertical'
     disabled?: boolean
     class?: string
 }
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
     modelValue: undefined,
     variant: 'default',
     size: 'default',
+    orientation: 'horizontal',
     disabled: false,
     class: undefined,
 })
@@ -31,7 +33,11 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
 const emit = defineEmits<{ 'update:modelValue': [value: string | string[]] }>()
 
 const classes = computed(() =>
-    cn('flex items-center justify-center gap-1.5', props.class)
+    cn(
+        'flex items-center justify-center gap-1.5',
+        props.orientation === 'vertical' && 'flex-col',
+        props.class,
+    ),
 )
 
 provide(toggleGroupKey, {
@@ -47,6 +53,7 @@ provide(toggleGroupKey, {
         :default-value="defaultValue"
         :model-value="modelValue"
         :disabled="disabled"
+        :orientation="orientation"
         :class="classes"
         @update:model-value="emit('update:modelValue', $event as string | string[])"
     >

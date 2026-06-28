@@ -50,6 +50,67 @@ describe('Skeleton', () => {
         expect(classes).toContain('h-4')
         expect(classes).toContain('w-full')
     })
+
+    it('applies sm size height', () => {
+        const wrapper = mount(Skeleton, { props: { size: 'sm' } })
+        expect(wrapper.classes()).toContain('h-8')
+    })
+
+    it('applies default size height', () => {
+        const wrapper = mount(Skeleton, { props: { size: 'default' } })
+        expect(wrapper.classes()).toContain('h-10')
+    })
+
+    it('applies lg size height', () => {
+        const wrapper = mount(Skeleton, { props: { size: 'lg' } })
+        expect(wrapper.classes()).toContain('h-14')
+    })
+
+    it('applies xl size height', () => {
+        const wrapper = mount(Skeleton, { props: { size: 'xl' } })
+        expect(wrapper.classes()).toContain('h-20')
+    })
+
+    it('applies rect shape rounded-brutal by default', () => {
+        const wrapper = mount(Skeleton)
+        expect(wrapper.classes()).toContain('rounded-brutal')
+        expect(wrapper.classes()).not.toContain('rounded-full')
+    })
+
+    it('applies circle shape rounded-full', () => {
+        const wrapper = mount(Skeleton, { props: { shape: 'circle' } })
+        expect(wrapper.classes()).toContain('rounded-full')
+        expect(wrapper.classes()).not.toContain('rounded-brutal')
+    })
+
+    it('circle shape sets width matching height', () => {
+        const wrapper = mount(Skeleton, {
+            props: { shape: 'circle', size: 'sm' },
+        })
+        expect(wrapper.classes()).toContain('h-8')
+        expect(wrapper.classes()).toContain('w-8')
+    })
+
+    it('rect shape does not add circle width classes', () => {
+        const wrapper = mount(Skeleton, {
+            props: { shape: 'rect', size: 'default' },
+        })
+        expect(wrapper.classes()).not.toContain('w-10')
+    })
+
+    it('applies custom width via style', () => {
+        const wrapper = mount(Skeleton, {
+            props: { width: '100%' },
+        })
+        expect(wrapper.attributes('style')).toContain('width: 100%')
+    })
+
+    it('applies pixel width via style', () => {
+        const wrapper = mount(Skeleton, {
+            props: { width: '200px' },
+        })
+        expect(wrapper.attributes('style')).toContain('width: 200px')
+    })
 })
 
 describe('SkeletonText', () => {

@@ -125,4 +125,76 @@ describe('CopyToClipboard', () => {
         })
         expect(wrapper.text()).toContain('Custom slot')
     })
+
+    it('applies default variant classes', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        const button = wrapper.find('button')
+        expect(button.classes()).toContain('bg-brutal-bg')
+        expect(button.classes()).toContain('text-brutal-fg')
+    })
+
+    it('applies primary variant classes', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello', variant: 'primary' },
+            ...localeProvide,
+        })
+        const button = wrapper.find('button')
+        expect(button.classes()).toContain('bg-brutal-primary')
+        expect(button.classes()).toContain('text-brutal-primary-foreground')
+    })
+
+    it('applies outline variant classes', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello', variant: 'outline' },
+            ...localeProvide,
+        })
+        const button = wrapper.find('button')
+        expect(button.classes()).toContain('bg-transparent')
+        expect(button.classes()).toContain('text-brutal-fg')
+    })
+
+    it('applies sm size classes', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello', size: 'sm' },
+            ...localeProvide,
+        })
+        expect(wrapper.find('button').classes()).toContain('h-9')
+    })
+
+    it('applies default size classes', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        expect(wrapper.find('button').classes()).toContain('h-11')
+    })
+
+    it('applies lg size classes', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello', size: 'lg' },
+            ...localeProvide,
+        })
+        expect(wrapper.find('button').classes()).toContain('h-14')
+    })
+
+    it('copied state overrides variant background', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        mockCopied.value = true
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello', variant: 'primary' },
+            ...localeProvide,
+        })
+        const button = wrapper.find('button')
+        expect(button.classes()).toContain('bg-brutal-success')
+        expect(button.classes()).not.toContain('bg-brutal-primary')
+    })
 })

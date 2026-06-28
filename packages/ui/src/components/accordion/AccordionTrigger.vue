@@ -7,7 +7,9 @@ import { accordionTriggerVariants } from './accordion-variants'
 import { accordionItemKey } from './accordion-key'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
-const props = defineProps<AccordionTriggerProps & { class?: string; iconSize?: IconSize }>()
+const props = withDefaults(defineProps<AccordionTriggerProps & { class?: string; iconSize?: IconSize }>(), {
+    iconSize: 'lg',
+})
 
 const context = inject(accordionItemKey, { variant: computed(() => undefined) })
 
@@ -29,7 +31,7 @@ const classes = computed(() =>
 
 const iconClasses = computed(() =>
     cn(
-        iconSizeVariants({ size: props.iconSize ?? 'lg' }),
+        iconSizeVariants({ size: props.iconSize }),
         'shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm'
     )
 )
