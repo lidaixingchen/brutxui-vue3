@@ -56,6 +56,33 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 </template>
 ```
 
+## 无障碍标签
+
+通过 `ariaLabel` 为表格提供可读名称，便于屏幕阅读器识别表格用途，对于无可见标题（`TableCaption`）的表格尤为重要。`ariaLabel` 仅作用于 `Table` 根组件。
+
+```vue
+<script setup>
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <Table aria-label="近期发票列表">
+        <TableHeader>
+            <TableRow>
+                <TableHead>名称</TableHead>
+                <TableHead>金额</TableHead>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            <TableRow>
+                <TableCell>发票 #001</TableCell>
+                <TableCell>$250.00</TableCell>
+            </TableRow>
+        </TableBody>
+    </Table>
+</template>
+```
+
 ## 子组件
 
 | 组件 | 说明 |
@@ -75,6 +102,13 @@ import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell, TableCap
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `class` | `string` | — |
+
+### Table
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `ariaLabel` | `string` | — |
 | `class` | `string` | — |
 
 ### TableHeader / TableHead

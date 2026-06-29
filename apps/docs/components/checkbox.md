@@ -65,16 +65,50 @@ import { Checkbox } from 'brutx-ui-vue'
 </template>
 ```
 
+## 不确定状态
+
+将 `checked` 设置为 `'indeterminate'` 可展示不确定状态，此时指示器显示 `Minus`（减号）图标，常用于"部分选中"等层级选择场景。
+
+```vue
+<script setup>
+import { Checkbox } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <Checkbox :checked="'indeterminate'" />
+</template>
+```
+
+## 无障碍标签
+
+Checkbox 默认通过 locale 提供 `aria-label`（中文为"复选框"），未提供时回退到 `t('checkbox.check')`。当毗邻可见文本已能描述用途时可省略，否则建议通过 `ariaLabel` 提供更具体的描述。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Checkbox, Label } from 'brutx-ui-vue'
+
+const checked = ref(false)
+</script>
+
+<template>
+    <div class="flex items-center gap-3">
+        <Checkbox v-model:checked="checked" id="marketing" aria-label="接收营销邮件" />
+        <Label for="marketing">接收营销邮件</Label>
+    </div>
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `class` | `string` | — |
 | `checked` | `boolean` | — |
-| `defaultChecked` | `boolean` | — |
 | `disabled` | `boolean` | `false` |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `ariaLabel` | `string` | locale 默认值（`checkbox.check`） |
 
 ## 事件
 

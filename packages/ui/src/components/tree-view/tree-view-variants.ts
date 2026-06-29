@@ -13,7 +13,6 @@ export const treeItemVariants = cva(
         variants: {
             selected: {
                 true: 'bg-brutal-primary border-brutal shadow-brutal',
-                false: '',
             },
         },
         defaultVariants: {

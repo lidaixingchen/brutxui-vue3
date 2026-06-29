@@ -21,6 +21,8 @@
 
 子组件：Dialog, DialogTrigger, DialogPortal, DialogClose, DialogOverlay, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription
 
+- `DialogContent.size`: `'sm' | 'default' | 'lg' | 'xl' | 'full'` — 默认 `'default'`，控制最大宽度（sm=max-w-sm, default=max-w-lg, lg=max-w-2xl, xl=max-w-4xl, full=max-w-[calc(100vw-2rem)]）
+
 ## AlertDialog
 
 确认弹窗。
@@ -57,7 +59,10 @@
 </Alert>
 ```
 
-- `variant`: `'default' | 'destructive'`
+- `variant`: `'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'` — 默认 `'default'`，控制背景色与文字色（源码中以 `danger` 对应危险/错误场景）
+- `closable`: `boolean` — 默认 `false`，右上角渲染关闭按钮（使用 Button `variant="ghost" size="icon"`）
+- Events: `close` — 点击关闭按钮时触发
+- Slots: `action` — 操作按钮区域（如"重试"、"查看详情"），渲染在内容下方
 
 ## Toast
 
@@ -73,6 +78,7 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
 - `title`: `string`
 - `description`: `string`
 - `variant`: `'default' | 'success' | 'destructive' | 'info'`
+- `pauseOnHover`: `boolean` — 默认 `true`，鼠标悬停时暂停倒计时和进度条动画，离开后从剩余时间继续
 
 ## Popover
 
@@ -139,3 +145,5 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
 ```
 
 子组件：Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator, CommandShortcut
+
+- 暴露: `filterSearch`（`Ref<string>`）— 可通过 `ref` 程序化读写搜索过滤值

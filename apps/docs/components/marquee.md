@@ -83,3 +83,12 @@ import { Marquee } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'accent'` | 背景与文字颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 文字大小与内边距 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |
+
+## 无障碍 / 动效降级
+
+组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时：
+
+- 移除轨道的滚动动画（添加 `[animation:none]`），内容以静态形式展示。
+- 不再渲染用于无缝衔接的重复轨道副本（`aria-hidden` 的镜像轨道），仅保留单份内容，避免视觉冗余。
+
+该行为通过 `useReducedMotion` 组合式函数监听 `prefers-reduced-motion: reduce` 媒体查询实现，会随系统设置的切换实时响应，无需刷新页面。

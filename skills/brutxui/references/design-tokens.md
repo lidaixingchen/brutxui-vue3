@@ -9,6 +9,7 @@
 - [主题预设](#主题预设)
 - [暗色模式](#暗色模式)
 - [useTheme 组合式函数](#usetheme-组合式函数)
+- [useAnimation 组合式函数](#useanimation-组合式函数)
 - [国际化](#国际化)
 
 ---
@@ -202,6 +203,63 @@ BrutxUI 提供三个内置主题预设，通过 CSS 类名切换：
 - 更强的黑白对比
 - 0px 圆角
 
+### theme-warm
+
+暖色粗野主义风格，融合原始感与温暖视觉体验，橙色、棕色、米色、奶油色为主色调，轻微圆角软化硬朗感。
+
+```vue
+<div class="theme-warm">
+  <Button variant="primary">暖色风格</Button>
+</div>
+```
+
+特征：
+- 3px 边框
+- 4px 阴影
+- 4px 圆角（轻微圆角软化硬朗感）
+- 暖色调（橙色 `#E8722A`、棕色 `#8B6F47`、米色 `#F5EDE3`、奶油色 `#FFF8F0`）
+
+```css
+.theme-warm {
+    --brutal-border-width: 3px;
+    --brutal-border-color: #5C3D2E;
+    --brutal-shadow-offset-x: 4px;
+    --brutal-shadow-offset-y: 4px;
+    --brutal-shadow-color: #5C3D2E;
+    --brutal-radius: 4px;
+    --brutal-bg: #FFF8F0;
+    --brutal-fg: #2D1810;
+    --brutal-primary: #E8722A;
+    --brutal-secondary: #8B6F47;
+    --brutal-accent: #F2C078;
+    --brutal-destructive: #C0392B;
+    --brutal-success: #7B8B3A;
+    --brutal-muted: #F5EDE3;
+    --brutal-muted-foreground: #6B5B4F;
+    --brutal-ring: #E8722A;
+    --brutal-info: #D4956A;
+    --brutal-overlay: rgba(45, 24, 16, 0.5);
+    --brutal-placeholder: #B8A898;
+}
+.dark .theme-warm, .theme-warm.dark {
+    --brutal-border-color: #C4A882;
+    --brutal-shadow-color: #C4A882;
+    --brutal-bg: #1A1410;
+    --brutal-fg: #F5E6D3;
+    --brutal-primary: #F59E4C;
+    --brutal-secondary: #B8956A;
+    --brutal-accent: #FFD89B;
+    --brutal-destructive: #E74C3C;
+    --brutal-success: #A3B556;
+    --brutal-muted: #2A2018;
+    --brutal-muted-foreground: #B8A898;
+    --brutal-ring: #F59E4C;
+    --brutal-info: #E8B88A;
+    --brutal-overlay: rgba(0, 0, 0, 0.7);
+    --brutal-placeholder: #6B5B4F;
+}
+```
+
 ---
 
 ## 暗色模式
@@ -229,7 +287,7 @@ BrutxUI 提供了 `useTheme` 组合式函数，用于在运行时切换主题和
 ```typescript
 import { useTheme } from 'brutx-ui-vue'
 
-const { theme, colorMode, setTheme, toggleColorMode, applyColorMode, initTheme } = useTheme()
+const { theme, colorMode, setTheme, toggleColorMode, applyColorMode, initTheme, setCustomVariable, removeCustomVariable } = useTheme()
 ```
 
 ### API
@@ -242,6 +300,8 @@ const { theme, colorMode, setTheme, toggleColorMode, applyColorMode, initTheme }
 | `toggleColorMode()` | `() => void` | 在亮色/暗色模式之间切换 |
 | `applyColorMode(mode)` | `(mode: ColorMode) => void` | 设置指定的颜色模式 |
 | `initTheme()` | `() => void` | 从 localStorage 恢复用户偏好，或跟随系统偏好 |
+| `setCustomVariable(name, value)` | `(name: \`--${string}\`, value: string) => void` | 运行时设置自定义 CSS 变量到 document.documentElement |
+| `removeCustomVariable(name)` | `(name: \`--${string}\`) => void` | 移除自定义 CSS 变量 |
 
 ### 使用示例
 
@@ -295,6 +355,24 @@ function handleThemeChange(value: AcceptableValue) {
   </Button>
 </template>
 ```
+
+---
+
+## useAnimation 组合式函数
+
+统一动画降级策略，自动尊重 `prefers-reduced-motion` 系统设置。
+
+```typescript
+import { useAnimation } from 'brutx-ui-vue'
+
+const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
+// prefersReduced=true 时 animationClass 为空字符串
+```
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `animationClass` | `ComputedRef<string>` | 解析后的动画类名（降级时为空） |
+| `prefersReduced` | `Ref<boolean>` | 是否启用了减少动效 |
 
 ---
 

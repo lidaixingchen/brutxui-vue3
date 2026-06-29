@@ -66,6 +66,35 @@ const tags = ref(['vue', 'css'])
 </template>
 ```
 
+## 无障碍标签
+
+TagsInput 默认通过 locale 提供 `aria-label`（中文为"标签输入"），未提供时回退到 `t('tagsInput.label')`。当需要更具体的描述（如"文章标签"、"收件人"）时，可通过 `ariaLabel` prop 自定义。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import {
+    TagsInput,
+    TagsInputInput,
+    TagsInputItem,
+    TagsInputItemText,
+    TagsInputItemDelete
+} from 'brutx-ui-vue'
+
+const tags = ref(['vue', 'css'])
+</script>
+
+<template>
+    <TagsInput v-model="tags" aria-label="文章标签">
+        <TagsInputItem v-for="tag in tags" :key="tag" :value="tag">
+            <TagsInputItemText>{{ tag }}</TagsInputItemText>
+            <TagsInputItemDelete />
+        </TagsInputItem>
+        <TagsInputInput placeholder="添加标签..." />
+    </TagsInput>
+</template>
+```
+
 ## Props
 
 ### TagsInput Props
@@ -76,6 +105,7 @@ const tags = ref(['vue', 'css'])
 | `disabled` | `boolean` | `false` | 是否禁用输入 |
 | `max` | `number` | — | 最大允许标签数 |
 | `addOnPaste` | `boolean` | `false` | 是否在粘贴时根据分词自动添加标签 |
+| `ariaLabel` | `string` | locale 默认值（`tagsInput.label`） | 无障碍标签，未提供时使用 locale 默认值 |
 
 ### TagsInputItem Props
 

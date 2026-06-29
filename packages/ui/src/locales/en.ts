@@ -72,6 +72,7 @@ export const en: Locale = {
         live: 'Live',
         defaultDescription: 'Join the waitlist to be among the first to try it.',
         invalidEmail: 'Please enter a valid email address',
+        emailPlaceholder: 'you@example.com',
     },
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
@@ -395,6 +396,18 @@ export const en: Locale = {
         mostPopular: 'Most Popular Tier',
         perLifetime: '/ lifetime',
         emptyTitle: 'No pricing plans available',
+        perMonth: '/mo',
+        perMonthBilledAnnually: 'mo (billed annually)',
+        billingPeriod: 'Billing period',
+        monthly: 'Monthly',
+        annually: 'Annually',
+    },
+    colorModeSwitcher: {
+        light: 'Light',
+        dark: 'Dark',
+        system: 'System',
+        colorMode: 'Color mode',
+        currentToggle: 'Current: {mode}. Click to toggle.',
     },
     dashboardStats: {
         defaultTitle: 'Overview Performance',

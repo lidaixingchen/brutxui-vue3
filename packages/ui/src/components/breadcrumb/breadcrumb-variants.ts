@@ -1,25 +1,17 @@
-import { cva } from 'class-variance-authority'
-
-export const breadcrumbListVariants = cva(
+export const breadcrumbListClasses =
     'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4'
-)
 
-export const breadcrumbItemVariants = cva(
+export const breadcrumbItemClasses =
     'list-none inline-flex items-center gap-1.5'
-)
 
-export const breadcrumbLinkVariants = cva(
+export const breadcrumbLinkClasses =
     'font-semibold transition-colors hover:text-brutal-primary hover:underline hover:shadow-brutal-sm hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer'
-)
 
-export const breadcrumbPageVariants = cva(
+export const breadcrumbPageClasses =
     'font-black text-brutal-fg bg-brutal-accent px-2 py-0.5 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'
-)
 
-export const breadcrumbSeparatorVariants = cva(
+export const breadcrumbSeparatorClasses =
     'list-none [&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-brutal-fg/60'
-)
 
-export const breadcrumbEllipsisVariants = cva(
+export const breadcrumbEllipsisClasses =
     'flex h-7 w-7 items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm rounded-brutal transition-all hover:bg-brutal-muted active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none select-none'
-)

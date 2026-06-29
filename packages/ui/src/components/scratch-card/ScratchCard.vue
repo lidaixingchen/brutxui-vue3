@@ -6,6 +6,19 @@ import { useCanvasInteraction } from '../../composables/useCanvasInteraction'
 import { useLocale } from '@/composables/useLocale'
 import { scratchCardVariants } from './scratch-card-variants'
 
+const DEFAULT_PERCENTAGE = 50
+const DEFAULT_BRUSH_RADIUS = 20
+const DEFAULT_FADE_DURATION = 300
+
+const FALLBACK_PRIMARY_COLOR = '#FF6B6B'
+const FALLBACK_SECONDARY_COLOR = '#4ECDC4'
+const FALLBACK_FG_COLOR = '#000000'
+
+const PRIMARY_STRIPE_WIDTH = 10
+const SECONDARY_STRIPE_WIDTH = 2
+const STRIPE_SPACING = 20
+const SECONDARY_STRIPE_OFFSET = 5
+
 interface ScratchCardProps {
     percentage?: number
     brushRadius?: number
@@ -15,10 +28,10 @@ interface ScratchCardProps {
 }
 
 const props = withDefaults(defineProps<ScratchCardProps>(), {
-    percentage: 50,
-    brushRadius: 20,
+    percentage: DEFAULT_PERCENTAGE,
+    brushRadius: DEFAULT_BRUSH_RADIUS,
     overlayColor: undefined,
-    fadeDuration: 300,
+    fadeDuration: DEFAULT_FADE_DURATION,
     class: undefined,
 })
 
@@ -40,9 +53,9 @@ const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => 
         ctxVal.fillStyle = props.overlayColor
         ctxVal.fillRect(0, 0, w, h)
     } else {
-        let primary = '#FF6B6B'
-        let secondary = '#4ECDC4'
-        let fg = '#000000'
+        let primary = FALLBACK_PRIMARY_COLOR
+        let secondary = FALLBACK_SECONDARY_COLOR
+        let fg = FALLBACK_FG_COLOR
         if (typeof document !== 'undefined') {
             const rootStyle = getComputedStyle(document.documentElement)
             primary = rootStyle.getPropertyValue('--brutal-primary').trim() || primary
@@ -54,9 +67,8 @@ const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => 
         ctxVal.fillRect(0, 0, w, h)
 
         ctxVal.strokeStyle = primary
-        ctxVal.lineWidth = 10
-        const spacing = 20
-        for (let i = -h; i < w + h; i += spacing) {
+        ctxVal.lineWidth = PRIMARY_STRIPE_WIDTH
+        for (let i = -h; i < w + h; i += STRIPE_SPACING) {
             ctxVal.beginPath()
             ctxVal.moveTo(i, 0)
             ctxVal.lineTo(i + h, h)
@@ -64,11 +76,11 @@ const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => 
         }
 
         ctxVal.strokeStyle = fg
-        ctxVal.lineWidth = 2
-        for (let i = -h; i < w + h; i += spacing) {
+        ctxVal.lineWidth = SECONDARY_STRIPE_WIDTH
+        for (let i = -h; i < w + h; i += STRIPE_SPACING) {
             ctxVal.beginPath()
-            ctxVal.moveTo(i + 5, 0)
-            ctxVal.lineTo(i + 5 + h, h)
+            ctxVal.moveTo(i + SECONDARY_STRIPE_OFFSET, 0)
+            ctxVal.lineTo(i + SECONDARY_STRIPE_OFFSET + h, h)
             ctxVal.stroke()
         }
     }

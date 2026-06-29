@@ -9,7 +9,7 @@ interface FormControlProps {
 
 const props = defineProps<FormControlProps>()
 
-const rootClasses = computed(() => cn('', props.class))
+const rootClasses = computed(() => cn(props.class))
 
 const fieldContext = inject(formFieldKey, {
     name: computed(() => ''),

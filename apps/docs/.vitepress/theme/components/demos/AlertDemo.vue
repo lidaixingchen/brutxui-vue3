@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { Alert, AlertTitle, AlertDescription } from 'brutx-ui-vue'
+import { ref } from 'vue'
+import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
+
+const closableVisible = ref(true)
+
+function handleClose() {
+    closableVisible.value = false
+}
 </script>
 
 <template>
@@ -15,6 +22,20 @@ import { Alert, AlertTitle, AlertDescription } from 'brutx-ui-vue'
         <Alert variant="danger">
             <AlertTitle>危险</AlertTitle>
             <AlertDescription>这是一条危险警告信息。</AlertDescription>
+        </Alert>
+
+        <Alert v-if="closableVisible" variant="info" closable @close="handleClose">
+            <AlertTitle>可关闭的提示</AlertTitle>
+            <AlertDescription>点击右上角的 × 按钮可以关闭此提示。</AlertDescription>
+        </Alert>
+
+        <Alert variant="warning">
+            <AlertTitle>存储空间不足</AlertTitle>
+            <AlertDescription>您的存储空间已使用 90%，请及时清理或升级。</AlertDescription>
+            <template #action>
+                <Button variant="primary" size="sm">立即升级</Button>
+                <Button variant="outline" size="sm">稍后提醒</Button>
+            </template>
         </Alert>
     </div>
 </template>

@@ -4,7 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
-import { card3dVariants, card3dShadowVariants } from './card-3d-variants'
+import { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './card-3d-variants'
 
 type Card3DVariantProps = VariantProps<typeof card3dVariants>
 
@@ -44,7 +44,7 @@ const isHovered = ref(false)
 const prefersReducedMotion = useReducedMotion()
 const { t } = useLocale()
 
-const CSS_VAR_OFFSET_FALLBACK = 4
+const CSS_VAR_OFFSET_FALLBACK = DEFAULT_CARD3D_OFFSET_PX
 
 // 从 CSS 变量 --card3d-offset 读取阴影偏移量（变量定义在卡片元素上）
 const readOffsetFromCSSVar = (): number => {
@@ -151,7 +151,7 @@ const handleClick = (event: MouseEvent) => {
 }
 
 const shadowClasses = computed(() =>
-    cn(card3dShadowVariants)
+    cn(card3dShadowClasses)
 )
 </script>
 

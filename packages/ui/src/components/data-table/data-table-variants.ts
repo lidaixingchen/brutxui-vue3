@@ -37,7 +37,6 @@ export const dataTableHeadVariants = cva(
         variants: {
             sortable: {
                 true: 'cursor-pointer select-none hover:bg-brutal-accent/40 active:translate-y-[var(--brutal-pressed-offset,2px)] active:bg-brutal-accent',
-                false: '',
             },
             align: {
                 left: 'text-left',
@@ -46,7 +45,6 @@ export const dataTableHeadVariants = cva(
             },
             active: {
                 true: 'bg-brutal-accent',
-                false: '',
             },
         },
         defaultVariants: {
@@ -56,8 +54,6 @@ export const dataTableHeadVariants = cva(
         },
     },
 )
-
-export const dataTableBodyVariants = cva([])
 
 export const dataTableRowVariants = cva(
     [
@@ -72,7 +68,6 @@ export const dataTableRowVariants = cva(
             },
             striped: {
                 true: 'even:bg-brutal-muted/50',
-                false: '',
             },
         },
         defaultVariants: {
@@ -100,11 +95,9 @@ export const dataTableCellVariants = cva(
             },
             dense: {
                 true: 'py-1.5',
-                false: '',
             },
             active: {
                 true: 'bg-brutal-accent/20',
-                false: '',
             },
         },
         defaultVariants: {
@@ -114,14 +107,6 @@ export const dataTableCellVariants = cva(
             active: false,
         },
     },
-)
-
-export const dataTableFooterVariants = cva(
-    [
-        'border-t-3 border-brutal',
-        'bg-brutal-muted',
-        'px-4 py-3',
-    ],
 )
 
 export const dataTableToolbarVariants = cva(
@@ -137,12 +122,6 @@ export const dataTablePaginationVariants = cva(
         'flex items-center justify-between gap-4 p-4',
         'border-t-3 border-brutal',
         'bg-brutal-muted',
-    ],
-)
-
-export const dataTableFilterVariants = cva(
-    [
-        'flex items-center gap-2',
     ],
 )
 

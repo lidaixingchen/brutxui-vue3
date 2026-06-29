@@ -29,7 +29,7 @@ interface StepperProps {
 const props = withDefaults(defineProps<StepperProps>(), {
     orientation: 'horizontal',
     size: 'default',
-    variant: 'primary',
+    variant: 'default',
     clickable: true,
     class: undefined,
 });
@@ -54,7 +54,8 @@ function clickStep(index: number) {
 }
 
 function handleStepKeydown(event: KeyboardEvent) {
-    const target = event.target as HTMLElement
+    const target = event.target
+    if (!(target instanceof HTMLElement)) return
     if (target.tagName !== 'BUTTON') return
 
     const container = target.closest('[role="list"]')
@@ -96,7 +97,7 @@ function handleStepKeydown(event: KeyboardEvent) {
 
     if (nextIndex !== null && nextIndex >= 0 && nextIndex < buttons.length) {
         event.preventDefault()
-        ;(buttons[nextIndex] as HTMLElement).focus()
+        buttons[nextIndex].focus()
     }
 }
 

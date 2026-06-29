@@ -4,7 +4,6 @@ import { RadioGroupRoot } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
 interface RadioGroupProps {
-    defaultValue?: string
     modelValue?: string
     name?: string
     disabled?: boolean
@@ -22,14 +21,13 @@ const classes = computed(() => cn('grid gap-2', props.class))
 
 <template>
     <RadioGroupRoot
-        :default-value="defaultValue"
         :model-value="modelValue"
         :name="name"
         :disabled="disabled"
         :orientation="orientation"
         :aria-label="ariaLabel"
         :class="classes"
-        @update:model-value="emit('update:modelValue', $event as string)"
+        @update:model-value="(val) => emit('update:modelValue', val as string)"
     >
         <slot />
     </RadioGroupRoot>

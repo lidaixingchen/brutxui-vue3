@@ -50,13 +50,13 @@ describe('DashboardShell', () => {
         expect(wrapper.find('header').text()).toContain('Header content')
     })
 
-    it('emits signOut when sign out button is clicked', async () => {
+    it('emits sign-out when sign out button is clicked', async () => {
         const wrapper = mount(DashboardShell, { ...localeProvide })
         const signOutButton = wrapper.findAll('button').find(b => b.text() === 'Sign out')
         expect(signOutButton).toBeTruthy()
         await signOutButton!.trigger('click')
-        expect(wrapper.emitted('signOut')).toBeTruthy()
-        expect(wrapper.emitted('signOut')!.length).toBe(1)
+        expect(wrapper.emitted('sign-out')).toBeTruthy()
+        expect(wrapper.emitted('sign-out')!.length).toBe(1)
     })
 
     it('renders BrutxUI brand text in sidebar', () => {

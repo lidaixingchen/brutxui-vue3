@@ -23,8 +23,11 @@ npx brutx-vue@latest add --block stepper-section
 
 ```vue
 <script setup>
+import { ref } from 'vue'
 import StepperSection from '@/components/ui/stepper-section/StepperSection.vue'
 import type { StepperStepItem } from '@/components/ui/stepper-section/StepperSection.vue'
+
+const currentStep = ref(0)
 
 const steps: StepperStepItem[] = [
     { title: 'Account', description: 'Create your account' },
@@ -41,7 +44,7 @@ function handleStepClick(index: number) {
     <StepperSection
         title="Setup Wizard"
         :steps="steps"
-        :current-step="0"
+        v-model="currentStep"
         @step-click="handleStepClick"
     />
 </template>
@@ -66,8 +69,7 @@ const steps = [
 <template>
     <StepperSection
         :steps="steps"
-        :current-step="currentStep"
-        @step-click="currentStep = $event"
+        v-model="currentStep"
     >
         <template v-if="currentStep === 0">
             <p>Personal info form goes here</p>
@@ -88,7 +90,7 @@ const steps = [
 |------|------|--------|
 | `title` | `string` | locale: `stepperSection.defaultTitle` |
 | `steps` | `StepperStepItem[]` | `[]` |
-| `currentStep` | `number` | `0` |
+| `modelValue` | `number` | `0` |
 | `class` | `string` | — |
 
 ### StepperStepItem 类型

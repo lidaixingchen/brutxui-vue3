@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type Component } from 'vue'
+import { computed } from 'vue'
 import { Activity } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -49,7 +49,7 @@ const dashboardStats = computed<StatItem[]>(() =>
         description: '',
         change: stat.change,
         trend: stat.trend,
-        icon: Activity as Component,
+        icon: Activity,
     }))
 )
 </script>

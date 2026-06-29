@@ -68,3 +68,13 @@ const modified = '/images/after.jpg'
 | `disabled` | `boolean` | `false` | 是否禁用拖拽交互 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 分割线方向，vertical 时从下到上裁剪 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |
+
+## 无障碍 / 动效降级
+
+组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（通过 `useReducedMotion` 监听 `prefers-reduced-motion: reduce`）：
+
+- **移除滑块过渡**：分割线、拖拽手柄以及 `clip-path` 裁剪层不再应用 `transition-[left,top,clip-path] duration-100 ease-out` 过渡样式，拖动时位置变化即时生效，不带有缓动动画。
+- **交互能力保留**：拖拽、键盘方向键、`disabled` 等行为完全不受影响，仅去除视觉过渡。
+- **实时响应**：偏好切换后立即生效，无需重新挂载组件。
+
+该机制通过一个响应式的 `motionTransition` 计算属性实现：在动效降级模式下返回空字符串，从而让相关元素跳过过渡样式。

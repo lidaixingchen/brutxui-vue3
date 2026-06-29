@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { barsSpinnerVariants } from './spinner-variants'
+import { barsSpinnerVariants, getSpinnerColorClasses } from './spinner-variants'
 
 type BarsSpinnerSize = NonNullable<VariantProps<typeof barsSpinnerVariants>['size']>
 
@@ -25,6 +25,15 @@ const { t } = useLocale()
 
 const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
 
+const BAR_HEIGHT_RATIOS = [0.7, 0.55, 0.85, 0.6, 0.75]
+const ANIMATION_DELAY_INCREMENT_MS = 100
+const ANIMATION_DURATION_MS = 400
+const BAR_COUNT = 5
+
+const containerClasses = computed(() =>
+    cn(barsSpinnerVariants({ size: props.size }), props.class)
+)
+
 const barWidthMap: Record<string, string> = {
     sm: 'w-1',
     default: 'w-1.5',
@@ -32,24 +41,8 @@ const barWidthMap: Record<string, string> = {
     xl: 'w-3',
 }
 
-const colorMap: Record<string, string[]> = {
-    default: ['bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg'],
-    primary: ['bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary'],
-    secondary: ['bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary'],
-    accent: ['bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent'],
-    mixed: ['bg-brutal-primary', 'bg-brutal-secondary', 'bg-brutal-accent', 'bg-brutal-info', 'bg-brutal-primary'],
-}
-
-const BAR_HEIGHT_RATIOS = [0.7, 0.55, 0.85, 0.6, 0.75]
-const ANIMATION_DELAY_INCREMENT_MS = 100
-const ANIMATION_DURATION_MS = 400
-
-const containerClasses = computed(() =>
-    cn(barsSpinnerVariants({ size: props.size }), props.class)
-)
-
 const barClasses = computed(() =>
-    colorMap[props.color].map(barColor =>
+    getSpinnerColorClasses(props.color, BAR_COUNT).map(barColor =>
         cn(barWidthMap[props.size ?? 'default'], 'border-3 border-brutal', barColor, 'animate-pulse origin-bottom')
     )
 )

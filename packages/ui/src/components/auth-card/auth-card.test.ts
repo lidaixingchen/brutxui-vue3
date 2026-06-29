@@ -42,65 +42,65 @@ describe('AuthCard', () => {
         expect(wrapper.text()).toContain('GitHub')
     })
 
-    it('emits googleClick when Google button is clicked', async () => {
+    it('emits google-click when Google button is clicked', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         const buttons = wrapper.findAll('button')
         const googleButton = buttons.find(b => b.text().includes('Google'))
         expect(googleButton).toBeTruthy()
         await googleButton!.trigger('click')
-        expect(wrapper.emitted('googleClick')).toBeTruthy()
-        expect(wrapper.emitted('googleClick')!.length).toBe(1)
+        expect(wrapper.emitted('google-click')).toBeTruthy()
+        expect(wrapper.emitted('google-click')!.length).toBe(1)
     })
 
-    it('emits githubClick when GitHub button is clicked', async () => {
+    it('emits github-click when GitHub button is clicked', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         const buttons = wrapper.findAll('button')
         const githubButton = buttons.find(b => b.text().includes('GitHub'))
         expect(githubButton).toBeTruthy()
         await githubButton!.trigger('click')
-        expect(wrapper.emitted('githubClick')).toBeTruthy()
-        expect(wrapper.emitted('githubClick')!.length).toBe(1)
+        expect(wrapper.emitted('github-click')).toBeTruthy()
+        expect(wrapper.emitted('github-click')!.length).toBe(1)
     })
 
-    it('emits forgotPassword when forgot password button is clicked', async () => {
+    it('emits forgot-password when forgot password button is clicked', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         const buttons = wrapper.findAll('button')
         const forgotButton = buttons.find(b => b.text().includes('Forgot password?'))
         expect(forgotButton).toBeTruthy()
         await forgotButton!.trigger('click')
-        expect(wrapper.emitted('forgotPassword')).toBeTruthy()
-        expect(wrapper.emitted('forgotPassword')!.length).toBe(1)
+        expect(wrapper.emitted('forgot-password')).toBeTruthy()
+        expect(wrapper.emitted('forgot-password')!.length).toBe(1)
     })
 
-    it('emits loginSubmit when form is submitted with valid credentials', async () => {
+    it('emits login-submit when form is submitted with valid credentials', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         const inputs = wrapper.findAll('input')
         await inputs[0].setValue('test@example.com')
         await inputs[1].setValue('password123')
         const form = wrapper.find('form')
         await form.trigger('submit')
-        expect(wrapper.emitted('loginSubmit')).toBeTruthy()
-        expect(wrapper.emitted('loginSubmit')!.length).toBe(1)
-        expect(wrapper.emitted('loginSubmit')![0]).toEqual([{ email: 'test@example.com', password: 'password123' }])
+        expect(wrapper.emitted('login-submit')).toBeTruthy()
+        expect(wrapper.emitted('login-submit')!.length).toBe(1)
+        expect(wrapper.emitted('login-submit')![0]).toEqual([{ email: 'test@example.com', password: 'password123' }])
     })
 
-    it('does not emit loginSubmit when form is submitted with empty fields', async () => {
+    it('does not emit login-submit when form is submitted with empty fields', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         const form = wrapper.find('form')
         await form.trigger('submit')
-        expect(wrapper.emitted('loginSubmit')).toBeFalsy()
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
         expect(wrapper.text()).toContain('Please enter a valid email address')
         expect(wrapper.text()).toContain('Please enter your password')
     })
 
-    it('does not emit loginSubmit when email format is invalid', async () => {
+    it('does not emit login-submit when email format is invalid', async () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         const inputs = wrapper.findAll('input')
         await inputs[0].setValue('invalid-email')
         await inputs[1].setValue('password123')
         const form = wrapper.find('form')
         await form.trigger('submit')
-        expect(wrapper.emitted('loginSubmit')).toBeFalsy()
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
         expect(wrapper.text()).toContain('Please enter a valid email address')
     })
 

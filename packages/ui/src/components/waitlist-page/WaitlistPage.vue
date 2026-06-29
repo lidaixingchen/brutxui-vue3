@@ -4,6 +4,7 @@ import { Sparkles, Users, Star } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { EMAIL_REGEX } from '../../lib/validation'
 import Button from '../button/Button.vue'
 import Badge from '../badge/Badge.vue'
 import Input from '../input/Input.vue'
@@ -38,8 +39,6 @@ const emit = defineEmits<{
 
 const email = ref('')
 const errorMessage = ref('')
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const rootClasses = computed(() => cn('w-full max-w-lg mx-auto text-center', props.class))
 
@@ -81,7 +80,7 @@ function handleSubmit() {
 </p>
 
         <form class="mt-8 flex flex-col sm:flex-row gap-3" @submit.prevent="handleSubmit">
-            <Input v-model="email" type="email" placeholder="you@example.com" class="flex-1" />
+            <Input v-model="email" type="email" :placeholder="t('waitlistPage.emailPlaceholder')" class="flex-1" />
             <Button type="submit" variant="primary">
 {{ resolvedCtaText }}
 </Button>

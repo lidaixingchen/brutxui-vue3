@@ -132,6 +132,9 @@
 
 - `checked`: `boolean`（`v-model:checked`）
 - `disabled`: `boolean`
+- `ariaLabel`: `string` — 无障碍标签，未提供时使用 locale 默认值 `t('checkbox.check')`
+
+> indeterminate 状态（`checked="indeterminate"`）显示 `Minus` 图标，而非 `Check` 图标。
 
 ## Switch
 
@@ -257,6 +260,8 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 - `variant`: `'default' | 'outline'`
 - `size`: `'default' | 'sm' | 'lg'`
 - `disabled`: `boolean`
+- `loading`: `boolean` — 默认 `false`，loading 时显示 Loader2 spinner 并自动禁用，设置 `aria-busy="true"`
+- `ariaLabel`: `string` — 无障碍标签
 
 ## ToggleGroup
 
@@ -286,6 +291,8 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 ```
 
 子组件：TagsInput, TagsInputInput, TagsInputItem, TagsInputItemText, TagsInputItemDelete
+
+- `ariaLabel`: `string` — 无障碍标签，未提供时使用 locale 默认值 `t('tagsInput.label')`
 
 ## Calendar
 
@@ -385,6 +392,8 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 - `displayFormat`: `string` — 默认 `'YYYY'`
 
 所有组件共享事件：`update:modelValue`、`change`、`open`、`close`。
+
+- 暴露 (DatePicker): `open` (`Ref<boolean>`) — 基础 DatePicker 组件可通过 ref 程序化控制面板开关
 
 ## Form
 
@@ -559,3 +568,37 @@ const { currentStep, nextStep, previousStep, goToStep, complete, isFirstStep, is
 ```
 
 - `when`: `(values: Record<string, unknown>) => boolean` — 条件判断函数（必填）
+
+## useFormFieldValidation
+
+通用表单验证组合式函数，从 HardcoreInput 验证逻辑抽取，可用于任意表单控件。
+
+```typescript
+import { useFormFieldValidation } from 'brutx-ui-vue'
+
+const { validationState, errorMessage, validate, reset, shouldValidateOnInput, shouldValidateOnBlur } = useFormFieldValidation({
+  rules: [(v) => v.includes('@') || '请输入有效邮箱'],
+  validateOn: 'blur',
+  onValidationChange: (state, message) => console.log(state, message),
+})
+```
+
+### Options
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `rules` | `ValidationRule<TValue>[]` | `[]` | 验证规则数组，返回 `true` 或错误消息字符串 |
+| `validateOn` | `'input' \| 'blur' \| 'submit'` | `'submit'` | 验证触发时机 |
+| `defaultErrorMessage` | `string` | `'Invalid value'` | 默认错误消息 |
+| `onValidationChange` | `(state, message?) => void` | — | 验证状态变化回调 |
+
+### 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `validationState` | `Ref<'default' \| 'success' \| 'error'>` | 当前验证状态 |
+| `errorMessage` | `Ref<string>` | 错误消息 |
+| `validate(value)` | `(value: TValue) => boolean` | 执行验证，返回是否通过 |
+| `reset()` | `() => void` | 重置为 default 状态 |
+| `shouldValidateOnInput` | `() => boolean` | 是否在 input 时验证 |
+| `shouldValidateOnBlur` | `() => boolean` | 是否在 blur 时验证 |

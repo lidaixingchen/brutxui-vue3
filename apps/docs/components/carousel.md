@@ -64,8 +64,113 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 
 Carousel 不对外暴露独立事件，所有交互通过鼠标悬停自动暂停 / 离开恢复播放实现。如需访问 Embla API，可通过 `ref` + 内部 `emblaApi` 的方式进行扩展。
 
+## useCarousel 组合式函数
+
+`Carousel` 组件内部逻辑已抽取为独立的 `useCarousel` 组合式函数，可单独使用以构建完全自定义的轮播 UI。它基于 `embla-carousel-vue` 封装，内置自动播放、循环控制、选中索引追踪，并自动遵守 `prefers-reduced-motion` 系统偏好（启用减少动效时会停止自动播放并禁用过渡动画）。
+
+```ts
+import { useCarousel } from 'brutx-ui-vue'
+import type { UseCarouselOptions } from 'brutx-ui-vue'
+
+const options: UseCarouselOptions = {
+    loop: true,
+    autoplay: true,
+    autoplayDelay: 3000,
+}
+
+const {
+    emblaRef,        // 绑定到轮播容器的 ref
+    selectedIndex,   // 当前选中幻灯片索引
+    scrollSnaps,     // 所有滚动停靠点
+    canScrollPrev,   // 是否可向前滚动
+    canScrollNext,   // 是否可向后滚动
+    scrollPrev,      // 滚动到上一张
+    scrollNext,      // 滚动到下一张
+    scrollTo,        // 滚动到指定索引
+    startAutoplay,   // 启动自动播放
+    stopAutoplay,    // 停止自动播放
+} = useCarousel(options)
+```
+
+### UseCarouselOptions
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `loop` | `MaybeRefOrGetter<boolean \| undefined>` | `false` | 是否开启首尾循环滚动 |
+| `autoplay` | `MaybeRefOrGetter<boolean \| undefined>` | `false` | 是否自动播放 |
+| `autoplayDelay` | `MaybeRefOrGetter<number \| undefined>` | `3000` | 自动播放间隔（毫秒） |
+
+### 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `emblaRef` | `Ref<HTMLElement \| undefined>` | 绑定到轮播容器的 ref（传给 `<template>` 中的容器元素） |
+| `selectedIndex` | `Ref<number>` | 当前选中幻灯片索引 |
+| `scrollSnaps` | `Ref<number[]>` | 所有可停靠的滚动位置 |
+| `canScrollPrev` | `ComputedRef<boolean>` | 是否可向前滚动（非循环模式下到达首张时为 `false`） |
+| `canScrollNext` | `ComputedRef<boolean>` | 是否可向后滚动（非循环模式下到达末张时为 `false`） |
+| `scrollPrev()` | `() => void` | 滚动到上一张 |
+| `scrollNext()` | `() => void` | 滚动到下一张 |
+| `scrollTo(index)` | `(index: number) => void` | 滚动到指定索引 |
+| `startAutoplay()` | `() => void` | 启动自动播放（受 `autoplay` 选项与减少动效偏好控制） |
+| `stopAutoplay()` | `() => void` | 停止自动播放 |
+
+> 提示：`useCarousel` 会在内部 `onMounted` 注册 Embla 事件、`onUnmounted` 清理监听与计时器，必须在 `setup` 顶层调用。
+
+## 程序化控制
+
+Carousel 通过 `defineExpose` 暴露了一组方法与状态，可通过组件 `ref` 在父组件中主动控制轮播的滚动与读取当前状态，无需自行接管 Embla 实例。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Carousel, CarouselItem } from 'brutx-ui-vue'
+
+const carouselRef = ref()
+</script>
+
+<template>
+    <Carousel ref="carouselRef" :loop="true">
+        <CarouselItem v-for="i in 5" :key="i">
+            <div class="w-full h-full flex items-center justify-center">幻灯片 {{ i }}</div>
+        </CarouselItem>
+    </Carousel>
+
+    <div class="flex gap-2 mt-4">
+        <button @click="carouselRef?.scrollPrev()">上一张</button>
+        <button @click="carouselRef?.scrollNext()">下一张</button>
+        <button @click="carouselRef?.scrollTo(0)">回到首张</button>
+    </div>
+</template>
+```
+
+### Methods
+
+通过 `ref` 调用以下方法：
+
+| 方法 | 类型 | 说明 |
+|------|------|------|
+| `scrollPrev` | `() => void` | 滚动到上一张幻灯片 |
+| `scrollNext` | `() => void` | 滚动到下一张幻灯片 |
+| `scrollTo` | `(index: number) => void` | 滚动到指定索引的幻灯片 |
+| `selectedIndex` | `ComputedRef<number>` | 当前选中幻灯片的索引（只读响应式） |
+| `canScrollPrev` | `ComputedRef<boolean>` | 是否还可向前滚动；开启 `loop` 时恒为 `true`（只读响应式） |
+| `canScrollNext` | `ComputedRef<boolean>` | 是否还可向后滚动；开启 `loop` 时恒为 `true`（只读响应式） |
+
+> 注意：`selectedIndex`、`canScrollPrev`、`canScrollNext` 是响应式 `ComputedRef`，在 `<template>` 中直接使用时会自动解包；在 `<script setup>` 中读取需通过 `.value`。
+
 ## 无障碍
 
 - 左右箭头按钮均带有 `aria-label`
 - 导航圆点按钮均带有 `aria-label`
 - 键盘焦点管理由 Embla 内置支持
+
+## 无障碍 / 动效降级
+
+组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（由内部 `useCarousel` 组合式函数通过 `useReducedMotion` 监听）：
+
+- **停止自动播放**：`autoplay` 不再触发，已有的定时器会被清除。
+- **禁用过渡动画**：通过 `emblaApi.reInit({ duration: 0 })` 让幻灯片切换不再带有滑动惯性，直接跳转到位。
+- **实时响应**：偏好变化时立即生效，无需重新挂载组件；恢复默认设置后会还原过渡时长并在 `autoplay` 开启时恢复播放。
+
+鼠标悬停暂停 / 离开恢复的交互逻辑在动效降级模式下依然保留，但因为 autoplay 已停止，悬停行为不会带来额外的副作用。

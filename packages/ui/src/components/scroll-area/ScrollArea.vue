@@ -5,13 +5,16 @@ import {
     ScrollAreaViewport as ScrollAreaViewportPrimitive,
     ScrollAreaCorner as ScrollAreaCornerPrimitive,
 } from 'reka-ui'
+import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
-import { scrollAreaRootVariants } from './scroll-area-variants'
+import { scrollAreaRootVariants, scrollAreaScrollbarVariants } from './scroll-area-variants'
 import ScrollBar from './ScrollBar.vue'
 
+type ScrollAreaVariantProps = VariantProps<typeof scrollAreaScrollbarVariants>
+
 interface ScrollAreaProps {
-    variant?: 'default' | 'primary' | 'accent'
-    size?: 'sm' | 'default' | 'lg'
+    variant?: NonNullable<ScrollAreaVariantProps['variant']>
+    size?: NonNullable<ScrollAreaVariantProps['size']>
     class?: string
 }
 

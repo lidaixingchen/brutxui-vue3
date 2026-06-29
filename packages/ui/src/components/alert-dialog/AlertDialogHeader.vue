@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
-import { alertDialogHeaderVariants } from './alert-dialog-variants'
+import { sectionHeaderVariants } from '../../lib/modal-variants'
 
 interface AlertDialogHeaderProps {
     class?: string
@@ -10,7 +10,7 @@ interface AlertDialogHeaderProps {
 const props = defineProps<AlertDialogHeaderProps>()
 
 const classes = computed(() =>
-    cn(alertDialogHeaderVariants(), props.class)
+    cn(sectionHeaderVariants(), props.class)
 )
 </script>
 

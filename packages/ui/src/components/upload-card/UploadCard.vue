@@ -67,8 +67,10 @@ function handleDragOver(event: DragEvent) {
 
 function handleDragLeave(event: DragEvent) {
     event.preventDefault()
-    const el = event.currentTarget as HTMLElement
-    if (el.contains(event.relatedTarget as Node)) return
+    const el = event.currentTarget
+    if (!(el instanceof HTMLElement)) return
+    const related = event.relatedTarget
+    if (related instanceof Node && el.contains(related)) return
     isDragging.value = false
 }
 
@@ -86,7 +88,8 @@ function handleBrowse() {
 }
 
 function handleFileChange(event: Event) {
-    const target = event.target as HTMLInputElement
+    const target = event.target
+    if (!(target instanceof HTMLInputElement)) return
     const files = filterBySize(Array.from(target.files ?? []))
     if (files.length > 0) {
         emit('upload', files)
@@ -95,8 +98,9 @@ function handleFileChange(event: Event) {
 }
 
 function filterBySize(files: File[]): File[] {
-    if (!props.maxSize) return files
-    return files.filter(f => f.size <= props.maxSize!)
+    const maxSize = props.maxSize
+    if (maxSize === undefined) return files
+    return files.filter(f => f.size <= maxSize)
 }
 </script>
 

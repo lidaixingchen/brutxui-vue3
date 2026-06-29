@@ -10,6 +10,9 @@ const presetColor = ref<string | null>(null)
 const sizeColor = ref<string | null>('#EF476F')
 const disabledColor = ref<string | null>('#EF476F')
 
+const programmableColor = ref<string | null>('#06D6A0')
+const pickerRef = ref<InstanceType<typeof ColorPicker> | null>(null)
+
 const presets = [
     '#EF476F',
     '#FFD166',
@@ -74,6 +77,28 @@ const presets = [
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">禁用状态</p>
             <ColorPicker v-model="disabledColor" disabled />
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">程序化控制（通过 ref 打开面板）</p>
+            <p class="text-xs opacity-70 leading-relaxed">
+                通过 <span class="font-mono font-black">pickerRef.open</span> 可在外部按钮中打开或关闭颜色面板。
+            </p>
+            <div class="flex flex-wrap items-center gap-3">
+                <ColorPicker ref="pickerRef" v-model="programmableColor" :clearable="true" />
+                <button
+                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="pickerRef && (pickerRef.open = true)"
+                >
+                    打开面板
+                </button>
+                <button
+                    class="border-3 border-brutal px-3 py-1 text-sm font-black shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="pickerRef && (pickerRef.open = false)"
+                >
+                    关闭面板
+                </button>
+            </div>
         </div>
     </div>
 </template>

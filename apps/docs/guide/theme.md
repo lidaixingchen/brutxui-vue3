@@ -332,7 +332,18 @@ BrutxUI 提供了 `useTheme` 组合式函数，用于在运行时切换主题和
 ```ts
 import { useTheme } from 'brutx-ui-vue'
 
-const { theme, colorMode, resolvedColorMode, isSystemDark, setTheme, toggleColorMode, applyColorMode, initTheme } = useTheme()
+const {
+    theme,
+    colorMode,
+    resolvedColorMode,
+    isSystemDark,
+    setTheme,
+    setCustomVariable,
+    removeCustomVariable,
+    toggleColorMode,
+    applyColorMode,
+    initTheme,
+} = useTheme()
 ```
 
 ### API
@@ -344,6 +355,8 @@ const { theme, colorMode, resolvedColorMode, isSystemDark, setTheme, toggleColor
 | `resolvedColorMode` | `ComputedRef<'light' \| 'dark'>` | 实际应用的颜色模式（system 模式下解析后的值） |
 | `isSystemDark` | `Ref<boolean>` | 系统当前是否为暗色模式 |
 | `setTheme(name)` | `(name: ThemeName) => void` | 切换主题，同时更新 DOM class 和 localStorage |
+| `setCustomVariable(name, value)` | `(name: \`--${string}\`, value: string) => void` | 通过 `document.documentElement.style.setProperty` 设置自定义 CSS 变量（Batch 8.3 新增） |
+| `removeCustomVariable(name)` | `(name: \`--${string}\`) => void` | 移除自定义 CSS 变量（Batch 8.3 新增） |
 | `toggleColorMode()` | `() => void` | 在 light → dark → system 之间循环切换 |
 | `applyColorMode(mode)` | `(mode: ColorMode) => void` | 设置指定的颜色模式 |
 | `initTheme()` | `() => void` | 从 localStorage 恢复用户偏好，或跟随系统偏好 |
@@ -402,6 +415,55 @@ function handleThemeChange(value: AcceptableValue) {
     </Button>
 </template>
 ```
+
+### 运行时主题定制
+
+`setCustomVariable` 和 `removeCustomVariable` 用于在运行时动态写入或清除任意 CSS 变量（写入到 `document.documentElement` 的内联样式中）。适合"用户自定义主色"、"品牌色即时预览"、"运行时调整边框粗细"等场景，无需重新构建 CSS。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useTheme, Button, Input } from 'brutx-ui-vue'
+
+const { setCustomVariable, removeCustomVariable } = useTheme()
+
+const primaryColor = ref('#8B5CF6')
+const borderWidth = ref('3px')
+
+function applyPrimary() {
+    setCustomVariable('--brutal-primary', primaryColor.value)
+}
+
+function applyBorderWidth() {
+    setCustomVariable('--brutal-border-width', borderWidth.value)
+}
+
+function reset() {
+    removeCustomVariable('--brutal-primary')
+    removeCustomVariable('--brutal-border-width')
+}
+</script>
+
+<template>
+    <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-2">
+            <Input v-model="primaryColor" size="sm" class="w-40" placeholder="主色（如 #8B5CF6）" />
+            <Button variant="primary" size="sm" @click="applyPrimary">应用主色</Button>
+        </div>
+        <div class="flex items-center gap-2">
+            <Input v-model="borderWidth" size="sm" class="w-40" placeholder="边框宽度（如 5px）" />
+            <Button variant="default" size="sm" @click="applyBorderWidth">应用边框</Button>
+        </div>
+        <Button variant="default" size="sm" @click="reset">恢复默认</Button>
+    </div>
+</template>
+```
+
+> 说明：
+>
+> - `setCustomVariable` 直接调用 `document.documentElement.style.setProperty`，因此会覆盖预设主题与 `:root` 中定义的同名变量。在 SSR 环境（`typeof document === 'undefined'`）下函数会安全跳过。
+> - `removeCustomVariable` 调用 `removeProperty`，仅移除通过内联样式设置的同名变量，不会影响样式表中通过 CSS 定义的同名变量，因此"恢复默认"后会回落到当前主题预设的取值。
+> - 参数 `name` 必须以 `--` 开头（TypeScript 上以模板字面量类型 `\`--${string}\`` 约束），否则编译期会报错。
 
 ## ColorModeSwitcher 组件
 
@@ -470,3 +532,57 @@ BrutxUI 提供了 13 个粗野主义风格的动画工具类，支持 `prefers-r
 | `animation-delay-500` | 延迟 500ms |
 | `animation-once` | 只播放一次 |
 | `animation-infinite` | 无限循环 |
+
+## useAnimation 组合式函数
+
+CSS 动画预设类在 `<template>` 中可以直接写死，但当动画类名需要根据状态动态切换、或希望统一遵守系统级 `prefers-reduced-motion` 偏好时，可使用 `useAnimation` 组合式函数在 JS 中统一处理动画降级。
+
+`useAnimation` 接收一个动画类名（支持 `ref` / `getter` / 静态字符串），返回解析后的动画类与减少动效偏好。当用户系统启用了 `prefers-reduced-motion: reduce` 时，`animationClass` 会自动变为空字符串，从而禁用动画。
+
+```ts
+import { useAnimation } from 'brutx-ui-vue'
+
+const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
+// prefersReduced=true 时 animationClass 为空字符串
+```
+
+### API
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `animationClass` | `ComputedRef<string>` | 解析后的动画类名；启用减少动效时为空字符串 |
+| `prefersReduced` | `Ref<boolean>` | 系统是否启用了 `prefers-reduced-motion: reduce` |
+
+### 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `animationClass` | `MaybeRefOrGetter<string>` | `''` | 想要应用的动画类名，支持 `ref` / `getter` / 静态字符串 |
+
+### 使用示例
+
+根据组件状态动态切换动画类，并自动尊重减少动效偏好：
+
+```vue
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useAnimation } from 'brutx-ui-vue'
+
+const shake = ref(false)
+const animationName = computed(() => shake.value ? 'animate-brutal-shake' : 'animate-brutal-pulse')
+const { animationClass } = useAnimation(animationName)
+
+function trigger() {
+    shake.value = !shake.value
+}
+</script>
+
+<template>
+    <div :class="animationClass">
+        动画区域
+    </div>
+    <button @click="trigger">切换动画</button>
+</template>
+```
+
+> 提示：`useAnimation` 内部基于 `useReducedMotion`，会在 `onMounted` 时订阅 `matchMedia('(prefers-reduced-motion: reduce)')`，并在 `onUnmounted` 时自动清理监听器。必须在 `setup` 顶层调用，不能在异步回调或事件处理器中调用。

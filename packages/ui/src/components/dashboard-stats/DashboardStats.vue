@@ -72,7 +72,7 @@ function getIconClasses(stat: StatItem) {
 
 function getTrendIconClasses(stat: StatItem) {
     return cn(
-        iconSizeVariants({ size: 'default' }),
+        iconSizeVariants({ size: props.iconSize }),
         'stroke-[3]',
         stat.trend === 'up' ? 'text-brutal-success' : stat.trend === 'down' ? 'text-brutal-destructive' : 'text-brutal-muted-foreground'
     )

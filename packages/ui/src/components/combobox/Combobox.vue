@@ -108,8 +108,8 @@ watch(open, (isOpen) => {
     }
 })
 
-const checkSelectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: 'default' }), 'stroke-[3]', 'opacity-100'))
-const checkUnselectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: 'default' }), 'stroke-[3]', 'opacity-0'))
+const checkSelectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: props.iconSize }), 'stroke-[3]', 'opacity-100'))
+const checkUnselectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: props.iconSize }), 'stroke-[3]', 'opacity-0'))
 
 const triggerIconClasses = computed(() =>
     cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))

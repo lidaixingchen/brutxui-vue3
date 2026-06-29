@@ -11,7 +11,6 @@ export const kanbanColumnVariants = cva(
         variants: {
             dragOver: {
                 true: 'shadow-brutal-lg border-brutal-primary',
-                false: '',
             },
         },
         defaultVariants: {
@@ -30,11 +29,9 @@ export const kanbanColumnHeaderVariants = cva(
         variants: {
             dragging: {
                 true: 'opacity-40',
-                false: '',
             },
             dragOver: {
                 true: 'border-3 border-brutal-primary rounded-brutal',
-                false: '',
             },
         },
         defaultVariants: {
@@ -57,7 +54,6 @@ export const kanbanCardVariants = cva(
         variants: {
             dragging: {
                 true: 'opacity-40 shadow-none',
-                false: '',
             },
         },
         defaultVariants: {

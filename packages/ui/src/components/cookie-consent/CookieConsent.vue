@@ -71,7 +71,12 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <Transition name="cookie-slide-up">
+    <Transition
+        enter-active-class="transition-all duration-300 ease-out"
+        leave-active-class="transition-all duration-300 ease-in"
+        enter-from-class="opacity-0 translate-y-full"
+        leave-to-class="opacity-0 translate-y-full"
+    >
         <div v-if="modelValue" :class="rootClasses" aria-live="polite">
             <Card :class="cardClasses" variant="default">
                 <CardContent class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -100,16 +105,3 @@ const iconClasses = computed(() =>
         </div>
     </Transition>
 </template>
-
-<style scoped>
-.cookie-slide-up-enter-active,
-.cookie-slide-up-leave-active {
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.cookie-slide-up-enter-from,
-.cookie-slide-up-leave-to {
-    transform: translateY(100%);
-    opacity: 0;
-}
-</style>

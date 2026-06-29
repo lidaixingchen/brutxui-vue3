@@ -16,15 +16,10 @@ const form = inject(formContextKey)
 
 const shouldShow = computed(() => {
     if (!form) return false
-    try {
-        return props.when(form.values.value)
-    } catch (e) {
-        console.warn('[BrutxUI] FormConditional: Error in when callback:', e)
-        return false
-    }
+    return props.when(form.values.value)
 })
 
-const classes = computed(() => cn('', props.class))
+const classes = computed(() => cn(props.class))
 </script>
 
 <template>

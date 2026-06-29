@@ -6,6 +6,10 @@ import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()
 
+const DEFAULT_MAX_VISIBLE = 5
+const DEFAULT_GAP = 12
+const DEFAULT_EXPAND_DIRECTION: ToastStackOptions['expandDirection'] = 'down'
+
 interface ToastContainerProps {
     position?: ToastPosition
     stack?: ToastStackOptions
@@ -15,9 +19,9 @@ interface ToastContainerProps {
 const props = withDefaults(defineProps<ToastContainerProps>(), {
     position: 'bottom-right',
     stack: () => ({
-        maxVisible: 5,
-        gap: 12,
-        expandDirection: 'down',
+        maxVisible: DEFAULT_MAX_VISIBLE,
+        gap: DEFAULT_GAP,
+        expandDirection: DEFAULT_EXPAND_DIRECTION,
     }),
     class: undefined,
 })
@@ -69,7 +73,7 @@ const positionStyle = computed(() => {
     return {}
 })
 
-const gap = computed(() => Math.max(0, props.stack?.gap ?? 12))
+const gap = computed(() => Math.max(0, props.stack?.gap ?? DEFAULT_GAP))
 const expandDirection = computed(() => {
     const value = props.stack?.expandDirection ?? 'down'
     return ['up', 'down'].includes(value) ? value : 'down'

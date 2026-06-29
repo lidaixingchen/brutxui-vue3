@@ -51,6 +51,16 @@ import { NoiseBackground } from 'brutx-ui-vue'
 </template>
 ```
 
+## 无障碍 / 动效降级
+
+组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（通过 `useReducedMotion` 监听 `prefers-reduced-motion: reduce`）：
+
+- **停止动画帧**：`startAnimation` 会在内部直接返回，不再启动 `requestAnimationFrame` 循环；若动画已在运行，会通过 `cancelAnimationFrame` 立即停止。
+- **保留单帧静态渲染**：SVG `<feTurbulence>` 仍以初始的 `frequency` 属性值渲染一帧静态噪点，背景纹理不会完全消失，只是不再随时间变化。
+- **实时响应**：偏好变化时自动切换，恢复默认设置后若 `animated` 为 `true` 会重新启动动画。
+
+该机制确保在低性能设备或对动效敏感的用户环境下，组件不会持续占用 CPU 资源。
+
 ## 自定义噪点类型
 
 ```vue

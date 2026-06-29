@@ -123,6 +123,44 @@ const open = ref(false)
 </template>
 ```
 
+## 程序化控制
+
+`Command` 通过 `defineExpose` 暴露 `filterSearch` 响应式引用，允许父组件程序化读取或设置搜索关键词，从而在不依赖 `CommandInput` 的情况下触发项目过滤。
+
+> 注意：仅当内部过滤启用时（即未设置 `disable-filter`）写入 `filterSearch` 才会触发过滤逻辑；`disable-filter` 为 `true` 时内部过滤被禁用，写入不会影响项目显示。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from 'brutx-ui-vue'
+
+const commandRef = ref()
+</script>
+
+<template>
+    <Command ref="commandRef">
+        <CommandInput />
+        <CommandList>
+            <CommandEmpty />
+            <CommandGroup heading="建议">
+                <CommandItem value="calendar">日历</CommandItem>
+                <CommandItem value="search">搜索表情</CommandItem>
+                <CommandItem value="calculator">计算器</CommandItem>
+            </CommandGroup>
+        </CommandList>
+    </Command>
+
+    <button @click="commandRef?.filterSearch = 'cal'">外部触发搜索 "cal"</button>
+    <button @click="commandRef?.filterSearch = ''">清除搜索</button>
+</template>
+```
+
+### Methods
+
+| 方法/属性 | 类型 | 说明 |
+|----------|------|------|
+| `filterSearch` | `Ref<string>` | 当前搜索关键词，可读写；写入后会触发内部过滤逻辑（需 `disableFilter` 为 `false`） |
+
 ## 键盘导航
 
 组件内置键盘导航支持：

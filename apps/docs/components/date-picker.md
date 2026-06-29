@@ -364,6 +364,35 @@ const maxDate = new Date(2026, 11, 31)
 | `open` | — | 面板打开时触发 |
 | `close` | — | 面板关闭时触发 |
 
+## 程序化控制
+
+`DatePicker` 通过 `defineExpose` 暴露 `open` 响应式引用，允许父组件程序化打开或关闭日期面板。`open` 是与内部 Popover 双向绑定的 `Ref<boolean>`，可直接读写。
+
+> 注意：目前仅 `DatePicker` 组件暴露了 `open`，日期选择器族中的其他组件（`DatePickerRange`、`DateTimePicker` 等）暂未暴露。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { DatePicker } from 'brutx-ui-vue'
+
+const pickerRef = ref()
+const date = ref(null)
+</script>
+
+<template>
+    <DatePicker ref="pickerRef" v-model="date" />
+
+    <button @click="pickerRef?.open = true">打开面板</button>
+    <button @click="pickerRef?.open = false">关闭面板</button>
+</template>
+```
+
+### Methods
+
+| 方法/属性 | 类型 | 说明 |
+|----------|------|------|
+| `open` | `Ref<boolean>` | 面板开关状态，可读写；设为 `true` 打开，`false` 关闭 |
+
 ## 快捷选项类型
 
 ```typescript
@@ -387,6 +416,64 @@ interface DatePickerRangeShortcut {
 | `Enter` / `Space` | 打开面板 |
 | `Escape` | 关闭面板 |
 | `Tab` | 在输入框和面板间切换 |
+
+## useDatePicker 组合式函数
+
+`DatePicker` 等组件的弹出面板触发、显示格式化、清除、确认等逻辑已抽取为独立的 `useDatePicker` 组合式函数，可在需要构建完全自定义触发器或日历面板时单独使用。它负责管理面板开关状态、显示值与 `modelValue` 的同步，并通过传入的 `emit` 触发 `open` / `close` / `change` / `update:modelValue` 事件。
+
+```ts
+import { useDatePicker } from 'brutx-ui-vue'
+import type { UseDatePickerOptions } from 'brutx-ui-vue'
+
+const emit = defineEmits<{
+    'update:modelValue': [value: Date | null]
+    'change': [value: Date | null]
+    'open': []
+    'close': []
+}>()
+
+const {
+    open,                  // 面板是否打开
+    displayValue,          // 面板内当前显示的值（未确认前的临时值）
+    formattedDisplay,      // 格式化后的展示字符串
+    handlePanelUpdate,     // 面板值更新回调
+    handlePanelConfirm,    // 面板确认回调
+    handlePanelClear,      // 面板清除回调
+    handleClearClick,      // 触发器清除按钮点击回调
+    handleTriggerKeydown,  // 触发器键盘事件回调
+} = useDatePicker({
+    modelValue,
+    displayFormat: 'YYYY-MM-DD',
+    disabled: false,
+    readonly: false,
+    emit,
+})
+```
+
+### UseDatePickerOptions
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `MaybeRefOrGetter<Date \| null>` | `null` | 当前选中日期（支持 v-model） |
+| `displayFormat` | `MaybeRefOrGetter<string>` | `'YYYY-MM-DD'` | 显示格式（支持 `YYYY`、`MM`、`DD`、`HH`、`mm`、`ss`、`WW` token） |
+| `disabled` | `MaybeRefOrGetter<boolean>` | `false` | 是否禁用 |
+| `readonly` | `MaybeRefOrGetter<boolean>` | `false` | 是否只读 |
+| `emit` | `DatePickerEmit` | — | 触发事件的函数（必填，类型与组件 emits 一致） |
+
+### 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `open` | `Ref<boolean>` | 面板是否打开 |
+| `displayValue` | `Ref<Date \| null>` | 面板内当前显示的值 |
+| `formattedDisplay` | `ComputedRef<string>` | 按 `displayFormat` 格式化后的字符串 |
+| `handlePanelUpdate(value)` | `(value: Date \| null) => void` | 面板值更新时调用，同步 `displayValue` 并触发 `update:modelValue` |
+| `handlePanelConfirm(value)` | `(value: Date \| null) => void` | 面板确认时调用，触发 `update:modelValue` / `change` 并关闭面板 |
+| `handlePanelClear()` | `() => void` | 面板清除时调用，触发 `update:modelValue(null)` / `change(null)` |
+| `handleClearClick(event)` | `(event: MouseEvent) => void` | 触发器清除按钮点击回调，阻止事件冒泡并清除 |
+| `handleTriggerKeydown(event)` | `(event: KeyboardEvent) => void` | 触发器键盘事件回调，`Enter` / `Space` 打开面板 |
+
+> 提示：`emit` 必须是符合 `DatePickerEmit` 签名的函数（即组件 `defineEmits` 的返回值）。`useDatePicker` 不会自动管理 `onMounted` / `onUnmounted` 副作用，可在任意时机调用。
 
 ## 样式
 

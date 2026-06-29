@@ -8,6 +8,7 @@ const tagsSecondary = ref(['reka-ui', 'lucide', 'pnpm'])
 const tagsAccent = ref(['neo-brutalism', 'design', 'tokens'])
 const tagsDanger = ref(['bug', 'deprecated', 'breaking'])
 const tagsSuccess = ref(['stable', 'tested', 'released'])
+const tagsLabeled = ref(['vue', 'a11y'])
 </script>
 
 <template>
@@ -82,6 +83,19 @@ const tagsSuccess = ref(['stable', 'tested', 'released'])
             <div class="w-full max-w-[400px]">
                 <TagsInput v-model="tagsSuccess">
                     <TagsInputItem v-for="tag in tagsSuccess" :key="tag" :value="tag" variant="success">
+                        <TagsInputItemText>{{ tag }}</TagsInputItemText>
+                        <TagsInputItemDelete />
+                    </TagsInputItem>
+                    <TagsInputInput placeholder="添加标签..." />
+                </TagsInput>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-3">自定义 aria-label</h3>
+            <div class="w-full max-w-[400px]">
+                <TagsInput v-model="tagsLabeled" aria-label="文章标签">
+                    <TagsInputItem v-for="tag in tagsLabeled" :key="tag" :value="tag" variant="primary">
                         <TagsInputItemText>{{ tag }}</TagsInputItemText>
                         <TagsInputItemDelete />
                     </TagsInputItem>

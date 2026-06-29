@@ -42,7 +42,7 @@ describe('Stepper', () => {
 
     it('marks active step with bg-brutal-primary', () => {
         const wrapper = mount(Stepper, {
-            props: { steps, modelValue: 1 },
+            props: { steps, modelValue: 1, variant: 'primary' },
             global: { provide: localeProvide },
         })
         const buttons = wrapper.findAll('button')
@@ -195,14 +195,14 @@ describe('Stepper', () => {
     })
 
     describe('variant', () => {
-        it('applies primary color to active step by default', () => {
+        it('applies default color to active step by default', () => {
             const wrapper = mount(Stepper, {
                 props: { steps, modelValue: 1 },
                 global: { provide: localeProvide },
             })
             const buttons = wrapper.findAll('button')
-            expect(buttons[1].classes()).toContain('bg-brutal-primary')
-            expect(buttons[1].classes()).toContain('text-brutal-primary-foreground')
+            expect(buttons[1].classes()).toContain('bg-brutal-bg')
+            expect(buttons[1].classes()).toContain('text-brutal-fg')
         })
 
         it('applies accent color to active step when variant=accent', () => {

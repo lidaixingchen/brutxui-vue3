@@ -156,11 +156,11 @@ const rootClasses = computed(() =>
     cn(formWizardRootVariants(), props.class)
 )
 
-const navigationClasses = computed(() => formWizardNavigationVariants())
-const stepInfoClasses = computed(() => formWizardStepInfoVariants())
-const stepCounterClasses = computed(() => formWizardStepCounterVariants())
-const errorPanelClasses = computed(() => formWizardErrorPanelVariants())
-const errorTitleClasses = computed(() => formWizardErrorTitleVariants())
+const navigationClasses = formWizardNavigationVariants()
+const stepInfoClasses = formWizardStepInfoVariants()
+const stepCounterClasses = formWizardStepCounterVariants()
+const errorPanelClasses = formWizardErrorPanelVariants()
+const errorTitleClasses = formWizardErrorTitleVariants()
 </script>
 
 <template>

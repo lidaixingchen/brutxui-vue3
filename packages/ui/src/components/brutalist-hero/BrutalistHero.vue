@@ -35,8 +35,8 @@ const resolvedPrimaryCtaText = computed(() => props.primaryCtaText ?? t('brutali
 const resolvedSecondaryCtaText = computed(() => props.secondaryCtaText ?? t('brutalistHero.secondaryCtaText'))
 
 const emit = defineEmits<{
-    primaryCta: []
-    secondaryCta: []
+    'primary-cta': []
+    'secondary-cta': []
 }>()
 
 const rootClasses = computed(() => cn('w-full', props.class))
@@ -63,11 +63,11 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 {{ resolvedSubtitle }}
 </p>
                 <div class="mt-8 flex flex-wrap gap-4">
-                    <Button variant="primary" size="lg" @click="emit('primaryCta')">
+                    <Button variant="primary" size="lg" @click="emit('primary-cta')">
                         {{ resolvedPrimaryCtaText }}
                         <ArrowRight :class="primaryCtaIconClasses" />
                     </Button>
-                    <Button variant="outline" size="lg" @click="emit('secondaryCta')">
+                    <Button variant="outline" size="lg" @click="emit('secondary-cta')">
 {{ resolvedSecondaryCtaText }}
 </Button>
                 </div>

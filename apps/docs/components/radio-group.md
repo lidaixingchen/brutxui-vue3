@@ -45,6 +45,36 @@ const selected = ref('comfortable')
 </template>
 ```
 
+## 无障碍标签
+
+通过 `ariaLabel` 为单选组提供可读名称，便于屏幕阅读器识别分组用途。当没有可见的分组标题（如 `Label` 或字段集标题）时尤为有用。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { RadioGroup, RadioGroupItem } from 'brutx-ui-vue'
+
+const density = ref('comfortable')
+</script>
+
+<template>
+    <RadioGroup v-model="density" aria-label="布局密度">
+        <div class="flex items-center gap-3">
+            <RadioGroupItem value="default" />
+            <span class="text-sm font-bold">默认</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <RadioGroupItem value="comfortable" />
+            <span class="text-sm font-bold">舒适</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <RadioGroupItem value="compact" />
+            <span class="text-sm font-bold">紧凑</span>
+        </div>
+    </RadioGroup>
+</template>
+```
+
 ## Props
 
 ### RadioGroup
@@ -52,7 +82,7 @@ const selected = ref('comfortable')
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `modelValue` | `string` | — |
-| `defaultValue` | `string` | — |
+| `ariaLabel` | `string` | — |
 | `class` | `string` | — |
 
 ### RadioGroupItem

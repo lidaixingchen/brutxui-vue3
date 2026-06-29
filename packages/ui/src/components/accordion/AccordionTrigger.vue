@@ -14,7 +14,6 @@ const props = withDefaults(defineProps<AccordionTriggerProps & { class?: string;
 const context = inject(accordionItemKey, { variant: computed(() => undefined) })
 
 const delegatedProps = computed(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { class: _, iconSize: __, ...delegated } = props
     return delegated
 })

@@ -6,7 +6,8 @@ import {
     AlertDialogContent as AlertDialogContentPrimitive,
 } from 'reka-ui'
 import { cn } from '../../lib/utils'
-import { alertDialogOverlayVariants, alertDialogContentVariants } from './alert-dialog-variants'
+import { overlayVariants } from '../../lib/modal-variants'
+import { alertDialogContentVariants } from './alert-dialog-variants'
 
 interface AlertDialogContentProps {
     class?: string
@@ -14,7 +15,7 @@ interface AlertDialogContentProps {
 
 const props = defineProps<AlertDialogContentProps>()
 
-const overlayClasses = computed(() => alertDialogOverlayVariants())
+const overlayClasses = computed(() => overlayVariants())
 
 const contentClasses = computed(() =>
     cn(alertDialogContentVariants(), props.class)

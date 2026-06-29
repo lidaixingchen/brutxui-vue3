@@ -13,8 +13,8 @@ describe('Marquee', () => {
         expect(container.classes()).toContain('overflow-hidden')
         expect(container.classes()).toContain('border-y-3')
         expect(container.classes()).toContain('border-brutal')
-        expect(container.classes()).toContain('bg-brutal-accent')
-        expect(container.classes()).toContain('text-brutal-accent-foreground')
+        expect(container.classes()).toContain('bg-brutal-bg')
+        expect(container.classes()).toContain('text-brutal-fg')
         expect(container.classes()).toContain('font-black')
         expect(container.classes()).toContain('uppercase')
         expect(container.classes()).toContain('select-none')
@@ -100,13 +100,13 @@ describe('Marquee', () => {
     })
 
     describe('variant', () => {
-        it('applies accent variant by default', () => {
+        it('applies default variant by default', () => {
             const wrapper = mount(Marquee, {
                 slots: { default: 'Item' },
             })
             const container = wrapper.find('div')
-            expect(container.classes()).toContain('bg-brutal-accent')
-            expect(container.classes()).toContain('text-brutal-accent-foreground')
+            expect(container.classes()).toContain('bg-brutal-bg')
+            expect(container.classes()).toContain('text-brutal-fg')
         })
 
         it('applies primary variant', () => {

@@ -12,20 +12,24 @@ import SelectContent from '../select/SelectContent.vue'
 import SelectItem from '../select/SelectItem.vue'
 import { useTheme } from '../../composables/useTheme'
 import type { ColorMode } from '../../composables/useTheme'
+import { useLocale } from '@/composables/useLocale'
 
-interface Props {
+interface ColorModeSwitcherProps {
     /** 显示模式：icon=仅图标，button=按钮，select=下拉选择 */
     display?: 'icon' | 'button' | 'select'
     /** 是否显示 "system" 选项 */
     showSystem?: boolean
+    class?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ColorModeSwitcherProps>(), {
     display: 'icon',
     showSystem: true,
+    class: undefined,
 })
 
 const { colorMode, resolvedColorMode, applyColorMode } = useTheme()
+const { t } = useLocale()
 
 const allModes: ColorMode[] = ['light', 'dark', 'system']
 
@@ -54,21 +58,14 @@ const currentIcon = computed<Component>(() => {
     return resolvedColorMode.value === 'dark' ? iconMap.dark : iconMap.light
 })
 
-const labels: Record<ColorMode, string> = {
-    light: 'Light',
-    dark: 'Dark',
-    system: 'System',
-}
+const labelFor = (mode: ColorMode) => t(`colorModeSwitcher.${mode}`)
 
-const currentLabel = computed(() => labels[colorMode.value])
+const currentLabel = computed(() => labelFor(colorMode.value))
 
-const labelFor = (mode: ColorMode) => labels[mode]
-
-// 验证处理程序
 const handleValueChange = (value: AcceptableValue) => {
     if (typeof value !== 'string') return
-    if (!allModes.includes(value as ColorMode)) return
-    applyColorMode(value as ColorMode)
+    const mode = allModes.find(m => m === value)
+    if (mode) applyColorMode(mode)
 }
 </script>
 
@@ -78,7 +75,8 @@ const handleValueChange = (value: AcceptableValue) => {
         v-if="display === 'icon'"
         variant="default"
         size="icon"
-        :title="`Current: ${currentLabel}. Click to toggle.`"
+        :class="props.class"
+        :title="t('colorModeSwitcher.currentToggle', { mode: currentLabel })"
         @click="toggleColorModeLocal"
     >
         <component :is="currentIcon" :size="20" :stroke-width="2.5" class="text-brutal-fg" />
@@ -89,6 +87,7 @@ const handleValueChange = (value: AcceptableValue) => {
         v-else-if="display === 'button'"
         variant="default"
         size="sm"
+        :class="props.class"
         @click="toggleColorModeLocal"
     >
         <component :is="currentIcon" :size="16" :stroke-width="2.5" class="text-brutal-fg" />
@@ -98,13 +97,14 @@ const handleValueChange = (value: AcceptableValue) => {
     <!-- 下拉选择模式 -->
     <SelectRoot
         v-else
+        :class="props.class"
         :model-value="colorMode"
         @update:model-value="handleValueChange"
     >
         <SelectTrigger
             size="sm"
             class="w-auto min-w-[8rem] gap-2"
-            aria-label="Color mode"
+            :aria-label="t('colorModeSwitcher.colorMode')"
         >
             <SelectValue />
         </SelectTrigger>

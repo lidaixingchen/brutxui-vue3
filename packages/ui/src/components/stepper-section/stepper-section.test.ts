@@ -27,7 +27,7 @@ describe('StepperSection', () => {
 
     it('renders steps via Stepper component', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 0 },
+            props: { steps: mockSteps, modelValue: 0 },
             ...localeProvide,
         })
         expect(wrapper.text()).toContain('Account')
@@ -37,7 +37,7 @@ describe('StepperSection', () => {
 
     it('renders step descriptions', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 0 },
+            props: { steps: mockSteps, modelValue: 0 },
             ...localeProvide,
         })
         expect(wrapper.text()).toContain('Create your account')
@@ -46,7 +46,7 @@ describe('StepperSection', () => {
 
     it('renders navigation buttons', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 1 },
+            props: { steps: mockSteps, modelValue: 1 },
             ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
@@ -57,7 +57,7 @@ describe('StepperSection', () => {
 
     it('disables Previous button on first step', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 0 },
+            props: { steps: mockSteps, modelValue: 0 },
             ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
@@ -67,7 +67,7 @@ describe('StepperSection', () => {
 
     it('disables Next button on last step', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 2 },
+            props: { steps: mockSteps, modelValue: 2 },
             ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
@@ -77,7 +77,7 @@ describe('StepperSection', () => {
 
     it('emits step-click when Previous is clicked', async () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 1 },
+            props: { steps: mockSteps, modelValue: 1 },
             ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
@@ -89,7 +89,7 @@ describe('StepperSection', () => {
 
     it('emits step-click when Next is clicked', async () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 0 },
+            props: { steps: mockSteps, modelValue: 0 },
             ...localeProvide,
         })
         const buttons = wrapper.findAll('button')
@@ -101,7 +101,7 @@ describe('StepperSection', () => {
 
     it('renders with empty steps array', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: [], currentStep: 0 },
+            props: { steps: [], modelValue: 0 },
             ...localeProvide,
         })
         expect(wrapper.find('h2').exists()).toBe(true)
@@ -134,7 +134,7 @@ describe('StepperSection', () => {
 
     it('renders default slot for step content', () => {
         const wrapper = mount(StepperSection, {
-            props: { steps: mockSteps, currentStep: 0 },
+            props: { steps: mockSteps, modelValue: 0 },
             slots: { default: '<div class="step-content">Step Content Here</div>' },
             ...localeProvide,
         })

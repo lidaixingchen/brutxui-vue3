@@ -9,11 +9,11 @@ export const carouselRootVariants = cva(
                 md: 'h-64',
                 lg: 'h-96',
                 full: 'h-full',
-                auto: '',
+                default: '',
             },
         },
         defaultVariants: {
-            size: 'auto',
+            size: 'default',
         },
     }
 );

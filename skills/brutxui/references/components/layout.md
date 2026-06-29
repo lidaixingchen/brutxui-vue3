@@ -80,6 +80,8 @@
 
 - `Tabs.default-value`: `string`
 - `TabsTrigger.value`: `string`
+- `Tabs.orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，透传给 reka-ui `TabsRoot`，并通过 provide/inject 共享给子组件
+- `TabsList.orientation`: `'horizontal' | 'vertical'` — 默认跟随父级 `Tabs`（解析为 `'horizontal'`），vertical 时 TabsList 使用 `flex-col` 布局
 
 ## Accordion
 
@@ -93,6 +95,8 @@
 ```
 
 子组件：Accordion, AccordionItem, AccordionTrigger, AccordionContent
+
+- `AccordionItem.variant`: `'default' | 'flat' | 'ghost' | 'interactive'` — 默认 `'default'`，content 区域样式：default 无附加、flat `bg-brutal-muted/30`、ghost `border-transparent`、interactive `hover:bg-brutal-muted/20`。AccordionContent 通过 provide/inject 自动继承父 AccordionItem 的 variant。
 
 ## Breadcrumb
 
@@ -176,6 +180,15 @@
 - `showArrows`: `boolean` — 默认 `true`
 - `showDots`: `boolean` — 默认 `true`
 - `size`: `'sm' | 'md' | 'lg' | 'full' | 'auto'` — 默认 `'auto'`
+- 暴露方法（通过 `ref`）：
+  - `scrollPrev()`: 滚动到上一张
+  - `scrollNext()`: 滚动到下一张
+  - `scrollTo(index)`: 滚动到指定索引
+  - `selectedIndex`: `ComputedRef<number>` — 当前选中索引
+  - `canScrollPrev`: `ComputedRef<boolean>` — 是否可向前滚动
+  - `canScrollNext`: `ComputedRef<boolean>` — 是否可向后滚动
+- 尊重 `prefers-reduced-motion`：启用时停止 autoplay 并通过 `emblaApi.reInit({ duration: 0 })` 禁用过渡
+- `useCarousel` composable：Carousel 内部逻辑已抽取为独立 composable，可单独使用构建自定义轮播 UI。从 `brutx-ui-vue` 导入，接收 `{ loop?, autoplay?, autoplayDelay? }` 选项（支持 `MaybeRefOrGetter`），返回 `{ emblaRef, selectedIndex, scrollSnaps, canScrollPrev, canScrollNext, scrollPrev, scrollNext, scrollTo, startAutoplay, stopAutoplay }`。
 
 ## TreeView
 

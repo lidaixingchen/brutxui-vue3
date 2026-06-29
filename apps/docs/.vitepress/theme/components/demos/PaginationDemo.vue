@@ -7,6 +7,21 @@ const currentPageLarge = ref(5)
 const currentPageNoNumbers = ref(3)
 const currentPageRounded = ref(4)
 const currentPageMinimal = ref(7)
+const currentPageJump = ref(10)
+const jumpMessage = ref('')
+
+function handleJump() {
+    const input = window.prompt('跳转到第几页？', String(currentPageJump.value))
+    if (input !== null) {
+        const page = Number(input)
+        if (Number.isFinite(page) && page >= 1 && page <= 50) {
+            currentPageJump.value = page
+            jumpMessage.value = `已跳转到第 ${page} 页`
+        } else {
+            jumpMessage.value = '请输入 1-50 之间的有效页码'
+        }
+    }
+}
 </script>
 
 <template>
@@ -112,6 +127,20 @@ const currentPageMinimal = ref(7)
                     :show-page-numbers="false"
                 />
             </div>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-3">可点击省略号（jump 事件）</h3>
+            <p class="text-xs opacity-70 mb-3 leading-relaxed">
+                点击省略号 <span class="font-mono font-black">•••</span> 触发 jump 事件，弹出输入框直接跳转到目标页码。
+            </p>
+            <Pagination
+                v-model:current-page="currentPageJump"
+                :total-pages="50"
+                :sibling-count="1"
+                @jump="handleJump"
+            />
+            <p v-if="jumpMessage" class="text-xs font-bold mt-3 opacity-70">{{ jumpMessage }}</p>
         </div>
     </div>
 </template>

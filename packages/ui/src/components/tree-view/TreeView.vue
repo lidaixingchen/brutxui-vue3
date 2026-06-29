@@ -97,8 +97,13 @@ function getVisibleTreeItems(): HTMLElement[] {
 function focusAdjacent(direction: -1 | 1) {
     const items = getVisibleTreeItems()
     if (items.length === 0) return
-    const activeEl = document.activeElement as HTMLElement | null
-    const currentIndex = activeEl ? items.indexOf(activeEl.closest('[role="treeitem"]') as HTMLElement) : -1
+    const activeEl = document.activeElement
+    const currentItem = activeEl instanceof HTMLElement
+        ? activeEl.closest('[role="treeitem"]')
+        : null
+    const currentIndex = currentItem instanceof HTMLElement
+        ? items.indexOf(currentItem)
+        : -1
     const nextIndex = currentIndex + direction
     if (nextIndex >= 0 && nextIndex < items.length) {
         items[nextIndex].focus()
@@ -116,25 +121,27 @@ function handleFocusNext() {
 function handleFocusParent() {
     const items = getVisibleTreeItems()
     if (items.length === 0) return
-    const activeEl = document.activeElement as HTMLElement | null
-    if (!activeEl) return
-    const currentItem = activeEl.closest('[role="treeitem"]') as HTMLElement
-    if (!currentItem) return
-    const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]') as HTMLElement | null
-    if (parentGroup) {
+    const activeEl = document.activeElement
+    if (!(activeEl instanceof HTMLElement)) return
+    const currentItem = activeEl.closest('[role="treeitem"]')
+    if (!(currentItem instanceof HTMLElement)) return
+    const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
+    if (parentGroup instanceof HTMLElement) {
         parentGroup.focus()
     }
 }
 
 function handleFocusFirstChild() {
-    const activeEl = document.activeElement as HTMLElement | null
-    if (!activeEl) return
-    const currentItem = activeEl.closest('[role="treeitem"]') as HTMLElement | null
-    if (!currentItem) return
+    const activeEl = document.activeElement
+    if (!(activeEl instanceof HTMLElement)) return
+    const currentItem = activeEl.closest('[role="treeitem"]')
+    if (!(currentItem instanceof HTMLElement)) return
     const childGroup = currentItem.querySelector('[role="group"]')
     if (childGroup) {
-        const firstChild = childGroup.querySelector('[role="treeitem"]') as HTMLElement | null
-        firstChild?.focus()
+        const firstChild = childGroup.querySelector('[role="treeitem"]')
+        if (firstChild instanceof HTMLElement) {
+            firstChild.focus()
+        }
     }
 }
 

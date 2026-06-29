@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<DashboardShellProps>(), {
 })
 
 const emit = defineEmits<{
-    signOut: []
+    'sign-out': []
 }>()
 
 const { t } = useLocale()
@@ -55,7 +55,7 @@ BrutxUI
                 <div class="text-sm font-bold truncate">
 {{ displayEmail }}
 </div>
-                <Button variant="link" class="text-sm font-bold text-brutal-destructive mt-1 hover:no-underline" @click="emit('signOut')">
+                <Button variant="link" class="text-sm font-bold text-brutal-destructive mt-1 hover:no-underline" @click="emit('sign-out')">
 {{ t('dashboardShell.signOut') }}
 </Button>
             </div>

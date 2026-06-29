@@ -115,8 +115,8 @@ function getPlanPrice(plan: BrutalistPricingPlan) {
 
 function getPriceLabel(plan: BrutalistPricingPlan) {
     if (!showBillingToggle.value) return t('pricingSection.perLifetime')
-    if (billing.value === 'monthly') return t('saasPricing.perMonth')
-    return plan.priceAnnually !== undefined ? t('saasPricing.perMonthBilledAnnually') : t('saasPricing.perMonth')
+    if (billing.value === 'monthly') return t('pricingSection.perMonth')
+    return plan.priceAnnually !== undefined ? t('pricingSection.perMonthBilledAnnually') : t('pricingSection.perMonth')
 }
 
 function getFeatureText(feature: string | PricingFeature) {
@@ -156,7 +156,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                 v-if="showBillingToggle"
                 class="mt-6 inline-flex items-center gap-3 border-3 border-brutal bg-brutal-muted p-1"
                 role="tablist"
-                :aria-label="t('saasPricing.billingPeriod')"
+                :aria-label="t('pricingSection.billingPeriod')"
                 @keydown.left.prevent="billing = 'monthly'"
                 @keydown.right.prevent="billing = 'annually'"
                 @keydown.home.prevent="billing = 'monthly'"
@@ -169,7 +169,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                     :class="monthlyBtnClasses"
                     @click="billing = 'monthly'"
                 >
-                    {{ t('saasPricing.monthly') }}
+                    {{ t('pricingSection.monthly') }}
                 </button>
                 <button
                     role="tab"
@@ -178,7 +178,7 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                     :class="annuallyBtnClasses"
                     @click="billing = 'annually'"
                 >
-                    {{ t('saasPricing.annually') }}
+                    {{ t('pricingSection.annually') }}
                 </button>
             </div>
         </div>

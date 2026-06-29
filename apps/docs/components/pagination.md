@@ -94,6 +94,38 @@ const currentPage = ref(1)
 </template>
 ```
 
+## 可点击省略号
+
+当总页数较多时，分页范围会以省略号 `...` 表示被折叠的页码。省略号现为可点击的 `<button>` 元素（带 `aria-label`，无障碍友好），点击后会触发 `jump` 事件（无载荷），开发者可在此事件中实现自定义跳页交互，例如弹出输入框让用户直接输入目标页码。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Pagination } from 'brutx-ui-vue'
+
+const currentPage = ref(1)
+
+function handleJump() {
+    const input = window.prompt('跳转到第几页？')
+    if (input !== null) {
+        const page = Number(input)
+        if (Number.isFinite(page)) {
+            currentPage.value = page
+        }
+    }
+}
+</script>
+
+<template>
+    <Pagination
+        v-model:current-page="currentPage"
+        :total-pages="50"
+        :sibling-count="1"
+        @jump="handleJump"
+    />
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -109,6 +141,7 @@ const currentPage = ref(1)
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `update:currentPage` | `number` |
+| 事件 | 载荷 | 说明 |
+|------|------|------|
+| `update:currentPage` | `number` | 页码变化时触发 |
+| `jump` | — | 点击省略号 `...` 按钮时触发，用于自定义跳页交互 |

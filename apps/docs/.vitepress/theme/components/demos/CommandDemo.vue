@@ -13,9 +13,16 @@ import {
 } from 'brutx-ui-vue'
 
 const dialogOpen = ref(false)
+const commandRef = ref<InstanceType<typeof Command> | null>(null)
 
 function handleSelect(_value: string) {
     // 处理选择事件
+}
+
+function setFilter(value: string) {
+    if (commandRef.value) {
+        commandRef.value.filterSearch = value
+    }
 }
 </script>
 
@@ -94,6 +101,59 @@ function handleSelect(_value: string) {
                     </CommandGroup>
                 </CommandList>
             </CommandDialog>
+        </div>
+
+        <div>
+            <h3 class="mb-4 text-lg font-black">程序化控制（filterSearch）</h3>
+            <p class="mb-3 text-xs opacity-70 leading-relaxed">
+                通过 ref 写入 <span class="font-mono font-black">filterSearch</span> 可在不操作输入框的情况下触发过滤。
+            </p>
+            <div class="mb-3 flex flex-wrap gap-2">
+                <button
+                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="setFilter('cal')"
+                >
+                    搜索 "cal"
+                </button>
+                <button
+                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="setFilter('设置')"
+                >
+                    搜索 "设置"
+                </button>
+                <button
+                    class="border-3 border-brutal px-3 py-1 text-sm font-black shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="setFilter('')"
+                >
+                    清除
+                </button>
+            </div>
+            <Command ref="commandRef" class="w-full max-w-md border-3 border-brutal shadow-brutal">
+                <CommandInput placeholder="输入命令或搜索..." />
+                <CommandList>
+                    <CommandEmpty />
+                    <CommandGroup heading="建议">
+                        <CommandItem value="calendar" @select="handleSelect">
+                            日历
+                        </CommandItem>
+                        <CommandItem value="search-emoji" @select="handleSelect">
+                            搜索表情
+                        </CommandItem>
+                        <CommandItem value="calculator" @select="handleSelect">
+                            计算器
+                        </CommandItem>
+                    </CommandGroup>
+                    <CommandSeparator />
+                    <CommandGroup heading="设置">
+                        <CommandItem value="profile" @select="handleSelect">
+                            个人资料
+                        </CommandItem>
+                        <CommandItem value="settings" @select="handleSelect">
+                            设置
+                        </CommandItem>
+                    </CommandGroup>
+                </CommandList>
+            </Command>
         </div>
     </div>
 </template>

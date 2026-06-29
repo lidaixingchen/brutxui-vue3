@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { DataTable } from 'brutx-ui-vue'
+import { ref } from 'vue'
+import { DataTable, Button } from 'brutx-ui-vue'
 import type { DataTableColumn } from 'brutx-ui-vue'
 
 interface User {
@@ -31,10 +32,47 @@ const columns: DataTableColumn<User>[] = [
     { id: 'role', header: '角色', accessorKey: 'role', sortable: true },
     { id: 'status', header: '状态', accessorKey: 'status', sortable: true },
 ]
+
+// @ts-expect-error vue-tsc cannot infer InstanceType of generic components — known limitation with <script setup generic="T">
+const tableRef = ref<InstanceType<typeof DataTable> | null>(null)
+
+function sortByNamAsc() {
+    tableRef.value?.sort.toggleSort('name')
+}
+
+function clearFilter() {
+    tableRef.value?.filter.setGlobalFilter('')
+}
+
+function selectAllOnPage() {
+    tableRef.value?.selection.toggleAllRows()
+}
+
+function clearSelection() {
+    tableRef.value?.selection.clearSelection()
+}
+
+function goPrevPage() {
+    tableRef.value?.pagination.previousPage()
+}
+
+function goNextPage() {
+    tableRef.value?.pagination.nextPage()
+}
 </script>
 
 <template>
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        <Button variant="primary" size="sm" @click="sortByNamAsc">按姓名排序</Button>
+        <Button variant="default" size="sm" @click="clearFilter">清空筛选</Button>
+        <Button variant="default" size="sm" @click="selectAllOnPage">全选当前页</Button>
+        <Button variant="default" size="sm" @click="clearSelection">清空选择</Button>
+        <Button variant="default" size="sm" @click="goPrevPage">上一页</Button>
+        <Button variant="default" size="sm" @click="goNextPage">下一页</Button>
+    </div>
+
     <DataTable
+        ref="tableRef"
         :data="users"
         :columns="columns"
         :row-key="'id'"

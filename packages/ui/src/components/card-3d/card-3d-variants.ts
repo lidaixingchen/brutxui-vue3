@@ -1,5 +1,7 @@
 import { cva } from 'class-variance-authority'
 
+export const DEFAULT_CARD3D_OFFSET_PX = 4
+
 export const card3dVariants = cva(
     [
         'relative',
@@ -10,7 +12,7 @@ export const card3dVariants = cva(
     {
         variants: {
             shadow: {
-                default: '[--card3d-offset:4px]',
+                default: `[--card3d-offset:${DEFAULT_CARD3D_OFFSET_PX}px]`,
                 lg: '[--card3d-offset:8px]',
                 xl: '[--card3d-offset:12px]',
             },
@@ -28,5 +30,5 @@ export const card3dVariants = cva(
     }
 )
 
-export const card3dShadowVariants =
+export const card3dShadowClasses =
     'absolute inset-0 border-3 border-brutal rounded-brutal bg-brutal-fg transition-transform duration-200 ease-out -z-10'

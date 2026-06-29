@@ -6,6 +6,7 @@ const value = ref('')
 const errorValue = ref('')
 const successValue = ref('')
 const modelValue = ref('')
+const readonlyValue = ref('这是一段只读内容，用户可以选中和复制文本，但无法修改。')
 </script>
 
 <template>
@@ -32,6 +33,7 @@ const modelValue = ref('')
             <p class="text-sm font-bold tracking-wide">状态</p>
             <div class="flex flex-col gap-3">
                 <Textarea disabled placeholder="禁用文本区域" />
+                <Textarea v-model="readonlyValue" readonly />
             </div>
         </div>
 

@@ -59,24 +59,24 @@ describe('BrutalistHero', () => {
         expect(wrapper.text()).toContain('See Docs')
     })
 
-    it('emits primaryCta when primary button is clicked', async () => {
+    it('emits primary-cta when primary button is clicked', async () => {
         const wrapper = mount(BrutalistHero, { ...localeProvide })
         const buttons = wrapper.findAll('button')
         const primaryButton = buttons.find(b => b.text().includes('Get Started Now'))
         expect(primaryButton).toBeTruthy()
         await primaryButton!.trigger('click')
-        expect(wrapper.emitted('primaryCta')).toBeTruthy()
-        expect(wrapper.emitted('primaryCta')!.length).toBe(1)
+        expect(wrapper.emitted('primary-cta')).toBeTruthy()
+        expect(wrapper.emitted('primary-cta')!.length).toBe(1)
     })
 
-    it('emits secondaryCta when secondary button is clicked', async () => {
+    it('emits secondary-cta when secondary button is clicked', async () => {
         const wrapper = mount(BrutalistHero, { ...localeProvide })
         const buttons = wrapper.findAll('button')
         const secondaryButton = buttons.find(b => b.text().includes('View Component Registry'))
         expect(secondaryButton).toBeTruthy()
         await secondaryButton!.trigger('click')
-        expect(wrapper.emitted('secondaryCta')).toBeTruthy()
-        expect(wrapper.emitted('secondaryCta')!.length).toBe(1)
+        expect(wrapper.emitted('secondary-cta')).toBeTruthy()
+        expect(wrapper.emitted('secondary-cta')!.length).toBe(1)
     })
 
     it('renders Neo-Brutalism UI badge', () => {

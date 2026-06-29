@@ -10,8 +10,7 @@ import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 type ToggleVariantProps = VariantProps<typeof toggleVariants>
 
 interface ToggleProps {
-    defaultValue?: boolean
-    pressed?: boolean
+    modelValue?: boolean
     variant?: NonNullable<ToggleVariantProps['variant']>
     size?: NonNullable<ToggleVariantProps['size']>
     disabled?: boolean
@@ -30,7 +29,7 @@ const props = withDefaults(defineProps<ToggleProps>(), {
     ariaLabel: undefined,
 })
 
-const emit = defineEmits<{ 'update:pressed': [value: boolean] }>()
+const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
 const TOGGLE_SIZE_TO_ICON: Record<NonNullable<ToggleVariantProps['size']>, IconSize> = {
     sm: 'sm',
@@ -55,12 +54,12 @@ const loaderClasses = computed(() =>
 
 <template>
     <Toggle
-        v-bind="pressed !== undefined ? { 'model-value': pressed } : { 'default-value': defaultValue }"
+        :model-value="modelValue"
         :disabled="isDisabled"
         :class="classes"
         :aria-label="ariaLabel"
         :aria-busy="loading || undefined"
-        @update:model-value="emit('update:pressed', $event)"
+        @update:model-value="emit('update:modelValue', $event)"
     >
         <Loader2 v-if="loading" :class="loaderClasses" />
         <slot />

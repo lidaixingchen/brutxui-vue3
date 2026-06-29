@@ -6,6 +6,7 @@ const value = ref('')
 const errorValue = ref('')
 const successValue = ref('')
 const modelValue = ref('')
+const readonlyValue = ref('只读内容，可选中复制但不可编辑')
 </script>
 
 <template>
@@ -32,6 +33,7 @@ const modelValue = ref('')
             <p class="text-sm font-bold tracking-wide">状态</p>
             <div class="flex flex-col gap-3">
                 <Input disabled placeholder="禁用输入" />
+                <Input v-model="readonlyValue" readonly />
             </div>
         </div>
 

@@ -78,6 +78,7 @@ export interface WaitlistPageLocale {
     live: string
     defaultDescription: string
     invalidEmail: string
+    emailPlaceholder: string
 }
 
 export interface DashboardShellLocale {
@@ -446,11 +447,24 @@ export interface TabsNavLocale {
     emptyTitle: string
 }
 
+export interface ColorModeSwitcherLocale {
+    light: string
+    dark: string
+    system: string
+    colorMode: string
+    currentToggle: string
+}
+
 export interface PricingSectionLocale {
     defaultTitle: string
     mostPopular: string
     perLifetime: string
     emptyTitle: string
+    perMonth: string
+    perMonthBilledAnnually: string
+    billingPeriod: string
+    monthly: string
+    annually: string
 }
 
 export interface DashboardStatsLocale {
@@ -556,6 +570,7 @@ export interface Locale {
     kanban: KanbanLocale
     tabsNav: TabsNavLocale
     pricingSection: PricingSectionLocale
+    colorModeSwitcher: ColorModeSwitcherLocale
     dashboardStats: DashboardStatsLocale
     input: InputLocale
     numberInput: NumberInputLocale

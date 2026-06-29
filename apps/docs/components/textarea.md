@@ -102,6 +102,46 @@ import { Textarea } from 'brutx-ui-vue'
 </template>
 ```
 
+## 只读状态
+
+通过 `readonly` 属性设置只读文本域。只读状态下文本域不可编辑但可聚焦选择文本，光标样式为 `cursor-default`，不会降低透明度（区别于 `disabled`）。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Textarea } from 'brutx-ui-vue'
+
+const content = ref('这是一段只读内容，用户可以选中和复制文本，但无法修改。适用于展示协议条款、历史记录等场景。')
+</script>
+
+<template>
+    <Textarea v-model="content" readonly />
+</template>
+```
+
+## 无障碍
+
+通过 ARIA 属性增强文本域的无障碍可访问性，便于辅助技术（如屏幕阅读器）正确朗读：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Textarea } from 'brutx-ui-vue'
+
+const bio = ref('')
+</script>
+
+<template>
+    <Textarea
+        v-model="bio"
+        aria-label="个人简介"
+        aria-required="true"
+        aria-invalid="false"
+        placeholder="请输入个人简介..."
+    />
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -112,6 +152,11 @@ import { Textarea } from 'brutx-ui-vue'
 | `disabled` | `boolean` | `false` |
 | `readonly` | `boolean` | `false` |
 | `placeholder` | `string` | `t('textarea.placeholder')` |
+| `ariaLabel` | `string` | — |
+| `ariaLabelledby` | `string` | — |
+| `ariaDescribedby` | `string` | — |
+| `ariaInvalid` | `boolean` | — |
+| `ariaRequired` | `boolean` | — |
 | `class` | `string` | — |
 
 ## 事件

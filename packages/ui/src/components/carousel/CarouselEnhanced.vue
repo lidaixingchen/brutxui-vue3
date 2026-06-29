@@ -38,7 +38,7 @@ interface CarouselEnhancedProps {
     autoplayDelay?: number;
     showArrows?: boolean;
     showDots?: boolean;
-    size?: 'sm' | 'md' | 'lg' | 'full' | 'auto';
+    size?: 'sm' | 'md' | 'lg' | 'full' | 'default';
     thumbnails?: CarouselThumbnails;
     autoplayIndicator?: AutoplayIndicator;
     parallax?: ParallaxEffect;
@@ -51,7 +51,7 @@ const props = withDefaults(defineProps<CarouselEnhancedProps>(), {
     autoplayDelay: DEFAULT_AUTOPLAY_DELAY,
     showArrows: true,
     showDots: true,
-    size: 'auto',
+    size: 'default',
     thumbnails: () => ({ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }),
     autoplayIndicator: undefined,
     parallax: undefined,

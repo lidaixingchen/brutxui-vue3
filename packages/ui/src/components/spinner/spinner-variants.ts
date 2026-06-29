@@ -65,3 +65,23 @@ export const dotsSpinnerVariants = cva('flex items-center', {
         size: 'default',
     },
 })
+
+export const SPINNER_COLOR_CLASSES: Record<string, string> = {
+    default: 'bg-brutal-fg',
+    primary: 'bg-brutal-primary',
+    secondary: 'bg-brutal-secondary',
+    accent: 'bg-brutal-accent',
+    info: 'bg-brutal-info',
+}
+
+const MIXED_COLOR_ORDER = ['primary', 'secondary', 'accent', 'info']
+
+export function getSpinnerColorClasses(color: string, count: number): string[] {
+    if (color === 'mixed') {
+        return Array.from({ length: count }, (_, i) =>
+            SPINNER_COLOR_CLASSES[MIXED_COLOR_ORDER[i % MIXED_COLOR_ORDER.length]]
+        )
+    }
+    return Array(count).fill(SPINNER_COLOR_CLASSES[color] ?? SPINNER_COLOR_CLASSES.default)
+}
+

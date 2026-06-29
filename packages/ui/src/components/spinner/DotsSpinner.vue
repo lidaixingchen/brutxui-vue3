@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { dotsSpinnerVariants } from './spinner-variants'
+import { dotsSpinnerVariants, SPINNER_COLOR_CLASSES } from './spinner-variants'
 
 type DotsSpinnerSize = NonNullable<VariantProps<typeof dotsSpinnerVariants>['size']>
 
@@ -32,13 +32,6 @@ const sizeMap: Record<string, string> = {
     xl: 'h-5 w-5',
 }
 
-const colorMap: Record<string, string> = {
-    default: 'bg-brutal-fg',
-    primary: 'bg-brutal-primary',
-    secondary: 'bg-brutal-secondary',
-    accent: 'bg-brutal-accent',
-}
-
 const DOT_ANIMATION_DELAY_INCREMENT_MS = 100
 const DOT_ANIMATION_DURATION_MS = 500
 
@@ -47,7 +40,7 @@ const containerClasses = computed(() =>
 )
 
 const dotClasses = computed(() =>
-    cn(sizeMap[props.size ?? 'default'], 'border-3 border-brutal', colorMap[props.color], 'animate-bounce')
+    cn(sizeMap[props.size ?? 'default'], 'border-3 border-brutal', SPINNER_COLOR_CLASSES[props.color], 'animate-bounce')
 )
 </script>
 

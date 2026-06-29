@@ -65,15 +65,35 @@ import { Switch } from 'brutx-ui-vue'
 </template>
 ```
 
+## 无障碍标签
+
+Switch 默认通过 locale 提供 `aria-label`（中文为"开关"），确保屏幕阅读器能够正确朗读。当需要更具体的描述时，可通过 `ariaLabel` prop 自定义。未提供时回退到 `t('switch.toggle')`。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Switch, Label } from 'brutx-ui-vue'
+
+const sync = ref(false)
+</script>
+
+<template>
+    <div class="flex items-center gap-3">
+        <Switch v-model="sync" aria-label="自动同步数据" />
+        <Label>自动同步</Label>
+    </div>
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `modelValue` | `boolean` | — |
-| `defaultValue` | `boolean` | — |
 | `disabled` | `boolean` | `false` |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `ariaLabel` | `string` | locale 默认值（`switch.toggle`） |
 | `class` | `string` | — |
 
 ## 事件

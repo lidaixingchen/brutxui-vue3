@@ -18,6 +18,9 @@ const week = ref<Date | null>(null)
 const month = ref<Date | null>(null)
 const year = ref<Date | null>(null)
 
+const programmableDate = ref<Date | null>(null)
+const pickerRef = ref<InstanceType<typeof DatePicker> | null>(null)
+
 const shortcuts = [
     { label: '今天', value: () => new Date() },
     {
@@ -71,6 +74,28 @@ const shortcuts = [
             <div class="space-y-2">
                 <p class="text-sm font-bold tracking-wide">YearPicker 年份</p>
                 <YearPicker v-model="year" />
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">程序化控制（通过 ref 打开面板）</p>
+            <p class="text-xs opacity-70 leading-relaxed">
+                通过 <span class="font-mono font-black">pickerRef.open</span> 可在外部按钮中打开或关闭日期面板。
+            </p>
+            <div class="flex flex-wrap items-center gap-3">
+                <DatePicker ref="pickerRef" v-model="programmableDate" :clearable="true" />
+                <button
+                    class="border-3 border-brutal bg-brutal-primary px-3 py-1 text-sm font-black text-brutal-bg shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="pickerRef && (pickerRef.open = true)"
+                >
+                    打开面板
+                </button>
+                <button
+                    class="border-3 border-brutal px-3 py-1 text-sm font-black shadow-brutal active:translate-y-[2px] active:shadow-none transition-all"
+                    @click="pickerRef && (pickerRef.open = false)"
+                >
+                    关闭面板
+                </button>
             </div>
         </div>
     </div>

@@ -172,6 +172,33 @@ const presets = [
 | `open` | — | 面板打开时触发 |
 | `close` | — | 面板关闭时触发 |
 
+## 程序化控制
+
+`ColorPicker` 通过 `defineExpose` 暴露 `open` 响应式引用，允许父组件程序化打开或关闭颜色面板。`open` 是与内部 Popover 双向绑定的 `Ref<boolean>`，可直接读写。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { ColorPicker } from 'brutx-ui-vue'
+
+const pickerRef = ref()
+const color = ref(null)
+</script>
+
+<template>
+    <ColorPicker ref="pickerRef" v-model="color" />
+
+    <button @click="pickerRef?.open = true">打开面板</button>
+    <button @click="pickerRef?.open = false">关闭面板</button>
+</template>
+```
+
+### Methods
+
+| 方法/属性 | 类型 | 说明 |
+|----------|------|------|
+| `open` | `Ref<boolean>` | 面板开关状态，可读写；设为 `true` 打开，`false` 关闭 |
+
 ## 颜色格式说明
 
 | 格式 | 示例 | 说明 |
@@ -186,6 +213,66 @@ const presets = [
 |------|------|
 | `Enter` / `Space` | 打开面板 |
 | `Escape` | 关闭面板 |
+
+## useColorPicker 组合式函数
+
+`ColorPicker` 组件的弹出面板触发、颜色格式归一化、清除、确认等逻辑已抽取为独立的 `useColorPicker` 组合式函数，可在需要构建完全自定义触发器或调色面板时单独使用。它负责管理面板开关状态、显示值与 `modelValue` 的同步、按目标格式归一化展示，并通过传入的 `emit` 触发 `open` / `close` / `change` / `update:modelValue` 事件。
+
+```ts
+import { useColorPicker } from 'brutx-ui-vue'
+import type { UseColorPickerOptions } from 'brutx-ui-vue'
+
+const emit = defineEmits<{
+    'update:modelValue': [value: string | null]
+    'change': [value: string | null]
+    'open': []
+    'close': []
+}>()
+
+const {
+    open,                  // 面板是否打开
+    displayValue,          // 面板内当前显示的值
+    normalizedDisplay,     // 按目标格式归一化后的展示字符串
+    swatchStyle,           // 触发器色块的内联样式
+    handlePanelUpdate,     // 面板值更新回调
+    handlePanelConfirm,    // 面板确认回调
+    handlePanelClear,      // 面板清除回调
+    handleClearClick,      // 触发器清除按钮点击回调
+    handleTriggerKeydown,  // 触发器键盘事件回调
+} = useColorPicker({
+    modelValue,
+    format: 'hex',
+    showAlpha: false,
+    disabled: false,
+    emit,
+})
+```
+
+### UseColorPickerOptions
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `MaybeRefOrGetter<string \| null>` | `null` | 当前选中颜色（支持 v-model） |
+| `format` | `MaybeRefOrGetter<'hex' \| 'rgb' \| 'hsl'>` | `'hex'` | 颜色格式 |
+| `showAlpha` | `MaybeRefOrGetter<boolean>` | `false` | 是否支持透明度通道 |
+| `disabled` | `MaybeRefOrGetter<boolean>` | `false` | 是否禁用 |
+| `emit` | `ColorPickerEmit` | — | 触发事件的函数（必填，类型与组件 emits 一致） |
+
+### 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `open` | `Ref<boolean>` | 面板是否打开 |
+| `displayValue` | `Ref<string \| null>` | 面板内当前显示的值 |
+| `normalizedDisplay` | `ComputedRef<string \| null>` | 按 `format` 归一化后的展示字符串（无法解析时为 `null`） |
+| `swatchStyle` | `ComputedRef<{ backgroundColor: string }>` | 触发器色块的内联样式 |
+| `handlePanelUpdate(value)` | `(value: string \| null) => void` | 面板值更新时调用，同步 `displayValue` 并触发 `update:modelValue` |
+| `handlePanelConfirm(value)` | `(value: string \| null) => void` | 面板确认时调用，触发 `update:modelValue` / `change` 并关闭面板 |
+| `handlePanelClear()` | `() => void` | 面板清除时调用，触发 `update:modelValue(null)` / `change(null)` |
+| `handleClearClick(event)` | `(event: MouseEvent) => void` | 触发器清除按钮点击回调，阻止事件冒泡并清除 |
+| `handleTriggerKeydown(event)` | `(event: KeyboardEvent) => void` | 触发器键盘事件回调，`Enter` / `Space` 打开面板（禁用时不响应） |
+
+> 提示：`emit` 必须是符合 `ColorPickerEmit` 签名的函数（即组件 `defineEmits` 的返回值）。颜色解析与格式化由 `@/lib/color` 的 `parseColor` / `formatColor` 提供。
 
 ## 样式
 

@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { CLOSE_BUTTON_BASE_CLASSES } from '../../lib/modal-variants'
 
 export const dialogContentVariants = cva(
     [
@@ -30,14 +31,8 @@ export const dialogContentVariants = cva(
 
 export const dialogCloseVariants = cva(
     [
+        ...CLOSE_BUTTON_BASE_CLASSES,
         'absolute right-4 top-4',
-        'h-8 w-8 flex items-center justify-center',
-        'border-3 border-brutal bg-brutal-bg text-brutal-fg',
-        'shadow-brutal-sm',
-        'transition-all duration-150',
-        'hover:bg-brutal-destructive hover:text-brutal-fg',
         'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
     ]
 )

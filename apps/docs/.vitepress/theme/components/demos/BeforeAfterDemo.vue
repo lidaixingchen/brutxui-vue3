@@ -25,5 +25,9 @@ const afterImg = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg
                 :default-value="40"
             />
         </div>
+
+        <p class="text-xs opacity-60 leading-relaxed">
+            提示：拖拽滑块的位置过渡尊重系统的「减少动态效果」设置。启用后分割线与裁剪区域将即时跟随，不再带有缓动动画。
+        </p>
     </div>
 </template>

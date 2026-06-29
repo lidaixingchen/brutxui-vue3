@@ -72,6 +72,7 @@ export const zhCN: Locale = {
         live: '在线',
         defaultDescription: '加入等候列表，成为首批体验者。',
         invalidEmail: '请输入有效的邮箱地址',
+        emailPlaceholder: 'you@example.com',
     },
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
@@ -395,6 +396,18 @@ export const zhCN: Locale = {
         mostPopular: '最受欢迎',
         perLifetime: '/ 终身',
         emptyTitle: '暂无定价方案',
+        perMonth: '/月',
+        perMonthBilledAnnually: '每月（按年计费）',
+        billingPeriod: '计费周期',
+        monthly: '按月',
+        annually: '按年',
+    },
+    colorModeSwitcher: {
+        light: '浅色',
+        dark: '深色',
+        system: '跟随系统',
+        colorMode: '颜色模式',
+        currentToggle: '当前：{mode}。点击切换。',
     },
     dashboardStats: {
         defaultTitle: '概览性能',

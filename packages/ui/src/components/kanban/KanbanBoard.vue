@@ -66,8 +66,10 @@ function onDragOver(e: DragEvent, columnId: string) {
 }
 
 function onDragLeave(e: DragEvent, columnId: string) {
-    const el = e.currentTarget as HTMLElement
-    if (el.contains(e.relatedTarget as Node)) return
+    const el = e.currentTarget
+    if (!(el instanceof HTMLElement)) return
+    const related = e.relatedTarget
+    if (related instanceof Node && el.contains(related)) return
     if (dragOverColumn.value === columnId) {
         dragOverColumn.value = null;
     }
@@ -98,7 +100,8 @@ function onDrop(e: DragEvent, toColumnId: string) {
         return;
     }
 
-    const columnEl = e.currentTarget as HTMLElement
+    const columnEl = e.currentTarget
+    if (!(columnEl instanceof HTMLElement)) return
     const cardEls = Array.from(columnEl.querySelectorAll('[data-card-id]'))
     let insertIndex = cardEls.length
     const mouseY = e.clientY

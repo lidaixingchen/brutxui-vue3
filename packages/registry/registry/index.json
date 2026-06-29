@@ -1187,6 +1187,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/modal-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3729,6 +3733,10 @@
         {
           "path": "components/ui/alert-dialog/alert-dialog-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/modal-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3867,6 +3875,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/modal-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -4777,6 +4789,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/validation.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5134,6 +5150,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/validation.ts",
           "type": "registry:ui"
         }
       ],
@@ -11165,6 +11185,18 @@
         },
         {
           "path": "composables/useTheme.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
           "type": "registry:ui"
         }
       ],

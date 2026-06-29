@@ -333,8 +333,8 @@ const columns: DataTableColumn<User>[] = [
 | `sort` | `[column: string, direction: 'asc' \| 'desc' \| null]` | 排序变化时触发 |
 | `filter` | `[filters: DataTableFilterState]` | 筛选条件变化时触发 |
 | `select` | `[rows: T[]]` | 选中行变化时触发 |
-| `pageChange` | `[page: number]` | 页码变化时触发 |
-| `pageSizeChange` | `[size: number]` | 每页条数变化时触发 |
+| `page-change` | `[page: number]` | 页码变化时触发 |
+| `page-size-change` | `[size: number]` | 每页条数变化时触发 |
 | `export` | `[format: 'csv' \| 'json', selectedRows: T[]]` | 导出操作触发，携带选中行数据（需启用 selectable） |
 
 ## 插槽
@@ -345,6 +345,124 @@ const columns: DataTableColumn<User>[] = [
 | `cell-{columnId}` | `{ row: T; value: unknown }` | 自定义特定列的单元格渲染 |
 | `empty` | — | 数据为空时的自定义空状态 |
 | `loading` | — | 自定义加载态内容，仅在 `loading` 为 `true` 时渲染 |
+
+## 程序化控制
+
+DataTable 通过 `defineExpose` 暴露了排序、筛选、选择、分页四组方法与状态，可通过组件 `ref` 在父组件中直接调用，实现"工具栏外置"、"外部按钮触发排序"、"批量操作按钮"等场景。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { DataTable, Button } from 'brutx-ui-vue'
+import type { DataTableColumn } from 'brutx-ui-vue'
+
+interface User {
+    id: number
+    name: string
+    email: string
+    role: string
+    status: string
+}
+
+const tableRef = ref<InstanceType<typeof DataTable> | null>(null)
+
+const columns: DataTableColumn<User>[] = [
+    { id: 'name', header: '姓名', accessorKey: 'name', sortable: true },
+    { id: 'email', header: '邮箱', accessorKey: 'email' },
+    { id: 'role', header: '角色', accessorKey: 'role' },
+    { id: 'status', header: '状态', accessorKey: 'status' },
+]
+
+const data: User[] = [
+    { id: 1, name: '张三', email: 'zhangsan@example.com', role: '管理员', status: '活跃' },
+    { id: 2, name: '李四', email: 'lisi@example.com', role: '编辑', status: '未激活' },
+    { id: 3, name: '王五', email: 'wangwu@example.com', role: '访客', status: '活跃' },
+]
+
+// 程序化触发按 name 升序
+function sortByNamAsc() {
+    tableRef.value?.sort.toggleSort('name')
+}
+
+// 程序化设置全局筛选关键字
+function filterByAdmin() {
+    tableRef.value?.filter.setGlobalFilter('管理员')
+}
+
+// 全选当前页
+function selectAll() {
+    tableRef.value?.selection.toggleAllRows()
+}
+
+// 跳转到下一页
+function goNextPage() {
+    tableRef.value?.pagination.nextPage()
+}
+</script>
+
+<template>
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        <Button variant="primary" size="sm" @click="sortByNamAsc">按姓名排序</Button>
+        <Button variant="default" size="sm" @click="filterByAdmin">筛选"管理员"</Button>
+        <Button variant="default" size="sm" @click="selectAll">全选当前页</Button>
+        <Button variant="default" size="sm" @click="goNextPage">下一页</Button>
+    </div>
+
+    <DataTable
+        ref="tableRef"
+        :data="data"
+        :columns="columns"
+        :sortable="true"
+        :filterable="true"
+        :selectable="true"
+        :paginated="true"
+        :page-size="2"
+        row-key="id"
+    />
+</template>
+```
+
+### 暴露的 API
+
+通过 `ref` 访问 `tableRef` 后，可使用以下四组命名空间：
+
+#### sort
+
+| 成员 | 类型 | 说明 |
+|------|------|------|
+| `toggleSort(columnId)` | `(columnId: string) => void` | 切换指定列的排序方向，循环顺序为 `asc → desc → 取消` |
+| `sortState` | `Ref<{ column: string; direction: 'asc' \| 'desc' \| null }>` | 当前排序状态（响应式） |
+
+#### filter
+
+| 成员 | 类型 | 说明 |
+|------|------|------|
+| `setGlobalFilter(value)` | `(value: string) => void` | 设置全局筛选关键字 |
+| `filterState` | `Ref<DataTableFilterState>` | 当前筛选状态（响应式），包含 `global` 字段 |
+
+#### selection
+
+| 成员 | 类型 | 说明 |
+|------|------|------|
+| `toggleRow(row)` | `(row: T) => void` | 切换指定行的选中状态 |
+| `toggleAllRows()` | `() => void` | 切换当前页全选 / 取消全选 |
+| `clearSelection()` | `() => void` | 清空所有选中行 |
+| `getSelectedRows()` | `() => T[]` | 获取当前选中的完整行数据数组 |
+| `selectedRows` | `Ref<Set<string \| number>>` | 选中行的 key 集合（响应式） |
+| `isAllSelected` | `ComputedRef<boolean>` | 当前页是否全选 |
+
+#### pagination
+
+| 成员 | 类型 | 说明 |
+|------|------|------|
+| `goToPage(page)` | `(page: number) => boolean` | 跳转到指定页码，返回是否实际切换 |
+| `nextPage()` | `() => void` | 跳转到下一页 |
+| `previousPage()` | `() => void` | 跳转到上一页 |
+| `setPageSize(size)` | `(size: number) => void` | 设置每页条数（会重置到第 1 页） |
+| `pageIndex` | `Ref<number>` | 当前页码（响应式，从 1 开始） |
+| `pageCount` | `ComputedRef<number>` | 总页数（响应式） |
+
+> 注意：程序化调用 `toggleSort` / `setGlobalFilter` / `toggleRow` 等方法**不会**自动触发 `sort` / `filter` / `select` 事件。如需同步通知父组件，请自行监听对应状态变化或显式调用后处理。
 
 ## 迁移指南
 

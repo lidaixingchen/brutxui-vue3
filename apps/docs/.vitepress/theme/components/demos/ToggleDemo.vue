@@ -13,10 +13,10 @@ const outlinePressed = ref(false)
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">默认变体</p>
             <div class="flex gap-2">
-                <Toggle v-model:pressed="boldPressed" aria-label="加粗">
+                <Toggle v-model="boldPressed" aria-label="加粗">
                     <Bold class="h-4 w-4" />
                 </Toggle>
-                <Toggle v-model:pressed="italicPressed" aria-label="斜体">
+                <Toggle v-model="italicPressed" aria-label="斜体">
                     <Italic class="h-4 w-4" />
                 </Toggle>
             </div>
@@ -53,6 +53,18 @@ const outlinePressed = ref(false)
                     <Bold class="h-4 w-4" />
                 </Toggle>
                 <Toggle disabled :pressed="true" aria-label="已按下(禁用)">
+                    <Italic class="h-4 w-4" />
+                </Toggle>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">加载中</p>
+            <div class="flex items-center gap-2">
+                <Toggle loading aria-label="加粗加载中">
+                    <Bold class="h-4 w-4" />
+                </Toggle>
+                <Toggle loading :pressed="true" variant="outline" aria-label="斜体加载中">
                     <Italic class="h-4 w-4" />
                 </Toggle>
             </div>

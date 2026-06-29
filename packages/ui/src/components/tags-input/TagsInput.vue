@@ -12,7 +12,6 @@ const { t } = useLocale()
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('tagsInput.label'))
 
 const delegatedProps = computed(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { class: _, ariaLabel: __, ...delegated } = props
     return delegated
 })

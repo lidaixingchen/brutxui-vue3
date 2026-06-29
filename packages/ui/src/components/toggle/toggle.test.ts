@@ -37,13 +37,13 @@ describe('Toggle', () => {
         expect(wrapper.classes()).toContain('h-12')
     })
 
-    it('emits update:pressed when toggled', async () => {
+    it('emits update:modelValue when toggled', async () => {
         const wrapper = mount(Toggle, {
             attachTo: document.body,
         })
         await wrapper.trigger('click')
-        expect(wrapper.emitted('update:pressed')).toBeTruthy()
-        expect(wrapper.emitted('update:pressed')![0]).toEqual([true])
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([true])
     })
 
     it('is disabled when disabled=true', () => {

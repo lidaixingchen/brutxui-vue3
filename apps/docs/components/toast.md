@@ -144,6 +144,36 @@ function showCustomToast() {
 </script>
 ```
 
+## 悬停暂停
+
+`Toast` 默认启用 `pauseOnHover`（默认值 `true`）：鼠标移入提示时暂停倒计时与顶部进度条动画，移出后从剩余时间继续，便于用户阅读较长内容。设置 `:pause-on-hover="false"` 可禁用该行为。
+
+> 注意：`pauseOnHover` 是 `<Toast>` 组件自身的 prop，不通过 `useToast` 的 `addToast` / `ToastItem` 传递。在自定义 `ToastContainer` 渲染 `<Toast>` 时直接绑定即可。
+
+```vue
+<script setup>
+import { useToast, ToastContainer, Toast } from 'brutx-ui-vue'
+
+const { toasts, addToast, removeToast } = useToast()
+</script>
+
+<template>
+    <ToastContainer position="bottom-right">
+        <Toast
+            v-for="toast in toasts"
+            :key="toast.id"
+            :duration="toast.duration"
+            :pause-on-hover="true"
+            @close="removeToast(toast.id)"
+        />
+    </ToastContainer>
+
+    <button @click="addToast({ title: '悬停我', description: '将鼠标移到提示上可暂停倒计时。', duration: 10000 })">
+        显示可暂停提示
+    </button>
+</template>
+```
+
 ## ToastItem 类型
 
 ```ts
@@ -160,11 +190,12 @@ interface ToastItem {
 
 ### Toast
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` | 提示类型 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
+| `pauseOnHover` | `boolean` | `true` | 鼠标悬停时暂停倒计时与进度条动画，移出后从剩余时间继续 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### ToastContainer
 

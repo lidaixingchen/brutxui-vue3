@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { blockSpinnerVariants } from './spinner-variants'
+import { blockSpinnerVariants, getSpinnerColorClasses } from './spinner-variants'
 
 type BlockSpinnerSize = NonNullable<VariantProps<typeof blockSpinnerVariants>['size']>
 
@@ -25,23 +25,16 @@ const { t } = useLocale()
 
 const resolvedLabel = computed(() => props.label ?? t('spinner.loading'))
 
-const colorMap: Record<string, string[]> = {
-    default: ['bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg', 'bg-brutal-fg'],
-    primary: ['bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary', 'bg-brutal-primary'],
-    secondary: ['bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary', 'bg-brutal-secondary'],
-    accent: ['bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent', 'bg-brutal-accent'],
-    mixed: ['bg-brutal-primary', 'bg-brutal-secondary', 'bg-brutal-accent', 'bg-brutal-info'],
-}
-
 const BLOCK_ANIMATION_DELAY_INCREMENT_MS = 150
 const BLOCK_ANIMATION_DURATION_MS = 600
+const BLOCK_COUNT = 4
 
 const classes = computed(() =>
     cn(blockSpinnerVariants({ size: props.size }), props.class)
 )
 
 const blockClasses = computed(() =>
-    colorMap[props.color].map(blockColor =>
+    getSpinnerColorClasses(props.color, BLOCK_COUNT).map(blockColor =>
         cn('border-3 border-brutal', blockColor, 'animate-pulse')
     )
 )

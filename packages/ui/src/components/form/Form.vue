@@ -27,7 +27,7 @@ const onSubmit = form.handleSubmit((values) => {
     emit('submit', values)
 })
 
-const rootClasses = computed(() => cn('', props.class))
+const rootClasses = computed(() => cn(props.class))
 
 watch(
     () => props.initialValues,

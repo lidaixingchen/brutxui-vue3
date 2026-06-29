@@ -11,6 +11,7 @@ import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { sheetVariants } from './sheet-variants'
 import { iconSizeVariants } from '../../lib/icon-size-variants'
+import { overlayVariants, CLOSE_BUTTON_BASE_CLASSES } from '../../lib/modal-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type SheetVariantProps = VariantProps<typeof sheetVariants>
@@ -27,13 +28,7 @@ const props = withDefaults(defineProps<SheetContentProps>(), {
 
 const { t } = useLocale()
 
-const overlayClasses = computed(() =>
-    cn(
-        'fixed inset-0 z-50 bg-brutal-overlay',
-        'data-[state=open]:animate-in data-[state=closed]:animate-out',
-        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
-    )
-)
+const overlayClasses = computed(() => overlayVariants())
 
 const contentClasses = computed(() =>
     cn(sheetVariants({ side: props.side }), props.class)
@@ -41,16 +36,10 @@ const contentClasses = computed(() =>
 
 const closeClasses = computed(() =>
     cn(
+        CLOSE_BUTTON_BASE_CLASSES,
         'absolute top-4',
         props.side === 'left' ? 'left-4' : 'right-4',
-        'h-8 w-8 flex items-center justify-center',
-        'border-3 border-brutal bg-brutal-bg text-brutal-fg',
-        'shadow-brutal-sm',
-        'transition-all duration-150',
-        'hover:bg-brutal-destructive hover:text-brutal-fg',
-        'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2'
+        'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'
     )
 )
 

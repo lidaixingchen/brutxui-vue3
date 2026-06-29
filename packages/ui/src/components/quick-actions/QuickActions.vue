@@ -42,7 +42,7 @@ const resolvedTitle = computed(() => props.title ?? t('quickActions.defaultTitle
 const resolvedBadge = computed(() => t('quickActions.badge'))
 
 const actionIconClasses = computed(() =>
-    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[2.5]')
+    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
 )
 </script>
 

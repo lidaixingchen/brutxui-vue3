@@ -16,7 +16,7 @@ interface CarouselProps {
     autoplayDelay?: number;
     showArrows?: boolean;
     showDots?: boolean;
-    size?: 'sm' | 'md' | 'lg' | 'full' | 'auto';
+    size?: 'sm' | 'md' | 'lg' | 'full' | 'default';
     class?: string;
 }
 
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<CarouselProps>(), {
     autoplayDelay: DEFAULT_AUTOPLAY_DELAY,
     showArrows: true,
     showDots: true,
-    size: 'auto',
+    size: 'default',
     class: undefined,
 });
 

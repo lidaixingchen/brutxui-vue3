@@ -19,7 +19,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const delegatedProps = computed(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { class: _, variant: __, ...delegated } = props
     return delegated
 })

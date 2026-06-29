@@ -18,7 +18,6 @@ interface StepperSectionProps {
     title?: string
     steps?: StepperStepItem[]
     modelValue?: number
-    currentStep?: number
     class?: string
     iconSize?: IconSize
 }
@@ -26,8 +25,7 @@ interface StepperSectionProps {
 const props = withDefaults(defineProps<StepperSectionProps>(), {
     title: undefined,
     steps: () => [],
-    modelValue: undefined,
-    currentStep: 0,
+    modelValue: 0,
     class: undefined,
     iconSize: 'default',
 })
@@ -51,7 +49,7 @@ const stepperSteps = computed(() =>
     }))
 )
 
-const activeStep = computed(() => props.modelValue ?? props.currentStep)
+const activeStep = computed(() => props.modelValue)
 const canGoPrevious = computed(() => activeStep.value > 0)
 const canGoNext = computed(() => activeStep.value < props.steps.length - 1)
 

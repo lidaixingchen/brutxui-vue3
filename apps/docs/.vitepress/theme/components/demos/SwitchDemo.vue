@@ -5,6 +5,7 @@ import { Switch } from 'brutx-ui-vue'
 const enabled = ref(false)
 const primaryEnabled = ref(true)
 const dangerEnabled = ref(false)
+const syncEnabled = ref(false)
 </script>
 
 <template>
@@ -20,6 +21,10 @@ const dangerEnabled = ref(false)
         <div class="flex items-center gap-3">
             <Switch v-model="dangerEnabled" variant="danger" />
             <span class="text-sm font-bold">危险</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <Switch v-model="syncEnabled" aria-label="自动同步数据" />
+            <span class="text-sm font-bold">自定义 aria-label</span>
         </div>
     </div>
 </template>

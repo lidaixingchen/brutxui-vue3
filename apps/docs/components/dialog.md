@@ -62,6 +62,39 @@ import { Button } from 'brutx-ui-vue'
 | `DialogClose` | 关闭按钮 |
 | `DialogOverlay` | 背景遮罩层 |
 
+## 尺寸变体
+
+通过 `DialogContent` 的 `size` 属性控制对话框的最大宽度。默认值为 `default`（`max-w-lg`）。
+
+| 尺寸 | 最大宽度 | 适用场景 |
+|------|----------|----------|
+| `sm` | `max-w-sm` | 确认框、简单提示 |
+| `default` | `max-w-lg` | 标准表单、常规内容 |
+| `lg` | `max-w-2xl` | 多列表单、详细设置 |
+| `xl` | `max-w-4xl` | 复杂内容、数据展示 |
+| `full` | `max-w-[calc(100vw-2rem)]` | 大幅内容、全屏式交互 |
+
+```vue
+<script setup>
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <Dialog>
+        <DialogTrigger as-child>
+            <Button variant="primary">打开小型对话框</Button>
+        </DialogTrigger>
+        <DialogContent size="sm">
+            <DialogHeader>
+                <DialogTitle>确认删除</DialogTitle>
+                <DialogDescription>此操作不可撤销，确定要继续吗？</DialogDescription>
+            </DialogHeader>
+        </DialogContent>
+    </Dialog>
+</template>
+```
+
 ## Props
 
 ### DialogContent
@@ -69,6 +102,7 @@ import { Button } from 'brutx-ui-vue'
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `showCloseButton` | `boolean` | `true` |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` |
 | `forceMount` | `boolean` | — |
 | `class` | `string` | — |
 

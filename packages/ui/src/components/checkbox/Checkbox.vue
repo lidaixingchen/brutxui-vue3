@@ -13,7 +13,6 @@ type CheckboxVariantProps = VariantProps<typeof checkboxVariants>
 interface CheckboxProps {
     class?: string
     checked?: boolean | 'indeterminate'
-    defaultChecked?: boolean
     disabled?: boolean
     variant?: NonNullable<CheckboxVariantProps['variant']>
     size?: NonNullable<CheckboxVariantProps['size']>
@@ -60,7 +59,7 @@ const checkClasses = computed(() =>
 <template>
     <CheckboxRoot
         :class="classes"
-        v-bind="checked !== undefined ? { 'model-value': checked } : { 'default-value': defaultChecked }"
+        :model-value="checked"
         :disabled="disabled"
         :aria-label="resolvedAriaLabel"
         @update:model-value="(val: boolean | 'indeterminate') => emit('update:checked', val)"

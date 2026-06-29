@@ -60,6 +60,43 @@ const underline = ref(false)
 | `default` | `h-10` | `min-w-10` | `text-sm` |
 | `lg` | `h-12` | `min-w-12` | `text-sm` |
 
+## Loading 状态
+
+通过 `loading` prop 显示加载指示器（`Loader2` 旋转图标），此时按钮会自动禁用并设置 `aria-busy="true"`，适合异步操作场景。loading 期间原插槽内容会被替换为旋转图标。
+
+```vue
+<script setup>
+import { Toggle } from 'brutx-ui-vue'
+import { Bold } from '@lucide/vue'
+</script>
+
+<template>
+    <Toggle loading aria-label="加粗">
+        <Bold class="h-4 w-4" />
+    </Toggle>
+</template>
+```
+
+## 无障碍标签
+
+Toggle 不会自动生成默认 `aria-label`。当插槽内容仅为图标时，建议通过 `ariaLabel` prop 提供可读文本，以便屏幕阅读器正确朗读按钮用途。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Toggle } from 'brutx-ui-vue'
+import { Bold } from '@lucide/vue'
+
+const bold = ref(false)
+</script>
+
+<template>
+    <Toggle v-model:pressed="bold" aria-label="加粗">
+        <Bold class="h-4 w-4" />
+    </Toggle>
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -69,6 +106,8 @@ const underline = ref(false)
 | `pressed` | `boolean` | — |
 | `defaultValue` | `boolean` | — |
 | `disabled` | `boolean` | — |
+| `loading` | `boolean` | `false` |
+| `ariaLabel` | `string` | — |
 | `class` | `string` | — |
 
 ## 事件

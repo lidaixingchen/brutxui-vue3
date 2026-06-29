@@ -11,7 +11,6 @@ import {
     dataTableRootVariants,
     dataTableHeaderVariants,
     dataTableHeadVariants,
-    dataTableBodyVariants,
     dataTableRowVariants,
     dataTableCellVariants,
     dataTableToolbarVariants,
@@ -47,7 +46,6 @@ const props = withDefaults(defineProps<{
     sortable?: boolean
     filterable?: boolean
     selectable?: boolean
-    resizable?: boolean
     paginated?: boolean
     pageSize?: number
     pageSizeOptions?: number[]
@@ -64,7 +62,6 @@ const props = withDefaults(defineProps<{
     sortable: false,
     filterable: false,
     selectable: false,
-    resizable: false,
     paginated: false,
     pageSize: 10,
     pageSizeOptions: () => [10, 20, 50, 100],
@@ -82,8 +79,8 @@ const emit = defineEmits<{
     sort: [column: string, direction: 'asc' | 'desc' | null]
     filter: [filters: DataTableFilterState]
     select: [rows: T[]]
-    pageChange: [page: number]
-    pageSizeChange: [size: number]
+    'page-change': [page: number]
+    'page-size-change': [size: number]
     export: [format: 'csv' | 'json', selectedRows?: T[]]
 }>()
 
@@ -129,7 +126,7 @@ function getHeaderLabel(column: DataTableColumn<T>): string {
         return column.header({
             id: column.id,
             sortable: column.sortable,
-            sortDirection: sort.sortState.value.column === column.id ? sort.sortState.value.direction : null,
+            direction: sort.sortState.value.column === column.id ? sort.sortState.value.direction : null,
             accessorKey: column.accessorKey,
             align: column.align,
         })
@@ -157,13 +154,13 @@ function handleToggleAll() {
 
 function handleGoToPage(page: number) {
     if (pagination.goToPage(page)) {
-        emit('pageChange', pagination.currentPage.value)
+        emit('page-change', pagination.currentPage.value)
     }
 }
 
 function handleSetPageSize(size: number) {
     pagination.setPageSize(size)
-    emit('pageSizeChange', size)
+    emit('page-size-change', size)
 }
 
 function exportData(format: 'csv' | 'json') {
@@ -193,7 +190,6 @@ const rootStyle = computed(() => {
 
 const toolbarClasses = computed(() => cn(dataTableToolbarVariants()))
 const headerClasses = computed(() => cn(dataTableHeaderVariants(), props.stickyHeader && 'sticky top-0 z-10'))
-const bodyClasses = computed(() => cn(dataTableBodyVariants()))
 const emptyClasses = computed(() => cn(dataTableEmptyVariants()))
 const paginationClasses = computed(() => cn(dataTablePaginationVariants()))
 const loadingClasses = computed(() => cn(dataTableLoadingVariants()))
@@ -332,7 +328,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                 </thead>
 
                 <!-- Body -->
-                <tbody :class="bodyClasses">
+                <tbody>
                     <template v-if="displayData.length > 0">
                         <tr
                             v-for="row in displayData"

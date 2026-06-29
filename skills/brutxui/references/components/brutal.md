@@ -47,6 +47,22 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 延迟：`animation-delay-100/200/300/500`
 重复：`animation-once` / `animation-infinite`
 
+### useAnimation 组合式函数
+
+在 JavaScript 中统一处理动画降级：
+
+```typescript
+import { useAnimation } from 'brutx-ui-vue'
+
+const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
+// prefersReduced=true 时 animationClass 为空字符串，动画自动禁用
+```
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `animationClass` | `ComputedRef<string>` | 解析后的动画类名 |
+| `prefersReduced` | `Ref<boolean>` | 是否启用了减少动效 |
+
 ## Card3D
 
 3D 悬浮卡片，鼠标移动时产生 3D 倾斜效果。
@@ -153,6 +169,8 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 - `animated`: `boolean` — 是否启用动画，默认 `false`
 - `animationDuration`: `number` — 动画周期（秒），默认 `8`
 - `rounded`: `'none' | 'default' | 'lg' | 'full'` — 默认 `'none'`
+
+> 当 `prefers-reduced-motion` 启用时，组件跳过 `requestAnimationFrame` 动画循环，仅渲染静态噪点单帧（基于 `useReducedMotion` 检测）。
 
 ## ScratchCard
 

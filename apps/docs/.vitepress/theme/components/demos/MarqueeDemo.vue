@@ -39,5 +39,9 @@ import { Marquee } from 'brutx-ui-vue'
                 <span>LARGE</span>
             </Marquee>
         </div>
+
+        <p class="text-xs opacity-60 pt-2 leading-relaxed">
+            提示：本组件尊重系统的「减少动态效果」设置。启用后跑马灯将停止滚动并以静态形式展示内容。
+        </p>
     </div>
 </template>

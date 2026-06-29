@@ -50,7 +50,7 @@ describe('ColorModeSwitcher', () => {
             global: { stubs: selectStubs },
         })
         expect(wrapper.find('button').exists()).toBe(true)
-        expect(wrapper.text()).toContain('Light')
+        expect(wrapper.text()).toContain('浅色')
     })
 
     it('renders in select display mode', () => {

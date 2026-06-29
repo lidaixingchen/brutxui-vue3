@@ -11,16 +11,11 @@ const steps: StepperStepItem[] = [
 ]
 
 const currentStep = ref(1)
-
-function handleStepClick(index: number) {
-    currentStep.value = index
-}
 </script>
 
 <template>
     <StepperSection
         :steps="steps"
-        :current-step="currentStep"
-        @step-click="handleStepClick"
+        v-model="currentStep"
     />
 </template>

@@ -78,6 +78,47 @@ import { Input } from 'brutx-ui-vue'
 </template>
 ```
 
+## 只读状态
+
+通过 `readonly` 属性设置只读输入框。只读状态下输入框不可编辑但可聚焦选择文本，光标样式为 `cursor-default`，不会降低透明度（区别于 `disabled`）。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const value = ref('只读内容，可选中复制但不可编辑')
+</script>
+
+<template>
+    <Input v-model="value" readonly />
+</template>
+```
+
+## 无障碍
+
+通过 ARIA 属性增强输入框的无障碍可访问性，便于辅助技术（如屏幕阅读器）正确朗读：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const email = ref('')
+</script>
+
+<template>
+    <Input
+        v-model="email"
+        type="email"
+        aria-label="邮箱地址"
+        aria-required="true"
+        aria-invalid="false"
+        placeholder="you@example.com"
+    />
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -89,6 +130,11 @@ import { Input } from 'brutx-ui-vue'
 | `disabled` | `boolean` | `false` |
 | `readonly` | `boolean` | `false` |
 | `placeholder` | `string` | `t('input.placeholder')` |
+| `ariaLabel` | `string` | — |
+| `ariaLabelledby` | `string` | — |
+| `ariaDescribedby` | `string` | — |
+| `ariaInvalid` | `boolean` | — |
+| `ariaRequired` | `boolean` | — |
 | `class` | `string` | — |
 
 ## 事件

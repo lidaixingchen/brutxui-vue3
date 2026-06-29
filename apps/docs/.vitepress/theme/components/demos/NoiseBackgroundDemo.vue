@@ -37,5 +37,9 @@ import { NoiseBackground } from 'brutx-ui-vue'
                 </NoiseBackground>
             </div>
         </div>
+
+        <p class="text-xs opacity-60 leading-relaxed">
+            提示：动态噪点尊重系统的「减少动态效果」设置。启用后将停止 requestAnimationFrame 循环，仅保留一帧静态噪点纹理。
+        </p>
     </div>
 </template>

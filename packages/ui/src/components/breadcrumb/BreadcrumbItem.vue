@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
-import { breadcrumbItemVariants } from './breadcrumb-variants'
+import { breadcrumbItemClasses } from './breadcrumb-variants'
 
 interface BreadcrumbItemProps {
     class?: string
@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<BreadcrumbItemProps>(), {
 })
 
 const classes = computed(() =>
-    cn(breadcrumbItemVariants(), props.class)
+    cn(breadcrumbItemClasses, props.class)
 )
 </script>
 

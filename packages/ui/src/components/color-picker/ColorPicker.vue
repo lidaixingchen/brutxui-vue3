@@ -72,6 +72,12 @@ const triggerClasses = computed(() =>
     )
 )
 
+const ICON_SIZE_CLASSES = {
+    swatch: { sm: 'w-4 h-4', default: 'w-5 h-5', lg: 'w-7 h-7' },
+    clearButton: { sm: 'w-4 h-4', default: 'w-5 h-5', lg: 'w-5 h-5' },
+    smallIcon: { sm: 'w-3 h-3', default: 'w-4 h-4', lg: 'w-4 h-4' },
+} as const
+
 defineExpose({ open })
 
 const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => props.presets)
@@ -95,7 +101,7 @@ const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => pro
                 <span
                     class="inline-block border-2 border-brutal shrink-0"
                     :class="[
-                        size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-7 h-7' : 'w-5 h-5',
+                        ICON_SIZE_CLASSES.swatch[size],
                         !modelValue && 'opacity-40',
                     ]"
                     :style="swatchStyle"
@@ -111,14 +117,14 @@ const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => pro
                         v-if="clearable && modelValue && !disabled"
                         type="button"
                         class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
-                        :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
+                        :class="ICON_SIZE_CLASSES.clearButton[size]"
                         :aria-label="t('colorPicker.clear')"
                         tabindex="-1"
                         @click="handleClearClick"
                     >
-                        <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
+                        <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
                     </button>
-                    <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
+                    <ChevronDown class="opacity-60 stroke-[3]" :class="ICON_SIZE_CLASSES.smallIcon[size]" />
                 </span>
             </button>
         </PopoverTrigger>

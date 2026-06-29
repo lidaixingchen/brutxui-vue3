@@ -62,6 +62,19 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'br
 </template>
 ```
 
+### 内容区域样式
+
+`AccordionContent` 的样式会自动继承父级 `AccordionItem` 的 `variant`（通过 `provide`/`inject` 同步，无需手动指定）。所有变体共享基础类 `border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg`，再按下表叠加差异样式：
+
+| 变体 | 内容区差异样式 | 视觉效果 |
+|------|----------------|----------|
+| `default` | （无附加样式） | 顶部黑色粗分隔线 + 默认背景色 |
+| `flat` | `bg-brutal-muted/30` | 背景替换为半透明静音色，呼应扁平化风格 |
+| `ghost` | `border-transparent` | 顶部边框透明，整体更简约轻盈 |
+| `interactive` | `hover:bg-brutal-muted/20` | 鼠标悬停时内容区出现轻微高亮，增强交互反馈 |
+
+> 说明：变体同时作用于 `AccordionItem`（容器）、`AccordionTrigger`（触发器）与 `AccordionContent`（内容区）三层，保持整体视觉一致。
+
 ## Props
 
 ### Accordion Props

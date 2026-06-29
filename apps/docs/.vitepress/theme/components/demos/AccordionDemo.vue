@@ -5,6 +5,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'br
 const activeItem = ref('item-1')
 const activeFlat = ref('flat-1')
 const activeGhost = ref('ghost-1')
+const activeInteractive = ref('interactive-1')
 </script>
 
 <template>
@@ -64,6 +65,24 @@ const activeGhost = ref('ghost-1')
                     <AccordionTrigger>它支持无障碍吗？</AccordionTrigger>
                     <AccordionContent>
                         是的。BrutxUI 采用 reka-ui 无头组件原语作为底层骨架，内置完善的 WAI-ARIA 规范和键盘导航逻辑。
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+        </div>
+
+        <div class="space-y-2">
+            <p class="font-black text-sm">交互（interactive）</p>
+            <Accordion type="single" collapsible v-model="activeInteractive">
+                <AccordionItem value="interactive-1" variant="interactive">
+                    <AccordionTrigger>悬停时会发生什么？</AccordionTrigger>
+                    <AccordionContent>
+                        整个面板会出现阴影放大与位移，内容区也会带有轻微高亮，强化可点击的物理反馈。
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="interactive-2" variant="interactive">
+                    <AccordionTrigger>内容区样式如何继承？</AccordionTrigger>
+                    <AccordionContent>
+                        内容区自动继承父级 AccordionItem 的 variant，无需手动设置。interactive 变体的内容区会在 hover 时叠加 muted 高亮。
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

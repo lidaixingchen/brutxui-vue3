@@ -140,7 +140,7 @@ describe('DataTable', () => {
         expect(wrapper.findAll('tbody tr')).toHaveLength(10)
     })
 
-    it('emits pageChange event', async () => {
+    it('emits page-change event', async () => {
         const largeData: TestRow[] = Array.from({ length: 25 }, (_, i) => ({
             id: i + 1,
             name: `User ${i + 1}`,
@@ -157,8 +157,8 @@ describe('DataTable', () => {
         })
         const nextButton = wrapper.find('button[aria-label="Next page"]')
         await nextButton.trigger('click')
-        expect(wrapper.emitted('pageChange')).toBeTruthy()
-        expect(wrapper.emitted('pageChange')![0]).toEqual([2])
+        expect(wrapper.emitted('page-change')).toBeTruthy()
+        expect(wrapper.emitted('page-change')![0]).toEqual([2])
     })
 
     it('shows loading overlay when loading', () => {

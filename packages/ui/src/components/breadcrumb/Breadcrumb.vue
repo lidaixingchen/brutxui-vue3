@@ -13,7 +13,7 @@ const props = withDefaults(defineProps<BreadcrumbProps>(), {
 
 const { t } = useLocale()
 
-const rootClasses = computed(() => cn('', props.class))
+const rootClasses = computed(() => cn(props.class))
 </script>
 
 <template>

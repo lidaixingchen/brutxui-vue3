@@ -8,8 +8,8 @@ export interface DataTableColumnHeaderContext {
     id: string
     /** 当前列是否可排序 */
     sortable?: boolean
-    /** 当前列是否正在排序 */
-    sortDirection?: 'asc' | 'desc' | null
+    /** 当前列的排序方向（null 表示未排序） */
+    direction?: 'asc' | 'desc' | null
     /** 当前列的 accessorKey（如果有） */
     accessorKey?: PropertyKey
     /** 当前列的对齐方式 */
@@ -19,8 +19,6 @@ export interface DataTableColumnHeaderContext {
 export interface DataTableVirtualScroll {
     enabled?: boolean
     rowHeight?: number
-    overscan?: number
-    threshold?: number
 }
 
 export interface DataTableColumn<T extends object = Record<string, unknown>> {
@@ -46,7 +44,6 @@ export interface DataTableProps<T extends object> {
     sortable?: boolean
     filterable?: boolean
     selectable?: boolean
-    resizable?: boolean
     paginated?: boolean
     pageSize?: number
     pageSizeOptions?: number[]

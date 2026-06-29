@@ -83,7 +83,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                 </Carousel>
 
                 <div v-else class="flex flex-col items-center justify-center py-12 text-brutal-muted-foreground">
-                    <ImageIcon class="w-12 h-12 mb-3 stroke-[2]" />
+                    <ImageIcon class="w-12 h-12 mb-3 stroke-[3]" />
                     <p class="font-bold">
                         {{ resolvedNoItems }}
                     </p>

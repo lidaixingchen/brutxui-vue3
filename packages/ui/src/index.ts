@@ -281,7 +281,7 @@ export { default as DataTableSection } from './components/data-table-section/Dat
 export type { ColumnDef, DataTableSectionProps } from './components/data-table-section/types'
 
 export { default as DataTable } from './components/data-table/DataTable.vue'
-export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, dataTableBodyVariants, dataTableRowVariants, dataTableCellVariants, dataTableFooterVariants, dataTableToolbarVariants, dataTablePaginationVariants, dataTableEmptyVariants, dataTableLoadingVariants } from './components/data-table/data-table-variants'
+export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, dataTableRowVariants, dataTableCellVariants, dataTableToolbarVariants, dataTablePaginationVariants, dataTableEmptyVariants, dataTableLoadingVariants } from './components/data-table/data-table-variants'
 export type { DataTableColumn, DataTableColumnHeaderContext, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
 
 export { default as SettingsPage } from './components/settings-page/SettingsPage.vue'
@@ -333,7 +333,7 @@ export { default as BreadcrumbLink } from './components/breadcrumb/BreadcrumbLin
 export { default as BreadcrumbPage } from './components/breadcrumb/BreadcrumbPage.vue'
 export { default as BreadcrumbSeparator } from './components/breadcrumb/BreadcrumbSeparator.vue'
 export { default as BreadcrumbEllipsis } from './components/breadcrumb/BreadcrumbEllipsis.vue'
-export { breadcrumbListVariants, breadcrumbItemVariants, breadcrumbLinkVariants, breadcrumbPageVariants, breadcrumbSeparatorVariants, breadcrumbEllipsisVariants } from './components/breadcrumb/breadcrumb-variants'
+export { breadcrumbListClasses, breadcrumbItemClasses, breadcrumbLinkClasses, breadcrumbPageClasses, breadcrumbSeparatorClasses, breadcrumbEllipsisClasses } from './components/breadcrumb/breadcrumb-variants'
 
 export { default as Marquee } from './components/marquee/Marquee.vue'
 export { marqueeContainerVariants, marqueeTrackVariants } from './components/marquee/marquee-variants'
@@ -398,11 +398,11 @@ export type { TranslateFunction } from './composables/useLocale'
 export { useColorHistory } from './composables/useColorHistory'
 export type { UseColorHistoryOptions, UseColorHistoryReturn } from './composables/useColorHistory'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, ColorModeSwitcherLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale, VirtualScrollLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'
-export { card3dVariants, card3dShadowVariants } from './components/card-3d/card-3d-variants'
+export { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './components/card-3d/card-3d-variants'
 
 export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
 export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'

@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<MarqueeProps>(), {
     speed: DEFAULT_SPEED,
     pauseOnHover: false,
     fade: false,
-    variant: 'accent',
+    variant: 'default',
     size: 'default',
     class: undefined,
 })

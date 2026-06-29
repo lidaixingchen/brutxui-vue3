@@ -11,7 +11,6 @@ type SwitchRootVariantProps = VariantProps<typeof switchRootVariants>
 interface SwitchProps {
     class?: string
     modelValue?: boolean
-    defaultValue?: boolean
     disabled?: boolean
     variant?: NonNullable<SwitchRootVariantProps['variant']>
     size?: NonNullable<SwitchRootVariantProps['size']>
@@ -47,7 +46,7 @@ const thumbClasses = computed(() =>
 <template>
     <SwitchRoot
         :class="classes"
-        v-bind="modelValue !== undefined ? { 'model-value': modelValue } : { 'default-value': defaultValue }"
+        :model-value="modelValue"
         :disabled="disabled"
         :aria-label="resolvedAriaLabel"
         @update:model-value="emit('update:modelValue', $event)"
