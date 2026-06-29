@@ -53,19 +53,19 @@ function getVersionFromPackageJson() {
 function getCommitsSince(tag) {
     const range = tag ? `${tag}..HEAD` : 'HEAD';
     try {
-        const result = spawnSync('git', ['log', range, '--format=%H|%s|%b|%an|%ae'], {
+        const result = spawnSync('git', ['log', range, '--format=%H%x1f%s%x1f%b%x1f%an%x1f%ae%x1e'], {
             cwd: repoRoot,
             encoding: 'utf-8',
         });
         if (result.error || result.status !== 0) return [];
-        return result.stdout.trim().split('\n').filter(Boolean);
+        return result.stdout.trim().split('\x1e').filter(Boolean);
     } catch {
         return [];
     }
 }
 
 function parseCommit(line) {
-    const [hash, subject, body, author, email] = line.split('|');
+    const [hash, subject, body, author, email] = line.split('\x1f').map((s) => s.trim());
     const match = subject.match(COMMIT_PATTERN);
 
     if (!match) {
@@ -122,15 +122,23 @@ function categorize(commits) {
 
 function renderMarkdown(version, date, categories, latestTag) {
     const lines = [];
-    lines.push(`## [${version}](${REPO_URL}/compare/${latestTag || 'v0.0.0'}...v${version}) (${date})`);
+    const compareEnd = version === 'Unreleased' ? 'HEAD' : `v${version}`;
+    lines.push(`## [${version}](${REPO_URL}/compare/${latestTag || 'v0.0.0'}...${compareEnd}) (${date})`);
     lines.push('');
+
+    function renderCommit(commit) {
+        const scope = commit.scope ? `**${commit.scope}:** ` : '';
+        const header = `* ${scope}${commit.subject} ([${commit.hash.slice(0, 7)}](${REPO_URL}/commit/${commit.hash}))`;
+        if (!commit.body) return [header];
+        const bodyLines = commit.body.split('\n').filter(Boolean);
+        return [header, ...bodyLines.map((line) => `  ${line}`)];
+    }
 
     if (categories.has('breaking')) {
         lines.push('### ⚠ BREAKING CHANGES');
         lines.push('');
         for (const commit of categories.get('breaking')) {
-            const scope = commit.scope ? `**${commit.scope}:** ` : '';
-            lines.push(`* ${scope}${commit.subject} ([${commit.hash.slice(0, 7)}](${REPO_URL}/commit/${commit.hash}))`);
+            lines.push(...renderCommit(commit));
         }
         lines.push('');
     }
@@ -141,8 +149,7 @@ function renderMarkdown(version, date, categories, latestTag) {
         lines.push(`### ${label}`);
         lines.push('');
         for (const commit of commits) {
-            const scope = commit.scope ? `**${commit.scope}:** ` : '';
-            lines.push(`* ${scope}${commit.subject} ([${commit.hash.slice(0, 7)}](${REPO_URL}/commit/${commit.hash}))`);
+            lines.push(...renderCommit(commit));
         }
         lines.push('');
     }
@@ -152,16 +159,17 @@ function renderMarkdown(version, date, categories, latestTag) {
 
 function prependToChangelog(newEntry) {
     const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
-    const header = '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n';
+    const defaultHeader = '# 更新日志\n\n本项目所有重要变更均记录于此。\n\n格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，\n版本号遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。\n\n';
 
     try {
         if (existsSync(changelogPath)) {
             const existing = readFileSync(changelogPath, 'utf-8');
             const firstEntryIndex = existing.indexOf('\n## [');
+            const header = firstEntryIndex !== -1 ? existing.slice(0, firstEntryIndex + 1) : defaultHeader;
             const contentWithoutHeader = firstEntryIndex !== -1 ? existing.slice(firstEntryIndex + 1) : '';
             writeFileSync(changelogPath, header + newEntry + '\n' + contentWithoutHeader, 'utf-8');
         } else {
-            writeFileSync(changelogPath, header + newEntry, 'utf-8');
+            writeFileSync(changelogPath, defaultHeader + newEntry, 'utf-8');
         }
     } catch (error) {
         console.error('Error updating CHANGELOG.md:', error instanceof Error ? error.message : String(error));
@@ -178,6 +186,14 @@ function main() {
     const version = getVersionFromPackageJson();
     const commits = getCommitsSince(tag);
 
+    if (commits.length === 0) {
+        console.log('No new commits since last tag. Skipping changelog update.');
+        return;
+    }
+
+    const tagVersion = tag ? tag.replace(/^v/, '') : null;
+    const displayVersion = tagVersion === version ? 'Unreleased' : version;
+
     const parsed = commits
         .map(parseCommit)
         .filter((c) => !EXCLUDED_TYPES.includes(c.type))
@@ -188,7 +204,7 @@ function main() {
         : parsed;
 
     const categorized = categorize(filtered);
-    const entry = renderMarkdown(version, new Date().toISOString().slice(0, 10), categorized, tag);
+    const entry = renderMarkdown(displayVersion, new Date().toISOString().slice(0, 10), categorized, tag);
 
     if (isDryRun) {
         console.log(entry);
