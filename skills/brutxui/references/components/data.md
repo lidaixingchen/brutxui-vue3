@@ -66,20 +66,19 @@
 
 ```vue
 <Pagination
-  :current-page="1" :total-pages="10"
+  v-model="currentPage" :total-pages="10"
   :sibling-count="1" show-first-last
-  @update:current-page="handlePageChange"
 />
 ```
 
-- `currentPage`: `number` — 必填
+- `modelValue`: `number` — 必填（v-model）
 - `totalPages`: `number` — 必填
 - `siblingCount`: `number` — 默认 `1`
 - `showFirstLast`: `boolean` — 默认 `true`
 - `showPageNumbers`: `boolean` — 默认 `true`
 - `variant`: `'default' | 'outline'`
 - `size`: `'default' | 'sm' | 'lg'`
-- Events: `update:currentPage(page: number)`, `jump()` — 点击省略号按钮时触发（省略号现为可点击 `<button>`，带 `aria-label`）
+- Events: `update:modelValue(page: number)`, `jump()` — 点击省略号按钮时触发（省略号现为可点击 `<button>`，带 `aria-label`）
 
 ## Counter
 
@@ -314,17 +313,20 @@ interface VirtualScrollItem {
 前后对比图。
 
 ```vue
-<BeforeAfter before="/before.jpg" after="/after.jpg" before-alt="修改前" after-alt="修改后" orientation="horizontal" />
+<BeforeAfter v-model="position" before="/before.jpg" after="/after.jpg" before-alt="修改前" after-alt="修改后" orientation="horizontal" />
 ```
 
 - `before`: `string` — 必填
 - `after`: `string` — 必填
 - `beforeAlt`: `string`
 - `afterAlt`: `string`
+- `modelValue`: `number` — 分割线位置（v-model，0-100）
 - `defaultValue`: `number` — 默认 `50`
 - `disabled`: `boolean`
 - `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，vertical 时从下到上裁剪、滑块水平方向、handle 图标旋转 90°
+- Events: `update:modelValue(value: number)` — 分割线位置变化时触发
 - 尊重 `prefers-reduced-motion`：启用时移除滑块 transition（`transition-[left,top,clip-path]` 不附加），拖拽即时响应
+- 容器比例自适应：根据图片实际尺寸自动计算 `aspect-ratio`，图片加载前使用默认比例（水平 16:9，垂直 9:16）
 
 ## ChatBubble
 

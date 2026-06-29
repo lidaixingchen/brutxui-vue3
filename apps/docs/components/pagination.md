@@ -130,7 +130,7 @@ function handleJump() {
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `currentPage` | `number` | —（必填） |
+| `modelValue` | `number` | —（必填） |
 | `totalPages` | `number` | —（必填） |
 | `siblingCount` | `number` | `1` |
 | `showFirstLast` | `boolean` | `true` |

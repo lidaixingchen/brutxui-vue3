@@ -41,9 +41,11 @@
 - `plans`: `BrutalistPricingPlan[]`
 - `title`/`subtitle`: `string`
 - `billingMode`: `'auto' | 'toggle' | 'none'` — 默认 `'auto'`
-- `defaultBilling`: `'monthly' | 'annually'` — 默认 `'monthly'`
+- `modelValue`: `'monthly' | 'annually'` — v-model，受控计费周期
+- `defaultBilling`: `'monthly' | 'annually'` — 默认 `'monthly'`，非受控默认值
 - `popularText`: `string`
 - `@plan-select`: `(planName: string) => void`
+- `@update:modelValue`: `(value: 'monthly' | 'annually') => void`
 
 ```typescript
 interface PricingFeature {

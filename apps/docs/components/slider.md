@@ -135,7 +135,6 @@ const value = ref([50])
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `modelValue` | `number[]` | — |
-| `defaultValue` | `number[]` | — |
 | `min` | `number` | `0` |
 | `max` | `number` | `100` |
 | `step` | `number` | `1` |

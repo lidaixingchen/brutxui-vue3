@@ -239,7 +239,6 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 ```
 
 - `modelValue`: `number[]`
-- `defaultValue`: `number[]`
 - `min`: `number` — 默认 `0`
 - `max`: `number` — 默认 `100`
 - `step`: `number` — 默认 `1`
@@ -345,9 +344,7 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 ### DatePicker
 
 - `modelValue`: `Date | null`
-- `mode`: `'date' | 'week' | 'month' | 'year'` — 默认 `'date'`
 - `displayFormat`: `string` — 默认 `'YYYY-MM-DD'`，支持 YYYY/YY/MM/DD/HH/mm/ss/WW token
-- `valueFormat`: `'date' | 'timestamp' | string` — 默认 `'date'`
 - `minDate` / `maxDate`: `Date`
 - `disabled` / `readonly` / `clearable`: `boolean`
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
@@ -357,7 +354,12 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 ### DatePickerRange
 
 - `modelValue`: `[Date, Date] | null`
+- `displayFormat`: `string` — 默认 `'YYYY-MM-DD'`
 - `startPlaceholder` / `endPlaceholder` / `separator`: `string`
+- `minDate` / `maxDate`: `Date`
+- `disabled` / `clearable`: `boolean`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `variant`: `'default' | 'error' | 'success'`
 - `shortcuts`: `DatePickerRangeShortcut[]` — `{ label: string; value: [Date, Date] | (() => [Date, Date]) }`
 
 ### DateTimePicker
@@ -379,17 +381,29 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 - `modelValue`: `Date | null`（自动对齐到周起始日，整周高亮）
 - `displayFormat`: `string` — 默认 `'YYYY-WW'`
 - `weekStartsOn`: `0 | 1` — 默认 `1`（0=周日，1=周一）
+- `minDate` / `maxDate`: `Date`
+- `disabled` / `readonly` / `clearable`: `boolean`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `variant`: `'default' | 'error' | 'success'`
 - `shortcuts`: `DatePickerShortcut[]`
 
 ### MonthPicker
 
 - `modelValue`: `Date | null`
 - `displayFormat`: `string` — 默认 `'YYYY-MM'`
+- `minDate` / `maxDate`: `Date`
+- `disabled` / `readonly` / `clearable`: `boolean`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `variant`: `'default' | 'error' | 'success'`
 
 ### YearPicker
 
 - `modelValue`: `Date | null`
 - `displayFormat`: `string` — 默认 `'YYYY'`
+- `minDate` / `maxDate`: `Date`
+- `disabled` / `readonly` / `clearable`: `boolean`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `variant`: `'default' | 'error' | 'success'`
 
 所有组件共享事件：`update:modelValue`、`change`、`open`、`close`。
 

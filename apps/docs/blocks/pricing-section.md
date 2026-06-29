@@ -118,6 +118,7 @@ interface BrutalistPricingPlan {
 | `subtitle` | `string` | — |
 | `plans` | `BrutalistPricingPlan[]` | `[]` |
 | `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` |
+| `modelValue` | `'monthly' \| 'annually'` | — |
 | `defaultBilling` | `'monthly' \| 'annually'` | `'monthly'` |
 | `popularText` | `string` | locale: `pricingSection.mostPopular` |
 | `class` | `string` | — |

@@ -124,7 +124,6 @@ const styles = ref([])
 |------|------|--------|------|
 | `type` | `'single' \| 'multiple'` | `'single'` | 单选或多选 |
 | `modelValue` | `string \| string[]` | — | v-model 值 |
-| `defaultValue` | `string \| string[]` | — | 默认值（非受控） |
 | `variant` | `'default' \| 'outline'` | `'default'` | 变体，下发给子项 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸，下发给子项 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 排列方向；`vertical` 时容器 `flex-col` 并透传给 reka-ui 原语 |

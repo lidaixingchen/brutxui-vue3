@@ -42,6 +42,7 @@ const modified = '/images/after.jpg'
 1. **触控友好**：在手机、平板等移动端设备上完美适配滑动手势。
 2. **零依赖**：不需要额外加载任何外部手势交互 JS 库，包体积近乎于零。
 3. **完美排版**：底层的 `clip-path: inset(...)` 裁剪方式不会破坏图片的宽高比，确保布局在多端始终对齐。
+4. **自适应比例**：容器根据图片实际尺寸自动计算 `aspect-ratio`，无需手动指定比例。图片加载前使用默认比例（水平 16:9，垂直 9:16）作为占位。
 
 ## 方向
 
@@ -64,10 +65,17 @@ const modified = '/images/after.jpg'
 | `after` | `string` | — | 右侧/表层对比图片的 URL (必填) |
 | `beforeAlt` | `string` | locale: `beforeAfter.before` | 原始图片的 `alt` 属性 |
 | `afterAlt` | `string` | locale: `beforeAfter.after` | 对比图片的 `alt` 属性 |
+| `modelValue` | `number` | — | 分割线位置（v-model，0-100） |
 | `defaultValue` | `number` | `50` | 初始状态下分割线所处的百分比位置 (0-100) |
 | `disabled` | `boolean` | `false` | 是否禁用拖拽交互 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 分割线方向，vertical 时从下到上裁剪 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |
+
+## 事件
+
+| 事件 | 载荷 |
+|------|------|
+| `update:modelValue` | `number` |
 
 ## 无障碍 / 动效降级
 

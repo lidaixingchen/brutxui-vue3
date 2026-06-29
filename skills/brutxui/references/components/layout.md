@@ -68,7 +68,7 @@
 ## Tabs
 
 ```vue
-<Tabs default-value="account">
+<Tabs v-model="activeTab">
   <TabsList>
     <TabsTrigger value="account">账户</TabsTrigger>
     <TabsTrigger value="password">密码</TabsTrigger>
@@ -78,7 +78,7 @@
 </Tabs>
 ```
 
-- `Tabs.default-value`: `string`
+- `Tabs.modelValue`: `string` — v-model，当前激活的标签页
 - `TabsTrigger.value`: `string`
 - `Tabs.orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，透传给 reka-ui `TabsRoot`，并通过 provide/inject 共享给子组件
 - `TabsList.orientation`: `'horizontal' | 'vertical'` — 默认跟随父级 `Tabs`（解析为 `'horizontal'`），vertical 时 TabsList 使用 `flex-col` 布局

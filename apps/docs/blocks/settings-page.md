@@ -88,6 +88,7 @@ const tabs = [
 |------|------|--------|
 | `title` | `string` | locale: `settingsPage.defaultTitle` |
 | `tabs` | `SettingsTab[]` | `[]` |
+| `modelValue` | `string` | — |
 | `defaultTab` | `string` | — |
 | `class` | `string` | — |
 

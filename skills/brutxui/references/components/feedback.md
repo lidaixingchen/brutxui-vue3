@@ -62,7 +62,7 @@
 - `variant`: `'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'` — 默认 `'default'`，控制背景色与文字色（源码中以 `danger` 对应危险/错误场景）
 - `closable`: `boolean` — 默认 `false`，右上角渲染关闭按钮（使用 Button `variant="ghost" size="icon"`）
 - Events: `close` — 点击关闭按钮时触发
-- Slots: `action` — 操作按钮区域（如"重试"、"查看详情"），渲染在内容下方
+- Slots: `actions` — 操作按钮区域（如"重试"、"查看详情"），渲染在内容下方
 
 ## Toast
 

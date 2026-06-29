@@ -157,4 +157,4 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 | 插槽 | 说明 |
 |------|------|
 | `default` | 提示框主体内容 |
-| `action` | 操作按钮区域，渲染在内容下方 |
+| `actions` | 操作按钮区域，渲染在内容下方 |

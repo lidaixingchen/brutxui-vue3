@@ -86,7 +86,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `defaultValue` | `string` | — |
 | `modelValue` | `string` | — |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `class` | `string` | — |

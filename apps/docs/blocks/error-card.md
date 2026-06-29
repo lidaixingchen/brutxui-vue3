@@ -77,7 +77,7 @@ import ErrorCard from '@/components/ui/error-card/ErrorCard.vue'
 | 事件 | 载荷 |
 |------|------|
 | `retry` | `[]` |
-| `dismiss` | `[]` |
+| `close` | `[]` |
 
 ## 插槽
 

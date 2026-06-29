@@ -35,6 +35,7 @@
 
 ```vue
 <SettingsPage
+  v-model="activeTab"
   title="设置"
   :tabs="[{ label: '通用', value: 'general' }, { label: '安全', value: 'security' }]"
   default-tab="general"
@@ -43,7 +44,10 @@
 
 - `title`: `string`
 - `tabs`: `SettingsTab[]` — `{ label: string; value: string }[]`
-- `defaultTab`: `string`
+- `modelValue`: `string` — v-model，当前激活的标签页
+- `defaultTab`: `string` — 非受控默认标签页
+- `@update:modelValue`: `(value: string) => void`
+- `@save`: `(payload: { tab: string; values: Record<string, unknown> }) => void`
 
 ## WaitlistPage
 

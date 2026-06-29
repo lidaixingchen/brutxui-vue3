@@ -13,11 +13,11 @@
 ## ErrorCard
 
 ```vue
-<ErrorCard title="加载失败" description="网络问题，请重试" retry-text="重试" @retry="handleRetry" />
+<ErrorCard title="加载失败" description="网络问题，请重试" retry-text="重试" @retry="handleRetry" @close="handleClose" />
 ```
 
 - `title`/`description`/`retryText`: `string`
-- Events: `retry`
+- Events: `retry`, `close`
 
 ## SuccessCard
 

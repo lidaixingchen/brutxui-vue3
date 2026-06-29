@@ -60,13 +60,13 @@ import { cn } from '@/lib/utils'
 | Select | 选择器 | 支持子组件组合 |
 | Combobox | 搜索选择器 | 可搜索的单选/多选，支持加载状态与创建选项 |
 | TreeSelect | 树形选择器 | 支持单选/多选/搜索/任意深度树结构 |
-| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式/方向/刻度/提示 |
+| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式/方向/刻度/提示，通过 v-model 进行受控 |
 | Toggle | 切换按钮 | 支持 v-model:pressed、loading 加载状态、ariaLabel 无障碍标签 |
-| ToggleGroup | 切换按钮组 | 支持单选/多选/方向 |
+| ToggleGroup | 切换按钮组 | 支持单选/多选/方向，通过 v-model 进行受控 |
 | TagsInput | 标签输入 | 支持子组件组合、ariaLabel 无障碍标签 |
 | Calendar | 日历 | 日期选择器，支持范围模式 |
 | ColorPicker | 颜色选择器 | 支持 HEX/RGB/HSL、透明度、预设与历史记录、defineExpose({ open }) 程序化控制面板 |
-| DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，含快捷选项、defineExpose({ open }) 程序化控制面板 |
+| DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，支持 v-model、displayFormat 格式化、快捷选项、defineExpose({ open }) 程序化控制面板 |
 | Form | 表单 | 集成 vee-validate + Zod 校验 |
 | Label | 标签 | 表单字段标签，支持尺寸/必填标记 |
 
@@ -79,7 +79,7 @@ import { cn } from '@/lib/utils'
 | Separator | 分隔线 | 支持水平/垂直方向/变体/尺寸/文字分隔线 |
 | ScrollArea | 滚动区域 | 自定义滚动条，支持 ScrollBar 子组件/变体/尺寸 |
 | Sheet | 侧边抽屉 | 4 个方向变体（top/right/bottom/left） |
-| Tabs | 标签页 | 支持 list/trigger/content、orientation 垂直布局 |
+| Tabs | 标签页 | 支持 list/trigger/content、orientation 垂直布局，通过 v-model 进行受控 |
 | Accordion | 手风琴 | 支持单选/多选模式、content 变体（flat/ghost/interactive） |
 | Breadcrumb | 面包屑 | 支持 Link/Page/Separator/Ellipsis |
 | Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击 |
@@ -97,12 +97,12 @@ import { cn } from '@/lib/utils'
 | Badge | 徽章 | 7 种变体、3 种尺寸（sm/default/lg）、closable/dot/pulse、icon 插槽 |
 | Avatar | 头像 | 支持 image/fallback、尺寸、形状、变体、状态 |
 | Progress | 进度条 | 支持 v-model、不确定状态、百分比标签 |
-| Pagination | 分页 | 支持计算算法、首尾页、可点击省略号 jump 事件 |
+| Pagination | 分页 | 支持 v-model、计算算法、首尾页、可点击省略号 jump 事件 |
 | Counter | 数字动画 | 支持前缀/后缀/分隔符/缓动函数，5 种变体 |
 | Kbd | 键盘按键 | 3 种尺寸、4 种变体 |
 | CodeBlock | 代码块 | 支持语言高亮、行号、折叠展开 |
 | Marquee | 跑马灯 | 支持方向/速度/暂停/淡出、变体/尺寸、prefers-reduced-motion 动效降级 |
-| BeforeAfter | 对比图 | 前后对比滑块，支持水平/垂直方向、prefers-reduced-motion 动效降级 |
+| BeforeAfter | 对比图 | 前后对比滑块，支持 v-model、水平/垂直方向、prefers-reduced-motion 动效降级 |
 | ChatBubble | 聊天气泡 | 支持 sent/received/system 变体、颜色/尺寸 |
 | Skeleton | 骨架屏 | 支持 Text/Avatar/Card/Table 子组件、尺寸/形状/宽度 |
 | Spinner | 加载动画 | 4 种变体（Spinner/Block/Dots/Bars） |
@@ -114,7 +114,7 @@ import { cn } from '@/lib/utils'
 |------|--------|------|
 | Dialog | 对话框 | 支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full） |
 | AlertDialog | 确认弹窗 | 支持 Action/Cancel |
-| Alert | 提示 | 7 种变体、closable/action 插槽 |
+| Alert | 提示 | 7 种变体、closable、actions 插槽 |
 | Toast | 通知 | 搭配 useToast 组合式函数、pauseOnHover 悬停暂停 |
 | Popover | 弹出框 | 支持对齐/偏移 |
 | Tooltip | 工具提示 | 支持偏移 |
@@ -138,7 +138,7 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
-| PricingSection | 统一定价区域 | 支持一次性价格、订阅切换和功能状态 |
+| PricingSection | 统一定价区域 | 支持 v-model、一次性价格、订阅切换和功能状态 |
 | SaaSPricing | SaaS 定价 | 基于 PricingSection 的 SaaS 兼容封装 |
 | BrutalistHero | 英雄区块 | 支持主/次操作按钮 |
 | HeaderSection | 页头导航 | 支持导航项/Logo |
@@ -152,7 +152,7 @@ import { cn } from '@/lib/utils'
 | StepperSection | 步骤区块 | 支持当前步骤 |
 | AuthCard | 登录卡片 | 内置国际化文案，支持 texts prop 批量覆盖 |
 | ProfilePage | 个人资料 | 支持头像/邮箱/简介 |
-| SettingsPage | 设置页面 | 支持标签切换 |
+| SettingsPage | 设置页面 | 支持 v-model、标签切换 |
 | WaitlistPage | 等待名单 | 支持等待人数 |
 | NotFoundPage | 404 页面 | 支持返回按钮 |
 | LoadingPage | 加载页面 | 支持进度条 |
@@ -164,7 +164,7 @@ import { cn } from '@/lib/utils'
 | FileCard | 文件卡片 | 支持文件名/大小/类型 |
 | UploadCard | 上传卡片 | 支持进度条/文件限制 |
 | EmptyState | 空状态 | 支持图标/操作按钮 |
-| ErrorCard | 错误卡片 | 支持重试操作 |
+| ErrorCard | 错误卡片 | 支持重试/关闭操作 |
 | SuccessCard | 成功卡片 | 支持确认按钮 |
 | CookieConsent | Cookie 同意 | 支持接受/拒绝 |
 | FeedbackForm | 反馈表单 | 支持标题/描述、加载/成功状态 |

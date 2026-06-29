@@ -238,9 +238,7 @@ const maxDate = new Date(2026, 11, 31)
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的日期，支持 v-model |
-| `mode` | `'date' \| 'week' \| 'month' \| 'year'` | `'date'` | 选择模式 |
 | `displayFormat` | `string` | `'YYYY-MM-DD'` | 显示格式 |
-| `valueFormat` | `'date' \| 'timestamp' \| string` | `'date'` | 值格式（自定义字符串作为 format） |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
@@ -260,7 +258,6 @@ const maxDate = new Date(2026, 11, 31)
 |------|------|--------|------|
 | `modelValue` | `[Date, Date] \| null` | `null` | 选中的日期范围 |
 | `displayFormat` | `string` | `'YYYY-MM-DD'` | 显示格式 |
-| `valueFormat` | `'date' \| 'timestamp' \| string` | `'date'` | 值格式 |
 | `startPlaceholder` | `string` | — | 开始日期占位符 |
 | `endPlaceholder` | `string` | — | 结束日期占位符 |
 | `separator` | `string` | — | 分隔符 |
@@ -278,7 +275,6 @@ const maxDate = new Date(2026, 11, 31)
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的日期时间 |
 | `displayFormat` | `string` | `'YYYY-MM-DD HH:mm'` | 显示格式（showSeconds 时默认含 ss） |
-| `timeFormat` | `string` | — | 时间格式 |
 | `showSeconds` | `boolean` | `false` | 是否显示秒 |
 | `timeStep` | `{ hour?: number; minute?: number; second?: number }` | — | 时间步进 |
 | `placeholder` | `string` | — | 占位符文本 |
@@ -309,7 +305,6 @@ const maxDate = new Date(2026, 11, 31)
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的周（对齐到周起始日） |
 | `displayFormat` | `string` | `'YYYY-WW'` | 显示格式 |
-| `valueFormat` | `'date' \| 'timestamp' \| string` | `'date'` | 值格式 |
 | `weekStartsOn` | `0 \| 1` | `1` | 周起始日（0=周日，1=周一） |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
@@ -327,7 +322,6 @@ const maxDate = new Date(2026, 11, 31)
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的月份 |
 | `displayFormat` | `string` | `'YYYY-MM'` | 显示格式 |
-| `valueFormat` | `'date' \| 'timestamp' \| string` | `'date'` | 值格式 |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
@@ -343,7 +337,6 @@ const maxDate = new Date(2026, 11, 31)
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的年份 |
 | `displayFormat` | `string` | `'YYYY'` | 显示格式 |
-| `valueFormat` | `'date' \| 'timestamp' \| string` | `'date'` | 值格式 |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
