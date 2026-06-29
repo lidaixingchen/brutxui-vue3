@@ -115,10 +115,12 @@
 ## Label
 
 ```vue
-<Label for="email">邮箱地址</Label>
+<Label for="email" size="default" :required="true">邮箱地址</Label>
 ```
 
 - `for`: `string`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `required`: `boolean` — 默认 `false`，为 true 时渲染红色 `*` 星号并设 `aria-required`
 
 ## Checkbox
 
@@ -172,6 +174,9 @@
   placeholder="选择框架"
   search-placeholder="搜索..."
   empty-text="没有结果"
+  :loading="isLoading"
+  :creative="true"
+  @create="handleCreate"
 />
 ```
 
@@ -181,6 +186,11 @@
 - `searchPlaceholder`: `string`
 - `emptyText`: `string`
 - `disabled`: `boolean`
+- `loading`: `boolean` — 默认 `false`，列表底部显示 Spinner
+- `creative`: `boolean` — 默认 `false`，输入无匹配项时显示"创建 '{query}'"选项
+- Events: `update:modelValue`, `create(query: string)` — creative 模式下选择创建项时触发
+
+> ComboboxMulti 同步支持 `loading`/`creative`/`create`，但创建后不关闭下拉（多选模式保持打开）。
 
 ## TreeSelect
 
@@ -220,7 +230,7 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 ## Slider
 
 ```vue
-<Slider v-model="value" :min="0" :max="100" :step="5" />
+<Slider v-model="value" :min="0" :max="100" :step="5" orientation="horizontal" :marks="[0, 25, 50, 75, 100]" :show-tooltip="true" />
 ```
 
 - `modelValue`: `number[]`
@@ -231,6 +241,9 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 - `disabled`: `boolean`
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 - `variant`: `'default' | 'primary' | 'secondary' | 'success'` — 默认 `'default'`
+- `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，透传给 reka-ui 原语
+- `marks`: `number[]` — 渲染刻度标记
+- `showTooltip`: `boolean` — 默认 `false`，拖拽时显示当前值
 
 ## Toggle
 
@@ -246,7 +259,7 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 ## ToggleGroup
 
 ```vue
-<ToggleGroup type="multiple" v-model="selected">
+<ToggleGroup type="multiple" v-model="selected" orientation="horizontal">
   <ToggleGroupItem value="bold">B</ToggleGroupItem>
   <ToggleGroupItem value="italic">I</ToggleGroupItem>
 </ToggleGroup>
@@ -256,6 +269,7 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 - `modelValue`: `string | string[]`
 - `variant`: `'default' | 'outline'`
 - `size`: `'default' | 'sm' | 'lg'`
+- `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，vertical 时容器 flex-col 并透传 aria-orientation
 
 ## TagsInput
 

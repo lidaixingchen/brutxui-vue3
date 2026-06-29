@@ -38,9 +38,24 @@
 ## FeedbackForm
 
 ```vue
-<FeedbackForm title="给我们反馈" description="帮助改进" submit-text="提交" @submit="handleSubmit" />
+<FeedbackForm
+  title="给我们反馈"
+  description="帮助改进"
+  submit-text="提交"
+  :loading="isSubmitting"
+  :success="isSuccess"
+  success-title="提交成功"
+  success-description="感谢您的反馈"
+  success-confirm-text="知道了"
+  @submit="handleSubmit"
+  @success-confirm="handleConfirm"
+/>
 ```
 
 - `title`/`description`/`submitText`: `string`
+- `loading`: `boolean` — 默认 `false`，提交按钮显示 loading spinner
+- `success`: `boolean` — 默认 `false`，为 true 时显示 SuccessCard 替换表单
+- `successTitle`/`successDescription`/`successConfirmText`: `string` — 成功卡片文案
 - 内置必填验证（姓名、邮箱、主题、消息）和邮箱格式验证
 - 验证失败时输入框显示 error 样式，不触发 submit 事件
+- Events: `submit(values)`, `success-confirm`

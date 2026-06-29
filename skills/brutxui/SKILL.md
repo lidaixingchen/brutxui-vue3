@@ -58,34 +58,34 @@ import { cn } from '@/lib/utils'
 | Switch | 开关 | 通过 v-model:checked 绑定 |
 | RadioGroup | 单选组 | 支持 v-model |
 | Select | 选择器 | 支持子组件组合 |
-| Combobox | 搜索选择器 | 可搜索的单选/多选 |
+| Combobox | 搜索选择器 | 可搜索的单选/多选，支持加载状态与创建选项 |
 | TreeSelect | 树形选择器 | 支持单选/多选/搜索/任意深度树结构 |
-| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式 |
+| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式/方向/刻度/提示 |
 | Toggle | 切换按钮 | 支持 v-model:pressed |
-| ToggleGroup | 切换按钮组 | 支持单选/多选 |
+| ToggleGroup | 切换按钮组 | 支持单选/多选/方向 |
 | TagsInput | 标签输入 | 支持子组件组合 |
 | Calendar | 日历 | 日期选择器，支持范围模式 |
 | ColorPicker | 颜色选择器 | 支持 HEX/RGB/HSL、透明度、预设与历史记录 |
 | DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，含快捷选项 |
 | Form | 表单 | 集成 vee-validate + Zod 校验 |
-| Label | 标签 | 表单字段标签 |
+| Label | 标签 | 表单字段标签，支持尺寸/必填标记 |
 
 ### 布局与容器
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
 | Card | 卡片 | 6 种变体，支持 Header/Title/Description/Content/Footer |
-| Card3D | 3D 卡片 | 3D 物理悬浮，鼠标悬停偏转与反向阴影 |
-| Separator | 分隔线 | 支持水平/垂直方向 |
-| ScrollArea | 滚动区域 | 自定义滚动条，支持 ScrollBar 子组件 |
+| Card3D | 3D 卡片 | 3D 物理悬浮，鼠标悬停偏转与反向阴影，支持变体/可点击 |
+| Separator | 分隔线 | 支持水平/垂直方向/变体/尺寸/文字分隔线 |
+| ScrollArea | 滚动区域 | 自定义滚动条，支持 ScrollBar 子组件/变体/尺寸 |
 | Sheet | 侧边抽屉 | 4 个方向变体（top/right/bottom/left） |
 | Tabs | 标签页 | 支持 list/trigger/content |
 | Accordion | 手风琴 | 支持单选/多选模式 |
 | Breadcrumb | 面包屑 | 支持 Link/Page/Separator/Ellipsis |
-| Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽 |
-| Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状 |
+| Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击 |
+| Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局 |
 | Carousel | 轮播 | 支持循环/自动播放/箭头/圆点 |
-| TreeView | 树形视图 | 支持展开/选中 |
+| TreeView | 树形视图 | 支持展开/选中/复选选择模式 |
 
 ### 数据展示
 
@@ -93,18 +93,18 @@ import { cn } from '@/lib/utils'
 |------|--------|------|
 | Table | 表格 | 8 个子组件（Header/Body/Footer/Row/Head/Cell/Caption） |
 | DataTable | 数据表格 | 支持排序/筛选/分页/选择/虚拟滚动 |
-| VirtualScroll | 虚拟滚动 | 基于 @tanstack/vue-virtual，支持大数据列表高性能滚动 |
+| VirtualScroll | 虚拟滚动 | 基于 @tanstack/vue-virtual，支持大数据列表高性能滚动，暴露 scrollToIndex 方法 |
 | Badge | 徽章 | 7 种变体、3 种尺寸（sm/default/lg） |
-| Avatar | 头像 | 支持 image/fallback、尺寸、形状 |
-| Progress | 进度条 | 支持 v-model |
+| Avatar | 头像 | 支持 image/fallback、尺寸、形状、变体、状态 |
+| Progress | 进度条 | 支持 v-model、不确定状态、百分比标签 |
 | Pagination | 分页 | 支持计算算法、首尾页 |
-| Counter | 数字动画 | 支持前缀/后缀/分隔符/缓动函数 |
-| Kbd | 键盘按键 | 3 种尺寸 |
-| CodeBlock | 代码块 | 支持语言高亮、行号 |
-| Marquee | 跑马灯 | 支持方向/速度/暂停/淡出 |
-| BeforeAfter | 对比图 | 前后对比滑块 |
-| ChatBubble | 聊天气泡 | 支持 sent/received/system 变体 |
-| Skeleton | 骨架屏 | 支持 Text/Avatar/Card/Table 子组件 |
+| Counter | 数字动画 | 支持前缀/后缀/分隔符/缓动函数，5 种变体 |
+| Kbd | 键盘按键 | 3 种尺寸、4 种变体 |
+| CodeBlock | 代码块 | 支持语言高亮、行号、折叠展开 |
+| Marquee | 跑马灯 | 支持方向/速度/暂停/淡出、变体/尺寸 |
+| BeforeAfter | 对比图 | 前后对比滑块，支持水平/垂直方向 |
+| ChatBubble | 聊天气泡 | 支持 sent/received/system 变体、颜色/尺寸 |
+| Skeleton | 骨架屏 | 支持 Text/Avatar/Card/Table 子组件、尺寸/形状/宽度 |
 | Spinner | 加载动画 | 4 种变体（Spinner/Block/Dots/Bars） |
 | DashboardStats | 仪表盘统计 | 支持趋势指标 |
 
@@ -131,8 +131,8 @@ import { cn } from '@/lib/utils'
 | NoiseBackground | 噪点背景 | SVG feTurbulence 滤镜，支持动画/类型/圆角 |
 | ScratchCard | 刮刮卡 | Canvas 覆盖层擦除 |
 | SketchyChart | 手绘图表 | 支持折线/柱状/饼图，SVG + 分形噪声 |
-| CopyToClipboard | 复制到剪贴板 | 支持自定义持续时间 |
-| KanbanBoard | 看板 | 支持拖拽排序 |
+| CopyToClipboard | 复制到剪贴板 | 支持自定义持续时间、变体/尺寸 |
+| KanbanBoard | 看板 | 支持拖拽排序、列拖拽/添加卡片 |
 
 ### 区块/页面模板
 
@@ -167,9 +167,9 @@ import { cn } from '@/lib/utils'
 | ErrorCard | 错误卡片 | 支持重试操作 |
 | SuccessCard | 成功卡片 | 支持确认按钮 |
 | CookieConsent | Cookie 同意 | 支持接受/拒绝 |
-| FeedbackForm | 反馈表单 | 支持标题/描述 |
+| FeedbackForm | 反馈表单 | 支持标题/描述、加载/成功状态 |
 | QuickActions | 快捷操作 | 支持图标/变体 |
-| SearchWidget | 搜索组件 | 支持建议/分组 |
+| SearchWidget | 搜索组件 | 支持建议/分组、加载/最近搜索 |
 | TabsNav | 标签导航 | 支持默认值 |
 
 > 完整 Props / Events / Slots 参考 `references/components/` 下的分类文件。

@@ -20,17 +20,26 @@
 ```vue
 <Separator />
 <Separator orientation="vertical" />
+<Separator variant="primary" size="lg">
+  <template #label>文字</template>
+</Separator>
 ```
 
 - `orientation`: `'horizontal' | 'vertical'`
+- `variant`: `'default' | 'primary' | 'muted'` — 默认 `'default'`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，控制粗细
+- 插槽 `label`: 居中文字分隔线（仅 orientation=horizontal 且有内容时渲染）
 
 ## ScrollArea
 
 ```vue
-<ScrollArea class="h-72 w-48">
+<ScrollArea class="h-72 w-48" variant="primary" size="lg">
   <div class="p-4">长内容...</div>
 </ScrollArea>
 ```
+
+- `variant`: `'default' | 'primary' | 'accent'` — 默认 `'default'`，控制滚动条颜色
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，控制滚动条粗细
 
 子组件：ScrollArea, ScrollBar
 
@@ -115,6 +124,9 @@
 - `steps`: `StepperStep[]` — `{ id: string|number; title: string; description?: string }[]`
 - `modelValue`: `number`（0-indexed）
 - `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`
+- `variant`: `'default' | 'primary' | 'accent'` — 默认 `'default'`，影响 active 状态颜色
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，步骤点尺寸
+- `clickable`: `boolean` — 默认 `true`，false 时步骤点不可点击
 - Events: `update:modelValue`, `step-click`（点击步骤节点时触发）
 
 垂直模式支持内容插槽：
@@ -145,6 +157,7 @@
 ```
 
 - `orientation`: `'vertical' | 'horizontal'` — 默认 `'vertical'`
+- `alternate`: `boolean` — 默认 `false`，仅 vertical 生效，交替左右排列（偶数项左、奇数项右）
 
 子组件：Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent
 
@@ -175,9 +188,14 @@
   ]"
   v-model="selectedNode"
   :default-expanded="['1']"
+  selection-mode="checkbox"
+  v-model:checked-ids="checkedIds"
 />
 ```
 
-- `nodes`: `TreeNode[]` — `{ id: string; label: string; icon?: string; children?: TreeNode[]; data?: unknown }[]`
+- `nodes`: `TreeNode[]` — `{ id: string; label: string; icon?: string; children?: TreeNode[]; disabled?: boolean; data?: unknown }[]`
 - `modelValue`: `string | null`
 - `defaultExpanded`: `string[]`
+- `selectionMode`: `'single' | 'checkbox'` — 默认 `'single'`，checkbox 模式下每节点前渲染 Checkbox
+- `checkedIds`: `Set<string>` — `v-model:checked-ids`，checkbox 模式的选中节点 id 集合（父节点状态通过后代推导，支持级联选中与半选）
+- Events: `update:modelValue`, `update:checkedIds`, `check(checkedIds: Set<string>)`

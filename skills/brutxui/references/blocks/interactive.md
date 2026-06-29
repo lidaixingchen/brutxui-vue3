@@ -24,11 +24,16 @@
     { label: 'Button', value: 'button', group: '组件' },
     { label: '安装指南', value: 'install', group: '文档' },
   ]"
+  :loading="isSearching"
+  :recent="recentSearches"
+  @select="handleSelect"
 />
 ```
 
 - `placeholder`: `string`
 - `suggestions`: `SearchSuggestion[]` — `{ label: string; value: string; group?: string }[]`
+- `loading`: `boolean` — 默认 `false`，搜索时显示 Spinner
+- `recent`: `SearchSuggestion[]` — 最近搜索列表，输入框为空时显示"最近搜索"分组，点击回填 query 并 emit select
 
 ## FileCard
 

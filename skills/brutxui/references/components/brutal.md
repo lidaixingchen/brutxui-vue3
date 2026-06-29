@@ -63,6 +63,9 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 - `shadowOffset`: `number` — 默认 `10`
 - `shadow`: `'default' | 'sm' | 'lg'`
 - `disabled`: `boolean`
+- `variant`: `'default' | 'primary' | 'accent' | 'muted'` — 默认 `'default'`，控制背景色
+- `clickable`: `boolean` — 默认 `false`，true 时 cursor-pointer 并 emit `click` 事件
+- Events: `click`
 
 ## GlitchText
 
@@ -221,11 +224,13 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 ## CopyToClipboard
 
 ```vue
-<CopyToClipboard text="要复制的文本" :duration="2000" />
+<CopyToClipboard text="要复制的文本" :duration="2000" variant="primary" size="lg" />
 ```
 
 - `text`: `string` — 必填
 - `duration`: `number` — 默认 `2000`
+- `variant`: `'default' | 'primary' | 'outline'` — 默认 `'default'`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 
 ## KanbanBoard
 
@@ -233,12 +238,14 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 <KanbanBoard
   v-model="columns"
   @card-move="(id, from, to) => console.log(id, from, to)"
+  @column-move="(id, fromIdx, toIdx) => console.log(id, fromIdx, toIdx)"
+  @add-card="(colId) => handleAddCard(colId)"
 />
 ```
 
 - `modelValue`: `KanbanColumn[]` — 必填
-- Events: `update:modelValue`, `card-move(cardId, fromColumn, toColumn)`
-- 插槽: `add-{columnId}` 在列底部插入自定义内容
+- Events: `update:modelValue`, `card-move(cardId, fromColumn, toColumn)`, `column-move(fromId, fromIndex, toIndex)`（列标题拖拽排序）, `add-card(columnId)`（默认 `+` 按钮点击时触发）
+- 插槽: `add-{columnId}` 在列底部插入自定义添加入口（带默认 `+` 按钮 fallback，可用 `#add-{colId}` 自定义）
 
 ```typescript
 interface KanbanColumn {

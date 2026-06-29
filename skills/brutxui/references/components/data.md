@@ -29,7 +29,7 @@
 ## Avatar
 
 ```vue
-<Avatar size="lg" shape="circle">
+<Avatar size="lg" shape="circle" variant="primary" status="online">
   <AvatarImage src="https://..." />
   <AvatarFallback>CN</AvatarFallback>
 </Avatar>
@@ -37,17 +37,22 @@
 
 - `size`: `'sm' | 'default' | 'lg' | 'xl'`
 - `shape`: `'square' | 'circle'`
+- `variant`: `'default' | 'primary' | 'secondary' | 'accent'` — 默认 `'default'`，控制回退背景色
+- `status`: `'online' | 'offline' | 'busy' | 'none'` — 默认 `'none'`，右下角状态圆点（online=绿/offline=灰/busy=红）
 
 子组件：Avatar, AvatarImage, AvatarFallback
 
 ## Progress
 
 ```vue
-<Progress :model-value="60" :max="100" />
+<Progress :model-value="60" :max="100" :show-label="true" />
+<Progress indeterminate />
 ```
 
 - `modelValue`: `number` — 默认 `0`
 - `max`: `number` — 默认 `100`
+- `indeterminate`: `boolean` — 默认 `false`，不确定状态（CSS 动画循环滑动，忽略 modelValue）
+- `showLabel`: `boolean` — 默认 `false`，显示百分比文字
 
 ## Pagination
 
@@ -89,6 +94,7 @@
 - `easing`: `'linear' | 'ease-out' | 'ease-in-out'` — 默认 `'ease-out'`
 - `autoStart`: `boolean` — 默认 `true`
 - `size`: `'sm' | 'md' | 'lg'`
+- `variant`: `'default' | 'primary' | 'accent' | 'success' | 'danger'` — 默认 `'default'`，仅影响文字颜色
 
 ## DataTable
 
@@ -220,6 +226,7 @@ const items = Array.from({ length: 10000 }, (_, i) => ({
 - `scrollEndThreshold`: `number` — 滚动到底部检测阈值（像素），默认 `50`
 - Events: `scroll(scrollTop: number)`, `scroll-end`
 - 插槽: `default`（列表项）、`empty`（空状态）、`loading`（加载更多）
+- 暴露方法: `scrollToIndex(index: number)` — 通过 ref 调用，滚动到指定索引
 
 ```typescript
 interface VirtualScrollItem {
@@ -236,25 +243,28 @@ interface VirtualScrollItem {
 
 ```vue
 <Kbd size="md">Ctrl</Kbd> + <Kbd size="md">C</Kbd>
+<Kbd variant="primary">⌘</Kbd>
 ```
 
 - `size`: `'sm' | 'md' | 'lg'` — 默认 `'md'`
+- `variant`: `'default' | 'primary' | 'secondary' | 'accent'` — 默认 `'default'`
 
 ## CodeBlock
 
 ```vue
-<CodeBlock code="const x = 1" language="typescript" filename="example.ts" :show-line-numbers="true" />
+<CodeBlock code="const x = 1" language="typescript" filename="example.ts" :show-line-numbers="true" :max-lines="10" />
 ```
 
 - `code`: `string` — 必填
 - `language`: `string` — 默认 `'plaintext'`
 - `filename`: `string`
 - `showLineNumbers`: `boolean` — 默认 `false`
+- `maxLines`: `number` — 默认 `undefined`（不限制）。超过时裁剪并显示展开/收起按钮
 
 ## Marquee
 
 ```vue
-<Marquee direction="left" :speed="20" :pause-on-hover="true" :fade="true">
+<Marquee direction="left" :speed="20" :pause-on-hover="true" :fade="true" variant="primary" size="lg">
   <span>滚动内容...</span>
 </Marquee>
 ```
@@ -263,13 +273,15 @@ interface VirtualScrollItem {
 - `speed`: `number` — 默认 `20`
 - `pauseOnHover`: `boolean` — 默认 `false`
 - `fade`: `boolean` — 默认 `false`
+- `variant`: `'default' | 'primary' | 'accent' | 'muted'` — 默认 `'accent'`，控制背景色和边框色
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，控制文字大小和 padding
 
 ## BeforeAfter
 
 前后对比图。
 
 ```vue
-<BeforeAfter before="/before.jpg" after="/after.jpg" before-alt="修改前" after-alt="修改后" />
+<BeforeAfter before="/before.jpg" after="/after.jpg" before-alt="修改前" after-alt="修改后" orientation="horizontal" />
 ```
 
 - `before`: `string` — 必填
@@ -278,11 +290,12 @@ interface VirtualScrollItem {
 - `afterAlt`: `string`
 - `defaultValue`: `number` — 默认 `50`
 - `disabled`: `boolean`
+- `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，vertical 时从下到上裁剪、滑块水平方向、handle 图标旋转 90°
 
 ## ChatBubble
 
 ```vue
-<ChatBubble :message="{ id: '1', content: '你好！', variant: 'sent', name: '我', timestamp: '10:30', status: 'read' }" />
+<ChatBubble :message="{ id: '1', content: '你好！', variant: 'sent', name: '我', timestamp: '10:30', status: 'read' }" color="primary" size="lg" />
 ```
 
 - `message`: `ChatMessage` — `{ id: string; content: string; variant?: 'sent'|'received'|'system'; avatar?: string; name?: string; timestamp?: string | Date; status?: 'sending'|'sent'|'delivered'|'read'|'failed' }`
@@ -290,6 +303,8 @@ interface VirtualScrollItem {
 - `showStatus`: `boolean` — 默认 `true`
 - `showTimestamp`: `boolean` — 默认 `true`
 - `dateFormat`: `(date: Date) => string` — 自定义日期格式化
+- `color`: `'default' | 'primary' | 'accent'` — 默认 `'default'`，仅影响 `variant="sent"` 的气泡颜色
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，控制文字大小、padding，联动头像尺寸
 
 ## ChatContainer
 
@@ -308,12 +323,16 @@ interface VirtualScrollItem {
 ## Skeleton
 
 ```vue
-<Skeleton class="h-4 w-[250px]" />
+<Skeleton class="h-4 w-[250px]" size="default" shape="rect" width="100%" />
 <SkeletonText :lines="3" />
 <SkeletonCard />
 <SkeletonAvatar />
 <SkeletonTable :rows="5" :cols="4" />
 ```
+
+- `size`: `'sm' | 'default' | 'lg' | 'xl'` — 默认 `'default'`，控制高度（circle 时宽=高）
+- `shape`: `'rect' | 'circle'` — 默认 `'rect'`，circle 时 rounded-full 且宽=高
+- `width`: `string` — 自定义宽度（如 `'100%'`、`'200px'`），circle 时同步设高
 
 子组件：Skeleton, SkeletonText, SkeletonAvatar, SkeletonCard, SkeletonTable
 

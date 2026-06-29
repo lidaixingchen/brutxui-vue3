@@ -14,9 +14,9 @@
 | 已规划组件 | 31 | 路线图 + 全面拓展方案 |
 | 未覆盖核心 UI | 37 | 本方案重点分析对象 |
 | 使用 defineExpose | 7 / 96 | 仅 7% 组件暴露方法 |
-| 使用 useReducedMotion | 6 / 96 | 仅 6% 组件尊重动效偏好 |
+| 使用 useReducedMotion | 5 / 96 | 仅 5% 组件尊重动效偏好（Card3D/GlitchButton/GlitchText/TypewriterText/ScratchCard） |
 | 空变体值 | 2 处 | Accordion content、DatePicker trigger |
-| 缺失 ARIA props | 9 个交互组件 | Switch/Checkbox/Toggle 等 |
+| 缺失 ARIA props | 6 个交互组件 | Switch/Checkbox/Toggle/RadioGroup/TagsInput/Table（Input/Textarea 已达标） |
 
 ---
 
@@ -232,6 +232,7 @@
 
 - **文件**：`packages/ui/src/components/tabs/TabsList.vue`、`tabs-variants.ts`
 - **现状**：仅支持水平布局
+- **参考**：RadioGroup 已实现 `orientation` prop（`packages/ui/src/components/radio-group/RadioGroup.vue:12`），可参考其透传方式
 - **改动**：
   - `TabsList.vue` 新增 `orientation?: 'horizontal' | 'vertical'` prop（默认 `horizontal`）
   - 将 `orientation` 透传给 reka-ui `TabsRoot`（原语原生支持，自动处理 `aria-orientation` 和键盘方向键）
@@ -254,12 +255,12 @@
   function pauseTimer() {
     if (timer.value) {
       window.clearTimeout(timer.value)
-      remainingTime.value -= Date.now() - startTime
+      remainingTime.value -= performance.now() - startTime
     }
   }
 
   function resumeTimer() {
-    startTime = Date.now()
+    startTime = performance.now()
     timer.value = window.setTimeout(startLeave, remainingTime.value)
   }
   ```
@@ -285,7 +286,7 @@
 ### 6.1 Carousel — 暴露滚动方法
 
 - **文件**：`packages/ui/src/components/carousel/Carousel.vue`
-- **现状**：`scrollPrev`、`scrollNext`、`scrollTo` 函数已实现但未暴露
+- **现状**：`scrollPrev`、`scrollNext`、`scrollTo` 函数已实现但未暴露；`startAutoplay`/`stopAutoplay` 已通过 `@mouseenter`/`@mouseleave` 在模板中绑定（非 prop 控制）
 - **改动**：
   ```typescript
   defineExpose({
@@ -402,14 +403,14 @@
 
 - **文件**：`packages/ui/src/composables/useTheme.ts`（扩展）
 - **现状**：`useTheme` 仅支持 4 个预设主题切换，无法运行时修改单个 CSS 变量
-- **改动**：新增 `setCustomVariable(name: string, value: string)` 方法
+- **改动**：新增 `setCustomVariable(name: string, value: string)` 方法，`name` 应以 `--` 开头（类型约束 `` `--${string}` ``），内部通过 `document.documentElement.style.setProperty(name, value)` 设置
 - **收益**：品牌定制无需创建新主题预设
 
 ### 8.4 Accessibility Test Expansion — 无障碍测试扩展
 
-- **文件**：`packages/ui/src/accessibility.test.ts`（扩展）
-- **现状**：仅测试 6 个组件
-- **目标**：扩展到所有交互组件（Switch、Checkbox、RadioGroup、Toggle、TagsInput、DatePicker、ColorPicker、Select、Combobox 等）
+- **文件**：`packages/ui/src/components/accessibility.test.ts`（扩展）
+- **现状**：测试覆盖 5 个组件（Dialog、AlertDialog、Tabs、Select、DropdownMenu）+ Label/Input/Button/Form 基础无障碍
+- **目标**：扩展到所有交互组件（Switch、Checkbox、RadioGroup、Toggle、TagsInput、DatePicker、ColorPicker、Combobox 等）
 - **收益**：防止无障碍回归
 
 ---
@@ -440,4 +441,5 @@
 
 | 日期 | 版本 | 说明 |
 | --- | --- | --- |
+| 2026-06-30 | v1.1 | 修正数据：useReducedMotion 计数 6→5、缺失 ARIA props 组件数 9→6、无障碍测试文件路径和覆盖范围；补充 Input/Textarea 已达标说明、RadioGroup orientation 参考、Carousel hover 行为说明、Toast 使用 performance.now()、useTheme 类型约束 |
 | 2026-06-30 | v1.0 | 初始版本，规划 8 批深化拓展方向 |
