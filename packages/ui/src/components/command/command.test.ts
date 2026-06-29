@@ -684,3 +684,45 @@ describe('CommandDialog', () => {
         wrapper.unmount()
     })
 })
+
+describe('Command programmatic control (defineExpose)', () => {
+    it('exposes filterSearch as a readable string', () => {
+        const wrapper = mount(Command, { ...localeProvide })
+        expect(wrapper.vm.filterSearch).toBe('')
+    })
+
+    it('setting filterSearch programmatically filters items', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandList>
+                        <CommandGroup heading="Suggestions">
+                            <CommandItem value="calendar">Calendar</CommandItem>
+                            <CommandItem value="search">Search Emoji</CommandItem>
+                            <CommandItem value="calculator">Calculator</CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandList, CommandGroup, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+
+        const initialItems = wrapper.findAll('[data-slot="command-item"]')
+            .filter(el => (el.element as HTMLElement).style.display !== 'none')
+        expect(initialItems.length).toBe(3)
+
+        wrapper.vm.filterSearch = 'cal'
+        await nextTick()
+        await nextTick()
+
+        const visibleItems = wrapper.findAll('[data-slot="command-item"]')
+            .filter(el => (el.element as HTMLElement).style.display !== 'none')
+        expect(visibleItems.length).toBe(2)
+    })
+})

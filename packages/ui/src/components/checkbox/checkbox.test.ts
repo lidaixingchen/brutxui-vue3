@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import Checkbox from './Checkbox.vue'
+import { Minus } from '@lucide/vue'
 
 describe('Checkbox', () => {
     it('renders with checkbox role', () => {
@@ -66,5 +67,38 @@ describe('Checkbox', () => {
             // stroke-[3] base preserved from checkboxIndicatorVariants
             expect(indicator.classList.contains('stroke-[3]')).toBe(true)
         }
+    })
+
+    it('provides default aria-label from locale', () => {
+        const wrapper = mount(Checkbox, {
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="checkbox"]').attributes('aria-label')).toBe('复选框')
+    })
+
+    it('uses custom ariaLabel when provided', () => {
+        const wrapper = mount(Checkbox, {
+            props: { ariaLabel: '同意条款' },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="checkbox"]').attributes('aria-label')).toBe('同意条款')
+    })
+
+    it('renders Minus icon when indeterminate', () => {
+        const wrapper = mount(Checkbox, {
+            props: { checked: 'indeterminate' },
+            attachTo: document.body,
+        })
+        const minus = wrapper.findComponent(Minus)
+        expect(minus.exists()).toBe(true)
+    })
+
+    it('renders Check icon when checked (not indeterminate)', () => {
+        const wrapper = mount(Checkbox, {
+            props: { checked: true },
+            attachTo: document.body,
+        })
+        const minus = wrapper.findComponent(Minus)
+        expect(minus.exists()).toBe(false)
     })
 })

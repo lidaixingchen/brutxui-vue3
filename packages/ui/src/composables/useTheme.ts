@@ -94,6 +94,16 @@ export function createTheme() {
         applyTheme(name)
     }
 
+    function setCustomVariable(name: `--${string}`, value: string) {
+        if (typeof document === 'undefined') return
+        document.documentElement.style.setProperty(name, value)
+    }
+
+    function removeCustomVariable(name: `--${string}`) {
+        if (typeof document === 'undefined') return
+        document.documentElement.style.removeProperty(name)
+    }
+
     // 监听系统暗色模式变化
     function onSystemDarkChange(e: MediaQueryListEvent) {
         isSystemDark.value = e.matches
@@ -141,6 +151,8 @@ export function createTheme() {
         resolvedColorMode,
         isSystemDark,
         setTheme,
+        setCustomVariable,
+        removeCustomVariable,
         toggleColorMode,
         applyColorMode,
         initTheme,

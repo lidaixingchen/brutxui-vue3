@@ -59,6 +59,14 @@ describe('RadioGroup', () => {
         // Verify the radio element still exists and is interactive
         expect(radio.exists()).toBe(true)
     })
+
+    it('passes ariaLabel to aria-label attribute', () => {
+        const wrapper = mount(RadioGroup, {
+            props: { ariaLabel: '选择主题' },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="radiogroup"]').attributes('aria-label')).toBe('选择主题')
+    })
 })
 
 describe('RadioGroupItem', () => {

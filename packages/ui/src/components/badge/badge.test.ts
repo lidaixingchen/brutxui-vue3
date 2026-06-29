@@ -1,5 +1,9 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Badge from './Badge.vue'
+
+const globalProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('Badge', () => {
     it('renders with default variant and size', () => {
@@ -92,5 +96,72 @@ describe('Badge', () => {
             props: { class: 'custom-class' },
         })
         expect(wrapper.classes()).toContain('custom-class')
+    })
+
+    describe('closable', () => {
+        it('does not render close button by default', () => {
+            const wrapper = mount(Badge, { ...globalProvide })
+            expect(wrapper.find('button[aria-label="Close"]').exists()).toBe(false)
+        })
+
+        it('renders close button when closable is true', () => {
+            const wrapper = mount(Badge, {
+                props: { closable: true },
+                ...globalProvide,
+            })
+            expect(wrapper.find('button[aria-label="Close"]').exists()).toBe(true)
+        })
+
+        it('emits close event when close button clicked', async () => {
+            const wrapper = mount(Badge, {
+                props: { closable: true },
+                ...globalProvide,
+            })
+            await wrapper.find('button[aria-label="Close"]').trigger('click')
+            expect(wrapper.emitted('close')).toBeTruthy()
+            expect(wrapper.emitted('close')!.length).toBe(1)
+        })
+    })
+
+    describe('dot', () => {
+        it('does not render dot by default', () => {
+            const wrapper = mount(Badge, { ...globalProvide })
+            expect(wrapper.find('.rounded-full').exists()).toBe(false)
+        })
+
+        it('renders dot when dot is true', () => {
+            const wrapper = mount(Badge, {
+                props: { dot: true },
+                ...globalProvide,
+            })
+            const dot = wrapper.find('.rounded-full.bg-current')
+            expect(dot.exists()).toBe(true)
+        })
+
+        it('applies pulse animation when pulse is true', () => {
+            const wrapper = mount(Badge, {
+                props: { dot: true, pulse: true },
+                ...globalProvide,
+            })
+            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-pulse').exists()).toBe(true)
+        })
+
+        it('does not apply pulse animation when pulse is false', () => {
+            const wrapper = mount(Badge, {
+                props: { dot: true, pulse: false },
+                ...globalProvide,
+            })
+            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-pulse').exists()).toBe(false)
+        })
+    })
+
+    describe('icon slot', () => {
+        it('renders icon slot content', () => {
+            const wrapper = mount(Badge, {
+                slots: { icon: '<span class="custom-icon" />' },
+                ...globalProvide,
+            })
+            expect(wrapper.find('.custom-icon').exists()).toBe(true)
+        })
     })
 })

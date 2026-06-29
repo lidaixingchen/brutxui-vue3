@@ -557,3 +557,34 @@ describe('ColorPickerPanel pointer interaction', () => {
         expect(emitted).toBeTruthy()
     })
 })
+
+describe('ColorPicker programmatic control (defineExpose)', () => {
+    it('exposes open as a readable boolean', () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.vm.open).toBe(false)
+        wrapper.unmount()
+    })
+
+    it('setting open to true programmatically opens the panel and emits open', async () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        wrapper.vm.open = true
+        await nextTick()
+        await nextTick()
+        expect(wrapper.emitted('open')).toBeTruthy()
+        const dialog = document.body.querySelector('[role="dialog"]')
+        expect(dialog).not.toBeNull()
+        wrapper.unmount()
+    })
+
+    it('setting open to false programmatically closes the panel and emits close', async () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        wrapper.vm.open = true
+        await nextTick()
+        await nextTick()
+        wrapper.vm.open = false
+        await nextTick()
+        await nextTick()
+        expect(wrapper.emitted('close')).toBeTruthy()
+        wrapper.unmount()
+    })
+})

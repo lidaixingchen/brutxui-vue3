@@ -36,7 +36,10 @@ const props = withDefaults(defineProps<PaginationProps>(), {
     class: undefined,
 })
 
-const emit = defineEmits<{ 'update:currentPage': [page: number] }>()
+const emit = defineEmits<{
+    'update:currentPage': [page: number]
+    jump: []
+}>()
 
 function range(start: number, end: number) {
     const length = end - start + 1
@@ -121,7 +124,12 @@ const lastButtonClasses = computed(() =>
 )
 
 const dotsClasses = computed(() =>
-    cn('flex items-center justify-center font-black text-brutal-fg', dotsSizeClasses.value)
+    cn(
+        'flex items-center justify-center font-black text-brutal-fg cursor-pointer',
+        'hover:bg-brutal-muted transition-colors duration-150',
+        'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
+        dotsSizeClasses.value
+    )
 )
 
 const pageButtonActiveClasses = computed(() =>
@@ -164,12 +172,15 @@ function onPageChange(page: number) {
 
         <template v-if="showPageNumbers">
             <template v-for="(pageNumber, index) in paginationRange" :key="index">
-                <span
+                <button
                     v-if="pageNumber === 'dots'"
+                    type="button"
                     :class="dotsClasses"
+                    :aria-label="t('pagination.jumpPages')"
+                    @click="emit('jump')"
                 >
                     •••
-                </span>
+                </button>
                 <button
                     v-else
                     type="button"

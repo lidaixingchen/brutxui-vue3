@@ -13,7 +13,7 @@ function getPageNumbers(wrapper: ReturnType<typeof mount>) {
 }
 
 function getDotsCount(wrapper: ReturnType<typeof mount>) {
-    return wrapper.findAll('span').filter((el) => el.text().includes('•••')).length
+    return wrapper.findAll('button[aria-label="Jump pages"]').length
 }
 
 describe('Pagination', () => {
@@ -118,8 +118,7 @@ describe('Pagination', () => {
             props: { totalPages: 20, currentPage: 10 },
             ...globalProvide,
         })
-        const dots = wrapper.findAll('span').filter((el) => el.text().includes('•••'))
-        expect(dots.length).toBeGreaterThan(0)
+        expect(getDotsCount(wrapper)).toBeGreaterThan(0)
     })
 
     it('emits correct page when first button clicked', async () => {
@@ -299,5 +298,31 @@ describe('Pagination', () => {
         const expectedPages = [FIRST_PAGE, ...middlePages, totalPages]
         expect(getPageNumbers(wrapper)).toEqual(expectedPages)
         expect(getDotsCount(wrapper)).toBe(2)
+    })
+
+    describe('jump event', () => {
+        it('emits jump when dots button is clicked', async () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 20, currentPage: 10 },
+                ...globalProvide,
+            })
+            const dotsButton = wrapper.find('button[aria-label="Jump pages"]')
+            expect(dotsButton.exists()).toBe(true)
+            await dotsButton.trigger('click')
+            expect(wrapper.emitted('jump')).toBeTruthy()
+            expect(wrapper.emitted('jump')!.length).toBe(1)
+        })
+
+        it('emits jump for each dots button clicked', async () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 20, currentPage: 10 },
+                ...globalProvide,
+            })
+            const dotsButtons = wrapper.findAll('button[aria-label="Jump pages"]')
+            expect(dotsButtons.length).toBe(2)
+            await dotsButtons[0].trigger('click')
+            await dotsButtons[1].trigger('click')
+            expect(wrapper.emitted('jump')!.length).toBe(2)
+        })
     })
 })

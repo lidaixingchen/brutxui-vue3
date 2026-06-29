@@ -34,8 +34,9 @@ interface InputProps {
     type?: HTMLInputType
     modelValue?: string
     variant?: NonNullable<InputVariantProps['variant']>
-    inputSize?: NonNullable<InputVariantProps['inputSize']>
+    size?: NonNullable<InputVariantProps['size']>
     disabled?: boolean
+    readonly?: boolean
     placeholder?: string
     /** 无障碍标签 */
     ariaLabel?: string
@@ -54,8 +55,9 @@ const props = withDefaults(defineProps<InputProps>(), {
     type: 'text',
     modelValue: undefined,
     variant: 'default',
-    inputSize: 'default',
+    size: 'default',
     disabled: false,
+    readonly: false,
     placeholder: undefined,
     ariaLabel: undefined,
     ariaLabelledby: undefined,
@@ -70,7 +72,11 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const isComposing = ref(false)
 
 const classes = computed(() =>
-    cn(inputVariants({ variant: props.variant, inputSize: props.inputSize }), props.class)
+    cn(
+        inputVariants({ variant: props.variant, size: props.size }),
+        props.readonly && 'cursor-default',
+        props.class
+    )
 )
 </script>
 
@@ -79,6 +85,7 @@ const classes = computed(() =>
         :type="type"
         :value="modelValue"
         :disabled="disabled"
+        :readonly="readonly"
         :placeholder="placeholder"
         :class="classes"
         :aria-label="ariaLabel"

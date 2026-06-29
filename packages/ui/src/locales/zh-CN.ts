@@ -23,6 +23,7 @@ export const zhCN: Locale = {
         lastPage: '转到最后一页',
         page: '第 {number} 页',
         label: '分页导航',
+        jumpPages: '跳转页码',
     },
     carousel: {
         previousSlide: '上一张幻灯片',
@@ -411,5 +412,20 @@ export const zhCN: Locale = {
     virtualScroll: {
         label: '虚拟滚动列表',
         empty: '暂无数据',
+    },
+    switch: {
+        toggle: '开关',
+    },
+    checkbox: {
+        check: '复选框',
+    },
+    tagsInput: {
+        label: '标签输入',
+    },
+    badge: {
+        close: '关闭',
+    },
+    alert: {
+        close: '关闭',
     },
 }

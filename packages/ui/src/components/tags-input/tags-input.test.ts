@@ -44,6 +44,21 @@ describe('TagsInput', () => {
         })
         expect(wrapper.classes()).toContain('custom-root')
     })
+
+    it('provides default aria-label from locale', () => {
+        const wrapper = mount(TagsInput, {
+            global: { stubs: { TagsInputRoot: primitiveStub } },
+        })
+        expect(wrapper.attributes('aria-label')).toBe('标签输入')
+    })
+
+    it('uses custom ariaLabel when provided', () => {
+        const wrapper = mount(TagsInput, {
+            props: { ariaLabel: '添加标签' },
+            global: { stubs: { TagsInputRoot: primitiveStub } },
+        })
+        expect(wrapper.attributes('aria-label')).toBe('添加标签')
+    })
 })
 
 describe('TagsInputInput', () => {

@@ -46,13 +46,13 @@ const message = ref('')
 
 ### 尺寸
 
-通过 `textarea-size` 属性设置不同的尺寸：
+通过 `size` 属性设置不同的尺寸：
 
 ```vue
 <template>
-    <Textarea textarea-size="sm" placeholder="Small size" />
-    <Textarea textarea-size="default" placeholder="Default size" />
-    <Textarea textarea-size="lg" placeholder="Large size" />
+    <Textarea size="sm" placeholder="Small size" />
+    <Textarea size="default" placeholder="Default size" />
+    <Textarea size="lg" placeholder="Large size" />
 </template>
 ```
 
@@ -108,8 +108,9 @@ import { Textarea } from 'brutx-ui-vue'
 |------|------|--------|
 | `modelValue` | `string` | — |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` |
-| `textareaSize` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `disabled` | `boolean` | `false` |
+| `readonly` | `boolean` | `false` |
 | `placeholder` | `string` | `t('textarea.placeholder')` |
 | `class` | `string` | — |
 

@@ -9,7 +9,7 @@
   "files": [
     {
       "path": "components/ui/table/Table.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { tableVariants } from '@/components/ui/table/table-variants'\n\ninterface TableProps {\n    class?: string\n}\n\nconst props = defineProps<TableProps>()\n\nconst classes = computed(() =>\n    cn(tableVariants(), props.class)\n)\n</script>\n\n<template>\n    <div class=\"relative w-full overflow-x-auto\">\n        <table :class=\"classes\">\n            <slot />\n        </table>\n    </div>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { tableVariants } from '@/components/ui/table/table-variants'\n\ninterface TableProps {\n    class?: string\n    /** 无障碍标签 */\n    ariaLabel?: string\n}\n\nconst props = defineProps<TableProps>()\n\nconst classes = computed(() =>\n    cn(tableVariants(), props.class)\n)\n</script>\n\n<template>\n    <div class=\"relative w-full overflow-x-auto\">\n        <table :class=\"classes\" :aria-label=\"ariaLabel\">\n            <slot />\n        </table>\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {

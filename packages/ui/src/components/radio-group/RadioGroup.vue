@@ -10,6 +10,8 @@ interface RadioGroupProps {
     disabled?: boolean
     orientation?: 'horizontal' | 'vertical'
     class?: string
+    /** 无障碍标签 */
+    ariaLabel?: string
 }
 
 const props = defineProps<RadioGroupProps>()
@@ -25,6 +27,7 @@ const classes = computed(() => cn('grid gap-2', props.class))
         :name="name"
         :disabled="disabled"
         :orientation="orientation"
+        :aria-label="ariaLabel"
         :class="classes"
         @update:model-value="emit('update:modelValue', $event as string)"
     >

@@ -5,6 +5,7 @@ import {
     DialogContent as DialogContentPrimitive,
     DialogClose as DialogClosePrimitive,
 } from 'reka-ui'
+import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
@@ -12,14 +13,18 @@ import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
 import { iconSizeVariants } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
+type DialogContentVariantProps = VariantProps<typeof dialogContentVariants>
+
 interface DialogContentProps {
     showCloseButton?: boolean
+    size?: NonNullable<DialogContentVariantProps['size']>
     forceMount?: boolean
     class?: string
 }
 
 const props = withDefaults(defineProps<DialogContentProps>(), {
     showCloseButton: true,
+    size: 'default',
     forceMount: undefined,
     class: undefined,
 })
@@ -27,7 +32,7 @@ const props = withDefaults(defineProps<DialogContentProps>(), {
 const { t } = useLocale()
 
 const contentClasses = computed(() =>
-    cn(dialogContentVariants(), props.class)
+    cn(dialogContentVariants({ size: props.size }), props.class)
 )
 
 const closeClasses = computed(() =>

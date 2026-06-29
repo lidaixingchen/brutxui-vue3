@@ -27,6 +27,19 @@ import Button from './button/Button.vue'
 import FormLabel from './form/FormLabel.vue'
 import FormMessage from './form/FormMessage.vue'
 import { formFieldKey, formItemKey } from './form/form-context'
+import Switch from './switch/Switch.vue'
+import Checkbox from './checkbox/Checkbox.vue'
+import RadioGroup from './radio-group/RadioGroup.vue'
+import Toggle from './toggle/Toggle.vue'
+import TagsInput from './tags-input/TagsInput.vue'
+import Table from './table/Table.vue'
+import DatePicker from './date-picker/DatePicker.vue'
+import ColorPicker from './color-picker/ColorPicker.vue'
+import Combobox from './combobox/Combobox.vue'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+
+const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 afterEach(() => {
     document.body.innerHTML = ''
@@ -384,6 +397,240 @@ describe('Form accessibility', () => {
         const message = wrapper.find('p')
         expect(message.exists()).toBe(true)
         expect(message.attributes('role')).toBe('alert')
+        wrapper.unmount()
+    })
+})
+
+describe('Switch accessibility', () => {
+    it('should have role="switch"', () => {
+        const wrapper = mount(Switch, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="switch"]').exists()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it('should have aria-label from prop', () => {
+        const wrapper = mount(Switch, {
+            props: { ariaLabel: 'Enable notifications' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('Enable notifications')
+        wrapper.unmount()
+    })
+
+    it('should have default aria-label from locale', () => {
+        const wrapper = mount(Switch, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBeTruthy()
+        wrapper.unmount()
+    })
+
+    it('should have aria-checked attribute', () => {
+        const wrapper = mount(Switch, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="switch"]').attributes('aria-checked')).toBeDefined()
+        wrapper.unmount()
+    })
+})
+
+describe('Checkbox accessibility', () => {
+    it('should have role="checkbox"', () => {
+        const wrapper = mount(Checkbox, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="checkbox"]').exists()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it('should have aria-label from prop', () => {
+        const wrapper = mount(Checkbox, {
+            props: { ariaLabel: 'Accept terms' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="checkbox"]').attributes('aria-label')).toBe('Accept terms')
+        wrapper.unmount()
+    })
+
+    it('should have aria-checked attribute', () => {
+        const wrapper = mount(Checkbox, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="checkbox"]').attributes('aria-checked')).toBeDefined()
+        wrapper.unmount()
+    })
+})
+
+describe('RadioGroup accessibility', () => {
+    it('should have role="radiogroup"', () => {
+        const wrapper = mount(RadioGroup, {
+            props: { ariaLabel: 'Choose option' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="radiogroup"]').exists()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it('should have aria-label from prop', () => {
+        const wrapper = mount(RadioGroup, {
+            props: { ariaLabel: 'Select size' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="radiogroup"]').attributes('aria-label')).toBe('Select size')
+        wrapper.unmount()
+    })
+})
+
+describe('Toggle accessibility', () => {
+    it('should have aria-pressed attribute', () => {
+        const wrapper = mount(Toggle, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.attributes('aria-pressed')).toBeDefined()
+        wrapper.unmount()
+    })
+
+    it('should have aria-label from prop', () => {
+        const wrapper = mount(Toggle, {
+            props: { ariaLabel: 'Bold' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-label')).toBe('Bold')
+        wrapper.unmount()
+    })
+})
+
+describe('TagsInput accessibility', () => {
+    it('should have aria-label from prop on root element', () => {
+        const wrapper = mount(TagsInput, {
+            props: { ariaLabel: 'Add tags' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-label')).toBe('Add tags')
+        wrapper.unmount()
+    })
+
+    it('should have default aria-label from locale', () => {
+        const wrapper = mount(TagsInput, {
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        expect(wrapper.attributes('aria-label')).toBeTruthy()
+        wrapper.unmount()
+    })
+})
+
+describe('Table accessibility', () => {
+    it('should have aria-label on table element from prop', () => {
+        const wrapper = mount(Table, {
+            props: { ariaLabel: 'Users list' },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        const table = wrapper.find('table')
+        expect(table.exists()).toBe(true)
+        expect(table.attributes('aria-label')).toBe('Users list')
+        wrapper.unmount()
+    })
+
+    it('should render a table element', () => {
+        const wrapper = mount(Table, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('table').exists()).toBe(true)
+        wrapper.unmount()
+    })
+})
+
+describe('DatePicker accessibility', () => {
+    it('trigger should have role="combobox"', () => {
+        const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="combobox"]').exists()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it('trigger should have aria-expanded attribute', () => {
+        const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-expanded')).toBeDefined()
+        wrapper.unmount()
+    })
+
+    it('trigger should have aria-haspopup="dialog"', () => {
+        const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+        wrapper.unmount()
+    })
+
+    it('trigger should have aria-label', () => {
+        const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-label')).toBeTruthy()
+        wrapper.unmount()
+    })
+
+    it('trigger should be disabled when disabled prop is true', () => {
+        const wrapper = mount(DatePicker, {
+            props: { disabled: true },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('disabled')).toBeDefined()
+        wrapper.unmount()
+    })
+})
+
+describe('ColorPicker accessibility', () => {
+    it('trigger should have role="combobox"', () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('[role="combobox"]').exists()).toBe(true)
+        wrapper.unmount()
+    })
+
+    it('trigger should have aria-expanded attribute', () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-expanded')).toBeDefined()
+        wrapper.unmount()
+    })
+
+    it('trigger should have aria-haspopup="dialog"', () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+        wrapper.unmount()
+    })
+
+    it('trigger should have aria-label', () => {
+        const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('aria-label')).toBeTruthy()
+        wrapper.unmount()
+    })
+
+    it('trigger should be disabled when disabled prop is true', () => {
+        const wrapper = mount(ColorPicker, {
+            props: { disabled: true },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.attributes('disabled')).toBeDefined()
+        wrapper.unmount()
+    })
+})
+
+describe('Combobox accessibility', () => {
+    it('should have a combobox trigger with aria-label, aria-expanded, and aria-haspopup', () => {
+        const wrapper = mount(Combobox, {
+            props: {
+                options: [{ label: 'Apple', value: 'apple' }],
+                ariaLabel: 'Choose a fruit',
+            },
+            ...localeProvide,
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.exists()).toBe(true)
+        expect(trigger.attributes('aria-label')).toBe('Choose a fruit')
+        expect(trigger.attributes('aria-expanded')).toBe('false')
+        expect(trigger.attributes('aria-haspopup')).toBe('listbox')
         wrapper.unmount()
     })
 })

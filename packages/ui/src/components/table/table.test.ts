@@ -36,6 +36,11 @@ describe('Table', () => {
         const wrapper = mount(Table, { props: { class: 'my-table' } })
         expect(wrapper.find('table').classes()).toContain('my-table')
     })
+
+    it('passes ariaLabel to table aria-label attribute', () => {
+        const wrapper = mount(Table, { props: { ariaLabel: '用户列表' } })
+        expect(wrapper.find('table').attributes('aria-label')).toBe('用户列表')
+    })
 })
 
 describe('TableHeader', () => {

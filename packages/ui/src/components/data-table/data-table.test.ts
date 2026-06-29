@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DataTable from './DataTable.vue'
@@ -384,5 +385,199 @@ describe('DataTable style guard', () => {
         const classes = getAllClasses(mountComprehensive().html())
         expect(classes).not.toContain('divide-y-2')
         expect(classes.some(c => c.startsWith('divide-brutal/'))).toBe(false)
+    })
+})
+
+describe('DataTable programmatic control (defineExpose)', () => {
+    type DataTableExposed = {
+        sort: { toggleSort: (columnId: string) => void; sortState: { value: { column: string; direction: 'asc' | 'desc' | null } } }
+        filter: { filterState: { value: { global: string } }; setGlobalFilter: (value: string) => void }
+        selection: {
+            toggleRow: (row: TestRow) => void
+            toggleAllRows: () => void
+            clearSelection: () => void
+            getSelectedRows: () => TestRow[]
+            selectedRows: { value: Set<string | number> }
+            isAllSelected: { value: boolean }
+        }
+        pagination: {
+            goToPage: (page: number) => boolean
+            nextPage: () => void
+            previousPage: () => void
+            setPageSize: (size: number) => void
+            pageIndex: { value: number }
+            pageCount: { value: number }
+        }
+    }
+
+    function getExposed(wrapper: ReturnType<typeof mountDataTable>): DataTableExposed {
+        return wrapper.vm as unknown as DataTableExposed
+    }
+
+    it('exposes sort namespace with toggleSort and sortState', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            sortable: true,
+        })
+        const vm = getExposed(wrapper)
+        expect(typeof vm.sort.toggleSort).toBe('function')
+        expect(vm.sort.sortState).toBeDefined()
+        expect(vm.sort.sortState.value.column).toBe('')
+        expect(vm.sort.sortState.value.direction).toBeNull()
+    })
+
+    it('sort.toggleSort changes sort state programmatically', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            sortable: true,
+        })
+        const vm = getExposed(wrapper)
+        expect(vm.sort.sortState.value.direction).toBeNull()
+        vm.sort.toggleSort('name')
+        await nextTick()
+        expect(vm.sort.sortState.value.column).toBe('name')
+        expect(vm.sort.sortState.value.direction).toBe('asc')
+    })
+
+    it('exposes filter namespace with filterState and setGlobalFilter', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            filterable: true,
+        })
+        const vm = getExposed(wrapper)
+        expect(typeof vm.filter.setGlobalFilter).toBe('function')
+        expect(vm.filter.filterState).toBeDefined()
+        expect(vm.filter.filterState.value.global).toBe('')
+        vm.filter.setGlobalFilter('alice')
+        await nextTick()
+        expect(vm.filter.filterState.value.global).toBe('alice')
+    })
+
+    it('exposes selection namespace with methods and refs', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            selectable: true,
+        })
+        const vm = getExposed(wrapper)
+        expect(typeof vm.selection.toggleRow).toBe('function')
+        expect(typeof vm.selection.toggleAllRows).toBe('function')
+        expect(typeof vm.selection.clearSelection).toBe('function')
+        expect(typeof vm.selection.getSelectedRows).toBe('function')
+        expect(vm.selection.selectedRows).toBeDefined()
+        expect(vm.selection.isAllSelected).toBeDefined()
+    })
+
+    it('selection.toggleRow selects a row programmatically', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            selectable: true,
+        })
+        const vm = getExposed(wrapper)
+        vm.selection.toggleRow(testData[0])
+        expect(vm.selection.getSelectedRows()).toHaveLength(1)
+        expect(vm.selection.getSelectedRows()[0].id).toBe(1)
+    })
+
+    it('selection.clearSelection clears selected rows', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            selectable: true,
+        })
+        const vm = getExposed(wrapper)
+        vm.selection.toggleRow(testData[0])
+        expect(vm.selection.getSelectedRows()).toHaveLength(1)
+        vm.selection.clearSelection()
+        expect(vm.selection.getSelectedRows()).toHaveLength(0)
+    })
+
+    it('exposes pagination namespace with methods and refs', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 2,
+        })
+        const vm = getExposed(wrapper)
+        expect(typeof vm.pagination.goToPage).toBe('function')
+        expect(typeof vm.pagination.nextPage).toBe('function')
+        expect(typeof vm.pagination.previousPage).toBe('function')
+        expect(typeof vm.pagination.setPageSize).toBe('function')
+        expect(vm.pagination.pageIndex).toBeDefined()
+        expect(vm.pagination.pageCount).toBeDefined()
+    })
+
+    it('pagination exposes correct initial page index and count', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 2,
+        })
+        const vm = getExposed(wrapper)
+        expect(vm.pagination.pageIndex.value).toBe(1)
+        expect(vm.pagination.pageCount.value).toBe(2)
+    })
+
+    it('pagination.goToPage moves to the requested page', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 2,
+        })
+        const vm = getExposed(wrapper)
+        vm.pagination.goToPage(2)
+        await nextTick()
+        expect(vm.pagination.pageIndex.value).toBe(2)
+    })
+
+    it('pagination.nextPage and previousPage navigate pages', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 2,
+        })
+        const vm = getExposed(wrapper)
+        vm.pagination.nextPage()
+        await nextTick()
+        expect(vm.pagination.pageIndex.value).toBe(2)
+        vm.pagination.previousPage()
+        await nextTick()
+        expect(vm.pagination.pageIndex.value).toBe(1)
+    })
+
+    it('pagination.setPageSize resets to first page', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            paginated: true,
+            pageSize: 2,
+        })
+        const vm = getExposed(wrapper)
+        vm.pagination.goToPage(2)
+        await nextTick()
+        expect(vm.pagination.pageIndex.value).toBe(2)
+        vm.pagination.setPageSize(10)
+        await nextTick()
+        expect(vm.pagination.pageIndex.value).toBe(1)
+        expect(vm.pagination.pageCount.value).toBe(1)
     })
 })

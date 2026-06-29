@@ -51,9 +51,9 @@ export const accordionContentVariants = cva(
         variants: {
             variant: {
                 default: '',
-                flat: '',
-                ghost: '',
-                interactive: '',
+                flat: 'bg-brutal-muted/30',
+                ghost: 'border-transparent',
+                interactive: 'hover:bg-brutal-muted/20',
             },
         },
         defaultVariants: {

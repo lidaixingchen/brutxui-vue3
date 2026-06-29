@@ -22,7 +22,7 @@ export const textareaVariants = cva(
                 error: 'border-brutal-destructive focus:shadow-brutal-primary',
                 success: 'border-brutal-success focus:shadow-brutal-secondary',
             },
-            textareaSize: {
+            size: {
                 sm: 'px-3 py-2 text-sm',
                 default: 'px-4 py-3 text-base',
                 lg: 'px-5 py-4 text-lg',
@@ -30,7 +30,7 @@ export const textareaVariants = cva(
         },
         defaultVariants: {
             variant: 'default',
-            textareaSize: 'default',
+            size: 'default',
         },
     }
 )

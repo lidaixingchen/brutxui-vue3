@@ -83,6 +83,21 @@ describe('TabsList', () => {
         })
         expect(wrapper.classes()).toContain('h-9')
     })
+
+    it('defaults to horizontal orientation', () => {
+        const wrapper = mount(TabsList, {
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapper.classes()).not.toContain('flex-col')
+    })
+
+    it('applies flex-col when orientation is vertical', () => {
+        const wrapper = mount(TabsList, {
+            props: { orientation: 'vertical' },
+            global: { stubs: { TabsList: primitiveStub } },
+        })
+        expect(wrapper.classes()).toContain('flex-col')
+    })
 })
 
 describe('TabsTrigger', () => {

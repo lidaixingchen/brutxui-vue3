@@ -21,7 +21,7 @@ export const inputVariants = cva(
                 error: 'border-brutal-destructive focus:shadow-brutal-primary',
                 success: 'border-brutal-success focus:shadow-brutal-secondary',
             },
-            inputSize: {
+            size: {
                 sm: 'h-9 px-3 py-1 text-sm',
                 default: 'h-11 px-4 py-2 text-base',
                 lg: 'h-14 px-5 py-3 text-lg',
@@ -29,7 +29,7 @@ export const inputVariants = cva(
         },
         defaultVariants: {
             variant: 'default',
-            inputSize: 'default',
+            size: 'default',
         },
     }
 )

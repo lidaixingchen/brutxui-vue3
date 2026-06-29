@@ -85,8 +85,9 @@ import { Input } from 'brutx-ui-vue'
 | `type` | `string` | `'text'` |
 | `modelValue` | `string` | — |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` |
-| `inputSize` | `'sm' \| 'default' \| 'lg'` | `'default'` |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `disabled` | `boolean` | `false` |
+| `readonly` | `boolean` | `false` |
 | `placeholder` | `string` | `t('input.placeholder')` |
 | `class` | `string` | — |
 

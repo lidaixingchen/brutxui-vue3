@@ -10,7 +10,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/alert/Alert.vue",
@@ -26,6 +28,22 @@
         },
         {
           "path": "components/ui/alert/alert-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -260,6 +278,22 @@
         },
         {
           "path": "components/ui/badge/badge-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -705,6 +739,18 @@
         },
         {
           "path": "components/ui/checkbox/checkbox-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
           "type": "registry:ui"
         },
         {
@@ -2543,6 +2589,18 @@
         {
           "path": "components/ui/switch/switch-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4239,6 +4297,10 @@
         {
           "path": "components/ui/toggle/toggle-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5323,6 +5385,18 @@
         {
           "path": "components/ui/tags-input/tags-input-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5823,6 +5897,10 @@
         {
           "path": "components/ui/marquee/marquee-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "composables/useReducedMotion.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5932,6 +6010,10 @@
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useReducedMotion.ts",
           "type": "registry:ui"
         },
         {
@@ -6320,6 +6402,10 @@
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useCarousel.ts",
           "type": "registry:ui"
         },
         {
@@ -7592,6 +7678,10 @@
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useFormFieldValidation.ts",
           "type": "registry:ui"
         },
         {
@@ -10763,6 +10853,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "composables/useColorPicker.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "locales/zh-CN.ts",
           "type": "registry:ui"
         },
@@ -10771,11 +10865,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "lib/color.ts",
+          "path": "lib/default-presets.ts",
           "type": "registry:ui"
         },
         {
-          "path": "lib/default-presets.ts",
+          "path": "lib/color.ts",
           "type": "registry:ui"
         }
       ],
@@ -10948,6 +11042,10 @@
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useDatePicker.ts",
           "type": "registry:ui"
         },
         {
@@ -11557,6 +11655,10 @@
         },
         {
           "path": "components/ui/noise-background/noise-background-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useReducedMotion.ts",
           "type": "registry:ui"
         }
       ],

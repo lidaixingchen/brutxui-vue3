@@ -41,8 +41,9 @@
 - `type`: `string`
 - `placeholder`: `string`
 - `disabled`: `boolean`
+- `readonly`: `boolean`
 - `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
-- `inputSize`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 - `ariaLabel`: `string` — 无障碍标签
 - `ariaLabelledby`: `string` — 关联的标签元素 ID
 - `ariaDescribedby`: `string` — 描述元素 ID
@@ -104,8 +105,9 @@
 - `placeholder`: `string`
 - `rows`: `number`
 - `disabled`: `boolean`
+- `readonly`: `boolean`
 - `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
-- `textareaSize`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 - `ariaLabel`: `string` — 无障碍标签
 - `ariaLabelledby`: `string` — 关联的标签元素 ID
 - `ariaDescribedby`: `string` — 描述元素 ID

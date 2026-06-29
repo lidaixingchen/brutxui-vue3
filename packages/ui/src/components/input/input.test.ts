@@ -21,16 +21,16 @@ describe('Input', () => {
         expect(wrapper.classes()).toContain('border-brutal-success')
     })
 
-    it('applies size classes via inputSize prop', async () => {
+    it('applies size classes via size prop', async () => {
         const wrapper = mount(Input)
 
-        await wrapper.setProps({ inputSize: 'sm' })
+        await wrapper.setProps({ size: 'sm' })
         expect(wrapper.classes()).toContain('h-9')
 
-        await wrapper.setProps({ inputSize: 'default' })
+        await wrapper.setProps({ size: 'default' })
         expect(wrapper.classes()).toContain('h-11')
 
-        await wrapper.setProps({ inputSize: 'lg' })
+        await wrapper.setProps({ size: 'lg' })
         expect(wrapper.classes()).toContain('h-14')
     })
 
@@ -64,11 +64,19 @@ describe('Input', () => {
         expect(wrapper.classes()).toContain('custom-class')
     })
 
-    it('supports readonly attribute', () => {
+    it('supports readonly prop', () => {
         const wrapper = mount(Input, {
-            attrs: { readonly: '' },
+            props: { readonly: true },
         })
         expect(wrapper.attributes('readonly')).toBeDefined()
+        expect(wrapper.classes()).toContain('cursor-default')
+    })
+
+    it('does not apply opacity-50 when readonly', () => {
+        const wrapper = mount(Input, {
+            props: { readonly: true },
+        })
+        expect(wrapper.classes()).not.toContain('opacity-50')
     })
 
     it('supports type="password"', () => {

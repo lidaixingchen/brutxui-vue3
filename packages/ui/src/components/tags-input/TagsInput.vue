@@ -2,13 +2,18 @@
 import { TagsInputRoot, type TagsInputRootProps, type TagsInputRootEmits, useForwardPropsEmits } from 'reka-ui'
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
+import { useLocale } from '../../composables/useLocale'
 
-const props = defineProps<TagsInputRootProps & { class?: string }>()
+const props = defineProps<TagsInputRootProps & { class?: string; ariaLabel?: string }>()
 const emits = defineEmits<TagsInputRootEmits>()
+
+const { t } = useLocale()
+
+const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('tagsInput.label'))
 
 const delegatedProps = computed(() => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { class: _, ...delegated } = props
+    const { class: _, ariaLabel: __, ...delegated } = props
     return delegated
 })
 
@@ -23,7 +28,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <TagsInputRoot v-bind="forwarded" :class="classes">
+    <TagsInputRoot v-bind="forwarded" :class="classes" :aria-label="resolvedAriaLabel">
         <slot />
     </TagsInputRoot>
 </template>

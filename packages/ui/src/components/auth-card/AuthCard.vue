@@ -147,7 +147,7 @@ function handleSubmit() {
 </LabelRoot>
                     <div class="relative">
                         <Mail :class="fieldIconClasses" />
-                        <Input :id="emailId" v-model="email" type="email" :placeholder="t('authCard.emailPlaceholder')" input-size="default" class="pl-10" />
+                        <Input :id="emailId" v-model="email" type="email" :placeholder="t('authCard.emailPlaceholder')" size="default" class="pl-10" />
                     </div>
                     <p v-if="emailError" class="text-sm font-bold text-brutal-destructive">
 {{ emailError }}
@@ -164,7 +164,7 @@ function handleSubmit() {
                     </div>
                     <div class="relative">
                         <Lock :class="fieldIconClasses" />
-                        <Input :id="passwordId" v-model="password" :type="passwordType" :placeholder="t('authCard.passwordPlaceholder')" input-size="default" class="pl-10 pr-10" />
+                        <Input :id="passwordId" v-model="password" :type="passwordType" :placeholder="t('authCard.passwordPlaceholder')" size="default" class="pl-10 pr-10" />
                         <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-brutal-muted-foreground active:translate-y-[calc(-50%+var(--brutal-pressed-offset,2px))] active:shadow-none transition-all" :aria-label="passwordToggleLabel" @click="showPassword = !showPassword">
                             <component :is="passwordToggleIcon" :class="iconClasses" />
                         </button>

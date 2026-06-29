@@ -23,6 +23,7 @@ export const en: Locale = {
         lastPage: 'Go to last page',
         page: 'Go to page {number}',
         label: 'pagination',
+        jumpPages: 'Jump pages',
     },
     carousel: {
         previousSlide: 'Previous slide',
@@ -411,5 +412,20 @@ export const en: Locale = {
     virtualScroll: {
         label: 'Virtual scroll list',
         empty: 'No data available',
+    },
+    switch: {
+        toggle: 'Toggle',
+    },
+    checkbox: {
+        check: 'Checkbox',
+    },
+    tagsInput: {
+        label: 'Tags input',
+    },
+    badge: {
+        close: 'Close',
+    },
+    alert: {
+        close: 'Close',
     },
 }

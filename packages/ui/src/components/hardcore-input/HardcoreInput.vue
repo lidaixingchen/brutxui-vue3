@@ -2,6 +2,7 @@
 import { ref, computed, toRef, inject, onUnmounted, useId } from 'vue'
 import { cn } from '../../lib/utils'
 import { useAudioEngine } from '../../composables/useAudioEngine'
+import { useFormFieldValidation } from '../../composables/useFormFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { hardcoreInputVariants, hardcoreInputFaceVariants } from './hardcore-input-variants'
 import { formFieldKey, type FormFieldContext } from '../form/form-context'
@@ -39,8 +40,6 @@ const emit = defineEmits<{
 
 const errorId = `input-error-${useId().replace(/:/g, '-')}`
 
-const validationState = ref<'default' | 'success' | 'error'>('default')
-const errorMessage = ref<string>('')
 const triggerShake = ref(false)
 const shakeTimer = ref<number | undefined>(undefined)
 
@@ -49,75 +48,64 @@ const { t } = useLocale()
 
 const formField = inject<FormFieldContext | null>(formFieldKey, null)
 
+const { validationState, errorMessage, validate: validateField } = useFormFieldValidation<string>({
+    rules: () => props.rules,
+    validateOn: () => props.validateOn,
+    defaultErrorMessage: () => t('hardcoreInput.invalidInput'),
+})
+
 onUnmounted(() => {
     if (shakeTimer.value) clearTimeout(shakeTimer.value)
 })
 
 const validate = (value: string) => {
-    if (props.rules.length === 0) {
-        if (validationState.value !== 'default') {
-            validationState.value = 'default'
-            errorMessage.value = ''
+    const rulesEmpty = props.rules.length === 0
+    const prevState = validationState.value
+    validateField(value)
+
+    if (rulesEmpty) {
+        if (prevState !== 'default' && validationState.value === 'default') {
             emit('validationChange', 'default')
         }
         return
     }
 
-    let isOk = true
-    let errText = ''
-
-    for (const rule of props.rules) {
-        const result = rule(value)
-        if (result !== true) {
-            isOk = false
-            errText = typeof result === 'string' ? result : t('hardcoreInput.invalidInput')
-            break
+    if (prevState !== validationState.value) {
+        if (validationState.value === 'error') {
+            audioEngine.playSound('fail')
+        } else if (validationState.value === 'success') {
+            audioEngine.playSound('success')
         }
     }
 
-    const prevState = validationState.value
-
-    if (!isOk) {
-        validationState.value = 'error'
-        errorMessage.value = errText
-        
-        if (prevState !== 'error') {
-            audioEngine.playSound('fail')
-        }
-        
-        if (props.shakeOnError) {
-            if (shakeTimer.value) clearTimeout(shakeTimer.value)
-            triggerShake.value = false
-            shakeTimer.value = window.setTimeout(() => {
-                shakeTimer.value = undefined
-                triggerShake.value = true
-            }, 10)
-        }
-        emit('validationChange', 'error', errText)
-    } else {
-        validationState.value = 'success'
-        errorMessage.value = ''
-        
-        if (prevState !== 'success') {
-            audioEngine.playSound('success')
-        }
-        emit('validationChange', 'success')
+    if (validationState.value === 'error' && props.shakeOnError) {
+        if (shakeTimer.value) clearTimeout(shakeTimer.value)
+        triggerShake.value = false
+        shakeTimer.value = window.setTimeout(() => {
+            shakeTimer.value = undefined
+            triggerShake.value = true
+        }, 10)
     }
 
     if (formField) {
-        formField.setError(!isOk ? errText : undefined)
+        formField.setError(validationState.value === 'error' ? errorMessage.value : undefined)
+    }
+
+    if (validationState.value === 'error') {
+        emit('validationChange', 'error', errorMessage.value)
+    } else if (validationState.value === 'success') {
+        emit('validationChange', 'success')
     }
 }
 
 const onInput = (e: Event) => {
     const value = (e.target as HTMLInputElement).value
     emit('update:modelValue', value)
-    
+
     if (formField) {
         formField.setValue(value)
     }
 
-    // 键盘打字音效
     audioEngine.playSound('type')
 
     if (props.validateOn === 'input') {
@@ -136,7 +124,6 @@ const onAnimationEnd = () => {
     triggerShake.value = false
 }
 
-// 暴露外部主动校验接口
 const triggerValidate = () => {
     validate(props.modelValue ?? '')
 }

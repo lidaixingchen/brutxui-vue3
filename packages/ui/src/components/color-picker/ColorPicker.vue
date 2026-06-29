@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { formatColor, parseColor } from '../../lib/color'
 import { type ColorPreset } from '../../lib/default-presets'
 import PopoverContent from '../popover/PopoverContent.vue'
 import { colorPickerTriggerVariants } from './color-picker-variants'
 import ColorPickerPanel from './ColorPickerPanel.vue'
 import { type ColorPickerEmits, type ColorPickerProps } from './types'
+import { useColorPicker } from '@/composables/useColorPicker'
 
 type TriggerVariantProps = VariantProps<typeof colorPickerTriggerVariants>
 
@@ -46,33 +46,23 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('colorPicker.placeholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('colorPicker.placeholder'))
 
-const open = ref(false)
-const displayValue = ref<string | null>(props.modelValue)
-
-watch(open, (isOpen) => {
-    if (isOpen) emit('open')
-    else {
-        emit('close')
-        if (displayValue.value !== props.modelValue) {
-            emit('change', props.modelValue)
-        }
-    }
+const {
+    open,
+    displayValue,
+    normalizedDisplay,
+    swatchStyle,
+    handlePanelUpdate,
+    handlePanelConfirm,
+    handlePanelClear,
+    handleClearClick,
+    handleTriggerKeydown,
+} = useColorPicker({
+    modelValue: () => props.modelValue,
+    format: () => props.format,
+    showAlpha: () => props.showAlpha,
+    disabled: () => props.disabled,
+    emit,
 })
-
-watch(() => props.modelValue, (value) => {
-    displayValue.value = value
-})
-
-const normalizedDisplay = computed(() => {
-    if (!props.modelValue) return null
-    const hsv = parseColor(props.modelValue)
-    if (!hsv) return null
-    return formatColor(hsv, props.format, props.showAlpha)
-})
-
-const swatchStyle = computed(() => ({
-    backgroundColor: props.modelValue ?? 'transparent',
-}))
 
 const triggerClasses = computed(() =>
     cn(
@@ -82,38 +72,7 @@ const triggerClasses = computed(() =>
     )
 )
 
-function handlePanelUpdate(value: string | null) {
-    displayValue.value = value
-    emit('update:modelValue', value)
-}
-
-function handlePanelConfirm(value: string | null) {
-    displayValue.value = value
-    emit('update:modelValue', value)
-    emit('change', value)
-    open.value = false
-}
-
-function handlePanelClear() {
-    displayValue.value = null
-    emit('update:modelValue', null)
-    emit('change', null)
-}
-
-function handleClearClick(event: MouseEvent) {
-    event.stopPropagation()
-    displayValue.value = null
-    emit('update:modelValue', null)
-    emit('change', null)
-}
-
-function handleTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled) return
-    if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
-        event.preventDefault()
-        open.value = true
-    }
-}
+defineExpose({ open })
 
 const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => props.presets)
 </script>

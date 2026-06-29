@@ -22,9 +22,9 @@ const modelValue = ref('')
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex flex-col gap-3">
-                <Textarea textarea-size="sm" placeholder="小号文本区域" />
-                <Textarea textarea-size="default" placeholder="默认文本区域" />
-                <Textarea textarea-size="lg" placeholder="大号文本区域" />
+                <Textarea size="sm" placeholder="小号文本区域" />
+                <Textarea size="default" placeholder="默认文本区域" />
+                <Textarea size="lg" placeholder="大号文本区域" />
             </div>
         </div>
 

@@ -104,3 +104,32 @@ describe('CarouselItem', () => {
         expect(wrapper.text()).toBe('Item content')
     })
 })
+
+describe('Carousel programmatic control (defineExpose)', () => {
+    it('exposes scrollPrev, scrollNext, scrollTo as functions', () => {
+        const wrapper = mount(Carousel, { ...localeProvide })
+        expect(typeof wrapper.vm.scrollPrev).toBe('function')
+        expect(typeof wrapper.vm.scrollNext).toBe('function')
+        expect(typeof wrapper.vm.scrollTo).toBe('function')
+    })
+
+    it('exposes selectedIndex as a readable value', () => {
+        const wrapper = mount(Carousel, { ...localeProvide })
+        expect(wrapper.vm.selectedIndex).toBe(0)
+    })
+
+    it('exposes canScrollPrev and canScrollNext as readable values', () => {
+        const wrapper = mount(Carousel, { ...localeProvide })
+        expect(typeof wrapper.vm.canScrollPrev).toBe('boolean')
+        expect(typeof wrapper.vm.canScrollNext).toBe('boolean')
+    })
+
+    it('calling exposed scroll methods does not throw when embla is unavailable', () => {
+        const wrapper = mount(Carousel, { ...localeProvide })
+        expect(() => {
+            wrapper.vm.scrollPrev()
+            wrapper.vm.scrollNext()
+            wrapper.vm.scrollTo(0)
+        }).not.toThrow()
+    })
+})

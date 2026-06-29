@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import useEmblaCarousel from 'embla-carousel-vue';
+import { computed, type ComputedRef } from 'vue';
 import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
 import { useLocale } from '@/composables/useLocale';
+import { useCarousel } from '@/composables/useCarousel';
 
 const { t } = useLocale();
 
@@ -30,92 +30,11 @@ const props = withDefaults(defineProps<CarouselProps>(), {
     class: undefined,
 });
 
-// @ts-expect-error vue-tsc does not recognize string-based template ref "emblaRef" as a usage of the script variable,
-// causing TS6133 (declared but never read). This is a known vue-tsc limitation with <script setup>.
-// Using `:ref="emblaRef"` instead is not viable because embla-carousel-vue's `Ref<HTMLElement | undefined>`
-// is incompatible with Vue's `VNodeRef` type expected by the ref directive.
-const [emblaRef, emblaApi] = useEmblaCarousel({ loop: props.loop });
-
-const selectedIndex = ref(0);
-const scrollSnaps = ref<number[]>([]);
-let autoplayTimer: ReturnType<typeof setInterval> | null = null;
-
-const canScrollPrev = computed(() => props.loop || selectedIndex.value > 0);
-const canScrollNext = computed(() => props.loop || selectedIndex.value < scrollSnaps.value.length - 1);
-
-function onInit() {
-    if (!emblaApi.value) return;
-    scrollSnaps.value = emblaApi.value.scrollSnapList();
-    selectedIndex.value = emblaApi.value.selectedScrollSnap();
-}
-
-function onSelect() {
-    if (!emblaApi.value) return;
-    selectedIndex.value = emblaApi.value.selectedScrollSnap();
-}
-
-function scrollPrev() {
-    emblaApi.value?.scrollPrev();
-}
-
-function scrollNext() {
-    emblaApi.value?.scrollNext();
-}
-
-function scrollTo(index: number) {
-    emblaApi.value?.scrollTo(index);
-}
-
-function startAutoplay() {
-    stopAutoplay();
-    if (!props.autoplay) return;
-    autoplayTimer = setInterval(() => {
-        if (emblaApi.value && scrollSnaps.value.length > 0) {
-            if (!props.loop && selectedIndex.value === scrollSnaps.value.length - 1) {
-                stopAutoplay()
-            } else {
-                emblaApi.value.scrollNext();
-            }
-        }
-    }, props.autoplayDelay);
-}
-
-function stopAutoplay() {
-    if (autoplayTimer) {
-        clearInterval(autoplayTimer);
-        autoplayTimer = null;
-    }
-}
-
-onMounted(() => {
-    if (!emblaApi.value) return;
-    emblaApi.value.on('init', onInit);
-    emblaApi.value.on('select', onSelect);
-    emblaApi.value.on('reInit', onInit);
-    onInit();
-    startAutoplay();
-});
-
-watch(() => props.autoplay, (val) => {
-    if (val) startAutoplay();
-    else stopAutoplay();
-});
-
-watch(() => props.loop, () => {
-    if (emblaApi.value) emblaApi.value.reInit({ loop: props.loop });
-});
-
-watch(() => props.autoplayDelay, () => {
-    if (props.autoplay) startAutoplay();
-});
-
-onUnmounted(() => {
-    stopAutoplay()
-    if (emblaApi.value) {
-        emblaApi.value.off('init', onInit)
-        emblaApi.value.off('select', onSelect)
-        emblaApi.value.off('reInit', onInit)
-    }
+// @ts-expect-error vue-tsc does not recognize string-based template ref "emblaRef" as a usage of the destructured variable, causing TS6133.
+const { emblaRef, selectedIndex, scrollSnaps, canScrollPrev, canScrollNext, scrollPrev, scrollNext, scrollTo, startAutoplay, stopAutoplay } = useCarousel({
+    loop: () => props.loop,
+    autoplay: () => props.autoplay,
+    autoplayDelay: () => props.autoplayDelay,
 });
 
 const rootClass = computed(() =>
@@ -147,6 +66,17 @@ const dotInactiveClasses = computed(() =>
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
     )
 );
+
+const exposedSelectedIndex: ComputedRef<number> = computed(() => selectedIndex.value);
+
+defineExpose({
+    scrollPrev,
+    scrollNext,
+    scrollTo,
+    selectedIndex: exposedSelectedIndex,
+    canScrollPrev,
+    canScrollNext,
+});
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import { computed, ref, watch, onMounted, onUnmounted, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { noiseBackgroundVariants } from './noise-background-variants'
+import { useReducedMotion } from '../../composables/useReducedMotion'
 
 type NoiseBackgroundVariantProps = VariantProps<typeof noiseBackgroundVariants>
 
@@ -39,6 +40,8 @@ const props = withDefaults(defineProps<NoiseBackgroundProps>(), {
     class: undefined,
 })
 
+const prefersReducedMotion = useReducedMotion()
+
 // 使用 Vue ref 替代直接 DOM 访问
 const turbulenceRef = ref<SVGFETurbulenceElement | null>(null)
 
@@ -50,8 +53,9 @@ let animationFrame: number | null = null
 const currentFrequency = ref(props.frequency)
 
 function startAnimation() {
-    // SSR 兼容性检查
+    // SSR 兼容性检查 + 动效降级
     if (!props.animated || typeof window === 'undefined' || props.animationDuration <= 0) return
+    if (prefersReducedMotion.value) return
 
     stopAnimation()
 
@@ -94,6 +98,15 @@ watch(() => props.animated, (newVal) => {
 // 响应 frequency 和 animationDuration 属性变化
 watch(() => [props.frequency, props.animationDuration], () => {
     if (props.animated) {
+        startAnimation()
+    }
+})
+
+// 响应动效偏好变化
+watch(prefersReducedMotion, (reduced) => {
+    if (reduced) {
+        stopAnimation()
+    } else if (props.animated) {
         startAnimation()
     }
 })

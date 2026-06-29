@@ -155,25 +155,24 @@
 
 > 组件库的 API 一致性直接影响开发者的认知负荷和学习曲线。
 
-### 4.1 Input/Textarea — `inputSize`/`textareaSize` → `size` 兼容别名
+### 4.1 Input/Textarea — `inputSize`/`textareaSize` → `size` 统一命名
 
 - **文件**：`packages/ui/src/components/input/input-variants.ts`、`Input.vue`、`packages/ui/src/components/textarea/textarea-variants.ts`、`Textarea.vue`
 - **现状**：Input 用 `inputSize`、Textarea 用 `textareaSize`，其余 90%+ 组件用 `size`
-- **改动**（向后兼容方案）：
-  - CVA 变体文件保留 `inputSize`/`textareaSize` 不改（避免破坏现有用户）
-  - 组件 Props 新增 `size` 别名，内部映射到 CVA 的 `inputSize`/`textareaSize`
-  - 同时支持 `size` 和 `inputSize`/`textareaSize`，优先使用具体名称（向后兼容）
+- **改动**（直接重命名，**无需向后兼容**）：
+  - CVA 变体文件中将 `inputSize`/`textareaSize` 直接重命名为 `size`
+  - 组件 Props 中 `inputSize`/`textareaSize` 直接改为 `size`，**移除旧名**
+  - **不保留任何别名**：本方案明确不要求向后兼容，旧名一次性移除，避免长期维护两套 API
   - 使用 `useLocale` 不涉及
 - **示例**：
   ```typescript
   // Input.vue
   interface InputProps {
-    size?: 'sm' | 'default' | 'lg'  // 新增别名
-    inputSize?: 'sm' | 'default' | 'lg'  // 保留旧名
+    size?: 'sm' | 'default' | 'lg'  // 直接使用 size，移除 inputSize
   }
-  const resolvedSize = computed(() => props.inputSize ?? props.size ?? 'default')
+  const resolvedSize = computed(() => props.size ?? 'default')
   ```
-- **测试**：验证 `size` 和 `inputSize` 均可正常工作
+- **测试**：验证 `size` prop 正常工作；确认 `inputSize`/`textareaSize` 已彻底移除
 
 ### 4.2 Input — 添加 `readonly` prop
 
@@ -417,9 +416,9 @@
 
 ## 约定与决策
 
-- **向后兼容**：所有改动必须保持现有 API 不变，新增 prop 均有合理默认值
+- **无需向后兼容**：本方案明确不要求向后兼容。所有破坏性改动（如重命名 prop、移除旧 API）可直接执行，**无需保留别名或旧名兼容**。旧 API 一次性移除，避免长期维护两套接口。
 - **变体命名**：遵循现有约定 `default`/`primary`/`secondary`/`accent`/`success`/`danger`/`muted`/`outline`
-- **尺寸命名**：新增 `size` 的组件统一使用 `sm`/`default`/`lg`；旧名 `inputSize`/`textareaSize` 通过别名兼容
+- **尺寸命名**：统一使用 `size` prop，取值 `sm`/`default`/`lg`；旧名 `inputSize`/`textareaSize` 直接重命名为 `size`，不保留别名
 - **国际化**：新增用户可见文本使用 `useLocale` 的 `t()` 函数
 - **无障碍**：所有交互组件必须有 `ariaLabel` prop；动画组件必须尊重 `prefers-reduced-motion`
 - **CSS 动画**：优先使用 `styles.css` 中已有的 `brutal-*` 动画类，避免在 `<style scoped>` 中重复定义 `@keyframes`
@@ -441,5 +440,6 @@
 
 | 日期 | 版本 | 说明 |
 | --- | --- | --- |
+| 2026-06-30 | v1.2 | 明确方案**无需向后兼容**：4.1 节由"兼容别名"改为"直接重命名 `inputSize`/`textareaSize` → `size`，移除旧名"；"约定与决策"中"向后兼容"条款改为"无需向后兼容"，尺寸命名条款移除别名兼容说明 |
 | 2026-06-30 | v1.1 | 修正数据：useReducedMotion 计数 6→5、缺失 ARIA props 组件数 9→6、无障碍测试文件路径和覆盖范围；补充 Input/Textarea 已达标说明、RadioGroup orientation 参考、Carousel hover 行为说明、Toast 使用 performance.now()、useTheme 类型约束 |
 | 2026-06-30 | v1.0 | 初始版本，规划 8 批深化拓展方向 |

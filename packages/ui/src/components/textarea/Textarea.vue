@@ -10,8 +10,9 @@ type TextareaVariantProps = VariantProps<typeof textareaVariants>
 interface TextareaProps {
     modelValue?: string
     variant?: NonNullable<TextareaVariantProps['variant']>
-    textareaSize?: NonNullable<TextareaVariantProps['textareaSize']>
+    size?: NonNullable<TextareaVariantProps['size']>
     disabled?: boolean
+    readonly?: boolean
     placeholder?: string
     /** 无障碍标签 */
     ariaLabel?: string
@@ -29,8 +30,9 @@ interface TextareaProps {
 const props = withDefaults(defineProps<TextareaProps>(), {
     modelValue: undefined,
     variant: 'default',
-    textareaSize: 'default',
+    size: 'default',
     disabled: false,
+    readonly: false,
     placeholder: undefined,
     ariaLabel: undefined,
     ariaLabelledby: undefined,
@@ -47,7 +49,11 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))
 
 const classes = computed(() =>
-    cn(textareaVariants({ variant: props.variant, textareaSize: props.textareaSize }), props.class)
+    cn(
+        textareaVariants({ variant: props.variant, size: props.size }),
+        props.readonly && 'cursor-default',
+        props.class
+    )
 )
 </script>
 
@@ -55,6 +61,7 @@ const classes = computed(() =>
     <textarea
         :value="modelValue"
         :disabled="disabled"
+        :readonly="readonly"
         :placeholder="resolvedPlaceholder"
         :class="classes"
         :aria-label="ariaLabel"

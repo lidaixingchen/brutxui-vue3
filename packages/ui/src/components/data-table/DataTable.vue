@@ -198,6 +198,35 @@ const emptyClasses = computed(() => cn(dataTableEmptyVariants()))
 const paginationClasses = computed(() => cn(dataTablePaginationVariants()))
 const loadingClasses = computed(() => cn(dataTableLoadingVariants()))
 
+defineExpose({
+    sort: {
+        toggleSort: sort.toggleSort,
+        sortState: sort.sortState,
+    },
+    filter: {
+        filterState: filter.filterState,
+        setGlobalFilter: (value: string) => {
+            filter.filterState.value = { ...filter.filterState.value, global: value }
+        },
+    },
+    selection: {
+        toggleRow: selection.toggleRowSelection,
+        toggleAllRows: selection.toggleAllSelection,
+        clearSelection: selection.clearSelection,
+        getSelectedRows: selection.getSelectedRows,
+        selectedRows: selection.selectedRows,
+        isAllSelected: selection.isAllSelected,
+    },
+    pagination: {
+        goToPage: pagination.goToPage,
+        nextPage: () => pagination.goToPage(pagination.currentPage.value + 1),
+        previousPage: () => pagination.goToPage(pagination.currentPage.value - 1),
+        setPageSize: pagination.setPageSize,
+        pageIndex: pagination.currentPage,
+        pageCount: pagination.totalPages,
+    },
+})
+
 function getHeadClasses(column: DataTableColumn<T>): string {
     return cn(
         dataTableHeadVariants({
@@ -243,7 +272,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
             <div v-if="filterable" class="flex items-center gap-2">
                 <Input
                     v-model="filter.filterState.value.global"
-                    input-size="sm"
+                    size="sm"
                     :placeholder="t('dataTable.filterPlaceholder')"
                     :aria-label="t('dataTable.filterPlaceholder')"
                 />

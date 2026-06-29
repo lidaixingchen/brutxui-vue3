@@ -67,6 +67,8 @@ provideCommandRootContext({
     filterState,
 })
 
+defineExpose({ filterSearch })
+
 const classes = computed(() =>
     cn(
         'flex h-full w-full flex-col overflow-hidden',

@@ -96,6 +96,47 @@ describe('DialogContent', () => {
         expect(closeIcon.classes()).toContain('w-4')
         expect(closeIcon.classes()).toContain('stroke-[3]')
     })
+
+    describe('size variants', () => {
+        it('applies default max-w-lg when size is default', () => {
+            const wrapper = mount(DialogContent, {
+                global: { stubs: contentStubs },
+            })
+            expect(wrapper.find('[data-testid="dialog-content"]').classes()).toContain('max-w-lg')
+        })
+
+        it('applies max-w-sm when size is sm', () => {
+            const wrapper = mount(DialogContent, {
+                props: { size: 'sm' },
+                global: { stubs: contentStubs },
+            })
+            expect(wrapper.find('[data-testid="dialog-content"]').classes()).toContain('max-w-sm')
+        })
+
+        it('applies max-w-2xl when size is lg', () => {
+            const wrapper = mount(DialogContent, {
+                props: { size: 'lg' },
+                global: { stubs: contentStubs },
+            })
+            expect(wrapper.find('[data-testid="dialog-content"]').classes()).toContain('max-w-2xl')
+        })
+
+        it('applies max-w-4xl when size is xl', () => {
+            const wrapper = mount(DialogContent, {
+                props: { size: 'xl' },
+                global: { stubs: contentStubs },
+            })
+            expect(wrapper.find('[data-testid="dialog-content"]').classes()).toContain('max-w-4xl')
+        })
+
+        it('applies max-w-[calc(100vw-2rem)] when size is full', () => {
+            const wrapper = mount(DialogContent, {
+                props: { size: 'full' },
+                global: { stubs: contentStubs },
+            })
+            expect(wrapper.find('[data-testid="dialog-content"]').classes()).toContain('max-w-[calc(100vw-2rem)]')
+        })
+    })
 })
 
 describe('DialogHeader', () => {

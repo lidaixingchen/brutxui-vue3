@@ -20,16 +20,16 @@ describe('Textarea', () => {
         expect(wrapper.classes()).toContain('border-brutal-success')
     })
 
-    it('applies size classes via textareaSize prop', async () => {
+    it('applies size classes via size prop', async () => {
         const wrapper = mount(Textarea)
 
-        await wrapper.setProps({ textareaSize: 'sm' })
+        await wrapper.setProps({ size: 'sm' })
         expect(wrapper.classes()).toContain('text-sm')
 
-        await wrapper.setProps({ textareaSize: 'default' })
+        await wrapper.setProps({ size: 'default' })
         expect(wrapper.classes()).toContain('text-base')
 
-        await wrapper.setProps({ textareaSize: 'lg' })
+        await wrapper.setProps({ size: 'lg' })
         expect(wrapper.classes()).toContain('text-lg')
     })
 
@@ -61,5 +61,20 @@ describe('Textarea', () => {
             props: { class: 'custom-class' },
         })
         expect(wrapper.classes()).toContain('custom-class')
+    })
+
+    it('supports readonly prop', () => {
+        const wrapper = mount(Textarea, {
+            props: { readonly: true },
+        })
+        expect(wrapper.attributes('readonly')).toBeDefined()
+        expect(wrapper.classes()).toContain('cursor-default')
+    })
+
+    it('does not apply opacity-50 when readonly', () => {
+        const wrapper = mount(Textarea, {
+            props: { readonly: true },
+        })
+        expect(wrapper.classes()).not.toContain('opacity-50')
     })
 })

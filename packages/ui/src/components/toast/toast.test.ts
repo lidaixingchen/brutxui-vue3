@@ -103,6 +103,69 @@ describe('Toast', () => {
         expect(wrapper.emitted('close')).toBeTruthy()
     })
 
+    describe('pauseOnHover', () => {
+        it('defaults to true', () => {
+            const wrapper = mount(Toast, { global: globalProvide })
+            expect(wrapper.props('pauseOnHover')).toBe(true)
+        })
+
+        it('pauses timer on mouseenter', async () => {
+            vi.useFakeTimers()
+            const wrapper = mount(Toast, {
+                props: { duration: 5000, pauseOnHover: true },
+                global: globalProvide,
+            })
+            vi.advanceTimersByTime(2000)
+            await wrapper.trigger('mouseenter')
+            vi.advanceTimersByTime(10000)
+            expect(wrapper.emitted('close')).toBeFalsy()
+        })
+
+        it('resumes timer on mouseleave with remaining time', async () => {
+            vi.useFakeTimers()
+            const wrapper = mount(Toast, {
+                props: { duration: 5000, pauseOnHover: true },
+                global: globalProvide,
+            })
+            vi.advanceTimersByTime(2000)
+            await wrapper.trigger('mouseenter')
+            vi.advanceTimersByTime(10000)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            await wrapper.trigger('mouseleave')
+            vi.advanceTimersByTime(3000)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            vi.advanceTimersByTime(300)
+            expect(wrapper.emitted('close')).toBeTruthy()
+        })
+
+        it('does not pause when pauseOnHover is false', async () => {
+            vi.useFakeTimers()
+            const wrapper = mount(Toast, {
+                props: { duration: 5000, pauseOnHover: false },
+                global: globalProvide,
+            })
+            vi.advanceTimersByTime(2000)
+            await wrapper.trigger('mouseenter')
+            vi.advanceTimersByTime(3000)
+            expect(wrapper.emitted('close')).toBeFalsy()
+            vi.advanceTimersByTime(300)
+            expect(wrapper.emitted('close')).toBeTruthy()
+        })
+
+        it('syncs progress bar animation-play-state on pause', async () => {
+            vi.useFakeTimers()
+            const wrapper = mount(Toast, {
+                props: { duration: 5000, pauseOnHover: true },
+                global: globalProvide,
+            })
+            const progressBar = wrapper.find('.animate-nb-shrink')
+            expect(progressBar.attributes('style')).toContain('animation-play-state: running')
+            vi.advanceTimersByTime(1000)
+            await wrapper.trigger('mouseenter')
+            expect(progressBar.attributes('style')).toContain('animation-play-state: paused')
+        })
+    })
+
     it('renders size variants', () => {
         const wrapper = mount(Toast, {
             props: { size: 'sm' },

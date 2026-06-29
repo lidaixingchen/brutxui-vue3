@@ -1,7 +1,11 @@
 import { mount } from '@vue/test-utils'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Alert from './Alert.vue'
 import AlertTitle from './AlertTitle.vue'
 import AlertDescription from './AlertDescription.vue'
+
+const globalProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
 describe('Alert', () => {
     it('renders with default variant', () => {
@@ -47,6 +51,54 @@ describe('Alert', () => {
     it('applies custom class', () => {
         const wrapper = mount(Alert, { props: { class: 'my-alert' } })
         expect(wrapper.classes()).toContain('my-alert')
+    })
+
+    describe('closable', () => {
+        it('does not render close button by default', () => {
+            const wrapper = mount(Alert, { ...globalProvide })
+            expect(wrapper.find('button[aria-label="Close"]').exists()).toBe(false)
+        })
+
+        it('renders close button when closable is true', () => {
+            const wrapper = mount(Alert, {
+                props: { closable: true },
+                ...globalProvide,
+            })
+            expect(wrapper.find('button[aria-label="Close"]').exists()).toBe(true)
+        })
+
+        it('adds pr-12 class when closable', () => {
+            const wrapper = mount(Alert, {
+                props: { closable: true },
+                ...globalProvide,
+            })
+            expect(wrapper.classes()).toContain('pr-12')
+        })
+
+        it('emits close event when close button clicked', async () => {
+            const wrapper = mount(Alert, {
+                props: { closable: true },
+                ...globalProvide,
+            })
+            await wrapper.find('button[aria-label="Close"]').trigger('click')
+            expect(wrapper.emitted('close')).toBeTruthy()
+            expect(wrapper.emitted('close')!.length).toBe(1)
+        })
+    })
+
+    describe('action slot', () => {
+        it('renders action slot content', () => {
+            const wrapper = mount(Alert, {
+                slots: { action: '<button class="retry-btn">Retry</button>' },
+                ...globalProvide,
+            })
+            expect(wrapper.find('.retry-btn').exists()).toBe(true)
+        })
+
+        it('does not render action container when slot is empty', () => {
+            const wrapper = mount(Alert, { ...globalProvide })
+            expect(wrapper.find('.mt-3.flex.items-center.gap-2').exists()).toBe(false)
+        })
     })
 })
 

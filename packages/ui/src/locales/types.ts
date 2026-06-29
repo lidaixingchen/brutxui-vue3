@@ -22,6 +22,7 @@ export interface PaginationLocale {
     lastPage: string
     page: string
     label: string
+    jumpPages: string
 }
 
 export interface CarouselLocale {
@@ -474,6 +475,26 @@ export interface VirtualScrollLocale {
     empty: string
 }
 
+export interface SwitchLocale {
+    toggle: string
+}
+
+export interface CheckboxLocale {
+    check: string
+}
+
+export interface TagsInputLocale {
+    label: string
+}
+
+export interface BadgeLocale {
+    close: string
+}
+
+export interface AlertLocale {
+    close: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -540,4 +561,9 @@ export interface Locale {
     numberInput: NumberInputLocale
     textarea: TextareaLocale
     virtualScroll: VirtualScrollLocale
+    switch: SwitchLocale
+    checkbox: CheckboxLocale
+    tagsInput: TagsInputLocale
+    badge: BadgeLocale
+    alert: AlertLocale
 }

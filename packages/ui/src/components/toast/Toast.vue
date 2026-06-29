@@ -19,6 +19,7 @@ interface ToastProps {
     title?: string
     description?: string
     duration?: number
+    pauseOnHover?: boolean
     class?: string
     iconSize?: IconSize
 }
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<ToastProps>(), {
     title: undefined,
     description: undefined,
     duration: DEFAULT_DURATION,
+    pauseOnHover: true,
     class: undefined,
     iconSize: 'xl',
 })
@@ -38,8 +40,11 @@ const emit = defineEmits<{ close: [] }>()
 const { t } = useLocale()
 
 const isLeaving = ref(false)
+const isPaused = ref(false)
 const timer = ref<number | undefined>(undefined)
 const leaveTimer = ref<number | undefined>(undefined)
+const remainingTime = ref(props.duration)
+let startTime = 0
 
 function startLeave() {
     if (isLeaving.value) return
@@ -49,11 +54,35 @@ function startLeave() {
     }, LEAVE_ANIMATION_DELAY)
 }
 
+function startTimer() {
+    startTime = performance.now()
+    timer.value = window.setTimeout(() => {
+        startLeave()
+    }, remainingTime.value)
+}
+
+function pauseTimer() {
+    if (isLeaving.value || !timer.value) return
+    window.clearTimeout(timer.value)
+    timer.value = undefined
+    remainingTime.value -= performance.now() - startTime
+    isPaused.value = true
+}
+
+function resumeTimer() {
+    if (isLeaving.value || timer.value) return
+    if (remainingTime.value <= 0) {
+        startLeave()
+        return
+    }
+    isPaused.value = false
+    startTimer()
+}
+
 onMounted(() => {
     if (props.duration) {
-        timer.value = window.setTimeout(() => {
-            startLeave()
-        }, props.duration)
+        remainingTime.value = props.duration
+        startTimer()
     }
 })
 
@@ -61,6 +90,14 @@ onUnmounted(() => {
     if (timer.value) window.clearTimeout(timer.value)
     if (leaveTimer.value) window.clearTimeout(leaveTimer.value)
 })
+
+function onMouseEnter() {
+    if (props.pauseOnHover) pauseTimer()
+}
+
+function onMouseLeave() {
+    if (props.pauseOnHover) resumeTimer()
+}
 
 const classes = computed(() =>
     cn(
@@ -85,14 +122,19 @@ const mainIconClasses = computed(() =>
 )
 
 const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+
+const progressBarStyle = computed(() => ({
+    animationDuration: `${props.duration}ms`,
+    animationPlayState: isPaused.value ? 'paused' as const : 'running' as const,
+}))
 </script>
 
 <template>
-    <div :class="classes" role="alert">
+    <div :class="classes" role="alert" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
         <div v-if="duration" class="absolute top-0 left-0 right-0 h-1 bg-brutal-fg/10 overflow-hidden">
             <div
                 class="h-full bg-brutal-fg/30 animate-nb-shrink"
-                :style="{ animationDuration: `${duration}ms` }"
+                :style="progressBarStyle"
             />
         </div>
 

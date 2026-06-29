@@ -22,9 +22,9 @@ const modelValue = ref('')
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex flex-col gap-3">
-                <Input input-size="sm" placeholder="小型输入" />
-                <Input input-size="default" placeholder="默认输入" />
-                <Input input-size="lg" placeholder="大型输入" />
+                <Input size="sm" placeholder="小型输入" />
+                <Input size="default" placeholder="默认输入" />
+                <Input size="lg" placeholder="大型输入" />
             </div>
         </div>
 

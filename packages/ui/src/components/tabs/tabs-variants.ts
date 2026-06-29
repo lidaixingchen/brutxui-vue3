@@ -12,9 +12,14 @@ export const tabsListVariants = cva(
                 default: 'h-12',
                 lg: 'h-14',
             },
+            orientation: {
+                horizontal: '',
+                vertical: 'flex-col',
+            },
         },
         defaultVariants: {
             size: 'default',
+            orientation: 'horizontal',
         },
     }
 )

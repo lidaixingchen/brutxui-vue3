@@ -1,8 +1,10 @@
 import { mount } from '@vue/test-utils'
+import { ref } from 'vue'
 import Accordion from './Accordion.vue'
 import AccordionItem from './AccordionItem.vue'
 import AccordionTrigger from './AccordionTrigger.vue'
 import AccordionContent from './AccordionContent.vue'
+import { accordionItemKey } from './accordion-key'
 
 const primitiveStub = {
     template: '<div><slot /></div>',
@@ -157,5 +159,51 @@ describe('AccordionContent', () => {
         })
         const innerDiv = wrapper.find('[class*="custom-content"]')
         expect(innerDiv.exists()).toBe(true)
+    })
+
+    it('applies flat variant background class', () => {
+        const wrapper = mount(AccordionContent, {
+            global: {
+                stubs: { AccordionContent: primitiveStub },
+                provide: { [accordionItemKey]: { variant: ref('flat') } },
+            },
+        })
+        const innerDiv = wrapper.find('.border-t-3')
+        expect(innerDiv.classes()).toContain('bg-brutal-muted/30')
+    })
+
+    it('applies ghost variant with transparent border', () => {
+        const wrapper = mount(AccordionContent, {
+            global: {
+                stubs: { AccordionContent: primitiveStub },
+                provide: { [accordionItemKey]: { variant: ref('ghost') } },
+            },
+        })
+        const innerDiv = wrapper.find('.border-t-3')
+        expect(innerDiv.classes()).toContain('border-transparent')
+    })
+
+    it('applies interactive variant hover class', () => {
+        const wrapper = mount(AccordionContent, {
+            global: {
+                stubs: { AccordionContent: primitiveStub },
+                provide: { [accordionItemKey]: { variant: ref('interactive') } },
+            },
+        })
+        const innerDiv = wrapper.find('.border-t-3')
+        expect(innerDiv.classes()).toContain('hover:bg-brutal-muted/20')
+    })
+
+    it('default variant has no extra content classes beyond base', () => {
+        const wrapper = mount(AccordionContent, {
+            global: {
+                stubs: { AccordionContent: primitiveStub },
+                provide: { [accordionItemKey]: { variant: ref('default') } },
+            },
+        })
+        const innerDiv = wrapper.find('.border-t-3')
+        expect(innerDiv.classes()).not.toContain('bg-brutal-muted/30')
+        expect(innerDiv.classes()).not.toContain('border-transparent')
+        expect(innerDiv.classes()).toContain('border-t-3')
     })
 })

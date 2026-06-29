@@ -81,4 +81,50 @@ describe('useTheme', () => {
         expect(document.documentElement.classList.contains('theme-mono')).toBe(true)
         expect(document.documentElement.classList.contains('dark')).toBe(true)
     })
+
+    describe('setCustomVariable', () => {
+        it('returns setCustomVariable function', () => {
+            const { setCustomVariable } = createTheme()
+            expect(typeof setCustomVariable).toBe('function')
+        })
+
+        it('sets a CSS custom property on document root', () => {
+            const { setCustomVariable } = createTheme()
+            setCustomVariable('--brutal-primary', '#ff0000')
+            expect(document.documentElement.style.getPropertyValue('--brutal-primary')).toBe('#ff0000')
+        })
+
+        it('overwrites existing custom property value', () => {
+            const { setCustomVariable } = createTheme()
+            setCustomVariable('--brutal-primary', '#ff0000')
+            setCustomVariable('--brutal-primary', '#00ff00')
+            expect(document.documentElement.style.getPropertyValue('--brutal-primary')).toBe('#00ff00')
+        })
+
+        it('accepts any value string', () => {
+            const { setCustomVariable } = createTheme()
+            setCustomVariable('--brutal-radius', '8px')
+            expect(document.documentElement.style.getPropertyValue('--brutal-radius')).toBe('8px')
+        })
+    })
+
+    describe('removeCustomVariable', () => {
+        it('returns removeCustomVariable function', () => {
+            const { removeCustomVariable } = createTheme()
+            expect(typeof removeCustomVariable).toBe('function')
+        })
+
+        it('removes a CSS custom property from document root', () => {
+            const { setCustomVariable, removeCustomVariable } = createTheme()
+            setCustomVariable('--brutal-primary', '#ff0000')
+            expect(document.documentElement.style.getPropertyValue('--brutal-primary')).toBe('#ff0000')
+            removeCustomVariable('--brutal-primary')
+            expect(document.documentElement.style.getPropertyValue('--brutal-primary')).toBe('')
+        })
+
+        it('does not throw when removing non-existent property', () => {
+            const { removeCustomVariable } = createTheme()
+            expect(() => removeCustomVariable('--nonexistent')).not.toThrow()
+        })
+    })
 })

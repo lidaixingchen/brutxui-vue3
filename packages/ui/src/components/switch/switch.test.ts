@@ -76,4 +76,19 @@ describe('Switch', () => {
             if (cls) expect(el.classes()).toContain(cls)
         })
     })
+
+    it('provides default aria-label from locale', () => {
+        const wrapper = mount(Switch, {
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('开关')
+    })
+
+    it('uses custom ariaLabel when provided', () => {
+        const wrapper = mount(Switch, {
+            props: { ariaLabel: '通知开关' },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('[role="switch"]').attributes('aria-label')).toBe('通知开关')
+    })
 })

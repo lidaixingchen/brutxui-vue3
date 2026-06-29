@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 import { MoveHorizontal } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { useReducedMotion } from '@/composables/useReducedMotion'
 import { beforeAfterRootVariants, beforeAfterHandleVariants } from './before-after-variants'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<BeforeAfterProps>(), {
 })
 
 const { t } = useLocale()
+const prefersReducedMotion = useReducedMotion()
 
 const resolvedBeforeAlt = computed(() => props.beforeAlt ?? t('beforeAfter.before'))
 const resolvedAfterAlt = computed(() => props.afterAlt ?? t('beforeAfter.after'))
@@ -40,6 +42,10 @@ const sliderVal = ref(props.defaultValue)
 watch(() => props.defaultValue, (val) => {
     sliderVal.value = val
 })
+
+const motionTransition = computed(() =>
+    prefersReducedMotion.value ? '' : 'transition-[left,top,clip-path] duration-100 ease-out'
+)
 
 const clipStyle = computed(() => {
     if (props.orientation === 'vertical') {
@@ -60,7 +66,8 @@ const sliderLineClasses = computed(() =>
         'absolute bg-brutal-fg pointer-events-none z-10',
         props.orientation === 'vertical'
             ? 'left-0 right-0 h-[4px] -translate-y-1/2'
-            : 'top-0 bottom-0 w-[4px] -translate-x-1/2'
+            : 'top-0 bottom-0 w-[4px] -translate-x-1/2',
+        motionTransition.value,
     )
 )
 
@@ -69,7 +76,10 @@ const rootClasses = computed(() =>
 )
 
 const handleClasses = computed(() =>
-    cn(beforeAfterHandleVariants({ orientation: props.orientation }))
+    cn(
+        beforeAfterHandleVariants({ orientation: props.orientation }),
+        motionTransition.value,
+    )
 )
 
 const iconClasses = computed(() =>
@@ -105,6 +115,7 @@ const inputStyle = computed(() => {
 
         <div
             class="absolute inset-0 w-full h-full pointer-events-none"
+            :class="motionTransition"
             :style="clipStyle"
         >
             <img
