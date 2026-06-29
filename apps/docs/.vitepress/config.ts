@@ -4,6 +4,27 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
     lang: 'zh-CN',
     title: 'BrutxUI',
+    locales: {
+        root: {
+            label: '简体中文',
+            themeConfig: {
+                outline: {
+                    label: '本页目录',
+                    level: [2, 3],
+                },
+                lastUpdated: {
+                    text: '最后更新于',
+                },
+                docFooter: {
+                    prev: '上一页',
+                    next: '下一页',
+                },
+                darkModeSwitchLabel: '外观',
+                sidebarMenuLabel: '菜单',
+                returnToTopLabel: '回到顶部',
+            },
+        },
+    },
     description: 'Neo-Brutalism 风格 Vue 3 组件库',
     base: '/brutxui-vue3/',
     lastUpdated: true,
@@ -292,26 +313,6 @@ export default defineConfig({
         socialLinks: [
             { icon: 'github', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
         ],
-        locales: {
-            root: {
-                label: '简体中文',
-                outline: {
-                    label: '本页目录',
-                    level: [2, 3],
-                },
-                lastUpdated: {
-                    text: '最后更新于',
-                },
-                docFooter: {
-                    prev: '上一页',
-                    next: '下一页',
-                },
-                returnToTop: '回到顶部',
-                darkModeSwitchLabel: '外观',
-                sidebarMenuLabel: '菜单',
-                returnToTopLabel: '回到顶部',
-            },
-        },
         footer: {
             message: '蛮力铸就。',
             copyright: `© ${new Date().getFullYear()} BrutxUI · MIT License`,
