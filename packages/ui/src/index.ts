@@ -65,7 +65,8 @@ export { PopoverRoot as Popover, PopoverTrigger, PopoverAnchor } from 'reka-ui'
 export { default as PopoverContent } from './components/popover/PopoverContent.vue'
 export { popoverContentVariants } from './components/popover/popover-variants'
 
-export { TooltipProvider, TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
+export { default as TooltipProvider } from './components/tooltip/TooltipProvider.vue'
+export { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 export { default as TooltipContent } from './components/tooltip/TooltipContent.vue'
 export { tooltipContentVariants } from './components/tooltip/tooltip-variants'
 

@@ -17,13 +17,13 @@ import {
             </Tooltip>
         </TooltipProvider>
 
-        <TooltipProvider :delay-duration="700">
+        <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger>
                     <Button variant="secondary">默认延迟</Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>delayDuration = 700</p>
+                    <p>默认 delayDuration = 400</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

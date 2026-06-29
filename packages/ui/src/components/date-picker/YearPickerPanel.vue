@@ -138,7 +138,7 @@ function getYearClasses(year: number): string {
                 </Button>
             </div>
 
-            <div class="grid grid-cols-3 gap-1 p-2 bg-brutal-bg" role="grid">
+            <div class="grid grid-cols-4 gap-1 p-2 bg-brutal-bg" role="grid">
                 <button
                     v-for="year in years"
                     :key="`year-${year}`"

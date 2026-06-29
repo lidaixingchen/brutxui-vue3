@@ -70,7 +70,7 @@ import { TooltipProvider } from 'brutx-ui-vue'
     </Tooltip>
 </TooltipProvider>
 
-<TooltipProvider :delay-duration="700">
+<TooltipProvider>
     <Tooltip :delay-duration="1500">
         <TooltipTrigger>
             <Button>长延迟</Button>
@@ -97,7 +97,7 @@ import { TooltipProvider } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `delayDuration` | `number` | `700` | 指针进入触发元素后到工具提示打开的延迟时间（毫秒） |
+| `delayDuration` | `number` | `400` | 指针进入触发元素后到工具提示打开的延迟时间（毫秒） |
 | `skipDelayDuration` | `number` | `300` | 从一个工具提示移到另一个时跳过延迟的时间窗口（毫秒） |
 | `disableHoverableContent` | `boolean` | `false` | 为 `true` 时，指针移入内容区域会关闭工具提示 |
 
@@ -105,7 +105,7 @@ import { TooltipProvider } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `delayDuration` | `number` | `700` | 覆盖 Provider 的延迟时间，针对单个工具提示自定义 |
+| `delayDuration` | `number` | 继承 Provider | 覆盖 Provider 的延迟时间，针对单个工具提示自定义 |
 | `disableHoverableContent` | `boolean` | `false` | 继承自 Provider，可单独覆盖 |
 | `disableClosingTrigger` | `boolean` | `false` | 为 `true` 时，点击触发元素不会关闭工具提示 |
 | `disabled` | `boolean` | `false` | 为 `true` 时，禁用工具提示 |
