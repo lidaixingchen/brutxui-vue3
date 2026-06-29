@@ -58,6 +58,7 @@ const bubbleClass = computed(() =>
             color: props.color,
             size: props.size,
         }),
+        isSystem.value && 'text-xs',
         props.class
     )
 );

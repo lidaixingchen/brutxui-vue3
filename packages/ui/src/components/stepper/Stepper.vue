@@ -29,7 +29,7 @@ interface StepperProps {
 const props = withDefaults(defineProps<StepperProps>(), {
     orientation: 'horizontal',
     size: 'default',
-    variant: 'default',
+    variant: 'primary',
     clickable: true,
     class: undefined,
 });

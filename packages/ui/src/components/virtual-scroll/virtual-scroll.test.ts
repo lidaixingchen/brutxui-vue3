@@ -26,11 +26,10 @@ vi.mock('@tanstack/vue-virtual', () => ({
 }))
 
 describe('VirtualScroll', () => {
-    const mockItems = [
-        { id: '1', name: 'Item 1' },
-        { id: '2', name: 'Item 2' },
-        { id: '3', name: 'Item 3' },
-    ]
+    const mockItems = Array.from({ length: 100 }, (_, i) => ({
+        id: String(i + 1),
+        name: `Item ${i + 1}`,
+    }))
 
     it('renders with items', () => {
         const wrapper = mount(VirtualScroll, {

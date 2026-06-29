@@ -183,7 +183,7 @@ function onColumnDrop(e: DragEvent, toColumnId: string) {
     newColumns.splice(adjustedIndex, 0, moved);
 
     emit('update:modelValue', newColumns);
-    emit('column-move', fromId, fromIndex, adjustedIndex);
+    emit('column-move', fromId, fromIndex, toIndex);
 }
 
 function onAddCard(columnId: string) {
