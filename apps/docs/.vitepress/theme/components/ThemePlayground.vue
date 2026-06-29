@@ -345,16 +345,16 @@ async function copyCss() {
                     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                         <div>
                             <p class="m-0 text-xs font-black uppercase tracking-[0.16em] text-brutal-muted-foreground">
-                                Live preview
+                                实时预览
                             </p>
                             <h3 class="!m-0 !border-0 !p-0 text-xl font-black text-brutal-fg">
                                 {{ currentPreset.label }} / {{ colorMode }}
                             </h3>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <Badge variant="primary">Primary</Badge>
-                            <Badge variant="secondary">Secondary</Badge>
-                            <Badge variant="accent">Accent</Badge>
+                            <Badge variant="primary">主要</Badge>
+                            <Badge variant="secondary">次要</Badge>
+                            <Badge variant="accent">强调</Badge>
                         </div>
                     </div>
 
@@ -363,76 +363,76 @@ async function copyCss() {
                             <CardHeader>
                                 <div class="flex flex-wrap items-start justify-between gap-3">
                                     <div>
-                                        <CardTitle>Launch Console</CardTitle>
+                                        <CardTitle>启动控制台</CardTitle>
                                         <CardDescription>
                                             产品控制台预览，用来判断主题在真实界面里的整体气质。
                                         </CardDescription>
                                     </div>
-                                    <Badge variant="success">Live</Badge>
+                                    <Badge variant="success">上线</Badge>
                                 </div>
                             </CardHeader>
                             <CardContent class="space-y-4">
                                 <div class="grid gap-3 md:grid-cols-3">
                                     <div class="border-3 border-brutal bg-brutal-primary p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">Revenue</p>
+                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">收入</p>
                                         <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">42.8K</p>
-                                        <p class="m-0 text-xs font-bold text-brutal-fg">+18% this week</p>
+                                        <p class="m-0 text-xs font-bold text-brutal-fg">本周 +18%</p>
                                     </div>
                                     <div class="border-3 border-brutal bg-brutal-secondary p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">Active</p>
+                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">活跃</p>
                                         <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">1,284</p>
-                                        <p class="m-0 text-xs font-bold text-brutal-fg">Users online</p>
+                                        <p class="m-0 text-xs font-bold text-brutal-fg">用户在线</p>
                                     </div>
                                     <div class="border-3 border-brutal bg-brutal-accent p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">Shadow</p>
+                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">阴影</p>
                                         <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">{{ currentTokens.shadowOffsetX }}</p>
-                                        <p class="m-0 text-xs font-bold text-brutal-fg">Hard offset</p>
+                                        <p class="m-0 text-xs font-bold text-brutal-fg">硬偏移</p>
                                     </div>
                                 </div>
 
                                 <div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_max-content]">
                                     <div class="relative">
                                         <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" />
-                                        <Input v-model="sampleEmail" class="pl-9" placeholder="Filter customers" />
+                                        <Input v-model="sampleEmail" class="pl-9" placeholder="筛选客户" />
                                     </div>
-                                    <Button type="button" variant="primary" class="whitespace-nowrap">Create segment</Button>
+                                    <Button type="button" variant="primary" class="whitespace-nowrap">创建分群</Button>
                                 </div>
 
                                 <div class="overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
                                     <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 border-b-3 border-brutal bg-brutal-muted p-3 text-xs font-black uppercase tracking-wide text-brutal-muted-foreground">
-                                        <span>Account</span>
-                                        <span>Status</span>
-                                        <span>Risk</span>
+                                        <span>账户</span>
+                                        <span>状态</span>
+                                        <span>风险</span>
                                     </div>
                                     <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 border-b-3 border-brutal p-3">
                                         <div class="min-w-0">
                                             <p class="m-0 truncate text-sm font-black text-brutal-fg">brutal-studio.io</p>
                                             <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">hello@brutx.dev</p>
                                         </div>
-                                        <Badge variant="success" size="sm">Healthy</Badge>
-                                        <Badge variant="outline" size="sm">Low</Badge>
+                                        <Badge variant="success" size="sm">健康</Badge>
+                                        <Badge variant="outline" size="sm">低</Badge>
                                     </div>
                                     <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-3">
                                         <div class="min-w-0">
                                             <p class="m-0 truncate text-sm font-black text-brutal-fg">mono-labs.dev</p>
                                             <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">ops@brutx.dev</p>
                                         </div>
-                                        <Badge variant="primary" size="sm">Trial</Badge>
-                                        <Badge variant="danger" size="sm">High</Badge>
+                                        <Badge variant="primary" size="sm">试用</Badge>
+                                        <Badge variant="danger" size="sm">高</Badge>
                                     </div>
                                 </div>
                             </CardContent>
                             <CardFooter class="flex flex-wrap gap-3">
-                                <Button type="button" variant="secondary">Ship preset</Button>
-                                <Button type="button" variant="danger">Pause account</Button>
-                                <Button type="button" variant="outline">View CSS</Button>
+                                <Button type="button" variant="secondary">发布预设</Button>
+                                <Button type="button" variant="danger">暂停账户</Button>
+                                <Button type="button" variant="outline">查看 CSS</Button>
                             </CardFooter>
                         </Card>
 
                         <div class="space-y-4">
                             <Card class="bg-brutal-bg min-w-0">
                                 <CardHeader>
-                                    <CardTitle>Component Matrix</CardTitle>
+                                    <CardTitle>组件矩阵</CardTitle>
                                     <CardDescription>
                                         快速扫一眼常用组件状态是否清晰。
                                     </CardDescription>
@@ -444,7 +444,7 @@ async function copyCss() {
                                         <Button type="button" variant="accent">Accent</Button>
                                         <Button type="button" variant="danger">Danger</Button>
                                     </div>
-                                    <Input placeholder="Token-aware input" />
+                                    <Input placeholder="令牌感知输入" />
                                     <div class="flex flex-wrap gap-2">
                                         <Badge>Default</Badge>
                                         <Badge variant="primary">Primary</Badge>
@@ -452,15 +452,15 @@ async function copyCss() {
                                         <Badge variant="danger">Danger</Badge>
                                     </div>
                                     <Alert variant="info">
-                                        <AlertTitle>Info surface</AlertTitle>
+                                        <AlertTitle>信息表面</AlertTitle>
                                         <AlertDescription>
-                                            Alerts, cards and badges all inherit the local theme variables.
+                                            提示、卡片和徽标都继承本地主题变量。
                                         </AlertDescription>
                                     </Alert>
                                     <Alert variant="danger">
-                                        <AlertTitle>Danger surface</AlertTitle>
+                                        <AlertTitle>危险表面</AlertTitle>
                                         <AlertDescription>
-                                            Destructive color contrast is checked below.
+                                            破坏性颜色对比度在下方检查。
                                         </AlertDescription>
                                     </Alert>
                                 </CardContent>
@@ -468,7 +468,7 @@ async function copyCss() {
 
                             <div class="border-3 border-brutal bg-brutal-bg p-4 shadow-brutal">
                                 <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                    Swatches
+                                    色板
                                 </p>
                                 <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                                     <div
@@ -499,7 +499,7 @@ async function copyCss() {
                     <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
                         <div class="border-b-3 border-brutal bg-brutal-muted p-3">
                             <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                Quality checks
+                                质量检查
                             </p>
                             <p class="m-0 text-sm font-bold text-brutal-fg">
                                 {{ contrastSummary.passed }}/{{ contrastSummary.total }} 通过，{{ contrastSummary.warnings }} 个偏低。
@@ -562,7 +562,7 @@ async function copyCss() {
                         <div class="flex flex-wrap items-center justify-between gap-3 border-b-3 border-brutal bg-brutal-muted p-3">
                             <div>
                                 <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                    Generated CSS
+                                    生成的 CSS
                                 </p>
                                 <p class="m-0 text-sm font-bold text-brutal-fg">
                                     复制到项目 CSS 中即可使用 `.theme-custom`。

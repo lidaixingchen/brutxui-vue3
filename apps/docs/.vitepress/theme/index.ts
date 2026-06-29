@@ -1,5 +1,6 @@
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
+import Layout from './Layout.vue'
 import ComponentPreview from './components/ComponentPreview.vue'
 import CopyButton from './components/CopyButton.vue'
 import HomeCodePreview from './components/HomeCodePreview.vue'
@@ -111,6 +112,7 @@ import './style.css'
 
 export default {
     extends: DefaultTheme,
+    Layout,
     enhanceApp({ app }) {
         app.component('ComponentPreview', ComponentPreview)
         app.component('CopyButton', CopyButton)
