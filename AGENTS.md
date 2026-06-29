@@ -37,13 +37,12 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 ## 代码风格
 
-- 除非要求否则不写注释 · 无魔法数字 · 无硬编码值
+- 除非要求否则不写注释 · 无魔法数字 · 无硬编码值 · 禁止硬编码密钥
 - 4 空格缩进 · 单引号 · PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
 
-## Shell 注意事项
+## Shell git注意事项
 
-- **Bash 工具中 `@'...'@` 不是 here-string**：Claude Code 的 Bash 工具使用 Git Bash（POSIX sh），不是 PowerShell。`@'...'@` 会被当作普通字符串，开头的 `@` 会成为内容的一部分。多行 commit message 应直接用普通引号包裹。
-- PowerShell 的 `@'...'@` 单引号 here-string 语法要求结束标记 `'@` 必须位于行首（列 0），前面不能有空格。此语法仅在 PowerShell 终端中有效，在 Bash 工具中无效。
+详见 [提交信息规范 - Shell 注意事项](docs/COMMIT_CONVENTION.md#shell-注意事项)。
 
 ## 目录结构
 
@@ -70,9 +69,9 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 ## 详细文档
 
+- [提交信息规范](docs/COMMIT_CONVENTION.md)
 - [发布流程与 Changelog](docs/RELEASE.md)
 - [组件开发指南](docs/COMPONENT_GUIDE.md)
-- [安全](docs/SECURITY.md)
 
 ## AGENTS.md 维护约定
 
