@@ -29,13 +29,13 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Suggestions">
+            <CommandGroup title="Suggestions">
                 <CommandItem value="calendar">Calendar</CommandItem>
                 <CommandItem value="search">Search Emoji</CommandItem>
                 <CommandItem value="calculator">Calculator</CommandItem>
             </CommandGroup>
             <CommandSeparator />
-            <CommandGroup heading="Settings">
+            <CommandGroup title="Settings">
                 <CommandItem value="profile">
                     Profile
                     <CommandShortcut>⌘P</CommandShortcut>
@@ -63,11 +63,11 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
     <CommandInput />
     <CommandList>
         <CommandEmpty />
-        <CommandGroup heading="Suggestions">
+        <CommandGroup title="Suggestions">
             <CommandItem value="calendar">Calendar</CommandItem>
             <CommandItem value="search">Search Emoji</CommandItem>
         </CommandGroup>
-        <CommandGroup heading="Settings">
+        <CommandGroup title="Settings">
             <CommandItem value="profile">Profile</CommandItem>
         </CommandGroup>
     </CommandList>
@@ -114,7 +114,7 @@ const open = ref(false)
         <CommandInput placeholder="Type a command..." />
         <CommandList>
             <CommandEmpty />
-            <CommandGroup heading="Actions">
+            <CommandGroup title="Actions">
                 <CommandItem value="new">New File</CommandItem>
                 <CommandItem value="open">Open File</CommandItem>
             </CommandGroup>
@@ -142,7 +142,7 @@ const commandRef = ref()
         <CommandInput />
         <CommandList>
             <CommandEmpty />
-            <CommandGroup heading="建议">
+            <CommandGroup title="建议">
                 <CommandItem value="calendar">日历</CommandItem>
                 <CommandItem value="search">搜索表情</CommandItem>
                 <CommandItem value="calculator">计算器</CommandItem>
@@ -214,7 +214,7 @@ const commandRef = ref()
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `heading` | `string` | — |
+| `title` | `string` | — |
 | `class` | `string` | — |
 
 ### CommandList

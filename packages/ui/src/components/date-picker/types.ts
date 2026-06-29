@@ -1,6 +1,3 @@
-import type { DateValueFormat } from '../../lib/date'
-
-export type DatePickerMode = 'date' | 'week' | 'month' | 'year'
 export type DatePickerSize = 'sm' | 'default' | 'lg'
 export type DatePickerVariant = 'default' | 'error' | 'success'
 
@@ -11,9 +8,7 @@ export interface DatePickerShortcut {
 
 export interface DatePickerProps {
     modelValue?: Date | null
-    mode?: DatePickerMode
     displayFormat?: string
-    valueFormat?: DateValueFormat
     placeholder?: string
     minDate?: Date
     maxDate?: Date
@@ -52,7 +47,6 @@ export interface DatePickerRangeShortcut {
 export interface DatePickerRangeProps {
     modelValue?: DateRange | null
     displayFormat?: string
-    valueFormat?: DateValueFormat
     startPlaceholder?: string
     endPlaceholder?: string
     separator?: string
@@ -85,8 +79,6 @@ export function resolveRangeShortcutValue(shortcut: DatePickerRangeShortcut): Da
 export interface DateTimePickerProps {
     modelValue?: Date | null
     displayFormat?: string
-    valueFormat?: DateValueFormat
-    timeFormat?: string
     showSeconds?: boolean
     timeStep?: { hour?: number; minute?: number; second?: number }
     placeholder?: string
@@ -116,7 +108,6 @@ export interface DateTimePickerEmits {
 export interface WeekPickerProps {
     modelValue?: Date | null
     displayFormat?: string
-    valueFormat?: DateValueFormat
     weekStartsOn?: 0 | 1
     placeholder?: string
     minDate?: Date
@@ -145,7 +136,6 @@ export interface WeekPickerEmits {
 export interface MonthPickerProps {
     modelValue?: Date | null
     displayFormat?: string
-    valueFormat?: DateValueFormat
     placeholder?: string
     minDate?: Date
     maxDate?: Date
@@ -172,7 +162,6 @@ export interface MonthPickerEmits {
 export interface YearPickerProps {
     modelValue?: Date | null
     displayFormat?: string
-    valueFormat?: DateValueFormat
     placeholder?: string
     minDate?: Date
     maxDate?: Date

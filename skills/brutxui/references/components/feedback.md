@@ -132,12 +132,12 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
   <CommandInput placeholder="搜索..." />
   <CommandList>
     <CommandEmpty>没有结果</CommandEmpty>
-    <CommandGroup heading="操作">
+    <CommandGroup title="操作">
       <CommandItem>新建文件</CommandItem>
       <CommandItem>打开设置</CommandItem>
     </CommandGroup>
     <CommandSeparator />
-    <CommandGroup heading="最近">
+    <CommandGroup title="最近">
       <CommandItem>项目 A</CommandItem>
     </CommandGroup>
   </CommandList>

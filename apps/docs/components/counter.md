@@ -36,7 +36,7 @@ const counterRef = ref()
 
     <!-- 手动控制 -->
     <Counter ref="counterRef" :to="500" :auto-start="false" />
-    <button @click="counterRef.start()">开始</button>
+    <button @click="counterRef.play()">开始</button>
 </template>
 ```
 
@@ -119,5 +119,5 @@ import { DollarSign, Percent } from 'lucide-vue-next'
 
 | 方法 | 说明 |
 |------|------|
-| `start()` | 从 `from` 重新开始播放动画 |
+| `play()` | 从 `from` 重新开始播放动画 |
 | `stop()` | 立即停止动画 |

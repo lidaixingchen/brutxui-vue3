@@ -38,6 +38,7 @@ const props = withDefaults(defineProps<TreeViewProps>(), {
 const emit = defineEmits<{
     'update:modelValue': [id: string | null];
     'update:checkedIds': [ids: string[]];
+    'update:expanded': [ids: string[]];
     'select': [node: TreeNode];
     'expand': [id: string, expanded: boolean];
     'check': [node: TreeNode, checked: boolean];
@@ -64,6 +65,7 @@ function toggleExpand(id: string) {
     }
     expandedIds.value = nextSet
     emit('expand', id, nextSet.has(id))
+    emit('update:expanded', Array.from(nextSet))
 }
 
 function selectNode(node: TreeNode) {

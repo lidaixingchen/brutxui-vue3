@@ -15,7 +15,7 @@ export const chatBubbleVariants = cva(
                 system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none text-xs',
             },
             color: {
-                default: '',
+                default: '', // no-op: color styling applied via compoundVariants below
                 primary: '',
                 accent: '',
             },

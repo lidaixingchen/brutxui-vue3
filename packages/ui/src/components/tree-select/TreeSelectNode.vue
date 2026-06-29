@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
@@ -9,6 +9,8 @@ import type { TreeNode } from './tree-select-types'
 const INDENT_PER_DEPTH = 20
 const BASE_INDENT = 8
 const ICON_SIZE_CLASSES = iconSizeVariants({ size: 'default' })
+
+const contentId = `tree-select-content-${useId()}`
 
 interface TreeSelectNodeProps {
     node: TreeNode
@@ -85,7 +87,7 @@ function focusParent() {
     if (!activeEl) return
     const currentItem = activeEl.closest('[role="treeitem"]')
     if (!currentItem) return
-    const parentGroup = (currentItem.parentElement as HTMLElement | null)?.closest('[role="treeitem"]')
+    const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
     if (parentGroup) (parentGroup as HTMLElement).focus()
 }
 
@@ -154,6 +156,7 @@ function handleKeydown(e: KeyboardEvent) {
         role="treeitem"
         :tabindex="focusedId === node.id ? 0 : -1"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
+        :aria-controls="!isLeaf ? contentId : undefined"
         :aria-selected="isSelected"
         @focus="emit('focus', node.id)"
         @keydown="handleKeydown"
@@ -180,7 +183,7 @@ function handleKeydown(e: KeyboardEvent) {
             />
         </div>
 
-        <div v-if="!isLeaf && isExpanded" role="group">
+        <div v-if="!isLeaf && isExpanded" :id="contentId" role="group">
             <TreeSelectNode
                 v-for="child in node.children"
                 :key="child.id"

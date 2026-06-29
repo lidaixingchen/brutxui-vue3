@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../button/button-variants'
@@ -22,6 +22,7 @@ const DEFAULT_MAX_DISPLAY = 3
 interface ComboboxMultiProps {
     options: ComboboxOption[]
     modelValue?: string[]
+    open?: boolean
     placeholder?: string
     searchPlaceholder?: string
     emptyText?: string
@@ -36,6 +37,7 @@ interface ComboboxMultiProps {
 
 const props = withDefaults(defineProps<ComboboxMultiProps>(), {
     modelValue: () => [],
+    open: undefined,
     placeholder: undefined,
     searchPlaceholder: undefined,
     emptyText: undefined,
@@ -56,10 +58,18 @@ const resolvedEmptyText = computed(() => props.emptyText ?? t('combobox.emptyTex
 
 const emit = defineEmits<{
     'update:modelValue': [value: string[]]
+    'update:open': [value: boolean]
     'create': [value: string]
 }>()
 
-const open = ref(false)
+const internalOpen = ref(false)
+const open = computed<boolean>({
+    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    set: (val) => {
+        internalOpen.value = val
+        emit('update:open', val)
+    },
+})
 const searchQuery = ref('')
 
 const selectedOptions = computed(() =>
@@ -122,6 +132,8 @@ const triggerIconClasses = computed(() =>
 
 const checkIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
 
+const contentId = `combobox-multi-content-${useId()}`
+
 watch(open, (isOpen) => {
     if (!isOpen) {
         searchQuery.value = ''
@@ -136,6 +148,7 @@ watch(open, (isOpen) => {
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
+                :aria-controls="open ? contentId : undefined"
                 :aria-label="ariaLabel"
                 aria-haspopup="listbox"
                 :disabled="disabled"
@@ -146,6 +159,7 @@ watch(open, (isOpen) => {
             </button>
         </PopoverTrigger>
         <PopoverContent :class="contentClasses" align="start">
+          <div :id="contentId">
             <Command disable-filter>
                 <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
@@ -180,6 +194,7 @@ watch(open, (isOpen) => {
                     </div>
                 </CommandList>
             </Command>
+          </div>
         </PopoverContent>
     </PopoverRoot>
 </template>

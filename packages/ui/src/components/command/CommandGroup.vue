@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils'
 import { injectCommandRootContext, provideCommandGroupContext } from './command-context'
 
 interface CommandGroupProps {
-    heading?: string
+    title?: string
     class?: string
 }
 
@@ -53,8 +53,8 @@ onUnmounted(() => {
         data-slot="command-group"
         role="group"
     >
-        <div v-if="heading" :class="headingClasses" data-slot="command-group-heading">
-            {{ heading }}
+        <div v-if="title" :class="headingClasses" data-slot="command-group-heading">
+            {{ title }}
         </div>
         <slot />
     </ListboxGroup>

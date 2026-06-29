@@ -13,14 +13,11 @@ export const treeItemVariants = cva(
         variants: {
             selected: {
                 true: 'bg-brutal-primary border-brutal shadow-brutal',
+                false: '',
             },
         },
         defaultVariants: {
             selected: false,
         },
     }
-);
-
-export const treeBranchLineVariants = cva(
-    'absolute left-0 top-0 bottom-0 border-l-3 border-brutal'
 );

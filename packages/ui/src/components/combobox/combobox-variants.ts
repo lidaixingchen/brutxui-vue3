@@ -7,7 +7,7 @@ export const comboboxTriggerVariants = cva(
     {
         variants: {
             hasValue: {
-                true: '',
+                true: '', // no-op: default state styling
                 false: 'text-brutal-muted-foreground',
             },
         },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { buttonVariants } from '../button/button-variants'
@@ -21,6 +21,7 @@ import { type ComboboxOption } from './combobox-types'
 interface ComboboxProps {
     options: ComboboxOption[]
     modelValue?: string
+    open?: boolean
     placeholder?: string
     searchPlaceholder?: string
     emptyText?: string
@@ -34,6 +35,7 @@ interface ComboboxProps {
 
 const props = withDefaults(defineProps<ComboboxProps>(), {
     modelValue: undefined,
+    open: undefined,
     placeholder: undefined,
     searchPlaceholder: undefined,
     emptyText: undefined,
@@ -53,10 +55,18 @@ const resolvedEmptyText = computed(() => props.emptyText ?? t('combobox.emptyTex
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | undefined]
+    'update:open': [value: boolean]
     'create': [value: string]
 }>()
 
-const open = ref(false)
+const internalOpen = ref(false)
+const open = computed<boolean>({
+    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    set: (val) => {
+        internalOpen.value = val
+        emit('update:open', val)
+    },
+})
 const searchQuery = ref('')
 
 const selectedOption = computed(() =>
@@ -108,12 +118,14 @@ watch(open, (isOpen) => {
     }
 })
 
-const checkSelectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: props.iconSize }), 'stroke-[3]', 'opacity-100'))
-const checkUnselectedClasses = computed(() => cn('mr-2', iconSizeVariants({ size: props.iconSize }), 'stroke-[3]', 'opacity-0'))
-
 const triggerIconClasses = computed(() =>
     cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))
 )
+
+const checkSelectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
+const checkUnselectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'opacity-0')
+
+const contentId = `combobox-content-${useId()}`
 </script>
 
 <template>
@@ -123,6 +135,7 @@ const triggerIconClasses = computed(() =>
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
+                :aria-controls="open ? contentId : undefined"
                 :aria-label="ariaLabel"
                 aria-haspopup="listbox"
                 :disabled="disabled"
@@ -133,6 +146,7 @@ const triggerIconClasses = computed(() =>
             </button>
         </PopoverTrigger>
         <PopoverContent :class="contentClasses" align="start">
+          <div :id="contentId">
             <Command disable-filter>
                 <CommandInput v-model="searchQuery" :placeholder="resolvedSearchPlaceholder" />
                 <CommandList>
@@ -165,6 +179,7 @@ const triggerIconClasses = computed(() =>
                     </div>
                 </CommandList>
             </Command>
+          </div>
         </PopoverContent>
     </PopoverRoot>
 </template>

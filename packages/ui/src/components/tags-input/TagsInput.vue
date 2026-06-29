@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils'
 import { useLocale } from '../../composables/useLocale'
 
 const props = defineProps<TagsInputRootProps & { class?: string; ariaLabel?: string }>()
-const emits = defineEmits<TagsInputRootEmits>()
+const emit = defineEmits<TagsInputRootEmits>()
 
 const { t } = useLocale()
 
@@ -16,7 +16,7 @@ const delegatedProps = computed(() => {
     return delegated
 })
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const forwarded = useForwardPropsEmits(delegatedProps, emit)
 
 const classes = computed(() =>
     cn(

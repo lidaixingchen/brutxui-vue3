@@ -158,29 +158,29 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     </DatePicker>
 </template>
 
-<style scoped>
-:global(.brutal-selected) {
+<style>
+.brutal-selected {
     background-color: var(--brutal-primary) !important;
     border: 3px solid var(--brutal-border-color) !important;
     border-radius: var(--brutal-radius) !important;
     box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color) !important;
 }
 
-:global(.brutal-selected-content) {
+.brutal-selected-content {
     color: var(--brutal-primary-foreground) !important;
     font-weight: 900 !important;
 }
 
-:global(.brutal-range) {
+.brutal-range {
     background-color: var(--brutal-accent) !important;
     border-radius: var(--brutal-radius) !important;
 }
 
-:global(.brutal-range-content) {
+.brutal-range-content {
     color: var(--brutal-accent-foreground) !important;
 }
 
-:global(.brutx-calendar) {
+.brutx-calendar {
     --vc-rounded-full: var(--brutal-radius);
     --vc-highlight-solid-bg: var(--brutal-primary);
     --vc-highlight-light-bg: var(--brutal-accent);
@@ -191,20 +191,20 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     --vc-highlight-outline-content-color: var(--brutal-fg);
 }
 
-:global(.brutx-calendar .vc-day-layer.vc-day-box-center-center) {
+.brutx-calendar .vc-day-layer.vc-day-box-center-center {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-:global(.brutx-calendar .vc-highlights .vc-highlight),
-:global(.brutx-calendar .vc-highlight-bg-solid),
-:global(.brutx-calendar .vc-highlight-bg-light),
-:global(.brutx-calendar .vc-highlight-bg-outline) {
+.brutx-calendar .vc-highlights .vc-highlight,
+.brutx-calendar .vc-highlight-bg-solid,
+.brutx-calendar .vc-highlight-bg-light,
+.brutx-calendar .vc-highlight-bg-outline {
     border-radius: var(--brutal-radius) !important;
 }
 
-:global(.brutx-calendar .vc-arrow) {
+.brutx-calendar .vc-arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -218,23 +218,23 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     color: var(--brutal-fg);
 }
 
-:global(.brutx-calendar .vc-arrow:hover) {
+.brutx-calendar .vc-arrow:hover {
     box-shadow: calc(var(--brutal-shadow-offset-x) + 2px) calc(var(--brutal-shadow-offset-y) + 2px) 0 var(--brutal-shadow-color);
     transform: translate(-1px, -1px);
 }
 
-:global(.brutx-calendar .vc-arrow:active) {
+.brutx-calendar .vc-arrow:active {
     transform: translateY(var(--brutal-pressed-offset, 2px));
     box-shadow: none !important;
 }
 
-:global(.brutx-calendar .vc-arrow.vc-prev svg),
-:global(.brutx-calendar .vc-arrow.vc-next svg) {
+.brutx-calendar .vc-arrow.vc-prev svg,
+.brutx-calendar .vc-arrow.vc-next svg {
     width: 1rem;
     height: 1rem;
 }
 
-:global(.brutx-calendar .vc-title) {
+.brutx-calendar .vc-title {
     font-weight: 900;
     font-size: 0.75rem;
     letter-spacing: -0.025em;
@@ -245,11 +245,11 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     padding: 0;
 }
 
-:global(.brutx-calendar .vc-title:hover) {
+.brutx-calendar .vc-title:hover {
     color: var(--brutal-primary);
 }
 
-:global(.brutx-calendar .vc-weekday) {
+.brutx-calendar .vc-weekday {
     font-weight: 900;
     font-size: 0.625rem;
     text-transform: uppercase;
@@ -258,11 +258,11 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     border-bottom: 3px solid var(--brutal-border-color);
 }
 
-:global(.brutx-calendar .vc-weeks) {
+.brutx-calendar .vc-weeks {
     min-width: 0;
 }
 
-:global(.brutx-calendar .vc-day) {
+.brutx-calendar .vc-day {
     min-width: 0;
     display: flex;
     align-items: center;

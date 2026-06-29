@@ -13,7 +13,7 @@ interface AlertDialogActionProps extends PrimitiveProps {
 }
 
 const props = withDefaults(defineProps<AlertDialogActionProps>(), {
-    variant: 'primary',
+    variant: 'default',
     as: undefined,
     asChild: undefined,
     class: undefined,

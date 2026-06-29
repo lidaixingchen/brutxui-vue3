@@ -13,7 +13,7 @@ interface ColorPickerHistoryProps {
 
 const props = withDefaults(defineProps<ColorPickerHistoryProps>(), {
     modelValue: null,
-    size: 'sm',
+    size: 'default',
     ariaLabel: undefined,
     clearLabel: undefined,
 })

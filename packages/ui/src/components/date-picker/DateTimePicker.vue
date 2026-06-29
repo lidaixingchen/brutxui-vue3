@@ -4,6 +4,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '../../lib/utils'
+import { iconSizeVariants } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { formatDate } from '../../lib/date'
 import PopoverContent from '../popover/PopoverContent.vue'
@@ -21,8 +22,6 @@ interface Props extends DateTimePickerProps {
 const props = withDefaults(defineProps<Props>(), {
     modelValue: null,
     displayFormat: undefined,
-    valueFormat: 'date',
-    timeFormat: undefined,
     showSeconds: false,
     timeStep: () => ({ hour: 1, minute: 1, second: 1 }),
     placeholder: undefined,
@@ -131,7 +130,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
             >
                 <CalendarIcon
                     class="shrink-0 stroke-[3] opacity-70"
-                    :class="size === 'sm' ? 'w-3.5 h-3.5' : size === 'lg' ? 'w-5 h-5' : 'w-4 h-4'"
+                    :class="iconSizeVariants({ size })"
                 />
                 <span class="flex-1 text-left truncate font-mono text-sm">
                     {{ formattedDisplay || resolvedPlaceholder }}

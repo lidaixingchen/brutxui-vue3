@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, nextTick } from 'vue';
+import { computed, ref, nextTick, useId } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
@@ -9,6 +9,8 @@ import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
 
 const INDENT_PER_DEPTH = 20
 const BASE_INDENT = 4
+
+const contentId = `tree-content-${useId()}`
 
 interface TreeViewNodeProps {
     node: TreeNode;
@@ -165,6 +167,7 @@ defineExpose({ focus, nodeId: props.node.id });
         role="treeitem"
         :tabindex="isSelected ? 0 : (isFirstRoot ? 0 : -1)"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
+        :aria-controls="!isLeaf ? contentId : undefined"
         :aria-selected="isSelected"
         :aria-checked="ariaChecked"
         :aria-disabled="disabled || undefined"
@@ -199,7 +202,7 @@ defineExpose({ focus, nodeId: props.node.id });
         </div>
 
         <Transition name="tree-expand">
-            <div v-if="!isLeaf && isExpanded" role="group">
+            <div v-if="!isLeaf && isExpanded" :id="contentId" role="group">
                 <TreeViewNode
                     v-for="child in node.children"
                     :key="child.id"

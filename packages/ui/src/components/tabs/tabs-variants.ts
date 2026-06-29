@@ -13,7 +13,7 @@ export const tabsListVariants = cva(
                 lg: 'h-14',
             },
             orientation: {
-                horizontal: '',
+                horizontal: '', // no-op: default horizontal layout
                 vertical: 'flex-col',
             },
         },

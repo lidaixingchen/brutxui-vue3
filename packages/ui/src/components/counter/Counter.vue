@@ -87,7 +87,7 @@ function animate(ts: number) {
     }
 }
 
-function start() {
+function play() {
     if (rafId !== null) cancelAnimationFrame(rafId);
     startTime = null;
     current.value = props.from;
@@ -101,7 +101,7 @@ function stop() {
     }
 }
 
-defineExpose({ start, stop });
+defineExpose({ play, stop });
 
 function scheduleUpdateScale() {
     if (scaleRafId !== null) return;
@@ -125,7 +125,7 @@ function updateScale() {
 }
 
 onMounted(() => {
-    if (props.autoStart) start();
+    if (props.autoStart) play();
     nextTick(() => {
         const root = rootRef.value;
         if (!root) return;
@@ -149,7 +149,7 @@ onUnmounted(() => {
 
 watch(() => [props.to, props.from] as const, () => {
     if (props.autoStart) {
-        start();
+        play();
     } else {
         stop(); // Stop any ongoing animation
         current.value = props.from;

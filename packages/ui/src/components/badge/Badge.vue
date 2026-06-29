@@ -38,8 +38,8 @@ const classes = computed(() =>
 const dotClasses = computed(() =>
     cn(
         'rounded-full bg-current',
-        props.size === 'sm' ? 'h-1.5 w-1.5' : props.size === 'lg' ? 'h-2.5 w-2.5' : 'h-2 w-2',
-        props.pulse && 'animate-brutal-pulse'
+        props.size === 'sm' ? 'h-1.5 w-1.5 mr-1' : props.size === 'lg' ? 'h-2.5 w-2.5 mr-2' : 'h-2 w-2 mr-1.5',
+        props.pulse && 'animate-brutal-badge-pulse'
     )
 )
 

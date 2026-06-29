@@ -86,16 +86,16 @@ describe('Alert', () => {
         })
     })
 
-    describe('action slot', () => {
-        it('renders action slot content', () => {
+    describe('actions slot', () => {
+        it('renders actions slot content', () => {
             const wrapper = mount(Alert, {
-                slots: { action: '<button class="retry-btn">Retry</button>' },
+                slots: { actions: '<button class="retry-btn">Retry</button>' },
                 ...globalProvide,
             })
             expect(wrapper.find('.retry-btn').exists()).toBe(true)
         })
 
-        it('does not render action container when slot is empty', () => {
+        it('does not render actions container when slot is empty', () => {
             const wrapper = mount(Alert, { ...globalProvide })
             expect(wrapper.find('.mt-3.flex.items-center.gap-2').exists()).toBe(false)
         })

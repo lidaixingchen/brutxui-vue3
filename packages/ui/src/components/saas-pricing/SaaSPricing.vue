@@ -24,54 +24,7 @@ interface SaaSPricingProps {
 }
 
 const props = withDefaults(defineProps<SaaSPricingProps>(), {
-    plans: () => [
-        {
-            name: 'Starter',
-            description: 'For side projects and experiments',
-            priceMonthly: '$0',
-            priceAnnually: '$0',
-            features: [
-                { text: '5 components', included: true },
-                { text: 'Basic themes', included: true },
-                { text: 'Community support', included: true },
-                { text: 'Priority updates', included: false },
-                { text: 'Custom themes', included: false },
-            ],
-            buttonText: 'Get Started',
-            buttonVariant: 'outline' as const,
-        },
-        {
-            name: 'Pro',
-            description: 'For professional developers',
-            priceMonthly: '$19',
-            priceAnnually: '$15',
-            features: [
-                { text: 'All components', included: true },
-                { text: 'All themes', included: true },
-                { text: 'Priority support', included: true },
-                { text: 'Priority updates', included: true },
-                { text: 'Custom themes', included: false },
-            ],
-            popular: true,
-            buttonText: 'Go Pro',
-            buttonVariant: 'primary' as const,
-        },
-        {
-            name: 'Enterprise',
-            description: 'For teams and organizations',
-            priceMonthly: '$49',
-            priceAnnually: '$39',
-            features: [
-                { text: 'All components', included: true },
-                { text: 'All themes', included: true },
-                { text: 'Dedicated support', included: true },
-                { text: 'Priority updates', included: true },
-                { text: 'Custom themes', included: true },
-            ],
-            buttonText: 'Contact Sales',
-            buttonVariant: 'secondary' as const,
-        },
-    ],
+    plans: undefined,
     title: undefined,
     subtitle: '',
     class: undefined,
@@ -84,7 +37,57 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 const resolvedTitle = computed(() => props.title ?? t('saasPricing.title'))
-const normalizedPlans = computed<BrutalistPricingPlan[]>(() => props.plans)
+
+const defaultPlans = computed<PricingPlan[]>(() => [
+    {
+        name: t('saasPricing.planStarterName'),
+        description: t('saasPricing.planStarterDescription'),
+        priceMonthly: '$0',
+        priceAnnually: '$0',
+        features: [
+            { text: t('saasPricing.feature5Components'), included: true },
+            { text: t('saasPricing.featureBasicThemes'), included: true },
+            { text: t('saasPricing.featureCommunitySupport'), included: true },
+            { text: t('saasPricing.featurePriorityUpdates'), included: false },
+            { text: t('saasPricing.featureCustomThemes'), included: false },
+        ],
+        buttonText: t('saasPricing.planStarterCta'),
+        buttonVariant: 'outline' as const,
+    },
+    {
+        name: t('saasPricing.planProName'),
+        description: t('saasPricing.planProDescription'),
+        priceMonthly: '$19',
+        priceAnnually: '$15',
+        features: [
+            { text: t('saasPricing.featureAllComponents'), included: true },
+            { text: t('saasPricing.featureAllThemes'), included: true },
+            { text: t('saasPricing.featurePrioritySupport'), included: true },
+            { text: t('saasPricing.featurePriorityUpdates'), included: true },
+            { text: t('saasPricing.featureCustomThemes'), included: false },
+        ],
+        popular: true,
+        buttonText: t('saasPricing.planProCta'),
+        buttonVariant: 'primary' as const,
+    },
+    {
+        name: t('saasPricing.planEnterpriseName'),
+        description: t('saasPricing.planEnterpriseDescription'),
+        priceMonthly: '$49',
+        priceAnnually: '$39',
+        features: [
+            { text: t('saasPricing.featureAllComponents'), included: true },
+            { text: t('saasPricing.featureAllThemes'), included: true },
+            { text: t('saasPricing.featureDedicatedSupport'), included: true },
+            { text: t('saasPricing.featurePriorityUpdates'), included: true },
+            { text: t('saasPricing.featureCustomThemes'), included: true },
+        ],
+        buttonText: t('saasPricing.planEnterpriseCta'),
+        buttonVariant: 'secondary' as const,
+    },
+])
+
+const normalizedPlans = computed<BrutalistPricingPlan[]>(() => props.plans ?? defaultPlans.value)
 </script>
 
 <template>

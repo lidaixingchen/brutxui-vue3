@@ -20,7 +20,7 @@ export const datePickerTriggerVariants = cva(
                 lg: 'h-14 px-5 text-lg',
             },
             variant: {
-                default: '',
+                default: '', // no-op: default border style (base classes)
                 error: 'border-brutal-destructive',
                 success: 'border-brutal-success',
             },
@@ -52,7 +52,7 @@ export const datePickerShortcutVariants = cva(
         variants: {
             active: {
                 true: 'bg-brutal-primary text-brutal-primary-foreground',
-                false: '',
+                false: '', // no-op: inactive state
             },
         },
         defaultVariants: {

@@ -6,13 +6,13 @@ import { timelineDotVariants } from './timeline-variants'
 
 type TimelineDotVariantProps = VariantProps<typeof timelineDotVariants>
 
-interface Props {
+interface TimelineDotProps {
     variant?: NonNullable<TimelineDotVariantProps['variant']>
     shape?: NonNullable<TimelineDotVariantProps['shape']>
     class?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TimelineDotProps>(), {
     variant: 'accent',
     shape: 'circle',
     class: undefined,

@@ -44,7 +44,6 @@ function handleClick() {
         role="option"
         :aria-label="ariaLabel ?? label ?? value"
         :aria-selected="selected"
-        :aria-disabled="disabled"
         :disabled="disabled"
         :title="label ?? value"
         :class="classes"

@@ -37,6 +37,7 @@ export const dataTableHeadVariants = cva(
         variants: {
             sortable: {
                 true: 'cursor-pointer select-none hover:bg-brutal-accent/40 active:translate-y-[var(--brutal-pressed-offset,2px)] active:bg-brutal-accent',
+                false: '',
             },
             align: {
                 left: 'text-left',
@@ -45,6 +46,7 @@ export const dataTableHeadVariants = cva(
             },
             active: {
                 true: 'bg-brutal-accent',
+                false: '',
             },
         },
         defaultVariants: {
@@ -68,6 +70,7 @@ export const dataTableRowVariants = cva(
             },
             striped: {
                 true: 'even:bg-brutal-muted/50',
+                false: '',
             },
         },
         defaultVariants: {
@@ -95,9 +98,11 @@ export const dataTableCellVariants = cva(
             },
             dense: {
                 true: 'py-1.5',
+                false: '',
             },
             active: {
                 true: 'bg-brutal-accent/20',
+                false: '',
             },
         },
         defaultVariants: {

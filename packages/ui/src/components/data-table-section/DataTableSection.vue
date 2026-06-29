@@ -180,9 +180,8 @@ function sortIcon(key: string) {
 
                 <div v-if="totalPages > 1" class="mt-4 flex justify-center">
                     <Pagination
-                        :current-page="currentPage"
+                        v-model="currentPage"
                         :total-pages="totalPages"
-                        @update:current-page="currentPage = $event"
                     />
                 </div>
             </div>

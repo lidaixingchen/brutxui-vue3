@@ -51,14 +51,14 @@ describe('ErrorCard', () => {
         expect(wrapper.emitted('retry')!.length).toBe(1)
     })
 
-    it('emits dismiss when dismiss button is clicked', async () => {
+    it('emits close when close button is clicked', async () => {
         const wrapper = mount(ErrorCard, { ...localeProvide })
         const buttons = wrapper.findAll('button')
-        const dismissButton = buttons.find(b => b.text().includes('Dismiss'))
-        expect(dismissButton).toBeTruthy()
-        await dismissButton!.trigger('click')
-        expect(wrapper.emitted('dismiss')).toBeTruthy()
-        expect(wrapper.emitted('dismiss')!.length).toBe(1)
+        const closeButton = buttons.find(b => b.text().includes('Dismiss'))
+        expect(closeButton).toBeTruthy()
+        await closeButton!.trigger('click')
+        expect(wrapper.emitted('close')).toBeTruthy()
+        expect(wrapper.emitted('close')!.length).toBe(1)
     })
 
     it('renders actions slot', () => {

@@ -95,42 +95,40 @@ function handleNext() {
             </div>
         </slot>
 
-        <slot name="content">
-            <template v-if="steps.length > 0">
-                <Stepper
-                    :steps="stepperSteps"
-                    :model-value="activeStep"
-                    orientation="horizontal"
-                    @step-click="handleStepClick"
-                />
+        <template v-if="steps.length > 0">
+            <Stepper
+                :steps="stepperSteps"
+                :model-value="activeStep"
+                orientation="horizontal"
+                @step-click="handleStepClick"
+            />
 
-                <Card variant="default" class="mt-6">
-                    <div class="p-6">
-                        <slot name="default" />
-                    </div>
-                </Card>
-
-                <div class="flex items-center justify-between mt-6">
-                    <Button
-                        variant="outline"
-                        :disabled="!canGoPrevious"
-                        @click="handlePrevious"
-                    >
-                        <ChevronLeft :class="previousIconClasses" />
-                        {{ resolvedPrevious }}
-                    </Button>
-                    <Button
-                        variant="primary"
-                        :disabled="!canGoNext"
-                        @click="handleNext"
-                    >
-                        {{ resolvedNext }}
-                        <ChevronRight :class="nextIconClasses" />
-                    </Button>
+            <Card variant="default" class="mt-6">
+                <div class="p-6">
+                    <slot name="default" />
                 </div>
-            </template>
-            <EmptyState v-else :title="t('stepperSection.emptyTitle')" />
-        </slot>
+            </Card>
+
+            <div class="flex items-center justify-between mt-6">
+                <Button
+                    variant="outline"
+                    :disabled="!canGoPrevious"
+                    @click="handlePrevious"
+                >
+                    <ChevronLeft :class="previousIconClasses" />
+                    {{ resolvedPrevious }}
+                </Button>
+                <Button
+                    variant="primary"
+                    :disabled="!canGoNext"
+                    @click="handleNext"
+                >
+                    {{ resolvedNext }}
+                    <ChevronRight :class="nextIconClasses" />
+                </Button>
+            </div>
+        </template>
+        <EmptyState v-else :title="t('stepperSection.emptyTitle')" />
 
         <slot name="footer" />
     </div>

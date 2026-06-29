@@ -18,7 +18,7 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableVirtualScroll, DataTableFilterState } from './types'
+import type { DataTableColumn, DataTableProps, DataTableFilterState } from './types'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -40,25 +40,7 @@ import {
 
 const { t } = useLocale()
 
-const props = withDefaults(defineProps<{
-    data: T[]
-    columns: DataTableColumn<T>[]
-    sortable?: boolean
-    filterable?: boolean
-    selectable?: boolean
-    paginated?: boolean
-    pageSize?: number
-    pageSizeOptions?: number[]
-    loading?: boolean
-    emptyMessage?: string
-    rowKey: keyof T | ((row: T) => string | number)
-    virtualScroll?: DataTableVirtualScroll
-    size?: 'sm' | 'default' | 'lg'
-    dense?: boolean
-    striped?: boolean
-    stickyHeader?: boolean
-    class?: string
-}>(), {
+const props = withDefaults(defineProps<DataTableProps<T>>(), {
     sortable: false,
     filterable: false,
     selectable: false,
@@ -66,13 +48,10 @@ const props = withDefaults(defineProps<{
     pageSize: 10,
     pageSizeOptions: () => [10, 20, 50, 100],
     loading: false,
-    emptyMessage: undefined,
-    virtualScroll: undefined,
     size: 'default',
     dense: false,
     striped: true,
     stickyHeader: false,
-    class: undefined,
 })
 
 const emit = defineEmits<{

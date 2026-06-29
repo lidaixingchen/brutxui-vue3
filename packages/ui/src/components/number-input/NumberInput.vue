@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
     iconSize: 'default',
 })
 
-const emits = defineEmits<NumberFieldRootEmits>()
+const emit = defineEmits<NumberFieldRootEmits>()
 
 const { t } = useLocale()
 
@@ -40,7 +40,7 @@ const delegatedProps = computed(() => {
     return delegated
 })
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const forwarded = useForwardPropsEmits(delegatedProps, emit)
 
 const containerClasses = computed(() =>
     cn(numberInputRootVariants({ layout: props.layout }), props.class)

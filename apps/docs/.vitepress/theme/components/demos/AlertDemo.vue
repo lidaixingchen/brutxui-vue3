@@ -32,7 +32,7 @@ function handleClose() {
         <Alert variant="warning">
             <AlertTitle>存储空间不足</AlertTitle>
             <AlertDescription>您的存储空间已使用 90%，请及时清理或升级。</AlertDescription>
-            <template #action>
+            <template #actions>
                 <Button variant="primary" size="sm">立即升级</Button>
                 <Button variant="outline" size="sm">稍后提醒</Button>
             </template>

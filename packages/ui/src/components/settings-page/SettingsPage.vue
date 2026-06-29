@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
@@ -24,6 +24,7 @@ export interface SettingsTab {
 interface SettingsPageProps {
     title?: string
     tabs?: SettingsTab[]
+    modelValue?: string
     defaultTab?: string
     class?: string
 }
@@ -31,11 +32,13 @@ interface SettingsPageProps {
 const props = withDefaults(defineProps<SettingsPageProps>(), {
     title: undefined,
     tabs: () => [],
+    modelValue: undefined,
     defaultTab: undefined,
     class: undefined,
 })
 
 const emit = defineEmits<{
+    'update:modelValue': [value: string]
     save: [payload: { tab: string; values: Record<string, unknown> }]
 }>()
 
@@ -47,7 +50,19 @@ const resolvedNameLabel = computed(() => t('settingsPage.nameLabel'))
 const resolvedNamePlaceholder = computed(() => t('settingsPage.namePlaceholder'))
 const resolvedNotificationsLabel = computed(() => t('settingsPage.notificationsLabel'))
 
-const activeTab = ref(props.defaultTab ?? (props.tabs.length > 0 ? props.tabs[0].value : ''))
+const internalActiveTab = ref(props.modelValue ?? props.defaultTab ?? (props.tabs.length > 0 ? props.tabs[0].value : ''))
+
+watch(() => props.modelValue ?? props.defaultTab, (val) => {
+    if (val !== undefined) internalActiveTab.value = val
+})
+
+const activeTab = computed<string>({
+    get: () => internalActiveTab.value,
+    set: (val) => {
+        internalActiveTab.value = val
+        emit('update:modelValue', val)
+    },
+})
 
 const formValues = ref<Record<string, Record<string, unknown>>>({})
 

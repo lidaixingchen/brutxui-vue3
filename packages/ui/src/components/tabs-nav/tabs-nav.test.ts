@@ -77,9 +77,9 @@ describe('TabsNav', () => {
         expect(wrapper.find('.custom-content').exists()).toBe(true)
     })
 
-    it('uses defaultValue prop', () => {
+    it('uses modelValue prop', () => {
         const wrapper = mount(TabsNav, {
-            props: { tabs: mockTabs, defaultValue: 'features' },
+            props: { tabs: mockTabs, modelValue: 'features' },
             global: { stubs: globalStubs },
         })
         expect(wrapper.text()).toContain('Overview')

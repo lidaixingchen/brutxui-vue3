@@ -14,6 +14,7 @@ interface BeforeAfterProps {
     after: string
     beforeAlt?: string
     afterAlt?: string
+    modelValue?: number
     defaultValue?: number
     disabled?: boolean
     orientation?: 'horizontal' | 'vertical'
@@ -24,6 +25,7 @@ interface BeforeAfterProps {
 const props = withDefaults(defineProps<BeforeAfterProps>(), {
     beforeAlt: undefined,
     afterAlt: undefined,
+    modelValue: undefined,
     defaultValue: DEFAULT_SLIDER_POSITION,
     disabled: false,
     orientation: 'horizontal',
@@ -31,16 +33,26 @@ const props = withDefaults(defineProps<BeforeAfterProps>(), {
     iconSize: 'default',
 })
 
+const emit = defineEmits<{ 'update:modelValue': [value: number] }>()
+
 const { t } = useLocale()
 const prefersReducedMotion = useReducedMotion()
 
 const resolvedBeforeAlt = computed(() => props.beforeAlt ?? t('beforeAfter.before'))
 const resolvedAfterAlt = computed(() => props.afterAlt ?? t('beforeAfter.after'))
 
-const sliderVal = ref(props.defaultValue)
+const internalSliderVal = ref(props.modelValue ?? props.defaultValue)
 
-watch(() => props.defaultValue, (val) => {
-    sliderVal.value = val
+watch(() => props.modelValue ?? props.defaultValue, (val) => {
+    if (val !== undefined) internalSliderVal.value = val
+})
+
+const sliderVal = computed<number>({
+    get: () => internalSliderVal.value,
+    set: (val) => {
+        internalSliderVal.value = val
+        emit('update:modelValue', val)
+    },
 })
 
 const motionTransition = computed(() =>

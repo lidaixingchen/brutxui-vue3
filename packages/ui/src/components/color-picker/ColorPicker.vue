@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId, watch } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -14,11 +14,12 @@ import { useColorPicker } from '@/composables/useColorPicker'
 
 type TriggerVariantProps = VariantProps<typeof colorPickerTriggerVariants>
 
-interface Props extends ColorPickerProps {
+interface ColorPickerRootProps extends ColorPickerProps {
+    open?: boolean
     size?: NonNullable<TriggerVariantProps['size']>
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ColorPickerRootProps>(), {
     modelValue: null,
     format: 'hex',
     showAlpha: false,
@@ -32,6 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: undefined,
     disabled: false,
     clearable: false,
+    open: undefined,
     size: 'default',
     name: undefined,
     id: undefined,
@@ -39,7 +41,9 @@ const props = withDefaults(defineProps<Props>(), {
     class: undefined,
 })
 
-const emit = defineEmits<ColorPickerEmits>()
+const emit = defineEmits<ColorPickerEmits & {
+    'update:open': [value: boolean]
+}>()
 
 const { t } = useLocale()
 
@@ -47,7 +51,7 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('colorPicker.p
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('colorPicker.placeholder'))
 
 const {
-    open,
+    open: internalOpen,
     displayValue,
     normalizedDisplay,
     swatchStyle,
@@ -62,6 +66,18 @@ const {
     showAlpha: () => props.showAlpha,
     disabled: () => props.disabled,
     emit,
+})
+
+watch(() => props.open, (val) => {
+    if (val !== undefined) internalOpen.value = val
+}, { immediate: true })
+
+const open = computed<boolean>({
+    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    set: (val) => {
+        internalOpen.value = val
+        emit('update:open', val)
+    },
 })
 
 const triggerClasses = computed(() =>
@@ -80,6 +96,8 @@ const ICON_SIZE_CLASSES = {
 
 defineExpose({ open })
 
+const contentId = `color-picker-content-${useId()}`
+
 const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => props.presets)
 </script>
 
@@ -92,6 +110,7 @@ const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => pro
                 :name="name"
                 role="combobox"
                 :aria-expanded="open"
+                :aria-controls="open ? contentId : undefined"
                 :aria-label="resolvedAriaLabel"
                 aria-haspopup="dialog"
                 :disabled="disabled"

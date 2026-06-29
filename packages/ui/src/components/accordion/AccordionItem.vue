@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, provide, toRef } from 'vue'
-import { AccordionItem, type AccordionItemProps, useForwardProps } from 'reka-ui'
+import { AccordionItem, type AccordionItemProps as RekaAccordionItemProps, useForwardProps } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { accordionItemVariants } from './accordion-variants'
@@ -8,12 +8,12 @@ import { accordionItemKey } from './accordion-key'
 
 type AccordionItemVariantProps = VariantProps<typeof accordionItemVariants>
 
-interface Props extends AccordionItemProps {
+interface AccordionItemProps extends RekaAccordionItemProps {
     variant?: NonNullable<AccordionItemVariantProps['variant']>
     class?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<AccordionItemProps>(), {
     variant: 'default',
     class: undefined,
 })

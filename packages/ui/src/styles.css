@@ -761,6 +761,10 @@
         animation: brutal-pulse 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
     }
 
+    .animate-brutal-badge-pulse {
+        animation: brutal-badge-pulse 1.2s ease-in-out infinite;
+    }
+
     .animate-brutal-flip {
         animation: brutal-flip 0.4s ease-out both;
     }
@@ -833,6 +837,11 @@
         50% { transform: scale(1.05); }
     }
 
+    @keyframes brutal-badge-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.6); }
+    }
+
     @keyframes brutal-flip {
         0% { transform: perspective(400px) rotateY(0); }
         100% { transform: perspective(400px) rotateY(180deg); }
@@ -901,6 +910,7 @@
         .animate-brutal-shake,
         .animate-brutal-bounce,
         .animate-brutal-pulse,
+        .animate-brutal-badge-pulse,
         .animate-brutal-flip,
         .animate-brutal-slide-up,
         .animate-brutal-slide-down,

@@ -31,7 +31,7 @@ const { t } = useLocale()
 
 const emit = defineEmits<{
     retry: []
-    dismiss: []
+    close: []
 }>()
 
 const rootClasses = computed(() => cn('w-full max-w-md', props.class))
@@ -56,7 +56,7 @@ const buttonIconClasses = cn(iconSizeVariants({ size: 'default' }), 'mr-1 stroke
         </Alert>
         <CardContent>
             <div class="flex items-center justify-end gap-3">
-                <Button variant="ghost" size="sm" @click="emit('dismiss')">
+                <Button variant="ghost" size="sm" @click="emit('close')">
                     <X :class="buttonIconClasses" />
                     {{ t('errorCard.dismiss') }}
                 </Button>

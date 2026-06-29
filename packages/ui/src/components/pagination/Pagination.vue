@@ -17,7 +17,7 @@ const FIRST_PAGES_COUNT = 3
 const ELLIPSIS_COUNT = 1
 
 interface PaginationProps {
-    currentPage: number
+    modelValue: number
     totalPages: number
     siblingCount?: number
     showFirstLast?: boolean
@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
 })
 
 const emit = defineEmits<{
-    'update:currentPage': [page: number]
+    'update:modelValue': [page: number]
     jump: []
 }>()
 
@@ -55,8 +55,8 @@ const paginationRange = computed(() => {
         return range(FIRST_PAGE, props.totalPages)
     }
 
-    const leftSiblingIndex = Math.max(props.currentPage - props.siblingCount, FIRST_PAGE)
-    const rightSiblingIndex = Math.min(props.currentPage + props.siblingCount, props.totalPages)
+    const leftSiblingIndex = Math.max(props.modelValue - props.siblingCount, FIRST_PAGE)
+    const rightSiblingIndex = Math.min(props.modelValue + props.siblingCount, props.totalPages)
 
     const shouldShowLeftDots = leftSiblingIndex > MIN_PAGE_THRESHOLD
     const shouldShowRightDots = rightSiblingIndex < props.totalPages - MIN_PAGE_THRESHOLD
@@ -88,7 +88,7 @@ const navClasses = computed(() =>
 )
 
 const safeCurrentPage = computed(() =>
-    Math.min(Math.max(props.currentPage, FIRST_PAGE), Math.max(props.totalPages, FIRST_PAGE))
+    Math.min(Math.max(props.modelValue, FIRST_PAGE), Math.max(props.totalPages, FIRST_PAGE))
 )
 
 const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']>, IconSize> = {
@@ -142,7 +142,7 @@ const pageButtonInactiveClasses = computed(() =>
 
 function onPageChange(page: number) {
     if (page >= FIRST_PAGE && page <= props.totalPages) {
-        emit('update:currentPage', page)
+        emit('update:modelValue', page)
     }
 }
 </script>
@@ -185,9 +185,9 @@ function onPageChange(page: number) {
                     v-else
                     type="button"
                     :class="safeCurrentPage === pageNumber ? pageButtonActiveClasses : pageButtonInactiveClasses"
-                    :aria-label="t('pagination.page', { number: pageNumber as number })"
+                    :aria-label="t('pagination.page', { number: pageNumber })"
                     :aria-current="safeCurrentPage === pageNumber ? 'page' : undefined"
-                    @click="onPageChange(pageNumber as number)"
+                    @click="onPageChange(pageNumber)"
                 >
                     {{ pageNumber }}
                 </button>

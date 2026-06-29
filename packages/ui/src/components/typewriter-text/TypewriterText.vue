@@ -126,7 +126,7 @@ onUnmounted(() => {
 })
 
 const classes = computed(() =>
-    cn(typewriterTextVariants({ size: props.size, weight: props.weight }), props.class)
+    cn('brutx-typewriter', typewriterTextVariants({ size: props.size, weight: props.weight }), props.class)
 )
 
 // 光标高度映射表，提升可读性
@@ -158,8 +158,8 @@ const cursorClasses = computed(() =>
     </span>
 </template>
 
-<style scoped>
-@keyframes blink {
+<style>
+@keyframes brutx-typewriter-blink {
     0%, 50% {
         opacity: 1;
     }
@@ -168,7 +168,7 @@ const cursorClasses = computed(() =>
     }
 }
 
-.animate-blink {
-    animation: blink 1s infinite;
+.brutx-typewriter .animate-blink {
+    animation: brutx-typewriter-blink 1s infinite;
 }
 </style>

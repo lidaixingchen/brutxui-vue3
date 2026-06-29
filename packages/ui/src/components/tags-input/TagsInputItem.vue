@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TagsInputItem, type TagsInputItemProps } from 'reka-ui'
+import { TagsInputItem, type TagsInputItemProps as RekaTagsInputItemProps } from 'reka-ui'
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
@@ -7,12 +7,12 @@ import { tagsInputItemVariants } from './tags-input-variants'
 
 type TagsInputItemVariantProps = VariantProps<typeof tagsInputItemVariants>
 
-interface Props extends TagsInputItemProps {
+interface TagsInputItemProps extends RekaTagsInputItemProps {
     variant?: NonNullable<TagsInputItemVariantProps['variant']>
     class?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TagsInputItemProps>(), {
     variant: 'primary',
     class: undefined,
 })

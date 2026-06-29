@@ -38,8 +38,8 @@ const positionMap: Record<PositionKey, string> = {
 }
 
 const positionClasses = computed(() => {
-    if (typeof props.position === 'string') {
-        return positionMap[props.position as PositionKey] || ''
+    if (typeof props.position === 'string' && props.position in positionMap) {
+        return positionMap[props.position]
     }
     return ''
 })

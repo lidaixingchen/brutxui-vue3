@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, computed, type Ref } from 'vue'
+import { inject, ref, computed } from 'vue'
 import { cn } from '../../lib/utils'
 import { formFieldKey, formItemKey } from './form-context'
 
@@ -13,7 +13,7 @@ const rootClasses = computed(() => cn(props.class))
 
 const fieldContext = inject(formFieldKey, {
     name: computed(() => ''),
-    error: ref<string | undefined>(undefined) as Ref<string | undefined>,
+    error: ref<string | undefined>(undefined),
     value: ref<unknown>(undefined),
     setValue: () => {},
     setError: () => {},

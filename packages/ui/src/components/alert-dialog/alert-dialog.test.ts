@@ -128,11 +128,11 @@ describe('AlertDialogAction', () => {
         expect(wrapper.classes()).toContain('custom-action')
     })
 
-    it('renders with primary variant by default', () => {
+    it('renders with default variant by default', () => {
         const wrapper = mount(AlertDialogAction, {
             global: { stubs: { AlertDialogAction: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('bg-brutal-primary')
+        expect(wrapper.classes()).toContain('bg-brutal-bg')
     })
 })
 

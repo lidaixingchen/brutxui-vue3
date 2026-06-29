@@ -4,14 +4,12 @@ import { TabsRoot } from 'reka-ui'
 import { cn } from '../../lib/utils'
 
 interface TabsProps {
-    defaultValue?: string
     modelValue?: string
     orientation?: 'horizontal' | 'vertical'
     class?: string
 }
 
 const props = withDefaults(defineProps<TabsProps>(), {
-    defaultValue: undefined,
     modelValue: undefined,
     orientation: 'horizontal',
     class: undefined,
@@ -25,7 +23,6 @@ provide<ComputedRef<'horizontal' | 'vertical'>>('brutx-tabs-orientation', orient
 
 <template>
     <TabsRoot
-        :default-value="defaultValue"
         :model-value="modelValue"
         :orientation="orientation"
         :class="cn(props.class)"

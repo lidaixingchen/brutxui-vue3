@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { ChevronsUpDown, X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -18,6 +18,8 @@ interface TreeSelectProps {
     nodes: TreeNode[]
     /** 选中值（单选为 string，多选为 string[]） */
     modelValue?: string | string[]
+    /** 受控展开状态（与 update:open 配合实现 v-model:open） */
+    open?: boolean
     /** 是否支持多选 */
     multiple?: boolean
     /** 是否可搜索 */
@@ -50,6 +52,7 @@ interface TreeSelectProps {
 
 const props = withDefaults(defineProps<TreeSelectProps>(), {
     modelValue: undefined,
+    open: undefined,
     multiple: false,
     searchable: true,
     placeholder: undefined,
@@ -74,11 +77,19 @@ const resolvedEmptyText = computed(() => props.emptyText ?? t('treeSelect.emptyT
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | string[] | undefined]
+    'update:open': [value: boolean]
     'select': [node: TreeNode | TreeNode[] | undefined]
     'open-change': [open: boolean]
 }>()
 
-const open = ref(false)
+const internalOpen = ref(false)
+const open = computed<boolean>({
+    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    set: (val) => {
+        internalOpen.value = val
+        emit('update:open', val)
+    },
+})
 const searchQuery = ref('')
 const expandedIds = ref<Set<string>>(new Set())
 const focusedId = ref<string | undefined>(undefined)
@@ -116,7 +127,7 @@ const selectedNode = computed(() => {
 // 多选模式：选中的节点列表
 const selectedNodes = computed(() => {
     if (!props.multiple || !Array.isArray(props.modelValue)) return []
-    return props.modelValue.map(findNodeById).filter(Boolean) as TreeNode[]
+    return props.modelValue.map(findNodeById).filter((n): n is TreeNode => n != null)
 })
 
 // 选中 ID 集合（用于递归组件）
@@ -232,7 +243,7 @@ function handleSelect(node: TreeNode) {
             current.push(node.id)
         }
         emit('update:modelValue', current)
-        emit('select', current.map(findNodeById).filter(Boolean) as TreeNode[])
+        emit('select', current.map(findNodeById).filter((n): n is TreeNode => n != null))
     } else {
         emit('update:modelValue', node.id)
         emit('select', node)
@@ -284,6 +295,8 @@ const triggerIconClasses = computed(() =>
 )
 
 const clearIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')
+
+const contentId = `tree-select-content-${useId()}`
 </script>
 
 <template>
@@ -293,6 +306,7 @@ const clearIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')
             <div
                 role="combobox"
                 :aria-expanded="open"
+                :aria-controls="open ? contentId : undefined"
                 :aria-label="ariaLabel"
                 aria-haspopup="listbox"
                 :aria-multiselectable="multiple ? 'true' : undefined"
@@ -323,7 +337,7 @@ const clearIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')
             </div>
         </PopoverTrigger>
         <PopoverContent class="w-(--reka-popover-trigger-width) p-0" align="start">
-            <div class="flex flex-col">
+          <div :id="contentId" class="flex flex-col">
                 <!-- 搜索框 -->
                 <div v-if="searchable" class="border-b-3 border-brutal p-2">
                     <input

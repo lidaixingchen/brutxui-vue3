@@ -6413,6 +6413,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/carousel/CarouselEnhanced.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/carousel/CarouselItem.vue",
           "type": "registry:ui"
         },
@@ -11074,6 +11078,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
         },
         {

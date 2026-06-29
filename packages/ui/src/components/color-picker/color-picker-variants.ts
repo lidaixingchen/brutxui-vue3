@@ -45,7 +45,7 @@ export const colorPickerSwatchVariants = cva(
             },
             selected: {
                 true: 'ring-2 ring-brutal-ring ring-offset-2 ring-offset-brutal-bg',
-                false: '',
+                false: '', // no-op: unselected uses base swatch style
             },
         },
         defaultVariants: {

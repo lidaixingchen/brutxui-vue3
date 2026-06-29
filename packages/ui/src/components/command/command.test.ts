@@ -259,7 +259,7 @@ describe('CommandGroup', () => {
             slots: {
                 default: `
                     <CommandList>
-                        <CommandGroup heading="Suggestions">
+                        <CommandGroup title="Suggestions">
                             <CommandItem value="test">Test</CommandItem>
                         </CommandGroup>
                     </CommandList>
@@ -488,7 +488,7 @@ describe('Command filtering', () => {
                 default: `
                     <CommandInput />
                     <CommandList>
-                        <CommandGroup heading="Suggestions">
+                        <CommandGroup title="Suggestions">
                             <CommandItem value="calendar">Calendar</CommandItem>
                             <CommandItem value="search">Search Emoji</CommandItem>
                             <CommandItem value="calculator">Calculator</CommandItem>
@@ -524,7 +524,7 @@ describe('Command filtering', () => {
                 default: `
                     <CommandInput />
                     <CommandList>
-                        <CommandGroup heading="Suggestions">
+                        <CommandGroup title="Suggestions">
                             <CommandItem value="calendar">Calendar</CommandItem>
                         </CommandGroup>
                         <CommandEmpty />
@@ -556,10 +556,10 @@ describe('Command filtering', () => {
                 default: `
                     <CommandInput />
                     <CommandList>
-                        <CommandGroup heading="Suggestions">
+                        <CommandGroup title="Suggestions">
                             <CommandItem value="calendar">Calendar</CommandItem>
                         </CommandGroup>
-                        <CommandGroup heading="Settings">
+                        <CommandGroup title="Settings">
                             <CommandItem value="profile">Profile</CommandItem>
                         </CommandGroup>
                     </CommandList>
@@ -697,7 +697,7 @@ describe('Command programmatic control (defineExpose)', () => {
             slots: {
                 default: `
                     <CommandList>
-                        <CommandGroup heading="Suggestions">
+                        <CommandGroup title="Suggestions">
                             <CommandItem value="calendar">Calendar</CommandItem>
                             <CommandItem value="search">Search Emoji</CommandItem>
                             <CommandItem value="calculator">Calculator</CommandItem>

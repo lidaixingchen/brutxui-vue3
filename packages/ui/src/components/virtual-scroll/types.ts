@@ -1,5 +1,3 @@
-import type { VNode } from 'vue'
-
 export interface VirtualScrollItem {
     id: string | number
     [key: string]: unknown
@@ -27,13 +25,4 @@ export interface VirtualScrollEmits {
     (e: 'scroll-end'): void
     /** 滚动时触发 */
     (e: 'scroll', scrollTop: number): void
-}
-
-export interface VirtualScrollSlots {
-    /** 默认插槽 - 渲染每个项目 */
-    default: (props: { item: VirtualScrollItem; index: number }) => VNode[]
-    /** 空状态插槽 */
-    empty: () => VNode[]
-    /** 加载更多插槽 */
-    loading: () => VNode[]
 }

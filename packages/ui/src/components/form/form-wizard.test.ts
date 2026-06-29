@@ -78,8 +78,8 @@ describe('FormWizard', () => {
         })
         const nextButton = wrapper.findAll('button').find(b => b.text() === 'Next')
         await nextButton!.trigger('click')
-        expect(wrapper.emitted('stepChange')).toBeTruthy()
-        expect(wrapper.emitted('stepChange')![0]).toEqual([1, 0])
+        expect(wrapper.emitted('step-change')).toBeTruthy()
+        expect(wrapper.emitted('step-change')![0]).toEqual([1, 0])
     })
 
     it('shows previous button after navigating', async () => {
@@ -150,7 +150,7 @@ describe('FormWizard', () => {
         })
         const nextButton = wrapper.findAll('button').find(b => b.text() === 'Next')
         await nextButton!.trigger('click')
-        expect(wrapper.emitted('validationError')).toBeTruthy()
+        expect(wrapper.emitted('validation-error')).toBeTruthy()
         expect(wrapper.text()).toContain('Name is required')
     })
 
@@ -165,6 +165,6 @@ describe('FormWizard', () => {
         })
         const stepButtons = wrapper.findAll('[role="listitem"] button')
         await stepButtons[2].trigger('click')
-        expect(wrapper.emitted('stepChange')).toBeTruthy()
+        expect(wrapper.emitted('step-change')).toBeTruthy()
     })
 })

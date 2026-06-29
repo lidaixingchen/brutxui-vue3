@@ -10,6 +10,7 @@ export const marqueeContainerVariants = cva(
         variants: {
             fade: {
                 true: '[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
+                false: '',
             },
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg',
@@ -43,6 +44,7 @@ export const marqueeTrackVariants = cva(
             },
             pauseOnHover: {
                 true: 'hover:[animation-play-state:paused]',
+                false: '',
             },
         },
         defaultVariants: {

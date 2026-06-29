@@ -57,7 +57,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'before-after': { files: ['BeforeAfter.vue', 'before-after-variants.ts'], composables: ['useLocale.ts'] },
     'code-block': { files: ['CodeBlock.vue', 'prism-languages.ts', 'brutx-prism.css', 'code-block-variants.ts'], composables: ['useLocale.ts'] },
     timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-key.ts', 'timeline-variants.ts'] },
-    carousel: { files: ['Carousel.vue', 'CarouselItem.vue', 'carousel-variants.ts'], composables: ['useLocale.ts'] },
+    carousel: { files: ['Carousel.vue', 'CarouselEnhanced.vue', 'CarouselItem.vue', 'carousel-variants.ts'], composables: ['useLocale.ts'] },
     'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts'], composables: ['useLocale.ts'] },
     kanban: { files: ['KanbanBoard.vue', 'kanban-variants.ts'], composables: ['useLocale.ts'] },
     'chat-bubble': { files: ['ChatBubble.vue', 'chat-bubble-variants.ts'] },

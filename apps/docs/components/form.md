@@ -207,9 +207,9 @@ interface ValidationResult {
 | 事件 | 载荷 | 说明 |
 |------|------|------|
 | `update:modelValue` | `Record<string, unknown>` | 表单数据更新 |
-| `stepChange` | `[step: number, previousStep: number]` | 步骤切换 |
+| `step-change` | `[step: number, previousStep: number]` | 步骤切换 |
 | `complete` | `Record<string, unknown>` | 表单完成 |
-| `validationError` | `[step: number, errors: Record<string, string>]` | 验证失败 |
+| `validation-error` | `[step: number, errors: Record<string, string>]` | 验证失败 |
 
 ### useFormWizard
 

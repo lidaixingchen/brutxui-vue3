@@ -22,7 +22,6 @@ type SliderTrackVariantProps = VariantProps<typeof sliderTrackVariants>
 type SliderThumbVariantProps = VariantProps<typeof sliderThumbVariants>
 
 interface SliderProps {
-    defaultValue?: number[]
     modelValue?: number[]
     min?: number
     max?: number
@@ -38,7 +37,6 @@ interface SliderProps {
 }
 
 const props = withDefaults(defineProps<SliderProps>(), {
-    defaultValue: undefined,
     modelValue: undefined,
     min: 0,
     max: 100,
@@ -84,7 +82,6 @@ const tooltipClasses = computed(() =>
 
 const thumbCount = computed(() => {
     if (props.modelValue && props.modelValue.length > 0) return props.modelValue.length
-    if (props.defaultValue && props.defaultValue.length > 0) return props.defaultValue.length
     return 1
 })
 
@@ -148,7 +145,6 @@ function handleThumbBlur(index: number) {
 
 <template>
     <SliderRootPrimitive
-        :default-value="defaultValue"
         :model-value="modelValue"
         :min="min"
         :max="max"

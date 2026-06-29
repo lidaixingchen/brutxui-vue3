@@ -82,7 +82,7 @@ import { Badge } from 'brutx-ui-vue'
 
 ## 脉冲动画
 
-通过 `pulse` 属性为圆点启用脉冲动画（`animate-brutal-pulse`）。`pulse` 隐含 `dot`，无需同时设置。适用于实时状态、新消息提醒等需要吸引注意力的场景。
+通过 `pulse` 属性为圆点启用脉冲动画（`animate-brutal-badge-pulse`）。`pulse` 隐含 `dot`，无需同时设置。适用于实时状态、新消息提醒等需要吸引注意力的场景。
 
 ```vue
 <script setup>

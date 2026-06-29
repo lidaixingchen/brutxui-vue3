@@ -149,37 +149,37 @@ const classes = computed(() =>
 
 .glitch-text.is-glitching.glitch-horizontal::before {
     left: 2px;
-    text-shadow: -2px 0 var(--brutal-destructive, #EF476F);
+    text-shadow: -2px 0 var(--brutal-destructive);
     animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
 .glitch-text.is-glitching.glitch-horizontal::after {
     left: -2px;
-    text-shadow: -2px 0 var(--brutal-info, #4A90D9);
+    text-shadow: -2px 0 var(--brutal-info);
     animation: glitch-anim-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
 .glitch-text.is-glitching.glitch-vertical::before {
     top: 2px;
-    text-shadow: 0 -2px var(--brutal-destructive, #EF476F);
+    text-shadow: 0 -2px var(--brutal-destructive);
     animation: glitch-anim-vertical-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
 .glitch-text.is-glitching.glitch-vertical::after {
     top: -2px;
-    text-shadow: 0 -2px var(--brutal-info, #4A90D9);
+    text-shadow: 0 -2px var(--brutal-info);
     animation: glitch-anim-vertical-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
 .glitch-text.is-glitching.glitch-both::before {
     left: 2px;
-    text-shadow: -2px 0 var(--brutal-destructive, #EF476F);
+    text-shadow: -2px 0 var(--brutal-destructive);
     animation: glitch-anim-1 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 
 .glitch-text.is-glitching.glitch-both::after {
     top: -2px;
-    text-shadow: 0 -2px var(--brutal-info, #4A90D9);
+    text-shadow: 0 -2px var(--brutal-info);
     animation: glitch-anim-vertical-2 var(--glitch-duration, 300ms) infinite linear alternate-reverse;
 }
 

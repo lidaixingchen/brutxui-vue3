@@ -1,5 +1,3 @@
-export type DateValueFormat = 'date' | 'timestamp' | string
-
 function pad2(value: number): string {
     return value.toString().padStart(2, '0')
 }
@@ -86,22 +84,4 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     const date = new Date(year, month, day, hours, minutes, seconds)
     if (Number.isNaN(date.getTime())) return null
     return date
-}
-
-export function toValueFormat(date: Date | null, valueFormat: DateValueFormat): Date | number | string | null {
-    if (!date) return null
-    if (valueFormat === 'date') return date
-    if (valueFormat === 'timestamp') return date.getTime()
-    return formatDate(date, valueFormat)
-}
-
-export function fromValueFormat(value: unknown, valueFormat: DateValueFormat): Date | null {
-    if (!value) return null
-    if (value instanceof Date) return value
-    if (valueFormat === 'timestamp' && typeof value === 'number') return new Date(value)
-    if (typeof value === 'string') {
-        if (valueFormat === 'date') return null
-        return parseFormattedDate(value, valueFormat)
-    }
-    return null
 }

@@ -34,7 +34,7 @@ function setFilter(value: string) {
                 <CommandInput placeholder="输入命令或搜索..." />
                 <CommandList>
                     <CommandEmpty />
-                    <CommandGroup heading="建议">
+                    <CommandGroup title="建议">
                         <CommandItem value="calendar" @select="handleSelect">
                             日历
                         </CommandItem>
@@ -46,7 +46,7 @@ function setFilter(value: string) {
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
-                    <CommandGroup heading="设置">
+                    <CommandGroup title="设置">
                         <CommandItem value="profile" @select="handleSelect">
                             个人资料
                             <CommandShortcut>⌘P</CommandShortcut>
@@ -76,7 +76,7 @@ function setFilter(value: string) {
                 <CommandInput placeholder="输入命令..." />
                 <CommandList>
                     <CommandEmpty />
-                    <CommandGroup heading="操作">
+                    <CommandGroup title="操作">
                         <CommandItem value="new-file" @select="handleSelect">
                             新建文件
                             <CommandShortcut>⌘N</CommandShortcut>
@@ -91,7 +91,7 @@ function setFilter(value: string) {
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
-                    <CommandGroup heading="导航">
+                    <CommandGroup title="导航">
                         <CommandItem value="go-home" @select="handleSelect">
                             前往首页
                         </CommandItem>
@@ -132,7 +132,7 @@ function setFilter(value: string) {
                 <CommandInput placeholder="输入命令或搜索..." />
                 <CommandList>
                     <CommandEmpty />
-                    <CommandGroup heading="建议">
+                    <CommandGroup title="建议">
                         <CommandItem value="calendar" @select="handleSelect">
                             日历
                         </CommandItem>
@@ -144,7 +144,7 @@ function setFilter(value: string) {
                         </CommandItem>
                     </CommandGroup>
                     <CommandSeparator />
-                    <CommandGroup heading="设置">
+                    <CommandGroup title="设置">
                         <CommandItem value="profile" @select="handleSelect">
                             个人资料
                         </CommandItem>

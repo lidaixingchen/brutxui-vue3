@@ -17,14 +17,12 @@ export interface TabItem {
 interface TabsNavProps {
     tabs?: TabItem[]
     modelValue?: string
-    defaultValue?: string
     class?: string
 }
 
 const props = withDefaults(defineProps<TabsNavProps>(), {
     tabs: () => [],
     modelValue: undefined,
-    defaultValue: undefined,
     class: undefined,
 })
 
@@ -41,7 +39,6 @@ const internalValue = ref<string>('')
 const activeValue = computed(() => {
     if (props.modelValue !== undefined) return props.modelValue
     if (internalValue.value) return internalValue.value
-    if (props.defaultValue) return props.defaultValue
     if (props.tabs.length > 0) return props.tabs[0].value
     return ''
 })

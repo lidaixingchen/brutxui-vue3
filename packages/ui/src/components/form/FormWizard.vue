@@ -47,9 +47,9 @@ const props = withDefaults(defineProps<FormWizardProps>(), {
 
 const emit = defineEmits<{
     'update:modelValue': [values: Record<string, unknown>]
-    stepChange: [step: number, previousStep: number]
+    'step-change': [step: number, previousStep: number]
     complete: [values: Record<string, unknown>]
-    validationError: [step: number, errors: Record<string, string>]
+    'validation-error': [step: number, errors: Record<string, string>]
     'navigation-blocked': [targetStep: number, blockedStep: number]
 }>()
 
@@ -83,7 +83,7 @@ function validateCurrentStep(): boolean {
     const result = step.validator(props.modelValue)
     if (!result.valid) {
         stepErrors.value.set(currentStep.value, result.errors)
-        emit('validationError', currentStep.value, result.errors)
+        emit('validation-error', currentStep.value, result.errors)
         return false
     }
 
@@ -105,7 +105,7 @@ function goToStep(step: number) {
 
     const previousStep = currentStep.value
     currentStep.value = step
-    emit('stepChange', step, previousStep)
+    emit('step-change', step, previousStep)
 }
 
 function nextStep() {

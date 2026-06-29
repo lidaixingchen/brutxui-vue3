@@ -1,9 +1,6 @@
 import {
     formatDate,
     parseFormattedDate,
-    toValueFormat,
-    fromValueFormat,
-    type DateValueFormat,
 } from './date'
 
 describe('formatDate', () => {
@@ -129,60 +126,5 @@ describe('parseFormattedDate', () => {
         const result = parseFormattedDate('98-06-26', 'YY-MM-DD')
         expect(result).not.toBeNull()
         expect(result!.getFullYear()).toBe(1998)
-    })
-})
-
-describe('toValueFormat', () => {
-    it('returns null for null date', () => {
-        expect(toValueFormat(null, 'date')).toBeNull()
-    })
-
-    it('returns Date object when valueFormat is date', () => {
-        const date = new Date(2026, 0, 5)
-        expect(toValueFormat(date, 'date')).toBe(date)
-    })
-
-    it('returns timestamp number when valueFormat is timestamp', () => {
-        const date = new Date(2026, 0, 5)
-        expect(toValueFormat(date, 'timestamp')).toBe(date.getTime())
-    })
-
-    it('returns formatted string for custom format', () => {
-        const date = new Date(2026, 0, 5)
-        expect(toValueFormat(date, 'YYYY/MM/DD' as DateValueFormat)).toBe('2026/01/05')
-    })
-})
-
-describe('fromValueFormat', () => {
-    it('returns null for null value', () => {
-        expect(fromValueFormat(null, 'date')).toBeNull()
-    })
-
-    it('returns Date when value is Date instance', () => {
-        const date = new Date(2026, 0, 5)
-        expect(fromValueFormat(date, 'date')).toBe(date)
-    })
-
-    it('returns Date from timestamp when valueFormat is timestamp', () => {
-        const date = new Date(2026, 0, 5)
-        const result = fromValueFormat(date.getTime(), 'timestamp')
-        expect(result).not.toBeNull()
-        expect(result!.getTime()).toBe(date.getTime())
-    })
-
-    it('returns Date from formatted string when valueFormat is custom', () => {
-        const result = fromValueFormat('2026/01/05', 'YYYY/MM/DD')
-        expect(result).not.toBeNull()
-        expect(result!.getFullYear()).toBe(2026)
-        expect(result!.getMonth()).toBe(0)
-        expect(result!.getDate()).toBe(5)
-    })
-
-    it('returns null for string when valueFormat is date', () => {
-        expect(fromValueFormat('2026-01-05', 'date')).toBeNull()
-    })
-
-    it('returns null for unknown value type', () => {
-        expect(fromValueFormat(123, 'date')).toBeNull()
     })
 })

@@ -3,7 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from 'brutx-ui-vue'
 </script>
 
 <template>
-    <div class="space-y-6">
+    <!-- Override --radius-brutal directly: the @theme indirection (--radius-brutal: var(--brutal-radius)) resolves at :root, so setting --brutal-radius alone has no effect on descendants. -->
+    <div class="space-y-6" style="--radius-brutal: 8px">
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">尺寸</p>
             <div class="flex items-center gap-4">

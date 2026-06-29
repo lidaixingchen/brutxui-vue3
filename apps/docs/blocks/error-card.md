@@ -40,7 +40,7 @@ function handleDismiss() {
         description="An unexpected error occurred. Please try again."
         retry-text="Retry"
         @retry="handleRetry"
-        @dismiss="handleDismiss"
+        @close="handleDismiss"
     />
 </template>
 ```
@@ -58,7 +58,7 @@ import ErrorCard from '@/components/ui/error-card/ErrorCard.vue'
         description="Your file could not be uploaded. Check the format and try again."
         retry-text="Re-upload"
         @retry="retryUpload"
-        @dismiss="cancelUpload"
+        @close="cancelUpload"
     />
 </template>
 ```

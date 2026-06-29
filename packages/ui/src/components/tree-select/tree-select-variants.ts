@@ -38,7 +38,7 @@ export const treeSelectNodeVariants = cva(
         variants: {
             selected: {
                 true: 'bg-brutal-primary border-brutal shadow-brutal',
-                false: '',
+                false: '', // no-op: unselected state
             },
         },
         defaultVariants: {

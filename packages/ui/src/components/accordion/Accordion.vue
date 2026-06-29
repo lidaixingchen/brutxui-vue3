@@ -4,14 +4,14 @@ import { computed } from 'vue'
 import { cn } from '../../lib/utils'
 
 const props = defineProps<AccordionRootProps & { class?: string }>()
-const emits = defineEmits<AccordionRootEmits>()
+const emit = defineEmits<AccordionRootEmits>()
 
 const delegatedProps = computed(() => {
     const { class: _, ...delegated } = props
     return delegated
 })
 
-const forwarded = useForwardPropsEmits(delegatedProps, emits)
+const forwarded = useForwardPropsEmits(delegatedProps, emit)
 
 const classes = computed(() => cn(props.class))
 </script>

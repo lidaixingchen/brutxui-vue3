@@ -42,6 +42,7 @@ interface PricingSectionProps {
     subtitle?: string
     plans?: BrutalistPricingPlan[]
     billingMode?: BillingMode
+    modelValue?: BillingPeriod
     defaultBilling?: BillingPeriod
     popularText?: string
     class?: string
@@ -52,19 +53,31 @@ const props = withDefaults(defineProps<PricingSectionProps>(), {
     subtitle: undefined,
     plans: () => [],
     billingMode: 'auto',
+    modelValue: undefined,
     defaultBilling: 'monthly',
     popularText: undefined,
     class: undefined,
 })
 
 const emit = defineEmits<{
+    'update:modelValue': [value: BillingPeriod]
     'plan-select': [planName: string]
 }>()
 
 const { t } = useLocale()
-const billing = ref<BillingPeriod>(props.defaultBilling)
+const internalBilling = ref<BillingPeriod>(props.modelValue ?? props.defaultBilling)
 
-watch(() => props.defaultBilling, (val) => { billing.value = val })
+watch(() => props.modelValue ?? props.defaultBilling, (val) => {
+    if (val) internalBilling.value = val
+})
+
+const billing = computed<BillingPeriod>({
+    get: () => internalBilling.value,
+    set: (val) => {
+        internalBilling.value = val
+        emit('update:modelValue', val)
+    },
+})
 
 const resolvedTitle = computed(() => props.title ?? t('pricingSection.defaultTitle'))
 const resolvedSubtitle = computed(() => props.subtitle ?? '')

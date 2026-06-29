@@ -142,9 +142,9 @@ const rootClasses = computed(() =>
 
                 <div v-if="totalPages > 1" class="mt-8 flex justify-center">
                     <Pagination
-                        :current-page="currentPage"
+                        :model-value="currentPage"
                         :total-pages="totalPages"
-                        @update:current-page="handlePageChange"
+                        @update:model-value="handlePageChange"
                     />
                 </div>
             </slot>

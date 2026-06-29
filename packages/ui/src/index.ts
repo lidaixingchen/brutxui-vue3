@@ -199,7 +199,7 @@ export { default as MonthPickerPanel } from './components/date-picker/MonthPicke
 export { default as YearPicker } from './components/date-picker/YearPicker.vue'
 export { default as YearPickerPanel } from './components/date-picker/YearPickerPanel.vue'
 export { datePickerTriggerVariants, datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants, timePickerPanelVariants, timePickerTriggerVariants } from './components/date-picker/date-picker-variants'
-export type { DatePickerProps, DatePickerEmits, DatePickerMode, DatePickerSize, DatePickerVariant, DatePickerShortcut, DatePickerRangeProps, DatePickerRangeEmits, DatePickerRangeShortcut, DateRange, DateTimePickerProps, DateTimePickerEmits, WeekPickerProps, WeekPickerEmits, MonthPickerProps, MonthPickerEmits, YearPickerProps, YearPickerEmits } from './components/date-picker/types'
+export type { DatePickerProps, DatePickerEmits, DatePickerSize, DatePickerVariant, DatePickerShortcut, DatePickerRangeProps, DatePickerRangeEmits, DatePickerRangeShortcut, DateRange, DateTimePickerProps, DateTimePickerEmits, WeekPickerProps, WeekPickerEmits, MonthPickerProps, MonthPickerEmits, YearPickerProps, YearPickerEmits } from './components/date-picker/types'
 
 export { default as ColorPicker } from './components/color-picker/ColorPicker.vue'
 export { default as ColorPickerPanel } from './components/color-picker/ColorPickerPanel.vue'

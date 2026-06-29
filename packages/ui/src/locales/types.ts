@@ -103,6 +103,24 @@ export interface SaaSPricingLocale {
     perMonth: string
     perMonthBilledAnnually: string
     billingPeriod: string
+    planStarterName: string
+    planStarterDescription: string
+    planStarterCta: string
+    planProName: string
+    planProDescription: string
+    planProCta: string
+    planEnterpriseName: string
+    planEnterpriseDescription: string
+    planEnterpriseCta: string
+    feature5Components: string
+    featureBasicThemes: string
+    featureCommunitySupport: string
+    featurePriorityUpdates: string
+    featureCustomThemes: string
+    featureAllComponents: string
+    featureAllThemes: string
+    featurePrioritySupport: string
+    featureDedicatedSupport: string
 }
 
 export interface ToastLocale {

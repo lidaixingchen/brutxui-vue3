@@ -29,7 +29,7 @@
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 - `closable`: `boolean` — 默认 `false`，渲染 × 关闭按钮
 - `dot`: `boolean` — 默认 `false`，渲染小圆点指示器
-- `pulse`: `boolean` — 默认 `false`，dot 启用脉冲动画（`animate-brutal-pulse`）
+- `pulse`: `boolean` — 默认 `false`，dot 启用脉冲动画（`animate-brutal-badge-pulse`）
 
 - Events: `close` — 点击关闭按钮时触发
 - Slots: `icon` — 在文字前渲染自定义图标；`default` — 徽标内容

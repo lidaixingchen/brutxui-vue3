@@ -108,7 +108,7 @@ const showSuggestions = computed(() => !!query.value)
                     <CommandGroup
                         v-for="(groupSuggestions, groupKey) in groupedSuggestions"
                         :key="groupKey"
-                        :heading="groupKey || undefined"
+                        :title="groupKey || undefined"
                     >
                         <CommandItem
                             v-for="suggestion in groupSuggestions"
@@ -125,7 +125,7 @@ const showSuggestions = computed(() => !!query.value)
                     </div>
                 </CommandList>
                 <CommandList v-else-if="showRecent">
-                    <CommandGroup :heading="t('searchWidget.recentSearches')">
+                    <CommandGroup :title="t('searchWidget.recentSearches')">
                         <CommandItem
                             v-for="item in recent"
                             :key="item.value"

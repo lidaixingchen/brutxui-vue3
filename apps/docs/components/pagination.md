@@ -30,7 +30,7 @@ const totalPages = 10
 
 <template>
     <Pagination
-        v-model:current-page="currentPage"
+        v-model="currentPage"
         :total-pages="totalPages"
     />
 </template>
@@ -64,7 +64,7 @@ const currentPage = ref(1)
 
 <template>
     <Pagination
-        v-model:current-page="currentPage"
+        v-model="currentPage"
         :total-pages="50"
         :sibling-count="2"
         :show-first-last="true"
@@ -87,7 +87,7 @@ const currentPage = ref(1)
 
 <template>
     <Pagination
-        v-model:current-page="currentPage"
+        v-model="currentPage"
         :total-pages="10"
         :show-page-numbers="false"
     />
@@ -118,7 +118,7 @@ function handleJump() {
 
 <template>
     <Pagination
-        v-model:current-page="currentPage"
+        v-model="currentPage"
         :total-pages="50"
         :sibling-count="1"
         @jump="handleJump"
@@ -143,5 +143,5 @@ function handleJump() {
 
 | 事件 | 载荷 | 说明 |
 |------|------|------|
-| `update:currentPage` | `number` | 页码变化时触发 |
+| `update:modelValue` | `number` | 页码变化时触发 |
 | `jump` | — | 点击省略号 `...` 按钮时触发，用于自定义跳页交互 |

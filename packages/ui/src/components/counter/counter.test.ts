@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import Counter from './Counter.vue'
 
 interface CounterExposed {
-    start: () => void
+    play: () => void
     stop: () => void
 }
 
@@ -104,12 +104,12 @@ describe('Counter', () => {
         expect(wrapper.element.tagName).toBe('SPAN')
     })
 
-    it('exposes start and stop methods', () => {
+    it('exposes play and stop methods', () => {
         const wrapper = mount(Counter, {
             props: { to: 100 },
         })
         const vm = wrapper.vm as unknown as CounterExposed
-        expect(typeof vm.start).toBe('function')
+        expect(typeof vm.play).toBe('function')
         expect(typeof vm.stop).toBe('function')
     })
 

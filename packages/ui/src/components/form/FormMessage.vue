@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref, type Ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { cn } from '../../lib/utils'
 import { formFieldKey, formItemKey } from './form-context'
 
@@ -9,7 +9,7 @@ interface FormMessageProps {
 
 const props = defineProps<FormMessageProps>()
 
-const fieldContext = inject(formFieldKey, { name: computed(() => ''), error: ref<string | undefined>(undefined) as Ref<string | undefined>, value: ref<unknown>(undefined), setValue: () => {}, setError: () => {} })
+const fieldContext = inject(formFieldKey, { name: computed(() => ''), error: ref<string | undefined>(undefined), value: ref<unknown>(undefined), setValue: () => {}, setError: () => {} })
 const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })
 
 const body = computed(() => fieldContext.error.value)

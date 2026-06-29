@@ -143,7 +143,7 @@ describe('Badge', () => {
                 props: { dot: true, pulse: true },
                 ...globalProvide,
             })
-            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-pulse').exists()).toBe(true)
+            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-badge-pulse').exists()).toBe(true)
         })
 
         it('does not apply pulse animation when pulse is false', () => {
@@ -151,7 +151,7 @@ describe('Badge', () => {
                 props: { dot: true, pulse: false },
                 ...globalProvide,
             })
-            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-pulse').exists()).toBe(false)
+            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-badge-pulse').exists()).toBe(false)
         })
     })
 

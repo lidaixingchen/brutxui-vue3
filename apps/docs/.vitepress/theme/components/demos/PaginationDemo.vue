@@ -29,7 +29,7 @@ function handleJump() {
         <div>
             <h3 class="text-sm font-black mb-3">基础用法</h3>
             <Pagination
-                v-model:current-page="currentPage"
+                v-model="currentPage"
                 :total-pages="3"
             />
         </div>
@@ -38,17 +38,17 @@ function handleJump() {
             <h3 class="text-sm font-black mb-3">变体：默认 / 圆角 / 极简</h3>
             <div class="space-y-4">
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     variant="default"
                 />
                 <Pagination
-                    v-model:current-page="currentPageRounded"
+                    v-model="currentPageRounded"
                     :total-pages="20"
                     variant="rounded"
                 />
                 <Pagination
-                    v-model:current-page="currentPageMinimal"
+                    v-model="currentPageMinimal"
                     :total-pages="20"
                     variant="minimal"
                 />
@@ -59,17 +59,17 @@ function handleJump() {
             <h3 class="text-sm font-black mb-3">尺寸：小 / 默认 / 大</h3>
             <div class="space-y-4">
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     size="sm"
                 />
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     size="default"
                 />
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     size="lg"
                 />
@@ -80,17 +80,17 @@ function handleJump() {
             <h3 class="text-sm font-black mb-3">siblingCount（相邻页码数）</h3>
             <div class="space-y-4">
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     :sibling-count="0"
                 />
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     :sibling-count="1"
                 />
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     :sibling-count="2"
                 />
@@ -101,12 +101,12 @@ function handleJump() {
             <h3 class="text-sm font-black mb-3">showFirstLast（首页/末页按钮）</h3>
             <div class="space-y-4">
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     :show-first-last="true"
                 />
                 <Pagination
-                    v-model:current-page="currentPageLarge"
+                    v-model="currentPageLarge"
                     :total-pages="20"
                     :show-first-last="false"
                 />
@@ -117,12 +117,12 @@ function handleJump() {
             <h3 class="text-sm font-black mb-3">showPageNumbers（页码显示模式）</h3>
             <div class="space-y-4">
                 <Pagination
-                    v-model:current-page="currentPageNoNumbers"
+                    v-model="currentPageNoNumbers"
                     :total-pages="20"
                     :show-page-numbers="true"
                 />
                 <Pagination
-                    v-model:current-page="currentPageNoNumbers"
+                    v-model="currentPageNoNumbers"
                     :total-pages="20"
                     :show-page-numbers="false"
                 />
@@ -135,7 +135,7 @@ function handleJump() {
                 点击省略号 <span class="font-mono font-black">•••</span> 触发 jump 事件，弹出输入框直接跳转到目标页码。
             </p>
             <Pagination
-                v-model:current-page="currentPageJump"
+                v-model="currentPageJump"
                 :total-pages="50"
                 :sibling-count="1"
                 @jump="handleJump"

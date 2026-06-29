@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<HardcoreInputProps>(), {
 
 const emit = defineEmits<{
     'update:modelValue': [value: string]
-    'validationChange': [state: 'default' | 'success' | 'error', message?: string]
+    'validation-change': [state: 'default' | 'success' | 'error', message?: string]
 }>()
 
 const errorId = `input-error-${useId().replace(/:/g, '-')}`
@@ -65,7 +65,7 @@ const validate = (value: string) => {
 
     if (rulesEmpty) {
         if (prevState !== 'default' && validationState.value === 'default') {
-            emit('validationChange', 'default')
+            emit('validation-change', 'default')
         }
         return
     }
@@ -92,9 +92,9 @@ const validate = (value: string) => {
     }
 
     if (validationState.value === 'error') {
-        emit('validationChange', 'error', errorMessage.value)
+        emit('validation-change', 'error', errorMessage.value)
     } else if (validationState.value === 'success') {
-        emit('validationChange', 'success')
+        emit('validation-change', 'success')
     }
 }
 
@@ -177,7 +177,7 @@ const faceClasses = computed(() =>
                     <div v-if="validationState !== 'default'" :class="faceClasses">
                         <!-- 成功 (😎) SVG -->
                         <svg v-if="validationState === 'success'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <circle cx="12" cy="12" r="10" fill="var(--brutal-accent, #FFE66D)" stroke="currentColor" stroke-width="2.5" />
+                            <circle cx="12" cy="12" r="10" fill="var(--brutal-accent)" stroke="currentColor" stroke-width="2.5" />
                             <!-- 墨镜 -->
                             <rect x="6" y="8" width="5" height="4" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1" />
                             <rect x="13" y="8" width="5" height="4" rx="1.5" fill="currentColor" stroke="currentColor" stroke-width="1" />
@@ -188,7 +188,7 @@ const faceClasses = computed(() =>
                         
                         <!-- 错误 (😠) SVG -->
                         <svg v-if="validationState === 'error'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <circle cx="12" cy="12" r="10" fill="var(--brutal-destructive, #EF476F)" stroke="currentColor" stroke-width="2.5" />
+                            <circle cx="12" cy="12" r="10" fill="var(--brutal-destructive)" stroke="currentColor" stroke-width="2.5" />
                             <!-- 倒八字愤怒眉毛 -->
                             <line x1="6" y1="8" x2="10" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
                             <line x1="18" y1="8" x2="14" y2="10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />

@@ -42,8 +42,8 @@ const closeIconClasses = computed(() =>
 <template>
     <div role="alert" :class="classes">
         <slot />
-        <div v-if="$slots.action" class="mt-3 flex items-center gap-2">
-            <slot name="action" />
+        <div v-if="$slots.actions" class="mt-3 flex items-center gap-2">
+            <slot name="actions" />
         </div>
         <Button
             v-if="closable"

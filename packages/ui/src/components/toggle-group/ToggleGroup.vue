@@ -10,7 +10,6 @@ type ToggleVariantProps = VariantProps<typeof toggleVariants>
 
 interface ToggleGroupProps {
     type?: 'single' | 'multiple'
-    defaultValue?: string | string[]
     modelValue?: string | string[]
     variant?: NonNullable<ToggleVariantProps['variant']>
     size?: NonNullable<ToggleVariantProps['size']>
@@ -21,7 +20,6 @@ interface ToggleGroupProps {
 
 const props = withDefaults(defineProps<ToggleGroupProps>(), {
     type: 'single',
-    defaultValue: undefined,
     modelValue: undefined,
     variant: 'default',
     size: 'default',
@@ -50,7 +48,6 @@ provide(toggleGroupKey, {
 <template>
     <ToggleGroupRoot
         :type="type"
-        :default-value="defaultValue"
         :model-value="modelValue"
         :disabled="disabled"
         :orientation="orientation"

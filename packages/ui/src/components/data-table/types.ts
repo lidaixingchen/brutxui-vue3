@@ -29,8 +29,6 @@ export interface DataTableColumn<T extends object = Record<string, unknown>> {
     accessorFn?: (row: T) => unknown
     cell?: (props: { row: T; value: unknown }) => VNode | string
     sortable?: boolean
-    filterable?: boolean
-    resizable?: boolean
     hidden?: boolean
     width?: number | 'auto'
     minWidth?: number

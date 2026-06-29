@@ -19,7 +19,7 @@ function getDotsCount(wrapper: ReturnType<typeof mount>) {
 describe('Pagination', () => {
     it('renders with default props', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1 },
+            props: { totalPages: 5, modelValue: 1 },
             ...globalProvide,
         })
         expect(wrapper.find('nav').exists()).toBe(true)
@@ -27,21 +27,21 @@ describe('Pagination', () => {
         expect(wrapper.find('nav').attributes('aria-label')).toBe('pagination')
     })
 
-    it('emits update:currentPage when page is clicked', async () => {
+    it('emits update:modelValue when page is clicked', async () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1 },
+            props: { totalPages: 5, modelValue: 1 },
             ...globalProvide,
         })
         const pageButtons = wrapper.findAll('button[aria-label^="Go to page"]')
         expect(pageButtons.length).toBeGreaterThan(0)
         await pageButtons[1].trigger('click')
-        expect(wrapper.emitted('update:currentPage')).toBeTruthy()
-        expect(wrapper.emitted('update:currentPage')![0]).toEqual([2])
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([2])
     })
 
     it('shows correct page numbers', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3 },
+            props: { totalPages: 5, modelValue: 3 },
             ...globalProvide,
         })
         const pageButtons = wrapper.findAll('button[aria-label^="Go to page"]')
@@ -53,7 +53,7 @@ describe('Pagination', () => {
 
     it('applies custom class', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, class: 'custom-pagination' },
+            props: { totalPages: 5, modelValue: 1, class: 'custom-pagination' },
             ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('custom-pagination')
@@ -61,7 +61,7 @@ describe('Pagination', () => {
 
     it('highlights current page', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3 },
+            props: { totalPages: 5, modelValue: 3 },
             ...globalProvide,
         })
         const activePage = wrapper.find('button[aria-current="page"]')
@@ -71,7 +71,7 @@ describe('Pagination', () => {
 
     it('disables previous button on first page', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1 },
+            props: { totalPages: 5, modelValue: 1 },
             ...globalProvide,
         })
         const prevButton = wrapper.find('button[aria-label="Go to previous page"]')
@@ -80,7 +80,7 @@ describe('Pagination', () => {
 
     it('disables next button on last page', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 5 },
+            props: { totalPages: 5, modelValue: 5 },
             ...globalProvide,
         })
         const nextButton = wrapper.find('button[aria-label="Go to next page"]')
@@ -89,7 +89,7 @@ describe('Pagination', () => {
 
     it('shows first and last buttons when showFirstLast is true', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, showFirstLast: true },
+            props: { totalPages: 5, modelValue: 1, showFirstLast: true },
             ...globalProvide,
         })
         expect(wrapper.find('button[aria-label="Go to first page"]').exists()).toBe(true)
@@ -98,7 +98,7 @@ describe('Pagination', () => {
 
     it('hides first and last buttons when showFirstLast is false', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, showFirstLast: false },
+            props: { totalPages: 5, modelValue: 1, showFirstLast: false },
             ...globalProvide,
         })
         expect(wrapper.find('button[aria-label="Go to first page"]').exists()).toBe(false)
@@ -107,7 +107,7 @@ describe('Pagination', () => {
 
     it('shows page counter when showPageNumbers is false', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3, showPageNumbers: false },
+            props: { totalPages: 5, modelValue: 3, showPageNumbers: false },
             ...globalProvide,
         })
         expect(wrapper.text()).toContain('3 / 5')
@@ -115,7 +115,7 @@ describe('Pagination', () => {
 
     it('shows dots for large page ranges', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 20, currentPage: 10 },
+            props: { totalPages: 20, modelValue: 10 },
             ...globalProvide,
         })
         expect(getDotsCount(wrapper)).toBeGreaterThan(0)
@@ -123,45 +123,45 @@ describe('Pagination', () => {
 
     it('emits correct page when first button clicked', async () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3, showFirstLast: true },
+            props: { totalPages: 5, modelValue: 3, showFirstLast: true },
             ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to first page"]').trigger('click')
-        expect(wrapper.emitted('update:currentPage')![0]).toEqual([1])
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([1])
     })
 
     it('emits correct page when last button clicked', async () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3, showFirstLast: true },
+            props: { totalPages: 5, modelValue: 3, showFirstLast: true },
             ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to last page"]').trigger('click')
-        expect(wrapper.emitted('update:currentPage')![0]).toEqual([5])
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([5])
     })
 
     it('emits correct page when next button clicked', async () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3 },
+            props: { totalPages: 5, modelValue: 3 },
             ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to next page"]').trigger('click')
-        expect(wrapper.emitted('update:currentPage')![0]).toEqual([4])
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([4])
     })
 
     it('emits correct page when previous button clicked', async () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 3 },
+            props: { totalPages: 5, modelValue: 3 },
             ...globalProvide,
         })
         await wrapper.find('button[aria-label="Go to previous page"]').trigger('click')
-        expect(wrapper.emitted('update:currentPage')![0]).toEqual([2])
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([2])
     })
 
     it('shows right dots only when current page is near start', () => {
         const totalPages = 10
         const currentPage = FIRST_PAGE
         const wrapper = mount(Pagination, {
-            props: { totalPages, currentPage },
+            props: { totalPages, modelValue: currentPage },
             ...globalProvide,
         })
         const leftEndIndex = FIRST_PAGES_COUNT + 2 * DEFAULT_SIBLING_COUNT
@@ -177,7 +177,7 @@ describe('Pagination', () => {
         const totalPages = 10
         const currentPage = totalPages
         const wrapper = mount(Pagination, {
-            props: { totalPages, currentPage },
+            props: { totalPages, modelValue: currentPage },
             ...globalProvide,
         })
         const rightEndIndex = FIRST_PAGES_COUNT + 2 * DEFAULT_SIBLING_COUNT
@@ -193,7 +193,7 @@ describe('Pagination', () => {
         const totalPages = 10
         const currentPage = 5
         const wrapper = mount(Pagination, {
-            props: { totalPages, currentPage },
+            props: { totalPages, modelValue: currentPage },
             ...globalProvide,
         })
         const leftSiblingIndex = currentPage - DEFAULT_SIBLING_COUNT
@@ -209,7 +209,7 @@ describe('Pagination', () => {
 
     it('applies rounded variant classes', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, variant: 'rounded' },
+            props: { totalPages: 5, modelValue: 1, variant: 'rounded' },
             ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('[&_button]:rounded-brutal')
@@ -217,7 +217,7 @@ describe('Pagination', () => {
 
     it('applies minimal variant classes', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, variant: 'minimal' },
+            props: { totalPages: 5, modelValue: 1, variant: 'minimal' },
             ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('[&_button]:border-transparent')
@@ -226,7 +226,7 @@ describe('Pagination', () => {
 
     it('applies sm size classes', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, size: 'sm' },
+            props: { totalPages: 5, modelValue: 1, size: 'sm' },
             ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('gap-1')
@@ -234,7 +234,7 @@ describe('Pagination', () => {
 
     it('applies lg size classes', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, size: 'lg' },
+            props: { totalPages: 5, modelValue: 1, size: 'lg' },
             ...globalProvide,
         })
         expect(wrapper.find('nav').classes()).toContain('gap-3')
@@ -242,7 +242,7 @@ describe('Pagination', () => {
 
     it('links nav icon size to default pagination size', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, showFirstLast: true },
+            props: { totalPages: 5, modelValue: 1, showFirstLast: true },
             ...globalProvide,
         })
         const icons = wrapper.findAll('nav button[aria-label] svg')
@@ -255,7 +255,7 @@ describe('Pagination', () => {
 
     it('links nav icon size to sm pagination size', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, size: 'sm', showFirstLast: true },
+            props: { totalPages: 5, modelValue: 1, size: 'sm', showFirstLast: true },
             ...globalProvide,
         })
         const icons = wrapper.findAll('nav button[aria-label] svg')
@@ -269,7 +269,7 @@ describe('Pagination', () => {
 
     it('links nav icon size to lg pagination size', () => {
         const wrapper = mount(Pagination, {
-            props: { totalPages: 5, currentPage: 1, size: 'lg', showFirstLast: true },
+            props: { totalPages: 5, modelValue: 1, size: 'lg', showFirstLast: true },
             ...globalProvide,
         })
         const icons = wrapper.findAll('nav button[aria-label] svg')
@@ -286,7 +286,7 @@ describe('Pagination', () => {
         const totalPages = 20
         const currentPage = 10
         const wrapper = mount(Pagination, {
-            props: { totalPages, currentPage, siblingCount },
+            props: { totalPages, modelValue: currentPage, siblingCount },
             ...globalProvide,
         })
         const leftSiblingIndex = currentPage - siblingCount
@@ -303,7 +303,7 @@ describe('Pagination', () => {
     describe('jump event', () => {
         it('emits jump when dots button is clicked', async () => {
             const wrapper = mount(Pagination, {
-                props: { totalPages: 20, currentPage: 10 },
+                props: { totalPages: 20, modelValue: 10 },
                 ...globalProvide,
             })
             const dotsButton = wrapper.find('button[aria-label="Jump pages"]')
@@ -315,7 +315,7 @@ describe('Pagination', () => {
 
         it('emits jump for each dots button clicked', async () => {
             const wrapper = mount(Pagination, {
-                props: { totalPages: 20, currentPage: 10 },
+                props: { totalPages: 20, modelValue: 10 },
                 ...globalProvide,
             })
             const dotsButtons = wrapper.findAll('button[aria-label="Jump pages"]')
