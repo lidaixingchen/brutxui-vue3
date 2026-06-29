@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import {
     SliderRoot as SliderRootPrimitive,
@@ -56,6 +56,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()
 
 const activeThumb = ref(-1)
+const tooltipId = `slider-tooltip-${useId()}`
 
 const rootClasses = computed(() =>
     cn(sliderRootVariants({ orientation: props.orientation }), props.class)
@@ -173,6 +174,7 @@ function handleThumbBlur(index: number) {
                 v-for="(_, index) in thumbCount"
                 :key="index"
                 :class="thumbClasses"
+                :aria-describedby="showTooltip && activeThumb === index ? tooltipId : undefined"
                 @focus="handleThumbFocus(index)"
                 @blur="handleThumbBlur(index)"
                 @pointerenter="handleThumbFocus(index)"
@@ -180,6 +182,7 @@ function handleThumbBlur(index: number) {
             />
             <span
                 v-if="showTooltip && activeThumb >= 0"
+                :id="tooltipId"
                 :class="tooltipClasses"
                 :style="tooltipStyleFor(slotValues)"
                 role="tooltip"

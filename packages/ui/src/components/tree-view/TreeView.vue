@@ -2,12 +2,12 @@
 import { ref, computed, watch } from 'vue';
 import { cn } from '../../lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
-import { getAllDescendantIds } from './tree-view-utils';
+import { getCheckState, getAllDescendantIds } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 
 export type SelectionMode = 'single' | 'checkbox';
 
-export type CheckState = 'checked' | 'unchecked' | 'indeterminate';
+export type { CheckState } from './tree-view-utils';
 
 export interface TreeNode {
     id: string;
@@ -71,18 +71,9 @@ function selectNode(node: TreeNode) {
     emit('select', node);
 }
 
-function getCheckState(node: TreeNode): CheckState {
-    const descendantIds = getAllDescendantIds(node)
-    const checkedCount = descendantIds.filter(id => checkedSet.value.has(id)).length
-
-    if (checkedCount === descendantIds.length) return 'checked'
-    if (checkedCount === 0) return 'unchecked'
-    return 'indeterminate'
-}
-
 function toggleCheck(node: TreeNode) {
     if (node.disabled) return
-    const state = getCheckState(node)
+    const state = getCheckState(node, checkedSet.value)
     const descendantIds = getAllDescendantIds(node)
     const currentSet = new Set(checkedSet.value)
 
@@ -147,6 +138,18 @@ function handleFocusFirstChild() {
     }
 }
 
+function handleFocusFirst() {
+    const items = getVisibleTreeItems()
+    if (items.length === 0) return
+    items[0].focus()
+}
+
+function handleFocusLast() {
+    const items = getVisibleTreeItems()
+    if (items.length === 0) return
+    items[items.length - 1].focus()
+}
+
 const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 </script>
 
@@ -170,6 +173,8 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
             @focus-next="handleFocusNext"
             @focus-parent="handleFocusParent"
             @focus-first-child="handleFocusFirstChild"
+            @focus-first="handleFocusFirst"
+            @focus-last="handleFocusLast"
         />
     </div>
 </template>

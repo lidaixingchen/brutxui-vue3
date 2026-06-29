@@ -147,7 +147,7 @@ describe('ChatBubble color', () => {
         expect(bubble.classes()).not.toContain('bg-brutal-accent')
     })
 
-    it('keeps primary color on sent bubble with color=primary', () => {
+    it('applies primary color with shadow to sent bubble with color=primary', () => {
         const wrapper = mount(ChatBubble, {
             props: {
                 message: { id: '4', content: 'Hi', variant: 'sent' },
@@ -156,6 +156,8 @@ describe('ChatBubble color', () => {
         })
         const bubble = wrapper.find('.px-4')
         expect(bubble.classes()).toContain('bg-brutal-primary')
+        expect(bubble.classes()).toContain('text-brutal-primary-foreground')
+        expect(bubble.classes()).toContain('shadow-brutal-primary')
     })
 
     it('defaults to primary color on sent bubble with color=default', () => {
@@ -167,6 +169,7 @@ describe('ChatBubble color', () => {
         })
         const bubble = wrapper.find('.px-4')
         expect(bubble.classes()).toContain('bg-brutal-primary')
+        expect(bubble.classes()).not.toContain('shadow-brutal-primary')
     })
 })
 

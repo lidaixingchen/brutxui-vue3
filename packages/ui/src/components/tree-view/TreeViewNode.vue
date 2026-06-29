@@ -3,7 +3,7 @@ import { computed, ref, nextTick } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { treeItemVariants } from './tree-view-variants';
-import { getAllDescendantIds } from './tree-view-utils';
+import { getCheckState } from './tree-view-utils';
 import Checkbox from '../checkbox/Checkbox.vue';
 import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
 
@@ -38,6 +38,8 @@ const emit = defineEmits<{
     'focus-next': [];
     'focus-parent': [];
     'focus-first-child': [];
+    'focus-first': [];
+    'focus-last': [];
 }>();
 
 const treeItemRef = ref<HTMLDivElement | null>(null);
@@ -49,11 +51,7 @@ const isCheckboxMode = computed(() => props.selectionMode === 'checkbox');
 
 const checkState = computed<CheckState>(() => {
     if (!isCheckboxMode.value) return 'unchecked'
-    const descendantIds = getAllDescendantIds(props.node)
-    const checkedCount = descendantIds.filter(id => props.checkedIds.has(id)).length
-    if (checkedCount === descendantIds.length) return 'checked'
-    if (checkedCount === 0) return 'unchecked'
-    return 'indeterminate'
+    return getCheckState(props.node, props.checkedIds)
 })
 
 const isChecked = computed(() => checkState.value === 'checked');
@@ -62,7 +60,7 @@ const isIndeterminate = computed(() => checkState.value === 'indeterminate');
 const ariaChecked = computed(() => {
     if (!isCheckboxMode.value) return undefined
     if (isIndeterminate.value) return 'mixed'
-    return isChecked.value
+    return isChecked.value ? 'true' : 'false'
 })
 
 const itemClass = computed(() =>
@@ -96,7 +94,9 @@ const handleKeydown = (e: KeyboardEvent) => {
             break;
         case 'Enter':
             e.preventDefault();
-            if (isLeaf.value) {
+            if (isCheckboxMode.value) {
+                if (!props.disabled) emit('check', props.node)
+            } else if (isLeaf.value) {
                 emit('select', props.node);
             } else {
                 emit('toggle', props.node.id);
@@ -128,6 +128,14 @@ const handleKeydown = (e: KeyboardEvent) => {
         case 'ArrowDown':
             e.preventDefault();
             emit('focus-next');
+            break;
+        case 'Home':
+            e.preventDefault();
+            emit('focus-first');
+            break;
+        case 'End':
+            e.preventDefault();
+            emit('focus-last');
             break;
     }
 };
@@ -209,6 +217,8 @@ defineExpose({ focus, nodeId: props.node.id });
                     @focus-next="emit('focus-next')"
                     @focus-parent="emit('focus-parent')"
                     @focus-first-child="emit('focus-first-child')"
+                    @focus-first="emit('focus-first')"
+                    @focus-last="emit('focus-last')"
                 />
             </div>
         </Transition>

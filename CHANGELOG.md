@@ -1,11 +1,41 @@
-# Changelog
+# 更新日志
 
-All notable changes to this project will be documented in this file.
+本项目所有重要变更均记录于此。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
+版本号遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
 ## [Unreleased]
+
+### Fixed
+
+- **Slider**: 修复 marks 在 0% 和 100% 位置被 `overflow-hidden` 裁剪的问题
+- **KanbanBoard**: 修复列拖拽 `onColumnDrop` 中 splice 索引偏移 bug（3列以上场景必现）
+- **KanbanBoard**: `column-move` 事件参数改为 `adjustedIndex` 反映实际位置
+- **KanbanBoard**: `isDragging` 重置从 `setTimeout(0)` 改为 `requestAnimationFrame` 提升时序可靠性
+- **ChatBubble**: 修复 `system` variant 的 `text-xs` 无条件覆盖 `size` prop 问题
+- **ChatBubble**: 修复 `color="primary"` 在 sent 气泡上是死选项的问题，添加 `shadow-brutal-primary` 视觉区分
+- **ChatBubble**: 移除 `sent + primary` compoundVariant 中与基础 variant 重复的类
+- **BeforeAfter**: 垂直模式添加 `orient="vertical"` 属性修复 Firefox 兼容性
+- **BeforeAfter**: `beforeAfterRootVariants` 添加 orientation 变体，垂直模式使用 `aspect-[9/16]`
+- **Card3D**: 修复 shadow 变体全为空字符串的问题，使用 CSS 变量 `--card3d-offset` 驱动阴影偏移
+- **Card3D**: `card3dShadowVariants` 从无参数 CVA 简化为字符串常量
+- **Label**: required 指示器 `*` 添加 `ml-0.5` 间距
+- **Stepper**: 区分 `variant.default`（中性色）与 `variant.primary`（主色调）
+- **Separator**: 提取 `DEFAULT_THICKNESS` 常量替代三处硬编码 `3px`
+- **Separator**: 修复文字分隔线模式下 `props.class` 应用位置
+- **Separator**: 修复 `hasLabel` 响应性，正确检查 slot 内容而非仅检查 slot 存在
+- **ScrollArea**: 移除未使用的 `scrollAreaViewportVariants` 死代码
+- **Marquee**: `variant.accent` 颜色从 `text-brutal-fg` 改为 `text-brutal-accent-foreground`
+- **TreeView**: `ariaChecked` 返回字符串 `"true"`/`"false"`/`"mixed"` 替代布尔值
+- **TreeView**: `getCheckState` 逻辑提取到 `tree-view-utils.ts` 共享函数
+- **TreeView**: Enter 键在 checkbox 模式下触发 check
+- **TreeView**: 添加 Home/End 键支持（WAI-ARIA 推荐）
+- **VirtualScroll**: `scrollToIndex` 添加输入边界校验
+- **Avatar**: `statusLabel` computed 改用局部变量确保 TypeScript 类型精确收窄
+- **Slider**: tooltip 通过 `aria-describedby` 与 thumb 关联，提升无障碍支持
+- **测试**: 修复 `feedback-form.test` 中 `[data-slot="success-card"]` 无实际验证作用的断言
+- **注册表**: 同步 `card-3d.json`、`label.json`、`scroll-area.json` 与源代码变更
 
 ## [0.8.0] - 2026-06-29
 

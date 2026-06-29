@@ -6,12 +6,6 @@ export const scrollAreaRootVariants = cva(
     ],
 )
 
-export const scrollAreaViewportVariants = cva(
-    [
-        'h-full w-full rounded-[inherit]',
-    ],
-)
-
 const scrollBarColorVariants = {
     default: 'border-brutal',
     primary: 'border-brutal-primary',

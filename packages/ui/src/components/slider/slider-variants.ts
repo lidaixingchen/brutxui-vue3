@@ -23,7 +23,7 @@ export const sliderRootVariants = cva(
 
 export const sliderTrackVariants = cva(
     [
-        'relative grow overflow-hidden rounded-brutal',
+        'relative grow overflow-visible rounded-brutal',
         'border-3 border-brutal bg-brutal-bg',
         'shadow-brutal-sm',
     ],

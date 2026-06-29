@@ -56,7 +56,7 @@ function onDragStart(cardId: string, fromColumn: string) {
 function onDragEnd() {
     draggingCard.value = null;
     dragOverColumn.value = null;
-    setTimeout(() => { isDragging.value = false }, 0);
+    requestAnimationFrame(() => { isDragging.value = false });
 }
 
 function onDragOver(e: DragEvent, columnId: string) {
@@ -179,10 +179,11 @@ function onColumnDrop(e: DragEvent, toColumnId: string) {
 
     const newColumns = [...columns.value];
     const [moved] = newColumns.splice(fromIndex, 1);
-    newColumns.splice(toIndex, 0, moved);
+    const adjustedIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+    newColumns.splice(adjustedIndex, 0, moved);
 
     emit('update:modelValue', newColumns);
-    emit('column-move', fromId, fromIndex, toIndex);
+    emit('column-move', fromId, fromIndex, adjustedIndex);
 }
 
 function onAddCard(columnId: string) {

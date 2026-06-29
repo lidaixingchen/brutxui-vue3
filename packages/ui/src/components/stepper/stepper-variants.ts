@@ -22,7 +22,7 @@ export const stepperDotVariants = cva(
                 lg: 'w-10 h-10 text-base',
             },
             variant: {
-                default: 'bg-brutal-primary text-brutal-primary-foreground',
+                default: 'bg-brutal-bg text-brutal-fg',
                 primary: 'bg-brutal-primary text-brutal-primary-foreground',
                 accent: 'bg-brutal-accent text-brutal-accent-foreground',
             },

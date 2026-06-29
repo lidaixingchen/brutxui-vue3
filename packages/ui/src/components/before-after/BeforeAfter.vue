@@ -65,7 +65,7 @@ const sliderLineClasses = computed(() =>
 )
 
 const rootClasses = computed(() =>
-    cn(beforeAfterRootVariants(), props.class)
+    cn(beforeAfterRootVariants({ orientation: props.orientation }), props.class)
 )
 
 const handleClasses = computed(() =>
@@ -135,6 +135,7 @@ const inputStyle = computed(() => {
             :aria-label="t('beforeAfter.comparisonSlider')"
             :class="inputClasses"
             :style="inputStyle"
+            :orient="orientation === 'vertical' ? 'vertical' : undefined"
         >
     </div>
 </template>

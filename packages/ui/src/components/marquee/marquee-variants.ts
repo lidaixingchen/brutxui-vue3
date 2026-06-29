@@ -15,7 +15,7 @@ export const marqueeContainerVariants = cva(
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg',
                 primary: 'bg-brutal-primary text-brutal-primary-foreground',
-                accent: 'bg-brutal-accent text-brutal-fg',
+                accent: 'bg-brutal-accent text-brutal-accent-foreground',
                 muted: 'bg-brutal-muted text-brutal-muted-foreground',
             },
             size: {

@@ -25,7 +25,14 @@ const props = withDefaults(defineProps<SeparatorProps>(), {
 
 const slots = useSlots()
 
-const hasLabel = computed(() => Boolean(slots.default && slots.default().length > 0))
+// 检查 slot 是否实际包含内容，避免空 slot 被误判为有内容
+const hasLabel = computed(() => {
+    const defaultSlot = slots.default
+    if (!defaultSlot) return false
+    // 检查 slot 是否实际包含内容
+    const vnodes = defaultSlot()
+    return vnodes.length > 0
+})
 
 const isTextSeparator = computed(() => props.orientation === 'horizontal' && hasLabel.value)
 
@@ -33,13 +40,13 @@ const classes = computed(() =>
     cn(separatorVariants({ variant: props.variant, size: props.size, orientation: props.orientation }), props.class)
 )
 
+// 文字分隔线模式下，props.class 应用到线条上而非 wrapper，
+// 与非文字模式下 props.class 应用到分隔线元素上的行为保持一致
 const lineClasses = computed(() =>
-    separatorLineVariants({ variant: props.variant, size: props.size })
+    cn(separatorLineVariants({ variant: props.variant, size: props.size }), props.class)
 )
 
-const wrapperClasses = computed(() =>
-    cn('flex items-center gap-3 w-full', props.class)
-)
+const wrapperClasses = 'flex items-center gap-3 w-full'
 </script>
 
 <template>

@@ -42,8 +42,9 @@ const statusLocaleKeyMap: Record<Exclude<AvatarStatus, 'none'>, string> = {
 const { t } = useLocale()
 
 const statusLabel = computed(() => {
-    if (props.status === 'none') return ''
-    return t(statusLocaleKeyMap[props.status])
+    const status = props.status
+    if (status === 'none') return undefined
+    return t(statusLocaleKeyMap[status])
 })
 
 const classes = computed(() =>
@@ -58,10 +59,11 @@ const classes = computed(() =>
 )
 
 const statusClasses = computed(() => {
-    if (props.status === 'none') return ''
+    const status = props.status
+    if (status === 'none') return ''
     return cn(
         'absolute bottom-0 right-0 w-3 h-3 rounded-full border-3 border-brutal-bg',
-        statusColorMap[props.status],
+        statusColorMap[status],
     )
 })
 

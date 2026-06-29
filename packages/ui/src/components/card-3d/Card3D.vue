@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
@@ -44,20 +44,30 @@ const isHovered = ref(false)
 const prefersReducedMotion = useReducedMotion()
 const { t } = useLocale()
 
-// 阴影偏移量与 shadow variant 对应
-const SHADOW_OFFSET_DEFAULT = 4
-const SHADOW_OFFSET_LG = 6
-const SHADOW_OFFSET_XL = 8
+const CSS_VAR_OFFSET_FALLBACK = 4
 
-const initialOffset = computed(() => {
-    switch (props.shadow) {
-        case 'lg':
-            return SHADOW_OFFSET_LG
-        case 'xl':
-            return SHADOW_OFFSET_XL
-        default:
-            return SHADOW_OFFSET_DEFAULT
-    }
+// 从 CSS 变量 --card3d-offset 读取阴影偏移量（变量定义在卡片元素上）
+const readOffsetFromCSSVar = (): number => {
+    if (!cardRef.value) return CSS_VAR_OFFSET_FALLBACK
+    const computed = getComputedStyle(cardRef.value)
+    const val = computed.getPropertyValue('--card3d-offset').trim()
+    const parsed = parseInt(val, 10)
+    return Number.isNaN(parsed) ? CSS_VAR_OFFSET_FALLBACK : parsed
+}
+
+// 阴影偏移量（响应式）
+const initialOffset = ref(CSS_VAR_OFFSET_FALLBACK)
+
+// 在挂载后从 CSS 变量读取初始偏移量
+onMounted(() => {
+    initialOffset.value = readOffsetFromCSSVar()
+})
+
+// 当 shadow 变体变化时重新读取
+watch(() => props.shadow, () => {
+    nextTick(() => {
+        initialOffset.value = readOffsetFromCSSVar()
+    })
 })
 
 // 动态阴影偏移量
@@ -141,7 +151,7 @@ const handleClick = (event: MouseEvent) => {
 }
 
 const shadowClasses = computed(() =>
-    cn(card3dShadowVariants())
+    cn(card3dShadowVariants)
 )
 </script>
 

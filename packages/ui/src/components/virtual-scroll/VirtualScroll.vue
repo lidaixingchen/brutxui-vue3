@@ -67,7 +67,12 @@ const rootClasses = computed(() =>
 )
 
 function scrollToIndex(index: number) {
-    virtualizer.value.scrollToIndex(index)
+    const itemCount = props.items.length
+
+    if (itemCount === 0) return
+
+    const clampedIndex = Math.max(0, Math.min(index, itemCount - 1))
+    virtualizer.value.scrollToIndex(clampedIndex)
 }
 
 defineExpose({ scrollToIndex })

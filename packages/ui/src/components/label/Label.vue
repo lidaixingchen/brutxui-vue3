@@ -31,6 +31,6 @@ const classes = computed(() =>
 <template>
     <LabelRoot :class="classes" :for="props.for" :aria-required="required || undefined">
         <slot />
-        <span v-if="required" class="text-brutal-destructive" aria-hidden="true">*</span>
+        <span v-if="required" class="text-brutal-destructive ml-0.5" aria-hidden="true">*</span>
     </LabelRoot>
 </template>

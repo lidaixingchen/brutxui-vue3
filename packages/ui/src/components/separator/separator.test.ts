@@ -167,12 +167,16 @@ describe('Separator', () => {
         })
     })
 
-    it('applies custom class to text separator wrapper', () => {
+    it('applies custom class to text separator lines', () => {
         const wrapper = mount(Separator, {
             props: { class: 'my-text-sep' },
             slots: { default: 'OR' },
             attachTo: document.body,
         })
-        expect(wrapper.classes()).toContain('my-text-sep')
+        // props.class 应应用到线条上，而非 wrapper
+        const lines = wrapper.findAll('div.flex-1')
+        lines.forEach(line => {
+            expect(line.classes()).toContain('my-text-sep')
+        })
     })
 })

@@ -11,7 +11,7 @@ describe('FeedbackForm', () => {
             ...localeProvide,
         })
         expect(wrapper.find('form').exists()).toBe(true)
-        expect(wrapper.find('[data-slot="success-card"]').exists()).toBe(false)
+        expect(wrapper.findComponent({ name: 'SuccessCard' }).exists()).toBe(false)
     })
 
     it('renders SuccessCard when success prop is true', () => {

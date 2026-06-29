@@ -10,9 +10,9 @@ export const card3dVariants = cva(
     {
         variants: {
             shadow: {
-                default: '',
-                lg: '',
-                xl: '',
+                default: '[--card3d-offset:4px]',
+                lg: '[--card3d-offset:8px]',
+                xl: '[--card3d-offset:12px]',
             },
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg',
@@ -28,13 +28,5 @@ export const card3dVariants = cva(
     }
 )
 
-export const card3dShadowVariants = cva(
-    [
-        'absolute inset-0',
-        'border-3 border-brutal',
-        'rounded-brutal',
-        'bg-brutal-fg',
-        'transition-transform duration-200 ease-out',
-        '-z-10',
-    ]
-)
+export const card3dShadowVariants =
+    'absolute inset-0 border-3 border-brutal rounded-brutal bg-brutal-fg transition-transform duration-200 ease-out -z-10'

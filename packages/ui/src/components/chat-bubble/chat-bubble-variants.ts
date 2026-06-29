@@ -12,7 +12,7 @@ export const chatBubbleVariants = cva(
             variant: {
                 sent: 'bg-brutal-primary text-brutal-primary-foreground ml-auto',
                 received: 'bg-brutal-bg text-brutal-fg mr-auto',
-                system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none',
+                system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none text-xs',
             },
             color: {
                 default: '',
@@ -28,12 +28,13 @@ export const chatBubbleVariants = cva(
         compoundVariants: [
             {
                 variant: 'sent',
-                color: 'accent',
-                class: 'bg-brutal-accent text-brutal-accent-foreground',
+                color: 'primary',
+                class: 'shadow-brutal-primary',
             },
             {
-                variant: 'system',
-                class: 'text-xs',
+                variant: 'sent',
+                color: 'accent',
+                class: 'bg-brutal-accent text-brutal-accent-foreground',
             },
         ],
         defaultVariants: {
