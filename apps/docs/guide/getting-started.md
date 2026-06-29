@@ -110,6 +110,16 @@ BrutxUI 内置四套主题预设，你可以通过在根元素上添加类名来
 </div>
 ```
 
+### Warm
+
+原始感与温暖的视觉体验 — 3px 边框、4px 阴影、4px 圆角、暖棕色调。
+
+```html
+<div class="theme-warm">
+    <!-- Your app -->
+</div>
+```
+
 ## AI 优先集成
 
 BrutxUI 旨在与 AI 编码助手无缝协作：
