@@ -25,7 +25,7 @@ function handleJump() {
 </script>
 
 <template>
-    <div class="space-y-8">
+    <div class="space-y-8 max-w-full overflow-x-auto">
         <div>
             <h3 class="text-sm font-black mb-3">基础用法</h3>
             <Pagination

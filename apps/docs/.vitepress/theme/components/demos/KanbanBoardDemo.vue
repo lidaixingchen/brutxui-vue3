@@ -55,7 +55,7 @@ function handleAddCard(columnId: string) {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-6 max-w-full">
         <div class="overflow-x-auto">
             <KanbanBoard v-model="columns" />
         </div>

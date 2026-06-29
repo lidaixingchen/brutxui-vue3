@@ -8,15 +8,20 @@ export const tabsListVariants = cva(
     {
         variants: {
             size: {
-                sm: 'h-9',
-                default: 'h-12',
-                lg: 'h-14',
+                sm: '',
+                default: '',
+                lg: '',
             },
             orientation: {
-                horizontal: '', // no-op: default horizontal layout
+                horizontal: '',
                 vertical: 'flex-col',
             },
         },
+        compoundVariants: [
+            { size: 'sm', orientation: 'horizontal', class: 'h-9' },
+            { size: 'default', orientation: 'horizontal', class: 'h-12' },
+            { size: 'lg', orientation: 'horizontal', class: 'h-14' },
+        ],
         defaultVariants: {
             size: 'default',
             orientation: 'horizontal',

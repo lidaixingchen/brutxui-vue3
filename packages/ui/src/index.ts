@@ -340,7 +340,7 @@ export { default as Marquee } from './components/marquee/Marquee.vue'
 export { marqueeContainerVariants, marqueeTrackVariants } from './components/marquee/marquee-variants'
 
 export { default as BeforeAfter } from './components/before-after/BeforeAfter.vue'
-export { beforeAfterRootVariants, beforeAfterHandleVariants } from './components/before-after/before-after-variants'
+export { beforeAfterHandleVariants } from './components/before-after/before-after-variants'
 
 export { default as CodeBlock } from './components/code-block/CodeBlock.vue'
 export { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './components/code-block/code-block-variants'

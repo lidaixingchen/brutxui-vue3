@@ -4,7 +4,7 @@ import { MoveHorizontal } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { useReducedMotion } from '@/composables/useReducedMotion'
-import { beforeAfterRootVariants, beforeAfterHandleVariants } from './before-after-variants'
+import { beforeAfterHandleVariants } from './before-after-variants'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 const DEFAULT_SLIDER_POSITION = 50
@@ -37,6 +37,24 @@ const emit = defineEmits<{ 'update:modelValue': [value: number] }>()
 
 const { t } = useLocale()
 const prefersReducedMotion = useReducedMotion()
+
+const imageWidth = ref(0)
+const imageHeight = ref(0)
+
+function handleImageLoad(event: Event) {
+    const img = event.target as HTMLImageElement
+    if (img.naturalWidth && img.naturalHeight) {
+        imageWidth.value = img.naturalWidth
+        imageHeight.value = img.naturalHeight
+    }
+}
+
+const aspectRatio = computed(() => {
+    if (imageWidth.value && imageHeight.value) {
+        return `${imageWidth.value} / ${imageHeight.value}`
+    }
+    return props.orientation === 'vertical' ? '9 / 16' : '16 / 9'
+})
 
 const resolvedBeforeAlt = computed(() => props.beforeAlt ?? t('beforeAfter.before'))
 const resolvedAfterAlt = computed(() => props.afterAlt ?? t('beforeAfter.after'))
@@ -83,8 +101,15 @@ const sliderLineClasses = computed(() =>
     )
 )
 
+const rootStyle = computed(() => ({
+    aspectRatio: aspectRatio.value,
+}))
+
 const rootClasses = computed(() =>
-    cn(beforeAfterRootVariants({ orientation: props.orientation }), props.class)
+    cn(
+        'relative overflow-hidden w-full border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal select-none',
+        props.class
+    )
 )
 
 const handleClasses = computed(() =>
@@ -118,11 +143,12 @@ const inputStyle = computed(() => {
 </script>
 
 <template>
-    <div :class="rootClasses">
+    <div :class="rootClasses" :style="rootStyle">
         <img
             :src="before"
             :alt="resolvedBeforeAlt"
             class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            @load="handleImageLoad"
         >
 
         <div
