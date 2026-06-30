@@ -64,3 +64,35 @@ export {
     SKETCHY_CHART_DEFAULT_HEIGHT,
     TWO_DIGIT_YEAR_PIVOT,
 } from './defaults'
+
+// 主题变量系统
+export {
+    createThemeVariables,
+    createDarkModeToggle,
+    DEFAULT_THEME,
+    DARK_THEME,
+    PASTEL_THEME,
+    MONO_THEME,
+    WARM_THEME,
+    DEFAULT_THEMES,
+} from './theme-variables'
+export type {
+    ThemeVariables,
+    ThemeColors,
+    ThemeSpacing,
+    ThemeBorder,
+    ThemeShadow,
+    ThemeTypography,
+    ThemeOptions,
+    ThemeApi,
+    ThemeVariablesApi,
+} from './theme-variables'
+
+// 主题编辑器
+export { createThemeEditor } from './theme-editor'
+export type {
+    PartialThemeVariables,
+    ThemeEditorOptions,
+    CSSGenerateOptions,
+    ThemeEditorReturn,
+} from './theme-editor'

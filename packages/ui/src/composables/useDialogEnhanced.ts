@@ -80,7 +80,7 @@ export function useDialogEnhanced(
     const contentStyle = computed<CSSProperties>(() => {
         const style: CSSProperties = {}
 
-        if (draggable && !false /* fullscreen is handled at component level */) {
+        if (draggable) {
             style.transform = `translate(${position.value.x}px, ${position.value.y}px)`
             style.position = 'fixed'
             style.top = '50%'

@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, watch, type Ref } from 'vue'
+import { onMounted, onUnmounted, watch, isRef, type Ref } from 'vue'
 
 type EventTargetLike = EventTarget | Window | Document | HTMLElement
 
@@ -95,8 +95,4 @@ export function useEventListener(
     onUnmounted(() => {
         cleanup()
     })
-}
-
-function isRef<T>(value: Ref<T | null> | T): value is Ref<T | null> {
-    return value !== null && typeof value === 'object' && 'value' in value && '__v_isRef' in value
 }

@@ -1,5 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { nextTick, type Component } from 'vue'
+import { vi } from 'vitest'
 
 export { expectNoA11yViolations, getA11yResults } from './a11y'
 
@@ -125,4 +126,149 @@ export function createMockKeyboardEvent(
     properties?: Record<string, unknown>,
 ): KeyboardEvent {
     return new KeyboardEvent(type, properties)
+}
+
+/**
+ * Mock window.matchMedia
+ *
+ * 在测试环境中模拟 window.matchMedia API，
+ * 避免 "window.matchMedia is not a function" 错误。
+ *
+ * @returns Mock 函数，可用于断言调用参数
+ *
+ * @example
+ * ```ts
+ * const matchMediaMock = mockWindowMatchMedia()
+ *
+ * // 测试组件是否调用了 matchMedia
+ * expect(matchMediaMock).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)')
+ *
+ * // 清理（通常在 afterEach 中调用）
+ * matchMediaMock.mockRestore()
+ * ```
+ */
+export function mockWindowMatchMedia(): ReturnType<typeof vi.fn> {
+    const matchMediaMock = vi.fn().mockImplementation(query => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    }))
+
+    Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        value: matchMediaMock,
+    })
+
+    return matchMediaMock
+}
+
+/**
+ * Mock window.setTimeout / window.clearTimeout
+ *
+ * 在测试环境中模拟 setTimeout/clearTimeout，
+ * 避免异步测试中的时序问题。
+ *
+ * @returns 包含 setTimeout 和 clearTimeout 的 mock 对象
+ *
+ * @example
+ * ```ts
+ * const { setTimeoutMock, clearTimeoutMock } = mockWindowTimers()
+ *
+ * // 手动推进定时器
+ * setTimeoutMock.mock.calls[0][0]()
+ *
+ * // 清理
+ * restoreWindowTimers()
+ * ```
+ */
+export function mockWindowTimers(): {
+    setTimeoutMock: ReturnType<typeof vi.fn>
+    clearTimeoutMock: ReturnType<typeof vi.fn>
+} {
+    const setTimeoutMock = vi.fn().mockReturnValue(123)
+    const clearTimeoutMock = vi.fn()
+
+    Object.defineProperty(window, 'setTimeout', {
+        writable: true,
+        value: setTimeoutMock,
+    })
+
+    Object.defineProperty(window, 'clearTimeout', {
+        writable: true,
+        value: clearTimeoutMock,
+    })
+
+    return { setTimeoutMock, clearTimeoutMock }
+}
+
+/**
+ * 恢复 window 原始定时器
+ *
+ * 在 mockWindowTimers 后恢复原始的 setTimeout/clearTimeout。
+ *
+ * @example
+ * ```ts
+ * afterEach(() => {
+ *   restoreWindowTimers()
+ * })
+ * ```
+ */
+export function restoreWindowTimers(): void {
+    // Vitest 的 vi.useFakeTimers() 会自动恢复
+    // 此函数作为显式恢复的便捷方法
+    vi.useRealTimers()
+}
+
+/**
+ * Mock ResizeObserver
+ *
+ * 在测试环境中模拟 ResizeObserver API，
+ * 避免 "ResizeObserver is not defined" 错误。
+ *
+ * @example
+ * ```ts
+ * beforeEach(() => {
+ *   mockResizeObserver()
+ * })
+ * ```
+ */
+export function mockResizeObserver(): void {
+    globalThis.ResizeObserver = class ResizeObserver {
+        observe = vi.fn()
+        unobserve = vi.fn()
+        disconnect = vi.fn()
+    }
+}
+
+/**
+ * Mock IntersectionObserver
+ *
+ * 在测试环境中模拟 IntersectionObserver API，
+ * 避免 "IntersectionObserver is not defined" 错误。
+ *
+ * @example
+ * ```ts
+ * beforeEach(() => {
+ *   mockIntersectionObserver()
+ * })
+ * ```
+ */
+export function mockIntersectionObserver(): void {
+    globalThis.IntersectionObserver = class IntersectionObserver {
+        root = null
+        rootMargin = ''
+        thresholds: ReadonlyArray<number> = []
+
+        constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
+
+        observe = vi.fn()
+        unobserve = vi.fn()
+        disconnect = vi.fn()
+        takeRecords = vi.fn().mockReturnValue([])
+    } as unknown as typeof IntersectionObserver
 }

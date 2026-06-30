@@ -218,6 +218,19 @@ export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions }
 export { useTheme, provideTheme, createTheme } from './composables/useTheme'
 export type { ThemeName, ColorMode, ResolvedColorMode } from './composables/useTheme'
 
+// 预设主题
+export {
+    themes,
+    defaultTheme,
+    darkTheme,
+    highContrastTheme,
+    minimalTheme,
+    getPresetThemeNames,
+    getPresetTheme,
+    createCustomTheme,
+} from './themes'
+export type { PresetThemeName } from './themes'
+
 export { default as ColorModeSwitcher } from './components/color-mode-switcher/ColorModeSwitcher.vue'
 
 export { default as SaaSPricing } from './components/saas-pricing/SaaSPricing.vue'

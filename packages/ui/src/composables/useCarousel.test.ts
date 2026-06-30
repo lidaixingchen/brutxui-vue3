@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ref, nextTick, defineComponent, h } from 'vue'
 import { mount } from '@vue/test-utils'
-import type { EmblaCarouselType } from 'embla-carousel' // eslint-disable-line @typescript-eslint/no-unused-vars
+import type { EmblaCarouselType } from 'embla-carousel'
 
 /* ---------- mock embla-carousel-vue ---------- */
 type EventName = string

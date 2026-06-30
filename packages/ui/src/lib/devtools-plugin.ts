@@ -161,8 +161,8 @@ interface VueDevtoolsApi {
 
 /** 声明全局 __VUE_DEVTOOLS_GLOBAL_HOOK__ */
 declare global {
-    // eslint-disable-next-line no-var, @typescript-eslint/no-explicit-any
-    var __VUE_DEVTOOLS_GLOBAL_HOOK__: any
+    // eslint-disable-next-line no-var
+    var __VUE_DEVTOOLS_GLOBAL_HOOK__: VueDevtoolsApi | undefined
 }
 
 const PLUGIN_ID = 'brutxui-devtools'
@@ -600,10 +600,9 @@ export function useDevtools(): BrutxUIDevtoolsContext | null {
 
     // 从全局属性获取
     if (typeof window !== 'undefined') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const app = (window as any).__VUE_APP__
+        const app = (window as unknown as { __VUE_APP__?: { config?: { globalProperties?: Record<string, unknown> } } }).__VUE_APP__
         if (app?.config?.globalProperties?.__BRUTX_UI_DEVTOOLS__) {
-            return app.config.globalProperties.__BRUTX_UI_DEVTOOLS__
+            return app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
         }
     }
 
