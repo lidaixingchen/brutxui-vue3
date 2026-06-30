@@ -1,5 +1,6 @@
 import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey } from 'vue'
 import { isClient } from '../lib/env'
+import { MAX_TOASTS } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
 
@@ -44,7 +45,6 @@ export const DEFAULT_TOAST_DURATION = 5000
 
 export function createToast(isFallback = false) {
     const toasts = ref<ToastItem[]>([])
-    const MAX_TOASTS = 10
     const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
 
     function clearTimer(id: string) {

@@ -20,9 +20,9 @@ function validateIndexConsistency(files: string[]): number {
     try {
         const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
         const items = Array.isArray(indexData?.items) ? indexData.items : [];
-        indexNames = new Set(items.map((item: any) => item?.name).filter((n: unknown) => typeof n === 'string'));
-    } catch (err: any) {
-        console.error('✗ Failed to parse index.json:', err.message || err);
+        indexNames = new Set(items.map((item: unknown) => (item as Record<string, unknown>)?.name).filter((n: unknown) => typeof n === 'string'));
+    } catch (err: unknown) {
+        console.error('✗ Failed to parse index.json:', err instanceof Error ? err.message : err);
         return 1;
     }
 
@@ -173,8 +173,8 @@ function validate() {
                 errorCount++;
             }
 
-        } catch (err: any) {
-            console.error(`✗ [${file}] Failed to parse JSON:`, err.message || err);
+        } catch (err: unknown) {
+            console.error(`✗ [${file}] Failed to parse JSON:`, err instanceof Error ? err.message : err);
             errorCount++;
         }
     }

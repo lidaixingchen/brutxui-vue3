@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import type { PathLike } from 'fs';
 import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion, getAliasFromTsConfig, resolveAliasPath } from '../src/lib/project.js';
 
 describe('resolveImportAlias', () => {
@@ -97,7 +98,7 @@ describe('detectPackageManager', () => {
     });
 
     it('should detect pnpm if pnpm-lock.yaml exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             return p.toString().endsWith('pnpm-lock.yaml');
         });
         const pm = detectPackageManager('/dummy/path');
@@ -105,7 +106,7 @@ describe('detectPackageManager', () => {
     });
 
     it('should detect yarn if yarn.lock exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             return p.toString().endsWith('yarn.lock');
         });
         const pm = detectPackageManager('/dummy/path');
@@ -113,7 +114,7 @@ describe('detectPackageManager', () => {
     });
 
     it('should detect bun if bun.lockb exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             return p.toString().endsWith('bun.lockb');
         });
         const pm = detectPackageManager('/dummy/path');
@@ -133,7 +134,7 @@ describe('detectProjectType', () => {
     });
 
     it('should detect nuxt if nuxt config exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             const pStr = p.toString();
             if (pStr.endsWith('nuxt.config.js') || pStr.endsWith('nuxt.config.ts') || pStr.endsWith('nuxt.config.mjs')) {
                 return true;
@@ -145,7 +146,7 @@ describe('detectProjectType', () => {
     });
 
     it('should detect vite-vue if vite config exists and vue dependency exists and no src dir', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             const pStr = p.toString();
             if (pStr.endsWith('vite.config.js') || pStr.endsWith('vite.config.ts') || pStr.endsWith('vite.config.mjs')) {
                 return true;
@@ -165,7 +166,7 @@ describe('detectProjectType', () => {
     });
 
     it('should detect vite-vue-src if vite config exists and vue dependency exists and src dir exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             const pStr = p.toString();
             if (pStr.endsWith('vite.config.js') || pStr.endsWith('vite.config.ts') || pStr.endsWith('vite.config.mjs')) {
                 return true;
@@ -215,7 +216,7 @@ describe('detectTailwindVersion', () => {
     });
 
     it('should fallback to v3 if tailwind config file exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: any) => {
+        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
             return p.toString().endsWith('tailwind.config.js');
         });
 

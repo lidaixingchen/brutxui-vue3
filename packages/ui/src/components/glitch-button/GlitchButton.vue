@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, shallowRef, computed, watch, onMounted, onUnmounted } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
@@ -43,29 +43,29 @@ const prefersReducedMotion = useReducedMotion()
 
 const AUTOPLAY_ACTIVE_DURATION_MS = 1000
 
-let autoplayTimer: ReturnType<typeof setInterval> | null = null
-let autoplayStopTimer: ReturnType<typeof setTimeout> | null = null
+const autoplayTimer = shallowRef<ReturnType<typeof setInterval> | null>(null)
+const autoplayStopTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 
 const startAutoplay = () => {
     stopAutoplay()
     const interval = Math.max(Number(props.interval) || DEFAULT_AUTOPLAY_INTERVAL_MS, 100)
-    autoplayTimer = setInterval(() => {
+    autoplayTimer.value = setInterval(() => {
         if (prefersReducedMotion.value) return
         isActive.value = true
-        autoplayStopTimer = setTimeout(() => {
+        autoplayStopTimer.value = setTimeout(() => {
             isActive.value = false
         }, AUTOPLAY_ACTIVE_DURATION_MS)
     }, interval)
 }
 
 const stopAutoplay = () => {
-    if (autoplayTimer) {
-        clearInterval(autoplayTimer)
-        autoplayTimer = null
+    if (autoplayTimer.value) {
+        clearInterval(autoplayTimer.value)
+        autoplayTimer.value = null
     }
-    if (autoplayStopTimer) {
-        clearTimeout(autoplayStopTimer)
-        autoplayStopTimer = null
+    if (autoplayStopTimer.value) {
+        clearTimeout(autoplayStopTimer.value)
+        autoplayStopTimer.value = null
     }
 }
 

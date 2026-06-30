@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
 import { computed, watch, markRaw, useSlots } from 'vue'
 import { cn } from '../../lib/utils'
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../lib/defaults'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
 import { useDataTableSort } from '@/composables/useDataTableSort'
@@ -47,7 +48,7 @@ const props = withDefaults(defineProps<DataTableProps<T>>(), {
     selectable: false,
     paginated: false,
     pageSize: 10,
-    pageSizeOptions: () => [10, 20, 50, 100],
+    pageSizeOptions: () => [...DEFAULT_PAGE_SIZE_OPTIONS],
     loading: false,
     size: 'default',
     dense: false,

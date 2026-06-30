@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { cn } from '../../lib/utils'
 import { type ColorPreset, DEFAULT_COLOR_PRESETS } from '../../lib/default-presets'
+import { HSV_PERCENT_PRECISION, HUE_DEGREES, HSV_COMPONENT_MAX, ALPHA_PRECISION } from '../../lib/defaults'
 import {
     type ColorFormat,
     type HSVColor,
@@ -117,13 +118,13 @@ function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
     if (target === 'sv') {
         hsv.value = {
             ...hsv.value,
-            s: Math.round((x / rect.width) * 1000) / 10,
-            v: Math.round((1 - y / rect.height) * 1000) / 10,
+            s: Math.round((x / rect.width) * HSV_PERCENT_PRECISION) / (HSV_PERCENT_PRECISION / HSV_COMPONENT_MAX),
+            v: Math.round((1 - y / rect.height) * HSV_PERCENT_PRECISION) / (HSV_PERCENT_PRECISION / HSV_COMPONENT_MAX),
         }
     } else if (target === 'hue') {
-        hsv.value = { ...hsv.value, h: Math.round((x / rect.width) * 360) }
+        hsv.value = { ...hsv.value, h: Math.round((x / rect.width) * HUE_DEGREES) }
     } else {
-        hsv.value = { ...hsv.value, a: Math.round((x / rect.width) * 100) / 100 }
+        hsv.value = { ...hsv.value, a: Math.round((x / rect.width) * ALPHA_PRECISION) / ALPHA_PRECISION }
     }
     emitUpdate()
 }

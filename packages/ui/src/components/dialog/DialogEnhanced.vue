@@ -8,6 +8,7 @@ import {
 } from 'reka-ui'
 import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
+import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '../../lib/defaults'
 import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
 import { iconSizeVariants } from '../../lib/icon-size-variants'
@@ -41,8 +42,8 @@ const props = withDefaults(defineProps<DialogEnhancedProps>(), {
     bounds: 'viewport',
     initialPosition: undefined,
     resizable: false,
-    minWidth: 200,
-    minHeight: 150,
+    minWidth: DIALOG_MIN_WIDTH_PX,
+    minHeight: DIALOG_MIN_HEIGHT_PX,
     maxWidth: undefined,
     maxHeight: undefined,
     aspectRatio: undefined,

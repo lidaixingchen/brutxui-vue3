@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, shallowRef, computed, watch, onMounted, onUnmounted } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
@@ -46,17 +46,17 @@ const prefersReducedMotion = useReducedMotion()
 const displayedText = ref('')
 const currentIndex = ref(0)
 const isTyping = ref(false)
-let typeTimer: ReturnType<typeof setTimeout> | null = null
-let startTimer: ReturnType<typeof setTimeout> | null = null
+const typeTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
+const startTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 
 function clearAllTimers() {
-    if (typeTimer) {
-        clearTimeout(typeTimer)
-        typeTimer = null
+    if (typeTimer.value) {
+        clearTimeout(typeTimer.value)
+        typeTimer.value = null
     }
-    if (startTimer) {
-        clearTimeout(startTimer)
-        startTimer = null
+    if (startTimer.value) {
+        clearTimeout(startTimer.value)
+        startTimer.value = null
     }
 }
 
@@ -71,12 +71,12 @@ function typeNextChar() {
     if (currentIndex.value < props.text.length) {
         displayedText.value += props.text[currentIndex.value]
         currentIndex.value++
-        typeTimer = setTimeout(typeNextChar, props.speed)
+        typeTimer.value = setTimeout(typeNextChar, props.speed)
     } else {
         isTyping.value = false
         emit('complete')
         if (props.loop) {
-            typeTimer = setTimeout(() => {
+            typeTimer.value = setTimeout(() => {
                 reset()
                 startTyping()
             }, props.delay)
@@ -104,7 +104,7 @@ function startTyping() {
 function init() {
     reset()
     if (props.delay > 0) {
-        startTimer = setTimeout(startTyping, props.delay)
+        startTimer.value = setTimeout(startTyping, props.delay)
     } else {
         startTyping()
     }
