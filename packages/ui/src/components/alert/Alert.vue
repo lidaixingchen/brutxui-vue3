@@ -41,7 +41,7 @@ const closeIconClasses = computed(() =>
 </script>
 
 <template>
-    <div role="alert" :class="classes">
+    <div role="alert" aria-live="assertive" :class="classes">
         <slot />
         <div v-if="slots.actions" class="mt-3 flex items-center gap-2">
             <slot name="actions" />

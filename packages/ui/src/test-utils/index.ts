@@ -1,6 +1,8 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { nextTick, type Component } from 'vue'
 
+export { expectNoA11yViolations, getA11yResults } from './a11y'
+
 /**
  * 带默认配置的组件挂载函数
  *

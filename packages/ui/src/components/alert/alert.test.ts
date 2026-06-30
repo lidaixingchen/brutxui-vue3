@@ -48,6 +48,11 @@ describe('Alert', () => {
         expect(wrapper.attributes('role')).toBe('alert')
     })
 
+    it('has aria-live="assertive"', () => {
+        const wrapper = mount(Alert)
+        expect(wrapper.attributes('aria-live')).toBe('assertive')
+    })
+
     it('applies custom class', () => {
         const wrapper = mount(Alert, { props: { class: 'my-alert' } })
         expect(wrapper.classes()).toContain('my-alert')

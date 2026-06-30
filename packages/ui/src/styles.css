@@ -870,3 +870,67 @@
         transition-duration: 0.01ms !important;
     }
 }
+
+/* ============================================
+   High Contrast Mode Support
+   适配系统 prefers-contrast: high 设置，
+   提升所有组件在高对比度模式下的可读性。
+   ============================================ */
+@media (prefers-contrast: high) {
+    :root {
+        --brutal-border-color: #000;
+        --brutal-border-width: 4px;
+        --brutal-fg: #000;
+        --brutal-bg: #fff;
+        --brutal-primary: #0000EE;
+        --brutal-primary-foreground: #fff;
+        --brutal-secondary: #006600;
+        --brutal-secondary-foreground: #fff;
+        --brutal-destructive: #CC0000;
+        --brutal-destructive-foreground: #fff;
+        --brutal-success: #006600;
+        --brutal-success-foreground: #fff;
+        --brutal-muted: #f0f0f0;
+        --brutal-muted-foreground: #000;
+        --brutal-ring: #000;
+        --brutal-shadow-color: #000;
+        --brutal-overlay: rgba(0, 0, 0, 0.7);
+        --brutal-placeholder: #333;
+    }
+
+    .dark {
+        --brutal-border-color: #fff;
+        --brutal-border-width: 4px;
+        --brutal-fg: #fff;
+        --brutal-bg: #000;
+        --brutal-primary: #6699FF;
+        --brutal-primary-foreground: #000;
+        --brutal-secondary: #66CC66;
+        --brutal-secondary-foreground: #000;
+        --brutal-destructive: #FF6666;
+        --brutal-destructive-foreground: #000;
+        --brutal-success: #66CC66;
+        --brutal-success-foreground: #000;
+        --brutal-muted: #1a1a1a;
+        --brutal-muted-foreground: #fff;
+        --brutal-ring: #fff;
+        --brutal-shadow-color: #fff;
+        --brutal-overlay: rgba(0, 0, 0, 0.8);
+        --brutal-placeholder: #aaa;
+    }
+
+    /* 增强边框 */
+    .border-3 {
+        border-width: 4px;
+    }
+
+    /* 增强焦点指示器 */
+    *:focus-visible {
+        outline: 3px solid #000;
+        outline-offset: 2px;
+    }
+
+    .dark *:focus-visible {
+        outline-color: #fff;
+    }
+}

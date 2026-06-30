@@ -99,6 +99,12 @@ function onMouseLeave() {
     if (props.pauseOnHover) resumeTimer()
 }
 
+function onKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+        startLeave()
+    }
+}
+
 const classes = computed(() =>
     cn(
         toastVariants({ variant: props.variant, size: props.size }),
@@ -123,6 +129,11 @@ const mainIconClasses = computed(() =>
 
 const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 
+/** 紧急变体（error/warning）使用 role="alert" + aria-live="assertive"，其他使用 role="status" + aria-live="polite" */
+const isUrgentVariant = computed(() => props.variant === 'error' || props.variant === 'warning')
+const ariaRole = computed(() => isUrgentVariant.value ? 'alert' : 'status')
+const ariaLive = computed(() => isUrgentVariant.value ? 'assertive' : 'polite')
+
 const progressBarStyle = computed(() => ({
     animationDuration: `${props.duration}ms`,
     animationPlayState: isPaused.value ? 'paused' as const : 'running' as const,
@@ -130,7 +141,7 @@ const progressBarStyle = computed(() => ({
 </script>
 
 <template>
-    <div :class="classes" role="alert" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+    <div :class="classes" :role="ariaRole" :aria-live="ariaLive" tabindex="0" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave" @keydown="onKeydown">
         <div v-if="duration" class="absolute top-0 left-0 right-0 h-1 bg-brutal-fg/10 overflow-hidden">
             <div
                 class="h-full bg-brutal-fg/30 animate-nb-shrink"

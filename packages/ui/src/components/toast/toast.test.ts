@@ -31,9 +31,51 @@ describe('Toast', () => {
         expect(wrapper.text()).toContain('Test Description')
     })
 
-    it('has role="alert"', () => {
+    it('has role="status" for default variant', () => {
         const wrapper = mount(Toast, { global: globalProvide })
+        expect(wrapper.attributes('role')).toBe('status')
+        expect(wrapper.attributes('aria-live')).toBe('polite')
+    })
+
+    it('has role="status" for success variant', () => {
+        const wrapper = mount(Toast, {
+            props: { variant: 'success' },
+            global: globalProvide,
+        })
+        expect(wrapper.attributes('role')).toBe('status')
+        expect(wrapper.attributes('aria-live')).toBe('polite')
+    })
+
+    it('has role="alert" for error variant', () => {
+        const wrapper = mount(Toast, {
+            props: { variant: 'error' },
+            global: globalProvide,
+        })
         expect(wrapper.attributes('role')).toBe('alert')
+        expect(wrapper.attributes('aria-live')).toBe('assertive')
+    })
+
+    it('has role="alert" for warning variant', () => {
+        const wrapper = mount(Toast, {
+            props: { variant: 'warning' },
+            global: globalProvide,
+        })
+        expect(wrapper.attributes('role')).toBe('alert')
+        expect(wrapper.attributes('aria-live')).toBe('assertive')
+    })
+
+    it('has role="status" for info variant', () => {
+        const wrapper = mount(Toast, {
+            props: { variant: 'info' },
+            global: globalProvide,
+        })
+        expect(wrapper.attributes('role')).toBe('status')
+        expect(wrapper.attributes('aria-live')).toBe('polite')
+    })
+
+    it('is focusable for keyboard interaction', () => {
+        const wrapper = mount(Toast, { global: globalProvide })
+        expect(wrapper.attributes('tabindex')).toBe('0')
     })
 
     it('applies custom class', () => {
@@ -99,6 +141,14 @@ describe('Toast', () => {
         const wrapper = mount(Toast, { global: globalProvide })
         const closeButton = wrapper.find('button[aria-label="Close"]')
         await closeButton.trigger('click')
+        vi.advanceTimersByTime(300)
+        expect(wrapper.emitted('close')).toBeTruthy()
+    })
+
+    it('emits close event when Escape key pressed', async () => {
+        vi.useFakeTimers()
+        const wrapper = mount(Toast, { global: globalProvide })
+        await wrapper.trigger('keydown', { key: 'Escape' })
         vi.advanceTimersByTime(300)
         expect(wrapper.emitted('close')).toBeTruthy()
     })

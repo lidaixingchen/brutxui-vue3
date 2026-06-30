@@ -15,6 +15,10 @@ interface ButtonProps {
     asChild?: boolean
     loading?: boolean
     disabled?: boolean
+    /** 按钮是否处于按下状态（切换按钮） */
+    pressed?: boolean
+    /** 按钮控制的内容是否展开 */
+    expanded?: boolean
     class?: string
 }
 
@@ -24,6 +28,8 @@ const props = withDefaults(defineProps<ButtonProps>(), {
     asChild: false,
     loading: false,
     disabled: false,
+    pressed: undefined,
+    expanded: undefined,
     class: undefined,
 })
 
@@ -58,6 +64,8 @@ const loaderClasses = computed(() =>
         :disabled="!asChild && isDisabled"
         :aria-disabled="asChild && isDisabled ? true : undefined"
         :aria-busy="loading || undefined"
+        :aria-pressed="pressed"
+        :aria-expanded="expanded"
     >
         <Loader2 v-if="loading" :class="loaderClasses" />
         <slot />

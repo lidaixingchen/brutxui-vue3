@@ -7,6 +7,15 @@ declare module 'vitest-axe/matchers' {
     }
 }
 
+declare module '@vitest/expect' {
+    interface Assertion<T = any> {
+        toHaveNoViolations(): void
+    }
+    interface AsymmetricMatchersContaining {
+        toHaveNoViolations(): void
+    }
+}
+
 declare module 'vitest' {
     interface Assertion<T = any> {
         toHaveNoViolations(): void

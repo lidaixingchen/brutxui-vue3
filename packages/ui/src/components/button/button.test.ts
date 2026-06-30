@@ -118,4 +118,44 @@ describe('Button', () => {
         await wrapper.trigger('click')
         expect(onClick).toHaveBeenCalled()
     })
+
+    describe('ARIA attributes', () => {
+        it('sets aria-disabled when asChild and disabled', () => {
+            const wrapper = mount(Button, {
+                props: { asChild: true, disabled: true },
+                slots: { default: '<span>Click</span>' },
+            })
+            const child = wrapper.find('span')
+            expect(child.attributes('aria-disabled')).toBe('true')
+        })
+
+        it('sets aria-busy when loading', () => {
+            const wrapper = mount(Button, {
+                props: { loading: true },
+            })
+            expect(wrapper.attributes('aria-busy')).toBe('true')
+        })
+
+        it('sets aria-pressed when pressed prop is provided', async () => {
+            const wrapper = mount(Button)
+            expect(wrapper.attributes('aria-pressed')).toBeUndefined()
+
+            await wrapper.setProps({ pressed: true } as any)
+            expect(wrapper.attributes('aria-pressed')).toBe('true')
+
+            await wrapper.setProps({ pressed: false } as any)
+            expect(wrapper.attributes('aria-pressed')).toBe('false')
+        })
+
+        it('sets aria-expanded when expanded prop is provided', async () => {
+            const wrapper = mount(Button)
+            expect(wrapper.attributes('aria-expanded')).toBeUndefined()
+
+            await wrapper.setProps({ expanded: true } as any)
+            expect(wrapper.attributes('aria-expanded')).toBe('true')
+
+            await wrapper.setProps({ expanded: false } as any)
+            expect(wrapper.attributes('aria-expanded')).toBe('false')
+        })
+    })
 })
