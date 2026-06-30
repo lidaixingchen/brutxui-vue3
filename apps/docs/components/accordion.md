@@ -84,12 +84,65 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from 'br
 | `type` | `'single' \| 'multiple'` | — | 展开模式，单选或多选 |
 | `collapsible` | `boolean` | `false` | 在 `type="single"` 模式下是否允许关闭全部子项 |
 | `disabled` | `boolean` | `false` | 是否禁用整个折叠面板 |
-| `modelValue` | `string \| string[]` | — | 当前选中的面板值 |
+| `modelValue` | `string \| string[]` | — | 当前选中的面板值，支持 `v-model` 双向绑定 |
+| `defaultValue` | `string \| string[]` | — | 非受控模式下的默认选中值 |
+| `dir` | `'ltr' \| 'rtl'` | `'ltr'` | 阅读方向 |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 折叠面板排列方向 |
+| `unmountOnHide` | `boolean` | `true` | 关闭时是否卸载内容 DOM |
+| `class` | `string` | — | 自定义类名 |
 
 ### AccordionItem Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `value` | `string` | — | 唯一的标示值 (必填) |
+| `value` | `string` | — | 唯一的标示值（必填） |
 | `variant` | `'default' \| 'flat' \| 'ghost' \| 'interactive'` | `'default'` | 视觉风格变体 |
 | `disabled` | `boolean` | `false` | 是否禁用此子项 |
+| `class` | `string` | — | 自定义类名 |
+
+### AccordionTrigger Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'lg'` | 展开/折叠图标的尺寸 |
+| `class` | `string` | — | 自定义类名 |
+
+### AccordionContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `forceMount` | `boolean` | — | 强制挂载内容，用于配合外部动画库控制动画 |
+| `class` | `string` | — | 自定义类名 |
+
+## Events
+
+| 事件名 | 参数 | 说明 |
+|--------|------|------|
+| `update:modelValue` | `(value: string \| string[] \| undefined)` | 展开状态改变时触发，支持 `v-model` |
+
+## Slots
+
+### Accordion Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 折叠面板内容，通常包含 `AccordionItem` |
+
+### AccordionItem Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 面板子项内容，通常包含 `AccordionTrigger` 和 `AccordionContent` |
+
+### AccordionTrigger Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 触发器文本内容 |
+| `icon` | 自定义展开/折叠图标，默认为 `ChevronDown` |
+
+### AccordionContent Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 面板展开后显示的内容 |

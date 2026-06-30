@@ -90,26 +90,86 @@ import { Sheet, SheetTrigger, SheetContent, Button } from 'brutx-ui-vue'
 
 | 组件 | 说明 |
 |------|------|
-| `Sheet` | 根组件（从 reka-ui 重新导出为 `DialogRoot`） |
-| `SheetTrigger` | 打开面板的按钮 |
-| `SheetContent` | 带方向变体的面板内容 |
+| `Sheet` | 根组件（从 reka-ui 重新导出的 `DialogRoot`） |
+| `SheetTrigger` | 打开面板的触发器（从 reka-ui 重新导出的 `DialogTrigger`） |
+| `SheetPortal` | 渲染 portal 容器（从 reka-ui 重新导出的 `DialogPortal`） |
+| `SheetContent` | 带方向变体的面板内容，内置关闭按钮 |
 | `SheetHeader` | 头部容器 |
 | `SheetFooter` | 底部容器 |
-| `SheetTitle` | 面板标题 |
-| `SheetDescription` | 面板描述文字 |
-| `SheetClose` | 关闭按钮 |
+| `SheetTitle` | 面板标题（从 reka-ui 重新导出的 `DialogTitle`） |
+| `SheetDescription` | 面板描述文字（从 reka-ui 重新导出的 `DialogDescription`） |
+| `SheetClose` | 关闭按钮（从 reka-ui 重新导出的 `DialogClose`） |
 
 ## Props
 
+### Sheet
+
+根组件，继承 reka-ui `DialogRoot` 的全部属性。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `defaultOpen` | `boolean` | — | 非受控的默认打开状态 |
+| `modal` | `boolean` | `true` | 是否为模态对话框 |
+
 ### SheetContent
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` | 面板滑出方向 |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
+> **注意：** `SheetContent` 内置了关闭按钮（右上角或左上角的 X 图标，当 `side="left"` 时位于左上角），无需手动添加。关闭按钮的辅助文字支持国际化（`sheet.close`）。
 
 ### SheetHeader / SheetFooter / SheetTitle / SheetDescription
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义 CSS 类名 |
+
+## Events
+
+### Sheet
+
+| 事件名 | 参数 | 说明 |
+|--------|------|------|
+| `update:open` | `(value: boolean)` | 打开状态变化时触发，用于 `v-model:open` 双向绑定 |
+| `open-change` | `(open: boolean)` | 打开状态变化时触发 |
+
+### SheetContent
+
+继承 reka-ui `DialogContent` 的全部事件。
+
+| 事件名 | 参数 | 说明 |
+|--------|------|------|
+| `open-auto-focus` | `(event: Event)` | 内容打开后自动聚焦时触发 |
+| `close-auto-focus` | `(event: Event)` | 内容关闭后自动聚焦时触发 |
+| `interact-outside` | `(event: InteractOutsideEvent)` | 在内容外部交互时触发 |
+| `escape-key-down` | `(event: KeyboardEvent)` | 按下 Escape 键时触发 |
+| `pointer-down-outside` | `(event: PointerDownOutsideEvent)` | 在内容外部按下指针时触发 |
+
+## Slots
+
+### Sheet
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置 `SheetTrigger`、`SheetContent` 等子组件 |
+
+### SheetContent
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置面板内容（`SheetHeader`、内容区域、`SheetFooter` 等） |
+
+### SheetHeader / SheetFooter
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽 |
+
+### SheetTitle / SheetDescription
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽 |

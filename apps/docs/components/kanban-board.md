@@ -84,6 +84,7 @@ interface KanbanColumn {
 |------|------|------|
 | `update:modelValue` | `KanbanColumn[]` | 列数据更新（卡片移动或列排序后） |
 | `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | 卡片跨列移动完成时触发 |
+| `card-click` | `(card: KanbanCard, columnId: string)` | 点击卡片时触发（拖拽过程中不会触发） |
 | `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | 拖拽列标题完成排序时触发 |
 | `add-card` | `columnId: string` | 点击默认「添加卡片」按钮时触发 |
 
@@ -145,3 +146,9 @@ function handleAddCard(columnId) {
     </KanbanBoard>
 </template>
 ```
+
+## 无障碍支持
+
+- 卡片支持键盘导航，可通过 `Tab` 键聚焦
+- 聚焦后按 `Enter` 或 `Space` 键可触发 `card-click` 事件
+- 空列会显示本地化的提示文本，引导用户拖放卡片

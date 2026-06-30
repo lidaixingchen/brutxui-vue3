@@ -109,7 +109,7 @@ import { Separator } from 'brutx-ui-vue'
 
 ## 文字分隔线
 
-当 `orientation="horizontal"` 且默认插槽有内容时，Separator 会渲染为居中文字分隔线：两侧为分隔线，中间为插槽内容。
+当 `orientation="horizontal"` 且默认插槽有实际内容时，Separator 会渲染为居中文字分隔线：两侧为分隔线，中间为插槽内容。
 
 ```vue
 <script setup>
@@ -132,6 +132,8 @@ import { Separator } from 'brutx-ui-vue'
     <Separator variant="primary" size="lg">主色标题</Separator>
 </template>
 ```
+
+> **注意**：文字分隔线模式下，`class` 属性会应用到两侧的分隔线上，而非外层容器。这与普通模式下 `class` 应用到分隔线元素上的行为保持一致。
 
 ## Props
 

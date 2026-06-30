@@ -88,7 +88,8 @@ interface ComboboxOption {
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `options` | `ComboboxOption[]` | —（必填） |
-| `modelValue` | `string \| undefined` | — |
+| `modelValue` | `string \| undefined` | `undefined` |
+| `open` | `boolean` | `undefined` |
 | `placeholder` | `string` | locale: `combobox.placeholder` |
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` |
 | `emptyText` | `string` | locale: `combobox.emptyText` |
@@ -105,6 +106,7 @@ interface ComboboxOption {
 |------|------|--------|
 | `options` | `ComboboxOption[]` | —（必填） |
 | `modelValue` | `string[]` | `[]` |
+| `open` | `boolean` | `undefined` |
 | `placeholder` | `string` | locale: `combobox.multiPlaceholder` |
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` |
 | `emptyText` | `string` | locale: `combobox.emptyText` |
@@ -120,17 +122,19 @@ interface ComboboxOption {
 
 ### Combobox
 
-| 事件 | 载荷 |
-|------|------|
-| `update:modelValue` | `string \| undefined` |
-| `create` | `[value: string]` |
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | `string \| undefined` | 选中值变化时触发，再次选择相同选项会取消选中（值变为 `undefined`） |
+| `update:open` | `boolean` | 下拉展开/关闭状态变化时触发 |
+| `create` | `string` | 点击「创建」选项时触发，参数为当前搜索文本 |
 
 ### ComboboxMulti
 
-| 事件 | 载荷 |
-|------|------|
-| `update:modelValue` | `string[]` |
-| `create` | `[value: string]` |
+| 事件 | 载荷 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | `string[]` | 选中值变化时触发，切换选中/取消选中对应选项 |
+| `update:open` | `boolean` | 下拉展开/关闭状态变化时触发 |
+| `create` | `string` | 点击「创建」选项时触发，参数为当前搜索文本 |
 
 ## 加载状态
 

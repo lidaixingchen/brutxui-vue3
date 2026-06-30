@@ -82,6 +82,9 @@ const density = ref('comfortable')
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `modelValue` | `string` | — |
+| `name` | `string` | — |
+| `disabled` | `boolean` | — |
+| `orientation` | `'horizontal' \| 'vertical'` | — |
 | `ariaLabel` | `string` | — |
 | `class` | `string` | — |
 

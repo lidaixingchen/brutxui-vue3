@@ -84,12 +84,18 @@ function handleClick(event) {
 ## 事件
 
 | 事件名 | 参数 | 说明 |
-|--------|------|------|
-| `click` | `MouseEvent` | 仅当 `clickable` 为 `true` 时点击卡片触发 |
+| -------- | ------------ | ------------------------------------------------------------ |
+| `click` | `MouseEvent` | 仅当 `clickable` 为 `true` 且 `disabled` 为 `false` 时点击卡片触发 |
+
+## 插槽
+
+| 插槽名 | 说明 |
+| ------ | ------------------------------ |
+| 默认插槽 | 卡片内容，支持任意自定义内容 |
 
 ## 无障碍
 
-- 组件设置了 `role="region"` 和 `aria-label="3D 交互卡片"`
+- 组件设置了 `role="group"`，并通过 i18n 提供 `aria-label`（中文为 `"3D 交互卡片"`，英文为 `"3D Interactive Card"`）
 - 当用户偏好 `prefers-reduced-motion: reduce` 时，自动禁用 3D 偏转效果
 - 可通过 `disabled` prop 完全禁用 3D 效果
 

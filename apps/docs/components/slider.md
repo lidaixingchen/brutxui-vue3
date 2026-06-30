@@ -138,9 +138,10 @@ const value = ref([50])
 | `min` | `number` | `0` |
 | `max` | `number` | `100` |
 | `step` | `number` | `1` |
-| `disabled` | `boolean` | — |
+| `disabled` | `boolean` | `false` |
+| `ariaLabel` | `string` | — |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success'` | `'default'` |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `marks` | `number[]` | — |
 | `showTooltip` | `boolean` | `false` |

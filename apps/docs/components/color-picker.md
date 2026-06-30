@@ -88,13 +88,14 @@ const presets = [
 </template>
 ```
 
-预设也支持带标签的对象格式：
+预设也支持带标签的对象格式（可选 `disabled` 字段禁用单个色块）：
 
 ```vue
 <script setup>
 const presets = [
     { label: '珊瑚红', value: '#FF6B6B' },
     { label: '薄荷青', value: '#4ECDC4' },
+    { label: '已废弃', value: '#999999', disabled: true },
 ]
 </script>
 ```
@@ -150,9 +151,9 @@ const presets = [
 | `presets` | `string[] \| ColorPreset[]` | — | 预设颜色列表 |
 | `showPresets` | `boolean` | `true` | 是否显示预设颜色 |
 | `presetsLabel` | `string` | — | 预设区域标签文本 |
-| `showHistory` | `boolean` | `false` | 是否显示颜色历史记录 |
-| `historyMax` | `number` | `10` | 历史记录最大数量 |
-| `historyStorageKey` | `string` | — | 历史记录 localStorage 键名 |
+| `showHistory` | `boolean` | `true` | 是否显示颜色历史记录 |
+| `historyMax` | `number` | `8` | 历史记录最大数量 |
+| `historyStorageKey` | `string` | `'brutx-color-history'` | 历史记录 localStorage 键名 |
 | `showInput` | `boolean` | `true` | 是否显示输入框 |
 | `placeholder` | `string` | — | 占位符文本 |
 | `disabled` | `boolean` | `false` | 禁用状态 |
@@ -162,15 +163,17 @@ const presets = [
 | `id` | `string` | — | 组件 ID |
 | `ariaLabel` | `string` | — | 无障碍标签 |
 | `class` | `string` | — | 自定义类名 |
+| `open` | `boolean` | — | 面板是否打开，支持 v-model:open 双向绑定 |
 
 ## 事件
 
 | 事件 | 载荷 | 说明 |
 |------|------|------|
 | `update:modelValue` | `string \| null` | 颜色变化时触发 |
-| `change` | `string \| null` | 面板关闭且值变化时触发 |
+| `change` | `string \| null` | 面板关闭且值变化时触发，也由确认/清除操作触发 |
 | `open` | — | 面板打开时触发 |
 | `close` | — | 面板关闭时触发 |
+| `update:open` | `boolean` | 面板开关状态变化时触发，配合 v-model:open 使用 |
 
 ## 程序化控制
 
@@ -209,10 +212,31 @@ const color = ref(null)
 
 ## 键盘导航
 
+### 触发器
+
 | 按键 | 操作 |
 |------|------|
-| `Enter` / `Space` | 打开面板 |
+| `Enter` / `Space` | 打开面板（禁用时不响应） |
 | `Escape` | 关闭面板 |
+
+### 饱和度/亮度区域
+
+| 按键 | 操作 |
+|------|------|
+| `←` / `→` | 调整饱和度（步长 1，Shift 步长 10） |
+| `↑` / `↓` | 调整亮度（步长 1，Shift 步长 10） |
+
+### 色相滑块
+
+| 按键 | 操作 |
+|------|------|
+| `←` / `→` | 调整色相（步长 1，Shift 步长 15） |
+
+### 透明度滑块
+
+| 按键 | 操作 |
+|------|------|
+| `←` / `→` | 调整透明度（步长 0.01，Shift 步长 0.1） |
 
 ## useColorPicker 组合式函数
 

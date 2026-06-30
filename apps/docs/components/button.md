@@ -5,7 +5,7 @@ description: 新粗野主义风格的按钮组件，提供9种颜色变体、加
 
 # Button 按钮
 
-新粗野主义风格的按钮组件，支持 9 种变体、5 种尺寸、加载状态和 `asChild` 组合支持。
+新粗野主义风格的按钮组件，支持 9 种变体、4 种尺寸 + icon 模式、加载状态和 `asChild` 组合支持。
 
 ## 预览
 
@@ -111,11 +111,31 @@ import { RouterLink } from 'vue-router'
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` |
-| `asChild` | `boolean` | `false` |
-| `loading` | `boolean` | `false` |
-| `disabled` | `boolean` | `false` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体样式 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | 按钮尺寸，`icon` 为正方形图标按钮 |
+| `asChild` | `boolean` | `false` | 将按钮样式渲染到子元素上，用于组合路由链接等 |
+| `loading` | `boolean` | `false` | 显示加载动画并禁用按钮 |
+| `disabled` | `boolean` | `false` | 禁用按钮 |
+| `class` | `string` | `undefined` | 自定义 CSS 类名 |
+
+## Events
+
+按钮组件会传播所有原生 DOM 事件（如 `click`、`mouseenter` 等），无需额外配置。
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `click` | `MouseEvent` | 点击按钮时触发，加载或禁用状态时不触发 |
+
+## Slots
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 按钮内容 |
+
+## Accessibility（无障碍）
+
+- 禁用状态自动设置 `disabled` 属性（非 `asChild` 模式）或 `aria-disabled="true"`（`asChild` 模式）
+- 加载状态自动设置 `aria-busy="true"`
+- 支持键盘导航和焦点样式（`focus:outline`）

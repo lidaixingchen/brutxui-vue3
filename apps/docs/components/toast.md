@@ -59,13 +59,15 @@ function handleError() {
 
 ## 变体
 
-| 变体 | 背景 | 文字 |
+| 变体 | 背景 | 图标 |
 |------|------|------|
-| `default` | `bg-brutal-bg` | `text-brutal-fg` |
-| `success` | `bg-brutal-success` | `text-black` |
-| `error` | `bg-brutal-destructive` | `text-white` |
-| `warning` | `bg-brutal-accent` | `text-black` |
-| `info` | `bg-brutal-secondary` | `text-black` |
+| `default` | `bg-brutal-bg` | `Zap` |
+| `success` | `bg-brutal-success` | `CheckCircle` |
+| `error` | `bg-brutal-destructive` | `AlertCircle` |
+| `warning` | `bg-brutal-accent` | `AlertTriangle` |
+| `info` | `bg-brutal-secondary` | `Info` |
+
+所有变体统一使用 `text-brutal-fg` 文字颜色和 `shadow-brutal-lg` 阴影。
 
 ## 尺寸
 
@@ -79,17 +81,33 @@ function handleError() {
 
 ```ts
 const {
-    toasts,       // Ref<ToastItem[]> - 响应式提示列表
-    addToast,     // (toast: Omit<ToastItem, 'id'>) => string
-    removeToast,  // (id: string) => void
-    clearToasts,  // () => void
-    success,      // (title: string, description?: string) => string
-    error,        // (title: string, description?: string) => string
-    warning,      // (title: string, description?: string) => string
-    info,         // (title: string, description?: string) => string
-    promise,      // <T>(promise: Promise<T>, options: PromiseToastOptions<T>) => Promise<T>
+    toasts,          // Ref<ToastItem[]> - 响应式提示列表
+    addToast,        // (toast: Omit<ToastItem, 'id'>) => string
+    removeToast,     // (id: string) => void
+    clearToasts,     // () => void
+    clearAllTimers,  // () => void
+    success,         // (title: string, description?: string) => string
+    error,           // (title: string, description?: string) => string
+    warning,         // (title: string, description?: string) => string
+    info,            // (title: string, description?: string) => string
+    promise,         // <T>(promise: Promise<T> | (() => Promise<T>), options: PromiseToastOptions<T>) => Promise<T>
 } = useToast()
 ```
+
+### provideToast
+
+在应用根组件调用 `provideToast()` 提供 toast 实例，子组件中 `useToast()` 会自动注入该实例。
+
+```vue
+<!-- App.vue -->
+<script setup>
+import { provideToast } from 'brutx-ui-vue'
+
+provideToast()
+</script>
+```
+
+> 注意：若未调用 `provideToast()`，`useToast()` 会回退到共享单例并输出警告。
 
 ## Promise Toast
 
@@ -115,13 +133,13 @@ async function handleSave() {
 
 ```ts
 interface PromiseToastOptions<T> {
-    loading: string                          // loading 状态文本
-    success: string | ((data: T) => string)  // 成功文本或格式化函数
-    error: string | ((error: Error) => string) // 错误文本或格式化函数
-    duration?: number                        // 成功/错误后显示时长
-    loadingVariant?: string                  // loading 状态变体
-    successVariant?: string                  // 成功状态变体
-    errorVariant?: string                    // 错误状态变体
+    loading: string                                        // loading 状态文本
+    success: string | ((data: T) => string)                // 成功文本或格式化函数
+    error: string | ((error: Error) => string)             // 错误文本或格式化函数
+    duration?: number                                      // 成功/错误后显示时长
+    loadingVariant?: 'default' | 'success' | 'error' | 'warning' | 'info'  // loading 状态变体
+    successVariant?: 'default' | 'success' | 'error' | 'warning' | 'info'  // 成功状态变体
+    errorVariant?: 'default' | 'success' | 'error' | 'warning' | 'info'    // 错误状态变体
 }
 ```
 
@@ -180,6 +198,7 @@ const { toasts, addToast, removeToast } = useToast()
 interface ToastItem {
     id: string
     variant?: 'default' | 'success' | 'error' | 'warning' | 'info'
+    size?: 'sm' | 'default' | 'lg'
     title?: string
     description?: string
     duration?: number
@@ -194,8 +213,24 @@ interface ToastItem {
 |------|------|--------|------|
 | `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` | 提示类型 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
+| `title` | `string` | — | 标题文本 |
+| `description` | `string` | — | 描述文本 |
+| `duration` | `number` | `5000` | 显示时长（毫秒），设为 `0` 则不自动关闭 |
 | `pauseOnHover` | `boolean` | `true` | 鼠标悬停时暂停倒计时与进度条动画，移出后从剩余时间继续 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'xl'` | 主图标尺寸 |
 | `class` | `string` | — | 自定义样式类 |
+
+### Toast Events
+
+| 事件名  | 参数 | 说明                         |
+|---------|------|------------------------------|
+| `close` | —    | 提示关闭时触发（动画完成后） |
+
+### Toast Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 自定义内容，渲染在标题和描述下方 |
 
 ### ToastContainer
 

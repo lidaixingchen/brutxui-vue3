@@ -45,9 +45,11 @@ import { ScratchCard } from 'brutx-ui-vue'
 
 ## 无障碍
 
-- 组件设置了 `role="region"`、`aria-label="刮刮卡"` 和 `tabindex="0"`
+- 组件设置了 `role="region"` 和 `tabindex="0"`
+- `aria-label` 默认使用本地化文本 `scratchCard.ariaLabel`（默认为"刮刮卡"）
 - 按 `Enter` 或 `Space` 键可自动揭开全部内容
 - 当用户偏好 `prefers-reduced-motion: reduce` 时，淡出动画被跳过，Canvas 立即移除
+- Canvas 覆盖层使用 `cursor-crosshair` 光标提示可交互
 
 ## Props
 

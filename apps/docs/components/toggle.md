@@ -32,13 +32,13 @@ const underline = ref(false)
 
 <template>
     <div class="flex items-center gap-2">
-        <Toggle v-model:pressed="bold" variant="default" size="default">
+        <Toggle v-model="bold" variant="default" size="default">
             <Bold class="h-4 w-4" />
         </Toggle>
-        <Toggle v-model:pressed="italic" variant="default" size="default">
+        <Toggle v-model="italic" variant="default" size="default">
             <Italic class="h-4 w-4" />
         </Toggle>
-        <Toggle v-model:pressed="underline" variant="default" size="default">
+        <Toggle v-model="underline" variant="default" size="default">
             <Underline class="h-4 w-4" />
         </Toggle>
     </div>
@@ -91,7 +91,7 @@ const bold = ref(false)
 </script>
 
 <template>
-    <Toggle v-model:pressed="bold" aria-label="加粗">
+    <Toggle v-model="bold" aria-label="加粗">
         <Bold class="h-4 w-4" />
     </Toggle>
 </template>
@@ -101,20 +101,19 @@ const bold = ref(false)
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `modelValue` | `boolean` | — |
 | `variant` | `'default' \| 'outline'` | `'default'` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `pressed` | `boolean` | — |
-| `defaultValue` | `boolean` | — |
-| `disabled` | `boolean` | — |
+| `disabled` | `boolean` | `false` |
 | `loading` | `boolean` | `false` |
 | `ariaLabel` | `string` | — |
 | `class` | `string` | — |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `update:pressed` | `boolean` |
+| 事件                 | 载荷      |
+| -------------------- | --------- |
+| `update:modelValue`  | `boolean` |
 
 ## 样式
 

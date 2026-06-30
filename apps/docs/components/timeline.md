@@ -178,7 +178,20 @@ import {
 |------|------|--------|------|
 | `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 时间线排版布局朝向 |
 | `alternate` | `boolean` | `false` | 是否启用交替布局；仅 `orientation='vertical'` 时生效，偶数项内容在左、奇数项在右 |
-| `class` | `string` | `""` | 整体包裹容器自定义样式类 |
+| `class` | `string` | `undefined` | 整体包裹容器自定义样式类 |
+
+### TimelineItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `index` | `number` | `undefined` | 节点索引，由 `Timeline` 组件自动注入，无需手动指定 |
+| `class` | `string` | `undefined` | 单个时间节点的自定义样式类 |
+
+### TimelineSeparator Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | `undefined` | 分隔区域的自定义样式类 |
 
 ### TimelineDot Props
 
@@ -186,4 +199,54 @@ import {
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'accent'` | 配色变体 |
 | `shape` | `'circle' \| 'square' \| 'diamond'` | `'circle'` | 几何形态变体 |
-| `class` | `string` | `""` | 节点微标的自定义样式类 |
+| `class` | `string` | `undefined` | 节点微标的自定义样式类 |
+
+### TimelineConnector Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | `undefined` | 连接线的自定义样式类 |
+
+### TimelineContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | `undefined` | 内容区域的自定义样式类 |
+
+## Slots
+
+### Timeline Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置 `TimelineItem` 子节点 |
+
+### TimelineItem Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置 `TimelineSeparator` 和 `TimelineContent` |
+
+### TimelineSeparator Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置 `TimelineDot` 和 `TimelineConnector` |
+
+### TimelineDot Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置节点内显示的内容（如数字、图标等） |
+
+### TimelineConnector Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 无默认插槽，连接线为纯展示组件 |
+
+### TimelineContent Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽，用于放置时间线节点的具体内容 |

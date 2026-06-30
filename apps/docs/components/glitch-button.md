@@ -37,7 +37,7 @@ import { GlitchButton } from 'brutx-ui-vue'
 |------|------|
 | `hover` | 鼠标悬停时触发动画，离开后停止（默认） |
 | `click` | 点击切换动画开/关 |
-| `autoplay` | 组件挂载后自动循环播放，hover 时暂停 |
+| `autoplay` | 组件挂载后自动循环播放，hover 时暂停，离开后恢复 |
 | `none` | 不自动触发，通过 `expose({ play(), stop() })` 供外部程序化控制 |
 
 ## 速度变体
@@ -99,6 +99,8 @@ GlitchButton 继承 Button 的所有变体：
 - 当用户偏好 `prefers-reduced-motion: reduce` 时，自动禁用所有故障动画
 - 监听 `prefersReducedMotion` 变化，实时响应用户偏好
 - 支持 `disabled` 和 `loading` 状态
+- `loading` 状态下会显示旋转的加载图标，并设置 `aria-busy="true"`
+- `disabled` 和 `loading` 状态都会禁用按钮交互
 
 ## Props
 
@@ -110,8 +112,8 @@ GlitchButton 继承 Button 的所有变体：
 | `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向（横向/纵向/双向） |
 | `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 动画触发时机 |
 | `interval` | `number` | `3000` | 自动播放间隔 (ms)，最小 100 |
-| `asChild` | `boolean` | `false` | 作为子组件渲染 |
-| `loading` | `boolean` | `false` | 加载状态 |
+| `asChild` | `boolean` | `false` | 作为子组件渲染，不渲染为 `<button>` 元素 |
+| `loading` | `boolean` | `false` | 加载状态，显示旋转图标并禁用交互 |
 | `disabled` | `boolean` | `false` | 禁用状态 |
 | `class` | `string` | — | 外部类覆盖 |
 
@@ -123,10 +125,37 @@ GlitchButton 继承 Button 的所有变体：
 
 ## 暴露方法
 
+通过 `ref` 获取组件实例后可调用以下方法：
+
 | 方法 | 说明 |
 |------|------|
-| `play()` | 开始故障动画 |
-| `stop()` | 停止故障动画 |
+| `play()` | 开始故障动画，设置 `isActive` 为 `true` |
+| `stop()` | 停止故障动画，设置 `isActive` 为 `false` |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { GlitchButton } from 'brutx-ui-vue'
+
+const glitchRef = ref(null)
+
+const startGlitch = () => {
+  glitchRef.value?.play()
+}
+
+const stopGlitch = () => {
+  glitchRef.value?.stop()
+}
+</script>
+
+<template>
+  <GlitchButton ref="glitchRef" trigger="none">
+    手动控制
+  </GlitchButton>
+  <button @click="startGlitch">开始</button>
+  <button @click="stopGlitch">停止</button>
+</template>
+```
 
 ## 示例
 
@@ -151,5 +180,23 @@ GlitchButton 继承 Button 的所有变体：
 ```vue
 <GlitchButton size="icon" variant="outline">
     <Icon name="settings" />
+</GlitchButton>
+```
+
+### 作为子组件渲染
+
+使用 `asChild` 可以将故障效果应用到其他元素上，而不渲染为 `<button>` 元素：
+
+```vue
+<GlitchButton asChild trigger="hover">
+    <a href="/some-link">链接样式</a>
+</GlitchButton>
+```
+
+### 禁用状态
+
+```vue
+<GlitchButton disabled>
+    禁用状态
 </GlitchButton>
 ```

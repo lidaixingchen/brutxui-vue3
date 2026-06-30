@@ -80,6 +80,16 @@ import { GlitchText } from 'brutx-ui-vue'
 | `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向（横向/纵向/双向） |
 | `class` | `string` | — | 外部类覆盖 |
 
+## 事件
+
+组件支持以下原生 DOM 事件，用于触发动画控制：
+
+| 事件 | 说明 |
+| ---- | ---- |
+| `mouseenter` | 鼠标进入时触发。`hover` 模式下激活动画，`autoplay` 模式下暂停动画 |
+| `mouseleave` | 鼠标离开时触发。`hover` 模式下停止动画，`autoplay` 模式下恢复自动播放 |
+| `click` | 点击时触发。`click` 模式下切换动画开/关状态 |
+
 ## 插槽
 
 | 插槽 | 说明 |
@@ -89,6 +99,6 @@ import { GlitchText } from 'brutx-ui-vue'
 ## 暴露方法
 
 | 方法 | 说明 |
-|------|------|
-| `play()` | 开始故障动画 |
-| `stop()` | 停止故障动画 |
+| ---- | ---- |
+| `play()` | 开始故障动画（设置内部 `isActive` 状态为 `true`） |
+| `stop()` | 停止故障动画（设置内部 `isActive` 状态为 `false`） |

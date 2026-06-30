@@ -80,7 +80,7 @@ import { Marquee } from 'brutx-ui-vue'
 | `speed` | `number` | `20` | 单次循环所耗费的秒数（数值越小速度越快） |
 | `pauseOnHover` | `boolean` | `false` | 鼠标悬停时是否暂停动画 |
 | `fade` | `boolean` | `false` | 是否开启左右边缘淡入淡出遮罩效果 |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'accent'` | 背景与文字颜色变体 |
+| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 背景与文字颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 文字大小与内边距 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |
 

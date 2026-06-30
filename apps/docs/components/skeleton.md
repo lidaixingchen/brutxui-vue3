@@ -156,11 +156,11 @@ import { Skeleton } from 'brutx-ui-vue'
 
 | 组件 | 说明 |
 |------|------|
-| `Skeleton` | 基础骨架块 |
-| `SkeletonText` | 多行骨架文本 |
-| `SkeletonAvatar` | 圆形/方形头像占位符 |
-| `SkeletonCard` | 完整卡片骨架，包含头部、内容、底部 |
-| `SkeletonTable` | 表格骨架，包含行和列 |
+| `Skeleton` | 基础骨架块，内置 `role="status"` 和 `aria-busy="true"` 无障碍属性 |
+| `SkeletonText` | 多行骨架文本，支持自定义行数和末行宽度 |
+| `SkeletonAvatar` | 圆形头像占位符 |
+| `SkeletonCard` | 完整卡片骨架，包含图片区、标题、文本和按钮占位 |
+| `SkeletonTable` | 表格骨架，内置 `role="table"` 和 `aria-busy="true"` 无障碍属性 |
 
 ## Props
 
@@ -176,31 +176,39 @@ import { Skeleton } from 'brutx-ui-vue'
 
 ### SkeletonText
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `lines` | `number` | `3` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
+| `lines` | `number` | `3` | 文本行数 |
+| `lastLineWidth` | `string` | `'60%'` | 最后一行的宽度，支持任意 CSS 宽度值 |
+| `class` | `string` | — | 附加类名 |
 
 ### SkeletonAvatar
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 头像尺寸，宽高相等 |
+| `class` | `string` | — | 附加类名 |
 
 ### SkeletonCard
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
+| `class` | `string` | — | 附加类名 |
 
 ### SkeletonTable
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` |
-| `rows` | `number` | `5` |
-| `columns` | `number` | `4` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
+| `rows` | `number` | `5` | 数据行数 |
+| `columns` | `number` | `4` | 列数 |
+| `class` | `string` | — | 附加类名 |
+
+## Slots
+
+| 组件 | 插槽 | 说明 |
+| --- | --- | --- |
+| Skeleton | default | 骨架块内部内容，可放置自定义加载指示器或其他元素 |

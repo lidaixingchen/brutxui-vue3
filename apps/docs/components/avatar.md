@@ -160,9 +160,32 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 |------|------|--------|------|
 | `src` | `string` | — | 图片地址 |
 | `alt` | `string` | — | 替代文本 |
+| `class` | `string` | — | 附加类名 |
 
 ### AvatarFallback
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `class` | `string` | — | 附加类名 |
+
+## Slots
+
+**Avatar Slots:**
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 默认插槽，用于放置 `AvatarImage` 和 `AvatarFallback` 子组件 |
+
+**AvatarFallback Slots:**
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 默认插槽，用于放置回退内容（文字或图标） |
+
+## Accessibility
+
+- 状态圆点使用 `role="status"` 和 `aria-label` 属性，支持屏幕阅读器
+- 状态标签通过国际化（i18n）提供本地化文本：
+  - `online` → "在线"
+  - `offline` → "离线"
+  - `busy` → "忙碌"

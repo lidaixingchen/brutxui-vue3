@@ -80,16 +80,30 @@ import { Label, Input } from 'brutx-ui-vue'
 </template>
 ```
 
+## Slots
+
+| 插槽 | 说明 |
+| --- | --- |
+| `default` | 标签内容 |
+
+## Events
+
+该组件没有定义自定义事件，但会透传所有原生 `<label>` 元素的事件。
+
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `required` | `boolean` | `false` |
-| `for` | `string` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | 标签变体样式 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 标签尺寸 |
+| `required` | `boolean` | `false` | 是否显示必填标记 |
+| `for` | `string` | — | 关联的表单控件 ID |
+| `class` | `string` | — | 自定义 CSS 类名 |
 
 ## 无障碍
 
 Label 组件渲染为 HTML `<label>` 元素。当使用 `for` 属性时，它会关联到匹配的表单控件，从而改善无障碍性和点击聚焦行为。
+
+- 当 `required` 为 `true` 时，组件会自动添加 `aria-required="true"` 属性
+- 必填标记 `*` 被标记为 `aria-hidden="true"`，避免屏幕阅读器重复朗读
+- 组件支持 `peer-disabled` 状态，当关联的表单控件禁用时会显示禁用样式

@@ -69,6 +69,7 @@ const modified = '/images/after.jpg'
 | `defaultValue` | `number` | `50` | 初始状态下分割线所处的百分比位置 (0-100) |
 | `disabled` | `boolean` | `false` | 是否禁用拖拽交互 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 分割线方向，vertical 时从下到上裁剪 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 拖拽手柄图标的尺寸 |
 | `class` | `string` | `""` | 容器的自定义 CSS 类 |
 
 ## 事件

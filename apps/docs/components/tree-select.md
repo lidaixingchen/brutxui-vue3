@@ -1,11 +1,11 @@
 ---
 title: TreeSelect 树形选择器
-description: 基于 TreeView 和 Popover 的树形下拉选择器，支持单选、多选、搜索过滤和任意深度树结构。
+description: 递归节点组件 TreeSelectNode 配合 Popover 的树形下拉选择器，支持单选、多选、搜索过滤和任意深度树结构。
 ---
 
 # TreeSelect 树形选择器
 
-新粗野主义风格的树形下拉选择组件，结合了 `TreeView` 的层级展示能力和 `Popover` 的下拉交互模式。支持单选、多选、搜索过滤，适用于文件选择、分类选择、组织架构等场景。
+新粗野主义风格的树形下拉选择组件，使用递归节点组件 `TreeSelectNode` 展示层级结构，配合 `Popover` 实现下拉交互。支持单选、多选、搜索过滤，适用于文件选择、分类选择、组织架构等场景。
 
 ## 预览
 
@@ -23,9 +23,9 @@ description: 基于 TreeView 和 Popover 的树形下拉选择器，支持单选
 <script setup>
 import { ref } from 'vue'
 import { TreeSelect } from 'brutx-ui-vue'
-import type { TreeSelectTreeNode } from 'brutx-ui-vue'
+import type { TreeNode } from 'brutx-ui-vue'
 
-const nodes: TreeSelectTreeNode[] = [
+const nodes: TreeNode[] = [
     {
         id: 'docs',
         label: '文档',
@@ -105,7 +105,8 @@ interface TreeNode {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `nodes` | `TreeNode[]` | —（必填） | 树形数据源 |
-| `modelValue` | `string \| string[]` | — | 选中值（单选为 string，多选为 string[]） |
+| `modelValue` | `string \| string[]` | `undefined` | 选中值（单选为 string，多选为 string[]） |
+| `open` | `boolean` | `undefined` | 受控展开状态，配合 `update:open` 事件实现 `v-model:open` |
 | `multiple` | `boolean` | `false` | 是否支持多选 |
 | `searchable` | `boolean` | `true` | 是否显示搜索框 |
 | `placeholder` | `string` | locale: `treeSelect.placeholder` | 占位文本 |
@@ -114,17 +115,19 @@ interface TreeNode {
 | `clearable` | `boolean` | `false` | 是否显示清除按钮 |
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
-| `ariaLabel` | `string` | — | ARIA 标签 |
+| `ariaLabel` | `string` | `undefined` | ARIA 标签 |
 | `maxDisplay` | `number` | `3` | 多选模式下最多显示的标签数 |
 | `maxHeight` | `string` | `'15rem'` | 下拉列表最大高度 |
-| `dropdownClass` | `string` | — | 下拉列表自定义类名 |
-| `class` | `string` | — | 触发器自定义类名 |
+| `dropdownClass` | `string` | `undefined` | 下拉列表自定义类名 |
+| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
+| `class` | `string` | `undefined` | 触发器自定义类名 |
 
 ## 事件
 
 | 事件 | 载荷 | 说明 |
 |------|------|------|
 | `update:modelValue` | `string \| string[] \| undefined` | 选中值变更 |
+| `update:open` | `boolean` | 下拉展开/关闭状态变更，配合 `open` prop 实现 `v-model:open` |
 | `select` | `TreeNode \| TreeNode[] \| undefined` | 选中节点变更 |
 | `open-change` | `boolean` | 下拉框展开/关闭 |
 
@@ -149,17 +152,44 @@ const nodes = [
 ]
 ```
 
+### 受控展开
+
+通过 `open` prop 和 `update:open` 事件可实现对下拉框展开状态的受控管理：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { TreeSelect } from 'brutx-ui-vue'
+
+const selected = ref(undefined)
+const isOpen = ref(false)
+
+function handleClose() {
+    isOpen.value = false
+}
+</script>
+
+<template>
+    <TreeSelect
+        v-model="selected"
+        v-model:open="isOpen"
+        :nodes="nodes"
+    />
+</template>
+```
+
 ### 国际化
 
 组件使用 `useLocale` composable 支持国际化，可通过 `TreeSelectLocale` 自定义文本：
 
 ```ts
 interface TreeSelectLocale {
-    placeholder: string
-    searchPlaceholder: string
-    emptyText: string
-    selectedCount: string
-    clear: string
+    placeholder: string        // 触发器占位文本
+    searchPlaceholder: string  // 搜索框占位文本
+    search: string             // 搜索框 ARIA 标签
+    emptyText: string          // 无结果提示文本
+    selectedCount: string      // 多选超出 maxDisplay 时的计数文本，支持 {count} 插值
+    clear: string              // 清除按钮 ARIA 标签
 }
 ```
 
@@ -170,3 +200,7 @@ interface TreeSelectLocale {
 - 多选模式下添加 `aria-multiselectable`
 - 清除按钮支持键盘操作（Enter/Space）
 - 禁用状态下使用 `aria-disabled` 和 `tabindex="-1"`
+- 节点支持 `ArrowUp` / `ArrowDown` 导航
+- 非叶节点支持 `ArrowRight` 展开 / `ArrowLeft` 折叠
+- `Home` / `End` 键跳转至首尾节点
+- 使用 roving tabindex 管理焦点

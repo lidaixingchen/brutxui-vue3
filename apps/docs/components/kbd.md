@@ -66,19 +66,29 @@ import { Kbd } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## API
+
+### Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 按键颜色变体 |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 按键尺寸 |
-| `class` | `string` | — | 自定义样式类 |
+| `class` | `string \| undefined` | `undefined` | 自定义样式类，会与组件默认样式合并 |
 
-## 插槽
+### Events
+
+该组件没有定义任何事件。
+
+### Slots
 
 | 插槽名 | 说明 |
 |--------|------|
 | `default` | 按键内容（文字或符号） |
+
+### Expose
+
+该组件没有暴露任何方法或属性。
 
 ## 常用按键符号参考
 

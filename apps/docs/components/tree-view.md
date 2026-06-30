@@ -53,13 +53,24 @@ const selected = ref(null)
 
 ```ts
 interface TreeNode {
-    id: string       // 唯一标识
-    label: string    // 显示文本
-    icon?: string    // 节点图标
-    children?: TreeNode[]  // 子节点（省略则为叶节点）
-    data?: unknown   // 自定义附加数据
-    disabled?: boolean  // 是否禁用（checkbox 模式下不可勾选）
+    id: string            // 唯一标识
+    label: string         // 显示文本
+    icon?: string         // 节点图标（预留字段，当前未使用）
+    children?: TreeNode[] // 子节点（省略则为叶节点）
+    data?: unknown        // 自定义附加数据
+    disabled?: boolean    // 是否禁用（checkbox 模式下不可勾选）
 }
+```
+
+> 说明：节点图标当前由组件内部自动根据类型渲染——文件夹节点使用 `Folder` / `FolderOpen` 图标，叶节点使用 `File` 图标，无需手动指定。
+
+## 导出类型
+
+除了 `TreeNode`，组件还导出以下类型供 TypeScript 项目使用：
+
+```ts
+type SelectionMode = 'single' | 'checkbox'
+type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 ```
 
 ## 选择模式
@@ -118,8 +129,23 @@ const checkedIds = ref<string[]>(['button'])
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
-| `update:modelValue` | `string \| null` | 选中节点 id 变更 |
-| `update:checkedIds` | `string[]` | 勾选项变更（checkbox 模式） |
-| `select` | `TreeNode` | 点击任意节点时触发 |
+| `update:modelValue` | `(id: string \| null)` | 选中节点 id 变更 |
+| `update:checkedIds` | `(ids: string[])` | 勾选项变更（checkbox 模式） |
+| `update:expanded` | `(ids: string[])` | 展开节点列表变更 |
+| `select` | `(node: TreeNode)` | 点击任意节点时触发 |
 | `expand` | `(id: string, expanded: boolean)` | 展开 / 折叠节点时触发 |
 | `check` | `(node: TreeNode, checked: boolean)` | 勾选 / 取消勾选节点时触发（checkbox 模式） |
+
+## 键盘导航
+
+组件遵循 WAI-ARIA TreeView 角色规范，支持以下键盘操作：
+
+| 按键 | 说明 |
+|------|------|
+| `ArrowUp` | 聚焦上一个可见节点 |
+| `ArrowDown` | 聚焦下一个可见节点 |
+| `ArrowRight` | 若节点未展开则展开；若已展开则聚焦第一个子节点 |
+| `ArrowLeft` | 若节点已展开则折叠；若已折叠则聚焦父节点 |
+| `Enter` / `Space` | 选中节点（单选模式）或切换勾选状态（复选模式） |
+| `Home` | 聚焦第一个节点 |
+| `End` | 聚焦最后一个节点 |

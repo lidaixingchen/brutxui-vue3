@@ -53,14 +53,16 @@ import { Button } from 'brutx-ui-vue'
 | 组件 | 说明 |
 |------|------|
 | `Dialog` | 根组件（从 reka-ui 的 `DialogRoot` 重新导出） |
-| `DialogTrigger` | 打开对话框的按钮 |
+| `DialogTrigger` | 打开对话框的按钮（从 reka-ui 重新导出） |
 | `DialogContent` | 带遮罩层的对话框内容面板 |
 | `DialogHeader` | 头部容器 |
 | `DialogFooter` | 底部容器，弹性布局 |
 | `DialogTitle` | 对话框标题 |
 | `DialogDescription` | 对话框描述文本 |
-| `DialogClose` | 关闭按钮 |
+| `DialogClose` | 关闭按钮（从 reka-ui 重新导出） |
 | `DialogOverlay` | 背景遮罩层 |
+| `DialogPortal` | 传送门容器（从 reka-ui 重新导出） |
+| `DialogEnhanced` | 支持可拖拽和可调整大小的增强版对话框 |
 
 ## 尺寸变体
 
@@ -97,20 +99,70 @@ import { Button } from 'brutx-ui-vue'
 
 ## Props
 
+### Dialog（根组件）
+
+从 reka-ui 的 `DialogRoot` 重新导出，管理对话框的打开/关闭状态。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `defaultOpen` | `boolean` | `false` | 非受控模式下的默认打开状态 |
+| `modal` | `boolean` | `true` | 是否为模态对话框 |
+
+### DialogTrigger
+
+从 reka-ui 重新导出的触发按钮。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `asChild` | `boolean` | — | 是否将渲染委托给子元素 |
+| `as` | `string` | `'button'` | 渲染的 HTML 元素 |
+
 ### DialogContent
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `showCloseButton` | `boolean` | `true` |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` |
-| `forceMount` | `boolean` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 对话框尺寸 |
+| `forceMount` | `boolean` | — | 强制渲染（用于动画控制） |
+| `class` | `string` | — | 自定义样式类 |
 
-### DialogHeader / DialogFooter / DialogTitle / DialogDescription
+### DialogClose
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+从 reka-ui 重新导出的关闭按钮。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `asChild` | `boolean` | — | 是否将渲染委托给子元素 |
+| `as` | `string` | `'button'` | 渲染的 HTML 元素 |
+
+### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
+
+## Events
+
+### Dialog
+
+| 事件名 | 参数 | 说明 |
+|--------|------|------|
+| `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
+
+## Slots
+
+### Dialog
+
+| 插槽名 | 作用域参数 | 说明 |
+|--------|-----------|------|
+| `default` | `{ open: boolean, close: () => void }` | 默认插槽，提供当前打开状态和关闭方法 |
+
+### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽 |
 
 ## DialogEnhanced 增强对话框
 
@@ -157,6 +209,12 @@ import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from
 | `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
 | `forceMount` | `boolean` | — | 强制渲染 |
 | `class` | `string` | — | 自定义样式类 |
+
+### DialogEnhanced Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认插槽 |
 
 ## 无障碍
 

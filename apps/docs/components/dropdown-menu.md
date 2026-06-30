@@ -58,6 +58,8 @@ import { Button } from 'brutx-ui-vue'
 
 ## 复选框项
 
+使用 `v-model` 绑定复选框状态，支持 `boolean` 和 `'indeterminate'` 两种值。
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -79,10 +81,10 @@ const showActivityBar = ref(false)
             <Button variant="outline">View</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-            <DropdownMenuCheckboxItem v-model:checked="showStatusBar">
+            <DropdownMenuCheckboxItem v-model="showStatusBar">
                 Status Bar
             </DropdownMenuCheckboxItem>
-            <DropdownMenuCheckboxItem v-model:checked="showActivityBar">
+            <DropdownMenuCheckboxItem v-model="showActivityBar">
                 Activity Bar
             </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
@@ -124,24 +126,59 @@ const position = ref('bottom')
 </template>
 ```
 
+## 子菜单
+
+```vue
+<script setup>
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent,
+} from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+            <Button variant="outline">Open Menu</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+            <DropdownMenuItem>New Tab</DropdownMenuItem>
+            <DropdownMenuSub>
+                <DropdownMenuSubTrigger>More Tools</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                    <DropdownMenuItem>Save Page</DropdownMenuItem>
+                    <DropdownMenuItem>Developer Tools</DropdownMenuItem>
+                </DropdownMenuSubContent>
+            </DropdownMenuSub>
+        </DropdownMenuContent>
+    </DropdownMenu>
+</template>
+```
+
 ## 子组件
 
 | 组件 | 说明 |
 |------|------|
-| `DropdownMenu` | 根组件 |
-| `DropdownMenuTrigger` | 打开菜单的按钮 |
+| `DropdownMenu` | 根组件（reka-ui `DropdownMenuRoot` 的重新导出） |
+| `DropdownMenuTrigger` | 打开菜单的按钮（reka-ui 重新导出） |
 | `DropdownMenuContent` | 下拉内容面板 |
 | `DropdownMenuItem` | 标准菜单项 |
 | `DropdownMenuCheckboxItem` | 复选框菜单项 |
 | `DropdownMenuRadioItem` | 单选菜单项 |
-| `DropdownMenuRadioGroup` | 单选项分组 |
+| `DropdownMenuRadioGroup` | 单选项分组（reka-ui 重新导出） |
 | `DropdownMenuLabel` | 区域标签 |
 | `DropdownMenuSeparator` | 视觉分隔线 |
 | `DropdownMenuShortcut` | 键盘快捷键提示 |
-| `DropdownMenuSub` | 子菜单容器 |
+| `DropdownMenuSub` | 子菜单容器（reka-ui 重新导出） |
 | `DropdownMenuSubTrigger` | 子菜单触发器 |
 | `DropdownMenuSubContent` | 子菜单内容 |
-| `DropdownMenuGroup` | 菜单项分组 |
+| `DropdownMenuGroup` | 菜单项分组（reka-ui 重新导出） |
 
 ## Props
 
@@ -156,30 +193,29 @@ const position = ref('bottom')
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `inset` | `boolean` | — |
 | `class` | `string` | — |
 
 ### DropdownMenuCheckboxItem
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `v-model` | `boolean \| 'indeterminate'` | — |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` |
 | `class` | `string` | — |
 
 ### DropdownMenuRadioItem
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `class` | `string` | — |
-
-### DropdownMenuRadioGroup
-
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
+| `value` | `string` | —（必填） |
 | `class` | `string` | — |
 
 ### DropdownMenuLabel
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `inset` | `boolean` | — |
 | `class` | `string` | — |
 
 ### DropdownMenuSeparator
@@ -198,6 +234,8 @@ const position = ref('bottom')
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `inset` | `boolean` | — |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` |
 | `class` | `string` | — |
 
 ### DropdownMenuSubContent
@@ -205,3 +243,24 @@ const position = ref('bottom')
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `class` | `string` | — |
+
+## Events
+
+### DropdownMenuCheckboxItem
+
+| 事件名               | 参数                                      | 说明                 |
+| -------------------- | ----------------------------------------- | -------------------- |
+| `update:modelValue`  | `(value: boolean \| 'indeterminate')`     | 复选框状态变化时触发 |
+
+## Slots
+
+以下自定义包装组件均提供默认插槽（`default`），用于渲染子内容：
+
+- `DropdownMenuContent`
+- `DropdownMenuItem`
+- `DropdownMenuCheckboxItem`
+- `DropdownMenuRadioItem`
+- `DropdownMenuLabel`
+- `DropdownMenuShortcut`
+- `DropdownMenuSubTrigger`
+- `DropdownMenuSubContent`

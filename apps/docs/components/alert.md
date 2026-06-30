@@ -134,6 +134,8 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
+| `as` | `string \| Component` | `'h5'` |
+| `asChild` | `boolean` | — |
 | `class` | `string` | — |
 
 ### AlertDescription
@@ -158,3 +160,15 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 |------|------|
 | `default` | 提示框主体内容 |
 | `actions` | 操作按钮区域，渲染在内容下方 |
+
+### AlertTitle
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 标题内容 |
+
+### AlertDescription
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 描述内容 |

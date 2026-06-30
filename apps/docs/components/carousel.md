@@ -51,7 +51,7 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 | `autoplayDelay` | `number` | `3000` | 自动播放间隔（毫秒） |
 | `showArrows` | `boolean` | `true` | 是否显示左右切换箭头 |
 | `showDots` | `boolean` | `true` | 是否显示底部导航圆点 |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'auto'` | `'auto'` | 轮播容器高度预设 |
+| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'default'` | `'default'` | 轮播容器高度预设 |
 | `class` | `string` | — | 根节点自定义样式类 |
 
 ### CarouselItem Props
@@ -60,9 +60,23 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 |------|------|--------|------|
 | `class` | `string` | — | 单张幻灯片容器自定义样式类 |
 
+## 插槽
+
+### Carousel 插槽
+
+| 插槽名 | 说明 |
+|------|--------|
+| `default` | 默认插槽，用于放置 `CarouselItem` 组件 |
+
+### CarouselItem 插槽
+
+| 插槽名 | 说明 |
+|------|--------|
+| `default` | 默认插槽，用于放置幻灯片内容 |
+
 ## 事件
 
-Carousel 不对外暴露独立事件，所有交互通过鼠标悬停自动暂停 / 离开恢复播放实现。如需访问 Embla API，可通过 `ref` + 内部 `emblaApi` 的方式进行扩展。
+Carousel 不对外暴露独立事件。组件内部通过鼠标悬停自动暂停播放、离开恢复播放实现交互控制。如需访问 Embla API，可通过 `ref` + 内部 `emblaApi` 的方式进行扩展。
 
 ## useCarousel 组合式函数
 

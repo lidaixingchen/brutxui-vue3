@@ -287,7 +287,6 @@ const columns: DataTableColumn<User>[] = [
 | `sortable` | `boolean` | `false` |
 | `filterable` | `boolean` | `false` |
 | `selectable` | `boolean` | `false` |
-| `resizable` | `boolean` | `false` |
 | `paginated` | `boolean` | `false` |
 | `pageSize` | `number` | `10` |
 | `pageSizeOptions` | `number[]` | `[10, 20, 50, 100]` |
@@ -305,17 +304,28 @@ const columns: DataTableColumn<User>[] = [
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `id` | `string` | 列唯一标识，必填 |
-| `header` | `string \| ((column: DataTableColumn<T>) => string)` | 列标题，必填 |
-| `accessorKey` | `keyof T` | 通过 key 访问行数据字段 |
+| `header` | `string \| ((ctx: DataTableColumnHeaderContext) => string)` | 列标题，必填；函数形式接收 `DataTableColumnHeaderContext` 上下文 |
+| `accessorKey` | `keyof T & string` | 通过 key 访问行数据字段 |
 | `accessorFn` | `(row: T) => unknown` | 通过函数访问行数据值 |
 | `cell` | `(props: { row: T; value: unknown }) => VNode \| string` | 自定义单元格渲染 |
 | `sortable` | `boolean` | 是否可排序，默认 `true` |
-| `filterable` | `boolean` | 是否可筛选 |
 | `hidden` | `boolean` | 是否隐藏 |
 | `width` | `number \| 'auto'` | 列宽度 |
 | `minWidth` | `number` | 最小宽度 |
 | `maxWidth` | `number` | 最大宽度 |
 | `align` | `'left' \| 'center' \| 'right'` | 对齐方式 |
+
+### DataTableColumnHeaderContext 类型
+
+`header` 回调函数接收的上下文对象，用于在函数式表头中获取列的运行时状态。
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `id` | `string` | 当前列的 ID |
+| `sortable` | `boolean` | 当前列是否可排序 |
+| `direction` | `'asc' \| 'desc' \| null` | 当前列的排序方向（`null` 表示未排序） |
+| `accessorKey` | `PropertyKey` | 当前列的 accessorKey（如果有） |
+| `align` | `'left' \| 'center' \| 'right'` | 当前列的对齐方式 |
 
 ### DataTableVirtualScroll 类型
 
@@ -323,8 +333,13 @@ const columns: DataTableColumn<User>[] = [
 |------|------|--------|
 | `enabled` | `boolean` | — |
 | `rowHeight` | `number` | `48` |
-| `overscan` | `number` | — |
-| `threshold` | `number` | — |
+
+### DataTableFilterState 类型
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `global` | `string` | 全局筛选关键字 |
+| `columns` | `Record<string, string>` | 按列 ID 索引的列级筛选值 |
 
 ## 事件
 
@@ -335,7 +350,7 @@ const columns: DataTableColumn<User>[] = [
 | `select` | `[rows: T[]]` | 选中行变化时触发 |
 | `page-change` | `[page: number]` | 页码变化时触发 |
 | `page-size-change` | `[size: number]` | 每页条数变化时触发 |
-| `export` | `[format: 'csv' \| 'json', selectedRows: T[]]` | 导出操作触发，携带选中行数据（需启用 selectable） |
+| `export` | `[format: 'csv' \| 'json', selectedRows?: T[]]` | 导出操作触发，携带选中行数据（需启用 selectable） |
 
 ## 插槽
 
@@ -380,7 +395,7 @@ const data: User[] = [
 ]
 
 // 程序化触发按 name 升序
-function sortByNamAsc() {
+function sortByNameAsc() {
     tableRef.value?.sort.toggleSort('name')
 }
 
@@ -402,7 +417,7 @@ function goNextPage() {
 
 <template>
     <div class="flex flex-wrap items-center gap-2 mb-4">
-        <Button variant="primary" size="sm" @click="sortByNamAsc">按姓名排序</Button>
+        <Button variant="primary" size="sm" @click="sortByNameAsc">按姓名排序</Button>
         <Button variant="default" size="sm" @click="filterByAdmin">筛选"管理员"</Button>
         <Button variant="default" size="sm" @click="selectAll">全选当前页</Button>
         <Button variant="default" size="sm" @click="goNextPage">下一页</Button>

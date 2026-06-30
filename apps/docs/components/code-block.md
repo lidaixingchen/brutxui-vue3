@@ -149,8 +149,35 @@ import 'prismjs/components/prism-dart'
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `code` | `string` | — | 需要展示的原始代码文本 (必填) |
-| `language` | `string` | `'plaintext'` | 代码语言，用于语法高亮和顶栏徽章标签 |
+| `language` | `string` | `'plaintext'` | 代码语言，用于语法高亮和顶栏徽章标签。支持的语言见上方列表 |
 | `filename` | `string` | `""` | 文件名或路径名，展示在顶栏左侧 |
 | `showLineNumbers` | `boolean` | `false` | 是否在代码左侧展示行号 |
 | `maxLines` | `number` | `undefined` | 代码区域最大可见行数；超出时裁剪并显示展开/收起按钮，未设置时不限制 |
 | `class` | `string` | `""` | 组件卡片容器的自定义样式类 |
+
+## Slots
+
+| 插槽名 | 说明 |
+|------|------|
+| `default` | 可选。用于自定义代码内容，使用此插槽时将跳过内置 Prism 语法高亮，直接渲染插槽内容（适用于 Shiki 等其他高亮引擎） |
+
+## Events
+
+该组件没有定义任何事件。
+
+## Expose
+
+该组件没有通过 `defineExpose` 暴露任何属性或方法。
+
+## 国际化
+
+组件通过 `useLocale()` 提供多语言支持。可通过 `mergeLocale()` 自定义以下文本：
+
+| 键名 | 说明 | 中文默认值 | 英文默认值 |
+|------|------|-----------|-----------|
+| `codeBlock.copy` | 复制按钮文本 | `'复制'` | `'Copy'` |
+| `codeBlock.copied` | 复制成功后文本 | `'已复制'` | `'Copied'` |
+| `codeBlock.defaultLanguage` | 未指定语言时的默认标签 | `'plaintext'` | `'plaintext'` |
+| `codeBlock.defaultFilename` | 未指定文件名时的默认值 | `''` | `''` |
+| `codeBlock.expand` | 展开按钮文本 | `'展开'` | `'Expand'` |
+| `codeBlock.collapse` | 收起按钮文本 | `'收起'` | `'Collapse'` |

@@ -81,8 +81,21 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` |
 | `class` | `string` | — |
 
-### CardHeader / CardTitle / CardDescription / CardContent / CardFooter
+### CardTitle
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `as` | `string` | `'h3'` |
+| `class` | `string` | — |
+
+### CardHeader / CardDescription / CardContent / CardFooter
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `class` | `string` | — |
+
+## Slots
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 所有组件的默认插槽，用于插入内容 |

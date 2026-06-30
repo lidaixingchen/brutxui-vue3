@@ -83,7 +83,7 @@ const selectedFruit = ref('')
 ## 子组件
 
 | 组件 | 说明 |
-|------|------|
+| --- | --- |
 | `Select` | 根组件（从 reka-ui 重新导出为 `SelectRoot`） |
 | `SelectTrigger` | 打开下拉菜单的按钮 |
 | `SelectContent` | 下拉内容面板 |
@@ -97,31 +97,78 @@ const selectedFruit = ref('')
 
 ## Props
 
+### Select
+
+根组件，继承 reka-ui `SelectRoot` 的所有属性。常用属性如下：
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` | `string` | — | 选中的值，支持 `v-model` |
+| `defaultValue` | `string` | — | 默认选中值 |
+| `open` | `boolean` | — | 下拉框是否展开，支持 `v-model:open` |
+| `defaultOpen` | `boolean` | `false` | 默认是否展开 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `required` | `boolean` | `false` | 是否必填 |
+| `name` | `string` | — | 表单字段名称 |
+
 ### SelectTrigger
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `class` | `string` | — | 自定义类名 |
+| `iconClass` | `string` | — | 图标自定义类名 |
 
 ### SelectContent
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
-| `position` | `'popper' \| 'item-aligned'` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `position` | `'popper' \| 'item-aligned'` | `'popper'` | 定位方式 |
+| `class` | `string` | — | 自定义类名 |
 
 ### SelectItem
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `value` | `string` | —（必填） |
-| `disabled` | `boolean` | — |
-| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `value` | `string` | —（必填） | 选项值 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `variant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 选项样式变体 |
+| `class` | `string` | — | 自定义类名 |
+| `indicatorClass` | `string` | — | 选中指示器自定义类名 |
+| `iconClass` | `string` | — | 勾选图标自定义类名 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 勾选图标尺寸 |
+
+### SelectValue
+
+显示已选中值的组件，继承 reka-ui `SelectValue` 的所有属性。
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `placeholder` | `string` | — | 占位符文本 |
 
 ### SelectLabel
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `class` | `string` | — | 自定义类名 |
+
+### SelectSeparator
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `class` | `string` | — | 自定义类名 |
+
+### SelectScrollUpButton
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `class` | `string` | — | 自定义类名 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 向上箭头图标尺寸 |
+
+### SelectScrollDownButton
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `class` | `string` | — | 自定义类名 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 向下箭头图标尺寸 |

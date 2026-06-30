@@ -238,7 +238,8 @@ const maxDate = new Date(2026, 11, 31)
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的日期，支持 v-model |
-| `displayFormat` | `string` | `'YYYY-MM-DD'` | 显示格式 |
+| `open` | `boolean` | — | 面板打开状态，支持 v-model:open 双向绑定 |
+| `displayFormat` | `string` | `'YYYY-MM-DD'` | 显示格式（支持 `YYYY`、`YY`、`MM`、`DD`、`HH`、`mm`、`ss`、`WW` token） |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
@@ -257,7 +258,7 @@ const maxDate = new Date(2026, 11, 31)
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `[Date, Date] \| null` | `null` | 选中的日期范围 |
-| `displayFormat` | `string` | `'YYYY-MM-DD'` | 显示格式 |
+| `displayFormat` | `string` | `'YYYY-MM-DD'` | 显示格式（支持 `YYYY`、`YY`、`MM`、`DD`、`HH`、`mm`、`ss`、`WW` token） |
 | `startPlaceholder` | `string` | — | 开始日期占位符 |
 | `endPlaceholder` | `string` | — | 结束日期占位符 |
 | `separator` | `string` | — | 分隔符 |
@@ -268,15 +269,19 @@ const maxDate = new Date(2026, 11, 31)
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
 | `shortcuts` | `DatePickerRangeShortcut[]` | `[]` | 快捷选项 |
+| `name` | `string` | — | 表单字段名 |
+| `id` | `string` | — | 组件 ID |
+| `ariaLabel` | `string` | — | 无障碍标签 |
 
 ### DateTimePicker
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的日期时间 |
-| `displayFormat` | `string` | `'YYYY-MM-DD HH:mm'` | 显示格式（showSeconds 时默认含 ss） |
+| `open` | `boolean` | — | 面板打开状态，支持 v-model:open 双向绑定 |
+| `displayFormat` | `string` | `'YYYY-MM-DD HH:mm'` | 显示格式，`showSeconds` 为 `true` 时默认为 `'YYYY-MM-DD HH:mm:ss'` |
 | `showSeconds` | `boolean` | `false` | 是否显示秒 |
-| `timeStep` | `{ hour?: number; minute?: number; second?: number }` | — | 时间步进 |
+| `timeStep` | `{ hour?: number; minute?: number; second?: number }` | `{ hour: 1, minute: 1, second: 1 }` | 时间步进 |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
@@ -286,17 +291,21 @@ const maxDate = new Date(2026, 11, 31)
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
 | `shortcuts` | `DatePickerShortcut[]` | `[]` | 快捷选项 |
+| `name` | `string` | — | 表单字段名 |
+| `id` | `string` | — | 组件 ID |
+| `ariaLabel` | `string` | — | 无障碍标签 |
 
 ### TimePicker
+
+> 注意：`TimePicker` 是基于 Select 组件的纯时间选择器，不使用 Popover 弹出面板，因此不支持 `open`、`readonly`、`clearable`、`size`、`variant`、`shortcuts`、`minDate`、`maxDate`、`displayFormat` 等 Popover 相关属性。
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的时间 |
 | `showSeconds` | `boolean` | `false` | 是否显示秒 |
-| `timeStep` | `{ hour?: number; minute?: number; second?: number }` | — | 时间步进 |
+| `timeStep` | `{ hour?: number; minute?: number; second?: number }` | `{ hour: 1, minute: 1, second: 1 }` | 时间步进 |
 | `disabled` | `boolean` | `false` | 禁用状态 |
-| `readonly` | `boolean` | `false` | 只读状态 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
+| `embedded` | `boolean` | `false` | 是否以内嵌模式渲染（无外层边框） |
 | `ariaLabel` | `string` | — | 无障碍标签 |
 
 ### WeekPicker
@@ -304,7 +313,8 @@ const maxDate = new Date(2026, 11, 31)
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的周（对齐到周起始日） |
-| `displayFormat` | `string` | `'YYYY-WW'` | 显示格式 |
+| `open` | `boolean` | — | 面板打开状态，支持 v-model:open 双向绑定 |
+| `displayFormat` | `string` | `'YYYY-WW'` | 显示格式（支持 `YYYY`、`YY`、`MM`、`DD`、`HH`、`mm`、`ss`、`WW` token） |
 | `weekStartsOn` | `0 \| 1` | `1` | 周起始日（0=周日，1=周一） |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
@@ -315,13 +325,17 @@ const maxDate = new Date(2026, 11, 31)
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
 | `shortcuts` | `DatePickerShortcut[]` | `[]` | 快捷选项 |
+| `name` | `string` | — | 表单字段名 |
+| `id` | `string` | — | 组件 ID |
+| `ariaLabel` | `string` | — | 无障碍标签 |
 
 ### MonthPicker
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的月份 |
-| `displayFormat` | `string` | `'YYYY-MM'` | 显示格式 |
+| `open` | `boolean` | — | 面板打开状态，支持 v-model:open 双向绑定 |
+| `displayFormat` | `string` | `'YYYY-MM'` | 显示格式（支持 `YYYY`、`YY`、`MM` token） |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
@@ -330,13 +344,17 @@ const maxDate = new Date(2026, 11, 31)
 | `clearable` | `boolean` | `false` | 是否可清除 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
+| `name` | `string` | — | 表单字段名 |
+| `id` | `string` | — | 组件 ID |
+| `ariaLabel` | `string` | — | 无障碍标签 |
 
 ### YearPicker
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `Date \| null` | `null` | 选中的年份 |
-| `displayFormat` | `string` | `'YYYY'` | 显示格式 |
+| `open` | `boolean` | — | 面板打开状态，支持 v-model:open 双向绑定 |
+| `displayFormat` | `string` | `'YYYY'` | 显示格式（支持 `YYYY`、`YY` token） |
 | `placeholder` | `string` | — | 占位符文本 |
 | `minDate` | `Date` | — | 最小可选日期 |
 | `maxDate` | `Date` | — | 最大可选日期 |
@@ -345,23 +363,27 @@ const maxDate = new Date(2026, 11, 31)
 | `clearable` | `boolean` | `false` | 是否可清除 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
+| `name` | `string` | — | 表单字段名 |
+| `id` | `string` | — | 组件 ID |
+| `ariaLabel` | `string` | — | 无障碍标签 |
 
 ## 事件
 
-所有日期选择器组件共享以下事件：
+除 `TimePicker` 外，Popover 类日期选择器组件共享以下事件：
 
-| 事件 | 载荷 | 说明 |
-|------|------|------|
-| `update:modelValue` | `Date \| [Date, Date] \| null` | 值变化时触发 |
-| `change` | `Date \| [Date, Date] \| null` | 面板关闭且值变化时触发 |
-| `open` | — | 面板打开时触发 |
-| `close` | — | 面板关闭时触发 |
+| 事件 | 载荷 | 适用组件 | 说明 |
+|------|------|----------|------|
+| `update:modelValue` | `Date \| [Date, Date] \| null` | 全部组件 | 值变化时触发 |
+| `change` | `Date \| [Date, Date] \| null` | 除 `TimePicker` 外 | 面板关闭且值变化时触发 |
+| `open` | — | 除 `TimePicker` 外 | 面板打开时触发 |
+| `close` | — | 除 `TimePicker` 外 | 面板关闭时触发 |
+| `update:open` | `boolean` | `DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` | 面板开关状态变化时触发，配合 `v-model:open` 使用 |
 
 ## 程序化控制
 
-`DatePicker` 通过 `defineExpose` 暴露 `open` 响应式引用，允许父组件程序化打开或关闭日期面板。`open` 是与内部 Popover 双向绑定的 `Ref<boolean>`，可直接读写。
+`DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` 通过 `defineExpose` 暴露 `open` 响应式引用，允许父组件程序化打开或关闭日期面板。`open` 是与内部 Popover 双向绑定的 `Ref<boolean>`，可直接读写。
 
-> 注意：目前仅 `DatePicker` 组件暴露了 `open`，日期选择器族中的其他组件（`DatePickerRange`、`DateTimePicker` 等）暂未暴露。
+> 注意：`DatePickerRange` 和 `TimePicker` 未暴露 `open`。`DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` 同时支持 `v-model:open` 双向绑定，推荐使用 `v-model:open` 替代直接操作 ref。
 
 ```vue
 <script setup>

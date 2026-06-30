@@ -95,9 +95,15 @@ import { SubmitButton } from 'brutx-ui-vue'
 | `disabled` | `boolean` | `false` |
 | `class` | `string` | — |
 
+## Slots
+
+| 插槽     | 说明                                |
+|----------|-------------------------------------|
+| `default` | 按钮内容，当 `loading` 为 `false` 时显示 |
+
 ## 行为
 
 - 按钮渲染为 `<button type="submit">` 用于表单提交
-- 当 `loading` 为 `true` 时，按钮被禁用并显示旋转图标
-- 当 `loading` 为 `true` 时，插槽内容被替换为 `pendingText`
+- 当 `loading` 为 `true` 时，按钮显示 `pendingText`（默认使用国际化文本 `submitButton.submitting`）
+- 当 `loading` 为 `false` 时，显示默认插槽内容
 - `disabled` 属性或 `loading` 状态都会阻止点击

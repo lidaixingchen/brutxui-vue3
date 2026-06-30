@@ -54,16 +54,81 @@ import { Popover, PopoverTrigger, PopoverAnchor, PopoverContent, Button } from '
 
 ## Props
 
-### PopoverContent
+### Popover 根组件
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
-| `align` | `'start' \| 'center' \| 'end'` | `'center'` |
-| `sideOffset` | `number` | `8` |
+从 reka-ui 的 `PopoverRoot` 重新导出，管理弹出层的打开/关闭状态。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `defaultOpen` | `boolean` | `false` | 非受控模式下的初始打开状态 |
+| `modal` | `boolean` | `false` | 模态模式，启用时禁用与外部元素的交互 |
+
+### PopoverTrigger 触发器
+
+触发器组件，默认渲染为 `button` 元素。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `as` | `string \| Component` | `'button'` | 渲染的元素类型 |
+| `asChild` | `boolean` | — | 将样式渲染到子元素上 |
+
+### PopoverContent 内容面板
+
+弹出层内容面板，使用新粗野主义风格。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `align` | `'start' \| 'center' \| 'end'` | `'center'` | 相对于触发器的对齐方式 |
+| `sideOffset` | `number` | `8` | 与触发器的距离（像素） |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
+### PopoverAnchor 锚点
+
+自定义锚点元素，用于精确定位弹出层位置。
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `reference` | `ReferenceElement` | — | 自定义定位参考元素 |
+
+## Events
+
+### Popover 根组件事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `value: boolean` | 打开状态变化时触发 |
+
+### PopoverContent 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `openAutoFocus` | `Event` | 打开时自动聚焦触发，可阻止 |
+| `closeAutoFocus` | `Event` | 关闭时自动聚焦触发，可阻止 |
+| `pointerDownOutside` | `Event` | 在外部按下指针时触发 |
+| `interactOutside` | `Event` | 在外部交互时触发 |
+| `escapeKeyDown` | `Event` | 按下 Escape 键时触发 |
+| `focusOutside` | `Event` | 焦点移出时触发 |
+
+## Slots
+
+### Popover 根组件插槽
+
+| 插槽 | 参数 | 说明 |
+|------|------|------|
+| `default` | `{ open: boolean, close: () => void }` | 作用域插槽，提供当前状态和关闭方法 |
+
+### PopoverTrigger / PopoverContent / PopoverAnchor 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 默认插槽内容 |
 
 ## 无障碍
 
-- 弹出层打开时，焦点被限制在弹出层内
+- 弹出层使用 `role="dialog"` 语义
+- 自动关联 `aria-labelledby` 到触发器
+- 弹出层打开时自动聚焦
 - 按 `Escape` 关闭弹出层
 - 点击外部区域关闭弹出层
+- 模态模式下禁用与外部元素的交互

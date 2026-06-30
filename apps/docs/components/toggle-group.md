@@ -135,18 +135,32 @@ const styles = ref([])
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `value` | `string` | —（必填） | 子项值 |
-| `variant` | `'default' \| 'outline'` | 继承 ToggleGroup | 变体 |
-| `size` | `'sm' \| 'default' \| 'lg'` | 继承 ToggleGroup | 尺寸 |
-| `disabled` | `boolean` | `false`（继承 ToggleGroup） | 是否禁用 |
+| `variant` | `'default' \| 'outline'` | 继承 ToggleGroup | 变体，未设置时取父级 ToggleGroup 的 variant |
+| `size` | `'sm' \| 'default' \| 'lg'` | 继承 ToggleGroup | 尺寸，未设置时取父级 ToggleGroup 的 size |
+| `disabled` | `boolean` | `false` | 是否禁用；最终状态为父级 ToggleGroup 的 disabled 与自身 disabled 的逻辑或 |
 | `class` | `string` | — | 附加类名 |
 
 ## 事件
 
 ### ToggleGroup
 
-| 事件 | 载荷 |
+| 事件 | 载荷 | 说明 |
+|------|------|------|
+| `update:modelValue` | `string \| string[]` | 选中值变化时触发 |
+
+## 插槽
+
+### ToggleGroup 插槽
+
+| 插槽 | 说明 |
 |------|------|
-| `update:modelValue` | `string \| string[]` |
+| `default` | 默认插槽，用于放置 ToggleGroupItem 子项 |
+
+### ToggleGroupItem 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 默认插槽，用于放置按钮内容（图标、文字等） |
 
 ## 样式
 

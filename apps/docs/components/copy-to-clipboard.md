@@ -95,9 +95,29 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `text` | `string` | — | 需要拷贝到剪贴板的文本 (必填) |
+| `text` | `string` | — | 需要拷贝到剪贴板的文本（必填） |
 | `duration` | `number` | `2000` | 复制成功反馈（"已复制"状态）的保持毫秒数 |
 | `variant` | `'default' \| 'primary' \| 'outline'` | `'default'` | 按钮颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 按钮尺寸预设 |
-| `iconSize` | `IconSize` | `'default'` | 图标尺寸预设 |
-| `class` | `string` | `""` | 按钮容器自定义样式类 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 图标尺寸预设 |
+| `class` | `string` | `undefined` | 按钮容器自定义样式类 |
+
+## Slots
+
+| 插槽名   | 作用域参数           | 说明                                       |
+| -------- | -------------------- | ------------------------------------------ |
+| `default` | `{ copied: boolean }` | 自定义按钮内容，`copied` 表示是否刚复制成功 |
+
+```vue
+<script setup>
+import { CopyToClipboard } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <CopyToClipboard text="Custom Text">
+        <template #default="{ copied }">
+            <span>{{ copied ? '成功啦！' : '点此复制' }}</span>
+        </template>
+    </CopyToClipboard>
+</template>
+```

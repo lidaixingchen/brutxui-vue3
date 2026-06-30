@@ -83,12 +83,19 @@ interface StatItem {
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `stats` | `StatItem[]` | `[]` |
-| `title` | `string` | `'Overview Performance'` |
-| `subtitle` | `string` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `stats` | `StatItem[]` | `[]` | 统计项数据数组 |
+| `title` | `string` | 国际化默认值 | 标题文本 |
+| `subtitle` | `string` | — | 副标题文本 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 图标尺寸 |
+| `class` | `string` | — | 自定义样式类 |
+
+## 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `stat-click` | `index: number` | 点击统计卡片时触发，参数为卡片索引 |
 
 ## 强调色
 

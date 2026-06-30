@@ -91,29 +91,29 @@ function onComplete() {
 |------|------|--------|------|
 | `text` | `string` | —（必填） | 要显示的文本 |
 | `speed` | `number` | `50` | 打字速度（毫秒/字符） |
-| `delay` | `number` | `0` | 开始延迟（毫秒） |
+| `delay` | `number` | `0` | 打字开始前的延迟时间（毫秒）。循环模式下也用作每次重启的间隔时间 |
 | `loop` | `boolean` | `false` | 是否循环播放 |
-| `cursor` | `boolean` | `true` | 是否显示光标 |
+| `cursor` | `boolean` | `true` | 是否显示光标。光标仅在打字进行中可见，非循环模式下打字完成后自动隐藏 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 文本尺寸 |
 | `weight` | `'normal' \| 'medium' \| 'bold' \| 'black'` | `'normal'` | 文本粗细 |
 | `class` | `string` | — | 自定义类名 |
 
 ## 事件
 
-| 事件 | 说明 |
-|------|------|
-| `start` | 打字开始时触发 |
-| `complete` | 打字完成时触发 |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `start` | 无 | 打字开始时触发 |
+| `complete` | 无 | 打字完成时触发 |
 
 ## 尺寸变体
 
-| 尺寸 | CSS 类 |
-|------|--------|
-| `sm` | `text-sm` |
-| `default` | `text-base` |
-| `lg` | `text-lg` |
-| `xl` | `text-xl` |
-| `2xl` | `text-2xl` |
+| 尺寸 | CSS 类 | 光标高度 |
+|------|--------|----------|
+| `sm` | `text-sm` | `h-3` |
+| `default` | `text-base` | `h-4` |
+| `lg` | `text-lg` | `h-5` |
+| `xl` | `text-xl` | `h-6` |
+| `2xl` | `text-2xl` | `h-7` |
 
 ## 粗细变体
 
@@ -128,10 +128,11 @@ function onComplete() {
 
 - 组件使用 `aria-live="polite"` 确保屏幕阅读器能感知文本变化
 - 光标使用 `aria-hidden="true"` 标记为装饰性元素
-- 当用户偏好 `prefers-reduced-motion: reduce` 时，直接显示完整文本，跳过动画
+- 当用户偏好 `prefers-reduced-motion: reduce` 时，直接显示完整文本，跳过动画；该偏好实时响应系统设置变化
 
 ## 注意事项
 
 - `text` 属性变化时会重新开始打字动画
-- 组件卸载时会自动清理定时器，避免内存泄漏
+- 组件卸载时会自动清理所有定时器（包括打字定时器和延迟启动定时器），避免内存泄漏
 - 循环模式下，打字完成后会等待 `delay` 毫秒后重新开始
+- 组件根元素始终带有 `brutx-typewriter` CSS 类，可用于自定义样式覆盖

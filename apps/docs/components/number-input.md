@@ -55,11 +55,31 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `modelValue` | `number` | — | 当前输入值 |
+| `modelValue` | `number \| null` | — | 当前输入值 |
+| `defaultValue` | `number` | — | 未受控时的默认值 |
 | `min` | `number` | — | 允许的最小值 |
 | `max` | `number` | — | 允许的最大值 |
 | `step` | `number` | `1` | 每次微调的增减幅度 |
+| `stepSnapping` | `boolean` | `true` | 是否启用步进对齐，为 `false` 时值不会自动吸附到 step 的倍数 |
+| `focusOnChange` | `boolean` | `false` | 值变化时是否自动聚焦输入框 |
+| `formatOptions` | `Intl.NumberFormatOptions` | — | 数字格式化选项，影响显示与允许输入的字符 |
+| `locale` | `string` | — | 格式化与货币使用的区域设置 |
 | `layout` | `'split' \| 'stacked'` | `'split'` | 调整按钮的布局结构 |
-| `placeholder` | `string` | `""` | 占位符 |
+| `placeholder` | `string` | `undefined` | 占位符，未设置时使用国际化默认值 |
 | `disabled` | `boolean` | `false` | 是否禁用输入框及按钮 |
-| `class` | `string` | `""` | 容器的自定义 CSS 类 |
+| `readonly` | `boolean` | `false` | 是否只读 |
+| `disableWheelChange` | `boolean` | `false` | 是否禁止鼠标滚轮改变值 |
+| `invertWheelChange` | `boolean` | `false` | 是否反转滚轮滚动方向 |
+| `name` | `string` | — | 表单字段名称，随表单一起提交 |
+| `required` | `boolean` | `false` | 是否为必填字段 |
+| `id` | `string` | — | 元素的 id 属性 |
+| `class` | `string` | `undefined` | 容器的自定义 CSS 类 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 加减按钮图标的尺寸 |
+| `as` | `string \| Component` | `'div'` | 根元素渲染为的标签或组件 |
+| `asChild` | `boolean` | `false` | 是否启用组合模式，不渲染自身 DOM，将 props 传递给子元素 |
+
+## Events
+
+| 事件名 | 回调参数 | 说明 |
+| ------ | -------- | ---- |
+| `update:modelValue` | `(val: number)` | 输入值变化时触发 |

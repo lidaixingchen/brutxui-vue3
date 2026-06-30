@@ -93,7 +93,7 @@ const checked = ref(false)
 
 <template>
     <div class="flex items-center gap-3">
-        <Checkbox v-model:checked="checked" id="marketing" aria-label="接收营销邮件" />
+        <Checkbox v-model:checked="checked" id="marketing" ariaLabel="接收营销邮件" />
         <Label for="marketing">接收营销邮件</Label>
     </div>
 </template>
@@ -104,7 +104,7 @@ const checked = ref(false)
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
 | `class` | `string` | — |
-| `checked` | `boolean` | — |
+| `checked` | `boolean \| 'indeterminate'` | — |
 | `disabled` | `boolean` | `false` |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
@@ -114,7 +114,7 @@ const checked = ref(false)
 
 | 事件 | 载荷 |
 |------|------|
-| `update:checked` | `boolean` |
+| `update:checked` | `boolean \| 'indeterminate'` |
 
 Checkbox 使用 reka-ui 的 `CheckboxRoot`，支持 `v-model:checked` 双向绑定。
 

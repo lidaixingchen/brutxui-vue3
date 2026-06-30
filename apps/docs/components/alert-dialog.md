@@ -51,7 +51,8 @@ import { Button } from 'brutx-ui-vue'
 | 组件 | 说明 |
 |------|------|
 | `AlertDialog` | 根组件（从 reka-ui 的 `AlertDialogRoot` 重新导出） |
-| `AlertDialogTrigger` | 打开对话框的按钮 |
+| `AlertDialogTrigger` | 打开对话框的按钮（从 reka-ui 重新导出） |
+| `AlertDialogPortal` | 传送门组件（从 reka-ui 重新导出） |
 | `AlertDialogContent` | 对话框内容面板 |
 | `AlertDialogHeader` | 标题和描述的头部容器 |
 | `AlertDialogFooter` | 操作按钮的底部容器 |
@@ -68,12 +69,38 @@ import { Button } from 'brutx-ui-vue'
 |------|------|--------|
 | `class` | `string` | — |
 
+### AlertDialogHeader
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### AlertDialogFooter
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### AlertDialogTitle
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
+### AlertDialogDescription
+
+| 属性 | 类型 | 默认值 |
+|------|------|--------|
+| `class` | `string` | — |
+
 ### AlertDialogAction
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `variant` | `'primary' \| 'secondary' \| 'outline' \| 'danger' \| 'accent'` | `'primary'` |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` |
 | `class` | `string` | — |
+| `as` | `string \| Component` | — |
+| `asChild` | `boolean` | — |
 
 ### AlertDialogCancel
 
@@ -83,9 +110,14 @@ import { Button } from 'brutx-ui-vue'
 
 > `AlertDialogCancel` 使用硬编码的 `variant: 'outline'`。
 
+## Slots
+
+所有子组件均支持默认插槽（`default`），用于插入自定义内容。
+
 ## 无障碍
 
 - 对话框打开时，焦点被限制在对话框内
 - 按 `Escape` 关闭对话框
 - `AlertDialogCancel` 点击后关闭对话框
 - `AlertDialogAction` 确认并关闭对话框
+- 对话框使用语义化的 `role="alertdialog"` 属性

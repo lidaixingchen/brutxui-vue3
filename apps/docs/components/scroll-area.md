@@ -138,3 +138,10 @@ const tags = Array.from({ length: 20 }, (_, i) => `标签 ${i + 1}`)
 | `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细 |
 | `class` | `string` | — | 附加类名 |
+
+## Slots
+
+| 组件        | 插槽名    | 说明       |
+|-------------|-----------|------------|
+| `ScrollArea` | `default` | 滚动内容   |
+| `ScrollBar`  | —         | 无插槽     |

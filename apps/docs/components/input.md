@@ -123,19 +123,21 @@ const email = ref('')
 
 | 属性 | 类型 | 默认值 |
 |------|------|--------|
-| `type` | `string` | `'text'` |
+| `type` | `HTMLInputType` ¹ | `'text'` |
 | `modelValue` | `string` | — |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
 | `disabled` | `boolean` | `false` |
 | `readonly` | `boolean` | `false` |
-| `placeholder` | `string` | `t('input.placeholder')` |
+| `placeholder` | `string` | — |
 | `ariaLabel` | `string` | — |
 | `ariaLabelledby` | `string` | — |
 | `ariaDescribedby` | `string` | — |
 | `ariaInvalid` | `boolean` | — |
 | `ariaRequired` | `boolean` | — |
 | `class` | `string` | — |
+
+> ¹ `HTMLInputType` 为 `HTMLInputElement.type` 支持的所有标准类型联合：`'button' | 'checkbox' | 'color' | 'date' | 'datetime-local' | 'email' | 'file' | 'hidden' | 'image' | 'month' | 'number' | 'password' | 'radio' | 'range' | 'reset' | 'search' | 'submit' | 'tel' | 'text' | 'time' | 'url' | 'week'`
 
 ## 事件
 

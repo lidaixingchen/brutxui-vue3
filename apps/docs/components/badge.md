@@ -35,7 +35,7 @@ import { Badge } from 'brutx-ui-vue'
 
 | 变体 | 说明 |
 |------|------|
-| `default` | 背景色，带小阴影 |
+| `default` | 标准背景色，带小阴影 |
 | `primary` | Primary（珊瑚色）背景 |
 | `secondary` | Secondary（薄荷青）背景 |
 | `accent` | Accent（黄色）背景 |
@@ -66,6 +66,12 @@ import { Badge } from 'brutx-ui-vue'
 ## 圆点指示器
 
 通过 `dot` 属性在徽标前渲染一个小圆点，常用于状态指示。圆点颜色继承当前文本颜色（`bg-current`），尺寸随 `size` 自动调整。
+
+| 尺寸 | 圆点大小 | 右间距 |
+|------|----------|--------|
+| `sm` | `h-1.5 w-1.5` | `mr-1` |
+| `default` | `h-2 w-2` | `mr-1.5` |
+| `lg` | `h-2.5 w-2.5` | `mr-2` |
 
 ```vue
 <script setup>
@@ -98,7 +104,7 @@ import { Badge } from 'brutx-ui-vue'
 
 ## 可关闭徽标
 
-通过 `closable` 属性在徽标右侧渲染一个 × 关闭按钮。点击按钮会触发 `close` 事件，且事件不会冒泡（内部已调用 `stopPropagation`）。
+通过 `closable` 属性在徽标右侧渲染一个关闭按钮（X 图标）。点击按钮会触发 `close` 事件，且事件不会冒泡（内部已调用 `stopPropagation`）。关闭按钮内置无障碍支持，`aria-label` 通过国际化系统自动适配当前语言。
 
 ```vue
 <script setup>
@@ -187,6 +193,17 @@ function handleClose() {
 </template>
 ```
 
+## 变体工具函数
+
+组件同时导出 `badgeVariants` 工具函数，可在自定义组件中复用 Badge 的样式变体：
+
+```ts
+import { badgeVariants } from 'brutx-ui-vue'
+
+// 返回组合后的 Tailwind 类名字符串
+const classes = badgeVariants({ variant: 'primary', size: 'sm' })
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 |
@@ -202,7 +219,7 @@ function handleClose() {
 
 | 事件 | 载荷 | 说明 |
 |------|------|------|
-| `close` | `[]` | 点击关闭按钮时触发（已阻止冒泡） |
+| `close` | `[]` | 点击关闭按钮时触发（已阻止事件冒泡） |
 
 ## 插槽
 

@@ -127,3 +127,10 @@ import {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `class` | `string` | — | 自定义样式类 |
+| `iconSize` | `IconSize` | `'default'` | 图标尺寸，支持 `IconSize` 枚举值 |
+
+### BreadcrumbEllipsis Slots
+
+| 插槽名 | 说明 |
+|--------|------|
+| `default` | 默认渲染 `MoreHorizontal` 图标，可放入自定义的省略图标组件 |

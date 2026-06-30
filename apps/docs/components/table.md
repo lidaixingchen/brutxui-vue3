@@ -66,7 +66,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from 'b
 </script>
 
 <template>
-    <Table aria-label="近期发票列表">
+    <Table ariaLabel="近期发票列表">
         <TableHeader>
             <TableRow>
                 <TableHead>名称</TableHead>

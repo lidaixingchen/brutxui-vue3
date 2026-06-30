@@ -144,20 +144,20 @@ const bio = ref('')
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `modelValue` | `string` | — |
-| `variant` | `'default' \| 'error' \| 'success'` | `'default'` |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` |
-| `disabled` | `boolean` | `false` |
-| `readonly` | `boolean` | `false` |
-| `placeholder` | `string` | `t('textarea.placeholder')` |
-| `ariaLabel` | `string` | — |
-| `ariaLabelledby` | `string` | — |
-| `ariaDescribedby` | `string` | — |
-| `ariaInvalid` | `boolean` | — |
-| `ariaRequired` | `boolean` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `string` | `undefined` | 绑定值，支持 v-model |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `readonly` | `boolean` | `false` | 是否只读（不可编辑但可选中复制，光标为 `cursor-default`，不降低透明度） |
+| `placeholder` | `string` | 国际化回退文本 | 占位符文本 |
+| `ariaLabel` | `string` | `undefined` | 无障碍标签 |
+| `ariaLabelledby` | `string` | `undefined` | 关联的标签元素 ID |
+| `ariaDescribedby` | `string` | `undefined` | 描述元素 ID |
+| `ariaInvalid` | `boolean` | `undefined` | 是否标记为无效 |
+| `ariaRequired` | `boolean` | `undefined` | 是否标记为必填 |
+| `class` | `string` | `undefined` | 自定义 CSS 类 |
 
 ## 事件
 

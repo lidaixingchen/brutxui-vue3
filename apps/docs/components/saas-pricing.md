@@ -103,17 +103,17 @@ interface PricingPlan {
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `plans` | `PricingPlan[]` | 默认 3 个套餐 |
-| `title` | `string` | locale: `saasPricing.title` |
-| `subtitle` | `string` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `plans` | `PricingPlan[]` | 默认 3 个套餐 | 定价方案列表，不传时使用内置默认套餐 |
+| `title` | `string` | `locale: saasPricing.title` | 标题文本 |
+| `subtitle` | `string` | `''` | 副标题文本 |
+| `class` | `string` | — | 自定义 CSS 类名 |
 
 ## 事件
 
 | 事件 | 参数 |
-|------|------|
+| --- | --- |
 | `plan-select` | `planName: string` |
 
 ## 功能特性
