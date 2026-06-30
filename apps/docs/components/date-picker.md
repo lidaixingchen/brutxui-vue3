@@ -492,13 +492,9 @@ const date = ref(null)
 
 ## 样式定制
 
-所有日期选择器组件遵循新粗野主义设计规范：
-
 - **触发器**：`border-3 border-brutal` 粗边框 + `shadow-brutal` 硬质阴影，按压时位移反馈
 - **弹出面板**：粗边框 + 大号硬质阴影（`shadow-brutal-lg`）
 - **日期单元格**：选中态使用 Primary 背景色 + 粗边框；今天使用 Secondary 背景色
 - **周高亮**（WeekPicker）：Accent 背景色覆盖整周范围
 - **快捷选项**：悬停时背景色变化 + 位移，选中态使用 Primary 背景
 - **页脚按钮**：清除（默认背景）+ 确认（Primary 背景），均有按压反馈
-
-组件内部覆盖了 v-calendar 的 CSS 变量以适配 brutal 风格，与 Calendar 组件保持一致。
