@@ -1,7 +1,5 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
 import { computed, watch, markRaw, useSlots } from 'vue'
-
-const slots = useSlots()
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
@@ -40,6 +38,7 @@ import {
     Inbox,
 } from '@lucide/vue'
 
+const slots = useSlots()
 const { t } = useLocale()
 
 const props = withDefaults(defineProps<DataTableProps<T>>(), {

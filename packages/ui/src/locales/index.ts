@@ -4,17 +4,12 @@ export { zhCN } from './zh-CN'
 export { en } from './en'
 export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, KanbanLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './types'
 
-type DeepPartial<T> = T extends (infer U)[]
+type DeepPartial<T> = T extends (infer _U)[]
     ? T
     : { [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P] }
 
-const deepClone: <T>(value: T) => T =
-    typeof structuredClone === 'function'
-        ? structuredClone
-        : <T>(value: T): T => JSON.parse(JSON.stringify(value))
-
 export function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale {
-    const result = deepClone(base)
+    const result = structuredClone(base)
     for (const key of Object.keys(override) as Array<keyof Locale>) {
         const overrideVal = override[key]
         if (overrideVal !== undefined && typeof overrideVal === 'object' && !Array.isArray(overrideVal)) {

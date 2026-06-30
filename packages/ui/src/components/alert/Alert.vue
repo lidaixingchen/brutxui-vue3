@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
-
-const slots = useSlots()
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
@@ -10,6 +8,7 @@ import { iconSizeVariants } from '../../lib/icon-size-variants'
 import Button from '../button/Button.vue'
 import { useLocale } from '@/composables/useLocale'
 
+const slots = useSlots()
 type AlertVariantProps = VariantProps<typeof alertVariants>
 
 interface AlertProps {

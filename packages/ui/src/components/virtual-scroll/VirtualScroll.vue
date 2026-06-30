@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, useSlots } from 'vue'
-
-const slots = useSlots()
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
 import type { VirtualScrollProps, VirtualScrollEmits } from './types'
 import type { useVirtualizer } from '@tanstack/vue-virtual'
 
+const slots = useSlots()
 type UseVirtualizerFn = typeof useVirtualizer
 
 const props = withDefaults(defineProps<VirtualScrollProps>(), {
@@ -39,7 +38,7 @@ const virtualizerOptions = computed(() => ({
 
 function initVirtualizer(): void {
     if (useVirtualizerFn && !virtualizerRef) {
-        virtualizerRef = useVirtualizerFn(virtualizerOptions)
+        virtualizerRef = useVirtualizerFn(virtualizerOptions) as ReturnType<UseVirtualizerFn>
     }
 }
 

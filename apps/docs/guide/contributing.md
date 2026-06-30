@@ -105,7 +105,7 @@ packages/ui/src/components/
 
 ### 3. 编写文档
 
-在 `apps/docs/components/` 中创建文档，遵循 [组件文档模板](/docs/COMPONENT_DOC_TEMPLATE.md)。
+在 `apps/docs/components/` 中创建文档，遵循 [组件文档模板](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/COMPONENT_DOC_TEMPLATE.md)。
 
 ### 4. 编写测试
 
