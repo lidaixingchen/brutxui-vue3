@@ -193,7 +193,7 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
         let itemSource = source;
 
         if (fullName.includes('@')) {
-            const match = fullName.match(/^([a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
+            const match = fullName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
             if (match) {
                 cleanName = match[1];
                 const version = match[2];

@@ -37,11 +37,15 @@ export class Logger {
     }
 
     warn(message: string): void {
-        this.log(chalk.yellow(message));
+        if (!this.silent) {
+            console.warn(chalk.yellow(message));
+        }
     }
 
     error(message: string): void {
-        this.log(chalk.red(message));
+        if (!this.silent) {
+            console.error(chalk.red(message));
+        }
     }
 
     bold(message: string): void {

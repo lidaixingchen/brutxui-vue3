@@ -18,10 +18,8 @@ function resolveStylesDir(): string {
 }
 
 export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared-vue';
-export type { ComponentMeta as ComponentInfo } from 'brutx-shared-vue';
 
 export const CONFIG_FILES = {
-    vite: ['vite.config.js', 'vite.config.ts', 'vite.config.mjs'],
     nuxt: ['nuxt.config.js', 'nuxt.config.ts', 'nuxt.config.mjs'],
     tailwind: [
         'tailwind.config.ts',
@@ -66,14 +64,31 @@ export const DEFAULT_ALIASES = {
 
 export const DEFAULT_TAILWIND_CONFIG = 'tailwind.config.js';
 
+export const REGISTRY_PATH_PREFIXES = {
+    components: 'components/',
+    composables: 'composables/',
+    locales: 'locales/',
+    libUtils: 'lib/utils',
+    lib: 'lib/',
+} as const;
+
 export const SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/schema.json';
 
 export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
 
-export const BRUTALIST_CSS_STYLES = readFileSync(
-    join(resolveStylesDir(), 'brutalist.css'),
-    'utf-8'
-);
+export const DOCS_URL = 'https://lidaixingchen.github.io/brutxui-vue3/';
+
+let _brutalistCssStyles: string | undefined;
+
+export function getBrutalistCssStyles(): string {
+    if (_brutalistCssStyles === undefined) {
+        _brutalistCssStyles = readFileSync(
+            join(resolveStylesDir(), 'brutalist.css'),
+            'utf-8'
+        );
+    }
+    return _brutalistCssStyles;
+}
 
 export const UTILS_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";

@@ -29,11 +29,11 @@ describe('resolveAliasPath path traversal protection', () => {
     const cwd = path.resolve('/workspace/project');
 
     it('should throw error for alias with path traversal using ../../', () => {
-        expect(() => resolveAliasPath('../../etc/passwd', cwd)).toThrow('安全检查失败');
+        expect(() => resolveAliasPath('../../etc/passwd', cwd)).toThrow('Security Error');
     });
 
     it('should throw error for alias with path traversal using ../', () => {
-        expect(() => resolveAliasPath('../secret-file', cwd)).toThrow('安全检查失败');
+        expect(() => resolveAliasPath('../secret-file', cwd)).toThrow('Security Error');
     });
 
     it('should not throw for valid alias paths within project', () => {

@@ -50,8 +50,6 @@ export interface AddOptions {
     registry?: string;
 }
 
-export type { ComponentMeta as ComponentInfo } from 'brutx-shared-vue';
-
 export interface RegistryFile {
     path: string;
     content: string;
@@ -84,10 +82,20 @@ export interface DiffOptions {
 
 export type CheckStatus = 'pass' | 'warn' | 'error';
 
+export enum FixId {
+    AddSchema = 'add-schema',
+    SetStyle = 'set-style',
+    InjectCssTokens = 'inject-css-tokens',
+    CreateComponentsDir = 'create-components-dir',
+    CreateUtilsFile = 'create-utils-file',
+    AddCnFunction = 'add-cn-function',
+}
+
 export interface CheckResult {
     name: string;
     status: CheckStatus;
     message: string;
+    fixId?: FixId;
     fixDescription?: string;
 }
 

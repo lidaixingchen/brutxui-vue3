@@ -2,9 +2,10 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.js';
+import { FixId } from '../lib/types.js';
 import { readConfigSafe, CliError } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
-import { SCHEMA_URL, BASE_DEPENDENCIES, BRUTALIST_CSS_STYLES, UTILS_TEMPLATE } from '../lib/constants.js';
+import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
@@ -30,6 +31,7 @@ function checkSchema(config: BrutalistConfig): CheckResult {
             name: '$schema field present',
             status: 'warn',
             message: '$schema field is missing.',
+            fixId: FixId.AddSchema,
             fixDescription: 'Add $schema URL',
         };
     }
@@ -46,6 +48,7 @@ function checkStyle(config: BrutalistConfig): CheckResult {
             name: 'style field present',
             status: 'warn',
             message: 'style field is missing.',
+            fixId: FixId.SetStyle,
             fixDescription: 'Set style to "brutalism"',
         };
     }
@@ -73,6 +76,7 @@ function checkTailwindCss(cwd: string, config: BrutalistConfig): CheckResult {
             name: 'tailwind.css contains BrutxUI tokens',
             status: 'error',
             message: `CSS file exists but missing BrutxUI tokens: ${config.tailwind.css}`,
+            fixId: FixId.InjectCssTokens,
             fixDescription: 'Inject BrutxUI CSS tokens',
         };
     }
@@ -94,6 +98,7 @@ function checkAliases(cwd: string, config: BrutalistConfig): CheckResult[] {
         message: fs.existsSync(componentsPath)
             ? 'Directory exists.'
             : 'Directory does not exist.',
+        fixId: FixId.CreateComponentsDir,
         fixDescription: 'Create directory',
     });
 
@@ -104,6 +109,7 @@ function checkAliases(cwd: string, config: BrutalistConfig): CheckResult[] {
         name: `aliases.utils → ${config.aliases.utils}`,
         status: utilsExists ? 'pass' : 'error',
         message: utilsExists ? 'File exists.' : 'File does not exist.',
+        fixId: FixId.CreateUtilsFile,
         fixDescription: 'Create utils file',
     });
 
@@ -162,6 +168,7 @@ function checkUtilsFunction(cwd: string, config: BrutalistConfig): CheckResult {
             name: 'cn() function exists',
             status: 'error',
             message: 'Utils file not found.',
+            fixId: FixId.AddCnFunction,
             fixDescription: 'Create utils file with cn() function',
         };
     }
@@ -172,6 +179,7 @@ function checkUtilsFunction(cwd: string, config: BrutalistConfig): CheckResult {
             name: 'cn() function exists',
             status: 'error',
             message: 'cn() function not found in utils file.',
+            fixId: FixId.AddCnFunction,
             fixDescription: 'Add cn() function to utils file',
         };
     }
@@ -265,44 +273,51 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
     if (!config) return;
 
     for (const check of fixable) {
+        if (!check.fixId) continue;
         try {
-            if (check.name === '$schema field present') {
-                config.$schema = SCHEMA_URL;
-                logger.success('Added $schema field.');
-            }
+            switch (check.fixId) {
+                case FixId.AddSchema:
+                    config.$schema = SCHEMA_URL;
+                    logger.success('Added $schema field.');
+                    break;
 
-            if (check.name === 'style field present') {
-                config.style = 'brutalism';
-                logger.success('Set style to "brutalism".');
-            }
+                case FixId.SetStyle:
+                    config.style = 'brutalism';
+                    logger.success('Set style to "brutalism".');
+                    break;
 
-            if (check.name === 'tailwind.css contains BrutxUI tokens') {
-                const cssPath = resolveAliasPath(config.tailwind.css, cwd);
-                const existing = fs.readFileSync(cssPath, 'utf-8');
-                fs.writeFileSync(cssPath, existing + '\n' + BRUTALIST_CSS_STYLES, 'utf-8');
-                logger.success('Injected BrutxUI CSS tokens.');
-            }
+                case FixId.InjectCssTokens: {
+                    const cssPath = resolveAliasPath(config.tailwind.css, cwd);
+                    const existing = fs.readFileSync(cssPath, 'utf-8');
+                    fs.writeFileSync(cssPath, existing + '\n' + getBrutalistCssStyles(), 'utf-8');
+                    logger.success('Injected BrutxUI CSS tokens.');
+                    break;
+                }
 
-            if (check.name.startsWith('aliases.components')) {
-                const componentsPath = resolveAliasPath(config.aliases.components, cwd);
-                fs.ensureDirSync(componentsPath);
-                logger.success('Created components directory.');
-            }
+                case FixId.CreateComponentsDir: {
+                    const componentsPath = resolveAliasPath(config.aliases.components, cwd);
+                    fs.ensureDirSync(componentsPath);
+                    logger.success('Created components directory.');
+                    break;
+                }
 
-            if (check.name.startsWith('aliases.utils →') && check.status === 'error') {
-                const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
-                fs.writeFileSync(utilsPath + '.ts', UTILS_TEMPLATE, 'utf-8');
-                logger.success('Created utils file.');
-            }
+                case FixId.CreateUtilsFile: {
+                    const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
+                    fs.writeFileSync(utilsPath + '.ts', UTILS_TEMPLATE, 'utf-8');
+                    logger.success('Created utils file.');
+                    break;
+                }
 
-            if (check.name === 'cn() function exists') {
-                const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
-                const utilsFile = UTILS_EXTENSIONS.find((ext) => fs.existsSync(utilsPath + ext));
+                case FixId.AddCnFunction: {
+                    const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
+                    const utilsFile = UTILS_EXTENSIONS.find((ext) => fs.existsSync(utilsPath + ext));
 
-                if (utilsFile) {
-                    const existing = fs.readFileSync(utilsPath + utilsFile, 'utf-8');
-                    fs.writeFileSync(utilsPath + utilsFile, existing + '\n' + UTILS_TEMPLATE, 'utf-8');
-                    logger.success('Added cn() function.');
+                    if (utilsFile) {
+                        const existing = fs.readFileSync(utilsPath + utilsFile, 'utf-8');
+                        fs.writeFileSync(utilsPath + utilsFile, existing + '\n' + UTILS_TEMPLATE, 'utf-8');
+                        logger.success('Added cn() function.');
+                    }
+                    break;
                 }
             }
         } catch (error) {

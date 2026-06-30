@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
+import { diffLines } from 'diff';
 import type { BrutalistConfig, DiffResult, FileDiff, RegistryItem, DiffOptions } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
 import { readConfigSafe, CliError } from '../lib/index.js';
@@ -12,8 +13,11 @@ function normalizeLineEndings(content: string): string {
 }
 
 function matchFileByPath(registryPath: string, localRelativePath: string): boolean {
-    return registryPath.endsWith(localRelativePath) ||
-           localRelativePath.endsWith(path.basename(registryPath));
+    const normalizedRegistry = registryPath.replace(/\\/g, '/');
+    const normalizedLocal = localRelativePath.replace(/\\/g, '/');
+
+    return normalizedRegistry.endsWith('/' + normalizedLocal) ||
+           normalizedRegistry === normalizedLocal;
 }
 
 function generateUnifiedDiff(
@@ -21,34 +25,28 @@ function generateUnifiedDiff(
     oldContent: string,
     newContent: string
 ): string {
-    const oldLines = normalizeLineEndings(oldContent).split('\n');
-    const newLines = normalizeLineEndings(newContent).split('\n');
+    const normalizedOld = normalizeLineEndings(oldContent);
+    const normalizedNew = normalizeLineEndings(newContent);
 
-    const diffLines: string[] = [];
-    diffLines.push(`--- registry/${filePath}`);
-    diffLines.push(`+++ local/${filePath}`);
+    const changes = diffLines(normalizedOld, normalizedNew);
+    const diffLines_: string[] = [];
+    diffLines_.push(`--- registry/${filePath}`);
+    diffLines_.push(`+++ local/${filePath}`);
 
-    const maxLen = Math.max(oldLines.length, newLines.length);
-    let i = 0;
-
-    while (i < maxLen) {
-        const oldLine = oldLines[i];
-        const newLine = newLines[i];
-
-        if (oldLine === newLine) {
-            diffLines.push(` ${oldLine}`);
-        } else {
-            if (oldLine !== undefined) {
-                diffLines.push(`-${oldLine}`);
-            }
-            if (newLine !== undefined) {
-                diffLines.push(`+${newLine}`);
+    for (const part of changes) {
+        const lines = part.value.split('\n').filter((line, i, arr) => !(i === arr.length - 1 && line === ''));
+        for (const line of lines) {
+            if (part.added) {
+                diffLines_.push(`+${line}`);
+            } else if (part.removed) {
+                diffLines_.push(`-${line}`);
+            } else {
+                diffLines_.push(` ${line}`);
             }
         }
-        i++;
     }
 
-    return diffLines.join('\n');
+    return diffLines_.join('\n');
 }
 
 function getInstalledComponents(cwd: string, config: BrutalistConfig): string[] {

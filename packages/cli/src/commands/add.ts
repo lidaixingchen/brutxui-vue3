@@ -10,6 +10,7 @@ import {
     type RegistryItem,
     AVAILABLE_COMPONENTS,
     UTILS_TEMPLATE,
+    REGISTRY_PATH_PREFIXES,
     CliError,
     detectPackageManager,
     resolveAliasPath,
@@ -37,6 +38,14 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
 }
 
 async function validateComponents(components: string[]): Promise<void> {
+    const MAX_COMPONENT_NAME_LENGTH = 100;
+
+    for (const component of components) {
+        if (component.length > MAX_COMPONENT_NAME_LENGTH) {
+            throw new CliError(`Component name too long: "${component.slice(0, 50)}..." (max ${MAX_COMPONENT_NAME_LENGTH} characters)`);
+        }
+    }
+
     const cleanComponents = components.map(c => c.split('@')[0]);
     const invalid = cleanComponents.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
 
@@ -70,22 +79,22 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
 function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): string {
     let resolved: string;
 
-    if (registryPath.startsWith('components/')) {
-        const relative = registryPath.replace('components/', '');
+    if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.components)) {
+        const relative = registryPath.replace(REGISTRY_PATH_PREFIXES.components, '');
         const aliasPath = resolveAliasPath(config.aliases.components, cwd);
         resolved = path.join(aliasPath, relative);
-    } else if (registryPath.startsWith('composables/')) {
-        const relative = registryPath.slice('composables/'.length);
+    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.composables)) {
+        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.composables.length);
         const aliasPath = resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(aliasPath, relative);
-    } else if (registryPath.startsWith('locales/')) {
-        const relative = registryPath.slice('locales/'.length);
+    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.locales)) {
+        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
         const composablesPath = resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'locales', relative);
-    } else if (registryPath.startsWith('lib/utils')) {
+    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils)) {
         resolved = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
-    } else if (registryPath.startsWith('lib/')) {
-        const relative = registryPath.slice(4);
+    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
+        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
         const aliasPath = resolveAliasPath(config.aliases.utils, cwd);
         resolved = path.join(path.dirname(aliasPath), relative);
     } else {
@@ -93,7 +102,7 @@ function resolveComponentFilePath(registryPath: string, config: BrutalistConfig,
     }
 
     if (!isSafePath(resolved, cwd)) {
-        throw new Error(`Security Error: Resolved path "${resolved}" is outside the project directory.`);
+        throw new CliError(`Security Error: Resolved path "${resolved}" is outside the project directory.`, 2);
     }
 
     return resolved;
@@ -124,16 +133,7 @@ async function writeRegistryFiles(
         let itemAdded = false;
 
         for (const file of item.files) {
-            const normalizedPath = path.normalize(file.path);
-            if (normalizedPath.startsWith('..') || path.isAbsolute(normalizedPath)) {
-                throw new Error(`Security Error: Malicious component file path detected: "${file.path}".`);
-            }
-
             const targetPath = resolveComponentFilePath(file.path, config, cwd);
-
-            if (!isSafePath(targetPath, cwd)) {
-                throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetPath}".`);
-            }
 
             if (await fs.pathExists(targetPath)) {
                 if (!options.overwrite) {
@@ -205,7 +205,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
 
     if (options.path && !isSafePath(targetCwd, cwd)) {
-        throw new Error(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`);
+        throw new CliError(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`, 2);
     }
 
     logger.setSilent(options.silent ?? false);

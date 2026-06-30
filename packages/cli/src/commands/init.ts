@@ -9,8 +9,9 @@ import {
     type TailwindConfig,
     type AliasConfig,
     BASE_DEPENDENCIES,
-    BRUTALIST_CSS_STYLES,
+    getBrutalistCssStyles,
     SCHEMA_URL,
+    DOCS_URL,
     DEFAULT_TAILWIND_CONFIG,
     UTILS_TEMPLATE,
     CliError,
@@ -126,12 +127,12 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
         if (hasCompleteBrutalistStyles) {
             return false;
         }
-        content += BRUTALIST_CSS_STYLES;
+        content += getBrutalistCssStyles();
     } else {
         if (tailwindVersion === 'v4') {
-            content = `@import "tailwindcss";\n${BRUTALIST_CSS_STYLES}`;
+            content = `@import "tailwindcss";\n${getBrutalistCssStyles()}`;
         } else {
-            content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${BRUTALIST_CSS_STYLES}`;
+            content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${getBrutalistCssStyles()}`;
         }
     }
 
@@ -234,7 +235,7 @@ export async function init(options: InitOptions): Promise<void> {
         logger.info('     npx brutx-vue@latest add button');
         logger.info('     npx brutx-vue@latest add --all');
         logger.newLine();
-        logger.dim('Documentation: https://lidaixingchen.github.io/brutxui-vue3/');
+        logger.dim(`Documentation: ${DOCS_URL}`);
     } catch (error: unknown) {
         spinner?.fail('Failed to initialize Brutx-Vue');
         const message = error instanceof Error ? error.message : String(error);

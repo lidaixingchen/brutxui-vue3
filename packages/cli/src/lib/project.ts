@@ -116,7 +116,7 @@ export function resolveAliasPath(alias: string, cwd: string): string {
 
     if (!isSafePath(resolvedPath, cwd)) {
         throw new Error(
-            `安全检查失败：解析后的路径 "${resolvedPath}" 超出了项目目录 "${cwd}" 的范围。这可能是路径遍历攻击。`
+            `Security Error: Resolved path "${resolvedPath}" is outside the project directory "${cwd}". This may be a path traversal attack.`
         );
     }
 
