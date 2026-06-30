@@ -61,14 +61,16 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     const formatTokens: string[] = []
     let i = 0
     while (i < format.length) {
+        let matched = false
         for (const token of ['YYYY', 'YY', 'MM', 'DD', 'HH', 'mm', 'ss']) {
             if (format.startsWith(token, i)) {
                 formatTokens.push(token)
                 i += token.length
+                matched = true
                 break
             }
         }
-        i += 1
+        if (!matched) i += 1
     }
     const parts: Record<string, number> = {}
     formatTokens.forEach((token, index) => {

@@ -42,7 +42,7 @@ export interface PromiseToastOptions<T> {
 const TOAST_KEY: InjectionKey<ReturnType<typeof createToast>> = Symbol('brutx-toast')
 export const DEFAULT_TOAST_DURATION = 5000
 
-export function createToast() {
+export function createToast(isFallback = false) {
     const toasts = ref<ToastItem[]>([])
     const MAX_TOASTS = 10
     const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
@@ -88,7 +88,7 @@ export function createToast() {
         toasts.value = []
     }
 
-    if (getCurrentScope()) {
+    if (!isFallback && getCurrentScope()) {
         onScopeDispose(() => {
             clearToasts()
         })
@@ -184,7 +184,7 @@ export function useToast() {
         console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to shared singleton. Call provideToast() in your root component.')
     }
     if (!fallbackInstance) {
-        fallbackInstance = createToast()
+        fallbackInstance = createToast(true)
     }
     return fallbackInstance
 }
