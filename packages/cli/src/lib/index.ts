@@ -2,6 +2,8 @@ export * from './types.js';
 
 export * from './constants.js';
 
+export { CliError } from './error.js';
+
 export {
     detectProjectType,
     detectPackageManager,
@@ -18,6 +20,7 @@ export {
 
 export { installPackages, getInstallCommand } from './package-manager.js';
 
-export { logger } from './logger.js';
+export { Logger, logger } from './logger.js';
+export type { LoggerOptions } from './logger.js';
 
-export { getItem, resolveDeps, readConfig } from './registry.js';
+export { getItem, resolveDeps, readConfig, readConfigSafe } from './registry.js';

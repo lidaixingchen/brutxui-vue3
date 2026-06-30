@@ -1,10 +1,25 @@
 import chalk from 'chalk';
 
-class Logger {
-    private silent: boolean = false;
+export interface LoggerOptions {
+    silent?: boolean;
+    debug?: boolean;
+}
+
+export class Logger {
+    private silent: boolean;
+    private debugEnabled: boolean;
+
+    constructor(options: LoggerOptions = {}) {
+        this.silent = options.silent ?? false;
+        this.debugEnabled = options.debug ?? false;
+    }
 
     setSilent(silent: boolean): void {
         this.silent = silent;
+    }
+
+    setDebug(debug: boolean): void {
+        this.debugEnabled = debug;
     }
 
     log(message: string): void {
@@ -42,7 +57,7 @@ class Logger {
     }
 
     debug(message: string): void {
-        if (process.env.DEBUG) {
+        if (this.debugEnabled || process.env.DEBUG) {
             this.log(chalk.gray(`[DEBUG] ${message}`));
         }
     }
@@ -52,4 +67,5 @@ class Logger {
     }
 }
 
+// 默认实例，保持向后兼容
 export const logger = new Logger();

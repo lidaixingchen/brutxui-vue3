@@ -13,6 +13,7 @@ import {
     SCHEMA_URL,
     DEFAULT_TAILWIND_CONFIG,
     UTILS_TEMPLATE,
+    CliError,
     detectProjectType,
     detectPackageManager,
     findTailwindConfig,
@@ -237,7 +238,6 @@ export async function init(options: InitOptions): Promise<void> {
     } catch (error: unknown) {
         spinner?.fail('Failed to initialize Brutx-Vue');
         const message = error instanceof Error ? error.message : String(error);
-        logger.error(message);
-        process.exit(1);
+        throw new CliError(message);
     }
 }

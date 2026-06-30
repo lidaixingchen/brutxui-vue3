@@ -133,6 +133,14 @@ function validateBrutalistConfig(data: unknown): asserts data is Record<string, 
     }
 }
 
+export async function readConfigSafe(cwd: string): Promise<BrutalistConfig | null> {
+    try {
+        return await readConfig(cwd);
+    } catch {
+        return null;
+    }
+}
+
 export async function readConfig(cwd: string): Promise<BrutalistConfig> {
     const configPath = path.join(cwd, 'components.json');
     if (!(await fs.pathExists(configPath))) {

@@ -2,17 +2,10 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, DiffResult, FileDiff, RegistryItem, DiffOptions } from '../lib/types.js';
-import { readConfig, getItem } from '../lib/registry.js';
+import { getItem } from '../lib/registry.js';
+import { readConfigSafe, CliError } from '../lib/index.js';
 import { resolveAliasPath, resolveImportAlias } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
-
-async function readConfigSafe(cwd: string): Promise<BrutalistConfig | null> {
-    try {
-        return await readConfig(cwd);
-    } catch {
-        return null;
-    }
-}
 
 function normalizeLineEndings(content: string): string {
     return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -252,8 +245,7 @@ export async function diff(options: DiffOptions): Promise<void> {
     const config = await readConfigSafe(cwd);
 
     if (!config) {
-        logger.error('No components.json found. Run `brutx-vue init` first.');
-        process.exit(1);
+        throw new CliError('No components.json found. Run `brutx-vue init` first.');
     }
 
     const targetComponents = options.components?.length

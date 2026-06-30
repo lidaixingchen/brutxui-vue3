@@ -4,6 +4,7 @@ import { init } from './commands/init.js';
 import { add } from './commands/add.js';
 import { doctor } from './commands/doctor.js';
 import { diff } from './commands/diff.js';
+import { CliError, logger } from './lib/index.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -60,4 +61,16 @@ program
     .option('-s, --silent', 'Mute output', false)
     .action(diff);
 
-program.parse();
+async function main(): Promise<void> {
+    try {
+        await program.parseAsync();
+    } catch (error) {
+        if (error instanceof CliError) {
+            logger.error(error.message);
+            process.exit(error.code);
+        }
+        throw error;
+    }
+}
+
+main();

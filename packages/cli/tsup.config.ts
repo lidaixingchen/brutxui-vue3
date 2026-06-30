@@ -1,3 +1,5 @@
+import { cpSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
@@ -10,5 +12,12 @@ export default defineConfig({
     noExternal: ['brutx-shared-vue'],
     banner: {
         js: '#!/usr/bin/env node',
+    },
+    onSuccess: async () => {
+        cpSync(
+            resolve('src/styles'),
+            resolve('dist/styles'),
+            { recursive: true }
+        );
     },
 });

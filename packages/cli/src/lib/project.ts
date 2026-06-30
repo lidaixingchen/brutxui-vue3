@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { parse as parseJsonc } from 'jsonc-parser';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
 
@@ -53,112 +54,6 @@ export function detectPackageManager(cwd: string): PackageManager {
     return 'npm';
 }
 
-function stripJsonComments(content: string): string {
-    let result = '';
-    let inString = false;
-    let stringChar = '';
-    let i = 0;
-
-    while (i < content.length) {
-        const char = content[i];
-        const next = content[i + 1];
-
-        if (inString) {
-            result += char;
-            if (char === '\\' && i + 1 < content.length) {
-                result += content[i + 1];
-                i += 2;
-                continue;
-            }
-            if (char === stringChar) {
-                inString = false;
-            }
-            i++;
-            continue;
-        }
-
-        if (char === '"' || char === "'") {
-            inString = true;
-            stringChar = char;
-            result += char;
-            i++;
-            continue;
-        }
-
-        if (char === '/' && next === '/') {
-            while (i < content.length && content[i] !== '\n') {
-                i++;
-            }
-            continue;
-        }
-
-        if (char === '/' && next === '*') {
-            i += 2;
-            while (i < content.length && !(content[i] === '*' && content[i + 1] === '/')) {
-                i++;
-            }
-            if (i < content.length) {
-                i += 2;
-            }
-            continue;
-        }
-
-        result += char;
-        i++;
-    }
-
-    return result;
-}
-
-function stripJsonTrailingCommas(content: string): string {
-    let result = '';
-    let inString = false;
-    let stringChar = '';
-    let i = 0;
-
-    while (i < content.length) {
-        const char = content[i];
-
-        if (inString) {
-            result += char;
-            if (char === '\\' && i + 1 < content.length) {
-                result += content[i + 1];
-                i += 2;
-                continue;
-            }
-            if (char === stringChar) {
-                inString = false;
-            }
-            i++;
-            continue;
-        }
-
-        if (char === '"' || char === "'") {
-            inString = true;
-            stringChar = char;
-            result += char;
-            i++;
-            continue;
-        }
-
-        if (char === ',') {
-            let j = i + 1;
-            while (j < content.length && /\s/.test(content[j])) {
-                j++;
-            }
-            if (content[j] === '}' || content[j] === ']') {
-                i++;
-                continue;
-            }
-        }
-
-        result += char;
-        i++;
-    }
-
-    return result;
-}
-
 export function readTsConfig(cwd: string): TsConfig | null {
     for (const configFile of CONFIG_FILES.tsconfig) {
         const configPath = path.join(cwd, configFile);
@@ -167,12 +62,13 @@ export function readTsConfig(cwd: string): TsConfig | null {
 
         try {
             const content = fs.readFileSync(configPath, 'utf-8');
-            const jsonContent = stripJsonTrailingCommas(stripJsonComments(content));
-            return JSON.parse(jsonContent);
+            const parsed = parseJsonc(content) as TsConfig;
+            return parsed;
         } catch {
             continue;
         }
     }
+
     return null;
 }
 

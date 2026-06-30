@@ -2,20 +2,12 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.js';
-import { readConfig } from '../lib/registry.js';
+import { readConfigSafe, CliError } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, BRUTALIST_CSS_STYLES, UTILS_TEMPLATE } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
-
-async function readConfigSafe(cwd: string): Promise<BrutalistConfig | null> {
-    try {
-        return await readConfig(cwd);
-    } catch {
-        return null;
-    }
-}
 
 function checkConfigExists(cwd: string, config: BrutalistConfig | null): CheckResult {
     if (!config) {
@@ -365,6 +357,6 @@ export async function doctor(options: DoctorOptions): Promise<void> {
 
     const hasErrors = checks.some((c) => c.status === 'error');
     if (hasErrors) {
-        process.exit(1);
+        throw new CliError('Doctor check failed with errors');
     }
 }

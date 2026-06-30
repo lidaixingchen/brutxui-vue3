@@ -10,6 +10,7 @@ import {
     type RegistryItem,
     AVAILABLE_COMPONENTS,
     UTILS_TEMPLATE,
+    CliError,
     detectPackageManager,
     resolveAliasPath,
     resolveImportAlias,
@@ -28,13 +29,10 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message.includes('not found')) {
-            logger.error('Error: Brutx-Vue is not initialized.');
-            logger.warn('Run: npx brutx-vue@latest init');
+            throw new CliError('Brutx-Vue is not initialized. Run: npx brutx-vue@latest init');
         } else {
-            logger.error(`Error: Invalid components.json. ${message}`);
-            logger.warn('Run: npx brutx-vue@latest init --force to regenerate.');
+            throw new CliError(`Invalid components.json. ${message}. Run: npx brutx-vue@latest init --force to regenerate.`);
         }
-        process.exit(1);
     }
 }
 
@@ -43,11 +41,7 @@ async function validateComponents(components: string[]): Promise<void> {
     const invalid = cleanComponents.filter((c) => !AVAILABLE_COMPONENTS.includes(c));
 
     if (invalid.length > 0) {
-        logger.newLine();
-        logger.error(`Unknown components: ${invalid.join(', ')}`);
-        logger.warn('Please choose from the available list or run npx brutx-vue add interactively without arguments.');
-        logger.warn(`Available: ${AVAILABLE_COMPONENTS.join(', ')}`);
-        process.exit(1);
+        throw new CliError(`Unknown components: ${invalid.join(', ')}. Available: ${AVAILABLE_COMPONENTS.join(', ')}`);
     }
 }
 
@@ -61,9 +55,7 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
     }
 
     if (options.yes) {
-        logger.error('Error: No components specified.');
-        logger.warn('Use: npx brutx-vue@latest add [component] or --all');
-        process.exit(1);
+        throw new CliError('No components specified. Use: npx brutx-vue@latest add [component] or --all');
     }
 
     const selected = await checkbox({
@@ -315,7 +307,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     } catch (error: unknown) {
         spinner?.fail('Failed to add components');
         const message = error instanceof Error ? error.message : String(error);
-        logger.error(message);
-        process.exit(1);
+        throw new CliError(message);
     }
 }
