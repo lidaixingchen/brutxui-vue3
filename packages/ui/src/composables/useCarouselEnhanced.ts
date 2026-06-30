@@ -1,4 +1,5 @@
 import { ref, computed, onUnmounted, toValue, type MaybeRefOrGetter } from 'vue'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../lib/defaults'
 import { useCarousel, type UseCarouselOptions } from './useCarousel'
 
 const DEFAULT_PROGRESS_INTERVAL = 50
@@ -26,7 +27,7 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
         stopProgressTimer()
         if (!toValue(options.trackProgress)) return
 
-        const delay = toValue(options.autoplayDelay) ?? 3000
+        const delay = toValue(options.autoplayDelay) ?? DEFAULT_AUTOPLAY_INTERVAL_MS
         const interval = progressUpdateInterval.value
         const steps = delay / interval
 

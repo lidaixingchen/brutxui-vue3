@@ -32,9 +32,9 @@
 - 用户使用 Carousel 组件时可能遇到 "Module not found" 错误
 - 构建产物不包含该依赖，但 package.json 声明为必需依赖
 
-**建议方案**：
-- 方案 A：移至 `peerDependencies`，在 `peerDependenciesMeta` 中标记 `optional: true`
-- 方案 B：从 `external` 配置中移除，让其打包到产物中（降低用户安装门槛）
+**建议方案**（推荐方案 A）：
+- 方案 A（推荐）：移至 `peerDependencies`，在 `peerDependenciesMeta` 中标记 `optional: true` — 符合组件库惯例，Carousel 本身是可选组件
+- 方案 B：从 `external` 配置中移除，让其打包到产物中（降低用户安装门槛，但增加包体积）
 
 ### 2.2 未使用的依赖（增加维护负担）
 
@@ -133,6 +133,8 @@ function assertExposed(vm: unknown): asserts vm is CounterExposed {
 | `48` (px) | DataTable | `DEFAULT_VIRTUAL_ROW_HEIGHT` |
 | `1000, 15, 10, 1.1, 300` | Card3D, CarouselEnhanced | 各自组件级常量 |
 
+**改进基础**：`ScratchCard.vue` 已定义 `FALLBACK_PRIMARY_COLOR` 等常量，但未提取为共享模块。建议将其迁移至共享常量文件，供其他组件复用。
+
 **优先处理**：主题色回退值（跨组件重复）和分页配置（业务逻辑相关）
 
 ### 3.3 peerDependency 版本范围过宽
@@ -142,6 +144,8 @@ function assertExposed(vm: unknown): asserts vm is CounterExposed {
 | `@lucide/vue` | `^1.0.0` | `^1.17.0` | 使用了较新 API |
 | `prismjs` | `^1.29.0` | 添加 `optional: true` | 仅 CodeBlock 使用 |
 | `vee-validate` | `^4.0.0` | 添加 `optional: true` | 仅 Form 组件使用 |
+
+> **注意**：`devDependencies` 中的 `@types/prismjs` 应同步调整为可选安装，或在 `prismjs` 未安装时跳过类型检查。
 
 ---
 
@@ -200,17 +204,15 @@ function assertExposed(vm: unknown): asserts vm is CounterExposed {
 | `useCanvasInteraction.ts:211` | `typeof ResizeObserver` 守卫 | 目标浏览器已全面支持 | 移除守卫 |
 | `Counter.vue:133` | `typeof ResizeObserver` 守卫 | 同上 | 移除守卫 |
 
-### 5.3 必要保留的兼容性代码
+### 5.3 需要重新评估的"兼容性代码"
 
-| 类型 | 代码 | 保留原因 |
-|------|------|----------|
-| CSS 前缀 | `-webkit-text-size-adjust` | iOS Safari 仍需前缀 |
-| CSS 前缀 | `-webkit-font-smoothing`, `-moz-osx-font-smoothing` | 无前缀版本不存在 |
-| CSS 前缀 | `-webkit-mask-image` | Safari 15.4 早期版本兼容 |
-| CSS 前缀 | `-webkit-background-clip: text` | Safari 仍需前缀 |
-| SSR 守卫 | `typeof document/window/localStorage` | Vue 组件库需支持 SSR |
-| 功能检测 | `navigator.clipboard` 守卫 | 非安全上下文不可用 |
-| 存储守卫 | `useTheme.ts` 的 try-catch | Safari 隐私模式兼容 |
+| 类型 | 代码 | 当前位置 | 问题 | 建议处理方式 |
+|------|------|----------|------|--------------|
+| CSS 前缀 | `-webkit-text-size-adjust` | `styles.css:57` | 组件库不应硬编码全局样式前缀 | 移除，由用户项目的 Autoprefixer 处理 |
+| CSS 前缀 | `-webkit-font-smoothing`, `-moz-osx-font-smoothing` | `styles.css:68-69` | 同上，且非标准属性 | 移除，用户可自行添加到项目样式 |
+| SSR 守卫 | `typeof document/window/localStorage` | 10 个文件 | 分散检查，缺乏统一抽象 | 提取 `isClient()` 工具函数，或使用 `@vueuse/core` |
+| 功能检测 | `navigator.clipboard` 守卫 | 1 个文件 | 非安全上下文场景极少 | 保留，但添加注释说明适用场景 |
+| 存储守卫 | `useTheme.ts` 的 try-catch | 1 个文件 | Safari 隐私模式兼容 | **保留** — 这是真实的运行时问题，无法通过构建解决 |
 
 ### 5.4 滚动条样式问题
 
@@ -232,40 +234,44 @@ function assertExposed(vm: unknown): asserts vm is CounterExposed {
 
 按优先级排序的具体行动项：
 
-### P0 - 立即处理（影响稳定性）
+> **执行状态**（2026-06-30）：P0 全部完成 ✅ | P1 全部完成 ✅ | P2 #12-13 完成 ✅ | P2 #14 待调研
 
-| # | 行动项 | 预估工时 | 涉及文件 |
-|---|--------|----------|----------|
-| 1 | 修复 `embla-carousel-vue` 依赖分类 | 0.5h | `packages/ui/package.json`, `vite.config.ts` |
-| 2 | 移除未使用的 `postcss` 和 `tailwindcss-animate` | 0.5h | `packages/ui/package.json`, `postcss.config.cjs` |
-| 3 | 统一浏览器目标配置 | 0.5h | `package.json`, `.browserslistrc` |
+### P0 - 立即处理（影响稳定性） ✅ 已完成
 
-### P1 - 迭代计划（提升可维护性）
+| # | 行动项 | 状态 | 影响范围 | 涉及文件 |
+|---|--------|------|----------|----------|
+| 1 | 修复 `embla-carousel-vue` 依赖分类 | ✅ | Carousel 组件 | `packages/ui/package.json` |
+| 2 | 移除未使用的 `postcss` 和 `tailwindcss-animate` | ✅ | 全局 | `packages/ui/package.json`, `postcss.config.cjs` |
+| 3 | 统一浏览器目标配置 | ✅ | 全局 | `package.json` |
 
-| # | 行动项 | 预估工时 | 涉及文件 |
-|---|--------|----------|----------|
-| 4 | 清理过时的兼容性代码（structuredClone、webkitAudioContext、ResizeObserver 守卫） | 1h | 3 个文件 |
-| 5 | 提取主题色回退值到共享常量 | 1h | 新建 `theme-constants.ts`，修改 3 个组件 |
-| 6 | 更新 peerDependency 版本范围和 optional 标记 | 0.5h | `packages/ui/package.json` |
-| 7 | 添加生产代码的类型守卫（事件处理器） | 2h | 8 个组件文件 |
-| 8 | 提取高频魔法数字为常量 | 2h | 约 10 个组件文件 |
+### P1 - 迭代计划（提升可维护性） ✅ 已完成
+
+| # | 行动项 | 状态 | 影响范围 | 涉及文件 |
+|---|--------|------|----------|----------|
+| 4 | 清理过时的兼容性代码 | ✅ | locales、Audio、Canvas、Counter | 4 个文件 |
+| 5 | 提取主题色回退值到共享常量 | ✅ | ScratchCard | 新建 `lib/theme-fallbacks.ts` |
+| 6 | 更新 peerDependency optional 标记 | ✅ | CodeBlock、Form | `packages/ui/package.json` |
+| 7 | 添加生产代码的类型守卫 | ✅ | 5 个组件 | 5 个组件文件 |
+| 8 | 提取高频魔法数字为常量 | ✅ | 4 个组件 | 新建 `lib/defaults.ts`，4 个文件 |
+| 9 | 重构测试代码的双重类型断言 | ✅ | 7 个测试文件 | 7 个测试文件 |
+| 10 | 移除 styles.css 中的 CSS 前缀 | ✅ | 全局样式 | `packages/ui/src/styles.css` |
+| 11 | 统一 SSR 守卫为工具函数 | ✅ | 10 个文件 | 新建 `lib/env.ts`，10 个文件 |
 
 ### P2 - 长期跟踪（代码质量）
 
-| # | 行动项 | 预估工时 | 涉及文件 |
-|---|--------|----------|----------|
-| 9 | 重构测试代码的双重类型断言 | 3h | 7 个测试文件 |
-| 10 | 添加 Firefox 滚动条样式 | 0.5h | `apps/docs/.vitepress/theme/style.css` |
-| 11 | 清理根目录重复依赖 | 0.5h | 根目录 `package.json` |
-| 12 | 评估 prismjs 迁移到 shiki | 调研 2h | 仅调研，不实施 |
+| # | 行动项 | 状态 | 影响范围 | 涉及文件 |
+|---|--------|------|----------|----------|
+| 12 | 添加 Firefox 滚动条样式 | ✅ | 文档站 | `apps/docs/.vitepress/theme/style.css` |
+| 13 | 清理根目录重复依赖 | ✅ | monorepo 根 | 根目录 `package.json` |
+| 14 | 评估 prismjs 迁移到 shiki | ⏳ 待调研 | CodeBlock | 仅调研，不实施 |
 
-### P3 - 监控项（不立即处理）
+### P3 - 监控项
 
-| # | 行动项 | 处理时机 |
-|---|--------|----------|
-| 13 | 移除 `@ts-expect-error`（Carousel.vue） | vue-tsc 修复 TS6133 后 |
-| 14 | 移除 `-webkit-mask-image` 前缀 | 验证 Safari 15.4+ 稳定支持后 |
-| 15 | v-html 安全性持续监控 | CodeBlock.vue 使用场景变化时 |
+| # | 行动项 | 状态 | 说明 |
+|---|--------|------|------|
+| 15 | 移除 `@ts-expect-error`（Carousel.vue） | ⏳ 待上游修复 | vue-tsc TS6133 仍存在（2026-06-30 验证），需等待 vue-tsc 修复 |
+| 16 | 移除 `-webkit-mask-image` 前缀 | ✅ 已完成 | Safari 15.4+ 已支持无前缀 `mask-image` |
+| 17 | v-html 安全性持续监控 | ℹ️ 监控中 | CodeBlock.vue 使用场景未变化，prismjs 已转义输入 |
 
 ---
 

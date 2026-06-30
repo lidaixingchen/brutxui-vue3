@@ -7,6 +7,11 @@ interface HardcoreInputExposed {
     errorMessage: string
 }
 
+function assertHardcoreInputExposed(vm: unknown): asserts vm is HardcoreInputExposed {
+    expect(vm).toHaveProperty('validationState')
+    expect(vm).toHaveProperty('errorMessage')
+}
+
 vi.mock('../../composables/useAudioEngine', () => ({
     useAudioEngine: () => ({
         playSound: vi.fn(),
@@ -43,7 +48,8 @@ describe('HardcoreInput', () => {
         const input = wrapper.find('input')
         await input.trigger('blur')
 
-        const vm = wrapper.vm as unknown as HardcoreInputExposed
+        assertHardcoreInputExposed(wrapper.vm)
+        const vm = wrapper.vm
         expect(vm.validationState).toBe('error')
         expect(vm.errorMessage).toBe('Too short!')
         expect(wrapper.text()).toContain('Too short!')
@@ -62,7 +68,8 @@ describe('HardcoreInput', () => {
         const input = wrapper.find('input')
         await input.trigger('blur')
 
-        const vm = wrapper.vm as unknown as HardcoreInputExposed
+        assertHardcoreInputExposed(wrapper.vm)
+        const vm = wrapper.vm
         expect(vm.validationState).toBe('success')
         expect(vm.errorMessage).toBe('')
     })

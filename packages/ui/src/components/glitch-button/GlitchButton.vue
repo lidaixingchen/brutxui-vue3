@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
@@ -29,7 +30,7 @@ const props = withDefaults(defineProps<GlitchButtonProps>(), {
     speed: 'medium',
     direction: 'horizontal',
     trigger: 'hover',
-    interval: 3000,
+    interval: DEFAULT_AUTOPLAY_INTERVAL_MS,
     asChild: false,
     loading: false,
     disabled: false,
@@ -47,7 +48,7 @@ let autoplayStopTimer: ReturnType<typeof setTimeout> | null = null
 
 const startAutoplay = () => {
     stopAutoplay()
-    const interval = Math.max(Number(props.interval) || 3000, 100)
+    const interval = Math.max(Number(props.interval) || DEFAULT_AUTOPLAY_INTERVAL_MS, 100)
     autoplayTimer = setInterval(() => {
         if (prefersReducedMotion.value) return
         isActive.value = true

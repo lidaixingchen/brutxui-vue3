@@ -881,6 +881,11 @@
    SCROLLBAR — Thick, visible
    ============================================ */
 
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--brutal-border-color) var(--brutal-muted);
+}
+
 ::-webkit-scrollbar {
     width: 12px;
     height: 12px;

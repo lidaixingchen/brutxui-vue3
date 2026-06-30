@@ -3,6 +3,14 @@ import { nextTick } from 'vue'
 import { vi } from 'vitest'
 import Calendar from './Calendar.vue'
 
+interface CalendarExposed {
+    rootClasses: string
+}
+
+function assertCalendarExposed(vm: unknown): asserts vm is CalendarExposed {
+    expect(vm).toHaveProperty('rootClasses')
+}
+
 const { dayRef } = vi.hoisted(() => ({
     dayRef: {
         label: '15',
@@ -63,7 +71,8 @@ describe('Calendar', () => {
     describe('rootClasses computed', () => {
         it('applies default brutal styling classes', async () => {
             const wrapper = await mountCalendar()
-            const vm = wrapper.vm as unknown as { rootClasses: string }
+            assertCalendarExposed(wrapper.vm)
+        const vm = wrapper.vm
             expect(vm.rootClasses).toContain('border-3')
             expect(vm.rootClasses).toContain('border-brutal')
             expect(vm.rootClasses).toContain('shadow-brutal')
@@ -73,7 +82,8 @@ describe('Calendar', () => {
 
         it('merges custom class into rootClasses', async () => {
             const wrapper = await mountCalendar({ class: 'custom-calendar' })
-            const vm = wrapper.vm as unknown as { rootClasses: string }
+            assertCalendarExposed(wrapper.vm)
+        const vm = wrapper.vm
             expect(vm.rootClasses).toContain('custom-calendar')
         })
     })
@@ -218,14 +228,16 @@ describe('Calendar', () => {
 
         it('applies disabled styles to rootClasses when disabled', async () => {
             const wrapper = await mountCalendar({ disabled: true })
-            const vm = wrapper.vm as unknown as { rootClasses: string }
+            assertCalendarExposed(wrapper.vm)
+        const vm = wrapper.vm
             expect(vm.rootClasses).toContain('opacity-50')
             expect(vm.rootClasses).toContain('pointer-events-none')
         })
 
         it('does not apply disabled styles when not disabled', async () => {
             const wrapper = await mountCalendar()
-            const vm = wrapper.vm as unknown as { rootClasses: string }
+            assertCalendarExposed(wrapper.vm)
+        const vm = wrapper.vm
             expect(vm.rootClasses).not.toContain('opacity-50')
             expect(vm.rootClasses).not.toContain('pointer-events-none')
         })

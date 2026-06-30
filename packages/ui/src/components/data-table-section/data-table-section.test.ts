@@ -26,7 +26,8 @@ const mockRows: TestEmployee[] = [
 
 // Helper to mount DataTableSection with proper generic typing
 function mountDataTableSection(props?: Record<string, unknown>, options?: Record<string, unknown>) {
-    return mount(DataTableSection as unknown as Parameters<typeof mount>[0], {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Generic component requires cast for proper typing
+    return mount(DataTableSection as any, {
         props,
         ...localeProvide,
         ...options,

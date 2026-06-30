@@ -21,22 +21,10 @@
         "changelog:ui": "node scripts/release/generate-changelog.mjs --scope ui",
         "changelog:cli": "node scripts/release/generate-changelog.mjs --scope cli"
     },
-    "devDependencies": {
-        "@vitejs/plugin-vue": "^6.0.7",
-        "typescript": "^6.0.3",
-        "vite": "^8.0.16"
-    },
+    "devDependencies": {},
     "engines": {
         "node": ">=22.5.0",
         "pnpm": ">=11.0.0"
     },
-    "packageManager": "pnpm@11.5.2",
-    "browserslist": [
-        "Chrome >= 87",
-        "Firefox >= 78",
-        "Safari >= 14",
-        "Edge >= 88",
-        "iOS >= 14",
-        "Android >= 111"
-    ]
+    "packageManager": "pnpm@11.5.2"
 }

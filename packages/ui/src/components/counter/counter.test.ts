@@ -6,6 +6,11 @@ interface CounterExposed {
     stop: () => void
 }
 
+function assertCounterExposed(vm: unknown): asserts vm is CounterExposed {
+    expect(vm).toHaveProperty('play')
+    expect(vm).toHaveProperty('stop')
+}
+
 function getDisplaySpan(wrapper: ReturnType<typeof mount>) {
     return wrapper.find('[aria-live="polite"]')
 }
@@ -108,7 +113,8 @@ describe('Counter', () => {
         const wrapper = mount(Counter, {
             props: { to: 100 },
         })
-        const vm = wrapper.vm as unknown as CounterExposed
+        assertCounterExposed(wrapper.vm)
+        const vm = wrapper.vm
         expect(typeof vm.play).toBe('function')
         expect(typeof vm.stop).toBe('function')
     })

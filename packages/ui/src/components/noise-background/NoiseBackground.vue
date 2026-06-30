@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted, useId } from 'vue'
+import { isClient } from '../../lib/env'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { noiseBackgroundVariants } from './noise-background-variants'
@@ -54,7 +55,7 @@ const currentFrequency = ref(props.frequency)
 
 function startAnimation() {
     // SSR 兼容性检查 + 动效降级
-    if (!props.animated || typeof window === 'undefined' || props.animationDuration <= 0) return
+    if (!props.animated || !isClient || props.animationDuration <= 0) return
     if (prefersReducedMotion.value) return
 
     stopAnimation()

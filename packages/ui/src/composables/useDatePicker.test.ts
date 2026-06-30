@@ -160,7 +160,8 @@ describe('useDatePicker', () => {
             modelValue: () => new Date(2026, 0, 1),
             emit: (event: string, ...args: unknown[]) => emitted.push([event, args[0]]),
         })
-        const event = { stopPropagation: vi.fn() } as unknown as MouseEvent
+        const event = new MouseEvent('click')
+        vi.spyOn(event, 'stopPropagation')
         handleClearClick(event)
         expect(event.stopPropagation).toHaveBeenCalled()
         expect(displayValue.value).toBeNull()
@@ -171,7 +172,8 @@ describe('useDatePicker', () => {
         const { handleTriggerKeydown, open } = createDatePicker({
             emit: () => {},
         })
-        const event = { key: 'Enter', preventDefault: vi.fn() } as unknown as KeyboardEvent
+        const event = new KeyboardEvent('keydown', { key: 'Enter' })
+        vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
         expect(open.value).toBe(true)
     })
@@ -180,7 +182,8 @@ describe('useDatePicker', () => {
         const { handleTriggerKeydown, open } = createDatePicker({
             emit: () => {},
         })
-        const event = { key: ' ', preventDefault: vi.fn() } as unknown as KeyboardEvent
+        const event = new KeyboardEvent('keydown', { key: ' ' })
+        vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
         expect(open.value).toBe(true)
     })
@@ -190,7 +193,8 @@ describe('useDatePicker', () => {
             disabled: () => true,
             emit: () => {},
         })
-        const event = { key: 'Enter', preventDefault: vi.fn() } as unknown as KeyboardEvent
+        const event = new KeyboardEvent('keydown', { key: 'Enter' })
+        vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
         expect(open.value).toBe(false)
     })
@@ -200,7 +204,8 @@ describe('useDatePicker', () => {
             readonly: () => true,
             emit: () => {},
         })
-        const event = { key: 'Enter', preventDefault: vi.fn() } as unknown as KeyboardEvent
+        const event = new KeyboardEvent('keydown', { key: 'Enter' })
+        vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
         expect(open.value).toBe(false)
     })
@@ -210,7 +215,8 @@ describe('useDatePicker', () => {
             emit: () => {},
         })
         open.value = true
-        const event = { key: 'Enter', preventDefault: vi.fn() } as unknown as KeyboardEvent
+        const event = new KeyboardEvent('keydown', { key: 'Enter' })
+        vi.spyOn(event, 'preventDefault')
         handleTriggerKeydown(event)
         expect(event.preventDefault).not.toHaveBeenCalled()
     })

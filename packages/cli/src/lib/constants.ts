@@ -60,7 +60,7 @@ export const SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/schema.j
 export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
 
 export const BRUTALIST_CSS_STYLES = readFileSync(
-    join(__dirname, '..', 'styles', 'brutalist.css'),
+    join(__dirname, 'styles', 'brutalist.css'),
     'utf-8'
 );
 

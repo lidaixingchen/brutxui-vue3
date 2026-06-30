@@ -113,6 +113,7 @@
     "peerDependencies": {
         "@lucide/vue": "^1.0.0",
         "@tanstack/vue-virtual": "^3.0.0",
+        "embla-carousel-vue": "^8.6.0",
         "prismjs": "^1.29.0",
         "reka-ui": "^2.9.0",
         "tailwindcss": "^4.0.0",
@@ -124,14 +125,22 @@
         "@tanstack/vue-virtual": {
             "optional": true
         },
+        "embla-carousel-vue": {
+            "optional": true
+        },
+        "prismjs": {
+            "optional": true
+        },
         "v-calendar": {
+            "optional": true
+        },
+        "vee-validate": {
             "optional": true
         }
     },
     "dependencies": {
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.0",
-        "embla-carousel-vue": "^8.6.0",
         "tailwind-merge": "^3.6.0"
     },
     "devDependencies": {
@@ -147,9 +156,7 @@
         "eslint-plugin-vue": "^10.9.2",
         "globals": "^17.6.0",
         "happy-dom": "^20.9.0",
-        "postcss": "^8.5.15",
         "tailwindcss": "^4.3.0",
-        "tailwindcss-animate": "^1.0.7",
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.60.1",
         "vite": "^8.0.16",

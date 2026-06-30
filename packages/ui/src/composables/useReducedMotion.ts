@@ -1,4 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue'
+import { isClient } from '../lib/env'
 
 export function useReducedMotion() {
     const prefersReduced = ref(false)
@@ -9,7 +10,7 @@ export function useReducedMotion() {
     }
 
     onMounted(() => {
-        if (typeof window !== 'undefined') {
+        if (isClient) {
             mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
             prefersReduced.value = mediaQuery.matches
             mediaQuery.addEventListener('change', onChange)

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useCarouselEnhanced } from '@/composables/useCarouselEnhanced'
@@ -12,7 +13,7 @@ const { t } = useLocale()
 const props = withDefaults(defineProps<CarouselEnhancedProps>(), {
     loop: false,
     autoplay: false,
-    autoplayDelay: 3000,
+    autoplayDelay: DEFAULT_AUTOPLAY_INTERVAL_MS,
     showArrows: true,
     showDots: true,
     size: 'default',

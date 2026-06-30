@@ -1,4 +1,5 @@
 import { ref, inject, provide, computed, onUnmounted, getCurrentInstance, type InjectionKey } from 'vue'
+import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem } from '../lib/env'
 
 export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
 export type ColorMode = 'light' | 'dark' | 'system'
@@ -9,24 +10,6 @@ const THEME_KEY: InjectionKey<ReturnType<typeof createTheme>> = Symbol('brutx-th
 // 常量定义
 const VALID_THEMES: readonly ThemeName[] = ['classic', 'pastel', 'mono', 'warm'] as const
 const VALID_MODES: readonly ColorMode[] = ['light', 'dark', 'system'] as const
-
-function safeGetStorageItem(key: string): string | null {
-    try {
-        if (typeof localStorage === 'undefined') return null
-        return localStorage.getItem(key)
-    } catch {
-        return null
-    }
-}
-
-function safeSetStorageItem(key: string, value: string): void {
-    try {
-        if (typeof localStorage === 'undefined') return
-        localStorage.setItem(key, value)
-    } catch {
-        // Storage full or blocked (e.g. Safari private mode)
-    }
-}
 
 function getThemeClass(name: ThemeName): string {
     return `theme-${name}`
@@ -48,7 +31,7 @@ export function createTheme() {
     })
 
     function applyTheme(name: ThemeName) {
-        if (typeof document === 'undefined') return
+        if (!hasDocument) return
         const root = document.documentElement
         // 移除旧主题类名（如果存在）
         if (theme.value !== name) {
@@ -63,7 +46,7 @@ export function createTheme() {
     }
 
     function applyResolvedMode(mode: ResolvedColorMode) {
-        if (typeof document === 'undefined') return
+        if (!hasDocument) return
         const root = document.documentElement
         if (mode === 'dark') {
             root.classList.add('dark')
@@ -95,12 +78,12 @@ export function createTheme() {
     }
 
     function setCustomVariable(name: `--${string}`, value: string) {
-        if (typeof document === 'undefined') return
+        if (!hasDocument) return
         document.documentElement.style.setProperty(name, value)
     }
 
     function removeCustomVariable(name: `--${string}`) {
-        if (typeof document === 'undefined') return
+        if (!hasDocument) return
         document.documentElement.style.removeProperty(name)
     }
 
@@ -118,7 +101,7 @@ export function createTheme() {
         initialized = true
 
         // 第一步：初始化系统暗色模式检测（必须在应用颜色模式之前，isSystemDark 需先就绪）
-        if (typeof window !== 'undefined') {
+        if (isClient) {
             mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
             isSystemDark.value = mediaQuery.matches
             mediaQuery.addEventListener('change', onSystemDarkChange)

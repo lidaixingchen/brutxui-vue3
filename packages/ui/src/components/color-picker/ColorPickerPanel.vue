@@ -131,7 +131,8 @@ function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
 function handlePointerDown(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
     event.preventDefault()
     dragging.value = target
-    const el = event.currentTarget as HTMLElement
+    const el = event.currentTarget
+    if (!(el instanceof HTMLElement)) return
     el.setPointerCapture(event.pointerId)
     updateFromPointer(target, event)
 }
@@ -145,11 +146,13 @@ function handlePointerUp(event: PointerEvent) {
     if (!dragging.value) return
     const target = dragging.value
     dragging.value = null
-    const el = event.currentTarget as HTMLElement
-    try {
-        el.releasePointerCapture(event.pointerId)
-    } catch {
-        // pointer already released
+    const el = event.currentTarget
+    if (el instanceof HTMLElement) {
+        try {
+            el.releasePointerCapture(event.pointerId)
+        } catch {
+            // pointer already released
+        }
     }
     if (target === 'sv' || target === 'hue' || target === 'alpha') {
         confirmSelection()

@@ -1,5 +1,6 @@
 import { type DeepReadonly, type Ref, readonly, ref } from 'vue'
 import { normalizeColor } from '../lib/color'
+import { hasLocalStorage, safeGetStorageItem, safeSetStorageItem } from '../lib/env'
 
 export interface UseColorHistoryOptions {
     storageKey?: string
@@ -19,29 +20,23 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
     const history = ref<string[]>([])
 
     function loadHistory() {
-        if (!storageKey) return
-        if (typeof window === 'undefined' || !window.localStorage) return
-        try {
-            const raw = window.localStorage.getItem(storageKey)
-            if (raw) {
+        if (!storageKey || !hasLocalStorage) return
+        const raw = safeGetStorageItem(storageKey)
+        if (raw) {
+            try {
                 const parsed = JSON.parse(raw)
                 if (Array.isArray(parsed)) {
                     history.value = parsed.filter((item) => typeof item === 'string').slice(0, maxItems)
                 }
+            } catch {
+                history.value = []
             }
-        } catch {
-            history.value = []
         }
     }
 
     function saveHistory() {
-        if (!storageKey) return
-        if (typeof window === 'undefined' || !window.localStorage) return
-        try {
-            window.localStorage.setItem(storageKey, JSON.stringify(history.value))
-        } catch {
-            // ignore quota / serialization errors
-        }
+        if (!storageKey || !hasLocalStorage) return
+        safeSetStorageItem(storageKey, JSON.stringify(history.value))
     }
 
     function addToHistory(color: string) {

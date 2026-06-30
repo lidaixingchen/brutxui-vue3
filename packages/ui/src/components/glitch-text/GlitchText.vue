@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { glitchTextVariants } from './glitch-text-variants'
 
@@ -19,7 +20,7 @@ interface GlitchTextProps {
 const props = withDefaults(defineProps<GlitchTextProps>(), {
     text: '',
     trigger: 'hover',
-    interval: 3000,
+    interval: DEFAULT_AUTOPLAY_INTERVAL_MS,
     speed: 'medium',
     direction: 'horizontal',
     class: undefined,

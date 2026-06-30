@@ -37,7 +37,9 @@ watch(searchValue, (val) => {
 })
 
 function handleInput(event: Event) {
-    searchValue.value = (event.target as HTMLInputElement).value
+    const target = event.target
+    if (!(target instanceof HTMLInputElement)) return
+    searchValue.value = target.value
 }
 
 const wrapperClasses = computed(() =>

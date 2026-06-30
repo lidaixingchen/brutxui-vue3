@@ -7,6 +7,10 @@ interface VirtualScrollExposed {
     scrollToIndex: (index: number) => void
 }
 
+function assertVirtualScrollExposed(vm: unknown): asserts vm is VirtualScrollExposed {
+    expect(vm).toHaveProperty('scrollToIndex')
+}
+
 // Mock useLocale
 vi.mock('@/composables/useLocale', () => ({
     useLocale: () => ({
@@ -107,7 +111,8 @@ describe('VirtualScroll', () => {
         })
         await flushPromises()
 
-        expect(typeof (wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex).toBe('function')
+        assertVirtualScrollExposed(wrapper.vm)
+        expect(typeof wrapper.vm.scrollToIndex).toBe('function')
     })
 
     it('calls virtualizer.scrollToIndex when scrollToIndex is invoked', async () => {
@@ -119,7 +124,8 @@ describe('VirtualScroll', () => {
         await flushPromises()
 
         scrollToIndexMock.mockClear()
-        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(5)
+        assertVirtualScrollExposed(wrapper.vm)
+        wrapper.vm.scrollToIndex(5)
         expect(scrollToIndexMock).toHaveBeenCalledTimes(1)
         expect(scrollToIndexMock).toHaveBeenCalledWith(5)
     })
@@ -133,9 +139,10 @@ describe('VirtualScroll', () => {
         await flushPromises()
 
         scrollToIndexMock.mockClear()
-        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(0)
-        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(42)
-        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(99)
+        assertVirtualScrollExposed(wrapper.vm)
+        wrapper.vm.scrollToIndex(0)
+        wrapper.vm.scrollToIndex(42)
+        wrapper.vm.scrollToIndex(99)
         expect(scrollToIndexMock).toHaveBeenCalledTimes(3)
         expect(scrollToIndexMock).toHaveBeenNthCalledWith(1, 0)
         expect(scrollToIndexMock).toHaveBeenNthCalledWith(2, 42)

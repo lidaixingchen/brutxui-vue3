@@ -6,17 +6,7 @@ settings:
 
 importers:
 
-  .:
-    devDependencies:
-      '@vitejs/plugin-vue':
-        specifier: ^6.0.7
-        version: 6.0.7(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))(vue@3.5.35(typescript@6.0.3))
-      typescript:
-        specifier: ^6.0.3
-        version: 6.0.3
-      vite:
-        specifier: ^8.0.16
-        version: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
+  .: {}
 
   apps/docs:
     dependencies:
@@ -198,15 +188,9 @@ importers:
       happy-dom:
         specifier: ^20.9.0
         version: 20.9.0
-      postcss:
-        specifier: ^8.5.15
-        version: 8.5.15
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@4.3.0)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -3055,11 +3039,6 @@ packages:
 
   tailwind-merge@3.6.0:
     resolution: {integrity: sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==}
-
-  tailwindcss-animate@1.0.7:
-    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
-    peerDependencies:
-      tailwindcss: '>=3.0.0 || insiders'
 
   tailwindcss@4.3.0:
     resolution: {integrity: sha512-y6nxMGB1nMW9R6k96e5gdIFzcfL/gTJRNaqGes1YvkLnPVXzWgbqFF2yLC0T8G774n24cx3Pe8XrKoniCOAH+Q==}
@@ -6177,10 +6156,6 @@ snapshots:
   tabbable@6.4.0: {}
 
   tailwind-merge@3.6.0: {}
-
-  tailwindcss-animate@1.0.7(tailwindcss@4.3.0):
-    dependencies:
-      tailwindcss: 4.3.0
 
   tailwindcss@4.3.0: {}
 

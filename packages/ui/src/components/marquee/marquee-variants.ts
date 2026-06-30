@@ -9,7 +9,7 @@ export const marqueeContainerVariants = cva(
     {
         variants: {
             fade: {
-                true: '[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] [-webkit-mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
+                true: '[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',
                 false: '',
             },
             variant: {

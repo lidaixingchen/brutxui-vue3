@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, toRef, watch } from 'vue'
+import { hasDocument } from '../../lib/env'
 import { cn } from '../../lib/utils'
+import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '../../lib/theme-fallbacks'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { useCanvasInteraction } from '../../composables/useCanvasInteraction'
 import { useLocale } from '@/composables/useLocale'
@@ -9,10 +11,6 @@ import { scratchCardVariants } from './scratch-card-variants'
 const DEFAULT_PERCENTAGE = 50
 const DEFAULT_BRUSH_RADIUS = 20
 const DEFAULT_FADE_DURATION = 300
-
-const FALLBACK_PRIMARY_COLOR = '#FF6B6B'
-const FALLBACK_SECONDARY_COLOR = '#4ECDC4'
-const FALLBACK_FG_COLOR = '#000000'
 
 const PRIMARY_STRIPE_WIDTH = 10
 const SECONDARY_STRIPE_WIDTH = 2
@@ -56,7 +54,7 @@ const drawOverlay = (ctxVal: CanvasRenderingContext2D, w: number, h: number) => 
         let primary = FALLBACK_PRIMARY_COLOR
         let secondary = FALLBACK_SECONDARY_COLOR
         let fg = FALLBACK_FG_COLOR
-        if (typeof document !== 'undefined') {
+        if (hasDocument) {
             const rootStyle = getComputedStyle(document.documentElement)
             primary = rootStyle.getPropertyValue('--brutal-primary').trim() || primary
             secondary = rootStyle.getPropertyValue('--brutal-secondary').trim() || secondary

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { hasDocument } from '../../lib/env';
 import { cn } from '../../lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
 import { getCheckState, getAllDescendantIds } from './tree-view-utils';
@@ -97,7 +98,7 @@ function getVisibleTreeItems(): HTMLElement[] {
 }
 
 function focusAdjacent(direction: -1 | 1) {
-    if (typeof document === 'undefined') return
+    if (!hasDocument) return
     const items = getVisibleTreeItems()
     if (items.length === 0) return
     const activeEl = document.activeElement
@@ -122,7 +123,7 @@ function handleFocusNext() {
 }
 
 function handleFocusParent() {
-    if (typeof document === 'undefined') return
+    if (!hasDocument) return
     const items = getVisibleTreeItems()
     if (items.length === 0) return
     const activeEl = document.activeElement
@@ -136,7 +137,7 @@ function handleFocusParent() {
 }
 
 function handleFocusFirstChild() {
-    if (typeof document === 'undefined') return
+    if (!hasDocument) return
     const activeEl = document.activeElement
     if (!(activeEl instanceof HTMLElement)) return
     const currentItem = activeEl.closest('[role="treeitem"]')

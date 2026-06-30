@@ -1,4 +1,5 @@
 import { onUnmounted, type Ref } from 'vue'
+import { isClient } from '../lib/env'
 
 const TYPE_SOUND_THROTTLE_MS = 50
 const TYPE_BASE_FREQ = 220
@@ -20,22 +21,13 @@ const FAIL_GAIN = 0.1
 const FAIL_GAIN_END = 0.001
 const FAIL_DURATION = 0.2
 
-interface WindowWithWebkitAudio extends Window {
-    AudioContext?: typeof AudioContext
-    webkitAudioContext?: typeof AudioContext
-}
-
 export function useAudioEngine(enabled: Ref<boolean>) {
     let audioCtx: AudioContext | null = null
     let lastTypeSoundTime = 0
 
     const getCtx = () => {
-        if (!audioCtx && typeof window !== 'undefined') {
-            const win = window as WindowWithWebkitAudio
-            const AudioContextClass = win.AudioContext ?? win.webkitAudioContext
-            if (AudioContextClass) {
-                audioCtx = new AudioContextClass()
-            }
+        if (!audioCtx && isClient) {
+            audioCtx = new AudioContext()
         }
         return audioCtx
     }

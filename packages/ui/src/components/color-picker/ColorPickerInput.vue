@@ -54,10 +54,11 @@ const inputClasses = computed(() =>
 )
 
 function handleInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value
-    text.value = value
-    if (isValidColor(value)) {
-        emit('update:modelValue', formatToProp(value))
+    const target = event.target
+    if (!(target instanceof HTMLInputElement)) return
+    text.value = target.value
+    if (isValidColor(target.value)) {
+        emit('update:modelValue', formatToProp(target.value))
     }
 }
 

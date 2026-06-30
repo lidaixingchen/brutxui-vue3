@@ -8,6 +8,11 @@ interface ScratchCardExposed {
     revealAll: () => void
 }
 
+function assertScratchCardExposed(vm: unknown): asserts vm is ScratchCardExposed {
+    expect(vm).toHaveProperty('isRevealed')
+    expect(vm).toHaveProperty('revealAll')
+}
+
 vi.mock('../../composables/useReducedMotion', () => ({
     useReducedMotion: () => ref(false)
 }))
@@ -49,7 +54,7 @@ beforeAll(() => {
     // getContext 的重载签名无法通过 vi.fn() 直接推断，使用精确的双重断言
     HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue(
         mockCanvasContext,
-    ) as unknown as typeof originalGetContext
+    ) as typeof originalGetContext
 })
 
 afterAll(() => {
@@ -70,7 +75,8 @@ describe('ScratchCard', () => {
 
     it('reveals content on Enter key press', async () => {
         const wrapper = mount(ScratchCard)
-        const vm = wrapper.vm as unknown as ScratchCardExposed
+        assertScratchCardExposed(wrapper.vm)
+        const vm = wrapper.vm
         expect(vm.isRevealed).toBe(false)
 
         await wrapper.trigger('keydown', { key: 'Enter' })
@@ -79,7 +85,8 @@ describe('ScratchCard', () => {
 
     it('reveals content on Space key press', async () => {
         const wrapper = mount(ScratchCard)
-        const vm = wrapper.vm as unknown as ScratchCardExposed
+        assertScratchCardExposed(wrapper.vm)
+        const vm = wrapper.vm
         expect(vm.isRevealed).toBe(false)
 
         await wrapper.trigger('keydown', { key: ' ' })
@@ -112,7 +119,8 @@ describe('ScratchCard', () => {
             slots: { default: 'Content' }
         })
 
-        const vm = wrapper.vm as unknown as ScratchCardExposed
+        assertScratchCardExposed(wrapper.vm)
+        const vm = wrapper.vm
         vm.revealAll()
 
         await vi.advanceTimersByTimeAsync(500)

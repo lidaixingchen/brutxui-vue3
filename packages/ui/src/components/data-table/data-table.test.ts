@@ -28,7 +28,8 @@ const testColumns: DataTableColumn<TestRow>[] = [
 
 // Helper to mount DataTable with proper generic typing
 function mountDataTable(props: Partial<DataTableProps<TestRow>> & { data: TestRow[]; columns: DataTableColumn<TestRow>[]; rowKey: keyof TestRow | ((row: TestRow) => string | number) }) {
-    return mount(DataTable as unknown as Parameters<typeof mount>[0], {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Generic component requires cast for proper typing
+    return mount(DataTable as any, {
         props: props as Record<string, unknown>,
         global: globalProvide,
     })
@@ -410,8 +411,14 @@ describe('DataTable programmatic control (defineExpose)', () => {
         }
     }
 
+    function assertDataTableExposed(vm: unknown): asserts vm is DataTableExposed {
+        expect(vm).toHaveProperty('sort')
+        expect(vm).toHaveProperty('pagination')
+    }
+
     function getExposed(wrapper: ReturnType<typeof mountDataTable>): DataTableExposed {
-        return wrapper.vm as unknown as DataTableExposed
+        assertDataTableExposed(wrapper.vm)
+        return wrapper.vm
     }
 
     it('exposes sort namespace with toggleSort and sortState', () => {

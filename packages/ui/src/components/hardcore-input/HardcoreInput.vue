@@ -99,17 +99,18 @@ const validate = (value: string) => {
 }
 
 const onInput = (e: Event) => {
-    const value = (e.target as HTMLInputElement).value
-    emit('update:modelValue', value)
+    const target = e.target
+    if (!(target instanceof HTMLInputElement)) return
+    emit('update:modelValue', target.value)
 
     if (formField) {
-        formField.setValue(value)
+        formField.setValue(target.value)
     }
 
     audioEngine.playSound('type')
 
     if (props.validateOn === 'input') {
-        validate(value)
+        validate(target.value)
     }
 }
 

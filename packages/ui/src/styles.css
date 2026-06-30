@@ -54,7 +54,7 @@
     }
 
     html {
-        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
         font-feature-settings: normal;
         font-variation-settings: normal;
         tab-size: 4;
@@ -65,8 +65,7 @@
         line-height: inherit;
         font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
             Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+        font-smoothing: antialiased;
     }
 
     /* Breadcrumb list reset to prevent style pollution from external markdown renderers (like VitePress) */

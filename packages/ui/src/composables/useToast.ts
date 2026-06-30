@@ -1,4 +1,5 @@
 import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey } from 'vue'
+import { isClient } from '../lib/env'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
 
@@ -65,7 +66,7 @@ export function createToast() {
         }
         toasts.value = [...toasts.value, { ...toast, id }]
         const duration = toast.duration ?? DEFAULT_TOAST_DURATION
-        if (duration > 0 && typeof window !== 'undefined') {
+        if (duration > 0 && isClient) {
             const timerId = window.setTimeout(() => removeToast(id), duration)
             timerMap.set(id, timerId)
         }
