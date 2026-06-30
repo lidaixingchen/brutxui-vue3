@@ -4,26 +4,34 @@
 
 ```vue
 <HeaderSection
-  :nav-items="[{ text: '首页', href: '/' }, { text: '文档', href: '/docs' }]"
-  logo-text="BrutxUI" logo-href="/"
+  :nav-items="[{ label: '首页', href: '/' }, { label: '文档', href: '/docs' }]"
+  logo-text="BrutxUI" cta-text="注册"
+  @cta-click="handleCta" @nav-click="handleNav"
 />
 ```
 
-- `navItems`: `NavItem[]` — `{ text: string; href: string }[]`
+- `navItems`: `NavItem[]` — `{ label: string; href?: string }[]`
 - `logoText`: `string`
-- `logoHref`: `string`
+- `ctaText`: `string`
+- Events: `ctaClick()`, `navClick(index)`
+- Slots: `header`, `default`, `footer`
 
 ## FooterSection
 
 ```vue
 <FooterSection
-  :links="[{ title: '产品', items: [{ text: '组件', href: '/components' }] }]"
+  logo-text="BrutxUI" description="构建大胆的界面"
+  :link-groups="[{ title: '产品', links: [{ label: '组件', href: '/components' }] }]"
   copyright="© 2024 BrutxUI"
+  @link-click="handleLinkClick"
 />
 ```
 
-- `links`: `FooterLinkGroup[]` — `{ title: string; items: { text: string; href: string }[] }[]`
-- `copyright`: `string`
+- `logoText`/`description`/`copyright`: `string`
+- `linkGroups`: `FooterLinkGroup[]` — `{ title: string; links: FooterLink[] }[]`
+- `FooterLink`: `{ label: string; href?: string }`
+- Events: `linkClick({ groupIndex, linkIndex })`
+- Slots: `header`, `default`, `footer`
 
 ## DashboardShell
 
@@ -32,21 +40,24 @@
 ```vue
 <DashboardShell user-email="user@example.com" @sign-out="handleSignOut">
   <template #sidebar><nav>侧边栏</nav></template>
+  <template #header><span>标题</span></template>
   <template #default><h1>内容</h1></template>
 </DashboardShell>
 ```
 
-- `userEmail`: `string` — 默认 `'user@example.com'`
+- `userEmail`: `string`
 - Events: `signOut`
+- Slots: `sidebar`, `header`, `default`
 
 ## TabsNav
 
 ```vue
 <TabsNav
   :tabs="[{ label: '概览', value: 'overview' }, { label: '设置', value: 'settings' }]"
-  default-value="overview"
+  model-value="overview"
 />
 ```
 
 - `tabs`: `TabItem[]` — `{ label: string; value: string }[]`
-- `defaultValue`: `string`
+- `modelValue`: `string` — v-model，当前激活标签
+- Slots: `header`, `default`, `footer`

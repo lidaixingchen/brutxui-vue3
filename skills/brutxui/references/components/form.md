@@ -464,12 +464,14 @@ function onSubmit(values: Record<string, unknown>) {
 | 组件 | 说明 |
 |------|------|
 | `Form` | 根表单组件，集成 vee-validate |
-| `FormField` | 字段包装器，连接表单状态，提供 `value` 和 `setValue` |
-| `FormItem` | 标签、控件和消息的布局容器 |
+| `FormField` | 字段包装器，连接表单状态，提供字段上下文 |
+| `FormItem` | 标签、控件和消息的布局容器，生成唯一 ID |
 | `FormLabel` | 支持错误状态的标签，注入字段上下文 |
-| `FormControl` | 输入控件的包装器，注入字段上下文 |
+| `FormControl` | 输入控件的包装器，通过 slot 提供无障碍属性 |
 | `FormDescription` | 输入框下方的辅助文本 |
 | `FormMessage` | 验证错误消息，注入字段上下文 |
+| `FormWizard` | 多步骤向导式表单 |
+| `FormConditional` | 根据表单值动态显示/隐藏字段组 |
 
 ### 字段上下文
 
@@ -481,8 +483,22 @@ interface FormFieldContext {
   error: Ref<string | undefined>
   value: Ref<unknown>
   setValue: (value: unknown) => void
+  setError: (message: string | undefined) => void
 }
 ```
+
+`FormItem` 通过 `provide/inject` 向子组件提供 `FormItemContext`：
+
+```typescript
+interface FormItemContext {
+  id: string
+  formItemId: string
+  formDescriptionId: string
+  formMessageId: string
+}
+```
+
+`FormControl`、`FormLabel`、`FormMessage` 均注入 `FormFieldContext` 和 `FormItemContext`，可直接访问字段值和错误状态。
 
 ### Form Props
 
@@ -502,8 +518,28 @@ interface FormFieldContext {
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | 标签变体 |
+| `class` | `string` | — | 自定义类名（错误状态时自动添加 `text-brutal-destructive`） |
+
+### FormControl Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
 | `class` | `string` | — | 自定义类名 |
+
+**Slot Props:** `FormControl` 通过作用域 slot 提供以下属性，用于绑定到内部输入控件：
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `id` | `string` | 与 `FormItem` 关联的唯一 ID |
+| `class` | `string` | 样式类 |
+| `aria-describedby` | `string` | 描述元素的 ID（包含 `FormDescription` 和 `FormMessage`） |
+| `aria-invalid` | `boolean` | 字段是否有验证错误 |
+
+```vue
+<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid }">
+  <Input :id="id" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
+</FormControl>
+```
 
 ### Form 事件
 
@@ -541,12 +577,15 @@ const steps = [
 
 ### FormWizard Props
 
-- `steps`: `FormStep[]` — 步骤配置数组（必填）
-- `modelValue`: `Record<string, unknown>` — 表单数据（v-model）
-- `initialStep`: `number` — 初始步骤索引，默认 `0`
-- `validateOnNext`: `boolean` — 下一步时验证，默认 `true`
-- `showIndicator`: `boolean` — 显示步骤指示器，默认 `true`
-- `linear`: `boolean` — 必须按顺序完成，默认 `true`
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `steps` | `FormStep[]` | — | 步骤配置数组（必填） |
+| `modelValue` | `Record<string, unknown>` | `{}` | 表单数据（v-model） |
+| `initialStep` | `number` | `0` | 初始步骤索引 |
+| `validateOnNext` | `boolean` | `true` | 是否在下一步时验证 |
+| `showIndicator` | `boolean` | `true` | 是否显示步骤指示器 |
+| `linear` | `boolean` | `true` | 是否必须按顺序完成 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### FormStep 类型
 
@@ -555,8 +594,18 @@ interface FormStep {
     id: string
     title: string
     description?: string
+    icon?: Component
     validator?: (values: Record<string, unknown>) => ValidationResult
     optional?: boolean
+}
+```
+
+### ValidationResult 类型
+
+```typescript
+interface ValidationResult {
+    valid: boolean
+    errors: Record<string, string>
 }
 ```
 
@@ -565,8 +614,31 @@ interface FormStep {
 在 FormWizard 子组件中获取向导上下文：
 
 ```typescript
-const { currentStep, nextStep, previousStep, goToStep, complete, isFirstStep, isLastStep } = useFormWizard()
+const {
+    currentStep,    // Ref<number> - 当前步骤
+    steps,          // ComputedRef<FormStep[]> - 步骤配置
+    values,         // ComputedRef<Record<string, unknown>> - 表单数据
+    updateValues,   // (values: Record<string, unknown>) => void - 更新表单数据
+    nextStep,       // () => void - 下一步
+    previousStep,   // () => void - 上一步
+    goToStep,       // (step: number) => void - 跳转步骤
+    complete,       // () => void - 完成表单
+    getStepErrors,  // (step: number) => Record<string, string> | undefined - 获取指定步骤的错误
+    isFirstStep,    // ComputedRef<boolean>
+    isLastStep,     // ComputedRef<boolean>
+    canGoNext,      // ComputedRef<boolean>
+} = useFormWizard()
 ```
+
+### FormWizard 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `Record<string, unknown>` | 表单数据更新 |
+| `step-change` | `[step: number, previousStep: number]` | 步骤切换 |
+| `complete` | `Record<string, unknown>` | 表单完成 |
+| `validation-error` | `[step: number, errors: Record<string, string>]` | 验证失败 |
+| `navigation-blocked` | `[targetStep: number, blockedStep: number]` | 线性模式下导航被阻止 |
 
 ## FormConditional 条件字段
 
@@ -577,11 +649,17 @@ const { currentStep, nextStep, previousStep, goToStep, complete, isFirstStep, is
     <FormField name="type" />
     <FormConditional :when="(v) => v.type === 'company'">
         <FormField name="companyName" />
+        <FormField name="taxId" />
     </FormConditional>
 </Form>
 ```
 
-- `when`: `(values: Record<string, unknown>) => boolean` — 条件判断函数（必填）
+### FormConditional Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `when` | `(values: Record<string, unknown>) => boolean` | — | 条件判断函数（必填） |
+| `class` | `string` | — | 自定义样式类 |
 
 ## useFormFieldValidation
 

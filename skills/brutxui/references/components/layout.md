@@ -2,8 +2,10 @@
 
 ## Card
 
+卡片容器，支持 6 种变体。
+
 ```vue
-<Card>
+<Card variant="default" padding="default">
   <CardHeader>
     <CardTitle>标题</CardTitle>
     <CardDescription>描述</CardDescription>
@@ -15,22 +17,50 @@
 
 子组件：Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
 
+### Card Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
+| `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
+| `class` | `string` | — | 自定义样式类 |
+
+### CardTitle Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `as` | `string` | `'h3'` | 渲染的 HTML 元素 |
+| `class` | `string` | — | 自定义样式类 |
+
 ## Separator
+
+分隔线，支持水平/垂直方向和文字分隔线。
 
 ```vue
 <Separator />
 <Separator orientation="vertical" />
-<Separator variant="primary" size="lg">
-  <template #label>文字</template>
-</Separator>
+<Separator variant="primary" size="lg">文字分隔线</Separator>
 ```
 
-- `orientation`: `'horizontal' | 'vertical'`
-- `variant`: `'default' | 'primary' | 'muted'` — 默认 `'default'`
-- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，控制粗细
-- 插槽 `label`: 居中文字分隔线（仅 orientation=horizontal 且有内容时渲染）
+### Separator Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'muted'` | `'default'` | 颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 控制粗细 |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 方向 |
+| `decorative` | `boolean` | `true` | 是否为装饰性（无语义角色） |
+| `class` | `string` | — | 自定义样式类 |
+
+### Separator 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 文字分隔线内容；仅在 `orientation="horizontal"` 且有内容时渲染 |
 
 ## ScrollArea
+
+自定义滚动区域，基于 reka-ui ScrollArea 原语构建。
 
 ```vue
 <ScrollArea class="h-72 w-48" variant="primary" size="lg">
@@ -38,14 +68,28 @@
 </ScrollArea>
 ```
 
-- `variant`: `'default' | 'primary' | 'accent'` — 默认 `'default'`，控制滚动条颜色
-- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，控制滚动条粗细
-
 子组件：ScrollArea, ScrollBar
+
+### ScrollArea Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细 |
+| `class` | `string` | — | 自定义样式类 |
+
+### ScrollBar Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 方向 |
+| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## Sheet
 
-侧边抽屉，基于 Dialog。
+侧边抽屉，基于 Dialog 原语构建。
 
 ```vue
 <Sheet>
@@ -61,16 +105,37 @@
 </Sheet>
 ```
 
-- `SheetContent.side`: `'top' | 'right' | 'bottom' | 'left'` — 默认 `'right'`
-
 子组件：Sheet, SheetTrigger, SheetPortal, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription
+
+### Sheet Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `defaultOpen` | `boolean` | — | 非受控的默认打开状态 |
+| `modal` | `boolean` | `true` | 是否为模态对话框 |
+
+### SheetContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` | 面板滑出方向 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Sheet 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `boolean` | 打开状态变化时触发 |
 
 ## Tabs
 
+标签页，基于 reka-ui Tabs 原语构建。
+
 ```vue
-<Tabs v-model="activeTab">
-  <TabsList>
-    <TabsTrigger value="account">账户</TabsTrigger>
+<Tabs v-model="activeTab" orientation="horizontal">
+  <TabsList size="default">
+    <TabsTrigger value="account" variant="default">账户</TabsTrigger>
     <TabsTrigger value="password">密码</TabsTrigger>
   </TabsList>
   <TabsContent value="account">账户内容</TabsContent>
@@ -78,16 +143,53 @@
 </Tabs>
 ```
 
-- `Tabs.modelValue`: `string` — v-model，当前激活的标签页
-- `TabsTrigger.value`: `string`
-- `Tabs.orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，透传给 reka-ui `TabsRoot`，并通过 provide/inject 共享给子组件
-- `TabsList.orientation`: `'horizontal' | 'vertical'` — 默认跟随父级 `Tabs`（解析为 `'horizontal'`），vertical 时 TabsList 使用 `flex-col` 布局
+子组件：Tabs, TabsList, TabsTrigger, TabsContent
+
+### Tabs Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `string` | — | 当前激活标签页的值 |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 标签页排列方向 |
+| `class` | `string` | — | 自定义样式类 |
+
+### TabsList Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 容器尺寸 |
+| `orientation` | `'horizontal' \| 'vertical'` | 继承自 Tabs | 排列方向 |
+| `class` | `string` | — | 自定义样式类 |
+
+### TabsTrigger Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | `string` | —（必填） | 标签页唯一标识 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success'` | `'default'` | 激活状态颜色变体 |
+| `class` | `string` | — | 自定义样式类 |
+
+### TabsContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | `string` | —（必填） | 对应标签页的值 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Tabs 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `string` | 激活标签页变化时触发 |
 
 ## Accordion
 
+折叠面板，基于 reka-ui 原语构建。
+
 ```vue
 <Accordion type="single" collapsible>
-  <AccordionItem value="item-1">
+  <AccordionItem value="item-1" variant="default">
     <AccordionTrigger>问题 1</AccordionTrigger>
     <AccordionContent>回答 1</AccordionContent>
   </AccordionItem>
@@ -96,23 +198,91 @@
 
 子组件：Accordion, AccordionItem, AccordionTrigger, AccordionContent
 
-- `AccordionItem.variant`: `'default' | 'flat' | 'ghost' | 'interactive'` — 默认 `'default'`，content 区域样式：default 无附加、flat `bg-brutal-muted/30`、ghost `border-transparent`、interactive `hover:bg-brutal-muted/20`。AccordionContent 通过 provide/inject 自动继承父 AccordionItem 的 variant。
+### Accordion Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `type` | `'single' \| 'multiple'` | — | 展开模式 |
+| `collapsible` | `boolean` | `false` | 是否允许关闭全部子项 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `modelValue` | `string \| string[]` | — | 当前选中的面板值 |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 排列方向 |
+| `unmountOnHide` | `boolean` | `true` | 关闭时是否卸载内容 DOM |
+| `class` | `string` | — | 自定义样式类 |
+
+### AccordionItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | `string` | —（必填） | 唯一标识 |
+| `variant` | `'default' \| 'flat' \| 'ghost' \| 'interactive'` | `'default'` | 视觉风格变体 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `class` | `string` | — | 自定义样式类 |
+
+### AccordionTrigger Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'lg'` | 展开/折叠图标尺寸 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Accordion 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `string \| string[] \| undefined` | 展开状态改变时触发 |
+
+### Accordion 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `AccordionTrigger#icon` | 自定义展开/折叠图标，默认为 ChevronDown |
 
 ## Breadcrumb
+
+面包屑导航，基于 reka-ui 原语构建。
 
 ```vue
 <Breadcrumb>
   <BreadcrumbList>
-    <BreadcrumbItem><BreadcrumbLink href="/">首页</BreadcrumbLink></BreadcrumbItem>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">首页</BreadcrumbLink>
+    </BreadcrumbItem>
     <BreadcrumbSeparator />
-    <BreadcrumbItem><BreadcrumbPage>当前页</BreadcrumbPage></BreadcrumbItem>
+    <BreadcrumbItem>
+      <BreadcrumbPage>当前页</BreadcrumbPage>
+    </BreadcrumbItem>
   </BreadcrumbList>
 </Breadcrumb>
 ```
 
 子组件：Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis
 
+### BreadcrumbLink Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `as` | `string` | `'a'` | 渲染的 HTML 标签 |
+| `asChild` | `boolean` | `false` | 是否开启 asChild |
+| `class` | `string` | — | 自定义样式类 |
+
+### BreadcrumbEllipsis Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Breadcrumb 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `BreadcrumbSeparator#default` | 默认渲染 `/`，可自定义 |
+| `BreadcrumbEllipsis#default` | 默认渲染 MoreHorizontal 图标 |
+
 ## Stepper
+
+步骤条，支持水平/垂直方向。
 
 ```vue
 <Stepper
@@ -122,75 +292,134 @@
   ]"
   v-model="currentStep"
   orientation="horizontal"
+  variant="default"
+  size="default"
+  :clickable="true"
 />
 ```
 
-- `steps`: `StepperStep[]` — `{ id: string|number; title: string; description?: string }[]`
-- `modelValue`: `number`（0-indexed）
-- `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`
-- `variant`: `'default' | 'primary' | 'accent'` — 默认 `'default'`，影响 active 状态颜色
-- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`，步骤点尺寸
-- `clickable`: `boolean` — 默认 `true`，false 时步骤点不可点击
-- Events: `update:modelValue`, `step-click`（点击步骤节点时触发）
+### StepperStep 类型
 
-垂直模式支持内容插槽：
-
-```vue
-<Stepper v-model="current" :steps="steps" orientation="vertical">
-  <template #step-1>
-    <p>第一步的内容...</p>
-  </template>
-  <template #step-2>
-    <p>第二步的内容...</p>
-  </template>
-</Stepper>
+```typescript
+interface StepperStep {
+  id: string | number
+  title: string
+  description?: string
+}
 ```
+
+### Stepper Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `steps` | `StepperStep[]` | —（必填） | 步骤数据列表 |
+| `modelValue` | `number` | — | 当前步骤索引（0 开始） |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 布局方向 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 步骤点尺寸 |
+| `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 激活步骤的颜色变体 |
+| `clickable` | `boolean` | `true` | 是否允许点击步骤点跳转 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Stepper 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `number` | 步骤变更 |
+| `step-click` | `number` | 点击某步骤节点时触发 |
+
+### Stepper 插槽
+
+垂直模式下，每个步骤可通过 `#step-{id}` 插槽注入内容。
 
 ## Timeline
 
+时间线，支持垂直/水平方向和交替布局。
+
 ```vue
-<Timeline orientation="vertical">
+<Timeline orientation="vertical" :alternate="false">
   <TimelineItem>
     <TimelineSeparator>
-      <TimelineDot />
+      <TimelineDot variant="primary" shape="circle">1</TimelineDot>
       <TimelineConnector />
     </TimelineSeparator>
-    <TimelineContent><p>事件 1</p></TimelineContent>
+    <TimelineContent>
+      <div class="font-black">第一阶段</div>
+      <p>描述信息</p>
+    </TimelineContent>
   </TimelineItem>
 </Timeline>
 ```
 
-- `orientation`: `'vertical' | 'horizontal'` — 默认 `'vertical'`
-- `alternate`: `boolean` — 默认 `false`，仅 vertical 生效，交替左右排列（偶数项左、奇数项右）
-
 子组件：Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnector, TimelineContent
+
+### Timeline Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 时间线排版方向 |
+| `alternate` | `boolean` | `false` | 是否启用交替布局（仅 vertical 生效） |
+| `class` | `string` | — | 自定义样式类 |
+
+### TimelineDot Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'accent'` | 配色变体 |
+| `shape` | `'circle' \| 'square' \| 'diamond'` | `'circle'` | 几何形态变体 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## Carousel
 
+轮播图，基于 Embla Carousel 驱动。
+
 ```vue
-<Carousel :loop="true" :autoplay="true" :autoplay-delay="5000" show-arrows show-dots>
+<Carousel :loop="true" :autoplay="true" :autoplay-delay="5000" show-arrows show-dots size="md">
   <CarouselItem>幻灯片 1</CarouselItem>
   <CarouselItem>幻灯片 2</CarouselItem>
 </Carousel>
 ```
 
-- `loop`: `boolean` — 默认 `false`
-- `autoplay`: `boolean` — 默认 `false`
-- `autoplayDelay`: `number` — 默认 `3000`
-- `showArrows`: `boolean` — 默认 `true`
-- `showDots`: `boolean` — 默认 `true`
-- `size`: `'sm' | 'md' | 'lg' | 'full' | 'auto'` — 默认 `'auto'`
-- 暴露方法（通过 `ref`）：
-  - `scrollPrev()`: 滚动到上一张
-  - `scrollNext()`: 滚动到下一张
-  - `scrollTo(index)`: 滚动到指定索引
-  - `selectedIndex`: `ComputedRef<number>` — 当前选中索引
-  - `canScrollPrev`: `ComputedRef<boolean>` — 是否可向前滚动
-  - `canScrollNext`: `ComputedRef<boolean>` — 是否可向后滚动
-- 尊重 `prefers-reduced-motion`：启用时停止 autoplay 并通过 `emblaApi.reInit({ duration: 0 })` 禁用过渡
-- `useCarousel` composable：Carousel 内部逻辑已抽取为独立 composable，可单独使用构建自定义轮播 UI。从 `brutx-ui-vue` 导入，接收 `{ loop?, autoplay?, autoplayDelay? }` 选项（支持 `MaybeRefOrGetter`），返回 `{ emblaRef, selectedIndex, scrollSnaps, canScrollPrev, canScrollNext, scrollPrev, scrollNext, scrollTo, startAutoplay, stopAutoplay }`。
+子组件：Carousel, CarouselItem
+
+### Carousel Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `loop` | `boolean` | `false` | 是否开启首尾循环滚动 |
+| `autoplay` | `boolean` | `false` | 是否自动播放 |
+| `autoplayDelay` | `number` | `3000` | 自动播放间隔（毫秒） |
+| `showArrows` | `boolean` | `true` | 是否显示左右切换箭头 |
+| `showDots` | `boolean` | `true` | 是否显示底部导航圆点 |
+| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'default'` | `'default'` | 轮播容器高度预设 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Carousel 暴露的 API
+
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
+| `scrollPrev` | `() => void` | 滚动到上一张 |
+| `scrollNext` | `() => void` | 滚动到下一张 |
+| `scrollTo` | `(index: number) => void` | 滚动到指定索引 |
+| `selectedIndex` | `ComputedRef<number>` | 当前选中索引 |
+| `canScrollPrev` | `ComputedRef<boolean>` | 是否可向前滚动 |
+| `canScrollNext` | `ComputedRef<boolean>` | 是否可向后滚动 |
+
+### useCarousel composable
+
+```typescript
+import { useCarousel } from 'brutx-ui-vue'
+
+const {
+  emblaRef, selectedIndex, scrollSnaps,
+  canScrollPrev, canScrollNext,
+  scrollPrev, scrollNext, scrollTo,
+  startAutoplay, stopAutoplay,
+} = useCarousel({ loop: true, autoplay: true, autoplayDelay: 3000 })
+```
 
 ## TreeView
+
+树形目录，支持单选和复选模式。
 
 ```vue
 <TreeView
@@ -206,9 +435,37 @@
 />
 ```
 
-- `nodes`: `TreeNode[]` — `{ id: string; label: string; icon?: string; children?: TreeNode[]; disabled?: boolean; data?: unknown }[]`
-- `modelValue`: `string | null`
-- `defaultExpanded`: `string[]`
-- `selectionMode`: `'single' | 'checkbox'` — 默认 `'single'`，checkbox 模式下每节点前渲染 Checkbox
-- `checkedIds`: `Set<string>` — `v-model:checked-ids`，checkbox 模式的选中节点 id 集合（父节点状态通过后代推导，支持级联选中与半选）
-- Events: `update:modelValue`, `update:checkedIds`, `check(checkedIds: Set<string>)`
+### TreeNode 类型
+
+```typescript
+interface TreeNode {
+  id: string
+  label: string
+  icon?: string
+  children?: TreeNode[]
+  disabled?: boolean
+  data?: unknown
+}
+```
+
+### TreeView Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `nodes` | `TreeNode[]` | —（必填） | 树形数据源 |
+| `modelValue` | `string \| null` | `null` | 当前选中节点的 id |
+| `selectionMode` | `'single' \| 'checkbox'` | `'single'` | 选择模式 |
+| `checkedIds` | `string[]` | `[]` | 复选模式下勾选的节点 id 列表 |
+| `defaultExpanded` | `string[]` | `[]` | 初始展开的节点 id 列表 |
+| `class` | `string` | — | 自定义样式类 |
+
+### TreeView 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `string \| null` | 选中节点 id 变更 |
+| `update:checkedIds` | `string[]` | 勾选项变更（checkbox 模式） |
+| `update:expanded` | `string[]` | 展开节点列表变更 |
+| `select` | `TreeNode` | 点击任意节点时触发 |
+| `expand` | `[id: string, expanded: boolean]` | 展开/折叠节点时触发 |
+| `check` | `[node: TreeNode, checked: boolean]` | 勾选/取消勾选节点时触发 |

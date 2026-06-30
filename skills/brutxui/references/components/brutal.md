@@ -5,83 +5,49 @@
 颜色模式切换组件，支持三种显示模式。
 
 ```vue
-<script setup>
-import { ColorModeSwitcher } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <!-- 图标模式（默认） -->
-    <ColorModeSwitcher />
-
-    <!-- 按钮模式 -->
-    <ColorModeSwitcher display="button" />
-
-    <!-- 下拉选择模式 -->
-    <ColorModeSwitcher display="select" />
-
-    <!-- 不显示 system 选项 -->
-    <ColorModeSwitcher :show-system="false" />
-</template>
+<ColorModeSwitcher />
+<ColorModeSwitcher display="button" />
+<ColorModeSwitcher display="select" />
+<ColorModeSwitcher :show-system="false" />
 ```
 
-- `display`: `'icon' | 'button' | 'select'` — 默认 `'icon'`
-- `showSystem`: `boolean` — 默认 `true`
+### ColorModeSwitcher Props
 
-## CSS 动画预设
-
-13 个粗野主义风格动画工具类：
-
-| 类名 | 效果 |
-|------|------|
-| `animate-brutal-shake` | 左右抖动 |
-| `animate-brutal-bounce` | 弹跳 |
-| `animate-brutal-pulse` | 脉冲缩放 |
-| `animate-brutal-flip` | 水平翻转 |
-| `animate-brutal-slide-up/down/left/right` | 滑入 |
-| `animate-brutal-pop` | 弹出放大 |
-| `animate-brutal-rotate` | 旋转 360° |
-| `animate-brutal-swing` | 钟摆摆动 |
-| `animate-brutal-jello` | 果冻抖动 |
-| `animate-brutal-heartbeat` | 心跳 |
-
-延迟：`animation-delay-100/200/300/500`
-重复：`animation-once` / `animation-infinite`
-
-### useAnimation 组合式函数
-
-在 JavaScript 中统一处理动画降级：
-
-```typescript
-import { useAnimation } from 'brutx-ui-vue'
-
-const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
-// prefersReduced=true 时 animationClass 为空字符串，动画自动禁用
-```
-
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `animationClass` | `ComputedRef<string>` | 解析后的动画类名 |
-| `prefersReduced` | `Ref<boolean>` | 是否启用了减少动效 |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `display` | `'icon' \| 'button' \| 'select'` | `'icon'` | 显示模式 |
+| `showSystem` | `boolean` | `true` | 是否显示 "system" 选项 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## Card3D
 
 3D 悬浮卡片，鼠标移动时产生 3D 倾斜效果。
 
 ```vue
-<Card3D :max-rotation="15" :perspective="1000" :scale="1.02">
-  <Card><CardContent>3D 悬浮效果</CardContent></Card>
+<Card3D :max-rotation="15" :perspective="1000" :scale="1.02" variant="primary" clickable>
+  <div class="p-6">3D 悬浮效果</div>
 </Card3D>
 ```
 
-- `maxRotation`: `number` — 默认 `15`
-- `perspective`: `number` — 默认 `1000`
-- `scale`: `number` — 默认 `1.02`
-- `shadowOffset`: `number` — 默认 `10`
-- `shadow`: `'default' | 'sm' | 'lg'`
-- `disabled`: `boolean`
-- `variant`: `'default' | 'primary' | 'accent' | 'muted'` — 默认 `'default'`，控制背景色
-- `clickable`: `boolean` — 默认 `false`，true 时 cursor-pointer 并 emit `click` 事件
-- Events: `click`
+### Card3D Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `maxRotation` | `number` | `15` | 最大偏转角度（度） |
+| `perspective` | `number` | `1000` | 3D 透视深度 (px) |
+| `scale` | `number` | `1.02` | Hover 时的缩放比例 |
+| `shadowOffset` | `number` | `10` | 阴影最大物理位移像素量 |
+| `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | 阴影大小变体 |
+| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 卡片背景色变体 |
+| `disabled` | `boolean` | `false` | 禁用 3D 效果 |
+| `clickable` | `boolean` | `false` | 是否启用点击 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Card3D 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `click` | `MouseEvent` | 仅当 `clickable` 为 `true` 且 `disabled` 为 `false` 时触发 |
 
 ## GlitchText
 
@@ -91,44 +57,63 @@ const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
 <GlitchText text="GLITCH" trigger="hover" speed="medium" direction="horizontal" />
 ```
 
-- `text`: `string`
-- `trigger`: `'hover' | 'click' | 'autoplay' | 'none'` — 默认 `'hover'`
-- `interval`: `number` — 默认 `3000`
-- `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
-- `direction`: `'horizontal' | 'vertical' | 'both'` — 默认 `'horizontal'`，控制撕裂方向
+### GlitchText Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `text` | `string` | `''` | 要显示的文本内容 |
+| `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 动画触发时机 |
+| `interval` | `number` | `3000` | 自动播放时的周期时间 (ms) |
+| `speed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 撕裂抖动的频率和速度 |
+| `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向 |
+| `class` | `string` | — | 自定义样式类 |
+
+### GlitchText 暴露的 API
+
+| 方法 | 说明 |
+|------|------|
+| `play()` | 开始故障动画 |
+| `stop()` | 停止故障动画 |
 
 ## GlitchButton
 
-故障效果按钮，继承 Button 的所有变体和尺寸，支持横向/纵向/双向撕裂。
+故障效果按钮，继承 Button 的所有变体和尺寸。
 
 ```vue
 <GlitchButton variant="primary" trigger="hover" speed="medium" direction="horizontal" data-text="点击我">
   点击我
 </GlitchButton>
 
-<!-- 自动播放模式 -->
 <GlitchButton trigger="autoplay" :interval="5000" speed="slow" data-text="自动故障">
   自动故障
 </GlitchButton>
 
-<!-- 加载状态 -->
 <GlitchButton :loading="true" data-text="提交中...">提交中...</GlitchButton>
 ```
 
-- `variant`: `'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'` — 默认 `'default'`
-- `size`: `'sm' | 'default' | 'lg' | 'xl' | 'icon'` — 默认 `'default'`
-- `speed`: `'slow' | 'medium' | 'fast'` — 默认 `'medium'`
-- `direction`: `'horizontal' | 'vertical' | 'both'` — 默认 `'horizontal'`，控制撕裂方向
-- `trigger`: `'hover' | 'click' | 'autoplay' | 'none'` — 默认 `'hover'`
-- `interval`: `number` — 自动播放间隔（毫秒），最小 100，默认 `3000`
-- `asChild`: `boolean` — 默认 `false`
-- `loading`: `boolean` — 默认 `false`
-- `disabled`: `boolean` — 默认 `false`
-- 方法: `play()`, `stop()`
+### GlitchButton Props
 
-> 注意：GlitchButton 的撕裂效果通过伪元素 `content: attr(data-text)` 复制文本实现，需通过 `data-text` 属性传入与按钮内容一致的文本，否则伪元素复制层为空。GlitchText 自动从 `text` prop 绑定 `data-text`，无需手动传。
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | 按钮尺寸 |
+| `speed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 故障动画速度 |
+| `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向 |
+| `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 动画触发时机 |
+| `interval` | `number` | `3000` | 自动播放间隔 (ms)，最小 100 |
+| `asChild` | `boolean` | `false` | 作为子组件渲染 |
+| `loading` | `boolean` | `false` | 加载状态 |
+| `disabled` | `boolean` | `false` | 禁用状态 |
+| `class` | `string` | — | 自定义样式类 |
 
-> 注意：当用户启用 prefers-reduced-motion 时，动画会自动禁用以支持无障碍。
+### GlitchButton 暴露的 API
+
+| 方法 | 说明 |
+|------|------|
+| `play()` | 开始故障动画 |
+| `stop()` | 停止故障动画 |
+
+> 注意：GlitchButton 的撕裂效果通过伪元素 `content: attr(data-text)` 复制文本实现，需通过 `data-text` 属性传入与按钮内容一致的文本。
 
 ## TypewriterText
 
@@ -143,14 +128,25 @@ const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
 />
 ```
 
-- `text`: `string` — 必填
-- `speed`: `number` — 打字速度（毫秒/字符），默认 `50`
-- `delay`: `number` — 开始延迟（毫秒），默认 `0`
-- `loop`: `boolean` — 是否循环，默认 `false`
-- `cursor`: `boolean` — 是否显示光标，默认 `true`
-- `size`: `'sm' | 'default' | 'lg' | 'xl' | '2xl'` — 默认 `'default'`
-- `weight`: `'normal' | 'medium' | 'bold' | 'black'` — 默认 `'normal'`
-- Events: `start`, `complete`
+### TypewriterText Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `text` | `string` | —（必填） | 要显示的文本 |
+| `speed` | `number` | `50` | 打字速度（毫秒/字符） |
+| `delay` | `number` | `0` | 开始延迟（毫秒），循环模式下也用作重启间隔 |
+| `loop` | `boolean` | `false` | 是否循环播放 |
+| `cursor` | `boolean` | `true` | 是否显示光标 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 文本尺寸 |
+| `weight` | `'normal' \| 'medium' \| 'bold' \| 'black'` | `'normal'` | 文本粗细 |
+| `class` | `string` | — | 自定义样式类 |
+
+### TypewriterText 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `start` | — | 打字开始时触发 |
+| `complete` | — | 打字完成时触发 |
 
 ## NoiseBackground
 
@@ -162,15 +158,19 @@ const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
 </NoiseBackground>
 ```
 
-- `type`: `'fractalNoise' | 'turbulence'` — 默认 `'fractalNoise'`
-- `frequency`: `number` — 噪点频率，默认 `0.65`
-- `octaves`: `number` — 噪点层数，默认 `3`
-- `opacity`: `number` — 不透明度，默认 `0.5`
-- `animated`: `boolean` — 是否启用动画，默认 `false`
-- `animationDuration`: `number` — 动画周期（秒），默认 `8`
-- `rounded`: `'none' | 'default' | 'lg' | 'full'` — 默认 `'none'`
+### NoiseBackground Props
 
-> 当 `prefers-reduced-motion` 启用时，组件跳过 `requestAnimationFrame` 动画循环，仅渲染静态噪点单帧（基于 `useReducedMotion` 检测）。
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `type` | `'fractalNoise' \| 'turbulence'` | `'fractalNoise'` | 噪点类型 |
+| `frequency` | `number` | `0.65` | 噪点频率（0-1） |
+| `octaves` | `number` | `3` | 噪点层数 |
+| `opacity` | `number` | `0.5` | 噪点不透明度（0-1） |
+| `animated` | `boolean` | `false` | 是否启用动画效果 |
+| `animationDuration` | `number` | `8` | 动画周期（秒） |
+| `animationRange` | `number` | `0.1` | 动画频率变化范围 |
+| `rounded` | `'none' \| 'default' \| 'lg' \| 'full'` | `'none'` | 圆角变体 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## ScratchCard
 
@@ -178,79 +178,87 @@ const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
 
 ```vue
 <ScratchCard :percentage="50" :brush-radius="20" :fade-duration="300">
-  <div>🎉 恭喜中奖！</div>
+  <div>恭喜中奖！</div>
 </ScratchCard>
 ```
 
-- `percentage`: `number` — 默认 `50`，刮开多少比例自动显示全部
-- `brushRadius`: `number` — 默认 `20`
-- `overlayColor`: `string` — 设置纯色覆盖层，不设则默认双色条纹
-- `fadeDuration`: `number` — 默认 `300`
-- Events: `@progress(percent: number)`, `@completed`
-- 暴露: `isRevealed` (Ref<boolean>), `revealAll()` (方法)
+### ScratchCard Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `percentage` | `number` | `50` | 自动刮除全部的面积百分比阈值 (0-100) |
+| `brushRadius` | `number` | `20` | 刮除画笔擦头半径 (px) |
+| `overlayColor` | `string` | — | 覆盖层底色，不设则默认双色条纹 |
+| `fadeDuration` | `number` | `300` | 达到阈值后 Canvas 淡出动画时长 (ms) |
+| `class` | `string` | — | 自定义样式类 |
+
+### ScratchCard 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `progress` | `number` | 刮除进度改变回调（已节流） |
+| `completed` | — | 刮开完成触发 |
+
+### ScratchCard 暴露的 API
+
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
+| `isRevealed` | `boolean` | 是否已揭开 |
+| `revealAll()` | `() => void` | 立即揭开全部内容 |
 
 ## SketchyChart
 
 手绘风格图表，支持折线图、柱状图和饼图。
 
-### 折线图
-
 ```vue
 <SketchyChart
   type="line"
-  :data="[{ label: '1月', value: 40 }, { label: '2月', value: 60 }, { label: '3月', value: 35 }]"
-  :sketchiness="2" :grid="true"
-/>
-```
-
-### 柱状图
-
-```vue
-<SketchyChart
-  type="bar"
-  :data="[{ label: 'A', value: 30 }, { label: 'B', value: 50 }, { label: 'C', value: 20 }]"
+  :data="[{ label: '1月', value: 40 }, { label: '2月', value: 60 }]"
   :sketchiness="2"
+  :grid="true"
 />
 ```
 
-### 饼图
+### SketchyChart Props
 
-```vue
-<SketchyChart
-  type="pie"
-  :data="[
-    { label: 'Vue', value: 45 },
-    { label: 'React', value: 30 },
-    { label: 'Angular', value: 15 },
-    { label: 'Svelte', value: 10 },
-  ]"
-  :width="400" :height="400"
-/>
-```
-
-饼图颜色自动循环使用设计令牌：`--brutal-primary` → `--brutal-secondary` → `--brutal-accent` → `--brutal-info` → `--brutal-success` → `--brutal-destructive`。扇区从顶部（12 点钟方向）开始，顺时针排列，按数据值比例计算角度。
-
-### Props
-
-- `type`: `'line' | 'bar' | 'pie'` — 默认 `'line'`
-- `data`: `ChartDataItem[]` — `{ label: string; value: number }[]`
-- `sketchiness`: `number` — 默认 `2`，手绘抖动程度
-- `grid`: `boolean` — 默认 `true`（仅折线图/柱状图有效）
-- `width`: `number` — 默认 `600`
-- `height`: `number` — 默认 `400`
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `type` | `'line' \| 'bar' \| 'pie'` | `'line'` | 图表类型 |
+| `data` | `Array<{ label: string, value: number }>` | `[]` | 图表数据源 |
+| `sketchiness` | `number` | `2` | 手绘抖动幅度 (0-10) |
+| `grid` | `boolean` | `true` | 是否绘制背景网格（饼图无效） |
+| `width` | `number` | `600` | 图表宽度 (px) |
+| `height` | `number` | `400` | 图表高度 (px) |
+| `class` | `string` | — | 自定义样式类 |
 
 ## CopyToClipboard
+
+复制到剪贴板按钮。
 
 ```vue
 <CopyToClipboard text="要复制的文本" :duration="2000" variant="primary" size="lg" />
 ```
 
-- `text`: `string` — 必填
-- `duration`: `number` — 默认 `2000`
-- `variant`: `'default' | 'primary' | 'outline'` — 默认 `'default'`
-- `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+### CopyToClipboard Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `text` | `string` | —（必填） | 需要拷贝到剪贴板的文本 |
+| `duration` | `number` | `2000` | 复制成功反馈的保持毫秒数 |
+| `variant` | `'default' \| 'primary' \| 'outline'` | `'default'` | 按钮颜色变体 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 按钮尺寸 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 图标尺寸 |
+| `class` | `string` | — | 自定义样式类 |
+
+### CopyToClipboard 插槽
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | `{ copied: boolean }` | 自定义按钮内容 |
 
 ## KanbanBoard
+
+看板组件，基于原生 HTML5 拖拽 API。
 
 ```vue
 <KanbanBoard
@@ -261,15 +269,44 @@ const { animationClass, prefersReduced } = useAnimation('animate-brutal-bounce')
 />
 ```
 
-- `modelValue`: `KanbanColumn[]` — 必填
-- Events: `update:modelValue`, `card-move(cardId, fromColumn, toColumn)`, `column-move(fromId, fromIndex, toIndex)`（列标题拖拽排序）, `add-card(columnId)`（默认 `+` 按钮点击时触发）
-- 插槽: `add-{columnId}` 在列底部插入自定义添加入口（带默认 `+` 按钮 fallback，可用 `#add-{colId}` 自定义）
+### KanbanColumn 类型
 
 ```typescript
 interface KanbanColumn {
-  id: string; title: string; color?: string; cards: KanbanCard[]
+  id: string
+  title: string
+  color?: string
+  cards: KanbanCard[]
 }
+
 interface KanbanCard {
-  id: string; title: string; description?: string; tags?: string[]; color?: string
+  id: string
+  title: string
+  description?: string
+  tags?: string[]
+  color?: string
 }
 ```
+
+### KanbanBoard Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `KanbanColumn[]` | —（必填） | 看板数据（v-model） |
+| `class` | `string` | — | 自定义样式类 |
+
+### KanbanBoard 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `KanbanColumn[]` | 列数据更新 |
+| `card-move` | `(cardId: string, fromColumn: string, toColumn: string)` | 卡片跨列移动完成时触发 |
+| `card-click` | `(card: KanbanCard, columnId: string)` | 点击卡片时触发 |
+| `column-move` | `(columnId: string, fromIndex: number, toIndex: number)` | 拖拽列标题完成排序时触发 |
+| `add-card` | `columnId: string` | 点击默认「添加卡片」按钮时触发 |
+
+### KanbanBoard 插槽
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `add-{columnId}` | `columnId: string` | 在指定列底部自定义「添加卡片」入口 |

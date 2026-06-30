@@ -2,6 +2,8 @@
 
 ## Dialog
 
+模态对话框，基于 reka-ui Dialog 原语构建。
+
 ```vue
 <Dialog>
   <DialogTrigger as-child><Button>打开</Button></DialogTrigger>
@@ -19,13 +21,45 @@
 </Dialog>
 ```
 
-子组件：Dialog, DialogTrigger, DialogPortal, DialogClose, DialogOverlay, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription
+子组件：Dialog, DialogTrigger, DialogPortal, DialogClose, DialogOverlay, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogEnhanced
 
-- `DialogContent.size`: `'sm' | 'default' | 'lg' | 'xl' | 'full'` — 默认 `'default'`，控制最大宽度（sm=max-w-sm, default=max-w-lg, lg=max-w-2xl, xl=max-w-4xl, full=max-w-[calc(100vw-2rem)]）
+### Dialog Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `defaultOpen` | `boolean` | `false` | 非受控模式下的默认打开状态 |
+| `modal` | `boolean` | `true` | 是否为模态对话框 |
+
+### DialogContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 对话框尺寸 |
+| `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
+| `class` | `string` | — | 自定义样式类 |
+
+### DialogEnhanced（可拖拽/可调整大小）
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `draggable` | `boolean` | `false` | 是否可拖拽 |
+| `dragHandle` | `string \| HTMLElement` | — | 拖拽手柄（CSS 选择器或元素） |
+| `resizable` | `boolean` | `false` | 是否可调整大小 |
+| `minWidth` | `number` | `200` | 最小宽度 |
+| `minHeight` | `number` | `150` | 最小高度 |
+| `maxWidth` | `number` | — | 最大宽度 |
+| `maxHeight` | `number` | — | 最大高度 |
+
+### Dialog 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `boolean` | 对话框打开状态变化时触发 |
 
 ## AlertDialog
 
-确认弹窗。
+确认弹窗，基于 reka-ui AlertDialog 原语构建。
 
 ```vue
 <AlertDialog>
@@ -45,42 +79,134 @@
 
 子组件：AlertDialog, AlertDialogTrigger, AlertDialogPortal, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel
 
+### AlertDialogAction Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体 |
+| `class` | `string` | — | 自定义样式类 |
+
+> AlertDialogCancel 使用硬编码的 `variant: 'outline'`。
+
 ## Alert
 
 ```vue
-<Alert>
+<Alert variant="default">
   <AlertTitle>提示</AlertTitle>
   <AlertDescription>提示信息。</AlertDescription>
 </Alert>
 
-<Alert variant="destructive">
+<Alert variant="danger" closable @close="handleClose">
   <AlertTitle>错误</AlertTitle>
   <AlertDescription>操作失败。</AlertDescription>
+  <template #actions>
+    <Button variant="primary" size="sm">重试</Button>
+  </template>
 </Alert>
 ```
 
-- `variant`: `'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'` — 默认 `'default'`，控制背景色与文字色（源码中以 `danger` 对应危险/错误场景）
-- `closable`: `boolean` — 默认 `false`，右上角渲染关闭按钮（使用 Button `variant="ghost" size="icon"`）
-- Events: `close` — 点击关闭按钮时触发
-- Slots: `actions` — 操作按钮区域（如"重试"、"查看详情"），渲染在内容下方
+### Alert Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'default'` | 警告框变体类型 |
+| `closable` | `boolean` | `false` | 是否显示关闭按钮 |
+| `class` | `string` | — | 自定义样式类 |
+
+### AlertTitle Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `as` | `string \| Component` | `'h5'` | 渲染的 HTML 元素或组件 |
+| `asChild` | `boolean` | — | 是否将 props 传递给子元素 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Alert 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `close` | — | 点击关闭按钮时触发 |
+
+### Alert 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `default` | 提示框主体内容 |
+| `actions` | 操作按钮区域，渲染在内容下方 |
 
 ## Toast
 
-```vue
-<script setup lang="ts">
-import { useToast } from 'brutx-ui-vue'
-const { toast } = useToast()
+全局通知气泡系统，提供 `useToast` 组合式函数。
 
-toast({ title: '成功', description: '已保存。', variant: 'success' })
+```vue
+<script setup>
+import { useToast, ToastContainer } from 'brutx-ui-vue'
+const { success, error, warning, info, addToast, promise } = useToast()
+
+success('成功', '已保存。')
+error('错误', '操作失败。')
+
+// Promise Toast
+await promise(saveData(), {
+  loading: '保存中...',
+  success: '保存成功！',
+  error: '保存失败',
+})
 </script>
+
+<template>
+  <ToastContainer />
+</template>
 ```
 
-- `title`: `string`
-- `description`: `string`
-- `variant`: `'default' | 'success' | 'destructive' | 'info'`
-- `pauseOnHover`: `boolean` — 默认 `true`，鼠标悬停时暂停倒计时和进度条动画，离开后从剩余时间继续
+### ToastItem 类型
+
+```typescript
+interface ToastItem {
+  id: string
+  variant?: 'default' | 'success' | 'error' | 'warning' | 'info'
+  size?: 'sm' | 'default' | 'lg'
+  title?: string
+  description?: string
+  duration?: number
+}
+```
+
+### useToast 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `toasts` | `Ref<ToastItem[]>` | 响应式提示列表 |
+| `addToast` | `(toast: Omit<ToastItem, 'id'>) => string` | 添加自定义提示 |
+| `removeToast` | `(id: string) => void` | 移除指定提示 |
+| `clearToasts` | `() => void` | 清除所有提示 |
+| `success` | `(title: string, description?: string) => string` | 显示成功提示 |
+| `error` | `(title: string, description?: string) => string` | 显示错误提示 |
+| `warning` | `(title: string, description?: string) => string` | 显示警告提示 |
+| `info` | `(title: string, description?: string) => string` | 显示信息提示 |
+| `promise` | `<T>(promise: Promise<T>, options: PromiseToastOptions<T>) => Promise<T>` | 自动追踪 Promise 状态 |
+
+### Toast Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'default'` | 提示类型 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 尺寸 |
+| `title` | `string` | — | 标题文本 |
+| `description` | `string` | — | 描述文本 |
+| `duration` | `number` | `5000` | 显示时长（毫秒），设为 `0` 则不自动关闭 |
+| `pauseOnHover` | `boolean` | `true` | 鼠标悬停时暂停倒计时与进度条动画 |
+
+### ToastContainer Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` | 显示位置 |
+| `stack` | `{ maxVisible?: number; gap?: number; expandDirection?: 'up' \| 'down' }` | `{ maxVisible: 5, gap: 12 }` | 堆叠配置 |
 
 ## Popover
+
+弹出层，基于 reka-ui Popover 原语构建。
 
 ```vue
 <Popover>
@@ -89,10 +215,33 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
 </Popover>
 ```
 
-- `PopoverContent.align`: `'center' | 'start' | 'end'` — 默认 `'center'`
-- `PopoverContent.sideOffset`: `number` — 默认 `8`
+子组件：Popover, PopoverTrigger, PopoverContent, PopoverAnchor
+
+### Popover Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `defaultOpen` | `boolean` | `false` | 非受控模式下的初始打开状态 |
+| `modal` | `boolean` | `false` | 模态模式 |
+
+### PopoverContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `align` | `'start' \| 'center' \| 'end'` | `'center'` | 相对于触发器的对齐方式 |
+| `sideOffset` | `number` | `8` | 与触发器的距离（像素） |
+| `class` | `string` | — | 自定义样式类 |
+
+### Popover 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `boolean` | 打开状态变化时触发 |
 
 ## Tooltip
+
+工具提示，基于 reka-ui Tooltip 原语构建。需要 `TooltipProvider` 包裹。
 
 ```vue
 <TooltipProvider>
@@ -103,14 +252,51 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
 </TooltipProvider>
 ```
 
-- `TooltipContent.sideOffset`: `number` — 默认 `6`
+子组件：TooltipProvider, Tooltip, TooltipTrigger, TooltipContent
+
+### TooltipProvider Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `delayDuration` | `number` | `400` | 打开延迟时间（毫秒） |
+| `skipDelayDuration` | `number` | `300` | 跳过延迟的时间窗口 |
+| `disableHoverableContent` | `boolean` | `false` | 指针移入内容区域是否关闭 |
+| `disabled` | `boolean` | `false` | 是否禁用所有工具提示 |
+
+### Tooltip Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | — | 受控的打开状态 |
+| `delayDuration` | `number` | `700` | 覆盖 Provider 的延迟时间 |
+| `disabled` | `boolean` | `false` | 是否禁用此工具提示 |
+
+### TooltipContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `sideOffset` | `number` | `6` | 与触发器的距离（像素） |
+| `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'top'` | 显示方向 |
+| `align` | `'start' \| 'center' \| 'end'` | `'center'` | 相对触发器的对齐方式 |
+| `ariaLabel` | `string` | — | 屏幕阅读器标签 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Tooltip 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `boolean` | 打开状态变化时触发 |
 
 ## DropdownMenu
+
+下拉菜单，基于 reka-ui DropdownMenu 原语构建。
 
 ```vue
 <DropdownMenu>
   <DropdownMenuTrigger as-child><Button>菜单</Button></DropdownMenuTrigger>
   <DropdownMenuContent :side-offset="6">
+    <DropdownMenuLabel>操作</DropdownMenuLabel>
+    <DropdownMenuSeparator />
     <DropdownMenuItem>编辑</DropdownMenuItem>
     <DropdownMenuItem>复制</DropdownMenuItem>
     <DropdownMenuSeparator />
@@ -119,13 +305,48 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
 </DropdownMenu>
 ```
 
-- `DropdownMenuContent.sideOffset`: `number` — 默认 `6`
-
 子组件：DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSub, DropdownMenuRadioGroup, DropdownMenuContent, DropdownMenuItem, DropdownMenuCheckboxItem, DropdownMenuRadioItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuSubTrigger, DropdownMenuSubContent
+
+### DropdownMenuContent Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `sideOffset` | `number` | `6` | 菜单内容与触发器之间的间距 |
+| `class` | `string` | — | 自定义样式类 |
+
+### DropdownMenuItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `inset` | `boolean` | — | 是否缩进显示 |
+| `class` | `string` | — | 自定义样式类 |
+
+### DropdownMenuCheckboxItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `v-model` | `boolean \| 'indeterminate'` | — | 复选框状态 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 勾选图标尺寸 |
+| `class` | `string` | — | 自定义样式类 |
+
+### DropdownMenuRadioItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | `string` | —（必填） | 单选项的值 |
+| `class` | `string` | — | 自定义样式类 |
+
+### DropdownMenuSubTrigger Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `inset` | `boolean` | — | 是否缩进显示 |
+| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 展开图标尺寸 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## Command
 
-命令面板。
+命令面板，基于 reka-ui Listbox 原语构建。
 
 ```vue
 <Command>
@@ -133,12 +354,12 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
   <CommandList>
     <CommandEmpty>没有结果</CommandEmpty>
     <CommandGroup title="操作">
-      <CommandItem>新建文件</CommandItem>
-      <CommandItem>打开设置</CommandItem>
+      <CommandItem value="new">新建文件</CommandItem>
+      <CommandItem value="open">打开设置</CommandItem>
     </CommandGroup>
     <CommandSeparator />
     <CommandGroup title="最近">
-      <CommandItem>项目 A</CommandItem>
+      <CommandItem value="project-a">项目 A</CommandItem>
     </CommandGroup>
   </CommandList>
 </Command>
@@ -146,4 +367,54 @@ toast({ title: '成功', description: '已保存。', variant: 'success' })
 
 子组件：Command, CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator, CommandShortcut
 
-- 暴露: `filterSearch`（`Ref<string>`）— 可通过 `ref` 程序化读写搜索过滤值
+### Command Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `disableFilter` | `boolean` | `false` | 禁用内部搜索过滤 |
+| `class` | `string` | — | 自定义样式类 |
+
+### CommandDialog Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `open` | `boolean` | `false` | 对话框是否打开，支持 `v-model:open` |
+| `title` | `string` | 国际化默认值 | 对话框标题（无障碍访问用） |
+| `description` | `string` | 国际化默认值 | 对话框描述（无障碍访问用） |
+| `class` | `string` | — | 自定义样式类 |
+
+### CommandInput Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `modelValue` | `string` | — | 输入框的值，支持 `v-model` |
+| `placeholder` | `string` | 国际化默认值 | 占位符文本 |
+| `class` | `string` | — | 自定义样式类 |
+
+### CommandItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `value` | `string` | — | 项目的唯一标识值 |
+| `disabled` | `boolean` | — | 是否禁用该项目 |
+| `class` | `string` | — | 自定义样式类 |
+
+### CommandGroup Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | — | 分组标题文本 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Command 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `string` | 输入值变化时触发 |
+| `select` | `string` | 选中项目时触发（CommandItem） |
+
+### 暴露的 API
+
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
+| `filterSearch` | `Ref<string>` | 当前搜索关键词，可读写；写入后会触发内部过滤逻辑 |

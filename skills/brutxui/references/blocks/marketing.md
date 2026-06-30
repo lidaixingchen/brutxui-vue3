@@ -6,14 +6,16 @@
 <BrutalistHero
   title="构建大胆的界面"
   subtitle="快速创建新粗野主义风格应用"
-  primary-action-text="开始使用" primary-action-href="/docs"
-  secondary-action-text="源码" secondary-action-href="https://github.com/..."
+  primary-cta-text="开始使用"
+  secondary-cta-text="源码"
+  @primary-cta="handlePrimary"
+  @secondary-cta="handleSecondary"
 />
 ```
 
 - `title`/`subtitle`: `string`
-- `primaryActionText`/`primaryActionHref`: `string`
-- `secondaryActionText`/`secondaryActionHref`: `string`
+- `primaryCtaText`/`secondaryCtaText`: `string`
+- Events: `primaryCta`, `secondaryCta`
 
 ## PricingSection
 
@@ -122,14 +124,17 @@ interface PricingPlan {
 ```
 
 - `quote`/`author`/`role`: `string`
+- Slot: `actions` — 卡片底部操作区域
 
 ## BlogCard
 
 ```vue
-<BlogCard title="Vue 3 最佳实践" excerpt="学习组合式 API..." date="2024-01-15" tag="Vue" href="/blog/vue3" />
+<BlogCard title="Vue 3 最佳实践" excerpt="学习组合式 API..." date="2024-01-15" category="Vue" @read-more="handleReadMore" />
 ```
 
-- `title`/`excerpt`/`date`/`tag`/`href`: `string`
+- `title`/`excerpt`/`author`/`date`/`category`: `string`
+- Events: `readMore`
+- Slot: `actions` — 卡片底部操作区域
 
 ## BlogListPage
 
@@ -138,6 +143,7 @@ interface PricingPlan {
   title="博客"
   :posts="[{ title: '文章', excerpt: '摘要', author: '作者', date: '2024-01-15', category: 'Vue', slug: 'article' }]"
   :categories="['Vue', 'CSS']" :page-size="6"
+  @post-click="handlePostClick" @category-filter="handleCategoryFilter"
 />
 ```
 
@@ -145,24 +151,31 @@ interface PricingPlan {
 - `posts`: `BlogPost[]` — `{ title: string; excerpt: string; author: string; date: string; category: string; slug: string }[]`
 - `categories`: `string[]`
 - `pageSize`: `number` — 默认 `6`
+- Events: `postClick(slug)`, `categoryFilter(category)`
+- Slots: `header`, `default`, `footer`
 
 ## GallerySection
 
 ```vue
-<GallerySection title="项目展示" :items="[{ src: '/img/1.jpg', alt: '项目 1', caption: '描述' }]" />
+<GallerySection title="项目展示" :items="[{ src: '/img/1.jpg', alt: '项目 1', caption: '描述' }]" @item-click="handleItemClick" />
 ```
 
 - `title`: `string`
 - `items`: `GalleryItem[]` — `{ src: string; alt: string; caption?: string }[]`
+- Events: `itemClick(index)`
+- Slots: `header`, `default`, `footer`
 
 ## FaqSection
 
 ```vue
 <FaqSection
-  :faqs="[{ question: '支持哪些框架？', answer: 'Vue 3。' }]"
+  :items="[{ question: '支持哪些框架？', answer: 'Vue 3。' }]"
   title="常见问题" subtitle="找到答案"
+  @item-click="handleItemClick"
 />
 ```
 
-- `faqs`: `FaqItem[]` — `{ question: string; answer: string }[]`
+- `items`: `FaqItem[]` — `{ question: string; answer: string }[]`
 - `title`/`subtitle`: `string`
+- Events: `itemClick(index)`
+- Slots: `header`, `default`, `footer`
