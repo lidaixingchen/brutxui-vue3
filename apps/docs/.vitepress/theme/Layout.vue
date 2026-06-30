@@ -2,9 +2,11 @@
 import DefaultTheme from 'vitepress/theme'
 import { useRouter } from 'vitepress'
 import { NotFoundPage } from 'brutx-ui-vue'
+import { useI18n } from './lib/i18n'
 
 const { Layout } = DefaultTheme
 const router = useRouter()
+const { t } = useI18n()
 
 function handleBack() {
     router.go('/')
@@ -15,9 +17,9 @@ function handleBack() {
     <Layout>
         <template #not-found>
             <NotFoundPage
-                title="页面未找到"
-                description="您访问的页面不存在或已被移除。"
-                back-text="返回首页"
+                :title="t('pageNotFound')"
+                :description="t('pageNotFoundDesc')"
+                :back-text="t('backToHome')"
                 @back="handleBack"
             />
         </template>

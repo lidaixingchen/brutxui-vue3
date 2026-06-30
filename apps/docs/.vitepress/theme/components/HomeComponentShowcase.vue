@@ -1,31 +1,33 @@
 <script setup lang="ts">
-// Demo 组件已在 theme/index.ts 全局注册
+import { useI18n } from '../lib/i18n'
+
+const { isEn, t } = useI18n()
 </script>
 
 <template>
   <div class="home-showcase">
     <div class="showcase-header">
-      <h3 class="showcase-title">组件预览</h3>
-      <p class="showcase-subtitle">粗野主义视觉冲击力，一眼可见</p>
+      <h3 class="showcase-title">{{ t('componentPreview') }}</h3>
+      <p class="showcase-subtitle">{{ t('brutalVisualImpact') }}</p>
     </div>
 
     <div class="showcase-grid">
       <div class="showcase-item">
-        <div class="showcase-label">Button 按钮</div>
+        <div class="showcase-label">{{ isEn ? 'Button' : 'Button 按钮' }}</div>
         <div class="showcase-content vp-raw">
           <ButtonDemo />
         </div>
       </div>
 
       <div class="showcase-item">
-        <div class="showcase-label">Badge 徽标</div>
+        <div class="showcase-label">{{ isEn ? 'Badge' : 'Badge 徽标' }}</div>
         <div class="showcase-content vp-raw">
           <BadgeDemo />
         </div>
       </div>
 
       <div class="showcase-item showcase-item-wide">
-        <div class="showcase-label">Card 卡片</div>
+        <div class="showcase-label">{{ isEn ? 'Card' : 'Card 卡片' }}</div>
         <div class="showcase-content vp-raw">
           <CardDemo />
         </div>

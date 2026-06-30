@@ -1,15 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useI18n } from '../lib/i18n'
+
+const { isEn, t } = useI18n()
 
 const activeTab = ref<'cli' | 'usage'>('cli')
 
-const cliCode = `# 初始化项目
+const cliCode = computed(() =>
+    isEn.value
+        ? `# Initialize project
+npx brutx-vue init
+
+# Add components
+npx brutx-vue add button card badge`
+        : `# 初始化项目
 npx brutx-vue init
 
 # 添加组件
-npx brutx-vue add button card badge`
+npx brutx-vue add button card badge`,
+)
 
-const usageCode = `<script setup lang="ts">
+const usageCode = computed(() =>
+    isEn.value
+        ? `<script setup lang="ts">
+import { BButton } from '@/components/ui/button'
+<\/script>
+
+<template>
+  <BButton variant="primary" size="lg">
+    Neo-Brutalism Button
+  </BButton>
+</template>`
+        : `<script setup lang="ts">
 import { BButton } from '@/components/ui/button'
 <\/script>
 
@@ -17,14 +39,15 @@ import { BButton } from '@/components/ui/button'
   <BButton variant="primary" size="lg">
     粗野主义按钮
   </BButton>
-</template>`
+</template>`,
+)
 </script>
 
 <template>
   <div class="home-code-preview">
     <div class="code-header">
-      <h3 class="code-title">快速开始</h3>
-      <p class="code-subtitle">复制粘贴优先，零依赖锁定</p>
+      <h3 class="code-title">{{ t('quickStart') }}</h3>
+      <p class="code-subtitle">{{ t('copyPasteFirst') }}</p>
     </div>
 
     <div class="code-tabs" role="tablist">
@@ -34,7 +57,7 @@ import { BButton } from '@/components/ui/button'
         :aria-selected="activeTab === 'cli'"
         @click="activeTab = 'cli'"
       >
-        CLI 安装
+        {{ t('cliInstall') }}
       </button>
       <button
         :class="['tab-button', { active: activeTab === 'usage' }]"
@@ -42,7 +65,7 @@ import { BButton } from '@/components/ui/button'
         :aria-selected="activeTab === 'usage'"
         @click="activeTab = 'usage'"
       >
-        组件使用
+        {{ t('componentUsage') }}
       </button>
     </div>
 

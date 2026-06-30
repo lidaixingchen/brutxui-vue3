@@ -27,6 +27,237 @@ export default defineConfig({
                 returnToTopLabel: '回到顶部',
             },
         },
+        en: {
+            label: 'English',
+            lang: 'en',
+            title: 'BrutxUI',
+            description: 'Neo-Brutalism Vue 3 Component Library',
+            themeConfig: {
+                outline: { label: 'On this page', level: [2, 3] },
+                lastUpdated: { text: 'Last updated' },
+                docFooter: { prev: 'Previous', next: 'Next' },
+                darkModeSwitchLabel: 'Appearance',
+                sidebarMenuLabel: 'Menu',
+                returnToTopLabel: 'Back to top',
+                nav: [
+                    { text: 'Guide', link: '/en/guide/getting-started' },
+                    { text: 'Components', link: '/en/components/' },
+                    { text: 'Blocks', link: '/en/blocks/' },
+                    { text: 'GitHub', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
+                ],
+                sidebar: {
+                    '/en/guide/': [
+                        { text: 'Getting Started', link: '/en/guide/getting-started' },
+                        {
+                            text: 'Installation',
+                            items: [
+                                { text: 'Vite', link: '/en/guide/installation-vite' },
+                                { text: 'Manual', link: '/en/guide/installation-manual' },
+                            ],
+                        },
+                        { text: 'CLI', link: '/en/guide/cli' },
+                        { text: 'Theme & Tokens', link: '/en/guide/theme' },
+                        { text: 'Theme Playground', link: '/en/guide/theme-playground' },
+                        { text: 'Internationalization', link: '/en/guide/locale' },
+                        { text: 'AI Integration', link: '/en/guide/ai' },
+                        {
+                            text: 'Advanced',
+                            items: [
+                                { text: 'Best Practices', link: '/en/guide/best-practices' },
+                                { text: 'FAQ', link: '/en/guide/faq' },
+                                { text: 'Changelog', link: '/en/guide/changelog' },
+                                { text: 'Contributing', link: '/en/guide/contributing' },
+                            ],
+                        },
+                    ],
+                    '/en/components/': [
+                        { text: 'Overview', link: '/en/components/' },
+                        {
+                            text: 'Basic',
+                            items: [
+                                { text: 'Button', link: '/en/components/button' },
+                                { text: 'Badge', link: '/en/components/badge' },
+                                { text: 'Label', link: '/en/components/label' },
+                                { text: 'Kbd', link: '/en/components/kbd' },
+                                { text: 'Separator', link: '/en/components/separator' },
+                                { text: 'Spinner', link: '/en/components/spinner' },
+                                { text: 'Skeleton', link: '/en/components/skeleton' },
+                                { text: 'Avatar', link: '/en/components/avatar' },
+                                { text: 'CopyToClipboard', link: '/en/components/copy-to-clipboard' },
+                            ],
+                        },
+                        {
+                            text: 'Layout',
+                            items: [
+                                { text: 'Card', link: '/en/components/card' },
+                                { text: 'Card3D', link: '/en/components/card-3d' },
+                                { text: 'Accordion', link: '/en/components/accordion' },
+                                { text: 'Scroll Area', link: '/en/components/scroll-area' },
+                                { text: 'Carousel', link: '/en/components/carousel' },
+                                { text: 'Breadcrumb', link: '/en/components/breadcrumb' },
+                            ],
+                        },
+                        {
+                            text: 'Form',
+                            items: [
+                                { text: 'Input', link: '/en/components/input' },
+                                { text: 'HardcoreInput', link: '/en/components/hardcore-input' },
+                                { text: 'NumberInput', link: '/en/components/number-input' },
+                                { text: 'Textarea', link: '/en/components/textarea' },
+                                { text: 'Checkbox', link: '/en/components/checkbox' },
+                                { text: 'Radio Group', link: '/en/components/radio-group' },
+                                { text: 'Switch', link: '/en/components/switch' },
+                                { text: 'Toggle', link: '/en/components/toggle' },
+                                { text: 'Toggle Group', link: '/en/components/toggle-group' },
+                                { text: 'Select', link: '/en/components/select' },
+                                { text: 'Combobox', link: '/en/components/combobox' },
+                                { text: 'TreeSelect', link: '/en/components/tree-select' },
+                                { text: 'Slider', link: '/en/components/slider' },
+                                { text: 'TagsInput', link: '/en/components/tags-input' },
+                                { text: 'ColorPicker', link: '/en/components/color-picker' },
+                                { text: 'Form', link: '/en/components/form' },
+                                { text: 'Submit Button', link: '/en/components/submit-button' },
+                            ],
+                        },
+                        {
+                            text: 'Data Display',
+                            items: [
+                                { text: 'Table', link: '/en/components/table' },
+                                { text: 'VirtualScroll', link: '/en/components/virtual-scroll' },
+                                { text: 'Timeline', link: '/en/components/timeline' },
+                                { text: 'Progress', link: '/en/components/progress' },
+                                { text: 'Counter', link: '/en/components/counter' },
+                                { text: 'Marquee', link: '/en/components/marquee' },
+                                { text: 'SketchyChart', link: '/en/components/sketchy-chart' },
+                                { text: 'CodeBlock', link: '/en/components/code-block' },
+                                { text: 'ChatBubble', link: '/en/components/chat-bubble' },
+                                { text: 'TreeView', link: '/en/components/tree-view' },
+                                { text: 'Dashboard Stats', link: '/en/components/dashboard-stats' },
+                                { text: 'DataTable', link: '/en/components/data-table' },
+                            ],
+                        },
+                        {
+                            text: 'Navigation',
+                            items: [
+                                { text: 'Tabs', link: '/en/components/tabs' },
+                                { text: 'Stepper', link: '/en/components/stepper' },
+                                { text: 'Pagination', link: '/en/components/pagination' },
+                                { text: 'Dropdown Menu', link: '/en/components/dropdown-menu' },
+                                { text: 'Command', link: '/en/components/command' },
+                            ],
+                        },
+                        {
+                            text: 'Feedback',
+                            items: [
+                                { text: 'Dialog', link: '/en/components/dialog' },
+                                { text: 'Alert Dialog', link: '/en/components/alert-dialog' },
+                                { text: 'Sheet', link: '/en/components/sheet' },
+                                { text: 'Popover', link: '/en/components/popover' },
+                                { text: 'Tooltip', link: '/en/components/tooltip' },
+                                { text: 'Toast', link: '/en/components/toast' },
+                                { text: 'Alert', link: '/en/components/alert' },
+                            ],
+                        },
+                        {
+                            text: 'Date & Time',
+                            items: [
+                                { text: 'Calendar', link: '/en/components/calendar' },
+                                { text: 'DatePicker', link: '/en/components/date-picker' },
+                            ],
+                        },
+                        {
+                            text: 'Other',
+                            items: [
+                                { text: 'GlitchText', link: '/en/components/glitch-text' },
+                                { text: 'GlitchButton', link: '/en/components/glitch-button' },
+                                { text: 'TypewriterText', link: '/en/components/typewriter-text' },
+                                { text: 'BeforeAfter', link: '/en/components/before-after' },
+                                { text: 'ScratchCard', link: '/en/components/scratch-card' },
+                                { text: 'NoiseBackground', link: '/en/components/noise-background' },
+                                { text: 'SaaS Pricing', link: '/en/components/saas-pricing' },
+                                { text: 'KanbanBoard', link: '/en/components/kanban-board' },
+                                { text: 'ColorModeSwitcher', link: '/en/components/color-mode-switcher' },
+                            ],
+                        },
+                    ],
+                    '/en/blocks/': [
+                        { text: 'Overview', link: '/en/blocks/' },
+                        {
+                            text: 'Cards & Components',
+                            items: [
+                                { text: 'Auth Card', link: '/en/blocks/auth-card' },
+                                { text: 'Testimonial Card', link: '/en/blocks/testimonial-card' },
+                                { text: 'Blog Card', link: '/en/blocks/blog-card' },
+                                { text: 'File Card', link: '/en/blocks/file-card' },
+                                { text: 'Error Card', link: '/en/blocks/error-card' },
+                                { text: 'Success Card', link: '/en/blocks/success-card' },
+                                { text: 'Upload Card', link: '/en/blocks/upload-card' },
+                                { text: 'Empty State', link: '/en/blocks/empty-state' },
+                                { text: 'Quick Actions', link: '/en/blocks/quick-actions' },
+                                { text: 'Tabs Nav', link: '/en/blocks/tabs-nav' },
+                                { text: 'Search Widget', link: '/en/blocks/search-widget' },
+                                { text: 'Feedback Form', link: '/en/blocks/feedback-form' },
+                                { text: 'Cookie Consent', link: '/en/blocks/cookie-consent' },
+                            ],
+                        },
+                        {
+                            text: 'Sections',
+                            items: [
+                                { text: 'Brutalist Hero', link: '/en/blocks/brutalist-hero' },
+                                { text: 'Pricing Section', link: '/en/blocks/pricing-section' },
+                                { text: 'Dashboard Shell', link: '/en/blocks/dashboard-shell' },
+                                { text: 'Header Section', link: '/en/blocks/header-section' },
+                                { text: 'Footer Section', link: '/en/blocks/footer-section' },
+                                { text: 'FAQ Section', link: '/en/blocks/faq-section' },
+                                { text: 'Data Table Section', link: '/en/blocks/data-table-section' },
+                                { text: 'Stepper Section', link: '/en/blocks/stepper-section' },
+                                { text: 'Chart Section', link: '/en/blocks/chart-section' },
+                                { text: 'Gallery Section', link: '/en/blocks/gallery-section' },
+                            ],
+                        },
+                        {
+                            text: 'Pages',
+                            items: [
+                                { text: 'Waitlist Page', link: '/en/blocks/waitlist-page' },
+                                { text: 'Not Found Page', link: '/en/blocks/not-found-page' },
+                                { text: 'Loading Page', link: '/en/blocks/loading-page' },
+                                { text: 'Settings Page', link: '/en/blocks/settings-page' },
+                                { text: 'Blog List Page', link: '/en/blocks/blog-list-page' },
+                                { text: 'Overview Page', link: '/en/blocks/overview-page' },
+                                { text: 'Activity Log Page', link: '/en/blocks/activity-log-page' },
+                                { text: 'Profile Page', link: '/en/blocks/profile-page' },
+                            ],
+                        },
+                    ],
+                },
+                search: {
+                    provider: 'local',
+                    options: {
+                        translations: {
+                            button: { buttonText: 'Search docs', buttonAriaLabel: 'Search docs' },
+                            modal: {
+                                displayDetails: 'Display details',
+                                resetButtonTitle: 'Reset search',
+                                backButtonTitle: 'Go back',
+                                noResultsText: 'No results found',
+                                footer: { selectText: 'Select', navigateText: 'Navigate', closeText: 'Close' },
+                            },
+                        },
+                    },
+                },
+                socialLinks: [
+                    { icon: 'github', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
+                ],
+                footer: {
+                    message: 'Brute force builds.',
+                    copyright: `© ${new Date().getFullYear()} BrutxUI · MIT License`,
+                },
+                editLink: {
+                    pattern: 'https://github.com/lidaixingchen/brutxui-vue3/edit/main/apps/docs/:path',
+                    text: 'Edit this page on GitHub',
+                },
+            },
+        },
     },
     description: 'Neo-Brutalism 风格 Vue 3 组件库',
     base: '/brutxui-vue3/',
@@ -54,11 +285,26 @@ export default defineConfig({
         let pageUrl = context.page.replace(/\.md$/, '')
         if (pageUrl === 'index') pageUrl = ''
         pageUrl = pageUrl.replace(/\/index$/, '')
-        const canonicalUrl = `https://lidaixingchen.github.io/brutxui-vue3/${pageUrl}`
+        const isEn = pageUrl.startsWith('en/')
+        const basePath = isEn ? pageUrl.replace(/^en\//, '') : pageUrl
+        const baseUrl = 'https://lidaixingchen.github.io/brutxui-vue3'
+        const canonicalUrl = isEn ? `${baseUrl}/en/${basePath}` : `${baseUrl}/${basePath}`
+        const description = isEn
+            ? (context.description ?? 'Neo-Brutalism Vue 3 Component Library')
+            : (context.description ?? 'Neo-Brutalism 风格 Vue 3 组件库')
 
         return [
+            // hreflang 标签
+            ['link', { rel: 'alternate', hreflang: 'zh-CN', href: `${baseUrl}/${basePath}` }],
+            ['link', { rel: 'alternate', hreflang: 'en', href: `${baseUrl}/en/${basePath}` }],
+            ['link', { rel: 'alternate', hreflang: 'x-default', href: `${baseUrl}/${basePath}` }],
+            // canonical URL
             ['link', { rel: 'canonical', href: canonicalUrl }],
+            // OG / Twitter meta
             ['meta', { property: 'og:url', content: canonicalUrl }],
+            ['meta', { property: 'og:description', content: description }],
+            ['meta', { name: 'twitter:description', content: description }],
+            // JSON-LD 结构化数据
             [
                 'script',
                 { type: 'application/ld+json' },
@@ -66,7 +312,7 @@ export default defineConfig({
                     '@context': 'https://schema.org',
                     '@type': 'SoftwareSourceCode',
                     name: context.title ?? 'BrutxUI',
-                    description: context.description ?? 'Neo-Brutalism 风格 Vue 3 组件库',
+                    description,
                     url: canonicalUrl,
                     codeRepository: 'https://github.com/lidaixingchen/brutxui-vue3',
                     programmingLanguage: 'Vue',

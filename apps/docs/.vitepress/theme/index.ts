@@ -10,6 +10,7 @@ import InstallationTabs from './components/InstallationTabs.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ThemePlayground from './components/ThemePlayground.vue'
 import Logo from './components/Logo.vue'
+import TranslationBanner from './components/TranslationBanner.vue'
 import AlertDemo from './components/demos/AlertDemo.vue'
 import AlertDialogDemo from './components/demos/AlertDialogDemo.vue'
 import AvatarDemo from './components/demos/AvatarDemo.vue'
@@ -123,6 +124,7 @@ export default {
         app.component('ThemeToggle', ThemeToggle)
         app.component('ThemePlayground', ThemePlayground)
         app.component('Logo', Logo)
+        app.component('TranslationBanner', TranslationBanner)
         app.component('AlertDemo', AlertDemo)
         app.component('AlertDialogDemo', AlertDialogDemo)
         app.component('AvatarDemo', AvatarDemo)

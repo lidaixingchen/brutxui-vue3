@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useI18n } from '../lib/i18n'
+
+const { t } = useI18n()
 
 interface StatItem {
   value: string
@@ -7,12 +10,12 @@ interface StatItem {
   suffix?: string
 }
 
-const stats: StatItem[] = [
-  { value: '65', suffix: '+', label: '组件' },
-  { value: '31', suffix: '+', label: '区块' },
-  { value: '100', suffix: '%', label: 'TypeScript' },
-  { value: '4', label: '套主题' },
-]
+const stats = computed<StatItem[]>(() => [
+  { value: '65', suffix: '+', label: t('components') },
+  { value: '31', suffix: '+', label: t('blocks') },
+  { value: '100', suffix: '%', label: t('typescript') },
+  { value: '4', label: t('themes') },
+])
 
 const isVisible = ref(false)
 
@@ -22,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div :class="['home-stats', { visible: isVisible }]" role="list" aria-label="项目统计数据">
+  <div :class="['home-stats', { visible: isVisible }]" role="list" aria-label="Project Statistics">
     <div class="stats-grid">
       <div
         v-for="(stat, index) in stats"
