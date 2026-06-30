@@ -3099,6 +3099,14 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/defaults.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5921,6 +5929,10 @@
         {
           "path": "composables/useReducedMotion.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -6046,6 +6058,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],
@@ -6433,11 +6449,19 @@
           "type": "registry:ui"
         },
         {
+          "path": "composables/useCarouselEnhanced.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "locales/zh-CN.ts",
           "type": "registry:ui"
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/defaults.ts",
           "type": "registry:ui"
         }
       ],
@@ -6563,6 +6587,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],
@@ -7241,6 +7269,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -7348,6 +7380,14 @@
         },
         {
           "path": "composables/useReducedMotion.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/defaults.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],
@@ -7472,6 +7512,14 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/theme-fallbacks.ts",
           "type": "registry:ui"
         }
       ],
@@ -7714,6 +7762,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],
@@ -9768,6 +9820,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "composables/useDataTablePagination.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "locales/zh-CN.ts",
           "type": "registry:ui"
         },
@@ -10893,7 +10949,15 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/defaults.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "lib/color.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],
@@ -11206,6 +11270,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -11349,6 +11417,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/defaults.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "lib/data-table-utils.ts",
           "type": "registry:ui"
         }
@@ -11484,6 +11556,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -11592,6 +11668,10 @@
         {
           "path": "composables/useReducedMotion.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -11699,6 +11779,10 @@
         },
         {
           "path": "composables/useReducedMotion.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],
@@ -11810,7 +11894,15 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/defaults.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:ui"
         }
       ],

@@ -5,6 +5,82 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.8.2...HEAD)
+
+## [0.8.2](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.8.1...v0.8.2) - 2026-06-30
+
+### ✨ Features
+
+* **i18n:** 实施多语言支持 - 英文 locale 配置与主题组件国际化 ([0639f0e](https://github.com/lidaixingchen/brutxui-vue3/commit/0639f0ee4d4d7e77be19b73050e3d6efa7b655a0), [d6fd00a](https://github.com/lidaixingchen/brutxui-vue3/commit/d6fd00a850333e03b99c32f62bbc78e2d836255a))
+  * 添加 VitePress 英文 locale 配置（nav、sidebar、search、footer）
+  * 创建 i18n composable (useI18n) 支持 22 个翻译键
+  * 国际化 InstallationTabs、HomeCodePreview、Layout 等主题组件
+  * 完成全部 113 个英文文档翻译（12 guide + 67 组件 + 31 区块 + 3 索引页）
+
+### 🐛 Bug Fixes
+
+* **ui:** 修复代码审查发现的 8 个 bug ([9fc3a0a](https://github.com/lidaixingchen/brutxui-vue3/commit/9fc3a0ab9ecb6a9c1e8c3c7d99ea58abea1dfef3))
+  * parseFormattedDate: 修复无分隔符格式 YYYYMMDD 解析时跳过字符
+  * useToast: 修复 fallback 单例 onScopeDispose 绑定到错误作用域
+  * useCarousel: 修复初始挂载时未应用 reduced-motion 偏好
+  * GlitchText: 添加 trigger 属性监听器，防止定时器泄漏
+  * DataTable: 移除 deep watch，避免不必要的状态重置
+* **ui:** 修复类型安全与兼容性问题 ([2ed7cfe](https://github.com/lidaixingchen/brutxui-vue3/commit/2ed7cfe98dd68d5688f59615375a2fda31481787), [fa496bd](https://github.com/lidaixingchen/brutxui-vue3/commit/fa496bd5b39504edb6569f1224fcd5e89cb7e09b), [2d340e3](https://github.com/lidaixingchen/brutxui-vue3/commit/2d340e3457c381eb7506a282f4da92ef73b40c5e))
+  * ESLint no-explicit-any 从 warn 提升为 error，消除 any 类型
+  * 魔法数字提取为 defaults.ts 命名常量
+  * 定时器声明风格统一为 shallowRef
+  * 修复 VirtualScroll useVirtualizer 参数非响应式
+  * 为多个组件添加 SSR 安全守卫
+  * 为 DatePicker 系列添加 v-model:open 受控模式
+* **ci:** 修复 vue-tsc 类型检查失败及 VitePress 死链 ([cb52c57](https://github.com/lidaixingchen/brutxui-vue3/commit/cb52c5777e342f4824390e3a32748937188bc328))
+* **cli:** 兼容源码与构建产物的 styles 路径解析 ([1fdb15b](https://github.com/lidaixingchen/brutxui-vue3/commit/1fdb15b364b9a6c212b5ab29f223b3ba763c7d44))
+* **docs:** 修复文档格式与国际化问题 ([479fb71](https://github.com/lidaixingchen/brutxui-vue3/commit/479fb71a2514f4589ff447a2c3dc50a66dec5eeb), [4d9c233](https://github.com/lidaixingchen/brutxui-vue3/commit/4d9c233f7afed417639b1086c0879c2cafca9748), [b45beb6](https://github.com/lidaixingchen/brutxui-vue3/commit/b45beb67c2c762b8c8a90170933a940d5b1022b2))
+  * 修复 blocks 安装方式、Props 表格、可访问性章节缺失
+  * 修复未汉化的表格列名（Slots→插槽、载荷→参数）
+  * 修复 locales 配置位置
+
+### 📝 Documentation
+
+* **docs:** 全面翻新组件与区块文档 ([397f288](https://github.com/lidaixingchen/brutxui-vue3/commit/397f2888612dca71dc30ec2316090d53198cb465), [524bd88](https://github.com/lidaixingchen/brutxui-vue3/commit/524bd88491bb25cf66d72181754208521b4d84f5), [3a189bf](https://github.com/lidaixingchen/brutxui-vue3/commit/3a189bf01a5cf814d044f67c49fdbfecca785bf4))
+  * 按模板统一翻新 101 个文档（68 组件 + 33 区块）
+  * 统一章节顺序、名称中文化、表格格式标准化
+  * 对照源码更新 64 个组件 API 描述，补充缺失的 Props/Events/Slots
+* **docs:** 为 12 个复杂组件添加常见问题章节 ([90fc5af](https://github.com/lidaixingchen/brutxui-vue3/commit/90fc5af1db5d52baf5fd8aed2d89ab75c05ff4f3))
+  添加：data-table, kanban-board, form, dialog, combobox, virtual-scroll, carousel, date-picker, color-picker, tags-input, tree-view, tree-select
+* **docs:** 文档网站中文化改造及 VitePress 升级 ([14ddf22](https://github.com/lidaixingchen/brutxui-vue3/commit/14ddf225c863ca9887012ecebcbd3dffca84e8ca), [469f18b](https://github.com/lidaixingchen/brutxui-vue3/commit/469f18b93f38e979f687af1eafe002cdc3080625))
+  * 消除文档网站中所有非必要的英文残留
+  * 404 页面使用自定义 NotFoundPage 组件
+  * VitePress 从 1.6.0 升级至 1.6.4
+  * 新增 FAQ、CHANGELOG、贡献指南、最佳实践指南页面
+* **docs:** 删除无用文档章节 ([c689651](https://github.com/lidaixingchen/brutxui-vue3/commit/c689651533a974156840fde958f2b475ea875cd4))
+  * 删除 10 个组件无用的样式定制章节
+  * 删除 kbd.md 常见问题、code-block.md 国际化、date-picker.md 样式定制、data-table.md 常见问题等冗余章节
+
+### ♻️ Code Refactoring
+
+* **ui:** 清理技术债 - 类型安全与依赖管理 ([bc490e6](https://github.com/lidaixingchen/brutxui-vue3/commit/bc490e6efb5a1f1ded27a51acf5eb38877109804), [d1fbb4b](https://github.com/lidaixingchen/brutxui-vue3/commit/d1fbb4b5e1c7d87401a4dc51423a53db1c29ed7c))
+  * 统一 SSR 守卫为 lib/env.ts 工具函数
+  * 移除过时的兼容性代码（structuredClone、webkitAudioContext、ResizeObserver）
+  * 消除重复常量定义，提取共享常量到 defaults.ts
+  * embla-carousel-vue 移至 peerDependencies
+  * 移除未使用的 postcss、tailwindcss-animate、rimraf、jsdom
+  * 添加 .browserslistrc 明确浏览器兼容目标
+* **cli:** 清理兼容性债务，优化项目配置 ([ffe49eb](https://github.com/lidaixingchen/brutxui-vue3/commit/ffe49ebe30bfd4d7a6ca54d3999ae1694825bb85))
+  * 统一错误处理：定义 CliError 类，移除所有 process.exit()
+  * 替换 JSONC 解析器：使用 jsonc-parser 库
+  * 重构 Logger：支持依赖注入
+
+### 📦 Build
+
+* **registry:** 重建全部组件注册表索引，同步源码变更
+* **ui,docs:** 技术栈优化与子路径导出扩展 ([4fab9bf](https://github.com/lidaixingchen/brutxui-vue3/commit/4fab9bf9e1bf5c68f1d489c3049d842cde3d832a))
+  * brutalism-plugin.js 从 CJS 转为 ESM 格式
+  * Calendar/DatePicker 等 5 个组件改为 defineAsyncComponent 动态 import
+  * 用 @tailwindcss/vite 替代 @tailwindcss/postcss
+  * reka-ui、@tanstack/vue-virtual 移至可选 peerDependencies
+  * 新增 10 个高频组件子路径导出（button, input, dialog, toast, form, select, dropdown-menu, table, card, tabs）
+* **cli:** 修复 styles 路径解析兼容性问题 ([1fdb15b](https://github.com/lidaixingchen/brutxui-vue3/commit/1fdb15b364b9a6c212b5ab29f223b3ba763c7d44))
+
 ## [0.8.1] - 2026-06-30
 
 ### ♻️ Code Refactoring
