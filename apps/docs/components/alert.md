@@ -124,25 +124,25 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 
 ### Alert
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'default'` |
-| `closable` | `boolean` | `false` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'default'` | 警告框变体类型 |
+| `closable` | `boolean` | `false` | 是否显示关闭按钮 |
+| `class` | `string` | — | 自定义 CSS 类 |
 
 ### AlertTitle
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `as` | `string \| Component` | `'h5'` |
-| `asChild` | `boolean` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `as` | `string \| Component` | `'h5'` | 渲染的 HTML 元素或组件 |
+| `asChild` | `boolean` | — | 是否将 props 传递给子元素 |
+| `class` | `string` | — | 自定义 CSS 类 |
 
 ### AlertDescription
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `class` | `string` | — | 自定义 CSS 类 |
 
 ## 事件
 
@@ -172,3 +172,10 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
 | `default` | — | 描述内容 |
+
+## 可访问性
+
+- **ARIA 角色**：组件自动设置 `role="alert"`，确保屏幕阅读器能够识别并播报警告内容
+- **键盘操作**：可关闭提示框的关闭按钮支持 Tab 键聚焦，Enter/Space 键触发关闭
+- **焦点管理**：关闭按钮具有可见的焦点指示器，符合键盘导航标准
+- **语义化结构**：`AlertTitle` 默认渲染为 `h5` 标题元素，提供清晰的内容层级

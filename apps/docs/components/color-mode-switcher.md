@@ -71,6 +71,12 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 | `button` | 按钮模式，显示图标和文字标签的组合按钮 |
 | `select` | 下拉选择模式，基于 Select 组件的下拉选择器 |
 
+## 组合式函数
+
+`ColorModeSwitcher` 内部使用 `useTheme()` 组合式函数获取当前颜色模式并切换。组件需要在上层通过 `provideTheme()` 提供主题上下文，或使用内置的共享单例回退。
+
+颜色模式会持久化到 `localStorage`（键名 `brutx-color-mode`）。当选择 `system` 时，将跟随系统偏好设置，并监听 `prefers-color-scheme` 媒体查询的变化。
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -78,12 +84,6 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 | `display` | `'icon' \| 'button' \| 'select'` | `'icon'` | 显示模式：图标、按钮或下拉选择 |
 | `showSystem` | `boolean` | `true` | 是否显示 "system" 选项 |
 | `class` | `string` | `undefined` | 自定义样式类 |
-
-## 组合式函数
-
-`ColorModeSwitcher` 内部使用 `useTheme()` 组合式函数获取当前颜色模式并切换。组件需要在上层通过 `provideTheme()` 提供主题上下文，或使用内置的共享单例回退。
-
-颜色模式会持久化到 `localStorage`（键名 `brutx-color-mode`）。当选择 `system` 时，将跟随系统偏好设置，并监听 `prefers-color-scheme` 媒体查询的变化。
 
 ## 可访问性
 

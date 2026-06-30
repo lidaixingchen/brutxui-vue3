@@ -15,9 +15,7 @@ description: 搜索组件区块，带有输入框和分组建议列表。
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block search-widget
-```
+<InstallationTabs componentName="search-widget" />
 
 ## 用法
 

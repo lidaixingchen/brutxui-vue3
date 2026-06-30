@@ -305,6 +305,35 @@ const {
 
 > 提示：`emit` 必须是符合 `DatePickerEmit` 签名的函数（即组件 `defineEmits` 的返回值）。`useDatePicker` 不会自动管理 `onMounted` / `onUnmounted` 副作用，可在任意时机调用。
 
+## 程序化控制
+
+`DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` 通过 `defineExpose` 暴露 `open` 响应式引用，允许父组件程序化打开或关闭日期面板。`open` 是与内部 Popover 双向绑定的 `Ref<boolean>`，可直接读写。
+
+> 注意：`DatePickerRange` 和 `TimePicker` 未暴露 `open`。`DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` 同时支持 `v-model:open` 双向绑定，推荐使用 `v-model:open` 替代直接操作 ref。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { DatePicker } from 'brutx-ui-vue'
+
+const pickerRef = ref()
+const date = ref(null)
+</script>
+
+<template>
+    <DatePicker ref="pickerRef" v-model="date" />
+
+    <button @click="pickerRef?.open = true">打开面板</button>
+    <button @click="pickerRef?.open = false">关闭面板</button>
+</template>
+```
+
+### Methods
+
+| 方法/属性 | 类型 | 说明 |
+|----------|------|------|
+| `open` | `Ref<boolean>` | 面板开关状态，可读写；设为 `true` 打开，`false` 关闭 |
+
 ## Props
 
 ### DatePicker
@@ -440,35 +469,6 @@ const {
 | `name` | `string` | — | 表单字段名 |
 | `id` | `string` | — | 组件 ID |
 | `ariaLabel` | `string` | — | 无障碍标签 |
-
-## 程序化控制
-
-`DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` 通过 `defineExpose` 暴露 `open` 响应式引用，允许父组件程序化打开或关闭日期面板。`open` 是与内部 Popover 双向绑定的 `Ref<boolean>`，可直接读写。
-
-> 注意：`DatePickerRange` 和 `TimePicker` 未暴露 `open`。`DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker`、`YearPicker` 同时支持 `v-model:open` 双向绑定，推荐使用 `v-model:open` 替代直接操作 ref。
-
-```vue
-<script setup>
-import { ref } from 'vue'
-import { DatePicker } from 'brutx-ui-vue'
-
-const pickerRef = ref()
-const date = ref(null)
-</script>
-
-<template>
-    <DatePicker ref="pickerRef" v-model="date" />
-
-    <button @click="pickerRef?.open = true">打开面板</button>
-    <button @click="pickerRef?.open = false">关闭面板</button>
-</template>
-```
-
-### Methods
-
-| 方法/属性 | 类型 | 说明 |
-|----------|------|------|
-| `open` | `Ref<boolean>` | 面板开关状态，可读写；设为 `true` 打开，`false` 关闭 |
 
 ## 事件
 

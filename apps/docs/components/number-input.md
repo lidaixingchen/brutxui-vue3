@@ -83,3 +83,10 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 | 事件 | 参数 | 说明 |
 | --- | --- | --- |
 | `update:modelValue` | `(val: number)` | 输入值变化时触发 |
+
+## 可访问性
+
+- **键盘操作**：输入框支持 Tab 键聚焦，加减按钮支持 Enter/Space 键触发，支持方向键 Up/Down 微调数值
+- **ARIA 属性**：加减按钮自动设置 `aria-label`（如"增加"/"减少"），输入框设置 `aria-valuemin`、`aria-valuemax`、`aria-valuenow` 属性
+- **表单集成**：支持 `name`、`required`、`disabled`、`readonly` 等原生表单属性，与表单验证兼容
+- **焦点管理**：`focusOnChange` 属性控制值变化时是否自动聚焦，`disabled` 状态下禁止所有交互

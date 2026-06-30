@@ -97,6 +97,32 @@ import { Counter } from 'brutx-ui-vue'
 | `lg` | 大字号 |
 | `xl` | 超大字号 |
 
+## 程序化控制
+
+Counter 通过 `defineExpose` 暴露以下方法，允许父组件通过 ref 调用：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Counter } from 'brutx-ui-vue'
+
+const counterRef = ref()
+</script>
+
+<template>
+    <Counter ref="counterRef" :to="500" :auto-start="false" />
+    <button @click="counterRef?.play()">开始</button>
+    <button @click="counterRef?.stop()">停止</button>
+</template>
+```
+
+### 暴露的 API
+
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
+| `play()` | `() => void` | 从 `from` 重新开始播放动画 |
+| `stop()` | `() => void` | 立即停止动画 |
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -123,32 +149,6 @@ import { Counter } from 'brutx-ui-vue'
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `complete` | — | 动画播放完毕时触发 |
-
-## 程序化控制
-
-Counter 通过 `defineExpose` 暴露以下方法，允许父组件通过 ref 调用：
-
-```vue
-<script setup>
-import { ref } from 'vue'
-import { Counter } from 'brutx-ui-vue'
-
-const counterRef = ref()
-</script>
-
-<template>
-    <Counter ref="counterRef" :to="500" :auto-start="false" />
-    <button @click="counterRef?.play()">开始</button>
-    <button @click="counterRef?.stop()">停止</button>
-</template>
-```
-
-### 暴露的 API
-
-| 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
-| `play()` | `() => void` | 从 `from` 重新开始播放动画 |
-| `stop()` | `() => void` | 立即停止动画 |
 
 ## 可访问性
 

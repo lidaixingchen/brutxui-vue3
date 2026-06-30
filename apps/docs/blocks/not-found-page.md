@@ -15,9 +15,7 @@ description: 404 错误页面区块，带有故障文本效果和返回按钮。
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block not-found-page
-```
+<InstallationTabs componentName="not-found-page" />
 
 ## 用法
 

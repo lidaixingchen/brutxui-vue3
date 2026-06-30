@@ -83,6 +83,20 @@ function handleClick(event) {
 </template>
 ```
 
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `maxRotation` | `number` | `15` | 最大偏转角度（度） |
+| `perspective` | `number` | `1000` | 3D 透视深度 (px) |
+| `scale` | `number` | `1.02` | Hover 时的缩放比例 |
+| `shadowOffset` | `number` | `10` | 阴影最大物理位移像素量 (px) |
+| `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | 阴影大小变体 |
+| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 卡片背景色变体 |
+| `disabled` | `boolean` | `false` | 禁用 3D 效果，卡片保持静态 |
+| `clickable` | `boolean` | `false` | 是否启用点击，true 时光标为 pointer 并触发 click 事件 |
+| `class` | `string` | — | 外部类覆盖 |
+
 ## 事件
 
 | 事件 | 参数 | 说明 |
@@ -100,17 +114,3 @@ function handleClick(event) {
 - 组件设置了 `role="group"`，并通过 i18n 提供 `aria-label`（中文为 `"3D 交互卡片"`，英文为 `"3D Interactive Card"`）
 - 当用户偏好 `prefers-reduced-motion: reduce` 时，自动禁用 3D 偏转效果
 - 可通过 `disabled` prop 完全禁用 3D 效果
-
-## Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `maxRotation` | `number` | `15` | 最大偏转角度（度） |
-| `perspective` | `number` | `1000` | 3D 透视深度 (px) |
-| `scale` | `number` | `1.02` | Hover 时的缩放比例 |
-| `shadowOffset` | `number` | `10` | 阴影最大物理位移像素量 (px) |
-| `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | 阴影大小变体 |
-| `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 卡片背景色变体 |
-| `disabled` | `boolean` | `false` | 禁用 3D 效果，卡片保持静态 |
-| `clickable` | `boolean` | `false` | 是否启用点击，true 时光标为 pointer 并触发 click 事件 |
-| `class` | `string` | — | 外部类覆盖 |

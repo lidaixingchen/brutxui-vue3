@@ -75,27 +75,33 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 ### Card
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` |
-| `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
+| `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
+| `class` | `string` | — | 自定义 CSS 类 |
 
 ### CardTitle
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `as` | `string` | `'h3'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `as` | `string` | `'h3'` | 渲染的 HTML 元素 |
+| `class` | `string` | — | 自定义 CSS 类 |
 
 ### CardHeader / CardDescription / CardContent / CardFooter
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `class` | `string` | — | 自定义 CSS 类 |
 
 ## 插槽
 
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
 | `default` | — | 所有组件的默认插槽，用于插入内容 |
+
+## 可访问性
+
+- **语义化结构**：`CardTitle` 默认渲染为 `h3` 标题元素，可通过 `as` 属性自定义为合适的标题层级
+- **交互反馈**：`interactive` 变体提供悬停效果，建议配合键盘焦点样式使用
+- **内容组织**：通过 `CardHeader`、`CardContent`、`CardFooter` 子组件提供清晰的内容结构，便于辅助技术理解页面布局
