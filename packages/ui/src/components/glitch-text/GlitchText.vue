@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
@@ -59,6 +59,15 @@ const stopAutoplay = () => {
 
 onMounted(() => {
     if (props.trigger === 'autoplay') {
+        startAutoplay()
+    }
+})
+
+watch(() => props.trigger, (newTrigger, oldTrigger) => {
+    if (oldTrigger === 'autoplay') {
+        stopAutoplay()
+    }
+    if (newTrigger === 'autoplay') {
         startAutoplay()
     }
 })

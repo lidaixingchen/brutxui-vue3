@@ -148,10 +148,12 @@ function exportData(format: 'csv' | 'json') {
     emit('export', format, selectedData)
 }
 
-watch(() => props.data, () => {
-    selection.clearSelection()
-    pagination.goToPage(1)
-}, { deep: true })
+watch(() => props.data, (newData, oldData) => {
+    if (newData !== oldData) {
+        selection.clearSelection()
+        pagination.goToPage(1)
+    }
+})
 
 watch(() => filter.filterState.value.global, () => {
     emit('filter', filter.filterState.value)

@@ -169,3 +169,10 @@ export function useTheme() {
     }
     return fallbackInstance
 }
+
+export function destroyFallback() {
+    if (fallbackInstance) {
+        fallbackInstance.destroy()
+        fallbackInstance = null
+    }
+}

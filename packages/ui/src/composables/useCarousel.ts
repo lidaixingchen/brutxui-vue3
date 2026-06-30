@@ -8,6 +8,10 @@ export interface UseCarouselOptions {
     loop?: MaybeRefOrGetter<boolean | undefined>
     autoplay?: MaybeRefOrGetter<boolean | undefined>
     autoplayDelay?: MaybeRefOrGetter<number | undefined>
+    /** autoplay 状态变化回调 */
+    onAutoplayChange?: (enabled: boolean) => void
+    /** autoplayDelay 变化后 autoplay 重启回调 */
+    onAutoplayDelayChange?: () => void
 }
 
 export function useCarousel(options: UseCarouselOptions = {}) {
@@ -66,18 +70,29 @@ export function useCarousel(options: UseCarouselOptions = {}) {
         }
     }
 
+    let cachedApi: NonNullable<typeof emblaApi.value> | null = null
+
     onMounted(() => {
         if (!emblaApi.value) return
-        emblaApi.value.on('init', onInit)
-        emblaApi.value.on('select', onSelect)
-        emblaApi.value.on('reInit', onInit)
+        cachedApi = emblaApi.value
+        cachedApi.on('init', onInit)
+        cachedApi.on('select', onSelect)
+        cachedApi.on('reInit', onInit)
+        if (prefersReducedMotion.value) {
+            cachedApi.reInit({ duration: 0 })
+        }
         onInit()
         startAutoplay()
     })
 
     watch(() => toValue(options.autoplay), (val) => {
-        if (val) startAutoplay()
-        else stopAutoplay()
+        if (val) {
+            startAutoplay()
+            options.onAutoplayChange?.(true)
+        } else {
+            stopAutoplay()
+            options.onAutoplayChange?.(false)
+        }
     })
 
     watch(() => toValue(options.loop), () => {
@@ -85,7 +100,10 @@ export function useCarousel(options: UseCarouselOptions = {}) {
     })
 
     watch(() => toValue(options.autoplayDelay), () => {
-        if (toValue(options.autoplay)) startAutoplay()
+        if (toValue(options.autoplay)) {
+            startAutoplay()
+            options.onAutoplayDelayChange?.()
+        }
     })
 
     watch(prefersReducedMotion, (reduced) => {
@@ -97,14 +115,14 @@ export function useCarousel(options: UseCarouselOptions = {}) {
             emblaApi.value.reInit({})
             if (toValue(options.autoplay)) startAutoplay()
         }
-    }, { immediate: true })
+    })
 
     onUnmounted(() => {
         stopAutoplay()
-        if (emblaApi.value) {
-            emblaApi.value.off('init', onInit)
-            emblaApi.value.off('select', onSelect)
-            emblaApi.value.off('reInit', onInit)
+        if (cachedApi) {
+            cachedApi.off('init', onInit)
+            cachedApi.off('select', onSelect)
+            cachedApi.off('reInit', onInit)
         }
     })
 

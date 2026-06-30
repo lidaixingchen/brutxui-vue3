@@ -12,8 +12,22 @@ export interface UseCarouselEnhancedOptions extends UseCarouselOptions {
 }
 
 export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
-    // 复用基础 composable
-    const carousel = useCarousel(options)
+    // 复用基础 composable，通过回调同步进度条
+    const carousel = useCarousel({
+        ...options,
+        onAutoplayChange: (enabled) => {
+            if (enabled) {
+                startProgressTimer()
+            } else {
+                stopProgressTimer()
+            }
+            options.onAutoplayChange?.(enabled)
+        },
+        onAutoplayDelayChange: () => {
+            startProgressTimer()
+            options.onAutoplayDelayChange?.()
+        },
+    })
 
     // 增强功能：进度追踪
     const autoplayProgress = ref(0)
