@@ -462,7 +462,7 @@ function onSubmit(values: Record<string, unknown>) {
 ### 子组件
 
 | 组件 | 说明 |
-| --- | --- |
+|------|------|
 | `Form` | 根表单组件，集成 vee-validate |
 | `FormField` | 字段包装器，连接表单状态，提供 `value` 和 `setValue` |
 | `FormItem` | 标签、控件和消息的布局容器 |
@@ -486,30 +486,30 @@ interface FormFieldContext {
 
 ### Form Props
 
-| 属性 | 类型 | 默认值 |
-| --- | --- | --- |
-| `class` | `string` | — |
-| `initialValues` | `Record<string, unknown>` | — |
-| `validationSchema` | `unknown` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义类名 |
+| `initialValues` | `Record<string, unknown>` | — | 表单初始值 |
+| `validationSchema` | `unknown` | — | vee-validate 校验 schema |
 
 ### FormField Props
 
-| 属性 | 类型 | 默认值 |
-| --- | --- | --- |
-| `name` | `string` | —（必填） |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `name` | `string` | —（必填） | 字段名称 |
 
 ### FormLabel Props
 
-| 属性 | 类型 | 默认值 |
-| --- | --- | --- |
-| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | 标签变体 |
+| `class` | `string` | — | 自定义类名 |
 
-### Form Events
+### Form 事件
 
-| 事件 | 载荷 |
-| --- | --- |
-| `submit` | `Record<string, unknown>` |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `submit` | `Record<string, unknown>` | 表单提交时触发 |
 
 ## FormWizard 多步骤表单
 

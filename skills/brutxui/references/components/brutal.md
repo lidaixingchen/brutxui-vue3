@@ -32,7 +32,7 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 13 个粗野主义风格动画工具类：
 
 | 类名 | 效果 |
-| --- | --- |
+|------|------|
 | `animate-brutal-shake` | 左右抖动 |
 | `animate-brutal-bounce` | 弹跳 |
 | `animate-brutal-pulse` | 脉冲缩放 |
