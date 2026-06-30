@@ -38,7 +38,7 @@ const virtualizerOptions = computed(() => ({
 
 function initVirtualizer(): void {
     if (useVirtualizerFn && !virtualizerRef) {
-        virtualizerRef = useVirtualizerFn(virtualizerOptions) as ReturnType<UseVirtualizerFn>
+        virtualizerRef = useVirtualizerFn(virtualizerOptions) as unknown as ReturnType<UseVirtualizerFn>
     }
 }
 
