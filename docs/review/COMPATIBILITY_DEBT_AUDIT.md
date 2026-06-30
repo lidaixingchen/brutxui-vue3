@@ -151,25 +151,30 @@
 | 文件 | 问题 |
 |------|------|
 | `packages/ui/src/lib/test-utils.ts` | 完全未使用的工具函数 |
-| `packages/ui/src/hooks/index.ts` | 完全冗余的 re-export，无消费者 |
 
-### 2. 重复导出文件
+### 2. 公共 API 导出文件（保留）
+
+| 文件                      | 说明                                                                       |
+| ------------------------- | -------------------------------------------------------------------------- |
+| `packages/ui/src/hooks/index.ts` | 公共 API 导出，package.json 中有 `./hooks` 导出配置，供外部消费者使用 |
+
+### 3. 重复导出文件
 
 | 文件 | 说明 |
 |------|------|
 | `packages/ui/src/calendar.ts` | 与 `index.ts` 重复导出 Calendar 组件 |
 | `packages/ui/src/submit-button.ts` | 与 `index.ts` 重复导出 SubmitButton 组件 |
 
-### 3. 重复常量定义
+### 4. 重复常量定义
 
-| 常量 | 重复位置 |
-|------|---------|
-| `DEFAULT_AUTOPLAY_DELAY = 3000` | `Carousel.vue:11` + `useCarousel.ts:5` |
-| `DEFAULT_PAGE_SIZE = 10` | `useDataTablePagination.ts:3` + `DataTableSection.vue:19` |
-| `DEFAULT_COPY_DURATION = 2000` | `useClipboard.ts:3` + `CopyToClipboard.vue:13` |
-| `DEFAULT_TOAST_DURATION = 5000` | `useToast.ts:42` + `Toast.vue:13` |
+| 常量                                        | 重复位置                                                         |
+| ------------------------------------------- | ---------------------------------------------------------------- |
+| `DEFAULT_AUTOPLAY_DELAY = 3000`             | `Carousel.vue:11` + `useCarousel.ts:5`                           |
+| `DEFAULT_PAGE_SIZE = 10`                    | `useDataTablePagination.ts:3` + `DataTableSection.vue:19`        |
+| `DEFAULT_COPIED_DURATION = 2000`            | `useClipboard.ts:3` + `CopyToClipboard.vue:13`（名称略有差异）   |
+| `DEFAULT_TOAST_DURATION = 5000`             | `useToast.ts:42` + `Toast.vue:13`（名称略有差异）                |
 
-### 4. 其他问题
+### 5. 其他问题
 
 - `cli/src/commands/diff.ts:273` — `console.log` 未使用 `logger`
 - `useToast.ts:179-189` / `useTheme.ts:177-188` — fallback 单例模式可考虑 deprecated
@@ -183,7 +188,7 @@
 
 | # | 问题 | 位置 | 建议 |
 |---|------|------|------|
-| 1 | **Tailwind v3 config 是 dead code** | `packages/ui/tailwind.config.js`, `apps/docs/tailwind.config.cjs` | 删除，项目已使用 v4 `@plugin` 语法 |
+| 1 | **Tailwind v3 config 是 dead code** | `packages/ui/tailwind.config.js` | 删除，项目已使用 v4 `@plugin` 语法 |
 | 2 | **`tailwindcss-animate` v1 可能与 Tailwind v4 不兼容** | `packages/ui/tailwind.config.js:40` | 验证 `@plugin "tailwindcss-animate"` 是否正常工作 |
 | 3 | **无显式 `browserslist` 或 `build.target`** | 根 `package.json`, `packages/ui/package.json` | 添加明确的浏览器兼容目标 |
 
@@ -234,8 +239,8 @@
 
 ### 立即处理
 
-1. 删除 Tailwind v3 配置文件（`tailwind.config.js`、`tailwind.config.cjs`）
-2. 删除未使用的 `test-utils.ts` 和 `hooks/index.ts`
+1. 删除 Tailwind v3 配置文件（`packages/ui/tailwind.config.js`）
+2. 删除未使用的 `test-utils.ts`
 
 ### 短期处理
 

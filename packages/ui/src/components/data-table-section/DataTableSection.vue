@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { ArrowUpDown, ArrowUp, ArrowDown } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
+import { DEFAULT_PAGE_SIZE } from '@/composables/useDataTablePagination'
 import { cn } from '../../lib/utils'
 import { iconSizeVariants } from '../../lib/icon-size-variants'
 import Table from '../table/Table.vue'
@@ -15,8 +16,6 @@ import Input from '../input/Input.vue'
 import type { ColumnDef, DataTableSectionProps } from './types'
 
 export type { ColumnDef, DataTableSectionProps }
-
-const DEFAULT_PAGE_SIZE = 10
 
 const props = withDefaults(defineProps<DataTableSectionProps>(), {
     title: undefined,

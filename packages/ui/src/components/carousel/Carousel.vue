@@ -4,11 +4,9 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
 import { useLocale } from '@/composables/useLocale';
-import { useCarousel } from '@/composables/useCarousel';
+import { useCarousel, DEFAULT_AUTOPLAY_DELAY } from '@/composables/useCarousel';
 
 const { t } = useLocale();
-
-const DEFAULT_AUTOPLAY_DELAY = 3000
 
 interface CarouselProps {
     loop?: boolean;

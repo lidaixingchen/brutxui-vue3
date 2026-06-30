@@ -17,6 +17,7 @@ vi.mock('../../composables/useClipboard', () => ({
         copied: mockCopied,
         isSupported: mockIsSupported,
     }),
+    DEFAULT_COPIED_DURATION: 2000,
 }))
 
 async function loadCopyToClipboard(): Promise<Component> {
@@ -39,6 +40,7 @@ function mockUseClipboard() {
             copied: mockCopied,
             isSupported: mockIsSupported,
         }),
+        DEFAULT_COPIED_DURATION: 2000,
     }))
 }
 

@@ -1,6 +1,6 @@
 import { ref, onUnmounted, toValue, type MaybeRefOrGetter } from 'vue'
 
-const DEFAULT_COPIED_DURATION = 2000
+export const DEFAULT_COPIED_DURATION = 2000
 
 export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}) {
     const copied = ref(false)

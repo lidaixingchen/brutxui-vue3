@@ -7,10 +7,10 @@ import Button from '../button/Button.vue'
 import { toastVariants } from './toast-variants'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import { DEFAULT_TOAST_DURATION } from '@/composables/useToast'
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
 
-const DEFAULT_DURATION = 5000
 const LEAVE_ANIMATION_DELAY = 300
 
 interface ToastProps {
@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<ToastProps>(), {
     size: 'default',
     title: undefined,
     description: undefined,
-    duration: DEFAULT_DURATION,
+    duration: DEFAULT_TOAST_DURATION,
     pauseOnHover: true,
     class: undefined,
     iconSize: 'xl',

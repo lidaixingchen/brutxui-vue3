@@ -39,7 +39,7 @@ export interface PromiseToastOptions<T> {
 }
 
 const TOAST_KEY: InjectionKey<ReturnType<typeof createToast>> = Symbol('brutx-toast')
-const DEFAULT_TOAST_DURATION = 5000
+export const DEFAULT_TOAST_DURATION = 5000
 
 export function createToast() {
     const toasts = ref<ToastItem[]>([])

@@ -2,15 +2,13 @@
 import { computed, toRef } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Check, Copy } from '@lucide/vue'
-import { useClipboard } from '../../composables/useClipboard'
+import { useClipboard, DEFAULT_COPIED_DURATION } from '../../composables/useClipboard'
 import { useLocale } from '@/composables/useLocale'
 import { cn } from '../../lib/utils'
 import { copyToClipboardVariants } from './copy-to-clipboard-variants'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 
 type CopyToClipboardVariantProps = VariantProps<typeof copyToClipboardVariants>
-
-const DEFAULT_COPY_DURATION = 2000
 
 interface CopyToClipboardProps {
     text: string
@@ -22,7 +20,7 @@ interface CopyToClipboardProps {
 }
 
 const props = withDefaults(defineProps<CopyToClipboardProps>(), {
-    duration: DEFAULT_COPY_DURATION,
+    duration: DEFAULT_COPIED_DURATION,
     variant: 'default',
     size: 'default',
     class: undefined,

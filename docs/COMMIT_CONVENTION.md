@@ -2,6 +2,13 @@
 
 本项目遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范。
 
+## Shell 注意事项
+
+书写多行 commit message 时需注意不同 Shell 的语法差异：
+
+- **Bash 工具**（Claude Code 默认）：使用 Git Bash（POSIX sh），`@'...'@` 不是 here-string 语法，会被当作普通字符串。多行 commit message 应直接用普通引号包裹。
+- **PowerShell**：`@'...'@` 单引号 here-string 语法要求结束标记 `'@` 必须位于行首（列 0），前面不能有空格。
+
 ## 格式模板
 
 ```
@@ -51,13 +58,6 @@
 | `registry` | 注册表构建 |
 | `shared` | 共享类型 |
 | `deps` | 依赖变更 |
-
-## Shell 注意事项
-
-书写多行 commit message 时需注意不同 Shell 的语法差异：
-
-- **Bash 工具**（Claude Code 默认）：使用 Git Bash（POSIX sh），`@'...'@` 不是 here-string 语法，会被当作普通字符串。多行 commit message 应直接用普通引号包裹。
-- **PowerShell**：`@'...'@` 单引号 here-string 语法要求结束标记 `'@` 必须位于行首（列 0），前面不能有空格。
 
 ## 示例
 
