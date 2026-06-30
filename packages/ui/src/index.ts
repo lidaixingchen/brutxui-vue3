@@ -370,7 +370,7 @@ export { kanbanColumnVariants, kanbanCardVariants } from './components/kanban/ka
 export { default as ChatBubble } from './components/chat-bubble/ChatBubble.vue'
 export { default as ChatContainer } from './components/chat-bubble/ChatContainer.vue'
 export { chatBubbleVariants, chatAvatarVariants } from './components/chat-bubble/chat-bubble-variants'
-export type { MessageStatus } from './components/chat-bubble/ChatBubble.vue'
+export type { ChatMessage, MessageStatus } from './components/chat-bubble/types'
 
 export { default as Kbd } from './components/kbd/Kbd.vue'
 export { kbdVariants } from './components/kbd/kbd-variants'

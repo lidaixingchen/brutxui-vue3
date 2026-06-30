@@ -15,6 +15,7 @@ import { type WeekPickerEmits, type WeekPickerProps } from './types'
 type TriggerVariantProps = VariantProps<typeof datePickerTriggerVariants>
 
 interface Props extends WeekPickerProps {
+    open?: boolean
     size?: NonNullable<TriggerVariantProps['size']>
     variant?: NonNullable<TriggerVariantProps['variant']>
 }
@@ -29,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
     disabled: false,
     readonly: false,
     clearable: false,
+    open: undefined,
     size: 'default',
     variant: 'default',
     shortcuts: () => [],
@@ -38,17 +40,19 @@ const props = withDefaults(defineProps<Props>(), {
     class: undefined,
 })
 
-const emit = defineEmits<WeekPickerEmits>()
+const emit = defineEmits<WeekPickerEmits & {
+    'update:open': [value: boolean]
+}>()
 
 const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.weekPlaceholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.weekPlaceholder'))
 
-const open = ref(false)
+const internalOpen = ref(false)
 const displayValue = ref<Date | null>(props.modelValue)
 
-watch(open, (isOpen) => {
+watch(internalOpen, (isOpen) => {
     if (isOpen) emit('open')
     else {
         emit('close')
@@ -60,6 +64,18 @@ watch(open, (isOpen) => {
 
 watch(() => props.modelValue, (value) => {
     displayValue.value = value
+})
+
+watch(() => props.open, (val) => {
+    if (val !== undefined) internalOpen.value = val
+}, { immediate: true })
+
+const open = computed<boolean>({
+    get: () => props.open !== undefined ? props.open : internalOpen.value,
+    set: (val) => {
+        internalOpen.value = val
+        emit('update:open', val)
+    },
 })
 
 const formattedDisplay = computed(() => {
@@ -107,6 +123,8 @@ function handleTriggerKeydown(event: KeyboardEvent) {
         open.value = true
     }
 }
+
+defineExpose({ open })
 </script>
 
 <template>

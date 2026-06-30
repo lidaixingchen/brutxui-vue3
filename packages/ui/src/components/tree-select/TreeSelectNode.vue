@@ -66,12 +66,14 @@ function handleClick() {
 }
 
 function getVisibleTreeItems(): HTMLElement[] {
+    if (typeof document === 'undefined') return []
     const tree = document.activeElement?.closest('[role="tree"]')
     if (!tree) return []
     return Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
 }
 
 function focusAdjacent(direction: -1 | 1) {
+    if (typeof document === 'undefined') return
     const items = getVisibleTreeItems()
     if (items.length === 0) return
     const activeEl = document.activeElement as HTMLElement | null
@@ -83,6 +85,7 @@ function focusAdjacent(direction: -1 | 1) {
 }
 
 function focusParent() {
+    if (typeof document === 'undefined') return
     const activeEl = document.activeElement as HTMLElement | null
     if (!activeEl) return
     const currentItem = activeEl.closest('[role="treeitem"]')
@@ -92,6 +95,7 @@ function focusParent() {
 }
 
 function focusFirstChild() {
+    if (typeof document === 'undefined') return
     const activeEl = document.activeElement as HTMLElement | null
     if (!activeEl) return
     const currentItem = activeEl.closest('[role="treeitem"]')

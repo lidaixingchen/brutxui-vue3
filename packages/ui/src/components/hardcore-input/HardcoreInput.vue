@@ -81,7 +81,7 @@ const validate = (value: string) => {
     if (validationState.value === 'error' && props.shakeOnError) {
         if (shakeTimer.value) clearTimeout(shakeTimer.value)
         triggerShake.value = false
-        shakeTimer.value = window.setTimeout(() => {
+        shakeTimer.value = setTimeout(() => {
             shakeTimer.value = undefined
             triggerShake.value = true
         }, 10)

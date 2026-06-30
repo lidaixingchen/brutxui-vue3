@@ -138,6 +138,7 @@ function constrainPosition(newX: number, newY: number): { x: number; y: number }
 }
 
 function onDragStart(e: MouseEvent) {
+    if (typeof document === 'undefined') return
     if (!props.draggable) return
 
     const target = e.target as HTMLElement
@@ -167,12 +168,14 @@ function onDragMove(e: MouseEvent) {
 }
 
 function onDragEnd() {
+    if (typeof document === 'undefined') return
     isDragging.value = false
     document.removeEventListener('mousemove', onDragMove)
     document.removeEventListener('mouseup', onDragEnd)
 }
 
 function onResizeStart(e: MouseEvent, corner: string) {
+    if (typeof document === 'undefined') return
     if (!props.resizable) return
 
     isResizing.value = true
@@ -233,6 +236,7 @@ function onResizeMove(e: MouseEvent) {
 }
 
 function onResizeEnd() {
+    if (typeof document === 'undefined') return
     isResizing.value = false
     document.removeEventListener('mousemove', onResizeMove)
     document.removeEventListener('mouseup', onResizeEnd)
@@ -269,6 +273,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+    if (typeof document === 'undefined') return
     document.removeEventListener('mousemove', onDragMove)
     document.removeEventListener('mouseup', onDragEnd)
     document.removeEventListener('mousemove', onResizeMove)

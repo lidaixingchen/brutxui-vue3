@@ -7,7 +7,8 @@ import { accordionItemKey } from './accordion-key'
 
 const props = defineProps<AccordionContentProps & { class?: string }>()
 
-const context = inject(accordionItemKey, { variant: computed(() => undefined) })
+const defaultContext = { variant: computed(() => undefined) }
+const context = inject(accordionItemKey, defaultContext)
 
 const delegatedProps = computed(() => {
     const { class: _, ...delegated } = props

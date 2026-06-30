@@ -21,12 +21,14 @@ const { t } = useLocale()
 
 const parentRef = ref<HTMLElement | null>(null)
 
-const virtualizer = useVirtualizer({
+const virtualizerOptions = computed(() => ({
     count: props.items.length,
     getScrollElement: () => parentRef.value,
     estimateSize: () => props.itemHeight,
     overscan: props.overscan,
-})
+}))
+
+const virtualizer = useVirtualizer(virtualizerOptions)
 
 const virtualItems = computed(() => virtualizer.value.getVirtualItems())
 const totalSize = computed(() => virtualizer.value.getTotalSize())

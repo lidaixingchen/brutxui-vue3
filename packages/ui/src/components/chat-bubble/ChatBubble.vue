@@ -1,23 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { Check, CheckCheck, AlertCircle, Loader2 } from '@lucide/vue';
 import { cn } from '../../lib/utils';
 import { chatBubbleVariants, chatAvatarVariants } from './chat-bubble-variants';
+import type { ChatMessage } from './types';
 
 type ChatBubbleCvaProps = VariantProps<typeof chatBubbleVariants>;
-
-export type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
-
-interface ChatMessage {
-    id: string;
-    content: string;
-    variant?: 'sent' | 'received' | 'system';
-    avatar?: string;
-    name?: string;
-    timestamp?: string | Date;
-    status?: MessageStatus;
-}
 
 interface ChatBubbleProps {
     message: ChatMessage;
@@ -86,6 +75,11 @@ const formattedTimestamp = computed(() => {
     return props.message.timestamp.toLocaleString();
 });
 
+const avatarError = ref(false);
+watch(() => props.message.avatar, () => {
+    avatarError.value = false;
+});
+
 const statusIcon = computed(() => {
     if (!props.message.status) return null;
     switch (props.message.status) {
@@ -120,10 +114,11 @@ const statusClass = computed(() => {
             :title="message.name"
         >
             <img
-                v-if="message.avatar"
+                v-if="message.avatar && !avatarError"
                 :src="message.avatar"
                 :alt="message.name"
                 class="w-full h-full object-cover rounded-brutal"
+                @error="avatarError = true"
             >
             <span v-else>{{ initials }}</span>
         </div>

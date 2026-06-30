@@ -88,7 +88,11 @@ function handleSort(key: string) {
 }
 
 function handleRowClick(row: unknown) {
-    emit('row-click', row as T)
+    // Vue 泛型组件模板中，T 类型通过 computed 链会退化为默认约束类型 Record<string, unknown>
+    // 此处 row 运行时实际为 T，但 TypeScript 无法从模板推断，需断言
+    if (row !== null && typeof row === 'object') {
+        emit('row-click', row as T)
+    }
 }
 
 function handleSearch() {

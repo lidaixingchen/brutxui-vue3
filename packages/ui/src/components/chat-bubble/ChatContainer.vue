@@ -2,20 +2,10 @@
 import { computed } from 'vue';
 import { cn } from '../../lib/utils';
 import ChatBubble from './ChatBubble.vue';
-import type { MessageStatus } from './ChatBubble.vue';
+import type { ChatMessage } from './types';
 import { useLocale } from '@/composables/useLocale';
 
 const { t } = useLocale();
-
-interface ChatMessage {
-    id: string;
-    content: string;
-    variant?: 'sent' | 'received' | 'system';
-    avatar?: string;
-    name?: string;
-    timestamp?: string | Date;
-    status?: MessageStatus;
-}
 
 interface ChatMessageGroup {
     label: string;

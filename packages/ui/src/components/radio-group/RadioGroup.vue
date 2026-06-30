@@ -27,7 +27,7 @@ const classes = computed(() => cn('grid gap-2', props.class))
         :orientation="orientation"
         :aria-label="ariaLabel"
         :class="classes"
-        @update:model-value="(val) => emit('update:modelValue', val as string)"
+        @update:model-value="(val) => { if (typeof val === 'string') emit('update:modelValue', val) }"
     >
         <slot />
     </RadioGroupRoot>

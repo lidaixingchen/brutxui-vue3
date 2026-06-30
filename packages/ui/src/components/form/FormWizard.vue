@@ -32,7 +32,7 @@ import { formWizardRootVariants, formWizardNavigationVariants, formWizardStepInf
 import { Stepper } from '../stepper'
 import type { StepperStep } from '../stepper'
 import Button from '../button/Button.vue'
-import { useLocale } from '@/composables/useLocale'
+import { useLocale } from '../../composables/useLocale'
 
 const { t } = useLocale()
 

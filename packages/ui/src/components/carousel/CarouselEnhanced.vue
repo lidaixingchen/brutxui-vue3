@@ -9,6 +9,7 @@ import { useLocale } from '@/composables/useLocale';
 const { t } = useLocale();
 
 const DEFAULT_AUTOPLAY_DELAY = 3000;
+const PROGRESS_UPDATE_INTERVAL = 50; // ms
 
 interface CarouselThumbnails {
     show?: boolean;
@@ -99,15 +100,14 @@ function startAutoplay() {
     if (!props.autoplay) return;
 
     autoplayProgress.value = 0;
-    const progressInterval = 50;
-    const steps = props.autoplayDelay / progressInterval;
+    const steps = props.autoplayDelay / PROGRESS_UPDATE_INTERVAL;
 
     progressTimer = setInterval(() => {
         autoplayProgress.value += 100 / steps;
         if (autoplayProgress.value >= 100) {
             autoplayProgress.value = 0;
         }
-    }, progressInterval);
+    }, PROGRESS_UPDATE_INTERVAL);
 
     autoplayTimer = setInterval(() => {
         if (emblaApi.value && scrollSnaps.value.length > 0) {

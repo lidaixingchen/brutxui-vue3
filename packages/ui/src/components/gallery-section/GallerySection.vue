@@ -73,6 +73,7 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                                     :alt="item.alt"
                                     class="w-full h-auto object-cover"
                                     loading="lazy"
+                                    @error="($event.target as HTMLImageElement).style.display = 'none'"
                                 >
                             </div>
                             <p v-if="item.caption" class="mt-3 text-sm font-bold text-brutal-fg text-center">

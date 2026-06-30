@@ -26,7 +26,7 @@ provide<ComputedRef<'horizontal' | 'vertical'>>('brutx-tabs-orientation', orient
         :model-value="modelValue"
         :orientation="orientation"
         :class="cn(props.class)"
-        @update:model-value="emit('update:modelValue', $event as string)"
+        @update:model-value="(val) => { if (typeof val === 'string') emit('update:modelValue', val) }"
     >
         <slot />
     </TabsRoot>

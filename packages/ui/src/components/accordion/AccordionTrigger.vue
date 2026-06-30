@@ -11,7 +11,8 @@ const props = withDefaults(defineProps<AccordionTriggerProps & { class?: string;
     iconSize: 'lg',
 })
 
-const context = inject(accordionItemKey, { variant: computed(() => undefined) })
+const defaultContext = { variant: computed(() => undefined) }
+const context = inject(accordionItemKey, defaultContext)
 
 const delegatedProps = computed(() => {
     const { class: _, iconSize: __, ...delegated } = props

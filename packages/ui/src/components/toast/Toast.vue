@@ -49,21 +49,21 @@ let startTime = 0
 function startLeave() {
     if (isLeaving.value) return
     isLeaving.value = true
-    leaveTimer.value = window.setTimeout(() => {
+    leaveTimer.value = setTimeout(() => {
         emit('close')
     }, LEAVE_ANIMATION_DELAY)
 }
 
 function startTimer() {
     startTime = performance.now()
-    timer.value = window.setTimeout(() => {
+    timer.value = setTimeout(() => {
         startLeave()
     }, remainingTime.value)
 }
 
 function pauseTimer() {
     if (isLeaving.value || !timer.value) return
-    window.clearTimeout(timer.value)
+    clearTimeout(timer.value)
     timer.value = undefined
     remainingTime.value -= performance.now() - startTime
     isPaused.value = true
@@ -87,8 +87,8 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-    if (timer.value) window.clearTimeout(timer.value)
-    if (leaveTimer.value) window.clearTimeout(leaveTimer.value)
+    if (timer.value) clearTimeout(timer.value)
+    if (leaveTimer.value) clearTimeout(leaveTimer.value)
 })
 
 function onMouseEnter() {
