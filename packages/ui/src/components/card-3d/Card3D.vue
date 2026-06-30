@@ -5,6 +5,7 @@ import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
 import { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './card-3d-variants'
+import { CARD_3D_DEFAULT_PERSPECTIVE_PX } from '../../lib/defaults'
 
 type Card3DVariantProps = VariantProps<typeof card3dVariants>
 
@@ -22,7 +23,7 @@ interface Card3DProps {
 
 const props = withDefaults(defineProps<Card3DProps>(), {
     maxRotation: 15,
-    perspective: 1000,
+    perspective: CARD_3D_DEFAULT_PERSPECTIVE_PX,
     scale: 1.02,
     shadowOffset: 10,
     shadow: 'default',

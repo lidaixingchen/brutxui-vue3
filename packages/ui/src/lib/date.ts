@@ -2,8 +2,10 @@ function pad2(value: number): string {
     return value.toString().padStart(2, '0')
 }
 
+import { TWO_DIGIT_YEAR_PIVOT } from './defaults'
+
 function pivotTwoDigitYear(twoDigitYear: number): number {
-    return twoDigitYear >= 50 ? 1900 + twoDigitYear : 2000 + twoDigitYear
+    return twoDigitYear >= TWO_DIGIT_YEAR_PIVOT ? 1900 + twoDigitYear : 2000 + twoDigitYear
 }
 
 export function getISOWeekNumber(date: Date): number {

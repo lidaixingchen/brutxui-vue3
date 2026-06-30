@@ -36,3 +36,21 @@ export const MAX_TOASTS = 10
 
 /** Default page size options for paginated tables */
 export const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const
+
+// ── Card3D ────────────────────────────────────────────────────
+
+/** Default CSS perspective value in pixels for 3D card effect */
+export const CARD_3D_DEFAULT_PERSPECTIVE_PX = 1000
+
+// ── SketchyChart ──────────────────────────────────────────────
+
+/** Default chart width in pixels */
+export const SKETCHY_CHART_DEFAULT_WIDTH = 600
+
+/** Default chart height in pixels */
+export const SKETCHY_CHART_DEFAULT_HEIGHT = 400
+
+// ── Date ──────────────────────────────────────────────────────
+
+/** Two-digit year pivot: >= this value → 19xx, < this value → 20xx */
+export const TWO_DIGIT_YEAR_PIVOT = 50
