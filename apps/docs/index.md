@@ -25,7 +25,7 @@ features:
   - title: CLI 工具
     details: 一条命令添加组件。npx brutx-vue init 初始化项目，npx brutx-vue add button card 按需安装，AI 友好的项目结构。
   - title: 现代技术栈
-    details: Vue 3.5+ script setup、Tailwind CSS 3.4+、Vite 6+、Vitest 3+、pnpm。为现代 Vue 生态而生。
+    details: Vue 3.5+ script setup、Tailwind CSS 4.3+、Vite 8+、Vitest 4+、pnpm。为现代 Vue 生态而生。
 ---
 
 <HomeComponentShowcase />

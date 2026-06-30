@@ -124,6 +124,15 @@ export default defineConfig({
                     text: 'AI 集成',
                     link: '/guide/ai',
                 },
+                {
+                    text: '进阶',
+                    items: [
+                        { text: '最佳实践', link: '/guide/best-practices' },
+                        { text: '常见问题', link: '/guide/faq' },
+                        { text: '版本历史', link: '/guide/changelog' },
+                        { text: '贡献指南', link: '/guide/contributing' },
+                    ],
+                },
             ],
             '/components/': [
                 {
