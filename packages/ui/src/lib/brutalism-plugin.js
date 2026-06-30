@@ -1,4 +1,4 @@
-const plugin = require('tailwindcss/plugin');
+import plugin from 'tailwindcss/plugin';
 
 const brutalismPlugin = plugin(
     function ({ addUtilities, addComponents }) {
@@ -205,4 +205,4 @@ const brutalismPlugin = plugin(
     }
 );
 
-module.exports = brutalismPlugin;
+export default brutalismPlugin;

@@ -17,9 +17,7 @@
  */
 
 @import 'tailwindcss';
-@import 'v-calendar/dist/style.css';
 @import '../../../../packages/ui/dist/styles.css';
-@config '../../tailwind.config.cjs';
 
 
 

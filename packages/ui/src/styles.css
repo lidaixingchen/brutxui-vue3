@@ -1,4 +1,3 @@
-@import 'v-calendar/dist/style.css';
 @import "tailwindcss";
 @import "./components/code-block/brutx-prism.css";
 
@@ -352,29 +351,6 @@
         --brutal-info-foreground: #1A1410;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #6B5B4F;
-    }
-}
-
-@layer components {
-
-    .nb-border {
-        border-width: var(--brutal-border-width, 3px);
-        border-style: solid;
-        border-color: var(--brutal-border-color, #000000);
-    }
-
-    .nb-shadow {
-        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
-    }
-
-    .nb-press {
-        transform: translateY(var(--brutal-pressed-offset, 2px));
-        box-shadow: none;
-    }
-
-    .nb-font {
-        font-weight: 900;
-        letter-spacing: 0.025em;
     }
 }
 

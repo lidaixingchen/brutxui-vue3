@@ -92,6 +92,7 @@ BREAKING CHANGE: Button 的 variant 属性重命名为 type
 - **Node.js** >= 22.5.0（推荐，pnpm 11.x 依赖 `node:sqlite` 内置模块）
 - **Node.js** >= 18.12.0（最低要求，仅支持 pnpm 9.x）
 - **pnpm** >= 9.0.0（推荐 11.x）
+- **TypeScript** >= 5.5.0（消费者端最低要求）
 
 > **注意：** pnpm 11 需要 Node.js 22.5+，pnpm 9 可在 Node.js 18.12+ 上运行。如果使用 pnpm 9，需要在 `.npmrc` 中移除 `allowBuilds` 配置。
 

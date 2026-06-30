@@ -1,0 +1,6 @@
+export { default as Tabs } from './components/tabs/Tabs.vue'
+export { TabsRoot } from 'reka-ui'
+export { default as TabsList } from './components/tabs/TabsList.vue'
+export { default as TabsTrigger } from './components/tabs/TabsTrigger.vue'
+export { default as TabsContent } from './components/tabs/TabsContent.vue'
+export { tabsListVariants, tabsTriggerVariants, tabsContentVariants } from './components/tabs/tabs-variants'

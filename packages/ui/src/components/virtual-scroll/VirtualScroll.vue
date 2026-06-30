@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
-import { useVirtualizer } from '@tanstack/vue-virtual'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
 import type { VirtualScrollProps, VirtualScrollEmits } from './types'
+
+type UseVirtualizerFn = (options: unknown) => { value: { getVirtualItems: () => Array<{ key: string | number; index: number; size: number; start: number }>; getTotalSize: () => number; measure: () => void; scrollToIndex: (index: number) => void } }
 
 const props = withDefaults(defineProps<VirtualScrollProps>(), {
     itemHeight: 48,
@@ -21,6 +22,18 @@ const { t } = useLocale()
 
 const parentRef = ref<HTMLElement | null>(null)
 
+const isAvailable = ref(true)
+
+let useVirtualizer: UseVirtualizerFn | null = null
+
+try {
+    const mod = await import('@tanstack/vue-virtual')
+    useVirtualizer = mod.useVirtualizer as UseVirtualizerFn
+} catch {
+    console.warn('[BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual')
+    isAvailable.value = false
+}
+
 const virtualizerOptions = computed(() => ({
     count: props.items.length,
     getScrollElement: () => parentRef.value,
@@ -28,10 +41,10 @@ const virtualizerOptions = computed(() => ({
     overscan: props.overscan,
 }))
 
-const virtualizer = useVirtualizer(virtualizerOptions)
+const virtualizer = useVirtualizer ? useVirtualizer(virtualizerOptions) : null
 
-const virtualItems = computed(() => virtualizer.value.getVirtualItems())
-const totalSize = computed(() => virtualizer.value.getTotalSize())
+const virtualItems = computed(() => virtualizer?.value.getVirtualItems() ?? [])
+const totalSize = computed(() => virtualizer?.value.getTotalSize() ?? 0)
 
 const isEmpty = computed(() => props.items.length === 0)
 
@@ -49,7 +62,7 @@ function handleScroll() {
 }
 
 watch(() => props.items.length, () => {
-    virtualizer.value.measure()
+    virtualizer?.value.measure()
 })
 
 onMounted(() => {
@@ -71,7 +84,7 @@ const rootClasses = computed(() =>
 function scrollToIndex(index: number) {
     const itemCount = props.items.length
 
-    if (itemCount === 0) return
+    if (itemCount === 0 || !virtualizer) return
 
     const clampedIndex = Math.max(0, Math.min(index, itemCount - 1))
     virtualizer.value.scrollToIndex(clampedIndex)
@@ -82,6 +95,19 @@ defineExpose({ scrollToIndex })
 
 <template>
     <div
+        v-if="!isAvailable"
+        :class="rootClasses"
+        role="list"
+        :aria-label="t('virtualScroll.label')"
+    >
+        <div class="flex items-center justify-center p-8 text-brutal-fg/50">
+            <p class="font-bold">
+                [BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual
+            </p>
+        </div>
+    </div>
+    <div
+        v-else
         ref="parentRef"
         :class="rootClasses"
         role="list"

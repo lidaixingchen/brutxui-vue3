@@ -37,6 +37,56 @@
             "import": "./dist/locales.js",
             "require": "./dist/locales.cjs"
         },
+        "./button": {
+            "types": "./dist/button.d.ts",
+            "import": "./dist/button.js",
+            "require": "./dist/button.cjs"
+        },
+        "./input": {
+            "types": "./dist/input.d.ts",
+            "import": "./dist/input.js",
+            "require": "./dist/input.cjs"
+        },
+        "./dialog": {
+            "types": "./dist/dialog.d.ts",
+            "import": "./dist/dialog.js",
+            "require": "./dist/dialog.cjs"
+        },
+        "./toast": {
+            "types": "./dist/toast.d.ts",
+            "import": "./dist/toast.js",
+            "require": "./dist/toast.cjs"
+        },
+        "./form": {
+            "types": "./dist/form.d.ts",
+            "import": "./dist/form.js",
+            "require": "./dist/form.cjs"
+        },
+        "./select": {
+            "types": "./dist/select.d.ts",
+            "import": "./dist/select.js",
+            "require": "./dist/select.cjs"
+        },
+        "./dropdown-menu": {
+            "types": "./dist/dropdown-menu.d.ts",
+            "import": "./dist/dropdown-menu.js",
+            "require": "./dist/dropdown-menu.cjs"
+        },
+        "./table": {
+            "types": "./dist/table.d.ts",
+            "import": "./dist/table.js",
+            "require": "./dist/table.cjs"
+        },
+        "./card": {
+            "types": "./dist/card.d.ts",
+            "import": "./dist/card.js",
+            "require": "./dist/card.cjs"
+        },
+        "./tabs": {
+            "types": "./dist/tabs.d.ts",
+            "import": "./dist/tabs.js",
+            "require": "./dist/tabs.cjs"
+        },
         "./styles.css": "./dist/styles.css"
     },
     "files": [
@@ -62,14 +112,22 @@
     },
     "peerDependencies": {
         "@lucide/vue": ">=1.0.0",
+        "@tanstack/vue-virtual": ">=3.0.0",
         "prismjs": ">=1.29.0",
-        "tailwindcss": ">=4.0.0",
+        "reka-ui": ">=2.9.0",
+        "tailwindcss": ">=4.0.0 <5.0.0",
         "v-calendar": ">=3.0.0",
         "vee-validate": ">=4.0.0",
         "vue": ">=3.5.0",
         "zod": ">=3.0.0"
     },
     "peerDependenciesMeta": {
+        "@tanstack/vue-virtual": {
+            "optional": true
+        },
+        "reka-ui": {
+            "optional": true
+        },
         "v-calendar": {
             "optional": true
         },
@@ -78,7 +136,6 @@
         }
     },
     "dependencies": {
-        "@tanstack/vue-virtual": "^3.13.30",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.0",
         "embla-carousel-vue": "^8.6.0",

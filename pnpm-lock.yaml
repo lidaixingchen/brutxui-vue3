@@ -39,21 +39,15 @@ importers:
         specifier: ^3.5.0
         version: 3.5.35(typescript@6.0.3)
     devDependencies:
-      '@tailwindcss/postcss':
+      '@tailwindcss/vite':
         specifier: ^4.3.0
-        version: 4.3.0
+        version: 4.3.0(vite@8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4))
       '@types/node':
         specifier: ^25.9.1
         version: 25.9.1
-      postcss:
-        specifier: ^8.5.15
-        version: 8.5.15
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
-      tailwindcss-animate:
-        specifier: ^1.0.7
-        version: 1.0.7(tailwindcss@4.3.0)
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -138,7 +132,7 @@ importers:
         specifier: '>=1.0.0'
         version: 1.17.0(vue@3.5.35(typescript@6.0.3))
       '@tanstack/vue-virtual':
-        specifier: ^3.13.30
+        specifier: '>=3.0.0'
         version: 3.13.30(vue@3.5.35(typescript@6.0.3))
       class-variance-authority:
         specifier: ^0.7.0
@@ -1659,16 +1653,8 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7 || ^8
 
-  '@tanstack/virtual-core@3.17.0':
-    resolution: {integrity: sha512-gOxY/hFkPh/XQYhnThBHzkbkX3Ed+z/iushyz+R+JAr213aXxUDgQoTgTdrDpBSRsjFM73P/KfUyWmaF9WHMkQ==}
-
   '@tanstack/virtual-core@3.17.2':
     resolution: {integrity: sha512-w43MvWvmShpb6kIC9MOoLyUkLmRTLPjt61bHWs+X29hACSpX+n8DvgZ3qM7cUfflKlRRcHR9KVJE6TmcqnQvcA==}
-
-  '@tanstack/vue-virtual@3.13.28':
-    resolution: {integrity: sha512-A+jWpXtMpWXKhGLKQrXeC9mk1VgYeMWSJ+o0CTCEi+HLYMSQFdVmPG9lJz7d4XJyIkc5xVwZU9QY67QpScqnxA==}
-    peerDependencies:
-      vue: ^2.7.0 || ^3.0.0
 
   '@tanstack/vue-virtual@3.13.30':
     resolution: {integrity: sha512-5IpTZf5US81z9CHaRm2imVC44WDU1V/pd8mN1OIvIerRmo6C179UN+vnzlO/dx9Fpt9X7Rjl7fyvolPhPgtfqg==}
@@ -4657,14 +4643,7 @@ snapshots:
       tailwindcss: 4.3.0
       vite: 8.0.16(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.4)
 
-  '@tanstack/virtual-core@3.17.0': {}
-
   '@tanstack/virtual-core@3.17.2': {}
-
-  '@tanstack/vue-virtual@3.13.28(vue@3.5.35(typescript@6.0.3))':
-    dependencies:
-      '@tanstack/virtual-core': 3.17.0
-      vue: 3.5.35(typescript@6.0.3)
 
   '@tanstack/vue-virtual@3.13.30(vue@3.5.35(typescript@6.0.3))':
     dependencies:
@@ -6054,7 +6033,7 @@ snapshots:
       '@floating-ui/vue': 1.1.11(vue@3.5.35(typescript@6.0.3))
       '@internationalized/date': 3.12.2
       '@internationalized/number': 3.6.7
-      '@tanstack/vue-virtual': 3.13.28(vue@3.5.35(typescript@6.0.3))
+      '@tanstack/vue-virtual': 3.13.30(vue@3.5.35(typescript@6.0.3))
       '@vueuse/core': 14.3.0(vue@3.5.35(typescript@6.0.3))
       '@vueuse/shared': 14.3.0(vue@3.5.35(typescript@6.0.3))
       aria-hidden: 1.2.6

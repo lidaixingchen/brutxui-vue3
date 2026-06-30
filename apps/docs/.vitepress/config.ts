@@ -1,5 +1,6 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vitepress'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
     lang: 'zh-CN',
@@ -323,6 +324,7 @@ export default defineConfig({
         },
     },
     vite: {
+        plugins: [tailwindcss()],
         resolve: {
             alias: {
                 '@': resolve(import.meta.dirname, '.vitepress'),

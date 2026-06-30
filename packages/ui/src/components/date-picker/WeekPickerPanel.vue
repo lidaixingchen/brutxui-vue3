@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { DatePicker } from 'v-calendar'
+import { computed, defineAsyncComponent } from 'vue'
+
+const DatePicker = defineAsyncComponent(async () => {
+    try {
+        const mod = await import('v-calendar')
+        return mod.DatePicker
+    } catch {
+        console.warn('[BrutxUI] Calendar component requires v-calendar. Install it: pnpm add v-calendar')
+        return { template: '<div/>' }
+    }
+})
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
