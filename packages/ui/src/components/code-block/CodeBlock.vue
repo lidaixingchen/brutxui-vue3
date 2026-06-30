@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, useSlots } from 'vue'
+
+const slots = useSlots()
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import Button from '../button/Button.vue'
 import { cn } from '../../lib/utils'
@@ -134,7 +136,7 @@ function escapeHtml(str: string): string {
                 <span v-for="(_, i) in lines" :key="i">{{ i + 1 }}</span>
             </div>
 
-            <pre v-if="$slots.default" class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold"><slot /></code></pre>
+            <pre v-if="slots.default" class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold"><slot /></code></pre>
             <!-- eslint-disable-next-line vue/no-v-html -- 安全假设：prismjs highlight() 已对用户输入进行 HTML 转义 -->
             <pre v-else class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" v-html="highlightedHtml" /></pre>
         </div>

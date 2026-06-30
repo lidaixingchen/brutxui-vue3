@@ -1,257 +1,312 @@
-# 全面兼容性包袱审查报告
+# BrutxUI Vue3 组件库兼容性债务审计报告
 
-**项目**: brutxui-vue3 (Neo-Brutalism UI Library Monorepo)
-**审查日期**: 2026-06-30
-**审查范围**: `packages/` 和 `apps/` 下所有源代码
-
----
-
-## 总体评估
-
-**项目兼容性包袱极轻，代码质量优秀。** 这是一个干净的、完全基于 Vue 3 Composition API 的现代 UI 库，无 IE 支持、无 Vue 2 兼容层、无 polyfill。
-
-### 按维度汇总
-
-| 维度 | 严重问题 | 中等问题 | 低优先级 | 整体评价 |
-|------|---------|---------|---------|---------|
-| 浏览器兼容性 | 0 | 0 | 1 | 极佳 — 仅 `-moz-osx-font-smoothing` 可移除 |
-| Vue 兼容性 | 0 | 0 | 1 | 极佳 — 仅 `getCurrentInstance()` 半内部 API |
-| TypeScript 类型 | 0 | 0 | ~15 | 良好 — 源码无 `any`，问题在测试文件 |
-| 废弃代码 | 2 | 4 | 3 | 有 dead code 待清理 |
-| 依赖和构建 | 3 | 3 | 6 | Tailwind v3/v4 冲突需关注 |
-| CSS 和样式 | 0 | 0 | 3 | 极佳 — 仅少量可清理项 |
-
-### 无问题的维度（值得肯定）
-
-- 零 polyfill — 无任何浏览器 polyfill 依赖
-- 零 IE 支持代码 — 无条件注释、UA 检测、IE hack
-- 零 Vue 2 兼容层 — 无 `@vue/compat`、`vue-demi`、Options API
-- 零废弃 API 使用 — 无 `$listeners`、`.native`、`$set`、`Vue.extend`
-- 215+ 组件统一使用 `<script setup lang="ts">`
-- 源码无 `any` 类型 — 仅测试文件中有少量
-- 所有 `@ts-expect-error` 均有清晰注释说明 vue-tsc 限制
-- CSS 变量 fallback 设计完善 — 50+ 处使用 `var(--name, fallback)` 模式
+**审查日期**: 2026-06-30  
+**审查范围**: `packages/ui` 目录  
+**审查维度**: TypeScript类型、Vue3兼容性、废弃API、依赖版本、构建模块、浏览器兼容性  
+**审查方法**: 6个并行子agent独立审查
 
 ---
 
-## 一、浏览器兼容性审查
+## 📊 问题统计
 
-### 1. Polyfill / Shim / Browser Hack
-
-**无 polyfill 或 shim。** 项目中不存在 `core-js`、`@babel/polyfill`、`regenerator-runtime` 等依赖。
-
-### 2. CSS Vendor Prefixes
-
-所有 vendor prefix 均合理且必要：
-
-| 文件 | 属性 | 用途 | 是否需要保留 |
-|------|------|------|-------------|
-| `packages/ui/src/styles.css:57` | `-webkit-text-size-adjust: 100%` | 防止 iOS 文本膨胀 | 是 — 无标准替代 |
-| `packages/ui/src/styles.css:68` | `-webkit-font-smoothing: antialiased` | macOS/WebKit 字体平滑 | 是 — 非标准属性 |
-| `packages/ui/src/styles.css:69` | `-moz-osx-font-smoothing: grayscale` | Firefox/macOS 字体平滑 | 可选 — 现代 Firefox 已不需要 |
-| `apps/docs/.vitepress/theme/style.css:403` | `-webkit-background-clip: text` | 渐变文字 | 是 — Safari 仍需要 |
-| `apps/docs/.vitepress/theme/style.css:404` | `-webkit-text-fill-color` | 渐变文字颜色 | 是 — 非标准属性 |
-| `apps/docs/.vitepress/theme/style.css:886-901` | `::-webkit-scrollbar` 系列 | 自定义滚动条 | 是 — 无标准替代 |
-| `packages/ui/src/components/marquee/marquee-variants.ts:12` | `-webkit-mask-image` | 遮罩 | 可选 — 标准版已广泛支持 |
-
-### 3. 浏览器特性检测（全部合理）
-
-| 文件 | 代码 | 评估 |
-|------|------|------|
-| `composables/useAudioEngine.ts:23-35` | `webkitAudioContext` fallback | 合理 — 兼容旧版 iOS Safari |
-| `composables/useClipboard.ts:7` | `navigator.clipboard?.writeText` 检测 | 合理 — 标准特性检测 |
-| `composables/useColorHistory.ts:23,39` | `typeof window/localStorage` SSR 守卫 | 合理 — SSR 安全 |
-| `composables/useTheme.ts` | `typeof document/localStorage` SSR 守卫 | 合理 — SSR 安全 |
-
-### 4. 无 IE / 旧浏览器条件代码
-
-未发现 `MSIE`、`Trident`、`document.all`、条件注释等。
+| 严重程度 | 数量 | 说明 |
+|---------|------|------|
+| 🔴 严重 | 6 | 功能性破坏或安全隐患（✅ 已修复 4/6） |
+| 🟡 中等 | 16 | 需要关注的技术债务（✅ 已修复 5/16，含1项已验证非问题） |
+| 🟢 轻微 | 12 | 风格/一致性问题 |
 
 ---
 
-## 二、Vue 兼容性审查
+## 🔴 严重问题 (6个)
 
-### 1. Vue 2/3 兼容层
+### 1. reka-ui 双重声明冲突 ✅ 已修复
+**文件**: `packages/ui/package.json`
+**修复**: 从 `dependencies` 移除 reka-ui；从 `peerDependenciesMeta` 移除 `optional: true`；peer 范围改为 `^2.9.0`
 
-**无。** 不存在 `@vue/compat`、`vue-demi`、`@vue/composition-api` 依赖。
+### 2. prismjs 未被 external 导致打包冗余 ✅ 已修复
+**文件**: `packages/ui/vite.config.ts`
+**修复**: 在 rollup external 数组中添加 `/^prismjs/`
 
-### 2. Options API 混用
+### 3. structuredClone() 无 polyfill ✅ 已修复
+**文件**: `packages/ui/src/locales/index.ts`
+**修复**: 添加 `deepClone` 工具，运行时检测 `structuredClone` 可用性，不可用时降级为 `JSON.parse(JSON.stringify())`
 
-**无。** 全部 215+ 个组件均使用 `<script setup lang="ts">`。唯一包含双 script 块的是 `FormWizard.vue`，用于导出类型和 composable，这是 Vue 3 原生支持的特性。
+### 4. ResizeObserver 无 polyfill ✅ 已修复
+**文件**:
+- `packages/ui/src/composables/useCanvasInteraction.ts`
+- `packages/ui/src/components/counter/Counter.vue`
 
-### 3. Vue 2 遗留 API
+**修复**: 添加 `typeof ResizeObserver !== 'undefined'` 守卫，不支持时静默跳过而非崩溃
 
-| API | 状态 |
-|-----|------|
-| `$listeners` | 未使用 |
-| `.native` 修饰符 | 未使用 |
-| `$set` / `$delete` | 未使用 |
-| `Vue.extend` / `Vue.observable` | 未使用 |
-| `beforeDestroy` / `destroyed` | 未使用 |
-| `.sync` 修饰符 | 未使用 |
-| `$parent` / `$root` / `$children` | 未使用 |
-| `functional: true` | 未使用 |
-| `data()` / `methods: {}` | 未使用 |
+### 5. Tailwind `:has()` 任意变体无降级方案
 
-### 4. 值得注意
+**文件**: `packages/ui/src/components/table/table-variants.ts` (行 31, 77)
+**问题**: 使用 Tailwind 任意变体 `[&:has([role=checkbox])]:pr-0`，由 Tailwind 编译为 CSS `:has()` 伪类，无降级方案
 
-- `useTheme.ts:170` 使用 `getCurrentInstance()` — 半内部 API，用法合理但可考虑重构
-- `$slots.xxx` 在 4 个组件中用于条件渲染 — 合法的 Vue 3 用法
+**影响**: Firefox < 121 中表格复选框列的 padding 会失效；Tailwind 4 不自动提供 `:has()` 降级
 
----
+**建议**: 添加 CSS 降级或移除 `:has()` 依赖
 
-## 三、TypeScript 类型兼容性审查
+### 6. CSS `@layer` 导致旧浏览器完全无样式
+**文件**: `packages/ui/src/styles.css` (行 46, 357)  
+**问题**: 所有基础和工具样式都在 `@layer` 块中
 
-### 1. 严格模式配置
+**影响**: 不支持 `@layer` 的浏览器（Chrome < 99, Firefox < 97, Safari < 15.4）会忽略所有样式
 
-所有 5 个 tsconfig 均设置 `"strict": true`。
-
-**可选增强项：**
-- `noUncheckedIndexedAccess` — 未开启
-- `noPropertyAccessFromIndexSignature` — 未开启
-- `exactOptionalPropertyTypes` — 未开启
-
-### 2. `any` 类型使用（共 15 处）
-
-**源码中无 `any`。** 所有 `any` 均在测试文件和脚本中：
-
-| 文件 | 数量 | 说明 |
-|------|------|------|
-| `cli/tests/project.test.ts` | 7 | `vi.spyOn` mock 参数类型 |
-| `virtual-scroll/virtual-scroll.test.ts` | 5 | `wrapper.vm as any` 访问 exposed 方法 |
-| `registry/scripts/validate-registry.ts` | 3 | JSON 解析和错误处理 |
-| `cli/tests/registry.test.ts` | 1 | mock 数据类型 |
-
-### 3. `@ts-expect-error` 使用（共 3 处）
-
-全部为 vue-tsc 已知限制，注释清晰：
-
-| 文件 | 行号 | 原因 |
-|------|------|------|
-| `Carousel.vue` | 33 | 字符串模板 ref 未被 vue-tsc 识别 |
-| `CarouselEnhanced.vue` | 62 | 同上 |
-| `DataTableDemo.vue` | 36 | 泛型组件 InstanceType 推断限制 |
-
-### 4. 类型断言分析
-
-| 类型 | 数量 | 评估 |
-|------|------|------|
-| `as unknown as`（测试中） | 25 | 合理 — vue-test-utils 类型缺陷 |
-| `as Record<string, unknown>`（CLI） | 7 | 轻微技术债务 — 可用 Zod 替代 |
-| `as Record<string, unknown>`（UI） | 3 | 技术债务 — 可用类型守卫替代 |
-| `as WindowWithWebkitAudio` | 1 | 合理 — webkitAudioContext 兼容 |
-| `as never` | 1 | 技术债务 |
+**建议**: 在文档中明确最低浏览器版本要求
 
 ---
 
-## 四、废弃代码和 Dead Code 审查
+## 🟡 中等问题 (16个)
 
-### 1. 可安全删除的文件
+### 依赖配置问题
 
-| 文件 | 问题 |
-|------|------|
-| `packages/ui/src/lib/test-utils.ts` | 完全未使用的工具函数 |
+#### 7. 所有 `>=` peer 依赖无上限保护 ✅ 已修复
+**文件**: `packages/ui/package.json`
+**修复**: 所有 peer 依赖范围从 `>=X.0.0` 改为 `^X.0.0`
 
-### 2. 公共 API 导出文件（保留）
+#### 8. zod 列为 peer 但从未使用
+**文件**: `packages/ui/package.json` (行 123)  
+**问题**: zod 作为 peer 依赖但源码中无任何 import  
+**建议**: 移除或添加实际使用
 
-| 文件                      | 说明                                                                       |
-| ------------------------- | -------------------------------------------------------------------------- |
-| `packages/ui/src/hooks/index.ts` | 公共 API 导出，package.json 中有 `./hooks` 导出配置，供外部消费者使用 |
+#### 9. strict-peer-dependencies=false
+**文件**: `.npmrc` (行 2)  
+**问题**: 禁用所有 peer 依赖强制检查  
+**影响**: 消费者可安装缺失的必选依赖而不报错  
+**建议**: 仅对 optional 依赖禁用，或在文档中强调必选依赖
 
-### 3. 重复导出文件
+#### 10. tailwindcss-animate 未声明为 peer
+**文件**: `packages/ui/package.json` (行 161)  
+**问题**: 在 devDependencies 中但可能被消费者需要  
+**建议**: 如果样式依赖此类，应添加到 peerDependencies
 
-| 文件 | 说明 |
-|------|------|
-| `packages/ui/src/calendar.ts` | 与 `index.ts` 重复导出 Calendar 组件 |
-| `packages/ui/src/submit-button.ts` | 与 `index.ts` 重复导出 SubmitButton 组件 |
+### TypeScript 类型问题
 
-### 4. 重复常量定义
+#### 11. VirtualScroll UseVirtualizerFn 类型丢失
+**文件**: `packages/ui/src/components/virtual-scroll/VirtualScroll.vue` (行 8)  
+**问题**: options 参数为 `unknown`，丢失了 useVirtualizer 的参数类型  
+**建议**: 导入 `@tanstack/vue-virtual` 的实际选项类型
 
-| 常量                                        | 重复位置                                                         |
-| ------------------------------------------- | ---------------------------------------------------------------- |
-| `DEFAULT_AUTOPLAY_DELAY = 3000`             | `Carousel.vue:11` + `useCarousel.ts:5`                           |
-| `DEFAULT_PAGE_SIZE = 10`                    | `useDataTablePagination.ts:3` + `DataTableSection.vue:19`        |
-| `DEFAULT_COPIED_DURATION = 2000`            | `useClipboard.ts:3` + `CopyToClipboard.vue:13`（名称略有差异）   |
-| `DEFAULT_TOAST_DURATION = 5000`             | `useToast.ts:42` + `Toast.vue:13`（名称略有差异）                |
+#### 12. VirtualScroll 测试中 5 处 as any
+**文件**: `packages/ui/src/components/virtual-scroll/virtual-scroll.test.ts` (行 100, 111, 124-126)  
+**问题**: 访问 `scrollToIndex` 方法需要绕过类型系统  
+**建议**: 定义 `VirtualScrollExposed` 接口
 
-### 5. 其他问题
+#### 13. globalThis Prism 注入缺少类型声明
+**文件**: `packages/ui/src/components/code-block/prism-languages.ts` (行 4-5)  
+**问题**: 向 globalThis 注入 Prism 但无 `declare global` 模块增强  
+**建议**: 添加类型声明
 
-- `cli/src/commands/diff.ts:273` — `console.log` 未使用 `logger`
-- `useToast.ts:179-189` / `useTheme.ts:177-188` — fallback 单例模式可考虑 deprecated
-- 无 `@deprecated` 标记、无注释掉的代码、无 TODO/FIXME/HACK 注释、无 `debugger` 语句
+#### 14. DeepPartial<T> 对数组类型意外递归
+**文件**: `packages/ui/src/locales/index.ts` (行 7-8)  
+**问题**: 递归条件类型 `T[P] extends object ? DeepPartial<T[P]> : T[P]` 对数组也会递归  
+**建议**: 添加 `T extends Array<any> ? T : ...` 分支
+
+### 构建配置问题
+
+#### 15. ~~__dirname 在 ESM 模块中使用~~ (已验证：非问题)
+
+**文件**: `packages/ui/vite.config.ts` (行 13-14)
+**说明**: Vite 配置文件在 Node.js 中运行时由 Vite/esbuild 转译为 CJS 上下文，`__dirname` 可用。此项为误报，已从优先建议中移除
+
+#### 16. copyStylesPlugin 硬编码文件名
+**文件**: `packages/ui/vite.config.ts` (行 8-22)  
+**问题**: 硬编码 `brutx-ui-vue.css` 文件名，与包名脆弱耦合  
+**建议**: 动态获取或使用配置变量
+
+#### 17. Tailwind 4 双重处理 ✅ 已修复
+**文件**: `packages/ui/postcss.config.cjs`、`packages/ui/package.json`
+**修复**: 从 postcss.config.cjs 移除 `@tailwindcss/postcss` 插件，仅保留 Vite 插件处理；从 devDependencies 移除 `@tailwindcss/postcss`
+
+#### 18. /^@vueuse/ rollup 外部声明是死代码 ✅ 已修复
+**文件**: `packages/ui/vite.config.ts`
+**修复**: 从 rollup external 数组中移除 `/^@vueuse/`
+
+#### 19. @tanstack/vue-virtual 未被 external ✅ 已修复
+**文件**: `packages/ui/vite.config.ts`
+**修复**: 在 rollup external 数组中添加 `/^@tanstack\/vue-virtual/`
+
+#### 20. exports 缺少 default fallback (低风险)
+
+**文件**: `packages/ui/package.json` (行 9-91)
+**问题**: 子路径导出缺少 `default` 条件  
+**说明**: 所有子路径已有 `import` + `require` 条件，覆盖 Node.js 和主流 bundler。`default` fallback 仅影响非标准解析器，实际风险极低  
+**建议**: 可选添加 `"default": "./dist/index.js"` 作为 fallback
+
+#### 21. brutalism-plugin.js 使用 Tailwind v3 API ✅ 已修复
+**文件**: `packages/ui/src/lib/brutalism-plugin.js`
+**修复**: 移除 `theme.extend` 配置块（Tailwind 4 中由 `@theme` 指令替代，已在 styles.css 中配置）
+
+### 浏览器兼容性问题
+
+#### 22. navigator.clipboard.writeText() 无回退
+**文件**: `packages/ui/src/composables/useClipboard.ts` (行 19)
+**问题**: 特性检测存在但无 `document.execCommand('copy')` 回退
+**建议**: 添加回退方案
+
+#### 23. 运行时依赖应迁移为 peerDependencies
+**文件**: `packages/ui/package.json` (行 138-144)
+**问题**: `embla-carousel-vue`、`class-variance-authority`、`clsx`、`tailwind-merge` 作为 `dependencies` 而非 `peerDependencies`，消费者无法控制版本，可能导致重复打包
+
+- `embla-carousel-vue`: `^8.6.0` — 仅 Carousel 组件使用
+- `class-variance-authority`: `^0.7.0` — 变体定义核心
+- `clsx`: `^2.1.0` — className 工具
+- `tailwind-merge`: `^3.6.0` — className 合并
+
+**影响**: 消费者若安装不同版本，库和应用会各打包一份，增加 bundle 体积
+**建议**: 迁移到 `peerDependencies`，或至少将仅部分组件使用的 `embla-carousel-vue` 迁出
 
 ---
 
-## 五、依赖和构建兼容性审查
+## 🟢 轻微问题 (12个)
 
-### 1. 高优先级问题
+### 23. getCurrentInstance() 使用
+**文件**: `packages/ui/src/composables/useTheme.ts` (行 170)  
+**说明**: Vue 官方标记为"internal"，非推荐用法
 
-| # | 问题 | 位置 | 建议 |
-|---|------|------|------|
-| 1 | **Tailwind v3 config 是 dead code** | `packages/ui/tailwind.config.js` | 删除，项目已使用 v4 `@plugin` 语法 |
-| 2 | **`tailwindcss-animate` v1 可能与 Tailwind v4 不兼容** | `packages/ui/tailwind.config.js:40` | 验证 `@plugin "tailwindcss-animate"` 是否正常工作 |
-| 3 | **无显式 `browserslist` 或 `build.target`** | 根 `package.json`, `packages/ui/package.json` | 添加明确的浏览器兼容目标 |
+### 24. $slots 直接访问与 useSlots() 不一致
+**文件**: 4处直接访问 vs 2处 useSlots()  
+**说明**: 功能正常但风格不一致
 
-### 2. 中优先级问题
+### 25. 6处 no-op 空变体占位符
+**文件**: 多个 variants 文件  
+**说明**: `'' // no-op` 代码异味
 
-| # | 问题 | 位置 | 建议 |
-|---|------|------|------|
-| 4 | `rimraf` 在 Node 22+ 上不必要 | `packages/ui/package.json` | 替换为原生命令 |
-| 5 | 同时依赖 `happy-dom` 和 `jsdom` | `packages/ui/package.json` | 选择一个，移除另一个 |
-| 6 | `vue-demi` 在传递依赖中 | `pnpm-workspace.yaml` | `v-calendar` 引入，可评估替代方案 |
+### 26. 11处 console.warn/error 残留
+**文件**: 多个 composable 和组件文件  
+**说明**: 生产代码中的调试输出
 
-### 3. 低优先级问题
+### 27. 3处 fallback singleton 宽松设计
+**文件**: useToast, useTheme, useLocale  
+**说明**: 可能掩盖使用错误
 
-| # | 问题 | 位置 | 建议 |
-|---|------|------|------|
-| 7 | `shamefully-hoist=true` 破坏 pnpm 严格隔离 | `.npmrc` | 评估是否仍需要 |
-| 8 | `strict-peer-dependencies=false` 静默忽略 peer 不匹配 | `.npmrc` | 评估风险 |
-| 9 | 缺少 `.nvmrc` 文件 | 项目根目录 | 添加以统一 Node 版本 |
-| 10 | `ignoreDeprecations: "6.0"` 表明有废弃选项 | `packages/cli/tsconfig.json:10` | 识别并替换 |
-| 11 | CJS 构建格式可能不必要 | `packages/ui/vite.config.ts:47` | Vue 3 库通常只需 ESM |
-| 12 | `.jsx`/`.tsx` 在 resolve.extensions 中无用 | `packages/ui/vite.config.ts:62` | 可移除 |
+### 28. css.d.ts 类型声明与实际使用不匹配
+**文件**: `packages/ui/src/css.d.ts`  
+**说明**: 声明默认导出但实际是 side effect import
+
+### 29. env.d.ts Vue 组件类型过于宽泛
+**文件**: `packages/ui/src/env.d.ts`  
+**说明**: `DefineComponent<object, object, unknown>` 丢失精确类型
+
+### 30. hooks 子路径导出内容有限
+**文件**: `packages/ui/src/hooks/index.ts`  
+**说明**: 仅导出 4 个 hook，其余需从主入口导入
+
+### 31. webkitAudioContext 垫片
+**文件**: `packages/ui/src/composables/useAudioEngine.ts` (行 23-35)  
+**说明**: 旧版 Safari 兼容性代码，现代浏览器不再需要
+
+### 32. Safari localStorage 防护
+**文件**: `packages/ui/src/composables/useTheme.ts` (行 13-28)  
+**说明**: try-catch 包裹，良好实践
+
+### 33. -webkit- CSS 前缀
+**文件**: 多个文件  
+**说明**: 必要的浏览器前缀
+
+### 34. postcss.config.cjs 使用 CJS 格式
+**文件**: `packages/ui/postcss.config.cjs`  
+**说明**: 在 ESM 包中使用 `.cjs` 后缀是正确的
 
 ---
 
-## 六、CSS 和样式兼容性审查
+## ✅ 良好实践
 
-### 1. Vendor Prefixes（共 9 处）
-
-全部合理且必要，详见第一章浏览器兼容性审查。
-
-### 2. 无问题项
-
-- 无 CSS hack（IE hack）
-- 无过时 CSS 属性（`filter: alpha()`、`zoom: 1` 等）
-- 无旧式媒体查询语法
-- 无 `@supports` 特性查询（中性，非问题）
-
-### 3. 可清理项
-
-| 问题 | 位置 | 建议 |
-|------|------|------|
-| `word-wrap: normal` 可替换为 `overflow-wrap` | `brutx-prism.css:17` | 现代化 |
-| font stack 中 `-apple-system`/`BlinkMacSystemFont` 冗余 | `styles.css:66-67` | `system-ui` 已广泛支持 |
+1. **所有180+组件使用 `<script setup>`** - 完全拥抱 Vue 3 Composition API
+2. **无 Vue 2 遗留 API** - 无 $on, $off, filters, mixins 等
+3. **CSS 自定义属性均有 fallback 值** - 良好的降级支持
+4. **`prefers-reduced-motion` 支持** - 无障碍访问考虑
+5. **`prefers-color-scheme` 检测** - 暗色模式支持
+6. **localStorage 访问有 try-catch 防护** - Safari 隐私模式兼容
+7. **Pointer Events 统一处理** - 鼠标/触摸/触控笔统一处理
+8. **动态 import + try/catch** - 可选依赖优雅降级（v-calendar, @tanstack/vue-virtual）
+9. **子路径导出设计** - 支持按组件 tree-shaking
+10. **ESM + CJS 双格式输出** - 广泛的打包工具兼容
+11. **Intl.ListFormat 特性检测 + 降级** - 树选择组件的国际化处理
+12. **markRaw() 正确使用** - DataTable 中防止组件响应式
 
 ---
 
-## 建议行动
+## 🎯 优先建议
 
-### 立即处理
+### 立即修复 (P0) — ✅ 全部完成
+1. ~~修复 reka-ui 双重声明问题~~ ✅
+2. ~~将 prismjs 添加到 rollup external~~ ✅
+3. ~~添加 structuredClone polyfill~~ ✅
 
-1. 删除 Tailwind v3 配置文件（`packages/ui/tailwind.config.js`）
-2. 删除未使用的 `test-utils.ts`
+### 短期改进 (P1) — ✅ 6/7 完成
+1. ~~添加 ResizeObserver 守卫~~ ✅
+2. 为 Tailwind `:has()` 任意变体添加降级方案（待处理）
+3. ~~修复 `>=` 无上限的 peer 依赖范围~~ ✅
+4. ~~修复 Tailwind 4 双重处理问题~~ ✅
+5. ~~将 @tanstack/vue-virtual 添加到 rollup external~~ ✅
+6. ~~从 rollup external 移除 /^@vueuse/ 死代码~~ ✅
+7. 评估运行时依赖（embla-carousel-vue, cva, clsx, tailwind-merge）是否应迁为 peerDependencies（待评估）
 
-### 短期处理
+### 长期优化 (P2) — ✅ 2/7 完成
+1. 清理死代码（zod peer、console 残留）
+2. 统一 $slots 访问方式
+3. 添加 browserslist 配置明确目标浏览器
+4. ~~更新 brutalism-plugin.js 到 Tailwind 4 API~~ ✅
+5. ~~为 DeepPartial<T> 添加数组类型保护~~ ✅
+6. 为 VirtualScroll 添加 UseVirtualizerFn 正确类型
+7. 为 VirtualScroll 测试添加 VirtualScrollExposed 接口
 
-3. 添加 `browserslist` 到 `package.json`
-4. 清理重复常量定义（提取到共享位置）
-5. 移除 `rimraf` 依赖
-6. 选择 `happy-dom` 或 `jsdom`，移除另一个
+---
 
-### 长期改进
+## 📋 审查维度详情
 
-7. 验证 `tailwindcss-animate` 与 Tailwind v4 的兼容性
-8. 逐步修复测试文件中的 `any` 类型
-9. 评估 `.npmrc` 配置的必要性
-10. 考虑 `useToast`/`useTheme` fallback 单例模式的 deprecation
+### TypeScript 类型兼容性
+- **@ts-expect-error**: 1处（Carousel.vue, vue-tsc 限制）
+- **as any**: 0处源码，5处测试文件
+- **as unknown as**: ~21处（测试文件 + 少量业务断言）
+- **DOM target 断言**: ~18处（标准模式）
+- **泛型约束**: 设计合理，DeepPartial 有数组递归风险
+- **类型定义**: 3个 .d.ts 文件，基本合格
+
+### Vue 3 兼容性
+- **Vue 2 遗留 API**: 0处（完全干净）
+- **Composition API**: 180+组件全部使用 `<script setup>`
+- **响应式 API**: 1处 reactive()，正确使用
+- **生命周期**: 全部使用 Composition API hooks
+- **插槽**: 4处 $slots 直接访问，2处 useSlots()
+- **事件**: 全部使用 defineEmits()
+- **getCurrentInstance()**: 1处（半内部 API）
+
+### 废弃 API 和历史包袱
+- **TODO/FIXME**: 0处
+- **@deprecated**: 0处
+- **兼容性垫片**: 6处（WebKit Audio, Safari localStorage, CSS 前缀）
+- **死代码**: /^@vueuse/ external, zod peer
+- **no-op 占位**: 6处
+- **console 残留**: 11处
+- **fallback singleton**: 3处
+
+### 依赖版本兼容性
+- **peer 依赖冲突**: reka-ui 双重声明
+- **无上限范围**: 所有 >= peer 依赖
+- **缺失声明**: tailwindcss-animate
+- **死依赖**: zod peer, @vueuse external
+- **强制检查**: 被 strict-peer-dependencies=false 禁用
+- **dependencies 误放**: embla-carousel-vue, class-variance-authority, clsx, tailwind-merge 应为 peerDependencies
+
+### 构建和模块兼容性
+- **ESM/CJS**: 双格式正确
+- **子路径导出**: 完整但缺 default fallback
+- **Tree-shaking**: 子路径入口设计良好
+- **Rollup external**: prismjs 遗漏，@vueuse 死代码
+- **Tailwind**: v4 Vite+PostCSS 双重处理
+- **copyStylesPlugin**: 硬编码文件名脆弱
+
+### 浏览器兼容性
+- **Polyfill**: 无（structuredClone, ResizeObserver 缺失）
+- **CSS 特性**: :has() 和 @layer 旧浏览器不支持
+- **JS 特性**: Intl.ListFormat 有降级，clipboard 无降级
+- **浏览器前缀**: -webkit-mask-image, -webkit-text-size-adjust 正确
+- **移动端**: Pointer Events 统一处理，touch-none 正确使用
+
+---
+
+**审查完成时间**: 2026-06-30  
+**审查工具**: Claude Code with 6 parallel sub-agents

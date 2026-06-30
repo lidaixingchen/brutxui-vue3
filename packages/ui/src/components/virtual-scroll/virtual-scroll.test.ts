@@ -1,7 +1,11 @@
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import { ref } from 'vue'
 import VirtualScroll from './VirtualScroll.vue'
+
+interface VirtualScrollExposed {
+    scrollToIndex: (index: number) => void
+}
 
 // Mock useLocale
 vi.mock('@/composables/useLocale', () => ({
@@ -31,7 +35,7 @@ describe('VirtualScroll', () => {
         name: `Item ${i + 1}`,
     }))
 
-    it('renders with items', () => {
+    it('renders with items', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
@@ -40,90 +44,98 @@ describe('VirtualScroll', () => {
                 default: '<div>Item</div>',
             },
         })
+        await flushPromises()
 
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.classes()).toContain('virtual-scroll-root')
     })
 
-    it('renders empty state when no items', () => {
+    it('renders empty state when no items', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: [],
             },
         })
+        await flushPromises()
 
         expect(wrapper.find('.text-brutal-fg\\/50').exists()).toBe(true)
     })
 
-    it('applies size variant classes', () => {
+    it('applies size variant classes', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
                 size: 'lg',
             },
         })
+        await flushPromises()
 
         expect(wrapper.classes()).toContain('max-h-[32rem]')
     })
 
-    it('applies item variant classes for default variant', () => {
+    it('applies item variant classes for default variant', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
                 variant: 'default',
             },
         })
+        await flushPromises()
 
         // With mocked virtualizer, check container renders
         expect(wrapper.exists()).toBe(true)
         expect(wrapper.find('[role="list"]').exists()).toBe(true)
     })
 
-    it('has correct accessibility attributes', () => {
+    it('has correct accessibility attributes', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
             },
         })
+        await flushPromises()
 
         expect(wrapper.attributes('role')).toBe('list')
         expect(wrapper.attributes('aria-label')).toBe('virtualScroll.label')
     })
 
-    it('exposes scrollToIndex method', () => {
+    it('exposes scrollToIndex method', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
             },
         })
+        await flushPromises()
 
-        expect(typeof (wrapper.vm as any).scrollToIndex).toBe('function')
+        expect(typeof (wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex).toBe('function')
     })
 
-    it('calls virtualizer.scrollToIndex when scrollToIndex is invoked', () => {
+    it('calls virtualizer.scrollToIndex when scrollToIndex is invoked', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
             },
         })
+        await flushPromises()
 
         scrollToIndexMock.mockClear()
-        ;(wrapper.vm as any).scrollToIndex(5)
+        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(5)
         expect(scrollToIndexMock).toHaveBeenCalledTimes(1)
         expect(scrollToIndexMock).toHaveBeenCalledWith(5)
     })
 
-    it('passes different indices through to virtualizer', () => {
+    it('passes different indices through to virtualizer', async () => {
         const wrapper = mount(VirtualScroll, {
             props: {
                 items: mockItems,
             },
         })
+        await flushPromises()
 
         scrollToIndexMock.mockClear()
-        ;(wrapper.vm as any).scrollToIndex(0)
-        ;(wrapper.vm as any).scrollToIndex(42)
-        ;(wrapper.vm as any).scrollToIndex(99)
+        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(0)
+        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(42)
+        ;(wrapper.vm as unknown as VirtualScrollExposed).scrollToIndex(99)
         expect(scrollToIndexMock).toHaveBeenCalledTimes(3)
         expect(scrollToIndexMock).toHaveBeenNthCalledWith(1, 0)
         expect(scrollToIndexMock).toHaveBeenNthCalledWith(2, 42)

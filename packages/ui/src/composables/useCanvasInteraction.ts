@@ -208,7 +208,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
 
     onMounted(() => {
         syncCanvasSize()
-        if (containerRef.value) {
+        if (containerRef.value && typeof ResizeObserver !== 'undefined') {
             resizeObserver = new ResizeObserver(syncCanvasSize)
             resizeObserver.observe(containerRef.value)
         }

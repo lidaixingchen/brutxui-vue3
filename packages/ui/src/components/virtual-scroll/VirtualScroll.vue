@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, useSlots } from 'vue'
+
+const slots = useSlots()
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
 import type { VirtualScrollProps, VirtualScrollEmits } from './types'
+import type { useVirtualizer } from '@tanstack/vue-virtual'
 
-type UseVirtualizerFn = (options: unknown) => { value: { getVirtualItems: () => Array<{ key: string | number; index: number; size: number; start: number }>; getTotalSize: () => number; measure: () => void; scrollToIndex: (index: number) => void } }
+type UseVirtualizerFn = typeof useVirtualizer
 
 const props = withDefaults(defineProps<VirtualScrollProps>(), {
     itemHeight: 48,
@@ -24,15 +27,8 @@ const parentRef = ref<HTMLElement | null>(null)
 
 const isAvailable = ref(true)
 
-let useVirtualizer: UseVirtualizerFn | null = null
-
-try {
-    const mod = await import('@tanstack/vue-virtual')
-    useVirtualizer = mod.useVirtualizer as UseVirtualizerFn
-} catch {
-    console.warn('[BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual')
-    isAvailable.value = false
-}
+let useVirtualizerFn: UseVirtualizerFn | null = null
+let virtualizerRef: ReturnType<UseVirtualizerFn> | null = null
 
 const virtualizerOptions = computed(() => ({
     count: props.items.length,
@@ -41,10 +37,25 @@ const virtualizerOptions = computed(() => ({
     overscan: props.overscan,
 }))
 
-const virtualizer = useVirtualizer ? useVirtualizer(virtualizerOptions) : null
+function initVirtualizer(): void {
+    if (useVirtualizerFn && !virtualizerRef) {
+        virtualizerRef = useVirtualizerFn(virtualizerOptions)
+    }
+}
 
-const virtualItems = computed(() => virtualizer?.value.getVirtualItems() ?? [])
-const totalSize = computed(() => virtualizer?.value.getTotalSize() ?? 0)
+// 使用 .then()/.catch() 模式而非顶层 await
+import('@tanstack/vue-virtual')
+    .then((mod) => {
+        useVirtualizerFn = mod.useVirtualizer as UseVirtualizerFn
+        initVirtualizer()
+    })
+    .catch(() => {
+        console.warn('[BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual')
+        isAvailable.value = false
+    })
+
+const virtualItems = computed(() => virtualizerRef?.value.getVirtualItems() ?? [])
+const totalSize = computed(() => virtualizerRef?.value.getTotalSize() ?? 0)
 
 const isEmpty = computed(() => props.items.length === 0)
 
@@ -62,13 +73,14 @@ function handleScroll() {
 }
 
 watch(() => props.items.length, () => {
-    virtualizer?.value.measure()
+    virtualizerRef?.value.measure()
 })
 
 onMounted(() => {
     if (parentRef.value) {
         parentRef.value.addEventListener('scroll', handleScroll)
     }
+    initVirtualizer()
 })
 
 onUnmounted(() => {
@@ -84,10 +96,10 @@ const rootClasses = computed(() =>
 function scrollToIndex(index: number) {
     const itemCount = props.items.length
 
-    if (itemCount === 0 || !virtualizer) return
+    if (itemCount === 0 || !virtualizerRef) return
 
     const clampedIndex = Math.max(0, Math.min(index, itemCount - 1))
-    virtualizer.value.scrollToIndex(clampedIndex)
+    virtualizerRef.value.scrollToIndex(clampedIndex)
 }
 
 defineExpose({ scrollToIndex })
@@ -152,7 +164,7 @@ defineExpose({ scrollToIndex })
         </div>
 
         <!-- 加载更多 -->
-        <div v-if="$slots.loading" class="flex items-center justify-center p-4">
+        <div v-if="slots.loading" class="flex items-center justify-center p-4">
             <slot name="loading" />
         </div>
     </div>

@@ -1,5 +1,7 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, watch, markRaw } from 'vue'
+import { computed, watch, markRaw, useSlots } from 'vue'
+
+const slots = useSlots()
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
@@ -243,7 +245,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
 <template>
     <div :class="rootClasses" :style="rootStyle" role="grid" :aria-label="t('dataTable.label')">
         <!-- Toolbar -->
-        <div v-if="filterable || $slots.toolbar" :class="toolbarClasses">
+        <div v-if="filterable || slots.toolbar" :class="toolbarClasses">
             <div v-if="filterable" class="flex items-center gap-2">
                 <Input
                     v-model="filter.filterState.value.global"

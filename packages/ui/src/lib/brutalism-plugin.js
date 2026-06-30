@@ -158,50 +158,6 @@ const brutalismPlugin = plugin(
         addUtilities(utilities);
         addUtilities(interactiveUtilities);
         addComponents(components);
-    },
-    {
-        theme: {
-            extend: {
-                colors: {
-                    brutal: {
-                        bg: 'var(--brutal-bg)',
-                        fg: 'var(--brutal-fg)',
-                        primary: 'var(--brutal-primary)',
-                        'primary-foreground': 'var(--brutal-primary-foreground)',
-                        secondary: 'var(--brutal-secondary)',
-                        'secondary-foreground': 'var(--brutal-secondary-foreground)',
-                        accent: 'var(--brutal-accent)',
-                        'accent-foreground': 'var(--brutal-accent-foreground)',
-                        destructive: 'var(--brutal-destructive)',
-                        'destructive-foreground': 'var(--brutal-destructive-foreground)',
-                        success: 'var(--brutal-success)',
-                        'success-foreground': 'var(--brutal-success-foreground)',
-                        muted: 'var(--brutal-muted)',
-                        'muted-foreground': 'var(--brutal-muted-foreground)',
-                        ring: 'var(--brutal-ring)',
-                        info: 'var(--brutal-info)',
-                        'info-foreground': 'var(--brutal-info-foreground)',
-                        overlay: 'var(--brutal-overlay)',
-                        placeholder: 'var(--brutal-placeholder)',
-                    },
-                },
-                boxShadow: {
-                    brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-sm': 'calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-lg': 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-xl': 'calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)',
-                },
-                borderWidth: {
-                    3: '3px',
-                },
-                borderRadius: {
-                    brutal: 'var(--brutal-radius, 0px)',
-                },
-                borderColor: {
-                    brutal: 'var(--brutal-border-color, #000000)',
-                },
-            },
-        },
     }
 );
 

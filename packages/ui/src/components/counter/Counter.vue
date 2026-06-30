@@ -130,8 +130,10 @@ onMounted(() => {
         const root = rootRef.value;
         if (!root) return;
         updateScale();
-        resizeObserver = new ResizeObserver(updateScale);
-        resizeObserver.observe(root);
+        if (typeof ResizeObserver !== 'undefined') {
+            resizeObserver = new ResizeObserver(updateScale);
+            resizeObserver.observe(root);
+        }
     });
 });
 

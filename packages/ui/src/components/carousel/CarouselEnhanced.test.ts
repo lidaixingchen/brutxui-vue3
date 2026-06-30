@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { ref, computed } from 'vue'
 import CarouselEnhanced from './CarouselEnhanced.vue'
 
 // Mock useLocale
@@ -12,9 +13,39 @@ vi.mock('@/composables/useLocale', () => ({
     }),
 }))
 
+// Mock useCarouselEnhanced - 在 happy-dom 测试环境中 embla-carousel 无法完整初始化，
+// 因为 happy-dom 缺少真实的布局引擎。scrollSnaps 需要通过 emblaApi 初始化后填充，
+// 但 emblaApi 在测试环境中永远不会初始化，导致 scrollSnaps 始终为空数组。
+// 通过 mock composable 返回有效的 scrollSnaps 值来正确测试 UI 渲染逻辑。
+const mockScrollSnaps = ref<number[]>([0, 1])
+const mockSelectedIndex = ref(0)
+const mockCanScrollPrev = computed(() => mockSelectedIndex.value > 0)
+const mockCanScrollNext = computed(() => mockSelectedIndex.value < mockScrollSnaps.value.length - 1)
+const mockAutoplayProgress = ref(0)
+
+vi.mock('@/composables/useCarouselEnhanced', () => ({
+    useCarouselEnhanced: () => ({
+        emblaRef: ref(null),
+        selectedIndex: mockSelectedIndex,
+        scrollSnaps: mockScrollSnaps,
+        canScrollPrev: mockCanScrollPrev,
+        canScrollNext: mockCanScrollNext,
+        scrollPrev: vi.fn(),
+        scrollNext: vi.fn(),
+        scrollTo: vi.fn(),
+        startAutoplay: vi.fn(),
+        stopAutoplay: vi.fn(),
+        autoplayProgress: mockAutoplayProgress,
+    }),
+}))
+
 describe('CarouselEnhanced', () => {
     beforeEach(() => {
         vi.clearAllMocks()
+        // 重置 mock 状态到默认值（scrollSnaps 默认为空，模拟 embla 未初始化的状态）
+        mockScrollSnaps.value = []
+        mockSelectedIndex.value = 0
+        mockAutoplayProgress.value = 0
     })
 
     it('should render with default props', () => {
@@ -75,6 +106,8 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render dots indicator when configured', () => {
+        // 模拟 embla 初始化后有 2 个 scroll snap 的状态
+        mockScrollSnaps.value = [0, 1]
         const wrapper = mount(CarouselEnhanced, {
             props: {
                 autoplay: true,
@@ -84,11 +117,9 @@ describe('CarouselEnhanced', () => {
                 default: '<div>Slide 1</div><div>Slide 2</div>',
             },
         })
-        // Dots indicator 需要 autoplay 和 autoplayIndicator 同时存在
-        // 且 scrollSnaps.length > 1（需要 embla 初始化）
+        // 当 autoplay、autoplayIndicator.type === 'dots' 和 scrollSnaps.length > 1
+        // 同时满足时，应渲染 dots 指示器
         const dotsContainer = wrapper.find('.absolute.bottom-3')
-        // 由于 embla 可能未完全初始化，dots 可能不会渲染
-        // 这是预期行为，因为 scrollSnaps 在初始化前为空
         expect(dotsContainer.exists()).toBe(true)
     })
 

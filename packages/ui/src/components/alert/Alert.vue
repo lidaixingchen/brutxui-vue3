@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
+
+const slots = useSlots()
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '../../lib/utils'
@@ -42,7 +44,7 @@ const closeIconClasses = computed(() =>
 <template>
     <div role="alert" :class="classes">
         <slot />
-        <div v-if="$slots.actions" class="mt-3 flex items-center gap-2">
+        <div v-if="slots.actions" class="mt-3 flex items-center gap-2">
             <slot name="actions" />
         </div>
         <Button

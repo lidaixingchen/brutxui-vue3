@@ -1,0 +1,11 @@
+# BrutxUI 浏览器兼容性目标
+# 基于项目使用的 Web API 和 CSS 特性确定：
+#   - @layer (CSS)     → Chrome 99+, Firefox 97+, Safari 15.4+
+#   - :has() (CSS)     → Chrome 105+, Firefox 121+, Safari 15.4+
+#   - structuredClone   → Chrome 98+, Firefox 94+, Safari 15.4+ (已添加降级)
+#   - ResizeObserver    → Chrome 64+, Firefox 69+, Safari 13.1+ (已添加守卫)
+
+Chrome >= 105
+Firefox >= 121
+Safari >= 15.4
+Edge >= 105
