@@ -8,10 +8,10 @@ import {
 } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { sheetVariants } from './sheet-variants'
-import { iconSizeVariants } from '../../lib/icon-size-variants'
-import { overlayVariants, CLOSE_BUTTON_BASE_CLASSES } from '../../lib/modal-variants'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
+import { overlayVariants, CLOSE_BUTTON_BASE_CLASSES } from '@/lib/modal-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type SheetVariantProps = VariantProps<typeof sheetVariants>

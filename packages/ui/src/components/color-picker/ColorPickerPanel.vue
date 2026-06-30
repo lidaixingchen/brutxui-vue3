@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { cn } from '../../lib/utils'
-import { type ColorPreset, DEFAULT_COLOR_PRESETS } from '../../lib/default-presets'
-import { HSV_PERCENT_PRECISION, HUE_DEGREES, HSV_COMPONENT_MAX, ALPHA_PRECISION } from '../../lib/defaults'
+import { cn } from '@/lib/utils'
+import { type ColorPreset, DEFAULT_COLOR_PRESETS } from '@/lib/default-presets'
+import { HSV_PERCENT_PRECISION, HUE_DEGREES, HSV_COMPONENT_MAX, ALPHA_PRECISION } from '@/lib/defaults'
 import {
     type ColorFormat,
     type HSVColor,
@@ -13,7 +13,7 @@ import {
     isValidColor,
     normalizeColor,
     parseColor,
-} from '../../lib/color'
+} from '@/lib/color'
 import { useLocale } from '@/composables/useLocale'
 import { useColorHistory } from '@/composables/useColorHistory'
 import { colorPickerPanelVariants } from './color-picker-variants'

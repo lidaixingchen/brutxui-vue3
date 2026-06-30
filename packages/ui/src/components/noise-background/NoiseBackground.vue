@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onBeforeUnmount, useId } from 'vue'
-import { isClient } from '../../lib/env'
+import { isClient } from '@/lib/env'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { noiseBackgroundVariants } from './noise-background-variants'
-import { useReducedMotion } from '../../composables/useReducedMotion'
+import { useReducedMotion } from '@/composables/useReducedMotion'
 
 type NoiseBackgroundVariantProps = VariantProps<typeof noiseBackgroundVariants>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AccordionRoot, type AccordionRootProps, type AccordionRootEmits, useForwardPropsEmits } from 'reka-ui'
 import { computed } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<AccordionRootProps & { class?: string }>()
 const emit = defineEmits<AccordionRootEmits>()

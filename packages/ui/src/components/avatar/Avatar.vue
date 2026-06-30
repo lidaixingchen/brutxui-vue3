@@ -2,7 +2,7 @@
 import { computed, provide } from 'vue'
 import { AvatarRoot } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { avatarVariants } from './avatar-variants'
 import { avatarKey } from './avatar-key'

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
-import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
-import { useReducedMotion } from '../../composables/useReducedMotion'
+import { cn } from '@/lib/utils'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
+import { useReducedMotion } from '@/composables/useReducedMotion'
 import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
 import { glitchButtonVariants } from './glitch-button-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 type GlitchButtonVariantProps = VariantProps<typeof glitchButtonVariants>
 

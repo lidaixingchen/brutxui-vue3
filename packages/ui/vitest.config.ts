@@ -12,7 +12,7 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'happy-dom',
-        setupFiles: ['./vitest.setup.ts'],
+        setupFiles: ['./src/vitest.setup.ts'],
         include: ['src/**/*.{test,spec}.{ts,tsx}'],
         pool: 'threads',
         isolate: false,

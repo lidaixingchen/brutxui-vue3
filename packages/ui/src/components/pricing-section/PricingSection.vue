@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { Check, HelpCircle } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { TagsInputRoot, type TagsInputRootProps, type TagsInputRootEmits, useForwardPropsEmits } from 'reka-ui'
 import { computed } from 'vue'
-import { cn } from '../../lib/utils'
-import { useLocale } from '../../composables/useLocale'
+import { cn } from '@/lib/utils'
+import { useLocale } from '@/composables/useLocale'
 
 const props = defineProps<TagsInputRootProps & { class?: string; ariaLabel?: string }>()
 const emit = defineEmits<TagsInputRootEmits>()

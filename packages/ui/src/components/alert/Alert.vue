@@ -2,9 +2,9 @@
 import { computed, useSlots } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { alertVariants } from './alert-variants'
-import { iconSizeVariants } from '../../lib/icon-size-variants'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
 import Button from '../button/Button.vue'
 import { useLocale } from '@/composables/useLocale'
 

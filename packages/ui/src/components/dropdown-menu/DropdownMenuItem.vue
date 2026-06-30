@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { DropdownMenuItem as DropdownMenuItemPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { dropdownMenuItemVariants } from './dropdown-menu-variants'
 
 interface DropdownMenuItemProps {

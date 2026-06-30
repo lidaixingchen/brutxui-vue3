@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { badgeVariants } from './badge-variants'
-import { iconSizeVariants } from '../../lib/icon-size-variants'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type BadgeVariantProps = VariantProps<typeof badgeVariants>

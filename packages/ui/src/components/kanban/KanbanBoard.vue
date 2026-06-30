@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { Plus } from '@lucide/vue';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { useLocale } from '@/composables/useLocale';
-import { iconSizeVariants } from '../../lib/icon-size-variants';
+import { iconSizeVariants } from '@/lib/icon-size-variants';
 import { kanbanColumnVariants, kanbanCardVariants, kanbanColumnHeaderVariants } from './kanban-variants';
 import Button from '../button/Button.vue';
 

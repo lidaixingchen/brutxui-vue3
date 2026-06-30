@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { colorPickerInputVariants } from './color-picker-variants'
-import { formatColor, isValidColor, parseColor } from '../../lib/color'
+import { formatColor, isValidColor, parseColor } from '@/lib/color'
 
 interface ColorPickerInputProps {
     modelValue?: string | null

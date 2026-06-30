@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { RadioGroupItem as RadioGroupItemPrimitive, RadioGroupIndicator as RadioGroupIndicatorPrimitive } from 'reka-ui'
 import { Square } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { radioGroupItemVariants } from './radio-group-variants'
 
 type RadioGroupItemVariantProps = VariantProps<typeof radioGroupItemVariants>

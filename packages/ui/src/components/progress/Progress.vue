@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { ProgressRoot, ProgressIndicator } from 'reka-ui'
 import { progressRootVariants, progressIndicatorVariants } from './progress-variants'
 

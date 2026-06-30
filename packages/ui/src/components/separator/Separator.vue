@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useSlots } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { Separator as SeparatorPrimitive } from 'reka-ui'
 import { separatorVariants, separatorLineVariants } from './separator-variants'
 

@@ -2,9 +2,9 @@
 import { computed, ref } from 'vue'
 import { Menu } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import Button from '../button/Button.vue'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface DashboardShellProps {
     userEmail?: string

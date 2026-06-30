@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { type SkeletonVariantProps, skeletonCircleWidthVariants } from './skeleton-variants'
 import Skeleton from './Skeleton.vue'
 

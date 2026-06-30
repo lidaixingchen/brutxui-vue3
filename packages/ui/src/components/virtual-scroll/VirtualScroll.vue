@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, useSlots } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
 import type { VirtualScrollProps, VirtualScrollEmits } from './types'

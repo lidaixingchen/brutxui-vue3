@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { CLOSE_BUTTON_BASE_CLASSES } from '../../lib/modal-variants'
+import { CLOSE_BUTTON_BASE_CLASSES } from '@/lib/modal-variants'
 
 export const dialogContentVariants = cva(
     [

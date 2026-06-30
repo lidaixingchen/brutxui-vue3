@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { Toggle } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { Loader2 } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { toggleVariants } from './toggle-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 type ToggleVariantProps = VariantProps<typeof toggleVariants>
 

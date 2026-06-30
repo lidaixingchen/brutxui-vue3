@@ -5,7 +5,7 @@ import {
     SelectContent as SelectContentPrimitive,
     SelectViewport as SelectViewportPrimitive,
 } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import SelectScrollUpButton from './SelectScrollUpButton.vue'
 import SelectScrollDownButton from './SelectScrollDownButton.vue'
 import { selectContentVariants } from './select-variants'

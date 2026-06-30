@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import Table from '../table/Table.vue'
 import TableHeader from '../table/TableHeader.vue'
 import TableBody from '../table/TableBody.vue'

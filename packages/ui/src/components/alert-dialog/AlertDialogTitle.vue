@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { AlertDialogTitle as AlertDialogTitlePrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { alertDialogTitleVariants } from './alert-dialog-variants'
 
 interface AlertDialogTitleProps {

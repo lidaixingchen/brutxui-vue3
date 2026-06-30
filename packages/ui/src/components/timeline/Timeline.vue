@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { provide, computed, useSlots, cloneVNode, type VNode } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { timelineOrientationKey, timelineAlternateKey, type TimelineOrientation } from './timeline-key'
 import TimelineItem from './TimelineItem.vue'
 

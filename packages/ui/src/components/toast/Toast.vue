@@ -2,10 +2,10 @@
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from '@lucide/vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import Button from '../button/Button.vue'
 import { toastVariants } from './toast-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 import { DEFAULT_TOAST_DURATION } from '@/composables/useToast'
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { marqueeContainerVariants, marqueeTrackVariants } from './marquee-variants'
-import { useReducedMotion } from '../../composables/useReducedMotion'
+import { useReducedMotion } from '@/composables/useReducedMotion'
 
 type MarqueeContainerVariantProps = VariantProps<typeof marqueeContainerVariants>
 

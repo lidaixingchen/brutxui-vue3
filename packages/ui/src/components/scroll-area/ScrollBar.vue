@@ -5,7 +5,7 @@ import {
     ScrollAreaThumb as ScrollAreaThumbPrimitive,
 } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { scrollAreaScrollbarVariants, scrollAreaThumbVariants } from './scroll-area-variants'
 
 type ScrollAreaScrollbarVariantProps = VariantProps<typeof scrollAreaScrollbarVariants>

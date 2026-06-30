@@ -11,7 +11,7 @@ const DatePicker = defineAsyncComponent(async () => {
     }
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 
 interface CalendarProps {
     modelValue?: Date | Date[] | null

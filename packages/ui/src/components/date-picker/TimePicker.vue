@@ -4,7 +4,7 @@ import { SelectRoot, SelectValue } from 'reka-ui'
 import SelectTrigger from '../select/SelectTrigger.vue'
 import SelectContent from '../select/SelectContent.vue'
 import SelectItem from '../select/SelectItem.vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { timePickerPanelVariants, timePickerTriggerVariants } from './date-picker-variants'
 

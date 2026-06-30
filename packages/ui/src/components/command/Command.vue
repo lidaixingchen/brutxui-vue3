@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { ListboxRoot, useFilter } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { provideCommandRootContext } from './command-context'
 
 interface CommandProps {

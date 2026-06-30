@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-import { hasDocument } from '../../lib/env'
+import { hasDocument } from '@/lib/env'
 import {
     DialogPortal as DialogPortalPrimitive,
     DialogContent as DialogContentPrimitive,
     DialogClose as DialogClosePrimitive,
 } from 'reka-ui'
 import { X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
-import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '../../lib/defaults'
+import { cn } from '@/lib/utils'
+import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
-import { iconSizeVariants } from '../../lib/icon-size-variants'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 interface DraggableDialogProps {

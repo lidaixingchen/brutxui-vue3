@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import { SelectScrollDownButton as SelectScrollDownButtonPrimitive } from 'reka-ui'
 import { ChevronDown } from '@lucide/vue'
-import { cn } from '../../lib/utils'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { cn } from '@/lib/utils'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface SelectScrollDownButtonProps {
     class?: string

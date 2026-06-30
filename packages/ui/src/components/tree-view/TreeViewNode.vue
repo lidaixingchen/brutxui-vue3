@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, nextTick, useId } from 'vue';
 import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { treeItemVariants } from './tree-view-variants';
 import { getCheckState } from './tree-view-utils';
 import Checkbox from '../checkbox/Checkbox.vue';

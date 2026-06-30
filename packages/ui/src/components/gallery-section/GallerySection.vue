@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { Image as ImageIcon } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import Carousel from '../carousel/Carousel.vue'
 import CarouselItem from '../carousel/CarouselItem.vue'
 import Card from '../card/Card.vue'

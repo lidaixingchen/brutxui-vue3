@@ -2,7 +2,7 @@
 import { TagsInputItemDelete, type TagsInputItemDeleteProps } from 'reka-ui'
 import { computed } from 'vue'
 import { X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<TagsInputItemDeleteProps & { class?: string }>()
 

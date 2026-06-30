@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { FileIcon, Download } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Badge from '../badge/Badge.vue'

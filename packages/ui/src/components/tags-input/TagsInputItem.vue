@@ -2,7 +2,7 @@
 import { TagsInputItem, type TagsInputItemProps as RekaTagsInputItemProps } from 'reka-ui'
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { tagsInputItemVariants } from './tags-input-variants'
 
 type TagsInputItemVariantProps = VariantProps<typeof tagsInputItemVariants>

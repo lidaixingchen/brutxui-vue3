@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
-import { useReducedMotion } from '../../composables/useReducedMotion'
+import { cn } from '@/lib/utils'
+import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
 import { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './card-3d-variants'
-import { CARD_3D_DEFAULT_PERSPECTIVE_PX } from '../../lib/defaults'
+import { CARD_3D_DEFAULT_PERSPECTIVE_PX } from '@/lib/defaults'
 
 type Card3DVariantProps = VariantProps<typeof card3dVariants>
 

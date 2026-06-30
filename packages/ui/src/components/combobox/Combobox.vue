@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
 import { Check, ChevronsUpDown } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { buttonVariants } from '../button/button-variants'
 import { comboboxTriggerVariants, comboboxContentVariants } from './combobox-variants'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -13,7 +13,7 @@ import CommandEmpty from '../command/CommandEmpty.vue'
 import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
 import Spinner from '../spinner/Spinner.vue'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 import { type ComboboxOption } from './combobox-types'

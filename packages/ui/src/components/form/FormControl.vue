@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, computed } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { formFieldKey, formItemKey } from './form-context'
 
 interface FormControlProps {

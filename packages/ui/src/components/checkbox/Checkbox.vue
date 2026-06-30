@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { CheckboxRoot, CheckboxIndicator } from 'reka-ui'
 import { Check, Minus } from '@lucide/vue'
 import { checkboxVariants, checkboxIndicatorVariants } from './checkbox-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
-import { useLocale } from '../../composables/useLocale'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
+import { useLocale } from '@/composables/useLocale'
 
 type CheckboxVariantProps = VariantProps<typeof checkboxVariants>
 

@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 import { SelectScrollUpButton as SelectScrollUpButtonPrimitive } from 'reka-ui'
 import { ChevronUp } from '@lucide/vue'
-import { cn } from '../../lib/utils'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { cn } from '@/lib/utils'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface SelectScrollUpButtonProps {
     class?: string

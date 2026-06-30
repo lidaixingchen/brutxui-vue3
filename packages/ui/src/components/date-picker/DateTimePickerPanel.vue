@@ -12,7 +12,7 @@ const DatePicker = defineAsyncComponent(async () => {
     }
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
 import { type DatePickerShortcut, resolveShortcutValue } from './types'

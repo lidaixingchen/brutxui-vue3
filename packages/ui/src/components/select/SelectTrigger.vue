@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { SelectTrigger as SelectTriggerPrimitive, SelectIcon as SelectIconPrimitive } from 'reka-ui'
 import { ChevronDown } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { selectTriggerVariants } from './select-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 type SelectTriggerVariantProps = VariantProps<typeof selectTriggerVariants>
 

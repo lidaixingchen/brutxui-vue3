@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { AlertDialogAction as AlertDialogActionPrimitive, type PrimitiveProps, useForwardProps } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { buttonVariants } from '../button/button-variants'
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>

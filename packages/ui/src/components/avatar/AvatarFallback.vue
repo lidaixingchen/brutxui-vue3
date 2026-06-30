@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue'
 import { AvatarFallback as AvatarFallbackPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { avatarFallbackVariants } from './avatar-variants'
 import { avatarKey } from './avatar-key'
 

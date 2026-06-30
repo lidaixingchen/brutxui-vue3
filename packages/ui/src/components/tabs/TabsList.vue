@@ -2,7 +2,7 @@
 import { computed, inject, type ComputedRef } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { TabsList as TabsListPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { tabsListVariants } from './tabs-variants'
 
 type TabsListVariantProps = VariantProps<typeof tabsListVariants>

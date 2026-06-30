@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
-import { hasDocument } from '../../lib/env'
+import { hasDocument } from '@/lib/env'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
-import { iconSizeVariants } from '../../lib/icon-size-variants'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
 import type { TreeNode } from './tree-select-types'
 
 const INDENT_PER_DEPTH = 20

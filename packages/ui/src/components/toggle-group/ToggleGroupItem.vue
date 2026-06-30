@@ -2,7 +2,7 @@
 import { computed, inject } from 'vue'
 import { ToggleGroupItem as ToggleGroupItemPrimitive } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { toggleVariants } from '../toggle/toggle-variants'
 import { toggleGroupKey } from './toggle-group-key'
 

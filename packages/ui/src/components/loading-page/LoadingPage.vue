@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import Skeleton from '../skeleton/Skeleton.vue'
 import Spinner from '../spinner/Spinner.vue'
 import Progress from '../progress/Progress.vue'

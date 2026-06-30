@@ -4,7 +4,7 @@ import {
     DropdownMenuPortal as DropdownMenuPortalPrimitive,
     DropdownMenuContent as DropdownMenuContentPrimitive,
 } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { dropdownMenuContentVariants } from './dropdown-menu-variants'
 
 const DEFAULT_SIDE_OFFSET = 6

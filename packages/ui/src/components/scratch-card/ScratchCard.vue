@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, toRef, watch } from 'vue'
-import { hasDocument } from '../../lib/env'
-import { cn } from '../../lib/utils'
-import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '../../lib/theme-fallbacks'
-import { useReducedMotion } from '../../composables/useReducedMotion'
-import { useCanvasInteraction } from '../../composables/useCanvasInteraction'
+import { hasDocument } from '@/lib/env'
+import { cn } from '@/lib/utils'
+import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '@/lib/theme-fallbacks'
+import { useReducedMotion } from '@/composables/useReducedMotion'
+import { useCanvasInteraction } from '@/composables/useCanvasInteraction'
 import { useLocale } from '@/composables/useLocale'
 import { scratchCardVariants } from './scratch-card-variants'
 

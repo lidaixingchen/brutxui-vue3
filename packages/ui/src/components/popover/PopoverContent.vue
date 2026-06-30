@@ -4,7 +4,7 @@ import {
     PopoverPortal as PopoverPortalPrimitive,
     PopoverContent as PopoverContentPrimitive,
 } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { popoverContentVariants } from './popover-variants'
 
 const DEFAULT_SIDE_OFFSET = 8

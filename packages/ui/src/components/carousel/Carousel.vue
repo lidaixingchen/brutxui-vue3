@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, type ComputedRef } from 'vue';
 import { ChevronLeft, ChevronRight } from '@lucide/vue';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
 import { useLocale } from '@/composables/useLocale';
 import { useCarousel, DEFAULT_AUTOPLAY_DELAY } from '@/composables/useCarousel';

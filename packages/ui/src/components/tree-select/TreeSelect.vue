@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue'
 import { ChevronsUpDown, X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
 import { useLocale } from '@/composables/useLocale'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
 import { type VariantProps } from 'class-variance-authority'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import TreeSelectNode from './TreeSelectNode.vue'
 
 type TreeSelectVariantProps = VariantProps<typeof treeSelectTriggerVariants>

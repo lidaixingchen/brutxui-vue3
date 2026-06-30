@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { TabsRoot } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import TabsList from '../tabs/TabsList.vue'
 import TabsTrigger from '../tabs/TabsTrigger.vue'

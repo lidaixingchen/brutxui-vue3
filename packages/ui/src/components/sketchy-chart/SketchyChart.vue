@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { sketchyChartVariants } from './sketchy-chart-variants'
-import { SKETCHY_CHART_DEFAULT_WIDTH, SKETCHY_CHART_DEFAULT_HEIGHT } from '../../lib/defaults'
+import { SKETCHY_CHART_DEFAULT_WIDTH, SKETCHY_CHART_DEFAULT_HEIGHT } from '@/lib/defaults'
 
 interface ChartDataItem {
     label: string

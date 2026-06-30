@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { Loader2 } from '@lucide/vue'
 import { Primitive } from 'reka-ui'
 import { buttonVariants } from './button-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>
 

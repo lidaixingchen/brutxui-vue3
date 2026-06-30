@@ -2,7 +2,7 @@
 import { computed, ref, watch, useSlots } from 'vue'
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import Button from '../button/Button.vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './code-block-variants'
 import { Prism, resolveLanguage, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'

@@ -10,9 +10,9 @@ import {
     useForwardPropsEmits
 } from 'reka-ui'
 import { Plus, Minus, ChevronUp, ChevronDown } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { numberInputRootVariants, numberInputButtonVariants, numberInputFieldVariants } from './number-input-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 interface NumberInputProps extends NumberFieldRootProps {

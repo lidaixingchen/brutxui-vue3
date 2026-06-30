@@ -7,7 +7,7 @@ import {
     SliderRange as SliderRangePrimitive,
     SliderThumb as SliderThumbPrimitive,
 } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import {
     sliderRootVariants,
     sliderTrackVariants,

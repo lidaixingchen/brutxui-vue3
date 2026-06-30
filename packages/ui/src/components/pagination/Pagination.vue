@@ -2,9 +2,9 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()

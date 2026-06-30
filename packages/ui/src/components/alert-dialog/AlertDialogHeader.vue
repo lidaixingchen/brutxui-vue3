@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { cn } from '../../lib/utils'
-import { sectionHeaderVariants } from '../../lib/modal-variants'
+import { cn } from '@/lib/utils'
+import { sectionHeaderVariants } from '@/lib/modal-variants'
 
 interface AlertDialogHeaderProps {
     class?: string

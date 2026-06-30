@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { colorPickerSwatchVariants } from './color-picker-variants'
 
 type SwatchVariantProps = VariantProps<typeof colorPickerSwatchVariants>

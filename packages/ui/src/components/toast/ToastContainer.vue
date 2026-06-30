@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { cn } from '../../lib/utils'
-import type { ToastPosition, ToastStackOptions } from '../../composables/useToast'
+import { cn } from '@/lib/utils'
+import type { ToastPosition, ToastStackOptions } from '@/composables/useToast'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()

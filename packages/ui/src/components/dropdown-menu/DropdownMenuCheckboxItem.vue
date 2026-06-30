@@ -5,9 +5,9 @@ import {
     DropdownMenuItemIndicator as DropdownMenuItemIndicatorPrimitive,
 } from 'reka-ui'
 import { Check } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { dropdownMenuItemVariants } from './dropdown-menu-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface DropdownMenuCheckboxItemProps {
     modelValue?: boolean | 'indeterminate'

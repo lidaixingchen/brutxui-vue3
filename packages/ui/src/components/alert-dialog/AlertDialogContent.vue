@@ -5,8 +5,8 @@ import {
     AlertDialogOverlay as AlertDialogOverlayPrimitive,
     AlertDialogContent as AlertDialogContentPrimitive,
 } from 'reka-ui'
-import { cn } from '../../lib/utils'
-import { overlayVariants } from '../../lib/modal-variants'
+import { cn } from '@/lib/utils'
+import { overlayVariants } from '@/lib/modal-variants'
 import { alertDialogContentVariants } from './alert-dialog-variants'
 
 interface AlertDialogContentProps {

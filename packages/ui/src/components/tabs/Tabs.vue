@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, provide, type ComputedRef } from 'vue'
 import { TabsRoot } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 
 interface TabsProps {
     modelValue?: string

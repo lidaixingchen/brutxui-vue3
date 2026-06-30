@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { TabsContent as TabsContentPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { tabsContentVariants } from './tabs-variants'
 
 interface TabsContentProps {

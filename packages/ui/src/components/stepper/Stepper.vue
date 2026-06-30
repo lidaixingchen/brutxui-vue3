@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { Check } from '@lucide/vue';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
 import { useLocale } from '@/composables/useLocale';
 

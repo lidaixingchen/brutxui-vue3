@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { SelectItem as SelectItemPrimitive, SelectItemIndicator as SelectItemIndicatorPrimitive, SelectItemText as SelectItemTextPrimitive } from 'reka-ui'
 import { Check } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { selectItemVariants } from './select-variants'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 type SelectItemVariantProps = VariantProps<typeof selectItemVariants>
 

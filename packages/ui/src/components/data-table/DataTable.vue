@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
 import { computed, watch, markRaw, useSlots } from 'vue'
-import { cn } from '../../lib/utils'
-import { DEFAULT_PAGE_SIZE_OPTIONS } from '../../lib/defaults'
+import { cn } from '@/lib/utils'
+import { DEFAULT_PAGE_SIZE_OPTIONS } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
 import { useDataTableSort } from '@/composables/useDataTableSort'

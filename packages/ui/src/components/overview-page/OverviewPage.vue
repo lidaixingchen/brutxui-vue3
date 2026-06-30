@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Activity } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import DashboardStats from '../dashboard-stats/DashboardStats.vue'
 import type { StatItem } from '../dashboard-stats/DashboardStats.vue'

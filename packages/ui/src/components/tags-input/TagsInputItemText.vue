@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TagsInputItemText, type TagsInputItemTextProps } from 'reka-ui'
 import { computed } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 
 const props = defineProps<TagsInputItemTextProps & { class?: string }>()
 

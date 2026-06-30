@@ -7,10 +7,10 @@ import {
 } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
-import { iconSizeVariants } from '../../lib/icon-size-variants'
+import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type DialogContentVariantProps = VariantProps<typeof dialogContentVariants>

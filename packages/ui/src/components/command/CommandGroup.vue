@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount } from 'vue'
 import { ListboxGroup, useId } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { injectCommandRootContext, provideCommandGroupContext } from './command-context'
 
 interface CommandGroupProps {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { hasDocument } from '../../lib/env';
-import { cn } from '../../lib/utils';
+import { hasDocument } from '@/lib/env';
+import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
 import { getCheckState, getAllDescendantIds } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';

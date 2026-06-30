@@ -1,4 +1,4 @@
-import type { ColorPreset } from '../../lib/default-presets'
+import type { ColorPreset } from '@/lib/default-presets'
 
 export type ColorPickerSize = 'sm' | 'default' | 'lg'
 export type ColorPickerFormat = 'hex' | 'rgb' | 'hsl'

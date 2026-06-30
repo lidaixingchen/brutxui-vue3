@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Mail, Lock, Eye, EyeOff } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
-import { EMAIL_REGEX } from '../../lib/validation'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
+import { EMAIL_REGEX } from '@/lib/validation'
 import { useId } from 'vue'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'

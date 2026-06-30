@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { scrollAreaScrollbarVariants, scrollAreaThumbVariants } from './scroll-area-variants'
 import ScrollArea from './ScrollArea.vue'
 import ScrollBar from './ScrollBar.vue'

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, toRef, inject, onBeforeUnmount, useId } from 'vue'
-import { cn } from '../../lib/utils'
-import { useAudioEngine } from '../../composables/useAudioEngine'
-import { useFormFieldValidation } from '../../composables/useFormFieldValidation'
+import { cn } from '@/lib/utils'
+import { useAudioEngine } from '@/composables/useAudioEngine'
+import { useFormFieldValidation } from '@/composables/useFormFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { hardcoreInputVariants, hardcoreInputFaceVariants } from './hardcore-input-variants'
 import { formFieldKey, type FormFieldContext } from '../form/form-context'

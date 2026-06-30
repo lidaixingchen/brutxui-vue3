@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { provide, computed, watch } from 'vue'
 import { useForm } from 'vee-validate'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { formContextKey } from './form-context'
 
 interface FormProps {

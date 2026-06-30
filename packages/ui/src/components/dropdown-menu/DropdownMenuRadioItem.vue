@@ -5,7 +5,7 @@ import {
     DropdownMenuItemIndicator as DropdownMenuItemIndicatorPrimitive,
 } from 'reka-ui'
 import { Circle } from '@lucide/vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { dropdownMenuItemVariants } from './dropdown-menu-variants'
 
 interface DropdownMenuRadioItemProps {

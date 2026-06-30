@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { TooltipPortal, TooltipContent as TooltipContentPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { tooltipContentVariants } from './tooltip-variants'
 
 const DEFAULT_SIDE_OFFSET = 6

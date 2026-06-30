@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { DialogRoot } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import DialogContent from '../dialog/DialogContent.vue'
 import DialogTitle from '../dialog/DialogTitle.vue'

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, ref, type ComponentPublicInstance } from 'vue'
 import { ListboxItem, useId } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { commandItemVariants } from './command-variants'
 import { injectCommandRootContext, injectCommandGroupContext } from './command-context'
 

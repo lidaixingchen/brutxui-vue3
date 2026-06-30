@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { TabsTrigger as TabsTriggerPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { tabsTriggerVariants } from './tabs-variants'
 
 type TabsTriggerVariantProps = VariantProps<typeof tabsTriggerVariants>

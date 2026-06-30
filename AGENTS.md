@@ -37,7 +37,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 ## 代码风格
 
-- 除非要求否则不写注释 · 无魔法数字 · 无硬编码值 · 禁止硬编码密钥
+- 除非要求否则不写注释 · 无魔法数字 · 无硬编码值
 - 4 空格缩进 · 单引号 · PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
 
 ## Shell git注意事项

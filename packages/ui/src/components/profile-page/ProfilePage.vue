@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import Avatar from '../avatar/Avatar.vue'
 import AvatarFallback from '../avatar/AvatarFallback.vue'
 import Card from '../card/Card.vue'

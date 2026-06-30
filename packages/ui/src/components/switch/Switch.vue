@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { switchRootVariants, switchThumbVariants } from './switch-variants'
-import { useLocale } from '../../composables/useLocale'
+import { useLocale } from '@/composables/useLocale'
 
 type SwitchRootVariantProps = VariantProps<typeof switchRootVariants>
 

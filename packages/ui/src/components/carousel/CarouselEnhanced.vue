@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
-import { cn } from '../../lib/utils'
-import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
+import { cn } from '@/lib/utils'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
 import { carouselRootVariants, carouselButtonVariants } from './carousel-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useCarouselEnhanced } from '@/composables/useCarouselEnhanced'

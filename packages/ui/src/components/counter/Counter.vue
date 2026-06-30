@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, type Component } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import { counterVariants } from './counter-variants';
 
 const DEFAULT_COUNTER_DURATION = 2000

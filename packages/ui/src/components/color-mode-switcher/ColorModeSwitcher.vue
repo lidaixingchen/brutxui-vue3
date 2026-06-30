@@ -10,8 +10,8 @@ import Button from '../button/Button.vue'
 import SelectTrigger from '../select/SelectTrigger.vue'
 import SelectContent from '../select/SelectContent.vue'
 import SelectItem from '../select/SelectItem.vue'
-import { useTheme } from '../../composables/useTheme'
-import type { ColorMode } from '../../composables/useTheme'
+import { useTheme } from '@/composables/useTheme'
+import type { ColorMode } from '@/composables/useTheme'
 import { useLocale } from '@/composables/useLocale'
 
 interface ColorModeSwitcherProps {

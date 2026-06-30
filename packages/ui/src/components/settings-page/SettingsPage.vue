@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { useLocale } from '@/composables/useLocale'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import TabsList from '../tabs/TabsList.vue'
 import TabsTrigger from '../tabs/TabsTrigger.vue'
 import TabsContent from '../tabs/TabsContent.vue'

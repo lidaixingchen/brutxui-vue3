@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { ref } from 'vue'
 import ColorModeSwitcher from './ColorModeSwitcher.vue'
-import type { ColorMode } from '../../composables/useTheme'
+import type { ColorMode } from '@/composables/useTheme'
 
 // Mock useTheme composable
 const mockColorMode = ref<ColorMode>('light')

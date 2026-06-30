@@ -2,7 +2,7 @@
 import { computed, provide, toRef } from 'vue'
 import { AccordionItem, type AccordionItemProps as RekaAccordionItemProps, useForwardProps } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { accordionItemVariants } from './accordion-variants'
 import { accordionItemKey } from './accordion-key'
 

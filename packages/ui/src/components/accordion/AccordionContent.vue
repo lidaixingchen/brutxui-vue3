@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AccordionContent, type AccordionContentProps } from 'reka-ui'
 import { computed, inject } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { accordionContentVariants } from './accordion-variants'
 import { accordionItemKey } from './accordion-key'
 

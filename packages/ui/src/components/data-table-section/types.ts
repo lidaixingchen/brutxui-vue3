@@ -1,4 +1,4 @@
-import type { IconSize } from '../../lib/icon-size-variants'
+import type { IconSize } from '@/lib/icon-size-variants'
 
 export interface ColumnDef {
     key: string

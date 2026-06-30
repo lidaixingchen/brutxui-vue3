@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { AlertDialogCancel as AlertDialogCancelPrimitive } from 'reka-ui'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { buttonVariants } from '../button/button-variants'
 
 interface AlertDialogCancelProps {

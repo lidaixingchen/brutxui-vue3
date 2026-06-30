@@ -27,12 +27,12 @@ export function useFormWizard() {
 
 <script setup lang="ts">
 import { ref, computed, provide } from 'vue'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import { formWizardRootVariants, formWizardNavigationVariants, formWizardStepInfoVariants, formWizardStepCounterVariants, formWizardErrorPanelVariants, formWizardErrorTitleVariants } from './form-wizard-variants'
 import Stepper from '../stepper/Stepper.vue'
 import type { StepperStep } from '../stepper/Stepper.vue'
 import Button from '../button/Button.vue'
-import { useLocale } from '../../composables/useLocale'
+import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()
 

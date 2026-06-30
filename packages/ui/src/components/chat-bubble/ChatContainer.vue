@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { cn } from '../../lib/utils';
+import { cn } from '@/lib/utils';
 import ChatBubble from './ChatBubble.vue';
 import type { ChatMessage } from './types';
 import { useLocale } from '@/composables/useLocale';
