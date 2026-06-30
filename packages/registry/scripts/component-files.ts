@@ -146,4 +146,22 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
         files: ['VirtualScroll.vue', 'virtual-scroll-variants.ts', 'types.ts'],
         composables: ['useLocale.ts'],
     },
+    'input-adornment': {
+        files: ['InputAdornment.vue'],
+    },
+    upload: {
+        files: ['Upload.vue', 'UploadTrigger.vue', 'UploadFileList.vue', 'UploadFileItem.vue', 'index.ts'],
+        composables: ['useLocale.ts'],
+    },
+    popconfirm: {
+        files: ['Popconfirm.vue'],
+        composables: ['useLocale.ts'],
+    },
+    descriptions: {
+        files: ['Descriptions.vue', 'DescriptionsItem.vue'],
+    },
+    'infinite-scroll': {
+        files: ['InfiniteScroll.vue', 'useInfiniteScroll.ts'],
+        composables: ['useReducedMotion.ts'],
+    },
 };
