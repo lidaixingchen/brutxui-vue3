@@ -1,10 +1,21 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import type { ProjectType } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+/**
+ * 解析 styles 目录路径。
+ * - 构建产物（dist/）中：styles/ 与 index.js 同级
+ * - 源码（src/lib/）中：styles/ 在上级目录
+ */
+function resolveStylesDir(): string {
+    const direct = join(__dirname, 'styles');
+    if (existsSync(direct)) return direct;
+    return join(__dirname, '..', 'styles');
+}
 
 export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared-vue';
 export type { ComponentMeta as ComponentInfo } from 'brutx-shared-vue';
@@ -60,7 +71,7 @@ export const SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/schema.j
 export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
 
 export const BRUTALIST_CSS_STYLES = readFileSync(
-    join(__dirname, 'styles', 'brutalist.css'),
+    join(resolveStylesDir(), 'brutalist.css'),
     'utf-8'
 );
 
