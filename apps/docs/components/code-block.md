@@ -160,16 +160,3 @@ import 'prismjs/components/prism-dart'
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
 | `default` | — | 可选。用于自定义代码内容，使用此插槽时将跳过内置 Prism 语法高亮，直接渲染插槽内容（适用于 Shiki 等其他高亮引擎） |
-
-## 国际化
-
-组件通过 `useLocale()` 提供多语言支持。可通过 `mergeLocale()` 自定义以下文本：
-
-| 键名 | 说明 | 中文默认值 | 英文默认值 |
-|------|------|-----------|-----------|
-| `codeBlock.copy` | 复制按钮文本 | `'复制'` | `'Copy'` |
-| `codeBlock.copied` | 复制成功后文本 | `'已复制'` | `'Copied'` |
-| `codeBlock.defaultLanguage` | 未指定语言时的默认标签 | `'plaintext'` | `'plaintext'` |
-| `codeBlock.defaultFilename` | 未指定文件名时的默认值 | `''` | `''` |
-| `codeBlock.expand` | 展开按钮文本 | `'展开'` | `'Expand'` |
-| `codeBlock.collapse` | 收起按钮文本 | `'收起'` | `'Collapse'` |
