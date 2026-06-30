@@ -444,7 +444,7 @@ function goNextPage() {
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `data` | `T[]` | —（必填） | 表格数据源 |
 | `columns` | `DataTableColumn<T>[]` | —（必填） | 列定义配置 |
 | `rowKey` | `keyof T \| ((row: T) => string \| number)` | —（必填） | 行唯一标识，用于选择和虚拟滚动 |
@@ -461,25 +461,48 @@ function goNextPage() {
 | `dense` | `boolean` | `false` | 是否启用紧凑密度 |
 | `striped` | `boolean` | `true` | 是否显示条纹 |
 | `stickyHeader` | `boolean` | `false` | 是否启用粘性表头 |
+| `expandable` | `boolean` | `false` | 是否启用展开行 |
+| `expandRowKeys` | `Set<string \| number>` | — | 受控的展开行 key 集合 |
+| `spanMethod` | `(params) => [number, number] \| void` | — | 单元格合并方法，返回 `[rowspan, colspan]` |
 | `class` | `string` | — | 自定义 CSS 类名 |
+
+### DataTableColumn 属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `id` | `string` | —（必填） | 列唯一标识 |
+| `header` | `string \| ((ctx) => string)` | —（必填） | 列头文本或渲染函数 |
+| `accessorKey` | `keyof T & string` | — | 数据字段键 |
+| `accessorFn` | `(row: T) => unknown` | — | 自定义取值函数 |
+| `cell` | `(props) => VNode \| string` | — | 自定义单元格渲染函数 |
+| `sortable` | `boolean` | — | 该列是否可排序 |
+| `hidden` | `boolean` | — | 是否隐藏该列 |
+| `width` | `number \| 'auto'` | — | 列宽 |
+| `minWidth` | `number` | — | 最小列宽 |
+| `maxWidth` | `number` | — | 最大列宽 |
+| `align` | `'left' \| 'center' \| 'right'` | — | 列内容对齐方式 |
+| `fixed` | `'left' \| 'right'` | — | 固定列方向 |
+| `type` | `'default' \| 'expand'` | `'default'` | 列类型（`expand` 为展开列） |
 
 ## 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `sort` | `[column: string, direction: 'asc' \| 'desc' \| null]` | 排序变化时触发 |
 | `filter` | `[filters: DataTableFilterState]` | 筛选条件变化时触发 |
 | `select` | `[rows: T[]]` | 选中行变化时触发 |
 | `page-change` | `[page: number]` | 页码变化时触发 |
 | `page-size-change` | `[size: number]` | 每页条数变化时触发 |
+| `expand-change` | `[row: T, expanded: boolean]` | 行展开状态变化时触发 |
 | `export` | `[format: 'csv' \| 'json', selectedRows?: T[]]` | 导出操作触发，携带选中行数据（需启用 selectable） |
 
 ## 插槽
 
 | 插槽 | 作用域 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `toolbar` | — | 工具栏区域，位于筛选框右侧 |
 | `cell-{columnId}` | `{ row: T; value: unknown }` | 自定义特定列的单元格渲染 |
+| `expanded-row` | `{ row: T; index: number }` | 自定义展开行内容 |
 | `empty` | — | 数据为空时的自定义空状态 |
 | `loading` | — | 自定义加载态内容，仅在 `loading` 为 `true` 时渲染 |
 

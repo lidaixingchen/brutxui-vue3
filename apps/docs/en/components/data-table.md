@@ -445,7 +445,7 @@ After accessing `tableRef` via `ref`, you can use the following four namespaces:
 ## Props
 
 | Prop | Type | Default | Description |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `data` | `T[]` | — (required) | Table data source |
 | `columns` | `DataTableColumn<T>[]` | — (required) | Column definition configuration |
 | `rowKey` | `keyof T \| ((row: T) => string \| number)` | — (required) | Row unique identifier, used for selection and virtual scrolling |
@@ -462,25 +462,48 @@ After accessing `tableRef` via `ref`, you can use the following four namespaces:
 | `dense` | `boolean` | `false` | Whether to enable compact density |
 | `striped` | `boolean` | `true` | Whether to show stripes |
 | `stickyHeader` | `boolean` | `false` | Whether to enable sticky header |
+| `expandable` | `boolean` | `false` | Whether to enable expandable rows |
+| `expandRowKeys` | `Set<string \| number>` | — | Controlled expanded row keys |
+| `spanMethod` | `(params) => [number, number] \| void` | — | Cell merge method, returns `[rowspan, colspan]` |
 | `class` | `string` | — | Custom CSS class name |
+
+### DataTableColumn Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `id` | `string` | — (required) | Column unique identifier |
+| `header` | `string \| ((ctx) => string)` | — (required) | Column header text or render function |
+| `accessorKey` | `keyof T & string` | — | Data field key |
+| `accessorFn` | `(row: T) => unknown` | — | Custom value accessor function |
+| `cell` | `(props) => VNode \| string` | — | Custom cell render function |
+| `sortable` | `boolean` | — | Whether the column is sortable |
+| `hidden` | `boolean` | — | Whether to hide the column |
+| `width` | `number \| 'auto'` | — | Column width |
+| `minWidth` | `number` | — | Minimum column width |
+| `maxWidth` | `number` | — | Maximum column width |
+| `align` | `'left' \| 'center' \| 'right'` | — | Column content alignment |
+| `fixed` | `'left' \| 'right'` | — | Fixed column direction |
+| `type` | `'default' \| 'expand'` | `'default'` | Column type (`expand` for expand column) |
 
 ## Events
 
 | Event | Payload | Description |
-|------|------|------|
+| --- | --- | --- |
 | `sort` | `[column: string, direction: 'asc' \| 'desc' \| null]` | Fired when sort changes |
 | `filter` | `[filters: DataTableFilterState]` | Fired when filter criteria change |
 | `select` | `[rows: T[]]` | Fired when selected rows change |
 | `page-change` | `[page: number]` | Fired when page number changes |
 | `page-size-change` | `[size: number]` | Fired when page size changes |
+| `expand-change` | `[row: T, expanded: boolean]` | Fired when row expand state changes |
 | `export` | `[format: 'csv' \| 'json', selectedRows?: T[]]` | Fired on export operation, carries selected row data (requires selectable) |
 
 ## Slots
 
 | Slot | Scope | Description |
-|------|------|------|
+| --- | --- | --- |
 | `toolbar` | — | Toolbar area, positioned to the right of the filter input |
 | `cell-{columnId}` | `{ row: T; value: unknown }` | Custom cell rendering for a specific column |
+| `expanded-row` | `{ row: T; index: number }` | Custom expanded row content |
 | `empty` | — | Custom empty state when data is empty |
 | `loading` | — | Custom loading content, only rendered when `loading` is `true` |
 

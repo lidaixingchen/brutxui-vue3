@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import Input from '../input/Input.vue'
+import { SelectRoot, SelectValue } from 'reka-ui'
+import SelectTrigger from '../select/SelectTrigger.vue'
+import SelectContent from '../select/SelectContent.vue'
+import SelectItem from '../select/SelectItem.vue'
 
 const { t } = useLocale()
 
@@ -18,7 +23,22 @@ const ELLIPSIS_COUNT = 1
 
 interface PaginationProps {
     modelValue: number
-    totalPages: number
+    /** 总页数（与 total + pageSize 二选一） */
+    totalPages?: number
+    /** 总条数 */
+    total?: number
+    /** 每页条数 */
+    pageSize?: number
+    /** 每页条数选项 */
+    pageSizes?: number[]
+    /** 自定义布局 */
+    layout?: string
+    /** 是否禁用 */
+    disabled?: boolean
+    /** 页码按钮背景色 */
+    background?: boolean
+    /** 只有一页时隐藏 */
+    hideOnSinglePage?: boolean
     siblingCount?: number
     showFirstLast?: boolean
     showPageNumbers?: boolean
@@ -28,6 +48,14 @@ interface PaginationProps {
 }
 
 const props = withDefaults(defineProps<PaginationProps>(), {
+    totalPages: undefined,
+    total: undefined,
+    pageSize: 10,
+    pageSizes: () => [10, 20, 50, 100],
+    layout: 'sizes, prev, pager, next, jumper, total',
+    disabled: false,
+    background: false,
+    hideOnSinglePage: false,
     siblingCount: 1,
     showFirstLast: true,
     showPageNumbers: true,
@@ -38,8 +66,26 @@ const props = withDefaults(defineProps<PaginationProps>(), {
 
 const emit = defineEmits<{
     'update:modelValue': [page: number]
+    'update:pageSize': [size: number]
     jump: []
 }>()
+
+// 计算总页数
+const computedTotalPages = computed(() => {
+    if (props.totalPages !== undefined) return props.totalPages
+    if (props.total !== undefined && props.pageSize > 0) {
+        return Math.ceil(props.total / props.pageSize)
+    }
+    return 1
+})
+
+// 解析布局
+const layoutComponents = computed(() => {
+    return props.layout.split(',').map(item => item.trim()).filter(Boolean)
+})
+
+// 跳转输入值
+const jumpValue = ref('')
 
 function range(start: number, end: number) {
     const length = end - start + 1
@@ -47,31 +93,31 @@ function range(start: number, end: number) {
 }
 
 const paginationRange = computed(() => {
-    if (props.totalPages <= 0) return []
+    if (computedTotalPages.value <= 0) return []
 
     const totalPageNumbers = props.siblingCount * 2 + FIRST_PAGES_COUNT + ELLIPSIS_COUNT * 2
 
-    if (totalPageNumbers >= props.totalPages) {
-        return range(FIRST_PAGE, props.totalPages)
+    if (totalPageNumbers >= computedTotalPages.value) {
+        return range(FIRST_PAGE, computedTotalPages.value)
     }
 
     const leftSiblingIndex = Math.max(props.modelValue - props.siblingCount, FIRST_PAGE)
-    const rightSiblingIndex = Math.min(props.modelValue + props.siblingCount, props.totalPages)
+    const rightSiblingIndex = Math.min(props.modelValue + props.siblingCount, computedTotalPages.value)
 
     const shouldShowLeftDots = leftSiblingIndex > MIN_PAGE_THRESHOLD
-    const shouldShowRightDots = rightSiblingIndex < props.totalPages - MIN_PAGE_THRESHOLD
+    const shouldShowRightDots = rightSiblingIndex < computedTotalPages.value - MIN_PAGE_THRESHOLD
 
-    const lastPageIndex = props.totalPages
+    const lastPageIndex = computedTotalPages.value
 
     if (!shouldShowLeftDots && shouldShowRightDots) {
         const leftEndIndex = FIRST_PAGES_COUNT + 2 * props.siblingCount
         const leftRange = range(FIRST_PAGE, leftEndIndex)
-        return [...leftRange, 'dots' as const, props.totalPages]
+        return [...leftRange, 'dots' as const, computedTotalPages.value]
     }
 
     if (shouldShowLeftDots && !shouldShowRightDots) {
         const rightEndIndex = FIRST_PAGES_COUNT + 2 * props.siblingCount
-        const rightRange = range(props.totalPages - rightEndIndex + 1, props.totalPages)
+        const rightRange = range(computedTotalPages.value - rightEndIndex + 1, computedTotalPages.value)
         return [FIRST_PAGE, 'dots' as const, ...rightRange]
     }
 
@@ -80,15 +126,19 @@ const paginationRange = computed(() => {
         return [FIRST_PAGE, 'dots' as const, ...middleRange, 'dots' as const, lastPageIndex]
     }
 
-    return range(FIRST_PAGE, props.totalPages)
+    return range(FIRST_PAGE, computedTotalPages.value)
 })
 
 const navClasses = computed(() =>
-    cn(paginationVariants({ variant: props.variant, size: props.size }), props.class)
+    cn(
+        paginationVariants({ variant: props.variant, size: props.size }),
+        props.disabled && 'opacity-50 pointer-events-none',
+        props.class,
+    )
 )
 
 const safeCurrentPage = computed(() =>
-    Math.min(Math.max(props.modelValue, FIRST_PAGE), Math.max(props.totalPages, FIRST_PAGE))
+    Math.min(Math.max(props.modelValue, FIRST_PAGE), Math.max(computedTotalPages.value, FIRST_PAGE))
 )
 
 const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']>, IconSize> = {
@@ -108,19 +158,31 @@ const dotsSizeClasses = computed(() => {
 })
 
 const firstButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: props.size, isActive: false }))
+    cn(
+        paginationButtonVariants({ size: props.size, isActive: false }),
+        props.background && 'bg-brutal-muted',
+    )
 )
 
 const prevButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: props.size, isActive: false }))
+    cn(
+        paginationButtonVariants({ size: props.size, isActive: false }),
+        props.background && 'bg-brutal-muted',
+    )
 )
 
 const nextButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: props.size, isActive: false }))
+    cn(
+        paginationButtonVariants({ size: props.size, isActive: false }),
+        props.background && 'bg-brutal-muted',
+    )
 )
 
 const lastButtonClasses = computed(() =>
-    cn(paginationButtonVariants({ size: props.size, isActive: false }))
+    cn(
+        paginationButtonVariants({ size: props.size, isActive: false }),
+        props.background && 'bg-brutal-muted',
+    )
 )
 
 const dotsClasses = computed(() =>
@@ -128,55 +190,117 @@ const dotsClasses = computed(() =>
         'flex items-center justify-center font-black text-brutal-fg cursor-pointer',
         'hover:bg-brutal-muted transition-colors duration-150',
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
-        dotsSizeClasses.value
+        dotsSizeClasses.value,
     )
 )
 
 const pageButtonActiveClasses = computed(() =>
-    cn(paginationButtonVariants({ size: props.size, isActive: true }))
+    cn(
+        paginationButtonVariants({ size: props.size, isActive: true }),
+    )
 )
 
 const pageButtonInactiveClasses = computed(() =>
-    cn(paginationButtonVariants({ size: props.size, isActive: false }))
+    cn(
+        paginationButtonVariants({ size: props.size, isActive: false }),
+        props.background && 'bg-brutal-muted',
+    )
 )
 
+// 是否隐藏（只有一页时）
+const isHidden = computed(() => {
+    return props.hideOnSinglePage && computedTotalPages.value <= 1
+})
+
 function onPageChange(page: number) {
-    if (page >= FIRST_PAGE && page <= props.totalPages) {
+    if (page >= FIRST_PAGE && page <= computedTotalPages.value) {
         emit('update:modelValue', page)
+    }
+}
+
+function onPageSizeChange(size: number) {
+    emit('update:pageSize', size)
+    // 重新计算当前页
+    const newTotalPages = props.total ? Math.ceil(props.total / size) : computedTotalPages.value
+    if (props.modelValue > newTotalPages) {
+        emit('update:modelValue', newTotalPages)
+    }
+}
+
+function onJumpToPage() {
+    const page = parseInt(jumpValue.value, 10)
+    if (!isNaN(page) && page >= FIRST_PAGE && page <= computedTotalPages.value) {
+        emit('update:modelValue', page)
+        jumpValue.value = ''
     }
 }
 </script>
 
 <template>
-    <nav role="navigation" :aria-label="t('pagination.label')" :class="navClasses">
-        <button
-            v-if="showFirstLast"
-            type="button"
-            :class="firstButtonClasses"
-            :disabled="safeCurrentPage <= FIRST_PAGE"
-            :aria-label="t('pagination.firstPage')"
-            @click="onPageChange(1)"
+    <nav
+        v-if="!isHidden"
+        role="navigation"
+        :aria-label="t('pagination.label')"
+        :class="navClasses"
+    >
+        <!-- 总条数 -->
+        <span
+            v-if="layoutComponents.includes('total') && total !== undefined"
+            class="text-sm font-medium text-brutal-fg"
         >
-            <ChevronsLeft :class="iconClasses" />
-        </button>
+            共 {{ total }} 条
+        </span>
 
+        <!-- 每页条数选择 -->
+        <div
+            v-if="layoutComponents.includes('sizes')"
+            class="flex items-center gap-2"
+        >
+            <SelectRoot
+                :model-value="String(pageSize)"
+                :disabled="disabled"
+                @update:model-value="onPageSizeChange(Number($event))"
+            >
+                <SelectTrigger
+                    size="sm"
+                    class="w-auto"
+                    :aria-label="t('pagination.perPage')"
+                >
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem
+                        v-for="sizeOption in pageSizes"
+                        :key="sizeOption"
+                        :value="String(sizeOption)"
+                    >
+                        {{ sizeOption }} 条/页
+                    </SelectItem>
+                </SelectContent>
+            </SelectRoot>
+        </div>
+
+        <!-- 上一页 -->
         <button
+            v-if="layoutComponents.includes('prev')"
             type="button"
             :class="prevButtonClasses"
-            :disabled="safeCurrentPage <= FIRST_PAGE"
+            :disabled="safeCurrentPage <= FIRST_PAGE || disabled"
             :aria-label="t('pagination.previousPage')"
             @click="onPageChange(safeCurrentPage - 1)"
         >
             <ChevronLeft :class="iconClasses" />
         </button>
 
-        <template v-if="showPageNumbers">
+        <!-- 页码 -->
+        <template v-if="layoutComponents.includes('pager') && showPageNumbers">
             <template v-for="(pageNumber, index) in paginationRange" :key="index">
                 <button
                     v-if="pageNumber === 'dots'"
                     type="button"
                     :class="dotsClasses"
                     :aria-label="t('pagination.jumpPages')"
+                    :disabled="disabled"
                     @click="emit('jump')"
                 >
                     •••
@@ -187,6 +311,7 @@ function onPageChange(page: number) {
                     :class="safeCurrentPage === pageNumber ? pageButtonActiveClasses : pageButtonInactiveClasses"
                     :aria-label="t('pagination.page', { number: pageNumber })"
                     :aria-current="safeCurrentPage === pageNumber ? 'page' : undefined"
+                    :disabled="disabled"
                     @click="onPageChange(pageNumber)"
                 >
                     {{ pageNumber }}
@@ -194,29 +319,41 @@ function onPageChange(page: number) {
             </template>
         </template>
 
-        <span v-if="!showPageNumbers" class="px-4 font-black text-brutal-fg">
-            {{ safeCurrentPage }} / {{ totalPages }}
+        <!-- 简洁页码显示 -->
+        <span
+            v-if="layoutComponents.includes('pager') && !showPageNumbers"
+            class="px-4 font-black text-brutal-fg"
+        >
+            {{ safeCurrentPage }} / {{ computedTotalPages }}
         </span>
 
+        <!-- 下一页 -->
         <button
+            v-if="layoutComponents.includes('next')"
             type="button"
             :class="nextButtonClasses"
-            :disabled="safeCurrentPage >= props.totalPages"
+            :disabled="safeCurrentPage >= computedTotalPages || disabled"
             :aria-label="t('pagination.nextPage')"
             @click="onPageChange(safeCurrentPage + 1)"
         >
             <ChevronRight :class="iconClasses" />
         </button>
 
-        <button
-            v-if="showFirstLast"
-            type="button"
-            :class="lastButtonClasses"
-            :disabled="safeCurrentPage >= props.totalPages"
-            :aria-label="t('pagination.lastPage')"
-            @click="onPageChange(totalPages)"
+        <!-- 跳转 -->
+        <div
+            v-if="layoutComponents.includes('jumper')"
+            class="flex items-center gap-2"
         >
-            <ChevronsRight :class="iconClasses" />
-        </button>
+            <span class="text-sm text-brutal-fg">前往</span>
+            <Input
+                v-model="jumpValue"
+                size="sm"
+                class="w-16"
+                :disabled="disabled"
+                :placeholder="''"
+                @keyup.enter="onJumpToPage"
+            />
+            <span class="text-sm text-brutal-fg">页</span>
+        </div>
     </nav>
 </template>

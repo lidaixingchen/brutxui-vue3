@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, watch, markRaw, useSlots } from 'vue'
+import { computed, ref, watch, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
@@ -19,7 +19,7 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableProps, DataTableFilterState } from './types'
+import type { DataTableColumn, DataTableProps, DataTableFilterState, DataTableSpanMethodParams } from './types'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -37,6 +37,8 @@ import {
     ChevronsLeft,
     ChevronsRight,
     Inbox,
+    ChevronDown,
+    ChevronRight as ChevronRightIcon,
 } from '@lucide/vue'
 
 const slots = useSlots()
@@ -54,6 +56,9 @@ const props = withDefaults(defineProps<DataTableProps<T>>(), {
     dense: false,
     striped: true,
     stickyHeader: false,
+    expandable: false,
+    expandRowKeys: undefined,
+    spanMethod: undefined,
 })
 
 const emit = defineEmits<{
@@ -62,8 +67,69 @@ const emit = defineEmits<{
     select: [rows: T[]]
     'page-change': [page: number]
     'page-size-change': [size: number]
+    'expand-change': [row: T, expanded: boolean]
     export: [format: 'csv' | 'json', selectedRows?: T[]]
 }>()
+
+// 展开行状态
+const expandedRowKeys = ref<Set<string | number>>(new Set())
+
+// 同步外部 expandRowKeys
+if (props.expandRowKeys) {
+    expandedRowKeys.value = new Set(props.expandRowKeys)
+}
+
+watch(() => props.expandRowKeys, (newKeys) => {
+    if (newKeys) {
+        expandedRowKeys.value = new Set(newKeys)
+    }
+}, { deep: true })
+
+// 获取行的唯一 key
+function getRowKeyValue(row: T): string | number {
+    if (typeof props.rowKey === 'function') {
+        return props.rowKey(row)
+    }
+    return row[props.rowKey] as string | number
+}
+
+// 切换展开行
+function toggleExpandRow(row: T) {
+    const key = getRowKeyValue(row)
+    const isExpanded = expandedRowKeys.value.has(key)
+    if (isExpanded) {
+        expandedRowKeys.value.delete(key)
+    } else {
+        expandedRowKeys.value.add(key)
+    }
+    // 触发响应式
+    expandedRowKeys.value = new Set(expandedRowKeys.value)
+    emit('expand-change', row, !isExpanded)
+}
+
+// 检查行是否展开
+function isRowExpanded(row: T): boolean {
+    return expandedRowKeys.value.has(getRowKeyValue(row))
+}
+
+// 计算固定列的偏移量
+function getFixedColumnOffset(column: DataTableColumn<T>, side: 'left' | 'right'): number {
+    const cols = visibleColumns.value.filter(c => c.fixed === side)
+    const index = cols.findIndex(c => c.id === column.id)
+    if (index === -1) return 0
+
+    let offset = 0
+    for (let i = 0; i < index; i++) {
+        offset += cols[i].width && typeof cols[i].width === 'number' ? cols[i].width! : 150
+    }
+    return offset
+}
+
+// 获取合并单元格的 rowspan 和 colspan
+function getSpanMethodResult(row: T, column: DataTableColumn<T>, rowIndex: number, columnIndex: number): [number, number] | void {
+    if (!props.spanMethod) return undefined
+    return props.spanMethod({ row, column, rowIndex, columnIndex })
+}
 
 const visibleColumns = computed(() =>
     props.columns.filter((col) => !col.hidden),
@@ -204,6 +270,11 @@ defineExpose({
         pageIndex: pagination.currentPage,
         pageCount: pagination.totalPages,
     },
+    expand: {
+        toggleRow: toggleExpandRow,
+        isRowExpanded,
+        expandedRowKeys,
+    },
 })
 
 function getHeadClasses(column: DataTableColumn<T>): string {
@@ -275,6 +346,9 @@ function getCellClasses(column: DataTableColumn<T>): string {
                 <!-- Header -->
                 <thead :class="headerClasses">
                     <tr>
+                        <th v-if="expandable" class="w-10 px-2 py-3 text-center">
+                            <span class="sr-only">Expand</span>
+                        </th>
                         <th v-if="selectable" class="w-12 px-4 py-3 text-center">
                             <Checkbox
                                 :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
@@ -291,6 +365,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 width: column.width ? (typeof column.width === 'number' ? `${column.width}px` : column.width) : undefined,
                                 minWidth: column.minWidth ? `${column.minWidth}px` : undefined,
                                 maxWidth: column.maxWidth ? `${column.maxWidth}px` : undefined,
+                                position: column.fixed ? 'sticky' : undefined,
+                                left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
+                                right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
+                                zIndex: column.fixed ? 10 : undefined,
                             }"
                             role="columnheader"
                             :tabindex="sortable && column.sortable !== false ? 0 : undefined"
@@ -313,35 +391,98 @@ function getCellClasses(column: DataTableColumn<T>): string {
                 <!-- Body -->
                 <tbody>
                     <template v-if="displayData.length > 0">
-                        <tr
-                            v-for="row in displayData"
+                        <template
+                            v-for="(row, rowIndex) in displayData"
                             :key="selection.getRowKey(row)"
-                            :class="getRowClasses(row)"
-                            role="row"
-                            :aria-selected="selection.selectedRows.value.has(selection.getRowKey(row)) || undefined"
                         >
-                            <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
-                                <Checkbox
-                                    :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
-                                    size="sm"
-                                    class="cursor-pointer"
-                                    @update:checked="handleToggleRow(row)"
-                                />
-                            </td>
-                            <td
-                                v-for="column in visibleColumns"
-                                :key="column.id"
-                                :class="getCellClasses(column)"
-                                role="gridcell"
+                            <!-- 主行 -->
+                            <tr
+                                :class="getRowClasses(row)"
+                                role="row"
+                                :aria-selected="selection.selectedRows.value.has(selection.getRowKey(row)) || undefined"
+                                :aria-expanded="expandable ? isRowExpanded(row) : undefined"
                             >
-                                <slot :name="`cell-${column.id}`" :row="row" :value="getCellValue(row, column)">
-                                    <CellRenderer v-if="column.cell" :cell-fn="column.cell" :row="row" :value="getCellValue(row, column)" />
-                                    <template v-else>
-                                        {{ getCellValue(row, column) }}
+                                <td v-if="expandable" class="w-10 px-2 py-3 text-center" role="gridcell">
+                                    <button
+                                        class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                        :aria-label="isRowExpanded(row) ? 'Collapse row' : 'Expand row'"
+                                        @click="toggleExpandRow(row)"
+                                    >
+                                        <ChevronDown
+                                            v-if="isRowExpanded(row)"
+                                            class="w-4 h-4 transition-transform"
+                                        />
+                                        <ChevronRightIcon
+                                            v-else
+                                            class="w-4 h-4 transition-transform"
+                                        />
+                                    </button>
+                                </td>
+                                <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
+                                    <Checkbox
+                                        :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
+                                        size="sm"
+                                        class="cursor-pointer"
+                                        @update:checked="handleToggleRow(row)"
+                                    />
+                                </td>
+                                <td
+                                    v-for="(column, columnIndex) in visibleColumns"
+                                    :key="column.id"
+                                    :class="getCellClasses(column)"
+                                    :style="{
+                                        position: column.fixed ? 'sticky' : undefined,
+                                        left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
+                                        right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
+                                        zIndex: column.fixed ? 10 : undefined,
+                                        ...(getSpanMethodResult(row, column, rowIndex, columnIndex) ? {
+                                            rowspan: getSpanMethodResult(row, column, rowIndex, columnIndex)![0],
+                                            colspan: getSpanMethodResult(row, column, rowIndex, columnIndex)![1],
+                                        } : {}),
+                                    }"
+                                    role="gridcell"
+                                    v-show="!getSpanMethodResult(row, column, rowIndex, columnIndex) || (getSpanMethodResult(row, column, rowIndex, columnIndex)![0] !== 0 && getSpanMethodResult(row, column, rowIndex, columnIndex)![1] !== 0)"
+                                >
+                                    <template v-if="column.type === 'expand'">
+                                        <button
+                                            class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                            @click="toggleExpandRow(row)"
+                                        >
+                                            <ChevronDown
+                                                v-if="isRowExpanded(row)"
+                                                class="w-4 h-4 transition-transform"
+                                            />
+                                            <ChevronRightIcon
+                                                v-else
+                                                class="w-4 h-4 transition-transform"
+                                            />
+                                        </button>
                                     </template>
-                                </slot>
-                            </td>
-                        </tr>
+                                    <template v-else>
+                                        <slot :name="`cell-${column.id}`" :row="row" :value="getCellValue(row, column)">
+                                            <CellRenderer v-if="column.cell" :cell-fn="column.cell" :row="row" :value="getCellValue(row, column)" />
+                                            <template v-else>
+                                                {{ getCellValue(row, column) }}
+                                            </template>
+                                        </slot>
+                                    </template>
+                                </td>
+                            </tr>
+                            <!-- 展开行 -->
+                            <tr
+                                v-if="expandable && isRowExpanded(row)"
+                                class="bg-brutal-muted/30"
+                                role="row"
+                            >
+                                <td
+                                    :colspan="visibleColumns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)"
+                                    class="px-4 py-3"
+                                    role="gridcell"
+                                >
+                                    <slot name="expanded-row" :row="row" :index="rowIndex" />
+                                </td>
+                            </tr>
+                        </template>
                     </template>
                     <template v-else>
                         <tr>

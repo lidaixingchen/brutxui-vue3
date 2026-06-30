@@ -115,11 +115,13 @@ Root component that inherits all props from reka-ui `SelectRoot`. Common props a
 ### SelectTrigger
 
 | Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| --- | --- | --- | --- |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Trigger size |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
 | `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"` |
 | `disabled` | `boolean` | `false` | Whether disabled |
+| `clearable` | `boolean` | `false` | Show clear button on hover |
+| `modelValue` | `string \| number \| null` | — | Current selected value (for clearable) |
 | `class` | `string` | — | Custom CSS class |
 | `iconClass` | `string` | — | Custom icon CSS class |
 
@@ -175,6 +177,12 @@ Displays the selected value, inherits all props from reka-ui `SelectValue`.
 |------|------|---------|-------------|
 | `class` | `string` | — | Custom CSS class |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | Down arrow icon size |
+
+## SelectTrigger Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `clear` | — | Triggered when clear button is clicked |
 
 ## Accessibility
 

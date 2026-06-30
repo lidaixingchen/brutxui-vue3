@@ -102,6 +102,77 @@ const email = ref('')
 </template>
 ```
 
+### 可清除
+
+设置 `clearable` 属性后，鼠标悬停时会显示清除按钮。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const value = ref('点击清除')
+</script>
+
+<template>
+    <Input v-model="value" clearable @clear="value = ''" />
+</template>
+```
+
+### 密码切换
+
+设置 `show-password` 属性后，密码输入框会显示可见性切换按钮。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const password = ref('')
+</script>
+
+<template>
+    <Input v-model="password" type="password" show-password placeholder="请输入密码" />
+</template>
+```
+
+### 字数统计
+
+同时设置 `show-word-limit` 和 `maxlength` 属性后，会显示字数统计。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const value = ref('')
+</script>
+
+<template>
+    <Input v-model="value" maxlength="100" show-word-limit placeholder="最多 100 个字符" />
+</template>
+```
+
+### 前缀/后缀插槽
+
+使用插槽在输入框前后添加自定义内容。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const url = ref('')
+</script>
+
+<template>
+    <Input v-model="url" placeholder="请输入网址">
+        <template #prepend>https://</template>
+        <template #append>.com</template>
+    </Input>
+</template>
+```
+
 ## 变体
 
 | 变体 | 说明 |
@@ -121,7 +192,7 @@ const email = ref('')
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `type` | `HTMLInputType` ¹ | `'text'` | 输入框类型 |
 | `modelValue` | `string` | — | v-model 绑定值 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 输入框变体 |
@@ -129,6 +200,12 @@ const email = ref('')
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `readonly` | `boolean` | `false` | 是否只读 |
 | `placeholder` | `string` | — | 占位符文本 |
+| `maxlength` | `number` | — | 最大输入长度 |
+| `clearable` | `boolean` | `false` | 悬停时显示清除按钮 |
+| `showPassword` | `boolean` | `false` | 显示密码切换按钮（仅 `type="password"` 有效） |
+| `showWordLimit` | `boolean` | `false` | 显示字数统计（需配合 `maxlength`） |
+| `prefixIcon` | `Component` | — | 前缀图标 |
+| `suffixIcon` | `Component` | — | 后缀图标 |
 | `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
 | `ariaLabel` | `string` | — | ARIA 标签 |
 | `ariaLabelledby` | `string` | — | ARIA 标签引用 ID |
@@ -142,8 +219,18 @@ const email = ref('')
 ## 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `update:modelValue` | `string` | 值更新时触发 |
+| `clear` | — | 点击清除按钮时触发 |
+
+## 插槽
+
+| 插槽 | 说明 |
+| --- | --- |
+| `prepend` | 输入框前置内容（如 URL 协议） |
+| `append` | 输入框后置内容（如域名） |
+| `prefix` | 自定义前缀内容 |
+| `suffix` | 自定义后缀内容 |
 
 ## 方法（defineExpose）
 

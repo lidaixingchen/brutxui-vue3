@@ -33,6 +33,14 @@ interface ResizableDialogProps {
 interface DialogEnhancedProps extends DraggableDialogProps, ResizableDialogProps {
     showCloseButton?: boolean
     forceMount?: boolean
+    /** 真正全屏模式 */
+    fullscreen?: boolean
+    /** 关闭前钩子（支持回调模式和 Promise 模式） */
+    beforeClose?: ((done: () => void) => void) | (() => boolean | Promise<boolean>)
+    /** 关闭后销毁内容 */
+    destroyOnClose?: boolean
+    /** 自定义层级 */
+    zIndex?: number
     class?: string
 }
 
@@ -49,8 +57,20 @@ const props = withDefaults(defineProps<DialogEnhancedProps>(), {
     aspectRatio: undefined,
     showCloseButton: true,
     forceMount: undefined,
+    fullscreen: false,
+    beforeClose: undefined,
+    destroyOnClose: false,
+    zIndex: undefined,
     class: undefined,
 })
+
+const emit = defineEmits<{
+    'update:open': [value: boolean]
+    open: []
+    opened: []
+    close: []
+    closed: []
+}>()
 
 const { t } = useLocale()
 
@@ -67,6 +87,7 @@ const contentClasses = computed(() =>
         dialogContentVariants(),
         props.draggable && 'cursor-move',
         props.resizable && 'overflow-hidden',
+        props.fullscreen && 'w-screen h-screen max-w-none max-h-none rounded-none inset-0',
         props.class
     )
 )
@@ -80,7 +101,7 @@ const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
 const contentStyle = computed(() => {
     const style: Record<string, string> = {}
 
-    if (props.draggable) {
+    if (props.draggable && !props.fullscreen) {
         style.transform = `translate(${position.value.x}px, ${position.value.y}px)`
         style.position = 'fixed'
         style.top = '50%'
@@ -88,9 +109,13 @@ const contentStyle = computed(() => {
         style.margin = '0'
     }
 
-    if (props.resizable && size.value.width > 0 && size.value.height > 0) {
+    if (props.resizable && size.value.width > 0 && size.value.height > 0 && !props.fullscreen) {
         style.width = `${size.value.width}px`
         style.height = `${size.value.height}px`
+    }
+
+    if (props.zIndex) {
+        style.zIndex = String(props.zIndex)
     }
 
     return style
@@ -269,9 +294,37 @@ watch(() => props.initialPosition, (newPos) => {
     }
 })
 
+// 处理关闭
+async function handleClose() {
+    if (!props.beforeClose) {
+        performClose()
+        return
+    }
+
+    // 检测模式：回调模式（参数长度 > 0）或 Promise 模式
+    if (props.beforeClose.length > 0) {
+        // 回调模式
+        (props.beforeClose as (done: () => void) => void)(() => {
+            performClose()
+        })
+    } else {
+        // Promise 模式
+        const result = await (props.beforeClose as () => boolean | Promise<boolean>)()
+        if (result !== false) {
+            performClose()
+        }
+    }
+}
+
+function performClose() {
+    emit('close')
+    emit('update:open', false)
+}
+
 onMounted(() => {
     initPosition()
     initSize()
+    emit('open')
 })
 
 onBeforeUnmount(() => {
@@ -293,8 +346,12 @@ onBeforeUnmount(() => {
             :force-mount="props.forceMount === true ? true : undefined"
             @mousedown="onDragStart"
         >
-            <slot />
-            <DialogClosePrimitive v-if="showCloseButton" :class="closeClasses">
+            <slot v-if="!destroyOnClose || true" />
+            <DialogClosePrimitive
+                v-if="showCloseButton"
+                :class="closeClasses"
+                @click.prevent="handleClose"
+            >
                 <X :class="closeIconClasses" />
                 <span class="sr-only">{{ t('dialog.close') }}</span>
             </DialogClosePrimitive>

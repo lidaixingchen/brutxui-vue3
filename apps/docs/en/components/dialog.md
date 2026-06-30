@@ -168,7 +168,7 @@ Close button re-exported from reka-ui.
 ### DialogEnhanced
 
 | Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| --- | --- | --- | --- |
 | `draggable` | `boolean` | `false` | Whether the dialog is draggable |
 | `dragHandle` | `string \| HTMLElement` | — | Drag handle (CSS selector or element) |
 | `bounds` | `'parent' \| 'viewport' \| { top, left, right, bottom }` | `'viewport'` | Drag boundaries |
@@ -181,6 +181,10 @@ Close button re-exported from reka-ui.
 | `aspectRatio` | `number` | — | Lock aspect ratio |
 | `showCloseButton` | `boolean` | `true` | Whether to show the close button |
 | `forceMount` | `boolean` | — | Force mount |
+| `fullscreen` | `boolean` | `false` | Fullscreen mode (occupies entire viewport) |
+| `beforeClose` | `((done) => void) \| (() => boolean \| Promise<boolean>)` | — | Close hook (supports callback and Promise mode) |
+| `destroyOnClose` | `boolean` | `false` | Destroy content after closing |
+| `zIndex` | `number` | — | Custom z-index |
 | `class` | `string` | — | Custom CSS class |
 
 ### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
@@ -191,24 +195,34 @@ Close button re-exported from reka-ui.
 
 ## Events
 
-### Dialog
+### DialogRoot
 
 | Event | Payload | Description |
-|-------|---------|-------------|
+| --- | --- | --- |
 | `update:open` | `(value: boolean)` | Emitted when the dialog open state changes |
+
+### DialogEnhanced Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:open` | `(value: boolean)` | Emitted when the dialog open state changes |
+| `open` | — | Emitted when the dialog starts opening |
+| `opened` | — | Emitted when the dialog open animation completes |
+| `close` | — | Emitted when the dialog starts closing |
+| `closed` | — | Emitted when the dialog close animation completes |
 
 ## Slots
 
 ### Dialog
 
 | Slot | Scope | Description |
-|------|-------|-------------|
+| --- | --- | --- |
 | `default` | `{ open: boolean, close: () => void }` | Default slot, provides current open state and close method |
 
-### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay / DialogEnhanced
+### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay / DialogEnhanced Slots
 
 | Slot | Scope | Description |
-|------|-------|-------------|
+| --- | --- | --- |
 | `default` | — | Default slot |
 
 ## Accessibility

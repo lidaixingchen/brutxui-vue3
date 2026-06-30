@@ -92,7 +92,7 @@ const data: User[] = [
 ### DataTable Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `data` | `T[]` | —（必填） | 表格数据源 |
 | `columns` | `DataTableColumn<T>[]` | —（必填） | 列定义配置 |
 | `rowKey` | `keyof T \| ((row: T) => string \| number)` | —（必填） | 行唯一标识 |
@@ -109,12 +109,15 @@ const data: User[] = [
 | `dense` | `boolean` | `false` | 是否启用紧凑密度 |
 | `striped` | `boolean` | `true` | 是否显示条纹 |
 | `stickyHeader` | `boolean` | `false` | 是否启用粘性表头 |
+| `expandable` | `boolean` | `false` | 是否启用展开行 |
+| `expandRowKeys` | `Set<string \| number>` | — | 受控的展开行 key 集合 |
+| `spanMethod` | `(params) => [number, number] \| void` | — | 单元格合并方法，返回 `[rowspan, colspan]` |
 | `class` | `string` | — | 自定义样式类 |
 
 ### DataTableColumn 类型
 
 | 字段 | 类型 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `id` | `string` | 列唯一标识，必填 |
 | `header` | `string \| ((ctx) => string)` | 列标题，必填 |
 | `accessorKey` | `keyof T & string` | 通过 key 访问行数据字段 |
@@ -124,16 +127,19 @@ const data: User[] = [
 | `hidden` | `boolean` | 是否隐藏 |
 | `width` | `number \| 'auto'` | 列宽度 |
 | `align` | `'left' \| 'center' \| 'right'` | 对齐方式 |
+| `fixed` | `'left' \| 'right'` | 固定列方向 |
+| `type` | `'default' \| 'expand'` | 列类型（`expand` 为展开列） |
 
 ### DataTable 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `sort` | `[column: string, direction: 'asc' \| 'desc' \| null]` | 排序变化时触发 |
 | `filter` | `[filters: DataTableFilterState]` | 筛选条件变化时触发 |
 | `select` | `[rows: T[]]` | 选中行变化时触发 |
 | `page-change` | `[page: number]` | 页码变化时触发 |
 | `page-size-change` | `[size: number]` | 每页条数变化时触发 |
+| `expand-change` | `[row: T, expanded: boolean]` | 行展开状态变化时触发 |
 | `export` | `[format: 'csv' \| 'json', selectedRows?: T[]]` | 导出操作触发 |
 
 ### DataTable 插槽
@@ -242,14 +248,30 @@ const data: User[] = [
   variant="default"
   size="default"
 />
+
+<!-- 使用 total + pageSize -->
+<Pagination
+  v-model="currentPage"
+  :total="100"
+  :page-size="10"
+  :page-sizes="[10, 20, 50, 100]"
+  layout="sizes, prev, pager, next, jumper, total"
+/>
 ```
 
 ### Pagination Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `modelValue` | `number` | —（必填） | 当前页码 |
-| `totalPages` | `number` | —（必填） | 总页数 |
+| `totalPages` | `number` | — | 总页数（与 `total` + `pageSize` 二选一） |
+| `total` | `number` | — | 总条数 |
+| `pageSize` | `number` | `10` | 每页条数 |
+| `pageSizes` | `number[]` | `[10, 20, 50, 100]` | 每页条数选项 |
+| `layout` | `string` | `'sizes, prev, pager, next, jumper, total'` | 自定义布局 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `background` | `boolean` | `false` | 页码按钮是否显示背景色 |
+| `hideOnSinglePage` | `boolean` | `false` | 只有一页时是否隐藏 |
 | `siblingCount` | `number` | `1` | 当前页码两侧显示的兄弟页数 |
 | `showFirstLast` | `boolean` | `true` | 是否显示首页/末页按钮 |
 | `showPageNumbers` | `boolean` | `true` | 是否显示页码按钮 |
@@ -260,8 +282,9 @@ const data: User[] = [
 ### Pagination 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `update:modelValue` | `page: number` | 页码变化时触发 |
+| `update:pageSize` | `size: number` | 每页条数变化时触发 |
 | `jump` | — | 点击省略号按钮时触发 |
 
 ## Counter
@@ -646,7 +669,7 @@ interface StatItem {
 ### DashboardStats Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `stats` | `StatItem[]` | `[]` | 统计项数据数组 |
 | `title` | `string` | 国际化默认值 | 标题文本 |
 | `subtitle` | `string` | — | 副标题文本 |
@@ -656,5 +679,38 @@ interface StatItem {
 ### DashboardStats 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `stat-click` | `number` | 点击统计卡片时触发，参数为卡片索引 |
+
+## Descriptions
+
+描述列表，以键值对形式展示只读信息。
+
+```vue
+<Descriptions title="用户信息" :column="2" border>
+    <DescriptionsItem label="姓名">张三</DescriptionsItem>
+    <DescriptionsItem label="邮箱">zhangsan@example.com</DescriptionsItem>
+    <DescriptionsItem label="电话">+86 138 0000 0000</DescriptionsItem>
+    <DescriptionsItem label="地址">北京市朝阳区</DescriptionsItem>
+</Descriptions>
+```
+
+### Descriptions Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `column` | `number` | `3` | 列数 |
+| `border` | `boolean` | `false` | 是否显示边框 |
+| `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` | 排列方向 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 组件尺寸 |
+| `title` | `string` | — | 标题文本 |
+| `class` | `string` | — | 自定义 CSS 类 |
+
+### DescriptionsItem Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | `string` | —（必填） | 标签文本 |
+| `span` | `number` | `1` | 跨列数 |
+| `labelWidth` | `string \| number` | — | 标签宽度（仅水平方向有效） |
+| `class` | `string` | — | 自定义 CSS 类 |

@@ -167,7 +167,7 @@ import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from
 ### DialogEnhanced
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `draggable` | `boolean` | `false` | 是否可拖拽 |
 | `dragHandle` | `string \| HTMLElement` | — | 拖拽手柄（CSS 选择器或元素） |
 | `bounds` | `'parent' \| 'viewport' \| { top, left, right, bottom }` | `'viewport'` | 拖拽边界 |
@@ -180,12 +180,16 @@ import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from
 | `aspectRatio` | `number` | — | 宽高比锁定 |
 | `showCloseButton` | `boolean` | `true` | 是否显示关闭按钮 |
 | `forceMount` | `boolean` | — | 强制渲染 |
+| `fullscreen` | `boolean` | `false` | 全屏模式（占满整个视口） |
+| `beforeClose` | `((done) => void) \| (() => boolean \| Promise<boolean>)` | — | 关闭前钩子（支持回调模式和 Promise 模式） |
+| `destroyOnClose` | `boolean` | `false` | 关闭后销毁内容 |
+| `zIndex` | `number` | — | 自定义层级 |
 | `class` | `string` | — | 自定义样式类 |
 
 ### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `class` | `string` | — | 自定义样式类 |
 
 ## 事件
@@ -193,15 +197,25 @@ import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from
 ### Dialog
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
+
+### DialogEnhanced 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
+| `open` | — | 对话框开始打开时触发 |
+| `opened` | — | 对话框打开动画完成时触发 |
+| `close` | — | 对话框开始关闭时触发 |
+| `closed` | — | 对话框关闭动画完成时触发 |
 
 ## 插槽
 
 ### Dialog
 
 | 插槽 | 作用域 | 说明 |
-|------|--------|------|
+| --- | --- | --- |
 | `default` | `{ open: boolean, close: () => void }` | 默认插槽，提供当前打开状态和关闭方法 |
 
 ### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay / DialogEnhanced

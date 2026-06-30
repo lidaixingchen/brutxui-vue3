@@ -80,6 +80,77 @@ const value = ref('Readonly content, selectable and copyable but not editable')
 </template>
 ```
 
+### Clearable
+
+Add a clear button that appears on hover when the input has a value.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const value = ref('Clear me!')
+</script>
+
+<template>
+    <Input v-model="value" clearable @clear="value = ''" />
+</template>
+```
+
+### Password Toggle
+
+Show a password visibility toggle button for password inputs.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const password = ref('')
+</script>
+
+<template>
+    <Input v-model="password" type="password" show-password placeholder="Enter password" />
+</template>
+```
+
+### Word Limit
+
+Show character count when `show-word-limit` and `maxlength` are both set.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const value = ref('')
+</script>
+
+<template>
+    <Input v-model="value" maxlength="100" show-word-limit placeholder="Max 100 characters" />
+</template>
+```
+
+### With Prefix/Suffix Slots
+
+Use slots to add custom content before or after the input.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const url = ref('')
+</script>
+
+<template>
+    <Input v-model="url" placeholder="Enter URL">
+        <template #prepend>https://</template>
+        <template #append>.com</template>
+    </Input>
+</template>
+```
+
 ## Variants
 
 | Variant | Description |
@@ -107,6 +178,12 @@ const value = ref('Readonly content, selectable and copyable but not editable')
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `readonly` | `boolean` | `false` | Whether readonly |
 | `placeholder` | `string` | — | Placeholder text |
+| `maxlength` | `number` | — | Maximum input length |
+| `clearable` | `boolean` | `false` | Show clear button on hover |
+| `showPassword` | `boolean` | `false` | Show password toggle button (for `type="password"`) |
+| `showWordLimit` | `boolean` | `false` | Show word count (requires `maxlength`) |
+| `prefixIcon` | `Component` | — | Prefix icon |
+| `suffixIcon` | `Component` | — | Suffix icon |
 | `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"`, uses `role="alert"` for screen reader announcement |
 | `ariaLabel` | `string` | — | ARIA label |
 | `ariaLabelledby` | `string` | — | ARIA label reference ID |
@@ -120,8 +197,18 @@ const value = ref('Readonly content, selectable and copyable but not editable')
 ## Events
 
 | Event | Payload | Description |
-|-------|---------|-------------|
+| --- | --- | --- |
 | `update:modelValue` | `string` | Triggered when value changes |
+| `clear` | — | Triggered when clear button is clicked |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `prepend` | Content before the input (e.g., URL protocol) |
+| `append` | Content after the input (e.g., domain) |
+| `prefix` | Custom prefix content |
+| `suffix` | Custom suffix content |
 
 ## Exposed Methods (defineExpose)
 

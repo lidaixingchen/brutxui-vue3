@@ -47,17 +47,17 @@ import { cn } from '@/lib/utils'
 ### 表单与输入
 
 | 组件 | 中文名 | 说明 |
-|------|--------|------|
+| --- | --- | --- |
 | Button | 按钮 | 9 种变体、5 种尺寸、加载状态 |
 | SubmitButton | 提交按钮 | 支持加载/等待状态 |
-| Input | 输入框 | 支持变体/尺寸/ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、defineExpose 暴露 ref/focus/blur/select 方法 |
+| Input | 输入框 | 支持变体/尺寸/ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、clearable 清除按钮、showPassword 密码切换、showWordLimit 字数统计、prefixIcon/suffixIcon 前后缀图标、prepend/append 插槽、defineExpose 暴露 ref/focus/blur/select 方法 |
 | Textarea | 文本域 | 多行文本输入，支持 ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、defineExpose 暴露 ref/focus/blur/select 方法 |
 | NumberInput | 数字输入框 | 带 +/- 按钮，支持 split/stacked 布局、variant 边框样式变体、errorMessage 错误消息 |
 | HardcoreInput | 硬核输入框 | 8-bit 音效 + 表情反馈 + 物理震动 |
 | Checkbox | 复选框 | 通过 v-model:checked 绑定、ariaLabel 无障碍标签、indeterminate 状态使用 Minus 图标 |
 | Switch | 开关 | 通过 v-model:checked 绑定、ariaLabel 无障碍标签 |
 | RadioGroup | 单选组 | 支持 v-model、ariaLabel 无障碍标签 |
-| Select | 选择器 | 支持子组件组合，SelectTrigger 支持 variant 边框样式变体和 errorMessage 错误消息 |
+| Select | 选择器 | 支持子组件组合，SelectTrigger 支持 variant 边框样式变体、errorMessage 错误消息、clearable 清除按钮 |
 | Combobox | 搜索选择器 | 可搜索的单选/多选，支持加载状态与创建选项，defineExpose 暴露 open/searchQuery/selectedValue/focus |
 | TreeSelect | 树形选择器 | 支持单选/多选/搜索/任意深度树结构，defineExpose 暴露 open/searchQuery/selectedNodes/expandedIds/focus |
 | Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式/方向/刻度/提示，通过 v-model 进行受控，defineExpose 暴露 currentVal/setValue |
@@ -67,7 +67,8 @@ import { cn } from '@/lib/utils'
 | Calendar | 日历 | 日期选择器，支持范围模式 |
 | ColorPicker | 颜色选择器 | 支持 HEX/RGB/HSL、透明度、预设与历史记录、defineExpose({ open }) 程序化控制面板 |
 | DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，支持 v-model、displayFormat 格式化、快捷选项、defineExpose({ open }) 程序化控制面板 |
-| Form | 表单 | 集成 vee-validate + Zod 校验 |
+| Upload | 上传 | 文件上传系统，支持拖拽、文件列表管理、进度追踪、错误处理、beforeUpload/beforeRemove 钩子、httpRequest 自定义上传、listType 列表类型 |
+| Form | 表单 | 集成 vee-validate + Zod 校验，支持 inline 行内布局、labelPosition 标签位置、scrollToError 滚动到错误字段、defineExpose 暴露 validate/validateField/resetFields/clearValidate/scrollToField 方法 |
 | Label | 标签 | 表单字段标签，支持尺寸/必填标记 |
 
 ### 布局与容器
@@ -90,14 +91,15 @@ import { cn } from '@/lib/utils'
 ### 数据展示
 
 | 组件 | 中文名 | 说明 |
-|------|--------|------|
+| --- | --- | --- |
 | Table | 表格 | 8 个子组件（Header/Body/Footer/Row/Head/Cell/Caption）、ariaLabel 无障碍标签 |
-| DataTable | 数据表格 | 支持排序/筛选/分页/选择/虚拟滚动、defineExpose 暴露排序/筛选/选择/分页方法 |
+| DataTable | 数据表格 | 支持排序/筛选/分页/选择/虚拟滚动/固定列/展开行/合并单元格、defineExpose 暴露排序/筛选/选择/分页/展开方法 |
+| Descriptions | 描述列表 | 以键值对形式展示只读信息，支持 column 列数、border 边框、direction 方向、span 跨列 |
 | VirtualScroll | 虚拟滚动 | 基于 @tanstack/vue-virtual，支持大数据列表高性能滚动，暴露 scrollToIndex 方法 |
 | Badge | 徽章 | 7 种变体、3 种尺寸（sm/default/lg）、closable/dot/pulse、icon 插槽 |
 | Avatar | 头像 | 支持 image/fallback、尺寸、形状、变体、状态 |
 | Progress | 进度条 | 支持 v-model、不确定状态、百分比标签 |
-| Pagination | 分页 | 支持 v-model、计算算法、首尾页、可点击省略号 jump 事件 |
+| Pagination | 分页 | 支持 v-model、total/pageSizes/layout/jumper、首尾页、可点击省略号 jump 事件 |
 | Counter | 数字动画 | 支持前缀/后缀/分隔符/缓动函数，5 种变体，自动尊重 prefers-reduced-motion |
 | Kbd | 键盘按键 | 3 种尺寸、4 种变体 |
 | CodeBlock | 代码块 | 支持语言高亮、行号、折叠展开 |
@@ -111,15 +113,17 @@ import { cn } from '@/lib/utils'
 ### 反馈与浮层
 
 | 组件 | 中文名 | 说明 |
-|------|--------|------|
-| Dialog | 对话框 | 支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full） |
+| --- | --- | --- |
+| Dialog | 对话框 | 支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full）、fullscreen 全屏、beforeClose 关闭前钩子、destroyOnClose 关闭后销毁 |
 | AlertDialog | 确认弹窗 | 支持 Action/Cancel |
 | Alert | 提示 | 7 种变体、closable、actions 插槽 |
 | Toast | 通知 | 搭配 useToast 组合式函数、pauseOnHover 悬停暂停 |
 | Popover | 弹出框 | 支持对齐/偏移 |
+| Popconfirm | 气泡确认框 | 轻量级确认操作，支持 title/confirmButtonType/icon/cancelable |
 | Tooltip | 工具提示 | 支持偏移 |
 | DropdownMenu | 下拉菜单 | 支持子菜单项/复选/单选/分隔符 |
 | Command | 命令面板 | 支持搜索/分组/快捷键、defineExpose({ filterSearch }) 程序化搜索 |
+| InfiniteScroll | 无限滚动 | 滚动到底部自动加载更多数据，支持 distance/delay/disabled、useInfiniteScroll composable |
 
 ### 新粗野主义特色
 
@@ -363,7 +367,7 @@ provideLocale({
 BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使用：
 
 | Composable | 说明 |
-|------------|------|
+| --- | --- |
 | `useCarousel` | 轮播逻辑（embla 初始化、autoplay、状态管理），自动尊重 prefers-reduced-motion |
 | `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认） |
 | `useColorPicker` | 颜色选择逻辑（面板开关、颜色转换、选择确认） |
@@ -379,6 +383,8 @@ BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使
 | `useCanvasInteraction` | Canvas 交互逻辑（涂抹进度、阈值自动揭示） |
 | `useKanban` | 看板拖拽逻辑（鼠标/键盘拖拽、列/卡片移动） |
 | `useStepper` | 步骤条逻辑（步骤导航、键盘处理） |
+| `useClearable` | 统一清除按钮逻辑（showClear、handleClear、鼠标进入/离开） |
+| `useInfiniteScroll` | 无限滚动逻辑（IntersectionObserver、防抖、加载状态） |
 | `useDataTableSort` | DataTable 排序状态管理 |
 | `useDataTableFilter` | DataTable 筛选状态管理 |
 | `useDataTableSelection` | DataTable 行选择管理 |

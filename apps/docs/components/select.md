@@ -114,11 +114,13 @@ const selectedFruit = ref('')
 ### SelectTrigger
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
 | `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
 | `disabled` | `boolean` | `false` | 是否禁用 |
+| `clearable` | `boolean` | `false` | 悬停时显示清除按钮 |
+| `modelValue` | `string \| number \| null` | — | 当前选中值（用于清除功能） |
 | `class` | `string` | — | 自定义样式类 |
 | `iconClass` | `string` | — | 图标自定义样式类 |
 
@@ -171,9 +173,15 @@ const selectedFruit = ref('')
 ### SelectScrollDownButton
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `class` | `string` | — | 自定义样式类 |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 向下箭头图标尺寸 |
+
+## SelectTrigger 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `clear` | — | 点击清除按钮时触发 |
 
 ## 可访问性
 

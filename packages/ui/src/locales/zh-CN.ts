@@ -466,4 +466,18 @@ export const zhCN: Locale = {
     alert: {
         close: '关闭',
     },
+    popconfirm: {
+        confirm: '确认',
+        cancel: '取消',
+    },
+    upload: {
+        dragText: '点击或拖拽文件到此区域上传',
+        browseText: '浏览文件',
+        maxSizeError: '文件大小超过限制',
+        limitError: '最多只能上传 {limit} 个文件',
+        retry: '重试',
+    },
+    infiniteScroll: {
+        loading: '加载中...',
+    },
 }

@@ -42,7 +42,7 @@
 ### DialogEnhanced（可拖拽/可调整大小）
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
 | `draggable` | `boolean` | `false` | 是否可拖拽 |
 | `dragHandle` | `string \| HTMLElement` | — | 拖拽手柄（CSS 选择器或元素） |
 | `resizable` | `boolean` | `false` | 是否可调整大小 |
@@ -50,12 +50,20 @@
 | `minHeight` | `number` | `150` | 最小高度 |
 | `maxWidth` | `number` | — | 最大宽度 |
 | `maxHeight` | `number` | — | 最大高度 |
+| `fullscreen` | `boolean` | `false` | 全屏模式（占满整个视口） |
+| `beforeClose` | `((done) => void) \| (() => boolean \| Promise<boolean>)` | — | 关闭前钩子（支持回调模式和 Promise 模式） |
+| `destroyOnClose` | `boolean` | `false` | 关闭后销毁内容 |
+| `zIndex` | `number` | — | 自定义层级 |
 
 ### Dialog 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `update:open` | `boolean` | 对话框打开状态变化时触发 |
+| `open` | — | 对话框开始打开时触发 |
+| `opened` | — | 对话框打开动画完成时触发 |
+| `close` | — | 对话框开始关闭时触发 |
+| `closed` | — | 对话框关闭动画完成时触发 |
 
 ## AlertDialog
 
@@ -236,8 +244,41 @@ interface ToastItem {
 ### Popover 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `update:open` | `boolean` | 打开状态变化时触发 |
+
+## Popconfirm
+
+轻量级的确认气泡弹窗，基于 Popover 构建。
+
+```vue
+<Popconfirm
+    title="确定要删除此项吗？"
+    confirm-button-type="destructive"
+    @confirm="handleConfirm"
+    @cancel="handleCancel"
+>
+    <Button variant="destructive">删除</Button>
+</Popconfirm>
+```
+
+### Popconfirm Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | —（必填） | 确认标题文本 |
+| `confirmButtonText` | `string` | locale: `popconfirm.confirm` | 确认按钮文字 |
+| `cancelButtonText` | `string` | locale: `popconfirm.cancel` | 取消按钮文字 |
+| `confirmButtonType` | `'primary' \| 'destructive'` | `'primary'` | 确认按钮样式 |
+| `icon` | `Component` | `TriangleAlert` | 警告图标组件 |
+| `cancelable` | `boolean` | `true` | 是否显示取消按钮 |
+
+### Popconfirm 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `confirm` | — | 点击确认按钮时触发 |
+| `cancel` | — | 点击取消按钮时触发 |
 
 ## Tooltip
 
@@ -409,12 +450,67 @@ interface ToastItem {
 ### Command 事件
 
 | 事件 | 参数 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `update:modelValue` | `string` | 输入值变化时触发 |
 | `select` | `string` | 选中项目时触发（CommandItem） |
 
 ### 暴露的 API
 
 | 方法/属性 | 类型 | 说明 |
-|-----------|------|------|
+| --- | --- | --- |
 | `filterSearch` | `Ref<string>` | 当前搜索关键词，可读写；写入后会触发内部过滤逻辑 |
+
+## InfiniteScroll
+
+无限滚动组件，滚动到底部自动加载更多数据。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { InfiniteScroll } from 'brutx-ui-vue'
+
+const items = ref([])
+
+async function loadMore() {
+    // 加载数据
+}
+</script>
+
+<template>
+    <InfiniteScroll @load="loadMore">
+        <div v-for="item in items" :key="item.id">
+            {{ item.name }}
+        </div>
+    </InfiniteScroll>
+</template>
+```
+
+### InfiniteScroll Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `distance` | `number` | `100` | 触发距离阈值（像素） |
+| `delay` | `number` | `200` | 防抖延迟（毫秒） |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `immediate` | `boolean` | `true` | 挂载时是否立即检查 |
+
+### InfiniteScroll 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `load` | — | 需要加载更多数据时触发 |
+
+### useInfiniteScroll composable
+
+```typescript
+import { useInfiniteScroll } from 'brutx-ui-vue'
+
+const { isLoading, resetLoading } = useInfiniteScroll(targetRef, {
+    distance: 100,
+    delay: 200,
+    onLoad: async () => {
+        // 加载数据
+        resetLoading()
+    },
+})
+```

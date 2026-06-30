@@ -466,4 +466,18 @@ export const en: Locale = {
     alert: {
         close: 'Close',
     },
+    popconfirm: {
+        confirm: 'Confirm',
+        cancel: 'Cancel',
+    },
+    upload: {
+        dragText: 'Click or drag files to this area to upload',
+        browseText: 'Browse files',
+        maxSizeError: 'File size exceeds limit',
+        limitError: 'Maximum {limit} files can be uploaded',
+        retry: 'Retry',
+    },
+    infiniteScroll: {
+        loading: 'Loading...',
+    },
 }

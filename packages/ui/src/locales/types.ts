@@ -535,6 +535,23 @@ export interface AlertLocale {
     close: string
 }
 
+export interface PopconfirmLocale {
+    confirm: string
+    cancel: string
+}
+
+export interface UploadLocale {
+    dragText: string
+    browseText: string
+    maxSizeError: string
+    limitError: string
+    retry: string
+}
+
+export interface InfiniteScrollLocale {
+    loading: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -608,4 +625,7 @@ export interface Locale {
     tagsInput: TagsInputLocale
     badge: BadgeLocale
     alert: AlertLocale
+    popconfirm: PopconfirmLocale
+    upload: UploadLocale
+    infiniteScroll: InfiniteScrollLocale
 }

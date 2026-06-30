@@ -133,7 +133,14 @@ function handleJump() {
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `modelValue` | `number` | —（必填） | 当前页码，支持 `v-model` 双向绑定 |
-| `totalPages` | `number` | —（必填） | 总页数 |
+| `totalPages` | `number` | — | 总页数（与 `total` + `pageSize` 二选一） |
+| `total` | `number` | — | 总条数 |
+| `pageSize` | `number` | `10` | 每页条数 |
+| `pageSizes` | `number[]` | `[10, 20, 50, 100]` | 每页条数选项 |
+| `layout` | `string` | `'sizes, prev, pager, next, jumper, total'` | 自定义布局（逗号分隔：`total`、`sizes`、`prev`、`pager`、`next`、`jumper`） |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `background` | `boolean` | `false` | 页码按钮是否显示背景色 |
+| `hideOnSinglePage` | `boolean` | `false` | 只有一页时是否隐藏 |
 | `siblingCount` | `number` | `1` | 当前页码两侧显示的兄弟页数 |
 | `showFirstLast` | `boolean` | `true` | 是否显示首页/末页按钮 |
 | `showPageNumbers` | `boolean` | `true` | 是否显示页码按钮，为 `false` 时显示页码计数器 |
@@ -146,6 +153,7 @@ function handleJump() {
 | 事件 | 参数 | 说明 |
 | --- | --- | --- |
 | `update:modelValue` | `page: number` | 页码变化时触发，用于 `v-model` 绑定 |
+| `update:pageSize` | `size: number` | 每页条数变化时触发 |
 | `jump` | — | 点击省略号 `...` 按钮时触发，用于自定义跳页交互 |
 
 ## 可访问性

@@ -134,7 +134,14 @@ function handleJump() {
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `modelValue` | `number` | — (required) | Current page number, supports `v-model` two-way binding |
-| `totalPages` | `number` | — (required) | Total number of pages |
+| `totalPages` | `number` | — | Total number of pages (mutually exclusive with `total` + `pageSize`) |
+| `total` | `number` | — | Total number of items |
+| `pageSize` | `number` | `10` | Number of items per page |
+| `pageSizes` | `number[]` | `[10, 20, 50, 100]` | Page size options |
+| `layout` | `string` | `'sizes, prev, pager, next, jumper, total'` | Custom layout (comma-separated: `total`, `sizes`, `prev`, `pager`, `next`, `jumper`) |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `background` | `boolean` | `false` | Whether page buttons have background color |
+| `hideOnSinglePage` | `boolean` | `false` | Whether to hide when there is only one page |
 | `siblingCount` | `number` | `1` | Number of sibling pages displayed on each side of the current page |
 | `showFirstLast` | `boolean` | `true` | Whether to show first/last page buttons |
 | `showPageNumbers` | `boolean` | `true` | Whether to show page number buttons; when `false`, displays a page counter instead |
@@ -147,6 +154,7 @@ function handleJump() {
 | Event | Payload | Description |
 | --- | --- | --- |
 | `update:modelValue` | `page: number` | Triggered when the page number changes, used for `v-model` binding |
+| `update:pageSize` | `size: number` | Triggered when the page size changes |
 | `jump` | — | Triggered when the ellipsis `...` button is clicked, used for custom page-jump interactions |
 
 ## Accessibility

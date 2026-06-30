@@ -34,6 +34,17 @@ export interface DataTableColumn<T extends object = Record<string, unknown>> {
     minWidth?: number
     maxWidth?: number
     align?: 'left' | 'center' | 'right'
+    /** 固定列方向 */
+    fixed?: 'left' | 'right'
+    /** 列类型 */
+    type?: 'default' | 'expand'
+}
+
+export interface DataTableSpanMethodParams<T extends object = Record<string, unknown>> {
+    row: T
+    column: DataTableColumn<T>
+    rowIndex: number
+    columnIndex: number
 }
 
 export interface DataTableProps<T extends object> {
@@ -53,6 +64,12 @@ export interface DataTableProps<T extends object> {
     dense?: boolean
     striped?: boolean
     stickyHeader?: boolean
+    /** 是否启用展开行 */
+    expandable?: boolean
+    /** 控制展开的行 */
+    expandRowKeys?: Set<string | number>
+    /** 合并单元格方法 */
+    spanMethod?: (params: DataTableSpanMethodParams<T>) => [number, number] | void
     class?: string
 }
 

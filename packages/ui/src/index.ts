@@ -459,3 +459,25 @@ export type { UseDataTableSelectionOptions } from './composables/useDataTableSel
 export { useDataTablePagination } from './composables/useDataTablePagination'
 export type { UseDataTablePaginationOptions } from './composables/useDataTablePagination'
 
+// 新增 composable
+export { useClearable } from './composables/useClearable'
+export type { UseClearableOptions } from './composables/useClearable'
+
+// 新增组件 - Input Adornment
+export { InputAdornment } from './components/input-adornment'
+
+// 新增组件 - Upload 系统
+export { Upload, UploadTrigger, UploadFileList, UploadFileItem } from './components/upload'
+export type { UploadFile, UploadError, UploadRequestOptions } from './components/upload'
+
+// 新增组件 - Popconfirm
+export { default as Popconfirm } from './components/popconfirm/Popconfirm.vue'
+
+// 新增组件 - Descriptions
+export { default as Descriptions } from './components/descriptions/Descriptions.vue'
+export { default as DescriptionsItem } from './components/descriptions/DescriptionsItem.vue'
+
+// 新增组件 - InfiniteScroll
+export { default as InfiniteScroll } from './components/infinite-scroll/InfiniteScroll.vue'
+export { useInfiniteScroll } from './components/infinite-scroll/useInfiniteScroll'
+

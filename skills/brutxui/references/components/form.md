@@ -36,6 +36,21 @@
   placeholder="you@example.com"
 />
 
+<!-- 可清除 -->
+<Input v-model="value" clearable @clear="value = ''" />
+
+<!-- 密码切换 -->
+<Input v-model="password" type="password" show-password placeholder="请输入密码" />
+
+<!-- 字数统计 -->
+<Input v-model="value" maxlength="100" show-word-limit placeholder="最多 100 个字符" />
+
+<!-- 前缀/后缀插槽 -->
+<Input v-model="url" placeholder="请输入网址">
+  <template #prepend>https://</template>
+  <template #append>.com</template>
+</Input>
+
 <!-- 无障碍属性 -->
 <Input
   v-model="email"
@@ -52,6 +67,12 @@
 - `readonly`: `boolean`
 - `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `maxlength`: `number` — 最大输入长度
+- `clearable`: `boolean` — 悬停时显示清除按钮
+- `showPassword`: `boolean` — 显示密码切换按钮（仅 `type="password"` 有效）
+- `showWordLimit`: `boolean` — 显示字数统计（需配合 `maxlength`）
+- `prefixIcon`: `Component` — 前缀图标
+- `suffixIcon`: `Component` — 后缀图标
 - `errorMessage`: `string` — 错误消息文本，仅在 `variant="error"` 时显示，使用 `role="alert"` 确保屏幕阅读器自动播报
 - `ariaLabel`: `string` — 无障碍标签
 - `ariaLabelledby`: `string` — 关联的标签元素 ID
@@ -59,12 +80,28 @@
 - `ariaInvalid`: `boolean` — 是否无效
 - `ariaRequired`: `boolean` — 是否必填
 
+### Input 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `update:modelValue` | `string` | 值更新时触发 |
+| `clear` | — | 点击清除按钮时触发 |
+
+### Input 插槽
+
+| 插槽 | 说明 |
+| --- | --- |
+| `prepend` | 输入框前置内容（如 URL 协议） |
+| `append` | 输入框后置内容（如域名） |
+| `prefix` | 自定义前缀内容 |
+| `suffix` | 自定义后缀内容 |
+
 ### Input 暴露的 API
 
 通过 `ref` 访问组件实例后可调用以下方法：
 
 | 方法 | 说明 |
-|------|------|
+| --- | --- |
 | `focus()` | 聚焦输入框 |
 | `blur()` | 移除焦点 |
 | `select()` | 选中输入框中的文本 |
@@ -234,6 +271,14 @@ function handleFocus() {
   </SelectTrigger>
   <SelectContent>...</SelectContent>
 </Select>
+
+<!-- SelectTrigger 可清除 -->
+<Select v-model="value">
+  <SelectTrigger clearable :model-value="value" @clear="value = ''">
+    <SelectValue placeholder="选择..." />
+  </SelectTrigger>
+  <SelectContent>...</SelectContent>
+</Select>
 ```
 
 子组件：Select, SelectTrigger, SelectContent, SelectItem, SelectValue, SelectLabel, SelectSeparator, SelectGroup, SelectScrollUpButton, SelectScrollDownButton
@@ -246,6 +291,14 @@ function handleFocus() {
 | `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
 | `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
 | `disabled` | `boolean` | `false` | 是否禁用 |
+| `clearable` | `boolean` | `false` | 悬停时显示清除按钮 |
+| `modelValue` | `string \| number \| null` | — | 当前选中值（用于清除功能） |
+
+### SelectTrigger 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `clear` | — | 点击清除按钮时触发 |
 
 ## Combobox
 
@@ -606,10 +659,27 @@ interface FormItemContext {
 ### Form Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| --- | --- | --- | --- |
+| `inline` | `boolean` | `false` | 行内表单布局 |
+| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | 标签位置 |
+| `labelWidth` | `string \| number` | — | 标签宽度 |
+| `scrollToError` | `boolean` | `false` | 验证失败时滚动到第一个错误字段 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 统一尺寸 |
 | `class` | `string` | — | 自定义类名 |
 | `initialValues` | `Record<string, unknown>` | — | 表单初始值 |
 | `validationSchema` | `unknown` | — | vee-validate 校验 schema |
+
+### Form 暴露的 API
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 方法 | 返回类型 | 说明 |
+| --- | --- | --- |
+| `validate()` | `Promise<boolean>` | 验证所有字段，返回 `true` 表示验证通过 |
+| `validateField(field)` | `Promise<boolean>` | 验证单个字段 |
+| `resetFields()` | `void` | 重置所有字段为初始值 |
+| `clearValidate(fields?)` | `void` | 清除指定或所有字段的验证错误 |
+| `scrollToField(field)` | `void` | 滚动到指定字段 |
 
 ### FormField Props
 
@@ -790,10 +860,79 @@ const { validationState, errorMessage, validate, reset, shouldValidateOnInput, s
 ### 返回值
 
 | 属性 | 类型 | 说明 |
-|------|------|------|
+| --- | --- | --- |
 | `validationState` | `Ref<'default' \| 'success' \| 'error'>` | 当前验证状态 |
 | `errorMessage` | `Ref<string>` | 错误消息 |
 | `validate(value)` | `(value: TValue) => boolean` | 执行验证，返回是否通过 |
 | `reset()` | `() => void` | 重置为 default 状态 |
 | `shouldValidateOnInput` | `() => boolean` | 是否在 input 时验证 |
 | `shouldValidateOnBlur` | `() => boolean` | 是否在 blur 时验证 |
+
+## Upload
+
+文件上传系统，支持拖拽、文件列表管理、进度追踪和错误处理。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Upload, UploadTrigger, UploadFileList, type UploadFile } from 'brutx-ui-vue'
+
+const fileList = ref<UploadFile[]>([])
+
+async function handleUpload(options) {
+    const formData = new FormData()
+    formData.append('file', options.file)
+    const response = await fetch('/api/upload', { method: 'POST', body: formData })
+    options.onSuccess(response)
+}
+</script>
+
+<template>
+    <Upload
+        v-model:file-list="fileList"
+        :http-request="handleUpload"
+        accept="image/*"
+        :max-size="5 * 1024 * 1024"
+    >
+        <template #trigger="{ selectFiles, drag }">
+            <UploadTrigger :drag="drag" @select="selectFiles" />
+        </template>
+        <template #file-list="{ files, remove, retry }">
+            <UploadFileList :files="files" @remove="remove" @retry="retry" />
+        </template>
+    </Upload>
+</template>
+```
+
+### Upload Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `fileList` | `UploadFile[]` | `[]` | 文件列表，支持 `v-model:fileList` |
+| `limit` | `number` | — | 最大文件数量 |
+| `multiple` | `boolean` | `true` | 是否支持多选 |
+| `accept` | `string` | — | 接受的文件类型 |
+| `maxSize` | `number` | — | 最大文件大小（字节） |
+| `maxRetries` | `number` | `3` | 最大重试次数 |
+| `beforeUpload` | `(file: File) => boolean \| Promise<boolean>` | — | 上传前钩子 |
+| `beforeRemove` | `(file: UploadFile) => boolean \| Promise<boolean>` | — | 删除前钩子 |
+| `httpRequest` | `(options: UploadRequestOptions) => Promise<void>` | — | 自定义上传实现 |
+| `listType` | `'text' \| 'picture' \| 'picture-card'` | `'text'` | 列表显示类型 |
+| `autoUpload` | `boolean` | `true` | 选择后是否自动上传 |
+| `drag` | `boolean` | `true` | 是否支持拖拽 |
+
+### UploadFile 类型
+
+```typescript
+interface UploadFile {
+    id: string
+    name: string
+    size: number
+    type: string
+    status: 'ready' | 'uploading' | 'success' | 'error'
+    progress: number
+    url?: string
+    raw?: File
+    error?: UploadError
+}
+```

@@ -226,7 +226,12 @@ const {
 ### Form
 
 | 属性 | 类型 | 默认值 | 说明 |
-| ---- | ---- | ------ | ---- |
+| --- | --- | --- | --- |
+| `inline` | `boolean` | `false` | 行内表单布局 |
+| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | 标签位置 |
+| `labelWidth` | `string \| number` | — | 标签宽度 |
+| `scrollToError` | `boolean` | `false` | 验证失败时滚动到第一个错误字段 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 统一尺寸 |
 | `class` | `string` | — | 自定义样式类 |
 | `initialValues` | `Record<string, unknown>` | — | 表单初始值 |
 | `validationSchema` | `unknown` | — | 验证模式（支持 vee-validate schema） |
@@ -306,18 +311,56 @@ const {
 ### Form 事件
 
 | 事件 | 参数 | 说明 |
-| ---- | ---- | ---- |
+| --- | --- | --- |
 | `submit` | `Record<string, unknown>` | 表单提交时触发，包含所有字段值 |
 
 ### FormWizard 事件
 
 | 事件 | 参数 | 说明 |
-| ---- | ---- | ---- |
+| --- | --- | --- |
 | `update:modelValue` | `Record<string, unknown>` | 表单数据更新 |
 | `step-change` | `[step: number, previousStep: number]` | 步骤切换 |
 | `complete` | `Record<string, unknown>` | 表单完成 |
 | `validation-error` | `[step: number, errors: Record<string, string>]` | 验证失败 |
 | `navigation-blocked` | `[targetStep: number, blockedStep: number]` | 线性模式下导航被阻止 |
+
+## 暴露的方法（Form）
+
+通过 `ref` 访问 Form 组件实例后可调用以下方法：
+
+| 方法 | 返回类型 | 说明 |
+| --- | --- | --- |
+| `validate()` | `Promise<boolean>` | 验证所有字段，返回 `true` 表示验证通过 |
+| `validateField(field)` | `Promise<boolean>` | 验证单个字段 |
+| `resetFields()` | `void` | 重置所有字段为初始值 |
+| `clearValidate(fields?)` | `void` | 清除指定或所有字段的验证错误 |
+| `scrollToField(field)` | `void` | 滚动到指定字段 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Form } from 'brutx-ui-vue'
+
+const formRef = ref(null)
+
+async function handleSubmit() {
+    const isValid = await formRef.value?.validate()
+    if (isValid) {
+        // 提交表单
+    }
+}
+
+function handleReset() {
+    formRef.value?.resetFields()
+}
+</script>
+
+<template>
+    <Form ref="formRef" :scroll-to-error="true">
+        <!-- 表单字段 -->
+    </Form>
+</template>
+```
 
 ## 可访问性
 

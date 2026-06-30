@@ -227,7 +227,12 @@ const {
 ### Form
 
 | Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| --- | --- | --- | --- |
+| `inline` | `boolean` | `false` | Inline form layout |
+| `labelPosition` | `'left' \| 'right' \| 'top'` | `'right'` | Label position |
+| `labelWidth` | `string \| number` | — | Label width |
+| `scrollToError` | `boolean` | `false` | Scroll to first error field on validation failure |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Unified size for all form items |
 | `class` | `string` | — | Custom CSS class |
 | `initialValues` | `Record<string, unknown>` | — | Initial form values |
 | `validationSchema` | `unknown` | — | Validation schema (supports vee-validate schema) |
@@ -307,18 +312,56 @@ const {
 ### Form Events
 
 | Event | Payload | Description |
-|-------|---------|-------------|
+| --- | --- | --- |
 | `submit` | `Record<string, unknown>` | Triggered on form submission, contains all field values |
 
 ### FormWizard Events
 
 | Event | Payload | Description |
-|-------|---------|-------------|
+| --- | --- | --- |
 | `update:modelValue` | `Record<string, unknown>` | Form data update |
 | `step-change` | `[step: number, previousStep: number]` | Step change |
 | `complete` | `Record<string, unknown>` | Form completion |
 | `validation-error` | `[step: number, errors: Record<string, string>]` | Validation failure |
 | `navigation-blocked` | `[targetStep: number, blockedStep: number]` | Navigation blocked in linear mode |
+
+## Exposed Methods (Form)
+
+Access the Form component instance via `ref` to call the following methods:
+
+| Method | Return Type | Description |
+| --- | --- | --- |
+| `validate()` | `Promise<boolean>` | Validate all fields, returns `true` if valid |
+| `validateField(field)` | `Promise<boolean>` | Validate a single field |
+| `resetFields()` | `void` | Reset all fields to initial values |
+| `clearValidate(fields?)` | `void` | Clear validation errors for specified or all fields |
+| `scrollToField(field)` | `void` | Scroll to the specified field |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Form } from 'brutx-ui-vue'
+
+const formRef = ref(null)
+
+async function handleSubmit() {
+    const isValid = await formRef.value?.validate()
+    if (isValid) {
+        // Submit form
+    }
+}
+
+function handleReset() {
+    formRef.value?.resetFields()
+}
+</script>
+
+<template>
+    <Form ref="formRef" :scroll-to-error="true">
+        <!-- Form fields -->
+    </Form>
+</template>
+```
 
 ## Accessibility
 
