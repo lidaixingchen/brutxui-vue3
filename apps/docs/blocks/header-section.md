@@ -51,16 +51,9 @@ function handleNav(index) {
 </template>
 ```
 
-## Props
+## 数据类型
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `logoText` | `string` | locale: `headerSection.defaultLogoText` |
-| `navItems` | `NavItem[]` | `[]` |
-| `ctaText` | `string` | locale: `headerSection.defaultCtaText` |
-| `class` | `string` | — |
-
-### NavItem 类型
+### NavItem
 
 ```ts
 interface NavItem {
@@ -69,25 +62,30 @@ interface NavItem {
 }
 ```
 
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `logoText` | `string` | locale: `headerSection.defaultLogoText` | Logo 显示文本 |
+| `navItems` | `NavItem[]` | `[]` | 导航链接项数组 |
+| `ctaText` | `string` | locale: `headerSection.defaultCtaText` | CTA 按钮文本 |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `cta-click` | `[]` |
-| `nav-click` | `[index: number]` |
+| 事件         | 参数               | 说明                                 |
+| ------------ | ------------------ | ------------------------------------ |
+| `cta-click`  | `[]`               | 点击 CTA 按钮时触发                  |
+| `nav-click`  | `[index: number]`  | 点击导航链接时触发，参数为链接索引   |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换 Logo 区域 |
-| `default` | 替换导航链接区域 |
-| `footer` | 替换 CTA 按钮区域 |
+| 插槽      | 作用域 | 说明               |
+| --------- | ------ | ------------------ |
+| `header`  | —      | 替换 Logo 区域     |
+| `default` | —      | 替换导航链接区域   |
+| `footer`  | —      | 替换 CTA 按钮区域  |
 
-## 布局
+## 可访问性
 
-HeaderSection 包含：
-- **Logo**：加粗、字距调整的品牌文本
-- **导航链接**：ghost 变体按钮，桌面端水平排列
-- **CTA 按钮**：primary 变体，桌面端显示
-- **移动端菜单**：outline 变体汉堡按钮，点击打开 Sheet 抽屉
+<!-- TODO: 添加可访问性说明 -->

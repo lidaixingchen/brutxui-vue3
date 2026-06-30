@@ -21,6 +21,8 @@ npx brutx-vue@latest add --block stepper-section
 
 ## 用法
 
+### 基础用法
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -50,7 +52,9 @@ function handleStepClick(index: number) {
 </template>
 ```
 
-## 自定义步骤内容
+### 自定义步骤内容
+
+通过默认插槽自定义每个步骤的内容区域，根据 `currentStep` 值渲染对应内容：
 
 ```vue
 <script setup>
@@ -84,40 +88,41 @@ const steps = [
 </template>
 ```
 
-## Props
+## 数据类型
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `stepperSection.defaultTitle` |
-| `steps` | `StepperStepItem[]` | `[]` |
-| `modelValue` | `number` | `0` |
-| `class` | `string` | — |
-
-### StepperStepItem 类型
+### StepperStepItem
 
 | 字段 | 类型 | 说明 |
-|------|------|------|
+| ---- | ---- | ---- |
 | `title` | `string` | 步骤标题 |
 | `description` | `string` | 可选，步骤描述 |
 
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `title` | `string` | locale: `stepperSection.defaultTitle` | 区块标题文本 |
+| `steps` | `StepperStepItem[]` | `[]` | 步骤列表数据 |
+| `modelValue` | `number` | `0` | 当前激活步骤的索引，支持 `v-model` 双向绑定 |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `step-click` | `[index: number]` |
+| 事件 | 参数 | 说明 |
+| ---- | ---- | ---- |
+| `step-click` | `[index: number]` | 点击步骤标题时触发，参数为步骤索引 |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换/扩展区块头部 |
-| `default` | 步骤内容区域（卡片内部） |
-| `footer` | 替换/扩展区块底部 |
+| 插槽 | 作用域 | 说明 |
+| ---- | ---- | ---- |
+| `header` | — | 替换/扩展区块头部 |
+| `default` | — | 步骤内容区域（卡片内部） |
+| `footer` | — | 替换/扩展区块底部 |
 
-## 布局
+## 可访问性
 
-StepperSection 包含：
-- **头部**：居中标题
-- **Stepper**：水平方向的步骤指示器
-- **内容卡片**：Card 组件包裹的步骤内容区域
-- **导航按钮**：上一步（outline 变体）和下一步（primary 变体），自动根据当前步骤禁用
+- Stepper 使用 `role="navigation"` 和 `aria-label` 标识步骤导航区域
+- 每个步骤节点包含 `aria-current="step"` 标识当前步骤
+- 步骤节点通过 `tabindex` 支持键盘导航
+- 导航按钮在禁用状态下设置 `aria-disabled="true"`

@@ -41,7 +41,7 @@ function handleSubmit(payload) {
 </template>
 ```
 
-## 自定义文本
+### 自定义文本
 
 ```vue
 <script setup>
@@ -58,29 +58,7 @@ import FeedbackForm from '@/components/ui/feedback-form/FeedbackForm.vue'
 </template>
 ```
 
-## Props
-
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `feedbackForm.defaultTitle` |
-| `description` | `string` | locale: `feedbackForm.defaultDescription` |
-| `submitText` | `string` | locale: `feedbackForm.defaultSubmitText` |
-| `loading` | `boolean` | `false` |
-| `success` | `boolean` | `false` |
-| `successTitle` | `string` | locale: `successCard.defaultTitle` |
-| `successDescription` | `string` | locale: `successCard.defaultDescription` |
-| `successConfirmText` | `string` | locale: `successCard.defaultConfirmText` |
-| `iconSize` | `IconSize` | `'default'` |
-| `class` | `string` | — |
-
-## 事件
-
-| 事件 | 载荷 |
-|------|------|
-| `submit` | `[{ name: string; email: string; subject: string; message: string }]` |
-| `success-confirm` | `[]` |
-
-## 加载状态
+### 加载状态
 
 设置 `loading` 为 `true` 时，提交按钮进入 loading 态并显示 spinner，期间禁止重复提交。`submit` 事件仍正常触发，由调用方在异步请求结束后将 `loading` 置回 `false`。
 
@@ -103,7 +81,7 @@ async function handleSubmit(payload) {
 </template>
 ```
 
-## 成功状态
+### 成功状态
 
 设置 `success` 为 `true` 时，表单被 `SuccessCard` 替换，展示成功标题、描述与确认按钮。点击确认按钮触发 `success-confirm` 事件，由调用方决定后续行为（如重置表单、跳转）。
 
@@ -140,21 +118,38 @@ function handleSuccessConfirm() {
 </template>
 ```
 
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | locale: `feedbackForm.defaultTitle` | 表单标题 |
+| `description` | `string` | locale: `feedbackForm.defaultDescription` | 表单描述文本 |
+| `submitText` | `string` | locale: `feedbackForm.defaultSubmitText` | 提交按钮文本 |
+| `loading` | `boolean` | `false` | 是否处于加载状态 |
+| `success` | `boolean` | `false` | 是否显示成功卡片 |
+| `successTitle` | `string` | locale: `successCard.defaultTitle` | 成功卡片标题 |
+| `successDescription` | `string` | locale: `successCard.defaultDescription` | 成功卡片描述文本 |
+| `successConfirmText` | `string` | locale: `successCard.defaultConfirmText` | 成功卡片确认按钮文本 |
+| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
+## 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `submit` | `[{ name: string; email: string; subject: string; message: string }]` | 表单提交时触发，携带表单数据 |
+| `success-confirm` | `[]` | 点击成功卡片确认按钮时触发 |
+
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换/扩展区块头部 |
-| `default` | 替换区块主体内容（含表单） |
-| `footer` | 替换/扩展区块底部 |
+| 插槽 | 作用域 | 说明 |
+| --- | --- | --- |
+| `header` | — | 替换/扩展区块头部 |
+| `default` | — | 替换区块主体内容（含表单） |
+| `footer` | — | 替换/扩展区块底部 |
 
-## 布局
+## 可访问性
 
-FeedbackForm 包含：
-- **头部**：居中标题和描述文本
-- **表单卡片**：Card 组件包裹的表单区域
-  - **姓名字段**：Input 组件
-  - **邮箱字段**：Input 组件（type="email"）
-  - **主题字段**：Input 组件
-  - **消息字段**：Textarea 组件
-  - **提交按钮**：primary 变体，带 Send 图标，全宽
+- 表单字段均使用语义化 `<label>` 关联，确保屏幕阅读器可正确识别。
+- 提交按钮在 `loading` 状态下会被禁用，防止重复提交。
+- 成功卡片提供确认按钮，支持键盘导航和焦点管理。

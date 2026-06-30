@@ -5,7 +5,7 @@ description: 统计卡片组区块，用于仪表盘中的关键指标展示。
 
 # Dashboard Stats 仪表盘统计
 
-新粗野主义风格的统计卡片组，展示关键业务指标和趋势变化。
+新粗野主义风格的统计卡片组，展示关键业务指标和趋势变化。每个卡片支持趋势指示、图标配置、强调色自定义和可选进度条，自动适配响应式网格布局。
 
 ## 预览
 
@@ -15,9 +15,7 @@ description: 统计卡片组区块，用于仪表盘中的关键指标展示。
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block dashboard-stats
-```
+<InstallationTabs componentName="dashboard-stats" />
 
 ## 用法
 
@@ -67,7 +65,7 @@ const stats = [
 </template>
 ```
 
-## StatItem 类型
+## 数据类型
 
 ```ts
 interface StatItem {
@@ -84,24 +82,21 @@ interface StatItem {
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `stats` | `StatItem[]` | `[]` |
-| `title` | `string` | locale: `dashboardStats.defaultTitle` |
-| `subtitle` | `string` | — |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `stats` | `StatItem[]` | `[]` | 统计数据数组 |
+| `title` | `string` | locale: `dashboardStats.defaultTitle` | 卡片组标题 |
+| `subtitle` | `string` | — | 卡片组副标题 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `stat-click` | `[index: number]` |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `stat-click` | `[index: number]` | 点击统计卡片时触发，参数为卡片索引 |
 
-## 特性
+## 可访问性
 
-- **趋势指示**：根据 `trend` 值显示不同颜色（up=成功色，down=危险色，neutral=强调色）
-- **图标支持**：每个统计卡片可配置 Lucide 图标
-- **响应式网格**：移动端单列，平板双列，桌面三列
-- **变化百分比**：`change` 字段展示趋势变化
-- **强调色**：可选 `accentColor` 字段自定义图标和进度条颜色
-- **进度条**：可选 `progress` 字段显示进度指示
+- **键盘操作**：支持 `Tab` 在卡片间切换焦点，`Space` / `Enter` 触发点击事件
+- **ARIA 属性**：统计卡片组使用 `role="region"` 或 `role="list"`，各卡片使用 `role="listitem"` 等语义化标记
+- **焦点管理**：卡片可聚焦时显示清晰的焦点指示器

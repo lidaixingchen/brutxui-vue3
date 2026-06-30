@@ -21,6 +21,8 @@ npx brutx-vue@latest add --block not-found-page
 
 ## 用法
 
+### 基本用法
+
 ```vue
 <script setup>
 import NotFoundPage from '@/components/ui/not-found-page/NotFoundPage.vue'
@@ -40,7 +42,7 @@ function handleBack() {
 </template>
 ```
 
-## 自定义文本
+### 自定义文本
 
 ```vue
 <script setup>
@@ -61,32 +63,27 @@ const router = useRouter()
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `notFoundPage.defaultTitle` |
-| `description` | `string` | locale: `notFoundPage.defaultDescription` |
-| `backText` | `string` | locale: `notFoundPage.defaultBackText` |
-| `class` | `string` | — |
+|属性|类型|默认值|说明|
+|---|---|---|---|
+|`title`|`string`|locale: `notFoundPage.defaultTitle`|页面标题文本|
+|`description`|`string`|locale: `notFoundPage.defaultDescription`|页面描述文本|
+|`backText`|`string`|locale: `notFoundPage.defaultBackText`|返回按钮文本|
+|`class`|`string`|—|自定义 CSS 类名|
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `back` | `[]` |
+|事件|参数|说明|
+|---|---|---|
+|`back`|—|点击返回按钮时触发|
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换/扩展区块头部 |
-| `default` | 替换区块主体内容 |
-| `footer` | 替换/扩展区块底部 |
+|插槽|作用域|说明|
+|---|---|---|
+|`header`|—|替换/扩展区块头部|
+|`default`|—|替换区块主体内容|
+|`footer`|—|替换/扩展区块底部|
 
-## 布局
+## 可访问性
 
-NotFoundPage 包含：
-- **装饰方块**：强调色和辅助色旋转方块，偏移阴影
-- **故障文本**：GlitchText 组件渲染 "404"，自动播放故障动画
-- **标题**：加粗、字距调整的标题文本
-- **描述**：弱化文本描述
-- **返回按钮**：primary 变体，带箭头图标
+<!-- TODO: 补充可访问性说明 -->

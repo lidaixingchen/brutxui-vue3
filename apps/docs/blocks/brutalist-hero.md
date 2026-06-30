@@ -1,6 +1,6 @@
 ---
-title: Brutalist Hero
-description: 新粗野主义落地页 Hero 区段模板，包含标题、CTA 和装饰性卡片。
+title: Brutalist Hero 英雄区
+description: 新粗野主义风格的 Hero 区段，适用于落地页，包含标题、副标题、CTA 按钮和装饰性代码预览卡片。
 ---
 
 # Brutalist Hero 英雄区
@@ -15,9 +15,7 @@ description: 新粗野主义落地页 Hero 区段模板，包含标题、CTA 和
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block brutalist-hero
-```
+<InstallationTabs componentName="brutalist-hero" />
 
 ## 用法
 
@@ -48,24 +46,25 @@ function handleSecondary() {
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `brutalistHero.title` |
-| `subtitle` | `string` | — |
-| `primaryCtaText` | `string` | locale: `brutalistHero.primaryCtaText` |
-| `secondaryCtaText` | `string` | locale: `brutalistHero.secondaryCtaText` |
-| `class` | `string` | — |
+### BrutalistHero
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `title` | `string` | locale: `brutalistHero.title` | 标题文本 |
+| `subtitle` | `string` | — | 副标题文本 |
+| `primaryCtaText` | `string` | locale: `brutalistHero.primaryCtaText` | 主 CTA 按钮文本 |
+| `secondaryCtaText` | `string` | locale: `brutalistHero.secondaryCtaText` | 次 CTA 按钮文本 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `primaryCta` | `[]` |
-| `secondaryCta` | `[]` |
+| 事件 | 参数 | 说明 |
+| ---- | ---- | ---- |
+| `primaryCta` | — | 点击主 CTA 按钮时触发 |
+| `secondaryCta` | — | 点击次 CTA 按钮时触发 |
 
-## 布局
+## 可访问性
 
-Hero 使用双列网格布局：
-- **左列**：徽章、标题、副标题和 CTA 按钮
-- **右列**：带有偏移阴影和代码预览的装饰性卡片
-- 在移动端，列会垂直堆叠
+- **键盘操作**：支持 `Tab` 在按钮间导航，`Enter` 触发操作
+- **ARIA 属性**：按钮使用语义化 `<button>` 标签
+- **焦点管理**：按钮按逻辑顺序排列

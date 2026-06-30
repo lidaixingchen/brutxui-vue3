@@ -55,16 +55,9 @@ function handleItemClick(index) {
 </template>
 ```
 
-## Props
+## 数据类型
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `faqSection.defaultTitle` |
-| `subtitle` | `string` | locale: `faqSection.defaultSubtitle` |
-| `items` | `FaqItem[]` | `[]` |
-| `class` | `string` | — |
-
-### FaqItem 类型
+### FaqItem
 
 ```ts
 interface FaqItem {
@@ -73,22 +66,33 @@ interface FaqItem {
 }
 ```
 
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | locale: `faqSection.defaultTitle` | 区块标题 |
+| `subtitle` | `string` | locale: `faqSection.defaultSubtitle` | 区块副标题 |
+| `items` | `FaqItem[]` | `[]` | FAQ 问题列表 |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `item-click` | `[index: number]` |
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `item-click` | `[index: number]` | 点击 FAQ 项目时触发 |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换标题和副标题区域 |
-| `default` | 替换手风琴列表区域 |
-| `footer` | 替换/扩展区块底部 |
+| 插槽 | 作用域 | 说明 |
+| --- | --- | --- |
+| `header` | — | 替换标题和副标题区域 |
+| `default` | — | 替换手风琴列表区域 |
+| `footer` | — | 替换/扩展区块底部 |
 
-## 布局
+## 可访问性
 
-FaqSection 包含：
-- **标题区**：居中标题和副标题
-- **手风琴列表**：Card 容器内的 Accordion 组件，每项含编号 Badge 和问题/答案
+<!-- TODO: 补充可访问性说明 -->
+
+- 手风琴组件支持键盘导航（Enter/Space 展开/折叠）
+- 每个问题项具有适当的 ARIA 属性（`aria-expanded`、`aria-controls`）
+- 折叠面板内容对屏幕阅读器可见

@@ -40,7 +40,7 @@ function handleConfirm() {
 </template>
 ```
 
-## 自定义文本
+自定义文本示例：
 
 ```vue
 <script setup>
@@ -59,31 +59,28 @@ import SuccessCard from '@/components/ui/success-card/SuccessCard.vue'
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `successCard.defaultTitle` |
-| `description` | `string` | locale: `successCard.defaultDescription` |
-| `confirmText` | `string` | locale: `successCard.defaultConfirmText` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | locale: `successCard.defaultTitle` | 卡片标题文本 |
+| `description` | `string` | locale: `successCard.defaultDescription` | 卡片描述文本 |
+| `confirmText` | `string` | locale: `successCard.defaultConfirmText` | 确认按钮文本 |
+| `class` | `string` | — | 自定义 CSS 类名 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `confirm` | `[]` |
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `confirm` | `[]` | 点击确认按钮时触发 |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `actions` | 额外操作按钮区域 |
+| 插槽 | 作用域 | 说明 |
+| --- | --- | --- |
+| `actions` | — | 额外操作按钮区域 |
 
-## 布局
+## 可访问性
 
-SuccessCard 包含：
-- **成功色顶部条**：`bg-brutal-success` 装饰条
-- **装饰性勾选图标**：成功色方框内 Check 图标，带有偏移阴影背景
-- **标题**：加粗、字距调整的标题
-- **描述**：标题下方的弱化文本（仅在提供时显示）
-- **确认按钮**：primary 变体按钮
-- **扩展插槽**：`actions` slot 用于添加自定义操作按钮
+- 卡片使用语义化结构，标题和描述文本清晰可读
+- 确认按钮支持键盘导航和焦点管理
+- 成功状态通过视觉图标和文本双重提示
+- 颜色对比度符合 WCAG 标准

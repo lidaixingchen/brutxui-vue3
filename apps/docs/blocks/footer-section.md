@@ -65,17 +65,7 @@ function handleLinkClick({ groupIndex, linkIndex }) {
 </template>
 ```
 
-## Props
-
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `logoText` | `string` | locale: `footerSection.defaultLogoText` |
-| `description` | `string` | locale: `footerSection.defaultDescription` |
-| `linkGroups` | `FooterLinkGroup[]` | `[]` |
-| `copyright` | `string` | locale: `footerSection.defaultCopyright` |
-| `class` | `string` | — |
-
-### FooterLinkGroup 类型
+## 数据类型
 
 ```ts
 interface FooterLinkGroup {
@@ -89,24 +79,30 @@ interface FooterLink {
 }
 ```
 
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `logoText` | `string` | locale: `footerSection.defaultLogoText` | Logo 文本 |
+| `description` | `string` | locale: `footerSection.defaultDescription` | 描述文本 |
+| `linkGroups` | `FooterLinkGroup[]` | `[]` | 链接组数据 |
+| `copyright` | `string` | locale: `footerSection.defaultCopyright` | 版权声明文本 |
+| `class` | `string` | — | 自定义类名 |
+
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `link-click` | `[{ groupIndex: number; linkIndex: number }]` |
+| 事件         | 参数                                        | 说明               |
+| ------------ | ------------------------------------------- | ------------------ |
+| `link-click` | `{ groupIndex: number; linkIndex: number }` | 链接被点击时触发   |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换 Logo 和描述区域 |
-| `default` | 替换链接组区域 |
-| `footer` | 替换版权声明区域 |
+| 插槽      | 作用域 | 说明                 |
+| --------- | ------ | -------------------- |
+| `header`  | —      | 替换 Logo 和描述区域 |
+| `default` | —      | 替换链接组区域       |
+| `footer`  | —      | 替换版权声明区域     |
 
-## 布局
+## 可访问性
 
-FooterSection 包含：
-- **Logo 与描述**：品牌文本和简短描述
-- **链接组**：2×4 响应式网格布局，每组含标题和链接列表
-- **分隔线**：Separator 组件
-- **版权声明**：居中弱化文本
+<!-- TODO: 添加可访问性说明 -->

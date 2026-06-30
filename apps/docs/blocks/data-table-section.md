@@ -15,9 +15,7 @@ description: 数据表格区块，带有搜索、排序和分页功能。
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block data-table-section
-```
+<InstallationTabs componentName="data-table-section" />
 
 ## 用法
 
@@ -38,13 +36,12 @@ const rows = [
     { name: 'Charlie', email: 'charlie@example.com', role: 'Editor' },
 ]
 
-function handleRowClick(row) {
+function handleRowClick(row: Record<string, unknown>) {
     console.log('Row clicked:', row)
 }
 
-function handleSort(payload) {
+function handleSort(payload: { key: string; direction: 'asc' | 'desc' }) {
     console.log('Sort:', payload)
-    // payload: { key: string; direction: 'asc' | 'desc' }
 }
 </script>
 
@@ -61,7 +58,9 @@ function handleSort(payload) {
 </template>
 ```
 
-## 禁用搜索
+## 变体
+
+### 禁用搜索
 
 ```vue
 <script setup>
@@ -78,46 +77,44 @@ import DataTableSection from '@/components/ui/data-table-section/DataTableSectio
 </template>
 ```
 
+## 数据类型
+
+```ts
+interface ColumnDef {
+    key: string
+    label: string
+    sortable?: boolean
+}
+```
+
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `dataTableSection.defaultTitle` |
-| `columns` | `ColumnDef[]` | `[]` |
-| `rows` | `Record<string, unknown>[]` | `[]` |
-| `searchable` | `boolean` | `true` |
-| `pageSize` | `number` | `10` |
-| `class` | `string` | — |
-
-### ColumnDef 类型
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `key` | `string` | 列数据字段名 |
-| `label` | `string` | 列标题显示文本 |
-| `sortable` | `boolean` | 可选，是否可排序 |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | locale: `dataTableSection.defaultTitle` | 区块标题 |
+| `columns` | `ColumnDef[]` | `[]` | 列定义 |
+| `rows` | `Record<string, unknown>[]` | `[]` | 行数据 |
+| `searchable` | `boolean` | `true` | 是否启用搜索 |
+| `pageSize` | `number` | `10` | 每页显示行数 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `row-click` | `[row: Record<string, unknown>]` |
-| `sort` | `[{ key: string; direction: 'asc' \| 'desc' }]` |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `row-click` | `[row: Record<string, unknown>]` | 行点击时触发，参数为行数据 |
+| `sort` | `[{ key: string; direction: 'asc' \| 'desc' }]` | 排序变化时触发 |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换/扩展区块头部 |
-| `default` | 替换区块主体内容（含表格和分页） |
-| `footer` | 替换/扩展区块底部 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `header` | — | 替换/扩展区块头部 |
+| `default` | — | 替换区块主体内容（含表格和分页） |
+| `footer` | — | 替换/扩展区块底部 |
 
-## 布局
+## 可访问性
 
-DataTableSection 包含：
-- **头部**：标题区域
-- **搜索框**：Input 组件，仅在 `searchable` 为 `true` 时显示
-- **数据表格**：Table 组件，包含可排序的表头和可点击的数据行
-  - 可排序列显示排序图标（ArrowUpDown / ArrowUp / ArrowDown）
-  - 无数据时显示空状态文本
-- **分页**：Pagination 组件，仅在总页数大于 1 时显示
+- **键盘操作**：表格行支持 `Tab` 聚焦，`Enter` / `Space` 触发点击；排序按钮支持 `Enter` 切换排序
+- **ARIA 属性**：表格使用语义化 `<table>` 标签，排序按钮使用 `aria-sort` 标识当前排序状态
+- **焦点管理**：支持键盘导航在表格行和控件间切换焦点

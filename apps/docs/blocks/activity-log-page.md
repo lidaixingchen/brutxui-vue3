@@ -1,11 +1,11 @@
 ---
-title: Activity Log Page
+title: Activity Log Page 活动日志页
 description: 带有表格、类型徽标和分页的活动日志页面区块。
 ---
 
 # Activity Log Page 活动日志页
 
-新粗野主义风格的活动日志页面，包含表格视图、类型徽标和分页组件。
+新粗野主义风格的活动日志页面，包含表格视图、类型徽标和分页组件。适用于展示系统操作记录、审计日志等场景。
 
 ## 预览
 
@@ -15,9 +15,7 @@ description: 带有表格、类型徽标和分页的活动日志页面区块。
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block activity-log-page
-```
+<InstallationTabs componentName="activity-log-page" />
 
 ## 用法
 
@@ -51,7 +49,7 @@ const activities = [
     },
 ]
 
-function handleEntryClick(id) {
+function handleEntryClick(id: string) {
     console.log('Entry clicked:', id)
 }
 </script>
@@ -64,43 +62,46 @@ function handleEntryClick(id) {
 </template>
 ```
 
+## 数据类型
+
+```ts
+interface ActivityEntry {
+    id: string
+    action: string
+    user: string
+    timestamp: string
+    details?: string
+    type: 'info' | 'warning' | 'error' | 'success'
+}
+```
+
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `activityLogPage.defaultTitle` |
-| `activities` | `ActivityEntry[]` | `[]` |
-| `class` | `string` | — |
+### ActivityLogPage
 
-### ActivityEntry 接口
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `id` | `string` | 条目唯一标识 |
-| `action` | `string` | 操作描述 |
-| `user` | `string` | 执行者 |
-| `timestamp` | `string` | 时间戳 |
-| `details` | `string` | 可选详情 |
-| `type` | `'info' \| 'warning' \| 'error' \| 'success'` | 条目类型（默认 `'info'`） |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | locale: `activityLogPage.defaultTitle` | 页面标题 |
+| `activities` | `ActivityEntry[]` | `[]` | 活动日志数据 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `entry-click` | `[id: string]` |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `entry-click` | `[id: string]` | 点击日志条目时触发 |
 
 ## 插槽
 
-| 插槽 | 说明 |
-|------|------|
-| `header` | 自定义页面标题区域 |
-| `default` | 自定义主内容区域（替换表格和分页） |
-| `footer` | 页面底部内容 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `header` | — | 自定义页面标题区域 |
+| `default` | — | 自定义主内容区域（替换表格和分页） |
+| `footer` | — | 页面底部内容 |
 
-## 布局
+## 可访问性
 
-ActivityLogPage 包含：
-- **标题**：加粗页面标题，可通过 `header` 插槽自定义
-- **表格**：四列表格（操作、用户、时间戳、详情），操作列包含类型徽标
-- **类型徽标映射**：`info` → default、`warning` → accent、`error` → danger、`success` → success
-- **分页**：每页 10 条，自动显示分页控件
+- **键盘操作**：支持 `Space` / `Enter` 触发条目点击
+- **ARIA 属性**：表格使用语义化 `<table>` 标记，分页控件使用 `aria-label` 标识
+- **焦点管理**：可交互元素支持 Tab 键导航
+- **动效降级**：尊重 `prefers-reduced-motion` 系统设置，自动禁用或简化动画（如适用）

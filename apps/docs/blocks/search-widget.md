@@ -21,6 +21,8 @@ npx brutx-vue@latest add --block search-widget
 
 ## 用法
 
+### 基础用法
+
 ```vue
 <script setup>
 import SearchWidget from '@/components/ui/search-widget/SearchWidget.vue'
@@ -52,7 +54,7 @@ function handleSelect(suggestion: SearchSuggestion) {
 </template>
 ```
 
-## 无分组建议
+### 无分组建议
 
 ```vue
 <script setup>
@@ -73,33 +75,7 @@ const suggestions = [
 </template>
 ```
 
-## Props
-
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `placeholder` | `string` | locale: `searchWidget.defaultPlaceholder` |
-| `suggestions` | `SearchSuggestion[]` | `[]` |
-| `recent` | `SearchSuggestion[]` | `[]` |
-| `loading` | `boolean` | `false` |
-| `iconSize` | `IconSize` | `'default'` |
-| `class` | `string` | — |
-
-### SearchSuggestion 类型
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `label` | `string` | 建议项显示文本 |
-| `value` | `string` | 建议项值 |
-| `group` | `string` | 可选，分组名称 |
-
-## 事件
-
-| 事件 | 载荷 |
-|------|------|
-| `search` | `[value: string]` |
-| `select` | `[suggestion: SearchSuggestion]` |
-
-## 最近搜索
+### 最近搜索
 
 当输入框为空且 `recent` 非空时，下拉列表展示「最近搜索」分组（标题取自 locale `searchWidget.recentSearches`）。点击某项会将输入框回填为该项 `label` 并触发 `select` 事件。
 
@@ -119,7 +95,7 @@ const recent: SearchSuggestion[] = [
 </template>
 ```
 
-## 加载状态
+### 加载状态
 
 设置 `loading` 为 `true` 时，建议列表底部显示 `Spinner`，用于异步搜索场景。
 
@@ -141,16 +117,43 @@ function handleSearch(value) {
 </template>
 ```
 
+## 数据类型
+
+### SearchSuggestion
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `label` | `string` | 建议项显示文本 |
+| `value` | `string` | 建议项值 |
+| `group` | `string` | 可选，分组名称 |
+
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `placeholder` | `string` | locale: `searchWidget.defaultPlaceholder` | 输入框占位文本 |
+| `suggestions` | `SearchSuggestion[]` | `[]` | 建议列表数据 |
+| `recent` | `SearchSuggestion[]` | `[]` | 最近搜索记录列表 |
+| `loading` | `boolean` | `false` | 是否显示加载状态 |
+| `iconSize` | `IconSize` | `'default'` | 搜索图标尺寸 |
+| `class` | `string` | — | 自定义 CSS 类名 |
+
+## 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `search` | `[value: string]` | 输入内容变化时触发 |
+| `select` | `[suggestion: SearchSuggestion]` | 选中建议项时触发 |
+
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `actions` | 额外操作区域 |
+| 插槽 | 作用域 | 说明 |
+| --- | --- | --- |
+| `actions` | — | 额外操作区域 |
 
-## 布局
+## 可访问性
 
-SearchWidget 包含：
-- **Command 输入框**：基于 Command 组件的搜索输入
-- **建议列表**：输入内容后显示过滤后的建议，按 `group` 字段分组
-- **空状态**：无匹配结果时显示 CommandEmpty
-- **扩展插槽**：`actions` slot 用于添加自定义操作
+- 搜索输入框具有 `role="combobox"` 和 `aria-expanded` 属性，表明其为可展开的组合框
+- 建议列表使用 `role="listbox"` 和 `role="option"` 标识选项
+- 支持键盘导航：`Arrow Up/Down` 切换选项，`Enter` 选中，`Escape` 关闭下拉
+- 空状态和加载状态均提供对应的 ARIA 提示信息

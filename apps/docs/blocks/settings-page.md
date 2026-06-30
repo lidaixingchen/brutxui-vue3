@@ -1,5 +1,5 @@
 ---
-title: Settings Page
+title: Settings Page 设置页
 description: 设置页面区块，带有标签页导航和表单控件。
 ---
 
@@ -15,9 +15,7 @@ description: 设置页面区块，带有标签页导航和表单控件。
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block settings-page
-```
+<InstallationTabs componentName="settings-page" />
 
 ## 用法
 
@@ -48,7 +46,7 @@ function handleSave(payload) {
 </template>
 ```
 
-## 自定义标签页内容
+### 自定义标签页内容
 
 ```vue
 <script setup>
@@ -82,51 +80,42 @@ const tabs = [
 </template>
 ```
 
+## 数据类型
+
+```ts
+interface SettingsTab {
+    label: string
+    value: string
+}
+```
+
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `settingsPage.defaultTitle` |
-| `tabs` | `SettingsTab[]` | `[]` |
-| `modelValue` | `string` | — |
-| `defaultTab` | `string` | — |
-| `class` | `string` | — |
-
-### SettingsTab 类型
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `label` | `string` | 标签页显示文本 |
-| `value` | `string` | 标签页值 |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | locale: `settingsPage.defaultTitle` | 页面标题 |
+| `tabs` | `SettingsTab[]` | `[]` | 标签页配置列表 |
+| `modelValue` | `string` | — | 当前激活的标签页（v-model） |
+| `defaultTab` | `string` | — | 默认激活的标签页 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
-| 事件 | 载荷 |
-|------|------|
-| `save` | `[{ tab: string; values: Record<string, unknown> }]` |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `save` | `{ tab: string; values: Record<string, unknown> }` | 点击保存按钮时触发，包含当前标签页和表单值 |
 
 ## 插槽
 
-| Slot | 用途 |
-|------|------|
-| `header` | 替换/扩展区块头部 |
-| `default` | 替换区块主体内容（含标签页和保存按钮） |
-| `footer` | 替换/扩展区块底部 |
-| `tab-{value}` | 自定义标签页内容，提供 `{ values, setValue }` 作用域属性 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `header` | — | 替换/扩展区块头部 |
+| `default` | — | 替换区块主体内容（含标签页和保存按钮） |
+| `footer` | — | 替换/扩展区块底部 |
+| `tab-{value}` | `{ values: Record<string, unknown>; setValue: (key: string, val: unknown) => void }` | 自定义标签页内容，提供表单值和设置函数 |
 
-### 作用域插槽属性（`tab-{value}`）
+## 可访问性
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `values` | `Record<string, unknown>` | 当前标签页的表单值 |
-| `setValue` | `(key: string, val: unknown) => void` | 设置表单值的函数 |
-
-## 布局
-
-SettingsPage 包含：
-- **头部**：标题区域
-- **标签页导航**：TabsList + TabsTrigger，根据 `tabs` prop 渲染
-- **标签页内容**：每个标签页对应一个 Card，包含：
-  - 默认内容：Name（Input）和 Notifications（Switch），用 Separator 分隔
-  - 可通过 `tab-{value}` 插槽自定义
-- **保存按钮**：primary 变体，右对齐
+- **键盘操作**：支持 `Tab` 在标签页和表单控件间导航，`Enter` / `Space` 切换标签页
+- **ARIA 属性**：标签页使用 `role="tablist"` 和 `role="tab"`，内容区域使用 `role="tabpanel"`
+- **焦点管理**：标签页切换时焦点保持在标签页触发器上

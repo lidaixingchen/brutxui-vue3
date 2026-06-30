@@ -1,5 +1,5 @@
 ---
-title: Pricing Section
+title: Pricing Section 定价区
 description: 统一定价区块，支持一次性价格、月付/年付切换、多方案对比和热门方案强调。
 ---
 
@@ -15,9 +15,7 @@ description: 统一定价区块，支持一次性价格、月付/年付切换、
 
 ## 安装
 
-```bash
-npx brutx-vue@latest add --block pricing-section
-```
+<InstallationTabs componentName="pricing-section" />
 
 ## 用法
 
@@ -87,7 +85,7 @@ const plans = [
 </template>
 ```
 
-## BrutalistPricingPlan 类型
+## 数据类型
 
 ```ts
 interface PricingFeature {
@@ -112,27 +110,25 @@ interface BrutalistPricingPlan {
 
 ## Props
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `title` | `string` | locale: `pricingSection.defaultTitle` |
-| `subtitle` | `string` | — |
-| `plans` | `BrutalistPricingPlan[]` | `[]` |
-| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` |
-| `modelValue` | `'monthly' \| 'annually'` | — |
-| `defaultBilling` | `'monthly' \| 'annually'` | `'monthly'` |
-| `popularText` | `string` | locale: `pricingSection.mostPopular` |
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | locale: `pricingSection.defaultTitle` | 标题文本 |
+| `subtitle` | `string` | — | 副标题文本 |
+| `plans` | `BrutalistPricingPlan[]` | `[]` | 定价方案列表 |
+| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` | 计费模式：auto 自动检测，toggle 强制显示，none 隐藏 |
+| `modelValue` | `'monthly' \| 'annually'` | — | 当前选中的计费周期（v-model） |
+| `defaultBilling` | `'monthly' \| 'annually'` | `'monthly'` | 默认计费周期 |
+| `popularText` | `string` | locale: `pricingSection.mostPopular` | 热门方案徽章文本 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
-| 事件 | 参数 |
-|------|------|
-| `plan-select` | `planName: string` |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `plan-select` | `planName: string` | 选择方案时触发，参数为方案名称 |
 
-## 特性
+## 可访问性
 
-- **统一计费模式**：`billingMode="auto"` 会在方案包含 `priceMonthly` 或 `priceAnnually` 时自动显示切换按钮
-- **一次性价格兼容**：只传 `price` 时不显示计费切换，并使用 lifetime 文案
-- **热门徽章**：设置 `popular: true` 的方案会显示强调徽章，可通过 `popularText` 覆盖文案
-- **功能状态**：字符串功能默认视为包含；对象功能可通过 `included: false` 显示未包含状态
-- **按钮兼容**：支持旧字段 `ctaText`，也支持和 `SaaSPricing` 一致的 `buttonText` / `buttonVariant`
+- **键盘操作**：支持 `Tab` 在方案卡片和按钮间导航，`Enter` / `Space` 触发按钮操作
+- **ARIA 属性**：切换按钮使用 `aria-pressed` 状态，热门方案使用 `aria-label` 提示
+- **焦点管理**：焦点顺序遵循文档流，按钮获得焦点时显示可见的焦点指示器
