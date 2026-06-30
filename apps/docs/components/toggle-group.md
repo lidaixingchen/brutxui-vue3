@@ -168,9 +168,3 @@ const styles = ref([])
 
 - **ARIA 属性**：自动管理 `aria-pressed` 状态，`vertical` 方向时设置 `aria-orientation="vertical"`
 - **键盘操作**：支持方向键在组内导航，`Space` / `Enter` 切换选中状态
-
-## 样式定制
-
-- **未按下**：带背景和小阴影，悬停时上浮并增大阴影
-- **按下**：主色/辅助色背景，无阴影，向下偏移（pressed offset）
-- **禁用**：降低不透明度，显示禁止光标

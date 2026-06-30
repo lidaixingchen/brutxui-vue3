@@ -130,11 +130,3 @@ import { Separator } from 'brutx-ui-vue'
 ## 可访问性
 
 - **ARIA 属性**：`decorative` 为 `true` 时无语义角色；为 `false` 时自动设置 `role="separator"`
-
-## 样式定制
-
-- **粗细**：由 `size` 通过 `--sep-thickness` 令牌控制（`sm`=`2px`、`default`=`var(--brutal-border-width, 3px)`、`lg`=`5px`）
-- **水平**：`h-[var(--sep-thickness)] w-full`
-- **垂直**：`h-full w-[var(--sep-thickness)]`
-- **颜色**：由 `variant` 控制 -- `default`=`bg-brutal-fg`、`primary`=`bg-brutal-primary`、`muted`=`bg-brutal-muted`
-- **文字分隔线**：容器 `flex items-center gap-3 w-full`，两侧分隔线使用 `flex-1`

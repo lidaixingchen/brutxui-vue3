@@ -89,9 +89,3 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 
 - **键盘操作**：支持 `Enter` / `Space` 触发切换
 - **ARIA 属性**：图标按钮包含当前模式的文本描述
-
-## 样式定制
-
-- **图标模式**：带 nb-border / nb-shadow / nb-press 的图标按钮，显示当前模式对应的 `@lucide/vue` 图标（Sun / Moon / Monitor）
-- **按钮模式**：图标 + 文字标签的组合按钮，hover 时背景色变化
-- **下拉选择模式**：基于项目 `Select` 组件（reka-ui 无头原语封装），带 nb-border / nb-shadow 新粗野主义样式

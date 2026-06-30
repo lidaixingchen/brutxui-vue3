@@ -141,12 +141,3 @@ const checked = ref(false)
     </div>
 </template>
 ```
-
-## 样式定制
-
-- **未选中**：白色背景，粗野主义边框和 `shadow-brutal-sm`
-- **已选中**：根据 variant 使用不同颜色（default: `bg-brutal-success`，primary: `bg-brutal-primary` 等），带勾选图标
-- **悬停**：阴影增大 `shadow-brutal`，轻微上移
-- **按压**：向下位移，阴影消失
-- **禁用状态**：降低透明度，显示禁止光标
-- **聚焦状态**：使用 `--brutal-ring` 令牌显示可见聚焦环
