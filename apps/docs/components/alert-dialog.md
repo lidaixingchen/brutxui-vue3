@@ -1,9 +1,9 @@
 ---
-title: Alert Dialog 提示对话框
+title: AlertDialog 提示对话框
 description: 提示对话框组件，用于需要用户明确确认的操作，无障碍适配良好。
 ---
 
-# Alert Dialog 提示对话框
+# AlertDialog 提示对话框
 
 新粗野主义风格的确认对话框，需要用户交互。基于 reka-ui 的 AlertDialog 原语构建。
 
@@ -65,59 +65,59 @@ import { Button } from 'brutx-ui-vue'
 
 ### AlertDialogContent
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 ### AlertDialogHeader
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 ### AlertDialogFooter
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 ### AlertDialogTitle
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 ### AlertDialogDescription
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 ### AlertDialogAction
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` |
-| `class` | `string` | — |
-| `as` | `string \| Component` | — |
-| `asChild` | `boolean` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体 |
+| `class` | `string` | — | 自定义样式类 |
+| `as` | `string \| Component` | — | 渲染为指定元素或组件 |
+| `asChild` | `boolean` | — | 是否以子元素方式渲染 |
 
 ### AlertDialogCancel
 
-| 属性 | 类型 | 默认值 |
-|------|------|--------|
-| `class` | `string` | — |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
 > `AlertDialogCancel` 使用硬编码的 `variant: 'outline'`。
 
-## Slots
+## 插槽
 
-所有子组件均支持默认插槽（`default`），用于插入自定义内容。
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 所有子组件均支持默认插槽，用于插入自定义内容 |
 
-## 无障碍
+## 可访问性
 
-- 对话框打开时，焦点被限制在对话框内
-- 按 `Escape` 关闭对话框
-- `AlertDialogCancel` 点击后关闭对话框
-- `AlertDialogAction` 确认并关闭对话框
-- 对话框使用语义化的 `role="alertdialog"` 属性
+- **键盘操作**：按 `Escape` 关闭对话框；`AlertDialogCancel` 点击后关闭对话框；`AlertDialogAction` 确认并关闭对话框
+- **ARIA 属性**：对话框使用语义化的 `role="alertdialog"` 属性
+- **焦点管理**：对话框打开时，焦点被限制在对话框内

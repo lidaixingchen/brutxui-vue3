@@ -40,45 +40,24 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 </template>
 ```
 
-## Props
+## 尺寸
 
-### Carousel Props
+| 尺寸 | 说明 |
+|------|------|
+| `sm` | 小尺寸 |
+| `md` | 中等尺寸 |
+| `lg` | 大尺寸 |
+| `full` | 全屏高度 |
+| `default` | 默认尺寸 |
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `loop` | `boolean` | `false` | 是否开启首尾循环滚动 |
-| `autoplay` | `boolean` | `false` | 是否自动播放 |
-| `autoplayDelay` | `number` | `3000` | 自动播放间隔（毫秒） |
-| `showArrows` | `boolean` | `true` | 是否显示左右切换箭头 |
-| `showDots` | `boolean` | `true` | 是否显示底部导航圆点 |
-| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'default'` | `'default'` | 轮播容器高度预设 |
-| `class` | `string` | — | 根节点自定义样式类 |
+## 子组件
 
-### CarouselItem Props
+| 组件 | 说明 |
+|------|------|
+| `Carousel` | 轮播容器，管理滚动逻辑与导航控制 |
+| `CarouselItem` | 单张幻灯片容器 |
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 单张幻灯片容器自定义样式类 |
-
-## 插槽
-
-### Carousel 插槽
-
-| 插槽名 | 说明 |
-|------|--------|
-| `default` | 默认插槽，用于放置 `CarouselItem` 组件 |
-
-### CarouselItem 插槽
-
-| 插槽名 | 说明 |
-|------|--------|
-| `default` | 默认插槽，用于放置幻灯片内容 |
-
-## 事件
-
-Carousel 不对外暴露独立事件。组件内部通过鼠标悬停自动暂停播放、离开恢复播放实现交互控制。如需访问 Embla API，可通过 `ref` + 内部 `emblaApi` 的方式进行扩展。
-
-## useCarousel 组合式函数
+## 组合式函数
 
 `Carousel` 组件内部逻辑已抽取为独立的 `useCarousel` 组合式函数，可单独使用以构建完全自定义的轮播 UI。它基于 `embla-carousel-vue` 封装，内置自动播放、循环控制、选中索引追踪，并自动遵守 `prefers-reduced-motion` 系统偏好（启用减少动效时会停止自动播放并禁用过渡动画）。
 
@@ -106,7 +85,7 @@ const {
 } = useCarousel(options)
 ```
 
-### UseCarouselOptions
+### 选项
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
@@ -158,12 +137,10 @@ const carouselRef = ref()
 </template>
 ```
 
-### Methods
+### 暴露的 API
 
-通过 `ref` 调用以下方法：
-
-| 方法 | 类型 | 说明 |
-|------|------|------|
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
 | `scrollPrev` | `() => void` | 滚动到上一张幻灯片 |
 | `scrollNext` | `() => void` | 滚动到下一张幻灯片 |
 | `scrollTo` | `(index: number) => void` | 滚动到指定索引的幻灯片 |
@@ -173,18 +150,47 @@ const carouselRef = ref()
 
 > 注意：`selectedIndex`、`canScrollPrev`、`canScrollNext` 是响应式 `ComputedRef`，在 `<template>` 中直接使用时会自动解包；在 `<script setup>` 中读取需通过 `.value`。
 
-## 无障碍
+## Props
 
-- 左右箭头按钮均带有 `aria-label`
-- 导航圆点按钮均带有 `aria-label`
-- 键盘焦点管理由 Embla 内置支持
+### Carousel
 
-## 无障碍 / 动效降级
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `loop` | `boolean` | `false` | 是否开启首尾循环滚动 |
+| `autoplay` | `boolean` | `false` | 是否自动播放 |
+| `autoplayDelay` | `number` | `3000` | 自动播放间隔（毫秒） |
+| `showArrows` | `boolean` | `true` | 是否显示左右切换箭头 |
+| `showDots` | `boolean` | `true` | 是否显示底部导航圆点 |
+| `size` | `'sm' \| 'md' \| 'lg' \| 'full' \| 'default'` | `'default'` | 轮播容器高度预设 |
+| `class` | `string` | — | 根节点自定义样式类 |
 
-组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（由内部 `useCarousel` 组合式函数通过 `useReducedMotion` 监听）：
+### CarouselItem
 
-- **停止自动播放**：`autoplay` 不再触发，已有的定时器会被清除。
-- **禁用过渡动画**：通过 `emblaApi.reInit({ duration: 0 })` 让幻灯片切换不再带有滑动惯性，直接跳转到位。
-- **实时响应**：偏好变化时立即生效，无需重新挂载组件；恢复默认设置后会还原过渡时长并在 `autoplay` 开启时恢复播放。
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 单张幻灯片容器自定义样式类 |
+
+## 插槽
+
+### Carousel
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽，用于放置 `CarouselItem` 组件 |
+
+### CarouselItem
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽，用于放置幻灯片内容 |
+
+## 可访问性
+
+- **ARIA 属性**：左右箭头按钮均带有 `aria-label`；导航圆点按钮均带有 `aria-label`
+- **焦点管理**：键盘焦点管理由 Embla 内置支持
+- **动效降级**：组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（由内部 `useCarousel` 组合式函数通过 `useReducedMotion` 监听）：
+  - **停止自动播放**：`autoplay` 不再触发，已有的定时器会被清除
+  - **禁用过渡动画**：通过 `emblaApi.reInit({ duration: 0 })` 让幻灯片切换不再带有滑动惯性，直接跳转到位
+  - **实时响应**：偏好变化时立即生效，无需重新挂载组件；恢复默认设置后会还原过渡时长并在 `autoplay` 开启时恢复播放
 
 鼠标悬停暂停 / 离开恢复的交互逻辑在动效降级模式下依然保留，但因为 autoplay 已停止，悬停行为不会带来额外的副作用。

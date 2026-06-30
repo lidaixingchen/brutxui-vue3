@@ -65,7 +65,7 @@ const selected = ref(undefined)
 </template>
 ```
 
-## 多选模式
+### 多选模式
 
 ```vue
 <script setup>
@@ -87,59 +87,9 @@ const selected = ref([])
 </template>
 ```
 
-## TreeNode 类型
-
-```ts
-interface TreeNode {
-    id: string              // 唯一标识
-    label: string           // 显示文本
-    children?: TreeNode[]   // 子节点（省略则为叶节点）
-    icon?: string           // 节点图标
-    disabled?: boolean      // 是否禁用
-    data?: unknown          // 自定义附加数据
-}
-```
-
-## Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `nodes` | `TreeNode[]` | —（必填） | 树形数据源 |
-| `modelValue` | `string \| string[]` | `undefined` | 选中值（单选为 string，多选为 string[]） |
-| `open` | `boolean` | `undefined` | 受控展开状态，配合 `update:open` 事件实现 `v-model:open` |
-| `multiple` | `boolean` | `false` | 是否支持多选 |
-| `searchable` | `boolean` | `true` | 是否显示搜索框 |
-| `placeholder` | `string` | locale: `treeSelect.placeholder` | 占位文本 |
-| `searchPlaceholder` | `string` | locale: `treeSelect.searchPlaceholder` | 搜索框占位文本 |
-| `emptyText` | `string` | locale: `treeSelect.emptyText` | 无结果时的提示文本 |
-| `clearable` | `boolean` | `false` | 是否显示清除按钮 |
-| `disabled` | `boolean` | `false` | 是否禁用 |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
-| `ariaLabel` | `string` | `undefined` | ARIA 标签 |
-| `maxDisplay` | `number` | `3` | 多选模式下最多显示的标签数 |
-| `maxHeight` | `string` | `'15rem'` | 下拉列表最大高度 |
-| `dropdownClass` | `string` | `undefined` | 下拉列表自定义类名 |
-| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
-| `class` | `string` | `undefined` | 触发器自定义类名 |
-
-## 事件
-
-| 事件 | 载荷 | 说明 |
-|------|------|------|
-| `update:modelValue` | `string \| string[] \| undefined` | 选中值变更 |
-| `update:open` | `boolean` | 下拉展开/关闭状态变更，配合 `open` prop 实现 `v-model:open` |
-| `select` | `TreeNode \| TreeNode[] \| undefined` | 选中节点变更 |
-| `open-change` | `boolean` | 下拉框展开/关闭 |
-
-## 特性
-
 ### 搜索过滤
 
 启用 `searchable` 后，用户输入关键词可递归过滤树节点，匹配时保留祖先路径。
-
-### 任意深度支持
-
-组件使用递归渲染，支持任意深度的树结构，不限于两层。
 
 ### 禁用节点
 
@@ -178,7 +128,39 @@ function handleClose() {
 </template>
 ```
 
-### 国际化
+### 任意深度支持
+
+组件使用递归渲染，支持任意深度的树结构，不限于两层。
+
+## 变体
+
+| 变体 | 说明 |
+|------|------|
+| `single` | 默认单选模式，`modelValue` 为 `string \| undefined` |
+| `multiple` | 多选模式（设置 `multiple` prop），`modelValue` 为 `string[]` |
+
+## 尺寸
+
+| 尺寸 | 说明 |
+|------|------|
+| `sm` | 小尺寸触发器 |
+| `default` | 默认尺寸触发器 |
+| `lg` | 大尺寸触发器 |
+
+## 数据类型
+
+```ts
+interface TreeNode {
+    id: string              // 唯一标识
+    label: string           // 显示文本
+    children?: TreeNode[]   // 子节点（省略则为叶节点）
+    icon?: string           // 节点图标
+    disabled?: boolean      // 是否禁用
+    data?: unknown          // 自定义附加数据
+}
+```
+
+### TreeSelectLocale
 
 组件使用 `useLocale` composable 支持国际化，可通过 `TreeSelectLocale` 自定义文本：
 
@@ -193,14 +175,40 @@ interface TreeSelectLocale {
 }
 ```
 
-## 无障碍
+## Props
 
-- 触发器使用 `role="combobox"` 和 `aria-expanded`
-- 下拉列表使用 `role="tree"` 和 `role="treeitem"`
-- 多选模式下添加 `aria-multiselectable`
-- 清除按钮支持键盘操作（Enter/Space）
-- 禁用状态下使用 `aria-disabled` 和 `tabindex="-1"`
-- 节点支持 `ArrowUp` / `ArrowDown` 导航
-- 非叶节点支持 `ArrowRight` 展开 / `ArrowLeft` 折叠
-- `Home` / `End` 键跳转至首尾节点
-- 使用 roving tabindex 管理焦点
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `nodes` | `TreeNode[]` | —（必填） | 树形数据源 |
+| `modelValue` | `string \| string[]` | `undefined` | 选中值（单选为 string，多选为 string[]） |
+| `open` | `boolean` | `undefined` | 受控展开状态，配合 `update:open` 事件实现 `v-model:open` |
+| `multiple` | `boolean` | `false` | 是否支持多选 |
+| `searchable` | `boolean` | `true` | 是否显示搜索框 |
+| `placeholder` | `string` | locale: `treeSelect.placeholder` | 占位文本 |
+| `searchPlaceholder` | `string` | locale: `treeSelect.searchPlaceholder` | 搜索框占位文本 |
+| `emptyText` | `string` | locale: `treeSelect.emptyText` | 无结果时的提示文本 |
+| `clearable` | `boolean` | `false` | 是否显示清除按钮 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
+| `ariaLabel` | `string` | `undefined` | ARIA 标签 |
+| `maxDisplay` | `number` | `3` | 多选模式下最多显示的标签数 |
+| `maxHeight` | `string` | `'15rem'` | 下拉列表最大高度 |
+| `dropdownClass` | `string` | `undefined` | 下拉列表自定义类名 |
+| `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
+| `class` | `string` | `undefined` | 触发器自定义类名 |
+
+## 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:modelValue` | `string \| string[] \| undefined` | 选中值变更 |
+| `update:open` | `boolean` | 下拉展开/关闭状态变更，配合 `open` prop 实现 `v-model:open` |
+| `select` | `TreeNode \| TreeNode[] \| undefined` | 选中节点变更 |
+| `open-change` | `boolean` | 下拉框展开/关闭 |
+
+## 可访问性
+
+- **键盘操作**：节点支持 `ArrowUp` / `ArrowDown` 导航；非叶节点支持 `ArrowRight` 展开 / `ArrowLeft` 折叠；`Home` / `End` 键跳转至首尾节点；清除按钮支持 `Enter` / `Space` 操作
+- **ARIA 属性**：触发器使用 `role="combobox"` 和 `aria-expanded`；下拉列表使用 `role="tree"` 和 `role="treeitem"`；多选模式下添加 `aria-multiselectable`；禁用状态下使用 `aria-disabled`
+- **焦点管理**：使用 roving tabindex 管理焦点；禁用节点设置 `tabindex="-1"`
+```

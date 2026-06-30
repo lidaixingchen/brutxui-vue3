@@ -32,6 +32,23 @@ import { Label, Input } from 'brutx-ui-vue'
 </template>
 ```
 
+### 必填标记
+
+设置 `required` 属性后，标签末尾会自动渲染红色的 `*` 星号（标记为 `aria-hidden`），同时根元素会带上 `aria-required="true"` 以辅助无障碍工具识别必填项。
+
+```vue
+<script setup>
+import { Label, Input } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <div class="space-y-2">
+        <Label for="username" required>用户名</Label>
+        <Input id="username" placeholder="请输入用户名" />
+    </div>
+</template>
+```
+
 ## 变体
 
 | 变体 | 说明 |
@@ -63,44 +80,23 @@ import { Label } from 'brutx-ui-vue'
 </template>
 ```
 
-## 必填标记
-
-设置 `required` 属性后，标签末尾会自动渲染红色的 `*` 星号（标记为 `aria-hidden`），同时根元素会带上 `aria-required="true"` 以辅助无障碍工具识别必填项。
-
-```vue
-<script setup>
-import { Label, Input } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <div class="space-y-2">
-        <Label for="username" required>用户名</Label>
-        <Input id="username" placeholder="请输入用户名" />
-    </div>
-</template>
-```
-
-## Slots
-
-| 插槽 | 说明 |
-| --- | --- |
-| `default` | 标签内容 |
-
-## Events
-
-该组件没有定义自定义事件，但会透传所有原生 `<label>` 元素的事件。
-
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
+|------|------|--------|------|
 | `variant` | `'default' \| 'error' \| 'success' \| 'muted'` | `'default'` | 标签变体样式 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 标签尺寸 |
 | `required` | `boolean` | `false` | 是否显示必填标记 |
 | `for` | `string` | — | 关联的表单控件 ID |
 | `class` | `string` | — | 自定义 CSS 类名 |
 
-## 无障碍
+## 插槽
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 标签内容 |
+
+## 可访问性
 
 Label 组件渲染为 HTML `<label>` 元素。当使用 `for` 属性时，它会关联到匹配的表单控件，从而改善无障碍性和点击聚焦行为。
 

@@ -66,7 +66,7 @@ const stats = [
 </template>
 ```
 
-## StatItem 类型
+## 数据类型
 
 ```ts
 interface StatItem {
@@ -80,6 +80,19 @@ interface StatItem {
     progress?: number
 }
 ```
+
+## 强调色
+
+每个统计项的 `accentColor` 属性控制图标背景和进度条颜色：
+
+| 值 | 颜色 |
+|----|------|
+| `primary` | 珊瑚色（`--brutal-primary`） |
+| `secondary` | 薄荷青（`--brutal-secondary`） |
+| `accent` | 黄色（`--brutal-accent`） |
+| `destructive` | 红色（`--brutal-destructive`） |
+| `success` | 绿色（`--brutal-success`） |
+| `info` | 蓝色（`--brutal-info`） |
 
 ## Props
 
@@ -95,17 +108,9 @@ interface StatItem {
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
-| `stat-click` | `index: number` | 点击统计卡片时触发，参数为卡片索引 |
+| `stat-click` | `number` | 点击统计卡片时触发，参数为卡片索引 |
 
-## 强调色
+## 可访问性
 
-每个统计项的 `accentColor` 属性控制图标背景和进度条颜色：
-
-| 值 | 颜色 |
-|----|------|
-| `primary` | 珊瑚色（`--brutal-primary`） |
-| `secondary` | 薄荷青（`--brutal-secondary`） |
-| `accent` | 黄色（`--brutal-accent`） |
-| `destructive` | 红色（`--brutal-destructive`） |
-| `success` | 绿色（`--brutal-success`） |
-| `info` | 蓝色（`--brutal-info`） |
+- **键盘操作**：统计卡片支持键盘导航和 `Enter` / `Space` 触发点击
+- **ARIA 属性**：卡片包含标题和描述的文本内容，对屏幕阅读器可访问

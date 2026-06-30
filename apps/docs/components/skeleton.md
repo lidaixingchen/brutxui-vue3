@@ -31,6 +31,36 @@ import { Skeleton } from 'brutx-ui-vue'
 </template>
 ```
 
+### 形状
+
+| 形状 | 说明 |
+|------|------|
+| `rect` | 圆角矩形（`rounded-brutal`） |
+| `circle` | 圆形（`rounded-full`），宽高相等 |
+
+```vue
+<template>
+    <div class="flex items-center gap-4">
+        <Skeleton shape="rect" size="lg" width="80px" />
+        <Skeleton shape="circle" size="lg" />
+    </div>
+</template>
+```
+
+### 自定义宽度
+
+`width` 接受任意 CSS 宽度字符串，包括百分比；当 `shape="circle"` 时同时设置高度。
+
+```vue
+<template>
+    <div class="space-y-2 w-full">
+        <Skeleton width="100%" />
+        <Skeleton width="75%" />
+        <Skeleton width="50%" />
+    </div>
+</template>
+```
+
 ### SkeletonText
 
 ```vue
@@ -100,54 +130,12 @@ import { SkeletonTable } from 'brutx-ui-vue'
 当 `shape="circle"` 时，宽度与高度保持一致（`w-8`/`w-10`/`w-14`/`w-20`）。
 
 ```vue
-<script setup>
-import { Skeleton } from 'brutx-ui-vue'
-</script>
-
 <template>
     <div class="space-y-2">
         <Skeleton size="sm" width="200px" />
         <Skeleton size="default" width="200px" />
         <Skeleton size="lg" width="200px" />
         <Skeleton size="xl" width="200px" />
-    </div>
-</template>
-```
-
-## 形状
-
-| 形状 | 说明 |
-|------|------|
-| `rect` | 圆角矩形（`rounded-brutal`） |
-| `circle` | 圆形（`rounded-full`），宽高相等 |
-
-```vue
-<script setup>
-import { Skeleton } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <div class="flex items-center gap-4">
-        <Skeleton shape="rect" size="lg" width="80px" />
-        <Skeleton shape="circle" size="lg" />
-    </div>
-</template>
-```
-
-## 自定义宽度
-
-`width` 接受任意 CSS 宽度字符串，包括百分比；当 `shape="circle"` 时同时设置高度。
-
-```vue
-<script setup>
-import { Skeleton } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <div class="space-y-2 w-full">
-        <Skeleton width="100%" />
-        <Skeleton width="75%" />
-        <Skeleton width="50%" />
     </div>
 </template>
 ```
@@ -172,7 +160,7 @@ import { Skeleton } from 'brutx-ui-vue'
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 控制高度（`circle` 时同步控制宽度） |
 | `shape` | `'rect' \| 'circle'` | `'rect'` | 形状；`circle` 时 `rounded-full` 且宽高相等 |
 | `width` | `string` | — | 自定义宽度，支持百分比如 `'100%'`；`circle` 时同时设置高度 |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### SkeletonText
 
@@ -181,7 +169,7 @@ import { Skeleton } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
 | `lines` | `number` | `3` | 文本行数 |
 | `lastLineWidth` | `string` | `'60%'` | 最后一行的宽度，支持任意 CSS 宽度值 |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### SkeletonAvatar
 
@@ -189,14 +177,14 @@ import { Skeleton } from 'brutx-ui-vue'
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl'` | `'default'` | 头像尺寸，宽高相等 |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### SkeletonCard
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### SkeletonTable
 
@@ -205,10 +193,14 @@ import { Skeleton } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent'` | `'default'` | 颜色变体 |
 | `rows` | `number` | `5` | 数据行数 |
 | `columns` | `number` | `4` | 列数 |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
-## Slots
+## 插槽
 
-| 组件 | 插槽 | 说明 |
-| --- | --- | --- |
-| Skeleton | default | 骨架块内部内容，可放置自定义加载指示器或其他元素 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 骨架块内部内容，可放置自定义加载指示器或其他元素 |
+
+## 可访问性
+
+- **ARIA 属性**：`Skeleton` 内置 `role="status"` 和 `aria-busy="true"`；`SkeletonTable` 内置 `role="table"` 和 `aria-busy="true"`

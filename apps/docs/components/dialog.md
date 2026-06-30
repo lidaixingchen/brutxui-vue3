@@ -48,23 +48,7 @@ import { Button } from 'brutx-ui-vue'
 </template>
 ```
 
-## 子组件
-
-| 组件 | 说明 |
-|------|------|
-| `Dialog` | 根组件（从 reka-ui 的 `DialogRoot` 重新导出） |
-| `DialogTrigger` | 打开对话框的按钮（从 reka-ui 重新导出） |
-| `DialogContent` | 带遮罩层的对话框内容面板 |
-| `DialogHeader` | 头部容器 |
-| `DialogFooter` | 底部容器，弹性布局 |
-| `DialogTitle` | 对话框标题 |
-| `DialogDescription` | 对话框描述文本 |
-| `DialogClose` | 关闭按钮（从 reka-ui 重新导出） |
-| `DialogOverlay` | 背景遮罩层 |
-| `DialogPortal` | 传送门容器（从 reka-ui 重新导出） |
-| `DialogEnhanced` | 支持可拖拽和可调整大小的增强版对话框 |
-
-## 尺寸变体
+## 尺寸
 
 通过 `DialogContent` 的 `size` 属性控制对话框的最大宽度。默认值为 `default`（`max-w-lg`）。
 
@@ -93,6 +77,50 @@ import { Button } from 'brutx-ui-vue'
                 <DialogDescription>此操作不可撤销，确定要继续吗？</DialogDescription>
             </DialogHeader>
         </DialogContent>
+    </Dialog>
+</template>
+```
+
+## 子组件
+
+| 组件 | 说明 |
+|------|------|
+| `Dialog` | 根组件（从 reka-ui 的 `DialogRoot` 重新导出） |
+| `DialogTrigger` | 打开对话框的按钮（从 reka-ui 重新导出） |
+| `DialogContent` | 带遮罩层的对话框内容面板 |
+| `DialogHeader` | 头部容器 |
+| `DialogFooter` | 底部容器，弹性布局 |
+| `DialogTitle` | 对话框标题 |
+| `DialogDescription` | 对话框描述文本 |
+| `DialogClose` | 关闭按钮（从 reka-ui 重新导出） |
+| `DialogOverlay` | 背景遮罩层 |
+| `DialogPortal` | 传送门容器（从 reka-ui 重新导出） |
+| `DialogEnhanced` | 支持可拖拽和可调整大小的增强版对话框 |
+
+### DialogEnhanced 用法
+
+支持可拖拽和可调整大小的增强版对话框：
+
+```vue
+<script setup>
+import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <Dialog>
+        <DialogTrigger>打开可拖拽对话框</DialogTrigger>
+        <DialogEnhanced
+            draggable
+            resizable
+            :min-width="300"
+            :min-height="200"
+            drag-handle=".dialog-header"
+        >
+            <DialogHeader class="dialog-header">
+                <DialogTitle>可拖拽对话框</DialogTitle>
+            </DialogHeader>
+            <p>拖拽标题栏移动，拖拽边缘调整大小</p>
+        </DialogEnhanced>
     </Dialog>
 </template>
 ```
@@ -136,63 +164,7 @@ import { Button } from 'brutx-ui-vue'
 | `asChild` | `boolean` | — | 是否将渲染委托给子元素 |
 | `as` | `string` | `'button'` | 渲染的 HTML 元素 |
 
-### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-## Events
-
-### Dialog
-
-| 事件名 | 参数 | 说明 |
-|--------|------|------|
-| `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
-
-## Slots
-
-### Dialog
-
-| 插槽名 | 作用域参数 | 说明 |
-|--------|-----------|------|
-| `default` | `{ open: boolean, close: () => void }` | 默认插槽，提供当前打开状态和关闭方法 |
-
-### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
-
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽 |
-
-## DialogEnhanced 增强对话框
-
-支持可拖拽和可调整大小的增强版对话框：
-
-```vue
-<script setup>
-import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <Dialog>
-        <DialogTrigger>打开可拖拽对话框</DialogTrigger>
-        <DialogEnhanced
-            draggable
-            resizable
-            :min-width="300"
-            :min-height="200"
-            drag-handle=".dialog-header"
-        >
-            <DialogHeader class="dialog-header">
-                <DialogTitle>可拖拽对话框</DialogTitle>
-            </DialogHeader>
-            <p>拖拽标题栏移动，拖拽边缘调整大小</p>
-        </DialogEnhanced>
-    </Dialog>
-</template>
-```
-
-### DialogEnhanced Props
+### DialogEnhanced
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
@@ -210,16 +182,37 @@ import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from
 | `forceMount` | `boolean` | — | 强制渲染 |
 | `class` | `string` | — | 自定义样式类 |
 
-### DialogEnhanced Slots
+### DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽 |
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 自定义样式类 |
 
-## 无障碍
+## 事件
 
-- 对话框打开时，焦点被限制在对话框内
-- 按 `Escape` 关闭对话框
-- 点击遮罩层关闭对话框
-- 关闭按钮包含屏幕阅读器文本
-- 拖拽时自动排除交互元素（Input、Button 等）
+### Dialog
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `(value: boolean)` | 对话框打开状态变化时触发 |
+
+## 插槽
+
+### Dialog
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | `{ open: boolean, close: () => void }` | 默认插槽，提供当前打开状态和关闭方法 |
+
+### DialogContent / DialogHeader / DialogFooter / DialogTitle / DialogDescription / DialogOverlay / DialogEnhanced
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽 |
+
+## 可访问性
+
+- **键盘操作**：按 `Escape` 关闭对话框
+- **焦点管理**：对话框打开时，焦点被限制在对话框内；关闭时恢复焦点
+- **ARIA 属性**：关闭按钮包含屏幕阅读器文本
+- **交互元素**：拖拽时自动排除交互元素（Input、Button 等）

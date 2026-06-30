@@ -33,7 +33,7 @@ import { TypewriterText } from 'brutx-ui-vue'
 </template>
 ```
 
-## 循环播放
+### 循环播放
 
 ```vue
 <template>
@@ -47,20 +47,7 @@ import { TypewriterText } from 'brutx-ui-vue'
 </template>
 ```
 
-## 尺寸和粗细
-
-```vue
-<template>
-    <TypewriterText
-        text="大号粗体文本"
-        size="xl"
-        weight="bold"
-        :speed="100"
-    />
-</template>
-```
-
-## 事件监听
+### 事件监听
 
 ```vue
 <script setup>
@@ -85,6 +72,36 @@ function onComplete() {
 </template>
 ```
 
+## 变体
+
+| 变体 | CSS 类 |
+|------|--------|
+| `normal` | `font-normal` |
+| `medium` | `font-medium` |
+| `bold` | `font-bold` |
+| `black` | `font-black` |
+
+## 尺寸
+
+| 尺寸 | CSS 类 | 光标高度 |
+|------|--------|----------|
+| `sm` | `text-sm` | `h-3` |
+| `default` | `text-base` | `h-4` |
+| `lg` | `text-lg` | `h-5` |
+| `xl` | `text-xl` | `h-6` |
+| `2xl` | `text-2xl` | `h-7` |
+
+```vue
+<template>
+    <TypewriterText
+        text="大号粗体文本"
+        size="xl"
+        weight="bold"
+        :speed="100"
+    />
+</template>
+```
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -102,37 +119,28 @@ function onComplete() {
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
-| `start` | 无 | 打字开始时触发 |
-| `complete` | 无 | 打字完成时触发 |
+| `start` | — | 打字开始时触发 |
+| `complete` | — | 打字完成时触发 |
 
-## 尺寸变体
+## 可访问性
 
-| 尺寸 | CSS 类 | 光标高度 |
-|------|--------|----------|
-| `sm` | `text-sm` | `h-3` |
-| `default` | `text-base` | `h-4` |
-| `lg` | `text-lg` | `h-5` |
-| `xl` | `text-xl` | `h-6` |
-| `2xl` | `text-2xl` | `h-7` |
+- **ARIA 属性**：组件使用 `aria-live="polite"` 确保屏幕阅读器能感知文本变化；光标使用 `aria-hidden="true"` 标记为装饰性元素
+- **动效降级**：当用户偏好 `prefers-reduced-motion: reduce` 时，直接显示完整文本，跳过动画；该偏好实时响应系统设置变化
 
-## 粗细变体
+## 常见问题
 
-| 粗细 | CSS 类 |
-|------|--------|
-| `normal` | `font-normal` |
-| `medium` | `font-medium` |
-| `bold` | `font-bold` |
-| `black` | `font-black` |
+**Q: `text` 属性变化时会怎样？**
 
-## 无障碍
+A: `text` 属性变化时会重新开始打字动画。
 
-- 组件使用 `aria-live="polite"` 确保屏幕阅读器能感知文本变化
-- 光标使用 `aria-hidden="true"` 标记为装饰性元素
-- 当用户偏好 `prefers-reduced-motion: reduce` 时，直接显示完整文本，跳过动画；该偏好实时响应系统设置变化
+**Q: 组件卸载时定时器如何处理？**
 
-## 注意事项
+A: 组件卸载时会自动清理所有定时器（包括打字定时器和延迟启动定时器），避免内存泄漏。
 
-- `text` 属性变化时会重新开始打字动画
-- 组件卸载时会自动清理所有定时器（包括打字定时器和延迟启动定时器），避免内存泄漏
-- 循环模式下，打字完成后会等待 `delay` 毫秒后重新开始
-- 组件根元素始终带有 `brutx-typewriter` CSS 类，可用于自定义样式覆盖
+**Q: 循环模式下的行为是什么？**
+
+A: 循环模式下，打字完成后会等待 `delay` 毫秒后重新开始。
+
+**Q: 如何自定义样式？**
+
+A: 组件根元素始终带有 `brutx-typewriter` CSS 类，可用于自定义样式覆盖。

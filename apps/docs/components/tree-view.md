@@ -1,11 +1,11 @@
 ---
 title: TreeView 树形目录
-description: 递归树形组件，支持节点展开折叠、单选、图标、自定义缩进，适合文件系统、分类层级等场景。
+description: 递归树形组件，支持节点展开折叠、单选、复选、图标、自定义缩进，适合文件系统、分类层级等场景。
 ---
 
 # TreeView 树形目录
 
-可递归展开的层级数据可视化组件，内置文件夹 / 文件图标，支持键盘导航与受控单选状态。
+可递归展开的层级数据可视化组件，内置文件夹 / 文件图标，支持键盘导航与受控单选、复选状态。
 
 ## 预览
 
@@ -49,37 +49,6 @@ const selected = ref(null)
 </template>
 ```
 
-## TreeNode 类型
-
-```ts
-interface TreeNode {
-    id: string            // 唯一标识
-    label: string         // 显示文本
-    icon?: string         // 节点图标（预留字段，当前未使用）
-    children?: TreeNode[] // 子节点（省略则为叶节点）
-    data?: unknown        // 自定义附加数据
-    disabled?: boolean    // 是否禁用（checkbox 模式下不可勾选）
-}
-```
-
-> 说明：节点图标当前由组件内部自动根据类型渲染——文件夹节点使用 `Folder` / `FolderOpen` 图标，叶节点使用 `File` 图标，无需手动指定。
-
-## 导出类型
-
-除了 `TreeNode`，组件还导出以下类型供 TypeScript 项目使用：
-
-```ts
-type SelectionMode = 'single' | 'checkbox'
-type CheckState = 'checked' | 'unchecked' | 'indeterminate'
-```
-
-## 选择模式
-
-`selectionMode` 支持 `single`（默认，单选）与 `checkbox`（复选）两种模式。
-
-- `single`：点击节点时通过 `v-model` 同步选中 id，仅单选。
-- `checkbox`：每个节点前渲染 `Checkbox`，支持级联勾选——父节点勾选则所有子孙节点全部勾选；子孙节点部分勾选时父节点呈半选状态（`aria-checked="mixed"`）。勾选项通过 `v-model:checkedIds` 双向绑定。`disabled` 为 `true` 的节点不可勾选。
-
 ### 复选模式
 
 ```vue
@@ -112,9 +81,42 @@ const checkedIds = ref<string[]>(['button'])
 </template>
 ```
 
-## Props
+## 变体
 
-### TreeView Props
+`selectionMode` 支持两种选择模式：
+
+| 变体 | 说明 |
+|------|------|
+| `single` | 默认单选模式，点击节点时通过 `v-model` 同步选中 id |
+| `checkbox` | 复选模式，每个节点前渲染 `Checkbox`，支持级联勾选——父节点勾选则所有子孙节点全部勾选；子孙节点部分勾选时父节点呈半选状态（`aria-checked="mixed"`）。勾选项通过 `v-model:checkedIds` 双向绑定。`disabled` 为 `true` 的节点不可勾选 |
+
+## 数据类型
+
+```ts
+interface TreeNode {
+    id: string            // 唯一标识
+    label: string         // 显示文本
+    icon?: string         // 节点图标（预留字段，当前未使用）
+    children?: TreeNode[] // 子节点（省略则为叶节点）
+    data?: unknown        // 自定义附加数据
+    disabled?: boolean    // 是否禁用（checkbox 模式下不可勾选）
+}
+```
+
+> 说明：节点图标当前由组件内部自动根据类型渲染——文件夹节点使用 `Folder` / `FolderOpen` 图标，叶节点使用 `File` 图标，无需手动指定。
+
+## 导出类型
+
+除了 `TreeNode`，组件还导出以下类型供 TypeScript 项目使用：
+
+```ts
+import type { SelectionMode, CheckState } from 'brutx-ui-vue'
+
+type SelectionMode = 'single' | 'checkbox'
+type CheckState = 'checked' | 'unchecked' | 'indeterminate'
+```
+
+## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
@@ -129,16 +131,16 @@ const checkedIds = ref<string[]>(['button'])
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
-| `update:modelValue` | `(id: string \| null)` | 选中节点 id 变更 |
-| `update:checkedIds` | `(ids: string[])` | 勾选项变更（checkbox 模式） |
-| `update:expanded` | `(ids: string[])` | 展开节点列表变更 |
-| `select` | `(node: TreeNode)` | 点击任意节点时触发 |
-| `expand` | `(id: string, expanded: boolean)` | 展开 / 折叠节点时触发 |
-| `check` | `(node: TreeNode, checked: boolean)` | 勾选 / 取消勾选节点时触发（checkbox 模式） |
+| `update:modelValue` | `string \| null` | 选中节点 id 变更 |
+| `update:checkedIds` | `string[]` | 勾选项变更（checkbox 模式） |
+| `update:expanded` | `string[]` | 展开节点列表变更 |
+| `select` | `TreeNode` | 点击任意节点时触发 |
+| `expand` | `[id: string, expanded: boolean]` | 展开 / 折叠节点时触发 |
+| `check` | `[node: TreeNode, checked: boolean]` | 勾选 / 取消勾选节点时触发（checkbox 模式） |
 
-## 键盘导航
+## 可访问性
 
-组件遵循 WAI-ARIA TreeView 角色规范，支持以下键盘操作：
+- **键盘操作**：遵循 WAI-ARIA TreeView 角色规范
 
 | 按键 | 说明 |
 |------|------|
@@ -149,3 +151,6 @@ const checkedIds = ref<string[]>(['button'])
 | `Enter` / `Space` | 选中节点（单选模式）或切换勾选状态（复选模式） |
 | `Home` | 聚焦第一个节点 |
 | `End` | 聚焦最后一个节点 |
+
+- **ARIA 属性**：使用 `role="tree"` 和 `role="treeitem"` 语义化标记；复选模式下使用 `aria-checked` 属性（`true` / `false` / `mixed`）
+- **焦点管理**：使用 roving tabindex 管理焦点

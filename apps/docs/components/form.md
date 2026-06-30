@@ -69,123 +69,9 @@ function onSubmit(values) {
 </template>
 ```
 
-## 子组件
-
-| 组件 | 说明 |
-|------|------|
-| `Form` | 根表单组件，集成 vee-validate |
-| `FormField` | 字段包装器，连接表单状态，提供字段上下文 |
-| `FormItem` | 标签、控件和消息的布局容器，生成唯一 ID |
-| `FormLabel` | 支持错误状态的标签，注入字段上下文 |
-| `FormControl` | 输入控件的包装器，通过 slot 提供无障碍属性 |
-| `FormDescription` | 输入框下方的辅助文本 |
-| `FormMessage` | 验证错误消息，注入字段上下文 |
-| `FormWizard` | 多步骤向导式表单 |
-| `FormConditional` | 根据表单值动态显示/隐藏字段组 |
-
-## 字段上下文
-
-`FormField` 通过 `provide/inject` 向子组件提供 `FormFieldContext`：
-
-```ts
-interface FormFieldContext {
-    name: ComputedRef<string>
-    error: Ref<string | undefined>
-    value: Ref<unknown>
-    setValue: (value: unknown) => void
-    setError: (message: string | undefined) => void
-}
-```
-
-`FormItem` 通过 `provide/inject` 向子组件提供 `FormItemContext`：
-
-```ts
-interface FormItemContext {
-    id: string
-    formItemId: string
-    formDescriptionId: string
-    formMessageId: string
-}
-```
-
-`FormControl`、`FormLabel`、`FormMessage` 均注入 `FormFieldContext` 和 `FormItemContext`，可直接访问字段值和错误状态。
-
-## Props
-
-### Form
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-| `initialValues` | `Record<string, unknown>` | — | 表单初始值 |
-| `validationSchema` | `unknown` | — | 验证模式（支持 vee-validate schema） |
-
-### FormField
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `name` | `string` | —（必填） | 字段名称 |
-
-### FormItem
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类 |
-
-### FormLabel
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | — | 自定义样式类（错误状态时自动添加 `text-brutal-destructive`） |
-
-### FormControl
-
-| 属性 | 类型   | 默认值 | 说明           |
-| ---- | ------ | ------ | -------------- |
-| `class` | `string` | —      | 自定义样式类   |
-
-**Slot Props:** `FormControl` 通过作用域 slot 提供以下属性，用于绑定到内部输入控件：
-
-| 属性             | 类型      | 说明                                                      |
-| ---------------- | --------- | --------------------------------------------------------- |
-| `id`             | `string`  | 与 `FormItem` 关联的唯一 ID                               |
-| `class`          | `string`  | 样式类                                                    |
-| `aria-describedby` | `string`  | 描述元素的 ID（包含 `FormDescription` 和 `FormMessage`） |
-| `aria-invalid`   | `boolean` | 字段是否有验证错误                                        |
-
-```vue
-<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid }">
-    <Input :id="id" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
-</FormControl>
-```
-
-### FormDescription
-
-| 属性    | 类型     | 默认值 | 说明         |
-| ------- | -------- | ------ | ------------ |
-| `class` | `string` | —      | 自定义样式类 |
-
-### FormMessage
-
-| 属性    | 类型     | 默认值 | 说明         |
-| ------- | -------- | ------ | ------------ |
-| `class` | `string` | —      | 自定义样式类 |
-
-## 事件
-
-### Form
-
-| 事件     | 载荷                    | 说明                           |
-| -------- | ----------------------- | ------------------------------ |
-| `submit` | `Record<string, unknown>` | 表单提交时触发，包含所有字段值 |
-
----
-
-## FormWizard 多步骤表单
+### FormWizard 多步骤表单
 
 基于 `Stepper` 组件构建的向导式表单，支持步骤验证、线性导航和自定义步骤内容。
-
-### 用法
 
 ```vue
 <script setup>
@@ -224,19 +110,73 @@ function onComplete(finalValues) {
 </template>
 ```
 
-### FormWizard Props
+### FormConditional 条件字段
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `steps` | `FormStep[]` | — | 步骤配置数组（必填） |
-| `modelValue` | `Record<string, unknown>` | `{}` | 表单数据（v-model） |
-| `initialStep` | `number` | `0` | 初始步骤索引 |
-| `validateOnNext` | `boolean` | `true` | 是否在下一步时验证 |
-| `showIndicator` | `boolean` | `true` | 是否显示步骤指示器 |
-| `linear` | `boolean` | `true` | 是否必须按顺序完成 |
-| `class` | `string` | — | 自定义样式类 |
+根据表单值动态显示/隐藏字段组：
 
-### FormStep 类型
+```vue
+<template>
+    <Form v-model="values">
+        <FormField name="type" />
+
+        <FormConditional :when="(v) => v.type === 'company'">
+            <FormField name="companyName" />
+            <FormField name="taxId" />
+        </FormConditional>
+
+        <FormConditional :when="(v) => v.type === 'personal'">
+            <FormField name="idNumber" />
+        </FormConditional>
+    </Form>
+</template>
+```
+
+## 子组件
+
+| 组件 | 说明 |
+| ---- | ---- |
+| `Form` | 根表单组件，集成 vee-validate |
+| `FormField` | 字段包装器，连接表单状态，提供字段上下文 |
+| `FormItem` | 标签、控件和消息的布局容器，生成唯一 ID |
+| `FormLabel` | 支持错误状态的标签，注入字段上下文 |
+| `FormControl` | 输入控件的包装器，通过 slot 提供无障碍属性 |
+| `FormDescription` | 输入框下方的辅助文本 |
+| `FormMessage` | 验证错误消息，注入字段上下文 |
+| `FormWizard` | 多步骤向导式表单 |
+| `FormConditional` | 根据表单值动态显示/隐藏字段组 |
+
+## 数据类型
+
+### FormFieldContext
+
+`FormField` 通过 `provide/inject` 向子组件提供 `FormFieldContext`：
+
+```ts
+interface FormFieldContext {
+    name: ComputedRef<string>
+    error: Ref<string | undefined>
+    value: Ref<unknown>
+    setValue: (value: unknown) => void
+    setError: (message: string | undefined) => void
+}
+```
+
+### FormItemContext
+
+`FormItem` 通过 `provide/inject` 向子组件提供 `FormItemContext`：
+
+```ts
+interface FormItemContext {
+    id: string
+    formItemId: string
+    formDescriptionId: string
+    formMessageId: string
+}
+```
+
+`FormControl`、`FormLabel`、`FormMessage` 均注入 `FormFieldContext` 和 `FormItemContext`，可直接访问字段值和错误状态。
+
+### FormStep
 
 ```ts
 interface FormStep {
@@ -247,22 +187,18 @@ interface FormStep {
     validator?: (values: Record<string, unknown>) => ValidationResult
     optional?: boolean
 }
+```
 
+### ValidationResult
+
+```ts
 interface ValidationResult {
     valid: boolean
     errors: Record<string, string>
 }
 ```
 
-### FormWizard 事件
-
-| 事件 | 载荷 | 说明 |
-|------|------|------|
-| `update:modelValue` | `Record<string, unknown>` | 表单数据更新 |
-| `step-change` | `[step: number, previousStep: number]` | 步骤切换 |
-| `complete` | `Record<string, unknown>` | 表单完成 |
-| `validation-error` | `[step: number, errors: Record<string, string>]` | 验证失败 |
-| `navigation-blocked` | `[targetStep: number, blockedStep: number]` | 线性模式下导航被阻止（目标步骤和被阻止的步骤） |
+## 组合式函数
 
 ### useFormWizard
 
@@ -285,32 +221,120 @@ const {
 } = useFormWizard()
 ```
 
----
+## Props
 
-## FormConditional 条件字段
-
-根据表单值动态显示/隐藏字段组：
-
-```vue
-<template>
-    <Form v-model="values">
-        <FormField name="type" />
-
-        <FormConditional :when="(v) => v.type === 'company'">
-            <FormField name="companyName" />
-            <FormField name="taxId" />
-        </FormConditional>
-
-        <FormConditional :when="(v) => v.type === 'personal'">
-            <FormField name="idNumber" />
-        </FormConditional>
-    </Form>
-</template>
-```
-
-### FormConditional Props
+### Form
 
 | 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
+| ---- | ---- | ------ | ---- |
+| `class` | `string` | — | 自定义样式类 |
+| `initialValues` | `Record<string, unknown>` | — | 表单初始值 |
+| `validationSchema` | `unknown` | — | 验证模式（支持 vee-validate schema） |
+
+### FormField
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `name` | `string` | —（必填） | 字段名称 |
+
+### FormItem
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `class` | `string` | — | 自定义样式类 |
+
+### FormLabel
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `class` | `string` | — | 自定义样式类（错误状态时自动添加 `text-brutal-destructive`） |
+
+### FormControl
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `class` | `string` | — | 自定义样式类 |
+
+**Slot Props:** `FormControl` 通过作用域 slot 提供以下属性，用于绑定到内部输入控件：
+
+| 属性 | 类型 | 说明 |
+| ---- | ---- | ---- |
+| `id` | `string` | 与 `FormItem` 关联的唯一 ID |
+| `class` | `string` | 样式类 |
+| `aria-describedby` | `string` | 描述元素的 ID（包含 `FormDescription` 和 `FormMessage`） |
+| `aria-invalid` | `boolean` | 字段是否有验证错误 |
+
+```vue
+<FormControl v-slot="{ id, ariaDescribedby, ariaInvalid }">
+    <Input :id="id" :aria-describedby="ariaDescribedby" :aria-invalid="ariaInvalid" />
+</FormControl>
+```
+
+### FormDescription
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `class` | `string` | — | 自定义样式类 |
+
+### FormMessage
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `class` | `string` | — | 自定义样式类 |
+
+### FormWizard
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
+| `steps` | `FormStep[]` | — | 步骤配置数组（必填） |
+| `modelValue` | `Record<string, unknown>` | `{}` | 表单数据（v-model） |
+| `initialStep` | `number` | `0` | 初始步骤索引 |
+| `validateOnNext` | `boolean` | `true` | 是否在下一步时验证 |
+| `showIndicator` | `boolean` | `true` | 是否显示步骤指示器 |
+| `linear` | `boolean` | `true` | 是否必须按顺序完成 |
+| `class` | `string` | — | 自定义样式类 |
+
+### FormConditional
+
+| 属性 | 类型 | 默认值 | 说明 |
+| ---- | ---- | ------ | ---- |
 | `when` | `(values: Record<string, unknown>) => boolean` | — | 条件判断函数（必填） |
 | `class` | `string` | — | 自定义样式类 |
+
+## 事件
+
+### Form 事件
+
+| 事件 | 参数 | 说明 |
+| ---- | ---- | ---- |
+| `submit` | `Record<string, unknown>` | 表单提交时触发，包含所有字段值 |
+
+### FormWizard 事件
+
+| 事件 | 参数 | 说明 |
+| ---- | ---- | ---- |
+| `update:modelValue` | `Record<string, unknown>` | 表单数据更新 |
+| `step-change` | `[step: number, previousStep: number]` | 步骤切换 |
+| `complete` | `Record<string, unknown>` | 表单完成 |
+| `validation-error` | `[step: number, errors: Record<string, string>]` | 验证失败 |
+| `navigation-blocked` | `[targetStep: number, blockedStep: number]` | 线性模式下导航被阻止 |
+
+## 可访问性
+
+### 表单结构
+
+- `FormItem` 自动生成唯一 ID，确保 `FormLabel`、`FormControl`、`FormDescription`、`FormMessage` 之间的关联关系正确。
+- `FormLabel` 通过 `for` 属性关联到对应的输入控件。
+- `FormControl` 通过作用域 slot 提供 `id`、`aria-describedby`、`aria-invalid` 属性，需绑定到内部输入控件以保证无障碍性。
+
+### 验证错误
+
+- 验证失败时，`FormLabel` 自动添加 `text-brutal-destructive` 样式。
+- `FormMessage` 使用 `role="alert"` 确保屏幕阅读器能及时播报错误信息。
+- 输入控件的 `aria-invalid` 属性会自动设置为 `true`。
+
+### FormWizard 导航
+
+- 步骤指示器使用 `role="tablist"` 和 `role="tab"` 语义。
+- 支持键盘导航（Tab、Enter、Space）。
+- 当 `linear` 模式启用时，被阻止的步骤会通过 `aria-disabled` 标识。

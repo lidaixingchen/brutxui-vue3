@@ -54,6 +54,14 @@ const current = ref(0)
 </template>
 ```
 
+### 不可点击
+
+设置 `clickable` 为 `false` 可禁用步骤点的点击跳转，仅作展示用。
+
+```vue
+<Stepper v-model="current" :steps="steps" :clickable="false" />
+```
+
 ## 变体
 
 通过 `variant` 属性控制激活步骤的颜色。
@@ -82,15 +90,7 @@ const current = ref(0)
 <Stepper v-model="current" :steps="steps" size="lg" />
 ```
 
-## 不可点击
-
-设置 `clickable` 为 `false` 可禁用步骤点的点击跳转，仅作展示用。
-
-```vue
-<Stepper v-model="current" :steps="steps" :clickable="false" />
-```
-
-## StepperStep 类型
+## 数据类型
 
 ```ts
 interface StepperStep {
@@ -98,6 +98,12 @@ interface StepperStep {
     title: string         // 步骤标题
     description?: string  // 可选副标题
 }
+```
+
+## 导出类型
+
+```ts
+import type { StepperStep } from 'brutx-ui-vue'
 ```
 
 ## Props
@@ -110,7 +116,7 @@ interface StepperStep {
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 步骤点尺寸 |
 | `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 激活步骤的颜色变体 |
 | `clickable` | `boolean` | `true` | 是否允许点击步骤点跳转 |
-| `class` | `string` | — | 根节点自定义样式类 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 事件
 
@@ -119,21 +125,7 @@ interface StepperStep {
 | `update:modelValue` | `number` | 步骤变更（v-model） |
 | `step-click` | `number` | 点击某步骤节点时触发 |
 
-## 键盘导航
-
-步骤按钮支持以下键盘操作：
-
-| 按键 | 操作 | 说明 |
-| --- | --- | --- |
-| `←` | 聚焦上一个步骤 | 仅水平模式 |
-| `→` | 聚焦下一个步骤 | 仅水平模式 |
-| `↑` | 聚焦上一个步骤 | 仅垂直模式 |
-| `↓` | 聚焦下一个步骤 | 仅垂直模式 |
-| `Home` | 聚焦第一个步骤 | 所有模式 |
-| `End` | 聚焦最后一个步骤 | 所有模式 |
-| `Enter` / `Space` | 点击当前聚焦的步骤 | 所有模式 |
-
-## 插槽（垂直模式）
+## 插槽
 
 垂直模式下，每个步骤在激活时可通过 `#step-{id}` 插槽注入内容区域：
 
@@ -145,7 +137,12 @@ interface StepperStep {
 </Stepper>
 ```
 
-## 节点状态说明
+## 可访问性
+
+- **键盘操作**：步骤按钮支持方向键导航（`←`/`→` 水平模式，`↑`/`↓` 垂直模式），`Home`/`End` 跳转首尾步骤，`Enter`/`Space` 点击当前聚焦步骤
+- **焦点管理**：通过 Tab 键可聚焦到步骤按钮
+
+### 节点状态说明
 
 | 状态 | 样式 | 条件 |
 |------|------|------|

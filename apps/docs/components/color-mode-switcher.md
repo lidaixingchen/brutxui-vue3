@@ -63,21 +63,34 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 </template>
 ```
 
+## 变体
+
+| 变体 | 说明 |
+|------|------|
+| `icon` | 图标模式，仅显示当前模式对应的图标 |
+| `button` | 按钮模式，显示图标和文字标签的组合按钮 |
+| `select` | 下拉选择模式，基于 Select 组件的下拉选择器 |
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
+|------|------|--------|------|
 | `display` | `'icon' \| 'button' \| 'select'` | `'icon'` | 显示模式：图标、按钮或下拉选择 |
 | `showSystem` | `boolean` | `true` | 是否显示 "system" 选项 |
 | `class` | `string` | `undefined` | 自定义样式类 |
 
-## 工作原理
+## 组合式函数
 
 `ColorModeSwitcher` 内部使用 `useTheme()` 组合式函数获取当前颜色模式并切换。组件需要在上层通过 `provideTheme()` 提供主题上下文，或使用内置的共享单例回退。
 
 颜色模式会持久化到 `localStorage`（键名 `brutx-color-mode`）。当选择 `system` 时，将跟随系统偏好设置，并监听 `prefers-color-scheme` 媒体查询的变化。
 
-## 样式
+## 可访问性
+
+- **键盘操作**：支持 `Enter` / `Space` 触发切换
+- **ARIA 属性**：图标按钮包含当前模式的文本描述
+
+## 样式定制
 
 - **图标模式**：带 nb-border / nb-shadow / nb-press 的图标按钮，显示当前模式对应的 `@lucide/vue` 图标（Sun / Moon / Monitor）
 - **按钮模式**：图标 + 文字标签的组合按钮，hover 时背景色变化

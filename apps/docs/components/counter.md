@@ -40,6 +40,26 @@ const counterRef = ref()
 </template>
 ```
 
+### 自定义组件前缀/后缀
+
+```vue
+<script setup>
+import { Counter } from 'brutx-ui-vue'
+import { DollarSign, Percent } from 'lucide-vue-next'
+</script>
+
+<template>
+    <!-- 使用组件作为前缀 -->
+    <Counter :to="12800" :prefix-component="DollarSign" />
+
+    <!-- 使用文本作为后缀 -->
+    <Counter :to="99.9" :decimals="1" suffix="%" />
+
+    <!-- 混合使用：组件前缀 + 文本后缀 -->
+    <Counter :to="500" :prefix-component="DollarSign" suffix="万" :animate-suffix="false" />
+</template>
+```
+
 ## 变体
 
 `variant` 仅影响数字文字颜色，方便在不同背景上突出展示统计数值。
@@ -68,6 +88,15 @@ import { Counter } from 'brutx-ui-vue'
 </template>
 ```
 
+## 尺寸
+
+| 尺寸 | 说明 |
+|------|------|
+| `sm` | 小字号 |
+| `md` | 默认字号 |
+| `lg` | 大字号 |
+| `xl` | 超大字号 |
+
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -89,35 +118,38 @@ import { Counter } from 'brutx-ui-vue'
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | 文字颜色变体（仅影响文字颜色，不改变背景） |
 | `class` | `string` | — | 自定义样式类 |
 
-### 自定义组件前缀/后缀
-
-```vue
-<script setup>
-import { Counter } from 'brutx-ui-vue'
-import { DollarSign, Percent } from 'lucide-vue-next'
-</script>
-
-<template>
-    <!-- 使用组件作为前缀 -->
-    <Counter :to="12800" :prefix-component="DollarSign" />
-
-    <!-- 使用文本作为后缀 -->
-    <Counter :to="99.9" :decimals="1" suffix="%" />
-
-    <!-- 混合使用：组件前缀 + 文本后缀 -->
-    <Counter :to="500" :prefix-component="DollarSign" suffix="万" :animate-suffix="false" />
-</template>
-```
-
 ## 事件
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `complete` | — | 动画播放完毕时触发 |
 
-## 暴露方法（`defineExpose`）
+## 程序化控制
 
-| 方法 | 说明 |
-|------|------|
-| `play()` | 从 `from` 重新开始播放动画 |
-| `stop()` | 立即停止动画 |
+Counter 通过 `defineExpose` 暴露以下方法，允许父组件通过 ref 调用：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Counter } from 'brutx-ui-vue'
+
+const counterRef = ref()
+</script>
+
+<template>
+    <Counter ref="counterRef" :to="500" :auto-start="false" />
+    <button @click="counterRef?.play()">开始</button>
+    <button @click="counterRef?.stop()">停止</button>
+</template>
+```
+
+### 暴露的 API
+
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
+| `play()` | `() => void` | 从 `from` 重新开始播放动画 |
+| `stop()` | `() => void` | 立即停止动画 |
+
+## 可访问性
+
+- **ARIA 属性**：数字内容对屏幕阅读器可访问

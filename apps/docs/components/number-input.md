@@ -32,7 +32,7 @@ const count = ref(5)
 </template>
 ```
 
-## 布局变体
+## 变体
 
 NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 
@@ -73,13 +73,13 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 | `name` | `string` | — | 表单字段名称，随表单一起提交 |
 | `required` | `boolean` | `false` | 是否为必填字段 |
 | `id` | `string` | — | 元素的 id 属性 |
-| `class` | `string` | `undefined` | 容器的自定义 CSS 类 |
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 加减按钮图标的尺寸 |
 | `as` | `string \| Component` | `'div'` | 根元素渲染为的标签或组件 |
 | `asChild` | `boolean` | `false` | 是否启用组合模式，不渲染自身 DOM，将 props 传递给子元素 |
+| `class` | `string` | `undefined` | 容器的自定义 CSS 类 |
 
-## Events
+## 事件
 
-| 事件名 | 回调参数 | 说明 |
-| ------ | -------- | ---- |
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
 | `update:modelValue` | `(val: number)` | 输入值变化时触发 |

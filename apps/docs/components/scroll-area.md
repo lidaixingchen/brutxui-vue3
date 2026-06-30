@@ -38,7 +38,7 @@ import { ScrollArea } from 'brutx-ui-vue'
 </template>
 ```
 
-## 水平滚动
+### 水平滚动
 
 ```vue
 <script setup>
@@ -128,7 +128,7 @@ const tags = Array.from({ length: 20 }, (_, i) => `标签 ${i + 1}`)
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体，下发给内部 `ScrollBar` |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细，下发给内部 `ScrollBar` |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 ### ScrollBar
 
@@ -137,11 +137,10 @@ const tags = Array.from({ length: 20 }, (_, i) => `标签 ${i + 1}`)
 | `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 方向 |
 | `variant` | `'default' \| 'primary' \| 'accent'` | `'default'` | 滚动条颜色变体 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 滚动条粗细 |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
-## Slots
+## 插槽
 
-| 组件        | 插槽名    | 说明       |
-|-------------|-----------|------------|
-| `ScrollArea` | `default` | 滚动内容   |
-| `ScrollBar`  | —         | 无插槽     |
+| 插槽      | 作用域 | 说明     |
+|-----------|--------|----------|
+| `default` | —      | 滚动内容 |

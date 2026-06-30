@@ -158,95 +158,117 @@ import {
 交替布局的索引由 `Timeline` 自动按 `TimelineItem` 出现顺序从 0 开始注入，无需手动指定；`alternate` 与 `horizontal` 同时设置时，水平模式优先生效，`alternate` 不会产生任何效果。
 :::
 
-## 节点属性配置
+## 变体
 
 `TimelineDot` 支持多样化的新粗野主义几何设计与颜色主题，通过 `shape` 和 `variant` 进行自定义：
 
-### 形状选择 (`shape`)
-- `circle` (默认)：经典的圆形小徽章。
-- `square`：方正的硬朗线条卡片。
-- `diamond`：斜向 45 度旋转的菱形（文字插槽内容会被内部自动反向微调，以防排版发生倾斜）。
+### 形状 (`shape`)
 
-### 配色变体 (`variant`)
-- `'primary' | 'secondary' | 'accent' | 'success' | 'danger' | 'default'`
+| 形状 | 说明 |
+|------|------|
+| `circle` | 经典的圆形小徽章 |
+| `square` | 方正的硬朗线条卡片 |
+| `diamond` | 斜向 45 度旋转的菱形（文字插槽内容会被内部自动反向微调，以防排版发生倾斜） |
+
+### 配色 (`variant`)
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 默认配色 |
+| `primary` | 主色 |
+| `secondary` | 辅助色 |
+| `accent` | 强调色 |
+| `success` | 成功色 |
+| `danger` | 危险色 |
+
+## 子组件
+
+| 组件 | 说明 |
+|------|------|
+| `Timeline` | 根容器，管理布局方向和交替排列 |
+| `TimelineItem` | 单个时间节点 |
+| `TimelineSeparator` | 节点分隔区域，包含 Dot 和 Connector |
+| `TimelineDot` | 节点徽标，支持形状和配色变体 |
+| `TimelineConnector` | 节点之间的连接线 |
+| `TimelineContent` | 节点内容区域 |
 
 ## Props
 
-### Timeline Props
+### Timeline
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` | 时间线排版布局朝向 |
 | `alternate` | `boolean` | `false` | 是否启用交替布局；仅 `orientation='vertical'` 时生效，偶数项内容在左、奇数项在右 |
-| `class` | `string` | `undefined` | 整体包裹容器自定义样式类 |
+| `class` | `string` | — | 整体包裹容器自定义样式类 |
 
-### TimelineItem Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `index` | `number` | `undefined` | 节点索引，由 `Timeline` 组件自动注入，无需手动指定 |
-| `class` | `string` | `undefined` | 单个时间节点的自定义样式类 |
-
-### TimelineSeparator Props
+### TimelineItem
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | `undefined` | 分隔区域的自定义样式类 |
+| `index` | `number` | — | 节点索引，由 `Timeline` 组件自动注入，无需手动指定 |
+| `class` | `string` | — | 单个时间节点的自定义样式类 |
 
-### TimelineDot Props
+### TimelineSeparator
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 分隔区域的自定义样式类 |
+
+### TimelineDot
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'success' \| 'danger'` | `'accent'` | 配色变体 |
 | `shape` | `'circle' \| 'square' \| 'diamond'` | `'circle'` | 几何形态变体 |
-| `class` | `string` | `undefined` | 节点微标的自定义样式类 |
+| `class` | `string` | — | 节点微标的自定义样式类 |
 
-### TimelineConnector Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `class` | `string` | `undefined` | 连接线的自定义样式类 |
-
-### TimelineContent Props
+### TimelineConnector
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | `undefined` | 内容区域的自定义样式类 |
+| `class` | `string` | — | 连接线的自定义样式类 |
 
-## Slots
+### TimelineContent
 
-### Timeline Slots
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `class` | `string` | — | 内容区域的自定义样式类 |
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置 `TimelineItem` 子节点 |
+## 插槽
 
-### TimelineItem Slots
+### Timeline
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置 `TimelineSeparator` 和 `TimelineContent` |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 用于放置 `TimelineItem` 子节点 |
 
-### TimelineSeparator Slots
+### TimelineItem
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置 `TimelineDot` 和 `TimelineConnector` |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 用于放置 `TimelineSeparator` 和 `TimelineContent` |
 
-### TimelineDot Slots
+### TimelineSeparator
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置节点内显示的内容（如数字、图标等） |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 用于放置 `TimelineDot` 和 `TimelineConnector` |
 
-### TimelineConnector Slots
+### TimelineDot
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 无默认插槽，连接线为纯展示组件 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 用于放置节点内显示的内容（如数字、图标等） |
 
-### TimelineContent Slots
+### TimelineConnector
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置时间线节点的具体内容 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 无默认插槽，连接线为纯展示组件 |
+
+### TimelineContent
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 用于放置时间线节点的具体内容 |

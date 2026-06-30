@@ -29,7 +29,7 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 </template>
 ```
 
-## 自定义展示插槽
+### 自定义展示插槽
 
 组件提供了默认插槽，它暴露了 `copied` 状态（是否刚复制成功），支持您自定义按钮的各种显示形式。
 
@@ -71,11 +71,11 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 
 ## 尺寸
 
-| 尺寸 | 高度 | 内边距 | 字体大小 |
-|------|------|--------|----------|
-| `sm` | `h-9` | `px-3` | `text-sm` |
-| `default` | `h-11` | `px-5` | `text-base` |
-| `lg` | `h-14` | `px-7` | `text-lg` |
+| 尺寸 | 说明 |
+|------|------|
+| `sm` | 小尺寸，高度 `h-9`，内边距 `px-3`，字体 `text-sm` |
+| `default` | 默认尺寸，高度 `h-11`，内边距 `px-5`，字体 `text-base` |
+| `lg` | 大尺寸，高度 `h-14`，内边距 `px-7`，字体 `text-lg` |
 
 ```vue
 <script setup>
@@ -102,10 +102,10 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 | `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 图标尺寸预设 |
 | `class` | `string` | `undefined` | 按钮容器自定义样式类 |
 
-## Slots
+## 插槽
 
-| 插槽名   | 作用域参数           | 说明                                       |
-| -------- | -------------------- | ------------------------------------------ |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
 | `default` | `{ copied: boolean }` | 自定义按钮内容，`copied` 表示是否刚复制成功 |
 
 ```vue
@@ -121,3 +121,8 @@ import { CopyToClipboard } from 'brutx-ui-vue'
     </CopyToClipboard>
 </template>
 ```
+
+## 可访问性
+
+- **键盘操作**：支持 `Enter` / `Space` 触发复制操作
+- **ARIA 属性**：按钮包含复制状态的文本描述

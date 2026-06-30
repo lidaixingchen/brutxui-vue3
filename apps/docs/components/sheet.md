@@ -60,7 +60,7 @@ import {
 </template>
 ```
 
-## 方向变体
+### 方向变体
 
 | 方向 | 说明 |
 |------|------|
@@ -117,7 +117,7 @@ import { Sheet, SheetTrigger, SheetContent, Button } from 'brutx-ui-vue'
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `side` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'right'` | 面板滑出方向 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 > **注意：** `SheetContent` 内置了关闭按钮（右上角或左上角的 X 图标，当 `side="left"` 时位于左上角），无需手动添加。关闭按钮的辅助文字支持国际化（`sheet.close`）。
 
@@ -125,51 +125,49 @@ import { Sheet, SheetTrigger, SheetContent, Button } from 'brutx-ui-vue'
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `string` | — | 自定义样式类 |
 
-## Events
+## 事件
 
 ### Sheet
 
-| 事件名 | 参数 | 说明 |
-|--------|------|------|
-| `update:open` | `(value: boolean)` | 打开状态变化时触发，用于 `v-model:open` 双向绑定 |
-| `open-change` | `(open: boolean)` | 打开状态变化时触发 |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `update:open` | `boolean` | 打开状态变化时触发，用于 `v-model:open` 双向绑定 |
+| `open-change` | `boolean` | 打开状态变化时触发 |
 
 ### SheetContent
 
 继承 reka-ui `DialogContent` 的全部事件。
 
-| 事件名 | 参数 | 说明 |
-|--------|------|------|
-| `open-auto-focus` | `(event: Event)` | 内容打开后自动聚焦时触发 |
-| `close-auto-focus` | `(event: Event)` | 内容关闭后自动聚焦时触发 |
-| `interact-outside` | `(event: InteractOutsideEvent)` | 在内容外部交互时触发 |
-| `escape-key-down` | `(event: KeyboardEvent)` | 按下 Escape 键时触发 |
-| `pointer-down-outside` | `(event: PointerDownOutsideEvent)` | 在内容外部按下指针时触发 |
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `open-auto-focus` | `Event` | 内容打开后自动聚焦时触发 |
+| `close-auto-focus` | `Event` | 内容关闭后自动聚焦时触发 |
+| `interact-outside` | `InteractOutsideEvent` | 在内容外部交互时触发 |
+| `escape-key-down` | `KeyboardEvent` | 按下 Escape 键时触发 |
+| `pointer-down-outside` | `PointerDownOutsideEvent` | 在内容外部按下指针时触发 |
 
-## Slots
+## 插槽
 
-### Sheet
-
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置 `SheetTrigger`、`SheetContent` 等子组件 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽，用于放置 `SheetTrigger`、`SheetContent` 等子组件 |
 
 ### SheetContent
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽，用于放置面板内容（`SheetHeader`、内容区域、`SheetFooter` 等） |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽，用于放置面板内容（`SheetHeader`、内容区域、`SheetFooter` 等） |
 
-### SheetHeader / SheetFooter
+### SheetHeader / SheetFooter / SheetTitle / SheetDescription
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽 |
 
-### SheetTitle / SheetDescription
+## 可访问性
 
-| 插槽名 | 说明 |
-|--------|------|
-| `default` | 默认插槽 |
+- **键盘操作**：支持 `Escape` 关闭面板
+- **ARIA 属性**：自动管理 `aria-labelledby`（关联 `SheetTitle`）、`aria-describedby`（关联 `SheetDescription`）
+- **焦点管理**：打开时焦点锁定在面板内，关闭时恢复焦点到触发器

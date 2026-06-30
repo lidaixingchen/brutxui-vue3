@@ -34,7 +34,7 @@ import { NoiseBackground } from 'brutx-ui-vue'
 </template>
 ```
 
-## 动画效果
+### 动画效果
 
 ```vue
 <template>
@@ -51,17 +51,7 @@ import { NoiseBackground } from 'brutx-ui-vue'
 </template>
 ```
 
-## 无障碍 / 动效降级
-
-组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（通过 `useReducedMotion` 监听 `prefers-reduced-motion: reduce`）：
-
-- **停止动画帧**：`startAnimation` 会在内部直接返回，不再启动 `requestAnimationFrame` 循环；若动画已在运行，会通过 `cancelAnimationFrame` 立即停止。
-- **保留单帧静态渲染**：SVG `<feTurbulence>` 仍以初始的 `frequency` 属性值渲染一帧静态噪点，背景纹理不会完全消失，只是不再随时间变化。
-- **实时响应**：偏好变化时自动切换，恢复默认设置后若 `animated` 为 `true` 会重新启动动画。
-
-该机制确保在低性能设备或对动效敏感的用户环境下，组件不会持续占用 CPU 资源。
-
-## 自定义噪点类型
+### 自定义噪点类型
 
 ```vue
 <template>
@@ -77,7 +67,7 @@ import { NoiseBackground } from 'brutx-ui-vue'
 </template>
 ```
 
-## 圆角变体
+### 圆角变体
 
 ```vue
 <template>
@@ -107,9 +97,9 @@ import { NoiseBackground } from 'brutx-ui-vue'
 
 ## 插槽
 
-| 插槽 | 说明 |
-|------|------|
-| `default` | 嵌套内容，会显示在噪点背景上方 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 嵌套内容，会显示在噪点背景上方 |
 
 ## 噪点类型说明
 
@@ -118,7 +108,17 @@ import { NoiseBackground } from 'brutx-ui-vue'
 | `fractalNoise` | 分形噪声，柔和自然 | 通用背景、卡片装饰 |
 | `turbulence` | 湍流效果，纹理更明显 | 特殊效果、艺术风格 |
 
-## 圆角变体
+## 可访问性
+
+- **动效降级**：组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（通过 `useReducedMotion` 监听 `prefers-reduced-motion: reduce`）：
+  - **停止动画帧**：`startAnimation` 会在内部直接返回，不再启动 `requestAnimationFrame` 循环；若动画已在运行，会通过 `cancelAnimationFrame` 立即停止。
+  - **保留单帧静态渲染**：SVG `<feTurbulence>` 仍以初始的 `frequency` 属性值渲染一帧静态噪点，背景纹理不会完全消失，只是不再随时间变化。
+  - **实时响应**：偏好变化时自动切换，恢复默认设置后若 `animated` 为 `true` 会重新启动动画。
+- 该机制确保在低性能设备或对动效敏感的用户环境下，组件不会持续占用 CPU 资源。
+
+## 样式定制
+
+### 圆角变体 CSS 类
 
 | 变量 | CSS 类 |
 |------|--------|
@@ -127,17 +127,16 @@ import { NoiseBackground } from 'brutx-ui-vue'
 | `lg` | `rounded-brutal-lg` |
 | `full` | `rounded-full` |
 
-## 技术实现
+## 常见问题
 
-- 使用 SVG `<feTurbulence>` 滤镜生成噪点（性能最佳）
-- 动画通过 JavaScript 定时修改 `baseFrequency` 属性实现
-- 组件使用 Vue ref 引用 SVG 元素，避免直接 DOM 操作
-- 支持 SSR 环境，动画仅在客户端启动
-- 组件卸载时自动清理动画帧，避免内存泄漏
+**Q: 组件的技术实现原理是什么？**
 
-## 注意事项
+A: 组件使用 SVG `<feTurbulence>` 滤镜生成噪点（性能最佳），动画通过 JavaScript 定时修改 `baseFrequency` 属性实现。组件使用 Vue ref 引用 SVG 元素，避免直接 DOM 操作，支持 SSR 环境（动画仅在客户端启动），组件卸载时自动清理动画帧，避免内存泄漏。
 
-- SVG 滤镜在部分低端设备上可能有性能问题，建议提供降级方案
-- 动画模式下会持续消耗 CPU 资源，谨慎在大量实例中使用
-- `frequency` 值越大，噪点越密集；值越小，噪点越稀疏
-- `octaves` 值越大，噪点细节越丰富，但性能开销也越大
+**Q: 使用时有哪些注意事项？**
+
+A: 请注意以下几点：
+- SVG 滤镜在部分低端设备上可能有性能问题，建议提供降级方案。
+- 动画模式下会持续消耗 CPU 资源，谨慎在大量实例中使用。
+- `frequency` 值越大，噪点越密集；值越小，噪点越稀疏。
+- `octaves` 值越大，噪点细节越丰富，但性能开销也越大。

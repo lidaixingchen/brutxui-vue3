@@ -35,13 +35,19 @@ const data = [
 </template>
 ```
 
-## 图表类型
+## 变体
 
-| 类型 | 说明 |
+| 变体 | 说明 |
 |------|------|
 | `line` | 折线图，带阴影填充区和拐点圆圈 |
 | `bar` | 柱状图，带 Hatch 斜线填充和硬投影 |
 | `pie` | 饼图，使用设计令牌色板和粗黑边框 |
+
+```vue
+<template>
+    <SketchyChart type="bar" :data="data" />
+</template>
+```
 
 ## 手绘抖动
 
@@ -57,11 +63,6 @@ const data = [
 - **负值**：取绝对值
 - **大数据集**（>30 项）：自动降采样
 
-## 无障碍
-
-- SVG 设置了 `role="img"` 和 `aria-label`
-- 包含 `<title>` 元素供屏幕阅读器读取
-
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -73,3 +74,8 @@ const data = [
 | `width` | `number` | `600` | 图表宽度 (px) |
 | `height` | `number` | `400` | 图表高度 (px) |
 | `class` | `string` | — | 外部类覆盖 |
+
+## 可访问性
+
+- **ARIA 属性**：SVG 设置了 `role="img"` 和 `aria-label`
+- **屏幕阅读器**：包含 `<title>` 元素供屏幕阅读器读取

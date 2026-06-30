@@ -32,7 +32,7 @@ const progress = ref(45)
 </template>
 ```
 
-## 带最大值
+### 带最大值
 
 ```vue
 <script setup>
@@ -47,7 +47,7 @@ const progress = ref(75)
 </template>
 ```
 
-## 不确定状态
+### 不确定状态
 
 当无法确定具体进度时，设置 `indeterminate` 为 `true`，进度条会忽略 `modelValue`，指示器以 CSS 动画在轨道内循环滑动。
 
@@ -61,7 +61,7 @@ import { Progress } from 'brutx-ui-vue'
 </template>
 ```
 
-## 显示百分比标签
+### 显示百分比标签
 
 设置 `showLabel` 为 `true` 时，会在进度条中央显示当前百分比文字（基于 `modelValue` 与 `max` 计算，四舍五入取整）。不确定状态下不显示标签。
 
@@ -138,6 +138,8 @@ const value = ref(50)
 
 ## Props
 
+### Progress
+
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `modelValue` | `number` | `0` | 当前进度值 |
@@ -148,7 +150,7 @@ const value = ref(50)
 | `showLabel` | `boolean` | `false` | 是否在进度条中央显示百分比标签（不确定状态下不显示） |
 | `class` | `string` | — | 自定义样式类 |
 
-## 无障碍
+## 可访问性
 
 组件基于 reka-ui 的 `ProgressRoot` 原语，自动具备以下无障碍属性：
 
@@ -157,7 +159,7 @@ const value = ref(50)
 - `aria-valuemax` 对应 `max` 值
 - `aria-valuenow` 对应当前 `modelValue`（不确定状态下不设置）
 
-## 样式
+## 样式定制
 
 - 轨道使用 `border-3 border-brutal` 搭配 `shadow-brutal-sm`，`rounded-brutal`
 - 指示器根据 variant 使用不同颜色搭配 `transition-all duration-300 ease-out` 平滑过渡

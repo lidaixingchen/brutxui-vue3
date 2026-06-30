@@ -33,27 +33,19 @@ import { Separator } from 'brutx-ui-vue'
 </template>
 ```
 
-## 方向
+### 方向
 
-### 水平（默认）
+水平（默认）：
 
 ```vue
-<script setup>
-import { Separator } from 'brutx-ui-vue'
-</script>
-
 <template>
     <Separator orientation="horizontal" />
 </template>
 ```
 
-### 垂直
+垂直：
 
 ```vue
-<script setup>
-import { Separator } from 'brutx-ui-vue'
-</script>
-
 <template>
     <div class="flex h-8 items-center gap-4">
         <span class="text-sm font-bold">Item 1</span>
@@ -62,6 +54,26 @@ import { Separator } from 'brutx-ui-vue'
     </div>
 </template>
 ```
+
+### 文字分隔线
+
+当 `orientation="horizontal"` 且默认插槽有实际内容时，Separator 会渲染为居中文字分隔线：两侧为分隔线，中间为插槽内容。
+
+```vue
+<template>
+    <Separator>章节标题</Separator>
+</template>
+```
+
+文字分隔线同样支持 `variant` 与 `size`：
+
+```vue
+<template>
+    <Separator variant="primary" size="lg">主色标题</Separator>
+</template>
+```
+
+> **注意**：文字分隔线模式下，`class` 属性会应用到两侧的分隔线上，而非外层容器。这与普通模式下 `class` 应用到分隔线元素上的行为保持一致。
 
 ## 变体
 
@@ -72,10 +84,6 @@ import { Separator } from 'brutx-ui-vue'
 | `muted` | 静音色（`bg-brutal-muted`） |
 
 ```vue
-<script setup>
-import { Separator } from 'brutx-ui-vue'
-</script>
-
 <template>
     <div class="space-y-2">
         <Separator variant="default" />
@@ -94,10 +102,6 @@ import { Separator } from 'brutx-ui-vue'
 | `lg` | `5px` |
 
 ```vue
-<script setup>
-import { Separator } from 'brutx-ui-vue'
-</script>
-
 <template>
     <div class="space-y-2">
         <Separator size="sm" />
@@ -107,34 +111,6 @@ import { Separator } from 'brutx-ui-vue'
 </template>
 ```
 
-## 文字分隔线
-
-当 `orientation="horizontal"` 且默认插槽有实际内容时，Separator 会渲染为居中文字分隔线：两侧为分隔线，中间为插槽内容。
-
-```vue
-<script setup>
-import { Separator } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <Separator>章节标题</Separator>
-</template>
-```
-
-文字分隔线同样支持 `variant` 与 `size`：
-
-```vue
-<script setup>
-import { Separator } from 'brutx-ui-vue'
-</script>
-
-<template>
-    <Separator variant="primary" size="lg">主色标题</Separator>
-</template>
-```
-
-> **注意**：文字分隔线模式下，`class` 属性会应用到两侧的分隔线上，而非外层容器。这与普通模式下 `class` 应用到分隔线元素上的行为保持一致。
-
 ## Props
 
 | 属性 | 类型 | 默认值 | 说明 |
@@ -143,18 +119,22 @@ import { Separator } from 'brutx-ui-vue'
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 控制粗细 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 方向 |
 | `decorative` | `boolean` | `true` | 是否为装饰性（无语义角色） |
-| `class` | `string` | — | 附加类名 |
+| `class` | `string` | — | 自定义样式类 |
 
 ## 插槽
 
-| 插槽 | 说明 |
-|------|------|
-| `default` | 文字分隔线内容；仅在 `orientation="horizontal"` 且插槽有内容时渲染为居中文字分隔线 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 文字分隔线内容；仅在 `orientation="horizontal"` 且插槽有内容时渲染为居中文字分隔线 |
 
-## 样式
+## 可访问性
+
+- **ARIA 属性**：`decorative` 为 `true` 时无语义角色；为 `false` 时自动设置 `role="separator"`
+
+## 样式定制
 
 - **粗细**：由 `size` 通过 `--sep-thickness` 令牌控制（`sm`=`2px`、`default`=`var(--brutal-border-width, 3px)`、`lg`=`5px`）
 - **水平**：`h-[var(--sep-thickness)] w-full`
 - **垂直**：`h-full w-[var(--sep-thickness)]`
-- **颜色**：由 `variant` 控制 — `default`=`bg-brutal-fg`、`primary`=`bg-brutal-primary`、`muted`=`bg-brutal-muted`
+- **颜色**：由 `variant` 控制 -- `default`=`bg-brutal-fg`、`primary`=`bg-brutal-primary`、`muted`=`bg-brutal-muted`
 - **文字分隔线**：容器 `flex items-center gap-3 w-full`，两侧分隔线使用 `flex-1`

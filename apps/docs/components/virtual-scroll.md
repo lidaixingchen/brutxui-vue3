@@ -42,99 +42,6 @@ const items = Array.from({ length: 10000 }, (_, i) => ({
 </template>
 ```
 
-## 尺寸变体
-
-| 尺寸 | 最大高度 |
-|------|----------|
-| `sm` | `max-h-64` (16rem) |
-| `default` | `max-h-96` (24rem) |
-| `lg` | `max-h-[32rem]` |
-| `xl` | `max-h-[48rem]` |
-| `full` | `max-h-full` |
-
-## 列表项样式变体
-
-| 变体 | 说明 |
-|------|------|
-| `default` | 默认样式 |
-| `striped` | 斑马纹（偶数行背景色） |
-| `bordered` | 带底部边框 |
-
-## 无障碍
-
-- 使用 `role="list"` 和 `role="listitem"` 语义化标记
-- 支持 `aria-setsize` 和 `aria-posinset` 属性
-- 支持 `aria-label` 国际化标签
-
-## Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `items` | `VirtualScrollItem[]` | — | 数据数组（必填），每项必须有 `id` 字段 |
-| `itemHeight` | `number` | `48` | 每项高度（像素） |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 容器尺寸变体 |
-| `variant` | `'default' \| 'striped' \| 'bordered'` | `'default'` | 列表项样式变体 |
-| `overscan` | `number` | `5` | 可视区域外预渲染的项目数量 |
-| `scrollEndThreshold` | `number` | `50` | 滚动到底部检测阈值（像素） |
-| `class` | `string` | — | 外部类覆盖 |
-
-## 类型定义
-
-```typescript
-interface VirtualScrollItem {
-    id: string | number
-    [key: string]: unknown
-}
-```
-
-## 事件
-
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `scroll` | `scrollTop: number` | 滚动时触发 |
-| `scroll-end` | — | 滚动到底部时触发 |
-
-## 暴露方法
-
-通过 `ref` 引用组件后可调用以下方法（经 `defineExpose` 暴露）：
-
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `scrollToIndex` | `index: number` | 滚动到指定索引位置的列表项 |
-
-```vue
-<script setup>
-import { ref } from 'vue'
-import { VirtualScroll } from 'brutx-ui-vue'
-
-const listRef = ref(null)
-const items = Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `项目 ${i + 1}` }))
-
-function jumpToMiddle() {
-    listRef.value?.scrollToIndex(Math.floor(items.length / 2))
-}
-</script>
-
-<template>
-    <Button @click="jumpToMiddle">跳转到中间</Button>
-    <VirtualScroll ref="listRef" :items="items" :item-height="48">
-        <template #default="{ item }">
-            <div class="p-4">{{ item.name }}</div>
-        </template>
-    </VirtualScroll>
-</template>
-```
-
-## 插槽
-
-| 插槽 | 参数 | 说明 |
-|------|------|------|
-| `default` | `{ item: VirtualScrollItem, index: number }` | 列表项渲染 |
-| `empty` | — | 空状态展示（当 `items` 为空数组时显示） |
-| `loading` | — | 加载更多展示（仅在提供该插槽时渲染） |
-
-## 示例
-
 ### 斑马纹列表
 
 ```vue
@@ -197,3 +104,95 @@ function jumpToMiddle() {
     </template>
 </VirtualScroll>
 ```
+
+## 变体
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 默认样式 |
+| `striped` | 斑马纹（偶数行背景色） |
+| `bordered` | 带底部边框 |
+
+## 尺寸
+
+| 尺寸 | 最大高度 |
+|------|----------|
+| `sm` | `max-h-64` (16rem) |
+| `default` | `max-h-96` (24rem) |
+| `lg` | `max-h-[32rem]` |
+| `xl` | `max-h-[48rem]` |
+| `full` | `max-h-full` |
+
+## 数据类型
+
+```ts
+interface VirtualScrollItem {
+    id: string | number
+    [key: string]: unknown
+}
+```
+
+## 程序化控制
+
+通过 `ref` 引用组件后可调用以下方法（经 `defineExpose` 暴露）：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { VirtualScroll } from 'brutx-ui-vue'
+
+const listRef = ref(null)
+const items = Array.from({ length: 10000 }, (_, i) => ({ id: i, name: `项目 ${i + 1}` }))
+
+function jumpToMiddle() {
+    listRef.value?.scrollToIndex(Math.floor(items.length / 2))
+}
+</script>
+
+<template>
+    <Button @click="jumpToMiddle">跳转到中间</Button>
+    <VirtualScroll ref="listRef" :items="items" :item-height="48">
+        <template #default="{ item }">
+            <div class="p-4">{{ item.name }}</div>
+        </template>
+    </VirtualScroll>
+</template>
+```
+
+### 暴露的 API
+
+| 方法 | 参数 | 说明 |
+|------|------|------|
+| `scrollToIndex` | `index: number` | 滚动到指定索引位置的列表项 |
+
+## Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `items` | `VirtualScrollItem[]` | — | 数据数组（必填），每项必须有 `id` 字段 |
+| `itemHeight` | `number` | `48` | 每项高度（像素） |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 容器尺寸变体 |
+| `variant` | `'default' \| 'striped' \| 'bordered'` | `'default'` | 列表项样式变体 |
+| `overscan` | `number` | `5` | 可视区域外预渲染的项目数量 |
+| `scrollEndThreshold` | `number` | `50` | 滚动到底部检测阈值（像素） |
+| `class` | `string` | — | 外部类覆盖 |
+
+## 事件
+
+| 事件 | 参数 | 说明 |
+|------|------|------|
+| `scroll` | `scrollTop: number` | 滚动时触发 |
+| `scroll-end` | — | 滚动到底部时触发 |
+
+## 插槽
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | `{ item: VirtualScrollItem, index: number }` | 列表项渲染 |
+| `empty` | — | 空状态展示（当 `items` 为空数组时显示） |
+| `loading` | — | 加载更多展示（仅在提供该插槽时渲染） |
+
+## 可访问性
+
+- **ARIA 属性**：使用 `role="list"` 和 `role="listitem"` 语义化标记；支持 `aria-setsize` 和 `aria-posinset` 属性
+- **键盘操作**：支持 `aria-label` 国际化标签
