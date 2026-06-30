@@ -196,3 +196,17 @@ function jumpToMiddle() {
 
 - **ARIA 属性**：使用 `role="list"` 和 `role="listitem"` 语义化标记；支持 `aria-setsize` 和 `aria-posinset` 属性
 - **键盘操作**：支持 `aria-label` 国际化标签
+
+## 常见问题
+
+**Q: 列表项高度不固定时，虚拟滚动会出现跳动怎么办？**
+
+A: `itemHeight` 是预估值，用于计算滚动位置。如果列表项高度差异较大，可能导致滚动时出现跳动。建议将 `itemHeight` 设置为大多数列表项的平均高度，或者通过 CSS 确保所有列表项高度一致。适当增大 `overscan` 值也可以缓解跳动感。
+
+**Q: 安装后组件显示提示信息而非正常渲染，是什么原因？**
+
+A: `VirtualScroll` 依赖 `@tanstack/vue-virtual`，属于可选依赖。如果未安装该包，组件会显示安装提示而非报错。请执行 `pnpm add @tanstack/vue-virtual` 安装依赖后重新启动项目。
+
+**Q: 滚动到底部时 `scroll-end` 事件没有触发？**
+
+A: 请检查是否正确提供了数据源。`scroll-end` 事件需要在容器实际发生滚动且到达底部时才会触发。如果数据量不足以产生滚动条（列表高度未超出容器），则不会触发。可以调整 `scrollEndThreshold` 值来控制触发的灵敏度。

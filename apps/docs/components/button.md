@@ -117,8 +117,6 @@ import { RouterLink } from 'vue-router'
 
 ## Props
 
-### Button
-
 | 属性 | 类型 | 默认值 | 说明 |
 | ---- | ---- | ------ | ---- |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体样式 |

@@ -338,3 +338,17 @@ const {
 - 步骤指示器使用 `role="tablist"` 和 `role="tab"` 语义。
 - 支持键盘导航（Tab、Enter、Space）。
 - 当 `linear` 模式启用时，被阻止的步骤会通过 `aria-disabled` 标识。
+
+## 常见问题
+
+**Q: 提交时没有触发表单验证是怎么回事？**
+
+A: 请确认已正确安装并配置了 `vee-validate` 和 `@vee-validate/zod` 依赖，并且将 `validationSchema` 传递给了 `Form` 组件。同时，每个需要验证的字段必须用 `FormField` 包裹，并确保 `FormField` 的 `name` 属性与 schema 中的字段名一致。
+
+**Q: FormWizard 中如何跳过某些步骤的验证？**
+
+A: 在 `steps` 配置中设置 `optional: true` 可将步骤标记为可选，可选步骤在前进时不会触发验证。如果需要更精细的控制，可以在步骤的 `validator` 函数中自定义验证逻辑，根据条件返回 `{ valid: true, errors: {} }` 来跳过验证。
+
+**Q: FormConditional 的条件函数为什么不生效？**
+
+A: `FormConditional` 的 `when` 函数接收的参数是当前表单的完整值对象。请确保字段名拼写正确，且表单值已通过 `v-model` 或 `initialValues` 正确初始化。如果条件依赖的字段尚未渲染或值为 `undefined`，条件判断可能会返回意外结果。

@@ -490,3 +490,17 @@ const date = ref(null)
 | `Escape` | 关闭面板 |
 | `Tab` | 在输入框和面板间切换 |
 
+## 常见问题
+
+**Q: 安装后组件报错找不到 `v-calendar` 模块？**
+
+A: `DatePicker` 组件依赖 `v-calendar`，属于额外依赖，需要手动安装：`pnpm add v-calendar`。安装后重启开发服务器即可正常运行。
+
+**Q: `DatePickerRange` 为什么没有 `open` 属性？**
+
+A: `DatePickerRange` 和 `TimePicker` 未暴露 `open` 响应式引用，不支持通过 `v-model:open` 双向绑定控制面板状态。如果需要程序化控制面板开关，请使用 `DatePicker`、`DateTimePicker`、`WeekPicker`、`MonthPicker` 或 `YearPicker`。
+
+**Q: WeekPicker 选中日期后，为什么显示的周起始日与预期不符？**
+
+A: `WeekPicker` 的 `weekStartsOn` 属性控制周起始日：`0` 表示周日起始，`1` 表示周一起始（默认）。选中任意日期后，`modelValue` 会自动对齐到当周的起始日。如果显示结果与预期不符，请检查 `weekStartsOn` 的设置是否符合业务需求。
+

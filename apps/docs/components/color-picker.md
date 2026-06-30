@@ -303,3 +303,17 @@ const color = ref(null)
 | 按键 | 操作 |
 |------|------|
 | `←` / `→` | 调整透明度（步长 0.01，Shift 步长 0.1） |
+
+## 常见问题
+
+**Q: 切换 `format` 后，之前的 `modelValue` 值格式不匹配怎么办？**
+
+A: 组件内部会自动将已有的颜色值归一化为当前 `format` 对应的格式。例如，从 `hex` 切换到 `rgb` 时，之前的 `#FF6B6B` 会被自动转换为 `rgb(255, 107, 107)`。无需手动处理格式转换。
+
+**Q: 颜色历史记录存储在哪里？如何清除？**
+
+A: 颜色历史记录默认存储在浏览器的 `localStorage` 中，键名由 `historyStorageKey` 属性控制（默认为 `'brutx-color-history'`）。可以通过浏览器开发者工具的 Application 面板清除，或在代码中调用 `localStorage.removeItem('brutx-color-history')` 清除。设置不同的 `historyStorageKey` 可以为不同的使用场景维护独立的历史记录。
+
+**Q: 启用 `showAlpha` 后输出的值格式有什么变化？**
+
+A: 启用透明度通道后，输出值会包含 alpha 信息。`hex` 格式变为 8 位（如 `#FF6B6B80`），`rgb` 格式变为 `rgba()`，`hsl` 格式变为 `hsla()`。关闭 `showAlpha` 后输出值恢复为不含透明度的标准格式。

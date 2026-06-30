@@ -154,3 +154,17 @@ type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 
 - **ARIA 属性**：使用 `role="tree"` 和 `role="treeitem"` 语义化标记；复选模式下使用 `aria-checked` 属性（`true` / `false` / `mixed`）
 - **焦点管理**：使用 roving tabindex 管理焦点
+
+## 常见问题
+
+**Q: 复选模式下，为什么父节点变成了半选状态？**
+
+A: 这是级联勾选的设计行为。当父节点的子节点中只有部分被勾选时，父节点会显示为半选状态（`aria-checked="mixed"`），表示"部分选中"。只有当所有子节点都被勾选时，父节点才会显示为完全勾选状态。反之，勾选父节点会自动勾选其所有子孙节点。
+
+**Q: 如何在初始加载时展开特定节点？**
+
+A: 使用 `defaultExpanded` 属性传入需要初始展开的节点 `id` 数组。例如 `:default-expanded="['src', 'components']"` 会在组件加载时自动展开这些节点。后续的展开/折叠操作会触发 `update:expanded` 事件。
+
+**Q: 禁用的节点在复选模式下会怎样？**
+
+A: 设置 `disabled: true` 的节点在复选模式下不可被勾选，其复选框会显示为禁用状态。如果父节点被禁用，其子节点仍然可以独立勾选。禁用节点不影响单选模式下的点击选中行为（单选模式不使用 `disabled` 属性）。

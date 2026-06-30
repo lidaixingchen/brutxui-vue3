@@ -211,4 +211,17 @@ interface TreeSelectLocale {
 - **键盘操作**：节点支持 `ArrowUp` / `ArrowDown` 导航；非叶节点支持 `ArrowRight` 展开 / `ArrowLeft` 折叠；`Home` / `End` 键跳转至首尾节点；清除按钮支持 `Enter` / `Space` 操作
 - **ARIA 属性**：触发器使用 `role="combobox"` 和 `aria-expanded`；下拉列表使用 `role="tree"` 和 `role="treeitem"`；多选模式下添加 `aria-multiselectable`；禁用状态下使用 `aria-disabled`
 - **焦点管理**：使用 roving tabindex 管理焦点；禁用节点设置 `tabindex="-1"`
-```
+
+## 常见问题
+
+**Q: 搜索过滤时为什么有些节点搜不到？**
+
+A: 搜索过滤会递归匹配所有层级的节点。匹配到子节点时，其祖先路径会自动保留以确保可见性。如果搜索不到某个节点，请检查节点的 `label` 是否与搜索关键词匹配。搜索默认是大小写敏感的模糊匹配。
+
+**Q: 单选和多选模式的 `modelValue` 类型不同，如何统一处理？**
+
+A: 单选模式下 `modelValue` 为 `string | undefined`，多选模式下为 `string[]`。在 TypeScript 项目中，根据是否设置了 `multiple` 属性来确定类型。如果需要动态切换模式，建议使用条件类型或分别定义 ref 变量。
+
+**Q: 下拉列表内容很多时如何控制显示高度？**
+
+A: 使用 `maxHeight` 属性控制下拉列表的最大高度，默认为 `'15rem'`。当树节点超出最大高度时，列表会自动出现滚动条。可以传入任意有效的 CSS 高度值，如 `'200px'`、`'50vh'` 等。
