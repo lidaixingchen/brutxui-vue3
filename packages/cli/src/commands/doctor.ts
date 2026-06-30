@@ -59,10 +59,10 @@ function checkStyle(config: BrutalistConfig): CheckResult {
     };
 }
 
-function checkTailwindCss(cwd: string, config: BrutalistConfig): CheckResult {
-    const cssPath = resolveAliasPath(config.tailwind.css, cwd);
+async function checkTailwindCss(cwd: string, config: BrutalistConfig): Promise<CheckResult> {
+    const cssPath = await resolveAliasPath(config.tailwind.css, cwd);
 
-    if (!fs.existsSync(cssPath)) {
+    if (!(await fs.pathExists(cssPath))) {
         return {
             name: 'tailwind.css points to real file',
             status: 'error',
@@ -70,7 +70,7 @@ function checkTailwindCss(cwd: string, config: BrutalistConfig): CheckResult {
         };
     }
 
-    const content = fs.readFileSync(cssPath, 'utf-8');
+    const content = await fs.readFile(cssPath, 'utf-8');
     if (!content.includes('--brutal-bg')) {
         return {
             name: 'tailwind.css contains BrutxUI tokens',
@@ -88,22 +88,29 @@ function checkTailwindCss(cwd: string, config: BrutalistConfig): CheckResult {
     };
 }
 
-function checkAliases(cwd: string, config: BrutalistConfig): CheckResult[] {
+async function checkAliases(cwd: string, config: BrutalistConfig): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
-    const componentsPath = resolveAliasPath(config.aliases.components, cwd);
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+    const componentsExists = await fs.pathExists(componentsPath);
     results.push({
         name: `aliases.components → ${config.aliases.components}`,
-        status: fs.existsSync(componentsPath) ? 'pass' : 'warn',
-        message: fs.existsSync(componentsPath)
+        status: componentsExists ? 'pass' : 'warn',
+        message: componentsExists
             ? 'Directory exists.'
             : 'Directory does not exist.',
         fixId: FixId.CreateComponentsDir,
         fixDescription: 'Create directory',
     });
 
-    const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
-    const utilsExists = UTILS_EXTENSIONS.some((ext) => fs.existsSync(utilsPath + ext));
+    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+    let utilsExists = false;
+    for (const ext of UTILS_EXTENSIONS) {
+        if (await fs.pathExists(utilsPath + ext)) {
+            utilsExists = true;
+            break;
+        }
+    }
 
     results.push({
         name: `aliases.utils → ${config.aliases.utils}`,
@@ -116,12 +123,12 @@ function checkAliases(cwd: string, config: BrutalistConfig): CheckResult[] {
     return results;
 }
 
-function checkDependencies(cwd: string): CheckResult[] {
+async function checkDependencies(cwd: string): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
     let packageJson: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> } = {};
     try {
-        packageJson = fs.readJsonSync(path.join(cwd, 'package.json'));
+        packageJson = await fs.readJson(path.join(cwd, 'package.json'));
     } catch {
         return results;
     }
@@ -159,9 +166,15 @@ function checkDependencies(cwd: string): CheckResult[] {
     return results;
 }
 
-function checkUtilsFunction(cwd: string, config: BrutalistConfig): CheckResult {
-    const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
-    const utilsFile = UTILS_EXTENSIONS.find((ext) => fs.existsSync(utilsPath + ext));
+async function checkUtilsFunction(cwd: string, config: BrutalistConfig): Promise<CheckResult> {
+    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+    let utilsFile: string | undefined;
+    for (const ext of UTILS_EXTENSIONS) {
+        if (await fs.pathExists(utilsPath + ext)) {
+            utilsFile = ext;
+            break;
+        }
+    }
 
     if (!utilsFile) {
         return {
@@ -173,7 +186,7 @@ function checkUtilsFunction(cwd: string, config: BrutalistConfig): CheckResult {
         };
     }
 
-    const content = fs.readFileSync(utilsPath + utilsFile, 'utf-8');
+    const content = await fs.readFile(utilsPath + utilsFile, 'utf-8');
     if (!content.includes('export function cn') && !content.includes('export const cn')) {
         return {
             name: 'cn() function exists',
@@ -191,20 +204,20 @@ function checkUtilsFunction(cwd: string, config: BrutalistConfig): CheckResult {
     };
 }
 
-function checkComponentIntegrity(cwd: string, config: BrutalistConfig): CheckResult[] {
+async function checkComponentIntegrity(cwd: string, config: BrutalistConfig): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
-    const componentsPath = resolveAliasPath(config.aliases.components, cwd);
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
 
-    if (!fs.existsSync(componentsPath)) {
+    if (!(await fs.pathExists(componentsPath))) {
         return results;
     }
 
     try {
-        const dirs = fs.readdirSync(componentsPath, { withFileTypes: true });
+        const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
         for (const dir of dirs) {
             if (dir.isDirectory()) {
                 const componentPath = path.join(componentsPath, dir.name);
-                const files = fs.readdirSync(componentPath);
+                const files = await fs.readdir(componentPath);
                 const hasFiles = files.length > 0;
 
                 results.push({
@@ -287,34 +300,40 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                     break;
 
                 case FixId.InjectCssTokens: {
-                    const cssPath = resolveAliasPath(config.tailwind.css, cwd);
-                    const existing = fs.readFileSync(cssPath, 'utf-8');
-                    fs.writeFileSync(cssPath, existing + '\n' + getBrutalistCssStyles(), 'utf-8');
+                    const cssPath = await resolveAliasPath(config.tailwind.css, cwd);
+                    const existing = await fs.readFile(cssPath, 'utf-8');
+                    await fs.writeFile(cssPath, existing + '\n' + await getBrutalistCssStyles(), 'utf-8');
                     logger.success('Injected BrutxUI CSS tokens.');
                     break;
                 }
 
                 case FixId.CreateComponentsDir: {
-                    const componentsPath = resolveAliasPath(config.aliases.components, cwd);
-                    fs.ensureDirSync(componentsPath);
+                    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+                    await fs.ensureDir(componentsPath);
                     logger.success('Created components directory.');
                     break;
                 }
 
                 case FixId.CreateUtilsFile: {
-                    const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
-                    fs.writeFileSync(utilsPath + '.ts', UTILS_TEMPLATE, 'utf-8');
+                    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+                    await fs.writeFile(utilsPath + '.ts', UTILS_TEMPLATE, 'utf-8');
                     logger.success('Created utils file.');
                     break;
                 }
 
                 case FixId.AddCnFunction: {
-                    const utilsPath = resolveAliasPath(config.aliases.utils, cwd);
-                    const utilsFile = UTILS_EXTENSIONS.find((ext) => fs.existsSync(utilsPath + ext));
+                    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+                    let utilsFile: string | undefined;
+                    for (const ext of UTILS_EXTENSIONS) {
+                        if (await fs.pathExists(utilsPath + ext)) {
+                            utilsFile = ext;
+                            break;
+                        }
+                    }
 
                     if (utilsFile) {
-                        const existing = fs.readFileSync(utilsPath + utilsFile, 'utf-8');
-                        fs.writeFileSync(utilsPath + utilsFile, existing + '\n' + UTILS_TEMPLATE, 'utf-8');
+                        const existing = await fs.readFile(utilsPath + utilsFile, 'utf-8');
+                        await fs.writeFile(utilsPath + utilsFile, existing + '\n' + UTILS_TEMPLATE, 'utf-8');
                         logger.success('Added cn() function.');
                     }
                     break;
@@ -329,7 +348,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
     // Write updated config
     try {
         const configPath = path.join(cwd, 'components.json');
-        fs.writeJsonSync(configPath, config, { spaces: 2 });
+        await fs.writeJson(configPath, config, { spaces: 2 });
         logger.success('Updated components.json.');
     } catch (error) {
         logger.error('Failed to write updated config file.');
@@ -353,11 +372,11 @@ export async function doctor(options: DoctorOptions): Promise<void> {
     if (config) {
         checks.push(checkSchema(config));
         checks.push(checkStyle(config));
-        checks.push(checkTailwindCss(cwd, config));
-        checks.push(...checkAliases(cwd, config));
-        checks.push(...checkDependencies(cwd));
-        checks.push(checkUtilsFunction(cwd, config));
-        checks.push(...checkComponentIntegrity(cwd, config));
+        checks.push(await checkTailwindCss(cwd, config));
+        checks.push(...await checkAliases(cwd, config));
+        checks.push(...await checkDependencies(cwd));
+        checks.push(await checkUtilsFunction(cwd, config));
+        checks.push(...await checkComponentIntegrity(cwd, config));
     }
 
     if (options.json) {

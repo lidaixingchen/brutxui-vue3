@@ -49,48 +49,48 @@ function generateUnifiedDiff(
     return diffLines_.join('\n');
 }
 
-function getInstalledComponents(cwd: string, config: BrutalistConfig): string[] {
-    const componentsPath = resolveAliasPath(config.aliases.components, cwd);
+async function getInstalledComponents(cwd: string, config: BrutalistConfig): Promise<string[]> {
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
 
-    if (!fs.existsSync(componentsPath)) {
+    if (!await fs.pathExists(componentsPath)) {
         return [];
     }
 
-    const dirs = fs.readdirSync(componentsPath, { withFileTypes: true });
+    const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
     return dirs
         .filter((d) => d.isDirectory())
         .map((d) => d.name);
 }
 
-function getLocalComponentFiles(
+async function getLocalComponentFiles(
     cwd: string,
     config: BrutalistConfig,
     componentName: string
-): Array<{ relativePath: string; absolutePath: string }> {
-    const componentsPath = resolveAliasPath(config.aliases.components, cwd);
+): Promise<Array<{ relativePath: string; absolutePath: string }>> {
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
     const componentPath = path.join(componentsPath, componentName);
 
-    if (!fs.existsSync(componentPath)) {
+    if (!await fs.pathExists(componentPath)) {
         return [];
     }
 
     const files: Array<{ relativePath: string; absolutePath: string }> = [];
 
-    function walkDir(dir: string, relativeBase: string) {
-        const entries = fs.readdirSync(dir, { withFileTypes: true });
+    async function walkDir(dir: string, relativeBase: string): Promise<void> {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
             const fullPath = path.join(dir, entry.name);
             const relativePath = path.join(relativeBase, entry.name);
 
             if (entry.isDirectory()) {
-                walkDir(fullPath, relativePath);
+                await walkDir(fullPath, relativePath);
             } else {
                 files.push({ relativePath, absolutePath: fullPath });
             }
         }
     }
 
-    walkDir(componentPath, '');
+    await walkDir(componentPath, '');
     return files;
 }
 
@@ -116,7 +116,7 @@ async function diffComponent(
         };
     }
 
-    const localFiles = getLocalComponentFiles(cwd, config, componentName);
+    const localFiles = await getLocalComponentFiles(cwd, config, componentName);
     const fileDiffs: FileDiff[] = [];
 
     for (const registryFile of registryItem.files) {
@@ -130,7 +130,7 @@ async function diffComponent(
             continue;
         }
 
-        if (!fs.existsSync(localFile.absolutePath)) {
+        if (!await fs.pathExists(localFile.absolutePath)) {
             fileDiffs.push({
                 path: registryFile.path,
                 status: 'added',
@@ -138,7 +138,7 @@ async function diffComponent(
             continue;
         }
 
-        const localContent = fs.readFileSync(localFile.absolutePath, 'utf-8');
+        const localContent = await fs.readFile(localFile.absolutePath, 'utf-8');
         const normalizedRegistryContent = resolveImportAlias(registryFile.content, config);
 
         if (normalizeLineEndings(localContent) === normalizeLineEndings(normalizedRegistryContent)) {
@@ -248,7 +248,7 @@ export async function diff(options: DiffOptions): Promise<void> {
 
     const targetComponents = options.components?.length
         ? options.components
-        : getInstalledComponents(cwd, config);
+        : await getInstalledComponents(cwd, config);
 
     if (targetComponents.length === 0) {
         logger.info('No components found to compare.');

@@ -1,4 +1,4 @@
-import { readFileSync, existsSync } from 'node:fs';
+import { readFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import type { ProjectType } from './types.js';
@@ -11,10 +11,14 @@ const __dirname = dirname(__filename);
  * - 构建产物（dist/）中：styles/ 与 index.js 同级
  * - 源码（src/lib/）中：styles/ 在上级目录
  */
-function resolveStylesDir(): string {
+async function resolveStylesDir(): Promise<string> {
     const direct = join(__dirname, 'styles');
-    if (existsSync(direct)) return direct;
-    return join(__dirname, '..', 'styles');
+    try {
+        await access(direct);
+        return direct;
+    } catch {
+        return join(__dirname, '..', 'styles');
+    }
 }
 
 export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared-vue';
@@ -80,10 +84,11 @@ export const DOCS_URL = 'https://lidaixingchen.github.io/brutxui-vue3/';
 
 let _brutalistCssStyles: string | undefined;
 
-export function getBrutalistCssStyles(): string {
+export async function getBrutalistCssStyles(): Promise<string> {
     if (_brutalistCssStyles === undefined) {
-        _brutalistCssStyles = readFileSync(
-            join(resolveStylesDir(), 'brutalist.css'),
+        const stylesDir = await resolveStylesDir();
+        _brutalistCssStyles = await readFile(
+            join(stylesDir, 'brutalist.css'),
             'utf-8'
         );
     }

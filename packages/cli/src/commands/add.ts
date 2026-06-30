@@ -76,32 +76,32 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
     return selected;
 }
 
-function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): string {
+async function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): Promise<string> {
     let resolved: string;
 
     if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.components)) {
         const relative = registryPath.replace(REGISTRY_PATH_PREFIXES.components, '');
-        const aliasPath = resolveAliasPath(config.aliases.components, cwd);
+        const aliasPath = await resolveAliasPath(config.aliases.components, cwd);
         resolved = path.join(aliasPath, relative);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.composables)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.composables.length);
-        const aliasPath = resolveAliasPath(config.aliases.composables, cwd);
+        const aliasPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(aliasPath, relative);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.locales)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
-        const composablesPath = resolveAliasPath(config.aliases.composables, cwd);
+        const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'locales', relative);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils)) {
-        resolved = resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+        resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
-        const aliasPath = resolveAliasPath(config.aliases.utils, cwd);
+        const aliasPath = await resolveAliasPath(config.aliases.utils, cwd);
         resolved = path.join(path.dirname(aliasPath), relative);
     } else {
         resolved = path.join(cwd, registryPath);
     }
 
-    if (!isSafePath(resolved, cwd)) {
+    if (!(await isSafePath(resolved, cwd))) {
         throw new CliError(`Security Error: Resolved path "${resolved}" is outside the project directory.`, 2);
     }
 
@@ -133,7 +133,7 @@ async function writeRegistryFiles(
         let itemAdded = false;
 
         for (const file of item.files) {
-            const targetPath = resolveComponentFilePath(file.path, config, cwd);
+            const targetPath = await resolveComponentFilePath(file.path, config, cwd);
 
             if (await fs.pathExists(targetPath)) {
                 if (!options.overwrite) {
@@ -165,10 +165,10 @@ async function writeRegistryFiles(
     return { added, skipped: Array.from(skippedSet), filesWritten };
 }
 
-function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): void {
+async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<void> {
     if (deps.length === 0) return;
 
-    const packageManager = detectPackageManager(cwd);
+    const packageManager = await detectPackageManager(cwd);
     logger.newLine();
 
     if (dryRun) {
@@ -204,7 +204,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const cwd = options.cwd ?? process.cwd();
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
 
-    if (options.path && !isSafePath(targetCwd, cwd)) {
+    if (options.path && !(await isSafePath(targetCwd, cwd))) {
         throw new CliError(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`, 2);
     }
 
@@ -221,7 +221,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         return;
     }
 
-    const utilsPath = resolveAliasPath(config.aliases.utils, targetCwd) + '.ts';
+    const utilsPath = await resolveAliasPath(config.aliases.utils, targetCwd) + '.ts';
 
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
@@ -296,7 +296,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             }
         }
 
-        installComponentDeps(Array.from(allDeps), targetCwd, options.dryRun ?? false);
+        await installComponentDeps(Array.from(allDeps), targetCwd, options.dryRun ?? false);
 
         if (added.length > 0) {
             logger.newLine();

@@ -80,12 +80,12 @@ describe('tsconfig alias parsing', () => {
                 },
             }`);
 
-            expect(getAliasFromTsConfig(cwd)).toEqual({
+            expect(await getAliasFromTsConfig(cwd)).toEqual({
                 components: '@/components',
                 utils: '@/lib/utils',
                 composables: '@/composables',
             });
-            expect(resolveAliasPath('@/components', cwd)).toBe(path.join(cwd, 'src', 'components'));
+            expect(await resolveAliasPath('@/components', cwd)).toBe(path.join(cwd, 'src', 'components'));
         } finally {
             await fs.remove(cwd);
         }
@@ -97,33 +97,33 @@ describe('detectPackageManager', () => {
         vi.restoreAllMocks();
     });
 
-    it('should detect pnpm if pnpm-lock.yaml exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
-            return p.toString().endsWith('pnpm-lock.yaml');
+    it('should detect pnpm if pnpm-lock.yaml exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
+            return Promise.resolve(p.toString().endsWith('pnpm-lock.yaml'));
         });
-        const pm = detectPackageManager('/dummy/path');
+        const pm = await detectPackageManager('/dummy/path');
         expect(pm).toBe('pnpm');
     });
 
-    it('should detect yarn if yarn.lock exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
-            return p.toString().endsWith('yarn.lock');
+    it('should detect yarn if yarn.lock exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
+            return Promise.resolve(p.toString().endsWith('yarn.lock'));
         });
-        const pm = detectPackageManager('/dummy/path');
+        const pm = await detectPackageManager('/dummy/path');
         expect(pm).toBe('yarn');
     });
 
-    it('should detect bun if bun.lockb exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
-            return p.toString().endsWith('bun.lockb');
+    it('should detect bun if bun.lockb exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
+            return Promise.resolve(p.toString().endsWith('bun.lockb'));
         });
-        const pm = detectPackageManager('/dummy/path');
+        const pm = await detectPackageManager('/dummy/path');
         expect(pm).toBe('bun');
     });
 
-    it('should detect npm as fallback if no lockfile exists', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(false);
-        const pm = detectPackageManager('/dummy/path');
+    it('should detect npm as fallback if no lockfile exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockResolvedValue(false);
+        const pm = await detectPackageManager('/dummy/path');
         expect(pm).toBe('npm');
     });
 });
@@ -133,55 +133,55 @@ describe('detectProjectType', () => {
         vi.restoreAllMocks();
     });
 
-    it('should detect nuxt if nuxt config exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
+    it('should detect nuxt if nuxt config exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
             const pStr = p.toString();
             if (pStr.endsWith('nuxt.config.js') || pStr.endsWith('nuxt.config.ts') || pStr.endsWith('nuxt.config.mjs')) {
-                return true;
+                return Promise.resolve(true);
             }
-            return false;
+            return Promise.resolve(false);
         });
-        const type = detectProjectType('/dummy/path');
+        const type = await detectProjectType('/dummy/path');
         expect(type).toBe('nuxt');
     });
 
-    it('should detect vite-vue if vite config exists and vue dependency exists and no src dir', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
+    it('should detect vite-vue if vite config exists and vue dependency exists and no src dir', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
             const pStr = p.toString();
             if (pStr.endsWith('vite.config.js') || pStr.endsWith('vite.config.ts') || pStr.endsWith('vite.config.mjs')) {
-                return true;
+                return Promise.resolve(true);
             }
             if (pStr.endsWith('src')) {
-                return false;
+                return Promise.resolve(false);
             }
-            return false;
+            return Promise.resolve(false);
         });
-        vi.spyOn(fs, 'readJsonSync').mockReturnValue({
+        vi.spyOn(fs, 'readJson').mockResolvedValue({
             dependencies: {
                 vue: '^3.5.0'
             }
         });
-        const type = detectProjectType('/dummy/path');
+        const type = await detectProjectType('/dummy/path');
         expect(type).toBe('vite-vue');
     });
 
-    it('should detect vite-vue-src if vite config exists and vue dependency exists and src dir exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
+    it('should detect vite-vue-src if vite config exists and vue dependency exists and src dir exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
             const pStr = p.toString();
             if (pStr.endsWith('vite.config.js') || pStr.endsWith('vite.config.ts') || pStr.endsWith('vite.config.mjs')) {
-                return true;
+                return Promise.resolve(true);
             }
             if (pStr.endsWith('src')) {
-                return true;
+                return Promise.resolve(true);
             }
-            return false;
+            return Promise.resolve(false);
         });
-        vi.spyOn(fs, 'readJsonSync').mockReturnValue({
+        vi.spyOn(fs, 'readJson').mockResolvedValue({
             dependencies: {
                 vue: '^3.5.0'
             }
         });
-        const type = detectProjectType('/dummy/path');
+        const type = await detectProjectType('/dummy/path');
         expect(type).toBe('vite-vue-src');
     });
 });
@@ -191,36 +191,36 @@ describe('detectTailwindVersion', () => {
         vi.restoreAllMocks();
     });
 
-    it('should detect v4 if package.json has tailwindcss v4', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-        vi.spyOn(fs, 'readJsonSync').mockReturnValue({
+    it('should detect v4 if package.json has tailwindcss v4', async () => {
+        vi.spyOn(fs, 'pathExists').mockResolvedValue(true);
+        vi.spyOn(fs, 'readJson').mockResolvedValue({
             devDependencies: {
                 tailwindcss: '^4.0.0'
             }
         });
 
-        const version = detectTailwindVersion('/dummy/path');
+        const version = await detectTailwindVersion('/dummy/path');
         expect(version).toBe('v4');
     });
 
-    it('should detect v3 if package.json has tailwindcss v3', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-        vi.spyOn(fs, 'readJsonSync').mockReturnValue({
+    it('should detect v3 if package.json has tailwindcss v3', async () => {
+        vi.spyOn(fs, 'pathExists').mockResolvedValue(true);
+        vi.spyOn(fs, 'readJson').mockResolvedValue({
             devDependencies: {
                 tailwindcss: '^3.4.1'
             }
         });
 
-        const version = detectTailwindVersion('/dummy/path');
+        const version = await detectTailwindVersion('/dummy/path');
         expect(version).toBe('v3');
     });
 
-    it('should fallback to v3 if tailwind config file exists', () => {
-        vi.spyOn(fs, 'existsSync').mockImplementation((p: PathLike) => {
-            return p.toString().endsWith('tailwind.config.js');
+    it('should fallback to v3 if tailwind config file exists', async () => {
+        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
+            return Promise.resolve(p.toString().endsWith('tailwind.config.js'));
         });
 
-        const version = detectTailwindVersion('/dummy/path');
+        const version = await detectTailwindVersion('/dummy/path');
         expect(version).toBe('v3');
     });
 });

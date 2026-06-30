@@ -34,12 +34,12 @@ interface DetectedSettings {
 }
 
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
-    const projectType = detectProjectType(cwd);
-    const tailwindVersion = detectTailwindVersion(cwd);
+    const projectType = await detectProjectType(cwd);
+    const tailwindVersion = await detectTailwindVersion(cwd);
 
-    const tailwindConfig = findTailwindConfig(cwd);
-    const cssFile = findCssFile(cwd, projectType);
-    const aliases = getDefaultAliases(cwd);
+    const tailwindConfig = await findTailwindConfig(cwd);
+    const cssFile = await findCssFile(cwd, projectType);
+    const aliases = await getDefaultAliases(cwd);
 
     const fallbackCss = projectType === 'nuxt'
         ? 'assets/css/main.css'
@@ -110,13 +110,13 @@ async function createConfigFile(cwd: string, settings: DetectedSettings): Promis
 async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean> {
     const fullPath = path.join(cwd, cssPath);
 
-    if (!isSafePath(fullPath, cwd)) {
+    if (!(await isSafePath(fullPath, cwd))) {
         throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullPath}".`);
     }
 
     await fs.ensureDir(path.dirname(fullPath));
 
-    const tailwindVersion = detectTailwindVersion(cwd);
+    const tailwindVersion = await detectTailwindVersion(cwd);
 
     let content = '';
     if (await fs.pathExists(fullPath)) {
@@ -127,12 +127,12 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
         if (hasCompleteBrutalistStyles) {
             return false;
         }
-        content += getBrutalistCssStyles();
+        content += await getBrutalistCssStyles();
     } else {
         if (tailwindVersion === 'v4') {
-            content = `@import "tailwindcss";\n${getBrutalistCssStyles()}`;
+            content = `@import "tailwindcss";\n${await getBrutalistCssStyles()}`;
         } else {
-            content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${getBrutalistCssStyles()}`;
+            content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${await getBrutalistCssStyles()}`;
         }
     }
 
@@ -171,7 +171,7 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
 
 export async function init(options: InitOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
-    const projectType = detectProjectType(cwd);
+    const projectType = await detectProjectType(cwd);
 
     logger.setSilent(options.silent ?? false);
 
@@ -193,7 +193,7 @@ export async function init(options: InitOptions): Promise<void> {
     try {
         await createConfigFile(cwd, settings);
 
-        const utilsPath = resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
+        const utilsPath = await resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
         await fs.ensureDir(path.dirname(utilsPath));
         if (!(await fs.pathExists(utilsPath))) {
             await fs.writeFile(utilsPath, UTILS_TEMPLATE);
@@ -202,7 +202,7 @@ export async function init(options: InitOptions): Promise<void> {
             spinner?.info('Utility helper already exists, skipping.');
         }
 
-        const componentsDir = resolveAliasPath(settings.aliases.components, cwd);
+        const componentsDir = await resolveAliasPath(settings.aliases.components, cwd);
         await fs.ensureDir(path.join(componentsDir, 'ui'));
         spinner?.info('Created components/ui directory');
 
@@ -215,7 +215,7 @@ export async function init(options: InitOptions): Promise<void> {
 
         spinner?.succeed('Brutx-Vue initialized successfully!');
 
-        const packageManager = detectPackageManager(cwd);
+        const packageManager = await detectPackageManager(cwd);
         logger.newLine();
         logger.bold(`Installing dependencies with ${packageManager}...`);
 

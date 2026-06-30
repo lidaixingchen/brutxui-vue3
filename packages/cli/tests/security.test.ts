@@ -5,39 +5,39 @@ import { isSafePath, resolveAliasPath } from '../src/lib/project.js';
 describe('isSafePath', () => {
     const cwd = path.resolve('/workspace/project');
 
-    it('should return true for paths inside the cwd', () => {
+    it('should return true for paths inside the cwd', async () => {
         const safePath = path.join(cwd, 'src/components/ui/button.tsx');
-        expect(isSafePath(safePath, cwd)).toBe(true);
+        expect(await isSafePath(safePath, cwd)).toBe(true);
     });
 
-    it('should return true for paths exactly matching cwd', () => {
-        expect(isSafePath(cwd, cwd)).toBe(true);
+    it('should return true for paths exactly matching cwd', async () => {
+        expect(await isSafePath(cwd, cwd)).toBe(true);
     });
 
-    it('should return false for paths attempting path traversal out of cwd', () => {
+    it('should return false for paths attempting path traversal out of cwd', async () => {
         const unsafePath = path.resolve(cwd, '../../etc/passwd');
-        expect(isSafePath(unsafePath, cwd)).toBe(false);
+        expect(await isSafePath(unsafePath, cwd)).toBe(false);
     });
 
-    it('should return false for paths in parent directories', () => {
+    it('should return false for paths in parent directories', async () => {
         const parentPath = path.resolve(cwd, '..');
-        expect(isSafePath(parentPath, cwd)).toBe(false);
+        expect(await isSafePath(parentPath, cwd)).toBe(false);
     });
 });
 
 describe('resolveAliasPath path traversal protection', () => {
     const cwd = path.resolve('/workspace/project');
 
-    it('should throw error for alias with path traversal using ../../', () => {
-        expect(() => resolveAliasPath('../../etc/passwd', cwd)).toThrow('Security Error');
+    it('should throw error for alias with path traversal using ../../', async () => {
+        await expect(resolveAliasPath('../../etc/passwd', cwd)).rejects.toThrow('Security Error');
     });
 
-    it('should throw error for alias with path traversal using ../', () => {
-        expect(() => resolveAliasPath('../secret-file', cwd)).toThrow('Security Error');
+    it('should throw error for alias with path traversal using ../', async () => {
+        await expect(resolveAliasPath('../secret-file', cwd)).rejects.toThrow('Security Error');
     });
 
-    it('should not throw for valid alias paths within project', () => {
-        const result = resolveAliasPath('@/components', cwd);
+    it('should not throw for valid alias paths within project', async () => {
+        const result = await resolveAliasPath('@/components', cwd);
         expect(result).toContain(cwd);
     });
 });
