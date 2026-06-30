@@ -490,11 +490,3 @@ const date = ref(null)
 | `Escape` | 关闭面板 |
 | `Tab` | 在输入框和面板间切换 |
 
-## 样式定制
-
-- **触发器**：`border-3 border-brutal` 粗边框 + `shadow-brutal` 硬质阴影，按压时位移反馈
-- **弹出面板**：粗边框 + 大号硬质阴影（`shadow-brutal-lg`）
-- **日期单元格**：选中态使用 Primary 背景色 + 粗边框；今天使用 Secondary 背景色
-- **周高亮**（WeekPicker）：Accent 背景色覆盖整周范围
-- **快捷选项**：悬停时背景色变化 + 位移，选中态使用 Primary 背景
-- **页脚按钮**：清除（默认背景）+ 确认（Primary 背景），均有按压反馈
