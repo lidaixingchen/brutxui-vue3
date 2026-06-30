@@ -148,7 +148,7 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 
 ### Alert
 
-| 事件 | 载荷 | 说明 |
+| 事件 | 参数 | 说明 |
 |------|------|------|
 | `close` | `[]` | 点击关闭按钮时触发 |
 
@@ -156,19 +156,19 @@ import { Alert, AlertTitle, AlertDescription, Button } from 'brutx-ui-vue'
 
 ### Alert
 
-| 插槽 | 说明 |
-|------|------|
-| `default` | 提示框主体内容 |
-| `actions` | 操作按钮区域，渲染在内容下方 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 提示框主体内容 |
+| `actions` | — | 操作按钮区域，渲染在内容下方 |
 
 ### AlertTitle
 
-| 插槽 | 说明 |
-|------|------|
-| `default` | 标题内容 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 标题内容 |
 
 ### AlertDescription
 
-| 插槽 | 说明 |
-|------|------|
-| `default` | 描述内容 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 描述内容 |

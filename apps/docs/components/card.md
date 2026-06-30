@@ -94,8 +94,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 |------|------|--------|
 | `class` | `string` | — |
 
-## Slots
+## 插槽
 
-| 插槽 | 说明 |
-|------|------|
-| `default` | 所有组件的默认插槽，用于插入内容 |
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 所有组件的默认插槽，用于插入内容 |
