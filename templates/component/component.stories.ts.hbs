@@ -1,0 +1,58 @@
+import type { Meta, StoryObj } from '@storybook/vue3'
+import {{componentName}} from './{{componentName}}.vue'
+
+/**
+ * {{componentName}} - {{description}}
+ */
+const meta: Meta<typeof {{componentName}}> = {
+    title: 'Components/{{componentName}}',
+    component: {{componentName}},
+    tags: ['autodocs'],
+    argTypes: {
+        class: {
+            control: 'text',
+            description: '自定义 CSS 类名',
+        },
+    },
+}
+
+export default meta
+type Story = StoryObj<typeof {{componentName}}>
+
+/**
+ * 默认状态
+ */
+export const Default: Story = {
+    args: {},
+    render: (args) => ({
+        components: { {{componentName}} },
+        setup() {
+            return { args }
+        },
+        template: `
+            <{{componentNameKebab}} v-bind="args">
+                默认内容
+            </{{componentNameKebab}}>
+        `,
+    }),
+}
+
+/**
+ * 自定义样式
+ */
+export const WithCustomClass: Story = {
+    args: {
+        class: 'bg-brutal-primary text-white',
+    },
+    render: (args) => ({
+        components: { {{componentName}} },
+        setup() {
+            return { args }
+        },
+        template: `
+            <{{componentNameKebab}} v-bind="args">
+                自定义样式内容
+            </{{componentNameKebab}}>
+        `,
+    }),
+}

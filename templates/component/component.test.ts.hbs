@@ -1,0 +1,57 @@
+import { mount } from '@vue/test-utils'
+import {{componentName}} from './{{componentName}}.vue'
+
+describe('{{componentName}}', () => {
+    /**
+     * 基本渲染测试
+     */
+    it('renders correctly with default props', () => {
+        const wrapper = mount({{componentName}})
+
+        expect(wrapper.exists()).toBe(true)
+        expect(wrapper.classes()).toContain('border-3')
+        expect(wrapper.classes()).toContain('border-brutal')
+        expect(wrapper.classes()).toContain('rounded-brutal')
+        expect(wrapper.classes()).toContain('shadow-brutal')
+        expect(wrapper.classes()).toContain('bg-brutal-bg')
+        expect(wrapper.classes()).toContain('text-brutal-fg')
+    })
+
+    /**
+     * 测试 slot 内容渲染
+     */
+    it('renders slot content', () => {
+        const slotContent = '测试内容'
+        const wrapper = mount({{componentName}}, {
+            slots: {
+                default: slotContent,
+            },
+        })
+
+        expect(wrapper.text()).toContain(slotContent)
+    })
+
+    /**
+     * 测试自定义 class
+     */
+    it('applies custom class', () => {
+        const customClass = 'custom-test-class'
+        const wrapper = mount({{componentName}}, {
+            props: {
+                class: customClass,
+            },
+        })
+
+        expect(wrapper.classes()).toContain(customClass)
+    })
+
+    /**
+     * 测试 Neo-Brutalism 样式类名
+     */
+    it('applies Neo-Brutalism design classes', () => {
+        const wrapper = mount({{componentName}})
+
+        expect(wrapper.classes()).toContain('font-black')
+        expect(wrapper.classes()).toContain('tracking-wide')
+    })
+})

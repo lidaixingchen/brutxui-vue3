@@ -19,7 +19,10 @@
         "changelog:dry": "node scripts/release/generate-changelog.mjs --dry-run",
         "changelog:full": "node scripts/release/generate-changelog.mjs --full-history",
         "changelog:ui": "node scripts/release/generate-changelog.mjs --scope ui",
-        "changelog:cli": "node scripts/release/generate-changelog.mjs --scope cli"
+        "changelog:cli": "node scripts/release/generate-changelog.mjs --scope cli",
+        "generate:component": "tsx scripts/generate.ts component",
+        "generate:composable": "tsx scripts/generate.ts composable",
+        "generate:page": "tsx scripts/generate.ts page"
     },
     "devDependencies": {},
     "engines": {
