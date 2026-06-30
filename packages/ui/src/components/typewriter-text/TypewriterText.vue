@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { useReducedMotion } from '../../composables/useReducedMotion'
@@ -121,7 +121,7 @@ onMounted(() => {
     }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     clearAllTimers()
 })
 

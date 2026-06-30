@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
-import { breadcrumbSeparatorClasses } from './breadcrumb-variants'
+import { breadcrumbSeparatorVariants } from './breadcrumb-variants'
 
 interface BreadcrumbSeparatorProps {
     class?: string
@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<BreadcrumbSeparatorProps>(), {
 })
 
 const classes = computed(() =>
-    cn(breadcrumbSeparatorClasses, props.class)
+    cn(breadcrumbSeparatorVariants(), props.class)
 )
 </script>
 

@@ -29,8 +29,8 @@ export function useFormWizard() {
 import { ref, computed, provide } from 'vue'
 import { cn } from '../../lib/utils'
 import { formWizardRootVariants, formWizardNavigationVariants, formWizardStepInfoVariants, formWizardStepCounterVariants, formWizardErrorPanelVariants, formWizardErrorTitleVariants } from './form-wizard-variants'
-import { Stepper } from '../stepper'
-import type { StepperStep } from '../stepper'
+import Stepper from '../stepper/Stepper.vue'
+import type { StepperStep } from '../stepper/Stepper.vue'
 import Button from '../button/Button.vue'
 import { useLocale } from '../../composables/useLocale'
 

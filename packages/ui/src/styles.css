@@ -898,8 +898,22 @@
         .animate-brutal-heartbeat,
         .animate-indeterminate,
         .animate-marquee-left,
-        .animate-marquee-right {
+        .animate-marquee-right,
+        .animate-nb-shrink,
+        .animate-accordion-down,
+        .animate-accordion-up {
             animation: none !important;
         }
+    }
+}
+
+/* 全局 reduced-motion 兜底：覆盖所有未单独处理的动画和过渡 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

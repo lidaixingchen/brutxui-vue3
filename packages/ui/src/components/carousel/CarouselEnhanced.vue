@@ -25,7 +25,6 @@ const props = withDefaults(defineProps<CarouselEnhancedProps>(), {
 
 // 复用增强版 composable
 const {
-    emblaRef,
     selectedIndex,
     scrollSnaps,
     canScrollPrev,
@@ -121,7 +120,6 @@ const parallaxStyle = computed(() => {
 })
 
 defineExpose({
-    emblaRef,
     scrollPrev,
     scrollNext,
     scrollTo,

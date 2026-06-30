@@ -65,7 +65,11 @@ const rootClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))
                     >
                         <div
                             class="flex flex-col items-center justify-center p-4 cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
+                            role="button"
+                            tabindex="0"
                             @click="handleItemClick(index)"
+                            @keydown.enter="handleItemClick(index)"
+                            @keydown.space.prevent="handleItemClick(index)"
                         >
                             <div class="w-full border-3 border-brutal shadow-brutal overflow-hidden bg-brutal-bg">
                                 <img

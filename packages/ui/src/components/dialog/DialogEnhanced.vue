@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { hasDocument } from '../../lib/env'
 import {
     DialogPortal as DialogPortalPrimitive,
@@ -274,7 +274,7 @@ onMounted(() => {
     initSize()
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     if (!hasDocument) return
     document.removeEventListener('mousemove', onDragMove)
     document.removeEventListener('mouseup', onDragEnd)

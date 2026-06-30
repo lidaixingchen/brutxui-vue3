@@ -166,7 +166,9 @@ function sortIcon(key: string) {
                                 v-for="(row, rowIndex) in paginatedRows"
                                 :key="rowKey ? String(row[rowKey]) : rowIndex"
                                 class="cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
+                                tabindex="0"
                                 @click="handleRowClick(row)"
+                                @keydown.enter="handleRowClick(row)"
                             >
                                 <TableCell v-for="col in columns" :key="col.key">
                                     {{ row[col.key] }}

@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { MoreHorizontal } from '@lucide/vue'
 import { cn } from '../../lib/utils'
-import { breadcrumbEllipsisClasses } from './breadcrumb-variants'
+import { breadcrumbEllipsisVariants } from './breadcrumb-variants'
 import { iconSizeVariants, type IconSize } from '../../lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
 
@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {
 const { t } = useLocale()
 
 const classes = computed(() =>
-    cn(breadcrumbEllipsisClasses, props.class)
+    cn(breadcrumbEllipsisVariants(), props.class)
 )
 
 const iconClasses = computed(() =>

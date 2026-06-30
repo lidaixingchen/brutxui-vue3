@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, onMounted, onUnmounted } from 'vue'
+import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../../lib/defaults'
@@ -72,7 +72,7 @@ watch(() => props.trigger, (newTrigger, oldTrigger) => {
     }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     stopAutoplay()
 })
 

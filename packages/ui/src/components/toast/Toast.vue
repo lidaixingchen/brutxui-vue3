@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from '@lucide/vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
@@ -86,7 +86,7 @@ onMounted(() => {
     }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     if (timer.value) clearTimeout(timer.value)
     if (leaveTimer.value) clearTimeout(leaveTimer.value)
 })

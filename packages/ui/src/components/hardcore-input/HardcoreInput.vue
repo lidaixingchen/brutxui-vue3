@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, toRef, inject, onUnmounted, useId } from 'vue'
+import { ref, computed, toRef, inject, onBeforeUnmount, useId } from 'vue'
 import { cn } from '../../lib/utils'
 import { useAudioEngine } from '../../composables/useAudioEngine'
 import { useFormFieldValidation } from '../../composables/useFormFieldValidation'
@@ -54,7 +54,7 @@ const { validationState, errorMessage, validate: validateField } = useFormFieldV
     defaultErrorMessage: () => t('hardcoreInput.invalidInput'),
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     if (shakeTimer.value) clearTimeout(shakeTimer.value)
 })
 

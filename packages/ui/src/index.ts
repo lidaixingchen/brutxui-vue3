@@ -334,7 +334,7 @@ export { default as BreadcrumbLink } from './components/breadcrumb/BreadcrumbLin
 export { default as BreadcrumbPage } from './components/breadcrumb/BreadcrumbPage.vue'
 export { default as BreadcrumbSeparator } from './components/breadcrumb/BreadcrumbSeparator.vue'
 export { default as BreadcrumbEllipsis } from './components/breadcrumb/BreadcrumbEllipsis.vue'
-export { breadcrumbListClasses, breadcrumbItemClasses, breadcrumbLinkClasses, breadcrumbPageClasses, breadcrumbSeparatorClasses, breadcrumbEllipsisClasses } from './components/breadcrumb/breadcrumb-variants'
+export { breadcrumbListVariants, breadcrumbItemVariants, breadcrumbLinkVariants, breadcrumbPageVariants, breadcrumbSeparatorVariants, breadcrumbEllipsisVariants } from './components/breadcrumb/breadcrumb-variants'
 
 export { default as Marquee } from './components/marquee/Marquee.vue'
 export { marqueeContainerVariants, marqueeTrackVariants } from './components/marquee/marquee-variants'

@@ -11,6 +11,15 @@ const THEME_KEY: InjectionKey<ReturnType<typeof createTheme>> = Symbol('brutx-th
 const VALID_THEMES: readonly ThemeName[] = ['classic', 'pastel', 'mono', 'warm'] as const
 const VALID_MODES: readonly ColorMode[] = ['light', 'dark', 'system'] as const
 
+// 类型守卫
+function isValidTheme(value: string | null): value is ThemeName {
+    return value !== null && (VALID_THEMES as readonly string[]).includes(value)
+}
+
+function isValidColorMode(value: string | null): value is ColorMode {
+    return value !== null && (VALID_MODES as readonly string[]).includes(value)
+}
+
 function getThemeClass(name: ThemeName): string {
     return `theme-${name}`
 }
@@ -109,12 +118,12 @@ export function createTheme() {
 
         // 第二步：应用保存的主题（复用 applyTheme，避免重复 DOM 操作与持久化逻辑）
         const savedThemeRaw = safeGetStorageItem('brutx-theme')
-        const savedTheme = (savedThemeRaw && VALID_THEMES.includes(savedThemeRaw as ThemeName)) ? savedThemeRaw as ThemeName : null
+        const savedTheme = isValidTheme(savedThemeRaw) ? savedThemeRaw : null
         applyTheme(savedTheme ?? theme.value)
 
         // 第三步：应用保存的颜色模式（复用 applyColorMode，避免重复逻辑）
         const savedModeRaw = safeGetStorageItem('brutx-color-mode')
-        const savedMode = (savedModeRaw && VALID_MODES.includes(savedModeRaw as ColorMode)) ? savedModeRaw as ColorMode : null
+        const savedMode = isValidColorMode(savedModeRaw) ? savedModeRaw : null
         if (savedMode) {
             applyColorMode(savedMode)
         } else if (isSystemDark.value) {

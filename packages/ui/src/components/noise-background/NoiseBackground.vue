@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, onUnmounted, useId } from 'vue'
+import { computed, ref, watch, onMounted, onBeforeUnmount, useId } from 'vue'
 import { isClient } from '../../lib/env'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '../../lib/utils'
@@ -118,7 +118,7 @@ onMounted(() => {
     }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     stopAnimation()
 })
 

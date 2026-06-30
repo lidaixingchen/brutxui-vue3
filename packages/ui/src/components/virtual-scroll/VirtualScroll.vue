@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, useSlots } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, useSlots } from 'vue'
 import { cn } from '../../lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
@@ -27,7 +27,8 @@ const parentRef = ref<HTMLElement | null>(null)
 const isAvailable = ref(true)
 
 let useVirtualizerFn: UseVirtualizerFn | null = null
-let virtualizerRef: ReturnType<UseVirtualizerFn> | null = null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 动态导入的虚拟化器类型需要运行时确定
+let virtualizerRef: any = null
 
 const virtualizerOptions = computed(() => ({
     count: props.items.length,
@@ -38,7 +39,7 @@ const virtualizerOptions = computed(() => ({
 
 function initVirtualizer(): void {
     if (useVirtualizerFn && !virtualizerRef) {
-        virtualizerRef = useVirtualizerFn(virtualizerOptions) as unknown as ReturnType<UseVirtualizerFn>
+        virtualizerRef = useVirtualizerFn(virtualizerOptions.value)
     }
 }
 
@@ -82,7 +83,7 @@ onMounted(() => {
     initVirtualizer()
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     if (parentRef.value) {
         parentRef.value.removeEventListener('scroll', handleScroll)
     }

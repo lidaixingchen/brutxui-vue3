@@ -2,7 +2,7 @@
 import { Primitive, type PrimitiveProps } from 'reka-ui'
 import { computed } from 'vue'
 import { cn } from '../../lib/utils'
-import { breadcrumbLinkClasses } from './breadcrumb-variants'
+import { breadcrumbLinkVariants } from './breadcrumb-variants'
 
 interface BreadcrumbLinkProps extends PrimitiveProps {
     class?: string
@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<BreadcrumbLinkProps>(), {
 })
 
 const classes = computed(() =>
-    cn(breadcrumbLinkClasses, props.class)
+    cn(breadcrumbLinkVariants(), props.class)
 )
 </script>
 

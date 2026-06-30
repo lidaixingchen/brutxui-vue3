@@ -22,6 +22,8 @@ interface TextareaProps {
     ariaDescribedby?: string
     /** 是否无效 */
     ariaInvalid?: boolean
+    /** 错误消息元素 ID */
+    ariaErrormessage?: string
     /** 是否必填 */
     ariaRequired?: boolean
     class?: string
@@ -38,6 +40,7 @@ const props = withDefaults(defineProps<TextareaProps>(), {
     ariaLabelledby: undefined,
     ariaDescribedby: undefined,
     ariaInvalid: undefined,
+    ariaErrormessage: undefined,
     ariaRequired: undefined,
     class: undefined,
 })
@@ -68,6 +71,7 @@ const classes = computed(() =>
         :aria-labelledby="ariaLabelledby"
         :aria-describedby="ariaDescribedby"
         :aria-invalid="ariaInvalid"
+        :aria-errormessage="ariaErrormessage"
         :aria-required="ariaRequired"
         @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
     />

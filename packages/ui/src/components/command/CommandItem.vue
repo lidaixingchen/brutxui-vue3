@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, type ComponentPublicInstance } from 'vue'
+import { computed, onMounted, onBeforeUnmount, ref, type ComponentPublicInstance } from 'vue'
 import { ListboxItem, useId } from 'reka-ui'
 import { cn } from '../../lib/utils'
 import { commandItemVariants } from './command-variants'
@@ -50,7 +50,7 @@ onMounted(() => {
     }
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
     rootContext.allItems.value.delete(id)
     const groupId = groupContext?.id
     if (groupId) {
