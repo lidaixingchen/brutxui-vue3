@@ -52,6 +52,24 @@ NumberInput provides two button layout modes, configured via the `layout` prop:
 </template>
 ```
 
+### Border Style Variants
+
+Set different border styles via the `variant` prop for form validation state feedback:
+
+| Variant | Description |
+| --- | --- |
+| `default` | Standard border |
+| `error` | Error border with danger color focus shadow |
+| `success` | Success border with success color focus shadow |
+
+```vue
+<template>
+    <NumberInput v-model="count" variant="default" />
+    <NumberInput v-model="count" variant="error" />
+    <NumberInput v-model="count" variant="success" />
+</template>
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -66,6 +84,8 @@ NumberInput provides two button layout modes, configured via the `layout` prop:
 | `formatOptions` | `Intl.NumberFormatOptions` | — | Number formatting options, affects display and allowed input characters |
 | `locale` | `string` | — | Locale for formatting and currency |
 | `layout` | `'split' \| 'stacked'` | `'split'` | Layout structure for the adjustment buttons |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
+| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"` |
 | `placeholder` | `string` | `undefined` | Placeholder; uses internationalized default when not set |
 | `disabled` | `boolean` | `false` | Whether to disable the input and buttons |
 | `readonly` | `boolean` | `false` | Whether readonly |

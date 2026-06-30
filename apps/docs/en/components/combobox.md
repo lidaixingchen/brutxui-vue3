@@ -202,6 +202,15 @@ interface ComboboxOption {
 - **Keyboard**: Supports `Arrow Up` / `Arrow Down` to move focus, `Enter` to select the current item, `Escape` to close the dropdown
 - **ARIA Attributes**: Provides accessibility label via the `ariaLabel` prop
 
+## Exposed Methods (defineExpose)
+
+| Property/Method | Type | Description |
+| --- | --- | --- |
+| `open` | `Ref<boolean>` | Whether the dropdown panel is expanded |
+| `searchQuery` | `Ref<string>` | Current search keyword |
+| `selectedValue` | `ComputedRef<string \| undefined>` | Currently selected value (read-only) |
+| `focus` | `() => void` | Focus the trigger |
+
 ## FAQ
 
 **Q: Why does clicking an already selected option in single-select mode have no effect?**

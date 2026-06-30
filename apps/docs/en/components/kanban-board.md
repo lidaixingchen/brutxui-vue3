@@ -153,6 +153,68 @@ interface KanbanColumn {
 - Cards support keyboard navigation and can be focused via the `Tab` key
 - Pressing `Enter` or `Space` after focusing triggers the `card-click` event
 - Empty columns display a localized prompt text to guide users to drag and drop cards
+- **Keyboard drag**: Focus a card and press `Space` to grab, use arrow keys to move, press `Space` again to drop, `Escape` to cancel
+  - `↑/↓`: Move card up/down within the current column
+  - `←/→`: Move card to an adjacent column
+- Grabbed cards have `aria-grabbed="true"` attribute added
+- Move results are automatically announced via `aria-live="polite"` region
+
+### Keyboard Drag Example
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
+
+const columns = ref([
+    { id: 'todo', title: 'Todo', cards: [
+        { id: 'c1', title: 'Task 1' },
+        { id: 'c2', title: 'Task 2' },
+    ]},
+    { id: 'done', title: 'Done', cards: [] },
+])
+</script>
+
+<template>
+    <!-- Users can:
+         1. Tab to focus a card
+         2. Press Space to grab the card
+         3. Use arrow keys to move the card
+         4. Press Space to drop the card
+         5. Press Escape to cancel
+    -->
+    <KanbanBoard v-model="columns" />
+</template>
+```
+
+## Exposed Methods (defineExpose)
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `moveCard` | `(cardId, columnId, direction)` | Move card to adjacent column |
+| `moveColumn` | `(fromId, toId)` | Swap two columns |
+| `addCard` | `(columnId)` | Trigger add card event |
+| `getColumn` | `(columnId)` | Get specific column data |
+| `getAllColumns` | — | Get all column data (computed) |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
+
+const kanbanRef = ref(null)
+const columns = ref([...])
+
+function moveCardRight() {
+    kanbanRef.value?.moveCard('card-1', 'todo', 1)
+}
+</script>
+
+<template>
+    <KanbanBoard ref="kanbanRef" v-model="columns" />
+    <button @click="moveCardRight">Move Card Right</button>
+</template>
+```
 
 ## FAQ
 

@@ -107,6 +107,7 @@ const value = ref('Readonly content, selectable and copyable but not editable')
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `readonly` | `boolean` | `false` | Whether readonly |
 | `placeholder` | `string` | — | Placeholder text |
+| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"`, uses `role="alert"` for screen reader announcement |
 | `ariaLabel` | `string` | — | ARIA label |
 | `ariaLabelledby` | `string` | — | ARIA label reference ID |
 | `ariaDescribedby` | `string` | — | ARIA description reference ID |
@@ -121,6 +122,33 @@ const value = ref('Readonly content, selectable and copyable but not editable')
 | Event | Payload | Description |
 |-------|---------|-------------|
 | `update:modelValue` | `string` | Triggered when value changes |
+
+## Exposed Methods (defineExpose)
+
+Access the component instance via `ref` to call the following methods:
+
+| Method | Description |
+|--------|-------------|
+| `focus()` | Focus the input |
+| `blur()` | Remove focus |
+| `select()` | Select all text in the input |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const inputRef = ref(null)
+function handleFocus() {
+    inputRef.value?.focus()
+}
+</script>
+
+<template>
+    <Input ref="inputRef" placeholder="Click button to focus" />
+    <button @click="handleFocus">Focus Input</button>
+</template>
+```
 
 ## Accessibility
 

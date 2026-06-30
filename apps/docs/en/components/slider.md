@@ -131,3 +131,10 @@ Enable `showTooltip` to display the current value near the thumb when dragging o
 - **Keyboard**: Supports arrow keys to adjust the value, `Home` / `End` to jump to min/max
 - **ARIA Attributes**: Automatically manages `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, `aria-orientation`, etc.
 - **Focus Management**: The slider can be focused via the Tab key
+
+## Exposed Methods (defineExpose)
+
+| Property/Method | Type | Description |
+| --- | --- | --- |
+| `currentValue` | `ComputedRef<number[]>` | Current slider value (read-only) |
+| `setValue` | `(value: number[]) => void` | Set the slider value |

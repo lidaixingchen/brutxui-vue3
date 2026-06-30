@@ -126,6 +126,7 @@ Set different sizes via the `size` prop:
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `readonly` | `boolean` | `false` | Whether readonly (not editable but selectable/copyable, cursor is `cursor-default`, opacity not reduced) |
 | `placeholder` | `string` | Internationalized fallback text | Placeholder text |
+| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"`, uses `role="alert"` for screen reader announcement |
 | `ariaLabel` | `string` | — | Accessibility label |
 | `ariaLabelledby` | `string` | — | Associated label element ID |
 | `ariaDescribedby` | `string` | — | Description element ID |
@@ -138,6 +139,16 @@ Set different sizes via the `size` prop:
 | Event | Payload | Description |
 | --- | --- | --- |
 | `update:modelValue` | `string` | Triggered when value changes |
+
+## Exposed Methods (defineExpose)
+
+Access the component instance via `ref` to call the following methods:
+
+| Method | Description |
+|--------|-------------|
+| `focus()` | Focus the textarea |
+| `blur()` | Remove focus |
+| `select()` | Select all text in the textarea |
 
 ## Accessibility
 

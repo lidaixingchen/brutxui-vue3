@@ -80,7 +80,14 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | --- | --- | --- | --- |
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | Card variant type |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | Card padding |
+| `interactive` | `boolean` | `false` | Whether clickable, adds `role="button"`, `tabindex="0"` and keyboard support |
 | `class` | `string` | — | Custom CSS class |
+
+### Card Events
+
+| Event | Description |
+| --- | --- |
+| `activate` | Triggered when `interactive=true`, fired on click or Enter/Space key press |
 
 ### CardTitle
 
@@ -105,4 +112,28 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 - **Semantic structure**: `CardTitle` renders as an `h3` heading element by default, customizable to an appropriate heading level via the `as` prop
 - **Interactive feedback**: The `interactive` variant provides hover effects; it is recommended to use it with keyboard focus styles
+- **Clickable cards**: Setting the `interactive` prop adds `role="button"` and `tabindex="0"` to the card, with Enter/Space key support to trigger the `activate` event
 - **Content organization**: The `CardHeader`, `CardContent`, and `CardFooter` sub-components provide a clear content structure, making it easier for assistive technologies to understand the page layout
+
+### Clickable Card
+
+Use the `interactive` prop to make a card clickable, automatically adding pointer cursor and hover lift effect:
+
+```vue
+<script setup>
+import { Card, CardContent, CardTitle } from 'brutx-ui-vue'
+
+function handleClick() {
+    console.log('Card activated!')
+}
+</script>
+
+<template>
+    <Card interactive @activate="handleClick">
+        <CardContent>
+            <CardTitle>Click me!</CardTitle>
+            <p>This card is interactive and supports keyboard navigation.</p>
+        </CardContent>
+    </Card>
+</template>
+```

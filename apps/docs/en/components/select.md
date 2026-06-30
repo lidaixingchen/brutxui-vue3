@@ -117,6 +117,8 @@ Root component that inherits all props from reka-ui `SelectRoot`. Common props a
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Trigger size |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
+| `errorMessage` | `string` | — | Error message text, only displayed when `variant="error"` |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `class` | `string` | — | Custom CSS class |
 | `iconClass` | `string` | — | Custom icon CSS class |

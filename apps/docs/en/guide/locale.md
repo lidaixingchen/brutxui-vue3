@@ -185,8 +185,9 @@ t('pagination.page', { number: 5 })
 When `t(path, params?)` is called, it looks up in the following order:
 
 1. Look up the value for `path` in the current locale
-2. If not found → fall back to the value for `path` in the zh-CN language pack
-3. If still not found → return the path string `path` itself
+2. If not found → fall back to the custom fallbackLocale (if configured)
+3. If still not found → fall back to the value for `path` in the zh-CN language pack
+4. If still not found → return the path string `path` itself
 
 ## Available Language Packs
 
@@ -211,11 +212,38 @@ app.use(BrutxUIPlugin, { locale: en })
 
 ### provideLocale
 
-Inject locale configuration within a component subtree.
+Inject locale configuration within a component subtree. Supports two calling methods:
 
 ```ts
+// Method 1: Direct locale (backward compatible)
 function provideLocale(locale: MaybeRef<Locale>): void
+
+// Method 2: Options object with custom fallback
+function provideLocale(options: {
+    locale: MaybeRef<Locale>
+    fallbackLocale?: MaybeRef<Partial<Locale>>
+}): void
 ```
+
+#### Custom Fallback Locale
+
+By default, when a key is not found in the current locale, it falls back to `zhCN`. You can customize the fallback chain via `fallbackLocale`:
+
+```vue
+<script setup>
+import { provideLocale, en } from 'brutx-ui-vue'
+
+// Custom fallback: en → customFallback → zhCN
+provideLocale({
+    locale: en,
+    fallbackLocale: {
+        button: { confirm: 'OK', cancel: 'Cancel' },
+    },
+})
+</script>
+```
+
+Fallback order: user locale → fallbackLocale → zhCN → return path string
 
 ### useLocale
 
@@ -295,7 +323,8 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | HardcoreInput | `hardcoreInput.invalidInput` | — |
 | CodeBlock | `codeBlock.copied`, `codeBlock.copy`, `codeBlock.defaultLanguage`, `codeBlock.defaultFilename` | — |
 | Calendar | `calendar.previousMonth`, `calendar.nextMonth` | — |
-| Kanban | `kanban.dropCardsHere` | — |
+| Kanban | `kanban.dropCardsHere`, `kanban.addCard`, `kanban.cardGrabbed`, `kanban.cardReleased`, `kanban.cardMoved`, `kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
+| Timeline | `timeline.label` | — |
 | PricingSection | `pricingSection.defaultTitle`, `pricingSection.mostPopular`, `pricingSection.perLifetime` | — |
 | DashboardStats | `dashboardStats.defaultTitle` | — |
 | Input | `input.placeholder` | — |

@@ -150,3 +150,17 @@ In vertical mode, each step can inject content via the `#step-{id}` slot when ac
 | `completed` | Green background + checkmark icon | Index < current step |
 | `active` | Variant background color + large shadow | Index = current step |
 | `upcoming` | Default background color + semi-transparent | Index > current step |
+
+## Exposed Methods (defineExpose)
+
+Access the component instance via `ref` to call the following methods:
+
+| Property/Method | Type | Description |
+| --- | --- | --- |
+| `currentStep` | `ComputedRef<number>` | Current step index (read-only) |
+| `totalSteps` | `ComputedRef<number>` | Total number of steps (read-only) |
+| `isFirstStep` | `ComputedRef<boolean>` | Whether it's the first step (read-only) |
+| `isLastStep` | `ComputedRef<boolean>` | Whether it's the last step (read-only) |
+| `goToStep` | `(index: number) => void` | Jump to a specific step |
+| `nextStep` | `() => void` | Go forward one step |
+| `previousStep` | `() => void` | Go back one step |

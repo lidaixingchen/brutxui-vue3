@@ -213,6 +213,16 @@ interface TreeSelectLocale {
 - **ARIA Attributes**: The trigger uses `role="combobox"` and `aria-expanded`; the dropdown list uses `role="tree"` and `role="treeitem"`; multi-select mode adds `aria-multiselectable`; disabled state uses `aria-disabled`
 - **Focus Management**: Uses roving tabindex for focus management; disabled nodes have `tabindex="-1"`
 
+## Exposed Methods (defineExpose)
+
+| Property/Method | Type | Description |
+| --- | --- | --- |
+| `open` | `Ref<boolean>` | Whether the dropdown panel is expanded |
+| `searchQuery` | `Ref<string>` | Current search keyword |
+| `selectedNodes` | `ComputedRef<TreeNode[]>` | Selected nodes in multi-select mode (read-only) |
+| `expandedIds` | `Ref<Set<string>>` | Currently expanded node IDs |
+| `focus` | `() => void` | Focus the trigger |
+
 ## FAQ
 
 **Q: Why can't some nodes be found during search filtering?**
