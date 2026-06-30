@@ -468,4 +468,4 @@ watch(searchQuery, (val) => {
 - [x] 提取魔法数字（CarouselEnhanced 的 `progressInterval`）✅ 2026-06-30
 - [x] 改善 aria-live 策略（Toast 从 `off` 改为 `polite`）✅ 2026-06-30
 - [x] 统一 inject fallback 模式（Accordion）✅ 2026-06-30
-- [ ] 验证并移除 `@ts-expect-error`（Carousel）
+- [x] 验证并移除 `@ts-expect-error`（Carousel）✅ 2026-06-30 — 已验证，vue-tsc 仍存在该限制，保留注释
