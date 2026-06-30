@@ -130,3 +130,31 @@ const value = ref([500])
 - **键盘操作**：支持方向键调节值，`Home` / `End` 跳转最小/最大值
 - **ARIA 属性**：自动管理 `aria-valuemin`、`aria-valuemax`、`aria-valuenow`、`aria-orientation` 等
 - **焦点管理**：滑块可通过 Tab 键聚焦
+
+## 方法（defineExpose）
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `currentValue` | `ComputedRef<number[]>` | 当前滑块值（只读） |
+| `setValue` | `(value: number[]) => void` | 设置滑块值 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Slider } from 'brutx-ui-vue'
+
+const sliderRef = ref(null)
+const value = ref([50])
+
+function resetToCenter() {
+    sliderRef.value?.setValue([50])
+}
+</script>
+
+<template>
+    <Slider ref="sliderRef" v-model="value" />
+    <button @click="resetToCenter">Reset</button>
+</template>
+```

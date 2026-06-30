@@ -149,3 +149,42 @@ import type { StepperStep } from 'brutx-ui-vue'
 | `completed` | 绿色背景 + ✓ 图标 | 索引 < 当前步骤 |
 | `active` | 变体背景色 + 大阴影 | 索引 = 当前步骤 |
 | `upcoming` | 默认背景色 + 半透明 | 索引 > 当前步骤 |
+
+## 方法（defineExpose）
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `currentStep` | `ComputedRef<number>` | 当前步骤索引（只读） |
+| `totalSteps` | `ComputedRef<number>` | 总步骤数（只读） |
+| `isFirstStep` | `ComputedRef<boolean>` | 是否为第一步（只读） |
+| `isLastStep` | `ComputedRef<boolean>` | 是否为最后一步（只读） |
+| `goToStep` | `(index: number) => void` | 跳转到指定步骤 |
+| `nextStep` | `() => void` | 前进一步 |
+| `previousStep` | `() => void` | 后退一步 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Stepper } from 'brutx-ui-vue'
+
+const stepperRef = ref(null)
+const current = ref(0)
+const steps = [...]
+
+function handleNext() {
+    stepperRef.value?.nextStep()
+}
+
+function handleBack() {
+    stepperRef.value?.previousStep()
+}
+</script>
+
+<template>
+    <Stepper ref="stepperRef" v-model="current" :steps="steps" />
+    <button @click="handleBack" :disabled="stepperRef?.isFirstStep">上一步</button>
+    <button @click="handleNext" :disabled="stepperRef?.isLastStep">下一步</button>
+</template>
+```

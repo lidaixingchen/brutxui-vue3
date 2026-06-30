@@ -405,6 +405,13 @@ export const zhCN: Locale = {
     kanban: {
         dropCardsHere: '拖放卡片到此处',
         addCard: '添加卡片',
+        cardGrabbed: '已抓取卡片，使用方向键移动',
+        cardReleased: '已释放卡片',
+        cardMoved: '卡片已移动',
+        cardMovedToColumn: '卡片已移动到 {column}',
+    },
+    timeline: {
+        label: '时间线',
     },
     tabsNav: {
         emptyTitle: '暂无标签页',

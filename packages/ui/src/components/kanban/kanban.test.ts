@@ -93,7 +93,7 @@ describe('KanbanBoard', () => {
         const wrapper = mount(KanbanBoard, {
             props: { modelValue: columns, class: 'my-board' },
         })
-        expect(wrapper.classes()).toContain('my-board')
+        expect(wrapper.find('.my-board').exists()).toBe(true)
     })
 
     it('cards are draggable', () => {

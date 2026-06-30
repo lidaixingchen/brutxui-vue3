@@ -212,6 +212,38 @@ interface TreeSelectLocale {
 - **ARIA 属性**：触发器使用 `role="combobox"` 和 `aria-expanded`；下拉列表使用 `role="tree"` 和 `role="treeitem"`；多选模式下添加 `aria-multiselectable`；禁用状态下使用 `aria-disabled`
 - **焦点管理**：使用 roving tabindex 管理焦点；禁用节点设置 `tabindex="-1"`
 
+## 方法（defineExpose）
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `open` | `Ref<boolean>` | 下拉面板是否展开 |
+| `searchQuery` | `Ref<string>` | 当前搜索关键词 |
+| `selectedNodes` | `ComputedRef<TreeNode[]>` | 多选模式下选中的节点列表（只读） |
+| `expandedIds` | `Ref<Set<string>>` | 当前展开的节点 ID 集合 |
+| `focus` | `() => void` | 聚焦触发器 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { TreeSelect } from 'brutx-ui-vue'
+
+const treeRef = ref(null)
+
+function expandAll() {
+    // 获取所有节点 ID 并展开
+    const allIds = getAllNodeIds(nodes)
+    treeRef.value?.expandedIds = new Set(allIds)
+}
+</script>
+
+<template>
+    <TreeSelect ref="treeRef" v-model="selected" :nodes="nodes" />
+    <button @click="expandAll">展开全部</button>
+</template>
+```
+
 ## 常见问题
 
 **Q: 搜索过滤时为什么有些节点搜不到？**

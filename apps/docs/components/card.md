@@ -79,7 +79,14 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | --- | --- | --- | --- |
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
+| `interactive` | `boolean` | `false` | 是否可点击，添加 `role="button"`、`tabindex="0"` 和键盘支持 |
 | `class` | `string` | — | 自定义 CSS 类 |
+
+#### 事件
+
+| 事件 | 说明 |
+| --- | --- |
+| `activate` | 当 `interactive=true` 时，点击或按 Enter/Space 键触发 |
 
 ### CardTitle
 
@@ -104,4 +111,28 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 - **语义化结构**：`CardTitle` 默认渲染为 `h3` 标题元素，可通过 `as` 属性自定义为合适的标题层级
 - **交互反馈**：`interactive` 变体提供悬停效果，建议配合键盘焦点样式使用
+- **可点击卡片**：设置 `interactive` 属性后，卡片会添加 `role="button"` 和 `tabindex="0"`，支持 Enter/Space 键触发 `activate` 事件
 - **内容组织**：通过 `CardHeader`、`CardContent`、`CardFooter` 子组件提供清晰的内容结构，便于辅助技术理解页面布局
+
+### 可点击卡片
+
+通过 `interactive` 属性将卡片变为可点击元素，自动添加手型光标和悬停提升效果：
+
+```vue
+<script setup>
+import { Card, CardContent, CardTitle } from 'brutx-ui-vue'
+
+function handleClick() {
+    console.log('Card activated!')
+}
+</script>
+
+<template>
+    <Card interactive @activate="handleClick">
+        <CardContent>
+            <CardTitle>Click me!</CardTitle>
+            <p>This card is interactive and supports keyboard navigation.</p>
+        </CardContent>
+    </Card>
+</template>
+```

@@ -13,6 +13,13 @@
   <CardContent>内容</CardContent>
   <CardFooter>底部</CardFooter>
 </Card>
+
+<!-- 可点击卡片 -->
+<Card interactive @activate="handleClick">
+  <CardContent>
+    <p>点击此卡片触发 activate 事件</p>
+  </CardContent>
+</Card>
 ```
 
 子组件：Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
@@ -23,7 +30,14 @@
 |------|------|--------|------|
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
+| `interactive` | `boolean` | `false` | 是否可点击，添加 `role="button"`、`tabindex="0"` 和键盘支持 |
 | `class` | `string` | — | 自定义样式类 |
+
+### Card 事件
+
+| 事件 | 说明 |
+|------|------|
+| `activate` | 当 `interactive=true` 时，点击或按 Enter/Space 键触发 |
 
 ### CardTitle Props
 
@@ -330,6 +344,20 @@ interface StepperStep {
 ### Stepper 插槽
 
 垂直模式下，每个步骤可通过 `#step-{id}` 插槽注入内容。
+
+### Stepper 暴露的 API
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `currentStep` | `ComputedRef<number>` | 当前步骤索引（只读） |
+| `totalSteps` | `ComputedRef<number>` | 总步骤数（只读） |
+| `isFirstStep` | `ComputedRef<boolean>` | 是否为第一步（只读） |
+| `isLastStep` | `ComputedRef<boolean>` | 是否为最后一步（只读） |
+| `goToStep` | `(index: number) => void` | 跳转到指定步骤 |
+| `nextStep` | `() => void` | 前进一步 |
+| `previousStep` | `() => void` | 后退一步 |
 
 ## Timeline
 

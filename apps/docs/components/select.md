@@ -116,6 +116,8 @@ const selectedFruit = ref('')
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
+| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `class` | `string` | — | 自定义样式类 |
 | `iconClass` | `string` | — | 图标自定义样式类 |

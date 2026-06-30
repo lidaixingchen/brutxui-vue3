@@ -41,6 +41,39 @@ const emit = defineEmits<{
     'step-click': [index: number];
 }>();
 
+const currentStep = computed(() => props.modelValue)
+const totalSteps = computed(() => props.steps.length)
+const isFirstStep = computed(() => currentStep.value === 0)
+const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
+
+function goToStep(index: number) {
+    if (index >= 0 && index < totalSteps.value) {
+        emit('update:modelValue', index)
+    }
+}
+
+function nextStep() {
+    if (!isLastStep.value) {
+        emit('update:modelValue', currentStep.value + 1)
+    }
+}
+
+function previousStep() {
+    if (!isFirstStep.value) {
+        emit('update:modelValue', currentStep.value - 1)
+    }
+}
+
+defineExpose({
+    currentStep,
+    totalSteps,
+    goToStep,
+    nextStep,
+    previousStep,
+    isFirstStep,
+    isLastStep,
+})
+
 function getState(index: number): 'completed' | 'active' | 'upcoming' {
     if (index < props.modelValue) return 'completed';
     if (index === props.modelValue) return 'active';

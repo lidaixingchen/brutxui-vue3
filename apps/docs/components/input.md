@@ -79,6 +79,29 @@ const value = ref('只读内容，可选中复制但不可编辑')
 </template>
 ```
 
+### 错误消息
+
+通过 `variant="error"` 和 `errorMessage` 属性显示错误消息。错误消息使用 `role="alert"` 确保屏幕阅读器自动播报。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const email = ref('')
+</script>
+
+<template>
+    <Input
+        v-model="email"
+        type="email"
+        variant="error"
+        error-message="请输入有效的邮箱地址"
+        placeholder="you@example.com"
+    />
+</template>
+```
+
 ## 变体
 
 | 变体 | 说明 |
@@ -106,6 +129,7 @@ const value = ref('只读内容，可选中复制但不可编辑')
 | `disabled` | `boolean` | `false` | 是否禁用 |
 | `readonly` | `boolean` | `false` | 是否只读 |
 | `placeholder` | `string` | — | 占位符文本 |
+| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
 | `ariaLabel` | `string` | — | ARIA 标签 |
 | `ariaLabelledby` | `string` | — | ARIA 标签引用 ID |
 | `ariaDescribedby` | `string` | — | ARIA 描述引用 ID |
@@ -120,6 +144,34 @@ const value = ref('只读内容，可选中复制但不可编辑')
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `update:modelValue` | `string` | 值更新时触发 |
+
+## 方法（defineExpose）
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 方法 | 说明 |
+|------|------|
+| `focus()` | 聚焦输入框 |
+| `blur()` | 移除焦点 |
+| `select()` | 选中输入框中的文本 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const inputRef = ref(null)
+
+function handleFocus() {
+    inputRef.value?.focus()
+}
+</script>
+
+<template>
+    <Input ref="inputRef" placeholder="Click button to focus" />
+    <button @click="handleFocus">Focus Input</button>
+</template>
+```
 
 ## 可访问性
 

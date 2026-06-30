@@ -184,8 +184,9 @@ t('pagination.page', { number: 5 })
 当 `t(path, params?)` 被调用时，按以下顺序查找：
 
 1. 当前 locale 中查找 `path` 对应的值
-2. 不存在 → 回退到 zh-CN 语言包中 `path` 对应的值
-3. 仍不存在 → 返回路径字符串 `path` 本身
+2. 不存在 → 回退到自定义 fallbackLocale（如果配置了）
+3. 仍不存在 → 回退到 zh-CN 语言包中 `path` 对应的值
+4. 仍不存在 → 返回路径字符串 `path` 本身
 
 ## 可用语言包
 
@@ -210,11 +211,38 @@ app.use(BrutxUIPlugin, { locale: en })
 
 ### provideLocale
 
-在组件子树内注入 locale 配置。
+在组件子树内注入 locale 配置。支持两种调用方式：
 
 ```ts
+// 方式 1：直接传入 locale（向后兼容）
 function provideLocale(locale: MaybeRef<Locale>): void
+
+// 方式 2：传入配置对象，支持自定义 fallback
+function provideLocale(options: {
+    locale: MaybeRef<Locale>
+    fallbackLocale?: MaybeRef<Partial<Locale>>
+}): void
 ```
+
+#### 自定义 Fallback Locale
+
+默认情况下，当 key 在当前 locale 中找不到时，会回退到 `zhCN`。可以通过 `fallbackLocale` 自定义回退链：
+
+```vue
+<script setup>
+import { provideLocale, en } from 'brutx-ui-vue'
+
+// 自定义 fallback：en → customFallback → zhCN
+provideLocale({
+    locale: en,
+    fallbackLocale: {
+        button: { confirm: 'OK', cancel: 'Cancel' },
+    },
+})
+</script>
+```
+
+回退顺序：用户 locale → fallbackLocale → zhCN → 返回 path 原文
 
 ### useLocale
 
@@ -294,7 +322,8 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | HardcoreInput | `hardcoreInput.invalidInput` | — |
 | CodeBlock | `codeBlock.copied`、`codeBlock.copy`、`codeBlock.defaultLanguage`、`codeBlock.defaultFilename` | — |
 | Calendar | `calendar.previousMonth`、`calendar.nextMonth` | — |
-| Kanban | `kanban.dropCardsHere` | — |
+| Kanban | `kanban.dropCardsHere`、`kanban.addCard`、`kanban.cardGrabbed`、`kanban.cardReleased`、`kanban.cardMoved`、`kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
+| Timeline | `timeline.label` | — |
 | PricingSection | `pricingSection.defaultTitle`、`pricingSection.mostPopular`、`pricingSection.perLifetime` | — |
 | DashboardStats | `dashboardStats.defaultTitle` | — |
 | Input | `input.placeholder` | — |

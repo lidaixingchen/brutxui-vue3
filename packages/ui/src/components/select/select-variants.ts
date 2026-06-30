@@ -20,9 +20,15 @@ export const selectTriggerVariants = cva(
                 default: 'h-11',
                 lg: 'h-14',
             },
+            variant: {
+                default: '',
+                error: 'border-brutal-danger focus:ring-brutal-danger',
+                success: 'border-brutal-success focus:ring-brutal-success',
+            },
         },
         defaultVariants: {
             size: 'default',
+            variant: 'default',
         },
     }
 )

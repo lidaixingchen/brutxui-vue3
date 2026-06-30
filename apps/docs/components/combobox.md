@@ -201,6 +201,35 @@ interface ComboboxOption {
 - **键盘操作**：支持 `↑` / `↓` 上下移动焦点，`Enter` 选中当前项，`Escape` 关闭下拉
 - **ARIA 属性**：通过 `ariaLabel` 属性提供无障碍标签
 
+## 方法（defineExpose）
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `open` | `Ref<boolean>` | 下拉面板是否展开 |
+| `searchQuery` | `Ref<string>` | 当前搜索关键词 |
+| `selectedValue` | `ComputedRef<string \| undefined>` | 当前选中值（只读） |
+| `focus` | `() => void` | 聚焦触发器 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Combobox } from 'brutx-ui-vue'
+
+const comboboxRef = ref(null)
+
+function openDropdown() {
+    comboboxRef.value?.open = true
+}
+</script>
+
+<template>
+    <Combobox ref="comboboxRef" v-model="selected" :options="options" />
+    <button @click="openDropdown">Open</button>
+</template>
+```
+
 ## 常见问题
 
 **Q: 单选模式下再次点击已选中的选项为什么没有反应？**

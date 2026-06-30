@@ -4,41 +4,42 @@ import Input from './Input.vue'
 describe('Input', () => {
     it('renders with default type="text"', () => {
         const wrapper = mount(Input)
-        expect(wrapper.element.tagName).toBe('INPUT')
-        expect(wrapper.attributes('type')).toBe('text')
+        const input = wrapper.find('input')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('type')).toBe('text')
     })
 
     it('applies variant classes', async () => {
         const wrapper = mount(Input)
 
         await wrapper.setProps({ variant: 'default' })
-        expect(wrapper.classes()).toContain('border-brutal')
+        expect(wrapper.find('input').classes()).toContain('border-brutal')
 
         await wrapper.setProps({ variant: 'error' })
-        expect(wrapper.classes()).toContain('border-brutal-destructive')
+        expect(wrapper.find('input').classes()).toContain('border-brutal-destructive')
 
         await wrapper.setProps({ variant: 'success' })
-        expect(wrapper.classes()).toContain('border-brutal-success')
+        expect(wrapper.find('input').classes()).toContain('border-brutal-success')
     })
 
     it('applies size classes via size prop', async () => {
         const wrapper = mount(Input)
 
         await wrapper.setProps({ size: 'sm' })
-        expect(wrapper.classes()).toContain('h-9')
+        expect(wrapper.find('input').classes()).toContain('h-9')
 
         await wrapper.setProps({ size: 'default' })
-        expect(wrapper.classes()).toContain('h-11')
+        expect(wrapper.find('input').classes()).toContain('h-11')
 
         await wrapper.setProps({ size: 'lg' })
-        expect(wrapper.classes()).toContain('h-14')
+        expect(wrapper.find('input').classes()).toContain('h-14')
     })
 
     it('has v-model support (emits update:modelValue on input)', async () => {
         const wrapper = mount(Input, {
             props: { modelValue: '' },
         })
-        await wrapper.setValue('hello')
+        await wrapper.find('input').setValue('hello')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])
     })
@@ -47,62 +48,86 @@ describe('Input', () => {
         const wrapper = mount(Input, {
             props: { disabled: true },
         })
-        expect(wrapper.attributes('disabled')).toBeDefined()
+        expect(wrapper.find('input').attributes('disabled')).toBeDefined()
     })
 
     it('shows placeholder text', () => {
         const wrapper = mount(Input, {
             props: { placeholder: 'Enter text' },
         })
-        expect(wrapper.attributes('placeholder')).toBe('Enter text')
+        expect(wrapper.find('input').attributes('placeholder')).toBe('Enter text')
     })
 
     it('applies custom class', () => {
         const wrapper = mount(Input, {
             props: { class: 'custom-class' },
         })
-        expect(wrapper.classes()).toContain('custom-class')
+        expect(wrapper.find('input').classes()).toContain('custom-class')
     })
 
     it('supports readonly prop', () => {
         const wrapper = mount(Input, {
             props: { readonly: true },
         })
-        expect(wrapper.attributes('readonly')).toBeDefined()
-        expect(wrapper.classes()).toContain('cursor-default')
+        expect(wrapper.find('input').attributes('readonly')).toBeDefined()
+        expect(wrapper.find('input').classes()).toContain('cursor-default')
     })
 
     it('does not apply opacity-50 when readonly', () => {
         const wrapper = mount(Input, {
             props: { readonly: true },
         })
-        expect(wrapper.classes()).not.toContain('opacity-50')
+        expect(wrapper.find('input').classes()).not.toContain('opacity-50')
     })
 
     it('supports type="password"', () => {
         const wrapper = mount(Input, {
             props: { type: 'password' },
         })
-        expect(wrapper.attributes('type')).toBe('password')
+        expect(wrapper.find('input').attributes('type')).toBe('password')
     })
 
     it('supports type="email"', () => {
         const wrapper = mount(Input, {
             props: { type: 'email' },
         })
-        expect(wrapper.attributes('type')).toBe('email')
+        expect(wrapper.find('input').attributes('type')).toBe('email')
     })
 
     it('supports type="number"', () => {
         const wrapper = mount(Input, {
             props: { type: 'number' },
         })
-        expect(wrapper.attributes('type')).toBe('number')
+        expect(wrapper.find('input').attributes('type')).toBe('number')
     })
 
     it('has default border-brutal class', () => {
         const wrapper = mount(Input)
-        expect(wrapper.classes()).toContain('border-brutal')
-        expect(wrapper.classes()).toContain('bg-brutal-bg')
+        expect(wrapper.find('input').classes()).toContain('border-brutal')
+        expect(wrapper.find('input').classes()).toContain('bg-brutal-bg')
+    })
+
+    it('shows error message when variant is error and errorMessage is provided', () => {
+        const wrapper = mount(Input, {
+            props: { variant: 'error', errorMessage: 'This field is required' },
+        })
+        const errorMsg = wrapper.find('[role="alert"]')
+        expect(errorMsg.exists()).toBe(true)
+        expect(errorMsg.text()).toBe('This field is required')
+    })
+
+    it('does not show error message when variant is not error', () => {
+        const wrapper = mount(Input, {
+            props: { variant: 'default', errorMessage: 'This field is required' },
+        })
+        expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    })
+
+    it('exposes ref, focus, blur, select methods', () => {
+        const wrapper = mount(Input)
+        expect(wrapper.vm.ref).toBeDefined()
+        expect(typeof wrapper.vm.focus).toBe('function')
+        expect(typeof wrapper.vm.blur).toBe('function')
+        expect(typeof wrapper.vm.select).toBe('function')
     })
 })

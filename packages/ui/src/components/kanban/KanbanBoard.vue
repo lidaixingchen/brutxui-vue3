@@ -44,6 +44,8 @@ const draggingColumn = ref<string | null>(null);
 const dragOverColumn = ref<string | null>(null);
 const dragOverColumnHeader = ref<string | null>(null);
 const isDragging = ref(false);
+const grabbedCard = ref<{ cardId: string; columnId: string } | null>(null);
+const ariaLiveMessage = ref('');
 
 const columns = computed(() => props.modelValue);
 
@@ -81,10 +83,83 @@ function onCardClick(card: KanbanCard, columnId: string) {
 }
 
 function onCardKeydown(e: KeyboardEvent, card: KanbanCard, columnId: string) {
-    if (e.key === 'Enter' || e.key === ' ') {
+    // Space 抓取/放下卡片
+    if (e.key === ' ') {
+        e.preventDefault();
+        if (grabbedCard.value) {
+            grabbedCard.value = null;
+            ariaLiveMessage.value = t('kanban.cardReleased');
+        } else {
+            grabbedCard.value = { cardId: card.id, columnId };
+            ariaLiveMessage.value = t('kanban.cardGrabbed');
+        }
+        return;
+    }
+    // Enter 触发 click 事件
+    if (e.key === 'Enter') {
         e.preventDefault();
         onCardClick(card, columnId);
+        return;
     }
+
+    if (!grabbedCard.value) return;
+
+    if (e.key === 'Escape') {
+        grabbedCard.value = null;
+        ariaLiveMessage.value = t('kanban.cardReleased');
+        return;
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        moveCardInColumn(grabbedCard.value.cardId, grabbedCard.value.columnId, e.key === 'ArrowUp' ? -1 : 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        moveCardToAdjacentColumn(grabbedCard.value.cardId, grabbedCard.value.columnId, e.key === 'ArrowLeft' ? -1 : 1);
+    }
+}
+
+function moveCardInColumn(cardId: string, columnId: string, direction: number) {
+    const col = columns.value.find(c => c.id === columnId);
+    if (!col) return;
+    const index = col.cards.findIndex(c => c.id === cardId);
+    if (index === -1) return;
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= col.cards.length) return;
+
+    const newColumns = columns.value.map(c => {
+        if (c.id !== columnId) return c;
+        const newCards = [...c.cards];
+        const [moved] = newCards.splice(index, 1);
+        newCards.splice(newIndex, 0, moved);
+        return { ...c, cards: newCards };
+    });
+    emit('update:modelValue', newColumns);
+    ariaLiveMessage.value = t('kanban.cardMoved');
+}
+
+function moveCardToAdjacentColumn(cardId: string, columnId: string, direction: number) {
+    const colIndex = columns.value.findIndex(c => c.id === columnId);
+    if (colIndex === -1) return;
+    const newColIndex = colIndex + direction;
+    if (newColIndex < 0 || newColIndex >= columns.value.length) return;
+
+    const col = columns.value[colIndex];
+    const card = col.cards.find(c => c.id === cardId);
+    if (!card) return;
+
+    const newColumns = columns.value.map((c, i) => {
+        if (i === colIndex) {
+            return { ...c, cards: c.cards.filter(cc => cc.id !== cardId) };
+        }
+        if (i === newColIndex) {
+            return { ...c, cards: [...c.cards, card] };
+        }
+        return c;
+    });
+    emit('update:modelValue', newColumns);
+    grabbedCard.value = { cardId, columnId: columns.value[newColIndex].id };
+    ariaLiveMessage.value = t('kanban.cardMovedToColumn', { column: columns.value[newColIndex].title });
 }
 
 function onDrop(e: DragEvent, toColumnId: string) {
@@ -225,6 +300,22 @@ const columnHeaderClassesMap = computed(() => {
 })
 
 const addIconClasses = computed(() => iconSizeVariants({ size: 'sm' }));
+
+defineExpose({
+    moveCard: moveCardToAdjacentColumn,
+    moveColumn: (fromId: string, toId: string) => {
+        const fromIndex = columns.value.findIndex(c => c.id === fromId);
+        const toIndex = columns.value.findIndex(c => c.id === toId);
+        if (fromIndex === -1 || toIndex === -1) return;
+        const newColumns = [...columns.value];
+        const [moved] = newColumns.splice(fromIndex, 1);
+        newColumns.splice(toIndex, 0, moved);
+        emit('update:modelValue', newColumns);
+    },
+    addCard: (columnId: string) => emit('add-card', columnId),
+    getColumn: (columnId: string) => columns.value.find(c => c.id === columnId),
+    getAllColumns: computed(() => props.modelValue),
+});
 </script>
 
 <template>
@@ -273,6 +364,7 @@ const addIconClasses = computed(() => iconSizeVariants({ size: 'sm' }));
                     :tabindex="0"
                     role="button"
                     :aria-label="card.title"
+                    :aria-grabbed="grabbedCard?.cardId === card.id ? 'true' : undefined"
                     draggable="true"
                     @dragstart="onDragStart(card.id, col.id)"
                     @dragend="onDragEnd"
@@ -319,5 +411,9 @@ const addIconClasses = computed(() => iconSizeVariants({ size: 'sm' }));
                 </Button>
             </slot>
         </div>
+    </div>
+    <!-- 无障碍：实时播报卡片移动结果 -->
+    <div class="sr-only" aria-live="polite" role="status">
+        {{ ariaLiveMessage }}
     </div>
 </template>

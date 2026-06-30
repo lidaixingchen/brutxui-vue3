@@ -16,12 +16,13 @@ describe('SelectTrigger', () => {
         const wrapper = mount(SelectTrigger, {
             global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('border-3')
-        expect(wrapper.classes()).toContain('border-brutal')
-        expect(wrapper.classes()).toContain('shadow-brutal')
-        expect(wrapper.classes()).toContain('bg-brutal-bg')
-        expect(wrapper.classes()).toContain('text-brutal-fg')
-        expect(wrapper.classes()).toContain('font-bold')
+        const trigger = wrapper.find('[role="combobox"], [aria-haspopup="listbox"]')
+        expect(trigger.classes()).toContain('border-3')
+        expect(trigger.classes()).toContain('border-brutal')
+        expect(trigger.classes()).toContain('shadow-brutal')
+        expect(trigger.classes()).toContain('bg-brutal-bg')
+        expect(trigger.classes()).toContain('text-brutal-fg')
+        expect(trigger.classes()).toContain('font-bold')
     })
 
     it('applies custom class', () => {
@@ -29,7 +30,8 @@ describe('SelectTrigger', () => {
             props: { class: 'custom-trigger' },
             global: { stubs: { SelectTrigger: primitiveStub, SelectIcon: primitiveStub } },
         })
-        expect(wrapper.classes()).toContain('custom-trigger')
+        const trigger = wrapper.find('[role="combobox"], [aria-haspopup="listbox"]')
+        expect(trigger.classes()).toContain('custom-trigger')
     })
 
     it('applies default icon classes to chevron linked to size prop', () => {

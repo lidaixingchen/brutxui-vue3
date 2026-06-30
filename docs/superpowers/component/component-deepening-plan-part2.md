@@ -529,16 +529,6 @@
 - **测试覆盖**：所有新增 composable 必须配套 `.test.ts` 文件；hooks/index.ts 导出必须与主入口同步
 - **Locale fallback**：fallback 链路可配置但默认回退到 `zhCN`
 
-## 验证步骤
-
-每批完成后执行：
-
-1. `pnpm lint` — 代码规范检查
-2. `pnpm typecheck` — 类型检查
-3. `pnpm test` — 全部测试通过（含新增测试）
-4. `pnpm --filter brutx-registry-vue build && pnpm --filter brutx-registry-vue validate` — 注册表验证
-5. 最终全部门禁：`pnpm release:check`
-
 ---
 
 ## 更新日志
@@ -546,3 +536,4 @@
 | 日期 | 版本 | 说明 |
 | --- | --- | --- |
 | 2026-06-30 | v1.0 | 初始版本，规划第 9~16 批深化拓展方向 |
+| 2026-06-30 | v1.1 | 实施第 9~16 批深化拓展方案 |

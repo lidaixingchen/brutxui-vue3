@@ -50,17 +50,17 @@ import { cn } from '@/lib/utils'
 |------|--------|------|
 | Button | 按钮 | 9 种变体、5 种尺寸、加载状态 |
 | SubmitButton | 提交按钮 | 支持加载/等待状态 |
-| Input | 输入框 | 支持变体/尺寸/ARIA 无障碍属性、readonly 只读 |
-| Textarea | 文本域 | 多行文本输入，支持 ARIA 无障碍属性、readonly 只读 |
-| NumberInput | 数字输入框 | 带 +/- 按钮，支持 split/stacked 布局 |
+| Input | 输入框 | 支持变体/尺寸/ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、defineExpose 暴露 ref/focus/blur/select 方法 |
+| Textarea | 文本域 | 多行文本输入，支持 ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、defineExpose 暴露 ref/focus/blur/select 方法 |
+| NumberInput | 数字输入框 | 带 +/- 按钮，支持 split/stacked 布局、variant 边框样式变体、errorMessage 错误消息 |
 | HardcoreInput | 硬核输入框 | 8-bit 音效 + 表情反馈 + 物理震动 |
 | Checkbox | 复选框 | 通过 v-model:checked 绑定、ariaLabel 无障碍标签、indeterminate 状态使用 Minus 图标 |
 | Switch | 开关 | 通过 v-model:checked 绑定、ariaLabel 无障碍标签 |
 | RadioGroup | 单选组 | 支持 v-model、ariaLabel 无障碍标签 |
-| Select | 选择器 | 支持子组件组合 |
-| Combobox | 搜索选择器 | 可搜索的单选/多选，支持加载状态与创建选项 |
-| TreeSelect | 树形选择器 | 支持单选/多选/搜索/任意深度树结构 |
-| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式/方向/刻度/提示，通过 v-model 进行受控 |
+| Select | 选择器 | 支持子组件组合，SelectTrigger 支持 variant 边框样式变体和 errorMessage 错误消息 |
+| Combobox | 搜索选择器 | 可搜索的单选/多选，支持加载状态与创建选项，defineExpose 暴露 open/searchQuery/selectedValue/focus |
+| TreeSelect | 树形选择器 | 支持单选/多选/搜索/任意深度树结构，defineExpose 暴露 open/searchQuery/selectedNodes/expandedIds/focus |
+| Slider | 滑块 | 支持 v-model，支持 variant/size/范围模式/方向/刻度/提示，通过 v-model 进行受控，defineExpose 暴露 currentVal/setValue |
 | Toggle | 切换按钮 | 支持 v-model:pressed、loading 加载状态、ariaLabel 无障碍标签 |
 | ToggleGroup | 切换按钮组 | 支持单选/多选/方向，通过 v-model 进行受控 |
 | TagsInput | 标签输入 | 支持子组件组合、ariaLabel 无障碍标签 |
@@ -74,7 +74,7 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
-| Card | 卡片 | 6 种变体，支持 Header/Title/Description/Content/Footer |
+| Card | 卡片 | 6 种变体，支持 Header/Title/Description/Content/Footer，interactive 可点击模式支持 role="button" 和键盘事件 |
 | Card3D | 3D 卡片 | 3D 物理悬浮，鼠标悬停偏转与反向阴影，支持变体/可点击 |
 | Separator | 分隔线 | 支持水平/垂直方向/变体/尺寸/文字分隔线 |
 | ScrollArea | 滚动区域 | 自定义滚动条，支持 ScrollBar 子组件/变体/尺寸 |
@@ -82,8 +82,8 @@ import { cn } from '@/lib/utils'
 | Tabs | 标签页 | 支持 list/trigger/content、orientation 垂直布局，通过 v-model 进行受控 |
 | Accordion | 手风琴 | 支持单选/多选模式、content 变体（flat/ghost/interactive） |
 | Breadcrumb | 面包屑 | 支持 Link/Page/Separator/Ellipsis |
-| Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击 |
-| Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局 |
+| Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击，defineExpose 暴露 currentStep/goToStep/nextStep/previousStep 等方法 |
+| Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局，role="list" 和 role="listitem" 无障碍语义 |
 | Carousel | 轮播 | 支持循环/自动播放/箭头/圆点、defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
 | TreeView | 树形视图 | 支持展开/选中/复选选择模式 |
 
@@ -98,7 +98,7 @@ import { cn } from '@/lib/utils'
 | Avatar | 头像 | 支持 image/fallback、尺寸、形状、变体、状态 |
 | Progress | 进度条 | 支持 v-model、不确定状态、百分比标签 |
 | Pagination | 分页 | 支持 v-model、计算算法、首尾页、可点击省略号 jump 事件 |
-| Counter | 数字动画 | 支持前缀/后缀/分隔符/缓动函数，5 种变体 |
+| Counter | 数字动画 | 支持前缀/后缀/分隔符/缓动函数，5 种变体，自动尊重 prefers-reduced-motion |
 | Kbd | 键盘按键 | 3 种尺寸、4 种变体 |
 | CodeBlock | 代码块 | 支持语言高亮、行号、折叠展开 |
 | Marquee | 跑马灯 | 支持方向/速度/暂停/淡出、变体/尺寸、prefers-reduced-motion 动效降级 |
@@ -125,14 +125,14 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
-| GlitchText | 故障文字 | CSS clip-path 驱动，支持 hover/click/autoplay，横向/纵向/双向撕裂 |
-| GlitchButton | 故障按钮 | 继承 Button 所有变体，支持 hover/click/autoplay 触发故障动画，横向/纵向/双向撕裂 |
-| TypewriterText | 打字机文本 | 逐字符显示动画，支持循环/光标/尺寸/粗细 |
+| GlitchText | 故障文字 | CSS clip-path 驱动，支持 hover/click/autoplay，横向/纵向/双向撕裂，自动尊重 prefers-reduced-motion |
+| GlitchButton | 故障按钮 | 继承 Button 所有变体，支持 hover/click/autoplay 触发故障动画，横向/纵向/双向撕裂，自动尊重 prefers-reduced-motion |
+| TypewriterText | 打字机文本 | 逐字符显示动画，支持循环/光标/尺寸/粗细，自动尊重 prefers-reduced-motion |
 | NoiseBackground | 噪点背景 | SVG feTurbulence 滤镜，支持动画/类型/圆角、prefers-reduced-motion 静态降级 |
 | ScratchCard | 刮刮卡 | Canvas 覆盖层擦除 |
 | SketchyChart | 手绘图表 | 支持折线/柱状/饼图，SVG + 分形噪声 |
 | CopyToClipboard | 复制到剪贴板 | 支持自定义持续时间、变体/尺寸 |
-| KanbanBoard | 看板 | 支持拖拽排序、列拖拽/添加卡片 |
+| KanbanBoard | 看板 | 支持拖拽排序、列拖拽/添加卡片、键盘拖拽（Space 抓取、方向键移动）、defineExpose 暴露 moveCard/moveColumn/addCard 等方法 |
 
 ### 区块/页面模板
 
@@ -342,6 +342,22 @@ app.use(BrutxUIPlugin, { locale: customLocale })
 }" />
 ```
 
+### 自定义 Fallback Locale
+
+当 key 在当前 locale 中找不到时，可以自定义回退链：
+
+```typescript
+import { provideLocale, en } from 'brutx-ui-vue'
+
+// 回退顺序：en → customFallback → zhCN → 返回 path 原文
+provideLocale({
+    locale: en,
+    fallbackLocale: {
+        button: { confirm: 'OK', cancel: 'Cancel' },
+    },
+})
+```
+
 ## 组合式函数
 
 BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使用：
@@ -351,11 +367,18 @@ BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使
 | `useCarousel` | 轮播逻辑（embla 初始化、autoplay、状态管理），自动尊重 prefers-reduced-motion |
 | `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认） |
 | `useColorPicker` | 颜色选择逻辑（面板开关、颜色转换、选择确认） |
+| `useColorHistory` | 颜色历史记录管理（localStorage 持久化、去重、最大数量限制） |
 | `useAnimation` | 统一动画降级策略，自动尊重 prefers-reduced-motion |
+| `useReducedMotion` | 检测用户 prefers-reduced-motion 系统设置 |
 | `useFormFieldValidation` | 通用表单验证（rules、validateOn、validationState） |
 | `useTheme` | 主题切换与运行时定制（setCustomVariable/removeCustomVariable） |
 | `useLocale` | 国际化文本获取 |
 | `useToast` | Toast 通知管理 |
+| `useClipboard` | 剪贴板复制功能（isSupported、copied 状态） |
+| `useAudioEngine` | Web Audio API 音效引擎（type/success/fail 音效） |
+| `useCanvasInteraction` | Canvas 交互逻辑（涂抹进度、阈值自动揭示） |
+| `useKanban` | 看板拖拽逻辑（鼠标/键盘拖拽、列/卡片移动） |
+| `useStepper` | 步骤条逻辑（步骤导航、键盘处理） |
 | `useDataTableSort` | DataTable 排序状态管理 |
 | `useDataTableFilter` | DataTable 筛选状态管理 |
 | `useDataTableSelection` | DataTable 行选择管理 |
@@ -417,8 +440,10 @@ import { Timeline, TimelineItem, TimelineSeparator, TimelineDot, TimelineConnect
 </script>
 
 <template>
+  <!-- 自动添加 role="list" 和 aria-label -->
   <Timeline orientation="vertical">
     <TimelineItem>
+      <!-- 自动添加 role="listitem" -->
       <TimelineSeparator>
         <TimelineDot variant="primary" shape="circle">1</TimelineDot>
         <TimelineConnector />

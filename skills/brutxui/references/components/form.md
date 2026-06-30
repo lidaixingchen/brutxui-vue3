@@ -28,6 +28,14 @@
 ```vue
 <Input v-model="value" placeholder="请输入..." type="email" />
 
+<!-- 错误消息 -->
+<Input
+  v-model="email"
+  variant="error"
+  error-message="请输入有效的邮箱地址"
+  placeholder="you@example.com"
+/>
+
 <!-- 无障碍属性 -->
 <Input
   v-model="email"
@@ -44,11 +52,39 @@
 - `readonly`: `boolean`
 - `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `errorMessage`: `string` — 错误消息文本，仅在 `variant="error"` 时显示，使用 `role="alert"` 确保屏幕阅读器自动播报
 - `ariaLabel`: `string` — 无障碍标签
 - `ariaLabelledby`: `string` — 关联的标签元素 ID
 - `ariaDescribedby`: `string` — 描述元素 ID
 - `ariaInvalid`: `boolean` — 是否无效
 - `ariaRequired`: `boolean` — 是否必填
+
+### Input 暴露的 API
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 方法 | 说明 |
+|------|------|
+| `focus()` | 聚焦输入框 |
+| `blur()` | 移除焦点 |
+| `select()` | 选中输入框中的文本 |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Input } from 'brutx-ui-vue'
+
+const inputRef = ref(null)
+function handleFocus() {
+    inputRef.value?.focus()
+}
+</script>
+
+<template>
+    <Input ref="inputRef" placeholder="Click button to focus" />
+    <button @click="handleFocus">Focus Input</button>
+</template>
+```
 
 ## NumberInput
 
@@ -56,11 +92,16 @@
 
 ```vue
 <NumberInput v-model="quantity" :min="0" :max="100" layout="split" />
+
+<!-- 边框样式变体 -->
+<NumberInput v-model="count" variant="error" error-message="请输入有效数字" />
 ```
 
 继承 reka-ui `NumberFieldRootProps`，额外：
 
 - `layout`: `'split' | 'stacked'` — 默认 `'split'`
+- `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`，边框样式变体
+- `errorMessage`: `string` — 错误消息文本，仅在 `variant="error"` 时显示
 - `placeholder`: `string`
 
 ## HardcoreInput
@@ -92,6 +133,14 @@
 ```vue
 <Textarea v-model="content" placeholder="请输入..." :rows="4" />
 
+<!-- 错误消息 -->
+<Textarea
+  v-model="message"
+  variant="error"
+  error-message="消息内容不能为空"
+  placeholder="请输入消息..."
+/>
+
 <!-- 无障碍属性 -->
 <Textarea
   v-model="bio"
@@ -108,11 +157,22 @@
 - `readonly`: `boolean`
 - `variant`: `'default' | 'error' | 'success'` — 默认 `'default'`
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
+- `errorMessage`: `string` — 错误消息文本，仅在 `variant="error"` 时显示，使用 `role="alert"` 确保屏幕阅读器自动播报
 - `ariaLabel`: `string` — 无障碍标签
 - `ariaLabelledby`: `string` — 关联的标签元素 ID
 - `ariaDescribedby`: `string` — 描述元素 ID
 - `ariaInvalid`: `boolean` — 是否无效
 - `ariaRequired`: `boolean` — 是否必填
+
+### Textarea 暴露的 API
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 方法 | 说明 |
+|------|------|
+| `focus()` | 聚焦文本域 |
+| `blur()` | 移除焦点 |
+| `select()` | 选中文本域中的文本 |
 
 ## Label
 
@@ -166,9 +226,26 @@
     <SelectItem value="a">选项 A</SelectItem>
   </SelectContent>
 </Select>
+
+<!-- SelectTrigger 边框样式变体 -->
+<Select>
+  <SelectTrigger variant="error" error-message="请选择一个选项">
+    <SelectValue placeholder="选择..." />
+  </SelectTrigger>
+  <SelectContent>...</SelectContent>
+</Select>
 ```
 
 子组件：Select, SelectTrigger, SelectContent, SelectItem, SelectValue, SelectLabel, SelectSeparator, SelectGroup, SelectScrollUpButton, SelectScrollDownButton
+
+### SelectTrigger Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
+| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
 
 ## Combobox
 
@@ -196,6 +273,15 @@
 - Events: `update:modelValue`, `create(query: string)` — creative 模式下选择创建项时触发
 
 > ComboboxMulti 同步支持 `loading`/`creative`/`create`，但创建后不关闭下拉（多选模式保持打开）。
+
+### Combobox 暴露的 API
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `open` | `Ref<boolean>` | 下拉面板是否展开 |
+| `searchQuery` | `Ref<string>` | 当前搜索关键词 |
+| `selectedValue` | `ComputedRef<string \| undefined>` | 当前选中值（只读） |
+| `focus` | `() => void` | 聚焦触发器 |
 
 ## TreeSelect
 
@@ -232,6 +318,16 @@
 
 TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolean; icon?: string; data?: unknown }`
 
+### TreeSelect 暴露的 API
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `open` | `Ref<boolean>` | 下拉面板是否展开 |
+| `searchQuery` | `Ref<string>` | 当前搜索关键词 |
+| `selectedNodes` | `ComputedRef<TreeNode[]>` | 多选模式下选中的节点列表（只读） |
+| `expandedIds` | `Ref<Set<string>>` | 当前展开的节点 ID 集合 |
+| `focus` | `() => void` | 聚焦触发器 |
+
 ## Slider
 
 ```vue
@@ -248,6 +344,13 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 - `orientation`: `'horizontal' | 'vertical'` — 默认 `'horizontal'`，透传给 reka-ui 原语
 - `marks`: `number[]` — 渲染刻度标记
 - `showTooltip`: `boolean` — 默认 `false`，拖拽时显示当前值
+
+### Slider 暴露的 API
+
+| 属性/方法 | 类型 | 说明 |
+| --- | --- | --- |
+| `currentValue` | `ComputedRef<number[]>` | 当前滑块值（只读） |
+| `setValue` | `(value: number[]) => void` | 设置滑块值 |
 
 ## Toggle
 

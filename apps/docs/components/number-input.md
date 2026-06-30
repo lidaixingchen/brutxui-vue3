@@ -45,9 +45,27 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 <template>
     <!-- 分立式 -->
     <NumberInput v-model="count" layout="split" />
-    
+
     <!-- 堆叠式 -->
     <NumberInput v-model="count" layout="stacked" />
+</template>
+```
+
+### 边框样式变体
+
+通过 `variant` 属性设置不同的边框样式，用于表单验证状态反馈：
+
+| 变体 | 说明 |
+|------|------|
+| `default` | 标准边框 |
+| `error` | 错误边框，聚焦时使用危险色阴影 |
+| `success` | 成功边框，聚焦时使用成功色阴影 |
+
+```vue
+<template>
+    <NumberInput v-model="count" variant="default" />
+    <NumberInput v-model="count" variant="error" />
+    <NumberInput v-model="count" variant="success" />
 </template>
 ```
 
@@ -65,6 +83,8 @@ NumberInput 提供两种按钮排版形态，通过 `layout` 属性配置：
 | `formatOptions` | `Intl.NumberFormatOptions` | — | 数字格式化选项，影响显示与允许输入的字符 |
 | `locale` | `string` | — | 格式化与货币使用的区域设置 |
 | `layout` | `'split' \| 'stacked'` | `'split'` | 调整按钮的布局结构 |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
+| `errorMessage` | `string` | — | 错误消息文本，仅在 `variant="error"` 时显示 |
 | `placeholder` | `string` | `undefined` | 占位符，未设置时使用国际化默认值 |
 | `disabled` | `boolean` | `false` | 是否禁用输入框及按钮 |
 | `readonly` | `boolean` | `false` | 是否只读 |

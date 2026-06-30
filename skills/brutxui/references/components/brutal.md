@@ -75,6 +75,8 @@
 | `play()` | 开始故障动画 |
 | `stop()` | 停止故障动画 |
 
+> **动效降级**：自动尊重 `prefers-reduced-motion` 系统设置，当用户偏好减少动画时禁用所有故障效果。
+
 ## GlitchButton
 
 故障效果按钮，继承 Button 的所有变体和尺寸。
@@ -114,6 +116,8 @@
 | `stop()` | 停止故障动画 |
 
 > 注意：GlitchButton 的撕裂效果通过伪元素 `content: attr(data-text)` 复制文本实现，需通过 `data-text` 属性传入与按钮内容一致的文本。
+>
+> **动效降级**：自动尊重 `prefers-reduced-motion` 系统设置，当用户偏好减少动画时禁用所有故障效果。
 
 ## TypewriterText
 
@@ -147,6 +151,8 @@
 |------|------|------|
 | `start` | — | 打字开始时触发 |
 | `complete` | — | 打字完成时触发 |
+
+> **动效降级**：自动尊重 `prefers-reduced-motion` 系统设置，当用户偏好减少动画时直接显示完整文本。
 
 ## NoiseBackground
 
@@ -258,7 +264,7 @@
 
 ## KanbanBoard
 
-看板组件，基于原生 HTML5 拖拽 API。
+看板组件，基于原生 HTML5 拖拽 API，支持键盘拖拽。
 
 ```vue
 <KanbanBoard
@@ -310,3 +316,23 @@ interface KanbanCard {
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
 | `add-{columnId}` | `columnId: string` | 在指定列底部自定义「添加卡片」入口 |
+
+### 键盘拖拽
+
+卡片支持键盘拖拽操作：
+- `Space`：抓取/放下卡片
+- `↑/↓`：在当前列内上下移动
+- `←/→`：将卡片移动到相邻列
+- `Escape`：取消抓取
+
+抓取状态下卡片添加 `aria-grabbed="true"`，移动结果通过 `aria-live="polite"` 自动播报。
+
+### KanbanBoard 暴露的 API
+
+| 方法 | 参数 | 说明 |
+|------|------|------|
+| `moveCard` | `(cardId, columnId, direction)` | 移动卡片到相邻列 |
+| `moveColumn` | `(fromId, toId)` | 交换两列位置 |
+| `addCard` | `(columnId)` | 触发添加卡片事件 |
+| `getColumn` | `(columnId)` | 获取指定列数据 |
+| `getAllColumns` | — | 获取所有列数据（计算属性） |

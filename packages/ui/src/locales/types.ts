@@ -459,6 +459,14 @@ export interface ColorPickerLocale {
 export interface KanbanLocale {
     dropCardsHere: string
     addCard: string
+    cardGrabbed: string
+    cardReleased: string
+    cardMoved: string
+    cardMovedToColumn: string
+}
+
+export interface TimelineLocale {
+    label: string
 }
 
 export interface TabsNavLocale {
@@ -586,6 +594,7 @@ export interface Locale {
     datePicker: DatePickerLocale
     colorPicker: ColorPickerLocale
     kanban: KanbanLocale
+    timeline: TimelineLocale
     tabsNav: TabsNavLocale
     pricingSection: PricingSectionLocale
     colorModeSwitcher: ColorModeSwitcherLocale

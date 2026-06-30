@@ -12,9 +12,15 @@ export const numberInputRootVariants = cva(
                 split: '',
                 stacked: '',
             },
+            variant: {
+                default: '',
+                error: 'border-brutal-danger focus-within:ring-brutal-danger',
+                success: 'border-brutal-success focus-within:ring-brutal-success',
+            },
         },
         defaultVariants: {
             layout: 'split',
+            variant: 'default',
         },
     }
 )

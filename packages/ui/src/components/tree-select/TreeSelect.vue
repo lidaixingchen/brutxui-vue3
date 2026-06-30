@@ -296,6 +296,16 @@ const triggerIconClasses = computed(() =>
 
 const clearIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')
 
+const triggerRef = ref<HTMLElement | null>(null)
+
+defineExpose({
+    open,
+    searchQuery,
+    selectedNodes,
+    expandedIds,
+    focus: () => triggerRef.value?.focus(),
+})
+
 const contentId = `tree-select-content-${useId()}`
 </script>
 

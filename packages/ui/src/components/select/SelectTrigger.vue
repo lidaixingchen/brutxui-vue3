@@ -11,6 +11,8 @@ type SelectTriggerVariantProps = VariantProps<typeof selectTriggerVariants>
 
 interface SelectTriggerProps {
     size?: NonNullable<SelectTriggerVariantProps['size']>
+    variant?: NonNullable<SelectTriggerVariantProps['variant']>
+    errorMessage?: string
     disabled?: boolean
     class?: string
     iconClass?: string
@@ -18,6 +20,8 @@ interface SelectTriggerProps {
 
 const props = withDefaults(defineProps<SelectTriggerProps>(), {
     size: 'default',
+    variant: 'default',
+    errorMessage: undefined,
     disabled: false,
     class: undefined,
     iconClass: undefined,
@@ -30,7 +34,7 @@ const SIZE_TO_ICON: Record<NonNullable<SelectTriggerVariantProps['size']>, IconS
 }
 
 const classes = computed(() =>
-    cn(selectTriggerVariants({ size: props.size }), props.class)
+    cn(selectTriggerVariants({ size: props.size, variant: props.variant }), props.class)
 )
 
 const iconClasses = computed(() =>
@@ -43,10 +47,19 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <SelectTriggerPrimitive :class="classes" :disabled="disabled" aria-haspopup="listbox">
-        <slot />
-        <SelectIconPrimitive as-child>
-            <ChevronDown :class="iconClasses" />
-        </SelectIconPrimitive>
-    </SelectTriggerPrimitive>
+    <div class="w-full">
+        <SelectTriggerPrimitive :class="classes" :disabled="disabled" aria-haspopup="listbox">
+            <slot />
+            <SelectIconPrimitive as-child>
+                <ChevronDown :class="iconClasses" />
+            </SelectIconPrimitive>
+        </SelectTriggerPrimitive>
+        <p
+            v-if="variant === 'error' && errorMessage"
+            class="text-sm text-brutal-danger mt-1"
+            role="alert"
+        >
+            {{ errorMessage }}
+        </p>
+    </div>
 </template>

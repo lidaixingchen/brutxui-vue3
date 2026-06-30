@@ -118,6 +118,15 @@ watch(open, (isOpen) => {
     }
 })
 
+const triggerRef = ref<HTMLElement | null>(null)
+
+defineExpose({
+    open,
+    searchQuery,
+    selectedValue: computed(() => props.modelValue),
+    focus: () => triggerRef.value?.focus(),
+})
+
 const triggerIconClasses = computed(() =>
     cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))
 )

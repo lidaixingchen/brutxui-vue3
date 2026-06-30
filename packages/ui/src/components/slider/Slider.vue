@@ -53,6 +53,11 @@ const props = withDefaults(defineProps<SliderProps>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()
 
+defineExpose({
+    currentValue: computed(() => props.modelValue),
+    setValue: (value: number[]) => emit('update:modelValue', value),
+})
+
 const activeThumb = ref(-1)
 const tooltipId = `slider-tooltip-${useId()}`
 

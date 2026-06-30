@@ -405,6 +405,13 @@ export const en: Locale = {
     kanban: {
         dropCardsHere: 'Drop cards here',
         addCard: 'Add card',
+        cardGrabbed: 'Card grabbed, use arrow keys to move',
+        cardReleased: 'Card released',
+        cardMoved: 'Card moved',
+        cardMovedToColumn: 'Card moved to {column}',
+    },
+    timeline: {
+        label: 'Timeline',
     },
     tabsNav: {
         emptyTitle: 'No tabs available',

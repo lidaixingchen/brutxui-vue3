@@ -2,6 +2,7 @@
 import { provide, computed, useSlots, cloneVNode, type VNode } from 'vue'
 import { cn } from '@/lib/utils'
 import { timelineOrientationKey, timelineAlternateKey, type TimelineOrientation } from './timeline-key'
+import { useLocale } from '@/composables/useLocale'
 import TimelineItem from './TimelineItem.vue'
 
 interface TimelineProps {
@@ -15,6 +16,8 @@ const props = withDefaults(defineProps<TimelineProps>(), {
     alternate: false,
     class: undefined,
 })
+
+const { t } = useLocale()
 
 provide(timelineOrientationKey, computed(() => props.orientation))
 provide(timelineAlternateKey, computed(() => props.alternate && props.orientation === 'vertical'))
@@ -42,7 +45,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div :class="classes" role="list" :aria-label="t('timeline.label')">
         <RenderItems />
     </div>
 </template>

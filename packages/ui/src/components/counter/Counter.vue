@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, type Component } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { useReducedMotion } from '@/composables/useReducedMotion';
 import { counterVariants } from './counter-variants';
 
 const DEFAULT_COUNTER_DURATION = 2000
@@ -49,6 +50,7 @@ const emit = defineEmits<{
     complete: [];
 }>();
 
+const prefersReducedMotion = useReducedMotion()
 const current = ref(props.from);
 const rootRef = ref<HTMLElement | null>(null);
 const measureRef = ref<HTMLElement | null>(null);
@@ -90,6 +92,14 @@ function animate(ts: number) {
 function play() {
     if (rafId !== null) cancelAnimationFrame(rafId);
     startTime = null;
+
+    // 如果用户偏好减少动画，直接显示目标值
+    if (prefersReducedMotion.value) {
+        current.value = props.to;
+        emit('complete');
+        return;
+    }
+
     current.value = props.from;
     rafId = requestAnimationFrame(animate);
 }

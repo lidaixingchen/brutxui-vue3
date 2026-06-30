@@ -38,6 +38,8 @@ interface InputProps {
     disabled?: boolean
     readonly?: boolean
     placeholder?: string
+    /** 错误消息 */
+    errorMessage?: string
     /** 无障碍标签 */
     ariaLabel?: string
     /** 关联的标签元素 ID */
@@ -61,6 +63,7 @@ const props = withDefaults(defineProps<InputProps>(), {
     disabled: false,
     readonly: false,
     placeholder: undefined,
+    errorMessage: undefined,
     ariaLabel: undefined,
     ariaLabelledby: undefined,
     ariaDescribedby: undefined,
@@ -72,6 +75,7 @@ const props = withDefaults(defineProps<InputProps>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
+const inputRef = ref<HTMLInputElement | null>(null)
 const isComposing = ref(false)
 
 const classes = computed(() =>
@@ -81,24 +85,41 @@ const classes = computed(() =>
         props.class
     )
 )
+
+defineExpose({
+    ref: inputRef,
+    focus: () => inputRef.value?.focus(),
+    blur: () => inputRef.value?.blur(),
+    select: () => inputRef.value?.select(),
+})
 </script>
 
 <template>
-    <input
-        :type="type"
-        :value="modelValue"
-        :disabled="disabled"
-        :readonly="readonly"
-        :placeholder="placeholder"
-        :class="classes"
-        :aria-label="ariaLabel"
-        :aria-labelledby="ariaLabelledby"
-        :aria-describedby="ariaDescribedby"
-        :aria-invalid="ariaInvalid"
-        :aria-errormessage="ariaErrormessage"
-        :aria-required="ariaRequired"
-        @compositionstart="isComposing = true"
-        @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
-        @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-    >
+    <div class="w-full">
+        <input
+            ref="inputRef"
+            :type="type"
+            :value="modelValue"
+            :disabled="disabled"
+            :readonly="readonly"
+            :placeholder="placeholder"
+            :class="classes"
+            :aria-label="ariaLabel"
+            :aria-labelledby="ariaLabelledby"
+            :aria-describedby="ariaDescribedby"
+            :aria-invalid="ariaInvalid"
+            :aria-errormessage="ariaErrormessage"
+            :aria-required="ariaRequired"
+            @compositionstart="isComposing = true"
+            @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
+            @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+        >
+        <p
+            v-if="variant === 'error' && errorMessage"
+            class="text-sm text-brutal-danger mt-1"
+            role="alert"
+        >
+            {{ errorMessage }}
+        </p>
+    </div>
 </template>

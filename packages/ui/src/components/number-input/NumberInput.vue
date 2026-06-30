@@ -17,6 +17,8 @@ import { useLocale } from '@/composables/useLocale'
 
 interface NumberInputProps extends NumberFieldRootProps {
     layout?: 'split' | 'stacked'
+    variant?: 'default' | 'error' | 'success'
+    errorMessage?: string
     placeholder?: string
     class?: string
     iconSize?: IconSize
@@ -24,6 +26,8 @@ interface NumberInputProps extends NumberFieldRootProps {
 
 const props = withDefaults(defineProps<NumberInputProps>(), {
     layout: 'split',
+    variant: 'default',
+    errorMessage: undefined,
     placeholder: undefined,
     class: undefined,
     iconSize: 'default',
@@ -36,14 +40,14 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('numberInput.placeholder'))
 
 const delegatedProps = computed(() => {
-    const { class: _, layout: __, placeholder: ___, iconSize: ____, ...delegated } = props
+    const { class: _, layout: __, variant: ___, errorMessage: ____, placeholder: _____, iconSize: ______, ...delegated } = props
     return delegated
 })
 
 const forwarded = useForwardPropsEmits(delegatedProps, emit)
 
 const containerClasses = computed(() =>
-    cn(numberInputRootVariants({ layout: props.layout }), props.class)
+    cn(numberInputRootVariants({ layout: props.layout, variant: props.variant }), props.class)
 )
 
 const decrementClasses = computed(() =>
@@ -64,36 +68,45 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
-        <template v-if="layout === 'split'">
-            <NumberFieldDecrement :class="decrementClasses">
-                <Minus :class="iconClasses" />
-            </NumberFieldDecrement>
-
-            <NumberFieldInput
-                :placeholder="resolvedPlaceholder"
-                :class="fieldClasses"
-            />
-
-            <NumberFieldIncrement :class="incrementClasses">
-                <Plus :class="iconClasses" />
-            </NumberFieldIncrement>
-        </template>
-
-        <template v-else>
-            <NumberFieldInput
-                :placeholder="resolvedPlaceholder"
-                :class="fieldClasses"
-            />
-
-            <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
-                <NumberFieldIncrement :class="incrementClasses">
-                    <ChevronUp :class="iconClasses" />
-                </NumberFieldIncrement>
+    <div class="w-full">
+        <NumberFieldRoot v-bind="forwarded" :class="containerClasses">
+            <template v-if="layout === 'split'">
                 <NumberFieldDecrement :class="decrementClasses">
-                    <ChevronDown :class="iconClasses" />
+                    <Minus :class="iconClasses" />
                 </NumberFieldDecrement>
-            </div>
-        </template>
-    </NumberFieldRoot>
+
+                <NumberFieldInput
+                    :placeholder="resolvedPlaceholder"
+                    :class="fieldClasses"
+                />
+
+                <NumberFieldIncrement :class="incrementClasses">
+                    <Plus :class="iconClasses" />
+                </NumberFieldIncrement>
+            </template>
+
+            <template v-else>
+                <NumberFieldInput
+                    :placeholder="resolvedPlaceholder"
+                    :class="fieldClasses"
+                />
+
+                <div class="flex flex-col border-l-3 border-brutal w-10 shrink-0">
+                    <NumberFieldIncrement :class="incrementClasses">
+                        <ChevronUp :class="iconClasses" />
+                    </NumberFieldIncrement>
+                    <NumberFieldDecrement :class="decrementClasses">
+                        <ChevronDown :class="iconClasses" />
+                    </NumberFieldDecrement>
+                </div>
+            </template>
+        </NumberFieldRoot>
+        <p
+            v-if="variant === 'error' && errorMessage"
+            class="text-sm text-brutal-danger mt-1"
+            role="alert"
+        >
+            {{ errorMessage }}
+        </p>
+    </div>
 </template>

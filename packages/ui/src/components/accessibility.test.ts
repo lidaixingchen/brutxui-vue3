@@ -332,12 +332,12 @@ describe('Label accessibility', () => {
 describe('Input accessibility', () => {
     it('Input should have proper type attribute', () => {
         const wrapper = mount(Input)
-        expect(wrapper.attributes('type')).toBe('text')
+        expect(wrapper.find('input').attributes('type')).toBe('text')
     })
 
     it('Input should have disabled attribute when disabled prop is true', () => {
         const wrapper = mount(Input, { props: { disabled: true } })
-        expect(wrapper.attributes('disabled')).toBeDefined()
+        expect(wrapper.find('input').attributes('disabled')).toBeDefined()
     })
 })
 

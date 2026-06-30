@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { textareaVariants } from './textarea-variants'
@@ -14,6 +14,8 @@ interface TextareaProps {
     disabled?: boolean
     readonly?: boolean
     placeholder?: string
+    /** 错误消息 */
+    errorMessage?: string
     /** 无障碍标签 */
     ariaLabel?: string
     /** 关联的标签元素 ID */
@@ -36,6 +38,7 @@ const props = withDefaults(defineProps<TextareaProps>(), {
     disabled: false,
     readonly: false,
     placeholder: undefined,
+    errorMessage: undefined,
     ariaLabel: undefined,
     ariaLabelledby: undefined,
     ariaDescribedby: undefined,
@@ -48,6 +51,7 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const { t } = useLocale()
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))
 
@@ -58,21 +62,38 @@ const classes = computed(() =>
         props.class
     )
 )
+
+defineExpose({
+    ref: textareaRef,
+    focus: () => textareaRef.value?.focus(),
+    blur: () => textareaRef.value?.blur(),
+    select: () => textareaRef.value?.select(),
+})
 </script>
 
 <template>
-    <textarea
-        :value="modelValue"
-        :disabled="disabled"
-        :readonly="readonly"
-        :placeholder="resolvedPlaceholder"
-        :class="classes"
-        :aria-label="ariaLabel"
-        :aria-labelledby="ariaLabelledby"
-        :aria-describedby="ariaDescribedby"
-        :aria-invalid="ariaInvalid"
-        :aria-errormessage="ariaErrormessage"
-        :aria-required="ariaRequired"
-        @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
-    />
+    <div class="w-full">
+        <textarea
+            ref="textareaRef"
+            :value="modelValue"
+            :disabled="disabled"
+            :readonly="readonly"
+            :placeholder="resolvedPlaceholder"
+            :class="classes"
+            :aria-label="ariaLabel"
+            :aria-labelledby="ariaLabelledby"
+            :aria-describedby="ariaDescribedby"
+            :aria-invalid="ariaInvalid"
+            :aria-errormessage="ariaErrormessage"
+            :aria-required="ariaRequired"
+            @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
+        />
+        <p
+            v-if="variant === 'error' && errorMessage"
+            class="text-sm text-brutal-danger mt-1"
+            role="alert"
+        >
+            {{ errorMessage }}
+        </p>
+    </div>
 </template>

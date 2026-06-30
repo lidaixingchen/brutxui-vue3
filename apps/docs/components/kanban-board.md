@@ -152,6 +152,71 @@ interface KanbanColumn {
 - 卡片支持键盘导航，可通过 `Tab` 键聚焦
 - 聚焦后按 `Enter` 或 `Space` 键可触发 `card-click` 事件
 - 空列会显示本地化的提示文本，引导用户拖放卡片
+- **键盘拖拽**：聚焦卡片后按 `Space` 键抓取卡片，使用方向键移动，再次按 `Space` 放下，`Escape` 取消
+  - `↑/↓`：在当前列内上下移动卡片
+  - `←/→`：将卡片移动到相邻列
+- 抓取状态下卡片会添加 `aria-grabbed="true"` 属性
+- 移动结果会通过 `aria-live="polite"` 区域自动播报
+
+### 键盘拖拽示例
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
+
+const columns = ref([
+    { id: 'todo', title: '待办', cards: [
+        { id: 'c1', title: '任务 1' },
+        { id: 'c2', title: '任务 2' },
+    ]},
+    { id: 'done', title: '已完成', cards: [] },
+])
+</script>
+
+<template>
+    <!-- 用户可以：
+         1. Tab 聚焦到卡片
+         2. 按 Space 抓取卡片
+         3. 使用方向键移动卡片
+         4. 按 Space 放下卡片
+         5. 按 Escape 取消操作
+    -->
+    <KanbanBoard v-model="columns" />
+</template>
+```
+
+## 方法（defineExpose）
+
+通过 `ref` 访问组件实例后可调用以下方法：
+
+| 方法 | 参数 | 说明 |
+|------|------|------|
+| `moveCard` | `(cardId: string, columnId: string, direction: number)` | 移动卡片到相邻列 |
+| `moveColumn` | `(fromId: string, toId: string)` | 交换两列位置 |
+| `addCard` | `(columnId: string)` | 触发添加卡片事件 |
+| `getColumn` | `(columnId: string)` | 获取指定列数据 |
+| `getAllColumns` | — | 获取所有列数据（计算属性） |
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { KanbanBoard } from 'brutx-ui-vue'
+
+const kanbanRef = ref(null)
+const columns = ref([...])
+
+function moveCardRight() {
+    // 将卡片移动到右侧列
+    kanbanRef.value?.moveCard('card-1', 'todo', 1)
+}
+</script>
+
+<template>
+    <KanbanBoard ref="kanbanRef" v-model="columns" />
+    <button @click="moveCardRight">Move Card Right</button>
+</template>
+```
 
 ## 常见问题
 
