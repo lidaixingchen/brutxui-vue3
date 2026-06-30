@@ -76,7 +76,7 @@ function clearValidate(fields?: string[]) {
             form.setFieldError(field, undefined)
         })
     } else {
-        form.resetForm({ errors: false })
+        form.resetForm({ errors: {} })
     }
 }
 

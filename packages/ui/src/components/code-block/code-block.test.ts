@@ -148,7 +148,7 @@ describe('CodeBlock', () => {
         await vi.waitFor(() => {
             expect(wrapper.find('.token').exists()).toBe(true)
         })
-        await wrapper.setProps({ code: 'let y = 2' })
+        await wrapper.setProps({ code: 'let y = 2' } as any)
         await vi.waitFor(() => {
             expect(wrapper.find('code').text()).toContain('let y = 2')
         })
@@ -161,7 +161,7 @@ describe('CodeBlock', () => {
         await vi.waitFor(() => {
             expect(wrapper.find('.token').exists()).toBe(true)
         })
-        await wrapper.setProps({ language: 'typescript' })
+        await wrapper.setProps({ language: 'typescript' } as any)
         await vi.waitFor(() => {
             expect(wrapper.find('code').classes()).toContain('language-typescript')
         })

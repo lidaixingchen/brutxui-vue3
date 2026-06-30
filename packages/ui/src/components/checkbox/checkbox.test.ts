@@ -57,7 +57,7 @@ describe('Checkbox', () => {
             attachTo: document.body,
         })
         for (const { size, expected } of cases) {
-            await wrapper.setProps({ size })
+            await wrapper.setProps({ size } as any)
             const svg = wrapper.find('svg')
             expect(svg.exists()).toBe(true)
             const indicator = svg.element.parentElement as HTMLElement

@@ -1,4 +1,4 @@
-import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { DataTableColumn, DataTableSortState } from '@/components/data-table/types'
 import { getCellValue } from '@/lib/data-table-utils'
 
@@ -7,9 +7,15 @@ export interface UseDataTableSortOptions<T extends object> {
     sortable: MaybeRefOrGetter<boolean | undefined>
 }
 
+export interface UseDataTableSortReturn<T> {
+    sortState: Ref<DataTableSortState>
+    toggleSort: (columnId: string) => void
+    sortedData: (data: T[]) => T[]
+}
+
 export function useDataTableSort<T extends object>(
     options: UseDataTableSortOptions<T>,
-) {
+): UseDataTableSortReturn<T> {
     const sortState = ref<DataTableSortState>({ column: '', direction: null })
 
     const visibleColumns = computed(() =>

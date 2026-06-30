@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, ref, watch, markRaw, useSlots } from 'vue'
+import { computed, ref, shallowRef, watch, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
@@ -19,7 +19,7 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableProps, DataTableFilterState, DataTableSpanMethodParams } from './types'
+import type { DataTableColumn, DataTableProps, DataTableFilterState } from './types'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -71,8 +71,8 @@ const emit = defineEmits<{
     export: [format: 'csv' | 'json', selectedRows?: T[]]
 }>()
 
-// 展开行状态
-const expandedRowKeys = ref<Set<string | number>>(new Set())
+// 展开行状态 - 使用 shallowRef 避免对 Set 进行深层响应式转换
+const expandedRowKeys = shallowRef<Set<string | number>>(new Set())
 
 // 同步外部 expandRowKeys
 if (props.expandRowKeys) {
@@ -120,7 +120,8 @@ function getFixedColumnOffset(column: DataTableColumn<T>, side: 'left' | 'right'
 
     let offset = 0
     for (let i = 0; i < index; i++) {
-        offset += cols[i].width && typeof cols[i].width === 'number' ? cols[i].width! : 150
+        const w = cols[i].width
+        offset += typeof w === 'number' ? w : 150
     }
     return offset
 }

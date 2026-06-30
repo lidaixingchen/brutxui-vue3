@@ -10,4 +10,4 @@ export { default as FormConditional } from './components/form/FormConditional.vu
 export { formFieldKey, formItemKey, formContextKey, formWizardContextKey } from './components/form/form-context'
 export type { FormFieldContext, FormItemContext } from './components/form/form-context'
 export type { FormStep, ValidationResult, FormWizardContext } from './components/form/form-wizard-types'
-export { useFormWizard } from './components/form/FormWizard.vue'
+export { useFormWizard } from './components/form/form-wizard-utils'

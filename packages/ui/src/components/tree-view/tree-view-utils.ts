@@ -1,4 +1,4 @@
-import type { TreeNode } from './TreeView.vue'
+import type { TreeNode } from './types'
 
 export type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 

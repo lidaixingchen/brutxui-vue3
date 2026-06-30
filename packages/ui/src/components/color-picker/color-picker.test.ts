@@ -567,7 +567,7 @@ describe('ColorPicker programmatic control (defineExpose)', () => {
 
     it('setting open to true programmatically opens the panel and emits open', async () => {
         const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
-        wrapper.vm.open = true
+        ;(wrapper as any).vm.open = true
         await nextTick()
         await nextTick()
         expect(wrapper.emitted('open')).toBeTruthy()
@@ -578,10 +578,10 @@ describe('ColorPicker programmatic control (defineExpose)', () => {
 
     it('setting open to false programmatically closes the panel and emits close', async () => {
         const wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
-        wrapper.vm.open = true
+        ;(wrapper as any).vm.open = true
         await nextTick()
         await nextTick()
-        wrapper.vm.open = false
+        ;(wrapper as any).vm.open = false
         await nextTick()
         await nextTick()
         expect(wrapper.emitted('close')).toBeTruthy()

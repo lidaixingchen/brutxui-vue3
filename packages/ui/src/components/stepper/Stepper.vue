@@ -5,12 +5,9 @@ import { Check } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
 import { useLocale } from '@/composables/useLocale';
+import type { StepperStep } from './types';
 
-export interface StepperStep {
-    id: string | number;
-    title: string;
-    description?: string;
-}
+export type { StepperStep };
 
 type StepperDotVariantProps = VariantProps<typeof stepperDotVariants>;
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type Component } from 'vue'
+import { computed } from 'vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -9,12 +9,9 @@ import CardHeader from '../card/CardHeader.vue'
 import Button from '../button/Button.vue'
 import Badge from '../badge/Badge.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { ActionItem } from './types'
 
-export interface ActionItem {
-    label: string
-    icon: Component
-    variant?: 'primary' | 'secondary' | 'outline' | 'danger'
-}
+export type { ActionItem };
 
 interface QuickActionsProps {
     title?: string

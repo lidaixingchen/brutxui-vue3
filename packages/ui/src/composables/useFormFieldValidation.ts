@@ -1,4 +1,4 @@
-import { ref, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export type ValidationState = 'default' | 'success' | 'error'
 export type ValidationRule<TValue> = (value: TValue) => boolean | string
@@ -11,7 +11,16 @@ export interface UseFormFieldValidationOptions<TValue = string> {
     onValidationChange?: (state: ValidationState, message?: string) => void
 }
 
-export function useFormFieldValidation<TValue = string>(options: UseFormFieldValidationOptions<TValue> = {}) {
+export interface UseFormFieldValidationReturn<TValue = string> {
+    validationState: Ref<ValidationState>
+    errorMessage: Ref<string>
+    validate: (value: TValue) => boolean
+    reset: () => void
+    shouldValidateOnInput: () => boolean
+    shouldValidateOnBlur: () => boolean
+}
+
+export function useFormFieldValidation<TValue = string>(options: UseFormFieldValidationOptions<TValue> = {}): UseFormFieldValidationReturn<TValue> {
     const validationState = ref<ValidationState>('default')
     const errorMessage = ref<string>('')
 

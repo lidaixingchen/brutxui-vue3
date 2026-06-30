@@ -10,13 +10,9 @@ import CardHeader from '../card/CardHeader.vue'
 import CardTitle from '../card/CardTitle.vue'
 import CardContent from '../card/CardContent.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { OverviewStat } from './types'
 
-export interface OverviewStat {
-    title: string
-    value: string
-    change: string
-    trend: 'up' | 'down' | 'neutral'
-}
+export type { OverviewStat };
 
 interface OverviewPageProps {
     title?: string

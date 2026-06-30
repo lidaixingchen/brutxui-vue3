@@ -1,4 +1,4 @@
-import { ref, computed, watch, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export const DEFAULT_PAGE_SIZE = 10
 
@@ -8,7 +8,16 @@ export interface UseDataTablePaginationOptions {
     totalItems: MaybeRefOrGetter<number>
 }
 
-export function useDataTablePagination(options: UseDataTablePaginationOptions) {
+export interface UseDataTablePaginationReturn {
+    currentPage: Ref<number>
+    currentPageSize: Ref<number>
+    totalPages: ComputedRef<number>
+    paginatedData: <T>(data: T[]) => T[]
+    goToPage: (page: number) => boolean
+    setPageSize: (size: number) => void
+}
+
+export function useDataTablePagination(options: UseDataTablePaginationOptions): UseDataTablePaginationReturn {
     const currentPage = ref(1)
     const currentPageSize = ref(toValue(options.pageSize) ?? DEFAULT_PAGE_SIZE)
 

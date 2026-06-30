@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, type ConcreteComponent, type Component } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
-import { Eye, EyeOff, X } from 'lucide-vue-next'
+import { Eye, EyeOff, X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { inputVariants } from './input-variants'
 import { useClearable } from '@/composables/useClearable'

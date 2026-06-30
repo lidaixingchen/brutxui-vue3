@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import OverviewPage from './OverviewPage.vue'
-import type { OverviewStat } from './OverviewPage.vue'
+import type { OverviewStat } from './types'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 

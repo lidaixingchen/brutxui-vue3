@@ -1,8 +1,14 @@
-import { ref, onUnmounted, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, onUnmounted, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export const DEFAULT_COPIED_DURATION = 2000
 
-export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}) {
+export interface UseClipboardReturn {
+    copy: (text: string) => Promise<boolean>
+    copied: Ref<boolean>
+    isSupported: Ref<boolean>
+}
+
+export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}): UseClipboardReturn {
     const copied = ref(false)
     const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)
 
@@ -21,7 +27,7 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
 
             if (timeoutId) clearTimeout(timeoutId)
             const duration = toValue(options.duration) ?? DEFAULT_COPIED_DURATION
-            timeoutId = window.setTimeout(() => {
+            timeoutId = setTimeout(() => {
                 copied.value = false
             }, duration)
 

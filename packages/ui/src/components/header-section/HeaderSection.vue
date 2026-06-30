@@ -11,11 +11,9 @@ import SheetHeader from '../sheet/SheetHeader.vue'
 import SheetTitle from '../sheet/SheetTitle.vue'
 import SheetDescription from '../sheet/SheetDescription.vue'
 import Separator from '../separator/Separator.vue'
+import type { NavItem } from './types'
 
-export interface NavItem {
-    label: string
-    href?: string
-}
+export type { NavItem };
 
 interface HeaderSectionProps {
     logoText?: string

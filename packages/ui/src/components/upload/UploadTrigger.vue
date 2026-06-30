@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Upload } from 'lucide-vue-next'
+import { Upload } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 
 interface UploadTriggerProps {
@@ -107,7 +107,7 @@ function handleDrop(event: DragEvent) {
                     'transition-colors duration-200',
                     isDragging
                         ? 'border-brutal-primary bg-brutal-primary/10'
-                        : 'border-brutal-border hover:border-brutal-primary',
+                        : 'border-brutal hover:border-brutal-primary',
                 )"
             >
                 <Upload

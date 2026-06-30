@@ -1,4 +1,4 @@
-import { type Ref, ref, computed } from 'vue'
+import { type Ref, ref, computed, type ComputedRef } from 'vue'
 
 export interface Step {
     id: string | number
@@ -13,7 +13,18 @@ export interface UseStepperOptions {
     onChange?: (step: number) => void
 }
 
-export function useStepper(options: UseStepperOptions) {
+export interface UseStepperReturn {
+    currentStep: Ref<number>
+    totalSteps: ComputedRef<number>
+    isFirstStep: ComputedRef<boolean>
+    isLastStep: ComputedRef<boolean>
+    goToStep: (index: number) => void
+    nextStep: () => void
+    previousStep: () => void
+    handleKeydown: (e: KeyboardEvent) => void
+}
+
+export function useStepper(options: UseStepperOptions): UseStepperReturn {
     const currentStep = ref(options.initialStep ?? 0)
     const totalSteps = computed(() => options.steps.value.length)
     const isFirstStep = computed(() => currentStep.value === 0)

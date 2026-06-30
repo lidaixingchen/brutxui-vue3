@@ -8,6 +8,7 @@ const mockOscillator = {
     disconnect: vi.fn(),
     start: vi.fn(),
     stop: vi.fn(),
+    type: 'triangle' as OscillatorType,
     frequency: {
         setValueAtTime: vi.fn(),
         exponentialRampToValueAtTime: vi.fn(),
@@ -34,16 +35,31 @@ const mockAudioContext = {
     close: vi.fn().mockResolvedValue(undefined),
 }
 
+// Mock isClient module-level export
+vi.mock('../lib/env', () => ({
+    isClient: true,
+}))
+
 describe('useAudioEngine', () => {
     beforeEach(() => {
         vi.useFakeTimers()
-        vi.stubGlobal('AudioContext', vi.fn(() => mockAudioContext))
-        vi.stubGlobal('isClient', true)
+        vi.setSystemTime(1000)
+        mockAudioContext.state = 'running'
+        // Use a class-based mock so `new AudioContext()` works as a constructor
+        vi.stubGlobal('AudioContext', class {
+            createOscillator = mockAudioContext.createOscillator
+            createGain = mockAudioContext.createGain
+            destination = mockAudioContext.destination
+            currentTime = mockAudioContext.currentTime
+            get state() { return mockAudioContext.state }
+            resume = mockAudioContext.resume
+            close = mockAudioContext.close
+        })
     })
 
     afterEach(() => {
         vi.useRealTimers()
-        vi.restoreAllMocks()
+        vi.clearAllMocks()
     })
 
     it('playSound does nothing when disabled', () => {
@@ -95,8 +111,10 @@ describe('useAudioEngine', () => {
 
     it('dispose closes audio context', () => {
         const enabled = ref(true)
-        const { dispose } = useAudioEngine(enabled)
+        const { playSound, dispose } = useAudioEngine(enabled)
 
+        // Create the AudioContext first by playing a sound
+        playSound('type')
         dispose()
         expect(mockAudioContext.close).toHaveBeenCalled()
     })

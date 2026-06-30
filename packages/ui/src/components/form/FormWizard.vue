@@ -1,28 +1,10 @@
 <script lang="ts">
-import { inject } from 'vue'
 import { formWizardContextKey } from './form-context'
-import type { FormStep, FormWizardContext } from './form-wizard-types'
+import type { FormStep, FormWizardContext, FormWizardProps } from './form-wizard-types'
 
 export { formWizardContextKey }
-export type { FormStep, FormWizardContext }
-
-export interface FormWizardProps {
-    steps: FormStep[]
-    initialStep?: number
-    validateOnNext?: boolean
-    showIndicator?: boolean
-    linear?: boolean
-    modelValue?: Record<string, unknown>
-    class?: string
-}
-
-export function useFormWizard() {
-    const context = inject(formWizardContextKey)
-    if (!context) {
-        throw new Error('[BrutxUI] useFormWizard() must be used within a FormWizard component.')
-    }
-    return context
-}
+export type { FormStep, FormWizardContext, FormWizardProps }
+export { useFormWizard } from './form-wizard-utils'
 </script>
 
 <script setup lang="ts">

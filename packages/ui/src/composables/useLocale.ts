@@ -12,7 +12,7 @@ export interface LocaleOptions {
     fallbackLocale?: MaybeRef<Partial<Locale>>
 }
 
-export function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions) {
+export function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions): void {
     // 检查是否是 LocaleOptions 格式（包含 locale 属性）
     if (
         typeof localeOrOptions === 'object' &&

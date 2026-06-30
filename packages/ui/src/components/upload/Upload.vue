@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import type { UploadFile, UploadError, UploadRequestOptions } from './index'
 
@@ -98,45 +98,45 @@ function createUploadFile(file: File): UploadFile {
 }
 
 // 上传文件
-async function uploadFile(uploadFile: UploadFile): Promise<void> {
+async function doUpload(file: UploadFile): Promise<void> {
     if (!props.httpRequest) return
 
-    uploadFile.status = 'uploading'
-    uploadFile.progress = 0
+    file.status = 'uploading'
+    file.progress = 0
 
     try {
         await props.httpRequest({
-            file: uploadFile.raw!,
+            file: file.raw!,
             onProgress: (percent) => {
-                uploadFile.progress = percent
+                file.progress = percent
             },
-            onSuccess: (response) => {
-                uploadFile.status = 'success'
-                uploadFile.progress = 100
-                emit('file-success', uploadFile)
+            onSuccess: () => {
+                file.status = 'success'
+                file.progress = 100
+                emit('file-success', file)
             },
             onError: (error) => {
-                uploadFile.status = 'error'
-                uploadFile.error = error
-                emit('file-error', uploadFile, error)
-                props.onError?.(error, uploadFile)
+                file.status = 'error'
+                file.error = error
+                emit('file-error', file, error)
+                props.onError?.(error, file)
             },
         })
     } catch (error) {
         const uploadError: UploadError = {
             message: error instanceof Error ? error.message : 'Upload failed',
         }
-        uploadFile.status = 'error'
-        uploadFile.error = uploadError
-        emit('file-error', uploadFile, uploadError)
-        props.onError?.(uploadError, uploadFile)
+        file.status = 'error'
+        file.error = uploadError
+        emit('file-error', file, uploadError)
+        props.onError?.(uploadError, file)
     }
 }
 
 // 重试上传
-async function retryUpload(uploadFile: UploadFile): Promise<void> {
-    uploadFile.error = undefined
-    await uploadFile(uploadFile)
+async function retryUpload(file: UploadFile): Promise<void> {
+    file.error = undefined
+    await doUpload(file)
 }
 
 // 处理文件选择
@@ -191,7 +191,7 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
 
         // 自动上传
         if (props.autoUpload) {
-            await uploadFile(uploadFile)
+            await doUpload(uploadFile)
         }
     }
 }

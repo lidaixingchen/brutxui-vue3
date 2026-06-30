@@ -6,12 +6,9 @@ import { cn } from '@/lib/utils'
 import Carousel from '../carousel/Carousel.vue'
 import CarouselItem from '../carousel/CarouselItem.vue'
 import Card from '../card/Card.vue'
+import type { GalleryItem } from './types'
 
-export interface GalleryItem {
-    src: string
-    alt: string
-    caption?: string
-}
+export type { GalleryItem };
 
 interface GallerySectionProps {
     title?: string

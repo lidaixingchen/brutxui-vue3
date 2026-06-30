@@ -1,0 +1,16 @@
+# Build outputs
+dist
+coverage
+playwright-report
+test-results
+
+# Generated documentation
+docs/api
+
+# IDE
+.vscode
+.idea
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -10,15 +10,9 @@ import TableHead from '../table/TableHead.vue'
 import TableCell from '../table/TableCell.vue'
 import Badge from '../badge/Badge.vue'
 import Pagination from '../pagination/Pagination.vue'
+import type { ActivityEntry } from './types'
 
-export interface ActivityEntry {
-    id: string
-    action: string
-    user: string
-    timestamp: string
-    details?: string
-    type?: 'info' | 'warning' | 'error' | 'success'
-}
+export type { ActivityEntry };
 
 interface ActivityLogPageProps {
     title?: string

@@ -27,8 +27,16 @@ const parentRef = ref<HTMLElement | null>(null)
 const isAvailable = ref(true)
 
 let useVirtualizerFn: UseVirtualizerFn | null = null
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 动态导入的虚拟化器类型需要运行时确定
-let virtualizerRef: any = null
+interface VirtualizerInstance {
+    value: {
+        getVirtualItems: () => Array<{ key: string | number; index: number; size: number; start: number }>
+        getTotalSize: () => number
+        scrollToIndex: (index: number) => void
+        measure: () => void
+    }
+}
+
+let virtualizerRef: VirtualizerInstance | null = null
 
 const virtualizerOptions = computed(() => ({
     count: props.items.length,

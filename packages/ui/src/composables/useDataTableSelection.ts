@@ -1,4 +1,4 @@
-import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { shallowRef, computed, toValue, type ComputedRef, type MaybeRefOrGetter, type ShallowRef } from 'vue'
 
 export interface UseDataTableSelectionOptions<T extends object> {
     selectable: MaybeRefOrGetter<boolean | undefined>
@@ -7,10 +7,21 @@ export interface UseDataTableSelectionOptions<T extends object> {
     data: MaybeRefOrGetter<T[]>
 }
 
+export interface UseDataTableSelectionReturn<T> {
+    selectedRows: ShallowRef<Set<string | number>>
+    isAllSelected: ComputedRef<boolean>
+    isIndeterminate: ComputedRef<boolean>
+    toggleRowSelection: (row: T) => void
+    toggleAllSelection: () => void
+    clearSelection: () => void
+    getRowKey: (row: T) => string | number
+    getSelectedRows: () => T[]
+}
+
 export function useDataTableSelection<T extends object>(
     options: UseDataTableSelectionOptions<T>,
-) {
-    const selectedRows = ref<Set<string | number>>(new Set())
+): UseDataTableSelectionReturn<T> {
+    const selectedRows = shallowRef<Set<string | number>>(new Set())
 
     function getRowKey(row: T): string | number {
         const key = toValue(options.rowKey)

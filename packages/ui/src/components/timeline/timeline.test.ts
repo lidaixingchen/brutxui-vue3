@@ -55,8 +55,8 @@ describe('Timeline alternate', () => {
         const wrapper = mountWithItems({ alternate: true })
         const items = wrapper.findAllComponents(TimelineItem)
         expect(items).toHaveLength(2)
-        expect(items[0].props('index')).toBe(0)
-        expect(items[1].props('index')).toBe(1)
+        expect((items[0].props as any)('index')).toBe(0)
+        expect((items[1].props as any)('index')).toBe(1)
     })
 
     it('applies flex-row-reverse for even index in alternate mode', () => {

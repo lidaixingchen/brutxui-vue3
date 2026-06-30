@@ -21,7 +21,12 @@ const FAIL_GAIN = 0.1
 const FAIL_GAIN_END = 0.001
 const FAIL_DURATION = 0.2
 
-export function useAudioEngine(enabled: Ref<boolean>) {
+export interface UseAudioEngineReturn {
+    playSound: (type: 'type' | 'success' | 'fail') => void
+    dispose: () => void
+}
+
+export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
     let audioCtx: AudioContext | null = null
     let lastTypeSoundTime = 0
 

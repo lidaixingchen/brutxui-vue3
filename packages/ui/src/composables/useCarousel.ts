@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onUnmounted, watch, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import useEmblaCarousel from 'embla-carousel-vue'
 import { useReducedMotion } from './useReducedMotion'
 
@@ -14,7 +14,20 @@ export interface UseCarouselOptions {
     onAutoplayDelayChange?: () => void
 }
 
-export function useCarousel(options: UseCarouselOptions = {}) {
+export interface UseCarouselReturn {
+    emblaRef: Ref<HTMLElement | undefined>
+    selectedIndex: Ref<number>
+    scrollSnaps: Ref<number[]>
+    canScrollPrev: ComputedRef<boolean>
+    canScrollNext: ComputedRef<boolean>
+    scrollPrev: () => void
+    scrollNext: () => void
+    scrollTo: (index: number) => void
+    startAutoplay: () => void
+    stopAutoplay: () => void
+}
+
+export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn {
     const prefersReducedMotion = useReducedMotion()
 
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: toValue(options.loop) ?? false })

@@ -280,6 +280,18 @@ function onJumpToPage() {
             </SelectRoot>
         </div>
 
+        <!-- 第一页 -->
+        <button
+            v-if="showFirstLast && layoutComponents.includes('prev')"
+            type="button"
+            :class="firstButtonClasses"
+            :disabled="safeCurrentPage <= FIRST_PAGE || disabled"
+            :aria-label="t('pagination.firstPage')"
+            @click="onPageChange(FIRST_PAGE)"
+        >
+            <ChevronsLeft :class="iconClasses" />
+        </button>
+
         <!-- 上一页 -->
         <button
             v-if="layoutComponents.includes('prev')"
@@ -337,6 +349,18 @@ function onJumpToPage() {
             @click="onPageChange(safeCurrentPage + 1)"
         >
             <ChevronRight :class="iconClasses" />
+        </button>
+
+        <!-- 最后一页 -->
+        <button
+            v-if="showFirstLast && layoutComponents.includes('next')"
+            type="button"
+            :class="lastButtonClasses"
+            :disabled="safeCurrentPage >= computedTotalPages || disabled"
+            :aria-label="t('pagination.lastPage')"
+            @click="onPageChange(computedTotalPages)"
+        >
+            <ChevronsRight :class="iconClasses" />
         </button>
 
         <!-- 跳转 -->

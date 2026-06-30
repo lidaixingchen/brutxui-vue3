@@ -1,11 +1,25 @@
-import { ref, inject, provide, computed, onUnmounted, getCurrentInstance, type InjectionKey } from 'vue'
+import { ref, inject, provide, computed, onUnmounted, getCurrentInstance, type ComputedRef, type InjectionKey, type Ref } from 'vue'
 import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem } from '../lib/env'
 
 export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
 export type ColorMode = 'light' | 'dark' | 'system'
 export type ResolvedColorMode = 'light' | 'dark'
 
-const THEME_KEY: InjectionKey<ReturnType<typeof createTheme>> = Symbol('brutx-theme')
+export interface UseThemeReturn {
+    theme: Ref<ThemeName>
+    colorMode: Ref<ColorMode>
+    resolvedColorMode: ComputedRef<ResolvedColorMode>
+    isSystemDark: Ref<boolean>
+    setTheme: (name: ThemeName) => void
+    setCustomVariable: (name: `--${string}`, value: string) => void
+    removeCustomVariable: (name: `--${string}`) => void
+    toggleColorMode: () => void
+    applyColorMode: (mode: ColorMode) => void
+    initTheme: () => void
+    destroy: () => void
+}
+
+const THEME_KEY: InjectionKey<UseThemeReturn> = Symbol('brutx-theme')
 
 // 常量定义
 const VALID_THEMES: readonly ThemeName[] = ['classic', 'pastel', 'mono', 'warm'] as const
@@ -24,7 +38,7 @@ function getThemeClass(name: ThemeName): string {
     return `theme-${name}`
 }
 
-export function createTheme() {
+export function createTheme(): UseThemeReturn {
     const theme = ref<ThemeName>('classic')
     const colorMode = ref<ColorMode>('light')
     const isSystemDark = ref(false)
@@ -152,9 +166,9 @@ export function createTheme() {
     }
 }
 
-let fallbackInstance: ReturnType<typeof createTheme> | null = null
+let fallbackInstance: UseThemeReturn | null = null
 
-export function provideTheme() {
+export function provideTheme(): UseThemeReturn {
     const theme = createTheme()
     provide(THEME_KEY, theme)
 
@@ -166,7 +180,7 @@ export function provideTheme() {
     return theme
 }
 
-export function useTheme() {
+export function useTheme(): UseThemeReturn {
     const theme = inject(THEME_KEY)
     if (theme) return theme
     if (typeof console !== 'undefined') {

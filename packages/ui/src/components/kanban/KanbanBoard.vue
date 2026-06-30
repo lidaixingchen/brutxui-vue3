@@ -6,21 +6,9 @@ import { useLocale } from '@/composables/useLocale';
 import { iconSizeVariants } from '@/lib/icon-size-variants';
 import { kanbanColumnVariants, kanbanCardVariants, kanbanColumnHeaderVariants } from './kanban-variants';
 import Button from '../button/Button.vue';
+import type { KanbanCard, KanbanColumn } from './types';
 
-export interface KanbanCard {
-    id: string;
-    title: string;
-    description?: string;
-    tags?: string[];
-    color?: string;
-}
-
-export interface KanbanColumn {
-    id: string;
-    title: string;
-    color?: string;
-    cards: KanbanCard[];
-}
+export type { KanbanCard, KanbanColumn };
 
 interface KanbanBoardProps {
     modelValue: KanbanColumn[];

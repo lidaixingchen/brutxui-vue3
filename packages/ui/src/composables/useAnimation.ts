@@ -1,7 +1,12 @@
-import { computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { computed, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { useReducedMotion } from './useReducedMotion'
 
-export function useAnimation(animationClass: MaybeRefOrGetter<string> = '') {
+export interface UseAnimationReturn {
+    animationClass: ComputedRef<string>
+    prefersReduced: Ref<boolean>
+}
+
+export function useAnimation(animationClass: MaybeRefOrGetter<string> = ''): UseAnimationReturn {
     const prefersReduced = useReducedMotion()
     const resolvedClass = computed(() => {
         if (prefersReduced.value) return ''

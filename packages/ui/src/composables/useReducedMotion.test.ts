@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, nextTick, type Ref } from 'vue'
+
 import { useReducedMotion } from './useReducedMotion'
 
 function createMockMediaQuery(matches: boolean) {
@@ -20,10 +21,10 @@ function createMockMediaQuery(matches: boolean) {
     } as unknown as MediaQueryList
 }
 
-function createWrapper() {
+function createWrapperWith(composable: () => Ref<boolean>) {
     return defineComponent({
         setup() {
-            const prefersReduced = useReducedMotion()
+            const prefersReduced = composable()
             return { prefersReduced }
         },
         template: '<div>{{ prefersReduced }}</div>',
@@ -31,13 +32,15 @@ function createWrapper() {
 }
 
 describe('useReducedMotion', () => {
+    let originalMatchMedia: typeof window.matchMedia
+
     beforeEach(() => {
-        vi.stubGlobal('window', {
-            matchMedia: vi.fn(),
-        })
+        originalMatchMedia = window.matchMedia
+        window.matchMedia = vi.fn() as unknown as typeof window.matchMedia
     })
 
     afterEach(() => {
+        window.matchMedia = originalMatchMedia
         vi.restoreAllMocks()
     })
 
@@ -45,7 +48,7 @@ describe('useReducedMotion', () => {
         const mockQuery = createMockMediaQuery(true)
         vi.mocked(window.matchMedia).mockReturnValue(mockQuery)
 
-        const wrapper = mount(createWrapper())
+        const wrapper = mount(createWrapperWith(useReducedMotion))
         await nextTick()
 
         expect(wrapper.vm.prefersReduced).toBe(true)
@@ -55,7 +58,7 @@ describe('useReducedMotion', () => {
         const mockQuery = createMockMediaQuery(false)
         vi.mocked(window.matchMedia).mockReturnValue(mockQuery)
 
-        const wrapper = mount(createWrapper())
+        const wrapper = mount(createWrapperWith(useReducedMotion))
         await nextTick()
 
         expect(wrapper.vm.prefersReduced).toBe(false)
@@ -65,13 +68,13 @@ describe('useReducedMotion', () => {
         const mockQuery = createMockMediaQuery(false)
         vi.mocked(window.matchMedia).mockReturnValue(mockQuery)
 
-        const wrapper = mount(createWrapper())
+        const wrapper = mount(createWrapperWith(useReducedMotion))
         await nextTick()
 
-        expect(wrapper.vm.prefersReduced).toBe(false)
+        expect((wrapper.vm as any).prefersReduced).toBe(false)
 
         // Simulate media query change
-        mockQuery._trigger(true)
+        ;(mockQuery as any)._trigger(true)
         await nextTick()
 
         expect(wrapper.vm.prefersReduced).toBe(true)
@@ -81,11 +84,44 @@ describe('useReducedMotion', () => {
         const mockQuery = createMockMediaQuery(false)
         vi.mocked(window.matchMedia).mockReturnValue(mockQuery)
 
-        const wrapper = mount(createWrapper())
+        const wrapper = mount(createWrapperWith(useReducedMotion))
         await nextTick()
 
         wrapper.unmount()
 
         expect(mockQuery.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function))
+    })
+
+    describe('SSR environment (isClient = false)', () => {
+        beforeEach(() => {
+            vi.resetModules()
+            vi.doMock('../lib/env', () => ({
+                isClient: false,
+                hasDocument: false,
+                hasLocalStorage: false,
+            }))
+            vi.mocked(window.matchMedia).mockReturnValue(createMockMediaQuery(false))
+        })
+
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
+
+        it('keeps prefersReduced as false and skips matchMedia', async () => {
+            const { useReducedMotion: useReducedMotionSSR } = await import('./useReducedMotion')
+            const wrapper = mount(createWrapperWith(useReducedMotionSSR))
+            await nextTick()
+
+            expect(wrapper.vm.prefersReduced).toBe(false)
+            expect(window.matchMedia).not.toHaveBeenCalled()
+        })
+
+        it('does not throw on unmount when no mediaQuery was created', async () => {
+            const { useReducedMotion: useReducedMotionSSR } = await import('./useReducedMotion')
+            const wrapper = mount(createWrapperWith(useReducedMotionSSR))
+            await nextTick()
+
+            expect(() => wrapper.unmount()).not.toThrow()
+        })
     })
 })

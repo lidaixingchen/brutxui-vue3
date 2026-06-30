@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 
@@ -27,12 +27,13 @@ const emit = defineEmits<{
     load: []
 }>()
 
-const { prefersReducedMotion } = useReducedMotion()
+const prefersReducedMotion = useReducedMotion()
 
 const sentinelRef = ref<HTMLElement | null>(null)
 const isLoading = ref(false)
-const observer = ref<IntersectionObserver | null>(null)
-const loadTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+// 使用 shallowRef 存储原生对象，避免不必要的深层响应式追踪
+const observer = shallowRef<IntersectionObserver | null>(null)
+const loadTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 
 // 检查是否应该加载
 function shouldLoad(): boolean {

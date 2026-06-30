@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import KanbanBoard from './KanbanBoard.vue'
-import type { KanbanCard, KanbanColumn } from './KanbanBoard.vue'
+import type { KanbanCard, KanbanColumn } from './types'
 import { zhCN } from '@/locales/zh-CN'
 
 const card1: KanbanCard = {
@@ -141,8 +141,8 @@ describe('KanbanBoard', () => {
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const newColumns = emitted![0][0] as KanbanColumn[]
-        const todoCards = newColumns.find((c) => c.id === 'todo')!.cards
-        expect(todoCards.map((c) => c.id)).toEqual(['card-2', 'card-1'])
+        const todoCards = newColumns.find((c: KanbanColumn) => c.id === 'todo')!.cards
+        expect(todoCards.map((c: KanbanCard) => c.id)).toEqual(['card-2', 'card-1'])
     })
 
     it('reorders card backward within same column on drop', async () => {
@@ -198,8 +198,8 @@ describe('KanbanBoard', () => {
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const newColumns = emitted![0][0] as KanbanColumn[]
-        const todoCards = newColumns.find((c) => c.id === 'todo')!.cards
-        expect(todoCards.map((c) => c.id)).toEqual(['card-a', 'card-c', 'card-b', 'card-d'])
+        const todoCards = newColumns.find((c: KanbanColumn) => c.id === 'todo')!.cards
+        expect(todoCards.map((c: KanbanCard) => c.id)).toEqual(['card-a', 'card-c', 'card-b', 'card-d'])
     })
 
     it('moves card to different column on drop', async () => {
@@ -238,9 +238,9 @@ describe('KanbanBoard', () => {
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
         const newColumns = emitted![0][0] as KanbanColumn[]
-        const todoCards = newColumns.find((c) => c.id === 'todo')!.cards
-        expect(todoCards.map((c) => c.id)).toEqual(['card-1', 'card-2', 'card-3'])
-        const inProgressCards = newColumns.find((c) => c.id === 'in-progress')!.cards
+        const todoCards = newColumns.find((c: KanbanColumn) => c.id === 'todo')!.cards
+        expect(todoCards.map((c: KanbanCard) => c.id)).toEqual(['card-1', 'card-2', 'card-3'])
+        const inProgressCards = newColumns.find((c: KanbanColumn) => c.id === 'in-progress')!.cards
         expect(inProgressCards).toHaveLength(0)
     })
 })

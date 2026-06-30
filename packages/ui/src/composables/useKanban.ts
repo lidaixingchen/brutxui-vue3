@@ -1,4 +1,5 @@
 import { type Ref, ref } from 'vue'
+import type { MoveDirection } from '@/types'
 
 export interface KanbanCard {
     id: string
@@ -21,7 +22,23 @@ export interface UseKanbanOptions {
     onColumnMove?: (columnId: string, fromIndex: number, toIndex: number) => void
 }
 
-export function useKanban(options: UseKanbanOptions) {
+export interface UseKanbanReturn {
+    draggingCard: Ref<{ cardId: string; fromColumn: string } | null>
+    draggingColumn: Ref<string | null>
+    grabbedCard: Ref<{ cardId: string; columnId: string } | null>
+    dragOverColumn: Ref<string | null>
+    isDragging: Ref<boolean>
+    onDragStart: (cardId: string, fromColumn: string) => void
+    onDragEnd: () => void
+    onDragOver: (e: DragEvent, columnId: string) => void
+    onDrop: (e: DragEvent, toColumnId: string) => KanbanColumn[] | undefined
+    onCardKeydown: (e: KeyboardEvent, cardId: string, columnId: string) => void
+    moveCardInColumn: (cardId: string, columnId: string, direction: MoveDirection) => KanbanColumn[] | undefined
+    moveCardToAdjacentColumn: (cardId: string, columnId: string, direction: MoveDirection) => KanbanColumn[] | undefined
+    moveColumn: (fromId: string, toId: string) => KanbanColumn[] | undefined
+}
+
+export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null)
     const draggingColumn = ref<string | null>(null)
     const grabbedCard = ref<{ cardId: string; columnId: string } | null>(null)
@@ -121,7 +138,7 @@ export function useKanban(options: UseKanbanOptions) {
         }
     }
 
-    function moveCardInColumn(cardId: string, columnId: string, direction: number) {
+    function moveCardInColumn(cardId: string, columnId: string, direction: MoveDirection) {
         const col = options.columns.value.find(c => c.id === columnId)
         if (!col) return
         const index = col.cards.findIndex(c => c.id === cardId)
@@ -139,7 +156,7 @@ export function useKanban(options: UseKanbanOptions) {
         return newColumns
     }
 
-    function moveCardToAdjacentColumn(cardId: string, columnId: string, direction: number) {
+    function moveCardToAdjacentColumn(cardId: string, columnId: string, direction: MoveDirection) {
         const colIndex = options.columns.value.findIndex(c => c.id === columnId)
         if (colIndex === -1) return
         const newColIndex = colIndex + direction

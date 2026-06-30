@@ -32,6 +32,11 @@
             "import": "./dist/brutalism-plugin.js",
             "require": "./dist/brutalism-plugin.cjs"
         },
+        "./devtools-plugin": {
+            "types": "./dist/devtools-plugin.d.ts",
+            "import": "./dist/devtools-plugin.js",
+            "require": "./dist/devtools-plugin.cjs"
+        },
         "./locales": {
             "types": "./dist/locales.d.ts",
             "import": "./dist/locales.js",
@@ -108,7 +113,10 @@
         "test:coverage": "vitest run --coverage",
         "visual:dev": "vite --config visual/vite.config.ts --host 127.0.0.1",
         "test:visual": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts",
-        "test:visual:update": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts --update-snapshots"
+        "test:visual:update": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts --update-snapshots",
+        "docs:api": "typedoc",
+        "docs:api:full": "npx tsx scripts/generate-api-docs.ts",
+        "docs:api:vue": "npx tsx scripts/generate-api-docs.ts --skip-typedoc"
     },
     "peerDependencies": {
         "@lucide/vue": "^1.0.0",
@@ -151,12 +159,17 @@
         "@types/prismjs": "^1.26.6",
         "@vitejs/plugin-vue": "^6.0.7",
         "@vitest/coverage-v8": "^4.1.8",
-        "@vue/test-utils": "^2.4.0",
+        "@vue/test-utils": "^2.4.11",
+        "embla-carousel": "8.6.0",
         "eslint": "^10.4.1",
         "eslint-plugin-vue": "^10.9.2",
         "globals": "^17.6.0",
         "happy-dom": "^20.9.0",
+        "jsdom": "^29.1.1",
         "tailwindcss": "^4.3.0",
+        "tsx": "^4.22.4",
+        "typedoc": "^0.28.19",
+        "typedoc-plugin-markdown": "^4.12.0",
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.60.1",
         "vite": "^8.0.16",

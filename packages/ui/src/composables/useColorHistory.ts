@@ -24,7 +24,7 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
         const raw = safeGetStorageItem(storageKey)
         if (raw) {
             try {
-                const parsed = JSON.parse(raw)
+                const parsed: unknown = JSON.parse(raw)
                 if (Array.isArray(parsed)) {
                     history.value = parsed.filter((item) => typeof item === 'string').slice(0, maxItems)
                 }

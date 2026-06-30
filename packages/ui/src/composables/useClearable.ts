@@ -1,4 +1,4 @@
-import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, computed, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export interface UseClearableOptions<TValue = unknown> {
     /** 当前值，用于判断是否显示清除按钮 */
@@ -11,7 +11,15 @@ export interface UseClearableOptions<TValue = unknown> {
     onClear?: (event: MouseEvent) => void
 }
 
-export function useClearable<TValue = unknown>(options: UseClearableOptions<TValue> = {}) {
+export interface UseClearableReturn {
+    isHovering: Ref<boolean>
+    showClear: ComputedRef<boolean>
+    handleClear: (event: MouseEvent) => void
+    onMouseEnter: () => void
+    onMouseLeave: () => void
+}
+
+export function useClearable<TValue = unknown>(options: UseClearableOptions<TValue> = {}): UseClearableReturn {
     const isHovering = ref(false)
 
     const hasValue = computed(() => {

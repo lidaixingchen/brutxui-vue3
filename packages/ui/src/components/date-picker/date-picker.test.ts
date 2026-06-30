@@ -457,8 +457,8 @@ describe('DatePicker', () => {
         })
         await openPanel(wrapper)
         const panel = wrapper.findComponent(DatePickerPanel)
-        expect(panel.props('minDate')).toEqual(minDate)
-        expect(panel.props('maxDate')).toEqual(maxDate)
+        expect((panel as any).props('minDate')).toEqual(minDate)
+        expect((panel as any).props('maxDate')).toEqual(maxDate)
     })
 
     it('passes shortcuts to panel', async () => {
@@ -472,7 +472,7 @@ describe('DatePicker', () => {
         })
         await openPanel(wrapper)
         const panel = wrapper.findComponent(DatePickerPanel)
-        expect(panel.props('shortcuts')).toEqual(shortcuts)
+        expect((panel as any).props('shortcuts')).toEqual(shortcuts)
     })
 
     it('passes clearable to panel', async () => {
@@ -483,7 +483,7 @@ describe('DatePicker', () => {
         })
         await openPanel(wrapper)
         const panel = wrapper.findComponent(DatePickerPanel)
-        expect(panel.props('clearable')).toBe(true)
+        expect((panel as any).props('clearable')).toBe(true)
     })
 
     it('syncs displayValue when modelValue prop changes', async () => {
@@ -698,7 +698,7 @@ describe('DatePicker programmatic control (defineExpose)', () => {
 
     it('setting open to true programmatically opens the panel and emits open', async () => {
         const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
-        wrapper.vm.open = true
+        ;(wrapper as any).vm.open = true
         await nextTick()
         await nextTick()
         expect(wrapper.emitted('open')).toBeTruthy()
@@ -709,10 +709,10 @@ describe('DatePicker programmatic control (defineExpose)', () => {
 
     it('setting open to false programmatically closes the panel and emits close', async () => {
         const wrapper = mount(DatePicker, { ...localeProvide, attachTo: document.body })
-        wrapper.vm.open = true
+        ;(wrapper as any).vm.open = true
         await nextTick()
         await nextTick()
-        wrapper.vm.open = false
+        ;(wrapper as any).vm.open = false
         await nextTick()
         await nextTick()
         expect(wrapper.emitted('close')).toBeTruthy()

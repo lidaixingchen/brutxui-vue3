@@ -17,7 +17,18 @@ interface UseCanvasInteractionOptions {
     drawOverlay: (ctx: CanvasRenderingContext2D, width: number, height: number) => void
 }
 
-export function useCanvasInteraction(options: UseCanvasInteractionOptions) {
+export interface UseCanvasInteractionReturn {
+    ctx: Ref<CanvasRenderingContext2D | null>
+    isRevealed: Ref<boolean>
+    revealAll: () => void
+    syncCanvasSize: () => void
+    handlePointerDown: (e: PointerEvent) => void
+    handlePointerMove: (e: PointerEvent) => void
+    handlePointerUp: (e: PointerEvent) => void
+    touchAction: 'none'
+}
+
+export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseCanvasInteractionReturn {
     const {
         containerRef,
         canvasRef,

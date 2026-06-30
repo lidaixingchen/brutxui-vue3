@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, shallowRef, computed, watch } from 'vue';
 import { hasDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
 import { getCheckState, getAllDescendantIds } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
+import type { SelectionMode, TreeNode } from './types';
+import type { CheckState } from './tree-view-utils';
 
-export type SelectionMode = 'single' | 'checkbox';
-
-export type { CheckState } from './tree-view-utils';
-
-export interface TreeNode {
-    id: string;
-    label: string;
-    icon?: string;
-    children?: TreeNode[];
-    data?: unknown;
-    disabled?: boolean;
-}
+export type { SelectionMode, TreeNode, CheckState };
 
 interface TreeViewProps {
     nodes: TreeNode[];
@@ -49,7 +40,8 @@ const { t } = useLocale();
 
 const treeRootRef = ref<HTMLDivElement | null>(null);
 
-const expandedIds = ref<Set<string>>(new Set(props.defaultExpanded));
+// 使用 shallowRef 避免对 Set 进行深层响应式转换
+const expandedIds = shallowRef<Set<string>>(new Set(props.defaultExpanded));
 
 watch(() => props.defaultExpanded, (newVal) => {
     expandedIds.value = new Set(newVal);

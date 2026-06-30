@@ -8,11 +8,9 @@ import TabsTrigger from '../tabs/TabsTrigger.vue'
 import TabsContent from '../tabs/TabsContent.vue'
 import Card from '../card/Card.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { TabItem } from './types'
 
-export interface TabItem {
-    label: string
-    value: string
-}
+export type { TabItem };
 
 interface TabsNavProps {
     tabs?: TabItem[]

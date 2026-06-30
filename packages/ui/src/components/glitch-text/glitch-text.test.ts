@@ -46,11 +46,11 @@ describe('GlitchText', () => {
 
         expect(wrapper.classes()).not.toContain('is-glitching')
 
-        wrapper.vm.play()
+        ;(wrapper.vm as any).play()
         await nextTick()
         expect(wrapper.classes()).toContain('is-glitching')
 
-        wrapper.vm.stop()
+        ;(wrapper.vm as any).stop()
         await nextTick()
         expect(wrapper.classes()).not.toContain('is-glitching')
     })
@@ -93,12 +93,12 @@ describe('GlitchText', () => {
         expect(wrapper.classes()).toContain('glitch-vertical')
         expect(wrapper.classes()).not.toContain('is-glitching')
 
-        wrapper.vm.play()
+        ;(wrapper.vm as any).play()
         await nextTick()
         expect(wrapper.classes()).toContain('is-glitching')
         expect(wrapper.classes()).toContain('glitch-vertical')
 
-        wrapper.vm.stop()
+        ;(wrapper.vm as any).stop()
         await nextTick()
         expect(wrapper.classes()).not.toContain('is-glitching')
         expect(wrapper.classes()).toContain('glitch-vertical')

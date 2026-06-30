@@ -179,7 +179,7 @@ export { default as FormConditional } from './components/form/FormConditional.vu
 export { formFieldKey, formItemKey, formContextKey, formWizardContextKey } from './components/form/form-context'
 export type { FormFieldContext, FormItemContext } from './components/form/form-context'
 export type { FormStep, ValidationResult, FormWizardContext } from './components/form/form-wizard-types'
-export { useFormWizard } from './components/form/FormWizard.vue'
+export { useFormWizard } from './components/form/form-wizard-utils'
 
 export { default as SubmitButton } from './components/submit-button/SubmitButton.vue'
 
@@ -221,10 +221,10 @@ export type { ThemeName, ColorMode, ResolvedColorMode } from './composables/useT
 export { default as ColorModeSwitcher } from './components/color-mode-switcher/ColorModeSwitcher.vue'
 
 export { default as SaaSPricing } from './components/saas-pricing/SaaSPricing.vue'
-export type { PricingPlan, PricingFeature } from './components/saas-pricing/SaaSPricing.vue'
+export type { PricingPlan, PricingFeature } from './components/saas-pricing/types'
 
 export { default as DashboardStats } from './components/dashboard-stats/DashboardStats.vue'
-export type { StatItem } from './components/dashboard-stats/DashboardStats.vue'
+export type { StatItem } from './components/dashboard-stats/types'
 
 export { default as DashboardShell } from './components/dashboard-shell/DashboardShell.vue'
 
@@ -235,7 +235,7 @@ export { default as AuthCard } from './components/auth-card/AuthCard.vue'
 export { default as EmptyState } from './components/empty-state/EmptyState.vue'
 
 export { default as PricingSection } from './components/pricing-section/PricingSection.vue'
-export type { BrutalistPricingPlan } from './components/pricing-section/PricingSection.vue'
+export type { BrutalistPricingPlan } from './components/pricing-section/types'
 
 export { default as WaitlistPage } from './components/waitlist-page/WaitlistPage.vue'
 
@@ -246,19 +246,19 @@ export { default as BlogCard } from './components/blog-card/BlogCard.vue'
 export { default as FileCard } from './components/file-card/FileCard.vue'
 
 export { default as QuickActions } from './components/quick-actions/QuickActions.vue'
-export type { ActionItem } from './components/quick-actions/QuickActions.vue'
+export type { ActionItem } from './components/quick-actions/types'
 
 export { default as FaqSection } from './components/faq-section/FaqSection.vue'
-export type { FaqItem } from './components/faq-section/FaqSection.vue'
+export type { FaqItem } from './components/faq-section/types'
 
 export { default as TabsNav } from './components/tabs-nav/TabsNav.vue'
-export type { TabItem } from './components/tabs-nav/TabsNav.vue'
+export type { TabItem } from './components/tabs-nav/types'
 
 export { default as HeaderSection } from './components/header-section/HeaderSection.vue'
-export type { NavItem } from './components/header-section/HeaderSection.vue'
+export type { NavItem } from './components/header-section/types'
 
 export { default as FooterSection } from './components/footer-section/FooterSection.vue'
-export type { FooterLinkGroup, FooterLink } from './components/footer-section/FooterSection.vue'
+export type { FooterLinkGroup, FooterLink } from './components/footer-section/types'
 
 export { default as NotFoundPage } from './components/not-found-page/NotFoundPage.vue'
 
@@ -269,12 +269,12 @@ export { default as ErrorCard } from './components/error-card/ErrorCard.vue'
 export { default as SuccessCard } from './components/success-card/SuccessCard.vue'
 
 export { default as SearchWidget } from './components/search-widget/SearchWidget.vue'
-export type { SearchSuggestion } from './components/search-widget/SearchWidget.vue'
+export type { SearchSuggestion } from './components/search-widget/types'
 
 export { default as FeedbackForm } from './components/feedback-form/FeedbackForm.vue'
 
 export { default as StepperSection } from './components/stepper-section/StepperSection.vue'
-export type { StepperStepItem } from './components/stepper-section/StepperSection.vue'
+export type { StepperStepItem } from './components/stepper-section/types'
 
 export { default as CookieConsent } from './components/cookie-consent/CookieConsent.vue'
 
@@ -286,26 +286,26 @@ export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, 
 export type { DataTableColumn, DataTableColumnHeaderContext, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
 
 export { default as SettingsPage } from './components/settings-page/SettingsPage.vue'
-export type { SettingsTab } from './components/settings-page/SettingsPage.vue'
+export type { SettingsTab } from './components/settings-page/types'
 
 export { default as BlogListPage } from './components/blog-list-page/BlogListPage.vue'
-export type { BlogPost } from './components/blog-list-page/BlogListPage.vue'
+export type { BlogPost } from './components/blog-list-page/types'
 
 export { default as ActivityLogPage } from './components/activity-log-page/ActivityLogPage.vue'
-export type { ActivityEntry } from './components/activity-log-page/ActivityLogPage.vue'
+export type { ActivityEntry } from './components/activity-log-page/types'
 
 export { default as ProfilePage } from './components/profile-page/ProfilePage.vue'
 
 export { default as ChartSection } from './components/chart-section/ChartSection.vue'
-export type { ChartDataPoint } from './components/chart-section/ChartSection.vue'
+export type { ChartDataPoint } from './components/chart-section/types'
 
 export { default as GallerySection } from './components/gallery-section/GallerySection.vue'
-export type { GalleryItem } from './components/gallery-section/GallerySection.vue'
+export type { GalleryItem } from './components/gallery-section/types'
 
 export { default as UploadCard } from './components/upload-card/UploadCard.vue'
 
 export { default as OverviewPage } from './components/overview-page/OverviewPage.vue'
-export type { OverviewStat } from './components/overview-page/OverviewPage.vue'
+export type { OverviewStat } from './components/overview-page/types'
 
 export { default as Accordion } from './components/accordion/Accordion.vue'
 export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
@@ -361,11 +361,11 @@ export type { CarouselThumbnails, AutoplayIndicator, ParallaxEffect, CarouselEnh
 
 export { default as TreeView } from './components/tree-view/TreeView.vue'
 export { default as TreeViewNode } from './components/tree-view/TreeViewNode.vue'
-export type { TreeNode } from './components/tree-view/TreeView.vue'
+export type { TreeNode } from './components/tree-view/types'
 export { treeItemVariants } from './components/tree-view/tree-view-variants'
 
 export { default as KanbanBoard } from './components/kanban/KanbanBoard.vue'
-export type { KanbanCard, KanbanColumn } from './components/kanban/KanbanBoard.vue'
+export type { KanbanCard, KanbanColumn } from './components/kanban/types'
 export { kanbanColumnVariants, kanbanCardVariants } from './components/kanban/kanban-variants'
 
 export { default as ChatBubble } from './components/chat-bubble/ChatBubble.vue'
@@ -380,12 +380,13 @@ export { default as Counter } from './components/counter/Counter.vue'
 export { counterVariants } from './components/counter/counter-variants'
 
 export { default as Stepper } from './components/stepper/Stepper.vue'
-export type { StepperStep } from './components/stepper/Stepper.vue'
+export type { StepperStep } from './components/stepper/types'
 export { stepperDotVariants, stepperConnectorVariants } from './components/stepper/stepper-variants'
 
-export * from './lib/utils'
-export * from './lib/color'
-export * from './lib/date'
+export { cn } from './lib/utils'
+export { hsvToRgb, rgbToHsv, rgbToHsl, hslToRgb, hsvToHex, hsvToHexAlpha, hexToHsv, hexToRgb, parseColor, isValidColor, formatColor, normalizeColor } from './lib/color'
+export type { HSVColor, RGBColor, HSLColor, ColorFormat } from './lib/color'
+export { getISOWeekNumber, getWeekStartDate, formatDate, parseFormattedDate } from './lib/date'
 export { DEFAULT_COLOR_PRESETS } from './lib/default-presets'
 export type { ColorPreset } from './lib/default-presets'
 export { iconSizeVariants } from './lib/icon-size-variants'
@@ -395,6 +396,17 @@ export type { VariantProps } from 'class-variance-authority'
 
 export { BrutxUIPlugin } from './plugin'
 export type { BrutxUIPluginOptions } from './plugin'
+
+// Vue Devtools 插件
+export { devtoolsPlugin, setupDevtools, useDevtools } from './lib/devtools-plugin'
+export type {
+    DevtoolsPluginOptions,
+    BrutxUIDevtoolsContext,
+    EventLogEntry,
+    PerformanceEntry,
+    ComponentMeta,
+    PerformanceReport,
+} from './lib/devtools-plugin'
 export { useLocale, provideLocale } from './composables/useLocale'
 export type { TranslateFunction } from './composables/useLocale'
 export { useColorHistory } from './composables/useColorHistory'
@@ -463,6 +475,12 @@ export type { UseDataTablePaginationOptions } from './composables/useDataTablePa
 export { useClearable } from './composables/useClearable'
 export type { UseClearableOptions } from './composables/useClearable'
 
+export { useDebounce } from './composables/useDebounce'
+export type { UseDebounceOptions, UseDebounceReturn } from './composables/useDebounce'
+
+export { useThrottle } from './composables/useThrottle'
+export type { UseThrottleOptions, UseThrottleReturn } from './composables/useThrottle'
+
 // 新增组件 - Input Adornment
 export { InputAdornment } from './components/input-adornment'
 
@@ -480,4 +498,49 @@ export { default as DescriptionsItem } from './components/descriptions/Descripti
 // 新增组件 - InfiniteScroll
 export { default as InfiniteScroll } from './components/infinite-scroll/InfiniteScroll.vue'
 export { useInfiniteScroll } from './components/infinite-scroll/useInfiniteScroll'
+
+// 通用工具类型
+export type {
+    Size,
+    CompactSize,
+    Variant,
+    Orientation,
+    Alignment,
+    IconComponent,
+    ResizeCorner,
+    MoveDirection,
+    EventHandler,
+    OptionalEventHandler,
+    ComponentProps,
+    ComponentEmits,
+    ComponentSlots,
+    Nullable,
+    MaybeUndefined,
+    DeepPartial,
+    DeepReadonly,
+    ArrayElement,
+    RecordValue,
+    PartialBy,
+    RequiredBy,
+} from './types'
+
+// Composable 返回类型
+export type { UseCarouselReturn } from './composables/useCarousel'
+export type { UseClearableReturn } from './composables/useClearable'
+export type { UseClipboardReturn } from './composables/useClipboard'
+export type { UseStepperReturn } from './composables/useStepper'
+export type { UseToastReturn } from './composables/useToast'
+export type { UseThemeReturn } from './composables/useTheme'
+export type { UseDatePickerReturn } from './composables/useDatePicker'
+export type { UseColorPickerReturn } from './composables/useColorPicker'
+export type { UseFormFieldValidationReturn } from './composables/useFormFieldValidation'
+export type { UseAnimationReturn } from './composables/useAnimation'
+export type { UseAudioEngineReturn } from './composables/useAudioEngine'
+export type { UseCanvasInteractionReturn } from './composables/useCanvasInteraction'
+export type { UseDataTableSortReturn } from './composables/useDataTableSort'
+export type { UseDataTableFilterReturn } from './composables/useDataTableFilter'
+export type { UseDataTableSelectionReturn } from './composables/useDataTableSelection'
+export type { UseDataTablePaginationReturn } from './composables/useDataTablePagination'
+export type { UseKanbanReturn } from './composables/useKanban'
+export type { UseDialogEnhancedReturn } from './composables/useDialogEnhanced'
 

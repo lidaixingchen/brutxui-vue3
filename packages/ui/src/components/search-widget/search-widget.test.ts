@@ -3,7 +3,7 @@ import { nextTick } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import SearchWidget from './SearchWidget.vue'
-import type { SearchSuggestion } from './SearchWidget.vue'
+import type { SearchSuggestion } from './types'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 

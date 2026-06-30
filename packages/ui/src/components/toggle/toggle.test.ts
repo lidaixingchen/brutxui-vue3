@@ -15,10 +15,10 @@ describe('Toggle', () => {
             attachTo: document.body,
         })
 
-        await wrapper.setProps({ variant: 'default' })
+        await wrapper.setProps({ variant: 'default' } as any)
         expect(wrapper.classes()).toContain('shadow-brutal-sm')
 
-        await wrapper.setProps({ variant: 'outline' })
+        await wrapper.setProps({ variant: 'outline' } as any)
         expect(wrapper.classes()).toContain('border-brutal')
     })
 
@@ -27,13 +27,13 @@ describe('Toggle', () => {
             attachTo: document.body,
         })
 
-        await wrapper.setProps({ size: 'sm' })
+        await wrapper.setProps({ size: 'sm' } as any)
         expect(wrapper.classes()).toContain('h-8')
 
-        await wrapper.setProps({ size: 'default' })
+        await wrapper.setProps({ size: 'default' } as any)
         expect(wrapper.classes()).toContain('h-10')
 
-        await wrapper.setProps({ size: 'lg' })
+        await wrapper.setProps({ size: 'lg' } as any)
         expect(wrapper.classes()).toContain('h-12')
     })
 

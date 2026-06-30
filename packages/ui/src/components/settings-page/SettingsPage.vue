@@ -15,11 +15,9 @@ import Switch from '../switch/Switch.vue'
 import Button from '../button/Button.vue'
 import Separator from '../separator/Separator.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { SettingsTab } from './types'
 
-export interface SettingsTab {
-    label: string
-    value: string
-}
+export type { SettingsTab };
 
 interface SettingsPageProps {
     title?: string

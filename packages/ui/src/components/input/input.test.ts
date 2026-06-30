@@ -13,26 +13,26 @@ describe('Input', () => {
     it('applies variant classes', async () => {
         const wrapper = mount(Input)
 
-        await wrapper.setProps({ variant: 'default' })
+        await wrapper.setProps({ variant: 'default' } as any)
         expect(wrapper.find('input').classes()).toContain('border-brutal')
 
-        await wrapper.setProps({ variant: 'error' })
+        await wrapper.setProps({ variant: 'error' } as any)
         expect(wrapper.find('input').classes()).toContain('border-brutal-destructive')
 
-        await wrapper.setProps({ variant: 'success' })
+        await wrapper.setProps({ variant: 'success' } as any)
         expect(wrapper.find('input').classes()).toContain('border-brutal-success')
     })
 
     it('applies size classes via size prop', async () => {
         const wrapper = mount(Input)
 
-        await wrapper.setProps({ size: 'sm' })
+        await wrapper.setProps({ size: 'sm' } as any)
         expect(wrapper.find('input').classes()).toContain('h-9')
 
-        await wrapper.setProps({ size: 'default' })
+        await wrapper.setProps({ size: 'default' } as any)
         expect(wrapper.find('input').classes()).toContain('h-11')
 
-        await wrapper.setProps({ size: 'lg' })
+        await wrapper.setProps({ size: 'lg' } as any)
         expect(wrapper.find('input').classes()).toContain('h-14')
     })
 

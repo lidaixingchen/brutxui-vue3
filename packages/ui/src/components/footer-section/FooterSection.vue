@@ -4,16 +4,9 @@ import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import Button from '../button/Button.vue'
 import Separator from '../separator/Separator.vue'
+import type { FooterLink, FooterLinkGroup } from './types'
 
-export interface FooterLink {
-    label: string
-    href?: string
-}
-
-export interface FooterLinkGroup {
-    title: string
-    links: FooterLink[]
-}
+export type { FooterLink, FooterLinkGroup };
 
 interface FooterSectionProps {
     logoText?: string

@@ -246,7 +246,7 @@ describe('Slider', () => {
             await thumb.trigger('focus')
             expect(wrapper.find('[role="tooltip"]').text()).toBe('50')
 
-            await wrapper.setProps({ modelValue: [75] })
+            await wrapper.setProps({ modelValue: [75] } as any)
             expect(wrapper.find('[role="tooltip"]').text()).toBe('75')
         })
     })

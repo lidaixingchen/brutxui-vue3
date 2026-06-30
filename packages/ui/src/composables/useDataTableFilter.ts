@@ -1,4 +1,4 @@
-import { ref, computed, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { DataTableColumn, DataTableFilterState } from '@/components/data-table/types'
 import { getCellValue } from '@/lib/data-table-utils'
 
@@ -7,9 +7,14 @@ export interface UseDataTableFilterOptions<T extends object> {
     filterable: MaybeRefOrGetter<boolean | undefined>
 }
 
+export interface UseDataTableFilterReturn<T> {
+    filterState: Ref<DataTableFilterState>
+    filteredData: (data: T[]) => T[]
+}
+
 export function useDataTableFilter<T extends object>(
     options: UseDataTableFilterOptions<T>,
-) {
+): UseDataTableFilterReturn<T> {
     const filterState = ref<DataTableFilterState>({ global: '', columns: {} })
 
     const visibleColumns = computed(() =>

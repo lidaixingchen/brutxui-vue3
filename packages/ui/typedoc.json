@@ -1,0 +1,50 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": [
+        "src/composables/index.ts",
+        "src/lib/index.ts"
+    ],
+    "out": "docs/api",
+    "tsconfig": "tsconfig.typedoc.json",
+    "exclude": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/*.vue",
+        "**/node_modules/**",
+        "**/test-utils/**",
+        "**/vitest.setup.ts",
+        "**/vitest-axe.d.ts",
+        "**/css.d.ts",
+        "**/env.d.ts",
+        "**/devtools-plugin.ts",
+        "**/devtools-plugin.test.ts",
+        "**/component-preview.ts",
+        "**/component-preview.test.ts"
+    ],
+    "excludePrivate": true,
+    "excludeInternal": true,
+    "excludeExternals": true,
+    "skipErrorChecking": true,
+    "plugin": ["typedoc-plugin-markdown"],
+    "theme": "default",
+    "readme": "none",
+    "githubPages": false,
+    "categorizeByGroup": true,
+    "defaultCategory": "Other",
+    "categoryOrder": [
+        "Composables",
+        "Components",
+        "Types",
+        "Utilities",
+        "Other"
+    ],
+    "sort": ["source-order"],
+    "kindSortOrder": [
+        "Function",
+        "TypeAlias",
+        "Interface",
+        "Enum",
+        "Variable",
+        "Class"
+    ]
+}

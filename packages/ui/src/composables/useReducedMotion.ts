@@ -1,7 +1,7 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { isClient } from '../lib/env'
 
-export function useReducedMotion() {
+export function useReducedMotion(): Ref<boolean> {
     const prefersReduced = ref(false)
     let mediaQuery: MediaQueryList | null = null
 

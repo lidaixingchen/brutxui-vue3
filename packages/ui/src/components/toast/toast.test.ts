@@ -106,7 +106,7 @@ describe('Toast', () => {
     describe('pauseOnHover', () => {
         it('defaults to true', () => {
             const wrapper = mount(Toast, { global: globalProvide })
-            expect(wrapper.props('pauseOnHover')).toBe(true)
+            expect((wrapper.props as any)('pauseOnHover')).toBe(true)
         })
 
         it('pauses timer on mouseenter', async () => {

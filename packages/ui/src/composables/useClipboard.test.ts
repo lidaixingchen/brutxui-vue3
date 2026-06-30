@@ -52,7 +52,7 @@ describe('useClipboard', () => {
 
         expect(copied.value).toBe(true)
 
-        vi.advanceTimersByTime(DEFAULT_COPIED_DURATION)
+        await vi.advanceTimersByTimeAsync(DEFAULT_COPIED_DURATION)
         expect(copied.value).toBe(false)
     })
 
@@ -66,10 +66,10 @@ describe('useClipboard', () => {
 
         expect(copied.value).toBe(true)
 
-        vi.advanceTimersByTime(999)
+        await vi.advanceTimersByTimeAsync(999)
         expect(copied.value).toBe(true)
 
-        vi.advanceTimersByTime(1)
+        await vi.advanceTimersByTimeAsync(1)
         expect(copied.value).toBe(false)
     })
 

@@ -10,26 +10,26 @@ describe('Textarea', () => {
     it('applies variant classes', async () => {
         const wrapper = mount(Textarea)
 
-        await wrapper.setProps({ variant: 'default' })
+        await wrapper.setProps({ variant: 'default' } as any)
         expect(wrapper.find('textarea').classes()).toContain('border-brutal')
 
-        await wrapper.setProps({ variant: 'error' })
+        await wrapper.setProps({ variant: 'error' } as any)
         expect(wrapper.find('textarea').classes()).toContain('border-brutal-destructive')
 
-        await wrapper.setProps({ variant: 'success' })
+        await wrapper.setProps({ variant: 'success' } as any)
         expect(wrapper.find('textarea').classes()).toContain('border-brutal-success')
     })
 
     it('applies size classes via size prop', async () => {
         const wrapper = mount(Textarea)
 
-        await wrapper.setProps({ size: 'sm' })
+        await wrapper.setProps({ size: 'sm' } as any)
         expect(wrapper.find('textarea').classes()).toContain('text-sm')
 
-        await wrapper.setProps({ size: 'default' })
+        await wrapper.setProps({ size: 'default' } as any)
         expect(wrapper.find('textarea').classes()).toContain('text-base')
 
-        await wrapper.setProps({ size: 'lg' })
+        await wrapper.setProps({ size: 'lg' } as any)
         expect(wrapper.find('textarea').classes()).toContain('text-lg')
     })
 

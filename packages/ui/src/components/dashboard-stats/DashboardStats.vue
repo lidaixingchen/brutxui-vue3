@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type Component } from 'vue'
+import { computed } from 'vue'
 import { ArrowUpRight, ArrowDownRight, Minus } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -10,6 +10,9 @@ import CardContent from '../card/CardContent.vue'
 import CardDescription from '../card/CardDescription.vue'
 import Badge from '../badge/Badge.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { StatItem } from './types'
+
+export type { StatItem };
 
 type AccentColorKey = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
 
@@ -20,17 +23,6 @@ const ACCENT_COLOR_MAP: Record<AccentColorKey, string> = {
     destructive: 'bg-brutal-destructive',
     success: 'bg-brutal-success',
     info: 'bg-brutal-info',
-}
-
-export interface StatItem {
-    title: string
-    value: string
-    description: string
-    change: string
-    trend: 'up' | 'down' | 'neutral'
-    icon: Component
-    accentColor?: AccentColorKey
-    progress?: number
 }
 
 interface DashboardStatsProps {

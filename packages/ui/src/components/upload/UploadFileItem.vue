@@ -10,7 +10,7 @@ import {
     Check,
     AlertCircle,
     RefreshCw,
-} from 'lucide-vue-next'
+} from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import type { UploadFile } from './index'
 import { Progress } from '@/components/progress'

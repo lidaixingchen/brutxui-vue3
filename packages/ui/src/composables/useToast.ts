@@ -1,4 +1,4 @@
-import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey } from 'vue'
+import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey, type Ref } from 'vue'
 import { isClient } from '../lib/env'
 import { MAX_TOASTS } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
@@ -40,10 +40,23 @@ export interface PromiseToastOptions<T> {
     errorVariant?: NonNullable<ToastVariantProps['variant']>
 }
 
-const TOAST_KEY: InjectionKey<ReturnType<typeof createToast>> = Symbol('brutx-toast')
+export interface UseToastReturn {
+    toasts: Ref<ToastItem[]>
+    addToast: (toast: Omit<ToastItem, 'id'>) => string
+    removeToast: (id: string) => void
+    clearToasts: () => void
+    clearAllTimers: () => void
+    success: (title: string, description?: string) => string
+    error: (title: string, description?: string) => string
+    warning: (title: string, description?: string) => string
+    info: (title: string, description?: string) => string
+    promise: <T>(promiseOrFn: Promise<T> | (() => Promise<T>), options: PromiseToastOptions<T>) => Promise<T>
+}
+
+const TOAST_KEY: InjectionKey<UseToastReturn> = Symbol('brutx-toast')
 export const DEFAULT_TOAST_DURATION = 5000
 
-export function createToast(isFallback = false) {
+export function createToast(isFallback = false): UseToastReturn {
     const toasts = ref<ToastItem[]>([])
     const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
 
@@ -162,7 +175,7 @@ export function createToast(isFallback = false) {
     }
 }
 
-let fallbackInstance: ReturnType<typeof createToast> | null = null
+let fallbackInstance: UseToastReturn | null = null
 
 function destroyFallback() {
     if (fallbackInstance) {
@@ -171,13 +184,13 @@ function destroyFallback() {
     }
 }
 
-export function provideToast() {
+export function provideToast(): UseToastReturn {
     const toast = createToast()
     provide(TOAST_KEY, toast)
     return toast
 }
 
-export function useToast() {
+export function useToast(): UseToastReturn {
     const toast = inject(TOAST_KEY)
     if (toast) return toast
     if (typeof console !== 'undefined') {

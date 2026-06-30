@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, type Component } from 'vue'
-import { TriangleAlert } from 'lucide-vue-next'
+import { TriangleAlert } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/popover'
@@ -96,7 +96,7 @@ function handleCancel() {
                             {{ cancelButtonText || t('popconfirm.cancel') }}
                         </Button>
                         <Button
-                            :variant="confirmButtonType === 'destructive' ? 'destructive' : 'primary'"
+                            :variant="confirmButtonType === 'destructive' ? 'danger' : 'primary'"
                             size="sm"
                             @click="handleConfirm"
                         >

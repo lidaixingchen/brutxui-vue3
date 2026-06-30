@@ -24,7 +24,7 @@ describe('Button', () => {
 
         const wrapper = mount(Button)
         for (const { variant, expectedClass } of variants) {
-            await wrapper.setProps({ variant })
+            await wrapper.setProps({ variant } as any)
             expect(wrapper.classes()).toContain(expectedClass)
         }
     })
@@ -40,7 +40,7 @@ describe('Button', () => {
 
         const wrapper = mount(Button)
         for (const { size, expectedClass } of sizes) {
-            await wrapper.setProps({ size })
+            await wrapper.setProps({ size } as any)
             expect(wrapper.classes()).toContain(expectedClass)
         }
     })
@@ -72,7 +72,7 @@ describe('Button', () => {
             props: { loading: true },
         })
         for (const { size, expected } of cases) {
-            await wrapper.setProps({ size })
+            await wrapper.setProps({ size } as any)
             const svg = wrapper.find('svg')
             for (const cls of expected) {
                 expect(svg.classes()).toContain(cls)

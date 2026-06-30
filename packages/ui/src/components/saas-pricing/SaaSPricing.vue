@@ -1,20 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import PricingSection, { type BrutalistPricingPlan, type PricingFeature } from '../pricing-section/PricingSection.vue'
+import PricingSection from '../pricing-section/PricingSection.vue'
+import type { BrutalistPricingPlan } from '../pricing-section/types'
+import type { PricingPlan } from './types'
 
-export type { PricingFeature }
-
-export interface PricingPlan {
-    name: string
-    description: string
-    priceMonthly: string
-    priceAnnually: string
-    features: PricingFeature[]
-    popular?: boolean
-    buttonText: string
-    buttonVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
-}
+export type { PricingPlan };
 
 interface SaaSPricingProps {
     plans?: PricingPlan[]

@@ -33,7 +33,7 @@ describe('Carousel', () => {
 
         const wrapper = mount(Carousel, { ...localeProvide })
         for (const { size, expectedClass } of sizes) {
-            await wrapper.setProps({ size })
+            await wrapper.setProps({ size } as any)
             expect(wrapper.classes()).toContain(expectedClass)
         }
     })
@@ -127,9 +127,9 @@ describe('Carousel programmatic control (defineExpose)', () => {
     it('calling exposed scroll methods does not throw when embla is unavailable', () => {
         const wrapper = mount(Carousel, { ...localeProvide })
         expect(() => {
-            wrapper.vm.scrollPrev()
-            wrapper.vm.scrollNext()
-            wrapper.vm.scrollTo(0)
+            ;(wrapper.vm as any).scrollPrev()
+            ;(wrapper.vm as any).scrollNext()
+            ;(wrapper.vm as any).scrollTo(0)
         }).not.toThrow()
     })
 })

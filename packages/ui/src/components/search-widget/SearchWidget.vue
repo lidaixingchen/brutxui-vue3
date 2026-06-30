@@ -13,12 +13,9 @@ import CommandGroup from '../command/CommandGroup.vue'
 import CommandItem from '../command/CommandItem.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import Spinner from '../spinner/Spinner.vue'
+import type { SearchSuggestion } from './types'
 
-export interface SearchSuggestion {
-    label: string
-    value: string
-    group?: string
-}
+export type { SearchSuggestion };
 
 interface SearchWidgetProps {
     placeholder?: string

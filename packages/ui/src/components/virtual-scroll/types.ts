@@ -22,7 +22,7 @@ export interface VirtualScrollProps {
 
 export interface VirtualScrollEmits {
     /** 滚动到底部时触发 */
-    (e: 'scroll-end'): void
+    'scroll-end': []
     /** 滚动时触发 */
-    (e: 'scroll', scrollTop: number): void
+    scroll: [scrollTop: number]
 }

@@ -11,15 +11,9 @@ import CardTitle from '../card/CardTitle.vue'
 import Pagination from '../pagination/Pagination.vue'
 import Badge from '../badge/Badge.vue'
 import Input from '../input/Input.vue'
+import type { BlogPost } from './types'
 
-export interface BlogPost {
-    title: string
-    excerpt: string
-    author: string
-    date: string
-    category: string
-    slug: string
-}
+export type { BlogPost };
 
 interface BlogListPageProps {
     title?: string

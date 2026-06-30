@@ -1,4 +1,4 @@
-import { ref, computed, watch, toValue, type MaybeRefOrGetter } from 'vue'
+import { ref, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { formatColor, parseColor } from '../lib/color'
 import type { ColorPickerFormat } from '../components/color-picker/types'
 
@@ -15,7 +15,19 @@ export interface UseColorPickerOptions {
     emit: ColorPickerEmit
 }
 
-export function useColorPicker(options: UseColorPickerOptions) {
+export interface UseColorPickerReturn {
+    open: Ref<boolean>
+    displayValue: Ref<string | null>
+    normalizedDisplay: ComputedRef<string | null>
+    swatchStyle: ComputedRef<{ backgroundColor: string }>
+    handlePanelUpdate: (value: string | null) => void
+    handlePanelConfirm: (value: string | null) => void
+    handlePanelClear: () => void
+    handleClearClick: (event: MouseEvent) => void
+    handleTriggerKeydown: (event: KeyboardEvent) => void
+}
+
+export function useColorPicker(options: UseColorPickerOptions): UseColorPickerReturn {
     const open = ref(false)
     const displayValue = ref<string | null>(toValue(options.modelValue) ?? null)
 

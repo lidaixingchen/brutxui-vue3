@@ -14,6 +14,16 @@ export interface ValidationResult {
     errors: Record<string, string>
 }
 
+export interface FormWizardProps {
+    steps: FormStep[]
+    modelValue?: Record<string, unknown>
+    initialStep?: number
+    validateOnNext?: boolean
+    showIndicator?: boolean
+    linear?: boolean
+    class?: string
+}
+
 export interface FormWizardContext {
     currentStep: Ref<number>
     steps: ComputedRef<FormStep[]>

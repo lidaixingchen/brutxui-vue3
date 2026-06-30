@@ -1,0 +1,21 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "types": ["vitest/globals", "node"],
+        "skipLibCheck": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false
+    },
+    "include": ["src/**/*.ts", "src/**/*.d.ts"],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/*.vue",
+        "src/lib/devtools-plugin.ts",
+        "src/lib/devtools-plugin.test.ts",
+        "src/lib/component-preview.ts",
+        "src/lib/component-preview.test.ts"
+    ]
+}

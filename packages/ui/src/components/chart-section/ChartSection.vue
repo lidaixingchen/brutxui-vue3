@@ -10,11 +10,9 @@ import TabsList from '../tabs/TabsList.vue'
 import TabsTrigger from '../tabs/TabsTrigger.vue'
 import TabsContent from '../tabs/TabsContent.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { ChartDataPoint } from './types'
 
-export interface ChartDataPoint {
-    label: string
-    value: number
-}
+export type { ChartDataPoint };
 
 interface ChartSectionProps {
     title?: string

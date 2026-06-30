@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useId, watch } from 'vue'
+import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { ChevronsUpDown, X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -91,7 +91,8 @@ const open = computed<boolean>({
     },
 })
 const searchQuery = ref('')
-const expandedIds = ref<Set<string>>(new Set())
+// 使用 shallowRef 避免对 Set 进行深层响应式转换
+const expandedIds = shallowRef<Set<string>>(new Set())
 const focusedId = ref<string | undefined>(undefined)
 
 // 迭代式扁平化所有节点（用于查找）- 避免递归栈溢出

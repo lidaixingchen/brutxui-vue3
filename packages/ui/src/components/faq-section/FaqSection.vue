@@ -9,11 +9,9 @@ import AccordionContent from '../accordion/AccordionContent.vue'
 import Card from '../card/Card.vue'
 import Badge from '../badge/Badge.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { FaqItem } from './types'
 
-export interface FaqItem {
-    question: string
-    answer: string
-}
+export type { FaqItem };
 
 interface FaqSectionProps {
     title?: string

@@ -29,6 +29,8 @@
     --color-brutal-success-foreground: var(--brutal-success-foreground);
     --color-brutal-info: var(--brutal-info);
     --color-brutal-info-foreground: var(--brutal-info-foreground);
+    --color-brutal-danger: var(--brutal-destructive);
+    --color-brutal-warning: var(--brutal-accent);
 
     /* Dynamic: shadows use --brutal-shadow-* for dark mode */
     --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
@@ -138,60 +140,11 @@
         --brutal-placeholder: #6B7280;
     }
 
-    /* Classic theme: intentionally re-declares all variables identical to :root defaults.
-       This is required so that switching from another theme (e.g. .theme-pastel) back
-       to .theme-classic correctly overrides inherited custom properties. */
-    .theme-classic {
-        --brutal-border-width: 3px;
-        --brutal-border-color: #000000;
-        --brutal-shadow-offset-x: 4px;
-        --brutal-shadow-offset-y: 4px;
-        --brutal-shadow-color: #000000;
-        --brutal-radius: 0px;
-        --brutal-bg: #ffffff;
-        --brutal-fg: #000000;
-        --brutal-primary: #FF6B6B;
-        --brutal-primary-foreground: #000000;
-        --brutal-secondary: #4ECDC4;
-        --brutal-secondary-foreground: #000000;
-        --brutal-accent: #FFE66D;
-        --brutal-accent-foreground: #000000;
-        --brutal-destructive: #EF476F;
-        --brutal-destructive-foreground: #ffffff;
-        --brutal-success: #7FB069;
-        --brutal-success-foreground: #000000;
-        --brutal-muted: #f3f4f6;
-        --brutal-muted-foreground: #4B5563;
-        --brutal-ring: #000000;
-        --brutal-info: #4A90D9;
-        --brutal-info-foreground: #ffffff;
-        --brutal-overlay: rgba(0, 0, 0, 0.5);
-        --brutal-placeholder: #9CA3AF;
-    }
-    /* Dark classic: only overrides variables that change between light/dark.
-       Variables unchanged (border-width, shadow-offset-x/y, radius) inherit from .theme-classic. */
+    /* Classic theme: light mode inherits all values from :root above.
+       Only the dark override is needed to reset variables when switching themes. */
+    /* Dark classic: only declares values that differ from the .dark base rule. */
     .dark .theme-classic, .theme-classic.dark {
-        --brutal-border-color: #ffffff;
-        --brutal-shadow-color: #ffffff;
-        --brutal-bg: #141414;
-        --brutal-fg: #ffffff;
-        --brutal-primary: #FF6B6B;
-        --brutal-primary-foreground: #000000;
-        --brutal-secondary: #4ECDC4;
-        --brutal-secondary-foreground: #000000;
-        --brutal-accent: #FFE66D;
-        --brutal-accent-foreground: #000000;
-        --brutal-destructive: #EF476F;
-        --brutal-destructive-foreground: #ffffff;
-        --brutal-success: #7FB069;
-        --brutal-success-foreground: #000000;
-        --brutal-muted: #1e1e1e;
-        --brutal-muted-foreground: #9CA3AF;
-        --brutal-ring: #ffffff;
         --brutal-info: #3B82F6;
-        --brutal-info-foreground: #ffffff;
-        --brutal-overlay: rgba(0, 0, 0, 0.7);
-        --brutal-placeholder: #6B7280;
     }
 
     .theme-pastel {

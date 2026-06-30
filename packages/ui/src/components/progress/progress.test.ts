@@ -31,7 +31,7 @@ describe('Progress', () => {
         const style = indicator.attributes('style')
         expect(style).toContain('translateX(-50%)')
 
-        await wrapper.setProps({ modelValue: 75 })
+        await wrapper.setProps({ modelValue: 75 } as any)
         const updatedStyle = indicator.attributes('style')
         expect(updatedStyle).toContain('translateX(-25%)')
     })

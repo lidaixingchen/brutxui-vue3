@@ -100,12 +100,12 @@ describe('FeedbackForm', () => {
         await inputs[1].setValue('alice@example.com')
         await wrapper.find('textarea').setValue('Great work!')
 
-        await wrapper.setProps({ success: true })
+        await (wrapper as any).setProps({ success: true })
         const successCard = wrapper.findComponent({ name: 'SuccessCard' })
         successCard.vm.$emit('confirm')
         await wrapper.vm.$nextTick()
 
-        await wrapper.setProps({ success: false })
+        await (wrapper as any).setProps({ success: false })
 
         const restoredInputs = wrapper.findAll('input')
         expect((restoredInputs[0].element as HTMLInputElement).value).toBe('')

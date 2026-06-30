@@ -12,30 +12,14 @@ import CardDescription from '../card/CardDescription.vue'
 import CardFooter from '../card/CardFooter.vue'
 import Badge from '../badge/Badge.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { PricingFeature, BrutalistPricingPlan } from './types'
+
+export type { PricingFeature, BrutalistPricingPlan };
 
 type ButtonVariant = 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
 type CardVariant = 'default' | 'elevated' | 'flat' | 'interactive' | 'primary' | 'secondary'
 type BillingPeriod = 'monthly' | 'annually'
 type BillingMode = 'none' | 'toggle' | 'auto'
-
-export interface PricingFeature {
-    text: string
-    included?: boolean
-}
-
-export interface BrutalistPricingPlan {
-    name: string
-    price?: string
-    priceMonthly?: string
-    priceAnnually?: string
-    description: string
-    features: Array<string | PricingFeature>
-    ctaText?: string
-    buttonText?: string
-    popular?: boolean
-    variant?: Extract<CardVariant, 'primary' | 'secondary' | 'default' | 'interactive' | 'elevated' | 'flat'>
-    buttonVariant?: ButtonVariant
-}
 
 interface PricingSectionProps {
     title?: string

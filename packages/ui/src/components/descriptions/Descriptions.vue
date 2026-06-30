@@ -39,18 +39,6 @@ const sizeClasses = computed(() => {
     }
 })
 
-// 计算单元格 padding
-const cellPadding = computed(() => {
-    switch (props.size) {
-        case 'sm':
-            return 'px-2 py-1'
-        case 'lg':
-            return 'px-4 py-3'
-        default:
-            return 'px-3 py-2'
-    }
-})
-
 // 计算网格样式
 const gridStyle = computed(() => {
     return {

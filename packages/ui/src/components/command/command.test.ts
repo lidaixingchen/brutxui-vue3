@@ -717,7 +717,7 @@ describe('Command programmatic control (defineExpose)', () => {
             .filter(el => (el.element as HTMLElement).style.display !== 'none')
         expect(initialItems.length).toBe(3)
 
-        wrapper.vm.filterSearch = 'cal'
+        ;(wrapper as any).vm.filterSearch = 'cal'
         await nextTick()
         await nextTick()
 

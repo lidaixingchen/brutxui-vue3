@@ -8,11 +8,9 @@ import Stepper from '../stepper/Stepper.vue'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import type { StepperStepItem } from './types'
 
-export interface StepperStepItem {
-    title: string
-    description?: string
-}
+export type { StepperStepItem };
 
 interface StepperSectionProps {
     title?: string

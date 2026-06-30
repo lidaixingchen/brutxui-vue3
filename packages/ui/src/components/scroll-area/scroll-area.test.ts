@@ -39,7 +39,7 @@ describe('ScrollArea', () => {
             props: { variant: 'primary' },
         })
         const scrollbar = wrapper.findComponent(ScrollBar)
-        expect(scrollbar.props('variant')).toBe('primary')
+        expect((scrollbar.props as any)('variant')).toBe('primary')
         wrapper.unmount()
     })
 
@@ -49,7 +49,7 @@ describe('ScrollArea', () => {
             props: { size: 'lg' },
         })
         const scrollbar = wrapper.findComponent(ScrollBar)
-        expect(scrollbar.props('size')).toBe('lg')
+        expect((scrollbar.props as any)('size')).toBe('lg')
         wrapper.unmount()
     })
 })
