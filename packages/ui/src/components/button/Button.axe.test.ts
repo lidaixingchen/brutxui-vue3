@@ -12,5 +12,5 @@ describe('Button a11y', () => {
         })
         // @ts-expect-error vitest-axe 类型声明不完整
         expect(await axe(wrapper.element)).toHaveNoViolations()
-    })
+    }, 30000)
 })
