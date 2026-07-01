@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import type { Component } from 'vue'
-import { expect } from 'vitest'
+import { expect, vi } from 'vitest'
 import { axe } from '../vitest.setup'
 
 /**
@@ -30,6 +30,8 @@ export async function expectNoA11yViolations(
     component: Component,
     options?: Record<string, unknown>,
 ) {
+    // 强制使用真实定时器，防止外部 vi.useFakeTimers 污染导致 axe 挂起超时
+    vi.useRealTimers()
     const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
     try {
         const results = await axe(wrapper.element)
@@ -60,6 +62,8 @@ export async function getA11yResults(
     component: Component,
     options?: Record<string, unknown>,
 ) {
+    // 强制使用真实定时器，防止外部 vi.useFakeTimers 污染导致 axe 挂起超时
+    vi.useRealTimers()
     const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
     try {
         const results = await axe(wrapper.element)
