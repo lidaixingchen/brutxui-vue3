@@ -104,8 +104,8 @@ describe('Accordion keyboard navigation support', () => {
                     type: 'single',
                     collapsible: true,
                     modelValue: modelValue.value,
-                    'onUpdate:modelValue': (val: string) => {
-                        modelValue.value = val
+                    'onUpdate:modelValue': (val: string | string[] | undefined) => {
+                        modelValue.value = val as string
                     },
                 },
                 global: {
@@ -125,8 +125,8 @@ describe('Accordion keyboard navigation support', () => {
                 props: {
                     type: 'multiple',
                     modelValue: modelValue.value,
-                    'onUpdate:modelValue': (val: string[]) => {
-                        modelValue.value = val
+                    'onUpdate:modelValue': (val: string | string[] | undefined) => {
+                        modelValue.value = val as string[]
                     },
                 },
                 global: {

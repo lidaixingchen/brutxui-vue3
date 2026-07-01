@@ -29,7 +29,7 @@ const isAvailable = ref(true)
 let useVirtualizerFn: UseVirtualizerFn | null = null
 interface VirtualizerInstance {
     value: {
-        getVirtualItems: () => Array<{ key: string | number; index: number; size: number; start: number }>
+        getVirtualItems: () => Array<{ key: unknown; index: number; size: number; start: number }>
         getTotalSize: () => number
         scrollToIndex: (index: number) => void
         measure: () => void
@@ -47,7 +47,7 @@ const virtualizerOptions = computed(() => ({
 
 function initVirtualizer(): void {
     if (useVirtualizerFn && !virtualizerRef) {
-        virtualizerRef = useVirtualizerFn(virtualizerOptions.value)
+        virtualizerRef = useVirtualizerFn(virtualizerOptions.value) as unknown as VirtualizerInstance
     }
 }
 

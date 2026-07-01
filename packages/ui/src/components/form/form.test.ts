@@ -278,27 +278,27 @@ describe('Form', () => {
     describe('exposed methods', () => {
         it('exposes validate method', () => {
             const wrapper = mount(Form)
-            expect(typeof (wrapper.vm as Record<string, unknown>).validate).toBe('function')
+            expect(typeof ((wrapper.vm as unknown) as Record<string, unknown>).validate).toBe('function')
         })
 
         it('exposes validateField method', () => {
             const wrapper = mount(Form)
-            expect(typeof (wrapper.vm as Record<string, unknown>).validateField).toBe('function')
+            expect(typeof ((wrapper.vm as unknown) as Record<string, unknown>).validateField).toBe('function')
         })
 
         it('exposes resetFields method', () => {
             const wrapper = mount(Form)
-            expect(typeof (wrapper.vm as Record<string, unknown>).resetFields).toBe('function')
+            expect(typeof ((wrapper.vm as unknown) as Record<string, unknown>).resetFields).toBe('function')
         })
 
         it('exposes clearValidate method', () => {
             const wrapper = mount(Form)
-            expect(typeof (wrapper.vm as Record<string, unknown>).clearValidate).toBe('function')
+            expect(typeof ((wrapper.vm as unknown) as Record<string, unknown>).clearValidate).toBe('function')
         })
 
         it('exposes scrollToField method', () => {
             const wrapper = mount(Form)
-            expect(typeof (wrapper.vm as Record<string, unknown>).scrollToField).toBe('function')
+            expect(typeof ((wrapper.vm as unknown) as Record<string, unknown>).scrollToField).toBe('function')
         })
 
         it('validate returns true when form is valid', async () => {
@@ -308,7 +308,7 @@ describe('Form', () => {
                 },
             })
 
-            const result = await (wrapper.vm as Record<string, Function>).validate()
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             expect(result).toBe(true)
         })
 
@@ -325,7 +325,7 @@ describe('Form', () => {
                 validationSchema: schema,
             })
 
-            const result = await (wrapper.vm as Record<string, Function>).validate()
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             await flushPromises()
             expect(result).toBe(false)
         })
@@ -353,7 +353,7 @@ describe('Form', () => {
             const mockElement = { scrollIntoView: scrollIntoViewMock }
             vi.spyOn(formEl, 'querySelector').mockReturnValue(mockElement as unknown as Element)
 
-            const result = await (wrapper.vm as Record<string, Function>).validate()
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             await flushPromises()
 
             // With scrollToError=true and validation failing, scrollToField should be called
@@ -381,7 +381,7 @@ describe('Form', () => {
                 scrollToError: false,
             })
 
-            const result = await (wrapper.vm as Record<string, Function>).validate()
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             await flushPromises()
 
             expect(scrollIntoViewMock).not.toHaveBeenCalled()
@@ -412,7 +412,7 @@ describe('Form', () => {
             const formEl = wrapper.find('form').element
             vi.spyOn(formEl, 'querySelector').mockReturnValue(null)
 
-            const result = await (wrapper.vm as Record<string, Function>).validate()
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             await flushPromises()
 
             // scrollToField should be called but find no element, so no scrollIntoView
@@ -429,7 +429,7 @@ describe('Form', () => {
                 },
             })
 
-            await (wrapper.vm as Record<string, Function>).resetFields()
+            await ((wrapper.vm as unknown) as Record<string, Function>).resetFields()
             // resetFields calls form.resetForm(); just verify no error
             expect(wrapper.find('form').exists()).toBe(true)
         })
@@ -438,7 +438,7 @@ describe('Form', () => {
             const wrapper = mount(Form)
 
             // clearValidate without arguments should call resetForm with empty errors
-            await (wrapper.vm as Record<string, Function>).clearValidate()
+            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate()
             expect(wrapper.find('form').exists()).toBe(true)
         })
 
@@ -446,7 +446,7 @@ describe('Form', () => {
             const wrapper = mount(Form)
 
             // clearValidate with specific field names
-            await (wrapper.vm as Record<string, Function>).clearValidate(['name', 'email'])
+            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate(['name', 'email'])
             expect(wrapper.find('form').exists()).toBe(true)
         })
 
@@ -464,11 +464,11 @@ describe('Form', () => {
             })
 
             // First validate to generate errors
-            await (wrapper.vm as Record<string, Function>).validate()
+            await ((wrapper.vm as unknown) as Record<string, Function>).validate()
             await flushPromises()
 
             // Then clear specific field
-            await (wrapper.vm as Record<string, Function>).clearValidate(['name'])
+            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate(['name'])
             expect(wrapper.find('form').exists()).toBe(true)
         })
 
@@ -487,7 +487,7 @@ describe('Form', () => {
                 },
             })
 
-            const result = await (wrapper.vm as Record<string, Function>).validateField('name')
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validateField('name')
             expect(result).toBe(true)
         })
 
@@ -506,7 +506,7 @@ describe('Form', () => {
                 },
             })
 
-            const result = await (wrapper.vm as Record<string, Function>).validateField('name')
+            const result = await ((wrapper.vm as unknown) as Record<string, Function>).validateField('name')
             expect(result).toBe(false)
         })
 
@@ -518,7 +518,7 @@ describe('Form', () => {
             const mockElement = { scrollIntoView: scrollIntoViewMock }
             vi.spyOn(formEl, 'querySelector').mockReturnValue(mockElement as unknown as Element)
 
-            ;(wrapper.vm as Record<string, Function>).scrollToField('username')
+            ;((wrapper.vm as unknown) as Record<string, Function>).scrollToField('username')
 
             expect(formEl.querySelector).toHaveBeenCalledWith('[name="username"]')
             expect(scrollIntoViewMock).toHaveBeenCalledWith({
@@ -533,7 +533,7 @@ describe('Form', () => {
             vi.spyOn(formEl, 'querySelector').mockReturnValue(null)
 
             expect(() => {
-                (wrapper.vm as Record<string, Function>).scrollToField('nonexistent')
+                ((wrapper.vm as unknown) as Record<string, Function>).scrollToField('nonexistent')
             }).not.toThrow()
         })
     })

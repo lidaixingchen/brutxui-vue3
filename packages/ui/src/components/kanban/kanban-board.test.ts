@@ -1051,7 +1051,7 @@ describe('KanbanBoard', () => {
         const wrapper = createWrapper()
         // Access the exposed getAllColumns to trigger its computed getter (line 305)
         // We test it indirectly by verifying it's available and reflects props
-        const vm = wrapper.vm as Record<string, unknown>
+        const vm = wrapper.vm as unknown as Record<string, unknown>
         expect('getAllColumns' in vm).toBe(true)
     })
 
