@@ -377,7 +377,16 @@ export default defineConfig({
                 {
                     text: '进阶',
                     items: [
-                        { text: '最佳实践', link: '/guide/best-practices' },
+                        {
+                            text: '最佳实践',
+                            items: [
+                                { text: '概览', link: '/guide/best-practices' },
+                                { text: '组件使用规范', link: '/guide/best-practices/component-usage' },
+                                { text: '样式定制指南', link: '/guide/best-practices/styling' },
+                                { text: '可访问性指南', link: '/guide/best-practices/accessibility' },
+                                { text: '性能优化建议', link: '/guide/best-practices/performance' },
+                            ],
+                        },
                         { text: '常见问题', link: '/guide/faq' },
                         { text: '版本历史', link: '/guide/changelog' },
                         { text: '贡献指南', link: '/guide/contributing' },

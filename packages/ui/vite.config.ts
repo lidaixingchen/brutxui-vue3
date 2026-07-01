@@ -58,6 +58,26 @@ function flattenPreserveModulesPlugin(): Plugin {
                     let content = readFileSync(srcFile, 'utf-8')
                     // Replace ./packages/ui/src/ prefix with ./
                     content = content.replace(/\.\/packages\/ui\/src\//g, './')
+                    
+                    // Rewrite relative imports to _virtual/ and node_modules/ due to flattening
+                    const destDirOfFile = resolve(destFile, '..')
+                    const relToDistRoot = relative(destDirOfFile, distDir).replace(/\\/g, '/')
+                    const prefix = relToDistRoot ? relToDistRoot + '/' : './'
+                    content = content.replace(/(["'])(\.\.\/)+(_virtual|node_modules)\//g, `$1${prefix}$3/`)
+                    
+                    // Fix virtual export-helper relative path due to flattening
+                    const virtualMatch = /(['"])[^'"]*?_virtual\/_plugin-vue_export-helper\.(js|cjs|mjs)\1/g
+                    content = content.replace(virtualMatch, (m, quote, helperExt) => {
+                        const fileDir = resolve(destFile, '..')
+                        let relPath = relative(fileDir, distDir).replace(/\\/g, '/')
+                        if (!relPath) {
+                            relPath = '.'
+                        } else if (!relPath.startsWith('.')) {
+                            relPath = './' + relPath
+                        }
+                        return `${quote}${relPath}/_virtual/_plugin-vue_export-helper.${helperExt}${quote}`
+                    })
+                    
                     writeFileSync(destFile, content)
                 } else {
                     writeFileSync(destFile, readFileSync(srcFile))
@@ -74,8 +94,26 @@ function flattenPreserveModulesPlugin(): Plugin {
                 if (ext !== '.js' && ext !== '.cjs' && ext !== '.mjs') continue
                 const filePath = join(distDir, entry.name)
                 let content = readFileSync(filePath, 'utf-8')
+                let changed = false
                 if (content.includes('./packages/ui/src/')) {
                     content = content.replace(/\.\/packages\/ui\/src\//g, './')
+                    changed = true
+                }
+                const virtualMatch = /(['"])[^'"]*?_virtual\/_plugin-vue_export-helper\.(js|cjs|mjs)\1/g
+                if (virtualMatch.test(content)) {
+                    content = content.replace(virtualMatch, (m, quote, helperExt) => {
+                        const fileDir = resolve(filePath, '..')
+                        let relPath = relative(fileDir, distDir).replace(/\\/g, '/')
+                        if (!relPath) {
+                            relPath = '.'
+                        } else if (!relPath.startsWith('.')) {
+                            relPath = './' + relPath
+                        }
+                        return `${quote}${relPath}/_virtual/_plugin-vue_export-helper.${helperExt}${quote}`
+                    })
+                    changed = true
+                }
+                if (changed) {
                     writeFileSync(filePath, content)
                 }
             }
@@ -120,24 +158,28 @@ export default defineConfig({
             formats: ['es', 'cjs'],
         },
         rollupOptions: {
-            external: ['vue', 'tailwindcss', /^reka-ui/, /^prismjs/, /^@tanstack\/vue-virtual/, /^v-calendar/, /^vee-validate/, /^@vee-validate/, /^@lucide/, /^lucide-vue-next/, /^embla-carousel/],
+            external: [
+                'vue',
+                'tailwindcss',
+                'class-variance-authority',
+                'clsx',
+                'tailwind-merge',
+                /^reka-ui/,
+                /^prismjs/,
+                /^@tanstack\/vue-virtual/,
+                /^v-calendar/,
+                /^vee-validate/,
+                /^@vee-validate/,
+                /^@lucide/,
+                /^lucide-vue-next/,
+                /^embla-carousel/,
+            ],
             output: {
                 globals: {
                     vue: 'Vue',
                 },
                 preserveModules: true,
                 preserveModulesRoot: resolve(__dirname, 'src'),
-                manualChunks(id) {
-                    if (id.includes('node_modules/class-variance-authority')) {
-                        return 'cva'
-                    }
-                    if (id.includes('node_modules/clsx')) {
-                        return 'clsx'
-                    }
-                    if (id.includes('node_modules/tailwind-merge')) {
-                        return 'tailwind-merge'
-                    }
-                },
             },
             treeshake: {
                 moduleSideEffects: true,
