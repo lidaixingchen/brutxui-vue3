@@ -11,6 +11,8 @@ export interface UseDatePickerOptions {
     displayFormat?: MaybeRefOrGetter<string>
     disabled?: MaybeRefOrGetter<boolean>
     readonly?: MaybeRefOrGetter<boolean>
+    openProp?: MaybeRefOrGetter<boolean | undefined>
+    emitUpdateOpen?: (value: boolean) => void
     emit: DatePickerEmit
 }
 
@@ -26,7 +28,19 @@ export interface UseDatePickerReturn {
 }
 
 export function useDatePicker(options: UseDatePickerOptions): UseDatePickerReturn {
-    const open = ref(false)
+    const internalOpen = ref(false)
+
+    const open = computed<boolean>({
+        get: () => {
+            const controlled = toValue(options.openProp)
+            return controlled !== undefined ? controlled : internalOpen.value
+        },
+        set: (val) => {
+            internalOpen.value = val
+            options.emitUpdateOpen?.(val)
+        },
+    })
+
     const displayValue = ref<Date | null>(toValue(options.modelValue) ?? null)
 
     watch(open, (isOpen) => {
@@ -40,6 +54,12 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
             }
         }
     })
+
+    if (options.openProp !== undefined) {
+        watch(() => toValue(options.openProp), (val) => {
+            if (val !== undefined) internalOpen.value = val
+        }, { immediate: true })
+    }
 
     watch(() => toValue(options.modelValue), (value) => {
         displayValue.value = value ?? null

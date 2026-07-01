@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Combobox from './Combobox.vue'
-import ComboboxMulti from './ComboboxMulti.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
@@ -338,9 +337,9 @@ describe('Combobox', () => {
 
 describe('ComboboxMulti', () => {
     it('renders with options prop', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options },
+            props: { options, multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -348,9 +347,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('applies custom class', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, class: 'custom-multi' },
+            props: { options, class: 'custom-multi', multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -358,9 +357,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows placeholder text when no selection', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, placeholder: 'Pick fruits...' },
+            props: { options, placeholder: 'Pick fruits...', multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -368,9 +367,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows default placeholder text', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options },
+            props: { options, multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -378,9 +377,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows selected option labels', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, modelValue: ['apple', 'banana'] },
+            props: { options, modelValue: ['apple', 'banana'], multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -389,9 +388,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows count when selections exceed maxDisplay', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, modelValue: ['apple', 'banana', 'cherry'], maxDisplay: 2 },
+            props: { options, modelValue: ['apple', 'banana', 'cherry'], maxDisplay: 2, multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -399,18 +398,18 @@ describe('ComboboxMulti', () => {
     })
 
     it('emits update:modelValue when options selected', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options },
+            props: { options, multiple: true },
             attachTo: document.body,
         })
         expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
 
     it('is disabled when disabled prop is true', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, disabled: true },
+            props: { options, disabled: true, multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -418,9 +417,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('adds option to selection when unselected item is clicked', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, modelValue: [] },
+            props: { options, modelValue: [], multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -433,9 +432,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('removes option from selection when selected item is clicked', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, modelValue: ['apple', 'banana'] },
+            props: { options, modelValue: ['apple', 'banana'], multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -448,9 +447,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('filters options by search query', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options },
+            props: { options, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -465,9 +464,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('shows all options when search query is cleared', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options },
+            props: { options, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -483,9 +482,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('applies muted foreground class when no value selected', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options },
+            props: { options, multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -493,9 +492,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('does not apply muted foreground class when values are selected', () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, modelValue: ['apple'] },
+            props: { options, modelValue: ['apple'], multiple: true },
             attachTo: document.body,
         })
         const trigger = wrapper.find('[role="combobox"]')
@@ -503,9 +502,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('renders Spinner when loading is true', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, loading: true },
+            props: { options, loading: true, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -514,9 +513,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('does not render Spinner when loading is false', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, loading: false },
+            props: { options, loading: false, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -525,9 +524,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('renders create item when creative is true and no matches', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, creative: true },
+            props: { options, creative: true, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -542,9 +541,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('does not render create item when creative is false', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, creative: false },
+            props: { options, creative: false, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -557,9 +556,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('emits create event when create item is selected', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, creative: true },
+            props: { options, creative: true, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)
@@ -576,9 +575,9 @@ describe('ComboboxMulti', () => {
     })
 
     it('keeps dropdown open after create in multi mode', async () => {
-        wrapper = mount(ComboboxMulti, {
+        wrapper = mount(Combobox, {
             ...localeProvide,
-            props: { options, creative: true },
+            props: { options, creative: true, multiple: true },
             attachTo: document.body,
         })
         await openCombobox(wrapper)

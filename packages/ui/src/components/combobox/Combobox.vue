@@ -3,7 +3,7 @@ import { computed, ref, useId, watch } from 'vue'
 import { Check, ChevronsUpDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { buttonVariants } from '../button/button-variants'
-import { comboboxTriggerVariants, comboboxContentVariants } from './combobox-variants'
+import { comboboxTriggerVariants, comboboxContentVariants, comboboxCheckboxVariants } from './combobox-variants'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Command from '../command/Command.vue'
@@ -20,7 +20,8 @@ import { type ComboboxOption } from './combobox-types'
 
 interface ComboboxProps {
     options: ComboboxOption[]
-    modelValue?: string
+    modelValue?: string | string[]
+    multiple?: boolean
     open?: boolean
     placeholder?: string
     searchPlaceholder?: string
@@ -28,6 +29,7 @@ interface ComboboxProps {
     disabled?: boolean
     loading?: boolean
     creative?: boolean
+    maxDisplay?: number
     ariaLabel?: string
     class?: string
     iconSize?: IconSize
@@ -35,6 +37,7 @@ interface ComboboxProps {
 
 const props = withDefaults(defineProps<ComboboxProps>(), {
     modelValue: undefined,
+    multiple: false,
     open: undefined,
     placeholder: undefined,
     searchPlaceholder: undefined,
@@ -42,6 +45,7 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     disabled: false,
     loading: false,
     creative: false,
+    maxDisplay: 3,
     ariaLabel: undefined,
     class: undefined,
     iconSize: 'default',
@@ -49,12 +53,14 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
 
 const { t } = useLocale()
 
-const resolvedPlaceholder = computed(() => props.placeholder ?? t('combobox.placeholder'))
+const resolvedPlaceholder = computed(() =>
+    props.placeholder ?? (props.multiple ? t('combobox.multiPlaceholder') : t('combobox.placeholder'))
+)
 const resolvedSearchPlaceholder = computed(() => props.searchPlaceholder ?? t('combobox.searchPlaceholder'))
 const resolvedEmptyText = computed(() => props.emptyText ?? t('combobox.emptyText'))
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string | undefined]
+    'update:modelValue': [value: string | string[] | undefined]
     'update:open': [value: boolean]
     'create': [value: string]
 }>()
@@ -69,9 +75,24 @@ const open = computed<boolean>({
 })
 const searchQuery = ref('')
 
-const selectedOption = computed(() =>
-    props.options.find((option) => option.value === props.modelValue)
-)
+const selectedOptions = computed(() => {
+    if (props.multiple) {
+        return props.options.filter((o) => (props.modelValue as string[])?.includes(o.value))
+    }
+    const found = props.options.find((o) => o.value === props.modelValue)
+    return found ? [found] : []
+})
+
+const displayText = computed(() => {
+    if (!props.multiple) {
+        return selectedOptions.value.length > 0 ? selectedOptions.value[0].label : resolvedPlaceholder.value
+    }
+    if (selectedOptions.value.length === 0) return resolvedPlaceholder.value
+    if (selectedOptions.value.length <= props.maxDisplay) {
+        return selectedOptions.value.map((o) => o.label).join(', ')
+    }
+    return t('combobox.selectedCount', { count: selectedOptions.value.length })
+})
 
 const filteredOptions = computed(() => {
     if (!searchQuery.value) return props.options
@@ -89,26 +110,61 @@ const createItemLabel = computed(() =>
     t('combobox.create', { query: searchQuery.value })
 )
 
+const hasValue = computed(() =>
+    props.multiple
+        ? ((props.modelValue as string[])?.length ?? 0) > 0
+        : !!props.modelValue
+)
+
 const triggerClasses = computed(() =>
     cn(
         buttonVariants({ variant: 'outline' }),
-        comboboxTriggerVariants({ hasValue: !!props.modelValue }),
+        comboboxTriggerVariants({ hasValue: hasValue.value }),
         props.class
     )
 )
 
 const contentClasses = comboboxContentVariants()
 
+const checkboxSelectedClasses = comboboxCheckboxVariants({ selected: true })
+const checkboxUnselectedClasses = comboboxCheckboxVariants({ selected: false })
+const checkSelectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
+const checkUnselectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'opacity-0')
+const checkIconClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
+
+const triggerIconClasses = computed(() =>
+    cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))
+)
+
+const contentId = `combobox-content-${useId()}`
+
+function isSelected(optionValue: string): boolean {
+    if (props.multiple) {
+        return (props.modelValue as string[])?.includes(optionValue) ?? false
+    }
+    return props.modelValue === optionValue
+}
+
 function handleSelect(value: string) {
-    emit('update:modelValue', value === props.modelValue ? undefined : value)
-    open.value = false
-    searchQuery.value = ''
+    if (props.multiple) {
+        const current = (props.modelValue as string[]) ?? []
+        const newValue = current.includes(value)
+            ? current.filter((v) => v !== value)
+            : [...current, value]
+        emit('update:modelValue', newValue)
+    } else {
+        emit('update:modelValue', value === props.modelValue ? undefined : value)
+        open.value = false
+        searchQuery.value = ''
+    }
 }
 
 function handleCreate() {
     if (!searchQuery.value.trim()) return
     emit('create', searchQuery.value)
-    open.value = false
+    if (!props.multiple) {
+        open.value = false
+    }
     searchQuery.value = ''
 }
 
@@ -126,31 +182,24 @@ defineExpose({
     selectedValue: computed(() => props.modelValue),
     focus: () => triggerRef.value?.focus(),
 })
-
-const triggerIconClasses = computed(() =>
-    cn('ml-2 shrink-0 opacity-50 stroke-[3]', iconSizeVariants({ size: props.iconSize }))
-)
-
-const checkSelectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'stroke-[3] text-brutal-fg')
-const checkUnselectedClasses = cn(iconSizeVariants({ size: 'sm' }), 'opacity-0')
-
-const contentId = `combobox-content-${useId()}`
 </script>
 
 <template>
     <PopoverRoot v-model:open="open">
         <PopoverTrigger as-child>
             <button
+                ref="triggerRef"
                 type="button"
                 role="combobox"
                 :aria-expanded="open"
                 :aria-controls="open ? contentId : undefined"
                 :aria-label="ariaLabel"
+                :aria-multiselectable="multiple || undefined"
                 aria-haspopup="listbox"
                 :disabled="disabled"
                 :class="triggerClasses"
             >
-                <span>{{ selectedOption ? selectedOption.label : resolvedPlaceholder }}</span>
+                <span :class="multiple ? 'truncate' : undefined">{{ displayText }}</span>
                 <ChevronsUpDown :class="triggerIconClasses" />
             </button>
         </PopoverTrigger>
@@ -177,8 +226,16 @@ const contentId = `combobox-content-${useId()}`
                             :disabled="option.disabled"
                             @select="handleSelect"
                         >
+                            <template v-if="multiple">
+                                <div
+                                    :class="isSelected(option.value) ? checkboxSelectedClasses : checkboxUnselectedClasses"
+                                >
+                                    <Check v-if="isSelected(option.value)" :class="checkIconClasses" />
+                                </div>
+                            </template>
                             <Check
-                                :class="props.modelValue === option.value ? checkSelectedClasses : checkUnselectedClasses"
+                                v-else
+                                :class="isSelected(option.value) ? checkSelectedClasses : checkUnselectedClasses"
                             />
                             {{ option.label }}
                         </CommandItem>

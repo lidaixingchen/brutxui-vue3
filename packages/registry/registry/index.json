@@ -772,6 +772,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/form-toggle-base.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -882,11 +886,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/combobox/ComboboxMulti.vue",
+          "path": "components/ui/combobox/combobox-types.ts",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/combobox/combobox-types.ts",
+          "path": "components/ui/combobox/combobox-variants.ts",
           "type": "registry:ui"
         },
         {
@@ -1211,6 +1215,10 @@
         {
           "path": "lib/modal-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -1353,6 +1361,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
           "type": "registry:ui"
         }
       ],
@@ -1799,6 +1811,10 @@
         {
           "path": "components/ui/popover/popover-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2051,6 +2067,10 @@
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
           "type": "registry:ui"
         }
       ],
@@ -2523,6 +2543,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/form-toggle-base.ts",
           "type": "registry:ui"
         }
       ],
@@ -3566,6 +3590,10 @@
         },
         {
           "path": "lib/modal-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
           "type": "registry:ui"
         }
       ],

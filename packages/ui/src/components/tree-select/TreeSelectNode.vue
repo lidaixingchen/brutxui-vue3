@@ -4,11 +4,10 @@ import { hasDocument } from '@/lib/env'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
-import { INDENT_PER_DEPTH, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants'
+import { INDENT_PER_DEPTH, BASE_INDENT_TREE_SELECT, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import type { TreeNode } from './tree-select-types'
 
-const BASE_INDENT = 8
 const ICON_SIZE_CLASSES = iconSizeVariants({ size: 'default' })
 
 const contentId = `tree-select-content-${useId()}`
@@ -46,7 +45,7 @@ const itemClass = computed(() =>
 )
 
 const indentStyle = computed(() => ({
-    paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
+    paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT_TREE_SELECT}px`,
 }))
 
 const chevronClasses = computed(() =>

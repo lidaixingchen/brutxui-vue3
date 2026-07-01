@@ -2,7 +2,6 @@ import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { describe, it, expect } from 'vitest'
 import Combobox from './Combobox.vue'
-import ComboboxMulti from './ComboboxMulti.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
@@ -364,9 +363,9 @@ describe('Combobox keyboard navigation support', () => {
 
     describe('ComboboxMulti keyboard support', () => {
         it('has role="combobox" trigger', () => {
-            wrapper = mount(ComboboxMulti, {
+            wrapper = mount(Combobox, {
                 ...localeProvide,
-                props: { options },
+                props: { options, multiple: true },
                 attachTo: document.body,
             })
 
@@ -375,9 +374,9 @@ describe('Combobox keyboard navigation support', () => {
         })
 
         it('has aria-haspopup="listbox"', () => {
-            wrapper = mount(ComboboxMulti, {
+            wrapper = mount(Combobox, {
                 ...localeProvide,
-                props: { options },
+                props: { options, multiple: true },
                 attachTo: document.body,
             })
 
@@ -386,9 +385,9 @@ describe('Combobox keyboard navigation support', () => {
         })
 
         it('supports multiple selection via click', async () => {
-            wrapper = mount(ComboboxMulti, {
+            wrapper = mount(Combobox, {
                 ...localeProvide,
-                props: { options, modelValue: [] },
+                props: { options, modelValue: [], multiple: true },
                 attachTo: document.body,
             })
 
@@ -407,9 +406,9 @@ describe('Combobox keyboard navigation support', () => {
         })
 
         it('keeps dropdown open after selection in multi mode', async () => {
-            wrapper = mount(ComboboxMulti, {
+            wrapper = mount(Combobox, {
                 ...localeProvide,
-                props: { options, modelValue: [] },
+                props: { options, modelValue: [], multiple: true },
                 attachTo: document.body,
             })
 

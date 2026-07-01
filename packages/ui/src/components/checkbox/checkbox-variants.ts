@@ -1,26 +1,21 @@
 import { cva } from 'class-variance-authority'
+import { formToggleBaseClasses, formToggleVariantColors } from '@/lib/form-toggle-base'
 
 export const checkboxVariants = cva(
     [
         'peer shrink-0',
-        'border-3 border-brutal',
         'bg-brutal-bg',
         'flex items-center justify-center',
-        'transition-all duration-150',
-        'shadow-brutal-sm',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',
+        ...formToggleBaseClasses,
     ],
     {
         variants: {
             variant: {
-                default: 'data-[state=checked]:bg-brutal-success',
-                primary: 'data-[state=checked]:bg-brutal-primary',
-                secondary: 'data-[state=checked]:bg-brutal-secondary',
-                accent: 'data-[state=checked]:bg-brutal-accent',
-                danger: 'data-[state=checked]:bg-brutal-destructive',
+                default: formToggleVariantColors.default,
+                primary: formToggleVariantColors.primary,
+                secondary: formToggleVariantColors.secondary,
+                accent: formToggleVariantColors.accent,
+                danger: formToggleVariantColors.danger,
             },
             size: {
                 sm: 'h-5 w-5',

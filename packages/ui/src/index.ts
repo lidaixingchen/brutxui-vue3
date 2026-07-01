@@ -164,7 +164,6 @@ export { default as CommandShortcut } from './components/command/CommandShortcut
 export { commandInputWrapperVariants, commandItemVariants } from './components/command/command-variants'
 
 export { default as Combobox } from './components/combobox/Combobox.vue'
-export { default as ComboboxMulti } from './components/combobox/ComboboxMulti.vue'
 export type { ComboboxOption } from './components/combobox/combobox-types'
 
 export { default as Form } from './components/form/Form.vue'

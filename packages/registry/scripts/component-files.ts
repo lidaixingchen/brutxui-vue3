@@ -12,7 +12,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     calendar: { files: ['Calendar.vue'] },
     card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
-    combobox: { files: ['Combobox.vue', 'ComboboxMulti.vue', 'combobox-types.ts'], composables: ['useLocale.ts'] },
+    combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
     dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts'], composables: ['useLocale.ts'] },
     'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },

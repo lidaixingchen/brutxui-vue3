@@ -14,7 +14,7 @@ export const numberInputRootVariants = cva(
             },
             variant: {
                 default: '',
-                error: 'border-brutal-danger focus-within:ring-brutal-danger',
+                error: 'border-brutal-destructive focus-within:ring-brutal-destructive',
                 success: 'border-brutal-success focus-within:ring-brutal-success',
             },
         },

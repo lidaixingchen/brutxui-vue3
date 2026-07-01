@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Combobox, ComboboxMulti, Button } from 'brutx-ui-vue'
+import { Combobox, Button } from 'brutx-ui-vue'
 
 const selected = ref<string | undefined>(undefined)
 
@@ -85,9 +85,10 @@ function handleMultiCreate(value: string) {
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">创建选项（多选）</p>
             <p class="text-xs opacity-60">创建后不关闭下拉，可继续创建多项。</p>
-            <ComboboxMulti
+            <Combobox
                 v-model="multiSelected"
                 :options="multiOptions"
+                multiple
                 creative
                 placeholder="选择或创建..."
                 search-placeholder="搜索或输入..."

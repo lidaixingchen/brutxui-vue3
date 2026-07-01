@@ -6,7 +6,7 @@ translated: true
 
 # Combobox
 
-A neo-brutalist style searchable select component. Provides single-select (`Combobox`) and multi-select (`ComboboxMulti`) modes.
+A neo-brutalist style searchable select component. Toggle between single-select and multi-select modes via the `multiple` prop.
 
 ## Demo
 
@@ -52,7 +52,7 @@ const options = [
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { ComboboxMulti } from 'brutx-ui-vue'
+import { Combobox } from 'brutx-ui-vue'
 
 const selected = ref([])
 
@@ -65,9 +65,10 @@ const options = [
 </script>
 
 <template>
-    <ComboboxMulti
+    <Combobox
         v-model="selected"
         :options="options"
+        multiple
         placeholder="Select frameworks..."
         :max-display="3"
     />
@@ -102,13 +103,13 @@ async function handleOpen() {
 
 When `creative` is set to `true`, if no search matches are found and the input is non-empty, a "Create '{query}'" option appears at the top of the list (text from locale `combobox.create`). Clicking it triggers the `create` event with the current search text as the argument.
 
-- `Combobox`: Closes the dropdown after creation.
-- `ComboboxMulti`: Does **not** close the dropdown after creation, allowing continued selection or creation of multiple items.
+- `Combobox` (single-select): Closes the dropdown after creation.
+- `Combobox` (`multiple`): Does **not** close the dropdown after creation, allowing continued selection or creation of multiple items.
 
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { Combobox, ComboboxMulti } from 'brutx-ui-vue'
+import { Combobox } from 'brutx-ui-vue'
 
 const selected = ref(undefined)
 const options = ref([
@@ -144,56 +145,28 @@ interface ComboboxOption {
 
 ## Props
 
-### Combobox (Single-select)
-
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `options` | `ComboboxOption[]` | — (required) | Options list |
-| `modelValue` | `string \| undefined` | `undefined` | Selected value, supports v-model |
+| `multiple` | `boolean` | `false` | Whether to enable multi-select mode |
+| `modelValue` | `string \| string[] \| undefined` | Single: `undefined`; Multi: `[]` | Selected value, supports v-model. In multi-select mode this is `string[]` |
 | `open` | `boolean` | `undefined` | Whether the dropdown is expanded |
-| `placeholder` | `string` | locale: `combobox.placeholder` | Placeholder text |
+| `placeholder` | `string` | locale: `combobox.placeholder` / `combobox.multiPlaceholder` | Placeholder text, switches automatically based on mode |
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` | Search box placeholder |
 | `emptyText` | `string` | locale: `combobox.emptyText` | Text shown when no matches found |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `loading` | `boolean` | `false` | Whether to show loading state |
 | `creative` | `boolean` | `false` | Whether to allow creating new options |
+| `maxDisplay` | `number` | `3` | Maximum number of selected tags to display in multi-select mode |
 | `ariaLabel` | `string` | — | Accessibility label |
-| `iconSize` | `IconSize` | `'default'` | Icon size |
-| `class` | `string` | — | Custom CSS class |
-
-### ComboboxMulti (Multi-select)
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `options` | `ComboboxOption[]` | — (required) | Options list |
-| `modelValue` | `string[]` | `[]` | Selected values array, supports v-model |
-| `open` | `boolean` | `undefined` | Whether the dropdown is expanded |
-| `placeholder` | `string` | locale: `combobox.multiPlaceholder` | Placeholder text |
-| `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` | Search box placeholder |
-| `emptyText` | `string` | locale: `combobox.emptyText` | Text shown when no matches found |
-| `disabled` | `boolean` | `false` | Whether disabled |
-| `loading` | `boolean` | `false` | Whether to show loading state |
-| `creative` | `boolean` | `false` | Whether to allow creating new options |
-| `ariaLabel` | `string` | — | Accessibility label |
-| `maxDisplay` | `number` | `3` | Maximum number of selected tags to display |
 | `iconSize` | `IconSize` | `'default'` | Icon size |
 | `class` | `string` | — | Custom CSS class |
 
 ## Events
 
-### Combobox
-
 | Event | Payload | Description |
 |-------|---------|-------------|
-| `update:modelValue` | `string \| undefined` | Triggered when the selected value changes; selecting the same option again deselects it (value becomes `undefined`) |
-| `update:open` | `boolean` | Triggered when the dropdown open/close state changes |
-| `create` | `string` | Triggered when the "Create" option is clicked; payload is the current search text |
-
-### ComboboxMulti
-
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `string[]` | Triggered when the selected values change; toggles selection/deselection of the corresponding option |
+| `update:modelValue` | `string \| string[] \| undefined` | Triggered when the selected value changes. In single-select mode, selecting the same option again deselects it (value becomes `undefined`); in multi-select mode, toggles selection/deselection of the corresponding option |
 | `update:open` | `boolean` | Triggered when the dropdown open/close state changes |
 | `create` | `string` | Triggered when the "Create" option is clicked; payload is the current search text |
 
@@ -208,7 +181,7 @@ interface ComboboxOption {
 | --- | --- | --- |
 | `open` | `Ref<boolean>` | Whether the dropdown panel is expanded |
 | `searchQuery` | `Ref<string>` | Current search keyword |
-| `selectedValue` | `ComputedRef<string \| undefined>` | Currently selected value (read-only) |
+| `selectedValue` | `ComputedRef<string \| string[] \| undefined>` | Currently selected value (read-only) |
 | `focus` | `() => void` | Focus the trigger |
 
 ## FAQ

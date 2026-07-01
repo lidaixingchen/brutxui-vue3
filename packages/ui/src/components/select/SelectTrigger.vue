@@ -96,7 +96,7 @@ function handleClear(e: MouseEvent) {
         </SelectTriggerPrimitive>
         <p
             v-if="variant === 'error' && errorMessage"
-            class="text-sm text-brutal-danger mt-1"
+            class="text-sm text-brutal-destructive mt-1"
             role="alert"
         >
             {{ errorMessage }}

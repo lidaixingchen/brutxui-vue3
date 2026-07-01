@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useId, watch } from 'vue'
+import { computed, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -49,7 +49,7 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.pl
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.placeholder'))
 
 const {
-    open: internalOpen,
+    open,
     displayValue,
     formattedDisplay,
     handlePanelUpdate,
@@ -62,19 +62,9 @@ const {
     displayFormat: () => props.displayFormat,
     disabled: () => props.disabled,
     readonly: () => props.readonly,
+    openProp: () => props.open,
+    emitUpdateOpen: (val) => emit('update:open', val),
     emit,
-})
-
-watch(() => props.open, (val) => {
-    if (val !== undefined) internalOpen.value = val
-}, { immediate: true })
-
-const open = computed<boolean>({
-    get: () => props.open !== undefined ? props.open : internalOpen.value,
-    set: (val) => {
-        internalOpen.value = val
-        emit('update:open', val)
-    },
 })
 
 const triggerClasses = computed(() =>

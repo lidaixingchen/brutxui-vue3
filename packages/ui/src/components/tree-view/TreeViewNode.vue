@@ -4,11 +4,9 @@ import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { treeItemVariants } from './tree-view-variants';
 import { getCheckState } from './tree-view-utils';
-import { INDENT_PER_DEPTH, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
+import { INDENT_PER_DEPTH, BASE_INDENT_TREE_VIEW, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
 import Checkbox from '../checkbox/Checkbox.vue';
 import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
-
-const BASE_INDENT = 4
 
 const contentId = `tree-content-${useId()}`
 
@@ -74,7 +72,7 @@ const chevronClass = computed(() =>
 )
 
 const indentStyle = computed(() => ({
-    paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT}px`,
+    paddingLeft: `${props.depth * INDENT_PER_DEPTH + BASE_INDENT_TREE_VIEW}px`,
 }));
 
 function handleCheckboxUpdate() {

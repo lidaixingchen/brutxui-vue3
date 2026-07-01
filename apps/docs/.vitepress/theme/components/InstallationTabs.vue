@@ -84,7 +84,7 @@ const componentImports: Record<string, string[]> = {
     skeleton: ['Skeleton', 'SkeletonText', 'SkeletonAvatar', 'SkeletonCard', 'SkeletonTable'],
     calendar: ['Calendar'],
     command: ['Command', 'CommandDialog', 'CommandInput', 'CommandList', 'CommandEmpty', 'CommandGroup', 'CommandItem', 'CommandShortcut', 'CommandSeparator'],
-    combobox: ['Combobox', 'ComboboxMulti'],
+    combobox: ['Combobox'],
     'scroll-area': ['ScrollArea', 'ScrollBar'],
     form: ['Form', 'FormField', 'FormItem', 'FormLabel', 'FormControl', 'FormDescription', 'FormMessage'],
     sheet: ['SheetContent', 'SheetHeader', 'SheetFooter', 'SheetTitle', 'SheetDescription', 'sheetVariants'],

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Calendar as CalendarIcon, ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
-import { formatDate } from '@/lib/date'
+import { useDatePicker } from '@/composables/useDatePicker'
 import PopoverContent from '../popover/PopoverContent.vue'
 import { datePickerTriggerVariants } from './date-picker-variants'
 import MonthPickerPanel from './MonthPickerPanel.vue'
@@ -47,38 +47,23 @@ const { t } = useLocale()
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('datePicker.monthPlaceholder'))
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.monthPlaceholder'))
 
-const internalOpen = ref(false)
-const displayValue = ref<Date | null>(props.modelValue)
-
-watch(internalOpen, (isOpen) => {
-    if (isOpen) emit('open')
-    else {
-        emit('close')
-        if (displayValue.value?.getTime() !== props.modelValue?.getTime()) {
-            emit('change', displayValue.value)
-        }
-    }
-})
-
-watch(() => props.modelValue, (value) => {
-    displayValue.value = value
-})
-
-watch(() => props.open, (val) => {
-    if (val !== undefined) internalOpen.value = val
-}, { immediate: true })
-
-const open = computed<boolean>({
-    get: () => props.open !== undefined ? props.open : internalOpen.value,
-    set: (val) => {
-        internalOpen.value = val
-        emit('update:open', val)
-    },
-})
-
-const formattedDisplay = computed(() => {
-    if (!props.modelValue) return ''
-    return formatDate(props.modelValue, props.displayFormat)
+const {
+    open,
+    displayValue,
+    formattedDisplay,
+    handlePanelUpdate,
+    handlePanelConfirm,
+    handlePanelClear,
+    handleClearClick,
+    handleTriggerKeydown,
+} = useDatePicker({
+    modelValue: () => props.modelValue,
+    displayFormat: () => props.displayFormat,
+    disabled: () => props.disabled,
+    readonly: () => props.readonly,
+    openProp: () => props.open,
+    emitUpdateOpen: (val) => emit('update:open', val),
+    emit,
 })
 
 const triggerClasses = computed(() =>
@@ -88,39 +73,6 @@ const triggerClasses = computed(() =>
         props.class
     )
 )
-
-function handlePanelUpdate(value: Date | null) {
-    displayValue.value = value
-    emit('update:modelValue', value)
-}
-
-function handlePanelConfirm(value: Date | null) {
-    displayValue.value = value
-    emit('update:modelValue', value)
-    emit('change', value)
-    open.value = false
-}
-
-function handlePanelClear() {
-    displayValue.value = null
-    emit('update:modelValue', null)
-    emit('change', null)
-}
-
-function handleClearClick(event: MouseEvent) {
-    event.stopPropagation()
-    displayValue.value = null
-    emit('update:modelValue', null)
-    emit('change', null)
-}
-
-function handleTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled || props.readonly) return
-    if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
-        event.preventDefault()
-        open.value = true
-    }
-}
 
 defineExpose({ open })
 </script>

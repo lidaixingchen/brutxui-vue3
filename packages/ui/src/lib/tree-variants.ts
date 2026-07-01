@@ -1,4 +1,6 @@
 export const INDENT_PER_DEPTH = 20
+export const BASE_INDENT_TREE_VIEW = 4
+export const BASE_INDENT_TREE_SELECT = 8
 
 export const treeNodeBaseClasses = [
     'flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none',
