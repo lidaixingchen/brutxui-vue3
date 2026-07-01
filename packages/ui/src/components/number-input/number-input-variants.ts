@@ -4,7 +4,7 @@ export const numberInputRootVariants = cva(
     [
         'flex items-stretch border-3 border-brutal bg-brutal-bg rounded-brutal shadow-brutal overflow-hidden',
         'transition-all duration-150',
-        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:shadow-brutal',
+        'focus-within:ring-2 focus-within:ring-brutal-ring focus-within:ring-offset-2 focus-within:shadow-brutal-lg',
     ],
     {
         variants: {

@@ -40,52 +40,16 @@
 
 ## 二、深化方案（按优先级排序）
 
-### P0 — Select 组件增强
+### P0 — Select 与 Combobox 分立设计
 
-#### 2.1 Select 可搜索功能
+#### 2.1 Select 保持纯粹，引导使用 Combobox/ComboboxMulti
 
-**现状**：基于 reka-ui SelectRoot，仅支持 clearable，不支持搜索过滤。
+**现状**：目前 Select 是基于 reka-ui SelectRoot 等子组件拼装的单选下拉框。项目目前在 `packages/ui/src/components/combobox/` 下已经独立实现了成熟的 `Combobox.vue`（可搜索单选）和 `ComboboxMulti.vue`（可搜索多选）。
 
-**深化目标**：增加 filterable、remote 搜索功能。
-
-**新增 Props**：
-
-| Prop | 类型 | 默认值 | 说明 |
-|---|---|---|---|
-| `filterable` | `boolean` | `false` | 是否可搜索 |
-| `filterFunction` | `(query: string, option: SelectOption) => boolean` | — | 自定义过滤函数 |
-| `loading` | `boolean` | `false` | 加载状态（用于远程搜索） |
-| `remote` | `boolean` | `false` | 远程搜索模式（禁用本地过滤） |
-| `remoteMethod` | `(query: string) => Promise<void>` | — | 远程搜索方法 |
-| `multiple` | `boolean` | `false` | 是否多选 |
-| `multipleLimit` | `number` | `0` | 多选时最多选择数量，0 为不限制 |
-| `collapseTags` | `boolean` | `false` | 多选时是否折叠标签 |
-| `collapseTagsTooltip` | `boolean` | `false` | 折叠标签是否显示 tooltip |
-
-**SelectOption 类型**：
-
-```typescript
-interface SelectOption {
-  value: string | number
-  label: string
-  disabled?: boolean
-}
-```
-
-**新增 Events**：
-
-| Event | 参数 | 说明 |
-|---|---|---|
-| `filter-change` | `query: string` | 搜索关键词变化时触发 |
-| `change` | `value: string or number or (string or number)[]` | 选中值变化时触发 |
-| `remove-tag` | `value: string or number` | 多选模式下移除标签时触发 |
-
-**实现要点**：
-
-- 在 SelectContent 头部渲染搜索 Input
-- 使用 `filterFunction` 或默认字符串匹配过滤 SelectItem
-- 远程搜索时，`filter-change` 事件透传给外部，由外部控制 options 列表
-- 保持 Neo-Brutalism 风格：搜索框使用现有 Input 组件
+**设计调整**：
+- 依据 Reka UI 的规范与 ARIA 标准，Select 组件本身仅处理“非可编辑的轻量单选”。**不推荐**在 `Select` 内部强行集成过滤输入框和多选（这会破坏原语的键盘导航和 a11y 标准）。
+- 项目中所有对于**检索、远程搜索、多选、Tag折叠**的需求，均直接使用和推广已有的 `Combobox` 和 `ComboboxMulti` 组件。
+- 补充完善 `Combobox` 的 `loading`、`creative`（创建新选项）等高级特性。
 
 ---
 
@@ -110,26 +74,27 @@ interface SelectOption {
 
 #### 2.3 DataTable 虚拟滚动
 
-**现状**：`virtualScroll` prop 已在类型中声明，且已实现 CSS 变量 `--row-height`，但虚拟渲染逻辑未完成。
+**现状**：`virtualScroll` prop 已在类型中声明，但虚拟渲染逻辑未完成。项目目前已有一个基于 `div` + 绝对偏移定位的 `VirtualScroll` 组件。
 
 **实现方案**：
 
-- 利用已有的 `@tanstack/vue-virtual` 依赖和 `VirtualScroll` 组件
-- 当 `virtualScroll` 为 true 时，使用虚拟渲染替代全量渲染
-- 需要 `rowHeight` prop 或自动测量行高
+- 整合已有的 `VirtualScroll` 组件作为内部行容器渲染器。
+- **DOM 结构重构**：当 `virtualScroll` 为 `true` 时，DataTable 的 DOM 结构将**自动降级切换为非 Table 布局**，由 `div` 搭配 `display: grid` 或 `flex` 模拟行与单元格的渲染（以兼容 `VirtualScroll` 所需的绝对定位偏移）。
+- **局限与约束**：虚拟滚动模式下，原生列宽的自适应将会失效，**开发者必须为每一列显式配置 `width`**。
+- 需要支持 `rowHeight` prop，在复杂自适应场景下使用 `@tanstack/vue-virtual` 进行动态测量。
 
 **新增 Props**：
 
 | Prop | 类型 | 默认值 | 说明 |
 |---|---|---|---|
 | `virtualScroll` | `boolean` | `false` | 启用虚拟滚动 |
-| `rowHeight` | `number \| 'auto'` | `'auto'` | 行高（auto 为自动测量） |
+| `rowHeight` | `number \| 'auto'` | `48` | 行高（auto 为基于实际 DOM 动态测量） |
 | `virtualScrollBuffer` | `number` | `5` | 虚拟滚动缓冲行数 |
 
 **风险提示**：
 
 - 虚拟滚动 + 固定列 + 合并单元格的组合可能产生边界问题
-- 建议：合并单元格场景下禁用虚拟滚动，或提供降级方案
+- 建议：合并单元格或表头层级复杂场景下禁用虚拟滚动，或提供降级方案
 
 ---
 
@@ -612,15 +577,21 @@ interface MenuProps {
 
 ### 4.1 统一的加载状态系统
 
-**建议**：扩展现有 `Spinner` 组件，提供 `Loading` 包裹组件：
+**建议**：扩展现有 `Spinner` 组件，提供 `<Loading>` 包裹组件及一键化绑定的 `v-loading` 自定义指令：
 
 ```vue
+<!-- 组件用法 -->
 <Loading :loading="isLoading" :text="'加载中...'">
   <DataTable :data="data" />
 </Loading>
+
+<!-- 指令用法（推荐） -->
+<div v-loading="isLoading" v-loading-text="'数据拼命加载中...'">
+  <DataTable :data="data" />
+</div>
 ```
 
-**核心 Props**：
+**核心 Props（Loading 组件）**：
 
 ```typescript
 interface LoadingProps {
@@ -631,6 +602,11 @@ interface LoadingProps {
   customClass?: string
 }
 ```
+
+**指令 `v-loading` 设计机制**：
+- 在指令的 `mounted` 与 `updated` 钩子中，动态在宿主元素内部生成遮罩和 Spinner 并实施渲染。
+- **自动定位补充**：指令挂载时将自动检测宿主 DOM 的 CSS 定位。如果不是 `relative` 或 `absolute`，则指令会自动向宿主追加一个特定的定位 CSS Class（例如 `relative`），以防止遮罩层溢出，在指令销毁时还原。
+- **SSR 兼容**：在服务端渲染时忽略指令的 DOM 挂载逻辑，或配置 `getSSRProps`，仅在客户端 mounted 后初始化。
 
 ---
 

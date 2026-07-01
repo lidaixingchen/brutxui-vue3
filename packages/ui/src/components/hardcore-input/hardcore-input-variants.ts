@@ -10,7 +10,7 @@ export const hardcoreInputVariants = cva(
         'px-4 py-2',
         'font-bold',
         'transition-all duration-150',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:shadow-brutal',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:shadow-brutal-lg',
         'placeholder:text-brutal-placeholder placeholder:font-normal',
     ],
     {

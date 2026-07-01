@@ -38,7 +38,7 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <AccordionHeader class="flex">
+    <AccordionHeader class="flex !m-0">
         <AccordionTrigger v-bind="forwarded" :class="classes">
             <slot />
             <slot name="icon">
