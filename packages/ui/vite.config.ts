@@ -174,13 +174,26 @@ export default defineConfig({
                 /^lucide-vue-next/,
                 /^embla-carousel/,
             ],
-            output: {
-                globals: {
-                    vue: 'Vue',
+            output: [
+                {
+                    format: 'es',
+                    entryFileNames: (chunkInfo) => {
+                        const name = chunkInfo.name.replace(/[?&]/g, '_')
+                        return `${name}.js`
+                    },
+                    preserveModules: true,
+                    preserveModulesRoot: resolve(__dirname, 'src'),
                 },
-                preserveModules: true,
-                preserveModulesRoot: resolve(__dirname, 'src'),
-            },
+                {
+                    format: 'cjs',
+                    entryFileNames: (chunkInfo) => {
+                        const name = chunkInfo.name.replace(/[?&]/g, '_')
+                        return `${name}.cjs`
+                    },
+                    preserveModules: true,
+                    preserveModulesRoot: resolve(__dirname, 'src'),
+                }
+            ],
             treeshake: {
                 moduleSideEffects: true,
                 propertyReadSideEffects: false,
