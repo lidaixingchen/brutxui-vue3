@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch, useSlots } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, useSlots, shallowRef, triggerRef } from 'vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
 import type { VirtualScrollProps, VirtualScrollEmits } from './types'
-import type { useVirtualizer } from '@tanstack/vue-virtual'
 
 const slots = useSlots()
-type UseVirtualizerFn = typeof useVirtualizer
 
 const props = withDefaults(defineProps<VirtualScrollProps>(), {
     itemHeight: 48,
@@ -26,44 +24,76 @@ const parentRef = ref<HTMLElement | null>(null)
 
 const isAvailable = ref(true)
 
-let useVirtualizerFn: UseVirtualizerFn | null = null
 interface VirtualizerInstance {
-    value: {
-        getVirtualItems: () => Array<{ key: unknown; index: number; size: number; start: number }>
-        getTotalSize: () => number
-        scrollToIndex: (index: number) => void
-        measure: () => void
-    }
+    getVirtualItems: () => Array<{ key: unknown; index: number; size: number; start: number }>
+    getTotalSize: () => number
+    scrollToIndex: (index: number) => void
+    measure: () => void
 }
 
-let virtualizerRef: VirtualizerInstance | null = null
+const virtualizerRef = shallowRef<VirtualizerInstance | null>(null)
 
-const virtualizerOptions = computed(() => ({
-    count: props.items.length,
-    getScrollElement: () => parentRef.value,
-    estimateSize: () => props.itemHeight,
-    overscan: props.overscan,
-}))
-
-function initVirtualizer(): void {
-    if (useVirtualizerFn && !virtualizerRef) {
-        virtualizerRef = useVirtualizerFn(virtualizerOptions.value) as unknown as VirtualizerInstance
-    }
-}
+let cleanup: (() => void) | null = null
+let stopWatchScrollElement: (() => void) | null = null
+let stopWatchOptions: (() => void) | null = null
 
 // 使用 .then()/.catch() 模式而非顶层 await
 import('@tanstack/vue-virtual')
     .then((mod) => {
-        useVirtualizerFn = mod.useVirtualizer as UseVirtualizerFn
-        initVirtualizer()
+        const { Virtualizer, observeElementRect, observeElementOffset, elementScroll } = mod
+
+        const getOptions = () => ({
+            observeElementRect,
+            observeElementOffset,
+            scrollToFn: elementScroll,
+            count: props.items.length,
+            getScrollElement: () => parentRef.value,
+            estimateSize: () => props.itemHeight,
+            overscan: props.overscan,
+        })
+
+        // @ts-ignore
+        const virtualizer = new Virtualizer(getOptions())
+        virtualizerRef.value = virtualizer as unknown as VirtualizerInstance
+
+        cleanup = virtualizer._didMount()
+
+        stopWatchScrollElement = watch(
+            () => parentRef.value,
+            (el) => {
+                if (el) {
+                    virtualizer._willUpdate()
+                    triggerRef(virtualizerRef)
+                }
+            },
+            { immediate: true }
+        )
+
+        stopWatchOptions = watch(
+            () => [props.items.length, props.itemHeight, props.overscan],
+            () => {
+                virtualizer.setOptions({
+                    ...getOptions(),
+                    onChange: () => {
+                        triggerRef(virtualizerRef)
+                    }
+                })
+                virtualizer._willUpdate()
+                triggerRef(virtualizerRef)
+            },
+            { immediate: true }
+        )
+
+        virtualizer._willUpdate()
+        triggerRef(virtualizerRef)
     })
-    .catch(() => {
-        console.warn('[BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual')
+    .catch((err) => {
+        console.warn('[BrutxUI] VirtualScroll component requires @tanstack/vue-virtual. Install it: pnpm add @tanstack/vue-virtual', err)
         isAvailable.value = false
     })
 
-const virtualItems = computed(() => virtualizerRef?.value.getVirtualItems() ?? [])
-const totalSize = computed(() => virtualizerRef?.value.getTotalSize() ?? 0)
+const virtualItems = computed(() => virtualizerRef.value?.getVirtualItems() ?? [])
+const totalSize = computed(() => virtualizerRef.value?.getTotalSize() ?? 0)
 
 const isEmpty = computed(() => props.items.length === 0)
 
@@ -81,19 +111,27 @@ function handleScroll() {
 }
 
 watch(() => props.items.length, () => {
-    virtualizerRef?.value.measure()
+    virtualizerRef.value?.measure()
 })
 
 onMounted(() => {
     if (parentRef.value) {
         parentRef.value.addEventListener('scroll', handleScroll)
     }
-    initVirtualizer()
 })
 
 onBeforeUnmount(() => {
     if (parentRef.value) {
         parentRef.value.removeEventListener('scroll', handleScroll)
+    }
+    if (cleanup) {
+        cleanup()
+    }
+    if (stopWatchScrollElement) {
+        stopWatchScrollElement()
+    }
+    if (stopWatchOptions) {
+        stopWatchOptions()
     }
 })
 
@@ -104,7 +142,7 @@ const rootClasses = computed(() =>
 function scrollToIndex(index: number) {
     const itemCount = props.items.length
 
-    if (itemCount === 0 || !virtualizerRef) return
+    if (itemCount === 0 || !virtualizerRef.value) return
 
     const clampedIndex = Math.max(0, Math.min(index, itemCount - 1))
     virtualizerRef.value.scrollToIndex(clampedIndex)

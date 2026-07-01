@@ -1,6 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
-import { ref } from 'vue'
 import VirtualScroll from './VirtualScroll.vue'
 
 interface VirtualScrollExposed {
@@ -18,20 +17,35 @@ vi.mock('@/composables/useLocale', () => ({
     }),
 }))
 
-const scrollToIndexMock = vi.fn()
-
-// Mock @tanstack/vue-virtual
-vi.mock('@tanstack/vue-virtual', () => ({
-    useVirtualizer: vi.fn(() => ref({
-        getVirtualItems: () => [
-            { key: '0', index: 0, start: 0, size: 48 },
-            { key: '1', index: 1, start: 48, size: 48 },
-        ],
-        getTotalSize: () => 96,
-        measure: vi.fn(),
-        scrollToIndex: scrollToIndexMock,
-    })),
+// vi.hoisted 确保 mock 变量在 vi.mock() 工厂执行前初始化
+const { scrollToIndexMock } = vi.hoisted(() => ({
+    scrollToIndexMock: vi.fn(),
 }))
+
+// Mock @tanstack/vue-virtual — 使用 class 以支持 new Virtualizer() 构造
+vi.mock('@tanstack/vue-virtual', () => {
+    class MockVirtualizer {
+        getVirtualItems() {
+            return [
+                { key: '0', index: 0, start: 0, size: 48 },
+                { key: '1', index: 1, start: 48, size: 48 },
+            ]
+        }
+        getTotalSize() { return 96 }
+        measure = vi.fn()
+        scrollToIndex = scrollToIndexMock
+        _didMount() { return vi.fn() }
+        _willUpdate = vi.fn()
+        setOptions = vi.fn()
+    }
+    return {
+        useVirtualizer: vi.fn(),
+        observeElementRect: vi.fn(),
+        observeElementOffset: vi.fn(),
+        elementScroll: vi.fn(),
+        Virtualizer: MockVirtualizer,
+    }
+})
 
 describe('VirtualScroll', () => {
     const mockItems = Array.from({ length: 100 }, (_, i) => ({
