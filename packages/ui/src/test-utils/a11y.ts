@@ -31,10 +31,14 @@ export async function expectNoA11yViolations(
     options?: Record<string, unknown>,
 ) {
     const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
-    const results = await axe(wrapper.element)
-    // vitest-axe augments expect with toHaveNoViolations at runtime
-    ;(expect(results) as unknown as { toHaveNoViolations: () => void }).toHaveNoViolations()
-    return wrapper
+    try {
+        const results = await axe(wrapper.element)
+        // vitest-axe augments expect with toHaveNoViolations at runtime
+        ;(expect(results) as unknown as { toHaveNoViolations: () => void }).toHaveNoViolations()
+        return wrapper
+    } finally {
+        wrapper.unmount()
+    }
 }
 
 /**
@@ -57,6 +61,10 @@ export async function getA11yResults(
     options?: Record<string, unknown>,
 ) {
     const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
-    const results = await axe(wrapper.element)
-    return { wrapper, results }
+    try {
+        const results = await axe(wrapper.element)
+        return { wrapper, results }
+    } finally {
+        wrapper.unmount()
+    }
 }
