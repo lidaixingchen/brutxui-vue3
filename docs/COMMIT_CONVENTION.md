@@ -2,7 +2,7 @@
 
 本项目遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，提交时仅提交自身负责的或受自身影响的。
 
-## Shell 注意事项
+## Shell 提交注意事项
 
 书写多行 commit message 时需注意不同 Shell 的语法差异：
 
@@ -58,45 +58,3 @@
 | `registry` | 注册表构建 |
 | `shared` | 共享类型 |
 | `deps` | 依赖变更 |
-
-## 示例
-
-### 简单提交（无正文）
-
-```
-fix(ui): 修复 Button 组件 hover 状态样式
-docs: 更新 README 安装说明
-chore(deps): 升级 Vue 到 3.5.13
-```
-
-### 复杂提交（带正文）
-
-```
-fix(ui): 修复 5 个组件的 CI 测试失败问题
-
-修复 ChatBubble、Marquee、Stepper、VirtualScroll、KanbanBoard 共 8 个测试用例失败。
-
-## ChatBubble - system 消息 text-xs 被 size 覆盖
-
-**问题**: cn() 内部的 tailwind-merge 会将 text-xs 与 text-base 合并。
-**修复**: 为 system 消息在 cn() 末尾追加 text-xs 以提高优先级。
-
-## Stepper - 默认 variant 不符合测试预期
-
-**问题**: 默认 variant 为 "default"，但 active 步骤应显示 primary 配色。
-**修复**: 将默认 variant 从 "default" 改为 "primary"。
-```
-
-### 多个 scope 的提交
-
-```
-fix(ui,cli): 修复组件注册路径解析问题
-```
-
-### 带 Issue 引用的提交
-
-```
-fix(ui): 修复 KanbanBoard 拖拽排序问题
-
-Closes #168
-```
