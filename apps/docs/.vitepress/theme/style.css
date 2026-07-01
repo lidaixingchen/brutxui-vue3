@@ -1097,7 +1097,7 @@ body > [data-reka-popper-content-wrapper] {
     background-color: var(--brutal-bg, #ffffff) !important;
 }
 .rounded-brutal {
-    border-radius: var(--brutal-radius, 4px) !important;
+    border-radius: var(--radius-brutal, var(--brutal-radius, 4px)) !important;
 }
 .shadow-brutal-lg {
     box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000) !important;

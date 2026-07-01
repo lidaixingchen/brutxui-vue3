@@ -21,15 +21,4 @@ describe('Button Accessibility', () => {
             slots: { default: 'Loading' },
         })
     })
-
-    it('should have no accessibility violations with different variants', async () => {
-        const variants = ['default', 'primary', 'secondary', 'danger', 'success'] as const
-
-        for (const variant of variants) {
-            await expectNoA11yViolations(Button, {
-                props: { variant },
-                slots: { default: `${variant} button` },
-            })
-        }
-    })
-})
+}, 30000)

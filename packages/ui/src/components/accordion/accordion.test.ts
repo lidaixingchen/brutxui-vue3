@@ -56,7 +56,8 @@ describe('AccordionItem', () => {
         expect(classes).toContain('border-brutal')
         expect(classes).toContain('bg-brutal-bg')
         expect(classes).toContain('text-brutal-fg')
-        expect(classes).toContain('shadow-brutal')
+        expect(classes).toContain('data-[state=closed]:shadow-brutal-sm')
+        expect(classes).toContain('data-[state=open]:shadow-brutal')
         expect(classes).toContain('mb-4')
     })
 
@@ -87,9 +88,10 @@ describe('AccordionItem', () => {
             global: { stubs: { AccordionItem: primitiveStub } },
         })
         const classes = wrapper.classes()
-        expect(classes).toContain('shadow-brutal')
+        expect(classes).toContain('data-[state=closed]:shadow-brutal-sm')
+        expect(classes).toContain('data-[state=open]:shadow-brutal')
         expect(classes).toContain('mb-4')
-        expect(classes).toContain('hover:shadow-brutal-lg')
+        expect(classes).toContain('hover:shadow-brutal')
         expect(classes).toContain('hover:-translate-x-0.5')
         expect(classes).toContain('hover:-translate-y-0.5')
     })

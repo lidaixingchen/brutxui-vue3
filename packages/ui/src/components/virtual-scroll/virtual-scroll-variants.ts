@@ -38,7 +38,7 @@ export const virtualScrollItemVariants = cva(
         variants: {
             variant: {
                 default: '',
-                striped: 'even:bg-brutal-muted/50',
+                striped: '',
                 bordered: 'border-b-2 border-brutal',
             },
         },

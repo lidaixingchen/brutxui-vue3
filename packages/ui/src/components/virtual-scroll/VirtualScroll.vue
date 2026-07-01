@@ -188,7 +188,10 @@ defineExpose({ scrollToIndex })
             <div
                 v-for="virtualRow in virtualItems"
                 :key="Number(virtualRow.key)"
-                :class="cn(virtualScrollItemVariants({ variant: props.variant }))"
+                :class="cn(
+                    virtualScrollItemVariants({ variant: props.variant }),
+                    props.variant === 'striped' && virtualRow.index % 2 === 1 && 'bg-brutal-muted/50'
+                )"
                 :style="{
                     position: 'absolute',
                     top: 0,

@@ -48,6 +48,7 @@ function handleJump() {
                     v-model="currentPageRounded"
                     :total-pages="20"
                     variant="rounded"
+                    style="--radius-brutal: 8px; --brutal-radius: 8px;"
                 />
                 <Pagination
                     v-model="currentPageMinimal"

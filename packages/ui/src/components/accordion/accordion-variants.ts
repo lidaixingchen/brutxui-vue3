@@ -8,12 +8,18 @@ export const accordionItemVariants = cva(
     {
         variants: {
             variant: {
-                default: 'shadow-brutal mb-4',
+                default: [
+                    'mb-4',
+                    'data-[state=closed]:shadow-brutal-sm',
+                    'data-[state=open]:shadow-brutal data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5',
+                ],
                 flat: 'shadow-none mb-4',
                 ghost: 'border-transparent shadow-none mb-2',
                 interactive: [
-                    'shadow-brutal mb-4',
-                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                    'mb-4',
+                    'data-[state=closed]:shadow-brutal-sm',
+                    'data-[state=open]:shadow-brutal data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5',
+                    'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5',
                 ],
             },
         },

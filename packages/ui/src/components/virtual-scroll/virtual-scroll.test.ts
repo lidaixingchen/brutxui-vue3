@@ -162,4 +162,19 @@ describe('VirtualScroll', () => {
         expect(scrollToIndexMock).toHaveBeenNthCalledWith(2, 42)
         expect(scrollToIndexMock).toHaveBeenNthCalledWith(3, 99)
     })
+
+    it('applies item variant classes for striped variant based on index', async () => {
+        const wrapper = mount(VirtualScroll, {
+            props: {
+                items: mockItems,
+                variant: 'striped',
+            },
+        })
+        await flushPromises()
+
+        const items = wrapper.findAll('[role="listitem"]')
+        expect(items.length).toBe(2)
+        expect(items[0].classes()).not.toContain('bg-brutal-muted/50')
+        expect(items[1].classes()).toContain('bg-brutal-muted/50')
+    })
 })
