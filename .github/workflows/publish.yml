@@ -26,10 +26,25 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
-            - run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
+            - name: Cache Playwright Browser Binaries
+              id: playwright-cache
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-playwright-
+
+            - name: Install Playwright Browser and Deps
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
+              run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
+
+            - name: Install Playwright Dependencies (when cache hit)
+              if: steps.playwright-cache.outputs.cache-hit == 'true'
+              run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
 
             - name: Install fonts for visual tests
-              run: sudo apt-get update && sudo apt-get install -y fonts-inter
+              run: sudo apt-get install -y fonts-inter || (sudo apt-get update && sudo apt-get install -y fonts-inter)
 
             - name: Release reliability check
               run: pnpm release:check
