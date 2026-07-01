@@ -199,7 +199,7 @@ async function copyCss() {
             </p>
         </div>
 
-        <div class="grid gap-5 2xl:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
+        <div class="grid gap-5 lg:grid-cols-[minmax(320px,380px)_minmax(0,1fr)]">
             <aside class="space-y-5 border-3 border-brutal bg-brutal-bg p-4 shadow-brutal">
                 <div class="space-y-3">
                     <div>
@@ -336,98 +336,97 @@ async function copyCss() {
                 </p>
             </aside>
 
-            <div class="space-y-5">
-                <section
-                    class="border-3 border-brutal bg-brutal-bg p-4 text-brutal-fg shadow-brutal transition-all duration-150 sm:p-5"
-                    :class="colorMode === 'dark' ? 'dark' : ''"
-                    :style="previewStyle"
-                >
-                    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                        <div>
-                            <p class="m-0 text-xs font-black uppercase tracking-[0.16em] text-brutal-muted-foreground">
-                                实时预览
-                            </p>
-                            <h3 class="!m-0 !border-0 !p-0 text-xl font-black text-brutal-fg">
-                                {{ currentPreset.label }} / {{ colorMode }}
-                            </h3>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <Badge variant="primary">主要</Badge>
-                            <Badge variant="secondary">次要</Badge>
-                            <Badge variant="accent">强调</Badge>
-                        </div>
+            <section
+                class="border-3 border-brutal bg-brutal-bg p-4 text-brutal-fg shadow-brutal transition-all duration-150 sm:p-5"
+                :class="colorMode === 'dark' ? 'dark' : ''"
+                :style="previewStyle"
+            >
+                <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <p class="m-0 text-xs font-black uppercase tracking-[0.16em] text-brutal-muted-foreground">
+                            实时预览
+                        </p>
+                        <h3 class="!m-0 !border-0 !p-0 text-xl font-black text-brutal-fg">
+                            {{ currentPreset.label }} / {{ colorMode }}
+                        </h3>
                     </div>
+                    <div class="flex flex-wrap gap-2">
+                        <Badge variant="primary">主要</Badge>
+                        <Badge variant="secondary">次要</Badge>
+                        <Badge variant="accent">强调</Badge>
+                    </div>
+                </div>
 
-                    <div class="grid gap-4">
-                        <Card class="bg-brutal-bg">
-                            <CardHeader>
-                                <div class="flex flex-wrap items-start justify-between gap-3">
-                                    <div>
-                                        <CardTitle>启动控制台</CardTitle>
-                                        <CardDescription>
-                                            产品控制台预览，用来判断主题在真实界面里的整体气质。
-                                        </CardDescription>
-                                    </div>
-                                    <Badge variant="success">上线</Badge>
+                <div class="grid gap-4">
+                    <Card class="bg-brutal-bg">
+                        <CardHeader>
+                            <div class="flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                    <CardTitle>启动控制台</CardTitle>
+                                    <CardDescription>
+                                        产品控制台预览，用来判断主题在真实界面里的整体气质。
+                                    </CardDescription>
                                 </div>
-                            </CardHeader>
-                            <CardContent class="space-y-4">
-                                <div class="grid gap-3 md:grid-cols-3">
-                                    <div class="border-3 border-brutal bg-brutal-primary p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">收入</p>
-                                        <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">42.8K</p>
-                                        <p class="m-0 text-xs font-bold text-brutal-fg">本周 +18%</p>
-                                    </div>
-                                    <div class="border-3 border-brutal bg-brutal-secondary p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">活跃</p>
-                                        <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">1,284</p>
-                                        <p class="m-0 text-xs font-bold text-brutal-fg">用户在线</p>
-                                    </div>
-                                    <div class="border-3 border-brutal bg-brutal-accent p-3 shadow-brutal-sm">
-                                        <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">阴影</p>
-                                        <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">{{ currentTokens.shadowOffsetX }}</p>
-                                        <p class="m-0 text-xs font-bold text-brutal-fg">硬偏移</p>
-                                    </div>
+                                <Badge variant="success">上线</Badge>
+                            </div>
+                        </CardHeader>
+                        <CardContent class="space-y-4">
+                            <div class="grid gap-3 md:grid-cols-3">
+                                <div class="border-3 border-brutal bg-brutal-primary p-3 shadow-brutal-sm">
+                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">收入</p>
+                                    <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">42.8K</p>
+                                    <p class="m-0 text-xs font-bold text-brutal-fg">本周 +18%</p>
                                 </div>
+                                <div class="border-3 border-brutal bg-brutal-secondary p-3 shadow-brutal-sm">
+                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">活跃</p>
+                                    <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">1,284</p>
+                                    <p class="m-0 text-xs font-bold text-brutal-fg">用户在线</p>
+                                </div>
+                                <div class="border-3 border-brutal bg-brutal-accent p-3 shadow-brutal-sm">
+                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">阴影</p>
+                                    <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">{{ currentTokens.shadowOffsetX }}</p>
+                                    <p class="m-0 text-xs font-bold text-brutal-fg">硬偏移</p>
+                                </div>
+                            </div>
 
-                                <div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_max-content]">
-                                    <div class="relative">
-                                        <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" />
-                                        <Input v-model="sampleEmail" class="pl-9" placeholder="筛选客户" />
-                                    </div>
-                                    <Button type="button" variant="primary" class="whitespace-nowrap">创建分群</Button>
+                            <div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_max-content]">
+                                <div class="relative">
+                                    <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" />
+                                    <Input v-model="sampleEmail" class="pl-9" placeholder="筛选客户" />
                                 </div>
+                                <Button type="button" variant="primary" class="whitespace-nowrap">创建分群</Button>
+                            </div>
 
-                                <div class="overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
-                                    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 border-b-3 border-brutal bg-brutal-muted p-3 text-xs font-black uppercase tracking-wide text-brutal-muted-foreground">
-                                        <span>账户</span>
-                                        <span>状态</span>
-                                        <span>风险</span>
-                                    </div>
-                                    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 border-b-3 border-brutal p-3">
-                                        <div class="min-w-0">
-                                            <p class="m-0 truncate text-sm font-black text-brutal-fg">brutal-studio.io</p>
-                                            <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">hello@brutx.dev</p>
-                                        </div>
-                                        <Badge variant="success" size="sm">健康</Badge>
-                                        <Badge variant="outline" size="sm">低</Badge>
-                                    </div>
-                                    <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-3">
-                                        <div class="min-w-0">
-                                            <p class="m-0 truncate text-sm font-black text-brutal-fg">mono-labs.dev</p>
-                                            <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">ops@brutx.dev</p>
-                                        </div>
-                                        <Badge variant="primary" size="sm">试用</Badge>
-                                        <Badge variant="danger" size="sm">高</Badge>
-                                    </div>
+                            <div class="overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
+                                <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 border-b-3 border-brutal bg-brutal-muted p-3 text-xs font-black uppercase tracking-wide text-brutal-muted-foreground">
+                                    <span>账户</span>
+                                    <span>状态</span>
+                                    <span>风险</span>
                                 </div>
-                            </CardContent>
-                            <CardFooter class="flex flex-wrap gap-3">
-                                <Button type="button" variant="secondary">发布预设</Button>
-                                <Button type="button" variant="danger">暂停账户</Button>
-                                <Button type="button" variant="outline">查看 CSS</Button>
-                            </CardFooter>
-                        </Card>
+                                <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 border-b-3 border-brutal p-3">
+                                    <div class="min-w-0">
+                                        <p class="m-0 truncate text-sm font-black text-brutal-fg">brutal-studio.io</p>
+                                        <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">hello@brutx.dev</p>
+                                    </div>
+                                    <Badge variant="success" size="sm">健康</Badge>
+                                    <Badge variant="outline" size="sm">低</Badge>
+                                </div>
+                                <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-3">
+                                    <div class="min-w-0">
+                                        <p class="m-0 truncate text-sm font-black text-brutal-fg">mono-labs.dev</p>
+                                        <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">ops@brutx.dev</p>
+                                    </div>
+                                    <Badge variant="primary" size="sm">试用</Badge>
+                                    <Badge variant="danger" size="sm">高</Badge>
+                                </div>
+                            </div>
+                        </CardContent>
+                        <CardFooter class="flex flex-wrap gap-3">
+                            <Button type="button" variant="secondary">发布预设</Button>
+                            <Button type="button" variant="danger">暂停账户</Button>
+                            <Button type="button" variant="outline">查看 CSS</Button>
+                        </CardFooter>
+                    </Card>
 
                         <div class="space-y-4">
                             <Card class="bg-brutal-bg min-w-0">
@@ -494,96 +493,95 @@ async function copyCss() {
                         </div>
                     </div>
                 </section>
-
-                <section class="grid gap-5 lg:grid-cols-[minmax(300px,0.9fr)_minmax(0,1.1fr)]">
-                    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
-                        <div class="border-b-3 border-brutal bg-brutal-muted p-3">
-                            <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                质量检查
-                            </p>
-                            <p class="m-0 text-sm font-bold text-brutal-fg">
-                                {{ contrastSummary.passed }}/{{ contrastSummary.total }} 通过，{{ contrastSummary.warnings }} 个偏低。
-                            </p>
-                        </div>
-
-                        <div class="space-y-3 p-3">
-                            <div
-                                class="border-3 border-brutal p-3 shadow-brutal-sm"
-                                :class="themeCoverage.isComplete ? 'bg-brutal-success text-brutal-fg' : 'bg-brutal-accent text-brutal-fg'"
-                            >
-                                <div class="flex items-start gap-3">
-                                    <ShieldCheck v-if="themeCoverage.isComplete" class="mt-0.5 h-5 w-5 shrink-0" />
-                                    <ShieldAlert v-else class="mt-0.5 h-5 w-5 shrink-0" />
-                                    <div class="min-w-0">
-                                        <p class="m-0 text-sm font-black">
-                                            CSS 覆盖率 {{ themeCoverage.covered }}/{{ themeCoverage.total }} tokens
-                                        </p>
-                                        <p class="m-0 mt-1 text-xs font-bold">
-                                            {{ themeCoverage.isComplete ? 'light 和 dark 输出都覆盖完整。' : '存在缺失变量，请检查输出。' }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <ul v-if="!themeCoverage.isComplete" class="m-0 mt-2 list-none p-0 text-xs font-black">
-                                    <li v-for="item in themeCoverage.missing" :key="item">
-                                        {{ item }}
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="grid gap-3 sm:grid-cols-2">
-                                <div
-                                    v-for="check in contrastChecks"
-                                    :key="check.id"
-                                    :class="getContrastStatusClass(check.status)"
-                                >
-                                    <div class="flex items-start justify-between gap-3">
-                                        <div>
-                                            <p class="m-0 text-sm font-black">{{ check.label }}</p>
-                                            <p class="m-0 text-xs font-bold">{{ check.usage }}</p>
-                                        </div>
-                                        <span class="shrink-0 border-3 border-brutal bg-brutal-bg px-2 py-1 text-[0.65rem] font-black text-brutal-fg">
-                                            {{ getContrastStatusLabel(check.status) }}
-                                        </span>
-                                    </div>
-                                    <div class="mt-3 flex items-end justify-between gap-3">
-                                        <p class="m-0 font-mono text-xl font-black">
-                                            {{ formatContrastRatio(check.ratio) }}
-                                        </p>
-                                        <p class="m-0 text-right text-xs font-bold">
-                                            target {{ check.threshold }}:1
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
-                        <div class="flex flex-wrap items-center justify-between gap-3 border-b-3 border-brutal bg-brutal-muted p-3">
-                            <div>
-                                <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                    生成的 CSS
-                                </p>
-                                <p class="m-0 text-sm font-bold text-brutal-fg">
-                                    复制到项目 CSS 中即可使用 `.theme-custom`。
-                                </p>
-                            </div>
-                            <Button type="button" variant="primary" class="gap-2" @click="copyCss">
-                                <Check v-if="copyState === 'success'" class="h-4 w-4" />
-                                <Copy v-else class="h-4 w-4" />
-                                {{ copyState === 'success' ? '已复制' : '复制 CSS' }}
-                            </Button>
-                        </div>
-                        <textarea
-                            ref="cssOutput"
-                            :value="generatedCss"
-                            readonly
-                            class="block min-h-[360px] w-full resize-y border-0 bg-brutal-fg p-4 font-mono text-xs font-bold leading-6 text-brutal-bg outline-none sm:text-sm"
-                            aria-label="Generated theme CSS"
-                        />
-                    </div>
-                </section>
-            </div>
         </div>
+
+        <section class="mt-5 grid gap-5 lg:grid-cols-2">
+            <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
+                <div class="border-b-3 border-brutal bg-brutal-muted p-3">
+                    <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
+                        质量检查
+                    </p>
+                    <p class="m-0 text-sm font-bold text-brutal-fg">
+                        {{ contrastSummary.passed }}/{{ contrastSummary.total }} 通过，{{ contrastSummary.warnings }} 个偏低。
+                    </p>
+                </div>
+
+                <div class="space-y-3 p-3">
+                    <div
+                        class="border-3 border-brutal p-3 shadow-brutal-sm"
+                        :class="themeCoverage.isComplete ? 'bg-brutal-success text-brutal-fg' : 'bg-brutal-accent text-brutal-fg'"
+                    >
+                        <div class="flex items-start gap-3">
+                            <ShieldCheck v-if="themeCoverage.isComplete" class="mt-0.5 h-5 w-5 shrink-0" />
+                            <ShieldAlert v-else class="mt-0.5 h-5 w-5 shrink-0" />
+                            <div class="min-w-0">
+                                <p class="m-0 text-sm font-black">
+                                    CSS 覆盖率 {{ themeCoverage.covered }}/{{ themeCoverage.total }} tokens
+                                </p>
+                                <p class="m-0 mt-1 text-xs font-bold">
+                                    {{ themeCoverage.isComplete ? 'light 和 dark 输出都覆盖完整。' : '存在缺失变量，请检查输出。' }}
+                                </p>
+                            </div>
+                        </div>
+                        <ul v-if="!themeCoverage.isComplete" class="m-0 mt-2 list-none p-0 text-xs font-black">
+                            <li v-for="item in themeCoverage.missing" :key="item">
+                                {{ item }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <div
+                            v-for="check in contrastChecks"
+                            :key="check.id"
+                            :class="getContrastStatusClass(check.status)"
+                        >
+                            <div class="flex items-start justify-between gap-3">
+                                <div>
+                                    <p class="m-0 text-sm font-black">{{ check.label }}</p>
+                                    <p class="m-0 text-xs font-bold">{{ check.usage }}</p>
+                                </div>
+                                <span class="shrink-0 border-3 border-brutal bg-brutal-bg px-2 py-1 text-[0.65rem] font-black text-brutal-fg">
+                                    {{ getContrastStatusLabel(check.status) }}
+                                </span>
+                            </div>
+                            <div class="mt-3 flex items-end justify-between gap-3">
+                                <p class="m-0 font-mono text-xl font-black">
+                                    {{ formatContrastRatio(check.ratio) }}
+                                </p>
+                                <p class="m-0 text-right text-xs font-bold">
+                                    target {{ check.threshold }}:1
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b-3 border-brutal bg-brutal-muted p-3">
+                    <div>
+                        <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
+                            生成的 CSS
+                        </p>
+                        <p class="m-0 text-sm font-bold text-brutal-fg">
+                            复制到项目 CSS 中即可使用 `.theme-custom`。
+                        </p>
+                    </div>
+                    <Button type="button" variant="primary" class="gap-2" @click="copyCss">
+                        <Check v-if="copyState === 'success'" class="h-4 w-4" />
+                        <Copy v-else class="h-4 w-4" />
+                        {{ copyState === 'success' ? '已复制' : '复制 CSS' }}
+                    </Button>
+                </div>
+                <textarea
+                    ref="cssOutput"
+                    :value="generatedCss"
+                    readonly
+                    class="block min-h-[360px] w-full resize-y border-0 bg-brutal-fg p-4 font-mono text-xs font-bold leading-6 text-brutal-bg outline-none sm:text-sm"
+                    aria-label="Generated theme CSS"
+                />
+            </div>
+        </section>
     </section>
 </template>
