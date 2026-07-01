@@ -63,7 +63,16 @@ export default defineConfig({
                         {
                             text: 'Advanced',
                             items: [
-                                { text: 'Best Practices', link: '/en/guide/best-practices' },
+                                {
+                                    text: 'Best Practices',
+                                    items: [
+                                        { text: 'Overview', link: '/en/guide/best-practices' },
+                                        { text: 'Component Usage', link: '/en/guide/best-practices/component-usage' },
+                                        { text: 'Styling & Customization', link: '/en/guide/best-practices/styling' },
+                                        { text: 'Accessibility', link: '/en/guide/best-practices/accessibility' },
+                                        { text: 'Performance', link: '/en/guide/best-practices/performance' },
+                                    ],
+                                },
                                 { text: 'FAQ', link: '/en/guide/faq' },
                                 { text: 'Changelog', link: '/en/guide/changelog' },
                                 { text: 'Contributing', link: '/en/guide/contributing' },
@@ -202,6 +211,7 @@ export default defineConfig({
                                 { text: 'Search Widget', link: '/en/blocks/search-widget' },
                                 { text: 'Feedback Form', link: '/en/blocks/feedback-form' },
                                 { text: 'Cookie Consent', link: '/en/blocks/cookie-consent' },
+                                { text: 'Dashboard Stats', link: '/en/blocks/dashboard-stats' },
                             ],
                         },
                         {
@@ -209,6 +219,7 @@ export default defineConfig({
                             items: [
                                 { text: 'Brutalist Hero', link: '/en/blocks/brutalist-hero' },
                                 { text: 'Pricing Section', link: '/en/blocks/pricing-section' },
+                                { text: 'SaaS Pricing', link: '/en/blocks/saas-pricing' },
                                 { text: 'Dashboard Shell', link: '/en/blocks/dashboard-shell' },
                                 { text: 'Header Section', link: '/en/blocks/header-section' },
                                 { text: 'Footer Section', link: '/en/blocks/footer-section' },
@@ -531,6 +542,7 @@ export default defineConfig({
                         { text: 'Search Widget 搜索组件', link: '/blocks/search-widget' },
                         { text: 'Feedback Form 反馈表单', link: '/blocks/feedback-form' },
                         { text: 'Cookie Consent Cookie 同意', link: '/blocks/cookie-consent' },
+                        { text: 'Dashboard Stats 仪表盘统计', link: '/blocks/dashboard-stats' },
                     ],
                 },
                 {
@@ -538,6 +550,7 @@ export default defineConfig({
                     items: [
                         { text: 'Brutalist Hero 英雄区', link: '/blocks/brutalist-hero' },
                         { text: 'Pricing Section 定价区', link: '/blocks/pricing-section' },
+                        { text: 'SaaS Pricing 定价', link: '/blocks/saas-pricing' },
                         { text: 'Dashboard Shell 仪表盘框架', link: '/blocks/dashboard-shell' },
                         { text: 'Header Section 顶部导航', link: '/blocks/header-section' },
                         { text: 'Footer Section 底部信息栏', link: '/blocks/footer-section' },

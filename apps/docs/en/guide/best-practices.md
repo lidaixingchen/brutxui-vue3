@@ -1,242 +1,40 @@
 ---
 title: Best Practices
-description: BrutxUI usage tips and design patterns.
-translated: true
+description: Usage guidelines and design patterns for BrutxUI.
 ---
 
 # Best Practices
 
-This document provides usage tips for BrutxUI to help you build high-quality Neo-Brutalism applications.
+To help you build high-quality, high-performance, and accessible Neo-Brutalism web applications, BrutxUI provides detailed best practice guides across four core areas.
+
+Select a guide below based on your development needs:
 
 ---
 
-## Blocks vs Components
+## 📖 [Component Usage](./best-practices/component-usage)
 
-### When to Use Components
+Learn how to select, organize, and extend basic and composite components:
+* **Component Selection Guide**: Recommended components for basic inputs, feedback alerts, and complex form scenarios.
+* **Props & Event Handlers**: Standards for variant and size options, type-safe bindings (`v-model`), and event listeners.
+* **Slots & Composition**: Leveraging default/named slots and the `asChild` composition pattern to customize component rendering.
 
-Components are single-purpose UI primitives, suitable for:
+## 🎨 [Styling & Customization](./best-practices/styling)
 
-- Standalone elements like buttons, inputs, and cards
-- Scenarios requiring high customizability
-- Building your own business components
+Understand styling methods with CSS variables and Tailwind CSS extensions:
+* **CSS Variable Overrides**: Overriding `--brutal-` prefixed variables globally or locally to control border widths, colors, offsets, and border radii.
+* **Themes & Tokens**: Using built-in theme presets, styling with CSS classes, and swapping themes dynamically at runtime.
+* **Tailwind Extensions**: Utilizing utilities, modifying configuration, and combining styles dynamically using the `cn()` helper.
 
-```vue
-<template>
-  <Button variant="primary" @click="handleClick">
-    Submit
-  </Button>
-</template>
-```
+## ♿ [Accessibility (A11y)](./best-practices/accessibility)
 
-### When to Use Blocks
+Build accessible experiences compliant with WCAG 2.1 AA standards:
+* **ARIA & Semantics**: Proper ARIA role behaviors and form controls automatically mapped to `<Label>` components.
+* **Keyboard Navigation & Focus**: Built-in keyboard navigation mappings and managing focus states during modal overlays.
+* **Screen Reader Support**: Setting up alternate descriptors, managing `aria-live` regions, and handling high contrast preferences.
 
-Blocks are business snippets composed of multiple Components, suitable for:
+## ⚡ [Performance Optimization](./best-practices/performance)
 
-- Quickly scaffolding pages
-- Common UI patterns (pricing cards, login forms, dashboards)
-- Reducing duplicate code
-
-```vue
-<template>
-  <!-- Use a pre-built pricing card Block directly -->
-  <SaaSPricing :plans="plans" />
-</template>
-```
-
-**Selection Guide**:
-
-| Scenario | Recommendation |
-|------|------|
-| Full style customization needed | Components |
-| Rapid prototyping | Blocks |
-| Learning component usage | Reference Block source code |
-| Building reusable business components | Components + Composition |
-
----
-
-## Style Management
-
-### Prefer CSS Variables
-
-```css
-/* Recommended: use CSS variables */
-.my-component {
-  background: var(--brutal-primary);
-  border: var(--brutal-border-width) solid var(--brutal-fg);
-}
-
-/* Avoid: hardcoded values */
-.my-component {
-  background: #ff6b6b;
-  border: 3px solid #222;
-}
-```
-
-### Use `cn()` to Merge Classes
-
-Per the component development guide, always use `computed()` for dynamic class merging and never call `cn()` directly in templates:
-
-```ts
-import { computed } from 'vue'
-import { cn } from 'brutx-ui-vue'
-import { buttonVariants } from './button-variants'
-
-// Use cn() inside computed()
-const classes = computed(() => cn(
-  buttonVariants({ variant: 'primary', size: 'md' }),
-  props.class
-))
-
-// Avoid calling cn() in templates
-// <div :class="cn(base, props.class)">
-```
-
----
-
-## TypeScript Best Practices
-
-### Use Generics to Constrain Props
-
-```ts
-interface Props<T> {
-  items: T[]
-  keyExtractor: (item: T) => string
-  renderItem: (item: T) => VNode
-}
-
-const props = defineProps<Props<User>>()
-```
-
-### Type-Safe Event Handling
-
-```ts
-// Explicitly type event payloads
-function handleSort(column: string, direction: 'asc' | 'desc') {
-  // ...
-}
-
-// Avoid any
-function handleSort(...args: any[]) {
-  // ...
-}
-```
-
----
-
-## Accessibility
-
-### Keyboard Navigation
-
-Ensure all interactive components support keyboard operation:
-
-- `Tab` / `Shift+Tab`: focus switching
-- `Space` / `Enter`: activate / trigger
-- `Escape`: close / cancel
-
-### ARIA Attributes
-
-```vue
-<template>
-  <Button
-    :aria-expanded="isOpen"
-    aria-haspopup="dialog"
-    @click="toggle"
-  >
-    Open Panel
-  </Button>
-</template>
-```
-
-### Focus Management
-
-```vue
-<script setup>
-import { ref, nextTick } from 'vue'
-
-const inputRef = ref()
-
-async function openDialog() {
-  isOpen.value = true
-  await nextTick()
-  inputRef.value?.$el?.focus()
-}
-</script>
-```
-
----
-
-## Performance Optimization
-
-### Import on Demand
-
-```ts
-// Import on demand
-import { Button, Card } from 'brutx-ui-vue'
-
-// Avoid full import
-import * as BrutxUI from 'brutx-ui-vue'
-```
-
-### Virtual Scrolling
-
-Use the VirtualScroll component for large data lists:
-
-```vue
-<template>
-  <VirtualScroll
-    :items="largeList"
-    :item-height="48"
-    :buffer="5"
-  >
-    <template #default="{ item }">
-      <div>{{ item.name }}</div>
-    </template>
-  </VirtualScroll>
-</template>
-```
-
-### Lazy-Load Components
-
-```ts
-const HeavyComponent = defineAsyncComponent(() =>
-  import('./HeavyComponent.vue')
-)
-```
-
----
-
-## Common Pitfalls
-
-### 1. Loss of Reactivity
-
-```ts
-// Destructuring loses reactivity
-const { value } = defineProps({ value: String })
-
-// Use toRefs or access props directly
-const props = defineProps({ value: String })
-```
-
-### 2. Multiple Event Bindings
-
-```vue
-<!-- Inline function creates a new reference on every render -->
-<Button @click="() => handleClick(id)">Click</Button>
-
-<!-- Use a named function -->
-<Button @click="handleClick(id)">Click</Button>
-```
-
-### 3. Component Naming Conflicts
-
-```vue
-<!-- Using an HTML native tag name -->
-<template>
-  <button>Custom Button</button>
-</template>
-
-<!-- Use PascalCase -->
-<template>
-  <BrutalButton>Custom Button</BrutalButton>
-</template>
-```
+Implement performance optimization strategies for large datasets and highly interactive applications:
+* **Bundling & Lazy Loading**: Tree-shaking optimizations, code-splitting with async components, and route-level lazy loading.
+* **Rendering Large Datasets**: Using `shallowRef` to bypass deep reactivity tracking and utilizing `VirtualScroll` to optimize scrolling.
+* **Interaction Throttling**: Applying debounce and throttle behaviors to input searches, button clicks, and scroll listeners.
