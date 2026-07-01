@@ -4,6 +4,10 @@ import { defineComponent, nextTick, type Ref } from 'vue'
 
 import { useReducedMotion } from './useReducedMotion'
 
+interface MockMediaQueryList extends MediaQueryList {
+    _trigger: (match: boolean) => void
+}
+
 function createMockMediaQuery(matches: boolean) {
     const listeners: Record<string, (e: MediaQueryListEvent) => void> = {}
     return {
@@ -18,7 +22,7 @@ function createMockMediaQuery(matches: boolean) {
             const event = { matches: match } as MediaQueryListEvent
             listeners['change']?.(event)
         },
-    } as unknown as MediaQueryList
+    } as unknown as MockMediaQueryList
 }
 
 function createWrapperWith(composable: () => Ref<boolean>) {
@@ -71,10 +75,10 @@ describe('useReducedMotion', () => {
         const wrapper = mount(createWrapperWith(useReducedMotion))
         await nextTick()
 
-        expect((wrapper.vm as any).prefersReduced).toBe(false)
+        expect(wrapper.vm.prefersReduced).toBe(false)
 
         // Simulate media query change
-        ;(mockQuery as any)._trigger(true)
+        mockQuery._trigger(true)
         await nextTick()
 
         expect(wrapper.vm.prefersReduced).toBe(true)

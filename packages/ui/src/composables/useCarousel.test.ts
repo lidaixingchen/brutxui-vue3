@@ -7,9 +7,14 @@ import type { EmblaCarouselType } from 'embla-carousel'
 type EventName = string
 type EventHandler = (...args: unknown[]) => void
 
-function createMockEmblaApi(overrides: Partial<EmblaCarouselType> = {}) {
+interface MockEmblaApi extends EmblaCarouselType {
+    __emit: (event: EventName, ...args: unknown[]) => void
+    __listeners: Record<string, EventHandler[]>
+}
+
+function createMockEmblaApi(overrides: Partial<EmblaCarouselType> = {}): MockEmblaApi {
     const listeners: Record<string, EventHandler[]> = {}
-    const api: Record<string, unknown> = {
+    const mockApi = {
         scrollSnapList: vi.fn().mockReturnValue([]),
         selectedScrollSnap: vi.fn().mockReturnValue(0),
         scrollPrev: vi.fn(),
@@ -19,22 +24,23 @@ function createMockEmblaApi(overrides: Partial<EmblaCarouselType> = {}) {
         on: vi.fn((event: EventName, handler: EventHandler) => {
             if (!listeners[event]) listeners[event] = []
             listeners[event].push(handler)
-            return api
+            return mockApi
         }),
         off: vi.fn((event: EventName, handler: EventHandler) => {
             if (listeners[event]) {
                 listeners[event] = listeners[event].filter((h) => h !== handler)
             }
-            return api
+            return mockApi
         }),
         ...overrides,
-    }
+    } as unknown as MockEmblaApi
+
     // expose helpers to emit events from tests
-    ;(api as any).__emit = (event: string, ...args: unknown[]) => {
+    mockApi.__emit = (event: string, ...args: unknown[]) => {
         listeners[event]?.forEach((fn) => fn(...args))
     }
-    ;(api as any).__listeners = listeners
-    return api as unknown as EmblaCarouselType
+    mockApi.__listeners = listeners
+    return mockApi
 }
 
 const mockEmblaRef = ref<HTMLElement | undefined>(undefined)
@@ -238,7 +244,7 @@ describe('useCarousel', () => {
             const { wrapper, carousel } = mountWithCarousel()
 
             // trigger onInit via the 'init' event
-            ;(api as any).__emit('init', api, 'init')
+            api.__emit('init', api, 'init')
             await nextTick()
 
             expect(carousel.scrollSnaps.value).toEqual([0, 0.33, 0.66, 1])
@@ -260,7 +266,7 @@ describe('useCarousel', () => {
 
             // change return value to simulate scrolling to index 2
             selectedScrollSnapMock.mockReturnValue(2)
-            ;(api as any).__emit('select', api, 'select')
+            api.__emit('select', api, 'select')
             await nextTick()
             expect(carousel.selectedIndex.value).toBe(2)
             wrapper.unmount()
@@ -317,7 +323,7 @@ describe('useCarousel', () => {
             mockEmblaApi.value = api
             const { wrapper, carousel } = mountWithCarousel({ loop: () => false })
 
-            ;(api as any).__emit('init', api, 'init')
+            api.__emit('init', api, 'init')
             await nextTick()
 
             expect(carousel.canScrollPrev.value).toBe(true)
@@ -332,7 +338,7 @@ describe('useCarousel', () => {
             mockEmblaApi.value = api
             const { wrapper, carousel } = mountWithCarousel({ loop: () => false })
 
-            ;(api as any).__emit('init', api, 'init')
+            api.__emit('init', api, 'init')
             await nextTick()
 
             expect(carousel.canScrollNext.value).toBe(true)
@@ -347,7 +353,7 @@ describe('useCarousel', () => {
             mockEmblaApi.value = api
             const { wrapper, carousel } = mountWithCarousel({ loop: () => false })
 
-            ;(api as any).__emit('init', api, 'init')
+            api.__emit('init', api, 'init')
             await nextTick()
 
             expect(carousel.canScrollNext.value).toBe(false)
@@ -362,7 +368,7 @@ describe('useCarousel', () => {
             mockEmblaApi.value = api
             const { wrapper, carousel } = mountWithCarousel({ loop: () => false })
 
-            ;(api as any).__emit('init', api, 'init')
+            api.__emit('init', api, 'init')
             await nextTick()
 
             expect(carousel.canScrollPrev.value).toBe(false)

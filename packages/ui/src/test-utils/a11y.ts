@@ -9,7 +9,7 @@ import { axe } from '../vitest.setup'
  * 使用 axe-core 对渲染后的组件进行可访问性检测，
  * 确保没有违反 WCAG 标准的问题。
  *
- * @param component - 要测试的 Vue 组件
+ * @param component - 要测试 My Vue 组件
  * @param options - 挂载选项（props、slots、attrs 等）
  * @returns Vue Test Utils 的 VueWrapper 实例
  *
@@ -26,16 +26,14 @@ import { axe } from '../vitest.setup'
  * })
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function expectNoA11yViolations(
     component: Component,
-    options?: Record<string, any>,
+    options?: Record<string, unknown>,
 ) {
-    const wrapper = mount(component, options as any)
+    const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
     const results = await axe(wrapper.element)
     // vitest-axe augments expect with toHaveNoViolations at runtime
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ;(expect(results) as any).toHaveNoViolations()
+    ;(expect(results) as unknown as { toHaveNoViolations: () => void }).toHaveNoViolations()
     return wrapper
 }
 
@@ -54,12 +52,11 @@ export async function expectNoA11yViolations(
  * expect(results.violations).toHaveLength(0)
  * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getA11yResults(
     component: Component,
-    options?: Record<string, any>,
+    options?: Record<string, unknown>,
 ) {
-    const wrapper = mount(component, options as any)
+    const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
     const results = await axe(wrapper.element)
     return { wrapper, results }
 }

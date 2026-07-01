@@ -43,10 +43,12 @@ export default tseslint.config(
         },
     },
     {
-        files: ['**/*.test.ts', '**/*.spec.ts'],
+        files: ['**/*.test.ts', '**/*.spec.ts', 'src/test-utils/**/*.ts'],
         rules: {
             'vue/one-component-per-file': 'off',
             'no-restricted-imports': 'off',  // 测试文件允许导入 vitest.setup.ts 等特殊路径
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-unsafe-function-type': 'off',
         },
     }
 )
