@@ -290,6 +290,14 @@ import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue'
 
 鼠标悬停暂停 / 离开恢复的交互逻辑在动效降级模式下依然保留，但因为 autoplay 已停止，悬停行为不会带来额外的副作用。
 
+### CarouselEnhanced 额外说明
+
+- **缩略图按钮**：每个缩略图为 `<button type="button">`，带有 `aria-label`（通过 `t('carousel.goToSlide', { index })` 国际化）；当前缩略图通过视觉高亮标识
+- **导航去重**：当缩略图显示时，默认底部圆点导航自动隐藏（`showDots` 与 `thumbnails.show` 互斥），避免重复导航
+- **自动播放指示器**：进度条 / 分数 / 圆点均为装饰性视觉元素（`<div>`），不提供交互，不抢夺焦点
+- **悬停暂停**：`autoplayIndicator.pauseOnHover` 启用时，鼠标进入轮播区域会暂停自动播放，离开后恢复
+- **视差动画**：通过 CSS 变量驱动，继承 `useCarousel` 的 `prefers-reduced-motion` 处理，启用减少动效时视差缩放与透明度过渡同样被禁用
+
 ## 常见问题
 
 **Q: 开启 `loop` 后为什么箭头按钮状态没有变化？**

@@ -291,6 +291,14 @@ Inherits all Props from `Carousel` (`loop`/`autoplay`/`autoplayDelay`/`showArrow
 
 The hover-to-pause / leave-to-resume interaction logic is preserved in motion degradation mode, but since autoplay is already stopped, the hover behavior has no additional side effects.
 
+### CarouselEnhanced Additional Notes
+
+- **Thumbnail buttons**: Each thumbnail is a `<button type="button">` with `aria-label` (via `t('carousel.goToSlide', { index })` internationalization); the current thumbnail is identified by visual highlight
+- **Navigation deduplication**: When thumbnails are shown, the default bottom dot navigation is automatically hidden (`showDots` and `thumbnails.show` are mutually exclusive) to avoid duplicate navigation
+- **Autoplay indicators**: Progress bar / fraction / dots are decorative visual elements (`<div>`), non-interactive and do not steal focus
+- **Pause on hover**: When `autoplayIndicator.pauseOnHover` is enabled, entering the carousel area pauses autoplay and resumes on leave
+- **Parallax animation**: Driven by CSS variables, inherits `useCarousel`'s `prefers-reduced-motion` handling — parallax scale and opacity transitions are also disabled when reduced motion is enabled
+
 ## FAQ
 
 **Q: Why doesn't the arrow button state change after enabling `loop`?**

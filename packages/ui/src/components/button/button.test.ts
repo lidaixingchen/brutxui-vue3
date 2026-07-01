@@ -135,19 +135,24 @@ describe('Button', () => {
         it('shows pending text when type=submit, loading, and pendingText provided', () => {
             const wrapper = mount(Button, {
                 props: { type: 'submit', loading: true, pendingText: 'Saving...' },
-                slots: { default: 'Submit' },
             })
             expect(wrapper.text()).toContain('Saving...')
-            expect(wrapper.text()).not.toContain('Submit')
         })
 
         it('falls back to i18n default when pendingText not provided', () => {
             const wrapper = mount(Button, {
                 props: { type: 'submit', loading: true },
-                slots: { default: 'Submit' },
             })
             expect(wrapper.text()).toContain('提交中...')
-            expect(wrapper.text()).not.toContain('Submit')
+        })
+
+        it('prefers slot content over pendingText in submit+loading mode', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'submit', loading: true, pendingText: 'Saving...' },
+                slots: { default: 'Submit' },
+            })
+            expect(wrapper.text()).toContain('Submit')
+            expect(wrapper.text()).not.toContain('Saving...')
         })
 
         it('shows slot content when loading but type is not submit', () => {

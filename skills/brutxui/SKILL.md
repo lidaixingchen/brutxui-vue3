@@ -84,7 +84,7 @@ import { cn } from '@/lib/utils'
 | Breadcrumb | 面包屑 | 支持 Link/Page/Separator/Ellipsis |
 | Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击，defineExpose 暴露 currentStep/goToStep/nextStep/previousStep 等方法 |
 | Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局，role="list" 和 role="listitem" 无障碍语义 |
-| Carousel | 轮播 | 支持循环/自动播放/箭头/圆点、defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
+| Carousel | 轮播 | 支持循环/自动播放/箭头/圆点；`CarouselEnhanced` 增强版额外支持缩略图导航/自动播放指示器/视差动画；defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
 | TreeView | 树形视图 | 支持展开/选中/复选选择模式 |
 
 ### 数据展示
@@ -141,8 +141,7 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
-| PricingSection | 统一定价区域 | 支持 v-model、一次性价格、订阅切换和功能状态 |
-| SaaSPricing | SaaS 定价 | 基于 PricingSection 的 SaaS 兼容封装 |
+| PricingSection | 统一定价区域 | 支持 v-model、一次性价格，订阅切换和功能状态（已合并原 SaaSPricing） |
 | BrutalistHero | 英雄区块 | 支持主/次操作按钮 |
 | HeaderSection | 页头导航 | 支持导航项/Logo |
 | FooterSection | 页脚 | 支持链接分组/版权 |
@@ -388,6 +387,7 @@ BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使
 | `useDataTableFilter` | DataTable 筛选状态管理 |
 | `useDataTableSelection` | DataTable 行选择管理 |
 | `useDataTablePagination` | DataTable 分页状态管理 |
+| `useUpload` | 文件上传逻辑（文件选择、大小/类型校验、列表管理），所有选项支持 MaybeRefOrGetter 响应式更新 |
 
 ## 代码模板
 

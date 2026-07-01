@@ -208,6 +208,36 @@ describe('UploadCard', () => {
 
             expect((input.element as HTMLInputElement).value).toBe('')
         })
+
+        it('filters out files not matching accept type', async () => {
+            const wrapper = mountUploadCard({ accept: '.pdf' })
+            const input = wrapper.find('input[type="file"]')
+            const pdfFile = createFile('doc.pdf', 1024, 'application/pdf')
+            const txtFile = createFile('notes.txt', 1024, 'text/plain')
+
+            Object.defineProperty(input.element, 'files', {
+                value: [pdfFile, txtFile],
+                writable: false,
+            })
+            await input.trigger('change')
+
+            expect(wrapper.emitted('upload')).toHaveLength(1)
+            expect(wrapper.emitted('upload')![0][0]).toEqual([pdfFile])
+        })
+
+        it('does not emit upload when no files match accept type', async () => {
+            const wrapper = mountUploadCard({ accept: '.pdf' })
+            const input = wrapper.find('input[type="file"]')
+            const txtFile = createFile('notes.txt', 1024, 'text/plain')
+
+            Object.defineProperty(input.element, 'files', {
+                value: [txtFile],
+                writable: false,
+            })
+            await input.trigger('change')
+
+            expect(wrapper.emitted('upload')).toBeUndefined()
+        })
     })
 
     /* ───── Drag and Drop ───── */
@@ -380,6 +410,28 @@ describe('UploadCard', () => {
             await wrapper.vm.$nextTick()
 
             expect(wrapper.emitted('drop')).toBeUndefined()
+        })
+
+        it('filters dropped files by accept type', async () => {
+            const wrapper = mountUploadCard({ accept: 'image/*' })
+            const dropZone = wrapper.find('.border-dashed')
+            const imageFile = createFile('photo.png', 1024, 'image/png')
+            const textFile = createFile('notes.txt', 1024, 'text/plain')
+
+            const dataTransfer = { files: [imageFile, textFile] }
+            const dropEvent = new DragEvent('drop', {
+                bubbles: true,
+                cancelable: true,
+            })
+            Object.defineProperty(dropEvent, 'dataTransfer', {
+                value: dataTransfer,
+                writable: false,
+            })
+            dropZone.element.dispatchEvent(dropEvent)
+            await wrapper.vm.$nextTick()
+
+            expect(wrapper.emitted('drop')).toHaveLength(1)
+            expect(wrapper.emitted('drop')![0][0]).toEqual([imageFile])
         })
 
         it('handles drop with undefined dataTransfer gracefully', async () => {

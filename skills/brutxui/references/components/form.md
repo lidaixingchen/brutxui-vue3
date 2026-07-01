@@ -927,3 +927,51 @@ interface UploadFile {
     error?: UploadError
 }
 ```
+
+## useUpload
+
+`Upload` / `UploadCard` 内部的文件选择、校验与列表管理逻辑已抽取为独立的 `useUpload` 组合式函数，可用于构建完全自定义的上传 UI。所有选项均支持 `MaybeRefOrGetter`，可响应式更新。
+
+```typescript
+import { useUpload } from 'brutx-ui-vue'
+
+const {
+    selectedFiles,      // DeepReadonly<Ref<File[]>> - 当前文件列表（只读）
+    addFiles,           // (files: FileList | File[]) => File[]
+    removeFile,         // (file: File) => void
+    clearFiles,         // () => void
+    handleFileChange,   // (event: Event) => File[] - 适配 <input type="file" @change>
+    validateFileSize,   // (file: File) => boolean
+    matchesAccept,      // (file: File) => boolean
+    isFileValid,        // (file: File) => boolean
+    filterValidFiles,   // (files: File[]) => File[]
+} = useUpload({
+    maxSize: 5 * 1024 * 1024,   // 5MB
+    accept: 'image/*',
+    multiple: true,
+    initialFiles: [],
+})
+```
+
+### Options
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `maxSize` | `MaybeRefOrGetter<number \| undefined>` | — | 最大文件大小（字节），超出则校验失败 |
+| `accept` | `MaybeRefOrGetter<string \| undefined>` | — | 接受的文件类型（逗号分隔，支持 `.ext` / `mime/*` / `mime`） |
+| `multiple` | `MaybeRefOrGetter<boolean \| undefined>` | `true` | 是否支持多选；为 `false` 时 `addFiles` 只保留第一个有效文件 |
+| `initialFiles` | `MaybeRefOrGetter<File[]>` | `[]` | 初始文件列表 |
+
+### 返回值
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `selectedFiles` | `DeepReadonly<Ref<File[]>>` | 当前文件列表（只读，通过 `toRaw` 保持引用相等性） |
+| `addFiles` | `(files: FileList \| File[]) => File[]` | 添加文件（自动校验大小/类型），返回实际添加的有效文件 |
+| `removeFile` | `(file: File) => void` | 按引用移除单个文件 |
+| `clearFiles` | `() => void` | 清空文件列表 |
+| `handleFileChange` | `(event: Event) => File[]` | 适配 `<input type="file">` 的 `change` 事件，处理后自动重置 `input.value` |
+| `validateFileSize` | `(file: File) => boolean` | 校验文件大小 |
+| `matchesAccept` | `(file: File) => boolean` | 校验文件类型是否匹配 `accept` |
+| `isFileValid` | `(file: File) => boolean` | 综合校验（大小 + 类型） |
+| `filterValidFiles` | `(files: File[]) => File[]` | 过滤出有效文件 |

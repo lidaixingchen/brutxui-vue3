@@ -17,7 +17,7 @@ interface ButtonProps {
     type?: 'button' | 'submit' | 'reset'
     loading?: boolean
     disabled?: boolean
-    /** 加载中显示的等待文本，仅在 `type="submit"` 且 `loading` 时生效；未传入时回退到 i18n 默认值 */
+    /** 加载中显示的等待文本，作为默认插槽的回退内容；仅在 `type="submit"` 且 `loading` 时生效，未传入时回退到 i18n 默认值；提供插槽内容时优先显示插槽 */
     pendingText?: string
     /** 按钮是否处于按下状态（切换按钮） */
     pressed?: boolean
@@ -83,9 +83,8 @@ const showPendingText = computed(() =>
         :aria-expanded="expanded"
     >
         <Loader2 v-if="loading" :class="loaderClasses" />
-        <template v-if="showPendingText">
-            {{ resolvedPendingText }}
-        </template>
-        <slot v-else />
+        <slot>
+            <template v-if="showPendingText">{{ resolvedPendingText }}</template>
+        </slot>
     </Primitive>
 </template>

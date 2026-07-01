@@ -83,40 +83,6 @@ interface BrutalistPricingPlan {
 />
 ```
 
-## SaaSPricing
-
-`PricingSection` 的 SaaS 兼容封装，保留原有 API，并固定启用月付/年付切换。继续维护旧调用时使用它；新功能优先落到 `PricingSection`。
-
-```vue
-<SaaSPricing
-  :plans="[{
-    name: 'Pro', description: '适合专业团队',
-    priceMonthly: '¥99', priceAnnually: '¥79',
-    features: [{ text: '所有组件', included: true }],
-    popular: true, buttonText: '升级', buttonVariant: 'primary',
-  }]"
-  title="选择方案" subtitle="所有方案包含14天试用"
-/>
-```
-
-- `plans`: `PricingPlan[]`
-- `subtitle`: `string`
-- `title`: `string`
-- `@plan-select`: `(planName: string) => void`
-
-```typescript
-interface PricingPlan {
-  name: string
-  description: string
-  priceMonthly: string
-  priceAnnually: string
-  features: { text: string; included?: boolean }[]
-  buttonText: string
-  buttonVariant?: 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
-  popular?: boolean
-}
-```
-
 ## TestimonialCard
 
 ```vue

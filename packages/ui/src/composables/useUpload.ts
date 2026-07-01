@@ -59,7 +59,7 @@ export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
         const toAdd = isMultiple ? valid : valid.slice(0, 1)
         if (isMultiple) {
             selectedFiles.value.push(...toAdd)
-        } else {
+        } else if (toAdd.length > 0) {
             selectedFiles.value = toAdd
         }
         return toAdd

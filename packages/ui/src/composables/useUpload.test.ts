@@ -168,6 +168,17 @@ describe('useUpload', () => {
             expect(selectedFiles.value[0].name).toBe('b.txt')
         })
 
+        it('addFiles preserves existing file when all new files are invalid in single mode', () => {
+            const { selectedFiles, addFiles } = useUpload({ multiple: false, maxSize: 100, accept: '.pdf' })
+            const validPdf = createFile('valid.pdf', 50, 'application/pdf')
+            addFiles([validPdf])
+            expect(selectedFiles.value).toEqual([validPdf])
+
+            const oversizedTxt = createFile('bad.txt', 999, 'text/plain')
+            addFiles([oversizedTxt])
+            expect(selectedFiles.value).toEqual([validPdf])
+        })
+
         it('addFiles accepts FileList input', () => {
             const dt = new DataTransfer()
             dt.items.add(createFile('a.txt', 10))
