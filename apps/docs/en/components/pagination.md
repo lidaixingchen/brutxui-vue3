@@ -60,6 +60,30 @@ const currentPage = ref(1)
 </template>
 ```
 
+### Custom Layout & Quick Jumper
+
+You can arrange and display different functional blocks by configuring the `layout` prop, including: total items count (`total`), page size selector (`sizes`), previous page (`prev`), page numbers (`pager`), next page (`next`), and quick jumper (`jumper`).
+The default value is `'sizes, prev, pager, next, jumper, total'`. In the jumper input field, you can input a target page number and press `Enter` to jump.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Pagination } from 'brutx-ui-vue'
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+</script>
+
+<template>
+    <Pagination
+        v-model="currentPage"
+        v-model:page-size="pageSize"
+        :total="100"
+        layout="total, sizes, prev, pager, next, jumper"
+    />
+</template>
+```
+
 ### Without Page Numbers
 
 When `showPageNumbers` is set to `false`, the component displays a counter showing the current page and total pages (e.g., "3 / 10") instead of page number buttons.

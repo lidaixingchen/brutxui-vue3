@@ -7,6 +7,12 @@ description: 轻量级的确认气泡弹窗，用于确认操作。
 
 轻量级的确认气泡弹窗，点击触发元素后弹出。比 Dialog 更适合简单的确认/取消操作。
 
+## 预览
+
+<ComponentPreview>
+  <PopconfirmDemo />
+</ComponentPreview>
+
 ## 安装
 
 <InstallationTabs componentName="popconfirm" />

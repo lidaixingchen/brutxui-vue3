@@ -59,6 +59,30 @@ const currentPage = ref(1)
 </template>
 ```
 
+### 自定义布局与快速跳转 (Jumper)
+
+你可以通过配置 `layout` 属性来排列和显示不同的功能模块，包括：总条数（`total`）、每页大小选择（`sizes`）、上一页（`prev`）、页码（`pager`）、下一页（`next`）和快速跳转（`jumper`）。
+默认值为 `'sizes, prev, pager, next, jumper, total'`。在 jumper 快速跳转输入框中，输入目标页码并按回车键（Enter）即可跳转。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Pagination } from 'brutx-ui-vue'
+
+const currentPage = ref(1)
+const pageSize = ref(10)
+</script>
+
+<template>
+    <Pagination
+        v-model="currentPage"
+        v-model:page-size="pageSize"
+        :total="100"
+        layout="total, sizes, prev, pager, next, jumper"
+    />
+</template>
+```
+
 ### 不显示页码
 
 当设置 `showPageNumbers` 为 `false` 时，组件会显示当前页码与总页数的计数器（如 "3 / 10"），而不是页码按钮。

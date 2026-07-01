@@ -99,6 +99,10 @@ import ProfilePageDemo from './components/demos/ProfilePageDemo.vue'
 import ChartSectionDemo from './components/demos/ChartSectionDemo.vue'
 import GallerySectionDemo from './components/demos/GallerySectionDemo.vue'
 import UploadCardDemo from './components/demos/UploadCardDemo.vue'
+import UploadDemo from './components/demos/UploadDemo.vue'
+import DescriptionsDemo from './components/demos/DescriptionsDemo.vue'
+import PopconfirmDemo from './components/demos/PopconfirmDemo.vue'
+import InfiniteScrollDemo from './components/demos/InfiniteScrollDemo.vue'
 import OverviewPageDemo from './components/demos/OverviewPageDemo.vue'
 import VirtualScrollDemo from './components/demos/VirtualScrollDemo.vue'
 import GlitchButtonDemo from './components/demos/GlitchButtonDemo.vue'
@@ -109,6 +113,7 @@ import TreeSelectDemo from './components/demos/TreeSelectDemo.vue'
 import TypewriterTextDemo from './components/demos/TypewriterTextDemo.vue'
 import ColorModeSwitcherDemo from './components/demos/ColorModeSwitcherDemo.vue'
 import DataTableDemo from './components/demos/DataTableDemo.vue'
+import 'v-calendar/style.css'
 import './style.css'
 
 export default {
@@ -213,6 +218,10 @@ export default {
         app.component('ChartSectionDemo', ChartSectionDemo)
         app.component('GallerySectionDemo', GallerySectionDemo)
         app.component('UploadCardDemo', UploadCardDemo)
+        app.component('UploadDemo', UploadDemo)
+        app.component('DescriptionsDemo', DescriptionsDemo)
+        app.component('PopconfirmDemo', PopconfirmDemo)
+        app.component('InfiniteScrollDemo', InfiniteScrollDemo)
         app.component('OverviewPageDemo', OverviewPageDemo)
         app.component('VirtualScrollDemo', VirtualScrollDemo)
         app.component('GlitchButtonDemo', GlitchButtonDemo)

@@ -9,6 +9,8 @@ const currentPageRounded = ref(4)
 const currentPageMinimal = ref(7)
 const currentPageJump = ref(10)
 const jumpMessage = ref('')
+const currentPageLayout = ref(1)
+const currentPageLayoutPageSize = ref(10)
 
 function handleJump() {
     const input = window.prompt('跳转到第几页？', String(currentPageJump.value))
@@ -125,6 +127,21 @@ function handleJump() {
                     v-model="currentPageNoNumbers"
                     :total-pages="20"
                     :show-page-numbers="false"
+                />
+            </div>
+        </div>
+
+        <div>
+            <h3 class="text-sm font-black mb-3">自定义布局与快速跳转（Jumper）</h3>
+            <p class="text-xs opacity-70 mb-3 leading-relaxed">
+                通过配置 <span class="font-mono font-black">layout</span> 属性，可以自由排列：总条数（total）、每页条数（sizes）、上一页（prev）、页码（pager）、下一页（next）和快速跳转（jumper）。
+            </p>
+            <div class="space-y-4">
+                <Pagination
+                    v-model="currentPageLayout"
+                    v-model:page-size="currentPageLayoutPageSize"
+                    :total="100"
+                    layout="total, sizes, prev, pager, next, jumper"
                 />
             </div>
         </div>

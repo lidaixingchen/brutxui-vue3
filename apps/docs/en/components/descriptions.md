@@ -7,6 +7,12 @@ description: Display read-only information in key-value pairs, commonly used in 
 
 Display read-only information in key-value pairs. Commonly used in detail pages, profile pages, and data display scenarios.
 
+## Preview
+
+<ComponentPreview>
+  <DescriptionsDemo />
+</ComponentPreview>
+
 ## Installation
 
 <InstallationTabs componentName="descriptions" />

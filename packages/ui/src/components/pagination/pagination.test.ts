@@ -325,4 +325,57 @@ describe('Pagination', () => {
             expect(wrapper.emitted('jump')!.length).toBe(2)
         })
     })
+
+    describe('jumper (quick page jump)', () => {
+        it('renders jumper input when layout includes jumper', () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 5, modelValue: 1, layout: 'prev, pager, next, jumper' },
+                ...globalProvide,
+            })
+            const input = wrapper.find('input')
+            expect(input.exists()).toBe(true)
+        })
+
+        it('does not render jumper input when layout does not include jumper', () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 5, modelValue: 1, layout: 'prev, pager, next' },
+                ...globalProvide,
+            })
+            const input = wrapper.find('input')
+            expect(input.exists()).toBe(false)
+        })
+
+        it('emits update:modelValue when enter is pressed with a valid page number', async () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 10, modelValue: 1 },
+                ...globalProvide,
+            })
+            const input = wrapper.find('input')
+            expect(input.exists()).toBe(true)
+
+            await input.setValue('5')
+            await input.trigger('keyup.enter')
+
+            expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+            expect(wrapper.emitted('update:modelValue')![0]).toEqual([5])
+        })
+
+        it('does not emit update:modelValue when enter is pressed with invalid values', async () => {
+            const wrapper = mount(Pagination, {
+                props: { totalPages: 10, modelValue: 1 },
+                ...globalProvide,
+            })
+            const input = wrapper.find('input')
+
+            // Invalid non-numeric input
+            await input.setValue('abc')
+            await input.trigger('keyup.enter')
+            expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+
+            // Out of bounds page number
+            await input.setValue('15')
+            await input.trigger('keyup.enter')
+            expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+        })
+    })
 })

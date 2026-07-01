@@ -7,6 +7,12 @@ description: Automatically load more data when scrolling to the bottom.
 
 Automatically load more data when scrolling to the bottom. Uses `IntersectionObserver` for efficient scroll detection.
 
+## Preview
+
+<ComponentPreview>
+  <InfiniteScrollDemo />
+</ComponentPreview>
+
 ## Installation
 
 <InstallationTabs componentName="infinite-scroll" />

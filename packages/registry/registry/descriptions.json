@@ -1,0 +1,107 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "descriptions",
+  "type": "registry:ui",
+  "title": "Descriptions",
+  "description": "A highly customizable neo-brutalist Descriptions component built with Brutx design tokens for Vue 3.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/descriptions/Descriptions.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed, useSlots, provide, toRef } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface DescriptionsProps {\n    /** 列数 */\n    column?: number\n    /** 是否带边框 */\n    border?: boolean\n    /** 排列方向 */\n    direction?: 'horizontal' | 'vertical'\n    /** 尺寸 */\n    size?: 'sm' | 'default' | 'lg'\n    /** 标题 */\n    title?: string\n    class?: string\n}\n\nconst props = withDefaults(defineProps<DescriptionsProps>(), {\n    column: 3,\n    border: false,\n    direction: 'horizontal',\n    size: 'default',\n    title: undefined,\n    class: undefined,\n})\n\nprovide('descriptions-border', toRef(props, 'border'))\nprovide('descriptions-direction', toRef(props, 'direction'))\n\nconst slots = useSlots()\n\n// 计算尺寸样式\nconst sizeClasses = computed(() => {\n    switch (props.size) {\n        case 'sm':\n            return 'text-sm'\n        case 'lg':\n            return 'text-lg'\n        default:\n            return 'text-base'\n    }\n})\n\n// 计算网格样式\nconst gridStyle = computed(() => {\n    return {\n        gridTemplateColumns: `repeat(${props.column}, 1fr)`,\n    }\n})\n</script>\n\n<template>\n    <div :class=\"cn('w-full', props.class)\">\n        <!-- 标题 -->\n        <div\n            v-if=\"title || slots.title\"\n            class=\"mb-4\"\n        >\n            <slot name=\"title\">\n                <h3 class=\"text-lg font-bold text-brutal-fg\">\n                    {{ title }}\n                </h3>\n            </slot>\n        </div>\n\n        <!-- 带边框的描述列表 -->\n        <div\n            v-if=\"border\"\n            :class=\"cn(\n                'border-3 border-brutal rounded-brutal overflow-hidden',\n                sizeClasses,\n            )\"\n        >\n            <div\n                :class=\"cn(\n                    'grid',\n                    direction === 'vertical' ? 'grid-cols-1' : '',\n                )\"\n                :style=\"direction === 'horizontal' ? gridStyle : undefined\"\n            >\n                <slot />\n            </div>\n        </div>\n\n        <!-- 无边框的描述列表 -->\n        <div\n            v-else\n            :class=\"cn(\n                'grid gap-2',\n                sizeClasses,\n            )\"\n            :style=\"gridStyle\"\n        >\n            <slot />\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/descriptions/DescriptionsItem.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface DescriptionsItemProps {\n    /** 标签 */\n    label: string\n    /** 跨列数 */\n    span?: number\n    /** 标签宽度（仅在父组件 direction='horizontal' 时有效） */\n    labelWidth?: string | number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<DescriptionsItemProps>(), {\n    span: 1,\n    labelWidth: undefined,\n    class: undefined,\n})\n\n// 从父组件注入配置\nconst parentBorder = inject<boolean>('descriptions-border', false)\nconst parentDirection = inject<string>('descriptions-direction', 'horizontal')\n\n// 计算跨列样式\nconst spanStyle = computed(() => {\n    if (props.span <= 1) return undefined\n    return {\n        gridColumn: `span ${props.span}`,\n    }\n})\n\n// 计算标签宽度样式\nconst labelStyle = computed(() => {\n    if (!props.labelWidth) return undefined\n    const width = typeof props.labelWidth === 'number' ? `${props.labelWidth}px` : props.labelWidth\n    return { width }\n})\n</script>\n\n<template>\n    <!-- 带边框模式 -->\n    <template v-if=\"parentBorder\">\n        <!-- 水平方向 -->\n        <template v-if=\"parentDirection === 'horizontal'\">\n            <div\n                :class=\"cn(\n                    'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal',\n                    props.class,\n                )\"\n                :style=\"labelStyle\"\n            >\n                <slot name=\"label\">\n                    {{ label }}\n                </slot>\n            </div>\n            <div\n                :class=\"cn(\n                    'px-3 py-2 text-brutal-fg border-b-3 border-brutal',\n                    props.class,\n                )\"\n                :style=\"span > 1 ? { gridColumn: `span ${(span - 1) * 2}` } : undefined\"\n            >\n                <slot />\n            </div>\n        </template>\n\n        <!-- 垂直方向 -->\n        <template v-else>\n            <div\n                :class=\"cn(\n                    'px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal',\n                    props.class,\n                )\"\n                :style=\"spanStyle\"\n            >\n                <slot name=\"label\">\n                    {{ label }}\n                </slot>\n            </div>\n            <div\n                :class=\"cn(\n                    'px-3 py-2 text-brutal-fg border-b-3 border-brutal',\n                    props.class,\n                )\"\n                :style=\"spanStyle\"\n            >\n                <slot />\n            </div>\n        </template>\n    </template>\n\n    <!-- 无边框模式 -->\n    <div\n        v-else\n        :class=\"cn('flex flex-col gap-1', props.class)\"\n        :style=\"spanStyle\"\n    >\n        <div class=\"font-medium text-brutal-placeholder text-sm\">\n            <slot name=\"label\">\n                {{ label }}\n            </slot>\n        </div>\n        <div class=\"text-brutal-fg\">\n            <slot />\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  }
+}

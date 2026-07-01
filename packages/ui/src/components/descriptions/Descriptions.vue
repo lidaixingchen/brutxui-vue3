@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { computed, useSlots, provide, toRef } from 'vue'
 import { cn } from '@/lib/utils'
 
 interface DescriptionsProps {
@@ -24,6 +24,9 @@ const props = withDefaults(defineProps<DescriptionsProps>(), {
     title: undefined,
     class: undefined,
 })
+
+provide('descriptions-border', toRef(props, 'border'))
+provide('descriptions-direction', toRef(props, 'direction'))
 
 const slots = useSlots()
 

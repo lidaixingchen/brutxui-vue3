@@ -7,6 +7,12 @@ description: A lightweight confirmation popover for confirming actions.
 
 A lightweight confirmation popover that appears when clicking a trigger element. It's more lightweight than a Dialog for simple confirm/cancel actions.
 
+## Preview
+
+<ComponentPreview>
+  <PopconfirmDemo />
+</ComponentPreview>
+
 ## Installation
 
 <InstallationTabs componentName="popconfirm" />

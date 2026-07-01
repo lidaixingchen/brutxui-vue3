@@ -163,7 +163,7 @@ defineExpose({ open })
                 </span>
             </button>
         </PopoverTrigger>
-        <PopoverContent class="w-auto p-0" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <MonthPickerPanel
                 :model-value="displayValue"
                 :min-date="minDate"

@@ -5,6 +5,7 @@ import { defineAsyncComponent } from 'vue'
 const DatePicker = defineAsyncComponent(async () => {
     try {
         const mod = await import('v-calendar')
+        await import('v-calendar/style.css')
         return mod.DatePicker
     } catch {
         console.warn('[BrutxUI] Calendar component requires v-calendar. Install it: pnpm add v-calendar')

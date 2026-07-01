@@ -24,6 +24,11 @@ export const en: Locale = {
         page: 'Go to page {number}',
         label: 'pagination',
         jumpPages: 'Jump pages',
+        goto: 'Go to',
+        pageClassifier: '',
+        perPage: 'Items per page',
+        perPageOption: '{size} / page',
+        total: 'Total {total} items',
     },
     carousel: {
         previousSlide: 'Previous slide',

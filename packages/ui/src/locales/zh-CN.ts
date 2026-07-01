@@ -24,6 +24,11 @@ export const zhCN: Locale = {
         page: '第 {number} 页',
         label: '分页导航',
         jumpPages: '跳转页码',
+        goto: '前往',
+        pageClassifier: '页',
+        perPage: '每页条数',
+        perPageOption: '{size} 条/页',
+        total: '共 {total} 条',
     },
     carousel: {
         previousSlide: '上一张幻灯片',

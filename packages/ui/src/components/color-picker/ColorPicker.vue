@@ -147,7 +147,7 @@ const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => pro
                 </span>
             </button>
         </PopoverTrigger>
-        <PopoverContent class="w-auto p-0" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <ColorPickerPanel
                 :model-value="displayValue"
                 :format="format"

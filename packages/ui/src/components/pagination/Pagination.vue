@@ -248,7 +248,7 @@ function onJumpToPage() {
             v-if="layoutComponents.includes('total') && total !== undefined"
             class="text-sm font-medium text-brutal-fg"
         >
-            共 {{ total }} 条
+            {{ t('pagination.total', { total }) }}
         </span>
 
         <!-- 每页条数选择 -->
@@ -274,7 +274,7 @@ function onJumpToPage() {
                         :key="sizeOption"
                         :value="String(sizeOption)"
                     >
-                        {{ sizeOption }} 条/页
+                        {{ t('pagination.perPageOption', { size: sizeOption }) }}
                     </SelectItem>
                 </SelectContent>
             </SelectRoot>
@@ -368,7 +368,7 @@ function onJumpToPage() {
             v-if="layoutComponents.includes('jumper')"
             class="flex items-center gap-2"
         >
-            <span class="text-sm text-brutal-fg">前往</span>
+            <span class="text-sm text-brutal-fg">{{ t('pagination.goto') }}</span>
             <Input
                 v-model="jumpValue"
                 size="sm"
@@ -377,7 +377,12 @@ function onJumpToPage() {
                 :placeholder="''"
                 @keyup.enter="onJumpToPage"
             />
-            <span class="text-sm text-brutal-fg">页</span>
+            <span
+                v-if="t('pagination.pageClassifier')"
+                class="text-sm text-brutal-fg"
+            >
+                {{ t('pagination.pageClassifier') }}
+            </span>
         </div>
     </nav>
 </template>

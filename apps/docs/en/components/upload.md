@@ -7,6 +7,12 @@ description: File upload system with drag-and-drop support, file list management
 
 A complete file upload system built with Neo-Brutalism design, featuring drag-and-drop, file list management, progress tracking, and error handling.
 
+## Preview
+
+<ComponentPreview>
+  <UploadDemo />
+</ComponentPreview>
+
 ## Installation
 
 <InstallationTabs componentName="upload" />

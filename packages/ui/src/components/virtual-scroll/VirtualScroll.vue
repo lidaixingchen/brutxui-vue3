@@ -52,7 +52,6 @@ import('@tanstack/vue-virtual')
             overscan: props.overscan,
         })
 
-        // @ts-ignore
         const virtualizer = new Virtualizer(getOptions())
         virtualizerRef.value = virtualizer as unknown as VirtualizerInstance
 

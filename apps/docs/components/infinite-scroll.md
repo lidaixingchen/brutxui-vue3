@@ -7,6 +7,12 @@ description: 滚动到底部自动加载更多数据。
 
 滚动到底部自动加载更多数据。使用 `IntersectionObserver` 实现高效的滚动检测。
 
+## 预览
+
+<ComponentPreview>
+  <InfiniteScrollDemo />
+</ComponentPreview>
+
 ## 安装
 
 <InstallationTabs componentName="infinite-scroll" />

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "infinite-scroll",
+  "type": "registry:ui",
+  "title": "Infinite Scroll",
+  "description": "A highly customizable neo-brutalist Infinite Scroll component built with Brutx design tokens for Vue 3.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/infinite-scroll/InfiniteScroll.vue",
+      "content": "<script setup lang=\"ts\">\nimport { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { useReducedMotion } from '@/composables/useReducedMotion'\n\ninterface InfiniteScrollProps {\n    /** 触发距离阈值 (px) */\n    distance?: number\n    /** 防抖延迟 (ms) */\n    delay?: number\n    /** 是否禁用 */\n    disabled?: boolean\n    /** 是否立即检查 */\n    immediate?: boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<InfiniteScrollProps>(), {\n    distance: 100,\n    delay: 200,\n    disabled: false,\n    immediate: true,\n    class: undefined,\n})\n\nconst emit = defineEmits<{\n    load: []\n}>()\n\nconst prefersReducedMotion = useReducedMotion()\n\nconst sentinelRef = ref<HTMLElement | null>(null)\nconst isLoading = ref(false)\n// 使用 shallowRef 存储原生对象，避免不必要的深层响应式追踪\nconst observer = shallowRef<IntersectionObserver | null>(null)\nconst loadTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)\n\n// 检查是否应该加载\nfunction shouldLoad(): boolean {\n    if (props.disabled) return false\n    if (isLoading.value) return false\n    return true\n}\n\n// 触发加载\nfunction triggerLoad() {\n    if (!shouldLoad()) return\n\n    // 防抖处理\n    if (loadTimer.value) {\n        clearTimeout(loadTimer.value)\n    }\n\n    loadTimer.value = setTimeout(() => {\n        isLoading.value = true\n        emit('load')\n    }, props.delay)\n}\n\n// 设置 IntersectionObserver\nfunction setupObserver() {\n    if (!sentinelRef.value) return\n\n    observer.value = new IntersectionObserver(\n        (entries) => {\n            const entry = entries[0]\n            if (entry.isIntersecting) {\n                triggerLoad()\n            }\n        },\n        {\n            root: null,\n            rootMargin: `${props.distance}px`,\n            threshold: 0,\n        }\n    )\n\n    observer.value.observe(sentinelRef.value)\n}\n\n// 清理 Observer\nfunction cleanupObserver() {\n    if (observer.value) {\n        observer.value.disconnect()\n        observer.value = null\n    }\n}\n\n// 重置加载状态（供外部调用）\nfunction resetLoading() {\n    isLoading.value = false\n}\n\n// 监听 disabled 变化\nwatch(() => props.disabled, (disabled) => {\n    if (disabled) {\n        cleanupObserver()\n    } else {\n        setupObserver()\n    }\n})\n\nonMounted(() => {\n    if (!props.disabled) {\n        setupObserver()\n\n        // 立即检查\n        if (props.immediate) {\n            triggerLoad()\n        }\n    }\n})\n\nonUnmounted(() => {\n    cleanupObserver()\n    if (loadTimer.value) {\n        clearTimeout(loadTimer.value)\n    }\n})\n\ndefineExpose({\n    resetLoading,\n})\n</script>\n\n<template>\n    <div :class=\"cn('w-full', props.class)\">\n        <!-- 默认插槽 -->\n        <slot />\n\n        <!-- 加载状态 -->\n        <div\n            v-if=\"isLoading\"\n            class=\"flex items-center justify-center py-4\"\n        >\n            <slot name=\"loading\">\n                <div\n                    :class=\"cn(\n                        'flex items-center gap-2 text-brutal-placeholder',\n                        !prefersReducedMotion && 'animate-pulse',\n                    )\"\n                >\n                    <div class=\"w-2 h-2 rounded-full bg-brutal-primary\" />\n                    <div class=\"w-2 h-2 rounded-full bg-brutal-primary animation-delay-200\" />\n                    <div class=\"w-2 h-2 rounded-full bg-brutal-primary animation-delay-400\" />\n                </div>\n            </slot>\n        </div>\n\n        <!-- 哨兵元素 -->\n        <div\n            ref=\"sentinelRef\"\n            class=\"h-1\"\n            aria-hidden=\"true\"\n        />\n    </div>\n</template>\n\n<style scoped>\n.animation-delay-200 {\n    animation-delay: 200ms;\n}\n\n.animation-delay-400 {\n    animation-delay: 400ms;\n}\n</style>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/infinite-scroll/useInfiniteScroll.ts",
+      "content": "import { ref, onMounted, onUnmounted, type Ref } from 'vue'\n\nexport interface UseInfiniteScrollOptions {\n    /** 触发距离阈值 (px) */\n    distance?: number\n    /** 防抖延迟 (ms) */\n    delay?: number\n    /** 是否禁用 */\n    disabled?: boolean\n    /** 是否立即检查 */\n    immediate?: boolean\n    /** 加载回调 */\n    onLoad: () => void\n}\n\nexport function useInfiniteScroll(\n    targetRef: Ref<HTMLElement | null>,\n    options: UseInfiniteScrollOptions\n) {\n    const {\n        distance = 100,\n        delay = 200,\n        disabled = false,\n        immediate = true,\n        onLoad,\n    } = options\n\n    const isLoading = ref(false)\n    const observer = ref<IntersectionObserver | null>(null)\n    const loadTimer = ref<ReturnType<typeof setTimeout> | null>(null)\n\n    function shouldLoad(): boolean {\n        if (disabled) return false\n        if (isLoading.value) return false\n        return true\n    }\n\n    function triggerLoad() {\n        if (!shouldLoad()) return\n\n        if (loadTimer.value) {\n            clearTimeout(loadTimer.value)\n        }\n\n        loadTimer.value = setTimeout(() => {\n            isLoading.value = true\n            onLoad()\n        }, delay)\n    }\n\n    function setupObserver() {\n        if (!targetRef.value) return\n\n        observer.value = new IntersectionObserver(\n            (entries) => {\n                const entry = entries[0]\n                if (entry.isIntersecting) {\n                    triggerLoad()\n                }\n            },\n            {\n                root: null,\n                rootMargin: `${distance}px`,\n                threshold: 0,\n            }\n        )\n\n        observer.value.observe(targetRef.value)\n    }\n\n    function cleanupObserver() {\n        if (observer.value) {\n            observer.value.disconnect()\n            observer.value = null\n        }\n    }\n\n    function resetLoading() {\n        isLoading.value = false\n    }\n\n    onMounted(() => {\n        if (!disabled) {\n            setupObserver()\n\n            if (immediate) {\n                triggerLoad()\n            }\n        }\n    })\n\n    onUnmounted(() => {\n        cleanupObserver()\n        if (loadTimer.value) {\n            clearTimeout(loadTimer.value)\n        }\n    })\n\n    return {\n        isLoading,\n        resetLoading,\n    }\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "composables/useReducedMotion.ts",
+      "content": "import { ref, onMounted, onUnmounted, type Ref } from 'vue'\nimport { isClient } from '@/lib/env'\n\nexport function useReducedMotion(): Ref<boolean> {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (isClient) {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "lib/env.ts",
+      "content": "/**\n * Environment detection utilities for SSR compatibility.\n * Use these instead of scattered `typeof document/window` checks.\n */\n\n/** Whether the code is running in a browser environment (not SSR). */\nexport const isClient = typeof window !== 'undefined'\n\n/** Whether `document` is available. */\nexport const hasDocument = typeof document !== 'undefined'\n\n/** Whether `localStorage` is available (may be blocked in Safari private mode). */\nexport const hasLocalStorage = typeof localStorage !== 'undefined'\n\n/**\n * Safely get a value from localStorage.\n * Returns `null` if localStorage is unavailable or the key doesn't exist.\n */\nexport function safeGetStorageItem(key: string): string | null {\n    try {\n        if (!hasLocalStorage) return null\n        return localStorage.getItem(key)\n    } catch {\n        return null\n    }\n}\n\n/**\n * Safely set a value in localStorage.\n * Silently fails if localStorage is unavailable (e.g. Safari private mode, storage full).\n */\nexport function safeSetStorageItem(key: string, value: string): void {\n    try {\n        if (!hasLocalStorage) return\n        localStorage.setItem(key, value)\n    } catch {\n        // Storage full or blocked (e.g. Safari private mode)\n    }\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  }
+}

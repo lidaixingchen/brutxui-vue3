@@ -165,7 +165,7 @@ defineExpose({ open })
                 </span>
             </button>
         </PopoverTrigger>
-        <PopoverContent class="w-auto p-0" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <WeekPickerPanel
                 :model-value="displayValue"
                 :week-starts-on="weekStartsOn"

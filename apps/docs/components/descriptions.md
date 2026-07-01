@@ -7,6 +7,12 @@ description: 以键值对形式展示只读信息，常见于详情页。
 
 以键值对形式展示只读信息。常见于详情页、个人资料页和数据展示场景。
 
+## 预览
+
+<ComponentPreview>
+  <DescriptionsDemo />
+</ComponentPreview>
+
 ## 安装
 
 <InstallationTabs componentName="descriptions" />

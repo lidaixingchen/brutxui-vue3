@@ -163,7 +163,7 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                 </span>
             </button>
         </PopoverTrigger>
-        <PopoverContent class="w-auto p-0" align="start">
+        <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <DatePickerRangePanel
                 :model-value="displayValue"
                 :min-date="minDate"

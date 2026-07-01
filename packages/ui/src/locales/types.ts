@@ -23,6 +23,11 @@ export interface PaginationLocale {
     page: string
     label: string
     jumpPages: string
+    goto: string
+    pageClassifier: string
+    perPage: string
+    perPageOption: string
+    total: string
 }
 
 export interface CarouselLocale {

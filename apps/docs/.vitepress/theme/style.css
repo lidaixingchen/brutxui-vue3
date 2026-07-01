@@ -1068,4 +1068,41 @@ body > [data-reka-popper-content-wrapper] {
     }
 }
 
+/* ============================================
+   Popover & Calendar Brutal Shadow Fixes
+   ============================================ */
+
+/* 1. Prevent popper/portal wrapper from clipping the neo-brutalist box shadows */
+[data-reka-popper-content-wrapper] {
+    padding-right: 16px !important;
+    padding-bottom: 16px !important;
+}
+
+/* 2. Prevent v-calendar highlights container from clipping selected cell shadows */
+.brutx-calendar .vc-highlights {
+    overflow: visible !important;
+}
+
+/* 3. Elevate z-index of selected cells so their shadows overlay neighboring cells correctly */
+.brutx-calendar .vc-day:has(.brutal-selected),
+.brutx-calendar .vc-day:has(.brutal-range) {
+    z-index: 10 !important;
+}
+
+/* 4. Core Brutalist Class Fallbacks (Prevent Tailwind Purge on dynamically generated classes) */
+.border-brutal {
+    border-color: var(--brutal-border-color, #000000) !important;
+}
+.bg-brutal-bg {
+    background-color: var(--brutal-bg, #ffffff) !important;
+}
+.rounded-brutal {
+    border-radius: var(--brutal-radius, 4px) !important;
+}
+.shadow-brutal-lg {
+    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000) !important;
+}
+
+
+
 
