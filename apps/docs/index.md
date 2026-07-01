@@ -11,7 +11,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: 浏览组件
-      link: /components/alert
+      link: /components/
 
 features:
   - title: 粗野主义设计系统
