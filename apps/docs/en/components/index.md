@@ -39,7 +39,6 @@ Browse all available BrutxUI components.
 | [Label](/en/components/label) | Form field label |
 | [Upload](/en/components/upload) | File upload system with drag-and-drop, progress tracking, error handling |
 | [Form](/en/components/form) | Form system with vee-validate, resetFields/scrollToError support |
-| [Submit Button](/en/components/submit-button) | Submit button with loading/pending state |
 | [HardcoreInput](/en/components/hardcore-input) | Hardcore input with 8-bit sounds + emoji feedback + haptic vibration |
 
 ## Feedback & Status
@@ -114,7 +113,6 @@ Browse all available BrutxUI components.
 | Component | Description |
 | --- | --- |
 | [Dashboard Stats](/en/components/dashboard-stats) | Dashboard statistics block |
-| [SaaS Pricing](/en/components/saas-pricing) | SaaS pricing preset based on Pricing Section |
 
 ## Theme & Utilities
 

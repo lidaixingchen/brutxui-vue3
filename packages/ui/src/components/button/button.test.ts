@@ -119,6 +119,63 @@ describe('Button', () => {
         expect(onClick).toHaveBeenCalled()
     })
 
+    describe('submit button pending text', () => {
+        it('renders type attribute when type is set', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'submit' },
+            })
+            expect(wrapper.find('button').attributes('type')).toBe('submit')
+        })
+
+        it('does not set type attribute by default', () => {
+            const wrapper = mount(Button)
+            expect(wrapper.find('button').attributes('type')).toBeUndefined()
+        })
+
+        it('shows pending text when type=submit, loading, and pendingText provided', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'submit', loading: true, pendingText: 'Saving...' },
+                slots: { default: 'Submit' },
+            })
+            expect(wrapper.text()).toContain('Saving...')
+            expect(wrapper.text()).not.toContain('Submit')
+        })
+
+        it('falls back to i18n default when pendingText not provided', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'submit', loading: true },
+                slots: { default: 'Submit' },
+            })
+            expect(wrapper.text()).toContain('提交中...')
+            expect(wrapper.text()).not.toContain('Submit')
+        })
+
+        it('shows slot content when loading but type is not submit', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'button', loading: true, pendingText: 'Saving...' },
+                slots: { default: 'Click me' },
+            })
+            expect(wrapper.text()).toContain('Click me')
+            expect(wrapper.text()).not.toContain('Saving...')
+        })
+
+        it('shows slot content when type=submit but not loading', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'submit', loading: false, pendingText: 'Saving...' },
+                slots: { default: 'Submit' },
+            })
+            expect(wrapper.text()).toBe('Submit')
+        })
+
+        it('shows slot content when pendingText is empty string', () => {
+            const wrapper = mount(Button, {
+                props: { type: 'submit', loading: true, pendingText: '' },
+                slots: { default: 'Submit' },
+            })
+            expect(wrapper.text()).toBe('Submit')
+        })
+    })
+
     describe('ARIA attributes', () => {
         it('sets aria-disabled when asChild and disabled', () => {
             const wrapper = mount(Button, {

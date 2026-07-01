@@ -130,3 +130,36 @@ import { Popover, PopoverTrigger, PopoverAnchor, PopoverContent, Button } from '
 - **ARIA 属性**：弹出层使用 `role="dialog"` 语义，自动关联 `aria-labelledby` 到触发器
 - **焦点管理**：弹出层打开时自动聚焦
 - **交互行为**：点击外部区域关闭弹出层；模态模式下禁用与外部元素的交互
+
+## 与 Popconfirm 的关系
+
+[Popconfirm 气泡确认框](/components/popconfirm) 本质上是 Popover + 确认/取消按钮的组合封装。它内部直接使用 `Popover`/`PopoverTrigger`/`PopoverContent`，并附加了 `TriangleAlert` 警告图标和确认/取消按钮逻辑。
+
+### 何时使用 Popconfirm
+
+- 只需要简单的"确认/取消"二选一操作
+- 希望开箱即用，不需要自行组装按钮和事件
+- 需要一致的危险操作确认体验
+
+### 何时使用 Popover 手动组合
+
+- 需要自定义按钮文案、样式或布局
+- 需要在弹出层中放置表单、列表等复杂内容
+- 需要更细粒度地控制打开/关闭时机
+
+```vue
+<!-- Popconfirm：一行搞定确认操作 -->
+<Popconfirm title="确定删除？" @confirm="handleDelete">
+    <Button variant="destructive">删除</Button>
+</Popconfirm>
+
+<!-- Popover 手动组合：完全自定义 -->
+<Popover>
+    <PopoverTrigger as-child>
+        <Button variant="outline">自定义</Button>
+    </PopoverTrigger>
+    <PopoverContent>
+        <!-- 任意内容：表单、列表、自定义按钮等 -->
+    </PopoverContent>
+</Popover>
+```

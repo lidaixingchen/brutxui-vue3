@@ -17,11 +17,6 @@
             "import": "./dist/calendar.js",
             "require": "./dist/calendar.cjs"
         },
-        "./submit-button": {
-            "types": "./dist/submit-button.d.ts",
-            "import": "./dist/submit-button.js",
-            "require": "./dist/submit-button.cjs"
-        },
         "./hooks": {
             "types": "./dist/hooks.d.ts",
             "import": "./dist/hooks.js",

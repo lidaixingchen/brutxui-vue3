@@ -1,7 +1,12 @@
 import { cva } from 'class-variance-authority'
+import { baseModalContentClasses } from '@/lib/modal-variants'
 
 export const sheetVariants = cva(
-    'fixed z-50 gap-4 bg-brutal-bg p-6 border-brutal border-3 rounded-brutal shadow-brutal-xl text-brutal-fg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
+    [
+        'fixed z-50 gap-4 p-6 text-brutal-fg transition ease-in-out',
+        ...baseModalContentClasses,
+        'data-[state=closed]:duration-300 data-[state=open]:duration-500',
+    ],
     {
         variants: {
             side: {

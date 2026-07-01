@@ -47,7 +47,6 @@ const componentDependencies: Record<string, string[]> = {
     command: ['reka-ui'],
     combobox: ['reka-ui'],
     'scroll-area': ['reka-ui'],
-    'submit-button': [],
     form: ['vee-validate', '@vee-validate/zod', 'zod'],
     'alert-dialog': ['reka-ui'],
     sheet: ['reka-ui'],
@@ -56,7 +55,6 @@ const componentDependencies: Record<string, string[]> = {
     'toggle-group': ['reka-ui'],
     'radio-group': ['reka-ui'],
     progress: ['reka-ui'],
-    'saas-pricing': [],
     'dashboard-stats': [],
 }
 
@@ -88,7 +86,6 @@ const componentImports: Record<string, string[]> = {
     command: ['Command', 'CommandDialog', 'CommandInput', 'CommandList', 'CommandEmpty', 'CommandGroup', 'CommandItem', 'CommandShortcut', 'CommandSeparator'],
     combobox: ['Combobox', 'ComboboxMulti'],
     'scroll-area': ['ScrollArea', 'ScrollBar'],
-    'submit-button': ['SubmitButton'],
     form: ['Form', 'FormField', 'FormItem', 'FormLabel', 'FormControl', 'FormDescription', 'FormMessage'],
     sheet: ['SheetContent', 'SheetHeader', 'SheetFooter', 'SheetTitle', 'SheetDescription', 'sheetVariants'],
     slider: ['Slider'],
@@ -96,7 +93,6 @@ const componentImports: Record<string, string[]> = {
     'toggle-group': ['ToggleGroup', 'ToggleGroupItem', 'toggleGroupKey'],
     'radio-group': ['RadioGroup', 'RadioGroupItem'],
     progress: ['Progress'],
-    'saas-pricing': ['SaaSPricing'],
     'dashboard-stats': ['DashboardStats'],
     'brutalist-hero': ['BrutalistHero'],
     'pricing-section': ['PricingSection'],

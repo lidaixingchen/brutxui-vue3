@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
+import { stepperNavButtonIconVariants } from '../stepper/stepper-variants'
 import Stepper from '../stepper/Stepper.vue'
 import Button from '../button/Button.vue'
 import Card from '../card/Card.vue'
@@ -54,11 +55,11 @@ const canGoNext = computed(() => activeStep.value < props.steps.length - 1)
 const rootClasses = computed(() => cn('w-full max-w-3xl mx-auto', props.class))
 
 const previousIconClasses = computed(() =>
-    cn(iconSizeVariants({ size: props.iconSize }), 'mr-1')
+    cn(iconSizeVariants({ size: props.iconSize }), stepperNavButtonIconVariants({ direction: 'prev' }))
 )
 
 const nextIconClasses = computed(() =>
-    cn(iconSizeVariants({ size: props.iconSize }), 'ml-1')
+    cn(iconSizeVariants({ size: props.iconSize }), stepperNavButtonIconVariants({ direction: 'next' }))
 )
 
 function handleStepClick(index: number) {

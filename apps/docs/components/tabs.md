@@ -99,6 +99,68 @@ const currentTab = ref('account')
 </template>
 ```
 
+### 数据驱动模式（tabs prop）
+
+传入 `tabs` 数组即可让 `Tabs` 自动渲染 `TabsList`/`TabsTrigger`/`TabsContent`，适用于简单的标签导航场景。未传 `tabs` 时保持原有 slot 组合用法完全不变。
+
+```vue
+<script setup>
+import { Tabs } from 'brutx-ui-vue/tabs'
+import type { TabItem } from 'brutx-ui-vue/tabs'
+
+const tabs: TabItem[] = [
+    { label: '概览', value: 'overview' },
+    { label: '分析', value: 'analytics' },
+    { label: '设置', value: 'settings' },
+]
+</script>
+
+<template>
+    <Tabs :tabs="tabs" model-value="overview" />
+</template>
+```
+
+#### 自定义内容面板
+
+通过 `#default` 插槽可替换默认的 Card 展示。插槽会替代默认内容区域，但 `TabsList` 仍由 `tabs` 自动渲染：
+
+```vue
+<script setup>
+import { Tabs, TabsContent } from 'brutx-ui-vue/tabs'
+import type { TabItem } from 'brutx-ui-vue/tabs'
+
+const tabs: TabItem[] = [
+    { label: 'Tab A', value: 'a' },
+    { label: 'Tab B', value: 'b' },
+]
+</script>
+
+<template>
+    <Tabs :tabs="tabs">
+        <template #default>
+            <TabsContent value="a">
+                <p class="text-sm">自定义 A 内容</p>
+            </TabsContent>
+            <TabsContent value="b">
+                <p class="text-sm">自定义 B 内容</p>
+            </TabsContent>
+        </template>
+    </Tabs>
+</template>
+```
+
+#### header / footer 插槽
+
+`tabs` 模式下额外提供 `header` 与 `footer` 两个命名插槽，用于在标签区块上下方插入辅助内容。`tabs` 为空数组时会显示 `EmptyState` fallback，并仍渲染 `header`/`footer` 插槽。
+
+#### 受控/非受控双模式
+
+`tabs` 模式内置双模式状态管理：
+
+- 传入 `modelValue`（或使用 `v-model`）时为受控模式，由父组件主导激活值
+- 未传 `modelValue` 时为非受控模式，组件内部维护激活值
+- 当未传 `modelValue` 且无内部状态时，自动回退到首个 tab 的 `value`，避免空激活态
+
 ## 变体
 
 `TabsTrigger` 支持以下激活状态颜色变体：
@@ -150,7 +212,24 @@ import {
     tabsTriggerVariants,
     tabsContentVariants,
 } from 'brutx-ui-vue/tabs'
+import type { TabItem } from 'brutx-ui-vue/tabs'
 ```
+
+### TabItem
+
+`tabs` prop 的数据项类型：
+
+```ts
+interface TabItem {
+    label: string
+    value: string
+}
+```
+
+| 属性 | 类型 | 说明 |
+| --- | --- | --- |
+| `label` | `string` | 标签显示文本 |
+| `value` | `string` | 标签唯一标识 |
 
 ## 组合式函数
 
@@ -177,8 +256,9 @@ import {
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `modelValue` | `string` | — | 当前激活标签页的值（受控模式） |
+| `tabs` | `TabItem[]` | — | 标签数据数组。传入时自动渲染 `TabsList`/`TabsTrigger`/`TabsContent`，未传入时使用默认 slot 组合 |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 标签页排列方向 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `string` | — | 自定义 CSS 类名。`tabs` 模式下作用于外层包裹容器 |
 
 ### TabsList
 

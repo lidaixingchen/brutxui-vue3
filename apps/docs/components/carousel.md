@@ -56,6 +56,7 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 |------|------|
 | `Carousel` | 轮播容器，管理滚动逻辑与导航控制 |
 | `CarouselItem` | 单张幻灯片容器 |
+| `CarouselEnhanced` | 增强版轮播，额外支持缩略图导航、自动播放指示器与视差动画 |
 
 ## 组合式函数
 
@@ -183,6 +184,100 @@ const carouselRef = ref()
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
 | `default` | — | 默认插槽，用于放置幻灯片内容 |
+
+## CarouselEnhanced 增强版轮播
+
+`CarouselEnhanced` 在 `Carousel` 的基础上增加了**缩略图导航**、**自动播放指示器**（进度条/圆点/分数）与**视差动画**效果，适用于图片画廊、产品展示等需要更丰富交互的场景。
+
+### 预览
+
+<ComponentPreview>
+  <CarouselEnhancedDemo />
+</ComponentPreview>
+
+### 用法
+
+```vue
+<script setup>
+import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <CarouselEnhanced
+        :loop="true"
+        :autoplay="true"
+        :autoplay-delay="3000"
+        size="md"
+        :thumbnails="{ show: true, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }"
+        :autoplay-indicator="{ type: 'progress', position: 'top', pauseOnHover: true }"
+        :parallax="{ enabled: true, scale: 1.05, opacity: true, duration: 400 }"
+    >
+        <CarouselItem v-for="slide in slides" :key="slide.label">
+            <div class="w-full h-full flex items-center justify-center">{{ slide.label }}</div>
+        </CarouselItem>
+    </CarouselEnhanced>
+</template>
+```
+
+### 基础 Props
+
+继承 `Carousel` 的全部 Props（`loop`/`autoplay`/`autoplayDelay`/`showArrows`/`showDots`/`size`/`class`），以下为增强专有 Props：
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `thumbnails` | `CarouselThumbnails` | `{ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }` | 缩略图导航配置 |
+| `autoplayIndicator` | `AutoplayIndicator` | — | 自动播放指示器配置 |
+| `parallax` | `ParallaxEffect` | — | 视差动画配置 |
+
+### CarouselThumbnails
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `show` | `boolean` | `false` | 是否显示缩略图 |
+| `position` | `'bottom' \| 'left' \| 'right'` | `'bottom'` | 缩略图位置 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'sm'` | 缩略图尺寸 |
+| `gap` | `number` | `8` | 缩略图间距（像素） |
+| `highlightCurrent` | `boolean` | `true` | 是否高亮当前缩略图 |
+
+### AutoplayIndicator
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `type` | `'progress' \| 'dots' \| 'fraction'` | —（必填） | 指示器类型：进度条 / 圆点 / 分数 |
+| `position` | `'top' \| 'bottom'` | — | 指示器位置 |
+| `pauseOnHover` | `boolean` | — | 鼠标悬停时暂停自动播放 |
+
+### ParallaxEffect
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `enabled` | `boolean` | `false` | 是否启用视差动画 |
+| `scale` | `number` | `1.1` | 幻灯片缩放比例 |
+| `opacity` | `boolean` | `false` | 是否启用透明度过渡 |
+| `duration` | `number` | `300` | 动画时长（毫秒） |
+| `easing` | `string` | `'ease-out'` | CSS 缓动函数 |
+
+### 暴露的 API
+
+`CarouselEnhanced` 通过 `defineExpose` 暴露与 `Carousel` 相同的方法与状态，另增加自动播放控制：
+
+| 方法/属性 | 类型 | 说明 |
+|-----------|------|------|
+| `scrollPrev` | `() => void` | 滚动到上一张幻灯片 |
+| `scrollNext` | `() => void` | 滚动到下一张幻灯片 |
+| `scrollTo` | `(index: number) => void` | 滚动到指定索引的幻灯片 |
+| `selectedIndex` | `ComputedRef<number>` | 当前选中幻灯片的索引（只读响应式） |
+| `canScrollPrev` | `ComputedRef<boolean>` | 是否还可向前滚动 |
+| `canScrollNext` | `ComputedRef<boolean>` | 是否还可向后滚动 |
+| `startAutoplay` | `() => void` | 启动自动播放 |
+| `stopAutoplay` | `() => void` | 停止自动播放 |
+
+### 插槽
+
+| 插槽 | 作用域 | 说明 |
+|------|--------|------|
+| `default` | — | 默认插槽，用于放置 `CarouselItem` 组件 |
+| `thumbnail` | `{ index: number, scrollTo: (index: number) => void }` | 自定义缩略图渲染；不提供时使用默认数字缩略图 |
 
 ## 可访问性
 

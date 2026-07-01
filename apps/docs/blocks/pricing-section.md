@@ -5,7 +5,7 @@ description: 统一定价区块，支持一次性价格、月付/年付切换、
 
 # Pricing Section 定价区
 
-新粗野主义风格的统一定价区段，包含功能列表、热门方案高亮和可选的月付/年付切换。它既可以展示一次性价格，也可以展示 SaaS 订阅价格；`SaaSPricing` 现在是基于它的兼容封装。
+新粗野主义风格的统一定价区段，包含功能列表、热门方案高亮和可选的月付/年付切换。它既可以展示一次性价格，也可以展示 SaaS 订阅价格；传入 `preset="saas"` 可启用内置的 SaaS 三档默认数据。
 
 ## 预览
 
@@ -85,6 +85,38 @@ const plans = [
 </template>
 ```
 
+## SaaS 预设
+
+传入 `preset="saas"` 即可使用内置的 SaaS 三档默认数据（Starter / Pro / Enterprise），并自动启用月付/年付切换。该模式下：
+
+- 未传 `title` 时回退到 `pricingSection.saasTitle`（"简单，不妥协的定价"）
+- 未传 `popularText` 时回退到 `pricingSection.saasMostPopular`（"最受欢迎"）
+- 未传 `billingMode` 时默认 `'toggle'`
+- 未传 `plans` 时使用内置三档默认数据；传入 `plans` 时优先使用用户数据
+
+```vue
+<script setup>
+import PricingSection from '@/components/ui/pricing-section/PricingSection.vue'
+</script>
+
+<template>
+    <PricingSection preset="saas" />
+</template>
+```
+
+也可以在 SaaS 预设基础上覆盖任意字段：
+
+```vue
+<template>
+    <PricingSection
+        preset="saas"
+        title="自定义标题"
+        subtitle="覆盖默认副标题"
+        :plans="customPlans"
+    />
+</template>
+```
+
 ## 数据类型
 
 ```ts
@@ -115,7 +147,8 @@ interface BrutalistPricingPlan {
 | `title` | `string` | locale: `pricingSection.defaultTitle` | 标题文本 |
 | `subtitle` | `string` | — | 副标题文本 |
 | `plans` | `BrutalistPricingPlan[]` | `[]` | 定价方案列表 |
-| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` | 计费模式：auto 自动检测，toggle 强制显示，none 隐藏 |
+| `preset` | `'saas'` | — | 预设模式，传 `'saas'` 启用内置 SaaS 三档默认数据与回退逻辑 |
+| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'`（`preset='saas'` 时为 `'toggle'`） | 计费模式：auto 自动检测，toggle 强制显示，none 隐藏 |
 | `modelValue` | `'monthly' \| 'annually'` | — | 当前选中的计费周期（v-model） |
 | `defaultBilling` | `'monthly' \| 'annually'` | `'monthly'` | 默认计费周期 |
 | `popularText` | `string` | locale: `pricingSection.mostPopular` | 热门方案徽章文本 |

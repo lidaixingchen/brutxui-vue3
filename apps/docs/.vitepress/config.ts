@@ -126,7 +126,6 @@ export default defineConfig({
                                 { text: 'ColorPicker', link: '/en/components/color-picker' },
                                 { text: 'Upload', link: '/en/components/upload' },
                                 { text: 'Form', link: '/en/components/form' },
-                                { text: 'Submit Button', link: '/en/components/submit-button' },
                             ],
                         },
                         {
@@ -186,7 +185,6 @@ export default defineConfig({
                                 { text: 'BeforeAfter', link: '/en/components/before-after' },
                                 { text: 'ScratchCard', link: '/en/components/scratch-card' },
                                 { text: 'NoiseBackground', link: '/en/components/noise-background' },
-                                { text: 'SaaS Pricing', link: '/en/components/saas-pricing' },
                                 { text: 'KanbanBoard', link: '/en/components/kanban-board' },
                                 { text: 'ColorModeSwitcher', link: '/en/components/color-mode-switcher' },
                                 { text: 'InfiniteScroll', link: '/en/components/infinite-scroll' },
@@ -207,7 +205,6 @@ export default defineConfig({
                                 { text: 'Upload Card', link: '/en/blocks/upload-card' },
                                 { text: 'Empty State', link: '/en/blocks/empty-state' },
                                 { text: 'Quick Actions', link: '/en/blocks/quick-actions' },
-                                { text: 'Tabs Nav', link: '/en/blocks/tabs-nav' },
                                 { text: 'Search Widget', link: '/en/blocks/search-widget' },
                                 { text: 'Feedback Form', link: '/en/blocks/feedback-form' },
                                 { text: 'Cookie Consent', link: '/en/blocks/cookie-consent' },
@@ -219,7 +216,6 @@ export default defineConfig({
                             items: [
                                 { text: 'Brutalist Hero', link: '/en/blocks/brutalist-hero' },
                                 { text: 'Pricing Section', link: '/en/blocks/pricing-section' },
-                                { text: 'SaaS Pricing', link: '/en/blocks/saas-pricing' },
                                 { text: 'Dashboard Shell', link: '/en/blocks/dashboard-shell' },
                                 { text: 'Header Section', link: '/en/blocks/header-section' },
                                 { text: 'Footer Section', link: '/en/blocks/footer-section' },
@@ -454,7 +450,6 @@ export default defineConfig({
                         { text: 'ColorPicker 颜色选择器', link: '/components/color-picker' },
                         { text: 'Upload 上传', link: '/components/upload' },
                         { text: 'Form 表单', link: '/components/form' },
-                        { text: 'Submit Button 提交按钮', link: '/components/submit-button' },
                     ],
                 },
                 {
@@ -514,7 +509,6 @@ export default defineConfig({
                         { text: 'BeforeAfter 对比滑块', link: '/components/before-after' },
                         { text: 'ScratchCard 刮刮卡', link: '/components/scratch-card' },
                         { text: 'NoiseBackground 噪点背景', link: '/components/noise-background' },
-                        { text: 'SaaS Pricing 定价', link: '/components/saas-pricing' },
                         { text: 'KanbanBoard 看板', link: '/components/kanban-board' },
                         { text: 'ColorModeSwitcher 颜色模式切换', link: '/components/color-mode-switcher' },
                         { text: 'InfiniteScroll 无限滚动', link: '/components/infinite-scroll' },
@@ -538,7 +532,6 @@ export default defineConfig({
                         { text: 'Upload Card 上传卡片', link: '/blocks/upload-card' },
                         { text: 'Empty State 空状态', link: '/blocks/empty-state' },
                         { text: 'Quick Actions 快捷操作', link: '/blocks/quick-actions' },
-                        { text: 'Tabs Nav 标签导航', link: '/blocks/tabs-nav' },
                         { text: 'Search Widget 搜索组件', link: '/blocks/search-widget' },
                         { text: 'Feedback Form 反馈表单', link: '/blocks/feedback-form' },
                         { text: 'Cookie Consent Cookie 同意', link: '/blocks/cookie-consent' },
@@ -550,7 +543,6 @@ export default defineConfig({
                     items: [
                         { text: 'Brutalist Hero 英雄区', link: '/blocks/brutalist-hero' },
                         { text: 'Pricing Section 定价区', link: '/blocks/pricing-section' },
-                        { text: 'SaaS Pricing 定价', link: '/blocks/saas-pricing' },
                         { text: 'Dashboard Shell 仪表盘框架', link: '/blocks/dashboard-shell' },
                         { text: 'Header Section 顶部导航', link: '/blocks/header-section' },
                         { text: 'Footer Section 底部信息栏', link: '/blocks/footer-section' },

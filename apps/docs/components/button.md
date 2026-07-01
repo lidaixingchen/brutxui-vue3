@@ -68,6 +68,35 @@ import { Button } from 'brutx-ui-vue'
 </template>
 ```
 
+### 提交按钮与等待文本
+
+通过 `type="submit"` 将按钮渲染为表单提交按钮。配合 `loading` 与 `pendingText` 可在提交期间显示等待文本（替换插槽内容），未传入 `pendingText` 时回退到 i18n 默认值（`submitButton.submitting`）：
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Button } from 'brutx-ui-vue'
+
+const isLoading = ref(false)
+
+async function handleSubmit() {
+    isLoading.value = true
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    isLoading.value = false
+}
+</script>
+
+<template>
+    <form @submit.prevent="handleSubmit">
+        <Button type="submit" variant="primary" :loading="isLoading" pending-text="保存中...">
+            保存
+        </Button>
+    </form>
+</template>
+```
+
+仅当 `type="submit"` 且 `loading=true` 时才会显示等待文本并隐藏插槽内容；其他情况下插槽内容照常渲染，加载图标仍然显示。
+
 ### asChild
 
 使用 `asChild` 将按钮样式渲染到自定义元素上（例如路由链接）：
@@ -122,8 +151,10 @@ import { RouterLink } from 'vue-router'
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体样式 |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | 按钮尺寸，`icon` 为正方形图标按钮 |
 | `asChild` | `boolean` | `false` | 将按钮样式渲染到子元素上，用于组合路由链接等 |
+| `type` | `'button' \| 'submit' \| 'reset'` | `undefined` | 原生 button 类型；为 `submit` 时启用 `pendingText` 行为 |
 | `loading` | `boolean` | `false` | 显示加载动画并禁用按钮 |
 | `disabled` | `boolean` | `false` | 禁用按钮 |
+| `pendingText` | `string` | `undefined`（回退到 i18n `submitButton.submitting`） | 加载中显示的等待文本，仅在 `type="submit"` 且 `loading` 时生效 |
 | `class` | `string` | `undefined` | 自定义 CSS 类名 |
 
 ## 事件

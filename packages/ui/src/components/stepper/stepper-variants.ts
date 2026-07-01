@@ -1,4 +1,6 @@
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+export type StepperStepStatus = 'completed' | 'active' | 'upcoming';
 
 export const stepperDotVariants = cva(
     [
@@ -55,3 +57,30 @@ export const stepperConnectorVariants = cva(
         },
     }
 );
+
+export const stepperStepLabelVariants = cva('', {
+    variants: {
+        state: {
+            completed: '',
+            active: '',
+            upcoming: 'opacity-50',
+        },
+    },
+    defaultVariants: {
+        state: 'upcoming',
+    },
+});
+
+export const stepperNavButtonIconVariants = cva('', {
+    variants: {
+        direction: {
+            prev: 'mr-1',
+            next: 'ml-1',
+        },
+    },
+});
+
+export type StepperDotVariantProps = VariantProps<typeof stepperDotVariants>;
+export type StepperConnectorVariantProps = VariantProps<typeof stepperConnectorVariants>;
+export type StepperStepLabelVariantProps = VariantProps<typeof stepperStepLabelVariants>;
+export type StepperNavButtonIconVariantProps = VariantProps<typeof stepperNavButtonIconVariants>;

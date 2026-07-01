@@ -57,6 +57,7 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 |------|------|
 | `Carousel` | Carousel container, manages scroll logic and navigation controls |
 | `CarouselItem` | Single slide container |
+| `CarouselEnhanced` | Enhanced carousel with thumbnails, autoplay indicators, and parallax effects |
 
 ## Composables
 
@@ -184,6 +185,100 @@ const carouselRef = ref()
 | Slot | Scope | Description |
 |------|--------|------|
 | `default` | — | Default slot for placing slide content |
+
+## CarouselEnhanced
+
+`CarouselEnhanced` extends `Carousel` with **thumbnail navigation**, **autoplay indicators** (progress bar / dots / fraction), and **parallax animation** effects, suitable for image galleries, product showcases, and other scenarios requiring richer interaction.
+
+### Demo
+
+<ComponentPreview>
+  <CarouselEnhancedDemo />
+</ComponentPreview>
+
+### Usage
+
+```vue
+<script setup>
+import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue'
+</script>
+
+<template>
+    <CarouselEnhanced
+        :loop="true"
+        :autoplay="true"
+        :autoplay-delay="3000"
+        size="md"
+        :thumbnails="{ show: true, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }"
+        :autoplay-indicator="{ type: 'progress', position: 'top', pauseOnHover: true }"
+        :parallax="{ enabled: true, scale: 1.05, opacity: true, duration: 400 }"
+    >
+        <CarouselItem v-for="slide in slides" :key="slide.label">
+            <div class="w-full h-full flex items-center justify-center">{{ slide.label }}</div>
+        </CarouselItem>
+    </CarouselEnhanced>
+</template>
+```
+
+### Base Props
+
+Inherits all Props from `Carousel` (`loop`/`autoplay`/`autoplayDelay`/`showArrows`/`showDots`/`size`/`class`). The following are enhanced-exclusive Props:
+
+| Prop | Type | Default | Description |
+|------|------|--------|------|
+| `thumbnails` | `CarouselThumbnails` | `{ show: false, position: 'bottom', size: 'sm', gap: 8, highlightCurrent: true }` | Thumbnail navigation config |
+| `autoplayIndicator` | `AutoplayIndicator` | — | Autoplay indicator config |
+| `parallax` | `ParallaxEffect` | — | Parallax animation config |
+
+### CarouselThumbnails
+
+| Prop | Type | Default | Description |
+|------|------|--------|------|
+| `show` | `boolean` | `false` | Whether to show thumbnails |
+| `position` | `'bottom' \| 'left' \| 'right'` | `'bottom'` | Thumbnail position |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'sm'` | Thumbnail size |
+| `gap` | `number` | `8` | Thumbnail gap in pixels |
+| `highlightCurrent` | `boolean` | `true` | Whether to highlight the current thumbnail |
+
+### AutoplayIndicator
+
+| Prop | Type | Default | Description |
+|------|------|--------|------|
+| `type` | `'progress' \| 'dots' \| 'fraction'` | —(required) | Indicator type: progress bar / dots / fraction |
+| `position` | `'top' \| 'bottom'` | — | Indicator position |
+| `pauseOnHover` | `boolean` | — | Pause autoplay on mouse hover |
+
+### ParallaxEffect
+
+| Prop | Type | Default | Description |
+|------|------|--------|------|
+| `enabled` | `boolean` | `false` | Whether to enable parallax animation |
+| `scale` | `number` | `1.1` | Slide scale ratio |
+| `opacity` | `boolean` | `false` | Whether to enable opacity transition |
+| `duration` | `number` | `300` | Animation duration in milliseconds |
+| `easing` | `string` | `'ease-out'` | CSS easing function |
+
+### Exposed API
+
+`CarouselEnhanced` exposes the same methods and state as `Carousel` via `defineExpose`, plus autoplay control:
+
+| Method/Property | Type | Description |
+|-----------|------|------|
+| `scrollPrev` | `() => void` | Scroll to the previous slide |
+| `scrollNext` | `() => void` | Scroll to the next slide |
+| `scrollTo` | `(index: number) => void` | Scroll to the slide at the specified index |
+| `selectedIndex` | `ComputedRef<number>` | Currently selected slide index (read-only reactive) |
+| `canScrollPrev` | `ComputedRef<boolean>` | Whether scrolling backward is possible |
+| `canScrollNext` | `ComputedRef<boolean>` | Whether scrolling forward is possible |
+| `startAutoplay` | `() => void` | Start autoplay |
+| `stopAutoplay` | `() => void` | Stop autoplay |
+
+### Slots
+
+| Slot | Scope | Description |
+|------|--------|------|
+| `default` | — | Default slot for placing `CarouselItem` components |
+| `thumbnail` | `{ index: number, scrollTo: (index: number) => void }` | Custom thumbnail rendering; uses default numbered thumbnails when not provided |
 
 ## Accessibility
 

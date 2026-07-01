@@ -6,7 +6,7 @@ translated: true
 
 # Pricing Section
 
-A Neo-Brutalist unified pricing section featuring feature lists, popular plan highlighting, and an optional monthly/annual toggle. It can display both one-time pricing and SaaS subscription pricing; `SaaSPricing` is now a compatibility wrapper built on top of it.
+A Neo-Brutalist unified pricing section featuring feature lists, popular plan highlighting, and an optional monthly/annual toggle. It can display both one-time pricing and SaaS subscription pricing; pass `preset="saas"` to enable the built-in three-tier SaaS default data.
 
 ## Demo
 
@@ -86,6 +86,38 @@ const plans = [
 </template>
 ```
 
+## SaaS Preset
+
+Pass `preset="saas"` to use the built-in three-tier SaaS default data (Starter / Pro / Enterprise) and automatically enable the monthly/annual billing toggle. In this mode:
+
+- When `title` is not passed, falls back to `pricingSection.saasTitle` ("Simple, Unapologetic Pricing")
+- When `popularText` is not passed, falls back to `pricingSection.saasMostPopular` ("MOST POPULAR")
+- When `billingMode` is not passed, defaults to `'toggle'`
+- When `plans` is not passed, uses the built-in three-tier default data; passing `plans` takes precedence
+
+```vue
+<script setup>
+import PricingSection from '@/components/ui/pricing-section/PricingSection.vue'
+</script>
+
+<template>
+    <PricingSection preset="saas" />
+</template>
+```
+
+You can also override any field on top of the SaaS preset:
+
+```vue
+<template>
+    <PricingSection
+        preset="saas"
+        title="Custom Title"
+        subtitle="Override the default subtitle"
+        :plans="customPlans"
+    />
+</template>
+```
+
 ## Data Types
 
 ```ts
@@ -116,7 +148,8 @@ interface BrutalistPricingPlan {
 | `title` | `string` | locale: `pricingSection.defaultTitle` | Title text |
 | `subtitle` | `string` | — | Subtitle text |
 | `plans` | `BrutalistPricingPlan[]` | `[]` | Pricing plan list |
-| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` | Billing mode: `auto` for auto-detection, `toggle` to force display, `none` to hide |
+| `preset` | `'saas'` | — | Preset mode; pass `'saas'` to enable the built-in three-tier SaaS default data and fallback behavior |
+| `billingMode` | `'auto' \| 'toggle' \| 'none'` | `'auto'` (`'toggle'` when `preset='saas'`) | Billing mode: `auto` for auto-detection, `toggle` to force display, `none` to hide |
 | `modelValue` | `'monthly' \| 'annually'` | — | Currently selected billing cycle (v-model) |
 | `defaultBilling` | `'monthly' \| 'annually'` | `'monthly'` | Default billing cycle |
 | `popularText` | `string` | locale: `pricingSection.mostPopular` | Popular plan badge text |

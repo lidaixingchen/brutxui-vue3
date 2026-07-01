@@ -206,4 +206,106 @@ describe('PricingSection', () => {
         })
         expect(wrapper.classes()).toContain('my-pricing')
     })
+
+    describe('preset="saas"', () => {
+        it('renders built-in three-tier plans when plans not provided', () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            const cards = wrapper.findAll('.grid > div')
+            expect(cards.length).toBe(3)
+            expect(wrapper.text()).toContain('Starter')
+            expect(wrapper.text()).toContain('Pro')
+            expect(wrapper.text()).toContain('Enterprise')
+        })
+
+        it('falls back to saasTitle when title not provided', () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            expect(wrapper.find('h2').text()).toBe('Simple, Unapologetic Pricing')
+        })
+
+        it('uses saasMostPopular as popular badge text', () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            expect(wrapper.text()).toContain('MOST POPULAR')
+        })
+
+        it('defaults billingMode to toggle', () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            expect(wrapper.text()).toContain('Monthly')
+            expect(wrapper.text()).toContain('Annually')
+        })
+
+        it('shows monthly prices by default', () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            expect(wrapper.text()).toContain('$19')
+            expect(wrapper.text()).toContain('/mo')
+        })
+
+        it('switches to annual prices when annually toggle is clicked', async () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            const annualButton = wrapper.findAll('button').find(b => b.text() === 'Annually')
+            await annualButton!.trigger('click')
+            expect(wrapper.text()).toContain('$15')
+            expect(wrapper.text()).toContain('billed annually')
+        })
+
+        it('prefers user-provided plans over preset defaults', () => {
+            const wrapper = mount(PricingSection, {
+                props: {
+                    preset: 'saas',
+                    plans: [
+                        {
+                            name: 'Custom Plan',
+                            priceMonthly: '$99',
+                            priceAnnually: '$89',
+                            description: 'Custom',
+                            features: ['Custom feature'],
+                            buttonText: 'Buy',
+                            buttonVariant: 'primary' as const,
+                        },
+                    ],
+                },
+                ...localeProvide,
+            })
+            const cards = wrapper.findAll('.grid > div')
+            expect(cards.length).toBe(1)
+            expect(wrapper.text()).toContain('Custom Plan')
+            expect(wrapper.text()).not.toContain('Starter')
+        })
+
+        it('allows overriding title while using preset plans', () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas', title: 'Custom SaaS Title' },
+                ...localeProvide,
+            })
+            expect(wrapper.find('h2').text()).toBe('Custom SaaS Title')
+            expect(wrapper.findAll('.grid > div').length).toBe(3)
+        })
+
+        it('emits plan-select when preset plan button is clicked', async () => {
+            const wrapper = mount(PricingSection, {
+                props: { preset: 'saas' },
+                ...localeProvide,
+            })
+            const proButton = wrapper.findAll('button').find(button => button.text() === 'Go Pro')
+            await proButton!.trigger('click')
+            expect(wrapper.emitted('plan-select')).toEqual([['Pro']])
+        })
+    })
 })

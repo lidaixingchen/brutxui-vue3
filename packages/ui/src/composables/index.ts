@@ -38,6 +38,9 @@ export type { UseColorHistoryOptions, UseColorHistoryReturn } from './useColorHi
 export { useDatePicker } from './useDatePicker'
 export type { UseDatePickerOptions } from './useDatePicker'
 
+export { useUpload } from './useUpload'
+export type { UseUploadOptions, UseUploadReturn } from './useUpload'
+
 // DataTable 类
 export { useDataTableSort } from './useDataTableSort'
 export type { UseDataTableSortOptions } from './useDataTableSort'

@@ -69,6 +69,35 @@ import { Button } from 'brutx-ui-vue'
 </template>
 ```
 
+### Submit Button and Pending Text
+
+Set `type="submit"` to render the button as a form submit button. Combined with `loading` and `pendingText`, the button displays a pending text (replacing the slot content) during submission. When `pendingText` is not provided, it falls back to the i18n default (`submitButton.submitting`):
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Button } from 'brutx-ui-vue'
+
+const isLoading = ref(false)
+
+async function handleSubmit() {
+    isLoading.value = true
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    isLoading.value = false
+}
+</script>
+
+<template>
+    <form @submit.prevent="handleSubmit">
+        <Button type="submit" variant="primary" :loading="isLoading" pending-text="Saving...">
+            Save
+        </Button>
+    </form>
+</template>
+```
+
+The pending text is shown and the slot content is hidden only when `type="submit"` and `loading=true`. In all other cases, the slot content renders normally and the loading icon still appears.
+
 ### asChild
 
 Use `asChild` to render button styles onto a custom element (e.g., a router link):
@@ -123,8 +152,10 @@ import { RouterLink } from 'vue-router'
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | Button variant style |
 | `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | Button size; `icon` is a square icon button |
 | `asChild` | `boolean` | `false` | Renders button styles onto the child element, useful for composing router links, etc. |
+| `type` | `'button' \| 'submit' \| 'reset'` | `undefined` | Native button type; enables `pendingText` behavior when set to `submit` |
 | `loading` | `boolean` | `false` | Shows loading animation and disables the button |
 | `disabled` | `boolean` | `false` | Disables the button |
+| `pendingText` | `string` | `undefined` (falls back to i18n `submitButton.submitting`) | Pending text displayed during loading; only effective when `type="submit"` and `loading` |
 | `class` | `string` | `undefined` | Custom CSS class name |
 
 ## Events

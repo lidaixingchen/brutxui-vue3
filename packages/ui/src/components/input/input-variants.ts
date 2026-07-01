@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { inputVariantClasses } from './shared-input-variants'
 
 export const inputVariants = cva(
     [
@@ -16,11 +17,7 @@ export const inputVariants = cva(
     ],
     {
         variants: {
-            variant: {
-                default: 'border-brutal',
-                error: 'border-brutal-destructive focus:shadow-brutal-primary',
-                success: 'border-brutal-success focus:shadow-brutal-secondary',
-            },
+            variant: inputVariantClasses,
             size: {
                 sm: 'h-9 px-3 py-1 text-sm',
                 default: 'h-11 px-4 py-2 text-base',

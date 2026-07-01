@@ -38,5 +38,15 @@ import { Mail } from '@lucide/vue'
                 <Button disabled>禁用</Button>
             </div>
         </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">提交按钮</p>
+            <div class="flex flex-wrap items-center gap-3">
+                <Button type="submit" :loading="true">提交</Button>
+                <Button type="submit" :loading="true" pending-text="处理中...">提交</Button>
+                <Button type="submit" :loading="true" variant="primary" pending-text="保存中...">提交</Button>
+                <Button type="submit" :loading="true" variant="secondary" pending-text="上传中...">提交</Button>
+            </div>
+        </div>
     </div>
 </template>

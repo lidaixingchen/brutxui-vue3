@@ -21,7 +21,6 @@ BrutxUI provides pre-built block components, combining multiple basic components
 | [Blog Card](/en/blocks/blog-card) | Blog post preview card with category badges. |
 | [File Card](/en/blocks/file-card) | File card with download buttons and size statistics. |
 | [Quick Actions](/en/blocks/quick-actions) | Responsive grid layout for shortcut actions panel. |
-| [Tabs Nav](/en/blocks/tabs-nav) | Interactive tab navigation and nested panels. |
 | [Error Card](/en/blocks/error-card) | Error status card with dismiss and retry options. |
 | [Success Card](/en/blocks/success-card) | Success status card with checkmarks and confirmation buttons. |
 | [Search Widget](/en/blocks/search-widget) | Spotlight search dialog with categorized suggestions. |
@@ -38,7 +37,6 @@ BrutxUI provides pre-built block components, combining multiple basic components
 | [Upload Card](/en/blocks/upload-card) | Drag-and-drop file uploader card with progress tracking. |
 | [Overview Page](/en/blocks/overview-page) | Dashboard overview layout with statistics cards and charts. |
 | [Dashboard Stats](/en/blocks/dashboard-stats) | Statistics card panel with counter effects. |
-| [SaaS Pricing](/en/blocks/saas-pricing) | SaaS pricing comparisons with subscription toggles. |
 
 ## Installation
 

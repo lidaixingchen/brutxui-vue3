@@ -181,8 +181,6 @@ export type { FormFieldContext, FormItemContext } from './components/form/form-c
 export type { FormStep, ValidationResult, FormWizardContext } from './components/form/form-wizard-types'
 export { useFormWizard } from './components/form/form-wizard-utils'
 
-export { default as SubmitButton } from './components/submit-button/SubmitButton.vue'
-
 export { default as Calendar } from './components/calendar/Calendar.vue'
 
 export { default as DatePicker } from './components/date-picker/DatePicker.vue'
@@ -233,9 +231,6 @@ export type { PresetThemeName } from './themes'
 
 export { default as ColorModeSwitcher } from './components/color-mode-switcher/ColorModeSwitcher.vue'
 
-export { default as SaaSPricing } from './components/saas-pricing/SaaSPricing.vue'
-export type { PricingPlan, PricingFeature } from './components/saas-pricing/types'
-
 export { default as DashboardStats } from './components/dashboard-stats/DashboardStats.vue'
 export type { StatItem } from './components/dashboard-stats/types'
 
@@ -248,7 +243,7 @@ export { default as AuthCard } from './components/auth-card/AuthCard.vue'
 export { default as EmptyState } from './components/empty-state/EmptyState.vue'
 
 export { default as PricingSection } from './components/pricing-section/PricingSection.vue'
-export type { BrutalistPricingPlan } from './components/pricing-section/types'
+export type { BrutalistPricingPlan, PricingPlan, PricingFeature } from './components/pricing-section/types'
 
 export { default as WaitlistPage } from './components/waitlist-page/WaitlistPage.vue'
 
@@ -264,8 +259,7 @@ export type { ActionItem } from './components/quick-actions/types'
 export { default as FaqSection } from './components/faq-section/FaqSection.vue'
 export type { FaqItem } from './components/faq-section/types'
 
-export { default as TabsNav } from './components/tabs-nav/TabsNav.vue'
-export type { TabItem } from './components/tabs-nav/types'
+export type { TabItem } from './components/tabs/types'
 
 export { default as HeaderSection } from './components/header-section/HeaderSection.vue'
 export type { NavItem } from './components/header-section/types'
@@ -425,7 +419,7 @@ export type { TranslateFunction } from './composables/useLocale'
 export { useColorHistory } from './composables/useColorHistory'
 export type { UseColorHistoryOptions, UseColorHistoryReturn } from './composables/useColorHistory'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, SaaSPricingLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, ColorModeSwitcherLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale, VirtualScrollLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, LoadingPageLocale, ErrorCardLocale, SuccessCardLocale, SearchWidgetLocale, FeedbackFormLocale, StepperSectionLocale, CookieConsentLocale, DataTableSectionLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, UploadCardLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, ColorModeSwitcherLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale, VirtualScrollLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'
@@ -474,6 +468,9 @@ export type { UseColorPickerOptions } from './composables/useColorPicker'
 export { useAnimation } from './composables/useAnimation'
 export { useFormFieldValidation } from './composables/useFormFieldValidation'
 export type { UseFormFieldValidationOptions, ValidationState, ValidationRule, ValidateOn } from './composables/useFormFieldValidation'
+
+export { useUpload } from './composables/useUpload'
+export type { UseUploadOptions, UseUploadReturn } from './composables/useUpload'
 
 export { useDataTableSort } from './composables/useDataTableSort'
 export type { UseDataTableSortOptions } from './composables/useDataTableSort'

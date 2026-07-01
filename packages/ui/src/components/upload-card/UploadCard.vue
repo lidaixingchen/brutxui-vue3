@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { Upload } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { useUpload } from '@/composables/useUpload'
 import Card from '../card/Card.vue'
 import CardContent from '../card/CardContent.vue'
 import Button from '../button/Button.vue'
@@ -30,6 +31,10 @@ const props = withDefaults(defineProps<UploadCardProps>(), {
 })
 
 const { t } = useLocale()
+const { filterValidFiles } = useUpload({
+    maxSize: () => props.maxSize,
+    accept: () => props.accept,
+})
 
 const emit = defineEmits<{
     upload: [files: File[]]
@@ -77,7 +82,7 @@ function handleDragLeave(event: DragEvent) {
 function handleDrop(event: DragEvent) {
     event.preventDefault()
     isDragging.value = false
-    const files = filterBySize(Array.from(event.dataTransfer?.files ?? []))
+    const files = filterValidFiles(Array.from(event.dataTransfer?.files ?? []))
     if (files.length > 0) {
         emit('drop', files)
     }
@@ -90,17 +95,11 @@ function handleBrowse() {
 function handleFileChange(event: Event) {
     const target = event.target
     if (!(target instanceof HTMLInputElement)) return
-    const files = filterBySize(Array.from(target.files ?? []))
+    const files = filterValidFiles(Array.from(target.files ?? []))
     if (files.length > 0) {
         emit('upload', files)
     }
     target.value = ''
-}
-
-function filterBySize(files: File[]): File[] {
-    const maxSize = props.maxSize
-    if (maxSize === undefined) return files
-    return files.filter(f => f.size <= maxSize)
 }
 </script>
 

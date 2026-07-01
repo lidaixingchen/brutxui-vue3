@@ -164,7 +164,7 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Form
 
-`Button`, `SubmitButton`, `Input`, `NumberInput`, `HardcoreInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `Select`, `Combobox`, `Slider`, `Toggle`, `ToggleGroup`, `TagsInput`, `Calendar`, `Form`
+`Button`, `Input`, `NumberInput`, `HardcoreInput`, `Textarea`, `Checkbox`, `Switch`, `RadioGroup`, `Select`, `Combobox`, `Slider`, `Toggle`, `ToggleGroup`, `TagsInput`, `Calendar`, `Form`
 
 #### Layout & Container
 
@@ -184,7 +184,7 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Blocks / Pages
 
-`PricingSection`, `SaaSPricing`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `UploadCard`, `DataTableSection`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `StepperSection`, `EmptyState`, `ErrorCard`, `SuccessCard`, `NotFoundPage`, `LoadingPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `TabsNav`, `SearchWidget`, `FeedbackForm`
+`PricingSection`, `SaaSPricing`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `UploadCard`, `DataTableSection`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `StepperSection`, `EmptyState`, `ErrorCard`, `SuccessCard`, `NotFoundPage`, `LoadingPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `Tabs`, `SearchWidget`, `FeedbackForm`
 
 ---
 

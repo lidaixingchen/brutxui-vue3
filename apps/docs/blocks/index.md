@@ -21,7 +21,6 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [Blog Card](/blocks/blog-card) | 带有分类徽标和阅读更多的博客文章预览卡片 |
 | [File Card](/blocks/file-card) | 带有文件图标和下载按钮的文件信息卡片 |
 | [Quick Actions](/blocks/quick-actions) | 带有图标按钮网格的快捷操作面板 |
-| [Tabs Nav](/blocks/tabs-nav) | 带有标签触发器和内容面板的标签页导航 |
 | [Error Card](/blocks/error-card) | 带有警告提示和重试/关闭按钮的错误状态卡片 |
 | [Success Card](/blocks/success-card) | 带有勾选图标和确认按钮的成功状态卡片 |
 | [Search Widget](/blocks/search-widget) | 带有输入框和分组建议列表的搜索组件 |
@@ -38,7 +37,6 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [Upload Card](/blocks/upload-card) | 带有拖拽上传、进度条和旋转指示器的文件上传卡片 |
 | [Overview Page](/blocks/overview-page) | 带有统计卡片和活动面板的仪表盘概览页面 |
 | [Dashboard Stats](/blocks/dashboard-stats) | 带有统计卡片和计数器的仪表盘统计面板 |
-| [SaaS Pricing](/blocks/saas-pricing) | 带有切换开关和特性列表的 SaaS 定价区块 |
 
 ## 安装
 

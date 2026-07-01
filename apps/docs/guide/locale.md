@@ -277,14 +277,13 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | Pagination | `pagination.firstPage`、`pagination.previousPage`、`pagination.nextPage`、`pagination.lastPage`、`pagination.page`、`pagination.label` | `page`: `{number}` |
 | Carousel | `carousel.previousSlide`、`carousel.nextSlide`、`carousel.goToSlide` | `goToSlide`: `{index}` |
 | Spinner | `spinner.loading` | — |
-| SubmitButton | `submitButton.submitting` | — |
+| Button | `submitButton.submitting` | — |
 | CopyToClipboard | `copyToClipboard.copy`、`copyToClipboard.copied` | — |
 | BeforeAfter | `beforeAfter.before`、`beforeAfter.after` | — |
 | AuthCard | `authCard.welcomeBack`、`authCard.signInToContinue`、`authCard.google`、`authCard.github`、`authCard.orEmailLogin`、`authCard.email`、`authCard.password`、`authCard.forgotPassword`、`authCard.signIn`、`authCard.noAccount`、`authCard.register`、`authCard.emailPlaceholder`、`authCard.passwordPlaceholder` | — |
 | WaitlistPage | `waitlistPage.title`、`waitlistPage.ctaText`、`waitlistPage.earlyAccess`、`waitlistPage.onWaitlist`、`waitlistPage.live`、`waitlistPage.defaultDescription` | `onWaitlist`: `{count}` |
 | DashboardShell | `dashboardShell.sidebarNavigation`、`dashboardShell.signOut`、`dashboardShell.defaultEmail` | — |
 | BrutalistHero | `brutalistHero.title`、`brutalistHero.primaryCtaText`、`brutalistHero.secondaryCtaText`、`brutalistHero.neoBrutalismUI`、`brutalistHero.defaultSubtitle` | — |
-| SaaSPricing | `saasPricing.title`、`saasPricing.monthly`、`saasPricing.annually`、`saasPricing.mostPopular`、`saasPricing.perMonth`、`saasPricing.perMonthBilledAnnually`、`saasPricing.billingPeriod` | — |
 | Toast | `toast.close`、`toast.container` | — |
 | Dialog | `dialog.close` | — |
 | Sheet | `sheet.close` | — |
@@ -324,7 +323,7 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | Calendar | `calendar.previousMonth`、`calendar.nextMonth` | — |
 | Kanban | `kanban.dropCardsHere`、`kanban.addCard`、`kanban.cardGrabbed`、`kanban.cardReleased`、`kanban.cardMoved`、`kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
 | Timeline | `timeline.label` | — |
-| PricingSection | `pricingSection.defaultTitle`、`pricingSection.mostPopular`、`pricingSection.perLifetime` | — |
+| PricingSection | `pricingSection.defaultTitle`、`pricingSection.mostPopular`、`pricingSection.perLifetime`、`pricingSection.saasTitle`、`pricingSection.saasMostPopular`、`pricingSection.planStarterName`、`pricingSection.planProName`、`pricingSection.planEnterpriseName` | — |
 | DashboardStats | `dashboardStats.defaultTitle` | — |
 | Input | `input.placeholder` | — |
 | NumberInput | `numberInput.placeholder` | — |

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
+import { useUpload } from '@/composables/useUpload'
 import type { UploadFile, UploadError, UploadRequestOptions } from './index'
 
 interface UploadProps {
@@ -72,11 +73,7 @@ watch(() => props.fileList, (newList) => {
     internalFileList.value = [...newList]
 }, { deep: true })
 
-// 检查文件大小
-function validateFileSize(file: File): boolean {
-    if (props.maxSize === undefined) return true
-    return file.size <= props.maxSize
-}
+const { validateFileSize } = useUpload({ maxSize: () => props.maxSize })
 
 // 检查文件数量
 function validateFileCount(count: number): boolean {

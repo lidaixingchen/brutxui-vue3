@@ -2,7 +2,8 @@
 import { computed, type ComputedRef } from 'vue';
 import { ChevronLeft, ChevronRight } from '@lucide/vue';
 import { cn } from '@/lib/utils';
-import { carouselRootVariants, carouselButtonVariants } from './carousel-variants';
+import { carouselRootVariants } from './carousel-variants';
+import { dotActiveClasses, dotInactiveClasses, prevButtonClasses, nextButtonClasses } from './carousel-shared';
 import { useLocale } from '@/composables/useLocale';
 import { useCarousel, DEFAULT_AUTOPLAY_DELAY } from '@/composables/useCarousel';
 
@@ -39,32 +40,6 @@ const rootClass = computed(() =>
     cn(carouselRootVariants({ size: props.size }), props.class)
 );
 
-const prevButtonClass = computed(() =>
-    cn(carouselButtonVariants({ direction: 'prev' }))
-);
-
-const nextButtonClass = computed(() =>
-    cn(carouselButtonVariants({ direction: 'next' }))
-);
-
-const dotActiveClasses = computed(() =>
-    cn(
-        'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
-        'bg-brutal-primary shadow-brutal',
-        'hover:shadow-brutal-lg hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
-    )
-)
-
-const dotInactiveClasses = computed(() =>
-    cn(
-        'w-3 h-3 border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150',
-        'bg-brutal-bg hover:bg-brutal-muted',
-        'hover:shadow-brutal hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'
-    )
-);
-
 const exposedSelectedIndex: ComputedRef<number> = computed(() => selectedIndex.value);
 
 defineExpose({
@@ -88,7 +63,7 @@ defineExpose({
         <button
             v-if="showArrows"
             type="button"
-            :class="prevButtonClass"
+            :class="prevButtonClasses"
             :disabled="!canScrollPrev"
             :aria-label="t('carousel.previousSlide')"
             @click="scrollPrev"
@@ -99,7 +74,7 @@ defineExpose({
         <button
             v-if="showArrows"
             type="button"
-            :class="nextButtonClass"
+            :class="nextButtonClasses"
             :disabled="!canScrollNext"
             :aria-label="t('carousel.nextSlide')"
             @click="scrollNext"

@@ -131,3 +131,36 @@ Custom anchor element for precise popover positioning.
 - **ARIA Attributes**: The popover uses `role="dialog"` semantics and automatically links `aria-labelledby` to the trigger
 - **Focus Management**: The popover auto-focuses when opened
 - **Interaction Behavior**: Clicking outside closes the popover; in modal mode, interaction with external elements is disabled
+
+## Relationship with Popconfirm
+
+[Popconfirm](/en/components/popconfirm) is essentially a Popover + confirm/cancel button combination. It internally uses `Popover`/`PopoverTrigger`/`PopoverContent` directly, adding a `TriangleAlert` warning icon and confirm/cancel button logic.
+
+### When to use Popconfirm
+
+- Simple "confirm/cancel" binary operations
+- Out-of-the-box usage without assembling buttons and events manually
+- Consistent dangerous action confirmation experience
+
+### When to use Popover manually
+
+- Custom button text, styling, or layout
+- Complex content like forms or lists inside the popover
+- Fine-grained control over open/close timing
+
+```vue
+<!-- Popconfirm: one-line confirm action -->
+<Popconfirm title="Are you sure to delete?" @confirm="handleDelete">
+    <Button variant="destructive">Delete</Button>
+</Popconfirm>
+
+<!-- Popover manual combination: fully custom -->
+<Popover>
+    <PopoverTrigger as-child>
+        <Button variant="outline">Custom</Button>
+    </PopoverTrigger>
+    <PopoverContent>
+        <!-- Any content: forms, lists, custom buttons, etc. -->
+    </PopoverContent>
+</Popover>
+```

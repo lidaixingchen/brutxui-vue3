@@ -8,20 +8,11 @@
 
 - `variant`: `'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'`
 - `size`: `'sm' | 'default' | 'lg' | 'xl' | 'icon'`
+- `type`: `'button' | 'submit' | 'reset'` — 为 `submit` 时启用 `pendingText` 行为
 - `loading`: `boolean`
 - `disabled`: `boolean`
+- `pendingText`: `string` — 加载时显示的文字，仅在 `type="submit"` 且 `loading` 时生效，未传入时回退到 i18n 默认值
 - `asChild`: `boolean`
-
-## SubmitButton
-
-```vue
-<SubmitButton :loading="isSubmitting" pending-text="提交中...">提交</SubmitButton>
-```
-
-- `variant`/`size`: 同 Button
-- `pendingText`: `string` — 加载时显示的文字
-- `loading`: `boolean`
-- `disabled`: `boolean`
 
 ## Input
 
@@ -575,7 +566,7 @@ TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolea
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, SubmitButton } from 'brutx-ui-vue'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'brutx-ui-vue'
 
 const schema = toTypedSchema(z.object({
   username: z.string().min(2).max(50),
@@ -610,7 +601,7 @@ function onSubmit(values: Record<string, unknown>) {
       </FormItem>
     </FormField>
 
-    <SubmitButton variant="primary">提交</SubmitButton>
+    <Button type="submit" variant="primary">提交</Button>
   </Form>
 </template>
 ```

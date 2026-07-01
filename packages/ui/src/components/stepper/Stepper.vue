@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { type VariantProps } from 'class-variance-authority';
 import { Check } from '@lucide/vue';
 import { cn } from '@/lib/utils';
-import { stepperDotVariants, stepperConnectorVariants } from './stepper-variants';
+import {
+    stepperDotVariants,
+    stepperConnectorVariants,
+    stepperStepLabelVariants,
+    type StepperStepStatus,
+    type StepperDotVariantProps,
+} from './stepper-variants';
 import { useLocale } from '@/composables/useLocale';
 import type { StepperStep } from './types';
 
 export type { StepperStep };
-
-type StepperDotVariantProps = VariantProps<typeof stepperDotVariants>;
 
 const MIN_VERTICAL_CONNECTOR_HEIGHT = '2rem'
 
@@ -71,7 +74,7 @@ defineExpose({
     isLastStep,
 })
 
-function getState(index: number): 'completed' | 'active' | 'upcoming' {
+function getState(index: number): StepperStepStatus {
     if (index < props.modelValue) return 'completed';
     if (index === props.modelValue) return 'active';
     return 'upcoming';
@@ -152,7 +155,7 @@ const stepStates = computed(() =>
     props.steps.map((_, i) => getState(i))
 )
 
-function getDotClasses(state: 'completed' | 'active' | 'upcoming') {
+function getDotClasses(state: StepperStepStatus) {
     const variant = state === 'active' ? props.variant : undefined
     return cn(
         stepperDotVariants({ state, size: props.size, variant }),
@@ -166,6 +169,10 @@ const connectorCompletedClasses = computed(() =>
 
 const connectorIncompleteClasses = computed(() =>
     cn(stepperConnectorVariants({ orientation: props.orientation, completed: false }))
+)
+
+const labelStateClasses = computed(() =>
+    stepStates.value.map((state) => stepperStepLabelVariants({ state }))
 )
 
 const dotClasses = computed(() =>
@@ -215,7 +222,7 @@ const connectorClasses = computed(() =>
                 <div
                     v-if="orientation === 'horizontal'"
                     class="mt-2 text-center px-1"
-                    :class="stepStates[index] === 'upcoming' ? 'opacity-50' : ''"
+                    :class="labelStateClasses[index]"
                 >
                     <p class="text-xs font-black tracking-wide truncate">
 {{ step.title }}
@@ -249,7 +256,7 @@ const connectorClasses = computed(() =>
                     <!-- Label right of dot -->
                     <div
                         class="pb-6 min-w-0 flex-1"
-                        :class="stepStates[index] === 'upcoming' ? 'opacity-50' : ''"
+                        :class="labelStateClasses[index]"
                     >
                         <p class="text-sm font-black tracking-wide">
 {{ step.title }}

@@ -49,15 +49,16 @@
 - Events: `signOut`
 - Slots: `sidebar`, `header`, `default`
 
-## TabsNav
+## Tabs (tabs prop 数据驱动模式)
 
 ```vue
-<TabsNav
+<Tabs
   :tabs="[{ label: '概览', value: 'overview' }, { label: '设置', value: 'settings' }]"
   model-value="overview"
 />
 ```
 
-- `tabs`: `TabItem[]` — `{ label: string; value: string }[]`
-- `modelValue`: `string` — v-model，当前激活标签
-- Slots: `header`, `default`, `footer`
+- `tabs`: `TabItem[]` — `{ label: string; value: string }[]`，传入时自动渲染 TabsList/TabsTrigger/TabsContent
+- `modelValue`: `string` — v-model，当前激活标签（未传时回退到首个 tab）
+- Slots: `header`, `default`（替代默认 Card 内容）, `footer`
+- 未传 `tabs` 时退化为原 Tabs slot 组合用法

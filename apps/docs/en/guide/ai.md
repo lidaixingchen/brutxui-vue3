@@ -130,7 +130,7 @@ import FormLabel from '@/components/ui/FormLabel.vue'
 import FormControl from '@/components/ui/FormControl.vue'
 import FormMessage from '@/components/ui/FormMessage.vue'
 import Input from '@/components/ui/Input.vue'
-import SubmitButton from '@/components/ui/SubmitButton.vue'
+import Button from '@/components/ui/Button.vue'
 
 const schema = toTypedSchema(z.object({
     email: z.string().email(),
@@ -153,7 +153,7 @@ function onSubmit(values) {
                 <FormMessage />
             </FormItem>
         </FormField>
-        <SubmitButton variant="primary">Sign In</SubmitButton>
+        <Button type="submit" variant="primary">Sign In</Button>
     </Form>
 </template>
 ```

@@ -48,8 +48,7 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 | --- | --- | --- |
-| Button | 按钮 | 9 种变体、5 种尺寸、加载状态 |
-| SubmitButton | 提交按钮 | 支持加载/等待状态 |
+| Button | 按钮 | 9 种变体、5 种尺寸、加载状态、`type="submit"` 时支持 `pendingText` 等待文本 |
 | Input | 输入框 | 支持变体/尺寸/ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、clearable 清除按钮、showPassword 密码切换、showWordLimit 字数统计、prefixIcon/suffixIcon 前后缀图标、prepend/append 插槽、defineExpose 暴露 ref/focus/blur/select 方法 |
 | Textarea | 文本域 | 多行文本输入，支持 ARIA 无障碍属性、readonly 只读、errorMessage 错误消息、defineExpose 暴露 ref/focus/blur/select 方法 |
 | NumberInput | 数字输入框 | 带 +/- 按钮，支持 split/stacked 布局、variant 边框样式变体、errorMessage 错误消息 |
@@ -174,7 +173,7 @@ import { cn } from '@/lib/utils'
 | FeedbackForm | 反馈表单 | 支持标题/描述、加载/成功状态 |
 | QuickActions | 快捷操作 | 支持图标/变体 |
 | SearchWidget | 搜索组件 | 支持建议/分组、加载/最近搜索 |
-| TabsNav | 标签导航 | 支持默认值 |
+| Tabs (tabs prop) | 标签导航 | 传入 tabs 数组自动渲染触发器与面板，支持受控/非受控双模式 |
 
 > 完整 Props / Events / Slots 参考 `references/components/` 下的分类文件。
 > 区块组件详细用法参考 `references/blocks/` 下的分类文件。
@@ -398,7 +397,7 @@ BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, SubmitButton } from 'brutx-ui-vue'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'brutx-ui-vue'
 
 const schema = toTypedSchema(z.object({
   username: z.string().min(2).max(50),
@@ -433,7 +432,7 @@ function onSubmit(values: Record<string, unknown>) {
       </FormItem>
     </FormField>
 
-    <SubmitButton variant="primary">提交</SubmitButton>
+    <Button type="submit" variant="primary">提交</Button>
   </Form>
 </template>
 ```

@@ -1,18 +1,15 @@
 import { cva } from 'class-variance-authority';
+import { treeNodeBaseClasses, treeSelectedClass } from '@/lib/tree-variants';
 
 export const treeItemVariants = cva(
     [
-        'flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none',
-        'border-3 border-transparent rounded-brutal',
-        'text-sm text-brutal-fg font-medium',
-        'transition-all duration-150',
+        ...treeNodeBaseClasses,
         'hover:border-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
     ],
     {
         variants: {
             selected: {
-                true: 'bg-brutal-primary border-brutal shadow-brutal',
+                true: treeSelectedClass,
                 false: '',
             },
         },

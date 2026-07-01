@@ -1,5 +1,12 @@
 <script setup lang="ts">
 import { Tabs, TabsList, TabsTrigger, TabsContent } from 'brutx-ui-vue'
+import type { TabItem } from 'brutx-ui-vue'
+
+const arrayTabs: TabItem[] = [
+    { label: '概览', value: 'overview' },
+    { label: '分析', value: 'analytics' },
+    { label: '设置', value: 'settings' },
+]
 </script>
 
 <template>
@@ -50,6 +57,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from 'brutx-ui-vue'
                     </TabsContent>
                 </div>
             </Tabs>
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-sm font-bold tracking-wide">数据驱动模式（tabs prop）</p>
+            <Tabs :tabs="arrayTabs" model-value="overview" />
         </div>
     </div>
 </template>

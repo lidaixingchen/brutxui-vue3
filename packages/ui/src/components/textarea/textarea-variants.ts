@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { inputVariantClasses } from '../input/shared-input-variants'
 
 export const textareaVariants = cva(
     [
@@ -17,11 +18,7 @@ export const textareaVariants = cva(
     ],
     {
         variants: {
-            variant: {
-                default: 'border-brutal',
-                error: 'border-brutal-destructive focus:shadow-brutal-primary',
-                success: 'border-brutal-success focus:shadow-brutal-secondary',
-            },
+            variant: inputVariantClasses,
             size: {
                 sm: 'px-3 py-2 text-sm',
                 default: 'px-4 py-3 text-base',

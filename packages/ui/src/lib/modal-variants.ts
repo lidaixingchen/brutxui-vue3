@@ -23,3 +23,10 @@ export const CLOSE_BUTTON_BASE_CLASSES = [
     'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
     'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
 ]
+
+export const baseModalContentClasses = [
+    'bg-brutal-bg',
+    'border-3 border-brutal',
+    'shadow-brutal-xl',
+    'rounded-brutal',
+]

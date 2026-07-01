@@ -4,10 +4,10 @@ import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { treeItemVariants } from './tree-view-variants';
 import { getCheckState } from './tree-view-utils';
+import { INDENT_PER_DEPTH, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
 import Checkbox from '../checkbox/Checkbox.vue';
 import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
 
-const INDENT_PER_DEPTH = 20
 const BASE_INDENT = 4
 
 const contentId = `tree-content-${useId()}`
@@ -70,7 +70,7 @@ const itemClass = computed(() =>
 );
 
 const chevronClass = computed(() =>
-    cn('w-4 h-4 flex-shrink-0 transition-transform duration-150', isExpanded.value && 'rotate-90')
+    cn('w-4 h-4', treeChevronBaseClass, isExpanded.value && treeChevronExpandedClass)
 )
 
 const indentStyle = computed(() => ({
@@ -198,7 +198,7 @@ defineExpose({ focus, nodeId: props.node.id });
             <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
             <File v-else class="w-4 h-4 flex-shrink-0 opacity-60" />
 
-            <span class="truncate">{{ node.label }}</span>
+            <span :class="treeLabelBaseClass">{{ node.label }}</span>
         </div>
 
         <Transition name="tree-expand">

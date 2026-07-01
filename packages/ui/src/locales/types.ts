@@ -100,34 +100,6 @@ export interface BrutalistHeroLocale {
     defaultSubtitle: string
 }
 
-export interface SaaSPricingLocale {
-    title: string
-    monthly: string
-    annually: string
-    mostPopular: string
-    perMonth: string
-    perMonthBilledAnnually: string
-    billingPeriod: string
-    planStarterName: string
-    planStarterDescription: string
-    planStarterCta: string
-    planProName: string
-    planProDescription: string
-    planProCta: string
-    planEnterpriseName: string
-    planEnterpriseDescription: string
-    planEnterpriseCta: string
-    feature5Components: string
-    featureBasicThemes: string
-    featureCommunitySupport: string
-    featurePriorityUpdates: string
-    featureCustomThemes: string
-    featureAllComponents: string
-    featureAllThemes: string
-    featurePrioritySupport: string
-    featureDedicatedSupport: string
-}
-
 export interface ToastLocale {
     close: string
     container: string
@@ -474,7 +446,7 @@ export interface TimelineLocale {
     label: string
 }
 
-export interface TabsNavLocale {
+export interface TabsLocale {
     emptyTitle: string
 }
 
@@ -496,6 +468,26 @@ export interface PricingSectionLocale {
     billingPeriod: string
     monthly: string
     annually: string
+    saasTitle: string
+    saasMostPopular: string
+    planStarterName: string
+    planStarterDescription: string
+    planStarterCta: string
+    planProName: string
+    planProDescription: string
+    planProCta: string
+    planEnterpriseName: string
+    planEnterpriseDescription: string
+    planEnterpriseCta: string
+    feature5Components: string
+    featureBasicThemes: string
+    featureCommunitySupport: string
+    featurePriorityUpdates: string
+    featureCustomThemes: string
+    featureAllComponents: string
+    featureAllThemes: string
+    featurePrioritySupport: string
+    featureDedicatedSupport: string
 }
 
 export interface DashboardStatsLocale {
@@ -570,7 +562,6 @@ export interface Locale {
     waitlistPage: WaitlistPageLocale
     dashboardShell: DashboardShellLocale
     brutalistHero: BrutalistHeroLocale
-    saasPricing: SaaSPricingLocale
     toast: ToastLocale
     dialog: DialogLocale
     sheet: SheetLocale
@@ -617,7 +608,7 @@ export interface Locale {
     colorPicker: ColorPickerLocale
     kanban: KanbanLocale
     timeline: TimelineLocale
-    tabsNav: TabsNavLocale
+    tabs: TabsLocale
     pricingSection: PricingSectionLocale
     colorModeSwitcher: ColorModeSwitcherLocale
     dashboardStats: DashboardStatsLocale

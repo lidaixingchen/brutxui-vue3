@@ -12,19 +12,21 @@ import CardDescription from '../card/CardDescription.vue'
 import CardFooter from '../card/CardFooter.vue'
 import Badge from '../badge/Badge.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
-import type { PricingFeature, BrutalistPricingPlan } from './types'
+import type { PricingFeature, PricingPlan, BrutalistPricingPlan } from './types'
 
-export type { PricingFeature, BrutalistPricingPlan };
+export type { PricingFeature, PricingPlan, BrutalistPricingPlan };
 
 type ButtonVariant = 'default' | 'primary' | 'secondary' | 'accent' | 'danger' | 'success' | 'outline' | 'ghost' | 'link'
 type CardVariant = 'default' | 'elevated' | 'flat' | 'interactive' | 'primary' | 'secondary'
 type BillingPeriod = 'monthly' | 'annually'
 type BillingMode = 'none' | 'toggle' | 'auto'
+type Preset = 'saas'
 
 interface PricingSectionProps {
     title?: string
     subtitle?: string
     plans?: BrutalistPricingPlan[]
+    preset?: Preset
     billingMode?: BillingMode
     modelValue?: BillingPeriod
     defaultBilling?: BillingPeriod
@@ -35,8 +37,9 @@ interface PricingSectionProps {
 const props = withDefaults(defineProps<PricingSectionProps>(), {
     title: undefined,
     subtitle: undefined,
-    plans: () => [],
-    billingMode: 'auto',
+    plans: undefined,
+    preset: undefined,
+    billingMode: undefined,
     modelValue: undefined,
     defaultBilling: 'monthly',
     popularText: undefined,
@@ -63,18 +66,91 @@ const billing = computed<BillingPeriod>({
     },
 })
 
-const resolvedTitle = computed(() => props.title ?? t('pricingSection.defaultTitle'))
+const isSaasPreset = computed(() => props.preset === 'saas')
+
+const saasDefaultPlans = computed<PricingPlan[]>(() => [
+    {
+        name: t('pricingSection.planStarterName'),
+        description: t('pricingSection.planStarterDescription'),
+        priceMonthly: '$0',
+        priceAnnually: '$0',
+        features: [
+            { text: t('pricingSection.feature5Components'), included: true },
+            { text: t('pricingSection.featureBasicThemes'), included: true },
+            { text: t('pricingSection.featureCommunitySupport'), included: true },
+            { text: t('pricingSection.featurePriorityUpdates'), included: false },
+            { text: t('pricingSection.featureCustomThemes'), included: false },
+        ],
+        buttonText: t('pricingSection.planStarterCta'),
+        buttonVariant: 'outline' as const,
+    },
+    {
+        name: t('pricingSection.planProName'),
+        description: t('pricingSection.planProDescription'),
+        priceMonthly: '$19',
+        priceAnnually: '$15',
+        features: [
+            { text: t('pricingSection.featureAllComponents'), included: true },
+            { text: t('pricingSection.featureAllThemes'), included: true },
+            { text: t('pricingSection.featurePrioritySupport'), included: true },
+            { text: t('pricingSection.featurePriorityUpdates'), included: true },
+            { text: t('pricingSection.featureCustomThemes'), included: false },
+        ],
+        popular: true,
+        buttonText: t('pricingSection.planProCta'),
+        buttonVariant: 'primary' as const,
+    },
+    {
+        name: t('pricingSection.planEnterpriseName'),
+        description: t('pricingSection.planEnterpriseDescription'),
+        priceMonthly: '$49',
+        priceAnnually: '$39',
+        features: [
+            { text: t('pricingSection.featureAllComponents'), included: true },
+            { text: t('pricingSection.featureAllThemes'), included: true },
+            { text: t('pricingSection.featureDedicatedSupport'), included: true },
+            { text: t('pricingSection.featurePriorityUpdates'), included: true },
+            { text: t('pricingSection.featureCustomThemes'), included: true },
+        ],
+        buttonText: t('pricingSection.planEnterpriseCta'),
+        buttonVariant: 'secondary' as const,
+    },
+])
+
+const resolvedPlans = computed<BrutalistPricingPlan[]>(() => {
+    if (props.plans) return props.plans
+    if (isSaasPreset.value) return saasDefaultPlans.value
+    return []
+})
+
+const resolvedTitle = computed(() => {
+    if (props.title) return props.title
+    if (isSaasPreset.value) return t('pricingSection.saasTitle')
+    return t('pricingSection.defaultTitle')
+})
+
 const resolvedSubtitle = computed(() => props.subtitle ?? '')
-const resolvedPopularText = computed(() => props.popularText ?? t('pricingSection.mostPopular'))
+
+const resolvedPopularText = computed(() => {
+    if (props.popularText) return props.popularText
+    if (isSaasPreset.value) return t('pricingSection.saasMostPopular')
+    return t('pricingSection.mostPopular')
+})
+
+const resolvedBillingMode = computed<BillingMode>(() => {
+    if (props.billingMode) return props.billingMode
+    if (isSaasPreset.value) return 'toggle'
+    return 'auto'
+})
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
 
 const hasBillingPlans = computed(() =>
-    props.plans.some(plan => plan.priceMonthly !== undefined || plan.priceAnnually !== undefined)
+    resolvedPlans.value.some(plan => plan.priceMonthly !== undefined || plan.priceAnnually !== undefined)
 )
 
 const showBillingToggle = computed(() =>
-    props.billingMode === 'toggle' || (props.billingMode === 'auto' && hasBillingPlans.value)
+    resolvedBillingMode.value === 'toggle' || (resolvedBillingMode.value === 'auto' && hasBillingPlans.value)
 )
 
 const monthlyBtnClasses = computed(() =>
@@ -180,9 +256,9 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
             </div>
         </div>
 
-        <template v-if="plans.length > 0">
+        <template v-if="resolvedPlans.length > 0">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div v-for="plan in plans" :key="plan.name" class="relative">
+                <div v-for="plan in resolvedPlans" :key="plan.name" class="relative">
                     <div v-if="plan.popular" :class="popularBadgeWrapClasses">
                         <Badge variant="primary" class="animate-pulse">
 {{ resolvedPopularText }}

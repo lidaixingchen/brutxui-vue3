@@ -196,7 +196,7 @@ async function handleSubmit() {
 <template>
   <form @submit.prevent="handleSubmit">
     <!-- 表单内容 -->
-    <SubmitButton :loading="isSubmitting">提交</SubmitButton>
+    <Button type="submit" :loading="isSubmitting">提交</Button>
   </form>
 </template>
 ```

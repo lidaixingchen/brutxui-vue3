@@ -31,7 +31,6 @@ import PaginationDemo from './components/demos/PaginationDemo.vue'
 import PopoverDemo from './components/demos/PopoverDemo.vue'
 import ProgressDemo from './components/demos/ProgressDemo.vue'
 import RadioGroupDemo from './components/demos/RadioGroupDemo.vue'
-import SaaSPricingDemo from './components/demos/SaaSPricingDemo.vue'
 import ScrollAreaDemo from './components/demos/ScrollAreaDemo.vue'
 import SelectDemo from './components/demos/SelectDemo.vue'
 import SeparatorDemo from './components/demos/SeparatorDemo.vue'
@@ -39,7 +38,6 @@ import SheetDemo from './components/demos/SheetDemo.vue'
 import SkeletonDemo from './components/demos/SkeletonDemo.vue'
 import SliderDemo from './components/demos/SliderDemo.vue'
 import SpinnerDemo from './components/demos/SpinnerDemo.vue'
-import SubmitButtonDemo from './components/demos/SubmitButtonDemo.vue'
 import SwitchDemo from './components/demos/SwitchDemo.vue'
 import TableDemo from './components/demos/TableDemo.vue'
 import TabsDemo from './components/demos/TabsDemo.vue'
@@ -58,6 +56,7 @@ import BeforeAfterDemo from './components/demos/BeforeAfterDemo.vue'
 import CodeBlockDemo from './components/demos/CodeBlockDemo.vue'
 import TimelineDemo from './components/demos/TimelineDemo.vue'
 import CarouselDemo from './components/demos/CarouselDemo.vue'
+import CarouselEnhancedDemo from './components/demos/CarouselEnhancedDemo.vue'
 import TreeViewDemo from './components/demos/TreeViewDemo.vue'
 import KanbanBoardDemo from './components/demos/KanbanBoardDemo.vue'
 import ChatBubbleDemo from './components/demos/ChatBubbleDemo.vue'
@@ -87,7 +86,6 @@ import TestimonialCardDemo from './components/demos/TestimonialCardDemo.vue'
 import BlogCardDemo from './components/demos/BlogCardDemo.vue'
 import FileCardDemo from './components/demos/FileCardDemo.vue'
 import QuickActionsDemo from './components/demos/QuickActionsDemo.vue'
-import TabsNavDemo from './components/demos/TabsNavDemo.vue'
 import SearchWidgetDemo from './components/demos/SearchWidgetDemo.vue'
 import FeedbackFormDemo from './components/demos/FeedbackFormDemo.vue'
 import StepperSectionDemo from './components/demos/StepperSectionDemo.vue'
@@ -150,7 +148,6 @@ export default {
         app.component('PopoverDemo', PopoverDemo)
         app.component('ProgressDemo', ProgressDemo)
         app.component('RadioGroupDemo', RadioGroupDemo)
-        app.component('SaaSPricingDemo', SaaSPricingDemo)
         app.component('ScrollAreaDemo', ScrollAreaDemo)
         app.component('SelectDemo', SelectDemo)
         app.component('SeparatorDemo', SeparatorDemo)
@@ -158,7 +155,6 @@ export default {
         app.component('SkeletonDemo', SkeletonDemo)
         app.component('SliderDemo', SliderDemo)
         app.component('SpinnerDemo', SpinnerDemo)
-        app.component('SubmitButtonDemo', SubmitButtonDemo)
         app.component('SwitchDemo', SwitchDemo)
         app.component('TableDemo', TableDemo)
         app.component('TabsDemo', TabsDemo)
@@ -177,6 +173,7 @@ export default {
         app.component('CodeBlockDemo', CodeBlockDemo)
         app.component('TimelineDemo', TimelineDemo)
         app.component('CarouselDemo', CarouselDemo)
+        app.component('CarouselEnhancedDemo', CarouselEnhancedDemo)
         app.component('TreeViewDemo', TreeViewDemo)
         app.component('KanbanBoardDemo', KanbanBoardDemo)
         app.component('ChatBubbleDemo', ChatBubbleDemo)
@@ -206,7 +203,6 @@ export default {
         app.component('BlogCardDemo', BlogCardDemo)
         app.component('FileCardDemo', FileCardDemo)
         app.component('QuickActionsDemo', QuickActionsDemo)
-        app.component('TabsNavDemo', TabsNavDemo)
         app.component('SearchWidgetDemo', SearchWidgetDemo)
         app.component('FeedbackFormDemo', FeedbackFormDemo)
         app.component('StepperSectionDemo', StepperSectionDemo)
