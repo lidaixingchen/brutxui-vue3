@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHighlightLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const commandInputWrapperVariants = cva(
     [
@@ -16,8 +17,8 @@ export const commandItemVariants = cva(
         'border-3 border-transparent',
         'data-[highlighted=true]:bg-brutal-secondary data-[highlighted=true]:text-brutal-fg',
         'data-[highlighted=true]:border-brutal data-[highlighted=true]:font-black',
-        'data-[highlighted=true]:shadow-brutal-sm',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all',
+        brutalHighlightLift,
+        `${brutalPress} transition-all`,
         'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
     ]

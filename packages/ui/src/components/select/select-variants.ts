@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const selectTriggerVariants = cva(
     [
@@ -51,8 +52,8 @@ export const selectItemVariants = cva(
     [
         'relative flex w-full cursor-pointer select-none items-center py-2 pl-8 pr-3',
         'font-bold outline-none',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalHoverLift,
+        brutalPress,
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
     ],
     {

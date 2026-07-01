@@ -1060,6 +1060,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2043,6 +2047,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
