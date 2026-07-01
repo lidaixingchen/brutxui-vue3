@@ -1,6 +1,6 @@
 # 提交信息规范
 
-本项目遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范。
+本项目遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范，提交时仅提交自身负责的或受自身影响的。
 
 ## Shell 注意事项
 
