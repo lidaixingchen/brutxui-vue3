@@ -43,7 +43,7 @@ export const marqueeTrackVariants = cva(
                 right: 'animate-marquee-right',
             },
             pauseOnHover: {
-                true: 'hover:[animation-play-state:paused]',
+                true: 'hover:[animation-play-state:paused]', /* 组件私有：特定悬停暂停动画，不抽取 */
                 false: '',
             },
         },

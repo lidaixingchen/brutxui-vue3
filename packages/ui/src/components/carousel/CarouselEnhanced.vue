@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
 import { carouselRootVariants } from './carousel-variants'
 import { dotActiveClasses, dotInactiveClasses, prevButtonClasses, nextButtonClasses } from './carousel-shared'
@@ -58,8 +59,8 @@ const thumbnailClasses = computed(() => {
     }
     return cn(
         'border-3 border-brutal rounded-brutal cursor-pointer transition-all duration-150 overflow-hidden',
-        'hover:shadow-brutal hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalHoverLiftSmNoX,
+        brutalPress,
         sizeMap[props.thumbnails?.size ?? 'sm']
     )
 })

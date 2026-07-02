@@ -16,7 +16,7 @@
     },
     {
       "path": "components/ui/copy-to-clipboard/copy-to-clipboard-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const copyToClipboardVariants = cva(\n    [\n        'inline-flex items-center justify-center gap-2 font-black tracking-wide',\n        'border-3 border-brutal transition-all duration-150',\n        'rounded-brutal shadow-brutal select-none cursor-pointer',\n        'disabled:opacity-50 disabled:pointer-events-none',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-bg text-brutal-fg',\n                primary: 'bg-brutal-primary text-brutal-primary-foreground',\n                outline: 'bg-transparent text-brutal-fg',\n            },\n            size: {\n                sm: 'h-9 px-3 text-sm',\n                default: 'h-11 px-5 text-base',\n                lg: 'h-14 px-7 text-lg',\n            },\n            state: {\n                idle: 'hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n                copied: 'bg-brutal-success text-brutal-fg translate-y-[var(--brutal-pressed-offset,2px)] shadow-none',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            state: 'idle',\n        },\n    }\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const copyToClipboardVariants = cva(\n    [\n        'inline-flex items-center justify-center gap-2 font-black tracking-wide',\n        'border-3 border-brutal transition-all duration-150',\n        'rounded-brutal shadow-brutal select-none cursor-pointer',\n        'disabled:opacity-50 disabled:pointer-events-none',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-bg text-brutal-fg',\n                primary: 'bg-brutal-primary text-brutal-primary-foreground',\n                outline: 'bg-transparent text-brutal-fg',\n            },\n            size: {\n                sm: 'h-9 px-3 text-sm',\n                default: 'h-11 px-5 text-base',\n                lg: 'h-14 px-7 text-lg',\n            },\n            state: {\n                idle: `hover:bg-brutal-muted ${brutalHoverLift} ${brutalPress}`,\n                copied: 'bg-brutal-success text-brutal-fg translate-y-[var(--brutal-pressed-offset,2px)] shadow-none',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            state: 'idle',\n        },\n    }\n)\n",
       "type": "registry:ui"
     },
     {
@@ -42,6 +42,11 @@
     {
       "path": "lib/icon-size-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const iconSizeVariants = cva('', {\n    variants: {\n        size: {\n            xs: 'h-2.5 w-2.5',\n            sm: 'h-3 w-3',\n            default: 'h-4 w-4',\n            lg: 'h-5 w-5',\n            xl: 'h-6 w-6',\n            '2xl': 'h-8 w-8',\n        },\n    },\n    defaultVariants: { size: 'default' },\n})\n\nexport type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
       "type": "registry:ui"
     }
   ],
@@ -130,5 +135,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-69d0b2492628b8a9efe8dcc600036ee4f5409e4ffd423f6af1a67b5448d05cc8"
 }

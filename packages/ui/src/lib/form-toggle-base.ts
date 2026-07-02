@@ -1,9 +1,11 @@
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
+
 export const formToggleBaseClasses = [
     'border-3 border-brutal',
     'transition-all duration-150',
     'shadow-brutal-sm',
-    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+    brutalHoverLift,
+    brutalPress,
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
     'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',
 ] as const

@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const paginationVariants = cva('flex items-center justify-center', {
     variants: {
@@ -39,14 +40,14 @@ export const paginationButtonVariants = cva(
                     'bg-brutal-fg text-brutal-bg',
                     'shadow-brutal-primary',
                     'hover:shadow-brutal-sm',
-                    'active:shadow-none active:translate-y-[var(--brutal-pressed-offset,2px)]',
+                    brutalPress,
                 ],
                 false: [
                     'bg-brutal-bg text-brutal-fg',
                     'shadow-brutal',
                     'hover:bg-brutal-muted',
-                    'hover:shadow-brutal hover:-translate-y-0.5',
-                    'active:shadow-none active:translate-y-[var(--brutal-pressed-offset,2px)]',
+                    brutalHoverLiftSmNoX,
+                    brutalPress,
                 ],
             },
         },

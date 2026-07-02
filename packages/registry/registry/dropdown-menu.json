@@ -57,12 +57,17 @@
     },
     {
       "path": "components/ui/dropdown-menu/dropdown-menu-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\nimport { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\n\nconst dropdownMenuContentBaseStyles = [\n    'z-50 min-w-[8rem] overflow-hidden p-1',\n    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n    ...floatingContentAnimationClasses,\n]\n\nexport const dropdownMenuContentVariants = cva(dropdownMenuContentBaseStyles)\n\nexport const dropdownMenuSubContentVariants = cva(dropdownMenuContentBaseStyles)\n\nexport const dropdownMenuItemVariants = cva(\n    [\n        'relative flex cursor-pointer select-none items-center px-3 py-2',\n        'font-bold outline-none transition-all rounded-brutal',\n        'focus:bg-brutal-accent focus:text-brutal-fg',\n        'hover:shadow-brutal-sm',\n        'focus-visible:ring-2 focus-visible:ring-brutal-ring',\n        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n    ]\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\nimport { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\n\nconst dropdownMenuContentBaseStyles = [\n    'z-50 min-w-[8rem] overflow-hidden p-1',\n    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n    ...floatingContentAnimationClasses,\n]\n\nexport const dropdownMenuContentVariants = cva(dropdownMenuContentBaseStyles)\n\nexport const dropdownMenuSubContentVariants = cva(dropdownMenuContentBaseStyles)\n\nexport const dropdownMenuItemVariants = cva(\n    [\n        'relative flex cursor-pointer select-none items-center px-3 py-2',\n        'font-bold outline-none transition-all rounded-brutal',\n        'focus:bg-brutal-accent focus:text-brutal-fg',\n        'hover:shadow-brutal-sm',\n        'focus-visible:ring-2 focus-visible:ring-brutal-ring',\n        brutalPress,\n        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n    ]\n)\n",
       "type": "registry:ui"
     },
     {
       "path": "lib/icon-size-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const iconSizeVariants = cva('', {\n    variants: {\n        size: {\n            xs: 'h-2.5 w-2.5',\n            sm: 'h-3 w-3',\n            default: 'h-4 w-4',\n            lg: 'h-5 w-5',\n            xl: 'h-6 w-6',\n            '2xl': 'h-8 w-8',\n        },\n    },\n    defaultVariants: { size: 'default' },\n})\n\nexport type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
       "type": "registry:ui"
     },
     {
@@ -156,5 +161,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-324975ac83dd6dfed7c6ae59ab5bb09fa539353e99f097536443c70a3e0fc838"
 }

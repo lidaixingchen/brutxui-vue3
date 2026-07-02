@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { brutalHoverLiftNoX } from '@/lib/brutal-interaction-variants'
 import { cardVariants } from './card-variants'
 
 type CardVariantProps = VariantProps<typeof cardVariants>
@@ -27,7 +28,7 @@ const emit = defineEmits<{
 const classes = computed(() =>
     cn(
         cardVariants({ variant: props.variant, padding: props.padding }),
-        props.interactive && 'cursor-pointer hover:shadow-brutal-lg hover:-translate-y-0.5 transition-all',
+        props.interactive && `cursor-pointer ${brutalHoverLiftNoX} transition-all`,
         props.class
     )
 )

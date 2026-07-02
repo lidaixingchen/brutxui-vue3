@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerFooterVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
@@ -104,7 +105,7 @@ function getYearClasses(year: number): string {
         'h-10 w-full flex items-center justify-center text-xs font-bold tracking-tight cursor-pointer',
         'border-3 border-brutal/10 transition-all duration-100',
         'hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-black hover:shadow-brutal-sm hover:border-brutal',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalPress,
         isYearActive(year) && 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal-sm font-black',
         isYearDisabled(year) && 'opacity-40 cursor-not-allowed hover:bg-brutal-bg hover:text-brutal-fg hover:shadow-none hover:border-brutal/10 hover:font-bold',
     )

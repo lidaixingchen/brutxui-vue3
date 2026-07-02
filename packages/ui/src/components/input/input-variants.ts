@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { inputVariantClasses } from './shared-input-variants'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const inputVariants = cva(
     [
@@ -12,7 +13,7 @@ export const inputVariants = cva(
         'transition-all duration-150',
         'focus:outline-none focus:shadow-brutal',
         'focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2 focus-visible:shadow-brutal-lg',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalPress,
         'disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-brutal-muted',
     ],
     {

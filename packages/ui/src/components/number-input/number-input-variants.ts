@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const numberInputRootVariants = cva(
     [
@@ -30,7 +31,7 @@ export const numberInputButtonVariants = cva(
         'flex items-center justify-center',
         'transition-all duration-150',
         'disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalPress,
         'hover:shadow-brutal-sm hover:-translate-y-0.5',
     ],
     {

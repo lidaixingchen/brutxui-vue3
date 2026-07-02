@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const overlayVariants = cva([
     'fixed inset-0 z-50 bg-brutal-overlay',
@@ -20,7 +21,7 @@ export const CLOSE_BUTTON_BASE_CLASSES = [
     'shadow-brutal-sm',
     'transition-all duration-150',
     'hover:bg-brutal-destructive hover:text-brutal-fg',
-    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+    brutalPress,
     'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
 ]
 

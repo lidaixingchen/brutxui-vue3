@@ -1,3 +1,5 @@
+import { brutalPress } from '@/lib/brutal-interaction-variants'
+
 export const INDENT_PER_DEPTH = 20
 export const BASE_INDENT_TREE_VIEW = 4
 export const BASE_INDENT_TREE_SELECT = 8
@@ -7,7 +9,7 @@ export const treeNodeBaseClasses = [
     'border-3 border-transparent rounded-brutal',
     'text-sm text-brutal-fg font-medium',
     'transition-all duration-150',
-    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+    brutalPress,
 ] as const
 
 export const treeSelectedClass = 'bg-brutal-primary border-brutal shadow-brutal'

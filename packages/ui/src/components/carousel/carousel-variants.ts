@@ -25,8 +25,8 @@ export const carouselButtonVariants = cva(
         'bg-brutal-bg border-3 border-brutal shadow-brutal rounded-brutal',
         'w-10 h-10 cursor-pointer',
         'transition-all duration-150',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)]',
-        'active:translate-y-[calc(-50%+var(--brutal-pressed-offset,2px))] active:shadow-none',
+        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-[calc(50%+2px)]', /* 组件私有：配合 top-1/2 绝对定位，强耦合布局 */
+        'active:translate-y-[calc(-50%+var(--brutal-pressed-offset,2px))] active:shadow-none', /* 组件私有：配合 top-1/2 绝对定位，强耦合布局 */
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-brutal',
     ],
     {

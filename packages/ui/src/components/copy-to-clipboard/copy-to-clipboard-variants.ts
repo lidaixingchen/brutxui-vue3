@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const copyToClipboardVariants = cva(
     [
@@ -20,7 +21,7 @@ export const copyToClipboardVariants = cva(
                 lg: 'h-14 px-7 text-lg',
             },
             state: {
-                idle: 'hover:bg-brutal-muted hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+                idle: `hover:bg-brutal-muted ${brutalHoverLift} ${brutalPress}`,
                 copied: 'bg-brutal-success text-brutal-fg translate-y-[var(--brutal-pressed-offset,2px)] shadow-none',
             },
         },

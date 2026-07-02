@@ -47,7 +47,7 @@
     },
     {
       "path": "components/ui/breadcrumb/breadcrumb-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const breadcrumbListVariants = cva(\n    'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4'\n)\n\nexport const breadcrumbItemVariants = cva(\n    'list-none inline-flex items-center gap-1.5'\n)\n\nexport const breadcrumbLinkVariants = cva(\n    'font-semibold transition-colors hover:text-brutal-primary hover:underline hover:shadow-brutal-sm hover:-translate-y-0.5 active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer'\n)\n\nexport const breadcrumbPageVariants = cva(\n    'font-black text-brutal-fg bg-brutal-accent px-2 py-0.5 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'\n)\n\nexport const breadcrumbSeparatorVariants = cva(\n    'list-none [&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-brutal-fg/60'\n)\n\nexport const breadcrumbEllipsisVariants = cva(\n    'flex h-7 w-7 items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm rounded-brutal transition-all hover:bg-brutal-muted active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none select-none'\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const breadcrumbListVariants = cva(\n    'list-none flex flex-wrap items-center gap-2.5 break-words text-sm font-medium text-brutal-fg sm:gap-4'\n)\n\nexport const breadcrumbItemVariants = cva(\n    'list-none inline-flex items-center gap-1.5'\n)\n\nexport const breadcrumbLinkVariants = cva(\n    [\n        'font-semibold transition-colors hover:text-brutal-primary hover:underline hover:shadow-brutal-sm hover:-translate-y-0.5 cursor-pointer', /* 组件私有：面包屑项悬浮下划线及浮起效果，不抽取 */\n        brutalPress,\n    ]\n)\n\nexport const breadcrumbPageVariants = cva(\n    'font-black text-brutal-fg bg-brutal-accent px-2 py-0.5 border-3 border-brutal rounded-brutal shadow-brutal-sm select-none'\n)\n\nexport const breadcrumbSeparatorVariants = cva(\n    'list-none [&>svg]:w-3.5 [&>svg]:h-3.5 font-bold text-brutal-fg/60'\n)\n\nexport const breadcrumbEllipsisVariants = cva(\n    [\n        'flex h-7 w-7 items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm rounded-brutal transition-all hover:bg-brutal-muted select-none', /* 组件私有：面包屑操作按钮悬浮背景，不抽取 */\n        brutalPress,\n    ]\n)\n",
       "type": "registry:ui"
     },
     {
@@ -68,6 +68,11 @@
     {
       "path": "lib/icon-size-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const iconSizeVariants = cva('', {\n    variants: {\n        size: {\n            xs: 'h-2.5 w-2.5',\n            sm: 'h-3 w-3',\n            default: 'h-4 w-4',\n            lg: 'h-5 w-5',\n            xl: 'h-6 w-6',\n            '2xl': 'h-8 w-8',\n        },\n    },\n    defaultVariants: { size: 'default' },\n})\n\nexport type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
       "type": "registry:ui"
     }
   ],
@@ -156,5 +161,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-5fb3f54ee00c2f9334cd23cef853321cd78217c4fd7e37961a20f5dff9542429"
 }

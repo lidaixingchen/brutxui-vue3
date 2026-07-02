@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { baseButtonVariants } from './shared-button-variants'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const buttonVariants = cva(
     [
@@ -10,7 +11,7 @@ export const buttonVariants = cva(
         'transition-all duration-150',
         'focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2',
         'disabled:opacity-50 disabled:pointer-events-none',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalPress,
     ],
     baseButtonVariants
 )

@@ -13,6 +13,7 @@ const DatePicker = defineAsyncComponent(async () => {
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 
 interface CalendarProps {
     modelValue?: Date | Date[] | null
@@ -100,7 +101,7 @@ const dragAttribute = computed(() => ({
 const dayBaseClasses = computed(() =>
     cn(
         'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all'
+        brutalPressWithTransition
     )
 )
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')

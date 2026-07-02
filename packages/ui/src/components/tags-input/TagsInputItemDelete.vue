@@ -3,6 +3,7 @@ import { TagsInputItemDelete, type TagsInputItemDeleteProps } from 'reka-ui'
 import { computed } from 'vue'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 const props = defineProps<TagsInputItemDeleteProps & { class?: string }>()
 
@@ -13,7 +14,8 @@ const delegatedProps = computed(() => {
 
 const classes = computed(() =>
     cn(
-        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal',
+        brutalPress,
         props.class
     )
 )

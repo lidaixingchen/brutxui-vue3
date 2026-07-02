@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const tabsListVariants = cva(
     [
@@ -37,11 +38,11 @@ export const tabsTriggerVariants = cva(
         'rounded-brutal',
         'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalPress,
         'disabled:pointer-events-none disabled:opacity-50',
         'data-[state=active]:text-brutal-fg data-[state=active]:border-brutal data-[state=active]:shadow-brutal-sm',
-        'data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+        'data-[state=inactive]:hover:bg-brutal-muted data-[state=inactive]:shadow-none', /* 组件私有：未激活标签悬停样式，不抽取 */
+        brutalHoverLift,
     ],
     {
         variants: {

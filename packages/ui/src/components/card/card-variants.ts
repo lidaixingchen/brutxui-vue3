@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const cardVariants = cva(
     [
@@ -15,8 +16,8 @@ export const cardVariants = cva(
                 flat: 'shadow-none',
                 interactive: [
                     'shadow-brutal',
-                    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-                    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+                    brutalHoverLift,
+                    brutalPress,
                     'cursor-pointer',
                 ],
                 primary: 'shadow-brutal-primary border-[var(--brutal-primary)]',

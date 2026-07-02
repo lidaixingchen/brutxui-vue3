@@ -1,10 +1,12 @@
 import { cva } from 'class-variance-authority';
 import { treeNodeBaseClasses, treeSelectedClass } from '@/lib/tree-variants';
+import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
 
 export const treeItemVariants = cva(
     [
         ...treeNodeBaseClasses,
-        'hover:border-brutal hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+        'hover:border-brutal',
+        brutalHoverLift,
     ],
     {
         variants: {

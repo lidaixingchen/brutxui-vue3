@@ -1,3 +1,5 @@
+import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
+
 export const buttonVariantOptions = [
     'default',
     'primary',
@@ -27,48 +29,48 @@ export const baseButtonVariants = {
             default: [
                 'bg-brutal-bg text-brutal-fg',
                 'shadow-brutal',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                brutalHoverLift,
             ],
             primary: [
                 'bg-brutal-primary text-brutal-primary-foreground',
                 'shadow-brutal',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                brutalHoverLift,
             ],
             secondary: [
                 'bg-brutal-secondary text-brutal-secondary-foreground',
                 'shadow-brutal',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                brutalHoverLift,
             ],
             accent: [
                 'bg-brutal-accent text-brutal-accent-foreground',
                 'shadow-brutal',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                brutalHoverLift,
             ],
             danger: [
                 'bg-brutal-destructive text-brutal-destructive-foreground',
                 'shadow-brutal',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                brutalHoverLift,
             ],
             success: [
                 'bg-brutal-success text-brutal-success-foreground',
                 'shadow-brutal',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                brutalHoverLift,
             ],
             outline: [
                 'bg-transparent text-brutal-fg',
                 'shadow-brutal',
-                'hover:bg-brutal-fg hover:text-brutal-bg',
-                'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
+                'hover:bg-brutal-fg hover:text-brutal-bg', /* 组件私有：悬浮反色，不抽取 */
+                brutalHoverLift,
             ],
             ghost: [
                 'bg-transparent text-brutal-fg border-transparent',
                 'shadow-none',
-                'hover:bg-brutal-muted hover:border-brutal',
+                'hover:bg-brutal-muted hover:border-brutal', /* 组件私有：悬浮灰色背景，不抽取 */
             ],
             link: [
                 'bg-transparent text-brutal-fg border-transparent',
                 'shadow-none underline-offset-4',
-                'hover:underline',
+                'hover:underline', /* 组件私有：悬浮下划线，不抽取 */
             ],
         },
         size: {

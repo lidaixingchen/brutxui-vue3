@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLiftSm, brutalHoverLiftSmNoX } from '@/lib/brutal-interaction-variants'
 import { treeNodeBaseClasses, treeSelectedClass } from '@/lib/tree-variants'
 
 export const treeSelectTriggerVariants = cva(
@@ -7,7 +8,7 @@ export const treeSelectTriggerVariants = cva(
         'border-3 border-brutal rounded-brutal',
         'bg-brutal-bg text-brutal-fg font-semibold',
         'transition-all duration-150',
-        'hover:shadow-brutal hover:-translate-y-0.5',
+        brutalHoverLiftSmNoX,
         'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0',
     ],
@@ -28,7 +29,7 @@ export const treeSelectTriggerVariants = cva(
 export const treeSelectNodeVariants = cva(
     [
         ...treeNodeBaseClasses,
-        'hover:border-brutal hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5',
+        `hover:border-brutal ${brutalHoverLiftSm}`,
         'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-transparent disabled:hover:shadow-none disabled:hover:translate-x-0 disabled:hover:translate-y-0',
     ],
     {

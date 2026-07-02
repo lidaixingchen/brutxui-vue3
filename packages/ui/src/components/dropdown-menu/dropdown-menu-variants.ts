@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
 
 const dropdownMenuContentBaseStyles = [
@@ -18,7 +19,7 @@ export const dropdownMenuItemVariants = cva(
         'focus:bg-brutal-accent focus:text-brutal-fg',
         'hover:shadow-brutal-sm',
         'focus-visible:ring-2 focus-visible:ring-brutal-ring',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalPress,
         'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
     ]
 )

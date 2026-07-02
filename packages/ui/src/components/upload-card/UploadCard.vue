@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { Upload } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { useUpload } from '@/composables/useUpload'
 import Card from '../card/Card.vue'
@@ -55,8 +56,8 @@ const dropZoneClasses = computed(() =>
     cn(
         'flex flex-col items-center justify-center p-8 border-3 border-dashed border-brutal rounded-brutal transition-all cursor-pointer',
         isDragging.value ? 'bg-brutal-muted shadow-brutal' : 'bg-brutal-bg',
-        'hover:shadow-brutal hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalHoverLiftSmNoX,
+        brutalPress,
         props.uploading && 'pointer-events-none'
     )
 )

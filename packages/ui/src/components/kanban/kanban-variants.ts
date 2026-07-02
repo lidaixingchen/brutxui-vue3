@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority';
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const kanbanColumnVariants = cva(
     [
@@ -48,10 +49,10 @@ export const kanbanCardVariants = cva(
     [
         'border-3 border-brutal shadow-brutal rounded-brutal',
         'bg-brutal-bg px-3 py-2',
-        'cursor-grab active:cursor-grabbing',
+        'cursor-grab active:cursor-grabbing', /* 组件私有：拖拽抓取状态语义，不抽取 */
         'transition-all duration-150',
-        'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalHoverLift,
+        brutalPress,
     ],
     {
         variants: {

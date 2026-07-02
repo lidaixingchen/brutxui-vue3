@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const colorPickerTriggerVariants = cva(
     [
@@ -7,8 +8,8 @@ export const colorPickerTriggerVariants = cva(
         'bg-brutal-bg text-brutal-fg',
         'shadow-brutal',
         'transition-all duration-150',
-        'hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalHoverLift,
+        brutalPress,
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring',
         'disabled:opacity-50 disabled:pointer-events-none',
     ],
@@ -32,9 +33,9 @@ export const colorPickerSwatchVariants = cva(
         'border-2 border-brutal',
         'cursor-pointer',
         'transition-transform duration-100',
-        'hover:scale-110',
-        'active:scale-95',
-        'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+        'hover:scale-110', /* 组件私有：特定缩放效果，不抽取 */
+        'active:scale-95', /* 组件私有：特定缩放效果，不抽取 */
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100', /* 组件私有：禁用状态缩放重置，不抽取 */
     ],
     {
         variants: {

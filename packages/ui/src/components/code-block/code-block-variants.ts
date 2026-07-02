@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 
 export const codeBlockRootVariants = cva(
     'border-3 border-brutal bg-brutal-bg text-brutal-fg rounded-brutal shadow-brutal overflow-hidden'
@@ -21,5 +22,5 @@ export const codeBlockLineNumbersVariants = cva(
 )
 
 export const codeBlockCopyButtonVariants = cva(
-    'h-7 px-3 text-xs border-3 border-brutal shadow-brutal-sm active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all bg-brutal-bg hover:bg-brutal-muted'
+    `h-7 px-3 text-xs border-3 border-brutal shadow-brutal-sm ${brutalPressWithTransition} bg-brutal-bg hover:bg-brutal-muted`
 )

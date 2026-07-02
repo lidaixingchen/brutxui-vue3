@@ -36,7 +36,7 @@
     },
     {
       "path": "lib/form-toggle-base.ts",
-      "content": "export const formToggleBaseClasses = [\n    'border-3 border-brutal',\n    'transition-all duration-150',\n    'shadow-brutal-sm',\n    'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5',\n    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n    'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',\n] as const\n\nexport const formToggleVariantColors = {\n    default: 'data-[state=checked]:bg-brutal-success',\n    primary: 'data-[state=checked]:bg-brutal-primary',\n    secondary: 'data-[state=checked]:bg-brutal-secondary',\n    accent: 'data-[state=checked]:bg-brutal-accent',\n    danger: 'data-[state=checked]:bg-brutal-destructive',\n} as const\n",
+      "content": "import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const formToggleBaseClasses = [\n    'border-3 border-brutal',\n    'transition-all duration-150',\n    'shadow-brutal-sm',\n    brutalHoverLift,\n    brutalPress,\n    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n    'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',\n] as const\n\nexport const formToggleVariantColors = {\n    default: 'data-[state=checked]:bg-brutal-success',\n    primary: 'data-[state=checked]:bg-brutal-primary',\n    secondary: 'data-[state=checked]:bg-brutal-secondary',\n    accent: 'data-[state=checked]:bg-brutal-accent',\n    danger: 'data-[state=checked]:bg-brutal-destructive',\n} as const\n",
       "type": "registry:ui"
     }
   ],
@@ -125,5 +125,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-ab75698406f4349d9a048461156b6160efabdaadf09631544299d995e4696ac0"
 }

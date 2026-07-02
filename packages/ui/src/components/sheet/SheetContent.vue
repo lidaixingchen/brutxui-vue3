@@ -9,6 +9,7 @@ import {
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { brutalHoverLiftSm } from '@/lib/brutal-interaction-variants'
 import { sheetVariants } from './sheet-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { overlayVariants, CLOSE_BUTTON_BASE_CLASSES } from '@/lib/modal-variants'
@@ -39,7 +40,7 @@ const closeClasses = computed(() =>
         CLOSE_BUTTON_BASE_CLASSES,
         'absolute top-4',
         props.side === 'left' ? 'left-4' : 'right-4',
-        'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'
+        brutalHoverLiftSm
     )
 )
 

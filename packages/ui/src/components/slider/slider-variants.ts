@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 
 const sliderTrackSizeVariants = {
     sm: '[--slider-thickness:0.75rem]',
@@ -50,9 +51,9 @@ export const sliderThumbVariants = cva(
         'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
         'disabled:pointer-events-none disabled:opacity-50',
-        'hover:shadow-brutal hover:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'cursor-grab active:cursor-grabbing',
+        brutalHoverLiftSmNoX,
+        brutalPress,
+        'cursor-grab active:cursor-grabbing', /* 组件私有：拖拽抓取状态语义，不抽取 */
     ],
     {
         variants: {

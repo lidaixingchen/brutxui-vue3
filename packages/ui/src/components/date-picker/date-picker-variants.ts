@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const datePickerTriggerVariants = cva(
     [
@@ -7,8 +8,8 @@ export const datePickerTriggerVariants = cva(
         'bg-brutal-bg text-brutal-fg',
         'shadow-brutal',
         'transition-all duration-150',
-        'hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal-lg',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
+        brutalHoverLift,
+        brutalPress,
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring',
         'disabled:opacity-50 disabled:pointer-events-none',
     ],

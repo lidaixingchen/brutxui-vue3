@@ -106,5 +106,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-113e1a23758e751e0fdd02c34459e723acddd9ea5cf951027da6c83ea5ef94c7"
 }

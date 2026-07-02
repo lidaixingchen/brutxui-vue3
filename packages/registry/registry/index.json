@@ -132,7 +132,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-edae408c202d61b9a22372373c859599020a856bff2950018d3fd3cc729fc5ea"
     },
     {
       "name": "avatar",
@@ -262,7 +263,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-7e60c7c358b9936271414116dfaacbc416fb85bacdab4ed232d1353ccff485b8"
     },
     {
       "name": "badge",
@@ -382,7 +384,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-1b611b04ab6638a3468bb1c2058c132d9da0f7c03020333fc4aa0f154ec0dd05"
     },
     {
       "name": "button",
@@ -422,108 +425,9 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
         },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      }
-    },
-    {
-      "name": "calendar",
-      "type": "registry:ui",
-      "title": "Calendar",
-      "description": "A highly customizable neo-brutalist Calendar component built with Brutx design tokens for Vue 3.",
-      "dependencies": [
-        "v-calendar",
-        "@lucide/vue"
-      ],
-      "registryDependencies": [],
-      "files": [
         {
-          "path": "components/ui/calendar/Calendar.vue",
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -612,7 +516,116 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-b996a803185b03048765615f7c91b010684d1eb726cfeeba932bf542533c10fa"
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "A highly customizable neo-brutalist Calendar component built with Brutx design tokens for Vue 3.",
+      "dependencies": [
+        "v-calendar",
+        "@lucide/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/calendar/Calendar.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-e3c8a7059b080da0a307e3aeb5081d54e48344d6b65219ae0e79287ad1095eea"
     },
     {
       "name": "card",
@@ -649,6 +662,10 @@
         {
           "path": "components/ui/card/card-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -736,7 +753,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-52b60725b7a6c2ee3f4479ff468da3975ca5936fc5594f0c9e535a43001e717d"
     },
     {
       "name": "checkbox",
@@ -863,7 +881,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-e4ebd58e30d1a3ec2d875e8c16ffdc298f5e034aa9f51f444e28f8d3209d3a04"
     },
     {
       "name": "combobox",
@@ -995,7 +1014,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-aa40dbbd5a7615da6c7ab46ba1bf8efd1876822f3184026b490ed01d0b98560d"
     },
     {
       "name": "command",
@@ -1155,7 +1175,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ad3364e0e35d0861d754763fab13919c72965d410130d2626018b414d099d583"
     },
     {
       "name": "dialog",
@@ -1217,6 +1238,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "lib/floating-animation-classes.ts",
           "type": "registry:ui"
         }
@@ -1306,7 +1331,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-4146b19f0ae3d5f3ec10e3a9713979a9488eb32383cfd3374a5791d82fd44a54"
     },
     {
       "name": "dropdown-menu",
@@ -1364,6 +1390,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "lib/floating-animation-classes.ts",
           "type": "registry:ui"
         }
@@ -1453,7 +1483,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-324975ac83dd6dfed7c6ae59ab5bb09fa539353e99f097536443c70a3e0fc838"
     },
     {
       "name": "input",
@@ -1473,6 +1504,10 @@
         },
         {
           "path": "composables/useClearable.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1561,7 +1596,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-c69ae6f8fd3ae46442f65f9dd7c5a4b08944ca867e93e1e84eeb655e16b497cb"
     },
     {
       "name": "label",
@@ -1667,7 +1703,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-855e961d07550ffc1ec81ada56ba97374e8e72004aa87910323d18bd812c5e3d"
     },
     {
       "name": "pagination",
@@ -1704,6 +1741,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -1792,7 +1833,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-07ece8059d60faa97ca35310d5e088865a8206913875bc915b8f4f5f4c6f90e1"
     },
     {
       "name": "popover",
@@ -1902,7 +1944,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-db46a600b851b4183273ce5448561a036f0fa95b4393bf0db8d797e78226b3a0"
     },
     {
       "name": "scroll-area",
@@ -2012,7 +2055,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-1a8a79ca8a4134bf9cb270d99ba84a219d2e30fcfde2ba5b55513ad8377595bf"
     },
     {
       "name": "select",
@@ -2159,7 +2203,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-53e1b62d728b3cefa0d1d47b33440128e1b899babb5939b5d09d5b25eb070bd2"
     },
     {
       "name": "separator",
@@ -2265,7 +2310,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-4d1daeaacfdbf5bf8ebd3bd1c9e14d3dc6bed48692f3f51175694dcf75a3c537"
     },
     {
       "name": "skeleton",
@@ -2385,7 +2431,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-62b0165a88d90f6b63db9a2df8ab31720c8647094fe89d110553ed99c8eab0a0"
     },
     {
       "name": "spinner",
@@ -2513,7 +2560,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ed647740f7421307a0d41d383b0d2c9a260d61e961bbc506191350c385a7eabb"
     },
     {
       "name": "switch",
@@ -2635,7 +2683,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ab75698406f4349d9a048461156b6160efabdaadf09631544299d995e4696ac0"
     },
     {
       "name": "table",
@@ -2767,7 +2816,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-d7c2feaf8eecc41e8319227149b4c41f84280a2cd217a26aac2840fdda8d6a19"
     },
     {
       "name": "tabs",
@@ -2810,6 +2860,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -2897,7 +2951,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-937418f4948b420d1068aa5002e6cd3b7c19d098eeca75112b3bbd94459f1fe4"
     },
     {
       "name": "textarea",
@@ -2928,6 +2983,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3015,7 +3074,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-d5dc59adddbb951502f1bd55f3414ef3325e5a942155f73b16d48977b5bb7fb6"
     },
     {
       "name": "toast",
@@ -3155,7 +3215,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-a623b26857b7990e88daec1e190ddb0a2126298c637d3b58432c955ba5c7db54"
     },
     {
       "name": "tooltip",
@@ -3261,7 +3322,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-bd16af0dcf01e99858feb17c87fe2b21db7cfe27839aff4fed14c7e69513ebed"
     },
     {
       "name": "dashboard-stats",
@@ -3383,7 +3445,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-5abd3992ccacb184393062f503a86614fe5427e7fd1bee1d33cced46cddcbf25"
     },
     {
       "name": "form",
@@ -3542,7 +3605,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-923aa6455e9a3ca677da5a7067b819774cc998251818e20d693d8e18d19369a3"
     },
     {
       "name": "alert-dialog",
@@ -3682,7 +3746,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-54c54829bfc1ff1067f893d1444888fa5327801f355a1ee877baab0fe964eec0"
     },
     {
       "name": "sheet",
@@ -3729,6 +3794,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         },
         {
@@ -3825,7 +3894,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-5a214f0040342b75d590ff8fad55550215501c4cff788a3e235267fc1d359527"
     },
     {
       "name": "radio-group",
@@ -3849,6 +3919,10 @@
         {
           "path": "components/ui/radio-group/radio-group-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -3936,7 +4010,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-4a990aaf9dd406be371ecc20f1b5aa0aa979ab460b92cb6b2f49061524afff86"
     },
     {
       "name": "slider",
@@ -3955,6 +4030,10 @@
         {
           "path": "components/ui/slider/slider-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -4042,7 +4121,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-fb8ab9186bac957a3ec01c1cd2342bfaa99c930fe2b97aad102be090fd9d681f"
     },
     {
       "name": "progress",
@@ -4148,7 +4228,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-fa5ceda892937e7a0e680fa812ac30f940ec1dfc900d24312c88cb8324bd4e4c"
     },
     {
       "name": "toggle",
@@ -4170,6 +4251,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -4258,7 +4343,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-e6d2914b4c14a836c0eb17757a1a81eab38e4b1e92183d915006ad8237005b0d"
     },
     {
       "name": "toggle-group",
@@ -4370,7 +4456,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-e828f95ef0990f1437bc8355348e3d86c899951e31e20bb7e4e5197894f0ebc1"
     },
     {
       "name": "brutalist-hero",
@@ -4492,7 +4579,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ff2d241fc2b829cbded533fbd58e497ef100b39c71f169fc7091b77084a1762c"
     },
     {
       "name": "pricing-section",
@@ -4611,7 +4699,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-7062a9a6c4a3edfad760d8cbc6ff924e3395744fe99026d38ab56075f28db211"
     },
     {
       "name": "auth-card",
@@ -4738,7 +4827,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-c52584b22df5dc2d238e286cdbe86d5ae6a1d1855b392da2f96d83ea77c7286f"
     },
     {
       "name": "dashboard-shell",
@@ -4858,7 +4948,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-346c9fc4f41a73b1c0a43b184037877964fb0356c02f0783a45e346612de9222"
     },
     {
       "name": "empty-state",
@@ -4974,7 +5065,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ee45381cdef3d2f8cab95f06ef0a599b7d0bcaa34442237d00e67e6da15f27b7"
     },
     {
       "name": "waitlist-page",
@@ -5100,7 +5192,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-be2b1b8f55cd4647028cc5465414cb2b66a33ac18a817d207af208db3814d647"
     },
     {
       "name": "accordion",
@@ -5139,6 +5232,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -5227,7 +5324,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-d09fedf444ea56c3faa75faa5b7a3bee83726cce19f64fe5ad7d38580a6ffcf2"
     },
     {
       "name": "tags-input",
@@ -5275,6 +5373,10 @@
         {
           "path": "locales/types.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5362,7 +5464,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-664881dfa4d50d9b8047cd3c3ac6890fe19fce76f6f2c4850c189cd3b4c53604"
     },
     {
       "name": "number-input",
@@ -5398,6 +5501,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5485,7 +5592,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-5b3ef2af3a99a708f35f2d10a01e30cb7eb05cd138766996391e15436549917e"
     },
     {
       "name": "copy-to-clipboard",
@@ -5524,6 +5632,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5611,7 +5723,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-69d0b2492628b8a9efe8dcc600036ee4f5409e4ffd423f6af1a67b5448d05cc8"
     },
     {
       "name": "breadcrumb",
@@ -5671,6 +5784,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -5758,7 +5875,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-5fb3f54ee00c2f9334cd23cef853321cd78217c4fd7e37961a20f5dff9542429"
     },
     {
       "name": "marquee",
@@ -5870,7 +5988,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-218c860e3c3d5c3bd628ac78994cac1bccbc7823aeeef211c603cde23d7a7408"
     },
     {
       "name": "before-after",
@@ -6000,7 +6119,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-6b5cefc33fa7a9dcd68ace280c1dbcd0422f06990de96b3466d9cea5e7cbb1b3"
     },
     {
       "name": "code-block",
@@ -6042,6 +6162,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -6130,7 +6254,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-8cb8e8a1b5002755abc4e88eb184112218c4cc4e34b2ea667d0301013674112b"
     },
     {
       "name": "timeline",
@@ -6273,7 +6398,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-5ab26778096b3bbbfa9f7ba673d6d9fda249dc36e5a061bc0f5d8364d30f1d30"
     },
     {
       "name": "carousel",
@@ -6320,6 +6446,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         },
         {
@@ -6412,7 +6542,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-8fc93a71df8b190eb2253db2e51d476e6c4f790f7144614cbdcc025f6008ff44"
     },
     {
       "name": "tree-view",
@@ -6458,6 +6589,10 @@
         {
           "path": "lib/tree-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -6545,7 +6680,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-219a4f5084320b752c36e04a90e77590c1be78102ea09c3c296f755963b81e24"
     },
     {
       "name": "kanban",
@@ -6582,6 +6718,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -6669,7 +6809,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-fc24a3e99066887759651ab1e5b84d3a42cebf9ba7070dc7dd7408819c3b065e"
     },
     {
       "name": "chat-bubble",
@@ -6776,7 +6917,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-113e1a23758e751e0fdd02c34459e723acddd9ea5cf951027da6c83ea5ef94c7"
     },
     {
       "name": "kbd",
@@ -6880,7 +7022,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-e7ceb297a64445a001e9c28574067f2cdc2a1c26293e1406f2d70578f73b2908"
     },
     {
       "name": "counter",
@@ -6992,7 +7135,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-fc4053f1f146c3d20f375835272f8358df1046cd51d2c065fc98ebfa437fe3db"
     },
     {
       "name": "stepper",
@@ -7022,6 +7166,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -7110,7 +7258,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-b7216b8de4cda031bee412c19674e0c9ec4cb14f5a7a0f1746bc0954ff8a7686"
     },
     {
       "name": "card-3d",
@@ -7238,7 +7387,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-8514a3f48f019ea896c0f2bd47faf61fa77891e1fc60b3a81b27e1edbf52d381"
     },
     {
       "name": "glitch-text",
@@ -7262,6 +7412,10 @@
         },
         {
           "path": "lib/defaults.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         },
         {
@@ -7354,7 +7508,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-66580578c831cdba69bfcbf4c48d0ea253fe34cc2062f5f8320e9a2e9698202c"
     },
     {
       "name": "scratch-card",
@@ -7486,7 +7641,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-9a39e0c1a5832af3e19cc6ed7b75e538d297ee55de37d43597ce11a2346e84d8"
     },
     {
       "name": "sketchy-chart",
@@ -7606,7 +7762,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-8530719b51600815c6eb694d2f314c198c9425f1dbaeded90586dad519de27cd"
     },
     {
       "name": "hardcore-input",
@@ -7736,7 +7893,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-7ef9bed223d542df917c7a273dee13031231c75f7ff5f1a7a9f561050cde6489"
     },
     {
       "name": "testimonial-card",
@@ -7858,7 +8016,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ac3d10b357906e1924ed79249af9055e02f33b09492c6561548e53847522556e"
     },
     {
       "name": "blog-card",
@@ -7977,7 +8136,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-645aa8f851b0ce5d5f5eb7319f9e11864e437b8f739487a9bdc7223d1a22d17f"
     },
     {
       "name": "file-card",
@@ -8099,7 +8259,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-caa439b0e138a313d94e4f4b0ec0683ebd4feda532afbfc51d7f9801d99e86b4"
     },
     {
       "name": "quick-actions",
@@ -8222,7 +8383,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-4412a2c71008c6dba2921efd6195399e06565af2e5f97fe7300c1ceeee14599f"
     },
     {
       "name": "faq-section",
@@ -8341,7 +8503,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-426e4b17fc7f66e3e55a1c20e37803a873cff0fea71f76d7e4f0a72e6e572a4d"
     },
     {
       "name": "header-section",
@@ -8464,7 +8627,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-da9e61a00787f567f2aaa10e306b726dd4df12d76149fb52df10bb0d1d951b55"
     },
     {
       "name": "footer-section",
@@ -8581,7 +8745,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-c1d6d685a83bd30136b16cc992a1eea865aac03a74d28cbb5de39f5f6b85aa56"
     },
     {
       "name": "not-found-page",
@@ -8703,7 +8868,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-184dec66cfd19ad84f3fe481d1a00a66d0bb705cfdae93c689f4d7414a1abb1e"
     },
     {
       "name": "loading-page",
@@ -8821,7 +8987,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-bf3a7db6adee2b80647d198067fe5c1858f09f36a73afc578738b485e0a64e33"
     },
     {
       "name": "error-card",
@@ -8943,7 +9110,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-95658fb9edfa51ced4c4b45f6286185dd7743f95f1b72f570a1b3eb1c2eef023"
     },
     {
       "name": "success-card",
@@ -9064,7 +9232,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-c301ca255995d7bc5d3cdc17f30480f8132c4ace26d61bd725f5f5f011bccdc1"
     },
     {
       "name": "search-widget",
@@ -9186,7 +9355,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-caab1f24ed5e02317a4a6b5d3d760a01bdaa7a88e97fe16de0a571bdf4b27cb3"
     },
     {
       "name": "feedback-form",
@@ -9310,7 +9480,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-38f2dfb75a4d0da396097df582236f2ae15256de23453b784b67d63d6b756f31"
     },
     {
       "name": "stepper-section",
@@ -9433,7 +9604,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-295b92077f4f00009d28d736fb7ef27b9b146ec932eb205f31a6d4b9111c8b70"
     },
     {
       "name": "cookie-consent",
@@ -9554,7 +9726,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-7e6e7771fde9c18320fcc436876ce3ff7d6bc8bbc42bc0ab6da02c91b0d4b76e"
     },
     {
       "name": "data-table-section",
@@ -9684,7 +9857,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-acb5ea2c1f2c274393c565488209bcc3288c4f6b33f4533b893eefe40d4c8346"
     },
     {
       "name": "settings-page",
@@ -9807,7 +9981,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-063371410de64c519c472d0604b0003307d742a7de8e2b95a80aece3b589ae66"
     },
     {
       "name": "blog-list-page",
@@ -9930,7 +10105,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-00f57a9843ddede98b30678ae51fd02d286fd646129eaa9e5ebc26bc79bc1c7f"
     },
     {
       "name": "activity-log-page",
@@ -10048,7 +10224,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ea3e518b5ab2e9a45663112964d4b80116f8fe533ff961469bb4bb096eaf227e"
     },
     {
       "name": "profile-page",
@@ -10168,7 +10345,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-c3be678c91fb56afd701afd34c3817118e863941ba87289a89982b8cad881f3f"
     },
     {
       "name": "chart-section",
@@ -10288,7 +10466,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-a1dc835099f2c692cdff8815270271be781e09af91c650563eace5ff5fab9f84"
     },
     {
       "name": "gallery-section",
@@ -10406,7 +10585,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ca7bbda708352908cd6e0633bf5751a0af042c02319e84b1e952e7739fdc7ca1"
     },
     {
       "name": "upload-card",
@@ -10441,6 +10621,10 @@
         },
         {
           "path": "locales/types.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         }
       ],
@@ -10529,7 +10713,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-4cf67b24320d42acfd742ac1a03ddff2b50214af53bd8eacf33ef8aaf65b371f"
     },
     {
       "name": "overview-page",
@@ -10647,7 +10832,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-8a2b7bbe94442491447d747beb23eeb3b9d63cf291c3f094d0051c3000f86f2c"
     },
     {
       "name": "color-picker",
@@ -10721,6 +10907,10 @@
         },
         {
           "path": "lib/color.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         },
         {
@@ -10813,7 +11003,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-3ff545a06d532b9fa6c692863c5808d9ba2d702fc160222a588c371dc9389710"
     },
     {
       "name": "date-picker",
@@ -10916,6 +11107,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "lib/date.ts",
           "type": "registry:ui"
         }
@@ -11005,7 +11200,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-e55beec96b6754dbf5bd7f25d348293e2e949a483b6f6e908f17425f4e4dcb78"
     },
     {
       "name": "color-mode-switcher",
@@ -11128,7 +11324,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-d41b69ea0e2fac08c03ea1cdf0532e28134c0bb241f0b02f6ec2b1eb4adabcc1"
     },
     {
       "name": "data-table",
@@ -11190,6 +11387,10 @@
         {
           "path": "lib/data-table-utils.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -11277,7 +11478,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-7da17edb6c4cfba01994933a4cb7182098f10867417a175849b4bcfdeef004df"
     },
     {
       "name": "tree-select",
@@ -11331,6 +11533,10 @@
         {
           "path": "lib/tree-variants.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:ui"
         }
       ],
       "tailwind": {
@@ -11418,7 +11624,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-b1c0acba6e2abd96684139280085259dfcca0069c72e675f324b6c724df37f58"
     },
     {
       "name": "typewriter-text",
@@ -11530,7 +11737,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-1419b6ed58024aadd4ae082047763934ddc6946f28c43178c27201ecaaa03c2c"
     },
     {
       "name": "noise-background",
@@ -11642,7 +11850,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-538fd9bb81b6fcec8a84b4e0b6eb8f211a60d51a2ead4c0e7dcb309a765012b0"
     },
     {
       "name": "glitch-button",
@@ -11672,6 +11881,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:ui"
         },
         {
@@ -11764,7 +11977,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-0412459d95907b467b30d4c2dbbe0760e6f0c9e530beb1198a7d292e6bd9b08d"
     },
     {
       "name": "virtual-scroll",
@@ -11884,7 +12098,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-eb5cad94315a942016b5b27470cf303a5182397dd7ac0eec60ed23b34380e32f"
     },
     {
       "name": "input-adornment",
@@ -11984,7 +12199,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-761d44802d9c8aef021ea315f41269056cac86a44c2b16ec9b131d6eb0170b06"
     },
     {
       "name": "upload",
@@ -12116,7 +12332,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-eecadb5371c1ff894412d2571264f825616e99d874104c3c758da34863451b21"
     },
     {
       "name": "popconfirm",
@@ -12228,7 +12445,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-20cf19898e449a6f3c94b89d6e921b97e89b190319220913e5e20203c1463790"
     },
     {
       "name": "descriptions",
@@ -12332,7 +12550,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-ab2086aad2228b2312d830946e25f8a10aba0ab95e2c1b02abafe7acc8389373"
     },
     {
       "name": "infinite-scroll",
@@ -12444,7 +12663,8 @@
           "brutal-overlay": "rgba(0, 0, 0, 0.7)",
           "brutal-placeholder": "#6B7280"
         }
-      }
+      },
+      "integrity": "sha256-0dae52d08a8b565edb831b22ca04de38a548fc7e0b1c3d5c1b55834abe4dfc84"
     }
   ]
 }

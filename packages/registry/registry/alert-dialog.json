@@ -53,7 +53,7 @@
     },
     {
       "path": "lib/modal-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const overlayVariants = cva([\n    'fixed inset-0 z-50 bg-brutal-overlay',\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n])\n\nexport const sectionHeaderVariants = cva([\n    'flex flex-col space-y-2 pb-4 border-b-3 border-brutal',\n])\n\nexport const sectionFooterVariants = cva([\n    'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal',\n])\n\nexport const CLOSE_BUTTON_BASE_CLASSES = [\n    'h-8 w-8 flex items-center justify-center',\n    'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n    'shadow-brutal-sm',\n    'transition-all duration-150',\n    'hover:bg-brutal-destructive hover:text-brutal-fg',\n    'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n    'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',\n]\n\nexport const baseModalContentClasses = [\n    'bg-brutal-bg',\n    'border-3 border-brutal',\n    'shadow-brutal-xl',\n    'rounded-brutal',\n]\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const overlayVariants = cva([\n    'fixed inset-0 z-50 bg-brutal-overlay',\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n])\n\nexport const sectionHeaderVariants = cva([\n    'flex flex-col space-y-2 pb-4 border-b-3 border-brutal',\n])\n\nexport const sectionFooterVariants = cva([\n    'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal',\n])\n\nexport const CLOSE_BUTTON_BASE_CLASSES = [\n    'h-8 w-8 flex items-center justify-center',\n    'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n    'shadow-brutal-sm',\n    'transition-all duration-150',\n    'hover:bg-brutal-destructive hover:text-brutal-fg',\n    brutalPress,\n    'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',\n]\n\nexport const baseModalContentClasses = [\n    'bg-brutal-bg',\n    'border-3 border-brutal',\n    'shadow-brutal-xl',\n    'rounded-brutal',\n]\n",
       "type": "registry:ui"
     },
     {
@@ -147,5 +147,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-54c54829bfc1ff1067f893d1444888fa5327801f355a1ee877baab0fe964eec0"
 }

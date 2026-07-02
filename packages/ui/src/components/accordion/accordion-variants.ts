@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { brutalPress, brutalHoverLiftSm } from '@/lib/brutal-interaction-variants'
 
 export const accordionItemVariants = cva(
     [
@@ -19,7 +20,7 @@ export const accordionItemVariants = cva(
                     'mb-4',
                     'data-[state=closed]:shadow-brutal-sm',
                     'data-[state=open]:shadow-brutal data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5',
-                    'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5',
+                    brutalHoverLiftSm,
                 ],
             },
         },
@@ -33,8 +34,8 @@ export const accordionTriggerVariants = cva(
     [
         'flex flex-1 items-center justify-between py-4 px-6',
         'text-left font-black tracking-wide transition-all',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',
-        'hover:shadow-brutal-sm hover:-translate-y-0.5',
+        brutalPress,
+        'hover:shadow-brutal-sm hover:-translate-y-0.5', /* 组件私有：垂直浮起带小投影，不抽取 */
     ],
     {
         variants: {

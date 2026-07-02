@@ -66,7 +66,7 @@ export const tableFooterVariants = cva(
 export const tableRowVariants = cva(
     [
         'border-b-3 border-brutal transition-colors text-brutal-fg',
-        'hover:bg-brutal-accent/30',
+        'hover:bg-brutal-accent/30', /* 组件私有：表格行悬浮背景，不抽取 */
         'data-[state=selected]:bg-brutal-accent data-[state=selected]:text-brutal-accent-foreground',
     ]
 )

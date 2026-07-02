@@ -14,7 +14,7 @@
     },
     {
       "path": "components/ui/glitch-text/glitch-text-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const glitchTextVariants = cva(\n    [\n        'glitch-text',\n        'relative inline-block',\n        'font-black tracking-wide',\n        'text-brutal-fg',\n        'transition-all duration-150',\n        'hover:shadow-brutal hover:-translate-y-0.5',\n        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none',\n    ],\n    {\n        variants: {\n            speed: {\n                slow: '[--glitch-duration:800ms]',\n                medium: '[--glitch-duration:300ms]',\n                fast: '[--glitch-duration:100ms]',\n            },\n            direction: {\n                horizontal: 'glitch-horizontal',\n                vertical: 'glitch-vertical',\n                both: 'glitch-both',\n            },\n        },\n        defaultVariants: {\n            speed: 'medium',\n            direction: 'horizontal',\n        },\n    }\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const glitchTextVariants = cva(\n    [\n        'glitch-text',\n        'relative inline-block',\n        'font-black tracking-wide',\n        'text-brutal-fg',\n        'transition-all duration-150',\n        brutalHoverLiftSmNoX,\n        brutalPress,\n    ],\n    {\n        variants: {\n            speed: {\n                slow: '[--glitch-duration:800ms]',\n                medium: '[--glitch-duration:300ms]',\n                fast: '[--glitch-duration:100ms]',\n            },\n            direction: {\n                horizontal: 'glitch-horizontal',\n                vertical: 'glitch-vertical',\n                both: 'glitch-both',\n            },\n        },\n        defaultVariants: {\n            speed: 'medium',\n            direction: 'horizontal',\n        },\n    }\n)\n",
       "type": "registry:ui"
     },
     {
@@ -25,6 +25,11 @@
     {
       "path": "lib/defaults.ts",
       "content": "/**\n * Shared default values for component configuration.\n */\n\n/** Default autoplay interval in milliseconds (used by Carousel, GlitchText, GlitchButton) */\nexport const DEFAULT_AUTOPLAY_INTERVAL_MS = 3000\n\n// ── Color Picker ──────────────────────────────────────────────\n\n/** Precision multiplier for HSV saturation/value rounding (→ 0.1% steps) */\nexport const HSV_PERCENT_PRECISION = 1000\n\n/** Maximum hue angle in degrees */\nexport const HUE_DEGREES = 360\n\n/** Maximum saturation / value percentage */\nexport const HSV_COMPONENT_MAX = 100\n\n/** Precision multiplier for alpha rounding (→ 0.01 steps) */\nexport const ALPHA_PRECISION = 100\n\n// ── Dialog ────────────────────────────────────────────────────\n\n/** Minimum draggable/resizable dialog width in pixels */\nexport const DIALOG_MIN_WIDTH_PX = 200\n\n/** Minimum draggable/resizable dialog height in pixels */\nexport const DIALOG_MIN_HEIGHT_PX = 150\n\n// ── Toast ─────────────────────────────────────────────────────\n\n/** Maximum number of concurrent toasts displayed */\nexport const MAX_TOASTS = 10\n\n// ── DataTable ─────────────────────────────────────────────────\n\n/** Default page size options for paginated tables */\nexport const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const\n\n// ── Card3D ────────────────────────────────────────────────────\n\n/** Default CSS perspective value in pixels for 3D card effect */\nexport const CARD_3D_DEFAULT_PERSPECTIVE_PX = 1000\n\n// ── SketchyChart ──────────────────────────────────────────────\n\n/** Default chart width in pixels */\nexport const SKETCHY_CHART_DEFAULT_WIDTH = 600\n\n/** Default chart height in pixels */\nexport const SKETCHY_CHART_DEFAULT_HEIGHT = 400\n\n// ── Date ──────────────────────────────────────────────────────\n\n/** Two-digit year pivot: >= this value → 19xx, < this value → 20xx */\nexport const TWO_DIGIT_YEAR_PIVOT = 50\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
       "type": "registry:ui"
     },
     {
@@ -118,5 +123,6 @@
       "brutal-overlay": "rgba(0, 0, 0, 0.7)",
       "brutal-placeholder": "#6B7280"
     }
-  }
+  },
+  "integrity": "sha256-66580578c831cdba69bfcbf4c48d0ea253fe34cc2062f5f8320e9a2e9698202c"
 }

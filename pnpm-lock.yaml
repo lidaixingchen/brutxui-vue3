@@ -6,7 +6,23 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      '@lucide/vue':
+        specifier: ^1.23.0
+        version: 1.23.0(vue@3.5.35(typescript@6.0.3))
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      reka-ui:
+        specifier: ^2.10.1
+        version: 2.10.1(vue@3.5.35(typescript@6.0.3))
+      tailwind-merge:
+        specifier: ^3.6.0
+        version: 3.6.0
 
   apps/docs:
     dependencies:
@@ -1145,6 +1161,11 @@ packages:
 
   '@lucide/vue@1.17.0':
     resolution: {integrity: sha512-6Q1ZHgr5FbmJzKWe5BxlNdjLj2lbmuH1zwDtVzUJofX0w9UREwKgq4F4jwKqFYyyIS4Rj3FiJvDi2k6djukmmw==}
+    peerDependencies:
+      vue: '>=3.0.1'
+
+  '@lucide/vue@1.23.0':
+    resolution: {integrity: sha512-9SIYeY5K+R1iv8F8JUKMGSL7Pck/86BJ8djtZz/lnYsoHtKFUj1H2z6+PvKnC/8blZ8tqTDeDXAoTKobuX80hg==}
     peerDependencies:
       vue: '>=3.0.1'
 
@@ -2985,6 +3006,11 @@ packages:
   regex@5.1.1:
     resolution: {integrity: sha512-dN5I359AVGPnwzJm2jN1k0W9LPZ+ePvoOeVMMfqIMFz53sSwXkxaJoxr50ptnsC771lK95BnTrVSZxq0b9yCGw==}
 
+  reka-ui@2.10.1:
+    resolution: {integrity: sha512-drcOQ4rQtDYAcGCsyQBqQg8QQ+H3B+zDaMJU0h8KPEPMa7g9BHu3zcOi4OB39XJSWizceFoNO0Z9tctSGLOXqg==}
+    peerDependencies:
+      vue: '>= 3.4.0'
+
   reka-ui@2.9.9:
     resolution: {integrity: sha512-/e+hdF9vP8E2kPrKR4RdgMQQsfpCr8l436Zn8GRWM3jKT9EG1lOO/UFMGBVEnrMLOVoJSjjmIFrej4tMOb+6qQ==}
     peerDependencies:
@@ -4385,6 +4411,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.4.14
 
   '@lucide/vue@1.17.0(vue@3.5.35(typescript@6.0.3))':
+    dependencies:
+      vue: 3.5.35(typescript@6.0.3)
+
+  '@lucide/vue@1.23.0(vue@3.5.35(typescript@6.0.3))':
     dependencies:
       vue: 3.5.35(typescript@6.0.3)
 
@@ -6142,6 +6172,22 @@ snapshots:
   regex@5.1.1:
     dependencies:
       regex-utilities: 2.3.0
+
+  reka-ui@2.10.1(vue@3.5.35(typescript@6.0.3)):
+    dependencies:
+      '@floating-ui/dom': 1.7.6
+      '@floating-ui/vue': 1.1.11(vue@3.5.35(typescript@6.0.3))
+      '@internationalized/date': 3.12.2
+      '@internationalized/number': 3.6.7
+      '@tanstack/vue-virtual': 3.13.30(vue@3.5.35(typescript@6.0.3))
+      '@vueuse/core': 14.3.0(vue@3.5.35(typescript@6.0.3))
+      '@vueuse/shared': 14.3.0(vue@3.5.35(typescript@6.0.3))
+      aria-hidden: 1.2.6
+      defu: 6.1.7
+      ohash: 2.0.11
+      vue: 3.5.35(typescript@6.0.3)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
 
   reka-ui@2.9.9(vue@3.5.35(typescript@6.0.3)):
     dependencies:
