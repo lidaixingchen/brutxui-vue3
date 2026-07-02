@@ -1,3 +1,4 @@
+import { confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
@@ -9,6 +10,7 @@ import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE } 
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
+const CURRENT_CONFIG_VERSION = 1;
 
 function checkConfigExists(cwd: string, config: BrutalistConfig | null): CheckResult {
     if (!config) {
@@ -39,6 +41,32 @@ function checkSchema(config: BrutalistConfig): CheckResult {
         name: '$schema field present',
         status: 'pass',
         message: '$schema field is present.',
+    };
+}
+
+function checkConfigVersion(config: BrutalistConfig): CheckResult {
+    if (config.$version === undefined) {
+        return {
+            name: 'config version',
+            status: 'warn',
+            message: 'Configuration is missing version information.',
+            fixId: FixId.AddConfigVersion,
+            fixDescription: 'Add $version field',
+        };
+    }
+    if (config.$version < CURRENT_CONFIG_VERSION) {
+        return {
+            name: 'config version',
+            status: 'warn',
+            message: `Configuration version ${config.$version} is outdated (current: ${CURRENT_CONFIG_VERSION}). Migration may be needed.`,
+            fixId: FixId.AddConfigVersion,
+            fixDescription: `Update $version to ${CURRENT_CONFIG_VERSION}`,
+        };
+    }
+    return {
+        name: 'config version',
+        status: 'pass',
+        message: `Configuration version is ${config.$version}.`,
     };
 }
 
@@ -268,30 +296,52 @@ function printReport(checks: CheckResult[]): void {
 }
 
 async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promise<void> {
-    const fixable = checks.filter((c) => c.status !== 'pass' && c.fixDescription);
+    let fixable = checks.filter((c) => c.status !== 'pass' && c.fixDescription);
+
+    if (options.fixOnly) {
+        fixable = fixable.filter((c) => c.fixId === options.fixOnly);
+    }
 
     if (fixable.length === 0) {
         logger.info('No fixable issues found.');
         return;
     }
 
-    if (!options.yes && !options.silent) {
-        logger.warn(`Found ${fixable.length} fixable issue${fixable.length !== 1 ? 's' : ''}. Use --yes to auto-fix.`);
+    if (options.silent) {
         return;
     }
+
+    const isInteractive = !options.yes && !!process.stdin.isTTY;
 
     const cwd = options.cwd ?? process.cwd();
     const config = await readConfigSafe(cwd);
 
     if (!config) return;
 
+    let applied = 0;
+    const total = fixable.length;
+
     for (const check of fixable) {
         if (!check.fixId) continue;
+
+        if (isInteractive) {
+            const shouldFix = await confirm({
+                message: `Apply fix: ${check.fixId}?`,
+                default: true,
+            });
+            if (!shouldFix) continue;
+        }
+
         try {
             switch (check.fixId) {
                 case FixId.AddSchema:
                     config.$schema = SCHEMA_URL;
                     logger.success('Added $schema field.');
+                    break;
+
+                case FixId.AddConfigVersion:
+                    config.$version = CURRENT_CONFIG_VERSION;
+                    logger.success(`Set $version to ${CURRENT_CONFIG_VERSION}.`);
                     break;
 
                 case FixId.SetStyle:
@@ -339,22 +389,26 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                     break;
                 }
             }
+            applied++;
         } catch (error) {
             logger.error(`Failed to fix: ${check.name}`);
             logger.error(error instanceof Error ? error.message : String(error));
         }
     }
 
-    // Write updated config
-    try {
-        const configPath = path.join(cwd, 'components.json');
-        await fs.writeJson(configPath, config, { spaces: 2 });
-        logger.success('Updated components.json.');
-    } catch (error) {
-        logger.error('Failed to write updated config file.');
-        logger.error(error instanceof Error ? error.message : String(error));
-        throw error;
+    if (applied > 0) {
+        try {
+            const configPath = path.join(cwd, 'components.json');
+            await fs.writeJson(configPath, config, { spaces: 2 });
+            logger.success('Updated components.json.');
+        } catch (error) {
+            logger.error('Failed to write updated config file.');
+            logger.error(error instanceof Error ? error.message : String(error));
+            throw error;
+        }
     }
+
+    logger.log(`Applied ${applied}/${total} fixes.`);
 }
 
 export async function doctor(options: DoctorOptions): Promise<void> {
@@ -371,6 +425,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
 
     if (config) {
         checks.push(checkSchema(config));
+        checks.push(checkConfigVersion(config));
         checks.push(checkStyle(config));
         checks.push(await checkTailwindCss(cwd, config));
         checks.push(...await checkAliases(cwd, config));
@@ -385,7 +440,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         printReport(checks);
     }
 
-    if (options.fix) {
+    if (options.fix || options.fixOnly) {
         await applyFixes(checks, options);
     }
 

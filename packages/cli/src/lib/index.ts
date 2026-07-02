@@ -7,6 +7,7 @@ export { CliError } from './error.js';
 export {
     detectProjectType,
     detectPackageManager,
+    detectWorkspaceRoot,
     readTsConfig,
     findTailwindConfig,
     findCssFile,
@@ -24,3 +25,13 @@ export { Logger, logger } from './logger.js';
 export type { LoggerOptions } from './logger.js';
 
 export { getItem, resolveDeps, readConfig, readConfigSafe } from './registry.js';
+
+export { clearCache } from './cache.js';
+
+export {
+    generateSnippets,
+    generateSnippetsForComponents,
+    writeSnippetsFile,
+    mergeSnippetsFile,
+    hasVscodeDir,
+} from './vscode-snippets.js';

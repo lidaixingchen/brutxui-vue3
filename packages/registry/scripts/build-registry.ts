@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -219,6 +220,7 @@ interface RegistryIndexItem {
     files: RegistryIndexFile[];
     tailwind: typeof TAILWIND_CONFIG;
     cssVars: typeof CSS_VARS;
+    integrity: string;
 }
 
 interface RegistryIndex {
@@ -349,6 +351,9 @@ async function run() {
 
             const description = `A highly customizable neo-brutalist ${title} component built with Brutx design tokens for Vue 3.`;
 
+            const allContent = files.map(f => f.content).join('');
+            const integrity = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
+
             const registryItem = {
                 $schema: 'https://ui.shadcn.com/schema/registry-item.json',
                 name: name,
@@ -359,7 +364,8 @@ async function run() {
                 registryDependencies: Array.from(allRegistryDeps),
                 files,
                 tailwind: TAILWIND_CONFIG,
-                cssVars: CSS_VARS
+                cssVars: CSS_VARS,
+                integrity
             };
 
             const outputPath = path.join(OUTPUT_DIR, `${name}.json`);
@@ -378,7 +384,8 @@ async function run() {
                     type: f.type
                 })),
                 tailwind: TAILWIND_CONFIG,
-                cssVars: CSS_VARS
+                cssVars: CSS_VARS,
+                integrity
             });
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';

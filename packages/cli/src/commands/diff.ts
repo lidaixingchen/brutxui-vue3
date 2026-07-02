@@ -49,7 +49,7 @@ function generateUnifiedDiff(
     return diffLines_.join('\n');
 }
 
-async function getInstalledComponents(cwd: string, config: BrutalistConfig): Promise<string[]> {
+export async function getInstalledComponents(cwd: string, config: BrutalistConfig): Promise<string[]> {
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
 
     if (!await fs.pathExists(componentsPath)) {
@@ -94,7 +94,7 @@ async function getLocalComponentFiles(
     return files;
 }
 
-async function diffComponent(
+export async function diffComponent(
     cwd: string,
     config: BrutalistConfig,
     componentName: string,
@@ -235,6 +235,10 @@ function printDiffReport(results: DiffResult[]): void {
 
 export async function diff(options: DiffOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
+
+    if ((options as Record<string, unknown>).cache === false) {
+        process.env.BRUTX_NO_CACHE = '1';
+    }
 
     if (options.silent) {
         logger.setSilent(true);

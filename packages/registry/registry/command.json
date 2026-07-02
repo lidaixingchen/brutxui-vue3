@@ -63,7 +63,7 @@
     },
     {
       "path": "components/ui/command/command-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\nimport { brutalHighlightLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const commandInputWrapperVariants = cva(\n    [\n        'flex h-12 items-center gap-3 px-4',\n        'border-b-3 border-brutal',\n        'bg-brutal-accent',\n    ]\n)\n\nexport const commandItemVariants = cva(\n    [\n        'relative flex cursor-pointer items-center gap-3 px-3 py-2',\n        'text-sm font-semibold',\n        'select-none outline-none',\n        'border-3 border-transparent',\n        'data-[highlighted=true]:bg-brutal-secondary data-[highlighted=true]:text-brutal-fg',\n        'data-[highlighted=true]:border-brutal data-[highlighted=true]:font-black',\n        brutalHighlightLift,\n        brutalPress,\n        'transition-all',\n        'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',\n        '[&_svg]:pointer-events-none [&_svg]:shrink-0',\n    ]\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalHighlightLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const commandInputWrapperVariants = cva(\n    [\n        'flex h-12 items-center gap-3 px-4',\n        'border-b-3 border-brutal',\n        'bg-brutal-accent',\n    ]\n)\n\nexport const commandItemVariants = cva(\n    [\n        'relative flex cursor-pointer items-center gap-3 px-3 py-2',\n        'text-sm font-semibold',\n        'select-none outline-none',\n        'border-3 border-transparent',\n        'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',\n        'data-[highlighted]:border-brutal data-[highlighted]:font-black',\n        brutalHighlightLift,\n        brutalPress,\n        'transition-all',\n        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n        '[&_svg]:pointer-events-none [&_svg]:shrink-0',\n    ]\n)\n",
       "type": "registry:ui"
     },
     {
@@ -83,7 +83,7 @@
     },
     {
       "path": "lib/brutal-interaction-variants.ts",
-      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted=true]:shadow-brutal-lg data-[highlighted=true]:-translate-x-0.5 data-[highlighted=true]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n",
       "type": "registry:ui"
     }
   ],

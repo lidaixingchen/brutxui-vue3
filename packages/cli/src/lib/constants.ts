@@ -60,6 +60,17 @@ export const BASE_DEPENDENCIES = [
     'reka-ui',
 ] as const;
 
+export const SHARED_DEPENDENCIES = [
+    'clsx',
+    'tailwind-merge',
+    'class-variance-authority',
+] as const;
+
+export const COMPONENT_DEPENDENCIES = [
+    '@lucide/vue',
+    'reka-ui',
+] as const;
+
 export const DEFAULT_ALIASES = {
     components: '@/components',
     utils: '@/lib/utils',

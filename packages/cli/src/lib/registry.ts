@@ -1,7 +1,10 @@
+import crypto from 'node:crypto';
 import fs from 'fs-extra';
 import path from 'path';
 import type { RegistryItem, RegistryFile, BrutalistConfig } from './types.js';
 import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG } from './constants.js';
+import { CliError } from './error.js';
+import { getCached, setCache } from './cache.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
@@ -63,16 +66,72 @@ function validateRegistryItem(data: unknown, name: string): asserts data is Regi
     }
 }
 
-export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL): Promise<RegistryItem> {
+async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Response> {
+    const delays = [1000, 2000, 4000];
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            return await fetch(url, { signal: AbortSignal.timeout(30000) });
+        } catch (error: unknown) {
+            lastError = error instanceof Error ? error : new Error(String(error));
+            const isRetryable = lastError.name === 'TimeoutError' ||
+                lastError.name === 'AbortError' ||
+                lastError instanceof TypeError;
+
+            if (!isRetryable || attempt >= maxRetries) break;
+
+            process.stderr.write(`Network timeout, retrying (attempt ${attempt + 1}/${maxRetries})...\n`);
+            await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
+        }
+    }
+
+    throw new Error(
+        `Failed to fetch from "${url}" after ${maxRetries} attempts. ` +
+        `Please check your network connection or use --registry to specify a different source.\n` +
+        `Last error: ${lastError?.message ?? 'Unknown error'}`
+    );
+}
+
+export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem> {
     let data: unknown;
 
     if (isUrl(source)) {
+        const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
+
+        if (effectiveUseCache) {
+            const cached = await getCached<RegistryItem>(name, source);
+            if (cached) return cached;
+        }
+
         const url = `${source}/${name}.json`;
-        const res = await fetch(url, { signal: AbortSignal.timeout(30000) });
+        const res = await fetchWithRetry(url);
         if (!res.ok) {
             throw new Error(`Failed to fetch component "${name}" from registry: ${res.statusText}`);
         }
         data = await res.json();
+
+        const rawData = data as Record<string, unknown>;
+        if (typeof rawData.integrity === 'string') {
+            const files = rawData.files as Array<{ content: string }> | undefined;
+            if (Array.isArray(files)) {
+                const allContent = files.map(f => f.content).join('');
+                const computed = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
+                if (computed !== rawData.integrity) {
+                    throw new CliError(
+                        `Integrity check failed for component '${name}'. The registry content may have been tampered with.`
+                    );
+                }
+            }
+        }
+
+        validateRegistryItem(data, name);
+
+        if (effectiveUseCache) {
+            await setCache(name, source, data);
+        }
+
+        return data;
     } else {
         const filePath = path.resolve(source, `${name}.json`);
         if (!filePath.startsWith(path.resolve(source) + path.sep)) {
@@ -82,10 +141,10 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
             throw new Error(`Component "${name}" not found in local registry: ${filePath}`);
         }
         data = await fs.readJson(filePath);
-    }
 
-    validateRegistryItem(data, name);
-    return data;
+        validateRegistryItem(data, name);
+        return data;
+    }
 }
 
 function validateBrutalistConfig(data: unknown): asserts data is Record<string, unknown> {
@@ -183,10 +242,11 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
     };
 }
 
-export async function resolveDeps(names: string[], source: string = DEFAULT_REGISTRY_URL): Promise<RegistryItem[]> {
+export async function resolveDeps(names: string[], source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem[]> {
     const resolved: RegistryItem[] = [];
     const visited = new Set<string>();
     const active = new Set<string>();
+    const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
 
     async function dfs(fullName: string) {
         let cleanName = fullName;
@@ -214,7 +274,7 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
         active.add(cleanName);
 
         try {
-            const item = await getItem(cleanName, itemSource);
+            const item = await getItem(cleanName, itemSource, effectiveUseCache);
 
             if (item.registryDependencies && item.registryDependencies.length > 0) {
                 for (const dep of item.registryDependencies) {

@@ -1,8 +1,11 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { parse as parseJsonc } from 'jsonc-parser';
+import { initSync, parse as parseModuleImports } from 'es-module-lexer';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
+
+initSync();
 
 async function hasAnyFile(cwd: string, files: readonly string[]): Promise<boolean> {
     for (const file of files) {
@@ -47,12 +50,61 @@ export async function detectProjectType(cwd: string): Promise<ProjectType> {
     return 'unknown';
 }
 
+export async function detectWorkspaceRoot(cwd: string): Promise<string | null> {
+    let current = path.resolve(cwd);
+    const root = path.parse(current).root;
+
+    while (current !== root) {
+        if (await fs.pathExists(path.join(current, 'pnpm-workspace.yaml'))) {
+            return current;
+        }
+
+        if (await fs.pathExists(path.join(current, 'lerna.json'))) {
+            return current;
+        }
+
+        if (await fs.pathExists(path.join(current, 'turbo.json'))) {
+            return current;
+        }
+
+        const pkgPath = path.join(current, 'package.json');
+        if (await fs.pathExists(pkgPath)) {
+            try {
+                const pkg = await fs.readJson(pkgPath) as Record<string, unknown>;
+                if (pkg.workspaces) {
+                    return current;
+                }
+            } catch {
+            }
+        }
+
+        const parent = path.dirname(current);
+        if (parent === current) break;
+        current = parent;
+    }
+
+    return null;
+}
+
 export async function detectPackageManager(cwd: string): Promise<PackageManager> {
     const { lockfiles } = CONFIG_FILES;
 
     if (await fs.pathExists(path.join(cwd, lockfiles.pnpm))) return 'pnpm';
     if (await fs.pathExists(path.join(cwd, lockfiles.yarn))) return 'yarn';
     if (await fs.pathExists(path.join(cwd, lockfiles.bun))) return 'bun';
+
+    let current = path.resolve(cwd);
+    const root = path.parse(current).root;
+
+    while (current !== root) {
+        const parent = path.dirname(current);
+        if (parent === current) break;
+        current = parent;
+
+        if (await fs.pathExists(path.join(current, lockfiles.pnpm))) return 'pnpm';
+        if (await fs.pathExists(path.join(current, lockfiles.yarn))) return 'yarn';
+        if (await fs.pathExists(path.join(current, lockfiles.bun))) return 'bun';
+    }
 
     return 'npm';
 }
@@ -173,15 +225,78 @@ export async function getDefaultAliases(cwd: string): Promise<AliasConfig> {
     return await getAliasFromTsConfig(cwd) ?? { ...DEFAULT_ALIASES };
 }
 
+function extractScriptBlocks(content: string): Array<{ start: number; end: number; code: string }> {
+    const blocks: Array<{ start: number; end: number; code: string }> = [];
+    const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+    let match;
+    while ((match = scriptRegex.exec(content)) !== null) {
+        const scriptCode = match[1];
+        const openTagEnd = match[0].indexOf('>') + 1;
+        const codeStart = match.index + openTagEnd;
+        blocks.push({
+            start: codeStart,
+            end: codeStart + scriptCode.length,
+            code: scriptCode,
+        });
+    }
+    return blocks;
+}
+
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
     const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
     const localesAlias = `${path.dirname(composablesAlias)}/locales`;
+    const isVueSfc = /<script[\s>]/i.test(content);
 
-    return content
-        .replace(/(["'])@\/lib\/utils\1/g, `$1${config.aliases.utils}$1`)
-        .replace(/(["'])@\/components\/(.*?)\1/g, `$1${config.aliases.components}/$2$1`)
-        .replace(/(["'])@\/composables\/(.*?)\1/g, `$1${composablesAlias}/$2$1`)
-        .replace(/(["'])@\/locales\/(.*?)\1/g, `$1${localesAlias}/$2$1`);
+    interface Replacement { start: number; end: number; replacement: string }
+    const replacements: Replacement[] = [];
+
+    const collectReplacements = (code: string, offset: number): void => {
+        try {
+            const [imports] = parseModuleImports(code);
+            for (const imp of imports) {
+                if (!imp.n || !imp.n.startsWith('@/')) continue;
+
+                let newPath: string | null = null;
+                if (imp.n === '@/lib/utils') {
+                    newPath = config.aliases.utils;
+                } else if (imp.n.startsWith('@/components/')) {
+                    newPath = imp.n.replace('@/components', config.aliases.components);
+                } else if (imp.n.startsWith('@/composables/')) {
+                    newPath = imp.n.replace('@/composables', composablesAlias);
+                } else if (imp.n.startsWith('@/locales/')) {
+                    newPath = imp.n.replace('@/locales', localesAlias);
+                }
+
+                if (newPath) {
+                    replacements.push({
+                        start: offset + imp.s,
+                        end: offset + imp.e,
+                        replacement: newPath,
+                    });
+                }
+            }
+        } catch {
+        }
+    };
+
+    if (isVueSfc) {
+        for (const block of extractScriptBlocks(content)) {
+            collectReplacements(block.code, block.start);
+        }
+    } else {
+        collectReplacements(content, 0);
+    }
+
+    if (replacements.length === 0) return content;
+
+    replacements.sort((a, b) => b.start - a.start);
+
+    let result = content;
+    for (const { start, end, replacement } of replacements) {
+        result = result.slice(0, start) + replacement + result.slice(end);
+    }
+
+    return result;
 }
 
 export async function isSafePath(targetPath: string, cwd: string): Promise<boolean> {
@@ -189,22 +304,36 @@ export async function isSafePath(targetPath: string, cwd: string): Promise<boole
         ? (s: string) => s.toLowerCase()
         : (s: string) => s;
 
-    // Resolve symlinks to prevent symlink-based path traversal attacks
-    let resolvedTarget: string;
     let resolvedCwd: string;
     try {
-        // Use realpath to resolve symlinks
-        resolvedTarget = normalize(await fs.promises.realpath(path.resolve(targetPath)));
         resolvedCwd = normalize(await fs.promises.realpath(path.resolve(cwd)));
     } catch {
-        // If realpath fails (e.g., path doesn't exist), fall back to path.resolve
-        resolvedTarget = normalize(path.resolve(targetPath));
         resolvedCwd = normalize(path.resolve(cwd));
     }
 
-    // 磁盘根目录作为 cwd 不安全，因为它允许访问整个磁盘
     if (resolvedCwd === normalize(path.parse(resolvedCwd).root)) {
         return false;
+    }
+
+    let resolvedTarget: string;
+    try {
+        resolvedTarget = normalize(await fs.promises.realpath(path.resolve(targetPath)));
+    } catch {
+        resolvedTarget = normalize(path.resolve(targetPath));
+        let current = path.resolve(targetPath);
+        const root = path.parse(current).root;
+
+        while (current !== root) {
+            const parent = path.dirname(current);
+            try {
+                const realParent = await fs.promises.realpath(parent);
+                const relative = path.relative(parent, path.resolve(targetPath));
+                resolvedTarget = normalize(path.join(realParent, relative));
+                break;
+            } catch {
+                current = parent;
+            }
+        }
     }
 
     return resolvedTarget.startsWith(resolvedCwd + path.sep) || resolvedTarget === resolvedCwd;

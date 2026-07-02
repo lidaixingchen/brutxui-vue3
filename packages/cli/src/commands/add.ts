@@ -22,6 +22,8 @@ import {
     readConfig,
     isSafePath,
     logger,
+    mergeSnippetsFile,
+    hasVscodeDir,
 } from '../lib/index.js';
 
 async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
@@ -124,45 +126,83 @@ async function writeRegistryFiles(
     cwd: string,
     options: AddOptions,
     spinner: Ora | null
-): Promise<{ added: string[]; skipped: string[]; filesWritten: string[] }> {
+): Promise<{ added: string[]; skipped: string[]; filesWritten: string[]; rollbackCount: number }> {
     const added: string[] = [];
     const skippedSet = new Set<string>();
     const filesWritten: string[] = [];
+    const snapshot = new Map<string, string | null>();
 
-    for (const item of items) {
-        let itemAdded = false;
+    try {
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
 
-        for (const file of item.files) {
-            const targetPath = await resolveComponentFilePath(file.path, config, cwd);
+            if (spinner) {
+                spinner.text = `[${i + 1}/${items.length}] Adding ${item.name}...`;
+            }
 
-            if (await fs.pathExists(targetPath)) {
-                if (!options.overwrite) {
-                    spinner?.info(`Skipping file "${file.path}" for "${item.name}" (already exists). Use --overwrite to overwrite.`);
-                    skippedSet.add(item.name);
+            let itemAdded = false;
+
+            for (const file of item.files) {
+                const targetPath = await resolveComponentFilePath(file.path, config, cwd);
+
+                if (await fs.pathExists(targetPath)) {
+                    if (!options.overwrite) {
+                        spinner?.info(`Skipping file "${file.path}" for "${item.name}" (already exists). Use --overwrite to overwrite.`);
+                        skippedSet.add(item.name);
+                        continue;
+                    }
+                }
+
+                if (options.dryRun) {
+                    spinner?.info(`[Dry Run] Would create file: ${targetPath}`);
+                    itemAdded = true;
+                    filesWritten.push(targetPath);
                     continue;
                 }
-            }
 
-            if (options.dryRun) {
-                spinner?.info(`[Dry Run] Would create file: ${targetPath}`);
+                if (!snapshot.has(targetPath)) {
+                    if (await fs.pathExists(targetPath)) {
+                        snapshot.set(targetPath, await fs.readFile(targetPath, 'utf-8'));
+                    } else {
+                        snapshot.set(targetPath, null);
+                    }
+                }
+
+                await fs.ensureDir(path.dirname(targetPath));
+                const resolvedContent = resolveImportAlias(file.content, config);
+                await fs.writeFile(targetPath, resolvedContent, 'utf-8');
                 itemAdded = true;
                 filesWritten.push(targetPath);
-                continue;
             }
 
-            await fs.ensureDir(path.dirname(targetPath));
-            const resolvedContent = resolveImportAlias(file.content, config);
-            await fs.writeFile(targetPath, resolvedContent, 'utf-8');
-            itemAdded = true;
-            filesWritten.push(targetPath);
+            if (itemAdded) {
+                added.push(item.name);
+            }
+        }
+    } catch (writeError) {
+        let rollbackFailures = 0;
+
+        for (const [filePath, originalContent] of snapshot) {
+            try {
+                if (originalContent !== null) {
+                    await fs.writeFile(filePath, originalContent, 'utf-8');
+                } else if (await fs.pathExists(filePath)) {
+                    await fs.promises.rm(filePath, { force: true });
+                }
+            } catch {
+                rollbackFailures++;
+            }
         }
 
-        if (itemAdded) {
-            added.push(item.name);
+        if (rollbackFailures > 0) {
+            logger.error(`Rollback partially failed for ${rollbackFailures} file(s). Run "brutx-vue doctor --fix" to repair.`);
         }
+
+        logger.error(`Installation failed. Rolled back ${snapshot.size} file(s) to previous state.`);
+        throw writeError;
     }
 
-    return { added, skipped: Array.from(skippedSet), filesWritten };
+    return { added, skipped: Array.from(skippedSet), filesWritten, rollbackCount: 0 };
 }
 
 async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<void> {
@@ -180,7 +220,7 @@ async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean
     logger.bold(`Installing dependencies with ${packageManager}...`);
 
     try {
-        installPackages(packageManager, deps, cwd);
+        await installPackages(packageManager, deps, cwd);
         logger.success('✓ Dependencies installed');
     } catch {
         logger.warn('⚠ Failed to install dependencies automatically.');
@@ -203,6 +243,10 @@ function printUsageExample(component: string, componentsAlias: string): void {
 export async function add(components: string[], options: AddOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
+
+    if ((options as Record<string, unknown>).cache === false) {
+        process.env.BRUTX_NO_CACHE = '1';
+    }
 
     if (options.path && !(await isSafePath(targetCwd, cwd))) {
         throw new CliError(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`, 2);
@@ -236,6 +280,14 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         logger.info(`   Registry source: ${options.registry || 'Default Brutx-Vue hosted registry'}`);
         logger.newLine();
 
+        const planParts = registryItems.map(
+            (item) => `${item.name} (${item.files.length} file${item.files.length !== 1 ? 's' : ''})`
+        );
+        logger.bold(
+            `Installing ${registryItems.length} component${registryItems.length !== 1 ? 's' : ''}: ${planParts.join(', ')}`
+        );
+        logger.newLine();
+
         logger.bold('🧩 Components to install/update:');
         for (const item of registryItems) {
             const depsStr = item.registryDependencies && item.registryDependencies.length > 0
@@ -259,7 +311,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         }
 
         if (spinner) {
-            spinner.start('Adding component files...');
+            spinner.start(`[1/${registryItems.length}] Adding ${registryItems[0].name}...`);
         }
 
         if (!options.dryRun) {
@@ -297,6 +349,16 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         }
 
         await installComponentDeps(Array.from(allDeps), targetCwd, options.dryRun ?? false);
+
+        if (!options.dryRun && added.length > 0) {
+            const shouldUpdateSnippets = options.vscode === true
+                || (options.vscode !== false && await hasVscodeDir(cwd));
+
+            if (shouldUpdateSnippets) {
+                const snippetPath = await mergeSnippetsFile(cwd, added);
+                logger.success(`✓ VS Code snippets updated at ${path.relative(cwd, snippetPath)}`);
+            }
+        }
 
         if (added.length > 0) {
             logger.newLine();

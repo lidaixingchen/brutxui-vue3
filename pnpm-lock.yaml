@@ -65,6 +65,9 @@ importers:
       diff:
         specifier: ^7.0.0
         version: 7.0.0
+      es-module-lexer:
+        specifier: ^2.2.0
+        version: 2.2.0
       fs-extra:
         specifier: ^11.3.5
         version: 11.3.5
@@ -2267,6 +2270,9 @@ packages:
 
   es-module-lexer@2.1.0:
     resolution: {integrity: sha512-n27zTYMjYu1aj4MjCWzSP7G9r75utsaoc8m61weK+W8JMBGGQybd43GstCXZ3WNmSFtGT9wi59qQTW6mhTR5LQ==}
+
+  es-module-lexer@2.2.0:
+    resolution: {integrity: sha512-3lGxdTXCLfe1MYfTz1y2ksAAUM4NAOP6rPEjxGJVKO7TZ5+tvHCaQWGpC4Y3IXvW3ece0Cz1cIP4FWBxOnGCTQ==}
 
   esbuild@0.21.3:
     resolution: {integrity: sha512-Kgq0/ZsAPzKrbOjCQcjoSmPoWhlcVnGAUo7jvaLHoxW1Drto0KGkR1xBNg2Cp43b9ImvxmPEJZ9xkfcnqPsfBw==}
@@ -5362,6 +5368,8 @@ snapshots:
     optional: true
 
   es-module-lexer@2.1.0: {}
+
+  es-module-lexer@2.2.0: {}
 
   esbuild@0.21.3:
     optionalDependencies:

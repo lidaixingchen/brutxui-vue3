@@ -26,6 +26,7 @@ export interface TailwindConfig {
 
 export interface BrutalistConfig {
     $schema?: string;
+    $version?: number;
     style: string;
     tailwind: TailwindConfig;
     aliases: AliasConfig;
@@ -37,6 +38,17 @@ export interface InitOptions {
     cwd?: string;
     force?: boolean;
     silent?: boolean;
+    vscode?: boolean;
+    workspaceRoot?: string;
+}
+
+export type CreateTemplate = 'default' | 'nuxt';
+
+export interface CreateOptions {
+    template?: CreateTemplate;
+    packageManager?: PackageManager;
+    cwd?: string;
+    yes?: boolean;
 }
 
 export interface AddOptions {
@@ -48,6 +60,7 @@ export interface AddOptions {
     silent?: boolean;
     dryRun?: boolean;
     registry?: string;
+    vscode?: boolean;
 }
 
 export interface RegistryFile {
@@ -69,6 +82,7 @@ export interface DoctorOptions {
     json?: boolean;
     silent?: boolean;
     yes?: boolean;
+    fixOnly?: string;
 }
 
 export interface DiffOptions {
@@ -80,6 +94,43 @@ export interface DiffOptions {
     silent?: boolean;
 }
 
+export interface UpdateOptions {
+    components?: string[];
+    all?: boolean;
+    cwd?: string;
+    yes?: boolean;
+    silent?: boolean;
+    dryRun?: boolean;
+    registry?: string;
+}
+
+export interface ListOptions {
+    cwd?: string;
+    json?: boolean;
+    silent?: boolean;
+}
+
+export interface InfoOptions {
+    cwd?: string;
+    json?: boolean;
+    silent?: boolean;
+    registry?: string;
+}
+
+export interface RemoveOptions {
+    cwd?: string;
+    yes?: boolean;
+    silent?: boolean;
+    dryRun?: boolean;
+}
+
+export interface InstalledComponentInfo {
+    name: string;
+    files: string[];
+    fileCount: number;
+    dependencies: string[];
+}
+
 export type CheckStatus = 'pass' | 'warn' | 'error';
 
 export enum FixId {
@@ -89,6 +140,7 @@ export enum FixId {
     CreateComponentsDir = 'create-components-dir',
     CreateUtilsFile = 'create-utils-file',
     AddCnFunction = 'add-cn-function',
+    AddConfigVersion = 'add-config-version',
 }
 
 export interface CheckResult {
