@@ -11,7 +11,7 @@
 
 ## 特性
 
-- **CLI 工具**：通过 `npx brutx@latest` 将组件复制到你的代码库
+- **CLI 工具**：通过 `npx brutx-vue@latest` 将组件复制到你的代码库
 - **完全控制**：拥有并自定义每一个组件
 - **粗野主义风格**：粗边框、偏移阴影、鲜艳色彩
 - **Tailwind 就绪令牌**：background/foreground/primary/secondary/destructive、ring、input、card 等。通过 `.dark` 支持暗色模式
@@ -25,13 +25,13 @@
 
 ```bash
 # 初始化你的项目
-npx brutx@latest init
+npx brutx-vue@latest init
 
 # 添加组件
-npx brutx@latest add button card badge
+npx brutx-vue@latest add button card badge
 
 # 或添加全部组件
-npx brutx@latest add --all
+npx brutx-vue@latest add --all
 ```
 
 ## 升级
@@ -39,13 +39,13 @@ npx brutx@latest add --all
 当 BrutxUI 发布新版本时，重新运行 init 命令即可升级：
 
 ```bash
-npx brutx@latest init
+npx brutx-vue@latest init
 ```
 
 你也可以单独更新已有组件：
 
 ```bash
-npx brutx@latest add button --overwrite
+npx brutx-vue@latest add button --overwrite
 ```
 
 ## 用法
@@ -79,9 +79,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 | 命令                               | 说明                           |
 | ---------------------------------- | ------------------------------ |
-| `npx brutx@latest init`            | 使用 components.json 初始化项目 |
-| `npx brutx@latest add <component>` | 添加指定组件                   |
-| `npx brutx@latest add --all`       | 添加全部组件                   |
+| `npx brutx-vue@latest init`            | 使用 components.json 初始化项目 |
+| `npx brutx-vue@latest add <component>` | 添加指定组件                   |
+| `npx brutx-vue@latest add --all`       | 添加全部组件                   |
 
 ## 组件列表
 

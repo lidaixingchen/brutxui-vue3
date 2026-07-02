@@ -38,20 +38,6 @@ BrutxUI provides pre-built block components, combining multiple basic components
 | [Overview Page](/en/blocks/overview-page) | Dashboard overview layout with statistics cards and charts. |
 | [Dashboard Stats](/en/blocks/dashboard-stats) | Statistics card panel with counter effects. |
 
-## Installation
-
-Add blocks to your project via CLI:
-
-```bash
-npx brutx-vue@latest add --block auth-card
-```
-
-Or add multiple blocks at once:
-
-```bash
-npx brutx-vue@latest add --block brutalist-hero pricing-section
-```
-
 ## Customization
 
 Blocks are copy-and-paste components. Once added, you have full ownership and control over their source code. You can freely modify props, styling, and behavior to fit your design specifications.

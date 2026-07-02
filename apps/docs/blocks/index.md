@@ -38,20 +38,6 @@ BrutxUI 提供了预构建的区块组件，将多个基础组件组合成完整
 | [Overview Page](/blocks/overview-page) | 带有统计卡片和活动面板的仪表盘概览页面 |
 | [Dashboard Stats](/blocks/dashboard-stats) | 带有统计卡片和计数器的仪表盘统计面板 |
 
-## 安装
-
-使用 CLI 添加区块：
-
-```bash
-npx brutx-vue@latest add --block auth-card
-```
-
-或同时添加多个区块：
-
-```bash
-npx brutx-vue@latest add --block brutalist-hero pricing-section
-```
-
 ## 自定义
 
 区块是复制粘贴式组件。添加到项目后，你对其源代码拥有完全控制权。可以修改 props、样式和行为以满足你的需求。
