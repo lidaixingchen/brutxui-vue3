@@ -4,13 +4,13 @@
 
 ## 单体仓库
 
-| 包名 | 路径 | 说明 |
-|---------|------|------|
-| `brutx-ui-vue` | `packages/ui/` | 核心 Vue 3 组件库 |
-| `brutx-vue` | `packages/cli/` | 用于 `init` 和 `add` 的 CLI |
-| `brutx-registry-vue` | `packages/registry/` | 编译后的 JSON 注册表 |
-| `brutx-shared-vue` | `packages/shared/` | 共享类型和元数据 |
-| `docs` | `apps/docs/` | VitePress 文档站点 |
+| 包名                   | 路径                   | 说明                      |
+| -------------------- | -------------------- | ----------------------- |
+| `brutx-ui-vue`       | `packages/ui/`       | 核心 Vue 3 组件库            |
+| `brutx-vue`          | `packages/cli/`      | 用于 `init` 和 `add` 的 CLI |
+| `brutx-registry-vue` | `packages/registry/` | 编译后的 JSON 注册表           |
+| `brutx-shared-vue`   | `packages/shared/`   | 共享类型和元数据                |
+| `docs`               | `apps/docs/`         | VitePress 文档站点          |
 
 ## 命令
 
@@ -60,7 +60,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - **注册表构建器：** `packages/registry/`
   - 组件映射表：`packages/registry/scripts/component-files.ts`（`COMPONENT_FILES`，新增组件在此登记）
   - 构建脚本：`packages/registry/scripts/build-registry.ts`、`validate-registry.ts`
-  - 生成的组件 JSON：`packages/registry/registry/`（由 build 生成，勿手动编辑）
+  - 生成的组件 JSON：`packages/registry/registry/`（由 build 自动生成，勿手动编辑）
 - **共享类型：** `packages/shared/`
 - **为此UI库创建的Skills：** `skills/`
   - BrutxUI Skill：`skills/brutxui/`

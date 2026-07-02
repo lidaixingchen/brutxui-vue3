@@ -34,15 +34,15 @@ init 命令将：
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--yes` / `-y` | 跳过提示并使用默认值 | `false` |
-| `--defaults` / `-d` | 使用默认配置 | `false` |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--force` / `-f` | 强制覆盖已有配置 | `false` |
-| `--silent` / `-s` | 静默输出 | `false` |
-| `--vscode` | 生成 VS Code 代码片段 | `false` |
-| `--workspace-root <path>` | 指定 monorepo 工作区根目录 | — |
+| 标志                        | 描述                 | 默认值     |
+| ------------------------- | ------------------ | ------- |
+| `--yes` / `-y`            | 跳过提示并使用默认值         | `false` |
+| `--defaults` / `-d`       | 使用默认配置             | `false` |
+| `--cwd <path>`            | 设置工作目录             | 当前目录    |
+| `--force` / `-f`          | 强制覆盖已有配置           | `false` |
+| `--silent` / `-s`         | 静默输出               | `false` |
+| `--vscode`                | 生成 VS Code 代码片段    | `false` |
+| `--workspace-root <path>` | 指定 monorepo 工作区根目录 | —       |
 
 init 支持 monorepo 工作区检测（pnpm-workspace.yaml / lerna.json / turbo.json）。
 
@@ -76,18 +76,18 @@ npx brutx-vue@latest add --all
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--all` | 添加所有可用组件 | `false` |
-| `--yes` / `-y` | 跳过确认提示 | `false` |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--overwrite` | 覆盖已有的组件文件 | `false` |
-| `--path <path>` / `-p` | 指定组件添加路径 | — |
-| `--silent` / `-s` | 静默输出 | `false` |
-| `--dry-run` | 模拟添加，不写入文件 | `false` |
-| `--registry <registry>` / `-r` | 指定注册表路径或 URL | — |
-| `--no-cache` | 跳过注册表缓存 | `false` |
-| `--vscode` | 更新 VS Code 代码片段 | `false` |
+| 标志                             | 描述              | 默认值     |
+| ------------------------------ | --------------- | ------- |
+| `--all`                        | 添加所有可用组件        | `false` |
+| `--yes` / `-y`                 | 跳过确认提示          | `false` |
+| `--cwd <path>`                 | 设置工作目录          | 当前目录    |
+| `--overwrite`                  | 覆盖已有的组件文件       | `false` |
+| `--path <path>` / `-p`         | 指定组件添加路径        | —       |
+| `--silent` / `-s`              | 静默输出            | `false` |
+| `--dry-run`                    | 模拟添加，不写入文件      | `false` |
+| `--registry <registry>` / `-r` | 指定注册表路径或 URL    | —       |
+| `--no-cache`                   | 跳过注册表缓存         | `false` |
+| `--vscode`                     | 更新 VS Code 代码片段 | `false` |
 
 ### 版本锁定
 
@@ -138,14 +138,14 @@ npx brutx-vue@latest doctor --json
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--fix` | 自动修复可修复的问题 | `false` |
-| `--fix-only <fixId>` | 仅执行指定的修复项 | — |
-| `--json` | 输出 JSON 格式报告 | `false` |
-| `--yes` / `-y` | 跳过确认提示 | `false` |
-| `--silent` / `-s` | 静默输出 | `false` |
+| 标志                   | 描述           | 默认值     |
+| -------------------- | ------------ | ------- |
+| `--cwd <path>`       | 设置工作目录       | 当前目录    |
+| `--fix`              | 自动修复可修复的问题   | `false` |
+| `--fix-only <fixId>` | 仅执行指定的修复项    | —       |
+| `--json`             | 输出 JSON 格式报告 | `false` |
+| `--yes` / `-y`       | 跳过确认提示       | `false` |
+| `--silent` / `-s`    | 静默输出         | `false` |
 
 ### 输出示例
 
@@ -167,15 +167,15 @@ npx brutx-vue@latest doctor --json
 
 ### 可自动修复的问题
 
-| 问题 | 修复操作 |
-| --- | --- |
-| `$schema` 缺失 | 写入 schema URL |
-| `$version` 过期 | 更新为当前版本 |
-| `style` 缺失 | 设置为 `brutalism` |
-| CSS 缺少 BrutxUI token | 注入 CSS 样式 |
-| 组件目录不存在 | 创建目录 |
-| utils 文件不存在 | 创建 utils 文件 |
-| `cn()` 函数不存在 | 添加 cn() 函数 |
+| 问题                   | 修复操作            |
+| -------------------- | --------------- |
+| `$schema` 缺失         | 写入 schema URL   |
+| `$version` 过期        | 更新为当前版本         |
+| `style` 缺失           | 设置为 `brutalism` |
+| CSS 缺少 BrutxUI token | 注入 CSS 样式       |
+| 组件目录不存在              | 创建目录            |
+| utils 文件不存在          | 创建 utils 文件     |
+| `cn()` 函数不存在         | 添加 cn() 函数      |
 
 ## brutx-vue diff
 
@@ -213,14 +213,14 @@ npx brutx-vue@latest diff --all --json
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--all` | 对比所有已安装组件 | `false` |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--registry <path>` / `-r` | 指定本地注册表路径 | — |
-| `--json` | 输出 JSON 格式 | `false` |
-| `--silent` / `-s` | 静默输出 | `false` |
-| `--no-cache` | 跳过注册表缓存 | `false` |
+| 标志                         | 描述         | 默认值     |
+| -------------------------- | ---------- | ------- |
+| `--all`                    | 对比所有已安装组件  | `false` |
+| `--cwd <path>`             | 设置工作目录     | 当前目录    |
+| `--registry <path>` / `-r` | 指定本地注册表路径  | —       |
+| `--json`                   | 输出 JSON 格式 | `false` |
+| `--silent` / `-s`          | 静默输出       | `false` |
+| `--no-cache`               | 跳过注册表缓存    | `false` |
 
 ### 输出示例
 
@@ -292,15 +292,15 @@ npx brutx-vue@latest update --dry-run
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--all` / `-a` | 更新所有过期组件 | `false` |
-| `--yes` / `-y` | 跳过确认提示 | `false` |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--dry-run` | 仅预览，不写入文件 | `false` |
-| `--registry <registry>` / `-r` | 指定注册表 URL | — |
-| `--no-cache` | 跳过注册表缓存 | `false` |
-| `--silent` / `-s` | 静默输出 | `false` |
+| 标志                             | 描述        | 默认值     |
+| ------------------------------ | --------- | ------- |
+| `--all` / `-a`                 | 更新所有过期组件  | `false` |
+| `--yes` / `-y`                 | 跳过确认提示    | `false` |
+| `--cwd <path>`                 | 设置工作目录    | 当前目录    |
+| `--dry-run`                    | 仅预览，不写入文件 | `false` |
+| `--registry <registry>` / `-r` | 指定注册表 URL | —       |
+| `--no-cache`                   | 跳过注册表缓存   | `false` |
+| `--silent` / `-s`              | 静默输出      | `false` |
 
 ## brutx-vue list
 
@@ -312,11 +312,11 @@ npx brutx-vue@latest list
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--json` | 输出 JSON 格式 | `false` |
-| `--silent` / `-s` | 静默输出 | `false` |
+| 标志                | 描述         | 默认值     |
+| ----------------- | ---------- | ------- |
+| `--cwd <path>`    | 设置工作目录     | 当前目录    |
+| `--json`          | 输出 JSON 格式 | `false` |
+| `--silent` / `-s` | 静默输出       | `false` |
 
 ### 输出示例
 
@@ -348,12 +348,12 @@ npx brutx-vue@latest info button
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--json` | 输出 JSON 格式 | `false` |
-| `--registry <registry>` / `-r` | 指定注册表路径或 URL | — |
-| `--silent` / `-s` | 静默输出 | `false` |
+| 标志                             | 描述           | 默认值     |
+| ------------------------------ | ------------ | ------- |
+| `--cwd <path>`                 | 设置工作目录       | 当前目录    |
+| `--json`                       | 输出 JSON 格式   | `false` |
+| `--registry <registry>` / `-r` | 指定注册表路径或 URL | —       |
+| `--silent` / `-s`              | 静默输出         | `false` |
 
 ## brutx-vue remove
 
@@ -387,12 +387,12 @@ npx brutx-vue@latest remove button --dry-run
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--yes` / `-y` | 跳过确认提示 | `false` |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--dry-run` | 仅预览，不删除文件 | `false` |
-| `--silent` / `-s` | 静默输出 | `false` |
+| 标志                | 描述        | 默认值     |
+| ----------------- | --------- | ------- |
+| `--yes` / `-y`    | 跳过确认提示    | `false` |
+| `--cwd <path>`    | 设置工作目录    | 当前目录    |
+| `--dry-run`       | 仅预览，不删除文件 | `false` |
+| `--silent` / `-s` | 静默输出      | `false` |
 
 ## brutx-vue create
 
@@ -418,12 +418,12 @@ npx brutx-vue@latest create my-app --template nuxt
 
 ### 选项
 
-| 标志 | 描述 | 默认值 |
-|------|------|--------|
-| `--template <template>` / `-t` | 项目模板（`default`、`nuxt`） | `default` |
-| `--package-manager <pm>` | 包管理器（`pnpm`、`npm`、`yarn`、`bun`） | `pnpm` |
-| `--cwd <path>` | 设置工作目录 | 当前目录 |
-| `--yes` / `-y` | 跳过确认提示 | `false` |
+| 标志                             | 描述                              | 默认值       |
+| ------------------------------ | ------------------------------- | --------- |
+| `--template <template>` / `-t` | 项目模板（`default`、`nuxt`）          | `default` |
+| `--package-manager <pm>`       | 包管理器（`pnpm`、`npm`、`yarn`、`bun`） | `pnpm`    |
+| `--cwd <path>`                 | 设置工作目录                          | 当前目录      |
+| `--yes` / `-y`                 | 跳过确认提示                          | `false`   |
 
 ## components.json 配置文件
 
@@ -446,17 +446,13 @@ npx brutx-vue@latest create my-app --template nuxt
 }
 ```
 
-| 字段 | 描述 |
-|------|------|
-| `$schema` | JSON Schema URL，提供 IDE 校验 |
-| `$version` | 配置文件版本号，CLI 读取时自动迁移旧版本 |
-| `style` | 样式主题，当前仅支持 `brutalism` |
-| `tailwind.config` | Tailwind 配置文件路径（v4 项目为空字符串） |
-| `tailwind.css` | 全局 CSS 文件路径 |
-| `aliases.components` | 组件导入别名 |
-| `aliases.utils` | 工具函数导入别名 |
-| `aliases.composables` | 组合式函数导入别名 |
-
-### 可用组件
-
-accordion, activity-log-page, alert, alert-dialog, auth-card, avatar, badge, before-after, blog-card, blog-list-page, breadcrumb, brutalist-hero, button, calendar, card, card-3d, carousel, chat-bubble, checkbox, code-block, combobox, command, cookie-consent, copy-to-clipboard, counter, dashboard-shell, dashboard-stats, data-table-section, dialog, dropdown-menu, empty-state, error-card, faq-section, feedback-form, file-card, footer-section, form, gallery-section, glitch-text, hardcore-input, header-section, input, kbd, kanban, loading-page, marquee, not-found-page, number-input, overview-page, pagination, popover, pricing-section, profile-page, progress, quick-actions, radio-group, scratch-card, scroll-area, search-widget, select, separator, settings-page, sheet, skeleton, sketchy-chart, slider, spinner, stepper, stepper-section, submit-button, success-card, switch, table, tabs, tags-input, testimonial-card, textarea, timeline, toast, toggle, toggle-group, tooltip, tree-view, upload-card, waitlist-page
+| 字段                    | 描述                          |
+| --------------------- | --------------------------- |
+| `$schema`             | JSON Schema URL，提供 IDE 校验   |
+| `$version`            | 配置文件版本号，CLI 读取时自动迁移旧版本      |
+| `style`               | 样式主题，当前仅支持 `brutalism`      |
+| `tailwind.config`     | Tailwind 配置文件路径（v4 项目为空字符串） |
+| `tailwind.css`        | 全局 CSS 文件路径                 |
+| `aliases.components`  | 组件导入别名                      |
+| `aliases.utils`       | 工具函数导入别名                    |
+| `aliases.composables` | 组合式函数导入别名                   |

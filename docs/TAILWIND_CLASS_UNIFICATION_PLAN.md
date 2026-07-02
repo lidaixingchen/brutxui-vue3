@@ -21,39 +21,39 @@
 
 ### 1.2 引用现状
 
-| 常量 | 被 import 次数 | 内联重复次数 |
-|---|---|---|
-| `brutalHoverLift` | 1（`select-variants.ts`） | 21 |
-| `brutalHighlightLift` | 1（`command-variants.ts`） | 0 |
-| `brutalPress` | 2（`command-variants.ts`、`select-variants.ts`） | **44** |
+| 常量 | 被 import 次数 | 核心原子组件内联次数 | 展示大组件内联次数 |
+|---|---|---|---|
+| `brutalHoverLift` | 1（`select-variants.ts`） | 19 | 2 |
+| `brutalHighlightLift` | 1（`command-variants.ts`） | 0 | 0 |
+| `brutalPress` | 2（`command-variants.ts`、`select-variants.ts`） | **34** | 10 |
 
-合计 65 处内联字符串与现有常量**完全一致**，可直接替换。
+合计 53 处核心原子组件内联字符串与现有常量**完全一致**，可直接替换；另有 12 处大组件保持内联。
 
 ### 1.3 重复热点
 
-- `brutalPress`（44 处）：`accordion-variants.ts`、`button-variants.ts`、`card-variants.ts`、`code-block-variants.ts`、`data-table-variants.ts`、`date-picker-variants.ts`、`pagination-variants.ts`、`slider-variants.ts`、`stepper-variants.ts`、`tabs-variants.ts`、`toggle-variants.ts`、`FooterSection.vue`、`PricingSection.vue`、`UploadCard.vue`、`DataTableSection.vue` 等 38+ 个文件
-- `brutalHoverLift`（21 处）：`shared-button-variants.ts`（7 处）、`card-variants.ts`、`color-picker-variants.ts`、`data-table-variants.ts`、`dialog-variants.ts`、`kanban-variants.ts`、`radio-group-variants.ts`、`tree-view-variants.ts`、`BlogListPage.vue`、`OverviewPage.vue` 等
-- `brutalPressWithTransition`（19 处，**新派生常量候选**）：press + `transition-all` 的固定组合，分散在多个 variants 文件中
+- `brutalPress`：`accordion-variants.ts`、`button-variants.ts`、`card-variants.ts`、`code-block-variants.ts`、`data-table-variants.ts`、`date-picker-variants.ts`、`pagination-variants.ts`、`slider-variants.ts`、`stepper-variants.ts`、`tabs-variants.ts`、`toggle-variants.ts` 等原子组件；非核心展示组件（如 `FooterSection.vue` 等）保持内联。
+- `brutalHoverLift`：`shared-button-variants.ts`（7 处）、`card-variants.ts`、`color-picker-variants.ts`、`data-table-variants.ts`、`dialog-variants.ts`、`kanban-variants.ts`、`radio-group-variants.ts`、`tree-view-variants.ts` 等；展示性组件（如 `BlogListPage.vue`）保持内联。
+- `brutalPressWithTransition`（**新派生常量候选**）：press + `transition-all` 的固定组合，分散在多个 variants 文件中。
 
 ---
 
 ## 2. 分类框架
 
-把所有重复点按"可替换程度"分为三类，对应不同的处理策略：
+根据“原子组件重构、展示页面保持内联以维持简炼，但必须保证 100% 主题变量连贯性”的原则，分类处理策略如下：
 
 | 类别 | 描述 | 数量 | 处理策略 |
 |---|---|---|---|
-| **A** | 字符串与现有常量**完全一致** | 65 | 直接替换为 import 引用 |
-| **B** | 与常量相似但有微调 | 47 | 新建派生常量后替换 |
-| **C** | 组件私有（仅出现一次或布局强耦合） | 13 | 保留内联，添加注释说明 |
+| **A** | 原子组件中与现有常量**完全一致** | 53 | 直接替换为 import 引用 |
+| **B** | 原子组件中与常量相似但有微调 | 38 | 新建派生常量后替换 |
+| **C** | 组件私有（强耦合布局）或非核心展示大页面（保持内联） | 36 | 核心私有写明注释；页面级内联改写为使用主题变量 |
 
 ---
 
 ## 3. 分类详表
 
-### 3.1 类别 A：精确匹配（65 处）
+### 3.1 类别 A：精确匹配（53 处）
 
-#### A-1：`brutalPress` 精确匹配（44 处）
+#### A-1：`brutalPress` 精确匹配（34 处）
 
 **目标常量**：`brutalPress`（已存在）
 
@@ -61,9 +61,9 @@
 
 - **lib 层**：`form-toggle-base.ts`、`modal-variants.ts`、`tree-variants.ts`
 - **variants 层**：`accordion-variants.ts`、`button-variants.ts`、`card-variants.ts`、`code-block-variants.ts`、`color-picker-variants.ts`、`copy-to-clipboard-variants.ts`、`date-picker-variants.ts`、`dropdown-menu-variants.ts`、`glitch-button-variants.ts`、`glitch-text-variants.ts`、`input-variants.ts`、`kanban-variants.ts`、`number-input-variants.ts`、`pagination-variants.ts`（2 处）、`radio-group-variants.ts`、`slider-variants.ts`、`stepper-variants.ts`、`tabs-variants.ts`、`textarea-variants.ts`、`toggle-variants.ts`、`carousel-shared.ts`（2 处）
-- **Vue 层**：`BlogListPage.vue`、`ActivityLogPage.vue`、`Calendar.vue`、`CarouselEnhanced.vue`、`DatePickerPanel.vue`、`DatePickerRangePanel.vue`、`DateTimePickerPanel.vue`、`MonthPickerPanel.vue`、`WeekPickerPanel.vue`、`YearPickerPanel.vue`、`DataTableSection.vue`（2 处）、`FooterSection.vue`、`GallerySection.vue`、`OverviewPage.vue`、`PricingSection.vue`（2 处）、`TagsInputItemDelete.vue`、`UploadCard.vue`
+- **Vue 层 (仅限核心/原子级 UI 交互组件)**：`Calendar.vue`、`CarouselEnhanced.vue`、`DatePickerPanel.vue`、`DatePickerRangePanel.vue`、`DateTimePickerPanel.vue`、`MonthPickerPanel.vue`、`WeekPickerPanel.vue`、`YearPickerPanel.vue`、`TagsInputItemDelete.vue`
 
-#### A-2：`brutalHoverLift` 精确匹配（21 处）
+#### A-2：`brutalHoverLift` 精确匹配（19 处）
 
 **目标常量**：`brutalHoverLift`（已存在）
 
@@ -71,21 +71,20 @@
 
 - `shared-button-variants.ts`（7 处，每个 variant 选项 1 处）
 - `card-variants.ts`、`color-picker-variants.ts`、`copy-to-clipboard-variants.ts`、`data-table-variants.ts`、`date-picker-variants.ts`、`dialog-variants.ts`、`kanban-variants.ts`、`radio-group-variants.ts`、`select-variants.ts`（已引用，仅 1 处）、`stepper-variants.ts`、`tabs-variants.ts`、`tree-view-variants.ts`、`form-toggle-base.ts`
-- `BlogListPage.vue`、`OverviewPage.vue`
 
 #### A-3：`brutalHighlightLift` 精确匹配（0 处）
 
 当前无内联重复，保持现状。
 
-### 3.2 类别 B：需新建派生常量（41 处）
+### 3.2 类别 B：需新建派生常量（38 处）
 
 按"微调模式"聚合为 6 个派生常量候选：
 
-#### B-1：`brutalPressWithTransition`（19 处，**最优先**）
+#### B-1：`brutalPressWithTransition`（16 处，**最优先**）
 
 **值**：`brutalPress + ' transition-all'`
 
-**涉及文件**：`button-variants.ts`、`glitch-button-variants.ts`、`data-table-variants.ts`、`tabs-variants.ts`、`kanban-variants.ts`、`pagination-variants.ts`、`BlogListPage.vue`、`PricingSection.vue`、`ActivityLogPage.vue` 等
+**涉及文件**：`button-variants.ts`、`glitch-button-variants.ts`、`data-table-variants.ts`、`tabs-variants.ts`、`kanban-variants.ts`、`pagination-variants.ts` 等原子/核心组件的 variants 文件
 
 #### B-2：`brutalHoverLiftSm`（6 处）
 
@@ -103,7 +102,7 @@
 
 **值**：`'hover:shadow-brutal-lg hover:-translate-y-0.5'`（仅垂直 lift，无水平偏移）
 
-**涉及文件**：`carousel-shared.ts`、`Card.vue`（垂直浮起变体）
+**涉及文件**：`carousel-shared.ts`、`Card.vue` (垂直浮起变体)
 
 #### B-5：`brutalPressWithShadowSm`（4 处）
 
@@ -117,16 +116,21 @@
 
 **涉及文件**：`command-variants.ts`、`tree-view-variants.ts`
 
-### 3.3 类别 C：组件私有（19 处）
+### 3.3 类别 C：私有及大页面组件内联（36 处）
 
-**保留内联，添加注释说明原因**。典型例子：
+**执行策略**：
+1. **组件私有强耦合类**：核心 variants 文件中如有高度特例化布局（如配合居中等），保留内联并在源码中添加 `/* 组件私有：XXX 原因，不抽取 */` 注释。
+2. **展示性/页面大组件**：为保持 Vue 文件简炼，不强制其导入常量，允许在 Vue 模板中保持类名内联。
+3. **100% 主题一致性约束**：内联样式**绝对禁止**使用硬编码的 `active:translate-y-[2px]`。如存在该写法（如原方案中评估出的 `AuthCard.vue` / `WaitlistPage.vue`），必须通过本次重构将其改写为使用主题 CSS 变量（如 `active:translate-y-[var(--brutal-pressed-offset,2px)]`），以确保全局主题切换时压下偏移同步生效。
+
+典型例子：
 
 - `carousel-variants.ts`：`active:translate-y-[calc(50%+2px)]` 配合 `top-1/2` 绝对定位，强耦合布局（3 处）
-- `AuthCard.vue`：`active:translate-y-[2px]` 与 `active:scale-[0.98]`，不使用 CSS 变量或具备特有缩放效果，不满足全局主题压下偏移量（2 处）
-- `WaitlistPage.vue`：`active:translate-y-[2px]`，不继承全局主题变量（1 处）
-- `scratch-card-variants.ts`：`active:cursor-grabbing` 配合拖拽语义
-- `sketchy-chart-variants.ts`：`hover:z-10` 仅用于图表数据点悬浮层级
-
+- `AuthCard.vue` / `WaitlistPage.vue` 等展示性大页面组件：
+  - 重构前：直接硬编码的 `active:translate-y-[2px]`。
+  - 重构后：改写为使用带有主题变量的内联类名 `active:translate-y-[var(--brutal-pressed-offset,2px)]`，但不执行常量导入，保持 Vue 模板的独立性。
+- `scratch-card-variants.ts`：`active:cursor-grabbing` 配合拖拽语义（1 处）
+- `sketchy-chart-variants.ts`：`hover:z-10` 仅用于图表数据点悬浮层级（1 处）
 ---
 
 ## 4. 执行方案
@@ -215,21 +219,13 @@ import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 brutalPressWithTransition
 ```
 
-### 4.4 阶段 4：类别 C 添加注释（PR #4，预计 0.5h）
+### 4.4 阶段 4：类别 C 添加注释与重构（PR #4，预计 1.5h）
 
-**范围**：19 处
+**范围**：36 处
 
 **执行策略**：
-
-每处添加 `/* 组件私有：XXX 原因，不抽取 */` 注释。示例：
-
-```ts
-// carousel-variants.ts
-'active:translate-y-[calc(50%+2px)]' /* 组件私有：配合 top-1/2 绝对定位，强耦合布局 */,
-
-// AuthCard.vue
-'active:translate-y-[2px]' /* 组件私有：不使用 CSS 变量，不继承全局主题压下偏移量 */,
-```
+1. **添加私有注释**（19 处）：为组件库私有强耦合类添加 `/* 组件私有：XXX 原因，不抽取 */` 注释。
+2. **改写大页面组件内联类**（17 处）：对 `AuthCard.vue`、`WaitlistPage.vue` 等展示大页面组件中可能硬编码的类进行重构，将 `active:translate-y-[2px]` 改为 `active:translate-y-[var(--brutal-pressed-offset,2px)]`。模板中依然保持内联，不新增导入。
 
 ### 4.5 阶段 5：验证与回归（PR #5，预计 1h）
 
@@ -288,10 +284,10 @@ brutalPressWithTransition
 | 风险 | 概率 | 影响 | 缓解措施 |
 |---|---|---|---|
 | Tailwind purge 把常量引用的字符串当作动态类名而剔除 | 低 | 高 | CVA 会把数组/字符串字面量作为静态类名处理，与直接内联等效；阶段 5 视觉回归验证 |
-| 替换脚本误改非目标字符串（如注释、变量名） | 中 | 中 | regex 加 `\b` 边界 + 仅处理 `.ts`/`.vue` 文件 + 阶段 5 人工 review 每个 diff |
+| 替换脚本误改非目标字符串（如注释、变量名） | 中 | 中 | regex 加 `` 边界 + 仅处理 `.ts`/`.vue` 文件 + 阶段 5 人工 review 每个 diff |
 | 派生常量的模板字符串求值时机导致构建时优化失效 | 低 | 低 | 模板字符串在 JS 运行时求值，对 Tailwind JIT 透明（JIT 只扫描最终字符串） |
 | CLI 安装路径与用户 alias 配置不匹配（C5 已知限制） | 中 | 中 | 文档说明 + 后续可改 `resolveImportAlias` 处理所有 `@/lib/*`（独立议题，不在本方案范围） |
-
+| 用户端（消费者）的 Tailwind v4 扫描路径未包含 lib 导致样式丢失 | 低 | 中 | 在 CLI init 初始化引导、开发文档常见问题中，明确引导用户配置 `@source` 扫描目录（如 `@source "./src/**/*.ts"`） |
 ### 6.2 回滚策略
 
 - 每个 PR 保持**原子提交**（一个派生常量一个 commit），便于 cherry-pick 回滚
@@ -309,6 +305,7 @@ brutalPressWithTransition
 3. **不抽 `focus:` / `disabled:` 等其它状态类**：本次聚焦 hover/press/highlight 三大交互状态；其它状态类（如 `focus:outline focus:outline-brutal-ring`）的重复模式需要先独立调研
 4. **不对外暴露常量 API**：`brutal-interaction-variants` 保持内部实现细节，不加入 barrel 也不新增 `package.json` exports 子路径
 5. **不做一次性 PR**：按阶段 1-5 分 5 个 PR，每个可独立 review/merge/revert
+6. **不重构展示性大页面/模板组件的类导入**：如 `BlogListPage.vue`，`OverviewPage.vue`, `FooterSection.vue` 等展示性大组件允许保留内联类名，但必须使用主题 CSS 变量（例如将硬编码的 `2px` 纠正为 `var(--brutal-pressed-offset, 2px)`），从而兼顾页面代码的简炼度和主题配置的 100% 连贯性。
 
 ---
 
@@ -317,11 +314,10 @@ brutalPressWithTransition
 | PR | 标题 | 文件变更数 | 新增行数 | 删除行数 |
 |---|---|---|---|---|
 | #1 | `refactor(ui): 扩充 brutal-interaction-variants 派生常量` | 1 | ~20 | 0 |
-| #2 | `refactor(ui): 替换 65 处精确匹配的 Tailwind 交互类为常量引用` | 38 | ~70 | ~70 |
-| #3 | `refactor(ui): 替换 41 处派生常量匹配的 Tailwind 交互类` | 23 | ~45 | ~45 |
-| #4 | `docs(ui): 为 19 处组件私有交互类添加保留原因注释` | 10 | ~20 | 0 |
+| #2 | `refactor(ui): 替换 53 处精确匹配的 Tailwind 交互类为常量引用` | 30 | ~60 | ~60 |
+| #3 | `refactor(ui): 替换 38 处派生常量匹配的 Tailwind 交互类` | 20 | ~40 | ~40 |
+| #4 | `docs(ui): 为 36 处私有及大页面交互类进行添加注释与重构` | 15 | ~30 | 0 |
 | #5 | `chore(ui): Tailwind 交互类统一后的视觉与测试回归` | 0 | 0 | 0 |
-
 **预期净收益**：
 
 - 减少 ~70 行重复字符串
