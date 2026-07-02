@@ -2,6 +2,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, ty
 import { hasDocument } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import type { ResizeCorner } from '@/types'
+export type { ResizeCorner }
 
 export interface DraggableDialogOptions {
     draggable?: boolean
@@ -48,7 +49,7 @@ export function isInteractiveElement(target: HTMLElement): boolean {
 }
 
 export function useDialogEnhanced(
-    options: MaybeRefOrGetter<UseDialogEnhancedOptions>,
+    options?: MaybeRefOrGetter<UseDialogEnhancedOptions>,
 ): UseDialogEnhancedReturn {
     // Reactive source: accepts either a plain object (static options) or a
     // getter function (reactive options that re-evaluate when tracked deps

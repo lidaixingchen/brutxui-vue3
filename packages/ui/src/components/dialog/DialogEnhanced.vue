@@ -94,6 +94,8 @@ const {
     onUpdateOpen: (value) => emit('update:open', value),
 }))
 
+void contentRef
+
 const contentClasses = computed(() =>
     cn(
         dialogContentVariants(),
