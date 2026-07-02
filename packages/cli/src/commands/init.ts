@@ -29,12 +29,11 @@ import {
     installPackages,
     getInstallCommand,
     isSafePath,
+    CURRENT_CONFIG_VERSION,
     logger,
     writeSnippetsFile,
     hasVscodeDir,
 } from '../lib/index.js';
-
-const CURRENT_CONFIG_VERSION = 1;
 
 interface DetectedSettings {
     tailwind: TailwindConfig;

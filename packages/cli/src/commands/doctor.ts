@@ -6,11 +6,10 @@ import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.j
 import { FixId } from '../lib/types.js';
 import { readConfigSafe, CliError } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
-import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE } from '../lib/constants.js';
+import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
-const CURRENT_CONFIG_VERSION = 1;
 
 function checkConfigExists(cwd: string, config: BrutalistConfig | null): CheckResult {
     if (!config) {
@@ -383,7 +382,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
 
                     if (utilsFile) {
                         const existing = await fs.readFile(utilsPath + utilsFile, 'utf-8');
-                        await fs.writeFile(utilsPath + utilsFile, existing + '\n' + UTILS_TEMPLATE, 'utf-8');
+                        await fs.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE, 'utf-8');
                         logger.success('Added cn() function.');
                     }
                     break;

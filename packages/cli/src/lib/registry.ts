@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'fs-extra';
 import path from 'path';
 import type { RegistryItem, RegistryFile, BrutalistConfig } from './types.js';
-import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG } from './constants.js';
+import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG, CURRENT_CONFIG_VERSION } from './constants.js';
 import { CliError } from './error.js';
 import { getCached, setCache } from './cache.js';
 
@@ -192,6 +192,29 @@ function validateBrutalistConfig(data: unknown): asserts data is Record<string, 
     }
 }
 
+export async function migrateConfig(raw: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const version = typeof raw.$version === 'number' ? raw.$version : 0;
+
+    if (version >= CURRENT_CONFIG_VERSION) {
+        return raw;
+    }
+
+    let migrated = { ...raw };
+
+    // v0 → v1: add $schema and $version if missing
+    if (version < 1) {
+        if (!migrated.$schema) {
+            migrated.$schema = SCHEMA_URL;
+        }
+        migrated.$version = 1;
+    }
+
+    // Future migrations go here:
+    // if (migrated.$version < 2) { ... migrated.$version = 2; }
+
+    return migrated;
+}
+
 export async function readConfigSafe(cwd: string): Promise<BrutalistConfig | null> {
     try {
         return await readConfig(cwd);
@@ -216,7 +239,7 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
     validateBrutalistConfig(config);
 
     // config is narrowed to Record<string, unknown> by validateBrutalistConfig
-    const raw = config;
+    const raw = await migrateConfig(config as Record<string, unknown>);
     const rawTailwind = raw.tailwind;
     const rawAliases = raw.aliases;
 
@@ -229,10 +252,11 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
 
     return {
         $schema: (typeof raw.$schema === 'string' ? raw.$schema : undefined) ?? SCHEMA_URL,
+        $version: typeof raw.$version === 'number' ? raw.$version : undefined,
         style: (typeof raw.style === 'string' ? raw.style : undefined) ?? 'brutalism',
         tailwind: {
             config: (typeof tailwind?.config === 'string' ? tailwind.config : undefined) ?? DEFAULT_TAILWIND_CONFIG,
-            css: (typeof tailwind?.css === 'string' ? tailwind.css : undefined) ?? '@/styles/globals.css',
+            css: (typeof tailwind?.css === 'string' ? tailwind?.css : undefined) ?? '@/styles/globals.css',
         },
         aliases: {
             components: (typeof aliases?.components === 'string' ? aliases.components : undefined) ?? DEFAULT_ALIASES.components,

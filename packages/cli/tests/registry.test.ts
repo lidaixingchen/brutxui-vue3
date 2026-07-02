@@ -189,3 +189,31 @@ describe('resolveDeps with mocked fetch', () => {
         expect(resolved.map(r => r.name)).toEqual(['button', 'first', 'second']);
     });
 });
+
+describe('migrateConfig', () => {
+    it('should return config unchanged when version is current', async () => {
+        const raw = { $version: 1, $schema: 'https://example.com', style: 'brutalism' };
+        const result = await registry.migrateConfig(raw);
+        expect(result).toEqual(raw);
+    });
+
+    it('should migrate v0 config by adding $schema and $version', async () => {
+        const raw = { style: 'brutalism', tailwind: { config: '', css: 'src/index.css' } };
+        const result = await registry.migrateConfig(raw);
+        expect(result.$version).toBe(1);
+        expect(result.$schema).toBeDefined();
+    });
+
+    it('should not overwrite existing $schema during migration', async () => {
+        const raw = { $version: 0, $schema: 'https://custom.schema', style: 'brutalism' };
+        const result = await registry.migrateConfig(raw);
+        expect(result.$schema).toBe('https://custom.schema');
+        expect(result.$version).toBe(1);
+    });
+
+    it('should handle missing $version as v0', async () => {
+        const raw = { style: 'brutalism' };
+        const result = await registry.migrateConfig(raw);
+        expect(result.$version).toBe(1);
+    });
+});

@@ -234,13 +234,9 @@ catch (error) {
 
 ## 六、生态与集成
 
-### 20. Nuxt 深度集成缺失（中）
+### 20. ~~Nuxt 深度集成缺失（中）~~ — Deferred
 
-`init` 已能检测 Nuxt 项目（`detectProjectType()` 识别 `nuxt.config.{js,ts,mjs}`），并使用 Nuxt 专属 CSS 路径和 base 目录。但缺少深度集成：不会自动注册组件目录、不修改 `nuxt.config.ts`、不配置 auto-import。
-
-**建议：**
-- `init` 检测到 Nuxt 项目时，自动在 `nuxt.config.ts` 中添加 `components` 目录配置
-- 或提供一个 `@brutx-vue/nuxt` 模块，自动注册组件目录和 CSS
+`init` 已能检测 Nuxt 项目并自动注入 `components` 和 `css` 到 `nuxt.config.ts`。auto-import 等深度集成需独立 `@brutx-vue/nuxt` 模块，当前体量下维护 ROI 不合算，待用户量上来再考虑。
 
 ### 21. IDE 集成（低）
 
@@ -279,7 +275,7 @@ catch (error) {
 | P2 | #8 | 导入重写改 AST | 2d |
 | P2 | #12 | `add` 集成测试补全 | 1.5d |
 | P2 | #16 | 错误信息优化 | 0.5d |
-| P2 | #20 | Nuxt 深度集成 | 2d |
+| P2 | #20 | ~~Nuxt 深度集成~~ Deferred | — |
 | P3 | #4 | 脚手架模板 | 3d |
 | P3 | #9 | 类型声明修复 | 0.5d |
 | P3 | #19 | TOCTOU 修复 | 0.5d |

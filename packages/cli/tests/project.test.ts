@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 import type { PathLike } from 'fs';
-import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion, getAliasFromTsConfig, resolveAliasPath } from '../src/lib/project.js';
+import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion, getAliasFromTsConfig, resolveAliasPath, clearProjectTypeCache } from '../src/lib/project.js';
 
 describe('resolveImportAlias', () => {
     it('should correctly resolve import aliases based on config', () => {
@@ -131,6 +131,7 @@ describe('detectPackageManager', () => {
 describe('detectProjectType', () => {
     afterEach(() => {
         vi.restoreAllMocks();
+        clearProjectTypeCache();
     });
 
     it('should detect nuxt if nuxt config exists', async () => {

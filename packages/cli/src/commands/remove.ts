@@ -161,19 +161,19 @@ async function removeComponentFiles(
         return removed;
     }
 
-    async function collectAndRemove(dir: string): Promise<void> {
+    async function collectFilePaths(dir: string): Promise<void> {
         const entries = await fs.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
             const fullPath = path.join(dir, entry.name);
             if (entry.isDirectory()) {
-                await collectAndRemove(fullPath);
+                await collectFilePaths(fullPath);
             } else {
                 removed.push(fullPath);
             }
         }
     }
 
-    await collectAndRemove(componentPath);
+    await collectFilePaths(componentPath);
     return removed;
 }
 
@@ -217,14 +217,6 @@ export async function remove(components: string[], options: RemoveOptions): Prom
 
     const remaining = installed.filter(c => !toRemove.includes(c));
     const orphanedFiles = await findOrphanedFiles(cwd, config, remaining, toRemove);
-
-    const allFiles: string[] = [];
-    for (const comp of toRemove) {
-        const files = await removeComponentFiles(cwd, config, comp).catch(() => []);
-        for (const f of files) {
-            allFiles.push(f);
-        }
-    }
 
     if (options.dryRun) {
         logger.newLine();

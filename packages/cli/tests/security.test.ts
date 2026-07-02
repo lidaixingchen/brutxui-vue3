@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import path from 'path';
-import { isSafePath, resolveAliasPath } from '../src/lib/project.js';
+import os from 'os';
+import fs from 'fs-extra';
+import { isSafePath, resolveAliasPath, verifyWrittenPath } from '../src/lib/project.js';
 
 describe('isSafePath', () => {
     const cwd = path.resolve('/workspace/project');
@@ -39,5 +41,32 @@ describe('resolveAliasPath path traversal protection', () => {
     it('should not throw for valid alias paths within project', async () => {
         const result = await resolveAliasPath('@/components', cwd);
         expect(result).toContain(cwd);
+    });
+});
+
+describe('verifyWrittenPath', () => {
+    it('should not throw for a safe written path', async () => {
+        const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-verify-'));
+        try {
+            const filePath = path.join(tmpDir, 'test.txt');
+            await fs.writeFile(filePath, 'hello');
+            await expect(verifyWrittenPath(filePath, tmpDir)).resolves.toBeUndefined();
+        } finally {
+            await fs.remove(tmpDir);
+        }
+    });
+
+    it('should throw and remove file for path outside cwd', async () => {
+        const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-verify-'));
+        const outsideDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-outside-'));
+        try {
+            const filePath = path.join(outsideDir, 'escape.txt');
+            await fs.writeFile(filePath, 'malicious');
+            await expect(verifyWrittenPath(filePath, tmpDir)).rejects.toThrow('Security Error');
+            expect(await fs.pathExists(filePath)).toBe(false);
+        } finally {
+            await fs.remove(tmpDir);
+            await fs.remove(outsideDir);
+        }
     });
 });

@@ -21,6 +21,7 @@ import {
     resolveDeps,
     readConfig,
     isSafePath,
+    verifyWrittenPath,
     logger,
     mergeSnippetsFile,
     hasVscodeDir,
@@ -82,7 +83,7 @@ async function resolveComponentFilePath(registryPath: string, config: BrutalistC
     let resolved: string;
 
     if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.components)) {
-        const relative = registryPath.replace(REGISTRY_PATH_PREFIXES.components, '');
+        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.components.length);
         const aliasPath = await resolveAliasPath(config.aliases.components, cwd);
         resolved = path.join(aliasPath, relative);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.composables)) {
@@ -93,7 +94,7 @@ async function resolveComponentFilePath(registryPath: string, config: BrutalistC
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'locales', relative);
-    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils)) {
+    } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils + '/')) {
         resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
@@ -171,6 +172,7 @@ async function writeRegistryFiles(
                 await fs.ensureDir(path.dirname(targetPath));
                 const resolvedContent = resolveImportAlias(file.content, config);
                 await fs.writeFile(targetPath, resolvedContent, 'utf-8');
+                await verifyWrittenPath(targetPath, cwd);
                 itemAdded = true;
                 filesWritten.push(targetPath);
             }

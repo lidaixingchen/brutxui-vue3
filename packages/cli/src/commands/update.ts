@@ -1,4 +1,4 @@
-import { checkbox } from '@inquirer/prompts';
+import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import type { UpdateOptions, DiffResult } from '../lib/types.js';
 import { readConfigSafe, CliError, logger } from '../lib/index.js';
@@ -79,6 +79,35 @@ export async function update(components: string[], options: UpdateOptions): Prom
     if (selected.length === 0) {
         logger.warn('No components selected for update.');
         return;
+    }
+
+    const filesToOverwrite: Array<{ component: string; modifiedFiles: number }> = [];
+    for (const result of outdated) {
+        if (!selected.includes(result.component)) continue;
+        const modifiedFiles = result.files.filter(f => f.status === 'modified').length;
+        if (modifiedFiles > 0) {
+            filesToOverwrite.push({ component: result.component, modifiedFiles });
+        }
+    }
+
+    if (filesToOverwrite.length > 0) {
+        logger.newLine();
+        logger.warn('The following components have local modifications that will be overwritten:');
+        for (const item of filesToOverwrite) {
+            logger.log(`  ${chalk.yellow('●')} ${item.component} (${item.modifiedFiles} file${item.modifiedFiles !== 1 ? 's' : ''} modified)`);
+        }
+
+        if (!options.yes) {
+            const proceed = await confirm({
+                message: `Overwrite local modifications in ${filesToOverwrite.length} component(s)?`,
+                default: false,
+            });
+
+            if (!proceed) {
+                logger.info('Update cancelled.');
+                return;
+            }
+        }
     }
 
     await add(selected, {

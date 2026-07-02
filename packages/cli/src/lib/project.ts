@@ -37,17 +37,26 @@ async function hasVueDependency(cwd: string): Promise<boolean> {
     }
 }
 
+const projectTypeCache = new Map<string, ProjectType>();
+
+export function clearProjectTypeCache(): void {
+    projectTypeCache.clear();
+}
+
 export async function detectProjectType(cwd: string): Promise<ProjectType> {
+    const cached = projectTypeCache.get(cwd);
+    if (cached) return cached;
+
     const hasNuxt = await hasAnyFile(cwd, CONFIG_FILES.nuxt);
     const hasSrc = await fs.pathExists(path.join(cwd, 'src'));
 
-    if (hasNuxt) return 'nuxt';
+    let result: ProjectType;
+    if (hasNuxt) result = 'nuxt';
+    else if (await hasVueDependency(cwd)) result = hasSrc ? 'vite-vue-src' : 'vite-vue';
+    else result = 'unknown';
 
-    if (await hasVueDependency(cwd)) {
-        return hasSrc ? 'vite-vue-src' : 'vite-vue';
-    }
-
-    return 'unknown';
+    projectTypeCache.set(cwd, result);
+    return result;
 }
 
 export async function detectWorkspaceRoot(cwd: string): Promise<string | null> {
@@ -339,6 +348,21 @@ export async function isSafePath(targetPath: string, cwd: string): Promise<boole
     return resolvedTarget.startsWith(resolvedCwd + path.sep) || resolvedTarget === resolvedCwd;
 }
 
+export async function verifyWrittenPath(targetPath: string, cwd: string): Promise<void> {
+    const safe = await isSafePath(targetPath, cwd);
+    if (!safe) {
+        try {
+            await fs.promises.rm(targetPath, { force: true });
+        } catch {
+            // best effort cleanup
+        }
+        throw new Error(
+            `Security Error: Written path "${targetPath}" resolved outside project directory after write. ` +
+            `This may indicate a symlink attack. The file has been removed.`
+        );
+    }
+}
+
 export async function detectTailwindVersion(cwd: string): Promise<'v3' | 'v4'> {
     try {
         const pkgJsonPath = path.join(cwd, 'package.json');
@@ -347,12 +371,11 @@ export async function detectTailwindVersion(cwd: string): Promise<'v3' | 'v4'> {
             const tailwindVersion = pkg.dependencies?.['tailwindcss'] || pkg.devDependencies?.['tailwindcss'];
 
             if (tailwindVersion) {
-                const cleanVersion = tailwindVersion.replace(/^[^0-9]+/, '');
-                if (cleanVersion.startsWith('4')) {
-                    return 'v4';
-                }
-                if (cleanVersion.startsWith('3')) {
-                    return 'v3';
+                const match = tailwindVersion.match(/(\d+)\.\d+\.\d+/);
+                if (match) {
+                    const major = parseInt(match[1], 10);
+                    if (major >= 4) return 'v4';
+                    if (major >= 3) return 'v3';
                 }
             }
         }

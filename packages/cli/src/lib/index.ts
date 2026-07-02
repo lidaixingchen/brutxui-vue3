@@ -16,6 +16,7 @@ export {
     getDefaultAliases,
     resolveImportAlias,
     isSafePath,
+    verifyWrittenPath,
     detectTailwindVersion,
 } from './project.js';
 
@@ -24,7 +25,7 @@ export { installPackages, getInstallCommand } from './package-manager.js';
 export { Logger, logger } from './logger.js';
 export type { LoggerOptions } from './logger.js';
 
-export { getItem, resolveDeps, readConfig, readConfigSafe } from './registry.js';
+export { getItem, resolveDeps, readConfig, readConfigSafe, migrateConfig } from './registry.js';
 
 export { clearCache } from './cache.js';
 

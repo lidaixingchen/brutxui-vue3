@@ -106,6 +106,13 @@ export async function getBrutalistCssStyles(): Promise<string> {
     return _brutalistCssStyles;
 }
 
+export const CURRENT_CONFIG_VERSION = 1;
+
+export const CN_FUNCTION_TEMPLATE = `export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+`;
+
 export const UTILS_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
