@@ -17,9 +17,7 @@
         "**/css.d.ts",
         "**/env.d.ts",
         "**/devtools-plugin.ts",
-        "**/devtools-plugin.test.ts",
-        "**/component-preview.ts",
-        "**/component-preview.test.ts"
+        "**/devtools-plugin.test.ts"
     ],
     "excludePrivate": true,
     "excludeInternal": true,
