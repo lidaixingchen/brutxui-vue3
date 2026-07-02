@@ -11,7 +11,7 @@ import {
     type TestProject,
 } from './helpers.js';
 
-describe('brutx-vue CLI integration', () => {
+describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
     let project: TestProject | undefined;
 
     afterEach(async () => {

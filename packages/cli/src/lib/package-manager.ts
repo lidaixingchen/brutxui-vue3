@@ -30,6 +30,7 @@ export function installPackages(
         const child = spawn(command, [...baseArgs, '--', ...sanitized], {
             cwd,
             shell: isWindows,
+            env: process.env,
             stdio: ['inherit', 'pipe', 'pipe'],
         });
 

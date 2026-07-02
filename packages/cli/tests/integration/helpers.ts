@@ -23,7 +23,8 @@ export const cliEntry = path.join(cliRoot, 'dist', 'index.js');
 export const localRegistry = path.join(repoRoot, 'packages', 'registry', 'registry');
 
 export async function createTestProject(): Promise<TestProject> {
-    const root = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-cli-'));
+    const tempDir = await fs.realpath(os.tmpdir());
+    const root = await fs.mkdtemp(path.join(tempDir, 'brutx-cli-'));
     const fakeBin = path.join(root, '.fake-bin');
     const installLog = path.join(root, 'install-log.jsonl');
 
@@ -49,6 +50,11 @@ export async function createTestProject(): Promise<TestProject> {
     }, { spaces: 2 });
     await fs.writeFile(path.join(root, 'src', 'main.ts'), 'import { createApp } from "vue"\n');
     await fs.writeFile(path.join(root, 'src', 'index.css'), '@import "tailwindcss";\n');
+    // Pin pnpm virtual-store-dir to an absolute realpath to prevent
+    // ERR_PNPM_UNEXPECTED_VIRTUAL_STORE caused by Windows short/long path aliases
+    // (e.g. LIDAIX~1 vs lidaixingchen) resolving differently across subprocess invocations.
+    const virtualStoreDir = path.join(root, 'node_modules', '.pnpm').replace(/\\/g, '/');
+    await fs.writeFile(path.join(root, '.npmrc'), `virtual-store-dir=${virtualStoreDir}\n`);
     await writeFakePackageManager(fakeBin);
 
     return { root, fakeBin, installLog };
@@ -67,6 +73,8 @@ export async function runCli(
         throw new Error(`CLI build output does not exist: ${cliEntry}. Run pnpm --filter brutx-vue build first.`);
     }
 
+    const resolvedTemp = await fs.realpath(os.tmpdir());
+
     return new Promise((resolve) => {
         execFile(
             process.execPath,
@@ -75,6 +83,8 @@ export async function runCli(
                 cwd: options.cwd ?? project.root,
                 env: {
                     ...process.env,
+                    TEMP: resolvedTemp,
+                    TMP: resolvedTemp,
                     BRUTX_FAKE_PM_LOG: project.installLog,
                     CI: '1',
                     NO_COLOR: '1',
@@ -123,7 +133,13 @@ async function writeFakePackageManager(fakeBin: string): Promise<void> {
     ].join('\n');
 
     await fs.writeFile(scriptPath, script);
-    await fs.writeFile(path.join(fakeBin, 'npm'), `#!/usr/bin/env node\nrequire(${JSON.stringify(scriptPath)});\n`);
-    await fs.writeFile(path.join(fakeBin, 'npm.cmd'), `@echo off\r\nnode "${scriptPath}" %*\r\n`);
-    await fs.chmod(path.join(fakeBin, 'npm'), 0o755);
+
+    // Create fake shims for all supported package managers so the CLI picks up
+    // the fake instead of any real pm found later in PATH. Prevents real installs
+    // (and Windows short/long path issues with pnpm) from affecting tests.
+    for (const pm of ['npm', 'pnpm', 'yarn', 'bun']) {
+        await fs.writeFile(path.join(fakeBin, pm), `#!/usr/bin/env node\nrequire(${JSON.stringify(scriptPath)});\n`);
+        await fs.writeFile(path.join(fakeBin, `${pm}.cmd`), `@echo off\r\nnode "${scriptPath}" %*\r\n`);
+        await fs.chmod(path.join(fakeBin, pm), 0o755);
+    }
 }
