@@ -170,7 +170,7 @@ export default defineConfig({
                 /^vee-validate/,
                 /^@vee-validate/,
                 /^@lucide/,
-                /^lucide-vue-next/,
+                /^(?:@lucide\/vue|lucide-vue-next)/,
                 /^embla-carousel/,
             ],
             output: [

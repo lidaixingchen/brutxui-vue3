@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, inject } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { cn } from '@/lib/utils'
+import { descriptionsBorderKey, descriptionsDirectionKey } from './descriptions-key'
 
 interface DescriptionsItemProps {
     /** 标签 */
@@ -19,8 +20,8 @@ const props = withDefaults(defineProps<DescriptionsItemProps>(), {
 })
 
 // 从父组件注入配置
-const parentBorder = inject<boolean>('descriptions-border', false)
-const parentDirection = inject<string>('descriptions-direction', 'horizontal')
+const parentBorder = inject(descriptionsBorderKey, ref(false))
+const parentDirection = inject(descriptionsDirectionKey, ref('horizontal'))
 
 // 计算跨列样式
 const spanStyle = computed(() => {

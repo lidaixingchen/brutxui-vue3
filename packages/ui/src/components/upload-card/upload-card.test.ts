@@ -442,7 +442,7 @@ describe('UploadCard', () => {
                 bubbles: true,
                 cancelable: true,
             })
-            // dataTransfer is null by default in jsdom
+            // dataTransfer is null by default in the test environment
             dropZone.element.dispatchEvent(dropEvent)
             await wrapper.vm.$nextTick()
 

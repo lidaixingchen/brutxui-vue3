@@ -160,7 +160,6 @@
         "eslint-plugin-vue": "^10.9.2",
         "globals": "^17.6.0",
         "happy-dom": "^20.9.0",
-        "jsdom": "^29.1.1",
         "tailwindcss": "^4.3.0",
         "tsx": "^4.22.4",
         "typedoc": "^0.28.19",

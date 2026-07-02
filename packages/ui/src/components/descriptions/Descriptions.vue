@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useSlots, provide, toRef } from 'vue'
 import { cn } from '@/lib/utils'
+import { descriptionsBorderKey, descriptionsDirectionKey } from './descriptions-key'
 
 interface DescriptionsProps {
     /** 列数 */
@@ -25,8 +26,8 @@ const props = withDefaults(defineProps<DescriptionsProps>(), {
     class: undefined,
 })
 
-provide('descriptions-border', toRef(props, 'border'))
-provide('descriptions-direction', toRef(props, 'direction'))
+provide(descriptionsBorderKey, toRef(props, 'border'))
+provide(descriptionsDirectionKey, toRef(props, 'direction'))
 
 const slots = useSlots()
 

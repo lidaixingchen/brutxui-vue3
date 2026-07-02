@@ -348,7 +348,7 @@ describe('KanbanBoard', () => {
         await sourceCard.trigger('dragend')
 
         // After dragend, the card should no longer have dragging classes
-        // Note: requestAnimationFrame runs synchronously in jsdom
+        // Note: requestAnimationFrame runs synchronously in the test environment
         await nextTick()
     })
 
