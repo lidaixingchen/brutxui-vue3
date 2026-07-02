@@ -1,4 +1,4 @@
-import { ref, computed, watch, onMounted, onBeforeUnmount, type Ref, type CSSProperties } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, type ComputedRef, type CSSProperties, type MaybeRefOrGetter } from 'vue'
 import { hasDocument } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import type { ResizeCorner } from '@/types'
@@ -48,24 +48,31 @@ export function isInteractiveElement(target: HTMLElement): boolean {
 }
 
 export function useDialogEnhanced(
-    options: UseDialogEnhancedOptions = {},
+    options: MaybeRefOrGetter<UseDialogEnhancedOptions>,
 ): UseDialogEnhancedReturn {
-    const {
-        draggable = false,
-        dragHandle,
-        bounds = 'viewport',
-        initialPosition,
-        resizable = false,
-        minWidth = DIALOG_MIN_WIDTH_PX,
-        minHeight = DIALOG_MIN_HEIGHT_PX,
-        maxWidth,
-        maxHeight,
-        aspectRatio,
-        beforeClose,
-        onOpen,
-        onClose,
-        onUpdateOpen,
-    } = options
+    // Reactive source: accepts either a plain object (static options) or a
+    // getter function (reactive options that re-evaluate when tracked deps
+    // change — typically `() => ({ draggable: props.draggable, ... })`).
+    const optionsRef: ComputedRef<UseDialogEnhancedOptions> = computed(() => toValue(options) ?? {})
+
+    // Getter proxy: every access reads the latest options object, so
+    // closures (event handlers, watchers) always see up-to-date values.
+    const opt = {
+        get draggable() { return optionsRef.value.draggable ?? false },
+        get dragHandle() { return optionsRef.value.dragHandle },
+        get bounds() { return optionsRef.value.bounds ?? 'viewport' },
+        get initialPosition() { return optionsRef.value.initialPosition },
+        get resizable() { return optionsRef.value.resizable ?? false },
+        get minWidth() { return optionsRef.value.minWidth ?? DIALOG_MIN_WIDTH_PX },
+        get minHeight() { return optionsRef.value.minHeight ?? DIALOG_MIN_HEIGHT_PX },
+        get maxWidth() { return optionsRef.value.maxWidth },
+        get maxHeight() { return optionsRef.value.maxHeight },
+        get aspectRatio() { return optionsRef.value.aspectRatio },
+        get beforeClose() { return optionsRef.value.beforeClose },
+        get onOpen() { return optionsRef.value.onOpen },
+        get onClose() { return optionsRef.value.onClose },
+        get onUpdateOpen() { return optionsRef.value.onUpdateOpen },
+    }
 
     const contentRef = ref<HTMLElement | null>(null)
     const isDragging = ref(false)
@@ -80,7 +87,7 @@ export function useDialogEnhanced(
     const contentStyle = computed<CSSProperties>(() => {
         const style: CSSProperties = {}
 
-        if (draggable) {
+        if (opt.draggable) {
             style.transform = `translate(calc(-50% + ${position.value.x}px), calc(-50% + ${position.value.y}px))`
             style.position = 'fixed'
             style.top = '50%'
@@ -88,7 +95,7 @@ export function useDialogEnhanced(
             style.margin = '0'
         }
 
-        if (resizable && size.value.width > 0 && size.value.height > 0) {
+        if (opt.resizable && size.value.width > 0 && size.value.height > 0) {
             style.width = `${size.value.width}px`
             style.height = `${size.value.height}px`
         }
@@ -99,12 +106,12 @@ export function useDialogEnhanced(
     // ── Drag Handle Resolution ─────────────────────────────────────
 
     function getDragHandle(): HTMLElement | null {
-        if (!draggable) return null
-        if (typeof dragHandle === 'string') {
-            return contentRef.value?.querySelector(dragHandle) ?? null
+        if (!opt.draggable) return null
+        if (typeof opt.dragHandle === 'string') {
+            return contentRef.value?.querySelector(opt.dragHandle) ?? null
         }
-        if (dragHandle instanceof HTMLElement) {
-            return dragHandle
+        if (opt.dragHandle instanceof HTMLElement) {
+            return opt.dragHandle
         }
         return contentRef.value
     }
@@ -115,12 +122,12 @@ export function useDialogEnhanced(
         const rect = contentRef.value?.getBoundingClientRect()
         if (!rect) return { x: newX, y: newY }
 
-        if (bounds === 'viewport') {
+        if (opt.bounds === 'viewport') {
             return {
                 x: Math.max(-rect.width / 2, Math.min(newX, window.innerWidth - rect.width / 2)),
                 y: Math.max(-rect.height / 2, Math.min(newY, window.innerHeight - rect.height / 2)),
             }
-        } else if (bounds === 'parent') {
+        } else if (opt.bounds === 'parent') {
             const parentRect = contentRef.value?.parentElement?.getBoundingClientRect()
             if (parentRect) {
                 return {
@@ -128,10 +135,10 @@ export function useDialogEnhanced(
                     y: Math.max(parentRect.top - rect.height / 2, Math.min(newY, parentRect.bottom - rect.height / 2)),
                 }
             }
-        } else if (typeof bounds === 'object') {
+        } else if (typeof opt.bounds === 'object') {
             return {
-                x: Math.max(bounds.left - rect.width / 2, Math.min(newX, bounds.right - rect.width / 2)),
-                y: Math.max(bounds.top - rect.height / 2, Math.min(newY, bounds.bottom - rect.height / 2)),
+                x: Math.max(opt.bounds.left - rect.width / 2, Math.min(newX, opt.bounds.right - rect.width / 2)),
+                y: Math.max(opt.bounds.top - rect.height / 2, Math.min(newY, opt.bounds.bottom - rect.height / 2)),
             }
         }
 
@@ -142,7 +149,7 @@ export function useDialogEnhanced(
 
     function onDragStart(e: MouseEvent) {
         if (!hasDocument) return
-        if (!draggable) return
+        if (!opt.draggable) return
 
         const target = e.target
         if (!(target instanceof HTMLElement) || isInteractiveElement(target)) return
@@ -181,7 +188,7 @@ export function useDialogEnhanced(
 
     function onResizeStart(e: MouseEvent, corner: ResizeCorner) {
         if (!hasDocument) return
-        if (!resizable) return
+        if (!opt.resizable) return
 
         isResizing.value = true
         resizeStart.value = {
@@ -226,15 +233,15 @@ export function useDialogEnhanced(
                 break
         }
 
-        if (minWidth) newWidth = Math.max(minWidth, newWidth)
-        if (minHeight) newHeight = Math.max(minHeight, newHeight)
-        if (maxWidth) newWidth = Math.min(maxWidth, newWidth)
-        if (maxHeight) newHeight = Math.min(maxHeight, newHeight)
+        if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
+        if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
+        if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
+        if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
 
-        if (aspectRatio) {
-            newHeight = newWidth / aspectRatio
-            if (minHeight) newHeight = Math.max(minHeight, newHeight)
-            if (maxHeight) newHeight = Math.min(maxHeight, newHeight)
+        if (opt.aspectRatio) {
+            newHeight = newWidth / opt.aspectRatio
+            if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
+            if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
         }
 
         size.value = { width: newWidth, height: newHeight }
@@ -250,25 +257,25 @@ export function useDialogEnhanced(
     // ── Close Handling ─────────────────────────────────────────────
 
     function performClose(): void {
-        onClose?.()
-        onUpdateOpen?.(false)
+        opt.onClose?.()
+        opt.onUpdateOpen?.(false)
     }
 
     async function handleClose(): Promise<void> {
-        if (!beforeClose) {
+        if (!opt.beforeClose) {
             performClose()
             return
         }
 
         // Detect mode: callback mode (parameter length > 0) or Promise mode
-        if (beforeClose.length > 0) {
+        if (opt.beforeClose.length > 0) {
             // Callback mode
-            (beforeClose as (done: () => void) => void)(() => {
+            (opt.beforeClose as (done: () => void) => void)(() => {
                 performClose()
             })
         } else {
             // Promise mode
-            const result = await (beforeClose as () => boolean | Promise<boolean>)()
+            const result = await (opt.beforeClose as () => boolean | Promise<boolean>)()
             if (result !== false) {
                 performClose()
             }
@@ -278,8 +285,8 @@ export function useDialogEnhanced(
     // ── Initialization ─────────────────────────────────────────────
 
     function initPosition(): void {
-        if (initialPosition) {
-            position.value = { ...initialPosition }
+        if (opt.initialPosition) {
+            position.value = { ...opt.initialPosition }
         } else {
             position.value = { x: 0, y: 0 }
         }
@@ -300,18 +307,18 @@ export function useDialogEnhanced(
 
     // ── Watchers & Lifecycle ───────────────────────────────────────
 
-    if (initialPosition !== undefined) {
-        watch(() => initialPosition, (newPos) => {
-            if (newPos) {
-                position.value = { ...newPos }
-            }
-        })
-    }
+    // Reactive watcher: fires whenever optionsRef yields a new initialPosition
+    // (works when the caller passes a getter that reads reactive props).
+    watch(() => opt.initialPosition, (newPos) => {
+        if (newPos) {
+            position.value = { ...newPos }
+        }
+    })
 
     onMounted(() => {
         initPosition()
         initSize()
-        onOpen?.()
+        opt.onOpen?.()
     })
 
     onBeforeUnmount(() => {

@@ -15,12 +15,12 @@ export const commandItemVariants = cva(
         'text-sm font-semibold',
         'select-none outline-none',
         'border-3 border-transparent',
-        'data-[highlighted=true]:bg-brutal-secondary data-[highlighted=true]:text-brutal-fg',
-        'data-[highlighted=true]:border-brutal data-[highlighted=true]:font-black',
+        'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',
+        'data-[highlighted]:border-brutal data-[highlighted]:font-black',
         brutalHighlightLift,
         brutalPress,
         'transition-all',
-        'data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
+        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
         '[&_svg]:pointer-events-none [&_svg]:shrink-0',
     ]
 )
