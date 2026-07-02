@@ -33,6 +33,8 @@ The init command will:
 5. Add BrutxUI styles (including Tailwind utility class layers) to your CSS
 6. Set up the component directory structure
 
+Init also supports monorepo workspace detection. If a `pnpm-workspace.yaml`, `lerna.json`, or `turbo.json` file is found, the CLI will detect the workspace root and offer to install shared dependencies there while keeping component-specific dependencies in the current package. Use `--workspace-root` to explicitly specify the workspace root.
+
 ### Options
 
 | Flag | Description | Default |
@@ -42,6 +44,8 @@ The init command will:
 | `--cwd <path>` | Set working directory | Current directory |
 | `--force` / `-f` | Force overwrite existing configuration | `false` |
 | `--silent` / `-s` | Silent output | `false` |
+| `--vscode` | Generate VS Code snippets | Auto-detected |
+| `--workspace-root <path>` | Specify monorepo workspace root directory | Auto-detected |
 
 ## brutx-vue add
 
@@ -71,6 +75,14 @@ Add all available components:
 npx brutx-vue@latest add --all
 ```
 
+### Version Pinning
+
+Use the `@` syntax to pin a component to a specific version. This maps to the corresponding GitHub tag in the registry:
+
+```bash
+npx brutx-vue@latest add button@1.2.0
+```
+
 ### Options
 
 | Flag | Description | Default |
@@ -83,6 +95,8 @@ npx brutx-vue@latest add --all
 | `--silent` / `-s` | Silent output | `false` |
 | `--dry-run` | Simulate adding without writing files | `false` |
 | `--registry <registry>` / `-r` | Specify registry path or URL | — |
+| `--no-cache` | Skip registry cache | `false` |
+| `--vscode` | Update VS Code snippets with new components | `false` |
 
 ## brutx-vue doctor
 
@@ -95,12 +109,14 @@ npx brutx-vue@latest doctor
 The doctor command will check:
 
 1. Whether `components.json` exists and is valid
-2. Whether configured paths point to real files
-3. Tailwind CSS version compatibility
-4. Whether required dependencies are installed (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`)
-5. Whether the `cn()` utility function exists
-6. Whether CSS files contain BrutxUI design tokens
-7. File integrity of installed components
+2. Whether the `$schema` field is present
+3. Whether the `$version` config version is up to date
+4. Whether the `style` field is present
+5. Tailwind CSS file contains BrutxUI design tokens
+6. Whether configured alias paths point to real files/directories
+7. Whether required dependencies are installed (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`)
+8. Whether the `cn()` utility function exists
+9. File integrity of installed components
 
 ### Examples
 
@@ -116,6 +132,12 @@ Auto-fix fixable issues:
 npx brutx-vue@latest doctor --fix --yes
 ```
 
+Apply only a specific fix:
+
+```bash
+npx brutx-vue@latest doctor --fix-only add-schema
+```
+
 Output JSON format report:
 
 ```bash
@@ -128,6 +150,7 @@ npx brutx-vue@latest doctor --json
 |------|-------------|---------|
 | `--cwd <path>` | Set working directory | Current directory |
 | `--fix` | Auto-fix fixable issues | `false` |
+| `--fix-only <fixId>` | Apply only the specified fix | — |
 | `--json` | Output JSON format report | `false` |
 | `--yes` / `-y` | Skip confirmation prompts | `false` |
 | `--silent` / `-s` | Silent output | `false` |
@@ -139,6 +162,7 @@ Brutx-Vue Doctor
 
   [PASS] components.json exists — components.json found.
   [PASS] $schema field present — $schema field is present.
+  [PASS] config version — Configuration version is 1.
   [PASS] style field present — style is "brutalism".
   [PASS] tailwind.css contains BrutxUI tokens — CSS file contains BrutxUI tokens.
   [PASS] aliases.components → @/components — Directory exists.
@@ -147,7 +171,7 @@ Brutx-Vue Doctor
   [PASS] reka-ui installed — ^2.9.9 installed.
   [PASS] cn() function exists — cn() function found.
 
-  Summary: 9 passed, 0 warnings, 0 errors
+  Summary: 10 passed, 0 warnings, 0 errors
 ```
 
 ### Auto-Fixable Issues
@@ -155,6 +179,7 @@ Brutx-Vue Doctor
 | Issue | Fix Action |
 | --- | --- |
 | Missing `$schema` | Write schema URL |
+| Missing or outdated `$version` | Update to current version |
 | Missing `style` | Set to `brutalism` |
 | CSS missing BrutxUI tokens | Inject CSS styles |
 | Component directory missing | Create directory |
@@ -204,6 +229,7 @@ npx brutx-vue@latest diff --all --json
 | `--registry <path>` / `-r` | Specify local registry path | — |
 | `--json` | Output JSON format | `false` |
 | `--silent` / `-s` | Silent output | `false` |
+| `--no-cache` | Skip registry cache | `false` |
 
 ### Output Example
 
@@ -243,6 +269,228 @@ Component Diff Report
   Summary: 2 modified, 5 up-to-date, 0 local-only
 ```
 
-### Available Components
+## brutx-vue update
+
+Check for and apply component updates from the registry. Components with local modifications will be flagged before overwriting:
+
+```bash
+npx brutx-vue@latest update [components...]
+```
+
+### Examples
+
+Update a specific component:
+
+```bash
+npx brutx-vue@latest update button
+```
+
+Update all outdated components without prompts:
+
+```bash
+npx brutx-vue@latest update --all --yes
+```
+
+Preview which components have updates available:
+
+```bash
+npx brutx-vue@latest update --dry-run
+```
+
+### Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--all` / `-a` | Update all outdated components | `false` |
+| `--yes` / `-y` | Skip confirmation prompts | `false` |
+| `--cwd <path>` | Set working directory | Current directory |
+| `--dry-run` | Show which components would be updated without writing | `false` |
+| `--registry <registry>` / `-r` | Specify registry URL | — |
+| `--no-cache` | Skip registry cache | `false` |
+| `--silent` / `-s` | Silent output | `false` |
+
+## brutx-vue list
+
+List all installed components in your project, including file counts and dependencies:
+
+```bash
+npx brutx-vue@latest list
+```
+
+### Examples
+
+List installed components:
+
+```bash
+npx brutx-vue@latest list
+```
+
+Output as JSON:
+
+```bash
+npx brutx-vue@latest list --json
+```
+
+### Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--cwd <path>` | Set working directory | Current directory |
+| `--json` | Output JSON format | `false` |
+| `--silent` / `-s` | Silent output | `false` |
+
+### Output Example
+
+```text
+Installed Components
+
+  Name        Files   Dependencies
+  ──────────  ──────  ────────────────────────
+  badge       2       reka-ui
+  button      3       reka-ui, @lucide/vue
+  card        2       none
+  dialog      2       reka-ui, @lucide/vue
+
+  4 component(s) installed
+```
+
+## brutx-vue info
+
+Show detailed information about a component, including registry metadata, local files, dependencies, and installation status:
+
+```bash
+npx brutx-vue@latest info <component>
+```
+
+### Examples
+
+Show info for a component:
+
+```bash
+npx brutx-vue@latest info button
+```
+
+Output as JSON:
+
+```bash
+npx brutx-vue@latest info button --json
+```
+
+### Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--cwd <path>` | Set working directory | Current directory |
+| `--json` | Output JSON format | `false` |
+| `--registry <registry>` / `-r` | Specify registry path or URL | — |
+| `--silent` / `-s` | Silent output | `false` |
+
+## brutx-vue remove
+
+Remove installed components from your project. Also detects and cleans up orphaned files (composables, utilities, locales) that are no longer referenced by any remaining component:
+
+```bash
+npx brutx-vue@latest remove <components...>
+```
+
+### Examples
+
+Remove a single component:
+
+```bash
+npx brutx-vue@latest remove button
+```
+
+Remove multiple components:
+
+```bash
+npx brutx-vue@latest remove button card dialog
+```
+
+Preview removal without deleting files:
+
+```bash
+npx brutx-vue@latest remove button --dry-run
+```
+
+### Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--yes` / `-y` | Skip confirmation prompts | `false` |
+| `--cwd <path>` | Set working directory | Current directory |
+| `--dry-run` | Show which files would be removed without deleting | `false` |
+| `--silent` / `-s` | Silent output | `false` |
+
+## brutx-vue create
+
+Scaffold a new Vue 3 project with BrutxUI pre-configured. Creates the project, installs dependencies, and runs `init` automatically:
+
+```bash
+npx brutx-vue@latest create <project-name>
+```
+
+### Examples
+
+Create a project with the default Vite + Vue 3 + TypeScript template:
+
+```bash
+npx brutx-vue@latest create my-app
+```
+
+Create a Nuxt 3 project:
+
+```bash
+npx brutx-vue@latest create my-app --template nuxt
+```
+
+Create a project using npm as the package manager:
+
+```bash
+npx brutx-vue@latest create my-app --package-manager npm
+```
+
+### Options
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--template <template>` / `-t` | Project template (`default`, `nuxt`) | `default` |
+| `--package-manager <pm>` | Package manager to use (`pnpm`, `npm`, `yarn`, `bun`) | `pnpm` |
+| `--cwd <path>` | The directory to create the project in | Current directory |
+| `--yes` / `-y` | Skip confirmation prompts | `false` |
+
+## `components.json` Configuration File
+
+The `components.json` file is created by `brutx-vue init` and stores your project configuration. All CLI commands read this file to locate components, utilities, and styles.
+
+```json
+{
+    "$schema": "https://brutx-vue.dev/schema.json",
+    "$version": 1,
+    "style": "brutalism",
+    "tailwind": {
+        "config": "tailwind.config.js",
+        "css": "src/assets/index.css"
+    },
+    "aliases": {
+        "components": "@/components",
+        "utils": "@/lib/utils",
+        "composables": "@/composables"
+    }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `$schema` | JSON schema URL for IDE validation and autocompletion. |
+| `$version` | Configuration format version. Used by `doctor` to detect outdated configs that may need migration. |
+| `style` | The design style variant. Currently only `brutalism` is supported. |
+| `tailwind.config` | Path to your Tailwind CSS config file. Empty string for Tailwind v4 (no config file needed). |
+| `tailwind.css` | Path to your main CSS file where BrutxUI design tokens are injected. |
+| `aliases.components` | Import alias for the components directory (e.g. `@/components`). |
+| `aliases.utils` | Import alias for the utility file containing `cn()` (e.g. `@/lib/utils`). |
+| `aliases.composables` | Import alias for the composables directory (e.g. `@/composables`). |
+
+## Available Components
 
 accordion, activity-log-page, alert, alert-dialog, auth-card, avatar, badge, before-after, blog-card, blog-list-page, breadcrumb, brutalist-hero, button, calendar, card, card-3d, carousel, chat-bubble, checkbox, code-block, combobox, command, cookie-consent, copy-to-clipboard, counter, dashboard-shell, dashboard-stats, data-table-section, dialog, dropdown-menu, empty-state, error-card, faq-section, feedback-form, file-card, footer-section, form, gallery-section, glitch-text, hardcore-input, header-section, input, kbd, kanban, loading-page, marquee, not-found-page, number-input, overview-page, pagination, popover, pricing-section, profile-page, progress, quick-actions, radio-group, scratch-card, scroll-area, search-widget, select, separator, settings-page, sheet, skeleton, sketchy-chart, slider, spinner, stepper, stepper-section, submit-button, success-card, switch, table, tabs, tags-input, testimonial-card, textarea, timeline, toast, toggle, toggle-group, tooltip, tree-view, upload-card, waitlist-page

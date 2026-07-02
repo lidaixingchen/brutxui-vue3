@@ -41,6 +41,10 @@ init 命令将：
 | `--cwd <path>` | 设置工作目录 | 当前目录 |
 | `--force` / `-f` | 强制覆盖已有配置 | `false` |
 | `--silent` / `-s` | 静默输出 | `false` |
+| `--vscode` | 生成 VS Code 代码片段 | `false` |
+| `--workspace-root <path>` | 指定 monorepo 工作区根目录 | — |
+
+init 支持 monorepo 工作区检测（pnpm-workspace.yaml / lerna.json / turbo.json）。
 
 ## brutx-vue add
 
@@ -82,6 +86,16 @@ npx brutx-vue@latest add --all
 | `--silent` / `-s` | 静默输出 | `false` |
 | `--dry-run` | 模拟添加，不写入文件 | `false` |
 | `--registry <registry>` / `-r` | 指定注册表路径或 URL | — |
+| `--no-cache` | 跳过注册表缓存 | `false` |
+| `--vscode` | 更新 VS Code 代码片段 | `false` |
+
+### 版本锁定
+
+```bash
+npx brutx-vue@latest add button@1.2.0
+```
+
+使用 `@` 语法将组件锁定到指定版本（映射到注册表中对应的 GitHub tag）。
 
 ## brutx-vue doctor
 
@@ -100,6 +114,7 @@ doctor 命令将检查：
 5. `cn()` 工具函数是否存在
 6. CSS 文件中是否包含 BrutxUI 设计 token
 7. 已安装组件的文件完整性
+8. `$version` 配置版本检查
 
 ### 示例
 
@@ -127,6 +142,7 @@ npx brutx-vue@latest doctor --json
 |------|------|--------|
 | `--cwd <path>` | 设置工作目录 | 当前目录 |
 | `--fix` | 自动修复可修复的问题 | `false` |
+| `--fix-only <fixId>` | 仅执行指定的修复项 | — |
 | `--json` | 输出 JSON 格式报告 | `false` |
 | `--yes` / `-y` | 跳过确认提示 | `false` |
 | `--silent` / `-s` | 静默输出 | `false` |
@@ -154,6 +170,7 @@ npx brutx-vue@latest doctor --json
 | 问题 | 修复操作 |
 | --- | --- |
 | `$schema` 缺失 | 写入 schema URL |
+| `$version` 过期 | 更新为当前版本 |
 | `style` 缺失 | 设置为 `brutalism` |
 | CSS 缺少 BrutxUI token | 注入 CSS 样式 |
 | 组件目录不存在 | 创建目录 |
@@ -203,6 +220,7 @@ npx brutx-vue@latest diff --all --json
 | `--registry <path>` / `-r` | 指定本地注册表路径 | — |
 | `--json` | 输出 JSON 格式 | `false` |
 | `--silent` / `-s` | 静默输出 | `false` |
+| `--no-cache` | 跳过注册表缓存 | `false` |
 
 ### 输出示例
 
@@ -241,6 +259,203 @@ npx brutx-vue@latest diff --all --json
 
   Summary: 2 modified, 5 up-to-date, 0 local-only
 ```
+
+## brutx-vue update
+
+检查已安装组件是否有可用更新，并一键更新：
+
+```bash
+npx brutx-vue@latest update [components...]
+```
+
+update 命令内部复用 diff 逻辑检测过期组件，再执行覆盖安装。
+
+### 示例
+
+检查并更新所有已安装组件：
+
+```bash
+npx brutx-vue@latest update
+```
+
+更新指定组件：
+
+```bash
+npx brutx-vue@latest update button card
+```
+
+仅预览，不实际更新：
+
+```bash
+npx brutx-vue@latest update --dry-run
+```
+
+### 选项
+
+| 标志 | 描述 | 默认值 |
+|------|------|--------|
+| `--all` / `-a` | 更新所有过期组件 | `false` |
+| `--yes` / `-y` | 跳过确认提示 | `false` |
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+| `--dry-run` | 仅预览，不写入文件 | `false` |
+| `--registry <registry>` / `-r` | 指定注册表 URL | — |
+| `--no-cache` | 跳过注册表缓存 | `false` |
+| `--silent` / `-s` | 静默输出 | `false` |
+
+## brutx-vue list
+
+列出项目中已安装的组件及其信息：
+
+```bash
+npx brutx-vue@latest list
+```
+
+### 选项
+
+| 标志 | 描述 | 默认值 |
+|------|------|--------|
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+| `--json` | 输出 JSON 格式 | `false` |
+| `--silent` / `-s` | 静默输出 | `false` |
+
+### 输出示例
+
+```text
+Installed Components
+
+  Name      Files   Dependencies
+  ─────────────────────────────────
+  badge     2       vue
+  button    3       vue, reka-ui, @lucide/vue
+  card      2       vue
+
+  3 component(s) installed
+```
+
+## brutx-vue info
+
+查看指定组件的详细信息：
+
+```bash
+npx brutx-vue@latest info <component>
+```
+
+### 示例
+
+```bash
+npx brutx-vue@latest info button
+```
+
+### 选项
+
+| 标志 | 描述 | 默认值 |
+|------|------|--------|
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+| `--json` | 输出 JSON 格式 | `false` |
+| `--registry <registry>` / `-r` | 指定注册表路径或 URL | — |
+| `--silent` / `-s` | 静默输出 | `false` |
+
+## brutx-vue remove
+
+从项目中移除已安装的组件：
+
+```bash
+npx brutx-vue@latest remove <components...>
+```
+
+remove 命令会删除组件目录，并检测不再被其他组件引用的孤儿文件（composable / locale），提示是否一并清理。
+
+### 示例
+
+移除单个组件：
+
+```bash
+npx brutx-vue@latest remove button
+```
+
+移除多个组件：
+
+```bash
+npx brutx-vue@latest remove button card
+```
+
+仅预览，不实际删除：
+
+```bash
+npx brutx-vue@latest remove button --dry-run
+```
+
+### 选项
+
+| 标志 | 描述 | 默认值 |
+|------|------|--------|
+| `--yes` / `-y` | 跳过确认提示 | `false` |
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+| `--dry-run` | 仅预览，不删除文件 | `false` |
+| `--silent` / `-s` | 静默输出 | `false` |
+
+## brutx-vue create
+
+从零创建一个预配置 BrutxUI 的 Vue 3 项目：
+
+```bash
+npx brutx-vue@latest create <project-name>
+```
+
+create 命令会自动搭建项目脚手架、安装依赖并运行 `init`。
+
+### 示例
+
+```bash
+npx brutx-vue@latest create my-app
+```
+
+使用 Nuxt 模板：
+
+```bash
+npx brutx-vue@latest create my-app --template nuxt
+```
+
+### 选项
+
+| 标志 | 描述 | 默认值 |
+|------|------|--------|
+| `--template <template>` / `-t` | 项目模板（`default`、`nuxt`） | `default` |
+| `--package-manager <pm>` | 包管理器（`pnpm`、`npm`、`yarn`、`bun`） | `pnpm` |
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+| `--yes` / `-y` | 跳过确认提示 | `false` |
+
+## components.json 配置文件
+
+运行 `init` 后，项目根目录会生成 `components.json`：
+
+```json
+{
+  "$schema": "https://lidaixingchen.github.io/brutxui-vue3/schema.json",
+  "$version": 1,
+  "style": "brutalism",
+  "tailwind": {
+    "config": "tailwind.config.js",
+    "css": "src/index.css"
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "composables": "@/composables"
+  }
+}
+```
+
+| 字段 | 描述 |
+|------|------|
+| `$schema` | JSON Schema URL，提供 IDE 校验 |
+| `$version` | 配置文件版本号，CLI 读取时自动迁移旧版本 |
+| `style` | 样式主题，当前仅支持 `brutalism` |
+| `tailwind.config` | Tailwind 配置文件路径（v4 项目为空字符串） |
+| `tailwind.css` | 全局 CSS 文件路径 |
+| `aliases.components` | 组件导入别名 |
+| `aliases.utils` | 工具函数导入别名 |
+| `aliases.composables` | 组合式函数导入别名 |
 
 ### 可用组件
 

@@ -102,6 +102,18 @@ If download fails due to network issues, try using a custom registry:
 npx brutx-vue add button -r https://your-registry-url
 ```
 
+### How do I check which components have updates available?
+
+Run `npx brutx-vue@latest update --dry-run` to preview outdated components, or use `npx brutx-vue@latest diff` for detailed line-level diffs. Then run `npx brutx-vue@latest update` to apply updates.
+
+### How do I remove an installed component?
+
+Run `npx brutx-vue@latest remove <component>`. The CLI automatically detects orphaned files (composables / locales) no longer referenced by other components and prompts for cleanup. Use `--dry-run` to preview first.
+
+### My project configuration seems broken. How do I diagnose it?
+
+Run `npx brutx-vue@latest doctor` to check project health. It inspects 8 categories including config file, dependencies, CSS tokens, and utility functions. Add `--fix --yes` to auto-fix most common issues.
+
 ---
 
 ## Build & Deployment

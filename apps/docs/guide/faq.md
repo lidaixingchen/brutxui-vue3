@@ -101,6 +101,18 @@ npx brutx-vue init
 npx brutx-vue add button -r https://your-registry-url
 ```
 
+### 如何查看哪些组件有可用更新？
+
+运行 `npx brutx-vue@latest update --dry-run` 预览有更新的组件，或使用 `npx brutx-vue@latest diff` 查看详细的行级差异。确认后用 `npx brutx-vue@latest update` 一键更新。
+
+### 组件安装后想删除怎么办？
+
+运行 `npx brutx-vue@latest remove <component>` 即可。CLI 会自动检测不再被其他组件引用的孤儿文件（composable / locale），并提示是否一并清理。建议先用 `--dry-run` 预览。
+
+### 项目配置出问题了怎么排查？
+
+运行 `npx brutx-vue@latest doctor` 检查项目健康度。它会检测配置文件、依赖、CSS token、工具函数等 8 类问题。加上 `--fix --yes` 可自动修复大部分常见问题。
+
 ---
 
 ## 构建与部署
