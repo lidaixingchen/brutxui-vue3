@@ -87,4 +87,7 @@ interface NavItem {
 
 ## Accessibility
 
-<!-- TODO: Add accessibility notes -->
+- Rooted in a semantic `<header>` element that serves as the page's top landmark
+- Desktop navigation is wrapped in `<nav>`; the mobile menu button includes an `sr-only` label for screen-reader pronunciation
+- The mobile menu is built on reka-ui's `DialogRoot` + `SheetContent`, providing automatic focus trapping, `Escape` dismissal, and `aria-modal` state
+- The sheet renders `SheetTitle` / `SheetDescription`, giving the dialog an accessible name and description

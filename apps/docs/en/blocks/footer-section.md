@@ -104,4 +104,7 @@ interface FooterLink {
 
 ## Accessibility
 
-<!-- TODO: Add accessibility notes -->
+- Rooted in a semantic `<footer>` element, exposing it as a page-footer landmark to assistive technologies
+- Each link group is introduced by an `<h3>` heading so screen-reader users can navigate by group
+- Groups render their links inside `<ul>` / `<li>` lists, correctly expressing the sibling relationship between items
+- External links render as native `<a>` elements while internal actions render as `<Button>`, each preserving its expected keyboard and focus behavior

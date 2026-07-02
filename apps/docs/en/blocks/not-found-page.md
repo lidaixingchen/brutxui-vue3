@@ -85,4 +85,7 @@ const router = useRouter()
 
 ## Accessibility
 
-<!-- TODO: Add accessibility notes -->
+- The page title uses `<h1>` to preserve a correct document outline
+- The decorative GlitchText "404" animation runs via `autoplay`, requires no user interaction, and is not exposed as a focusable element
+- The back button is a semantic `<button>`, keyboard-focusable and activatable with `Enter` / `Space`
+- The container uses `min-h-screen` to keep content centered, avoiding small-screen accessibility issues tied to viewport scrolling

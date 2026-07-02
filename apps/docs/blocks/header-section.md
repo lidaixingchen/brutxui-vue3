@@ -86,4 +86,7 @@ interface NavItem {
 
 ## 可访问性
 
-<!-- TODO: 添加可访问性说明 -->
+- 使用语义化 `<header>` 元素作为根节点，作为页面顶部地标区域
+- 桌面端导航使用 `<nav>` 包裹；移动端菜单按钮配有 `sr-only` 文本标签，屏幕阅读器可朗读
+- 移动端菜单由 reka-ui 的 `DialogRoot` + `SheetContent` 实现，自动处理焦点陷阱、`Escape` 关闭与 `aria-modal` 状态
+- 菜单内含 `SheetTitle` / `SheetDescription`，为对话框提供可被辅助设备朗读的标题与说明
