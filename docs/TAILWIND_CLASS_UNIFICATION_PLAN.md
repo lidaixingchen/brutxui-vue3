@@ -77,9 +77,9 @@
 
 当前无内联重复，保持现状。
 
-### 3.2 类别 B：需新建派生常量（47 处）
+### 3.2 类别 B：需新建派生常量（41 处）
 
-按"微调模式"聚合为 8 个派生常量候选：
+按"微调模式"聚合为 6 个派生常量候选：
 
 #### B-1：`brutalPressWithTransition`（19 处，**最优先**）
 
@@ -117,24 +117,13 @@
 
 **涉及文件**：`command-variants.ts`、`tree-view-variants.ts`
 
-#### B-7：`brutalPressCalcOffset`（3 处）
-
-**值**：`'active:translate-y-[calc(50%+2px)] active:shadow-none'`（carousel 专用，补偿 `top-1/2` 偏移）
-
-**涉及文件**：`carousel-variants.ts`（Next/Prev 按钮）
-
-#### B-8：`brutalPressFixedOffset`（3 处）
-
-**值**：`'active:translate-y-[2px] active:shadow-none'`（固定 2px，不使用 CSS 变量）
-
-**涉及文件**：`auth-card-variants.ts`、`waitlist-page-variants.ts` 等不继承主题变量的上下文
-
-### 3.3 类别 C：组件私有（13 处）
+### 3.3 类别 C：组件私有（19 处）
 
 **保留内联，添加注释说明原因**。典型例子：
 
-- `carousel-variants.ts`：`active:translate-y-[calc(50%+2px)]` 配合 `top-1/2` 绝对定位，强耦合布局
-- `auth-card-variants.ts`：`active:scale-[0.98]` 缩放效果，与其他 brutalist press 语义不同
+- `carousel-variants.ts`：`active:translate-y-[calc(50%+2px)]` 配合 `top-1/2` 绝对定位，强耦合布局（3 处）
+- `AuthCard.vue`：`active:translate-y-[2px]` 与 `active:scale-[0.98]`，不使用 CSS 变量或具备特有缩放效果，不满足全局主题压下偏移量（2 处）
+- `WaitlistPage.vue`：`active:translate-y-[2px]`，不继承全局主题变量（1 处）
 - `scratch-card-variants.ts`：`active:cursor-grabbing` 配合拖拽语义
 - `sketchy-chart-variants.ts`：`hover:z-10` 仅用于图表数据点悬浮层级
 
@@ -146,7 +135,7 @@
 
 **修改文件**：`packages/ui/src/lib/brutal-interaction-variants.ts`
 
-**新增 8 个派生常量**（按 §3.2 的 B-1 到 B-8）：
+**新增 6 个派生常量**（按 §3.2 的 B-1 到 B-6）：
 
 ```ts
 // 已有
@@ -161,8 +150,6 @@ export const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hov
 export const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'
 export const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'
 export const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`
-export const brutalPressCalcOffset = 'active:translate-y-[calc(50%+2px)] active:shadow-none'
-export const brutalPressFixedOffset = 'active:translate-y-[2px] active:shadow-none'
 ```
 
 **注意事项**：
@@ -230,7 +217,7 @@ brutalPressWithTransition
 
 ### 4.4 阶段 4：类别 C 添加注释（PR #4，预计 0.5h）
 
-**范围**：13 处
+**范围**：19 处
 
 **执行策略**：
 
@@ -238,7 +225,10 @@ brutalPressWithTransition
 
 ```ts
 // carousel-variants.ts
-'active:translate-y-[calc(50%+2px)]' /* 组件私有：补偿 top-1/2 绝对定位偏移 */,
+'active:translate-y-[calc(50%+2px)]' /* 组件私有：配合 top-1/2 绝对定位，强耦合布局 */,
+
+// AuthCard.vue
+'active:translate-y-[2px]' /* 组件私有：不使用 CSS 变量，不继承全局主题压下偏移量 */,
 ```
 
 ### 4.5 阶段 5：验证与回归（PR #5，预计 1h）
@@ -265,7 +255,7 @@ brutalPressWithTransition
 5. **CLI 安装回归**：
    - `pnpm registry:build` 重建注册表
    - 抽样检查 `packages/registry/registry/button.json`、`select.json`、`tabs.json` 的 `files` 数组是否包含 `lib/brutal-interaction-variants.ts`
-   - 在临时目录跑 `npx brutx-vue@latest add button`，验证安装后的 `@/lib/brutal-interaction-variants.ts` 存在且内容正确
+   - 在临时目录跑本地编译好的 CLI 程序（如 `node <workspace_path>/packages/cli/dist/index.js add button`），验证安装后的 `@/lib/brutal-interaction-variants.ts` 存在且内容正确
 
 6. **Lint**：
    - `pnpm lint` 零错误
@@ -326,10 +316,10 @@ brutalPressWithTransition
 
 | PR | 标题 | 文件变更数 | 新增行数 | 删除行数 |
 |---|---|---|---|---|
-| #1 | `refactor(ui): 扩充 brutal-interaction-variants 派生常量` | 1 | ~25 | 0 |
+| #1 | `refactor(ui): 扩充 brutal-interaction-variants 派生常量` | 1 | ~20 | 0 |
 | #2 | `refactor(ui): 替换 65 处精确匹配的 Tailwind 交互类为常量引用` | 38 | ~70 | ~70 |
-| #3 | `refactor(ui): 替换 47 处派生常量匹配的 Tailwind 交互类` | 25 | ~50 | ~50 |
-| #4 | `docs(ui): 为 13 处组件私有交互类添加保留原因注释` | 8 | ~15 | 0 |
+| #3 | `refactor(ui): 替换 41 处派生常量匹配的 Tailwind 交互类` | 23 | ~45 | ~45 |
+| #4 | `docs(ui): 为 19 处组件私有交互类添加保留原因注释` | 10 | ~20 | 0 |
 | #5 | `chore(ui): Tailwind 交互类统一后的视觉与测试回归` | 0 | 0 | 0 |
 
 **预期净收益**：
