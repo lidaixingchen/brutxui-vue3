@@ -40,6 +40,8 @@ vi.mock('v-calendar', () => ({
     },
 }))
 
+vi.mock('v-calendar/style.css', () => ({}))
+
 const defaultDay = {
     label: '15',
     isToday: false,
