@@ -3,7 +3,7 @@
   "name": "tooltip",
   "type": "registry:ui",
   "title": "Tooltip",
-  "description": "A highly customizable neo-brutalist Tooltip component built with Brutx design tokens for Vue 3.",
+  "description": "Contextual tooltip triggered on hover or focus.",
   "dependencies": [
     "reka-ui"
   ],
@@ -17,7 +17,7 @@
     {
       "path": "components/ui/tooltip/tooltip-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\n\nexport const tooltipContentVariants = cva(\n    [\n        'z-50 overflow-hidden px-3 py-1.5',\n        'bg-brutal-fg text-brutal-bg text-sm font-bold',\n        'border-3 border-brutal rounded-brutal shadow-brutal',\n        'animate-in fade-in-0 zoom-in-95',\n        'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',\n        'data-[side=bottom]:slide-in-from-top-2',\n        'data-[side=left]:slide-in-from-right-2',\n        'data-[side=right]:slide-in-from-left-2',\n        'data-[side=top]:slide-in-from-bottom-2',\n    ]\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -106,5 +106,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-bd16af0dcf01e99858feb17c87fe2b21db7cfe27839aff4fed14c7e69513ebed"
+  "integrity": "sha256-21e372d97340c116a9006f82a931c34e947ee35b328ce65fe5c090254ad99d87"
 }

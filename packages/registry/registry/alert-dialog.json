@@ -3,7 +3,7 @@
   "name": "alert-dialog",
   "type": "registry:ui",
   "title": "Alert Dialog",
-  "description": "A highly customizable neo-brutalist Alert Dialog component built with Brutx design tokens for Vue 3.",
+  "description": "Confirmation dialog requiring explicit user action before proceeding.",
   "dependencies": [
     "reka-ui"
   ],
@@ -49,17 +49,17 @@
     {
       "path": "components/ui/alert-dialog/alert-dialog-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { baseModalContentClasses } from '@/lib/modal-variants'\nimport { centeredModalAnimationClasses } from '@/lib/floating-animation-classes'\n\nexport const alertDialogContentVariants = cva(\n    [\n        'fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4',\n        'p-6 text-brutal-fg',\n        ...baseModalContentClasses,\n        ...centeredModalAnimationClasses,\n    ],\n)\n\nexport const alertDialogTitleVariants = cva(\n    [\n        'text-lg font-black tracking-tight text-brutal-fg',\n    ],\n)\n\nexport const alertDialogDescriptionVariants = cva(\n    [\n        'text-sm text-brutal-muted-foreground font-medium',\n    ],\n)",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/modal-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const overlayVariants = cva([\n    'fixed inset-0 z-50 bg-brutal-overlay',\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n])\n\nexport const sectionHeaderVariants = cva([\n    'flex flex-col space-y-2 pb-4 border-b-3 border-brutal',\n])\n\nexport const sectionFooterVariants = cva([\n    'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal',\n])\n\nexport const CLOSE_BUTTON_BASE_CLASSES = [\n    'h-8 w-8 flex items-center justify-center',\n    'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n    'shadow-brutal-sm',\n    'transition-all duration-150',\n    'hover:bg-brutal-destructive hover:text-brutal-fg',\n    brutalPress,\n    'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',\n]\n\nexport const baseModalContentClasses = [\n    'bg-brutal-bg',\n    'border-3 border-brutal',\n    'shadow-brutal-xl',\n    'rounded-brutal',\n]\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/floating-animation-classes.ts",
       "content": "export const floatingContentAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n\nexport const centeredModalAnimationClasses = [\n    'duration-200',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',\n    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',\n] as const\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -148,5 +148,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-54c54829bfc1ff1067f893d1444888fa5327801f355a1ee877baab0fe964eec0"
+  "integrity": "sha256-07d913382f302ecd442848abe1ba13b888a1a7a6c66442127427c09b32039806"
 }

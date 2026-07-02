@@ -3,7 +3,7 @@
   "name": "slider",
   "type": "registry:ui",
   "title": "Slider",
-  "description": "A highly customizable neo-brutalist Slider component built with Brutx design tokens for Vue 3.",
+  "description": "Range slider with single or dual thumbs.",
   "dependencies": [
     "reka-ui"
   ],
@@ -17,12 +17,12 @@
     {
       "path": "components/ui/slider/slider-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'\n\nconst sliderTrackSizeVariants = {\n    sm: '[--slider-thickness:0.75rem]',\n    default: '[--slider-thickness:1.25rem]',\n    lg: '[--slider-thickness:1.75rem]',\n}\n\nexport const sliderRootVariants = cva(\n    ['relative flex touch-none select-none'],\n    {\n        variants: {\n            orientation: {\n                horizontal: 'w-full items-center',\n                vertical: 'flex-col h-full justify-center',\n            },\n        },\n        defaultVariants: {\n            orientation: 'horizontal',\n        },\n    }\n)\n\nexport const sliderTrackVariants = cva(\n    [\n        'relative grow overflow-visible rounded-brutal',\n        'border-3 border-brutal bg-brutal-bg',\n        'shadow-brutal-sm',\n    ],\n    {\n        variants: {\n            size: sliderTrackSizeVariants,\n            orientation: {\n                horizontal: 'w-full h-[var(--slider-thickness,1.25rem)]',\n                vertical: 'h-full w-[var(--slider-thickness,1.25rem)]',\n            },\n        },\n        defaultVariants: {\n            size: 'default',\n            orientation: 'horizontal',\n        },\n    }\n)\n\nexport const sliderThumbVariants = cva(\n    [\n        'block rounded-brutal',\n        'border-3 border-brutal',\n        'shadow-brutal-sm',\n        'transition-all duration-150',\n        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n        'disabled:pointer-events-none disabled:opacity-50',\n        brutalHoverLiftSmNoX,\n        brutalPress,\n        'cursor-grab active:cursor-grabbing', /* 组件私有：拖拽抓取状态语义，不抽取 */\n    ],\n    {\n        variants: {\n            size: {\n                sm: 'h-4 w-4',\n                default: 'h-6 w-6',\n                lg: 'h-8 w-8',\n            },\n            variant: {\n                default: 'bg-brutal-accent',\n                primary: 'bg-brutal-primary',\n                secondary: 'bg-brutal-secondary',\n                accent: 'bg-brutal-accent',\n                success: 'bg-brutal-success',\n            },\n        },\n        defaultVariants: {\n            size: 'default',\n            variant: 'default',\n        },\n    }\n)\n\nexport const sliderRangeVariants = cva(\n    [\n        'absolute',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-secondary',\n                primary: 'bg-brutal-primary',\n                secondary: 'bg-brutal-secondary',\n                accent: 'bg-brutal-accent',\n                success: 'bg-brutal-success',\n            },\n            orientation: {\n                horizontal: 'h-full',\n                vertical: 'w-full',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            orientation: 'horizontal',\n        },\n    }\n)\n\nexport const sliderMarkVariants = cva(\n    ['absolute bg-brutal-fg/60 pointer-events-none'],\n    {\n        variants: {\n            orientation: {\n                horizontal: 'w-0.5 h-2',\n                vertical: 'h-0.5 w-2',\n            },\n        },\n        defaultVariants: {\n            orientation: 'horizontal',\n        },\n    }\n)\n\nexport const sliderTooltipVariants = cva(\n    [\n        'absolute pointer-events-none z-10',\n        'px-2 py-1 text-xs font-bold',\n        'bg-brutal-fg text-brutal-bg',\n        'border-3 border-brutal rounded-brutal',\n        'shadow-brutal-sm whitespace-nowrap',\n    ]\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/brutal-interaction-variants.ts",
       "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -111,5 +111,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-fb8ab9186bac957a3ec01c1cd2342bfaa99c930fe2b97aad102be090fd9d681f"
+  "integrity": "sha256-e90dc2bea53bf3336a4625b5d7e77667ae45b3a970766f321771b69ccf8829b1"
 }

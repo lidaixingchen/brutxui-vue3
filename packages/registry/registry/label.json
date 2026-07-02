@@ -3,7 +3,7 @@
   "name": "label",
   "type": "registry:ui",
   "title": "Label",
-  "description": "A highly customizable neo-brutalist Label component built with Brutx design tokens for Vue 3.",
+  "description": "Form label associated with input controls.",
   "dependencies": [
     "reka-ui"
   ],
@@ -17,7 +17,7 @@
     {
       "path": "components/ui/label/label-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\n\nexport const labelVariants = cva(\n    [\n        'font-bold tracking-wide',\n        'peer-disabled:cursor-not-allowed peer-disabled:opacity-70',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'text-brutal-fg',\n                error: 'text-brutal-destructive',\n                success: 'text-brutal-success',\n                muted: 'text-brutal-muted-foreground',\n            },\n            size: {\n                sm: 'text-xs leading-none',\n                default: 'text-sm leading-none',\n                lg: 'text-base leading-none',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n        },\n    }\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -106,5 +106,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-855e961d07550ffc1ec81ada56ba97374e8e72004aa87910323d18bd812c5e3d"
+  "integrity": "sha256-feb41e154e6931801ad88e6285674cace19892ef86621c8a506e830c39b6c2d9"
 }

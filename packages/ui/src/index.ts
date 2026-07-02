@@ -410,7 +410,7 @@ export type {
     BrutxUIDevtoolsContext,
     EventLogEntry,
     PerformanceEntry,
-    ComponentMeta,
+    DevtoolsComponentMeta,
     PerformanceReport,
 } from './lib/devtools-plugin'
 export { useLocale, provideLocale } from './composables/useLocale'

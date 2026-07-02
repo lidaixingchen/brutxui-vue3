@@ -14,19 +14,71 @@ const UI_LOCALES_DIR = path.resolve(__dirname, '../../ui/src/locales');
 const UI_LIB_DIR = path.resolve(__dirname, '../../ui/src/lib');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
+// utils.ts is excluded from registry — consumers must create their own lib/utils.ts via CLI init.
+// This file provides the cn() utility (clsx + tailwind-merge) and is project-specific.
 const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
+
+const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
+
+function loadCache(): Record<string, string> {
+    if (fs.existsSync(CACHE_FILE)) {
+        try {
+            return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+        } catch { return {}; }
+    }
+    return {};
+}
+
+function saveCache(cache: Record<string, string>): void {
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf-8');
+}
+
+function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[] }): string {
+    const parts: string[] = [];
+    const libDeps = new Set<string>();
+
+    for (const fileName of fileMapping.files) {
+        const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`Source file not found: ${filePath}`);
+        }
+        const code = readComponentSource(filePath);
+        parts.push(code);
+        const rewritten = rewriteImports(code, name);
+        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+    }
+    for (const composableName of fileMapping.composables ?? []) {
+        const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
+        if (!fs.existsSync(composablePath)) {
+            throw new Error(`Composable file not found: ${composablePath}`);
+        }
+        const code = readComponentSource(composablePath);
+        parts.push(code);
+        const rewritten = rewriteImports(code, name);
+        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+    }
+
+    for (const libName of libDeps) {
+        if (LIB_FILE_EXCLUDE.has(libName)) continue;
+        const libPath = path.join(UI_LIB_DIR, libName);
+        if (fs.existsSync(libPath)) {
+            parts.push(readComponentSource(libPath));
+        }
+    }
+
+    return crypto.createHash('sha256').update(parts.join('\0')).digest('hex');
+}
 
 function readComponentSource(filePath: string): string {
     return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
 }
 
 function rewriteImports(code: string, componentName: string): string {
-    code = code.replace(/['"]\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
-    code = code.replace(/['"]\.\.\/\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
+    // Rewrite relative imports from composable/lib files to @/ aliases
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
-    code = code.replace(/['"]\.\.\/\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
+    code = code.replace(/['"]\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
     code = code.replace(/['"]\.\.\/locales\/([^'"]+)['"]/g, "'@/locales/$1'");
-    code = code.replace(/['"]\.\.\/\.\.\/locales\/([^'"]+)['"]/g, "'@/locales/$1'");
+
     code = code.replace(
         /['"]\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)['"]/g,
         (m, comp, rest) => (COMPONENT_FILES[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
@@ -49,58 +101,24 @@ function rewriteImports(code: string, componentName: string): string {
     return code;
 }
 
-function extractComposableDeps(code: string): string[] {
+function extractDeps(code: string, dirPrefix: string): string[] {
     const deps = new Set<string>();
-    const patterns = [
-        /@\/composables\/([^'";\s]+)/g,
-        /\.\.\/\.\.\/composables\/([^'";\s]+)/g,
-        /\.\.\/composables\/([^'";\s]+)/g,
-    ];
-
-    for (const pattern of patterns) {
-        for (const match of code.matchAll(pattern)) {
-            const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
-            deps.add(fileName);
-        }
+    const pattern = new RegExp(`@/${dirPrefix}/([^'";\\s]+)`, 'g');
+    for (const match of code.matchAll(pattern)) {
+        const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
+        deps.add(fileName);
     }
-
     return Array.from(deps);
 }
 
-function extractLibDeps(code: string): string[] {
-    const deps = new Set<string>();
-    const patterns = [
-        /@\/lib\/([^'";\s]+)/g,
-        /\.\.\/\.\.\/lib\/([^'";\s]+)/g,
-        /\.\.\/lib\/([^'";\s]+)/g,
-    ];
-
-    for (const pattern of patterns) {
-        for (const match of code.matchAll(pattern)) {
-            const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
-            deps.add(fileName);
-        }
-    }
-
-    return Array.from(deps);
-}
-
-function extractLocaleDeps(code: string): string[] {
-    const deps = new Set<string>();
-    const patterns = [
-        /@\/locales\/([^'";\s]+)/g,
-        /\.\.\/\.\.\/locales\/([^'";\s]+)/g,
-        /\.\.\/locales\/([^'";\s]+)/g,
-    ];
-
-    for (const pattern of patterns) {
-        for (const match of code.matchAll(pattern)) {
-            const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
-            deps.add(fileName);
-        }
-    }
-
-    return Array.from(deps);
+function getFileType(filePath: string): string {
+    if (filePath.endsWith('.vue')) return 'registry:ui';
+    if (filePath.endsWith('.css')) return 'registry:ui';
+    if (filePath.includes('-variants') || filePath.includes('-types') || filePath.includes('-key')) return 'registry:lib';
+    if (filePath.startsWith('composables/')) return 'registry:hook';
+    if (filePath.startsWith('locales/')) return 'registry:lib';
+    if (filePath.startsWith('lib/')) return 'registry:lib';
+    return 'registry:ui';
 }
 
 function extractRegistryDeps(code: string, componentName: string): string[] {
@@ -224,6 +242,7 @@ interface RegistryIndexItem {
 }
 
 interface RegistryIndex {
+    $schema?: string;
     name: string;
     homepage: string;
     items: RegistryIndexItem[];
@@ -236,15 +255,94 @@ async function run() {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     }
 
+    const cache = loadCache();
+    const newCache: Record<string, string> = {};
     const componentNames = Object.keys(COMPONENT_FILES);
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
 
     const registryIndex: RegistryIndex = {
+        $schema: 'https://ui.shadcn.com/schema/registry.json',
         name: 'brutx-vue',
         homepage: 'https://lidaixingchen.github.io/brutxui-vue3/',
         items: []
     };
+
+    const LOCALE_FILES = ['zh-CN.ts', 'types.ts'];
+    const localeFiles: { path: string; content: string; type: string }[] = [];
+    const localeHashParts: string[] = [];
+    for (const localeFile of LOCALE_FILES) {
+        const localePath = path.join(UI_LOCALES_DIR, localeFile);
+        if (fs.existsSync(localePath)) {
+            const code = readComponentSource(localePath);
+            localeFiles.push({
+                path: `locales/${localeFile}`,
+                content: code,
+                type: 'registry:lib'
+            });
+            localeHashParts.push(code);
+        }
+    }
+
+    const localeHash = crypto.createHash('sha256').update(localeHashParts.join('\0')).digest('hex');
+    const localeOutputPath = path.join(OUTPUT_DIR, 'locale-zh-cn.json');
+
+    if (cache['locale-zh-cn'] === localeHash && fs.existsSync(localeOutputPath) && localeFiles.length > 0) {
+        try {
+            const existingLocaleItem = JSON.parse(fs.readFileSync(localeOutputPath, 'utf-8'));
+            registryIndex.items.push({
+                name: existingLocaleItem.name,
+                type: existingLocaleItem.type,
+                title: existingLocaleItem.title,
+                description: existingLocaleItem.description,
+                dependencies: existingLocaleItem.dependencies,
+                registryDependencies: existingLocaleItem.registryDependencies,
+                files: existingLocaleItem.files.map((f: { path: string; type: string }) => ({
+                    path: f.path,
+                    type: f.type
+                })),
+                tailwind: TAILWIND_CONFIG,
+                cssVars: CSS_VARS,
+                integrity: existingLocaleItem.integrity
+            });
+            newCache['locale-zh-cn'] = localeHash;
+            console.log('⊘ Skipped locale-zh-cn (unchanged)');
+        } catch { /* fall through to rebuild */ }
+    } else if (localeFiles.length > 0) {
+        const localeContent = localeFiles.map(f => f.content).join('\0');
+        const localeIntegrity = 'sha256-' + crypto.createHash('sha256').update(localeContent).digest('hex');
+
+        const localeItem = {
+            $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+            name: 'locale-zh-cn',
+            type: 'registry:lib',
+            title: 'Locale Zh CN',
+            description: 'Chinese (Simplified) locale data files for BrutxUI components.',
+            dependencies: [] as string[],
+            registryDependencies: [] as string[],
+            files: localeFiles,
+            tailwind: TAILWIND_CONFIG,
+            cssVars: CSS_VARS,
+            integrity: localeIntegrity
+        };
+
+        fs.writeFileSync(localeOutputPath, JSON.stringify(localeItem, null, 2), 'utf-8');
+        console.log(`✓ Generated locale-zh-cn.json (${localeFiles.length} files)`);
+        newCache['locale-zh-cn'] = localeHash;
+
+        registryIndex.items.push({
+            name: 'locale-zh-cn',
+            type: 'registry:lib',
+            title: 'Locale Zh CN',
+            description: 'Chinese (Simplified) locale data files for BrutxUI components.',
+            dependencies: [],
+            registryDependencies: [],
+            files: localeFiles.map(f => ({ path: f.path, type: f.type })),
+            tailwind: TAILWIND_CONFIG,
+            cssVars: CSS_VARS,
+            integrity: localeIntegrity
+        });
+    }
 
     for (const name of componentNames) {
         try {
@@ -255,10 +353,37 @@ async function run() {
                 throw new Error(`No file mapping found for component "${name}"`);
             }
 
+            const sourceHash = computeSourceHash(name, fileMapping);
+            const outputPath = path.join(OUTPUT_DIR, `${name}.json`);
+
+            if (cache[name] === sourceHash && fs.existsSync(outputPath)) {
+                try {
+                    const existingItem = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
+                    registryIndex.items.push({
+                        name: existingItem.name,
+                        type: existingItem.type,
+                        title: existingItem.title,
+                        description: existingItem.description,
+                        dependencies: existingItem.dependencies,
+                        registryDependencies: existingItem.registryDependencies,
+                        files: existingItem.files.map((f: { path: string; type: string }) => ({
+                            path: f.path,
+                            type: f.type
+                        })),
+                        tailwind: TAILWIND_CONFIG,
+                        cssVars: CSS_VARS,
+                        integrity: existingItem.integrity
+                    });
+                    newCache[name] = sourceHash;
+                    console.log(`⊘ Skipped ${name} (unchanged)`);
+                    continue;
+                } catch { /* fall through to rebuild */ }
+            }
+
             const allRegistryDeps = new Set<string>();
             const files: { path: string; content: string; type: string }[] = [];
             const composableDeps = new Set(fileMapping.composables ?? []);
-            const localeDeps = new Set(fileMapping.locales ?? []);
+            const localeDeps = new Set<string>();
             const libDeps = new Set<string>();
 
             for (const fileName of fileMapping.files) {
@@ -273,14 +398,14 @@ async function run() {
 
                 const deps = extractRegistryDeps(code, name);
                 deps.forEach(d => allRegistryDeps.add(d));
-                extractComposableDeps(code).forEach(d => composableDeps.add(d));
-                extractLocaleDeps(code).forEach(d => localeDeps.add(d));
-                extractLibDeps(code).forEach(d => libDeps.add(d));
+                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
 
                 files.push({
                     path: `components/ui/${name}/${fileName}`,
                     content: code,
-                    type: 'registry:ui'
+                    type: getFileType(`components/ui/${name}/${fileName}`)
                 });
             }
 
@@ -297,33 +422,21 @@ async function run() {
 
                     let code = readComponentSource(composablePath);
                     code = rewriteImports(code, name);
-                    extractComposableDeps(code).forEach(d => composableDeps.add(d));
-                    extractLocaleDeps(code).forEach(d => localeDeps.add(d));
-                    extractLibDeps(code).forEach(d => libDeps.add(d));
+                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
 
                     files.push({
                         path: `composables/${composableName}`,
                         content: code,
-                        type: 'registry:ui'
+                        type: getFileType(`composables/${composableName}`)
                     });
                     addedComposables.add(composableName);
                 }
             }
 
-            for (const localeName of localeDeps) {
-                const localePath = path.join(UI_LOCALES_DIR, localeName);
-
-                if (!fs.existsSync(localePath)) {
-                    throw new Error(`Locale file not found at ${localePath}`);
-                }
-
-                const code = rewriteImports(readComponentSource(localePath), name);
-
-                files.push({
-                    path: `locales/${localeName}`,
-                    content: code,
-                    type: 'registry:ui'
-                });
+            if (localeDeps.size > 0) {
+                allRegistryDeps.add('locale-zh-cn');
             }
 
             for (const libName of libDeps) {
@@ -340,7 +453,7 @@ async function run() {
                 files.push({
                     path: `lib/${libName}`,
                     content: code,
-                    type: 'registry:ui'
+                    type: getFileType(`lib/${libName}`)
                 });
             }
 
@@ -349,9 +462,10 @@ async function run() {
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(' ');
 
-            const description = `A highly customizable neo-brutalist ${title} component built with Brutx design tokens for Vue 3.`;
+            const description = componentInfo?.description
+                || `A highly customizable neo-brutalist ${title} component built with Brutx design tokens for Vue 3.`;
 
-            const allContent = files.map(f => f.content).join('');
+            const allContent = files.map(f => f.content).join('\0');
             const integrity = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
 
             const registryItem = {
@@ -368,9 +482,9 @@ async function run() {
                 integrity
             };
 
-            const outputPath = path.join(OUTPUT_DIR, `${name}.json`);
             fs.writeFileSync(outputPath, JSON.stringify(registryItem, null, 2), 'utf-8');
             console.log(`✓ Generated ${name}.json (${files.length} files, Registry dependencies: [${Array.from(allRegistryDeps).join(', ')}])`);
+            newCache[name] = sourceHash;
 
             registryIndex.items.push({
                 name: name,
@@ -390,18 +504,26 @@ async function run() {
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';
             console.error(`✗ Failed to process component ${name}:`, errorMessage);
+            const stalePath = path.join(OUTPUT_DIR, `${name}.json`);
+            if (fs.existsSync(stalePath)) {
+                fs.unlinkSync(stalePath);
+                console.log(`  Removed stale ${name}.json`);
+            }
             errorCount++;
         }
-    }
-
-    if (errorCount > 0) {
-        throw new Error(`Registry build failed with ${errorCount} component error(s).`);
     }
 
     const indexPath = path.join(OUTPUT_DIR, 'index.json');
     fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
     console.log('✓ Generated index.json');
-    console.log('🎉 Registry built successfully!');
+
+    saveCache(newCache);
+
+    if (errorCount > 0) {
+        console.warn(`⚠ Registry build completed with ${errorCount} component error(s). Failed components are excluded from index.json.`);
+    }
+
+    console.log('🎉 Registry built!');
 }
 
 run().catch(console.error);

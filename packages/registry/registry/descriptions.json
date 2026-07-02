@@ -3,7 +3,7 @@
   "name": "descriptions",
   "type": "registry:ui",
   "title": "Descriptions",
-  "description": "A highly customizable neo-brutalist Descriptions component built with Brutx design tokens for Vue 3.",
+  "description": "Key-value description list in horizontal or vertical layout.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
@@ -104,5 +104,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-ab2086aad2228b2312d830946e25f8a10aba0ab95e2c1b02abafe7acc8389373"
+  "integrity": "sha256-935677ac62a040ca7762867ac3e617ae1a1816c10afc49db883464da603f9f46"
 }

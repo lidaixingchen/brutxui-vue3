@@ -3,7 +3,7 @@
   "name": "radio-group",
   "type": "registry:ui",
   "title": "Radio Group",
-  "description": "A highly customizable neo-brutalist Radio Group component built with Brutx design tokens for Vue 3.",
+  "description": "Mutually exclusive radio button group.",
   "dependencies": [
     "reka-ui",
     "@lucide/vue"
@@ -23,12 +23,12 @@
     {
       "path": "components/ui/radio-group/radio-group-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const radioGroupItemVariants = cva(\n    [\n        'peer aspect-square',\n        'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n        'shadow-brutal-sm',\n        'transition-all duration-150',\n        brutalHoverLift,\n        brutalPress,\n        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n        'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'data-[state=checked]:bg-brutal-primary',\n                secondary: 'data-[state=checked]:bg-brutal-secondary',\n                accent: 'data-[state=checked]:bg-brutal-accent',\n                success: 'data-[state=checked]:bg-brutal-success',\n                danger: 'data-[state=checked]:bg-brutal-destructive',\n            },\n            size: {\n                sm: 'h-5 w-5',\n                default: 'h-6 w-6',\n                lg: 'h-7 w-7',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n        },\n    }\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/brutal-interaction-variants.ts",
       "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -117,5 +117,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-4a990aaf9dd406be371ecc20f1b5aa0aa979ab460b92cb6b2f49061524afff86"
+  "integrity": "sha256-e2083937f5d4b2b0b5663481bb08343c1a247115770ffc82d123f8a4c3d0eb47"
 }

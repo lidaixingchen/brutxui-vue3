@@ -3,7 +3,7 @@
   "name": "chat-bubble",
   "type": "registry:ui",
   "title": "Chat Bubble",
-  "description": "A highly customizable neo-brutalist Chat Bubble component built with Brutx design tokens for Vue 3.",
+  "description": "Chat message bubbles with avatar and timestamp.",
   "dependencies": [
     "reka-ui",
     "@lucide/vue"
@@ -18,7 +18,7 @@
     {
       "path": "components/ui/chat-bubble/chat-bubble-variants.ts",
       "content": "import { cva } from 'class-variance-authority';\n\nexport const chatBubbleVariants = cva(\n    [\n        'relative max-w-[75%]',\n        'border-3 border-brutal rounded-brutal',\n        'font-medium leading-relaxed',\n        'shadow-brutal',\n    ],\n    {\n        variants: {\n            variant: {\n                sent: 'bg-brutal-primary text-brutal-primary-foreground ml-auto',\n                received: 'bg-brutal-bg text-brutal-fg mr-auto',\n                system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none text-xs',\n            },\n            color: {\n                default: '', // no-op: color styling applied via compoundVariants below\n                primary: '',\n                accent: '',\n            },\n            size: {\n                sm: 'px-3 py-1.5 text-xs',\n                default: 'px-4 py-2.5 text-sm',\n                lg: 'px-5 py-3.5 text-base',\n            },\n        },\n        compoundVariants: [\n            {\n                variant: 'sent',\n                color: 'primary',\n                class: 'shadow-brutal-primary',\n            },\n            {\n                variant: 'sent',\n                color: 'accent',\n                class: 'bg-brutal-accent text-brutal-accent-foreground',\n            },\n        ],\n        defaultVariants: {\n            variant: 'received',\n            color: 'default',\n            size: 'default',\n        },\n    }\n);\n\nexport const chatAvatarVariants = cva(\n    [\n        'flex-shrink-0 rounded-brutal border-3 border-brutal',\n        'flex items-center justify-center font-bold',\n        'bg-brutal-secondary text-brutal-secondary-foreground',\n    ],\n    {\n        variants: {\n            size: {\n                sm: 'w-6 h-6 text-[10px]',\n                default: 'w-8 h-8 text-xs',\n                lg: 'w-10 h-10 text-sm',\n            },\n        },\n        defaultVariants: {\n            size: 'default',\n        },\n    }\n);\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -107,5 +107,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-113e1a23758e751e0fdd02c34459e723acddd9ea5cf951027da6c83ea5ef94c7"
+  "integrity": "sha256-54b43803af60f2bdc763139dbef5e4a3bd0462217345489946ba540ae1458daa"
 }

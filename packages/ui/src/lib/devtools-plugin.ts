@@ -59,7 +59,7 @@ export interface PerformanceEntry {
 }
 
 /** 组件元数据 */
-export interface ComponentMeta {
+export interface DevtoolsComponentMeta {
     /** 组件名称 */
     name: string
     /** 组件版本 */
@@ -83,7 +83,7 @@ export interface BrutxUIDevtoolsContext {
     /** 库名称 */
     libraryName: string
     /** 注册的组件集合 */
-    components: Map<string, ComponentMeta>
+    components: Map<string, DevtoolsComponentMeta>
     /** 事件日志 */
     eventLog: EventLogEntry[]
     /** 性能测量记录 */
@@ -95,9 +95,9 @@ export interface BrutxUIDevtoolsContext {
     /** 异步测量性能函数 */
     measureAsync: <T>(name: string, fn: () => Promise<T>, component?: string) => Promise<T>
     /** 注册组件函数 */
-    registerComponent: (name: string, meta?: Partial<ComponentMeta>) => void
+    registerComponent: (name: string, meta?: Partial<DevtoolsComponentMeta>) => void
     /** 获取组件列表函数 */
-    getComponents: () => ComponentMeta[]
+    getComponents: () => DevtoolsComponentMeta[]
     /** 获取事件日志函数 */
     getEventLog: () => EventLogEntry[]
     /** 清除事件日志函数 */
@@ -183,7 +183,7 @@ const DEFAULT_OPTIONS: Required<DevtoolsPluginOptions> = {
  * 创建 Devtools 上下文
  */
 function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxUIDevtoolsContext {
-    const components = new Map<string, ComponentMeta>()
+    const components = new Map<string, DevtoolsComponentMeta>()
     const eventLog: EventLogEntry[] = []
     const performanceEntries: PerformanceEntry[] = []
 
@@ -282,7 +282,7 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
             return result
         },
 
-        registerComponent(name: string, meta?: Partial<ComponentMeta>) {
+        registerComponent(name: string, meta?: Partial<DevtoolsComponentMeta>) {
             const now = Date.now()
             const existing = components.get(name)
 

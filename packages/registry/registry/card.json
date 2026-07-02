@@ -3,7 +3,7 @@
   "name": "card",
   "type": "registry:ui",
   "title": "Card",
-  "description": "A highly customizable neo-brutalist Card component built with Brutx design tokens for Vue 3.",
+  "description": "Content card container with header, body, footer, and description sections.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
@@ -40,12 +40,12 @@
     {
       "path": "components/ui/card/card-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const cardVariants = cva(\n    [\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'bg-brutal-bg text-brutal-fg',\n        'transition-all duration-150',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'shadow-brutal',\n                elevated: 'shadow-brutal-lg',\n                flat: 'shadow-none',\n                interactive: [\n                    'shadow-brutal',\n                    brutalHoverLift,\n                    brutalPress,\n                    'cursor-pointer',\n                ],\n                primary: 'shadow-brutal-primary border-[var(--brutal-primary)]',\n                secondary: 'shadow-brutal-secondary border-[var(--brutal-secondary)]',\n            },\n            padding: {\n                none: 'p-0',\n                sm: 'p-3',\n                default: 'p-5',\n                lg: 'p-8',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            padding: 'default',\n        },\n    }\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/brutal-interaction-variants.ts",
       "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -134,5 +134,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-52b60725b7a6c2ee3f4479ff468da3975ca5936fc5594f0c9e535a43001e717d"
+  "integrity": "sha256-762c0b43f234a3944b99a7370c666ee4f4a9b9cabd9e05e22b25271a5169dd1e"
 }

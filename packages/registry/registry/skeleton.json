@@ -3,7 +3,7 @@
   "name": "skeleton",
   "type": "registry:ui",
   "title": "Skeleton",
-  "description": "A highly customizable neo-brutalist Skeleton component built with Brutx design tokens for Vue 3.",
+  "description": "Loading placeholder skeletons for text, cards, avatars, and tables.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
@@ -35,7 +35,7 @@
     {
       "path": "components/ui/skeleton/skeleton-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const skeletonVariants = cva(\n    ['animate-pulse', 'border-3 border-brutal'],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-muted',\n                primary: 'bg-brutal-primary/30',\n                secondary: 'bg-brutal-secondary/30',\n                accent: 'bg-brutal-accent/30',\n            },\n            size: {\n                sm: 'h-8',\n                default: 'h-10',\n                lg: 'h-14',\n                xl: 'h-20',\n            },\n            shape: {\n                rect: 'rounded-brutal',\n                circle: 'rounded-full',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            shape: 'rect',\n        },\n    }\n)\n\ntype SkeletonSize = NonNullable<VariantProps<typeof skeletonVariants>['size']>\n\nexport const skeletonCircleWidthVariants: Record<SkeletonSize, string> = {\n    sm: 'w-8',\n    default: 'w-10',\n    lg: 'w-14',\n    xl: 'w-20',\n}\n\nexport type SkeletonVariantProps = VariantProps<typeof skeletonVariants>\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -124,5 +124,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-62b0165a88d90f6b63db9a2df8ab31720c8647094fe89d110553ed99c8eab0a0"
+  "integrity": "sha256-8bf41a92e0248f1b7f04274586f6144f17f2fd8a531f9d4036307593a2679e54"
 }

@@ -3,7 +3,7 @@
   "name": "separator",
   "type": "registry:ui",
   "title": "Separator",
-  "description": "A highly customizable neo-brutalist Separator component built with Brutx design tokens for Vue 3.",
+  "description": "Visual divider line between content sections.",
   "dependencies": [
     "reka-ui"
   ],
@@ -17,7 +17,7 @@
     {
       "path": "components/ui/separator/separator-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\n\n/** CSS variable `--sep-thickness` 的默认 fallback 值 */\nexport const DEFAULT_THICKNESS = '3px'\n\nconst separatorColorVariants = {\n    default: 'bg-brutal-fg',\n    primary: 'bg-brutal-primary',\n    muted: 'bg-brutal-muted',\n}\n\nconst separatorSizeVariants = {\n    sm: '[--sep-thickness:2px]',\n    default: '[--sep-thickness:var(--brutal-border-width,3px)]',\n    lg: '[--sep-thickness:5px]',\n}\n\nexport const separatorVariants = cva('shrink-0', {\n    variants: {\n        variant: separatorColorVariants,\n        size: separatorSizeVariants,\n        orientation: {\n            horizontal: `h-[var(--sep-thickness,${DEFAULT_THICKNESS})] w-full`,\n            vertical: `h-full w-[var(--sep-thickness,${DEFAULT_THICKNESS})]`,\n        },\n    },\n    defaultVariants: {\n        variant: 'default',\n        size: 'default',\n        orientation: 'horizontal',\n    },\n})\n\nexport const separatorLineVariants = cva(`flex-1 h-[var(--sep-thickness,${DEFAULT_THICKNESS})]`, {\n    variants: {\n        variant: separatorColorVariants,\n        size: separatorSizeVariants,\n    },\n    defaultVariants: {\n        variant: 'default',\n        size: 'default',\n    },\n})\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -106,5 +106,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-4d1daeaacfdbf5bf8ebd3bd1c9e14d3dc6bed48692f3f51175694dcf75a3c537"
+  "integrity": "sha256-6b04bc1a75b205a0ddced988f766332e313b576135e13746cc7725a96690fde4"
 }

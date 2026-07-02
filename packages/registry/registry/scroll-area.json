@@ -3,7 +3,7 @@
   "name": "scroll-area",
   "type": "registry:ui",
   "title": "Scroll Area",
-  "description": "A highly customizable neo-brutalist Scroll Area component built with Brutx design tokens for Vue 3.",
+  "description": "Custom scrollable container with styled scrollbars.",
   "dependencies": [
     "reka-ui"
   ],
@@ -22,7 +22,7 @@
     {
       "path": "components/ui/scroll-area/scroll-area-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\n\nexport const scrollAreaRootVariants = cva(\n    [\n        'relative overflow-hidden',\n    ],\n)\n\nconst scrollBarColorVariants = {\n    default: 'border-brutal',\n    primary: 'border-brutal-primary',\n    accent: 'border-brutal-accent',\n}\n\nconst SCROLL_THICKNESS = {\n    sm: '0.5rem',\n    default: '0.75rem',\n    lg: '1rem',\n} as const\n\nconst scrollBarSizeVariants = {\n    sm: `[--scroll-thickness:${SCROLL_THICKNESS.sm}]`,\n    default: `[--scroll-thickness:${SCROLL_THICKNESS.default}]`,\n    lg: `[--scroll-thickness:${SCROLL_THICKNESS.lg}]`,\n}\n\nexport const scrollAreaScrollbarVariants = cva(\n    [\n        'flex touch-none select-none transition-colors',\n    ],\n    {\n        variants: {\n            variant: scrollBarColorVariants,\n            size: scrollBarSizeVariants,\n            orientation: {\n                vertical: `h-full w-[var(--scroll-thickness,${SCROLL_THICKNESS.default})] border-l-3 p-[1px]`,\n                horizontal: `h-[var(--scroll-thickness,${SCROLL_THICKNESS.default})] flex-col border-t-3 p-[1px]`,\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            orientation: 'vertical',\n        },\n    },\n)\n\nconst scrollBarThumbColorVariants = {\n    default: 'bg-brutal-fg',\n    primary: 'bg-brutal-primary',\n    accent: 'bg-brutal-accent',\n}\n\nexport const scrollAreaThumbVariants = cva(\n    [\n        'relative flex-1',\n    ],\n    {\n        variants: {\n            variant: scrollBarThumbColorVariants,\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    },\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -111,5 +111,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-1a8a79ca8a4134bf9cb270d99ba84a219d2e30fcfde2ba5b55513ad8377595bf"
+  "integrity": "sha256-bbaa7b4bf3cbe428eb2dffb754fe7c297525f9ba3f6912dc0cfd1b8b89753d28"
 }

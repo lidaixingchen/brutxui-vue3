@@ -3,7 +3,7 @@
   "name": "kbd",
   "type": "registry:ui",
   "title": "Kbd",
-  "description": "A highly customizable neo-brutalist Kbd component built with Brutx design tokens for Vue 3.",
+  "description": "Keyboard shortcut key display element.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
@@ -15,7 +15,7 @@
     {
       "path": "components/ui/kbd/kbd-variants.ts",
       "content": "import { cva } from 'class-variance-authority';\n\nexport const kbdVariants = cva(\n    [\n        'inline-flex items-center justify-center',\n        'font-mono font-black',\n        'border-3 border-brutal rounded-brutal',\n        'shadow-brutal-sm',\n        'select-none whitespace-nowrap',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-muted text-brutal-fg',\n                primary: 'bg-brutal-primary text-brutal-primary-foreground',\n                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',\n                accent: 'bg-brutal-accent text-brutal-accent-foreground',\n            },\n            size: {\n                sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',\n                md: 'px-2 py-1 text-sm min-w-[1.75rem]',\n                lg: 'px-3 py-1.5 text-base min-w-[2.25rem]',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'md',\n        },\n    }\n);\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -104,5 +104,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-e7ceb297a64445a001e9c28574067f2cdc2a1c26293e1406f2d70578f73b2908"
+  "integrity": "sha256-0fd7bfaed5a9045ca977a480fd04fac50d5ac07290db79df81c8950db18fcf9d"
 }

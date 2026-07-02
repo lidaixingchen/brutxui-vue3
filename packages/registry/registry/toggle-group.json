@@ -3,7 +3,7 @@
   "name": "toggle-group",
   "type": "registry:ui",
   "title": "Toggle Group",
-  "description": "A highly customizable neo-brutalist Toggle Group component built with Brutx design tokens for Vue 3.",
+  "description": "Group of toggle buttons with single or multiple selection.",
   "dependencies": [
     "reka-ui"
   ],
@@ -24,7 +24,7 @@
     {
       "path": "components/ui/toggle-group/toggle-group-key.ts",
       "content": "import type { InjectionKey, Ref } from 'vue'\nimport type { VariantProps } from 'class-variance-authority'\nimport { toggleVariants } from '@/components/ui/toggle/toggle-variants'\n\ntype ToggleVariantProps = VariantProps<typeof toggleVariants>\n\nexport const toggleGroupKey: InjectionKey<{\n    variant: Ref<NonNullable<ToggleVariantProps['variant']> | undefined>\n    size: Ref<NonNullable<ToggleVariantProps['size']> | undefined>\n    disabled: Ref<boolean>\n}> = Symbol('toggleGroup')\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -113,5 +113,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-e828f95ef0990f1437bc8355348e3d86c899951e31e20bb7e4e5197894f0ebc1"
+  "integrity": "sha256-5d207bfd03f81f01ae80eb86eba63599eb01fd4f2920d2681aaca99096c7704d"
 }

@@ -3,7 +3,7 @@
   "name": "marquee",
   "type": "registry:ui",
   "title": "Marquee",
-  "description": "A highly customizable neo-brutalist Marquee component built with Brutx design tokens for Vue 3.",
+  "description": "Auto-scrolling marquee banner for announcements.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
@@ -15,17 +15,17 @@
     {
       "path": "components/ui/marquee/marquee-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\n\nexport const marqueeContainerVariants = cva(\n    [\n        'relative flex overflow-hidden w-full',\n        'border-y-3 border-brutal',\n        'font-black uppercase select-none',\n    ],\n    {\n        variants: {\n            fade: {\n                true: '[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]',\n                false: '',\n            },\n            variant: {\n                default: 'bg-brutal-bg text-brutal-fg',\n                primary: 'bg-brutal-primary text-brutal-primary-foreground',\n                accent: 'bg-brutal-accent text-brutal-accent-foreground',\n                muted: 'bg-brutal-muted text-brutal-muted-foreground',\n            },\n            size: {\n                sm: 'py-2 text-sm tracking-wider',\n                default: 'py-4 text-xl tracking-widest',\n                lg: 'py-6 text-2xl tracking-widest',\n            },\n        },\n        defaultVariants: {\n            fade: false,\n            variant: 'default',\n            size: 'default',\n        },\n    }\n)\n\nexport const marqueeTrackVariants = cva(\n    [\n        'flex min-w-full shrink-0 items-center justify-around gap-4',\n    ],\n    {\n        variants: {\n            direction: {\n                left: 'animate-marquee-left',\n                right: 'animate-marquee-right',\n            },\n            pauseOnHover: {\n                true: 'hover:[animation-play-state:paused]', /* 组件私有：特定悬停暂停动画，不抽取 */\n                false: '',\n            },\n        },\n        defaultVariants: {\n            direction: 'left',\n            pauseOnHover: false,\n        },\n    }\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "composables/useReducedMotion.ts",
       "content": "import { ref, onMounted, onUnmounted, type Ref } from 'vue'\nimport { isClient } from '@/lib/env'\n\nexport function useReducedMotion(): Ref<boolean> {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (isClient) {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
-      "type": "registry:ui"
+      "type": "registry:hook"
     },
     {
       "path": "lib/env.ts",
       "content": "/**\n * Environment detection utilities for SSR compatibility.\n * Use these instead of scattered `typeof document/window` checks.\n */\n\n/** Whether the code is running in a browser environment (not SSR). */\nexport const isClient = typeof window !== 'undefined'\n\n/** Whether `document` is available. */\nexport const hasDocument = typeof document !== 'undefined'\n\n/** Whether `localStorage` is available (may be blocked in Safari private mode). */\nexport const hasLocalStorage = typeof localStorage !== 'undefined'\n\n/**\n * Safely get a value from localStorage.\n * Returns `null` if localStorage is unavailable or the key doesn't exist.\n */\nexport function safeGetStorageItem(key: string): string | null {\n    try {\n        if (!hasLocalStorage) return null\n        return localStorage.getItem(key)\n    } catch {\n        return null\n    }\n}\n\n/**\n * Safely set a value in localStorage.\n * Silently fails if localStorage is unavailable (e.g. Safari private mode, storage full).\n */\nexport function safeSetStorageItem(key: string, value: string): void {\n    try {\n        if (!hasLocalStorage) return\n        localStorage.setItem(key, value)\n    } catch {\n        // Storage full or blocked (e.g. Safari private mode)\n    }\n}\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -114,5 +114,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-218c860e3c3d5c3bd628ac78994cac1bccbc7823aeeef211c603cde23d7a7408"
+  "integrity": "sha256-f42cd2c94c6e37e32f66b085eae256ca2ad4d0b1c572f3c78a4621d3911ac9b9"
 }

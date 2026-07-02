@@ -3,8 +3,10 @@
   "name": "glitch-button",
   "type": "registry:ui",
   "title": "Glitch Button",
-  "description": "A highly customizable neo-brutalist Glitch Button component built with Brutx design tokens for Vue 3.",
-  "dependencies": [],
+  "description": "Button with glitch animation effect on hover and interaction.",
+  "dependencies": [
+    "@lucide/vue"
+  ],
   "registryDependencies": [
     "button"
   ],
@@ -17,32 +19,32 @@
     {
       "path": "components/ui/glitch-button/glitch-button-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { baseButtonVariants } from '@/components/ui/button/shared-button-variants'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const glitchButtonVariants = cva(\n    [\n        'glitch-button',\n        'relative inline-flex items-center justify-center gap-2',\n        'border-3 border-brutal',\n        'font-black tracking-wide',\n        'transition-all duration-150',\n        'focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2',\n        'disabled:opacity-50 disabled:pointer-events-none',\n        brutalPress,\n    ],\n    {\n        variants: {\n            ...baseButtonVariants.variants,\n            speed: {\n                slow: '[--glitch-duration:800ms]',\n                medium: '[--glitch-duration:300ms]',\n                fast: '[--glitch-duration:100ms]',\n            },\n            direction: {\n                horizontal: 'glitch-horizontal',\n                vertical: 'glitch-vertical',\n                both: 'glitch-both',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            speed: 'medium',\n            direction: 'horizontal',\n        },\n    }\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "composables/useReducedMotion.ts",
       "content": "import { ref, onMounted, onUnmounted, type Ref } from 'vue'\nimport { isClient } from '@/lib/env'\n\nexport function useReducedMotion(): Ref<boolean> {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (isClient) {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
-      "type": "registry:ui"
+      "type": "registry:hook"
     },
     {
       "path": "lib/defaults.ts",
       "content": "/**\n * Shared default values for component configuration.\n */\n\n/** Default autoplay interval in milliseconds (used by Carousel, GlitchText, GlitchButton) */\nexport const DEFAULT_AUTOPLAY_INTERVAL_MS = 3000\n\n// ── Color Picker ──────────────────────────────────────────────\n\n/** Precision multiplier for HSV saturation/value rounding (→ 0.1% steps) */\nexport const HSV_PERCENT_PRECISION = 1000\n\n/** Maximum hue angle in degrees */\nexport const HUE_DEGREES = 360\n\n/** Maximum saturation / value percentage */\nexport const HSV_COMPONENT_MAX = 100\n\n/** Precision multiplier for alpha rounding (→ 0.01 steps) */\nexport const ALPHA_PRECISION = 100\n\n// ── Dialog ────────────────────────────────────────────────────\n\n/** Minimum draggable/resizable dialog width in pixels */\nexport const DIALOG_MIN_WIDTH_PX = 200\n\n/** Minimum draggable/resizable dialog height in pixels */\nexport const DIALOG_MIN_HEIGHT_PX = 150\n\n// ── Toast ─────────────────────────────────────────────────────\n\n/** Maximum number of concurrent toasts displayed */\nexport const MAX_TOASTS = 10\n\n// ── DataTable ─────────────────────────────────────────────────\n\n/** Default page size options for paginated tables */\nexport const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const\n\n// ── Card3D ────────────────────────────────────────────────────\n\n/** Default CSS perspective value in pixels for 3D card effect */\nexport const CARD_3D_DEFAULT_PERSPECTIVE_PX = 1000\n\n// ── SketchyChart ──────────────────────────────────────────────\n\n/** Default chart width in pixels */\nexport const SKETCHY_CHART_DEFAULT_WIDTH = 600\n\n/** Default chart height in pixels */\nexport const SKETCHY_CHART_DEFAULT_HEIGHT = 400\n\n// ── Date ──────────────────────────────────────────────────────\n\n/** Two-digit year pivot: >= this value → 19xx, < this value → 20xx */\nexport const TWO_DIGIT_YEAR_PIVOT = 50\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/icon-size-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const iconSizeVariants = cva('', {\n    variants: {\n        size: {\n            xs: 'h-2.5 w-2.5',\n            sm: 'h-3 w-3',\n            default: 'h-4 w-4',\n            lg: 'h-5 w-5',\n            xl: 'h-6 w-6',\n            '2xl': 'h-8 w-8',\n        },\n    },\n    defaultVariants: { size: 'default' },\n})\n\nexport type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/brutal-interaction-variants.ts",
       "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/env.ts",
       "content": "/**\n * Environment detection utilities for SSR compatibility.\n * Use these instead of scattered `typeof document/window` checks.\n */\n\n/** Whether the code is running in a browser environment (not SSR). */\nexport const isClient = typeof window !== 'undefined'\n\n/** Whether `document` is available. */\nexport const hasDocument = typeof document !== 'undefined'\n\n/** Whether `localStorage` is available (may be blocked in Safari private mode). */\nexport const hasLocalStorage = typeof localStorage !== 'undefined'\n\n/**\n * Safely get a value from localStorage.\n * Returns `null` if localStorage is unavailable or the key doesn't exist.\n */\nexport function safeGetStorageItem(key: string): string | null {\n    try {\n        if (!hasLocalStorage) return null\n        return localStorage.getItem(key)\n    } catch {\n        return null\n    }\n}\n\n/**\n * Safely set a value in localStorage.\n * Silently fails if localStorage is unavailable (e.g. Safari private mode, storage full).\n */\nexport function safeSetStorageItem(key: string, value: string): void {\n    try {\n        if (!hasLocalStorage) return\n        localStorage.setItem(key, value)\n    } catch {\n        // Storage full or blocked (e.g. Safari private mode)\n    }\n}\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -131,5 +133,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-0412459d95907b467b30d4c2dbbe0760e6f0c9e530beb1198a7d292e6bd9b08d"
+  "integrity": "sha256-86eecaf8bf2f1e9f41a7cf41e66be411c8fa1e93f64c31c6256507f0b95113c5"
 }

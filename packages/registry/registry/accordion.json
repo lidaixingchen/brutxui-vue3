@@ -3,7 +3,7 @@
   "name": "accordion",
   "type": "registry:ui",
   "title": "Accordion",
-  "description": "A highly customizable neo-brutalist Accordion component built with Brutx design tokens for Vue 3.",
+  "description": "Collapsible content sections with keyboard navigation.",
   "dependencies": [
     "reka-ui",
     "@lucide/vue"
@@ -33,22 +33,22 @@
     {
       "path": "components/ui/accordion/accordion-key.ts",
       "content": "import type { InjectionKey, Ref } from 'vue'\nimport type { VariantProps } from 'class-variance-authority'\nimport { accordionItemVariants } from '@/components/ui/accordion/accordion-variants'\n\ntype AccordionItemVariantProps = VariantProps<typeof accordionItemVariants>\n\nexport const accordionItemKey: InjectionKey<{\n    variant: Ref<NonNullable<AccordionItemVariantProps['variant']> | undefined>\n}> = Symbol('accordionItem')\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "components/ui/accordion/accordion-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { brutalPress, brutalHoverLiftSm } from '@/lib/brutal-interaction-variants'\n\nexport const accordionItemVariants = cva(\n    [\n        'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n        'transition-all duration-150',\n    ],\n    {\n        variants: {\n            variant: {\n                default: [\n                    'mb-4',\n                    'data-[state=closed]:shadow-brutal-sm',\n                    'data-[state=open]:shadow-brutal data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5',\n                ],\n                flat: 'shadow-none mb-4',\n                ghost: 'border-transparent shadow-none mb-2',\n                interactive: [\n                    'mb-4',\n                    'data-[state=closed]:shadow-brutal-sm',\n                    'data-[state=open]:shadow-brutal data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5',\n                    brutalHoverLiftSm,\n                ],\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n\nexport const accordionTriggerVariants = cva(\n    [\n        'flex flex-1 items-center justify-between py-4 px-6',\n        'text-left font-black tracking-wide transition-all',\n        brutalPress,\n        'hover:shadow-brutal-sm hover:-translate-y-0.5', /* 组件私有：垂直浮起带小投影，不抽取 */\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'hover:bg-brutal-muted',\n                flat: 'hover:bg-brutal-muted',\n                ghost: 'hover:bg-brutal-muted',\n                interactive: 'hover:bg-brutal-muted',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n\nexport const accordionContentVariants = cva(\n    'border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg',\n    {\n        variants: {\n            variant: {\n                default: '',\n                flat: 'bg-brutal-muted/30',\n                ghost: 'border-transparent',\n                interactive: 'hover:bg-brutal-muted/20',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/icon-size-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const iconSizeVariants = cva('', {\n    variants: {\n        size: {\n            xs: 'h-2.5 w-2.5',\n            sm: 'h-3 w-3',\n            default: 'h-4 w-4',\n            lg: 'h-5 w-5',\n            xl: 'h-6 w-6',\n            '2xl': 'h-8 w-8',\n        },\n    },\n    defaultVariants: { size: 'default' },\n})\n\nexport type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "lib/brutal-interaction-variants.ts",
       "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -137,5 +137,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-d09fedf444ea56c3faa75faa5b7a3bee83726cce19f64fe5ad7d38580a6ffcf2"
+  "integrity": "sha256-3139e16e960438e55f207b6ee2fc802c6292402c43a40fd03f7b9e9fd2817ee0"
 }

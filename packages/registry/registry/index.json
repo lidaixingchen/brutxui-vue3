@@ -1,17 +1,124 @@
 {
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "brutx-vue",
   "homepage": "https://lidaixingchen.github.io/brutxui-vue3/",
   "items": [
     {
+      "name": "locale-zh-cn",
+      "type": "registry:lib",
+      "title": "Locale Zh CN",
+      "description": "Chinese (Simplified) locale data files for BrutxUI components.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "locales/zh-CN.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "locales/types.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-795793564e2d5d24a9aebb128fda6b7a679a36001c4018dc835ac4a833a350b8"
+    },
+    {
       "name": "alert",
       "type": "registry:ui",
       "title": "Alert",
-      "description": "A highly customizable neo-brutalist Alert component built with Brutx design tokens for Vue 3.",
+      "description": "Contextual alert banners with variants for info, success, warning, and error states.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -28,23 +135,15 @@
         },
         {
           "path": "components/ui/alert/alert-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -133,17 +232,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-edae408c202d61b9a22372373c859599020a856bff2950018d3fd3cc729fc5ea"
+      "integrity": "sha256-fa17ce9912bfaed1ca499f4788454b4e118b2240a13a29e75e901e7124f755f7"
     },
     {
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar",
-      "description": "A highly customizable neo-brutalist Avatar component built with Brutx design tokens for Vue 3.",
+      "description": "User avatar with image, fallback initials, and status indicator support.",
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/avatar/Avatar.vue",
@@ -159,23 +260,15 @@
         },
         {
           "path": "components/ui/avatar/avatar-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/avatar/avatar-key.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -264,15 +357,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7e60c7c358b9936271414116dfaacbc416fb85bacdab4ed232d1353ccff485b8"
+      "integrity": "sha256-32f6d0e3c8ff1d8c3cd1254aecf31d2ceaaa1903c190df4f59e43dcf0a472473"
     },
     {
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
-      "description": "A highly customizable neo-brutalist Badge component built with Brutx design tokens for Vue 3.",
+      "description": "Inline status badges and labels with color variants.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/badge/Badge.vue",
@@ -280,23 +375,15 @@
         },
         {
           "path": "components/ui/badge/badge-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -385,18 +472,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1b611b04ab6638a3468bb1c2058c132d9da0f7c03020333fc4aa0f154ec0dd05"
+      "integrity": "sha256-f71f6dc89b49cd59b697135af3251ba8422df395525d534772b4823f21c7ddb7"
     },
     {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A highly customizable neo-brutalist Button component built with Brutx design tokens for Vue 3.",
+      "description": "Interactive button with loading state, icon support, and multiple style variants.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/button/Button.vue",
@@ -404,31 +493,23 @@
         },
         {
           "path": "components/ui/button/button-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/button/shared-button-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -517,13 +598,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b996a803185b03048765615f7c91b010684d1eb726cfeeba932bf542533c10fa"
+      "integrity": "sha256-96a73215305a03d730aed6e33edcdefb00c7b0661ab43d4ffde5fe0bea34c8d0"
     },
     {
       "name": "calendar",
       "type": "registry:ui",
       "title": "Calendar",
-      "description": "A highly customizable neo-brutalist Calendar component built with Brutx design tokens for Vue 3.",
+      "description": "Date calendar with single and range selection powered by v-calendar.",
       "dependencies": [
         "v-calendar",
         "@lucide/vue"
@@ -536,7 +617,7 @@
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -625,13 +706,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e3c8a7059b080da0a307e3aeb5081d54e48344d6b65219ae0e79287ad1095eea"
+      "integrity": "sha256-ea4577049cf22eb8c0b623b9eaa26f0d30cf324eab3288ab80128535d5503272"
     },
     {
       "name": "card",
       "type": "registry:ui",
       "title": "Card",
-      "description": "A highly customizable neo-brutalist Card component built with Brutx design tokens for Vue 3.",
+      "description": "Content card container with header, body, footer, and description sections.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -661,11 +742,11 @@
         },
         {
           "path": "components/ui/card/card-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -754,18 +835,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-52b60725b7a6c2ee3f4479ff468da3975ca5936fc5594f0c9e535a43001e717d"
+      "integrity": "sha256-762c0b43f234a3944b99a7370c666ee4f4a9b9cabd9e05e22b25271a5169dd1e"
     },
     {
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
-      "description": "A highly customizable neo-brutalist Checkbox component built with Brutx design tokens for Vue 3.",
+      "description": "Accessible checkbox with label and indeterminate state support.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/checkbox/Checkbox.vue",
@@ -773,27 +856,19 @@
         },
         {
           "path": "components/ui/checkbox/checkbox-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/form-toggle-base.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -882,13 +957,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e4ebd58e30d1a3ec2d875e8c16ffdc298f5e034aa9f51f444e28f8d3209d3a04"
+      "integrity": "sha256-3324171b0bae4a99defab7a15f04dbabe54f846776b061f5e13b1ddfc62771aa"
     },
     {
       "name": "combobox",
       "type": "registry:ui",
       "title": "Combobox",
-      "description": "A highly customizable neo-brutalist Combobox component built with Brutx design tokens for Vue 3.",
+      "description": "Searchable dropdown with single and multi-select modes.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -897,7 +972,8 @@
         "button",
         "popover",
         "command",
-        "spinner"
+        "spinner",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -906,27 +982,19 @@
         },
         {
           "path": "components/ui/combobox/combobox-types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/combobox/combobox-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1015,18 +1083,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-aa40dbbd5a7615da6c7ab46ba1bf8efd1876822f3184026b490ed01d0b98560d"
+      "integrity": "sha256-c6238bd6fc04d8770e1adfb89c6d371028e5259271ac35ac351f67a492d190c9"
     },
     {
       "name": "command",
       "type": "registry:ui",
       "title": "Command",
-      "description": "A highly customizable neo-brutalist Command component built with Brutx design tokens for Vue 3.",
+      "description": "Command palette with keyboard navigation and fuzzy search.",
       "dependencies": [
         "reka-ui"
       ],
       "registryDependencies": [
-        "dialog"
+        "dialog",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -1071,23 +1140,15 @@
         },
         {
           "path": "components/ui/command/command-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1176,18 +1237,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ad3364e0e35d0861d754763fab13919c72965d410130d2626018b414d099d583"
+      "integrity": "sha256-d0a26fa7843cf1417d7df691eff81f856440a8d729360c3fe7d889d16dd35d89"
     },
     {
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
-      "description": "A highly customizable neo-brutalist Dialog component built with Brutx design tokens for Vue 3.",
+      "description": "Modal dialog with overlay, header, footer, and description.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/dialog/DialogContent.vue",
@@ -1215,35 +1278,27 @@
         },
         {
           "path": "components/ui/dialog/dialog-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/modal-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/floating-animation-classes.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1332,13 +1387,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4146b19f0ae3d5f3ec10e3a9713979a9488eb32383cfd3374a5791d82fd44a54"
+      "integrity": "sha256-4b4961eb94717346e2149e4c774da87a6a9dacec33dd26f2b02b3694e7efa7b5"
     },
     {
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown Menu",
-      "description": "A highly customizable neo-brutalist Dropdown Menu component built with Brutx design tokens for Vue 3.",
+      "description": "Dropdown menu with checkbox items, radio items, and sub-menus.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -1383,19 +1438,19 @@
         },
         {
           "path": "components/ui/dropdown-menu/dropdown-menu-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/floating-animation-classes.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1484,13 +1539,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-324975ac83dd6dfed7c6ae59ab5bb09fa539353e99f097536443c70a3e0fc838"
+      "integrity": "sha256-824b55186246653d9bb2b4828e33cbdb3bb3c122a2970c99823ebbb00c897a80"
     },
     {
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "A highly customizable neo-brutalist Input component built with Brutx design tokens for Vue 3.",
+      "description": "Text input field with validation styling.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -1500,15 +1555,15 @@
         },
         {
           "path": "components/ui/input/input-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useClearable.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1597,13 +1652,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c69ae6f8fd3ae46442f65f9dd7c5a4b08944ca867e93e1e84eeb655e16b497cb"
+      "integrity": "sha256-6315b9e8cef77132958d4fa73e78f858ff3b7e0197ed211182c061e1bf6bb7e2"
     },
     {
       "name": "label",
       "type": "registry:ui",
       "title": "Label",
-      "description": "A highly customizable neo-brutalist Label component built with Brutx design tokens for Vue 3.",
+      "description": "Form label associated with input controls.",
       "dependencies": [
         "reka-ui"
       ],
@@ -1615,7 +1670,7 @@
         },
         {
           "path": "components/ui/label/label-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1704,19 +1759,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-855e961d07550ffc1ec81ada56ba97374e8e72004aa87910323d18bd812c5e3d"
+      "integrity": "sha256-feb41e154e6931801ad88e6285674cace19892ef86621c8a506e830c39b6c2d9"
     },
     {
       "name": "pagination",
       "type": "registry:ui",
       "title": "Pagination",
-      "description": "A highly customizable neo-brutalist Pagination component built with Brutx design tokens for Vue 3.",
+      "description": "Page navigation with first, previous, next, last controls and locale support.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "input",
-        "select"
+        "select",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -1725,27 +1781,19 @@
         },
         {
           "path": "components/ui/pagination/pagination-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1834,13 +1882,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-07ece8059d60faa97ca35310d5e088865a8206913875bc915b8f4f5f4c6f90e1"
+      "integrity": "sha256-44bd5322a18a543ef660acfdebd8a9adf927cf03ae2e2d29b2eab7a6002f4f8d"
     },
     {
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
-      "description": "A highly customizable neo-brutalist Popover component built with Brutx design tokens for Vue 3.",
+      "description": "Floating popover anchored to trigger elements.",
       "dependencies": [
         "reka-ui"
       ],
@@ -1852,11 +1900,11 @@
         },
         {
           "path": "components/ui/popover/popover-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/floating-animation-classes.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -1945,13 +1993,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-db46a600b851b4183273ce5448561a036f0fa95b4393bf0db8d797e78226b3a0"
+      "integrity": "sha256-2cfc10ac574e06d436b2a62f38e36b86c0da97ae60744ccd255183734411ec8f"
     },
     {
       "name": "scroll-area",
       "type": "registry:ui",
       "title": "Scroll Area",
-      "description": "A highly customizable neo-brutalist Scroll Area component built with Brutx design tokens for Vue 3.",
+      "description": "Custom scrollable container with styled scrollbars.",
       "dependencies": [
         "reka-ui"
       ],
@@ -1967,7 +2015,7 @@
         },
         {
           "path": "components/ui/scroll-area/scroll-area-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2056,13 +2104,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1a8a79ca8a4134bf9cb270d99ba84a219d2e30fcfde2ba5b55513ad8377595bf"
+      "integrity": "sha256-bbaa7b4bf3cbe428eb2dffb754fe7c297525f9ba3f6912dc0cfd1b8b89753d28"
     },
     {
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
-      "description": "A highly customizable neo-brutalist Select component built with Brutx design tokens for Vue 3.",
+      "description": "Single-value select dropdown with grouped items.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -2099,23 +2147,23 @@
         },
         {
           "path": "components/ui/select/select-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useClearable.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/floating-animation-classes.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2204,13 +2252,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-53e1b62d728b3cefa0d1d47b33440128e1b899babb5939b5d09d5b25eb070bd2"
+      "integrity": "sha256-cb4eca5de7f4b8b88c9f033b3f3cc85e4bcc56a838ea73a073ba75ee0170a861"
     },
     {
       "name": "separator",
       "type": "registry:ui",
       "title": "Separator",
-      "description": "A highly customizable neo-brutalist Separator component built with Brutx design tokens for Vue 3.",
+      "description": "Visual divider line between content sections.",
       "dependencies": [
         "reka-ui"
       ],
@@ -2222,7 +2270,7 @@
         },
         {
           "path": "components/ui/separator/separator-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2311,13 +2359,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4d1daeaacfdbf5bf8ebd3bd1c9e14d3dc6bed48692f3f51175694dcf75a3c537"
+      "integrity": "sha256-6b04bc1a75b205a0ddced988f766332e313b576135e13746cc7725a96690fde4"
     },
     {
       "name": "skeleton",
       "type": "registry:ui",
       "title": "Skeleton",
-      "description": "A highly customizable neo-brutalist Skeleton component built with Brutx design tokens for Vue 3.",
+      "description": "Loading placeholder skeletons for text, cards, avatars, and tables.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -2343,7 +2391,7 @@
         },
         {
           "path": "components/ui/skeleton/skeleton-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2432,15 +2480,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-62b0165a88d90f6b63db9a2df8ab31720c8647094fe89d110553ed99c8eab0a0"
+      "integrity": "sha256-8bf41a92e0248f1b7f04274586f6144f17f2fd8a531f9d4036307593a2679e54"
     },
     {
       "name": "spinner",
       "type": "registry:ui",
       "title": "Spinner",
-      "description": "A highly customizable neo-brutalist Spinner component built with Brutx design tokens for Vue 3.",
+      "description": "Loading spinners with bars, blocks, and dots animation variants.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/spinner/Spinner.vue",
@@ -2460,19 +2510,11 @@
         },
         {
           "path": "components/ui/spinner/spinner-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -2561,17 +2603,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ed647740f7421307a0d41d383b0d2c9a260d61e961bbc506191350c385a7eabb"
+      "integrity": "sha256-f883a757ce3d55934547c534d68555be9938b9205a42dc2eba6cecd3ab475d92"
     },
     {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
-      "description": "A highly customizable neo-brutalist Switch component built with Brutx design tokens for Vue 3.",
+      "description": "Toggle switch for boolean on/off states.",
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/switch/Switch.vue",
@@ -2579,23 +2623,15 @@
         },
         {
           "path": "components/ui/switch/switch-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/form-toggle-base.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2684,13 +2720,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ab75698406f4349d9a048461156b6160efabdaadf09631544299d995e4696ac0"
+      "integrity": "sha256-94a84ccd183c4a0884ef8739ed53f6298f3d891d84943dccb4e8483c463250c7"
     },
     {
       "name": "table",
       "type": "registry:ui",
       "title": "Table",
-      "description": "A highly customizable neo-brutalist Table component built with Brutx design tokens for Vue 3.",
+      "description": "Structured data table with header, body, footer, and caption.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -2728,7 +2764,7 @@
         },
         {
           "path": "components/ui/table/table-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2817,17 +2853,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d7c2feaf8eecc41e8319227149b4c41f84280a2cd217a26aac2840fdda8d6a19"
+      "integrity": "sha256-59d7db2b0f1711debe3e38751ea8589ca42ab896c8ea62216b12c2fb7f37cf7a"
     },
     {
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "A highly customizable neo-brutalist Tabs component built with Brutx design tokens for Vue 3.",
+      "description": "Tabbed interface with content panels and locale support.",
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/tabs/TabsContent.vue",
@@ -2843,7 +2881,7 @@
         },
         {
           "path": "components/ui/tabs/tabs-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/tabs/types.ts",
@@ -2851,19 +2889,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2952,16 +2982,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-937418f4948b420d1068aa5002e6cd3b7c19d098eeca75112b3bbd94459f1fe4"
+      "integrity": "sha256-ea42aaf6f4299247eabbafbc54cbb508a5c9150885269fdf5dfc4bc4aab1cbb2"
     },
     {
       "name": "textarea",
       "type": "registry:ui",
       "title": "Textarea",
-      "description": "A highly customizable neo-brutalist Textarea component built with Brutx design tokens for Vue 3.",
+      "description": "Multi-line text input with validation styling.",
       "dependencies": [],
       "registryDependencies": [
-        "input"
+        "input",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -2970,23 +3001,15 @@
         },
         {
           "path": "components/ui/textarea/textarea-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -3075,18 +3098,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d5dc59adddbb951502f1bd55f3414ef3325e5a942155f73b16d48977b5bb7fb6"
+      "integrity": "sha256-94cc5a6ada54a86a64c88a622adb49990d3ad258281a534d78bc74652ac44de5"
     },
     {
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "A highly customizable neo-brutalist Toast component built with Brutx design tokens for Vue 3.",
+      "description": "Ephemeral notification toasts with auto-dismiss and action support.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -3099,35 +3123,27 @@
         },
         {
           "path": "components/ui/toast/toast-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useToast.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -3216,13 +3232,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a623b26857b7990e88daec1e190ddb0a2126298c637d3b58432c955ba5c7db54"
+      "integrity": "sha256-3eca4f3149949ce7ef4f50543070981492fb5034e554444b1e7d8c0a96e622aa"
     },
     {
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",
-      "description": "A highly customizable neo-brutalist Tooltip component built with Brutx design tokens for Vue 3.",
+      "description": "Contextual tooltip triggered on hover or focus.",
       "dependencies": [
         "reka-ui"
       ],
@@ -3234,7 +3250,7 @@
         },
         {
           "path": "components/ui/tooltip/tooltip-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -3323,20 +3339,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-bd16af0dcf01e99858feb17c87fe2b21db7cfe27839aff4fed14c7e69513ebed"
+      "integrity": "sha256-21e372d97340c116a9006f82a931c34e947ee35b328ce65fe5c090254ad99d87"
     },
     {
       "name": "dashboard-stats",
       "type": "registry:ui",
       "title": "Dashboard Stats",
-      "description": "A highly customizable neo-brutalist Dashboard Stats component built with Brutx design tokens for Vue 3.",
+      "description": "Dashboard statistics cards with trend indicators.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
         "badge",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -3345,19 +3362,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -3446,13 +3455,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5abd3992ccacb184393062f503a86614fe5427e7fd1bee1d33cced46cddcbf25"
+      "integrity": "sha256-f20da4513712ff29e2bae4ae4c07903736ba9333ecb7b30a333973da7372acd4"
     },
     {
       "name": "form",
       "type": "registry:ui",
       "title": "Form",
-      "description": "A highly customizable neo-brutalist Form component built with Brutx design tokens for Vue 3.",
+      "description": "Form validation and field management powered by vee-validate with wizard support.",
       "dependencies": [
         "vee-validate",
         "reka-ui"
@@ -3460,7 +3469,8 @@
       "registryDependencies": [
         "label",
         "stepper",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -3492,6 +3502,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/form/FormConditional.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/form/form-context.ts",
           "type": "registry:ui"
         },
@@ -3501,23 +3515,19 @@
         },
         {
           "path": "components/ui/form/form-wizard-types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/form/form-wizard-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/form/form-wizard-utils.ts",
           "type": "registry:ui"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -3606,13 +3616,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-923aa6455e9a3ca677da5a7067b819774cc998251818e20d693d8e18d19369a3"
+      "integrity": "sha256-6a6658b4a76ec09d9b4e0f08834876b81206821a9cf611e3e0c3f045f34e4463"
     },
     {
       "name": "alert-dialog",
       "type": "registry:ui",
       "title": "Alert Dialog",
-      "description": "A highly customizable neo-brutalist Alert Dialog component built with Brutx design tokens for Vue 3.",
+      "description": "Confirmation dialog requiring explicit user action before proceeding.",
       "dependencies": [
         "reka-ui"
       ],
@@ -3650,15 +3660,15 @@
         },
         {
           "path": "components/ui/alert-dialog/alert-dialog-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/modal-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/floating-animation-classes.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -3747,18 +3757,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-54c54829bfc1ff1067f893d1444888fa5327801f355a1ee877baab0fe964eec0"
+      "integrity": "sha256-07d913382f302ecd442848abe1ba13b888a1a7a6c66442127427c09b32039806"
     },
     {
       "name": "sheet",
       "type": "registry:ui",
       "title": "Sheet",
-      "description": "A highly customizable neo-brutalist Sheet component built with Brutx design tokens for Vue 3.",
+      "description": "Side panel overlay sliding from any edge of the viewport.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/sheet/SheetContent.vue",
@@ -3782,31 +3794,23 @@
         },
         {
           "path": "components/ui/sheet/sheet-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/modal-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -3895,13 +3899,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5a214f0040342b75d590ff8fad55550215501c4cff788a3e235267fc1d359527"
+      "integrity": "sha256-e870e494b2f95f2247286c087641c1292d7161486a74688936e7958093899414"
     },
     {
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "A highly customizable neo-brutalist Radio Group component built with Brutx design tokens for Vue 3.",
+      "description": "Mutually exclusive radio button group.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -3918,11 +3922,11 @@
         },
         {
           "path": "components/ui/radio-group/radio-group-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4011,13 +4015,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4a990aaf9dd406be371ecc20f1b5aa0aa979ab460b92cb6b2f49061524afff86"
+      "integrity": "sha256-e2083937f5d4b2b0b5663481bb08343c1a247115770ffc82d123f8a4c3d0eb47"
     },
     {
       "name": "slider",
       "type": "registry:ui",
       "title": "Slider",
-      "description": "A highly customizable neo-brutalist Slider component built with Brutx design tokens for Vue 3.",
+      "description": "Range slider with single or dual thumbs.",
       "dependencies": [
         "reka-ui"
       ],
@@ -4029,11 +4033,11 @@
         },
         {
           "path": "components/ui/slider/slider-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4122,13 +4126,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-fb8ab9186bac957a3ec01c1cd2342bfaa99c930fe2b97aad102be090fd9d681f"
+      "integrity": "sha256-e90dc2bea53bf3336a4625b5d7e77667ae45b3a970766f321771b69ccf8829b1"
     },
     {
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "A highly customizable neo-brutalist Progress component built with Brutx design tokens for Vue 3.",
+      "description": "Determinate progress bar indicator.",
       "dependencies": [
         "reka-ui"
       ],
@@ -4140,7 +4144,7 @@
         },
         {
           "path": "components/ui/progress/progress-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4229,13 +4233,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-fa5ceda892937e7a0e680fa812ac30f940ec1dfc900d24312c88cb8324bd4e4c"
+      "integrity": "sha256-4f25faa6f05c7c1470c042618733530fa59b074aaaaba6768690432eac05c9b9"
     },
     {
       "name": "toggle",
       "type": "registry:ui",
       "title": "Toggle",
-      "description": "A highly customizable neo-brutalist Toggle component built with Brutx design tokens for Vue 3.",
+      "description": "Pressable toggle button with active state.",
       "dependencies": [
         "reka-ui"
       ],
@@ -4247,15 +4251,15 @@
         },
         {
           "path": "components/ui/toggle/toggle-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4344,13 +4348,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e6d2914b4c14a836c0eb17757a1a81eab38e4b1e92183d915006ad8237005b0d"
+      "integrity": "sha256-a26e97f8bee4b8e16d822f3f3234222437c8373421aad927799c0850a8f7fd96"
     },
     {
       "name": "toggle-group",
       "type": "registry:ui",
       "title": "Toggle Group",
-      "description": "A highly customizable neo-brutalist Toggle Group component built with Brutx design tokens for Vue 3.",
+      "description": "Group of toggle buttons with single or multiple selection.",
       "dependencies": [
         "reka-ui"
       ],
@@ -4368,7 +4372,7 @@
         },
         {
           "path": "components/ui/toggle-group/toggle-group-key.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4457,20 +4461,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e828f95ef0990f1437bc8355348e3d86c899951e31e20bb7e4e5197894f0ebc1"
+      "integrity": "sha256-5d207bfd03f81f01ae80eb86eba63599eb01fd4f2920d2681aaca99096c7704d"
     },
     {
       "name": "brutalist-hero",
       "type": "registry:ui",
       "title": "Brutalist Hero",
-      "description": "A highly customizable neo-brutalist Brutalist Hero component built with Brutx design tokens for Vue 3.",
+      "description": "Full-width hero section with bold typography and call-to-action.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "button",
         "badge",
-        "card"
+        "card",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -4479,19 +4484,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4580,13 +4577,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ff2d241fc2b829cbded533fbd58e497ef100b39c71f169fc7091b77084a1762c"
+      "integrity": "sha256-55d906a533c2a4c56a68d9dff71175184cd01e839dddd6c6b60c8f3dd9393814"
     },
     {
       "name": "pricing-section",
       "type": "registry:ui",
       "title": "Pricing Section",
-      "description": "A highly customizable neo-brutalist Pricing Section component built with Brutx design tokens for Vue 3.",
+      "description": "Pricing table with plan comparison and feature highlights.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -4594,7 +4591,8 @@
         "button",
         "card",
         "badge",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -4603,15 +4601,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -4700,13 +4690,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7062a9a6c4a3edfad760d8cbc6ff924e3395744fe99026d38ab56075f28db211"
+      "integrity": "sha256-2fa636a0b3cf7ff3f99513dbbc39a3f86936f2fef8e671c96874056ab6ad4ac7"
     },
     {
       "name": "auth-card",
       "type": "registry:ui",
       "title": "Auth Card",
-      "description": "A highly customizable neo-brutalist Auth Card component built with Brutx design tokens for Vue 3.",
+      "description": "Authentication card with login, register, and password recovery forms.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -4714,7 +4704,8 @@
         "button",
         "card",
         "input",
-        "label"
+        "label",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -4723,23 +4714,15 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/validation.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4828,18 +4811,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c52584b22df5dc2d238e286cdbe86d5ae6a1d1855b392da2f96d83ea77c7286f"
+      "integrity": "sha256-abf1b0fc23112bfb4fbbf8d7cfe783e68d5d7619de75b0096ba397d4730932ff"
     },
     {
       "name": "dashboard-shell",
       "type": "registry:ui",
       "title": "Dashboard Shell",
-      "description": "A highly customizable neo-brutalist Dashboard Shell component built with Brutx design tokens for Vue 3.",
+      "description": "Application shell layout with sidebar, header, and main content area.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -4848,19 +4832,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -4949,18 +4925,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-346c9fc4f41a73b1c0a43b184037877964fb0356c02f0783a45e346612de9222"
+      "integrity": "sha256-0290d91480cb7d0fd53384f5b0fd2ba5a9c1f06c9245292bb359e4d8b3829f42"
     },
     {
       "name": "empty-state",
       "type": "registry:ui",
       "title": "Empty State",
-      "description": "A highly customizable neo-brutalist Empty State component built with Brutx design tokens for Vue 3.",
+      "description": "Placeholder for empty data states with illustration and action.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -4969,15 +4946,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -5066,20 +5035,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ee45381cdef3d2f8cab95f06ef0a599b7d0bcaa34442237d00e67e6da15f27b7"
+      "integrity": "sha256-5d23c70a122058ff269f533576200c0dea0648b144345a5630c9d30a06145093"
     },
     {
       "name": "waitlist-page",
       "type": "registry:ui",
       "title": "Waitlist Page",
-      "description": "A highly customizable neo-brutalist Waitlist Page component built with Brutx design tokens for Vue 3.",
+      "description": "Waitlist signup page with email capture and countdown.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "button",
         "badge",
-        "input"
+        "input",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -5088,23 +5058,15 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/validation.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5193,13 +5155,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-be2b1b8f55cd4647028cc5465414cb2b66a33ac18a817d207af208db3814d647"
+      "integrity": "sha256-df9eb9437167a9a8bacfd8cff6baf3922a50da244ccd751bba55c70703989db1"
     },
     {
       "name": "accordion",
       "type": "registry:ui",
       "title": "Accordion",
-      "description": "A highly customizable neo-brutalist Accordion component built with Brutx design tokens for Vue 3.",
+      "description": "Collapsible content sections with keyboard navigation.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -5224,19 +5186,19 @@
         },
         {
           "path": "components/ui/accordion/accordion-key.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/accordion/accordion-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5325,18 +5287,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d09fedf444ea56c3faa75faa5b7a3bee83726cce19f64fe5ad7d38580a6ffcf2"
+      "integrity": "sha256-3139e16e960438e55f207b6ee2fc802c6292402c43a40fd03f7b9e9fd2817ee0"
     },
     {
       "name": "tags-input",
       "type": "registry:ui",
       "title": "Tags Input",
-      "description": "A highly customizable neo-brutalist Tags Input component built with Brutx design tokens for Vue 3.",
+      "description": "Input field for adding and removing tag chips.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/tags-input/TagsInput.vue",
@@ -5360,23 +5324,15 @@
         },
         {
           "path": "components/ui/tags-input/tags-input-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5465,18 +5421,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-664881dfa4d50d9b8047cd3c3ac6890fe19fce76f6f2c4850c189cd3b4c53604"
+      "integrity": "sha256-bb452bfaeca16002ece1ab47afbd4fb02a48cb3b0bc428180689fc61c36074b0"
     },
     {
       "name": "number-input",
       "type": "registry:ui",
       "title": "Number Input",
-      "description": "A highly customizable neo-brutalist Number Input component built with Brutx design tokens for Vue 3.",
+      "description": "Numeric input with increment, decrement, and step controls.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/number-input/NumberInput.vue",
@@ -5484,27 +5442,19 @@
         },
         {
           "path": "components/ui/number-input/number-input-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5593,17 +5543,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5b3ef2af3a99a708f35f2d10a01e30cb7eb05cd138766996391e15436549917e"
+      "integrity": "sha256-014313d0752e520757331609103ce0f40d88fef8ec5c4ff094953bb349e9b9a8"
     },
     {
       "name": "copy-to-clipboard",
       "type": "registry:ui",
       "title": "Copy To Clipboard",
-      "description": "A highly customizable neo-brutalist Copy To Clipboard component built with Brutx design tokens for Vue 3.",
+      "description": "Click-to-copy button with success feedback.",
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/copy-to-clipboard/CopyToClipboard.vue",
@@ -5611,31 +5563,23 @@
         },
         {
           "path": "components/ui/copy-to-clipboard/copy-to-clipboard-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useClipboard.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5724,18 +5668,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-69d0b2492628b8a9efe8dcc600036ee4f5409e4ffd423f6af1a67b5448d05cc8"
+      "integrity": "sha256-63ccae04ae2bc0b0c8289cb9fb280e79ed9768bd401de6195b80f402b97fcca2"
     },
     {
       "name": "breadcrumb",
       "type": "registry:ui",
       "title": "Breadcrumb",
-      "description": "A highly customizable neo-brutalist Breadcrumb component built with Brutx design tokens for Vue 3.",
+      "description": "Hierarchical navigation breadcrumb with separator and ellipsis.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/breadcrumb/Breadcrumb.vue",
@@ -5767,27 +5713,19 @@
         },
         {
           "path": "components/ui/breadcrumb/breadcrumb-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5876,13 +5814,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5fb3f54ee00c2f9334cd23cef853321cd78217c4fd7e37961a20f5dff9542429"
+      "integrity": "sha256-965fde1c57170c2478542b44038e2ccd62803a7c84e64e9155fe73f983175de4"
     },
     {
       "name": "marquee",
       "type": "registry:ui",
       "title": "Marquee",
-      "description": "A highly customizable neo-brutalist Marquee component built with Brutx design tokens for Vue 3.",
+      "description": "Auto-scrolling marquee banner for announcements.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -5892,15 +5830,15 @@
         },
         {
           "path": "components/ui/marquee/marquee-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -5989,17 +5927,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-218c860e3c3d5c3bd628ac78994cac1bccbc7823aeeef211c603cde23d7a7408"
+      "integrity": "sha256-f42cd2c94c6e37e32f66b085eae256ca2ad4d0b1c572f3c78a4621d3911ac9b9"
     },
     {
       "name": "before-after",
       "type": "registry:ui",
       "title": "Before After",
-      "description": "A highly customizable neo-brutalist Before After component built with Brutx design tokens for Vue 3.",
+      "description": "Side-by-side image comparison with draggable slider.",
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/before-after/BeforeAfter.vue",
@@ -6007,31 +5947,23 @@
         },
         {
           "path": "components/ui/before-after/before-after-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6120,20 +6052,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6b5cefc33fa7a9dcd68ace280c1dbcd0422f06990de96b3466d9cea5e7cbb1b3"
+      "integrity": "sha256-3558820d4b0afd27e1425d39bac0b30b8f55065c5e4f042657aa5036da0e6eb2"
     },
     {
       "name": "code-block",
       "type": "registry:ui",
       "title": "Code Block",
-      "description": "A highly customizable neo-brutalist Code Block component built with Brutx design tokens for Vue 3.",
+      "description": "Syntax-highlighted code display with language selector and copy button.",
       "dependencies": [
         "@lucide/vue",
         "prismjs"
       ],
       "registryDependencies": [
         "copy-to-clipboard",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -6150,23 +6083,15 @@
         },
         {
           "path": "components/ui/code-block/code-block-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6255,18 +6180,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8cb8e8a1b5002755abc4e88eb184112218c4cc4e34b2ea667d0301013674112b"
+      "integrity": "sha256-957adb63f42b264397360fcccbbcd5ef0e97027c4ffdb51d820e9e1bb78eaee9"
     },
     {
       "name": "timeline",
       "type": "registry:ui",
       "title": "Timeline",
-      "description": "A highly customizable neo-brutalist Timeline component built with Brutx design tokens for Vue 3.",
+      "description": "Vertical timeline with connected events and content.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/timeline/Timeline.vue",
@@ -6294,23 +6221,15 @@
         },
         {
           "path": "components/ui/timeline/timeline-key.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/timeline/timeline-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -6399,18 +6318,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5ab26778096b3bbbfa9f7ba673d6d9fda249dc36e5a061bc0f5d8364d30f1d30"
+      "integrity": "sha256-4a8f4e252cf16f99dca4804f1e3cc8764768bbca6e6fe0a3401782f942141fc5"
     },
     {
       "name": "carousel",
       "type": "registry:ui",
       "title": "Carousel",
-      "description": "A highly customizable neo-brutalist Carousel component built with Brutx design tokens for Vue 3.",
+      "description": "Image and content carousel with navigation and autoplay.",
       "dependencies": [
         "embla-carousel-vue",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/carousel/Carousel.vue",
@@ -6426,35 +6347,27 @@
         },
         {
           "path": "components/ui/carousel/carousel-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useCarousel.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useCarouselEnhanced.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6543,19 +6456,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8fc93a71df8b190eb2253db2e51d476e6c4f790f7144614cbdcc025f6008ff44"
+      "integrity": "sha256-760faaa7d8bb32772a43cf1b2997ee7e07fb31d2db39af9ffd2bc41eba70bf03"
     },
     {
       "name": "tree-view",
       "type": "registry:ui",
       "title": "Tree View",
-      "description": "A highly customizable neo-brutalist Tree View component built with Brutx design tokens for Vue 3.",
+      "description": "Hierarchical tree with expandable nodes and selection.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "checkbox"
+        "checkbox",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -6568,31 +6482,23 @@
         },
         {
           "path": "components/ui/tree-view/tree-view-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/tree-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6681,18 +6587,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-219a4f5084320b752c36e04a90e77590c1be78102ea09c3c296f755963b81e24"
+      "integrity": "sha256-47f3efaf413b75dae46dd16d2624c92cce39615cf3a8231b4c29502fc308c2ad"
     },
     {
       "name": "kanban",
       "type": "registry:ui",
       "title": "Kanban",
-      "description": "A highly customizable neo-brutalist Kanban component built with Brutx design tokens for Vue 3.",
+      "description": "Drag-and-drop kanban board with columns and cards.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -6701,27 +6608,19 @@
         },
         {
           "path": "components/ui/kanban/kanban-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6810,13 +6709,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-fc24a3e99066887759651ab1e5b84d3a42cebf9ba7070dc7dd7408819c3b065e"
+      "integrity": "sha256-1014c68bc21fc9681e3fcc452b424880477701aa159251b9b8955facdc55e89b"
     },
     {
       "name": "chat-bubble",
       "type": "registry:ui",
       "title": "Chat Bubble",
-      "description": "A highly customizable neo-brutalist Chat Bubble component built with Brutx design tokens for Vue 3.",
+      "description": "Chat message bubbles with avatar and timestamp.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -6829,7 +6728,7 @@
         },
         {
           "path": "components/ui/chat-bubble/chat-bubble-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6918,13 +6817,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-113e1a23758e751e0fdd02c34459e723acddd9ea5cf951027da6c83ea5ef94c7"
+      "integrity": "sha256-54b43803af60f2bdc763139dbef5e4a3bd0462217345489946ba540ae1458daa"
     },
     {
       "name": "kbd",
       "type": "registry:ui",
       "title": "Kbd",
-      "description": "A highly customizable neo-brutalist Kbd component built with Brutx design tokens for Vue 3.",
+      "description": "Keyboard shortcut key display element.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -6934,7 +6833,7 @@
         },
         {
           "path": "components/ui/kbd/kbd-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7023,13 +6922,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e7ceb297a64445a001e9c28574067f2cdc2a1c26293e1406f2d70578f73b2908"
+      "integrity": "sha256-0fd7bfaed5a9045ca977a480fd04fac50d5ac07290db79df81c8950db18fcf9d"
     },
     {
       "name": "counter",
       "type": "registry:ui",
       "title": "Counter",
-      "description": "A highly customizable neo-brutalist Counter component built with Brutx design tokens for Vue 3.",
+      "description": "Animated number counter with formatting.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -7039,15 +6938,15 @@
         },
         {
           "path": "components/ui/counter/counter-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7136,17 +7035,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-fc4053f1f146c3d20f375835272f8358df1046cd51d2c065fc98ebfa437fe3db"
+      "integrity": "sha256-7ececa1a51315254357d24986936757f6d8cb6d797a26fa42f70e897e5b36428"
     },
     {
       "name": "stepper",
       "type": "registry:ui",
       "title": "Stepper",
-      "description": "A highly customizable neo-brutalist Stepper component built with Brutx design tokens for Vue 3.",
+      "description": "Multi-step wizard with progress indicator.",
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/stepper/Stepper.vue",
@@ -7154,23 +7055,15 @@
         },
         {
           "path": "components/ui/stepper/stepper-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7259,15 +7152,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b7216b8de4cda031bee412c19674e0c9ec4cb14f5a7a0f1746bc0954ff8a7686"
+      "integrity": "sha256-359a5ae53b0deeb2f1f06c56a3230f06e876016ab87f3efa56dad0eacf7ca209"
     },
     {
       "name": "card-3d",
       "type": "registry:ui",
       "title": "Card 3d",
-      "description": "A highly customizable neo-brutalist Card 3d component built with Brutx design tokens for Vue 3.",
+      "description": "Interactive card with 3D tilt effect on mouse movement.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/card-3d/Card3D.vue",
@@ -7275,31 +7170,23 @@
         },
         {
           "path": "components/ui/card-3d/card-3d-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7388,13 +7275,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8514a3f48f019ea896c0f2bd47faf61fa77891e1fc60b3a81b27e1edbf52d381"
+      "integrity": "sha256-2ba711a49066ad82b14e1493ad338d6c01a48e946552532203b053184807bccd"
     },
     {
       "name": "glitch-text",
       "type": "registry:ui",
       "title": "Glitch Text",
-      "description": "A highly customizable neo-brutalist Glitch Text component built with Brutx design tokens for Vue 3.",
+      "description": "Text with glitch animation and distortion effects.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -7404,23 +7291,23 @@
         },
         {
           "path": "components/ui/glitch-text/glitch-text-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7509,15 +7396,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-66580578c831cdba69bfcbf4c48d0ea253fe34cc2062f5f8320e9a2e9698202c"
+      "integrity": "sha256-ec9ab8af06618c4b0b138a7c9b904a192452df1ceba6eeaf6d0d72cea3205206"
     },
     {
       "name": "scratch-card",
       "type": "registry:ui",
       "title": "Scratch Card",
-      "description": "A highly customizable neo-brutalist Scratch Card component built with Brutx design tokens for Vue 3.",
+      "description": "Scratch-off reveal card with canvas interaction.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/scratch-card/ScratchCard.vue",
@@ -7525,35 +7414,27 @@
         },
         {
           "path": "components/ui/scratch-card/scratch-card-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useCanvasInteraction.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/theme-fallbacks.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7642,15 +7523,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9a39e0c1a5832af3e19cc6ed7b75e538d297ee55de37d43597ce11a2346e84d8"
+      "integrity": "sha256-8b0a8fc030c31f6641702c22ec3615dc367904764b7a7b62cfbd991f452639ab"
     },
     {
       "name": "sketchy-chart",
       "type": "registry:ui",
       "title": "Sketchy Chart",
-      "description": "A highly customizable neo-brutalist Sketchy Chart component built with Brutx design tokens for Vue 3.",
+      "description": "Hand-drawn style data visualization chart.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/sketchy-chart/SketchyChart.vue",
@@ -7658,23 +7541,15 @@
         },
         {
           "path": "components/ui/sketchy-chart/sketchy-chart-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7763,16 +7638,17 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8530719b51600815c6eb694d2f314c198c9425f1dbaeded90586dad519de27cd"
+      "integrity": "sha256-ad5cc07fe2200ed06ebe6f6f278a549f731c88f214b126d9f35908207ef30c99"
     },
     {
       "name": "hardcore-input",
       "type": "registry:ui",
       "title": "Hardcore Input",
-      "description": "A highly customizable neo-brutalist Hardcore Input component built with Brutx design tokens for Vue 3.",
+      "description": "Input field with audio feedback and visual effects.",
       "dependencies": [],
       "registryDependencies": [
-        "form"
+        "form",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -7781,31 +7657,23 @@
         },
         {
           "path": "components/ui/hardcore-input/hardcore-input-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useAudioEngine.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useFormFieldValidation.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -7894,20 +7762,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7ef9bed223d542df917c7a273dee13031231c75f7ff5f1a7a9f561050cde6489"
+      "integrity": "sha256-88c5f96b8526c7df6a82d1b17e66420519c002c11280c157294f33f6c13b0322"
     },
     {
       "name": "testimonial-card",
       "type": "registry:ui",
       "title": "Testimonial Card",
-      "description": "A highly customizable neo-brutalist Testimonial Card component built with Brutx design tokens for Vue 3.",
+      "description": "Customer testimonial display with avatar and rating.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
         "avatar",
-        "badge"
+        "badge",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -7916,19 +7785,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -8017,13 +7878,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ac3d10b357906e1924ed79249af9055e02f33b09492c6561548e53847522556e"
+      "integrity": "sha256-890ac027596c95185fe1bbaf8c05995889ec992dea40de392ff2de1b54b67b93"
     },
     {
       "name": "blog-card",
       "type": "registry:ui",
       "title": "Blog Card",
-      "description": "A highly customizable neo-brutalist Blog Card component built with Brutx design tokens for Vue 3.",
+      "description": "Blog post preview card with image, title, and excerpt.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8031,7 +7892,8 @@
         "card",
         "badge",
         "avatar",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8040,15 +7902,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -8137,20 +7991,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-645aa8f851b0ce5d5f5eb7319f9e11864e437b8f739487a9bdc7223d1a22d17f"
+      "integrity": "sha256-ad9d6846e5d73f64222b62e38c89c25f4ef18898712aa86a18426b86a319d72c"
     },
     {
       "name": "file-card",
       "type": "registry:ui",
       "title": "File Card",
-      "description": "A highly customizable neo-brutalist File Card component built with Brutx design tokens for Vue 3.",
+      "description": "File preview card with metadata and download action.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
         "badge",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8159,19 +8014,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -8260,13 +8107,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-caa439b0e138a313d94e4f4b0ec0683ebd4feda532afbfc51d7f9801d99e86b4"
+      "integrity": "sha256-8b69906708b1e381f2e0b4f9e607166f07e9a65211e2b90653e9e206672d66c9"
     },
     {
       "name": "quick-actions",
       "type": "registry:ui",
       "title": "Quick Actions",
-      "description": "A highly customizable neo-brutalist Quick Actions component built with Brutx design tokens for Vue 3.",
+      "description": "Floating action buttons for common tasks.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8274,7 +8121,8 @@
         "card",
         "button",
         "badge",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8283,19 +8131,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -8384,13 +8224,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4412a2c71008c6dba2921efd6195399e06565af2e5f97fe7300c1ceeee14599f"
+      "integrity": "sha256-ae52f638a103beba6aa6e0a43f96f4dfdf7a51f60e7c599a26a7111d50eac17d"
     },
     {
       "name": "faq-section",
       "type": "registry:ui",
       "title": "Faq Section",
-      "description": "A highly customizable neo-brutalist Faq Section component built with Brutx design tokens for Vue 3.",
+      "description": "Frequently asked questions with expandable answers.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8398,7 +8238,8 @@
         "accordion",
         "card",
         "badge",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8407,15 +8248,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -8504,13 +8337,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-426e4b17fc7f66e3e55a1c20e37803a873cff0fea71f76d7e4f0a72e6e572a4d"
+      "integrity": "sha256-eec1fad429d857e9301aafa59cf2b987e475a62ab96bbe7ad6c2ac871c0fe9ad"
     },
     {
       "name": "header-section",
       "type": "registry:ui",
       "title": "Header Section",
-      "description": "A highly customizable neo-brutalist Header Section component built with Brutx design tokens for Vue 3.",
+      "description": "Page header with navigation, title, and subtitle.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -8518,7 +8351,8 @@
       "registryDependencies": [
         "button",
         "sheet",
-        "separator"
+        "separator",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8527,19 +8361,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -8628,19 +8454,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-da9e61a00787f567f2aaa10e306b726dd4df12d76149fb52df10bb0d1d951b55"
+      "integrity": "sha256-fc623177147b39ced122f10a0822c9c90d1385c33b64611d7ab37ed3e03be9b9"
     },
     {
       "name": "footer-section",
       "type": "registry:ui",
       "title": "Footer Section",
-      "description": "A highly customizable neo-brutalist Footer Section component built with Brutx design tokens for Vue 3.",
+      "description": "Page footer with links, copyright, and social icons.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "button",
-        "separator"
+        "separator",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8649,15 +8476,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -8746,20 +8565,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c1d6d685a83bd30136b16cc992a1eea865aac03a74d28cbb5de39f5f6b85aa56"
+      "integrity": "sha256-10fb3c4966d246a00854c3d706c82c88e072b1581476d6f5923a294e68e74f45"
     },
     {
       "name": "not-found-page",
       "type": "registry:ui",
       "title": "Not Found Page",
-      "description": "A highly customizable neo-brutalist Not Found Page component built with Brutx design tokens for Vue 3.",
+      "description": "404 error page with illustration and navigation.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "button",
         "card",
-        "glitch-text"
+        "glitch-text",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8768,19 +8588,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -8869,20 +8681,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-184dec66cfd19ad84f3fe481d1a00a66d0bb705cfdae93c689f4d7414a1abb1e"
+      "integrity": "sha256-81c45a52be8bd9336bcc3ebb79e056d637e0c7c9bd2ae3683b180c491b75da48"
     },
     {
       "name": "loading-page",
       "type": "registry:ui",
       "title": "Loading Page",
-      "description": "A highly customizable neo-brutalist Loading Page component built with Brutx design tokens for Vue 3.",
+      "description": "Full-page loading state with spinner and progress.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "skeleton",
         "spinner",
-        "progress"
+        "progress",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -8891,15 +8704,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -8988,20 +8793,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-bf3a7db6adee2b80647d198067fe5c1858f09f36a73afc578738b485e0a64e33"
+      "integrity": "sha256-89ed44698f010251bfbbd985dbd3fbf5c15a5a7095c3825956179fe2bb8a0ed6"
     },
     {
       "name": "error-card",
       "type": "registry:ui",
       "title": "Error Card",
-      "description": "A highly customizable neo-brutalist Error Card component built with Brutx design tokens for Vue 3.",
+      "description": "Error state card with message and retry action.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
         "button",
-        "alert"
+        "alert",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9010,19 +8816,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9111,19 +8909,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-95658fb9edfa51ced4c4b45f6286185dd7743f95f1b72f570a1b3eb1c2eef023"
+      "integrity": "sha256-c7eb0f09aa7b5314d93a8a6c4d222c9dde980786f12fcd7bdd3f1851666d7183"
     },
     {
       "name": "success-card",
       "type": "registry:ui",
       "title": "Success Card",
-      "description": "A highly customizable neo-brutalist Success Card component built with Brutx design tokens for Vue 3.",
+      "description": "Success state card with confirmation message and action.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9132,19 +8931,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9233,20 +9024,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c301ca255995d7bc5d3cdc17f30480f8132c4ace26d61bd725f5f5f011bccdc1"
+      "integrity": "sha256-d8e0b0f4706418f6b7d5d29ccf6b1cb575f8acd8b9b3514e0a6f05ba61c36797"
     },
     {
       "name": "search-widget",
       "type": "registry:ui",
       "title": "Search Widget",
-      "description": "A highly customizable neo-brutalist Search Widget component built with Brutx design tokens for Vue 3.",
+      "description": "Search input with results display and filtering.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
         "command",
-        "spinner"
+        "spinner",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9255,19 +9047,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9356,13 +9140,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-caab1f24ed5e02317a4a6b5d3d760a01bdaa7a88e97fe16de0a571bdf4b27cb3"
+      "integrity": "sha256-4af1e71cda278782c36e69fc9b970bc048c079a02ac298c0d892eb133bdd0fbb"
     },
     {
       "name": "feedback-form",
       "type": "registry:ui",
       "title": "Feedback Form",
-      "description": "A highly customizable neo-brutalist Feedback Form component built with Brutx design tokens for Vue 3.",
+      "description": "User feedback form with rating and comment fields.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9371,7 +9155,8 @@
         "input",
         "textarea",
         "button",
-        "success-card"
+        "success-card",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9380,19 +9165,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9481,13 +9258,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-38f2dfb75a4d0da396097df582236f2ae15256de23453b784b67d63d6b756f31"
+      "integrity": "sha256-a814b4e631ef993a8c5791e8425181773e1d1c524a2a87623af997e9371c022c"
     },
     {
       "name": "stepper-section",
       "type": "registry:ui",
       "title": "Stepper Section",
-      "description": "A highly customizable neo-brutalist Stepper Section component built with Brutx design tokens for Vue 3.",
+      "description": "Step-based content sections with navigation controls.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9495,7 +9272,8 @@
         "stepper",
         "button",
         "card",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9504,19 +9282,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9605,19 +9375,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-295b92077f4f00009d28d736fb7ef27b9b146ec932eb205f31a6d4b9111c8b70"
+      "integrity": "sha256-2c7496caea72450a12f61d06d5762431ce652241bd8102a6fa2036f988baac64"
     },
     {
       "name": "cookie-consent",
       "type": "registry:ui",
       "title": "Cookie Consent",
-      "description": "A highly customizable neo-brutalist Cookie Consent component built with Brutx design tokens for Vue 3.",
+      "description": "Cookie consent banner with accept and customize options.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "card",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9626,19 +9397,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9727,20 +9490,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7e6e7771fde9c18320fcc436876ce3ff7d6bc8bbc42bc0ab6da02c91b0d4b76e"
+      "integrity": "sha256-6546322222c4f700281215493371eedd64f6c52b70c62398d4d7962fb6ae5d6f"
     },
     {
       "name": "data-table-section",
       "type": "registry:ui",
       "title": "Data Table Section",
-      "description": "A highly customizable neo-brutalist Data Table Section component built with Brutx design tokens for Vue 3.",
+      "description": "Data display section with table, filters, and pagination.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "table",
         "pagination",
-        "input"
+        "input",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9753,23 +9517,15 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useDataTablePagination.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -9858,13 +9614,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-acb5ea2c1f2c274393c565488209bcc3288c4f6b33f4533b893eefe40d4c8346"
+      "integrity": "sha256-d4bb80eb433e87b55e0710856d892613ebc9a7e9e2fbe2af2d537604995b9a05"
     },
     {
       "name": "settings-page",
       "type": "registry:ui",
       "title": "Settings Page",
-      "description": "A highly customizable neo-brutalist Settings Page component built with Brutx design tokens for Vue 3.",
+      "description": "Settings page layout with grouped configuration options.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -9876,7 +9632,8 @@
         "switch",
         "button",
         "separator",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -9885,15 +9642,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -9982,13 +9731,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-063371410de64c519c472d0604b0003307d742a7de8e2b95a80aece3b589ae66"
+      "integrity": "sha256-12cc501dd350ec4cbcd47614ad6d2f858e865748c97b0802d0d50f453b407d1b"
     },
     {
       "name": "blog-list-page",
       "type": "registry:ui",
       "title": "Blog List Page",
-      "description": "A highly customizable neo-brutalist Blog List Page component built with Brutx design tokens for Vue 3.",
+      "description": "Blog listing page with post cards and pagination.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9996,7 +9745,8 @@
         "card",
         "pagination",
         "badge",
-        "input"
+        "input",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10005,19 +9755,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -10106,20 +9848,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-00f57a9843ddede98b30678ae51fd02d286fd646129eaa9e5ebc26bc79bc1c7f"
+      "integrity": "sha256-c057555c696d8cc9126b094b961d798424478b9060f3a2c4afdfca1247e058a0"
     },
     {
       "name": "activity-log-page",
       "type": "registry:ui",
       "title": "Activity Log Page",
-      "description": "A highly customizable neo-brutalist Activity Log Page component built with Brutx design tokens for Vue 3.",
+      "description": "Activity log page with timeline entries and filtering.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "table",
         "badge",
-        "pagination"
+        "pagination",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10128,15 +9871,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -10225,13 +9960,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ea3e518b5ab2e9a45663112964d4b80116f8fe533ff961469bb4bb096eaf227e"
+      "integrity": "sha256-1948c99dcab331af5a9e860ab593ba218400c0c164b7639843322d89a89cde4e"
     },
     {
       "name": "profile-page",
       "type": "registry:ui",
       "title": "Profile Page",
-      "description": "A highly customizable neo-brutalist Profile Page component built with Brutx design tokens for Vue 3.",
+      "description": "User profile page with avatar, info, and edit actions.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10240,7 +9975,8 @@
         "card",
         "input",
         "button",
-        "textarea"
+        "textarea",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10249,15 +9985,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -10346,13 +10074,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c3be678c91fb56afd701afd34c3817118e863941ba87289a89982b8cad881f3f"
+      "integrity": "sha256-13decfad4ca5302232712ad58cd6909e97b88f89ff06dff06abc59cf490e7efd"
     },
     {
       "name": "chart-section",
       "type": "registry:ui",
       "title": "Chart Section",
-      "description": "A highly customizable neo-brutalist Chart Section component built with Brutx design tokens for Vue 3.",
+      "description": "Data visualization section with interactive charts.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -10361,7 +10089,8 @@
         "sketchy-chart",
         "card",
         "tabs",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10370,15 +10099,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -10467,20 +10188,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a1dc835099f2c692cdff8815270271be781e09af91c650563eace5ff5fab9f84"
+      "integrity": "sha256-08041bc5036a7340e8676f427a413d78fd6fca52ea9eec29393fa41270fe5824"
     },
     {
       "name": "gallery-section",
       "type": "registry:ui",
       "title": "Gallery Section",
-      "description": "A highly customizable neo-brutalist Gallery Section component built with Brutx design tokens for Vue 3.",
+      "description": "Image gallery with lightbox and grid layouts.",
       "dependencies": [
         "embla-carousel-vue",
         "@lucide/vue"
       ],
       "registryDependencies": [
         "carousel",
-        "card"
+        "card",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10489,15 +10211,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -10586,13 +10300,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ca7bbda708352908cd6e0633bf5751a0af042c02319e84b1e952e7739fdc7ca1"
+      "integrity": "sha256-6be7c7a40c35fa8e515460f489e15cf494fd65a345471ccaf2da2061fb2a3e2d"
     },
     {
       "name": "upload-card",
       "type": "registry:ui",
       "title": "Upload Card",
-      "description": "A highly customizable neo-brutalist Upload Card component built with Brutx design tokens for Vue 3.",
+      "description": "File upload card with drag-and-drop and progress.",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10600,7 +10314,8 @@
         "card",
         "button",
         "progress",
-        "spinner"
+        "spinner",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10609,23 +10324,15 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useUpload.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -10714,20 +10421,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4cf67b24320d42acfd742ac1a03ddff2b50214af53bd8eacf33ef8aaf65b371f"
+      "integrity": "sha256-350d03649c79d2002d9c0a7f695ccf115e7a705fe5280054fd6443d3d2acf4d1"
     },
     {
       "name": "overview-page",
       "type": "registry:ui",
       "title": "Overview Page",
-      "description": "A highly customizable neo-brutalist Overview Page component built with Brutx design tokens for Vue 3.",
+      "description": "Dashboard overview page with stats and recent activity.",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "dashboard-stats",
         "card",
-        "empty-state"
+        "empty-state",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10736,15 +10444,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -10833,20 +10533,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8a2b7bbe94442491447d747beb23eeb3b9d63cf291c3f094d0051c3000f86f2c"
+      "integrity": "sha256-88a9e8aea40191521b4985bbb8035a28d840c848b6f0371e29b15e5b08c4b440"
     },
     {
       "name": "color-picker",
       "type": "registry:ui",
       "title": "Color Picker",
-      "description": "A highly customizable neo-brutalist Color Picker component built with Brutx design tokens for Vue 3.",
+      "description": "Color picker with palette, input, history, and swatches.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
         "popover",
-        "button"
+        "button",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -10871,7 +10572,7 @@
         },
         {
           "path": "components/ui/color-picker/color-picker-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/color-picker/types.ts",
@@ -10879,43 +10580,35 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useColorHistory.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useColorPicker.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/default-presets.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/color.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11004,13 +10697,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3ff545a06d532b9fa6c692863c5808d9ba2d702fc160222a588c371dc9389710"
+      "integrity": "sha256-c14c67891b01f3ebf13ab665e06ccf0c3ed98b81ca9d1190689bce6896580d78"
     },
     {
       "name": "date-picker",
       "type": "registry:ui",
       "title": "Date Picker",
-      "description": "A highly customizable neo-brutalist Date Picker component built with Brutx design tokens for Vue 3.",
+      "description": "Date picker with range selection, time input, and locale-aware formatting.",
       "dependencies": [
         "v-calendar",
         "@lucide/vue",
@@ -11019,7 +10712,8 @@
       "registryDependencies": [
         "popover",
         "button",
-        "select"
+        "select",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -11076,7 +10770,7 @@
         },
         {
           "path": "components/ui/date-picker/date-picker-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/date-picker/types.ts",
@@ -11088,31 +10782,23 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useDatePicker.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/date.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11201,17 +10887,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e55beec96b6754dbf5bd7f25d348293e2e949a483b6f6e908f17425f4e4dcb78"
+      "integrity": "sha256-dd75c1bc752918c3f8a29daec4c8a058acab43ce2af542a09b1b2eb52340f12c"
     },
     {
       "name": "color-mode-switcher",
       "type": "registry:ui",
       "title": "Color Mode Switcher",
-      "description": "A highly customizable neo-brutalist Color Mode Switcher component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Toggle between light, dark, and system color modes.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "button",
-        "select"
+        "select",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -11220,23 +10909,15 @@
         },
         {
           "path": "composables/useTheme.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11325,19 +11006,22 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d41b69ea0e2fac08c03ea1cdf0532e28134c0bb241f0b02f6ec2b1eb4adabcc1"
+      "integrity": "sha256-c0bc33e04fecdc5b698e33254789f3e60e2ff5a6ee9def022164803249099574"
     },
     {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data Table",
-      "description": "A highly customizable neo-brutalist Data Table component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Full-featured data table with sorting, filtering, pagination, and row selection.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "input",
         "button",
         "checkbox",
-        "select"
+        "select",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -11346,7 +11030,7 @@
         },
         {
           "path": "components/ui/data-table/data-table-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/data-table/types.ts",
@@ -11354,43 +11038,35 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useDataTableSort.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useDataTableFilter.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useDataTableSelection.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useDataTablePagination.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/data-table-utils.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11479,19 +11155,20 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7da17edb6c4cfba01994933a4cb7182098f10867417a175849b4bcfdeef004df"
+      "integrity": "sha256-86c3d85a0089b46f1ebe54491fe745bf038cc18b4a54cca0ebb41cdf888f26dc"
     },
     {
       "name": "tree-select",
       "type": "registry:ui",
       "title": "Tree Select",
-      "description": "A highly customizable neo-brutalist Tree Select component built with Brutx design tokens for Vue 3.",
+      "description": "Hierarchical tree-based select with multi-select support.",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "popover"
+        "popover",
+        "locale-zh-cn"
       ],
       "files": [
         {
@@ -11504,39 +11181,31 @@
         },
         {
           "path": "components/ui/tree-select/tree-select-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/tree-select/tree-select-types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/tree-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11625,13 +11294,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b1c0acba6e2abd96684139280085259dfcca0069c72e675f324b6c724df37f58"
+      "integrity": "sha256-2c028d3d6236ee54bcfefa1069376bb8925bf8a3dba258f59e5f0186f7ed8192"
     },
     {
       "name": "typewriter-text",
       "type": "registry:ui",
       "title": "Typewriter Text",
-      "description": "A highly customizable neo-brutalist Typewriter Text component built with Brutx design tokens for Vue 3.",
+      "description": "Text with typewriter typing animation effect.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -11641,15 +11310,15 @@
         },
         {
           "path": "components/ui/typewriter-text/typewriter-text-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11738,13 +11407,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1419b6ed58024aadd4ae082047763934ddc6946f28c43178c27201ecaaa03c2c"
+      "integrity": "sha256-61f1c5e047189f41392762b73629f26d35310fe23aae3fda5e7d45f8d2abd522"
     },
     {
       "name": "noise-background",
       "type": "registry:ui",
       "title": "Noise Background",
-      "description": "A highly customizable neo-brutalist Noise Background component built with Brutx design tokens for Vue 3.",
+      "description": "Animated noise texture background overlay.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -11754,15 +11423,15 @@
         },
         {
           "path": "components/ui/noise-background/noise-background-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11851,14 +11520,16 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-538fd9bb81b6fcec8a84b4e0b6eb8f211a60d51a2ead4c0e7dcb309a765012b0"
+      "integrity": "sha256-cf49d07f043af4d272752e492291afa112d2dc24dfd797f08d4fe2e631903a6a"
     },
     {
       "name": "glitch-button",
       "type": "registry:ui",
       "title": "Glitch Button",
-      "description": "A highly customizable neo-brutalist Glitch Button component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Button with glitch animation effect on hover and interaction.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "button"
       ],
@@ -11869,27 +11540,27 @@
         },
         {
           "path": "components/ui/glitch-button/glitch-button-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/defaults.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/icon-size-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -11978,15 +11649,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0412459d95907b467b30d4c2dbbe0760e6f0c9e530beb1198a7d292e6bd9b08d"
+      "integrity": "sha256-86eecaf8bf2f1e9f41a7cf41e66be411c8fa1e93f64c31c6256507f0b95113c5"
     },
     {
       "name": "virtual-scroll",
       "type": "registry:ui",
       "title": "Virtual Scroll",
-      "description": "A highly customizable neo-brutalist Virtual Scroll component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
-      "registryDependencies": [],
+      "description": "High-performance virtualized list for large datasets.",
+      "dependencies": [
+        "@tanstack/vue-virtual"
+      ],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/virtual-scroll/VirtualScroll.vue",
@@ -11994,7 +11669,7 @@
         },
         {
           "path": "components/ui/virtual-scroll/virtual-scroll-variants.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/virtual-scroll/types.ts",
@@ -12002,15 +11677,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -12099,13 +11766,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-eb5cad94315a942016b5b27470cf303a5182397dd7ac0eec60ed23b34380e32f"
+      "integrity": "sha256-65c7925e51ab5a8a45c72aa1586a5053f3c49191798b635785794f0a5f98da0f"
     },
     {
       "name": "input-adornment",
       "type": "registry:ui",
       "title": "Input Adornment",
-      "description": "A highly customizable neo-brutalist Input Adornment component built with Brutx design tokens for Vue 3.",
+      "description": "Decorative prefix and suffix elements for input fields.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12206,9 +11873,13 @@
       "name": "upload",
       "type": "registry:ui",
       "title": "Upload",
-      "description": "A highly customizable neo-brutalist Upload component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
-      "registryDependencies": [],
+      "description": "File upload with drag-and-drop, preview, and progress tracking.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/upload/Upload.vue",
@@ -12232,19 +11903,11 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "composables/useUpload.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -12333,15 +11996,19 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-eecadb5371c1ff894412d2571264f825616e99d874104c3c758da34863451b21"
+      "integrity": "sha256-63cfc03438f09b88e9fb3302724e3e18bbcc5d58681b5b6c8caa1d50b434c1a0"
     },
     {
       "name": "popconfirm",
       "type": "registry:ui",
       "title": "Popconfirm",
-      "description": "A highly customizable neo-brutalist Popconfirm component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
-      "registryDependencies": [],
+      "description": "Confirmation popover with customizable content and actions.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/popconfirm/Popconfirm.vue",
@@ -12349,15 +12016,7 @@
         },
         {
           "path": "composables/useLocale.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/zh-CN.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "locales/types.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -12446,13 +12105,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-20cf19898e449a6f3c94b89d6e921b97e89b190319220913e5e20203c1463790"
+      "integrity": "sha256-b996e8857e71ec0cda190a328a75bfbc41380082bec4fda136a961c200a37add"
     },
     {
       "name": "descriptions",
       "type": "registry:ui",
       "title": "Descriptions",
-      "description": "A highly customizable neo-brutalist Descriptions component built with Brutx design tokens for Vue 3.",
+      "description": "Key-value description list in horizontal or vertical layout.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12551,13 +12210,13 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ab2086aad2228b2312d830946e25f8a10aba0ab95e2c1b02abafe7acc8389373"
+      "integrity": "sha256-935677ac62a040ca7762867ac3e617ae1a1816c10afc49db883464da603f9f46"
     },
     {
       "name": "infinite-scroll",
       "type": "registry:ui",
       "title": "Infinite Scroll",
-      "description": "A highly customizable neo-brutalist Infinite Scroll component built with Brutx design tokens for Vue 3.",
+      "description": "Auto-loading list that fetches more content on scroll.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12571,11 +12230,11 @@
         },
         {
           "path": "composables/useReducedMotion.ts",
-          "type": "registry:ui"
+          "type": "registry:hook"
         },
         {
           "path": "lib/env.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -12664,7 +12323,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0dae52d08a8b565edb831b22ca04de38a548fc7e0b1c3d5c1b55834abe4dfc84"
+      "integrity": "sha256-e9bd542d92eb74f9ba0df561e022c14ed71f1b25b1f8940d4818596813ea3af9"
     }
   ]
 }

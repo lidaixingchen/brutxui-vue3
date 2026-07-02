@@ -1,7 +1,6 @@
 export interface ComponentFileMapping {
     files: string[];
     composables?: string[];
-    locales?: string[];
 }
 
 export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
@@ -32,7 +31,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     toast: { files: ['Toast.vue', 'ToastContainer.vue', 'toast-variants.ts'], composables: ['useToast.ts', 'useLocale.ts'] },
     tooltip: { files: ['TooltipContent.vue', 'tooltip-variants.ts'] },
     'dashboard-stats': { files: ['DashboardStats.vue'], composables: ['useLocale.ts'] },
-    form: { files: ['Form.vue', 'FormControl.vue', 'FormDescription.vue', 'FormField.vue', 'FormItem.vue', 'FormLabel.vue', 'FormMessage.vue', 'form-context.ts', 'FormWizard.vue', 'form-wizard-types.ts', 'form-wizard-variants.ts'] },
+    form: { files: ['Form.vue', 'FormControl.vue', 'FormDescription.vue', 'FormField.vue', 'FormItem.vue', 'FormLabel.vue', 'FormMessage.vue', 'FormConditional.vue', 'form-context.ts', 'FormWizard.vue', 'form-wizard-types.ts', 'form-wizard-variants.ts', 'form-wizard-utils.ts'] },
     'alert-dialog': { files: ['AlertDialogAction.vue', 'AlertDialogCancel.vue', 'AlertDialogContent.vue', 'AlertDialogDescription.vue', 'AlertDialogFooter.vue', 'AlertDialogHeader.vue', 'AlertDialogTitle.vue', 'alert-dialog-variants.ts'] },
     sheet: { files: ['SheetContent.vue', 'SheetDescription.vue', 'SheetFooter.vue', 'SheetHeader.vue', 'SheetTitle.vue', 'sheet-variants.ts'], composables: ['useLocale.ts'] },
     'radio-group': { files: ['RadioGroup.vue', 'RadioGroupItem.vue', 'radio-group-variants.ts'] },

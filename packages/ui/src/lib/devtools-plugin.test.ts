@@ -15,7 +15,7 @@ import {
     type DevtoolsPluginOptions,
     type EventLogEntry,
     type PerformanceEntry,
-    type ComponentMeta,
+    type DevtoolsComponentMeta,
     type PerformanceReport,
 } from './devtools-plugin'
 
@@ -522,8 +522,8 @@ describe('type safety', () => {
         expect(entry.component).toBeTypeOf('string')
     })
 
-    it('should have correct types for ComponentMeta', () => {
-        const meta: ComponentMeta = {
+    it('should have correct types for DevtoolsComponentMeta', () => {
+        const meta: DevtoolsComponentMeta = {
             name: 'Button',
             version: '1.0.0',
             description: 'A button component',

@@ -3,7 +3,7 @@
   "name": "infinite-scroll",
   "type": "registry:ui",
   "title": "Infinite Scroll",
-  "description": "A highly customizable neo-brutalist Infinite Scroll component built with Brutx design tokens for Vue 3.",
+  "description": "Auto-loading list that fetches more content on scroll.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
@@ -20,12 +20,12 @@
     {
       "path": "composables/useReducedMotion.ts",
       "content": "import { ref, onMounted, onUnmounted, type Ref } from 'vue'\nimport { isClient } from '@/lib/env'\n\nexport function useReducedMotion(): Ref<boolean> {\n    const prefersReduced = ref(false)\n    let mediaQuery: MediaQueryList | null = null\n\n    const onChange = (e: MediaQueryListEvent) => {\n        prefersReduced.value = e.matches\n    }\n\n    onMounted(() => {\n        if (isClient) {\n            mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')\n            prefersReduced.value = mediaQuery.matches\n            mediaQuery.addEventListener('change', onChange)\n        }\n    })\n\n    onUnmounted(() => {\n        mediaQuery?.removeEventListener('change', onChange)\n    })\n\n    return prefersReduced\n}\n",
-      "type": "registry:ui"
+      "type": "registry:hook"
     },
     {
       "path": "lib/env.ts",
       "content": "/**\n * Environment detection utilities for SSR compatibility.\n * Use these instead of scattered `typeof document/window` checks.\n */\n\n/** Whether the code is running in a browser environment (not SSR). */\nexport const isClient = typeof window !== 'undefined'\n\n/** Whether `document` is available. */\nexport const hasDocument = typeof document !== 'undefined'\n\n/** Whether `localStorage` is available (may be blocked in Safari private mode). */\nexport const hasLocalStorage = typeof localStorage !== 'undefined'\n\n/**\n * Safely get a value from localStorage.\n * Returns `null` if localStorage is unavailable or the key doesn't exist.\n */\nexport function safeGetStorageItem(key: string): string | null {\n    try {\n        if (!hasLocalStorage) return null\n        return localStorage.getItem(key)\n    } catch {\n        return null\n    }\n}\n\n/**\n * Safely set a value in localStorage.\n * Silently fails if localStorage is unavailable (e.g. Safari private mode, storage full).\n */\nexport function safeSetStorageItem(key: string, value: string): void {\n    try {\n        if (!hasLocalStorage) return\n        localStorage.setItem(key, value)\n    } catch {\n        // Storage full or blocked (e.g. Safari private mode)\n    }\n}\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -114,5 +114,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-0dae52d08a8b565edb831b22ca04de38a548fc7e0b1c3d5c1b55834abe4dfc84"
+  "integrity": "sha256-e9bd542d92eb74f9ba0df561e022c14ed71f1b25b1f8940d4818596813ea3af9"
 }

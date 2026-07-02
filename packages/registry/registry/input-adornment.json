@@ -3,7 +3,7 @@
   "name": "input-adornment",
   "type": "registry:ui",
   "title": "Input Adornment",
-  "description": "A highly customizable neo-brutalist Input Adornment component built with Brutx design tokens for Vue 3.",
+  "description": "Decorative prefix and suffix elements for input fields.",
   "dependencies": [],
   "registryDependencies": [],
   "files": [
