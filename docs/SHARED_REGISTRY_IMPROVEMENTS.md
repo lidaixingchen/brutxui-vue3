@@ -8,7 +8,7 @@
 
 ### 1. 9 个组件缺失于 `COMPONENTS`（高）
 
-`COMPONENTS` 只有 91 条，但 `COMPONENT_FILES` 有 97 条。缺失的 9 个组件在 registry JSON 中 `dependencies` 永远为空数组，CLI 安装后可能导致依赖缺失。
+`COMPONENTS` 只有 91 条，但 `COMPONENT_FILES` 有 100 条。缺失的 9 个组件在 registry JSON 中 `dependencies` 永远为空数组，CLI 安装后可能导致依赖缺失。
 
 **缺失组件：**
 
@@ -45,13 +45,15 @@ validateSourceConsistency(uiComponentsDir, componentFiles, registryDir);
 - 检查 `COMPONENTS` 的每个 key 都存在于 `COMPONENT_FILES` 中
 - CI 管道中强制执行 `pnpm validate`
 
-### 3. `FormConditional.vue` 未登记（高）
+### 3. `FormConditional.vue` 和 `form-wizard-utils.ts` 未登记（高）
 
 `packages/ui/src/index.ts` 导出了 `FormConditional`，但 `COMPONENT_FILES` 的 `form` 条目未列出此文件，registry build 会静默丢弃。
 
+更严重的是，`FormWizard.vue` 通过 `export { useFormWizard } from './form-wizard-utils'` 引用了 `form-wizard-utils.ts`，但该文件同样未登记在 `COMPONENT_FILES['form'].files` 中。消费者从 registry 安装 `form` 组件后会遇到**运行时模块找不到**的错误，这与 `FormConditional` 仅少装一个文件的性质不同——它是破坏性的。
+
 **建议：**
-- 在 `COMPONENT_FILES['form'].files` 中添加 `'FormConditional.vue'`
-- 添加自动化检查：扫描 UI 包的 `index.ts` 导出，确保所有导出的组件都在 registry 中
+- 在 `COMPONENT_FILES['form'].files` 中添加 `'FormConditional.vue'` 和 `'form-wizard-utils.ts'`
+- 添加自动化检查：扫描 UI 包的 `index.ts` 导出及组件内部相对引用，确保所有被引用的文件都在 registry 中
 
 ---
 
@@ -168,7 +170,7 @@ export interface ComponentFileMapping {
 
 ## 四、构建脚本质量（中）
 
-### 8. `extract*Deps` 函数存在死代码（中）
+### 8. `extract*Deps` 和 `rewriteImports` 存在死代码（中）
 
 `extractComposableDeps`、`extractLibDeps`、`extractLocaleDeps` 三个函数的 `../../` 和 `../` 正则模式永远不会匹配——因为 `rewriteImports` 已经先把所有路径重写成了 `@/` 前缀。
 
@@ -185,9 +187,12 @@ function extractComposableDeps(content: string): string[] {
 }
 ```
 
+此外，`rewriteImports` 本身处理相对路径的替换逻辑（lines 24-29）也是死代码。`.vue`/`.ts` 源文件本身就使用 `@/` 别名导入（如 `import { useLocale } from '@/composables/useLocale'`），相对路径仅出现在 `.test.ts` 文件中，而测试文件不参与 registry 构建。这意味着 `../composables/`→`@/composables/`、`../../lib/`→`@/lib/`、`../locales/`→`@/locales/` 等替换永远不会被触发。
+
 **建议：**
-- 删除死模式，只保留 `@/` 前缀的匹配
+- 删除 `extract*Deps` 中的死模式，只保留 `@/` 前缀的匹配
 - 简化函数签名，三个函数可合并为一个通用函数
+- 清理 `rewriteImports` 中处理相对路径的死代码（lines 24-29），只保留跨组件引用（`../{component}/`）和同目录引用（`./{file}`）的替换逻辑
 
 ### 9. description 模板化，无区分度（中）
 
@@ -308,14 +313,17 @@ const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 
 ### 16. 构建错误处理为全有或全无（低）
 
-如果任一组件构建失败，`index.json` 不会被写入，导致整个 registry 不可用。
+如果任一组件构建失败，`index.json` 不会被写入，导致整个 registry 对消费者不可用。实际上更严重的是，单个组件 JSON 已在循环内写入磁盘，会 index.json 缺失会形成半残状态。
 
 **现状：**
 ```ts
 // packages/registry/scripts/build-registry.ts
 if (errorCount > 0) {
-    throw new Error(`Registry build completed with ${errorCount} error(s)`);
+    throw new Error(`Registry build failed with ${errorCount} component error(s).`);
 }
+// index.json 在 throw 之后写入，因此 throw 会跳过此步
+const indexPath = path.join(OUTPUT_DIR, 'index.json');
+fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
 ```
 
 **建议：**
@@ -331,12 +339,12 @@ if (errorCount > 0) {
 |--------|------|--------|----|--------|
 | P0 | #1 | 补全 9 个缺失组件 | shared | 0.5d |
 | P0 | #2 | 添加交叉校验脚本 | registry | 0.5d |
-| P0 | #3 | 登记 `FormConditional.vue` | registry | 0.5h |
+| P0 | #3 | 登记 `FormConditional.vue` 和 `form-wizard-utils.ts` | registry | 0.5h |
 | P0 | #4 | Locale 抽离为独立 registry item | registry | 2d |
 | P1 | #5 | 重命名 `ComponentMeta` 避免冲突 | shared | 0.5d |
 | P1 | #6 | 删除 `ComponentMeta` 死字段 | shared | 0.5h |
 | P1 | #7 | 删除 `ComponentFileMapping.locales` | registry | 0.5h |
-| P1 | #8 | 删除 `extract*Deps` 死代码 | registry | 0.5h |
+| P1 | #8 | 删除 `extract*Deps` 和 `rewriteImports` 死代码 | registry | 1h |
 | P1 | #9 | 填充有意义的 description | shared | 1d |
 | P1 | #10 | 使用细粒度文件 `type` | registry | 0.5d |
 | P1 | #11 | 添加 `integrity` 校验 | registry | 0.5d |
@@ -353,7 +361,7 @@ if (errorCount > 0) {
 ### 第一阶段：数据修复（1 天）
 
 1. 补全 `COMPONENTS` 中缺失的 9 个组件
-2. 在 `COMPONENT_FILES['form']` 中添加 `FormConditional.vue`
+2. 在 `COMPONENT_FILES['form']` 中添加 `FormConditional.vue` 和 `form-wizard-utils.ts`
 3. 在 `validate-registry.ts` 中添加 `validateComponentsSync()`
 4. 运行 `pnpm build && pnpm validate` 确保通过
 
@@ -370,7 +378,7 @@ if (errorCount > 0) {
 1. 重命名 `ComponentMeta` 为 `RegistryComponentMeta`
 2. 删除死字段（`title`、`description`、`tailwind`、`cssVars`、`optionalDependencies`、`name`）
 3. 删除 `ComponentFileMapping.locales`
-4. 删除 `extract*Deps` 中的死模式
+4. 删除 `extract*Deps` 中的死模式，同时清理 `rewriteImports` 中处理相对路径的死代码（lines 24-29）
 5. 运行 typecheck 确保无错误
 
 ### 第四阶段：质量提升（2 天）
