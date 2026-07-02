@@ -37,10 +37,14 @@ const ariaLiveMessage = ref('');
 
 const columns = computed(() => props.modelValue);
 
-function onDragStart(cardId: string, fromColumn: string) {
+function onDragStart(e: DragEvent, cardId: string, fromColumn: string) {
     if (draggingColumn.value) return;
     draggingCard.value = { cardId, fromColumn };
     isDragging.value = true;
+    if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', cardId);
+    }
 }
 
 function onDragEnd() {
@@ -354,7 +358,7 @@ defineExpose({
                     :aria-label="card.title"
                     :aria-grabbed="grabbedCard?.cardId === card.id ? 'true' : undefined"
                     draggable="true"
-                    @dragstart="onDragStart(card.id, col.id)"
+                    @dragstart="onDragStart($event, card.id, col.id)"
                     @dragend="onDragEnd"
                     @click="onCardClick(card, col.id)"
                     @keydown="onCardKeydown($event, card, col.id)"

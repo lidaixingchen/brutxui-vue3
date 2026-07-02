@@ -107,7 +107,7 @@ function handlePanelClear() {
     emit('change', null)
 }
 
-function handleClearClick(event: MouseEvent) {
+function handleClearClick(event: Event) {
     event.stopPropagation()
     displayValue.value = null
     emit('update:modelValue', null)
@@ -148,17 +148,19 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                     <span class="truncate">{{ formattedEnd || resolvedEndPlaceholder }}</span>
                 </span>
                 <span class="flex items-center gap-1 shrink-0">
-                    <button
+                    <span
                         v-if="clearable && hasValue && !disabled"
-                        type="button"
+                        role="button"
                         class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
                         :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
                         :aria-label="t('datePicker.clear')"
                         tabindex="-1"
                         @click="handleClearClick"
+                        @keydown.enter.prevent="handleClearClick"
+                        @keydown.space.prevent="handleClearClick"
                     >
                         <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
-                    </button>
+                    </span>
                     <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
                 </span>
             </button>

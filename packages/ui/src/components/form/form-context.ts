@@ -17,7 +17,7 @@ export interface FormItemContext {
     formMessageId: string
 }
 
-export const formContextKey: InjectionKey<VeeFormContext> = Symbol('formContext')
+export const formContextKey: InjectionKey<ComputedRef<VeeFormContext & { inline: boolean; labelPosition: 'left' | 'right' | 'top'; labelWidth: string | number | undefined; size: 'sm' | 'default' | 'lg' }>> = Symbol('formContext')
 export const formFieldKey: InjectionKey<FormFieldContext> = Symbol('formField')
 export const formItemKey: InjectionKey<FormItemContext> = Symbol('formItem')
 export const formWizardContextKey: InjectionKey<FormWizardContext> = Symbol('formWizardContext')

@@ -81,7 +81,7 @@ function handleCancel() {
                     </p>
 
                     <!-- 描述 -->
-                    <div v-if="$slots.default" class="mt-1">
+                    <div v-if="$slots.description" class="mt-1">
                         <slot name="description" />
                     </div>
 

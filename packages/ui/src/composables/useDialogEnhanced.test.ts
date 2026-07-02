@@ -160,7 +160,7 @@ describe('useDialogEnhanced', () => {
         const { result } = createWrapper({ draggable: true })
         result.position.value = { x: 30, y: 60 }
         const style = result.contentStyle.value
-        expect(style.transform).toBe('translate(30px, 60px)')
+        expect(style.transform).toBe('translate(calc(-50% + 30px), calc(-50% + 60px))')
         expect(style.position).toBe('fixed')
         expect(style.top).toBe('50%')
         expect(style.left).toBe('50%')
@@ -204,7 +204,7 @@ describe('useDialogEnhanced', () => {
         result.position.value = { x: 10, y: 20 }
         result.size.value = { width: 300, height: 200 }
         const style = result.contentStyle.value
-        expect(style.transform).toBe('translate(10px, 20px)')
+        expect(style.transform).toBe('translate(calc(-50% + 10px), calc(-50% + 20px))')
         expect(style.width).toBe('300px')
         expect(style.height).toBe('200px')
     })

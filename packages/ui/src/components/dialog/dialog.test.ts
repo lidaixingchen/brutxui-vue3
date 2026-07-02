@@ -462,7 +462,7 @@ describe('DialogEnhanced', () => {
             document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, clientY: 300 }))
             await nextTick()
 
-            expect(el.style.transform).toContain('translate(0px, 0px)')
+            expect(el.style.transform).toContain('translate(calc(-50% + 0px), calc(-50% + 0px))')
         })
 
         it('does not start drag on INPUT element', async () => {
@@ -706,7 +706,7 @@ describe('DialogEnhanced', () => {
             })
             await nextTick()
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
-            expect(el.style.transform).toContain('translate(30px, 40px)')
+            expect(el.style.transform).toContain('translate(calc(-50% + 30px), calc(-50% + 40px))')
         })
 
         it('does not apply drag transform when fullscreen', async () => {
@@ -718,7 +718,7 @@ describe('DialogEnhanced', () => {
             await nextTick()
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
             // fullscreen disables draggable positioning in contentStyle
-            expect(el.style.transform).not.toContain('translate(30px, 40px)')
+            expect(el.style.transform).not.toContain('translate(calc(-50% + 30px), calc(-50% + 40px))')
         })
     })
 
@@ -833,14 +833,14 @@ describe('DialogEnhanced', () => {
             })
             await nextTick()
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
-            expect(el.style.transform).toContain('translate(50px, 75px)')
+            expect(el.style.transform).toContain('translate(calc(-50% + 50px), calc(-50% + 75px))')
         })
 
         it('defaults to (0,0) when no initialPosition', async () => {
             const wrapper = mountDialog({ draggable: true })
             await nextTick()
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
-            expect(el.style.transform).toContain('translate(0px, 0px)')
+            expect(el.style.transform).toContain('translate(calc(-50% + 0px), calc(-50% + 0px))')
         })
 
         it('updates position when initialPosition prop changes', async () => {
@@ -848,7 +848,7 @@ describe('DialogEnhanced', () => {
             await wrapper.setProps({ initialPosition: { x: 120, y: 200 } } as any)
             await nextTick()
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
-            expect(el.style.transform).toContain('translate(120px, 200px)')
+            expect(el.style.transform).toContain('translate(calc(-50% + 120px), calc(-50% + 200px))')
         })
 
         it('ignores undefined initialPosition in watch', async () => {
@@ -859,7 +859,7 @@ describe('DialogEnhanced', () => {
             await wrapper.setProps({ initialPosition: undefined } as any)
             await nextTick()
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
-            expect(el.style.transform).toContain('translate(50px, 75px)')
+            expect(el.style.transform).toContain('translate(calc(-50% + 50px), calc(-50% + 75px))')
         })
     })
 
@@ -966,12 +966,12 @@ describe('DialogEnhanced', () => {
     /* ======== destroyOnClose ======== */
 
     describe('destroyOnClose', () => {
-        it('renders slot content when destroyOnClose is true', () => {
+        it('hides slot content when destroyOnClose is true and no dialog context', () => {
             const wrapper = mountDialog(
                 { destroyOnClose: true },
                 { slots: { default: '<p>Content</p>' } },
             )
-            expect(wrapper.text()).toContain('Content')
+            expect(wrapper.text()).not.toContain('Content')
         })
 
         it('renders slot content when destroyOnClose is false', () => {

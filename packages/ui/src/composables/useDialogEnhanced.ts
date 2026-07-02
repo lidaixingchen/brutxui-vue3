@@ -81,7 +81,7 @@ export function useDialogEnhanced(
         const style: CSSProperties = {}
 
         if (draggable) {
-            style.transform = `translate(${position.value.x}px, ${position.value.y}px)`
+            style.transform = `translate(calc(-50% + ${position.value.x}px), calc(-50% + ${position.value.y}px))`
             style.position = 'fixed'
             style.top = '50%'
             style.left = '50%'
@@ -285,9 +285,11 @@ export function useDialogEnhanced(
         }
     }
 
+    let sizeRafId: number | null = null
+
     function initSize(): void {
         if (contentRef.value) {
-            requestAnimationFrame(() => {
+            sizeRafId = requestAnimationFrame(() => {
                 const rect = contentRef.value?.getBoundingClientRect()
                 if (rect && rect.width > 0 && rect.height > 0) {
                     size.value = { width: rect.width, height: rect.height }
@@ -313,6 +315,9 @@ export function useDialogEnhanced(
     })
 
     onBeforeUnmount(() => {
+        if (sizeRafId !== null) {
+            cancelAnimationFrame(sizeRafId)
+        }
         if (!hasDocument) return
         document.removeEventListener('mousemove', onDragMove)
         document.removeEventListener('mouseup', onDragEnd)

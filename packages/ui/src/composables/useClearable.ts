@@ -8,13 +8,13 @@ export interface UseClearableOptions<TValue = unknown> {
     /** 是否禁用 */
     disabled?: MaybeRefOrGetter<boolean>
     /** 清除时触发的回调 */
-    onClear?: (event: MouseEvent) => void
+    onClear?: (event: Event) => void
 }
 
 export interface UseClearableReturn {
     isHovering: Ref<boolean>
     showClear: ComputedRef<boolean>
-    handleClear: (event: MouseEvent) => void
+    handleClear: (event: Event) => void
     onMouseEnter: () => void
     onMouseLeave: () => void
 }
@@ -37,7 +37,7 @@ export function useClearable<TValue = unknown>(options: UseClearableOptions<TVal
         return isHovering.value
     })
 
-    function handleClear(event: MouseEvent) {
+    function handleClear(event: Event) {
         event.stopPropagation()
         options.onClear?.(event)
     }

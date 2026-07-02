@@ -10,6 +10,7 @@
  * 仅在开发环境加载
  */
 
+import { inject } from 'vue'
 import type { App, Plugin } from 'vue'
 
 // process 在 Vitest/Vite 环境中运行时存在，但 tsconfig 未包含 node 类型
@@ -383,6 +384,7 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
         },
 
         exportDebugData() {
+            const seen = new WeakSet()
             return JSON.stringify({
                 version: context.version,
                 libraryName: context.libraryName,
@@ -390,7 +392,13 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
                 eventLog,
                 performanceReport: context.getPerformanceReport(),
                 exportedAt: new Date().toISOString(),
-            }, null, 2)
+            }, (_key: string, value: unknown) => {
+                if (typeof value === 'object' && value !== null) {
+                    if (seen.has(value)) return '[Circular]'
+                    seen.add(value)
+                }
+                return value
+            }, 2)
         },
     }
 
@@ -598,13 +606,5 @@ export function useDevtools(): BrutxUIDevtoolsContext | null {
         return null
     }
 
-    // 从全局属性获取
-    if (typeof window !== 'undefined') {
-        const app = (window as unknown as { __VUE_APP__?: { config?: { globalProperties?: Record<string, unknown> } } }).__VUE_APP__
-        if (app?.config?.globalProperties?.__BRUTX_UI_DEVTOOLS__) {
-            return app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
-        }
-    }
-
-    return null
+    return inject<BrutxUIDevtoolsContext | null>('__BRUTX_UI_DEVTOOLS__', null)
 }

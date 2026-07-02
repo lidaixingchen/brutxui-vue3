@@ -6,7 +6,7 @@
 declare const process: { env: { NODE_ENV: string | undefined } }
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { createApp, type App } from 'vue'
+import { createApp, defineComponent, h, type App } from 'vue'
 import {
     devtoolsPlugin,
     setupDevtools,
@@ -439,9 +439,6 @@ describe('useDevtools', () => {
 
     afterEach(() => {
         process.env.NODE_ENV = originalNodeEnv
-        // 清理全局属性
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        delete (window as any).__VUE_APP__
     })
 
     it('should return null in production', () => {
@@ -451,21 +448,46 @@ describe('useDevtools', () => {
 
     it('should return null when no app is registered', () => {
         process.env.NODE_ENV = 'development'
-        expect(useDevtools()).toBeNull()
+
+        let context: BrutxUIDevtoolsContext | null | undefined
+        const TestComponent = defineComponent({
+            setup() {
+                context = useDevtools()
+                return {}
+            },
+            render() { return h('div') },
+        })
+
+        const app = createApp(TestComponent)
+        const container = document.createElement('div')
+        app.mount(container)
+
+        expect(context!).toBeNull()
+
+        app.unmount()
     })
 
     it('should return context when app is registered', () => {
         process.env.NODE_ENV = 'development'
-        const app = createApp({})
+
+        let context: BrutxUIDevtoolsContext | null | undefined
+        const TestComponent = defineComponent({
+            setup() {
+                context = useDevtools()
+                return {}
+            },
+            render() { return h('div') },
+        })
+
+        const app = createApp(TestComponent)
         app.use(devtoolsPlugin)
+        const container = document.createElement('div')
+        app.mount(container)
 
-        // 模拟 app 注册到 window
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(window as any).__VUE_APP__ = app
-
-        const context = useDevtools()
         expect(context).toBeDefined()
         expect(context?.libraryName).toBe('BrutxUI')
+
+        app.unmount()
     })
 })
 

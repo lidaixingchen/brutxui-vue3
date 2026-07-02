@@ -104,17 +104,19 @@ defineExpose({ open })
                     {{ formattedDisplay || resolvedPlaceholder }}
                 </span>
                 <span class="flex items-center gap-1 shrink-0">
-                    <button
+                    <span
                         v-if="clearable && modelValue && !disabled && !readonly"
-                        type="button"
+                        role="button"
                         class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
                         :class="iconSizeVariants({ size: size === 'sm' ? 'default' : 'lg' })"
                         :aria-label="t('datePicker.clear')"
                         tabindex="-1"
                         @click="handleClearClick"
+                        @keydown.enter.prevent="handleClearClick"
+                        @keydown.space.prevent="handleClearClick"
                     >
                         <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" class="stroke-[3]" />
-                    </button>
+                    </span>
                     <ChevronDown class="opacity-60 stroke-[3]" :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" />
                 </span>
             </button>

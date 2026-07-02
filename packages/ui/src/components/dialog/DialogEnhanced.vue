@@ -5,6 +5,7 @@ import {
     DialogPortal as DialogPortalPrimitive,
     DialogContent as DialogContentPrimitive,
     DialogClose as DialogClosePrimitive,
+    injectDialogRootContext,
 } from 'reka-ui'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
@@ -82,6 +83,8 @@ const size = ref({ width: 0, height: 0 })
 const dragStart = ref({ x: 0, y: 0 })
 const resizeStart = ref({ x: 0, y: 0, width: 0, height: 0, corner: 'se' })
 
+const dialogContext = injectDialogRootContext(null)
+
 const contentClasses = computed(() =>
     cn(
         dialogContentVariants(),
@@ -102,7 +105,7 @@ const contentStyle = computed(() => {
     const style: Record<string, string> = {}
 
     if (props.draggable && !props.fullscreen) {
-        style.transform = `translate(${position.value.x}px, ${position.value.y}px)`
+        style.transform = `translate(calc(-50% + ${position.value.x}px), calc(-50% + ${position.value.y}px))`
         style.position = 'fixed'
         style.top = '50%'
         style.left = '50%'
@@ -346,7 +349,7 @@ onBeforeUnmount(() => {
             :force-mount="props.forceMount === true ? true : undefined"
             @mousedown="onDragStart"
         >
-            <slot v-if="!destroyOnClose || true" />
+            <slot v-if="!destroyOnClose || dialogContext?.open.value" />
             <DialogClosePrimitive
                 v-if="showCloseButton"
                 :class="closeClasses"

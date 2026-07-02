@@ -28,7 +28,7 @@ export function getWeekStartDate(date: Date, weekStartsOn: 0 | 1 = 1): Date {
 }
 
 export function formatDate(date: Date | null | undefined, format: string): string {
-    if (!date) return ''
+    if (!date || Number.isNaN(date.getTime())) return ''
     const tokens: Record<string, string> = {
         YYYY: String(date.getFullYear()),
         YY: String(date.getFullYear()).slice(-2),

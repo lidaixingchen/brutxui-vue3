@@ -124,7 +124,7 @@ watch(
     { deep: true }
 )
 
-provide(formContextKey, formContext.value)
+provide(formContextKey, formContext)
 
 defineExpose({
     validate,

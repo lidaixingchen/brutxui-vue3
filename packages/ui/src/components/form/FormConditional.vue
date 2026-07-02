@@ -16,7 +16,7 @@ const form = inject(formContextKey)
 
 const shouldShow = computed(() => {
     if (!form) return false
-    return props.when(form.values.value)
+    return props.when(form.value.values.value)
 })
 
 const classes = computed(() => cn(props.class))

@@ -205,7 +205,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(true)
     })
 
@@ -215,7 +215,7 @@ describe('DatePickerRange', () => {
             props: { clearable: true },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(false)
     })
 
@@ -227,7 +227,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(false)
     })
 
@@ -241,7 +241,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(false)
     })
 
@@ -254,7 +254,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
         await clearBtn.trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual([null])
@@ -269,7 +269,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('button[aria-label="Clear"]')
+        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
         await clearBtn.trigger('click')
         expect(wrapper.emitted('change')).toBeTruthy()
         expect(wrapper.emitted('change')![0]).toEqual([null])

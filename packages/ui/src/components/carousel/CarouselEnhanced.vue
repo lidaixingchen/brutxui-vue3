@@ -26,6 +26,8 @@ const props = withDefaults(defineProps<CarouselEnhancedProps>(), {
 
 // 复用增强版 composable
 const {
+    // @ts-expect-error vue-tsc does not recognize string-based template ref "emblaRef" as a usage of the destructured variable, causing TS6133.
+    emblaRef,
     selectedIndex,
     scrollSnaps,
     canScrollPrev,

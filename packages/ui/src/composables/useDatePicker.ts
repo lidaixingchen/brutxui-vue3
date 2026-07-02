@@ -23,7 +23,7 @@ export interface UseDatePickerReturn {
     handlePanelUpdate: (value: Date | null) => void
     handlePanelConfirm: (value: Date | null) => void
     handlePanelClear: () => void
-    handleClearClick: (event: MouseEvent) => void
+    handleClearClick: (event: Event) => void
     handleTriggerKeydown: (event: KeyboardEvent) => void
 }
 
@@ -89,7 +89,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
         options.emit('change', null)
     }
 
-    function handleClearClick(event: MouseEvent) {
+    function handleClearClick(event: Event) {
         event.stopPropagation()
         displayValue.value = null
         options.emit('update:modelValue', null)

@@ -66,7 +66,7 @@ const iconClasses = computed(() =>
     )
 )
 
-function handleClear(e: MouseEvent) {
+function handleClear(e: Event) {
     handleClearEvent(e)
 }
 </script>
@@ -82,14 +82,17 @@ function handleClear(e: MouseEvent) {
             <SelectIconPrimitive as-child>
                 <div class="flex items-center gap-1">
                     <!-- 清除按钮 -->
-                    <button
+                    <span
                         v-if="showClear"
-                        type="button"
+                        role="button"
                         class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
+                        tabindex="-1"
                         @click.stop="handleClear"
+                        @keydown.enter.prevent.stop="handleClear"
+                        @keydown.space.prevent.stop="handleClear"
                     >
                         <X :class="cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')" />
-                    </button>
+                    </span>
                     <ChevronDown v-else :class="iconClasses" />
                 </div>
             </SelectIconPrimitive>
