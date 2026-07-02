@@ -3,6 +3,11 @@ import type { Component } from 'vue'
 import { expect, vi } from 'vitest'
 import { axe } from '../vitest.setup'
 
+// FIXME(vitest-axe): vitest-axe ^0.1.0 的模块增强（vitest-axe.d.ts 中 4 个 module target 的 augmentation）
+// 无法覆盖 Vitest 4.x 的 expect 类型，导致 toHaveNoViolations matcher 在类型系统中不可见。
+// 短期方案：下方 expect(results) 使用 as unknown as 强转绕过类型检查。
+// 长期方案：升级 vitest-axe 到与 Vitest 4.x 兼容的版本，或切换到社区 fork，然后移除强转。
+
 /**
  * 检测组件无 accessibility 违规
  *
@@ -38,36 +43,6 @@ export async function expectNoA11yViolations(
         // vitest-axe augments expect with toHaveNoViolations at runtime
         ;(expect(results) as unknown as { toHaveNoViolations: () => void }).toHaveNoViolations()
         return wrapper
-    } finally {
-        wrapper.unmount()
-    }
-}
-
-/**
- * 获取组件的可访问性检测结果
- *
- * 返回 axe 检测结果而不自动断言，适用于需要自定义处理的场景。
- *
- * @param component - 要测试的 Vue 组件
- * @param options - 挂载选项
- * @returns axe 检测结果
- *
- * @example
- * ```ts
- * const results = await getA11yResults(Button, { props: { disabled: true } })
- * expect(results.violations).toHaveLength(0)
- * ```
- */
-export async function getA11yResults(
-    component: Component,
-    options?: Record<string, unknown>,
-) {
-    // 强制使用真实定时器，防止外部 vi.useFakeTimers 污染导致 axe 挂起超时
-    vi.useRealTimers()
-    const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
-    try {
-        const results = await axe(wrapper.element)
-        return { wrapper, results }
     } finally {
         wrapper.unmount()
     }

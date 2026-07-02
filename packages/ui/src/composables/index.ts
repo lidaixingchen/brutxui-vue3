@@ -7,7 +7,7 @@
  * - 表单输入（FormFieldValidation、ColorPicker、DatePicker）
  * - 数据表格（Sort、Filter、Selection、Pagination）
  * - 动画（Animation、ReducedMotion、CanvasInteraction）
- * - 工具函数（Debounce、Throttle、Clipboard、EventListener）
+ * - 工具函数（Debounce、Throttle、Clipboard）
  */
 
 // UI 交互类
@@ -76,5 +76,4 @@ export type { UseDebounceOptions, UseDebounceReturn } from './useDebounce'
 export { useThrottle } from './useThrottle'
 export type { UseThrottleOptions, UseThrottleReturn } from './useThrottle'
 
-export { useEventListener } from './useEventListener'
 export { useClipboard } from './useClipboard'
