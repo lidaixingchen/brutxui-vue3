@@ -291,9 +291,9 @@ describe('DataTable visual compliance', () => {
 
     it('filter input is rendered with Input component classes (border-3 border-brutal)', () => {
         const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', filterable: true })
-        const input = wrapper.find('input[type="text"]')
-        expect(input.classes()).toContain('border-3')
-        expect(input.classes()).toContain('border-brutal')
+        const container = wrapper.find('.brutal-input-container')
+        expect(container.classes()).toContain('border-3')
+        expect(container.classes()).toContain('border-brutal')
     })
 
     it('export button renders as Button component after row selection', async () => {

@@ -2,11 +2,12 @@
 import { computed, ref, type ConcreteComponent, type Component } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { Eye, EyeOff, X } from '@lucide/vue'
+import { useSlots } from 'vue'
 import { cn } from '@/lib/utils'
-import { inputVariants } from './input-variants'
+import { inputVariants, inputContainerVariants } from './input-variants'
 import { useClearable } from '@/composables/useClearable'
 
-type InputVariantProps = VariantProps<typeof inputVariants>
+type InputVariantProps = VariantProps<typeof inputContainerVariants>
 
 type HTMLInputType =
     | 'button'
@@ -98,6 +99,7 @@ const emit = defineEmits<{
     clear: []
 }>()
 
+const slots = useSlots()
 const inputRef = ref<HTMLInputElement | null>(null)
 const isComposing = ref(false)
 const passwordVisible = ref(false)
@@ -134,18 +136,23 @@ const currentLength = computed(() => {
     return props.modelValue?.length ?? 0
 })
 
-// 计算是否有前置/后缀内容
-const hasPrefix = computed(() => props.prefixIcon)
 const hasSuffix = computed(() => props.suffixIcon || showClear.value || showPasswordToggle.value)
+
+// 容器样式
+const inputContainerClasses = computed(() =>
+    cn(
+        inputContainerVariants({ variant: props.variant, size: props.size, disabled: props.disabled }),
+        props.class,
+    )
+)
 
 // 输入框样式
 const inputClasses = computed(() =>
     cn(
-        inputVariants({ variant: props.variant, size: props.size }),
+        inputVariants(),
         props.readonly && 'cursor-default',
-        hasPrefix.value && 'pl-10',
-        hasSuffix.value && 'pr-10',
-        props.class,
+        props.prefixIcon ? 'pl-9' : 'pl-3',
+        hasSuffix.value ? 'pr-9' : 'pr-3',
     )
 )
 
@@ -169,206 +176,84 @@ defineExpose({
 
 <template>
     <div class="w-full">
-        <!-- 前置插槽 -->
+        <!-- 统一外层容器，承载圆角、阴影、交互及 Focus-within -->
         <div
-            v-if="$slots.prepend"
-            class="flex items-stretch"
-        >
-            <div class="flex items-center px-3 border-3 border-r-0 rounded-l-brutal bg-brutal-muted text-brutal-fg font-medium">
-                <slot name="prepend" />
-            </div>
-            <div
-                class="relative flex-1"
-                @mouseenter="onMouseEnter"
-                @mouseleave="onMouseLeave"
-            >
-                <div
-                    v-if="prefixIcon"
-                    class="absolute left-3 top-1/2 -translate-y-1/2 text-brutal-placeholder"
-                >
-                    <component :is="prefixIcon" class="h-4 w-4" />
-                </div>
-                <input
-                    ref="inputRef"
-                    :type="actualType"
-                    :value="modelValue"
-                    :disabled="disabled"
-                    :readonly="readonly"
-                    :placeholder="placeholder"
-                    :maxlength="maxlength"
-                    :class="inputClasses"
-                    :aria-label="ariaLabel"
-                    :aria-labelledby="ariaLabelledby"
-                    :aria-describedby="ariaDescribedby"
-                    :aria-invalid="ariaInvalid"
-                    :aria-errormessage="ariaErrormessage"
-                    :aria-required="ariaRequired"
-                    @compositionstart="isComposing = true"
-                    @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
-                    @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-                >
-                <!-- 后缀图标/清除按钮/密码切换 -->
-                <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <!-- 清除按钮 -->
-                    <button
-                        v-if="showClear"
-                        type="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
-                        @click="handleClear"
-                    >
-                        <X class="h-3.5 w-3.5 text-brutal-placeholder" />
-                    </button>
-                    <!-- 密码切换按钮 -->
-                    <button
-                        v-if="showPasswordToggle"
-                        type="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
-                        @click="togglePasswordVisibility"
-                    >
-                        <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />
-                        <EyeOff v-else class="h-3.5 w-3.5 text-brutal-placeholder" />
-                    </button>
-                    <!-- 后缀图标 -->
-                    <component
-                        :is="suffixIcon"
-                        v-if="suffixIcon && !showClear && !showPasswordToggle"
-                        class="h-4 w-4 text-brutal-placeholder"
-                    />
-                </div>
-            </div>
-            <div class="flex items-center px-3 border-3 border-l-0 rounded-r-brutal bg-brutal-muted text-brutal-fg font-medium">
-                <slot name="append" />
-            </div>
-        </div>
-
-        <!-- 后置插槽 -->
-        <div
-            v-else-if="$slots.append"
-            class="flex items-stretch"
-        >
-            <div
-                class="relative flex-1"
-                @mouseenter="onMouseEnter"
-                @mouseleave="onMouseLeave"
-            >
-                <div
-                    v-if="prefixIcon"
-                    class="absolute left-3 top-1/2 -translate-y-1/2 text-brutal-placeholder"
-                >
-                    <component :is="prefixIcon" class="h-4 w-4" />
-                </div>
-                <input
-                    ref="inputRef"
-                    :type="actualType"
-                    :value="modelValue"
-                    :disabled="disabled"
-                    :readonly="readonly"
-                    :placeholder="placeholder"
-                    :maxlength="maxlength"
-                    :class="inputClasses"
-                    :aria-label="ariaLabel"
-                    :aria-labelledby="ariaLabelledby"
-                    :aria-describedby="ariaDescribedby"
-                    :aria-invalid="ariaInvalid"
-                    :aria-errormessage="ariaErrormessage"
-                    :aria-required="ariaRequired"
-                    @compositionstart="isComposing = true"
-                    @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
-                    @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-                >
-                <!-- 后缀图标/清除按钮/密码切换 -->
-                <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <!-- 清除按钮 -->
-                    <button
-                        v-if="showClear"
-                        type="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
-                        @click="handleClear"
-                    >
-                        <X class="h-3.5 w-3.5 text-brutal-placeholder" />
-                    </button>
-                    <!-- 密码切换按钮 -->
-                    <button
-                        v-if="showPasswordToggle"
-                        type="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
-                        @click="togglePasswordVisibility"
-                    >
-                        <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />
-                        <EyeOff v-else class="h-3.5 w-3.5 text-brutal-placeholder" />
-                    </button>
-                    <!-- 后缀图标 -->
-                    <component
-                        :is="suffixIcon"
-                        v-if="suffixIcon && !showClear && !showPasswordToggle"
-                        class="h-4 w-4 text-brutal-placeholder"
-                    />
-                </div>
-            </div>
-            <div class="flex items-center px-3 border-3 border-l-0 rounded-r-brutal bg-brutal-muted text-brutal-fg font-medium">
-                <slot name="append" />
-            </div>
-        </div>
-
-        <!-- 无前置/后置插槽 -->
-        <div
-            v-else
-            class="relative"
+            class="brutal-input-container"
+            :class="inputContainerClasses"
             @mouseenter="onMouseEnter"
             @mouseleave="onMouseLeave"
         >
+            <!-- 前置插槽：仅在存在时渲染，防止出现空灰色块 -->
             <div
-                v-if="prefixIcon"
-                class="absolute left-3 top-1/2 -translate-y-1/2 text-brutal-placeholder"
+                v-if="slots.prepend"
+                class="flex items-center px-3 border-r-3 border-brutal bg-brutal-muted text-brutal-fg font-medium"
             >
-                <component :is="prefixIcon" class="h-4 w-4" />
+                <slot name="prepend" />
             </div>
-            <input
-                ref="inputRef"
-                :type="actualType"
-                :value="modelValue"
-                :disabled="disabled"
-                :readonly="readonly"
-                :placeholder="placeholder"
-                :maxlength="maxlength"
-                :class="inputClasses"
-                :aria-label="ariaLabel"
-                :aria-labelledby="ariaLabelledby"
-                :aria-describedby="ariaDescribedby"
-                :aria-invalid="ariaInvalid"
-                :aria-errormessage="ariaErrormessage"
-                :aria-required="ariaRequired"
-                @compositionstart="isComposing = true"
-                @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
-                @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+
+            <!-- 输入核心区 -->
+            <div class="relative flex-1 h-full flex items-center">
+                <!-- 前缀图标 -->
+                <div
+                    v-if="prefixIcon"
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-brutal-placeholder pointer-events-none"
+                >
+                    <component :is="prefixIcon" class="h-4 w-4" />
+                </div>
+
+                <input
+                    ref="inputRef"
+                    :type="actualType"
+                    :value="modelValue"
+                    :disabled="disabled"
+                    :readonly="readonly"
+                    :placeholder="placeholder"
+                    :maxlength="maxlength"
+                    :class="inputClasses"
+                    :aria-label="ariaLabel"
+                    :aria-labelledby="ariaLabelledby"
+                    :aria-describedby="ariaDescribedby"
+                    :aria-invalid="ariaInvalid"
+                    :aria-errormessage="ariaErrormessage"
+                    :aria-required="ariaRequired"
+                    @compositionstart="isComposing = true"
+                    @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
+                    @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+                >
+
+                <!-- 后缀功能区 (清除 / 密码切换 / 后缀图标) -->
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                    <button
+                        v-if="showClear"
+                        type="button"
+                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
+                        @click="handleClear"
+                    >
+                        <X class="h-3.5 w-3.5 text-brutal-placeholder" />
+                    </button>
+                    <button
+                        v-if="showPasswordToggle"
+                        type="button"
+                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
+                        @click="togglePasswordVisibility"
+                    >
+                        <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />
+                        <EyeOff v-else class="h-3.5 w-3.5 text-brutal-placeholder" />
+                    </button>
+                    <component
+                        :is="suffixIcon"
+                        v-if="suffixIcon && !showClear && !showPasswordToggle"
+                        class="h-4 w-4 text-brutal-placeholder"
+                    />
+                </div>
+            </div>
+
+            <!-- 后置插槽：仅在存在时渲染，防止出现空灰色块 -->
+            <div
+                v-if="slots.append"
+                class="flex items-center px-3 border-l-3 border-brutal bg-brutal-muted text-brutal-fg font-medium"
             >
-            <!-- 后缀图标/清除按钮/密码切换 -->
-            <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                <!-- 清除按钮 -->
-                <button
-                    v-if="showClear"
-                    type="button"
-                    class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
-                    @click="handleClear"
-                >
-                    <X class="h-3.5 w-3.5 text-brutal-placeholder" />
-                </button>
-                <!-- 密码切换按钮 -->
-                <button
-                    v-if="showPasswordToggle"
-                    type="button"
-                    class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
-                    @click="togglePasswordVisibility"
-                >
-                    <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />
-                    <EyeOff v-else class="h-3.5 w-3.5 text-brutal-placeholder" />
-                </button>
-                <!-- 后缀图标 -->
-                <component
-                    :is="suffixIcon"
-                    v-if="suffixIcon && !showClear && !showPasswordToggle"
-                    class="h-4 w-4 text-brutal-placeholder"
-                />
+                <slot name="append" />
             </div>
         </div>
 

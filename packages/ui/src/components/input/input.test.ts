@@ -14,26 +14,26 @@ describe('Input', () => {
         const wrapper = mount(Input)
 
         await wrapper.setProps({ variant: 'default' } as any)
-        expect(wrapper.find('input').classes()).toContain('border-brutal')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('border-brutal')
 
         await wrapper.setProps({ variant: 'error' } as any)
-        expect(wrapper.find('input').classes()).toContain('border-brutal-destructive')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('border-brutal-destructive')
 
         await wrapper.setProps({ variant: 'success' } as any)
-        expect(wrapper.find('input').classes()).toContain('border-brutal-success')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('border-brutal-success')
     })
 
     it('applies size classes via size prop', async () => {
         const wrapper = mount(Input)
 
         await wrapper.setProps({ size: 'sm' } as any)
-        expect(wrapper.find('input').classes()).toContain('h-9')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('h-9')
 
         await wrapper.setProps({ size: 'default' } as any)
-        expect(wrapper.find('input').classes()).toContain('h-11')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('h-11')
 
         await wrapper.setProps({ size: 'lg' } as any)
-        expect(wrapper.find('input').classes()).toContain('h-14')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('h-14')
     })
 
     it('has v-model support (emits update:modelValue on input)', async () => {
@@ -63,7 +63,7 @@ describe('Input', () => {
         const wrapper = mount(Input, {
             props: { class: 'custom-class' },
         })
-        expect(wrapper.find('input').classes()).toContain('custom-class')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('custom-class')
     })
 
     it('supports readonly prop', () => {
@@ -104,8 +104,8 @@ describe('Input', () => {
 
     it('has default border-brutal class', () => {
         const wrapper = mount(Input)
-        expect(wrapper.find('input').classes()).toContain('border-brutal')
-        expect(wrapper.find('input').classes()).toContain('bg-brutal-bg')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('border-brutal')
+        expect(wrapper.find('.brutal-input-container').classes()).toContain('bg-brutal-bg')
     })
 
     it('shows error message when variant is error and errorMessage is provided', () => {
@@ -187,7 +187,7 @@ describe('Input', () => {
             })
 
             // Trigger mouseenter on the relative container
-            await wrapper.find('.relative').trigger('mouseenter')
+            await wrapper.find('.brutal-input-container').trigger('mouseenter')
             await nextTick()
 
             // Find the clear button (X icon button)
@@ -204,7 +204,7 @@ describe('Input', () => {
             })
 
             // Trigger mouseenter to show clear button
-            await wrapper.find('.relative').trigger('mouseenter')
+            await wrapper.find('.brutal-input-container').trigger('mouseenter')
             await nextTick()
 
             // Click the clear button
@@ -225,7 +225,7 @@ describe('Input', () => {
             })
 
             // Even on hover, no clear button should appear
-            wrapper.find('.relative').trigger('mouseenter')
+            wrapper.find('.brutal-input-container').trigger('mouseenter')
             expect(wrapper.find('button').exists()).toBe(false)
         })
 
@@ -237,7 +237,7 @@ describe('Input', () => {
                 },
             })
 
-            await wrapper.find('.relative').trigger('mouseenter')
+            await wrapper.find('.brutal-input-container').trigger('mouseenter')
             await nextTick()
             expect(wrapper.find('button').exists()).toBe(false)
         })

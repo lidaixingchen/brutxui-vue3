@@ -5,7 +5,7 @@ import { floatingContentAnimationClasses } from '@/lib/floating-animation-classe
 export const selectTriggerVariants = cva(
     [
         'flex w-full items-center justify-between px-4 py-2',
-        'bg-brutal-bg text-brutal-fg border-3 border-brutal',
+        'bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal',
         'font-bold placeholder:text-brutal-placeholder',
         'shadow-brutal',
         'transition-all duration-150',
