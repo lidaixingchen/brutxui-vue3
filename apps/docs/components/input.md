@@ -229,8 +229,6 @@ const url = ref('')
 | --- | --- |
 | `prepend` | 输入框前置内容（如 URL 协议） |
 | `append` | 输入框后置内容（如域名） |
-| `prefix` | 自定义前缀内容 |
-| `suffix` | 自定义后缀内容 |
 
 ## 方法（defineExpose）
 
