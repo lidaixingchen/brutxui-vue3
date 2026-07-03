@@ -322,6 +322,7 @@ export const en: Locale = {
         lineAriaLabel: 'Sketchy Line Chart',
         barAriaLabel: 'Sketchy Bar Chart',
         pieAriaLabel: 'Sketchy Pie Chart',
+        emptyText: 'No data available',
     },
     card3d: {
         ariaLabel: '3D Interactive Card',

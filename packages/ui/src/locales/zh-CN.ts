@@ -322,6 +322,7 @@ export const zhCN: Locale = {
         lineAriaLabel: '手绘风格折线图',
         barAriaLabel: '手绘风格柱状图',
         pieAriaLabel: '手绘风格饼图',
+        emptyText: '暂无数据',
     },
     card3d: {
         ariaLabel: '3D 交互卡片',

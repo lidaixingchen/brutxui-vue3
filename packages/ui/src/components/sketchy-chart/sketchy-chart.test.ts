@@ -39,11 +39,34 @@ describe('SketchyChart', () => {
         expect(rects.length).toBe(6)
     })
 
-    it('handles empty data boundary safely', () => {
+    it('handles empty data boundary safely and renders empty state', () => {
         const wrapper = mount(SketchyChart, {
             props: { data: [] }
         })
         expect(wrapper.findAll('.chart-data *').length).toBe(0)
+        
+        const emptyState = wrapper.find('.chart-empty-state')
+        expect(emptyState.exists()).toBe(true)
+        expect(emptyState.find('text').exists()).toBe(true)
+        expect(emptyState.find('circle').exists()).toBe(false)
+    })
+
+    it('renders placeholder circle for empty pie chart', () => {
+        const wrapper = mount(SketchyChart, {
+            props: { type: 'pie', data: [] }
+        })
+        const emptyState = wrapper.find('.chart-empty-state')
+        expect(emptyState.exists()).toBe(true)
+        expect(emptyState.find('circle').exists()).toBe(true)
+    })
+
+    it('renders empty state when pie chart data sum is 0', () => {
+        const wrapper = mount(SketchyChart, {
+            props: { type: 'pie', data: [{ label: 'A', value: 0 }, { label: 'B', value: 0 }] }
+        })
+        const emptyState = wrapper.find('.chart-empty-state')
+        expect(emptyState.exists()).toBe(true)
+        expect(emptyState.find('circle').exists()).toBe(true)
     })
 
     it('generates unique filter IDs per instance', () => {

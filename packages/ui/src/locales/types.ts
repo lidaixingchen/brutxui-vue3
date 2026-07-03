@@ -369,6 +369,7 @@ export interface SketchyChartLocale {
     lineAriaLabel: string
     barAriaLabel: string
     pieAriaLabel: string
+    emptyText: string
 }
 
 export interface Card3dLocale {

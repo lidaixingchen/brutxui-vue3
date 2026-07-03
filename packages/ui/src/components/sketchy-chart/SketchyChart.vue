@@ -189,6 +189,12 @@ const yTicks = computed(() => {
     return ticks
 })
 
+const isEmpty = computed(() =>
+    props.type === 'pie'
+        ? pieSlices.value.length === 0
+        : processedData.value.length === 0
+)
+
 const containerClasses = computed(() =>
     cn(sketchyChartVariants(), props.class)
 )
@@ -367,6 +373,30 @@ const containerClasses = computed(() =>
                     text-anchor="middle"
                 >
                     {{ d.label }}
+                </text>
+            </g>
+            
+            <!-- 暂无数据提示 (Empty State) -->
+            <g v-if="isEmpty" :filter="`url(#${filterId})`" class="chart-empty-state">
+                <circle
+                    v-if="type === 'pie'"
+                    :cx="width / 2"
+                    :cy="height / 2"
+                    :r="Math.min(width, height) / 2 * WIDTH_RATIO"
+                    fill="var(--brutal-muted, #f3f4f6)"
+                    stroke="var(--brutal-border-color, #000000)"
+                    :stroke-width="CHART_STROKE_WIDTH"
+                />
+                <text
+                    :x="width / 2"
+                    :y="height / 2"
+                    text-anchor="middle"
+                    dominant-baseline="central"
+                    fill="var(--brutal-fg, #000000)"
+                    font-size="14"
+                    font-weight="900"
+                >
+                    {{ t('sketchyChart.emptyText') }}
                 </text>
             </g>
         </svg>
