@@ -66,6 +66,50 @@ describe('Card', () => {
         const wrapper = mount(Card, { props: { class: 'my-custom' } })
         expect(wrapper.classes()).toContain('my-custom')
     })
+
+    it('applies accessibility attributes when interactive', () => {
+        const wrapper = mount(Card, { props: { interactive: true } })
+        expect(wrapper.attributes('role')).toBe('button')
+        expect(wrapper.attributes('tabindex')).toBe('0')
+    })
+
+    it('applies accessibility attributes when variant is interactive', () => {
+        const wrapper = mount(Card, { props: { variant: 'interactive' } })
+        expect(wrapper.attributes('role')).toBe('button')
+        expect(wrapper.attributes('tabindex')).toBe('0')
+    })
+
+    it('does not apply accessibility attributes when not interactive', () => {
+        const wrapper = mount(Card)
+        expect(wrapper.attributes('role')).toBeUndefined()
+        expect(wrapper.attributes('tabindex')).toBeUndefined()
+    })
+
+    it('emits activate event with MouseEvent on click', async () => {
+        const wrapper = mount(Card, { props: { interactive: true } })
+        await wrapper.trigger('click')
+        expect(wrapper.emitted('activate')).toBeTruthy()
+        expect(wrapper.emitted('activate')![0][0]).toBeInstanceOf(MouseEvent)
+    })
+
+    it('emits activate event with KeyboardEvent on Enter/Space keys', async () => {
+        const wrapper = mount(Card, { props: { interactive: true } })
+        
+        await wrapper.trigger('keydown', { key: 'Enter' })
+        expect(wrapper.emitted('activate')).toBeTruthy()
+        expect(wrapper.emitted('activate')![0][0]).toBeInstanceOf(KeyboardEvent)
+
+        await wrapper.trigger('keydown', { key: ' ' })
+        expect(wrapper.emitted('activate')![1][0]).toBeInstanceOf(KeyboardEvent)
+        expect(wrapper.emitted('activate')).toHaveLength(2)
+    })
+
+    it('does not emit activate event on click/keydown when not interactive', async () => {
+        const wrapper = mount(Card)
+        await wrapper.trigger('click')
+        await wrapper.trigger('keydown', { key: 'Enter' })
+        expect(wrapper.emitted('activate')).toBeFalsy()
+    })
 })
 
 describe('CardHeader', () => {

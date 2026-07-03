@@ -86,7 +86,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 | 事件 | 说明 |
 | --- | --- |
-| `activate` | 当 `interactive=true` 时，点击或按 Enter/Space 键触发 |
+| `activate` | 当 `interactive=true`（或 `variant="interactive"`）时，点击或按 Enter/Space 键触发，返回原生 `Event` 对象 |
 
 ### CardTitle
 
@@ -111,7 +111,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 - **语义化结构**：`CardTitle` 默认渲染为 `h3` 标题元素，可通过 `as` 属性自定义为合适的标题层级
 - **交互反馈**：`interactive` 变体提供悬停效果，建议配合键盘焦点样式使用
-- **可点击卡片**：设置 `interactive` 属性后，卡片会添加 `role="button"` 和 `tabindex="0"`，支持 Enter/Space 键触发 `activate` 事件
+- **可点击卡片**：设置 `interactive` 属性（或使用 `variant="interactive"`）后，卡片会添加 `role="button"` 和 `tabindex="0"`，支持 Enter/Space 键触发 `activate` 事件（派发原生事件参数）
 - **内容组织**：通过 `CardHeader`、`CardContent`、`CardFooter` 子组件提供清晰的内容结构，便于辅助技术理解页面布局
 
 ### 可点击卡片
@@ -122,8 +122,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 <script setup>
 import { Card, CardContent, CardTitle } from 'brutx-ui-vue'
 
-function handleClick() {
-    console.log('Card activated!')
+function handleClick(event) {
+    console.log('Card activated!', event)
 }
 </script>
 

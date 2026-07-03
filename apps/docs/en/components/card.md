@@ -87,7 +87,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 | Event | Description |
 | --- | --- |
-| `activate` | Triggered when `interactive=true`, fired on click or Enter/Space key press |
+| `activate` | Triggered when `interactive=true` (or `variant="interactive"`), fired on click or Enter/Space key press, returning the native `Event` object |
 
 ### CardTitle
 
@@ -112,7 +112,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 - **Semantic structure**: `CardTitle` renders as an `h3` heading element by default, customizable to an appropriate heading level via the `as` prop
 - **Interactive feedback**: The `interactive` variant provides hover effects; it is recommended to use it with keyboard focus styles
-- **Clickable cards**: Setting the `interactive` prop adds `role="button"` and `tabindex="0"` to the card, with Enter/Space key support to trigger the `activate` event
+- **Clickable cards**: Setting the `interactive` prop (or using `variant="interactive"`) adds `role="button"` and `tabindex="0"` to the card, with Enter/Space key support to trigger the `activate` event (dispatching native event parameter)
 - **Content organization**: The `CardHeader`, `CardContent`, and `CardFooter` sub-components provide a clear content structure, making it easier for assistive technologies to understand the page layout
 
 ### Clickable Card
@@ -123,8 +123,8 @@ Use the `interactive` prop to make a card clickable, automatically adding pointe
 <script setup>
 import { Card, CardContent, CardTitle } from 'brutx-ui-vue'
 
-function handleClick() {
-    console.log('Card activated!')
+function handleClick(event) {
+    console.log('Card activated!', event)
 }
 </script>
 

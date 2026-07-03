@@ -22,36 +22,39 @@ const props = withDefaults(defineProps<CardProps>(), {
 })
 
 const emit = defineEmits<{
-    activate: []
+    activate: [event: Event]
 }>()
+
+const isInteractive = computed(() => props.interactive || props.variant === 'interactive')
 
 const classes = computed(() =>
     cn(
         cardVariants({ variant: props.variant, padding: props.padding }),
-        props.interactive && `cursor-pointer ${brutalHoverLiftNoX} transition-all`,
+        (props.interactive && props.variant !== 'interactive') &&
+            `cursor-pointer ${brutalHoverLiftNoX} transition-all`,
         props.class
     )
 )
 
 function onKeydown(e: KeyboardEvent) {
-    if (!props.interactive) return
+    if (!isInteractive.value) return
     if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault()
-        emit('activate')
+        emit('activate', e)
     }
 }
 
-function onClick() {
-    if (!props.interactive) return
-    emit('activate')
+function onClick(e: MouseEvent) {
+    if (!isInteractive.value) return
+    emit('activate', e)
 }
 </script>
 
 <template>
     <div
         :class="classes"
-        :role="interactive ? 'button' : undefined"
-        :tabindex="interactive ? 0 : undefined"
+        :role="isInteractive ? 'button' : undefined"
+        :tabindex="isInteractive ? 0 : undefined"
         @click="onClick"
         @keydown="onKeydown"
     >

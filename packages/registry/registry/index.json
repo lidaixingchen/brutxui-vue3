@@ -106,7 +106,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ab21ad37a6c656232fb0bbb5ea3662aa0a9da91f51764386c5905a7d399be03b"
+      "integrity": "sha256-2f4443116ef939cb36aab20f604e1ca216ed5526448a0ee75bce002928c3c065"
     },
     {
       "name": "alert",
@@ -835,7 +835,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-762c0b43f234a3944b99a7370c666ee4f4a9b9cabd9e05e22b25271a5169dd1e"
+      "integrity": "sha256-d340ac68167d967573a463738a04aaa2500b784e9669f781ad7a391a4335641c"
     },
     {
       "name": "cascader",
@@ -1780,7 +1780,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6315b9e8cef77132958d4fa73e78f858ff3b7e0197ed211182c061e1bf6bb7e2"
+      "integrity": "sha256-8e35f0ad867e1858cf85afdea5ef2d6d500831cd2341bb4a9471b321efce38af"
     },
     {
       "name": "label",
@@ -2384,7 +2384,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d03f56ceae361dc7db1016f6daf1f5bf2d91fe86a9b74141df4ecda6b735ae2c"
+      "integrity": "sha256-83b033c9818dcd1359bb2d0bbd9419dbe0bc8bdb9e570170ebefbee9a2eab8fc"
     },
     {
       "name": "separator",
@@ -7887,7 +7887,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ad5cc07fe2200ed06ebe6f6f278a549f731c88f214b126d9f35908207ef30c99"
+      "integrity": "sha256-9de45150ed63924635dbb5104841862c86bbfd92b29a08176c8baf0fe53ec54d"
     },
     {
       "name": "hardcore-input",
