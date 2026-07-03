@@ -39,7 +39,12 @@ import {
     Inbox,
     ChevronDown,
     ChevronRight as ChevronRightIcon,
+    Filter,
 } from '@lucide/vue'
+import VirtualScroll from '../virtual-scroll/VirtualScroll.vue'
+import Popover from '../popover/Popover.vue'
+import PopoverTrigger from '../popover/PopoverTrigger.vue'
+import PopoverContent from '../popover/PopoverContent.vue'
 
 const slots = useSlots()
 const { t } = useLocale()
@@ -223,9 +228,85 @@ watch(() => props.data, (newData, oldData) => {
     }
 })
 
-watch(() => filter.filterState.value.global, () => {
-    emit('filter', filter.filterState.value)
+watch(filter.filterState, (newState) => {
+    emit('filter', newState)
+}, { deep: true })
+
+const gridTemplateColumns = computed(() => {
+    const parts: string[] = []
+    if (props.expandable) parts.push('40px')
+    if (props.selectable) parts.push('48px')
+
+    visibleColumns.value.forEach((col) => {
+        if (!col.width) {
+            console.warn(`[BrutxUI] Column "${col.id}" must have an explicit width when virtualScroll is enabled.`)
+            parts.push('1fr')
+        } else if (typeof col.width === 'number') {
+            parts.push(`${col.width}px`)
+        } else if (col.width === 'auto') {
+            parts.push('1fr')
+        } else {
+            parts.push(col.width)
+        }
+    })
+    return parts.join(' ')
 })
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isMultiSelectChecked(columnId: string, value: any): boolean {
+    const vals = filter.filterState.value.columns[columnId]
+    if (!Array.isArray(vals)) return false
+    return vals.includes(value)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleMultiSelectChange(columnId: string, value: any, checked: boolean | 'indeterminate') {
+    if (!filter.filterState.value.columns) {
+        filter.filterState.value.columns = {}
+    }
+    let vals = filter.filterState.value.columns[columnId]
+    if (!Array.isArray(vals)) {
+        vals = []
+    }
+    if (checked === true) {
+        if (!vals.includes(value)) {
+            vals.push(value)
+        }
+    } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        vals = vals.filter((v: any) => v !== value)
+    }
+    filter.filterState.value.columns[columnId] = [...vals]
+    filter.filterState.value = { ...filter.filterState.value }
+}
+
+function getDateRangeVal(columnId: string, bound: 'start' | 'end'): string {
+    const val = filter.filterState.value.columns[columnId]
+    if (val && typeof val === 'object') {
+        return val[bound] || ''
+    }
+    return ''
+}
+
+function handleDateRangeChange(columnId: string, bound: 'start' | 'end', val: string) {
+    if (!filter.filterState.value.columns) {
+        filter.filterState.value.columns = {}
+    }
+    let current = filter.filterState.value.columns[columnId]
+    if (!current || typeof current !== 'object' || Array.isArray(current)) {
+        current = { start: '', end: '' }
+    }
+    current[bound] = val
+    filter.filterState.value.columns[columnId] = { ...current }
+    filter.filterState.value = { ...filter.filterState.value }
+}
+
+function resetColumnFilter(columnId: string) {
+    if (filter.filterState.value.columns) {
+        delete filter.filterState.value.columns[columnId]
+        filter.filterState.value = { ...filter.filterState.value }
+    }
+}
 
 const rootClasses = computed(() =>
     cn(dataTableRootVariants({ size: props.size }), props.class),
@@ -341,9 +422,273 @@ function getCellClasses(column: DataTableColumn<T>): string {
             </div>
         </div>
 
-        <!-- Table -->
+        <!-- Table / Virtual Scroll -->
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
+            <!-- 虚拟滚动启用时的布局 -->
+            <template v-if="props.virtualScroll?.enabled">
+                <div class="w-full min-w-max border-collapse" role="presentation">
+                    <!-- Header -->
+                    <div :class="headerClasses" role="rowgroup">
+                        <div
+                            class="grid border-b-3 border-brutal"
+                            :style="{ gridTemplateColumns }"
+                            role="row"
+                        >
+                            <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader">
+                                <span class="sr-only">Expand</span>
+                            </div>
+                            <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="columnheader">
+                                <Checkbox
+                                    :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
+                                    size="sm"
+                                    class="cursor-pointer"
+                                    @update:checked="handleToggleAll"
+                                />
+                            </div>
+                            <div
+                                v-for="column in visibleColumns"
+                                :key="column.id"
+                                :class="[getHeadClasses(column), 'flex items-center']"
+                                :style="{
+                                    position: column.fixed ? 'sticky' : undefined,
+                                    left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
+                                    right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
+                                    zIndex: column.fixed ? 10 : undefined,
+                                }"
+                                role="columnheader"
+                                :tabindex="sortable && column.sortable !== false ? 0 : undefined"
+                                :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
+                                @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                            >
+                                <div class="flex items-center gap-2 w-full" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
+                                    <span>{{ getHeaderLabel(column) }}</span>
+                                    
+                                    <!-- Column Filter UI -->
+                                    <Popover v-if="props.filterable && column.filterType">
+                                        <PopoverTrigger as-child>
+                                            <Button
+                                                variant="default"
+                                                size="icon"
+                                                class="h-6 w-6 p-0 border-2 shadow-none focus-visible:ring-1"
+                                                :aria-label="`Filter ${column.id}`"
+                                                @click.stop
+                                            >
+                                                <Filter class="h-3 w-3" />
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent class="w-64 p-3 bg-brutal-bg border-3 border-brutal shadow-brutal flex flex-col gap-2 z-50">
+                                            <div class="font-bold text-xs text-brutal-fg mb-1">筛选 {{ getHeaderLabel(column) }}</div>
+                                            
+                                            <!-- Text Match -->
+                                            <template v-if="column.filterType === 'text'">
+                                                <Input
+                                                    v-model="filter.filterState.value.columns[column.id]"
+                                                    size="sm"
+                                                    placeholder="搜索关键字..."
+                                                    clearable
+                                                />
+                                            </template>
+                                            
+                                            <!-- Select -->
+                                            <template v-else-if="column.filterType === 'select'">
+                                                <SelectRoot
+                                                    :model-value="String(filter.filterState.value.columns[column.id] || '')"
+                                                    @update:model-value="val => { filter.filterState.value.columns[column.id] = val; filter.filterState.value = { ...filter.filterState.value } }"
+                                                >
+                                                    <SelectTrigger size="sm" class="w-full">
+                                                        <SelectValue placeholder="全部" />
+                                                    </SelectTrigger>
+                                                    <SelectContent class="z-50">
+                                                        <SelectItem value="">全部</SelectItem>
+                                                        <SelectItem
+                                                            v-for="opt in column.filterOptions"
+                                                            :key="opt.value"
+                                                            :value="String(opt.value)"
+                                                        >
+                                                            {{ opt.label }}
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </SelectRoot>
+                                            </template>
+                                            
+                                            <!-- Multi-Select -->
+                                            <template v-else-if="column.filterType === 'multi-select'">
+                                                <div class="flex flex-col gap-1.5 max-h-40 overflow-y-auto border border-brutal p-1.5 bg-brutal-muted/20">
+                                                    <label
+                                                        v-for="opt in column.filterOptions"
+                                                        :key="opt.value"
+                                                        class="flex items-center gap-2 cursor-pointer text-xs"
+                                                    >
+                                                        <Checkbox
+                                                            :checked="isMultiSelectChecked(column.id, opt.value)"
+                                                            size="sm"
+                                                            @update:checked="checked => handleMultiSelectChange(column.id, opt.value, checked)"
+                                                        />
+                                                        <span>{{ opt.label }}</span>
+                                                    </label>
+                                                </div>
+                                            </template>
+                                            
+                                            <!-- Date Range -->
+                                            <template v-else-if="column.filterType === 'date-range'">
+                                                <div class="flex flex-col gap-2">
+                                                    <Input
+                                                        :model-value="getDateRangeVal(column.id, 'start')"
+                                                        type="date"
+                                                        size="sm"
+                                                        placeholder="开始日期"
+                                                        @update:model-value="val => handleDateRangeChange(column.id, 'start', val)"
+                                                    />
+                                                    <span class="text-xs text-center text-brutal-fg/50">至</span>
+                                                    <Input
+                                                        :model-value="getDateRangeVal(column.id, 'end')"
+                                                        type="date"
+                                                        size="sm"
+                                                        placeholder="结束日期"
+                                                        @update:model-value="val => handleDateRangeChange(column.id, 'end', val)"
+                                                    />
+                                                </div>
+                                            </template>
+                                            
+                                            <div class="flex items-center justify-between border-t border-brutal pt-2 mt-1">
+                                                <Button
+                                                    variant="default"
+                                                    size="sm"
+                                                    class="h-7 px-2 text-xs border-2 shadow-none"
+                                                    @click="resetColumnFilter(column.id)"
+                                                >
+                                                    重置
+                                                </Button>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                    
+                                    <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
+                                        <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
+                                        <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />
+                                        <ArrowUpDown v-else class="w-4 h-4" />
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Body with Virtual Scroll -->
+                    <VirtualScroll
+                        v-if="displayData.length > 0"
+                        :items="(displayData as any[])"
+                        :item-height="props.virtualScroll.rowHeight === 'auto' ? 48 : props.virtualScroll.rowHeight"
+                        :dynamic-height="props.virtualScroll.rowHeight === 'auto'"
+                        role="rowgroup"
+                        item-role="none"
+                        class="w-full max-h-[400px] overflow-y-auto border-3 border-t-0 border-brutal"
+                    >
+                        <template #default="{ index: rowIndex }">
+                            <div v-if="displayData[rowIndex]" class="flex flex-col w-full border-b border-brutal/30 last:border-b-0">
+                                <div
+                                    class="grid"
+                                    :style="{ gridTemplateColumns }"
+                                    :class="getRowClasses(displayData[rowIndex])"
+                                    role="row"
+                                    :aria-selected="selection.selectedRows.value.has(selection.getRowKey(displayData[rowIndex])) || undefined"
+                                    :aria-expanded="expandable ? isRowExpanded(displayData[rowIndex]) : undefined"
+                                >
+                                    <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center" role="gridcell">
+                                        <button
+                                            class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                            :aria-label="isRowExpanded(displayData[rowIndex]) ? 'Collapse row' : 'Expand row'"
+                                            @click="toggleExpandRow(displayData[rowIndex])"
+                                        >
+                                            <ChevronDown
+                                                v-if="isRowExpanded(displayData[rowIndex])"
+                                                class="w-4 h-4 transition-transform"
+                                            />
+                                            <ChevronRightIcon
+                                                v-else
+                                                class="w-4 h-4 transition-transform"
+                                            />
+                                        </button>
+                                    </div>
+                                    <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="gridcell">
+                                        <Checkbox
+                                            :checked="selection.selectedRows.value.has(selection.getRowKey(displayData[rowIndex]))"
+                                            size="sm"
+                                            class="cursor-pointer"
+                                            @update:checked="handleToggleRow(displayData[rowIndex])"
+                                        />
+                                    </div>
+                                    <div
+                                        v-for="column in visibleColumns"
+                                        :key="column.id"
+                                        :class="[getCellClasses(column), 'flex items-center']"
+                                        :style="{
+                                            position: column.fixed ? 'sticky' : undefined,
+                                            left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
+                                            right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
+                                            zIndex: column.fixed ? 10 : undefined,
+                                        }"
+                                        role="gridcell"
+                                    >
+                                        <template v-if="column.type === 'expand'">
+                                            <button
+                                                class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                                @click="toggleExpandRow(displayData[rowIndex])"
+                                            >
+                                                <ChevronDown
+                                                    v-if="isRowExpanded(displayData[rowIndex])"
+                                                    class="w-4 h-4 transition-transform"
+                                                />
+                                                <ChevronRightIcon
+                                                    v-else
+                                                    class="w-4 h-4 transition-transform"
+                                                />
+                                            </button>
+                                        </template>
+                                        <template v-else>
+                                            <slot :name="`cell-${column.id}`" :row="displayData[rowIndex]" :value="getCellValue(displayData[rowIndex], column)">
+                                                <CellRenderer v-if="column.cell" :cell-fn="column.cell" :row="displayData[rowIndex]" :value="getCellValue(displayData[rowIndex], column)" />
+                                                <template v-else>
+                                                    {{ getCellValue(displayData[rowIndex], column) }}
+                                                </template>
+                                            </slot>
+                                        </template>
+                                    </div>
+                                </div>
+                                <!-- Expanded Row -->
+                                <div
+                                    v-if="expandable && isRowExpanded(displayData[rowIndex])"
+                                    class="bg-brutal-muted/30 p-4 border-t border-brutal/20"
+                                    role="row"
+                                >
+                                    <div :style="{ width: '100%' }" role="gridcell">
+                                        <slot name="expanded-row" :row="displayData[rowIndex]" :index="rowIndex" />
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </VirtualScroll>
+                    
+                    <!-- Empty State for Virtual Scroll -->
+                    <div v-else :class="emptyClasses" role="rowgroup">
+                        <div role="row">
+                            <div role="gridcell" class="w-full text-center py-8">
+                                <slot name="empty">
+                                    <span class="inline-flex items-center justify-center border-3 border-brutal shadow-brutal p-3 bg-brutal-bg">
+                                        <Inbox class="w-6 h-6" />
+                                    </span>
+                                    <p class="font-black mt-2">
+                                        {{ emptyMessage || t('dataTable.noData') }}
+                                    </p>
+                                </slot>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Native Table Layout -->
+            <table v-else class="w-full border-collapse">
                 <!-- Header -->
                 <thead :class="headerClasses">
                     <tr>
@@ -379,6 +724,107 @@ function getCellClasses(column: DataTableColumn<T>): string {
                         >
                             <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                 <span>{{ getHeaderLabel(column) }}</span>
+                                
+                                <!-- Column Filter UI (Native Table) -->
+                                <Popover v-if="props.filterable && column.filterType">
+                                    <PopoverTrigger as-child>
+                                        <Button
+                                            variant="default"
+                                            size="icon"
+                                            class="h-6 w-6 p-0 border-2 shadow-none focus-visible:ring-1"
+                                            :aria-label="`Filter ${column.id}`"
+                                            @click.stop
+                                        >
+                                            <Filter class="h-3 w-3" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent class="w-64 p-3 bg-brutal-bg border-3 border-brutal shadow-brutal flex flex-col gap-2 z-50">
+                                        <div class="font-bold text-xs text-brutal-fg mb-1">筛选 {{ getHeaderLabel(column) }}</div>
+                                        
+                                        <!-- Text Match -->
+                                        <template v-if="column.filterType === 'text'">
+                                            <Input
+                                                v-model="filter.filterState.value.columns[column.id]"
+                                                size="sm"
+                                                placeholder="搜索关键字..."
+                                                clearable
+                                            />
+                                        </template>
+                                        
+                                        <!-- Select -->
+                                        <template v-else-if="column.filterType === 'select'">
+                                            <SelectRoot
+                                                :model-value="String(filter.filterState.value.columns[column.id] || '')"
+                                                @update:model-value="val => { filter.filterState.value.columns[column.id] = val; filter.filterState.value = { ...filter.filterState.value } }"
+                                            >
+                                                <SelectTrigger size="sm" class="w-full">
+                                                    <SelectValue placeholder="全部" />
+                                                </SelectTrigger>
+                                                <SelectContent class="z-50">
+                                                    <SelectItem value="">全部</SelectItem>
+                                                    <SelectItem
+                                                        v-for="opt in column.filterOptions"
+                                                        :key="opt.value"
+                                                        :value="String(opt.value)"
+                                                    >
+                                                        {{ opt.label }}
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </SelectRoot>
+                                        </template>
+                                        
+                                        <!-- Multi-Select -->
+                                        <template v-else-if="column.filterType === 'multi-select'">
+                                            <div class="flex flex-col gap-1.5 max-h-40 overflow-y-auto border border-brutal p-1.5 bg-brutal-muted/20">
+                                                <label
+                                                    v-for="opt in column.filterOptions"
+                                                    :key="opt.value"
+                                                    class="flex items-center gap-2 cursor-pointer text-xs"
+                                                >
+                                                    <Checkbox
+                                                        :checked="isMultiSelectChecked(column.id, opt.value)"
+                                                        size="sm"
+                                                        @update:checked="checked => handleMultiSelectChange(column.id, opt.value, checked)"
+                                                    />
+                                                    <span>{{ opt.label }}</span>
+                                                </label>
+                                            </div>
+                                        </template>
+                                        
+                                        <!-- Date Range -->
+                                        <template v-else-if="column.filterType === 'date-range'">
+                                            <div class="flex flex-col gap-2">
+                                                <Input
+                                                    :model-value="getDateRangeVal(column.id, 'start')"
+                                                    type="date"
+                                                    size="sm"
+                                                    placeholder="开始日期"
+                                                    @update:model-value="val => handleDateRangeChange(column.id, 'start', val)"
+                                                />
+                                                <span class="text-xs text-center text-brutal-fg/50">至</span>
+                                                <Input
+                                                    :model-value="getDateRangeVal(column.id, 'end')"
+                                                    type="date"
+                                                    size="sm"
+                                                    placeholder="结束日期"
+                                                    @update:model-value="val => handleDateRangeChange(column.id, 'end', val)"
+                                                />
+                                            </div>
+                                        </template>
+                                        
+                                        <div class="flex items-center justify-between border-t border-brutal pt-2 mt-1">
+                                            <Button
+                                                variant="default"
+                                                size="sm"
+                                                class="h-7 px-2 text-xs border-2 shadow-none"
+                                                @click="resetColumnFilter(column.id)"
+                                            >
+                                                重置
+                                            </Button>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
+
                                 <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
                                     <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
                                     <ArrowDown v-else-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'desc'" class="w-4 h-4" />

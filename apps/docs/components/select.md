@@ -50,6 +50,47 @@ import {
 </template>
 ```
 
+### 一体化用法
+
+除了使用原子组件拼装，还可以使用封装好的一体化 `Select` 组件，支持传入 `options` 数组并支持自动分组。
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Select } from 'brutx-ui-vue'
+
+const selectedValue = ref('')
+
+const foodOptions = [
+    { label: '苹果', value: 'apple', category: 'fruits', categoryName: '水果' },
+    { label: '香蕉', value: 'banana', category: 'fruits', categoryName: '水果' },
+    { label: '胡萝卜', value: 'carrot', category: 'vegetables', categoryName: '蔬菜' },
+    { label: '土豆', value: 'potato', category: 'vegetables', categoryName: '蔬菜' },
+    { label: '牛奶', value: 'milk' } // 未分组
+]
+</script>
+
+<template>
+    <!-- 基本用法 -->
+    <Select
+        v-model="selectedValue"
+        :options="foodOptions"
+        placeholder="选择你喜欢的食物"
+        class="w-[280px]"
+    />
+
+    <!-- 自动分组用法 -->
+    <Select
+        v-model="selectedValue"
+        :options="foodOptions"
+        group-field="category"
+        group-label="categoryName"
+        placeholder="选择食物（分组）"
+        class="w-[280px]"
+    />
+</template>
+```
+
 ### 使用 v-model
 
 ```vue
@@ -97,7 +138,28 @@ const selectedFruit = ref('')
 
 ## Props
 
-### Select
+### Select (一体化组件)
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `options` | `SelectOption[]` | `[]` | 选项数据源，每个选项包含 `label`, `value`, `disabled` 等属性 |
+| `groupField` | `string` | — | 自动分组所依据的键名（如 `category`） |
+| `groupLabel` | `string` | — | 分组显示名称在选项中对应的键名（如 `categoryName`），不提供时使用 `groupField` 的值 |
+| `placeholder` | `string` | `'Select an option'` | 占位文本 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `required` | `boolean` | `false` | 是否必填 |
+| `name` | `string` | — | 表单字段名称 |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 触发器尺寸 |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | 边框样式变体 |
+| `errorMessage` | `string` | — | 错误提示消息 |
+| `clearable` | `boolean` | `false` | 是否显示清除按钮 |
+| `position` | `'popper' \| 'item-aligned'` | `'popper'` | 下拉浮层定位方式 |
+| `class` | `string` | — | 根组件（触发器）样式类 |
+| `triggerClass` | `string` | — | 触发器自定义样式类 |
+| `contentClass` | `string` | — | 下拉内容浮层样式类 |
+| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 选项选中/激活变体 |
+
+### Select (原子组件)
 
 根组件，继承 reka-ui `SelectRoot` 的所有属性。常用属性如下：
 

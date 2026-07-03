@@ -177,6 +177,7 @@ interface ToastItem {
   title?: string
   description?: string
   duration?: number
+  count?: number // 在开启 grouping 合并计数时，表示该 Toast 的重复计数
 }
 ```
 

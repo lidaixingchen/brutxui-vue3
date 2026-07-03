@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import Select from './Select.vue'
 import SelectTrigger from './SelectTrigger.vue'
 import SelectContent from './SelectContent.vue'
 import SelectItem from './SelectItem.vue'
@@ -253,5 +254,121 @@ describe('SelectScrollDownButton', () => {
             global: { stubs: { SelectScrollDownButton: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('custom-scroll-down')
+    })
+})
+
+describe('Select.vue', () => {
+    const defaultOptions = [
+        { label: 'Option 1', value: 'opt1' },
+        { label: 'Option 2', value: 'opt2', disabled: true },
+        { label: 'Option 3', value: 'opt3' },
+    ]
+
+    const groupOptions = [
+        { label: 'Apple', value: 'apple', category: 'fruits', categoryName: 'Fresh Fruits' },
+        { label: 'Banana', value: 'banana', category: 'fruits', categoryName: 'Fresh Fruits' },
+        { label: 'Carrot', value: 'carrot', category: 'vegetables', categoryName: 'Organic Veggies' },
+        { label: 'Potato', value: 'potato', category: 'vegetables', categoryName: 'Organic Veggies' },
+        { label: 'Milk', value: 'milk' },
+    ]
+
+    const selectStubs = {
+        SelectRoot: {
+            template: '<div data-testid="select-root"><slot /></div>',
+        },
+        SelectTrigger: {
+            template: '<button data-testid="select-trigger"><slot /></button>',
+        },
+        SelectValue: {
+            props: ['placeholder'],
+            template: '<span data-testid="select-value">{{ placeholder }}</span>',
+        },
+        SelectContent: {
+            template: '<div data-testid="select-content"><slot /></div>',
+        },
+        SelectGroup: {
+            template: '<div data-testid="select-group"><slot /></div>',
+        },
+        SelectLabel: {
+            template: '<span data-testid="select-label"><slot /></span>',
+        },
+        SelectItem: {
+            props: ['value', 'disabled'],
+            template: '<div data-testid="select-item" :data-value="value" :data-disabled="disabled"><slot /></div>',
+        },
+    }
+
+    it('renders with placeholder and options', () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: defaultOptions,
+                placeholder: 'Select food',
+            },
+            global: { stubs: selectStubs },
+        })
+
+        expect(wrapper.find('[data-testid="select-value"]').text()).toBe('Select food')
+        
+        const items = wrapper.findAll('[data-testid="select-item"]')
+        expect(items.length).toBe(3)
+        expect(items[0].text()).toBe('Option 1')
+        expect(items[0].attributes('data-value')).toBe('opt1')
+        expect(items[1].attributes('data-disabled')).toBe('true')
+    })
+
+    it('handles grouping with groupField', () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: groupOptions,
+                groupField: 'category',
+            },
+            global: { stubs: selectStubs },
+        })
+
+        const groups = wrapper.findAll('[data-testid="select-group"]')
+        expect(groups.length).toBe(3)
+
+        const labels = wrapper.findAll('[data-testid="select-label"]')
+        expect(labels.length).toBe(2)
+        expect(labels[0].text()).toBe('fruits')
+        expect(labels[1].text()).toBe('vegetables')
+
+        const fruitsItems = groups[0].findAll('[data-testid="select-item"]')
+        expect(fruitsItems.length).toBe(2)
+        expect(fruitsItems[0].text()).toBe('Apple')
+        expect(fruitsItems[1].text()).toBe('Banana')
+
+        const ungroupedItems = groups[2].findAll('[data-testid="select-item"]')
+        expect(ungroupedItems.length).toBe(1)
+        expect(ungroupedItems[0].text()).toBe('Milk')
+    })
+
+    it('uses groupLabel for group header when provided', () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: groupOptions,
+                groupField: 'category',
+                groupLabel: 'categoryName',
+            },
+            global: { stubs: selectStubs },
+        })
+
+        const labels = wrapper.findAll('[data-testid="select-label"]')
+        expect(labels.length).toBe(2)
+        expect(labels[0].text()).toBe('Fresh Fruits')
+        expect(labels[1].text()).toBe('Organic Veggies')
+    })
+
+    it('binds and updates v-model correctly', async () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: defaultOptions,
+                modelValue: 'opt1',
+                'onUpdate:modelValue': (e: any) => wrapper.setProps({ modelValue: e }),
+            },
+            global: { stubs: selectStubs },
+        })
+
+        expect(wrapper.vm.modelValue).toBe('opt1')
     })
 })

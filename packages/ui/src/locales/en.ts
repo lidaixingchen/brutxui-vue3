@@ -116,6 +116,18 @@ export const en: Locale = {
         selectedCount: '{count} selected',
         clear: 'Clear',
     },
+    cascader: {
+        placeholder: 'Select path...',
+        emptyText: 'No options found.',
+        selectedCount: '{count} selected',
+        clear: 'Clear',
+    },
+    transfer: {
+        sourceTitle: 'Source',
+        targetTitle: 'Target',
+        placeholder: 'Enter keyword to search',
+        emptyText: 'No data',
+    },
     stepper: {
         progressSteps: 'Progress steps',
         step: 'Step {index}: {title}',

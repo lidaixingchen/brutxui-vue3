@@ -7,6 +7,8 @@ import {
     FormLabel,
     FormControl,
     FormMessage,
+} from 'brutx-ui-vue/form'
+import {
     Input,
     Button,
 } from 'brutx-ui-vue'

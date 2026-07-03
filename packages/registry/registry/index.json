@@ -106,7 +106,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-795793564e2d5d24a9aebb128fda6b7a679a36001c4018dc835ac4a833a350b8"
+      "integrity": "sha256-ab21ad37a6c656232fb0bbb5ea3662aa0a9da91f51764386c5905a7d399be03b"
     },
     {
       "name": "alert",
@@ -836,6 +836,134 @@
         }
       },
       "integrity": "sha256-762c0b43f234a3944b99a7370c666ee4f4a9b9cabd9e05e22b25271a5169dd1e"
+    },
+    {
+      "name": "cascader",
+      "type": "registry:ui",
+      "title": "Cascader",
+      "description": "A highly customizable neo-brutalist Cascader component built with Brutx design tokens for Vue 3.",
+      "dependencies": [],
+      "registryDependencies": [
+        "popover",
+        "locale-zh-cn"
+      ],
+      "files": [
+        {
+          "path": "components/ui/cascader/Cascader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/cascader/cascader-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/cascader/cascader-types.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/cascader/index.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-6c7f27f1c192abd60f93b7d5626046ffed018d84b761d542eadc598a6c7a7f48"
     },
     {
       "name": "checkbox",
@@ -2118,6 +2246,10 @@
       "registryDependencies": [],
       "files": [
         {
+          "path": "components/ui/select/Select.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/select/SelectContent.vue",
           "type": "registry:ui"
         },
@@ -2252,7 +2384,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-cb4eca5de7f4b8b88c9f033b3f3cc85e4bcc56a838ea73a073ba75ee0170a861"
+      "integrity": "sha256-d03f56ceae361dc7db1016f6daf1f5bf2d91fe86a9b74141df4ecda6b735ae2c"
     },
     {
       "name": "separator",
@@ -3232,7 +3364,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3eca4f3149949ce7ef4f50543070981492fb5034e554444b1e7d8c0a96e622aa"
+      "integrity": "sha256-10541ca0c44775cbbca02150a2f61b756c34d1cb1d81ea879fdd247d2f33f1aa"
     },
     {
       "name": "tooltip",
@@ -5928,6 +6060,123 @@
         }
       },
       "integrity": "sha256-f42cd2c94c6e37e32f66b085eae256ca2ad4d0b1c572f3c78a4621d3911ac9b9"
+    },
+    {
+      "name": "menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "A highly customizable neo-brutalist Menu component built with Brutx design tokens for Vue 3.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/menu/Menu.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/MenuItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/SubMenu.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/menu-types.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/menu/index.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-aaf9427978b4e61fde1a12d09c5ae1bdd8f9638c882fa730a8dccfc09164bfa9"
     },
     {
       "name": "before-after",
@@ -11021,6 +11270,8 @@
         "button",
         "checkbox",
         "select",
+        "virtual-scroll",
+        "popover",
         "locale-zh-cn"
       ],
       "files": [
@@ -11155,7 +11406,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-86c3d85a0089b46f1ebe54491fe745bf038cc18b4a54cca0ebb41cdf888f26dc"
+      "integrity": "sha256-825e354d62a0c340089376764479e759fc9b94fd5b885a4a77a269c895ea03d0"
     },
     {
       "name": "tree-select",
@@ -11766,7 +12017,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-65c7925e51ab5a8a45c72aa1586a5053f3c49191798b635785794f0a5f98da0f"
+      "integrity": "sha256-abab6ea3c5c95607ca8d4e8cbe3f69e58af8055bd3a0fc858b8cd6879378c0a8"
     },
     {
       "name": "input-adornment",
@@ -12324,6 +12575,226 @@
         }
       },
       "integrity": "sha256-e9bd542d92eb74f9ba0df561e022c14ed71f1b25b1f8940d4818596813ea3af9"
+    },
+    {
+      "name": "transfer",
+      "type": "registry:ui",
+      "title": "Transfer",
+      "description": "A highly customizable neo-brutalist Transfer component built with Brutx design tokens for Vue 3.",
+      "dependencies": [],
+      "registryDependencies": [
+        "card",
+        "checkbox",
+        "button",
+        "input",
+        "locale-zh-cn"
+      ],
+      "files": [
+        {
+          "path": "components/ui/transfer/Transfer.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/transfer/index.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-6c0f92bb15bbc9937bd74266a7fa798026210679eb2e36b12adcb04980a65ccf"
+    },
+    {
+      "name": "rate",
+      "type": "registry:ui",
+      "title": "Rate",
+      "description": "A highly customizable neo-brutalist Rate component built with Brutx design tokens for Vue 3.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/rate/Rate.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/rate/index.ts",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-d44721d9e3e07e3d968d4548aa685851caf8df5e795efb66f59e8a3c28c4e105"
     }
   ]
 }

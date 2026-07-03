@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { GallerySection } from 'brutx-ui-vue'
-import type { GalleryItem } from 'brutx-ui-vue'
+import { GallerySection } from 'brutx-ui-vue/carousel'
+import type { GalleryItem } from 'brutx-ui-vue/carousel'
 
 const items: GalleryItem[] = [
     {

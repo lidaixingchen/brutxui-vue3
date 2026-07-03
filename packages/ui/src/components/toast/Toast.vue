@@ -22,6 +22,7 @@ interface ToastProps {
     pauseOnHover?: boolean
     class?: string
     iconSize?: IconSize
+    count?: number
 }
 
 const props = withDefaults(defineProps<ToastProps>(), {
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<ToastProps>(), {
     pauseOnHover: true,
     class: undefined,
     iconSize: 'xl',
+    count: 1,
 })
 
 const emit = defineEmits<{ close: [] }>()
@@ -156,7 +158,7 @@ const progressBarStyle = computed(() => ({
 
             <div class="flex-1 min-w-0">
                 <p v-if="title" class="font-black text-base leading-tight">
-{{ title }}
+{{ title }}{{ count && count > 1 ? ` (${count})` : '' }}
 </p>
                 <p v-if="description" class="font-medium text-sm mt-1 opacity-80 leading-snug">
 {{ description }}

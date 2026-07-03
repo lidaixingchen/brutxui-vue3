@@ -146,6 +146,53 @@ Enabling `selectable` displays checkboxes on the left side of each row. The head
 
 The paginator includes first page, previous page, next page, last page buttons, and a page size selector.
 
+### Column Filters
+
+Supports adding a Popover filter in the header of each column. Supports text search, single selection (Select), multi-selection (Multi-Select), and date range (Date Range) filtering.
+
+```vue
+<script setup lang="ts">
+const columns = [
+    { id: 'name', header: 'Name', accessorKey: 'name', filterType: 'text' },
+    {
+        id: 'role',
+        header: 'Role',
+        accessorKey: 'role',
+        filterType: 'select',
+        filterOptions: [
+            { label: 'Admin', value: 'Admin' },
+            { label: 'Editor', value: 'Editor' }
+        ]
+    },
+    {
+        id: 'status',
+        header: 'Status',
+        accessorKey: 'status',
+        filterType: 'multi-select',
+        filterOptions: [
+            { label: 'Active', value: 'Active' },
+            { label: 'Inactive', value: 'Inactive' }
+        ]
+    },
+    {
+        id: 'date',
+        header: 'Hire Date',
+        accessorKey: 'date',
+        filterType: 'date-range'
+    }
+]
+</script>
+
+<template>
+    <DataTable
+        :data="data"
+        :columns="columns"
+        :filterable="true"
+        row-key="id"
+    />
+</template>
+```
+
 ### Custom Cell Rendering
 
 ```vue
@@ -297,6 +344,8 @@ Enabling `stickyHeader` adds `sticky top-0 z-10` to `<thead>`, keeping the heade
 | `minWidth` | `number` | Minimum width |
 | `maxWidth` | `number` | Maximum width |
 | `align` | `'left' \| 'center' \| 'right'` | Alignment |
+| `filterType` | `'text' \| 'select' \| 'multi-select' \| 'date-range'` | Filter type, displays corresponding filter popover in column header |
+| `filterOptions` | `Array<{ label: string; value: any }>` | Filter options, used for `select` and `multi-select` filters |
 
 ### DataTableColumnHeaderContext
 
@@ -315,14 +364,14 @@ Context object received by the `header` callback function, used to access the co
 | Field | Type | Default | Description |
 |------|------|--------|------|
 | `enabled` | `boolean` | — | Whether to enable virtual scrolling |
-| `rowHeight` | `number` | `48` | Estimated row height (pixels) |
+| `rowHeight` | `number \| 'auto'` | `48` | Estimated row height (pixels), `'auto'` to observe and measure dynamic height via DOM (requires all columns to have explicit width configuration) |
 
 ### DataTableFilterState
 
 | Field | Type | Description |
 |------|------|------|
 | `global` | `string` | Global filter keyword |
-| `columns` | `Record<string, string>` | Column-level filter values indexed by column ID |
+| `columns` | `Record<string, any>` | Column-level filter values indexed by column ID |
 
 ## Programmatic Control
 

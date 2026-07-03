@@ -10,6 +10,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     button: { files: ['Button.vue', 'button-variants.ts', 'shared-button-variants.ts'] },
     calendar: { files: ['Calendar.vue'] },
     card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
+    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts'] },
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
     combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
@@ -20,7 +21,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     pagination: { files: ['Pagination.vue', 'pagination-variants.ts'], composables: ['useLocale.ts'] },
     popover: { files: ['PopoverContent.vue', 'popover-variants.ts'] },
     'scroll-area': { files: ['ScrollArea.vue', 'ScrollBar.vue', 'scroll-area-variants.ts'] },
-    select: { files: ['SelectContent.vue', 'SelectItem.vue', 'SelectLabel.vue', 'SelectScrollDownButton.vue', 'SelectScrollUpButton.vue', 'SelectSeparator.vue', 'SelectTrigger.vue', 'select-variants.ts'] },
+    select: { files: ['Select.vue', 'SelectContent.vue', 'SelectItem.vue', 'SelectLabel.vue', 'SelectScrollDownButton.vue', 'SelectScrollUpButton.vue', 'SelectSeparator.vue', 'SelectTrigger.vue', 'select-variants.ts'] },
     separator: { files: ['Separator.vue', 'separator-variants.ts'] },
     skeleton: { files: ['Skeleton.vue', 'SkeletonAvatar.vue', 'SkeletonCard.vue', 'SkeletonTable.vue', 'SkeletonText.vue', 'skeleton-variants.ts'] },
     spinner: { files: ['Spinner.vue', 'BarsSpinner.vue', 'BlockSpinner.vue', 'DotsSpinner.vue', 'spinner-variants.ts'], composables: ['useLocale.ts'] },
@@ -51,6 +52,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'copy-to-clipboard': { files: ['CopyToClipboard.vue', 'copy-to-clipboard-variants.ts'], composables: ['useClipboard.ts', 'useLocale.ts'] },
     breadcrumb: { files: ['Breadcrumb.vue', 'BreadcrumbList.vue', 'BreadcrumbItem.vue', 'BreadcrumbLink.vue', 'BreadcrumbPage.vue', 'BreadcrumbSeparator.vue', 'BreadcrumbEllipsis.vue', 'breadcrumb-variants.ts'], composables: ['useLocale.ts'] },
     marquee: { files: ['Marquee.vue', 'marquee-variants.ts'] },
+    menu: { files: ['Menu.vue', 'MenuItem.vue', 'SubMenu.vue', 'menu-types.ts', 'index.ts'] },
     'before-after': { files: ['BeforeAfter.vue', 'before-after-variants.ts'], composables: ['useLocale.ts'] },
     'code-block': { files: ['CodeBlock.vue', 'prism-languages.ts', 'brutx-prism.css', 'code-block-variants.ts'], composables: ['useLocale.ts'] },
     timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-key.ts', 'timeline-variants.ts'] },
@@ -159,5 +161,12 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'infinite-scroll': {
         files: ['InfiniteScroll.vue', 'useInfiniteScroll.ts'],
         composables: ['useReducedMotion.ts'],
+    },
+    transfer: {
+        files: ['Transfer.vue', 'index.ts'],
+        composables: ['useLocale.ts'],
+    },
+    rate: {
+        files: ['Rate.vue', 'index.ts'],
     },
 };

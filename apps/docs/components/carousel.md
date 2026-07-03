@@ -21,7 +21,7 @@ description: 基于 Embla Carousel 的高性能轮播组件，支持自动播放
 
 ```vue
 <script setup>
-import { Carousel, CarouselItem } from 'brutx-ui-vue'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 </script>
 
 <template>
@@ -63,8 +63,8 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 `Carousel` 组件内部逻辑已抽取为独立的 `useCarousel` 组合式函数，可单独使用以构建完全自定义的轮播 UI。它基于 `embla-carousel-vue` 封装，内置自动播放、循环控制、选中索引追踪，并自动遵守 `prefers-reduced-motion` 系统偏好（启用减少动效时会停止自动播放并禁用过渡动画）。
 
 ```ts
-import { useCarousel } from 'brutx-ui-vue'
-import type { UseCarouselOptions } from 'brutx-ui-vue'
+import { useCarousel } from 'brutx-ui-vue/carousel'
+import type { UseCarouselOptions } from 'brutx-ui-vue/carousel'
 
 const options: UseCarouselOptions = {
     loop: true,
@@ -118,7 +118,7 @@ Carousel 通过 `defineExpose` 暴露了一组方法与状态，可通过组件 
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { Carousel, CarouselItem } from 'brutx-ui-vue'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 
 const carouselRef = ref()
 </script>
@@ -199,7 +199,7 @@ const carouselRef = ref()
 
 ```vue
 <script setup>
-import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue'
+import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
 </script>
 
 <template>

@@ -17,6 +17,16 @@
             "import": "./dist/calendar.js",
             "require": "./dist/calendar.cjs"
         },
+        "./carousel": {
+            "types": "./dist/carousel.d.ts",
+            "import": "./dist/carousel.js",
+            "require": "./dist/carousel.cjs"
+        },
+        "./code-block": {
+            "types": "./dist/code-block.d.ts",
+            "import": "./dist/code-block.js",
+            "require": "./dist/code-block.cjs"
+        },
         "./hooks": {
             "types": "./dist/hooks.d.ts",
             "import": "./dist/hooks.js",

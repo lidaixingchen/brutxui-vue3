@@ -546,4 +546,73 @@ describe('useToast', () => {
             destroyFallback() // should not throw
         })
     })
+
+    // ── Toast Grouping ──────────────────────────────────────────
+    describe('Toast Grouping', () => {
+        it('does not group by default', () => {
+            const { toasts, addToast } = createToast()
+            addToast({ title: 'Test', variant: 'success' })
+            addToast({ title: 'Test', variant: 'success' })
+            expect(toasts.value.length).toBe(2)
+            expect(toasts.value[0].count).toBe(1)
+            expect(toasts.value[1].count).toBe(1)
+        })
+
+        it('groups when global grouping is enabled', () => {
+            const { toasts, addToast } = createToast(false, { grouping: true })
+            const id1 = addToast({ title: 'Test', variant: 'success' })
+            const id2 = addToast({ title: 'Test', variant: 'success' })
+            
+            expect(toasts.value.length).toBe(1)
+            expect(toasts.value[0].id).toBe(id1)
+            expect(toasts.value[0].count).toBe(2)
+            expect(id1).toBe(id2)
+        })
+
+        it('groups when local grouping is enabled per toast', () => {
+            const { toasts, addToast } = createToast()
+            const id1 = addToast({ title: 'Test', variant: 'success', grouping: true })
+            const id2 = addToast({ title: 'Test', variant: 'success', grouping: true })
+            
+            expect(toasts.value.length).toBe(1)
+            expect(toasts.value[0].count).toBe(2)
+            expect(id1).toBe(id2)
+        })
+
+        it('does not group if variant is different', () => {
+            const { toasts, addToast } = createToast(false, { grouping: true })
+            addToast({ title: 'Test', variant: 'success' })
+            addToast({ title: 'Test', variant: 'error' })
+            
+            expect(toasts.value.length).toBe(2)
+        })
+
+        it('does not group if title is different', () => {
+            const { toasts, addToast } = createToast(false, { grouping: true })
+            addToast({ title: 'Test 1', variant: 'success' })
+            addToast({ title: 'Test 2', variant: 'success' })
+            
+            expect(toasts.value.length).toBe(2)
+        })
+
+        it('resets duration timer and extends lifetime when grouped', () => {
+            const { toasts, addToast } = createToast(false, { grouping: true })
+            addToast({ title: 'Test', variant: 'success', duration: 5000 })
+            
+            vi.advanceTimersByTime(3000)
+            expect(toasts.value.length).toBe(1)
+            
+            // Add identical toast at t = 3000ms. Timer should be reset to a new 5000ms duration.
+            addToast({ title: 'Test', variant: 'success', duration: 5000 })
+            
+            // Advance by another 3000ms (total 6000ms). If timer wasn't reset, it would have expired at 5000ms.
+            vi.advanceTimersByTime(3000)
+            expect(toasts.value.length).toBe(1)
+            expect(toasts.value[0].count).toBe(2)
+            
+            // Advance by remaining 2000ms (total 8000ms). It should now expire.
+            vi.advanceTimersByTime(2000)
+            expect(toasts.value.length).toBe(0)
+        })
+    })
 })

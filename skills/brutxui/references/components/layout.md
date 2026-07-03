@@ -497,3 +497,34 @@ interface TreeNode {
 | `select` | `TreeNode` | 点击任意节点时触发 |
 | `expand` | `[id: string, expanded: boolean]` | 展开/折叠节点时触发 |
 | `check` | `[node: TreeNode, checked: boolean]` | 勾选/取消勾选节点时触发 |
+
+## Menu 导航菜单
+
+导航菜单组件，支持横向 (horizontal) 与纵向 (vertical) 排版，支持嵌套 `SubMenu` 及 router 自动跳转。
+
+```vue
+<Menu mode="vertical" :default-active="activeKey" :router="true">
+  <MenuItem index="dashboard">仪表盘</MenuItem>
+  <SubMenu index="settings">
+    <template #title>设置</template>
+    <MenuItem index="profile">个人资料</MenuItem>
+    <MenuItem index="security">安全设置</MenuItem>
+  </SubMenu>
+</Menu>
+```
+
+### Menu Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `mode` | `'horizontal' \| 'vertical'` | `'vertical'` | 菜单展示模式 |
+| `defaultActive` | `string` | `''` | 默认选中的激活索引值 |
+| `router` | `boolean` | `false` | 是否开启 Vue Router 自动跳转 |
+| `class` | `string` | — | 自定义样式类 |
+
+### SubMenu 插槽
+
+| 插槽 | 说明 |
+|------|------|
+| `title` | 定义子菜单标题（支持文本及 Icon 自定义） |
+| `default` | 嵌套的子菜单项 |

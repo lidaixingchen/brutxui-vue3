@@ -140,6 +140,8 @@ export default defineConfig({
                 index: resolve(__dirname, 'src/index.ts'),
                 locales: resolve(__dirname, 'src/locales/index.ts'),
                 calendar: resolve(__dirname, 'src/calendar.ts'),
+                carousel: resolve(__dirname, 'src/carousel.ts'),
+                'code-block': resolve(__dirname, 'src/code-block.ts'),
                 hooks: resolve(__dirname, 'src/hooks/index.ts'),
                 'brutalism-plugin': resolve(__dirname, 'src/lib/brutalism-plugin.js'),
                 'devtools-plugin': resolve(__dirname, 'src/lib/devtools-plugin.ts'),

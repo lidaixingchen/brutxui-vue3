@@ -975,3 +975,106 @@ const {
 | `matchesAccept` | `(file: File) => boolean` | 校验文件类型是否匹配 `accept` |
 | `isFileValid` | `(file: File) => boolean` | 综合校验（大小 + 类型） |
 | `filterValidFiles` | `(files: File[]) => File[]` | 过滤出有效文件 |
+
+## Select 一体化下拉框
+
+对低级 Select 原子原语的单体化封装组件，使用 `options` 驱动，且支持分组渲染。
+
+```vue
+<Select
+  v-model="value"
+  :options="options"
+  group-field="category"
+  group-label="categoryName"
+  placeholder="请选择水果"
+/>
+```
+
+### Select 属性 (Props)
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` / `v-model` | `string` | — | 选中的值 |
+| `options` | `SelectOption[]` | `[]` | 下拉可选项数组 |
+| `groupField` | `string` | — | 分组的字段属性名 |
+| `groupLabel` | `string` | — | 分组标签的属性名 |
+| `placeholder` | `string` | — | 占位文本 |
+| `disabled` | `boolean` | `false` | 是否禁用 |
+| `clearable` | `boolean` | `false` | 是否可清空 |
+
+---
+
+## Transfer 穿梭框
+
+双栏式数据转移组件，用于在一对列表之间交互式穿梭传输项目。
+
+```vue
+<Transfer
+  v-model="targetKeys"
+  :data="sourceData"
+  :filterable="true"
+  :titles="['源数据', '已选数据']"
+/>
+```
+
+### Transfer 属性 (Props)
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` / `v-model` | `(string \| number)[]` | `[]` | 右栏目标列表的 Key 数组 |
+| `data` | `TransferDataItem[]` | `[]` | 所有源选项列表数据 |
+| `filterable` | `boolean` | `false` | 是否开启本地模糊搜索 |
+| `filterMethod` | `(query: string, item: TransferDataItem) => boolean` | — | 自定义搜索过滤逻辑 |
+| `titles` | `string[]` | `['源列表', '目标列表']` | 左右侧列表卡片标题 |
+| `buttonTexts` | `string[]` | `['', '']` | 中间穿梭按钮文字文本 |
+
+---
+
+## Rate 评分组件
+
+多阶段星级评分组件，支持 HSL 炫酷填充色和精致弹性悬浮微交互。
+
+```vue
+<Rate
+  v-model="score"
+  :max="5"
+  :allow-half="true"
+  size="lg"
+/>
+```
+
+### Rate 属性 (Props)
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` / `v-model` | `number` | `0` | 评分分数 |
+| `max` | `number` | `5` | 最大评分星数 |
+| `allowHalf` | `boolean` | `false` | 是否允许选择半星分数 |
+| `readonly` | `boolean` | `false` | 是否为只读星级展示状态 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 星级图标尺寸尺寸 |
+
+---
+
+## Cascader 级联选择器
+
+逐级展开的选择器，用于在树状层级结构中进行路径选择，拥有完整的键盘 roving focus 交互。
+
+```vue
+<Cascader
+  v-model="regionPath"
+  :options="regionOptions"
+  :multiple="false"
+  :clearable="true"
+  placeholder="请选择省市区"
+/>
+```
+
+### Cascader 属性 (Props)
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `modelValue` / `v-model` | `CascaderValue` | — | 单选为一维路径数组 `(string \| number)[]`，多选为二维路径数组 `(string \| number)[][]` |
+| `options` | `CascaderOption[]` | `[]` | 级联层级数据源 |
+| `multiple` | `boolean` | `false` | 是否支持父子层级复选框多选 |
+| `clearable` | `boolean` | `false` | 是否支持清除选中项 |
+| `placeholder` | `string` | — | 选择框占位字符 |

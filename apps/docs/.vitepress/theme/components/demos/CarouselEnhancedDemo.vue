@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue'
+import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
 
 const slides = [
     { bg: 'bg-brutal-primary', label: '缩略图导航', desc: '底部缩略图快速跳转' },

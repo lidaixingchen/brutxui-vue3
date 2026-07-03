@@ -22,7 +22,7 @@ A touch-friendly carousel powered by Embla Carousel, featuring smooth physics-ba
 
 ```vue
 <script setup>
-import { Carousel, CarouselItem } from 'brutx-ui-vue'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 </script>
 
 <template>
@@ -64,8 +64,8 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue'
 The internal logic of the `Carousel` component has been extracted into a standalone `useCarousel` composable, which can be used independently to build fully custom carousel UIs. It wraps `embla-carousel-vue` with built-in autoplay, loop control, selected index tracking, and automatically respects the `prefers-reduced-motion` system preference (stops autoplay and disables transition animations when reduced motion is enabled).
 
 ```ts
-import { useCarousel } from 'brutx-ui-vue'
-import type { UseCarouselOptions } from 'brutx-ui-vue'
+import { useCarousel } from 'brutx-ui-vue/carousel'
+import type { UseCarouselOptions } from 'brutx-ui-vue/carousel'
 
 const options: UseCarouselOptions = {
     loop: true,
@@ -119,7 +119,7 @@ Carousel exposes a set of methods and state via `defineExpose`, allowing you to 
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { Carousel, CarouselItem } from 'brutx-ui-vue'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 
 const carouselRef = ref()
 </script>
@@ -200,7 +200,7 @@ const carouselRef = ref()
 
 ```vue
 <script setup>
-import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue'
+import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
 </script>
 
 <template>

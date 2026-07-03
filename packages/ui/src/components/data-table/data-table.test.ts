@@ -588,3 +588,93 @@ describe('DataTable programmatic control (defineExpose)', () => {
         expect(vm.pagination.pageCount.value).toBe(1)
     })
 })
+
+describe('DataTable virtual scroll & column filtering options', () => {
+    const filterColumns: DataTableColumn<TestRow>[] = [
+        { id: 'name', header: 'Name', accessorKey: 'name', filterType: 'text' },
+        { id: 'email', header: 'Email', accessorKey: 'email', filterType: 'select', filterOptions: [{ label: 'Alice', value: 'alice@example.com' }, { label: 'Bob', value: 'bob@example.com' }] },
+        { id: 'age', header: 'Age', accessorKey: 'age', filterType: 'multi-select', filterOptions: [{ label: '25', value: 25 }, { label: '30', value: 30 }] },
+    ]
+
+    it('uses div layout and applies role="row" in virtual scroll mode', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: filterColumns.map(c => ({ ...c, width: 100 })),
+            rowKey: 'id',
+            virtualScroll: { enabled: true, rowHeight: 'auto' },
+        })
+        expect(wrapper.find('table').exists()).toBe(false)
+        expect(wrapper.find('[role="grid"]').exists()).toBe(true)
+        expect(wrapper.html()).toContain('role="row"')
+    })
+
+    it('performs column text filtering correctly', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: filterColumns,
+            rowKey: 'id',
+            filterable: true,
+        })
+        const vm = wrapper.vm as any
+        vm.filter.filterState.value.columns.name = 'Alice'
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('Alice')
+    })
+
+    it('performs column select filtering correctly', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: filterColumns,
+            rowKey: 'id',
+            filterable: true,
+        })
+        const vm = wrapper.vm as any
+        vm.filter.filterState.value.columns.email = 'bob@example.com'
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('Bob')
+    })
+
+    it('performs column multi-select filtering correctly', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: filterColumns,
+            rowKey: 'id',
+            filterable: true,
+        })
+        const vm = wrapper.vm as any
+        vm.filter.filterState.value.columns.age = [25, 35]
+        await nextTick()
+        // Alice (25) and Charlie (35) should remain
+        expect(wrapper.findAll('tbody tr')).toHaveLength(2)
+        expect(wrapper.text()).toContain('Alice')
+        expect(wrapper.text()).toContain('Charlie')
+    })
+
+    it('performs column date-range filtering correctly', async () => {
+        const dateData = [
+            { id: 1, name: 'A', date: '2026-01-01' },
+            { id: 2, name: 'B', date: '2026-06-01' },
+            { id: 3, name: 'C', date: '2026-12-01' },
+        ]
+        const dateColumns = [
+            { id: 'name', header: 'Name', accessorKey: 'name' },
+            { id: 'date', header: 'Date', accessorKey: 'date', filterType: 'date-range' as const },
+        ]
+        const wrapper = mount(DataTable as any, {
+            props: {
+                data: dateData,
+                columns: dateColumns,
+                rowKey: 'id',
+                filterable: true,
+            },
+            global: globalProvide,
+        })
+        const vm = wrapper.vm as any
+        vm.filter.filterState.value.columns.date = { start: '2026-02-01', end: '2026-07-01' }
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('B')
+    })
+})

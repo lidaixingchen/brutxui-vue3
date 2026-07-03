@@ -30,7 +30,7 @@ pnpm add v-calendar
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { DatePicker } from 'brutx-ui-vue'
+import { DatePicker } from 'brutx-ui-vue/calendar'
 
 const date = ref(null)
 </script>
@@ -45,7 +45,7 @@ const date = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { DatePicker } from 'brutx-ui-vue'
+import { DatePicker } from 'brutx-ui-vue/calendar'
 
 const date = ref(null)
 
@@ -74,7 +74,7 @@ const shortcuts = [
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { DatePickerRange } from 'brutx-ui-vue'
+import { DatePickerRange } from 'brutx-ui-vue/calendar'
 
 const dateRange = ref(null)
 </script>
@@ -93,7 +93,7 @@ const dateRange = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { DateTimePicker } from 'brutx-ui-vue'
+import { DateTimePicker } from 'brutx-ui-vue/calendar'
 
 const dateTime = ref(null)
 </script>
@@ -123,7 +123,7 @@ const dateTime = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { TimePicker } from 'brutx-ui-vue'
+import { TimePicker } from 'brutx-ui-vue/calendar'
 
 const time = ref(null)
 </script>
@@ -138,7 +138,7 @@ const time = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { WeekPicker } from 'brutx-ui-vue'
+import { WeekPicker } from 'brutx-ui-vue/calendar'
 
 const week = ref(null)
 </script>
@@ -155,7 +155,7 @@ const week = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { MonthPicker } from 'brutx-ui-vue'
+import { MonthPicker } from 'brutx-ui-vue/calendar'
 
 const month = ref(null)
 </script>
@@ -170,7 +170,7 @@ const month = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { YearPicker } from 'brutx-ui-vue'
+import { YearPicker } from 'brutx-ui-vue/calendar'
 
 const year = ref(null)
 </script>
@@ -194,7 +194,7 @@ const year = ref(null)
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { DatePicker } from 'brutx-ui-vue'
+import { DatePicker } from 'brutx-ui-vue/calendar'
 
 const date = ref(null)
 const minDate = new Date(2026, 0, 1)
@@ -252,8 +252,8 @@ interface DatePickerRangeShortcut {
 `DatePicker` 等组件的弹出面板触发、显示格式化、清除、确认等逻辑已抽取为独立的 `useDatePicker` 组合式函数，可在需要构建完全自定义触发器或日历面板时单独使用。它负责管理面板开关状态、显示值与 `modelValue` 的同步，并通过传入的 `emit` 触发 `open` / `close` / `change` / `update:modelValue` 事件。
 
 ```ts
-import { useDatePicker } from 'brutx-ui-vue'
-import type { UseDatePickerOptions } from 'brutx-ui-vue'
+import { useDatePicker } from 'brutx-ui-vue/calendar'
+import type { UseDatePickerOptions } from 'brutx-ui-vue/calendar'
 
 const emit = defineEmits<{
     'update:modelValue': [value: Date | null]
@@ -314,7 +314,7 @@ const {
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { DatePicker } from 'brutx-ui-vue'
+import { DatePicker } from 'brutx-ui-vue/calendar'
 
 const pickerRef = ref()
 const date = ref(null)

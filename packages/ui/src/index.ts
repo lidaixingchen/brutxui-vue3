@@ -70,7 +70,8 @@ export { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 export { default as TooltipContent } from './components/tooltip/TooltipContent.vue'
 export { tooltipContentVariants } from './components/tooltip/tooltip-variants'
 
-export { SelectRoot as Select, SelectGroup, SelectValue } from 'reka-ui'
+export { default as Select } from './components/select/Select.vue'
+export { SelectGroup, SelectValue } from 'reka-ui'
 export { default as SelectTrigger } from './components/select/SelectTrigger.vue'
 export { default as SelectContent } from './components/select/SelectContent.vue'
 export { default as SelectItem } from './components/select/SelectItem.vue'
@@ -166,37 +167,9 @@ export { commandInputWrapperVariants, commandItemVariants } from './components/c
 export { default as Combobox } from './components/combobox/Combobox.vue'
 export type { ComboboxOption } from './components/combobox/combobox-types'
 
-export { default as Form } from './components/form/Form.vue'
-export { default as FormField } from './components/form/FormField.vue'
-export { default as FormItem } from './components/form/FormItem.vue'
-export { default as FormLabel } from './components/form/FormLabel.vue'
-export { default as FormControl } from './components/form/FormControl.vue'
-export { default as FormDescription } from './components/form/FormDescription.vue'
-export { default as FormMessage } from './components/form/FormMessage.vue'
-export { default as FormWizard } from './components/form/FormWizard.vue'
-export { default as FormConditional } from './components/form/FormConditional.vue'
-export { formFieldKey, formItemKey, formContextKey, formWizardContextKey } from './components/form/form-context'
-export type { FormFieldContext, FormItemContext } from './components/form/form-context'
-export type { FormStep, ValidationResult, FormWizardContext } from './components/form/form-wizard-types'
-export { useFormWizard } from './components/form/form-wizard-utils'
 
-export { default as Calendar } from './components/calendar/Calendar.vue'
 
-export { default as DatePicker } from './components/date-picker/DatePicker.vue'
-export { default as DatePickerPanel } from './components/date-picker/DatePickerPanel.vue'
-export { default as DatePickerRange } from './components/date-picker/DatePickerRange.vue'
-export { default as DatePickerRangePanel } from './components/date-picker/DatePickerRangePanel.vue'
-export { default as TimePicker } from './components/date-picker/TimePicker.vue'
-export { default as DateTimePicker } from './components/date-picker/DateTimePicker.vue'
-export { default as DateTimePickerPanel } from './components/date-picker/DateTimePickerPanel.vue'
-export { default as WeekPicker } from './components/date-picker/WeekPicker.vue'
-export { default as WeekPickerPanel } from './components/date-picker/WeekPickerPanel.vue'
-export { default as MonthPicker } from './components/date-picker/MonthPicker.vue'
-export { default as MonthPickerPanel } from './components/date-picker/MonthPickerPanel.vue'
-export { default as YearPicker } from './components/date-picker/YearPicker.vue'
-export { default as YearPickerPanel } from './components/date-picker/YearPickerPanel.vue'
-export { datePickerTriggerVariants, datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants, timePickerPanelVariants, timePickerTriggerVariants } from './components/date-picker/date-picker-variants'
-export type { DatePickerProps, DatePickerEmits, DatePickerSize, DatePickerVariant, DatePickerShortcut, DatePickerRangeProps, DatePickerRangeEmits, DatePickerRangeShortcut, DateRange, DateTimePickerProps, DateTimePickerEmits, WeekPickerProps, WeekPickerEmits, MonthPickerProps, MonthPickerEmits, YearPickerProps, YearPickerEmits } from './components/date-picker/types'
+
 
 export { default as ColorPicker } from './components/color-picker/ColorPicker.vue'
 export { default as ColorPickerPanel } from './components/color-picker/ColorPickerPanel.vue'
@@ -305,8 +278,7 @@ export { default as ProfilePage } from './components/profile-page/ProfilePage.vu
 export { default as ChartSection } from './components/chart-section/ChartSection.vue'
 export type { ChartDataPoint } from './components/chart-section/types'
 
-export { default as GallerySection } from './components/gallery-section/GallerySection.vue'
-export type { GalleryItem } from './components/gallery-section/types'
+
 
 export { default as UploadCard } from './components/upload-card/UploadCard.vue'
 
@@ -348,8 +320,7 @@ export { marqueeContainerVariants, marqueeTrackVariants } from './components/mar
 export { default as BeforeAfter } from './components/before-after/BeforeAfter.vue'
 export { beforeAfterHandleVariants } from './components/before-after/before-after-variants'
 
-export { default as CodeBlock } from './components/code-block/CodeBlock.vue'
-export { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVariants, codeBlockBodyVariants, codeBlockLineNumbersVariants, codeBlockCopyButtonVariants } from './components/code-block/code-block-variants'
+
 
 export { default as Timeline } from './components/timeline/Timeline.vue'
 export { default as TimelineItem } from './components/timeline/TimelineItem.vue'
@@ -359,11 +330,7 @@ export { default as TimelineConnector } from './components/timeline/TimelineConn
 export { default as TimelineContent } from './components/timeline/TimelineContent.vue'
 export { timelineDotVariants } from './components/timeline/timeline-variants'
 
-export { default as Carousel } from './components/carousel/Carousel.vue'
-export { default as CarouselEnhanced } from './components/carousel/CarouselEnhanced.vue'
-export { default as CarouselItem } from './components/carousel/CarouselItem.vue'
-export { carouselRootVariants, carouselButtonVariants } from './components/carousel/carousel-variants'
-export type { CarouselThumbnails, AutoplayIndicator, ParallaxEffect, CarouselEnhancedProps } from './components/carousel/types'
+
 
 export { default as TreeView } from './components/tree-view/TreeView.vue'
 export { default as TreeViewNode } from './components/tree-view/TreeViewNode.vue'
@@ -458,10 +425,7 @@ export { hardcoreInputVariants, hardcoreInputFaceVariants } from './components/h
 export { useReducedMotion } from './composables/useReducedMotion'
 export { useAudioEngine } from './composables/useAudioEngine'
 export { useCanvasInteraction } from './composables/useCanvasInteraction'
-export { useCarousel } from './composables/useCarousel'
-export type { UseCarouselOptions } from './composables/useCarousel'
-export { useDatePicker } from './composables/useDatePicker'
-export type { UseDatePickerOptions } from './composables/useDatePicker'
+
 export { useColorPicker } from './composables/useColorPicker'
 export type { UseColorPickerOptions } from './composables/useColorPicker'
 export { useAnimation } from './composables/useAnimation'
@@ -508,6 +472,11 @@ export { default as DescriptionsItem } from './components/descriptions/Descripti
 export { default as InfiniteScroll } from './components/infinite-scroll/InfiniteScroll.vue'
 export { useInfiniteScroll } from './components/infinite-scroll/useInfiniteScroll'
 
+// 新增组件 - Transfer & Rate
+export { default as Transfer } from './components/transfer/Transfer.vue'
+export type { TransferDataItem } from './components/transfer/Transfer.vue'
+export { default as Rate } from './components/rate/Rate.vue'
+
 // 通用工具类型
 export type {
     Size,
@@ -533,13 +502,23 @@ export type {
     RequiredBy,
 } from './types'
 
+// Cascader & Menu components
+export { default as Cascader } from './components/cascader/Cascader.vue'
+export type { CascaderOption, CascaderValue } from './components/cascader/cascader-types'
+export { cascaderTriggerVariants, cascaderContentVariants, cascaderItemVariants } from './components/cascader/cascader-variants'
+
+export { default as Menu } from './components/menu/Menu.vue'
+export { default as MenuItem } from './components/menu/MenuItem.vue'
+export { default as SubMenu } from './components/menu/SubMenu.vue'
+export type { MenuContext } from './components/menu/menu-types'
+
 // Composable 返回类型
-export type { UseCarouselReturn } from './composables/useCarousel'
+
 export type { UseClearableReturn } from './composables/useClearable'
 export type { UseClipboardReturn } from './composables/useClipboard'
 export type { UseToastReturn } from './composables/useToast'
 export type { UseThemeReturn } from './composables/useTheme'
-export type { UseDatePickerReturn } from './composables/useDatePicker'
+
 export type { UseColorPickerReturn } from './composables/useColorPicker'
 export type { UseFormFieldValidationReturn } from './composables/useFormFieldValidation'
 export type { UseAnimationReturn } from './composables/useAnimation'

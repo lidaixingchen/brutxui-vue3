@@ -30,7 +30,8 @@ pnpm add vee-validate @vee-validate/zod zod
 <script setup>
 import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'brutx-ui-vue'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from 'brutx-ui-vue/form'
+import { Input, Button } from 'brutx-ui-vue'
 
 const schema = toTypedSchema(z.object({
     username: z.string().min(2).max(50),
@@ -77,7 +78,9 @@ A wizard-style form built on the `Stepper` component, supporting step validation
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { FormWizard, FormStep, Input } from 'brutx-ui-vue'
+import { FormWizard } from 'brutx-ui-vue/form'
+import type { FormStep } from 'brutx-ui-vue/form'
+import { Input } from 'brutx-ui-vue'
 
 const values = ref({})
 
@@ -340,7 +343,7 @@ Access the Form component instance via `ref` to call the following methods:
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { Form } from 'brutx-ui-vue'
+import { Form } from 'brutx-ui-vue/form'
 
 const formRef = ref(null)
 

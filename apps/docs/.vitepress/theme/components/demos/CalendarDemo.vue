@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Calendar } from 'brutx-ui-vue'
+import { Calendar } from 'brutx-ui-vue/calendar'
 
 const selectedDate = ref<Date | null>(null)
 const rangeDate = ref<Date[] | null>(null)

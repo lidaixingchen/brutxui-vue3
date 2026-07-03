@@ -145,6 +145,53 @@ const data = ref<User[]>([
 
 分页器包含首页、上一页、下一页、末页按钮，以及每页条数选择器。
 
+### 列筛选
+
+支持在每一列头部添加 Popover 筛选器。支持文本搜索、单选（Select）、多选（Multi-Select）以及日期范围（Date Range）筛选。
+
+```vue
+<script setup lang="ts">
+const columns = [
+    { id: 'name', header: '姓名', accessorKey: 'name', filterType: 'text' },
+    {
+        id: 'role',
+        header: '角色',
+        accessorKey: 'role',
+        filterType: 'select',
+        filterOptions: [
+            { label: '管理员', value: '管理员' },
+            { label: '编辑', value: '编辑' }
+        ]
+    },
+    {
+        id: 'status',
+        header: '状态',
+        accessorKey: 'status',
+        filterType: 'multi-select',
+        filterOptions: [
+            { label: '活跃', value: '活跃' },
+            { label: '未激活', value: '未激活' }
+        ]
+    },
+    {
+        id: 'date',
+        header: '入职日期',
+        accessorKey: 'date',
+        filterType: 'date-range'
+    }
+]
+</script>
+
+<template>
+    <DataTable
+        :data="data"
+        :columns="columns"
+        :filterable="true"
+        row-key="id"
+    />
+</template>
+```
+
 ### 自定义单元格
 
 ```vue
@@ -296,6 +343,8 @@ const columns: DataTableColumn<User>[] = [
 | `minWidth` | `number` | 最小宽度 |
 | `maxWidth` | `number` | 最大宽度 |
 | `align` | `'left' \| 'center' \| 'right'` | 对齐方式 |
+| `filterType` | `'text' \| 'select' \| 'multi-select' \| 'date-range'` | 筛选类型，开启后表头会显示对应筛选 Popover |
+| `filterOptions` | `Array<{ label: string; value: any }>` | 筛选可选项，供 `select` 和 `multi-select` 筛选使用 |
 
 ### DataTableColumnHeaderContext
 
@@ -314,14 +363,14 @@ const columns: DataTableColumn<User>[] = [
 | 字段 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `enabled` | `boolean` | — | 是否启用虚拟滚动 |
-| `rowHeight` | `number` | `48` | 每行预估高度（像素） |
+| `rowHeight` | `number \| 'auto'` | `48` | 每行预估高度（像素），`'auto'` 为根据 DOM 自动测量动态高度（要求所有列必须显式配置宽度） |
 
 ### DataTableFilterState
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `global` | `string` | 全局筛选关键字 |
-| `columns` | `Record<string, string>` | 按列 ID 索引的列级筛选值 |
+| `columns` | `Record<string, any>` | 按列 ID 索引的列级筛选值 |
 
 ## 程序化控制
 

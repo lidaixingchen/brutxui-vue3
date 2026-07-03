@@ -18,7 +18,7 @@ export interface DataTableColumnHeaderContext {
 
 export interface DataTableVirtualScroll {
     enabled?: boolean
-    rowHeight?: number
+    rowHeight?: number | 'auto'
 }
 
 export interface DataTableColumn<T extends object = Record<string, unknown>> {
@@ -38,6 +38,11 @@ export interface DataTableColumn<T extends object = Record<string, unknown>> {
     fixed?: 'left' | 'right'
     /** 列类型 */
     type?: 'default' | 'expand'
+    /** 过滤器类型 */
+    filterType?: 'text' | 'select' | 'multi-select' | 'date-range'
+    /** 过滤可选项 */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    filterOptions?: Array<{ label: string; value: any }>
 }
 
 export interface DataTableSpanMethodParams<T extends object = Record<string, unknown>> {
@@ -80,7 +85,8 @@ export interface DataTableSortState {
 
 export interface DataTableFilterState {
     global?: string
-    columns: Record<string, string>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    columns: Record<string, any>
 }
 
 export interface DataTablePaginationState {

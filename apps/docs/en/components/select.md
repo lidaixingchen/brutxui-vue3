@@ -51,6 +51,47 @@ import {
 </template>
 ```
 
+### Unified Usage
+
+In addition to using individual atomic components, you can use the pre-packaged unified `Select` component, which supports passing an `options` array and automatically grouping items.
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Select } from 'brutx-ui-vue'
+
+const selectedValue = ref('')
+
+const foodOptions = [
+    { label: 'Apple', value: 'apple', category: 'fruits', categoryName: 'Fruits' },
+    { label: 'Banana', value: 'banana', category: 'fruits', categoryName: 'Fruits' },
+    { label: 'Carrot', value: 'carrot', category: 'vegetables', categoryName: 'Vegetables' },
+    { label: 'Potato', value: 'potato', category: 'vegetables', categoryName: 'Vegetables' },
+    { label: 'Milk', value: 'milk' } // ungrouped
+]
+</script>
+
+<template>
+    <!-- Basic Usage -->
+    <Select
+        v-model="selectedValue"
+        :options="foodOptions"
+        placeholder="Select your food"
+        class="w-[280px]"
+    />
+
+    <!-- Auto Grouping Usage -->
+    <Select
+        v-model="selectedValue"
+        :options="foodOptions"
+        group-field="category"
+        group-label="categoryName"
+        placeholder="Select food (Grouped)"
+        class="w-[280px]"
+    />
+</template>
+```
+
 ### Using v-model
 
 ```vue
@@ -98,7 +139,28 @@ const selectedFruit = ref('')
 
 ## Props
 
-### Select
+### Select (Unified Component)
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `SelectOption[]` | `[]` | Options data source, where each item contains `label`, `value`, `disabled`, etc. |
+| `groupField` | `string` | — | The key to group options by (e.g., `category`) |
+| `groupLabel` | `string` | — | The key containing the group display label in options (e.g., `categoryName`), defaults to the value of `groupField` |
+| `placeholder` | `string` | `'Select an option'` | Placeholder text |
+| `disabled` | `boolean` | `false` | Whether disabled |
+| `required` | `boolean` | `false` | Whether required |
+| `name` | `string` | — | Form field name |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Trigger size |
+| `variant` | `'default' \| 'error' \| 'success'` | `'default'` | Border style variant |
+| `errorMessage` | `string` | — | Error message text |
+| `clearable` | `boolean` | `false` | Whether clearable |
+| `position` | `'popper' \| 'item-aligned'` | `'popper'` | Dropdown menu positioning strategy |
+| `class` | `string` | — | Root component (trigger) CSS class |
+| `triggerClass` | `string` | — | Custom trigger CSS class |
+| `contentClass` | `string` | — | Custom dropdown content panel CSS class |
+| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Option selection variant |
+
+### Select (Atomic Component)
 
 Root component that inherits all props from reka-ui `SelectRoot`. Common props are listed below:
 

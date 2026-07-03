@@ -28,7 +28,7 @@ pnpm add prismjs
 
 ```vue
 <script setup>
-import { CodeBlock } from 'brutx-ui-vue'
+import { CodeBlock } from 'brutx-ui-vue/code-block'
 
 const codeString = `const app = createApp(App)
 app.mount('#app')`
@@ -50,7 +50,7 @@ The `maxLines` prop limits the maximum visible lines in the code area. When the 
 
 ```vue
 <script setup>
-import { CodeBlock } from 'brutx-ui-vue'
+import { CodeBlock } from 'brutx-ui-vue/code-block'
 
 const longCode = `function quickSort(arr) {
     if (arr.length <= 1) return arr

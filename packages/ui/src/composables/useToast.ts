@@ -13,6 +13,8 @@ export interface ToastItem {
     title?: string
     description?: string
     duration?: number
+    count?: number
+    grouping?: boolean
 }
 
 export interface ToastStackOptions {
@@ -56,9 +58,10 @@ export interface UseToastReturn {
 const TOAST_KEY: InjectionKey<UseToastReturn> = Symbol('brutx-toast')
 export const DEFAULT_TOAST_DURATION = 5000
 
-export function createToast(isFallback = false): UseToastReturn {
+export function createToast(isFallback = false, globalOptions?: { grouping?: boolean }): UseToastReturn {
     const toasts = ref<ToastItem[]>([])
     const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
+    const globalGrouping = globalOptions?.grouping ?? false
 
     function clearTimer(id: string) {
         const timerId = timerMap.get(id)
@@ -69,6 +72,35 @@ export function createToast(isFallback = false): UseToastReturn {
     }
 
     function addToast(toast: Omit<ToastItem, 'id'>) {
+        const isGroupingEnabled = toast.grouping ?? globalGrouping
+        if (isGroupingEnabled) {
+            const existingIndex = toasts.value.findIndex(
+                (t) => t.title === toast.title && t.variant === toast.variant
+            )
+            if (existingIndex !== -1) {
+                const existing = toasts.value[existingIndex]
+                const updatedCount = (existing.count ?? 1) + 1
+                clearTimer(existing.id)
+
+                const updatedToast: ToastItem = {
+                    ...existing,
+                    ...toast,
+                    id: existing.id,
+                    count: updatedCount,
+                }
+                const newToasts = [...toasts.value]
+                newToasts[existingIndex] = updatedToast
+                toasts.value = newToasts
+
+                const duration = toast.duration ?? DEFAULT_TOAST_DURATION
+                if (duration > 0 && isClient) {
+                    const timerId = window.setTimeout(() => removeToast(existing.id), duration)
+                    timerMap.set(existing.id, timerId)
+                }
+                return existing.id
+            }
+        }
+
         const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
         if (toasts.value.length >= MAX_TOASTS) {
             const removed = toasts.value[0]
@@ -77,7 +109,7 @@ export function createToast(isFallback = false): UseToastReturn {
             }
             toasts.value = toasts.value.slice(1)
         }
-        toasts.value = [...toasts.value, { ...toast, id }]
+        toasts.value = [...toasts.value, { ...toast, id, count: toast.count ?? 1 }]
         const duration = toast.duration ?? DEFAULT_TOAST_DURATION
         if (duration > 0 && isClient) {
             const timerId = window.setTimeout(() => removeToast(id), duration)
@@ -184,8 +216,8 @@ function destroyFallback() {
     }
 }
 
-export function provideToast(): UseToastReturn {
-    const toast = createToast()
+export function provideToast(globalOptions?: { grouping?: boolean }): UseToastReturn {
+    const toast = createToast(false, globalOptions)
     provide(TOAST_KEY, toast)
     return toast
 }

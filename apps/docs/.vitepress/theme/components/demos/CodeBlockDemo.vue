@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CodeBlock } from 'brutx-ui-vue'
+import { CodeBlock } from 'brutx-ui-vue/code-block'
 
 const jsCode = `const greeting = "Hello Brutalist Design!";
 console.log(greeting);

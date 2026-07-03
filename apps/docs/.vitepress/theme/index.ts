@@ -111,6 +111,8 @@ import TreeSelectDemo from './components/demos/TreeSelectDemo.vue'
 import TypewriterTextDemo from './components/demos/TypewriterTextDemo.vue'
 import ColorModeSwitcherDemo from './components/demos/ColorModeSwitcherDemo.vue'
 import DataTableDemo from './components/demos/DataTableDemo.vue'
+import TransferDemo from './components/demos/TransferDemo.vue'
+import RateDemo from './components/demos/RateDemo.vue'
 import 'v-calendar/style.css'
 import './style.css'
 

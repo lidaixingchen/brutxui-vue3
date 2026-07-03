@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Carousel, CarouselItem } from 'brutx-ui-vue'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 
 const slides = [
     { bg: 'bg-brutal-primary', label: '🔥 新粗野主义', desc: '大胆边框 + 硬朗阴影' },

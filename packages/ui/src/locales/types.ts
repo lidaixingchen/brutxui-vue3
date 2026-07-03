@@ -131,6 +131,20 @@ export interface TreeSelectLocale {
     clear: string
 }
 
+export interface CascaderLocale {
+    placeholder: string
+    emptyText: string
+    selectedCount: string
+    clear: string
+}
+
+export interface TransferLocale {
+    sourceTitle: string
+    targetTitle: string
+    placeholder: string
+    emptyText: string
+}
+
 export interface StepperLocale {
     progressSteps: string
     step: string
@@ -568,6 +582,8 @@ export interface Locale {
     breadcrumb: BreadcrumbLocale
     treeView: TreeViewLocale
     treeSelect: TreeSelectLocale
+    cascader: CascaderLocale
+    transfer: TransferLocale
     stepper: StepperLocale
     emptyState: EmptyStateLocale
     testimonialCard: TestimonialCardLocale

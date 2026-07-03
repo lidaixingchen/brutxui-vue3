@@ -14,6 +14,9 @@ const props = withDefaults(defineProps<VirtualScrollProps>(), {
     overscan: 5,
     scrollEndThreshold: 50,
     class: undefined,
+    dynamicHeight: false,
+    role: 'list',
+    itemRole: 'listitem',
 })
 
 const emit = defineEmits<VirtualScrollEmits>()
@@ -29,6 +32,8 @@ interface VirtualizerInstance {
     getTotalSize: () => number
     scrollToIndex: (index: number) => void
     measure: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    measureElement: (el: any) => void
 }
 
 const virtualizerRef = shallowRef<VirtualizerInstance | null>(null)
@@ -69,7 +74,7 @@ import('@tanstack/vue-virtual')
         )
 
         stopWatchOptions = watch(
-            () => [props.items.length, props.itemHeight, props.overscan],
+            () => [props.items.length, props.itemHeight, props.overscan, props.dynamicHeight],
             () => {
                 virtualizer.setOptions({
                     ...getOptions(),
@@ -147,7 +152,14 @@ function scrollToIndex(index: number) {
     virtualizerRef.value.scrollToIndex(clampedIndex)
 }
 
-defineExpose({ scrollToIndex })
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function measureElement(el: any) {
+    if (virtualizerRef.value && 'measureElement' in virtualizerRef.value) {
+        virtualizerRef.value.measureElement(el)
+    }
+}
+
+defineExpose({ scrollToIndex, measureElement, virtualizer: virtualizerRef })
 </script>
 
 <template>
@@ -167,7 +179,7 @@ defineExpose({ scrollToIndex })
         v-else
         ref="parentRef"
         :class="rootClasses"
-        role="list"
+        :role="props.role"
         :aria-label="t('virtualScroll.label')"
     >
         <!-- 空状态 -->
@@ -188,6 +200,7 @@ defineExpose({ scrollToIndex })
             <div
                 v-for="virtualRow in virtualItems"
                 :key="Number(virtualRow.key)"
+                :ref="el => { if (el && props.dynamicHeight) measureElement(el) }"
                 :class="cn(
                     virtualScrollItemVariants({ variant: props.variant }),
                     props.variant === 'striped' && virtualRow.index % 2 === 1 && 'bg-brutal-muted/50'
@@ -197,10 +210,10 @@ defineExpose({ scrollToIndex })
                     top: 0,
                     left: 0,
                     width: '100%',
-                    height: `${virtualRow.size}px`,
+                    height: props.dynamicHeight ? undefined : `${virtualRow.size}px`,
                     transform: `translateY(${virtualRow.start}px)`,
                 }"
-                role="listitem"
+                :role="props.itemRole"
                 :aria-setsize="items.length"
                 :aria-posinset="virtualRow.index + 1"
             >

@@ -104,7 +104,7 @@ const data: User[] = [
 | `pageSizeOptions` | `number[]` | `[10, 20, 50, 100]` | 每页条数选项 |
 | `loading` | `boolean` | `false` | 是否显示加载状态 |
 | `emptyMessage` | `string` | 国际化默认值 | 数据为空时的提示信息 |
-| `virtualScroll` | `DataTableVirtualScroll` | — | 虚拟滚动配置 |
+| `virtualScroll` | `DataTableVirtualScroll` | — | 虚拟滚动配置，其属性 `rowHeight` 支持 `number \| 'auto'`，开启后自动切换为 ARIA 语义化 div 渲染 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 表格尺寸 |
 | `dense` | `boolean` | `false` | 是否启用紧凑密度 |
 | `striped` | `boolean` | `true` | 是否显示条纹 |
@@ -125,10 +125,12 @@ const data: User[] = [
 | `cell` | `(props: { row: T; value: unknown }) => VNode \| string` | 自定义单元格渲染 |
 | `sortable` | `boolean` | 是否可排序，默认 `true` |
 | `hidden` | `boolean` | 是否隐藏 |
-| `width` | `number \| 'auto'` | 列宽度 |
+| `width` | `number \| 'auto'` | 列宽度（虚拟滚动模式下不可为 'auto'，必须显式定义宽度数值） |
 | `align` | `'left' \| 'center' \| 'right'` | 对齐方式 |
 | `fixed` | `'left' \| 'right'` | 固定列方向 |
 | `type` | `'default' \| 'expand'` | 列类型（`expand` 为展开列） |
+| `filterType` | `'text' \| 'select' \| 'multi-select' \| 'date-range'` | 列级筛选器类型 |
+| `filterOptions` | `{ label: string; value: unknown }[]` | 筛选器列表选项（适用 select / multi-select） |
 
 ### DataTable 事件
 

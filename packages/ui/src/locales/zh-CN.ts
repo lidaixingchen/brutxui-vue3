@@ -116,6 +116,18 @@ export const zhCN: Locale = {
         selectedCount: '已选 {count} 项',
         clear: '清除',
     },
+    cascader: {
+        placeholder: '请选择...',
+        emptyText: '暂无数据。',
+        selectedCount: '已选 {count} 项',
+        clear: '清除',
+    },
+    transfer: {
+        sourceTitle: '源列表',
+        targetTitle: '目标列表',
+        placeholder: '输入关键词搜索',
+        emptyText: '暂无数据',
+    },
     stepper: {
         progressSteps: '进度步骤',
         step: '第 {index} 步：{title}',

@@ -38,11 +38,52 @@ export function useDataTableFilter<T extends object>(
 
         Object.entries(filterState.value.columns).forEach(([columnId, filterValue]) => {
             if (filterValue === undefined || filterValue === null || filterValue === '') return
+            if (Array.isArray(filterValue) && filterValue.length === 0) return
+
             const col = visibleColumns.value.find((c) => c.id === columnId)
             if (!col) return
-            result = result.filter((row) =>
-                String(getCellValue(row, col)).toLowerCase().includes(String(filterValue).toLowerCase()),
-            )
+
+            if (col.filterType === 'select') {
+                result = result.filter((row) => {
+                    const val = getCellValue(row, col)
+                    return String(val) === String(filterValue)
+                })
+            } else if (col.filterType === 'multi-select') {
+                result = result.filter((row) => {
+                    const val = getCellValue(row, col)
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const filterArr = filterValue as any[]
+                    return filterArr.some((item) => String(item) === String(val))
+                })
+            } else if (col.filterType === 'date-range') {
+                result = result.filter((row) => {
+                    const val = getCellValue(row, col)
+                    if (!val) return false
+                    const cellDate = new Date(val as string | number | Date).getTime()
+                    if (isNaN(cellDate)) return false
+
+                    let start: number | null = null
+                    let end: number | null = null
+
+                    if (Array.isArray(filterValue)) {
+                        start = filterValue[0] ? new Date(filterValue[0]).getTime() : null
+                        end = filterValue[1] ? new Date(filterValue[1]).getTime() : null
+                    } else if (filterValue && typeof filterValue === 'object') {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const obj = filterValue as any
+                        start = obj.start ? new Date(obj.start).getTime() : null
+                        end = obj.end ? new Date(obj.end).getTime() : null
+                    }
+
+                    if (start !== null && !isNaN(start) && cellDate < start) return false
+                    if (end !== null && !isNaN(end) && cellDate > end) return false
+                    return true
+                })
+            } else {
+                result = result.filter((row) =>
+                    String(getCellValue(row, col)).toLowerCase().includes(String(filterValue).toLowerCase()),
+                )
+            }
         })
 
         return result
