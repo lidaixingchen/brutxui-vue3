@@ -1,15 +1,23 @@
 import { vi } from 'vitest'
-
-// Mock useLocale before importing components that use it
-vi.mock('@/composables/useLocale', () => ({
-    useLocale: () => ({
-        t: (key: string) => key,
-    }),
-}))
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import type { Locale } from '@/locales/types'
 
 import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import VirtualScroll from './VirtualScroll.vue'
+
+const testLocale: Locale = {
+    virtualScroll: {
+        label: 'virtualScroll.label',
+        empty: 'virtualScroll.empty',
+    },
+} as Locale
+
+const globalProvide = {
+    provide: {
+        [LOCALE_INJECTION_KEY as symbol]: testLocale,
+    },
+}
 
 interface VirtualScrollExposed {
     scrollToIndex: (index: number) => void
@@ -55,8 +63,15 @@ describe('VirtualScroll', () => {
         name: `Item ${i + 1}`,
     }))
 
+    function mountComponent(options: Parameters<typeof mount>[1] = {}) {
+        return mount(VirtualScroll, {
+            ...options,
+            global: globalProvide,
+        })
+    }
+
     it('renders with items', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
             },
@@ -71,7 +86,7 @@ describe('VirtualScroll', () => {
     })
 
     it('renders empty state when no items', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: [],
             },
@@ -82,7 +97,7 @@ describe('VirtualScroll', () => {
     })
 
     it('applies size variant classes', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
                 size: 'lg',
@@ -94,7 +109,7 @@ describe('VirtualScroll', () => {
     })
 
     it('applies item variant classes for default variant', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
                 variant: 'default',
@@ -108,7 +123,7 @@ describe('VirtualScroll', () => {
     })
 
     it('has correct accessibility attributes', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
             },
@@ -116,11 +131,11 @@ describe('VirtualScroll', () => {
         await flushPromises()
 
         expect(wrapper.attributes('role')).toBe('list')
-        expect(['virtualScroll.label', '虚拟滚动列表']).toContain(wrapper.attributes('aria-label'))
+        expect(wrapper.attributes('aria-label')).toBe('virtualScroll.label')
     })
 
     it('exposes scrollToIndex method', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
             },
@@ -132,7 +147,7 @@ describe('VirtualScroll', () => {
     })
 
     it('calls virtualizer.scrollToIndex when scrollToIndex is invoked', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
             },
@@ -147,7 +162,7 @@ describe('VirtualScroll', () => {
     })
 
     it('passes different indices through to virtualizer', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
             },
@@ -166,7 +181,7 @@ describe('VirtualScroll', () => {
     })
 
     it('applies item variant classes for striped variant based on index', async () => {
-        const wrapper = mount(VirtualScroll, {
+        const wrapper = mountComponent({
             props: {
                 items: mockItems,
                 variant: 'striped',

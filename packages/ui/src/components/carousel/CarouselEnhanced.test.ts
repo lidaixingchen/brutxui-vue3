@@ -2,16 +2,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { ref, computed } from 'vue'
 import CarouselEnhanced from './CarouselEnhanced.vue'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import type { Locale } from '@/locales/types'
 
-// Mock useLocale
-vi.mock('@/composables/useLocale', () => ({
-    useLocale: () => ({
-        t: (key: string, params?: Record<string, unknown>) => {
-            if (params) return `${key} ${JSON.stringify(params)}`
-            return key
+const testLocale: Locale = {
+    carousel: {
+        previousSlide: 'carousel.previousSlide',
+        nextSlide: 'carousel.nextSlide',
+        goToSlide: 'carousel.goToSlide {index}',
+    },
+} as Locale
+
+function mountCarousel(options: Parameters<typeof mount>[1] = {}) {
+    return mount(CarouselEnhanced, {
+        ...options,
+        global: {
+            provide: {
+                [LOCALE_INJECTION_KEY as symbol]: testLocale,
+            },
         },
-    }),
-}))
+    })
+}
 
 // Mock useCarouselEnhanced - 在 happy-dom 测试环境中 embla-carousel 无法完整初始化，
 // 因为 happy-dom 缺少真实的布局引擎。scrollSnaps 需要通过 emblaApi 初始化后填充，
@@ -49,7 +60,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render with default props', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             slots: {
                 default: '<div>Slide 1</div>',
             },
@@ -58,7 +69,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render arrows when showArrows is true', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: { showArrows: true },
             slots: {
                 default: '<div>Slide 1</div>',
@@ -69,7 +80,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should not render arrows when showArrows is false', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: { showArrows: false },
             slots: {
                 default: '<div>Slide 1</div>',
@@ -80,7 +91,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render progress indicator when configured', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: {
                 autoplay: true,
                 autoplayIndicator: { type: 'progress' },
@@ -93,7 +104,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render fraction indicator when configured', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: {
                 autoplay: true,
                 autoplayIndicator: { type: 'fraction' },
@@ -108,7 +119,7 @@ describe('CarouselEnhanced', () => {
     it('should render dots indicator when configured', () => {
         // 模拟 embla 初始化后有 2 个 scroll snap 的状态
         mockScrollSnaps.value = [0, 1]
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: {
                 autoplay: true,
                 autoplayIndicator: { type: 'dots' },
@@ -124,7 +135,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render thumbnails when configured', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: {
                 thumbnails: { show: true },
             },
@@ -137,7 +148,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should apply parallax style when configured', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             props: {
                 parallax: { enabled: true, scale: 1.2 },
             },
@@ -150,7 +161,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should expose control methods', () => {
-        const wrapper = mount(CarouselEnhanced, {
+        const wrapper = mountCarousel( {
             slots: {
                 default: '<div>Slide 1</div>',
             },
@@ -167,7 +178,7 @@ describe('CarouselEnhanced', () => {
         const sizes = ['sm', 'md', 'lg', 'full', 'default'] as const
 
         sizes.forEach((size) => {
-            const wrapper = mount(CarouselEnhanced, {
+            const wrapper = mountCarousel( {
                 props: { size },
                 slots: {
                     default: '<div>Slide 1</div>',
@@ -181,7 +192,7 @@ describe('CarouselEnhanced', () => {
         const positions = ['bottom', 'left', 'right'] as const
 
         positions.forEach((position) => {
-            const wrapper = mount(CarouselEnhanced, {
+            const wrapper = mountCarousel( {
                 props: {
                     thumbnails: { show: true, position },
                 },
@@ -197,7 +208,7 @@ describe('CarouselEnhanced', () => {
         const sizes = ['sm', 'md', 'lg'] as const
 
         sizes.forEach((size) => {
-            const wrapper = mount(CarouselEnhanced, {
+            const wrapper = mountCarousel( {
                 props: {
                     thumbnails: { show: true, size },
                 },
