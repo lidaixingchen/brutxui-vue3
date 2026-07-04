@@ -446,8 +446,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     :aria-expanded="expandable ? isRowExpanded(displayData[rowIndex]) : undefined"
                                 >
                                     <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center" role="gridcell">
-                                        <button
-                                            class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            class="p-1 h-auto w-auto"
                                             :aria-label="isRowExpanded(displayData[rowIndex]) ? 'Collapse row' : 'Expand row'"
                                             @click="toggleExpandRow(displayData[rowIndex])"
                                         >
@@ -459,7 +461,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                                 v-else
                                                 class="w-4 h-4 transition-transform"
                                             />
-                                        </button>
+                                        </Button>
                                     </div>
                                     <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="gridcell">
                                         <Checkbox
@@ -482,8 +484,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         role="gridcell"
                                     >
                                         <template v-if="column.type === 'expand'">
-                                            <button
-                                                class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                class="p-1 h-auto w-auto"
                                                 @click="toggleExpandRow(displayData[rowIndex])"
                                             >
                                                 <ChevronDown
@@ -494,7 +498,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                                     v-else
                                                     class="w-4 h-4 transition-transform"
                                                 />
-                                            </button>
+                                            </Button>
                                         </template>
                                         <template v-else>
                                             <slot :name="`cell-${column.id}`" :row="displayData[rowIndex]" :value="getCellValue(displayData[rowIndex], column)">
@@ -609,8 +613,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 :aria-expanded="expandable ? isRowExpanded(row) : undefined"
                             >
                                 <td v-if="expandable" class="w-10 px-2 py-3 text-center" role="gridcell">
-                                    <button
-                                        class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        class="p-1 h-auto w-auto"
                                         :aria-label="isRowExpanded(row) ? 'Collapse row' : 'Expand row'"
                                         @click="toggleExpandRow(row)"
                                     >
@@ -622,7 +628,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                             v-else
                                             class="w-4 h-4 transition-transform"
                                         />
-                                    </button>
+                                    </Button>
                                 </td>
                                 <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
                                     <Checkbox
@@ -650,8 +656,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     v-show="!getSpanMethodResult(row, column, rowIndex, columnIndex) || (getSpanMethodResult(row, column, rowIndex, columnIndex)![0] !== 0 && getSpanMethodResult(row, column, rowIndex, columnIndex)![1] !== 0)"
                                 >
                                     <template v-if="column.type === 'expand'">
-                                        <button
-                                            class="p-1 hover:bg-brutal-muted rounded-sm transition-colors"
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            class="p-1 h-auto w-auto"
                                             @click="toggleExpandRow(row)"
                                         >
                                             <ChevronDown
@@ -662,7 +670,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                                 v-else
                                                 class="w-4 h-4 transition-transform"
                                             />
-                                        </button>
+                                        </Button>
                                     </template>
                                     <template v-else>
                                         <slot :name="`cell-${column.id}`" :row="row" :value="getCellValue(row, column)">

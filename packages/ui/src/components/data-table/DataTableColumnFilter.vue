@@ -28,7 +28,7 @@ const { t } = useLocale()
 
 // 统一的过滤器更新方法
 function updateFilterValue(val: any) {
-    const columns = { ...props.filterState.columns }
+    const columns = { ...(props.filterState.columns || {}) }
     if (val === undefined || val === null || val === '') {
         delete columns[props.column.id]
     } else {
@@ -68,7 +68,7 @@ function isMultiSelectChecked(value: any): boolean {
 }
 
 function handleMultiSelectChange(value: any, checked: boolean | 'indeterminate') {
-    const columns = { ...props.filterState.columns }
+    const columns = { ...(props.filterState.columns || {}) }
     let vals = columns[props.column.id]
     if (!Array.isArray(vals)) {
         vals = []
@@ -97,7 +97,7 @@ function getDateRangeVal(bound: 'start' | 'end'): string {
 }
 
 function handleDateRangeChange(bound: 'start' | 'end', val: string) {
-    const columns = { ...props.filterState.columns }
+    const columns = { ...(props.filterState.columns || {}) }
     let current = columns[props.column.id]
     if (!current || typeof current !== 'object' || Array.isArray(current)) {
         current = { start: '', end: '' }
@@ -114,7 +114,7 @@ function handleDateRangeChange(bound: 'start' | 'end', val: string) {
 
 // 重置当前列的过滤器
 function resetColumnFilter() {
-    const columns = { ...props.filterState.columns }
+    const columns = { ...(props.filterState.columns || {}) }
     delete columns[props.column.id]
     emit('update:filterState', {
         ...props.filterState,
