@@ -1,0 +1,108 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "watermark",
+  "type": "registry:ui",
+  "title": "Watermark",
+  "description": "Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/watermark/Watermark.vue",
+      "content": "<script setup lang=\"ts\">\nimport { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'\nimport { isClient } from '@/lib/env'\n\ninterface WatermarkFont {\n    color?: string\n    fontSize?: number | string\n    fontWeight?: 'normal' | 'light' | 'weight' | 'bold' | number\n    fontStyle?: 'none' | 'normal' | 'italic' | 'oblique'\n    fontFamily?: string\n}\n\ninterface WatermarkProps {\n    width?: number\n    height?: number\n    rotate?: number\n    zIndex?: number\n    image?: string\n    content?: string | string[]\n    font?: WatermarkFont\n    gap?: [number, number]\n    offset?: [number, number]\n}\n\nconst props = withDefaults(defineProps<WatermarkProps>(), {\n    width: 120,\n    height: 64,\n    rotate: -22,\n    zIndex: 9999,\n    image: undefined,\n    content: 'BRUTXUI',\n    font: () => ({\n        color: 'rgba(0, 0, 0, 0.15)',\n        fontSize: 14,\n        fontWeight: 'normal',\n        fontStyle: 'normal',\n        fontFamily: 'sans-serif'\n    }),\n    gap: () => [100, 100],\n    offset: () => [0, 0]\n})\n\nconst containerRef = ref<HTMLDivElement | null>(null)\nconst watermarkRef = ref<HTMLDivElement | null>(null)\nconst watermarkUrl = ref<string>('')\nconst watermarkKey = ref<number>(0)\n\nlet observer: MutationObserver | null = null\nlet isRecreating = false\n\nfunction getMarkSize() {\n    return [props.width, props.height]\n}\n\nfunction drawSvgFallback() {\n    const [markWidth, markHeight] = getMarkSize()\n    const canvasWidth = markWidth + props.gap[0]\n    const canvasHeight = markHeight + props.gap[1]\n    const { font } = props\n    const color = font.color || 'rgba(0, 0, 0, 0.15)'\n    const fontSize = font.fontSize || 14\n    const fontWeight = font.fontWeight || 'normal'\n    const fontStyle = font.fontStyle || 'normal'\n    const fontFamily = font.fontFamily || 'sans-serif'\n    \n    const contents = Array.isArray(props.content) ? props.content : [props.content]\n    const lineHeight = typeof fontSize === 'number' ? fontSize + 4 : parseInt(String(fontSize)) + 4\n    \n    const textNodes = contents.map((text, index) => {\n        const yOffset = (index - (contents.length - 1) / 2) * lineHeight\n        return `<text x=\"50%\" y=\"50%\" dy=\"${yOffset}\" font-size=\"${fontSize}\" font-weight=\"${fontWeight}\" font-style=\"${fontStyle}\" font-family=\"${fontFamily}\" fill=\"${color}\" text-anchor=\"middle\" dominant-baseline=\"middle\">${text}</text>`\n    }).join('')\n    \n    const svg = `\n        <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"${canvasWidth}\" height=\"${canvasHeight}\">\n            <g transform=\"rotate(${props.rotate} ${canvasWidth / 2} ${canvasHeight / 2})\">\n                ${textNodes}\n            </g>\n        </svg>\n    `\n    \n    /* global Buffer */\n    const base64 = typeof window !== 'undefined' && typeof window.btoa === 'function'\n        ? window.btoa(unescape(encodeURIComponent(svg)))\n        : typeof Buffer !== 'undefined' ? Buffer.from(svg).toString('base64') : ''\n    \n    watermarkUrl.value = `data:image/svg+xml;base64,${base64}`\n    nextTick(() => initObserver())\n}\n\nfunction renderWatermark() {\n    if (!isClient) return\n\n    const canvas = document.createElement('canvas')\n    const ctx = canvas.getContext('2d')\n    if (!ctx) {\n        drawSvgFallback()\n        return\n    }\n\n    const [markWidth, markHeight] = getMarkSize()\n    const canvasWidth = markWidth + props.gap[0]\n    const canvasHeight = markHeight + props.gap[1]\n\n    const ratio = window.devicePixelRatio || 1\n    canvas.width = canvasWidth * ratio\n    canvas.height = canvasHeight * ratio\n    ctx.scale(ratio, ratio)\n\n    ctx.translate(canvasWidth / 2, canvasHeight / 2)\n    ctx.rotate((props.rotate * Math.PI) / 180)\n\n    if (props.image) {\n        const img = new Image()\n        img.crossOrigin = 'anonymous'\n        img.referrerPolicy = 'no-referrer'\n        img.src = props.image\n        img.onload = () => {\n            ctx.drawImage(img, -markWidth / 2, -markHeight / 2, markWidth, markHeight)\n            watermarkUrl.value = canvas.toDataURL()\n            nextTick(() => initObserver())\n        }\n        img.onerror = () => {\n            drawTextWatermark(ctx, canvas)\n        }\n    } else {\n        drawTextWatermark(ctx, canvas)\n    }\n}\n\nfunction drawTextWatermark(\n    ctx: CanvasRenderingContext2D, \n    canvas: HTMLCanvasElement\n) {\n    const { font } = props\n    const color = font.color || 'rgba(0, 0, 0, 0.15)'\n    const fontSize = font.fontSize || 14\n    const fontWeight = font.fontWeight || 'normal'\n    const fontStyle = font.fontStyle || 'normal'\n    const fontFamily = font.fontFamily || 'sans-serif'\n\n    ctx.fillStyle = color\n    ctx.font = `${fontStyle} normal ${fontWeight} ${typeof fontSize === 'number' ? `${fontSize}px` : fontSize} ${fontFamily}`\n    ctx.textBaseline = 'middle'\n    ctx.textAlign = 'center'\n\n    const contents = Array.isArray(props.content) ? props.content : [props.content]\n    const lineHeight = typeof fontSize === 'number' ? fontSize + 4 : parseInt(String(fontSize)) + 4\n\n    contents.forEach((text, index) => {\n        const yOffset = (index - (contents.length - 1) / 2) * lineHeight\n        ctx.fillText(text || '', 0, yOffset)\n    })\n\n    watermarkUrl.value = canvas.toDataURL()\n    nextTick(() => initObserver())\n}\n\nfunction recreateWatermark() {\n    if (isRecreating) return\n    isRecreating = true\n\n    if (observer) {\n        observer.disconnect()\n        observer = null\n    }\n\n    watermarkKey.value++\n\n    renderWatermark()\n\n    isRecreating = false\n}\n\nfunction initObserver() {\n    if (!isClient || !containerRef.value || !watermarkRef.value) return\n    if (observer) return\n\n    observer = new MutationObserver((mutations) => {\n        for (const mutation of mutations) {\n            if (mutation.type === 'childList') {\n                const removedNodes = Array.from(mutation.removedNodes)\n                if (removedNodes.includes(watermarkRef.value!)) {\n                    recreateWatermark()\n                    break\n                }\n            }\n            if (\n                mutation.type === 'attributes' && \n                mutation.target === watermarkRef.value && \n                (mutation.attributeName === 'style' || mutation.attributeName === 'class')\n            ) {\n                recreateWatermark()\n                break\n            }\n        }\n    })\n\n    observer.observe(containerRef.value, {\n        childList: true,\n        attributes: true,\n        subtree: true,\n        attributeFilter: ['style', 'class']\n    })\n}\n\nfunction destroyObserver() {\n    if (observer) {\n        observer.disconnect()\n        observer = null\n    }\n}\n\nonMounted(() => {\n    renderWatermark()\n})\n\nonBeforeUnmount(() => {\n    destroyObserver()\n})\n\nwatch(\n    () => [props.content, props.image, props.width, props.height, props.rotate, props.gap, props.font],\n    () => {\n        recreateWatermark()\n    },\n    { deep: true }\n)\n</script>\n\n<template>\n    <div ref=\"containerRef\" class=\"relative overflow-hidden w-full h-full\">\n        <slot />\n        <div :key=\"watermarkKey\" style=\"display: contents\">\n            <div\n                v-if=\"watermarkUrl\"\n                ref=\"watermarkRef\"\n                class=\"absolute pointer-events-none\"\n                :style=\"{\n                    left: `${offset[0]}px`,\n                    top: `${offset[1]}px`,\n                    width: `calc(100% - ${offset[0]}px)`,\n                    height: `calc(100% - ${offset[1]}px)`,\n                    backgroundImage: `url(${watermarkUrl})`,\n                    backgroundSize: `${width + gap[0]}px ${height + gap[1]}px`,\n                    backgroundRepeat: 'repeat',\n                    zIndex: zIndex\n                }\"\n            />\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "lib/env.ts",
+      "content": "/**\n * Environment detection utilities for SSR compatibility.\n * Use these instead of scattered `typeof document/window` checks.\n */\n\n/** Whether the code is running in a browser environment (not SSR). */\nexport const isClient = typeof window !== 'undefined'\n\n/** Whether `document` is available. */\nexport const hasDocument = typeof document !== 'undefined'\n\n/** Whether `localStorage` is available (may be blocked in Safari private mode). */\nexport const hasLocalStorage = typeof localStorage !== 'undefined'\n\n/**\n * Safely get a value from localStorage.\n * Returns `null` if localStorage is unavailable or the key doesn't exist.\n */\nexport function safeGetStorageItem(key: string): string | null {\n    try {\n        if (!hasLocalStorage) return null\n        return localStorage.getItem(key)\n    } catch {\n        return null\n    }\n}\n\n/**\n * Safely set a value in localStorage.\n * Silently fails if localStorage is unavailable (e.g. Safari private mode, storage full).\n */\nexport function safeSetStorageItem(key: string, value: string): void {\n    try {\n        if (!hasLocalStorage) return\n        localStorage.setItem(key, value)\n    } catch {\n        // Storage full or blocked (e.g. Safari private mode)\n    }\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  },
+  "integrity": "sha256-09d8221f5bd35fac12754446af1374f8a25dd446ea40c64bf9c575e4d949b2ac"
+}

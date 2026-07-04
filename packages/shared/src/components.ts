@@ -112,6 +112,10 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     menu: { dependencies: ['@lucide/vue'], description: 'Horizontal or vertical navigation menu with sub-menu support.' },
     transfer: { dependencies: ['@lucide/vue'], description: 'Dual-panel transfer list for moving items between source and target collections.' },
     rate: { dependencies: ['@lucide/vue'], description: 'Star rating input with half-star precision and keyboard navigation.' },
+    backtop: { dependencies: ['@lucide/vue'], description: 'Brutalist back-to-top button with scroll detection and click behavior.' },
+    result: { dependencies: ['@lucide/vue'], description: 'Feedback result display with state color blocks and action buttons.' },
+    statistic: { dependencies: [], description: 'Statistic data display component using Counter animation.' },
+    watermark: { dependencies: [], description: 'Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.' },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "statistic",
+  "type": "registry:ui",
+  "title": "Statistic",
+  "description": "Statistic data display component using Counter animation.",
+  "dependencies": [],
+  "registryDependencies": [
+    "counter"
+  ],
+  "files": [
+    {
+      "path": "components/ui/statistic/Statistic.vue",
+      "content": "<script setup lang=\"ts\">\nimport { type Component, type CSSProperties } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport Counter from '@/components/ui/counter/Counter.vue'\nimport { counterVariants } from '@/components/ui/counter/counter-variants'\nimport { cn } from '@/lib/utils'\n\ntype CounterVariantProps = VariantProps<typeof counterVariants>;\n\ninterface StatisticProps {\n    value: number\n    title?: string\n    precision?: number\n    decimalSeparator?: string\n    groupSeparator?: string\n    prefix?: string\n    suffix?: string\n    prefixComponent?: Component\n    suffixComponent?: Component\n    valueStyle?: CSSProperties\n    class?: string\n    card?: boolean\n    variant?: NonNullable<CounterVariantProps['variant']>\n    size?: NonNullable<CounterVariantProps['size']>\n}\n\nconst props = withDefaults(defineProps<StatisticProps>(), {\n    title: undefined,\n    precision: 0,\n    decimalSeparator: '.',\n    groupSeparator: ',',\n    prefix: '',\n    suffix: '',\n    prefixComponent: undefined,\n    suffixComponent: undefined,\n    valueStyle: undefined,\n    class: undefined,\n    card: false,\n    variant: 'default',\n    size: 'md',\n})\n</script>\n\n<template>\n    <div\n        :class=\"cn(\n            'flex flex-col min-w-0',\n            card && 'p-4 border-2 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]',\n            props.class\n        )\"\n    >\n        <span \n            v-if=\"title || $slots.title\" \n            class=\"text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 select-none\"\n        >\n            <slot name=\"title\">{{ title }}</slot>\n        </span>\n        \n        <div :style=\"valueStyle\">\n            <Counter\n                :to=\"value\"\n                :decimals=\"precision\"\n                :separator=\"groupSeparator\"\n                :prefix=\"prefix\"\n                :suffix=\"suffix\"\n                :prefix-component=\"prefixComponent\"\n                :suffix-component=\"suffixComponent\"\n                :variant=\"variant\"\n                :size=\"size\"\n                class=\"!font-black text-inherit\"\n            />\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  },
+  "integrity": "sha256-989d70ed574b63261f8da9ccefb519f47bc8d22d2e7156769928be261c17f6b2"
+}

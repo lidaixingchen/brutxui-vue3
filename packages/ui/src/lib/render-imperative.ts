@@ -19,7 +19,7 @@ export interface RenderImperativeReturn {
  */
 export function renderImperative(
     component: Component,
-    props: Record<string, any> = {},
+    props: Record<string, unknown> = {},
     options: RenderImperativeOptions = {}
 ): RenderImperativeReturn {
     if (!isClient) {
@@ -31,7 +31,7 @@ export function renderImperative(
     const container = document.createElement('div')
     let isDestroyed = false
 
-    const handleClose = (...args: any[]) => {
+    const handleClose = () => {
         if (options.onClose) {
             options.onClose()
         }

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "backtop",
+  "type": "registry:ui",
+  "title": "Backtop",
+  "description": "Brutalist back-to-top button with scroll detection and click behavior.",
+  "dependencies": [
+    "@lucide/vue"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/backtop/Backtop.vue",
+      "content": "<script setup lang=\"ts\">\nimport { ref, onMounted, onBeforeUnmount, computed, type CSSProperties } from 'vue'\nimport { ArrowUp } from '@lucide/vue'\nimport { useThrottle } from '@/composables/useThrottle'\nimport { cn } from '@/lib/utils'\n\ninterface BacktopProps {\n    visibilityHeight?: number\n    target?: string | HTMLElement\n    right?: number\n    bottom?: number\n    variant?: 'primary' | 'secondary' | 'accent'\n    class?: string\n}\n\nconst props = withDefaults(defineProps<BacktopProps>(), {\n    visibilityHeight: 200,\n    right: 40,\n    bottom: 40,\n    variant: 'primary',\n    class: undefined,\n})\n\nconst emit = defineEmits<{\n    (e: 'click', event: MouseEvent): void\n}>()\n\nconst visible = ref(false)\nlet container: HTMLElement | Window | null = null\n\nconst styles = computed<CSSProperties>(() => ({\n    right: `${props.right}px`,\n    bottom: `${props.bottom}px`\n}))\n\nfunction getScrollContainer() {\n    if (!props.target) return window\n    if (typeof props.target === 'string') {\n        return document.querySelector(props.target) as HTMLElement\n    }\n    return props.target\n}\n\nfunction handleScroll() {\n    if (!container) return\n    const scrollTop = (container === window || !('scrollTop' in container))\n        ? (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop)\n        : (container as HTMLElement).scrollTop\n    visible.value = scrollTop >= props.visibilityHeight\n}\n\nconst { throttled: throttledScroll, cancel: cancelThrottle } = useThrottle(handleScroll, 100)\n\nfunction handleClick(event: MouseEvent) {\n    emit('click', event)\n    scrollToTop()\n}\n\nfunction scrollToTop() {\n    if (!container) return\n    if (container instanceof Window) {\n        window.scrollTo({\n            top: 0,\n            behavior: 'smooth'\n        })\n    } else {\n        container.scrollTo({\n            top: 0,\n            behavior: 'smooth'\n        })\n    }\n}\n\nonMounted(() => {\n    container = getScrollContainer()\n    if (container) {\n        container.addEventListener('scroll', throttledScroll, { passive: true })\n        handleScroll()\n    }\n})\n\nonBeforeUnmount(() => {\n    if (container) {\n        container.removeEventListener('scroll', throttledScroll)\n    }\n    cancelThrottle()\n})\n</script>\n\n<template>\n    <Transition\n        enter-active-class=\"transition-all duration-200 ease-out\"\n        leave-active-class=\"transition-all duration-200 ease-in\"\n        enter-from-class=\"opacity-0 translate-y-4 scale-95\"\n        leave-to-class=\"opacity-0 translate-y-4 scale-95\"\n    >\n        <button\n            v-if=\"visible\"\n            :style=\"styles\"\n            :class=\"cn(\n                'fixed flex items-center justify-center z-[999]',\n                'w-10 h-10 border-2 border-brutal-black bg-brutal-yellow text-brutal-black font-black',\n                'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] active:translate-x-[4px] active:translate-y-[4px] transition-all cursor-pointer',\n                props.class\n            )\"\n            aria-label=\"Back to top\"\n            @click=\"handleClick\"\n        >\n            <slot>\n                <ArrowUp class=\"w-5 h-5 stroke-[3]\" />\n            </slot>\n        </button>\n    </Transition>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "composables/useThrottle.ts",
+      "content": "import { onUnmounted } from 'vue'\n\n/**\n * useThrottle 选项\n */\nexport interface UseThrottleOptions {\n    /** 是否在首次调用时立即执行 */\n    leading?: boolean\n    /** 是否在节流结束后执行最后一次调用 */\n    trailing?: boolean\n}\n\n/**\n * useThrottle 返回类型\n */\nexport interface UseThrottleReturn<T extends (...args: never[]) => unknown> {\n    /** 节流后的函数 */\n    throttled: T\n    /** 取消待执行的尾部调用 */\n    cancel: () => void\n    /** 立即执行待执行的尾部调用 */\n    flush: () => void\n}\n\n/**\n * 创建节流函数，在 delay 毫秒内多次调用只执行一次。\n *\n * @param fn - 需要节流的函数\n * @param delay - 节流间隔（毫秒）\n * @param options - 配置选项\n * @returns 包含节流函数、cancel 和 flush 方法的对象\n *\n * @example\n * ```ts\n * const { throttled, cancel } = useThrottle(handleScroll, 200)\n *\n * // 使用节流函数\n * throttled(event)\n *\n * // 取消待执行的尾部调用\n * cancel()\n * ```\n */\nexport function useThrottle<T extends (...args: never[]) => unknown>(\n    fn: T,\n    delay: number,\n    options: UseThrottleOptions = {},\n): UseThrottleReturn<T> {\n    const { leading = true, trailing = true } = options\n\n    let timeoutId: ReturnType<typeof setTimeout> | null = null\n    let lastArgs: Parameters<T> | null = null\n    let lastCallTime = 0\n\n    function cancel(): void {\n        if (timeoutId !== null) {\n            clearTimeout(timeoutId)\n            timeoutId = null\n        }\n        lastArgs = null\n        lastCallTime = 0\n    }\n\n    function flush(): void {\n        if (lastArgs !== null) {\n            const args = lastArgs\n            cancel()\n            fn(...args)\n        } else {\n            cancel()\n        }\n    }\n\n    function invokeTrailing(): void {\n        if (lastArgs !== null) {\n            const args = lastArgs\n            lastArgs = null\n            fn(...args)\n            lastCallTime = Date.now()\n        }\n    }\n\n    const throttled = ((...args: Parameters<T>) => {\n        const now = Date.now()\n\n        if (!leading && lastCallTime === 0) {\n            // 首次调用不执行时，记录时间并等待\n            lastCallTime = now\n        }\n\n        const remaining = delay - (now - lastCallTime)\n        lastArgs = args\n\n        if (remaining <= 0 || remaining > delay) {\n            // 超过间隔，立即执行\n            if (timeoutId !== null) {\n                clearTimeout(timeoutId)\n                timeoutId = null\n            }\n            fn(...args)\n            lastCallTime = now\n            lastArgs = null\n        } else if (trailing && timeoutId === null) {\n            // 在间隔内，设置尾部执行\n            timeoutId = setTimeout(() => {\n                timeoutId = null\n                invokeTrailing()\n            }, remaining)\n        }\n    }) as T\n\n    onUnmounted(() => {\n        cancel()\n    })\n\n    return {\n        throttled,\n        cancel,\n        flush,\n    }\n}\n",
+      "type": "registry:hook"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  },
+  "integrity": "sha256-6630974851780462540eacaccf9b6454026516efb14ecbb061d6cfed9bb78648"
+}

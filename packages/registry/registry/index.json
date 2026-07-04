@@ -106,7 +106,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b473e6462f664f823ceff28270c49015a45caaff102d06e2a3ca8ff199685209"
+      "integrity": "sha256-a474d1dc6dbd303c429c63214a27236868c05e95886f94e72818204528be8afe"
     },
     {
       "name": "alert",
@@ -360,6 +360,113 @@
       "integrity": "sha256-32f6d0e3c8ff1d8c3cd1254aecf31d2ceaaa1903c190df4f59e43dcf0a472473"
     },
     {
+      "name": "backtop",
+      "type": "registry:ui",
+      "title": "Backtop",
+      "description": "Brutalist back-to-top button with scroll detection and click behavior.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/backtop/Backtop.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useThrottle.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-6630974851780462540eacaccf9b6454026516efb14ecbb061d6cfed9bb78648"
+    },
+    {
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
@@ -472,7 +579,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f71f6dc89b49cd59b697135af3251ba8422df395525d534772b4823f21c7ddb7"
+      "integrity": "sha256-30ce68d3349db3cc5d5942d8412bc1aea5812ad3c80ec5015169de0a2174c7dd"
     },
     {
       "name": "button",
@@ -841,10 +948,14 @@
       "name": "cascader",
       "type": "registry:ui",
       "title": "Cascader",
-      "description": "A highly customizable neo-brutalist Cascader component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Cascading selector with multi-level option navigation and search support.",
+      "dependencies": [
+        "reka-ui",
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "popover",
+        "checkbox",
         "locale-zh-cn"
       ],
       "files": [
@@ -963,7 +1074,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6c7f27f1c192abd60f93b7d5626046ffed018d84b761d542eadc598a6c7a7f48"
+      "integrity": "sha256-b15aa5cab3ed92b71eaff3422226d27fef85c0b7c17eeb6c9bb2228250bfc373"
     },
     {
       "name": "checkbox",
@@ -1675,7 +1786,9 @@
       "title": "Input",
       "description": "Text input field with validation styling.",
       "dependencies": [],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/input/Input.vue",
@@ -1687,6 +1800,10 @@
         },
         {
           "path": "composables/useClearable.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
@@ -1780,7 +1897,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8e35f0ad867e1858cf85afdea5ef2d6d500831cd2341bb4a9471b321efce38af"
+      "integrity": "sha256-2127770ea32ff7dfd85156fd6d098572ce188e5baa9cd7c6ccd872805dfe782d"
     },
     {
       "name": "label",
@@ -1888,6 +2005,109 @@
         }
       },
       "integrity": "sha256-feb41e154e6931801ad88e6285674cace19892ef86621c8a506e830c39b6c2d9"
+    },
+    {
+      "name": "loading",
+      "type": "registry:ui",
+      "title": "Loading",
+      "description": "Container wrapper and v-loading custom directive for displaying loading state overlay with custom text.",
+      "dependencies": [],
+      "registryDependencies": [
+        "spinner"
+      ],
+      "files": [
+        {
+          "path": "components/ui/loading/Loading.vue",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-7a4312219b9990a209be43199c3e4bb7ccb95ba469e06dc2eab732e8c5a4a336"
     },
     {
       "name": "pagination",
@@ -2384,7 +2604,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-83b033c9818dcd1359bb2d0bbd9419dbe0bc8bdb9e570170ebefbee9a2eab8fc"
+      "integrity": "sha256-37728c31c684deba49de2d4db48c175b227a8446d2222e4c5de8ecf1b706923a"
     },
     {
       "name": "separator",
@@ -4943,7 +5163,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-abf1b0fc23112bfb4fbbf8d7cfe783e68d5d7619de75b0096ba397d4730932ff"
+      "integrity": "sha256-adb5747d2391f7e8235e093477f1fe486b8af2c0d135a41b3dd034afdbfbc8f7"
     },
     {
       "name": "dashboard-shell",
@@ -6065,8 +6285,10 @@
       "name": "menu",
       "type": "registry:ui",
       "title": "Menu",
-      "description": "A highly customizable neo-brutalist Menu component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Horizontal or vertical navigation menu with sub-menu support.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [],
       "files": [
         {
@@ -6176,7 +6398,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-aaf9427978b4e61fde1a12d09c5ae1bdd8f9638c882fa730a8dccfc09164bfa9"
+      "integrity": "sha256-0e8638f702947fc37ada136eefe790ce17071f6993af91c5ee0277fdcf642e00"
     },
     {
       "name": "before-after",
@@ -6579,6 +6801,7 @@
         "@lucide/vue"
       ],
       "registryDependencies": [
+        "button",
         "locale-zh-cn"
       ],
       "files": [
@@ -6705,7 +6928,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-760faaa7d8bb32772a43cf1b2997ee7e07fb31d2db39af9ffd2bc41eba70bf03"
+      "integrity": "sha256-549c8d42029baca36e7f08069f5350a95e0467bff8a89b781b64751d23529e80"
     },
     {
       "name": "tree-view",
@@ -11271,7 +11494,6 @@
         "checkbox",
         "select",
         "virtual-scroll",
-        "popover",
         "locale-zh-cn"
       ],
       "files": [
@@ -11406,7 +11628,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-825e354d62a0c340089376764479e759fc9b94fd5b885a4a77a269c895ea03d0"
+      "integrity": "sha256-cc6bf5bce8e43e2ec14f1cbd66e7eeec34fd9e418b8bc0e9bbdb0d96f4d8b2fe"
     },
     {
       "name": "tree-select",
@@ -11419,6 +11641,7 @@
       ],
       "registryDependencies": [
         "popover",
+        "input",
         "locale-zh-cn"
       ],
       "files": [
@@ -11545,7 +11768,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2c028d3d6236ee54bcfefa1069376bb8925bf8a3dba258f59e5f0186f7ed8192"
+      "integrity": "sha256-f50fbf876323f61eb66c8f9f2e4cce31eb553752485129f5b74226454378e150"
     },
     {
       "name": "typewriter-text",
@@ -12247,7 +12470,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-63cfc03438f09b88e9fb3302724e3e18bbcc5d58681b5b6c8caa1d50b434c1a0"
+      "integrity": "sha256-f4c2b9d83897833cb1036f0714df894c5bd631b022fa002b4d869a9cec12ccc2"
     },
     {
       "name": "popconfirm",
@@ -12580,8 +12803,10 @@
       "name": "transfer",
       "type": "registry:ui",
       "title": "Transfer",
-      "description": "A highly customizable neo-brutalist Transfer component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Dual-panel transfer list for moving items between source and target collections.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "card",
         "checkbox",
@@ -12689,14 +12914,16 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6c0f92bb15bbc9937bd74266a7fa798026210679eb2e36b12adcb04980a65ccf"
+      "integrity": "sha256-958fd4491b93240ed89bb9ec8650183ba1844c2700558d1d644fa1f85fdb8704"
     },
     {
       "name": "rate",
       "type": "registry:ui",
       "title": "Rate",
-      "description": "A highly customizable neo-brutalist Rate component built with Brutx design tokens for Vue 3.",
-      "dependencies": [],
+      "description": "Star rating input with half-star precision and keyboard navigation.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [],
       "files": [
         {
@@ -12794,7 +13021,318 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d44721d9e3e07e3d968d4548aa685851caf8df5e795efb66f59e8a3c28c4e105"
+      "integrity": "sha256-315b92e9db013f36861e1dd44eb8bb5ec4abc908695206c33bd0def7167aec49"
+    },
+    {
+      "name": "result",
+      "type": "registry:ui",
+      "title": "Result",
+      "description": "Feedback result display with state color blocks and action buttons.",
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/result/Result.vue",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-1409d9ef4ad34921cfe4278baba70b506bb13503ad4bdd2bab470edecfe09ee7"
+    },
+    {
+      "name": "statistic",
+      "type": "registry:ui",
+      "title": "Statistic",
+      "description": "Statistic data display component using Counter animation.",
+      "dependencies": [],
+      "registryDependencies": [
+        "counter"
+      ],
+      "files": [
+        {
+          "path": "components/ui/statistic/Statistic.vue",
+          "type": "registry:ui"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-989d70ed574b63261f8da9ccefb519f47bc8d22d2e7156769928be261c17f6b2"
+    },
+    {
+      "name": "watermark",
+      "type": "registry:ui",
+      "title": "Watermark",
+      "description": "Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/watermark/Watermark.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {
+        "config": {
+          "theme": {
+            "extend": {
+              "borderWidth": {
+                "3": "var(--brutal-border-width, 3px)"
+              },
+              "borderColor": {
+                "brutal": "var(--brutal-border-color, #000000)"
+              },
+              "borderRadius": {
+                "brutal": "var(--brutal-radius, 0px)"
+              },
+              "colors": {
+                "brutal-bg": "var(--brutal-bg)",
+                "brutal-fg": "var(--brutal-fg)",
+                "brutal-primary": "var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-secondary)",
+                "brutal-accent": "var(--brutal-accent)",
+                "brutal-destructive": "var(--brutal-destructive)",
+                "brutal-success": "var(--brutal-success)",
+                "brutal-muted": "var(--brutal-muted)",
+                "brutal-ring": "var(--brutal-ring)",
+                "brutal-info": "var(--brutal-info)",
+                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+                "brutal-overlay": "var(--brutal-overlay)",
+                "brutal-placeholder": "var(--brutal-placeholder)"
+              },
+              "boxShadow": {
+                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+              }
+            }
+          }
+        }
+      },
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#f3f4f6",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-accent": "#FFE66D",
+          "brutal-destructive": "#EF476F",
+          "brutal-success": "#7FB069",
+          "brutal-muted": "#1e1e1e",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280"
+        }
+      },
+      "integrity": "sha256-09d8221f5bd35fac12754446af1374f8a25dd446ea40c64bf9c575e4d949b2ac"
     }
   ]
 }

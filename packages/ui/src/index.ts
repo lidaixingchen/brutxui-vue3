@@ -482,6 +482,11 @@ export { default as Transfer } from './components/transfer/Transfer.vue'
 export type { TransferDataItem } from './components/transfer/Transfer.vue'
 export { default as Rate } from './components/rate/Rate.vue'
 
+export { default as Statistic } from './components/statistic/Statistic.vue'
+export { default as Result } from './components/result/Result.vue'
+export { default as Watermark } from './components/watermark/Watermark.vue'
+export { default as Backtop } from './components/backtop/Backtop.vue'
+
 // 通用工具类型
 export type {
     Size,

@@ -1,0 +1,105 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "result",
+  "type": "registry:ui",
+  "title": "Result",
+  "description": "Feedback result display with state color blocks and action buttons.",
+  "dependencies": [
+    "@lucide/vue"
+  ],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "components/ui/result/Result.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { Check, AlertTriangle, Info, X } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\n\ninterface ResultProps {\n    status?: 'success' | 'warning' | 'info' | 'error'\n    title?: string\n    subTitle?: string\n    class?: string\n}\n\nconst props = withDefaults(defineProps<ResultProps>(), {\n    status: 'info',\n    title: undefined,\n    subTitle: undefined,\n    class: undefined,\n})\n\nconst statusConfig = {\n    success: {\n        icon: Check,\n        colorClass: 'bg-[#22c55e] text-brutal-black dark:text-white',\n    },\n    warning: {\n        icon: AlertTriangle,\n        colorClass: 'bg-brutal-yellow text-brutal-black',\n    },\n    info: {\n        icon: Info,\n        colorClass: 'bg-[#3b82f6] text-brutal-black dark:text-white',\n    },\n    error: {\n        icon: X,\n        colorClass: 'bg-brutal-destructive text-white',\n    },\n}\n\nconst activeConfig = computed(() => statusConfig[props.status] || statusConfig.info)\n</script>\n\n<template>\n    <div\n        :class=\"cn(\n            'flex flex-col items-center justify-center text-center p-8 border-3 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]',\n            props.class\n        )\"\n    >\n        <div class=\"mb-6 select-none\">\n            <slot name=\"icon\">\n                <div\n                    :class=\"cn(\n                        'w-16 h-16 rounded-none flex items-center justify-center border-3 border-brutal-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]',\n                        activeConfig.colorClass\n                    )\"\n                >\n                    <component \n                        :is=\"activeConfig.icon\" \n                        class=\"w-10 h-10 stroke-[3]\" \n                    />\n                </div>\n            </slot>\n        </div>\n\n        <h2 \n            v-if=\"title || $slots.title\" \n            class=\"text-2xl font-black text-brutal-black dark:text-white mb-2 uppercase tracking-wide\"\n        >\n            <slot name=\"title\">\n                {{ title }}\n            </slot>\n        </h2>\n\n        <p \n            v-if=\"subTitle || $slots.subTitle\" \n            class=\"text-sm font-bold text-gray-500 dark:text-gray-400 max-w-md mb-6 leading-relaxed\"\n        >\n            <slot name=\"subTitle\">\n                {{ subTitle }}\n            </slot>\n        </p>\n\n        <div \n            v-if=\"$slots.extra\" \n            class=\"flex items-center gap-3 mt-2\"\n        >\n            <slot name=\"extra\" />\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  },
+  "integrity": "sha256-1409d9ef4ad34921cfe4278baba70b506bb13503ad4bdd2bab470edecfe09ee7"
+}
