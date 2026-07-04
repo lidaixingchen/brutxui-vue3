@@ -528,3 +528,73 @@ interface TreeNode {
 |------|------|
 | `title` | 定义子菜单标题（支持文本及 Icon 自定义） |
 | `default` | 嵌套的子菜单项 |
+
+## Watermark
+
+新粗野主义平铺水印容器。支持防物理篡改、防 VDOM 更新 Diff 异常、防高分屏失真，以及测试环境（无 Canvas 浏览器）自动向 SVG Fallback 降级。
+
+```vue
+<script setup>
+import { Watermark } from 'brutx-ui-vue'
+</script>
+
+<template>
+  <Watermark content="内部机密 严禁外传">
+    <div class="h-96 border-3 border-brutal rounded-brutal bg-white p-6">
+      <h4>核心客户资料表</h4>
+      <p>客户信息等敏感数据...</p>
+    </div>
+  </Watermark>
+</template>
+```
+
+### Watermark Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `width` | `number` | `120` | 单个水印图形宽度（单位 px） |
+| `height` | `number` | `64` | 单个水印图形高度（单位 px） |
+| `rotate` | `number` | `-22` | 水印旋转角度 |
+| `zIndex` | `number` | `9999` | 水印图层的 CSS z-index 层级 |
+| `image` | `string` | — | 水印图片源地址（若设置此项则优先渲染图片） |
+| `content` | `string \| string[]` | `'BrutxUI'` | 水印文本内容（为数组时表示多行渲染） |
+| `font` | `{ color?: string; fontSize?: number; fontWeight?: string; fontFamily?: string }` | `{ color: 'rgba(0,0,0,0.15)', fontSize: 16 }` | 水印文本字体样式定义 |
+| `gap` | `[number, number]` | `[100, 100]` | 水印横纵平铺间距（单位 px） |
+| `offset` | `[number, number]` | — | 水印偏离左上角的偏移量 |
+| `class` | `string` | — | 自定义 CSS 类 |
+
+---
+
+## Backtop
+
+回到顶部组件。带有节流保护、跨沙箱 Window 构造探测、自定义显示高度以及硬核浮角定位。
+
+```vue
+<script setup>
+import { Backtop } from 'brutx-ui-vue'
+</script>
+
+<template>
+  <div class="container h-[2000px]">
+    <p>向下滚动页面...</p>
+    <Backtop :visibility-height="300" :right="40" :bottom="40" />
+  </div>
+</template>
+```
+
+### Backtop Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `target` | `string` | — | 滚动监听目标选择器（为空时默认监听最近的 scroll 容器或 window） |
+| `visibilityHeight` | `number` | `200` | 滚动高度达到此数值（px）时才显示组件 |
+| `right` | `number` | `40` | 距离视口右侧的像素间距 |
+| `bottom` | `number` | `40` | 距离视口底部的像素间距 |
+| `class` | `string` | — | 自定义 CSS 类 |
+
+### Backtop 事件
+
+| 事件 | 参数 | 说明 |
+| --- | --- | --- |
+| `click` | `MouseEvent` | 点击回到顶部按钮时触发 |
+

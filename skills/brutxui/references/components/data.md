@@ -716,3 +716,57 @@ interface StatItem {
 | `span` | `number` | `1` | 跨列数 |
 | `labelWidth` | `string \| number` | — | 标签宽度（仅水平方向有效） |
 | `class` | `string` | — | 自定义 CSS 类 |
+
+## Statistic
+
+新粗野主义高对比度统计数值组件，支持数字滚动动画、前缀后缀、千分位分隔符等。
+
+```vue
+<script setup>
+import { Statistic } from 'brutx-ui-vue'
+import { ArrowUp } from '@lucide/vue'
+</script>
+
+<template>
+  <Statistic
+    title="月度营业额"
+    :value="98450"
+    prefix="￥"
+    suffix="元"
+    group-separator=","
+    animation
+  >
+    <template #extra>
+      <div class="flex items-center gap-1 mt-2 text-xs font-bold text-brutal-success">
+        <ArrowUp class="w-3.5 h-3.5" />
+        <span>+12.4% 环比增长</span>
+      </div>
+    </template>
+  </Statistic>
+</template>
+```
+
+### Statistic Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `value` | `number \| string` | —（必填） | 数值内容 |
+| `title` | `string` | — | 标题文本 |
+| `prefix` | `string` | — | 数值前缀插槽/文本 |
+| `suffix` | `string` | — | 数值后缀插槽/文本 |
+| `precision` | `number` | — | 数值保留精度 |
+| `groupSeparator` | `string` | `''` | 千分位分隔符 |
+| `animation` | `boolean` | `true` | 是否启用数字递增滚动动画，自动尊重 `prefers-reduced-motion` 降级 |
+| `duration` | `number` | `1000` | 滚动动画持续时间（毫秒） |
+| `valueStyle` | `CSSProperties` | — | 自定义数值样式 |
+| `class` | `string` | — | 自定义 CSS 类 |
+
+### Statistic 插槽
+
+| 插槽 | 说明 |
+| --- | --- |
+| `title` | 自定义标题 |
+| `prefix` | 自定义前缀 |
+| `suffix` | 自定义后缀 |
+| `extra` | 自定义统计底盒扩展区 |
+

@@ -515,3 +515,110 @@ const { isLoading, resetLoading } = useInfiniteScroll(targetRef, {
     },
 })
 ```
+
+## Loading
+
+加载遮罩组件与指令。支持局部遮罩、整页遮罩、动态提示语以及服务端渲染（SSR）兼容。
+
+### 声明式组件
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { Loading } from 'brutx-ui-vue'
+
+const isLoading = ref(true)
+</script>
+
+<template>
+  <Loading :loading="isLoading" text="同步中...">
+    <div class="card p-6">
+      <h4>核心内容区域</h4>
+      <p>这里是需要遮罩的内容...</p>
+    </div>
+  </Loading>
+</template>
+```
+
+### 指令式用法 (v-loading)
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { vLoading } from 'brutx-ui-vue'
+
+const isLoading = ref(true)
+</script>
+
+<template>
+  <div v-loading="isLoading" v-loading-text="'请求中...'" class="p-6">
+    <h4>账户资料</h4>
+    <p>内容信息...</p>
+  </div>
+</template>
+```
+
+### Loading Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `loading` | `boolean` | `false` | 是否显示加载遮罩 |
+| `text` | `string` | `''` | 自定义加载文案 |
+| `class` | `string` | — | 自定义样式类 |
+
+### Loading 插槽
+
+| 插槽 | 说明 |
+| --- | --- |
+| `default` | 需要被遮罩保护的内容 |
+
+### v-loading 指令修饰属性
+
+| 属性 | 类型 | 说明 |
+| --- | --- | --- |
+| `v-loading` | `boolean` | 绑定加载状态变量，控制遮罩显示 |
+| `v-loading-text` | `string` | 挂载在宿主上的自定义加载文本属性 |
+
+---
+
+## Result
+
+新粗野主义结果反馈组件，用于成功、警告、普通、失败等结果的状态告知。
+
+```vue
+<script setup>
+import { Result, Button } from 'brutx-ui-vue'
+</script>
+
+<template>
+  <Result
+    status="success"
+    title="订单支付成功"
+    sub-title="您的订单已顺利完成支付，商品将会在 24 小时内发出。"
+  >
+    <template #extra>
+      <Button variant="primary">查看订单</Button>
+      <Button variant="outline" class="ml-3">返回首页</Button>
+    </template>
+  </Result>
+</template>
+```
+
+### Result Props
+
+| 属性 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `status` | `'success' \| 'warning' \| 'info' \| 'error'` | `'info'` | 状态类型，决定底盒图标背景色与状态图标 |
+| `title` | `string` | — | 主标题文本 |
+| `subTitle` | `string` | — | 副标题文本 |
+| `class` | `string` | — | 自定义 CSS 类 |
+
+### Result 插槽
+
+| 插槽 | 说明 |
+| --- | --- |
+| `icon` | 自定义左侧/顶部状态图标 |
+| `title` | 自定义标题 |
+| `sub-title` | 自定义副标题 |
+| `extra` | 自定义操作按钮/控制按钮扩展区 |
+

@@ -86,6 +86,8 @@ import { cn } from '@/lib/utils'
 | Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局，role="list" 和 role="listitem" 无障碍语义 |
 | Carousel | 轮播 | 支持循环/自动播放/箭头/圆点；`CarouselEnhanced` 增强版额外支持缩略图导航/自动播放指示器/视差动画；defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
 | TreeView | 树形视图 | 支持展开/选中/复选选择模式 |
+| Watermark | 水印 | 平铺水印层，支持防篡改与自适应防 Diff 缓存重绘 |
+| Backtop | 回到顶部 | 带滚动节流与跨沙箱容器探测支持的回到顶部组件 |
 
 ### 数据展示
 
@@ -108,6 +110,7 @@ import { cn } from '@/lib/utils'
 | Skeleton | 骨架屏 | 支持 Text/Avatar/Card/Table 子组件、尺寸/形状/宽度 |
 | Spinner | 加载动画 | 4 种变体（Spinner/Block/Dots/Bars） |
 | DashboardStats | 仪表盘统计 | 支持趋势指标 |
+| Statistic | 统计数值 | 粗野主义高对比度统计数值卡片，带数字递增动画缓动 |
 
 ### 反馈与浮层
 
@@ -123,6 +126,8 @@ import { cn } from '@/lib/utils'
 | DropdownMenu | 下拉菜单 | 支持子菜单项/复选/单选/分隔符 |
 | Command | 命令面板 | 支持搜索/分组/快捷键、defineExpose({ filterSearch }) 程序化搜索 |
 | InfiniteScroll | 无限滚动 | 滚动到底部自动加载更多数据，支持 distance/delay/disabled、useInfiniteScroll composable |
+| Loading | 加载蒙版 | 包裹式加载蒙版与 v-loading 客户端指令支持（附带 getSSRProps SSR 安全机制） |
+| Result | 结果反馈 | 成功、警告、普通、失败四种状态的新粗野反馈卡片 |
 
 ### 新粗野主义特色
 
