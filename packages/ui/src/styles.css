@@ -1,5 +1,4 @@
-@import "tailwindcss/theme";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 @variant dark (&:where(.dark, .dark *));
 @import "./components/code-block/brutx-prism.css";
 
