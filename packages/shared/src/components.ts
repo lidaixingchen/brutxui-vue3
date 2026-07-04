@@ -20,6 +20,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     },
     input: { dependencies: [], description: 'Text input field with validation styling.' },
     label: { dependencies: ['reka-ui'], description: 'Form label associated with input controls.' },
+    loading: { dependencies: [], description: 'Container wrapper and v-loading custom directive for displaying loading state overlay with custom text.' },
     pagination: { dependencies: ['@lucide/vue'], description: 'Page navigation with first, previous, next, last controls and locale support.' },
     popover: { dependencies: ['reka-ui'], description: 'Floating popover anchored to trigger elements.' },
     'scroll-area': { dependencies: ['reka-ui'], description: 'Custom scrollable container with styled scrollbars.' },

@@ -1,0 +1,78 @@
+import { createVNode, render, type Component, type AppContext } from 'vue'
+import { isClient } from './env'
+import { globalAppContext } from '../plugin'
+
+export interface RenderImperativeOptions {
+    appContext?: AppContext
+    onClose?: () => void
+    transitionDuration?: number
+}
+
+export interface RenderImperativeReturn {
+    destroy: () => void
+}
+
+/**
+ * 命令式渲染挂载组件的辅助工具（函数式 API 基础）
+ * 解决脱离 Vue 主应用树导致 provide/inject 上下文（如 i18n, Pinia）丢失问题，
+ * 并在组件关闭动效结束后提供自动垃圾回收（GC）销毁机制。
+ */
+export function renderImperative(
+    component: Component,
+    props: Record<string, any> = {},
+    options: RenderImperativeOptions = {}
+): RenderImperativeReturn {
+    if (!isClient) {
+        return {
+            destroy: () => {},
+        }
+    }
+
+    const container = document.createElement('div')
+    let isDestroyed = false
+
+    const handleClose = (...args: any[]) => {
+        if (options.onClose) {
+            options.onClose()
+        }
+        destroy()
+    }
+
+    const vnode = createVNode(component, {
+        ...props,
+        onClose: handleClose,
+        onDestroy: handleClose,
+    })
+
+    // 继承全局 App Context 或是手动传入的上下文，防止 i18n / theme 丢失
+    vnode.appContext = options.appContext || globalAppContext
+
+    render(vnode, container)
+
+    const el = container.firstElementChild
+    if (el) {
+        document.body.appendChild(el)
+    }
+
+    function destroy() {
+        if (isDestroyed) return
+        isDestroyed = true
+
+        const cleanup = () => {
+            render(null, container)
+            container.remove()
+        }
+
+        // 延迟卸载 DOM，确保退场 Transition 动画能完整执行完毕
+        const delay = options.transitionDuration ?? 300
+        if (delay > 0) {
+            setTimeout(cleanup, delay)
+        } else {
+            cleanup()
+        }
+    }
+
+    return {
+        destroy,
+    }
+}

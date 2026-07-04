@@ -66,12 +66,12 @@
 
 **实现方案**：
 
-- 节点展开时调用 `load` 方法获取子节点
-- 加载中显示 Spinner 组件
-- 加载完成后将子节点插入到对应节点下
-- 使用 `loadingKeys` Set 跟踪正在加载的节点，防止重复请求
-- 加载失败时显示重试按钮，支持 `retryOnError` prop
-- 已加载的节点缓存子节点数据，再次展开时不再请求。同时在实例中暴露 `reloadNode(nodeKey: string)` 的方法，允许开发者手动清理缓存并重新懒加载该节点的子数据。
+- **TreeNode 接口定义扩展**：在 `types.ts` 中为 `TreeNode` 补充扩展属性，声明 `isLeaf?: boolean`（标记叶子节点以防止展开箭头误渲染）、`loaded?: boolean`（缓存标识字段）以及 `loading?: boolean`（用于局部 Spinner 渲染状态跟踪）。
+- 节点展开时若未加载则调用 `load` 方法获取子节点。
+- 加载中显示 Spinner 组件，加载完成后将子节点插入并置 `loaded = true`。
+- **防重复请求与竞态条件防范**：内部必须维护一个 `loadingKeys` Set 结构。在某个节点的 `load` Promise 尚未 resolve 之前，拦截并拒绝该 Key 上的所有后续重复 load 请求。
+- 加载失败时显示重试按钮，支持 `retryOnError` prop。
+- 已加载的节点缓存子节点数据，再次展开时不再请求。同时在实例中暴露 `reloadNode(nodeKey: string)` 的方法，允许开发者手动清理缓存并将对应节点的 `loaded` 置为 `false`，以重新懒加载。
 
 ---
 
@@ -143,8 +143,9 @@ interface ImageProps {
 **实现方案**：
 
 - 使用 `IntersectionObserver` 实现懒加载
-- 使用现有 `Dialog` 组件实现图片预览
+- **预览挂载与 SSR 兼容**：使用 `reka-ui` 的 `DialogPortal` 原语，或 Vue 的 `<Teleport to="body" :disabled="!isMounted">`（配合 `onMounted` 切换 `isMounted` 状态），确保服务端渲染时不会将预览器 DOM 输出，实现水合（Hydration）安全性。
 - 预览支持缩放、旋转、左右切换
+- **键盘交互与 A11y 规范**：支持键盘 `ArrowLeft` 和 `ArrowRight` 切换图片，`Escape` 键关闭预览，且在预览器激活期间实施焦点捕获（Focus Trap）。
 - 错误时显示 fallback 图片或默认占位符
 
 ---
@@ -229,7 +230,8 @@ interface TourStep {
 **实现方案**：
 
 - 使用 `Popover` 组件作为提示框
-- 使用遮罩层突出目标元素
+- **Neo-Brutalism 遮罩与高亮**：不使用普通的软虚影遮罩，而使用 Canvas 在被聚焦元素周围裁剪出带 **2px 粗黑边框**的硬边界聚焦高亮区。
+- **视口滚动定位计算**：如高亮目标在局部滚动区域中，需使用 `scrollIntoView` 定位。定位计算必须放在 `nextTick` 并且在滚动动效结束后执行，以防动效位移造成定位偏差。
 - 支持键盘导航（Escape 关闭，Enter 下一步）
 
 ---
@@ -264,7 +266,7 @@ interface WatermarkProps {
 
 - 使用 Canvas API 生成水印图片
 - 将水印图片设置为背景
-- 使用 MutationObserver 防止水印被删除
+- **防篡改机制与死循环防范**：使用 MutationObserver 监控水印容器节点的 `style`、`class` 属性和子节点移除（`childList: true`）。在触发重绘或属性更新逻辑前，必须调用 `observer.disconnect()` 暂时禁用监听，DOM 更新完毕后再重新 observe，以防陷入“重绘 - 修改 style - 重绘”的无限循环。
 
 ---
 
@@ -322,11 +324,10 @@ interface LoadingProps {
 ```
 
 **指令 `v-loading` 设计机制**：
+- **SSR 兼容隔离**：指令内部必须严格使用 `isClient` 确保在 Node.js (VitePress/SSR) 环境中不直接访问/操作 DOM 引起构建报错。在服务端仅注册为空的 fallback 操作，避免 Hydration Mismatch。
 - 在指令的 `mounted` 与 `updated` 钩子中，动态在宿主元素内部生成遮罩和 Spinner 并实施渲染。
-- **自动定位补充**：指令挂载时将自动检测宿主 DOM 的 CSS 定位。如果不是 `relative` 或 `absolute`，则指令会自动向宿主追加一个特定的定位 CSS Class（例如 `relative`），以防止遮罩层溢出，在指令销毁时还原。
-- **SSR 兼容与插件注册**：
-  - 指令内部必须使用 `isClient` 确保在 Node.js (VitePress/SSR) 环境中不直接访问/操作 DOM 引起构建报错。
-  - 该指令应作为 UI 库插件（Plugin）的一部分，在 `packages/ui/src/index.ts` 中进行全局注册和统一导出。
+- **自动定位与还原**：指令挂载时将自动检测宿主 DOM 的 CSS 计算定位。如果其值为 `static`，则指令会自动向宿主追加一个特定的定位 CSS Class（例如 `relative!` 或修改 `style.position`）以防遮罩层溢出。在指令卸载（`unmounted`）时必须完整恢复宿主原 position，避免影响原先的 Flex 或 Grid 布局。
+- **插件注册**：该指令应作为 UI 库插件（Plugin）的一部分，在 `packages/ui/src/index.ts` 中进行全局注册和统一导出。
 
 ---
 
@@ -363,8 +364,9 @@ message.info('提示信息')
 ```
 
 **架构设计要点 (App Context 继承 & SSR)**：
-- **Context-bound (Provider 模式)**：由于通过 `createVNode` + `render` 独立渲染挂载的节点会脱离 Vue 主应用树，从而导致其无法通过 `inject` 获取主应用中 provide 的 Locale 状态和 Pinia，因此函数式 API 必须采用 **Provider 模式进行上下文绑定**（可对齐 `useToast.ts` 的注入机制），以确保国际化（i18n）在函数式组件内依然可用。
+- **App Context 继承机制**：由于通过 `render(createVNode(Component), container)` 独立渲染挂载的组件（如 `useDialog`, `useMessageBox`）会脱离 Vue 主应用树，从而导致其无法通过 `inject` 获取主应用中 provide 的 Locale 状态和 Pinia。为解决此问题，必须在库入口插件安装函数（`install` 方法）中拦截并保存 Vue 应用的全局 context（`app._context`），并在函数式挂载时将其赋值给 VNode 的 `appContext`（`vnode.appContext = globalAppContext`），使其完美继承全局上下文，同时允许在方法传参中接受指定的组件上下文。
 - **客户端环境检测**：所有函数式方法及 Composable 内部必须带有 `isClient` 环境检测，防止在服务端渲染 (VitePress Build) 期间实例化时直接使用 `document`/`window` 导致构建崩溃。
+- **资源回收机制 (Garbage Collection)**：所有动态挂载的命令式组件在关闭 Transition 动画结束后，必须自动执行 `render(null, container)` 和 `container.remove()` 彻底清理宿主元素，防止 DOM 和组件实例泄露。
 
 ---
 
@@ -382,10 +384,10 @@ message.info('提示信息')
 
 **实现建议**：
 
-- 提取 `useKeyboardNavigation` composable
-- 使用 `aria-*` 属性标记可访问状态
-- 遵循 WAI-ARIA 设计模式（如 Combobox、Listbox、Menu）
-- **聚焦样式（Focus Rings）规范**：为了匹配 Neo-Brutalism 的高对比度特色，当元素被聚焦时必须有统一且醒目的视觉指示。应避免使用隐蔽的默认聚焦边框，提倡使用符合 Brutalism 风格的偏移粗边框样式（如 `focus-visible:ring-2 focus-visible:ring-brutal-black` 结合 `focus-visible:ring-offset-2`）。
+- 提取 `useKeyboardNavigation` composable。
+- 使用 `aria-*` 属性标记可访问状态，如 `aria-expanded`、`aria-haspopup` 和 `aria-controls` 等。
+- 遵循 WAI-ARIA 设计模式（如 Combobox、Listbox、Menu），且弹出层内强制使用 Focus Trap 焦点捕获（建议采用 `reka-ui` 的 `FocusScope` 原语）。
+- **聚焦样式（Focus Rings）规范**：为了匹配 Neo-Brutalism 的高对比度特色，当元素被聚焦时必须有统一且醒目的视觉指示。应避免使用隐蔽的默认聚焦边框。由于项目使用 Tailwind CSS 4.3+，建议统一使用以下聚焦环样式：`focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brutal-black focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-white dark:focus-visible:ring-offset-brutal-black`。
 
 ---
 

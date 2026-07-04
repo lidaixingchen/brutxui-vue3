@@ -18,6 +18,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },
     input: { files: ['Input.vue', 'input-variants.ts'] },
     label: { files: ['Label.vue', 'label-variants.ts'] },
+    loading: { files: ['Loading.vue'] },
     pagination: { files: ['Pagination.vue', 'pagination-variants.ts'], composables: ['useLocale.ts'] },
     popover: { files: ['PopoverContent.vue', 'popover-variants.ts'] },
     'scroll-area': { files: ['ScrollArea.vue', 'ScrollBar.vue', 'scroll-area-variants.ts'] },
