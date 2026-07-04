@@ -115,6 +115,11 @@ import TransferDemo from './components/demos/TransferDemo.vue'
 import RateDemo from './components/demos/RateDemo.vue'
 import MenuDemo from './components/demos/MenuDemo.vue'
 import CascaderDemo from './components/demos/CascaderDemo.vue'
+import LoadingDemo from './components/demos/LoadingDemo.vue'
+import StatisticDemo from './components/demos/StatisticDemo.vue'
+import ResultDemo from './components/demos/ResultDemo.vue'
+import WatermarkDemo from './components/demos/WatermarkDemo.vue'
+import BacktopDemo from './components/demos/BacktopDemo.vue'
 import 'v-calendar/style.css'
 import './style.css'
 
@@ -236,5 +241,10 @@ export default {
         app.component('CascaderDemo', CascaderDemo)
         app.component('TransferDemo', TransferDemo)
         app.component('RateDemo', RateDemo)
+        app.component('LoadingDemo', LoadingDemo)
+        app.component('StatisticDemo', StatisticDemo)
+        app.component('ResultDemo', ResultDemo)
+        app.component('WatermarkDemo', WatermarkDemo)
+        app.component('BacktopDemo', BacktopDemo)
     },
 } satisfies Theme

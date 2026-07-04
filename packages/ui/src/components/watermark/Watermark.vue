@@ -79,10 +79,12 @@ function drawSvgFallback() {
         </svg>
     `
     
-    /* global Buffer */
+    const globalObj = globalThis as typeof globalThis & { Buffer?: any }
     const base64 = typeof window !== 'undefined' && typeof window.btoa === 'function'
         ? window.btoa(unescape(encodeURIComponent(svg)))
-        : typeof Buffer !== 'undefined' ? Buffer.from(svg).toString('base64') : ''
+        : typeof globalObj.Buffer !== 'undefined'
+            ? globalObj.Buffer.from(svg).toString('base64')
+            : ''
     
     watermarkUrl.value = `data:image/svg+xml;base64,${base64}`
     nextTick(() => initObserver())
