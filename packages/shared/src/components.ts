@@ -118,6 +118,8 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     statistic: { dependencies: [], description: 'Statistic data display component using Counter animation.' },
     watermark: { dependencies: [], description: 'Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.' },
     tour: { dependencies: [], description: 'Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.' },
+    image: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Image component with lazy loading, fallback, preview modal, and Neo-Brutalist placeholder patterns.' },
+    message: { dependencies: ['@lucide/vue'], description: 'Imperative message notification system with singleton container, TransitionGroup stacking, and auto GC.' },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);
