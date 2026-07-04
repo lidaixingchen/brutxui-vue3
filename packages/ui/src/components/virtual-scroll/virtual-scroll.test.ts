@@ -63,7 +63,7 @@ describe('VirtualScroll', () => {
         name: `Item ${i + 1}`,
     }))
 
-    function mountComponent(options: Parameters<typeof mount>[1] = {}) {
+    function mountComponent(options: Parameters<typeof mount<typeof VirtualScroll>>[1] = {}) {
         return mount(VirtualScroll, {
             ...options,
             global: globalProvide,
