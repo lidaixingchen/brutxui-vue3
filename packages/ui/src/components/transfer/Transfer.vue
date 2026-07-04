@@ -136,7 +136,7 @@ const rightIndeterminate = computed(() => {
 // 处理左侧全选点击
 const handleLeftAllCheckChange = (checked: boolean | 'indeterminate') => {
     const enabledKeys = filteredSourceData.value.filter(item => !item.disabled).map(item => item.key)
-    if (checked === true) {
+    if (checked === true || checked === 'indeterminate') {
         const uniqueKeys = new Set([...leftChecked.value, ...enabledKeys])
         leftChecked.value = Array.from(uniqueKeys)
     } else {
@@ -147,7 +147,7 @@ const handleLeftAllCheckChange = (checked: boolean | 'indeterminate') => {
 // 处理右侧全选点击
 const handleRightAllCheckChange = (checked: boolean | 'indeterminate') => {
     const enabledKeys = filteredTargetData.value.filter(item => !item.disabled).map(item => item.key)
-    if (checked === true) {
+    if (checked === true || checked === 'indeterminate') {
         const uniqueKeys = new Set([...rightChecked.value, ...enabledKeys])
         rightChecked.value = Array.from(uniqueKeys)
     } else {

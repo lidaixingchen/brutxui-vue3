@@ -74,7 +74,7 @@ function handleMultiSelectChange(value: unknown, checked: boolean | 'indetermina
     if (!Array.isArray(vals)) {
         vals = []
     }
-    if (checked === true) {
+    if (checked === true || checked === 'indeterminate') {
         if (!vals.includes(value)) {
             vals.push(value)
         }

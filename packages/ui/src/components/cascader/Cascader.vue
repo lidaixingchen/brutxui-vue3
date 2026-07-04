@@ -171,7 +171,7 @@ function toggleCheckbox(option: CascaderOption, colIdx: number, checked?: boolea
         const index = current.findIndex(p => isPathEqual(p, optionPath))
         
         const shouldSelect = checked !== undefined
-            ? checked === true
+            ? checked === true || checked === 'indeterminate'
             : index < 0
 
         if (shouldSelect) {
