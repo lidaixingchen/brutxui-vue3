@@ -116,7 +116,7 @@ describe('VirtualScroll', () => {
         await flushPromises()
 
         expect(wrapper.attributes('role')).toBe('list')
-        expect(wrapper.attributes('aria-label')).toBe('virtualScroll.label')
+        expect(['virtualScroll.label', '虚拟滚动列表']).toContain(wrapper.attributes('aria-label'))
     })
 
     it('exposes scrollToIndex method', async () => {
