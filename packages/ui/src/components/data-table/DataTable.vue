@@ -39,12 +39,9 @@ import {
     Inbox,
     ChevronDown,
     ChevronRight as ChevronRightIcon,
-    Filter,
 } from '@lucide/vue'
 import VirtualScroll from '../virtual-scroll/VirtualScroll.vue'
-import Popover from '../popover/Popover.vue'
-import PopoverTrigger from '../popover/PopoverTrigger.vue'
-import PopoverContent from '../popover/PopoverContent.vue'
+import DataTableColumnFilter from './DataTableColumnFilter.vue'
 
 const slots = useSlots()
 const { t } = useLocale()
@@ -252,61 +249,7 @@ const gridTemplateColumns = computed(() => {
     return parts.join(' ')
 })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isMultiSelectChecked(columnId: string, value: any): boolean {
-    const vals = filter.filterState.value.columns[columnId]
-    if (!Array.isArray(vals)) return false
-    return vals.includes(value)
-}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function handleMultiSelectChange(columnId: string, value: any, checked: boolean | 'indeterminate') {
-    if (!filter.filterState.value.columns) {
-        filter.filterState.value.columns = {}
-    }
-    let vals = filter.filterState.value.columns[columnId]
-    if (!Array.isArray(vals)) {
-        vals = []
-    }
-    if (checked === true) {
-        if (!vals.includes(value)) {
-            vals.push(value)
-        }
-    } else {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        vals = vals.filter((v: any) => v !== value)
-    }
-    filter.filterState.value.columns[columnId] = [...vals]
-    filter.filterState.value = { ...filter.filterState.value }
-}
-
-function getDateRangeVal(columnId: string, bound: 'start' | 'end'): string {
-    const val = filter.filterState.value.columns[columnId]
-    if (val && typeof val === 'object') {
-        return val[bound] || ''
-    }
-    return ''
-}
-
-function handleDateRangeChange(columnId: string, bound: 'start' | 'end', val: string) {
-    if (!filter.filterState.value.columns) {
-        filter.filterState.value.columns = {}
-    }
-    let current = filter.filterState.value.columns[columnId]
-    if (!current || typeof current !== 'object' || Array.isArray(current)) {
-        current = { start: '', end: '' }
-    }
-    current[bound] = val
-    filter.filterState.value.columns[columnId] = { ...current }
-    filter.filterState.value = { ...filter.filterState.value }
-}
-
-function resetColumnFilter(columnId: string) {
-    if (filter.filterState.value.columns) {
-        delete filter.filterState.value.columns[columnId]
-        filter.filterState.value = { ...filter.filterState.value }
-    }
-}
 
 const rootClasses = computed(() =>
     cn(dataTableRootVariants({ size: props.size }), props.class),
@@ -465,104 +408,12 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     <span>{{ getHeaderLabel(column) }}</span>
                                     
                                     <!-- Column Filter UI -->
-                                    <Popover v-if="props.filterable && column.filterType">
-                                        <PopoverTrigger as-child>
-                                            <Button
-                                                variant="default"
-                                                size="icon"
-                                                class="h-6 w-6 p-0 border-2 shadow-none focus-visible:ring-1"
-                                                :aria-label="`Filter ${column.id}`"
-                                                @click.stop
-                                            >
-                                                <Filter class="h-3 w-3" />
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent class="w-64 p-3 bg-brutal-bg border-3 border-brutal shadow-brutal flex flex-col gap-2 z-50">
-                                            <div class="font-bold text-xs text-brutal-fg mb-1">筛选 {{ getHeaderLabel(column) }}</div>
-                                            
-                                            <!-- Text Match -->
-                                            <template v-if="column.filterType === 'text'">
-                                                <Input
-                                                    v-model="filter.filterState.value.columns[column.id]"
-                                                    size="sm"
-                                                    placeholder="搜索关键字..."
-                                                    clearable
-                                                />
-                                            </template>
-                                            
-                                            <!-- Select -->
-                                            <template v-else-if="column.filterType === 'select'">
-                                                <SelectRoot
-                                                    :model-value="String(filter.filterState.value.columns[column.id] || '')"
-                                                    @update:model-value="val => { filter.filterState.value.columns[column.id] = val; filter.filterState.value = { ...filter.filterState.value } }"
-                                                >
-                                                    <SelectTrigger size="sm" class="w-full">
-                                                        <SelectValue placeholder="全部" />
-                                                    </SelectTrigger>
-                                                    <SelectContent class="z-50">
-                                                        <SelectItem value="">全部</SelectItem>
-                                                        <SelectItem
-                                                            v-for="opt in column.filterOptions"
-                                                            :key="opt.value"
-                                                            :value="String(opt.value)"
-                                                        >
-                                                            {{ opt.label }}
-                                                        </SelectItem>
-                                                    </SelectContent>
-                                                </SelectRoot>
-                                            </template>
-                                            
-                                            <!-- Multi-Select -->
-                                            <template v-else-if="column.filterType === 'multi-select'">
-                                                <div class="flex flex-col gap-1.5 max-h-40 overflow-y-auto border border-brutal p-1.5 bg-brutal-muted/20">
-                                                    <label
-                                                        v-for="opt in column.filterOptions"
-                                                        :key="opt.value"
-                                                        class="flex items-center gap-2 cursor-pointer text-xs"
-                                                    >
-                                                        <Checkbox
-                                                            :checked="isMultiSelectChecked(column.id, opt.value)"
-                                                            size="sm"
-                                                            @update:checked="checked => handleMultiSelectChange(column.id, opt.value, checked)"
-                                                        />
-                                                        <span>{{ opt.label }}</span>
-                                                    </label>
-                                                </div>
-                                            </template>
-                                            
-                                            <!-- Date Range -->
-                                            <template v-else-if="column.filterType === 'date-range'">
-                                                <div class="flex flex-col gap-2">
-                                                    <Input
-                                                        :model-value="getDateRangeVal(column.id, 'start')"
-                                                        type="date"
-                                                        size="sm"
-                                                        placeholder="开始日期"
-                                                        @update:model-value="val => handleDateRangeChange(column.id, 'start', val)"
-                                                    />
-                                                    <span class="text-xs text-center text-brutal-fg/50">至</span>
-                                                    <Input
-                                                        :model-value="getDateRangeVal(column.id, 'end')"
-                                                        type="date"
-                                                        size="sm"
-                                                        placeholder="结束日期"
-                                                        @update:model-value="val => handleDateRangeChange(column.id, 'end', val)"
-                                                    />
-                                                </div>
-                                            </template>
-                                            
-                                            <div class="flex items-center justify-between border-t border-brutal pt-2 mt-1">
-                                                <Button
-                                                    variant="default"
-                                                    size="sm"
-                                                    class="h-7 px-2 text-xs border-2 shadow-none"
-                                                    @click="resetColumnFilter(column.id)"
-                                                >
-                                                    重置
-                                                </Button>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
+                                    <DataTableColumnFilter
+                                        v-if="props.filterable && column.filterType"
+                                        :column="column"
+                                        v-model:filter-state="filter.filterState.value"
+                                        :header-label="getHeaderLabel(column)"
+                                    />
                                     
                                     <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
                                         <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />
@@ -726,104 +577,12 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 <span>{{ getHeaderLabel(column) }}</span>
                                 
                                 <!-- Column Filter UI (Native Table) -->
-                                <Popover v-if="props.filterable && column.filterType">
-                                    <PopoverTrigger as-child>
-                                        <Button
-                                            variant="default"
-                                            size="icon"
-                                            class="h-6 w-6 p-0 border-2 shadow-none focus-visible:ring-1"
-                                            :aria-label="`Filter ${column.id}`"
-                                            @click.stop
-                                        >
-                                            <Filter class="h-3 w-3" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent class="w-64 p-3 bg-brutal-bg border-3 border-brutal shadow-brutal flex flex-col gap-2 z-50">
-                                        <div class="font-bold text-xs text-brutal-fg mb-1">筛选 {{ getHeaderLabel(column) }}</div>
-                                        
-                                        <!-- Text Match -->
-                                        <template v-if="column.filterType === 'text'">
-                                            <Input
-                                                v-model="filter.filterState.value.columns[column.id]"
-                                                size="sm"
-                                                placeholder="搜索关键字..."
-                                                clearable
-                                            />
-                                        </template>
-                                        
-                                        <!-- Select -->
-                                        <template v-else-if="column.filterType === 'select'">
-                                            <SelectRoot
-                                                :model-value="String(filter.filterState.value.columns[column.id] || '')"
-                                                @update:model-value="val => { filter.filterState.value.columns[column.id] = val; filter.filterState.value = { ...filter.filterState.value } }"
-                                            >
-                                                <SelectTrigger size="sm" class="w-full">
-                                                    <SelectValue placeholder="全部" />
-                                                </SelectTrigger>
-                                                <SelectContent class="z-50">
-                                                    <SelectItem value="">全部</SelectItem>
-                                                    <SelectItem
-                                                        v-for="opt in column.filterOptions"
-                                                        :key="opt.value"
-                                                        :value="String(opt.value)"
-                                                    >
-                                                        {{ opt.label }}
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </SelectRoot>
-                                        </template>
-                                        
-                                        <!-- Multi-Select -->
-                                        <template v-else-if="column.filterType === 'multi-select'">
-                                            <div class="flex flex-col gap-1.5 max-h-40 overflow-y-auto border border-brutal p-1.5 bg-brutal-muted/20">
-                                                <label
-                                                    v-for="opt in column.filterOptions"
-                                                    :key="opt.value"
-                                                    class="flex items-center gap-2 cursor-pointer text-xs"
-                                                >
-                                                    <Checkbox
-                                                        :checked="isMultiSelectChecked(column.id, opt.value)"
-                                                        size="sm"
-                                                        @update:checked="checked => handleMultiSelectChange(column.id, opt.value, checked)"
-                                                    />
-                                                    <span>{{ opt.label }}</span>
-                                                </label>
-                                            </div>
-                                        </template>
-                                        
-                                        <!-- Date Range -->
-                                        <template v-else-if="column.filterType === 'date-range'">
-                                            <div class="flex flex-col gap-2">
-                                                <Input
-                                                    :model-value="getDateRangeVal(column.id, 'start')"
-                                                    type="date"
-                                                    size="sm"
-                                                    placeholder="开始日期"
-                                                    @update:model-value="val => handleDateRangeChange(column.id, 'start', val)"
-                                                />
-                                                <span class="text-xs text-center text-brutal-fg/50">至</span>
-                                                <Input
-                                                    :model-value="getDateRangeVal(column.id, 'end')"
-                                                    type="date"
-                                                    size="sm"
-                                                    placeholder="结束日期"
-                                                    @update:model-value="val => handleDateRangeChange(column.id, 'end', val)"
-                                                />
-                                            </div>
-                                        </template>
-                                        
-                                        <div class="flex items-center justify-between border-t border-brutal pt-2 mt-1">
-                                            <Button
-                                                variant="default"
-                                                size="sm"
-                                                class="h-7 px-2 text-xs border-2 shadow-none"
-                                                @click="resetColumnFilter(column.id)"
-                                            >
-                                                重置
-                                            </Button>
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
+                                <DataTableColumnFilter
+                                    v-if="props.filterable && column.filterType"
+                                    :column="column"
+                                    v-model:filter-state="filter.filterState.value"
+                                    :header-label="getHeaderLabel(column)"
+                                />
 
                                 <span v-if="sortable && column.sortable !== false" class="inline-flex text-brutal-fg">
                                     <ArrowUp v-if="sort.sortState.value.column === column.id && sort.sortState.value.direction === 'asc'" class="w-4 h-4" />

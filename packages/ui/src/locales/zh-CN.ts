@@ -243,6 +243,13 @@ export const zhCN: Locale = {
         sortAscending: '升序排列',
         sortDescending: '降序排列',
         clearSort: '清除排序',
+        filterTitle: '筛选 {label}',
+        filterSearchPlaceholder: '搜索关键字...',
+        filterAll: '全部',
+        filterStartDate: '开始日期',
+        filterEndDate: '结束日期',
+        filterTo: '至',
+        filterReset: '重置',
     },
     formWizard: {
         label: '表单向导',

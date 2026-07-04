@@ -243,6 +243,13 @@ export const en: Locale = {
         sortAscending: 'Sort ascending',
         sortDescending: 'Sort descending',
         clearSort: 'Clear sort',
+        filterTitle: 'Filter {label}',
+        filterSearchPlaceholder: 'Search keyword...',
+        filterAll: 'All',
+        filterStartDate: 'Start date',
+        filterEndDate: 'End date',
+        filterTo: 'to',
+        filterReset: 'Reset',
     },
     formWizard: {
         label: 'Form Wizard',

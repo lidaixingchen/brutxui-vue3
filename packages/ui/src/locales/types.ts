@@ -278,6 +278,13 @@ export interface DataTableLocale {
     sortAscending: string
     sortDescending: string
     clearSort: string
+    filterTitle: string
+    filterSearchPlaceholder: string
+    filterAll: string
+    filterStartDate: string
+    filterEndDate: string
+    filterTo: string
+    filterReset: string
 }
 
 export interface FormWizardLocale {
