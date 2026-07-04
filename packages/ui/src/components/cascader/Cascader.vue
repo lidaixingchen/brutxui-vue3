@@ -160,7 +160,7 @@ function getOptionCheckState(option: CascaderOption, colIdx: number): 'checked' 
 }
 
 // Handle checkbox clicking in multi-select mode
-function toggleCheckbox(option: CascaderOption, colIdx: number) {
+function toggleCheckbox(option: CascaderOption, colIdx: number, checked?: boolean | 'indeterminate') {
     if (option.disabled) return
     const optionPath = getOptionPath(option, colIdx)
     
@@ -169,10 +169,19 @@ function toggleCheckbox(option: CascaderOption, colIdx: number) {
             ? [...props.modelValue] as CascaderValue[][] 
             : []
         const index = current.findIndex(p => isPathEqual(p, optionPath))
-        if (index >= 0) {
-            current.splice(index, 1)
+        
+        const shouldSelect = checked !== undefined
+            ? checked === true
+            : index < 0
+
+        if (shouldSelect) {
+            if (index < 0) {
+                current.push(optionPath)
+            }
         } else {
-            current.push(optionPath)
+            if (index >= 0) {
+                current.splice(index, 1)
+            }
         }
         emit('update:modelValue', current)
         emit('change', current)
@@ -183,8 +192,12 @@ function toggleCheckbox(option: CascaderOption, colIdx: number) {
             : []
         const currentState = getOptionCheckState(option, colIdx)
         
+        const shouldDeselect = checked !== undefined
+            ? checked === false
+            : currentState === 'checked'
+        
         let next: CascaderValue[][]
-        if (currentState === 'checked') {
+        if (shouldDeselect) {
             // Deselect all descendant leaf paths
             next = current.filter(p => !leaves.some(l => isPathEqual(l, p)))
         } else {
@@ -451,7 +464,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                                 v-if="multiple"
                                 :checked="getOptionCheckState(option, colIdx) === 'checked' ? true : getOptionCheckState(option, colIdx) === 'indeterminate' ? 'indeterminate' : false"
                                 size="sm"
-                                @update:checked="toggleCheckbox(option, colIdx)"
+                                @update:checked="(checked) => toggleCheckbox(option, colIdx, checked)"
                                 @click.stop
                             />
                             <span class="truncate">{{ option.label }}</span>

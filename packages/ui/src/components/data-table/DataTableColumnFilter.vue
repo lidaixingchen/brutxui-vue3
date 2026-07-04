@@ -130,7 +130,7 @@ function resetColumnFilter() {
             <Button
                 variant="default"
                 size="icon"
-                class="h-6 w-6 p-0 border-2 shadow-none focus-visible:ring-1"
+                class="h-6 w-6 p-0 border-3 shadow-none focus-visible:ring-1"
                 :aria-label="`Filter ${column.id}`"
                 @click.stop
             >
@@ -217,7 +217,7 @@ function resetColumnFilter() {
                 <Button
                     variant="default"
                     size="sm"
-                    class="h-7 px-2 text-xs border-2 shadow-none"
+                    class="h-7 px-2 text-xs border-3 shadow-none"
                     @click="resetColumnFilter"
                 >
                     {{ t('dataTable.filterReset') }}

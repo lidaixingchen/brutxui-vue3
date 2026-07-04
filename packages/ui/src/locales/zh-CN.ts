@@ -458,6 +458,8 @@ export const zhCN: Locale = {
     },
     input: {
         placeholder: '请输入...',
+        showPassword: '显示密码',
+        hidePassword: '隐藏密码',
     },
     numberInput: {
         placeholder: '请输入数字...',

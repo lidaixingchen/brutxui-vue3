@@ -56,12 +56,21 @@ const closeIconClasses = computed(() =>
         'stroke-[3]'
     )
 )
+
+const iconClasses = computed(() =>
+    cn(
+        'inline-flex items-center justify-center',
+        props.size === 'sm' ? 'mr-1' : props.size === 'lg' ? 'mr-2' : 'mr-1.5'
+    )
+)
 </script>
 
 <template>
     <span :class="classes">
         <span v-if="showDot" :class="dotClasses" aria-hidden="true" />
-        <slot name="icon" />
+        <span v-if="$slots.icon" :class="iconClasses">
+            <slot name="icon" />
+        </span>
         <slot />
         <button
             v-if="closable"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Mail, Lock, Eye, EyeOff } from '@lucide/vue'
+import { Mail, Lock } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
@@ -75,11 +75,7 @@ const email = ref('')
 const password = ref('')
 const emailError = ref('')
 const passwordError = ref('')
-const showPassword = ref(false)
 
-const passwordType = computed(() => showPassword.value ? 'text' : 'password')
-const passwordToggleIcon = computed(() => showPassword.value ? EyeOff : Eye)
-const passwordToggleLabel = computed(() => showPassword.value ? t('authCard.hidePassword') : t('authCard.showPassword'))
 
 const resolvedTitle = computed(() => props.title ?? props.texts.welcomeBack ?? t('authCard.welcomeBack'))
 const resolvedDescription = computed(() => props.description ?? props.texts.signInToContinue ?? t('authCard.signInToContinue'))
@@ -163,10 +159,15 @@ function handleSubmit() {
                     </div>
                     <div class="relative">
                         <Lock :class="fieldIconClasses" />
-                        <Input :id="passwordId" v-model="password" :type="passwordType" :placeholder="t('authCard.passwordPlaceholder')" size="default" class="pl-10 pr-10" />
-                        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-brutal-muted-foreground active:translate-y-[calc(-50%+var(--brutal-pressed-offset,2px))] active:shadow-none transition-all" :aria-label="passwordToggleLabel" @click="showPassword = !showPassword">
-                            <component :is="passwordToggleIcon" :class="iconClasses" />
-                        </button>
+                        <Input
+                            :id="passwordId"
+                            v-model="password"
+                            type="password"
+                            show-password
+                            :placeholder="t('authCard.passwordPlaceholder')"
+                            size="default"
+                            class="pl-10"
+                        />
                     </div>
                     <p v-if="passwordError" class="text-sm font-bold text-brutal-destructive">
 {{ passwordError }}

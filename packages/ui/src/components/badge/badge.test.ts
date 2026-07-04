@@ -163,5 +163,30 @@ describe('Badge', () => {
             })
             expect(wrapper.find('.custom-icon').exists()).toBe(true)
         })
+
+        it('applies correct margin-right classes for different sizes', () => {
+            const defaultWrapper = mount(Badge, {
+                slots: { icon: '<span class="custom-icon" />' },
+                ...globalProvide,
+            })
+            const iconContainer = defaultWrapper.find('.custom-icon').element.parentElement
+            expect(iconContainer?.className).toContain('mr-1.5')
+
+            const smWrapper = mount(Badge, {
+                props: { size: 'sm' },
+                slots: { icon: '<span class="custom-icon" />' },
+                ...globalProvide,
+            })
+            const smIconContainer = smWrapper.find('.custom-icon').element.parentElement
+            expect(smIconContainer?.className).toContain('mr-1')
+
+            const lgWrapper = mount(Badge, {
+                props: { size: 'lg' },
+                slots: { icon: '<span class="custom-icon" />' },
+                ...globalProvide,
+            })
+            const lgIconContainer = lgWrapper.find('.custom-icon').element.parentElement
+            expect(lgIconContainer?.className).toContain('mr-2')
+        })
     })
 })

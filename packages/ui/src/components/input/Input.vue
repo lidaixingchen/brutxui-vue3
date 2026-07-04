@@ -6,6 +6,7 @@ import { useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { inputVariants, inputContainerVariants } from './input-variants'
 import { useClearable } from '@/composables/useClearable'
+import { useLocale } from '@/composables/useLocale'
 
 type InputVariantProps = VariantProps<typeof inputContainerVariants>
 
@@ -103,6 +104,12 @@ const slots = useSlots()
 const inputRef = ref<HTMLInputElement | null>(null)
 const isComposing = ref(false)
 const passwordVisible = ref(false)
+
+const { t } = useLocale()
+
+const passwordToggleLabel = computed(() =>
+    passwordVisible.value ? t('input.hidePassword') : t('input.showPassword')
+)
 
 // 使用 useClearable composable
 const { showClear, handleClear: handleClearEvent, onMouseEnter, onMouseLeave } = useClearable({
@@ -235,6 +242,7 @@ defineExpose({
                         v-if="showPasswordToggle"
                         type="button"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
+                        :aria-label="passwordToggleLabel"
                         @click="togglePasswordVisibility"
                     >
                         <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />

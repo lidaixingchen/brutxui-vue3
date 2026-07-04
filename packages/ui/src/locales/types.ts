@@ -519,6 +519,8 @@ export interface DashboardStatsLocale {
 
 export interface InputLocale {
     placeholder: string
+    showPassword: string
+    hidePassword: string
 }
 
 export interface NumberInputLocale {

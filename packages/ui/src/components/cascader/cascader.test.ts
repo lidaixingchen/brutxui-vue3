@@ -104,4 +104,28 @@ describe('Cascader', () => {
         await nextTick()
         expect((wrapper.vm as any).open).toBe(false)
     })
+
+    it('supports multiple mode checkbox selection and toggleCheckbox', async () => {
+        wrapper = mount(Cascader, {
+            ...localeProvide,
+            props: { options, multiple: true, modelValue: [] },
+            attachTo: document.body,
+        })
+        
+        const vm = wrapper.vm as any
+        const optionZh = options[0]
+        const optionBj = optionZh.children![0]
+
+        // 1. Select option using toggleCheckbox with checked=true (with activePath populated as in real interactions)
+        vm.activePath = ['zh', 'bj']
+        vm.toggleCheckbox(optionBj, 1, true)
+        expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toEqual([['zh', 'bj', 'hd'], ['zh', 'bj', 'cy']])
+
+        // 2. Deselect option using toggleCheckbox with checked=false
+        wrapper.setProps({ modelValue: [['zh', 'bj', 'hd'], ['zh', 'bj', 'cy']] })
+        await nextTick()
+        vm.activePath = ['zh', 'bj']
+        vm.toggleCheckbox(optionBj, 1, false)
+        expect(wrapper.emitted('update:modelValue')?.[1]?.[0]).toEqual([])
+    })
 })

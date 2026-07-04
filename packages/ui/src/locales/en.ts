@@ -458,6 +458,8 @@ export const en: Locale = {
     },
     input: {
         placeholder: 'Type here...',
+        showPassword: 'Show password',
+        hidePassword: 'Hide password',
     },
     numberInput: {
         placeholder: 'Enter a number...',
