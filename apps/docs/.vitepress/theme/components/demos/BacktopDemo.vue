@@ -5,43 +5,20 @@ import { Backtop } from 'brutx-ui-vue'
 <template>
     <div class="space-y-8">
         <div>
-            <h3 class="text-sm font-black mb-3">区域容器内滚动回到顶部演示</h3>
+            <h3 class="text-sm font-black mb-3">基础用法</h3>
             <p class="text-xs font-bold opacity-60 mb-2">
-                请向下滚动下方黄色硬边框容器。当滚动高度超过 100 像素时，容器右下角会出现回到顶部的按钮（本 Demo 的 Backtop 的 target 属性指向该滚动容器 ID）。
+                向下滚动本页，当滚动距离超过 200px 时，页面右下角会出现回到顶部按钮。
+                Backtop 默认监听 window 滚动，使用 position: fixed 定位，无需额外配置。
             </p>
-            
-            <div 
-                id="backtop-scroll-container" 
-                class="relative border-3 border-brutal rounded-brutal h-[220px] overflow-y-auto bg-brutal-bg p-4 shadow-brutal"
-            >
-                <div class="space-y-4 py-2">
-                    <div class="h-20 border-2 border-dashed border-brutal px-3 py-2 text-xs font-black bg-brutal-muted">
-                        滚动容器顶部 ↑
-                    </div>
-                    <div v-for="i in 10" :key="i" class="h-10 border-2 border-brutal-black bg-white rounded-brutal flex items-center px-4 text-xs font-bold">
-                        内容列表第 {{ i }} 行
-                    </div>
-                    <div class="h-20 border-2 border-dashed border-brutal px-3 py-2 text-xs font-black bg-brutal-muted">
-                        到底啦 ↓
-                    </div>
+            <div class="border-3 border-brutal rounded-brutal p-4 bg-brutal-muted/30 shadow-brutal">
+                <div class="text-xs font-bold space-y-1">
+                    <p>Props 说明：</p>
+                    <p>• <code class="bg-brutal-bg px-1 border border-brutal">visibility-height</code> — 触发显示的最小滚动距离（默认 200px）</p>
+                    <p>• <code class="bg-brutal-bg px-1 border border-brutal">right / bottom</code> — 按钮距视口边缘的偏移（默认 40/40）</p>
+                    <p>• <code class="bg-brutal-bg px-1 border border-brutal">target</code> — 可指定滚动容器选择器（默认 window）</p>
                 </div>
-
-                <!-- 回到顶部组件部署在这 -->
-                <Backtop 
-                    target="#backtop-scroll-container" 
-                    :visibility-height="100" 
-                    :right="20"
-                    :bottom="20"
-                    class="absolute!" 
-                />
             </div>
         </div>
+        <Backtop :visibility-height="200" />
     </div>
 </template>
-
-<style scoped>
-/* 避免 Demo 的绝对定位把页面撑开 */
-.absolute\! {
-    position: absolute !important;
-}
-</style>

@@ -60,7 +60,7 @@ const labelStyle = computed(() => {
                     'px-3 py-2 text-brutal-fg border-b-3 border-brutal',
                     props.class,
                 )"
-                :style="span > 1 ? { gridColumn: `span ${(span - 1) * 2}` } : undefined"
+                :style="span > 1 ? { gridColumn: `span ${span * 2 - 1}` } : undefined"
             >
                 <slot />
             </div>
