@@ -71,6 +71,9 @@ const dateRange = ref(null)
 | `modelValue` | `Date \| Date[] \| null` | `undefined` | Selected date, supports v-model binding. `Date` for single mode, `[Date, Date]` for range mode |
 | `isRange` | `boolean` | `false` | Whether to enable date range selection mode |
 | `disabled` | `boolean` | `false` | Disables the calendar, making it semi-transparent and non-interactive |
+| `events` | `CalendarEvent[]` | `[]` | Event markers data, displays event indicators on corresponding dates |
+| `eventRenderer` | `(event: CalendarEvent) => VNode \| string` | — | Custom event render function, returns a VNode or string |
+| `mode` | `'default' \| 'card'` | `'default'` | Event display mode: `default` shows dot indicators with Tooltip, `card` shows adaptive-height cards with capsule badges |
 | `class` | `string` | `undefined` | Custom CSS class name |
 
 ## Events
@@ -89,6 +92,84 @@ The Calendar component exposes the following slots via v-calendar's DatePicker, 
 | `header-title` | `{ title: string }` | Custom header title (defaults to bold uppercase display) |
 | `header-next-button` | — | Custom next month navigation button (defaults to ChevronRight icon) |
 | `day-content` | `{ day: object, dayProps: object, dayEvents: object }` | Custom date cell content |
+
+## Event Markers
+
+Use the `events` prop to mark events on the calendar. Two display modes are supported.
+
+### Data Type
+
+```ts
+interface CalendarEvent {
+    date: Date | string    // Event date
+    title: string          // Event title
+    [key: string]: unknown // Additional custom fields
+}
+```
+
+### Default Mode
+
+Dot indicators with Tooltip, ideal for calendars with fewer events:
+
+```vue
+<script setup>
+import { Calendar } from 'brutx-ui-vue/calendar'
+
+const events = [
+    { date: '2025-07-15', title: 'Team Meeting' },
+    { date: '2025-07-20', title: 'Product Launch' },
+    { date: '2025-07-20', title: 'Code Review' },
+]
+</script>
+
+<template>
+    <Calendar :events="events" />
+</template>
+```
+
+### Card Mode
+
+Adaptive-height cards with capsule badges, ideal for calendars with many events:
+
+```vue
+<script setup>
+import { Calendar } from 'brutx-ui-vue/calendar'
+
+const events = [
+    { date: '2025-07-15', title: 'Team Meeting' },
+    { date: '2025-07-20', title: 'Product Launch' },
+    { date: '2025-07-20', title: 'Code Review' },
+]
+</script>
+
+<template>
+    <Calendar :events="events" mode="card" />
+</template>
+```
+
+### Custom Event Rendering
+
+Use `eventRenderer` to customize how events are rendered:
+
+```vue
+<script setup>
+import { Calendar } from 'brutx-ui-vue/calendar'
+import { h } from 'vue'
+
+const events = [
+    { date: '2025-07-15', title: 'Team Meeting', color: 'red' },
+    { date: '2025-07-20', title: 'Product Launch', color: 'blue' },
+]
+
+function renderEvent(event) {
+    return h('span', { style: { color: event.color } }, event.title)
+}
+</script>
+
+<template>
+    <Calendar :events="events" :event-renderer="renderEvent" />
+</template>
+```
 
 ## Accessibility
 

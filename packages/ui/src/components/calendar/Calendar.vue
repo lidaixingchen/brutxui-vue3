@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, watch, defineAsyncComponent } from 'vue'
+import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
+import TooltipContent from '../tooltip/TooltipContent.vue'
+import TooltipProvider from '../tooltip/TooltipProvider.vue'
 
 const DatePicker = defineAsyncComponent(async () => {
     try {
@@ -15,11 +18,20 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 
+export interface CalendarEvent {
+    date: Date | string
+    title: string
+    [key: string]: unknown
+}
+
 interface CalendarProps {
     modelValue?: Date | Date[] | null
     isRange?: boolean
     disabled?: boolean
     class?: string
+    events?: CalendarEvent[]
+    eventRenderer?: (event: CalendarEvent) => unknown
+    mode?: 'default' | 'card'
 }
 
 interface DateRangeValue {
@@ -32,6 +44,9 @@ const props = withDefaults(defineProps<CalendarProps>(), {
     isRange: false,
     disabled: false,
     class: undefined,
+    events: () => [],
+    eventRenderer: undefined,
+    mode: 'default',
 })
 
 const emit = defineEmits<{
@@ -41,11 +56,11 @@ const emit = defineEmits<{
 const rootClasses = computed(() =>
     cn(
         'brutx-calendar',
+        props.mode === 'card' ? 'mode-card w-full' : 'w-fit max-w-full overflow-x-auto',
         'p-2 sm:p-3',
         'bg-brutal-bg text-brutal-fg',
         'border-3 border-brutal',
         'shadow-brutal',
-        'w-fit max-w-full overflow-x-auto',
         props.disabled ? 'opacity-50 pointer-events-none' : '',
         props.class
     )
@@ -98,12 +113,16 @@ const dragAttribute = computed(() => ({
     },
 }))
 
-const dayBaseClasses = computed(() =>
-    cn(
-        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
+const dayBaseClasses = computed(() => {
+    const isCard = props.mode === 'card'
+    return cn(
+        'flex font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10 relative',
+        isCard
+            ? 'h-auto min-h-16 flex-col items-stretch justify-start p-1 text-[10px] sm:text-xs'
+            : 'h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs',
         brutalPressWithTransition
     )
-)
+})
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
 const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
 
@@ -129,6 +148,22 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 
     dayClassesCache.set(key, result)
     return result
+}
+
+function isSameDay(date1: Date | string, date2: Date) {
+    const d1 = typeof date1 === 'string' ? new Date(date1) : date1
+    if (!(d1 instanceof Date) || isNaN(d1.getTime())) return false
+    return (
+        d1.getFullYear() === date2.getFullYear() &&
+        d1.getMonth() === date2.getMonth() &&
+        d1.getDate() === date2.getDate()
+    )
+}
+
+function getDayEvents(day: { date?: Date; startDate?: Date }) {
+    const dayDate = day.date || day.startDate
+    if (!dayDate || !props.events) return []
+    return props.events.filter(event => isSameDay(event.date, dayDate))
 }
 </script>
 
@@ -158,13 +193,73 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
             <ChevronRight class="w-4 h-4" />
         </template>
         <template #day-content="{ day, dayProps, dayEvents }">
-            <div
-                v-bind="dayProps"
-                :class="getDayClasses(day, dayProps.class)"
-                v-on="dayEvents"
-            >
-                {{ day.label }}
-            </div>
+            <!-- Default mode with events: render with Tooltip and a Dot -->
+            <template v-if="mode === 'default' && getDayEvents(day).length > 0">
+                <TooltipProvider :delay-duration="100">
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <div
+                                v-bind="dayProps"
+                                :class="getDayClasses(day, dayProps.class)"
+                                v-on="dayEvents"
+                            >
+                                <span>{{ day.label }}</span>
+                                <span
+                                    class="absolute top-0.5 right-0.5 block h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-brutal-primary border border-brutal"
+                                    data-testid="calendar-event-dot"
+                                />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <div class="flex flex-col gap-1 text-xs">
+                                <div
+                                    v-for="event in getDayEvents(day)"
+                                    :key="event.title"
+                                    class="font-bold"
+                                    data-testid="calendar-tooltip-event-title"
+                                >
+                                    {{ event.title }}
+                                </div>
+                            </div>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </template>
+            <!-- Default mode without events OR Card mode -->
+            <template v-else>
+                <div
+                    v-bind="dayProps"
+                    :class="getDayClasses(day, dayProps.class)"
+                    v-on="dayEvents"
+                >
+                    <template v-if="mode === 'card'">
+                        <div class="flex items-center justify-between w-full mb-1">
+                            <span :class="day.isToday ? 'underline decoration-2 font-black' : ''">
+                                {{ day.label }}
+                            </span>
+                        </div>
+                        <div class="flex flex-col gap-1 w-full items-stretch" data-testid="calendar-event-list">
+                            <template v-for="event in getDayEvents(day)" :key="event.title">
+                                <component
+                                    :is="eventRenderer(event)"
+                                    v-if="eventRenderer"
+                                />
+                                <div
+                                    v-else
+                                    class="text-[9px] sm:text-[10px] leading-tight px-1.5 py-0.5 bg-brutal-bg text-brutal-fg border border-brutal shadow-[1px_1px_0px_rgba(0,0,0,1)] rounded font-mono truncate text-left"
+                                    :title="event.title"
+                                    data-testid="calendar-card-event-badge"
+                                >
+                                    {{ event.title }}
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                    <template v-else>
+                        {{ day.label }}
+                    </template>
+                </div>
+            </template>
         </template>
     </DatePicker>
 </template>
@@ -278,5 +373,22 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Mode card custom overrides to make weeks stretch and days auto-resize */
+.brutx-calendar.mode-card {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.brutx-calendar.mode-card .vc-weeks {
+    width: 100% !important;
+}
+
+.brutx-calendar.mode-card .vc-day {
+    height: auto !important;
+    min-height: 4rem; /* 4rem = min-h-16 */
+    align-items: stretch;
+    justify-content: flex-start;
 }
 </style>

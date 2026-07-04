@@ -1,4 +1,5 @@
 export { default as Calendar } from './components/calendar/Calendar.vue'
+export type { CalendarEvent } from './components/calendar/Calendar.vue'
 
 export { default as DatePicker } from './components/date-picker/DatePicker.vue'
 export { default as DatePickerPanel } from './components/date-picker/DatePickerPanel.vue'

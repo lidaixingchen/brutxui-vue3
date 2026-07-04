@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, nextTick, useId } from 'vue';
-import { ChevronRight, File, Folder, FolderOpen } from '@lucide/vue';
+import { computed, ref, nextTick, useId, inject } from 'vue';
+import { ChevronRight, File, Folder, FolderOpen, Loader2, RotateCw } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { treeItemVariants } from './tree-view-variants';
 import { getCheckState } from './tree-view-utils';
 import { INDENT_PER_DEPTH, BASE_INDENT_TREE_VIEW, treeChevronBaseClass, treeChevronExpandedClass, treeLabelBaseClass } from '@/lib/tree-variants';
 import Checkbox from '../checkbox/Checkbox.vue';
-import type { TreeNode, SelectionMode, CheckState } from './TreeView.vue';
+import type { TreeNode, SelectionMode, CheckState, TreeViewContext } from './TreeView.vue';
+
+const context = inject<TreeViewContext | null>('TreeViewContext', null);
+
 
 const contentId = `tree-content-${useId()}`
 
@@ -44,10 +47,89 @@ const emit = defineEmits<{
 
 const treeItemRef = ref<HTMLDivElement | null>(null);
 
-const isLeaf = computed(() => !props.node.children || props.node.children.length === 0);
+const isLeaf = computed(() => {
+    if (props.node.isLeaf !== undefined) return props.node.isLeaf;
+    if (context?.lazy?.value) {
+        if (props.node.loaded) {
+            return !props.node.children || props.node.children.length === 0;
+        }
+        return false;
+    }
+    return !props.node.children || props.node.children.length === 0;
+});
 const isExpanded = computed(() => props.expandedIds.has(props.node.id));
 const isSelected = computed(() => props.selectedId === props.node.id);
 const isCheckboxMode = computed(() => props.selectionMode === 'checkbox');
+
+const isLoading = computed(() => {
+    return props.node.loading || (context?.loadingKeys.value.has(props.node.id) ?? false);
+});
+const isFailed = computed(() => {
+    return context?.failedKeys.value.has(props.node.id) ?? false;
+});
+const showRetry = computed(() => {
+    return isFailed.value && (context?.retryOnError.value ?? false);
+});
+
+const isDragOver = computed(() => {
+    return context?.dragOverNode.value?.id === props.node.id;
+});
+const dragOverType = computed(() => {
+    return isDragOver.value ? context?.dropType.value : null;
+});
+
+const dragClasses = computed(() => {
+    if (!isDragOver.value || !dragOverType.value) return '';
+    if (dragOverType.value === 'before') {
+        return 'border-t-4 border-dashed border-black dark:border-white';
+    }
+    if (dragOverType.value === 'after') {
+        return 'border-b-4 border-dashed border-black dark:border-white';
+    }
+    if (dragOverType.value === 'inner') {
+        return 'border-2 border-solid border-black dark:border-white bg-black/5 dark:bg-white/5';
+    }
+    return '';
+});
+
+function handleDragStart(e: DragEvent) {
+    if (props.disabled) return;
+    context?.onNodeDragStart(e, props.node);
+}
+
+function handleDragOver(e: DragEvent) {
+    if (props.disabled) return;
+    const rect = e.currentTarget instanceof HTMLElement 
+        ? e.currentTarget.getBoundingClientRect() 
+        : null;
+    if (rect) {
+        context?.onNodeDragOver(e, props.node, rect, e.clientY);
+    }
+}
+
+function handleDragEnter(e: DragEvent) {
+    if (props.disabled) return;
+    context?.onNodeDragEnter(e, props.node);
+}
+
+function handleDragLeave(e: DragEvent) {
+    if (props.disabled) return;
+    context?.onNodeDragLeave(e, props.node);
+}
+
+function handleDragEnd(e: DragEvent) {
+    if (props.disabled) return;
+    context?.onNodeDragEnd(e, props.node);
+}
+
+function handleDrop(e: DragEvent) {
+    if (props.disabled) return;
+    context?.onNodeDrop(e, props.node);
+}
+
+function handleRetry() {
+    context?.triggerLoad(props.node);
+}
 
 const checkState = computed<CheckState>(() => {
     if (!isCheckboxMode.value) return 'unchecked'
@@ -161,6 +243,7 @@ defineExpose({ focus, nodeId: props.node.id });
 
 <template>
     <div
+        v-show="!node.hidden"
         ref="treeItemRef"
         role="treeitem"
         :tabindex="isSelected ? 0 : (isFirstRoot ? 0 : -1)"
@@ -172,9 +255,16 @@ defineExpose({ focus, nodeId: props.node.id });
         @keydown="handleKeydown"
     >
         <div
-            :class="itemClass"
+            :class="[itemClass, dragClasses]"
             :style="indentStyle"
+            :draggable="context?.draggable.value && !disabled"
             @click="handleClick"
+            @dragstart="handleDragStart"
+            @dragover="handleDragOver"
+            @dragenter="handleDragEnter"
+            @dragleave="handleDragLeave"
+            @dragend="handleDragEnd"
+            @drop="handleDrop"
         >
             <ChevronRight
                 v-if="!isLeaf"
@@ -192,11 +282,24 @@ defineExpose({ focus, nodeId: props.node.id });
                 @update:checked="handleCheckboxUpdate"
             />
 
-            <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0 text-brutal-primary" />
-            <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
-            <File v-else class="w-4 h-4 flex-shrink-0 opacity-60" />
+            <Loader2 v-if="isLoading" class="w-4 h-4 animate-spin flex-shrink-0 text-brutal-primary" />
+            <template v-else>
+                <FolderOpen v-if="!isLeaf && isExpanded" class="w-4 h-4 flex-shrink-0 text-brutal-primary" />
+                <Folder v-else-if="!isLeaf" class="w-4 h-4 flex-shrink-0" />
+                <File v-else class="w-4 h-4 flex-shrink-0 opacity-60" />
+            </template>
 
             <span :class="treeLabelBaseClass">{{ node.label }}</span>
+
+            <button
+                v-if="showRetry"
+                type="button"
+                class="ml-2 p-1 border-2 border-black dark:border-white bg-brutal-primary text-black hover:bg-brutal-primary/80 transition-colors flex items-center justify-center rounded-none cursor-pointer"
+                title="Retry Loading"
+                @click.stop="handleRetry"
+            >
+                <RotateCw class="w-3 h-3" />
+            </button>
         </div>
 
         <Transition name="tree-expand">

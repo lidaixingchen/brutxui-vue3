@@ -79,7 +79,7 @@ function drawSvgFallback() {
         </svg>
     `
     
-    const globalObj = globalThis as typeof globalThis & { Buffer?: any }
+    const globalObj = globalThis as typeof globalThis & { Buffer?: { from: (str: string) => { toString: (enc: string) => string } } }
     const base64 = typeof window !== 'undefined' && typeof window.btoa === 'function'
         ? window.btoa(unescape(encodeURIComponent(svg)))
         : typeof globalObj.Buffer !== 'undefined'

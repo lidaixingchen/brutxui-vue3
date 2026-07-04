@@ -4,7 +4,7 @@ import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import TreeView from './TreeView.vue'
 import TreeViewNode from './TreeViewNode.vue'
-import { getAllDescendantIds, getCheckState } from './tree-view-utils'
+import { getAllDescendantIds, getCheckState, moveNode } from './tree-view-utils'
 import type { TreeNode } from './types'
 
 const localeProvide = { [LOCALE_INJECTION_KEY]: en }
@@ -1227,4 +1227,196 @@ describe('tree-view-utils', () => {
             expect(getCheckState(leaf, new Set())).toBe('unchecked')
         })
     })
+
+    describe('moveNode', () => {
+        it('moves a node before another node', () => {
+            const tree: TreeNode[] = [
+                { id: '1', label: '1' },
+                { id: '2', label: '2' },
+            ]
+            const result = moveNode(tree, '2', '1', 'before')
+            expect(result.map(n => n.id)).toEqual(['2', '1'])
+        })
+
+        it('moves a node after another node', () => {
+            const tree: TreeNode[] = [
+                { id: '1', label: '1' },
+                { id: '2', label: '2' },
+            ]
+            const result = moveNode(tree, '1', '2', 'after')
+            expect(result.map(n => n.id)).toEqual(['2', '1'])
+        })
+
+        it('moves a node inner to another node', () => {
+            const tree: TreeNode[] = [
+                { id: '1', label: '1' },
+                { id: '2', label: '2' },
+            ]
+            const result = moveNode(tree, '2', '1', 'inner')
+            expect(result[0].children).toHaveLength(1)
+            expect(result[0].children![0].id).toBe('2')
+            expect(result).toHaveLength(1)
+        })
+
+        it('refuses to move if target is same as source', () => {
+            const tree: TreeNode[] = [{ id: '1', label: '1' }]
+            const result = moveNode(tree, '1', '1', 'inner')
+            expect(result).toEqual(tree)
+        })
+
+        it('refuses to move to a descendant of itself', () => {
+            const tree: TreeNode[] = [
+                {
+                    id: '1',
+                    label: '1',
+                    children: [{ id: '2', label: '2' }],
+                },
+            ]
+            const result = moveNode(tree, '1', '2', 'inner')
+            expect(result).toEqual(tree)
+        })
+    })
 })
+
+describe('TreeView - Drag and Drop', () => {
+    it('supports draggable props and triggers drag events', async () => {
+        const tree: TreeNode[] = [
+            { id: 'drag-node', label: 'Drag' },
+            { id: 'drop-node', label: 'Drop' }
+        ]
+        
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: tree,
+                draggable: true,
+            },
+            global: { provide: localeProvide },
+        })
+
+        const nodes = wrapper.findAllComponents(TreeViewNode)
+        const dragItem = nodes[0]
+        const dropItem = nodes[1]
+
+        await dragItem.find('[draggable="true"]').trigger('dragstart', { preventDefault: () => {} })
+        expect(wrapper.emitted('node-drag-start')).toBeTruthy()
+
+        await dropItem.find('[role="treeitem"] > div').trigger('dragover', { clientY: 10, preventDefault: () => {} })
+        expect(wrapper.emitted('node-drag-over')).toBeTruthy()
+
+        await dropItem.find('[role="treeitem"] > div').trigger('drop', { preventDefault: () => {} })
+        expect(wrapper.emitted('node-drop')).toBeTruthy()
+        expect(wrapper.emitted('update:nodes')).toBeTruthy()
+    })
+})
+
+describe('TreeView - Lazy Loading', () => {
+    it('shows branch chevron/icon and loads children on expand', async () => {
+        const mockLoad = vi.fn().mockResolvedValue([
+            { id: 'child', label: 'Child Node', isLeaf: true }
+        ])
+        const tree: TreeNode[] = [
+            { id: 'lazy-root', label: 'Lazy Root' }
+        ]
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: tree,
+                lazy: true,
+                load: mockLoad,
+            },
+            global: { provide: localeProvide },
+        })
+
+        const node = wrapper.findComponent(TreeViewNode)
+        expect(node.text()).toContain('Lazy Root')
+        
+        await node.find('[role="treeitem"] > div').trigger('click')
+        
+        expect(mockLoad).toHaveBeenCalledWith(expect.objectContaining({ id: 'lazy-root' }))
+        
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+        
+        expect(wrapper.text()).toContain('Child Node')
+    })
+
+    it('shows retry button on failure and retries loading', async () => {
+        let callCount = 0
+        const mockLoad = vi.fn().mockImplementation(() => {
+            callCount++
+            if (callCount === 1) {
+                return Promise.reject(new Error('Load error'))
+            }
+            return Promise.resolve([{ id: 'child', label: 'Child Node', isLeaf: true }])
+        })
+        const tree: TreeNode[] = [
+            { id: 'lazy-root', label: 'Lazy Root' }
+        ]
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: tree,
+                lazy: true,
+                load: mockLoad,
+                retryOnError: true,
+            },
+            global: { provide: localeProvide },
+        })
+
+        const node = wrapper.findComponent(TreeViewNode)
+        await node.find('[role="treeitem"] > div').trigger('click')
+        
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+        
+        const retryBtn = node.find('button[title="Retry Loading"]')
+        expect(retryBtn.exists()).toBe(true)
+        
+        await retryBtn.trigger('click')
+        
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+        
+        expect(wrapper.text()).toContain('Child Node')
+        expect(node.find('button[title="Retry Loading"]').exists()).toBe(false)
+    })
+})
+
+describe('TreeView - Filtering', () => {
+    it('filters nodes based on query and exposes filter method', async () => {
+        const tree: TreeNode[] = [
+            {
+                id: 'parent1',
+                label: 'Parent 1',
+                children: [
+                    { id: 'child1', label: 'Match Me' },
+                    { id: 'child2', label: 'Hidden Node' }
+                ]
+            },
+            { id: 'parent2', label: 'Other Parent' }
+        ]
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: tree,
+                filterable: true,
+            },
+            global: { provide: localeProvide },
+        })
+
+        const vm = wrapper.vm as any
+        vm.filter('Match')
+        await nextTick()
+
+        const items = wrapper.findAllComponents(TreeViewNode)
+        const parent1 = items.find(i => i.props('node').id === 'parent1')
+        expect((parent1?.element as HTMLElement).style.display).not.toBe('none')
+        
+        const child1 = items.find(i => i.props('node').id === 'child1')
+        expect((child1?.element as HTMLElement).style.display).not.toBe('none')
+
+        const child2 = items.find(i => i.props('node').id === 'child2')
+        expect((child2?.element as HTMLElement).style.display).toBe('none')
+
+        const parent2 = items.find(i => i.props('node').id === 'parent2')
+        expect((parent2?.element as HTMLElement).style.display).toBe('none')
+    })
+})
+

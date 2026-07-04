@@ -232,6 +232,124 @@ Close button re-exported from reka-ui.
 - **ARIA Attributes**: Close button includes screen reader text
 - **Interactive Elements**: Interactive elements (Input, Button, etc.) are automatically excluded during drag
 
+## Functional API
+
+In addition to the declarative component approach, Dialog also provides functional invocation methods for quickly creating dialogs in business logic.
+
+### showDialog
+
+Call `showDialog` to programmatically create and open a dialog:
+
+```ts
+import { showDialog } from 'brutx-ui-vue'
+
+const instance = showDialog({
+    title: 'Confirm Action',
+    content: 'Are you sure you want to delete this record?',
+    size: 'sm',
+    onConfirm: () => {
+        // Handle confirmation logic
+    },
+    onCancel: () => {
+        // Handle cancellation logic
+    },
+})
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `title` | `string` | — | Dialog title |
+| `content` | `string` | — | Dialog content |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | Dialog size |
+| `onConfirm` | `() => void` | — | Confirmation callback |
+| `onCancel` | `() => void` | — | Cancellation callback |
+
+**Return value:** Returns a dialog instance with a `close()` method for manual closing.
+
+### showMessageBox
+
+Call `showMessageBox` to display a confirmation message box that returns a Promise:
+
+```ts
+import { showMessageBox } from 'brutx-ui-vue'
+
+async function handleDelete() {
+    const confirmed = await showMessageBox({
+        title: 'Warning',
+        content: 'This action cannot be undone. Are you sure you want to continue?',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
+    })
+
+    if (confirmed) {
+        // User clicked confirm
+    }
+}
+```
+
+**Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `title` | `string` | — | Message box title |
+| `content` | `string` | — | Message box content |
+| `confirmText` | `string` | `'Confirm'` | Confirm button text |
+| `cancelText` | `string` | `'Cancel'` | Cancel button text |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'sm'` | Message box size |
+
+**Return value:** `Promise<boolean>` -- returns `true` if the user clicks confirm, `false` if the user clicks cancel.
+
+### useDialog (Composable)
+
+Use the `useDialog` composable within a component to gain reactive dialog control:
+
+```vue
+<script setup>
+import { useDialog } from 'brutx-ui-vue'
+
+const { open, close, isOpen } = useDialog()
+
+function showMyDialog() {
+    open({
+        title: 'Notice',
+        content: 'This dialog was opened via a Composable',
+    })
+}
+</script>
+
+<template>
+    <button @click="showMyDialog">Open Dialog</button>
+</template>
+```
+
+### useMessageBox (Composable)
+
+Use the `useMessageBox` composable within a component to gain reactive message box control:
+
+```vue
+<script setup>
+import { useMessageBox } from 'brutx-ui-vue'
+
+const { confirm } = useMessageBox()
+
+async function handleAction() {
+    const result = await confirm({
+        title: 'Confirm',
+        content: 'Are you sure you want to perform this action?',
+    })
+    if (result) {
+        // User confirmed
+    }
+}
+</script>
+
+<template>
+    <button @click="handleAction">Perform Action</button>
+</template>
+```
+
 ## FAQ
 
 **Q: The page is still scrollable after opening the dialog. What should I do?**

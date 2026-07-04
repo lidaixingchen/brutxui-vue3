@@ -19,6 +19,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
         description: 'Dropdown menu with checkbox items, radio items, and sub-menus.',
     },
     input: { dependencies: [], description: 'Text input field with validation styling.' },
+    image: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Image component with lazy loading, fallback image, and Neo-Brutalist interactive preview modal.' },
     label: { dependencies: ['reka-ui'], description: 'Form label associated with input controls.' },
     loading: { dependencies: [], description: 'Container wrapper and v-loading custom directive for displaying loading state overlay with custom text.' },
     pagination: { dependencies: ['@lucide/vue'], description: 'Page navigation with first, previous, next, last controls and locale support.' },
@@ -116,6 +117,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     result: { dependencies: ['@lucide/vue'], description: 'Feedback result display with state color blocks and action buttons.' },
     statistic: { dependencies: [], description: 'Statistic data display component using Counter animation.' },
     watermark: { dependencies: [], description: 'Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.' },
+    tour: { dependencies: [], description: 'Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.' },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

@@ -1,6 +1,7 @@
 export interface ComponentFileMapping {
     files: string[];
     composables?: string[];
+    directives?: string[];
 }
 
 export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
@@ -15,11 +16,16 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
     combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
-    dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts'], composables: ['useLocale.ts'] },
+    dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts', 'DialogEnhanced.vue', 'functional.ts'], composables: ['useLocale.ts'] },
     'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },
     input: { files: ['Input.vue', 'input-variants.ts'] },
+    image: { files: ['Image.vue'] },
     label: { files: ['Label.vue', 'label-variants.ts'] },
-    loading: { files: ['Loading.vue'] },
+    loading: {
+        files: ['Loading.vue'],
+        composables: [],
+        directives: ['loading.ts'],
+    },
     pagination: { files: ['Pagination.vue', 'pagination-variants.ts'], composables: ['useLocale.ts'] },
     popover: { files: ['PopoverContent.vue', 'popover-variants.ts'] },
     'scroll-area': { files: ['ScrollArea.vue', 'ScrollBar.vue', 'scroll-area-variants.ts'] },
@@ -59,7 +65,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'code-block': { files: ['CodeBlock.vue', 'prism-languages.ts', 'brutx-prism.css', 'code-block-variants.ts'], composables: ['useLocale.ts'] },
     timeline: { files: ['Timeline.vue', 'TimelineItem.vue', 'TimelineSeparator.vue', 'TimelineDot.vue', 'TimelineConnector.vue', 'TimelineContent.vue', 'timeline-key.ts', 'timeline-variants.ts'] },
     carousel: { files: ['Carousel.vue', 'CarouselEnhanced.vue', 'CarouselItem.vue', 'carousel-variants.ts'], composables: ['useLocale.ts'] },
-    'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts'], composables: ['useLocale.ts'] },
+    'tree-view': { files: ['TreeView.vue', 'TreeViewNode.vue', 'tree-view-variants.ts', 'tree-view-utils.ts'], composables: ['useLocale.ts'] },
     kanban: { files: ['KanbanBoard.vue', 'kanban-variants.ts'], composables: ['useLocale.ts'] },
     'chat-bubble': { files: ['ChatBubble.vue', 'chat-bubble-variants.ts'] },
     kbd: { files: ['Kbd.vue', 'kbd-variants.ts'] },
@@ -179,5 +185,13 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     },
     watermark: {
         files: ['Watermark.vue'],
+    },
+    tour: {
+        files: ['Tour.vue'],
+        composables: ['useLocale.ts'],
+    },
+    message: {
+        files: ['MessageContainer.vue'],
+        composables: ['useMessage.ts', 'useLocale.ts'],
     },
 };

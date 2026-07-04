@@ -7,4 +7,9 @@ export interface TreeNode {
     children?: TreeNode[];
     data?: unknown;
     disabled?: boolean;
+    isLeaf?: boolean;
+    loaded?: boolean;
+    loading?: boolean;
+    hidden?: boolean;
 }
+

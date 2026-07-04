@@ -105,6 +105,10 @@ export interface ToastLocale {
     container: string
 }
 
+export interface MessageLocale {
+    close: string
+}
+
 export interface DialogLocale {
     close: string
 }
@@ -587,6 +591,7 @@ export interface Locale {
     dashboardShell: DashboardShellLocale
     brutalistHero: BrutalistHeroLocale
     toast: ToastLocale
+    message: MessageLocale
     dialog: DialogLocale
     sheet: SheetLocale
     breadcrumb: BreadcrumbLocale

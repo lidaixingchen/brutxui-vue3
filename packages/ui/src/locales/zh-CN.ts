@@ -95,6 +95,9 @@ export const zhCN: Locale = {
         close: '关闭',
         container: '通知',
     },
+    message: {
+        close: '关闭',
+    },
     dialog: {
         close: '关闭',
     },

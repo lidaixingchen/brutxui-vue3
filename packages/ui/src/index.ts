@@ -46,6 +46,13 @@ export { default as DialogFooter } from './components/dialog/DialogFooter.vue'
 export { default as DialogTitle } from './components/dialog/DialogTitle.vue'
 export { default as DialogDescription } from './components/dialog/DialogDescription.vue'
 export { dialogContentVariants, dialogCloseVariants } from './components/dialog/dialog-variants'
+export { showDialog, showMessageBox } from './components/dialog/functional'
+export { useDialog } from './composables/useDialog'
+export type { UseDialogReturn } from './composables/useDialog'
+export { useMessageBox } from './composables/useMessageBox'
+export type { UseMessageBoxReturn } from './composables/useMessageBox'
+export { useMessage, messageStore, removeMessage } from './composables/useMessage'
+export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './composables/useMessage'
 
 export { AlertDialogRoot as AlertDialog, AlertDialogTrigger, AlertDialogPortal } from 'reka-ui'
 export { default as AlertDialogContent } from './components/alert-dialog/AlertDialogContent.vue'
@@ -486,6 +493,9 @@ export { default as Statistic } from './components/statistic/Statistic.vue'
 export { default as Result } from './components/result/Result.vue'
 export { default as Watermark } from './components/watermark/Watermark.vue'
 export { default as Backtop } from './components/backtop/Backtop.vue'
+export { default as Tour } from './components/tour/Tour.vue'
+export type { TourStep, TourProps } from './components/tour/Tour.vue'
+export { default as Image } from './components/image/Image.vue'
 
 // 通用工具类型
 export type {

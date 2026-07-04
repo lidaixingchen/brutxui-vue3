@@ -1,14 +1,32 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch } from 'vue';
+import { ref, shallowRef, computed, watch, provide, type Ref, type ComputedRef } from 'vue';
 import { hasDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
-import { getCheckState, getAllDescendantIds } from './tree-view-utils';
+import { getCheckState, getAllDescendantIds, moveNode } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 import type { SelectionMode, TreeNode } from './types';
 import type { CheckState } from './tree-view-utils';
 
 export type { SelectionMode, TreeNode, CheckState };
+
+export interface TreeViewContext {
+    lazy: ComputedRef<boolean>;
+    retryOnError: ComputedRef<boolean>;
+    loadingKeys: Ref<Set<string>>;
+    failedKeys: Ref<Set<string>>;
+    draggable: ComputedRef<boolean>;
+    draggedNode: Ref<TreeNode | null>;
+    dragOverNode: Ref<TreeNode | null>;
+    dropType: Ref<'before' | 'after' | 'inner' | null>;
+    triggerLoad: (node: TreeNode) => Promise<void>;
+    onNodeDragStart: (event: DragEvent, node: TreeNode) => void;
+    onNodeDragOver: (event: DragEvent, node: TreeNode, rect: DOMRect, clientY: number) => void;
+    onNodeDragEnter: (event: DragEvent, node: TreeNode) => void;
+    onNodeDragLeave: (event: DragEvent, node: TreeNode) => void;
+    onNodeDragEnd: (event: DragEvent, node: TreeNode) => void;
+    onNodeDrop: (event: DragEvent, node: TreeNode) => void;
+}
 
 interface TreeViewProps {
     nodes: TreeNode[];
@@ -17,6 +35,20 @@ interface TreeViewProps {
     selectionMode?: SelectionMode;
     defaultExpanded?: string[];
     class?: string;
+    
+    // Drag & Drop
+    draggable?: boolean;
+    allowDrag?: (node: TreeNode) => boolean;
+    allowDrop?: (dragNode: TreeNode, dropNode: TreeNode, dropType: 'before' | 'after' | 'inner') => boolean;
+    
+    // Lazy Loading
+    lazy?: boolean;
+    load?: (node: TreeNode) => Promise<TreeNode[]>;
+    retryOnError?: boolean;
+    
+    // Filter
+    filterable?: boolean;
+    filterMethod?: (query: string, node: TreeNode) => boolean;
 }
 
 const props = withDefaults(defineProps<TreeViewProps>(), {
@@ -25,15 +57,32 @@ const props = withDefaults(defineProps<TreeViewProps>(), {
     selectionMode: 'single',
     defaultExpanded: () => [],
     class: undefined,
+    draggable: false,
+    allowDrag: undefined,
+    allowDrop: undefined,
+    lazy: false,
+    load: undefined,
+    retryOnError: false,
+    filterable: false,
+    filterMethod: undefined,
 });
 
 const emit = defineEmits<{
     'update:modelValue': [id: string | null];
     'update:checkedIds': [ids: string[]];
     'update:expanded': [ids: string[]];
+    'update:nodes': [nodes: TreeNode[]];
     'select': [node: TreeNode];
     'expand': [id: string, expanded: boolean];
     'check': [node: TreeNode, checked: boolean];
+    
+    // Drag & Drop Events
+    'node-drag-start': [event: DragEvent, node: TreeNode];
+    'node-drag-enter': [event: DragEvent, node: TreeNode];
+    'node-drag-leave': [event: DragEvent, node: TreeNode];
+    'node-drag-over': [event: DragEvent, node: TreeNode];
+    'node-drag-end': [event: DragEvent, node: TreeNode];
+    'node-drop': [event: DragEvent, node: TreeNode, dropType: 'before' | 'after' | 'inner'];
 }>();
 
 const { t } = useLocale();
@@ -55,6 +104,11 @@ function toggleExpand(id: string) {
         nextSet.delete(id)
     } else {
         nextSet.add(id)
+        
+        const node = findNodeById(props.nodes, id);
+        if (node && props.lazy && props.load && !node.loaded && !node.isLeaf) {
+            triggerLoad(node);
+        }
     }
     expandedIds.value = nextSet
     emit('expand', id, nextSet.has(id))
@@ -154,6 +208,213 @@ function handleFocusLast() {
     if (items.length === 0) return
     items[items.length - 1].focus()
 }
+
+const draggedNode = ref<TreeNode | null>(null);
+const dragOverNode = ref<TreeNode | null>(null);
+const dropType = ref<'before' | 'after' | 'inner' | null>(null);
+
+const loadingKeys = ref<Set<string>>(new Set());
+const failedKeys = ref<Set<string>>(new Set());
+
+function findNodeById(nodes: TreeNode[], id: string): TreeNode | null {
+    for (const node of nodes) {
+        if (node.id === id) return node;
+        if (node.children && node.children.length > 0) {
+            const found = findNodeById(node.children, id);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
+async function triggerLoad(node: TreeNode) {
+    if (loadingKeys.value.has(node.id)) return;
+    
+    loadingKeys.value.add(node.id);
+    node.loading = true;
+    failedKeys.value.delete(node.id);
+    
+    try {
+        const result = await props.load?.(node);
+        if (result) {
+            node.children = result;
+        }
+        node.loaded = true;
+        node.loading = false;
+        emit('update:nodes', [...props.nodes]);
+    } catch (err) {
+        node.loading = false;
+        node.loaded = false;
+        failedKeys.value.add(node.id);
+        console.error(`Failed to load children for node ${node.id}:`, err);
+    } finally {
+        loadingKeys.value.delete(node.id);
+    }
+}
+
+function onNodeDragStart(event: DragEvent, node: TreeNode) {
+    if (!props.draggable) return;
+    if (props.allowDrag && !props.allowDrag(node)) {
+        event.preventDefault();
+        return;
+    }
+    draggedNode.value = node;
+    emit('node-drag-start', event, node);
+}
+
+function onNodeDragOver(event: DragEvent, node: TreeNode, rect: DOMRect, clientY: number) {
+    if (!props.draggable || !draggedNode.value) return;
+    
+    if (draggedNode.value.id === node.id) {
+        dragOverNode.value = null;
+        dropType.value = null;
+        return;
+    }
+    
+    const relativeY = clientY - rect.top;
+    let type: 'before' | 'after' | 'inner';
+    if (relativeY < rect.height * 0.25) {
+        type = 'before';
+    } else if (relativeY > rect.height * 0.75) {
+        type = 'after';
+    } else {
+        type = 'inner';
+    }
+    
+    if (props.allowDrop && !props.allowDrop(draggedNode.value, node, type)) {
+        dragOverNode.value = null;
+        dropType.value = null;
+        return;
+    }
+    
+    event.preventDefault();
+    dragOverNode.value = node;
+    dropType.value = type;
+    emit('node-drag-over', event, node);
+}
+
+function onNodeDragEnter(event: DragEvent, node: TreeNode) {
+    emit('node-drag-enter', event, node);
+}
+
+function onNodeDragLeave(event: DragEvent, node: TreeNode) {
+    if (dragOverNode.value?.id === node.id) {
+        dragOverNode.value = null;
+        dropType.value = null;
+    }
+    emit('node-drag-leave', event, node);
+}
+
+function onNodeDragEnd(event: DragEvent, node: TreeNode) {
+    draggedNode.value = null;
+    dragOverNode.value = null;
+    dropType.value = null;
+    emit('node-drag-end', event, node);
+}
+
+function onNodeDrop(event: DragEvent, node: TreeNode) {
+    if (!props.draggable || !draggedNode.value || !dragOverNode.value || !dropType.value) return;
+    event.preventDefault();
+    
+    const dragId = draggedNode.value.id;
+    const dropId = node.id;
+    const type = dropType.value;
+    
+    emit('node-drop', event, node, type);
+    
+    const nextNodes = moveNode(props.nodes, dragId, dropId, type);
+    emit('update:nodes', nextNodes);
+    
+    draggedNode.value = null;
+    dragOverNode.value = null;
+    dropType.value = null;
+}
+
+function filter(query: string) {
+    if (!props.filterable) return;
+    
+    if (!query) {
+        function resetHidden(nodesList: TreeNode[]) {
+            for (const node of nodesList) {
+                node.hidden = false;
+                if (node.children) {
+                    resetHidden(node.children);
+                }
+            }
+        }
+        resetHidden(props.nodes);
+        return;
+    }
+    
+    const method = props.filterMethod || ((q: string, n: TreeNode) => 
+        n.label.toLowerCase().includes(q.toLowerCase())
+    );
+    
+    const nextExpanded = new Set(expandedIds.value);
+    
+    function runFilter(nodesList: TreeNode[]): boolean {
+        let anyMatch = false;
+        for (const node of nodesList) {
+            const selfMatch = method(query, node);
+            let childrenMatch = false;
+            
+            if (node.children && node.children.length > 0) {
+                childrenMatch = runFilter(node.children);
+            }
+            
+            const isMatch = selfMatch || childrenMatch;
+            node.hidden = !isMatch;
+            
+            if (isMatch) {
+                anyMatch = true;
+                if (childrenMatch) {
+                    nextExpanded.add(node.id);
+                }
+            }
+        }
+        return anyMatch;
+    }
+    
+    runFilter(props.nodes);
+    expandedIds.value = nextExpanded;
+    emit('update:expanded', Array.from(nextExpanded));
+}
+
+provide('TreeViewContext', {
+    lazy: computed(() => props.lazy),
+    retryOnError: computed(() => props.retryOnError),
+    loadingKeys,
+    failedKeys,
+    draggable: computed(() => props.draggable),
+    draggedNode,
+    dragOverNode,
+    dropType,
+    triggerLoad,
+    onNodeDragStart,
+    onNodeDragOver,
+    onNodeDragEnter,
+    onNodeDragLeave,
+    onNodeDragEnd,
+    onNodeDrop,
+});
+
+function reloadNode(nodeKey: string) {
+    const node = findNodeById(props.nodes, nodeKey)
+    if (!node) return
+    node.loaded = false
+    node.loading = false
+    node.children = undefined
+    loadingKeys.value.delete(nodeKey)
+    failedKeys.value.delete(nodeKey)
+    if (props.lazy && props.load) {
+        triggerLoad(node)
+    }
+}
+
+defineExpose({
+    filter,
+    reloadNode,
+});
 
 const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 </script>

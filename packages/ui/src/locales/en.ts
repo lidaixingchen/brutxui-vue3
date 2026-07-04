@@ -95,6 +95,9 @@ export const en: Locale = {
         close: 'Close',
         container: 'Notifications',
     },
+    message: {
+        close: 'Close',
+    },
     dialog: {
         close: 'Close',
     },

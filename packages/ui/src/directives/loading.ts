@@ -14,7 +14,7 @@ interface LoadingEl extends HTMLElement {
  * v-loading 指令：为宿主元素添加局部加载遮罩和 Spinner。
  * 具备 SSR 环境安全保护、动态定位劫持与还原、以及粗野主义风格文字。
  */
-export const vLoading: Directive<LoadingEl, boolean> & { getSSRProps?: () => Record<string, any> } = {
+export const vLoading: Directive<LoadingEl, boolean> & { getSSRProps?: () => Record<string, unknown> } = {
     mounted(el, binding) {
         if (!isClient) return
 

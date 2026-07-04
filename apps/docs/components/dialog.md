@@ -231,6 +231,124 @@ import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from
 - **ARIA 属性**：关闭按钮包含屏幕阅读器文本
 - **交互元素**：拖拽时自动排除交互元素（Input、Button 等）
 
+## 函数式 API
+
+除了声明式组件，Dialog 还提供函数式调用方式，适合在业务逻辑中快速弹出对话框。
+
+### showDialog
+
+直接调用 `showDialog` 以编程方式创建并打开一个对话框：
+
+```ts
+import { showDialog } from 'brutx-ui-vue'
+
+const instance = showDialog({
+    title: '确认操作',
+    content: '确定要删除这条记录吗？',
+    size: 'sm',
+    onConfirm: () => {
+        // 处理确认逻辑
+    },
+    onCancel: () => {
+        // 处理取消逻辑
+    },
+})
+```
+
+**参数：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | — | 对话框标题 |
+| `content` | `string` | — | 对话框内容 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'default'` | 对话框尺寸 |
+| `onConfirm` | `() => void` | — | 确认回调 |
+| `onCancel` | `() => void` | — | 取消回调 |
+
+**返回值：** 返回对话框实例，包含 `close()` 方法用于手动关闭。
+
+### showMessageBox
+
+调用 `showMessageBox` 弹出一个确认消息框，返回 Promise：
+
+```ts
+import { showMessageBox } from 'brutx-ui-vue'
+
+async function handleDelete() {
+    const confirmed = await showMessageBox({
+        title: '警告',
+        content: '此操作不可撤销，确定要继续吗？',
+        confirmText: '确定',
+        cancelText: '取消',
+    })
+
+    if (confirmed) {
+        // 用户点击了确认
+    }
+}
+```
+
+**参数：**
+
+| 参数 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `title` | `string` | — | 消息框标题 |
+| `content` | `string` | — | 消息框内容 |
+| `confirmText` | `string` | `'确认'` | 确认按钮文本 |
+| `cancelText` | `string` | `'取消'` | 取消按钮文本 |
+| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'full'` | `'sm'` | 消息框尺寸 |
+
+**返回值：** `Promise<boolean>` — 用户点击确认返回 `true`，点击取消返回 `false`。
+
+### useDialog（Composable）
+
+在组件中使用 `useDialog` 组合式函数，获得对话框的响应式控制能力：
+
+```vue
+<script setup>
+import { useDialog } from 'brutx-ui-vue'
+
+const { open, close, isOpen } = useDialog()
+
+function showMyDialog() {
+    open({
+        title: '提示',
+        content: '这是一个通过 Composable 打开的对话框',
+    })
+}
+</script>
+
+<template>
+    <button @click="showMyDialog">打开对话框</button>
+</template>
+```
+
+### useMessageBox（Composable）
+
+在组件中使用 `useMessageBox` 组合式函数，获得消息框的响应式控制能力：
+
+```vue
+<script setup>
+import { useMessageBox } from 'brutx-ui-vue'
+
+const { confirm } = useMessageBox()
+
+async function handleAction() {
+    const result = await confirm({
+        title: '确认',
+        content: '确定要执行此操作吗？',
+    })
+    if (result) {
+        // 用户确认
+    }
+}
+</script>
+
+<template>
+    <button @click="handleAction">执行操作</button>
+</template>
+```
+
 ## 常见问题
 
 **Q: 打开对话框后页面还能滚动怎么办？**

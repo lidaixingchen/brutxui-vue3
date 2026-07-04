@@ -14,6 +14,9 @@
 export { useToast, provideToast, createToast } from './useToast'
 export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './useToast'
 
+export { useMessage } from './useMessage'
+export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './useMessage'
+
 export { useTheme, provideTheme, createTheme } from './useTheme'
 export type { ThemeName, ColorMode, ResolvedColorMode } from './useTheme'
 
@@ -22,6 +25,12 @@ export type { TranslateFunction } from './useLocale'
 
 export { useClearable } from './useClearable'
 export type { UseClearableOptions } from './useClearable'
+
+export { useDialog } from './useDialog'
+export type { UseDialogReturn, ShowDialogOptions } from './useDialog'
+
+export { useMessageBox } from './useMessageBox'
+export type { UseMessageBoxReturn, MessageBoxOptions } from './useMessageBox'
 
 export { useStepper } from './useStepper'
 

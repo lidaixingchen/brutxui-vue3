@@ -110,7 +110,7 @@
         "*.css"
     ],
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && pnpm build:preflight",
         "build:preflight": "tailwindcss -i src/preflight.css -o dist/preflight.css",
         "prepack": "vite build",
         "dev": "vite build --watch",

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tour",
+  "type": "registry:ui",
+  "title": "Tour",
+  "description": "Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.",
+  "dependencies": [],
+  "registryDependencies": [
+    "locale-zh-cn"
+  ],
+  "files": [
+    {
+      "path": "components/ui/tour/Tour.vue",
+      "content": "<script setup lang=\"ts\">\n/* global ScrollIntoViewOptions */\nimport { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'\nimport { useLocale } from '@/composables/useLocale'\n\nexport interface TourStep {\n    target: string | HTMLElement\n    title?: string\n    description?: string\n    placement?: 'top' | 'bottom' | 'left' | 'right'\n    mask?: boolean\n}\n\nexport interface TourProps {\n    steps: TourStep[]\n    current?: number\n    mask?: boolean\n    open?: boolean\n    scrollIntoViewOptions?: ScrollIntoViewOptions\n}\n\nconst props = withDefaults(defineProps<TourProps>(), {\n    current: 0,\n    mask: true,\n    open: true,\n    scrollIntoViewOptions: undefined,\n})\n\nconst emit = defineEmits<{\n    (e: 'update:current', val: number): void\n    (e: 'update:open', val: boolean): void\n    (e: 'skip'): void\n    (e: 'finish'): void\n    (e: 'close'): void\n}>()\n\nconst currentStep = defineModel<number>('current', { default: 0 })\nconst isOpen = defineModel<boolean>('open', { default: true })\n\nconst BORDER_WIDTH = 2\nconst POPOVER_GAP = 12\nconst VIEWPORT_MARGIN = 8\nconst DEFAULT_DPR = 1\nconst BORDER_FALLBACK_COLOR = '#000000'\nconst CANVAS_ALPHA_FILL = 'rgba(0, 0, 0, 0.5)'\n\nconst canvasRef = ref<HTMLCanvasElement | null>(null)\nconst popoverRef = ref<HTMLElement | null>(null)\nconst highlightRect = ref<{ left: number; top: number; width: number; height: number } | null>(null)\n\nconst popoverStyle = ref<CSSProperties>({\n    position: 'fixed',\n    left: '0px',\n    top: '0px',\n    transform: 'translate3d(0px, 0px, 0)',\n    visibility: 'hidden',\n    zIndex: '9999',\n})\n\nconst { locale } = useLocale()\n\nconst isZh = computed<boolean>(() => {\n    return locale.value.dialog.close === '关闭'\n})\n\nconst texts = computed<{ prev: string; next: string; finish: string; skip: string }>(() => {\n    return isZh.value\n        ? { prev: '上一步', next: '下一步', finish: '结束', skip: '跳过' }\n        : { prev: 'Previous', next: 'Next', finish: 'Finish', skip: 'Skip' }\n})\n\nconst currentStepVal = computed<TourStep | undefined>(() => {\n    return props.steps[currentStep.value]\n})\n\nconst getTargetElement = (target: string | HTMLElement | undefined): HTMLElement | null => {\n    if (!target) {\n        return null\n    }\n    if (typeof target === 'string') {\n        return document.querySelector(target)\n    }\n    return target\n}\n\nconst drawCanvas = (): void => {\n    const canvas = canvasRef.value\n    if (!canvas) {\n        return\n    }\n    const ctx = canvas.getContext('2d')\n    if (!ctx) {\n        return\n    }\n\n    const dpr = window.devicePixelRatio || DEFAULT_DPR\n    const width = window.innerWidth\n    const height = window.innerHeight\n\n    canvas.width = width * dpr\n    canvas.height = height * dpr\n    canvas.style.width = `${width}px`\n    canvas.style.height = `${height}px`\n\n    ctx.scale(dpr, dpr)\n    ctx.clearRect(0, 0, width, height)\n\n    const step = props.steps[currentStep.value]\n    const showMask = (step?.mask ?? props.mask) ?? true\n\n    if (showMask) {\n        ctx.fillStyle = CANVAS_ALPHA_FILL\n        ctx.fillRect(0, 0, width, height)\n    }\n\n    if (highlightRect.value) {\n        const { left, top, width: rectW, height: rectH } = highlightRect.value\n\n        if (showMask) {\n            ctx.clearRect(left, top, rectW, rectH)\n        }\n\n        let strokeColor = BORDER_FALLBACK_COLOR\n        if (typeof window !== 'undefined') {\n            const style = getComputedStyle(document.documentElement)\n            strokeColor = style.getPropertyValue('--brutal-black').trim() || BORDER_FALLBACK_COLOR\n        }\n\n        ctx.strokeStyle = strokeColor\n        ctx.lineWidth = BORDER_WIDTH\n        ctx.lineJoin = 'miter'\n\n        const drawL = Math.round(left)\n        const drawT = Math.round(top)\n        const drawW = Math.round(rectW)\n        const drawH = Math.round(rectH)\n\n        ctx.strokeRect(drawL, drawT, drawW, drawH)\n    }\n}\n\nconst updatePopoverPosition = (): void => {\n    const popover = popoverRef.value\n    if (!popover) {\n        return\n    }\n\n    const step = props.steps[currentStep.value]\n    const placement = step?.placement || 'bottom'\n\n    const popoverW = popover.offsetWidth\n    const popoverH = popover.offsetHeight\n\n    if (!highlightRect.value) {\n        const left = (window.innerWidth - popoverW) / 2\n        const top = (window.innerHeight - popoverH) / 2\n        popoverStyle.value = {\n            position: 'fixed',\n            left: '0px',\n            top: '0px',\n            transform: `translate3d(${Math.round(left)}px, ${Math.round(top)}px, 0)`,\n            visibility: 'visible',\n            zIndex: '9999',\n        }\n        return\n    }\n\n    const { left: targetL, top: targetT, width: targetW, height: targetH } = highlightRect.value\n\n    let popoverLeft = 0\n    let popoverTop = 0\n\n    switch (placement) {\n        case 'top':\n            popoverLeft = targetL + (targetW - popoverW) / 2\n            popoverTop = targetT - popoverH - POPOVER_GAP\n            break\n        case 'bottom':\n            popoverLeft = targetL + (targetW - popoverW) / 2\n            popoverTop = targetT + targetH + POPOVER_GAP\n            break\n        case 'left':\n            popoverLeft = targetL - popoverW - POPOVER_GAP\n            popoverTop = targetT + (targetH - popoverH) / 2\n            break\n        case 'right':\n            popoverLeft = targetL + targetW + POPOVER_GAP\n            popoverTop = targetT + (targetH - popoverH) / 2\n            break\n    }\n\n    popoverLeft = Math.max(VIEWPORT_MARGIN, Math.min(window.innerWidth - popoverW - VIEWPORT_MARGIN, popoverLeft))\n    popoverTop = Math.max(VIEWPORT_MARGIN, Math.min(window.innerHeight - popoverH - VIEWPORT_MARGIN, popoverTop))\n\n    popoverStyle.value = {\n        position: 'fixed',\n        left: '0px',\n        top: '0px',\n        transform: `translate3d(${Math.round(popoverLeft)}px, ${Math.round(popoverTop)}px, 0)`,\n        visibility: 'visible',\n        zIndex: '9999',\n    }\n}\n\nconst recalculatePosition = (): void => {\n    const step = props.steps[currentStep.value]\n    if (!step) {\n        return\n    }\n    const el = getTargetElement(step.target)\n    if (!el) {\n        highlightRect.value = null\n        drawCanvas()\n        updatePopoverPosition()\n        return\n    }\n    const rect = el.getBoundingClientRect()\n    highlightRect.value = {\n        left: rect.left,\n        top: rect.top,\n        width: rect.width,\n        height: rect.height,\n    }\n    drawCanvas()\n    updatePopoverPosition()\n}\n\nconst updatePosition = async (): Promise<void> => {\n    const step = props.steps[currentStep.value]\n    if (!step) {\n        return\n    }\n\n    const el = getTargetElement(step.target)\n    if (!el) {\n        highlightRect.value = null\n        drawCanvas()\n        updatePopoverPosition()\n        return\n    }\n\n    el.scrollIntoView(props.scrollIntoViewOptions || { block: 'center', inline: 'nearest' })\n\n    await nextTick()\n\n    const rect = el.getBoundingClientRect()\n    highlightRect.value = {\n        left: rect.left,\n        top: rect.top,\n        width: rect.width,\n        height: rect.height,\n    }\n\n    drawCanvas()\n    updatePopoverPosition()\n}\n\nlet resizeObserver: ResizeObserver | null = null\nlet activeObservedElement: HTMLElement | null = null\n\nconst initResizeObserver = (): void => {\n    if (typeof window === 'undefined' || !window.ResizeObserver) {\n        return\n    }\n    resizeObserver = new ResizeObserver((): void => {\n        recalculatePosition()\n    })\n}\n\nconst cleanupResizeObserver = (): void => {\n    if (resizeObserver && activeObservedElement) {\n        resizeObserver.unobserve(activeObservedElement)\n        activeObservedElement = null\n    }\n}\n\nconst setupResizeObserver = (): void => {\n    cleanupResizeObserver()\n    if (!resizeObserver) {\n        initResizeObserver()\n    }\n    const step = props.steps[currentStep.value]\n    if (step) {\n        const el = getTargetElement(step.target)\n        if (el && resizeObserver) {\n            resizeObserver.observe(el)\n            activeObservedElement = el\n        }\n    }\n}\n\nconst handleSkip = (): void => {\n    isOpen.value = false\n    emit('skip')\n    emit('close')\n}\n\nconst handlePrev = (): void => {\n    if (currentStep.value > 0) {\n        currentStep.value -= 1\n    }\n}\n\nconst handleNext = (): void => {\n    if (currentStep.value < props.steps.length - 1) {\n        currentStep.value += 1\n    }\n}\n\nconst handleFinish = (): void => {\n    isOpen.value = false\n    emit('finish')\n    emit('close')\n}\n\nconst handleNextOrFinish = (): void => {\n    if (currentStep.value === props.steps.length - 1) {\n        handleFinish()\n    } else {\n        handleNext()\n    }\n}\n\nconst handleKeyDown = (e: KeyboardEvent): void => {\n    if (!isOpen.value) {\n        return\n    }\n    if (e.key === 'Escape') {\n        e.preventDefault()\n        handleSkip()\n    } else if (e.key === 'Enter') {\n        e.preventDefault()\n        handleNextOrFinish()\n    }\n}\n\nconst handleScrollOrResize = (): void => {\n    if (!isOpen.value) {\n        return\n    }\n    recalculatePosition()\n}\n\nwatch(\n    [isOpen, currentStep],\n    async ([newOpen]): Promise<void> => {\n        if (!newOpen) {\n            cleanupResizeObserver()\n            return\n        }\n        await nextTick()\n        await updatePosition()\n        setupResizeObserver()\n    },\n    { immediate: true }\n)\n\nonMounted((): void => {\n    window.addEventListener('resize', handleScrollOrResize, { passive: true })\n    window.addEventListener('scroll', handleScrollOrResize, { passive: true })\n    window.addEventListener('keydown', handleKeyDown)\n})\n\nonBeforeUnmount((): void => {\n    window.removeEventListener('resize', handleScrollOrResize)\n    window.removeEventListener('scroll', handleScrollOrResize)\n    window.removeEventListener('keydown', handleKeyDown)\n    cleanupResizeObserver()\n})\n</script>\n\n<template>\n    <div v-if=\"isOpen && steps.length > 0\" class=\"brutx-tour\">\n        <canvas\n            ref=\"canvasRef\"\n            class=\"fixed inset-0 pointer-events-auto z-[9998]\"\n        />\n        <div\n            ref=\"popoverRef\"\n            :style=\"popoverStyle\"\n            class=\"fixed bg-brutal-bg text-brutal-fg border-3 border-brutal-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] p-5 z-[9999] flex flex-col gap-4 max-w-sm rounded-brutal min-w-[280px] select-none\"\n        >\n            <div v-if=\"currentStepVal?.title\" class=\"text-lg font-black tracking-wide border-b-2 border-brutal-black dark:border-white pb-2\">\n                {{ currentStepVal.title }}\n            </div>\n            <div v-if=\"currentStepVal?.description\" class=\"text-sm font-medium leading-relaxed\">\n                {{ currentStepVal.description }}\n            </div>\n            <div class=\"flex items-center justify-between mt-2 pt-2 border-t-2 border-brutal-black dark:border-white border-dashed\">\n                <div>\n                    <button\n                        type=\"button\"\n                        class=\"px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer\"\n                        @click=\"handleSkip\"\n                    >\n                        {{ texts.skip }}\n                    </button>\n                </div>\n                <div class=\"flex items-center gap-2\">\n                    <button\n                        v-if=\"currentStep > 0\"\n                        type=\"button\"\n                        class=\"px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer\"\n                        @click=\"handlePrev\"\n                    >\n                        {{ texts.prev }}\n                    </button>\n                    <button\n                        type=\"button\"\n                        class=\"px-2.5 py-1 text-xs font-black uppercase bg-brutal-accent text-brutal-accent-foreground border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer\"\n                        @click=\"handleNextOrFinish\"\n                    >\n                        {{ currentStep === steps.length - 1 ? texts.finish : texts.next }}\n                    </button>\n                </div>\n            </div>\n        </div>\n    </div>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
+      "path": "composables/useLocale.ts",
+      "content": "import { type ComputedRef, type InjectionKey, type MaybeRef, computed, inject, provide, unref } from 'vue'\nimport { zhCN } from '@/locales/zh-CN'\nimport type { Locale } from '@/locales/types'\n\nexport const LOCALE_INJECTION_KEY: InjectionKey<MaybeRef<Locale>> = Symbol('brutx-ui-locale')\nexport const FALLBACK_LOCALE_INJECTION_KEY: InjectionKey<MaybeRef<Partial<Locale>>> = Symbol('brutx-ui-fallback-locale')\n\nexport type TranslateFunction = (path: string, params?: Record<string, string | number>) => string\n\nexport interface LocaleOptions {\n    locale: MaybeRef<Locale>\n    fallbackLocale?: MaybeRef<Partial<Locale>>\n}\n\nexport function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions): void {\n    // 检查是否是 LocaleOptions 格式（包含 locale 属性）\n    if (\n        typeof localeOrOptions === 'object' &&\n        localeOrOptions !== null &&\n        'locale' in localeOrOptions\n    ) {\n        const options = localeOrOptions as LocaleOptions\n        provide(LOCALE_INJECTION_KEY, options.locale)\n        if (options.fallbackLocale) {\n            provide(FALLBACK_LOCALE_INJECTION_KEY, options.fallbackLocale)\n        }\n    } else {\n        // 直接传入 MaybeRef<Locale> 格式（向后兼容）\n        provide(LOCALE_INJECTION_KEY, localeOrOptions as MaybeRef<Locale>)\n    }\n}\n\nfunction resolveByPath(obj: unknown, path: string): string | undefined {\n    const keys = path.split('.')\n    let result: unknown = obj\n    for (const key of keys) {\n        if (typeof result !== 'object' || result === null) return undefined\n        result = (result as Record<string, unknown>)[key]\n    }\n    return typeof result === 'string' ? result : undefined\n}\n\nfunction interpolate(template: string, params?: Record<string, string | number>): string {\n    if (!params) return template\n    return Object.entries(params).reduce(\n        (str, [k, v]) => str.split(`{${k}}`).join(String(v)),\n        template,\n    )\n}\n\nexport function useLocale(): { locale: ComputedRef<Locale>; t: TranslateFunction } {\n    const injected = inject<MaybeRef<Locale> | undefined>(LOCALE_INJECTION_KEY, undefined)\n    const injectedFallback = inject<MaybeRef<Partial<Locale>> | undefined>(FALLBACK_LOCALE_INJECTION_KEY, undefined)\n\n    const locale = computed<Locale>(() => {\n        const resolved = injected ? unref(injected) : undefined\n        return resolved ?? zhCN\n    })\n\n    const fallbackLocale = computed<Partial<Locale>>(() => {\n        return injectedFallback ? unref(injectedFallback) : {}\n    })\n\n    function t(path: string, params?: Record<string, string | number>): string {\n        // 1. 尝试从用户 locale 查找\n        const currentVal = resolveByPath(locale.value, path)\n        if (currentVal !== undefined) return interpolate(currentVal, params)\n\n        // 2. 尝试从自定义 fallback locale 查找\n        if (fallbackLocale.value && Object.keys(fallbackLocale.value).length > 0) {\n            const fallbackVal = resolveByPath(fallbackLocale.value, path)\n            if (fallbackVal !== undefined) return interpolate(fallbackVal, params)\n        }\n\n        // 3. 尝试从默认 zhCN 查找\n        const zhCNVal = resolveByPath(zhCN, path)\n        if (zhCNVal !== undefined) return interpolate(zhCNVal, params)\n\n        // 4. 返回 path 原文\n        return path\n    }\n\n    return { locale, t }\n}\n",
+      "type": "registry:hook"
+    }
+  ],
+  "tailwind": {
+    "config": {
+      "theme": {
+        "extend": {
+          "borderWidth": {
+            "3": "var(--brutal-border-width, 3px)"
+          },
+          "borderColor": {
+            "brutal": "var(--brutal-border-color, #000000)"
+          },
+          "borderRadius": {
+            "brutal": "var(--brutal-radius, 0px)"
+          },
+          "colors": {
+            "brutal-bg": "var(--brutal-bg)",
+            "brutal-fg": "var(--brutal-fg)",
+            "brutal-primary": "var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-secondary)",
+            "brutal-accent": "var(--brutal-accent)",
+            "brutal-destructive": "var(--brutal-destructive)",
+            "brutal-success": "var(--brutal-success)",
+            "brutal-muted": "var(--brutal-muted)",
+            "brutal-ring": "var(--brutal-ring)",
+            "brutal-info": "var(--brutal-info)",
+            "brutal-muted-foreground": "var(--brutal-muted-foreground)",
+            "brutal-overlay": "var(--brutal-overlay)",
+            "brutal-placeholder": "var(--brutal-placeholder)"
+          },
+          "boxShadow": {
+            "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
+            "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
+            "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
+          }
+        }
+      }
+    }
+  },
+  "cssVars": {
+    "light": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#000000",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#000000",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#ffffff",
+      "brutal-fg": "#000000",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#f3f4f6",
+      "brutal-ring": "#000000",
+      "brutal-info": "#4A90D9",
+      "brutal-muted-foreground": "#4B5563",
+      "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+      "brutal-placeholder": "#9CA3AF"
+    },
+    "dark": {
+      "brutal-border-width": "3px",
+      "brutal-border-color": "#ffffff",
+      "brutal-shadow-offset-x": "4px",
+      "brutal-shadow-offset-y": "4px",
+      "brutal-shadow-color": "#ffffff",
+      "brutal-radius": "0px",
+      "brutal-pressed-offset": "2px",
+      "brutal-bg": "#141414",
+      "brutal-fg": "#ffffff",
+      "brutal-primary": "#FF6B6B",
+      "brutal-secondary": "#4ECDC4",
+      "brutal-accent": "#FFE66D",
+      "brutal-destructive": "#EF476F",
+      "brutal-success": "#7FB069",
+      "brutal-muted": "#1e1e1e",
+      "brutal-ring": "#ffffff",
+      "brutal-info": "#3B82F6",
+      "brutal-muted-foreground": "#9CA3AF",
+      "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+      "brutal-placeholder": "#6B7280"
+    }
+  },
+  "integrity": "sha256-b780333c34635fdd73bbbc78db2ac835e349d27843f83efa81a3aadfa79447ee"
+}

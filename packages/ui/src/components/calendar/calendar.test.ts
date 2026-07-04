@@ -276,5 +276,53 @@ describe('Calendar', () => {
             await nextTick()
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([[start, end]])
         })
+
+        it('renders event dot in default mode when day has events', async () => {
+            const events = [
+                { date: new Date(2026, 5, 15), title: 'Meeting' },
+                { date: '2026-06-15', title: 'Lunch' }
+            ]
+            const wrapper = await mountCalendar({ events, mode: 'default' })
+            expect(wrapper.find('[data-testid="calendar-event-dot"]').exists()).toBe(true)
+        })
+
+        it('does not render event dot in default mode when day has no events', async () => {
+            const events = [
+                { date: new Date(2026, 5, 16), title: 'Meeting' }
+            ]
+            const wrapper = await mountCalendar({ events, mode: 'default' })
+            expect(wrapper.find('[data-testid="calendar-event-dot"]').exists()).toBe(false)
+        })
+
+        it('renders events as badges in card mode', async () => {
+            const events = [
+                { date: new Date(2026, 5, 15), title: 'Meeting' },
+                { date: new Date(2026, 5, 15), title: 'Lunch' }
+            ]
+            const wrapper = await mountCalendar({ events, mode: 'card' })
+            const badges = wrapper.findAll('[data-testid="calendar-card-event-badge"]')
+            expect(badges).toHaveLength(2)
+            expect(badges[0].text()).toBe('Meeting')
+            expect(badges[1].text()).toBe('Lunch')
+            expect(wrapper.find('[data-testid="calendar-event-dot"]').exists()).toBe(false)
+        })
+
+        it('supports custom event renderer via eventRenderer prop', async () => {
+            const events = [
+                { date: new Date(2026, 5, 15), title: 'Meeting' }
+            ]
+            const customRenderer = (event: any) => {
+                return {
+                    template: `<div class="custom-rendered-event">${event.title} - Custom</div>`
+                }
+            }
+            const wrapper = await mountCalendar({
+                events,
+                mode: 'card',
+                eventRenderer: customRenderer
+            })
+            expect(wrapper.find('.custom-rendered-event').exists()).toBe(true)
+            expect(wrapper.find('.custom-rendered-event').text()).toBe('Meeting - Custom')
+        })
     })
 })

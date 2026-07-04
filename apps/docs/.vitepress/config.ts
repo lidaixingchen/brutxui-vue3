@@ -149,6 +149,7 @@ export default defineConfig({
                                 { text: 'Descriptions', link: '/en/components/descriptions' },
                                 { text: 'Dashboard Stats', link: '/en/components/dashboard-stats' },
                                 { text: 'DataTable', link: '/en/components/data-table' },
+                                { text: 'Image', link: '/en/components/image' },
                             ],
                         },
                         {
@@ -159,6 +160,7 @@ export default defineConfig({
                                 { text: 'Pagination', link: '/en/components/pagination' },
                                 { text: 'Dropdown Menu', link: '/en/components/dropdown-menu' },
                                 { text: 'Command', link: '/en/components/command' },
+                                { text: 'Tour', link: '/en/components/tour' },
                             ],
                         },
                         {
@@ -174,6 +176,7 @@ export default defineConfig({
                                 { text: 'Alert', link: '/en/components/alert' },
                                 { text: 'Loading', link: '/en/components/loading' },
                                 { text: 'Result', link: '/en/components/result' },
+                                { text: 'Message', link: '/en/components/message' },
                             ],
                         },
                         {
@@ -482,6 +485,7 @@ export default defineConfig({
                         { text: 'Descriptions 描述列表', link: '/components/descriptions' },
                         { text: 'Dashboard Stats 仪表盘统计', link: '/components/dashboard-stats' },
                         { text: 'DataTable 数据表格', link: '/components/data-table' },
+                        { text: 'Image 图片', link: '/components/image' },
                     ],
                 },
                 {
@@ -492,6 +496,7 @@ export default defineConfig({
                         { text: 'Pagination 分页', link: '/components/pagination' },
                         { text: 'Dropdown Menu 下拉菜单', link: '/components/dropdown-menu' },
                         { text: 'Command 命令面板', link: '/components/command' },
+                        { text: 'Tour 导览', link: '/components/tour' },
                     ],
                 },
                 {
@@ -507,6 +512,7 @@ export default defineConfig({
                         { text: 'Alert 提示', link: '/components/alert' },
                         { text: 'Loading 加载', link: '/components/loading' },
                         { text: 'Result 结果', link: '/components/result' },
+                        { text: 'Message 消息提示', link: '/components/message' },
                     ],
                 },
                 {
