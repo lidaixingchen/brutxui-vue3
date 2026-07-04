@@ -120,6 +120,9 @@ import StatisticDemo from './components/demos/StatisticDemo.vue'
 import ResultDemo from './components/demos/ResultDemo.vue'
 import WatermarkDemo from './components/demos/WatermarkDemo.vue'
 import BacktopDemo from './components/demos/BacktopDemo.vue'
+import ImageDemo from './components/demos/ImageDemo.vue'
+import TourDemo from './components/demos/TourDemo.vue'
+import MessageDemo from './components/demos/MessageDemo.vue'
 import 'v-calendar/style.css'
 import './style.css'
 
@@ -246,5 +249,8 @@ export default {
         app.component('ResultDemo', ResultDemo)
         app.component('WatermarkDemo', WatermarkDemo)
         app.component('BacktopDemo', BacktopDemo)
+        app.component('ImageDemo', ImageDemo)
+        app.component('TourDemo', TourDemo)
+        app.component('MessageDemo', MessageDemo)
     },
 } satisfies Theme
