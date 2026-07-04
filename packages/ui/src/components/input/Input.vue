@@ -226,7 +226,7 @@ defineExpose({
                     <button
                         v-if="showClear"
                         type="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
                         @click="handleClear"
                     >
                         <X class="h-3.5 w-3.5 text-brutal-placeholder" />
@@ -234,7 +234,7 @@ defineExpose({
                     <button
                         v-if="showPasswordToggle"
                         type="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm transition-colors"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
                         @click="togglePasswordVisibility"
                     >
                         <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />

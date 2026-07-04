@@ -99,7 +99,7 @@ const subMenuClasses = computed(() => {
 
 const triggerClasses = computed(() => {
     return cn(
-        'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-2 font-semibold text-sm cursor-pointer select-none transition-all duration-150 outline-none',
+        'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150 outline-none',
         isChildActive.value
             ? 'text-brutal-primary-foreground bg-brutal-primary border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'
             : isOpened.value && isVertical.value

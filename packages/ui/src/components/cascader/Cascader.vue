@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { ChevronsUpDown, ChevronRight, Check, X } from '@lucide/vue'
+import { ChevronsUpDown, ChevronRight, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
+import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { cascaderTriggerVariants, cascaderItemVariants } from './cascader-variants'
@@ -416,7 +417,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         v-if="clearable && hasValue"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm focus:outline-none focus:ring-2 focus:ring-brutal-ring"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus:outline-none focus:ring-2 focus:ring-brutal-ring"
                         @click="handleClear"
                         @keydown.enter="handleClear"
                         @keydown.space="handleClear"
@@ -446,20 +447,13 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         @click="handleItemClick(option, colIdx)"
                     >
                         <div class="flex items-center gap-2 truncate">
-                            <!-- Custom Brutalist checkbox for multiple select -->
-                            <div
+                            <Checkbox
                                 v-if="multiple"
-                                class="border-2 border-brutal rounded-sm w-4 h-4 flex items-center justify-center shrink-0 transition-colors"
-                                :class="{
-                                    'bg-brutal-primary text-brutal-primary-foreground': getOptionCheckState(option, colIdx) === 'checked',
-                                    'bg-brutal-muted text-brutal-fg': getOptionCheckState(option, colIdx) === 'indeterminate',
-                                    'bg-brutal-bg': getOptionCheckState(option, colIdx) === 'unchecked'
-                                }"
-                                @click.stop="toggleCheckbox(option, colIdx)"
-                            >
-                                <Check v-if="getOptionCheckState(option, colIdx) === 'checked'" class="w-3 h-3 stroke-3" />
-                                <span v-else-if="getOptionCheckState(option, colIdx) === 'indeterminate'" class="w-2 h-0.5 bg-brutal-fg"></span>
-                            </div>
+                                :checked="getOptionCheckState(option, colIdx) === 'checked' ? true : getOptionCheckState(option, colIdx) === 'indeterminate' ? 'indeterminate' : false"
+                                size="sm"
+                                @update:checked="toggleCheckbox(option, colIdx)"
+                                @click.stop
+                            />
                             <span class="truncate">{{ option.label }}</span>
                         </div>
                         <ChevronRight

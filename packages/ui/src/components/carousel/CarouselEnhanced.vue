@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import Button from '../button/Button.vue'
 import { brutalHoverLiftSmNoX, brutalPress } from '@/lib/brutal-interaction-variants'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
 import { carouselRootVariants } from './carousel-variants'
@@ -126,7 +127,7 @@ defineExpose({
                 </div>
                 <div
                     v-else-if="autoplayIndicator.type === 'fraction'"
-                    class="absolute top-2 right-2 px-2 py-1 border-2 border-brutal bg-brutal-bg text-xs font-bold"
+                    class="absolute top-2 right-2 px-2 py-1 border-3 border-brutal rounded-brutal bg-brutal-bg text-xs font-bold"
                 >
                     {{ selectedIndex + 1 }} / {{ scrollSnaps.length }}
                 </div>
@@ -138,27 +139,29 @@ defineExpose({
                 </div>
             </div>
 
-            <button
+            <Button
                 v-if="showArrows"
                 type="button"
+                variant="default"
                 :class="prevButtonClasses"
                 :disabled="!canScrollPrev"
                 :aria-label="t('carousel.previousSlide')"
                 @click="scrollPrev"
             >
                 <ChevronLeft class="w-5 h-5" />
-            </button>
+            </Button>
 
-            <button
+            <Button
                 v-if="showArrows"
                 type="button"
+                variant="default"
                 :class="nextButtonClasses"
                 :disabled="!canScrollNext"
                 :aria-label="t('carousel.nextSlide')"
                 @click="scrollNext"
             >
                 <ChevronRight class="w-5 h-5" />
-            </button>
+            </Button>
 
             <div
                 v-if="showDots && scrollSnaps.length > 1 && !thumbnails?.show"
@@ -182,8 +185,8 @@ defineExpose({
                 <div
                     v-for="(_, i) in scrollSnaps"
                     :key="i"
-                    class="w-2 h-2 border-2 border-brutal rounded-full transition-all duration-300"
-                    :class="i === selectedIndex ? 'bg-brutal-primary' : 'bg-brutal-bg'"
+                    class="w-2.5 h-2.5 border-3 border-brutal rounded-brutal transition-all duration-300"
+                    :class="i === selectedIndex ? 'bg-brutal-primary shadow-brutal' : 'bg-brutal-bg'"
                 />
             </div>
         </div>

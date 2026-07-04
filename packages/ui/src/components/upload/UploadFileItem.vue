@@ -78,7 +78,7 @@ const previewUrl = computed(() => {
     <div
         v-if="listType === 'picture-card'"
         :class="cn(
-            'relative w-24 h-24 border-2 rounded-brutal overflow-hidden',
+            'relative w-24 h-24 border-3 border-brutal rounded-brutal overflow-hidden',
             'flex items-center justify-center',
             file.status === 'error' && 'border-brutal-destructive',
             props.class,
@@ -154,7 +154,7 @@ const previewUrl = computed(() => {
     <div
         v-else
         :class="cn(
-            'flex items-center gap-3 p-3 border-2 rounded-brutal',
+            'flex items-center gap-3 p-3 border-3 border-brutal rounded-brutal',
             'transition-colors duration-200',
             file.status === 'error' && 'border-brutal-destructive',
             props.class,

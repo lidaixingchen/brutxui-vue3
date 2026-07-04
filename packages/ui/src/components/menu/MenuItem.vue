@@ -47,7 +47,7 @@ const isActive = computed(() => context?.activeIndex.value === props.index)
 
 const classes = computed(() => {
     return cn(
-        'flex items-center gap-2 px-4 py-2.5 rounded-brutal border-2 font-semibold transition-all duration-150 cursor-pointer select-none text-sm outline-none',
+        'flex items-center gap-2 px-4 py-2.5 rounded-brutal border-3 font-semibold transition-all duration-150 cursor-pointer select-none text-sm outline-none',
         isActive.value
             ? 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'
             : 'text-brutal-fg border-transparent hover:bg-brutal-muted',

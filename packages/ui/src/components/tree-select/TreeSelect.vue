@@ -4,6 +4,7 @@ import { ChevronsUpDown, X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
+import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
@@ -335,7 +336,7 @@ const contentId = `tree-select-content-${useId()}`
                         v-if="clearable && hasValue"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
-                        class="p-0.5 hover:bg-brutal-muted rounded-sm focus:outline-none focus:ring-2 focus:ring-brutal-ring"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal focus:outline-none focus:ring-2 focus:ring-brutal-ring"
                         :aria-label="t('treeSelect.clear')"
                         @click="handleClear"
                         @keydown.enter="handleClear"
@@ -351,13 +352,14 @@ const contentId = `tree-select-content-${useId()}`
           <div :id="contentId" class="flex flex-col">
                 <!-- 搜索框 -->
                 <div v-if="searchable" class="border-b-3 border-brutal p-2">
-                    <input
+                    <Input
                         v-model="searchQuery"
                         type="text"
+                        size="sm"
                         :placeholder="resolvedSearchPlaceholder"
                         :aria-label="t('treeSelect.search')"
-                        class="w-full px-2 py-1.5 text-sm border-2 border-brutal rounded-brutal bg-brutal-bg text-brutal-fg placeholder:text-brutal-muted-foreground focus:outline-none focus:ring-2 focus:ring-brutal-ring"
-                    >
+                        class="w-full"
+                    />
                 </div>
                 <!-- 树形列表 - 使用递归组件 -->
                 <div

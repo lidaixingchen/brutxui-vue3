@@ -15,6 +15,7 @@ import PopoverTrigger from '../popover/PopoverTrigger.vue'
 import PopoverContent from '../popover/PopoverContent.vue'
 
 const props = defineProps<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     column: DataTableColumn<any>
     filterState: DataTableFilterState
     headerLabel: string
@@ -27,7 +28,7 @@ const emit = defineEmits<{
 const { t } = useLocale()
 
 // 统一的过滤器更新方法
-function updateFilterValue(val: any) {
+function updateFilterValue(val: unknown) {
     const columns = { ...(props.filterState.columns || {}) }
     if (val === undefined || val === null || val === '') {
         delete columns[props.column.id]
@@ -61,13 +62,13 @@ const selectVal = computed({
 })
 
 // 多选类型的逻辑
-function isMultiSelectChecked(value: any): boolean {
+function isMultiSelectChecked(value: unknown): boolean {
     const vals = props.filterState.columns?.[props.column.id]
     if (!Array.isArray(vals)) return false
     return vals.includes(value)
 }
 
-function handleMultiSelectChange(value: any, checked: boolean | 'indeterminate') {
+function handleMultiSelectChange(value: unknown, checked: boolean | 'indeterminate') {
     const columns = { ...(props.filterState.columns || {}) }
     let vals = columns[props.column.id]
     if (!Array.isArray(vals)) {
@@ -78,7 +79,7 @@ function handleMultiSelectChange(value: any, checked: boolean | 'indeterminate')
             vals.push(value)
         }
     } else {
-        vals = vals.filter((v: any) => v !== value)
+        vals = vals.filter((v: unknown) => v !== value)
     }
     columns[props.column.id] = [...vals]
     emit('update:filterState', {

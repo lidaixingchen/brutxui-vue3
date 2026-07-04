@@ -119,7 +119,7 @@ const handleSelect = (val: number) => {
             >
                 <Star
                     :class="cn(
-                        'fill-[hsl(48,100%,50%)] text-black stroke-black stroke-[2px]',
+                        'fill-[hsl(48,100%,50%)] text-brutal-fg stroke-brutal-fg stroke-[2px]',
                         starSizeClass
                     )"
                 />

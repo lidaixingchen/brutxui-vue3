@@ -39,8 +39,8 @@ export const cascaderContentVariants = cva(
 
 export const cascaderItemVariants = cva(
     [
-        'flex items-center justify-between w-full cursor-pointer select-none px-3 py-2 text-sm font-semibold rounded-md transition-all duration-150 outline-none',
-        'border-2 border-transparent',
+        'flex items-center justify-between w-full cursor-pointer select-none px-3 py-2 text-sm font-semibold rounded-brutal transition-all duration-150 outline-none',
+        'border-3 border-transparent',
         'disabled:pointer-events-none disabled:opacity-50',
     ],
     {
