@@ -9,13 +9,17 @@ A Neo-Brutalist styled cascading dropdown selection component. It displays multi
 
 ## Preview
 
-Due to the VitePress runtime environment constraints, please check the component preview within the Demo packages.
+<ComponentPreview>
+  <CascaderDemo />
+</ComponentPreview>
 
 ## Installation
 
 <InstallationTabs componentName="cascader" />
 
 ## Usage
+
+### Basic Usage
 
 ```vue
 <script setup>
@@ -101,42 +105,42 @@ By default, only leaf nodes can be selected. Set `checkStrictly` to `true` to al
 </template>
 ```
 
-## API
+## Props
 
-### Props
+### Cascader
 
 | Prop | Type | Default | Description |
-|---|---|---|---|
+|------|------|---------|-------------|
 | `options` | `CascaderOption[]` | `[]` | Hierarchical options list |
 | `modelValue` | `CascaderValue[] \| CascaderValue[][]` | `[]` | Selected value path(s) |
-| `open` | `boolean` | `undefined` | Controlled dropdown open state |
+| `open` | `boolean` | — | Controlled dropdown open state |
 | `multiple` | `boolean` | `false` | Enable multiple path selections |
 | `clearable` | `boolean` | `false` | Display clear selection button |
 | `checkStrictly` | `boolean` | `false` | Enable selecting parent nodes (uncorrelated parent-child) |
 | `separator` | `string` | `' / '` | Custom character separating paths |
 | `maxDisplay` | `number` | `2` | Max selected paths displayed in trigger before collapsing |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size of the trigger button |
-| `placeholder` | `string` | `undefined` | Trigger placeholder text |
+| `placeholder` | `string` | — | Trigger placeholder text |
 | `disabled` | `boolean` | `false` | Disable component interaction |
-| `dropdownClass` | `string` | `undefined` | Custom CSS class for dropdown wrapper |
-| `class` | `string` | `undefined` | Custom CSS class for trigger button |
-| `ariaLabel` | `string` | `undefined` | ARIA label |
+| `dropdownClass` | `string` | — | Custom CSS class for dropdown wrapper |
+| `ariaLabel` | `string` | — | ARIA label |
+| `class` | `string` | — | Custom CSS class for trigger button |
 
-### Events
+## Events
 
 | Event | Parameters | Description |
-|---|---|---|
+|-------|------------|-------------|
 | `update:modelValue` | `CascaderValue[] \| CascaderValue[][]` | Emitted when value selection changes |
 | `update:open` | `boolean` | Emitted when open state changes, supporting `v-model:open` |
 | `change` | `CascaderValue[] \| CascaderValue[][]` | Selection change event |
 | `open-change` | `boolean` | Emitted when dropdown state toggles |
 
-### Type Declarations
+## Data Types
 
-```typescript
-export type CascaderValue = string | number
+```ts
+type CascaderValue = string | number
 
-export interface CascaderOption {
+interface CascaderOption {
     value: CascaderValue
     label: string
     children?: CascaderOption[]
@@ -145,14 +149,21 @@ export interface CascaderOption {
 }
 ```
 
-## Accessibility (A11y)
+## Exported Types
 
-- **Keyboard Navigation**:
-  - `ArrowDown` / `ArrowUp`: Move focus up and down within the active column.
-  - `ArrowRight`: Expand the focused option's sub-column.
-  - `ArrowLeft`: Collapse the sub-column, returning to parent option.
-  - `Enter` / `Space`: Select the current option or expand if not check-strictly.
-  - `Escape`: Close dropdown panel.
-- **ARIA Attributes**:
-  - Combobox has `role="combobox"`, `aria-expanded` and `aria-disabled` indicators.
-  - Options have `role="menuitem"`.
+```ts
+import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
+```
+
+## Accessibility
+
+- **Keyboard Interaction**:
+  - `ArrowDown` / `ArrowUp`: Move focus up and down within the active column
+  - `ArrowRight`: Expand the focused option's sub-column and focus the first item
+  - `ArrowLeft`: Collapse the active sub-column, returning to parent option column
+  - `Enter` / `Space`: Select option, or toggle Checkbox state in multi-select mode
+  - `Escape`: Close dropdown panel
+- **ARIA Attributes**: The trigger has `role="combobox"`, `aria-expanded` and `aria-disabled` indicators. Option items have `role="menuitem"`
+- **Focus Management**: Upon opening, the focus automatically moves to the last selected value's option item or the first item in the list. Restores focus back to the trigger on close
+- **Reduced Motion**: Transition animations support `prefers-reduced-motion` settings and automatically downgrade (if applicable)
+

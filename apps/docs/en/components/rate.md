@@ -19,6 +19,8 @@ A rating component built on Lucide Star vector icons. Active stars feature high-
 
 ## Usage
 
+### Basic Usage
+
 ```vue
 <script setup>
 import { ref } from 'vue'
@@ -32,7 +34,7 @@ const value = ref(3)
 </template>
 ```
 
-## Half Star Support
+### Half Star Support
 
 Allow decimal ratings (half stars) using the `allow-half` property.
 
@@ -49,7 +51,7 @@ const value = ref(3.5)
 </template>
 ```
 
-## Max Stars Count
+### Max Stars Count
 
 Change the upper limit of the rating scale (default is `5`) using the `max` property.
 
@@ -59,7 +61,7 @@ Change the upper limit of the rating scale (default is `5`) using the `max` prop
 </template>
 ```
 
-## Readonly Mode
+### Readonly Mode
 
 Add the `readonly` attribute to make the rating static, removing hover states, transitions, and click handlers.
 
@@ -71,21 +73,19 @@ Add the `readonly` attribute to make the rating static, removing hover states, t
 
 ## Sizes
 
-The component supports `sm`, `md`, and `lg` sizes:
-
-```vue
-<template>
-    <Rate v-model="value" size="sm" />
-    <Rate v-model="value" size="md" />
-    <Rate v-model="value" size="lg" />
-</template>
-```
+| Size | Description |
+|------|-------------|
+| `sm` | Small size (20px / 5/4 gap) |
+| `md` | Default size (28px / 6 gap) |
+| `lg` | Large size (36px / 8 gap) |
 
 ## Props
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `modelValue` | `number` | `0` | Bound rating value, supports `v-model` |
+### Rate
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `modelValue` | `number` | `0` | Bound rating value, supports dual-binding |
 | `max` | `number` | `5` | Maximum rating value (total stars) |
 | `allowHalf` | `boolean` | `false` | Whether to allow half-star selection |
 | `readonly` | `boolean` | `false` | Read-only mode |
@@ -93,7 +93,16 @@ The component supports `sm`, `md`, and `lg` sizes:
 
 ## Events
 
+### Rate
+
 | Event | Parameters | Description |
 |-------|------------|-------------|
 | `update:modelValue` | `number` | Triggers when the score changes, supporting v-model |
 | `change` | `number` | Triggers when value is changed on selection |
+
+## Accessibility
+
+- **Keyboard Interaction**: The component currently interacts mainly via mouse hover and clicks
+- **ARIA Attributes**: The root element has `role="slider"`, `aria-valuenow` representing the current rating score, `aria-valuemin="0"`, `aria-valuemax` mapped to `max`, and `aria-readonly` indicating readonly state
+- **Reduced Motion**: Springy scale animation on hover honors `prefers-reduced-motion` settings and automatically downgrades (if applicable)
+

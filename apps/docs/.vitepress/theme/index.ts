@@ -113,6 +113,8 @@ import ColorModeSwitcherDemo from './components/demos/ColorModeSwitcherDemo.vue'
 import DataTableDemo from './components/demos/DataTableDemo.vue'
 import TransferDemo from './components/demos/TransferDemo.vue'
 import RateDemo from './components/demos/RateDemo.vue'
+import MenuDemo from './components/demos/MenuDemo.vue'
+import CascaderDemo from './components/demos/CascaderDemo.vue'
 import 'v-calendar/style.css'
 import './style.css'
 
@@ -230,5 +232,9 @@ export default {
         app.component('NoiseBackgroundDemo', NoiseBackgroundDemo)
         app.component('TreeSelectDemo', TreeSelectDemo)
         app.component('TypewriterTextDemo', TypewriterTextDemo)
+        app.component('MenuDemo', MenuDemo)
+        app.component('CascaderDemo', CascaderDemo)
+        app.component('TransferDemo', TransferDemo)
+        app.component('RateDemo', RateDemo)
     },
 } satisfies Theme

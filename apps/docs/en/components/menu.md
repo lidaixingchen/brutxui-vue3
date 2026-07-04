@@ -9,7 +9,9 @@ Used for site headers or sidebars, supporting `mode: 'horizontal' | 'vertical'`,
 
 ## Preview
 
-Due to VitePress runtime environment constraints, please check the component preview within the Demo packages.
+<ComponentPreview>
+  <MenuDemo />
+</ComponentPreview>
 
 ## Installation
 
@@ -24,17 +26,17 @@ Due to VitePress runtime environment constraints, please check the component pre
 import { ref } from 'vue'
 import { Menu, MenuItem, SubMenu } from 'brutx-ui-vue'
 
-const active = ref('home')
+const active = ref('1')
 </script>
 
 <template>
-    <Menu default-active="home" mode="vertical" v-model:active="active">
-        <MenuItem index="home">Home</MenuItem>
-        <SubMenu index="admin" title="Admin Panel">
+    <Menu default-active="1" mode="vertical" @select="idx => active = idx">
+        <MenuItem index="1">Home</MenuItem>
+        <SubMenu index="sub-admin" title="Admin Panel">
             <MenuItem index="admin-users">Users</MenuItem>
             <MenuItem index="admin-settings">Settings</MenuItem>
         </SubMenu>
-        <MenuItem index="disabled" disabled>Disabled Item</MenuItem>
+        <MenuItem index="3" disabled>Disabled Item</MenuItem>
     </Menu>
 </template>
 ```
@@ -44,19 +46,26 @@ const active = ref('home')
 Set `mode="horizontal"` to align items horizontally. Under horizontal mode, nested `SubMenu` lists will display as absolutely-positioned hover dropdowns instead of collapsing inline.
 
 ```vue
+<script setup>
+import { ref } from 'vue'
+import { Menu, MenuItem, SubMenu } from 'brutx-ui-vue'
+
+const active = ref('home')
+</script>
+
 <template>
-    <Menu default-active="home" mode="horizontal">
+    <Menu default-active="home" mode="horizontal" @select="idx => active = idx">
         <MenuItem index="home">Home</MenuItem>
         <SubMenu index="products" title="Products">
-            <MenuItem index="prod-server">Cloud Servers</MenuItem>
-            <MenuItem index="prod-db">Databases</MenuItem>
+            <MenuItem index="product-1">Cloud Servers</MenuItem>
+            <MenuItem index="product-2">Databases</MenuItem>
         </SubMenu>
         <MenuItem index="about">About</MenuItem>
     </Menu>
 </template>
 ```
 
-### Routing Mode (Router)
+### Routing Mode
 
 Set `router` to `true` to auto-push routes on click. If `route` prop is not explicitly specified on a `MenuItem`, its `index` attribute will be used as the target path.
 
@@ -70,49 +79,64 @@ Set `router` to `true` to auto-push routes on click. If `route` prop is not expl
 </template>
 ```
 
-## API
+## Subcomponents
 
-### Menu Props
+| Component | Description |
+|-----------|-------------|
+| `Menu` | Root menu component providing context state |
+| `MenuItem` | Menu item component |
+| `SubMenu` | Submenu component for nested and collapsible contents |
+
+## Props
+
+### Menu
 
 | Prop | Type | Default | Description |
-|---|---|---|---|
+|------|------|---------|-------------|
 | `mode` | `'horizontal' \| 'vertical'` | `'vertical'` | Alignment mode |
 | `defaultActive` | `string` | `''` | Key of the default active menu item |
 | `router` | `boolean` | `false` | Enable vue-router redirection modes |
-| `class` | `string` | `undefined` | Custom class list |
+| `class` | `string` | — | Custom class list |
 
-### Menu Events
-
-| Event | Parameters | Description |
-|---|---|---|
-| `select` | `(index: string) => void` | Emitted when a menu item is clicked and selected |
-
----
-
-### MenuItem Props
+### MenuItem
 
 | Prop | Type | Default | Description |
-|---|---|---|---|
-| `index` | `string` | Required | Unique key identifying the menu item |
+|------|------|---------|-------------|
+| `index` | `string` | — | Required, unique key identifying the menu item |
 | `disabled` | `boolean` | `false` | Disable item interaction |
-| `route` | `string \| object` | `undefined` | Target route path or object |
-| `class` | `string` | `undefined` | Custom class list |
+| `route` | `string \| object` | — | Target route path or object |
+| `class` | `string` | — | Custom class list |
 
----
-
-### SubMenu Props
+### SubMenu
 
 | Prop | Type | Default | Description |
-|---|---|---|---|
-| `index` | `string` | Required | Unique key identifying the sub-menu |
+|------|------|---------|-------------|
+| `index` | `string` | — | Required, unique key identifying the sub-menu |
 | `title` | `string` | `''` | Title label (prioritized below `title` slot) |
 | `disabled` | `boolean` | `false` | Disable entire sub-menu interaction |
-| `class` | `string` | `undefined` | Custom wrapper class list |
-| `triggerClass` | `string` | `undefined` | Custom header trigger class list |
+| `triggerClass` | `string` | — | Custom header trigger class list |
+| `class` | `string` | — | Custom wrapper class list |
 
-### SubMenu Slots
+## Events
 
-| Slot Name | Description |
-|---|---|
-| `default` | Nested submenu items (e.g. `MenuItem` or nested `SubMenu`) |
-| `title` | Custom header title trigger elements |
+### Menu
+
+| Event | Parameters | Description |
+|-------|------------|-------------|
+| `select` | `string` | Emitted when a menu item is clicked and selected, parameter is the active `index` |
+
+## Slots
+
+### SubMenu
+
+| Slot | Scope | Description |
+|------|-------|-------------|
+| `default` | — | Nested submenu items (e.g. `MenuItem` or nested `SubMenu`) |
+| `title` | — | Custom header title trigger elements |
+
+## Accessibility
+
+- **Keyboard Interaction**: Supports using `Enter` or `Space` keys to select `MenuItem` or expand/collapse `SubMenu`.
+- **ARIA Attributes**: The root component automatically sets `role="menubar"`, and each menu item sets `role="menuitem"`. The submenu trigger automatically manages `aria-haspopup="true"` and `aria-expanded` attributes.
+- **Reduced Motion**: Fold animation in vertical mode respects `prefers-reduced-motion` settings and automatically downgrades (if applicable).
+
