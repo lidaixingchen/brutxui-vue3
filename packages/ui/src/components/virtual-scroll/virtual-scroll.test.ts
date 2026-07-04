@@ -1,5 +1,14 @@
+import { vi } from 'vitest'
+
+// Mock useLocale before importing components that use it
+vi.mock('@/composables/useLocale', () => ({
+    useLocale: () => ({
+        t: (key: string) => key,
+    }),
+}))
+
 import { mount, flushPromises } from '@vue/test-utils'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import VirtualScroll from './VirtualScroll.vue'
 
 interface VirtualScrollExposed {
@@ -9,13 +18,6 @@ interface VirtualScrollExposed {
 function assertVirtualScrollExposed(vm: unknown): asserts vm is VirtualScrollExposed {
     expect(vm).toHaveProperty('scrollToIndex')
 }
-
-// Mock useLocale
-vi.mock('@/composables/useLocale', () => ({
-    useLocale: () => ({
-        t: (key: string) => key,
-    }),
-}))
 
 // vi.hoisted 确保 mock 变量在 vi.mock() 工厂执行前初始化
 const { scrollToIndexMock } = vi.hoisted(() => ({

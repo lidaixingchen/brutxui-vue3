@@ -115,13 +115,11 @@ function handleDateRangeChange(bound: 'start' | 'end', val: string) {
 // 重置当前列的过滤器
 function resetColumnFilter() {
     const columns = { ...props.filterState.columns }
-    if (columns) {
-        delete columns[props.column.id]
-        emit('update:filterState', {
-            ...props.filterState,
-            columns,
-        })
-    }
+    delete columns[props.column.id]
+    emit('update:filterState', {
+        ...props.filterState,
+        columns,
+    })
 }
 </script>
 

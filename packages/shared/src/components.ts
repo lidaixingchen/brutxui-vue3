@@ -107,6 +107,10 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     'infinite-scroll': { dependencies: [], description: 'Auto-loading list that fetches more content on scroll.' },
     'color-mode-switcher': { dependencies: ['@lucide/vue'], description: 'Toggle between light, dark, and system color modes.' },
     'data-table': { dependencies: ['@lucide/vue'], description: 'Full-featured data table with sorting, filtering, pagination, and row selection.' },
+    cascader: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Cascading selector with multi-level option navigation and search support.' },
+    menu: { dependencies: ['@lucide/vue'], description: 'Horizontal or vertical navigation menu with sub-menu support.' },
+    transfer: { dependencies: ['@lucide/vue'], description: 'Dual-panel transfer list for moving items between source and target collections.' },
+    rate: { dependencies: ['@lucide/vue'], description: 'Star rating input with half-star precision and keyboard navigation.' },
 } as const;
 
 export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);

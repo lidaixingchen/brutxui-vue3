@@ -4,6 +4,7 @@ import dts from 'vite-plugin-dts'
 import tailwindcss from '@tailwindcss/vite'
 import { resolve, relative, join } from 'path'
 import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, rmSync, existsSync } from 'node:fs'
+import { execSync } from 'node:child_process'
 
 function copyStylesPlugin(): Plugin {
     return {
@@ -14,8 +15,14 @@ function copyStylesPlugin(): Plugin {
                 const stylesCssPath = resolve(__dirname, 'dist/styles.css')
                 const componentCss = readFileSync(componentCssPath, 'utf-8')
                 writeFileSync(stylesCssPath, componentCss)
+                
+                // Compile preflight.css independently using Tailwind CSS v4 CLI via pnpm script
+                execSync('pnpm build:preflight', {
+                    cwd: __dirname,
+                    stdio: 'inherit',
+                })
             } catch (e) {
-                console.warn('Failed to copy styles.css:', e)
+                console.warn('Failed to copy styles or compile preflight:', e)
             }
         },
     }

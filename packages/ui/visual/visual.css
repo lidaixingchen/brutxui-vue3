@@ -1,3 +1,6 @@
+@import "../src/preflight.css";
+@import "../src/styles.css";
+
 .visual-shell,
 .visual-suite {
     --color-brutal-bg: var(--brutal-bg);

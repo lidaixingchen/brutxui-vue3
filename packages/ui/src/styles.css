@@ -1,4 +1,5 @@
-@import "tailwindcss";
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
 @variant dark (&:where(.dark, .dark *));
 @import "./components/code-block/brutx-prism.css";
 
@@ -47,29 +48,6 @@
 }
 
 @layer base {
-
-    *,
-    *::before,
-    *::after {
-        box-sizing: border-box;
-        border-width: 0;
-        border-style: solid;
-    }
-
-    html {
-        text-size-adjust: 100%;
-        font-feature-settings: normal;
-        font-variation-settings: normal;
-        tab-size: 4;
-    }
-
-    body {
-        margin: 0;
-        line-height: inherit;
-        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-            Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-        font-smoothing: antialiased;
-    }
 
     /* Breadcrumb list reset to prevent style pollution from external markdown renderers (like VitePress) */
     .breadcrumb-list,
@@ -339,6 +317,7 @@
     }
 
     .border-brutal {
+        border-style: solid;
         border-color: var(--brutal-border-color, #000000);
     }
 
@@ -861,16 +840,7 @@
     }
 }
 
-/* 全局 reduced-motion 兜底：覆盖所有未单独处理的动画和过渡 */
-@media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
-}
+
 
 /* ============================================
    High Contrast Mode Support
@@ -959,6 +929,7 @@
 
 /* 4. Core Brutalist Class Fallbacks (Prevent Tailwind Purge on dynamically generated classes) */
 .border-brutal {
+    border-style: solid !important;
     border-color: var(--brutal-border-color, #000000) !important;
 }
 .bg-brutal-bg {
