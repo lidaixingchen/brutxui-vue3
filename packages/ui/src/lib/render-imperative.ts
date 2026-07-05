@@ -1,5 +1,6 @@
 import { createVNode, render, type Component, type AppContext } from 'vue'
 import { isClient } from './env'
+import { DEFAULT_DIALOG_TRANSITION_MS } from './defaults'
 import { globalAppContext } from '../plugin'
 
 export interface RenderImperativeOptions {
@@ -64,7 +65,7 @@ export function renderImperative(
         }
 
         // 延迟卸载 DOM，确保退场 Transition 动画能完整执行完毕
-        const delay = options.transitionDuration ?? 300
+        const delay = options.transitionDuration ?? DEFAULT_DIALOG_TRANSITION_MS
         if (delay > 0) {
             setTimeout(cleanup, delay)
         } else {

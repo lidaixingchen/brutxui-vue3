@@ -1,8 +1,9 @@
 import { ref, computed, onMounted, onUnmounted, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import useEmblaCarousel from 'embla-carousel-vue'
+import { DEFAULT_AUTOPLAY_DELAY_MS } from '../lib/defaults'
 import { useReducedMotion } from './useReducedMotion'
 
-export const DEFAULT_AUTOPLAY_DELAY = 3000
+export const DEFAULT_AUTOPLAY_DELAY = DEFAULT_AUTOPLAY_DELAY_MS
 
 export interface UseCarouselOptions {
     loop?: MaybeRefOrGetter<boolean | undefined>

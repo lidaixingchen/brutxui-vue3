@@ -11,7 +11,7 @@ export const cascaderTriggerVariants = cva(
         'transition-all duration-150',
         brutalHoverLift,
         'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
-        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none',
+        'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none', /* 组件私有：重置 X 轴位移，不抽取 */
         'disabled:cursor-not-allowed disabled:opacity-50',
         '[&>span]:line-clamp-1',
     ],

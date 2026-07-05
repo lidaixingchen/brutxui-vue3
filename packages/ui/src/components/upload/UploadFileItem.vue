@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import {
     FileText,
     File,
@@ -63,14 +63,23 @@ const showImagePreview = computed(() => {
     return props.listType === 'picture' || props.listType === 'picture-card'
 })
 
-// 图片预览 URL
-const previewUrl = computed(() => {
-    if (props.file.url) return props.file.url
-    if (props.file.raw && props.file.type.startsWith('image/')) {
-        return URL.createObjectURL(props.file.raw)
+const objectUrl = ref<string | undefined>()
+
+watchEffect((onCleanup) => {
+    if (props.file.url || !props.file.raw || !props.file.type.startsWith('image/')) {
+        return
     }
-    return undefined
+    const url = URL.createObjectURL(props.file.raw)
+    objectUrl.value = url
+    onCleanup(() => {
+        URL.revokeObjectURL(url)
+        if (objectUrl.value === url) {
+            objectUrl.value = undefined
+        }
+    })
 })
+
+const previewUrl = computed(() => props.file.url ?? objectUrl.value)
 </script>
 
 <template>

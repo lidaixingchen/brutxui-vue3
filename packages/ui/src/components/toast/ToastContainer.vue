@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { cn } from '@/lib/utils'
+import { DEFAULT_TOAST_MAX_VISIBLE, DEFAULT_TOAST_GAP_PX } from '@/lib/defaults'
 import type { ToastPosition, ToastStackOptions } from '@/composables/useToast'
 import { useLocale } from '@/composables/useLocale'
 
 const { t } = useLocale()
 
-const DEFAULT_MAX_VISIBLE = 5
-const DEFAULT_GAP = 12
 const DEFAULT_EXPAND_DIRECTION: ToastStackOptions['expandDirection'] = 'down'
 
 interface ToastContainerProps {
@@ -19,8 +18,8 @@ interface ToastContainerProps {
 const props = withDefaults(defineProps<ToastContainerProps>(), {
     position: 'bottom-right',
     stack: () => ({
-        maxVisible: DEFAULT_MAX_VISIBLE,
-        gap: DEFAULT_GAP,
+        maxVisible: DEFAULT_TOAST_MAX_VISIBLE,
+        gap: DEFAULT_TOAST_GAP_PX,
         expandDirection: DEFAULT_EXPAND_DIRECTION,
     }),
     class: undefined,
@@ -73,7 +72,7 @@ const positionStyle = computed(() => {
     return {}
 })
 
-const gap = computed(() => Math.max(0, props.stack?.gap ?? DEFAULT_GAP))
+const gap = computed(() => Math.max(0, props.stack?.gap ?? DEFAULT_TOAST_GAP_PX))
 const expandDirection = computed(() => {
     const value = props.stack?.expandDirection ?? 'down'
     return ['up', 'down'].includes(value) ? value : 'down'

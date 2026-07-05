@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority'
+import { validationBorderColors } from '../input/shared-input-variants'
 
 export const hardcoreInputVariants = cva(
     [
@@ -15,14 +16,10 @@ export const hardcoreInputVariants = cva(
     ],
     {
         variants: {
-            validationState: {
-                default: 'border-brutal',
-                success: 'border-brutal-success',
-                error: 'border-brutal-destructive',
-            },
+            variant: validationBorderColors,
         },
         defaultVariants: {
-            validationState: 'default',
+            variant: 'default',
         },
     }
 )

@@ -51,8 +51,7 @@ export function useDataTableFilter<T extends object>(
             } else if (col.filterType === 'multi-select') {
                 result = result.filter((row) => {
                     const val = getCellValue(row, col)
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const filterArr = filterValue as any[]
+                    const filterArr = Array.isArray(filterValue) ? filterValue : []
                     return filterArr.some((item) => String(item) === String(val))
                 })
             } else if (col.filterType === 'date-range') {
@@ -66,11 +65,12 @@ export function useDataTableFilter<T extends object>(
                     let end: number | null = null
 
                     if (Array.isArray(filterValue)) {
-                        start = filterValue[0] ? new Date(filterValue[0]).getTime() : null
-                        end = filterValue[1] ? new Date(filterValue[1]).getTime() : null
-                    } else if (filterValue && typeof filterValue === 'object') {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        const obj = filterValue as any
+                        const s = filterValue[0] as string | null
+                        const e = filterValue[1] as string | null
+                        start = s ? new Date(s).getTime() : null
+                        end = e ? new Date(e).getTime() : null
+                    } else if (filterValue && typeof filterValue === 'object' && !Array.isArray(filterValue)) {
+                        const obj = filterValue as { start: string | null; end: string | null }
                         start = obj.start ? new Date(obj.start).getTime() : null
                         end = obj.end ? new Date(obj.end).getTime() : null
                     }

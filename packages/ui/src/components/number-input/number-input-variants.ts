@@ -1,5 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
+import { validationBorderColors } from '../input/shared-input-variants'
 
 export const numberInputRootVariants = cva(
     [
@@ -15,8 +16,8 @@ export const numberInputRootVariants = cva(
             },
             variant: {
                 default: '',
-                error: 'border-brutal-destructive focus-within:ring-brutal-destructive',
-                success: 'border-brutal-success focus-within:ring-brutal-success',
+                error: `${validationBorderColors.error} focus-within:ring-brutal-destructive`,
+                success: `${validationBorderColors.success} focus-within:ring-brutal-success`,
             },
         },
         defaultVariants: {

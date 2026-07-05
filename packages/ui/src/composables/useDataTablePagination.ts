@@ -1,6 +1,7 @@
 import { ref, computed, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { DEFAULT_PAGE_SIZE } from '../lib/defaults'
 
-export const DEFAULT_PAGE_SIZE = 10
+export { DEFAULT_PAGE_SIZE }
 
 export interface UseDataTablePaginationOptions {
     paginated: MaybeRefOrGetter<boolean | undefined>

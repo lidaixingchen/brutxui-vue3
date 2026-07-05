@@ -1,10 +1,11 @@
-import { cva } from 'class-variance-authority';
+import { cva } from 'class-variance-authority'
+import { chipBaseClasses, chipColorVariants } from '@/lib/chip-variants'
 
 export const kbdVariants = cva(
     [
-        'inline-flex items-center justify-center',
+        ...chipBaseClasses,
+        'justify-center',
         'font-mono font-black',
-        'border-3 border-brutal rounded-brutal',
         'shadow-brutal-sm',
         'select-none whitespace-nowrap',
     ],
@@ -12,9 +13,9 @@ export const kbdVariants = cva(
         variants: {
             variant: {
                 default: 'bg-brutal-muted text-brutal-fg',
-                primary: 'bg-brutal-primary text-brutal-primary-foreground',
-                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',
-                accent: 'bg-brutal-accent text-brutal-accent-foreground',
+                primary: chipColorVariants.primary,
+                secondary: chipColorVariants.secondary,
+                accent: chipColorVariants.accent,
             },
             size: {
                 sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',
@@ -27,4 +28,4 @@ export const kbdVariants = cva(
             size: 'md',
         },
     }
-);
+)

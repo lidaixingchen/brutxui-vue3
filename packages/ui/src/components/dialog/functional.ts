@@ -10,6 +10,7 @@ import DialogFooter from './DialogFooter.vue'
 import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
+import { DEFAULT_DIALOG_TRANSITION_MS } from '@/lib/defaults'
 import { globalAppContext } from '@/plugin'
 
 export type RenderableContent = string | Component | VNode | (() => string | Component | VNode | null)
@@ -104,7 +105,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
 
     watch(isOpen, (newVal) => {
         if (!newVal) {
-            setTimeout(destroy, 300)
+            setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
         }
     })
 
@@ -155,7 +156,12 @@ export function showDialog(options: ShowDialogOptions = {}) {
 
     return {
         close,
-        promise
+        promise,
+        destroy: () => {
+            render(null, container)
+            container.remove()
+            resolvePromise()
+        }
     }
 }
 
@@ -187,7 +193,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
 
     watch(isOpen, (newVal) => {
         if (!newVal) {
-            setTimeout(destroy, 300)
+            setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
         }
     })
 
@@ -286,6 +292,11 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
 
     return {
         close,
-        promise
+        promise,
+        destroy: () => {
+            render(null, container)
+            container.remove()
+            rejectPromise('destroy')
+        }
     }
 }

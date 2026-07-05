@@ -1,25 +1,24 @@
 import { onUnmounted, type Ref } from 'vue'
 import { isClient } from '../lib/env'
-
-const TYPE_SOUND_THROTTLE_MS = 50
-const TYPE_BASE_FREQ = 220
-const TYPE_FREQ_RANGE = 80
-const TYPE_GAIN = 0.08
-const TYPE_GAIN_END = 0.001
-const TYPE_DURATION = 0.05
-
-const SUCCESS_START_FREQ = 300
-const SUCCESS_END_FREQ = 600
-const SUCCESS_GAIN = 0.1
-const SUCCESS_GAIN_END = 0.001
-const SUCCESS_DURATION = 0.15
-
-const FAIL_FREQ_1 = 150
-const FAIL_FREQ_2 = 100
-const FAIL_FREQ_SHIFT_TIME = 0.1
-const FAIL_GAIN = 0.1
-const FAIL_GAIN_END = 0.001
-const FAIL_DURATION = 0.2
+import {
+    AUDIO_TYPE_THROTTLE_MS,
+    AUDIO_TYPE_BASE_FREQ,
+    AUDIO_TYPE_FREQ_RANGE,
+    AUDIO_TYPE_GAIN,
+    AUDIO_TYPE_GAIN_END,
+    AUDIO_TYPE_DURATION,
+    AUDIO_SUCCESS_START_FREQ,
+    AUDIO_SUCCESS_END_FREQ,
+    AUDIO_SUCCESS_GAIN,
+    AUDIO_SUCCESS_GAIN_END,
+    AUDIO_SUCCESS_DURATION,
+    AUDIO_FAIL_FREQ_1,
+    AUDIO_FAIL_FREQ_2,
+    AUDIO_FAIL_FREQ_SHIFT_TIME,
+    AUDIO_FAIL_GAIN,
+    AUDIO_FAIL_GAIN_END,
+    AUDIO_FAIL_DURATION,
+} from '../lib/defaults'
 
 export interface UseAudioEngineReturn {
     playSound: (type: 'type' | 'success' | 'fail') => void
@@ -41,7 +40,7 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
         if (!enabled.value) return
         if (type === 'type') {
             const now = Date.now()
-            if (now - lastTypeSoundTime < TYPE_SOUND_THROTTLE_MS) return
+            if (now - lastTypeSoundTime < AUDIO_TYPE_THROTTLE_MS) return
             lastTypeSoundTime = now
         }
         
@@ -64,27 +63,27 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
 
         if (type === 'type') {
             osc.type = 'triangle'
-            osc.frequency.setValueAtTime(TYPE_BASE_FREQ + Math.random() * TYPE_FREQ_RANGE, ctx.currentTime)
-            gain.gain.setValueAtTime(TYPE_GAIN, ctx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(TYPE_GAIN_END, ctx.currentTime + TYPE_DURATION)
+            osc.frequency.setValueAtTime(AUDIO_TYPE_BASE_FREQ + Math.random() * AUDIO_TYPE_FREQ_RANGE, ctx.currentTime)
+            gain.gain.setValueAtTime(AUDIO_TYPE_GAIN, ctx.currentTime)
+            gain.gain.exponentialRampToValueAtTime(AUDIO_TYPE_GAIN_END, ctx.currentTime + AUDIO_TYPE_DURATION)
             osc.start()
-            osc.stop(ctx.currentTime + TYPE_DURATION)
+            osc.stop(ctx.currentTime + AUDIO_TYPE_DURATION)
         } else if (type === 'success') {
             osc.type = 'sine'
-            osc.frequency.setValueAtTime(SUCCESS_START_FREQ, ctx.currentTime)
-            osc.frequency.exponentialRampToValueAtTime(SUCCESS_END_FREQ, ctx.currentTime + SUCCESS_DURATION)
-            gain.gain.setValueAtTime(SUCCESS_GAIN, ctx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(SUCCESS_GAIN_END, ctx.currentTime + SUCCESS_DURATION)
+            osc.frequency.setValueAtTime(AUDIO_SUCCESS_START_FREQ, ctx.currentTime)
+            osc.frequency.exponentialRampToValueAtTime(AUDIO_SUCCESS_END_FREQ, ctx.currentTime + AUDIO_SUCCESS_DURATION)
+            gain.gain.setValueAtTime(AUDIO_SUCCESS_GAIN, ctx.currentTime)
+            gain.gain.exponentialRampToValueAtTime(AUDIO_SUCCESS_GAIN_END, ctx.currentTime + AUDIO_SUCCESS_DURATION)
             osc.start()
-            osc.stop(ctx.currentTime + SUCCESS_DURATION)
+            osc.stop(ctx.currentTime + AUDIO_SUCCESS_DURATION)
         } else if (type === 'fail') {
             osc.type = 'square'
-            osc.frequency.setValueAtTime(FAIL_FREQ_1, ctx.currentTime)
-            osc.frequency.setValueAtTime(FAIL_FREQ_2, ctx.currentTime + FAIL_FREQ_SHIFT_TIME)
-            gain.gain.setValueAtTime(FAIL_GAIN, ctx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(FAIL_GAIN_END, ctx.currentTime + FAIL_DURATION)
+            osc.frequency.setValueAtTime(AUDIO_FAIL_FREQ_1, ctx.currentTime)
+            osc.frequency.setValueAtTime(AUDIO_FAIL_FREQ_2, ctx.currentTime + AUDIO_FAIL_FREQ_SHIFT_TIME)
+            gain.gain.setValueAtTime(AUDIO_FAIL_GAIN, ctx.currentTime)
+            gain.gain.exponentialRampToValueAtTime(AUDIO_FAIL_GAIN_END, ctx.currentTime + AUDIO_FAIL_DURATION)
             osc.start()
-            osc.stop(ctx.currentTime + FAIL_DURATION)
+            osc.stop(ctx.currentTime + AUDIO_FAIL_DURATION)
         }
     }
 

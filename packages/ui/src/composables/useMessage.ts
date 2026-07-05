@@ -1,6 +1,7 @@
 import { shallowRef } from 'vue'
 import { renderImperative, type RenderImperativeReturn } from '../lib/render-imperative'
 import { isClient } from '../lib/env'
+import { DEFAULT_MESSAGE_DURATION_MS, MESSAGE_GRACE_PERIOD_MS, DEFAULT_DIALOG_TRANSITION_MS } from '../lib/defaults'
 import MessageContainer from '../components/message/MessageContainer.vue'
 
 export type MessageType = 'info' | 'success' | 'warning' | 'error'
@@ -31,9 +32,6 @@ export interface UseMessageReturn {
 }
 
 export const messageStore = shallowRef<MessageItem[]>([])
-
-const DEFAULT_DURATION = 3000
-const GRACE_PERIOD_MS = 500
 
 let instance: RenderImperativeReturn | null = null
 let graceTimer: ReturnType<typeof setTimeout> | null = null
@@ -66,7 +64,7 @@ function scheduleGC(): void {
             instance.destroy()
             instance = null
         }
-    }, GRACE_PERIOD_MS)
+    }, MESSAGE_GRACE_PERIOD_MS)
 }
 
 function cancelGraceTimer(): void {
@@ -80,7 +78,7 @@ function ensureMounted(): void {
     if (!isClient) return
     if (instance) return
     instance = renderImperative(MessageContainer, {}, {
-        transitionDuration: 300,
+        transitionDuration: DEFAULT_DIALOG_TRANSITION_MS,
         onClose: () => {
             instance = null
         },
@@ -96,7 +94,7 @@ function addMessage(options: MessageOptions): () => void {
         type: options.type ?? 'info',
         title: options.title ?? '',
         description: options.description,
-        duration: options.duration ?? DEFAULT_DURATION,
+        duration: options.duration ?? DEFAULT_MESSAGE_DURATION_MS,
         closable: options.closable ?? true,
     }
 
@@ -139,4 +137,16 @@ export function useMessage(): UseMessageReturn {
     }
 
     return { show, info, success, warning, error }
+}
+
+export function destroyMessageSystem(): void {
+    timerMap.forEach((timer) => clearTimeout(timer))
+    timerMap.clear()
+    cancelGraceTimer()
+    messageStore.value = []
+    messageIdCounter = 0
+    if (instance) {
+        instance.destroy()
+        instance = null
+    }
 }

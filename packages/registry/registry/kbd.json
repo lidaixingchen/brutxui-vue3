@@ -14,7 +14,12 @@
     },
     {
       "path": "components/ui/kbd/kbd-variants.ts",
-      "content": "import { cva } from 'class-variance-authority';\n\nexport const kbdVariants = cva(\n    [\n        'inline-flex items-center justify-center',\n        'font-mono font-black',\n        'border-3 border-brutal rounded-brutal',\n        'shadow-brutal-sm',\n        'select-none whitespace-nowrap',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-muted text-brutal-fg',\n                primary: 'bg-brutal-primary text-brutal-primary-foreground',\n                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',\n                accent: 'bg-brutal-accent text-brutal-accent-foreground',\n            },\n            size: {\n                sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',\n                md: 'px-2 py-1 text-sm min-w-[1.75rem]',\n                lg: 'px-3 py-1.5 text-base min-w-[2.25rem]',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'md',\n        },\n    }\n);\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { chipBaseClasses, chipColorVariants } from '@/lib/chip-variants'\n\nexport const kbdVariants = cva(\n    [\n        ...chipBaseClasses,\n        'justify-center',\n        'font-mono font-black',\n        'shadow-brutal-sm',\n        'select-none whitespace-nowrap',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-muted text-brutal-fg',\n                primary: chipColorVariants.primary,\n                secondary: chipColorVariants.secondary,\n                accent: chipColorVariants.accent,\n            },\n            size: {\n                sm: 'px-1.5 py-0.5 text-xs min-w-[1.25rem]',\n                md: 'px-2 py-1 text-sm min-w-[1.75rem]',\n                lg: 'px-3 py-1.5 text-base min-w-[2.25rem]',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'md',\n        },\n    }\n)\n",
+      "type": "registry:lib"
+    },
+    {
+      "path": "lib/chip-variants.ts",
+      "content": "export const chipBaseClasses = [\n    'inline-flex items-center',\n    'border-3 border-brutal',\n    'rounded-brutal',\n] as const\n\nexport const chipColorVariants = {\n    primary: 'bg-brutal-primary text-brutal-primary-foreground',\n    secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',\n    accent: 'bg-brutal-accent text-brutal-accent-foreground',\n} as const\n",
       "type": "registry:lib"
     }
   ],
@@ -104,5 +109,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-0fd7bfaed5a9045ca977a480fd04fac50d5ac07290db79df81c8950db18fcf9d"
+  "integrity": "sha256-63839fb061e0036337d33b8158a763e458f52b854aa9866b85d417e55a63f669"
 }

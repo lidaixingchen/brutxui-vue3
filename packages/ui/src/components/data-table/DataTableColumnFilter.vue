@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import type { DataTableColumn, DataTableFilterState } from './types'
+import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from './types'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -27,8 +27,9 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-// 统一的过滤器更新方法
-function updateFilterValue(val: unknown) {
+type MultiSelectValue = Array<string | number | boolean>
+
+function updateFilterValue(val: DataTableFilterValue) {
     const columns = { ...(props.filterState.columns || {}) }
     if (val === undefined || val === null || val === '') {
         delete columns[props.column.id]
@@ -41,45 +42,45 @@ function updateFilterValue(val: unknown) {
     })
 }
 
-// 文本类型的绑定
-const textVal = computed({
+const textVal = computed<string>({
     get() {
-        return props.filterState.columns?.[props.column.id] || ''
+        const v = props.filterState.columns?.[props.column.id]
+        return typeof v === 'string' ? v : ''
     },
     set(val) {
         updateFilterValue(val)
     }
 })
 
-// 单选下拉列表类型的绑定
-const selectVal = computed({
+const selectVal = computed<string>({
     get() {
-        return String(props.filterState.columns?.[props.column.id] || '')
+        const v = props.filterState.columns?.[props.column.id]
+        return String(v ?? '')
     },
     set(val) {
         updateFilterValue(val)
     }
 })
 
-// 多选类型的逻辑
-function isMultiSelectChecked(value: unknown): boolean {
+function isMultiSelectChecked(value: string | number | boolean): boolean {
     const vals = props.filterState.columns?.[props.column.id]
     if (!Array.isArray(vals)) return false
-    return vals.includes(value)
+    return (vals as MultiSelectValue).includes(value)
 }
 
-function handleMultiSelectChange(value: unknown, checked: boolean | 'indeterminate') {
+function handleMultiSelectChange(value: string | number | boolean, checked: boolean | 'indeterminate') {
     const columns = { ...(props.filterState.columns || {}) }
-    let vals = columns[props.column.id]
-    if (!Array.isArray(vals)) {
-        vals = []
-    }
+    const current = columns[props.column.id]
+    const vals: MultiSelectValue = Array.isArray(current) ? (current as MultiSelectValue) : []
     if (checked === true || checked === 'indeterminate') {
         if (!vals.includes(value)) {
             vals.push(value)
         }
     } else {
-        vals = vals.filter((v: unknown) => v !== value)
+        const idx = vals.indexOf(value)
+        if (idx !== -1) {
+            vals.splice(idx, 1)
+        }
     }
     columns[props.column.id] = [...vals]
     emit('update:filterState', {
@@ -88,32 +89,32 @@ function handleMultiSelectChange(value: unknown, checked: boolean | 'indetermina
     })
 }
 
-// 日期范围的逻辑
 function getDateRangeVal(bound: 'start' | 'end'): string {
     const val = props.filterState.columns?.[props.column.id]
     if (val && typeof val === 'object' && !Array.isArray(val)) {
-        return val[bound] || ''
+        const obj = val as { start: string | null; end: string | null }
+        return obj[bound] ?? ''
     }
     return ''
 }
 
 function handleDateRangeChange(bound: 'start' | 'end', val: string) {
     const columns = { ...(props.filterState.columns || {}) }
-    let current = columns[props.column.id]
-    if (!current || typeof current !== 'object' || Array.isArray(current)) {
-        current = { start: '', end: '' }
+    const current = columns[props.column.id]
+    let next: { start: string | null; end: string | null }
+    if (current && typeof current === 'object' && !Array.isArray(current)) {
+        next = { ...(current as { start: string | null; end: string | null }) }
     } else {
-        current = { ...current }
+        next = { start: null, end: null }
     }
-    current[bound] = val
-    columns[props.column.id] = current
+    next[bound] = val || null
+    columns[props.column.id] = next
     emit('update:filterState', {
         ...props.filterState,
         columns,
     })
 }
 
-// 重置当前列的过滤器
 function resetColumnFilter() {
     const columns = { ...(props.filterState.columns || {}) }
     delete columns[props.column.id]

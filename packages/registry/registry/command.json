@@ -64,7 +64,7 @@
     },
     {
       "path": "components/ui/command/command-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\nimport { brutalHighlightLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const commandInputWrapperVariants = cva(\n    [\n        'flex h-12 items-center gap-3 px-4',\n        'border-b-3 border-brutal',\n        'bg-brutal-accent',\n    ]\n)\n\nexport const commandItemVariants = cva(\n    [\n        'relative flex cursor-pointer items-center gap-3 px-3 py-2',\n        'text-sm font-semibold',\n        'select-none outline-none',\n        'border-3 border-transparent',\n        'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',\n        'data-[highlighted]:border-brutal data-[highlighted]:font-black',\n        brutalHighlightLift,\n        brutalPress,\n        'transition-all',\n        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n        '[&_svg]:pointer-events-none [&_svg]:shrink-0',\n    ]\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { brutalHighlightLiftWithBorder, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const commandInputWrapperVariants = cva(\n    [\n        'flex h-12 items-center gap-3 px-4',\n        'border-b-3 border-brutal',\n        'bg-brutal-accent',\n    ]\n)\n\nexport const commandItemVariants = cva(\n    [\n        'relative flex cursor-pointer items-center gap-3 px-3 py-2',\n        'text-sm font-semibold',\n        'select-none outline-none',\n        'border-3 border-transparent',\n        'data-[highlighted]:bg-brutal-secondary data-[highlighted]:text-brutal-fg',\n        'data-[highlighted]:font-black',\n        brutalHighlightLiftWithBorder,\n        brutalPress,\n        'transition-all',\n        'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',\n        '[&_svg]:pointer-events-none [&_svg]:shrink-0',\n    ]\n)\n",
       "type": "registry:lib"
     },
     {
@@ -164,5 +164,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-d0a26fa7843cf1417d7df691eff81f856440a8d729360c3fe7d889d16dd35d89"
+  "integrity": "sha256-3fa3cc32f5f8e5c3aa99e758c98bfd6567b133ee8af8f58253cd6dc64223e77e"
 }

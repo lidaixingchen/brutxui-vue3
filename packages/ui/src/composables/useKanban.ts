@@ -109,6 +109,7 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
             return col
         })
 
+        options.columns.value = newColumns
         options.onCardMove?.(cardId, fromColumn, toColumnId, insertIndex)
         draggingCard.value = null
         dragOverColumn.value = null
@@ -153,6 +154,7 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
             newCards.splice(newIndex, 0, moved)
             return { ...c, cards: newCards }
         })
+        options.columns.value = newColumns
         return newColumns
     }
 
@@ -166,6 +168,9 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
         const card = col.cards.find(c => c.id === cardId)
         if (!card) return
 
+        const targetColumnId = options.columns.value[newColIndex].id
+        const targetIndex = options.columns.value[newColIndex].cards.length
+
         const newColumns = options.columns.value.map((c, i) => {
             if (i === colIndex) {
                 return { ...c, cards: c.cards.filter(cc => cc.id !== cardId) }
@@ -176,8 +181,9 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
             return c
         })
 
-        options.onCardMove?.(cardId, columnId, options.columns.value[newColIndex].id, options.columns.value[newColIndex].cards.length)
-        grabbedCard.value = { cardId, columnId: options.columns.value[newColIndex].id }
+        options.columns.value = newColumns
+        options.onCardMove?.(cardId, columnId, targetColumnId, targetIndex)
+        grabbedCard.value = { cardId, columnId: targetColumnId }
         return newColumns
     }
 
@@ -190,6 +196,7 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
         const [moved] = newColumns.splice(fromIndex, 1)
         newColumns.splice(toIndex, 0, moved)
 
+        options.columns.value = newColumns
         options.onColumnMove?.(fromId, fromIndex, toIndex)
         return newColumns
     }

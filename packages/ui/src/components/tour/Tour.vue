@@ -381,7 +381,7 @@ onBeforeUnmount((): void => {
                 <div>
                     <button
                         type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
                         @click="handleSkip"
                     >
                         {{ texts.skip }}
@@ -391,14 +391,14 @@ onBeforeUnmount((): void => {
                     <button
                         v-if="currentStep > 0"
                         type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-bg text-brutal-fg border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
                         @click="handlePrev"
                     >
                         {{ texts.prev }}
                     </button>
                     <button
                         type="button"
-                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-accent text-brutal-accent-foreground border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all cursor-pointer"
+                        class="px-2.5 py-1 text-xs font-black uppercase bg-brutal-accent text-brutal-accent-foreground border-2 border-brutal-black dark:border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] dark:shadow-[2px_2px_0px_0px_rgba(255,255,255,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all cursor-pointer"
                         @click="handleNextOrFinish"
                     >
                         {{ currentStep === steps.length - 1 ? texts.finish : texts.next }}

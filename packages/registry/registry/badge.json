@@ -16,7 +16,7 @@
     },
     {
       "path": "components/ui/badge/badge-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nexport const badgeVariants = cva(\n    [\n        'inline-flex items-center',\n        'border-3 border-brutal',\n        'rounded-brutal',\n        'font-bold tracking-wide',\n        'transition-colors',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-bg text-brutal-fg shadow-brutal-sm',\n                primary: 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm',\n                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground shadow-brutal-sm',\n                accent: 'bg-brutal-accent text-brutal-accent-foreground shadow-brutal-sm',\n                danger: 'bg-brutal-destructive text-brutal-destructive-foreground shadow-brutal-sm',\n                success: 'bg-brutal-success text-brutal-success-foreground shadow-brutal-sm',\n                outline: 'bg-transparent text-brutal-fg',\n            },\n            size: {\n                sm: 'px-2 py-0.5 text-xs',\n                default: 'px-3 py-1 text-sm',\n                lg: 'px-4 py-1.5 text-base',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n        },\n    }\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { chipBaseClasses, chipColorVariants } from '@/lib/chip-variants'\n\nexport const badgeVariants = cva(\n    [\n        ...chipBaseClasses,\n        'font-bold tracking-wide',\n        'transition-colors',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-bg text-brutal-fg shadow-brutal-sm',\n                primary: `${chipColorVariants.primary} shadow-brutal-sm`,\n                secondary: `${chipColorVariants.secondary} shadow-brutal-sm`,\n                accent: `${chipColorVariants.accent} shadow-brutal-sm`,\n                danger: 'bg-brutal-destructive text-brutal-destructive-foreground shadow-brutal-sm',\n                success: 'bg-brutal-success text-brutal-success-foreground shadow-brutal-sm',\n                outline: 'bg-transparent text-brutal-fg',\n            },\n            size: {\n                sm: 'px-2 py-0.5 text-xs',\n                default: 'px-3 py-1 text-sm',\n                lg: 'px-4 py-1.5 text-base',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n        },\n    }\n)\n",
       "type": "registry:lib"
     },
     {
@@ -27,6 +27,11 @@
     {
       "path": "lib/icon-size-variants.ts",
       "content": "import { cva, type VariantProps } from 'class-variance-authority'\n\nexport const iconSizeVariants = cva('', {\n    variants: {\n        size: {\n            xs: 'h-2.5 w-2.5',\n            sm: 'h-3 w-3',\n            default: 'h-4 w-4',\n            lg: 'h-5 w-5',\n            xl: 'h-6 w-6',\n            '2xl': 'h-8 w-8',\n        },\n    },\n    defaultVariants: { size: 'default' },\n})\n\nexport type IconSize = NonNullable<VariantProps<typeof iconSizeVariants>['size']>\n",
+      "type": "registry:lib"
+    },
+    {
+      "path": "lib/chip-variants.ts",
+      "content": "export const chipBaseClasses = [\n    'inline-flex items-center',\n    'border-3 border-brutal',\n    'rounded-brutal',\n] as const\n\nexport const chipColorVariants = {\n    primary: 'bg-brutal-primary text-brutal-primary-foreground',\n    secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',\n    accent: 'bg-brutal-accent text-brutal-accent-foreground',\n} as const\n",
       "type": "registry:lib"
     }
   ],
@@ -116,5 +121,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-30ce68d3349db3cc5d5942d8412bc1aea5812ad3c80ec5015169de0a2174c7dd"
+  "integrity": "sha256-019ecfef8b26ed208f49ef0a50e1f802dcfbbeb38bf4b82fedee04a637584e0d"
 }

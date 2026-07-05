@@ -28,8 +28,8 @@ export function useDataTableSelection<T extends object>(
         if (typeof key === 'function') return key(row)
         const value = row[key]
         if (typeof value !== 'string' && typeof value !== 'number') {
-            console.warn(`[useDataTableSelection] rowKey property "${String(key)}" returned a non-string/number value. Using String conversion.`)
-            return String(value)
+            console.warn(`[useDataTableSelection] rowKey property "${String(key)}" returned a non-string/number value. Using JSON.stringify for stable identity.`)
+            return JSON.stringify(value)
         }
         return value
     }

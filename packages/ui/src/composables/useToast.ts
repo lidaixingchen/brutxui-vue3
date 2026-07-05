@@ -216,6 +216,10 @@ function destroyFallback() {
     }
 }
 
+if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', destroyFallback)
+}
+
 export function provideToast(globalOptions?: { grouping?: boolean }): UseToastReturn {
     const toast = createToast(false, globalOptions)
     provide(TOAST_KEY, toast)

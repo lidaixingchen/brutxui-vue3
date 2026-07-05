@@ -83,10 +83,19 @@ export interface DataTableSortState {
     direction: 'asc' | 'desc' | null
 }
 
+export type DataTableFilterValue =
+    | string
+    | number
+    | boolean
+    | Array<string | number | boolean>
+    | [string | null, string | null]
+    | { start: string | null; end: string | null }
+    | null
+    | undefined
+
 export interface DataTableFilterState {
     global?: string
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    columns: Record<string, any>
+    columns: Record<string, DataTableFilterValue>
 }
 
 export interface DataTablePaginationState {

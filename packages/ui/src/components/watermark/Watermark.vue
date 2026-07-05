@@ -52,6 +52,21 @@ function getMarkSize() {
     return [props.width, props.height]
 }
 
+function escapeXml(str: string): string {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;')
+}
+
+function toBase64(str: string): string {
+    const bytes = new TextEncoder().encode(str)
+    const binString = String.fromCharCode(...bytes)
+    return btoa(binString)
+}
+
 function drawSvgFallback() {
     const [markWidth, markHeight] = getMarkSize()
     const canvasWidth = markWidth + props.gap[0]
@@ -68,7 +83,7 @@ function drawSvgFallback() {
     
     const textNodes = contents.map((text, index) => {
         const yOffset = (index - (contents.length - 1) / 2) * lineHeight
-        return `<text x="50%" y="50%" dy="${yOffset}" font-size="${fontSize}" font-weight="${fontWeight}" font-style="${fontStyle}" font-family="${fontFamily}" fill="${color}" text-anchor="middle" dominant-baseline="middle">${text}</text>`
+        return `<text x="50%" y="50%" dy="${yOffset}" font-size="${fontSize}" font-weight="${fontWeight}" font-style="${fontStyle}" font-family="${fontFamily}" fill="${color}" text-anchor="middle" dominant-baseline="middle">${escapeXml(text)}</text>`
     }).join('')
     
     const svg = `
@@ -79,12 +94,7 @@ function drawSvgFallback() {
         </svg>
     `
     
-    const globalObj = globalThis as typeof globalThis & { Buffer?: { from: (str: string) => { toString: (enc: string) => string } } }
-    const base64 = typeof window !== 'undefined' && typeof window.btoa === 'function'
-        ? window.btoa(unescape(encodeURIComponent(svg)))
-        : typeof globalObj.Buffer !== 'undefined'
-            ? globalObj.Buffer.from(svg).toString('base64')
-            : ''
+    const base64 = toBase64(svg)
     
     watermarkUrl.value = `data:image/svg+xml;base64,${base64}`
     nextTick(() => initObserver())

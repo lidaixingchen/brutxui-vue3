@@ -1,10 +1,9 @@
 import { cva } from 'class-variance-authority'
+import { chipBaseClasses, chipColorVariants } from '@/lib/chip-variants'
 
 export const badgeVariants = cva(
     [
-        'inline-flex items-center',
-        'border-3 border-brutal',
-        'rounded-brutal',
+        ...chipBaseClasses,
         'font-bold tracking-wide',
         'transition-colors',
     ],
@@ -12,9 +11,9 @@ export const badgeVariants = cva(
         variants: {
             variant: {
                 default: 'bg-brutal-bg text-brutal-fg shadow-brutal-sm',
-                primary: 'bg-brutal-primary text-brutal-primary-foreground shadow-brutal-sm',
-                secondary: 'bg-brutal-secondary text-brutal-secondary-foreground shadow-brutal-sm',
-                accent: 'bg-brutal-accent text-brutal-accent-foreground shadow-brutal-sm',
+                primary: `${chipColorVariants.primary} shadow-brutal-sm`,
+                secondary: `${chipColorVariants.secondary} shadow-brutal-sm`,
+                accent: `${chipColorVariants.accent} shadow-brutal-sm`,
                 danger: 'bg-brutal-destructive text-brutal-destructive-foreground shadow-brutal-sm',
                 success: 'bg-brutal-success text-brutal-success-foreground shadow-brutal-sm',
                 outline: 'bg-transparent text-brutal-fg',

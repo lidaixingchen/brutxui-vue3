@@ -2,7 +2,7 @@
 import { ref, shallowRef, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS, GLITCH_MIN_INTERVAL_MS } from '@/lib/defaults'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { glitchTextVariants } from './glitch-text-variants'
 
@@ -29,9 +29,6 @@ const props = withDefaults(defineProps<GlitchTextProps>(), {
 const isActive = ref(false)
 const prefersReducedMotion = useReducedMotion()
 
-const AUTOPLAY_ACTIVE_DURATION_MS = 1000
-const MIN_INTERVAL_MS = 50
-
 const autoplayTimer = shallowRef<ReturnType<typeof setInterval> | null>(null)
 const autoplayStopTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -42,8 +39,8 @@ const startAutoplay = () => {
         isActive.value = true
         autoplayStopTimer.value = setTimeout(() => {
             isActive.value = false
-        }, AUTOPLAY_ACTIVE_DURATION_MS)
-    }, Math.max(props.interval, MIN_INTERVAL_MS))
+        }, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)
+    }, Math.max(props.interval, GLITCH_MIN_INTERVAL_MS))
 }
 
 const stopAutoplay = () => {

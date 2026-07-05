@@ -229,6 +229,8 @@ watch(filter.filterState, (newState) => {
     emit('filter', newState)
 }, { deep: true })
 
+const warnedColumns = new Set<string>()
+
 const gridTemplateColumns = computed(() => {
     const parts: string[] = []
     if (props.expandable) parts.push('40px')
@@ -236,7 +238,10 @@ const gridTemplateColumns = computed(() => {
 
     visibleColumns.value.forEach((col) => {
         if (!col.width) {
-            console.warn(`[BrutxUI] Column "${col.id}" must have an explicit width when virtualScroll is enabled.`)
+            if (!warnedColumns.has(col.id)) {
+                console.warn(`[BrutxUI] Column "${col.id}" must have an explicit width when virtualScroll is enabled.`)
+                warnedColumns.add(col.id)
+            }
             parts.push('1fr')
         } else if (typeof col.width === 'number') {
             parts.push(`${col.width}px`)

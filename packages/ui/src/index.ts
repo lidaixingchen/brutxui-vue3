@@ -51,7 +51,7 @@ export { useDialog } from './composables/useDialog'
 export type { UseDialogReturn } from './composables/useDialog'
 export { useMessageBox } from './composables/useMessageBox'
 export type { UseMessageBoxReturn } from './composables/useMessageBox'
-export { useMessage, messageStore, removeMessage } from './composables/useMessage'
+export { useMessage, messageStore, removeMessage, destroyMessageSystem } from './composables/useMessage'
 export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './composables/useMessage'
 
 export { AlertDialogRoot as AlertDialog, AlertDialogTrigger, AlertDialogPortal } from 'reka-ui'
@@ -192,10 +192,10 @@ export type { ColorPickerProps, ColorPickerEmits, ColorPickerSize, ColorPickerFo
 export { default as Toast } from './components/toast/Toast.vue'
 export { default as ToastContainer } from './components/toast/ToastContainer.vue'
 export { toastVariants } from './components/toast/toast-variants'
-export { useToast, provideToast, createToast } from './composables/useToast'
+export { useToast, provideToast, createToast, destroyFallback as destroyToastFallback } from './composables/useToast'
 export type { ToastItem, ToastPosition, ToastStackOptions, PromiseToastOptions } from './composables/useToast'
 
-export { useTheme, provideTheme, createTheme } from './composables/useTheme'
+export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback } from './composables/useTheme'
 export type { ThemeName, ColorMode, ResolvedColorMode } from './composables/useTheme'
 
 // 预设主题

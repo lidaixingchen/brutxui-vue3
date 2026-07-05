@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { useAudioEngine } from '@/composables/useAudioEngine'
 import { useFormFieldValidation } from '@/composables/useFormFieldValidation'
 import { useLocale } from '@/composables/useLocale'
+import { HARDCORE_INPUT_SHAKE_DELAY_MS } from '@/lib/defaults'
 import { hardcoreInputVariants, hardcoreInputFaceVariants } from './hardcore-input-variants'
 import { formFieldKey, type FormFieldContext } from '../form/form-context'
 
@@ -84,7 +85,7 @@ const validate = (value: string) => {
         shakeTimer.value = setTimeout(() => {
             shakeTimer.value = undefined
             triggerShake.value = true
-        }, 10)
+        }, HARDCORE_INPUT_SHAKE_DELAY_MS)
     }
 
     if (formField) {
@@ -141,7 +142,7 @@ const containerClasses = computed(() =>
 
 const inputClasses = computed(() =>
     cn(
-        hardcoreInputVariants({ validationState: validationState.value }),
+        hardcoreInputVariants({ variant: validationState.value }),
         triggerShake.value ? 'animate-shake' : ''
     )
 )

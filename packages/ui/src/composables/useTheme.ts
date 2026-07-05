@@ -172,7 +172,6 @@ export function provideTheme(): UseThemeReturn {
     const theme = createTheme()
     provide(THEME_KEY, theme)
 
-    // 自动清理：当提供组件卸载时销毁监听器
     if (getCurrentInstance()) {
         onUnmounted(() => theme.destroy())
     }
@@ -198,4 +197,8 @@ export function destroyFallback() {
         fallbackInstance.destroy()
         fallbackInstance = null
     }
+}
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', destroyFallback)
 }

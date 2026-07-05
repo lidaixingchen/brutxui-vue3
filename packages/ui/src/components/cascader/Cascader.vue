@@ -72,7 +72,9 @@ const internalOpen = ref(false)
 const open = computed<boolean>({
     get: () => props.open !== undefined ? props.open : internalOpen.value,
     set: (val) => {
-        internalOpen.value = val
+        if (props.open === undefined) {
+            internalOpen.value = val
+        }
         emit('update:open', val)
     },
 })
@@ -152,11 +154,18 @@ function getOptionCheckState(option: CascaderOption, colIdx: number): 'checked' 
     }
     const leaves = getLeafPaths(option, activePath.value.slice(0, colIdx))
     if (leaves.length === 0) return 'unchecked'
-    
+
     const selectedCount = leaves.filter(p => isPathSelected(p)).length
     if (selectedCount === 0) return 'unchecked'
     if (selectedCount === leaves.length) return 'checked'
     return 'indeterminate'
+}
+
+function getCheckboxChecked(option: CascaderOption, colIdx: number): boolean | 'indeterminate' {
+    const state = getOptionCheckState(option, colIdx)
+    if (state === 'checked') return true
+    if (state === 'indeterminate') return 'indeterminate'
+    return false
 }
 
 // Handle checkbox clicking in multi-select mode
@@ -260,22 +269,23 @@ const triggerClasses = computed(() =>
     )
 )
 
-function handleMouseEnter(option: CascaderOption, colIdx: number) {
-    if (option.disabled) return
+function setActiveItem(option: CascaderOption, colIdx: number) {
     activeColumnIndex.value = colIdx
     const currentColumnOptions = columns.value[colIdx] || []
     activeItemIndex.value = currentColumnOptions.findIndex(o => o.value === option.value)
     activePath.value = [...activePath.value.slice(0, colIdx), option.value]
 }
 
+function handleMouseEnter(option: CascaderOption, colIdx: number) {
+    if (option.disabled) return
+    setActiveItem(option, colIdx)
+}
+
 function handleItemClick(option: CascaderOption, colIdx: number) {
     if (option.disabled) return
-    
-    activeColumnIndex.value = colIdx
-    const currentColumnOptions = columns.value[colIdx] || []
-    activeItemIndex.value = currentColumnOptions.findIndex(o => o.value === option.value)
-    activePath.value = [...activePath.value.slice(0, colIdx), option.value]
-    
+
+    setActiveItem(option, colIdx)
+
     const hasChildren = option.children && option.children.length > 0
     
     if (props.multiple) {
@@ -462,7 +472,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                         <div class="flex items-center gap-2 truncate">
                             <Checkbox
                                 v-if="multiple"
-                                :checked="getOptionCheckState(option, colIdx) === 'checked' ? true : getOptionCheckState(option, colIdx) === 'indeterminate' ? 'indeterminate' : false"
+                                :checked="getCheckboxChecked(option, colIdx)"
                                 size="sm"
                                 @update:checked="(checked) => toggleCheckbox(option, colIdx, checked)"
                                 @click.stop

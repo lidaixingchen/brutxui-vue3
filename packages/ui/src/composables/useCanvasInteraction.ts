@@ -1,8 +1,6 @@
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
+import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_INTERVAL_MS, CANVAS_PROGRESS_THROTTLE_MS } from '../lib/defaults'
 
-const SAMPLE_GRID_SIZE = 8
-const PROGRESS_CHECK_INTERVAL = 10
-const PROGRESS_THROTTLE_MS = 150
 const REVEAL_COMPLETED_FALLBACK_DURATION = 0
 
 interface UseCanvasInteractionOptions {
@@ -126,8 +124,8 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         let totalSampled = 0
         let cleared = 0
 
-        for (let y = 0; y < h; y += SAMPLE_GRID_SIZE) {
-            for (let x = 0; x < w; x += SAMPLE_GRID_SIZE) {
+        for (let y = 0; y < h; y += CANVAS_SAMPLE_GRID_SIZE) {
+            for (let x = 0; x < w; x += CANVAS_SAMPLE_GRID_SIZE) {
                 const idx = (y * w + x) * 4 + 3
                 totalSampled++
                 if (pixels[idx] === 0) {
@@ -166,9 +164,9 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         ctxVal.restore()
 
         drawFrameCount++
-        if (drawFrameCount % PROGRESS_CHECK_INTERVAL === 0) {
+        if (drawFrameCount % CANVAS_PROGRESS_CHECK_INTERVAL_MS === 0) {
             const now = Date.now()
-            if (now - lastProgressTime > PROGRESS_THROTTLE_MS) {
+            if (now - lastProgressTime > CANVAS_PROGRESS_THROTTLE_MS) {
                 checkProgress()
                 lastProgressTime = now
             }

@@ -21,6 +21,10 @@ interface TransferProps {
     filterMethod?: (query: string, item: TransferDataItem) => boolean
     titles?: string[]
     buttonTexts?: string[]
+    /** 左右面板宽度（像素），默认 260 */
+    panelWidth?: number
+    /** 左右面板高度（像素），默认 400 */
+    panelHeight?: number
 }
 
 const props = withDefaults(defineProps<TransferProps>(), {
@@ -29,7 +33,9 @@ const props = withDefaults(defineProps<TransferProps>(), {
     filterable: false,
     filterMethod: undefined,
     titles: undefined,
-    buttonTexts: undefined
+    buttonTexts: undefined,
+    panelWidth: 260,
+    panelHeight: 400,
 })
 
 const emit = defineEmits<{
@@ -53,6 +59,11 @@ const resolvedButtonTexts = computed(() => {
 // 左右查询关键词
 const leftQuery = ref('')
 const rightQuery = ref('')
+
+const panelStyle = computed(() => ({
+    width: `${props.panelWidth}px`,
+    height: `${props.panelHeight}px`,
+}))
 
 // 源列表（左侧）和目标列表（右侧）的所有项
 const sourceData = computed<TransferDataItem[]>(() => {
@@ -210,7 +221,8 @@ const addToLeft = () => {
         <Card
             variant="flat"
             padding="none"
-            class="flex flex-col w-[260px] h-[400px] border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+            class="flex flex-col border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+            :style="panelStyle"
         >
             <!-- 头部 -->
             <div class="flex items-center justify-between px-4 py-3 bg-brutal-muted border-b-3 border-brutal select-none">
@@ -299,7 +311,8 @@ const addToLeft = () => {
         <Card
             variant="flat"
             padding="none"
-            class="flex flex-col w-[260px] h-[400px] border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+            class="flex flex-col border-3 border-brutal bg-brutal-bg shadow-brutal overflow-hidden rounded-brutal"
+            :style="panelStyle"
         >
             <!-- 头部 -->
             <div class="flex items-center justify-between px-4 py-3 bg-brutal-muted border-b-3 border-brutal select-none">
