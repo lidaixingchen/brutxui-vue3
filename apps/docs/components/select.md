@@ -50,6 +50,37 @@ import {
 </template>
 ```
 
+### 自定义插槽与属性透传
+
+当使用默认插槽来自定义装配原子组件时，为了保证表单验证（如必填项校验）和无障碍访问（A11y）正常工作，你需要把 `Select` 组件上绑定的 `id`、`name`、`required` 以及 `disabled` 等属性透传给内部的 `SelectTrigger` 组件。
+
+你可以通过 `v-slot` 作用域插槽来接收并绑定这些属性：
+
+```vue
+<template>
+    <Select
+        id="my-select"
+        name="fruit"
+        required
+        v-slot="{ id, name, required, disabled }"
+    >
+        <SelectTrigger
+            :id="id"
+            :name="name"
+            :required="required"
+            :disabled="disabled"
+            class="w-[280px]"
+        >
+            <SelectValue placeholder="Select a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+        </SelectContent>
+    </Select>
+</template>
+```
+
 ### 一体化用法
 
 除了使用原子组件拼装，还可以使用封装好的一体化 `Select` 组件，支持传入 `options` 数组并支持自动分组。

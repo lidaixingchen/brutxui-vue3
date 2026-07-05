@@ -57,7 +57,7 @@ const labelStyle = computed(() => {
             </div>
             <div
                 :class="cn(
-                    'px-3 py-2 text-brutal-fg border-b-3 border-brutal',
+                    'flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
                     props.class,
                 )"
                 :style="span > 1 ? { gridColumn: `span ${span * 2 - 1}` } : undefined"
@@ -70,23 +70,23 @@ const labelStyle = computed(() => {
         <template v-else>
             <div
                 :class="cn(
-                    'px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal',
+                    'flex flex-col border-b-3 border-brutal',
                     props.class,
                 )"
                 :style="spanStyle"
             >
-                <slot name="label">
-                    {{ label }}
-                </slot>
-            </div>
-            <div
-                :class="cn(
-                    'px-3 py-2 text-brutal-fg border-b-3 border-brutal',
-                    props.class,
-                )"
-                :style="spanStyle"
-            >
-                <slot />
+                <div
+                    class="px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal"
+                >
+                    <slot name="label">
+                        {{ label }}
+                    </slot>
+                </div>
+                <div
+                    class="px-3 py-2 text-brutal-fg flex-1"
+                >
+                    <slot />
+                </div>
             </div>
         </template>
     </template>

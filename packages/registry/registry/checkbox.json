@@ -34,7 +34,7 @@
     },
     {
       "path": "lib/form-toggle-base.ts",
-      "content": "import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const formToggleBaseClasses = [\n    'border-3 border-brutal',\n    'transition-all duration-150',\n    'shadow-brutal-sm',\n    brutalHoverLift,\n    brutalPress,\n    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n    'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',\n] as const\n\nexport const formToggleVariantColors = {\n    default: 'data-[state=checked]:bg-brutal-success',\n    primary: 'data-[state=checked]:bg-brutal-primary',\n    secondary: 'data-[state=checked]:bg-brutal-secondary',\n    accent: 'data-[state=checked]:bg-brutal-accent',\n    danger: 'data-[state=checked]:bg-brutal-destructive',\n} as const\n",
+      "content": "import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const formToggleBaseClasses = [\n    'border-3 border-brutal',\n    'transition-all duration-150',\n    'shadow-brutal-sm',\n    brutalHoverLift,\n    brutalPress,\n    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n    'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',\n] as const\n\nexport const formToggleVariantColors = {\n    default: 'data-[state=checked]:bg-brutal-success data-[state=indeterminate]:bg-brutal-success',\n    primary: 'data-[state=checked]:bg-brutal-primary data-[state=indeterminate]:bg-brutal-primary',\n    secondary: 'data-[state=checked]:bg-brutal-secondary data-[state=indeterminate]:bg-brutal-secondary',\n    accent: 'data-[state=checked]:bg-brutal-accent data-[state=indeterminate]:bg-brutal-accent',\n    danger: 'data-[state=checked]:bg-brutal-destructive data-[state=indeterminate]:bg-brutal-destructive',\n} as const\n",
       "type": "registry:lib"
     }
   ],
@@ -124,5 +124,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-3324171b0bae4a99defab7a15f04dbabe54f846776b061f5e13b1ddfc62771aa"
+  "integrity": "sha256-f016ba4a1b44277b7ccd25cc0ebc3d607fadcf34fe648e147ebc2b8dfe2aabb2"
 }

@@ -53,10 +53,15 @@ export const cascaderItemVariants = cva(
                 true: 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal',
                 false: 'hover:bg-brutal-muted hover:text-brutal-fg',
             },
+            trail: {
+                true: 'bg-brutal-primary/15 font-bold',
+                false: '',
+            },
         },
         defaultVariants: {
             active: false,
             selected: false,
+            trail: false,
         },
     }
 )

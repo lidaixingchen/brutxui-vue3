@@ -367,7 +367,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
           "path": "components/ui/backtop/Backtop.vue",
@@ -464,7 +466,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6630974851780462540eacaccf9b6454026516efb14ecbb061d6cfed9bb78648"
+      "integrity": "sha256-bd4e18a415ec31a87339790fe1b900f4beb9ef9d7870620602d249c831c244b5"
     },
     {
       "name": "badge",
@@ -1080,7 +1082,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7e9a65bd97bf9cce7d32b4d1993b44785b67ed87ed36b06fafa5ac7c59683caa"
+      "integrity": "sha256-fec2c380f71d00271a287ad600160f09dff4102c1f322f29da1874855f1f62dc"
     },
     {
       "name": "checkbox",
@@ -1202,7 +1204,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3324171b0bae4a99defab7a15f04dbabe54f846776b061f5e13b1ddfc62771aa"
+      "integrity": "sha256-f016ba4a1b44277b7ccd25cc0ebc3d607fadcf34fe648e147ebc2b8dfe2aabb2"
     },
     {
       "name": "combobox",
@@ -2748,7 +2750,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-37728c31c684deba49de2d4db48c175b227a8446d2222e4c5de8ecf1b706923a"
+      "integrity": "sha256-5dbb76c04c0652c834b7530d38ed35ac4ff25ec89bc4dde4590903f577182b97"
     },
     {
       "name": "separator",
@@ -3216,7 +3218,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-94a84ccd183c4a0884ef8739ed53f6298f3d891d84943dccb4e8483c463250c7"
+      "integrity": "sha256-c9f2166ec214356b256800ec3997d45e0e785fb45d1b0f12d895f3409b71b2e6"
     },
     {
       "name": "table",
@@ -3478,7 +3480,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5f9cc489c4a4c8daf394ef7abbeaaebb1beb9dcb6ada7ae0f40efa9af7fae1a9"
+      "integrity": "sha256-74f1abe9211ef012d20e2806764a38cec85d1cb258ff5cea901e65b6eee8eb4a"
     },
     {
       "name": "textarea",
@@ -4622,7 +4624,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9ba1536cd8702cea4d912575693eca7037c419fc6c24736f133039d73583bee1"
+      "integrity": "sha256-dc4036b1db45905046c007c4b5221f9dd600ec27384c87ef363703cea76d688c"
     },
     {
       "name": "progress",
@@ -6543,7 +6545,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d9b00144799a173caf01a1ac5b686b718a20d634d703fdf6b7b07df40467081b"
+      "integrity": "sha256-e193e96915560fd9d95824cb2865d93aa1c951c130b48c12d5dde61a851de73d"
     },
     {
       "name": "before-after",
@@ -9798,6 +9800,7 @@
         "textarea",
         "button",
         "success-card",
+        "label",
         "locale-zh-cn"
       ],
       "files": [
@@ -9900,7 +9903,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a814b4e631ef993a8c5791e8425181773e1d1c524a2a87623af997e9371c022c"
+      "integrity": "sha256-c764b0a3bedf20443870a1198e79738d014f44e021acc17a93a6331539fee977"
     },
     {
       "name": "stepper-section",
@@ -10279,6 +10282,7 @@
         "button",
         "separator",
         "empty-state",
+        "label",
         "locale-zh-cn"
       ],
       "files": [
@@ -10377,7 +10381,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-12cc501dd350ec4cbcd47614ad6d2f858e865748c97b0802d0d50f453b407d1b"
+      "integrity": "sha256-adf6fe3553e27827e4fd26949dbea11bd64d71cae664733c43db8a4d783d2fda"
     },
     {
       "name": "blog-list-page",
@@ -10622,6 +10626,7 @@
         "input",
         "button",
         "textarea",
+        "label",
         "locale-zh-cn"
       ],
       "files": [
@@ -10720,7 +10725,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-13decfad4ca5302232712ad58cd6909e97b88f89ff06dff06abc59cf490e7efd"
+      "integrity": "sha256-8bf86c22aa7b191c87d4bdcbb22bb6c8d96ed2f4f80421342b4999d8de6bd748"
     },
     {
       "name": "chart-section",
@@ -12414,7 +12419,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f44ffc2ff73f6baa20c953f3051d7b5f6d79880d2a507cc115c1feecbd0fea40"
+      "integrity": "sha256-8bc15bec2682d5b1e3c9007fa51a82d75990c6b65c53a2afee60e49af557632e"
     },
     {
       "name": "input-adornment",
@@ -12858,7 +12863,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-332d31944401beba4bc48eb48176ae45b34b70525d8822f68413f01cf9e33a05"
+      "integrity": "sha256-50c7014d376795a4c633b45a7807667c706a6db1ed43ebcdcfa233e7bf555ceb"
     },
     {
       "name": "infinite-scroll",
@@ -13506,7 +13511,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8f0d2671a59a8808f38402d5295b78ffbf0786592e09eb431567cccb53667186"
+      "integrity": "sha256-4aa81574e0fed656df4af5d99f7e4ec1b7b96ed6d0d664e9ae0e7f5671abcc25"
     },
     {
       "name": "tour",
@@ -13751,7 +13756,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7ec315846c46a835972b37686d41916b58e342961a82c1e9ac54d38319077289"
+      "integrity": "sha256-0d82802255e20db9999430a9d43c8ab6440585a678e66635000bff4c8478ff52"
     }
   ]
 }

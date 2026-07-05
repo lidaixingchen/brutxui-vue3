@@ -23,6 +23,11 @@ pnpm test:watch     # 监视模式运行测试
 pnpm release:check  # 执行发布前完整门禁
 ```
 
+### 命令执行与测试约定
+- **测试最小化**：运行测试时必须尽可能最小化（仅针对当前修改的文件或特定目录，例如 `pnpm test path/to/modified.test.ts`）。
+- **避免重型测试**：除非用户明确指示或到了关键发布阶段，否则**禁止**在开发机上运行重型测试或全局完整门禁（如 `pnpm release:check`、全量 `pnpm test`），以防过度占用系统资源导致电脑卡顿。
+
+
 ## 技术栈
 
 Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+ · reka-ui 2.9+（无头原语）· CVA 0.7+（变体）· clsx + tailwind-merge 通过 `cn()` · Vite 8+ · Vitest 4+ · pnpm 11+ · Node.js 22.5+
@@ -66,19 +71,6 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - BrutxUI Skill：`skills/brutxui/`
   - 参考文档：`skills/brutxui/references/`
 - **方案文档：** `docs/`
-
-## 新建组件后同步清单
-
-新增组件（或为已有组件新增 composable）后，必须同步以下文件，否则 CI 会失败：
-
-| 顺序 | 文件 | 操作 | 验证 |
-| --- | --- | --- | --- |
-| 1 | `packages/registry/scripts/component-files.ts` | 在 `COMPONENT_FILES` 中登记组件文件名和 composables 映射 | — |
-| 2 | `packages/shared/src/components.ts` | 在 `COMPONENTS` 中添加条目（先 grep 确认 key 不存在，防止 TS1117 重复键） | `pnpm --filter brutx-registry-vue validate` |
-| 3 | `packages/registry/` | 运行 `pnpm --filter brutx-registry-vue build` 生成注册表 JSON | 同上 |
-| 4 | `apps/docs/components/{name}.md` + `apps/docs/en/components/{name}.md` | 按 `docs/COMPONENT_DOC_TEMPLATE.md` 模板编写中英文文档和demo组件演示 | `pnpm --filter docs build` |
-| 5 | `apps/docs/.vitepress/config.ts` | 在中文和英文 sidebar 各添加条目 | 同上 |
-| 6 | `skills/brutxui/SKILL.md` | 更新组件列表和组合式函数表 | — |
 
 ## 详细文档
 

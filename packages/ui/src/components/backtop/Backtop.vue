@@ -3,18 +3,21 @@ import { ref, onMounted, onBeforeUnmount, computed, type CSSProperties } from 'v
 import { ArrowUp } from '@lucide/vue'
 import { useThrottle } from '@/composables/useThrottle'
 import { cn } from '@/lib/utils'
+import Button from '../button/Button.vue'
+import type { ButtonVariant } from '../button/shared-button-variants'
 
 interface BacktopProps {
     visibilityHeight?: number
     target?: string | HTMLElement
     right?: number
     bottom?: number
-    variant?: 'primary' | 'secondary' | 'accent'
+    variant?: ButtonVariant
     class?: string
 }
 
 const props = withDefaults(defineProps<BacktopProps>(), {
     visibilityHeight: 200,
+    target: undefined,
     right: 40,
     bottom: 40,
     variant: 'primary',
@@ -27,6 +30,8 @@ const emit = defineEmits<{
 
 const visible = ref(false)
 let container: HTMLElement | Window | null = null
+
+const positionClass = computed(() => (props.target ? 'absolute' : 'fixed'))
 
 const styles = computed<CSSProperties>(() => ({
     right: `${props.right}px`,
@@ -94,13 +99,15 @@ onBeforeUnmount(() => {
         enter-from-class="opacity-0 translate-y-4 scale-95"
         leave-to-class="opacity-0 translate-y-4 scale-95"
     >
-        <button
+        <Button
             v-if="visible"
             :style="styles"
+            :variant="props.variant"
+            size="icon"
             :class="cn(
-                'fixed flex items-center justify-center z-[999]',
-                'w-10 h-10 border-2 border-brutal-black bg-brutal-yellow text-brutal-black font-black',
-                'shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] active:translate-x-[4px] active:translate-y-[4px] transition-all cursor-pointer',
+                positionClass,
+                'z-[999]',
+                props.variant === 'primary' && 'bg-brutal-yellow text-brutal-black font-black',
                 props.class
             )"
             aria-label="Back to top"
@@ -109,6 +116,6 @@ onBeforeUnmount(() => {
             <slot>
                 <ArrowUp class="w-5 h-5 stroke-[3]" />
             </slot>
-        </button>
+        </Button>
     </Transition>
 </template>

@@ -24,3 +24,16 @@
 - 新增组件时，在 `packages/registry/scripts/component-files.ts` 的 `COMPONENT_FILES` 中追加条目（声明 `files`、`composables` 等），然后运行 `pnpm --filter brutx-registry-vue build` 生成 JSON。
 - `pnpm --filter brutx-registry-vue validate` 会执行三道一致性校验：① 源码目录 ↔ `COMPONENT_FILES`（防止新增组件忘登记）；② `{name}.json` ↔ `index.json`（防止手写孤儿 JSON）；③ 字段完整性。
 - ⚠️ **CI 会强制检查**：`validate` 脚本会扫描 `packages/ui/src/components/` 下所有目录，与 `COMPONENT_FILES` 比对。漏登记会导致 CI 失败，必须先登记再提交。
+
+## 新建组件后同步清单
+
+新增组件（或为已有组件新增 composable）后，必须同步以下文件，否则 CI 会失败：
+
+| 顺序 | 文件 | 操作 | 验证 |
+| --- | --- | --- | --- |
+| 1 | `packages/registry/scripts/component-files.ts` | 在 `COMPONENT_FILES` 中登记组件文件名和 composables 映射 | — |
+| 2 | `packages/shared/src/components.ts` | 在 `COMPONENTS` 中添加条目（先 grep 确认 key 不存在，防止 TS1117 重复键） | `pnpm --filter brutx-registry-vue validate` |
+| 3 | `packages/registry/` | 运行 `pnpm --filter brutx-registry-vue build` 生成注册表 JSON | 同上 |
+| 4 | `apps/docs/components/{name}.md` + `apps/docs/en/components/{name}.md` | 按 `docs/COMPONENT_DOC_TEMPLATE.md` 模板编写中英文文档和demo组件演示 | `pnpm --filter docs build` |
+| 5 | `apps/docs/.vitepress/config.ts` | 在中文和英文 sidebar 各添加条目 | 同上 |
+| 6 | `skills/brutxui/SKILL.md` | 更新组件列表和组合式函数表 | — |

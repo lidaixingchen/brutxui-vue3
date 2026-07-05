@@ -15,6 +15,7 @@ import Switch from '../switch/Switch.vue'
 import Button from '../button/Button.vue'
 import Separator from '../separator/Separator.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import Label from '../label/Label.vue'
 import type { SettingsTab } from './types'
 
 export type { SettingsTab };
@@ -125,7 +126,7 @@ const rootClasses = computed(() =>
                                         <slot :name="`tab-${tab.value}`" :values="getTabValues(tab.value)" :set-value="(key: string, val: unknown) => setTabValue(tab.value, key, val)">
                                             <div class="space-y-4">
                                                 <div class="flex items-center justify-between">
-                                                    <label class="font-bold text-sm" :for="`setting-${tab.value}-name`">{{ resolvedNameLabel }}</label>
+                                                    <Label :for="`setting-${tab.value}-name`">{{ resolvedNameLabel }}</Label>
                                                     <Input
                                                         :id="`setting-${tab.value}-name`"
                                                         :model-value="String(getTabValues(tab.value).name ?? '')"
@@ -136,8 +137,9 @@ const rootClasses = computed(() =>
                                                 </div>
                                                 <Separator />
                                                 <div class="flex items-center justify-between">
-                                                    <label class="font-bold text-sm" :for="`setting-${tab.value}-notifications`">{{ resolvedNotificationsLabel }}</label>
+                                                    <Label :for="`setting-${tab.value}-notifications`">{{ resolvedNotificationsLabel }}</Label>
                                                     <Switch
+                                                        :id="`setting-${tab.value}-notifications`"
                                                         :model-value="Boolean(getTabValues(tab.value).notifications ?? false)"
                                                         @update:model-value="setTabValue(tab.value, 'notifications', $event)"
                                                     />

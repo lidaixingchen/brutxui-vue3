@@ -15,6 +15,7 @@ interface SelectTriggerProps {
     variant?: NonNullable<SelectTriggerVariantProps['variant']>
     errorMessage?: string
     disabled?: boolean
+    id?: string
     /** 是否可清除 */
     clearable?: boolean
     /** 当前选中的值 */
@@ -28,6 +29,7 @@ const props = withDefaults(defineProps<SelectTriggerProps>(), {
     variant: 'default',
     errorMessage: undefined,
     disabled: false,
+    id: undefined,
     clearable: false,
     modelValue: undefined,
     class: undefined,
@@ -77,7 +79,7 @@ function handleClear(e: Event) {
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
-        <SelectTriggerPrimitive :class="classes" :disabled="disabled" aria-haspopup="listbox">
+        <SelectTriggerPrimitive :id="id" :class="classes" :disabled="disabled" aria-haspopup="listbox">
             <slot />
             <SelectIconPrimitive as-child>
                 <div class="flex items-center gap-1">

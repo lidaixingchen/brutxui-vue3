@@ -32,10 +32,10 @@ async function handleConfirm() {
         <div>
             <h3 class="text-sm font-black mb-3">useMessage 四种类型</h3>
             <div class="flex flex-wrap gap-3">
-                <Button variant="outline" @click="info('提示', '这是一条普通信息提示。')">Info</Button>
-                <Button variant="outline" @click="success('成功', '操作已成功完成。')">Success</Button>
-                <Button variant="outline" @click="warning('警告', '请注意检查输入内容。')">Warning</Button>
-                <Button variant="outline" @click="error('错误', '操作失败，请重试。')">Error</Button>
+                <Button variant="secondary" @click="info('提示', '这是一条普通信息提示。')">Info</Button>
+                <Button variant="success" @click="success('成功', '操作已成功完成。')">Success</Button>
+                <Button variant="primary" @click="warning('警告', '请注意检查输入内容。')">Warning</Button>
+                <Button variant="danger" @click="error('错误', '操作失败，请重试。')">Error</Button>
             </div>
         </div>
 

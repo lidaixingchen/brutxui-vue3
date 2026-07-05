@@ -18,17 +18,17 @@ const iconMap: Record<MessageType, typeof Info> = {
 }
 
 const typeClasses: Record<MessageType, string> = {
-    info: 'bg-brutal-bg border-brutal-black dark:border-white',
-    success: 'bg-brutal-success/10 border-brutal-success',
-    warning: 'bg-brutal-warning/10 border-brutal-warning',
-    error: 'bg-brutal-destructive/10 border-brutal-destructive',
+    info: 'bg-brutal-secondary text-brutal-fg border-brutal',
+    success: 'bg-brutal-success text-brutal-fg border-brutal',
+    warning: 'bg-brutal-accent text-brutal-fg border-brutal',
+    error: 'bg-brutal-destructive text-brutal-fg border-brutal',
 }
 
 const iconColorClasses: Record<MessageType, string> = {
-    info: 'text-brutal-info',
-    success: 'text-brutal-success',
-    warning: 'text-brutal-warning',
-    error: 'text-brutal-destructive',
+    info: 'text-brutal-fg',
+    success: 'text-brutal-fg',
+    warning: 'text-brutal-fg',
+    error: 'text-brutal-fg',
 }
 
 function messageClasses(msg: MessageItem): string {

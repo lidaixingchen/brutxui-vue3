@@ -11,9 +11,9 @@ export const formToggleBaseClasses = [
 ] as const
 
 export const formToggleVariantColors = {
-    default: 'data-[state=checked]:bg-brutal-success',
-    primary: 'data-[state=checked]:bg-brutal-primary',
-    secondary: 'data-[state=checked]:bg-brutal-secondary',
-    accent: 'data-[state=checked]:bg-brutal-accent',
-    danger: 'data-[state=checked]:bg-brutal-destructive',
+    default: 'data-[state=checked]:bg-brutal-success data-[state=indeterminate]:bg-brutal-success',
+    primary: 'data-[state=checked]:bg-brutal-primary data-[state=indeterminate]:bg-brutal-primary',
+    secondary: 'data-[state=checked]:bg-brutal-secondary data-[state=indeterminate]:bg-brutal-secondary',
+    accent: 'data-[state=checked]:bg-brutal-accent data-[state=indeterminate]:bg-brutal-accent',
+    danger: 'data-[state=checked]:bg-brutal-destructive data-[state=indeterminate]:bg-brutal-destructive',
 } as const

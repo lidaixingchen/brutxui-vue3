@@ -74,4 +74,26 @@ describe('Backtop.vue', () => {
 
         wrapper.unmount()
     })
+
+    it('has primary as the default variant and applies custom styles', async () => {
+        const wrapper = mount(Backtop, {
+            props: { visibilityHeight: 100 },
+            global: { provide: localeProvide },
+            attachTo: document.body
+        })
+
+        Object.defineProperty(window, 'scrollY', { value: 150, writable: true, configurable: true })
+        Object.defineProperty(window, 'pageYOffset', { value: 150, writable: true, configurable: true })
+        document.documentElement.scrollTop = 150
+        window.dispatchEvent(new Event('scroll'))
+        await nextTick()
+
+        const btn = wrapper.findComponent({ name: 'Button' })
+        expect(btn.exists()).toBe(true)
+        expect(btn.props('variant')).toBe('primary')
+        expect(btn.classes()).toContain('bg-brutal-yellow')
+        expect(btn.classes()).toContain('text-brutal-black')
+
+        wrapper.unmount()
+    })
 })

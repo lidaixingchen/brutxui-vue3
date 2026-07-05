@@ -45,8 +45,9 @@ const sizeClasses = computed(() => {
 
 // 计算网格样式
 const gridStyle = computed(() => {
+    const cols = props.border && props.direction === 'horizontal' ? props.column * 2 : props.column
     return {
-        gridTemplateColumns: `repeat(${props.column}, 1fr)`,
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
     }
 })
 </script>
@@ -74,11 +75,8 @@ const gridStyle = computed(() => {
             )"
         >
             <div
-                :class="cn(
-                    'grid',
-                    direction === 'vertical' ? 'grid-cols-1' : '',
-                )"
-                :style="direction === 'horizontal' ? gridStyle : undefined"
+                class="grid"
+                :style="gridStyle"
             >
                 <slot />
             </div>

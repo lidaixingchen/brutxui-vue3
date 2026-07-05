@@ -10,6 +10,8 @@ interface MenuItemProps {
     disabled?: boolean
     /** Route object or path for router push */
     route?: string | object
+    /** Whether to indent the item to align with icon-bearing items */
+    inset?: boolean
     /** Custom class list */
     class?: string
 }
@@ -17,6 +19,7 @@ interface MenuItemProps {
 const props = withDefaults(defineProps<MenuItemProps>(), {
     disabled: false,
     route: undefined,
+    inset: false,
     class: undefined,
 })
 
@@ -48,6 +51,7 @@ const isActive = computed(() => context?.activeIndex.value === props.index)
 const classes = computed(() => {
     return cn(
         'flex items-center gap-2 px-4 py-2.5 rounded-brutal border-3 font-semibold transition-all duration-150 cursor-pointer select-none text-sm outline-none',
+        props.inset && 'pl-10',
         isActive.value
             ? 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'
             : 'text-brutal-fg border-transparent hover:bg-brutal-muted',

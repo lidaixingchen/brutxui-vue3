@@ -1089,20 +1089,6 @@ body > [data-reka-popper-content-wrapper] {
     z-index: 10 !important;
 }
 
-/* 4. Core Brutalist Class Fallbacks (Prevent Tailwind Purge on dynamically generated classes) */
-.border-brutal {
-    border-color: var(--brutal-border-color, #000000) !important;
-}
-.bg-brutal-bg {
-    background-color: var(--brutal-bg, #ffffff) !important;
-}
-.rounded-brutal {
-    border-radius: var(--radius-brutal, var(--brutal-radius, 4px)) !important;
-}
-.shadow-brutal-lg {
-    box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000) !important;
-}
-
 
 
 

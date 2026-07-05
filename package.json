@@ -24,10 +24,9 @@
         "generate:composable": "tsx scripts/generate.ts composable",
         "generate:page": "tsx scripts/generate.ts page"
     },
-    "devDependencies": {},
     "engines": {
         "node": ">=22.5.0",
         "pnpm": ">=11.0.0"
     },
-    "packageManager": "pnpm@11.5.2"
+    "packageManager": "pnpm@11.10.0"
 }

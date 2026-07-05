@@ -10,6 +10,7 @@ import Input from '../input/Input.vue'
 import Textarea from '../textarea/Textarea.vue'
 import Button from '../button/Button.vue'
 import SuccessCard from '../success-card/SuccessCard.vue'
+import Label from '../label/Label.vue'
 
 interface FeedbackFormProps {
     title?: string
@@ -141,10 +142,9 @@ function handleSuccessConfirm() {
                     <CardContent class="pt-6">
                         <form class="space-y-4" novalidate @submit.prevent="handleSubmit">
                             <div class="space-y-2">
-                                <label for="feedback-name" class="text-sm font-bold text-brutal-fg">
+                                <Label for="feedback-name" required>
                                     {{ nameLabel }}
-                                    <span class="text-brutal-destructive" aria-hidden="true">*</span>
-                                </label>
+                                </Label>
                                 <Input
                                     id="feedback-name"
                                     v-model="name"
@@ -154,13 +154,14 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.name ? 'feedback-name-error' : undefined"
                                     aria-required="true"
                                 />
-                                <p v-if="errors.name" id="feedback-name-error" class="text-sm text-red-500 font-medium" role="alert">{{ errors.name }}</p>
+                                <p v-if="errors.name" id="feedback-name-error" class="text-sm text-red-500 font-medium" role="alert">
+                                    {{ errors.name }}
+                                </p>
                             </div>
                             <div class="space-y-2">
-                                <label for="feedback-email" class="text-sm font-bold text-brutal-fg">
+                                <Label for="feedback-email" required>
                                     {{ emailLabel }}
-                                    <span class="text-brutal-destructive" aria-hidden="true">*</span>
-                                </label>
+                                </Label>
                                 <Input
                                     id="feedback-email"
                                     v-model="email"
@@ -171,19 +172,20 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.email ? 'feedback-email-error' : undefined"
                                     aria-required="true"
                                 />
-                                <p v-if="errors.email" id="feedback-email-error" class="text-sm text-red-500 font-medium" role="alert">{{ errors.email }}</p>
+                                <p v-if="errors.email" id="feedback-email-error" class="text-sm text-red-500 font-medium" role="alert">
+                                    {{ errors.email }}
+                                </p>
                             </div>
                             <div class="space-y-2">
-                                <label for="feedback-subject" class="text-sm font-bold text-brutal-fg">
+                                <Label for="feedback-subject">
                                     {{ subjectLabel }}
-                                </label>
+                                </Label>
                                 <Input id="feedback-subject" v-model="subject" :placeholder="subjectLabel" />
                             </div>
                             <div class="space-y-2">
-                                <label for="feedback-message" class="text-sm font-bold text-brutal-fg">
+                                <Label for="feedback-message" required>
                                     {{ messageLabel }}
-                                    <span class="text-brutal-destructive" aria-hidden="true">*</span>
-                                </label>
+                                </Label>
                                 <Textarea
                                     id="feedback-message"
                                     v-model="message"
@@ -193,7 +195,9 @@ function handleSuccessConfirm() {
                                     :aria-errormessage="errors.message ? 'feedback-message-error' : undefined"
                                     aria-required="true"
                                 />
-                                <p v-if="errors.message" id="feedback-message-error" class="text-sm text-red-500 font-medium" role="alert">{{ errors.message }}</p>
+                                <p v-if="errors.message" id="feedback-message-error" class="text-sm text-red-500 font-medium" role="alert">
+                                    {{ errors.message }}
+                                </p>
                             </div>
                             <Button variant="primary" type="submit" class="w-full" :loading="loading">
                                 <Send :class="iconClasses" />

@@ -49,11 +49,11 @@ function handleSelect(index: string) {
                     </MenuItem>
                 </SubMenu>
                 
-                <MenuItem index="about">
+                <MenuItem index="about" inset>
                     <span>关于我们</span>
                 </MenuItem>
                 
-                <MenuItem index="disabled-item" disabled>
+                <MenuItem index="disabled-item" inset disabled>
                     <span>禁用项目</span>
                 </MenuItem>
             </Menu>

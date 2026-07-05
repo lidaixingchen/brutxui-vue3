@@ -1,0 +1,744 @@
+{
+    "dependencyMap": {
+        "accessibility.test.ts": [
+            "dialog",
+            "alert-dialog",
+            "tabs",
+            "select",
+            "dropdown-menu",
+            "label",
+            "input",
+            "button",
+            "form",
+            "switch",
+            "checkbox",
+            "radio-group",
+            "toggle",
+            "tags-input",
+            "table",
+            "date-picker",
+            "color-picker",
+            "combobox"
+        ],
+        "activity-log-page": [
+            "table",
+            "badge",
+            "pagination"
+        ],
+        "alert": [
+            "button"
+        ],
+        "alert-dialog": [
+            "button"
+        ],
+        "auth-card": [
+            "button",
+            "card",
+            "input",
+            "label"
+        ],
+        "blog-card": [
+            "card",
+            "badge",
+            "avatar",
+            "button"
+        ],
+        "blog-list-page": [
+            "card",
+            "pagination",
+            "badge",
+            "input"
+        ],
+        "brutalist-hero": [
+            "button",
+            "badge",
+            "card"
+        ],
+        "calendar": [
+            "tooltip"
+        ],
+        "carousel": [
+            "button"
+        ],
+        "cascader": [
+            "popover",
+            "checkbox"
+        ],
+        "chart-section": [
+            "sketchy-chart",
+            "card",
+            "tabs",
+            "empty-state"
+        ],
+        "code-block": [
+            "copy-to-clipboard",
+            "button"
+        ],
+        "color-mode-switcher": [
+            "button",
+            "select"
+        ],
+        "color-picker": [
+            "popover",
+            "button"
+        ],
+        "combobox": [
+            "button",
+            "popover",
+            "command",
+            "spinner"
+        ],
+        "command": [
+            "dialog"
+        ],
+        "cookie-consent": [
+            "card",
+            "button"
+        ],
+        "dashboard-shell": [
+            "button"
+        ],
+        "dashboard-stats": [
+            "card",
+            "badge",
+            "empty-state"
+        ],
+        "data-table": [
+            "input",
+            "button",
+            "checkbox",
+            "select",
+            "virtual-scroll",
+            "popover"
+        ],
+        "data-table-section": [
+            "table",
+            "pagination",
+            "input"
+        ],
+        "date-picker": [
+            "popover",
+            "button",
+            "select"
+        ],
+        "dialog": [
+            "button",
+            "input"
+        ],
+        "empty-state": [
+            "button"
+        ],
+        "error-card": [
+            "card",
+            "button",
+            "alert"
+        ],
+        "faq-section": [
+            "accordion",
+            "card",
+            "badge",
+            "empty-state"
+        ],
+        "feedback-form": [
+            "card",
+            "input",
+            "textarea",
+            "button",
+            "success-card"
+        ],
+        "file-card": [
+            "card",
+            "badge",
+            "button"
+        ],
+        "footer-section": [
+            "button",
+            "separator"
+        ],
+        "form": [
+            "label",
+            "stepper",
+            "button"
+        ],
+        "gallery-section": [
+            "carousel",
+            "card"
+        ],
+        "glitch-button": [
+            "button"
+        ],
+        "hardcore-input": [
+            "input",
+            "form"
+        ],
+        "header-section": [
+            "button",
+            "sheet",
+            "separator"
+        ],
+        "kanban": [
+            "button"
+        ],
+        "loading": [
+            "spinner"
+        ],
+        "loading-page": [
+            "skeleton",
+            "spinner",
+            "progress"
+        ],
+        "message": [
+            "button"
+        ],
+        "not-found-page": [
+            "button",
+            "card",
+            "glitch-text"
+        ],
+        "number-input": [
+            "input"
+        ],
+        "overview-page": [
+            "dashboard-stats",
+            "card",
+            "empty-state"
+        ],
+        "pagination": [
+            "input",
+            "select"
+        ],
+        "popconfirm": [
+            "popover",
+            "button"
+        ],
+        "pricing-section": [
+            "button",
+            "card",
+            "badge",
+            "empty-state"
+        ],
+        "profile-page": [
+            "avatar",
+            "card",
+            "input",
+            "button",
+            "textarea"
+        ],
+        "quick-actions": [
+            "card",
+            "button",
+            "badge",
+            "empty-state"
+        ],
+        "search-widget": [
+            "card",
+            "command",
+            "spinner"
+        ],
+        "settings-page": [
+            "tabs",
+            "card",
+            "input",
+            "switch",
+            "button",
+            "separator",
+            "empty-state"
+        ],
+        "statistic": [
+            "counter"
+        ],
+        "stepper-section": [
+            "stepper",
+            "button",
+            "card",
+            "empty-state"
+        ],
+        "success-card": [
+            "card",
+            "button"
+        ],
+        "tabs": [
+            "card",
+            "empty-state"
+        ],
+        "testimonial-card": [
+            "card",
+            "avatar",
+            "badge"
+        ],
+        "textarea": [
+            "input"
+        ],
+        "toast": [
+            "button"
+        ],
+        "toggle-group": [
+            "toggle"
+        ],
+        "transfer": [
+            "button",
+            "checkbox",
+            "card",
+            "input"
+        ],
+        "tree-select": [
+            "popover",
+            "input"
+        ],
+        "tree-view": [
+            "checkbox"
+        ],
+        "upload": [
+            "progress",
+            "button"
+        ],
+        "upload-card": [
+            "card",
+            "button",
+            "progress",
+            "spinner"
+        ],
+        "waitlist-page": [
+            "button",
+            "badge",
+            "input"
+        ]
+    },
+    "dependentsMap": {
+        "accordion": [
+            "faq-section"
+        ],
+        "alert": [
+            "error-card"
+        ],
+        "alert-dialog": [
+            "accessibility.test.ts"
+        ],
+        "avatar": [
+            "blog-card",
+            "profile-page",
+            "testimonial-card"
+        ],
+        "badge": [
+            "activity-log-page",
+            "blog-card",
+            "blog-list-page",
+            "brutalist-hero",
+            "dashboard-stats",
+            "faq-section",
+            "file-card",
+            "pricing-section",
+            "quick-actions",
+            "testimonial-card",
+            "waitlist-page"
+        ],
+        "button": [
+            "accessibility.test.ts",
+            "alert",
+            "alert-dialog",
+            "auth-card",
+            "blog-card",
+            "brutalist-hero",
+            "carousel",
+            "code-block",
+            "color-mode-switcher",
+            "color-picker",
+            "combobox",
+            "cookie-consent",
+            "dashboard-shell",
+            "data-table",
+            "date-picker",
+            "dialog",
+            "empty-state",
+            "error-card",
+            "feedback-form",
+            "file-card",
+            "footer-section",
+            "form",
+            "glitch-button",
+            "header-section",
+            "kanban",
+            "message",
+            "not-found-page",
+            "popconfirm",
+            "pricing-section",
+            "profile-page",
+            "quick-actions",
+            "settings-page",
+            "stepper-section",
+            "success-card",
+            "toast",
+            "transfer",
+            "upload",
+            "upload-card",
+            "waitlist-page"
+        ],
+        "card": [
+            "auth-card",
+            "blog-card",
+            "blog-list-page",
+            "brutalist-hero",
+            "chart-section",
+            "cookie-consent",
+            "dashboard-stats",
+            "error-card",
+            "faq-section",
+            "feedback-form",
+            "file-card",
+            "gallery-section",
+            "not-found-page",
+            "overview-page",
+            "pricing-section",
+            "profile-page",
+            "quick-actions",
+            "search-widget",
+            "settings-page",
+            "stepper-section",
+            "success-card",
+            "tabs",
+            "testimonial-card",
+            "transfer",
+            "upload-card"
+        ],
+        "carousel": [
+            "gallery-section"
+        ],
+        "checkbox": [
+            "accessibility.test.ts",
+            "cascader",
+            "data-table",
+            "transfer",
+            "tree-view"
+        ],
+        "color-picker": [
+            "accessibility.test.ts"
+        ],
+        "combobox": [
+            "accessibility.test.ts"
+        ],
+        "command": [
+            "combobox",
+            "search-widget"
+        ],
+        "copy-to-clipboard": [
+            "code-block"
+        ],
+        "counter": [
+            "statistic"
+        ],
+        "dashboard-stats": [
+            "overview-page"
+        ],
+        "date-picker": [
+            "accessibility.test.ts"
+        ],
+        "dialog": [
+            "accessibility.test.ts",
+            "command"
+        ],
+        "dropdown-menu": [
+            "accessibility.test.ts"
+        ],
+        "empty-state": [
+            "chart-section",
+            "dashboard-stats",
+            "faq-section",
+            "overview-page",
+            "pricing-section",
+            "quick-actions",
+            "settings-page",
+            "stepper-section",
+            "tabs"
+        ],
+        "form": [
+            "accessibility.test.ts",
+            "hardcore-input"
+        ],
+        "glitch-text": [
+            "not-found-page"
+        ],
+        "input": [
+            "accessibility.test.ts",
+            "auth-card",
+            "blog-list-page",
+            "data-table",
+            "data-table-section",
+            "dialog",
+            "feedback-form",
+            "hardcore-input",
+            "number-input",
+            "pagination",
+            "profile-page",
+            "settings-page",
+            "textarea",
+            "transfer",
+            "tree-select",
+            "waitlist-page"
+        ],
+        "label": [
+            "accessibility.test.ts",
+            "auth-card",
+            "form"
+        ],
+        "pagination": [
+            "activity-log-page",
+            "blog-list-page",
+            "data-table-section"
+        ],
+        "popover": [
+            "cascader",
+            "color-picker",
+            "combobox",
+            "data-table",
+            "date-picker",
+            "popconfirm",
+            "tree-select"
+        ],
+        "progress": [
+            "loading-page",
+            "upload",
+            "upload-card"
+        ],
+        "radio-group": [
+            "accessibility.test.ts"
+        ],
+        "select": [
+            "accessibility.test.ts",
+            "color-mode-switcher",
+            "data-table",
+            "date-picker",
+            "pagination"
+        ],
+        "separator": [
+            "footer-section",
+            "header-section",
+            "settings-page"
+        ],
+        "sheet": [
+            "header-section"
+        ],
+        "skeleton": [
+            "loading-page"
+        ],
+        "sketchy-chart": [
+            "chart-section"
+        ],
+        "spinner": [
+            "combobox",
+            "loading",
+            "loading-page",
+            "search-widget",
+            "upload-card"
+        ],
+        "stepper": [
+            "form",
+            "stepper-section"
+        ],
+        "success-card": [
+            "feedback-form"
+        ],
+        "switch": [
+            "accessibility.test.ts",
+            "settings-page"
+        ],
+        "table": [
+            "accessibility.test.ts",
+            "activity-log-page",
+            "data-table-section"
+        ],
+        "tabs": [
+            "accessibility.test.ts",
+            "chart-section",
+            "settings-page"
+        ],
+        "tags-input": [
+            "accessibility.test.ts"
+        ],
+        "textarea": [
+            "feedback-form",
+            "profile-page"
+        ],
+        "toggle": [
+            "accessibility.test.ts",
+            "toggle-group"
+        ],
+        "tooltip": [
+            "calendar"
+        ],
+        "virtual-scroll": [
+            "data-table"
+        ]
+    },
+    "cycles": [],
+    "nativeUsage": [
+        {
+            "component": "backtop",
+            "file": "backtop/Backtop.vue",
+            "line": 99,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "command",
+            "file": "command/CommandInput.vue",
+            "line": 63,
+            "code": "<input",
+            "tag": "input"
+        },
+        {
+            "component": "copy-to-clipboard",
+            "file": "copy-to-clipboard/CopyToClipboard.vue",
+            "line": 56,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "date-picker",
+            "file": "date-picker/TimePicker.vue",
+            "line": 113,
+            "code": "<label :for=\"hourId\" class=\"text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5\">",
+            "tag": "label"
+        },
+        {
+            "component": "date-picker",
+            "file": "date-picker/TimePicker.vue",
+            "line": 146,
+            "code": "<label :for=\"minuteId\" class=\"text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5\">",
+            "tag": "label"
+        },
+        {
+            "component": "date-picker",
+            "file": "date-picker/TimePicker.vue",
+            "line": 180,
+            "code": "<label :for=\"secondId\" class=\"text-[10px] font-black uppercase tracking-tight text-brutal-fg mb-0.5\">",
+            "tag": "label"
+        },
+        {
+            "component": "feedback-form",
+            "file": "feedback-form/FeedbackForm.vue",
+            "line": 144,
+            "code": "<label for=\"feedback-name\" class=\"text-sm font-bold text-brutal-fg\">",
+            "tag": "label"
+        },
+        {
+            "component": "feedback-form",
+            "file": "feedback-form/FeedbackForm.vue",
+            "line": 160,
+            "code": "<label for=\"feedback-email\" class=\"text-sm font-bold text-brutal-fg\">",
+            "tag": "label"
+        },
+        {
+            "component": "feedback-form",
+            "file": "feedback-form/FeedbackForm.vue",
+            "line": 177,
+            "code": "<label for=\"feedback-subject\" class=\"text-sm font-bold text-brutal-fg\">",
+            "tag": "label"
+        },
+        {
+            "component": "feedback-form",
+            "file": "feedback-form/FeedbackForm.vue",
+            "line": 183,
+            "code": "<label for=\"feedback-message\" class=\"text-sm font-bold text-brutal-fg\">",
+            "tag": "label"
+        },
+        {
+            "component": "pagination",
+            "file": "pagination/Pagination.vue",
+            "line": 284,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "pagination",
+            "file": "pagination/Pagination.vue",
+            "line": 296,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "pagination",
+            "file": "pagination/Pagination.vue",
+            "line": 310,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "pagination",
+            "file": "pagination/Pagination.vue",
+            "line": 320,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "pagination",
+            "file": "pagination/Pagination.vue",
+            "line": 343,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "pagination",
+            "file": "pagination/Pagination.vue",
+            "line": 355,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "profile-page",
+            "file": "profile-page/ProfilePage.vue",
+            "line": 97,
+            "code": "<label class=\"font-bold text-sm\" for=\"profile-name\">{{ resolvedNameLabel }}</label>",
+            "tag": "label"
+        },
+        {
+            "component": "profile-page",
+            "file": "profile-page/ProfilePage.vue",
+            "line": 105,
+            "code": "<label class=\"font-bold text-sm\" for=\"profile-email\">{{ resolvedEmailLabel }}</label>",
+            "tag": "label"
+        },
+        {
+            "component": "profile-page",
+            "file": "profile-page/ProfilePage.vue",
+            "line": 114,
+            "code": "<label class=\"font-bold text-sm\" for=\"profile-bio\">{{ resolvedBioLabel }}</label>",
+            "tag": "label"
+        },
+        {
+            "component": "settings-page",
+            "file": "settings-page/SettingsPage.vue",
+            "line": 128,
+            "code": "<label class=\"font-bold text-sm\" :for=\"`setting-${tab.value}-name`\">{{ resolvedNameLabel }}</label>",
+            "tag": "label"
+        },
+        {
+            "component": "settings-page",
+            "file": "settings-page/SettingsPage.vue",
+            "line": 139,
+            "code": "<label class=\"font-bold text-sm\" :for=\"`setting-${tab.value}-notifications`\">{{ resolvedNotificationsLabel }}</label>",
+            "tag": "label"
+        },
+        {
+            "component": "stepper",
+            "file": "stepper/Stepper.vue",
+            "line": 204,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "stepper",
+            "file": "stepper/Stepper.vue",
+            "line": 239,
+            "code": "<button",
+            "tag": "button"
+        },
+        {
+            "component": "upload-card",
+            "file": "upload-card/UploadCard.vue",
+            "line": 122,
+            "code": "<input",
+            "tag": "input"
+        }
+    ],
+    "styleRepetitions": []
+}

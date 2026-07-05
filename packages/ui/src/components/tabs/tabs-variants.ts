@@ -3,7 +3,7 @@ import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const tabsListVariants = cva(
     [
-        'inline-flex items-center justify-center p-1 gap-1',
+        'inline-flex justify-center p-1 gap-1',
         'bg-brutal-bg border-3 border-brutal shadow-brutal rounded-brutal',
     ],
     {
@@ -14,17 +14,14 @@ export const tabsListVariants = cva(
                 lg: '',
             },
             orientation: {
-                horizontal: '',
-                vertical: 'flex-col',
+                horizontal: 'items-center',
+                vertical: 'flex-col items-stretch w-fit',
             },
         },
         compoundVariants: [
             { size: 'sm', orientation: 'horizontal', class: 'h-9' },
             { size: 'default', orientation: 'horizontal', class: 'h-12' },
             { size: 'lg', orientation: 'horizontal', class: 'h-14' },
-            { size: 'sm', orientation: 'vertical', class: 'w-9' },
-            { size: 'default', orientation: 'vertical', class: 'w-12' },
-            { size: 'lg', orientation: 'vertical', class: 'w-14' },
         ],
         defaultVariants: {
             size: 'default',

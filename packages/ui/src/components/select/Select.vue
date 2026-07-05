@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import { SelectRoot, SelectGroup, SelectValue } from 'reka-ui'
 import SelectTrigger from './SelectTrigger.vue'
 import SelectContent from './SelectContent.vue'
@@ -22,6 +22,7 @@ export interface SelectProps {
     disabled?: boolean
     required?: boolean
     name?: string
+    id?: string
     size?: 'sm' | 'default' | 'lg'
     variant?: 'default' | 'error' | 'success'
     errorMessage?: string
@@ -41,6 +42,7 @@ const {
     disabled = false,
     required = false,
     name = undefined,
+    id = undefined,
     size = 'default',
     variant = 'default',
     errorMessage = undefined,
@@ -53,6 +55,9 @@ const {
 } = defineProps<SelectProps>()
 
 const modelValue = defineModel<string>()
+
+const slots = useSlots()
+const hasDefaultSlot = computed(() => !!slots.default)
 
 interface GroupedItems {
     key: string
@@ -110,32 +115,47 @@ const grouped = computed<GroupedItems[]>(() => {
 <template>
     <SelectRoot
         v-model="modelValue"
+        :name="name"
         :disabled="disabled"
         :required="required"
-        :name="name"
     >
-        <SelectTrigger
-            :size="size"
-            :variant="variant"
-            :error-message="errorMessage"
-            :disabled="disabled"
-            :clearable="clearable"
-            :model-value="modelValue"
-            :class="cn(className, triggerClass)"
-            @clear="modelValue = undefined"
-        >
-            <SelectValue :placeholder="placeholder" />
-        </SelectTrigger>
+        <slot v-if="hasDefaultSlot" />
+        <template v-else>
+            <SelectTrigger
+                :id="id"
+                :size="size"
+                :variant="variant"
+                :error-message="errorMessage"
+                :disabled="disabled"
+                :clearable="clearable"
+                :model-value="modelValue"
+                :class="cn(className, triggerClass)"
+                @clear="modelValue = undefined"
+            >
+                <SelectValue :placeholder="placeholder" />
+            </SelectTrigger>
 
-        <SelectContent :position="position" :class="contentClass">
-            <template v-if="groupField">
-                <SelectGroup
-                    v-for="group in grouped"
-                    :key="group.key"
-                >
-                    <SelectLabel v-if="group.label">{{ group.label }}</SelectLabel>
+            <SelectContent :position="position" :class="contentClass">
+                <template v-if="groupField">
+                    <SelectGroup
+                        v-for="group in grouped"
+                        :key="group.key"
+                    >
+                        <SelectLabel v-if="group.label">{{ group.label }}</SelectLabel>
+                        <SelectItem
+                            v-for="opt in group.options"
+                            :key="opt.value"
+                            :value="opt.value"
+                            :disabled="opt.disabled"
+                            :variant="itemVariant"
+                        >
+                            {{ opt.label }}
+                        </SelectItem>
+                    </SelectGroup>
+                </template>
+                <template v-else>
                     <SelectItem
-                        v-for="opt in group.options"
+                        v-for="opt in options"
                         :key="opt.value"
                         :value="opt.value"
                         :disabled="opt.disabled"
@@ -143,19 +163,8 @@ const grouped = computed<GroupedItems[]>(() => {
                     >
                         {{ opt.label }}
                     </SelectItem>
-                </SelectGroup>
-            </template>
-            <template v-else>
-                <SelectItem
-                    v-for="opt in options"
-                    :key="opt.value"
-                    :value="opt.value"
-                    :disabled="opt.disabled"
-                    :variant="itemVariant"
-                >
-                    {{ opt.label }}
-                </SelectItem>
-            </template>
-        </SelectContent>
+                </template>
+            </SelectContent>
+        </template>
     </SelectRoot>
 </template>

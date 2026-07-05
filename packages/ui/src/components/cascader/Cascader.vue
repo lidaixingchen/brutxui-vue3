@@ -146,6 +146,27 @@ function isPathEqual(p1: CascaderValue[], p2: CascaderValue[]): boolean {
     return p1.every((v, i) => v === p2[i])
 }
 
+function isPathPrefix(fullPath: CascaderValue[], prefixPath: CascaderValue[]): boolean {
+    if (prefixPath.length >= fullPath.length) return false
+    return prefixPath.every((v, i) => v === fullPath[i])
+}
+
+function isOnSelectedTrail(option: CascaderOption, colIdx: number): boolean {
+    if (!props.modelValue) return false
+    const optionPath = getOptionPath(option, colIdx)
+    if (props.multiple) {
+        if (!Array.isArray(props.modelValue) || props.modelValue.length === 0) return false
+        const first = props.modelValue[0]
+        if (!Array.isArray(first)) return false
+        const paths = props.modelValue as CascaderValue[][]
+        return paths.some(p => isPathPrefix(p, optionPath))
+    } else {
+        if (!Array.isArray(props.modelValue)) return false
+        if (props.modelValue.length === 0) return false
+        return isPathPrefix(props.modelValue as CascaderValue[], optionPath)
+    }
+}
+
 // Checkbox selection state for an option node
 function getOptionCheckState(option: CascaderOption, colIdx: number): 'checked' | 'unchecked' | 'indeterminate' {
     const optionPath = getOptionPath(option, colIdx)
@@ -312,8 +333,24 @@ function handleClear(event: Event) {
 watch(open, (isOpen) => {
     emit('open-change', isOpen)
     if (isOpen) {
-        if (!props.multiple && Array.isArray(props.modelValue) && props.modelValue.length > 0 && !Array.isArray(props.modelValue[0])) {
-            const valPath = props.modelValue as CascaderValue[]
+        const hasValue = Array.isArray(props.modelValue) && props.modelValue.length > 0
+        let valPath: CascaderValue[] | null = null
+        
+        if (hasValue) {
+            if (props.multiple) {
+                const first = props.modelValue[0]
+                if (Array.isArray(first)) {
+                    valPath = first as CascaderValue[]
+                }
+            } else {
+                const first = props.modelValue[0]
+                if (!Array.isArray(first)) {
+                    valPath = props.modelValue as CascaderValue[]
+                }
+            }
+        }
+        
+        if (valPath && valPath.length > 0) {
             activePath.value = [...valPath]
             activeColumnIndex.value = valPath.length - 1
             const currentOptions = columns.value[activeColumnIndex.value] || []
@@ -410,11 +447,13 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
     const isSelected = isPathSelected(getOptionPath(option, colIdx))
     const isActive = activePath.value[colIdx] === option.value && activeColumnIndex.value === colIdx
     const isTrailActive = activePath.value[colIdx] === option.value
-    
+    const onSelectedTrail = isOnSelectedTrail(option, colIdx)
+
     return cn(
         cascaderItemVariants({
             selected: isSelected,
-            active: isActive || isTrailActive
+            active: isActive || isTrailActive,
+            trail: onSelectedTrail && !isSelected,
         }),
         option.disabled && 'opacity-50 pointer-events-none'
     )
@@ -450,11 +489,11 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 </span>
             </div>
         </PopoverTrigger>
-        <PopoverContent :class="cn('p-0', dropdownClass)" align="start">
+        <PopoverContent :class="cn('p-0 !w-auto', dropdownClass)" align="start">
             <div v-if="options.length === 0" class="px-4 py-6 text-sm text-brutal-muted-foreground text-center">
                 {{ resolvedEmptyText }}
             </div>
-            <div v-else class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 overflow-y-auto bg-brutal-bg text-brutal-fg">
+            <div v-else class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 overflow-x-auto overflow-y-hidden w-max bg-brutal-bg text-brutal-fg">
                 <div
                     v-for="(col, colIdx) in columns"
                     :key="colIdx"

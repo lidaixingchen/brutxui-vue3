@@ -11,6 +11,8 @@ interface SubMenuProps {
     title?: string
     /** Whether the sub-menu is disabled */
     disabled?: boolean
+    /** Whether to indent the item to align with icon-bearing items */
+    inset?: boolean
     /** Custom class list for submenu wrapper */
     class?: string
     /** Custom class list for the trigger header */
@@ -20,6 +22,7 @@ interface SubMenuProps {
 const props = withDefaults(defineProps<SubMenuProps>(), {
     title: '',
     disabled: false,
+    inset: false,
     class: undefined,
     triggerClass: undefined,
 })
@@ -100,6 +103,7 @@ const subMenuClasses = computed(() => {
 const triggerClasses = computed(() => {
     return cn(
         'flex items-center justify-between gap-4 px-4 py-2.5 rounded-brutal border-3 font-semibold text-sm cursor-pointer select-none transition-all duration-150 outline-none',
+        props.inset && 'pl-10',
         isChildActive.value
             ? 'text-brutal-primary-foreground bg-brutal-primary border-brutal shadow-brutal translate-x-0.5 -translate-y-0.5'
             : isOpened.value && isVertical.value

@@ -316,6 +316,37 @@ describe('Select.vue', () => {
         expect(items[1].attributes('data-disabled')).toBe('true')
     })
 
+    it('forwards id, name, required, disabled to SelectRoot and trigger in integrated mode', () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: defaultOptions,
+                id: 'my-select-id',
+                name: 'my-select-name',
+                required: true,
+                disabled: true,
+            },
+            global: {
+                stubs: {
+                    ...selectStubs,
+                    SelectTrigger: {
+                        props: ['id', 'disabled'],
+                        template: '<button data-testid="select-trigger" :id="id" :disabled="disabled"><slot /></button>',
+                    }
+                }
+            },
+        })
+
+        const selectRoot = wrapper.find('[data-testid="select-root"]')
+        expect(selectRoot.attributes('id')).toBeUndefined()
+        expect(selectRoot.attributes('name')).toBe('my-select-name')
+        expect(selectRoot.attributes('required')).toBe('true')
+        expect(selectRoot.attributes('disabled')).toBe('true')
+
+        const trigger = wrapper.find('[data-testid="select-trigger"]')
+        expect(trigger.attributes('id')).toBe('my-select-id')
+        expect(trigger.attributes()).toHaveProperty('disabled')
+    })
+
     it('handles grouping with groupField', () => {
         const wrapper = mount(Select, {
             props: {
@@ -370,5 +401,67 @@ describe('Select.vue', () => {
         })
 
         expect(wrapper.vm.modelValue).toBe('opt1')
+    })
+
+    describe('atomic slot mode', () => {
+        it('renders user-supplied slot content when default slot is provided', () => {
+            const wrapper = mount(Select, {
+                slots: {
+                    default: `
+                        <div data-testid="user-trigger">user trigger</div>
+                        <div data-testid="user-content">
+                            <div data-testid="user-item" data-value="apple">苹果</div>
+                            <div data-testid="user-item" data-value="banana">香蕉</div>
+                        </div>
+                    `,
+                },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.find('[data-testid="user-trigger"]').exists()).toBe(true)
+            expect(wrapper.find('[data-testid="user-trigger"]').text()).toBe('user trigger')
+            const userItems = wrapper.findAll('[data-testid="user-item"]')
+            expect(userItems.length).toBe(2)
+            expect(userItems[0].text()).toBe('苹果')
+            expect(userItems[0].attributes('data-value')).toBe('apple')
+            expect(userItems[1].text()).toBe('香蕉')
+        })
+
+        it('does not render integrated trigger/content/items when slot is provided', () => {
+            const wrapper = mount(Select, {
+                props: { options: defaultOptions },
+                slots: {
+                    default: '<div data-testid="user-slot"></div>',
+                },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.find('[data-testid="select-trigger"]').exists()).toBe(false)
+            expect(wrapper.find('[data-testid="select-content"]').exists()).toBe(false)
+            expect(wrapper.find('[data-testid="select-item"]').exists()).toBe(false)
+            expect(wrapper.find('[data-testid="select-value"]').exists()).toBe(false)
+        })
+
+        it('binds v-model through SelectRoot in slot mode', async () => {
+            const wrapper = mount(Select, {
+                props: { modelValue: 'opt1' },
+                slots: { default: '<div data-testid="user-slot"></div>' },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.vm.modelValue).toBe('opt1')
+        })
+
+        it('falls back to integrated mode when no slot is provided', () => {
+            const wrapper = mount(Select, {
+                props: { options: defaultOptions, placeholder: 'Pick one' },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.find('[data-testid="select-trigger"]').exists()).toBe(true)
+            expect(wrapper.find('[data-testid="select-content"]').exists()).toBe(true)
+            expect(wrapper.find('[data-testid="select-value"]').text()).toBe('Pick one')
+            expect(wrapper.findAll('[data-testid="select-item"]').length).toBe(3)
+        })
     })
 })

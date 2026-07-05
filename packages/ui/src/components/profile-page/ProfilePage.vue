@@ -11,6 +11,7 @@ import CardTitle from '../card/CardTitle.vue'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Textarea from '../textarea/Textarea.vue'
+import Label from '../label/Label.vue'
 
 interface ProfilePageProps {
     title?: string
@@ -94,7 +95,7 @@ const rootClasses = computed(() =>
                     <CardContent>
                         <div class="space-y-6">
                             <div class="space-y-2">
-                                <label class="font-bold text-sm" for="profile-name">{{ resolvedNameLabel }}</label>
+                                <Label for="profile-name">{{ resolvedNameLabel }}</Label>
                                 <Input
                                     id="profile-name"
                                     v-model="formName"
@@ -102,7 +103,7 @@ const rootClasses = computed(() =>
                                 />
                             </div>
                             <div class="space-y-2">
-                                <label class="font-bold text-sm" for="profile-email">{{ resolvedEmailLabel }}</label>
+                                <Label for="profile-email">{{ resolvedEmailLabel }}</Label>
                                 <Input
                                     id="profile-email"
                                     v-model="formEmail"
@@ -111,7 +112,7 @@ const rootClasses = computed(() =>
                                 />
                             </div>
                             <div class="space-y-2">
-                                <label class="font-bold text-sm" for="profile-bio">{{ resolvedBioLabel }}</label>
+                                <Label for="profile-bio">{{ resolvedBioLabel }}</Label>
                                 <Textarea
                                     id="profile-bio"
                                     v-model="formBio"
