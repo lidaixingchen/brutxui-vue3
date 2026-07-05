@@ -3,9 +3,9 @@ export interface VirtualScrollItem {
     [key: string]: unknown
 }
 
-export interface VirtualScrollProps {
+export interface VirtualScrollProps<T = unknown> {
     /** 数据列表 */
-    items: unknown[]
+    items: T[]
     /** 每项高度（像素） */
     itemHeight?: number
     /** 是否启用动态高度测量 */
@@ -31,4 +31,20 @@ export interface VirtualScrollEmits {
     'scroll-end': []
     /** 滚动时触发 */
     scroll: [scrollTop: number]
+}
+
+export interface VirtualizerVirtualItem {
+    key: unknown
+    index: number
+    size: number
+    start: number
+}
+
+export interface VirtualizerInstance {
+    getVirtualItems: () => VirtualizerVirtualItem[]
+    getTotalSize: () => number
+    scrollToIndex: (index: number) => void
+    measure: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    measureElement: (el: any) => void
 }

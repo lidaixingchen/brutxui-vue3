@@ -411,7 +411,7 @@ export { glitchButtonVariants } from './components/glitch-button/glitch-button-v
 
 export { default as VirtualScroll } from './components/virtual-scroll/VirtualScroll.vue'
 export { virtualScrollRootVariants, virtualScrollItemVariants } from './components/virtual-scroll/virtual-scroll-variants'
-export type { VirtualScrollItem, VirtualScrollProps, VirtualScrollEmits } from './components/virtual-scroll/types'
+export type { VirtualScrollItem, VirtualScrollProps, VirtualScrollEmits, VirtualizerInstance, VirtualizerVirtualItem } from './components/virtual-scroll/types'
 
 // 第一优先级新增组件
 export { default as TreeSelect } from './components/tree-select/TreeSelect.vue'

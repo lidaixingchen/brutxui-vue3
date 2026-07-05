@@ -90,6 +90,7 @@ async function findOrphanedFiles(
     const utilsDir = path.dirname(utilsAlias);
     const utilsPath = await resolveAliasPath(utilsDir, cwd);
     const localesPath = path.join(path.dirname(composablesPath), 'locales');
+    const directivesPath = path.join(path.dirname(composablesPath), 'directives');
 
     const orphaned: string[] = [];
 
@@ -99,9 +100,10 @@ async function findOrphanedFiles(
 
         const isComposable = importPath.includes('/composables/');
         const isLocale = importPath.includes('/locales/');
+        const isDirective = importPath.includes('/directives/');
         const isUtils = importPath.includes('/lib/') && !importPath.endsWith('/utils');
 
-        if (!isComposable && !isLocale && !isUtils) continue;
+        if (!isComposable && !isLocale && !isDirective && !isUtils) continue;
 
         let resolvedPath: string | null = null;
         const fileName = importPath.split('/').pop() ?? '';
@@ -112,6 +114,10 @@ async function findOrphanedFiles(
 
         if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
             resolvedPath = await resolveScriptFile(localesPath, fileName);
+        }
+
+        if (!resolvedPath && isDirective && await fs.pathExists(directivesPath)) {
+            resolvedPath = await resolveScriptFile(directivesPath, fileName);
         }
 
         if (!resolvedPath && isUtils && await fs.pathExists(utilsPath)) {

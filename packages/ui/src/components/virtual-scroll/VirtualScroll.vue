@@ -1,13 +1,13 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T">
 import { ref, computed, onMounted, onBeforeUnmount, watch, useSlots, shallowRef, triggerRef } from 'vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { virtualScrollRootVariants, virtualScrollItemVariants } from './virtual-scroll-variants'
-import type { VirtualScrollProps, VirtualScrollEmits } from './types'
+import type { VirtualScrollProps, VirtualScrollEmits, VirtualizerInstance } from './types'
 
 const slots = useSlots()
 
-const props = withDefaults(defineProps<VirtualScrollProps>(), {
+const props = withDefaults(defineProps<VirtualScrollProps<T>>(), {
     itemHeight: 48,
     size: 'default',
     variant: 'default',
@@ -26,15 +26,6 @@ const { t } = useLocale()
 const parentRef = ref<HTMLElement | null>(null)
 
 const isAvailable = ref(true)
-
-interface VirtualizerInstance {
-    getVirtualItems: () => Array<{ key: unknown; index: number; size: number; start: number }>
-    getTotalSize: () => number
-    scrollToIndex: (index: number) => void
-    measure: () => void
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    measureElement: (el: any) => void
-}
 
 const virtualizerRef = shallowRef<VirtualizerInstance | null>(null)
 
