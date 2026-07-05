@@ -67,6 +67,19 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - 参考文档：`skills/brutxui/references/`
 - **方案文档：** `docs/`
 
+## 新建组件后同步清单
+
+新增组件（或为已有组件新增 composable）后，必须同步以下文件，否则 CI 会失败：
+
+| 顺序 | 文件 | 操作 | 验证 |
+| --- | --- | --- | --- |
+| 1 | `packages/registry/scripts/component-files.ts` | 在 `COMPONENT_FILES` 中登记组件文件名和 composables 映射 | — |
+| 2 | `packages/shared/src/components.ts` | 在 `COMPONENTS` 中添加条目（先 grep 确认 key 不存在，防止 TS1117 重复键） | `pnpm --filter brutx-registry-vue validate` |
+| 3 | `packages/registry/` | 运行 `pnpm --filter brutx-registry-vue build` 生成注册表 JSON | 同上 |
+| 4 | `apps/docs/components/{name}.md` + `apps/docs/en/components/{name}.md` | 按 `docs/COMPONENT_DOC_TEMPLATE.md` 模板编写中英文文档和demo组件演示 | `pnpm --filter docs build` |
+| 5 | `apps/docs/.vitepress/config.ts` | 在中文和英文 sidebar 各添加条目 | 同上 |
+| 6 | `skills/brutxui/SKILL.md` | 更新组件列表和组合式函数表 | — |
+
 ## 详细文档
 
 - [提交信息规范](docs/COMMIT_CONVENTION.md)
