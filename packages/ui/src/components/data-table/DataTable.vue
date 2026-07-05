@@ -433,7 +433,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                     <!-- Body with Virtual Scroll -->
                     <VirtualScroll
                         v-if="displayData.length > 0"
-                        :items="(displayData as any[])"
+                        :items="displayData"
                         :item-height="props.virtualScroll.rowHeight === 'auto' ? 48 : props.virtualScroll.rowHeight"
                         :dynamic-height="props.virtualScroll.rowHeight === 'auto'"
                         role="rowgroup"

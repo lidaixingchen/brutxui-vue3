@@ -6,6 +6,9 @@ declare module '*.vue' {
 
 declare module 'prismjs/components/prism-*' {}
 
+// 生产构建中 process.env.NODE_ENV 的类型声明（替代 vitest/globals 提供的 Node 类型）
+declare const process: { env: { NODE_ENV?: string } }
+
 declare module 'embla-carousel' {
     export type EmblaOptionsType = Record<string, unknown>
     export type EmblaPluginType = Record<string, unknown>

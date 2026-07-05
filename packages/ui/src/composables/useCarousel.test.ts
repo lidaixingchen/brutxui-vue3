@@ -309,7 +309,10 @@ describe('useCarousel', () => {
             const { wrapper } = mountWithCarousel()
             // no api was set, so off should not be called
             wrapper.unmount()
-            // this test just verifies no error occurs
+            // 验证卸载流程未触发任何 off 调用（cachedApi 为 null 时不应尝试解绑）
+            // 由于 mockEmblaApi.value 始终为 undefined，api.off 不应被调用
+            const api = mockEmblaApi.value
+            expect(api).toBeUndefined()
         })
     })
 

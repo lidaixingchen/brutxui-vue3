@@ -329,8 +329,8 @@ describe('useDialogEnhanced', () => {
         document.dispatchEvent(moveEvent)
         // Position should have been updated: newX = 150 - 100 = 50, newY = 130 - 100 = 30
         // Constrained to viewport
-        expect(result.position.value.x).toBeDefined()
-        expect(result.position.value.y).toBeDefined()
+        expect(result.position.value.x).toBe(50)
+        expect(result.position.value.y).toBe(30)
     })
 
     it('onDragMove does nothing when not dragging', () => {

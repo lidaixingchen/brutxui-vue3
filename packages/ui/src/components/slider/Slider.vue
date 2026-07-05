@@ -158,7 +158,7 @@ function handleThumbBlur(index: number) {
         :orientation="orientation"
         :aria-label="ariaLabel"
         :class="rootClasses"
-        @update:model-value="emit('update:modelValue', $event ?? [0])"
+        @update:model-value="emit('update:modelValue', $event ?? [])"
     >
         <template #default="{ modelValue: slotValues }">
             <SliderTrackPrimitive :class="trackClasses">

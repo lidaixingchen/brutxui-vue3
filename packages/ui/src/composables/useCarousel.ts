@@ -97,6 +97,9 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         }
         onInit()
         startAutoplay()
+        if (toValue(options.autoplay) && !prefersReducedMotion.value) {
+            options.onAutoplayChange?.(true)
+        }
     })
 
     watch(() => toValue(options.autoplay), (val) => {

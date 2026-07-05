@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<WatermarkProps>(), {
     rotate: -22,
     zIndex: 9999,
     image: undefined,
-    content: 'BRUTXUI',
+    content: '',
     font: () => ({
         color: 'rgba(0, 0, 0, 0.15)',
         fontSize: 14,
@@ -63,8 +63,11 @@ function escapeXml(str: string): string {
 
 function toBase64(str: string): string {
     const bytes = new TextEncoder().encode(str)
-    const binString = String.fromCharCode(...bytes)
-    return btoa(binString)
+    const chars: string[] = []
+    for (const byte of bytes) {
+        chars.push(String.fromCharCode(byte))
+    }
+    return btoa(chars.join(''))
 }
 
 function drawSvgFallback() {
@@ -102,6 +105,13 @@ function drawSvgFallback() {
 
 function renderWatermark() {
     if (!isClient) return
+
+    const contents = Array.isArray(props.content) ? props.content : [props.content]
+    const hasTextContent = contents.some(text => text)
+    if (!props.image && !hasTextContent) {
+        watermarkUrl.value = ''
+        return
+    }
 
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')

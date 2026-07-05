@@ -1,7 +1,7 @@
 import { createVNode, render, type Component, type AppContext } from 'vue'
 import { isClient } from './env'
 import { DEFAULT_DIALOG_TRANSITION_MS } from './defaults'
-import { globalAppContext } from '../plugin'
+import { getGlobalAppContext } from '../plugin'
 
 export interface RenderImperativeOptions {
     appContext?: AppContext
@@ -46,14 +46,12 @@ export function renderImperative(
     })
 
     // 继承全局 App Context 或是手动传入的上下文，防止 i18n / theme 丢失
-    vnode.appContext = options.appContext || globalAppContext
+    vnode.appContext = options.appContext || getGlobalAppContext()
 
     render(vnode, container)
 
-    const el = container.firstElementChild
-    if (el) {
-        document.body.appendChild(el)
-    }
+    // 挂载整个容器而非仅 firstElementChild，避免多根 fragment 场景下丢失其他根节点
+    document.body.appendChild(container)
 
     function destroy() {
         if (isDestroyed) return

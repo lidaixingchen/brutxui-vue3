@@ -62,9 +62,7 @@ const props = withDefaults(defineProps<DialogEnhancedProps>(), {
 const emit = defineEmits<{
     'update:open': [value: boolean]
     open: []
-    opened: []
     close: []
-    closed: []
 }>()
 
 const { t } = useLocale()

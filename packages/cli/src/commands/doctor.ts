@@ -98,7 +98,10 @@ async function checkTailwindCss(cwd: string, config: BrutalistConfig): Promise<C
     }
 
     const content = await fs.readFile(cssPath, 'utf-8');
-    if (!content.includes('--brutal-bg')) {
+    const hasCompleteBrutalistStyles = content.includes('--color-brutal-bg')
+        && content.includes('.bg-brutal-primary')
+        && content.includes('.animate-in');
+    if (!hasCompleteBrutalistStyles) {
         return {
             name: 'tailwind.css contains BrutxUI tokens',
             status: 'error',

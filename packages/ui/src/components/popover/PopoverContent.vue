@@ -7,6 +7,8 @@ import {
 import { cn } from '@/lib/utils'
 import { popoverContentVariants } from './popover-variants'
 
+defineOptions({ inheritAttrs: false })
+
 const DEFAULT_SIDE_OFFSET = 8
 
 interface PopoverContentProps {
@@ -28,7 +30,7 @@ const classes = computed(() =>
 
 <template>
     <PopoverPortalPrimitive>
-        <PopoverContentPrimitive :align="align" :side-offset="sideOffset" :class="classes">
+        <PopoverContentPrimitive v-bind="$attrs" :align="align" :side-offset="sideOffset" :class="classes">
             <slot />
         </PopoverContentPrimitive>
     </PopoverPortalPrimitive>

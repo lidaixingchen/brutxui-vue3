@@ -41,10 +41,12 @@ const virtualizerRef = shallowRef<VirtualizerInstance | null>(null)
 let cleanup: (() => void) | null = null
 let stopWatchScrollElement: (() => void) | null = null
 let stopWatchOptions: (() => void) | null = null
+let isUnmounted = false
 
 // 使用 .then()/.catch() 模式而非顶层 await
 import('@tanstack/vue-virtual')
     .then((mod) => {
+        if (isUnmounted) return
         const { Virtualizer, observeElementRect, observeElementOffset, elementScroll } = mod
 
         const getOptions = () => ({
@@ -125,6 +127,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+    isUnmounted = true
     if (parentRef.value) {
         parentRef.value.removeEventListener('scroll', handleScroll)
     }

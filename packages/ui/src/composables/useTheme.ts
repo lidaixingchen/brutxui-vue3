@@ -1,4 +1,4 @@
-import { ref, inject, provide, computed, onUnmounted, getCurrentInstance, type ComputedRef, type InjectionKey, type Ref } from 'vue'
+import { ref, inject, provide, computed, onMounted, onUnmounted, getCurrentInstance, type ComputedRef, type InjectionKey, type Ref } from 'vue'
 import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem } from '../lib/env'
 
 export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
@@ -173,6 +173,8 @@ export function provideTheme(): UseThemeReturn {
     provide(THEME_KEY, theme)
 
     if (getCurrentInstance()) {
+        // 在挂载后初始化主题（确保 DOM 可用），与 useTheme() fallback 行为一致
+        onMounted(() => theme.initTheme())
         onUnmounted(() => theme.destroy())
     }
 

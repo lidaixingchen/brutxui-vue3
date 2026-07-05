@@ -254,6 +254,7 @@ function extractScriptBlocks(content: string): Array<{ start: number; end: numbe
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
     const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
     const localesAlias = `${path.dirname(composablesAlias)}/locales`;
+    const directivesAlias = `${path.dirname(composablesAlias)}/directives`;
     const isVueSfc = /<script[\s>]/i.test(content);
 
     interface Replacement { start: number; end: number; replacement: string }
@@ -274,6 +275,8 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
                     newPath = imp.n.replace('@/composables', composablesAlias);
                 } else if (imp.n.startsWith('@/locales/')) {
                     newPath = imp.n.replace('@/locales', localesAlias);
+                } else if (imp.n.startsWith('@/directives/')) {
+                    newPath = imp.n.replace('@/directives', directivesAlias);
                 }
 
                 if (newPath) {

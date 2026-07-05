@@ -101,6 +101,9 @@ async function doUpload(file: UploadFile): Promise<void> {
     file.status = 'uploading'
     file.progress = 0
 
+    // 防止 onError 回调与 catch 同时处理导致 file-error 重复触发
+    let settled = false
+
     try {
         await props.httpRequest({
             file: file.raw!,
@@ -108,11 +111,15 @@ async function doUpload(file: UploadFile): Promise<void> {
                 file.progress = percent
             },
             onSuccess: () => {
+                if (settled) return
+                settled = true
                 file.status = 'success'
                 file.progress = 100
                 emit('file-success', file)
             },
             onError: (error) => {
+                if (settled) return
+                settled = true
                 file.status = 'error'
                 file.error = error
                 emit('file-error', file, error)
@@ -120,6 +127,8 @@ async function doUpload(file: UploadFile): Promise<void> {
             },
         })
     } catch (error) {
+        if (settled) return
+        settled = true
         const uploadError: UploadError = {
             message: error instanceof Error ? error.message : 'Upload failed',
         }

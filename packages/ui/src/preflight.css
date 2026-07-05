@@ -25,13 +25,13 @@
     }
 }
 
-/* 全局 reduced-motion 兜底：覆盖所有未单独处理的动画和过渡 */
+/* 全局 reduced-motion 兜底：用高特异性通配选择器替代 !important，保留组件级 opt-out 能力 */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    html:not([data-allow-motion="true"]) *,
+    html:not([data-allow-motion="true"]) *::before,
+    html:not([data-allow-motion="true"]) *::after {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+        transition-duration: 0.01ms;
     }
 }

@@ -33,6 +33,10 @@
     --color-brutal-danger: var(--brutal-destructive);
     --color-brutal-warning: var(--brutal-accent);
 
+    /* Static design tokens (not theme-aware) */
+    --color-brutal-black: var(--brutal-black);
+    --color-brutal-yellow: var(--brutal-yellow);
+
     /* Dynamic: shadows use --brutal-shadow-* for dark mode */
     --shadow-brutal: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
     --shadow-brutal-sm: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
@@ -87,6 +91,8 @@
         --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
         --brutal-placeholder: #9CA3AF;
+        --brutal-black: #000000;
+        --brutal-yellow: #FFE66D;
     }
 
     .dark {

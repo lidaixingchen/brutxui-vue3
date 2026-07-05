@@ -6,13 +6,12 @@
         "noUnusedLocals": false,
         "noUnusedParameters": false
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts"],
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"],
     "exclude": [
         "node_modules",
         "dist",
         "**/*.test.ts",
         "**/*.spec.ts",
-        "**/*.vue",
         "src/lib/devtools-plugin.ts",
         "src/lib/devtools-plugin.test.ts",
         "src/lib/component-preview.ts",

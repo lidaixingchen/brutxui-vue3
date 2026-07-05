@@ -139,6 +139,9 @@
         "vue": "^3.5.0"
     },
     "peerDependenciesMeta": {
+        "@lucide/vue": {
+            "optional": true
+        },
         "@tanstack/vue-virtual": {
             "optional": true
         },

@@ -285,10 +285,7 @@ export function createCustomTheme(
     overrides: Partial<ThemeVariables>
 ): ThemeVariables {
     const baseTheme = themes[baseThemeName]
-    return deepMerge(
-        baseTheme as unknown as Record<string, unknown>,
-        overrides as unknown as Record<string, unknown>,
-    ) as unknown as ThemeVariables
+    return deepMerge(baseTheme, overrides)
 }
 
 // ============================================================================
@@ -298,12 +295,13 @@ export function createCustomTheme(
 /**
  * 深度合并对象
  */
-function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
-    const result = { ...target }
+function deepMerge<T extends object>(target: T, source: Partial<T>): T {
+    const result = { ...target } as Record<string, unknown>
+    const sourceRec = source as Record<string, unknown>
 
-    for (const key of Object.keys(source) as Array<keyof T>) {
-        const sourceVal = source[key]
-        const targetVal = target[key]
+    for (const key of Object.keys(sourceRec)) {
+        const sourceVal = sourceRec[key]
+        const targetVal = result[key]
 
         if (
             sourceVal !== null &&
@@ -317,13 +315,13 @@ function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial
             result[key] = deepMerge(
                 targetVal as Record<string, unknown>,
                 sourceVal as Record<string, unknown>
-            ) as T[keyof T]
+            )
         } else if (sourceVal !== undefined) {
-            result[key] = sourceVal as T[keyof T]
+            result[key] = sourceVal
         }
     }
 
-    return result
+    return result as T
 }
 
 // ============================================================================

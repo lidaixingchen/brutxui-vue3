@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { Z_INDEX } from '@/lib/z-index'
 
 interface ImageProps {
     src: string
@@ -331,13 +332,15 @@ onUnmounted(() => {
     <Teleport to="body">
         <div
             v-if="preview && showViewer"
-            class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm select-none"
+            class="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm select-none"
+            :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_OVERLAY }"
             @click.self="handleMaskClick"
         >
             <FocusScope trapped loop>
                 <!-- 关闭按钮 -->
                 <button
-                    class="absolute top-6 right-6 z-[10000] flex items-center justify-center w-12 h-12 bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    class="absolute top-6 right-6 flex items-center justify-center w-12 h-12 bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     @click="closeViewer"
                     aria-label="关闭预览"
                     data-testid="image-viewer-close"
@@ -348,7 +351,8 @@ onUnmounted(() => {
                 <!-- 切换上一张 -->
                 <button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute left-6 z-[10000] flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    class="absolute left-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     @click="prevImage"
                     aria-label="上一张"
                     data-testid="image-viewer-prev"
@@ -359,7 +363,8 @@ onUnmounted(() => {
                 <!-- 切换下一张 -->
                 <button
                     v-if="previewSrcList && previewSrcList.length > 1"
-                    class="absolute right-6 z-[10000] flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    class="absolute right-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
+                    :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                     @click="nextImage"
                     aria-label="下一张"
                     data-testid="image-viewer-next"
@@ -383,7 +388,8 @@ onUnmounted(() => {
 
                 <!-- 工具栏 -->
                 <div
-                    class="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 bg-brutal-bg border-3 border-brutal rounded-brutal shadow-brutal z-[10000]"
+                    class="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-3 bg-brutal-bg border-3 border-brutal rounded-brutal shadow-brutal"
+                    :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
                 >
                     <!-- 缩小 -->
                     <button

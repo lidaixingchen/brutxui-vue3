@@ -2,6 +2,7 @@
 /* global ScrollIntoViewOptions */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import { useLocale } from '@/composables/useLocale'
+import { Z_INDEX } from '@/lib/z-index'
 
 export interface TourStep {
     target: string | HTMLElement
@@ -48,7 +49,7 @@ const popoverStyle = ref<CSSProperties>({
     top: '0px',
     transform: 'translate3d(0px, 0px, 0)',
     visibility: 'hidden',
-    zIndex: '9999',
+    zIndex: Z_INDEX.TOUR_POPOVER,
 })
 
 const { locale } = useLocale()
@@ -154,7 +155,7 @@ const updatePopoverPosition = (): void => {
             top: '0px',
             transform: `translate3d(${Math.round(left)}px, ${Math.round(top)}px, 0)`,
             visibility: 'visible',
-            zIndex: '9999',
+            zIndex: Z_INDEX.TOUR_POPOVER,
         }
         return
     }
@@ -192,7 +193,7 @@ const updatePopoverPosition = (): void => {
         top: '0px',
         transform: `translate3d(${Math.round(popoverLeft)}px, ${Math.round(popoverTop)}px, 0)`,
         visibility: 'visible',
-        zIndex: '9999',
+        zIndex: Z_INDEX.TOUR_POPOVER,
     }
 }
 
@@ -250,6 +251,8 @@ const updatePosition = async (): Promise<void> => {
 }
 
 let resizeObserver: ResizeObserver | null = null
+// 防止 async watch 在 await 期间组件卸载后继续创建新的 ResizeObserver
+let isUnmounted = false
 
 const initResizeObserver = (): void => {
     if (typeof window === 'undefined' || !window.ResizeObserver) {
@@ -340,7 +343,10 @@ watch(
             return
         }
         await nextTick()
+        // 卸载发生在 await 期间时停止后续操作，避免泄漏 ResizeObserver
+        if (isUnmounted) return
         await updatePosition()
+        if (isUnmounted) return
         setupResizeObserver()
     },
     { immediate: true }
@@ -353,6 +359,7 @@ onMounted((): void => {
 })
 
 onBeforeUnmount((): void => {
+    isUnmounted = true
     window.removeEventListener('resize', handleScrollOrResize)
     window.removeEventListener('scroll', handleScrollOrResize)
     window.removeEventListener('keydown', handleKeyDown)
@@ -364,12 +371,13 @@ onBeforeUnmount((): void => {
     <div v-if="isOpen && steps.length > 0" class="brutx-tour">
         <canvas
             ref="canvasRef"
-            class="fixed inset-0 pointer-events-auto z-[9998]"
+            class="fixed inset-0 pointer-events-auto"
+            :style="{ zIndex: Z_INDEX.TOUR_CANVAS }"
         />
         <div
             ref="popoverRef"
-            :style="popoverStyle"
-            class="fixed bg-brutal-bg text-brutal-fg border-3 border-brutal-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] p-5 z-[9999] flex flex-col gap-4 max-w-sm rounded-brutal min-w-[280px] select-none"
+            :style="[popoverStyle, { zIndex: Z_INDEX.TOUR_POPOVER }]"
+            class="fixed bg-brutal-bg text-brutal-fg border-3 border-brutal-black dark:border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] p-5 flex flex-col gap-4 max-w-sm rounded-brutal min-w-[280px] select-none"
         >
             <div v-if="currentStepVal?.title" class="text-lg font-black tracking-wide border-b-2 border-brutal-black dark:border-white pb-2">
                 {{ currentStepVal.title }}

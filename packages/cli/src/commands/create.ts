@@ -61,6 +61,7 @@ function getInstallCommand(pm: PackageManager): { command: string; args: string[
         case 'yarn': return { command: 'yarn', args: ['install'] };
         case 'bun': return { command: 'bun', args: ['install'] };
         case 'npm': return { command: 'npm', args: ['install'] };
+        default: throw new CliError(`Unsupported package manager: "${String(pm)}". Supported: pnpm, yarn, bun, npm.`);
     }
 }
 
@@ -76,9 +77,18 @@ async function scaffoldProject(
     }
 }
 
+const VALID_PACKAGE_MANAGERS: readonly PackageManager[] = ['pnpm', 'yarn', 'bun', 'npm'];
+
 export async function create(projectName: string, options: CreateOptions): Promise<void> {
     const template: CreateTemplate = options.template ?? 'default';
     const packageManager: PackageManager = options.packageManager ?? 'pnpm';
+
+    if (!VALID_PACKAGE_MANAGERS.includes(packageManager)) {
+        throw new CliError(
+            `Unsupported package manager: "${String(packageManager)}". Supported: ${VALID_PACKAGE_MANAGERS.join(', ')}.`
+        );
+    }
+
     const baseCwd = options.cwd ?? process.cwd();
     const projectDir = path.resolve(baseCwd, projectName);
 

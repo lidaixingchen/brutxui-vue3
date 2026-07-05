@@ -11,9 +11,19 @@ import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { DEFAULT_DIALOG_TRANSITION_MS } from '@/lib/defaults'
-import { globalAppContext } from '@/plugin'
+import { getGlobalAppContext } from '@/plugin'
 
 export type RenderableContent = string | Component | VNode | (() => string | Component | VNode | null)
+
+export type DialogSize = 'sm' | 'default' | 'lg' | 'xl' | 'full'
+
+const DIALOG_SIZE_CLASSES: Record<DialogSize, string> = {
+    sm: 'max-w-sm',
+    default: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    full: '',
+}
 
 export interface ShowDialogOptions {
     title?: string
@@ -36,6 +46,9 @@ export interface ShowDialogOptions {
     destroyOnClose?: boolean
     zIndex?: number
     class?: string
+    size?: DialogSize
+    onConfirm?: () => void
+    onCancel?: () => void
 }
 
 export interface MessageBoxOptions extends ShowDialogOptions {
@@ -79,6 +92,17 @@ function getDialogEnhancedProps(options: ShowDialogOptions): Record<string, unkn
             props[key] = options[key]
         }
     }
+
+    // size='full' 映射到 fullscreen；其余 size 合并为 class 透传给 DialogEnhanced
+    const size = options.size
+    if (size === 'full') {
+        props.fullscreen = true
+    } else if (size) {
+        const sizeClass = DIALOG_SIZE_CLASSES[size]
+        const existingClass = (props.class as string) || ''
+        props.class = existingClass ? `${existingClass} ${sizeClass}` : sizeClass
+    }
+
     return props
 }
 
@@ -122,7 +146,35 @@ export function showDialog(options: ShowDialogOptions = {}) {
 
     const component = defineComponent({
         setup() {
+            const { locale } = useLocale()
+            const isZh = computed(() => locale.value.dialog.close === '关闭')
+
             return () => {
+                // 当未显式传入 footer 但提供了 onConfirm/onCancel 时，自动生成确认/取消按钮
+                const hasAutoFooter = !options.footer && (options.onConfirm || options.onCancel)
+                const autoFooter = hasAutoFooter ? h(DialogFooter, { class: 'flex justify-end gap-3 mt-4' }, {
+                    default: () => [
+                        options.onCancel ? h(Button, {
+                            variant: 'outline',
+                            onClick: () => {
+                                options.onCancel?.()
+                                close()
+                            }
+                        }, {
+                            default: () => isZh.value ? '取消' : 'Cancel'
+                        }) : null,
+                        options.onConfirm ? h(Button, {
+                            variant: 'default',
+                            onClick: () => {
+                                options.onConfirm?.()
+                                close()
+                            }
+                        }, {
+                            default: () => isZh.value ? '确定' : 'Confirm'
+                        }) : null,
+                    ]
+                }) : null
+
                 return h(DialogRoot, {
                     open: isOpen.value,
                     'onUpdate:open': (val: boolean) => {
@@ -142,7 +194,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
                             options.content ? h('div', { class: 'py-4' }, [renderSlot(options.content)]) : null,
                             options.footer ? h(DialogFooter, null, {
                                 default: () => renderSlot(options.footer)
-                            }) : null
+                            }) : autoFooter
                         ]
                     })
                 })
@@ -151,7 +203,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
     })
 
     const vnode = createVNode(component)
-    vnode.appContext = globalAppContext
+    vnode.appContext = getGlobalAppContext()
     render(vnode, container)
 
     return {
@@ -287,7 +339,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     })
 
     const vnode = createVNode(component)
-    vnode.appContext = globalAppContext
+    vnode.appContext = getGlobalAppContext()
     render(vnode, container)
 
     return {

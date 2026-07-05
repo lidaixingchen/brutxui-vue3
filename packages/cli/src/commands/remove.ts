@@ -8,6 +8,8 @@ import { readConfigSafe, CliError } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
+const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
+
 async function getInstalledComponentDirs(cwd: string, config: BrutalistConfig): Promise<string[]> {
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
 
@@ -60,6 +62,20 @@ async function scanAllImports(componentsPath: string): Promise<Map<string, Set<s
     return importMap;
 }
 
+async function resolveScriptFile(baseDir: string, fileName: string): Promise<string | null> {
+    for (const ext of SCRIPT_EXTENSIONS) {
+        const candidate = path.join(baseDir, fileName + ext);
+        if (await fs.pathExists(candidate)) {
+            return candidate;
+        }
+    }
+    const noExtCandidate = path.join(baseDir, fileName);
+    if (await fs.pathExists(noExtCandidate)) {
+        return noExtCandidate;
+    }
+    return null;
+}
+
 async function findOrphanedFiles(
     cwd: string,
     config: BrutalistConfig,
@@ -73,6 +89,7 @@ async function findOrphanedFiles(
     const utilsAlias = config.aliases.utils;
     const utilsDir = path.dirname(utilsAlias);
     const utilsPath = await resolveAliasPath(utilsDir, cwd);
+    const localesPath = path.join(path.dirname(composablesPath), 'locales');
 
     const orphaned: string[] = [];
 
@@ -87,21 +104,18 @@ async function findOrphanedFiles(
         if (!isComposable && !isLocale && !isUtils) continue;
 
         let resolvedPath: string | null = null;
+        const fileName = importPath.split('/').pop() ?? '';
 
         if (isComposable && await fs.pathExists(composablesPath)) {
-            const fileName = importPath.split('/').pop() ?? '';
-            const candidate = path.join(composablesPath, fileName);
-            if (await fs.pathExists(candidate)) {
-                resolvedPath = candidate;
-            }
+            resolvedPath = await resolveScriptFile(composablesPath, fileName);
         }
 
-        if (isUtils && await fs.pathExists(utilsPath)) {
-            const fileName = importPath.split('/').pop() ?? '';
-            const candidate = path.join(utilsPath, fileName);
-            if (await fs.pathExists(candidate)) {
-                resolvedPath = candidate;
-            }
+        if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
+            resolvedPath = await resolveScriptFile(localesPath, fileName);
+        }
+
+        if (!resolvedPath && isUtils && await fs.pathExists(utilsPath)) {
+            resolvedPath = await resolveScriptFile(utilsPath, fileName);
         }
 
         if (resolvedPath) {
@@ -146,35 +160,6 @@ async function getDependents(
     }
 
     return dependents;
-}
-
-async function removeComponentFiles(
-    cwd: string,
-    config: BrutalistConfig,
-    componentName: string
-): Promise<string[]> {
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-    const componentPath = path.join(componentsPath, componentName);
-    const removed: string[] = [];
-
-    if (!await fs.pathExists(componentPath)) {
-        return removed;
-    }
-
-    async function collectFilePaths(dir: string): Promise<void> {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
-        for (const entry of entries) {
-            const fullPath = path.join(dir, entry.name);
-            if (entry.isDirectory()) {
-                await collectFilePaths(fullPath);
-            } else {
-                removed.push(fullPath);
-            }
-        }
-    }
-
-    await collectFilePaths(componentPath);
-    return removed;
 }
 
 export async function remove(components: string[], options: RemoveOptions): Promise<void> {

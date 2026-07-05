@@ -304,9 +304,8 @@ function handleItemClick(option: CascaderOption, colIdx: number) {
 
 function handleClear(event: Event) {
     event.stopPropagation()
-    const emptyValue = props.multiple ? [] : []
-    emit('update:modelValue', emptyValue)
-    emit('change', emptyValue)
+    emit('update:modelValue', [])
+    emit('change', [])
 }
 
 // Synchronize keyboard focus state on popover open state transition

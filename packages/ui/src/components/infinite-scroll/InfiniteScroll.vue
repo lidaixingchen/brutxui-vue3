@@ -95,6 +95,10 @@ function resetLoading() {
 watch(() => props.disabled, (disabled) => {
     if (disabled) {
         cleanupObserver()
+        if (loadTimer.value) {
+            clearTimeout(loadTimer.value)
+            loadTimer.value = null
+        }
     } else {
         setupObserver()
     }

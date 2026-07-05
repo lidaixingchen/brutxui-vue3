@@ -272,9 +272,9 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
     const active = new Set<string>();
     const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
 
-    async function dfs(fullName: string) {
+    async function dfs(fullName: string, inheritedSource?: string) {
         let cleanName = fullName;
-        let itemSource = source;
+        let itemSource = inheritedSource ?? source;
 
         if (fullName.includes('@')) {
             const match = fullName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
@@ -302,7 +302,7 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
 
             if (item.registryDependencies && item.registryDependencies.length > 0) {
                 for (const dep of item.registryDependencies) {
-                    await dfs(dep);
+                    await dfs(dep, itemSource);
                 }
             }
 

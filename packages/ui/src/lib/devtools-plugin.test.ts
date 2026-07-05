@@ -585,8 +585,19 @@ describe('type safety', () => {
     })
 
     it('should have correct types for BrutxUIDevtoolsContext', () => {
-        // 这个测试主要验证类型定义是否正确
-        // 实际的 context 创建在其他测试中验证
-        expect(true).toBe(true)
+        process.env.NODE_ENV = 'development'
+        const testApp = createApp({})
+        testApp.use(devtoolsPlugin)
+        const ctx = testApp.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
+
+        // 验证 context 形状与类型定义一致
+        expect(ctx).toBeDefined()
+        expect(ctx.version).toBeTypeOf('string')
+        expect(ctx.libraryName).toBeTypeOf('string')
+        expect(ctx.components).toBeInstanceOf(Map)
+        expect(ctx.eventLog).toBeInstanceOf(Array)
+        expect(ctx.performanceEntries).toBeInstanceOf(Array)
+        expect(typeof ctx.logEvent).toBe('function')
+        expect(typeof ctx.measure).toBe('function')
     })
 })

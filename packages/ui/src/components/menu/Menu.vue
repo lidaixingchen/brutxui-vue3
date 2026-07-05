@@ -69,7 +69,7 @@ function toggleSubMenu(index: string) {
 provide(MENU_KEY, {
     activeIndex,
     mode: computed(() => props.mode),
-    router: props.router,
+    router: computed(() => props.router),
     selectItem,
     openedMenus,
     toggleSubMenu,

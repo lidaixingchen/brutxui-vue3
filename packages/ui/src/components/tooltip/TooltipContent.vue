@@ -4,6 +4,8 @@ import { TooltipPortal, TooltipContent as TooltipContentPrimitive } from 'reka-u
 import { cn } from '@/lib/utils'
 import { tooltipContentVariants } from './tooltip-variants'
 
+defineOptions({ inheritAttrs: false })
+
 const DEFAULT_SIDE_OFFSET = 6
 
 interface TooltipContentProps {
@@ -23,7 +25,7 @@ const classes = computed(() =>
 
 <template>
     <TooltipPortal>
-        <TooltipContentPrimitive :side-offset="sideOffset" :class="classes">
+        <TooltipContentPrimitive v-bind="$attrs" :side-offset="sideOffset" :class="classes">
             <slot />
         </TooltipContentPrimitive>
     </TooltipPortal>

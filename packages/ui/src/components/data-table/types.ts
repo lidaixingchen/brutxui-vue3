@@ -41,8 +41,7 @@ export interface DataTableColumn<T extends object = Record<string, unknown>> {
     /** 过滤器类型 */
     filterType?: 'text' | 'select' | 'multi-select' | 'date-range'
     /** 过滤可选项 */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    filterOptions?: Array<{ label: string; value: any }>
+    filterOptions?: Array<{ label: string; value: string | number }>
 }
 
 export interface DataTableSpanMethodParams<T extends object = Record<string, unknown>> {

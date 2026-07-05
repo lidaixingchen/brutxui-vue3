@@ -85,6 +85,7 @@ export const REGISTRY_PATH_PREFIXES = {
     locales: 'locales/',
     libUtils: 'lib/utils',
     lib: 'lib/',
+    directives: 'directives/',
 } as const;
 
 export const SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/schema.json';

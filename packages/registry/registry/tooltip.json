@@ -11,7 +11,7 @@
   "files": [
     {
       "path": "components/ui/tooltip/TooltipContent.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { TooltipPortal, TooltipContent as TooltipContentPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { tooltipContentVariants } from '@/components/ui/tooltip/tooltip-variants'\n\nconst DEFAULT_SIDE_OFFSET = 6\n\ninterface TooltipContentProps {\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TooltipContentProps>(), {\n    sideOffset: DEFAULT_SIDE_OFFSET,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(tooltipContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <TooltipPortal>\n        <TooltipContentPrimitive :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </TooltipContentPrimitive>\n    </TooltipPortal>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { TooltipPortal, TooltipContent as TooltipContentPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { tooltipContentVariants } from '@/components/ui/tooltip/tooltip-variants'\n\ndefineOptions({ inheritAttrs: false })\n\nconst DEFAULT_SIDE_OFFSET = 6\n\ninterface TooltipContentProps {\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TooltipContentProps>(), {\n    sideOffset: DEFAULT_SIDE_OFFSET,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(tooltipContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <TooltipPortal>\n        <TooltipContentPrimitive v-bind=\"$attrs\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </TooltipContentPrimitive>\n    </TooltipPortal>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -106,5 +106,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-21e372d97340c116a9006f82a931c34e947ee35b328ce65fe5c090254ad99d87"
+  "integrity": "sha256-8037d28bd943b72cac53d191266174f3de7ca2111c21bf935dbee253a19a39c3"
 }

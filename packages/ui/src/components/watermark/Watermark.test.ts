@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import Watermark from './Watermark.vue'
 
 describe('Watermark.vue', () => {
@@ -16,12 +16,66 @@ describe('Watermark.vue', () => {
         })
 
         expect(wrapper.find('.content').text()).toBe('Protected Content')
-        
+
         await nextTick()
-        
+
         const watermarkDiv = wrapper.find('.absolute')
         expect(watermarkDiv.exists()).toBe(true)
-        
+
+        const style = watermarkDiv.element.getAttribute('style') || ''
+        expect(style).toContain('background-image')
+
+        wrapper.unmount()
+    })
+
+    it('renders watermark overlay above positioned content by default', async () => {
+        const wrapper = mount(Watermark, {
+            slots: {
+                default: '<div class="content" style="position: relative; z-index: 10">Protected Content</div>'
+            },
+            props: { content: 'TEST_MARK' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+        expect(Number((watermarkDiv.element as HTMLElement).style.zIndex)).toBeGreaterThan(10)
+
+        wrapper.unmount()
+    })
+
+    it('does not render a blank watermark when content is empty and no image', async () => {
+        const wrapper = mount(Watermark, {
+            slots: { default: '<div class="content">Protected Content</div>' },
+            props: { content: '' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        expect(wrapper.find('.content').text()).toBe('Protected Content')
+        expect(wrapper.find('.absolute').exists()).toBe(false)
+
+        wrapper.unmount()
+    })
+
+    it('renders watermark when content is provided after being empty', async () => {
+        const wrapper = mount(Watermark, {
+            props: { content: '' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+        expect(wrapper.find('.absolute').exists()).toBe(false)
+
+        await wrapper.setProps({ content: 'CONFIDENTIAL' })
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
         const style = watermarkDiv.element.getAttribute('style') || ''
         expect(style).toContain('background-image')
 
@@ -77,5 +131,30 @@ describe('Watermark.vue', () => {
         expect(recreatedDiv).not.toBeNull()
 
         wrapper.unmount()
+    })
+
+    it('renders watermark with very large content without RangeError (SVG fallback)', async () => {
+        const getContextSpy = vi
+            .spyOn(HTMLCanvasElement.prototype, 'getContext')
+            .mockReturnValue(null)
+
+        const largeContent = 'A'.repeat(1000000)
+
+        const wrapper = mount(Watermark, {
+            props: { content: largeContent },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+
+        const style = watermarkDiv.element.getAttribute('style') || ''
+        expect(style).toContain('background-image')
+        expect(style).toContain('data:image/svg+xml;base64,')
+
+        wrapper.unmount()
+        getContextSpy.mockRestore()
     })
 })

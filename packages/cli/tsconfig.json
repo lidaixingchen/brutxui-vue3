@@ -7,7 +7,6 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "strict": true,
-        "ignoreDeprecations": "6.0",
         "esModuleInterop": true,
         "skipLibCheck": true,
         "declaration": true,

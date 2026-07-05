@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import { Plus } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { useLocale } from '@/composables/useLocale';
@@ -30,8 +30,9 @@ const { t } = useLocale();
 const draggingCard = ref<{ cardId: string; fromColumn: string } | null>(null);
 const draggingColumn = ref<string | null>(null);
 const dragOverColumn = ref<string | null>(null);
-const dragOverColumnHeader = ref<string | null>(null);
 const isDragging = ref(false);
+let dragEndRafId: number | null = null;
+const dragOverColumnHeader = ref<string | null>(null);
 const grabbedCard = ref<{ cardId: string; columnId: string } | null>(null);
 const ariaLiveMessage = ref('');
 
@@ -50,8 +51,12 @@ function onDragStart(e: DragEvent, cardId: string, fromColumn: string) {
 function onDragEnd() {
     draggingCard.value = null;
     dragOverColumn.value = null;
-    requestAnimationFrame(() => { isDragging.value = false });
+    dragEndRafId = requestAnimationFrame(() => { isDragging.value = false });
 }
+
+onBeforeUnmount(() => {
+    if (dragEndRafId !== null) cancelAnimationFrame(dragEndRafId);
+});
 
 function onDragOver(e: DragEvent, columnId: string) {
     if (draggingColumn.value) return;

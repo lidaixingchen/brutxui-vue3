@@ -6,8 +6,7 @@ import { messageStore, removeMessage, type MessageItem, type MessageType } from 
 import Button from '../button/Button.vue'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
-
-defineEmits<{ close: [] }>()
+import { Z_INDEX } from '@/lib/z-index'
 
 const { t } = useLocale()
 
@@ -49,7 +48,10 @@ function handleClose(id: string): void {
 </script>
 
 <template>
-    <div class="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] flex flex-col items-center gap-3 pointer-events-none">
+    <div
+        class="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none"
+        :style="{ zIndex: Z_INDEX.MESSAGE }"
+    >
         <TransitionGroup name="brutx-message">
             <div
                 v-for="msg in messageStore"

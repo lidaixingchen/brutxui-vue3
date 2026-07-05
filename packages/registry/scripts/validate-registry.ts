@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 const REGISTRY_DIR = path.resolve(__dirname, '../registry');
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
-const VALID_TYPES = new Set(['registry:ui', 'registry:hook', 'registry:lib']);
+const VALID_TYPES = new Set(['registry:ui', 'registry:hook', 'registry:lib', 'registry:directive']);
 
 function validateIndexConsistency(files: string[]): number {
     const indexPath = path.join(REGISTRY_DIR, 'index.json');
@@ -207,8 +207,8 @@ function validate() {
                         errorCount++;
                     }
 
-                    if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/') && !fileObj.path.startsWith('lib/')) {
-                        console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", "locales/", or "lib/".`);
+                    if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/') && !fileObj.path.startsWith('lib/') && !fileObj.path.startsWith('directives/')) {
+                        console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", "locales/", "lib/", or "directives/".`);
                         errorCount++;
                     }
                 }

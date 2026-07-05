@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted, type Ref } from 'vue'
+import { ref, onMounted, onUnmounted, watch, type Ref } from 'vue'
 
 export interface UseInfiniteScrollOptions {
     /** 触发距离阈值 (px) */
@@ -13,24 +13,24 @@ export interface UseInfiniteScrollOptions {
     onLoad: () => void
 }
 
+const DEFAULT_DISTANCE = 100
+const DEFAULT_DELAY = 200
+
 export function useInfiniteScroll(
     targetRef: Ref<HTMLElement | null>,
     options: UseInfiniteScrollOptions
 ) {
-    const {
-        distance = 100,
-        delay = 200,
-        disabled = false,
-        immediate = true,
-        onLoad,
-    } = options
+    // 使用 getter 读取最新值，避免在 setup 时静态捕获导致后续变更不生效
+    const getDistance = (): number => options.distance ?? DEFAULT_DISTANCE
+    const getDelay = (): number => options.delay ?? DEFAULT_DELAY
+    const getDisabled = (): boolean => options.disabled ?? false
 
     const isLoading = ref(false)
     const observer = ref<IntersectionObserver | null>(null)
     const loadTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
     function shouldLoad(): boolean {
-        if (disabled) return false
+        if (getDisabled()) return false
         if (isLoading.value) return false
         return true
     }
@@ -44,8 +44,8 @@ export function useInfiniteScroll(
 
         loadTimer.value = setTimeout(() => {
             isLoading.value = true
-            onLoad()
-        }, delay)
+            options.onLoad()
+        }, getDelay())
     }
 
     function setupObserver() {
@@ -60,7 +60,7 @@ export function useInfiniteScroll(
             },
             {
                 root: null,
-                rootMargin: `${distance}px`,
+                rootMargin: `${getDistance()}px`,
                 threshold: 0,
             }
         )
@@ -80,14 +80,39 @@ export function useInfiniteScroll(
     }
 
     onMounted(() => {
-        if (!disabled) {
+        if (!getDisabled()) {
             setupObserver()
 
-            if (immediate) {
+            if (options.immediate ?? true) {
                 triggerLoad()
             }
         }
     })
+
+    // 监听 distance 变化，重新创建 observer 以应用新的 rootMargin
+    watch(
+        () => options.distance,
+        () => {
+            if (observer.value) {
+                cleanupObserver()
+                if (!getDisabled()) {
+                    setupObserver()
+                }
+            }
+        }
+    )
+
+    // 监听 disabled 变化，动态启停 observer
+    watch(
+        () => options.disabled,
+        (newDisabled) => {
+            if (newDisabled) {
+                cleanupObserver()
+            } else if (!observer.value && targetRef.value) {
+                setupObserver()
+            }
+        }
+    )
 
     onUnmounted(() => {
         cleanupObserver()

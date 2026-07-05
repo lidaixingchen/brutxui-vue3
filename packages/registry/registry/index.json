@@ -819,7 +819,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-62743e136678cdb78b9a96d05ea1a52e1533b2a8446412370470b014e5a1b92d"
+      "integrity": "sha256-46344cb78e072dfd78123ef338af4fc9759221509085c07b5a7ed4e217b037ef"
     },
     {
       "name": "card",
@@ -1080,7 +1080,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5d46b013a476cbaff597809d192790eaa6533933c83da6c7771eb9348c56b257"
+      "integrity": "sha256-7e9a65bd97bf9cce7d32b4d1993b44785b67ed87ed36b06fafa5ac7c59683caa"
     },
     {
       "name": "checkbox",
@@ -1654,7 +1654,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-34d3b86da9b2cdad669a0afab73feb9f23e7b9b0afbe4cc493d30da4ed3a8bab"
+      "integrity": "sha256-8e5ed75cdcb9aa30bc6667ff3d2d7dbc21eeb716ca74f0d8fc32ae6939b43b5b"
     },
     {
       "name": "dropdown-menu",
@@ -1941,6 +1941,10 @@
         {
           "path": "components/ui/image/Image.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/z-index.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2029,7 +2033,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-add554d9b53a8a015400f5bed0152897c943d2f8a867f99df2fe7eaae77da9d1"
+      "integrity": "sha256-259216071e697dbe41c04e33f11c83897b93120085948cc6a6f31e9b065fd990"
     },
     {
       "name": "label",
@@ -2151,6 +2155,14 @@
         {
           "path": "components/ui/loading/Loading.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "directives/loading.ts",
+          "type": "registry:directive"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2239,7 +2251,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7a4312219b9990a209be43199c3e4bb7ccb95ba469e06dc2eab732e8c5a4a336"
+      "integrity": "sha256-3a6aa48e501423555387e99de0ae8eb44fc22f154eb237f35938861214b099c1"
     },
     {
       "name": "pagination",
@@ -2473,7 +2485,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2cfc10ac574e06d436b2a62f38e36b86c0da97ae60744ccd255183734411ec8f"
+      "integrity": "sha256-95243274809f3e912befb7d2f31d938a22296581b6481dba355fbe4099ef767c"
     },
     {
       "name": "scroll-area",
@@ -3466,7 +3478,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ea42aaf6f4299247eabbafbc54cbb508a5c9150885269fdf5dfc4bc4aab1cbb2"
+      "integrity": "sha256-5f9cc489c4a4c8daf394ef7abbeaaebb1beb9dcb6ada7ae0f40efa9af7fae1a9"
     },
     {
       "name": "textarea",
@@ -3823,7 +3835,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-21e372d97340c116a9006f82a931c34e947ee35b328ce65fe5c090254ad99d87"
+      "integrity": "sha256-8037d28bd943b72cac53d191266174f3de7ca2111c21bf935dbee253a19a39c3"
     },
     {
       "name": "dashboard-stats",
@@ -4610,7 +4622,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e90dc2bea53bf3336a4625b5d7e77667ae45b3a970766f321771b69ccf8829b1"
+      "integrity": "sha256-9ba1536cd8702cea4d912575693eca7037c419fc6c24736f133039d73583bee1"
     },
     {
       "name": "progress",
@@ -6531,7 +6543,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0e8638f702947fc37ada136eefe790ce17071f6993af91c5ee0277fdcf642e00"
+      "integrity": "sha256-d9b00144799a173caf01a1ac5b686b718a20d634d703fdf6b7b07df40467081b"
     },
     {
       "name": "before-after",
@@ -6967,11 +6979,19 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useReducedMotion.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:lib"
         },
         {
           "path": "lib/defaults.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:lib"
         }
       ],
@@ -7061,7 +7081,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-30fcf409702b57e62cedc1a371eaf79fb36fac328bedc3f59f7e017227aea889"
+      "integrity": "sha256-a8cad5cabf7e636f4a2a470019c72276608ef0ed3220b99b5a968363dd7f230b"
     },
     {
       "name": "tree-view",
@@ -7318,7 +7338,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1014c68bc21fc9681e3fcc452b424880477701aa159251b9b8955facdc55e89b"
+      "integrity": "sha256-0b2c932603d0a99e12bceffce5951bb3ffdf7a993f4839616aa492ff30d3eb15"
     },
     {
       "name": "chat-bubble",
@@ -10148,6 +10168,10 @@
         {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "lib/defaults.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -10236,7 +10260,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d4bb80eb433e87b55e0710856d892613ebc9a7e9e2fbe2af2d537604995b9a05"
+      "integrity": "sha256-c0359e52b39fb80da258cc868b27b3df561b2990391e02a79ab7da3a24e2061c"
     },
     {
       "name": "settings-page",
@@ -11319,7 +11343,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-63ba9921c34585faf3109afbd3bbe0e8b2245340182a8dddc4ecdb2a50e7d560"
+      "integrity": "sha256-c98798a7722c7261e16b4f760b6cedab53ce9c0eb2e1890920a43d53b0f7aba1"
     },
     {
       "name": "date-picker",
@@ -11509,7 +11533,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-dd75c1bc752918c3f8a29daec4c8a058acab43ce2af542a09b1b2eb52340f12c"
+      "integrity": "sha256-d102dd81ba1b60b51324b8eac8cb35635f734d4a5942a612f28f6d2349cc395c"
     },
     {
       "name": "color-mode-switcher",
@@ -11628,7 +11652,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c1bebca82b5c68042f2a836ae6e7d843ffad1c4d29cbca59ff89f7122644c513"
+      "integrity": "sha256-addba132bf44cccadc22b3dc070513ec151df3cd392c3d17fc01cb18636084b9"
     },
     {
       "name": "data-table",
@@ -11778,7 +11802,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0c7740385975751ba7c4b9a0ecf45e5602ae5685d5416a643b1375f4181f3bea"
+      "integrity": "sha256-8f9163268484a99b0f065b9e2357c254270bdc1aa142ec8ffdd280ada2880a6d"
     },
     {
       "name": "tree-select",
@@ -12390,7 +12414,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-abab6ea3c5c95607ca8d4e8cbe3f69e58af8055bd3a0fc858b8cd6879378c0a8"
+      "integrity": "sha256-f44ffc2ff73f6baa20c953f3051d7b5f6d79880d2a507cc115c1feecbd0fea40"
     },
     {
       "name": "input-adornment",
@@ -12620,7 +12644,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3f61510670c66edf566c2803085de62bd5305145a9b76d4323127fe310f81e45"
+      "integrity": "sha256-7d99183bfb0e8228d46ec9db56a3d07b4af9e32c4ded002d55c0a7892e10d642"
     },
     {
       "name": "popconfirm",
@@ -12947,7 +12971,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e9bd542d92eb74f9ba0df561e022c14ed71f1b25b1f8940d4818596813ea3af9"
+      "integrity": "sha256-5101980148c78560c9440959934ce2519c0f869471ff460053c86775dc1f6fd7"
     },
     {
       "name": "transfer",
@@ -13482,7 +13506,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-34b3cea5f40da30714ddf7027e0551f19206cc8c1f796be240a2bf070f1b74a3"
+      "integrity": "sha256-8f0d2671a59a8808f38402d5295b78ffbf0786592e09eb431567cccb53667186"
     },
     {
       "name": "tour",
@@ -13501,6 +13525,10 @@
         {
           "path": "composables/useLocale.ts",
           "type": "registry:hook"
+        },
+        {
+          "path": "lib/z-index.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -13589,7 +13617,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-bec1dcd268fd544a304e8b935a43f286042bc813ae8be503fa48235f1f10bed9"
+      "integrity": "sha256-0a1dd45bca87b10cfaf4ca0f1f19a7ac4e7a9adde9d08ddbde327fd1260ccb66"
     },
     {
       "name": "message",
@@ -13618,6 +13646,10 @@
         },
         {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/z-index.ts",
           "type": "registry:lib"
         },
         {
@@ -13719,7 +13751,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-593ea30ceb904db7fa0717590a54d5957f9c65dd8ae45c63cdd188948eec948f"
+      "integrity": "sha256-7ec315846c46a835972b37686d41916b58e342961a82c1e9ac54d38319077289"
     }
   ]
 }

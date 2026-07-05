@@ -5,7 +5,7 @@ export interface VirtualScrollItem {
 
 export interface VirtualScrollProps {
     /** 数据列表 */
-    items: VirtualScrollItem[]
+    items: unknown[]
     /** 每项高度（像素） */
     itemHeight?: number
     /** 是否启用动态高度测量 */

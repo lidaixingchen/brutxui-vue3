@@ -94,6 +94,10 @@ async function resolveComponentFilePath(registryPath: string, config: BrutalistC
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'locales', relative);
+    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.directives)) {
+        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.directives.length);
+        const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
+        resolved = path.join(path.dirname(composablesPath), 'directives', relative);
     } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils + '/')) {
         resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {

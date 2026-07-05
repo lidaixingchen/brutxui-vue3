@@ -265,25 +265,26 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 </template>
 
 <style>
-.brutal-selected {
-    background-color: var(--brutal-primary) !important;
-    border: 3px solid var(--brutal-border-color) !important;
-    border-radius: var(--brutal-radius) !important;
-    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color) !important;
+/* 提高特异性以替代 !important，允许下游覆盖 */
+.brutx-calendar .brutal-selected {
+    background-color: var(--brutal-primary);
+    border: 3px solid var(--brutal-border-color);
+    border-radius: var(--brutal-radius);
+    box-shadow: var(--brutal-shadow-offset-x) var(--brutal-shadow-offset-y) 0 var(--brutal-shadow-color);
 }
 
-.brutal-selected-content {
-    color: var(--brutal-primary-foreground) !important;
-    font-weight: 900 !important;
+.brutx-calendar .brutal-selected-content {
+    color: var(--brutal-primary-foreground);
+    font-weight: 900;
 }
 
-.brutal-range {
-    background-color: var(--brutal-accent) !important;
-    border-radius: var(--brutal-radius) !important;
+.brutx-calendar .brutal-range {
+    background-color: var(--brutal-accent);
+    border-radius: var(--brutal-radius);
 }
 
-.brutal-range-content {
-    color: var(--brutal-accent-foreground) !important;
+.brutx-calendar .brutal-range-content {
+    color: var(--brutal-accent-foreground);
 }
 
 .brutx-calendar {
@@ -307,7 +308,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 .brutx-calendar .vc-highlight-bg-solid,
 .brutx-calendar .vc-highlight-bg-light,
 .brutx-calendar .vc-highlight-bg-outline {
-    border-radius: var(--brutal-radius) !important;
+    border-radius: var(--brutal-radius);
 }
 
 .brutx-calendar .vc-arrow {
@@ -331,7 +332,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 
 .brutx-calendar .vc-arrow:active {
     transform: translateY(var(--brutal-pressed-offset, 2px));
-    box-shadow: none !important;
+    box-shadow: none;
 }
 
 .brutx-calendar .vc-arrow.vc-prev svg,
@@ -377,16 +378,16 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
 
 /* Mode card custom overrides to make weeks stretch and days auto-resize */
 .brutx-calendar.mode-card {
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100%;
+    max-width: 100%;
 }
 
 .brutx-calendar.mode-card .vc-weeks {
-    width: 100% !important;
+    width: 100%;
 }
 
 .brutx-calendar.mode-card .vc-day {
-    height: auto !important;
+    height: auto;
     min-height: 4rem; /* 4rem = min-h-16 */
     align-items: stretch;
     justify-content: flex-start;

@@ -308,13 +308,16 @@ export function useDialogEnhanced(
 
     // ── Watchers & Lifecycle ───────────────────────────────────────
 
-    // Reactive watcher: fires whenever optionsRef yields a new initialPosition
-    // (works when the caller passes a getter that reads reactive props).
-    watch(() => opt.initialPosition, (newPos) => {
-        if (newPos) {
-            position.value = { ...newPos }
+    // Watch x/y values (not the object reference) so that re-renders with an
+    // inline object prop of the same values don't clobber the user's drag offset.
+    watch(
+        [() => opt.initialPosition?.x, () => opt.initialPosition?.y],
+        () => {
+            if (opt.initialPosition) {
+                position.value = { ...opt.initialPosition }
+            }
         }
-    })
+    )
 
     onMounted(() => {
         initPosition()

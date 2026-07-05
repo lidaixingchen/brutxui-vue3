@@ -11,7 +11,7 @@
   "files": [
     {
       "path": "components/ui/popover/PopoverContent.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport {\n    PopoverPortal as PopoverPortalPrimitive,\n    PopoverContent as PopoverContentPrimitive,\n} from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n\nconst DEFAULT_SIDE_OFFSET = 8\n\ninterface PopoverContentProps {\n    align?: 'center' | 'start' | 'end'\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<PopoverContentProps>(), {\n    align: 'center',\n    sideOffset: DEFAULT_SIDE_OFFSET,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(popoverContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <PopoverPortalPrimitive>\n        <PopoverContentPrimitive :align=\"align\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </PopoverContentPrimitive>\n    </PopoverPortalPrimitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport {\n    PopoverPortal as PopoverPortalPrimitive,\n    PopoverContent as PopoverContentPrimitive,\n} from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n\ndefineOptions({ inheritAttrs: false })\n\nconst DEFAULT_SIDE_OFFSET = 8\n\ninterface PopoverContentProps {\n    align?: 'center' | 'start' | 'end'\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<PopoverContentProps>(), {\n    align: 'center',\n    sideOffset: DEFAULT_SIDE_OFFSET,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(popoverContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <PopoverPortalPrimitive>\n        <PopoverContentPrimitive v-bind=\"$attrs\" :align=\"align\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </PopoverContentPrimitive>\n    </PopoverPortalPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -111,5 +111,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-2cfc10ac574e06d436b2a62f38e36b86c0da97ae60744ccd255183734411ec8f"
+  "integrity": "sha256-95243274809f3e912befb7d2f31d938a22296581b6481dba355fbe4099ef767c"
 }

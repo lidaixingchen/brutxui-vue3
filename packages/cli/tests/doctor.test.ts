@@ -73,7 +73,7 @@ async function setupHealthyProject(cwd: string): Promise<void> {
     await fs.ensureDir(path.join(cwd, 'src', 'styles'));
     await fs.writeFile(
         path.join(cwd, 'src', 'styles', 'globals.css'),
-        ':root { --brutal-bg: #fff; }',
+        ':root { --color-brutal-bg: #fff; }\n.bg-brutal-primary { color: red; }\n.animate-in { animation: fade-in; }',
     );
     await fs.ensureDir(path.join(cwd, 'src', 'components'));
     await fs.ensureDir(path.join(cwd, 'src', 'lib'));
