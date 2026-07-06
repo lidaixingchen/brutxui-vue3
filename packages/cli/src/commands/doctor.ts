@@ -10,6 +10,33 @@ import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, C
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
+const MIN_NODE_VERSION = '22.0.0';
+
+function isNodeVersionSupported(version: string): boolean {
+    const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
+    const [minMajor, minMinor, minPatch] = MIN_NODE_VERSION.split('.').map(Number);
+
+    if (major !== minMajor) return major > minMajor;
+    if (minor !== minMinor) return minor > minMinor;
+    return patch >= minPatch;
+}
+
+function checkNodeVersion(): CheckResult {
+    const version = process.versions.node;
+    if (!isNodeVersionSupported(version)) {
+        return {
+            name: 'Node.js version',
+            status: 'error',
+            message: `Node.js ${version} is unsupported. brutx-vue requires Node.js >=${MIN_NODE_VERSION}.`,
+        };
+    }
+
+    return {
+        name: 'Node.js version',
+        status: 'pass',
+        message: `Node.js ${version} satisfies >=${MIN_NODE_VERSION}.`,
+    };
+}
 
 function checkConfigExists(cwd: string, config: BrutalistConfig | null): CheckResult {
     if (!config) {
@@ -466,6 +493,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
     const config = await readConfigSafe(cwd);
     const checks: CheckResult[] = [];
 
+    checks.push(checkNodeVersion());
     checks.push(checkConfigExists(cwd, config));
 
     if (config) {

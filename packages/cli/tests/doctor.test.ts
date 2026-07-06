@@ -134,6 +134,9 @@ describe('checkConfigExists', () => {
         try {
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });
+            const nodeCheck = results.find((r) => r.name === 'Node.js version');
+            expect(nodeCheck?.status).toBe('pass');
+
             const check = results.find((r) => r.name === 'components.json exists');
             expect(check?.status).toBe('pass');
             expect(check?.message).toContain('found');
@@ -160,8 +163,9 @@ describe('checkConfigExists', () => {
         try {
             mockedReadConfigSafe.mockResolvedValue(null);
             const results = await runDoctor(cwd, { silent: true });
-            expect(results).toHaveLength(1);
-            expect(results[0].name).toBe('components.json exists');
+            expect(results).toHaveLength(2);
+            expect(results[0].name).toBe('Node.js version');
+            expect(results[1].name).toBe('components.json exists');
         } finally {
             await fs.remove(cwd);
         }
@@ -677,7 +681,8 @@ describe('edge cases', () => {
             const results = await runDoctor(cwd, { silent: true });
             const check = results.find((r) => r.name === 'components.json exists');
             expect(check?.status).toBe('error');
-            expect(results).toHaveLength(1);
+            expect(results).toHaveLength(2);
+            expect(results[0].name).toBe('Node.js version');
         } finally {
             await fs.remove(cwd);
         }

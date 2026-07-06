@@ -28,6 +28,9 @@ export type { TranslateFunction } from './useLocale'
 export { useClearable } from './useClearable'
 export type { UseClearableOptions } from './useClearable'
 
+export { useSelectionDisplayText } from './useSelectionDisplayText'
+export type { UseSelectionDisplayTextOptions } from './useSelectionDisplayText'
+
 export { useDialog } from './useDialog'
 export type { UseDialogReturn, ShowDialogOptions } from './useDialog'
 

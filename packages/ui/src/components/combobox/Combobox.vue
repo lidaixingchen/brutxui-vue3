@@ -15,6 +15,7 @@ import CommandItem from '../command/CommandItem.vue'
 import Spinner from '../spinner/Spinner.vue'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 
 import { type ComboboxOption } from './combobox-types'
 
@@ -83,15 +84,14 @@ const selectedOptions = computed(() => {
     return found ? [found] : []
 })
 
-const displayText = computed(() => {
-    if (!props.multiple) {
-        return selectedOptions.value.length > 0 ? selectedOptions.value[0].label : resolvedPlaceholder.value
-    }
-    if (selectedOptions.value.length === 0) return resolvedPlaceholder.value
-    if (selectedOptions.value.length <= props.maxDisplay) {
-        return selectedOptions.value.map((o) => o.label).join(', ')
-    }
-    return t('combobox.selectedCount', { count: selectedOptions.value.length })
+const displayText = useSelectionDisplayText({
+    selectedItems: selectedOptions,
+    placeholder: resolvedPlaceholder,
+    multiple: () => props.multiple,
+    maxDisplay: () => props.maxDisplay,
+    getLabel: (option) => option.label,
+    formatList: (labels) => labels.join(', '),
+    formatCount: (count) => t('combobox.selectedCount', { count }),
 })
 
 const filteredOptions = computed(() => {

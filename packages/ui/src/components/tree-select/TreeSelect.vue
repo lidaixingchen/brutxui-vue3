@@ -7,6 +7,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { useClearable } from '@/composables/useClearable'
+import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
 import { type VariantProps } from 'class-variance-authority'
@@ -144,27 +145,18 @@ const selectedIds = computed(() => {
     return new Set<string>()
 })
 
-// 格式化列表文本（支持国际化）
-function formatList(labels: string[]): string {
-    // 使用 Intl.ListFormat 进行国际化格式化（如果可用）
-    if (typeof Intl !== 'undefined' && 'ListFormat' in Intl) {
-        const listFormatter = new Intl.ListFormat(undefined, { style: 'long', type: 'conjunction' })
-        return listFormatter.format(labels)
-    }
-    // 回退到简单逗号分隔
-    return labels.join(', ')
-}
+const displayNodes = computed(() => {
+    if (props.multiple) return selectedNodes.value
+    return selectedNode.value ? [selectedNode.value] : []
+})
 
-// 显示文本
-const displayText = computed(() => {
-    if (props.multiple && Array.isArray(props.modelValue)) {
-        if (selectedNodes.value.length === 0) return resolvedPlaceholder.value
-        if (selectedNodes.value.length <= props.maxDisplay) {
-            return formatList(selectedNodes.value.map((n) => n.label))
-        }
-        return t('treeSelect.selectedCount', { count: selectedNodes.value.length })
-    }
-    return selectedNode.value ? selectedNode.value.label : resolvedPlaceholder.value
+const displayText = useSelectionDisplayText({
+    selectedItems: displayNodes,
+    placeholder: resolvedPlaceholder,
+    multiple: () => props.multiple,
+    maxDisplay: () => props.maxDisplay,
+    getLabel: (node) => node.label,
+    formatCount: (count) => t('treeSelect.selectedCount', { count }),
 })
 
 // 优化的递归过滤节点 - 缓存小写查询字符串

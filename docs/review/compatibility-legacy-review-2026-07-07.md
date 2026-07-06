@@ -175,6 +175,7 @@
 - CLI 包 `packages/cli/package.json:57` 要求 Node `>=22.0.0`，`packages/cli/package.json:58` 要求 pnpm `>=9.0.0`。
 - CLI 构建 `packages/cli/tsup.config.ts:11` target 为 `node22`，且 `packages/cli/tsup.config.ts:9` 不生成 dts。
 - CLI integration matrix 已覆盖 Vite + Tailwind v4 默认路径，并显式登记 Tailwind v3、Nuxt、monorepo 子包等重型兼容场景；本地 registry 命令参数由测试矩阵生成。
+- CLI doctor 已检查当前运行的 Node.js 版本，低于 `brutx-vue` 的 `engines.node >=22.0.0` 时报告 error。
 
 风险：
 
@@ -184,7 +185,7 @@
 
 建议：
 
-- 短期维持 Node 22：保持 README、`engines`、doctor 和 CLI 构建 target 一致。
+- 短期维持 Node 22：`engines`、doctor 和 CLI 构建 target 已对齐；README/文档后续继续同步用户环境要求。
 - 如果未来希望扩大 CLI 覆盖面，再评估把 CLI target 降到 Node 20，并增加最低 Node 版本测试。
 - 根包 pnpm 11 和 CLI pnpm 9 可以共存；文档需持续说明“开发本仓库”和“使用 CLI”的要求不同。
 
