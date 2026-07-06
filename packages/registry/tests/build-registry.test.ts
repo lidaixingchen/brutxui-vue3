@@ -61,7 +61,9 @@ describe('build-registry helpers', () => {
     it('extracts static import and export module specifiers without matching dynamic imports', () => {
         const code = [
             "import '@/components/ui/button/button.css'",
-            "import type { ButtonProps } from '@/components/ui/button/types'",
+            "import type {",
+            "    ButtonProps,",
+            "} from '@/components/ui/button/types'",
             "export * from '@/lib/data-table-utils'",
             "export { cn } from '@/lib/utils'",
             "const lazy = import('@/components/ui/dialog/DialogContent.vue')",
@@ -72,6 +74,22 @@ describe('build-registry helpers', () => {
             '@/components/ui/button/types',
             '@/lib/data-table-utils',
             '@/lib/utils',
+        ]);
+    });
+
+    it('extracts module specifiers from Vue script blocks', () => {
+        const code = [
+            '<template><Button /></template>',
+            '<script setup lang="ts">',
+            "import Button from '@/components/ui/button/Button.vue'",
+            "export { useLocale } from '@/composables/useLocale'",
+            "const lazy = import('@/components/ui/dialog/DialogContent.vue')",
+            '</script>',
+        ].join('\n');
+
+        expect(extractModuleSpecifiers(code)).toEqual([
+            '@/components/ui/button/Button.vue',
+            '@/composables/useLocale',
         ]);
     });
 

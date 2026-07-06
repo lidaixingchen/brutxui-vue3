@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import fs from 'fs';
 import path from 'path';
+import ts from 'typescript';
 import { fileURLToPath, pathToFileURL } from 'url';
 import {
     COMPONENT_REGISTRY,
@@ -206,13 +207,40 @@ export function extractDeps(code: string, dirPrefix: string): string[] {
 
 export function extractModuleSpecifiers(code: string): string[] {
     const specifiers = new Set<string>();
-    const pattern = /(?:^|[;\r\n])\s*(?:import\s+(?:type\s+)?(?:[^'";]*?\s+from\s+)?|export\s+(?:type\s+)?[^'";]*?\s+from\s+)(['"])([^'"]+)\1/g;
 
-    for (const match of code.matchAll(pattern)) {
-        specifiers.add(match[2]);
+    for (const scriptCode of extractScriptBlocks(code)) {
+        const sourceFile = ts.createSourceFile(
+            'registry-source.ts',
+            scriptCode,
+            ts.ScriptTarget.Latest,
+            false,
+            ts.ScriptKind.TSX
+        );
+
+        for (const statement of sourceFile.statements) {
+            if (ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier)) {
+                specifiers.add(statement.moduleSpecifier.text);
+                continue;
+            }
+
+            if (ts.isExportDeclaration(statement) && statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
+                specifiers.add(statement.moduleSpecifier.text);
+            }
+        }
     }
 
     return Array.from(specifiers);
+}
+
+function extractScriptBlocks(code: string): string[] {
+    const blocks: string[] = [];
+    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+
+    for (const match of code.matchAll(scriptPattern)) {
+        blocks.push(match[1]);
+    }
+
+    return blocks.length > 0 ? blocks : [code];
 }
 
 export function getFileType(filePath: string): RegistryFileType {
