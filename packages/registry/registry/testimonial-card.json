@@ -6,6 +6,8 @@
   "description": "Customer testimonial display with avatar and rating.",
   "category": "layout",
   "examples": [],
+  "status": "legacy",
+  "replacement": "card",
   "dependencies": [
     "@lucide/vue"
   ],

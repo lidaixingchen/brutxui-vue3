@@ -6,6 +6,8 @@
   "description": "404 error page with illustration and navigation.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "result",
   "dependencies": [
     "@lucide/vue"
   ],

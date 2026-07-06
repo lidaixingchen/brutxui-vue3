@@ -6,6 +6,8 @@
   "description": "Dashboard overview page with stats and recent activity.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "dashboard-shell",
   "dependencies": [
     "@lucide/vue"
   ],

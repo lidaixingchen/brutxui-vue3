@@ -6,6 +6,8 @@
   "description": "Image gallery with lightbox and grid layouts.",
   "category": "marketing",
   "examples": [],
+  "status": "legacy",
+  "replacement": "carousel",
   "dependencies": [
     "embla-carousel-vue",
     "@lucide/vue"

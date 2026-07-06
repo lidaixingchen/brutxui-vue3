@@ -6,6 +6,8 @@
   "description": "Frequently asked questions with expandable answers.",
   "category": "marketing",
   "examples": [],
+  "status": "legacy",
+  "replacement": "accordion",
   "dependencies": [
     "@lucide/vue"
   ],

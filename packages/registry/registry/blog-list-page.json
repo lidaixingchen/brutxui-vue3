@@ -6,6 +6,8 @@
   "description": "Blog listing page with post cards and pagination.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "blog-card",
   "dependencies": [
     "@lucide/vue"
   ],

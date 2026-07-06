@@ -6,6 +6,8 @@
   "description": "Floating action buttons for common tasks.",
   "category": "utility",
   "examples": [],
+  "status": "legacy",
+  "replacement": "button",
   "dependencies": [
     "@lucide/vue"
   ],

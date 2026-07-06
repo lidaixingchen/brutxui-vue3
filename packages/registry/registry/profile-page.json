@@ -6,6 +6,8 @@
   "description": "User profile page with avatar, info, and edit actions.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "descriptions",
   "dependencies": [
     "@lucide/vue"
   ],

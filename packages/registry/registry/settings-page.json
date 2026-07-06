@@ -6,6 +6,8 @@
   "description": "Settings page layout with grouped configuration options.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "tabs",
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

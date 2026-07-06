@@ -6,6 +6,8 @@
   "description": "Decorative prefix and suffix elements for input fields.",
   "category": "form",
   "examples": [],
+  "status": "legacy",
+  "replacement": "input",
   "dependencies": [],
   "registryDependencies": [],
   "files": [

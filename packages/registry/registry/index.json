@@ -627,11 +627,27 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useGlitchEffect.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useReducedMotion.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:lib"
         },
         {
+          "path": "lib/defaults.ts",
+          "type": "registry:lib"
+        },
+        {
           "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/env.ts",
           "type": "registry:lib"
         }
       ],
@@ -721,7 +737,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-96a73215305a03d730aed6e33edcdefb00c7b0661ab43d4ffde5fe0bea34c8d0"
+      "integrity": "sha256-2b5293312c2447a2c54da5f22e3cc1d557a9cc278122b763d78cf375b9ffb01b"
     },
     {
       "name": "calendar",
@@ -743,6 +759,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "lib/date.ts",
+          "type": "registry:lib"
+        },
+        {
           "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:lib"
         }
@@ -833,7 +853,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-46344cb78e072dfd78123ef338af4fc9759221509085c07b5a7ed4e217b037ef"
+      "integrity": "sha256-da813ad854566316772044df781aa0f07f449af26a53355623a22f4a3e2c5ea4"
     },
     {
       "name": "card",
@@ -3912,6 +3932,8 @@
       "description": "Dashboard statistics cards with trend indicators.",
       "category": "layout",
       "examples": [],
+      "status": "legacy",
+      "replacement": "counter",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5529,6 +5551,7 @@
       ],
       "registryDependencies": [
         "button",
+        "result",
         "locale-zh-cn"
       ],
       "files": [
@@ -5627,7 +5650,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5d23c70a122058ff269f533576200c0dea0648b144345a5630c9d30a06145093"
+      "integrity": "sha256-af028c7b7b72053bbfc4df11c48e97c9c4ce35395e319bb433bbbd3a04744ab4"
     },
     {
       "name": "waitlist-page",
@@ -5636,6 +5659,8 @@
       "description": "Waitlist signup page with email capture and countdown.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "brutalist-hero",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -7201,7 +7226,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8c4865d2a21859e9cfc44562215492fa2df5e9dca358f5df2d3506bfd24e0f8c"
+      "integrity": "sha256-8d59c52fc3954d5ac7647031b45db9feec2d57e6bf178837c2224c5a1d193f3b"
     },
     {
       "name": "tree-view",
@@ -8555,6 +8580,8 @@
       "description": "Customer testimonial display with avatar and rating.",
       "category": "layout",
       "examples": [],
+      "status": "legacy",
+      "replacement": "card",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8673,6 +8700,8 @@
       "description": "Blog post preview card with image, title, and excerpt.",
       "category": "layout",
       "examples": [],
+      "status": "legacy",
+      "replacement": "card",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8788,6 +8817,8 @@
       "description": "File preview card with metadata and download action.",
       "category": "layout",
       "examples": [],
+      "status": "legacy",
+      "replacement": "card",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8906,6 +8937,8 @@
       "description": "Floating action buttons for common tasks.",
       "category": "utility",
       "examples": [],
+      "status": "legacy",
+      "replacement": "button",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9025,6 +9058,8 @@
       "description": "Frequently asked questions with expandable answers.",
       "category": "marketing",
       "examples": [],
+      "status": "legacy",
+      "replacement": "accordion",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9372,6 +9407,8 @@
       "description": "404 error page with illustration and navigation.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "result",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9505,6 +9542,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/search-widget/useSearchWidget.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
@@ -9599,7 +9640,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4af1e71cda278782c36e69fc9b970bc048c079a02ac298c0d892eb133bdd0fbb"
+      "integrity": "sha256-38342f355a8a333db374f182bb3dc21b57807f5348c77e8093b4e90a78d2d2f8"
     },
     {
       "name": "feedback-form",
@@ -9846,6 +9887,8 @@
       "description": "Settings page layout with grouped configuration options.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "tabs",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -9966,6 +10009,8 @@
       "description": "Blog listing page with post cards and pagination.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "blog-card",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10085,6 +10130,8 @@
       "description": "Activity log page with timeline entries and filtering.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "timeline",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10199,6 +10246,8 @@
       "description": "User profile page with avatar, info, and edit actions.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "descriptions",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10316,6 +10365,8 @@
       "description": "Data visualization section with interactive charts.",
       "category": "marketing",
       "examples": [],
+      "status": "legacy",
+      "replacement": "sketchy-chart",
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -10432,6 +10483,8 @@
       "description": "Image gallery with lightbox and grid layouts.",
       "category": "marketing",
       "examples": [],
+      "status": "legacy",
+      "replacement": "carousel",
       "dependencies": [
         "embla-carousel-vue",
         "@lucide/vue"
@@ -10546,6 +10599,8 @@
       "description": "Dashboard overview page with stats and recent activity.",
       "category": "page",
       "examples": [],
+      "status": "legacy",
+      "replacement": "dashboard-shell",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -11009,7 +11064,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6a8db1569044d61d03075b82587081692cf4785532998c79da0e9e9bd147354c"
+      "integrity": "sha256-5b8556478e72a5f1e887a78d52ab623792d57633bbf15d8e4befbb83a147e3cf"
     },
     {
       "name": "color-mode-switcher",
@@ -11286,7 +11341,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5af281ee2b2e6dfedb0b69b454cd3a1131c8e4b5cd8e3247b32ee1f1538ab47f"
+      "integrity": "sha256-cdcdcd82c4b70ea836ccdc6a7b0a07faa3a38517d5624f267587343ff57c7348"
     },
     {
       "name": "tree-select",
@@ -11687,11 +11742,11 @@
           "type": "registry:hook"
         },
         {
-          "path": "lib/defaults.ts",
-          "type": "registry:lib"
+          "path": "composables/useGlitchEffect.ts",
+          "type": "registry:hook"
         },
         {
-          "path": "lib/icon-size-variants.ts",
+          "path": "lib/defaults.ts",
           "type": "registry:lib"
         },
         {
@@ -11789,7 +11844,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c7d9120b701d548e881d1c9a753ba74f1f9d66cfac380d50d2216dc843dad051"
+      "integrity": "sha256-4c5ebebbeec1bb6b52af3d312b4da1086a7c0dae7f490938fe55227c1b164d7c"
     },
     {
       "name": "virtual-scroll",
@@ -11917,6 +11972,8 @@
       "description": "Decorative prefix and suffix elements for input fields.",
       "category": "form",
       "examples": [],
+      "status": "legacy",
+      "replacement": "input",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12812,7 +12869,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-09e8f88ddbcb2c211a3688b6a397ea42357e91995f5c53fd747e153c0ccb63d3"
+      "integrity": "sha256-84c0cee46821ccd7ac6905347046a8ae549b2a031f1f7326a324ff5352f60eb0"
     },
     {
       "name": "watermark",
@@ -13168,7 +13225,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0c2e9b13c0aa680f5d82841d0d8bee75e2e84a00f4a0bfe29858ef99591f9e4f"
+      "integrity": "sha256-c63414bea2623041850d25b7647f0a60d2a16a1b3b578a277f4190cec8da62dc"
     }
   ]
 }

@@ -6,6 +6,8 @@
   "description": "File preview card with metadata and download action.",
   "category": "layout",
   "examples": [],
+  "status": "legacy",
+  "replacement": "card",
   "dependencies": [
     "@lucide/vue"
   ],

@@ -30,7 +30,9 @@
         "table"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "timeline"
     },
     "alert": {
       "integrity": "sha256-fa17ce9912bfaed1ca499f4788454b4e118b2240a13a29e75e901e7124f755f7",
@@ -133,7 +135,9 @@
         "locale-zh-cn"
       ],
       "category": "layout",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "card"
     },
     "blog-list-page": {
       "integrity": "sha256-c057555c696d8cc9126b094b961d798424478b9060f3a2c4afdfca1247e058a0",
@@ -149,7 +153,9 @@
         "pagination"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "blog-card"
     },
     "breadcrumb": {
       "integrity": "sha256-965fde1c57170c2478542b44038e2ccd62803a7c84e64e9155fe73f983175de4",
@@ -180,8 +186,8 @@
       "examples": []
     },
     "button": {
-      "integrity": "sha256-96a73215305a03d730aed6e33edcdefb00c7b0661ab43d4ffde5fe0bea34c8d0",
-      "fileCount": 6,
+      "integrity": "sha256-2b5293312c2447a2c54da5f22e3cc1d557a9cc278122b763d78cf375b9ffb01b",
+      "fileCount": 10,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"
@@ -193,8 +199,8 @@
       "examples": []
     },
     "calendar": {
-      "integrity": "sha256-46344cb78e072dfd78123ef338af4fc9759221509085c07b5a7ed4e217b037ef",
-      "fileCount": 2,
+      "integrity": "sha256-da813ad854566316772044df781aa0f07f449af26a53355623a22f4a3e2c5ea4",
+      "fileCount": 3,
       "dependencies": [
         "@lucide/vue",
         "v-calendar"
@@ -224,7 +230,7 @@
       "examples": []
     },
     "carousel": {
-      "integrity": "sha256-8c4865d2a21859e9cfc44562215492fa2df5e9dca358f5df2d3506bfd24e0f8c",
+      "integrity": "sha256-8d59c52fc3954d5ac7647031b45db9feec2d57e6bf178837c2224c5a1d193f3b",
       "fileCount": 11,
       "dependencies": [
         "@lucide/vue",
@@ -267,7 +273,9 @@
         "tabs"
       ],
       "category": "marketing",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "sketchy-chart"
     },
     "chat-bubble": {
       "integrity": "sha256-54b43803af60f2bdc763139dbef5e4a3bd0462217345489946ba540ae1458daa",
@@ -427,10 +435,12 @@
         "locale-zh-cn"
       ],
       "category": "layout",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "counter"
     },
     "data-table": {
-      "integrity": "sha256-5af281ee2b2e6dfedb0b69b454cd3a1131c8e4b5cd8e3247b32ee1f1538ab47f",
+      "integrity": "sha256-cdcdcd82c4b70ea836ccdc6a7b0a07faa3a38517d5624f267587343ff57c7348",
       "fileCount": 12,
       "dependencies": [
         "@lucide/vue"
@@ -447,7 +457,7 @@
       "examples": []
     },
     "date-picker": {
-      "integrity": "sha256-6a8db1569044d61d03075b82587081692cf4785532998c79da0e9e9bd147354c",
+      "integrity": "sha256-5b8556478e72a5f1e887a78d52ab623792d57633bbf15d8e4befbb83a147e3cf",
       "fileCount": 21,
       "dependencies": [
         "@lucide/vue",
@@ -498,14 +508,15 @@
       "examples": []
     },
     "empty-state": {
-      "integrity": "sha256-5d23c70a122058ff269f533576200c0dea0648b144345a5630c9d30a06145093",
+      "integrity": "sha256-af028c7b7b72053bbfc4df11c48e97c9c4ce35395e319bb433bbbd3a04744ab4",
       "fileCount": 2,
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
         "button",
-        "locale-zh-cn"
+        "locale-zh-cn",
+        "result"
       ],
       "category": "utility",
       "examples": []
@@ -524,7 +535,9 @@
         "locale-zh-cn"
       ],
       "category": "marketing",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "accordion"
     },
     "feedback-form": {
       "integrity": "sha256-f93e16ac0f0fd656c5bdd7e56fc3f6bd7d39a062cdf5243866b91cfd6608bce4",
@@ -557,7 +570,9 @@
         "locale-zh-cn"
       ],
       "category": "layout",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "card"
     },
     "footer-section": {
       "integrity": "sha256-10fb3c4966d246a00854c3d706c82c88e072b1581476d6f5923a294e68e74f45",
@@ -602,10 +617,12 @@
         "locale-zh-cn"
       ],
       "category": "marketing",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "carousel"
     },
     "glitch-button": {
-      "integrity": "sha256-c7d9120b701d548e881d1c9a753ba74f1f9d66cfac380d50d2216dc843dad051",
+      "integrity": "sha256-4c5ebebbeec1bb6b52af3d312b4da1086a7c0dae7f490938fe55227c1b164d7c",
       "fileCount": 7,
       "dependencies": [
         "@lucide/vue"
@@ -687,7 +704,9 @@
       "dependencies": [],
       "registryDependencies": [],
       "category": "form",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "input"
     },
     "kanban": {
       "integrity": "sha256-0b2c932603d0a99e12bceffce5951bb3ffdf7a993f4839616aa492ff30d3eb15",
@@ -758,7 +777,7 @@
       "examples": []
     },
     "message": {
-      "integrity": "sha256-0c2e9b13c0aa680f5d82841d0d8bee75e2e84a00f4a0bfe29858ef99591f9e4f",
+      "integrity": "sha256-c63414bea2623041850d25b7647f0a60d2a16a1b3b578a277f4190cec8da62dc",
       "fileCount": 8,
       "dependencies": [
         "@lucide/vue"
@@ -791,7 +810,9 @@
         "locale-zh-cn"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "result"
     },
     "number-input": {
       "integrity": "sha256-966574a2c3f5b1dbd9df66ac9ee68a11ccb9fd060d4aac6d4c628a2605457380",
@@ -820,7 +841,9 @@
         "locale-zh-cn"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "dashboard-shell"
     },
     "pagination": {
       "integrity": "sha256-44bd5322a18a543ef660acfdebd8a9adf927cf03ae2e2d29b2eab7a6002f4f8d",
@@ -890,7 +913,9 @@
         "textarea"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "descriptions"
     },
     "progress": {
       "integrity": "sha256-4f25faa6f05c7c1470c042618733530fa59b074aaaaba6768690432eac05c9b9",
@@ -916,7 +941,9 @@
         "locale-zh-cn"
       ],
       "category": "utility",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "button"
     },
     "radio-group": {
       "integrity": "sha256-e2083937f5d4b2b0b5663481bb08343c1a247115770ffc82d123f8a4c3d0eb47",
@@ -940,7 +967,7 @@
       "examples": []
     },
     "result": {
-      "integrity": "sha256-09e8f88ddbcb2c211a3688b6a397ea42357e91995f5c53fd747e153c0ccb63d3",
+      "integrity": "sha256-84c0cee46821ccd7ac6905347046a8ae549b2a031f1f7326a324ff5352f60eb0",
       "fileCount": 2,
       "dependencies": [
         "@lucide/vue"
@@ -970,8 +997,8 @@
       "examples": []
     },
     "search-widget": {
-      "integrity": "sha256-4af1e71cda278782c36e69fc9b970bc048c079a02ac298c0d892eb133bdd0fbb",
-      "fileCount": 3,
+      "integrity": "sha256-38342f355a8a333db374f182bb3dc21b57807f5348c77e8093b4e90a78d2d2f8",
+      "fileCount": 4,
       "dependencies": [
         "@lucide/vue"
       ],
@@ -1024,7 +1051,9 @@
         "tabs"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "tabs"
     },
     "sheet": {
       "integrity": "sha256-e870e494b2f95f2247286c087641c1292d7161486a74688936e7958093899414",
@@ -1147,7 +1176,9 @@
         "locale-zh-cn"
       ],
       "category": "layout",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "card"
     },
     "textarea": {
       "integrity": "sha256-94cc5a6ada54a86a64c88a622adb49990d3ad258281a534d78bc74652ac44de5",
@@ -1318,7 +1349,9 @@
         "locale-zh-cn"
       ],
       "category": "page",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "brutalist-hero"
     },
     "watermark": {
       "integrity": "sha256-147d4a83ee0bc741ee00ead9f27ac7ade64fcdbd159f29df988e6e3584449f00",

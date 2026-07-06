@@ -6,6 +6,8 @@
   "description": "Dashboard statistics cards with trend indicators.",
   "category": "layout",
   "examples": [],
+  "status": "legacy",
+  "replacement": "counter",
   "dependencies": [
     "@lucide/vue"
   ],

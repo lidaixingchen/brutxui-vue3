@@ -6,6 +6,8 @@
   "description": "Waitlist signup page with email capture and countdown.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "brutalist-hero",
   "dependencies": [
     "@lucide/vue"
   ],

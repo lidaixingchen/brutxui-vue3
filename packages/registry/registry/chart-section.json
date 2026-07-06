@@ -6,6 +6,8 @@
   "description": "Data visualization section with interactive charts.",
   "category": "marketing",
   "examples": [],
+  "status": "legacy",
+  "replacement": "sketchy-chart",
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

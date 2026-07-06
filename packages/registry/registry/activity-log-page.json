@@ -6,6 +6,8 @@
   "description": "Activity log page with timeline entries and filtering.",
   "category": "page",
   "examples": [],
+  "status": "legacy",
+  "replacement": "timeline",
   "dependencies": [
     "@lucide/vue"
   ],

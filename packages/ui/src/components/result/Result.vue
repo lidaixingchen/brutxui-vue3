@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Check, AlertTriangle, Info, X } from '@lucide/vue'
+import { Check, AlertTriangle, Info, X, FolderOpen } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface ResultProps {
-    status?: 'success' | 'warning' | 'info' | 'error'
+    status?: 'success' | 'warning' | 'info' | 'error' | 'empty'
     title?: string
     subTitle?: string
     variant?: 'plain' | 'card'
     iconSize?: IconSize
+    titleAs?: 'h2' | 'h3'
     class?: string
 }
 
@@ -19,6 +20,7 @@ const props = withDefaults(defineProps<ResultProps>(), {
     subTitle: undefined,
     variant: 'card',
     iconSize: undefined,
+    titleAs: 'h2',
     class: undefined,
 })
 
@@ -38,6 +40,10 @@ const statusConfig = {
     error: {
         icon: X,
         colorClass: 'bg-brutal-destructive text-white',
+    },
+    empty: {
+        icon: FolderOpen,
+        colorClass: 'bg-brutal-accent text-brutal-black',
     },
 }
 
@@ -72,14 +78,15 @@ const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: 
             </slot>
         </div>
 
-        <h2 
+        <component
+            :is="titleAs"
             v-if="title || $slots.title" 
             class="text-2xl font-black text-brutal-black dark:text-white mb-2 uppercase tracking-wide"
         >
             <slot name="title">
                 {{ title }}
             </slot>
-        </h2>
+        </component>
 
         <p 
             v-if="subTitle || $slots.subTitle" 

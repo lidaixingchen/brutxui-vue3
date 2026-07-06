@@ -71,4 +71,18 @@ describe('Result.vue', () => {
         expect(icon.classes()).toContain('h-5')
         expect(icon.classes()).toContain('w-5')
     })
+
+    it('supports empty status and h3 title tag', () => {
+        const wrapper = mount(Result, {
+            props: {
+                status: 'empty',
+                title: 'No results',
+                titleAs: 'h3',
+            },
+            global: { provide: localeProvide },
+        })
+
+        expect(wrapper.find('h3').text()).toBe('No results')
+        expect(wrapper.find('.w-16.h-16').classes()).toContain('bg-brutal-accent')
+    })
 })

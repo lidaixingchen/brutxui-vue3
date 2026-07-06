@@ -6,6 +6,8 @@
   "description": "Blog post preview card with image, title, and excerpt.",
   "category": "layout",
   "examples": [],
+  "status": "legacy",
+  "replacement": "card",
   "dependencies": [
     "@lucide/vue"
   ],
