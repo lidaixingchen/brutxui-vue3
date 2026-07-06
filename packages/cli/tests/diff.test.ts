@@ -340,6 +340,45 @@ describe('diff command', () => {
             expect(results[0].integrityStatus).toBe('outdated');
             expect(results[0].registrySource).toBe('https://example.test/registry');
             expect(results[0].installedAt).toBe('2026-07-07T00:00:00.000Z');
+            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry');
+        });
+
+        it('should let --registry override manifest registry source', async () => {
+            mockedReadConfigSafe.mockResolvedValue(createConfig());
+            await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>button</template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-installed',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            mockedGetItem.mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                files: [{
+                    path: 'components/ui/button/Button.vue',
+                    content: '<template>button</template>',
+                }],
+                integrity: 'sha256-latest',
+            } as RegistryItem);
+
+            await runDiffJson(tmpDir, {
+                components: ['button'],
+                registry: 'https://override.test/registry',
+            });
+
+            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://override.test/registry');
         });
 
         it('should include unified diff patch for modified files', async () => {

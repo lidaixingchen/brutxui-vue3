@@ -292,7 +292,7 @@ export async function diff(options: DiffOptions): Promise<void> {
             cwd,
             config,
             component,
-            options.registry,
+            options.registry ?? manifest?.components[component]?.registrySource,
             manifest?.components[component],
         ))
     );
