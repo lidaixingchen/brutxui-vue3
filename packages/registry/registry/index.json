@@ -9524,6 +9524,8 @@
       "description": "Search input with results display and filtering.",
       "category": "utility",
       "examples": [],
+      "status": "legacy",
+      "replacement": "command",
       "dependencies": [
         "@lucide/vue"
       ],

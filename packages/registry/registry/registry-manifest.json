@@ -1008,7 +1008,9 @@
         "spinner"
       ],
       "category": "utility",
-      "examples": []
+      "examples": [],
+      "status": "legacy",
+      "replacement": "command"
     },
     "select": {
       "integrity": "sha256-84a3a31445305aee070fc3415737445f357c0eba0b323dea107e0866b3ce9c60",

@@ -79,7 +79,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     'header-section': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Page header with navigation, title, and subtitle.' },
     'footer-section': { dependencies: ['@lucide/vue'], description: 'Page footer with links, copyright, and social icons.' },
     'not-found-page': { dependencies: ['@lucide/vue'], description: '404 error page with illustration and navigation.', status: 'legacy', replacement: 'result' },
-    'search-widget': { dependencies: ['@lucide/vue'], description: 'Search input with results display and filtering.' },
+    'search-widget': { dependencies: ['@lucide/vue'], description: 'Search input with results display and filtering.', status: 'legacy', replacement: 'command' },
     'feedback-form': { dependencies: ['@lucide/vue'], description: 'User feedback form with rating and comment fields.' },
     'cookie-consent': { dependencies: ['@lucide/vue'], description: 'Cookie consent banner with accept and customize options.' },
     'settings-page': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Settings page layout with grouped configuration options.', status: 'legacy', replacement: 'tabs' },
