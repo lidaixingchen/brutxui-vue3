@@ -94,6 +94,18 @@ async function getComponentInfos(cwd: string, config: BrutalistConfig): Promise<
     return infos.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+function formatSource(source: string | undefined): string {
+    if (!source) {
+        return 'local';
+    }
+
+    try {
+        return new URL(source).host;
+    } catch {
+        return source;
+    }
+}
+
 function printTable(infos: InstalledComponentInfo[]): void {
     logger.newLine();
     logger.bold('Installed Components');
@@ -101,8 +113,9 @@ function printTable(infos: InstalledComponentInfo[]): void {
 
     const nameWidth = Math.max(10, ...infos.map(i => i.name.length)) + 2;
     const filesWidth = 8;
-    const header = `  ${'Name'.padEnd(nameWidth)}${'Files'.padEnd(filesWidth)}Dependencies`;
-    const separator = `  ${'─'.repeat(nameWidth)}${'─'.repeat(filesWidth)}${'─'.repeat(20)}`;
+    const sourceWidth = Math.max(10, ...infos.map(i => formatSource(i.registrySource).length)) + 2;
+    const header = `  ${'Name'.padEnd(nameWidth)}${'Files'.padEnd(filesWidth)}${'Source'.padEnd(sourceWidth)}Dependencies`;
+    const separator = `  ${'─'.repeat(nameWidth)}${'─'.repeat(filesWidth)}${'─'.repeat(sourceWidth)}${'─'.repeat(20)}`;
 
     logger.log(header);
     logger.log(separator);
@@ -111,7 +124,9 @@ function printTable(infos: InstalledComponentInfo[]): void {
         const depsStr = info.dependencies.length > 0
             ? info.dependencies.join(', ')
             : chalk.dim('none');
-        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${depsStr}`);
+        const source = formatSource(info.registrySource);
+        const sourceStr = info.registrySource ? source : chalk.dim(source);
+        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${sourceStr.padEnd(sourceWidth)}${depsStr}`);
     }
 
     logger.newLine();

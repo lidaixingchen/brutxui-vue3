@@ -436,5 +436,40 @@ import { DialogTrigger } from 'reka-ui';
             // console.log should NOT have been called with JSON data
             // (silent mode suppresses logger output, so stdout may be empty)
         });
+
+        it('shows manifest source in table output', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const compDir = path.join(tmpDir, 'src', 'components', 'button');
+            await fs.ensureDir(compDir);
+            await fs.writeFile(path.join(compDir, 'Button.vue'), '<template><button></button></template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            const output: string[] = [];
+            const consoleSpy = vi.spyOn(console, 'log').mockImplementation((...args: unknown[]) => {
+                output.push(args.map(String).join(' '));
+            });
+
+            await list({ cwd: tmpDir });
+
+            consoleSpy.mockRestore();
+
+            expect(output.join('\n')).toContain('example.test');
+        });
     });
 });
