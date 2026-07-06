@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<UploadTriggerProps>(), {
 })
 
 const emit = defineEmits<{
-    select: [files: FileList]
+    select: [files: FileList, source: 'browse' | 'drop']
 }>()
 
 const isDragging = ref(false)
@@ -40,7 +40,7 @@ function triggerFileInput() {
 function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement
     if (target.files && target.files.length > 0) {
-        emit('select', target.files)
+        emit('select', target.files, 'browse')
         target.value = '' // 重置 input
     }
 }
@@ -54,6 +54,11 @@ function handleDragEnter(event: DragEvent) {
 
 function handleDragLeave(event: DragEvent) {
     event.preventDefault()
+    const el = event.currentTarget
+    if (el instanceof HTMLElement) {
+        const related = event.relatedTarget
+        if (related instanceof Node && el.contains(related)) return
+    }
     isDragging.value = false
 }
 
@@ -69,7 +74,7 @@ function handleDrop(event: DragEvent) {
 
     const files = event.dataTransfer?.files
     if (files && files.length > 0) {
-        emit('select', files)
+        emit('select', files, 'drop')
     }
 }
 </script>
@@ -99,7 +104,7 @@ function handleDrop(event: DragEvent) {
         >
 
         <!-- 默认触发区域 -->
-        <slot :is-dragging="isDragging">
+        <slot :is-dragging="isDragging" :trigger-file-input="triggerFileInput">
             <div
                 :class="cn(
                     'flex flex-col items-center justify-center gap-2 p-8',
