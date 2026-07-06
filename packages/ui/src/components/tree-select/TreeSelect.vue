@@ -6,6 +6,7 @@ import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
+import { useClearable } from '@/composables/useClearable'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
 import { type VariantProps } from 'class-variance-authority'
@@ -254,13 +255,23 @@ function handleSelect(node: TreeNode) {
     }
 }
 
-// 清除选中
-function handleClear(event: Event) {
-    event.stopPropagation()
+function clearSelection() {
     const emptyValue = props.multiple ? [] : undefined
     emit('update:modelValue', emptyValue)
     emit('select', emptyValue)
 }
+
+const {
+    showClear,
+    handleClear,
+    onMouseEnter: onClearableMouseEnter,
+    onMouseLeave: onClearableMouseLeave,
+} = useClearable({
+    modelValue: () => props.modelValue,
+    clearable: () => props.clearable,
+    disabled: () => props.disabled,
+    onClear: clearSelection,
+})
 
 watch(open, (isOpen) => {
     emit('open-change', isOpen)
@@ -325,6 +336,8 @@ const contentId = `tree-select-content-${useId()}`
                 :tabindex="disabled ? -1 : 0"
                 :aria-disabled="disabled"
                 :class="triggerClasses"
+                @mouseenter="onClearableMouseEnter"
+                @mouseleave="onClearableMouseLeave"
                 @keydown.enter="!disabled && (open = !open)"
                 @keydown.space="!disabled && (open = !open)"
                 @keydown.escape="open = false"
@@ -333,14 +346,14 @@ const contentId = `tree-select-content-${useId()}`
                 <span class="flex items-center gap-1">
                     <!-- 修复：清除按钮使用 span + role="button" -->
                     <span
-                        v-if="clearable && hasValue"
+                        v-if="showClear"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal focus:outline-none focus:ring-2 focus:ring-brutal-ring"
                         :aria-label="t('treeSelect.clear')"
                         @click="handleClear"
                         @keydown.enter="handleClear"
-                        @keydown.space="handleClear"
+                        @keydown.space.prevent="handleClear"
                     >
                         <X :class="clearIconClasses" />
                     </span>

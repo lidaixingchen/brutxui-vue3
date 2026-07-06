@@ -147,6 +147,12 @@ describe('TreeSelect', () => {
             props: { nodes, modelValue: '1-1', clearable: true },
             attachTo: document.body,
         })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(wrapper.find('[role="button"][aria-label="Clear"]').exists()).toBe(false)
+
+        await trigger.trigger('mouseenter')
+        await nextTick()
+
         const clearButton = wrapper.find('[role="button"][aria-label="Clear"]')
         expect(clearButton.exists()).toBe(true)
         await clearButton.trigger('click')
@@ -170,6 +176,12 @@ describe('TreeSelect', () => {
             props: { nodes, multiple: true, modelValue: ['1-1', '1-2'], clearable: true },
             attachTo: document.body,
         })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(wrapper.find('[role="button"][aria-label="Clear"]').exists()).toBe(false)
+
+        await trigger.trigger('mouseenter')
+        await nextTick()
+
         const clearButton = wrapper.find('[role="button"][aria-label="Clear"]')
         expect(clearButton.exists()).toBe(true)
         await clearButton.trigger('click')

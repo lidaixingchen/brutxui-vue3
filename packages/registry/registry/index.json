@@ -11386,6 +11386,10 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useClearable.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:lib"
         },
@@ -11488,7 +11492,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2bc4f376b9fc65f649a5019a9c4b14ee358cd42c1f3146610bee55a280f3a6c8"
+      "integrity": "sha256-4acad2acf2dae52ade9b626dbafcc55c2ff435df4338f699264fde86894bb597"
     },
     {
       "name": "typewriter-text",
