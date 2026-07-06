@@ -4,19 +4,20 @@
   "type": "registry:ui",
   "title": "Error Card",
   "description": "Error state card with message and retry action.",
+  "status": "legacy",
+  "replacement": "result",
   "dependencies": [
     "@lucide/vue"
   ],
   "registryDependencies": [
-    "card",
     "button",
-    "alert",
+    "result",
     "locale-zh-cn"
   ],
   "files": [
     {
       "path": "components/ui/error-card/ErrorCard.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { AlertTriangle, RotateCw, X } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { useLocale } from '@/composables/useLocale'\nimport { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'\nimport Card from '@/components/ui/card/Card.vue'\nimport CardContent from '@/components/ui/card/CardContent.vue'\nimport Button from '@/components/ui/button/Button.vue'\nimport Alert from '@/components/ui/alert/Alert.vue'\nimport AlertTitle from '@/components/ui/alert/AlertTitle.vue'\nimport AlertDescription from '@/components/ui/alert/AlertDescription.vue'\n\ninterface ErrorCardProps {\n    title?: string\n    description?: string\n    retryText?: string\n    class?: string\n    iconSize?: IconSize\n}\n\nconst props = withDefaults(defineProps<ErrorCardProps>(), {\n    title: undefined,\n    description: undefined,\n    retryText: undefined,\n    class: undefined,\n    iconSize: 'lg',\n})\n\nconst { t } = useLocale()\n\nconst emit = defineEmits<{\n    retry: []\n    close: []\n}>()\n\nconst rootClasses = computed(() => cn('w-full max-w-md', props.class))\n\nconst resolvedTitle = computed(() => props.title ?? t('errorCard.defaultTitle'))\nconst resolvedDescription = computed(() => props.description ?? t('errorCard.defaultDescription'))\nconst resolvedRetryText = computed(() => props.retryText ?? t('errorCard.defaultRetryText'))\n\nconst iconClasses = computed(() =>\n    cn(iconSizeVariants({ size: props.iconSize }))\n)\n\nconst buttonIconClasses = cn(iconSizeVariants({ size: 'default' }), 'mr-1 stroke-[3]')\n</script>\n\n<template>\n    <Card :class=\"rootClasses\" variant=\"default\">\n        <Alert variant=\"danger\" class=\"mb-4\">\n            <AlertTriangle :class=\"iconClasses\" />\n            <AlertTitle>{{ resolvedTitle }}</AlertTitle>\n            <AlertDescription>{{ resolvedDescription }}</AlertDescription>\n        </Alert>\n        <CardContent>\n            <div class=\"flex items-center justify-end gap-3\">\n                <Button variant=\"ghost\" size=\"sm\" @click=\"emit('close')\">\n                    <X :class=\"buttonIconClasses\" />\n                    {{ t('errorCard.dismiss') }}\n                </Button>\n                <Button variant=\"primary\" size=\"sm\" @click=\"emit('retry')\">\n                    <RotateCw :class=\"buttonIconClasses\" />\n                    {{ resolvedRetryText }}\n                </Button>\n            </div>\n            <slot name=\"actions\" />\n        </CardContent>\n    </Card>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { RotateCw, X } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { useLocale } from '@/composables/useLocale'\nimport { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'\nimport Button from '@/components/ui/button/Button.vue'\nimport Result from '@/components/ui/result/Result.vue'\n\ninterface ErrorCardProps {\n    title?: string\n    description?: string\n    retryText?: string\n    class?: string\n    iconSize?: IconSize\n}\n\nconst props = withDefaults(defineProps<ErrorCardProps>(), {\n    title: undefined,\n    description: undefined,\n    retryText: undefined,\n    class: undefined,\n    iconSize: 'lg',\n})\n\nconst { t } = useLocale()\n\nconst emit = defineEmits<{\n    retry: []\n    close: []\n}>()\n\nconst rootClasses = computed(() => cn('w-full max-w-md', props.class))\n\nconst resolvedTitle = computed(() => props.title ?? t('errorCard.defaultTitle'))\nconst resolvedDescription = computed(() => props.description ?? t('errorCard.defaultDescription'))\nconst resolvedRetryText = computed(() => props.retryText ?? t('errorCard.defaultRetryText'))\n\nconst buttonIconClasses = cn(iconSizeVariants({ size: 'default' }), 'mr-1 stroke-[3]')\n</script>\n\n<template>\n    <Result\n        status=\"error\"\n        :title=\"resolvedTitle\"\n        :sub-title=\"resolvedDescription\"\n        :icon-size=\"iconSize\"\n        :class=\"rootClasses\"\n    >\n        <template #extra>\n            <Button variant=\"ghost\" size=\"sm\" @click=\"emit('close')\">\n                <X :class=\"buttonIconClasses\" />\n                {{ t('errorCard.dismiss') }}\n            </Button>\n            <Button variant=\"primary\" size=\"sm\" @click=\"emit('retry')\">\n                <RotateCw :class=\"buttonIconClasses\" />\n                {{ resolvedRetryText }}\n            </Button>\n            <slot name=\"actions\" />\n        </template>\n    </Result>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -116,5 +117,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-c7eb0f09aa7b5314d93a8a6c4d222c9dde980786f12fcd7bdd3f1851666d7183"
+  "integrity": "sha256-db11c07df67bc0ac1221d0f7e4e54ea5b710540f4c5e0de26526d67822c287af"
 }

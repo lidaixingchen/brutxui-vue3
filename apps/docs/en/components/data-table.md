@@ -500,6 +500,7 @@ After accessing `tableRef` via `ref`, you can use the following four namespaces:
 | `rowKey` | `keyof T \| ((row: T) => string \| number)` | — (required) | Row unique identifier, used for selection and virtual scrolling |
 | `sortable` | `boolean` | `false` | Whether to enable sorting |
 | `filterable` | `boolean` | `false` | Whether to enable filtering |
+| `filterPlaceholder` | `string` | locale: `dataTable.filterPlaceholder` | Placeholder for the global search input |
 | `selectable` | `boolean` | `false` | Whether to enable row selection |
 | `paginated` | `boolean` | `false` | Whether to enable pagination |
 | `pageSize` | `number` | `10` | Number of items per page |

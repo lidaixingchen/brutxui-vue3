@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, type Component } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, useSlots, type Component, type CSSProperties } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from '@/composables/useReducedMotion';
@@ -14,6 +14,7 @@ interface CounterProps {
     from?: number;
     duration?: number;
     decimals?: number;
+    decimalSeparator?: string;
     prefix?: string;
     suffix?: string;
     prefixComponent?: Component;
@@ -25,6 +26,9 @@ interface CounterProps {
     autoStart?: boolean;
     variant?: NonNullable<CounterVariantProps['variant']>;
     size?: NonNullable<CounterVariantProps['size']>;
+    title?: string;
+    card?: boolean;
+    valueStyle?: CSSProperties;
     class?: string;
 }
 
@@ -32,6 +36,7 @@ const props = withDefaults(defineProps<CounterProps>(), {
     from: 0,
     duration: DEFAULT_COUNTER_DURATION,
     decimals: 0,
+    decimalSeparator: '.',
     prefix: '',
     suffix: '',
     prefixComponent: undefined,
@@ -43,6 +48,9 @@ const props = withDefaults(defineProps<CounterProps>(), {
     autoStart: true,
     variant: 'default',
     size: 'md',
+    title: undefined,
+    card: false,
+    valueStyle: undefined,
     class: undefined,
 });
 
@@ -50,6 +58,7 @@ const emit = defineEmits<{
     complete: [];
 }>();
 
+const slots = useSlots();
 const prefersReducedMotion = useReducedMotion()
 const current = ref(props.from);
 const rootRef = ref<HTMLElement | null>(null);
@@ -71,7 +80,7 @@ function formatNumber(val: number): string {
     if (!props.separator) return fixed;
     const [int, dec] = fixed.split('.');
     const formatted = int.replace(/\B(?=(\d{3})+(?!\d))/g, props.separator);
-    return dec !== undefined ? `${formatted}.${dec}` : formatted;
+    return dec !== undefined ? `${formatted}${props.decimalSeparator}${dec}` : formatted;
 }
 
 function animate(ts: number) {
@@ -175,7 +184,7 @@ watch(() => props.duration, (newDuration, oldDuration) => {
     startTime = now - oldProgress * newDuration;
 });
 
-watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decimals, props.size, props.variant] as const, () => {
+watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decimalSeparator, props.decimals, props.size, props.variant] as const, () => {
     scheduleUpdateScale();
 });
 
@@ -191,6 +200,7 @@ const finalDisplayValue = computed(() =>
 
 const hasCustomPrefix = computed(() => !!props.prefixComponent);
 const hasCustomSuffix = computed(() => !!props.suffixComponent);
+const hasContainer = computed(() => props.card || !!props.title || !!slots.title);
 
 const scaleStyle = computed(() => {
     if (scaleFactor.value >= 1) return undefined;
@@ -201,16 +211,49 @@ const scaleStyle = computed(() => {
 });
 
 const classes = computed(() =>
-    cn(counterVariants({ variant: props.variant, size: props.size }), props.class)
+    cn(counterVariants({ variant: props.variant, size: props.size }), !hasContainer.value && props.class)
 );
 
 const measureClasses = computed(() =>
-    cn(counterVariants({ variant: props.variant, size: props.size }), props.class, 'absolute invisible whitespace-nowrap !max-w-none')
+    cn(counterVariants({ variant: props.variant, size: props.size }), !hasContainer.value && props.class, 'absolute invisible whitespace-nowrap !max-w-none')
 );
+
+const containerClasses = computed(() =>
+    cn(
+        'flex flex-col min-w-0',
+        props.card && 'p-4 border-2 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]',
+        props.class
+    )
+);
+
+const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 select-none';
 </script>
 
 <template>
-    <span class="relative inline-flex max-w-full min-w-0 items-center">
+    <div v-if="hasContainer" :class="containerClasses">
+        <span v-if="title || $slots.title" :class="titleClasses">
+            <slot name="title">{{ title }}</slot>
+        </span>
+
+        <span class="relative inline-flex max-w-full min-w-0 items-center" :style="valueStyle">
+            <span ref="measureRef" :class="measureClasses" aria-hidden="true">
+                {{ finalDisplayValue }}
+            </span>
+            <span ref="rootRef" :class="classes" :style="scaleStyle" aria-live="polite" :aria-label="displayValue">
+                <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
+                    <component :is="prefixComponent" />
+                </span>
+                <span v-else-if="prefix">{{ prefix }}</span>
+                {{ formattedCurrent }}
+                <span v-if="animateSuffix && hasCustomSuffix" class="inline-flex">
+                    <component :is="suffixComponent" />
+                </span>
+                <span v-else-if="suffix">{{ suffix }}</span>
+            </span>
+        </span>
+    </div>
+
+    <span v-else class="relative inline-flex max-w-full min-w-0 items-center" :style="valueStyle">
         <span ref="measureRef" :class="measureClasses" aria-hidden="true">
             {{ finalDisplayValue }}
         </span>

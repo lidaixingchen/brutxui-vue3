@@ -132,6 +132,7 @@ const counterRef = ref()
 | `from` | `number` | `0` | Starting value |
 | `duration` | `number` | `2000` | Animation duration (in milliseconds) |
 | `decimals` | `number` | `0` | Number of decimal places |
+| `decimalSeparator` | `string` | `'.'` | Decimal separator character |
 | `prefix` | `string` | `''` | Number prefix (e.g., `¥` `$`) |
 | `suffix` | `string` | `''` | Number suffix (e.g., `+` `%`) |
 | `prefixComponent` | `Component` | — | Custom prefix component |
@@ -143,6 +144,9 @@ const counterRef = ref()
 | `autoStart` | `boolean` | `true` | Whether to auto-play after mount |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Font size preset |
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | Text color variant (only affects text color, does not change background) |
+| `title` | `string` | — | Optional label; enables container mode when provided |
+| `card` | `boolean` | `false` | Whether to enable card container styling |
+| `valueStyle` | `CSSProperties` | — | Inline style for the value area |
 | `class` | `string` | — | Custom CSS class |
 
 ## Events

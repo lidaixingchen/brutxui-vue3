@@ -56,6 +56,7 @@ export interface DataTableProps<T extends object> {
     columns: DataTableColumn<T>[]
     sortable?: boolean
     filterable?: boolean
+    filterPlaceholder?: string
     selectable?: boolean
     paginated?: boolean
     pageSize?: number
@@ -63,6 +64,11 @@ export interface DataTableProps<T extends object> {
     loading?: boolean
     emptyMessage?: string
     rowKey: keyof T | ((row: T) => string | number)
+    rowClickable?: boolean
+    title?: string
+    description?: string
+    section?: boolean
+    framed?: boolean
     virtualScroll?: DataTableVirtualScroll
     size?: 'sm' | 'default' | 'lg'
     dense?: boolean

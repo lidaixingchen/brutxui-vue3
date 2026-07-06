@@ -26,6 +26,7 @@ describe('Statistic.vue', () => {
         expect(counter.exists()).toBe(true)
         expect(counter.props('to')).toBe(1234.56)
         expect(counter.props('decimals')).toBe(2)
+        expect(counter.props('title')).toBe('Active Users')
     })
 
     it('applies card container styling when card prop is true', () => {
@@ -40,6 +41,22 @@ describe('Statistic.vue', () => {
         expect(wrapper.classes()).toContain('border-2')
         expect(wrapper.classes()).toContain('border-brutal-black')
         expect(wrapper.classes()).toContain('shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]')
+    })
+
+    it('passes decimal separator correctly to Counter', () => {
+        const wrapper = mount(Statistic, {
+            props: {
+                value: 1234.56,
+                precision: 2,
+                decimalSeparator: ',',
+                groupSeparator: '.',
+            },
+            global: { provide: localeProvide },
+        })
+
+        const counter = wrapper.findComponent(Counter)
+        expect(counter.props('decimalSeparator')).toBe(',')
+        expect(counter.props('separator')).toBe('.')
     })
 
     it('passes prefix and suffix correctly to Counter', () => {

@@ -74,6 +74,39 @@ describe('Counter', () => {
         expect(getDisplaySpan(wrapper).classes()).toContain('my-counter')
     })
 
+    it('renders title in container mode', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100, title: 'Active Users' },
+        })
+        expect(wrapper.element.tagName).toBe('DIV')
+        expect(wrapper.text()).toContain('Active Users')
+    })
+
+    it('renders title slot in container mode', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100 },
+            slots: { title: '<span>Custom Title</span>' },
+        })
+        expect(wrapper.element.tagName).toBe('DIV')
+        expect(wrapper.text()).toContain('Custom Title')
+    })
+
+    it('applies card container styling when card prop is true', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 100, card: true },
+        })
+        expect(wrapper.classes()).toContain('border-2')
+        expect(wrapper.classes()).toContain('border-brutal-black')
+        expect(wrapper.classes()).toContain('shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]')
+    })
+
+    it('formats decimals with custom decimal separator', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 1234.56, decimals: 2, decimalSeparator: ',', separator: '.' },
+        })
+        expect(wrapper.text()).toContain('1.234,56')
+    })
+
     it('shows prefix in display', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, prefix: '$' },

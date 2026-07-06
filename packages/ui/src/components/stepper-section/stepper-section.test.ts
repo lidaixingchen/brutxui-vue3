@@ -83,6 +83,8 @@ describe('StepperSection', () => {
         const buttons = wrapper.findAll('button')
         const prevButton = buttons.find(b => b.text().includes('Previous'))
         await prevButton?.trigger('click')
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([0])
         expect(wrapper.emitted('step-click')).toBeTruthy()
         expect(wrapper.emitted('step-click')![0]).toEqual([0])
     })
@@ -95,8 +97,21 @@ describe('StepperSection', () => {
         const buttons = wrapper.findAll('button')
         const nextButton = buttons.find(b => b.text().includes('Next'))
         await nextButton?.trigger('click')
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+        expect(wrapper.emitted('update:modelValue')![0]).toEqual([1])
         expect(wrapper.emitted('step-click')).toBeTruthy()
         expect(wrapper.emitted('step-click')![0]).toEqual([1])
+    })
+
+    it('forwards step clicks through Stepper without duplicate model updates', async () => {
+        const wrapper = mount(StepperSection, {
+            props: { steps: mockSteps, modelValue: 0 },
+            ...localeProvide,
+        })
+        const buttons = wrapper.findAll('button')
+        await buttons[2].trigger('click')
+        expect(wrapper.emitted('update:modelValue')).toEqual([[2]])
+        expect(wrapper.emitted('step-click')).toEqual([[2]])
     })
 
     it('renders with empty steps array', () => {

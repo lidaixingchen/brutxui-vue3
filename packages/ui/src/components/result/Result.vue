@@ -2,11 +2,14 @@
 import { computed } from 'vue'
 import { Check, AlertTriangle, Info, X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 interface ResultProps {
     status?: 'success' | 'warning' | 'info' | 'error'
     title?: string
     subTitle?: string
+    variant?: 'plain' | 'card'
+    iconSize?: IconSize
     class?: string
 }
 
@@ -14,6 +17,8 @@ const props = withDefaults(defineProps<ResultProps>(), {
     status: 'info',
     title: undefined,
     subTitle: undefined,
+    variant: 'card',
+    iconSize: undefined,
     class: undefined,
 })
 
@@ -37,15 +42,20 @@ const statusConfig = {
 }
 
 const activeConfig = computed(() => statusConfig[props.status] || statusConfig.info)
+const rootClasses = computed(() =>
+    cn(
+        'flex flex-col items-center justify-center text-center',
+        props.variant === 'card'
+            ? 'p-8 border-3 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]'
+            : 'p-0',
+        props.class
+    )
+)
+const iconClasses = computed(() => cn(props.iconSize ? iconSizeVariants({ size: props.iconSize }) : 'w-10 h-10', 'stroke-[3]'))
 </script>
 
 <template>
-    <div
-        :class="cn(
-            'flex flex-col items-center justify-center text-center p-8 border-3 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_0px_rgba(255,255,255,1)]',
-            props.class
-        )"
-    >
+    <div :class="rootClasses">
         <div class="mb-6 select-none">
             <slot name="icon">
                 <div
@@ -56,7 +66,7 @@ const activeConfig = computed(() => statusConfig[props.status] || statusConfig.i
                 >
                     <component 
                         :is="activeConfig.icon" 
-                        class="w-10 h-10 stroke-[3]" 
+                        :class="iconClasses"
                     />
                 </div>
             </slot>

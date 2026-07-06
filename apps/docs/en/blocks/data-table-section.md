@@ -41,7 +41,7 @@ function handleRowClick(row: Record<string, unknown>) {
     console.log('Row clicked:', row)
 }
 
-function handleSort(payload: { key: string; direction: 'asc' | 'desc' }) {
+function handleSort(payload: { key: string; direction: 'asc' | 'desc' | null }) {
     console.log('Sort:', payload)
 }
 </script>
@@ -104,7 +104,7 @@ interface ColumnDef {
 | Event | Payload | Description |
 |------|------|------|
 | `row-click` | `[row: Record<string, unknown>]` | Triggered on row click, payload is the row data |
-| `sort` | `[{ key: string; direction: 'asc' \| 'desc' }]` | Triggered when sorting changes |
+| `sort` | `[{ key: string; direction: 'asc' \| 'desc' \| null }]` | Triggered when sorting changes; `null` means sorting was cleared |
 
 ## Slots
 

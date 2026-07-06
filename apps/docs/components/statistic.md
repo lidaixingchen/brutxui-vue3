@@ -29,7 +29,7 @@ import { Statistic } from 'brutx-ui-vue'
 </script>
 
 <template>
-    <Statistic title="活跃账户数" :value="12850" separator="," />
+    <Statistic title="活跃账户数" :value="12850" group-separator="," />
 </template>
 ```
 
@@ -76,7 +76,7 @@ import { ArrowUpRight } from '@lucide/vue'
 | `title` | `string` | `''` | 统计标题 |
 | `precision` | `number` | `0` | 数值精度，保留的小数位数 |
 | `decimalSeparator` | `string` | `'.'` | 小数点分隔符 |
-| `groupSeparator` | `string` | `''` | 千分位分隔符 |
+| `groupSeparator` | `string` | `','` | 千分位分隔符 |
 | `prefix` | `string` | `''` | 前缀文本 |
 | `suffix` | `string` | `''` | 后缀文本 |
 | `prefixComponent` | `Component` | `undefined` | 前缀自定义图标组件 |

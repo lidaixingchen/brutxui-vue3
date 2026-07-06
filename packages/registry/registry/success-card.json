@@ -4,18 +4,20 @@
   "type": "registry:ui",
   "title": "Success Card",
   "description": "Success state card with confirmation message and action.",
+  "status": "legacy",
+  "replacement": "result",
   "dependencies": [
     "@lucide/vue"
   ],
   "registryDependencies": [
-    "card",
     "button",
+    "result",
     "locale-zh-cn"
   ],
   "files": [
     {
       "path": "components/ui/success-card/SuccessCard.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { Check } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { useLocale } from '@/composables/useLocale'\nimport { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'\nimport Card from '@/components/ui/card/Card.vue'\nimport CardContent from '@/components/ui/card/CardContent.vue'\nimport Button from '@/components/ui/button/Button.vue'\n\ninterface SuccessCardProps {\n    title?: string\n    description?: string\n    confirmText?: string\n    class?: string\n    iconSize?: IconSize\n}\n\nconst props = withDefaults(defineProps<SuccessCardProps>(), {\n    title: undefined,\n    description: undefined,\n    confirmText: undefined,\n    class: undefined,\n    iconSize: '2xl',\n})\n\nconst { t } = useLocale()\n\nconst emit = defineEmits<{\n    confirm: []\n}>()\n\nconst rootClasses = computed(() => cn('w-full max-w-md', props.class))\n\nconst resolvedTitle = computed(() => props.title ?? t('successCard.defaultTitle'))\nconst resolvedDescription = computed(() => props.description ?? t('successCard.defaultDescription'))\nconst resolvedConfirmText = computed(() => props.confirmText ?? t('successCard.defaultConfirmText'))\n\nconst iconClasses = computed(() =>\n    cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')\n)\n</script>\n\n<template>\n    <Card :class=\"rootClasses\" variant=\"default\">\n        <div class=\"h-2 bg-brutal-success border-b-3 border-brutal\" />\n        <CardContent class=\"pt-6\">\n            <div class=\"flex flex-col items-center text-center\">\n                <div class=\"relative mb-4\">\n                    <div class=\"absolute inset-0 bg-brutal-muted border-3 border-brutal translate-x-2 translate-y-2\" />\n                    <div class=\"relative h-16 w-16 flex items-center justify-center bg-brutal-success border-3 border-brutal shadow-brutal\">\n                        <Check :class=\"iconClasses\" />\n                    </div>\n                </div>\n                <h3 class=\"text-xl font-black tracking-tight\">\n{{ resolvedTitle }}\n</h3>\n                <p v-if=\"resolvedDescription\" class=\"mt-2 text-sm text-brutal-muted-foreground font-medium\">\n{{ resolvedDescription }}\n</p>\n                <Button variant=\"primary\" class=\"mt-6\" @click=\"emit('confirm')\">\n                    {{ resolvedConfirmText }}\n                </Button>\n                <slot name=\"actions\" />\n            </div>\n        </CardContent>\n    </Card>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { useLocale } from '@/composables/useLocale'\nimport { type IconSize } from '@/lib/icon-size-variants'\nimport Button from '@/components/ui/button/Button.vue'\nimport Result from '@/components/ui/result/Result.vue'\n\ninterface SuccessCardProps {\n    title?: string\n    description?: string\n    confirmText?: string\n    class?: string\n    iconSize?: IconSize\n}\n\nconst props = withDefaults(defineProps<SuccessCardProps>(), {\n    title: undefined,\n    description: undefined,\n    confirmText: undefined,\n    class: undefined,\n    iconSize: '2xl',\n})\n\nconst { t } = useLocale()\n\nconst emit = defineEmits<{\n    confirm: []\n}>()\n\nconst rootClasses = computed(() => cn('w-full max-w-md', props.class))\n\nconst resolvedTitle = computed(() => props.title ?? t('successCard.defaultTitle'))\nconst resolvedDescription = computed(() => props.description ?? t('successCard.defaultDescription'))\nconst resolvedConfirmText = computed(() => props.confirmText ?? t('successCard.defaultConfirmText'))\n</script>\n\n<template>\n    <Result\n        status=\"success\"\n        :title=\"resolvedTitle\"\n        :sub-title=\"resolvedDescription\"\n        :icon-size=\"iconSize\"\n        :class=\"rootClasses\"\n    >\n        <template #extra>\n            <Button variant=\"primary\" @click=\"emit('confirm')\">\n                {{ resolvedConfirmText }}\n            </Button>\n            <slot name=\"actions\" />\n        </template>\n    </Result>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -115,5 +117,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-d8e0b0f4706418f6b7d5d29ccf6b1cb575f8acd8b9b3514e0a6f05ba61c36797"
+  "integrity": "sha256-1ba2aa3f7e799049b881284976b1241b8377716e0de6c38d31788fc01e82841e"
 }

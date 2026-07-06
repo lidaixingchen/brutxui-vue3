@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import Spinner from '../spinner/Spinner.vue'
+import Skeleton from '../skeleton/Skeleton.vue'
+import Progress from '../progress/Progress.vue'
 import { cn } from '@/lib/utils'
 
 interface LoadingProps {
@@ -8,6 +10,12 @@ interface LoadingProps {
     text?: string
     background?: string
     customClass?: string
+    page?: boolean
+    fullscreen?: boolean
+    title?: string
+    description?: string
+    progress?: number
+    class?: string
 }
 
 const props = withDefaults(defineProps<LoadingProps>(), {
@@ -15,6 +23,12 @@ const props = withDefaults(defineProps<LoadingProps>(), {
     text: undefined,
     background: undefined,
     customClass: undefined,
+    page: false,
+    fullscreen: false,
+    title: undefined,
+    description: undefined,
+    progress: undefined,
+    class: undefined,
 })
 
 const maskStyles = computed(() => {
@@ -23,10 +37,47 @@ const maskStyles = computed(() => {
     }
     return {}
 })
+
+const isPageMode = computed(() => props.page || props.fullscreen)
+const rootClasses = computed(() =>
+    cn(isPageMode.value ? 'min-h-screen flex items-center justify-center bg-brutal-bg p-4' : 'relative', props.class)
+)
+const hasProgress = computed(() => props.progress !== undefined)
 </script>
 
 <template>
-    <div class="relative">
+    <div v-if="isPageMode" :class="rootClasses">
+        <div class="w-full max-w-lg text-center relative">
+            <slot name="header" />
+
+            <div class="relative border-3 border-brutal bg-brutal-bg shadow-brutal p-8 sm:p-12">
+                <Skeleton variant="accent" class="absolute -top-3 -left-3 h-6 w-24" />
+                <Skeleton variant="secondary" class="absolute -bottom-3 -right-3 h-6 w-32" />
+
+                <div class="flex justify-center mb-6">
+                    <Spinner size="lg" variant="primary" />
+                </div>
+
+                <h1 v-if="title" class="text-2xl sm:text-3xl font-black tracking-tight text-brutal-fg">
+                    {{ title }}
+                </h1>
+
+                <p v-if="description" class="mt-3 text-brutal-muted-foreground font-medium">
+                    {{ description }}
+                </p>
+
+                <slot />
+
+                <div v-if="hasProgress" class="mt-6">
+                    <Progress :model-value="progress" />
+                </div>
+
+                <slot name="footer" />
+            </div>
+        </div>
+    </div>
+
+    <div v-else :class="rootClasses">
         <slot />
 
         <Transition

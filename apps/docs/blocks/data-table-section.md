@@ -40,7 +40,7 @@ function handleRowClick(row: Record<string, unknown>) {
     console.log('Row clicked:', row)
 }
 
-function handleSort(payload: { key: string; direction: 'asc' | 'desc' }) {
+function handleSort(payload: { key: string; direction: 'asc' | 'desc' | null }) {
     console.log('Sort:', payload)
 }
 </script>
@@ -103,7 +103,7 @@ interface ColumnDef {
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `row-click` | `[row: Record<string, unknown>]` | 行点击时触发，参数为行数据 |
-| `sort` | `[{ key: string; direction: 'asc' \| 'desc' }]` | 排序变化时触发 |
+| `sort` | `[{ key: string; direction: 'asc' \| 'desc' \| null }]` | 排序变化时触发，`null` 表示清除排序 |
 
 ## 插槽
 

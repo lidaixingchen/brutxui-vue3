@@ -1,6 +1,7 @@
 import { ref, computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { DataTableColumn, DataTableFilterState } from '@/components/data-table/types'
 import { getCellValue } from '@/lib/data-table-utils'
+import { parseFormattedDate } from '@/lib/date'
 
 export interface UseDataTableFilterOptions<T extends object> {
     columns: MaybeRefOrGetter<DataTableColumn<T>[]>
@@ -10,6 +11,32 @@ export interface UseDataTableFilterOptions<T extends object> {
 export interface UseDataTableFilterReturn<T> {
     filterState: Ref<DataTableFilterState>
     filteredData: (data: T[]) => T[]
+}
+
+function parseDateValue(value: string | number | Date, endOfDay = false): number | null {
+    if (value instanceof Date) {
+        const time = value.getTime()
+        return Number.isNaN(time) ? null : time
+    }
+
+    if (typeof value === 'number') {
+        const time = new Date(value).getTime()
+        return Number.isNaN(time) ? null : time
+    }
+
+    const text = value.trim()
+    if (!text) return null
+
+    const localDate = parseFormattedDate(text, 'YYYY-MM-DD')
+    if (localDate) {
+        if (endOfDay) {
+            localDate.setHours(23, 59, 59, 999)
+        }
+        return localDate.getTime()
+    }
+
+    const time = new Date(text).getTime()
+    return Number.isNaN(time) ? null : time
 }
 
 export function useDataTableFilter<T extends object>(
@@ -58,8 +85,8 @@ export function useDataTableFilter<T extends object>(
                 result = result.filter((row) => {
                     const val = getCellValue(row, col)
                     if (!val) return false
-                    const cellDate = new Date(val as string | number | Date).getTime()
-                    if (isNaN(cellDate)) return false
+                    const cellDate = parseDateValue(val as string | number | Date)
+                    if (cellDate === null) return false
 
                     let start: number | null = null
                     let end: number | null = null
@@ -67,16 +94,16 @@ export function useDataTableFilter<T extends object>(
                     if (Array.isArray(filterValue)) {
                         const s = filterValue[0] as string | null
                         const e = filterValue[1] as string | null
-                        start = s ? new Date(s).getTime() : null
-                        end = e ? new Date(e).getTime() : null
+                        start = s ? parseDateValue(s) : null
+                        end = e ? parseDateValue(e, true) : null
                     } else if (filterValue && typeof filterValue === 'object' && !Array.isArray(filterValue)) {
                         const obj = filterValue as { start: string | null; end: string | null }
-                        start = obj.start ? new Date(obj.start).getTime() : null
-                        end = obj.end ? new Date(obj.end).getTime() : null
+                        start = obj.start ? parseDateValue(obj.start) : null
+                        end = obj.end ? parseDateValue(obj.end, true) : null
                     }
 
-                    if (start !== null && !isNaN(start) && cellDate < start) return false
-                    if (end !== null && !isNaN(end) && cellDate > end) return false
+                    if (start !== null && cellDate < start) return false
+                    if (end !== null && cellDate > end) return false
                     return true
                 })
             } else {

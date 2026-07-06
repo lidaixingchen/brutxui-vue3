@@ -41,6 +41,26 @@ describe('Loading.vue (声明式组件)', () => {
         expect(textSpan.exists()).toBe(true)
         expect(textSpan.text()).toBe('Custom Loading Text')
     })
+
+    it('renders page mode with title and description', () => {
+        const wrapper = mount(Loading, {
+            props: { page: true, title: 'Loading Data', description: 'Please wait' },
+            global: { provide: localeProvide },
+        })
+
+        expect(wrapper.classes()).toContain('min-h-screen')
+        expect(wrapper.find('h1').text()).toBe('Loading Data')
+        expect(wrapper.text()).toContain('Please wait')
+    })
+
+    it('renders progress in page mode when progress is provided', () => {
+        const wrapper = mount(Loading, {
+            props: { page: true, progress: 30 },
+            global: { provide: localeProvide },
+        })
+
+        expect(wrapper.find('[role="progressbar"]').exists()).toBe(true)
+    })
 })
 
 describe('v-loading (自定义指令)', () => {

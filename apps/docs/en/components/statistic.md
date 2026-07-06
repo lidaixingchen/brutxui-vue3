@@ -76,7 +76,7 @@ import { ArrowUpRight } from '@lucide/vue'
 | `title` | `string` | `''` | Stat label/title |
 | `precision` | `number` | `0` | Decimal places |
 | `decimalSeparator` | `string` | `'.'` | Character representing the decimal |
-| `groupSeparator` | `string` | `''` | Digit grouping separator character |
+| `groupSeparator` | `string` | `','` | Digit grouping separator character |
 | `prefix` | `string` | `''` | Prefix text value |
 | `suffix` | `string` | `''` | Suffix text value |
 | `prefixComponent` | `Component` | `undefined` | Custom prefix icon component |

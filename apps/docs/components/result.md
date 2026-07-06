@@ -64,6 +64,8 @@ import { Result } from 'brutx-ui-vue'
 | `status` | `'success' \| 'error' \| 'info' \| 'warning'` | `'info'` | 结果状态类型，决定顶部硬边框图标的色彩和图案 |
 | `title` | `string` | `''` | 结果标题文本 |
 | `subTitle` | `string` | `''` | 结果副标题描述文本 |
+| `variant` | `'plain' \| 'card'` | `'card'` | 是否渲染卡片边框和硬投影 |
+| `iconSize` | `IconSize` | — | 状态图标尺寸 |
 
 ## Slots
 

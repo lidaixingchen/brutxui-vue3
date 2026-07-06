@@ -77,6 +77,17 @@ describe('DataTableSection', () => {
         expect(wrapper.emitted('sort')![0]).toEqual([{ key: 'name', direction: 'asc' }])
     })
 
+    it('emits sort event when DataTable clears sort', async () => {
+        const wrapper = mountDataTableSection({ columns: mockColumns, rows: mockRows })
+        const headers = wrapper.findAll('th')
+
+        await headers[0].trigger('click')
+        await headers[0].trigger('click')
+        await headers[0].trigger('click')
+
+        expect(wrapper.emitted('sort')![2]).toEqual([{ key: 'name', direction: null }])
+    })
+
     it('emits row-click event when a row is clicked', async () => {
         const wrapper = mountDataTableSection({ columns: mockColumns, rows: mockRows })
         const rows = wrapper.findAll('tbody tr')

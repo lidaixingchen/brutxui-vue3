@@ -50,4 +50,25 @@ describe('Result.vue', () => {
         expect(wrapper.find('.btn-home').exists()).toBe(true)
         expect(wrapper.find('.btn-home').text()).toBe('Go Home')
     })
+
+    it('renders plain variant without card chrome', () => {
+        const wrapper = mount(Result, {
+            props: { variant: 'plain' },
+            global: { provide: localeProvide },
+        })
+
+        expect(wrapper.classes()).toContain('p-0')
+        expect(wrapper.classes()).not.toContain('border-3')
+    })
+
+    it('links icon size to iconSize prop', () => {
+        const wrapper = mount(Result, {
+            props: { iconSize: 'lg' },
+            global: { provide: localeProvide },
+        })
+
+        const icon = wrapper.find('svg')
+        expect(icon.classes()).toContain('h-5')
+        expect(icon.classes()).toContain('w-5')
+    })
 })

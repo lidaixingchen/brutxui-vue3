@@ -131,6 +131,7 @@ const counterRef = ref()
 | `from` | `number` | `0` | 起始数值 |
 | `duration` | `number` | `2000` | 动画时长（毫秒） |
 | `decimals` | `number` | `0` | 小数位数 |
+| `decimalSeparator` | `string` | `'.'` | 小数分隔符 |
 | `prefix` | `string` | `''` | 数字前缀（如 `¥` `$`） |
 | `suffix` | `string` | `''` | 数字后缀（如 `+` `%`） |
 | `prefixComponent` | `Component` | — | 自定义前缀组件 |
@@ -142,6 +143,9 @@ const counterRef = ref()
 | `autoStart` | `boolean` | `true` | 是否挂载后自动播放 |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 字号预设 |
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'success' \| 'danger'` | `'default'` | 文字颜色变体（仅影响文字颜色，不改变背景） |
+| `title` | `string` | — | 可选标题，传入后启用容器模式 |
+| `card` | `boolean` | `false` | 是否启用卡片容器样式 |
+| `valueStyle` | `CSSProperties` | — | 数值区域内联样式 |
 | `class` | `string` | — | 自定义样式类 |
 
 ## 事件

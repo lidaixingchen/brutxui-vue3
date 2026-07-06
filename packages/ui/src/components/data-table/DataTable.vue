@@ -49,6 +49,7 @@ const { t } = useLocale()
 const props = withDefaults(defineProps<DataTableProps<T>>(), {
     sortable: false,
     filterable: false,
+    filterPlaceholder: undefined,
     selectable: false,
     paginated: false,
     pageSize: 10,
@@ -59,6 +60,11 @@ const props = withDefaults(defineProps<DataTableProps<T>>(), {
     striped: true,
     stickyHeader: false,
     expandable: false,
+    rowClickable: false,
+    title: undefined,
+    description: undefined,
+    section: false,
+    framed: true,
     expandRowKeys: undefined,
     spanMethod: undefined,
 })
@@ -70,6 +76,7 @@ const emit = defineEmits<{
     'page-change': [page: number]
     'page-size-change': [size: number]
     'expand-change': [row: T, expanded: boolean]
+    'row-click': [row: T]
     export: [format: 'csv' | 'json', selectedRows?: T[]]
 }>()
 
@@ -218,6 +225,17 @@ function exportData(format: 'csv' | 'json') {
     emit('export', format, selectedData)
 }
 
+function isInteractiveEvent(event: Event): boolean {
+    const target = event.target
+    if (!(target instanceof HTMLElement)) return false
+    return Boolean(target.closest('button, input, [role="checkbox"], [role="button"], a'))
+}
+
+function handleRowClick(row: T, event: Event) {
+    if (!props.rowClickable || isInteractiveEvent(event)) return
+    emit('row-click', row)
+}
+
 watch(() => props.data, (newData, oldData) => {
     if (newData !== oldData) {
         selection.clearSelection()
@@ -257,7 +275,12 @@ const gridTemplateColumns = computed(() => {
 
 
 const rootClasses = computed(() =>
-    cn(dataTableRootVariants({ size: props.size }), props.class),
+    cn(
+        dataTableRootVariants({ size: props.size }),
+        props.section && 'max-w-5xl mx-auto overflow-hidden',
+        props.framed === false && 'border-0 shadow-none rounded-none',
+        props.class,
+    ),
 )
 
 const rootStyle = computed(() => {
@@ -323,6 +346,7 @@ function getRowClasses(row: T): string {
             selected: selection.selectedRows.value.has(selection.getRowKey(row)),
             striped: props.striped,
         }),
+        props.rowClickable && 'cursor-pointer',
     )
 }
 
@@ -347,14 +371,25 @@ function getCellClasses(column: DataTableColumn<T>): string {
 
 <template>
     <div :class="rootClasses" :style="rootStyle" role="grid" :aria-label="t('dataTable.label')">
+        <slot name="header">
+            <div v-if="title || description" class="border-b-3 border-brutal px-6 py-4">
+                <h2 v-if="title" class="text-3xl font-black tracking-tight">
+                    {{ title }}
+                </h2>
+                <p v-if="description" class="mt-1 text-sm font-medium text-brutal-muted-foreground">
+                    {{ description }}
+                </p>
+            </div>
+        </slot>
+
         <!-- Toolbar -->
         <div v-if="filterable || slots.toolbar" :class="toolbarClasses">
             <div v-if="filterable" class="flex items-center gap-2">
                 <Input
                     v-model="filter.filterState.value.global"
                     size="sm"
-                    :placeholder="t('dataTable.filterPlaceholder')"
-                    :aria-label="t('dataTable.filterPlaceholder')"
+                    :placeholder="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
+                    :aria-label="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
                 />
             </div>
             <div class="flex items-center gap-2">
@@ -447,8 +482,11 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     :style="{ gridTemplateColumns }"
                                     :class="getRowClasses(displayData[rowIndex])"
                                     role="row"
+                                    :tabindex="rowClickable ? 0 : undefined"
                                     :aria-selected="selection.selectedRows.value.has(selection.getRowKey(displayData[rowIndex])) || undefined"
                                     :aria-expanded="expandable ? isRowExpanded(displayData[rowIndex]) : undefined"
+                                    @click="handleRowClick(displayData[rowIndex], $event)"
+                                    @keydown.enter="handleRowClick(displayData[rowIndex], $event)"
                                 >
                                     <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center" role="gridcell">
                                         <Button
@@ -456,7 +494,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                             size="sm"
                                             class="p-1 h-auto w-auto"
                                             :aria-label="isRowExpanded(displayData[rowIndex]) ? 'Collapse row' : 'Expand row'"
-                                            @click="toggleExpandRow(displayData[rowIndex])"
+                                            @click.stop="toggleExpandRow(displayData[rowIndex])"
                                         >
                                             <ChevronDown
                                                 v-if="isRowExpanded(displayData[rowIndex])"
@@ -493,7 +531,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                                 variant="ghost"
                                                 size="sm"
                                                 class="p-1 h-auto w-auto"
-                                                @click="toggleExpandRow(displayData[rowIndex])"
+                                                @click.stop="toggleExpandRow(displayData[rowIndex])"
                                             >
                                                 <ChevronDown
                                                     v-if="isRowExpanded(displayData[rowIndex])"
@@ -614,8 +652,11 @@ function getCellClasses(column: DataTableColumn<T>): string {
                             <tr
                                 :class="getRowClasses(row)"
                                 role="row"
+                                :tabindex="rowClickable ? 0 : undefined"
                                 :aria-selected="selection.selectedRows.value.has(selection.getRowKey(row)) || undefined"
                                 :aria-expanded="expandable ? isRowExpanded(row) : undefined"
+                                @click="handleRowClick(row, $event)"
+                                @keydown.enter="handleRowClick(row, $event)"
                             >
                                 <td v-if="expandable" class="w-10 px-2 py-3 text-center" role="gridcell">
                                     <Button
@@ -623,7 +664,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         size="sm"
                                         class="p-1 h-auto w-auto"
                                         :aria-label="isRowExpanded(row) ? 'Collapse row' : 'Expand row'"
-                                        @click="toggleExpandRow(row)"
+                                        @click.stop="toggleExpandRow(row)"
                                     >
                                         <ChevronDown
                                             v-if="isRowExpanded(row)"
@@ -665,7 +706,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                             variant="ghost"
                                             size="sm"
                                             class="p-1 h-auto w-auto"
-                                            @click="toggleExpandRow(row)"
+                                            @click.stop="toggleExpandRow(row)"
                                         >
                                             <ChevronDown
                                                 v-if="isRowExpanded(row)"
@@ -726,7 +767,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
         </div>
 
         <!-- Pagination -->
-        <div v-if="paginated" :class="paginationClasses">
+        <nav v-if="paginated" :class="paginationClasses" :aria-label="t('dataTable.pagination')">
             <div class="flex items-center gap-4">
                 <span class="text-sm font-medium">
                     {{ t('dataTable.pageInfo', { current: pagination.currentPage.value, total: pagination.totalPages.value }) }}
@@ -791,7 +832,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                     <ChevronsRight class="w-4 h-4" />
                 </Button>
             </div>
-        </div>
+        </nav>
 
         <!-- Loading Overlay -->
         <div v-if="loading" :class="loadingClasses">
@@ -809,5 +850,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
         >
             {{ t('dataTable.selectedRows', { count: selection.selectedRows.value.size }) }}
         </div>
+
+        <slot name="footer" />
     </div>
 </template>

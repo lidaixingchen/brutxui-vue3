@@ -64,6 +64,8 @@ Inject buttons inside the `#extra` slot layout to allow further navigation or re
 | `status` | `'success' \| 'error' \| 'info' \| 'warning'` | `'info'` | Action feedback status, controlling the color and graphic of the status emblem |
 | `title` | `string` | `''` | Result title text |
 | `subTitle` | `string` | `''` | Secondary description text |
+| `variant` | `'plain' \| 'card'` | `'card'` | Whether to render card chrome with border and hard shadow |
+| `iconSize` | `IconSize` | — | Status icon size |
 
 ## Slots
 

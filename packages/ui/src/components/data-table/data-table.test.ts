@@ -230,6 +230,19 @@ describe('DataTable', () => {
         expect(wrapper.findAll('tbody tr')).toHaveLength(1)
         expect(wrapper.text()).toContain('User 25')
     })
+
+    it('uses custom filter placeholder when provided', () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: testColumns,
+            rowKey: 'id',
+            filterable: true,
+            filterPlaceholder: 'Search section rows',
+        })
+
+        expect(wrapper.find('input[type="text"]').attributes('placeholder')).toBe('Search section rows')
+        expect(wrapper.find('input[type="text"]').attributes('aria-label')).toBe('Search section rows')
+    })
 })
 
 // === Visual / Behavior Tests (spec §7.3) ===

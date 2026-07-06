@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Statistic",
   "description": "Statistic data display component using Counter animation.",
+  "status": "legacy",
+  "replacement": "counter",
   "dependencies": [],
   "registryDependencies": [
     "counter"
@@ -11,7 +13,7 @@
   "files": [
     {
       "path": "components/ui/statistic/Statistic.vue",
-      "content": "<script setup lang=\"ts\">\nimport { type Component, type CSSProperties } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport Counter from '@/components/ui/counter/Counter.vue'\nimport { counterVariants } from '@/components/ui/counter/counter-variants'\nimport { cn } from '@/lib/utils'\n\ntype CounterVariantProps = VariantProps<typeof counterVariants>;\n\ninterface StatisticProps {\n    value: number\n    title?: string\n    precision?: number\n    decimalSeparator?: string\n    groupSeparator?: string\n    prefix?: string\n    suffix?: string\n    prefixComponent?: Component\n    suffixComponent?: Component\n    valueStyle?: CSSProperties\n    class?: string\n    card?: boolean\n    variant?: NonNullable<CounterVariantProps['variant']>\n    size?: NonNullable<CounterVariantProps['size']>\n}\n\nconst props = withDefaults(defineProps<StatisticProps>(), {\n    title: undefined,\n    precision: 0,\n    decimalSeparator: '.',\n    groupSeparator: ',',\n    prefix: '',\n    suffix: '',\n    prefixComponent: undefined,\n    suffixComponent: undefined,\n    valueStyle: undefined,\n    class: undefined,\n    card: false,\n    variant: 'default',\n    size: 'md',\n})\n</script>\n\n<template>\n    <div\n        :class=\"cn(\n            'flex flex-col min-w-0',\n            card && 'p-4 border-2 border-brutal-black dark:border-white bg-white dark:bg-brutal-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,1)]',\n            props.class\n        )\"\n    >\n        <span \n            v-if=\"title || $slots.title\" \n            class=\"text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 select-none\"\n        >\n            <slot name=\"title\">{{ title }}</slot>\n        </span>\n        \n        <div :style=\"valueStyle\">\n            <Counter\n                :to=\"value\"\n                :decimals=\"precision\"\n                :separator=\"groupSeparator\"\n                :prefix=\"prefix\"\n                :suffix=\"suffix\"\n                :prefix-component=\"prefixComponent\"\n                :suffix-component=\"suffixComponent\"\n                :variant=\"variant\"\n                :size=\"size\"\n                class=\"!font-black text-inherit\"\n            />\n        </div>\n    </div>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { type Component, type CSSProperties } from 'vue'\nimport { type VariantProps } from 'class-variance-authority'\nimport Counter from '@/components/ui/counter/Counter.vue'\nimport { counterVariants } from '@/components/ui/counter/counter-variants'\n\ntype CounterVariantProps = VariantProps<typeof counterVariants>;\n\ninterface StatisticProps {\n    value: number\n    title?: string\n    precision?: number\n    decimalSeparator?: string\n    groupSeparator?: string\n    prefix?: string\n    suffix?: string\n    prefixComponent?: Component\n    suffixComponent?: Component\n    valueStyle?: CSSProperties\n    class?: string\n    card?: boolean\n    variant?: NonNullable<CounterVariantProps['variant']>\n    size?: NonNullable<CounterVariantProps['size']>\n}\n\nconst props = withDefaults(defineProps<StatisticProps>(), {\n    title: undefined,\n    precision: 0,\n    decimalSeparator: '.',\n    groupSeparator: ',',\n    prefix: '',\n    suffix: '',\n    prefixComponent: undefined,\n    suffixComponent: undefined,\n    valueStyle: undefined,\n    class: undefined,\n    card: false,\n    variant: 'default',\n    size: 'md',\n})\n</script>\n\n<template>\n    <Counter\n        :to=\"value\"\n        :decimals=\"precision\"\n        :decimal-separator=\"decimalSeparator\"\n        :separator=\"groupSeparator\"\n        :prefix=\"prefix\"\n        :suffix=\"suffix\"\n        :prefix-component=\"prefixComponent\"\n        :suffix-component=\"suffixComponent\"\n        :variant=\"variant\"\n        :size=\"size\"\n        :title=\"title\"\n        :card=\"card\"\n        :value-style=\"valueStyle\"\n        :class=\"props.class\"\n    >\n        <template v-if=\"$slots.title\" #title>\n            <slot name=\"title\" />\n        </template>\n    </Counter>\n</template>\n",
       "type": "registry:ui"
     }
   ],
@@ -101,5 +103,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-989d70ed574b63261f8da9ccefb519f47bc8d22d2e7156769928be261c17f6b2"
+  "integrity": "sha256-d4855bde8d9c8ec4f72e45af51f7f90592456a90325df7945b476eed9167be1a"
 }

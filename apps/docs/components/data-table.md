@@ -499,6 +499,7 @@ function goNextPage() {
 | `rowKey` | `keyof T \| ((row: T) => string \| number)` | —（必填） | 行唯一标识，用于选择和虚拟滚动 |
 | `sortable` | `boolean` | `false` | 是否启用排序 |
 | `filterable` | `boolean` | `false` | 是否启用筛选 |
+| `filterPlaceholder` | `string` | locale: `dataTable.filterPlaceholder` | 全局搜索输入框占位文案 |
 | `selectable` | `boolean` | `false` | 是否启用行选择 |
 | `paginated` | `boolean` | `false` | 是否启用分页 |
 | `pageSize` | `number` | `10` | 每页显示条数 |

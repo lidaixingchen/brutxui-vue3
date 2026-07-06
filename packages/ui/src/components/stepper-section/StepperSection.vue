@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -36,6 +36,13 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
+type StepperNavigation = {
+    nextStep: () => void
+    previousStep: () => void
+}
+
+const stepperRef = ref<StepperNavigation | null>(null)
+
 const resolvedTitle = computed(() => props.title ?? t('stepperSection.defaultTitle'))
 const resolvedPrevious = computed(() => t('stepperSection.previous'))
 const resolvedNext = computed(() => t('stepperSection.next'))
@@ -62,15 +69,22 @@ const nextIconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), stepperNavButtonIconVariants({ direction: 'next' }))
 )
 
-function handleStepClick(index: number) {
+function handleStepUpdate(index: number) {
     emit('update:modelValue', index)
+}
+
+function handleStepClick(index: number) {
     emit('step-click', index)
 }
 
 function handlePrevious() {
     if (canGoPrevious.value) {
         const prev = activeStep.value - 1
-        emit('update:modelValue', prev)
+        if (stepperRef.value) {
+            stepperRef.value.previousStep()
+        } else {
+            emit('update:modelValue', prev)
+        }
         emit('step-click', prev)
     }
 }
@@ -78,7 +92,11 @@ function handlePrevious() {
 function handleNext() {
     if (canGoNext.value) {
         const next = activeStep.value + 1
-        emit('update:modelValue', next)
+        if (stepperRef.value) {
+            stepperRef.value.nextStep()
+        } else {
+            emit('update:modelValue', next)
+        }
         emit('step-click', next)
     }
 }
@@ -96,9 +114,11 @@ function handleNext() {
 
         <template v-if="steps.length > 0">
             <Stepper
+                ref="stepperRef"
                 :steps="stepperSteps"
                 :model-value="activeStep"
                 orientation="horizontal"
+                @update:model-value="handleStepUpdate"
                 @step-click="handleStepClick"
             />
 

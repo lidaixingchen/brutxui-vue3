@@ -6,6 +6,7 @@ interface Row extends Record<string, unknown> {
     name: string
     email: string
     age: number
+    createdAt?: string
 }
 
 const columns: DataTableColumn<Row>[] = [
@@ -126,5 +127,25 @@ describe('useDataTableFilter', () => {
         const snapshot = [...data]
         filteredData(data)
         expect(data).toEqual(snapshot)
+    })
+
+    it('parses YYYY-MM-DD date ranges as local dates and includes the end day', () => {
+        const dateColumns: DataTableColumn<Row>[] = [
+            { id: 'createdAt', header: 'Created', accessorKey: 'createdAt', filterType: 'date-range' },
+        ]
+        const dateData: Row[] = [
+            { id: 1, name: 'Start', email: 'start@example.com', age: 1, createdAt: '2026-01-01' },
+            { id: 2, name: 'Middle', email: 'middle@example.com', age: 2, createdAt: '2026-01-02T12:00:00' },
+            { id: 3, name: 'End', email: 'end@example.com', age: 3, createdAt: '2026-01-03T23:00:00' },
+            { id: 4, name: 'After', email: 'after@example.com', age: 4, createdAt: '2026-01-04' },
+        ]
+        const { filterState, filteredData } = useDataTableFilter({
+            columns: () => dateColumns,
+            filterable: () => true,
+        })
+
+        filterState.value.columns = { createdAt: { start: '2026-01-02', end: '2026-01-03' } }
+
+        expect(filteredData(dateData).map((row) => row.id)).toEqual([2, 3])
     })
 })

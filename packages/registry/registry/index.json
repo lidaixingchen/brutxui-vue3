@@ -1656,7 +1656,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8e5ed75cdcb9aa30bc6667ff3d2d7dbc21eeb716ca74f0d8fc32ae6939b43b5b"
+      "integrity": "sha256-d7e3117fc64615f363a71f11e4ea1f9eec0633046f84ce5b750e6dddb7b369f1"
     },
     {
       "name": "dropdown-menu",
@@ -1947,6 +1947,10 @@
         {
           "path": "lib/z-index.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -2035,7 +2039,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-259216071e697dbe41c04e33f11c83897b93120085948cc6a6f31e9b065fd990"
+      "integrity": "sha256-aa255675101e072634367e9a273b029a14cb75661df88681fcfe94d675746463"
     },
     {
       "name": "label",
@@ -2151,7 +2155,9 @@
       "description": "Container wrapper and v-loading custom directive for displaying loading state overlay with custom text.",
       "dependencies": [],
       "registryDependencies": [
-        "spinner"
+        "spinner",
+        "skeleton",
+        "progress"
       ],
       "files": [
         {
@@ -2253,7 +2259,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3a6aa48e501423555387e99de0ae8eb44fc22f154eb237f35938861214b099c1"
+      "integrity": "sha256-c406b6b8f4dd7dc1e8d3078d8b3c5c1c7172b6ac02927dc2a416daa5dd96dd07"
     },
     {
       "name": "pagination",
@@ -3730,7 +3736,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f17bdcd828d4ddc1267e4ac6e85f794381e1b506dc35202f0397c5241606c310"
+      "integrity": "sha256-684829bfcfb61b987d2d176e4c7150a53d4fb7442c0e81e2317511471e4ad22f"
     },
     {
       "name": "tooltip",
@@ -7218,7 +7224,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-caff4e19c6c13f20b616da4fa2a4044714ecfa97a0d0db704073f088194476a8"
+      "integrity": "sha256-a7c14bec45bf013403c382e49c4b46709601f83867def2381a6496d9e5a25442"
     },
     {
       "name": "kanban",
@@ -7670,7 +7676,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7ececa1a51315254357d24986936757f6d8cb6d797a26fa42f70e897e5b36428"
+      "integrity": "sha256-0c6b9bccfb99e0b1b6d4ae4c0ed1c80a1053ad61bd529ce96bb9d1336992bf5b"
     },
     {
       "name": "stepper",
@@ -7910,7 +7916,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9f21d3e77e9e4d104074395a345103008bd16c066848adc557f4f515b63d6168"
+      "integrity": "sha256-7fca0a7225b7295a7f0f2b0bf6cf135283075daacfae7fee8b12df8ddb8f3688"
     },
     {
       "name": "glitch-text",
@@ -8031,7 +8037,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-50bf32ce731c37cc62a17f61df1c34bb1fdbee3776ffdaff855d25dad74c0787"
+      "integrity": "sha256-8a21ef68d5f2ffd0a8e3dba95ab757cd6aec73a0ea78927ace927bb13bc445f8"
     },
     {
       "name": "scratch-card",
@@ -8162,7 +8168,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b36dd68f8528c561e18b4b522e3dd457c0da2f50e73e3869a6f70c6c40422408"
+      "integrity": "sha256-162bf89d9ce90df4637d23f39b5b849e46145048ce32f1a74b074eda439d44f8"
     },
     {
       "name": "sketchy-chart",
@@ -8406,7 +8412,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-47e91d85f4440432ec72557f0027d7b620d4586093ca1a9a0831b951d034957d"
+      "integrity": "sha256-0ac7b2cf5a47029704209edc56b78d5a42dfddb7abff3e1e7d71b038d38bd96c"
     },
     {
       "name": "testimonial-card",
@@ -9332,13 +9338,13 @@
       "type": "registry:ui",
       "title": "Loading Page",
       "description": "Full-page loading state with spinner and progress.",
+      "status": "legacy",
+      "replacement": "loading",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "skeleton",
-        "spinner",
-        "progress",
+        "loading",
         "locale-zh-cn"
       ],
       "files": [
@@ -9437,20 +9443,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-89ed44698f010251bfbbd985dbd3fbf5c15a5a7095c3825956179fe2bb8a0ed6"
+      "integrity": "sha256-5c6ff2521bcfb62f5fdbc45301342cb58e13bbe87a5046df09bac6db97c15e46"
     },
     {
       "name": "error-card",
       "type": "registry:ui",
       "title": "Error Card",
       "description": "Error state card with message and retry action.",
+      "status": "legacy",
+      "replacement": "result",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "card",
         "button",
-        "alert",
+        "result",
         "locale-zh-cn"
       ],
       "files": [
@@ -9553,19 +9560,21 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c7eb0f09aa7b5314d93a8a6c4d222c9dde980786f12fcd7bdd3f1851666d7183"
+      "integrity": "sha256-db11c07df67bc0ac1221d0f7e4e54ea5b710540f4c5e0de26526d67822c287af"
     },
     {
       "name": "success-card",
       "type": "registry:ui",
       "title": "Success Card",
       "description": "Success state card with confirmation message and action.",
+      "status": "legacy",
+      "replacement": "result",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "card",
         "button",
+        "result",
         "locale-zh-cn"
       ],
       "files": [
@@ -9668,7 +9677,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d8e0b0f4706418f6b7d5d29ccf6b1cb575f8acd8b9b3514e0a6f05ba61c36797"
+      "integrity": "sha256-1ba2aa3f7e799049b881284976b1241b8377716e0de6c38d31788fc01e82841e"
     },
     {
       "name": "search-widget",
@@ -9910,6 +9919,8 @@
       "type": "registry:ui",
       "title": "Stepper Section",
       "description": "Step-based content sections with navigation controls.",
+      "status": "legacy",
+      "replacement": "stepper",
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10020,7 +10031,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2c7496caea72450a12f61d06d5762431ce652241bd8102a6fa2036f988baac64"
+      "integrity": "sha256-5d22541d6142e1c72b64ab6df8a6713157ac4349fdeebc38c35e3190dadc38f4"
     },
     {
       "name": "cookie-consent",
@@ -10142,13 +10153,13 @@
       "type": "registry:ui",
       "title": "Data Table Section",
       "description": "Data display section with table, filters, and pagination.",
+      "status": "legacy",
+      "replacement": "data-table",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
-        "table",
-        "pagination",
-        "input",
+        "data-table",
         "locale-zh-cn"
       ],
       "files": [
@@ -10263,7 +10274,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c0359e52b39fb80da258cc868b27b3df561b2990391e02a79ab7da3a24e2061c"
+      "integrity": "sha256-26458319b4e50ae1767ad69855297ec884c6a74d2edb7a81aeb7c4949914b37b"
     },
     {
       "name": "settings-page",
@@ -10958,10 +10969,13 @@
       "type": "registry:ui",
       "title": "Upload Card",
       "description": "File upload card with drag-and-drop and progress.",
+      "status": "legacy",
+      "replacement": "upload",
       "dependencies": [
         "@lucide/vue"
       ],
       "registryDependencies": [
+        "upload",
         "card",
         "button",
         "progress",
@@ -11072,7 +11086,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-350d03649c79d2002d9c0a7f695ccf115e7a705fe5280054fd6443d3d2acf4d1"
+      "integrity": "sha256-138385161ebcc217f43464a3fbaf3503ebf13b4fec65de87f8e8d4de82c835fd"
     },
     {
       "name": "overview-page",
@@ -11348,7 +11362,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c98798a7722c7261e16b4f760b6cedab53ce9c0eb2e1890920a43d53b0f7aba1"
+      "integrity": "sha256-9953ecded8838fece9802c563b9f578a3a1d9b2a682e7d5644304ab563cb16f2"
     },
     {
       "name": "date-picker",
@@ -11538,7 +11552,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d102dd81ba1b60b51324b8eac8cb35635f734d4a5942a612f28f6d2349cc395c"
+      "integrity": "sha256-6a8db1569044d61d03075b82587081692cf4785532998c79da0e9e9bd147354c"
     },
     {
       "name": "color-mode-switcher",
@@ -11657,7 +11671,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-addba132bf44cccadc22b3dc070513ec151df3cd392c3d17fc01cb18636084b9"
+      "integrity": "sha256-bab9314e268bf1a1a26a17e89a9cb17e7fa32ba363c78cef2b21bd60a254ea18"
     },
     {
       "name": "data-table",
@@ -11807,7 +11821,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8f9163268484a99b0f065b9e2357c254270bdc1aa142ec8ffdd280ada2880a6d"
+      "integrity": "sha256-eabaca286d4fc88b91352c8fba004cce140dce9e1ff8081374b23d4fdb303893"
     },
     {
       "name": "tree-select",
@@ -11947,7 +11961,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f50fbf876323f61eb66c8f9f2e4cce31eb553752485129f5b74226454378e150"
+      "integrity": "sha256-2bc4f376b9fc65f649a5019a9c4b14ee358cd42c1f3146610bee55a280f3a6c8"
     },
     {
       "name": "typewriter-text",
@@ -12060,7 +12074,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-61f1c5e047189f41392762b73629f26d35310fe23aae3fda5e7d45f8d2abd522"
+      "integrity": "sha256-90fa35757f5c6ea4b34e708f91976b04e0bcf8eef967707267562ed302201ece"
     },
     {
       "name": "noise-background",
@@ -12173,7 +12187,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-cf49d07f043af4d272752e492291afa112d2dc24dfd797f08d4fe2e631903a6a"
+      "integrity": "sha256-7f960c65270ed5075b58ddbdd32c94ae3505139ac4590b4d4438fb2ff1af8c12"
     },
     {
       "name": "glitch-button",
@@ -12302,7 +12316,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-cab5ab78b763f5b9f734fbc22f0d7155810ae9939b32a7751eb784f5487631ea"
+      "integrity": "sha256-c7d9120b701d548e881d1c9a753ba74f1f9d66cfac380d50d2216dc843dad051"
     },
     {
       "name": "virtual-scroll",
@@ -12649,7 +12663,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7d99183bfb0e8228d46ec9db56a3d07b4af9e32c4ded002d55c0a7892e10d642"
+      "integrity": "sha256-8530018bab74c38aeaaef0071b9ae1ef6e73e7d23674d55f88bb6f66146a361f"
     },
     {
       "name": "popconfirm",
@@ -12976,7 +12990,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5101980148c78560c9440959934ce2519c0f869471ff460053c86775dc1f6fd7"
+      "integrity": "sha256-9320dcebb52a6e5ba59513d5ce97e871a887332e50c6a27ebb01ff0f0c7a22ed"
     },
     {
       "name": "transfer",
@@ -13215,6 +13229,10 @@
         {
           "path": "components/ui/result/Result.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/icon-size-variants.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -13303,13 +13321,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1409d9ef4ad34921cfe4278baba70b506bb13503ad4bdd2bab470edecfe09ee7"
+      "integrity": "sha256-09e8f88ddbcb2c211a3688b6a397ea42357e91995f5c53fd747e153c0ccb63d3"
     },
     {
       "name": "statistic",
       "type": "registry:ui",
       "title": "Statistic",
       "description": "Statistic data display component using Counter animation.",
+      "status": "legacy",
+      "replacement": "counter",
       "dependencies": [],
       "registryDependencies": [
         "counter"
@@ -13406,7 +13426,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-989d70ed574b63261f8da9ccefb519f47bc8d22d2e7156769928be261c17f6b2"
+      "integrity": "sha256-d4855bde8d9c8ec4f72e45af51f7f90592456a90325df7945b476eed9167be1a"
     },
     {
       "name": "watermark",
@@ -13511,7 +13531,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4aa81574e0fed656df4af5d99f7e4ec1b7b96ed6d0d664e9ae0e7f5671abcc25"
+      "integrity": "sha256-147d4a83ee0bc741ee00ead9f27ac7ade64fcdbd159f29df988e6e3584449f00"
     },
     {
       "name": "tour",
@@ -13756,7 +13776,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0d82802255e20db9999430a9d43c8ab6440585a678e66635000bff4c8478ff52"
+      "integrity": "sha256-0c2e9b13c0aa680f5d82841d0d8bee75e2e84a00f4a0bfe29858ef99591f9e4f"
     }
   ]
 }
