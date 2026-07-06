@@ -1,4 +1,4 @@
-import type { RegistryIndexItem } from 'brutx-shared-vue'
+import type { ComponentRegistryEntry, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
 
 export interface RegistryReferenceItem {
     name: string
@@ -24,6 +24,12 @@ export interface RegistryBuildManifestItem {
 export interface RegistryBuildManifestSnapshot {
     itemCount: number
     items: Record<string, RegistryBuildManifestItem>
+}
+
+export interface ComponentSourceFileInventory {
+    componentFiles: Set<string>
+    composables: Set<string>
+    directives: Set<string>
 }
 
 export function findUnknownRegistryReferences(items: RegistryReferenceItem[]): UnknownRegistryReference[] {
@@ -150,6 +156,103 @@ export function validateRegistryManifestConsistency(
     }
 
     return errors
+}
+
+export function validateComponentSourceFiles(
+    name: string,
+    entry: ComponentRegistryEntry,
+    inventory: ComponentSourceFileInventory
+): string[] {
+    const errors: string[] = []
+
+    if (entry.name !== name) {
+        errors.push(`[${name}] COMPONENT_REGISTRY entry name "${entry.name}" does not match its key`)
+    }
+
+    if (entry.files.length === 0) {
+        errors.push(`[${name}] COMPONENT_REGISTRY entry must list at least one component file`)
+    }
+
+    validateDeclaredFiles(errors, name, 'component file', entry.files, inventory.componentFiles)
+    validateDeclaredFiles(errors, name, 'composable', entry.composables ?? [], inventory.composables)
+    validateDeclaredFiles(errors, name, 'directive', entry.directives ?? [], inventory.directives)
+
+    return errors
+}
+
+export function validateGeneratedItemMatchesMetadata(
+    item: Pick<RegistryItem, 'name' | 'description' | 'dependencies' | 'category' | 'examples' | 'status' | 'replacement' | 'files'>,
+    entry: ComponentRegistryEntry
+): string[] {
+    const errors: string[] = []
+
+    if (item.description !== entry.description) {
+        errors.push('description does not match COMPONENT_REGISTRY')
+    }
+
+    compareStringArrays(errors, item.name, 'dependencies', item.dependencies, entry.dependencies)
+    compareStringArrays(errors, item.name, 'examples', item.examples ?? [], entry.examples ?? [])
+
+    if (item.category !== entry.category) {
+        errors.push('category does not match COMPONENT_REGISTRY')
+    }
+
+    if (item.status !== entry.status) {
+        errors.push('status does not match COMPONENT_REGISTRY')
+    }
+
+    if (item.replacement !== entry.replacement) {
+        errors.push('replacement does not match COMPONENT_REGISTRY')
+    }
+
+    const generatedFiles = new Set(item.files.map(file => file.path))
+    const declaredFiles = [
+        ...entry.files.map(file => `components/ui/${entry.name}/${file}`),
+        ...(entry.composables ?? []).map(file => `composables/${file}`),
+        ...(entry.directives ?? []).map(file => `directives/${file}`),
+    ]
+
+    for (const file of declaredFiles) {
+        if (!generatedFiles.has(file)) {
+            errors.push(`declared file "${file}" is missing from generated registry item`)
+        }
+    }
+
+    return errors
+}
+
+function validateDeclaredFiles(
+    errors: string[],
+    componentName: string,
+    label: string,
+    files: string[],
+    sourceFiles: Set<string>
+): void {
+    const seen = new Set<string>()
+
+    for (const file of files) {
+        if (!isSafeRelativeFile(file)) {
+            errors.push(`[${componentName}] ${label} "${file}" must be a portable relative file path`)
+            continue
+        }
+
+        if (seen.has(file)) {
+            errors.push(`[${componentName}] duplicate ${label} "${file}"`)
+        }
+        seen.add(file)
+
+        if (!sourceFiles.has(file)) {
+            errors.push(`[${componentName}] declared ${label} "${file}" does not exist in source`)
+        }
+    }
+}
+
+function isSafeRelativeFile(file: string): boolean {
+    if (file.length === 0 || file.startsWith('/') || file.startsWith('\\') || file.includes('\\')) {
+        return false
+    }
+
+    return file.split('/').every(segment => segment.length > 0 && segment !== '.' && segment !== '..')
 }
 
 function compareStringArrays(

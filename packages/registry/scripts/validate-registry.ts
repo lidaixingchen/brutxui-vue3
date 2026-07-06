@@ -11,6 +11,8 @@ import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
     formatRegistryDependencyGraph,
+    validateComponentSourceFiles,
+    validateGeneratedItemMatchesMetadata,
     validateRegistryManifestConsistency,
     type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
@@ -21,6 +23,33 @@ const __dirname = path.dirname(__filename);
 
 const REGISTRY_DIR = path.resolve(__dirname, '../registry');
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
+const UI_COMPOSABLES_DIR = path.resolve(__dirname, '../../ui/src/composables');
+const UI_DIRECTIVES_DIR = path.resolve(__dirname, '../../ui/src/directives');
+
+function readRelativeFiles(rootDir: string): Set<string> {
+    const files = new Set<string>();
+
+    if (!fs.existsSync(rootDir)) {
+        return files;
+    }
+
+    function walk(currentDir: string, base: string): void {
+        for (const entry of fs.readdirSync(currentDir, { withFileTypes: true })) {
+            const fullPath = path.join(currentDir, entry.name);
+            const relativePath = base ? `${base}/${entry.name}` : entry.name;
+
+            if (entry.isDirectory()) {
+                walk(fullPath, relativePath);
+            } else {
+                files.add(relativePath);
+            }
+        }
+    }
+
+    walk(rootDir, '');
+    return files;
+}
+
 function validateIndexConsistency(files: string[]): number {
     const indexPath = path.join(REGISTRY_DIR, 'index.json');
     const manifestPath = path.join(REGISTRY_DIR, 'registry-manifest.json');
@@ -125,16 +154,20 @@ function validateSourceConsistency(): number {
 
 function validateComponentsSync(): number {
     const registryKeys = new Set(Object.keys(COMPONENT_REGISTRY));
+    const composables = readRelativeFiles(UI_COMPOSABLES_DIR);
+    const directives = readRelativeFiles(UI_DIRECTIVES_DIR);
     let syncErrors = 0;
 
     for (const [name, entry] of Object.entries(COMPONENT_REGISTRY)) {
-        if (entry.name !== name) {
-            console.error(`✗ [${name}] COMPONENT_REGISTRY entry name "${entry.name}" does not match its key.`);
-            syncErrors++;
-        }
+        const componentFiles = readRelativeFiles(path.join(UI_COMPONENTS_DIR, name));
+        const errors = validateComponentSourceFiles(name, entry, {
+            componentFiles,
+            composables,
+            directives,
+        });
 
-        if (entry.files.length === 0) {
-            console.error(`✗ [${name}] COMPONENT_REGISTRY entry must list at least one component file.`);
+        for (const error of errors) {
+            console.error(`✗ ${error}.`);
             syncErrors++;
         }
     }
@@ -176,6 +209,15 @@ function validate() {
                 console.error(`✗ [${file}] Name field "${data.name}" does not match filename "${nameWithoutExtension}".`);
                 errorCount++;
             }
+
+            const metadata = COMPONENT_REGISTRY[data.name];
+            if (metadata) {
+                for (const error of validateGeneratedItemMatchesMetadata(data, metadata)) {
+                    console.error(`✗ [${file}] ${error}.`);
+                    errorCount++;
+                }
+            }
+
             referenceItems.push({
                 name: data.name,
                 registryDependencies: data.registryDependencies,

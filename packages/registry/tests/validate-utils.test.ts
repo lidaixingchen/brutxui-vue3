@@ -3,6 +3,8 @@ import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
     formatRegistryDependencyGraph,
+    validateComponentSourceFiles,
+    validateGeneratedItemMatchesMetadata,
     validateRegistryManifestConsistency,
 } from '../scripts/validate-utils'
 import type { RegistryIndexItem } from 'brutx-shared-vue'
@@ -159,6 +161,102 @@ describe('validate-registry helpers', () => {
             'item "dialog" replacement mismatch',
         ])
     })
+
+    it('validates component metadata against source file inventory', () => {
+        expect(validateComponentSourceFiles('button', {
+            name: 'button',
+            description: 'Button component',
+            dependencies: [],
+            category: 'action',
+            examples: [],
+            files: ['Button.vue', 'button-variants.ts'],
+            composables: ['useButton.ts'],
+            directives: ['button.ts'],
+        }, {
+            componentFiles: new Set(['Button.vue', 'button-variants.ts']),
+            composables: new Set(['useButton.ts']),
+            directives: new Set(['button.ts']),
+        })).toEqual([])
+    })
+
+    it('reports unsafe, duplicate, and missing metadata source files', () => {
+        expect(validateComponentSourceFiles('button', {
+            name: 'wrong-button',
+            description: 'Button component',
+            dependencies: [],
+            category: 'action',
+            examples: [],
+            files: ['Button.vue', 'Button.vue', '../escape.ts', 'Missing.vue'],
+            composables: ['missingComposable.ts'],
+            directives: ['missingDirective.ts'],
+        }, {
+            componentFiles: new Set(['Button.vue']),
+            composables: new Set(),
+            directives: new Set(),
+        })).toEqual([
+            '[button] COMPONENT_REGISTRY entry name "wrong-button" does not match its key',
+            '[button] duplicate component file "Button.vue"',
+            '[button] component file "../escape.ts" must be a portable relative file path',
+            '[button] declared component file "Missing.vue" does not exist in source',
+            '[button] declared composable "missingComposable.ts" does not exist in source',
+            '[button] declared directive "missingDirective.ts" does not exist in source',
+        ])
+    })
+
+    it('validates generated registry item metadata against shared metadata', () => {
+        const item = createRegistryItem('button', {
+            description: 'Button component',
+            dependencies: ['reka-ui'],
+            category: 'action',
+            examples: ['button-demo'],
+            files: [
+                'components/ui/button/Button.vue',
+                'components/ui/button/button-variants.ts',
+                'composables/useButton.ts',
+            ],
+        })
+
+        expect(validateGeneratedItemMatchesMetadata(item, {
+            name: 'button',
+            description: 'Button component',
+            dependencies: ['reka-ui'],
+            category: 'action',
+            examples: ['button-demo'],
+            files: ['Button.vue', 'button-variants.ts'],
+            composables: ['useButton.ts'],
+        })).toEqual([])
+    })
+
+    it('reports generated registry item drift from shared metadata', () => {
+        const item = createRegistryItem('button', {
+            description: 'Old description',
+            dependencies: ['old-dep'],
+            category: 'layout',
+            examples: ['old-demo'],
+            status: 'stable',
+            replacement: 'old-button',
+            files: ['components/ui/button/Button.vue'],
+        })
+
+        expect(validateGeneratedItemMatchesMetadata(item, {
+            name: 'button',
+            description: 'Button component',
+            dependencies: ['reka-ui'],
+            category: 'action',
+            examples: ['button-demo'],
+            status: 'legacy',
+            replacement: 'new-button',
+            files: ['Button.vue', 'button-variants.ts'],
+        })).toEqual([
+            'description does not match COMPONENT_REGISTRY',
+            'item "button" dependencies mismatch',
+            'item "button" examples mismatch',
+            'category does not match COMPONENT_REGISTRY',
+            'status does not match COMPONENT_REGISTRY',
+            'replacement does not match COMPONENT_REGISTRY',
+            'declared file "components/ui/button/button-variants.ts" is missing from generated registry item',
+        ])
+    })
 })
 
 function createIndexItem(
@@ -190,6 +288,40 @@ function createIndexItem(
         tailwind: {},
         cssVars: {},
         integrity: overrides.integrity,
+        status: overrides.status,
+        replacement: overrides.replacement,
+    }
+}
+
+function createRegistryItem(
+    name: string,
+    overrides: {
+        description: string
+        dependencies?: string[]
+        category?: RegistryIndexItem['category']
+        examples?: string[]
+        status?: RegistryIndexItem['status']
+        replacement?: string
+        files: string[]
+    }
+) {
+    return {
+        name,
+        type: 'registry:ui' as const,
+        title: name,
+        description: overrides.description,
+        category: overrides.category,
+        examples: overrides.examples,
+        dependencies: overrides.dependencies ?? [],
+        registryDependencies: [],
+        files: overrides.files.map(file => ({
+            path: file,
+            content: `${file} content`,
+            type: 'registry:ui' as const,
+        })),
+        tailwind: {},
+        cssVars: {},
+        integrity: 'sha256-test',
         status: overrides.status,
         replacement: overrides.replacement,
     }
