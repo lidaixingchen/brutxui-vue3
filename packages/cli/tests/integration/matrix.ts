@@ -13,6 +13,11 @@ export interface IntegrationMatrixCase {
     runByDefault: boolean
 }
 
+export interface IntegrationMatrixCommand {
+    label: string
+    args: string[]
+}
+
 export interface IntegrationMatrixOptions {
     includeHeavy?: boolean
 }
@@ -52,4 +57,11 @@ export function getIntegrationMatrixCases(options: IntegrationMatrixOptions = {}
     return options.includeHeavy
         ? [...CLI_INTEGRATION_MATRIX]
         : CLI_INTEGRATION_MATRIX.filter(item => item.runByDefault)
+}
+
+export function getIntegrationMatrixCommands(item: IntegrationMatrixCase): IntegrationMatrixCommand[] {
+    return item.commands.map(command => ({
+        label: command,
+        args: command.split(' '),
+    }))
 }

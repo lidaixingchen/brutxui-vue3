@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { CLI_INTEGRATION_MATRIX, getIntegrationMatrixCases } from './matrix'
+import {
+    CLI_INTEGRATION_MATRIX,
+    getIntegrationMatrixCases,
+    getIntegrationMatrixCommands,
+} from './matrix'
 
 describe('CLI integration matrix', () => {
     it('keeps the release matrix explicit and local-registry friendly', () => {
@@ -37,5 +41,16 @@ describe('CLI integration matrix', () => {
         expect(releaseCases).toHaveLength(CLI_INTEGRATION_MATRIX.length)
         expect(releaseCases.map(item => item.name)).toEqual(CLI_INTEGRATION_MATRIX.map(item => item.name))
         expect(releaseCases).not.toBe(CLI_INTEGRATION_MATRIX)
+    })
+
+    it('converts matrix command labels into CLI argument arrays', () => {
+        expect(getIntegrationMatrixCommands(CLI_INTEGRATION_MATRIX[0])).toEqual([
+            { label: 'init', args: ['init'] },
+            { label: 'add button', args: ['add', 'button'] },
+            { label: 'add data-table', args: ['add', 'data-table'] },
+            { label: 'diff', args: ['diff'] },
+            { label: 'remove button', args: ['remove', 'button'] },
+            { label: 'doctor', args: ['doctor'] },
+        ])
     })
 })
