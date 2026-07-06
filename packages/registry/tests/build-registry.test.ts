@@ -11,6 +11,7 @@ import {
 import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
     assertRegistryDependencyGraph,
+    assertKnownRegistryDeps,
     buildRegistryManifest,
     extractDeps,
     extractModuleSpecifiers,
@@ -81,6 +82,13 @@ describe('build-registry helpers', () => {
 
         expect(extractRegistryDeps(code, 'card')).toEqual(['button']);
         expect(extractUnknownRegistryDeps(code)).toEqual(['missing-widget', 'ghost']);
+    });
+
+    it('fails unknown registry imports with source context', () => {
+        const code = "import Missing from '@/components/ui/missing-widget/MissingWidget.vue'";
+
+        expect(() => assertKnownRegistryDeps(code, 'dialog', 'useDialog.ts'))
+            .toThrow('Unknown registry component import(s) in "dialog" (useDialog.ts): missing-widget');
     });
 
     it('extracts static import and export module specifiers without matching dynamic imports', () => {

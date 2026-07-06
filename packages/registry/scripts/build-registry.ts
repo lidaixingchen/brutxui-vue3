@@ -310,6 +310,15 @@ export function extractUnknownRegistryDeps(code: string): string[] {
     return Array.from(deps);
 }
 
+export function assertKnownRegistryDeps(code: string, ownerName: string, sourceLabel: string): string[] {
+    const unknownDeps = extractUnknownRegistryDeps(code);
+    if (unknownDeps.length > 0) {
+        throw new Error(`Unknown registry component import(s) in "${ownerName}" (${sourceLabel}): ${unknownDeps.join(', ')}`);
+    }
+
+    return extractRegistryDeps(code, ownerName);
+}
+
 const TAILWIND_CONFIG = {
     config: {
         theme: {
@@ -560,13 +569,7 @@ export async function run() {
                 let code = readComponentSource(filePath);
                 code = rewriteImports(code, name, 'component');
 
-                const deps = extractRegistryDeps(code, name);
-                const unknownDeps = extractUnknownRegistryDeps(code);
-                if (unknownDeps.length > 0) {
-                    throw new Error(`Unknown registry component import(s) in "${name}": ${unknownDeps.join(', ')}`);
-                }
-
-                deps.forEach(d => allRegistryDeps.add(d));
+                assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
                 extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
                 extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
                 extractDeps(code, 'lib').forEach(d => libDeps.add(d));
@@ -591,6 +594,7 @@ export async function run() {
 
                     let code = readComponentSource(composablePath);
                     code = rewriteImports(code, name, 'composable');
+                    assertKnownRegistryDeps(code, name, composableName).forEach(d => allRegistryDeps.add(d));
                     extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
                     extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
                     extractDeps(code, 'lib').forEach(d => libDeps.add(d));
@@ -613,8 +617,7 @@ export async function run() {
 
                 let code = readComponentSource(directivePath);
                 code = rewriteImports(code, name, 'directive');
-                const deps = extractRegistryDeps(code, name);
-                deps.forEach(d => allRegistryDeps.add(d));
+                assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
                 extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
                 extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
                 extractDeps(code, 'lib').forEach(d => libDeps.add(d));
@@ -640,6 +643,7 @@ export async function run() {
                 }
 
                 const code = rewriteImports(readComponentSource(libPath), name, 'lib');
+                assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
 
                 files.push({
                     path: `lib/${libName}`,
