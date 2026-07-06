@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onBeforeUnmount, nextTick } from 'vue'
-import { isClient } from '@/lib/env'
+import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getMutationObserverCtor, isClient } from '@/lib/env'
 
 interface WatermarkFont {
     color?: string
@@ -113,8 +113,12 @@ function renderWatermark() {
         return
     }
 
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
+    const canvas = createCanvasElement()
+    if (!canvas) {
+        drawSvgFallback()
+        return
+    }
+    const ctx = getCanvas2DContext(canvas)
     if (!ctx) {
         drawSvgFallback()
         return
@@ -124,7 +128,7 @@ function renderWatermark() {
     const canvasWidth = markWidth + props.gap[0]
     const canvasHeight = markHeight + props.gap[1]
 
-    const ratio = window.devicePixelRatio || 1
+    const ratio = getDevicePixelRatio()
     canvas.width = canvasWidth * ratio
     canvas.height = canvasHeight * ratio
     ctx.scale(ratio, ratio)
@@ -198,7 +202,10 @@ function initObserver() {
     if (!isClient || !containerRef.value || !watermarkRef.value) return
     if (observer) return
 
-    observer = new MutationObserver((mutations) => {
+    const MutationObserverCtor = getMutationObserverCtor()
+    if (!MutationObserverCtor) return
+
+    observer = new MutationObserverCtor((mutations) => {
         for (const mutation of mutations) {
             if (mutation.type === 'childList') {
                 const removedNodes = Array.from(mutation.removedNodes)

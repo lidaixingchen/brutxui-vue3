@@ -64,6 +64,7 @@ describe('Tour.vue', () => {
     })
 
     afterEach(() => {
+        vi.unstubAllGlobals()
         HTMLCanvasElement.prototype.getContext = originalGetContext
         HTMLElement.prototype.getBoundingClientRect = originalGetBoundingClientRect
         HTMLElement.prototype.scrollIntoView = originalScrollIntoView
@@ -189,5 +190,50 @@ describe('Tour.vue', () => {
 
         window.dispatchEvent(new Event('scroll'))
         expect(mockContextInstance.strokeRect).toHaveBeenCalled()
+    })
+
+    it('mounts when ResizeObserver is unavailable', async () => {
+        vi.stubGlobal('ResizeObserver', undefined)
+
+        expect(() => {
+            mount(Tour, {
+                props: {
+                    steps: [{
+                        target: `#${TARGET_ID_1}`,
+                        title: 'Step 1 Title',
+                    }],
+                    current: 0,
+                    open: true,
+                },
+                global: { provide: localeProvide },
+            })
+        }).not.toThrow()
+
+        await nextTick()
+        await nextTick()
+        expect(mockContextInstance.strokeRect).toHaveBeenCalled()
+    })
+
+    it('mounts when canvas 2d context is unavailable', async () => {
+        HTMLCanvasElement.prototype.getContext = vi.fn(() => {
+            throw new Error('canvas disabled')
+        }) as typeof originalGetContext
+
+        expect(() => {
+            mount(Tour, {
+                props: {
+                    steps: [{
+                        target: `#${TARGET_ID_1}`,
+                        title: 'Step 1 Title',
+                    }],
+                    current: 0,
+                    open: true,
+                },
+                global: { provide: localeProvide },
+            })
+        }).not.toThrow()
+
+        await nextTick()
+        await nextTick()
     })
 })

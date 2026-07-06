@@ -1,9 +1,14 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, it, expect, vi } from 'vitest'
 import Watermark from './Watermark.vue'
 
 describe('Watermark.vue', () => {
+    afterEach(() => {
+        vi.unstubAllGlobals()
+        vi.restoreAllMocks()
+    })
+
     it('renders slot content and watermark background successfully', async () => {
         const wrapper = mount(Watermark, {
             slots: {
@@ -156,5 +161,43 @@ describe('Watermark.vue', () => {
 
         wrapper.unmount()
         getContextSpy.mockRestore()
+    })
+
+    it('renders watermark without MutationObserver support', async () => {
+        vi.stubGlobal('MutationObserver', undefined)
+
+        const wrapper = mount(Watermark, {
+            props: { content: 'TEST_MARK' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        expect(wrapper.find('.absolute').exists()).toBe(true)
+
+        wrapper.unmount()
+    })
+
+    it('falls back to SVG when canvas creation throws', async () => {
+        const createElementSpy = vi.spyOn(document, 'createElement').mockImplementation((tagName: string, options?: ElementCreationOptions) => {
+            if (tagName === 'canvas') {
+                throw new Error('canvas disabled')
+            }
+            return Document.prototype.createElement.call(document, tagName, options)
+        })
+
+        const wrapper = mount(Watermark, {
+            props: { content: 'TEST_MARK' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+
+        const watermarkDiv = wrapper.find('.absolute')
+        expect(watermarkDiv.exists()).toBe(true)
+        expect(watermarkDiv.element.getAttribute('style') || '').toContain('data:image/svg+xml;base64,')
+
+        wrapper.unmount()
+        createElementSpy.mockRestore()
     })
 })

@@ -221,7 +221,7 @@
       "examples": []
     },
     "card-3d": {
-      "integrity": "sha256-a35deb818b2fd5a10a8f707a34c68ec4a195c6465a5db369ae7646443f37d10a",
+      "integrity": "sha256-fd230239db0e15fd7a48ec0c6033cc2e7f52851902a0fbdef497d2d6c9658a2b",
       "fileCount": 6,
       "dependencies": [],
       "registryDependencies": [
@@ -318,7 +318,7 @@
       "examples": []
     },
     "color-mode-switcher": {
-      "integrity": "sha256-dd7e98f31646d9e1ddaf19485f4609d18c906ac86b6074e1d5f4a0605fc07880",
+      "integrity": "sha256-e45ea84a44c51e7a04c6121ec928f0d9bf88a2b10844e84337aac24515951c9c",
       "fileCount": 4,
       "dependencies": [
         "@lucide/vue"
@@ -332,7 +332,7 @@
       "examples": []
     },
     "color-picker": {
-      "integrity": "sha256-8543635da4ea204d390d79b638c964007d39f596af5ed021ba89c0ec1b045761",
+      "integrity": "sha256-f3cc99fc0b1fa80ca89b38734daa85e6410126d257ea0a5acc1bc837eb7f0433",
       "fileCount": 15,
       "dependencies": [
         "@lucide/vue",
@@ -403,7 +403,7 @@
       "examples": []
     },
     "counter": {
-      "integrity": "sha256-87e912f611b2568e75e775a17d7216f3ccc9008a95c94e05c1e661f6e198589c",
+      "integrity": "sha256-aabb045bac645056e9e7a88d69fe3ffc6e46d7093eddb0abed2dea1c3879e6e1",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [],
@@ -484,7 +484,7 @@
       "examples": []
     },
     "dialog": {
-      "integrity": "sha256-46ef5f960abe2bc5a91bf3d1841c8fa213881c3d7855b6fb31cb088308ba49d1",
+      "integrity": "sha256-ebff1810e444eeff8dd1c25b8fd95e39a60820d6109879c5ab39be62b34c8ae8",
       "fileCount": 16,
       "dependencies": [
         "@lucide/vue",
@@ -634,7 +634,7 @@
       "examples": []
     },
     "glitch-text": {
-      "integrity": "sha256-3fcb2a3535c28a072e3fb7325a0c89d755465274fb6c50583b0b955163948b4c",
+      "integrity": "sha256-fece935d4f1e26a60dd3699dd2bd3efbce649c9fb2642fff21a498e96e5a5446",
       "fileCount": 6,
       "dependencies": [],
       "registryDependencies": [],
@@ -642,7 +642,7 @@
       "examples": []
     },
     "hardcore-input": {
-      "integrity": "sha256-d61ca7e921821b74d3c32496fed3256acd388d7920c2c014694390a422c0e1db",
+      "integrity": "sha256-de031904e7148b3fe7ee7a667885141f68e3c101bed18b7a788de4ec324d3936",
       "fileCount": 7,
       "dependencies": [],
       "registryDependencies": [
@@ -670,7 +670,7 @@
       "examples": []
     },
     "image": {
-      "integrity": "sha256-00636b738ce1e36edffd09153cdf65ba009febb043d5cfff083a1ea474280494",
+      "integrity": "sha256-f23bd882fc478a3b3252c9abb706659aa594cb32d70088db50e0971bd1431488",
       "fileCount": 3,
       "dependencies": [
         "@lucide/vue",
@@ -681,7 +681,7 @@
       "examples": []
     },
     "infinite-scroll": {
-      "integrity": "sha256-364cc07d5f455b78c25638b5c7e8945dfb0dd59f6e945fc87517ed7345b418f3",
+      "integrity": "sha256-e40cea0d8de07b75e948490c608e3c962d87e0b6863385692d923177b8148b9a",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [],
@@ -740,7 +740,7 @@
       "examples": []
     },
     "loading": {
-      "integrity": "sha256-b4d31655c06a37aeab690e98d7faee175f274729f410b9626357ca7f1a647d1a",
+      "integrity": "sha256-0b797bb8e559d6636dfd5ff52fff3c8525dfc60a9071c20cb58ca277b25f63e4",
       "fileCount": 3,
       "dependencies": [],
       "registryDependencies": [
@@ -777,7 +777,7 @@
       "examples": []
     },
     "message": {
-      "integrity": "sha256-dc821bc9ea359fa2a82645f7c50d1d603ececd4c9b07161fca11d61237971d4e",
+      "integrity": "sha256-10b3fa737dd629ccff417916da29ae84a3701f7895723c559ab09ef91866926a",
       "fileCount": 8,
       "dependencies": [
         "@lucide/vue"
@@ -790,7 +790,7 @@
       "examples": []
     },
     "noise-background": {
-      "integrity": "sha256-01c82af2908c5aefe75965aaffd19066fa75bfd7e1e53a2aa4c264313fd9a2c6",
+      "integrity": "sha256-50da36f37d151cbaf94554e98af8e6b3e885f7d488767fe771e20c17cd4865ed",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [],
@@ -977,7 +977,7 @@
       "examples": []
     },
     "scratch-card": {
-      "integrity": "sha256-8745519841b988a8b3fd62817d22726eb0d9db4ad5da55b5dccbaf20a113e4e6",
+      "integrity": "sha256-ef8202deb446d85d23cf25244ee3070cd14fea265f6deb63b0697ff9e087683a",
       "fileCount": 8,
       "dependencies": [],
       "registryDependencies": [
@@ -1207,7 +1207,7 @@
       "examples": []
     },
     "toast": {
-      "integrity": "sha256-7564f6de2acd04a00d01ec7e00afb0ef0c7e4ad355c547a7cdd4f3d08ab37de2",
+      "integrity": "sha256-de485bf781cb1027205c51b6eeaec20efaa52f068455dcce51ba45393ef63979",
       "fileCount": 8,
       "dependencies": [
         "@lucide/vue"
@@ -1252,8 +1252,8 @@
       "examples": []
     },
     "tour": {
-      "integrity": "sha256-0a1dd45bca87b10cfaf4ca0f1f19a7ac4e7a9adde9d08ddbde327fd1260ccb66",
-      "fileCount": 3,
+      "integrity": "sha256-cac6bc1f0eef2ca0355370a3f944ff21cd13e93df84e5f633e5792db52fec974",
+      "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -1278,7 +1278,7 @@
       "examples": []
     },
     "tree-select": {
-      "integrity": "sha256-cdbebd6139d326a3789b0fee80f712ff9862ef857a09151f21a944f433d97256",
+      "integrity": "sha256-0278be97210e083fd4f34c6b09ce27bf4ca4dd2cfcb275245d8d25c6c85df9e1",
       "fileCount": 11,
       "dependencies": [
         "@lucide/vue",
@@ -1293,7 +1293,7 @@
       "examples": []
     },
     "tree-view": {
-      "integrity": "sha256-be2d1882df33effa36b40dd45b84cffe7c2d3223424811fd34cd282f65df8d97",
+      "integrity": "sha256-b1c395dd0669f4ccb03c7e03c8dbf5cbe73b919b350ae4124857d417ad875c52",
       "fileCount": 8,
       "dependencies": [
         "@lucide/vue",
@@ -1307,7 +1307,7 @@
       "examples": []
     },
     "typewriter-text": {
-      "integrity": "sha256-a81eb7af754a0b682149c3d789672c105ed625f7c6430f0f6988976d34ad4161",
+      "integrity": "sha256-236a809cc41e001aceb6f37157f687d99cdf57e2ce22f0f3c77729aa02154485",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [],
@@ -1356,7 +1356,7 @@
       "replacement": "brutalist-hero"
     },
     "watermark": {
-      "integrity": "sha256-c0c896200b7b639e316914f18222c7c96ce8f06b3980eb6f7e73f295d76b3200",
+      "integrity": "sha256-706c7ab45419ebd80814e0565b106aa86daf93f462b2df13d4b0313ec6f606b3",
       "fileCount": 2,
       "dependencies": [],
       "registryDependencies": [],

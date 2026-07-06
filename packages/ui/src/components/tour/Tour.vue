@@ -2,6 +2,7 @@
 /* global ScrollIntoViewOptions */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import { useLocale } from '@/composables/useLocale'
+import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, hasDocument } from '@/lib/env'
 import { Z_INDEX } from '@/lib/z-index'
 
 export interface TourStep {
@@ -35,7 +36,6 @@ const isOpen = defineModel<boolean>('open', { default: true })
 const BORDER_WIDTH = 2
 const POPOVER_GAP = 12
 const VIEWPORT_MARGIN = 8
-const DEFAULT_DPR = 1
 const BORDER_FALLBACK_COLOR = '#000000'
 const CANVAS_ALPHA_FILL = 'rgba(0, 0, 0, 0.5)'
 
@@ -73,6 +73,7 @@ const getTargetElement = (target: string | HTMLElement | undefined): HTMLElement
         return null
     }
     if (typeof target === 'string') {
+        if (!hasDocument) return null
         return document.querySelector(target)
     }
     return target
@@ -83,12 +84,12 @@ const drawCanvas = (): void => {
     if (!canvas) {
         return
     }
-    const ctx = canvas.getContext('2d')
+    const ctx = getCanvas2DContext(canvas)
     if (!ctx) {
         return
     }
 
-    const dpr = window.devicePixelRatio || DEFAULT_DPR
+    const dpr = getDevicePixelRatio()
     const width = window.innerWidth
     const height = window.innerHeight
 
@@ -116,7 +117,7 @@ const drawCanvas = (): void => {
         }
 
         let strokeColor = BORDER_FALLBACK_COLOR
-        if (typeof window !== 'undefined') {
+        if (hasDocument) {
             const style = getComputedStyle(document.documentElement)
             strokeColor = style.getPropertyValue('--brutal-black').trim() || BORDER_FALLBACK_COLOR
         }
@@ -255,10 +256,11 @@ let resizeObserver: ResizeObserver | null = null
 let isUnmounted = false
 
 const initResizeObserver = (): void => {
-    if (typeof window === 'undefined' || !window.ResizeObserver) {
+    const ResizeObserverCtor = getResizeObserverCtor()
+    if (!ResizeObserverCtor) {
         return
     }
-    resizeObserver = new ResizeObserver((): void => {
+    resizeObserver = new ResizeObserverCtor((): void => {
         recalculatePosition()
     })
 }

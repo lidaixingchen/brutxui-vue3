@@ -22,6 +22,7 @@ export const hasIntersectionObserver = isClient && typeof window.IntersectionObs
 
 type AudioContextConstructor = typeof AudioContext
 type ResizeObserverConstructor = typeof ResizeObserver
+type MutationObserverConstructor = typeof MutationObserver
 
 /** Get the available AudioContext constructor, including Safari's prefixed API. */
 export function getAudioContextCtor(): AudioContextConstructor | null {
@@ -35,6 +36,12 @@ export function getAudioContextCtor(): AudioContextConstructor | null {
 export function getResizeObserverCtor(): ResizeObserverConstructor | null {
     if (!isClient) return null
     return window.ResizeObserver ?? null
+}
+
+/** Get the available MutationObserver constructor. */
+export function getMutationObserverCtor(): MutationObserverConstructor | null {
+    if (!isClient) return null
+    return window.MutationObserver ?? null
 }
 
 /** Get the current device pixel ratio with an SSR-safe fallback. */

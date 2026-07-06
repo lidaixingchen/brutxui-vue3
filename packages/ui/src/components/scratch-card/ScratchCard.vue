@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, toRef, watch } from 'vue'
-import { hasDocument } from '@/lib/env'
+import { getCanvas2DContext, getDevicePixelRatio, hasDocument } from '@/lib/env'
 import { cn } from '@/lib/utils'
 import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '@/lib/theme-fallbacks'
 import { useReducedMotion } from '@/composables/useReducedMotion'
@@ -120,9 +120,9 @@ const canvasStyle = computed(() => ({
 function resetCanvasOverlay() {
     const canvas = canvasRef.value
     if (!canvas) return
-    const ctxVal = canvas.getContext('2d')
+    const ctxVal = getCanvas2DContext(canvas)
     if (!ctxVal) return
-    const dpr = window.devicePixelRatio || 1
+    const dpr = getDevicePixelRatio()
     const w = canvas.width / dpr
     const h = canvas.height / dpr
     drawOverlay(ctxVal, w, h)
