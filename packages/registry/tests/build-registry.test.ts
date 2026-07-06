@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+    AVAILABLE_COMPONENTS,
     COMPONENT_FILES,
     COMPONENTS_BY_CATEGORY,
     COMPONENT_REGISTRY,
@@ -20,6 +21,7 @@ import {
 describe('build-registry helpers', () => {
     it('keeps the registry compatibility mapping pointed at shared metadata', () => {
         expect(REGISTRY_COMPONENT_FILES).toBe(COMPONENT_FILES);
+        expect(AVAILABLE_COMPONENTS).toEqual(Object.keys(COMPONENT_REGISTRY));
         expect(COMPONENT_FILES.button.files).toContain('Button.vue');
         expect(COMPONENT_REGISTRY.button.files).toBe(COMPONENT_FILES.button.files);
         expect(COMPONENT_REGISTRY.button.dependencies).toEqual(['reka-ui', '@lucide/vue']);

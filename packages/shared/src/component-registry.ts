@@ -84,6 +84,7 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
 };
 
 export const COMPONENT_REGISTRY: Record<string, ComponentRegistryEntry> = createComponentRegistry();
+export const AVAILABLE_COMPONENTS = Object.keys(COMPONENT_REGISTRY);
 export const COMPONENTS_BY_CATEGORY: Record<ComponentCategory, string[]> = createComponentsByCategory();
 
 export function getComponentsByCategory(category: ComponentCategory): string[] {

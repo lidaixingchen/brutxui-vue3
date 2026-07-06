@@ -120,5 +120,3 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     tour: { dependencies: [], description: 'Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.' },
     message: { dependencies: ['@lucide/vue'], description: 'Imperative message notification system with singleton container, TransitionGroup stacking, and auto GC.' },
 } as const;
-
-export const AVAILABLE_COMPONENTS = Object.keys(COMPONENTS);
