@@ -2,9 +2,9 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
-import type { BrutalistConfig, RemoveOptions, RegistryItem } from '../lib/types.js';
+import type { BrutalistConfig, BrutxManifest, RemoveOptions, RegistryItem } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, FileTransaction, removeInstalledComponents } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, readManifest, removeInstalledComponents, isSafePath } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -22,6 +22,48 @@ async function getInstalledComponentDirs(cwd: string, config: BrutalistConfig): 
         .filter(d => d.isDirectory())
         .map(d => d.name)
         .sort();
+}
+
+function isInsideDirectory(filePath: string, directoryPath: string): boolean {
+    const relative = path.relative(directoryPath, filePath);
+    return relative === '' || (relative.length > 0 && !relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+async function findManifestKnownFiles(
+    cwd: string,
+    config: BrutalistConfig,
+    manifest: BrutxManifest | null,
+    removedComponents: string[],
+    remainingComponents: string[]
+): Promise<string[]> {
+    if (!manifest) {
+        return [];
+    }
+
+    const remainingFiles = new Set(
+        remainingComponents.flatMap(component => manifest.components[component]?.files ?? [])
+    );
+    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+    const removedComponentDirs = removedComponents.map(component => path.join(componentsPath, component));
+    const knownFiles: string[] = [];
+
+    for (const component of removedComponents) {
+        const entry = manifest.components[component];
+        if (!entry) continue;
+
+        for (const manifestFile of entry.files) {
+            if (remainingFiles.has(manifestFile)) continue;
+
+            const absolutePath = path.resolve(cwd, manifestFile);
+            if (!await isSafePath(absolutePath, cwd)) continue;
+            if (removedComponentDirs.some(dir => isInsideDirectory(absolutePath, dir))) continue;
+            if (!await fs.pathExists(absolutePath)) continue;
+
+            knownFiles.push(absolutePath);
+        }
+    }
+
+    return [...new Set(knownFiles)];
 }
 
 async function scanAllImports(componentsPath: string): Promise<Map<string, Set<string>>> {
@@ -138,7 +180,13 @@ async function getDependents(
     componentsToRemove: string[]
 ): Promise<Map<string, string[]>> {
     const dependents = new Map<string, string[]>();
-    const installed = await getInstalledComponentDirs(cwd, config);
+    const manifest = await readManifest(cwd).catch(() => null);
+    const installed = [
+        ...new Set([
+            ...await getInstalledComponentDirs(cwd, config),
+            ...Object.keys(manifest?.components ?? {}),
+        ]),
+    ].sort();
     const remaining = installed.filter(c => !componentsToRemove.includes(c));
 
     for (const name of componentsToRemove) {
@@ -175,7 +223,13 @@ export async function remove(components: string[], options: RemoveOptions): Prom
         throw new CliError('No components.json found. Run `brutx-vue init` first.');
     }
 
-    const installed = await getInstalledComponentDirs(cwd, config);
+    const manifest = await readManifest(cwd).catch(() => null);
+    const installed = [
+        ...new Set([
+            ...await getInstalledComponentDirs(cwd, config),
+            ...Object.keys(manifest?.components ?? {}),
+        ]),
+    ].sort();
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
 
@@ -199,7 +253,12 @@ export async function remove(components: string[], options: RemoveOptions): Prom
     }
 
     const remaining = installed.filter(c => !toRemove.includes(c));
-    const orphanedFiles = await findOrphanedFiles(cwd, config, remaining, toRemove);
+    const orphanedFiles = [
+        ...new Set([
+            ...await findOrphanedFiles(cwd, config, remaining, toRemove),
+            ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining),
+        ]),
+    ];
 
     if (options.dryRun) {
         logger.newLine();

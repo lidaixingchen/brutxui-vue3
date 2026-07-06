@@ -282,6 +282,39 @@ describe('remove command', () => {
             expect(manifest.components.button).toBeUndefined();
             expect(manifest.components.card).toBeDefined();
         });
+
+        it('should remove manifest-known files that are no longer referenced', async () => {
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            await createComponent('button', {
+                'Button.vue': '<template>btn</template>',
+            });
+            const composablePath = path.join(tmpDir, 'src', 'composables', 'useButton.ts');
+            await fs.ensureDir(path.dirname(composablePath));
+            await fs.writeFile(composablePath, 'export function useButton() {}', 'utf-8');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: [
+                            'src/components/button/Button.vue',
+                            'src/composables/useButton.ts',
+                        ],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
+
+            expect(await fs.pathExists(composablePath)).toBe(false);
+        });
     });
 
     describe('removal cancelled by user', () => {
