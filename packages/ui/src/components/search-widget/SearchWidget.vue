@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { Search } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -14,6 +14,7 @@ import CommandItem from '../command/CommandItem.vue'
 import CommandEmpty from '../command/CommandEmpty.vue'
 import Spinner from '../spinner/Spinner.vue'
 import type { SearchSuggestion } from './types'
+import { useSearchWidget } from './useSearchWidget'
 
 export type { SearchSuggestion };
 
@@ -46,49 +47,25 @@ const rootClasses = computed(() => cn('w-full max-w-lg', props.class))
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('searchWidget.defaultPlaceholder'))
 
-const query = ref('')
-
-const filteredSuggestions = computed(() => {
-    if (!query.value) return []
-    const q = query.value.toLowerCase()
-    return props.suggestions.filter(s => s.label.toLowerCase().includes(q))
+const {
+    query,
+    groupedSuggestions,
+    showRecent,
+    showSuggestions,
+    handleSearch,
+    handleSelect,
+    handleRecentSelect,
+} = useSearchWidget({
+    suggestions: () => props.suggestions,
+    recent: () => props.recent,
+    onSearch: value => emit('search', value),
+    onSelect: suggestion => emit('select', suggestion),
 })
-
-const groupedSuggestions = computed(() => {
-    const groups: Record<string, SearchSuggestion[]> = {}
-    for (const suggestion of filteredSuggestions.value) {
-        const group = suggestion.group ?? ''
-        if (!groups[group]) groups[group] = []
-        groups[group].push(suggestion)
-    }
-    return groups
-})
-
-function handleSearch(value: string) {
-    query.value = value
-    emit('search', value)
-}
-
-function handleSelect(value: string) {
-    const suggestion = props.suggestions.find(s => s.value === value)
-    if (suggestion) {
-        emit('select', suggestion)
-    }
-}
-
-function handleRecentSelect(value: string) {
-    const suggestion = props.recent.find(s => s.value === value)
-    if (!suggestion) return
-    query.value = suggestion.label
-    emit('select', suggestion)
-}
 
 const iconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
 )
 
-const showRecent = computed(() => !query.value && props.recent.length > 0)
-const showSuggestions = computed(() => !!query.value)
 </script>
 
 <template>

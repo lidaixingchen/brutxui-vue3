@@ -84,7 +84,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'header-section': { files: ['HeaderSection.vue'], composables: ['useLocale.ts'] },
     'footer-section': { files: ['FooterSection.vue'], composables: ['useLocale.ts'] },
     'not-found-page': { files: ['NotFoundPage.vue'], composables: ['useLocale.ts'] },
-    'search-widget': { files: ['SearchWidget.vue'], composables: ['useLocale.ts'] },
+    'search-widget': { files: ['SearchWidget.vue', 'useSearchWidget.ts'], composables: ['useLocale.ts'] },
     'feedback-form': { files: ['FeedbackForm.vue'], composables: ['useLocale.ts'] },
     'cookie-consent': { files: ['CookieConsent.vue'], composables: ['useLocale.ts'] },
     'settings-page': { files: ['SettingsPage.vue'], composables: ['useLocale.ts'] },
