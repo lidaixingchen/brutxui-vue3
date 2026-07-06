@@ -4,6 +4,12 @@ import type { AddOptions, BrutalistConfig, RegistryItem } from '../types.js';
 import { REGISTRY_PATH_PREFIXES, UTILS_TEMPLATE } from '../constants.js';
 import { CliError } from '../error.js';
 import { isSafePath, resolveAliasPath, resolveImportAlias, verifyWrittenPath } from '../project.js';
+import { resolveDeps } from '../registry.js';
+
+export interface ComponentResolutionResult {
+    items: RegistryItem[];
+    dependencies: string[];
+}
 
 export interface EnsureUtilsFileResult {
     path: string;
@@ -33,6 +39,23 @@ export interface ComponentFileWriteResult {
 export interface ComponentFileWriteFailure {
     rollbackFailures: number;
     rollbackCount: number;
+}
+
+export async function resolveComponents(
+    components: string[],
+    registry?: string
+): Promise<ComponentResolutionResult> {
+    const items = await resolveDeps(components, registry);
+    const dependencies = new Set<string>();
+
+    for (const item of items) {
+        item.dependencies?.forEach(dep => dependencies.add(dep));
+    }
+
+    return {
+        items,
+        dependencies: Array.from(dependencies),
+    };
 }
 
 export async function resolveComponentFilePath(

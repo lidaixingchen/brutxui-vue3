@@ -3,11 +3,21 @@ import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 import type { BrutalistConfig, RegistryItem } from '../src/lib/types.js';
+import { resolveDeps } from '../src/lib/registry.js';
 import {
     ensureUtilsFile,
+    resolveComponents,
     resolveComponentFilePath,
     writeComponentFiles,
 } from '../src/lib/services/add-service.js';
+
+vi.mock('../src/lib/registry.js', async importOriginal => {
+    const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
+    return {
+        ...actual,
+        resolveDeps: vi.fn(),
+    };
+});
 
 const config: BrutalistConfig = {
     style: 'brutalism',
@@ -55,6 +65,7 @@ describe('add service', () => {
     let tmpDir: string;
 
     beforeEach(async () => {
+        vi.mocked(resolveDeps).mockReset();
         tmpDir = await createTmpProject();
     });
 
@@ -71,6 +82,27 @@ describe('add service', () => {
             created: true,
         });
         expect(await fs.readFile(result.path, 'utf-8')).toContain('export function cn');
+    });
+
+    it('resolves components and deduplicates npm dependencies', async () => {
+        const cardItem = {
+            ...badgeItem,
+            name: 'card',
+            dependencies: ['clsx', 'reka-ui'],
+        } as RegistryItem;
+        vi.mocked(resolveDeps).mockResolvedValue([
+            { ...badgeItem, dependencies: ['clsx'] } as RegistryItem,
+            cardItem,
+        ]);
+
+        const result = await resolveComponents(['badge', 'card'], 'local-registry');
+
+        expect(resolveDeps).toHaveBeenCalledWith(['badge', 'card'], 'local-registry');
+        expect(result.items).toEqual([
+            { ...badgeItem, dependencies: ['clsx'] },
+            cardItem,
+        ]);
+        expect(result.dependencies).toEqual(['clsx', 'reka-ui']);
     });
 
     it('resolves registry component paths through configured aliases', async () => {
@@ -123,5 +155,43 @@ describe('add service', () => {
         expect(result.filesWritten).toEqual([targetPath]);
         expect(await fs.pathExists(targetPath)).toBe(false);
         expect(onDryRunFile).toHaveBeenCalledWith({ item: badgeItem, targetPath });
+    });
+
+    it('rolls back written files when a later write fails', async () => {
+        const badgePath = path.join(tmpDir, 'src', 'widgets', 'ui', 'badge', 'Badge.vue');
+        const helperPath = path.join(tmpDir, 'src', 'hooks', 'useBadge.ts');
+        await fs.ensureDir(path.dirname(badgePath));
+        await fs.writeFile(badgePath, 'existing badge', 'utf-8');
+
+        const itemWithFailingHelper = {
+            ...badgeItem,
+            files: [
+                ...badgeItem.files,
+                {
+                    path: 'composables/useBadge.ts',
+                    content: 'export function useBadge() {}\n',
+                    type: 'registry:component',
+                },
+            ],
+        } as RegistryItem;
+
+        const writeFile = vi.spyOn(fs, 'writeFile').mockImplementation(async (file, content, options) => {
+            if (file === helperPath && content === 'export function useBadge() {}\n') {
+                throw new Error('simulated write failure');
+            }
+            return fs.outputFile(file, content, options);
+        });
+
+        await expect(writeComponentFiles([itemWithFailingHelper], config, tmpDir, { overwrite: true }))
+            .rejects
+            .toMatchObject({
+                message: 'simulated write failure',
+                rollbackCount: 2,
+                rollbackFailures: 0,
+            });
+
+        expect(writeFile).toHaveBeenCalled();
+        expect(await fs.readFile(badgePath, 'utf-8')).toBe('existing badge');
+        expect(await fs.pathExists(helperPath)).toBe(false);
     });
 });

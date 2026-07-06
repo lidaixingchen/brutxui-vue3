@@ -13,7 +13,6 @@ import {
     installPackages,
     getInstallCommand,
     getItem,
-    resolveDeps,
     readConfig,
     isSafePath,
     logger,
@@ -21,6 +20,7 @@ import {
     hasVscodeDir,
     updateInstalledComponents,
     ensureUtilsFile,
+    resolveComponents,
     writeComponentFiles,
     type ComponentFileWriteFailure,
 } from '../lib/index.js';
@@ -161,7 +161,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
     try {
-        const registryItems = await resolveDeps(selectedComponents, options.registry);
+        const { items: registryItems, dependencies: allDeps } = await resolveComponents(selectedComponents, options.registry);
 
         if (spinner) {
             spinner.stop();
@@ -193,16 +193,9 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         }
         logger.newLine();
 
-        const allDeps = new Set<string>();
-        for (const item of registryItems) {
-            if (item.dependencies) {
-                item.dependencies.forEach((dep) => allDeps.add(dep));
-            }
-        }
-
-        if (allDeps.size > 0) {
+        if (allDeps.length > 0) {
             logger.bold('📚 Required npm packages:');
-            logger.info(`   ${Array.from(allDeps).join(', ')}`);
+            logger.info(`   ${allDeps.join(', ')}`);
             logger.newLine();
         }
 
@@ -259,7 +252,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             }
         }
 
-        await installComponentDeps(Array.from(allDeps), targetCwd, options.dryRun ?? false);
+        await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
 
         if (!options.dryRun && added.length > 0) {
             await updateInstalledComponents(

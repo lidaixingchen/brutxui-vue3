@@ -53,6 +53,7 @@ export {
 
 export {
     ensureUtilsFile,
+    resolveComponents,
     resolveComponentFilePath,
     writeComponentFiles,
 } from './services/add-service.js';
@@ -61,6 +62,7 @@ export type {
     ComponentFileWriteFailure,
     ComponentFileWriteOptions,
     ComponentFileWriteResult,
+    ComponentResolutionResult,
     EnsureUtilsFileResult,
 } from './services/add-service.js';
 
