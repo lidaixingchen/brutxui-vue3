@@ -6,6 +6,7 @@ import {
     extractDeps,
     extractModuleSpecifiers,
     extractRegistryDeps,
+    extractUnknownRegistryDeps,
     getFileType,
     rewriteImports,
 } from '../scripts/build-registry';
@@ -56,6 +57,18 @@ describe('build-registry helpers', () => {
         expect(extractDeps(code, 'lib')).toEqual(['utils.ts', 'data-table-types.ts', 'table-key.ts']);
         expect(extractDeps(code, 'composables')).toEqual(['useForwardProps.ts']);
         expect(extractRegistryDeps(code, 'data-table')).toEqual(['button']);
+        expect(extractUnknownRegistryDeps(code)).toEqual([]);
+    });
+
+    it('finds component imports that are not registered in shared metadata', () => {
+        const code = [
+            "import Button from '@/components/ui/button/Button.vue'",
+            "import Missing from '@/components/ui/missing-widget/MissingWidget.vue'",
+            "export { Ghost } from '@/components/ui/ghost/Ghost.vue'",
+        ].join('\n');
+
+        expect(extractRegistryDeps(code, 'card')).toEqual(['button']);
+        expect(extractUnknownRegistryDeps(code)).toEqual(['missing-widget', 'ghost']);
     });
 
     it('extracts static import and export module specifiers without matching dynamic imports', () => {

@@ -270,6 +270,22 @@ export function extractRegistryDeps(code: string, componentName: string): string
     return Array.from(deps);
 }
 
+export function extractUnknownRegistryDeps(code: string): string[] {
+    const deps = new Set<string>();
+    const prefix = '@/components/ui/';
+
+    for (const specifier of extractModuleSpecifiers(code)) {
+        if (!specifier.startsWith(prefix)) continue;
+
+        const depName = specifier.slice(prefix.length).split('/')[0];
+        if (depName && !COMPONENT_REGISTRY[depName]) {
+            deps.add(depName);
+        }
+    }
+
+    return Array.from(deps);
+}
+
 const TAILWIND_CONFIG = {
     config: {
         theme: {
@@ -519,6 +535,11 @@ export async function run() {
                 code = rewriteImports(code, name, 'component');
 
                 const deps = extractRegistryDeps(code, name);
+                const unknownDeps = extractUnknownRegistryDeps(code);
+                if (unknownDeps.length > 0) {
+                    throw new Error(`Unknown registry component import(s) in "${name}": ${unknownDeps.join(', ')}`);
+                }
+
                 deps.forEach(d => allRegistryDeps.add(d));
                 extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
                 extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
