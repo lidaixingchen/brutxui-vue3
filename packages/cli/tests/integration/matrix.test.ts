@@ -4,6 +4,7 @@ import {
     getIntegrationMatrixCases,
     getIntegrationMatrixCommands,
 } from './matrix'
+import { shouldKeepTestProject } from './helpers'
 
 describe('CLI integration matrix', () => {
     it('keeps the release matrix explicit and local-registry friendly', () => {
@@ -52,5 +53,23 @@ describe('CLI integration matrix', () => {
             { label: 'remove button', args: ['remove', 'button'] },
             { label: 'doctor', args: ['doctor'] },
         ])
+    })
+
+    it('supports keeping failed integration workspaces for debugging', () => {
+        const previous = process.env.BRUTX_KEEP_INTEGRATION_TMP
+
+        try {
+            delete process.env.BRUTX_KEEP_INTEGRATION_TMP
+            expect(shouldKeepTestProject()).toBe(false)
+
+            process.env.BRUTX_KEEP_INTEGRATION_TMP = '1'
+            expect(shouldKeepTestProject()).toBe(true)
+        } finally {
+            if (previous === undefined) {
+                delete process.env.BRUTX_KEEP_INTEGRATION_TMP
+            } else {
+                process.env.BRUTX_KEEP_INTEGRATION_TMP = previous
+            }
+        }
     })
 })

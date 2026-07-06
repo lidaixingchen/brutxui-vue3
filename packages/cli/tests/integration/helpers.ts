@@ -22,6 +22,10 @@ const repoRoot = path.resolve(cliRoot, '../..');
 export const cliEntry = path.join(cliRoot, 'dist', 'index.js');
 export const localRegistry = path.join(repoRoot, 'packages', 'registry', 'registry');
 
+export function shouldKeepTestProject(): boolean {
+    return process.env.BRUTX_KEEP_INTEGRATION_TMP === '1';
+}
+
 export async function createTestProject(): Promise<TestProject> {
     const tempDir = await fs.realpath(os.tmpdir());
     const root = await fs.mkdtemp(path.join(tempDir, 'brutx-cli-'));
@@ -61,6 +65,11 @@ export async function createTestProject(): Promise<TestProject> {
 }
 
 export async function removeTestProject(project: TestProject): Promise<void> {
+    if (shouldKeepTestProject()) {
+        console.warn(`Keeping integration test project at ${project.root}`);
+        return;
+    }
+
     await fs.remove(project.root);
 }
 
