@@ -125,7 +125,7 @@
 - 若后续需要支持更多用户输入格式，新增明确格式参数，不扩大 `new Date(string)` 的隐式兼容面。
 - 增加跨时区等价测试时，优先测试纯日期边界和日期区间起止。
 
-## P2：全局 singleton fallback 是便利性也是状态债
+## P2：全局 singleton fallback 治理已落地
 
 证据：
 
@@ -133,18 +133,18 @@
 - `packages/ui/src/composables/useTheme.ts:204` 给 `window` 注册 `beforeunload` 清理。
 - `packages/ui/src/composables/useToast.ts:233` 在没有 `provideToast()` 时也回退共享单例。
 - `packages/ui/src/composables/useToast.ts:220` 同样注册 `beforeunload` 清理。
+- `packages/ui/src/composables/destroyFallbacks.ts` 已提供 `destroyBrutxFallbacks()`，统一清理 toast、theme、message 的 fallback 状态，并从主入口导出。
+- `apps/docs/components/toast.md`、`apps/docs/components/color-mode-switcher.md` 及英文文档已说明生产推荐 root provide，fallback 仅作为兼容兜底。
 
-风险：
+执行结论：
 
-1. 多 Vue app 同页、微前端、文档 demo、测试并发时，全局单例会跨树共享状态。
-2. fallback 降低上手门槛，但弱化了“根组件 provide 是推荐用法”的契约。
-3. beforeunload 清理不能覆盖测试隔离、SPA app unmount、热更新等场景。
+1. 保留 `useTheme()` / `useToast()` fallback 兼容行为，避免破坏旧用户代码。
+2. 公开 `destroyBrutxFallbacks()` 作为测试隔离、多应用同页、热更新边界的集中清理 API。
+3. 文档已明确 `provideTheme()` / `provideToast()` 是生产推荐路径，fallback 是兼容兜底。
 
-建议：
+剩余建议：
 
-- 文档中明确：fallback 是兼容兜底，生产推荐 `provideTheme/provideToast`。
-- 测试工具或 public API 暴露统一 `destroyBrutxFallbacks()`，集中清理 theme/toast/message 等 singleton。
-- 长期考虑在 dev 模式 warning 中加入组件树上下文建议，减少无意使用 fallback。
+- 长期考虑在 dev 模式 warning 中加入更具体的根组件 provide 建议，减少无意使用 fallback。
 
 ## P2：空壳兼容插件已移除
 
@@ -194,7 +194,7 @@
 3. registry 清理与同步校验已落地：legacy 状态会写入 registry item/index，validate 会校验 shared metadata、源文件、manifest 与生成 JSON 一致。
 4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期和无效格式校验已覆盖；后续补文档语义和跨时区等价测试。
 5. package 子路径策略仍需定案：当前已校验 Vite entry/package exports 与 registry metadata，同步生成全量子路径仍待评估。
-6. singleton fallback 治理：保留兼容，但提供集中销毁和文档边界。
+6. singleton fallback 治理已落地：保留兼容，同时提供集中销毁和文档边界。
 
 ## 本次执行验证
 
@@ -206,4 +206,5 @@
 - 本轮日期验证：`CI=true pnpm --filter brutx-ui-vue test src/lib/date.test.ts src/composables/useDataTableFilter.test.ts src/components/calendar/calendar.test.ts`。
 - 本轮 registry 同步验证：`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`、`CI=true pnpm --filter brutx-registry-vue test tests/build-registry.test.ts`、`CI=true pnpm --filter brutx-registry-vue test tests/validate-utils.test.ts`、`CI=true pnpm --filter brutx-registry-vue typecheck`。
 - 本轮 legacy 替代验证：`CI=true pnpm --filter brutx-ui-vue test src/components/dashboard-stats/dashboard-stats.test.ts`、`CI=true pnpm --filter brutx-ui-vue typecheck`、`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`。
+- 本轮 singleton fallback 验证：`CI=true pnpm --filter brutx-ui-vue test src/composables/destroyFallbacks.test.ts src/composables/use-toast.test.ts src/composables/useTheme.test.ts`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
