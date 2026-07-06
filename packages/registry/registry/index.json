@@ -10907,6 +10907,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/date-picker/DatePickerPanelFooter.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/date-picker/DatePickerRange.vue",
           "type": "registry:ui"
         },
@@ -10956,7 +10960,7 @@
         },
         {
           "path": "components/ui/date-picker/types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/date-picker/panel-styles.css",
@@ -11069,7 +11073,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5b8556478e72a5f1e887a78d52ab623792d57633bbf15d8e4befbb83a147e3cf"
+      "integrity": "sha256-455e799c0a02dfd3f6642ef37bf9e79c64f35e58dcf3a3c5d2f0114824da46e6"
     },
     {
       "name": "color-mode-switcher",

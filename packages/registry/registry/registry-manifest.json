@@ -458,8 +458,8 @@
       "examples": []
     },
     "date-picker": {
-      "integrity": "sha256-5b8556478e72a5f1e887a78d52ab623792d57633bbf15d8e4befbb83a147e3cf",
-      "fileCount": 21,
+      "integrity": "sha256-455e799c0a02dfd3f6642ef37bf9e79c64f35e58dcf3a3c5d2f0114824da46e6",
+      "fileCount": 22,
       "dependencies": [
         "@lucide/vue",
         "reka-ui",

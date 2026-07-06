@@ -102,6 +102,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
         files: [
             'DatePicker.vue',
             'DatePickerPanel.vue',
+            'DatePickerPanelFooter.vue',
             'DatePickerRange.vue',
             'DatePickerRangePanel.vue',
             'TimePicker.vue',

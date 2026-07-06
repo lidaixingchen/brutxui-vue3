@@ -4,8 +4,9 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
-import { datePickerPanelVariants, datePickerFooterVariants } from './date-picker-variants'
+import { datePickerPanelVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
+import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 
 interface MonthPickerPanelProps {
     modelValue?: Date | null
@@ -93,8 +94,6 @@ const monthButtonClasses = computed(() =>
     )
 )
 
-const footerClasses = cn(datePickerFooterVariants())
-
 function getMonthClasses(monthIndex: number): string {
     return cn(
         monthButtonClasses.value,
@@ -146,14 +145,13 @@ function getMonthClasses(monthIndex: number): string {
                 </button>
             </div>
 
-            <div v-if="clearable" :class="footerClasses">
-                <Button variant="default" size="sm" type="button" @click="handleClear">
-                    {{ resolvedClearLabel }}
-                </Button>
-                <Button variant="primary" size="sm" type="button" @click="handleConfirm">
-                    {{ resolvedConfirmLabel }}
-                </Button>
-            </div>
+            <DatePickerPanelFooter
+                v-if="clearable"
+                :clear-label="resolvedClearLabel"
+                :confirm-label="resolvedConfirmLabel"
+                @clear="handleClear"
+                @confirm="handleConfirm"
+            />
         </div>
     </div>
 </template>

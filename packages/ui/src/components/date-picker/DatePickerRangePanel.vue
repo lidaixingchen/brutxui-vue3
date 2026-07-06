@@ -16,9 +16,9 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
-import { datePickerPanelVariants, datePickerShortcutVariants, datePickerFooterVariants } from './date-picker-variants'
+import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
 import { type DatePickerRangeShortcut, type DateRange, resolveRangeShortcutValue } from './types'
-import Button from '../button/Button.vue'
+import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 import './panel-styles.css'
 
 interface DatePickerRangePanelProps {
@@ -140,7 +140,6 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 const rootClasses = computed(() => cn('brutx-calendar', 'p-2 sm:p-3', 'bg-brutal-bg text-brutal-fg'))
-const footerClasses = cn(datePickerFooterVariants())
 
 function getShortcutClasses(shortcut: DatePickerRangeShortcut): string {
     return cn(datePickerShortcutVariants({ active: isShortcutActive(shortcut) }))
@@ -207,14 +206,13 @@ function getShortcutClasses(shortcut: DatePickerRangeShortcut): string {
                 </DatePicker>
             </div>
 
-            <div v-if="clearable" :class="footerClasses">
-                <Button variant="default" size="sm" type="button" @click="handleClear">
-                    {{ resolvedClearLabel }}
-                </Button>
-                <Button variant="primary" size="sm" type="button" @click="handleConfirm">
-                    {{ resolvedConfirmLabel }}
-                </Button>
-            </div>
+            <DatePickerPanelFooter
+                v-if="clearable"
+                :clear-label="resolvedClearLabel"
+                :confirm-label="resolvedConfirmLabel"
+                @clear="handleClear"
+                @confirm="handleConfirm"
+            />
         </div>
     </div>
 </template>

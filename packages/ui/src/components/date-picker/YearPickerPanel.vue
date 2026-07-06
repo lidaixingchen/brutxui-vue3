@@ -4,8 +4,9 @@ import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
-import { datePickerPanelVariants, datePickerFooterVariants } from './date-picker-variants'
+import { datePickerPanelVariants } from './date-picker-variants'
 import Button from '../button/Button.vue'
+import DatePickerPanelFooter from './DatePickerPanelFooter.vue'
 
 const DEFAULT_YEAR_RANGE = 12
 
@@ -98,8 +99,6 @@ function handleClear() {
     emit('update:modelValue', null)
 }
 
-const footerClasses = cn(datePickerFooterVariants())
-
 function getYearClasses(year: number): string {
     return cn(
         'h-10 w-full flex items-center justify-center text-xs font-bold tracking-tight cursor-pointer',
@@ -154,14 +153,13 @@ function getYearClasses(year: number): string {
                 </button>
             </div>
 
-            <div v-if="clearable" :class="footerClasses">
-                <Button variant="default" size="sm" type="button" @click="handleClear">
-                    {{ resolvedClearLabel }}
-                </Button>
-                <Button variant="primary" size="sm" type="button" @click="handleConfirm">
-                    {{ resolvedConfirmLabel }}
-                </Button>
-            </div>
+            <DatePickerPanelFooter
+                v-if="clearable"
+                :clear-label="resolvedClearLabel"
+                :confirm-label="resolvedConfirmLabel"
+                @clear="handleClear"
+                @confirm="handleConfirm"
+            />
         </div>
     </div>
 </template>
