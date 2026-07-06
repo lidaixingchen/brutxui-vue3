@@ -21,6 +21,24 @@ describe('getCliErrorAdvice', () => {
         expect(advice.join('\n')).toContain('--no-cache');
     });
 
+    it('suggests doctor fix and force init for invalid config errors', () => {
+        const advice = getCliErrorAdvice(new CliError('Invalid config', {
+            code: 'CONFIG_INVALID',
+        }));
+
+        expect(advice.join('\n')).toContain('brutx-vue doctor --fix');
+        expect(advice.join('\n')).toContain('brutx-vue init --force');
+    });
+
+    it('suggests cache bypass and registry validation for integrity failures', () => {
+        const advice = getCliErrorAdvice(new CliError('Integrity mismatch', {
+            code: 'REGISTRY_INTEGRITY_FAILED',
+        }));
+
+        expect(advice.join('\n')).toContain('--no-cache');
+        expect(advice.join('\n')).toContain('rebuild and validate');
+    });
+
     it('suggests path and alias checks for unsafe paths', () => {
         const advice = getCliErrorAdvice(new CliError('Unsafe path', {
             code: 'PATH_UNSAFE',
@@ -28,6 +46,15 @@ describe('getCliErrorAdvice', () => {
 
         expect(advice.join('\n')).toContain('components.json');
         expect(advice.join('\n')).toContain('outside the project directory');
+    });
+
+    it('suggests file permission checks for write failures', () => {
+        const advice = getCliErrorAdvice(new CliError('Write failed', {
+            code: 'WRITE_FAILED',
+        }));
+
+        expect(advice.join('\n')).toContain('file permissions');
+        expect(advice.join('\n')).toContain('brutx-vue doctor --fix');
     });
 
     it('falls back to doctor advice for unknown errors', () => {
