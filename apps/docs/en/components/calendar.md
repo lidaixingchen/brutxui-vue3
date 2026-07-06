@@ -107,6 +107,8 @@ interface CalendarEvent {
 }
 ```
 
+When an event date is passed as a `YYYY-MM-DD` string, Calendar parses it as a local calendar date for that day instead of relying on native `Date` UTC/time-zone inference for date-only strings. Full datetime strings still use native `Date` / ISO datetime semantics; for cross-time-zone consistency, pass a `Date` object or a full ISO string with an explicit offset.
+
 ### Default Mode
 
 Dot indicators with Tooltip, ideal for calendars with fewer events:

@@ -150,6 +150,8 @@ The paginator includes first page, previous page, next page, last page buttons, 
 
 Supports adding a Popover filter in the header of each column. Supports text search, single selection (Select), multi-selection (Multi-Select), and date range (Date Range) filtering.
 
+`date-range` filters parse `YYYY-MM-DD` cell strings as local calendar dates and include the end date through `23:59:59.999` for that local day. Full datetime strings still use native `Date` / ISO datetime semantics; if your data must compare consistently across time zones, store values as `Date`, timestamps, or full ISO strings with explicit offsets.
+
 ```vue
 <script setup lang="ts">
 const columns = [

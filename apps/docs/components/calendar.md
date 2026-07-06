@@ -106,6 +106,8 @@ interface CalendarEvent {
 }
 ```
 
+事件日期如果传入 `YYYY-MM-DD` 字符串，会按本地日期解析为当天，不经过原生 `Date` 对纯日期字符串的 UTC/时区推断。完整 datetime 字符串仍按浏览器原生 `Date` / ISO datetime 语义解析；需要跨时区一致性时，推荐直接传入 `Date` 对象或带时区偏移的完整 ISO 字符串。
+
 ### default 模式
 
 圆点指示器 + Tooltip，适合事件较少的场景：

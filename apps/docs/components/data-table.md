@@ -149,6 +149,8 @@ const data = ref<User[]>([
 
 支持在每一列头部添加 Popover 筛选器。支持文本搜索、单选（Select）、多选（Multi-Select）以及日期范围（Date Range）筛选。
 
+`date-range` 筛选会将单元格中的 `YYYY-MM-DD` 字符串按本地日期解析，并把结束日期包含到当天 `23:59:59.999`。完整 datetime 字符串仍按浏览器原生 `Date` / ISO datetime 语义解析；如果数据需要跨时区一致，建议存储为 `Date`、时间戳，或带时区偏移的完整 ISO 字符串。
+
 ```vue
 <script setup lang="ts">
 const columns = [

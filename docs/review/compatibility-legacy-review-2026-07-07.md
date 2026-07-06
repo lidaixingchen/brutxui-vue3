@@ -112,16 +112,16 @@
 - `packages/ui/src/composables/useDataTableFilter.ts` 已先用 `parseFormattedDate(text, 'YYYY-MM-DD')` 按本地日期解析纯日期区间，并对结束日期应用当天 `23:59:59.999`。
 - `packages/ui/src/components/calendar/Calendar.vue` 的事件字符串日期已先按本地 `YYYY-MM-DD` 解析，再回退原生 `Date` 解析完整 datetime。
 - `packages/ui/src/lib/date.ts` 的 `parseFormattedDate` 已校验年月日时分秒回读值，拒绝 `2026-02-31`、`2026-13-01`、`25:00:00` 这类溢出日期。
+- `apps/docs/components/data-table.md`、`apps/docs/components/calendar.md` 及英文版已说明纯日期与完整 datetime 的解析边界。
 
-剩余风险：
+执行结论：
 
-1. 完整 ISO datetime 仍交给原生 `Date`，需要在文档中明确纯日期和 datetime 的语义边界。
-2. 后续新增日期输入点仍应优先复用 `parseFormattedDate` 或明确要求完整 ISO datetime。
-3. Calendar 事件和 DataTable 筛选已有定向覆盖，但还可以继续补跨时区等价测试。
+1. `YYYY-MM-DD` 纯日期在 Calendar 事件和 DataTable 日期范围筛选中按本地日期处理。
+2. 完整 datetime 字符串继续交给原生 `Date` / ISO datetime 语义，跨时区一致性建议使用 `Date`、时间戳或带时区偏移的 ISO 字符串。
+3. 后续新增日期输入点仍应优先复用 `parseFormattedDate` 或明确要求完整 ISO datetime。
 
 后续建议：
 
-- 在 DataTable / Calendar 文档中说明 `YYYY-MM-DD` 按本地日期处理，完整 datetime 按原生/ISO datetime 处理。
 - 若后续需要支持更多用户输入格式，新增明确格式参数，不扩大 `new Date(string)` 的隐式兼容面。
 - 增加跨时区等价测试时，优先测试纯日期边界和日期区间起止。
 
@@ -192,7 +192,7 @@
 1. 发布产物冒烟测试已落地：继续保留 `test:package` 与 `check:exports` 作为发布前最小门禁。
 2. env/browser capability 核心 helper 已落地：后续按需收敛 `ResizeObserver`、`MutationObserver`、Canvas 和其它 imperative DOM。
 3. registry 清理与同步校验已落地：legacy 状态会写入 registry item/index，validate 会校验 shared metadata、源文件、manifest 与生成 JSON 一致。
-4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期和无效格式校验已覆盖；后续补文档语义和跨时区等价测试。
+4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期、无效格式校验与文档语义已覆盖；后续可补跨时区等价测试。
 5. package 子路径策略已定案：主入口为完整稳定导入面，子路径入口保留为 `package.json exports` 白名单并由脚本校验。
 6. singleton fallback 治理已落地：保留兼容，同时提供集中销毁和文档边界。
 
