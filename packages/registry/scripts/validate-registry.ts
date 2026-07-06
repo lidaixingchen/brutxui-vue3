@@ -8,6 +8,11 @@ import {
     validateRegistryItem,
     COMPONENT_FILES,
 } from 'brutx-shared-vue';
+import {
+    findRegistryDependencyCycles,
+    findUnknownRegistryReferences,
+    type RegistryReferenceItem,
+} from './validate-utils';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -145,6 +150,7 @@ function validate() {
 
     let errorCount = 0;
     let totalFiles = 0;
+    const referenceItems: RegistryReferenceItem[] = [];
 
     for (const file of files) {
         const filePath = path.join(REGISTRY_DIR, file);
@@ -159,6 +165,10 @@ function validate() {
                 console.error(`✗ [${file}] Name field "${data.name}" does not match filename "${nameWithoutExtension}".`);
                 errorCount++;
             }
+            referenceItems.push({
+                name: data.name,
+                registryDependencies: data.registryDependencies,
+            });
 
             totalFiles += data.files.length;
             for (const fileObj of data.files) {
@@ -181,13 +191,6 @@ function validate() {
                 }
             }
 
-            for (const regDep of data.registryDependencies) {
-                if (!knownNames.has(regDep)) {
-                    console.error(`✗ [${file}] registryDependency "${regDep}" does not reference an existing registry item.`);
-                    errorCount++;
-                }
-            }
-
             if (data.replacement && !knownNames.has(data.replacement)) {
                 console.error(`✗ [${file}] replacement "${data.replacement}" does not reference an existing registry item.`);
                 errorCount++;
@@ -199,6 +202,16 @@ function validate() {
             console.error(`✗ [${file}] Failed to validate JSON:`, err instanceof Error ? err.message : err);
             errorCount++;
         }
+    }
+
+    for (const reference of findUnknownRegistryReferences(referenceItems)) {
+        console.error(`✗ [${reference.component}.json] registryDependency "${reference.dependency}" does not reference an existing registry item.`);
+        errorCount++;
+    }
+
+    for (const cycle of findRegistryDependencyCycles(referenceItems)) {
+        console.error(`✗ Registry dependency cycle detected: ${cycle.join(' -> ')}.`);
+        errorCount++;
     }
 
     errorCount += validateIndexConsistency(files);
