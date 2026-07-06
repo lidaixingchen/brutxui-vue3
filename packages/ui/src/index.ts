@@ -177,6 +177,11 @@ export { commandInputWrapperVariants, commandItemVariants } from './components/c
 export { default as Combobox } from './components/combobox/Combobox.vue'
 export type { ComboboxOption } from './components/combobox/combobox-types'
 
+export * from './calendar'
+export * from './carousel'
+export * from './code-block'
+export * from './form'
+
 
 
 

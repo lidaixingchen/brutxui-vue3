@@ -82,45 +82,55 @@ defineExpose({ open })
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
-            <button
-                :id="id"
-                type="button"
-                :name="name"
-                role="combobox"
-                :aria-expanded="open"
-                :aria-controls="open ? contentId : undefined"
-                :aria-label="resolvedAriaLabel"
-                aria-haspopup="dialog"
-                :disabled="disabled"
-                :class="triggerClasses"
-                @keydown="handleTriggerKeydown"
-            >
-                <CalendarIcon
-                    class="shrink-0 stroke-[3] opacity-70"
-                    :class="iconSizeVariants({ size })"
-                />
-                <span class="flex-1 text-left truncate font-mono text-sm">
-                    {{ formattedDisplay || resolvedPlaceholder }}
-                </span>
-                <span class="flex items-center gap-1 shrink-0">
-                    <span
-                        v-if="clearable && modelValue && !disabled && !readonly"
-                        role="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
-                        :class="iconSizeVariants({ size: size === 'sm' ? 'default' : 'lg' })"
-                        :aria-label="t('datePicker.clear')"
-                        tabindex="-1"
-                        @click="handleClearClick"
-                        @keydown.enter.prevent="handleClearClick"
-                        @keydown.space.prevent="handleClearClick"
-                    >
-                        <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" class="stroke-[3]" />
+        <div class="relative w-full">
+            <PopoverTrigger as-child>
+                <button
+                    :id="id"
+                    type="button"
+                    :name="name"
+                    role="combobox"
+                    :aria-expanded="open"
+                    :aria-controls="open ? contentId : undefined"
+                    :aria-label="resolvedAriaLabel"
+                    aria-haspopup="dialog"
+                    :disabled="disabled"
+                    :class="triggerClasses"
+                    @keydown="handleTriggerKeydown"
+                >
+                    <CalendarIcon
+                        class="shrink-0 stroke-[3] opacity-70"
+                        :class="iconSizeVariants({ size })"
+                    />
+                    <span class="flex-1 text-left truncate font-mono text-sm">
+                        {{ formattedDisplay || resolvedPlaceholder }}
                     </span>
-                    <ChevronDown class="opacity-60 stroke-[3]" :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" />
-                </span>
+                    <span class="flex items-center gap-1 shrink-0">
+                        <span
+                            v-if="clearable && modelValue && !disabled && !readonly"
+                            aria-hidden="true"
+                            class="inline-flex items-center justify-center opacity-0 pointer-events-none"
+                            :class="iconSizeVariants({ size: size === 'sm' ? 'default' : 'lg' })"
+                        >
+                            <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" class="stroke-[3]" />
+                        </span>
+                        <ChevronDown class="opacity-60 stroke-[3]" :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" />
+                    </span>
+                </button>
+            </PopoverTrigger>
+            <button
+                v-if="clearable && modelValue && !disabled && !readonly"
+                type="button"
+                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
+                :class="[
+                    size === 'sm' ? 'right-8' : 'right-10',
+                    iconSizeVariants({ size: size === 'sm' ? 'default' : 'lg' }),
+                ]"
+                :aria-label="t('datePicker.clear')"
+                @click="handleClearClick"
+            >
+                <X :class="iconSizeVariants({ size: size === 'sm' ? 'sm' : 'default' })" class="stroke-[3]" />
             </button>
-        </PopoverTrigger>
+        </div>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <div :id="contentId">
             <DatePickerPanel

@@ -125,46 +125,55 @@ function handleTriggerKeydown(event: KeyboardEvent) {
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
-            <button
-                :id="id"
-                type="button"
-                :name="name"
-                role="combobox"
-                :aria-expanded="open"
-                :aria-label="resolvedAriaLabel"
-                aria-haspopup="dialog"
-                :disabled="disabled"
-                :class="triggerClasses"
-                @keydown="handleTriggerKeydown"
-            >
-                <CalendarIcon
-                    class="shrink-0 stroke-[3] opacity-70"
-                    :class="iconSizeVariants({ size })"
-                />
-                <span class="flex-1 text-left truncate font-mono text-sm flex items-center gap-1.5 min-w-0">
-                    <span class="truncate">{{ formattedStart || resolvedStartPlaceholder }}</span>
-                    <span class="shrink-0 opacity-60 font-bold">{{ resolvedSeparator }}</span>
-                    <span class="truncate">{{ formattedEnd || resolvedEndPlaceholder }}</span>
-                </span>
-                <span class="flex items-center gap-1 shrink-0">
-                    <span
-                        v-if="clearable && hasValue && !disabled"
-                        role="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
-                        :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
-                        :aria-label="t('datePicker.clear')"
-                        tabindex="-1"
-                        @click="handleClearClick"
-                        @keydown.enter.prevent="handleClearClick"
-                        @keydown.space.prevent="handleClearClick"
-                    >
-                        <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
+        <div class="relative w-full">
+            <PopoverTrigger as-child>
+                <button
+                    :id="id"
+                    type="button"
+                    :name="name"
+                    role="combobox"
+                    :aria-expanded="open"
+                    :aria-label="resolvedAriaLabel"
+                    aria-haspopup="dialog"
+                    :disabled="disabled"
+                    :class="triggerClasses"
+                    @keydown="handleTriggerKeydown"
+                >
+                    <CalendarIcon
+                        class="shrink-0 stroke-[3] opacity-70"
+                        :class="iconSizeVariants({ size })"
+                    />
+                    <span class="flex-1 text-left truncate font-mono text-sm flex items-center gap-1.5 min-w-0">
+                        <span class="truncate">{{ formattedStart || resolvedStartPlaceholder }}</span>
+                        <span class="shrink-0 opacity-60 font-bold">{{ resolvedSeparator }}</span>
+                        <span class="truncate">{{ formattedEnd || resolvedEndPlaceholder }}</span>
                     </span>
-                    <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
-                </span>
+                    <span class="flex items-center gap-1 shrink-0">
+                        <span
+                            v-if="clearable && hasValue && !disabled"
+                            aria-hidden="true"
+                            class="inline-flex items-center justify-center opacity-0 pointer-events-none"
+                            :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
+                        >
+                            <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
+                        </span>
+                        <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
+                    </span>
+                </button>
+            </PopoverTrigger>
+            <button
+                v-if="clearable && hasValue && !disabled"
+                type="button"
+                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
+                :class="[
+                    size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5',
+                ]"
+                :aria-label="t('datePicker.clear')"
+                @click="handleClearClick"
+            >
+                <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
             </button>
-        </PopoverTrigger>
+        </div>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <DatePickerRangePanel
                 :model-value="displayValue"

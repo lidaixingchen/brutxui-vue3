@@ -182,6 +182,19 @@ describe('YearPicker', () => {
         expect(clearBtn.exists()).toBe(true)
     })
 
+    it('does not render a nested button for the clear control', () => {
+        wrapper = mount(YearPicker, {
+            ...localeProvide,
+            props: {
+                modelValue: new Date(2026, 0, 1),
+                clearable: true,
+            },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.findAll('button')).toHaveLength(0)
+    })
+
     it('does not show clear button when no value', () => {
         wrapper = mount(YearPicker, {
             ...localeProvide,

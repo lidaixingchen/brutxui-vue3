@@ -181,6 +181,19 @@ describe('MonthPicker', () => {
         expect(clearBtn.exists()).toBe(true)
     })
 
+    it('does not render a nested button for the clear control', () => {
+        wrapper = mount(MonthPicker, {
+            ...localeProvide,
+            props: {
+                modelValue: new Date(2026, 5, 1),
+                clearable: true,
+            },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.findAll('button')).toHaveLength(0)
+    })
+
     it('does not show clear button when no value', () => {
         wrapper = mount(MonthPicker, {
             ...localeProvide,

@@ -73,7 +73,10 @@ watch(() => props.fileList, (newList) => {
     internalFileList.value = [...newList]
 }, { deep: true })
 
-const { validateFileSize } = useUpload({ maxSize: () => props.maxSize })
+const { validateFileSize, matchesAccept } = useUpload({
+    maxSize: () => props.maxSize,
+    accept: () => props.accept,
+})
 
 // 检查文件数量
 function validateFileCount(count: number): boolean {
@@ -171,6 +174,22 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
         if (!validateFileSize(file)) {
             const error: UploadError = {
                 message: `文件 ${file.name} 大小超过限制`,
+            }
+            props.onError?.(error, {
+                id: '',
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                status: 'error',
+                progress: 0,
+                error,
+            })
+            continue
+        }
+
+        if (!matchesAccept(file)) {
+            const error: UploadError = {
+                message: `文件 ${file.name} 类型不符合要求`,
             }
             props.onError?.(error, {
                 id: '',

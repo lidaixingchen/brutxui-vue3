@@ -79,42 +79,53 @@ defineExpose({ open })
 
 <template>
     <PopoverRoot v-model:open="open">
-        <PopoverTrigger as-child>
+        <div class="relative w-full">
+            <PopoverTrigger as-child>
+                <button
+                    :id="id"
+                    type="button"
+                    :name="name"
+                    role="combobox"
+                    :aria-expanded="open"
+                    :aria-label="resolvedAriaLabel"
+                    aria-haspopup="dialog"
+                    :disabled="disabled"
+                    :class="triggerClasses"
+                    @keydown="handleTriggerKeydown"
+                >
+                    <CalendarIcon
+                        class="shrink-0 stroke-[3] opacity-70"
+                        :class="iconSizeVariants({ size })"
+                    />
+                    <span class="flex-1 text-left truncate font-mono text-sm">
+                        {{ formattedDisplay || resolvedPlaceholder }}
+                    </span>
+                    <span class="flex items-center gap-1 shrink-0">
+                        <span
+                            v-if="clearable && modelValue && !disabled && !readonly"
+                            aria-hidden="true"
+                            class="inline-flex items-center justify-center opacity-0 pointer-events-none"
+                            :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
+                        >
+                            <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
+                        </span>
+                        <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
+                    </span>
+                </button>
+            </PopoverTrigger>
             <button
-                :id="id"
+                v-if="clearable && modelValue && !disabled && !readonly"
                 type="button"
-                :name="name"
-                role="combobox"
-                :aria-expanded="open"
-                :aria-label="resolvedAriaLabel"
-                aria-haspopup="dialog"
-                :disabled="disabled"
-                :class="triggerClasses"
-                @keydown="handleTriggerKeydown"
+                class="absolute top-1/2 z-10 -translate-y-1/2 inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
+                :class="[
+                    size === 'sm' ? 'right-8 w-4 h-4' : 'right-10 w-5 h-5',
+                ]"
+                :aria-label="t('datePicker.clear')"
+                @click="handleClearClick"
             >
-                <CalendarIcon
-                    class="shrink-0 stroke-[3] opacity-70"
-                    :class="iconSizeVariants({ size })"
-                />
-                <span class="flex-1 text-left truncate font-mono text-sm">
-                    {{ formattedDisplay || resolvedPlaceholder }}
-                </span>
-                <span class="flex items-center gap-1 shrink-0">
-                    <button
-                        v-if="clearable && modelValue && !disabled && !readonly"
-                        type="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
-                        :class="size === 'sm' ? 'w-4 h-4' : 'w-5 h-5'"
-                        :aria-label="t('datePicker.clear')"
-                        tabindex="-1"
-                        @click="handleClearClick"
-                    >
-                        <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
-                    </button>
-                    <ChevronDown class="opacity-60 stroke-[3]" :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" />
-                </span>
+                <X :class="size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'" class="stroke-[3]" />
             </button>
-        </PopoverTrigger>
+        </div>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <YearPickerPanel
                 :model-value="displayValue"

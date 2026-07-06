@@ -205,8 +205,21 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(true)
+    })
+
+    it('does not render a nested button for the clear control', () => {
+        wrapper = mount(DatePickerRange, {
+            ...localeProvide,
+            props: {
+                modelValue: [new Date(2026, 0, 5), new Date(2026, 0, 10)],
+                clearable: true,
+            },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(trigger.findAll('button')).toHaveLength(0)
     })
 
     it('does not show clear button when no value', () => {
@@ -215,7 +228,7 @@ describe('DatePickerRange', () => {
             props: { clearable: true },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(false)
     })
 
@@ -227,7 +240,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(false)
     })
 
@@ -241,7 +254,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
         expect(clearBtn.exists()).toBe(false)
     })
 
@@ -254,7 +267,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
         await clearBtn.trigger('click')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual([null])
@@ -269,7 +282,7 @@ describe('DatePickerRange', () => {
             },
             attachTo: document.body,
         })
-        const clearBtn = wrapper.find('[role="button"][aria-label="Clear"]')
+        const clearBtn = wrapper.find('button[aria-label="Clear"]')
         await clearBtn.trigger('click')
         expect(wrapper.emitted('change')).toBeTruthy()
         expect(wrapper.emitted('change')![0]).toEqual([null])
