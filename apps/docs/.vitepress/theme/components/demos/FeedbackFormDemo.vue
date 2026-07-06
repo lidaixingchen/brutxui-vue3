@@ -25,7 +25,7 @@ const previewSuccess = ref(false)
 
         <div class="space-y-3">
             <p class="text-sm font-bold tracking-wide">加载与成功状态</p>
-            <p class="text-xs opacity-60">填写表单后点击提交，先进入 loading 态，请求完成后切换为 SuccessCard。</p>
+            <p class="text-xs opacity-60">填写表单后点击提交，先进入 loading 态，请求完成后切换为成功状态。</p>
             <FeedbackForm
                 :loading="loading"
                 :success="success"

@@ -135,6 +135,7 @@ describe('CarouselEnhanced', () => {
     })
 
     it('should render thumbnails when configured', () => {
+        mockScrollSnaps.value = [0, 1]
         const wrapper = mountCarousel( {
             props: {
                 thumbnails: { show: true },

@@ -20,7 +20,7 @@ export interface ParallaxEffect {
     easing?: string
 }
 
-export interface CarouselEnhancedProps {
+export interface CarouselProps {
     loop?: boolean
     autoplay?: boolean
     autoplayDelay?: number
@@ -32,3 +32,5 @@ export interface CarouselEnhancedProps {
     parallax?: ParallaxEffect
     class?: string
 }
+
+export type CarouselEnhancedProps = CarouselProps

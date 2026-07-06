@@ -75,9 +75,6 @@ import DashboardShellDemo from './components/demos/DashboardShellDemo.vue'
 import EmptyStateDemo from './components/demos/EmptyStateDemo.vue'
 import WaitlistPageDemo from './components/demos/WaitlistPageDemo.vue'
 import NotFoundPageDemo from './components/demos/NotFoundPageDemo.vue'
-import LoadingPageDemo from './components/demos/LoadingPageDemo.vue'
-import ErrorCardDemo from './components/demos/ErrorCardDemo.vue'
-import SuccessCardDemo from './components/demos/SuccessCardDemo.vue'
 import CookieConsentDemo from './components/demos/CookieConsentDemo.vue'
 import HeaderSectionDemo from './components/demos/HeaderSectionDemo.vue'
 import FooterSectionDemo from './components/demos/FooterSectionDemo.vue'
@@ -88,15 +85,12 @@ import FileCardDemo from './components/demos/FileCardDemo.vue'
 import QuickActionsDemo from './components/demos/QuickActionsDemo.vue'
 import SearchWidgetDemo from './components/demos/SearchWidgetDemo.vue'
 import FeedbackFormDemo from './components/demos/FeedbackFormDemo.vue'
-import StepperSectionDemo from './components/demos/StepperSectionDemo.vue'
-import DataTableSectionDemo from './components/demos/DataTableSectionDemo.vue'
 import SettingsPageDemo from './components/demos/SettingsPageDemo.vue'
 import BlogListPageDemo from './components/demos/BlogListPageDemo.vue'
 import ActivityLogPageDemo from './components/demos/ActivityLogPageDemo.vue'
 import ProfilePageDemo from './components/demos/ProfilePageDemo.vue'
 import ChartSectionDemo from './components/demos/ChartSectionDemo.vue'
 import GallerySectionDemo from './components/demos/GallerySectionDemo.vue'
-import UploadCardDemo from './components/demos/UploadCardDemo.vue'
 import UploadDemo from './components/demos/UploadDemo.vue'
 import DescriptionsDemo from './components/demos/DescriptionsDemo.vue'
 import PopconfirmDemo from './components/demos/PopconfirmDemo.vue'
@@ -116,7 +110,6 @@ import RateDemo from './components/demos/RateDemo.vue'
 import MenuDemo from './components/demos/MenuDemo.vue'
 import CascaderDemo from './components/demos/CascaderDemo.vue'
 import LoadingDemo from './components/demos/LoadingDemo.vue'
-import StatisticDemo from './components/demos/StatisticDemo.vue'
 import ResultDemo from './components/demos/ResultDemo.vue'
 import WatermarkDemo from './components/demos/WatermarkDemo.vue'
 import BacktopDemo from './components/demos/BacktopDemo.vue'
@@ -204,9 +197,6 @@ export default {
         app.component('EmptyStateDemo', EmptyStateDemo)
         app.component('WaitlistPageDemo', WaitlistPageDemo)
         app.component('NotFoundPageDemo', NotFoundPageDemo)
-        app.component('LoadingPageDemo', LoadingPageDemo)
-        app.component('ErrorCardDemo', ErrorCardDemo)
-        app.component('SuccessCardDemo', SuccessCardDemo)
         app.component('CookieConsentDemo', CookieConsentDemo)
         app.component('HeaderSectionDemo', HeaderSectionDemo)
         app.component('FooterSectionDemo', FooterSectionDemo)
@@ -217,15 +207,12 @@ export default {
         app.component('QuickActionsDemo', QuickActionsDemo)
         app.component('SearchWidgetDemo', SearchWidgetDemo)
         app.component('FeedbackFormDemo', FeedbackFormDemo)
-        app.component('StepperSectionDemo', StepperSectionDemo)
-        app.component('DataTableSectionDemo', DataTableSectionDemo)
         app.component('SettingsPageDemo', SettingsPageDemo)
         app.component('BlogListPageDemo', BlogListPageDemo)
         app.component('ActivityLogPageDemo', ActivityLogPageDemo)
         app.component('ProfilePageDemo', ProfilePageDemo)
         app.component('ChartSectionDemo', ChartSectionDemo)
         app.component('GallerySectionDemo', GallerySectionDemo)
-        app.component('UploadCardDemo', UploadCardDemo)
         app.component('UploadDemo', UploadDemo)
         app.component('DescriptionsDemo', DescriptionsDemo)
         app.component('PopconfirmDemo', PopconfirmDemo)
@@ -245,7 +232,6 @@ export default {
         app.component('TransferDemo', TransferDemo)
         app.component('RateDemo', RateDemo)
         app.component('LoadingDemo', LoadingDemo)
-        app.component('StatisticDemo', StatisticDemo)
         app.component('ResultDemo', ResultDemo)
         app.component('WatermarkDemo', WatermarkDemo)
         app.component('BacktopDemo', BacktopDemo)
