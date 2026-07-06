@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import type { ComponentCategory } from './types.js';
 
 export const REGISTRY_FILE_TYPES = [
     'registry:ui',
@@ -26,6 +27,8 @@ export interface RegistryItem {
     type: RegistryFileType;
     title: string;
     description: string;
+    category?: ComponentCategory;
+    examples?: string[];
     status?: 'stable' | 'legacy' | 'deprecated';
     replacement?: string;
     dependencies: string[];
@@ -41,6 +44,8 @@ export interface RegistryIndexItem {
     type: RegistryFileType;
     title: string;
     description: string;
+    category?: ComponentCategory;
+    examples?: string[];
     status?: 'stable' | 'legacy' | 'deprecated';
     replacement?: string;
     dependencies: string[];
@@ -94,6 +99,8 @@ export function validateRegistryItem(
     assertRegistryType(data.type, `"type"`, context);
     assertNonEmptyString(data.title, `"title"`, context);
     assertNonEmptyString(data.description, `"description"`, context);
+    assertCategory(data.category, context);
+    assertOptionalStringArray(data.examples, `"examples"`, context);
     assertStatus(data.status, context);
     assertOptionalNonEmptyString(data.replacement, `"replacement"`, context);
     assertLifecycleReplacement(data.status, data.replacement, context);
@@ -158,6 +165,8 @@ function validateRegistryIndexItem(data: unknown): asserts data is RegistryIndex
     assertRegistryType(data.type, `"type"`, context, 'Invalid registry index item');
     assertNonEmptyString(data.title, `"title"`, context, 'Invalid registry index item');
     assertNonEmptyString(data.description, `"description"`, context, 'Invalid registry index item');
+    assertCategory(data.category, context, 'Invalid registry index item');
+    assertOptionalStringArray(data.examples, `"examples"`, context, 'Invalid registry index item');
     assertStatus(data.status, context, 'Invalid registry index item');
     assertOptionalNonEmptyString(data.replacement, `"replacement"`, context, 'Invalid registry index item');
     assertLifecycleReplacement(data.status, data.replacement, context, 'Invalid registry index item');
@@ -217,6 +226,31 @@ function assertStatus(
     }
 }
 
+function assertCategory(
+    value: unknown,
+    context: string,
+    prefix = 'Invalid registry data'
+): asserts value is ComponentCategory | undefined {
+    const categories: ComponentCategory[] = [
+        'action',
+        'data-display',
+        'feedback',
+        'form',
+        'layout',
+        'marketing',
+        'media',
+        'navigation',
+        'overlay',
+        'page',
+        'utility',
+        'visual-effect',
+    ];
+
+    if (value !== undefined && (typeof value !== 'string' || !categories.includes(value as ComponentCategory))) {
+        throw new Error(`${prefix} for "${context}": "category" must be one of: ${categories.join(', ')}.`);
+    }
+}
+
 function assertLifecycleReplacement(
     status: 'stable' | 'legacy' | 'deprecated' | undefined,
     replacement: string | undefined,
@@ -243,6 +277,19 @@ function assertStringArray(
             throw new Error(`${prefix} for "${context}": ${field} must contain only non-empty strings.`);
         }
     }
+}
+
+function assertOptionalStringArray(
+    value: unknown,
+    field: string,
+    context: string,
+    prefix = 'Invalid registry data'
+): asserts value is string[] | undefined {
+    if (value === undefined) {
+        return;
+    }
+
+    assertStringArray(value, field, context, prefix);
 }
 
 function assertObject(

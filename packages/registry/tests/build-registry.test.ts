@@ -6,6 +6,7 @@ import {
     COMPONENT_REGISTRY,
     computeRegistryIntegrity,
     getComponentsByCategory,
+    validateRegistryItem,
 } from 'brutx-shared-vue';
 import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
@@ -125,6 +126,35 @@ describe('build-registry helpers', () => {
             { content: 'one' },
             { content: 'two' },
         ])).toBe('sha256-a0ef70c43442d404b1ed004b6649348633dda30e2ffac547c29a2b753abafa89');
+    });
+
+    it('validates registry metadata fields for docs consumption', () => {
+        const item = {
+            name: 'button',
+            type: 'registry:ui',
+            title: 'Button',
+            description: 'Button component',
+            category: 'action',
+            examples: ['button-demo'],
+            dependencies: [],
+            registryDependencies: [],
+            files: [
+                {
+                    path: 'components/ui/button/Button.vue',
+                    content: '<template><button /></template>',
+                    type: 'registry:ui',
+                },
+            ],
+            tailwind: {},
+            cssVars: {},
+            integrity: 'sha256-button',
+        };
+
+        expect(() => validateRegistryItem(item)).not.toThrow();
+        expect(() => validateRegistryItem({
+            ...item,
+            category: 'unknown',
+        })).toThrow('"category" must be one of');
     });
 
     it('builds a deterministic registry manifest from an index', () => {
