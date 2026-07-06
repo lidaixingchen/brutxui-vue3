@@ -21,6 +21,7 @@ export function canUseDocumentBody(): boolean {
 export const hasIntersectionObserver = isClient && typeof window.IntersectionObserver !== 'undefined'
 
 type AudioContextConstructor = typeof AudioContext
+type ResizeObserverConstructor = typeof ResizeObserver
 
 /** Get the available AudioContext constructor, including Safari's prefixed API. */
 export function getAudioContextCtor(): AudioContextConstructor | null {
@@ -28,6 +29,37 @@ export function getAudioContextCtor(): AudioContextConstructor | null {
     return window.AudioContext
         ?? (window as Window & typeof globalThis & { webkitAudioContext?: AudioContextConstructor }).webkitAudioContext
         ?? null
+}
+
+/** Get the available ResizeObserver constructor. */
+export function getResizeObserverCtor(): ResizeObserverConstructor | null {
+    if (!isClient) return null
+    return window.ResizeObserver ?? null
+}
+
+/** Get the current device pixel ratio with an SSR-safe fallback. */
+export function getDevicePixelRatio(): number {
+    if (!isClient) return 1
+    return window.devicePixelRatio || 1
+}
+
+/** Create a canvas element when the DOM supports it. */
+export function createCanvasElement(): HTMLCanvasElement | null {
+    if (!hasDocument) return null
+    try {
+        return document.createElement('canvas')
+    } catch {
+        return null
+    }
+}
+
+/** Get a 2D rendering context without leaking capability errors to callers. */
+export function getCanvas2DContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D | null {
+    try {
+        return canvas.getContext('2d')
+    } catch {
+        return null
+    }
 }
 
 /**

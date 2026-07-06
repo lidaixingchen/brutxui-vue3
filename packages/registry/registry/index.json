@@ -1700,7 +1700,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c0b2844e3c7e06ed953e4b93ceb764ca7b18820af416a6a96181d70156ad6a98"
+      "integrity": "sha256-46ef5f960abe2bc5a91bf3d1841c8fa213881c3d7855b6fb31cb088308ba49d1"
     },
     {
       "name": "dropdown-menu",
@@ -2089,7 +2089,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-aa255675101e072634367e9a273b029a14cb75661df88681fcfe94d675746463"
+      "integrity": "sha256-00636b738ce1e36edffd09153cdf65ba009febb043d5cfff083a1ea474280494"
     },
     {
       "name": "label",
@@ -2313,7 +2313,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c406b6b8f4dd7dc1e8d3078d8b3c5c1c7172b6ac02927dc2a416daa5dd96dd07"
+      "integrity": "sha256-b4d31655c06a37aeab690e98d7faee175f274729f410b9626357ca7f1a647d1a"
     },
     {
       "name": "pagination",
@@ -3814,7 +3814,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8439f251371d1d434cc276ae3d81950adb9bf83fa1db6984dceaff3ab4dae9e0"
+      "integrity": "sha256-7564f6de2acd04a00d01ec7e00afb0ef0c7e4ad355c547a7cdd4f3d08ab37de2"
     },
     {
       "name": "tooltip",
@@ -7360,7 +7360,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a7c14bec45bf013403c382e49c4b46709601f83867def2381a6496d9e5a25442"
+      "integrity": "sha256-be2d1882df33effa36b40dd45b84cffe7c2d3223424811fd34cd282f65df8d97"
     },
     {
       "name": "kanban",
@@ -7820,7 +7820,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0c6b9bccfb99e0b1b6d4ae4c0ed1c80a1053ad61bd529ce96bb9d1336992bf5b"
+      "integrity": "sha256-87e912f611b2568e75e775a17d7216f3ccc9008a95c94e05c1e661f6e198589c"
     },
     {
       "name": "stepper",
@@ -8064,7 +8064,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7fca0a7225b7295a7f0f2b0bf6cf135283075daacfae7fee8b12df8ddb8f3688"
+      "integrity": "sha256-a35deb818b2fd5a10a8f707a34c68ec4a195c6465a5db369ae7646443f37d10a"
     },
     {
       "name": "glitch-text",
@@ -8187,7 +8187,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8a21ef68d5f2ffd0a8e3dba95ab757cd6aec73a0ea78927ace927bb13bc445f8"
+      "integrity": "sha256-3fcb2a3535c28a072e3fb7325a0c89d755465274fb6c50583b0b955163948b4c"
     },
     {
       "name": "scratch-card",
@@ -8320,7 +8320,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-162bf89d9ce90df4637d23f39b5b849e46145048ce32f1a74b074eda439d44f8"
+      "integrity": "sha256-8745519841b988a8b3fd62817d22726eb0d9db4ad5da55b5dccbaf20a113e4e6"
     },
     {
       "name": "sketchy-chart",
@@ -8568,7 +8568,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0ac7b2cf5a47029704209edc56b78d5a42dfddb7abff3e1e7d71b038d38bd96c"
+      "integrity": "sha256-d61ca7e921821b74d3c32496fed3256acd388d7920c2c014694390a422c0e1db"
     },
     {
       "name": "testimonial-card",
@@ -10750,7 +10750,7 @@
         },
         {
           "path": "components/ui/color-picker/types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
@@ -10871,7 +10871,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9953ecded8838fece9802c563b9f578a3a1d9b2a682e7d5644304ab563cb16f2"
+      "integrity": "sha256-8543635da4ea204d390d79b638c964007d39f596af5ed021ba89c0ec1b045761"
     },
     {
       "name": "date-picker",
@@ -11188,7 +11188,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-bab9314e268bf1a1a26a17e89a9cb17e7fa32ba363c78cef2b21bd60a254ea18"
+      "integrity": "sha256-19b875c38baed547da52100211f6ccc213fd207797c00c930827cc0ee3c7ff52"
     },
     {
       "name": "data-table",
@@ -11490,7 +11490,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4acad2acf2dae52ade9b626dbafcc55c2ff435df4338f699264fde86894bb597"
+      "integrity": "sha256-82e0242ceb7de6e204843629ae208ff8fa2c8f960eaf2f8a37bd5a495d0d2dd4"
     },
     {
       "name": "typewriter-text",
@@ -11605,7 +11605,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-90fa35757f5c6ea4b34e708f91976b04e0bcf8eef967707267562ed302201ece"
+      "integrity": "sha256-a81eb7af754a0b682149c3d789672c105ed625f7c6430f0f6988976d34ad4161"
     },
     {
       "name": "noise-background",
@@ -11720,7 +11720,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-7f960c65270ed5075b58ddbdd32c94ae3505139ac4590b4d4438fb2ff1af8c12"
+      "integrity": "sha256-01c82af2908c5aefe75965aaffd19066fa75bfd7e1e53a2aa4c264313fd9a2c6"
     },
     {
       "name": "glitch-button",
@@ -12529,7 +12529,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9320dcebb52a6e5ba59513d5ce97e871a887332e50c6a27ebb01ff0f0c7a22ed"
+      "integrity": "sha256-364cc07d5f455b78c25638b5c7e8945dfb0dd59f6e945fc87517ed7345b418f3"
     },
     {
       "name": "transfer",
@@ -12973,7 +12973,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-147d4a83ee0bc741ee00ead9f27ac7ade64fcdbd159f29df988e6e3584449f00"
+      "integrity": "sha256-c0c896200b7b639e316914f18222c7c96ce8f06b3980eb6f7e73f295d76b3200"
     },
     {
       "name": "tour",
@@ -13222,7 +13222,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c63414bea2623041850d25b7647f0a60d2a16a1b3b578a277f4190cec8da62dc"
+      "integrity": "sha256-dc821bc9ea359fa2a82645f7c50d1d603ececd4c9b07161fca11d61237971d4e"
     }
   ]
 }

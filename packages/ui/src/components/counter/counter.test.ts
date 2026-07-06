@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import Counter from './Counter.vue'
 
 interface CounterExposed {
@@ -140,6 +141,16 @@ describe('Counter', () => {
             props: { to: 100 },
         })
         expect(wrapper.element.tagName).toBe('SPAN')
+    })
+
+    it('mounts when ResizeObserver is unavailable', async () => {
+        vi.stubGlobal('ResizeObserver', undefined)
+        expect(() => {
+            mount(Counter, {
+                props: { to: 100 },
+            })
+        }).not.toThrow()
+        await nextTick()
     })
 
     it('exposes play and stop methods', () => {

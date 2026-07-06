@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, useSlots, type Component, type CSSProperties } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
+import { getResizeObserverCtor } from '@/lib/env';
 import { useReducedMotion } from '@/composables/useReducedMotion';
 import { counterVariants } from './counter-variants';
 
@@ -149,7 +150,9 @@ onMounted(() => {
         const root = rootRef.value;
         if (!root) return;
         updateScale();
-        resizeObserver = new ResizeObserver(updateScale);
+        const ResizeObserverCtor = getResizeObserverCtor();
+        if (!ResizeObserverCtor) return;
+        resizeObserver = new ResizeObserverCtor(updateScale);
         resizeObserver.observe(root);
     });
 });

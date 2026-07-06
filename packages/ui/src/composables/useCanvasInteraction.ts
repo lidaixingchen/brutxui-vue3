@@ -1,5 +1,6 @@
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_INTERVAL_MS, CANVAS_PROGRESS_THROTTLE_MS } from '../lib/defaults'
+import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor } from '../lib/env'
 
 const REVEAL_COMPLETED_FALLBACK_DURATION = 0
 
@@ -59,20 +60,23 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         // 否则首次调用会误把空内容当作"旧内容"保存，导致 drawOverlay 永远不被调用。
         let tempCanvas: HTMLCanvasElement | null = null
         let hasOldContent = false
-        let oldDpr = window.devicePixelRatio || 1
+        let oldDpr = getDevicePixelRatio()
         const hasBeenSized = canvas.style.width !== '' && canvas.style.height !== ''
         if (hasBeenSized) {
-            const oldCtx = canvas.getContext('2d')
+            const oldCtx = getCanvas2DContext(canvas)
             const parsedStyleWidth = parseFloat(canvas.style.width)
             oldDpr = (oldCtx && canvas.width > 0 && Number.isFinite(parsedStyleWidth) && parsedStyleWidth > 0)
                 ? canvas.width / parsedStyleWidth
-                : (window.devicePixelRatio || 1)
+                : getDevicePixelRatio()
             if (oldCtx && canvas.width > 0 && canvas.height > 0) {
                 try {
-                    tempCanvas = document.createElement('canvas')
+                    tempCanvas = createCanvasElement()
+                    if (!tempCanvas) {
+                        throw new Error('Canvas is unavailable')
+                    }
                     tempCanvas.width = canvas.width
                     tempCanvas.height = canvas.height
-                    const tempCtx = tempCanvas.getContext('2d')
+                    const tempCtx = getCanvas2DContext(tempCanvas)
                     if (tempCtx && typeof tempCtx.drawImage === 'function') {
                         tempCtx.drawImage(canvas, 0, 0)
                         hasOldContent = true
@@ -86,14 +90,14 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         }
 
         const rect = container.getBoundingClientRect()
-        const dpr = window.devicePixelRatio || 1
+        const dpr = getDevicePixelRatio()
 
         canvas.width = rect.width * dpr
         canvas.height = rect.height * dpr
         canvas.style.width = `${rect.width}px`
         canvas.style.height = `${rect.height}px`
 
-        ctx.value = canvas.getContext('2d')
+        ctx.value = getCanvas2DContext(canvas)
         if (ctx.value) {
             ctx.value.scale(dpr, dpr)
             const w = canvas.width / dpr
@@ -218,7 +222,9 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
     onMounted(() => {
         syncCanvasSize()
         if (containerRef.value) {
-            resizeObserver = new ResizeObserver(syncCanvasSize)
+            const ResizeObserverCtor = getResizeObserverCtor()
+            if (!ResizeObserverCtor) return
+            resizeObserver = new ResizeObserverCtor(syncCanvasSize)
             resizeObserver.observe(containerRef.value)
         }
     })

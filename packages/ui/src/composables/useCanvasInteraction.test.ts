@@ -266,6 +266,42 @@ describe('useCanvasInteraction', () => {
         expect(drawOverlay).not.toHaveBeenCalled()
     })
 
+    it('syncCanvasSize handles canvas.getContext throwing', () => {
+        const drawOverlay = vi.fn()
+        const canvas = createMockCanvas()
+        canvas.getContext = vi.fn(() => {
+            throw new Error('canvas disabled')
+        }) as HTMLCanvasElement['getContext']
+        const canvasRef = ref(canvas)
+        const { ctx, syncCanvasSize } = useCanvasInteraction(
+            createDefaultOptions({ canvasRef, drawOverlay }) as Parameters<typeof useCanvasInteraction>[0],
+        )
+        expect(() => syncCanvasSize()).not.toThrow()
+        expect(ctx.value).toBeNull()
+        expect(drawOverlay).not.toHaveBeenCalled()
+    })
+
+    it('syncCanvasSize redraws overlay when temporary canvas cannot be created', () => {
+        const drawOverlay = vi.fn()
+        const canvas = createMockCanvas({
+            styleWidth: '100px',
+            styleHeight: '100px',
+        })
+        const createElement = vi.spyOn(document, 'createElement').mockImplementation((tagName: string, options?: ElementCreationOptions) => {
+            if (tagName === 'canvas') {
+                throw new Error('canvas disabled')
+            }
+            return Document.prototype.createElement.call(document, tagName, options)
+        })
+        const canvasRef = ref(canvas)
+        const { syncCanvasSize } = useCanvasInteraction(
+            createDefaultOptions({ canvasRef, drawOverlay }) as Parameters<typeof useCanvasInteraction>[0],
+        )
+        expect(() => syncCanvasSize()).not.toThrow()
+        expect(drawOverlay).toHaveBeenCalled()
+        createElement.mockRestore()
+    })
+
     // ─── scratch (via handlePointerDown/Move/Up) ─────────────────────────
 
     it('scratch draws a circle and calls onProgress on intervals', () => {
@@ -792,6 +828,29 @@ describe('useCanvasInteraction', () => {
 
         expect(drawOverlay).toHaveBeenCalled()
         expect(observe).toHaveBeenCalledWith(container)
+    })
+
+    it('onMounted skips observer setup when ResizeObserver is unavailable', () => {
+        vi.stubGlobal('ResizeObserver', undefined)
+        const drawOverlay = vi.fn()
+
+        expect(() => {
+            mount(
+                defineComponent({
+                    setup() {
+                        const containerRef = ref(createMockContainer())
+                        const canvasRef = ref(createMockCanvas())
+                        return useCanvasInteraction(createDefaultOptions({
+                            containerRef,
+                            canvasRef,
+                            drawOverlay,
+                        }) as Parameters<typeof useCanvasInteraction>[0])
+                    },
+                    render: () => h('div'),
+                }),
+            )
+        }).not.toThrow()
+        expect(drawOverlay).toHaveBeenCalled()
     })
 
     it('onMounted does not crash when containerRef is null', () => {

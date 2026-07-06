@@ -11,7 +11,7 @@
 | 优先级 | 发现 | 影响面 | 建议 |
 | --- | --- | --- | --- |
 | P0 | 发布产物依赖手写 flatten 和路径重写 | npm 包安装、子路径导入、CJS/ESM 产物 | 优先用构建验证和产物快照锁住，再考虑移除手写重写 |
-| P0 | 浏览器能力缺少统一降级策略 | SSR、老浏览器、WebView、测试环境 | 为 Observer、Audio、imperative DOM 建统一 env helper |
+| P0 | 浏览器能力缺少统一降级策略 | SSR、老浏览器、WebView、测试环境 | Observer、Audio、Canvas、imperative DOM 核心 helper 已落地，后续新增能力沿用该模式 |
 | P1 | npm `exports` 子路径只覆盖少数组件 | 用户按组件子路径导入时行为不一致 | 明确策略：只支持聚合入口，或生成所有组件子路径 |
 | P1 | legacy wrapper 和重复区块曾在 registry 中作为一等组件 | 文档推荐、CLI add、维护成本 | 已按“清除历史包袱”方案 A 移出公开分发面 |
 | P1 | Date 字符串解析语义需统一 | Safari、跨时区、筛选边界 | DataTable 与 Calendar 纯日期解析已收敛，后续补公共 API 语义文档 |
@@ -45,22 +45,25 @@
 
 证据：
 
-- `packages/ui/src/lib/env.ts` 已提供 `isClient`、`hasDocument`、`hasLocalStorage`、`canUseDocumentBody()`、`hasIntersectionObserver`、`getAudioContextCtor()`。
+- `packages/ui/src/lib/env.ts` 已提供 `isClient`、`hasDocument`、`hasLocalStorage`、`canUseDocumentBody()`、`hasIntersectionObserver`、`getAudioContextCtor()`、`getResizeObserverCtor()`、`getDevicePixelRatio()`、`createCanvasElement()`、`getCanvas2DContext()`。
 - `packages/ui/src/components/infinite-scroll/InfiniteScroll.vue` 和 `packages/ui/src/components/infinite-scroll/useInfiniteScroll.ts` 已在创建 `IntersectionObserver` 前检测能力；无 Observer 时保守触发一次加载，避免永久卡住。
 - `packages/ui/src/components/image/Image.vue` 已在 `loading="lazy"` 且无 `IntersectionObserver` 时默认使用原图 `src`，避免空 `src` 永久不加载。
 - `packages/ui/src/composables/useAudioEngine.ts` 已通过 `getAudioContextCtor()` 支持 `webkitAudioContext`，并 catch 构造、`resume()`、节点创建/播放异常，失败时禁用本次音效。
 - `packages/ui/src/components/dialog/functional.ts` 和 `packages/ui/src/lib/render-imperative.ts` 已复用 `canUseDocumentBody()`，在 SSR/无 body 环境返回 no-op handle。
+- `packages/ui/src/components/counter/Counter.vue` 已通过 `getResizeObserverCtor()` 降级：无 `ResizeObserver` 时仍执行一次尺寸计算，但跳过持续观察。
+- `packages/ui/src/composables/useCanvasInteraction.ts` 已通过 env helper 收敛 canvas 创建、2D context 获取、DPR 和 `ResizeObserver` 构造；禁用 canvas 或缺少 observer 的 WebView/测试环境不会抛出运行时错误。
 
 剩余风险：
 
-1. 目前核心高风险点已治理，但 `ResizeObserver`、`MutationObserver`、Canvas 创建等其它浏览器能力仍应按需收敛到 `env.ts` 或专用 helper。
+1. `ResizeObserver` 与 Canvas 核心路径已收敛；`MutationObserver` 后续如进入组件运行时路径，应同样补 helper 与缺能力测试。
 2. 后续新增组件仍需要遵循统一 helper，避免重新出现散落的 `typeof window/document` 和直接构造。
 3. imperative mount 的核心 guard 已统一，后续重点是新增能力不要绕开 helper。
 
 后续建议：
 
-- 后续遇到 `ResizeObserver`、`MutationObserver`、Canvas 或 imperative DOM 新用法时，优先补 helper 和定向测试。
+- 后续遇到 `MutationObserver` 或其它 imperative DOM 新用法时，优先补 helper 和定向测试。
 - 保留 Image / InfiniteScroll / Audio / functional dialog 的定向测试，作为 SSR/WebView 兼容回归网。
+- 新增 `Counter` 缺失 `ResizeObserver`、`useCanvasInteraction` 缺失 `ResizeObserver` / canvas 2D 能力的定向测试，作为老 WebView 回归网。
 
 ## P1：公开导出策略不一致
 
@@ -191,7 +194,7 @@
 ## 建议清债顺序
 
 1. 发布产物冒烟测试已落地：继续保留 `test:package` 与 `check:exports` 作为发布前最小门禁。
-2. env/browser capability 核心 helper 已落地：后续按需收敛 `ResizeObserver`、`MutationObserver`、Canvas 和其它 imperative DOM。
+2. env/browser capability 核心 helper 已落地：`ResizeObserver`、Canvas、Audio、IntersectionObserver、imperative DOM 已覆盖；后续按需收敛 `MutationObserver` 和其它新增能力。
 3. registry 清理与同步校验已落地：legacy 状态会写入 registry item/index，validate 会校验 shared metadata、源文件、manifest 与生成 JSON 一致。
 4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期、无效格式校验与文档语义已覆盖；后续可补跨时区等价测试。
 5. package 子路径策略已定案：主入口为完整稳定导入面，子路径入口保留为 `package.json exports` 白名单并由脚本校验。
