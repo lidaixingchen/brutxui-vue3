@@ -68,6 +68,8 @@ export type { UseDataTablePaginationOptions } from './useDataTablePagination'
 // 动画/Canvas 类
 export { useAnimation } from './useAnimation'
 export { useReducedMotion } from './useReducedMotion'
+export { useGlitchEffect } from './useGlitchEffect'
+export type { GlitchTrigger, UseGlitchEffectOptions } from './useGlitchEffect'
 export { useCanvasInteraction } from './useCanvasInteraction'
 
 // 轮播/画板类

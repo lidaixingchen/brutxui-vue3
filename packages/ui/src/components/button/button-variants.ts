@@ -13,5 +13,29 @@ export const buttonVariants = cva(
         'disabled:opacity-50 disabled:pointer-events-none',
         brutalPress,
     ],
-    baseButtonVariants
+    {
+        variants: {
+            ...baseButtonVariants.variants,
+            effect: {
+                none: '',
+                glitch: 'glitch-button relative',
+            },
+            glitchSpeed: {
+                slow: '[--glitch-duration:800ms]',
+                medium: '[--glitch-duration:300ms]',
+                fast: '[--glitch-duration:100ms]',
+            },
+            glitchDirection: {
+                horizontal: 'glitch-horizontal',
+                vertical: 'glitch-vertical',
+                both: 'glitch-both',
+            },
+        },
+        defaultVariants: {
+            ...baseButtonVariants.defaultVariants,
+            effect: 'none',
+            glitchSpeed: 'medium',
+            glitchDirection: 'horizontal',
+        },
+    }
 )
