@@ -3,7 +3,11 @@ export { COMPONENTS, AVAILABLE_COMPONENTS } from './components.js';
 export type { ComponentFileMapping } from './component-files.js';
 export { COMPONENT_FILES } from './component-files.js';
 export type { ComponentRegistryEntry } from './component-registry.js';
-export { COMPONENT_REGISTRY } from './component-registry.js';
+export {
+    COMPONENT_REGISTRY,
+    COMPONENTS_BY_CATEGORY,
+    getComponentsByCategory,
+} from './component-registry.js';
 export type {
     RegistryFileType,
     RegistryFile,

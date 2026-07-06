@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { COMPONENT_FILES, COMPONENT_REGISTRY, computeRegistryIntegrity } from 'brutx-shared-vue';
+import {
+    COMPONENT_FILES,
+    COMPONENTS_BY_CATEGORY,
+    COMPONENT_REGISTRY,
+    computeRegistryIntegrity,
+    getComponentsByCategory,
+} from 'brutx-shared-vue';
 import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
     buildRegistryManifest,
@@ -20,6 +26,8 @@ describe('build-registry helpers', () => {
         expect(COMPONENT_REGISTRY.button.category).toBe('action');
         expect(COMPONENT_REGISTRY.button.examples).toEqual([]);
         expect(COMPONENT_REGISTRY['settings-page'].category).toBe('page');
+        expect(COMPONENTS_BY_CATEGORY.action).toContain('button');
+        expect(getComponentsByCategory('page')).toContain('settings-page');
     });
 
     it('rewrites component imports to registry aliases', () => {

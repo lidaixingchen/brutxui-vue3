@@ -84,6 +84,11 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
 };
 
 export const COMPONENT_REGISTRY: Record<string, ComponentRegistryEntry> = createComponentRegistry();
+export const COMPONENTS_BY_CATEGORY: Record<ComponentCategory, string[]> = createComponentsByCategory();
+
+export function getComponentsByCategory(category: ComponentCategory): string[] {
+    return COMPONENTS_BY_CATEGORY[category];
+}
 
 function createComponentRegistry(): Record<string, ComponentRegistryEntry> {
     const registry: Record<string, ComponentRegistryEntry> = {};
@@ -135,4 +140,31 @@ function inferCategory(name: string): ComponentCategory {
     }
 
     return 'utility';
+}
+
+function createComponentsByCategory(): Record<ComponentCategory, string[]> {
+    const groups: Record<ComponentCategory, string[]> = {
+        action: [],
+        'data-display': [],
+        feedback: [],
+        form: [],
+        layout: [],
+        marketing: [],
+        media: [],
+        navigation: [],
+        overlay: [],
+        page: [],
+        utility: [],
+        'visual-effect': [],
+    };
+
+    for (const entry of Object.values(COMPONENT_REGISTRY)) {
+        groups[entry.category].push(entry.name);
+    }
+
+    for (const names of Object.values(groups)) {
+        names.sort();
+    }
+
+    return groups;
 }
