@@ -34,6 +34,14 @@ export interface ComponentSourceFileInventory {
     directives: Set<string>
 }
 
+export interface DocsComponentPageCoverageOptions {
+    locale: string
+    componentNames: Iterable<string>
+    pageSlugs: Set<string>
+    aliases?: Record<string, string>
+    exemptions?: Set<string>
+}
+
 export function findUnknownRegistryReferences(items: RegistryReferenceItem[]): UnknownRegistryReference[] {
     const knownNames = new Set(items.map(item => item.name))
     const unknown: UnknownRegistryReference[] = []
@@ -187,6 +195,34 @@ export function validateComponentSourceFiles(
     validateDeclaredFiles(errors, name, 'component file', entry.files, inventory.componentFiles)
     validateDeclaredFiles(errors, name, 'composable', entry.composables ?? [], inventory.composables)
     validateDeclaredFiles(errors, name, 'directive', entry.directives ?? [], inventory.directives)
+
+    return errors
+}
+
+export function validateDocsComponentPageCoverage(options: DocsComponentPageCoverageOptions): string[] {
+    const errors: string[] = []
+    const aliases = options.aliases ?? {}
+    const exemptions = options.exemptions ?? new Set<string>()
+    const expectedSlugs = new Map<string, string>()
+
+    for (const name of options.componentNames) {
+        if (exemptions.has(name)) {
+            continue
+        }
+        expectedSlugs.set(aliases[name] ?? name, name)
+    }
+
+    for (const [slug, name] of expectedSlugs) {
+        if (!options.pageSlugs.has(slug)) {
+            errors.push(`[docs:${options.locale}] Missing docs page for "${name}" at "${slug}.md"`)
+        }
+    }
+
+    for (const slug of options.pageSlugs) {
+        if (!expectedSlugs.has(slug)) {
+            errors.push(`[docs:${options.locale}] Docs page "${slug}.md" does not map to COMPONENT_REGISTRY`)
+        }
+    }
 
     return errors
 }

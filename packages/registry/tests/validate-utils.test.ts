@@ -4,6 +4,7 @@ import {
     findUnknownRegistryReferences,
     formatRegistryDependencyGraph,
     validateComponentSourceFiles,
+    validateDocsComponentPageCoverage,
     validateGeneratedItemMatchesMetadata,
     validateRegistryManifestConsistency,
 } from '../scripts/validate-utils'
@@ -221,6 +222,29 @@ describe('validate-registry helpers', () => {
             '[button] declared component file "Missing.vue" does not exist in source',
             '[button] declared composable "missingComposable.ts" does not exist in source',
             '[button] declared directive "missingDirective.ts" does not exist in source',
+        ])
+    })
+
+    it('validates docs component page coverage with aliases and exemptions', () => {
+        expect(validateDocsComponentPageCoverage({
+            locale: 'en',
+            componentNames: ['button', 'color-picker', 'legacy-card'],
+            pageSlugs: new Set(['button', 'color-picker']),
+            aliases: {
+                'color-picker': 'color-picker',
+            },
+            exemptions: new Set(['legacy-card']),
+        })).toEqual([])
+    })
+
+    it('reports missing and unknown docs component pages', () => {
+        expect(validateDocsComponentPageCoverage({
+            locale: 'zh',
+            componentNames: ['button', 'tree-select'],
+            pageSlugs: new Set(['button', 'ghost']),
+        })).toEqual([
+            '[docs:zh] Missing docs page for "tree-select" at "tree-select.md"',
+            '[docs:zh] Docs page "ghost.md" does not map to COMPONENT_REGISTRY',
         ])
     })
 

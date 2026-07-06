@@ -12,6 +12,7 @@ import {
     findUnknownRegistryReferences,
     formatRegistryDependencyGraph,
     validateComponentSourceFiles,
+    validateDocsComponentPageCoverage,
     validateGeneratedItemMatchesMetadata,
     validateRegistryManifestConsistency,
     type RegistryBuildManifestSnapshot,
@@ -25,6 +26,18 @@ const REGISTRY_DIR = path.resolve(__dirname, '../registry');
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
 const UI_COMPOSABLES_DIR = path.resolve(__dirname, '../../ui/src/composables');
 const UI_DIRECTIVES_DIR = path.resolve(__dirname, '../../ui/src/directives');
+const DOCS_COMPONENTS_DIR = path.resolve(__dirname, '../../../apps/docs/components');
+const DOCS_BLOCKS_DIR = path.resolve(__dirname, '../../../apps/docs/blocks');
+const DOCS_EN_COMPONENTS_DIR = path.resolve(__dirname, '../../../apps/docs/en/components');
+const DOCS_EN_BLOCKS_DIR = path.resolve(__dirname, '../../../apps/docs/en/blocks');
+
+const DOCS_PAGE_ALIASES: Record<string, string> = {
+    kanban: 'kanban-board',
+};
+
+const DOCS_PAGE_EXEMPTIONS = new Set([
+    'input-adornment',
+]);
 
 function readRelativeFiles(rootDir: string): Set<string> {
     const files = new Set<string>();
@@ -48,6 +61,24 @@ function readRelativeFiles(rootDir: string): Set<string> {
 
     walk(rootDir, '');
     return files;
+}
+
+function readMarkdownPageSlugs(dirs: string[]): Set<string> {
+    const slugs = new Set<string>();
+
+    for (const dir of dirs) {
+        if (!fs.existsSync(dir)) {
+            continue;
+        }
+
+        for (const file of fs.readdirSync(dir)) {
+            if (file.endsWith('.md') && file !== 'index.md') {
+                slugs.add(path.basename(file, '.md'));
+            }
+        }
+    }
+
+    return slugs;
 }
 
 function validateIndexConsistency(files: string[]): number {
@@ -179,6 +210,42 @@ function validateComponentsSync(): number {
     return syncErrors;
 }
 
+function validateDocsCoverage(): number {
+    const componentNames = Object.keys(COMPONENT_REGISTRY);
+    const locales = [
+        {
+            locale: 'zh-CN',
+            pageSlugs: readMarkdownPageSlugs([DOCS_COMPONENTS_DIR, DOCS_BLOCKS_DIR]),
+        },
+        {
+            locale: 'en',
+            pageSlugs: readMarkdownPageSlugs([DOCS_EN_COMPONENTS_DIR, DOCS_EN_BLOCKS_DIR]),
+        },
+    ];
+    let docsErrors = 0;
+
+    for (const locale of locales) {
+        const errors = validateDocsComponentPageCoverage({
+            locale: locale.locale,
+            componentNames,
+            pageSlugs: locale.pageSlugs,
+            aliases: DOCS_PAGE_ALIASES,
+            exemptions: DOCS_PAGE_EXEMPTIONS,
+        });
+
+        for (const error of errors) {
+            console.error(`✗ ${error}.`);
+            docsErrors++;
+        }
+    }
+
+    if (docsErrors === 0) {
+        console.log(`✓ Docs component pages cover COMPONENT_REGISTRY (${componentNames.length} components).`);
+    }
+
+    return docsErrors;
+}
+
 function validate() {
     console.log('🔍 Validating registry files...');
 
@@ -277,6 +344,7 @@ function validate() {
     errorCount += validateIndexConsistency(files);
     errorCount += validateSourceConsistency();
     errorCount += validateComponentsSync();
+    errorCount += validateDocsCoverage();
 
     console.log(`\n📊 Total files across all registry items: ${totalFiles}`);
 
