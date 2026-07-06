@@ -3,10 +3,9 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import {
-    COMPONENTS,
+    COMPONENT_REGISTRY,
     computeRegistryIntegrity,
     validateRegistryItem,
-    COMPONENT_FILES,
 } from 'brutx-shared-vue';
 import type {
     RegistryFile,
@@ -103,7 +102,7 @@ function saveCache(cache: Record<string, string>): void {
 function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[]; directives?: string[] }): string {
     const parts: string[] = [JSON.stringify({
         cacheVersion: CACHE_VERSION,
-        componentInfo: COMPONENTS[name] ?? null,
+        componentInfo: COMPONENT_REGISTRY[name] ?? null,
         fileMapping,
         tailwind: TAILWIND_CONFIG,
         cssVars: CSS_VARS,
@@ -164,14 +163,14 @@ export function rewriteImports(code: string, componentName: string, context: Rew
 
     code = code.replace(
         /['"]\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)['"]/g,
-        (m, comp, rest) => (COMPONENT_FILES[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
+        (m, comp, rest) => (COMPONENT_REGISTRY[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
     );
 
     // Rewrite cross-component imports: ../{component}/{file} → @/components/ui/{component}/{file}
     // Extract the component name directly from the path to avoid filename collision issues.
     code = code.replace(
         /(['"])\.\.\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
-        (m, quote, comp, rest) => (COMPONENT_FILES[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
+        (m, quote, comp, rest) => (COMPONENT_REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
     );
 
     // Rewrite same-directory imports: ./{file} → @/<context-dir>/{file}
@@ -235,7 +234,7 @@ export function extractRegistryDeps(code: string, componentName: string): string
         if (!specifier.startsWith(prefix)) continue;
 
         const depName = specifier.slice(prefix.length).split('/')[0];
-        if (depName !== componentName && COMPONENT_FILES[depName]) {
+        if (depName !== componentName && COMPONENT_REGISTRY[depName]) {
             deps.add(depName);
         }
     }
@@ -340,7 +339,7 @@ export async function run() {
 
     const cache = loadCache();
     const newCache: Record<string, string> = {};
-    const componentNames = Object.keys(COMPONENT_FILES);
+    const componentNames = Object.keys(COMPONENT_REGISTRY);
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
 
@@ -438,8 +437,8 @@ export async function run() {
 
     for (const name of componentNames) {
         try {
-            const componentInfo = COMPONENTS[name];
-            const fileMapping = COMPONENT_FILES[name];
+            const componentInfo = COMPONENT_REGISTRY[name];
+            const fileMapping = componentInfo;
 
             if (!fileMapping) {
                 throw new Error(`No file mapping found for component "${name}"`);

@@ -2,11 +2,10 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
-    COMPONENTS,
+    COMPONENT_REGISTRY,
     validateRegistryIndex,
     validateRegistryIntegrity,
     validateRegistryItem,
-    COMPONENT_FILES,
 } from 'brutx-shared-vue';
 import {
     findRegistryDependencyCycles,
@@ -70,7 +69,7 @@ function validateIndexConsistency(files: string[]): number {
 
     for (const name of fileNames) {
         if (!indexNames.has(name)) {
-            console.error(`✗ [${name}.json] Exists in registry directory but is missing from index.json. Register it in COMPONENT_FILES and run pnpm build.`);
+            console.error(`✗ [${name}.json] Exists in registry directory but is missing from index.json. Register it in COMPONENT_REGISTRY and run pnpm build.`);
             consistencyErrors++;
         }
     }
@@ -99,50 +98,48 @@ function validateSourceConsistency(): number {
             .filter((entry) => entry.isDirectory())
             .map((entry) => entry.name)
     );
-    const registered = new Set(Object.keys(COMPONENT_FILES));
+    const registered = new Set(Object.keys(COMPONENT_REGISTRY));
 
     let sourceErrors = 0;
 
     for (const name of sourceDirs) {
         if (!registered.has(name)) {
-            console.error(`✗ [${name}] Source directory exists at packages/ui/src/components/${name}/ but is not registered in COMPONENT_FILES. Add an entry and run pnpm build.`);
+            console.error(`✗ [${name}] Source directory exists at packages/ui/src/components/${name}/ but is not registered in COMPONENT_REGISTRY. Add an entry in shared metadata and run pnpm build.`);
             sourceErrors++;
         }
     }
     for (const name of registered) {
         if (!sourceDirs.has(name)) {
-            console.error(`✗ [${name}] Registered in COMPONENT_FILES but no source directory exists at packages/ui/src/components/${name}/.`);
+            console.error(`✗ [${name}] Registered in COMPONENT_REGISTRY but no source directory exists at packages/ui/src/components/${name}/.`);
             sourceErrors++;
         }
     }
 
     if (sourceErrors === 0) {
-        console.log(`✓ Source directories are consistent with COMPONENT_FILES (${sourceDirs.size} components).`);
+        console.log(`✓ Source directories are consistent with COMPONENT_REGISTRY (${sourceDirs.size} components).`);
     }
 
     return sourceErrors;
 }
 
 function validateComponentsSync(): number {
-    const componentFileKeys = new Set(Object.keys(COMPONENT_FILES));
-    const componentMetaKeys = new Set(Object.keys(COMPONENTS));
+    const registryKeys = new Set(Object.keys(COMPONENT_REGISTRY));
     let syncErrors = 0;
 
-    for (const name of componentFileKeys) {
-        if (!componentMetaKeys.has(name)) {
-            console.error(`✗ [${name}] Registered in COMPONENT_FILES but missing from COMPONENTS in shared package. Add an entry to packages/shared/src/components.ts.`);
+    for (const [name, entry] of Object.entries(COMPONENT_REGISTRY)) {
+        if (entry.name !== name) {
+            console.error(`✗ [${name}] COMPONENT_REGISTRY entry name "${entry.name}" does not match its key.`);
             syncErrors++;
         }
-    }
-    for (const name of componentMetaKeys) {
-        if (!componentFileKeys.has(name)) {
-            console.error(`✗ [${name}] Registered in COMPONENTS but missing from COMPONENT_FILES in registry. Add an entry to packages/registry/scripts/component-files.ts.`);
+
+        if (entry.files.length === 0) {
+            console.error(`✗ [${name}] COMPONENT_REGISTRY entry must list at least one component file.`);
             syncErrors++;
         }
     }
 
     if (syncErrors === 0) {
-        console.log(`✓ COMPONENTS and COMPONENT_FILES are in sync (${componentFileKeys.size} components).`);
+        console.log(`✓ COMPONENT_REGISTRY metadata is valid (${registryKeys.size} components).`);
     }
 
     return syncErrors;
