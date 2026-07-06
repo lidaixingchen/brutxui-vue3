@@ -220,4 +220,5 @@
 - 本轮 CLI matrix 验证：`CI=true pnpm --filter brutx-vue build`、`CI=true pnpm --filter brutx-vue typecheck`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/matrix.test.ts`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/cli-smoke.test.ts -t "dry-runs the full local registry"`。
 - 本轮浏览器能力验证：`packages/ui/node_modules/.bin/vitest.CMD run src/components/counter/counter.test.ts`、`packages/ui/node_modules/.bin/vitest.CMD run src/composables/useCanvasInteraction.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`packages/registry/node_modules/.bin/tsx.CMD scripts/build-registry.ts`、`packages/registry/node_modules/.bin/tsx.CMD scripts/validate-registry.ts`。
 - 本轮 flatten 路径重写验证：`packages/ui/node_modules/.bin/vitest.CMD run src/lib/preserve-modules-paths.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`npm.cmd run build`、`npm.cmd run check:exports`、`npm.cmd run test:package`。
+- 本轮 CLI runtime 验证：`packages/cli` 下 `vitest run tests/doctor.test.ts`、`npm.cmd run typecheck`、`npm.cmd run build`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
