@@ -140,8 +140,8 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
         files: ['NoiseBackground.vue', 'noise-background-variants.ts'],
     },
     'glitch-button': {
-        files: ['GlitchButton.vue', 'glitch-button-variants.ts'],
-        composables: ['useReducedMotion.ts'],
+        files: ['GlitchButton.vue'],
+        composables: ['useGlitchEffect.ts'],
     },
     'virtual-scroll': {
         files: ['VirtualScroll.vue', 'virtual-scroll-variants.ts', 'types.ts'],

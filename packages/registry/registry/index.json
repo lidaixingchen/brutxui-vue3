@@ -11727,9 +11727,7 @@
       "description": "Button with glitch animation effect on hover and interaction.",
       "category": "visual-effect",
       "examples": [],
-      "dependencies": [
-        "@lucide/vue"
-      ],
+      "dependencies": [],
       "registryDependencies": [
         "button"
       ],
@@ -11739,23 +11737,15 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/glitch-button/glitch-button-variants.ts",
-          "type": "registry:lib"
+          "path": "composables/useGlitchEffect.ts",
+          "type": "registry:hook"
         },
         {
           "path": "composables/useReducedMotion.ts",
           "type": "registry:hook"
         },
         {
-          "path": "composables/useGlitchEffect.ts",
-          "type": "registry:hook"
-        },
-        {
           "path": "lib/defaults.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:lib"
         },
         {
@@ -11849,7 +11839,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4c5ebebbeec1bb6b52af3d312b4da1086a7c0dae7f490938fe55227c1b164d7c"
+      "integrity": "sha256-774cb558995beba726865c2def7fb527ca3098fc9ebacbe9e60852f3c7382bb9"
     },
     {
       "name": "virtual-scroll",

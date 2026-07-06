@@ -396,7 +396,6 @@ export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
 export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'
 
 export { default as GlitchButton } from './components/glitch-button/GlitchButton.vue'
-export { glitchButtonVariants } from './components/glitch-button/glitch-button-variants'
 
 export { default as VirtualScroll } from './components/virtual-scroll/VirtualScroll.vue'
 export { virtualScrollRootVariants, virtualScrollItemVariants } from './components/virtual-scroll/virtual-scroll-variants'

@@ -623,11 +623,9 @@
       "replacement": "carousel"
     },
     "glitch-button": {
-      "integrity": "sha256-4c5ebebbeec1bb6b52af3d312b4da1086a7c0dae7f490938fe55227c1b164d7c",
-      "fileCount": 7,
-      "dependencies": [
-        "@lucide/vue"
-      ],
+      "integrity": "sha256-774cb558995beba726865c2def7fb527ca3098fc9ebacbe9e60852f3c7382bb9",
+      "fileCount": 5,
+      "dependencies": [],
       "registryDependencies": [
         "button"
       ],

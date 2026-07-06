@@ -94,7 +94,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     'tree-select': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Hierarchical tree-based select with multi-select support.' },
     'typewriter-text': { dependencies: [], description: 'Text with typewriter typing animation effect.' },
     'noise-background': { dependencies: [], description: 'Animated noise texture background overlay.' },
-    'glitch-button': { dependencies: ['@lucide/vue'], description: 'Button with glitch animation effect on hover and interaction.' },
+    'glitch-button': { dependencies: [], description: 'Button with glitch animation effect on hover and interaction.' },
     'virtual-scroll': { dependencies: ['@tanstack/vue-virtual'], description: 'High-performance virtualized list for large datasets.' },
     'input-adornment': { dependencies: [], description: 'Decorative prefix and suffix elements for input fields.', status: 'legacy', replacement: 'input' },
     upload: { dependencies: ['@lucide/vue'], description: 'File upload with drag-and-drop, preview, and progress tracking.' },
