@@ -60,7 +60,7 @@
 | 卡片/区块模板族 | `BlogCard`、`FileCard`、`TestimonialCard`、`QuickActions`、`FaqSection`、`ChartSection`、`GallerySection` 已标记 legacy/replacement；`DashboardStats` 内部数值展示已复用 `Counter`；docs 已补 `Card` 组合示例和 legacy 提示 | 后续逐步迁移更多 blocks 文档推荐入口 |
 | `EmptyState` + `Result` | `Result` 已支持 `status="empty"`，`EmptyState` 已改为兼容 wrapper；docs 已把空状态纳入 Result 示例 | 后续大版本评估是否移除独立入口 |
 | `InputAdornment` + `Input` | `InputAdornment` 已标记 `legacy`，replacement 指向 `input` | 文档优先推荐 `Input` 自身前后缀能力 |
-| 选择器族共享能力 | `Cascader`、`TreeSelect` 已复用 `useClearable`，`Combobox`、`Cascader` 与 `TreeSelect` 已复用 `useSelectionDisplayText` 统一单选/多选触发器展示文本；registry 映射已补齐相关组合式函数 | 继续抽 `useSelectableTrigger`、`useClearableSelection` 等共享能力 |
+| 选择器族共享能力 | `Cascader`、`TreeSelect` 已复用 `useClearableSelection` 统一清除按钮与空值派发，`Combobox`、`Cascader` 与 `TreeSelect` 已复用 `useSelectionDisplayText` 统一单选/多选触发器展示文本；registry 映射已补齐相关组合式函数 | 继续抽 `useSelectableTrigger` 等共享能力 |
 | 浮层族共享能力 | `Dialog` 与 `Sheet` 的关闭按钮已统一到 `modalCloseButtonVariants`；日期面板底部操作已抽为共享 footer | 继续统一 overlay content/trigger token，暂不合并公共组件 |
 
 ## P0：第一轮精简尾巴已清理
@@ -284,7 +284,7 @@
 
 - `useSelectableTrigger`
 - `useSelectionDisplayText`（已落地到 `Combobox` / `Cascader` / `TreeSelect`，保留各自 `selectedCount` i18n key 与列表格式化差异）
-- `useClearableSelection`
+- `useClearableSelection`（已落地到 `Cascader` / `TreeSelect`，统一清除按钮可见性、阻止冒泡和空值派发）
 - 统一 trigger variant、清除按钮、loading/empty 文案、键盘焦点样式
 
 这样可以降低重复，但不会牺牲类型清晰度。

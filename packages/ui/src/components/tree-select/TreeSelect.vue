@@ -6,7 +6,7 @@ import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
-import { useClearable } from '@/composables/useClearable'
+import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
@@ -15,6 +15,7 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import TreeSelectNode from './TreeSelectNode.vue'
 
 type TreeSelectVariantProps = VariantProps<typeof treeSelectTriggerVariants>
+type TreeSelectModelValue = string | string[] | undefined
 
 interface TreeSelectProps {
     /** 树形数据 */
@@ -247,22 +248,20 @@ function handleSelect(node: TreeNode) {
     }
 }
 
-function clearSelection() {
-    const emptyValue = props.multiple ? [] : undefined
-    emit('update:modelValue', emptyValue)
-    emit('select', emptyValue)
-}
-
 const {
     showClear,
     handleClear,
     onMouseEnter: onClearableMouseEnter,
     onMouseLeave: onClearableMouseLeave,
-} = useClearable({
+} = useClearableSelection<TreeSelectModelValue>({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
     disabled: () => props.disabled,
-    onClear: clearSelection,
+    emptyValue: () => props.multiple ? [] : undefined,
+    onClear: (emptyValue) => {
+        emit('update:modelValue', emptyValue)
+        emit('select', props.multiple ? [] : undefined)
+    },
 })
 
 watch(open, (isOpen) => {

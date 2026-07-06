@@ -1030,6 +1030,10 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useClearableSelection.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "composables/useSelectionDisplayText.ts",
           "type": "registry:hook"
         },
@@ -1128,7 +1132,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ea7d6a2da45c88f6931f6d959c024846064dab4ff67345836f061b29e9f344f5"
+      "integrity": "sha256-0712fcbf2ce5a71132fb46767fcfb6c47195a6a9572f37c7f98115e41119773a"
     },
     {
       "name": "checkbox",
@@ -11398,6 +11402,10 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useClearableSelection.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "composables/useSelectionDisplayText.ts",
           "type": "registry:hook"
         },
@@ -11504,7 +11512,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0278be97210e083fd4f34c6b09ce27bf4ca4dd2cfcb275245d8d25c6c85df9e1"
+      "integrity": "sha256-32cc04ac2b223b95f9221de9db9318b1b81ea5f7ce2a8ce3d399a59c221a0fb1"
     },
     {
       "name": "typewriter-text",

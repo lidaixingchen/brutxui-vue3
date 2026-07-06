@@ -6,7 +6,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
-import { useClearable } from '@/composables/useClearable'
+import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { cascaderTriggerVariants, cascaderItemVariants } from './cascader-variants'
 import type { CascaderOption, CascaderValue } from './cascader-types'
@@ -330,21 +330,20 @@ function handleItemClick(option: CascaderOption, colIdx: number) {
     }
 }
 
-function clearSelection() {
-    emit('update:modelValue', [])
-    emit('change', [])
-}
-
 const {
     showClear,
     handleClear,
     onMouseEnter: onClearableMouseEnter,
     onMouseLeave: onClearableMouseLeave,
-} = useClearable({
+} = useClearableSelection<CascaderValue[] | CascaderValue[][]>({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
     disabled: () => props.disabled,
-    onClear: clearSelection,
+    emptyValue: () => [] as CascaderValue[],
+    onClear: (emptyValue) => {
+        emit('update:modelValue', emptyValue)
+        emit('change', emptyValue)
+    },
 })
 
 // Synchronize keyboard focus state on popover open state transition
