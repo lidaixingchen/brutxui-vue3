@@ -141,12 +141,27 @@ export function rewriteImports(code: string, componentName: string, context: Rew
 
 export function extractDeps(code: string, dirPrefix: string): string[] {
     const deps = new Set<string>();
-    const pattern = new RegExp(`@/${dirPrefix}/([^'";\\s]+)`, 'g');
-    for (const match of code.matchAll(pattern)) {
-        const fileName = match[1].endsWith('.ts') ? match[1] : `${match[1]}.ts`;
+    const aliasPrefix = `@/${dirPrefix}/`;
+
+    for (const specifier of extractModuleSpecifiers(code)) {
+        if (!specifier.startsWith(aliasPrefix)) continue;
+
+        const rawFileName = specifier.slice(aliasPrefix.length).split(/[?#]/)[0];
+        const fileName = path.extname(rawFileName) ? rawFileName : `${rawFileName}.ts`;
         deps.add(fileName);
     }
     return Array.from(deps);
+}
+
+export function extractModuleSpecifiers(code: string): string[] {
+    const specifiers = new Set<string>();
+    const pattern = /(?:^|[;\r\n])\s*(?:import\s+(?:type\s+)?(?:[^'";]*?\s+from\s+)?|export\s+(?:type\s+)?[^'";]*?\s+from\s+)(['"])([^'"]+)\1/g;
+
+    for (const match of code.matchAll(pattern)) {
+        specifiers.add(match[2]);
+    }
+
+    return Array.from(specifiers);
 }
 
 export function getFileType(filePath: string): RegistryFileType {
@@ -162,15 +177,17 @@ export function getFileType(filePath: string): RegistryFileType {
 
 export function extractRegistryDeps(code: string, componentName: string): string[] {
     const deps = new Set<string>();
-    const matches = code.match(/@\/components\/ui\/([a-zA-Z0-9-]+)/g);
-    if (matches) {
-        for (const match of matches) {
-            const depName = match.replace('@/components/ui/', '');
-            if (depName !== componentName && COMPONENT_FILES[depName]) {
-                deps.add(depName);
-            }
+    const prefix = '@/components/ui/';
+
+    for (const specifier of extractModuleSpecifiers(code)) {
+        if (!specifier.startsWith(prefix)) continue;
+
+        const depName = specifier.slice(prefix.length).split('/')[0];
+        if (depName !== componentName && COMPONENT_FILES[depName]) {
+            deps.add(depName);
         }
     }
+
     return Array.from(deps);
 }
 

@@ -3,6 +3,7 @@ import { COMPONENT_FILES, computeRegistryIntegrity } from 'brutx-shared-vue';
 import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
     extractDeps,
+    extractModuleSpecifiers,
     extractRegistryDeps,
     getFileType,
     rewriteImports,
@@ -37,13 +38,35 @@ describe('build-registry helpers', () => {
     it('extracts library and registry dependencies from rewritten code', () => {
         const code = [
             "import { cn } from '@/lib/utils'",
+            "import type { TableColumn } from '@/lib/data-table-types'",
+            "export { useForwardProps } from '@/composables/useForwardProps'",
             "import { tableKey } from '@/lib/table-key.ts'",
             "import Button from '@/components/ui/button/Button.vue'",
             "import DataTable from '@/components/ui/data-table/DataTable.vue'",
+            "const literal = '@/components/ui/dialog/DialogContent.vue'",
+            "await import('@/components/ui/popover/PopoverContent.vue')",
         ].join('\n');
 
-        expect(extractDeps(code, 'lib')).toEqual(['utils.ts', 'table-key.ts']);
+        expect(extractDeps(code, 'lib')).toEqual(['utils.ts', 'data-table-types.ts', 'table-key.ts']);
+        expect(extractDeps(code, 'composables')).toEqual(['useForwardProps.ts']);
         expect(extractRegistryDeps(code, 'data-table')).toEqual(['button']);
+    });
+
+    it('extracts static import and export module specifiers without matching dynamic imports', () => {
+        const code = [
+            "import '@/components/ui/button/button.css'",
+            "import type { ButtonProps } from '@/components/ui/button/types'",
+            "export * from '@/lib/data-table-utils'",
+            "export { cn } from '@/lib/utils'",
+            "const lazy = import('@/components/ui/dialog/DialogContent.vue')",
+        ].join('\n');
+
+        expect(extractModuleSpecifiers(code)).toEqual([
+            '@/components/ui/button/button.css',
+            '@/components/ui/button/types',
+            '@/lib/data-table-utils',
+            '@/lib/utils',
+        ]);
     });
 
     it('classifies registry file types and computes stable integrity', () => {
