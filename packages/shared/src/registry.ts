@@ -96,6 +96,7 @@ export function validateRegistryItem(
     assertNonEmptyString(data.description, `"description"`, context);
     assertStatus(data.status, context);
     assertOptionalNonEmptyString(data.replacement, `"replacement"`, context);
+    assertLifecycleReplacement(data.status, data.replacement, context);
     assertStringArray(data.dependencies, `"dependencies"`, context);
     assertStringArray(data.registryDependencies, `"registryDependencies"`, context);
     assertObject(data.tailwind, `"tailwind"`, context);
@@ -159,6 +160,7 @@ function validateRegistryIndexItem(data: unknown): asserts data is RegistryIndex
     assertNonEmptyString(data.description, `"description"`, context, 'Invalid registry index item');
     assertStatus(data.status, context, 'Invalid registry index item');
     assertOptionalNonEmptyString(data.replacement, `"replacement"`, context, 'Invalid registry index item');
+    assertLifecycleReplacement(data.status, data.replacement, context, 'Invalid registry index item');
     assertStringArray(data.dependencies, `"dependencies"`, context, 'Invalid registry index item');
     assertStringArray(data.registryDependencies, `"registryDependencies"`, context, 'Invalid registry index item');
     assertObject(data.tailwind, `"tailwind"`, context, 'Invalid registry index item');
@@ -212,6 +214,17 @@ function assertStatus(
 ): asserts value is 'stable' | 'legacy' | 'deprecated' | undefined {
     if (value !== undefined && value !== 'stable' && value !== 'legacy' && value !== 'deprecated') {
         throw new Error(`${prefix} for "${context}": "status" must be one of: stable, legacy, deprecated.`);
+    }
+}
+
+function assertLifecycleReplacement(
+    status: 'stable' | 'legacy' | 'deprecated' | undefined,
+    replacement: string | undefined,
+    context: string,
+    prefix = 'Invalid registry data'
+): void {
+    if ((status === 'legacy' || status === 'deprecated') && !replacement) {
+        throw new Error(`${prefix} for "${context}": "replacement" is required when "status" is ${status}.`);
     }
 }
 

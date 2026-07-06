@@ -104,6 +104,15 @@ describe('getItem local validation', () => {
         });
     });
 
+    it('should require replacements for legacy registry items', async () => {
+        await withRegistry('legacy', createRegistryItem('legacy', {
+            status: 'legacy',
+            replacement: undefined,
+        }), async (registryPath) => {
+            await expect(registry.getItem('legacy', registryPath)).rejects.toThrow('"replacement" is required');
+        });
+    });
+
     it('should surface dependency resolution failures with the missing dependency name', async () => {
         await withRegistry('parent', createRegistryItem('parent', {
             registryDependencies: ['missing-child'],

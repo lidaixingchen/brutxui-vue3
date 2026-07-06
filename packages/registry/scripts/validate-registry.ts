@@ -188,6 +188,11 @@ function validate() {
                 }
             }
 
+            if (data.replacement && !knownNames.has(data.replacement)) {
+                console.error(`✗ [${file}] replacement "${data.replacement}" does not reference an existing registry item.`);
+                errorCount++;
+            }
+
             validateRegistryIntegrity(data, nameWithoutExtension);
 
         } catch (err: unknown) {
