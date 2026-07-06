@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 
 const slides = [
     { bg: 'bg-brutal-primary', label: '缩略图导航', desc: '底部缩略图快速跳转' },
@@ -14,7 +14,7 @@ const enhancedRef = ref()
 
 <template>
     <div class="w-full max-w-xl mx-auto space-y-6">
-        <CarouselEnhanced
+        <Carousel
             :loop="true"
             :autoplay="true"
             :autoplay-delay="3000"
@@ -29,18 +29,18 @@ const enhancedRef = ref()
                     <p class="text-sm font-bold opacity-70">{{ slide.desc }}</p>
                 </div>
             </CarouselItem>
-        </CarouselEnhanced>
+        </Carousel>
 
         <div class="space-y-2">
             <p class="text-sm font-bold tracking-wide">程序化控制</p>
-            <CarouselEnhanced ref="enhancedRef" :loop="true" size="md" :thumbnails="{ show: true, position: 'bottom', size: 'sm' }">
+            <Carousel ref="enhancedRef" :loop="true" size="md" :thumbnails="{ show: true, position: 'bottom', size: 'sm' }">
                 <CarouselItem v-for="(slide, i) in slides" :key="slide.label">
                     <div :class="['w-full h-full flex flex-col items-center justify-center gap-2 border-3 border-brutal', slide.bg]">
                         <p class="text-2xl font-black tracking-tight">{{ i + 1 }} / {{ slides.length }}</p>
                         <p class="text-sm font-bold opacity-70">{{ slide.label }}</p>
                     </div>
                 </CarouselItem>
-            </CarouselEnhanced>
+            </Carousel>
             <div class="flex items-center justify-center gap-2 flex-wrap">
                 <button
                     type="button"
@@ -67,7 +67,7 @@ const enhancedRef = ref()
         </div>
 
         <p class="text-xs opacity-60 leading-relaxed">
-            提示：CarouselEnhanced 在 Carousel 基础上增加了缩略图导航、自动播放指示器（进度条/圆点/分数）与视差动画效果。
+            提示：这些增强能力已经并入 Carousel；CarouselEnhanced 仅作为兼容入口保留。
         </p>
     </div>
 </template>

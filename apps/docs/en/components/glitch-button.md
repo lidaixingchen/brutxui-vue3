@@ -8,6 +8,8 @@ translated: true
 
 Neobrutalist-style glitch effect button that inherits all variants and sizes from the Button component, applying CSS `clip-path` glitch animation effects on button text. Supports horizontal, vertical, and both tear directions.
 
+> `GlitchButton` is now a compatibility wrapper around `Button effect="glitch"`. Prefer `Button` for new code so loading, disabled, ARIA, and size behavior stay unified.
+
 ## Demo
 
 <ComponentPreview>
@@ -22,38 +24,38 @@ Neobrutalist-style glitch effect button that inherits all variants and sizes fro
 
 ```vue
 <script setup>
-import { GlitchButton } from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
 </script>
 
 <template>
-    <GlitchButton variant="primary" trigger="hover">
+    <Button effect="glitch" variant="primary" glitch-trigger="hover">
         Click Me
-    </GlitchButton>
+    </Button>
 </template>
 ```
 
 ### Autoplay Mode
 
 ```vue
-<GlitchButton trigger="autoplay" :interval="5000" speed="slow">
+<Button effect="glitch" glitch-trigger="autoplay" :glitch-interval="5000" glitch-speed="slow">
     Auto Glitch Effect
-</GlitchButton>
+</Button>
 ```
 
 ### Loading State
 
 ```vue
-<GlitchButton :loading="true" variant="primary">
+<Button effect="glitch" :loading="true" variant="primary">
     Submitting...
-</GlitchButton>
+</Button>
 ```
 
 ### Icon Button
 
 ```vue
-<GlitchButton size="icon" variant="outline">
+<Button effect="glitch" size="icon" variant="outline">
     <Icon name="settings" />
-</GlitchButton>
+</Button>
 ```
 
 ### Render as Child Component
@@ -61,17 +63,17 @@ import { GlitchButton } from 'brutx-ui-vue'
 Use `asChild` to apply the glitch effect to other elements without rendering a `<button>` element:
 
 ```vue
-<GlitchButton asChild trigger="hover">
+<Button asChild effect="glitch" glitch-trigger="hover">
     <a href="/some-link">Link Style</a>
-</GlitchButton>
+</Button>
 ```
 
 ### Disabled State
 
 ```vue
-<GlitchButton disabled>
+<Button effect="glitch" disabled>
     Disabled State
-</GlitchButton>
+</Button>
 ```
 
 ## Variants
@@ -95,7 +97,7 @@ Use `asChild` to apply the glitch effect to other elements without rendering a `
 
 ### Tear Directions
 
-Control tear slice and displacement direction via the `direction` prop:
+Control tear slice and displacement direction with `Button`'s `glitchDirection` prop. The compatibility `GlitchButton` wrapper still accepts the old `direction` prop.
 
 | Direction         | Description                                                                                     |
 | ------------ | ---------------------------------------------------------------------------------------- |
@@ -104,12 +106,12 @@ Control tear slice and displacement direction via the `direction` prop:
 | `both`       | Both directions. `::before` uses horizontal red, `::after` uses vertical blue, two layers overlay; **no** overall tilt is applied to avoid excessive turbulence |
 
 ```vue
-<GlitchButton direction="horizontal" data-text="HORIZONTAL" trigger="click">HORIZONTAL</GlitchButton>
-<GlitchButton direction="vertical" data-text="VERTICAL" trigger="click">VERTICAL</GlitchButton>
-<GlitchButton direction="both" data-text="BOTH" trigger="click">BOTH</GlitchButton>
+<Button effect="glitch" glitch-direction="horizontal" data-text="HORIZONTAL" glitch-trigger="click">HORIZONTAL</Button>
+<Button effect="glitch" glitch-direction="vertical" data-text="VERTICAL" glitch-trigger="click">VERTICAL</Button>
+<Button effect="glitch" glitch-direction="both" data-text="BOTH" glitch-trigger="click">BOTH</Button>
 ```
 
-> **`data-text` attribute**: GlitchButton's tear effect is achieved through pseudo-element `content: attr(data-text)` to replicate text. Therefore, you need to pass text matching the button content via the `data-text` attribute, otherwise the pseudo-element copy layer will be empty. This is a key difference from GlitchText (which automatically binds `data-text` from the `text` prop).
+> **`data-text` attribute**: The glitch button tear effect is achieved through pseudo-element `content: attr(data-text)` to replicate text. Therefore, you need to pass text matching the button content via the `data-text` attribute, otherwise the pseudo-element copy layer will be empty. This is a key difference from GlitchText (which automatically binds `data-text` from the `text` prop).
 
 > In `both` mode, both pseudo-elements overlay the original text. Color block stacking may reduce readability; use as needed.
 
@@ -151,7 +153,7 @@ Obtain the component instance via `ref` to call the following methods:
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { GlitchButton } from 'brutx-ui-vue'
+import { Button } from 'brutx-ui-vue'
 
 const glitchRef = ref(null)
 
@@ -165,9 +167,9 @@ const stopGlitch = () => {
 </script>
 
 <template>
-  <GlitchButton ref="glitchRef" trigger="none">
+  <Button ref="glitchRef" effect="glitch" glitch-trigger="none">
     Manual Control
-  </GlitchButton>
+  </Button>
   <button @click="startGlitch">Start</button>
   <button @click="stopGlitch">Stop</button>
 </template>
@@ -179,10 +181,10 @@ const stopGlitch = () => {
 | ---------- | ------------------------------------------------------------------------------------------ | ----------- | -------------------------------------------- |
 | `variant`  | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | Button variant                                     |
 | `size`     | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'`                                             | `'default'` | Button size                                     |
-| `speed`    | `'slow' \| 'medium' \| 'fast'`                                                             | `'medium'`  | Glitch animation speed                                 |
-| `direction` | `'horizontal' \| 'vertical' \| 'both'`                                                    | `'horizontal'` | Tear direction (horizontal/vertical/both)               |
-| `trigger`  | `'hover' \| 'click' \| 'autoplay' \| 'none'`                                              | `'hover'`   | Animation trigger timing                                 |
-| `interval` | `number`                                                                                   | `3000`      | Autoplay interval (ms), minimum 100                  |
+| `speed`    | `'slow' \| 'medium' \| 'fast'`                                                             | `'medium'`  | Compatibility prop; maps to `Button`'s `glitchSpeed` |
+| `direction` | `'horizontal' \| 'vertical' \| 'both'`                                                    | `'horizontal'` | Compatibility prop; maps to `Button`'s `glitchDirection` |
+| `trigger`  | `'hover' \| 'click' \| 'autoplay' \| 'none'`                                              | `'hover'`   | Compatibility prop; maps to `Button`'s `glitchTrigger` |
+| `interval` | `number`                                                                                   | `3000`      | Compatibility prop; maps to `Button`'s `glitchInterval` |
 | `asChild`  | `boolean`                                                                                  | `false`     | Render as child component, does not render a `<button>` element     |
 | `loading`  | `boolean`                                                                                  | `false`     | Loading state, displays a spinning icon and disables interaction             |
 | `disabled` | `boolean`                                                                                  | `false`     | Disabled state                                     |

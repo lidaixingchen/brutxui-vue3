@@ -85,7 +85,7 @@ Browse all available BrutxUI components.
 | [Table](/en/components/table) | Data table with 8 sub-components |
 | [DataTable](/en/components/data-table) | Data table with sort/filter/pagination/fixed columns/expandable rows/merge cells |
 | [Descriptions](/en/components/descriptions) | Description list for displaying read-only info in key-value pairs |
-| [Carousel](/en/components/carousel) | Carousel with autoplay and loop |
+| [Carousel](/en/components/carousel) | Carousel with autoplay, thumbnails, and indicators |
 | [Timeline](/en/components/timeline) | Timeline for vertical event sequence |
 | [TreeView](/en/components/tree-view) | Tree directory with expand/collapse/multi-select |
 | [VirtualScroll](/en/components/virtual-scroll) | Virtual scroll for high-performance large lists |
@@ -105,7 +105,7 @@ Browse all available BrutxUI components.
 | [KanbanBoard](/en/components/kanban-board) | Kanban board with drag-and-drop cards |
 | [InfiniteScroll](/en/components/infinite-scroll) | Infinite scroll for auto-loading more data |
 | [GlitchText](/en/components/glitch-text) | Glitch tear text driven by CSS clip-path |
-| [GlitchButton](/en/components/glitch-button) | Glitch effect button with multiple trigger modes |
+| [GlitchButton](/en/components/glitch-button) | Compatibility entry; prefer Button's glitch effect |
 | [TypewriterText](/en/components/typewriter-text) | Typewriter effect text with loop and cursor |
 
 ## Blocks

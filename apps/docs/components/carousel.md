@@ -56,7 +56,7 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 |------|------|
 | `Carousel` | 轮播容器，管理滚动逻辑与导航控制 |
 | `CarouselItem` | 单张幻灯片容器 |
-| `CarouselEnhanced` | 增强版轮播，额外支持缩略图导航、自动播放指示器与视差动画 |
+| `CarouselEnhanced` | 兼容入口，内部转发到 `Carousel` |
 
 ## 组合式函数
 
@@ -185,9 +185,9 @@ const carouselRef = ref()
 |------|--------|------|
 | `default` | — | 默认插槽，用于放置幻灯片内容 |
 
-## CarouselEnhanced 增强版轮播
+## Carousel 增强能力
 
-`CarouselEnhanced` 在 `Carousel` 的基础上增加了**缩略图导航**、**自动播放指示器**（进度条/圆点/分数）与**视差动画**效果，适用于图片画廊、产品展示等需要更丰富交互的场景。
+`Carousel` 已内置**缩略图导航**、**自动播放指示器**（进度条/圆点/分数）与**视差动画**效果，适用于图片画廊、产品展示等需要更丰富交互的场景。`CarouselEnhanced` 仍作为兼容 wrapper 保留，新代码建议直接使用 `Carousel`。
 
 ### 预览
 
@@ -199,11 +199,11 @@ const carouselRef = ref()
 
 ```vue
 <script setup>
-import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 </script>
 
 <template>
-    <CarouselEnhanced
+    <Carousel
         :loop="true"
         :autoplay="true"
         :autoplay-delay="3000"
@@ -215,13 +215,13 @@ import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
         <CarouselItem v-for="slide in slides" :key="slide.label">
             <div class="w-full h-full flex items-center justify-center">{{ slide.label }}</div>
         </CarouselItem>
-    </CarouselEnhanced>
+    </Carousel>
 </template>
 ```
 
 ### 基础 Props
 
-继承 `Carousel` 的全部 Props（`loop`/`autoplay`/`autoplayDelay`/`showArrows`/`showDots`/`size`/`class`），以下为增强专有 Props：
+以下增强 Props 可直接传给 `Carousel`：
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
@@ -259,7 +259,7 @@ import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
 
 ### 暴露的 API
 
-`CarouselEnhanced` 通过 `defineExpose` 暴露与 `Carousel` 相同的方法与状态，另增加自动播放控制：
+`Carousel` 通过 `defineExpose` 暴露滚动与自动播放控制；`CarouselEnhanced` 兼容 wrapper 暴露同一组方法：
 
 | 方法/属性 | 类型 | 说明 |
 |-----------|------|------|
@@ -290,7 +290,7 @@ import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
 
 鼠标悬停暂停 / 离开恢复的交互逻辑在动效降级模式下依然保留，但因为 autoplay 已停止，悬停行为不会带来额外的副作用。
 
-### CarouselEnhanced 额外说明
+### 增强能力额外说明
 
 - **缩略图按钮**：每个缩略图为 `<button type="button">`，带有 `aria-label`（通过 `t('carousel.goToSlide', { index })` 国际化）；当前缩略图通过视觉高亮标识
 - **导航去重**：当缩略图显示时，默认底部圆点导航自动隐藏（`showDots` 与 `thumbnails.show` 互斥），避免重复导航

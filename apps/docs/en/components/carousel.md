@@ -57,7 +57,7 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 |------|------|
 | `Carousel` | Carousel container, manages scroll logic and navigation controls |
 | `CarouselItem` | Single slide container |
-| `CarouselEnhanced` | Enhanced carousel with thumbnails, autoplay indicators, and parallax effects |
+| `CarouselEnhanced` | Compatibility entry that forwards to `Carousel` |
 
 ## Composables
 
@@ -186,9 +186,9 @@ const carouselRef = ref()
 |------|--------|------|
 | `default` | — | Default slot for placing slide content |
 
-## CarouselEnhanced
+## Carousel Enhanced Features
 
-`CarouselEnhanced` extends `Carousel` with **thumbnail navigation**, **autoplay indicators** (progress bar / dots / fraction), and **parallax animation** effects, suitable for image galleries, product showcases, and other scenarios requiring richer interaction.
+`Carousel` includes **thumbnail navigation**, **autoplay indicators** (progress bar / dots / fraction), and **parallax animation** effects, suitable for image galleries, product showcases, and other scenarios requiring richer interaction. `CarouselEnhanced` remains available as a compatibility wrapper; prefer `Carousel` for new code.
 
 ### Demo
 
@@ -200,11 +200,11 @@ const carouselRef = ref()
 
 ```vue
 <script setup>
-import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
+import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 </script>
 
 <template>
-    <CarouselEnhanced
+    <Carousel
         :loop="true"
         :autoplay="true"
         :autoplay-delay="3000"
@@ -216,13 +216,13 @@ import { CarouselEnhanced, CarouselItem } from 'brutx-ui-vue/carousel'
         <CarouselItem v-for="slide in slides" :key="slide.label">
             <div class="w-full h-full flex items-center justify-center">{{ slide.label }}</div>
         </CarouselItem>
-    </CarouselEnhanced>
+    </Carousel>
 </template>
 ```
 
 ### Base Props
 
-Inherits all Props from `Carousel` (`loop`/`autoplay`/`autoplayDelay`/`showArrows`/`showDots`/`size`/`class`). The following are enhanced-exclusive Props:
+The following enhanced props can be passed directly to `Carousel`:
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
@@ -260,7 +260,7 @@ Inherits all Props from `Carousel` (`loop`/`autoplay`/`autoplayDelay`/`showArrow
 
 ### Exposed API
 
-`CarouselEnhanced` exposes the same methods and state as `Carousel` via `defineExpose`, plus autoplay control:
+`Carousel` exposes scroll and autoplay control via `defineExpose`; the `CarouselEnhanced` compatibility wrapper exposes the same methods:
 
 | Method/Property | Type | Description |
 |-----------|------|------|
@@ -291,7 +291,7 @@ Inherits all Props from `Carousel` (`loop`/`autoplay`/`autoplayDelay`/`showArrow
 
 The hover-to-pause / leave-to-resume interaction logic is preserved in motion degradation mode, but since autoplay is already stopped, the hover behavior has no additional side effects.
 
-### CarouselEnhanced Additional Notes
+### Enhanced Feature Notes
 
 - **Thumbnail buttons**: Each thumbnail is a `<button type="button">` with `aria-label` (via `t('carousel.goToSlide', { index })` internationalization); the current thumbnail is identified by visual highlight
 - **Navigation deduplication**: When thumbnails are shown, the default bottom dot navigation is automatically hidden (`showDots` and `thumbnails.show` are mutually exclusive) to avoid duplicate navigation

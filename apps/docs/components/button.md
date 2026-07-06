@@ -114,6 +114,25 @@ import { RouterLink } from 'vue-router'
 </template>
 ```
 
+### 故障效果
+
+`Button` 内置 `effect="glitch"`，可直接启用故障撕裂动画。`GlitchButton` 仍作为兼容入口保留，但新用法建议直接使用 `Button`。
+
+```vue
+<template>
+    <Button
+        effect="glitch"
+        variant="primary"
+        glitch-trigger="click"
+        glitch-speed="fast"
+        glitch-direction="both"
+        data-text="GLITCH"
+    >
+        GLITCH
+    </Button>
+</template>
+```
+
 ## 变体
 
 | 变体 | 说明 |
@@ -155,6 +174,11 @@ import { RouterLink } from 'vue-router'
 | `loading` | `boolean` | `false` | 显示加载动画并禁用按钮 |
 | `disabled` | `boolean` | `false` | 禁用按钮 |
 | `pendingText` | `string` | `undefined`（回退到 i18n `submitButton.submitting`） | 加载中显示的等待文本，仅在 `type="submit"` 且 `loading` 时生效 |
+| `effect` | `'none' \| 'glitch'` | `'none'` | 可选视觉效果 |
+| `glitchTrigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 故障动画触发方式，仅在 `effect="glitch"` 时生效 |
+| `glitchInterval` | `number` | `3000` | 自动播放间隔（毫秒），仅在 `glitchTrigger="autoplay"` 时生效 |
+| `glitchSpeed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 故障动画速度 |
+| `glitchDirection` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 故障撕裂方向 |
 | `class` | `string` | `undefined` | 自定义 CSS 类名 |
 
 ## 事件

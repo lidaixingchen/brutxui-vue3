@@ -96,6 +96,48 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 </Command>
 ```
 
+### 搜索组件 recipe
+
+`SearchWidget` 已作为兼容区块保留；新代码可直接用 `Command disable-filter` 组合搜索框、分组结果、最近搜索和加载状态。
+
+```vue
+<script setup>
+import { computed, ref } from 'vue'
+import {
+    Command,
+    CommandInput,
+    CommandList,
+    CommandEmpty,
+    CommandGroup,
+    CommandItem,
+} from 'brutx-ui-vue'
+
+const query = ref('')
+const suggestions = [
+    { label: 'Button 按钮', value: 'button', group: '组件' },
+    { label: '主题配置', value: 'theming', group: '文档' },
+]
+
+const filteredItems = computed(() =>
+    suggestions.filter(item => item.label.toLowerCase().includes(query.value.toLowerCase()))
+)
+</script>
+
+<template>
+    <Command disable-filter class="w-full max-w-lg border-3 border-brutal shadow-brutal">
+        <CommandInput v-model="query" placeholder="搜索组件或文档..." />
+        <CommandList>
+            <CommandEmpty />
+            <CommandGroup title="搜索结果">
+                <CommandItem v-for="item in filteredItems" :key="item.value" :value="item.value">
+                    {{ item.label }}
+                </CommandItem>
+            </CommandGroup>
+        </CommandList>
+    </Command>
+</template>
+```
+
 ## 命令对话框
 
 使用 `CommandDialog` 实现模态命令面板：

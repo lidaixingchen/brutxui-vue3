@@ -8,6 +8,8 @@ translated: true
 
 A Neo-Brutalist search component featuring a Command input and grouped suggestion list, supporting real-time filtering and selection.
 
+> `SearchWidget` is marked as a legacy block. It remains available, but new implementations should compose `Command` directly for search input, results, recent searches, and loading states.
+
 ## Demo
 
 <ComponentPreview>

@@ -97,6 +97,48 @@ When an external component handles filtering logic (e.g., Combobox, SearchWidget
 </Command>
 ```
 
+### Search Widget Recipe
+
+`SearchWidget` remains available as a compatibility block. New code can compose `Command disable-filter` directly for search input, grouped results, recent searches, and loading states.
+
+```vue
+<script setup>
+import { computed, ref } from 'vue'
+import {
+    Command,
+    CommandInput,
+    CommandList,
+    CommandEmpty,
+    CommandGroup,
+    CommandItem,
+} from 'brutx-ui-vue'
+
+const query = ref('')
+const suggestions = [
+    { label: 'Button', value: 'button', group: 'Components' },
+    { label: 'Theming', value: 'theming', group: 'Docs' },
+]
+
+const filteredItems = computed(() =>
+    suggestions.filter(item => item.label.toLowerCase().includes(query.value.toLowerCase()))
+)
+</script>
+
+<template>
+    <Command disable-filter class="w-full max-w-lg border-3 border-brutal shadow-brutal">
+        <CommandInput v-model="query" placeholder="Search components or docs..." />
+        <CommandList>
+            <CommandEmpty />
+            <CommandGroup title="Search Results">
+                <CommandItem v-for="item in filteredItems" :key="item.value" :value="item.value">
+                    {{ item.label }}
+                </CommandItem>
+            </CommandGroup>
+        </CommandList>
+    </Command>
+</template>
+```
+
 ## Command Dialog
 
 Use `CommandDialog` to create a modal command palette:

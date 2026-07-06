@@ -7,6 +7,8 @@ description: 搜索组件区块，带有输入框和分组建议列表。
 
 新粗野主义风格的搜索组件，包含 Command 输入框和分组建议列表，支持实时过滤和选择。
 
+> `SearchWidget` 已标记为 legacy block。它会继续可用，但新实现建议直接使用 `Command` 组件组合搜索输入、结果列表、最近搜索和加载状态。
+
 ## 预览
 
 <ComponentPreview>

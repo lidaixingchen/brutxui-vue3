@@ -115,6 +115,25 @@ import { RouterLink } from 'vue-router'
 </template>
 ```
 
+### Glitch Effect
+
+`Button` includes `effect="glitch"` for the glitch tear animation. `GlitchButton` remains available as a compatibility wrapper, but new usage should prefer `Button`.
+
+```vue
+<template>
+    <Button
+        effect="glitch"
+        variant="primary"
+        glitch-trigger="click"
+        glitch-speed="fast"
+        glitch-direction="both"
+        data-text="GLITCH"
+    >
+        GLITCH
+    </Button>
+</template>
+```
+
 ## Variants
 
 | Variant | Description |
@@ -156,6 +175,11 @@ import { RouterLink } from 'vue-router'
 | `loading` | `boolean` | `false` | Shows loading animation and disables the button |
 | `disabled` | `boolean` | `false` | Disables the button |
 | `pendingText` | `string` | `undefined` (falls back to i18n `submitButton.submitting`) | Pending text displayed during loading; only effective when `type="submit"` and `loading` |
+| `effect` | `'none' \| 'glitch'` | `'none'` | Optional visual effect |
+| `glitchTrigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | Glitch animation trigger, only active with `effect="glitch"` |
+| `glitchInterval` | `number` | `3000` | Autoplay interval in milliseconds, only active with `glitchTrigger="autoplay"` |
+| `glitchSpeed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | Glitch animation speed |
+| `glitchDirection` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | Glitch tear direction |
 | `class` | `string` | `undefined` | Custom CSS class name |
 
 ## Events
