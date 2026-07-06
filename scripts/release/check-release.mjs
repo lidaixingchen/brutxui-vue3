@@ -17,7 +17,11 @@ const requiredCommands = [
     ['pnpm', '--filter', 'brutx-ui-vue', 'test'],
     ['pnpm', '--filter', 'brutx-ui-vue', 'test:visual'],
     ['pnpm', '--filter', 'brutx-vue', 'test'],
-    ['pnpm', '--filter', 'brutx-vue', 'test:integration'],
+    {
+        command: 'pnpm',
+        args: ['--filter', 'brutx-vue', 'test:integration'],
+        env: { BRUTX_RUN_FULL_INTEGRATION_MATRIX: '1' },
+    },
     ['pnpm', '--filter', 'brutx-registry-vue', 'build'],
     ['pnpm', '--filter', 'brutx-registry-vue', 'validate'],
     ['pnpm', '--filter', 'docs', 'build'],
@@ -66,7 +70,7 @@ function runCommand(command, args, options = {}) {
         encoding: 'utf-8',
         shell: process.platform === 'win32',
         stdio: options.capture ? 'pipe' : 'inherit',
-        env: process.env,
+        env: { ...process.env, ...options.env },
     });
 
     if (result.error) {
@@ -197,11 +201,15 @@ function checkCliArtifacts(cliPackage) {
 function runRequiredCommands() {
     printGroup('Running build and tests');
 
-    for (const [command, ...args] of requiredCommands) {
+    for (const entry of requiredCommands) {
+        const command = Array.isArray(entry) ? entry[0] : entry.command;
+        const args = Array.isArray(entry) ? entry.slice(1) : entry.args;
+        const options = Array.isArray(entry) ? {} : { env: entry.env };
+
         if (command === 'pnpm') {
-            runPnpm(args);
+            runPnpm(args, options);
         } else {
-            runCommand(command, args);
+            runCommand(command, args, options);
         }
     }
 }
