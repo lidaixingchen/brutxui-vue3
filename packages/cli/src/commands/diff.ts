@@ -57,16 +57,20 @@ function generateUnifiedDiff(
 }
 
 export async function getInstalledComponents(cwd: string, config: BrutalistConfig): Promise<string[]> {
+    const manifest = await readManifest(cwd).catch(() => null);
+    const manifestNames = Object.keys(manifest?.components ?? {});
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
 
     if (!await fs.pathExists(componentsPath)) {
-        return [];
+        return manifestNames.sort();
     }
 
     const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
-    return dirs
+    const scannedNames = dirs
         .filter((d) => d.isDirectory())
         .map((d) => d.name);
+
+    return [...new Set([...manifestNames, ...scannedNames])].sort();
 }
 
 function getIntegrityHint(result: DiffResult): string {

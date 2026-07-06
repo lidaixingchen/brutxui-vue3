@@ -98,6 +98,46 @@ describe('diff command', () => {
     });
 
     describe('file matching with different path formats', () => {
+        it('discovers installed components from manifest when component directory is missing', async () => {
+            mockedReadConfigSafe.mockResolvedValue(createConfig());
+            await fs.ensureDir(path.join(tmpDir, '.brutx'));
+            await fs.writeJson(path.join(tmpDir, '.brutx', 'manifest.json'), {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button-old',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                        examples: [],
+                    },
+                },
+            });
+
+            mockedGetItem.mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                files: [{
+                    path: 'components/ui/button/Button.vue',
+                    content: '<template>button</template>',
+                }],
+                integrity: 'sha256-button-new',
+            });
+
+            const results = await runDiffJson(tmpDir);
+
+            expect(results).toHaveLength(1);
+            expect(results[0]).toMatchObject({
+                component: 'button',
+                installedIntegrity: 'sha256-button-old',
+                latestIntegrity: 'sha256-button-new',
+                integrityStatus: 'outdated',
+            });
+        });
+
         it('should match registry file with backslash path to local file', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>btn</template>');
