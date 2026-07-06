@@ -35,6 +35,58 @@ const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
 const CACHE_VERSION = 2;
 
+export interface RegistryBuildManifest {
+    $schema: string;
+    name: string;
+    registryVersion: string;
+    buildTimestamp: string | null;
+    gitCommit: string | null;
+    itemCount: number;
+    items: Record<string, {
+        integrity: string;
+        fileCount: number;
+        dependencies: string[];
+        registryDependencies: string[];
+        status?: RegistryIndexItem['status'];
+        replacement?: string;
+    }>;
+}
+
+export interface RegistryBuildManifestOptions {
+    registryVersion: string;
+    buildTimestamp?: string | null;
+    gitCommit?: string | null;
+}
+
+export function buildRegistryManifest(
+    index: RegistryIndex,
+    options: RegistryBuildManifestOptions
+): RegistryBuildManifest {
+    const sortedItems = [...index.items].sort((a, b) => a.name.localeCompare(b.name));
+    const items: RegistryBuildManifest['items'] = {};
+
+    for (const item of sortedItems) {
+        items[item.name] = {
+            integrity: item.integrity,
+            fileCount: item.files.length,
+            dependencies: [...item.dependencies].sort(),
+            registryDependencies: [...item.registryDependencies].sort(),
+            status: item.status,
+            replacement: item.replacement,
+        };
+    }
+
+    return {
+        $schema: 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json',
+        name: index.name,
+        registryVersion: options.registryVersion,
+        buildTimestamp: options.buildTimestamp ?? null,
+        gitCommit: options.gitCommit ?? null,
+        itemCount: sortedItems.length,
+        items,
+    };
+}
+
 function loadCache(): Record<string, string> {
     if (fs.existsSync(CACHE_FILE)) {
         try {
@@ -584,6 +636,16 @@ export async function run() {
     const indexPath = path.join(OUTPUT_DIR, 'index.json');
     fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
     console.log('✓ Generated index.json');
+
+    const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };
+    const manifest = buildRegistryManifest(registryIndex, {
+        registryVersion: packageJson.version,
+        buildTimestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
+        gitCommit: process.env.GITHUB_SHA ?? process.env.COMMIT_SHA ?? null,
+    });
+    const manifestPath = path.join(OUTPUT_DIR, 'registry-manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
+    console.log('✓ Generated registry-manifest.json');
 
     saveCache(newCache);
 

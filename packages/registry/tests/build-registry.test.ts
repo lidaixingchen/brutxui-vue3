@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { COMPONENT_FILES, computeRegistryIntegrity } from 'brutx-shared-vue';
 import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
+    buildRegistryManifest,
     extractDeps,
     extractModuleSpecifiers,
     extractRegistryDeps,
@@ -78,5 +79,72 @@ describe('build-registry helpers', () => {
             { content: 'one' },
             { content: 'two' },
         ])).toBe('sha256-a0ef70c43442d404b1ed004b6649348633dda30e2ffac547c29a2b753abafa89');
+    });
+
+    it('builds a deterministic registry manifest from an index', () => {
+        const manifest = buildRegistryManifest({
+            name: 'brutx-vue',
+            homepage: 'https://example.test',
+            items: [
+                {
+                    name: 'dialog',
+                    type: 'registry:ui',
+                    title: 'Dialog',
+                    description: 'Dialog component',
+                    dependencies: ['z', 'a'],
+                    registryDependencies: ['button'],
+                    files: [
+                        { path: 'components/ui/dialog/Dialog.vue', type: 'registry:ui' },
+                        { path: 'components/ui/dialog/DialogContent.vue', type: 'registry:ui' },
+                    ],
+                    tailwind: {},
+                    cssVars: {},
+                    integrity: 'sha256-dialog',
+                },
+                {
+                    name: 'button',
+                    type: 'registry:ui',
+                    title: 'Button',
+                    description: 'Button component',
+                    status: 'legacy',
+                    replacement: 'button-next',
+                    dependencies: [],
+                    registryDependencies: [],
+                    files: [
+                        { path: 'components/ui/button/Button.vue', type: 'registry:ui' },
+                    ],
+                    tailwind: {},
+                    cssVars: {},
+                    integrity: 'sha256-button',
+                },
+            ],
+        }, {
+            registryVersion: '0.1.0',
+            buildTimestamp: '2026-07-07T00:00:00.000Z',
+            gitCommit: 'abc123',
+        });
+
+        expect(Object.keys(manifest.items)).toEqual(['button', 'dialog']);
+        expect(manifest).toMatchObject({
+            name: 'brutx-vue',
+            registryVersion: '0.1.0',
+            buildTimestamp: '2026-07-07T00:00:00.000Z',
+            gitCommit: 'abc123',
+            itemCount: 2,
+            items: {
+                button: {
+                    integrity: 'sha256-button',
+                    fileCount: 1,
+                    status: 'legacy',
+                    replacement: 'button-next',
+                },
+                dialog: {
+                    integrity: 'sha256-dialog',
+                    fileCount: 2,
+                    dependencies: ['a', 'z'],
+                    registryDependencies: ['button'],
+                },
+            },
+        });
     });
 });
