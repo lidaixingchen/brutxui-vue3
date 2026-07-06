@@ -8,6 +8,7 @@ import {
     computeRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
+import { findRegistryDependencyCycles } from './validate-utils';
 import type {
     RegistryFile,
     RegistryFileType,
@@ -89,6 +90,16 @@ export function buildRegistryManifest(
         itemCount: sortedItems.length,
         items,
     };
+}
+
+export function assertRegistryDependencyGraph(
+    items: Array<Pick<RegistryIndexItem, 'name' | 'registryDependencies'>>
+): void {
+    const cycles = findRegistryDependencyCycles(items);
+
+    if (cycles.length > 0) {
+        throw new Error(`Registry dependency cycle detected: ${cycles.map(cycle => cycle.join(' -> ')).join('; ')}`);
+    }
 }
 
 function loadCache(): Record<string, string> {
@@ -700,6 +711,8 @@ export async function run() {
         }
     }
 
+    assertRegistryDependencyGraph(registryIndex.items);
+
     const indexPath = path.join(OUTPUT_DIR, 'index.json');
     fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
     console.log('✓ Generated index.json');
@@ -730,5 +743,8 @@ export async function run() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-    run().catch(console.error);
+    run().catch((error) => {
+        console.error(error);
+        process.exitCode = 1;
+    });
 }

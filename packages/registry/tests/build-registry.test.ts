@@ -10,6 +10,7 @@ import {
 } from 'brutx-shared-vue';
 import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
+    assertRegistryDependencyGraph,
     buildRegistryManifest,
     extractDeps,
     extractModuleSpecifiers,
@@ -231,5 +232,12 @@ describe('build-registry helpers', () => {
                 },
             },
         });
+    });
+
+    it('rejects registry dependency cycles before writing the build index', () => {
+        expect(() => assertRegistryDependencyGraph([
+            { name: 'button', registryDependencies: ['dialog'] },
+            { name: 'dialog', registryDependencies: ['button'] },
+        ])).toThrow('Registry dependency cycle detected: button -> dialog -> button');
     });
 });
