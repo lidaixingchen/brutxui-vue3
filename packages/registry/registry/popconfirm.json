@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Popconfirm",
   "description": "Confirmation popover with customizable content and actions.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

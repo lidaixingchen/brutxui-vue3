@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Blog List Page",
   "description": "Blog listing page with post cards and pagination.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

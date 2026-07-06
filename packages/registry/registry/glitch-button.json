@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Glitch Button",
   "description": "Button with glitch animation effect on hover and interaction.",
+  "category": "visual-effect",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

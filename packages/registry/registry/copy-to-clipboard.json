@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Copy To Clipboard",
   "description": "Click-to-copy button with success feedback.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

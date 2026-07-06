@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Radio Group",
   "description": "Mutually exclusive radio button group.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

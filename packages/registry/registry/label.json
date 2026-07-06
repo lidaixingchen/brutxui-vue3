@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Label",
   "description": "Form label associated with input controls.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

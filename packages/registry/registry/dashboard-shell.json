@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Dashboard Shell",
   "description": "Application shell layout with sidebar, header, and main content area.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

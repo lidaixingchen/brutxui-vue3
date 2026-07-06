@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Sketchy Chart",
   "description": "Hand-drawn style data visualization chart.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

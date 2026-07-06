@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Form",
   "description": "Form validation and field management powered by vee-validate with wizard support.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "vee-validate",
     "reka-ui"

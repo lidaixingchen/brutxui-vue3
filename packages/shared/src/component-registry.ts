@@ -63,7 +63,6 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     skeleton: 'feedback',
     slider: 'form',
     spinner: 'feedback',
-    statistic: 'data-display',
     stepper: 'navigation',
     switch: 'form',
     table: 'data-display',

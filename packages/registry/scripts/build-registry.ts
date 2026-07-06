@@ -100,6 +100,15 @@ function saveCache(cache: Record<string, string>): void {
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf-8');
 }
 
+function removeStaleRegistryFiles(expectedFiles: Set<string>): void {
+    for (const fileName of fs.readdirSync(OUTPUT_DIR)) {
+        if (!fileName.endsWith('.json') || expectedFiles.has(fileName)) continue;
+
+        fs.unlinkSync(path.join(OUTPUT_DIR, fileName));
+        console.log(`  Removed stale ${fileName}`);
+    }
+}
+
 function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[]; directives?: string[] }): string {
     const parts: string[] = [JSON.stringify({
         cacheVersion: CACHE_VERSION,
@@ -700,6 +709,12 @@ export async function run() {
     const manifestPath = path.join(OUTPUT_DIR, 'registry-manifest.json');
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
     console.log('✓ Generated registry-manifest.json');
+
+    removeStaleRegistryFiles(new Set([
+        'index.json',
+        'registry-manifest.json',
+        ...registryIndex.items.map(item => `${item.name}.json`),
+    ]));
 
     saveCache(newCache);
 

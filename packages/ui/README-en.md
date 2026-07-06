@@ -91,11 +91,11 @@ Accordion · Alert · AlertDialog · Avatar · Badge · Button · Card · Card3D
 
 ### Pages & Sections
 
-ActivityLogPage · AuthCard · BlogCard · BlogListPage · BrutalistHero · CookieConsent · DashboardShell · DashboardStats · EmptyState · ErrorCard · FaqSection · FeedbackForm · FileCard · FooterSection · GallerySection · HeaderSection · LoadingPage · NotFoundPage · OverviewPage · PricingSection · ProfilePage · QuickActions · SettingsPage · StepperSection · SuccessCard · TestimonialCard · UploadCard · WaitlistPage
+ActivityLogPage · AuthCard · BlogCard · BlogListPage · BrutalistHero · CookieConsent · DashboardShell · DashboardStats · EmptyState · FaqSection · FeedbackForm · FileCard · FooterSection · GallerySection · HeaderSection · NotFoundPage · OverviewPage · PricingSection · ProfilePage · QuickActions · SettingsPage · TestimonialCard · WaitlistPage
 
 ### Featured Components
 
-BeforeAfter · BlogCard · Calendar · Carousel · ChatBubble · CodeBlock · CopyToClipboard · Counter · DataTableSection · GlitchText · HardcoreInput · Kanban · Kbd · Marquee · Pagination · ScratchCard · SearchWidget · SketchyChart · Spinner · Stepper · Timeline · TreeView
+BeforeAfter · BlogCard · Calendar · Carousel · ChatBubble · CodeBlock · CopyToClipboard · Counter · DataTable · GlitchText · HardcoreInput · Kanban · Kbd · Marquee · Pagination · ScratchCard · SearchWidget · SketchyChart · Spinner · Stepper · Timeline · TreeView · Upload
 
 ## Claude Code Skill
 

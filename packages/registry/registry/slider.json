@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Slider",
   "description": "Range slider with single or dual thumbs.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

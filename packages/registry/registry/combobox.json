@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Combobox",
   "description": "Searchable dropdown with single and multi-select modes.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

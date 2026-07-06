@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Cascader",
   "description": "Cascading selector with multi-level option navigation and search support.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

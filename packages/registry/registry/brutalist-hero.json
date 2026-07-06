@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Brutalist Hero",
   "description": "Full-width hero section with bold typography and call-to-action.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

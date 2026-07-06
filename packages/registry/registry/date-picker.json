@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Date Picker",
   "description": "Date picker with range selection, time input, and locale-aware formatting.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "v-calendar",
     "@lucide/vue",

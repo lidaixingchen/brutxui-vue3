@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Avatar",
   "description": "User avatar with image, fallback initials, and status indicator support.",
+  "category": "media",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

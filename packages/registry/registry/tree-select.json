@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Tree Select",
   "description": "Hierarchical tree-based select with multi-select support.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

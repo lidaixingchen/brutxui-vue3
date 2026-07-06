@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Upload",
   "description": "File upload with drag-and-drop, preview, and progress tracking.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

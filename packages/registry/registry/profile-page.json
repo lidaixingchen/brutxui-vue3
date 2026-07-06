@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Profile Page",
   "description": "User profile page with avatar, info, and edit actions.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

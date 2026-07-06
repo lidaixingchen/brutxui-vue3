@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Select",
   "description": "Single-value select dropdown with grouped items.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

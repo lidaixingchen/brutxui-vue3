@@ -32,11 +32,6 @@
             "import": "./dist/hooks.js",
             "require": "./dist/hooks.cjs"
         },
-        "./brutalism-plugin": {
-            "types": "./dist/brutalism-plugin.d.ts",
-            "import": "./dist/brutalism-plugin.js",
-            "require": "./dist/brutalism-plugin.cjs"
-        },
         "./devtools-plugin": {
             "types": "./dist/devtools-plugin.d.ts",
             "import": "./dist/devtools-plugin.js",

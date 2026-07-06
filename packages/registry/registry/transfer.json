@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Transfer",
   "description": "Dual-panel transfer list for moving items between source and target collections.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

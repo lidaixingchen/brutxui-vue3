@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Skeleton",
   "description": "Loading placeholder skeletons for text, cards, avatars, and tables.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

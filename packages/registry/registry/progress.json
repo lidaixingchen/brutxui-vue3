@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Progress",
   "description": "Determinate progress bar indicator.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

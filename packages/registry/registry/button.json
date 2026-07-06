@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Button",
   "description": "Interactive button with loading state, icon support, and multiple style variants.",
+  "category": "action",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Toggle Group",
   "description": "Group of toggle buttons with single or multiple selection.",
+  "category": "action",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

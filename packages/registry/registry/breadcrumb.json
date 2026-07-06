@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Breadcrumb",
   "description": "Hierarchical navigation breadcrumb with separator and ellipsis.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

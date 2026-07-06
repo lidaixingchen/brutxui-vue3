@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Tour",
   "description": "Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

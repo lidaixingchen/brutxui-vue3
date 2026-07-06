@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Overview Page",
   "description": "Dashboard overview page with stats and recent activity.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

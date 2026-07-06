@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Sheet",
   "description": "Side panel overlay sliding from any edge of the viewport.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Empty State",
   "description": "Placeholder for empty data states with illustration and action.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

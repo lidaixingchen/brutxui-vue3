@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Code Block",
   "description": "Syntax-highlighted code display with language selector and copy button.",
+  "category": "data-display",
+  "examples": [],
   "dependencies": [
     "@lucide/vue",
     "prismjs"

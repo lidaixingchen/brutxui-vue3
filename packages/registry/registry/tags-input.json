@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Tags Input",
   "description": "Input field for adding and removing tag chips.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Gallery Section",
   "description": "Image gallery with lightbox and grid layouts.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "embla-carousel-vue",
     "@lucide/vue"

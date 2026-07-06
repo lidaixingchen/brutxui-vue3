@@ -143,7 +143,6 @@ export default defineConfig({
                 carousel: resolve(__dirname, 'src/carousel.ts'),
                 'code-block': resolve(__dirname, 'src/code-block.ts'),
                 hooks: resolve(__dirname, 'src/hooks/index.ts'),
-                'brutalism-plugin': resolve(__dirname, 'src/lib/brutalism-plugin.js'),
                 'devtools-plugin': resolve(__dirname, 'src/lib/devtools-plugin.ts'),
                 button: resolve(__dirname, 'src/button.ts'),
                 input: resolve(__dirname, 'src/input.ts'),

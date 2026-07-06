@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Popover",
   "description": "Floating popover anchored to trigger elements.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Badge",
   "description": "Inline status badges and labels with color variants.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

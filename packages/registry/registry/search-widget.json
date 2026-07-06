@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Search Widget",
   "description": "Search input with results display and filtering.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

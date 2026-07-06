@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Image",
   "description": "Image component with lazy loading, fallback image, and Neo-Brutalist interactive preview modal.",
+  "category": "media",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

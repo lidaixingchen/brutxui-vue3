@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Separator",
   "description": "Visual divider line between content sections.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

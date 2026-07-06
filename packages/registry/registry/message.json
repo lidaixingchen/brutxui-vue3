@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Message",
   "description": "Imperative message notification system with singleton container, TransitionGroup stacking, and auto GC.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

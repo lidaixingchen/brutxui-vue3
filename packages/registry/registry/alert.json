@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Alert",
   "description": "Contextual alert banners with variants for info, success, warning, and error states.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

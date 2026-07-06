@@ -142,11 +142,11 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Dashboard
 
-`DashboardShell`, `DashboardStats`, `OverviewPage`, `ChartSection`, `DataTableSection`
+`DashboardShell`, `DashboardStats`, `OverviewPage`, `ChartSection`, `DataTable`
 
 #### Pages
 
-`AuthCard`, `SettingsPage`, `ProfilePage`, `BlogListPage`, `ActivityLogPage`, `NotFoundPage`, `LoadingPage`
+`AuthCard`, `SettingsPage`, `ProfilePage`, `BlogListPage`, `ActivityLogPage`, `NotFoundPage`
 
 #### Navigation
 
@@ -154,11 +154,11 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Cards / Components
 
-`BlogCard`, `FileCard`, `UploadCard`, `ErrorCard`, `SuccessCard`, `EmptyState`
+`BlogCard`, `FileCard`, `EmptyState`, `Result`, `Upload`
 
 #### Interactive
 
-`QuickActions`, `SearchWidget`, `FeedbackForm`, `CookieConsent`, `StepperSection`, `GallerySection`
+`QuickActions`, `SearchWidget`, `FeedbackForm`, `CookieConsent`, `Stepper`, `GallerySection`
 
 ### Atomic Components
 
@@ -184,7 +184,7 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Blocks / Pages
 
-`PricingSection`, `SaaSPricing`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `UploadCard`, `DataTableSection`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `StepperSection`, `EmptyState`, `ErrorCard`, `SuccessCard`, `NotFoundPage`, `LoadingPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `Tabs`, `SearchWidget`, `FeedbackForm`
+`PricingSection`, `SaaSPricing`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `Upload`, `DataTable`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `Stepper`, `EmptyState`, `Result`, `NotFoundPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `Tabs`, `SearchWidget`, `FeedbackForm`
 
 ---
 

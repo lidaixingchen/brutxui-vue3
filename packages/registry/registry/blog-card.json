@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Blog Card",
   "description": "Blog post preview card with image, title, and excerpt.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

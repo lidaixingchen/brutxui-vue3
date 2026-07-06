@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Settings Page",
   "description": "Settings page layout with grouped configuration options.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

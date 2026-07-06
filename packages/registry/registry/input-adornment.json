@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Input Adornment",
   "description": "Decorative prefix and suffix elements for input fields.",
+  "category": "form",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

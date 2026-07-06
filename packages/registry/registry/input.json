@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Input",
   "description": "Text input field with validation styling.",
+  "category": "form",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

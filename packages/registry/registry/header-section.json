@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Header Section",
   "description": "Page header with navigation, title, and subtitle.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

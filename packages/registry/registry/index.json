@@ -106,13 +106,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-423484f4b7f171e3563106b45770d8e121f6cd5a48ae227ea1507ee5e959f5d4"
+      "integrity": "sha256-ad15eaed4baa4caf9cc5f1497f53d6018b5cf3356e7d51acd987d75e2097223f"
     },
     {
       "name": "alert",
       "type": "registry:ui",
       "title": "Alert",
       "description": "Contextual alert banners with variants for info, success, warning, and error states.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -239,6 +241,8 @@
       "type": "registry:ui",
       "title": "Avatar",
       "description": "User avatar with image, fallback initials, and status indicator support.",
+      "category": "media",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -364,6 +368,8 @@
       "type": "registry:ui",
       "title": "Backtop",
       "description": "Brutalist back-to-top button with scroll detection and click behavior.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -473,6 +479,8 @@
       "type": "registry:ui",
       "title": "Badge",
       "description": "Inline status badges and labels with color variants.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -592,6 +600,8 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "Interactive button with loading state, icon support, and multiple style variants.",
+      "category": "action",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -718,6 +728,8 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "Date calendar with single and range selection powered by v-calendar.",
+      "category": "data-display",
+      "examples": [],
       "dependencies": [
         "v-calendar",
         "@lucide/vue"
@@ -828,6 +840,8 @@
       "type": "registry:ui",
       "title": "Card",
       "description": "Content card container with header, body, footer, and description sections.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -957,6 +971,8 @@
       "type": "registry:ui",
       "title": "Cascader",
       "description": "Cascading selector with multi-level option navigation and search support.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -1089,6 +1105,8 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "Accessible checkbox with label and indeterminate state support.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -1211,6 +1229,8 @@
       "type": "registry:ui",
       "title": "Combobox",
       "description": "Searchable dropdown with single and multi-select modes.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -1337,6 +1357,8 @@
       "type": "registry:ui",
       "title": "Command",
       "description": "Command palette with keyboard navigation and fuzzy search.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -1491,6 +1513,8 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "Modal dialog with overlay, header, footer, and description.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -1663,6 +1687,8 @@
       "type": "registry:ui",
       "title": "Dropdown Menu",
       "description": "Dropdown menu with checkbox items, radio items, and sub-menus.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -1815,6 +1841,8 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "Text input field with validation styling.",
+      "category": "form",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -1934,6 +1962,8 @@
       "type": "registry:ui",
       "title": "Image",
       "description": "Image component with lazy loading, fallback image, and Neo-Brutalist interactive preview modal.",
+      "category": "media",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -2046,6 +2076,8 @@
       "type": "registry:ui",
       "title": "Label",
       "description": "Form label associated with input controls.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -2153,6 +2185,8 @@
       "type": "registry:ui",
       "title": "Loading",
       "description": "Container wrapper and v-loading custom directive for displaying loading state overlay with custom text.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "spinner",
@@ -2266,6 +2300,8 @@
       "type": "registry:ui",
       "title": "Pagination",
       "description": "Page navigation with first, previous, next, last controls and locale support.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -2389,6 +2425,8 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "Floating popover anchored to trigger elements.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -2500,6 +2538,8 @@
       "type": "registry:ui",
       "title": "Scroll Area",
       "description": "Custom scrollable container with styled scrollbars.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -2611,6 +2651,8 @@
       "type": "registry:ui",
       "title": "Select",
       "description": "Single-value select dropdown with grouped items.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -2763,6 +2805,8 @@
       "type": "registry:ui",
       "title": "Separator",
       "description": "Visual divider line between content sections.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -2870,6 +2914,8 @@
       "type": "registry:ui",
       "title": "Skeleton",
       "description": "Loading placeholder skeletons for text, cards, avatars, and tables.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -2991,6 +3037,8 @@
       "type": "registry:ui",
       "title": "Spinner",
       "description": "Loading spinners with bars, blocks, and dots animation variants.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -3114,6 +3162,8 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "Toggle switch for boolean on/off states.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -3231,6 +3281,8 @@
       "type": "registry:ui",
       "title": "Table",
       "description": "Structured data table with header, body, footer, and caption.",
+      "category": "data-display",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -3364,6 +3416,8 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "Tabbed interface with content panels and locale support.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -3493,6 +3547,8 @@
       "type": "registry:ui",
       "title": "Textarea",
       "description": "Multi-line text input with validation styling.",
+      "category": "form",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "input",
@@ -3609,6 +3665,8 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "Ephemeral notification toasts with auto-dismiss and action support.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -3736,13 +3794,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-684829bfcfb61b987d2d176e4c7150a53d4fb7442c0e81e2317511471e4ad22f"
+      "integrity": "sha256-8439f251371d1d434cc276ae3d81950adb9bf83fa1db6984dceaff3ab4dae9e0"
     },
     {
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "Contextual tooltip triggered on hover or focus.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -3850,6 +3910,8 @@
       "type": "registry:ui",
       "title": "Dashboard Stats",
       "description": "Dashboard statistics cards with trend indicators.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -3966,6 +4028,8 @@
       "type": "registry:ui",
       "title": "Form",
       "description": "Form validation and field management powered by vee-validate with wizard support.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "vee-validate",
         "reka-ui"
@@ -4127,6 +4191,8 @@
       "type": "registry:ui",
       "title": "Alert Dialog",
       "description": "Confirmation dialog requiring explicit user action before proceeding.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -4268,6 +4334,8 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "Side panel overlay sliding from any edge of the viewport.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -4410,6 +4478,8 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "Mutually exclusive radio button group.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -4526,6 +4596,8 @@
       "type": "registry:ui",
       "title": "Slider",
       "description": "Range slider with single or dual thumbs.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -4637,6 +4709,8 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "Determinate progress bar indicator.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -4744,6 +4818,8 @@
       "type": "registry:ui",
       "title": "Toggle",
       "description": "Pressable toggle button with active state.",
+      "category": "action",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -4859,6 +4935,8 @@
       "type": "registry:ui",
       "title": "Toggle Group",
       "description": "Group of toggle buttons with single or multiple selection.",
+      "category": "action",
+      "examples": [],
       "dependencies": [
         "reka-ui"
       ],
@@ -4972,6 +5050,8 @@
       "type": "registry:ui",
       "title": "Brutalist Hero",
       "description": "Full-width hero section with bold typography and call-to-action.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5088,6 +5168,8 @@
       "type": "registry:ui",
       "title": "Pricing Section",
       "description": "Pricing table with plan comparison and feature highlights.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5201,6 +5283,8 @@
       "type": "registry:ui",
       "title": "Auth Card",
       "description": "Authentication card with login, register, and password recovery forms.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5322,6 +5406,8 @@
       "type": "registry:ui",
       "title": "Dashboard Shell",
       "description": "Application shell layout with sidebar, header, and main content area.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5436,6 +5522,8 @@
       "type": "registry:ui",
       "title": "Empty State",
       "description": "Placeholder for empty data states with illustration and action.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5546,6 +5634,8 @@
       "type": "registry:ui",
       "title": "Waitlist Page",
       "description": "Waitlist signup page with email capture and countdown.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -5666,6 +5756,8 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "Collapsible content sections with keyboard navigation.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -5798,6 +5890,8 @@
       "type": "registry:ui",
       "title": "Tags Input",
       "description": "Input field for adding and removing tag chips.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -5932,6 +6026,8 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "Numeric input with increment, decrement, and step controls.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -6055,6 +6151,8 @@
       "type": "registry:ui",
       "title": "Copy To Clipboard",
       "description": "Click-to-copy button with success feedback.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -6180,6 +6278,8 @@
       "type": "registry:ui",
       "title": "Breadcrumb",
       "description": "Hierarchical navigation breadcrumb with separator and ellipsis.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -6326,6 +6426,8 @@
       "type": "registry:ui",
       "title": "Marquee",
       "description": "Auto-scrolling marquee banner for announcements.",
+      "category": "visual-effect",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -6432,13 +6534,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f42cd2c94c6e37e32f66b085eae256ca2ad4d0b1c572f3c78a4621d3911ac9b9"
+      "integrity": "sha256-66e58b93d916ff7a9f602a70f9bcb6b5a88032935f2a6fd29aebc6f098fba49b"
     },
     {
       "name": "menu",
       "type": "registry:ui",
       "title": "Menu",
       "description": "Horizontal or vertical navigation menu with sub-menu support.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -6558,6 +6662,8 @@
       "type": "registry:ui",
       "title": "Before After",
       "description": "Side-by-side image comparison with draggable slider.",
+      "category": "media",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -6676,13 +6782,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3558820d4b0afd27e1425d39bac0b30b8f55065c5e4f042657aa5036da0e6eb2"
+      "integrity": "sha256-2f0787615903ce47e6efd2e62c136faff07a4f64f926d5d1f68d246d64a34f94"
     },
     {
       "name": "code-block",
       "type": "registry:ui",
       "title": "Code Block",
       "description": "Syntax-highlighted code display with language selector and copy button.",
+      "category": "data-display",
+      "examples": [],
       "dependencies": [
         "@lucide/vue",
         "prismjs"
@@ -6811,6 +6919,8 @@
       "type": "registry:ui",
       "title": "Timeline",
       "description": "Vertical timeline with connected events and content.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -6949,6 +7059,8 @@
       "type": "registry:ui",
       "title": "Carousel",
       "description": "Image and content carousel with navigation and autoplay.",
+      "category": "media",
+      "examples": [],
       "dependencies": [
         "embla-carousel-vue",
         "@lucide/vue"
@@ -7089,13 +7201,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a8cad5cabf7e636f4a2a470019c72276608ef0ed3220b99b5a968363dd7f230b"
+      "integrity": "sha256-8c4865d2a21859e9cfc44562215492fa2df5e9dca358f5df2d3506bfd24e0f8c"
     },
     {
       "name": "tree-view",
       "type": "registry:ui",
       "title": "Tree View",
       "description": "Hierarchical tree with expandable nodes and selection.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -7231,6 +7345,8 @@
       "type": "registry:ui",
       "title": "Kanban",
       "description": "Drag-and-drop kanban board with columns and cards.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -7353,6 +7469,8 @@
       "type": "registry:ui",
       "title": "Chat Bubble",
       "description": "Chat message bubbles with avatar and timestamp.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -7461,6 +7579,8 @@
       "type": "registry:ui",
       "title": "Kbd",
       "description": "Keyboard shortcut key display element.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -7570,6 +7690,8 @@
       "type": "registry:ui",
       "title": "Counter",
       "description": "Animated number counter with formatting.",
+      "category": "data-display",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -7683,6 +7805,8 @@
       "type": "registry:ui",
       "title": "Stepper",
       "description": "Multi-step wizard with progress indicator.",
+      "category": "navigation",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -7800,6 +7924,8 @@
       "type": "registry:ui",
       "title": "Card 3d",
       "description": "Interactive card with 3D tilt effect on mouse movement.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -7923,6 +8049,8 @@
       "type": "registry:ui",
       "title": "Glitch Text",
       "description": "Text with glitch animation and distortion effects.",
+      "category": "visual-effect",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -8044,6 +8172,8 @@
       "type": "registry:ui",
       "title": "Scratch Card",
       "description": "Scratch-off reveal card with canvas interaction.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -8175,6 +8305,8 @@
       "type": "registry:ui",
       "title": "Sketchy Chart",
       "description": "Hand-drawn style data visualization chart.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -8290,6 +8422,8 @@
       "type": "registry:ui",
       "title": "Hardcore Input",
       "description": "Input field with audio feedback and visual effects.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "form",
@@ -8419,6 +8553,8 @@
       "type": "registry:ui",
       "title": "Testimonial Card",
       "description": "Customer testimonial display with avatar and rating.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8535,6 +8671,8 @@
       "type": "registry:ui",
       "title": "Blog Card",
       "description": "Blog post preview card with image, title, and excerpt.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8648,6 +8786,8 @@
       "type": "registry:ui",
       "title": "File Card",
       "description": "File preview card with metadata and download action.",
+      "category": "layout",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8764,6 +8904,8 @@
       "type": "registry:ui",
       "title": "Quick Actions",
       "description": "Floating action buttons for common tasks.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8881,6 +9023,8 @@
       "type": "registry:ui",
       "title": "Faq Section",
       "description": "Frequently asked questions with expandable answers.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -8994,6 +9138,8 @@
       "type": "registry:ui",
       "title": "Header Section",
       "description": "Page header with navigation, title, and subtitle.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -9111,6 +9257,8 @@
       "type": "registry:ui",
       "title": "Footer Section",
       "description": "Page footer with links, copyright, and social icons.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9222,6 +9370,8 @@
       "type": "registry:ui",
       "title": "Not Found Page",
       "description": "404 error page with illustration and navigation.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9334,356 +9484,12 @@
       "integrity": "sha256-81c45a52be8bd9336bcc3ebb79e056d637e0c7c9bd2ae3683b180c491b75da48"
     },
     {
-      "name": "loading-page",
-      "type": "registry:ui",
-      "title": "Loading Page",
-      "description": "Full-page loading state with spinner and progress.",
-      "status": "legacy",
-      "replacement": "loading",
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "loading",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/loading-page/LoadingPage.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-5c6ff2521bcfb62f5fdbc45301342cb58e13bbe87a5046df09bac6db97c15e46"
-    },
-    {
-      "name": "error-card",
-      "type": "registry:ui",
-      "title": "Error Card",
-      "description": "Error state card with message and retry action.",
-      "status": "legacy",
-      "replacement": "result",
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button",
-        "result",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/error-card/ErrorCard.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/icon-size-variants.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-db11c07df67bc0ac1221d0f7e4e54ea5b710540f4c5e0de26526d67822c287af"
-    },
-    {
-      "name": "success-card",
-      "type": "registry:ui",
-      "title": "Success Card",
-      "description": "Success state card with confirmation message and action.",
-      "status": "legacy",
-      "replacement": "result",
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button",
-        "result",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/success-card/SuccessCard.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/icon-size-variants.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-1ba2aa3f7e799049b881284976b1241b8377716e0de6c38d31788fc01e82841e"
-    },
-    {
       "name": "search-widget",
       "type": "registry:ui",
       "title": "Search Widget",
       "description": "Search input with results display and filtering.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9800,6 +9606,8 @@
       "type": "registry:ui",
       "title": "Feedback Form",
       "description": "User feedback form with rating and comment fields.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -9808,7 +9616,7 @@
         "input",
         "textarea",
         "button",
-        "success-card",
+        "result",
         "label",
         "locale-zh-cn"
       ],
@@ -9912,132 +9720,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-14c964a9923e333c5c5f8c167a2173754e8dfe70886c51a7b68185400b919e8f"
-    },
-    {
-      "name": "stepper-section",
-      "type": "registry:ui",
-      "title": "Stepper Section",
-      "description": "Step-based content sections with navigation controls.",
-      "status": "legacy",
-      "replacement": "stepper",
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "stepper",
-        "button",
-        "card",
-        "empty-state",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/stepper-section/StepperSection.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/icon-size-variants.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-5d22541d6142e1c72b64ab6df8a6713157ac4349fdeebc38c35e3190dadc38f4"
+      "integrity": "sha256-f93e16ac0f0fd656c5bdd7e56fc3f6bd7d39a062cdf5243866b91cfd6608bce4"
     },
     {
       "name": "cookie-consent",
       "type": "registry:ui",
       "title": "Cookie Consent",
       "description": "Cookie consent banner with accept and customize options.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10149,138 +9840,12 @@
       "integrity": "sha256-6546322222c4f700281215493371eedd64f6c52b70c62398d4d7962fb6ae5d6f"
     },
     {
-      "name": "data-table-section",
-      "type": "registry:ui",
-      "title": "Data Table Section",
-      "description": "Data display section with table, filters, and pagination.",
-      "status": "legacy",
-      "replacement": "data-table",
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "data-table",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/data-table-section/DataTableSection.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/data-table-section/types.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useDataTablePagination.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/icon-size-variants.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/defaults.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-26458319b4e50ae1767ad69855297ec884c6a74d2edb7a81aeb7c4949914b37b"
-    },
-    {
       "name": "settings-page",
       "type": "registry:ui",
       "title": "Settings Page",
       "description": "Settings page layout with grouped configuration options.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -10399,6 +9964,8 @@
       "type": "registry:ui",
       "title": "Blog List Page",
       "description": "Blog listing page with post cards and pagination.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10516,6 +10083,8 @@
       "type": "registry:ui",
       "title": "Activity Log Page",
       "description": "Activity log page with timeline entries and filtering.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10628,6 +10197,8 @@
       "type": "registry:ui",
       "title": "Profile Page",
       "description": "User profile page with avatar, info, and edit actions.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -10743,6 +10314,8 @@
       "type": "registry:ui",
       "title": "Chart Section",
       "description": "Data visualization section with interactive charts.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -10857,6 +10430,8 @@
       "type": "registry:ui",
       "title": "Gallery Section",
       "description": "Image gallery with lightbox and grid layouts.",
+      "category": "marketing",
+      "examples": [],
       "dependencies": [
         "embla-carousel-vue",
         "@lucide/vue"
@@ -10965,134 +10540,12 @@
       "integrity": "sha256-6be7c7a40c35fa8e515460f489e15cf494fd65a345471ccaf2da2061fb2a3e2d"
     },
     {
-      "name": "upload-card",
-      "type": "registry:ui",
-      "title": "Upload Card",
-      "description": "File upload card with drag-and-drop and progress.",
-      "status": "legacy",
-      "replacement": "upload",
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "upload",
-        "card",
-        "button",
-        "progress",
-        "spinner",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/upload-card/UploadCard.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useUpload.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-138385161ebcc217f43464a3fbaf3503ebf13b4fec65de87f8e8d4de82c835fd"
-    },
-    {
       "name": "overview-page",
       "type": "registry:ui",
       "title": "Overview Page",
       "description": "Dashboard overview page with stats and recent activity.",
+      "category": "page",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -11205,6 +10658,8 @@
       "type": "registry:ui",
       "title": "Color Picker",
       "description": "Color picker with palette, input, history, and swatches.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -11369,6 +10824,8 @@
       "type": "registry:ui",
       "title": "Date Picker",
       "description": "Date picker with range selection, time input, and locale-aware formatting.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "v-calendar",
         "@lucide/vue",
@@ -11559,6 +11016,8 @@
       "type": "registry:ui",
       "title": "Color Mode Switcher",
       "description": "Toggle between light, dark, and system color modes.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -11678,6 +11137,8 @@
       "type": "registry:ui",
       "title": "Data Table",
       "description": "Full-featured data table with sorting, filtering, pagination, and row selection.",
+      "category": "data-display",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -11732,6 +11193,10 @@
         },
         {
           "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/date.ts",
           "type": "registry:lib"
         }
       ],
@@ -11821,13 +11286,15 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-eabaca286d4fc88b91352c8fba004cce140dce9e1ff8081374b23d4fdb303893"
+      "integrity": "sha256-5af281ee2b2e6dfedb0b69b454cd3a1131c8e4b5cd8e3247b32ee1f1538ab47f"
     },
     {
       "name": "tree-select",
       "type": "registry:ui",
       "title": "Tree Select",
       "description": "Hierarchical tree-based select with multi-select support.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "reka-ui",
         "@lucide/vue"
@@ -11968,6 +11435,8 @@
       "type": "registry:ui",
       "title": "Typewriter Text",
       "description": "Text with typewriter typing animation effect.",
+      "category": "visual-effect",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12081,6 +11550,8 @@
       "type": "registry:ui",
       "title": "Noise Background",
       "description": "Animated noise texture background overlay.",
+      "category": "visual-effect",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12194,6 +11665,8 @@
       "type": "registry:ui",
       "title": "Glitch Button",
       "description": "Button with glitch animation effect on hover and interaction.",
+      "category": "visual-effect",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -12323,6 +11796,8 @@
       "type": "registry:ui",
       "title": "Virtual Scroll",
       "description": "High-performance virtualized list for large datasets.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [
         "@tanstack/vue-virtual"
       ],
@@ -12440,6 +11915,8 @@
       "type": "registry:ui",
       "title": "Input Adornment",
       "description": "Decorative prefix and suffix elements for input fields.",
+      "category": "form",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12541,6 +12018,8 @@
       "type": "registry:ui",
       "title": "Upload",
       "description": "File upload with drag-and-drop, preview, and progress tracking.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -12670,6 +12149,8 @@
       "type": "registry:ui",
       "title": "Popconfirm",
       "description": "Confirmation popover with customizable content and actions.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -12779,6 +12260,8 @@
       "type": "registry:ui",
       "title": "Descriptions",
       "description": "Key-value description list in horizontal or vertical layout.",
+      "category": "data-display",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12884,6 +12367,8 @@
       "type": "registry:ui",
       "title": "Infinite Scroll",
       "description": "Auto-loading list that fetches more content on scroll.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -12997,6 +12482,8 @@
       "type": "registry:ui",
       "title": "Transfer",
       "description": "Dual-panel transfer list for moving items between source and target collections.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -13114,6 +12601,8 @@
       "type": "registry:ui",
       "title": "Rate",
       "description": "Star rating input with half-star precision and keyboard navigation.",
+      "category": "form",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -13221,6 +12710,8 @@
       "type": "registry:ui",
       "title": "Result",
       "description": "Feedback result display with state color blocks and action buttons.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],
@@ -13324,115 +12815,12 @@
       "integrity": "sha256-09e8f88ddbcb2c211a3688b6a397ea42357e91995f5c53fd747e153c0ccb63d3"
     },
     {
-      "name": "statistic",
-      "type": "registry:ui",
-      "title": "Statistic",
-      "description": "Statistic data display component using Counter animation.",
-      "status": "legacy",
-      "replacement": "counter",
-      "dependencies": [],
-      "registryDependencies": [
-        "counter"
-      ],
-      "files": [
-        {
-          "path": "components/ui/statistic/Statistic.vue",
-          "type": "registry:ui"
-        }
-      ],
-      "tailwind": {
-        "config": {
-          "theme": {
-            "extend": {
-              "borderWidth": {
-                "3": "var(--brutal-border-width, 3px)"
-              },
-              "borderColor": {
-                "brutal": "var(--brutal-border-color, #000000)"
-              },
-              "borderRadius": {
-                "brutal": "var(--brutal-radius, 0px)"
-              },
-              "colors": {
-                "brutal-bg": "var(--brutal-bg)",
-                "brutal-fg": "var(--brutal-fg)",
-                "brutal-primary": "var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-secondary)",
-                "brutal-accent": "var(--brutal-accent)",
-                "brutal-destructive": "var(--brutal-destructive)",
-                "brutal-success": "var(--brutal-success)",
-                "brutal-muted": "var(--brutal-muted)",
-                "brutal-ring": "var(--brutal-ring)",
-                "brutal-info": "var(--brutal-info)",
-                "brutal-muted-foreground": "var(--brutal-muted-foreground)",
-                "brutal-overlay": "var(--brutal-overlay)",
-                "brutal-placeholder": "var(--brutal-placeholder)"
-              },
-              "boxShadow": {
-                "brutal": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-sm": "calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-lg": "calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-xl": "calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)",
-                "brutal-primary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)",
-                "brutal-secondary": "var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)"
-              }
-            }
-          }
-        }
-      },
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#f3f4f6",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-accent": "#FFE66D",
-          "brutal-destructive": "#EF476F",
-          "brutal-success": "#7FB069",
-          "brutal-muted": "#1e1e1e",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280"
-        }
-      },
-      "integrity": "sha256-d4855bde8d9c8ec4f72e45af51f7f90592456a90325df7945b476eed9167be1a"
-    },
-    {
       "name": "watermark",
       "type": "registry:ui",
       "title": "Watermark",
       "description": "Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.",
+      "category": "utility",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [],
       "files": [
@@ -13538,6 +12926,8 @@
       "type": "registry:ui",
       "title": "Tour",
       "description": "Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.",
+      "category": "overlay",
+      "examples": [],
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -13649,6 +13039,8 @@
       "type": "registry:ui",
       "title": "Message",
       "description": "Imperative message notification system with singleton container, TransitionGroup stacking, and auto GC.",
+      "category": "feedback",
+      "examples": [],
       "dependencies": [
         "@lucide/vue"
       ],

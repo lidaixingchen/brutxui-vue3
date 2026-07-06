@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Pagination",
   "description": "Page navigation with first, previous, next, last controls and locale support.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

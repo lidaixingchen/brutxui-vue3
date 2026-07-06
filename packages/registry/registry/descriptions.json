@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Descriptions",
   "description": "Key-value description list in horizontal or vertical layout.",
+  "category": "data-display",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

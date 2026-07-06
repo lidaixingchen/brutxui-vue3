@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Menu",
   "description": "Horizontal or vertical navigation menu with sub-menu support.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

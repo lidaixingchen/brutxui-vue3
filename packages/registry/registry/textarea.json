@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Textarea",
   "description": "Multi-line text input with validation styling.",
+  "category": "form",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "input",

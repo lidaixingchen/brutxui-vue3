@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Noise Background",
   "description": "Animated noise texture background overlay.",
+  "category": "visual-effect",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

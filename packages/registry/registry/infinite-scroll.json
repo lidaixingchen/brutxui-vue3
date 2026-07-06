@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Infinite Scroll",
   "description": "Auto-loading list that fetches more content on scroll.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

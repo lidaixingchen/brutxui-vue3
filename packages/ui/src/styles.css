@@ -5,8 +5,6 @@
 @source "../**/*.vue";
 @source "../**/*.ts";
 
-@plugin "./lib/brutalism-plugin.js";
-
 @theme {
     /* Dynamic: resolve at runtime via --brutal-* for dark mode support */
     --color-brutal-bg: var(--brutal-bg);

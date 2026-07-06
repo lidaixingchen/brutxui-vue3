@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Auth Card",
   "description": "Authentication card with login, register, and password recovery forms.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

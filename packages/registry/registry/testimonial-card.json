@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Testimonial Card",
   "description": "Customer testimonial display with avatar and rating.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

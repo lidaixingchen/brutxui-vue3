@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Hardcore Input",
   "description": "Input field with audio feedback and visual effects.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "form",

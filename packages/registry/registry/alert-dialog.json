@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Alert Dialog",
   "description": "Confirmation dialog requiring explicit user action before proceeding.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

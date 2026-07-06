@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Watermark",
   "description": "Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

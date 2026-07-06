@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Number Input",
   "description": "Numeric input with increment, decrement, and step controls.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

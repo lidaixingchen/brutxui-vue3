@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Timeline",
   "description": "Vertical timeline with connected events and content.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

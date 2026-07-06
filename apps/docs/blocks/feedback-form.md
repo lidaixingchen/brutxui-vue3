@@ -81,7 +81,7 @@ async function handleSubmit(payload) {
 
 ### 成功状态
 
-设置 `success` 为 `true` 时，表单被 `SuccessCard` 替换，展示成功标题、描述与确认按钮。点击确认按钮触发 `success-confirm` 事件，由调用方决定后续行为（如重置表单、跳转）。
+设置 `success` 为 `true` 时，表单被 `Result` 成功状态替换，展示成功标题、描述与确认按钮。点击确认按钮触发 `success-confirm` 事件，由调用方决定后续行为（如重置表单、跳转）。
 
 ```vue
 <script setup>
@@ -125,9 +125,9 @@ function handleSuccessConfirm() {
 | `submitText` | `string` | locale: `feedbackForm.defaultSubmitText` | 提交按钮文本 |
 | `loading` | `boolean` | `false` | 是否处于加载状态 |
 | `success` | `boolean` | `false` | 是否显示成功卡片 |
-| `successTitle` | `string` | locale: `successCard.defaultTitle` | 成功卡片标题 |
-| `successDescription` | `string` | locale: `successCard.defaultDescription` | 成功卡片描述文本 |
-| `successConfirmText` | `string` | locale: `successCard.defaultConfirmText` | 成功卡片确认按钮文本 |
+| `successTitle` | `string` | locale: `feedbackForm.successTitle` | 成功状态标题 |
+| `successDescription` | `string` | locale: `feedbackForm.successDescription` | 成功状态描述文本 |
+| `successConfirmText` | `string` | locale: `feedbackForm.successConfirmText` | 成功状态确认按钮文本 |
 | `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
 | `class` | `string` | — | 自定义 CSS 类名 |
 

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Scratch Card",
   "description": "Scratch-off reveal card with canvas interaction.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

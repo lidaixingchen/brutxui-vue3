@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Not Found Page",
   "description": "404 error page with illustration and navigation.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

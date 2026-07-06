@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Virtual Scroll",
   "description": "High-performance virtualized list for large datasets.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@tanstack/vue-virtual"
   ],

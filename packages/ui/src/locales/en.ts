@@ -181,21 +181,6 @@ export const en: Locale = {
         defaultDescription: 'The page you are looking for does not exist or has been removed.',
         defaultBackText: 'Go Back Home',
     },
-    loadingPage: {
-        defaultTitle: 'Loading',
-        defaultDescription: 'Please wait while content is loading...',
-    },
-    errorCard: {
-        defaultTitle: 'Something went wrong',
-        defaultDescription: 'The operation could not be completed. Please try again.',
-        defaultRetryText: 'Retry',
-        dismiss: 'Dismiss',
-    },
-    successCard: {
-        defaultTitle: 'Success',
-        defaultDescription: 'Your action has been completed successfully.',
-        defaultConfirmText: 'Confirm',
-    },
     searchWidget: {
         defaultPlaceholder: 'Search...',
         recentSearches: 'Recent searches',
@@ -204,6 +189,9 @@ export const en: Locale = {
         defaultTitle: 'Send Feedback',
         defaultDescription: "We'd love to hear from you",
         defaultSubmitText: 'Submit Feedback',
+        successTitle: 'Success',
+        successDescription: 'Your feedback has been submitted successfully.',
+        successConfirmText: 'Confirm',
         nameLabel: 'Name',
         emailLabel: 'Email',
         subjectLabel: 'Subject',
@@ -213,22 +201,11 @@ export const en: Locale = {
         emailInvalid: 'Please enter a valid email address',
         messageRequired: 'Message is required',
     },
-    stepperSection: {
-        defaultTitle: 'Steps',
-        previous: 'Previous',
-        next: 'Next',
-        emptyTitle: 'No steps available',
-    },
     cookieConsent: {
         defaultTitle: 'We use cookies',
         defaultDescription: 'This website uses cookies to enhance your browsing experience.',
         defaultAcceptText: 'Accept',
         defaultDeclineText: 'Decline',
-    },
-    dataTableSection: {
-        defaultTitle: 'Data Table',
-        searchPlaceholder: 'Search...',
-        noResults: 'No matching results found',
     },
     dataTable: {
         label: 'Data Table',
@@ -279,12 +256,6 @@ export const en: Locale = {
         namePlaceholder: 'Enter name',
         notificationsLabel: 'Notifications',
         emptyTitle: 'No settings available',
-    },
-    uploadCard: {
-        defaultTitle: 'Upload Files',
-        defaultDescription: 'Drag and drop your files here',
-        browseText: 'Browse Files',
-        dropText: 'Drop files here',
     },
     overviewPage: {
         defaultTitle: 'Overview',

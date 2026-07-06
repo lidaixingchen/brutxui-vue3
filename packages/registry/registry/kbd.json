@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Kbd",
   "description": "Keyboard shortcut key display element.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

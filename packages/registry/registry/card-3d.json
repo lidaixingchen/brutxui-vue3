@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Card 3d",
   "description": "Interactive card with 3D tilt effect on mouse movement.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Faq Section",
   "description": "Frequently asked questions with expandable answers.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

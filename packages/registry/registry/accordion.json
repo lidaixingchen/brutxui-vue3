@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Accordion",
   "description": "Collapsible content sections with keyboard navigation.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

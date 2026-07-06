@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Color Picker",
   "description": "Color picker with palette, input, history, and swatches.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

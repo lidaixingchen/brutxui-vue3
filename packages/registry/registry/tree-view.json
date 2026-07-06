@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Tree View",
   "description": "Hierarchical tree with expandable nodes and selection.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

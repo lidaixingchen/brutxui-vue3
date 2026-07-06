@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Waitlist Page",
   "description": "Waitlist signup page with email capture and countdown.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

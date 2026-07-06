@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Stepper",
   "description": "Multi-step wizard with progress indicator.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

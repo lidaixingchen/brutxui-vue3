@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Footer Section",
   "description": "Page footer with links, copyright, and social icons.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

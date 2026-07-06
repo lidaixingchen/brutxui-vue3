@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Checkbox",
   "description": "Accessible checkbox with label and indeterminate state support.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

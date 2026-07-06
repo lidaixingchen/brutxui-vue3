@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Pricing Section",
   "description": "Pricing table with plan comparison and feature highlights.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

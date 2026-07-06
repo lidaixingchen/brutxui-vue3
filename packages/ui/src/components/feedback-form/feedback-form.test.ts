@@ -11,19 +11,19 @@ describe('FeedbackForm', () => {
             ...localeProvide,
         })
         expect(wrapper.find('form').exists()).toBe(true)
-        expect(wrapper.findComponent({ name: 'SuccessCard' }).exists()).toBe(false)
+        expect(wrapper.findComponent({ name: 'Result' }).exists()).toBe(false)
     })
 
-    it('renders SuccessCard when success prop is true', () => {
+    it('renders Result when success prop is true', () => {
         const wrapper = mount(FeedbackForm, {
             props: { success: true },
             ...localeProvide,
         })
         expect(wrapper.find('form').exists()).toBe(false)
-        expect(wrapper.findComponent({ name: 'SuccessCard' }).exists()).toBe(true)
+        expect(wrapper.findComponent({ name: 'Result' }).exists()).toBe(true)
     })
 
-    it('passes successTitle to SuccessCard', () => {
+    it('passes successTitle to Result', () => {
         const wrapper = mount(FeedbackForm, {
             props: {
                 success: true,
@@ -31,11 +31,11 @@ describe('FeedbackForm', () => {
             },
             ...localeProvide,
         })
-        const successCard = wrapper.findComponent({ name: 'SuccessCard' })
-        expect(successCard.props('title')).toBe('Thank you!')
+        const result = wrapper.findComponent({ name: 'Result' })
+        expect(result.props('title')).toBe('Thank you!')
     })
 
-    it('passes successDescription to SuccessCard', () => {
+    it('passes successDescription to Result', () => {
         const wrapper = mount(FeedbackForm, {
             props: {
                 success: true,
@@ -43,11 +43,11 @@ describe('FeedbackForm', () => {
             },
             ...localeProvide,
         })
-        const successCard = wrapper.findComponent({ name: 'SuccessCard' })
-        expect(successCard.props('description')).toBe('We received your feedback.')
+        const result = wrapper.findComponent({ name: 'Result' })
+        expect(result.props('subTitle')).toBe('We received your feedback.')
     })
 
-    it('passes successConfirmText to SuccessCard', () => {
+    it('renders successConfirmText in Result action', () => {
         const wrapper = mount(FeedbackForm, {
             props: {
                 success: true,
@@ -55,8 +55,7 @@ describe('FeedbackForm', () => {
             },
             ...localeProvide,
         })
-        const successCard = wrapper.findComponent({ name: 'SuccessCard' })
-        expect(successCard.props('confirmText')).toBe('Done')
+        expect(wrapper.findComponent({ name: 'Button' }).text()).toContain('Done')
     })
 
     it('passes loading prop through to submit Button', () => {
@@ -76,13 +75,12 @@ describe('FeedbackForm', () => {
         expect(submitButton.props('loading')).toBe(false)
     })
 
-    it('forwards success-confirm event from SuccessCard', async () => {
+    it('emits success-confirm from Result action', async () => {
         const wrapper = mount(FeedbackForm, {
             props: { success: true },
             ...localeProvide,
         })
-        const successCard = wrapper.findComponent({ name: 'SuccessCard' })
-        successCard.vm.$emit('confirm')
+        await wrapper.findComponent({ name: 'Button' }).trigger('click')
         await wrapper.vm.$nextTick()
 
         const confirmEvents = wrapper.emitted('success-confirm')
@@ -101,8 +99,7 @@ describe('FeedbackForm', () => {
         await wrapper.find('textarea').setValue('Great work!')
 
         await (wrapper as any).setProps({ success: true })
-        const successCard = wrapper.findComponent({ name: 'SuccessCard' })
-        successCard.vm.$emit('confirm')
+        await wrapper.findComponent({ name: 'Button' }).trigger('click')
         await wrapper.vm.$nextTick()
 
         await (wrapper as any).setProps({ success: false })

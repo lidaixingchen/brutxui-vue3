@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Dashboard Stats",
   "description": "Dashboard statistics cards with trend indicators.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

@@ -181,21 +181,6 @@ export const zhCN: Locale = {
         defaultDescription: '您访问的页面不存在或已被移除。',
         defaultBackText: '返回首页',
     },
-    loadingPage: {
-        defaultTitle: '加载中',
-        defaultDescription: '请稍候，内容正在加载...',
-    },
-    errorCard: {
-        defaultTitle: '发生错误',
-        defaultDescription: '操作未能完成，请重试。',
-        defaultRetryText: '重试',
-        dismiss: '关闭',
-    },
-    successCard: {
-        defaultTitle: '操作成功',
-        defaultDescription: '您的操作已成功完成。',
-        defaultConfirmText: '确认',
-    },
     searchWidget: {
         defaultPlaceholder: '搜索...',
         recentSearches: '最近搜索',
@@ -204,6 +189,9 @@ export const zhCN: Locale = {
         defaultTitle: '发送反馈',
         defaultDescription: '我们很乐意听取您的意见',
         defaultSubmitText: '提交反馈',
+        successTitle: '操作成功',
+        successDescription: '您的反馈已成功提交。',
+        successConfirmText: '确认',
         nameLabel: '姓名',
         emailLabel: '邮箱',
         subjectLabel: '主题',
@@ -213,22 +201,11 @@ export const zhCN: Locale = {
         emailInvalid: '请输入有效的邮箱地址',
         messageRequired: '请输入消息内容',
     },
-    stepperSection: {
-        defaultTitle: '步骤',
-        previous: '上一步',
-        next: '下一步',
-        emptyTitle: '暂无步骤',
-    },
     cookieConsent: {
         defaultTitle: '我们使用 Cookie',
         defaultDescription: '本网站使用 Cookie 来提升您的浏览体验。',
         defaultAcceptText: '接受',
         defaultDeclineText: '拒绝',
-    },
-    dataTableSection: {
-        defaultTitle: '数据列表',
-        searchPlaceholder: '搜索...',
-        noResults: '未找到匹配结果',
     },
     dataTable: {
         label: '数据表格',
@@ -279,12 +256,6 @@ export const zhCN: Locale = {
         namePlaceholder: '输入姓名',
         notificationsLabel: '通知',
         emptyTitle: '暂无设置项',
-    },
-    uploadCard: {
-        defaultTitle: '上传文件',
-        defaultDescription: '拖拽文件到此处',
-        browseText: '浏览文件',
-        dropText: '释放文件以上传',
     },
     overviewPage: {
         defaultTitle: '概览',

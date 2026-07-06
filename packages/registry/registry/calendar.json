@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Calendar",
   "description": "Date calendar with single and range selection powered by v-calendar.",
+  "category": "data-display",
+  "examples": [],
   "dependencies": [
     "v-calendar",
     "@lucide/vue"

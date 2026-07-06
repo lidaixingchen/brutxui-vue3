@@ -299,16 +299,10 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | HeaderSection | `headerSection.defaultLogoText`、`headerSection.defaultCtaText`、`headerSection.menuLabel` | — |
 | FooterSection | `footerSection.defaultLogoText`、`footerSection.defaultDescription`、`footerSection.defaultCopyright` | — |
 | NotFoundPage | `notFoundPage.defaultTitle`、`notFoundPage.defaultDescription`、`notFoundPage.defaultBackText` | — |
-| LoadingPage | `loadingPage.defaultTitle`、`loadingPage.defaultDescription` | — |
-| ErrorCard | `errorCard.defaultTitle`、`errorCard.defaultDescription`、`errorCard.defaultRetryText`、`errorCard.dismiss` | — |
-| SuccessCard | `successCard.defaultTitle`、`successCard.defaultDescription`、`successCard.defaultConfirmText` | — |
 | SearchWidget | `searchWidget.defaultPlaceholder` | — |
-| FeedbackForm | `feedbackForm.defaultTitle`、`feedbackForm.defaultDescription`、`feedbackForm.defaultSubmitText`、`feedbackForm.nameLabel`、`feedbackForm.emailLabel`、`feedbackForm.subjectLabel`、`feedbackForm.messageLabel` | — |
-| StepperSection | `stepperSection.defaultTitle`、`stepperSection.previous`、`stepperSection.next` | — |
+| FeedbackForm | `feedbackForm.defaultTitle`、`feedbackForm.defaultDescription`、`feedbackForm.defaultSubmitText`、`feedbackForm.successTitle`、`feedbackForm.successDescription`、`feedbackForm.successConfirmText`、`feedbackForm.nameLabel`、`feedbackForm.emailLabel`、`feedbackForm.subjectLabel`、`feedbackForm.messageLabel` | — |
 | CookieConsent | `cookieConsent.defaultTitle`、`cookieConsent.defaultDescription`、`cookieConsent.defaultAcceptText`、`cookieConsent.defaultDeclineText` | — |
-| DataTableSection | `dataTableSection.defaultTitle`、`dataTableSection.searchPlaceholder`、`dataTableSection.noResults` | — |
 | SettingsPage | `settingsPage.defaultTitle`、`settingsPage.saveText`、`settingsPage.nameLabel`、`settingsPage.namePlaceholder`、`settingsPage.notificationsLabel` | — |
-| UploadCard | `uploadCard.defaultTitle`、`uploadCard.defaultDescription`、`uploadCard.browseText`、`uploadCard.dropText` | — |
 | OverviewPage | `overviewPage.defaultTitle`、`overviewPage.recentActivity`、`overviewPage.quickStats` | — |
 | BlogListPage | `blogListPage.defaultTitle`、`blogListPage.searchPlaceholder`、`blogListPage.allCategories`、`blogListPage.noPostsFound` | — |
 | ActivityLogPage | `activityLogPage.defaultTitle`、`activityLogPage.action`、`activityLogPage.user`、`activityLogPage.timestamp`、`activityLogPage.details`、`activityLogPage.noActivityFound` | — |

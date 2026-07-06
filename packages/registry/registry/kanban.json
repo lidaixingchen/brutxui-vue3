@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Kanban",
   "description": "Drag-and-drop kanban board with columns and cards.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Command",
   "description": "Command palette with keyboard navigation and fuzzy search.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

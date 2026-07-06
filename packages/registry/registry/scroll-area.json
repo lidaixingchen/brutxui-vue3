@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Scroll Area",
   "description": "Custom scrollable container with styled scrollbars.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

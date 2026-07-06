@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Tooltip",
   "description": "Contextual tooltip triggered on hover or focus.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Quick Actions",
   "description": "Floating action buttons for common tasks.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

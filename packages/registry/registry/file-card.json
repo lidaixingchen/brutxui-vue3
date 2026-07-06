@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "File Card",
   "description": "File preview card with metadata and download action.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

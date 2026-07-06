@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Rate",
   "description": "Star rating input with half-star precision and keyboard navigation.",
+  "category": "form",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

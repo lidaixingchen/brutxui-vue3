@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Toggle",
   "description": "Pressable toggle button with active state.",
+  "category": "action",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Backtop",
   "description": "Brutalist back-to-top button with scroll detection and click behavior.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

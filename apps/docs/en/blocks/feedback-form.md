@@ -82,7 +82,7 @@ async function handleSubmit(payload) {
 
 ### Success State
 
-Set `success` to `true` to replace the form with a `SuccessCard`, displaying a success title, description, and confirm button. Clicking the confirm button triggers the `success-confirm` event; the caller decides the follow-up behavior (e.g., resetting the form, navigating away).
+Set `success` to `true` to replace the form with the `Result` success state, displaying a success title, description, and confirm button. Clicking the confirm button triggers the `success-confirm` event; the caller decides the follow-up behavior (e.g., resetting the form, navigating away).
 
 ```vue
 <script setup>
@@ -126,9 +126,9 @@ function handleSuccessConfirm() {
 | `submitText` | `string` | locale: `feedbackForm.defaultSubmitText` | Submit button text |
 | `loading` | `boolean` | `false` | Whether in loading state |
 | `success` | `boolean` | `false` | Whether to show the success card |
-| `successTitle` | `string` | locale: `successCard.defaultTitle` | Success card title |
-| `successDescription` | `string` | locale: `successCard.defaultDescription` | Success card description text |
-| `successConfirmText` | `string` | locale: `successCard.defaultConfirmText` | Success card confirm button text |
+| `successTitle` | `string` | locale: `feedbackForm.successTitle` | Success state title |
+| `successDescription` | `string` | locale: `feedbackForm.successDescription` | Success state description text |
+| `successConfirmText` | `string` | locale: `feedbackForm.successConfirmText` | Success state confirm button text |
 | `iconSize` | `IconSize` | `'default'` | Icon size |
 | `class` | `string` | — | Custom CSS class |
 

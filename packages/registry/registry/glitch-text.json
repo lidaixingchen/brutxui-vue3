@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Glitch Text",
   "description": "Text with glitch animation and distortion effects.",
+  "category": "visual-effect",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Color Mode Switcher",
   "description": "Toggle between light, dark, and system color modes.",
+  "category": "utility",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Card",
   "description": "Content card container with header, body, footer, and description sections.",
+  "category": "layout",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

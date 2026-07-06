@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Spinner",
   "description": "Loading spinners with bars, blocks, and dots animation variants.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "locale-zh-cn"

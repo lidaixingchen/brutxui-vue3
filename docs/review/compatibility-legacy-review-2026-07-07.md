@@ -13,7 +13,7 @@
 | P0 | 发布产物依赖手写 flatten 和路径重写 | npm 包安装、子路径导入、CJS/ESM 产物 | 优先用构建验证和产物快照锁住，再考虑移除手写重写 |
 | P0 | 浏览器能力缺少统一降级策略 | SSR、老浏览器、WebView、测试环境 | 为 Observer、Audio、imperative DOM 建统一 env helper |
 | P1 | npm `exports` 子路径只覆盖少数组件 | 用户按组件子路径导入时行为不一致 | 明确策略：只支持聚合入口，或生成所有组件子路径 |
-| P1 | legacy wrapper 和重复区块仍在 registry 中作为一等组件 | 文档推荐、CLI add、维护成本 | 增加 `legacy/deprecated/replacement` 元数据并同步 CLI/docs |
+| P1 | legacy wrapper 和重复区块曾在 registry 中作为一等组件 | 文档推荐、CLI add、维护成本 | 已按“清除历史包袱”方案 A 移出公开分发面 |
 | P1 | Date 字符串解析依赖原生 `new Date(string)` | Safari、跨时区、筛选边界 | 统一使用 `parseFormattedDate` 或显式 ISO/本地日期解析 |
 | P2 | singleton fallback 提供易用性但形成全局状态 | 多应用同页、测试隔离、SSR 心智成本 | 文档化边界，逐步鼓励 root provide |
 
@@ -84,7 +84,7 @@
 - 如果推荐按组件子路径导入，改为从组件元数据生成入口、Vite entry 和 `exports`，并在 CI 中校验同步。
 - 对已有未导出的组件，避免临时手动补几个，应一次性定策略。
 
-## P1：legacy wrapper 与重复组件仍被当作普通组件分发
+## P1：legacy wrapper 与重复组件已从公开面移除
 
 证据：
 
@@ -95,18 +95,13 @@
 - `docs/UI_COMPONENT_MERGE_REPORT.md:218` 明确提出为 registry 元数据增加 `legacy`、`deprecated` 或 `replacement` 字段。
 - 但 `packages/shared/src/components.ts:89`、`:96`、`:118` 仍将 `data-table-section`、`upload-card`、`statistic` 作为普通可用组件列出。
 
-风险：
+执行结论：
 
-1. CLI registry 会继续把 legacy 组件作为首选可添加组件，用户新增项目会继续复制旧结构。
-2. 文档、registry、主入口导出的状态不一致时，维护者无法判断某组件是推荐入口、兼容层还是待删除项。
-3. 合并计划如果只停留在 docs，无法约束 CLI 和 registry 行为。
-
-建议：
-
-- 先在 `RegistryComponentMeta` 和 `ComponentFileMapping` 增加 `status: 'stable' | 'legacy' | 'deprecated'` 与 `replacement?: string`。
-- CLI `list/add/doctor` 显示 legacy 提示，但不要立刻阻断安装，给迁移窗口。
-- Docs 组件索引按状态分组，默认推荐 stable。
-- 对 `UploadCard`、`DataTableSection`、`LoadingPage`、`Statistic` 建立 wrapper 清单和移除版本计划。
+1. 选择方案 A：`brutx-ui-vue` 主入口作为完整稳定导入面，子路径只保留少量稳定白名单，不生成全量组件子路径。
+2. 不再建立 legacy 兼容窗口；`LoadingPage`、`ErrorCard`、`SuccessCard`、`StepperSection`、`DataTableSection`、`UploadCard`、`Statistic` 已从源码、主入口导出、registry 元数据、registry JSON 和文档推荐入口移除。
+3. 对应稳定替代入口为 `Loading`、`Result`、`Stepper`、`DataTable`、`Upload`、`Counter`。
+4. `FeedbackForm` 的成功态已改用 `Result`，并将默认成功文案迁到 `feedbackForm.success*`，不再依赖 `SuccessCard` 或 `successCard.*` locale。
+5. registry 构建脚本已增加过期 JSON 清理，避免被移除组件继续残留在静态 registry 目录。
 
 ## P1：日期解析语义不稳定
 
@@ -149,23 +144,19 @@
 - 测试工具或 public API 暴露统一 `destroyBrutxFallbacks()`，集中清理 theme/toast/message 等 singleton。
 - 长期考虑在 dev 模式 warning 中加入组件树上下文建议，减少无意使用 fallback。
 
-## P2：空壳兼容插件应纳入废弃策略
+## P2：空壳兼容插件已移除
 
 证据：
 
 - `packages/ui/src/lib/brutalism-plugin.js:11` 明确说明插件保留为空壳是为了 backward compatibility。
 - `packages/ui/package.json:35` 仍导出 `./brutalism-plugin`。
 
-风险：
+执行结论：
 
-1. 用户导入该插件不会报错，但也不会生成 CSS，容易误以为插件仍是样式接入方式。
-2. 空壳长期保留会让 Tailwind v3/v4 接入路径更难解释。
-
-建议：
-
-- 保留短期兼容，但在 docs 和 changelog 标记 deprecated。
-- CLI doctor 检测到用户项目使用该插件时，提示迁移到 `styles.css` 或 `preflight.css`。
-- 在下一个大版本移除导出或改为明确 warning 插件。
+1. `./brutalism-plugin` 已从 `packages/ui/package.json` 的 exports 和 `packages/ui/vite.config.ts` 的 lib entry 中移除。
+2. `packages/ui/src/styles.css` 已删除内部 `@plugin "./lib/brutalism-plugin.js"` 引用。
+3. `packages/ui/src/lib/brutalism-plugin.js` 空壳文件已删除。
+4. 样式接入统一回到 `styles.css` / `preflight.css`。
 
 ## P2：Node/pnpm 目标较新，用户项目兼容需明确
 
@@ -198,12 +189,14 @@
 
 1. 发布产物冒烟测试：先防止 `exports`、CSS、CJS/ESM 产物破坏用户安装。
 2. 统一 env/browser capability helper：先修 `IntersectionObserver` 和 imperative DOM。
-3. registry 状态元数据：让 legacy 不再伪装成 stable。
+3. registry 清理已落地：legacy 已从公开分发面移除，后续新增组件必须直接进入稳定替代入口。
 4. 日期解析统一：从 DataTable filter 开始，建立可复用 parse helper。
 5. 导出策略生成化：把 `index.ts`、Vite entry、package exports、registry 元数据的同步变成脚本校验。
 6. singleton fallback 治理：保留兼容，但提供集中销毁和文档边界。
 
-## 本次未执行
+## 本次执行验证
 
-- 未运行全量测试或发布门禁。根据项目约定，本次是审查与文档写入，不触发 `pnpm test`、`pnpm release:check` 这类重型命令。
-- 未修改业务代码。
+- `packages/registry`：`npm.cmd run build`、`npm.cmd run validate`、`vitest run tests/build-registry.test.ts`。
+- `packages/shared`：`npm.cmd run typecheck`。
+- `packages/ui`：`npm.cmd run check:exports`、`vitest run src/components/feedback-form/feedback-form.test.ts`、`npm.cmd run typecheck`、`npm.cmd run build`。
+- 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。

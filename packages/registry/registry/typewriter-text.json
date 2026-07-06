@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Typewriter Text",
   "description": "Text with typewriter typing animation effect.",
+  "category": "visual-effect",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [],
   "files": [

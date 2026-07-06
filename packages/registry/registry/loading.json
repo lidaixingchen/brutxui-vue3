@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Loading",
   "description": "Container wrapper and v-loading custom directive for displaying loading state overlay with custom text.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [],
   "registryDependencies": [
     "spinner",

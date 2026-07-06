@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Result",
   "description": "Feedback result display with state color blocks and action buttons.",
+  "category": "feedback",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

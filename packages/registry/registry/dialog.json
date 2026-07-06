@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Dialog",
   "description": "Modal dialog with overlay, header, footer, and description.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

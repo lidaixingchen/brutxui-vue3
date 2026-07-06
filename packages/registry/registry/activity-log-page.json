@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Activity Log Page",
   "description": "Activity log page with timeline entries and filtering.",
+  "category": "page",
+  "examples": [],
   "dependencies": [
     "@lucide/vue"
   ],

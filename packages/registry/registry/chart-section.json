@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Chart Section",
   "description": "Data visualization section with interactive charts.",
+  "category": "marketing",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

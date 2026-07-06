@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Tabs",
   "description": "Tabbed interface with content panels and locale support.",
+  "category": "navigation",
+  "examples": [],
   "dependencies": [
     "reka-ui"
   ],

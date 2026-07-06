@@ -4,6 +4,8 @@
   "type": "registry:ui",
   "title": "Dropdown Menu",
   "description": "Dropdown menu with checkbox items, radio items, and sub-menus.",
+  "category": "overlay",
+  "examples": [],
   "dependencies": [
     "reka-ui",
     "@lucide/vue"

@@ -84,21 +84,15 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     'header-section': { files: ['HeaderSection.vue'], composables: ['useLocale.ts'] },
     'footer-section': { files: ['FooterSection.vue'], composables: ['useLocale.ts'] },
     'not-found-page': { files: ['NotFoundPage.vue'], composables: ['useLocale.ts'] },
-    'loading-page': { files: ['LoadingPage.vue'], composables: ['useLocale.ts'] },
-    'error-card': { files: ['ErrorCard.vue'], composables: ['useLocale.ts'] },
-    'success-card': { files: ['SuccessCard.vue'], composables: ['useLocale.ts'] },
     'search-widget': { files: ['SearchWidget.vue'], composables: ['useLocale.ts'] },
     'feedback-form': { files: ['FeedbackForm.vue'], composables: ['useLocale.ts'] },
-    'stepper-section': { files: ['StepperSection.vue'], composables: ['useLocale.ts'] },
     'cookie-consent': { files: ['CookieConsent.vue'], composables: ['useLocale.ts'] },
-    'data-table-section': { files: ['DataTableSection.vue', 'types.ts'], composables: ['useLocale.ts'] },
     'settings-page': { files: ['SettingsPage.vue'], composables: ['useLocale.ts'] },
     'blog-list-page': { files: ['BlogListPage.vue'], composables: ['useLocale.ts'] },
     'activity-log-page': { files: ['ActivityLogPage.vue'], composables: ['useLocale.ts'] },
     'profile-page': { files: ['ProfilePage.vue'], composables: ['useLocale.ts'] },
     'chart-section': { files: ['ChartSection.vue'], composables: ['useLocale.ts'] },
     'gallery-section': { files: ['GallerySection.vue'], composables: ['useLocale.ts'] },
-    'upload-card': { files: ['UploadCard.vue'], composables: ['useLocale.ts'] },
     'overview-page': { files: ['OverviewPage.vue'], composables: ['useLocale.ts'] },
     'color-picker': {
         files: ['ColorPicker.vue', 'ColorPickerPanel.vue', 'ColorPickerSwatch.vue', 'ColorPickerInput.vue', 'ColorPickerHistory.vue', 'color-picker-variants.ts', 'types.ts'],
@@ -179,9 +173,6 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     },
     result: {
         files: ['Result.vue'],
-    },
-    statistic: {
-        files: ['Statistic.vue'],
     },
     watermark: {
         files: ['Watermark.vue'],

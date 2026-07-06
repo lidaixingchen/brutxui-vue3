@@ -209,24 +209,6 @@ export interface NotFoundPageLocale {
     defaultBackText: string
 }
 
-export interface LoadingPageLocale {
-    defaultTitle: string
-    defaultDescription: string
-}
-
-export interface ErrorCardLocale {
-    defaultTitle: string
-    defaultDescription: string
-    defaultRetryText: string
-    dismiss: string
-}
-
-export interface SuccessCardLocale {
-    defaultTitle: string
-    defaultDescription: string
-    defaultConfirmText: string
-}
-
 export interface SearchWidgetLocale {
     defaultPlaceholder: string
     recentSearches: string
@@ -236,6 +218,9 @@ export interface FeedbackFormLocale {
     defaultTitle: string
     defaultDescription: string
     defaultSubmitText: string
+    successTitle: string
+    successDescription: string
+    successConfirmText: string
     nameLabel: string
     emailLabel: string
     subjectLabel: string
@@ -246,24 +231,11 @@ export interface FeedbackFormLocale {
     messageRequired: string
 }
 
-export interface StepperSectionLocale {
-    defaultTitle: string
-    previous: string
-    next: string
-    emptyTitle: string
-}
-
 export interface CookieConsentLocale {
     defaultTitle: string
     defaultDescription: string
     defaultAcceptText: string
     defaultDeclineText: string
-}
-
-export interface DataTableSectionLocale {
-    defaultTitle: string
-    searchPlaceholder: string
-    noResults: string
 }
 
 export interface DataTableLocale {
@@ -318,13 +290,6 @@ export interface SettingsPageLocale {
     namePlaceholder: string
     notificationsLabel: string
     emptyTitle: string
-}
-
-export interface UploadCardLocale {
-    defaultTitle: string
-    defaultDescription: string
-    browseText: string
-    dropText: string
 }
 
 export interface OverviewPageLocale {
@@ -609,19 +574,13 @@ export interface Locale {
     headerSection: HeaderSectionLocale
     footerSection: FooterSectionLocale
     notFoundPage: NotFoundPageLocale
-    loadingPage: LoadingPageLocale
-    errorCard: ErrorCardLocale
-    successCard: SuccessCardLocale
     searchWidget: SearchWidgetLocale
     feedbackForm: FeedbackFormLocale
-    stepperSection: StepperSectionLocale
     cookieConsent: CookieConsentLocale
-    dataTableSection: DataTableSectionLocale
     dataTable: DataTableLocale
     formWizard: FormWizardLocale
     chatBubble: ChatBubbleLocale
     settingsPage: SettingsPageLocale
-    uploadCard: UploadCardLocale
     overviewPage: OverviewPageLocale
     blogListPage: BlogListPageLocale
     activityLogPage: ActivityLogPageLocale

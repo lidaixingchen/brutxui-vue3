@@ -9,7 +9,7 @@ import CardContent from '../card/CardContent.vue'
 import Input from '../input/Input.vue'
 import Textarea from '../textarea/Textarea.vue'
 import Button from '../button/Button.vue'
-import SuccessCard from '../success-card/SuccessCard.vue'
+import Result from '../result/Result.vue'
 import Label from '../label/Label.vue'
 
 interface FeedbackFormProps {
@@ -48,6 +48,9 @@ const { t } = useLocale()
 const resolvedTitle = computed(() => props.title ?? t('feedbackForm.defaultTitle'))
 const resolvedDescription = computed(() => props.description ?? t('feedbackForm.defaultDescription'))
 const resolvedSubmitText = computed(() => props.submitText ?? t('feedbackForm.defaultSubmitText'))
+const resolvedSuccessTitle = computed(() => props.successTitle ?? t('feedbackForm.successTitle'))
+const resolvedSuccessDescription = computed(() => props.successDescription ?? t('feedbackForm.successDescription'))
+const resolvedSuccessConfirmText = computed(() => props.successConfirmText ?? t('feedbackForm.successConfirmText'))
 const nameLabel = computed(() => t('feedbackForm.nameLabel'))
 const emailLabel = computed(() => t('feedbackForm.emailLabel'))
 const subjectLabel = computed(() => t('feedbackForm.subjectLabel'))
@@ -116,14 +119,19 @@ function handleSuccessConfirm() {
 
 <template>
     <div :class="rootClasses">
-        <SuccessCard
+        <Result
             v-if="success"
-            :title="successTitle"
-            :description="successDescription"
-            :confirm-text="successConfirmText"
+            status="success"
+            :title="resolvedSuccessTitle"
+            :sub-title="resolvedSuccessDescription"
             :icon-size="iconSize"
-            @confirm="handleSuccessConfirm"
-        />
+        >
+            <template #extra>
+                <Button variant="primary" @click="handleSuccessConfirm">
+                    {{ resolvedSuccessConfirmText }}
+                </Button>
+            </template>
+        </Result>
 
         <template v-else>
             <slot name="header">
