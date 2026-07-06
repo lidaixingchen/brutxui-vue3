@@ -167,18 +167,19 @@
 - 根包 `package.json:28` 要求 Node `>=22.5.0`，`package.json:29` 要求 pnpm `>=11.0.0`。
 - CLI 包 `packages/cli/package.json:57` 要求 Node `>=22.0.0`，`packages/cli/package.json:58` 要求 pnpm `>=9.0.0`。
 - CLI 构建 `packages/cli/tsup.config.ts:11` target 为 `node22`，且 `packages/cli/tsup.config.ts:9` 不生成 dts。
+- CLI integration matrix 已覆盖 Vite + Tailwind v4 默认路径，并显式登记 Tailwind v3、Nuxt、monorepo 子包等重型兼容场景；本地 registry 命令参数由测试矩阵生成。
 
 风险：
 
 1. 仓库开发环境和 CLI 用户环境要求不一致，排查 issue 时容易混淆。
 2. Node 22 目标对新项目没问题，但对仍在 Node 20 LTS 的 Vue 用户会形成安装门槛。
-3. 如果坚持 Node 22，应在 README、CLI error、doctor 中明确，不要让用户在运行时才遇到语法或 API 错误。
+3. 如果坚持 Node 22，应继续在 README、CLI error、doctor 中保持一致，不要让用户在运行时才遇到语法或 API 错误。
 
 建议：
 
-- 明确 CLI 是否支持 Node 20。如果不支持，将文档、`engines` 和错误提示统一成 Node 22。
-- 如果希望扩大 CLI 覆盖面，评估把 CLI target 降到 Node 20，并增加最低 Node 版本测试。
-- 根包 pnpm 11 和 CLI pnpm 9 可以共存，但 docs 需要说明：开发本仓库和使用 CLI 的要求不同。
+- 短期维持 Node 22：保持 README、`engines`、doctor 和 CLI 构建 target 一致。
+- 如果未来希望扩大 CLI 覆盖面，再评估把 CLI target 降到 Node 20，并增加最低 Node 版本测试。
+- 根包 pnpm 11 和 CLI pnpm 9 可以共存；文档需持续说明“开发本仓库”和“使用 CLI”的要求不同。
 
 ## 正向观察
 
@@ -208,4 +209,5 @@
 - 本轮 legacy 替代验证：`CI=true pnpm --filter brutx-ui-vue test src/components/dashboard-stats/dashboard-stats.test.ts`、`CI=true pnpm --filter brutx-ui-vue typecheck`、`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`。
 - 本轮 singleton fallback 验证：`CI=true pnpm --filter brutx-ui-vue test src/composables/destroyFallbacks.test.ts src/composables/use-toast.test.ts src/composables/useTheme.test.ts`。
 - 本轮 package 子路径策略验证：`CI=true pnpm --filter brutx-ui-vue check:exports`、`CI=true pnpm --filter brutx-ui-vue test:package`。
+- 本轮 CLI matrix 验证：`CI=true pnpm --filter brutx-vue build`、`CI=true pnpm --filter brutx-vue typecheck`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/matrix.test.ts`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/cli-smoke.test.ts -t "dry-runs the full local registry"`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
