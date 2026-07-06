@@ -86,6 +86,17 @@ export function findRegistryDependencyCycles(items: RegistryReferenceItem[]): st
     return cycles
 }
 
+export function formatRegistryDependencyGraph(items: RegistryReferenceItem[]): string[] {
+    return [...items]
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((item) => {
+            const dependencies = [...item.registryDependencies].sort()
+            return dependencies.length > 0
+                ? `${item.name} -> ${dependencies.join(', ')}`
+                : `${item.name} -> (none)`
+        })
+}
+
 export function validateRegistryManifestConsistency(
     manifest: RegistryBuildManifestSnapshot,
     indexItems: RegistryIndexItem[]

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
+    formatRegistryDependencyGraph,
     validateRegistryManifestConsistency,
 } from '../scripts/validate-utils'
 import type { RegistryIndexItem } from 'brutx-shared-vue'
@@ -33,6 +34,18 @@ describe('validate-registry helpers', () => {
             { name: 'dialog', registryDependencies: ['button'] },
             { name: 'popover', registryDependencies: ['button'] },
         ])).toEqual([])
+    })
+
+    it('formats a sorted registry dependency graph', () => {
+        expect(formatRegistryDependencyGraph([
+            { name: 'dialog', registryDependencies: ['button', 'popover'] },
+            { name: 'button', registryDependencies: [] },
+            { name: 'alert-dialog', registryDependencies: ['dialog', 'button'] },
+        ])).toEqual([
+            'alert-dialog -> button, dialog',
+            'button -> (none)',
+            'dialog -> button, popover',
+        ])
     })
 
     it('accepts a manifest that matches index items', () => {

@@ -10,6 +10,7 @@ import {
 import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
+    formatRegistryDependencyGraph,
     validateRegistryManifestConsistency,
     type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
@@ -222,6 +223,13 @@ function validate() {
     for (const cycle of findRegistryDependencyCycles(referenceItems)) {
         console.error(`✗ Registry dependency cycle detected: ${cycle.join(' -> ')}.`);
         errorCount++;
+    }
+
+    if (process.env.BRUTX_REGISTRY_PRINT_GRAPH === '1') {
+        console.log('\n🕸 Registry dependency graph:');
+        for (const line of formatRegistryDependencyGraph(referenceItems)) {
+            console.log(`  ${line}`);
+        }
     }
 
     errorCount += validateIndexConsistency(files);
