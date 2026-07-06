@@ -200,7 +200,7 @@ provideToast()
 </script>
 ```
 
-> 注意：若未调用 `provideToast()`，`useToast()` 会回退到共享单例并输出警告。
+> 注意：若未调用 `provideToast()`，`useToast()` 会回退到共享单例并输出警告。生产应用推荐在根组件显式调用 `provideToast()`；共享单例仅作为兼容兜底。测试、多应用同页或热更新场景可调用 `destroyBrutxFallbacks()` 集中清理 toast/theme/message 的 fallback 状态。
 
 ### Promise Toast
 

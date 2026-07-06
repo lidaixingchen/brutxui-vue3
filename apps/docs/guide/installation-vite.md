@@ -13,6 +13,8 @@ description: 在 Vite + Vue 3 项目中安装和配置 BrutxUI
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 
+本文示例使用 pnpm；你也可以使用 npm、yarn 或 bun。`brutx-vue init` 会根据 lockfile 自动判断包管理器，也可以通过 `--package-manager` 显式指定。
+
 ## 第 1 步：创建 Vite 项目
 
 如果你还没有项目，先创建一个：

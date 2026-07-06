@@ -7,7 +7,7 @@
 - tag 命名固定以 UI 包版本为主，格式为 `v<ui-version>`，例如 `v0.6.6`。CLI 版本不单独创建 tag。
 - 推送 `main` 和对应的 `v*` tag 后，由云端自动发布。
 - 任何影响组件安装、注册表生成或发布产物的改动，都必须同步检查 `packages/ui/`、`packages/shared/`、`packages/registry/`、`packages/cli/` 四处：源码文件、组件元数据、registry 构建脚本/JSON、CLI 安装复制逻辑必须保持一致。
-- 发布前必须执行完整检查：`pnpm release:check`。该门禁会覆盖构建、类型检查、lint、UI/CLI 测试、视觉测试、CLI 集成测试、注册表 build/validate、docs build、导出产物检查和 `pnpm pack --dry-run` 包内容审计。
+- 发布前必须执行完整检查：`pnpm release:check`。该门禁会覆盖构建、类型检查、lint、UI/CLI 测试、视觉测试、CLI 集成测试、注册表 build/validate、docs build、`exports` 与 Vite entry 同步校验、JS/CJS/CSS 产物冒烟检查和 `pnpm pack --dry-run` 包内容审计。
 - 如果本地验证 release tag，设置 `RELEASE_TAG=v<ui-version>` 后再运行 `pnpm release:check`；GitHub Actions 中会自动读取 `GITHUB_REF_NAME`。
 - 发布前必须检查 `pnpm-lock.yaml` 是否需要同步。若只修改包自身 `version` 且运行 pnpm 后 lockfile 无变化，可以不提交 lockfile；若修改 `dependencies`、`devDependencies`、`peerDependencies` 或 lockfile 自动变化，必须提交同步后的 `pnpm-lock.yaml`。
 

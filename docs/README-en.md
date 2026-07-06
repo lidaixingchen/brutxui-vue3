@@ -220,6 +220,8 @@ Claude will automatically reference component documentation, style specification
 
 Run, test, and build BrutxUI locally:
 
+Developing and publishing this repository requires **Node.js 22.5+** and **pnpm 11+**. This is a maintainer environment requirement; projects that install components with `brutx-vue` can still use npm, yarn, pnpm, or bun, and the CLI will choose the package manager from the lockfile or `--package-manager`.
+
 ### 1. Repository Setup
 ```bash
 # Clone the repository

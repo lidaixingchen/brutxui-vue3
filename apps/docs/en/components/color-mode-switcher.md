@@ -74,7 +74,7 @@ Control whether the "system" option is displayed via the `showSystem` prop. When
 
 ## Composables
 
-`ColorModeSwitcher` internally uses the `useTheme()` composable to retrieve and switch the current color mode. The component requires a parent theme context provided via `provideTheme()`, or falls back to a built-in shared singleton.
+`ColorModeSwitcher` internally uses the `useTheme()` composable to retrieve and switch the current color mode. Production apps should provide a parent theme context via `provideTheme()`; the built-in shared singleton is only a compatibility fallback. Tests, multi-app pages, and hot-reload boundaries can call `destroyBrutxFallbacks()` to clear theme/toast/message fallback state together.
 
 The color mode is persisted to `localStorage` (key: `brutx-color-mode`). When `system` is selected, it follows the system preference and listens for changes to the `prefers-color-scheme` media query.
 

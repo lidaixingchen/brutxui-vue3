@@ -23,7 +23,7 @@
   [![Vue 3](https://img.shields.io/badge/Vue_3-3.5+-4FC08D.svg?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
   [![Vite](https://img.shields.io/badge/Vite-8+-646CFF.svg?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
   [![Node.js](https://img.shields.io/badge/Node.js-22.5+-339933.svg?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-  [![pnpm](https://img.shields.io/badge/pnpm-9+-F69220.svg?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
+  [![pnpm](https://img.shields.io/badge/pnpm-11+-F69220.svg?style=flat-square&logo=pnpm&logoColor=white)](https://pnpm.io/)
 
 
   <br />
@@ -159,6 +159,8 @@ Claude 会自动参考组件文档、样式规范和代码模板，生成符合 
 ## 贡献与开发
 
 在本地运行、测试和打包 BrutxUI：
+
+本仓库开发和发布要求 **Node.js 22.5+** 与 **pnpm 11+**。这是维护环境要求；通过 `brutx-vue` 添加组件的用户项目仍可使用 npm、yarn、pnpm 或 bun，CLI 会根据 lockfile 或 `--package-manager` 选择包管理器。
 
 ### 1. 仓库设置
 ```bash

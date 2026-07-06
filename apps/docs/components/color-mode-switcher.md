@@ -73,7 +73,7 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 
 ## 组合式函数
 
-`ColorModeSwitcher` 内部使用 `useTheme()` 组合式函数获取当前颜色模式并切换。组件需要在上层通过 `provideTheme()` 提供主题上下文，或使用内置的共享单例回退。
+`ColorModeSwitcher` 内部使用 `useTheme()` 组合式函数获取当前颜色模式并切换。生产应用推荐在上层通过 `provideTheme()` 提供主题上下文；内置共享单例仅作为兼容兜底。测试、多应用同页或热更新场景可调用 `destroyBrutxFallbacks()` 集中清理 theme/toast/message 的 fallback 状态。
 
 颜色模式会持久化到 `localStorage`（键名 `brutx-color-mode`）。当选择 `system` 时，将跟随系统偏好设置，并监听 `prefers-color-scheme` 媒体查询的变化。
 

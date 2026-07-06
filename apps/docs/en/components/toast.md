@@ -201,7 +201,7 @@ provideToast()
 </script>
 ```
 
-> Note: If `provideToast()` is not called, `useToast()` will fall back to a shared singleton and output a warning.
+> Note: If `provideToast()` is not called, `useToast()` will fall back to a shared singleton and output a warning. Production apps should call `provideToast()` explicitly in the root component; the shared singleton is a compatibility fallback. Tests, multi-app pages, and hot-reload boundaries can call `destroyBrutxFallbacks()` to clear toast/theme/message fallback state together.
 
 ### Promise Toast
 

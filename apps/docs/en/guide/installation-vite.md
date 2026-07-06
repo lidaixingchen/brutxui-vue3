@@ -14,6 +14,8 @@ Set up BrutxUI in a new or existing Vite + Vue 3 project.
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 
+The examples use pnpm, but npm, yarn, and bun are also supported. `brutx-vue init` detects the package manager from the lockfile, or you can pass `--package-manager` explicitly.
+
 ## Step 1: Create a Vite Project
 
 If you don't have a project yet, create one first:
