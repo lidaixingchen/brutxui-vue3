@@ -50,3 +50,14 @@ export {
     mergeSnippetsFile,
     hasVscodeDir,
 } from './vscode-snippets.js';
+
+export {
+    countComponentFiles,
+    prepareRemoveComponents,
+    removeComponents,
+} from './services/remove-service.js';
+export type {
+    RemoveExecutionOptions,
+    RemoveExecutionResult,
+    RemovePreparation,
+} from './services/remove-service.js';

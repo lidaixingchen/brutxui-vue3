@@ -1,196 +1,25 @@
-import fs from 'fs-extra';
-import path from 'path';
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
-import type { BrutalistConfig, BrutxManifest, RemoveOptions, RegistryItem } from '../lib/types.js';
-import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, FileTransaction, readManifest, removeInstalledComponents, isSafePath, getInstalledComponentNames } from '../lib/index.js';
-import { resolveAliasPath } from '../lib/project.js';
+import type { RemoveOptions } from '../lib/types.js';
+import { readConfigSafe, CliError, readManifest } from '../lib/index.js';
+import {
+    countComponentFiles,
+    prepareRemoveComponents,
+    removeComponents,
+} from '../lib/services/remove-service.js';
 import { logger } from '../lib/logger.js';
 
-const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
-
-function isInsideDirectory(filePath: string, directoryPath: string): boolean {
-    const relative = path.relative(directoryPath, filePath);
-    return relative === '' || (relative.length > 0 && !relative.startsWith('..') && !path.isAbsolute(relative));
-}
-
-async function findManifestKnownFiles(
-    cwd: string,
-    config: BrutalistConfig,
-    manifest: BrutxManifest | null,
-    removedComponents: string[],
-    remainingComponents: string[]
-): Promise<string[]> {
-    if (!manifest) {
-        return [];
+function getRollbackFailures(error: unknown): string[] {
+    if (
+        typeof error === 'object' &&
+        error !== null &&
+        'rollbackFailures' in error &&
+        Array.isArray((error as { rollbackFailures?: unknown }).rollbackFailures)
+    ) {
+        return (error as { rollbackFailures: string[] }).rollbackFailures;
     }
 
-    const remainingFiles = new Set(
-        remainingComponents.flatMap(component => manifest.components[component]?.files ?? [])
-    );
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-    const removedComponentDirs = removedComponents.map(component => path.join(componentsPath, component));
-    const knownFiles: string[] = [];
-
-    for (const component of removedComponents) {
-        const entry = manifest.components[component];
-        if (!entry) continue;
-
-        for (const manifestFile of entry.files) {
-            if (remainingFiles.has(manifestFile)) continue;
-
-            const absolutePath = path.resolve(cwd, manifestFile);
-            if (!await isSafePath(absolutePath, cwd)) continue;
-            if (removedComponentDirs.some(dir => isInsideDirectory(absolutePath, dir))) continue;
-            if (!await fs.pathExists(absolutePath)) continue;
-
-            knownFiles.push(absolutePath);
-        }
-    }
-
-    return [...new Set(knownFiles)];
-}
-
-async function scanAllImports(componentsPath: string): Promise<Map<string, Set<string>>> {
-    const importMap = new Map<string, Set<string>>();
-
-    if (!await fs.pathExists(componentsPath)) {
-        return importMap;
-    }
-
-    async function scanDir(dir: string, componentName: string): Promise<void> {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
-        for (const entry of entries) {
-            const fullPath = path.join(dir, entry.name);
-            if (entry.isDirectory()) {
-                await scanDir(fullPath, componentName);
-                continue;
-            }
-
-            const ext = path.extname(entry.name);
-            if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
-
-            const content = await fs.readFile(fullPath, 'utf-8');
-            const importRegex = /from\s+['"]([^'"]+)['"]/g;
-            let match: RegExpExecArray | null;
-
-            while ((match = importRegex.exec(content)) !== null) {
-                const importPath = match[1];
-                if (!importMap.has(importPath)) {
-                    importMap.set(importPath, new Set());
-                }
-                importMap.get(importPath)!.add(componentName);
-            }
-        }
-    }
-
-    const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
-    for (const dir of dirs) {
-        if (!dir.isDirectory()) continue;
-        await scanDir(path.join(componentsPath, dir.name), dir.name);
-    }
-
-    return importMap;
-}
-
-async function resolveScriptFile(baseDir: string, fileName: string): Promise<string | null> {
-    for (const ext of SCRIPT_EXTENSIONS) {
-        const candidate = path.join(baseDir, fileName + ext);
-        if (await fs.pathExists(candidate)) {
-            return candidate;
-        }
-    }
-    const noExtCandidate = path.join(baseDir, fileName);
-    if (await fs.pathExists(noExtCandidate)) {
-        return noExtCandidate;
-    }
-    return null;
-}
-
-async function findOrphanedFiles(
-    cwd: string,
-    config: BrutalistConfig,
-    remainingComponents: string[],
-    removedComponents: string[]
-): Promise<string[]> {
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-    const importMap = await scanAllImports(componentsPath);
-
-    const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
-    const utilsAlias = config.aliases.utils;
-    const utilsDir = path.dirname(utilsAlias);
-    const utilsPath = await resolveAliasPath(utilsDir, cwd);
-    const localesPath = path.join(path.dirname(composablesPath), 'locales');
-    const directivesPath = path.join(path.dirname(composablesPath), 'directives');
-
-    const orphaned: string[] = [];
-
-    for (const [importPath, importers] of importMap) {
-        const wasOnlyUsedByRemoved = [...importers].every(c => removedComponents.includes(c));
-        if (!wasOnlyUsedByRemoved) continue;
-
-        const isComposable = importPath.includes('/composables/');
-        const isLocale = importPath.includes('/locales/');
-        const isDirective = importPath.includes('/directives/');
-        const isUtils = importPath.includes('/lib/') && !importPath.endsWith('/utils');
-
-        if (!isComposable && !isLocale && !isDirective && !isUtils) continue;
-
-        let resolvedPath: string | null = null;
-        const fileName = importPath.split('/').pop() ?? '';
-
-        if (isComposable && await fs.pathExists(composablesPath)) {
-            resolvedPath = await resolveScriptFile(composablesPath, fileName);
-        }
-
-        if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
-            resolvedPath = await resolveScriptFile(localesPath, fileName);
-        }
-
-        if (!resolvedPath && isDirective && await fs.pathExists(directivesPath)) {
-            resolvedPath = await resolveScriptFile(directivesPath, fileName);
-        }
-
-        if (!resolvedPath && isUtils && await fs.pathExists(utilsPath)) {
-            resolvedPath = await resolveScriptFile(utilsPath, fileName);
-        }
-
-        if (resolvedPath) {
-            orphaned.push(resolvedPath);
-        }
-    }
-
-    return [...new Set(orphaned)];
-}
-
-async function getDependents(
-    cwd: string,
-    config: BrutalistConfig,
-    componentsToRemove: string[],
-    manifest: BrutxManifest | null
-): Promise<Map<string, string[]>> {
-    const dependents = new Map<string, string[]>();
-    const installed = await getInstalledComponentNames(cwd, config);
-    const remaining = installed.filter(c => !componentsToRemove.includes(c));
-
-    for (const name of componentsToRemove) {
-        for (const other of remaining) {
-            try {
-                const otherItem: RegistryItem = await getItem(other, manifest?.components[other]?.registrySource);
-                if (otherItem.registryDependencies?.includes(name)) {
-                    if (!dependents.has(name)) {
-                        dependents.set(name, []);
-                    }
-                    dependents.get(name)!.push(other);
-                }
-            } catch {
-                // skip if registry item not found
-            }
-        }
-    }
-
-    return dependents;
+    return [];
 }
 
 export async function remove(components: string[], options: RemoveOptions): Promise<void> {
@@ -209,56 +38,41 @@ export async function remove(components: string[], options: RemoveOptions): Prom
     }
 
     const manifest = await readManifest(cwd).catch(() => null);
-    const installed = await getInstalledComponentNames(cwd, config);
-    const toRemove = components.filter(c => installed.includes(c));
-    const notFound = components.filter(c => !installed.includes(c));
+    const removal = await prepareRemoveComponents(cwd, config, components, manifest);
 
-    if (notFound.length > 0) {
-        logger.warn(`Component(s) not installed: ${notFound.join(', ')}`);
+    if (removal.notFound.length > 0) {
+        logger.warn(`Component(s) not installed: ${removal.notFound.join(', ')}`);
     }
 
-    if (toRemove.length === 0) {
+    if (removal.toRemove.length === 0) {
         logger.info('No components to remove.');
         return;
     }
 
-    const dependents = await getDependents(cwd, config, toRemove, manifest);
-
-    if (dependents.size > 0) {
+    if (removal.dependents.size > 0) {
         logger.newLine();
-        for (const [comp, deps] of dependents) {
+        for (const [comp, deps] of removal.dependents) {
             logger.warn(`Warning: ${deps.join(', ')} depends on ${comp}`);
         }
         logger.newLine();
     }
-
-    const remaining = installed.filter(c => !toRemove.includes(c));
-    const orphanedFiles = [
-        ...new Set([
-            ...await findOrphanedFiles(cwd, config, remaining, toRemove),
-            ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining),
-        ]),
-    ];
 
     if (options.dryRun) {
         logger.newLine();
         logger.bold('[Dry Run] Would remove:');
         logger.newLine();
 
-        for (const comp of toRemove) {
-            const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-            const componentPath = path.join(componentsPath, comp);
-            if (await fs.pathExists(componentPath)) {
-                const entries = await fs.readdir(componentPath, { withFileTypes: true });
-                const fileCount = entries.filter(e => e.isFile()).length;
+        for (const comp of removal.toRemove) {
+            const fileCount = await countComponentFiles(cwd, config, comp);
+            if (fileCount !== null) {
                 logger.log(`  ${chalk.red('●')} ${comp} (${fileCount} file${fileCount !== 1 ? 's' : ''})`);
             }
         }
 
-        if (orphanedFiles.length > 0) {
+        if (removal.orphanedFiles.length > 0) {
             logger.newLine();
             logger.log(`  ${chalk.yellow('Orphaned files:')}`);
-            for (const f of orphanedFiles) {
+            for (const f of removal.orphanedFiles) {
                 logger.log(`    ${chalk.dim(f)}`);
             }
         }
@@ -269,7 +83,7 @@ export async function remove(components: string[], options: RemoveOptions): Prom
 
     if (!options.yes) {
         const confirmed = await confirm({
-            message: `Remove ${toRemove.length} component(s): ${toRemove.join(', ')}?`,
+            message: `Remove ${removal.toRemove.length} component(s): ${removal.toRemove.join(', ')}?`,
             default: false,
         });
 
@@ -279,52 +93,34 @@ export async function remove(components: string[], options: RemoveOptions): Prom
         }
     }
 
-    const transaction = new FileTransaction();
+    let removeOrphaned = true;
+    if (removal.orphanedFiles.length > 0 && !options.yes) {
+        removeOrphaned = await confirm({
+            message: `Remove ${removal.orphanedFiles.length} orphaned file(s) no longer referenced by any component?`,
+            default: true,
+        });
+    }
+
     let totalRemoved = 0;
     let orphanedRemoved = 0;
 
     try {
-        for (const comp of toRemove) {
-            const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-            const componentPath = path.join(componentsPath, comp);
-
-            if (await fs.pathExists(componentPath)) {
-                const files = await fs.readdir(componentPath);
-                logger.info(`Removing ${comp} (${files.length} files)...`);
-                await transaction.remove(componentPath);
-                totalRemoved += files.length;
+        const result = await removeComponents(
+            cwd,
+            config,
+            removal.toRemove,
+            removal.orphanedFiles,
+            {
+                removeOrphaned,
+                onRemoveComponent: (componentName, fileCount) => {
+                    logger.info(`Removing ${componentName} (${fileCount} files)...`);
+                },
             }
-        }
-
-        if (orphanedFiles.length > 0) {
-            if (!options.yes) {
-                const removeOrphaned = await confirm({
-                    message: `Remove ${orphanedFiles.length} orphaned file(s) no longer referenced by any component?`,
-                    default: true,
-                });
-
-                if (!removeOrphaned) {
-                    await removeInstalledComponents(cwd, toRemove, { transaction });
-                    await transaction.commit();
-                    logger.info('Keeping orphaned files.');
-                    logger.newLine();
-                    logger.success(`Removed ${totalRemoved} file(s) and 0 orphaned file(s).`);
-                    return;
-                }
-            }
-
-            for (const f of orphanedFiles) {
-                if (await fs.pathExists(f)) {
-                    await transaction.remove(f);
-                    orphanedRemoved++;
-                }
-            }
-        }
-
-        await removeInstalledComponents(cwd, toRemove, { transaction });
-        await transaction.commit();
+        );
+        totalRemoved = result.totalRemoved;
+        orphanedRemoved = result.orphanedRemoved;
     } catch (error) {
-        const rollbackFailures = await transaction.rollback();
+        const rollbackFailures = getRollbackFailures(error);
         if (rollbackFailures.length > 0) {
             logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
         }
@@ -332,6 +128,10 @@ export async function remove(components: string[], options: RemoveOptions): Prom
             code: 'WRITE_FAILED',
             cause: error,
         });
+    }
+
+    if (!removeOrphaned) {
+        logger.info('Keeping orphaned files.');
     }
 
     logger.newLine();
