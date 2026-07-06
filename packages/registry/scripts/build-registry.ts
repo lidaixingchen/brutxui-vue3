@@ -47,6 +47,8 @@ export interface RegistryBuildManifest {
         fileCount: number;
         dependencies: string[];
         registryDependencies: string[];
+        category?: RegistryIndexItem['category'];
+        examples?: string[];
         status?: RegistryIndexItem['status'];
         replacement?: string;
     }>;
@@ -71,6 +73,8 @@ export function buildRegistryManifest(
             fileCount: item.files.length,
             dependencies: [...item.dependencies].sort(),
             registryDependencies: [...item.registryDependencies].sort(),
+            category: item.category,
+            examples: [...(item.examples ?? [])].sort(),
             status: item.status,
             replacement: item.replacement,
         };

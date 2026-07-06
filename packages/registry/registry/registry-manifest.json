@@ -13,7 +13,9 @@
         "@lucide/vue",
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "navigation",
+      "examples": []
     },
     "activity-log-page": {
       "integrity": "sha256-1948c99dcab331af5a9e860ab593ba218400c0c164b7639843322d89a89cde4e",
@@ -26,7 +28,9 @@
         "locale-zh-cn",
         "pagination",
         "table"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "alert": {
       "integrity": "sha256-fa17ce9912bfaed1ca499f4788454b4e118b2240a13a29e75e901e7124f755f7",
@@ -37,7 +41,9 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "feedback",
+      "examples": []
     },
     "alert-dialog": {
       "integrity": "sha256-07d913382f302ecd442848abe1ba13b888a1a7a6c66442127427c09b32039806",
@@ -47,7 +53,9 @@
       ],
       "registryDependencies": [
         "button"
-      ]
+      ],
+      "category": "overlay",
+      "examples": []
     },
     "auth-card": {
       "integrity": "sha256-adb5747d2391f7e8235e093477f1fe486b8af2c0d135a41b3dd034afdbfbc8f7",
@@ -61,7 +69,9 @@
         "input",
         "label",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "avatar": {
       "integrity": "sha256-32f6d0e3c8ff1d8c3cd1254aecf31d2ceaaa1903c190df4f59e43dcf0a472473",
@@ -71,7 +81,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "media",
+      "examples": []
     },
     "backtop": {
       "integrity": "sha256-e941093d1801ec8d0e7ac214c63d682dadc05aa83ca61aa4d0aadc9028d66b37",
@@ -81,7 +93,9 @@
       ],
       "registryDependencies": [
         "button"
-      ]
+      ],
+      "category": "navigation",
+      "examples": []
     },
     "badge": {
       "integrity": "sha256-019ecfef8b26ed208f49ef0a50e1f802dcfbbeb38bf4b82fedee04a637584e0d",
@@ -89,7 +103,9 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "feedback",
+      "examples": []
     },
     "before-after": {
       "integrity": "sha256-2f0787615903ce47e6efd2e62c136faff07a4f64f926d5d1f68d246d64a34f94",
@@ -99,7 +115,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "media",
+      "examples": []
     },
     "blog-card": {
       "integrity": "sha256-ad9d6846e5d73f64222b62e38c89c25f4ef18898712aa86a18426b86a319d72c",
@@ -113,7 +131,9 @@
         "button",
         "card",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "blog-list-page": {
       "integrity": "sha256-c057555c696d8cc9126b094b961d798424478b9060f3a2c4afdfca1247e058a0",
@@ -127,7 +147,9 @@
         "input",
         "locale-zh-cn",
         "pagination"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "breadcrumb": {
       "integrity": "sha256-965fde1c57170c2478542b44038e2ccd62803a7c84e64e9155fe73f983175de4",
@@ -138,7 +160,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "navigation",
+      "examples": []
     },
     "brutalist-hero": {
       "integrity": "sha256-55d906a533c2a4c56a68d9dff71175184cd01e839dddd6c6b60c8f3dd9393814",
@@ -151,7 +175,9 @@
         "button",
         "card",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "button": {
       "integrity": "sha256-96a73215305a03d730aed6e33edcdefb00c7b0661ab43d4ffde5fe0bea34c8d0",
@@ -162,7 +188,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "action",
+      "examples": []
     },
     "calendar": {
       "integrity": "sha256-46344cb78e072dfd78123ef338af4fc9759221509085c07b5a7ed4e217b037ef",
@@ -173,13 +201,17 @@
       ],
       "registryDependencies": [
         "tooltip"
-      ]
+      ],
+      "category": "data-display",
+      "examples": []
     },
     "card": {
       "integrity": "sha256-d340ac68167d967573a463738a04aaa2500b784e9669f781ad7a391a4335641c",
       "fileCount": 8,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "layout",
+      "examples": []
     },
     "card-3d": {
       "integrity": "sha256-7fca0a7225b7295a7f0f2b0bf6cf135283075daacfae7fee8b12df8ddb8f3688",
@@ -187,7 +219,9 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "carousel": {
       "integrity": "sha256-8c4865d2a21859e9cfc44562215492fa2df5e9dca358f5df2d3506bfd24e0f8c",
@@ -199,7 +233,9 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "media",
+      "examples": []
     },
     "cascader": {
       "integrity": "sha256-9ba990772833d651724e3de0baf3cf6724c6e4ebc7bffd6b08d79b8d3608ab34",
@@ -212,7 +248,9 @@
         "checkbox",
         "locale-zh-cn",
         "popover"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "chart-section": {
       "integrity": "sha256-08041bc5036a7340e8676f427a413d78fd6fca52ea9eec29393fa41270fe5824",
@@ -227,7 +265,9 @@
         "locale-zh-cn",
         "sketchy-chart",
         "tabs"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "chat-bubble": {
       "integrity": "sha256-54b43803af60f2bdc763139dbef5e4a3bd0462217345489946ba540ae1458daa",
@@ -236,7 +276,9 @@
         "@lucide/vue",
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "feedback",
+      "examples": []
     },
     "checkbox": {
       "integrity": "sha256-f016ba4a1b44277b7ccd25cc0ebc3d607fadcf34fe648e147ebc2b8dfe2aabb2",
@@ -247,7 +289,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "code-block": {
       "integrity": "sha256-957adb63f42b264397360fcccbbcd5ef0e97027c4ffdb51d820e9e1bb78eaee9",
@@ -260,7 +304,9 @@
         "button",
         "copy-to-clipboard",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "data-display",
+      "examples": []
     },
     "color-mode-switcher": {
       "integrity": "sha256-bab9314e268bf1a1a26a17e89a9cb17e7fa32ba363c78cef2b21bd60a254ea18",
@@ -272,7 +318,9 @@
         "button",
         "locale-zh-cn",
         "select"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "color-picker": {
       "integrity": "sha256-9953ecded8838fece9802c563b9f578a3a1d9b2a682e7d5644304ab563cb16f2",
@@ -285,7 +333,9 @@
         "button",
         "locale-zh-cn",
         "popover"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "combobox": {
       "integrity": "sha256-c6238bd6fc04d8770e1adfb89c6d371028e5259271ac35ac351f67a492d190c9",
@@ -300,7 +350,9 @@
         "locale-zh-cn",
         "popover",
         "spinner"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "command": {
       "integrity": "sha256-3fa3cc32f5f8e5c3aa99e758c98bfd6567b133ee8af8f58253cd6dc64223e77e",
@@ -311,7 +363,9 @@
       "registryDependencies": [
         "dialog",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "overlay",
+      "examples": []
     },
     "cookie-consent": {
       "integrity": "sha256-6546322222c4f700281215493371eedd64f6c52b70c62398d4d7962fb6ae5d6f",
@@ -323,7 +377,9 @@
         "button",
         "card",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "copy-to-clipboard": {
       "integrity": "sha256-63ccae04ae2bc0b0c8289cb9fb280e79ed9768bd401de6195b80f402b97fcca2",
@@ -333,13 +389,17 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "counter": {
       "integrity": "sha256-0c6b9bccfb99e0b1b6d4ae4c0ed1c80a1053ad61bd529ce96bb9d1336992bf5b",
       "fileCount": 4,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "data-display",
+      "examples": []
     },
     "dashboard-shell": {
       "integrity": "sha256-0290d91480cb7d0fd53384f5b0fd2ba5a9c1f06c9245292bb359e4d8b3829f42",
@@ -350,7 +410,9 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "dashboard-stats": {
       "integrity": "sha256-f20da4513712ff29e2bae4ae4c07903736ba9333ecb7b30a333973da7372acd4",
@@ -363,7 +425,9 @@
         "card",
         "empty-state",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "data-table": {
       "integrity": "sha256-5af281ee2b2e6dfedb0b69b454cd3a1131c8e4b5cd8e3247b32ee1f1538ab47f",
@@ -378,7 +442,9 @@
         "locale-zh-cn",
         "select",
         "virtual-scroll"
-      ]
+      ],
+      "category": "data-display",
+      "examples": []
     },
     "date-picker": {
       "integrity": "sha256-6a8db1569044d61d03075b82587081692cf4785532998c79da0e9e9bd147354c",
@@ -393,13 +459,17 @@
         "locale-zh-cn",
         "popover",
         "select"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "descriptions": {
       "integrity": "sha256-a11a2fd79e31f5fcbec54a289634b56aa667132dc5fc962050cf8a998c2577fb",
       "fileCount": 2,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "data-display",
+      "examples": []
     },
     "dialog": {
       "integrity": "sha256-d7e3117fc64615f363a71f11e4ea1f9eec0633046f84ce5b750e6dddb7b369f1",
@@ -412,7 +482,9 @@
         "button",
         "input",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "overlay",
+      "examples": []
     },
     "dropdown-menu": {
       "integrity": "sha256-824b55186246653d9bb2b4828e33cbdb3bb3c122a2970c99823ebbb00c897a80",
@@ -421,7 +493,9 @@
         "@lucide/vue",
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "overlay",
+      "examples": []
     },
     "empty-state": {
       "integrity": "sha256-5d23c70a122058ff269f533576200c0dea0648b144345a5630c9d30a06145093",
@@ -432,7 +506,9 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "faq-section": {
       "integrity": "sha256-eec1fad429d857e9301aafa59cf2b987e475a62ab96bbe7ad6c2ac871c0fe9ad",
@@ -446,7 +522,9 @@
         "card",
         "empty-state",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "feedback-form": {
       "integrity": "sha256-f93e16ac0f0fd656c5bdd7e56fc3f6bd7d39a062cdf5243866b91cfd6608bce4",
@@ -462,7 +540,9 @@
         "locale-zh-cn",
         "result",
         "textarea"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "file-card": {
       "integrity": "sha256-8b69906708b1e381f2e0b4f9e607166f07e9a65211e2b90653e9e206672d66c9",
@@ -475,7 +555,9 @@
         "button",
         "card",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "footer-section": {
       "integrity": "sha256-10fb3c4966d246a00854c3d706c82c88e072b1581476d6f5923a294e68e74f45",
@@ -487,7 +569,9 @@
         "button",
         "locale-zh-cn",
         "separator"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "form": {
       "integrity": "sha256-6a6658b4a76ec09d9b4e0f08834876b81206821a9cf611e3e0c3f045f34e4463",
@@ -501,7 +585,9 @@
         "label",
         "locale-zh-cn",
         "stepper"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "gallery-section": {
       "integrity": "sha256-6be7c7a40c35fa8e515460f489e15cf494fd65a345471ccaf2da2061fb2a3e2d",
@@ -514,7 +600,9 @@
         "card",
         "carousel",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "glitch-button": {
       "integrity": "sha256-c7d9120b701d548e881d1c9a753ba74f1f9d66cfac380d50d2216dc843dad051",
@@ -524,13 +612,17 @@
       ],
       "registryDependencies": [
         "button"
-      ]
+      ],
+      "category": "visual-effect",
+      "examples": []
     },
     "glitch-text": {
       "integrity": "sha256-8a21ef68d5f2ffd0a8e3dba95ab757cd6aec73a0ea78927ace927bb13bc445f8",
       "fileCount": 6,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "visual-effect",
+      "examples": []
     },
     "hardcore-input": {
       "integrity": "sha256-0ac7b2cf5a47029704209edc56b78d5a42dfddb7abff3e1e7d71b038d38bd96c",
@@ -540,7 +632,9 @@
         "form",
         "input",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "header-section": {
       "integrity": "sha256-fc623177147b39ced122f10a0822c9c90d1385c33b64611d7ab37ed3e03be9b9",
@@ -554,7 +648,9 @@
         "locale-zh-cn",
         "separator",
         "sheet"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "image": {
       "integrity": "sha256-aa255675101e072634367e9a273b029a14cb75661df88681fcfe94d675746463",
@@ -563,13 +659,17 @@
         "@lucide/vue",
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "media",
+      "examples": []
     },
     "infinite-scroll": {
       "integrity": "sha256-9320dcebb52a6e5ba59513d5ce97e871a887332e50c6a27ebb01ff0f0c7a22ed",
       "fileCount": 4,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "utility",
+      "examples": []
     },
     "input": {
       "integrity": "sha256-2127770ea32ff7dfd85156fd6d098572ce188e5baa9cd7c6ccd872805dfe782d",
@@ -577,13 +677,17 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "input-adornment": {
       "integrity": "sha256-761d44802d9c8aef021ea315f41269056cac86a44c2b16ec9b131d6eb0170b06",
       "fileCount": 1,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "form",
+      "examples": []
     },
     "kanban": {
       "integrity": "sha256-0b2c932603d0a99e12bceffce5951bb3ffdf7a993f4839616aa492ff30d3eb15",
@@ -594,13 +698,17 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "kbd": {
       "integrity": "sha256-63839fb061e0036337d33b8158a763e458f52b854aa9866b85d417e55a63f669",
       "fileCount": 3,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "utility",
+      "examples": []
     },
     "label": {
       "integrity": "sha256-feb41e154e6931801ad88e6285674cace19892ef86621c8a506e830c39b6c2d9",
@@ -608,7 +716,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "form",
+      "examples": []
     },
     "loading": {
       "integrity": "sha256-c406b6b8f4dd7dc1e8d3078d8b3c5c1c7172b6ac02927dc2a416daa5dd96dd07",
@@ -618,19 +728,24 @@
         "progress",
         "skeleton",
         "spinner"
-      ]
+      ],
+      "category": "feedback",
+      "examples": []
     },
     "locale-zh-cn": {
       "integrity": "sha256-ad15eaed4baa4caf9cc5f1497f53d6018b5cf3356e7d51acd987d75e2097223f",
       "fileCount": 2,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "examples": []
     },
     "marquee": {
       "integrity": "sha256-66e58b93d916ff7a9f602a70f9bcb6b5a88032935f2a6fd29aebc6f098fba49b",
       "fileCount": 4,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "visual-effect",
+      "examples": []
     },
     "menu": {
       "integrity": "sha256-e193e96915560fd9d95824cb2865d93aa1c951c130b48c12d5dde61a851de73d",
@@ -638,7 +753,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "navigation",
+      "examples": []
     },
     "message": {
       "integrity": "sha256-0c2e9b13c0aa680f5d82841d0d8bee75e2e84a00f4a0bfe29858ef99591f9e4f",
@@ -649,13 +766,17 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "feedback",
+      "examples": []
     },
     "noise-background": {
       "integrity": "sha256-7f960c65270ed5075b58ddbdd32c94ae3505139ac4590b4d4438fb2ff1af8c12",
       "fileCount": 4,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "visual-effect",
+      "examples": []
     },
     "not-found-page": {
       "integrity": "sha256-81c45a52be8bd9336bcc3ebb79e056d637e0c7c9bd2ae3683b180c491b75da48",
@@ -668,7 +789,9 @@
         "card",
         "glitch-text",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "number-input": {
       "integrity": "sha256-966574a2c3f5b1dbd9df66ac9ee68a11ccb9fd060d4aac6d4c628a2605457380",
@@ -680,7 +803,9 @@
       "registryDependencies": [
         "input",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "overview-page": {
       "integrity": "sha256-88a9e8aea40191521b4985bbb8035a28d840c848b6f0371e29b15e5b08c4b440",
@@ -693,7 +818,9 @@
         "dashboard-stats",
         "empty-state",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "pagination": {
       "integrity": "sha256-44bd5322a18a543ef660acfdebd8a9adf927cf03ae2e2d29b2eab7a6002f4f8d",
@@ -705,7 +832,9 @@
         "input",
         "locale-zh-cn",
         "select"
-      ]
+      ],
+      "category": "navigation",
+      "examples": []
     },
     "popconfirm": {
       "integrity": "sha256-b996e8857e71ec0cda190a328a75bfbc41380082bec4fda136a961c200a37add",
@@ -715,7 +844,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "overlay",
+      "examples": []
     },
     "popover": {
       "integrity": "sha256-95243274809f3e912befb7d2f31d938a22296581b6481dba355fbe4099ef767c",
@@ -723,7 +854,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "overlay",
+      "examples": []
     },
     "pricing-section": {
       "integrity": "sha256-2fa636a0b3cf7ff3f99513dbbc39a3f86936f2fef8e671c96874056ab6ad4ac7",
@@ -737,7 +870,9 @@
         "card",
         "empty-state",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "marketing",
+      "examples": []
     },
     "profile-page": {
       "integrity": "sha256-8bf86c22aa7b191c87d4bdcbb22bb6c8d96ed2f4f80421342b4999d8de6bd748",
@@ -753,7 +888,9 @@
         "label",
         "locale-zh-cn",
         "textarea"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "progress": {
       "integrity": "sha256-4f25faa6f05c7c1470c042618733530fa59b074aaaaba6768690432eac05c9b9",
@@ -761,7 +898,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "feedback",
+      "examples": []
     },
     "quick-actions": {
       "integrity": "sha256-ae52f638a103beba6aa6e0a43f96f4dfdf7a51f60e7c599a26a7111d50eac17d",
@@ -775,7 +914,9 @@
         "card",
         "empty-state",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "radio-group": {
       "integrity": "sha256-e2083937f5d4b2b0b5663481bb08343c1a247115770ffc82d123f8a4c3d0eb47",
@@ -784,7 +925,9 @@
         "@lucide/vue",
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "form",
+      "examples": []
     },
     "rate": {
       "integrity": "sha256-315b92e9db013f36861e1dd44eb8bb5ec4abc908695206c33bd0def7167aec49",
@@ -792,7 +935,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "form",
+      "examples": []
     },
     "result": {
       "integrity": "sha256-09e8f88ddbcb2c211a3688b6a397ea42357e91995f5c53fd747e153c0ccb63d3",
@@ -800,7 +945,9 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "feedback",
+      "examples": []
     },
     "scratch-card": {
       "integrity": "sha256-162bf89d9ce90df4637d23f39b5b849e46145048ce32f1a74b074eda439d44f8",
@@ -808,7 +955,9 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "scroll-area": {
       "integrity": "sha256-bbaa7b4bf3cbe428eb2dffb754fe7c297525f9ba3f6912dc0cfd1b8b89753d28",
@@ -816,7 +965,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "layout",
+      "examples": []
     },
     "search-widget": {
       "integrity": "sha256-4af1e71cda278782c36e69fc9b970bc048c079a02ac298c0d892eb133bdd0fbb",
@@ -829,7 +980,9 @@
         "command",
         "locale-zh-cn",
         "spinner"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "select": {
       "integrity": "sha256-84a3a31445305aee070fc3415737445f357c0eba0b323dea107e0866b3ce9c60",
@@ -838,7 +991,9 @@
         "@lucide/vue",
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "form",
+      "examples": []
     },
     "separator": {
       "integrity": "sha256-6b04bc1a75b205a0ddced988f766332e313b576135e13746cc7725a96690fde4",
@@ -846,7 +1001,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "layout",
+      "examples": []
     },
     "settings-page": {
       "integrity": "sha256-d570ee12f03f3d2095bf60d812afd1fb44a36e6d06636431b50df9ea240dbe0a",
@@ -865,7 +1022,9 @@
         "separator",
         "switch",
         "tabs"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "sheet": {
       "integrity": "sha256-e870e494b2f95f2247286c087641c1292d7161486a74688936e7958093899414",
@@ -876,13 +1035,17 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "overlay",
+      "examples": []
     },
     "skeleton": {
       "integrity": "sha256-8bf41a92e0248f1b7f04274586f6144f17f2fd8a531f9d4036307593a2679e54",
       "fileCount": 6,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "feedback",
+      "examples": []
     },
     "sketchy-chart": {
       "integrity": "sha256-28591e56f3127cb7e442a523f4716c416f4aa4946517e0af5218cf26ca2fe620",
@@ -890,7 +1053,9 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "slider": {
       "integrity": "sha256-b2b45d1f44ce3616778d4338895dbd4bbc094c6cda1f497eb82e781d1e0e2435",
@@ -898,7 +1063,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "form",
+      "examples": []
     },
     "spinner": {
       "integrity": "sha256-f883a757ce3d55934547c534d68555be9938b9205a42dc2eba6cecd3ab475d92",
@@ -906,7 +1073,9 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "feedback",
+      "examples": []
     },
     "stepper": {
       "integrity": "sha256-359a5ae53b0deeb2f1f06c56a3230f06e876016ab87f3efa56dad0eacf7ca209",
@@ -916,7 +1085,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "navigation",
+      "examples": []
     },
     "switch": {
       "integrity": "sha256-c9f2166ec214356b256800ec3997d45e0e785fb45d1b0f12d895f3409b71b2e6",
@@ -926,13 +1097,17 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "table": {
       "integrity": "sha256-59d7db2b0f1711debe3e38751ea8589ca42ab896c8ea62216b12c2fb7f37cf7a",
       "fileCount": 9,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "data-display",
+      "examples": []
     },
     "tabs": {
       "integrity": "sha256-74f1abe9211ef012d20e2806764a38cec85d1cb258ff5cea901e65b6eee8eb4a",
@@ -942,7 +1117,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "navigation",
+      "examples": []
     },
     "tags-input": {
       "integrity": "sha256-bb452bfaeca16002ece1ab47afbd4fb02a48cb3b0bc428180689fc61c36074b0",
@@ -953,7 +1130,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "testimonial-card": {
       "integrity": "sha256-890ac027596c95185fe1bbaf8c05995889ec992dea40de392ff2de1b54b67b93",
@@ -966,7 +1145,9 @@
         "badge",
         "card",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "layout",
+      "examples": []
     },
     "textarea": {
       "integrity": "sha256-94cc5a6ada54a86a64c88a622adb49990d3ad258281a534d78bc74652ac44de5",
@@ -975,7 +1156,9 @@
       "registryDependencies": [
         "input",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "timeline": {
       "integrity": "sha256-4a8f4e252cf16f99dca4804f1e3cc8764768bbca6e6fe0a3401782f942141fc5",
@@ -986,7 +1169,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "toast": {
       "integrity": "sha256-8439f251371d1d434cc276ae3d81950adb9bf83fa1db6984dceaff3ab4dae9e0",
@@ -997,7 +1182,9 @@
       "registryDependencies": [
         "button",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "feedback",
+      "examples": []
     },
     "toggle": {
       "integrity": "sha256-a26e97f8bee4b8e16d822f3f3234222437c8373421aad927799c0850a8f7fd96",
@@ -1005,7 +1192,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "action",
+      "examples": []
     },
     "toggle-group": {
       "integrity": "sha256-5d207bfd03f81f01ae80eb86eba63599eb01fd4f2920d2681aaca99096c7704d",
@@ -1015,7 +1204,9 @@
       ],
       "registryDependencies": [
         "toggle"
-      ]
+      ],
+      "category": "action",
+      "examples": []
     },
     "tooltip": {
       "integrity": "sha256-8037d28bd943b72cac53d191266174f3de7ca2111c21bf935dbee253a19a39c3",
@@ -1023,7 +1214,9 @@
       "dependencies": [
         "reka-ui"
       ],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "overlay",
+      "examples": []
     },
     "tour": {
       "integrity": "sha256-0a1dd45bca87b10cfaf4ca0f1f19a7ac4e7a9adde9d08ddbde327fd1260ccb66",
@@ -1031,7 +1224,9 @@
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "overlay",
+      "examples": []
     },
     "transfer": {
       "integrity": "sha256-ce775d67d9456b87d49568a5ec5e4dd01917d70f1d756f911ffcdfab790d46ae",
@@ -1045,7 +1240,9 @@
         "checkbox",
         "input",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "tree-select": {
       "integrity": "sha256-2bc4f376b9fc65f649a5019a9c4b14ee358cd42c1f3146610bee55a280f3a6c8",
@@ -1058,7 +1255,9 @@
         "input",
         "locale-zh-cn",
         "popover"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "tree-view": {
       "integrity": "sha256-a7c14bec45bf013403c382e49c4b46709601f83867def2381a6496d9e5a25442",
@@ -1070,13 +1269,17 @@
       "registryDependencies": [
         "checkbox",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "navigation",
+      "examples": []
     },
     "typewriter-text": {
       "integrity": "sha256-90fa35757f5c6ea4b34e708f91976b04e0bcf8eef967707267562ed302201ece",
       "fileCount": 4,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "visual-effect",
+      "examples": []
     },
     "upload": {
       "integrity": "sha256-8530018bab74c38aeaaef0071b9ae1ef6e73e7d23674d55f88bb6f66146a361f",
@@ -1086,7 +1289,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "form",
+      "examples": []
     },
     "virtual-scroll": {
       "integrity": "sha256-8bc15bec2682d5b1e3c9007fa51a82d75990c6b65c53a2afee60e49af557632e",
@@ -1096,7 +1301,9 @@
       ],
       "registryDependencies": [
         "locale-zh-cn"
-      ]
+      ],
+      "category": "utility",
+      "examples": []
     },
     "waitlist-page": {
       "integrity": "sha256-df9eb9437167a9a8bacfd8cff6baf3922a50da244ccd751bba55c70703989db1",
@@ -1109,13 +1316,17 @@
         "button",
         "input",
         "locale-zh-cn"
-      ]
+      ],
+      "category": "page",
+      "examples": []
     },
     "watermark": {
       "integrity": "sha256-147d4a83ee0bc741ee00ead9f27ac7ade64fcdbd159f29df988e6e3584449f00",
       "fileCount": 2,
       "dependencies": [],
-      "registryDependencies": []
+      "registryDependencies": [],
+      "category": "utility",
+      "examples": []
     }
   }
 }

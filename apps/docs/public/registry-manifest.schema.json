@@ -85,6 +85,30 @@
                     },
                     "uniqueItems": true
                 },
+                "category": {
+                    "enum": [
+                        "action",
+                        "data-display",
+                        "feedback",
+                        "form",
+                        "layout",
+                        "marketing",
+                        "media",
+                        "navigation",
+                        "overlay",
+                        "page",
+                        "utility",
+                        "visual-effect"
+                    ]
+                },
+                "examples": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "uniqueItems": true
+                },
                 "status": {
                     "enum": [
                         "stable",

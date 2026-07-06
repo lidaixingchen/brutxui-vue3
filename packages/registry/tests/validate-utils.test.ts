@@ -57,6 +57,8 @@ describe('validate-registry helpers', () => {
                     fileCount: 1,
                     dependencies: [],
                     registryDependencies: [],
+                    category: 'action',
+                    examples: [],
                     status: 'stable',
                 },
                 dialog: {
@@ -64,6 +66,8 @@ describe('validate-registry helpers', () => {
                     fileCount: 2,
                     dependencies: ['reka-ui', '@vueuse/core'],
                     registryDependencies: ['button'],
+                    category: 'overlay',
+                    examples: ['dialog-demo'],
                     status: 'deprecated',
                     replacement: 'modal',
                 },
@@ -74,6 +78,8 @@ describe('validate-registry helpers', () => {
                 fileCount: 1,
                 dependencies: [],
                 registryDependencies: [],
+                category: 'action',
+                examples: [],
                 status: 'stable',
             }),
             createIndexItem('dialog', {
@@ -81,6 +87,8 @@ describe('validate-registry helpers', () => {
                 fileCount: 2,
                 dependencies: ['@vueuse/core', 'reka-ui'],
                 registryDependencies: ['button'],
+                category: 'overlay',
+                examples: ['dialog-demo'],
                 status: 'deprecated',
                 replacement: 'modal',
             }),
@@ -123,6 +131,8 @@ describe('validate-registry helpers', () => {
                     fileCount: 1,
                     dependencies: ['old-dep'],
                     registryDependencies: ['old-component'],
+                    category: 'layout',
+                    examples: ['old-example'],
                     status: 'stable',
                     replacement: 'legacy-dialog',
                 },
@@ -133,6 +143,8 @@ describe('validate-registry helpers', () => {
                 fileCount: 2,
                 dependencies: ['new-dep'],
                 registryDependencies: ['button'],
+                category: 'overlay',
+                examples: ['dialog-demo'],
                 status: 'deprecated',
                 replacement: 'modal',
             }),
@@ -141,6 +153,8 @@ describe('validate-registry helpers', () => {
             'item "dialog" fileCount 1 does not match index file count 2',
             'item "dialog" dependencies mismatch',
             'item "dialog" registryDependencies mismatch',
+            'item "dialog" examples mismatch',
+            'item "dialog" category mismatch',
             'item "dialog" status mismatch',
             'item "dialog" replacement mismatch',
         ])
@@ -154,6 +168,8 @@ function createIndexItem(
         fileCount: number
         dependencies?: string[]
         registryDependencies?: string[]
+        category?: RegistryIndexItem['category']
+        examples?: string[]
         status?: RegistryIndexItem['status']
         replacement?: string
     }
@@ -163,6 +179,8 @@ function createIndexItem(
         type: 'registry:component',
         title: name,
         description: `${name} component`,
+        category: overrides.category,
+        examples: overrides.examples,
         dependencies: overrides.dependencies ?? [],
         registryDependencies: overrides.registryDependencies ?? [],
         files: Array.from({ length: overrides.fileCount }, (_, index) => ({

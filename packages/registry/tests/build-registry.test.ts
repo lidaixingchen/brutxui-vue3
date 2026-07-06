@@ -167,6 +167,8 @@ describe('build-registry helpers', () => {
                     type: 'registry:ui',
                     title: 'Dialog',
                     description: 'Dialog component',
+                    category: 'overlay',
+                    examples: ['dialog-demo', 'dialog-nested'],
                     dependencies: ['z', 'a'],
                     registryDependencies: ['button'],
                     files: [
@@ -182,6 +184,8 @@ describe('build-registry helpers', () => {
                     type: 'registry:ui',
                     title: 'Button',
                     description: 'Button component',
+                    category: 'action',
+                    examples: [],
                     status: 'legacy',
                     replacement: 'button-next',
                     dependencies: [],
@@ -212,6 +216,8 @@ describe('build-registry helpers', () => {
                 button: {
                     integrity: 'sha256-button',
                     fileCount: 1,
+                    category: 'action',
+                    examples: [],
                     status: 'legacy',
                     replacement: 'button-next',
                 },
@@ -220,6 +226,8 @@ describe('build-registry helpers', () => {
                     fileCount: 2,
                     dependencies: ['a', 'z'],
                     registryDependencies: ['button'],
+                    category: 'overlay',
+                    examples: ['dialog-demo', 'dialog-nested'],
                 },
             },
         });

@@ -15,6 +15,8 @@ export interface RegistryBuildManifestItem {
     fileCount: number
     dependencies: string[]
     registryDependencies: string[]
+    category?: RegistryIndexItem['category']
+    examples?: string[]
     status?: RegistryIndexItem['status']
     replacement?: string
 }
@@ -126,6 +128,11 @@ export function validateRegistryManifestConsistency(
 
         compareStringArrays(errors, item.name, 'dependencies', manifestItem.dependencies, item.dependencies)
         compareStringArrays(errors, item.name, 'registryDependencies', manifestItem.registryDependencies, item.registryDependencies)
+        compareStringArrays(errors, item.name, 'examples', manifestItem.examples ?? [], item.examples ?? [])
+
+        if (manifestItem.category !== item.category) {
+            errors.push(`item "${item.name}" category mismatch`)
+        }
 
         if (manifestItem.status !== item.status) {
             errors.push(`item "${item.name}" status mismatch`)
@@ -148,7 +155,7 @@ export function validateRegistryManifestConsistency(
 function compareStringArrays(
     errors: string[],
     itemName: string,
-    fieldName: 'dependencies' | 'registryDependencies',
+    fieldName: 'dependencies' | 'registryDependencies' | 'examples',
     manifestValues: string[],
     indexValues: string[]
 ): void {
