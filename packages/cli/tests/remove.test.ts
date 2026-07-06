@@ -435,6 +435,49 @@ describe('remove command', () => {
             expect(warnMessages.some(m => m.includes('card') && m.includes('depends on') && m.includes('button'))).toBe(true);
         });
 
+        it('should check remaining component dependencies from their installed registry source', async () => {
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+
+            await createComponent('button', {
+                'Button.vue': '<template>btn</template>',
+            });
+            await createComponent('card', {
+                'Card.vue': '<template>card</template>',
+            });
+
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://default.example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                    card: {
+                        name: 'card',
+                        registrySource: 'https://custom.example.test/registry',
+                        integrity: 'sha256-card',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/card/Card.vue'],
+                        dependencies: [],
+                        registryDependencies: ['button'],
+                    },
+                },
+            });
+
+            await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
+
+            expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://custom.example.test/registry');
+            const warnMessages = getLoggedMessages(warnSpy);
+            expect(warnMessages.some(m => m.includes('card') && m.includes('depends on') && m.includes('button'))).toBe(true);
+        });
+
         it('should not warn when no other component depends on the removed component', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 

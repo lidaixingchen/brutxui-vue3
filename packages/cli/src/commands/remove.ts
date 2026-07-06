@@ -167,7 +167,8 @@ async function findOrphanedFiles(
 async function getDependents(
     cwd: string,
     config: BrutalistConfig,
-    componentsToRemove: string[]
+    componentsToRemove: string[],
+    manifest: BrutxManifest | null
 ): Promise<Map<string, string[]>> {
     const dependents = new Map<string, string[]>();
     const installed = await getInstalledComponentNames(cwd, config);
@@ -176,7 +177,7 @@ async function getDependents(
     for (const name of componentsToRemove) {
         for (const other of remaining) {
             try {
-                const otherItem: RegistryItem = await getItem(other);
+                const otherItem: RegistryItem = await getItem(other, manifest?.components[other]?.registrySource);
                 if (otherItem.registryDependencies?.includes(name)) {
                     if (!dependents.has(name)) {
                         dependents.set(name, []);
@@ -221,7 +222,7 @@ export async function remove(components: string[], options: RemoveOptions): Prom
         return;
     }
 
-    const dependents = await getDependents(cwd, config, toRemove);
+    const dependents = await getDependents(cwd, config, toRemove, manifest);
 
     if (dependents.size > 0) {
         logger.newLine();
