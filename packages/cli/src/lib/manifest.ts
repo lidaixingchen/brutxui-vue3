@@ -4,6 +4,20 @@ import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './
 import type { FileTransaction } from './file-transaction.js';
 
 export const MANIFEST_RELATIVE_PATH = '.brutx/manifest.json';
+const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
+    'action',
+    'data-display',
+    'feedback',
+    'form',
+    'layout',
+    'marketing',
+    'media',
+    'navigation',
+    'overlay',
+    'page',
+    'utility',
+    'visual-effect',
+];
 
 export interface InstalledManifestEntryInput {
     item: RegistryItem;
@@ -22,6 +36,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function assertStringArray(value: unknown, field: string): asserts value is string[] {
     if (!Array.isArray(value) || value.some(entry => typeof entry !== 'string')) {
         throw new Error(`Invalid manifest: "${field}" must be an array of strings.`);
+    }
+}
+
+function assertCategory(value: unknown, componentName: string): asserts value is RegistryItem['category'] {
+    if (value !== undefined && (typeof value !== 'string' || !COMPONENT_CATEGORIES.includes(value as NonNullable<RegistryItem['category']>))) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "category" must be one of: ${COMPONENT_CATEGORIES.join(', ')}.`);
     }
 }
 
@@ -52,6 +72,9 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
     assertStringArray(value.files, `${componentName}.files`);
     assertStringArray(value.dependencies, `${componentName}.dependencies`);
     assertStringArray(value.registryDependencies, `${componentName}.registryDependencies`);
+    assertCategory(value.category, componentName);
+    const examples = value.examples ?? [];
+    assertStringArray(examples, `${componentName}.examples`);
 
     const status = value.status;
     if (status !== undefined && status !== 'stable' && status !== 'legacy' && status !== 'deprecated') {
@@ -71,6 +94,8 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         files: value.files,
         dependencies: value.dependencies,
         registryDependencies: value.registryDependencies,
+        category: value.category,
+        examples,
         status,
         replacement,
     };
@@ -162,6 +187,8 @@ export async function updateInstalledComponents(
             files: entry.files.map(file => toPortableRelativePath(cwd, file)).sort(),
             dependencies: [...entry.item.dependencies].sort(),
             registryDependencies: [...entry.item.registryDependencies].sort(),
+            category: entry.item.category,
+            examples: [...(entry.item.examples ?? [])].sort(),
             status: entry.item.status,
             replacement: entry.item.replacement,
         };

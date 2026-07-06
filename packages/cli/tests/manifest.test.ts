@@ -16,6 +16,8 @@ function makeRegistryItem(name: string): RegistryItem {
         type: 'registry:ui',
         title: name,
         description: `${name} component`,
+        category: 'action',
+        examples: [`${name}-demo`],
         dependencies: ['vue', 'reka-ui'],
         registryDependencies: ['primitive'],
         files: [
@@ -66,6 +68,8 @@ describe('install manifest helpers', () => {
             integrity: 'sha256-button',
             dependencies: ['reka-ui', 'vue'],
             registryDependencies: ['primitive'],
+            category: 'action',
+            examples: ['button-demo'],
             status: 'legacy',
             replacement: 'button-next',
         });

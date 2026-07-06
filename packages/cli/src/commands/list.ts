@@ -82,6 +82,8 @@ async function getComponentInfos(cwd: string, config: BrutalistConfig): Promise<
             files,
             fileCount: files.length,
             dependencies: manifestEntry?.dependencies ?? dependencies,
+            category: manifestEntry?.category,
+            examples: manifestEntry?.examples,
             status: manifestEntry?.status,
             replacement: manifestEntry?.replacement,
             registryDependencies: manifestEntry?.registryDependencies,
@@ -115,6 +117,10 @@ function formatStatus(info: InstalledComponentInfo): string {
     return info.replacement ? `${info.status} -> ${info.replacement}` : info.status;
 }
 
+function formatCategory(info: InstalledComponentInfo): string {
+    return info.category ?? 'local';
+}
+
 function printTable(infos: InstalledComponentInfo[]): void {
     logger.newLine();
     logger.bold('Installed Components');
@@ -122,10 +128,11 @@ function printTable(infos: InstalledComponentInfo[]): void {
 
     const nameWidth = Math.max(10, ...infos.map(i => i.name.length)) + 2;
     const filesWidth = 8;
+    const categoryWidth = Math.max(10, ...infos.map(i => formatCategory(i).length)) + 2;
     const statusWidth = Math.max(10, ...infos.map(i => formatStatus(i).length)) + 2;
     const sourceWidth = Math.max(10, ...infos.map(i => formatSource(i.registrySource).length)) + 2;
-    const header = `  ${'Name'.padEnd(nameWidth)}${'Files'.padEnd(filesWidth)}${'Status'.padEnd(statusWidth)}${'Source'.padEnd(sourceWidth)}Dependencies`;
-    const separator = `  ${'─'.repeat(nameWidth)}${'─'.repeat(filesWidth)}${'─'.repeat(statusWidth)}${'─'.repeat(sourceWidth)}${'─'.repeat(20)}`;
+    const header = `  ${'Name'.padEnd(nameWidth)}${'Files'.padEnd(filesWidth)}${'Category'.padEnd(categoryWidth)}${'Status'.padEnd(statusWidth)}${'Source'.padEnd(sourceWidth)}Dependencies`;
+    const separator = `  ${'─'.repeat(nameWidth)}${'─'.repeat(filesWidth)}${'─'.repeat(categoryWidth)}${'─'.repeat(statusWidth)}${'─'.repeat(sourceWidth)}${'─'.repeat(20)}`;
 
     logger.log(header);
     logger.log(separator);
@@ -136,9 +143,11 @@ function printTable(infos: InstalledComponentInfo[]): void {
             : chalk.dim('none');
         const source = formatSource(info.registrySource);
         const sourceStr = info.registrySource ? source : chalk.dim(source);
+        const category = formatCategory(info);
+        const categoryStr = info.category ? category : chalk.dim(category);
         const status = formatStatus(info);
         const statusStr = info.status && info.status !== 'stable' ? chalk.yellow(status) : status;
-        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${statusStr.padEnd(statusWidth)}${sourceStr.padEnd(sourceWidth)}${depsStr}`);
+        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${categoryStr.padEnd(categoryWidth)}${statusStr.padEnd(statusWidth)}${sourceStr.padEnd(sourceWidth)}${depsStr}`);
     }
 
     logger.newLine();

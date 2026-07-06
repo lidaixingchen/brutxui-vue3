@@ -120,6 +120,8 @@ export interface InstalledComponentInfo {
     files: string[];
     fileCount: number;
     dependencies: string[];
+    category?: RegistryItem['category'];
+    examples?: string[];
     status?: RegistryItem['status'];
     replacement?: string;
     registryDependencies?: string[];
@@ -143,6 +145,8 @@ export interface InstalledComponentManifest {
     files: string[];
     dependencies: string[];
     registryDependencies: string[];
+    category?: RegistryItem['category'];
+    examples: string[];
     status?: RegistryItem['status'];
     replacement?: string;
 }

@@ -177,6 +177,8 @@ describe('list command', () => {
                         files: ['src/components/button/Button.vue'],
                         dependencies: ['vue'],
                         registryDependencies: ['primitive'],
+                        category: 'action',
+                        examples: ['button-demo'],
                         status: 'legacy',
                         replacement: 'button-next',
                     },
@@ -192,6 +194,8 @@ describe('list command', () => {
             expect(button.installedAt).toBe('2026-07-07T00:00:00.000Z');
             expect(button.dependencies).toEqual(['vue']);
             expect(button.registryDependencies).toEqual(['primitive']);
+            expect(button.category).toBe('action');
+            expect(button.examples).toEqual(['button-demo']);
             expect(button.manifestFiles).toEqual(['src/components/button/Button.vue']);
             expect(button.status).toBe('legacy');
             expect(button.replacement).toBe('button-next');
@@ -460,6 +464,8 @@ import { DialogTrigger } from 'reka-ui';
                         files: ['src/components/button/Button.vue'],
                         dependencies: [],
                         registryDependencies: [],
+                        category: 'action',
+                        examples: [],
                     },
                 },
             });
@@ -474,6 +480,7 @@ import { DialogTrigger } from 'reka-ui';
             consoleSpy.mockRestore();
 
             expect(output.join('\n')).toContain('example.test');
+            expect(output.join('\n')).toContain('action');
         });
     });
 });
