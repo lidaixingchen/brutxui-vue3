@@ -28,6 +28,8 @@ function makeRegistryItem(name: string): RegistryItem {
         tailwind: {},
         cssVars: {},
         integrity: `sha256-${name}`,
+        status: 'legacy',
+        replacement: `${name}-next`,
     };
 }
 
@@ -64,6 +66,8 @@ describe('install manifest helpers', () => {
             integrity: 'sha256-button',
             dependencies: ['reka-ui', 'vue'],
             registryDependencies: ['primitive'],
+            status: 'legacy',
+            replacement: 'button-next',
         });
         expect(manifest?.components.button.files).toEqual([
             'src/components/button/Button.vue',

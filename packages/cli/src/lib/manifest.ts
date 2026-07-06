@@ -53,6 +53,16 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
     assertStringArray(value.dependencies, `${componentName}.dependencies`);
     assertStringArray(value.registryDependencies, `${componentName}.registryDependencies`);
 
+    const status = value.status;
+    if (status !== undefined && status !== 'stable' && status !== 'legacy' && status !== 'deprecated') {
+        throw new Error(`Invalid manifest entry for "${componentName}": "status" must be one of: stable, legacy, deprecated.`);
+    }
+
+    const replacement = value.replacement;
+    if (replacement !== undefined && (typeof replacement !== 'string' || replacement.length === 0)) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "replacement" must be a non-empty string when provided.`);
+    }
+
     return {
         name: value.name,
         registrySource,
@@ -61,6 +71,8 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         files: value.files,
         dependencies: value.dependencies,
         registryDependencies: value.registryDependencies,
+        status,
+        replacement,
     };
 }
 
@@ -150,6 +162,8 @@ export async function updateInstalledComponents(
             files: entry.files.map(file => toPortableRelativePath(cwd, file)).sort(),
             dependencies: [...entry.item.dependencies].sort(),
             registryDependencies: [...entry.item.registryDependencies].sort(),
+            status: entry.item.status,
+            replacement: entry.item.replacement,
         };
     }
 

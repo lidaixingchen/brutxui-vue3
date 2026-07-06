@@ -334,6 +334,8 @@ export async function run() {
                 type: existingLocaleItem.type,
                 title: existingLocaleItem.title,
                 description: existingLocaleItem.description,
+                status: existingLocaleItem.status,
+                replacement: existingLocaleItem.replacement,
                 dependencies: existingLocaleItem.dependencies,
                 registryDependencies: existingLocaleItem.registryDependencies,
                 files: existingLocaleItem.files.map((f: RegistryFile) => ({
@@ -403,6 +405,8 @@ export async function run() {
                         type: existingItem.type,
                         title: existingItem.title,
                         description: existingItem.description,
+                        status: existingItem.status,
+                        replacement: existingItem.replacement,
                         dependencies: existingItem.dependencies,
                         registryDependencies: existingItem.registryDependencies,
                         files: existingItem.files.map((f: RegistryFile) => ({
@@ -534,6 +538,8 @@ export async function run() {
                 type: 'registry:ui',
                 title: title,
                 description: description,
+                status: componentInfo?.status,
+                replacement: componentInfo?.replacement,
                 dependencies: componentInfo?.dependencies || [],
                 registryDependencies: Array.from(allRegistryDeps),
                 files,
@@ -551,6 +557,8 @@ export async function run() {
                 type: 'registry:ui',
                 title: title,
                 description: description,
+                status: componentInfo?.status,
+                replacement: componentInfo?.replacement,
                 dependencies: componentInfo?.dependencies || [],
                 registryDependencies: Array.from(allRegistryDeps),
                 files: files.map(f => ({

@@ -96,6 +96,14 @@ describe('getItem local validation', () => {
         });
     });
 
+    it('should reject registry items with invalid status', async () => {
+        await withRegistry('invalid', createRegistryItem('invalid', {
+            status: 'retired',
+        }), async (registryPath) => {
+            await expect(registry.getItem('invalid', registryPath)).rejects.toThrow('"status" must be one of');
+        });
+    });
+
     it('should surface dependency resolution failures with the missing dependency name', async () => {
         await withRegistry('parent', createRegistryItem('parent', {
             registryDependencies: ['missing-child'],

@@ -177,6 +177,8 @@ describe('list command', () => {
                         files: ['src/components/button/Button.vue'],
                         dependencies: ['vue'],
                         registryDependencies: ['primitive'],
+                        status: 'legacy',
+                        replacement: 'button-next',
                     },
                 },
             });
@@ -191,6 +193,8 @@ describe('list command', () => {
             expect(button.dependencies).toEqual(['vue']);
             expect(button.registryDependencies).toEqual(['primitive']);
             expect(button.manifestFiles).toEqual(['src/components/button/Button.vue']);
+            expect(button.status).toBe('legacy');
+            expect(button.replacement).toBe('button-next');
         });
     });
 

@@ -120,6 +120,8 @@ export interface InstalledComponentInfo {
     files: string[];
     fileCount: number;
     dependencies: string[];
+    status?: RegistryItem['status'];
+    replacement?: string;
     registryDependencies?: string[];
     registrySource?: string;
     installedIntegrity?: string;
@@ -141,6 +143,8 @@ export interface InstalledComponentManifest {
     files: string[];
     dependencies: string[];
     registryDependencies: string[];
+    status?: RegistryItem['status'];
+    replacement?: string;
 }
 
 export type CheckStatus = 'pass' | 'warn' | 'error';

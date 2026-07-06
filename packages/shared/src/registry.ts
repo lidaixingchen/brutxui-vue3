@@ -26,6 +26,8 @@ export interface RegistryItem {
     type: RegistryFileType;
     title: string;
     description: string;
+    status?: 'stable' | 'legacy' | 'deprecated';
+    replacement?: string;
     dependencies: string[];
     registryDependencies: string[];
     files: RegistryFile[];
@@ -39,6 +41,8 @@ export interface RegistryIndexItem {
     type: RegistryFileType;
     title: string;
     description: string;
+    status?: 'stable' | 'legacy' | 'deprecated';
+    replacement?: string;
     dependencies: string[];
     registryDependencies: string[];
     files: RegistryIndexFile[];
@@ -90,6 +94,8 @@ export function validateRegistryItem(
     assertRegistryType(data.type, `"type"`, context);
     assertNonEmptyString(data.title, `"title"`, context);
     assertNonEmptyString(data.description, `"description"`, context);
+    assertStatus(data.status, context);
+    assertOptionalNonEmptyString(data.replacement, `"replacement"`, context);
     assertStringArray(data.dependencies, `"dependencies"`, context);
     assertStringArray(data.registryDependencies, `"registryDependencies"`, context);
     assertObject(data.tailwind, `"tailwind"`, context);
@@ -151,6 +157,8 @@ function validateRegistryIndexItem(data: unknown): asserts data is RegistryIndex
     assertRegistryType(data.type, `"type"`, context, 'Invalid registry index item');
     assertNonEmptyString(data.title, `"title"`, context, 'Invalid registry index item');
     assertNonEmptyString(data.description, `"description"`, context, 'Invalid registry index item');
+    assertStatus(data.status, context, 'Invalid registry index item');
+    assertOptionalNonEmptyString(data.replacement, `"replacement"`, context, 'Invalid registry index item');
     assertStringArray(data.dependencies, `"dependencies"`, context, 'Invalid registry index item');
     assertStringArray(data.registryDependencies, `"registryDependencies"`, context, 'Invalid registry index item');
     assertObject(data.tailwind, `"tailwind"`, context, 'Invalid registry index item');
@@ -183,6 +191,27 @@ function assertNonEmptyString(
 ): asserts value is string {
     if (typeof value !== 'string' || value.length === 0) {
         throw new Error(`${prefix} for "${context}": ${field} must be a non-empty string.`);
+    }
+}
+
+function assertOptionalNonEmptyString(
+    value: unknown,
+    field: string,
+    context: string,
+    prefix = 'Invalid registry data'
+): asserts value is string | undefined {
+    if (value !== undefined && (typeof value !== 'string' || value.length === 0)) {
+        throw new Error(`${prefix} for "${context}": ${field} must be a non-empty string when provided.`);
+    }
+}
+
+function assertStatus(
+    value: unknown,
+    context: string,
+    prefix = 'Invalid registry data'
+): asserts value is 'stable' | 'legacy' | 'deprecated' | undefined {
+    if (value !== undefined && value !== 'stable' && value !== 'legacy' && value !== 'deprecated') {
+        throw new Error(`${prefix} for "${context}": "status" must be one of: stable, legacy, deprecated.`);
     }
 }
 

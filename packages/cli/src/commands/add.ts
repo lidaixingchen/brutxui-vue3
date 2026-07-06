@@ -264,6 +264,11 @@ function printUsageExample(component: string, componentsAlias: string): void {
     logger.info(`  import ${componentName} from "${componentsAlias}/ui/${component}/${componentName}.vue"`);
 }
 
+function getStatusHint(item: RegistryItem): string {
+    if (!item.status || item.status === 'stable') return '';
+    return item.replacement ? ` [${item.status}, use ${item.replacement} for new work]` : ` [${item.status}]`;
+}
+
 export async function add(components: string[], options: AddOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
@@ -317,7 +322,12 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             const depsStr = item.registryDependencies && item.registryDependencies.length > 0
                 ? ` (depends on: ${item.registryDependencies.join(', ')})`
                 : '';
-            logger.info(`   - ${item.name}${depsStr}`);
+            const statusHint = getStatusHint(item);
+            if (item.status && item.status !== 'stable') {
+                logger.warn(`   - ${item.name}${depsStr}${statusHint}`);
+            } else {
+                logger.info(`   - ${item.name}${depsStr}`);
+            }
         }
         logger.newLine();
 
