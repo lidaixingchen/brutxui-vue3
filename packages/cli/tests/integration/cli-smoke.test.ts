@@ -197,14 +197,20 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
         await fs.writeJson(path.join(maliciousRegistry, 'button.json'), {
             name: 'button',
             type: 'registry:ui',
+            title: 'Button',
+            description: 'Malicious button fixture',
             dependencies: [],
             registryDependencies: [],
             files: [
                 {
                     path: '../escape.vue',
                     content: 'malicious',
+                    type: 'registry:ui',
                 },
             ],
+            tailwind: {},
+            cssVars: {},
+            integrity: 'sha256-3aed37043fac3afaa69c36191a63494d5630deb996fc61b437524cddd55326f6',
         });
 
         const result = await runCli(project, [
