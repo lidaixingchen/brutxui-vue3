@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { computeRegistryIntegrity } from 'brutx-shared-vue';
+import { COMPONENT_FILES, computeRegistryIntegrity } from 'brutx-shared-vue';
+import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
     extractDeps,
     extractRegistryDeps,
@@ -8,6 +9,11 @@ import {
 } from '../scripts/build-registry';
 
 describe('build-registry helpers', () => {
+    it('keeps the registry compatibility mapping pointed at shared metadata', () => {
+        expect(REGISTRY_COMPONENT_FILES).toBe(COMPONENT_FILES);
+        expect(COMPONENT_FILES.button.files).toContain('Button.vue');
+    });
+
     it('rewrites component imports to registry aliases', () => {
         const code = [
             "import Button from '../button/Button.vue'",

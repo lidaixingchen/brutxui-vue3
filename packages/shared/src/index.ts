@@ -1,5 +1,7 @@
 export type { RegistryComponentMeta } from './types.js';
 export { COMPONENTS, AVAILABLE_COMPONENTS } from './components.js';
+export type { ComponentFileMapping } from './component-files.js';
+export { COMPONENT_FILES } from './component-files.js';
 export type {
     RegistryFileType,
     RegistryFile,

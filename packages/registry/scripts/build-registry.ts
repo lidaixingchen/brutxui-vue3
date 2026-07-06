@@ -6,6 +6,7 @@ import {
     COMPONENTS,
     computeRegistryIntegrity,
     validateRegistryItem,
+    COMPONENT_FILES,
 } from 'brutx-shared-vue';
 import type {
     RegistryFile,
@@ -14,7 +15,6 @@ import type {
     RegistryIndexItem,
     RegistryItem,
 } from 'brutx-shared-vue';
-import { COMPONENT_FILES } from './component-files';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
