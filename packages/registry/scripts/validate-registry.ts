@@ -11,6 +11,8 @@ import {
 import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
+    validateRegistryManifestConsistency,
+    type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
 } from './validate-utils';
 
@@ -21,6 +23,7 @@ const REGISTRY_DIR = path.resolve(__dirname, '../registry');
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
 function validateIndexConsistency(files: string[]): number {
     const indexPath = path.join(REGISTRY_DIR, 'index.json');
+    const manifestPath = path.join(REGISTRY_DIR, 'registry-manifest.json');
     if (!fs.existsSync(indexPath)) {
         console.error('✗ index.json is missing. Run pnpm build first.');
         return 1;
@@ -48,8 +51,18 @@ function validateIndexConsistency(files: string[]): number {
             seen.add(n as string);
         }
         indexNames = new Set(names);
+
+        if (fs.existsSync(manifestPath)) {
+            const manifestData = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as RegistryBuildManifestSnapshot;
+            const manifestErrors = validateRegistryManifestConsistency(manifestData, indexData.items);
+
+            for (const error of manifestErrors) {
+                console.error(`✗ [registry-manifest.json] ${error}.`);
+                consistencyErrors++;
+            }
+        }
     } catch (err: unknown) {
-        console.error('✗ Failed to parse index.json:', err instanceof Error ? err.message : err);
+        console.error('✗ Failed to parse registry index or manifest:', err instanceof Error ? err.message : err);
         return 1;
     }
 
