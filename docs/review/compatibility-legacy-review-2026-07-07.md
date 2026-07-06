@@ -69,18 +69,21 @@
 - `packages/ui/src/index.ts` 聚合导出大量组件，例如 `Image` 在 `packages/ui/src/index.ts:503`，`Tour` 在 `:501`，`Backtop` 在 `:500`，`Cascader` 在 `:531`，`Menu` 在 `:535`。
 - `packages/ui/package.json:9` 开始声明 `exports`，但组件子路径只覆盖 `button/input/dialog/toast/form/select/dropdown-menu/table/card/tabs` 等少量入口。
 - 当前 `packages/ui/src/components` 下有 112 个组件目录，而 `package.json` 的 `./*` 子路径导出为 21 个，其中还包含 CSS、hooks、locales、插件入口。
+- `packages/ui/scripts/validate-exports.mjs` 已校验 Vite `build.lib.entry` 与 `package.json exports` 一致；`packages/ui/scripts/smoke-package.mjs` 已从临时消费者项目验证所有已声明 `exports` 可解析。
+- `packages/registry/scripts/validate-registry.ts` 已校验 shared metadata、源文件、生成 registry item/index/manifest 的同步，包括 `status` 与 `replacement`。
 
 风险：
 
 1. 用户可以从主入口导入全部组件，但按组件子路径导入只有少数组件可用，体验不一致。
 2. 未来新增组件需要同时维护 `src/index.ts`、入口文件、Vite `lib.entry`、`package.json exports`，漏任一处都会形成发布层兼容 bug。
-3. 手动维护子路径也会放大构建 flatten 插件的风险。
+3. 手动维护子路径也会放大构建 flatten 插件的风险；当前已通过脚本验证“已声明入口”的一致性，但尚未自动生成全量子路径策略。
 
 建议：
 
 - 明确公开契约：如果推荐只从 `brutx-ui-vue` 主入口导入，就在文档中说明子路径仅限稳定白名单。
 - 如果推荐按组件子路径导入，改为从组件元数据生成入口、Vite entry 和 `exports`，并在 CI 中校验同步。
 - 对已有未导出的组件，避免临时手动补几个，应一次性定策略。
+- registry 侧同步校验已落地，后续重点收敛到 package 子路径公开契约，而不是继续手动补 registry 字段。
 
 ## P1：legacy wrapper 与重复组件已从公开面移除
 
@@ -187,9 +190,9 @@
 
 1. 发布产物冒烟测试已落地：继续保留 `test:package` 与 `check:exports` 作为发布前最小门禁。
 2. env/browser capability 核心 helper 已落地：后续按需收敛 `ResizeObserver`、`MutationObserver`、Canvas 和其它 imperative DOM。
-3. registry 清理已落地：legacy 已从公开分发面移除，后续新增组件必须直接进入稳定替代入口。
+3. registry 清理与同步校验已落地：legacy 状态会写入 registry item/index，validate 会校验 shared metadata、源文件、manifest 与生成 JSON 一致。
 4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期和无效格式校验已覆盖；后续补文档语义和跨时区等价测试。
-5. 导出策略生成化：把 `index.ts`、Vite entry、package exports、registry 元数据的同步变成脚本校验。
+5. package 子路径策略仍需定案：当前已校验 Vite entry/package exports 与 registry metadata，同步生成全量子路径仍待评估。
 6. singleton fallback 治理：保留兼容，但提供集中销毁和文档边界。
 
 ## 本次执行验证
@@ -200,4 +203,5 @@
 - 本轮新增验证：`CI=true pnpm --filter brutx-ui-vue test:package`、`CI=true pnpm --filter brutx-ui-vue check:exports`。
 - 本轮兼容验证：`CI=true pnpm --filter brutx-ui-vue test src/components/image/image.test.ts src/components/dialog/functional-dialog.test.ts src/composables/useAudioEngine.test.ts`。
 - 本轮日期验证：`CI=true pnpm --filter brutx-ui-vue test src/lib/date.test.ts src/composables/useDataTableFilter.test.ts src/components/calendar/calendar.test.ts`。
+- 本轮 registry 同步验证：`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`、`CI=true pnpm --filter brutx-registry-vue test tests/build-registry.test.ts`、`CI=true pnpm --filter brutx-registry-vue test tests/validate-utils.test.ts`、`CI=true pnpm --filter brutx-registry-vue typecheck`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
