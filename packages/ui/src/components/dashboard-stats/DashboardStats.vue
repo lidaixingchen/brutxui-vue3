@@ -10,11 +10,19 @@ import CardContent from '../card/CardContent.vue'
 import CardDescription from '../card/CardDescription.vue'
 import Badge from '../badge/Badge.vue'
 import EmptyState from '../empty-state/EmptyState.vue'
+import Counter from '../counter/Counter.vue'
 import type { StatItem } from './types'
 
 export type { StatItem };
 
 type AccentColorKey = 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
+
+interface ParsedCounterValue {
+    to: number
+    prefix: string
+    suffix: string
+    decimals: number
+}
 
 const ACCENT_COLOR_MAP: Record<AccentColorKey, string> = {
     primary: 'bg-brutal-primary',
@@ -50,6 +58,12 @@ const resolvedTitle = computed(() => props.title ?? t('dashboardStats.defaultTit
 const resolvedSubtitle = computed(() => props.subtitle ?? '')
 
 const rootClasses = computed(() => cn('w-full max-w-5xl mx-auto', props.class))
+const displayedStats = computed(() =>
+    props.stats.map(stat => ({
+        stat,
+        counterValue: parseCounterValue(stat.value),
+    }))
+)
 
 const statIconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[3]')
@@ -80,6 +94,25 @@ function getProgressClasses(stat: StatItem) {
 function clampProgress(value: number): number {
     return Math.min(100, Math.max(0, value))
 }
+
+function parseCounterValue(value: string): ParsedCounterValue | null {
+    const trimmed = value.trim()
+    const match = trimmed.match(/^([^0-9A-Za-z+-]*)([+-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(\s*(?:%|[A-Za-z].*))?$/)
+
+    if (!match) return null
+
+    const [, prefix, numericValue, suffix = ''] = match
+    const normalizedValue = Number(numericValue.replace(/,/g, ''))
+
+    if (!Number.isFinite(normalizedValue)) return null
+
+    return {
+        to: normalizedValue,
+        prefix,
+        suffix,
+        decimals: numericValue.includes('.') ? numericValue.split('.')[1].length : 0,
+    }
+}
 </script>
 
 <template>
@@ -95,7 +128,7 @@ function clampProgress(value: number): number {
 
         <template v-if="stats.length > 0">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card v-for="(stat, index) in stats" :key="index" variant="interactive" @click="emit('stat-click', index)">
+                <Card v-for="({ stat, counterValue }, index) in displayedStats" :key="index" variant="interactive" @click="emit('stat-click', index)">
                     <CardHeader class="pb-2">
                         <div class="flex items-center justify-between">
                             <CardDescription>{{ stat.title }}</CardDescription>
@@ -105,9 +138,18 @@ function clampProgress(value: number): number {
                         </div>
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-black">
-{{ stat.value }}
-</div>
+                        <Counter
+                            v-if="counterValue"
+                            v-bind="counterValue"
+                            :from="counterValue.to"
+                            :duration="600"
+                            :auto-start="false"
+                            size="sm"
+                            class="text-2xl"
+                        />
+                        <div v-else class="text-2xl font-black">
+                            {{ stat.value }}
+                        </div>
                         <div class="flex items-center gap-2 mt-1">
                             <component :is="stat.trend === 'up' ? ArrowUpRight : stat.trend === 'down' ? ArrowDownRight : Minus" :class="getTrendIconClasses(stat)" />
                             <Badge :variant="stat.trend === 'up' ? 'success' : stat.trend === 'down' ? 'danger' : 'default'" size="sm">

@@ -70,6 +70,57 @@ describe('DashboardStats', () => {
         expect(wrapper.text()).toContain('567')
     })
 
+    it('renders numeric stat values through Counter', () => {
+        const wrapper = mount(DashboardStats, {
+            props: { stats: mockStats },
+            ...localeProvide,
+        })
+
+        expect(wrapper.findAll('[aria-live="polite"]')).toHaveLength(3)
+    })
+
+    it('keeps non-numeric stat values as plain text', () => {
+        const wrapper = mount(DashboardStats, {
+            props: {
+                stats: [
+                    {
+                        title: 'Status',
+                        value: 'N/A',
+                        description: 'No value yet',
+                        change: '0%',
+                        trend: 'neutral' as const,
+                        icon: Activity,
+                    },
+                ],
+            },
+            ...localeProvide,
+        })
+
+        expect(wrapper.text()).toContain('N/A')
+        expect(wrapper.find('[aria-live="polite"]').exists()).toBe(false)
+    })
+
+    it('keeps date-like stat values as plain text', () => {
+        const wrapper = mount(DashboardStats, {
+            props: {
+                stats: [
+                    {
+                        title: 'Period',
+                        value: '2024-07',
+                        description: 'Reporting month',
+                        change: '0%',
+                        trend: 'neutral' as const,
+                        icon: Activity,
+                    },
+                ],
+            },
+            ...localeProvide,
+        })
+
+        expect(wrapper.text()).toContain('2024-07')
+        expect(wrapper.find('[aria-live="polite"]').exists()).toBe(false)
+    })
+
     it('shows stat change values', () => {
         const wrapper = mount(DashboardStats, {
             props: { stats: mockStats },

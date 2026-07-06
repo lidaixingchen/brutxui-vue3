@@ -423,7 +423,7 @@
       "examples": []
     },
     "dashboard-stats": {
-      "integrity": "sha256-f20da4513712ff29e2bae4ae4c07903736ba9333ecb7b30a333973da7372acd4",
+      "integrity": "sha256-bfd89890b96557303430cb989fc639b835b9283b0ae68ec0e519c8ab1e5458e4",
       "fileCount": 3,
       "dependencies": [
         "@lucide/vue"
@@ -431,6 +431,7 @@
       "registryDependencies": [
         "badge",
         "card",
+        "counter",
         "empty-state",
         "locale-zh-cn"
       ],
