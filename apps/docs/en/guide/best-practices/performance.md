@@ -14,12 +14,12 @@ import { Button, Input, Card } from 'brutx-ui-vue'
 import 'brutx-ui-vue/styles.css'
 ```
 
-### 1.2 Sub-path Imports
+### 1.2 Sub-path Imports (Stable Allowlist)
 
-For environments that require explicit path boundaries, you can import components directly from their sub-paths:
+The root entry is the stable component import surface for BrutxUI. Sub-path imports are supported only for the stable allowlist declared in `package.json` `exports`: `button`, `input`, `dialog`, `toast`, `form`, `select`, `dropdown-menu`, `table`, `card`, `tabs`, `calendar`, `carousel`, `code-block`, `hooks`, `locales`, `devtools-plugin`, and the style entries. Import components that are not listed here from the root entry.
 
 ```typescript
-// Import from sub-paths to minimize bundled asset sizes
+// Use direct imports only for allowlisted sub-paths
 import { Button, buttonVariants } from 'brutx-ui-vue/button'
 import { Dialog, DialogContent } from 'brutx-ui-vue/dialog'
 ```

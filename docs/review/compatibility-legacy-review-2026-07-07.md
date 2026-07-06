@@ -71,19 +71,19 @@
 - 当前 `packages/ui/src/components` 下有 112 个组件目录，而 `package.json` 的 `./*` 子路径导出为 21 个，其中还包含 CSS、hooks、locales、插件入口。
 - `packages/ui/scripts/validate-exports.mjs` 已校验 Vite `build.lib.entry` 与 `package.json exports` 一致；`packages/ui/scripts/smoke-package.mjs` 已从临时消费者项目验证所有已声明 `exports` 可解析。
 - `packages/registry/scripts/validate-registry.ts` 已校验 shared metadata、源文件、生成 registry item/index/manifest 的同步，包括 `status` 与 `replacement`。
+- `apps/docs/guide/best-practices/performance.md` 与英文版已明确：主入口是稳定组件导入面，子路径导入仅限 `package.json exports` 白名单。
 
 风险：
 
 1. 用户可以从主入口导入全部组件，但按组件子路径导入只有少数组件可用，体验不一致。
 2. 未来新增组件需要同时维护 `src/index.ts`、入口文件、Vite `lib.entry`、`package.json exports`，漏任一处都会形成发布层兼容 bug。
-3. 手动维护子路径也会放大构建 flatten 插件的风险；当前已通过脚本验证“已声明入口”的一致性，但尚未自动生成全量子路径策略。
+3. 手动维护子路径也会放大构建 flatten 插件的风险；当前已通过脚本验证“已声明入口”的一致性，并在文档中固定为稳定白名单策略。
 
-建议：
+执行结论：
 
-- 明确公开契约：如果推荐只从 `brutx-ui-vue` 主入口导入，就在文档中说明子路径仅限稳定白名单。
-- 如果推荐按组件子路径导入，改为从组件元数据生成入口、Vite entry 和 `exports`，并在 CI 中校验同步。
-- 对已有未导出的组件，避免临时手动补几个，应一次性定策略。
-- registry 侧同步校验已落地，后续重点收敛到 package 子路径公开契约，而不是继续手动补 registry 字段。
+1. 选择方案 A：主入口 `brutx-ui-vue` 是完整稳定导入面，子路径入口只作为稳定白名单维护。
+2. 已用 `check:exports` 与 `test:package` 校验白名单入口和发布产物解析，不生成全量组件子路径。
+3. 后续新增子路径必须同步 Vite entry、`package.json exports` 和验证脚本，不临时补单个未声明组件入口。
 
 ## P1：legacy wrapper 与重复组件已从公开面移除
 
@@ -193,7 +193,7 @@
 2. env/browser capability 核心 helper 已落地：后续按需收敛 `ResizeObserver`、`MutationObserver`、Canvas 和其它 imperative DOM。
 3. registry 清理与同步校验已落地：legacy 状态会写入 registry item/index，validate 会校验 shared metadata、源文件、manifest 与生成 JSON 一致。
 4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期和无效格式校验已覆盖；后续补文档语义和跨时区等价测试。
-5. package 子路径策略仍需定案：当前已校验 Vite entry/package exports 与 registry metadata，同步生成全量子路径仍待评估。
+5. package 子路径策略已定案：主入口为完整稳定导入面，子路径入口保留为 `package.json exports` 白名单并由脚本校验。
 6. singleton fallback 治理已落地：保留兼容，同时提供集中销毁和文档边界。
 
 ## 本次执行验证
@@ -207,4 +207,5 @@
 - 本轮 registry 同步验证：`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`、`CI=true pnpm --filter brutx-registry-vue test tests/build-registry.test.ts`、`CI=true pnpm --filter brutx-registry-vue test tests/validate-utils.test.ts`、`CI=true pnpm --filter brutx-registry-vue typecheck`。
 - 本轮 legacy 替代验证：`CI=true pnpm --filter brutx-ui-vue test src/components/dashboard-stats/dashboard-stats.test.ts`、`CI=true pnpm --filter brutx-ui-vue typecheck`、`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`。
 - 本轮 singleton fallback 验证：`CI=true pnpm --filter brutx-ui-vue test src/composables/destroyFallbacks.test.ts src/composables/use-toast.test.ts src/composables/useTheme.test.ts`。
+- 本轮 package 子路径策略验证：`CI=true pnpm --filter brutx-ui-vue check:exports`、`CI=true pnpm --filter brutx-ui-vue test:package`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。

@@ -14,12 +14,12 @@ import { Button, Input, Card } from 'brutx-ui-vue'
 import 'brutx-ui-vue/styles.css'
 ```
 
-### 1.2 子路径导入（更精确）
+### 1.2 子路径导入（稳定白名单）
 
-对于支持子路径导出的组件，可以使用更精确的导入路径：
+主入口是 BrutxUI 的稳定组件导入面。子路径导入只对 `package.json` `exports` 中声明的稳定白名单开放，当前包括 `button`、`input`、`dialog`、`toast`、`form`、`select`、`dropdown-menu`、`table`、`card`、`tabs`、`calendar`、`carousel`、`code-block`、`hooks`、`locales`、`devtools-plugin` 以及样式入口。未列出的组件请从主入口导入。
 
 ```typescript
-// 从子路径导入，进一步减少打包体积
+// 仅对白名单子路径使用直接导入
 import { Button, buttonVariants } from 'brutx-ui-vue/button'
 import { Dialog, DialogContent } from 'brutx-ui-vue/dialog'
 ```
