@@ -466,7 +466,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-bd4e18a415ec31a87339790fe1b900f4beb9ef9d7870620602d249c831c244b5"
+      "integrity": "sha256-e941093d1801ec8d0e7ac214c63d682dadc05aa83ca61aa4d0aadc9028d66b37"
     },
     {
       "name": "badge",
@@ -1082,7 +1082,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-fec2c380f71d00271a287ad600160f09dff4102c1f322f29da1874855f1f62dc"
+      "integrity": "sha256-9ba990772833d651724e3de0baf3cf6724c6e4ebc7bffd6b08d79b8d3608ab34"
     },
     {
       "name": "checkbox",
@@ -2750,7 +2750,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5dbb76c04c0652c834b7530d38ed35ac4ff25ec89bc4dde4590903f577182b97"
+      "integrity": "sha256-84a3a31445305aee070fc3415737445f357c0eba0b323dea107e0866b3ce9c60"
     },
     {
       "name": "separator",
@@ -4624,7 +4624,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-dc4036b1db45905046c007c4b5221f9dd600ec27384c87ef363703cea76d688c"
+      "integrity": "sha256-b2b45d1f44ce3616778d4338895dbd4bbc094c6cda1f497eb82e781d1e0e2435"
     },
     {
       "name": "progress",
@@ -9903,7 +9903,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c764b0a3bedf20443870a1198e79738d014f44e021acc17a93a6331539fee977"
+      "integrity": "sha256-14c964a9923e333c5c5f8c167a2173754e8dfe70886c51a7b68185400b919e8f"
     },
     {
       "name": "stepper-section",
@@ -10381,7 +10381,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-adf6fe3553e27827e4fd26949dbea11bd64d71cae664733c43db8a4d783d2fda"
+      "integrity": "sha256-d570ee12f03f3d2095bf60d812afd1fb44a36e6d06636431b50df9ea240dbe0a"
     },
     {
       "name": "blog-list-page",
@@ -12863,7 +12863,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-50c7014d376795a4c633b45a7807667c706a6db1ed43ebcdcfa233e7bf555ceb"
+      "integrity": "sha256-a11a2fd79e31f5fcbec54a289634b56aa667132dc5fc962050cf8a998c2577fb"
     },
     {
       "name": "infinite-scroll",
