@@ -115,6 +115,7 @@
         "prepack": "npm run build",
         "dev": "vite build --watch",
         "clean": "rm -rf dist",
+        "check:exports": "node scripts/validate-exports.mjs",
         "typecheck": "vue-tsc --noEmit",
         "lint": "eslint src",
         "test": "vitest run",
