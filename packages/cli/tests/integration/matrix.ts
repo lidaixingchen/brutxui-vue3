@@ -22,6 +22,11 @@ export interface IntegrationMatrixOptions {
     includeHeavy?: boolean
 }
 
+export interface IntegrationCommandContext {
+    cwd: string
+    registry: string
+}
+
 export const CLI_INTEGRATION_MATRIX: IntegrationMatrixCase[] = [
     {
         name: 'vite-vue-tailwind-v4',
@@ -59,9 +64,31 @@ export function getIntegrationMatrixCases(options: IntegrationMatrixOptions = {}
         : CLI_INTEGRATION_MATRIX.filter(item => item.runByDefault)
 }
 
-export function getIntegrationMatrixCommands(item: IntegrationMatrixCase): IntegrationMatrixCommand[] {
+export function getIntegrationMatrixCommands(
+    item: IntegrationMatrixCase,
+    context?: IntegrationCommandContext
+): IntegrationMatrixCommand[] {
     return item.commands.map(command => ({
         label: command,
-        args: command.split(' '),
+        args: context ? getCommandArgs(command, context) : command.split(' '),
     }))
+}
+
+function getCommandArgs(command: string, context: IntegrationCommandContext): string[] {
+    switch (command) {
+        case 'init':
+            return ['init', '--yes', '--force', '--cwd', context.cwd]
+        case 'add button':
+            return ['add', 'button', '--cwd', context.cwd, '--registry', context.registry, '--overwrite']
+        case 'add data-table':
+            return ['add', 'data-table', '--cwd', context.cwd, '--registry', context.registry, '--overwrite']
+        case 'diff':
+            return ['diff', '--cwd', context.cwd, '--registry', context.registry]
+        case 'remove button':
+            return ['remove', 'button', '--cwd', context.cwd, '--yes']
+        case 'doctor':
+            return ['doctor', '--cwd', context.cwd, '--yes']
+        default:
+            return command.split(' ')
+    }
 }

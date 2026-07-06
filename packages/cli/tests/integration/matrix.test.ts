@@ -1,12 +1,31 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
+import fs from 'fs-extra'
+import path from 'path'
 import {
     CLI_INTEGRATION_MATRIX,
     getIntegrationMatrixCases,
     getIntegrationMatrixCommands,
 } from './matrix'
-import { shouldKeepTestProject } from './helpers'
+import {
+    createTestProject,
+    localRegistry,
+    removeTestProject,
+    shouldKeepTestProject,
+    type TestProject,
+} from './helpers'
 
 describe('CLI integration matrix', () => {
+    const projects: TestProject[] = []
+
+    afterEach(async () => {
+        while (projects.length > 0) {
+            const project = projects.pop()
+            if (project) {
+                await removeTestProject(project)
+            }
+        }
+    })
+
     it('keeps the release matrix explicit and local-registry friendly', () => {
         expect(CLI_INTEGRATION_MATRIX.map(item => item.name)).toEqual([
             'vite-vue-tailwind-v4',
@@ -53,6 +72,56 @@ describe('CLI integration matrix', () => {
             { label: 'remove button', args: ['remove', 'button'] },
             { label: 'doctor', args: ['doctor'] },
         ])
+    })
+
+    it('expands matrix commands into local-registry CLI invocations', () => {
+        expect(getIntegrationMatrixCommands(CLI_INTEGRATION_MATRIX[0], {
+            cwd: 'PROJECT_ROOT',
+            registry: 'LOCAL_REGISTRY',
+        })).toEqual([
+            { label: 'init', args: ['init', '--yes', '--force', '--cwd', 'PROJECT_ROOT'] },
+            { label: 'add button', args: ['add', 'button', '--cwd', 'PROJECT_ROOT', '--registry', 'LOCAL_REGISTRY', '--overwrite'] },
+            { label: 'add data-table', args: ['add', 'data-table', '--cwd', 'PROJECT_ROOT', '--registry', 'LOCAL_REGISTRY', '--overwrite'] },
+            { label: 'diff', args: ['diff', '--cwd', 'PROJECT_ROOT', '--registry', 'LOCAL_REGISTRY'] },
+            { label: 'remove button', args: ['remove', 'button', '--cwd', 'PROJECT_ROOT', '--yes'] },
+            { label: 'doctor', args: ['doctor', '--cwd', 'PROJECT_ROOT', '--yes'] },
+        ])
+    })
+
+    it('creates lightweight project fixtures for every matrix case', async () => {
+        for (const item of CLI_INTEGRATION_MATRIX) {
+            const project = await createTestProject({
+                template: item.template,
+                tailwindMajor: item.tailwindMajor,
+            })
+            projects.push(project)
+
+            expect(project.template).toBe(item.template)
+            expect(project.tailwindMajor).toBe(item.tailwindMajor)
+            expect(await fs.pathExists(path.join(project.root, 'package.json'))).toBe(true)
+            expect(await fs.pathExists(project.fakeBin)).toBe(true)
+            expect(localRegistry).toContain(path.join('packages', 'registry', 'registry'))
+
+            if (item.template === 'nuxt') {
+                expect(await fs.pathExists(path.join(project.root, 'nuxt.config.ts'))).toBe(true)
+                expect(await fs.pathExists(path.join(project.root, 'assets', 'css', 'main.css'))).toBe(true)
+            } else {
+                expect(await fs.pathExists(path.join(project.root, 'src', 'main.ts'))).toBe(true)
+                expect(await fs.pathExists(path.join(project.root, 'src', 'index.css'))).toBe(true)
+            }
+
+            if (item.tailwindMajor === 3) {
+                expect(await fs.pathExists(path.join(project.root, 'tailwind.config.ts'))).toBe(true)
+            } else {
+                expect(await fs.pathExists(path.join(project.root, 'tailwind.config.ts'))).toBe(false)
+            }
+
+            if (item.template === 'monorepo-subpackage') {
+                expect(project.workspaceRoot).not.toBe(project.root)
+                expect(await fs.pathExists(path.join(project.workspaceRoot, 'pnpm-workspace.yaml'))).toBe(true)
+                expect(project.root).toBe(path.join(project.workspaceRoot, 'apps', 'web'))
+            }
+        }
     })
 
     it('supports keeping failed integration workspaces for debugging', () => {

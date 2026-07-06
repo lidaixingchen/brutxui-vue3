@@ -3,11 +3,16 @@ import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import type { IntegrationTemplate, TailwindMajor } from './matrix.js';
 
 export interface TestProject {
     root: string;
+    workspaceRoot: string;
+    cleanupRoot: string;
     fakeBin: string;
     installLog: string;
+    template: IntegrationTemplate;
+    tailwindMajor: TailwindMajor;
 }
 
 export interface CliResult {
@@ -22,23 +27,76 @@ const repoRoot = path.resolve(cliRoot, '../..');
 export const cliEntry = path.join(cliRoot, 'dist', 'index.js');
 export const localRegistry = path.join(repoRoot, 'packages', 'registry', 'registry');
 
+export interface CreateTestProjectOptions {
+    template?: IntegrationTemplate;
+    tailwindMajor?: TailwindMajor;
+}
+
 export function shouldKeepTestProject(): boolean {
     return process.env.BRUTX_KEEP_INTEGRATION_TMP === '1';
 }
 
-export async function createTestProject(): Promise<TestProject> {
+export async function createTestProject(options: CreateTestProjectOptions = {}): Promise<TestProject> {
+    const template = options.template ?? 'vite-vue';
+    const tailwindMajor = options.tailwindMajor ?? 4;
     const tempDir = await fs.realpath(os.tmpdir());
-    const root = await fs.mkdtemp(path.join(tempDir, 'brutx-cli-'));
-    const fakeBin = path.join(root, '.fake-bin');
-    const installLog = path.join(root, 'install-log.jsonl');
+    const workspaceRoot = await fs.mkdtemp(path.join(tempDir, 'brutx-cli-'));
+    const root = template === 'monorepo-subpackage'
+        ? path.join(workspaceRoot, 'apps', 'web')
+        : workspaceRoot;
+    const fakeBin = path.join(workspaceRoot, '.fake-bin');
+    const installLog = path.join(workspaceRoot, 'install-log.jsonl');
 
-    await fs.ensureDir(path.join(root, 'src'));
     await fs.ensureDir(fakeBin);
+    await writeProjectTemplate(workspaceRoot, root, template, tailwindMajor);
+    await writeFakePackageManager(fakeBin);
+
+    return {
+        root,
+        workspaceRoot,
+        cleanupRoot: workspaceRoot,
+        fakeBin,
+        installLog,
+        template,
+        tailwindMajor,
+    };
+}
+
+async function writeProjectTemplate(
+    workspaceRoot: string,
+    root: string,
+    template: IntegrationTemplate,
+    tailwindMajor: TailwindMajor
+): Promise<void> {
+    if (template === 'monorepo-subpackage') {
+        await fs.ensureDir(root);
+        await fs.writeJson(path.join(workspaceRoot, 'package.json'), {
+            private: true,
+            workspaces: ['apps/*'],
+        }, { spaces: 2 });
+        await fs.writeFile(path.join(workspaceRoot, 'pnpm-workspace.yaml'), 'packages:\n  - apps/*\n');
+    }
+
+    if (template === 'nuxt') {
+        await writeNuxtProject(root, tailwindMajor);
+    } else {
+        await writeViteProject(root, tailwindMajor);
+    }
+
+    // Pin pnpm virtual-store-dir to an absolute realpath to prevent
+    // ERR_PNPM_UNEXPECTED_VIRTUAL_STORE caused by Windows short/long path aliases
+    // (e.g. LIDAIX~1 vs lidaixingchen) resolving differently across subprocess invocations.
+    const virtualStoreDir = path.join(workspaceRoot, 'node_modules', '.pnpm').replace(/\\/g, '/');
+    await fs.writeFile(path.join(root, '.npmrc'), `virtual-store-dir=${virtualStoreDir}\n`);
+}
+
+async function writeViteProject(root: string, tailwindMajor: TailwindMajor): Promise<void> {
+    await fs.ensureDir(path.join(root, 'src'));
     await fs.writeJson(path.join(root, 'package.json'), {
         type: 'module',
         dependencies: {
             '@vitejs/plugin-vue': '^6.0.0',
-            tailwindcss: '^4.0.0',
+            tailwindcss: tailwindMajor === 4 ? '^4.0.0' : '^3.4.0',
             vite: '^8.0.0',
             vue: '^3.5.0',
         },
@@ -53,15 +111,43 @@ export async function createTestProject(): Promise<TestProject> {
         },
     }, { spaces: 2 });
     await fs.writeFile(path.join(root, 'src', 'main.ts'), 'import { createApp } from "vue"\n');
-    await fs.writeFile(path.join(root, 'src', 'index.css'), '@import "tailwindcss";\n');
-    // Pin pnpm virtual-store-dir to an absolute realpath to prevent
-    // ERR_PNPM_UNEXPECTED_VIRTUAL_STORE caused by Windows short/long path aliases
-    // (e.g. LIDAIX~1 vs lidaixingchen) resolving differently across subprocess invocations.
-    const virtualStoreDir = path.join(root, 'node_modules', '.pnpm').replace(/\\/g, '/');
-    await fs.writeFile(path.join(root, '.npmrc'), `virtual-store-dir=${virtualStoreDir}\n`);
-    await writeFakePackageManager(fakeBin);
 
-    return { root, fakeBin, installLog };
+    if (tailwindMajor === 4) {
+        await fs.writeFile(path.join(root, 'src', 'index.css'), '@import "tailwindcss";\n');
+    } else {
+        await fs.writeFile(path.join(root, 'src', 'index.css'), '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n');
+        await fs.writeFile(path.join(root, 'tailwind.config.ts'), 'export default { content: ["./src/**/*.{vue,ts}"] }\n');
+    }
+}
+
+async function writeNuxtProject(root: string, tailwindMajor: TailwindMajor): Promise<void> {
+    await fs.ensureDir(path.join(root, 'assets', 'css'));
+    await fs.writeJson(path.join(root, 'package.json'), {
+        type: 'module',
+        dependencies: {
+            nuxt: '^3.0.0',
+            tailwindcss: tailwindMajor === 4 ? '^4.0.0' : '^3.4.0',
+            vue: '^3.5.0',
+        },
+        devDependencies: {},
+    }, { spaces: 2 });
+    await fs.writeJson(path.join(root, 'tsconfig.json'), {
+        compilerOptions: {
+            baseUrl: '.',
+            paths: {
+                '@/*': ['./*'],
+            },
+        },
+    }, { spaces: 2 });
+    await fs.writeFile(path.join(root, 'nuxt.config.ts'), 'export default defineNuxtConfig({ css: ["~/assets/css/main.css"] })\n');
+    await fs.writeFile(path.join(root, 'app.vue'), '<template><NuxtPage /></template>\n');
+
+    if (tailwindMajor === 4) {
+        await fs.writeFile(path.join(root, 'assets', 'css', 'main.css'), '@import "tailwindcss";\n');
+    } else {
+        await fs.writeFile(path.join(root, 'assets', 'css', 'main.css'), '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n');
+        await fs.writeFile(path.join(root, 'tailwind.config.ts'), 'export default { content: ["./**/*.{vue,ts}"] }\n');
+    }
 }
 
 export async function removeTestProject(project: TestProject): Promise<void> {
@@ -70,7 +156,7 @@ export async function removeTestProject(project: TestProject): Promise<void> {
         return;
     }
 
-    await fs.remove(project.root);
+    await fs.remove(project.cleanupRoot);
 }
 
 export async function runCli(
