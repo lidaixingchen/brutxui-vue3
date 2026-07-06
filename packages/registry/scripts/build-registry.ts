@@ -268,13 +268,15 @@ function extractScriptBlocks(code: string): string[] {
 }
 
 export function getFileType(filePath: string): RegistryFileType {
+    const fileName = path.basename(filePath);
+
     if (filePath.endsWith('.vue')) return 'registry:ui';
-    if (filePath.endsWith('.css')) return 'registry:ui';
-    if (filePath.includes('-variants') || filePath.includes('-types') || filePath.includes('-key')) return 'registry:lib';
     if (filePath.startsWith('composables/')) return 'registry:hook';
     if (filePath.startsWith('locales/')) return 'registry:lib';
     if (filePath.startsWith('lib/')) return 'registry:lib';
     if (filePath.startsWith('directives/')) return 'registry:directive';
+    if (filePath.endsWith('.css')) return 'registry:ui';
+    if (fileName.includes('-variants') || fileName.includes('-types') || fileName.includes('-key') || fileName === 'types.ts') return 'registry:lib';
     return 'registry:ui';
 }
 

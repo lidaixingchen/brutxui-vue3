@@ -110,6 +110,26 @@ describe('build-registry helpers', () => {
         ]);
     });
 
+    it('tracks css assets, type-only imports, and barrel exports as static specifiers', () => {
+        const code = [
+            '<script setup lang="ts">',
+            "import '@/components/ui/code-block/brutx-prism.css'",
+            "import type { DataTableColumn } from '@/components/ui/data-table/types'",
+            "export * from '@/components/ui/button'",
+            "export type { ChartPoint } from '@/lib/chart-types'",
+            '</script>',
+        ].join('\n');
+
+        expect(extractModuleSpecifiers(code)).toEqual([
+            '@/components/ui/code-block/brutx-prism.css',
+            '@/components/ui/data-table/types',
+            '@/components/ui/button',
+            '@/lib/chart-types',
+        ]);
+        expect(extractRegistryDeps(code, 'data-table')).toEqual(['code-block', 'button']);
+        expect(extractDeps(code, 'lib')).toEqual(['chart-types.ts']);
+    });
+
     it('extracts module specifiers from Vue script blocks', () => {
         const code = [
             '<template><Button /></template>',
@@ -128,8 +148,13 @@ describe('build-registry helpers', () => {
 
     it('classifies registry file types and computes stable integrity', () => {
         expect(getFileType('components/ui/button/Button.vue')).toBe('registry:ui');
+        expect(getFileType('components/ui/code-block/brutx-prism.css')).toBe('registry:ui');
+        expect(getFileType('components/ui/data-table/types.ts')).toBe('registry:lib');
+        expect(getFileType('components/ui/data-table/data-table-types.ts')).toBe('registry:lib');
+        expect(getFileType('components/ui/button/button-variants.ts')).toBe('registry:lib');
         expect(getFileType('composables/useLocale.ts')).toBe('registry:hook');
         expect(getFileType('lib/data-table-utils.ts')).toBe('registry:lib');
+        expect(getFileType('lib/chart.css')).toBe('registry:lib');
 
         expect(computeRegistryIntegrity([
             { content: 'one' },
