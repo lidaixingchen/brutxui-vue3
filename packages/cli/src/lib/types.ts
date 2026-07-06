@@ -99,6 +99,9 @@ export interface ListOptions {
     cwd?: string;
     json?: boolean;
     silent?: boolean;
+    registry?: string;
+    checkUpdates?: boolean;
+    cache?: boolean;
 }
 
 export interface InfoOptions {
@@ -127,6 +130,9 @@ export interface InstalledComponentInfo {
     registryDependencies?: string[];
     registrySource?: string;
     installedIntegrity?: string;
+    latestIntegrity?: string;
+    updateAvailable?: boolean;
+    updateCheckError?: string;
     installedAt?: string;
     manifestFiles?: string[];
     managed?: boolean;

@@ -92,6 +92,9 @@ program
     .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
     .option('--json', 'Output JSON format', false)
     .option('-s, --silent', 'Mute output', false)
+    .option('-r, --registry <registry>', 'Specify registry path or URL for update checks')
+    .option('--check-updates', 'Check registry integrity to show available updates', false)
+    .option('--no-cache', 'Skip registry cache when checking updates')
     .action(list);
 
 program

@@ -6,7 +6,7 @@ import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../sr
 
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
-    return { ...actual, readConfigSafe: vi.fn() };
+    return { ...actual, readConfigSafe: vi.fn(), getItem: vi.fn() };
 });
 
 vi.mock('../src/lib/project.js', async (importOriginal) => {
@@ -20,6 +20,7 @@ import { list } from '../src/commands/list.js';
 import { CliError } from '../src/lib/error.js';
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
+const mockedGetItem = vi.mocked(registry.getItem);
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 
 function makeConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
@@ -55,6 +56,9 @@ describe('list command', () => {
 
     beforeEach(async () => {
         tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-list-'));
+        mockedReadConfigSafe.mockReset();
+        mockedGetItem.mockReset();
+        mockedResolveAliasPath.mockReset();
 
         mockedResolveAliasPath.mockImplementation(async (alias: string) => {
             return path.join(tmpDir, 'src', alias.replace('@/', ''));
@@ -199,6 +203,56 @@ describe('list command', () => {
             expect(button.manifestFiles).toEqual(['src/components/button/Button.vue']);
             expect(button.status).toBe('legacy');
             expect(button.replacement).toBe('button-next');
+        });
+
+        it('checks manifest integrity against registry when requested', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            mockedGetItem.mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                title: 'Button',
+                description: 'Button component',
+                dependencies: [],
+                registryDependencies: [],
+                files: [
+                    {
+                        path: 'components/ui/button/Button.vue',
+                        content: '<template><button /></template>',
+                        type: 'registry:ui',
+                    },
+                ],
+                tailwind: {},
+                cssVars: {},
+                integrity: 'sha256-button-new',
+            });
+
+            const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
+            await fs.ensureDir(buttonDir);
+            await fs.writeFile(path.join(buttonDir, 'Button.vue'), '<template><button /></template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button-old',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                        examples: [],
+                    },
+                },
+            });
+
+            const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true, checkUpdates: true });
+            const button = parsed.find(c => c.name === 'button')!;
+
+            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry', true);
+            expect(button.latestIntegrity).toBe('sha256-button-new');
+            expect(button.updateAvailable).toBe(true);
         });
     });
 
