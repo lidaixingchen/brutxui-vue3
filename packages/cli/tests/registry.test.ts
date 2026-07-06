@@ -2,8 +2,34 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import crypto from 'node:crypto';
+import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import * as registry from '../src/lib/registry.js';
+
+function createRegistryItem(name: string, overrides: Record<string, any> = {}) {
+    const files = overrides.files ?? [{
+        path: `components/ui/${name}/${name}.vue`,
+        content: `<template>${name}</template>`,
+        type: 'registry:ui',
+    }];
+    const item = {
+        $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+        name,
+        type: 'registry:ui',
+        title: name,
+        description: `${name} component`,
+        dependencies: [],
+        registryDependencies: [],
+        files,
+        tailwind: {},
+        cssVars: {},
+        ...overrides,
+    };
+
+    return {
+        ...item,
+        integrity: overrides.integrity ?? computeRegistryIntegrity(item.files),
+    };
+}
 
 describe('getItem local', () => {
     afterEach(() => {
@@ -40,7 +66,14 @@ describe('getItem local validation', () => {
         await withRegistry('invalid', {
             name: 'invalid',
             type: 'registry:ui',
+            title: 'invalid',
+            description: 'invalid component',
+            dependencies: [],
+            registryDependencies: [],
             files: {},
+            tailwind: {},
+            cssVars: {},
+            integrity: 'sha256-placeholder',
         }, async (registryPath) => {
             await expect(registry.getItem('invalid', registryPath)).rejects.toThrow('"files" must be an array');
         });
@@ -50,61 +83,68 @@ describe('getItem local validation', () => {
         await withRegistry('invalid', {
             name: 'invalid',
             type: 'registry:ui',
-            files: [{ path: 'components/ui/invalid/Invalid.vue' }],
+            title: 'invalid',
+            description: 'invalid component',
+            dependencies: [],
+            registryDependencies: [],
+            files: [{ path: 'components/ui/invalid/Invalid.vue', type: 'registry:ui' }],
+            tailwind: {},
+            cssVars: {},
+            integrity: 'sha256-placeholder',
         }, async (registryPath) => {
-            await expect(registry.getItem('invalid', registryPath)).rejects.toThrow('"content" must be a string');
+            await expect(registry.getItem('invalid', registryPath)).rejects.toThrow('"content" must be a non-empty string');
         });
     });
 
     it('should surface dependency resolution failures with the missing dependency name', async () => {
-        await withRegistry('parent', {
-            name: 'parent',
-            type: 'registry:ui',
-            files: [],
+        await withRegistry('parent', createRegistryItem('parent', {
             registryDependencies: ['missing-child'],
-        }, async (registryPath) => {
+        }), async (registryPath) => {
             await expect(registry.resolveDeps(['parent'], registryPath)).rejects.toThrow('missing-child');
+        });
+    });
+
+    it('should verify local integrity with null-separated file contents', async () => {
+        const item = createRegistryItem('button', {
+            files: [
+                { path: 'components/ui/button/Button.vue', content: 'one', type: 'registry:ui' },
+                { path: 'components/ui/button/button-variants.ts', content: 'two', type: 'registry:lib' },
+            ],
+        });
+
+        await withRegistry('button', item, async (registryPath) => {
+            await expect(registry.getItem('button', registryPath)).resolves.toMatchObject({
+                name: 'button',
+            });
+        });
+    });
+
+    it('should reject local registry items with mismatched integrity', async () => {
+        const item = createRegistryItem('button', {
+            integrity: 'sha256-deadbeef',
+        });
+
+        await withRegistry('button', item, async (registryPath) => {
+            await expect(registry.getItem('button', registryPath)).rejects.toMatchObject({
+                code: 'REGISTRY_INTEGRITY_FAILED',
+            });
         });
     });
 });
 
 describe('resolveDeps with mocked fetch', () => {
     const mockRegistry: Record<string, any> = {
-        combobox: {
-            name: 'combobox',
-            type: 'registry:ui',
-            dependencies: [],
+        combobox: createRegistryItem('combobox', {
             registryDependencies: ['button', 'popover'],
-            files: []
-        },
-        button: {
-            name: 'button',
-            type: 'registry:ui',
-            dependencies: [],
-            registryDependencies: [],
-            files: []
-        },
-        popover: {
-            name: 'popover',
-            type: 'registry:ui',
-            dependencies: [],
-            registryDependencies: [],
-            files: []
-        },
-        a: {
-            name: 'a',
-            type: 'registry:ui',
-            dependencies: [],
+        }),
+        button: createRegistryItem('button'),
+        popover: createRegistryItem('popover'),
+        a: createRegistryItem('a', {
             registryDependencies: ['b'],
-            files: []
-        },
-        b: {
-            name: 'b',
-            type: 'registry:ui',
-            dependencies: [],
+        }),
+        b: createRegistryItem('b', {
             registryDependencies: ['a'],
-            files: []
-        }
+        })
     };
 
     afterEach(() => {
@@ -133,21 +173,14 @@ describe('resolveDeps with mocked fetch', () => {
 
     it('should verify remote integrity with null-separated file contents', async () => {
         const files = [
-            { path: 'components/ui/button/Button.vue', content: 'one' },
-            { path: 'components/ui/button/button-variants.ts', content: 'two' },
+            { path: 'components/ui/button/Button.vue', content: 'one', type: 'registry:ui' },
+            { path: 'components/ui/button/button-variants.ts', content: 'two', type: 'registry:lib' },
         ];
-        const integrity = 'sha256-' + crypto
-            .createHash('sha256')
-            .update(files.map(f => f.content).join('\0'))
-            .digest('hex');
+        const integrity = computeRegistryIntegrity(files);
 
         vi.stubGlobal('fetch', async () => ({
             ok: true,
-            json: async () => ({
-                name: 'button',
-                type: 'registry:ui',
-                dependencies: [],
-                registryDependencies: [],
+            json: async () => createRegistryItem('button', {
                 files,
                 integrity,
             }),
@@ -189,18 +222,14 @@ describe('resolveDeps with mocked fetch', () => {
             const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
             const item = {
                 first: {
-                    name: 'first',
-                    type: 'registry:ui',
+                    ...createRegistryItem('first'),
                     dependencies: ['shared-runtime'],
                     registryDependencies: ['button'],
-                    files: []
                 },
                 second: {
-                    name: 'second',
-                    type: 'registry:ui',
+                    ...createRegistryItem('second'),
                     dependencies: ['shared-runtime'],
                     registryDependencies: ['button'],
-                    files: []
                 },
                 button: mockRegistry.button,
             }[name];

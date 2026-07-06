@@ -6,6 +6,7 @@
     "scripts": {
         "build": "tsx scripts/build-registry.ts",
         "validate": "tsx scripts/validate-registry.ts",
+        "test": "vitest run",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
@@ -14,6 +15,7 @@
     "devDependencies": {
         "@types/node": "^25.9.1",
         "tsx": "^4.22.4",
-        "typescript": "^6.0.3"
+        "typescript": "^6.0.3",
+        "vitest": "^4.1.8"
     }
 }

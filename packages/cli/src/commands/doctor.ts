@@ -4,7 +4,7 @@ import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -320,6 +320,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
 
     if (!config) return;
 
+    const transaction = new FileTransaction();
     let applied = 0;
     const total = fixable.length;
 
@@ -354,21 +355,21 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                 case FixId.InjectCssTokens: {
                     const cssPath = await resolveAliasPath(config.tailwind.css, cwd);
                     const existing = await fs.readFile(cssPath, 'utf-8');
-                    await fs.writeFile(cssPath, existing + '\n' + await getBrutalistCssStyles(), 'utf-8');
+                    await transaction.writeFile(cssPath, existing + '\n' + await getBrutalistCssStyles());
                     logger.success('Injected BrutxUI CSS tokens.');
                     break;
                 }
 
                 case FixId.CreateComponentsDir: {
                     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-                    await fs.ensureDir(componentsPath);
+                    await transaction.ensureDir(componentsPath);
                     logger.success('Created components directory.');
                     break;
                 }
 
                 case FixId.CreateUtilsFile: {
                     const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
-                    await fs.writeFile(utilsPath + '.ts', UTILS_TEMPLATE, 'utf-8');
+                    await transaction.writeFile(utilsPath + '.ts', UTILS_TEMPLATE);
                     logger.success('Created utils file.');
                     break;
                 }
@@ -385,7 +386,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
 
                     if (utilsFile) {
                         const existing = await fs.readFile(utilsPath + utilsFile, 'utf-8');
-                        await fs.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE, 'utf-8');
+                        await transaction.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE);
                         logger.success('Added cn() function.');
                     }
                     break;
@@ -393,21 +394,39 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
             }
             applied++;
         } catch (error) {
+            const rollbackFailures = await transaction.rollback();
             logger.error(`Failed to fix: ${check.name}`);
             logger.error(error instanceof Error ? error.message : String(error));
+            if (rollbackFailures.length > 0) {
+                logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
+            }
+            throw new CliError(`Failed to apply fix "${check.name}"`, {
+                code: 'WRITE_FAILED',
+                cause: error,
+            });
         }
     }
 
     if (applied > 0) {
         try {
             const configPath = path.join(cwd, 'components.json');
-            await fs.writeJson(configPath, config, { spaces: 2 });
+            await transaction.writeJson(configPath, config, { spaces: 2 });
+            await transaction.commit();
             logger.success('Updated components.json.');
         } catch (error) {
+            const rollbackFailures = await transaction.rollback();
             logger.error('Failed to write updated config file.');
             logger.error(error instanceof Error ? error.message : String(error));
-            throw error;
+            if (rollbackFailures.length > 0) {
+                logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
+            }
+            throw new CliError('Failed to write updated config file.', {
+                code: 'WRITE_FAILED',
+                cause: error,
+            });
         }
+    } else {
+        await transaction.commit();
     }
 
     logger.log(`Applied ${applied}/${total} fixes.`);

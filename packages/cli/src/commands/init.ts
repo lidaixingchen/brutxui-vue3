@@ -33,6 +33,7 @@ import {
     logger,
     writeSnippetsFile,
     hasVscodeDir,
+    FileTransaction,
 } from '../lib/index.js';
 
 interface DetectedSettings {
@@ -102,7 +103,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
     };
 }
 
-async function createConfigFile(cwd: string, settings: DetectedSettings): Promise<void> {
+async function createConfigFile(cwd: string, settings: DetectedSettings, transaction?: FileTransaction): Promise<void> {
     const config: BrutalistConfig = {
         $schema: SCHEMA_URL,
         $version: CURRENT_CONFIG_VERSION,
@@ -112,17 +113,25 @@ async function createConfigFile(cwd: string, settings: DetectedSettings): Promis
     };
 
     const configPath = path.join(cwd, 'components.json');
-    await fs.writeJson(configPath, config, { spaces: 2 });
+    if (transaction) {
+        await transaction.writeJson(configPath, config, { spaces: 2 });
+    } else {
+        await fs.writeJson(configPath, config, { spaces: 2 });
+    }
 }
 
-async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean> {
+async function addBrutalistStyles(cwd: string, cssPath: string, transaction?: FileTransaction): Promise<boolean> {
     const fullPath = path.join(cwd, cssPath);
 
     if (!(await isSafePath(fullPath, cwd))) {
         throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullPath}".`);
     }
 
-    await fs.ensureDir(path.dirname(fullPath));
+    if (transaction) {
+        await transaction.ensureDir(path.dirname(fullPath));
+    } else {
+        await fs.ensureDir(path.dirname(fullPath));
+    }
 
     const tailwindVersion = await detectTailwindVersion(cwd);
 
@@ -144,7 +153,11 @@ async function addBrutalistStyles(cwd: string, cssPath: string): Promise<boolean
         }
     }
 
-    await fs.writeFile(fullPath, content);
+    if (transaction) {
+        await transaction.writeFile(fullPath, content);
+    } else {
+        await fs.writeFile(fullPath, content);
+    }
     return true;
 }
 
@@ -234,6 +247,7 @@ async function configureNuxtConfig(
     cssPath: string,
     componentsDir: string,
     spinner: Ora | null,
+    transaction?: FileTransaction,
 ): Promise<boolean> {
     const configPath = await findNuxtConfig(cwd);
     if (!configPath) {
@@ -257,7 +271,11 @@ async function configureNuxtConfig(
     }
 
     try {
-        await fs.writeFile(configPath, result);
+        if (transaction) {
+            await transaction.writeFile(configPath, result);
+        } else {
+            await fs.writeFile(configPath, result);
+        }
         spinner?.info('Updated ' + path.basename(configPath) + ' with components and css configuration');
         return true;
     } catch {
@@ -335,24 +353,25 @@ export async function init(options: InitOptions): Promise<void> {
     }
 
     const spinner = options.silent ? null : ora('Initializing Brutx-Vue...').start();
+    const transaction = new FileTransaction();
 
     try {
-        await createConfigFile(configTarget, settings);
+        await createConfigFile(configTarget, settings, transaction);
 
         const utilsPath = await resolveAliasPath(settings.aliases.utils, configTarget) + '.ts';
-        await fs.ensureDir(path.dirname(utilsPath));
+        await transaction.ensureDir(path.dirname(utilsPath));
         if (!(await fs.pathExists(utilsPath))) {
-            await fs.writeFile(utilsPath, UTILS_TEMPLATE);
+            await transaction.writeFile(utilsPath, UTILS_TEMPLATE);
             spinner?.info('Created utility helper at ' + settings.aliases.utils);
         } else {
             spinner?.info('Utility helper already exists, skipping.');
         }
 
         const componentsDir = await resolveAliasPath(settings.aliases.components, configTarget);
-        await fs.ensureDir(path.join(componentsDir, 'ui'));
+        await transaction.ensureDir(path.join(componentsDir, 'ui'));
         spinner?.info('Created components/ui directory');
 
-        const stylesAdded = await addBrutalistStyles(configTarget, settings.tailwind.css);
+        const stylesAdded = await addBrutalistStyles(configTarget, settings.tailwind.css, transaction);
         if (stylesAdded) {
             spinner?.info('Added brutalist styles to ' + settings.tailwind.css);
         } else {
@@ -366,8 +385,11 @@ export async function init(options: InitOptions): Promise<void> {
                 settings.tailwind.css,
                 componentsDir,
                 spinner,
+                transaction,
             );
         }
+
+        await transaction.commit();
 
         spinner?.succeed('Brutx-Vue initialized successfully!');
 
@@ -441,7 +463,14 @@ export async function init(options: InitOptions): Promise<void> {
         }
     } catch (error: unknown) {
         spinner?.fail('Failed to initialize Brutx-Vue');
+        const rollbackFailures = await transaction.rollback();
+        if (rollbackFailures.length > 0) {
+            logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
+        }
         const message = error instanceof Error ? error.message : String(error);
-        throw new CliError(message);
+        if (error instanceof CliError) {
+            throw error;
+        }
+        throw new CliError(message, { code: 'WRITE_FAILED', cause: error });
     }
 }

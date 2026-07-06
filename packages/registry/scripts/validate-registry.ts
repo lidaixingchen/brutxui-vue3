@@ -1,8 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import crypto from 'node:crypto';
-import { COMPONENTS } from 'brutx-shared-vue';
+import {
+    COMPONENTS,
+    validateRegistryIndex,
+    validateRegistryIntegrity,
+    validateRegistryItem,
+} from 'brutx-shared-vue';
 import { COMPONENT_FILES } from './component-files';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -10,8 +14,6 @@ const __dirname = path.dirname(__filename);
 
 const REGISTRY_DIR = path.resolve(__dirname, '../registry');
 const UI_COMPONENTS_DIR = path.resolve(__dirname, '../../ui/src/components');
-const VALID_TYPES = new Set(['registry:ui', 'registry:hook', 'registry:lib', 'registry:directive']);
-
 function validateIndexConsistency(files: string[]): number {
     const indexPath = path.join(REGISTRY_DIR, 'index.json');
     if (!fs.existsSync(indexPath)) {
@@ -23,6 +25,7 @@ function validateIndexConsistency(files: string[]): number {
     let indexNames: Set<string>;
     try {
         const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+        validateRegistryIndex(indexData);
 
         if (indexData.$schema !== 'https://ui.shadcn.com/schema/registry.json') {
             console.error(`✗ [index.json] Missing or invalid $schema. Expected "https://ui.shadcn.com/schema/registry.json", got "${indexData.$schema}".`);
@@ -127,27 +130,6 @@ function validateComponentsSync(): number {
     return syncErrors;
 }
 
-function validateIntegrity(data: Record<string, unknown>): number {
-    const integrity = data.integrity;
-    if (typeof integrity !== 'string' || !integrity.startsWith('sha256-')) {
-        console.error(`✗ [${data.name}] Missing or invalid integrity hash.`);
-        return 1;
-    }
-
-    const files = data.files as Array<{ content: string }>;
-    if (!Array.isArray(files)) return 0;
-
-    const allContent = files.map(f => f.content).join('\0');
-    const expected = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
-
-    if (integrity !== expected) {
-        console.error(`✗ [${data.name}] Integrity hash mismatch. Expected ${expected}, got ${integrity}.`);
-        return 1;
-    }
-
-    return 0;
-}
-
 function validate() {
     console.log('🔍 Validating registry files...');
 
@@ -171,96 +153,45 @@ function validate() {
         try {
             const rawContent = fs.readFileSync(filePath, 'utf-8');
             const data = JSON.parse(rawContent);
-
-            if (data.$schema !== 'https://ui.shadcn.com/schema/registry-item.json') {
-                console.error(`✗ [${file}] Missing or invalid $schema header.`);
-                errorCount++;
-            }
+            validateRegistryItem(data, { name: nameWithoutExtension, requireSchema: true });
 
             if (data.name !== nameWithoutExtension) {
                 console.error(`✗ [${file}] Name field "${data.name}" does not match filename "${nameWithoutExtension}".`);
                 errorCount++;
             }
 
-            if (typeof data.type !== 'string' || !VALID_TYPES.has(data.type)) {
-                console.error(`✗ [${file}] Missing or invalid type field "${data.type}". Must be one of: ${[...VALID_TYPES].join(', ')}.`);
-                errorCount++;
-            }
-
-            if (!data.title || typeof data.title !== 'string') {
-                console.error(`✗ [${file}] Missing or invalid title.`);
-                errorCount++;
-            }
-            if (!data.description || typeof data.description !== 'string') {
-                console.error(`✗ [${file}] Missing or invalid description.`);
-                errorCount++;
-            }
-
-            if (!Array.isArray(data.files) || data.files.length === 0) {
-                console.error(`✗ [${file}] files array is missing or empty.`);
-                errorCount++;
-            } else {
-                totalFiles += data.files.length;
-                for (const fileObj of data.files) {
-                    if (!fileObj.path || !fileObj.content) {
-                        console.error(`✗ [${file}] Invalid file object in files array (missing path or content).`);
-                        errorCount++;
-                    }
-
-                    if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/') && !fileObj.path.startsWith('lib/') && !fileObj.path.startsWith('directives/')) {
-                        console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", "locales/", "lib/", or "directives/".`);
-                        errorCount++;
-                    }
+            totalFiles += data.files.length;
+            for (const fileObj of data.files) {
+                if (!fileObj.path.startsWith(`components/ui/${data.name}/`) && !fileObj.path.startsWith('composables/') && !fileObj.path.startsWith('locales/') && !fileObj.path.startsWith('lib/') && !fileObj.path.startsWith('directives/')) {
+                    console.error(`✗ [${file}] File path "${fileObj.path}" does not match expected pattern "components/ui/${data.name}/", "composables/", "locales/", "lib/", or "directives/".`);
+                    errorCount++;
                 }
             }
 
-            if (!Array.isArray(data.dependencies)) {
-                console.error(`✗ [${file}] dependencies must be an array.`);
-                errorCount++;
-            } else {
-                const seenDeps = new Set<string>();
-                for (const dep of data.dependencies) {
-                    if (typeof dep !== 'string' || dep.trim() === '') {
-                        console.error(`✗ [${file}] Found empty or non-string entry in dependencies.`);
-                        errorCount++;
-                        continue;
-                    }
-                    if (seenDeps.has(dep)) {
-                        console.error(`✗ [${file}] Duplicate dependency "${dep}".`);
-                        errorCount++;
-                    }
-                    seenDeps.add(dep);
-                    if (dep.includes('@radix-ui') || dep.includes('lucide-react') || dep.includes('react-hook-form') || dep.includes('cmdk') || dep.includes('react-day-picker')) {
-                        console.error(`✗ [${file}] Found React dependency "${dep}" — should be Vue equivalent.`);
-                        errorCount++;
-                    }
+            const seenDeps = new Set<string>();
+            for (const dep of data.dependencies) {
+                if (seenDeps.has(dep)) {
+                    console.error(`✗ [${file}] Duplicate dependency "${dep}".`);
+                    errorCount++;
                 }
-            }
-            if (!Array.isArray(data.registryDependencies)) {
-                console.error(`✗ [${file}] registryDependencies must be an array.`);
-                errorCount++;
-            } else {
-                for (const regDep of data.registryDependencies) {
-                    if (typeof regDep === 'string' && !knownNames.has(regDep)) {
-                        console.error(`✗ [${file}] registryDependency "${regDep}" does not reference an existing registry item.`);
-                        errorCount++;
-                    }
+                seenDeps.add(dep);
+                if (dep.includes('@radix-ui') || dep.includes('lucide-react') || dep.includes('react-hook-form') || dep.includes('cmdk') || dep.includes('react-day-picker')) {
+                    console.error(`✗ [${file}] Found React dependency "${dep}" — should be Vue equivalent.`);
+                    errorCount++;
                 }
             }
 
-            if (!data.tailwind || typeof data.tailwind !== 'object') {
-                console.error(`✗ [${file}] Missing or invalid tailwind block.`);
-                errorCount++;
-            }
-            if (!data.cssVars || typeof data.cssVars !== 'object') {
-                console.error(`✗ [${file}] Missing or invalid cssVars block.`);
-                errorCount++;
+            for (const regDep of data.registryDependencies) {
+                if (!knownNames.has(regDep)) {
+                    console.error(`✗ [${file}] registryDependency "${regDep}" does not reference an existing registry item.`);
+                    errorCount++;
+                }
             }
 
-            errorCount += validateIntegrity(data);
+            validateRegistryIntegrity(data, nameWithoutExtension);
 
         } catch (err: unknown) {
-            console.error(`✗ [${file}] Failed to parse JSON:`, err instanceof Error ? err.message : err);
+            console.error(`✗ [${file}] Failed to validate JSON:`, err instanceof Error ? err.message : err);
             errorCount++;
         }
     }

@@ -1,69 +1,16 @@
-import crypto from 'node:crypto';
 import fs from 'fs-extra';
 import path from 'path';
-import type { RegistryItem, RegistryFile, BrutalistConfig } from './types.js';
+import {
+    validateRegistryIntegrity,
+    validateRegistryItem,
+} from 'brutx-shared-vue';
+import type { RegistryItem, BrutalistConfig } from './types.js';
 import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG, CURRENT_CONFIG_VERSION } from './constants.js';
 import { CliError } from './error.js';
 import { getCached, setCache } from './cache.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
-}
-
-function validateRegistryFile(file: unknown, itemName: string): file is RegistryFile {
-    if (typeof file !== 'object' || file === null) {
-        return false;
-    }
-
-    const f = file as Record<string, unknown>;
-
-    if (typeof f.path !== 'string' || f.path.length === 0) {
-        throw new Error(
-            `Invalid registry file in "${itemName}": "path" must be a non-empty string.`
-        );
-    }
-
-    if (typeof f.content !== 'string') {
-        throw new Error(
-            `Invalid registry file in "${itemName}": "content" must be a string.`
-        );
-    }
-
-    return true;
-}
-
-function validateRegistryItem(data: unknown, name: string): asserts data is RegistryItem {
-    if (typeof data !== 'object' || data === null) {
-        throw new Error(`Invalid registry data for "${name}": expected an object.`);
-    }
-
-    const item = data as Record<string, unknown>;
-
-    if (typeof item.name !== 'string' || item.name.length === 0) {
-        throw new Error(`Invalid registry data for "${name}": "name" must be a non-empty string.`);
-    }
-
-    if (typeof item.type !== 'string') {
-        throw new Error(`Invalid registry data for "${name}": "type" must be a string.`);
-    }
-
-    if (!Array.isArray(item.files)) {
-        throw new Error(`Invalid registry data for "${name}": "files" must be an array.`);
-    }
-
-    for (const file of item.files) {
-        validateRegistryFile(file, name);
-    }
-
-    if (item.dependencies !== undefined && !Array.isArray(item.dependencies)) {
-        throw new Error(`Invalid registry data for "${name}": "dependencies" must be an array.`);
-    }
-
-    if (item.registryDependencies !== undefined && !Array.isArray(item.registryDependencies)) {
-        throw new Error(
-            `Invalid registry data for "${name}": "registryDependencies" must be an array.`
-        );
-    }
 }
 
 async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Response> {
@@ -86,11 +33,23 @@ async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Resp
         }
     }
 
-    throw new Error(
+    throw new CliError(
         `Failed to fetch from "${url}" after ${maxRetries} attempts. ` +
         `Please check your network connection or use --registry to specify a different source.\n` +
-        `Last error: ${lastError?.message ?? 'Unknown error'}`
+        `Last error: ${lastError?.message ?? 'Unknown error'}`,
+        { code: 'REGISTRY_FETCH_FAILED', cause: lastError }
     );
+}
+
+function verifyRegistryIntegrity(item: RegistryItem, name: string): void {
+    try {
+        validateRegistryIntegrity(item, name);
+    } catch (error) {
+        throw new CliError(
+            `Integrity check failed for component '${name}'. The registry content may have been tampered with.`,
+            { code: 'REGISTRY_INTEGRITY_FAILED', cause: error }
+        );
+    }
 }
 
 export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem> {
@@ -107,23 +66,15 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         const url = `${source}/${name}.json`;
         const res = await fetchWithRetry(url);
         if (!res.ok) {
-            throw new Error(`Failed to fetch component "${name}" from registry: ${res.statusText}`);
+            throw new CliError(
+                `Failed to fetch component "${name}" from registry: ${res.statusText}`,
+                { code: 'REGISTRY_FETCH_FAILED' }
+            );
         }
         data = await res.json();
 
-        validateRegistryItem(data, name);
-
-        const integrity = (data as RegistryItem & { integrity?: unknown }).integrity;
-        if (typeof integrity === 'string') {
-            const files = data.files as Array<{ content: string }>;
-            const allContent = files.map(f => f.content).join('\0');
-            const computed = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
-            if (computed !== integrity) {
-                throw new CliError(
-                    `Integrity check failed for component '${name}'. The registry content may have been tampered with.`
-                );
-            }
-        }
+        validateRegistryItem(data, { name });
+        verifyRegistryIntegrity(data, name);
 
         if (effectiveUseCache) {
             await setCache(name, source, data).catch(() => {});
@@ -133,14 +84,18 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
     } else {
         const filePath = path.resolve(source, `${name}.json`);
         if (!filePath.startsWith(path.resolve(source) + path.sep)) {
-            throw new Error(`Security Error: Path traversal detected in component name "${name}".`);
+            throw new CliError(
+                `Security Error: Path traversal detected in component name "${name}".`,
+                { code: 'PATH_UNSAFE', exitCode: 2 }
+            );
         }
         if (!(await fs.pathExists(filePath))) {
             throw new Error(`Component "${name}" not found in local registry: ${filePath}`);
         }
         data = await fs.readJson(filePath);
 
-        validateRegistryItem(data, name);
+        validateRegistryItem(data, { name });
+        verifyRegistryIntegrity(data, name);
         return data;
     }
 }

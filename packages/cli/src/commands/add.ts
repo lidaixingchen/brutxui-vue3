@@ -374,6 +374,9 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     } catch (error: unknown) {
         spinner?.fail('Failed to add components');
+        if (error instanceof CliError) {
+            throw error;
+        }
         const message = error instanceof Error ? error.message : String(error);
         throw new CliError(message);
     }

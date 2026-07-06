@@ -130,7 +130,7 @@ async function main(): Promise<void> {
     } catch (error) {
         if (error instanceof CliError) {
             logger.error(error.message);
-            process.exit(error.code);
+            process.exit(error.exitCode);
         }
 
         const verbose = program.opts().verbose as boolean;

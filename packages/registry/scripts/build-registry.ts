@@ -1,8 +1,19 @@
 import crypto from 'node:crypto';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { COMPONENTS } from 'brutx-shared-vue';
+import { fileURLToPath, pathToFileURL } from 'url';
+import {
+    COMPONENTS,
+    computeRegistryIntegrity,
+    validateRegistryItem,
+} from 'brutx-shared-vue';
+import type {
+    RegistryFile,
+    RegistryFileType,
+    RegistryIndex,
+    RegistryIndexItem,
+    RegistryItem,
+} from 'brutx-shared-vue';
 import { COMPONENT_FILES } from './component-files';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -93,7 +104,7 @@ function readComponentSource(filePath: string): string {
     return fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
 }
 
-function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component'): string {
+export function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component'): string {
     // Rewrite relative imports from composable/lib files to @/ aliases
     code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
     code = code.replace(/['"]\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
@@ -128,7 +139,7 @@ function rewriteImports(code: string, componentName: string, context: RewriteCon
     return code;
 }
 
-function extractDeps(code: string, dirPrefix: string): string[] {
+export function extractDeps(code: string, dirPrefix: string): string[] {
     const deps = new Set<string>();
     const pattern = new RegExp(`@/${dirPrefix}/([^'";\\s]+)`, 'g');
     for (const match of code.matchAll(pattern)) {
@@ -138,7 +149,7 @@ function extractDeps(code: string, dirPrefix: string): string[] {
     return Array.from(deps);
 }
 
-function getFileType(filePath: string): string {
+export function getFileType(filePath: string): RegistryFileType {
     if (filePath.endsWith('.vue')) return 'registry:ui';
     if (filePath.endsWith('.css')) return 'registry:ui';
     if (filePath.includes('-variants') || filePath.includes('-types') || filePath.includes('-key')) return 'registry:lib';
@@ -149,7 +160,7 @@ function getFileType(filePath: string): string {
     return 'registry:ui';
 }
 
-function extractRegistryDeps(code: string, componentName: string): string[] {
+export function extractRegistryDeps(code: string, componentName: string): string[] {
     const deps = new Set<string>();
     const matches = code.match(/@\/components\/ui\/([a-zA-Z0-9-]+)/g);
     if (matches) {
@@ -251,32 +262,7 @@ const CSS_VARS = {
     }
 };
 
-interface RegistryIndexFile {
-    path: string;
-    type: string;
-}
-
-interface RegistryIndexItem {
-    name: string;
-    type: string;
-    title: string;
-    description: string;
-    dependencies: string[];
-    registryDependencies: string[];
-    files: RegistryIndexFile[];
-    tailwind: typeof TAILWIND_CONFIG;
-    cssVars: typeof CSS_VARS;
-    integrity: string;
-}
-
-interface RegistryIndex {
-    $schema?: string;
-    name: string;
-    homepage: string;
-    items: RegistryIndexItem[];
-}
-
-async function run() {
+export async function run() {
     console.log('🚀 Starting registry build...');
 
     if (!fs.existsSync(OUTPUT_DIR)) {
@@ -289,15 +275,15 @@ async function run() {
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
 
-    const registryIndex: RegistryIndex = {
+    const registryIndex = {
         $schema: 'https://ui.shadcn.com/schema/registry.json',
         name: 'brutx-vue',
         homepage: 'https://lidaixingchen.github.io/brutxui-vue3/',
-        items: []
-    };
+        items: [] as RegistryIndexItem[]
+    } satisfies RegistryIndex;
 
     const LOCALE_FILES = ['zh-CN.ts', 'types.ts'];
-    const localeFiles: { path: string; content: string; type: string }[] = [];
+    const localeFiles: RegistryFile[] = [];
     const localeHashParts: string[] = [];
     for (const localeFile of LOCALE_FILES) {
         const localePath = path.join(UI_LOCALES_DIR, localeFile);
@@ -325,6 +311,7 @@ async function run() {
     if (cache['locale-zh-cn'] === localeHash && fs.existsSync(localeOutputPath) && localeFiles.length > 0) {
         try {
             const existingLocaleItem = JSON.parse(fs.readFileSync(localeOutputPath, 'utf-8'));
+            validateRegistryItem(existingLocaleItem, { name: 'locale-zh-cn', requireSchema: true });
             registryIndex.items.push({
                 name: existingLocaleItem.name,
                 type: existingLocaleItem.type,
@@ -332,7 +319,7 @@ async function run() {
                 description: existingLocaleItem.description,
                 dependencies: existingLocaleItem.dependencies,
                 registryDependencies: existingLocaleItem.registryDependencies,
-                files: existingLocaleItem.files.map((f: { path: string; type: string }) => ({
+                files: existingLocaleItem.files.map((f: RegistryFile) => ({
                     path: f.path,
                     type: f.type
                 })),
@@ -344,8 +331,7 @@ async function run() {
             console.log('⊘ Skipped locale-zh-cn (unchanged)');
         } catch { /* fall through to rebuild */ }
     } else if (localeFiles.length > 0) {
-        const localeContent = localeFiles.map(f => f.content).join('\0');
-        const localeIntegrity = 'sha256-' + crypto.createHash('sha256').update(localeContent).digest('hex');
+        const localeIntegrity = computeRegistryIntegrity(localeFiles);
 
         const localeItem = {
             $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -359,7 +345,7 @@ async function run() {
             tailwind: TAILWIND_CONFIG,
             cssVars: CSS_VARS,
             integrity: localeIntegrity
-        };
+        } satisfies RegistryItem;
 
         fs.writeFileSync(localeOutputPath, JSON.stringify(localeItem, null, 2), 'utf-8');
         console.log(`✓ Generated locale-zh-cn.json (${localeFiles.length} files)`);
@@ -394,6 +380,7 @@ async function run() {
             if (cache[name] === sourceHash && fs.existsSync(outputPath)) {
                 try {
                     const existingItem = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
+                    validateRegistryItem(existingItem, { name, requireSchema: true });
                     registryIndex.items.push({
                         name: existingItem.name,
                         type: existingItem.type,
@@ -401,7 +388,7 @@ async function run() {
                         description: existingItem.description,
                         dependencies: existingItem.dependencies,
                         registryDependencies: existingItem.registryDependencies,
-                        files: existingItem.files.map((f: { path: string; type: string }) => ({
+                        files: existingItem.files.map((f: RegistryFile) => ({
                             path: f.path,
                             type: f.type
                         })),
@@ -416,7 +403,7 @@ async function run() {
             }
 
             const allRegistryDeps = new Set<string>();
-            const files: { path: string; content: string; type: string }[] = [];
+            const files: RegistryFile[] = [];
             const composableDeps = new Set(fileMapping.composables ?? []);
             const localeDeps = new Set<string>();
             const libDeps = new Set<string>();
@@ -522,8 +509,7 @@ async function run() {
             const description = componentInfo?.description
                 || `A highly customizable neo-brutalist ${title} component built with Brutx design tokens for Vue 3.`;
 
-            const allContent = files.map(f => f.content).join('\0');
-            const integrity = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
+            const integrity = computeRegistryIntegrity(files);
 
             const registryItem = {
                 $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -537,7 +523,7 @@ async function run() {
                 tailwind: TAILWIND_CONFIG,
                 cssVars: CSS_VARS,
                 integrity
-            };
+            } satisfies RegistryItem;
 
             fs.writeFileSync(outputPath, JSON.stringify(registryItem, null, 2), 'utf-8');
             console.log(`✓ Generated ${name}.json (${files.length} files, Registry dependencies: [${Array.from(allRegistryDeps).join(', ')}])`);
@@ -583,4 +569,6 @@ async function run() {
     console.log('🎉 Registry built!');
 }
 
-run().catch(console.error);
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    run().catch(console.error);
+}

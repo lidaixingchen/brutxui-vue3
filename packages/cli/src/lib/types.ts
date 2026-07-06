@@ -1,3 +1,5 @@
+import type { RegistryFile, RegistryItem } from 'brutx-shared-vue';
+
 export type ProjectType =
     | 'vite-vue'
     | 'vite-vue-src'
@@ -63,18 +65,7 @@ export interface AddOptions {
     vscode?: boolean;
 }
 
-export interface RegistryFile {
-    path: string;
-    content: string;
-}
-
-export interface RegistryItem {
-    name: string;
-    type: string;
-    dependencies?: string[];
-    registryDependencies?: string[];
-    files: RegistryFile[];
-}
+export type { RegistryFile, RegistryItem };
 
 export interface DoctorOptions {
     cwd?: string;

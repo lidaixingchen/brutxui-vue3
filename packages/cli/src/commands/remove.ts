@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { BrutalistConfig, RemoveOptions, RegistryItem } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -240,43 +240,57 @@ export async function remove(components: string[], options: RemoveOptions): Prom
         }
     }
 
+    const transaction = new FileTransaction();
     let totalRemoved = 0;
-
-    for (const comp of toRemove) {
-        const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-        const componentPath = path.join(componentsPath, comp);
-
-        if (await fs.pathExists(componentPath)) {
-            const files = await fs.readdir(componentPath);
-            logger.info(`Removing ${comp} (${files.length} files)...`);
-            await fs.remove(componentPath);
-            totalRemoved += files.length;
-        }
-    }
-
     let orphanedRemoved = 0;
 
-    if (orphanedFiles.length > 0) {
-        if (!options.yes) {
-            const removeOrphaned = await confirm({
-                message: `Remove ${orphanedFiles.length} orphaned file(s) no longer referenced by any component?`,
-                default: true,
-            });
+    try {
+        for (const comp of toRemove) {
+            const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+            const componentPath = path.join(componentsPath, comp);
 
-            if (!removeOrphaned) {
-                logger.info('Keeping orphaned files.');
-                logger.newLine();
-                logger.success(`Removed ${totalRemoved} file(s) and 0 orphaned file(s).`);
-                return;
+            if (await fs.pathExists(componentPath)) {
+                const files = await fs.readdir(componentPath);
+                logger.info(`Removing ${comp} (${files.length} files)...`);
+                await transaction.remove(componentPath);
+                totalRemoved += files.length;
             }
         }
 
-        for (const f of orphanedFiles) {
-            if (await fs.pathExists(f)) {
-                await fs.remove(f);
-                orphanedRemoved++;
+        if (orphanedFiles.length > 0) {
+            if (!options.yes) {
+                const removeOrphaned = await confirm({
+                    message: `Remove ${orphanedFiles.length} orphaned file(s) no longer referenced by any component?`,
+                    default: true,
+                });
+
+                if (!removeOrphaned) {
+                    await transaction.commit();
+                    logger.info('Keeping orphaned files.');
+                    logger.newLine();
+                    logger.success(`Removed ${totalRemoved} file(s) and 0 orphaned file(s).`);
+                    return;
+                }
+            }
+
+            for (const f of orphanedFiles) {
+                if (await fs.pathExists(f)) {
+                    await transaction.remove(f);
+                    orphanedRemoved++;
+                }
             }
         }
+
+        await transaction.commit();
+    } catch (error) {
+        const rollbackFailures = await transaction.rollback();
+        if (rollbackFailures.length > 0) {
+            logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
+        }
+        throw new CliError('Failed to remove components. Rolled back file changes.', {
+            code: 'WRITE_FAILED',
+            cause: error,
+        });
     }
 
     logger.newLine();
