@@ -12,6 +12,24 @@ export const hasDocument = typeof document !== 'undefined'
 /** Whether `localStorage` is available (may be blocked in Safari private mode). */
 export const hasLocalStorage = typeof localStorage !== 'undefined'
 
+/** Whether `document.body` is available for imperative mounting. */
+export function canUseDocumentBody(): boolean {
+    return hasDocument && document.body !== null
+}
+
+/** Whether IntersectionObserver is available. */
+export const hasIntersectionObserver = isClient && typeof window.IntersectionObserver !== 'undefined'
+
+type AudioContextConstructor = typeof AudioContext
+
+/** Get the available AudioContext constructor, including Safari's prefixed API. */
+export function getAudioContextCtor(): AudioContextConstructor | null {
+    if (!isClient) return null
+    return window.AudioContext
+        ?? (window as Window & typeof globalThis & { webkitAudioContext?: AudioContextConstructor }).webkitAudioContext
+        ?? null
+}
+
 /**
  * Safely get a value from localStorage.
  * Returns `null` if localStorage is unavailable or the key doesn't exist.

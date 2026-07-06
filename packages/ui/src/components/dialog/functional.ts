@@ -11,6 +11,7 @@ import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { DEFAULT_DIALOG_TRANSITION_MS } from '@/lib/defaults'
+import { canUseDocumentBody } from '@/lib/env'
 import { getGlobalAppContext } from '@/plugin'
 
 export type RenderableContent = string | Component | VNode | (() => string | Component | VNode | null)
@@ -107,6 +108,14 @@ function getDialogEnhancedProps(options: ShowDialogOptions): Record<string, unkn
 }
 
 export function showDialog(options: ShowDialogOptions = {}) {
+    if (!canUseDocumentBody()) {
+        return {
+            close: () => {},
+            promise: Promise.resolve(),
+            destroy: () => {},
+        }
+    }
+
     const container = document.createElement('div')
     document.body.appendChild(container)
 
@@ -218,6 +227,14 @@ export function showDialog(options: ShowDialogOptions = {}) {
 }
 
 export function showMessageBox(options: MessageBoxOptions = {}) {
+    if (!canUseDocumentBody()) {
+        return {
+            close: () => {},
+            promise: Promise.resolve(undefined),
+            destroy: () => {},
+        }
+    }
+
     const container = document.createElement('div')
     document.body.appendChild(container)
 

@@ -35,9 +35,10 @@ const mockAudioContext = {
     close: vi.fn().mockResolvedValue(undefined),
 }
 
-// Mock isClient module-level export
+// Mock env module-level exports
 vi.mock('../lib/env', () => ({
     isClient: true,
+    getAudioContextCtor: () => globalThis.AudioContext ?? null,
 }))
 
 describe('useAudioEngine', () => {
@@ -60,6 +61,7 @@ describe('useAudioEngine', () => {
     afterEach(() => {
         vi.useRealTimers()
         vi.clearAllMocks()
+        vi.unstubAllGlobals()
     })
 
     it('playSound does nothing when disabled', () => {
@@ -126,5 +128,19 @@ describe('useAudioEngine', () => {
 
         playSound('type')
         expect(mockAudioContext.resume).toHaveBeenCalled()
+    })
+
+    it('does not throw when AudioContext construction fails', () => {
+        vi.stubGlobal('AudioContext', class {
+            constructor() {
+                throw new Error('blocked')
+            }
+        })
+
+        const enabled = ref(true)
+        const { playSound } = useAudioEngine(enabled)
+
+        expect(() => playSound('type')).not.toThrow()
+        expect(mockAudioContext.createOscillator).not.toHaveBeenCalled()
     })
 })

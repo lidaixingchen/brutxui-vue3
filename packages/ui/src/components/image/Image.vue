@@ -4,6 +4,7 @@ import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
+import { hasIntersectionObserver } from '@/lib/env'
 
 interface ImageProps {
     src: string
@@ -69,13 +70,13 @@ const srcToShow = computed(() => {
         return props.fallback
     }
     if (props.loading === 'lazy') {
-        return isInView.value ? props.src : ''
+        return isInView.value || !hasIntersectionObserver ? props.src : ''
     }
     return props.src
 })
 
 const isLoading = computed(() => {
-    if (props.loading === 'lazy' && !isInView.value) return true
+    if (props.loading === 'lazy' && hasIntersectionObserver && !isInView.value) return true
     return !isLoaded.value && !hasError.value
 })
 
@@ -263,6 +264,10 @@ watch(showViewer, (val) => {
 // 懒加载初始化
 const initObserver = () => {
     if (props.loading !== 'lazy') return
+    if (!hasIntersectionObserver) {
+        isInView.value = true
+        return
+    }
     if (!containerRef.value) return
 
     observer = new IntersectionObserver(

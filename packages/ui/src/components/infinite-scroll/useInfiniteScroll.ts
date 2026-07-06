@@ -1,4 +1,5 @@
 import { ref, onMounted, onUnmounted, watch, type Ref } from 'vue'
+import { hasIntersectionObserver } from '@/lib/env'
 
 export interface UseInfiniteScrollOptions {
     /** 触发距离阈值 (px) */
@@ -15,6 +16,7 @@ export interface UseInfiniteScrollOptions {
 
 const DEFAULT_DISTANCE = 100
 const DEFAULT_DELAY = 200
+type ObserverSetupResult = 'observed' | 'unsupported' | 'missing-target'
 
 export function useInfiniteScroll(
     targetRef: Ref<HTMLElement | null>,
@@ -48,8 +50,9 @@ export function useInfiniteScroll(
         }, getDelay())
     }
 
-    function setupObserver() {
-        if (!targetRef.value) return
+    function setupObserver(): ObserverSetupResult {
+        if (!targetRef.value) return 'missing-target'
+        if (!hasIntersectionObserver) return 'unsupported'
 
         observer.value = new IntersectionObserver(
             (entries) => {
@@ -66,6 +69,7 @@ export function useInfiniteScroll(
         )
 
         observer.value.observe(targetRef.value)
+        return 'observed'
     }
 
     function cleanupObserver() {
@@ -81,9 +85,9 @@ export function useInfiniteScroll(
 
     onMounted(() => {
         if (!getDisabled()) {
-            setupObserver()
+            const observerResult = setupObserver()
 
-            if (options.immediate ?? true) {
+            if ((options.immediate ?? true) || observerResult === 'unsupported') {
                 triggerLoad()
             }
         }
@@ -109,7 +113,10 @@ export function useInfiniteScroll(
             if (newDisabled) {
                 cleanupObserver()
             } else if (!observer.value && targetRef.value) {
-                setupObserver()
+                const observerResult = setupObserver()
+                if (observerResult === 'unsupported') {
+                    triggerLoad()
+                }
             }
         }
     )

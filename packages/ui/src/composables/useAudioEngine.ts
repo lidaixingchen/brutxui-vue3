@@ -1,5 +1,5 @@
 import { onUnmounted, type Ref } from 'vue'
-import { isClient } from '../lib/env'
+import { getAudioContextCtor } from '../lib/env'
 import {
     AUDIO_TYPE_THROTTLE_MS,
     AUDIO_TYPE_BASE_FREQ,
@@ -27,11 +27,23 @@ export interface UseAudioEngineReturn {
 
 export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
     let audioCtx: AudioContext | null = null
+    let audioUnavailable = false
     let lastTypeSoundTime = 0
 
     const getCtx = () => {
-        if (!audioCtx && isClient) {
-            audioCtx = new AudioContext()
+        if (!audioCtx && !audioUnavailable) {
+            const AudioContextCtor = getAudioContextCtor()
+            if (!AudioContextCtor) {
+                audioUnavailable = true
+                return null
+            }
+
+            try {
+                audioCtx = new AudioContextCtor()
+            } catch {
+                audioUnavailable = true
+                return null
+            }
         }
         return audioCtx
     }
@@ -48,47 +60,51 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
         if (!ctx) return
         
         if (ctx.state === 'suspended') {
-            void ctx.resume()
+            void ctx.resume().catch(() => {})
         }
 
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.connect(gain)
-        gain.connect(ctx.destination)
+        try {
+            const osc = ctx.createOscillator()
+            const gain = ctx.createGain()
+            osc.connect(gain)
+            gain.connect(ctx.destination)
 
-        osc.onended = () => {
-            osc.disconnect()
-            gain.disconnect()
-        }
+            osc.onended = () => {
+                osc.disconnect()
+                gain.disconnect()
+            }
 
-        if (type === 'type') {
-            osc.type = 'triangle'
-            osc.frequency.setValueAtTime(AUDIO_TYPE_BASE_FREQ + Math.random() * AUDIO_TYPE_FREQ_RANGE, ctx.currentTime)
-            gain.gain.setValueAtTime(AUDIO_TYPE_GAIN, ctx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(AUDIO_TYPE_GAIN_END, ctx.currentTime + AUDIO_TYPE_DURATION)
-            osc.start()
-            osc.stop(ctx.currentTime + AUDIO_TYPE_DURATION)
-        } else if (type === 'success') {
-            osc.type = 'sine'
-            osc.frequency.setValueAtTime(AUDIO_SUCCESS_START_FREQ, ctx.currentTime)
-            osc.frequency.exponentialRampToValueAtTime(AUDIO_SUCCESS_END_FREQ, ctx.currentTime + AUDIO_SUCCESS_DURATION)
-            gain.gain.setValueAtTime(AUDIO_SUCCESS_GAIN, ctx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(AUDIO_SUCCESS_GAIN_END, ctx.currentTime + AUDIO_SUCCESS_DURATION)
-            osc.start()
-            osc.stop(ctx.currentTime + AUDIO_SUCCESS_DURATION)
-        } else if (type === 'fail') {
-            osc.type = 'square'
-            osc.frequency.setValueAtTime(AUDIO_FAIL_FREQ_1, ctx.currentTime)
-            osc.frequency.setValueAtTime(AUDIO_FAIL_FREQ_2, ctx.currentTime + AUDIO_FAIL_FREQ_SHIFT_TIME)
-            gain.gain.setValueAtTime(AUDIO_FAIL_GAIN, ctx.currentTime)
-            gain.gain.exponentialRampToValueAtTime(AUDIO_FAIL_GAIN_END, ctx.currentTime + AUDIO_FAIL_DURATION)
-            osc.start()
-            osc.stop(ctx.currentTime + AUDIO_FAIL_DURATION)
+            if (type === 'type') {
+                osc.type = 'triangle'
+                osc.frequency.setValueAtTime(AUDIO_TYPE_BASE_FREQ + Math.random() * AUDIO_TYPE_FREQ_RANGE, ctx.currentTime)
+                gain.gain.setValueAtTime(AUDIO_TYPE_GAIN, ctx.currentTime)
+                gain.gain.exponentialRampToValueAtTime(AUDIO_TYPE_GAIN_END, ctx.currentTime + AUDIO_TYPE_DURATION)
+                osc.start()
+                osc.stop(ctx.currentTime + AUDIO_TYPE_DURATION)
+            } else if (type === 'success') {
+                osc.type = 'sine'
+                osc.frequency.setValueAtTime(AUDIO_SUCCESS_START_FREQ, ctx.currentTime)
+                osc.frequency.exponentialRampToValueAtTime(AUDIO_SUCCESS_END_FREQ, ctx.currentTime + AUDIO_SUCCESS_DURATION)
+                gain.gain.setValueAtTime(AUDIO_SUCCESS_GAIN, ctx.currentTime)
+                gain.gain.exponentialRampToValueAtTime(AUDIO_SUCCESS_GAIN_END, ctx.currentTime + AUDIO_SUCCESS_DURATION)
+                osc.start()
+                osc.stop(ctx.currentTime + AUDIO_SUCCESS_DURATION)
+            } else if (type === 'fail') {
+                osc.type = 'square'
+                osc.frequency.setValueAtTime(AUDIO_FAIL_FREQ_1, ctx.currentTime)
+                osc.frequency.setValueAtTime(AUDIO_FAIL_FREQ_2, ctx.currentTime + AUDIO_FAIL_FREQ_SHIFT_TIME)
+                gain.gain.setValueAtTime(AUDIO_FAIL_GAIN, ctx.currentTime)
+                gain.gain.exponentialRampToValueAtTime(AUDIO_FAIL_GAIN_END, ctx.currentTime + AUDIO_FAIL_DURATION)
+                osc.start()
+                osc.stop(ctx.currentTime + AUDIO_FAIL_DURATION)
+            }
+        } catch {
+            audioUnavailable = true
         }
     }
 
     const dispose = () => {
-        audioCtx?.close()
+        void audioCtx?.close().catch(() => {})
         audioCtx = null
     }
 

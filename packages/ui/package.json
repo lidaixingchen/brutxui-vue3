@@ -112,7 +112,7 @@
     "scripts": {
         "build": "vite build && pnpm build:preflight",
         "build:preflight": "tailwindcss -i src/preflight.css -o dist/preflight.css",
-        "prepack": "vite build",
+        "prepack": "pnpm build",
         "dev": "vite build --watch",
         "clean": "rm -rf dist",
         "typecheck": "vue-tsc --noEmit",

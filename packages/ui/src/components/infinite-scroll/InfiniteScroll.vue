@@ -2,6 +2,7 @@
 import { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
+import { hasIntersectionObserver } from '@/lib/env'
 
 interface InfiniteScrollProps {
     /** 触发距离阈值 (px) */
@@ -34,6 +35,7 @@ const isLoading = ref(false)
 // 使用 shallowRef 存储原生对象，避免不必要的深层响应式追踪
 const observer = shallowRef<IntersectionObserver | null>(null)
 const loadTimer = shallowRef<ReturnType<typeof setTimeout> | null>(null)
+type ObserverSetupResult = 'observed' | 'unsupported' | 'missing-target'
 
 // 检查是否应该加载
 function shouldLoad(): boolean {
@@ -58,8 +60,9 @@ function triggerLoad() {
 }
 
 // 设置 IntersectionObserver
-function setupObserver() {
-    if (!sentinelRef.value) return
+function setupObserver(): ObserverSetupResult {
+    if (!sentinelRef.value) return 'missing-target'
+    if (!hasIntersectionObserver) return 'unsupported'
 
     observer.value = new IntersectionObserver(
         (entries) => {
@@ -76,6 +79,7 @@ function setupObserver() {
     )
 
     observer.value.observe(sentinelRef.value)
+    return 'observed'
 }
 
 // 清理 Observer
@@ -100,16 +104,19 @@ watch(() => props.disabled, (disabled) => {
             loadTimer.value = null
         }
     } else {
-        setupObserver()
+        const observerResult = setupObserver()
+        if (observerResult === 'unsupported') {
+            triggerLoad()
+        }
     }
 })
 
 onMounted(() => {
     if (!props.disabled) {
-        setupObserver()
+        const observerResult = setupObserver()
 
-        // 立即检查
-        if (props.immediate) {
+        // 立即检查；无 Observer 时保守触发一次，避免永久不加载。
+        if (props.immediate || observerResult === 'unsupported') {
             triggerLoad()
         }
     }
