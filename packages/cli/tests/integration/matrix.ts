@@ -13,6 +13,10 @@ export interface IntegrationMatrixCase {
     runByDefault: boolean
 }
 
+export interface IntegrationMatrixOptions {
+    includeHeavy?: boolean
+}
+
 export const CLI_INTEGRATION_MATRIX: IntegrationMatrixCase[] = [
     {
         name: 'vite-vue-tailwind-v4',
@@ -44,3 +48,8 @@ export const CLI_INTEGRATION_MATRIX: IntegrationMatrixCase[] = [
     },
 ]
 
+export function getIntegrationMatrixCases(options: IntegrationMatrixOptions = {}): IntegrationMatrixCase[] {
+    return options.includeHeavy
+        ? [...CLI_INTEGRATION_MATRIX]
+        : CLI_INTEGRATION_MATRIX.filter(item => item.runByDefault)
+}
