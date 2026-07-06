@@ -126,6 +126,7 @@ describe('build-registry helpers', () => {
 
         expect(Object.keys(manifest.items)).toEqual(['button', 'dialog']);
         expect(manifest).toMatchObject({
+            $schema: 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json',
             name: 'brutx-vue',
             registryVersion: '0.1.0',
             buildTimestamp: '2026-07-07T00:00:00.000Z',
