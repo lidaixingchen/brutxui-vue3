@@ -393,7 +393,7 @@ describe('useTheme', () => {
             expect(theme).toBeDefined()
             expect(theme.theme.value).toBe('classic')
             expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('useTheme() called without provideTheme()'),
+                expect.stringContaining('Call provideTheme() in your root component.'),
             )
 
             consoleSpy.mockRestore()

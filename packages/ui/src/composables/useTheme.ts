@@ -185,7 +185,7 @@ export function useTheme(): UseThemeReturn {
     const theme = inject(THEME_KEY)
     if (theme) return theme
     if (typeof console !== 'undefined') {
-        console.warn('[BrutxUI] useTheme() called without provideTheme(). Falling back to shared singleton.')
+        console.warn('[BrutxUI] useTheme() called without provideTheme(). Falling back to shared singleton. Call provideTheme() in your root component.')
     }
     if (!fallbackInstance) {
         fallbackInstance = createTheme()

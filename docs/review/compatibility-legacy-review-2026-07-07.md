@@ -146,9 +146,10 @@
 2. 公开 `destroyBrutxFallbacks()` 作为测试隔离、多应用同页、热更新边界的集中清理 API。
 3. 文档已明确 `provideTheme()` / `provideToast()` 是生产推荐路径，fallback 是兼容兜底。
 
-剩余建议：
+执行结论：
 
-- 长期考虑在 dev 模式 warning 中加入更具体的根组件 provide 建议，减少无意使用 fallback。
+- dev 模式 warning 已加入更具体的根组件 `provideTheme()` / `provideToast()` 建议，减少无意使用 fallback。
+- 后续若新增 singleton fallback，需同步提供集中销毁 API、root provide 推荐文档和 warning 提示。
 
 ## P2：空壳兼容插件已移除
 
