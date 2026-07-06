@@ -654,22 +654,14 @@ export async function run() {
                 });
             }
 
-            const title = name
-                .split('-')
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-
-            const description = componentInfo?.description
-                || `A highly customizable neo-brutalist ${title} component built with Brutx design tokens for Vue 3.`;
-
             const integrity = computeRegistryIntegrity(files);
 
             const registryItem = {
                 $schema: 'https://ui.shadcn.com/schema/registry-item.json',
                 name: name,
                 type: 'registry:ui',
-                title: title,
-                description: description,
+                title: componentInfo.title,
+                description: componentInfo.description,
                 category: componentInfo.category,
                 examples: componentInfo.examples,
                 status: componentInfo?.status,
@@ -689,8 +681,8 @@ export async function run() {
             registryIndex.items.push({
                 name: name,
                 type: 'registry:ui',
-                title: title,
-                description: description,
+                title: componentInfo.title,
+                description: componentInfo.description,
                 category: componentInfo.category,
                 examples: componentInfo.examples,
                 status: componentInfo?.status,

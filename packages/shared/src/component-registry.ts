@@ -2,8 +2,10 @@ import { COMPONENT_FILES, type ComponentFileMapping } from './component-files.js
 import { COMPONENTS } from './components.js';
 import type { ComponentCategory, RegistryComponentMeta } from './types.js';
 
-export interface ComponentRegistryEntry extends RegistryComponentMeta, ComponentFileMapping {
+export interface ComponentRegistryEntry extends Omit<RegistryComponentMeta, 'description' | 'title'>, ComponentFileMapping {
     name: string;
+    title: string;
+    description: string;
     category: ComponentCategory;
     examples: string[];
 }
@@ -104,6 +106,8 @@ function createComponentRegistry(): Record<string, ComponentRegistryEntry> {
             name,
             ...meta,
             ...fileMapping,
+            title: meta.title ?? formatTitle(name),
+            description: meta.description ?? `A highly customizable neo-brutalist ${formatTitle(name)} component built with Brutx design tokens for Vue 3.`,
             category: meta.category ?? inferCategory(name),
             examples: meta.examples ?? [],
         };
@@ -116,6 +120,13 @@ function createComponentRegistry(): Record<string, ComponentRegistryEntry> {
     }
 
     return registry;
+}
+
+function formatTitle(name: string): string {
+    return name
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
 function inferCategory(name: string): ComponentCategory {

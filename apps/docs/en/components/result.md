@@ -55,13 +55,27 @@ Inject buttons inside the `#extra` slot layout to allow further navigation or re
 </template>
 ```
 
+### Empty State
+
+`Result` supports `status="empty"` and is the recommended entry for new empty states. `EmptyState` remains available as a compatibility block.
+
+```vue
+<template>
+    <Result
+        status="empty"
+        title="No data yet"
+        sub-title="Create your first record and it will appear here."
+    />
+</template>
+```
+
 ## Props
 
 ### Result
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
-| `status` | `'success' \| 'error' \| 'info' \| 'warning'` | `'info'` | Action feedback status, controlling the color and graphic of the status emblem |
+| `status` | `'success' \| 'error' \| 'info' \| 'warning' \| 'empty'` | `'info'` | Action feedback status, controlling the color and graphic of the status emblem |
 | `title` | `string` | `''` | Result title text |
 | `subTitle` | `string` | `''` | Secondary description text |
 | `variant` | `'plain' \| 'card'` | `'card'` | Whether to render card chrome with border and hard shadow |

@@ -8,6 +8,8 @@ translated: true
 
 A Neo-Brutalist user testimonial card featuring an avatar, quote icon, review text, author information, and a verification badge.
 
+> `TestimonialCard` is marked as a legacy block. Compose new testimonial cards from `Card`, `Avatar`, `Badge`, and related primitives.
+
 ## Demo
 
 <ComponentPreview>

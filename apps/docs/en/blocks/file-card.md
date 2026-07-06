@@ -8,6 +8,8 @@ translated: true
 
 A Neo-Brutalist file information card featuring a file icon, file name, type badge, file size, and a download button.
 
+> `FileCard` is marked as a legacy block. Compose new file cards from `Card`, `Badge`, `Button`, and related primitives.
+
 ## Demo
 
 <ComponentPreview>

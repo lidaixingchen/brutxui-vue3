@@ -13,6 +13,7 @@ export type ComponentCategory =
     | 'visual-effect';
 
 export interface RegistryComponentMeta {
+    title?: string;
     dependencies: string[];
     description?: string;
     category?: ComponentCategory;

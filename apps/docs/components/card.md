@@ -60,6 +60,52 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `default` | `p-5` |
 | `lg` | `p-8` |
 
+## 模板组合
+
+`BlogCard`、`FileCard`、`TestimonialCard` 已作为 legacy block 保留。新卡片模板建议直接组合 `Card` 子组件。
+
+### 文章卡片
+
+```vue
+<Card variant="interactive" padding="none">
+    <CardHeader>
+        <Badge variant="accent" size="sm">Vue 3</Badge>
+        <CardTitle>Getting Started with BrutxUI</CardTitle>
+        <CardDescription>Build bold interfaces with composable primitives.</CardDescription>
+    </CardHeader>
+    <CardFooter>
+        <Button variant="link">阅读更多</Button>
+    </CardFooter>
+</Card>
+```
+
+### 文件卡片
+
+```vue
+<Card>
+    <CardHeader>
+        <CardTitle>report-2026.pdf</CardTitle>
+        <CardDescription>PDF · 3.2 MB</CardDescription>
+    </CardHeader>
+    <CardFooter>
+        <Button variant="outline" size="sm">下载</Button>
+    </CardFooter>
+</Card>
+```
+
+### 评价卡片
+
+```vue
+<Card variant="elevated">
+    <CardContent>
+        <p class="font-bold">“这款产品彻底改变了我们的工作流程。”</p>
+    </CardContent>
+    <CardFooter>
+        <span class="text-sm font-black">张明 · 产品经理</span>
+    </CardFooter>
+</Card>
+```
+
 ## 子组件
 
 | 组件 | 说明 |

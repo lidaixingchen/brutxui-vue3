@@ -181,10 +181,14 @@ export function validateComponentSourceFiles(
 }
 
 export function validateGeneratedItemMatchesMetadata(
-    item: Pick<RegistryItem, 'name' | 'description' | 'dependencies' | 'category' | 'examples' | 'status' | 'replacement' | 'files'>,
+    item: Pick<RegistryItem, 'name' | 'title' | 'description' | 'dependencies' | 'category' | 'examples' | 'status' | 'replacement' | 'files'>,
     entry: ComponentRegistryEntry
 ): string[] {
     const errors: string[] = []
+
+    if (item.title !== entry.title) {
+        errors.push('title does not match COMPONENT_REGISTRY')
+    }
 
     if (item.description !== entry.description) {
         errors.push('description does not match COMPONENT_REGISTRY')

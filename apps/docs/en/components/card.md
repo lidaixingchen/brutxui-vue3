@@ -61,6 +61,52 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `default` | `p-5` |
 | `lg` | `p-8` |
 
+## Template Recipes
+
+`BlogCard`, `FileCard`, and `TestimonialCard` remain available as legacy blocks. Compose new card templates directly from the `Card` sub-components.
+
+### Article Card
+
+```vue
+<Card variant="interactive" padding="none">
+    <CardHeader>
+        <Badge variant="accent" size="sm">Vue 3</Badge>
+        <CardTitle>Getting Started with BrutxUI</CardTitle>
+        <CardDescription>Build bold interfaces with composable primitives.</CardDescription>
+    </CardHeader>
+    <CardFooter>
+        <Button variant="link">Read more</Button>
+    </CardFooter>
+</Card>
+```
+
+### File Card
+
+```vue
+<Card>
+    <CardHeader>
+        <CardTitle>report-2026.pdf</CardTitle>
+        <CardDescription>PDF · 3.2 MB</CardDescription>
+    </CardHeader>
+    <CardFooter>
+        <Button variant="outline" size="sm">Download</Button>
+    </CardFooter>
+</Card>
+```
+
+### Testimonial Card
+
+```vue
+<Card variant="elevated">
+    <CardContent>
+        <p class="font-bold">“This product changed our workflow.”</p>
+    </CardContent>
+    <CardFooter>
+        <span class="text-sm font-black">Alex Chen · Product Manager</span>
+    </CardFooter>
+</Card>
+```
+
 ## Sub-components
 
 | Component | Description |

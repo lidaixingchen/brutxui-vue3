@@ -8,6 +8,8 @@ translated: true
 
 A Neo-Brutalist empty state placeholder featuring a decorative icon, title, description, and action button.
 
+> `EmptyState` remains available as a compatibility block. Prefer `Result status="empty"` for new empty states to reuse the unified feedback display model.
+
 ## Demo
 
 <ComponentPreview>

@@ -27,6 +27,7 @@ describe('build-registry helpers', () => {
         expect(AVAILABLE_COMPONENTS).toEqual(Object.keys(COMPONENT_REGISTRY));
         expect(COMPONENT_FILES.button.files).toContain('Button.vue');
         expect(COMPONENT_REGISTRY.button.files).toBe(COMPONENT_FILES.button.files);
+        expect(COMPONENT_REGISTRY.button.title).toBe('Button');
         expect(COMPONENT_REGISTRY.button.dependencies).toEqual(['reka-ui', '@lucide/vue']);
         expect(COMPONENT_REGISTRY.button.category).toBe('action');
         expect(COMPONENT_REGISTRY.button.examples).toEqual([]);

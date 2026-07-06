@@ -55,13 +55,27 @@ import { Result } from 'brutx-ui-vue'
 </template>
 ```
 
+### 空状态
+
+`Result` 支持 `status="empty"`，可作为新空状态的推荐入口。`EmptyState` 仍作为兼容区块保留。
+
+```vue
+<template>
+    <Result
+        status="empty"
+        title="暂无数据"
+        sub-title="创建第一条记录后，这里会显示你的内容。"
+    />
+</template>
+```
+
 ## Props
 
 ### Result
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `status` | `'success' \| 'error' \| 'info' \| 'warning'` | `'info'` | 结果状态类型，决定顶部硬边框图标的色彩和图案 |
+| `status` | `'success' \| 'error' \| 'info' \| 'warning' \| 'empty'` | `'info'` | 结果状态类型，决定顶部硬边框图标的色彩和图案 |
 | `title` | `string` | `''` | 结果标题文本 |
 | `subTitle` | `string` | `''` | 结果副标题描述文本 |
 | `variant` | `'plain' \| 'card'` | `'card'` | 是否渲染卡片边框和硬投影 |

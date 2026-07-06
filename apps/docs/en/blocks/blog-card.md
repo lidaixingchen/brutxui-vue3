@@ -8,6 +8,8 @@ translated: true
 
 A Neo-Brutalist blog post preview card featuring a category badge, title, excerpt, author avatar, and a "Read more" link.
 
+> `BlogCard` is marked as a legacy block. Compose new article cards from `Card`, `Badge`, `Button`, and related primitives.
+
 ## Demo
 
 <ComponentPreview>

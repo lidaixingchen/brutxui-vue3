@@ -21,12 +21,13 @@
 
 证据：
 
-- `packages/ui/vite.config.ts:24` 标注 `flattenPreserveModulesPlugin` 用于把 `dist/packages/ui/src/...` 拍平成 `dist/`。
-- `packages/ui/vite.config.ts:60`、`:66`、`:70`、`:99`、`:104` 通过正则重写 JS/CJS/MJS import 路径。
+- `packages/ui/vite.config.ts` 的 `flattenPreserveModulesPlugin` 用于把 `dist/packages/ui/src/...` 拍平成 `dist/`。
+- `packages/ui/src/lib/preserve-modules-paths.ts` 已承接 JS/CJS/MJS import 路径重写，覆盖 nested source prefix、`_virtual`、`node_modules` 与 Vue export helper 路径。
 - `packages/ui/vite.config.ts:88` 在构建后删除 `dist/packages`。
 - `packages/ui/vite.config.ts:185`、`:194` 同时对 ES 和 CJS 开启 `preserveModules`。
 - `packages/ui/package.json` 的 `build` 额外执行 `build:preflight`，`prepack` 已改为复用 `npm run build`，避免发布前漏生成 `dist/preflight.css`。
 - `packages/ui/scripts/smoke-package.mjs` 已检查 `package.json` 中声明的目标文件存在且非空，并直接加载 ESM/CJS JS 入口。
+- `packages/ui/src/lib/preserve-modules-paths.test.ts` 已用 fixture 固化路径重写输入输出，防止后续升级 Vite/Rollup/Vue 插件时静默破坏发布产物路径。
 
 风险：
 
@@ -38,7 +39,7 @@
 
 - 已落地：`test:package` 增加临时消费者项目解析检查，覆盖 `brutx-ui-vue`、稳定子路径入口、`style.css`、`preflight.css` 等所有 `exports` specifier 的包名解析，并加载 ESM/CJS JS 入口。
 - 已落地：`prepack` 与 `build` 使用同一命令，避免 `preflight.css` 漏出。
-- 中期：将手写 flatten 插件收敛为可测试脚本，输入输出用 fixture 固化。
+- 已落地：将手写 flatten 插件的路径重写算法收敛为可测试纯函数，输入输出用 fixture 固化。
 - 长期：评估是否改用显式多入口加生成式 `exports`，减少构建后字符串重写。
 
 ## P0：浏览器能力核心降级已落地
@@ -213,4 +214,6 @@
 - 本轮 singleton fallback 验证：`CI=true pnpm --filter brutx-ui-vue test src/composables/destroyFallbacks.test.ts src/composables/use-toast.test.ts src/composables/useTheme.test.ts`。
 - 本轮 package 子路径策略验证：`CI=true pnpm --filter brutx-ui-vue check:exports`、`CI=true pnpm --filter brutx-ui-vue test:package`。
 - 本轮 CLI matrix 验证：`CI=true pnpm --filter brutx-vue build`、`CI=true pnpm --filter brutx-vue typecheck`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/matrix.test.ts`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/cli-smoke.test.ts -t "dry-runs the full local registry"`。
+- 本轮浏览器能力验证：`packages/ui/node_modules/.bin/vitest.CMD run src/components/counter/counter.test.ts`、`packages/ui/node_modules/.bin/vitest.CMD run src/composables/useCanvasInteraction.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`packages/registry/node_modules/.bin/tsx.CMD scripts/build-registry.ts`、`packages/registry/node_modules/.bin/tsx.CMD scripts/validate-registry.ts`。
+- 本轮 flatten 路径重写验证：`packages/ui/node_modules/.bin/vitest.CMD run src/lib/preserve-modules-paths.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`npm.cmd run build`、`npm.cmd run check:exports`、`npm.cmd run test:package`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
