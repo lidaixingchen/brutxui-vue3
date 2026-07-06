@@ -7,6 +7,7 @@ import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { useClearable } from '@/composables/useClearable'
+import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { cascaderTriggerVariants, cascaderItemVariants } from './cascader-variants'
 import type { CascaderOption, CascaderValue } from './cascader-types'
 
@@ -261,26 +262,31 @@ function getPathLabels(path: CascaderValue[]): string[] {
     return labels
 }
 
-// Computed selected display text
-const displayText = computed(() => {
-    if (!hasValue.value) return resolvedPlaceholder.value
+const selectedDisplayPaths = computed(() => {
+    if (!hasValue.value) return []
     if (props.multiple && Array.isArray(props.modelValue)) {
-        const paths = props.modelValue as CascaderValue[][]
-        if (paths.length === 0) return resolvedPlaceholder.value
-        if (paths.length <= props.maxDisplay) {
-            return paths.map(path => getPathLabels(path).join(props.separator)).join(', ')
-        }
-        return t('cascader.selectedCount', { count: paths.length })
-    } else if (Array.isArray(props.modelValue) && props.modelValue.length > 0) {
-        const labels = getPathLabels(props.modelValue as CascaderValue[])
-        if (labels.length > 0) return labels.join(props.separator)
+        return props.modelValue as CascaderValue[][]
     }
-    return resolvedPlaceholder.value
+    if (Array.isArray(props.modelValue) && props.modelValue.length > 0) {
+        const labels = getPathLabels(props.modelValue as CascaderValue[])
+        return labels.length > 0 ? [props.modelValue as CascaderValue[]] : []
+    }
+    return []
 })
 
 const hasValue = computed(() => {
     if (!props.modelValue) return false
     return Array.isArray(props.modelValue) && props.modelValue.length > 0
+})
+
+const displayText = useSelectionDisplayText({
+    selectedItems: selectedDisplayPaths,
+    placeholder: resolvedPlaceholder,
+    multiple: () => props.multiple,
+    maxDisplay: () => props.maxDisplay,
+    getLabel: (path) => getPathLabels(path).join(props.separator),
+    formatList: (labels) => labels.join(', '),
+    formatCount: (count) => t('cascader.selectedCount', { count }),
 })
 
 const triggerClasses = computed(() =>

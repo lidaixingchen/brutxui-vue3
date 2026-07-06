@@ -1030,6 +1030,10 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useSelectionDisplayText.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:lib"
         },
@@ -1124,7 +1128,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9297baf72c2b639802a5a2d2e8d3347d1630d9a809b5f04f07fce5e25247addc"
+      "integrity": "sha256-ea7d6a2da45c88f6931f6d959c024846064dab4ff67345836f061b29e9f344f5"
     },
     {
       "name": "checkbox",

@@ -245,8 +245,8 @@
       "examples": []
     },
     "cascader": {
-      "integrity": "sha256-9297baf72c2b639802a5a2d2e8d3347d1630d9a809b5f04f07fce5e25247addc",
-      "fileCount": 8,
+      "integrity": "sha256-ea7d6a2da45c88f6931f6d959c024846064dab4ff67345836f061b29e9f344f5",
+      "fileCount": 9,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"

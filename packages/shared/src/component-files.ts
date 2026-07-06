@@ -12,7 +12,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     button: { files: ['Button.vue', 'button-variants.ts', 'shared-button-variants.ts'] },
     calendar: { files: ['Calendar.vue'] },
     card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
-    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts', 'useClearable.ts'] },
+    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts', 'useClearable.ts', 'useSelectionDisplayText.ts'] },
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
     combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts', 'useSelectionDisplayText.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
