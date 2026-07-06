@@ -16,7 +16,8 @@ function copyStylesPlugin(): Plugin {
                 const componentCss = readFileSync(componentCssPath, 'utf-8')
                 writeFileSync(stylesCssPath, componentCss)
             } catch (e) {
-                console.warn('Failed to copy styles.css:', e)
+                const message = e instanceof Error ? e.message : String(e)
+                throw new Error(`Failed to copy styles.css: ${message}`)
             }
         },
     }

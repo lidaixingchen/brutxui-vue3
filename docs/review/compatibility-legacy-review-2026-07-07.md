@@ -27,18 +27,20 @@
 - `packages/ui/vite.config.ts:185`、`:194` 同时对 ES 和 CJS 开启 `preserveModules`。
 - `packages/ui/package.json` 的 `build` 额外执行 `build:preflight`，`prepack` 已改为复用 `npm run build`，避免发布前漏生成 `dist/preflight.css`。
 - `packages/ui/scripts/smoke-package.mjs` 已检查 `package.json` 中声明的目标文件存在且非空，并直接加载 ESM/CJS JS 入口。
+- `copyStylesPlugin` 复制 `styles.css` 失败时已改为抛出构建错误，避免样式入口缺失但发布构建仍成功。
 - `packages/ui/src/lib/preserve-modules-paths.test.ts` 已用 fixture 固化路径重写输入输出，防止后续升级 Vite/Rollup/Vue 插件时静默破坏发布产物路径。
 
 风险：
 
 1. 这是发布兼容性的最高风险点。路径重写覆盖了 Vue export helper、`_virtual`、`node_modules` 和 nested source prefix，一旦 Vite/Rollup/Vue 插件输出结构变化，包可能构建成功但运行时导入失败。
 2. `prepack` 与 `build` 行为不一致的问题已修复，但仍需要验证用户项目视角的包名解析，避免直接文件加载通过而 `exports` 子路径解析失败。
-3. `copyStylesPlugin` 从 `dist/brutx-ui-vue.css` 复制到 `dist/styles.css`，失败只 `console.warn`。对样式入口而言，这更接近发布阻断问题。
+3. `copyStylesPlugin` 的样式入口失败已改为发布阻断；后续风险主要在构建输出结构变化导致入口文件位置变化。
 
 建议：
 
 - 已落地：`test:package` 增加临时消费者项目解析检查，覆盖 `brutx-ui-vue`、稳定子路径入口、`style.css`、`preflight.css` 等所有 `exports` specifier 的包名解析，并加载 ESM/CJS JS 入口。
 - 已落地：`prepack` 与 `build` 使用同一命令，避免 `preflight.css` 漏出。
+- 已落地：`styles.css` 复制失败会阻断构建，避免带缺失样式入口的包进入发布流程。
 - 已落地：将手写 flatten 插件的路径重写算法收敛为可测试纯函数，输入输出用 fixture 固化。
 - 长期：评估是否改用显式多入口加生成式 `exports`，减少构建后字符串重写。
 
