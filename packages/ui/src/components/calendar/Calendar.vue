@@ -16,6 +16,7 @@ const DatePicker = defineAsyncComponent(async () => {
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
+import { parseFormattedDate } from '@/lib/date'
 import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 
 export interface CalendarEvent {
@@ -151,7 +152,9 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 function isSameDay(date1: Date | string, date2: Date) {
-    const d1 = typeof date1 === 'string' ? new Date(date1) : date1
+    const d1 = typeof date1 === 'string'
+        ? parseFormattedDate(date1, 'YYYY-MM-DD') ?? new Date(date1)
+        : date1
     if (!(d1 instanceof Date) || isNaN(d1.getTime())) return false
     return (
         d1.getFullYear() === date2.getFullYear() &&

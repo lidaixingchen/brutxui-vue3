@@ -87,5 +87,11 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     const seconds = parts.ss ?? 0
     const date = new Date(year, month, day, hours, minutes, seconds)
     if (Number.isNaN(date.getTime())) return null
+    if (date.getFullYear() !== year) return null
+    if (date.getMonth() !== month) return null
+    if (date.getDate() !== day) return null
+    if (date.getHours() !== hours) return null
+    if (date.getMinutes() !== minutes) return null
+    if (date.getSeconds() !== seconds) return null
     return date
 }

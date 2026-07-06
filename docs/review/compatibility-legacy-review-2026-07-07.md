@@ -14,7 +14,7 @@
 | P0 | 浏览器能力缺少统一降级策略 | SSR、老浏览器、WebView、测试环境 | 为 Observer、Audio、imperative DOM 建统一 env helper |
 | P1 | npm `exports` 子路径只覆盖少数组件 | 用户按组件子路径导入时行为不一致 | 明确策略：只支持聚合入口，或生成所有组件子路径 |
 | P1 | legacy wrapper 和重复区块曾在 registry 中作为一等组件 | 文档推荐、CLI add、维护成本 | 已按“清除历史包袱”方案 A 移出公开分发面 |
-| P1 | Date 字符串解析依赖原生 `new Date(string)` | Safari、跨时区、筛选边界 | 统一使用 `parseFormattedDate` 或显式 ISO/本地日期解析 |
+| P1 | Date 字符串解析语义需统一 | Safari、跨时区、筛选边界 | DataTable 与 Calendar 纯日期解析已收敛，后续补公共 API 语义文档 |
 | P2 | singleton fallback 提供易用性但形成全局状态 | 多应用同页、测试隔离、SSR 心智成本 | 文档化边界，逐步鼓励 root provide |
 
 ## P0：发布产物路径重写过重
@@ -25,44 +25,42 @@
 - `packages/ui/vite.config.ts:60`、`:66`、`:70`、`:99`、`:104` 通过正则重写 JS/CJS/MJS import 路径。
 - `packages/ui/vite.config.ts:88` 在构建后删除 `dist/packages`。
 - `packages/ui/vite.config.ts:185`、`:194` 同时对 ES 和 CJS 开启 `preserveModules`。
-- `packages/ui/package.json:114` 的 `build` 额外执行 `build:preflight`，但 `packages/ui/package.json:115` 的 `prepack` 只执行 `vite build`，不会生成 `dist/preflight.css`。
+- `packages/ui/package.json` 的 `build` 额外执行 `build:preflight`，`prepack` 已改为复用 `npm run build`，避免发布前漏生成 `dist/preflight.css`。
+- `packages/ui/scripts/smoke-package.mjs` 已检查 `package.json` 中声明的目标文件存在且非空，并直接加载 ESM/CJS JS 入口。
 
 风险：
 
 1. 这是发布兼容性的最高风险点。路径重写覆盖了 Vue export helper、`_virtual`、`node_modules` 和 nested source prefix，一旦 Vite/Rollup/Vue 插件输出结构变化，包可能构建成功但运行时导入失败。
-2. `prepack` 与 `build` 行为不一致，可能导致本地 `pnpm build` 有 `preflight.css`，发布前自动构建却缺失该文件。`package.json` 已导出 `./preflight.css`，缺失时会变成用户安装后的直接破坏。
+2. `prepack` 与 `build` 行为不一致的问题已修复，但仍需要验证用户项目视角的包名解析，避免直接文件加载通过而 `exports` 子路径解析失败。
 3. `copyStylesPlugin` 从 `dist/brutx-ui-vue.css` 复制到 `dist/styles.css`，失败只 `console.warn`。对样式入口而言，这更接近发布阻断问题。
 
 建议：
 
-- 短期：增加发布产物冒烟测试，至少验证 `brutx-ui-vue`、`brutx-ui-vue/button`、`brutx-ui-vue/style.css`、`brutx-ui-vue/preflight.css` 在临时项目中可被解析。
-- 短期：让 `prepack` 与 `build` 使用同一命令，避免 `preflight.css` 漏出。
+- 已落地：`test:package` 增加临时消费者项目解析检查，覆盖 `brutx-ui-vue`、稳定子路径入口、`style.css`、`preflight.css` 等所有 `exports` specifier 的包名解析，并加载 ESM/CJS JS 入口。
+- 已落地：`prepack` 与 `build` 使用同一命令，避免 `preflight.css` 漏出。
 - 中期：将手写 flatten 插件收敛为可测试脚本，输入输出用 fixture 固化。
 - 长期：评估是否改用显式多入口加生成式 `exports`，减少构建后字符串重写。
 
-## P0：浏览器能力降级不统一
+## P0：浏览器能力核心降级已落地
 
 证据：
 
-- `packages/ui/src/lib/env.ts:7`、`:10`、`:13` 已提供 `isClient`、`hasDocument`、`hasLocalStorage`，但使用并不统一。
-- `packages/ui/src/components/infinite-scroll/InfiniteScroll.vue:64` 和 `packages/ui/src/components/infinite-scroll/useInfiniteScroll.ts:54` 直接 `new IntersectionObserver(...)`，没有能力检测。
-- `packages/ui/src/components/image/Image.vue:67` 的 `srcToShow` 在 `loading="lazy"` 且未进入视口前返回空字符串，`:268` 又直接创建 `IntersectionObserver`。如果环境没有 Observer，图片可能永远不加载。
-- `packages/ui/src/composables/useAudioEngine.ts:34` 直接 `new AudioContext()`，未处理 `webkitAudioContext`、构造失败、用户手势限制或异常。
-- `packages/ui/src/lib/render-imperative.ts:21` 已用 `isClient` 返回 no-op，但 `packages/ui/src/components/dialog/functional.ts:110`、`:111`、`:221`、`:222` 仍直接访问 `document` / `document.body`。
+- `packages/ui/src/lib/env.ts` 已提供 `isClient`、`hasDocument`、`hasLocalStorage`、`canUseDocumentBody()`、`hasIntersectionObserver`、`getAudioContextCtor()`。
+- `packages/ui/src/components/infinite-scroll/InfiniteScroll.vue` 和 `packages/ui/src/components/infinite-scroll/useInfiniteScroll.ts` 已在创建 `IntersectionObserver` 前检测能力；无 Observer 时保守触发一次加载，避免永久卡住。
+- `packages/ui/src/components/image/Image.vue` 已在 `loading="lazy"` 且无 `IntersectionObserver` 时默认使用原图 `src`，避免空 `src` 永久不加载。
+- `packages/ui/src/composables/useAudioEngine.ts` 已通过 `getAudioContextCtor()` 支持 `webkitAudioContext`，并 catch 构造、`resume()`、节点创建/播放异常，失败时禁用本次音效。
+- `packages/ui/src/components/dialog/functional.ts` 和 `packages/ui/src/lib/render-imperative.ts` 已复用 `canUseDocumentBody()`，在 SSR/无 body 环境返回 no-op handle。
 
-风险：
+剩余风险：
 
-1. SSR 构建多数情况下不会触发 `onMounted`，但命令式 API、composable 或用户测试环境可能直接调用这些函数。
-2. 老版本 Safari、内嵌 WebView、隐私环境、测试环境对 `IntersectionObserver`、`AudioContext`、`localStorage` 支持差异明显。
-3. 同一类能力有的地方有 guard，有的地方没有，后续新增组件容易继续复制分叉模式。
+1. 目前核心高风险点已治理，但 `ResizeObserver`、`MutationObserver`、Canvas 创建等其它浏览器能力仍应按需收敛到 `env.ts` 或专用 helper。
+2. 后续新增组件仍需要遵循统一 helper，避免重新出现散落的 `typeof window/document` 和直接构造。
+3. imperative mount 的核心 guard 已统一，后续重点是新增能力不要绕开 helper。
 
-建议：
+后续建议：
 
-- 在 `env.ts` 增加 `hasIntersectionObserver`、`hasResizeObserver`、`getAudioContextCtor`、`canUseDocumentBody` 等能力 helper。
-- InfiniteScroll 无 Observer 时应有保守降级：立即触发一次、或退化为 scroll listener、或至少渲染 sentinel 并不阻塞内容。
-- Image lazy 无 Observer 时应默认加载原图，不能保持空 `src`。
-- `showDialog`、`showMessageBox` 改用 `renderImperative` 或复用同一 DOM guard。
-- Audio 构造和 `resume()` 应 catch，失败时静默禁用本次音效，不影响输入组件。
+- 后续遇到 `ResizeObserver`、`MutationObserver`、Canvas 或 imperative DOM 新用法时，优先补 helper 和定向测试。
+- 保留 Image / InfiniteScroll / Audio / functional dialog 的定向测试，作为 SSR/WebView 兼容回归网。
 
 ## P1：公开导出策略不一致
 
@@ -103,25 +101,25 @@
 4. `FeedbackForm` 的成功态已改用 `Result`，并将默认成功文案迁到 `feedbackForm.success*`，不再依赖 `SuccessCard` 或 `successCard.*` locale。
 5. registry 构建脚本已增加过期 JSON 清理，避免被移除组件继续残留在静态 registry 目录。
 
-## P1：日期解析语义不稳定
+## P1：日期解析语义已初步收敛
 
 证据：
 
-- `packages/ui/src/composables/useDataTableFilter.ts:61`、`:70`、`:71`、`:74`、`:75` 用 `new Date(...)` 解析单元格和区间值。
-- `packages/ui/src/components/calendar/Calendar.vue:154` 对字符串日期也直接 `new Date(date1)`。
-- `packages/ui/src/lib/date.ts:49` 已有格式化解析能力 `parseFormattedDate`，且内部在 `:88` 通过本地日期构造日期对象，但筛选逻辑没有复用。
+- `packages/ui/src/composables/useDataTableFilter.ts` 已先用 `parseFormattedDate(text, 'YYYY-MM-DD')` 按本地日期解析纯日期区间，并对结束日期应用当天 `23:59:59.999`。
+- `packages/ui/src/components/calendar/Calendar.vue` 的事件字符串日期已先按本地 `YYYY-MM-DD` 解析，再回退原生 `Date` 解析完整 datetime。
+- `packages/ui/src/lib/date.ts` 的 `parseFormattedDate` 已校验年月日时分秒回读值，拒绝 `2026-02-31`、`2026-13-01`、`25:00:00` 这类溢出日期。
 
-风险：
+剩余风险：
 
-1. `new Date('YYYY-MM-DD')` 和非 ISO 字符串在浏览器之间、时区之间容易出现边界偏移。
-2. DataTable 的日期筛选通常用于业务数据，一旦跨时区或 Safari 用户出现边界错误，问题会很隐蔽。
-3. 同库内已有日期工具却未统一使用，后续修复需要多处补丁。
+1. 完整 ISO datetime 仍交给原生 `Date`，需要在文档中明确纯日期和 datetime 的语义边界。
+2. 后续新增日期输入点仍应优先复用 `parseFormattedDate` 或明确要求完整 ISO datetime。
+3. Calendar 事件和 DataTable 筛选已有定向覆盖，但还可以继续补跨时区等价测试。
 
-建议：
+后续建议：
 
-- DataTable date filter 接受 `Date | number | ISO string` 时显式定义语义。
-- 对 `YYYY-MM-DD` 按本地日期构造，或强制要求完整 ISO datetime。
-- 增加 Safari 语义等价的单元测试：日期区间起止、无效字符串、纯日期跨时区。
+- 在 DataTable / Calendar 文档中说明 `YYYY-MM-DD` 按本地日期处理，完整 datetime 按原生/ISO datetime 处理。
+- 若后续需要支持更多用户输入格式，新增明确格式参数，不扩大 `new Date(string)` 的隐式兼容面。
+- 增加跨时区等价测试时，优先测试纯日期边界和日期区间起止。
 
 ## P2：全局 singleton fallback 是便利性也是状态债
 
@@ -187,10 +185,10 @@
 
 ## 建议清债顺序
 
-1. 发布产物冒烟测试：先防止 `exports`、CSS、CJS/ESM 产物破坏用户安装。
-2. 统一 env/browser capability helper：先修 `IntersectionObserver` 和 imperative DOM。
+1. 发布产物冒烟测试已落地：继续保留 `test:package` 与 `check:exports` 作为发布前最小门禁。
+2. env/browser capability 核心 helper 已落地：后续按需收敛 `ResizeObserver`、`MutationObserver`、Canvas 和其它 imperative DOM。
 3. registry 清理已落地：legacy 已从公开分发面移除，后续新增组件必须直接进入稳定替代入口。
-4. 日期解析统一：从 DataTable filter 开始，建立可复用 parse helper。
+4. 日期解析已初步收敛：DataTable 纯日期区间、Calendar 事件日期和无效格式校验已覆盖；后续补文档语义和跨时区等价测试。
 5. 导出策略生成化：把 `index.ts`、Vite entry、package exports、registry 元数据的同步变成脚本校验。
 6. singleton fallback 治理：保留兼容，但提供集中销毁和文档边界。
 
@@ -199,4 +197,7 @@
 - `packages/registry`：`npm.cmd run build`、`npm.cmd run validate`、`vitest run tests/build-registry.test.ts`。
 - `packages/shared`：`npm.cmd run typecheck`。
 - `packages/ui`：`npm.cmd run check:exports`、`vitest run src/components/feedback-form/feedback-form.test.ts`、`npm.cmd run typecheck`、`npm.cmd run build`。
+- 本轮新增验证：`CI=true pnpm --filter brutx-ui-vue test:package`、`CI=true pnpm --filter brutx-ui-vue check:exports`。
+- 本轮兼容验证：`CI=true pnpm --filter brutx-ui-vue test src/components/image/image.test.ts src/components/dialog/functional-dialog.test.ts src/composables/useAudioEngine.test.ts`。
+- 本轮日期验证：`CI=true pnpm --filter brutx-ui-vue test src/lib/date.test.ts src/composables/useDataTableFilter.test.ts src/components/calendar/calendar.test.ts`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。

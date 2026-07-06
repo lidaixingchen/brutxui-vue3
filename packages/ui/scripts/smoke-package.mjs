@@ -1,5 +1,7 @@
-import { existsSync, readFileSync, statSync } from 'node:fs'
+import { execFileSync } from 'node:child_process'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
@@ -10,6 +12,7 @@ const require = createRequire(import.meta.url)
 const failures = []
 const checkedTargets = new Set()
 const loadedEntries = new Set()
+const resolvedConsumerEntries = new Set()
 
 function addFailure(message) {
     failures.push(message)
@@ -71,6 +74,40 @@ function collectPackageTargets() {
     return targets
 }
 
+function toPackageSpecifier(subpath) {
+    if (subpath === '.') {
+        return packageJson.name
+    }
+
+    return `${packageJson.name}/${subpath.replace(/^\.\//, '')}`
+}
+
+function collectConsumerSmokeSpecifiers() {
+    const resolveSpecifiers = new Set()
+    const importSpecifiers = new Set()
+    const requireSpecifiers = new Set()
+
+    for (const [subpath, value] of Object.entries(packageJson.exports ?? {})) {
+        const specifier = toPackageSpecifier(subpath)
+        resolveSpecifiers.add(specifier)
+
+        if (typeof value === 'string') continue
+
+        if (value?.import) {
+            importSpecifiers.add(specifier)
+        }
+        if (value?.require) {
+            requireSpecifiers.add(specifier)
+        }
+    }
+
+    return {
+        resolveSpecifiers: [...resolveSpecifiers],
+        importSpecifiers: [...importSpecifiers],
+        requireSpecifiers: [...requireSpecifiers],
+    }
+}
+
 function assertTargetExists(entry) {
     const filePath = normalizeTarget(entry.target)
     if (!filePath) return null
@@ -108,6 +145,83 @@ async function loadEntry(entry, filePath) {
     }
 }
 
+function runConsumerScript(scriptPath, description) {
+    try {
+        execFileSync(process.execPath, [scriptPath], {
+            cwd: path.dirname(scriptPath),
+            stdio: 'pipe',
+            windowsHide: true,
+        })
+    } catch (error) {
+        const stderr = error?.stderr ? String(error.stderr).trim() : ''
+        const stdout = error?.stdout ? String(error.stdout).trim() : ''
+        const reason = stderr || stdout || (error instanceof Error ? error.message : String(error))
+        addFailure(`${description} failed: ${reason}`)
+    }
+}
+
+function writeConsumerProjectScripts(consumerRoot, specifiers) {
+    const importScriptPath = path.join(consumerRoot, 'import-smoke.mjs')
+    const requireScriptPath = path.join(consumerRoot, 'require-smoke.cjs')
+
+    writeFileSync(
+        importScriptPath,
+        [
+            `const resolveSpecifiers = ${JSON.stringify(specifiers.resolveSpecifiers)}`,
+            `const importSpecifiers = ${JSON.stringify(specifiers.importSpecifiers)}`,
+            'for (const specifier of resolveSpecifiers) {',
+            '    import.meta.resolve(specifier)',
+            '}',
+            'for (const specifier of importSpecifiers) {',
+            '    await import(specifier)',
+            '}',
+        ].join('\n'),
+    )
+
+    writeFileSync(
+        requireScriptPath,
+        [
+            `const resolveSpecifiers = ${JSON.stringify(specifiers.resolveSpecifiers)}`,
+            `const requireSpecifiers = ${JSON.stringify(specifiers.requireSpecifiers)}`,
+            'for (const specifier of resolveSpecifiers) {',
+            '    require.resolve(specifier)',
+            '}',
+            'for (const specifier of requireSpecifiers) {',
+            '    require(specifier)',
+            '}',
+        ].join('\n'),
+    )
+
+    return { importScriptPath, requireScriptPath }
+}
+
+function smokeConsumerResolution() {
+    const consumerRoot = mkdtempSync(path.join(tmpdir(), 'brutx-ui-package-smoke-'))
+    const nodeModulesDir = path.join(consumerRoot, 'node_modules')
+    const packageLink = path.join(nodeModulesDir, packageJson.name)
+
+    try {
+        mkdirSync(nodeModulesDir, { recursive: true })
+        writeFileSync(path.join(consumerRoot, 'package.json'), JSON.stringify({ type: 'module' }, null, 4))
+        symlinkSync(packageRoot, packageLink, process.platform === 'win32' ? 'junction' : 'dir')
+
+        const specifiers = collectConsumerSmokeSpecifiers()
+        const { importScriptPath, requireScriptPath } = writeConsumerProjectScripts(consumerRoot, specifiers)
+
+        runConsumerScript(importScriptPath, 'consumer ESM package resolution')
+        runConsumerScript(requireScriptPath, 'consumer CJS package resolution')
+
+        for (const specifier of specifiers.resolveSpecifiers) {
+            resolvedConsumerEntries.add(specifier)
+        }
+    } catch (error) {
+        const reason = error instanceof Error ? error.message : String(error)
+        addFailure(`consumer package setup failed: ${reason}`)
+    } finally {
+        rmSync(consumerRoot, { recursive: true, force: true })
+    }
+}
+
 async function main() {
     for (const entry of collectPackageTargets()) {
         const filePath = assertTargetExists(entry)
@@ -115,6 +229,8 @@ async function main() {
             await loadEntry(entry, filePath)
         }
     }
+
+    smokeConsumerResolution()
 
     if (failures.length > 0) {
         console.error('Package smoke check failed:')
@@ -124,7 +240,7 @@ async function main() {
         process.exit(1)
     }
 
-    console.log(`Package smoke check passed: ${checkedTargets.size} files checked, ${loadedEntries.size} JS entries loaded.`)
+    console.log(`Package smoke check passed: ${checkedTargets.size} files checked, ${loadedEntries.size} JS entries loaded, ${resolvedConsumerEntries.size} consumer specifiers resolved.`)
 }
 
 main()

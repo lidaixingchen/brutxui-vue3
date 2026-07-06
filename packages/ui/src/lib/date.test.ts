@@ -101,6 +101,12 @@ describe('parseFormattedDate', () => {
         expect(parseFormattedDate('2026-01', 'YYYY-MM-DD')).toBeNull()
     })
 
+    it('returns null for overflow dates', () => {
+        expect(parseFormattedDate('2026-02-31', 'YYYY-MM-DD')).toBeNull()
+        expect(parseFormattedDate('2026-13-01', 'YYYY-MM-DD')).toBeNull()
+        expect(parseFormattedDate('2026-01-01 25:00:00', 'YYYY-MM-DD HH:mm:ss')).toBeNull()
+    })
+
     it('handles time-only format', () => {
         const result = parseFormattedDate('09:05:03', 'HH:mm:ss')
         expect(result).not.toBeNull()

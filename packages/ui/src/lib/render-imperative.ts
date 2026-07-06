@@ -1,5 +1,5 @@
 import { createVNode, render, type Component, type AppContext } from 'vue'
-import { isClient } from './env'
+import { canUseDocumentBody } from './env'
 import { DEFAULT_DIALOG_TRANSITION_MS } from './defaults'
 import { getGlobalAppContext } from '../plugin'
 
@@ -23,7 +23,7 @@ export function renderImperative(
     props: Record<string, unknown> = {},
     options: RenderImperativeOptions = {}
 ): RenderImperativeReturn {
-    if (!isClient) {
+    if (!canUseDocumentBody()) {
         return {
             destroy: () => {},
         }
