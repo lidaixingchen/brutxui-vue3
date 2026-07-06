@@ -284,6 +284,26 @@ describe('checkTailwindCss', () => {
             await fs.remove(cwd);
         }
     });
+
+    it('should warn when tailwind config imports deprecated brutalism plugin', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await fs.writeFile(
+                path.join(cwd, 'tailwind.config.js'),
+                `const brutalism = require('brutx-ui-vue/brutalism-plugin');
+export default { plugins: [brutalism] };`,
+            );
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            const results = await runDoctor(cwd, { silent: true });
+
+            const check = results.find((r) => r.name === 'deprecated brutalism plugin');
+            expect(check?.status).toBe('warn');
+            expect(check?.message).toContain('styles.css');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
 });
 
 // ---------------------------------------------------------------------------

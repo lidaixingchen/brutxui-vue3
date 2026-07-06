@@ -6,7 +6,7 @@ import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.j
 import { FixId } from '../lib/types.js';
 import { readConfigSafe, CliError, FileTransaction } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
-import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION } from '../lib/constants.js';
+import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
@@ -115,6 +115,30 @@ async function checkTailwindCss(cwd: string, config: BrutalistConfig): Promise<C
         name: 'tailwind.css contains BrutxUI tokens',
         status: 'pass',
         message: 'CSS file contains BrutxUI tokens.',
+    };
+}
+
+async function checkDeprecatedBrutalismPlugin(cwd: string, config: BrutalistConfig): Promise<CheckResult> {
+    const candidates = Array.from(new Set([config.tailwind.config, ...CONFIG_FILES.tailwind]));
+
+    for (const candidate of candidates) {
+        const configPath = path.resolve(cwd, candidate);
+        if (!(await fs.pathExists(configPath))) continue;
+
+        const content = await fs.readFile(configPath, 'utf-8');
+        if (content.includes('brutx-ui-vue/brutalism-plugin') || content.includes('brutx-ui-vue/dist/brutalism-plugin')) {
+            return {
+                name: 'deprecated brutalism plugin',
+                status: 'warn',
+                message: `${candidate} imports the deprecated empty brutalism plugin. Import BrutxUI styles via styles.css or preflight.css instead.`,
+            };
+        }
+    }
+
+    return {
+        name: 'deprecated brutalism plugin',
+        status: 'pass',
+        message: 'No deprecated brutalism plugin import found.',
     };
 }
 
@@ -449,6 +473,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         checks.push(checkConfigVersion(config));
         checks.push(checkStyle(config));
         checks.push(await checkTailwindCss(cwd, config));
+        checks.push(await checkDeprecatedBrutalismPlugin(cwd, config));
         checks.push(...await checkAliases(cwd, config));
         checks.push(...await checkDependencies(cwd));
         checks.push(await checkUtilsFunction(cwd, config));
