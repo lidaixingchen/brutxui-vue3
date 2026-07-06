@@ -52,6 +52,19 @@ export {
 } from './vscode-snippets.js';
 
 export {
+    initializeProjectFiles,
+    injectNuxtConfig,
+} from './services/init-service.js';
+export type {
+    NuxtConfigResult,
+    NuxtConfigStatus,
+    ProjectInitializationCallbacks,
+    ProjectInitializationOptions,
+    ProjectInitializationResult,
+    ProjectInitializationSettings,
+} from './services/init-service.js';
+
+export {
     countComponentFiles,
     prepareRemoveComponents,
     removeComponents,

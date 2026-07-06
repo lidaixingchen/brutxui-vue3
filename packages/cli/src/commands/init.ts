@@ -1,22 +1,15 @@
-import ora, { type Ora } from 'ora';
+import ora from 'ora';
 import { input, confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
 
 import {
     type InitOptions,
-    type BrutalistConfig,
-    type TailwindConfig,
-    type AliasConfig,
     SHARED_DEPENDENCIES,
     COMPONENT_DEPENDENCIES,
     BASE_DEPENDENCIES,
-    getBrutalistCssStyles,
-    SCHEMA_URL,
     DOCS_URL,
     DEFAULT_TAILWIND_CONFIG,
-    UTILS_TEMPLATE,
-    CONFIG_FILES,
     CliError,
     detectProjectType,
     detectPackageManager,
@@ -24,22 +17,18 @@ import {
     findTailwindConfig,
     findCssFile,
     getDefaultAliases,
-    resolveAliasPath,
     detectTailwindVersion,
     installPackages,
     getInstallCommand,
-    isSafePath,
-    CURRENT_CONFIG_VERSION,
     logger,
     writeSnippetsFile,
     hasVscodeDir,
-    FileTransaction,
+    initializeProjectFiles,
+    type NuxtConfigResult,
+    type ProjectInitializationSettings,
 } from '../lib/index.js';
 
-interface DetectedSettings {
-    tailwind: TailwindConfig;
-    aliases: AliasConfig;
-}
+type DetectedSettings = ProjectInitializationSettings;
 
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const projectType = await detectProjectType(cwd);
@@ -103,64 +92,6 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
     };
 }
 
-async function createConfigFile(cwd: string, settings: DetectedSettings, transaction?: FileTransaction): Promise<void> {
-    const config: BrutalistConfig = {
-        $schema: SCHEMA_URL,
-        $version: CURRENT_CONFIG_VERSION,
-        style: 'brutalism',
-        tailwind: settings.tailwind,
-        aliases: settings.aliases,
-    };
-
-    const configPath = path.join(cwd, 'components.json');
-    if (transaction) {
-        await transaction.writeJson(configPath, config, { spaces: 2 });
-    } else {
-        await fs.writeJson(configPath, config, { spaces: 2 });
-    }
-}
-
-async function addBrutalistStyles(cwd: string, cssPath: string, transaction?: FileTransaction): Promise<boolean> {
-    const fullPath = path.join(cwd, cssPath);
-
-    if (!(await isSafePath(fullPath, cwd))) {
-        throw new Error(`Security Error: CSS path traversal detected. Access denied to path "${fullPath}".`);
-    }
-
-    if (transaction) {
-        await transaction.ensureDir(path.dirname(fullPath));
-    } else {
-        await fs.ensureDir(path.dirname(fullPath));
-    }
-
-    const tailwindVersion = await detectTailwindVersion(cwd);
-
-    let content = '';
-    if (await fs.pathExists(fullPath)) {
-        content = await fs.readFile(fullPath, 'utf-8');
-        const hasCompleteBrutalistStyles = content.includes('--color-brutal-bg')
-            && content.includes('.bg-brutal-primary')
-            && content.includes('.animate-in');
-        if (hasCompleteBrutalistStyles) {
-            return false;
-        }
-        content += await getBrutalistCssStyles();
-    } else {
-        if (tailwindVersion === 'v4') {
-            content = `@import "tailwindcss";\n${await getBrutalistCssStyles()}`;
-        } else {
-            content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${await getBrutalistCssStyles()}`;
-        }
-    }
-
-    if (transaction) {
-        await transaction.writeFile(fullPath, content);
-    } else {
-        await fs.writeFile(fullPath, content);
-    }
-    return true;
-}
-
 async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean> {
     const configPath = path.join(cwd, 'components.json');
 
@@ -190,51 +121,6 @@ async function shouldProceed(cwd: string, options: InitOptions): Promise<boolean
     return true;
 }
 
-async function findNuxtConfig(cwd: string): Promise<string | null> {
-    for (const file of CONFIG_FILES.nuxt) {
-        const fullPath = path.join(cwd, file);
-        if (await fs.pathExists(fullPath)) {
-            return fullPath;
-        }
-    }
-    return null;
-}
-
-function injectNuxtConfig(content: string, cssPath: string, componentsRelDir: string): string | null {
-    const defineMatch = content.match(/defineNuxtConfig\s*\(/);
-    if (!defineMatch || defineMatch.index === undefined) {
-        return null;
-    }
-
-    const afterDefine = defineMatch.index + defineMatch[0].length;
-    const braceIndex = content.indexOf('{', afterDefine);
-    if (braceIndex === -1) {
-        return null;
-    }
-
-    const hasComponents = /\bcomponents\s*:/.test(content);
-    const hasCss = /\bcss\s*:/.test(content);
-
-    if (hasComponents && hasCss) {
-        return content;
-    }
-
-    const insertions: string[] = [];
-
-    if (!hasComponents) {
-        insertions.push(`\n    components: ['~/${componentsRelDir}'],`);
-    }
-
-    if (!hasCss) {
-        insertions.push(`\n    css: ['${cssPath}'],`);
-    }
-
-    const before = content.slice(0, braceIndex + 1);
-    const after = content.slice(braceIndex + 1);
-
-    return before + insertions.join('') + after;
-}
-
 function printManualNuxtInstructions(cssPath: string, componentsRelDir: string): void {
     logger.newLine();
     logger.bold('Please manually add the following to your nuxt.config.ts inside defineNuxtConfig():');
@@ -242,48 +128,42 @@ function printManualNuxtInstructions(cssPath: string, componentsRelDir: string):
     logger.info(`    css: ['${cssPath}'],`);
 }
 
-async function configureNuxtConfig(
-    cwd: string,
-    cssPath: string,
-    componentsDir: string,
-    spinner: Ora | null,
-    transaction?: FileTransaction,
-): Promise<boolean> {
-    const configPath = await findNuxtConfig(cwd);
-    if (!configPath) {
+function reportNuxtConfigResult(result: NuxtConfigResult, spinner: ReturnType<typeof ora> | null): void {
+    if (result.status === 'not-found') {
         spinner?.warn('No nuxt.config file found. Skipping Nuxt configuration.');
-        return false;
+        return;
     }
 
-    const componentsRelDir = path.relative(cwd, componentsDir).replace(/\\/g, '/');
-    const original = await fs.readFile(configPath, 'utf-8');
-    const result = injectNuxtConfig(original, cssPath, componentsRelDir);
-
-    if (result === null) {
+    if (result.status === 'manual-required') {
         spinner?.warn('Could not auto-inject Nuxt configuration.');
-        printManualNuxtInstructions(cssPath, componentsRelDir);
-        return false;
+        printManualNuxtInstructions(result.cssPath, result.componentsRelDir);
+        return;
     }
 
-    if (result === original) {
+    if (result.status === 'already-configured') {
         spinner?.info('Nuxt config already contains components and css configuration, skipped.');
-        return true;
+        return;
     }
 
-    try {
-        if (transaction) {
-            await transaction.writeFile(configPath, result);
-        } else {
-            await fs.writeFile(configPath, result);
-        }
-        spinner?.info('Updated ' + path.basename(configPath) + ' with components and css configuration');
-        return true;
-    } catch {
-        await fs.writeFile(configPath, original).catch(() => {});
-        spinner?.warn('Failed to update nuxt config. Restored original file.');
-        printManualNuxtInstructions(cssPath, componentsRelDir);
-        return false;
+    if (result.status === 'updated') {
+        spinner?.info('Updated ' + result.configFile + ' with components and css configuration');
+        return;
     }
+
+    if (result.status === 'write-failed') {
+        spinner?.warn('Failed to update nuxt config. Restored original file.');
+        printManualNuxtInstructions(result.cssPath, result.componentsRelDir);
+    }
+}
+
+function getRollbackFailures(error: unknown): string[] {
+    if (error && typeof error === 'object' && 'rollbackFailures' in error) {
+        const rollbackFailures = (error as { rollbackFailures?: unknown }).rollbackFailures;
+        if (Array.isArray(rollbackFailures) && rollbackFailures.every(item => typeof item === 'string')) {
+            return rollbackFailures;
+        }
+    }
+    return [];
 }
 
 function printNuxtHints(cssPath: string): void {
@@ -353,43 +233,35 @@ export async function init(options: InitOptions): Promise<void> {
     }
 
     const spinner = options.silent ? null : ora('Initializing Brutx-Vue...').start();
-    const transaction = new FileTransaction();
 
     try {
-        await createConfigFile(configTarget, settings, transaction);
-
-        const utilsPath = await resolveAliasPath(settings.aliases.utils, configTarget) + '.ts';
-        await transaction.ensureDir(path.dirname(utilsPath));
-        if (!(await fs.pathExists(utilsPath))) {
-            await transaction.writeFile(utilsPath, UTILS_TEMPLATE);
-            spinner?.info('Created utility helper at ' + settings.aliases.utils);
-        } else {
-            spinner?.info('Utility helper already exists, skipping.');
-        }
-
-        const componentsDir = await resolveAliasPath(settings.aliases.components, configTarget);
-        await transaction.ensureDir(path.join(componentsDir, 'ui'));
-        spinner?.info('Created components/ui directory');
-
-        const stylesAdded = await addBrutalistStyles(configTarget, settings.tailwind.css, transaction);
-        if (stylesAdded) {
-            spinner?.info('Added brutalist styles to ' + settings.tailwind.css);
-        } else {
-            spinner?.info('Brutalist design tokens already present in ' + settings.tailwind.css + ', skipped duplicate injection.');
-        }
-
-        let nuxtConfigured = false;
-        if (projectType === 'nuxt') {
-            nuxtConfigured = await configureNuxtConfig(
-                configTarget,
-                settings.tailwind.css,
-                componentsDir,
-                spinner,
-                transaction,
-            );
-        }
-
-        await transaction.commit();
+        const initialization = await initializeProjectFiles({
+            cwd: configTarget,
+            projectType,
+            settings,
+            callbacks: {
+                onUtilityHelper: result => {
+                    if (result.created) {
+                        spinner?.info('Created utility helper at ' + result.alias);
+                    } else {
+                        spinner?.info('Utility helper already exists, skipping.');
+                    }
+                },
+                onComponentsDirectory: () => {
+                    spinner?.info('Created components/ui directory');
+                },
+                onStyles: result => {
+                    if (result.added) {
+                        spinner?.info('Added brutalist styles to ' + result.cssPath);
+                    } else {
+                        spinner?.info('Brutalist design tokens already present in ' + result.cssPath + ', skipped duplicate injection.');
+                    }
+                },
+                onNuxtConfig: result => {
+                    reportNuxtConfigResult(result, spinner);
+                },
+            },
+        });
 
         spinner?.succeed('Brutx-Vue initialized successfully!');
 
@@ -439,14 +311,7 @@ export async function init(options: InitOptions): Promise<void> {
             || (options.vscode !== false && await hasVscodeDir(configTarget));
 
         if (shouldGenerateSnippets) {
-            const config: BrutalistConfig = {
-                $schema: SCHEMA_URL,
-                $version: CURRENT_CONFIG_VERSION,
-                style: 'brutalism',
-                tailwind: settings.tailwind,
-                aliases: settings.aliases,
-            };
-            const snippetPath = await writeSnippetsFile(configTarget, config);
+            const snippetPath = await writeSnippetsFile(configTarget, initialization.config);
             logger.success(`✓ VS Code snippets generated at ${path.relative(configTarget, snippetPath)}`);
         }
 
@@ -458,12 +323,12 @@ export async function init(options: InitOptions): Promise<void> {
         logger.newLine();
         logger.dim(`Documentation: ${DOCS_URL}`);
 
-        if (projectType === 'nuxt' && nuxtConfigured) {
+        if (projectType === 'nuxt' && initialization.nuxt.configured) {
             printNuxtHints(settings.tailwind.css);
         }
     } catch (error: unknown) {
         spinner?.fail('Failed to initialize Brutx-Vue');
-        const rollbackFailures = await transaction.rollback();
+        const rollbackFailures = getRollbackFailures(error);
         if (rollbackFailures.length > 0) {
             logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
         }
