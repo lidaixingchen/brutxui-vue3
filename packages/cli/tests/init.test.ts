@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import type { CliError } from '../src/lib/error.js';
 
 vi.mock('../src/lib/package-manager.js', () => ({
     installPackages: vi.fn(),
@@ -52,6 +53,30 @@ describe('init', () => {
             expect(content).toContain('body { margin: 0; }');
             expect(content).toContain('--color-brutal-bg');
             expect(await fs.pathExists(path.join(cwd, 'src', 'index.css'))).toBe(false);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('should roll back config when utility file creation fails', async () => {
+        const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-init-'));
+
+        try {
+            await fs.ensureDir(path.join(cwd, 'src'));
+            await fs.writeJson(path.join(cwd, 'package.json'), {
+                dependencies: { vue: '^3.5.0', tailwindcss: '^4.0.0' },
+            });
+            await fs.writeFile(path.join(cwd, 'src', 'index.css'), '@import "tailwindcss";\n');
+            await fs.writeFile(path.join(cwd, 'src', 'lib'), 'not-a-directory', 'utf-8');
+
+            const { init } = await import('../src/commands/init.js');
+
+            await expect(init({ cwd, yes: true, force: true, silent: true })).rejects.toMatchObject({
+                code: 'WRITE_FAILED',
+            } satisfies Partial<CliError>);
+
+            expect(await fs.pathExists(path.join(cwd, 'components.json'))).toBe(false);
+            expect(await fs.readFile(path.join(cwd, 'src', 'lib'), 'utf-8')).toBe('not-a-directory');
         } finally {
             await fs.remove(cwd);
         }
