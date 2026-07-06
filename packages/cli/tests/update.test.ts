@@ -45,6 +45,13 @@ const upToDateResult: DiffResult = {
     files: [{ path: 'components/badge/Badge.vue', status: 'unchanged' }],
 };
 
+const outdatedIntegrityResult: DiffResult = {
+    component: 'badge',
+    status: 'up-to-date',
+    files: [{ path: 'components/badge/Badge.vue', status: 'unchanged' }],
+    integrityStatus: 'outdated',
+};
+
 const modifiedResult: DiffResult = {
     component: 'button',
     status: 'modified',
@@ -155,6 +162,18 @@ describe('update command', () => {
             expect(mockedAdd).toHaveBeenCalledOnce();
             expect(mockedAdd).toHaveBeenCalledWith(
                 ['button'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
+        });
+
+        it('should update components with outdated manifest integrity even when files match latest', async () => {
+            mockedGetInstalledComponents.mockResolvedValue(['badge']);
+            mockedDiffComponent.mockResolvedValue(outdatedIntegrityResult);
+
+            await update([], { cwd: '/tmp', silent: true, yes: true, all: true });
+
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['badge'],
                 expect.objectContaining({ overwrite: true, yes: true })
             );
         });

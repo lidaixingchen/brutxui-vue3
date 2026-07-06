@@ -1,7 +1,7 @@
 import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import type { UpdateOptions, DiffResult } from '../lib/types.js';
-import { readConfigSafe, CliError, logger } from '../lib/index.js';
+import { readConfigSafe, CliError, logger, readManifest } from '../lib/index.js';
 import { getInstalledComponents, diffComponent } from './diff.js';
 import { add } from './add.js';
 
@@ -30,12 +30,13 @@ export async function update(components: string[], options: UpdateOptions): Prom
     }
 
     logger.info('Checking for updates...');
+    const manifest = await readManifest(cwd).catch(() => null);
 
     const results = await Promise.all(
-        installedComponents.map(name => diffComponent(cwd, config, name, options.registry))
+        installedComponents.map(name => diffComponent(cwd, config, name, options.registry, manifest?.components[name]))
     );
 
-    const outdated = results.filter((r): r is DiffResult => r.status === 'modified');
+    const outdated = results.filter((r): r is DiffResult => r.status === 'modified' || r.integrityStatus === 'outdated');
 
     if (outdated.length === 0) {
         logger.success('All components are up-to-date.');
@@ -49,7 +50,7 @@ export async function update(components: string[], options: UpdateOptions): Prom
     for (const result of outdated) {
         const changedFiles = result.files.filter(f => f.status !== 'unchanged');
         const statuses = changedFiles.map(f => f.status).filter((s, i, arr) => arr.indexOf(s) === i);
-        const statusLabel = statuses.join(', ');
+        const statusLabel = statuses.length > 0 ? statuses.join(', ') : 'registry';
         logger.info(`  ${chalk.yellow('●')} ${result.component}  ${chalk.dim(`(${statusLabel})`)}`);
     }
 
