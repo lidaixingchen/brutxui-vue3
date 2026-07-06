@@ -211,7 +211,7 @@ let fallbackInstance: UseToastReturn | null = null
 
 function destroyFallback() {
     if (fallbackInstance) {
-        fallbackInstance.clearAllTimers()
+        fallbackInstance.clearToasts()
         fallbackInstance = null
     }
 }

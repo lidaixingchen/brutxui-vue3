@@ -53,6 +53,7 @@ export { useMessageBox } from './composables/useMessageBox'
 export type { UseMessageBoxReturn } from './composables/useMessageBox'
 export { useMessage, messageStore, removeMessage, destroyMessageSystem } from './composables/useMessage'
 export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './composables/useMessage'
+export { destroyBrutxFallbacks } from './composables/destroyFallbacks'
 
 export { AlertDialogRoot as AlertDialog, AlertDialogTrigger, AlertDialogPortal } from 'reka-ui'
 export { default as AlertDialogContent } from './components/alert-dialog/AlertDialogContent.vue'

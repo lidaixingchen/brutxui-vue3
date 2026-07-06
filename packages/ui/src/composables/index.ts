@@ -20,6 +20,8 @@ export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from 
 export { useTheme, provideTheme, createTheme, destroyFallback as destroyThemeFallback } from './useTheme'
 export type { ThemeName, ColorMode, ResolvedColorMode } from './useTheme'
 
+export { destroyBrutxFallbacks } from './destroyFallbacks'
+
 export { useLocale, provideLocale } from './useLocale'
 export type { TranslateFunction } from './useLocale'
 
