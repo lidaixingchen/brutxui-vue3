@@ -12,13 +12,13 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     button: { files: ['Button.vue', 'button-variants.ts', 'shared-button-variants.ts'] },
     calendar: { files: ['Calendar.vue'] },
     card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
-    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts'] },
+    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts', 'useClearable.ts'] },
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
     combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
     dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts', 'DialogEnhanced.vue', 'functional.ts'], composables: ['useLocale.ts'] },
     'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },
-    input: { files: ['Input.vue', 'input-variants.ts'] },
+    input: { files: ['Input.vue', 'input-variants.ts'], composables: ['useClearable.ts'] },
     image: { files: ['Image.vue'] },
     label: { files: ['Label.vue', 'label-variants.ts'] },
     loading: {
@@ -29,7 +29,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     pagination: { files: ['Pagination.vue', 'pagination-variants.ts'], composables: ['useLocale.ts'] },
     popover: { files: ['PopoverContent.vue', 'popover-variants.ts'] },
     'scroll-area': { files: ['ScrollArea.vue', 'ScrollBar.vue', 'scroll-area-variants.ts'] },
-    select: { files: ['Select.vue', 'SelectContent.vue', 'SelectItem.vue', 'SelectLabel.vue', 'SelectScrollDownButton.vue', 'SelectScrollUpButton.vue', 'SelectSeparator.vue', 'SelectTrigger.vue', 'select-variants.ts'] },
+    select: { files: ['Select.vue', 'SelectContent.vue', 'SelectItem.vue', 'SelectLabel.vue', 'SelectScrollDownButton.vue', 'SelectScrollUpButton.vue', 'SelectSeparator.vue', 'SelectTrigger.vue', 'select-variants.ts'], composables: ['useClearable.ts'] },
     separator: { files: ['Separator.vue', 'separator-variants.ts'] },
     skeleton: { files: ['Skeleton.vue', 'SkeletonAvatar.vue', 'SkeletonCard.vue', 'SkeletonTable.vue', 'SkeletonText.vue', 'skeleton-variants.ts'] },
     spinner: { files: ['Spinner.vue', 'BarsSpinner.vue', 'BlockSpinner.vue', 'DotsSpinner.vue', 'spinner-variants.ts'], composables: ['useLocale.ts'] },
@@ -130,7 +130,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     },
     'tree-select': {
         files: ['TreeSelect.vue', 'TreeSelectNode.vue', 'tree-select-variants.ts', 'tree-select-types.ts'],
-        composables: ['useLocale.ts'],
+        composables: ['useLocale.ts', 'useClearable.ts'],
     },
     'typewriter-text': {
         files: ['TypewriterText.vue', 'typewriter-text-variants.ts'],
