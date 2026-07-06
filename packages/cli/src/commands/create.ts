@@ -78,10 +78,17 @@ async function scaffoldProject(
 }
 
 const VALID_PACKAGE_MANAGERS: readonly PackageManager[] = ['pnpm', 'yarn', 'bun', 'npm'];
+const VALID_TEMPLATES = Object.keys(TEMPLATES) as CreateTemplate[];
 
 export async function create(projectName: string, options: CreateOptions): Promise<void> {
     const template: CreateTemplate = options.template ?? 'default';
     const packageManager: PackageManager = options.packageManager ?? 'pnpm';
+
+    if (!VALID_TEMPLATES.includes(template)) {
+        throw new CliError(
+            `Unsupported template: "${String(template)}". Supported: ${VALID_TEMPLATES.join(', ')}.`
+        );
+    }
 
     if (!VALID_PACKAGE_MANAGERS.includes(packageManager)) {
         throw new CliError(

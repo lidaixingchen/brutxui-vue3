@@ -40,11 +40,12 @@ export const CONFIG_FILES = {
 } as const;
 
 export const CSS_LOCATIONS: Record<ProjectType, readonly string[]> = {
-    'vite-vue': ['src/index.css', 'src/App.css', 'src/assets/main.css', 'index.css'],
-    'vite-vue-src': ['src/index.css', 'src/App.css', 'src/assets/main.css', 'src/styles/index.css'],
+    'vite-vue': ['src/index.css', 'src/style.css', 'src/App.css', 'src/assets/main.css', 'index.css'],
+    'vite-vue-src': ['src/index.css', 'src/style.css', 'src/App.css', 'src/assets/main.css', 'src/styles/index.css'],
     nuxt: ['assets/css/main.css', 'assets/css/tailwind.css', 'assets/css/global.css'],
     unknown: [
         'src/index.css',
+        'src/style.css',
         'src/assets/main.css',
         'src/styles/index.css',
         'assets/css/main.css',

@@ -22,6 +22,7 @@ type RewriteContext = 'component' | 'composable' | 'lib' | 'directive';
 const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 
 const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
+const CACHE_VERSION = 2;
 
 function loadCache(): Record<string, string> {
     if (fs.existsSync(CACHE_FILE)) {
@@ -37,7 +38,13 @@ function saveCache(cache: Record<string, string>): void {
 }
 
 function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[]; directives?: string[] }): string {
-    const parts: string[] = [];
+    const parts: string[] = [JSON.stringify({
+        cacheVersion: CACHE_VERSION,
+        componentInfo: COMPONENTS[name] ?? null,
+        fileMapping,
+        tailwind: TAILWIND_CONFIG,
+        cssVars: CSS_VARS,
+    })];
     const libDeps = new Set<string>();
 
     for (const fileName of fileMapping.files) {
@@ -305,7 +312,14 @@ async function run() {
         }
     }
 
-    const localeHash = crypto.createHash('sha256').update(localeHashParts.join('\0')).digest('hex');
+    const localeHash = crypto.createHash('sha256').update([
+        JSON.stringify({
+            cacheVersion: CACHE_VERSION,
+            tailwind: TAILWIND_CONFIG,
+            cssVars: CSS_VARS,
+        }),
+        ...localeHashParts,
+    ].join('\0')).digest('hex');
     const localeOutputPath = path.join(OUTPUT_DIR, 'locale-zh-cn.json');
 
     if (cache['locale-zh-cn'] === localeHash && fs.existsSync(localeOutputPath) && localeFiles.length > 0) {

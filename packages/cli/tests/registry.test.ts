@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
+import crypto from 'node:crypto';
 import * as registry from '../src/lib/registry.js';
 
 describe('getItem local', () => {
@@ -128,6 +129,33 @@ describe('resolveDeps with mocked fetch', () => {
         const resolved = await registry.resolveDeps(['combobox'], 'https://registry.mock');
 
         expect(resolved.map(r => r.name)).toEqual(['button', 'popover', 'combobox']);
+    });
+
+    it('should verify remote integrity with null-separated file contents', async () => {
+        const files = [
+            { path: 'components/ui/button/Button.vue', content: 'one' },
+            { path: 'components/ui/button/button-variants.ts', content: 'two' },
+        ];
+        const integrity = 'sha256-' + crypto
+            .createHash('sha256')
+            .update(files.map(f => f.content).join('\0'))
+            .digest('hex');
+
+        vi.stubGlobal('fetch', async () => ({
+            ok: true,
+            json: async () => ({
+                name: 'button',
+                type: 'registry:ui',
+                dependencies: [],
+                registryDependencies: [],
+                files,
+                integrity,
+            }),
+        }));
+
+        await expect(registry.getItem('button', 'https://registry.mock', false)).resolves.toMatchObject({
+            name: 'button',
+        });
     });
 
     it('should throw error when circular dependency is detected', async () => {

@@ -138,30 +138,22 @@ async function getDependents(
     componentsToRemove: string[]
 ): Promise<Map<string, string[]>> {
     const dependents = new Map<string, string[]>();
+    const installed = await getInstalledComponentDirs(cwd, config);
+    const remaining = installed.filter(c => !componentsToRemove.includes(c));
 
     for (const name of componentsToRemove) {
-        try {
-            const item: RegistryItem = await getItem(name);
-            if (!item.registryDependencies || item.registryDependencies.length === 0) continue;
-
-            const installed = await getInstalledComponentDirs(cwd, config);
-            const remaining = installed.filter(c => !componentsToRemove.includes(c));
-
-            for (const other of remaining) {
-                try {
-                    const otherItem = await getItem(other);
-                    if (otherItem.registryDependencies?.includes(name)) {
-                        if (!dependents.has(name)) {
-                            dependents.set(name, []);
-                        }
-                        dependents.get(name)!.push(other);
+        for (const other of remaining) {
+            try {
+                const otherItem: RegistryItem = await getItem(other);
+                if (otherItem.registryDependencies?.includes(name)) {
+                    if (!dependents.has(name)) {
+                        dependents.set(name, []);
                     }
-                } catch {
-                    // skip if registry item not found
+                    dependents.get(name)!.push(other);
                 }
+            } catch {
+                // skip if registry item not found
             }
-        } catch {
-            // skip if registry item not found
         }
     }
 

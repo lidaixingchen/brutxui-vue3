@@ -280,6 +280,22 @@ describe('remove command', () => {
     });
 
     describe('dependency warning', () => {
+        it('should warn when the removed component has no own registry dependencies but other components depend on it', async () => {
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+
+            await createComponent('button', {
+                'Button.vue': '<template>btn</template>',
+            });
+            await createComponent('card', {
+                'Card.vue': '<template>card</template>',
+            });
+
+            await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
+
+            const warnMessages = getLoggedMessages(warnSpy);
+            expect(warnMessages.some(m => m.includes('card') && m.includes('depends on') && m.includes('button'))).toBe(true);
+        });
+
         it('should warn when other installed components depend on the removed component', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 

@@ -31,4 +31,29 @@ describe('init', () => {
             await fs.remove(cwd);
         }
     });
+
+    it('should use src/style.css when initializing a Vite Vue project with the default Vite CSS entry', async () => {
+        const cwd = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-init-'));
+
+        try {
+            await fs.ensureDir(path.join(cwd, 'src'));
+            await fs.writeJson(path.join(cwd, 'package.json'), {
+                dependencies: { vue: '^3.5.0', tailwindcss: '^4.0.0' },
+            });
+            await fs.writeFile(path.join(cwd, 'src', 'style.css'), 'body { margin: 0; }');
+
+            const { init } = await import('../src/commands/init.js');
+            await init({ cwd, yes: true, force: true, silent: true });
+
+            const config = await fs.readJson(path.join(cwd, 'components.json'));
+            expect(config.tailwind.css).toBe('src/style.css');
+
+            const content = await fs.readFile(path.join(cwd, 'src', 'style.css'), 'utf-8');
+            expect(content).toContain('body { margin: 0; }');
+            expect(content).toContain('--color-brutal-bg');
+            expect(await fs.pathExists(path.join(cwd, 'src', 'index.css'))).toBe(false);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
 });

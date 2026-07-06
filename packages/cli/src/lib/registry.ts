@@ -111,24 +111,22 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         }
         data = await res.json();
 
-        const rawData = data as Record<string, unknown>;
-        if (typeof rawData.integrity === 'string') {
-            const files = rawData.files as Array<{ content: string }> | undefined;
-            if (Array.isArray(files)) {
-                const allContent = files.map(f => f.content).join('');
-                const computed = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
-                if (computed !== rawData.integrity) {
-                    throw new CliError(
-                        `Integrity check failed for component '${name}'. The registry content may have been tampered with.`
-                    );
-                }
+        validateRegistryItem(data, name);
+
+        const integrity = (data as RegistryItem & { integrity?: unknown }).integrity;
+        if (typeof integrity === 'string') {
+            const files = data.files as Array<{ content: string }>;
+            const allContent = files.map(f => f.content).join('\0');
+            const computed = 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
+            if (computed !== integrity) {
+                throw new CliError(
+                    `Integrity check failed for component '${name}'. The registry content may have been tampered with.`
+                );
             }
         }
 
-        validateRegistryItem(data, name);
-
         if (effectiveUseCache) {
-            await setCache(name, source, data);
+            await setCache(name, source, data).catch(() => {});
         }
 
         return data;
