@@ -83,6 +83,12 @@ describe('Cascader', () => {
             props: { options, modelValue: ['zh', 'bj', 'hd'], clearable: true },
             attachTo: document.body,
         })
+        const trigger = wrapper.find('[role="combobox"]')
+        expect(wrapper.find('[role="button"]').exists()).toBe(false)
+
+        await trigger.trigger('mouseenter')
+        await nextTick()
+
         const clearButton = wrapper.find('[role="button"]')
         expect(clearButton.exists()).toBe(true)
         await clearButton.trigger('click')

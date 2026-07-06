@@ -6,6 +6,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
+import { useClearable } from '@/composables/useClearable'
 import { cascaderTriggerVariants, cascaderItemVariants } from './cascader-variants'
 import type { CascaderOption, CascaderValue } from './cascader-types'
 
@@ -323,11 +324,22 @@ function handleItemClick(option: CascaderOption, colIdx: number) {
     }
 }
 
-function handleClear(event: Event) {
-    event.stopPropagation()
+function clearSelection() {
     emit('update:modelValue', [])
     emit('change', [])
 }
+
+const {
+    showClear,
+    handleClear,
+    onMouseEnter: onClearableMouseEnter,
+    onMouseLeave: onClearableMouseLeave,
+} = useClearable({
+    modelValue: () => props.modelValue,
+    clearable: () => props.clearable,
+    disabled: () => props.disabled,
+    onClear: clearSelection,
+})
 
 // Synchronize keyboard focus state on popover open state transition
 watch(open, (isOpen) => {
@@ -470,18 +482,20 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 :tabindex="disabled ? -1 : 0"
                 :aria-disabled="disabled"
                 :class="triggerClasses"
+                @mouseenter="onClearableMouseEnter"
+                @mouseleave="onClearableMouseLeave"
                 @keydown="handleKeyDown"
             >
                 <span class="truncate">{{ displayText }}</span>
                 <span class="flex items-center gap-1">
                     <span
-                        v-if="clearable && hasValue"
+                        v-if="showClear"
                         role="button"
                         :tabindex="disabled ? -1 : 0"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal focus:outline-none focus:ring-2 focus:ring-brutal-ring"
                         @click="handleClear"
                         @keydown.enter="handleClear"
-                        @keydown.space="handleClear"
+                        @keydown.space.prevent="handleClear"
                     >
                         <X class="w-3.5 h-3.5 stroke-3" />
                     </span>

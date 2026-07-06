@@ -1024,6 +1024,10 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useClearable.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/brutal-interaction-variants.ts",
           "type": "registry:lib"
         },
@@ -1118,7 +1122,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-9ba990772833d651724e3de0baf3cf6724c6e4ebc7bffd6b08d79b8d3608ab34"
+      "integrity": "sha256-9297baf72c2b639802a5a2d2e8d3347d1630d9a809b5f04f07fce5e25247addc"
     },
     {
       "name": "checkbox",
