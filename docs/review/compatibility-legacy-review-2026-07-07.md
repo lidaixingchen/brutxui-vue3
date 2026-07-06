@@ -103,6 +103,7 @@
 3. 对应稳定替代入口为 `Loading`、`Result`、`Stepper`、`DataTable`、`Upload`、`Counter`。
 4. `FeedbackForm` 的成功态已改用 `Result`，并将默认成功文案迁到 `feedbackForm.success*`，不再依赖 `SuccessCard` 或 `successCard.*` locale。
 5. registry 构建脚本已增加过期 JSON 清理，避免被移除组件继续残留在静态 registry 目录。
+6. `DashboardStats` 已对数值型统计值复用 `Counter` 静态渲染，非数值内容保留原文本路径，配套 registry 依赖同步到 `counter`。
 
 ## P1：日期解析语义已初步收敛
 
@@ -204,4 +205,5 @@
 - 本轮兼容验证：`CI=true pnpm --filter brutx-ui-vue test src/components/image/image.test.ts src/components/dialog/functional-dialog.test.ts src/composables/useAudioEngine.test.ts`。
 - 本轮日期验证：`CI=true pnpm --filter brutx-ui-vue test src/lib/date.test.ts src/composables/useDataTableFilter.test.ts src/components/calendar/calendar.test.ts`。
 - 本轮 registry 同步验证：`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`、`CI=true pnpm --filter brutx-registry-vue test tests/build-registry.test.ts`、`CI=true pnpm --filter brutx-registry-vue test tests/validate-utils.test.ts`、`CI=true pnpm --filter brutx-registry-vue typecheck`。
+- 本轮 legacy 替代验证：`CI=true pnpm --filter brutx-ui-vue test src/components/dashboard-stats/dashboard-stats.test.ts`、`CI=true pnpm --filter brutx-ui-vue typecheck`、`CI=true pnpm --filter brutx-registry-vue build`、`CI=true pnpm --filter brutx-registry-vue validate`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
