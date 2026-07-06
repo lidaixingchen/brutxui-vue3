@@ -80,6 +80,7 @@
 - 当前 `packages/ui/src/components` 下有 112 个组件目录，而 `package.json` 的 `./*` 子路径导出为 21 个，其中还包含 CSS、hooks、locales、插件入口。
 - `packages/ui/scripts/validate-exports.mjs` 已校验 Vite `build.lib.entry` 与 `package.json exports` 一致；`packages/ui/scripts/smoke-package.mjs` 已从临时消费者项目验证所有已声明 `exports` 可解析。
 - `packages/registry/scripts/validate-registry.ts` 已校验 shared metadata、源文件、生成 registry item/index/manifest 的同步，包括 `status` 与 `replacement`。
+- `packages/registry/scripts/validate-registry.ts` 已增加中英文组件文档覆盖校验，支持少量明确 alias 与 exemption，避免 registry 中的一等组件缺少对应文档页。
 - `apps/docs/guide/best-practices/performance.md` 与英文版已明确：主入口是稳定组件导入面，子路径导入仅限 `package.json exports` 白名单。
 
 风险：
@@ -179,6 +180,7 @@
 - CLI 构建 `packages/cli/tsup.config.ts:11` target 为 `node22`，且 `packages/cli/tsup.config.ts:9` 不生成 dts。
 - CLI integration matrix 已覆盖 Vite + Tailwind v4 默认路径，并显式登记 Tailwind v3、Nuxt、monorepo 子包等重型兼容场景；本地 registry 命令参数由测试矩阵生成。
 - CLI doctor 已检查当前运行的 Node.js 版本，低于 `brutx-vue` 的 `engines.node >=22.0.0` 时报告 error。
+- CLI 的 `init`、`add`、`diff`、`remove` 核心文件写入、registry diff、安装计划和删除计划已抽离到 `packages/cli/src/lib/services/`，命令层保留交互与日志；对应 service 级测试已覆盖事务边界、manifest 元数据、registry source、dry-run/跳过写入等关键路径。
 
 风险：
 
@@ -225,4 +227,7 @@
 - 本轮浏览器能力补强验证：`packages/ui/node_modules/.bin/vitest.CMD run src/components/tour/tour.test.ts src/components/watermark/Watermark.test.ts src/components/scratch-card/scratch-card.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`packages/registry/node_modules/.bin/tsx.CMD scripts/build-registry.ts`、`packages/registry/node_modules/.bin/tsx.CMD scripts/validate-registry.ts`。
 - 本轮 flatten 路径重写验证：`packages/ui/node_modules/.bin/vitest.CMD run src/lib/preserve-modules-paths.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`npm.cmd run build`、`npm.cmd run check:exports`、`npm.cmd run test:package`。
 - 本轮 CLI runtime 验证：`packages/cli` 下 `vitest run tests/doctor.test.ts`、`npm.cmd run typecheck`、`npm.cmd run build`。
+- 本轮 CLI 服务拆分验证：`packages/cli/node_modules/.bin/vitest.CMD run tests/remove-service.test.ts tests/remove.test.ts`、`packages/cli/node_modules/.bin/vitest.CMD run tests/init-service.test.ts tests/init.test.ts`、`packages/cli/node_modules/.bin/vitest.CMD run tests/diff-service.test.ts tests/diff.test.ts`、`packages/cli` 下 `npm.cmd run typecheck`、`npm.cmd run build`。
+- 本轮 registry 文档覆盖验证：`packages/registry/node_modules/.bin/vitest.CMD run tests/validate-utils.test.ts`、`packages/registry` 下 `node_modules/.bin/tsx.CMD scripts/validate-registry.ts`、`npm.cmd run typecheck`。
+- 本轮选择复用验证：`packages/ui` 下 `vitest run src/composables/useSelectionDisplayText.test.ts src/composables/useClearableSelection.test.ts`，并随 registry build/validate 同步生成 `cascader`、`tree-select` 注册表产物。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。

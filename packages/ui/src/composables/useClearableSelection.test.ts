@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { effectScope, ref } from 'vue'
 import { useClearableSelection } from './useClearableSelection'
 
@@ -40,7 +41,7 @@ describe('useClearableSelection', () => {
             emptyValue: () => [],
             onClear,
         })
-        const event = new MouseEvent('click')
+        const event = new Event('click')
 
         const emptyValue = clearableSelection.clearSelection(event)
 
@@ -58,7 +59,7 @@ describe('useClearableSelection', () => {
             onClear,
         })
         emptyValue.value = undefined
-        const event = new MouseEvent('click')
+        const event = new Event('click')
 
         clearableSelection.clearSelection(event)
 
@@ -73,7 +74,7 @@ describe('useClearableSelection', () => {
             emptyValue: () => undefined,
             onClear,
         })
-        const event = new MouseEvent('click')
+        const event = new Event('click')
         vi.spyOn(event, 'stopPropagation')
 
         clearableSelection.handleClear(event)
