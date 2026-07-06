@@ -83,7 +83,7 @@ function validateIndexConsistency(files: string[]): number {
 
         if (fs.existsSync(manifestPath)) {
             const manifestData = JSON.parse(fs.readFileSync(manifestPath, 'utf-8')) as RegistryBuildManifestSnapshot;
-            const manifestErrors = validateRegistryManifestConsistency(manifestData, indexData.items);
+            const manifestErrors = validateRegistryManifestConsistency(manifestData, indexData);
 
             for (const error of manifestErrors) {
                 console.error(`✗ [registry-manifest.json] ${error}.`);

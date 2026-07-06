@@ -2,6 +2,8 @@
   "$schema": "https://ui.shadcn.com/schema/registry.json",
   "name": "brutx-vue",
   "homepage": "https://lidaixingchen.github.io/brutxui-vue3/",
+  "schemaVersion": 1,
+  "registryVersion": "0.1.0",
   "items": [
     {
       "name": "locale-zh-cn",
@@ -737,7 +739,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2b5293312c2447a2c54da5f22e3cc1d557a9cc278122b763d78cf375b9ffb01b"
+      "integrity": "sha256-a841ce5ac587dc2ca77bc8723b1c1ffdc0ea13e5280c64ff1407c1c8e26b2df9"
     },
     {
       "name": "calendar",
@@ -3463,7 +3465,7 @@
         },
         {
           "path": "components/ui/tabs/types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
@@ -6556,7 +6558,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-66e58b93d916ff7a9f602a70f9bcb6b5a88032935f2a6fd29aebc6f098fba49b"
+      "integrity": "sha256-f4498df8af31598a9d0ed31f12f38b6e35417e8ecd5e2e24c81f2a9612f874a6"
     },
     {
       "name": "menu",
@@ -6804,7 +6806,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2f0787615903ce47e6efd2e62c136faff07a4f64f926d5d1f68d246d64a34f94"
+      "integrity": "sha256-055d11cab146695d6053618a5c08a5a537f6d1f6bef9fb82f1b230610da15195"
     },
     {
       "name": "code-block",
@@ -7223,7 +7225,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8d59c52fc3954d5ac7647031b45db9feec2d57e6bf178837c2224c5a1d193f3b"
+      "integrity": "sha256-88020f818a401b17b99eb6f2d901e7313c5462be375494b030bc143729aabbb7"
     },
     {
       "name": "tree-view",
@@ -11188,7 +11190,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-19b875c38baed547da52100211f6ccc213fd207797c00c930827cc0ee3c7ff52"
+      "integrity": "sha256-dd7e98f31646d9e1ddaf19485f4609d18c906ac86b6074e1d5f4a0605fc07880"
     },
     {
       "name": "data-table",
@@ -11219,7 +11221,7 @@
         },
         {
           "path": "components/ui/data-table/types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
@@ -11841,7 +11843,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-774cb558995beba726865c2def7fb527ca3098fc9ebacbe9e60852f3c7382bb9"
+      "integrity": "sha256-cd2408b34231934f2152358e5381eda108f592813c2550e1b87be43e4b5bc1f8"
     },
     {
       "name": "virtual-scroll",
@@ -11867,7 +11869,7 @@
         },
         {
           "path": "components/ui/virtual-scroll/types.ts",
-          "type": "registry:ui"
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",

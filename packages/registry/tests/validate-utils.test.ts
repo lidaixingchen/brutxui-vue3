@@ -52,6 +52,8 @@ describe('validate-registry helpers', () => {
 
     it('accepts a manifest that matches index items', () => {
         expect(validateRegistryManifestConsistency({
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
             itemCount: 2,
             items: {
                 button: {
@@ -74,7 +76,7 @@ describe('validate-registry helpers', () => {
                     replacement: 'modal',
                 },
             },
-        }, [
+        }, createIndex([
             createIndexItem('button', {
                 integrity: 'sha256-button',
                 fileCount: 1,
@@ -94,11 +96,28 @@ describe('validate-registry helpers', () => {
                 status: 'deprecated',
                 replacement: 'modal',
             }),
-        ])).toEqual([])
+        ]))).toEqual([])
+    })
+
+    it('reports manifest schema and registry version drift', () => {
+        expect(validateRegistryManifestConsistency({
+            schemaVersion: 2,
+            registryVersion: '0.0.0',
+            itemCount: 0,
+            items: {},
+        }, createIndex([], {
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+        }))).toEqual([
+            'schemaVersion 2 does not match index schemaVersion 1',
+            'registryVersion "0.0.0" does not match index registryVersion "0.1.0"',
+        ])
     })
 
     it('reports manifest item count, missing items, and extra items', () => {
         expect(validateRegistryManifestConsistency({
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
             itemCount: 3,
             items: {
                 button: {
@@ -114,10 +133,10 @@ describe('validate-registry helpers', () => {
                     registryDependencies: [],
                 },
             },
-        }, [
+        }, createIndex([
             createIndexItem('button', { integrity: 'sha256-button', fileCount: 1 }),
             createIndexItem('dialog', { integrity: 'sha256-dialog', fileCount: 1 }),
-        ])).toEqual([
+        ]))).toEqual([
             'itemCount 3 does not match index item count 2',
             'missing item "dialog"',
             'extra item "ghost"',
@@ -126,6 +145,8 @@ describe('validate-registry helpers', () => {
 
     it('reports manifest metadata drift for matching items', () => {
         expect(validateRegistryManifestConsistency({
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
             itemCount: 1,
             items: {
                 dialog: {
@@ -139,7 +160,7 @@ describe('validate-registry helpers', () => {
                     replacement: 'legacy-dialog',
                 },
             },
-        }, [
+        }, createIndex([
             createIndexItem('dialog', {
                 integrity: 'sha256-new',
                 fileCount: 2,
@@ -150,7 +171,7 @@ describe('validate-registry helpers', () => {
                 status: 'deprecated',
                 replacement: 'modal',
             }),
-        ])).toEqual([
+        ]))).toEqual([
             'item "dialog" integrity mismatch',
             'item "dialog" fileCount 1 does not match index file count 2',
             'item "dialog" dependencies mismatch',
@@ -263,6 +284,20 @@ describe('validate-registry helpers', () => {
         ])
     })
 })
+
+function createIndex(
+    items: RegistryIndexItem[],
+    overrides: {
+        schemaVersion?: number
+        registryVersion?: string
+    } = {}
+) {
+    return {
+        schemaVersion: overrides.schemaVersion ?? 1,
+        registryVersion: overrides.registryVersion ?? '0.1.0',
+        items,
+    }
+}
 
 function createIndexItem(
     name: string,

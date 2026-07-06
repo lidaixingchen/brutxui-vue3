@@ -36,7 +36,7 @@
     {
       "path": "components/ui/tabs/types.ts",
       "content": "export interface TabItem {\n    label: string\n    value: string\n}\n",
-      "type": "registry:ui"
+      "type": "registry:lib"
     },
     {
       "path": "composables/useLocale.ts",

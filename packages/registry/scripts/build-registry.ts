@@ -35,10 +35,12 @@ const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 
 const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
 const CACHE_VERSION = 2;
+const REGISTRY_SCHEMA_VERSION = 1;
 
 export interface RegistryBuildManifest {
     $schema: string;
     name: string;
+    schemaVersion: number;
     registryVersion: string;
     buildTimestamp: string | null;
     gitCommit: string | null;
@@ -57,6 +59,7 @@ export interface RegistryBuildManifest {
 
 export interface RegistryBuildManifestOptions {
     registryVersion: string;
+    schemaVersion?: number;
     buildTimestamp?: string | null;
     gitCommit?: string | null;
 }
@@ -84,6 +87,7 @@ export function buildRegistryManifest(
     return {
         $schema: 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json',
         name: index.name,
+        schemaVersion: options.schemaVersion ?? index.schemaVersion,
         registryVersion: options.registryVersion,
         buildTimestamp: options.buildTimestamp ?? null,
         gitCommit: options.gitCommit ?? null,
@@ -421,11 +425,14 @@ export async function run() {
     const componentNames = Object.keys(COMPONENT_REGISTRY);
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
+    const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };
 
     const registryIndex = {
         $schema: 'https://ui.shadcn.com/schema/registry.json',
         name: 'brutx-vue',
         homepage: 'https://lidaixingchen.github.io/brutxui-vue3/',
+        schemaVersion: REGISTRY_SCHEMA_VERSION,
+        registryVersion: packageJson.version,
         items: [] as RegistryIndexItem[]
     } satisfies RegistryIndex;
 
@@ -715,9 +722,9 @@ export async function run() {
     fs.writeFileSync(indexPath, JSON.stringify(registryIndex, null, 2), 'utf-8');
     console.log('✓ Generated index.json');
 
-    const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };
     const manifest = buildRegistryManifest(registryIndex, {
         registryVersion: packageJson.version,
+        schemaVersion: REGISTRY_SCHEMA_VERSION,
         buildTimestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
         gitCommit: process.env.GITHUB_SHA ?? process.env.COMMIT_SHA ?? null,
     });

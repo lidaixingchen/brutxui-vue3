@@ -60,6 +60,8 @@ export interface RegistryIndex {
     $schema?: string;
     name: string;
     homepage: string;
+    schemaVersion: number;
+    registryVersion: string;
     items: RegistryIndexItem[];
 }
 
@@ -134,6 +136,12 @@ export function validateRegistryIndex(data: unknown): asserts data is RegistryIn
 
     assertNonEmptyString(data.name, `"name"`, 'index');
     assertNonEmptyString(data.homepage, `"homepage"`, 'index');
+
+    if (typeof data.schemaVersion !== 'number' || !Number.isInteger(data.schemaVersion) || data.schemaVersion < 1) {
+        throw new Error('Invalid registry index: "schemaVersion" must be a positive integer.');
+    }
+
+    assertNonEmptyString(data.registryVersion, `"registryVersion"`, 'index');
 
     if (!Array.isArray(data.items)) {
         throw new Error('Invalid registry index: "items" must be an array.');

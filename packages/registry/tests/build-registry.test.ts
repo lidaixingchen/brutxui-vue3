@@ -5,6 +5,7 @@ import {
     COMPONENTS_BY_CATEGORY,
     COMPONENT_REGISTRY,
     computeRegistryIntegrity,
+    validateRegistryIndex,
     getComponentsByCategory,
     validateRegistryItem,
 } from 'brutx-shared-vue';
@@ -192,10 +193,33 @@ describe('build-registry helpers', () => {
         })).toThrow('"category" must be one of');
     });
 
+    it('validates registry index version metadata', () => {
+        const index = {
+            $schema: 'https://ui.shadcn.com/schema/registry.json',
+            name: 'brutx-vue',
+            homepage: 'https://example.test',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            items: [],
+        };
+
+        expect(() => validateRegistryIndex(index)).not.toThrow();
+        expect(() => validateRegistryIndex({
+            ...index,
+            schemaVersion: 0,
+        })).toThrow('"schemaVersion" must be a positive integer');
+        expect(() => validateRegistryIndex({
+            ...index,
+            registryVersion: '',
+        })).toThrow('"registryVersion" must be a non-empty string');
+    });
+
     it('builds a deterministic registry manifest from an index', () => {
         const manifest = buildRegistryManifest({
             name: 'brutx-vue',
             homepage: 'https://example.test',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
             items: [
                 {
                     name: 'dialog',
@@ -243,6 +267,7 @@ describe('build-registry helpers', () => {
         expect(manifest).toMatchObject({
             $schema: 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json',
             name: 'brutx-vue',
+            schemaVersion: 1,
             registryVersion: '0.1.0',
             buildTimestamp: '2026-07-07T00:00:00.000Z',
             gitCommit: 'abc123',

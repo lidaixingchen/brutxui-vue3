@@ -1,4 +1,4 @@
-import type { ComponentRegistryEntry, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
+import type { ComponentRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
 
 export interface RegistryReferenceItem {
     name: string
@@ -22,6 +22,8 @@ export interface RegistryBuildManifestItem {
 }
 
 export interface RegistryBuildManifestSnapshot {
+    schemaVersion: number
+    registryVersion: string
     itemCount: number
     items: Record<string, RegistryBuildManifestItem>
 }
@@ -107,11 +109,20 @@ export function formatRegistryDependencyGraph(items: RegistryReferenceItem[]): s
 
 export function validateRegistryManifestConsistency(
     manifest: RegistryBuildManifestSnapshot,
-    indexItems: RegistryIndexItem[]
+    index: Pick<RegistryIndex, 'schemaVersion' | 'registryVersion' | 'items'>
 ): string[] {
     const errors: string[] = []
+    const indexItems = index.items
     const indexByName = new Map(indexItems.map(item => [item.name, item]))
     const manifestNames = new Set(Object.keys(manifest.items))
+
+    if (manifest.schemaVersion !== index.schemaVersion) {
+        errors.push(`schemaVersion ${manifest.schemaVersion} does not match index schemaVersion ${index.schemaVersion}`)
+    }
+
+    if (manifest.registryVersion !== index.registryVersion) {
+        errors.push(`registryVersion "${manifest.registryVersion}" does not match index registryVersion "${index.registryVersion}"`)
+    }
 
     if (manifest.itemCount !== indexItems.length) {
         errors.push(`itemCount ${manifest.itemCount} does not match index item count ${indexItems.length}`)
