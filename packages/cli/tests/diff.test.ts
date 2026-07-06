@@ -5,6 +5,7 @@ import path from 'path';
 import * as registry from '../src/lib/registry.js';
 import * as project from '../src/lib/project.js';
 import { diff } from '../src/commands/diff.js';
+import { logger } from '../src/lib/logger.js';
 import type { BrutalistConfig, DiffResult, RegistryItem } from '../src/lib/types.js';
 
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
@@ -557,6 +558,55 @@ describe('diff command', () => {
             expect(parsed[0]).toHaveProperty('component');
             expect(parsed[0]).toHaveProperty('status');
             expect(parsed[0]).toHaveProperty('files');
+        });
+
+        it('should show update availability in non-JSON output when manifest integrity is outdated', async () => {
+            mockedReadConfigSafe.mockResolvedValue(createConfig());
+            await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>button</template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-installed',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            mockedGetItem.mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                files: [{
+                    path: 'components/ui/button/Button.vue',
+                    content: '<template>button</template>',
+                }],
+                integrity: 'sha256-latest',
+            } as RegistryItem);
+
+            logger.setSilent(false);
+            const output: string[] = [];
+            const spy = vi.spyOn(console, 'log').mockImplementation((...args: unknown[]) => {
+                output.push(args.map(String).join(' '));
+            });
+
+            try {
+                await diff({
+                    cwd: tmpDir,
+                    components: ['button'],
+                    silent: false,
+                });
+            } finally {
+                spy.mockRestore();
+            }
+
+            expect(output.join('\n')).toContain('update available');
         });
 
         it('should correctly apply resolveImportAlias to registry content before comparing', async () => {

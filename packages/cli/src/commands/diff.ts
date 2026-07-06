@@ -69,6 +69,12 @@ export async function getInstalledComponents(cwd: string, config: BrutalistConfi
         .map((d) => d.name);
 }
 
+function getIntegrityHint(result: DiffResult): string {
+    return result.integrityStatus === 'outdated'
+        ? chalk.yellow(' (update available)')
+        : '';
+}
+
 async function getLocalComponentFiles(
     cwd: string,
     config: BrutalistConfig,
@@ -222,7 +228,7 @@ function printDiffReport(results: DiffResult[]): void {
         logger.log(chalk.yellow(`  🔄 MODIFIED (${modified.length})`));
         for (const result of modified) {
             const changedFiles = result.files.filter((f) => f.status !== 'unchanged').length;
-            logger.log(`    — ${result.component}    (${changedFiles} file${changedFiles !== 1 ? 's' : ''} changed)`);
+            logger.log(`    — ${result.component}    (${changedFiles} file${changedFiles !== 1 ? 's' : ''} changed)${getIntegrityHint(result)}`);
 
             for (const file of result.files) {
                 if (file.status === 'modified' && file.patch) {
@@ -246,7 +252,7 @@ function printDiffReport(results: DiffResult[]): void {
     if (upToDate.length > 0) {
         logger.log(chalk.green(`  ✅ UP-TO-DATE (${upToDate.length})`));
         for (const result of upToDate) {
-            logger.log(`    — ${result.component}`);
+            logger.log(`    — ${result.component}${getIntegrityHint(result)}`);
         }
         logger.newLine();
     }
@@ -259,7 +265,9 @@ function printDiffReport(results: DiffResult[]): void {
         logger.newLine();
     }
 
-    logger.log(`  Summary: ${chalk.yellow(`${modified.length} modified`)}, ${chalk.green(`${upToDate.length} up-to-date`)}, ${chalk.gray(`${notInstalled.length} local-only`)}`);
+    const updateAvailable = results.filter((r) => r.integrityStatus === 'outdated').length;
+    const updateSummary = updateAvailable > 0 ? `, ${chalk.yellow(`${updateAvailable} update available`)}` : '';
+    logger.log(`  Summary: ${chalk.yellow(`${modified.length} modified`)}, ${chalk.green(`${upToDate.length} up-to-date`)}, ${chalk.gray(`${notInstalled.length} local-only`)}${updateSummary}`);
     logger.newLine();
 }
 
@@ -270,9 +278,7 @@ export async function diff(options: DiffOptions): Promise<void> {
         process.env.BRUTX_NO_CACHE = '1';
     }
 
-    if (options.silent) {
-        logger.setSilent(true);
-    }
+    logger.setSilent(options.silent ?? false);
 
     const config = await readConfigSafe(cwd);
 
