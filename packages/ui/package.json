@@ -110,9 +110,9 @@
         "*.css"
     ],
     "scripts": {
-        "build": "vite build && pnpm build:preflight",
+        "build": "vite build && npm run build:preflight",
         "build:preflight": "tailwindcss -i src/preflight.css -o dist/preflight.css",
-        "prepack": "pnpm build",
+        "prepack": "npm run build",
         "dev": "vite build --watch",
         "clean": "rm -rf dist",
         "typecheck": "vue-tsc --noEmit",
@@ -120,6 +120,7 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
+        "test:package": "node scripts/smoke-package.mjs",
         "visual:dev": "vite --config visual/vite.config.ts --host 127.0.0.1",
         "test:visual": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts",
         "test:visual:update": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts --update-snapshots",

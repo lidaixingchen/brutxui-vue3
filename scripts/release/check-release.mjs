@@ -9,6 +9,7 @@ const cliRoot = path.join(repoRoot, 'packages', 'cli');
 
 const requiredCommands = [
     ['pnpm', '--filter', 'brutx-ui-vue', 'build'],
+    ['pnpm', '--filter', 'brutx-ui-vue', 'test:package'],
     ['pnpm', '--filter', 'brutx-vue', 'build'],
     ['pnpm', '-r', 'typecheck'],
     ['pnpm', '-r', 'lint'],
