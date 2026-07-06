@@ -3,6 +3,7 @@ export * from './types.js';
 export * from './constants.js';
 
 export { CliError } from './error.js';
+export { getCliErrorAdvice } from './error-advice.js';
 
 export {
     detectProjectType,

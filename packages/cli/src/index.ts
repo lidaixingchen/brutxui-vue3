@@ -9,7 +9,7 @@ import { list } from './commands/list.js';
 import { info } from './commands/info.js';
 import { remove } from './commands/remove.js';
 import { create } from './commands/create.js';
-import { CliError, logger } from './lib/index.js';
+import { CliError, getCliErrorAdvice, logger } from './lib/index.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -128,12 +128,22 @@ async function main(): Promise<void> {
     try {
         await program.parseAsync();
     } catch (error) {
+        const verbose = program.opts().verbose as boolean;
+
         if (error instanceof CliError) {
             logger.error(error.message);
+            for (const line of getCliErrorAdvice(error)) {
+                logger.info(line);
+            }
+
+            if (verbose && error.stack) {
+                logger.newLine();
+                logger.dim(error.stack);
+            }
+
             process.exit(error.exitCode);
         }
 
-        const verbose = program.opts().verbose as boolean;
         const message = error instanceof Error ? error.message : String(error);
         const stack = error instanceof Error ? error.stack : undefined;
 
