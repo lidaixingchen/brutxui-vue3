@@ -2,9 +2,16 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import { diffLines } from 'diff';
-import type { BrutalistConfig, DiffResult, FileDiff, RegistryItem, DiffOptions } from '../lib/types.js';
+import type {
+    BrutalistConfig,
+    DiffResult,
+    FileDiff,
+    RegistryItem,
+    DiffOptions,
+    InstalledComponentManifest,
+} from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest } from '../lib/index.js';
 import { resolveAliasPath, resolveImportAlias } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -94,11 +101,32 @@ async function getLocalComponentFiles(
     return files;
 }
 
+function getIntegrityMetadata(
+    registryItem: RegistryItem | null,
+    manifestEntry?: InstalledComponentManifest
+): Pick<DiffResult, 'installedIntegrity' | 'latestIntegrity' | 'integrityStatus' | 'registrySource' | 'installedAt'> {
+    const installedIntegrity = manifestEntry?.integrity;
+    const latestIntegrity = typeof registryItem?.integrity === 'string'
+        ? registryItem.integrity
+        : undefined;
+
+    return {
+        installedIntegrity,
+        latestIntegrity,
+        integrityStatus: installedIntegrity && latestIntegrity
+            ? installedIntegrity === latestIntegrity ? 'current' : 'outdated'
+            : 'unknown',
+        registrySource: manifestEntry?.registrySource,
+        installedAt: manifestEntry?.installedAt,
+    };
+}
+
 export async function diffComponent(
     cwd: string,
     config: BrutalistConfig,
     componentName: string,
-    registryOverride?: string
+    registryOverride?: string,
+    manifestEntry?: InstalledComponentManifest
 ): Promise<DiffResult> {
     let registryItem: RegistryItem | null = null;
 
@@ -113,6 +141,7 @@ export async function diffComponent(
             component: componentName,
             status: 'not-installed',
             files: [],
+            ...getIntegrityMetadata(registryItem, manifestEntry),
         };
     }
 
@@ -176,6 +205,7 @@ export async function diffComponent(
         component: componentName,
         status: hasChanges ? 'modified' : 'up-to-date',
         files: fileDiffs,
+        ...getIntegrityMetadata(registryItem, manifestEntry),
     };
 }
 
@@ -253,6 +283,7 @@ export async function diff(options: DiffOptions): Promise<void> {
     const targetComponents = options.components?.length
         ? options.components
         : await getInstalledComponents(cwd, config);
+    const manifest = await readManifest(cwd).catch(() => null);
 
     if (targetComponents.length === 0) {
         logger.info('No components found to compare.');
@@ -260,7 +291,13 @@ export async function diff(options: DiffOptions): Promise<void> {
     }
 
     const results = await Promise.all(
-        targetComponents.map(component => diffComponent(cwd, config, component, options.registry))
+        targetComponents.map(component => diffComponent(
+            cwd,
+            config,
+            component,
+            options.registry,
+            manifest?.components[component],
+        ))
     );
 
     if (options.json) {

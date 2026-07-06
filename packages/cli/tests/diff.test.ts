@@ -261,6 +261,46 @@ describe('diff command', () => {
             expect(results[0].files[0].patch).toBeDefined();
         });
 
+        it('should compare manifest integrity with latest registry integrity', async () => {
+            mockedReadConfigSafe.mockResolvedValue(createConfig());
+            await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>button</template>');
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-installed',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            mockedGetItem.mockResolvedValue({
+                name: 'button',
+                type: 'registry:ui',
+                files: [{
+                    path: 'components/ui/button/Button.vue',
+                    content: '<template>button</template>',
+                }],
+                integrity: 'sha256-latest',
+            } as RegistryItem);
+
+            const results = await runDiffJson(tmpDir, { components: ['button'] });
+
+            expect(results[0].status).toBe('up-to-date');
+            expect(results[0].installedIntegrity).toBe('sha256-installed');
+            expect(results[0].latestIntegrity).toBe('sha256-latest');
+            expect(results[0].integrityStatus).toBe('outdated');
+            expect(results[0].registrySource).toBe('https://example.test/registry');
+            expect(results[0].installedAt).toBe('2026-07-07T00:00:00.000Z');
+        });
+
         it('should include unified diff patch for modified files', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>local</template>\n');

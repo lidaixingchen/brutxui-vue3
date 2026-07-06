@@ -172,9 +172,15 @@ export interface FileDiff {
 }
 
 export type DiffComponentStatus = 'up-to-date' | 'modified' | 'not-installed' | 'local-only';
+export type DiffIntegrityStatus = 'unknown' | 'current' | 'outdated';
 
 export interface DiffResult {
     component: string;
     status: DiffComponentStatus;
     files: FileDiff[];
+    installedIntegrity?: string;
+    latestIntegrity?: string;
+    integrityStatus?: DiffIntegrityStatus;
+    registrySource?: string;
+    installedAt?: string;
 }
