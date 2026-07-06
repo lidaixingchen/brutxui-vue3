@@ -33,7 +33,13 @@ export async function update(components: string[], options: UpdateOptions): Prom
     const manifest = await readManifest(cwd).catch(() => null);
 
     const results = await Promise.all(
-        installedComponents.map(name => diffComponent(cwd, config, name, options.registry, manifest?.components[name]))
+        installedComponents.map(name => diffComponent(
+            cwd,
+            config,
+            name,
+            options.registry ?? manifest?.components[name]?.registrySource,
+            manifest?.components[name],
+        ))
     );
 
     const outdated = results.filter((r): r is DiffResult => r.status === 'modified' || r.integrityStatus === 'outdated');
@@ -111,14 +117,25 @@ export async function update(components: string[], options: UpdateOptions): Prom
         }
     }
 
-    await add(selected, {
-        overwrite: true,
-        yes: true,
-        cwd,
-        silent: options.silent,
-        dryRun: options.dryRun,
-        registry: options.registry,
-    });
+    const selectedByRegistry = new Map<string | undefined, string[]>();
+    for (const component of selected) {
+        const registrySource = options.registry ?? manifest?.components[component]?.registrySource;
+        selectedByRegistry.set(registrySource, [
+            ...(selectedByRegistry.get(registrySource) ?? []),
+            component,
+        ]);
+    }
+
+    for (const [registrySource, groupedComponents] of selectedByRegistry) {
+        await add(groupedComponents, {
+            overwrite: true,
+            yes: true,
+            cwd,
+            silent: options.silent,
+            dryRun: options.dryRun,
+            registry: registrySource,
+        });
+    }
 
     logger.newLine();
     logger.success(`Updated ${selected.length} component(s): ${selected.join(', ')}`);

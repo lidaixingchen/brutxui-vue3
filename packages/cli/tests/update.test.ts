@@ -18,6 +18,9 @@ vi.mock('@inquirer/prompts', () => ({
 }));
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import fs from 'fs-extra';
+import os from 'os';
+import path from 'path';
 import * as registry from '../src/lib/registry.js';
 import * as diffCmd from '../src/commands/diff.js';
 import * as addModule from '../src/commands/add.js';
@@ -71,19 +74,43 @@ const modifiedNoPatch: DiffResult = {
 
 describe('update command', () => {
     let savedEnv: string | undefined;
+    let tmpDirs: string[];
 
     beforeEach(() => {
         vi.clearAllMocks();
+        tmpDirs = [];
         savedEnv = process.env.BRUTX_NO_CACHE;
         process.env.BRUTX_NO_CACHE = '1';
         mockedReadConfigSafe.mockResolvedValue(defaultConfig);
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         vi.restoreAllMocks();
+        await Promise.all(tmpDirs.map(dir => fs.remove(dir)));
         if (savedEnv === undefined) delete process.env.BRUTX_NO_CACHE;
         else process.env.BRUTX_NO_CACHE = savedEnv;
     });
+
+    async function createProjectWithManifest(components: Record<string, { registrySource: string }>): Promise<string> {
+        const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-update-'));
+        tmpDirs.push(tmpDir);
+        const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+        await fs.ensureDir(path.dirname(manifestPath));
+        await fs.writeJson(manifestPath, {
+            version: 1,
+            components: Object.fromEntries(Object.entries(components).map(([name, entry]) => [name, {
+                name,
+                registrySource: entry.registrySource,
+                integrity: `sha256-${name}`,
+                installedAt: '2026-07-07T00:00:00.000Z',
+                files: [`src/components/ui/${name}/${name}.vue`],
+                dependencies: [],
+                registryDependencies: [],
+                examples: [],
+            }])),
+        });
+        return tmpDir;
+    }
 
     describe('no config', () => {
         it('should throw CliError when components.json not found', async () => {
@@ -195,6 +222,82 @@ describe('update command', () => {
                     cwd: '/my/project',
                     registry: 'https://custom.registry.com',
                 })
+            );
+        });
+
+        it('should use manifest registry source when --registry is not provided', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry-a' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedResult);
+
+            await update([], { cwd: tmpDir, silent: true, yes: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledWith(
+                tmpDir,
+                defaultConfig,
+                'button',
+                'https://example.test/registry-a',
+                expect.objectContaining({ name: 'button' }),
+            );
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({
+                    cwd: tmpDir,
+                    registry: 'https://example.test/registry-a',
+                })
+            );
+        });
+
+        it('should group selected updates by manifest registry source', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry-a' },
+                card: { registrySource: 'https://example.test/registry-b' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button', 'card']);
+            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+                if (name === 'button') return modifiedResult;
+                return modifiedNoPatch;
+            });
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedAdd).toHaveBeenCalledTimes(2);
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({ registry: 'https://example.test/registry-a' })
+            );
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['card'],
+                expect.objectContaining({ registry: 'https://example.test/registry-b' })
+            );
+        });
+
+        it('should let --registry override manifest registry sources', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry-a' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedResult);
+
+            await update([], {
+                cwd: tmpDir,
+                silent: true,
+                yes: true,
+                registry: 'https://override.test/registry',
+            });
+
+            expect(mockedDiffComponent).toHaveBeenCalledWith(
+                tmpDir,
+                defaultConfig,
+                'button',
+                'https://override.test/registry',
+                expect.objectContaining({ name: 'button' }),
+            );
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({ registry: 'https://override.test/registry' })
             );
         });
     });
