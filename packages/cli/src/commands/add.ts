@@ -1,7 +1,5 @@
-import type { Ora } from 'ora';
 import ora from 'ora';
 import { checkbox } from '@inquirer/prompts';
-import fs from 'fs-extra';
 import path from 'path';
 
 import {
@@ -10,23 +8,21 @@ import {
     type RegistryItem,
     AVAILABLE_COMPONENTS,
     DEFAULT_REGISTRY_URL,
-    UTILS_TEMPLATE,
-    REGISTRY_PATH_PREFIXES,
     CliError,
     detectPackageManager,
-    resolveAliasPath,
-    resolveImportAlias,
     installPackages,
     getInstallCommand,
     getItem,
     resolveDeps,
     readConfig,
     isSafePath,
-    verifyWrittenPath,
     logger,
     mergeSnippetsFile,
     hasVscodeDir,
     updateInstalledComponents,
+    ensureUtilsFile,
+    writeComponentFiles,
+    type ComponentFileWriteFailure,
 } from '../lib/index.js';
 
 async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
@@ -81,154 +77,6 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
     return selected;
 }
 
-async function resolveComponentFilePath(registryPath: string, config: BrutalistConfig, cwd: string): Promise<string> {
-    let resolved: string;
-
-    if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.components)) {
-        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.components.length);
-        const aliasPath = await resolveAliasPath(config.aliases.components, cwd);
-        resolved = path.join(aliasPath, relative);
-    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.composables)) {
-        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.composables.length);
-        const aliasPath = await resolveAliasPath(config.aliases.composables, cwd);
-        resolved = path.join(aliasPath, relative);
-    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.locales)) {
-        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
-        const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
-        resolved = path.join(path.dirname(composablesPath), 'locales', relative);
-    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.directives)) {
-        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.directives.length);
-        const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
-        resolved = path.join(path.dirname(composablesPath), 'directives', relative);
-    } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils + '/')) {
-        resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
-    } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
-        const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
-        const aliasPath = await resolveAliasPath(config.aliases.utils, cwd);
-        resolved = path.join(path.dirname(aliasPath), relative);
-    } else {
-        resolved = path.join(cwd, registryPath);
-    }
-
-    if (!(await isSafePath(resolved, cwd))) {
-        throw new CliError(`Security Error: Resolved path "${resolved}" is outside the project directory.`, 2);
-    }
-
-    return resolved;
-}
-
-async function ensureUtilsFile(utilsPath: string): Promise<boolean> {
-    if (await fs.pathExists(utilsPath)) {
-        return false;
-    }
-
-    await fs.ensureDir(path.dirname(utilsPath));
-    await fs.writeFile(utilsPath, UTILS_TEMPLATE);
-    return true;
-}
-
-async function writeRegistryFiles(
-    items: RegistryItem[],
-    config: BrutalistConfig,
-    cwd: string,
-    options: AddOptions,
-    spinner: Ora | null
-): Promise<{
-    added: string[];
-    skipped: string[];
-    filesWritten: string[];
-    filesByComponent: Record<string, string[]>;
-    rollbackCount: number;
-}> {
-    const added: string[] = [];
-    const skippedSet = new Set<string>();
-    const filesWritten: string[] = [];
-    const filesByComponent = new Map<string, string[]>();
-    const snapshot = new Map<string, string | null>();
-
-    try {
-        for (let i = 0; i < items.length; i++) {
-            const item = items[i];
-
-            if (spinner) {
-                spinner.text = `[${i + 1}/${items.length}] Adding ${item.name}...`;
-            }
-
-            let itemAdded = false;
-
-            for (const file of item.files) {
-                const targetPath = await resolveComponentFilePath(file.path, config, cwd);
-
-                if (await fs.pathExists(targetPath)) {
-                    if (!options.overwrite) {
-                        spinner?.info(`Skipping file "${file.path}" for "${item.name}" (already exists). Use --overwrite to overwrite.`);
-                        skippedSet.add(item.name);
-                        continue;
-                    }
-                }
-
-                if (options.dryRun) {
-                    spinner?.info(`[Dry Run] Would create file: ${targetPath}`);
-                    itemAdded = true;
-                    filesWritten.push(targetPath);
-                    continue;
-                }
-
-                if (!snapshot.has(targetPath)) {
-                    if (await fs.pathExists(targetPath)) {
-                        snapshot.set(targetPath, await fs.readFile(targetPath, 'utf-8'));
-                    } else {
-                        snapshot.set(targetPath, null);
-                    }
-                }
-
-                await fs.ensureDir(path.dirname(targetPath));
-                const resolvedContent = resolveImportAlias(file.content, config);
-                await fs.writeFile(targetPath, resolvedContent, 'utf-8');
-                await verifyWrittenPath(targetPath, cwd);
-                itemAdded = true;
-                filesWritten.push(targetPath);
-                const componentFiles = filesByComponent.get(item.name) ?? [];
-                componentFiles.push(targetPath);
-                filesByComponent.set(item.name, componentFiles);
-            }
-
-            if (itemAdded) {
-                added.push(item.name);
-            }
-        }
-    } catch (writeError) {
-        let rollbackFailures = 0;
-
-        for (const [filePath, originalContent] of snapshot) {
-            try {
-                if (originalContent !== null) {
-                    await fs.writeFile(filePath, originalContent, 'utf-8');
-                } else if (await fs.pathExists(filePath)) {
-                    await fs.promises.rm(filePath, { force: true });
-                }
-            } catch {
-                rollbackFailures++;
-            }
-        }
-
-        if (rollbackFailures > 0) {
-            logger.error(`Rollback partially failed for ${rollbackFailures} file(s). Run "brutx-vue doctor --fix" to repair.`);
-        }
-
-        logger.error(`Installation failed. Rolled back ${snapshot.size} file(s) to previous state.`);
-        throw writeError;
-    }
-
-    return {
-        added,
-        skipped: Array.from(skippedSet),
-        filesWritten,
-        filesByComponent: Object.fromEntries(filesByComponent),
-        rollbackCount: 0,
-    };
-}
-
 async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<void> {
     if (deps.length === 0) return;
 
@@ -269,6 +117,22 @@ function getStatusHint(item: RegistryItem): string {
     return item.replacement ? ` [${item.status}, use ${item.replacement} for new work]` : ` [${item.status}]`;
 }
 
+function getComponentFileWriteFailure(error: unknown): ComponentFileWriteFailure | null {
+    if (!error || typeof error !== 'object') {
+        return null;
+    }
+
+    const failure = error as Partial<ComponentFileWriteFailure>;
+    if (typeof failure.rollbackFailures === 'number' && typeof failure.rollbackCount === 'number') {
+        return {
+            rollbackFailures: failure.rollbackFailures,
+            rollbackCount: failure.rollbackCount,
+        };
+    }
+
+    return null;
+}
+
 export async function add(components: string[], options: AddOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
@@ -293,8 +157,6 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         logger.warn('No components selected.');
         return;
     }
-
-    const utilsPath = await resolveAliasPath(config.aliases.utils, targetCwd) + '.ts';
 
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
@@ -349,18 +211,33 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         }
 
         if (!options.dryRun) {
-            const utilsCreated = await ensureUtilsFile(utilsPath);
-            if (utilsCreated) {
-                spinner?.info(`Created utility file at ${utilsPath}`);
+            const utils = await ensureUtilsFile(targetCwd, config);
+            if (utils.created) {
+                spinner?.info(`Created utility file at ${utils.path}`);
             }
         }
 
-        const { added, skipped, filesWritten, filesByComponent } = await writeRegistryFiles(
+        const { added, skipped, filesWritten, filesByComponent } = await writeComponentFiles(
             registryItems,
             config,
             targetCwd,
-            options,
-            spinner
+            {
+                overwrite: options.overwrite,
+                dryRun: options.dryRun,
+                callbacks: {
+                    onProgress: result => {
+                        if (spinner) {
+                            spinner.text = `[${result.index + 1}/${result.total}] Adding ${result.item.name}...`;
+                        }
+                    },
+                    onSkipFile: result => {
+                        spinner?.info(`Skipping file "${result.filePath}" for "${result.item.name}" (already exists). Use --overwrite to overwrite.`);
+                    },
+                    onDryRunFile: result => {
+                        spinner?.info(`[Dry Run] Would create file: ${result.targetPath}`);
+                    },
+                },
+            }
         );
 
         const summary = skipped.length > 0
@@ -413,6 +290,13 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     } catch (error: unknown) {
         spinner?.fail('Failed to add components');
+        const writeFailure = getComponentFileWriteFailure(error);
+        if (writeFailure) {
+            if (writeFailure.rollbackFailures > 0) {
+                logger.error(`Rollback partially failed for ${writeFailure.rollbackFailures} file(s). Run "brutx-vue doctor --fix" to repair.`);
+            }
+            logger.error(`Installation failed. Rolled back ${writeFailure.rollbackCount} file(s) to previous state.`);
+        }
         if (error instanceof CliError) {
             throw error;
         }

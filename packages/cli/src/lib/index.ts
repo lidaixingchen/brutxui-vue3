@@ -52,6 +52,19 @@ export {
 } from './vscode-snippets.js';
 
 export {
+    ensureUtilsFile,
+    resolveComponentFilePath,
+    writeComponentFiles,
+} from './services/add-service.js';
+export type {
+    ComponentFileWriteCallbacks,
+    ComponentFileWriteFailure,
+    ComponentFileWriteOptions,
+    ComponentFileWriteResult,
+    EnsureUtilsFileResult,
+} from './services/add-service.js';
+
+export {
     initializeProjectFiles,
     injectNuxtConfig,
 } from './services/init-service.js';
