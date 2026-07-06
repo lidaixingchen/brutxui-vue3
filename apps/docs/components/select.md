@@ -81,6 +81,27 @@ import {
 </template>
 ```
 
+### 自定义触发器（trigger 插槽）
+
+如果你只想替换触发器的样式，同时保留一体化的 `options` 数据驱动渲染，可以使用具名插槽 `trigger`。内容下拉区域（`<SelectContent>`）仍由 `options` prop 驱动，无需重新实现：
+
+```vue
+<template>
+    <Select
+        v-model="selectedValue"
+        :options="foodOptions"
+    >
+        <template #trigger>
+            <SelectTrigger class="w-[280px] border-dashed">
+                <SelectValue placeholder="请选择食物" />
+            </SelectTrigger>
+        </template>
+    </Select>
+</template>
+```
+
+> **注意**：`trigger` 插槽与 `default` 插槽互斥。使用 `default` 插槽时，全部内容由用户接管（需自行提供 `<SelectContent>`）；使用 `trigger` 插槽时，只替换触发器，`<SelectContent>` 仍由组件自动渲染。
+
 ### 一体化用法
 
 除了使用原子组件拼装，还可以使用封装好的一体化 `Select` 组件，支持传入 `options` 数组并支持自动分组。

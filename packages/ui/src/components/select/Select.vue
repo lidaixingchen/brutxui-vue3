@@ -58,6 +58,7 @@ const modelValue = defineModel<string>()
 
 const slots = useSlots()
 const hasDefaultSlot = computed(() => !!slots.default)
+const hasTriggerSlot = computed(() => !!slots.trigger)
 
 interface GroupedItems {
     key: string
@@ -119,9 +120,13 @@ const grouped = computed<GroupedItems[]>(() => {
         :disabled="disabled"
         :required="required"
     >
+        <!-- 完全自定义模式：使用默认插槽接管全部内容 -->
         <slot v-if="hasDefaultSlot" />
         <template v-else>
+            <!-- 触发器：优先使用具名 trigger 插槽，否则使用内置触发器 -->
+            <slot v-if="hasTriggerSlot" name="trigger" />
             <SelectTrigger
+                v-else
                 :id="id"
                 :size="size"
                 :variant="variant"
@@ -135,6 +140,7 @@ const grouped = computed<GroupedItems[]>(() => {
                 <SelectValue :placeholder="placeholder" />
             </SelectTrigger>
 
+            <!-- 内容区：始终由 props 数据驱动渲染 -->
             <SelectContent :position="position" :class="contentClass">
                 <template v-if="groupField">
                     <SelectGroup

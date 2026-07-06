@@ -464,4 +464,44 @@ describe('Select.vue', () => {
             expect(wrapper.findAll('[data-testid="select-item"]').length).toBe(3)
         })
     })
+
+    describe('trigger slot mode', () => {
+        it('renders named trigger slot content when trigger slot is provided', () => {
+            const wrapper = mount(Select, {
+                props: { options: defaultOptions },
+                slots: {
+                    trigger: '<button data-testid="custom-trigger">Custom Trigger</button>',
+                },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.find('[data-testid="custom-trigger"]').exists()).toBe(true)
+            expect(wrapper.find('[data-testid="custom-trigger"]').text()).toBe('Custom Trigger')
+        })
+
+        it('still renders integrated SelectContent when trigger slot is used', () => {
+            const wrapper = mount(Select, {
+                props: { options: defaultOptions },
+                slots: {
+                    trigger: '<button data-testid="custom-trigger">Custom Trigger</button>',
+                },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.find('[data-testid="select-content"]').exists()).toBe(true)
+            expect(wrapper.findAll('[data-testid="select-item"]').length).toBe(3)
+        })
+
+        it('does not render built-in SelectTrigger when trigger slot is provided', () => {
+            const wrapper = mount(Select, {
+                props: { options: defaultOptions },
+                slots: {
+                    trigger: '<button data-testid="custom-trigger">Custom Trigger</button>',
+                },
+                global: { stubs: selectStubs },
+            })
+
+            expect(wrapper.find('[data-testid="select-trigger"]').exists()).toBe(false)
+        })
+    })
 })
