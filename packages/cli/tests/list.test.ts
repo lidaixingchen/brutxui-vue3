@@ -205,6 +205,47 @@ describe('list command', () => {
             expect(button.replacement).toBe('button-next');
         });
 
+        it('lists manifest-only components when local component directory is missing', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: ['vue'],
+                        registryDependencies: ['primitive'],
+                        category: 'action',
+                        examples: ['button-demo'],
+                    },
+                },
+            });
+
+            const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true });
+
+            expect(parsed).toHaveLength(1);
+            expect(parsed[0]).toMatchObject({
+                name: 'button',
+                files: ['src/components/button/Button.vue'],
+                fileCount: 1,
+                dependencies: ['vue'],
+                registryDependencies: ['primitive'],
+                category: 'action',
+                examples: ['button-demo'],
+                registrySource: 'https://example.test/registry',
+                installedIntegrity: 'sha256-button',
+                installedAt: '2026-07-07T00:00:00.000Z',
+                manifestFiles: ['src/components/button/Button.vue'],
+                managed: true,
+            });
+        });
+
         it('checks manifest integrity against registry when requested', async () => {
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             mockedGetItem.mockResolvedValue({

@@ -283,6 +283,33 @@ describe('remove command', () => {
             expect(manifest.components.card).toBeDefined();
         });
 
+        it('should remove manifest-only components when local directory is missing', async () => {
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
+
+            const manifest = await fs.readJson(manifestPath);
+            expect(manifest.components.button).toBeUndefined();
+            const successMessages = getLoggedMessages(successSpy);
+            expect(successMessages.some(m => m.includes('0 file(s)'))).toBe(true);
+        });
+
         it('should remove manifest-known files that are no longer referenced', async () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             await createComponent('button', {

@@ -39,6 +39,11 @@ export {
 } from './manifest.js';
 
 export {
+    getInstalledComponentInfos,
+    getInstalledComponentNames,
+} from './installed-components.js';
+
+export {
     generateSnippets,
     generateSnippetsForComponents,
     writeSnippetsFile,

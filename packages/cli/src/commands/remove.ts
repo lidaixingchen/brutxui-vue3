@@ -4,25 +4,11 @@ import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { BrutalistConfig, BrutxManifest, RemoveOptions, RegistryItem } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, FileTransaction, readManifest, removeInstalledComponents, isSafePath } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, readManifest, removeInstalledComponents, isSafePath, getInstalledComponentNames } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
-
-async function getInstalledComponentDirs(cwd: string, config: BrutalistConfig): Promise<string[]> {
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-
-    if (!await fs.pathExists(componentsPath)) {
-        return [];
-    }
-
-    const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
-    return dirs
-        .filter(d => d.isDirectory())
-        .map(d => d.name)
-        .sort();
-}
 
 function isInsideDirectory(filePath: string, directoryPath: string): boolean {
     const relative = path.relative(directoryPath, filePath);
@@ -68,6 +54,10 @@ async function findManifestKnownFiles(
 
 async function scanAllImports(componentsPath: string): Promise<Map<string, Set<string>>> {
     const importMap = new Map<string, Set<string>>();
+
+    if (!await fs.pathExists(componentsPath)) {
+        return importMap;
+    }
 
     async function scanDir(dir: string, componentName: string): Promise<void> {
         const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -180,13 +170,7 @@ async function getDependents(
     componentsToRemove: string[]
 ): Promise<Map<string, string[]>> {
     const dependents = new Map<string, string[]>();
-    const manifest = await readManifest(cwd).catch(() => null);
-    const installed = [
-        ...new Set([
-            ...await getInstalledComponentDirs(cwd, config),
-            ...Object.keys(manifest?.components ?? {}),
-        ]),
-    ].sort();
+    const installed = await getInstalledComponentNames(cwd, config);
     const remaining = installed.filter(c => !componentsToRemove.includes(c));
 
     for (const name of componentsToRemove) {
@@ -224,12 +208,7 @@ export async function remove(components: string[], options: RemoveOptions): Prom
     }
 
     const manifest = await readManifest(cwd).catch(() => null);
-    const installed = [
-        ...new Set([
-            ...await getInstalledComponentDirs(cwd, config),
-            ...Object.keys(manifest?.components ?? {}),
-        ]),
-    ].sort();
+    const installed = await getInstalledComponentNames(cwd, config);
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
 

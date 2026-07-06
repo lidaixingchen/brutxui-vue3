@@ -11,7 +11,7 @@ import type {
     InstalledComponentManifest,
 } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, readManifest } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest, getInstalledComponentNames } from '../lib/index.js';
 import { resolveAliasPath, resolveImportAlias } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -57,20 +57,7 @@ function generateUnifiedDiff(
 }
 
 export async function getInstalledComponents(cwd: string, config: BrutalistConfig): Promise<string[]> {
-    const manifest = await readManifest(cwd).catch(() => null);
-    const manifestNames = Object.keys(manifest?.components ?? {});
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-
-    if (!await fs.pathExists(componentsPath)) {
-        return manifestNames.sort();
-    }
-
-    const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
-    const scannedNames = dirs
-        .filter((d) => d.isDirectory())
-        .map((d) => d.name);
-
-    return [...new Set([...manifestNames, ...scannedNames])].sort();
+    return getInstalledComponentNames(cwd, config);
 }
 
 function getIntegrityHint(result: DiffResult): string {
