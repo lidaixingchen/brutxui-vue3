@@ -48,25 +48,28 @@
 
 证据：
 
-- `packages/ui/src/lib/env.ts` 已提供 `isClient`、`hasDocument`、`hasLocalStorage`、`canUseDocumentBody()`、`hasIntersectionObserver`、`getAudioContextCtor()`、`getResizeObserverCtor()`、`getDevicePixelRatio()`、`createCanvasElement()`、`getCanvas2DContext()`。
+- `packages/ui/src/lib/env.ts` 已提供 `isClient`、`hasDocument`、`hasLocalStorage`、`canUseDocumentBody()`、`hasIntersectionObserver`、`getAudioContextCtor()`、`getResizeObserverCtor()`、`getMutationObserverCtor()`、`getDevicePixelRatio()`、`createCanvasElement()`、`getCanvas2DContext()`。
 - `packages/ui/src/components/infinite-scroll/InfiniteScroll.vue` 和 `packages/ui/src/components/infinite-scroll/useInfiniteScroll.ts` 已在创建 `IntersectionObserver` 前检测能力；无 Observer 时保守触发一次加载，避免永久卡住。
 - `packages/ui/src/components/image/Image.vue` 已在 `loading="lazy"` 且无 `IntersectionObserver` 时默认使用原图 `src`，避免空 `src` 永久不加载。
 - `packages/ui/src/composables/useAudioEngine.ts` 已通过 `getAudioContextCtor()` 支持 `webkitAudioContext`，并 catch 构造、`resume()`、节点创建/播放异常，失败时禁用本次音效。
 - `packages/ui/src/components/dialog/functional.ts` 和 `packages/ui/src/lib/render-imperative.ts` 已复用 `canUseDocumentBody()`，在 SSR/无 body 环境返回 no-op handle。
 - `packages/ui/src/components/counter/Counter.vue` 已通过 `getResizeObserverCtor()` 降级：无 `ResizeObserver` 时仍执行一次尺寸计算，但跳过持续观察。
 - `packages/ui/src/composables/useCanvasInteraction.ts` 已通过 env helper 收敛 canvas 创建、2D context 获取、DPR 和 `ResizeObserver` 构造；禁用 canvas 或缺少 observer 的 WebView/测试环境不会抛出运行时错误。
+- `packages/ui/src/components/tour/Tour.vue` 已通过 env helper 收敛 canvas 2D context、DPR、`ResizeObserver` 与 selector 查询；无 canvas context 或无 `ResizeObserver` 时仍可挂载并显示导览内容。
+- `packages/ui/src/components/scratch-card/ScratchCard.vue` 的 reset overlay 路径已复用 canvas 2D context 与 DPR helper，避免 canvas 能力异常时重置流程抛错。
+- `packages/ui/src/components/watermark/Watermark.vue` 已通过 env helper 收敛 canvas 创建、canvas 2D context、DPR 和 `MutationObserver`；无 canvas 时回退 SVG 水印，无 `MutationObserver` 时跳过防篡改观察但保留水印渲染。
 
 剩余风险：
 
-1. `ResizeObserver` 与 Canvas 核心路径已收敛；`MutationObserver` 后续如进入组件运行时路径，应同样补 helper 与缺能力测试。
+1. Observer、Canvas、Audio 与 imperative DOM 核心路径已收敛；后续新增浏览器 API 应继续补 helper 与缺能力测试。
 2. 后续新增组件仍需要遵循统一 helper，避免重新出现散落的 `typeof window/document` 和直接构造。
 3. imperative mount 的核心 guard 已统一，后续重点是新增能力不要绕开 helper。
 
 后续建议：
 
-- 后续遇到 `MutationObserver` 或其它 imperative DOM 新用法时，优先补 helper 和定向测试。
+- 后续遇到新的 Observer、media、storage 或其它 imperative DOM 能力时，优先补 helper 和定向测试。
 - 保留 Image / InfiniteScroll / Audio / functional dialog 的定向测试，作为 SSR/WebView 兼容回归网。
-- 新增 `Counter` 缺失 `ResizeObserver`、`useCanvasInteraction` 缺失 `ResizeObserver` / canvas 2D 能力的定向测试，作为老 WebView 回归网。
+- 保留 Counter / Tour / Watermark / ScratchCard / useCanvasInteraction 缺失 Observer、canvas 2D 能力的定向测试，作为老 WebView 回归网。
 
 ## P1：公开导出策略不一致
 
@@ -219,6 +222,7 @@
 - 本轮 package 子路径策略验证：`CI=true pnpm --filter brutx-ui-vue check:exports`、`CI=true pnpm --filter brutx-ui-vue test:package`。
 - 本轮 CLI matrix 验证：`CI=true pnpm --filter brutx-vue build`、`CI=true pnpm --filter brutx-vue typecheck`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/matrix.test.ts`、`CI=true packages/cli/node_modules/.bin/vitest.CMD run tests/integration/cli-smoke.test.ts -t "dry-runs the full local registry"`。
 - 本轮浏览器能力验证：`packages/ui/node_modules/.bin/vitest.CMD run src/components/counter/counter.test.ts`、`packages/ui/node_modules/.bin/vitest.CMD run src/composables/useCanvasInteraction.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`packages/registry/node_modules/.bin/tsx.CMD scripts/build-registry.ts`、`packages/registry/node_modules/.bin/tsx.CMD scripts/validate-registry.ts`。
+- 本轮浏览器能力补强验证：`packages/ui/node_modules/.bin/vitest.CMD run src/components/tour/tour.test.ts src/components/watermark/Watermark.test.ts src/components/scratch-card/scratch-card.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`packages/registry/node_modules/.bin/tsx.CMD scripts/build-registry.ts`、`packages/registry/node_modules/.bin/tsx.CMD scripts/validate-registry.ts`。
 - 本轮 flatten 路径重写验证：`packages/ui/node_modules/.bin/vitest.CMD run src/lib/preserve-modules-paths.test.ts`、`packages/ui/node_modules/.bin/vue-tsc.CMD --noEmit`、`npm.cmd run build`、`npm.cmd run check:exports`、`npm.cmd run test:package`。
 - 本轮 CLI runtime 验证：`packages/cli` 下 `vitest run tests/doctor.test.ts`、`npm.cmd run typecheck`、`npm.cmd run build`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
