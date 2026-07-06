@@ -53,12 +53,12 @@
 
 | 范围 | 当前进展 | 后续动作 |
 | --- | --- | --- |
-| `CarouselEnhanced` + `Carousel` | 已将增强能力收进 `Carousel`，`CarouselEnhanced` 保留为兼容 wrapper；registry 仍通过 `carousel` 条目分发 | 文档侧把增强 demo 合并到 `Carousel` 同页示例，下一大版本再考虑移除命名导出 |
-| `GlitchButton` + `Button` | 已由 `Button effect="glitch"` 和 `useGlitchEffect` 承载底层行为，`GlitchButton` 保留 wrapper；旧 `glitch-button-variants.ts` 已从源码、公共导出和 registry 映射中移除 | 文档侧把 `GlitchButton` 降级为 `Button` 效果示例 |
-| `SearchWidget` + `Command` | `SearchWidget` 已作为 `Command` 组合 wrapper 保留，并在 registry 中标记 `status: 'legacy'`、`replacement: 'command'` | 补充 Command 搜索 recipe 文档，再评估后续大版本移除独立入口 |
+| `CarouselEnhanced` + `Carousel` | 已将增强能力收进 `Carousel`，`CarouselEnhanced` 保留为兼容 wrapper；docs 已改为推荐 `Carousel` 增强 props | 下一大版本再考虑移除 `CarouselEnhanced` 命名导出 |
+| `GlitchButton` + `Button` | 已由 `Button effect="glitch"` 和 `useGlitchEffect` 承载底层行为，`GlitchButton` 保留 wrapper；docs 已降级为 `Button` 效果示例 | 下一大版本再评估是否移除独立入口 |
+| `SearchWidget` + `Command` | `SearchWidget` 已作为 `Command` 组合 wrapper 保留，并在 registry 中标记 `status: 'legacy'`、`replacement: 'command'`；docs 已补 Command 搜索 recipe | 后续大版本评估是否移除独立入口 |
 | 页面级组件 | `OverviewPage`、`BlogListPage`、`ActivityLogPage`、`ProfilePage`、`SettingsPage`、`WaitlistPage`、`NotFoundPage` 已标记 legacy/replacement | 逐步迁移 docs 推荐入口到 blocks 或 recipe |
-| 卡片/区块模板族 | `BlogCard`、`FileCard`、`TestimonialCard`、`QuickActions`、`FaqSection`、`ChartSection`、`GallerySection` 已标记 legacy/replacement；`DashboardStats` 内部数值展示已复用 `Counter` | 在 `Card` 和 blocks 文档补 preset 示例 |
-| `EmptyState` + `Result` | `Result` 已支持 `status="empty"`，`EmptyState` 已改为兼容 wrapper | 文档中把空状态纳入 Result 状态示例 |
+| 卡片/区块模板族 | `BlogCard`、`FileCard`、`TestimonialCard`、`QuickActions`、`FaqSection`、`ChartSection`、`GallerySection` 已标记 legacy/replacement；`DashboardStats` 内部数值展示已复用 `Counter`；docs 已补 `Card` 组合示例和 legacy 提示 | 后续逐步迁移更多 blocks 文档推荐入口 |
+| `EmptyState` + `Result` | `Result` 已支持 `status="empty"`，`EmptyState` 已改为兼容 wrapper；docs 已把空状态纳入 Result 示例 | 后续大版本评估是否移除独立入口 |
 | `InputAdornment` + `Input` | `InputAdornment` 已标记 `legacy`，replacement 指向 `input` | 文档优先推荐 `Input` 自身前后缀能力 |
 | 选择器族共享能力 | `Cascader`、`TreeSelect` 已复用 `useClearable`，registry 映射已补齐清除组合式函数 | 继续抽 `useSelectableTrigger`、`useSelectionDisplayText` 等共享能力 |
 | 浮层族共享能力 | `Dialog` 与 `Sheet` 的关闭按钮已统一到 `modalCloseButtonVariants`；日期面板底部操作已抽为共享 footer | 继续统一 overlay content/trigger token，暂不合并公共组件 |

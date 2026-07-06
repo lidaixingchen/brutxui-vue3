@@ -205,6 +205,7 @@ describe('validate-registry helpers', () => {
 
     it('validates generated registry item metadata against shared metadata', () => {
         const item = createRegistryItem('button', {
+            title: 'Button',
             description: 'Button component',
             dependencies: ['reka-ui'],
             category: 'action',
@@ -218,6 +219,7 @@ describe('validate-registry helpers', () => {
 
         expect(validateGeneratedItemMatchesMetadata(item, {
             name: 'button',
+            title: 'Button',
             description: 'Button component',
             dependencies: ['reka-ui'],
             category: 'action',
@@ -229,6 +231,7 @@ describe('validate-registry helpers', () => {
 
     it('reports generated registry item drift from shared metadata', () => {
         const item = createRegistryItem('button', {
+            title: 'Old Button',
             description: 'Old description',
             dependencies: ['old-dep'],
             category: 'layout',
@@ -240,6 +243,7 @@ describe('validate-registry helpers', () => {
 
         expect(validateGeneratedItemMatchesMetadata(item, {
             name: 'button',
+            title: 'Button',
             description: 'Button component',
             dependencies: ['reka-ui'],
             category: 'action',
@@ -248,6 +252,7 @@ describe('validate-registry helpers', () => {
             replacement: 'new-button',
             files: ['Button.vue', 'button-variants.ts'],
         })).toEqual([
+            'title does not match COMPONENT_REGISTRY',
             'description does not match COMPONENT_REGISTRY',
             'item "button" dependencies mismatch',
             'item "button" examples mismatch',
@@ -296,6 +301,7 @@ function createIndexItem(
 function createRegistryItem(
     name: string,
     overrides: {
+        title?: string
         description: string
         dependencies?: string[]
         category?: RegistryIndexItem['category']
@@ -308,7 +314,7 @@ function createRegistryItem(
     return {
         name,
         type: 'registry:ui' as const,
-        title: name,
+        title: overrides.title ?? name,
         description: overrides.description,
         category: overrides.category,
         examples: overrides.examples,
