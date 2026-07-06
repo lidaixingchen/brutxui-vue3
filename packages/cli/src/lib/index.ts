@@ -29,6 +29,13 @@ export { getItem, resolveDeps, readConfig, readConfigSafe, migrateConfig } from 
 
 export { clearCache } from './cache.js';
 export { FileTransaction } from './file-transaction.js';
+export {
+    MANIFEST_RELATIVE_PATH,
+    getManifestPath,
+    readManifest,
+    updateInstalledComponents,
+    removeInstalledComponents,
+} from './manifest.js';
 
 export {
     generateSnippets,

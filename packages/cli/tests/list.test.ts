@@ -154,6 +154,44 @@ describe('list command', () => {
             expect(card.files).toContain('Card.vue');
             expect(card.fileCount).toBe(1);
         });
+
+        it('merges manifest metadata into scanned components', async () => {
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
+            await fs.ensureDir(buttonDir);
+            await fs.writeFile(
+                path.join(buttonDir, 'Button.vue'),
+                '<template><button><slot /></button></template>',
+            );
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: ['vue'],
+                        registryDependencies: ['primitive'],
+                    },
+                },
+            });
+
+            const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true });
+            const button = parsed.find(c => c.name === 'button')!;
+
+            expect(button.managed).toBe(true);
+            expect(button.registrySource).toBe('https://example.test/registry');
+            expect(button.installedIntegrity).toBe('sha256-button');
+            expect(button.installedAt).toBe('2026-07-07T00:00:00.000Z');
+            expect(button.dependencies).toEqual(['vue']);
+            expect(button.registryDependencies).toEqual(['primitive']);
+            expect(button.manifestFiles).toEqual(['src/components/button/Button.vue']);
+        });
     });
 
     describe('JSON output', () => {

@@ -9,6 +9,7 @@ import {
     type BrutalistConfig,
     type RegistryItem,
     AVAILABLE_COMPONENTS,
+    DEFAULT_REGISTRY_URL,
     UTILS_TEMPLATE,
     REGISTRY_PATH_PREFIXES,
     CliError,
@@ -25,6 +26,7 @@ import {
     logger,
     mergeSnippetsFile,
     hasVscodeDir,
+    updateInstalledComponents,
 } from '../lib/index.js';
 
 async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
@@ -131,10 +133,17 @@ async function writeRegistryFiles(
     cwd: string,
     options: AddOptions,
     spinner: Ora | null
-): Promise<{ added: string[]; skipped: string[]; filesWritten: string[]; rollbackCount: number }> {
+): Promise<{
+    added: string[];
+    skipped: string[];
+    filesWritten: string[];
+    filesByComponent: Record<string, string[]>;
+    rollbackCount: number;
+}> {
     const added: string[] = [];
     const skippedSet = new Set<string>();
     const filesWritten: string[] = [];
+    const filesByComponent = new Map<string, string[]>();
     const snapshot = new Map<string, string | null>();
 
     try {
@@ -179,6 +188,9 @@ async function writeRegistryFiles(
                 await verifyWrittenPath(targetPath, cwd);
                 itemAdded = true;
                 filesWritten.push(targetPath);
+                const componentFiles = filesByComponent.get(item.name) ?? [];
+                componentFiles.push(targetPath);
+                filesByComponent.set(item.name, componentFiles);
             }
 
             if (itemAdded) {
@@ -208,7 +220,13 @@ async function writeRegistryFiles(
         throw writeError;
     }
 
-    return { added, skipped: Array.from(skippedSet), filesWritten, rollbackCount: 0 };
+    return {
+        added,
+        skipped: Array.from(skippedSet),
+        filesWritten,
+        filesByComponent: Object.fromEntries(filesByComponent),
+        rollbackCount: 0,
+    };
 }
 
 async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<void> {
@@ -327,7 +345,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             }
         }
 
-        const { added, skipped, filesWritten } = await writeRegistryFiles(
+        const { added, skipped, filesWritten, filesByComponent } = await writeRegistryFiles(
             registryItems,
             config,
             targetCwd,
@@ -357,6 +375,17 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         await installComponentDeps(Array.from(allDeps), targetCwd, options.dryRun ?? false);
 
         if (!options.dryRun && added.length > 0) {
+            await updateInstalledComponents(
+                targetCwd,
+                registryItems
+                    .filter(item => added.includes(item.name))
+                    .map(item => ({
+                        item,
+                        registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
+                        files: filesByComponent[item.name] ?? [],
+                    })),
+            );
+
             const shouldUpdateSnippets = options.vscode === true
                 || (options.vscode !== false && await hasVscodeDir(cwd));
 

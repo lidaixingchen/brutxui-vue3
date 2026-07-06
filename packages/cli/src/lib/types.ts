@@ -120,6 +120,27 @@ export interface InstalledComponentInfo {
     files: string[];
     fileCount: number;
     dependencies: string[];
+    registryDependencies?: string[];
+    registrySource?: string;
+    installedIntegrity?: string;
+    installedAt?: string;
+    manifestFiles?: string[];
+    managed?: boolean;
+}
+
+export interface BrutxManifest {
+    version: 1;
+    components: Record<string, InstalledComponentManifest>;
+}
+
+export interface InstalledComponentManifest {
+    name: string;
+    registrySource: string;
+    integrity: string;
+    installedAt: string;
+    files: string[];
+    dependencies: string[];
+    registryDependencies: string[];
 }
 
 export type CheckStatus = 'pass' | 'warn' | 'error';

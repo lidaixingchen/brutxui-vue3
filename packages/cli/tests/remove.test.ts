@@ -241,6 +241,47 @@ describe('remove command', () => {
 
             expect(mockedConfirm).not.toHaveBeenCalled();
         });
+
+        it('should remove deleted components from the install manifest', async () => {
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            await createComponent('button', {
+                'Button.vue': '<template>btn</template>',
+            });
+            await createComponent('card', {
+                'Card.vue': '<template>card</template>',
+            });
+            const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
+            await fs.ensureDir(path.dirname(manifestPath));
+            await fs.writeJson(manifestPath, {
+                version: 1,
+                components: {
+                    button: {
+                        name: 'button',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-button',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/button/Button.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                    card: {
+                        name: 'card',
+                        registrySource: 'https://example.test/registry',
+                        integrity: 'sha256-card',
+                        installedAt: '2026-07-07T00:00:00.000Z',
+                        files: ['src/components/card/Card.vue'],
+                        dependencies: [],
+                        registryDependencies: [],
+                    },
+                },
+            });
+
+            await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
+
+            const manifest = await fs.readJson(manifestPath);
+            expect(manifest.components.button).toBeUndefined();
+            expect(manifest.components.card).toBeDefined();
+        });
     });
 
     describe('removal cancelled by user', () => {

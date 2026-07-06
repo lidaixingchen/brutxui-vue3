@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { BrutalistConfig, RemoveOptions, RegistryItem } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, FileTransaction } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, removeInstalledComponents } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -265,6 +265,7 @@ export async function remove(components: string[], options: RemoveOptions): Prom
                 });
 
                 if (!removeOrphaned) {
+                    await removeInstalledComponents(cwd, toRemove, { transaction });
                     await transaction.commit();
                     logger.info('Keeping orphaned files.');
                     logger.newLine();
@@ -281,6 +282,7 @@ export async function remove(components: string[], options: RemoveOptions): Prom
             }
         }
 
+        await removeInstalledComponents(cwd, toRemove, { transaction });
         await transaction.commit();
     } catch (error) {
         const rollbackFailures = await transaction.rollback();

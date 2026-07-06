@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../lib/types.js';
-import { readConfigSafe, CliError } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -55,6 +55,7 @@ async function extractDependencies(componentDir: string): Promise<string[]> {
 
 async function getComponentInfos(cwd: string, config: BrutalistConfig): Promise<InstalledComponentInfo[]> {
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
+    const manifest = await readManifest(cwd).catch(() => null);
 
     if (!await fs.pathExists(componentsPath)) {
         return [];
@@ -74,12 +75,19 @@ async function getComponentInfos(cwd: string, config: BrutalistConfig): Promise<
         if (!hasVueFile) continue;
 
         const dependencies = await extractDependencies(componentDir);
+        const manifestEntry = manifest?.components[dir.name];
 
         infos.push({
             name: dir.name,
             files,
             fileCount: files.length,
-            dependencies,
+            dependencies: manifestEntry?.dependencies ?? dependencies,
+            registryDependencies: manifestEntry?.registryDependencies,
+            registrySource: manifestEntry?.registrySource,
+            installedIntegrity: manifestEntry?.integrity,
+            installedAt: manifestEntry?.installedAt,
+            manifestFiles: manifestEntry?.files,
+            managed: manifestEntry !== undefined,
         });
     }
 
