@@ -2,7 +2,7 @@ import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import type { UpdateOptions, DiffResult } from '../lib/types.js';
 import { readConfigSafe, CliError, logger, readManifest } from '../lib/index.js';
-import { getInstalledComponents, diffComponent } from './diff.js';
+import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
 import { add } from './add.js';
 
 export async function update(components: string[], options: UpdateOptions): Promise<void> {

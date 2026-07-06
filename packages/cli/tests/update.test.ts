@@ -3,8 +3,8 @@ vi.mock('../src/lib/registry.js', async (importOriginal) => {
     return { ...original, readConfigSafe: vi.fn() };
 });
 
-vi.mock('../src/commands/diff.js', async (importOriginal) => {
-    const original = await importOriginal<typeof import('../src/commands/diff.js')>();
+vi.mock('../src/lib/services/diff-service.js', async (importOriginal) => {
+    const original = await importOriginal<typeof import('../src/lib/services/diff-service.js')>();
     return { ...original, getInstalledComponents: vi.fn(), diffComponent: vi.fn() };
 });
 
@@ -22,15 +22,15 @@ import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 import * as registry from '../src/lib/registry.js';
-import * as diffCmd from '../src/commands/diff.js';
+import * as diffService from '../src/lib/services/diff-service.js';
 import * as addModule from '../src/commands/add.js';
 import * as prompts from '@inquirer/prompts';
 import { update } from '../src/commands/update.js';
 import type { DiffResult } from '../src/lib/types.js';
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetInstalledComponents = vi.mocked(diffCmd.getInstalledComponents);
-const mockedDiffComponent = vi.mocked(diffCmd.diffComponent);
+const mockedGetInstalledComponents = vi.mocked(diffService.getInstalledComponents);
+const mockedDiffComponent = vi.mocked(diffService.diffComponent);
 const mockedAdd = vi.mocked(addModule.add);
 const mockedCheckbox = vi.mocked(prompts.checkbox);
 const mockedConfirm = vi.mocked(prompts.confirm);
