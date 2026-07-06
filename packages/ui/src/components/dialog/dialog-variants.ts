@@ -1,6 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalHoverLift } from '@/lib/brutal-interaction-variants'
-import { CLOSE_BUTTON_BASE_CLASSES, baseModalContentClasses } from '@/lib/modal-variants'
+import { baseModalContentClasses, modalCloseButtonVariants } from '@/lib/modal-variants'
 import { centeredModalAnimationClasses } from '@/lib/floating-animation-classes'
 
 export const dialogContentVariants = cva(
@@ -27,10 +26,4 @@ export const dialogContentVariants = cva(
     }
 )
 
-export const dialogCloseVariants = cva(
-    [
-        ...CLOSE_BUTTON_BASE_CLASSES,
-        'absolute right-4 top-4',
-        brutalHoverLift,
-    ]
-)
+export const dialogCloseVariants = cva(modalCloseButtonVariants({ placement: 'dialog' }))

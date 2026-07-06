@@ -1602,10 +1602,6 @@
           "type": "registry:lib"
         },
         {
-          "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:lib"
-        },
-        {
           "path": "lib/floating-animation-classes.ts",
           "type": "registry:lib"
         },
@@ -1704,7 +1700,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d7e3117fc64615f363a71f11e4ea1f9eec0633046f84ce5b750e6dddb7b369f1"
+      "integrity": "sha256-c0b2844e3c7e06ed953e4b93ceb764ca7b18820af416a6a96181d70156ad6a98"
     },
     {
       "name": "dropdown-menu",
@@ -4354,7 +4350,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-07d913382f302ecd442848abe1ba13b888a1a7a6c66442127427c09b32039806"
+      "integrity": "sha256-f065c14c6e1fdb2770ebb675cf8518156638cfec4cc43e8114928a4633784e14"
     },
     {
       "name": "sheet",
@@ -4398,10 +4394,6 @@
         {
           "path": "composables/useLocale.ts",
           "type": "registry:hook"
-        },
-        {
-          "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:lib"
         },
         {
           "path": "lib/icon-size-variants.ts",
@@ -4498,7 +4490,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e870e494b2f95f2247286c087641c1292d7161486a74688936e7958093899414"
+      "integrity": "sha256-efc1da1692fcee5644bd239ff1c08c0faa83624dc7ece865eb1af64761f1102e"
     },
     {
       "name": "radio-group",

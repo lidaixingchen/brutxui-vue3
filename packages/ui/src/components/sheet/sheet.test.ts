@@ -16,7 +16,9 @@ describe('SheetContent', () => {
         DialogContent: {
             template: '<div data-testid="sheet-content"><slot /></div>',
         },
-        DialogClose: primitiveStub,
+        DialogClose: {
+            template: '<button data-testid="sheet-close" v-bind="$attrs"><slot /></button>',
+        },
     }
 
     it('renders with default side (right) variant classes', () => {
@@ -38,6 +40,18 @@ describe('SheetContent', () => {
         })
         // DialogClose stub should be rendered
         expect(wrapper.exists()).toBe(true)
+    })
+
+    it('renders right-side close button with shared modal close classes', () => {
+        const wrapper = mount(SheetContent, {
+            global: { stubs: contentStubs },
+        })
+        const closeButton = wrapper.find('[data-testid="sheet-close"]')
+        expect(closeButton.classes()).toContain('h-8')
+        expect(closeButton.classes()).toContain('w-8')
+        expect(closeButton.classes()).toContain('right-4')
+        expect(closeButton.classes()).toContain('top-4')
+        expect(closeButton.classes()).toContain('shadow-brutal-sm')
     })
 
     it('renders slot content', () => {
@@ -76,6 +90,7 @@ describe('SheetContent', () => {
         const content = wrapper.find('[data-testid="sheet-content"]')
         expect(content.classes()).toContain('left-0')
         expect(content.classes()).toContain('border-r-3')
+        expect(wrapper.find('[data-testid="sheet-close"]').classes()).toContain('left-4')
     })
 
     it('renders with right side variant classes', () => {

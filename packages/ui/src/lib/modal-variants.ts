@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import { brutalPress } from '@/lib/brutal-interaction-variants'
+import { brutalHoverLift, brutalHoverLiftSm, brutalPress } from '@/lib/brutal-interaction-variants'
 
 export const overlayVariants = cva([
     'fixed inset-0 z-50 bg-brutal-overlay',
@@ -24,6 +24,24 @@ export const CLOSE_BUTTON_BASE_CLASSES = [
     brutalPress,
     'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
 ]
+
+export const modalCloseButtonVariants = cva(CLOSE_BUTTON_BASE_CLASSES, {
+    variants: {
+        placement: {
+            dialog: 'absolute right-4 top-4',
+            'sheet-left': 'absolute left-4 top-4',
+            'sheet-right': 'absolute right-4 top-4',
+        },
+        motion: {
+            default: brutalHoverLift,
+            sm: brutalHoverLiftSm,
+        },
+    },
+    defaultVariants: {
+        placement: 'dialog',
+        motion: 'default',
+    },
+})
 
 export const baseModalContentClasses = [
     'bg-brutal-bg',

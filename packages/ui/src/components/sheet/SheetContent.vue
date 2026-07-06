@@ -9,10 +9,9 @@ import {
 import { type VariantProps } from 'class-variance-authority'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
-import { brutalHoverLiftSm } from '@/lib/brutal-interaction-variants'
 import { sheetVariants } from './sheet-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
-import { overlayVariants, CLOSE_BUTTON_BASE_CLASSES } from '@/lib/modal-variants'
+import { modalCloseButtonVariants, overlayVariants } from '@/lib/modal-variants'
 import { useLocale } from '@/composables/useLocale'
 
 type SheetVariantProps = VariantProps<typeof sheetVariants>
@@ -36,12 +35,10 @@ const contentClasses = computed(() =>
 )
 
 const closeClasses = computed(() =>
-    cn(
-        CLOSE_BUTTON_BASE_CLASSES,
-        'absolute top-4',
-        props.side === 'left' ? 'left-4' : 'right-4',
-        brutalHoverLiftSm
-    )
+    modalCloseButtonVariants({
+        placement: props.side === 'left' ? 'sheet-left' : 'sheet-right',
+        motion: 'sm',
+    })
 )
 
 const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')

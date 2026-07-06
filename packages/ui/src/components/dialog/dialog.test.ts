@@ -48,7 +48,9 @@ describe('DialogContent', () => {
         DialogContent: {
             template: '<div data-testid="dialog-content"><slot /></div>',
         },
-        DialogClose: primitiveStub,
+        DialogClose: {
+            template: '<button data-testid="dialog-close" v-bind="$attrs"><slot /></button>',
+        },
     }
 
     it('renders with brutal styling classes', () => {
@@ -77,6 +79,18 @@ describe('DialogContent', () => {
             global: { stubs: contentStubs },
         })
         expect(wrapper.exists()).toBe(true)
+    })
+
+    it('renders close button with shared modal close classes', () => {
+        const wrapper = mount(DialogContent, {
+            global: { stubs: contentStubs },
+        })
+        const closeButton = wrapper.find('[data-testid="dialog-close"]')
+        expect(closeButton.classes()).toContain('h-8')
+        expect(closeButton.classes()).toContain('w-8')
+        expect(closeButton.classes()).toContain('right-4')
+        expect(closeButton.classes()).toContain('top-4')
+        expect(closeButton.classes()).toContain('shadow-brutal-sm')
     })
 
     it('hides close button when showCloseButton=false', () => {

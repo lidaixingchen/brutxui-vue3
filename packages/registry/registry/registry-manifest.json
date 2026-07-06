@@ -48,7 +48,7 @@
       "examples": []
     },
     "alert-dialog": {
-      "integrity": "sha256-07d913382f302ecd442848abe1ba13b888a1a7a6c66442127427c09b32039806",
+      "integrity": "sha256-f065c14c6e1fdb2770ebb675cf8518156638cfec4cc43e8114928a4633784e14",
       "fileCount": 10,
       "dependencies": [
         "reka-ui"
@@ -483,8 +483,8 @@
       "examples": []
     },
     "dialog": {
-      "integrity": "sha256-d7e3117fc64615f363a71f11e4ea1f9eec0633046f84ce5b750e6dddb7b369f1",
-      "fileCount": 17,
+      "integrity": "sha256-c0b2844e3c7e06ed953e4b93ceb764ca7b18820af416a6a96181d70156ad6a98",
+      "fileCount": 16,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"
@@ -1057,8 +1057,8 @@
       "replacement": "tabs"
     },
     "sheet": {
-      "integrity": "sha256-e870e494b2f95f2247286c087641c1292d7161486a74688936e7958093899414",
-      "fileCount": 10,
+      "integrity": "sha256-efc1da1692fcee5644bd239ff1c08c0faa83624dc7ece865eb1af64761f1102e",
+      "fileCount": 9,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"
