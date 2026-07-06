@@ -74,6 +74,26 @@ describe('HardcoreInput', () => {
         expect(vm.errorMessage).toBe('')
     })
 
+    it('emits validation-change when validation state changes', async () => {
+        const checkRule = (val: string) => val.length >= 5 || 'Too short!'
+        const wrapper = mount(HardcoreInput, {
+            props: {
+                modelValue: '123',
+                rules: [checkRule],
+                validateOn: 'blur'
+            }
+        })
+
+        await wrapper.find('input').trigger('blur')
+
+        expect(wrapper.emitted('validation-change')?.[0]).toEqual(['error', 'Too short!'])
+
+        await wrapper.setProps({ modelValue: '12345' })
+        await wrapper.find('input').trigger('blur')
+
+        expect(wrapper.emitted('validation-change')?.[1]).toEqual(['success'])
+    })
+
     it('does not create multiple AudioContext instances', () => {
         const mockPlaySound = vi.fn()
         const mockDispose = vi.fn()

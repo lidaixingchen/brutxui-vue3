@@ -193,4 +193,18 @@ describe('FeedbackForm', () => {
 
         expect(wrapper.text()).toContain(en.feedbackForm.emailInvalid)
     })
+
+    it('shows required validation errors for missing name and message', async () => {
+        const wrapper = mount(FeedbackForm, {
+            ...localeProvide,
+        })
+        const inputs = wrapper.findAll('input')
+
+        await inputs[1].setValue('alice@example.com')
+        await wrapper.find('form').trigger('submit.prevent')
+
+        expect(wrapper.emitted('submit')).toBeFalsy()
+        expect(wrapper.text()).toContain(en.feedbackForm.nameRequired)
+        expect(wrapper.text()).toContain(en.feedbackForm.messageRequired)
+    })
 })

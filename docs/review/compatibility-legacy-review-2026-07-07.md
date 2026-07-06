@@ -230,4 +230,5 @@
 - 本轮 CLI 服务拆分验证：`packages/cli/node_modules/.bin/vitest.CMD run tests/remove-service.test.ts tests/remove.test.ts`、`packages/cli/node_modules/.bin/vitest.CMD run tests/init-service.test.ts tests/init.test.ts`、`packages/cli/node_modules/.bin/vitest.CMD run tests/diff-service.test.ts tests/diff.test.ts`、`packages/cli` 下 `npm.cmd run typecheck`、`npm.cmd run build`。
 - 本轮 registry 文档覆盖验证：`packages/registry/node_modules/.bin/vitest.CMD run tests/validate-utils.test.ts`、`packages/registry` 下 `node_modules/.bin/tsx.CMD scripts/validate-registry.ts`、`npm.cmd run typecheck`。
 - 本轮选择复用验证：`packages/ui` 下 `vitest run src/composables/useSelectionDisplayText.test.ts src/composables/useClearableSelection.test.ts`，并随 registry build/validate 同步生成 `cascader`、`tree-select` 注册表产物。
+- 本轮表单验证分支验证：`packages/ui` 下 `vitest run src/components/feedback-form/feedback-form.test.ts src/components/hardcore-input/hardcore-input.test.ts`、`vue-tsc --noEmit`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
