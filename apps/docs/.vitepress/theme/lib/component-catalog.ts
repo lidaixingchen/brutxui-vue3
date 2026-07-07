@@ -1,4 +1,4 @@
-import { COMPONENT_REGISTRY, type ComponentRegistryEntry } from '../../../../../packages/shared/src/index'
+import { COMPONENT_REGISTRY, type ComponentRegistryEntry } from '../../../../../packages/shared/src/component-registry'
 
 export type CatalogLocale = 'zh' | 'en'
 
