@@ -83,7 +83,7 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     'feedback-form': { dependencies: ['@lucide/vue'], description: 'User feedback form with rating and comment fields.' },
     'cookie-consent': { dependencies: ['@lucide/vue'], description: 'Cookie consent banner with accept and customize options.' },
     'settings-page': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Settings page layout with grouped configuration options.', status: 'legacy', replacement: 'tabs' },
-    'blog-list-page': { dependencies: ['@lucide/vue'], description: 'Blog listing page with post cards and pagination.', status: 'legacy', replacement: 'blog-card' },
+    'blog-list-page': { dependencies: ['@lucide/vue'], description: 'Blog listing page with post cards and pagination.', status: 'legacy', replacement: 'card' },
     'activity-log-page': { dependencies: ['@lucide/vue'], description: 'Activity log page with timeline entries and filtering.', status: 'legacy', replacement: 'timeline' },
     'profile-page': { dependencies: ['@lucide/vue'], description: 'User profile page with avatar, info, and edit actions.', status: 'legacy', replacement: 'descriptions' },
     'chart-section': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Data visualization section with interactive charts.', status: 'legacy', replacement: 'sketchy-chart' },

@@ -82,7 +82,9 @@ export async function diff(options: DiffOptions): Promise<void> {
     const config = await readConfigSafe(cwd);
 
     if (!config) {
-        throw new CliError('No components.json found. Run `brutx-vue init` first.');
+        throw new CliError('No components.json found. Run `brutx-vue init` first.', {
+            code: 'CONFIG_NOT_FOUND',
+        });
     }
 
     const targetComponents = options.components?.length

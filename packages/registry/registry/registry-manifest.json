@@ -156,7 +156,7 @@
       "category": "page",
       "examples": [],
       "status": "legacy",
-      "replacement": "blog-card"
+      "replacement": "card"
     },
     "breadcrumb": {
       "integrity": "sha256-965fde1c57170c2478542b44038e2ccd62803a7c84e64e9155fe73f983175de4",

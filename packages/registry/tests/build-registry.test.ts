@@ -13,6 +13,7 @@ import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/componen
 import {
     assertRegistryDependencyGraph,
     assertKnownRegistryDeps,
+    buildRegistryItem,
     buildRegistryManifest,
     extractComponentFileDeps,
     extractDeps,
@@ -312,5 +313,33 @@ describe('build-registry helpers', () => {
             { name: 'button', registryDependencies: ['dialog'] },
             { name: 'dialog', registryDependencies: ['button'] },
         ])).toThrow('Registry dependency cycle detected: button -> dialog -> button');
+    });
+});
+
+describe('registry build snapshots', () => {
+    const summarize = (item: ReturnType<typeof buildRegistryItem>) => ({
+        name: item.name,
+        type: item.type,
+        title: item.title,
+        category: item.category,
+        status: item.status,
+        replacement: item.replacement,
+        dependencies: item.dependencies,
+        registryDependencies: item.registryDependencies,
+        files: item.files.map(f => ({ path: f.path, type: f.type })),
+        fileCount: item.files.length,
+        integrity: item.integrity,
+    });
+
+    it('matches snapshot for simple component (button)', () => {
+        expect(summarize(buildRegistryItem('button'))).toMatchSnapshot();
+    });
+
+    it('matches snapshot for multi-dependency component (data-table)', () => {
+        expect(summarize(buildRegistryItem('data-table'))).toMatchSnapshot();
+    });
+
+    it('matches snapshot for page/block component (settings-page)', () => {
+        expect(summarize(buildRegistryItem('settings-page'))).toMatchSnapshot();
     });
 });

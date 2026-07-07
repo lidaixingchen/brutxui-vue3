@@ -57,7 +57,7 @@
 | `GlitchButton` + `Button` | 已由 `Button effect="glitch"` 和 `useGlitchEffect` 承载底层行为，`GlitchButton` 保留 wrapper；docs 已降级为 `Button` 效果示例 | 下一大版本再评估是否移除独立入口 |
 | `SearchWidget` + `Command` | `SearchWidget` 已作为 `Command` 组合 wrapper 保留，并在 registry 中标记 `status: 'legacy'`、`replacement: 'command'`；docs 已补 Command 搜索 recipe | 后续大版本评估是否移除独立入口 |
 | 页面级组件 | `OverviewPage`、`BlogListPage`、`ActivityLogPage`、`ProfilePage`、`SettingsPage`、`WaitlistPage`、`NotFoundPage` 已标记 legacy/replacement | 逐步迁移 docs 推荐入口到 blocks 或 recipe |
-| 卡片/区块模板族 | `BlogCard`、`FileCard`、`TestimonialCard`、`QuickActions`、`FaqSection`、`ChartSection`、`GallerySection` 已标记 legacy/replacement；`DashboardStats` 内部数值展示已复用 `Counter`；docs 已补 `Card` 组合示例和 legacy 提示 | 后续逐步迁移更多 blocks 文档推荐入口 |
+| 卡片/区块模板族 | `BlogCard`、`FileCard`、`TestimonialCard`、`QuickActions`、`FaqSection`、`ChartSection`、`GallerySection`、`DashboardStats` 已标记 legacy/replacement；`DashboardStats` 数值展示已收敛到 `Counter`；docs 已补 `Card` 组合示例和 legacy 提示 | 后续逐步迁移更多 blocks 文档推荐入口 |
 | `EmptyState` + `Result` | `Result` 已支持 `status="empty"`，`EmptyState` 已改为兼容 wrapper；docs 已把空状态纳入 Result 示例 | 后续大版本评估是否移除独立入口 |
 | `InputAdornment` + `Input` | `InputAdornment` 已标记 `legacy`，replacement 指向 `input`；Input 中英文文档与 demo 已优先展示内置图标、清除、密码、字数统计和 `prepend`/`append` 能力 | 后续大版本评估是否移除独立入口 |
 | 选择器族共享能力 | `Combobox`、`Cascader`、`TreeSelect` 已复用 `useSelectableTrigger` 与 `useSelectionDisplayText`，`Cascader`、`TreeSelect` 已复用 `useClearableSelection`；`Transfer` 已抽出 `useTransferPanelSelection` 统一左右面板的全选、半选、切换和无效 key 清理；registry 映射已补齐相关组合式函数 | 继续观察选择器族是否还有局部可复用状态逻辑 |

@@ -454,6 +454,159 @@ const CSS_VARS = {
     }
 };
 
+function processComposables(
+    composableDeps: Set<string>,
+    addedComposables: Set<string>,
+    name: string,
+    files: RegistryFile[],
+    allRegistryDeps: Set<string>,
+    localeDeps: Set<string>,
+    libDeps: Set<string>
+): void {
+    while (addedComposables.size < composableDeps.size) {
+        const pendingComposables = Array.from(composableDeps).filter(
+            composableName => !addedComposables.has(composableName)
+        );
+
+        for (const composableName of pendingComposables) {
+            const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
+
+            if (!fs.existsSync(composablePath)) {
+                throw new Error(`Composable file not found at ${composablePath}`);
+            }
+
+            let code = readComponentSource(composablePath);
+            code = rewriteImports(code, name, 'composable');
+            assertKnownRegistryDeps(code, name, composableName).forEach(d => allRegistryDeps.add(d));
+            extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+            extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+            files.push({
+                path: `composables/${composableName}`,
+                content: code,
+                type: getFileType(`composables/${composableName}`)
+            });
+            addedComposables.add(composableName);
+        }
+    }
+}
+
+export function buildRegistryItem(name: string): RegistryItem {
+    const componentInfo = COMPONENT_REGISTRY[name];
+    if (!componentInfo) {
+        throw new Error(`No file mapping found for component "${name}"`);
+    }
+
+    const allRegistryDeps = new Set<string>();
+    const files: RegistryFile[] = [];
+    const componentFileDeps = new Set(componentInfo.files);
+    const composableDeps = new Set(componentInfo.composables ?? []);
+    const localeDeps = new Set<string>();
+    const libDeps = new Set<string>();
+
+    const addedComponentFiles = new Set<string>();
+    while (addedComponentFiles.size < componentFileDeps.size) {
+        const pendingComponentFiles = Array.from(componentFileDeps).filter(
+            fileName => !addedComponentFiles.has(fileName)
+        );
+
+        for (const fileName of pendingComponentFiles) {
+            const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`Source file not found at ${filePath}`);
+            }
+
+            let code = readComponentSource(filePath);
+            code = rewriteImports(code, name, 'component');
+
+            assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
+            extractComponentFileDeps(code, name).forEach(d => componentFileDeps.add(d));
+            extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+            extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+            files.push({
+                path: `components/ui/${name}/${fileName}`,
+                content: code,
+                type: getFileType(`components/ui/${name}/${fileName}`)
+            });
+            addedComponentFiles.add(fileName);
+        }
+    }
+
+    const addedComposables = new Set<string>();
+    processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
+
+    for (const directiveName of componentInfo.directives ?? []) {
+        const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
+
+        if (!fs.existsSync(directivePath)) {
+            throw new Error(`Directive file not found at ${directivePath}`);
+        }
+
+        let code = readComponentSource(directivePath);
+        code = rewriteImports(code, name, 'directive');
+        assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
+        extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+        extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+        extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+        files.push({
+            path: `directives/${directiveName}`,
+            content: code,
+            type: getFileType(`directives/${directiveName}`)
+        });
+    }
+
+    processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
+
+    if (localeDeps.size > 0) {
+        allRegistryDeps.add('locale-zh-cn');
+    }
+
+    for (const libName of libDeps) {
+        if (LIB_FILE_EXCLUDE.has(libName)) continue;
+
+        const libPath = path.join(UI_LIB_DIR, libName);
+
+        if (!fs.existsSync(libPath)) {
+            throw new Error(`Lib file not found at ${libPath}`);
+        }
+
+        const code = rewriteImports(readComponentSource(libPath), name, 'lib');
+        assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
+        extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+        files.push({
+            path: `lib/${libName}`,
+            content: code,
+            type: getFileType(`lib/${libName}`)
+        });
+    }
+
+    const integrity = computeRegistryIntegrity(files);
+
+    return {
+        $schema: 'https://ui.shadcn.com/schema/registry-item.json',
+        name,
+        type: 'registry:ui',
+        title: componentInfo.title,
+        description: componentInfo.description,
+        category: componentInfo.category,
+        examples: componentInfo.examples,
+        status: componentInfo?.status,
+        replacement: componentInfo?.replacement,
+        dependencies: componentInfo?.dependencies || [],
+        registryDependencies: Array.from(allRegistryDeps),
+        files,
+        tailwind: TAILWIND_CONFIG,
+        cssVars: CSS_VARS,
+        integrity,
+    } satisfies RegistryItem;
+}
+
 export async function run() {
     console.log('🚀 Starting registry build...');
 
@@ -603,182 +756,30 @@ export async function run() {
                 } catch { /* fall through to rebuild */ }
             }
 
-            const allRegistryDeps = new Set<string>();
-            const files: RegistryFile[] = [];
-            const componentFileDeps = new Set(fileMapping.files);
-            const composableDeps = new Set(fileMapping.composables ?? []);
-            const localeDeps = new Set<string>();
-            const libDeps = new Set<string>();
-
-            const addedComponentFiles = new Set<string>();
-            while (addedComponentFiles.size < componentFileDeps.size) {
-                const pendingComponentFiles = Array.from(componentFileDeps).filter(fileName => !addedComponentFiles.has(fileName));
-
-                for (const fileName of pendingComponentFiles) {
-                    const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
-
-                    if (!fs.existsSync(filePath)) {
-                        throw new Error(`Source file not found at ${filePath}`);
-                    }
-
-                    let code = readComponentSource(filePath);
-                    code = rewriteImports(code, name, 'component');
-
-                    assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
-                    extractComponentFileDeps(code, name).forEach(d => componentFileDeps.add(d));
-                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-                    files.push({
-                        path: `components/ui/${name}/${fileName}`,
-                        content: code,
-                        type: getFileType(`components/ui/${name}/${fileName}`)
-                    });
-                    addedComponentFiles.add(fileName);
-                }
-            }
-
-            const addedComposables = new Set<string>();
-            while (addedComposables.size < composableDeps.size) {
-                const pendingComposables = Array.from(composableDeps).filter((composableName) => !addedComposables.has(composableName));
-
-                for (const composableName of pendingComposables) {
-                    const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
-
-                    if (!fs.existsSync(composablePath)) {
-                        throw new Error(`Composable file not found at ${composablePath}`);
-                    }
-
-                    let code = readComponentSource(composablePath);
-                    code = rewriteImports(code, name, 'composable');
-                    assertKnownRegistryDeps(code, name, composableName).forEach(d => allRegistryDeps.add(d));
-                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-                    files.push({
-                        path: `composables/${composableName}`,
-                        content: code,
-                        type: getFileType(`composables/${composableName}`)
-                    });
-                    addedComposables.add(composableName);
-                }
-            }
-
-            for (const directiveName of fileMapping.directives ?? []) {
-                const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
-
-                if (!fs.existsSync(directivePath)) {
-                    throw new Error(`Directive file not found at ${directivePath}`);
-                }
-
-                let code = readComponentSource(directivePath);
-                code = rewriteImports(code, name, 'directive');
-                assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
-                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-                files.push({
-                    path: `directives/${directiveName}`,
-                    content: code,
-                    type: getFileType(`directives/${directiveName}`)
-                });
-            }
-
-            while (addedComposables.size < composableDeps.size) {
-                const pendingComposables = Array.from(composableDeps).filter((composableName) => !addedComposables.has(composableName));
-
-                for (const composableName of pendingComposables) {
-                    const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
-
-                    if (!fs.existsSync(composablePath)) {
-                        throw new Error(`Composable file not found at ${composablePath}`);
-                    }
-
-                    let code = readComponentSource(composablePath);
-                    code = rewriteImports(code, name, 'composable');
-                    assertKnownRegistryDeps(code, name, composableName).forEach(d => allRegistryDeps.add(d));
-                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-                    files.push({
-                        path: `composables/${composableName}`,
-                        content: code,
-                        type: getFileType(`composables/${composableName}`)
-                    });
-                    addedComposables.add(composableName);
-                }
-            }
-
-            if (localeDeps.size > 0) {
-                allRegistryDeps.add('locale-zh-cn');
-            }
-
-            for (const libName of libDeps) {
-                if (LIB_FILE_EXCLUDE.has(libName)) continue;
-
-                const libPath = path.join(UI_LIB_DIR, libName);
-
-                if (!fs.existsSync(libPath)) {
-                    throw new Error(`Lib file not found at ${libPath}`);
-                }
-
-                const code = rewriteImports(readComponentSource(libPath), name, 'lib');
-                assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-                files.push({
-                    path: `lib/${libName}`,
-                    content: code,
-                    type: getFileType(`lib/${libName}`)
-                });
-            }
-
-            const integrity = computeRegistryIntegrity(files);
-
-            const registryItem = {
-                $schema: 'https://ui.shadcn.com/schema/registry-item.json',
-                name: name,
-                type: 'registry:ui',
-                title: componentInfo.title,
-                description: componentInfo.description,
-                category: componentInfo.category,
-                examples: componentInfo.examples,
-                status: componentInfo?.status,
-                replacement: componentInfo?.replacement,
-                dependencies: componentInfo?.dependencies || [],
-                registryDependencies: Array.from(allRegistryDeps),
-                files,
-                tailwind: TAILWIND_CONFIG,
-                cssVars: CSS_VARS,
-                integrity
-            } satisfies RegistryItem;
+            const registryItem = buildRegistryItem(name);
 
             fs.writeFileSync(outputPath, JSON.stringify(registryItem, null, 2), 'utf-8');
-            console.log(`✓ Generated ${name}.json (${files.length} files, Registry dependencies: [${Array.from(allRegistryDeps).join(', ')}])`);
+            console.log(`✓ Generated ${name}.json (${registryItem.files.length} files, Registry dependencies: [${registryItem.registryDependencies.join(', ')}])`);
             newCache[name] = sourceHash;
 
             registryIndex.items.push({
-                name: name,
-                type: 'registry:ui',
-                title: componentInfo.title,
-                description: componentInfo.description,
-                category: componentInfo.category,
-                examples: componentInfo.examples,
-                status: componentInfo?.status,
-                replacement: componentInfo?.replacement,
-                dependencies: componentInfo?.dependencies || [],
-                registryDependencies: Array.from(allRegistryDeps),
-                files: files.map(f => ({
+                name: registryItem.name,
+                type: registryItem.type,
+                title: registryItem.title,
+                description: registryItem.description,
+                category: registryItem.category,
+                examples: registryItem.examples,
+                status: registryItem.status,
+                replacement: registryItem.replacement,
+                dependencies: registryItem.dependencies,
+                registryDependencies: registryItem.registryDependencies,
+                files: registryItem.files.map(f => ({
                     path: f.path,
                     type: f.type
                 })),
-                tailwind: TAILWIND_CONFIG,
-                cssVars: CSS_VARS,
-                integrity
+                tailwind: registryItem.tailwind,
+                cssVars: registryItem.cssVars,
+                integrity: registryItem.integrity
             });
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error';

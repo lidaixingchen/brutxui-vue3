@@ -1,0 +1,184 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`registry build snapshots > matches snapshot for multi-dependency component (data-table) 1`] = `
+{
+  "category": "data-display",
+  "dependencies": [
+    "@lucide/vue",
+  ],
+  "fileCount": 13,
+  "files": [
+    {
+      "path": "components/ui/data-table/DataTable.vue",
+      "type": "registry:ui",
+    },
+    {
+      "path": "components/ui/data-table/data-table-variants.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "components/ui/data-table/types.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "components/ui/data-table/DataTableColumnFilter.vue",
+      "type": "registry:ui",
+    },
+    {
+      "path": "composables/useLocale.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useDataTableSort.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useDataTableFilter.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useDataTableSelection.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useDataTablePagination.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "lib/defaults.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "lib/data-table-utils.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "lib/date.ts",
+      "type": "registry:lib",
+    },
+  ],
+  "integrity": "sha256-39922565e595fceb4adcc45e74e5ddc4f0fcd390bcfccd4c4cac5dd1358f27d5",
+  "name": "data-table",
+  "registryDependencies": [
+    "input",
+    "button",
+    "checkbox",
+    "select",
+    "virtual-scroll",
+    "popover",
+    "locale-zh-cn",
+  ],
+  "replacement": undefined,
+  "status": undefined,
+  "title": "Data Table",
+  "type": "registry:ui",
+}
+`;
+
+exports[`registry build snapshots > matches snapshot for page/block component (settings-page) 1`] = `
+{
+  "category": "page",
+  "dependencies": [
+    "reka-ui",
+    "@lucide/vue",
+  ],
+  "fileCount": 3,
+  "files": [
+    {
+      "path": "components/ui/settings-page/SettingsPage.vue",
+      "type": "registry:ui",
+    },
+    {
+      "path": "components/ui/settings-page/types.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "composables/useLocale.ts",
+      "type": "registry:hook",
+    },
+  ],
+  "integrity": "sha256-5f1056cfef6c22cda3e17a7ec3c0d019406d593a1fa97774e3e2ef351f6a5bbc",
+  "name": "settings-page",
+  "registryDependencies": [
+    "tabs",
+    "card",
+    "input",
+    "switch",
+    "button",
+    "separator",
+    "empty-state",
+    "label",
+    "locale-zh-cn",
+  ],
+  "replacement": "tabs",
+  "status": "legacy",
+  "title": "Settings Page",
+  "type": "registry:ui",
+}
+`;
+
+exports[`registry build snapshots > matches snapshot for simple component (button) 1`] = `
+{
+  "category": "action",
+  "dependencies": [
+    "reka-ui",
+    "@lucide/vue",
+  ],
+  "fileCount": 10,
+  "files": [
+    {
+      "path": "components/ui/button/Button.vue",
+      "type": "registry:ui",
+    },
+    {
+      "path": "components/ui/button/button-variants.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "components/ui/button/shared-button-variants.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "composables/useLocale.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useGlitchEffect.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useReducedMotion.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "lib/icon-size-variants.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "lib/defaults.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "type": "registry:lib",
+    },
+    {
+      "path": "lib/env.ts",
+      "type": "registry:lib",
+    },
+  ],
+  "integrity": "sha256-66c7ed2d53661da58c72c8dc577183cbd4879cc12d7a75e11e50df2ef755d90f",
+  "name": "button",
+  "registryDependencies": [
+    "locale-zh-cn",
+  ],
+  "replacement": undefined,
+  "status": undefined,
+  "title": "Button",
+  "type": "registry:ui",
+}
+`;

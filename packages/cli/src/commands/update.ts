@@ -17,7 +17,9 @@ export async function update(components: string[], options: UpdateOptions): Prom
     const config = await readConfigSafe(cwd);
 
     if (!config) {
-        throw new CliError('No components.json found. Run `brutx-vue init` first.');
+        throw new CliError('No components.json found. Run `brutx-vue init` first.', {
+            code: 'CONFIG_NOT_FOUND',
+        });
     }
 
     const installedComponents = components.length > 0

@@ -5,7 +5,7 @@ import globals from 'globals'
 
 export default tseslint.config(
     {
-        ignores: ['**/dist/**', '**/node_modules/**', '**/*.d.ts', '**/brutalism-plugin.js'],
+        ignores: ['**/dist/**', '**/node_modules/**', '**/*.d.ts'],
     },
     js.configs.recommended,
     ...tseslint.configs.recommended,

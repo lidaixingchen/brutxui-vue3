@@ -34,7 +34,9 @@ export async function remove(components: string[], options: RemoveOptions): Prom
     const config = await readConfigSafe(cwd);
 
     if (!config) {
-        throw new CliError('No components.json found. Run `brutx-vue init` first.');
+        throw new CliError('No components.json found. Run `brutx-vue init` first.', {
+            code: 'CONFIG_NOT_FOUND',
+        });
     }
 
     const manifest = await readManifest(cwd).catch(() => null);
