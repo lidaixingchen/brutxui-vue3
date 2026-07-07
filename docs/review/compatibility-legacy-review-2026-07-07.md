@@ -231,4 +231,5 @@
 - 本轮 registry 文档覆盖验证：`packages/registry/node_modules/.bin/vitest.CMD run tests/validate-utils.test.ts`、`packages/registry` 下 `node_modules/.bin/tsx.CMD scripts/validate-registry.ts`、`npm.cmd run typecheck`。
 - 本轮选择复用验证：`packages/ui` 下 `vitest run src/composables/useSelectionDisplayText.test.ts src/composables/useClearableSelection.test.ts`、`vitest run src/composables/useSelectableTrigger.test.ts`，并随 registry build/validate 同步生成 `cascader`、`combobox`、`tree-select` 注册表产物。
 - 本轮表单验证分支验证：`packages/ui` 下 `vitest run src/components/feedback-form/feedback-form.test.ts src/components/hardcore-input/hardcore-input.test.ts`、`vue-tsc --noEmit`。
+- 本轮 viewport helper 验证：`packages/ui` 下 `vitest run src/lib/env.test.ts src/composables/useDialogEnhanced.test.ts src/components/tour/tour.test.ts`、`vue-tsc --noEmit`。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。

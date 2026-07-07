@@ -2,7 +2,7 @@
 /* global ScrollIntoViewOptions */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import { useLocale } from '@/composables/useLocale'
-import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, hasDocument } from '@/lib/env'
+import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, getViewportSize, hasDocument } from '@/lib/env'
 import { Z_INDEX } from '@/lib/z-index'
 
 export interface TourStep {
@@ -90,8 +90,7 @@ const drawCanvas = (): void => {
     }
 
     const dpr = getDevicePixelRatio()
-    const width = window.innerWidth
-    const height = window.innerHeight
+    const { width, height } = getViewportSize()
 
     canvas.width = width * dpr
     canvas.height = height * dpr
@@ -146,10 +145,11 @@ const updatePopoverPosition = (): void => {
 
     const popoverW = popover.offsetWidth
     const popoverH = popover.offsetHeight
+    const { width: viewportWidth, height: viewportHeight } = getViewportSize()
 
     if (!highlightRect.value) {
-        const left = (window.innerWidth - popoverW) / 2
-        const top = (window.innerHeight - popoverH) / 2
+        const left = (viewportWidth - popoverW) / 2
+        const top = (viewportHeight - popoverH) / 2
         popoverStyle.value = {
             position: 'fixed',
             left: '0px',
@@ -185,8 +185,8 @@ const updatePopoverPosition = (): void => {
             break
     }
 
-    popoverLeft = Math.max(VIEWPORT_MARGIN, Math.min(window.innerWidth - popoverW - VIEWPORT_MARGIN, popoverLeft))
-    popoverTop = Math.max(VIEWPORT_MARGIN, Math.min(window.innerHeight - popoverH - VIEWPORT_MARGIN, popoverTop))
+    popoverLeft = Math.max(VIEWPORT_MARGIN, Math.min(viewportWidth - popoverW - VIEWPORT_MARGIN, popoverLeft))
+    popoverTop = Math.max(VIEWPORT_MARGIN, Math.min(viewportHeight - popoverH - VIEWPORT_MARGIN, popoverTop))
 
     popoverStyle.value = {
         position: 'fixed',

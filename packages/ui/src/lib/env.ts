@@ -24,6 +24,11 @@ type AudioContextConstructor = typeof AudioContext
 type ResizeObserverConstructor = typeof ResizeObserver
 type MutationObserverConstructor = typeof MutationObserver
 
+export interface ViewportSize {
+    width: number
+    height: number
+}
+
 /** Get the available AudioContext constructor, including Safari's prefixed API. */
 export function getAudioContextCtor(): AudioContextConstructor | null {
     if (!isClient) return null
@@ -48,6 +53,15 @@ export function getMutationObserverCtor(): MutationObserverConstructor | null {
 export function getDevicePixelRatio(): number {
     if (!isClient) return 1
     return window.devicePixelRatio || 1
+}
+
+/** Get viewport dimensions with an SSR-safe fallback. */
+export function getViewportSize(): ViewportSize {
+    if (!isClient) return { width: 0, height: 0 }
+    return {
+        width: window.innerWidth,
+        height: window.innerHeight,
+    }
 }
 
 /** Create a canvas element when the DOM supports it. */

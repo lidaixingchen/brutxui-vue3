@@ -1,5 +1,5 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, type ComputedRef, type CSSProperties, type MaybeRefOrGetter } from 'vue'
-import { hasDocument } from '@/lib/env'
+import { getViewportSize, hasDocument } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import type { ResizeCorner } from '@/types'
 export type { ResizeCorner }
@@ -124,9 +124,10 @@ export function useDialogEnhanced(
         if (!rect) return { x: newX, y: newY }
 
         if (opt.bounds === 'viewport') {
+            const { width, height } = getViewportSize()
             return {
-                x: Math.max(-rect.width / 2, Math.min(newX, window.innerWidth - rect.width / 2)),
-                y: Math.max(-rect.height / 2, Math.min(newY, window.innerHeight - rect.height / 2)),
+                x: Math.max(-rect.width / 2, Math.min(newX, width - rect.width / 2)),
+                y: Math.max(-rect.height / 2, Math.min(newY, height - rect.height / 2)),
             }
         } else if (opt.bounds === 'parent') {
             const parentRect = contentRef.value?.parentElement?.getBoundingClientRect()
