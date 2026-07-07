@@ -6,9 +6,14 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import {
     COMPONENT_REGISTRY,
     computeRegistryIntegrity,
+    validateRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import { findRegistryDependencyCycles, REGISTRY_MANIFEST_SCHEMA_URL } from './validate-utils';
+import {
+    findRegistryDependencyCycles,
+    REGISTRY_MANIFEST_SCHEMA_URL,
+    validateRegistryItemInternalImports,
+} from './validate-utils';
 import type {
     RegistryFile,
     RegistryFileType,
@@ -34,7 +39,7 @@ type RewriteContext = 'component' | 'composable' | 'lib' | 'directive';
 const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
 
 const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 4;
 const REGISTRY_SCHEMA_VERSION = 1;
 
 export interface RegistryBuildManifest {
@@ -106,6 +111,16 @@ export function assertRegistryDependencyGraph(
     }
 }
 
+function validateReusableRegistryItem(data: unknown, name: string): asserts data is RegistryItem {
+    validateRegistryItem(data, { name, requireSchema: true });
+    validateRegistryIntegrity(data, name);
+
+    const importErrors = validateRegistryItemInternalImports(data);
+    if (importErrors.length > 0) {
+        throw new Error(importErrors.join('; '));
+    }
+}
+
 function loadCache(): Record<string, string> {
     if (fs.existsSync(CACHE_FILE)) {
         try {
@@ -136,17 +151,25 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
         tailwind: TAILWIND_CONFIG,
         cssVars: CSS_VARS,
     })];
+    const componentDeps = new Set(fileMapping.files);
+    const addedComponentDeps = new Set<string>();
     const libDeps = new Set<string>();
 
-    for (const fileName of fileMapping.files) {
-        const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
-        if (!fs.existsSync(filePath)) {
-            throw new Error(`Source file not found: ${filePath}`);
+    while (addedComponentDeps.size < componentDeps.size) {
+        const pendingComponentDeps = Array.from(componentDeps).filter(fileName => !addedComponentDeps.has(fileName));
+
+        for (const fileName of pendingComponentDeps) {
+            const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+            if (!fs.existsSync(filePath)) {
+                throw new Error(`Source file not found: ${filePath}`);
+            }
+            const code = readComponentSource(filePath);
+            parts.push(code);
+            const rewritten = rewriteImports(code, name, 'component');
+            extractComponentFileDeps(rewritten, name).forEach(d => componentDeps.add(d));
+            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+            addedComponentDeps.add(fileName);
         }
-        const code = readComponentSource(filePath);
-        parts.push(code);
-        const rewritten = rewriteImports(code, name, 'component');
-        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
     }
     for (const composableName of fileMapping.composables ?? []) {
         const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
@@ -173,7 +196,10 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
         if (LIB_FILE_EXCLUDE.has(libName)) continue;
         const libPath = path.join(UI_LIB_DIR, libName);
         if (fs.existsSync(libPath)) {
-            parts.push(readComponentSource(libPath));
+            const code = readComponentSource(libPath);
+            parts.push(code);
+            const rewritten = rewriteImports(code, name, 'lib');
+            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
         }
     }
 
@@ -295,6 +321,21 @@ export function extractRegistryDeps(code: string, componentName: string): string
         if (depName !== componentName && COMPONENT_REGISTRY[depName]) {
             deps.add(depName);
         }
+    }
+
+    return Array.from(deps);
+}
+
+export function extractComponentFileDeps(code: string, componentName: string): string[] {
+    const deps = new Set<string>();
+    const prefix = `@/components/ui/${componentName}/`;
+
+    for (const specifier of extractModuleSpecifiers(code)) {
+        if (!specifier.startsWith(prefix)) continue;
+
+        const rawFileName = specifier.slice(prefix.length).split(/[?#]/)[0];
+        const fileName = path.extname(rawFileName) ? rawFileName : `${rawFileName}.ts`;
+        deps.add(fileName);
     }
 
     return Array.from(deps);
@@ -465,7 +506,7 @@ export async function run() {
     if (cache['locale-zh-cn'] === localeHash && fs.existsSync(localeOutputPath) && localeFiles.length > 0) {
         try {
             const existingLocaleItem = JSON.parse(fs.readFileSync(localeOutputPath, 'utf-8'));
-            validateRegistryItem(existingLocaleItem, { name: 'locale-zh-cn', requireSchema: true });
+            validateReusableRegistryItem(existingLocaleItem, 'locale-zh-cn');
             registryIndex.items.push({
                 name: existingLocaleItem.name,
                 type: existingLocaleItem.type,
@@ -536,7 +577,7 @@ export async function run() {
             if (cache[name] === sourceHash && fs.existsSync(outputPath)) {
                 try {
                     const existingItem = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
-                    validateRegistryItem(existingItem, { name, requireSchema: true });
+                    validateReusableRegistryItem(existingItem, name);
                     registryIndex.items.push({
                         name: existingItem.name,
                         type: existingItem.type,
@@ -564,30 +605,38 @@ export async function run() {
 
             const allRegistryDeps = new Set<string>();
             const files: RegistryFile[] = [];
+            const componentFileDeps = new Set(fileMapping.files);
             const composableDeps = new Set(fileMapping.composables ?? []);
             const localeDeps = new Set<string>();
             const libDeps = new Set<string>();
 
-            for (const fileName of fileMapping.files) {
-                const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+            const addedComponentFiles = new Set<string>();
+            while (addedComponentFiles.size < componentFileDeps.size) {
+                const pendingComponentFiles = Array.from(componentFileDeps).filter(fileName => !addedComponentFiles.has(fileName));
 
-                if (!fs.existsSync(filePath)) {
-                    throw new Error(`Source file not found at ${filePath}`);
+                for (const fileName of pendingComponentFiles) {
+                    const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+
+                    if (!fs.existsSync(filePath)) {
+                        throw new Error(`Source file not found at ${filePath}`);
+                    }
+
+                    let code = readComponentSource(filePath);
+                    code = rewriteImports(code, name, 'component');
+
+                    assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
+                    extractComponentFileDeps(code, name).forEach(d => componentFileDeps.add(d));
+                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+                    files.push({
+                        path: `components/ui/${name}/${fileName}`,
+                        content: code,
+                        type: getFileType(`components/ui/${name}/${fileName}`)
+                    });
+                    addedComponentFiles.add(fileName);
                 }
-
-                let code = readComponentSource(filePath);
-                code = rewriteImports(code, name, 'component');
-
-                assertKnownRegistryDeps(code, name, fileName).forEach(d => allRegistryDeps.add(d));
-                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-                files.push({
-                    path: `components/ui/${name}/${fileName}`,
-                    content: code,
-                    type: getFileType(`components/ui/${name}/${fileName}`)
-                });
             }
 
             const addedComposables = new Set<string>();
@@ -638,6 +687,32 @@ export async function run() {
                 });
             }
 
+            while (addedComposables.size < composableDeps.size) {
+                const pendingComposables = Array.from(composableDeps).filter((composableName) => !addedComposables.has(composableName));
+
+                for (const composableName of pendingComposables) {
+                    const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
+
+                    if (!fs.existsSync(composablePath)) {
+                        throw new Error(`Composable file not found at ${composablePath}`);
+                    }
+
+                    let code = readComponentSource(composablePath);
+                    code = rewriteImports(code, name, 'composable');
+                    assertKnownRegistryDeps(code, name, composableName).forEach(d => allRegistryDeps.add(d));
+                    extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+                    extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+                    extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+                    files.push({
+                        path: `composables/${composableName}`,
+                        content: code,
+                        type: getFileType(`composables/${composableName}`)
+                    });
+                    addedComposables.add(composableName);
+                }
+            }
+
             if (localeDeps.size > 0) {
                 allRegistryDeps.add('locale-zh-cn');
             }
@@ -653,6 +728,7 @@ export async function run() {
 
                 const code = rewriteImports(readComponentSource(libPath), name, 'lib');
                 assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
+                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
 
                 files.push({
                     path: `lib/${libName}`,

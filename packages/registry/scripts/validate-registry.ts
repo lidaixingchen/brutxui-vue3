@@ -14,6 +14,7 @@ import {
     validateComponentSourceFiles,
     validateDocsComponentPageCoverage,
     validateGeneratedItemMatchesMetadata,
+    validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
     type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
@@ -283,6 +284,11 @@ function validate() {
                     console.error(`✗ [${file}] ${error}.`);
                     errorCount++;
                 }
+            }
+
+            for (const error of validateRegistryItemInternalImports(data)) {
+                console.error(`✗ [${file}] ${error}.`);
+                errorCount++;
             }
 
             referenceItems.push({

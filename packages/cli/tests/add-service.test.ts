@@ -111,6 +111,15 @@ describe('add service', () => {
         expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'ui', 'badge', 'Badge.vue'));
     });
 
+    it('classifies unsafe resolved component paths', async () => {
+        await expect(resolveComponentFilePath('../outside.ts', config, tmpDir))
+            .rejects
+            .toMatchObject({
+                code: 'PATH_UNSAFE',
+                exitCode: 2,
+            });
+    });
+
     it('writes component files and rewrites internal aliases', async () => {
         const onProgress = vi.fn();
 

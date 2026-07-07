@@ -38,6 +38,11 @@
       "path": "lib/form-toggle-base.ts",
       "content": "import { brutalHoverLift, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const formToggleBaseClasses = [\n    'border-3 border-brutal',\n    'transition-all duration-150',\n    'shadow-brutal-sm',\n    brutalHoverLift,\n    brutalPress,\n    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',\n    'disabled:cursor-not-allowed disabled:opacity-50 disabled:pointer-events-none',\n] as const\n\nexport const formToggleVariantColors = {\n    default: 'data-[state=checked]:bg-brutal-success data-[state=indeterminate]:bg-brutal-success',\n    primary: 'data-[state=checked]:bg-brutal-primary data-[state=indeterminate]:bg-brutal-primary',\n    secondary: 'data-[state=checked]:bg-brutal-secondary data-[state=indeterminate]:bg-brutal-secondary',\n    accent: 'data-[state=checked]:bg-brutal-accent data-[state=indeterminate]:bg-brutal-accent',\n    danger: 'data-[state=checked]:bg-brutal-destructive data-[state=indeterminate]:bg-brutal-destructive',\n} as const\n",
       "type": "registry:lib"
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -126,5 +131,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-f016ba4a1b44277b7ccd25cc0ebc3d607fadcf34fe648e147ebc2b8dfe2aabb2"
+  "integrity": "sha256-584cf8574c0f431879844c0410b6b3fe6155514eac98fdbb635b2d4314a3cbca"
 }

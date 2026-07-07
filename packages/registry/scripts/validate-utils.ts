@@ -48,6 +48,10 @@ export interface DocsComponentPageCoverageOptions {
     exemptions?: Set<string>
 }
 
+const REGISTRY_ITEM_IGNORED_IMPORTS = new Set([
+    'lib/utils.ts',
+])
+
 export function findUnknownRegistryReferences(items: RegistryReferenceItem[]): UnknownRegistryReference[] {
     const knownNames = new Set(items.map(item => item.name))
     const unknown: UnknownRegistryReference[] = []
@@ -297,6 +301,81 @@ export function validateGeneratedItemMatchesMetadata(
     }
 
     return errors
+}
+
+export function validateRegistryItemInternalImports(
+    item: Pick<RegistryItem, 'name' | 'files' | 'registryDependencies'>
+): string[] {
+    const errors: string[] = []
+    const files = new Set(item.files.map(file => file.path))
+    const registryDependencies = new Set(item.registryDependencies)
+
+    for (const file of item.files) {
+        for (const specifier of extractStaticModuleSpecifiers(file.content)) {
+            const expectedPath = resolveRegistryAliasImport(item.name, specifier)
+
+            if (!expectedPath || REGISTRY_ITEM_IGNORED_IMPORTS.has(expectedPath)) {
+                continue
+            }
+
+            if (!files.has(expectedPath)) {
+                if (expectedPath.startsWith('locales/') && registryDependencies.has('locale-zh-cn')) {
+                    continue
+                }
+
+                errors.push(`file "${file.path}" imports "${specifier}", but generated registry item is missing "${expectedPath}"`)
+            }
+        }
+    }
+
+    return errors
+}
+
+function extractStaticModuleSpecifiers(code: string): string[] {
+    const specifiers = new Set<string>()
+    const importPattern = /\b(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]/g
+
+    for (const match of code.matchAll(importPattern)) {
+        specifiers.add(match[1])
+    }
+
+    return Array.from(specifiers)
+}
+
+function resolveRegistryAliasImport(itemName: string, specifier: string): string | null {
+    const cleanSpecifier = specifier.split(/[?#]/)[0]
+
+    if (cleanSpecifier.startsWith('@/lib/')) {
+        return normalizeRegistryImportPath('lib/', cleanSpecifier.slice('@/lib/'.length))
+    }
+
+    if (cleanSpecifier.startsWith('@/composables/')) {
+        return normalizeRegistryImportPath('composables/', cleanSpecifier.slice('@/composables/'.length))
+    }
+
+    if (cleanSpecifier.startsWith('@/directives/')) {
+        return normalizeRegistryImportPath('directives/', cleanSpecifier.slice('@/directives/'.length))
+    }
+
+    if (cleanSpecifier.startsWith('@/locales/')) {
+        return normalizeRegistryImportPath('locales/', cleanSpecifier.slice('@/locales/'.length))
+    }
+
+    const componentPrefix = `@/components/ui/${itemName}/`
+    if (cleanSpecifier.startsWith(componentPrefix)) {
+        return normalizeRegistryImportPath(`components/ui/${itemName}/`, cleanSpecifier.slice(componentPrefix.length))
+    }
+
+    return null
+}
+
+function normalizeRegistryImportPath(prefix: string, relativePath: string): string {
+    return prefix + (hasFileExtension(relativePath) ? relativePath : `${relativePath}.ts`)
+}
+
+function hasFileExtension(filePath: string): boolean {
+    const fileName = filePath.split('/').pop() ?? ''
+    return /\.[a-zA-Z0-9]+$/.test(fileName)
 }
 
 function validateDeclaredFiles(

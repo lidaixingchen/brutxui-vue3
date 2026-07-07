@@ -58,6 +58,11 @@
       "path": "lib/modal-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { brutalHoverLift, brutalHoverLiftSm, brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const overlayVariants = cva([\n    'fixed inset-0 z-50 bg-brutal-overlay',\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n])\n\nexport const sectionHeaderVariants = cva([\n    'flex flex-col space-y-2 pb-4 border-b-3 border-brutal',\n])\n\nexport const sectionFooterVariants = cva([\n    'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3 pt-4 border-t-3 border-brutal',\n])\n\nexport const CLOSE_BUTTON_BASE_CLASSES = [\n    'h-8 w-8 flex items-center justify-center',\n    'border-3 border-brutal bg-brutal-bg text-brutal-fg',\n    'shadow-brutal-sm',\n    'transition-all duration-150',\n    'hover:bg-brutal-destructive hover:text-brutal-fg',\n    brutalPress,\n    'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',\n]\n\nexport const modalCloseButtonVariants = cva(CLOSE_BUTTON_BASE_CLASSES, {\n    variants: {\n        placement: {\n            dialog: 'absolute right-4 top-4',\n            'sheet-left': 'absolute left-4 top-4',\n            'sheet-right': 'absolute right-4 top-4',\n        },\n        motion: {\n            default: brutalHoverLift,\n            sm: brutalHoverLiftSm,\n        },\n    },\n    defaultVariants: {\n        placement: 'dialog',\n        motion: 'default',\n    },\n})\n\nexport const baseModalContentClasses = [\n    'bg-brutal-bg',\n    'border-3 border-brutal',\n    'shadow-brutal-xl',\n    'rounded-brutal',\n]\n",
       "type": "registry:lib"
+    },
+    {
+      "path": "lib/brutal-interaction-variants.ts",
+      "content": "export const brutalHoverLift = 'hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5'\n\nexport const brutalHighlightLift = 'data-[highlighted]:shadow-brutal-lg data-[highlighted]:-translate-x-0.5 data-[highlighted]:-translate-y-0.5'\n\nexport const brutalPress = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none'\n\n// Derived interaction variants\nexport const brutalPressWithTransition = `${brutalPress} transition-all`\nexport const brutalHoverLiftWithTransition = `${brutalHoverLift} transition-all`\nexport const brutalHoverLiftSm = 'hover:shadow-brutal hover:-translate-x-0.5 hover:-translate-y-0.5'\nexport const brutalHoverLiftNoX = 'hover:shadow-brutal-lg hover:-translate-y-0.5'\nexport const brutalHoverLiftSmNoX = 'hover:shadow-brutal hover:-translate-y-0.5'\nexport const brutalPressWithShadowSm = 'active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-brutal-sm'\nexport const brutalHighlightLiftWithBorder = `${brutalHighlightLift} data-[highlighted]:border-brutal`\n\n",
+      "type": "registry:lib"
     }
   ],
   "tailwind": {
@@ -146,5 +151,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-efc1da1692fcee5644bd239ff1c08c0faa83624dc7ece865eb1af64761f1102e"
+  "integrity": "sha256-35dd4b5c1388c78334be1a89f1577cb9b191f031cf4cc900192f90c70064e4bb"
 }

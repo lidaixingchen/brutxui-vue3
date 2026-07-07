@@ -7,6 +7,7 @@ import {
     validateComponentSourceFiles,
     validateDocsComponentPageCoverage,
     validateGeneratedItemMatchesMetadata,
+    validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
     type RegistryBuildManifestSnapshot,
 } from '../scripts/validate-utils'
@@ -332,6 +333,62 @@ describe('validate-registry helpers', () => {
             'replacement does not match COMPONENT_REGISTRY',
             'declared file "components/ui/button/button-variants.ts" is missing from generated registry item',
         ])
+    })
+
+    it('reports missing files for internal alias imports in generated registry items', () => {
+        const item = createRegistryItem('dialog', {
+            description: 'Dialog component',
+            files: [
+                'components/ui/dialog/DialogContent.vue',
+                'components/ui/dialog/dialog-variants.ts',
+                'lib/modal-variants.ts',
+                'composables/useDialog.ts',
+            ],
+        })
+        item.files[0].content = "import { dialogContentVariants } from '@/components/ui/dialog/dialog-variants'\n"
+        item.files[1].content = "import { baseModalContentClasses } from '@/lib/modal-variants'\n"
+        item.files[2].content = "import { brutalPress } from '@/lib/brutal-interaction-variants'\n"
+        item.files[3].content = "import { useLocale } from '@/composables/useLocale'\n"
+
+        expect(validateRegistryItemInternalImports(item)).toEqual([
+            'file "lib/modal-variants.ts" imports "@/lib/brutal-interaction-variants", but generated registry item is missing "lib/brutal-interaction-variants.ts"',
+            'file "composables/useDialog.ts" imports "@/composables/useLocale", but generated registry item is missing "composables/useLocale.ts"',
+        ])
+    })
+
+    it('requires same-component alias imports but ignores shared locale registry imports', () => {
+        const item = createRegistryItem('dialog', {
+            description: 'Dialog component',
+            files: [
+                'components/ui/dialog/DialogContent.vue',
+                'composables/useLocale.ts',
+            ],
+        })
+        item.files[0].content = "import { dialogContentVariants } from '@/components/ui/dialog/dialog-variants'\n"
+        item.files[1].content = [
+            "import { zhCN } from '@/locales/zh-CN'",
+            "import type { Locale } from '@/locales/types'",
+        ].join('\n')
+        item.registryDependencies = ['locale-zh-cn']
+
+        expect(validateRegistryItemInternalImports(item)).toEqual([
+            'file "components/ui/dialog/DialogContent.vue" imports "@/components/ui/dialog/dialog-variants", but generated registry item is missing "components/ui/dialog/dialog-variants.ts"',
+        ])
+    })
+
+    it('ignores utils imports and external registry component imports', () => {
+        const item = createRegistryItem('dialog', {
+            description: 'Dialog component',
+            files: [
+                'components/ui/dialog/DialogContent.vue',
+            ],
+        })
+        item.files[0].content = [
+            "import { cn } from '@/lib/utils'",
+            "import Button from '@/components/ui/button/Button.vue'",
+        ].join('\n')
+
+        expect(validateRegistryItemInternalImports(item)).toEqual([])
     })
 })
 

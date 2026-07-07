@@ -92,7 +92,10 @@ export async function resolveComponentFilePath(
     }
 
     if (!(await isSafePath(resolved, cwd))) {
-        throw new CliError(`Security Error: Resolved path "${resolved}" is outside the project directory.`, 2);
+        throw new CliError(`Security Error: Resolved path "${resolved}" is outside the project directory.`, {
+            code: 'PATH_UNSAFE',
+            exitCode: 2,
+        });
     }
 
     return resolved;

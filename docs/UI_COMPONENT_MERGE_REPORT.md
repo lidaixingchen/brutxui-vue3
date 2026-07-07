@@ -61,7 +61,7 @@
 | `EmptyState` + `Result` | `Result` 已支持 `status="empty"`，`EmptyState` 已改为兼容 wrapper；docs 已把空状态纳入 Result 示例 | 后续大版本评估是否移除独立入口 |
 | `InputAdornment` + `Input` | `InputAdornment` 已标记 `legacy`，replacement 指向 `input`；Input 中英文文档与 demo 已优先展示内置图标、清除、密码、字数统计和 `prepend`/`append` 能力 | 后续大版本评估是否移除独立入口 |
 | 选择器族共享能力 | `Combobox`、`Cascader`、`TreeSelect` 已复用 `useSelectableTrigger` 与 `useSelectionDisplayText`，`Cascader`、`TreeSelect` 已复用 `useClearableSelection`；`Transfer` 已抽出 `useTransferPanelSelection` 统一左右面板的全选、半选、切换和无效 key 清理；registry 映射已补齐相关组合式函数 | 继续观察选择器族是否还有局部可复用状态逻辑 |
-| 浮层族共享能力 | `Dialog` 与 `Sheet` 的关闭按钮已统一到 `modalCloseButtonVariants`；`Popover`、`DropdownMenu`、`Tooltip` 已复用 `floating-content-variants` 中的 side offset、surface 与 tooltip motion token；日期面板底部操作已抽为共享 footer | 继续统一 overlay content token，暂不合并公共组件 |
+| 浮层族共享能力 | `Dialog` 与 `Sheet` 的关闭按钮已统一到 `modalCloseButtonVariants`；`Popover`、`DropdownMenu`、`Tooltip` 已复用 `floating-content-variants` 中的 side offset、surface 与 tooltip motion token；`Popconfirm` 已直接复用 `PopoverContent` 的 surface token；日期面板底部操作已抽为共享 footer | 继续统一 overlay content token，暂不合并公共组件 |
 
 ## P0：第一轮精简尾巴已清理
 

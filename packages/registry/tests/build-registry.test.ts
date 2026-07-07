@@ -14,6 +14,7 @@ import {
     assertRegistryDependencyGraph,
     assertKnownRegistryDeps,
     buildRegistryManifest,
+    extractComponentFileDeps,
     extractDeps,
     extractModuleSpecifiers,
     extractRegistryDeps,
@@ -130,6 +131,19 @@ describe('build-registry helpers', () => {
         ]);
         expect(extractRegistryDeps(code, 'data-table')).toEqual(['code-block', 'button']);
         expect(extractDeps(code, 'lib')).toEqual(['chart-types.ts']);
+    });
+
+    it('extracts same-component file dependencies for recursive registry items', () => {
+        const code = [
+            "import type { DialogProps } from '@/components/ui/dialog/types'",
+            "export { dialogClasses } from '@/components/ui/dialog/dialog-variants'",
+            "import Button from '@/components/ui/button/Button.vue'",
+        ].join('\n');
+
+        expect(extractComponentFileDeps(code, 'dialog')).toEqual([
+            'types.ts',
+            'dialog-variants.ts',
+        ]);
     });
 
     it('extracts module specifiers from Vue script blocks', () => {

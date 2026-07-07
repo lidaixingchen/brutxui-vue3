@@ -22,6 +22,11 @@
       "type": "registry:lib"
     },
     {
+      "path": "components/ui/input/shared-input-variants.ts",
+      "content": "export const inputVariantOptions = ['default', 'error', 'success'] as const\n\nexport type InputVariant = (typeof inputVariantOptions)[number]\n\nexport const validationBorderColors: Record<InputVariant, string> = {\n    default: 'border-brutal',\n    error: 'border-brutal-destructive',\n    success: 'border-brutal-success',\n}\n\nexport const inputVariantClasses: Record<InputVariant, string> = {\n    default: validationBorderColors.default,\n    error: `${validationBorderColors.error} focus:shadow-brutal-primary`,\n    success: `${validationBorderColors.success} focus:shadow-brutal-secondary`,\n}\n\nexport interface BaseInputProps {\n    modelValue?: string\n    disabled?: boolean\n    readonly?: boolean\n    placeholder?: string\n    errorMessage?: string\n}\n",
+      "type": "registry:lib"
+    },
+    {
       "path": "composables/useClearable.ts",
       "content": "import { ref, computed, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'\n\nexport interface UseClearableOptions<TValue = unknown> {\n    /** 当前值，用于判断是否显示清除按钮 */\n    modelValue?: MaybeRefOrGetter<TValue | null | undefined>\n    /** 是否可清除 */\n    clearable?: MaybeRefOrGetter<boolean>\n    /** 是否禁用 */\n    disabled?: MaybeRefOrGetter<boolean>\n    /** 清除时触发的回调 */\n    onClear?: (event: Event) => void\n}\n\nexport interface UseClearableReturn {\n    isHovering: Ref<boolean>\n    showClear: ComputedRef<boolean>\n    handleClear: (event: Event) => void\n    onMouseEnter: () => void\n    onMouseLeave: () => void\n}\n\nexport function useClearable<TValue = unknown>(options: UseClearableOptions<TValue> = {}): UseClearableReturn {\n    const isHovering = ref(false)\n\n    const hasValue = computed(() => {\n        const value = toValue(options.modelValue)\n        if (value === null || value === undefined) return false\n        // 支持数组类型（如 Select multiple 模式）\n        if (Array.isArray(value)) return value.length > 0\n        return true\n    })\n\n    const showClear = computed(() => {\n        if (!toValue(options.clearable)) return false\n        if (!hasValue.value) return false\n        if (toValue(options.disabled)) return false\n        return isHovering.value\n    })\n\n    function handleClear(event: Event) {\n        event.stopPropagation()\n        options.onClear?.(event)\n    }\n\n    function onMouseEnter() {\n        isHovering.value = true\n    }\n\n    function onMouseLeave() {\n        isHovering.value = false\n    }\n\n    return {\n        isHovering,\n        showClear,\n        handleClear,\n        onMouseEnter,\n        onMouseLeave,\n    }\n}\n",
       "type": "registry:hook"
@@ -123,5 +128,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-2127770ea32ff7dfd85156fd6d098572ce188e5baa9cd7c6ccd872805dfe782d"
+  "integrity": "sha256-14f31d142b8f2033564e01c352fe6157821c388615e4f53b8130752f8c35ee1d"
 }

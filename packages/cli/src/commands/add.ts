@@ -31,9 +31,15 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         if (message.includes('not found')) {
-            throw new CliError('Brutx-Vue is not initialized. Run: npx brutx-vue@latest init');
+            throw new CliError('Brutx-Vue is not initialized. Run: npx brutx-vue@latest init', {
+                code: 'CONFIG_NOT_FOUND',
+                cause: error,
+            });
         } else {
-            throw new CliError(`Invalid components.json. ${message}. Run: npx brutx-vue@latest init --force to regenerate.`);
+            throw new CliError(`Invalid components.json. ${message}. Run: npx brutx-vue@latest init --force to regenerate.`, {
+                code: 'CONFIG_INVALID',
+                cause: error,
+            });
         }
     }
 }
@@ -142,7 +148,10 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     }
 
     if (options.path && !(await isSafePath(targetCwd, cwd))) {
-        throw new CliError(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`, 2);
+        throw new CliError(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`, {
+            code: 'PATH_UNSAFE',
+            exitCode: 2,
+        });
     }
 
     logger.setSilent(options.silent ?? false);

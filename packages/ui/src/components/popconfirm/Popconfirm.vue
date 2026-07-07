@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, type Component } from 'vue'
 import { TriangleAlert } from '@lucide/vue'
-import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/popover'
 import { Button } from '@/components/button'
@@ -56,11 +55,7 @@ function handleCancel() {
             <slot />
         </PopoverTrigger>
         <PopoverContent
-            :class="cn(
-                'w-72 p-4',
-                'border-3 border-brutal shadow-brutal',
-                props.class,
-            )"
+            :class="props.class"
             align="center"
         >
             <div class="flex gap-3">
