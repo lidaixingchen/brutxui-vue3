@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Timeline",
   "description": "Vertical timeline with connected events and content.",
-  "category": "utility",
+  "category": "data-display",
   "examples": [],
   "dependencies": [
     "reka-ui",

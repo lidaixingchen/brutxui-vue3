@@ -303,6 +303,65 @@ export function validateGeneratedItemMatchesMetadata(
     return errors
 }
 
+interface SidebarItemLike {
+    text: string
+    link?: string
+    items?: SidebarItemLike[]
+}
+
+export interface SidebarCoverageOptions {
+    locale: 'zh' | 'en'
+    section: 'components' | 'blocks'
+    sidebarItems: SidebarItemLike[]
+    entries: ComponentRegistryEntry[]
+}
+
+export function validateSidebarCoverage(options: SidebarCoverageOptions): string[] {
+    const errors: string[] = []
+    const { locale, section, sidebarItems, entries } = options
+
+    const localePrefix = locale === 'en' ? '/en' : ''
+    const linkPrefix = `${localePrefix}/${section}/`
+
+    const sidebarSlugs = new Set<string>()
+    for (const group of sidebarItems) {
+        if (!group.items) continue
+        for (const item of group.items) {
+            if (!item.link) continue
+            const slug = extractSidebarSlug(item.link, linkPrefix)
+            if (slug !== null) sidebarSlugs.add(slug)
+        }
+    }
+
+    const expectedSlugs = new Map<string, string>()
+    for (const entry of entries) {
+        if (entry.docsHidden === true) continue
+        const expectedSection = entry.kind === 'block' ? 'blocks' : 'components'
+        if (expectedSection !== section) continue
+        const slug = entry.docsSlug ?? entry.name
+        expectedSlugs.set(slug, entry.name)
+    }
+
+    for (const [slug, name] of expectedSlugs) {
+        if (!sidebarSlugs.has(slug)) {
+            errors.push(`[sidebar:${locale}:${section}] Entry "${name}" (slug "${slug}") is missing from generated sidebar`)
+        }
+    }
+
+    for (const slug of sidebarSlugs) {
+        if (!expectedSlugs.has(slug)) {
+            errors.push(`[sidebar:${locale}:${section}] Sidebar entry "${slug}" does not map to any COMPONENT_REGISTRY entry`)
+        }
+    }
+
+    return errors
+}
+
+function extractSidebarSlug(link: string, linkPrefix: string): string | null {
+    if (!link.startsWith(linkPrefix)) return null
+    return link.slice(linkPrefix.length).replace(/\.html$/, '')
+}
+
 export function validateRegistryItemInternalImports(
     item: Pick<RegistryItem, 'name' | 'files' | 'registryDependencies'>
 ): string[] {

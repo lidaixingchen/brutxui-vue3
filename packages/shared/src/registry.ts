@@ -246,7 +246,6 @@ function assertCategory(
         'form',
         'layout',
         'marketing',
-        'media',
         'navigation',
         'overlay',
         'page',

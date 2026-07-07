@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Chat Bubble",
   "description": "Chat message bubbles with avatar and timestamp.",
-  "category": "feedback",
+  "category": "data-display",
   "examples": [],
   "dependencies": [
     "reka-ui",

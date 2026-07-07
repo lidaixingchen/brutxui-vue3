@@ -243,7 +243,7 @@
       "type": "registry:ui",
       "title": "Avatar",
       "description": "User avatar with image, fallback initials, and status indicator support.",
-      "category": "media",
+      "category": "data-display",
       "examples": [],
       "dependencies": [
         "reka-ui"
@@ -2024,7 +2024,7 @@
       "type": "registry:ui",
       "title": "Image",
       "description": "Image component with lazy loading, fallback image, and Neo-Brutalist interactive preview modal.",
-      "category": "media",
+      "category": "data-display",
       "examples": [],
       "dependencies": [
         "reka-ui",
@@ -6392,7 +6392,7 @@
       "type": "registry:ui",
       "title": "Before After",
       "description": "Side-by-side image comparison with draggable slider.",
-      "category": "media",
+      "category": "visual-effect",
       "examples": [],
       "dependencies": [
         "@lucide/vue"
@@ -6649,7 +6649,7 @@
       "type": "registry:ui",
       "title": "Timeline",
       "description": "Vertical timeline with connected events and content.",
-      "category": "utility",
+      "category": "data-display",
       "examples": [],
       "dependencies": [
         "reka-ui",
@@ -6789,7 +6789,7 @@
       "type": "registry:ui",
       "title": "Carousel",
       "description": "Image and content carousel with navigation and autoplay.",
-      "category": "media",
+      "category": "data-display",
       "examples": [],
       "dependencies": [
         "embla-carousel-vue",
@@ -6942,7 +6942,7 @@
       "type": "registry:ui",
       "title": "Tree View",
       "description": "Hierarchical tree with expandable nodes and selection.",
-      "category": "navigation",
+      "category": "data-display",
       "examples": [],
       "dependencies": [
         "reka-ui",
@@ -7211,7 +7211,7 @@
       "type": "registry:ui",
       "title": "Chat Bubble",
       "description": "Chat message bubbles with avatar and timestamp.",
-      "category": "feedback",
+      "category": "data-display",
       "examples": [],
       "dependencies": [
         "reka-ui",
@@ -7674,7 +7674,7 @@
       "type": "registry:ui",
       "title": "Card 3d",
       "description": "Interactive card with 3D tilt effect on mouse movement.",
-      "category": "utility",
+      "category": "layout",
       "examples": [],
       "dependencies": [],
       "registryDependencies": [
@@ -7922,7 +7922,7 @@
       "type": "registry:ui",
       "title": "Scratch Card",
       "description": "Scratch-off reveal card with canvas interaction.",
-      "category": "layout",
+      "category": "visual-effect",
       "examples": [],
       "dependencies": [],
       "registryDependencies": [
@@ -8055,7 +8055,7 @@
       "type": "registry:ui",
       "title": "Sketchy Chart",
       "description": "Hand-drawn style data visualization chart.",
-      "category": "utility",
+      "category": "data-display",
       "examples": [],
       "dependencies": [],
       "registryDependencies": [
@@ -8172,7 +8172,7 @@
       "type": "registry:ui",
       "title": "Hardcore Input",
       "description": "Input field with audio feedback and visual effects.",
-      "category": "utility",
+      "category": "form",
       "examples": [],
       "dependencies": [],
       "registryDependencies": [

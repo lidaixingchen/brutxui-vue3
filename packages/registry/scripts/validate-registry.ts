@@ -16,9 +16,11 @@ import {
     validateGeneratedItemMatchesMetadata,
     validateRegistryItemInternalImports,
     validateRegistryManifestConsistency,
+    validateSidebarCoverage,
     type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
 } from './validate-utils';
+import { generateComponentsSidebar, generateBlocksSidebar } from '../../../apps/docs/.vitepress/theme/lib/sidebar-generator';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -247,6 +249,35 @@ function validateDocsCoverage(): number {
     return docsErrors;
 }
 
+function validateSidebar(): number {
+    const entries = Object.values(COMPONENT_REGISTRY);
+    const checks: Array<{ locale: 'zh' | 'en'; section: 'components' | 'blocks'; items: ReturnType<typeof generateComponentsSidebar> }> = [
+        { locale: 'zh', section: 'components', items: generateComponentsSidebar('zh') },
+        { locale: 'en', section: 'components', items: generateComponentsSidebar('en') },
+        { locale: 'zh', section: 'blocks', items: generateBlocksSidebar('zh') },
+        { locale: 'en', section: 'blocks', items: generateBlocksSidebar('en') },
+    ];
+
+    let sidebarErrors = 0;
+    for (const check of checks) {
+        for (const error of validateSidebarCoverage({
+            locale: check.locale,
+            section: check.section,
+            sidebarItems: check.items,
+            entries,
+        })) {
+            console.error(`✗ ${error}.`);
+            sidebarErrors++;
+        }
+    }
+
+    if (sidebarErrors === 0) {
+        console.log(`✓ Sidebar coverage is consistent with COMPONENT_REGISTRY (zh/en × components/blocks).`);
+    }
+
+    return sidebarErrors;
+}
+
 function validate() {
     console.log('🔍 Validating registry files...');
 
@@ -351,6 +382,7 @@ function validate() {
     errorCount += validateSourceConsistency();
     errorCount += validateComponentsSync();
     errorCount += validateDocsCoverage();
+    errorCount += validateSidebar();
 
     console.log(`\n📊 Total files across all registry items: ${totalFiles}`);
 

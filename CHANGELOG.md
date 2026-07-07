@@ -7,6 +7,23 @@
 
 ## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.1...HEAD)
 
+### ⚠️ Breaking Changes
+
+* **shared:** 移除 `media` category，原 media 组件重新分配 — `avatar`/`carousel`/`image` → `data-display`，`before-after` → `visual-effect`。registry JSON 的 `category` 字段值已变更，消费 `category === 'media'` 的外部代码需迁移
+* **shared:** 修正 7 个组件的 category 误分类 — `card-3d`(utility→layout)、`chat-bubble`(feedback→data-display)、`hardcore-input`(utility→form)、`scratch-card`(layout→visual-effect)、`sketchy-chart`(utility→data-display)、`timeline`(utility→data-display)、`tree-view`(navigation→data-display)
+* **docs:** sidebar 重构 — 移除「Basic」「Other」组，新增「Action」「Overlay」「Visual Effect」「Utility」四组，拆分「Feedback」为「Feedback」+「Overlay」。中/en 两份 sidebar 均改为从元数据自动生成
+
+### ✨ Features
+
+* **shared:** 新增 `sidebarGroup`/`kind`/`docsHidden`/`docsSlug` 元数据字段，支持 docs sidebar 从元数据自动生成、组件/区块路由前缀区分、文档隐藏与 slug 别名
+* **docs:** 新增 `sidebar-generator.ts`，从 `COMPONENT_REGISTRY` + 默认派生表生成 sidebar 结构，新增组件后 sidebar 自动出现条目
+* **registry:** 新增 `validateSidebarCoverage` 校验，确保每个非 `docsHidden` 的注册表条目在生成的 sidebar 中有对应条目，且 sidebar 无孤儿条目
+
+### ♻️ Code Refactoring
+
+* **docs:** 移除 `component-catalog.ts` 的 `hiddenDocsEntries`/`slugAliases`/`blockEntries` 三个本地结构，改为从 shared 元数据派生
+* **shared:** `CATEGORY_OVERRIDES` 新增 `scratch-card: 'visual-effect'` 修复 `inferCategory` 匹配 `-card` 后缀先于 `scratch` 模式的 bug
+
 ## [0.9.1](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.0...v0.9.1) - 2026-07-06
 
 ### ✨ Features

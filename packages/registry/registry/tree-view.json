@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Tree View",
   "description": "Hierarchical tree with expandable nodes and selection.",
-  "category": "navigation",
+  "category": "data-display",
   "examples": [],
   "dependencies": [
     "reka-ui",

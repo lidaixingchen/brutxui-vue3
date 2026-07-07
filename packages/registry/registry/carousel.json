@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Carousel",
   "description": "Image and content carousel with navigation and autoplay.",
-  "category": "media",
+  "category": "data-display",
   "examples": [],
   "dependencies": [
     "embla-carousel-vue",

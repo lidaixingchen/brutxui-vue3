@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Image",
   "description": "Image component with lazy loading, fallback image, and Neo-Brutalist interactive preview modal.",
-  "category": "media",
+  "category": "data-display",
   "examples": [],
   "dependencies": [
     "reka-ui",

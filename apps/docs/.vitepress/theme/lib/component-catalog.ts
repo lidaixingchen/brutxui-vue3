@@ -26,7 +26,6 @@ const categoryOrder: ComponentRegistryEntry['category'][] = [
     'feedback',
     'overlay',
     'layout',
-    'media',
     'visual-effect',
     'utility',
     'marketing',
@@ -42,7 +41,6 @@ const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['categ
         feedback: '反馈与状态',
         overlay: '弹出层与浮层',
         layout: '布局与结构',
-        media: '媒体',
         'visual-effect': '交互与可视化',
         utility: '主题与工具',
         marketing: '区块',
@@ -56,30 +54,12 @@ const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['categ
         feedback: 'Feedback & Status',
         overlay: 'Overlay & Popup',
         layout: 'Layout & Structure',
-        media: 'Media',
         'visual-effect': 'Interaction & Visualization',
         utility: 'Theme & Utilities',
         marketing: 'Blocks',
         page: 'Pages',
     },
 }
-
-const hiddenDocsEntries = new Set<string>([])
-
-const slugAliases: Record<string, string> = {
-    kanban: 'kanban-board',
-}
-
-const blockEntries = new Set([
-    'auth-card',
-    'brutalist-hero',
-    'cookie-consent',
-    'dashboard-shell',
-    'feedback-form',
-    'footer-section',
-    'header-section',
-    'pricing-section',
-])
 
 const descriptionLabels: Record<CatalogLocale, Record<string, string>> = {
     zh: {
@@ -173,25 +153,22 @@ const descriptionLabels: Record<CatalogLocale, Record<string, string>> = {
     en: {},
 }
 
-function getSlug(name: string): string {
-    return slugAliases[name] ?? name
-}
-
-function getHref(name: string, locale: CatalogLocale): string {
+function getHref(entry: ComponentRegistryEntry, locale: CatalogLocale): string {
     const prefix = locale === 'en' ? '/en' : ''
-    const section = blockEntries.has(name) ? 'blocks' : 'components'
-    return `${prefix}/${section}/${getSlug(name)}`
+    const section = entry.kind === 'block' ? 'blocks' : 'components'
+    const slug = entry.docsSlug ?? entry.name
+    return `${prefix}/${section}/${slug}`
 }
 
 export function getComponentCatalog(locale: CatalogLocale): CatalogSection[] {
     const entries = Object.values(COMPONENT_REGISTRY)
-        .filter(entry => !hiddenDocsEntries.has(entry.name))
+        .filter(entry => entry.docsHidden !== true)
         .map<CatalogItem>(entry => ({
             name: entry.name,
             title: entry.title,
             description: descriptionLabels[locale][entry.name] ?? entry.description,
             category: entry.category,
-            href: getHref(entry.name, locale),
+            href: getHref(entry, locale),
             status: entry.status,
             replacement: entry.replacement,
         }))

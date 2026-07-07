@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Sketchy Chart",
   "description": "Hand-drawn style data visualization chart.",
-  "category": "utility",
+  "category": "data-display",
   "examples": [],
   "dependencies": [],
   "registryDependencies": [

@@ -11,7 +11,6 @@ const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
     'form',
     'layout',
     'marketing',
-    'media',
     'navigation',
     'overlay',
     'page',

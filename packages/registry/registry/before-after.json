@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Before After",
   "description": "Side-by-side image comparison with draggable slider.",
-  "category": "media",
+  "category": "visual-effect",
   "examples": [],
   "dependencies": [
     "@lucide/vue"

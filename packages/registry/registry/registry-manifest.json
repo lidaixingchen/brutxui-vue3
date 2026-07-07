@@ -68,7 +68,7 @@
       "registryDependencies": [
         "locale-zh-cn"
       ],
-      "category": "media",
+      "category": "data-display",
       "examples": []
     },
     "backtop": {
@@ -102,7 +102,7 @@
       "registryDependencies": [
         "locale-zh-cn"
       ],
-      "category": "media",
+      "category": "visual-effect",
       "examples": []
     },
     "breadcrumb": {
@@ -174,7 +174,7 @@
       "registryDependencies": [
         "locale-zh-cn"
       ],
-      "category": "utility",
+      "category": "layout",
       "examples": []
     },
     "carousel": {
@@ -188,7 +188,7 @@
         "button",
         "locale-zh-cn"
       ],
-      "category": "media",
+      "category": "data-display",
       "examples": []
     },
     "cascader": {
@@ -214,7 +214,7 @@
         "reka-ui"
       ],
       "registryDependencies": [],
-      "category": "feedback",
+      "category": "data-display",
       "examples": []
     },
     "checkbox": {
@@ -485,7 +485,7 @@
         "input",
         "locale-zh-cn"
       ],
-      "category": "utility",
+      "category": "form",
       "examples": []
     },
     "header-section": {
@@ -512,7 +512,7 @@
         "reka-ui"
       ],
       "registryDependencies": [],
-      "category": "media",
+      "category": "data-display",
       "examples": []
     },
     "infinite-scroll": {
@@ -736,7 +736,7 @@
       "registryDependencies": [
         "locale-zh-cn"
       ],
-      "category": "layout",
+      "category": "visual-effect",
       "examples": []
     },
     "scroll-area": {
@@ -798,7 +798,7 @@
       "registryDependencies": [
         "locale-zh-cn"
       ],
-      "category": "utility",
+      "category": "data-display",
       "examples": []
     },
     "slider": {
@@ -899,7 +899,7 @@
       "registryDependencies": [
         "locale-zh-cn"
       ],
-      "category": "utility",
+      "category": "data-display",
       "examples": []
     },
     "toast": {
@@ -999,7 +999,7 @@
         "checkbox",
         "locale-zh-cn"
       ],
-      "category": "navigation",
+      "category": "data-display",
       "examples": []
     },
     "typewriter-text": {
