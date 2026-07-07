@@ -186,13 +186,7 @@ const carouselRef = ref()
 
 ## Carousel 增强能力
 
-`Carousel` 已内置**缩略图导航**、**自动播放指示器**（进度条/圆点/分数）与**视差动画**效果，适用于图片画廊、产品展示等需要更丰富交互的场景。`CarouselEnhanced` 仍作为兼容 wrapper 保留，新代码建议直接使用 `Carousel`。
-
-### 预览
-
-<ComponentPreview>
-  <CarouselEnhancedDemo />
-</ComponentPreview>
+`Carousel` 已内置**缩略图导航**、**自动播放指示器**（进度条/圆点/分数）与**视差动画**效果，适用于图片画廊、产品展示等需要更丰富交互的场景。
 
 ### 用法
 

@@ -136,29 +136,29 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Landing Page / Marketing
 
-`BrutalistHero`, `PricingSection`, `SaaSPricing`, `FaqSection`, `TestimonialCard`, `WaitlistPage`
+`BrutalistHero`, `PricingSection`
 
-`PricingSection` is the unified pricing implementation for lifetime and subscription pricing. `SaaSPricing` remains a SaaS compatibility preset powered by it.
+`PricingSection` is the unified pricing implementation for lifetime and subscription pricing.
 
 #### Dashboard
 
-`DashboardShell`, `DashboardStats`, `OverviewPage`, `ChartSection`, `DataTable`
+`DashboardShell`, `DataTable`
 
 #### Pages
 
-`AuthCard`, `SettingsPage`, `ProfilePage`, `BlogListPage`, `ActivityLogPage`, `NotFoundPage`
+`AuthCard`
 
 #### Navigation
 
-`HeaderSection`, `FooterSection`, `TabsNav`
+`HeaderSection`, `FooterSection`
 
 #### Cards / Components
 
-`BlogCard`, `FileCard`, `EmptyState`, `Result`, `Upload`
+`Result`, `Upload`
 
 #### Interactive
 
-`QuickActions`, `SearchWidget`, `FeedbackForm`, `CookieConsent`, `Stepper`, `GallerySection`
+`FeedbackForm`, `CookieConsent`, `Stepper`
 
 ### Atomic Components
 
@@ -184,7 +184,7 @@ BrutxUI includes components and layout blocks needed for common product UIs:
 
 #### Blocks / Pages
 
-`PricingSection`, `SaaSPricing`, `DashboardStats`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `FaqSection`, `TestimonialCard`, `BlogCard`, `BlogListPage`, `FileCard`, `Upload`, `DataTable`, `SettingsPage`, `ProfilePage`, `ActivityLogPage`, `OverviewPage`, `ChartSection`, `GallerySection`, `Stepper`, `EmptyState`, `Result`, `NotFoundPage`, `WaitlistPage`, `CookieConsent`, `QuickActions`, `Tabs`, `SearchWidget`, `FeedbackForm`
+`PricingSection`, `DashboardShell`, `BrutalistHero`, `AuthCard`, `HeaderSection`, `FooterSection`, `Upload`, `DataTable`, `Stepper`, `Result`, `CookieConsent`, `Tabs`, `FeedbackForm`
 
 ---
 

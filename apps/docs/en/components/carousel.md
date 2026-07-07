@@ -253,7 +253,7 @@ The following enhanced props can be passed directly to `Carousel`:
 
 ### Exposed API
 
-`Carousel` exposes scroll and autoplay control via `defineExpose`; the `CarouselEnhanced` compatibility wrapper exposes the same methods:
+`Carousel` exposes scroll and autoplay control via `defineExpose`:
 
 | Method/Property | Type | Description |
 |-----------|------|------|

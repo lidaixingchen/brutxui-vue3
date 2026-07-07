@@ -109,7 +109,6 @@ import { cn } from '@/lib/utils'
 | ChatBubble | 聊天气泡 | 支持 sent/received/system 变体、颜色/尺寸 |
 | Skeleton | 骨架屏 | 支持 Text/Avatar/Card/Table 子组件、尺寸/形状/宽度 |
 | Spinner | 加载动画 | 4 种变体（Spinner/Block/Dots/Bars） |
-| DashboardStats | 仪表盘统计 | 支持趋势指标 |
 | Statistic | 统计数值 | 粗野主义高对比度统计数值卡片，带数字递增动画缓动 |
 | Image | 图片 | 支持 fit 填充模式、懒加载（IntersectionObserver）、fallback 备用图、大图预览（Teleport/FocusScope/键盘切换/缩放/旋转/翻转/拖拽）、斜线噪点占位背景、placeholder/error 插槽 |
 
