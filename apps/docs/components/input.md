@@ -153,19 +153,22 @@ const value = ref('')
 </template>
 ```
 
-### 前缀/后缀插槽
+### 图标与前后缀
 
-使用插槽在输入框前后添加自定义内容。
+优先使用 `Input` 自身的 `prefixIcon`、`suffixIcon` props 和 `prepend`、`append` 插槽来实现输入框装饰。`InputAdornment` 仅作为兼容入口保留，新代码建议直接使用 `Input`。
 
 ```vue
 <script setup>
 import { ref } from 'vue'
 import { Input } from 'brutx-ui-vue'
+import { Search } from '@lucide/vue'
 
 const url = ref('')
 </script>
 
 <template>
+    <Input :prefix-icon="Search" placeholder="搜索项目" />
+
     <Input v-model="url" placeholder="请输入网址">
         <template #prepend>https://</template>
         <template #append>.com</template>

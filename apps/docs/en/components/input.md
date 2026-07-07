@@ -131,19 +131,22 @@ const value = ref('')
 </template>
 ```
 
-### With Prefix/Suffix Slots
+### Icons And Addons
 
-Use slots to add custom content before or after the input.
+Prefer the built-in `prefixIcon`, `suffixIcon`, `prepend`, and `append` APIs on `Input` for input adornments. `InputAdornment` remains only as a compatibility entry; new code should use `Input` directly.
 
 ```vue
 <script setup>
 import { ref } from 'vue'
 import { Input } from 'brutx-ui-vue'
+import { Search } from '@lucide/vue'
 
 const url = ref('')
 </script>
 
 <template>
+    <Input :prefix-icon="Search" placeholder="Search projects" />
+
     <Input v-model="url" placeholder="Enter URL">
         <template #prepend>https://</template>
         <template #append>.com</template>
@@ -207,8 +210,6 @@ const url = ref('')
 | --- | --- |
 | `prepend` | Content before the input (e.g., URL protocol) |
 | `append` | Content after the input (e.g., domain) |
-| `prefix` | Custom prefix content |
-| `suffix` | Custom suffix content |
 
 ## Exposed Methods (defineExpose)
 
