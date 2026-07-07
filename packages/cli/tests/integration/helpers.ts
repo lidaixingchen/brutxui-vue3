@@ -169,6 +169,19 @@ export async function runCli(
     }
 
     const resolvedTemp = await fs.realpath(os.tmpdir());
+    const pathKey = Object.keys(process.env).find(k => k.toLowerCase() === 'path') || 'PATH';
+    const originalPath = process.env[pathKey] || '';
+
+    const env: Record<string, string> = {
+        ...process.env,
+        TEMP: resolvedTemp,
+        TMP: resolvedTemp,
+        BRUTX_FAKE_PM_LOG: project.installLog,
+        CI: '1',
+        NO_COLOR: '1',
+    };
+    env['PATH'] = `${project.fakeBin}${path.delimiter}${originalPath}`;
+    env['Path'] = `${project.fakeBin}${path.delimiter}${originalPath}`;
 
     return new Promise((resolve) => {
         execFile(
@@ -176,15 +189,7 @@ export async function runCli(
             [cliEntry, ...args],
             {
                 cwd: options.cwd ?? project.root,
-                env: {
-                    ...process.env,
-                    TEMP: resolvedTemp,
-                    TMP: resolvedTemp,
-                    BRUTX_FAKE_PM_LOG: project.installLog,
-                    CI: '1',
-                    NO_COLOR: '1',
-                    PATH: `${project.fakeBin}${path.delimiter}${process.env.PATH ?? ''}`,
-                },
+                env,
                 windowsHide: true,
             },
             (error, stdout, stderr) => {
@@ -245,11 +250,16 @@ async function writeFakePackageManager(fakeBin: string): Promise<void> {
         '      }',
         '      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));',
         '    } catch (e) {',
+        '      console.error("FAKE_PM_ERROR (catch):", e.message, e.stack);',
         '      if (logPath) {',
         '        fs.appendFileSync(logPath, JSON.stringify({ error: e.message, stack: e.stack }) + "\\n");',
         '      }',
         '    }',
+        '  } else {',
+        '    console.error("FAKE_PM_ERROR: package.json does not exist at", pkgPath);',
         '  }',
+        '} else {',
+        '  console.error("FAKE_PM_ERROR: not an add command", args);',
         '}',
     ].join('\n');
 
