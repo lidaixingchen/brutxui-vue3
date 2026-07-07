@@ -79,9 +79,6 @@ function ensureMounted(): void {
     if (instance) return
     instance = renderImperative(MessageContainer, {}, {
         transitionDuration: DEFAULT_DIALOG_TRANSITION_MS,
-        onClose: () => {
-            instance = null
-        },
     })
 }
 

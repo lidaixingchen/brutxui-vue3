@@ -158,6 +158,7 @@ flowchart LR
 - **复现步骤**：阅读源码即可见。
 - **影响范围**：`MessageContainer.vue` `defineEmits<{ close: [] }>()`，但模板中关闭按钮调用 `handleClose(msg.id)` → `removeMessage(id)`，从不 `emit('close')`。`useMessage.ts` 传入的 `onClose: () => { instance = null }` 因此永不被触发（实际靠 `scheduleGC` 设置 `instance=null`）。`onClose` 死代码；若后续依赖该回调做清理将沉默失败。
 - **修复建议**：删除 `MessageContainer` 的 `defineEmits` 或在合适时机 `emit('close')`；同时移除 `useMessage.ts` 中的 `onClose`。
+- **处理记录（2026-07-07）**：`MessageContainer` 已不再声明 `close` emit；`useMessage.ts` 已移除传给 `renderImperative` 的无效 `onClose`，消息容器实例继续由 `scheduleGC()` 与 `destroyMessageSystem()` 清理。
 
 ### 3.4 [Minor] renderImperative 仅把 firstElementChild 挂到 body，多根片段会被丢弃
 
