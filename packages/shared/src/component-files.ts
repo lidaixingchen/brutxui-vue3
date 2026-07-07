@@ -167,7 +167,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     },
     transfer: {
         files: ['Transfer.vue', 'index.ts'],
-        composables: ['useLocale.ts'],
+        composables: ['useLocale.ts', 'useTransferPanelSelection.ts'],
     },
     rate: {
         files: ['Rate.vue', 'index.ts'],

@@ -7,6 +7,7 @@ import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
 import { ChevronLeft, ChevronRight, Search } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
+import { useTransferPanelSelection } from '@/composables/useTransferPanelSelection'
 
 export interface TransferDataItem {
     key: string | number
@@ -95,19 +96,36 @@ const filteredTargetData = computed<TransferDataItem[]>(() => {
     return targetData.value.filter(item => activeFilterMethod.value(rightQuery.value, item))
 })
 
-// 选中状态（存储被选中的 key）
-const leftChecked = ref<(string | number)[]>([])
-const rightChecked = ref<(string | number)[]>([])
+const {
+    checked: leftChecked,
+    allChecked: leftAllChecked,
+    indeterminate: leftIndeterminate,
+    handleAllCheckChange: handleLeftAllCheckChange,
+    toggleItem: toggleLeftChecked,
+    removeKeys: removeLeftCheckedKeys,
+    pruneKeys: pruneLeftCheckedKeys,
+} = useTransferPanelSelection({
+    items: () => filteredSourceData.value,
+})
+
+const {
+    checked: rightChecked,
+    allChecked: rightAllChecked,
+    indeterminate: rightIndeterminate,
+    handleAllCheckChange: handleRightAllCheckChange,
+    toggleItem: toggleRightChecked,
+    removeKeys: removeRightCheckedKeys,
+    pruneKeys: pruneRightCheckedKeys,
+} = useTransferPanelSelection({
+    items: () => filteredTargetData.value,
+})
 
 // 监视 props.modelValue 或 props.data 发生变化时，清理无效的选中项
 watch(
     [() => props.modelValue, () => props.data],
     () => {
-        const sourceKeys = new Set(sourceData.value.map(item => item.key))
-        leftChecked.value = leftChecked.value.filter(key => sourceKeys.has(key))
-
-        const targetKeys = new Set(targetData.value.map(item => item.key))
-        rightChecked.value = rightChecked.value.filter(key => targetKeys.has(key))
+        pruneLeftCheckedKeys(sourceData.value)
+        pruneRightCheckedKeys(targetData.value)
     },
     { deep: true }
 )
@@ -115,78 +133,6 @@ watch(
 // 按钮禁用状态
 const leftToRightDisabled = computed(() => leftChecked.value.length === 0)
 const rightToLeftDisabled = computed(() => rightChecked.value.length === 0)
-
-// 左侧全选框状态
-const leftAllChecked = computed(() => {
-    const enabledKeys = filteredSourceData.value.filter(item => !item.disabled).map(item => item.key)
-    if (enabledKeys.length === 0) return false
-    return enabledKeys.every(key => leftChecked.value.includes(key))
-})
-
-const leftIndeterminate = computed(() => {
-    const enabledKeys = filteredSourceData.value.filter(item => !item.disabled).map(item => item.key)
-    if (enabledKeys.length === 0) return false
-    const checkedCount = enabledKeys.filter(key => leftChecked.value.includes(key)).length
-    return checkedCount > 0 && checkedCount < enabledKeys.length
-})
-
-// 右侧全选框状态
-const rightAllChecked = computed(() => {
-    const enabledKeys = filteredTargetData.value.filter(item => !item.disabled).map(item => item.key)
-    if (enabledKeys.length === 0) return false
-    return enabledKeys.every(key => rightChecked.value.includes(key))
-})
-
-const rightIndeterminate = computed(() => {
-    const enabledKeys = filteredTargetData.value.filter(item => !item.disabled).map(item => item.key)
-    if (enabledKeys.length === 0) return false
-    const checkedCount = enabledKeys.filter(key => rightChecked.value.includes(key)).length
-    return checkedCount > 0 && checkedCount < enabledKeys.length
-})
-
-// 处理左侧全选点击
-const handleLeftAllCheckChange = (checked: boolean | 'indeterminate') => {
-    const enabledKeys = filteredSourceData.value.filter(item => !item.disabled).map(item => item.key)
-    if (checked === true || checked === 'indeterminate') {
-        const uniqueKeys = new Set([...leftChecked.value, ...enabledKeys])
-        leftChecked.value = Array.from(uniqueKeys)
-    } else {
-        leftChecked.value = leftChecked.value.filter(key => !enabledKeys.includes(key))
-    }
-}
-
-// 处理右侧全选点击
-const handleRightAllCheckChange = (checked: boolean | 'indeterminate') => {
-    const enabledKeys = filteredTargetData.value.filter(item => !item.disabled).map(item => item.key)
-    if (checked === true || checked === 'indeterminate') {
-        const uniqueKeys = new Set([...rightChecked.value, ...enabledKeys])
-        rightChecked.value = Array.from(uniqueKeys)
-    } else {
-        rightChecked.value = rightChecked.value.filter(key => !enabledKeys.includes(key))
-    }
-}
-
-// 切换左侧单项选中状态
-const toggleLeftChecked = (item: TransferDataItem) => {
-    if (item.disabled) return
-    const index = leftChecked.value.indexOf(item.key)
-    if (index > -1) {
-        leftChecked.value.splice(index, 1)
-    } else {
-        leftChecked.value.push(item.key)
-    }
-}
-
-// 切换右侧单项选中状态
-const toggleRightChecked = (item: TransferDataItem) => {
-    if (item.disabled) return
-    const index = rightChecked.value.indexOf(item.key)
-    if (index > -1) {
-        rightChecked.value.splice(index, 1)
-    } else {
-        rightChecked.value.push(item.key)
-    }
-}
 
 // 源列表 -> 目标列表 (左 -> 右)
 const addToRight = () => {
@@ -198,7 +144,7 @@ const addToRight = () => {
     const newValue = [...props.modelValue, ...keysToMove]
     emit('update:modelValue', newValue)
     emit('change', newValue, 'right', keysToMove)
-    leftChecked.value = leftChecked.value.filter(key => !keysToMove.includes(key))
+    removeLeftCheckedKeys(keysToMove)
 }
 
 // 目标列表 -> 源列表 (右 -> 左)
@@ -211,7 +157,7 @@ const addToLeft = () => {
     const newValue = props.modelValue.filter(key => !keysToMove.includes(key))
     emit('update:modelValue', newValue)
     emit('change', newValue, 'left', keysToMove)
-    rightChecked.value = rightChecked.value.filter(key => !keysToMove.includes(key))
+    removeRightCheckedKeys(keysToMove)
 }
 </script>
 

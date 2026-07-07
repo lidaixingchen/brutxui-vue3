@@ -12606,6 +12606,10 @@
         {
           "path": "composables/useLocale.ts",
           "type": "registry:hook"
+        },
+        {
+          "path": "composables/useTransferPanelSelection.ts",
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -12694,7 +12698,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ce775d67d9456b87d49568a5ec5e4dd01917d70f1d756f911ffcdfab790d46ae"
+      "integrity": "sha256-6428ea7fe44cedf1a9260f3edce58aaee6c398c0e800ef83a3fc74619f61f80d"
     },
     {
       "name": "rate",

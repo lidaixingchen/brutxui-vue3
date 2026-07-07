@@ -37,6 +37,9 @@ export type { UseSelectionDisplayTextOptions } from './useSelectionDisplayText'
 export { useSelectableTrigger } from './useSelectableTrigger'
 export type { SelectableTriggerClass, SelectableTriggerState, UseSelectableTriggerOptions, UseSelectableTriggerReturn } from './useSelectableTrigger'
 
+export { useTransferPanelSelection } from './useTransferPanelSelection'
+export type { TransferPanelItem, TransferPanelKey, UseTransferPanelSelectionOptions, UseTransferPanelSelectionReturn } from './useTransferPanelSelection'
+
 export { useDialog } from './useDialog'
 export type { UseDialogReturn, ShowDialogOptions } from './useDialog'
 

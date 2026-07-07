@@ -60,7 +60,7 @@
 | 卡片/区块模板族 | `BlogCard`、`FileCard`、`TestimonialCard`、`QuickActions`、`FaqSection`、`ChartSection`、`GallerySection` 已标记 legacy/replacement；`DashboardStats` 内部数值展示已复用 `Counter`；docs 已补 `Card` 组合示例和 legacy 提示 | 后续逐步迁移更多 blocks 文档推荐入口 |
 | `EmptyState` + `Result` | `Result` 已支持 `status="empty"`，`EmptyState` 已改为兼容 wrapper；docs 已把空状态纳入 Result 示例 | 后续大版本评估是否移除独立入口 |
 | `InputAdornment` + `Input` | `InputAdornment` 已标记 `legacy`，replacement 指向 `input`；Input 中英文文档与 demo 已优先展示内置图标、清除、密码、字数统计和 `prepend`/`append` 能力 | 后续大版本评估是否移除独立入口 |
-| 选择器族共享能力 | `Combobox`、`Cascader`、`TreeSelect` 已复用 `useSelectableTrigger` 与 `useSelectionDisplayText`，`Cascader`、`TreeSelect` 已复用 `useClearableSelection`；registry 映射已补齐相关组合式函数 | 继续观察 `Transfer` 是否适合复用局部 trigger/display helper |
+| 选择器族共享能力 | `Combobox`、`Cascader`、`TreeSelect` 已复用 `useSelectableTrigger` 与 `useSelectionDisplayText`，`Cascader`、`TreeSelect` 已复用 `useClearableSelection`；`Transfer` 已抽出 `useTransferPanelSelection` 统一左右面板的全选、半选、切换和无效 key 清理；registry 映射已补齐相关组合式函数 | 继续观察选择器族是否还有局部可复用状态逻辑 |
 | 浮层族共享能力 | `Dialog` 与 `Sheet` 的关闭按钮已统一到 `modalCloseButtonVariants`；`Popover`、`DropdownMenu`、`Tooltip` 已复用 `floating-content-variants` 中的 side offset、surface 与 tooltip motion token；日期面板底部操作已抽为共享 footer | 继续统一 overlay content token，暂不合并公共组件 |
 
 ## P0：第一轮精简尾巴已清理
@@ -285,6 +285,7 @@
 - `useSelectableTrigger`（已落地到 `Combobox` / `Cascader` / `TreeSelect`，统一有值状态和触发器空态 class 拼装）
 - `useSelectionDisplayText`（已落地到 `Combobox` / `Cascader` / `TreeSelect`，保留各自 `selectedCount` i18n key 与列表格式化差异）
 - `useClearableSelection`（已落地到 `Cascader` / `TreeSelect`，统一清除按钮可见性、阻止冒泡和空值派发）
+- `useTransferPanelSelection`（已落地到 `Transfer`，统一左右面板的启用项 key、全选、半选、单项切换和无效 key 清理）
 - 统一 trigger variant、清除按钮、loading/empty 文案、键盘焦点样式
 
 这样可以降低重复，但不会牺牲类型清晰度。
