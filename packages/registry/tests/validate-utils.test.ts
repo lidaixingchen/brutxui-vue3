@@ -3,10 +3,12 @@ import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
     formatRegistryDependencyGraph,
+    REGISTRY_MANIFEST_SCHEMA_URL,
     validateComponentSourceFiles,
     validateDocsComponentPageCoverage,
     validateGeneratedItemMatchesMetadata,
     validateRegistryManifestConsistency,
+    type RegistryBuildManifestSnapshot,
 } from '../scripts/validate-utils'
 import type { RegistryIndexItem } from 'brutx-shared-vue'
 
@@ -52,10 +54,7 @@ describe('validate-registry helpers', () => {
     })
 
     it('accepts a manifest that matches index items', () => {
-        expect(validateRegistryManifestConsistency({
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            itemCount: 2,
+        expect(validateRegistryManifestConsistency(createManifest({
             items: {
                 button: {
                     integrity: 'sha256-button',
@@ -77,7 +76,7 @@ describe('validate-registry helpers', () => {
                     replacement: 'modal',
                 },
             },
-        }, createIndex([
+        }), createIndex([
             createIndexItem('button', {
                 integrity: 'sha256-button',
                 fileCount: 1,
@@ -101,12 +100,12 @@ describe('validate-registry helpers', () => {
     })
 
     it('reports manifest schema and registry version drift', () => {
-        expect(validateRegistryManifestConsistency({
+        expect(validateRegistryManifestConsistency(createManifest({
             schemaVersion: 2,
             registryVersion: '0.0.0',
             itemCount: 0,
             items: {},
-        }, createIndex([], {
+        }), createIndex([], {
             schemaVersion: 1,
             registryVersion: '0.1.0',
         }))).toEqual([
@@ -116,9 +115,7 @@ describe('validate-registry helpers', () => {
     })
 
     it('reports manifest item count, missing items, and extra items', () => {
-        expect(validateRegistryManifestConsistency({
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
+        expect(validateRegistryManifestConsistency(createManifest({
             itemCount: 3,
             items: {
                 button: {
@@ -134,7 +131,7 @@ describe('validate-registry helpers', () => {
                     registryDependencies: [],
                 },
             },
-        }, createIndex([
+        }), createIndex([
             createIndexItem('button', { integrity: 'sha256-button', fileCount: 1 }),
             createIndexItem('dialog', { integrity: 'sha256-dialog', fileCount: 1 }),
         ]))).toEqual([
@@ -145,10 +142,7 @@ describe('validate-registry helpers', () => {
     })
 
     it('reports manifest metadata drift for matching items', () => {
-        expect(validateRegistryManifestConsistency({
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            itemCount: 1,
+        expect(validateRegistryManifestConsistency(createManifest({
             items: {
                 dialog: {
                     integrity: 'sha256-old',
@@ -161,7 +155,7 @@ describe('validate-registry helpers', () => {
                     replacement: 'legacy-dialog',
                 },
             },
-        }, createIndex([
+        }), createIndex([
             createIndexItem('dialog', {
                 integrity: 'sha256-new',
                 fileCount: 2,
@@ -181,6 +175,38 @@ describe('validate-registry helpers', () => {
             'item "dialog" category mismatch',
             'item "dialog" status mismatch',
             'item "dialog" replacement mismatch',
+        ])
+    })
+
+    it('reports manifest top-level contract drift', () => {
+        expect(validateRegistryManifestConsistency(createManifest({
+            $schema: 'https://example.test/registry-manifest.schema.json',
+            name: 'brutx-next',
+            buildTimestamp: 'not-a-date',
+            gitCommit: '',
+            items: {
+                dialog: {
+                    integrity: 'sha256-dialog',
+                    fileCount: 1,
+                    dependencies: [],
+                    registryDependencies: [],
+                },
+                button: {
+                    integrity: 'sha256-button',
+                    fileCount: 1,
+                    dependencies: [],
+                    registryDependencies: [],
+                },
+            },
+        }), createIndex([
+            createIndexItem('button', { integrity: 'sha256-button', fileCount: 1 }),
+            createIndexItem('dialog', { integrity: 'sha256-dialog', fileCount: 1 }),
+        ]))).toEqual([
+            `$schema "https://example.test/registry-manifest.schema.json" does not match expected "${REGISTRY_MANIFEST_SCHEMA_URL}"`,
+            'name "brutx-next" does not match index name "brutx-vue"',
+            'buildTimestamp "not-a-date" is not a valid date-time',
+            'gitCommit must be null or a non-empty string',
+            'manifest items must be sorted by name',
         ])
     })
 
@@ -317,9 +343,26 @@ function createIndex(
     } = {}
 ) {
     return {
+        name: 'brutx-vue',
         schemaVersion: overrides.schemaVersion ?? 1,
         registryVersion: overrides.registryVersion ?? '0.1.0',
         items,
+    }
+}
+
+function createManifest(overrides: Partial<RegistryBuildManifestSnapshot>): RegistryBuildManifestSnapshot {
+    const items = overrides.items ?? {}
+
+    return {
+        $schema: REGISTRY_MANIFEST_SCHEMA_URL,
+        name: 'brutx-vue',
+        schemaVersion: 1,
+        registryVersion: '0.1.0',
+        buildTimestamp: null,
+        gitCommit: null,
+        itemCount: Object.keys(items).length,
+        items,
+        ...overrides,
     }
 }
 

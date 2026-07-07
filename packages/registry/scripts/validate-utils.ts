@@ -1,5 +1,7 @@
 import type { ComponentRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
 
+export const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json'
+
 export interface RegistryReferenceItem {
     name: string
     registryDependencies: string[]
@@ -22,8 +24,12 @@ export interface RegistryBuildManifestItem {
 }
 
 export interface RegistryBuildManifestSnapshot {
+    $schema: string
+    name: string
     schemaVersion: number
     registryVersion: string
+    buildTimestamp: string | null
+    gitCommit: string | null
     itemCount: number
     items: Record<string, RegistryBuildManifestItem>
 }
@@ -117,12 +123,21 @@ export function formatRegistryDependencyGraph(items: RegistryReferenceItem[]): s
 
 export function validateRegistryManifestConsistency(
     manifest: RegistryBuildManifestSnapshot,
-    index: Pick<RegistryIndex, 'schemaVersion' | 'registryVersion' | 'items'>
+    index: Pick<RegistryIndex, 'name' | 'schemaVersion' | 'registryVersion' | 'items'>
 ): string[] {
     const errors: string[] = []
     const indexItems = index.items
     const indexByName = new Map(indexItems.map(item => [item.name, item]))
-    const manifestNames = new Set(Object.keys(manifest.items))
+    const manifestItemNames = Object.keys(manifest.items)
+    const manifestNames = new Set(manifestItemNames)
+
+    if (manifest.$schema !== REGISTRY_MANIFEST_SCHEMA_URL) {
+        errors.push(`$schema "${manifest.$schema}" does not match expected "${REGISTRY_MANIFEST_SCHEMA_URL}"`)
+    }
+
+    if (manifest.name !== index.name) {
+        errors.push(`name "${manifest.name}" does not match index name "${index.name}"`)
+    }
 
     if (manifest.schemaVersion !== index.schemaVersion) {
         errors.push(`schemaVersion ${manifest.schemaVersion} does not match index schemaVersion ${index.schemaVersion}`)
@@ -134,6 +149,18 @@ export function validateRegistryManifestConsistency(
 
     if (manifest.itemCount !== indexItems.length) {
         errors.push(`itemCount ${manifest.itemCount} does not match index item count ${indexItems.length}`)
+    }
+
+    if (manifest.buildTimestamp !== null && Number.isNaN(Date.parse(manifest.buildTimestamp))) {
+        errors.push(`buildTimestamp "${manifest.buildTimestamp}" is not a valid date-time`)
+    }
+
+    if (manifest.gitCommit !== null && manifest.gitCommit.length === 0) {
+        errors.push('gitCommit must be null or a non-empty string')
+    }
+
+    if (manifestItemNames.join('\0') !== [...manifestItemNames].sort().join('\0')) {
+        errors.push('manifest items must be sorted by name')
     }
 
     for (const item of indexItems) {

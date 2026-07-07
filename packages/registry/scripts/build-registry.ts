@@ -8,7 +8,7 @@ import {
     computeRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import { findRegistryDependencyCycles } from './validate-utils';
+import { findRegistryDependencyCycles, REGISTRY_MANIFEST_SCHEMA_URL } from './validate-utils';
 import type {
     RegistryFile,
     RegistryFileType,
@@ -85,7 +85,7 @@ export function buildRegistryManifest(
     }
 
     return {
-        $schema: 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json',
+        $schema: REGISTRY_MANIFEST_SCHEMA_URL,
         name: index.name,
         schemaVersion: options.schemaVersion ?? index.schemaVersion,
         registryVersion: options.registryVersion,
@@ -747,7 +747,9 @@ export async function run() {
     console.log('🎉 Registry built!');
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+const isVitestRuntime = process.env.VITEST === 'true' || process.env.VITEST_WORKER_ID !== undefined;
+
+if (!isVitestRuntime && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     run().catch((error) => {
         console.error(error);
         process.exitCode = 1;
