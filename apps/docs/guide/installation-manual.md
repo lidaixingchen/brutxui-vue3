@@ -9,7 +9,7 @@ description: 手动安装和配置 BrutxUI 组件库
 
 ## 前提条件
 
-- **Node.js** 22.5+
+- **Node.js**：使用你的 Vue/Tailwind 工具链支持的版本；如后续运行 `brutx-vue` CLI，则需要 22.0+
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 

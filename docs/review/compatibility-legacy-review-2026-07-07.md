@@ -180,6 +180,9 @@
 - CLI 构建 `packages/cli/tsup.config.ts:11` target 为 `node22`，且 `packages/cli/tsup.config.ts:9` 不生成 dts。
 - CLI integration matrix 已覆盖 Vite + Tailwind v4 默认路径，并显式登记 Tailwind v3、Nuxt、monorepo 子包等重型兼容场景；本地 registry 命令参数由测试矩阵生成。
 - CLI doctor 已检查当前运行的 Node.js 版本，低于 `brutx-vue` 的 `engines.node >=22.0.0` 时报告 error。
+- 文档站 Vite 安装页已把用户项目的 CLI 运行要求收敛为 Node.js 22.0+，不再误用仓库维护环境的 Node.js 22.5+。
+- 文档站手动安装页已说明纯手动复制以用户项目 Vue/Tailwind 工具链为准，仅在运行 `brutx-vue` CLI 时要求 Node.js 22.0+。
+- CLI 中英文 README 已明确 `brutx-vue` 运行要求为 Node.js 22.0+，并区分用户项目包管理器与仓库维护环境要求。
 - CLI 的 `init`、`add`、`diff`、`remove` 核心文件写入、registry diff、安装计划和删除计划已抽离到 `packages/cli/src/lib/services/`，命令层保留交互与日志；对应 service 级测试已覆盖事务边界、manifest 元数据、registry source、dry-run/跳过写入等关键路径。
 
 风险：
@@ -190,7 +193,7 @@
 
 建议：
 
-- 短期维持 Node 22：`engines`、doctor 和 CLI 构建 target 已对齐；README/文档后续继续同步用户环境要求。
+- 短期维持 Node 22：`engines`、doctor、CLI 构建 target 与用户安装文档已对齐；README/文档后续继续同步用户环境要求。
 - 如果未来希望扩大 CLI 覆盖面，再评估把 CLI target 降到 Node 20，并增加最低 Node 版本测试。
 - 根包 pnpm 11 和 CLI pnpm 9 可以共存；文档需持续说明“开发本仓库”和“使用 CLI”的要求不同。
 
@@ -234,4 +237,5 @@
 - 本轮 viewport helper 验证：`packages/ui` 下 `vitest run src/lib/env.test.ts src/composables/useDialogEnhanced.test.ts src/components/tour/tour.test.ts`、`vue-tsc --noEmit`。
 - 本轮日期文档补强：补齐 DatePicker 中英文文档的 `displayFormat` 展示边界和跨时区输入建议；仅文档变更，未运行代码测试。
 - 本轮日期本地语义补测：`packages/ui` 下 `vitest run src/lib/date.test.ts`，锁定 `YYYY-MM-DD` 按本地 midnight 构造。
+- 本轮 Node/pnpm 用户环境文档补强：对齐文档站安装页与 CLI README 的 Node.js 22.0+ CLI 运行要求，并保留根 README 的仓库维护环境 Node.js 22.5+ / pnpm 11+ 说明；仅文档变更，未运行代码测试。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。

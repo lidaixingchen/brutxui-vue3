@@ -10,7 +10,7 @@ Set up BrutxUI manually without using the CLI, suitable for projects that need f
 
 ## Prerequisites
 
-- **Node.js** 22.5+
+- **Node.js**: Use the version supported by your Vue/Tailwind toolchain; if you later run the `brutx-vue` CLI, use 22.0+
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 

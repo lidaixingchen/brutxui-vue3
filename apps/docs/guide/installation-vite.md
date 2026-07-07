@@ -9,7 +9,7 @@ description: 在 Vite + Vue 3 项目中安装和配置 BrutxUI
 
 ## 前提条件
 
-- **Node.js** 22.5+
+- **Node.js** 22.0+（运行 `brutx-vue` CLI）
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 

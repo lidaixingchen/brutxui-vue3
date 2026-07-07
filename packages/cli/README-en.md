@@ -6,6 +6,8 @@
 
 ## Installation
 
+Running `brutx-vue` requires **Node.js 22.0+**. User projects can use npm, yarn, pnpm, or bun; see the root README for this repository's maintainer environment requirements.
+
 ```bash
 # Using pnpm
 pnpm add -D brutx-vue

@@ -10,7 +10,7 @@ Set up BrutxUI in a new or existing Vite + Vue 3 project.
 
 ## Prerequisites
 
-- **Node.js** 22.5+
+- **Node.js** 22.0+ (for running the `brutx-vue` CLI)
 - **Vue** 3.5+
 - **Tailwind CSS** 4.3+
 
