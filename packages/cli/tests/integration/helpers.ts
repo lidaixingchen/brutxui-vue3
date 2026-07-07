@@ -223,54 +223,67 @@ async function writeFakePackageManager(fakeBin: string): Promise<void> {
     const script = [
         'const fs = require("fs");',
         'const path = require("path");',
-        'const logPath = process.env.BRUTX_FAKE_PM_LOG;',
-        'if (logPath) {',
-        '  fs.appendFileSync(logPath, JSON.stringify({',
-        '    command: path.basename(process.argv[1]),',
-        '    args: process.argv.slice(2),',
-        '    cwd: process.cwd(),',
-        '  }) + "\\n");',
-        '}',
-        'const args = process.argv.slice(2);',
-        'const isAdd = args.includes("add") || args.includes("install") || args.includes("i");',
-        'if (isAdd) {',
-        '  const pkgPath = path.join(process.cwd(), "package.json");',
-        '  if (fs.existsSync(pkgPath)) {',
-        '    try {',
-        '      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));',
-        '      pkg.dependencies = pkg.dependencies || {};',
-        '      pkg.devDependencies = pkg.devDependencies || {};',
-        '      const isDev = args.includes("-D") || args.includes("--save-dev") || args.includes("-d");',
-        '      const target = isDev ? pkg.devDependencies : pkg.dependencies;',
-        '      const packages = args.filter(arg => !arg.startsWith("-") && arg !== "add" && arg !== "install" && arg !== "i");',
-        '      for (const p of packages) {',
-        '        const name = p.split("@")[0];',
-        '        if (name) {',
-        '          target[name] = "workspace:*";',
+        'try {',
+        '  const logPath = process.env.BRUTX_FAKE_PM_LOG;',
+        '  if (logPath) {',
+        '    fs.appendFileSync(logPath, JSON.stringify({',
+        '      command: path.basename(process.argv[1]),',
+        '      args: process.argv.slice(2),',
+        '      cwd: process.cwd(),',
+        '    }) + "\\n");',
+        '  }',
+        '  const args = process.argv.slice(2);',
+        '  const isAdd = args.includes("add") || args.includes("install") || args.includes("i");',
+        '  if (isAdd) {',
+        '    const pkgPath = path.join(process.cwd(), "package.json");',
+        '    if (fs.existsSync(pkgPath)) {',
+        '      try {',
+        '        const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));',
+        '        pkg.dependencies = pkg.dependencies || {};',
+        '        pkg.devDependencies = pkg.devDependencies || {};',
+        '        const isDev = args.includes("-D") || args.includes("--save-dev") || args.includes("-d");',
+        '        const target = isDev ? pkg.devDependencies : pkg.dependencies;',
+        '        const packages = args.filter(arg => !arg.startsWith("-") && arg !== "add" && arg !== "install" && arg !== "i");',
+        '        for (const p of packages) {',
+        '          const name = p.startsWith("@") ? p.split("@").slice(0, 2).join("@") : p.split("@")[0];',
+        '          if (name) {',
+        '            target[name] = "workspace:*";',
+        '          }',
+        '        }',
+        '        fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));',
+        '      } catch (e) {',
+        '        console.error("FAKE_PM_ERROR (catch):", e.message, e.stack);',
+        '        if (logPath) {',
+        '          fs.appendFileSync(logPath, JSON.stringify({ error: e.message, stack: e.stack }) + "\\n");',
         '        }',
         '      }',
-        '      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));',
-        '    } catch (e) {',
-        '      console.error("FAKE_PM_ERROR (catch):", e.message, e.stack);',
-        '      if (logPath) {',
-        '        fs.appendFileSync(logPath, JSON.stringify({ error: e.message, stack: e.stack }) + "\\n");',
-        '      }',
+        '    } else {',
+        '      console.error("FAKE_PM_ERROR: package.json does not exist at", pkgPath);',
         '    }',
         '  } else {',
-        '    console.error("FAKE_PM_ERROR: package.json does not exist at", pkgPath);',
+        '    console.error("FAKE_PM_ERROR: not an add command", args);',
         '  }',
-        '} else {',
-        '  console.error("FAKE_PM_ERROR: not an add command", args);',
+        '} catch (e) {',
+        '  console.error("FAKE_PM_FATAL:", e.message, e.stack);',
+        '} finally {',
+        '  process.exit(0);',
         '}',
     ].join('\n');
 
     await fs.writeFile(scriptPath, script);
 
-    // Create fake shims for all supported package managers so the CLI picks up
-    // the fake instead of any real pm found later in PATH. Prevents real installs
-    // (and Windows short/long path issues with pnpm) from affecting tests.
+    // Write a package.json with "type": "commonjs" in fakeBin so that Node.js
+    // treats the extensionless shims (npm, pnpm, etc.) as CommonJS modules.
+    // Without this, the nearest package.json (the test project's, which has
+    // "type": "module") causes Node.js to treat the shims as ESM, where
+    // require() is not defined — breaking the fake PM on Linux.
+    await fs.writeJson(path.join(fakeBin, 'package.json'), { type: 'commonjs' });
+
+    // Use process.execPath (absolute path to node) in the shebang instead of
+    // /usr/bin/env node. On Linux CI, /usr/bin/env may not find node if PATH
+    // differs between the test runner and the spawned subprocess environment.
     for (const pm of ['npm', 'pnpm', 'yarn', 'bun']) {
-        await fs.writeFile(path.join(fakeBin, pm), `#!/usr/bin/env node\nrequire(${JSON.stringify(scriptPath)});\n`);
+        await fs.writeFile(path.join(fakeBin, pm), `#!${process.execPath}\nrequire(${JSON.stringify(scriptPath)});\n`);
         await fs.writeFile(path.join(fakeBin, `${pm}.cmd`), `@echo off\r\nnode "${scriptPath}" %*\r\n`);
         await fs.writeFile(path.join(fakeBin, `${pm}.ps1`), `node "${scriptPath}" $args\r\n`);
         await fs.chmod(path.join(fakeBin, pm), 0o755);
