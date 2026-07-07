@@ -178,7 +178,7 @@
       "examples": []
     },
     "carousel": {
-      "integrity": "sha256-7f286df2844b661383f2d34904f25bbeb2437b334bab6adf152ce68c81ec30eb",
+      "integrity": "sha256-f7a1205259e15ed2dad2d6f81c45715c575cd7ef249d879218269cd98b4fa3ce",
       "fileCount": 12,
       "dependencies": [
         "@lucide/vue",
@@ -974,7 +974,7 @@
       "examples": []
     },
     "tree-select": {
-      "integrity": "sha256-be2b396e035851aa42194b50d8877f7d244309d92ecad8505de3c0213605289f",
+      "integrity": "sha256-8a7fbe4ba0a738c04e7e3450c8b0bb6b4b7613be751efc5746b33f22317d97bd",
       "fileCount": 13,
       "dependencies": [
         "@lucide/vue",

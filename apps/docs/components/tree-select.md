@@ -195,6 +195,7 @@ interface TreeSelectLocale {
 | `maxHeight` | `string` | `'15rem'` | 下拉列表最大高度 |
 | `dropdownClass` | `string` | `undefined` | 下拉列表自定义类名 |
 | `iconSize` | `IconSize` | `'default'` | 图标尺寸 |
+| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | 下拉项的变体（选中高亮颜色） |
 | `class` | `string` | `undefined` | 触发器自定义类名 |
 
 ## 事件

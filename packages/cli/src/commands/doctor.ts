@@ -4,7 +4,7 @@ import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError, FileTransaction } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -152,6 +152,9 @@ async function checkDeprecatedBrutalismPlugin(cwd: string, config: BrutalistConf
         const configPath = path.resolve(cwd, candidate);
         if (!(await fs.pathExists(configPath))) continue;
 
+        const stat = await fs.stat(configPath);
+        if (stat.isDirectory()) continue;
+
         const content = await fs.readFile(configPath, 'utf-8');
         if (content.includes('brutx-ui-vue/brutalism-plugin') || content.includes('brutx-ui-vue/dist/brutalism-plugin')) {
             return {
@@ -218,6 +221,20 @@ async function checkDependencies(cwd: string): Promise<CheckResult[]> {
         ...packageJson.dependencies,
         ...packageJson.devDependencies,
     };
+
+    const workspaceRoot = await detectWorkspaceRoot(cwd);
+    if (workspaceRoot && workspaceRoot !== path.resolve(cwd)) {
+        try {
+            const rootPackageJson = await fs.readJson(path.join(workspaceRoot, 'package.json'));
+            Object.assign(
+                allDeps,
+                rootPackageJson.dependencies,
+                rootPackageJson.devDependencies
+            );
+        } catch {
+            // Ignore error
+        }
+    }
 
     const requiredDeps = BASE_DEPENDENCIES.filter((dep) => dep !== '@lucide/vue');
     const optionalDeps = ['@lucide/vue'];

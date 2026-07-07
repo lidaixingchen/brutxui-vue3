@@ -53,6 +53,8 @@ interface TreeSelectProps {
     class?: string
     /** 主图标尺寸 */
     iconSize?: IconSize
+    /** 下拉项的变体（选中高亮颜色） */
+    itemVariant?: 'default' | 'primary' | 'secondary'
 }
 
 const props = withDefaults(defineProps<TreeSelectProps>(), {
@@ -72,6 +74,7 @@ const props = withDefaults(defineProps<TreeSelectProps>(), {
     dropdownClass: undefined,
     class: undefined,
     iconSize: 'default',
+    itemVariant: 'default',
 })
 
 const { t } = useLocale()
@@ -374,6 +377,7 @@ const contentId = `tree-select-content-${useId()}`
                             :expanded-ids="expandedIds"
                             :multiple="multiple"
                             :focused-id="focusedId"
+                            :variant="itemVariant"
                             @toggle="toggleExpand"
                             @select="handleSelect"
                             @focus="handleNodeFocus"

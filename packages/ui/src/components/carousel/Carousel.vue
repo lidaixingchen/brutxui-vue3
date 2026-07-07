@@ -80,7 +80,7 @@ const wrapperClass = computed(() =>
 )
 
 const carouselFrameClass = computed(() =>
-    props.thumbnails?.show ? rootClass.value : undefined
+    props.thumbnails?.show ? rootClass.value : 'h-full'
 )
 
 const parallaxStyle = computed(() => {
@@ -146,6 +146,7 @@ defineExpose({
                 v-if="showArrows"
                 type="button"
                 variant="default"
+                size="icon"
                 :class="prevButtonClasses"
                 :disabled="!canScrollPrev"
                 :aria-label="t('carousel.previousSlide')"
@@ -158,6 +159,7 @@ defineExpose({
                 v-if="showArrows"
                 type="button"
                 variant="default"
+                size="icon"
                 :class="nextButtonClasses"
                 :disabled="!canScrollNext"
                 :aria-label="t('carousel.nextSlide')"

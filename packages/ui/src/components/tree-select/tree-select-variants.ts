@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSm, brutalHoverLiftSmNoX } from '@/lib/brutal-interaction-variants'
-import { treeNodeBaseClasses, treeSelectedClass } from '@/lib/tree-variants'
+import { treeNodeBaseClasses } from '@/lib/tree-variants'
 
 export const treeSelectTriggerVariants = cva(
     [
@@ -34,12 +34,35 @@ export const treeSelectNodeVariants = cva(
     ],
     {
         variants: {
+            variant: {
+                default: '',
+                primary: '',
+                secondary: '',
+            },
             selected: {
-                true: treeSelectedClass,
+                true: '',
                 false: '', // no-op: unselected state
             },
         },
+        compoundVariants: [
+            {
+                variant: 'default',
+                selected: true,
+                class: 'bg-brutal-accent text-brutal-accent-foreground border-brutal shadow-brutal',
+            },
+            {
+                variant: 'primary',
+                selected: true,
+                class: 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal',
+            },
+            {
+                variant: 'secondary',
+                selected: true,
+                class: 'bg-brutal-secondary text-brutal-secondary-foreground border-brutal shadow-brutal',
+            },
+        ],
         defaultVariants: {
+            variant: 'default',
             selected: false,
         },
     }

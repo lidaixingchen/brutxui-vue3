@@ -257,4 +257,43 @@ describe('TreeSelect', () => {
         await nextTick()
         expect(wrapper.emitted('update:modelValue')).toBeFalsy()
     })
+
+    it('applies default itemVariant highlight (accent yellow) to selected node', async () => {
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes, modelValue: '3' },
+            attachTo: document.body,
+        })
+        await openTreeSelect(wrapper)
+        const selectedItem = document.body.querySelector('[role="treeitem"][aria-selected="true"] > div')
+        expect(selectedItem).toBeTruthy()
+        expect(selectedItem!.classList.contains('bg-brutal-accent')).toBe(true)
+        expect(selectedItem!.classList.contains('text-brutal-accent-foreground')).toBe(true)
+    })
+
+    it('applies primary itemVariant highlight (primary red/coral) to selected node', async () => {
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes, modelValue: '3', itemVariant: 'primary' },
+            attachTo: document.body,
+        })
+        await openTreeSelect(wrapper)
+        const selectedItem = document.body.querySelector('[role="treeitem"][aria-selected="true"] > div')
+        expect(selectedItem).toBeTruthy()
+        expect(selectedItem!.classList.contains('bg-brutal-primary')).toBe(true)
+        expect(selectedItem!.classList.contains('text-brutal-primary-foreground')).toBe(true)
+    })
+
+    it('applies secondary itemVariant highlight (secondary teal) to selected node', async () => {
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes, modelValue: '3', itemVariant: 'secondary' },
+            attachTo: document.body,
+        })
+        await openTreeSelect(wrapper)
+        const selectedItem = document.body.querySelector('[role="treeitem"][aria-selected="true"] > div')
+        expect(selectedItem).toBeTruthy()
+        expect(selectedItem!.classList.contains('bg-brutal-secondary')).toBe(true)
+        expect(selectedItem!.classList.contains('text-brutal-secondary-foreground')).toBe(true)
+    })
 })

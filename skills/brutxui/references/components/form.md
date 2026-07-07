@@ -358,6 +358,7 @@ function handleFocus() {
 - `size`: `'sm' | 'default' | 'lg'` — 默认 `'default'`
 - `maxDisplay`: `number` — 多选时最多显示标签数，默认 `3`
 - `maxHeight`: `string` — 下拉列表最大高度，默认 `'15rem'`
+- `itemVariant`: `'default' | 'primary' | 'secondary'` — 下拉项的变体（选中高亮颜色），默认 `'default'`
 - `disabled`: `boolean`
 
 TreeNode: `{ id: string; label: string; children?: TreeNode[]; disabled?: boolean; icon?: string; data?: unknown }`

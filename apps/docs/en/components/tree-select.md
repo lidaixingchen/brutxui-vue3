@@ -196,6 +196,7 @@ interface TreeSelectLocale {
 | `maxHeight` | `string` | `'15rem'` | Maximum height of the dropdown list |
 | `dropdownClass` | `string` | `undefined` | Custom CSS class for the dropdown list |
 | `iconSize` | `IconSize` | `'default'` | Icon size |
+| `itemVariant` | `'default' \| 'primary' \| 'secondary'` | `'default'` | Dropdown item variant (selection highlight color) |
 | `class` | `string` | `undefined` | Custom CSS class for the trigger |
 
 ## Events

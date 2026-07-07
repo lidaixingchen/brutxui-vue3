@@ -25,7 +25,7 @@ function onComplete() {
     <div class="space-y-8">
         <div>
             <h3 class="text-sm font-black mb-3">基础用法</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-3 gap-4">
                 <div
                     v-for="stat in stats"
                     :key="stat.label"

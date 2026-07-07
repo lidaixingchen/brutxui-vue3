@@ -19,12 +19,14 @@ interface TreeSelectNodeProps {
     depth?: number
     multiple?: boolean
     focusedId?: string
+    variant?: 'default' | 'primary' | 'secondary'
 }
 
 const props = withDefaults(defineProps<TreeSelectNodeProps>(), {
     depth: 0,
     multiple: false,
     focusedId: undefined,
+    variant: 'default',
 })
 
 const emit = defineEmits<{
@@ -39,7 +41,7 @@ const isSelected = computed(() => props.selectedIds.has(props.node.id))
 
 const itemClass = computed(() =>
     cn(
-        treeSelectNodeVariants({ selected: isSelected.value }),
+        treeSelectNodeVariants({ selected: isSelected.value, variant: props.variant }),
         props.node.disabled && 'opacity-50 cursor-not-allowed'
     )
 )
@@ -197,6 +199,7 @@ function handleKeydown(e: KeyboardEvent) {
                 :depth="depth + 1"
                 :multiple="multiple"
                 :focused-id="focusedId"
+                :variant="variant"
                 @toggle="emit('toggle', $event)"
                 @select="emit('select', $event)"
                 @focus="emit('focus', $event)"
