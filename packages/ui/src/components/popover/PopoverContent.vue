@@ -5,11 +5,10 @@ import {
     PopoverContent as PopoverContentPrimitive,
 } from 'reka-ui'
 import { cn } from '@/lib/utils'
+import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { popoverContentVariants } from './popover-variants'
 
 defineOptions({ inheritAttrs: false })
-
-const DEFAULT_SIDE_OFFSET = 8
 
 interface PopoverContentProps {
     align?: 'center' | 'start' | 'end'
@@ -19,7 +18,7 @@ interface PopoverContentProps {
 
 const props = withDefaults(defineProps<PopoverContentProps>(), {
     align: 'center',
-    sideOffset: DEFAULT_SIDE_OFFSET,
+    sideOffset: floatingContentSideOffsets.popover,
     class: undefined,
 })
 

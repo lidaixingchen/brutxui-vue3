@@ -5,9 +5,8 @@ import {
     DropdownMenuContent as DropdownMenuContentPrimitive,
 } from 'reka-ui'
 import { cn } from '@/lib/utils'
+import { floatingContentSideOffsets } from '@/lib/floating-content-variants'
 import { dropdownMenuContentVariants } from './dropdown-menu-variants'
-
-const DEFAULT_SIDE_OFFSET = 6
 
 interface DropdownMenuContentProps {
     sideOffset?: number
@@ -15,7 +14,7 @@ interface DropdownMenuContentProps {
 }
 
 const props = withDefaults(defineProps<DropdownMenuContentProps>(), {
-    sideOffset: DEFAULT_SIDE_OFFSET,
+    sideOffset: floatingContentSideOffsets.dropdownMenu,
     class: undefined,
 })
 

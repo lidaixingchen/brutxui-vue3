@@ -13,12 +13,17 @@
   "files": [
     {
       "path": "components/ui/popover/PopoverContent.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport {\n    PopoverPortal as PopoverPortalPrimitive,\n    PopoverContent as PopoverContentPrimitive,\n} from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n\ndefineOptions({ inheritAttrs: false })\n\nconst DEFAULT_SIDE_OFFSET = 8\n\ninterface PopoverContentProps {\n    align?: 'center' | 'start' | 'end'\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<PopoverContentProps>(), {\n    align: 'center',\n    sideOffset: DEFAULT_SIDE_OFFSET,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(popoverContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <PopoverPortalPrimitive>\n        <PopoverContentPrimitive v-bind=\"$attrs\" :align=\"align\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </PopoverContentPrimitive>\n    </PopoverPortalPrimitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport {\n    PopoverPortal as PopoverPortalPrimitive,\n    PopoverContent as PopoverContentPrimitive,\n} from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { floatingContentSideOffsets } from '@/lib/floating-content-variants'\nimport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n\ndefineOptions({ inheritAttrs: false })\n\ninterface PopoverContentProps {\n    align?: 'center' | 'start' | 'end'\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<PopoverContentProps>(), {\n    align: 'center',\n    sideOffset: floatingContentSideOffsets.popover,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(popoverContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <PopoverPortalPrimitive>\n        <PopoverContentPrimitive v-bind=\"$attrs\" :align=\"align\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </PopoverContentPrimitive>\n    </PopoverPortalPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {
       "path": "components/ui/popover/popover-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\nimport { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\n\nexport const popoverContentVariants = cva(\n    [\n        'z-50 w-72 p-4',\n        'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n        'outline-none',\n        ...floatingContentAnimationClasses,\n    ]\n)\n",
+      "content": "import { cva } from 'class-variance-authority'\nimport { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\nimport { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'\n\nexport const popoverContentVariants = cva(\n    [\n        'z-50 w-72 p-4',\n        ...brutalFloatingSurfaceClasses,\n        'outline-none',\n        ...floatingContentAnimationClasses,\n    ]\n)\n",
+      "type": "registry:lib"
+    },
+    {
+      "path": "lib/floating-content-variants.ts",
+      "content": "export const floatingContentSideOffsets = {\n    popover: 8,\n    dropdownMenu: 6,\n    tooltip: 6,\n} as const\n\nexport const brutalFloatingSurfaceClasses = [\n    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n] as const\n\nexport const inverseFloatingSurfaceClasses = [\n    'bg-brutal-fg text-brutal-bg',\n    'border-3 border-brutal rounded-brutal shadow-brutal',\n] as const\n\nexport const tooltipFloatingAnimationClasses = [\n    'animate-in fade-in-0 zoom-in-95',\n    'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n",
       "type": "registry:lib"
     },
     {
@@ -113,5 +118,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-95243274809f3e912befb7d2f31d938a22296581b6481dba355fbe4099ef767c"
+  "integrity": "sha256-f94aed9d9db47c14a03923fb31ebc8f9bf46c3cc9a001a70c48b202b1cdfcae9"
 }

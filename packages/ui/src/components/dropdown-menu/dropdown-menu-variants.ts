@@ -1,10 +1,11 @@
 import { cva } from 'class-variance-authority'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'
+import { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'
 
 const dropdownMenuContentBaseStyles = [
     'z-50 min-w-[8rem] overflow-hidden p-1',
-    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
+    ...brutalFloatingSurfaceClasses,
     ...floatingContentAnimationClasses,
 ]
 
