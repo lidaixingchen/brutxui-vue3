@@ -2,6 +2,11 @@
 
 ## 版本发布
 
+> [!IMPORTANT]
+> **发布前置检查（防坑指南）**
+> 1. **检查工作区（`git status`）**：在开始发布流程前，**必须**运行 `git status` 审视工作区。确保所有应当包含在本次发布的实质性改动（组件源码、测试、文档、注册表等）已被全部提交或妥善 staged。**严禁在工作区留有未提交组件代码的情况下直接运行发布和打 tag**，这会导致发布产物不完整。
+> 2. **重新编译注册表**：若工作区包含组件的增删改，必须先运行 `pnpm --filter brutx-registry-vue build` 重新编译并生成注册表最新的 JSON 描述文件，再进行发布门禁检查。
+
 - 提交信息格式固定为 `release: bump version to <ui-version> for ui and <cli-version> for cli`。如果只发布其中一个包，仍保持该格式，并填写当前实际版本。
 - 哪个 NPM 包版本发生变化就发布哪个包；当前公开发布包为 `brutx-ui-vue`（`packages/ui/`）和 `brutx-vue`（`packages/cli/`）。
 - tag 命名固定以 UI 包版本为主，格式为 `v<ui-version>`，例如 `v0.6.6`。CLI 版本不单独创建 tag。
