@@ -69,16 +69,6 @@ export const en: Locale = {
         showPassword: 'Show password',
         hidePassword: 'Hide password',
     },
-    waitlistPage: {
-        title: 'Join the BrutxUI Waitlist Club',
-        ctaText: 'Secure Priority Access',
-        earlyAccess: 'Early Access',
-        onWaitlist: '{count} on waitlist',
-        live: 'Live',
-        defaultDescription: 'Join the waitlist to be among the first to try it.',
-        invalidEmail: 'Please enter a valid email address',
-        emailPlaceholder: 'you@example.com',
-    },
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
         signOut: 'Sign out',
@@ -135,37 +125,6 @@ export const en: Locale = {
         progressSteps: 'Progress steps',
         step: 'Step {index}: {title}',
     },
-    emptyState: {
-        defaultTitle: 'No active deployments found',
-        defaultActionText: 'Deploy New App',
-        defaultDescription: 'Nothing to display at the moment.',
-    },
-    testimonialCard: {
-        defaultQuote: 'This product has completely transformed our workflow.',
-        defaultAuthor: 'Alex Johnson',
-        defaultRole: 'Product Manager',
-        verified: 'Verified',
-    },
-    blogCard: {
-        defaultTitle: 'Getting Started with BrutxUI',
-        defaultExcerpt: 'Learn how to build bold interfaces with our component library.',
-        readMore: 'Read more',
-    },
-    fileCard: {
-        defaultFileName: 'document.pdf',
-        download: 'Download',
-        downloadAriaLabel: 'Download {fileName}',
-    },
-    quickActions: {
-        defaultTitle: 'Quick Actions',
-        badge: 'Quick',
-        emptyTitle: 'No quick actions available',
-    },
-    faqSection: {
-        defaultTitle: 'Frequently Asked Questions',
-        defaultSubtitle: 'Find the answers you need',
-        emptyTitle: 'No frequently asked questions',
-    },
     headerSection: {
         defaultLogoText: 'BrutxUI',
         defaultCtaText: 'Get Started',
@@ -175,15 +134,6 @@ export const en: Locale = {
         defaultLogoText: 'BrutxUI',
         defaultDescription: 'Neo-Brutalist UI component library for Vue 3',
         defaultCopyright: '© 2026 BrutxUI. All rights reserved.',
-    },
-    notFoundPage: {
-        defaultTitle: 'Page Not Found',
-        defaultDescription: 'The page you are looking for does not exist or has been removed.',
-        defaultBackText: 'Go Back Home',
-    },
-    searchWidget: {
-        defaultPlaceholder: 'Search...',
-        recentSearches: 'Recent searches',
     },
     feedbackForm: {
         defaultTitle: 'Send Feedback',
@@ -248,53 +198,6 @@ export const en: Locale = {
         delivered: 'Delivered',
         read: 'Read',
         failed: 'Failed',
-    },
-    settingsPage: {
-        defaultTitle: 'Settings',
-        saveText: 'Save Changes',
-        nameLabel: 'Name',
-        namePlaceholder: 'Enter name',
-        notificationsLabel: 'Notifications',
-        emptyTitle: 'No settings available',
-    },
-    overviewPage: {
-        defaultTitle: 'Overview',
-        recentActivity: 'Recent Activity',
-        quickStats: 'Quick Stats',
-        emptyTitle: 'No statistics available',
-    },
-    blogListPage: {
-        defaultTitle: 'Blog',
-        searchPlaceholder: 'Search posts...',
-        allCategories: 'All',
-        noPostsFound: 'No posts found',
-    },
-    activityLogPage: {
-        defaultTitle: 'Activity Log',
-        action: 'Action',
-        user: 'User',
-        timestamp: 'Timestamp',
-        details: 'Details',
-        noActivityFound: 'No activity found',
-    },
-    profilePage: {
-        defaultTitle: 'Profile',
-        nameLabel: 'Name',
-        emailLabel: 'Email',
-        bioLabel: 'Bio',
-        saveText: 'Save',
-    },
-    chartSection: {
-        defaultTitle: 'Data Visualization',
-        defaultSubtitle: 'View data trends',
-        bar: 'Bar',
-        line: 'Line',
-        pie: 'Pie',
-        emptyTitle: 'No chart data available',
-    },
-    gallerySection: {
-        defaultTitle: 'Gallery',
-        noItems: 'No items to display',
     },
     scratchCard: {
         ariaLabel: 'Scratch Card',
@@ -425,10 +328,6 @@ export const en: Locale = {
         system: 'System',
         colorMode: 'Color mode',
         currentToggle: 'Current: {mode}. Click to toggle.',
-    },
-    dashboardStats: {
-        defaultTitle: 'Overview Performance',
-        emptyTitle: 'No statistics available',
     },
     input: {
         placeholder: 'Type here...',

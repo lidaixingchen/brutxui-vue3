@@ -116,7 +116,7 @@ import { RouterLink } from 'vue-router'
 
 ### 故障效果
 
-`Button` 内置 `effect="glitch"`，可直接启用故障撕裂动画。`GlitchButton` 仍作为兼容入口保留，但新用法建议直接使用 `Button`。
+`Button` 内置 `effect="glitch"`，可直接启用故障撕裂动画。
 
 ```vue
 <template>

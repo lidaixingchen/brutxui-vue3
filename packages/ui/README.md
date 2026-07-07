@@ -91,11 +91,11 @@ Accordion · Alert · AlertDialog · Avatar · Badge · Button · Card · Card3D
 
 ### 页面与区块
 
-ActivityLogPage · AuthCard · BlogCard · BlogListPage · BrutalistHero · CookieConsent · DashboardShell · DashboardStats · EmptyState · FaqSection · FeedbackForm · FileCard · FooterSection · GallerySection · HeaderSection · NotFoundPage · OverviewPage · PricingSection · ProfilePage · QuickActions · SettingsPage · TestimonialCard · WaitlistPage
+AuthCard · BrutalistHero · CookieConsent · DashboardShell · FeedbackForm · FooterSection · HeaderSection · PricingSection
 
 ### 特色组件
 
-BeforeAfter · BlogCard · Calendar · Carousel · ChatBubble · CodeBlock · CopyToClipboard · Counter · DataTable · GlitchText · HardcoreInput · Kanban · Kbd · Marquee · Pagination · ScratchCard · SearchWidget · SketchyChart · Spinner · Stepper · Timeline · TreeView · Upload
+BeforeAfter · Calendar · Carousel · ChatBubble · CodeBlock · CopyToClipboard · Counter · DataTable · GlitchText · HardcoreInput · Kanban · Kbd · Marquee · Pagination · ScratchCard · SketchyChart · Spinner · Stepper · Timeline · TreeView · Upload
 
 ## Claude Code Skill
 

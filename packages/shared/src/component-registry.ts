@@ -42,7 +42,6 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     image: 'media',
     'infinite-scroll': 'utility',
     input: 'form',
-    'input-adornment': 'form',
     kbd: 'utility',
     label: 'form',
     loading: 'feedback',

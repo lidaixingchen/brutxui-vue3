@@ -155,7 +155,7 @@ const value = ref('')
 
 ### 图标与前后缀
 
-优先使用 `Input` 自身的 `prefixIcon`、`suffixIcon` props 和 `prepend`、`append` 插槽来实现输入框装饰。`InputAdornment` 仅作为兼容入口保留，新代码建议直接使用 `Input`。
+优先使用 `Input` 自身的 `prefixIcon`、`suffixIcon` props 和 `prepend`、`append` 插槽来实现输入框装饰。
 
 ```vue
 <script setup>

@@ -22,7 +22,6 @@ import CardDemo from './components/demos/CardDemo.vue'
 import CheckboxDemo from './components/demos/CheckboxDemo.vue'
 import ComboboxDemo from './components/demos/ComboboxDemo.vue'
 import CommandDemo from './components/demos/CommandDemo.vue'
-import DashboardStatsDemo from './components/demos/DashboardStatsDemo.vue'
 import DialogDemo from './components/demos/DialogDemo.vue'
 import DropdownMenuDemo from './components/demos/DropdownMenuDemo.vue'
 import FormDemo from './components/demos/FormDemo.vue'
@@ -57,7 +56,6 @@ import BeforeAfterDemo from './components/demos/BeforeAfterDemo.vue'
 import CodeBlockDemo from './components/demos/CodeBlockDemo.vue'
 import TimelineDemo from './components/demos/TimelineDemo.vue'
 import CarouselDemo from './components/demos/CarouselDemo.vue'
-import CarouselEnhancedDemo from './components/demos/CarouselEnhancedDemo.vue'
 import TreeViewDemo from './components/demos/TreeViewDemo.vue'
 import KanbanBoardDemo from './components/demos/KanbanBoardDemo.vue'
 import ChatBubbleDemo from './components/demos/ChatBubbleDemo.vue'
@@ -73,32 +71,15 @@ import BrutalistHeroDemo from './components/demos/BrutalistHeroDemo.vue'
 import PricingSectionDemo from './components/demos/PricingSectionDemo.vue'
 import AuthCardDemo from './components/demos/AuthCardDemo.vue'
 import DashboardShellDemo from './components/demos/DashboardShellDemo.vue'
-import EmptyStateDemo from './components/demos/EmptyStateDemo.vue'
-import WaitlistPageDemo from './components/demos/WaitlistPageDemo.vue'
-import NotFoundPageDemo from './components/demos/NotFoundPageDemo.vue'
 import CookieConsentDemo from './components/demos/CookieConsentDemo.vue'
 import HeaderSectionDemo from './components/demos/HeaderSectionDemo.vue'
 import FooterSectionDemo from './components/demos/FooterSectionDemo.vue'
-import FaqSectionDemo from './components/demos/FaqSectionDemo.vue'
-import TestimonialCardDemo from './components/demos/TestimonialCardDemo.vue'
-import BlogCardDemo from './components/demos/BlogCardDemo.vue'
-import FileCardDemo from './components/demos/FileCardDemo.vue'
-import QuickActionsDemo from './components/demos/QuickActionsDemo.vue'
-import SearchWidgetDemo from './components/demos/SearchWidgetDemo.vue'
 import FeedbackFormDemo from './components/demos/FeedbackFormDemo.vue'
-import SettingsPageDemo from './components/demos/SettingsPageDemo.vue'
-import BlogListPageDemo from './components/demos/BlogListPageDemo.vue'
-import ActivityLogPageDemo from './components/demos/ActivityLogPageDemo.vue'
-import ProfilePageDemo from './components/demos/ProfilePageDemo.vue'
-import ChartSectionDemo from './components/demos/ChartSectionDemo.vue'
-import GallerySectionDemo from './components/demos/GallerySectionDemo.vue'
 import UploadDemo from './components/demos/UploadDemo.vue'
 import DescriptionsDemo from './components/demos/DescriptionsDemo.vue'
 import PopconfirmDemo from './components/demos/PopconfirmDemo.vue'
 import InfiniteScrollDemo from './components/demos/InfiniteScrollDemo.vue'
-import OverviewPageDemo from './components/demos/OverviewPageDemo.vue'
 import VirtualScrollDemo from './components/demos/VirtualScrollDemo.vue'
-import GlitchButtonDemo from './components/demos/GlitchButtonDemo.vue'
 import DatePickerDemo from './components/demos/DatePickerDemo.vue'
 import ColorPickerDemo from './components/demos/ColorPickerDemo.vue'
 import NoiseBackgroundDemo from './components/demos/NoiseBackgroundDemo.vue'
@@ -145,7 +126,6 @@ export default {
         app.component('CheckboxDemo', CheckboxDemo)
         app.component('ComboboxDemo', ComboboxDemo)
         app.component('CommandDemo', CommandDemo)
-        app.component('DashboardStatsDemo', DashboardStatsDemo)
         app.component('DialogDemo', DialogDemo)
         app.component('DropdownMenuDemo', DropdownMenuDemo)
         app.component('FormDemo', FormDemo)
@@ -180,7 +160,6 @@ export default {
         app.component('CodeBlockDemo', CodeBlockDemo)
         app.component('TimelineDemo', TimelineDemo)
         app.component('CarouselDemo', CarouselDemo)
-        app.component('CarouselEnhancedDemo', CarouselEnhancedDemo)
         app.component('TreeViewDemo', TreeViewDemo)
         app.component('KanbanBoardDemo', KanbanBoardDemo)
         app.component('ChatBubbleDemo', ChatBubbleDemo)
@@ -196,32 +175,15 @@ export default {
         app.component('PricingSectionDemo', PricingSectionDemo)
         app.component('AuthCardDemo', AuthCardDemo)
         app.component('DashboardShellDemo', DashboardShellDemo)
-        app.component('EmptyStateDemo', EmptyStateDemo)
-        app.component('WaitlistPageDemo', WaitlistPageDemo)
-        app.component('NotFoundPageDemo', NotFoundPageDemo)
         app.component('CookieConsentDemo', CookieConsentDemo)
         app.component('HeaderSectionDemo', HeaderSectionDemo)
         app.component('FooterSectionDemo', FooterSectionDemo)
-        app.component('FaqSectionDemo', FaqSectionDemo)
-        app.component('TestimonialCardDemo', TestimonialCardDemo)
-        app.component('BlogCardDemo', BlogCardDemo)
-        app.component('FileCardDemo', FileCardDemo)
-        app.component('QuickActionsDemo', QuickActionsDemo)
-        app.component('SearchWidgetDemo', SearchWidgetDemo)
         app.component('FeedbackFormDemo', FeedbackFormDemo)
-        app.component('SettingsPageDemo', SettingsPageDemo)
-        app.component('BlogListPageDemo', BlogListPageDemo)
-        app.component('ActivityLogPageDemo', ActivityLogPageDemo)
-        app.component('ProfilePageDemo', ProfilePageDemo)
-        app.component('ChartSectionDemo', ChartSectionDemo)
-        app.component('GallerySectionDemo', GallerySectionDemo)
         app.component('UploadDemo', UploadDemo)
         app.component('DescriptionsDemo', DescriptionsDemo)
         app.component('PopconfirmDemo', PopconfirmDemo)
         app.component('InfiniteScrollDemo', InfiniteScrollDemo)
-        app.component('OverviewPageDemo', OverviewPageDemo)
         app.component('VirtualScrollDemo', VirtualScrollDemo)
-        app.component('GlitchButtonDemo', GlitchButtonDemo)
         app.component('DatePickerDemo', DatePickerDemo)
         app.component('ColorPickerDemo', ColorPickerDemo)
         app.component('ColorModeSwitcherDemo', ColorModeSwitcherDemo)

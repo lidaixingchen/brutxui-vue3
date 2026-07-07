@@ -64,39 +64,21 @@ const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['categ
     },
 }
 
-const hiddenDocsEntries = new Set([
-    'input-adornment',
-])
+const hiddenDocsEntries = new Set<string>([])
 
 const slugAliases: Record<string, string> = {
     kanban: 'kanban-board',
 }
 
 const blockEntries = new Set([
-    'activity-log-page',
     'auth-card',
-    'blog-card',
-    'blog-list-page',
     'brutalist-hero',
-    'chart-section',
     'cookie-consent',
     'dashboard-shell',
-    'empty-state',
-    'faq-section',
     'feedback-form',
-    'file-card',
     'footer-section',
-    'gallery-section',
     'header-section',
-    'not-found-page',
-    'overview-page',
     'pricing-section',
-    'profile-page',
-    'quick-actions',
-    'search-widget',
-    'settings-page',
-    'testimonial-card',
-    'waitlist-page',
 ])
 
 function getSlug(name: string): string {

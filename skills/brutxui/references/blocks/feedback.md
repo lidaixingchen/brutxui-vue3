@@ -1,15 +1,5 @@
 # 反馈与状态区块
 
-## EmptyState
-
-```vue
-<EmptyState title="还没有数据" description="创建第一个项目" action-text="创建" :icon="Server" @action="handleCreate" />
-```
-
-- `title`/`description`/`actionText`: `string`
-- `icon`: `Component` — 默认 `FolderOpen`（来自 @lucide/vue）
-- Events: `action()`
-
 ## ErrorCard
 
 ```vue

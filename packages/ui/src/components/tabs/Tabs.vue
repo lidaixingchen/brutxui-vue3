@@ -92,7 +92,7 @@ const wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class
 
     <div v-else-if="tabs && tabs.length === 0" :class="wrapperClasses">
         <slot name="header" />
-        <EmptyState :title="t('tabs.emptyTitle')" />
+        <Result status="empty" :title="t('tabs.emptyTitle')" />
         <slot name="footer" />
     </div>
 

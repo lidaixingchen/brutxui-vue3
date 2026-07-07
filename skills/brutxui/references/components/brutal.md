@@ -77,48 +77,6 @@
 
 > **动效降级**：自动尊重 `prefers-reduced-motion` 系统设置，当用户偏好减少动画时禁用所有故障效果。
 
-## GlitchButton
-
-故障效果按钮，继承 Button 的所有变体和尺寸。
-
-```vue
-<GlitchButton variant="primary" trigger="hover" speed="medium" direction="horizontal" data-text="点击我">
-  点击我
-</GlitchButton>
-
-<GlitchButton trigger="autoplay" :interval="5000" speed="slow" data-text="自动故障">
-  自动故障
-</GlitchButton>
-
-<GlitchButton :loading="true" data-text="提交中...">提交中...</GlitchButton>
-```
-
-### GlitchButton Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger' \| 'success' \| 'outline' \| 'ghost' \| 'link'` | `'default'` | 按钮变体 |
-| `size` | `'sm' \| 'default' \| 'lg' \| 'xl' \| 'icon'` | `'default'` | 按钮尺寸 |
-| `speed` | `'slow' \| 'medium' \| 'fast'` | `'medium'` | 故障动画速度 |
-| `direction` | `'horizontal' \| 'vertical' \| 'both'` | `'horizontal'` | 撕裂方向 |
-| `trigger` | `'hover' \| 'click' \| 'autoplay' \| 'none'` | `'hover'` | 动画触发时机 |
-| `interval` | `number` | `3000` | 自动播放间隔 (ms)，最小 100 |
-| `asChild` | `boolean` | `false` | 作为子组件渲染 |
-| `loading` | `boolean` | `false` | 加载状态 |
-| `disabled` | `boolean` | `false` | 禁用状态 |
-| `class` | `string` | — | 自定义样式类 |
-
-### GlitchButton 暴露的 API
-
-| 方法 | 说明 |
-|------|------|
-| `play()` | 开始故障动画 |
-| `stop()` | 停止故障动画 |
-
-> 注意：GlitchButton 的撕裂效果通过伪元素 `content: attr(data-text)` 复制文本实现，需通过 `data-text` 属性传入与按钮内容一致的文本。
->
-> **动效降级**：自动尊重 `prefers-reduced-motion` 系统设置，当用户偏好减少动画时禁用所有故障效果。
-
 ## TypewriterText
 
 打字机效果文本，逐字符显示。

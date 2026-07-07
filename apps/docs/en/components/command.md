@@ -77,7 +77,7 @@ Text entered in `CommandInput` automatically filters `CommandItem` elements. The
 
 ### Disable Internal Filtering
 
-When an external component handles filtering logic (e.g., Combobox, SearchWidget), use `disable-filter` to disable Command's internal search filtering to avoid double-filtering conflicts:
+When an external component handles filtering logic (e.g., Combobox), use `disable-filter` to disable Command's internal search filtering to avoid double-filtering conflicts:
 
 ```vue
 <Command disable-filter>
@@ -99,7 +99,7 @@ When an external component handles filtering logic (e.g., Combobox, SearchWidget
 
 ### Search Widget Recipe
 
-`SearchWidget` remains available as a compatibility block. New code can compose `Command disable-filter` directly for search input, grouped results, recent searches, and loading states.
+New code can compose `Command disable-filter` directly for search input, grouped results, recent searches, and loading states.
 
 ```vue
 <script setup>

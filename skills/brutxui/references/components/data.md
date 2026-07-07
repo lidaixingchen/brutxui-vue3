@@ -630,60 +630,6 @@ interface VirtualScrollItem {
 |------|------|------|
 | `scrollToIndex` | `index: number` | 滚动到指定索引位置 |
 
-## DashboardStats
-
-仪表盘统计卡片。
-
-```vue
-<DashboardStats
-  title="概览"
-  subtitle="本月关键指标"
-  :stats="[
-    {
-      title: '收入',
-      value: '$45,231',
-      description: '本月总收入',
-      change: '+20.1%',
-      trend: 'up',
-      icon: DollarSign,
-      accentColor: 'primary',
-      progress: 75,
-    }
-  ]"
-/>
-```
-
-### StatItem 类型
-
-```typescript
-interface StatItem {
-  title: string
-  value: string
-  description: string
-  change: string
-  trend: 'up' | 'down' | 'neutral'
-  icon: Component
-  accentColor?: 'primary' | 'secondary' | 'accent' | 'destructive' | 'success' | 'info'
-  progress?: number
-}
-```
-
-### DashboardStats Props
-
-| 属性 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `stats` | `StatItem[]` | `[]` | 统计项数据数组 |
-| `title` | `string` | 国际化默认值 | 标题文本 |
-| `subtitle` | `string` | — | 副标题文本 |
-| `iconSize` | `'xs' \| 'sm' \| 'default' \| 'lg' \| 'xl' \| '2xl'` | `'default'` | 图标尺寸 |
-| `class` | `string` | — | 自定义样式类 |
-
-### DashboardStats 事件
-
-| 事件 | 参数 | 说明 |
-| --- | --- | --- |
-| `stat-click` | `number` | 点击统计卡片时触发，参数为卡片索引 |
-
 ## Descriptions
 
 描述列表，以键值对形式展示只读信息。

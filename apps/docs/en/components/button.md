@@ -117,7 +117,7 @@ import { RouterLink } from 'vue-router'
 
 ### Glitch Effect
 
-`Button` includes `effect="glitch"` for the glitch tear animation. `GlitchButton` remains available as a compatibility wrapper, but new usage should prefer `Button`.
+`Button` includes `effect="glitch"` for the glitch tear animation.
 
 ```vue
 <template>

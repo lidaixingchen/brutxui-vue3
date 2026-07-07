@@ -11,7 +11,7 @@ import CardTitle from '../card/CardTitle.vue'
 import CardDescription from '../card/CardDescription.vue'
 import CardFooter from '../card/CardFooter.vue'
 import Badge from '../badge/Badge.vue'
-import EmptyState from '../empty-state/EmptyState.vue'
+import Result from '../result/Result.vue'
 import type { PricingFeature, PricingPlan, BrutalistPricingPlan } from './types'
 
 export type { PricingFeature, PricingPlan, BrutalistPricingPlan };
@@ -297,6 +297,6 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                 </div>
             </div>
         </template>
-        <EmptyState v-else :title="t('pricingSection.emptyTitle')" />
+        <Result status="empty" v-else :title="t('pricingSection.emptyTitle')" />
     </div>
 </template>

@@ -75,17 +75,6 @@ export interface AuthCardLocale {
     hidePassword: string
 }
 
-export interface WaitlistPageLocale {
-    title: string
-    ctaText: string
-    earlyAccess: string
-    onWaitlist: string
-    live: string
-    defaultDescription: string
-    invalidEmail: string
-    emailPlaceholder: string
-}
-
 export interface DashboardShellLocale {
     sidebarNavigation: string
     signOut: string
@@ -154,43 +143,6 @@ export interface StepperLocale {
     step: string
 }
 
-export interface EmptyStateLocale {
-    defaultTitle: string
-    defaultActionText: string
-    defaultDescription: string
-}
-
-export interface TestimonialCardLocale {
-    defaultQuote: string
-    defaultAuthor: string
-    defaultRole: string
-    verified: string
-}
-
-export interface BlogCardLocale {
-    defaultTitle: string
-    defaultExcerpt: string
-    readMore: string
-}
-
-export interface FileCardLocale {
-    defaultFileName: string
-    download: string
-    downloadAriaLabel: string
-}
-
-export interface QuickActionsLocale {
-    defaultTitle: string
-    badge: string
-    emptyTitle: string
-}
-
-export interface FaqSectionLocale {
-    defaultTitle: string
-    defaultSubtitle: string
-    emptyTitle: string
-}
-
 export interface HeaderSectionLocale {
     defaultLogoText: string
     defaultCtaText: string
@@ -201,17 +153,6 @@ export interface FooterSectionLocale {
     defaultLogoText: string
     defaultDescription: string
     defaultCopyright: string
-}
-
-export interface NotFoundPageLocale {
-    defaultTitle: string
-    defaultDescription: string
-    defaultBackText: string
-}
-
-export interface SearchWidgetLocale {
-    defaultPlaceholder: string
-    recentSearches: string
 }
 
 export interface FeedbackFormLocale {
@@ -281,60 +222,6 @@ export interface ChatBubbleLocale {
     delivered: string
     read: string
     failed: string
-}
-
-export interface SettingsPageLocale {
-    defaultTitle: string
-    saveText: string
-    nameLabel: string
-    namePlaceholder: string
-    notificationsLabel: string
-    emptyTitle: string
-}
-
-export interface OverviewPageLocale {
-    defaultTitle: string
-    recentActivity: string
-    quickStats: string
-    emptyTitle: string
-}
-
-export interface BlogListPageLocale {
-    defaultTitle: string
-    searchPlaceholder: string
-    allCategories: string
-    noPostsFound: string
-}
-
-export interface ActivityLogPageLocale {
-    defaultTitle: string
-    action: string
-    user: string
-    timestamp: string
-    details: string
-    noActivityFound: string
-}
-
-export interface ProfilePageLocale {
-    defaultTitle: string
-    nameLabel: string
-    emailLabel: string
-    bioLabel: string
-    saveText: string
-}
-
-export interface ChartSectionLocale {
-    defaultTitle: string
-    defaultSubtitle: string
-    bar: string
-    line: string
-    pie: string
-    emptyTitle: string
-}
-
-export interface GallerySectionLocale {
-    defaultTitle: string
-    noItems: string
 }
 
 export interface ScratchCardLocale {
@@ -481,11 +368,6 @@ export interface PricingSectionLocale {
     featureDedicatedSupport: string
 }
 
-export interface DashboardStatsLocale {
-    defaultTitle: string
-    emptyTitle: string
-}
-
 export interface InputLocale {
     placeholder: string
     showPassword: string
@@ -552,7 +434,6 @@ export interface Locale {
     copyToClipboard: CopyToClipboardLocale
     beforeAfter: BeforeAfterLocale
     authCard: AuthCardLocale
-    waitlistPage: WaitlistPageLocale
     dashboardShell: DashboardShellLocale
     brutalistHero: BrutalistHeroLocale
     toast: ToastLocale
@@ -565,28 +446,13 @@ export interface Locale {
     cascader: CascaderLocale
     transfer: TransferLocale
     stepper: StepperLocale
-    emptyState: EmptyStateLocale
-    testimonialCard: TestimonialCardLocale
-    blogCard: BlogCardLocale
-    fileCard: FileCardLocale
-    quickActions: QuickActionsLocale
-    faqSection: FaqSectionLocale
     headerSection: HeaderSectionLocale
     footerSection: FooterSectionLocale
-    notFoundPage: NotFoundPageLocale
-    searchWidget: SearchWidgetLocale
     feedbackForm: FeedbackFormLocale
     cookieConsent: CookieConsentLocale
     dataTable: DataTableLocale
     formWizard: FormWizardLocale
     chatBubble: ChatBubbleLocale
-    settingsPage: SettingsPageLocale
-    overviewPage: OverviewPageLocale
-    blogListPage: BlogListPageLocale
-    activityLogPage: ActivityLogPageLocale
-    profilePage: ProfilePageLocale
-    chartSection: ChartSectionLocale
-    gallerySection: GallerySectionLocale
     scratchCard: ScratchCardLocale
     sketchyChart: SketchyChartLocale
     card3d: Card3dLocale
@@ -601,7 +467,6 @@ export interface Locale {
     tabs: TabsLocale
     pricingSection: PricingSectionLocale
     colorModeSwitcher: ColorModeSwitcherLocale
-    dashboardStats: DashboardStatsLocale
     input: InputLocale
     numberInput: NumberInputLocale
     textarea: TextareaLocale

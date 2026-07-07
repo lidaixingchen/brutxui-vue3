@@ -151,7 +151,7 @@ const tabs: TabItem[] = [
 
 #### header / footer 插槽
 
-`tabs` 模式下额外提供 `header` 与 `footer` 两个命名插槽，用于在标签区块上下方插入辅助内容。`tabs` 为空数组时会显示 `EmptyState` fallback，并仍渲染 `header`/`footer` 插槽。
+`tabs` 模式下额外提供 `header` 与 `footer` 两个命名插槽，用于在标签区块上下方插入辅助内容。`tabs` 为空数组时会显示 `Result` fallback，并仍渲染 `header`/`footer` 插槽。
 
 #### 受控/非受控双模式
 

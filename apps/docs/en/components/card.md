@@ -63,7 +63,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 ## Template Recipes
 
-`BlogCard`, `FileCard`, and `TestimonialCard` remain available as legacy blocks. Compose new card templates directly from the `Card` sub-components.
+Compose new card templates directly from the `Card` sub-components.
 
 ### Article Card
 

@@ -57,7 +57,7 @@ import { Result } from 'brutx-ui-vue'
 
 ### 空状态
 
-`Result` 支持 `status="empty"`，可作为新空状态的推荐入口。`EmptyState` 仍作为兼容区块保留。
+`Result` 支持 `status="empty"`，可作为空状态的推荐入口。
 
 ```vue
 <template>

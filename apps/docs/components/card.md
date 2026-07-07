@@ -62,7 +62,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 ## 模板组合
 
-`BlogCard`、`FileCard`、`TestimonialCard` 已作为 legacy block 保留。新卡片模板建议直接组合 `Card` 子组件。
+新卡片模板建议直接组合 `Card` 子组件。
 
 ### 文章卡片
 

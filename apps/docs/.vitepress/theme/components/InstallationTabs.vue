@@ -55,7 +55,6 @@ const componentDependencies: Record<string, string[]> = {
     'toggle-group': ['reka-ui'],
     'radio-group': ['reka-ui'],
     progress: ['reka-ui'],
-    'dashboard-stats': [],
 }
 
 const componentImports: Record<string, string[]> = {
@@ -93,13 +92,10 @@ const componentImports: Record<string, string[]> = {
     'toggle-group': ['ToggleGroup', 'ToggleGroupItem', 'toggleGroupKey'],
     'radio-group': ['RadioGroup', 'RadioGroupItem'],
     progress: ['Progress'],
-    'dashboard-stats': ['DashboardStats'],
     'brutalist-hero': ['BrutalistHero'],
     'pricing-section': ['PricingSection'],
     'auth-card': ['AuthCard'],
     'dashboard-shell': ['DashboardShell'],
-    'empty-state': ['EmptyState'],
-    'waitlist-page': ['WaitlistPage'],
 }
 
 const activeTab = ref<InstallTab>('cli')

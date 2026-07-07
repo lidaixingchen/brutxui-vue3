@@ -76,7 +76,7 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 
 ### 禁用内部过滤
 
-当外部组件自行处理过滤逻辑时（如 Combobox、SearchWidget），可使用 `disable-filter` 禁用 Command 的内部搜索过滤，避免双重过滤冲突：
+当外部组件自行处理过滤逻辑时（如 Combobox），可使用 `disable-filter` 禁用 Command 的内部搜索过滤，避免双重过滤冲突：
 
 ```vue
 <Command disable-filter>
@@ -98,7 +98,7 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 
 ### 搜索组件 recipe
 
-`SearchWidget` 已作为兼容区块保留；新代码可直接用 `Command disable-filter` 组合搜索框、分组结果、最近搜索和加载状态。
+可直接用 `Command disable-filter` 组合搜索框、分组结果、最近搜索和加载状态。
 
 ```vue
 <script setup>

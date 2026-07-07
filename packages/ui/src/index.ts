@@ -219,33 +219,14 @@ export type { PresetThemeName } from './themes'
 
 export { default as ColorModeSwitcher } from './components/color-mode-switcher/ColorModeSwitcher.vue'
 
-export { default as DashboardStats } from './components/dashboard-stats/DashboardStats.vue'
-export type { StatItem } from './components/dashboard-stats/types'
-
 export { default as DashboardShell } from './components/dashboard-shell/DashboardShell.vue'
 
 export { default as BrutalistHero } from './components/brutalist-hero/BrutalistHero.vue'
 
 export { default as AuthCard } from './components/auth-card/AuthCard.vue'
 
-export { default as EmptyState } from './components/empty-state/EmptyState.vue'
-
 export { default as PricingSection } from './components/pricing-section/PricingSection.vue'
 export type { BrutalistPricingPlan, PricingPlan, PricingFeature } from './components/pricing-section/types'
-
-export { default as WaitlistPage } from './components/waitlist-page/WaitlistPage.vue'
-
-export { default as TestimonialCard } from './components/testimonial-card/TestimonialCard.vue'
-
-export { default as BlogCard } from './components/blog-card/BlogCard.vue'
-
-export { default as FileCard } from './components/file-card/FileCard.vue'
-
-export { default as QuickActions } from './components/quick-actions/QuickActions.vue'
-export type { ActionItem } from './components/quick-actions/types'
-
-export { default as FaqSection } from './components/faq-section/FaqSection.vue'
-export type { FaqItem } from './components/faq-section/types'
 
 export type { TabItem } from './components/tabs/types'
 
@@ -255,11 +236,6 @@ export type { NavItem } from './components/header-section/types'
 export { default as FooterSection } from './components/footer-section/FooterSection.vue'
 export type { FooterLinkGroup, FooterLink } from './components/footer-section/types'
 
-export { default as NotFoundPage } from './components/not-found-page/NotFoundPage.vue'
-
-export { default as SearchWidget } from './components/search-widget/SearchWidget.vue'
-export type { SearchSuggestion } from './components/search-widget/types'
-
 export { default as FeedbackForm } from './components/feedback-form/FeedbackForm.vue'
 
 export { default as CookieConsent } from './components/cookie-consent/CookieConsent.vue'
@@ -267,22 +243,6 @@ export { default as CookieConsent } from './components/cookie-consent/CookieCons
 export { default as DataTable } from './components/data-table/DataTable.vue'
 export { dataTableRootVariants, dataTableHeaderVariants, dataTableHeadVariants, dataTableRowVariants, dataTableCellVariants, dataTableToolbarVariants, dataTablePaginationVariants, dataTableEmptyVariants, dataTableLoadingVariants } from './components/data-table/data-table-variants'
 export type { DataTableColumn, DataTableColumnHeaderContext, DataTableVirtualScroll, DataTableSortState, DataTableFilterState, DataTablePaginationState } from './components/data-table/types'
-
-export { default as SettingsPage } from './components/settings-page/SettingsPage.vue'
-export type { SettingsTab } from './components/settings-page/types'
-
-export { default as BlogListPage } from './components/blog-list-page/BlogListPage.vue'
-export type { BlogPost } from './components/blog-list-page/types'
-
-export { default as ActivityLogPage } from './components/activity-log-page/ActivityLogPage.vue'
-export type { ActivityEntry } from './components/activity-log-page/types'
-
-export { default as ProfilePage } from './components/profile-page/ProfilePage.vue'
-
-export { default as ChartSection } from './components/chart-section/ChartSection.vue'
-export type { ChartDataPoint } from './components/chart-section/types'
-export { default as OverviewPage } from './components/overview-page/OverviewPage.vue'
-export type { OverviewStat } from './components/overview-page/types'
 
 export { default as Accordion } from './components/accordion/Accordion.vue'
 export { default as AccordionItem } from './components/accordion/AccordionItem.vue'
@@ -386,7 +346,7 @@ export type { TranslateFunction } from './composables/useLocale'
 export { useColorHistory } from './composables/useColorHistory'
 export type { UseColorHistoryOptions, UseColorHistoryReturn } from './composables/useColorHistory'
 export { zhCN, en, mergeLocale } from './locales'
-export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, WaitlistPageLocale, DashboardShellLocale, BrutalistHeroLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, EmptyStateLocale, TestimonialCardLocale, BlogCardLocale, FileCardLocale, QuickActionsLocale, FaqSectionLocale, HeaderSectionLocale, FooterSectionLocale, NotFoundPageLocale, SearchWidgetLocale, FeedbackFormLocale, CookieConsentLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, SettingsPageLocale, OverviewPageLocale, BlogListPageLocale, ActivityLogPageLocale, ProfilePageLocale, ChartSectionLocale, GallerySectionLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, ColorModeSwitcherLocale, PricingSectionLocale, DashboardStatsLocale, InputLocale, NumberInputLocale, TextareaLocale, VirtualScrollLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './locales/types'
+export type { Locale, CommandLocale, ComboboxLocale, PaginationLocale, CarouselLocale, SpinnerLocale, SubmitButtonLocale, CopyToClipboardLocale, BeforeAfterLocale, AuthCardLocale, DashboardShellLocale, BrutalistHeroLocale, ToastLocale, DialogLocale, SheetLocale, BreadcrumbLocale, TreeViewLocale, TreeSelectLocale, StepperLocale, HeaderSectionLocale, FooterSectionLocale, FeedbackFormLocale, CookieConsentLocale, DataTableLocale, FormWizardLocale, ChatBubbleLocale, ScratchCardLocale, SketchyChartLocale, Card3dLocale, HardcoreInputLocale, CodeBlockLocale, KanbanLocale, CalendarLocale, DatePickerLocale, ColorPickerLocale, ColorModeSwitcherLocale, PricingSectionLocale, InputLocale, NumberInputLocale, TextareaLocale, VirtualScrollLocale, SwitchLocale, CheckboxLocale, TagsInputLocale, BadgeLocale, AlertLocale } from './locales/types'
 
 // 新增新粗野主义交互与数据可视化组件导出
 export { default as Card3D } from './components/card-3d/Card3D.vue'
@@ -394,8 +354,6 @@ export { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from '.
 
 export { default as GlitchText } from './components/glitch-text/GlitchText.vue'
 export { glitchTextVariants } from './components/glitch-text/glitch-text-variants'
-
-export { default as GlitchButton } from './components/glitch-button/GlitchButton.vue'
 
 export { default as VirtualScroll } from './components/virtual-scroll/VirtualScroll.vue'
 export { virtualScrollRootVariants, virtualScrollItemVariants } from './components/virtual-scroll/virtual-scroll-variants'
@@ -453,9 +411,6 @@ export type { UseDebounceOptions, UseDebounceReturn } from './composables/useDeb
 
 export { useThrottle } from './composables/useThrottle'
 export type { UseThrottleOptions, UseThrottleReturn } from './composables/useThrottle'
-
-// 新增组件 - Input Adornment
-export { InputAdornment } from './components/input-adornment'
 
 // 新增组件 - Upload 系统
 export { Upload, UploadTrigger, UploadFileList, UploadFileItem } from './components/upload'

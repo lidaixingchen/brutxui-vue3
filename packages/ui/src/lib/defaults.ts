@@ -2,7 +2,7 @@
  * Shared default values for component configuration.
  */
 
-/** Default autoplay interval in milliseconds (used by Carousel, GlitchText, GlitchButton) */
+/** Default autoplay interval in milliseconds (used by Carousel, GlitchText) */
 export const DEFAULT_AUTOPLAY_INTERVAL_MS = 3000
 
 // ── Color Picker ──────────────────────────────────────────────

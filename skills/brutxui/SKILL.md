@@ -84,7 +84,7 @@ import { cn } from '@/lib/utils'
 | Breadcrumb | 面包屑 | 支持 Link/Page/Separator/Ellipsis |
 | Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击，defineExpose 暴露 currentStep/goToStep/nextStep/previousStep 等方法 |
 | Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局，role="list" 和 role="listitem" 无障碍语义 |
-| Carousel | 轮播 | 支持循环/自动播放/箭头/圆点；`CarouselEnhanced` 增强版额外支持缩略图导航/自动播放指示器/视差动画；defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
+| Carousel | 轮播 | 支持循环/自动播放/箭头/圆点、缩略图导航、自动播放指示器（进度条/圆点/分数）、视差动画；defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
 | TreeView | 树形视图 | 支持展开/选中/复选选择模式、拖拽排序（draggable/allowDrag/allowDrop/v-model:nodes/moveNode 工具函数）、懒加载（lazy/load/retryOnError）、节点过滤（filterable/filterMethod/filter 方法）、reloadNode 重载节点、defineExpose 暴露 filter/reloadNode 方法 |
 | Watermark | 水印 | 平铺水印层，支持防篡改与自适应防 Diff 缓存重绘 |
 | Backtop | 回到顶部 | 带滚动节流与跨沙箱容器探测支持的回到顶部组件 |
@@ -137,7 +137,6 @@ import { cn } from '@/lib/utils'
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
 | GlitchText | 故障文字 | CSS clip-path 驱动，支持 hover/click/autoplay，横向/纵向/双向撕裂，自动尊重 prefers-reduced-motion |
-| GlitchButton | 故障按钮 | 继承 Button 所有变体，支持 hover/click/autoplay 触发故障动画，横向/纵向/双向撕裂，自动尊重 prefers-reduced-motion |
 | TypewriterText | 打字机文本 | 逐字符显示动画，支持循环/光标/尺寸/粗细，自动尊重 prefers-reduced-motion |
 | NoiseBackground | 噪点背景 | SVG feTurbulence 滤镜，支持动画/类型/圆角、prefers-reduced-motion 静态降级 |
 | ScratchCard | 刮刮卡 | Canvas 覆盖层擦除 |
@@ -154,32 +153,15 @@ import { cn } from '@/lib/utils'
 | HeaderSection | 页头导航 | 支持导航项/Logo |
 | FooterSection | 页脚 | 支持链接分组/版权 |
 | DashboardShell | 仪表盘外壳 | 含侧边栏和顶栏 |
-| DashboardStats | 仪表盘统计 | 支持趋势指标 |
-| OverviewPage | 总览页面 | 支持统计卡片 |
 | DataTableSection | 数据表格 | 支持搜索/分页/排序 |
-| ChartSection | 图表区块 | 内置柱状/折线/饼图切换 |
-| ActivityLogPage | 活动日志 | 支持时间戳/类型标记 |
 | StepperSection | 步骤区块 | 支持当前步骤 |
 | AuthCard | 登录卡片 | 内置国际化文案，支持 texts prop 批量覆盖 |
-| ProfilePage | 个人资料 | 支持头像/邮箱/简介 |
-| SettingsPage | 设置页面 | 支持 v-model、标签切换 |
-| WaitlistPage | 等待名单 | 支持等待人数 |
-| NotFoundPage | 404 页面 | 支持返回按钮 |
 | LoadingPage | 加载页面 | 支持进度条 |
-| BlogCard | 博客卡片 | 支持标签/日期/链接 |
-| BlogListPage | 博客列表 | 支持分类/分页 |
-| TestimonialCard | 评价卡片 | 支持引用/作者/角色 |
-| FaqSection | FAQ 区块 | 支持问答列表 |
-| GallerySection | 画廊区块 | 支持图片/标题/描述 |
-| FileCard | 文件卡片 | 支持文件名/大小/类型 |
 | UploadCard | 上传卡片 | 支持进度条/文件限制 |
-| EmptyState | 空状态 | 支持图标/操作按钮 |
 | ErrorCard | 错误卡片 | 支持重试/关闭操作 |
 | SuccessCard | 成功卡片 | 支持确认按钮 |
 | CookieConsent | Cookie 同意 | 支持接受/拒绝 |
 | FeedbackForm | 反馈表单 | 支持标题/描述、加载/成功状态 |
-| QuickActions | 快捷操作 | 支持图标/变体 |
-| SearchWidget | 搜索组件 | 支持建议/分组、加载/最近搜索 |
 | Tabs (tabs prop) | 标签导航 | 传入 tabs 数组自动渲染触发器与面板，支持受控/非受控双模式 |
 
 > 完整 Props / Events / Slots 参考 `references/components/` 下的分类文件。

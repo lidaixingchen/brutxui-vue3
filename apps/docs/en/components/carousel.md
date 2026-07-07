@@ -57,7 +57,6 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 |------|------|
 | `Carousel` | Carousel container, manages scroll logic and navigation controls |
 | `CarouselItem` | Single slide container |
-| `CarouselEnhanced` | Compatibility entry that forwards to `Carousel` |
 
 ## Composables
 
@@ -188,13 +187,7 @@ const carouselRef = ref()
 
 ## Carousel Enhanced Features
 
-`Carousel` includes **thumbnail navigation**, **autoplay indicators** (progress bar / dots / fraction), and **parallax animation** effects, suitable for image galleries, product showcases, and other scenarios requiring richer interaction. `CarouselEnhanced` remains available as a compatibility wrapper; prefer `Carousel` for new code.
-
-### Demo
-
-<ComponentPreview>
-  <CarouselEnhancedDemo />
-</ComponentPreview>
+`Carousel` includes **thumbnail navigation**, **autoplay indicators** (progress bar / dots / fraction), and **parallax animation** effects, suitable for image galleries, product showcases, and other scenarios requiring richer interaction.
 
 ### Usage
 

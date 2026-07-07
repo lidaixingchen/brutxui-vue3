@@ -57,7 +57,7 @@ Inject buttons inside the `#extra` slot layout to allow further navigation or re
 
 ### Empty State
 
-`Result` supports `status="empty"` and is the recommended entry for new empty states. `EmptyState` remains available as a compatibility block.
+`Result` supports `status="empty"` and is the recommended entry for empty states.
 
 ```vue
 <template>

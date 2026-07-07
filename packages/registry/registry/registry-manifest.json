@@ -5,7 +5,7 @@
   "registryVersion": "0.1.0",
   "buildTimestamp": null,
   "gitCommit": null,
-  "itemCount": 106,
+  "itemCount": 87,
   "items": {
     "accordion": {
       "integrity": "sha256-3139e16e960438e55f207b6ee2fc802c6292402c43a40fd03f7b9e9fd2817ee0",
@@ -17,23 +17,6 @@
       "registryDependencies": [],
       "category": "navigation",
       "examples": []
-    },
-    "activity-log-page": {
-      "integrity": "sha256-8e37542c147ffb9b914f514ca52fcb293f5c1850f45a6803d06da7ff6176dde2",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "badge",
-        "locale-zh-cn",
-        "pagination",
-        "table"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "timeline"
     },
     "alert": {
       "integrity": "sha256-fa17ce9912bfaed1ca499f4788454b4e118b2240a13a29e75e901e7124f755f7",
@@ -122,42 +105,6 @@
       "category": "media",
       "examples": []
     },
-    "blog-card": {
-      "integrity": "sha256-ad9d6846e5d73f64222b62e38c89c25f4ef18898712aa86a18426b86a319d72c",
-      "fileCount": 2,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "avatar",
-        "badge",
-        "button",
-        "card",
-        "locale-zh-cn"
-      ],
-      "category": "layout",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "card"
-    },
-    "blog-list-page": {
-      "integrity": "sha256-0180c20d98c4b570b7327ba1772eebcaa6e122c3519d5b5a25454a65d6f5c98c",
-      "fileCount": 4,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "badge",
-        "card",
-        "input",
-        "locale-zh-cn",
-        "pagination"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "card"
-    },
     "breadcrumb": {
       "integrity": "sha256-965fde1c57170c2478542b44038e2ccd62803a7c84e64e9155fe73f983175de4",
       "fileCount": 11,
@@ -187,7 +134,7 @@
       "examples": []
     },
     "button": {
-      "integrity": "sha256-66c7ed2d53661da58c72c8dc577183cbd4879cc12d7a75e11e50df2ef755d90f",
+      "integrity": "sha256-f776aabb01607d0ef5329548a7f38b9d8a405145782c2defc18e47eb022c01a1",
       "fileCount": 10,
       "dependencies": [
         "@lucide/vue",
@@ -200,7 +147,7 @@
       "examples": []
     },
     "calendar": {
-      "integrity": "sha256-ae85da931772730fab4300b5402dae901cd0f7dee2aa4076eda5cb1477dd5861",
+      "integrity": "sha256-6bce7bdb550b93ad566b8c34df0006c6c16d295f50f042ca2f93c9414ef5e976",
       "fileCount": 4,
       "dependencies": [
         "@lucide/vue",
@@ -221,7 +168,7 @@
       "examples": []
     },
     "card-3d": {
-      "integrity": "sha256-534c1138ca4d74fe719da3d1ae864a7d8898d364fd56c70924ca2287fd2effdb",
+      "integrity": "sha256-56dd8a6c8af9e47dc4c89e3b630b6fc49876c3ddb91cf6f6372816f88d4bf366",
       "fileCount": 6,
       "dependencies": [],
       "registryDependencies": [
@@ -231,8 +178,8 @@
       "examples": []
     },
     "carousel": {
-      "integrity": "sha256-f0d274ceaf9469f9ff77b48fd53bb04ebd0456a13d242efc31c1c493d8499959",
-      "fileCount": 13,
+      "integrity": "sha256-7f286df2844b661383f2d34904f25bbeb2437b334bab6adf152ce68c81ec30eb",
+      "fileCount": 12,
       "dependencies": [
         "@lucide/vue",
         "embla-carousel-vue"
@@ -258,25 +205,6 @@
       ],
       "category": "form",
       "examples": []
-    },
-    "chart-section": {
-      "integrity": "sha256-0eb9dc10db6a2529f10900cf2bc3bb0d821b9b5d11c0d7294b85468078f2d824",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue",
-        "reka-ui"
-      ],
-      "registryDependencies": [
-        "card",
-        "empty-state",
-        "locale-zh-cn",
-        "sketchy-chart",
-        "tabs"
-      ],
-      "category": "marketing",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "sketchy-chart"
     },
     "chat-bubble": {
       "integrity": "sha256-d6908fe2e38817c1ff5a778334c78f464d033b27cb4057f969355125ada4b3ae",
@@ -332,7 +260,7 @@
       "examples": []
     },
     "color-picker": {
-      "integrity": "sha256-3cdef62d81b413cfb7d8400b3e1871b734d35118d5b4d1b22fba138927b24a03",
+      "integrity": "sha256-b14a66acc4c367272ff3603ef2201516de27a72009a4c3eb7af2313be8a22e42",
       "fileCount": 15,
       "dependencies": [
         "@lucide/vue",
@@ -423,26 +351,8 @@
       "category": "layout",
       "examples": []
     },
-    "dashboard-stats": {
-      "integrity": "sha256-d447989e03f1fb927f7c6cb943b2b307fc8c4337821c6e27a54ea25a861f879e",
-      "fileCount": 4,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "badge",
-        "card",
-        "counter",
-        "empty-state",
-        "locale-zh-cn"
-      ],
-      "category": "layout",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "counter"
-    },
     "data-table": {
-      "integrity": "sha256-39922565e595fceb4adcc45e74e5ddc4f0fcd390bcfccd4c4cac5dd1358f27d5",
+      "integrity": "sha256-108d4cfaa12328f45429f5a813227a07de92528eac9b987869d9d04b033ea142",
       "fileCount": 13,
       "dependencies": [
         "@lucide/vue"
@@ -460,7 +370,7 @@
       "examples": []
     },
     "date-picker": {
-      "integrity": "sha256-d440f6ab835cc1c1eddd781eb1aa205fcbd8bda595c4dae9dec8da7b2ee5d64d",
+      "integrity": "sha256-d9fa8af904e5b490e2565b9546c9cd7c1899986a42486ff62da9d38d9ffda315",
       "fileCount": 23,
       "dependencies": [
         "@lucide/vue",
@@ -485,7 +395,7 @@
       "examples": []
     },
     "dialog": {
-      "integrity": "sha256-11af95bb2a4911ff0ba06fc20d0ab836a265d987b0b81a935a7686a6f4eb935a",
+      "integrity": "sha256-509161190111cfdc07223628d44d809008a5a201bcdf68d4d35b7d9721b8fe2b",
       "fileCount": 17,
       "dependencies": [
         "@lucide/vue",
@@ -510,38 +420,6 @@
       "category": "overlay",
       "examples": []
     },
-    "empty-state": {
-      "integrity": "sha256-af028c7b7b72053bbfc4df11c48e97c9c4ce35395e319bb433bbbd3a04744ab4",
-      "fileCount": 2,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button",
-        "locale-zh-cn",
-        "result"
-      ],
-      "category": "utility",
-      "examples": []
-    },
-    "faq-section": {
-      "integrity": "sha256-e8abcf498aefee99496c0b54b61936fa48878ac889495bf620c57a23e335d2fb",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "accordion",
-        "badge",
-        "card",
-        "empty-state",
-        "locale-zh-cn"
-      ],
-      "category": "marketing",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "accordion"
-    },
     "feedback-form": {
       "integrity": "sha256-f93e16ac0f0fd656c5bdd7e56fc3f6bd7d39a062cdf5243866b91cfd6608bce4",
       "fileCount": 3,
@@ -559,23 +437,6 @@
       ],
       "category": "utility",
       "examples": []
-    },
-    "file-card": {
-      "integrity": "sha256-8b69906708b1e381f2e0b4f9e607166f07e9a65211e2b90653e9e206672d66c9",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "badge",
-        "button",
-        "card",
-        "locale-zh-cn"
-      ],
-      "category": "layout",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "card"
     },
     "footer-section": {
       "integrity": "sha256-5aaec348fd773c555a275c6419a116a3d3fe74dc1bf29172832fb410b3ee5392",
@@ -607,35 +468,8 @@
       "category": "form",
       "examples": []
     },
-    "gallery-section": {
-      "integrity": "sha256-5a226b465e57f2f5932ba6b78329482b4629cc2300482bdbe7af8ff451065778",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue",
-        "embla-carousel-vue"
-      ],
-      "registryDependencies": [
-        "card",
-        "carousel",
-        "locale-zh-cn"
-      ],
-      "category": "marketing",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "carousel"
-    },
-    "glitch-button": {
-      "integrity": "sha256-ff3631c545c3fefe5c8acbb7ed7db314d0f72c380b23878345e4462c75c87799",
-      "fileCount": 5,
-      "dependencies": [],
-      "registryDependencies": [
-        "button"
-      ],
-      "category": "visual-effect",
-      "examples": []
-    },
     "glitch-text": {
-      "integrity": "sha256-40f8ac6e74e9c55efbd754e35f2d662025e5a0d580198d058f8286008553ad29",
+      "integrity": "sha256-4676db827386668a749fa227b6f5317ed4ea26f73693620f67c7ab27ca7742a6",
       "fileCount": 6,
       "dependencies": [],
       "registryDependencies": [],
@@ -643,7 +477,7 @@
       "examples": []
     },
     "hardcore-input": {
-      "integrity": "sha256-0b3a5ffc50d796f048f4cef59c52be9bbcb3235243fcbcce8d066e5f7847c5a4",
+      "integrity": "sha256-08cce227d867b8455b5da2cb24b35016a88111a5963cb6a3eea850419923bf52",
       "fileCount": 7,
       "dependencies": [],
       "registryDependencies": [
@@ -699,16 +533,6 @@
       "category": "form",
       "examples": []
     },
-    "input-adornment": {
-      "integrity": "sha256-761d44802d9c8aef021ea315f41269056cac86a44c2b16ec9b131d6eb0170b06",
-      "fileCount": 1,
-      "dependencies": [],
-      "registryDependencies": [],
-      "category": "form",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "input"
-    },
     "kanban": {
       "integrity": "sha256-5289153d68835a6b0a317bdcb867fb8e8f7ff0678bcba819cf7ea5f19b87092c",
       "fileCount": 6,
@@ -753,7 +577,7 @@
       "examples": []
     },
     "locale-zh-cn": {
-      "integrity": "sha256-ad15eaed4baa4caf9cc5f1497f53d6018b5cf3356e7d51acd987d75e2097223f",
+      "integrity": "sha256-5948c66ee071e2d2bd97de7b68972ffadf5dbf5947c74db9f7d3182e54889999",
       "fileCount": 2,
       "dependencies": [],
       "registryDependencies": [],
@@ -778,7 +602,7 @@
       "examples": []
     },
     "message": {
-      "integrity": "sha256-732092ae2122f7ea7a3944da85cfdecb6706c0397e2c1f614b91a410168b131c",
+      "integrity": "sha256-3de9b5818eae9bbf9904e0d4ef4cbb90277082e7196a456e174e7e123aa55f37",
       "fileCount": 8,
       "dependencies": [
         "@lucide/vue"
@@ -798,23 +622,6 @@
       "category": "visual-effect",
       "examples": []
     },
-    "not-found-page": {
-      "integrity": "sha256-81c45a52be8bd9336bcc3ebb79e056d637e0c7c9bd2ae3683b180c491b75da48",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button",
-        "card",
-        "glitch-text",
-        "locale-zh-cn"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "result"
-    },
     "number-input": {
       "integrity": "sha256-966574a2c3f5b1dbd9df66ac9ee68a11ccb9fd060d4aac6d4c628a2605457380",
       "fileCount": 5,
@@ -828,23 +635,6 @@
       ],
       "category": "form",
       "examples": []
-    },
-    "overview-page": {
-      "integrity": "sha256-5272a074ce4cd8baf23cf51b3384a805a5ffc857d00b12a77988650238e5f10b",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "card",
-        "dashboard-stats",
-        "empty-state",
-        "locale-zh-cn"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "dashboard-shell"
     },
     "pagination": {
       "integrity": "sha256-44bd5322a18a543ef660acfdebd8a9adf927cf03ae2e2d29b2eab7a6002f4f8d",
@@ -883,7 +673,7 @@
       "examples": []
     },
     "pricing-section": {
-      "integrity": "sha256-205e9db27bb34ada0cf6a4708c08e6cbb86dfedf09a1b193ad680b0d67447fa7",
+      "integrity": "sha256-434eb203a21965a228dc9781ecccd437d06866feeca53973f02974c6bcf69ba9",
       "fileCount": 3,
       "dependencies": [
         "@lucide/vue"
@@ -892,31 +682,11 @@
         "badge",
         "button",
         "card",
-        "empty-state",
-        "locale-zh-cn"
+        "locale-zh-cn",
+        "result"
       ],
       "category": "marketing",
       "examples": []
-    },
-    "profile-page": {
-      "integrity": "sha256-8bf86c22aa7b191c87d4bdcbb22bb6c8d96ed2f4f80421342b4999d8de6bd748",
-      "fileCount": 2,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "avatar",
-        "button",
-        "card",
-        "input",
-        "label",
-        "locale-zh-cn",
-        "textarea"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "descriptions"
     },
     "progress": {
       "integrity": "sha256-4f25faa6f05c7c1470c042618733530fa59b074aaaaba6768690432eac05c9b9",
@@ -927,24 +697,6 @@
       "registryDependencies": [],
       "category": "feedback",
       "examples": []
-    },
-    "quick-actions": {
-      "integrity": "sha256-4560c865ba943ff7a0684e8d748e1daed50ce85727f94432aa513e27a3b2ce3f",
-      "fileCount": 4,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "badge",
-        "button",
-        "card",
-        "empty-state",
-        "locale-zh-cn"
-      ],
-      "category": "utility",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "button"
     },
     "radio-group": {
       "integrity": "sha256-e2083937f5d4b2b0b5663481bb08343c1a247115770ffc82d123f8a4c3d0eb47",
@@ -978,7 +730,7 @@
       "examples": []
     },
     "scratch-card": {
-      "integrity": "sha256-6ff65cace9374832914c4dbf440afad72eb91304ba0119243a2d2b33c11bbf01",
+      "integrity": "sha256-57139445f55757e9e92e0fd36ab628bdf0187eecbeb1d34d1901e40107929c2c",
       "fileCount": 8,
       "dependencies": [],
       "registryDependencies": [
@@ -996,23 +748,6 @@
       "registryDependencies": [],
       "category": "layout",
       "examples": []
-    },
-    "search-widget": {
-      "integrity": "sha256-669b450a0f2c66489181db452e5b8206a7d94842194fde9171024cf5c570ed1c",
-      "fileCount": 5,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "card",
-        "command",
-        "locale-zh-cn",
-        "spinner"
-      ],
-      "category": "utility",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "command"
     },
     "select": {
       "integrity": "sha256-84a3a31445305aee070fc3415737445f357c0eba0b323dea107e0866b3ce9c60",
@@ -1034,29 +769,6 @@
       "registryDependencies": [],
       "category": "layout",
       "examples": []
-    },
-    "settings-page": {
-      "integrity": "sha256-5f1056cfef6c22cda3e17a7ec3c0d019406d593a1fa97774e3e2ef351f6a5bbc",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue",
-        "reka-ui"
-      ],
-      "registryDependencies": [
-        "button",
-        "card",
-        "empty-state",
-        "input",
-        "label",
-        "locale-zh-cn",
-        "separator",
-        "switch",
-        "tabs"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "tabs"
     },
     "sheet": {
       "integrity": "sha256-35dd4b5c1388c78334be1a89f1577cb9b191f031cf4cc900192f90c70064e4bb",
@@ -1080,7 +792,7 @@
       "examples": []
     },
     "sketchy-chart": {
-      "integrity": "sha256-28591e56f3127cb7e442a523f4716c416f4aa4946517e0af5218cf26ca2fe620",
+      "integrity": "sha256-90f768b08ed58fc1deff9a1ef3f0b8ca3004c28dd7a2073a2bc90cb9c791c4ec",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [
@@ -1166,23 +878,6 @@
       "category": "form",
       "examples": []
     },
-    "testimonial-card": {
-      "integrity": "sha256-890ac027596c95185fe1bbaf8c05995889ec992dea40de392ff2de1b54b67b93",
-      "fileCount": 3,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "avatar",
-        "badge",
-        "card",
-        "locale-zh-cn"
-      ],
-      "category": "layout",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "card"
-    },
     "textarea": {
       "integrity": "sha256-94cc5a6ada54a86a64c88a622adb49990d3ad258281a534d78bc74652ac44de5",
       "fileCount": 4,
@@ -1208,7 +903,7 @@
       "examples": []
     },
     "toast": {
-      "integrity": "sha256-e339a987e9f2b98cd1120fc1f204dd77a007a553f19b0205cc3717ad5f43555f",
+      "integrity": "sha256-b4e04a6e44f92baf1d6093ae1b1da13659ecaaaf6d0ff3452be7d9b35720edd5",
       "fileCount": 8,
       "dependencies": [
         "@lucide/vue"
@@ -1338,23 +1033,6 @@
       ],
       "category": "utility",
       "examples": []
-    },
-    "waitlist-page": {
-      "integrity": "sha256-df9eb9437167a9a8bacfd8cff6baf3922a50da244ccd751bba55c70703989db1",
-      "fileCount": 4,
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "badge",
-        "button",
-        "input",
-        "locale-zh-cn"
-      ],
-      "category": "page",
-      "examples": [],
-      "status": "legacy",
-      "replacement": "brutalist-hero"
     },
     "watermark": {
       "integrity": "sha256-eaf404598a9331e845932b9d4ca1bd9dd2207a4521a528d68030f9f9d5c973d6",

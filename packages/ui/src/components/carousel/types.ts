@@ -32,5 +32,3 @@ export interface CarouselProps {
     parallax?: ParallaxEffect
     class?: string
 }
-
-export type CarouselEnhancedProps = CarouselProps

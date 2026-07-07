@@ -69,16 +69,6 @@ export const zhCN: Locale = {
         showPassword: '显示密码',
         hidePassword: '隐藏密码',
     },
-    waitlistPage: {
-        title: '加入 BrutxUI 等候俱乐部',
-        ctaText: '获取优先访问权',
-        earlyAccess: '抢先体验',
-        onWaitlist: '{count} 人已加入等候',
-        live: '在线',
-        defaultDescription: '加入等候列表，成为首批体验者。',
-        invalidEmail: '请输入有效的邮箱地址',
-        emailPlaceholder: 'you@example.com',
-    },
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
         signOut: '退出登录',
@@ -135,37 +125,6 @@ export const zhCN: Locale = {
         progressSteps: '进度步骤',
         step: '第 {index} 步：{title}',
     },
-    emptyState: {
-        defaultTitle: '未找到活跃的部署',
-        defaultActionText: '部署新应用',
-        defaultDescription: '暂无内容可显示。',
-    },
-    testimonialCard: {
-        defaultQuote: '这款产品彻底改变了我们的工作流程。',
-        defaultAuthor: '张明',
-        defaultRole: '产品经理',
-        verified: '已认证',
-    },
-    blogCard: {
-        defaultTitle: 'BrutxUI 入门指南',
-        defaultExcerpt: '了解如何使用我们的组件库构建大胆的界面。',
-        readMore: '阅读更多',
-    },
-    fileCard: {
-        defaultFileName: '文档.pdf',
-        download: '下载',
-        downloadAriaLabel: '下载 {fileName}',
-    },
-    quickActions: {
-        defaultTitle: '快捷操作',
-        badge: '快捷',
-        emptyTitle: '暂无快捷操作',
-    },
-    faqSection: {
-        defaultTitle: '常见问题',
-        defaultSubtitle: '查找您需要的答案',
-        emptyTitle: '暂无常见问题',
-    },
     headerSection: {
         defaultLogoText: 'BrutxUI',
         defaultCtaText: '开始使用',
@@ -175,15 +134,6 @@ export const zhCN: Locale = {
         defaultLogoText: 'BrutxUI',
         defaultDescription: '面向 Vue 3 的新粗野主义 UI 组件库',
         defaultCopyright: '© 2026 BrutxUI. 保留所有权利。',
-    },
-    notFoundPage: {
-        defaultTitle: '页面未找到',
-        defaultDescription: '您访问的页面不存在或已被移除。',
-        defaultBackText: '返回首页',
-    },
-    searchWidget: {
-        defaultPlaceholder: '搜索...',
-        recentSearches: '最近搜索',
     },
     feedbackForm: {
         defaultTitle: '发送反馈',
@@ -248,53 +198,6 @@ export const zhCN: Locale = {
         delivered: '已送达',
         read: '已读',
         failed: '发送失败',
-    },
-    settingsPage: {
-        defaultTitle: '设置',
-        saveText: '保存更改',
-        nameLabel: '姓名',
-        namePlaceholder: '输入姓名',
-        notificationsLabel: '通知',
-        emptyTitle: '暂无设置项',
-    },
-    overviewPage: {
-        defaultTitle: '概览',
-        recentActivity: '最近活动',
-        quickStats: '快速统计',
-        emptyTitle: '暂无统计数据',
-    },
-    blogListPage: {
-        defaultTitle: '博客',
-        searchPlaceholder: '搜索文章...',
-        allCategories: '全部',
-        noPostsFound: '未找到文章',
-    },
-    activityLogPage: {
-        defaultTitle: '活动日志',
-        action: '操作',
-        user: '用户',
-        timestamp: '时间',
-        details: '详情',
-        noActivityFound: '未找到活动记录',
-    },
-    profilePage: {
-        defaultTitle: '个人资料',
-        nameLabel: '姓名',
-        emailLabel: '邮箱',
-        bioLabel: '简介',
-        saveText: '保存',
-    },
-    chartSection: {
-        defaultTitle: '数据可视化',
-        defaultSubtitle: '查看数据趋势',
-        bar: '柱状图',
-        line: '折线图',
-        pie: '饼图',
-        emptyTitle: '暂无图表数据',
-    },
-    gallerySection: {
-        defaultTitle: '画廊',
-        noItems: '暂无内容',
     },
     scratchCard: {
         ariaLabel: '刮刮卡',
@@ -425,10 +328,6 @@ export const zhCN: Locale = {
         system: '跟随系统',
         colorMode: '颜色模式',
         currentToggle: '当前：{mode}。点击切换。',
-    },
-    dashboardStats: {
-        defaultTitle: '概览性能',
-        emptyTitle: '暂无统计数据',
     },
     input: {
         placeholder: '请输入...',

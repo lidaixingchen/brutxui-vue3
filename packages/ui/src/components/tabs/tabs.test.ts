@@ -160,7 +160,7 @@ describe('Tabs (tabs prop array mode)', () => {
         expect(wrapper.findAllComponents(TabsContent)).toHaveLength(mockTabs.length)
     })
 
-    it('renders EmptyState when tabs is empty array', () => {
+    it('renders Result when tabs is empty array', () => {
         const wrapper = mount(Tabs, {
             props: { tabs: [] },
             global: { stubs: tabsGlobalStubs },

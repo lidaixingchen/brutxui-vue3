@@ -133,7 +133,7 @@ const value = ref('')
 
 ### Icons And Addons
 
-Prefer the built-in `prefixIcon`, `suffixIcon`, `prepend`, and `append` APIs on `Input` for input adornments. `InputAdornment` remains only as a compatibility entry; new code should use `Input` directly.
+Prefer the built-in `prefixIcon`, `suffixIcon`, `prepend`, and `append` APIs on `Input` for input adornments.
 
 ```vue
 <script setup>

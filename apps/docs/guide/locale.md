@@ -281,7 +281,6 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | CopyToClipboard | `copyToClipboard.copy`、`copyToClipboard.copied` | — |
 | BeforeAfter | `beforeAfter.before`、`beforeAfter.after` | — |
 | AuthCard | `authCard.welcomeBack`、`authCard.signInToContinue`、`authCard.google`、`authCard.github`、`authCard.orEmailLogin`、`authCard.email`、`authCard.password`、`authCard.forgotPassword`、`authCard.signIn`、`authCard.noAccount`、`authCard.register`、`authCard.emailPlaceholder`、`authCard.passwordPlaceholder` | — |
-| WaitlistPage | `waitlistPage.title`、`waitlistPage.ctaText`、`waitlistPage.earlyAccess`、`waitlistPage.onWaitlist`、`waitlistPage.live`、`waitlistPage.defaultDescription` | `onWaitlist`: `{count}` |
 | DashboardShell | `dashboardShell.sidebarNavigation`、`dashboardShell.signOut`、`dashboardShell.defaultEmail` | — |
 | BrutalistHero | `brutalistHero.title`、`brutalistHero.primaryCtaText`、`brutalistHero.secondaryCtaText`、`brutalistHero.neoBrutalismUI`、`brutalistHero.defaultSubtitle` | — |
 | Toast | `toast.close`、`toast.container` | — |
@@ -290,25 +289,10 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | Breadcrumb | `breadcrumb.label`、`breadcrumb.more` | — |
 | TreeView | `treeView.fileTree` | — |
 | Stepper | `stepper.progressSteps`、`stepper.step` | `step`: `{index}`、`{title}` |
-| EmptyState | `emptyState.defaultTitle`、`emptyState.defaultActionText`、`emptyState.defaultDescription` | — |
-| TestimonialCard | `testimonialCard.defaultQuote`、`testimonialCard.defaultAuthor`、`testimonialCard.defaultRole`、`testimonialCard.verified` | — |
-| BlogCard | `blogCard.defaultTitle`、`blogCard.defaultExcerpt`、`blogCard.readMore` | — |
-| FileCard | `fileCard.defaultFileName`、`fileCard.download` | — |
-| QuickActions | `quickActions.defaultTitle`、`quickActions.badge` | — |
-| FaqSection | `faqSection.defaultTitle`、`faqSection.defaultSubtitle` | — |
 | HeaderSection | `headerSection.defaultLogoText`、`headerSection.defaultCtaText`、`headerSection.menuLabel` | — |
 | FooterSection | `footerSection.defaultLogoText`、`footerSection.defaultDescription`、`footerSection.defaultCopyright` | — |
-| NotFoundPage | `notFoundPage.defaultTitle`、`notFoundPage.defaultDescription`、`notFoundPage.defaultBackText` | — |
-| SearchWidget | `searchWidget.defaultPlaceholder` | — |
 | FeedbackForm | `feedbackForm.defaultTitle`、`feedbackForm.defaultDescription`、`feedbackForm.defaultSubmitText`、`feedbackForm.successTitle`、`feedbackForm.successDescription`、`feedbackForm.successConfirmText`、`feedbackForm.nameLabel`、`feedbackForm.emailLabel`、`feedbackForm.subjectLabel`、`feedbackForm.messageLabel` | — |
 | CookieConsent | `cookieConsent.defaultTitle`、`cookieConsent.defaultDescription`、`cookieConsent.defaultAcceptText`、`cookieConsent.defaultDeclineText` | — |
-| SettingsPage | `settingsPage.defaultTitle`、`settingsPage.saveText`、`settingsPage.nameLabel`、`settingsPage.namePlaceholder`、`settingsPage.notificationsLabel` | — |
-| OverviewPage | `overviewPage.defaultTitle`、`overviewPage.recentActivity`、`overviewPage.quickStats` | — |
-| BlogListPage | `blogListPage.defaultTitle`、`blogListPage.searchPlaceholder`、`blogListPage.allCategories`、`blogListPage.noPostsFound` | — |
-| ActivityLogPage | `activityLogPage.defaultTitle`、`activityLogPage.action`、`activityLogPage.user`、`activityLogPage.timestamp`、`activityLogPage.details`、`activityLogPage.noActivityFound` | — |
-| ProfilePage | `profilePage.defaultTitle`、`profilePage.nameLabel`、`profilePage.emailLabel`、`profilePage.bioLabel`、`profilePage.saveText` | — |
-| ChartSection | `chartSection.defaultTitle`、`chartSection.defaultSubtitle`、`chartSection.bar`、`chartSection.line`、`chartSection.pie` | — |
-| GallerySection | `gallerySection.defaultTitle`、`gallerySection.noItems` | — |
 | ScratchCard | `scratchCard.ariaLabel` | — |
 | SketchyChart | `sketchyChart.lineAriaLabel`、`sketchyChart.barAriaLabel`、`sketchyChart.pieAriaLabel` | — |
 | Card3D | `card3d.ariaLabel` | — |
@@ -318,7 +302,6 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | Kanban | `kanban.dropCardsHere`、`kanban.addCard`、`kanban.cardGrabbed`、`kanban.cardReleased`、`kanban.cardMoved`、`kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
 | Timeline | `timeline.label` | — |
 | PricingSection | `pricingSection.defaultTitle`、`pricingSection.mostPopular`、`pricingSection.perLifetime`、`pricingSection.saasTitle`、`pricingSection.saasMostPopular`、`pricingSection.planStarterName`、`pricingSection.planProName`、`pricingSection.planEnterpriseName` | — |
-| DashboardStats | `dashboardStats.defaultTitle` | — |
 | Input | `input.placeholder` | — |
 | NumberInput | `numberInput.placeholder` | — |
 | Textarea | `textarea.placeholder` | — |

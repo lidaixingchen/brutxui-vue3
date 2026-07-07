@@ -56,7 +56,6 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 |------|------|
 | `Carousel` | 轮播容器，管理滚动逻辑与导航控制 |
 | `CarouselItem` | 单张幻灯片容器 |
-| `CarouselEnhanced` | 兼容入口，内部转发到 `Carousel` |
 
 ## 组合式函数
 
@@ -259,7 +258,7 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 
 ### 暴露的 API
 
-`Carousel` 通过 `defineExpose` 暴露滚动与自动播放控制；`CarouselEnhanced` 兼容 wrapper 暴露同一组方法：
+`Carousel` 通过 `defineExpose` 暴露滚动与自动播放控制：
 
 | 方法/属性 | 类型 | 说明 |
 |-----------|------|------|

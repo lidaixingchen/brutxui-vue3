@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
 import { useRouter } from 'vitepress'
-import { NotFoundPage } from 'brutx-ui-vue'
+import { Result, Button } from 'brutx-ui-vue'
 import { useI18n } from './lib/i18n'
 
 const { Layout } = DefaultTheme
@@ -16,12 +16,17 @@ function handleBack() {
 <template>
     <Layout>
         <template #not-found>
-            <NotFoundPage
-                :title="t('pageNotFound')"
-                :description="t('pageNotFoundDesc')"
-                :back-text="t('backToHome')"
-                @back="handleBack"
-            />
+            <div class="max-w-2xl mx-auto py-20">
+                <Result
+                    status="error"
+                    :title="t('pageNotFound')"
+                    :sub-title="t('pageNotFoundDesc')"
+                >
+                    <template #extra>
+                        <Button @click="handleBack">{{ t('backToHome') }}</Button>
+                    </template>
+                </Result>
+            </div>
         </template>
     </Layout>
 </template>
