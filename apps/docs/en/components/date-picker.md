@@ -220,6 +220,8 @@ Supports `YYYY`, `YY`, `MM`, `DD`, `HH`, `mm`, `ss`, `WW` (ISO week number) toke
 </template>
 ```
 
+`displayFormat` only affects the string shown in the input. It does not change the types of `modelValue`, `minDate`, `maxDate`, `shortcuts`, or emitted payloads; those public APIs always use `Date`, `[Date, Date]`, or `null`. For cross-time-zone datetime consistency, normalize values in your application as `Date`, timestamps, or full ISO strings with explicit offsets before converting them to `Date`; do not rely on native parsing of arbitrary date strings.
+
 ## Sub-components
 
 | Component | Purpose |

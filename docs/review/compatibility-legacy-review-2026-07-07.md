@@ -122,7 +122,7 @@
 - `packages/ui/src/composables/useDataTableFilter.ts` 已先用 `parseFormattedDate(text, 'YYYY-MM-DD')` 按本地日期解析纯日期区间，并对结束日期应用当天 `23:59:59.999`。
 - `packages/ui/src/components/calendar/Calendar.vue` 的事件字符串日期已先按本地 `YYYY-MM-DD` 解析，再回退原生 `Date` 解析完整 datetime。
 - `packages/ui/src/lib/date.ts` 的 `parseFormattedDate` 已校验年月日时分秒回读值，拒绝 `2026-02-31`、`2026-13-01`、`25:00:00` 这类溢出日期。
-- `apps/docs/components/data-table.md`、`apps/docs/components/calendar.md` 及英文版已说明纯日期与完整 datetime 的解析边界。
+- `apps/docs/components/data-table.md`、`apps/docs/components/calendar.md` 及英文版已说明纯日期与完整 datetime 的解析边界；`apps/docs/components/date-picker.md` 及英文版已说明 `displayFormat` 只影响展示，公开 API 仍使用 `Date` / `[Date, Date]` / `null`。
 
 执行结论：
 
@@ -232,4 +232,5 @@
 - 本轮选择复用验证：`packages/ui` 下 `vitest run src/composables/useSelectionDisplayText.test.ts src/composables/useClearableSelection.test.ts`、`vitest run src/composables/useSelectableTrigger.test.ts`，并随 registry build/validate 同步生成 `cascader`、`combobox`、`tree-select` 注册表产物。
 - 本轮表单验证分支验证：`packages/ui` 下 `vitest run src/components/feedback-form/feedback-form.test.ts src/components/hardcore-input/hardcore-input.test.ts`、`vue-tsc --noEmit`。
 - 本轮 viewport helper 验证：`packages/ui` 下 `vitest run src/lib/env.test.ts src/composables/useDialogEnhanced.test.ts src/components/tour/tour.test.ts`、`vue-tsc --noEmit`。
+- 本轮日期文档补强：补齐 DatePicker 中英文文档的 `displayFormat` 展示边界和跨时区输入建议；仅文档变更，未运行代码测试。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
