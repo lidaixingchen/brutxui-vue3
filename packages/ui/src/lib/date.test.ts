@@ -67,6 +67,15 @@ describe('parseFormattedDate', () => {
         expect(result!.getDate()).toBe(5)
     })
 
+    it('parses date-only strings as local midnight', () => {
+        const result = parseFormattedDate('2026-01-05', 'YYYY-MM-DD')
+        expect(result).not.toBeNull()
+        expect(result!.getTime()).toBe(new Date(2026, 0, 5).getTime())
+        expect(result!.getHours()).toBe(0)
+        expect(result!.getMinutes()).toBe(0)
+        expect(result!.getSeconds()).toBe(0)
+    })
+
     it('parses YYYY/MM/DD correctly', () => {
         const result = parseFormattedDate('2026/12/25', 'YYYY/MM/DD')
         expect(result).not.toBeNull()

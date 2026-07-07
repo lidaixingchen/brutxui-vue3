@@ -233,4 +233,5 @@
 - 本轮表单验证分支验证：`packages/ui` 下 `vitest run src/components/feedback-form/feedback-form.test.ts src/components/hardcore-input/hardcore-input.test.ts`、`vue-tsc --noEmit`。
 - 本轮 viewport helper 验证：`packages/ui` 下 `vitest run src/lib/env.test.ts src/composables/useDialogEnhanced.test.ts src/components/tour/tour.test.ts`、`vue-tsc --noEmit`。
 - 本轮日期文档补强：补齐 DatePicker 中英文文档的 `displayFormat` 展示边界和跨时区输入建议；仅文档变更，未运行代码测试。
+- 本轮日期本地语义补测：`packages/ui` 下 `vitest run src/lib/date.test.ts`，锁定 `YYYY-MM-DD` 按本地 midnight 构造。
 - 未运行 `pnpm release:check` 或全量测试，符合项目“避免重型测试”的约定。
