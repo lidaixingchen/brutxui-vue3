@@ -37,6 +37,12 @@ jobs:
                   restore-keys: |
                       ${{ runner.os }}-playwright-
 
+            - name: Clean up problematic APT repositories
+              if: matrix.node-version == 22
+              run: |
+                  sudo rm -f /etc/apt/sources.list.d/azure-cli.list*
+                  sudo rm -f /etc/apt/sources.list.d/microsoft*
+
             - name: Install Playwright Browser and Deps
               if: matrix.node-version == 22 && steps.playwright-cache.outputs.cache-hit != 'true'
               run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
