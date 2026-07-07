@@ -51,6 +51,8 @@ export {
     hasVscodeDir,
 } from './vscode-snippets.js';
 
+export * as services from './services/index.js';
+
 export {
     ensureUtilsFile,
     resolveComponents,
@@ -78,6 +80,12 @@ export type {
     ProjectInitializationResult,
     ProjectInitializationSettings,
 } from './services/init-service.js';
+
+export {
+    diffComponent,
+    diffComponents,
+    getInstalledComponents,
+} from './services/diff-service.js';
 
 export {
     countComponentFiles,
