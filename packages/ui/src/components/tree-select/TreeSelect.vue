@@ -7,6 +7,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { useClearableSelection } from '@/composables/useClearableSelection'
+import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { treeSelectTriggerVariants } from './tree-select-variants'
 import { type TreeNode } from './tree-select-types'
@@ -278,21 +279,11 @@ watch(open, (isOpen) => {
     }
 })
 
-// 修复：检查空数组的情况
-const hasValue = computed(() => {
-    if (props.multiple && Array.isArray(props.modelValue)) {
-        return props.modelValue.length > 0
-    }
-    return !!props.modelValue
+const { triggerClasses } = useSelectableTrigger<TreeSelectModelValue>({
+    modelValue: () => props.modelValue,
+    baseClass: () => treeSelectTriggerVariants({ size: props.size }),
+    class: () => props.class,
 })
-
-const triggerClasses = computed(() =>
-    cn(
-        treeSelectTriggerVariants({ size: props.size }),
-        !hasValue.value && 'text-brutal-muted-foreground',
-        props.class
-    )
-)
 
 const triggerIconClasses = computed(() =>
     cn('shrink-0 opacity-50 stroke-3', iconSizeVariants({ size: props.iconSize }))

@@ -12,9 +12,9 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     button: { files: ['Button.vue', 'button-variants.ts', 'shared-button-variants.ts'] },
     calendar: { files: ['Calendar.vue'] },
     card: { files: ['Card.vue', 'CardContent.vue', 'CardDescription.vue', 'CardFooter.vue', 'CardHeader.vue', 'CardTitle.vue', 'card-variants.ts'] },
-    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts', 'useClearable.ts', 'useClearableSelection.ts', 'useSelectionDisplayText.ts'] },
+    cascader: { files: ['Cascader.vue', 'cascader-variants.ts', 'cascader-types.ts', 'index.ts'], composables: ['useLocale.ts', 'useClearable.ts', 'useClearableSelection.ts', 'useSelectableTrigger.ts', 'useSelectionDisplayText.ts'] },
     checkbox: { files: ['Checkbox.vue', 'checkbox-variants.ts'] },
-    combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts', 'useSelectionDisplayText.ts'] },
+    combobox: { files: ['Combobox.vue', 'combobox-types.ts', 'combobox-variants.ts'], composables: ['useLocale.ts', 'useSelectableTrigger.ts', 'useSelectionDisplayText.ts'] },
     command: { files: ['Command.vue', 'CommandDialog.vue', 'CommandEmpty.vue', 'CommandGroup.vue', 'CommandInput.vue', 'CommandItem.vue', 'CommandList.vue', 'CommandSeparator.vue', 'CommandShortcut.vue', 'command-context.ts', 'command-variants.ts'], composables: ['useLocale.ts'] },
     dialog: { files: ['DialogContent.vue', 'DialogDescription.vue', 'DialogFooter.vue', 'DialogHeader.vue', 'DialogOverlay.vue', 'DialogTitle.vue', 'dialog-variants.ts', 'DialogEnhanced.vue', 'functional.ts'], composables: ['useLocale.ts'] },
     'dropdown-menu': { files: ['DropdownMenuCheckboxItem.vue', 'DropdownMenuContent.vue', 'DropdownMenuItem.vue', 'DropdownMenuLabel.vue', 'DropdownMenuRadioItem.vue', 'DropdownMenuSeparator.vue', 'DropdownMenuShortcut.vue', 'DropdownMenuSubContent.vue', 'DropdownMenuSubTrigger.vue', 'dropdown-menu-variants.ts'] },
@@ -130,7 +130,7 @@ export const COMPONENT_FILES: Record<string, ComponentFileMapping> = {
     },
     'tree-select': {
         files: ['TreeSelect.vue', 'TreeSelectNode.vue', 'tree-select-variants.ts', 'tree-select-types.ts'],
-        composables: ['useLocale.ts', 'useClearable.ts', 'useClearableSelection.ts', 'useSelectionDisplayText.ts'],
+        composables: ['useLocale.ts', 'useClearable.ts', 'useClearableSelection.ts', 'useSelectableTrigger.ts', 'useSelectionDisplayText.ts'],
     },
     'typewriter-text': {
         files: ['TypewriterText.vue', 'typewriter-text-variants.ts'],

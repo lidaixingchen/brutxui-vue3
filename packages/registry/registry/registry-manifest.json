@@ -245,8 +245,8 @@
       "examples": []
     },
     "cascader": {
-      "integrity": "sha256-0712fcbf2ce5a71132fb46767fcfb6c47195a6a9572f37c7f98115e41119773a",
-      "fileCount": 10,
+      "integrity": "sha256-d6aee6dd79e588d832260c24cb99d4639017a2ebebd3e01344f7e80c673a353a",
+      "fileCount": 11,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"
@@ -347,8 +347,8 @@
       "examples": []
     },
     "combobox": {
-      "integrity": "sha256-720e98bbf9321a46488caa58b29dc11df054766c37507872d0492f5e31269567",
-      "fileCount": 6,
+      "integrity": "sha256-fe68d1abf40495d1a303fd0a74259f8d8cf73f63cdd67721a2ae25207dd0e6bf",
+      "fileCount": 7,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"
@@ -1278,8 +1278,8 @@
       "examples": []
     },
     "tree-select": {
-      "integrity": "sha256-32cc04ac2b223b95f9221de9db9318b1b81ea5f7ce2a8ce3d399a59c221a0fb1",
-      "fileCount": 12,
+      "integrity": "sha256-13230a568c00d172e76abf788ff4117fa8fec952fbaf77ba3127a02615fcd4e4",
+      "fileCount": 13,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"

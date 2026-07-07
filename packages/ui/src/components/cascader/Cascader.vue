@@ -7,6 +7,7 @@ import Checkbox from '../checkbox/Checkbox.vue'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
 import { useClearableSelection } from '@/composables/useClearableSelection'
+import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 import { cascaderTriggerVariants, cascaderItemVariants } from './cascader-variants'
 import type { CascaderOption, CascaderValue } from './cascader-types'
@@ -274,9 +275,10 @@ const selectedDisplayPaths = computed(() => {
     return []
 })
 
-const hasValue = computed(() => {
-    if (!props.modelValue) return false
-    return Array.isArray(props.modelValue) && props.modelValue.length > 0
+const { hasValue, triggerClasses } = useSelectableTrigger<CascaderValue[] | CascaderValue[][]>({
+    modelValue: () => props.modelValue,
+    baseClass: () => cascaderTriggerVariants({ size: props.size }),
+    class: () => props.class,
 })
 
 const displayText = useSelectionDisplayText({
@@ -288,14 +290,6 @@ const displayText = useSelectionDisplayText({
     formatList: (labels) => labels.join(', '),
     formatCount: (count) => t('cascader.selectedCount', { count }),
 })
-
-const triggerClasses = computed(() =>
-    cn(
-        cascaderTriggerVariants({ size: props.size }),
-        !hasValue.value && 'text-brutal-muted-foreground',
-        props.class
-    )
-)
 
 function setActiveItem(option: CascaderOption, colIdx: number) {
     activeColumnIndex.value = colIdx

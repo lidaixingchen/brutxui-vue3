@@ -34,6 +34,9 @@ export type { UseClearableSelectionOptions, UseClearableSelectionReturn } from '
 export { useSelectionDisplayText } from './useSelectionDisplayText'
 export type { UseSelectionDisplayTextOptions } from './useSelectionDisplayText'
 
+export { useSelectableTrigger } from './useSelectableTrigger'
+export type { SelectableTriggerClass, SelectableTriggerState, UseSelectableTriggerOptions, UseSelectableTriggerReturn } from './useSelectableTrigger'
+
 export { useDialog } from './useDialog'
 export type { UseDialogReturn, ShowDialogOptions } from './useDialog'
 

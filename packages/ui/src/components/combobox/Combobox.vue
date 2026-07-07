@@ -15,6 +15,7 @@ import CommandItem from '../command/CommandItem.vue'
 import Spinner from '../spinner/Spinner.vue'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
+import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
 
 import { type ComboboxOption } from './combobox-types'
@@ -110,19 +111,15 @@ const createItemLabel = computed(() =>
     t('combobox.create', { query: searchQuery.value })
 )
 
-const hasValue = computed(() =>
-    props.multiple
-        ? ((props.modelValue as string[])?.length ?? 0) > 0
-        : !!props.modelValue
-)
-
-const triggerClasses = computed(() =>
-    cn(
+const { triggerClasses } = useSelectableTrigger<string | string[]>({
+    modelValue: () => props.modelValue,
+    baseClass: ({ hasValue }) => cn(
         buttonVariants({ variant: 'outline' }),
-        comboboxTriggerVariants({ hasValue: hasValue.value }),
-        props.class
-    )
-)
+        comboboxTriggerVariants({ hasValue })
+    ),
+    class: () => props.class,
+    emptyClass: false,
+})
 
 const contentClasses = comboboxContentVariants()
 
