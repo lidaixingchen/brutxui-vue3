@@ -39,7 +39,8 @@ export function shouldKeepTestProject(): boolean {
 export async function createTestProject(options: CreateTestProjectOptions = {}): Promise<TestProject> {
     const template = options.template ?? 'vite-vue';
     const tailwindMajor = options.tailwindMajor ?? 4;
-    const tempDir = await fs.realpath(os.tmpdir());
+    const tempDir = path.join(os.homedir(), '.brutx-integration-tmp');
+    await fs.ensureDir(tempDir);
     const workspaceRoot = await fs.mkdtemp(path.join(tempDir, 'brutx-cli-'));
     const root = template === 'monorepo-subpackage'
         ? path.join(workspaceRoot, 'apps', 'web')
@@ -168,7 +169,7 @@ export async function runCli(
         throw new Error(`CLI build output does not exist: ${cliEntry}. Run pnpm --filter brutx-vue build first.`);
     }
 
-    const resolvedTemp = await fs.realpath(os.tmpdir());
+    const resolvedTemp = path.join(os.homedir(), '.brutx-integration-tmp');
     const pathKey = Object.keys(process.env).find(k => k.toLowerCase() === 'path') || 'PATH';
     const originalPath = process.env[pathKey] || '';
 
@@ -271,6 +272,7 @@ async function writeFakePackageManager(fakeBin: string): Promise<void> {
     for (const pm of ['npm', 'pnpm', 'yarn', 'bun']) {
         await fs.writeFile(path.join(fakeBin, pm), `#!/usr/bin/env node\nrequire(${JSON.stringify(scriptPath)});\n`);
         await fs.writeFile(path.join(fakeBin, `${pm}.cmd`), `@echo off\r\nnode "${scriptPath}" %*\r\n`);
+        await fs.writeFile(path.join(fakeBin, `${pm}.ps1`), `node "${scriptPath}" $args\r\n`);
         await fs.chmod(path.join(fakeBin, pm), 0o755);
     }
 }
