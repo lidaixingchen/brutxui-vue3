@@ -7,7 +7,7 @@ import TabsList from './TabsList.vue'
 import TabsTrigger from './TabsTrigger.vue'
 import TabsContent from './TabsContent.vue'
 import Card from '../card/Card.vue'
-import EmptyState from '../empty-state/EmptyState.vue'
+import Result from '../result/Result.vue'
 import type { TabItem } from './types'
 
 export type { TabItem }

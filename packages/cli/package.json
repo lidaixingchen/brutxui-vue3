@@ -5,7 +5,15 @@
     "bin": {
         "brutx-vue": "dist/index.js"
     },
-    "main": "./dist/index.js",
+    "main": "./dist/api.js",
+    "module": "./dist/api.js",
+    "types": "./dist/api.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/api.d.ts",
+            "import": "./dist/api.js"
+        }
+    },
     "type": "module",
     "files": [
         "dist"
@@ -21,6 +29,7 @@
     },
     "dependencies": {
         "@inquirer/prompts": "^8.5.2",
+        "brutx-shared-vue": "workspace:*",
         "chalk": "^5.3.0",
         "commander": "^15.0.0",
         "diff": "^7.0.0",
@@ -33,7 +42,6 @@
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^25.9.1",
         "@vitest/coverage-v8": "^4.1.8",
-        "brutx-shared-vue": "workspace:*",
         "tsup": "^8.0.1",
         "typescript": "^6.0.3",
         "vitest": "^4.1.8"
