@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue'
+import { ref, onUnmounted, type Ref } from 'vue'
 import { showDialog, type ShowDialogOptions } from '@/components/dialog/functional'
 
 export type { ShowDialogOptions }
@@ -21,8 +21,10 @@ export function useDialog(): UseDialogReturn {
         currentInstance = instance
         isOpen.value = true
         instance.promise.finally(() => {
-            isOpen.value = false
-            currentInstance = null
+            if (currentInstance === instance) {
+                isOpen.value = false
+                currentInstance = null
+            }
         })
         return instance
     }
@@ -32,6 +34,10 @@ export function useDialog(): UseDialogReturn {
             currentInstance.close()
         }
     }
+
+    onUnmounted(() => {
+        currentInstance?.close()
+    })
 
     return {
         show,

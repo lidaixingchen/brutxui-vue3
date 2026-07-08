@@ -131,12 +131,13 @@ export function showDialog(options: ShowDialogOptions = {}) {
     }
 
     const destroy = () => {
+        stopWatch()
         render(null, container)
         container.remove()
         resolvePromise()
     }
 
-    watch(isOpen, (newVal) => {
+    const stopWatch = watch(isOpen, (newVal) => {
         if (!newVal) {
             setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
         }
@@ -219,6 +220,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
         close,
         promise,
         destroy: () => {
+            stopWatch()
             render(null, container)
             container.remove()
             resolvePromise()
@@ -256,11 +258,13 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     }
 
     const destroy = () => {
+        stopWatch()
         render(null, container)
         container.remove()
+        rejectPromise('close')
     }
 
-    watch(isOpen, (newVal) => {
+    const stopWatch = watch(isOpen, (newVal) => {
         if (!newVal) {
             setTimeout(destroy, DEFAULT_DIALOG_TRANSITION_MS)
         }
@@ -363,6 +367,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
         close,
         promise,
         destroy: () => {
+            stopWatch()
             render(null, container)
             container.remove()
             rejectPromise('destroy')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch, onBeforeUnmount } from 'vue'
 import {
     DialogPortal as DialogPortalPrimitive,
     DialogContent as DialogContentPrimitive,
@@ -8,7 +8,7 @@ import {
 } from 'reka-ui'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
-import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
+import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX, DEFAULT_DIALOG_TRANSITION_MS } from '@/lib/defaults'
 import DialogOverlay from './DialogOverlay.vue'
 import { dialogContentVariants, dialogCloseVariants } from './dialog-variants'
 import { iconSizeVariants } from '@/lib/icon-size-variants'
@@ -129,6 +129,57 @@ const contentStyle = computed(() => {
 
     return style
 })
+
+function handleEscapeKeyDown(event: KeyboardEvent) {
+    event.preventDefault()
+    handleClose()
+}
+
+function handlePointerDownOutside(event: Event) {
+    event.preventDefault()
+    handleClose()
+}
+
+const isSlotPresent = ref(!props.destroyOnClose || !!dialogContext?.open.value)
+let destroySlotTimer: ReturnType<typeof setTimeout> | null = null
+
+function clearDestroySlotTimer() {
+    if (destroySlotTimer) {
+        clearTimeout(destroySlotTimer)
+        destroySlotTimer = null
+    }
+}
+
+watch(
+    () => dialogContext?.open.value,
+    (open, prevOpen) => {
+        if (!dialogContext) {
+            isSlotPresent.value = !props.destroyOnClose
+            return
+        }
+        if (open) {
+            clearDestroySlotTimer()
+            isSlotPresent.value = true
+        } else if (props.destroyOnClose) {
+            if (prevOpen === true) {
+                clearDestroySlotTimer()
+                destroySlotTimer = setTimeout(() => {
+                    isSlotPresent.value = false
+                    destroySlotTimer = null
+                }, DEFAULT_DIALOG_TRANSITION_MS)
+            } else {
+                isSlotPresent.value = false
+            }
+        } else {
+            isSlotPresent.value = true
+        }
+    },
+    { immediate: true }
+)
+
+onBeforeUnmount(() => {
+    clearDestroySlotTimer()
+})
 </script>
 
 <template>
@@ -140,8 +191,10 @@ const contentStyle = computed(() => {
             :style="contentStyle"
             :force-mount="props.forceMount === true ? true : undefined"
             @mousedown="onDragStart"
+            @escape-key-down="handleEscapeKeyDown"
+            @pointer-down-outside="handlePointerDownOutside"
         >
-            <slot v-if="!destroyOnClose || dialogContext?.open.value" />
+            <slot v-if="!destroyOnClose || isSlotPresent" />
             <DialogClosePrimitive
                 v-if="showCloseButton"
                 :class="closeClasses"

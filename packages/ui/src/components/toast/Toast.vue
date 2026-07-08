@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info, Zap } from '@lucide/vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -84,6 +84,18 @@ function resumeTimer() {
 onMounted(() => {
     if (props.duration) {
         remainingTime.value = props.duration
+        startTimer()
+    }
+})
+
+watch(() => props.duration, (newDuration) => {
+    if (isLeaving.value) return
+    if (timer.value) {
+        clearTimeout(timer.value)
+        timer.value = undefined
+    }
+    remainingTime.value = newDuration
+    if (newDuration > 0 && !isPaused.value) {
         startTimer()
     }
 })

@@ -92,7 +92,7 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
                 newToasts[existingIndex] = updatedToast
                 toasts.value = newToasts
 
-                const duration = toast.duration ?? DEFAULT_TOAST_DURATION
+                const duration = toast.duration ?? existing.duration ?? DEFAULT_TOAST_DURATION
                 if (duration > 0 && isClient) {
                     const timerId = window.setTimeout(() => removeToast(existing.id), duration)
                     timerMap.set(existing.id, timerId)
