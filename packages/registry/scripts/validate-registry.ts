@@ -3,6 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
     COMPONENT_REGISTRY,
+    generateComponentsSidebar,
+    generateBlocksSidebar,
     validateRegistryIndex,
     validateRegistryIntegrity,
     validateRegistryItem,
@@ -20,7 +22,6 @@ import {
     type RegistryBuildManifestSnapshot,
     type RegistryReferenceItem,
 } from './validate-utils';
-import { generateComponentsSidebar, generateBlocksSidebar } from '../../../apps/docs/.vitepress/theme/lib/sidebar-generator';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +42,16 @@ const DOCS_PAGE_ALIASES: Record<string, string> = {
 const DOCS_PAGE_EXEMPTIONS = new Set([
     'input-adornment',
 ]);
+
+function isReactDependency(dep: string): boolean {
+    if (dep === 'react' || dep === 'react-dom' || dep === 'cmdk') return true;
+    if (dep.startsWith('react-')) return true;
+    if (dep.startsWith('next/')) return true;
+    if (dep.includes('@radix-ui')) return true;
+    if (dep.includes('lucide-react')) return true;
+    if (dep.includes('/react')) return true;
+    return false;
+}
 
 function readRelativeFiles(rootDir: string): Set<string> {
     const files = new Set<string>();
@@ -342,7 +353,7 @@ function validate() {
                     errorCount++;
                 }
                 seenDeps.add(dep);
-                if (dep.includes('@radix-ui') || dep.includes('lucide-react') || dep.includes('react-hook-form') || dep.includes('cmdk') || dep.includes('react-day-picker')) {
+                if (isReactDependency(dep)) {
                     console.error(`✗ [${file}] Found React dependency "${dep}" — should be Vue equivalent.`);
                     errorCount++;
                 }

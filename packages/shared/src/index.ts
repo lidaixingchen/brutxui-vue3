@@ -25,3 +25,8 @@ export {
     validateRegistryItem,
     validateRegistryIndex,
 } from './registry.js';
+export type { SidebarLocale, SidebarItem } from './sidebar-generator.js';
+export {
+    generateComponentsSidebar,
+    generateBlocksSidebar,
+} from './sidebar-generator.js';

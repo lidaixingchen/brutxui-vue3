@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Cookie Consent",
   "description": "Cookie consent banner with accept and customize options.",
-  "category": "utility",
+  "category": "marketing",
   "examples": [],
   "dependencies": [
     "@lucide/vue"

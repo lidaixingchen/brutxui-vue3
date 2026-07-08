@@ -196,7 +196,7 @@ describe('build-registry helpers', () => {
             ],
             tailwind: {},
             cssVars: {},
-            integrity: 'sha256-button',
+            integrity: 'sha256-c4e1425d648b9bfa18bb0f9acbc2f166f177133b659035bf6ab1228c2c8fdb70',
         };
 
         expect(() => validateRegistryItem(item)).not.toThrow();

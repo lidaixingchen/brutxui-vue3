@@ -4,7 +4,7 @@
   "type": "registry:ui",
   "title": "Feedback Form",
   "description": "User feedback form with rating and comment fields.",
-  "category": "utility",
+  "category": "marketing",
   "examples": [],
   "dependencies": [
     "@lucide/vue"

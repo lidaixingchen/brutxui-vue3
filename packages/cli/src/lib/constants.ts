@@ -95,6 +95,9 @@ export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/lidaixing
 
 export const DOCS_URL = 'https://lidaixingchen.github.io/brutxui-vue3/';
 
+export const BRUTX_CSS_START_MARKER = '/* brutx-ui:start */';
+export const BRUTX_CSS_END_MARKER = '/* brutx-ui:end */';
+
 let _brutalistCssStyles: string | undefined;
 
 export async function getBrutalistCssStyles(): Promise<string> {

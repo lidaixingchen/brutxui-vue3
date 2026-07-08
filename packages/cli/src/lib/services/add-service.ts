@@ -81,7 +81,7 @@ export async function resolveComponentFilePath(
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.directives.length);
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'directives', relative);
-    } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils + '/')) {
+    } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils) {
         resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
@@ -181,6 +181,7 @@ export async function writeComponentFiles(
     } catch (writeError) {
         let rollbackFailures = 0;
 
+        const dirsToClean = new Set<string>();
         for (const [filePath, originalContent] of snapshot) {
             try {
                 if (originalContent !== null) {
@@ -188,8 +189,19 @@ export async function writeComponentFiles(
                 } else if (await fs.pathExists(filePath)) {
                     await fs.promises.rm(filePath, { force: true });
                 }
+                if (originalContent === null) {
+                    dirsToClean.add(path.dirname(filePath));
+                }
             } catch {
                 rollbackFailures++;
+            }
+        }
+
+        const sortedDirs = Array.from(dirsToClean).sort((a, b) => b.length - a.length);
+        for (const dir of sortedDirs) {
+            try {
+                await fs.promises.rmdir(dir);
+            } catch {
             }
         }
 

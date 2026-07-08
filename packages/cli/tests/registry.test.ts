@@ -73,7 +73,7 @@ describe('getItem local validation', () => {
             files: {},
             tailwind: {},
             cssVars: {},
-            integrity: 'sha256-placeholder',
+            integrity: 'sha256-' + '0'.repeat(64),
         }, async (registryPath) => {
             await expect(registry.getItem('invalid', registryPath)).rejects.toThrow('"files" must be an array');
         });
@@ -90,7 +90,7 @@ describe('getItem local validation', () => {
             files: [{ path: 'components/ui/invalid/Invalid.vue', type: 'registry:ui' }],
             tailwind: {},
             cssVars: {},
-            integrity: 'sha256-placeholder',
+            integrity: 'sha256-' + '0'.repeat(64),
         }, async (registryPath) => {
             await expect(registry.getItem('invalid', registryPath)).rejects.toThrow('"content" must be a non-empty string');
         });
@@ -138,7 +138,7 @@ describe('getItem local validation', () => {
 
     it('should reject local registry items with mismatched integrity', async () => {
         const item = createRegistryItem('button', {
-            integrity: 'sha256-deadbeef',
+            integrity: 'sha256-' + 'f'.repeat(64),
         });
 
         await withRegistry('button', item, async (registryPath) => {

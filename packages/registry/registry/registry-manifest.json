@@ -238,8 +238,6 @@
         "prismjs"
       ],
       "registryDependencies": [
-        "button",
-        "copy-to-clipboard",
         "locale-zh-cn"
       ],
       "category": "data-display",
@@ -315,7 +313,7 @@
         "card",
         "locale-zh-cn"
       ],
-      "category": "utility",
+      "category": "marketing",
       "examples": []
     },
     "copy-to-clipboard": {
@@ -395,8 +393,8 @@
       "examples": []
     },
     "dialog": {
-      "integrity": "sha256-509161190111cfdc07223628d44d809008a5a201bcdf68d4d35b7d9721b8fe2b",
-      "fileCount": 17,
+      "integrity": "sha256-d04da1814b4e26f6f9f65e19af9691d3c84f05b0efb1ced946bf5a5978751f7b",
+      "fileCount": 16,
       "dependencies": [
         "@lucide/vue",
         "reka-ui"
@@ -435,7 +433,7 @@
         "result",
         "textarea"
       ],
-      "category": "utility",
+      "category": "marketing",
       "examples": []
     },
     "footer-section": {
@@ -1035,8 +1033,8 @@
       "examples": []
     },
     "watermark": {
-      "integrity": "sha256-eaf404598a9331e845932b9d4ca1bd9dd2207a4521a528d68030f9f9d5c973d6",
-      "fileCount": 2,
+      "integrity": "sha256-656a5d2543fa65fc3e71a58f658ef0cceac94cf1c4e18491e7e3691c27f17d93",
+      "fileCount": 1,
       "dependencies": [],
       "registryDependencies": [],
       "category": "utility",

@@ -4,6 +4,8 @@ import type { AliasConfig, BrutalistConfig, ProjectType, TailwindConfig } from '
 import {
     CONFIG_FILES,
     CURRENT_CONFIG_VERSION,
+    BRUTX_CSS_START_MARKER,
+    BRUTX_CSS_END_MARKER,
     getBrutalistCssStyles,
     SCHEMA_URL,
     UTILS_TEMPLATE,
@@ -82,21 +84,31 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
     await transaction.ensureDir(path.dirname(fullPath));
 
     const tailwindVersion = await detectTailwindVersion(cwd);
+    const brutalistCss = await getBrutalistCssStyles();
+    const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
 
     let content = '';
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
-        const hasCompleteBrutalistStyles = content.includes('--color-brutal-bg')
+        const markerPattern = /\/\* brutx-ui:start \*\/[\s\S]*?\/\* brutx-ui:end \*\//;
+        if (markerPattern.test(content)) {
+            content = content.replace(markerPattern, brutxBlock);
+        } else if (
+            content.includes('--color-brutal-bg')
             && content.includes('.bg-brutal-primary')
-            && content.includes('.animate-in');
-        if (hasCompleteBrutalistStyles) {
+            && content.includes('.animate-in')
+        ) {
             return false;
+        } else {
+            if (!content.endsWith('\n') && content.length > 0) {
+                content += '\n';
+            }
+            content += brutxBlock;
         }
-        content += await getBrutalistCssStyles();
     } else if (tailwindVersion === 'v4') {
-        content = `@import "tailwindcss";\n${await getBrutalistCssStyles()}`;
+        content = `@import "tailwindcss";\n${brutxBlock}`;
     } else {
-        content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${await getBrutalistCssStyles()}`;
+        content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${brutxBlock}`;
     }
 
     await transaction.writeFile(fullPath, content);

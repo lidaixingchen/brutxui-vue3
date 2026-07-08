@@ -93,4 +93,4 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     watermark: { dependencies: [], description: 'Watermark overlay with Canvas text/image rendering and MutationObserver anti-tampering.' },
     tour: { dependencies: [], description: 'Neo-Brutalist step-by-step interactive onboarding tour component with Canvas mask highlight.' },
     message: { dependencies: ['@lucide/vue'], description: 'Imperative message notification system with singleton container, TransitionGroup stacking, and auto GC.' },
-} as const;
+};

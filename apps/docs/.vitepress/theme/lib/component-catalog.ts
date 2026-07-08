@@ -29,7 +29,6 @@ const categoryOrder: ComponentRegistryEntry['category'][] = [
     'visual-effect',
     'utility',
     'marketing',
-    'page',
 ]
 
 const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['category'], string>> = {
@@ -44,7 +43,6 @@ const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['categ
         'visual-effect': '交互与可视化',
         utility: '主题与工具',
         marketing: '区块',
-        page: '页面',
     },
     en: {
         action: 'Actions',
@@ -57,7 +55,6 @@ const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['categ
         'visual-effect': 'Interaction & Visualization',
         utility: 'Theme & Utilities',
         marketing: 'Blocks',
-        page: 'Pages',
     },
 }
 

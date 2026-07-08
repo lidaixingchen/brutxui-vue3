@@ -193,7 +193,7 @@ describe('info command', () => {
     });
 
     describe('registry unreachable', () => {
-        it('should report status as installed when registry throws but local files exist', async () => {
+        it('should report status as registry-unreachable when registry throws but local files exist', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItem.mockRejectedValue(new Error('Network error'));
@@ -205,7 +205,7 @@ describe('info command', () => {
             const result = await runInfoJson('button', { cwd: tmpDir });
 
             expect(result.name).toBe('button');
-            expect(result.status).toBe('installed');
+            expect(result.status).toBe('registry-unreachable');
             expect(result.registryItem).toBeNull();
             expect(result.localFiles).toHaveLength(1);
             expect(result.localFiles).toContain('Button.vue');
@@ -222,13 +222,13 @@ describe('info command', () => {
 
             const result = await runInfoJson('button', { cwd: tmpDir });
 
-            expect(result.status).toBe('installed');
+            expect(result.status).toBe('registry-unreachable');
             expect(result.registryItem).toBeNull();
         });
     });
 
     describe('registry unreachable and no local files', () => {
-        it('should report status as unknown when both registry and local files are unavailable', async () => {
+        it('should report status as registry-unreachable when both registry and local files are unavailable', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItem.mockRejectedValue(new Error('Network error'));
@@ -236,12 +236,12 @@ describe('info command', () => {
             const result = await runInfoJson('nonexistent', { cwd: tmpDir });
 
             expect(result.name).toBe('nonexistent');
-            expect(result.status).toBe('unknown');
+            expect(result.status).toBe('registry-unreachable');
             expect(result.registryItem).toBeNull();
             expect(result.localFiles).toEqual([]);
         });
 
-        it('should report unknown when component directory is empty and registry fails', async () => {
+        it('should report registry-unreachable when component directory is empty and registry fails', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItem.mockRejectedValue(new Error('Network error'));
@@ -250,7 +250,7 @@ describe('info command', () => {
 
             const result = await runInfoJson('ghost', { cwd: tmpDir });
 
-            expect(result.status).toBe('unknown');
+            expect(result.status).toBe('registry-unreachable');
             expect(result.localFiles).toEqual([]);
         });
     });
@@ -493,7 +493,7 @@ describe('info command', () => {
             expect(result.localFiles).toContain('utils/helpers.ts');
         });
 
-        it('should report installed with subdirectory files even when registry is unreachable', async () => {
+        it('should report registry-unreachable with subdirectory files even when registry is unreachable', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItem.mockRejectedValue(new Error('Network error'));
@@ -506,7 +506,7 @@ describe('info command', () => {
 
             const result = await runInfoJson('data-table', { cwd: tmpDir });
 
-            expect(result.status).toBe('installed');
+            expect(result.status).toBe('registry-unreachable');
             expect(result.registryItem).toBeNull();
             expect(result.localFiles).toHaveLength(2);
             expect(result.localFiles).toContain('DataTable.vue');

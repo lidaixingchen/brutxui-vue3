@@ -32,7 +32,7 @@ const UI_LIB_DIR = path.resolve(__dirname, '../../ui/src/lib');
 const UI_DIRECTIVES_DIR = path.resolve(__dirname, '../../ui/src/directives');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
-type RewriteContext = 'component' | 'composable' | 'lib' | 'directive';
+type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale';
 
 // utils.ts is excluded from registry — consumers must create their own lib/utils.ts via CLI init.
 // This file provides the cn() utility (clsx + tailwind-merge) and is project-specific.
@@ -211,10 +211,20 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
         }
     }
 
-    for (const localeName of localeDeps) {
-        const localePath = path.join(UI_LOCALES_DIR, localeName);
-        if (fs.existsSync(localePath)) {
-            parts.push(readComponentSource(localePath));
+    const addedLocaleDeps = new Set<string>();
+    while (addedLocaleDeps.size < localeDeps.size) {
+        const pendingLocaleDeps = Array.from(localeDeps).filter(localeName => !addedLocaleDeps.has(localeName));
+        for (const localeName of pendingLocaleDeps) {
+            const localePath = path.join(UI_LOCALES_DIR, localeName);
+            if (fs.existsSync(localePath)) {
+                const code = readComponentSource(localePath);
+                parts.push(code);
+                const rewritten = rewriteImports(code, name, 'locale');
+                extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
+                extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
+                extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+            }
+            addedLocaleDeps.add(localeName);
         }
     }
 
@@ -262,6 +272,7 @@ export function rewriteImports(code: string, componentName: string, context: Rew
         composable: '@/composables/',
         lib: '@/lib/',
         directive: '@/directives/',
+        locale: '@/locales/',
     };
     code = code.replace(
         /(['"])\.\/([^'"]+)\1/g,
@@ -629,9 +640,9 @@ export function buildRegistryItem(name: string): RegistryItem {
         description: componentInfo.description,
         category: componentInfo.category,
         examples: componentInfo.examples,
-        status: componentInfo?.status,
-        replacement: componentInfo?.replacement,
-        dependencies: componentInfo?.dependencies || [],
+        status: componentInfo.status,
+        replacement: componentInfo.replacement,
+        dependencies: componentInfo.dependencies || [],
         registryDependencies: Array.from(allRegistryDeps),
         files,
         tailwind: TAILWIND_CONFIG,
@@ -712,7 +723,9 @@ export async function run() {
             });
             newCache['locale-zh-cn'] = localeHash;
             console.log('⊘ Skipped locale-zh-cn (unchanged)');
-        } catch { /* fall through to rebuild */ }
+        } catch (cacheErr) {
+            console.warn(`⚠ Cache reuse for locale-zh-cn failed, rebuilding: ${cacheErr instanceof Error ? cacheErr.message : cacheErr}`);
+        }
     } else if (localeFiles.length > 0) {
         const localeIntegrity = computeRegistryIntegrity(localeFiles);
 
@@ -786,7 +799,9 @@ export async function run() {
                     newCache[name] = sourceHash;
                     console.log(`⊘ Skipped ${name} (unchanged)`);
                     continue;
-                } catch { /* fall through to rebuild */ }
+                } catch (cacheErr) {
+                    console.warn(`⚠ Cache reuse for ${name} failed, rebuilding: ${cacheErr instanceof Error ? cacheErr.message : cacheErr}`);
+                }
             }
 
             const registryItem = buildRegistryItem(name);

@@ -147,8 +147,15 @@ export function validateRegistryIndex(data: unknown): asserts data is RegistryIn
         throw new Error('Invalid registry index: "items" must be an array.');
     }
 
+    const seenNames = new Set<string>();
     for (const item of data.items) {
         validateRegistryIndexItem(item);
+        if (typeof item === 'object' && item !== null && typeof item.name === 'string') {
+            if (seenNames.has(item.name)) {
+                throw new Error(`Invalid registry index: duplicate item name "${item.name}".`);
+            }
+            seenNames.add(item.name);
+        }
     }
 }
 
@@ -325,8 +332,8 @@ function assertIntegrity(
     context: string,
     prefix = 'Invalid registry data'
 ): asserts value is string {
-    if (typeof value !== 'string' || !value.startsWith('sha256-')) {
-        throw new Error(`${prefix} for "${context}": "integrity" must be a sha256 hash.`);
+    if (typeof value !== 'string' || !/^sha256-[a-f0-9]{64}$/.test(value)) {
+        throw new Error(`${prefix} for "${context}": "integrity" must be a sha256 hash (format: sha256-<64 hex chars>).`);
     }
 }
 

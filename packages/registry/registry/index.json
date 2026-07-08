@@ -1620,10 +1620,6 @@
           "type": "registry:hook"
         },
         {
-          "path": "composables/useDialogEnhanced.ts",
-          "type": "registry:hook"
-        },
-        {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:lib"
         },
@@ -1734,7 +1730,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-509161190111cfdc07223628d44d809008a5a201bcdf68d4d35b7d9721b8fe2b"
+      "integrity": "sha256-d04da1814b4e26f6f9f65e19af9691d3c84f05b0efb1ced946bf5a5978751f7b"
     },
     {
       "name": "dropdown-menu",
@@ -6526,8 +6522,6 @@
         "prismjs"
       ],
       "registryDependencies": [
-        "copy-to-clipboard",
-        "button",
         "locale-zh-cn"
       ],
       "files": [
@@ -8543,7 +8537,7 @@
       "type": "registry:ui",
       "title": "Feedback Form",
       "description": "User feedback form with rating and comment fields.",
-      "category": "utility",
+      "category": "marketing",
       "examples": [],
       "dependencies": [
         "@lucide/vue"
@@ -8664,7 +8658,7 @@
       "type": "registry:ui",
       "title": "Cookie Consent",
       "description": "Cookie consent banner with accept and customize options.",
-      "category": "utility",
+      "category": "marketing",
       "examples": [],
       "dependencies": [
         "@lucide/vue"
@@ -10753,10 +10747,6 @@
         {
           "path": "components/ui/watermark/Watermark.vue",
           "type": "registry:ui"
-        },
-        {
-          "path": "lib/env.ts",
-          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -10845,7 +10835,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-eaf404598a9331e845932b9d4ca1bd9dd2207a4521a528d68030f9f9d5c973d6"
+      "integrity": "sha256-656a5d2543fa65fc3e71a58f658ef0cceac94cf1c4e18491e7e3691c27f17d93"
     },
     {
       "name": "tour",

@@ -8,6 +8,9 @@
     "exports": {
         ".": "./src/index.ts"
     },
+    "engines": {
+        "node": ">=22.5"
+    },
     "scripts": {
         "typecheck": "tsc --noEmit"
     },
