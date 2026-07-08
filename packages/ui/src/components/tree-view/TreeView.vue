@@ -101,7 +101,7 @@ watch(
         }
         localNodes.value = cloneTree(newVal);
     },
-    { immediate: true, deep: true }
+    { immediate: true }
 );
 
 function emitNodesUpdate() {
