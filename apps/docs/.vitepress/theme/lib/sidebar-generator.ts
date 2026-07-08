@@ -1,2 +1,2 @@
-export type { SidebarLocale, SidebarItem } from 'brutx-shared-vue';
-export { generateComponentsSidebar, generateBlocksSidebar } from 'brutx-shared-vue';
+export type { SidebarLocale, SidebarItem } from '../../../../../packages/shared/src/index';
+export { generateComponentsSidebar, generateBlocksSidebar } from '../../../../../packages/shared/src/index';

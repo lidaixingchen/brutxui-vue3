@@ -326,7 +326,10 @@ export function extractModuleSpecifiers(code: string): string[] {
 function extractScriptBlocks(code: string): string[] {
     const blocks: string[] = [];
     const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
-    const stringLiteralPattern = /(['"`])(?:\\.|(?!\1)[\s\S])*?\1/g;
+    
+    // 精确匹配单/双引号字面量（不允许跨行）和反引号模板字符串（允许跨行），防止注释中的单引号引发的跨行误匹配
+    const stringLiteralPattern = /'(?:[^'\r\n\\]|\\.)*'|"(?:[^"\r\n\\]|\\.)*"|`(?:[^`\\]|\\.)*`/g;
+    
     const placeholders: string[] = [];
     const masked = code.replace(stringLiteralPattern, (m) => {
         const idx = placeholders.length;

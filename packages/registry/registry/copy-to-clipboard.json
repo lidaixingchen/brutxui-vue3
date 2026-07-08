@@ -25,7 +25,7 @@
     },
     {
       "path": "composables/useClipboard.ts",
-      "content": "import { ref, onUnmounted, toValue, type MaybeRefOrGetter, type Ref } from 'vue'\n\nexport const DEFAULT_COPIED_DURATION = 2000\n\nexport interface UseClipboardReturn {\n    copy: (text: string) => Promise<boolean>\n    copied: Ref<boolean>\n    isSupported: Ref<boolean>\n}\n\nexport function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}): UseClipboardReturn {\n    const copied = ref(false)\n    const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)\n\n    let timeoutId: ReturnType<typeof setTimeout> | null = null\n\n    onUnmounted(() => {\n        if (timeoutId) clearTimeout(timeoutId)\n    })\n\n    async function copy(text: string) {\n        if (!isSupported.value) return false\n\n        try {\n            await navigator.clipboard.writeText(text)\n            copied.value = true\n\n            if (timeoutId) clearTimeout(timeoutId)\n            const duration = toValue(options.duration) ?? DEFAULT_COPIED_DURATION\n            timeoutId = setTimeout(() => {\n                copied.value = false\n            }, duration)\n\n            return true\n        } catch (err) {\n            console.error('Failed to copy text: ', err)\n            return false\n        }\n    }\n\n    return {\n        copy,\n        copied,\n        isSupported,\n    }\n}\n",
+      "content": "import { ref, onUnmounted, toValue, type MaybeRefOrGetter, type Ref } from 'vue'\n\nexport const DEFAULT_COPIED_DURATION = 2000\n\nexport interface UseClipboardReturn {\n    copy: (text: string) => Promise<boolean>\n    copied: Ref<boolean>\n    isSupported: Ref<boolean>\n}\n\nexport function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}): UseClipboardReturn {\n    const copied = ref(false)\n    const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)\n\n    let timeoutId: ReturnType<typeof setTimeout> | null = null\n    let disposed = false\n\n    onUnmounted(() => {\n        disposed = true\n        if (timeoutId) clearTimeout(timeoutId)\n    })\n\n    async function copy(text: string) {\n        if (!isSupported.value) return false\n\n        try {\n            await navigator.clipboard.writeText(text)\n            if (disposed) return true\n            copied.value = true\n\n            if (timeoutId) clearTimeout(timeoutId)\n            const duration = toValue(options.duration) ?? DEFAULT_COPIED_DURATION\n            timeoutId = setTimeout(() => {\n                copied.value = false\n            }, duration)\n\n            return true\n        } catch (err) {\n            console.error('Failed to copy text: ', err)\n            return false\n        }\n    }\n\n    return {\n        copy,\n        copied,\n        isSupported,\n    }\n}\n",
       "type": "registry:hook"
     },
     {
@@ -130,5 +130,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-63ccae04ae2bc0b0c8289cb9fb280e79ed9768bd401de6195b80f402b97fcca2"
+  "integrity": "sha256-0fd861cafbad03445bad99584862d6f615cde82372c3ce56535abcebf9852b7a"
 }
