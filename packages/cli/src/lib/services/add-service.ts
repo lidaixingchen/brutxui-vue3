@@ -81,7 +81,7 @@ export async function resolveComponentFilePath(
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.directives.length);
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'directives', relative);
-    } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils) {
+    } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils + '/')) {
         resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);

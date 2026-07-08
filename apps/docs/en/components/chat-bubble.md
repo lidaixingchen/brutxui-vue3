@@ -176,14 +176,14 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 |------|------|--------|------|
 | `messages` | `ChatMessage[]` | — | Message array (required) |
 | `groupByTime` | `boolean` | `false` | Whether to group by time (today/yesterday/date) |
-| `groupInterval` | `number` | `5` | Time grouping interval (minutes); reserved prop, not yet enabled in current version |
+| `groupInterval` | `number` | `5` | Time grouping interval (minutes) within the same date; adjacent messages exceeding this gap are split into a new group |
 | `showAvatar` | `boolean` | `true` | Whether to show avatars |
 | `showStatus` | `boolean` | `true` | Whether to show message status |
 | `showTimestamp` | `boolean` | `true` | Whether to show timestamps |
 | `dateFormat` | `(date: Date) => string` | — | Custom date formatting function |
 | `class` | `string` | — | Custom CSS class |
 
-> **Note:** When `groupByTime` is `true`, messages are automatically grouped by date labels (today/yesterday/specific date), with dividers and date labels between groups.
+> **Note:** When `groupByTime` is `true`, messages are automatically grouped by date labels (today/yesterday/specific date), with dividers and date labels between groups; within the same date, adjacent messages whose time gap exceeds `groupInterval` minutes are further split into separate groups (showing only the group spacing, without repeating the date label).
 
 ## Slots
 

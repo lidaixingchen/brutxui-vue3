@@ -175,14 +175,14 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 |------|------|--------|------|
 | `messages` | `ChatMessage[]` | — | 消息数组（必填） |
 | `groupByTime` | `boolean` | `false` | 是否按时间分组（今天/昨天/日期） |
-| `groupInterval` | `number` | `5` | 时间分组间隔（分钟），预留属性，当前版本未启用 |
+| `groupInterval` | `number` | `5` | 同一日期内的时间分组间隔（分钟），相邻消息超过该间隔则拆分为新分组 |
 | `showAvatar` | `boolean` | `true` | 是否显示头像 |
 | `showStatus` | `boolean` | `true` | 是否显示消息状态 |
 | `showTimestamp` | `boolean` | `true` | 是否显示时间戳 |
 | `dateFormat` | `(date: Date) => string` | — | 自定义日期格式化函数 |
 | `class` | `string` | — | 自定义样式类 |
 
-> **注意：** 当 `groupByTime` 为 `true` 时，消息按日期标签（今天/昨天/具体日期）自动分组，分组之间显示分隔线和日期标签。
+> **注意：** 当 `groupByTime` 为 `true` 时，消息按日期标签（今天/昨天/具体日期）自动分组，分组之间显示分隔线和日期标签；同一日期内相邻消息时间差超过 `groupInterval` 分钟时，会进一步拆分为独立分组（仅显示分组间距，不重复日期标签）。
 
 ## 插槽
 
