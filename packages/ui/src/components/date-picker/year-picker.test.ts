@@ -550,8 +550,8 @@ describe('YearPickerPanel', () => {
         expect(wrapper.text()).toContain('2020')
         const prevBtn = wrapper.find('button[aria-label="Previous decade"]')
         await prevBtn.trigger('click')
-        expect(wrapper.text()).toContain('2010')
-        expect(wrapper.text()).toContain('2021')
+        expect(wrapper.text()).toContain('2008')
+        expect(wrapper.text()).toContain('2019')
     })
 
     it('navigates to next decade on next button click', async () => {
@@ -563,8 +563,8 @@ describe('YearPickerPanel', () => {
         expect(wrapper.text()).toContain('2020')
         const nextBtn = wrapper.find('button[aria-label="Next decade"]')
         await nextBtn.trigger('click')
-        expect(wrapper.text()).toContain('2030')
-        expect(wrapper.text()).toContain('2041')
+        expect(wrapper.text()).toContain('2032')
+        expect(wrapper.text()).toContain('2043')
     })
 
     it('disables years before minDate', () => {

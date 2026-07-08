@@ -169,6 +169,7 @@ describe('Tour.vue', () => {
             },
         ]
 
+        vi.useFakeTimers()
         mount(Tour, {
             props: {
                 steps,
@@ -188,8 +189,11 @@ describe('Tour.vue', () => {
         expect(mockContextInstance.strokeRect).toHaveBeenCalled()
         mockContextInstance.strokeRect.mockClear()
 
+        vi.advanceTimersByTime(200)
         window.dispatchEvent(new Event('scroll'))
         expect(mockContextInstance.strokeRect).toHaveBeenCalled()
+
+        vi.useRealTimers()
     })
 
     it('mounts when ResizeObserver is unavailable', async () => {

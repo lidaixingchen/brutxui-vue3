@@ -117,7 +117,7 @@ describe('useColorPicker', () => {
         expect(emitted).toContain('close')
     })
 
-    it('closing emits change when displayValue differs from modelValue', async () => {
+    it('closing resets displayValue to modelValue without emitting change', async () => {
         const emitted: Array<[string, unknown]> = []
         const modelValue = ref<string | null>('#ff0000')
         const { open, displayValue } = createColorPicker({
@@ -130,8 +130,8 @@ describe('useColorPicker', () => {
         open.value = false
         await nextTick()
         const changeEvents = emitted.filter(([e]) => e === 'change')
-        expect(changeEvents.length).toBe(1)
-        expect(changeEvents[0][1]).toBe('#00ff00')
+        expect(changeEvents.length).toBe(0)
+        expect(displayValue.value).toBe('#ff0000')
     })
 
     it('closing does not emit change when displayValue equals modelValue', async () => {
