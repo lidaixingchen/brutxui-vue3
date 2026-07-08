@@ -127,3 +127,11 @@ export function moveNode(
     return treeWithoutDrag
 }
 
+export function cloneTree(nodes: TreeNode[]): TreeNode[] {
+    return nodes.map((node: TreeNode) => ({
+        ...node,
+        children: node.children ? cloneTree(node.children) : undefined,
+    }))
+}
+
+

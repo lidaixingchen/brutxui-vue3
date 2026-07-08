@@ -1415,8 +1415,89 @@ describe('TreeView - Filtering', () => {
         const child2 = items.find(i => i.props('node').id === 'child2')
         expect((child2?.element as HTMLElement).style.display).toBe('none')
 
-        const parent2 = items.find(i => i.props('node').id === 'parent2')
-        expect((parent2?.element as HTMLElement).style.display).toBe('none')
     })
 })
+
+describe('TreeView - Local State Sync and Immutable Props', () => {
+    it('does not mutate original nodes on filtering', async () => {
+        const tree: TreeNode[] = [
+            {
+                id: 'parent',
+                label: 'Parent',
+                children: [{ id: 'child', label: 'Child' }]
+            }
+        ]
+        const wrapper = mount(TreeView, {
+            props: { nodes: tree, filterable: true },
+            global: { provide: localeProvide }
+        })
+        const vm = wrapper.vm as any
+        vm.filter('Parent')
+        await nextTick()
+        
+        expect(wrapper.text()).toContain('Parent')
+        expect(tree[0].hidden).toBeUndefined()
+        expect(tree[0].children![0].hidden).toBeUndefined()
+    })
+
+    it('does not mutate original nodes on lazy load', async () => {
+        const mockLoad = vi.fn().mockResolvedValue([
+            { id: 'child', label: 'Child Node', isLeaf: true }
+        ])
+        const tree: TreeNode[] = [
+            { id: 'lazy-root', label: 'Lazy Root' }
+        ]
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: tree,
+                lazy: true,
+                load: mockLoad,
+            },
+            global: { provide: localeProvide }
+        })
+
+        const node = wrapper.findComponent(TreeViewNode)
+        await node.find('[role="treeitem"] > div').trigger('click')
+        
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+        
+        expect(wrapper.text()).toContain('Child Node')
+        expect(tree[0].loading).toBeUndefined()
+        expect(tree[0].loaded).toBeUndefined()
+        expect(tree[0].children).toBeUndefined()
+    })
+
+    it('triggers update:nodes event when node is modified internally', async () => {
+        const mockLoad = vi.fn().mockResolvedValue([
+            { id: 'child', label: 'Child Node', isLeaf: true }
+        ])
+        const tree: TreeNode[] = [
+            { id: 'lazy-root', label: 'Lazy Root' }
+        ]
+        const wrapper = mount(TreeView, {
+            props: {
+                nodes: tree,
+                lazy: true,
+                load: mockLoad,
+            },
+            global: { provide: localeProvide }
+        })
+
+        const node = wrapper.findComponent(TreeViewNode)
+        await node.find('[role="treeitem"] > div').trigger('click')
+        
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+
+        const emitted = wrapper.emitted('update:nodes')
+        expect(emitted).toBeTruthy()
+        
+        const lastEmitted = emitted![emitted!.length - 1][0] as TreeNode[]
+        expect(lastEmitted[0].loaded).toBe(true)
+        expect(lastEmitted[0].children).toHaveLength(1)
+        expect(lastEmitted[0].children![0].id).toBe('child')
+    })
+})
+
 

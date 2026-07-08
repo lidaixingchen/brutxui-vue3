@@ -3,7 +3,7 @@ import { ref, shallowRef, computed, watch, provide, type Ref, type ComputedRef }
 import { hasDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
-import { getCheckState, getAllDescendantIds, moveNode } from './tree-view-utils';
+import { getCheckState, getAllDescendantIds, moveNode, cloneTree } from './tree-view-utils';
 import { useLocale } from '@/composables/useLocale';
 import type { SelectionMode, TreeNode } from './types';
 import type { CheckState } from './tree-view-utils';
@@ -89,6 +89,26 @@ const { t } = useLocale();
 
 const treeRootRef = ref<HTMLDivElement | null>(null);
 
+const localNodes = ref<TreeNode[]>([]);
+let isUpdatingInternally = false;
+
+watch(
+    () => props.nodes,
+    (newVal) => {
+        if (isUpdatingInternally) {
+            isUpdatingInternally = false;
+            return;
+        }
+        localNodes.value = cloneTree(newVal);
+    },
+    { immediate: true, deep: true }
+);
+
+function emitNodesUpdate() {
+    isUpdatingInternally = true;
+    emit('update:nodes', localNodes.value);
+}
+
 // 使用 shallowRef 避免对 Set 进行深层响应式转换
 const expandedIds = shallowRef<Set<string>>(new Set(props.defaultExpanded));
 
@@ -105,7 +125,7 @@ function toggleExpand(id: string) {
     } else {
         nextSet.add(id)
         
-        const node = findNodeById(props.nodes, id);
+        const node = findNodeById(localNodes.value, id);
         if (node && props.lazy && props.load && !node.loaded && !node.isLeaf) {
             triggerLoad(node);
         }
@@ -233,6 +253,7 @@ async function triggerLoad(node: TreeNode) {
     loadingKeys.value.add(node.id);
     node.loading = true;
     failedKeys.value.delete(node.id);
+    emitNodesUpdate();
     
     try {
         const result = await props.load?.(node);
@@ -241,12 +262,13 @@ async function triggerLoad(node: TreeNode) {
         }
         node.loaded = true;
         node.loading = false;
-        emit('update:nodes', [...props.nodes]);
+        emitNodesUpdate();
     } catch (err) {
         node.loading = false;
         node.loaded = false;
         failedKeys.value.add(node.id);
         console.error(`Failed to load children for node ${node.id}:`, err);
+        emitNodesUpdate();
     } finally {
         loadingKeys.value.delete(node.id);
     }
@@ -322,8 +344,9 @@ function onNodeDrop(event: DragEvent, node: TreeNode) {
     
     emit('node-drop', event, node, type);
     
-    const nextNodes = moveNode(props.nodes, dragId, dropId, type);
-    emit('update:nodes', nextNodes);
+    const nextNodes = moveNode(localNodes.value, dragId, dropId, type);
+    localNodes.value = nextNodes;
+    emitNodesUpdate();
     
     draggedNode.value = null;
     dragOverNode.value = null;
@@ -342,7 +365,8 @@ function filter(query: string) {
                 }
             }
         }
-        resetHidden(props.nodes);
+        resetHidden(localNodes.value);
+        emitNodesUpdate();
         return;
     }
     
@@ -375,9 +399,10 @@ function filter(query: string) {
         return anyMatch;
     }
     
-    runFilter(props.nodes);
+    runFilter(localNodes.value);
     expandedIds.value = nextExpanded;
     emit('update:expanded', Array.from(nextExpanded));
+    emitNodesUpdate();
 }
 
 provide('TreeViewContext', {
@@ -399,13 +424,14 @@ provide('TreeViewContext', {
 });
 
 function reloadNode(nodeKey: string) {
-    const node = findNodeById(props.nodes, nodeKey)
+    const node = findNodeById(localNodes.value, nodeKey)
     if (!node) return
     node.loaded = false
     node.loading = false
     node.children = undefined
     loadingKeys.value.delete(nodeKey)
     failedKeys.value.delete(nodeKey)
+    emitNodesUpdate()
     if (props.lazy && props.load) {
         triggerLoad(node)
     }
@@ -422,7 +448,7 @@ const rootClass = computed(() => cn('flex flex-col gap-0.5', props.class));
 <template>
     <div ref="treeRootRef" :class="rootClass" role="tree" :aria-label="t('treeView.fileTree')">
         <TreeViewNode
-            v-for="(node, index) in nodes"
+            v-for="(node, index) in localNodes"
             :key="node.id"
             :node="node"
             :selected-id="modelValue"
