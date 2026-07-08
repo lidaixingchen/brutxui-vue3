@@ -57,9 +57,8 @@ function toggleLoading2() {
                 </div>
                 
                 <ClientOnly>
-                    <div 
+                    <div
                         v-loading="isLoading2"
-                        v-loading-text="''"
                         class="border-3 border-brutal shadow-brutal rounded-brutal p-6 bg-brutal-muted min-h-[160px] flex flex-col justify-center"
                     >
                         <h4 class="text-lg font-black mb-2">用户数据概览</h4>

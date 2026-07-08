@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from '../lib/i18n'
+import { COMPONENT_REGISTRY } from '../../../../../packages/shared/src/component-registry'
+import { themeOptions } from '../lib/theme-playground'
 
 const { t } = useI18n()
 
@@ -10,11 +12,15 @@ interface StatItem {
   suffix?: string
 }
 
+const componentCount = Object.values(COMPONENT_REGISTRY).filter((entry) => entry.kind !== 'block').length
+const blockCount = Object.values(COMPONENT_REGISTRY).filter((entry) => entry.kind === 'block').length
+const themeCount = themeOptions.length
+
 const stats = computed<StatItem[]>(() => [
-  { value: '65', suffix: '+', label: t('components') },
-  { value: '31', suffix: '+', label: t('blocks') },
+  { value: String(componentCount), suffix: '+', label: t('components') },
+  { value: String(blockCount), suffix: '+', label: t('blocks') },
   { value: '100', suffix: '%', label: t('typescript') },
-  { value: '4', label: t('themes') },
+  { value: String(themeCount), label: t('themes') },
 ])
 
 const isVisible = ref(false)

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref } from 'vue'
 import { Check, Copy, RotateCcw, Search, ShieldCheck, ShieldAlert } from '@lucide/vue'
 import {
     Alert,
@@ -183,6 +183,12 @@ async function copyCss() {
         copyState.value = 'idle'
     }, 1800)
 }
+
+onBeforeUnmount(() => {
+    if (copyTimer) {
+        clearTimeout(copyTimer)
+    }
+})
 </script>
 
 <template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { Check, Copy } from '@lucide/vue'
 import { cn } from '../lib/utils'
 
@@ -15,14 +15,28 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const copied = ref(false)
+let copyTimer: ReturnType<typeof setTimeout> | null = null
 
 async function handleCopy() {
-    await navigator.clipboard.writeText(props.text)
-    copied.value = true
-    setTimeout(() => {
+    try {
+        if (!navigator.clipboard) {
+            throw new Error('Clipboard API unavailable')
+        }
+        await navigator.clipboard.writeText(props.text)
+        copied.value = true
+        if (copyTimer) clearTimeout(copyTimer)
+        copyTimer = setTimeout(() => {
+            copied.value = false
+            copyTimer = null
+        }, 2000)
+    } catch {
         copied.value = false
-    }, 2000)
+    }
 }
+
+onBeforeUnmount(() => {
+    if (copyTimer) clearTimeout(copyTimer)
+})
 
 const buttonClass = computed(() =>
     cn(

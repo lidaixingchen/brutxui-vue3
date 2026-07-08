@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { useData } from 'vitepress'
+import { computed } from 'vue'
+import { useData, useRoute } from 'vitepress'
 
 const { frontmatter, lang } = useData()
+const route = useRoute()
 
-const translated = frontmatter.value.translated ?? true
-const isEn = lang.value.startsWith('en')
+const translated = computed(() => frontmatter.value.translated ?? true)
+const isEn = computed(() => lang.value.startsWith('en'))
+const zhHref = computed(() => route.path.replace(/^\/en\//, '/').replace(/^\/en$/, '/'))
 </script>
 
 <template>
@@ -13,7 +16,7 @@ const isEn = lang.value.startsWith('en')
         <span class="banner-text">
             This page is currently available in Chinese only.
         </span>
-        <a class="banner-link" href="#" onclick="history.back()">Switch back</a>
+        <a class="banner-link" :href="zhHref">Switch back</a>
     </div>
 </template>
 

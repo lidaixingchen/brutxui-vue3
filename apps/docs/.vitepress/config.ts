@@ -1,4 +1,3 @@
-import { resolve } from 'node:path'
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
 import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/sidebar-generator'
@@ -138,7 +137,7 @@ export default defineConfig({
         let pageUrl = context.page.replace(/\.md$/, '')
         if (pageUrl === 'index') pageUrl = ''
         pageUrl = pageUrl.replace(/\/index$/, '')
-        const isEn = pageUrl.startsWith('en/')
+        const isEn = pageUrl === 'en' || pageUrl.startsWith('en/')
         const basePath = isEn ? pageUrl.replace(/^en\//, '') : pageUrl
         const baseUrl = 'https://lidaixingchen.github.io/brutxui-vue3'
         const canonicalUrl = isEn ? `${baseUrl}/en/${basePath}` : `${baseUrl}/${basePath}`
@@ -284,7 +283,7 @@ export default defineConfig({
         plugins: [tailwindcss()],
         resolve: {
             alias: {
-                '@': resolve(import.meta.dirname, '.vitepress'),
+                '@': import.meta.dirname,
             },
         },
     },
