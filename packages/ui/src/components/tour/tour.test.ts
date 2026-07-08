@@ -170,30 +170,32 @@ describe('Tour.vue', () => {
         ]
 
         vi.useFakeTimers()
-        mount(Tour, {
-            props: {
-                steps,
-                current: 0,
-                open: true,
-            },
-            global: { provide: localeProvide },
-        })
+        try {
+            mount(Tour, {
+                props: {
+                    steps,
+                    current: 0,
+                    open: true,
+                },
+                global: { provide: localeProvide },
+            })
 
-        await nextTick()
-        await nextTick()
+            await nextTick()
+            await nextTick()
 
-        expect(mockContextInstance.strokeRect).toHaveBeenCalled()
-        mockContextInstance.strokeRect.mockClear()
+            expect(mockContextInstance.strokeRect).toHaveBeenCalled()
+            mockContextInstance.strokeRect.mockClear()
 
-        window.dispatchEvent(new Event('resize'))
-        expect(mockContextInstance.strokeRect).toHaveBeenCalled()
-        mockContextInstance.strokeRect.mockClear()
+            window.dispatchEvent(new Event('resize'))
+            expect(mockContextInstance.strokeRect).toHaveBeenCalled()
+            mockContextInstance.strokeRect.mockClear()
 
-        vi.advanceTimersByTime(200)
-        window.dispatchEvent(new Event('scroll'))
-        expect(mockContextInstance.strokeRect).toHaveBeenCalled()
-
-        vi.useRealTimers()
+            vi.advanceTimersByTime(200)
+            window.dispatchEvent(new Event('scroll'))
+            expect(mockContextInstance.strokeRect).toHaveBeenCalled()
+        } finally {
+            vi.useRealTimers()
+        }
     })
 
     it('mounts when ResizeObserver is unavailable', async () => {
