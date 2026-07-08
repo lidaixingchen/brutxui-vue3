@@ -65,6 +65,7 @@ const validate = (value: string) => {
     validateField(value)
 
     if (rulesEmpty) {
+        formField?.setError(undefined)
         if (prevState !== 'default' && validationState.value === 'default') {
             emit('validation-change', 'default')
         }

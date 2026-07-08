@@ -58,7 +58,9 @@ defineExpose({
     setValue: (value: number[]) => emit('update:modelValue', value),
 })
 
-const activeThumb = ref(-1)
+const focusedThumb = ref(-1)
+const hoveredThumb = ref(-1)
+const activeThumb = computed(() => focusedThumb.value >= 0 ? focusedThumb.value : hoveredThumb.value)
 const tooltipId = `slider-tooltip-${useId()}`
 
 const rootClasses = computed(() =>
@@ -137,14 +139,22 @@ function tooltipStyleFor(values: number[] | null | undefined): Record<string, st
 }
 
 function handleThumbFocus(index: number) {
-    activeThumb.value = index
+    focusedThumb.value = index
 }
 function handleThumbBlur(index: number) {
     Promise.resolve().then(() => {
-        if (activeThumb.value === index) {
-            activeThumb.value = -1
+        if (focusedThumb.value === index) {
+            focusedThumb.value = -1
         }
     })
+}
+function handleThumbPointerEnter(index: number) {
+    hoveredThumb.value = index
+}
+function handleThumbPointerLeave(index: number) {
+    if (hoveredThumb.value === index) {
+        hoveredThumb.value = -1
+    }
 }
 </script>
 
@@ -178,8 +188,8 @@ function handleThumbBlur(index: number) {
                 :aria-describedby="showTooltip && activeThumb === index ? tooltipId : undefined"
                 @focus="handleThumbFocus(index)"
                 @blur="handleThumbBlur(index)"
-                @pointerenter="handleThumbFocus(index)"
-                @pointerleave="handleThumbBlur(index)"
+                @pointerenter="handleThumbPointerEnter(index)"
+                @pointerleave="handleThumbPointerLeave(index)"
             />
             <span
                 v-if="showTooltip && activeThumb >= 0"

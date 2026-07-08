@@ -52,6 +52,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const { t } = useLocale()
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const isComposing = ref(false)
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('textarea.placeholder'))
 
@@ -86,7 +87,9 @@ defineExpose({
             :aria-invalid="ariaInvalid"
             :aria-errormessage="ariaErrormessage"
             :aria-required="ariaRequired"
-            @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
+            @compositionstart="isComposing = true"
+            @compositionend="isComposing = false"
+            @input="!isComposing && emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
         />
         <p
             v-if="variant === 'error' && errorMessage"

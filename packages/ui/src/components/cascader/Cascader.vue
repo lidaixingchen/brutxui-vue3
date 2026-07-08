@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { ChevronsUpDown, ChevronRight, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
 import PopoverContent from '../popover/PopoverContent.vue'
@@ -88,6 +88,18 @@ const activePath = ref<CascaderValue[]>([])
 const activeColumnIndex = ref(0)
 // Focused item index inside the active column
 const activeItemIndex = ref(-1)
+
+const uid = useId()
+const contentId = `${uid}-content`
+
+function getOptionId(colIdx: number, itemIdx: number): string {
+    return `${uid}-col-${colIdx}-item-${itemIdx}`
+}
+
+const activeDescendantId = computed(() => {
+    if (!open.value || activeItemIndex.value < 0) return undefined
+    return getOptionId(activeColumnIndex.value, activeItemIndex.value)
+})
 
 // Compute dynamically displayed columns based on activePath
 const columns = computed(() => {
@@ -480,6 +492,8 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 :aria-label="ariaLabel"
                 :tabindex="disabled ? -1 : 0"
                 :aria-disabled="disabled"
+                :aria-controls="open ? contentId : undefined"
+                :aria-activedescendant="activeDescendantId"
                 :class="triggerClasses"
                 @mouseenter="onClearableMouseEnter"
                 @mouseleave="onClearableMouseLeave"
@@ -506,16 +520,19 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
             <div v-if="options.length === 0" class="px-4 py-6 text-sm text-brutal-muted-foreground text-center">
                 {{ resolvedEmptyText }}
             </div>
-            <div v-else class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 overflow-x-auto overflow-y-hidden w-max bg-brutal-bg text-brutal-fg">
+            <div v-else :id="contentId" class="grid grid-flow-col auto-cols-[180px] divide-x-3 divide-brutal h-64 overflow-x-auto overflow-y-hidden w-max bg-brutal-bg text-brutal-fg">
                 <div
                     v-for="(col, colIdx) in columns"
                     :key="colIdx"
+                    role="listbox"
                     class="overflow-y-auto p-1 flex flex-col gap-1 max-h-full"
                 >
                     <div
-                        v-for="option in col"
+                        v-for="(option, optIdx) in col"
                         :key="option.value"
-                        role="menuitem"
+                        :id="getOptionId(colIdx, optIdx)"
+                        role="option"
+                        :aria-selected="isPathSelected(getOptionPath(option, colIdx))"
                         :class="getItemClasses(option, colIdx)"
                         @mouseenter="handleMouseEnter(option, colIdx)"
                         @click="handleItemClick(option, colIdx)"

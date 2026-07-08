@@ -87,8 +87,8 @@ function handleClear(e: Event) {
                     <span
                         v-if="showClear"
                         role="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
-                        tabindex="-1"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors focus:outline-none focus:ring-2 focus:ring-brutal-ring"
+                        tabindex="0"
                         @click.stop="handleClear"
                         @keydown.enter.prevent.stop="handleClear"
                         @keydown.space.prevent.stop="handleClear"

@@ -82,6 +82,24 @@ const handleSelect = (val: number) => {
     emit('update:modelValue', val)
     emit('change', val)
 }
+
+const handleKeydown = (event: KeyboardEvent) => {
+    if (props.readonly) return
+    const step = props.allowHalf ? 0.5 : 1
+    let nextValue: number | null = null
+
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+        nextValue = Math.min(props.max, props.modelValue + step)
+    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+        nextValue = Math.max(0, props.modelValue - step)
+    }
+
+    if (nextValue !== null) {
+        event.preventDefault()
+        emit('update:modelValue', nextValue)
+        emit('change', nextValue)
+    }
+}
 </script>
 
 <template>
@@ -92,7 +110,9 @@ const handleSelect = (val: number) => {
         :aria-valuemin="0"
         :aria-valuemax="max"
         :aria-readonly="readonly"
+        :tabindex="readonly ? -1 : 0"
         @mouseleave="handleMouseLeave"
+        @keydown="handleKeydown"
     >
         <div
             v-for="i in max"

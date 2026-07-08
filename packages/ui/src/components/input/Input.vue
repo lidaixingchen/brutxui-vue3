@@ -224,7 +224,7 @@ defineExpose({
                     :aria-errormessage="ariaErrormessage"
                     :aria-required="ariaRequired"
                     @compositionstart="isComposing = true"
-                    @compositionend="(e: CompositionEvent) => { isComposing = false; emit('update:modelValue', (e.target as HTMLInputElement).value) }"
+                    @compositionend="isComposing = false"
                     @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
                 >
 

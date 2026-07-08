@@ -135,10 +135,10 @@ const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => pro
                     <span
                         v-if="clearable && modelValue && !disabled"
                         role="button"
-                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors"
+                        class="inline-flex items-center justify-center text-brutal-fg hover:text-brutal-destructive transition-colors focus:outline-none focus:ring-2 focus:ring-brutal-ring rounded-brutal"
                         :class="ICON_SIZE_CLASSES.clearButton[size]"
                         :aria-label="t('colorPicker.clear')"
-                        tabindex="-1"
+                        tabindex="0"
                         @click="handleClearClick"
                         @keydown.enter.prevent="handleClearClick"
                         @keydown.space.prevent="handleClearClick"

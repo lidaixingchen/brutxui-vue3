@@ -8,7 +8,7 @@ export { useFormWizard } from './form-wizard-utils'
 </script>
 
 <script setup lang="ts">
-import { ref, computed, provide } from 'vue'
+import { ref, computed, provide, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { formWizardRootVariants, formWizardNavigationVariants, formWizardStepInfoVariants, formWizardStepCounterVariants, formWizardErrorPanelVariants, formWizardErrorTitleVariants } from './form-wizard-variants'
 import Stepper from '../stepper/Stepper.vue'
@@ -54,6 +54,14 @@ const currentStepConfig = computed(() => props.steps[currentStep.value])
 const canGoNext = computed(() => {
     if (!props.linear) return true
     return !stepErrors.value.has(currentStep.value)
+})
+
+watch(() => props.modelValue, () => {
+    stepErrors.value.delete(currentStep.value)
+}, { deep: true })
+
+watch(currentStep, () => {
+    stepErrors.value.delete(currentStep.value)
 })
 
 function validateCurrentStep(): boolean {

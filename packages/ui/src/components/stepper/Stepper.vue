@@ -94,7 +94,7 @@ function handleStepKeydown(event: KeyboardEvent) {
     const container = target.closest('[role="list"]')
     if (!container) return
 
-    const buttons = Array.from(container.querySelectorAll<HTMLElement>('button'))
+    const buttons = Array.from(container.querySelectorAll<HTMLElement>('[data-step-button]'))
     const currentIndex = buttons.indexOf(target)
     if (currentIndex === -1) return
 
@@ -204,6 +204,7 @@ const connectorClasses = computed(() =>
                     <button
                         :class="dotClasses[index]"
                         type="button"
+                        data-step-button
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                         @click="clickStep(index)"
                     >
@@ -239,6 +240,7 @@ const connectorClasses = computed(() =>
                         <button
                             :class="dotClasses[index]"
                             type="button"
+                            data-step-button
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
                             @click="clickStep(index)"
                         >
