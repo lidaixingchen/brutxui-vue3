@@ -200,7 +200,6 @@ async function configureNuxtConfig(
             configFile,
         };
     } catch {
-        await fs.writeFile(configPath, original).catch(() => {});
         return {
             configured: false,
             status: 'write-failed',

@@ -12,7 +12,7 @@ interface ComponentInfoResult {
     registryItem: RegistryItem | null;
     localFiles: string[];
     source: string;
-    status: 'installed' | 'not-installed' | 'unknown';
+    status: 'installed' | 'not-installed' | 'not-found' | 'registry-unreachable';
 }
 
 async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName: string): Promise<string[]> {
@@ -51,22 +51,30 @@ async function getComponentInfo(
 ): Promise<ComponentInfoResult> {
     const source = registryOverride ?? DEFAULT_REGISTRY_URL;
     let registryItem: RegistryItem | null = null;
+    let registryFetchError: Error | null = null;
 
     try {
         registryItem = await getItem(componentName, source);
-    } catch {
+    } catch (error) {
         registryItem = null;
+        registryFetchError = error instanceof Error ? error : new Error(String(error));
     }
 
     const localFiles = await getLocalFiles(cwd, config, componentName);
 
-    let status: ComponentInfoResult['status'] = 'unknown';
+    let status: ComponentInfoResult['status'];
     if (registryItem && localFiles.length > 0) {
         status = 'installed';
     } else if (registryItem && localFiles.length === 0) {
         status = 'not-installed';
+    } else if (!registryItem && registryFetchError && localFiles.length > 0) {
+        status = 'registry-unreachable';
     } else if (localFiles.length > 0) {
         status = 'installed';
+    } else if (!registryItem && registryFetchError) {
+        status = 'registry-unreachable';
+    } else {
+        status = 'not-found';
     }
 
     return {
@@ -101,7 +109,13 @@ function printInfo(result: ComponentInfoResult): void {
         logger.log(`  Local Files: ${result.localFiles.join(', ')} (${result.localFiles.length} file${result.localFiles.length !== 1 ? 's' : ''})`);
     }
 
-    const statusColor = result.status === 'installed' ? chalk.green : result.status === 'not-installed' ? chalk.yellow : chalk.dim;
+    const statusColor = result.status === 'installed'
+        ? chalk.green
+        : result.status === 'not-installed'
+            ? chalk.yellow
+            : result.status === 'registry-unreachable'
+                ? chalk.red
+                : chalk.dim;
     logger.log(`  Status: ${statusColor(result.status)}`);
 
     logger.newLine();

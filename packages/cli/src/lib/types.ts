@@ -63,6 +63,7 @@ export interface AddOptions {
     dryRun?: boolean;
     registry?: string;
     vscode?: boolean;
+    cache?: boolean;
 }
 
 export type { RegistryFile, RegistryItem };
@@ -83,6 +84,7 @@ export interface DiffOptions {
     registry?: string;
     json?: boolean;
     silent?: boolean;
+    cache?: boolean;
 }
 
 export interface UpdateOptions {
@@ -93,6 +95,7 @@ export interface UpdateOptions {
     silent?: boolean;
     dryRun?: boolean;
     registry?: string;
+    cache?: boolean;
 }
 
 export interface ListOptions {

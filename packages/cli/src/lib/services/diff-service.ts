@@ -125,9 +125,10 @@ export async function diffComponent(
     }
 
     if (!registryItem) {
+        const localFiles = await getLocalComponentFiles(cwd, config, componentName);
         return {
             component: componentName,
-            status: 'not-installed',
+            status: localFiles.length > 0 ? 'local-only' : 'not-installed',
             files: [],
             ...getIntegrityMetadata(registryItem, manifestEntry),
         };

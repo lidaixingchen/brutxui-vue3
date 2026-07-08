@@ -30,14 +30,14 @@ export async function getCached<T>(name: string, source: string, ttl: number = D
     try {
         if (!(await fs.pathExists(filePath))) return null;
 
-        const raw = await fs.readJson(filePath) as { data: T; timestamp: number };
+        const raw = await fs.readJson(filePath) as { data?: T; timestamp?: unknown };
 
-        if (Date.now() - raw.timestamp > ttl) {
+        if (typeof raw.timestamp !== 'number' || Date.now() - raw.timestamp > ttl) {
             await fs.remove(filePath);
             return null;
         }
 
-        return raw.data;
+        return raw.data ?? null;
     } catch {
         return null;
     }

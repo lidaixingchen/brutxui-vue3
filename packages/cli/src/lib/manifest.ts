@@ -13,7 +13,6 @@ const COMPONENT_CATEGORIES: Array<NonNullable<RegistryItem['category']>> = [
     'marketing',
     'navigation',
     'overlay',
-    'page',
     'utility',
     'visual-effect',
 ];

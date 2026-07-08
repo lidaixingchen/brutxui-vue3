@@ -8,7 +8,7 @@ import { add } from './add.js';
 export async function update(components: string[], options: UpdateOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
 
-    if ((options as Record<string, unknown>).cache === false) {
+    if (options.cache === false) {
         process.env.BRUTX_NO_CACHE = '1';
     }
 

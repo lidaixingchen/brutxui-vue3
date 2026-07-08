@@ -236,6 +236,10 @@ export async function getDefaultAliases(cwd: string): Promise<AliasConfig> {
 
 function extractScriptBlocks(content: string): Array<{ start: number; end: number; code: string }> {
     const blocks: Array<{ start: number; end: number; code: string }> = [];
+    // Note: this regex is non-greedy and may split prematurely if a string literal
+    // inside <script> contains the substring "</script>". Current codebase does not
+    // trigger this, but it remains a known limitation; switching to
+    // @vue/compiler-sfc would resolve it definitively.
     const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
     let match;
     while ((match = scriptRegex.exec(content)) !== null) {

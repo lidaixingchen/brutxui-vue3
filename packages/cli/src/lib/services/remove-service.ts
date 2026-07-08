@@ -6,6 +6,7 @@ import { FileTransaction } from '../file-transaction.js';
 import { removeInstalledComponents } from '../manifest.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { isSafePath, resolveAliasPath } from '../project.js';
+import { logger } from '../logger.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 
@@ -15,6 +16,7 @@ export interface RemovePreparation {
     notFound: string[];
     remaining: string[];
     dependents: Map<string, string[]>;
+    dependencyCheckFailures: string[];
     orphanedFiles: string[];
 }
 
@@ -144,6 +146,18 @@ async function findOrphanedFiles(
 
     const orphaned: string[] = [];
 
+    const stripAliasPrefix = (specifier: string, aliasDir: string): string => {
+        const prefix = `@/${aliasDir}/`;
+        if (specifier.startsWith(prefix)) {
+            return specifier.slice(prefix.length).split(/[?#]/)[0];
+        }
+        const legacyPrefix = `${aliasDir}/`;
+        if (specifier.startsWith(legacyPrefix)) {
+            return specifier.slice(legacyPrefix.length).split(/[?#]/)[0];
+        }
+        return specifier.split('/').pop() ?? '';
+    };
+
     for (const [importPath, importers] of importMap) {
         const wasOnlyUsedByRemoved = [...importers].every(c => removedComponents.includes(c));
         if (!wasOnlyUsedByRemoved) continue;
@@ -156,22 +170,25 @@ async function findOrphanedFiles(
         if (!isComposable && !isLocale && !isDirective && !isUtils) continue;
 
         let resolvedPath: string | null = null;
-        const fileName = importPath.split('/').pop() ?? '';
 
         if (isComposable && await fs.pathExists(composablesPath)) {
-            resolvedPath = await resolveScriptFile(composablesPath, fileName);
+            const relativePath = stripAliasPrefix(importPath, 'composables');
+            resolvedPath = await resolveScriptFile(composablesPath, relativePath);
         }
 
         if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
-            resolvedPath = await resolveScriptFile(localesPath, fileName);
+            const relativePath = stripAliasPrefix(importPath, 'locales');
+            resolvedPath = await resolveScriptFile(localesPath, relativePath);
         }
 
         if (!resolvedPath && isDirective && await fs.pathExists(directivesPath)) {
-            resolvedPath = await resolveScriptFile(directivesPath, fileName);
+            const relativePath = stripAliasPrefix(importPath, 'directives');
+            resolvedPath = await resolveScriptFile(directivesPath, relativePath);
         }
 
         if (!resolvedPath && isUtils && await fs.pathExists(utilsPath)) {
-            resolvedPath = await resolveScriptFile(utilsPath, fileName);
+            const relativePath = stripAliasPrefix(importPath, 'lib');
+            resolvedPath = await resolveScriptFile(utilsPath, relativePath);
         }
 
         if (resolvedPath) {
@@ -187,8 +204,9 @@ async function getDependents(
     config: BrutalistConfig,
     componentsToRemove: string[],
     manifest: BrutxManifest | null
-): Promise<Map<string, string[]>> {
+): Promise<{ dependents: Map<string, string[]>; failures: string[] }> {
     const dependents = new Map<string, string[]>();
+    const failures = new Set<string>();
     const installed = await getInstalledComponentNames(cwd, config);
     const remaining = installed.filter(c => !componentsToRemove.includes(c));
 
@@ -202,13 +220,14 @@ async function getDependents(
                     }
                     dependents.get(name)!.push(other);
                 }
-            } catch {
-                // skip if registry item not found
+            } catch (error) {
+                failures.add(other);
+                logger.debug(`Failed to fetch registry item for "${other}" during dependency check: ${error instanceof Error ? error.message : String(error)}`);
             }
         }
     }
 
-    return dependents;
+    return { dependents, failures: Array.from(failures).sort() };
 }
 
 export async function countComponentFiles(
@@ -237,9 +256,9 @@ export async function prepareRemoveComponents(
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
-    const dependents = toRemove.length > 0
+    const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
         ? await getDependents(cwd, config, toRemove, manifest)
-        : new Map<string, string[]>();
+        : { dependents: new Map<string, string[]>(), failures: [] as string[] };
     const orphanedFiles = toRemove.length > 0
         ? [
             ...new Set([
@@ -255,6 +274,7 @@ export async function prepareRemoveComponents(
         notFound,
         remaining,
         dependents,
+        dependencyCheckFailures,
         orphanedFiles,
     };
 }
@@ -276,10 +296,11 @@ export async function removeComponents(
             const componentPath = path.join(componentsPath, comp);
 
             if (await fs.pathExists(componentPath)) {
-                const files = await fs.readdir(componentPath);
-                options.onRemoveComponent?.(comp, files.length);
+                const entries = await fs.readdir(componentPath, { withFileTypes: true });
+                const fileCount = entries.filter(e => e.isFile()).length;
+                options.onRemoveComponent?.(comp, fileCount);
                 await transaction.remove(componentPath);
-                totalRemoved += files.length;
+                totalRemoved += fileCount;
             }
         }
 

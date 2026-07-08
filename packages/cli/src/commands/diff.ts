@@ -22,6 +22,7 @@ function printDiffReport(results: DiffResult[]): void {
     const modified = results.filter((r) => r.status === 'modified');
     const upToDate = results.filter((r) => r.status === 'up-to-date');
     const notInstalled = results.filter((r) => r.status === 'not-installed');
+    const localOnly = results.filter((r) => r.status === 'local-only');
 
     if (modified.length > 0) {
         logger.log(chalk.yellow(`  🔄 MODIFIED (${modified.length})`));
@@ -59,21 +60,29 @@ function printDiffReport(results: DiffResult[]): void {
     if (notInstalled.length > 0) {
         logger.log(chalk.gray(`  ❓ NOT IN REGISTRY (${notInstalled.length})`));
         for (const result of notInstalled) {
-            logger.log(`    — ${result.component} (local only)`);
+            logger.log(`    — ${result.component}`);
+        }
+        logger.newLine();
+    }
+
+    if (localOnly.length > 0) {
+        logger.log(chalk.gray(`  📦 LOCAL ONLY (${localOnly.length})`));
+        for (const result of localOnly) {
+            logger.log(`    — ${result.component} (registry unreachable)`);
         }
         logger.newLine();
     }
 
     const updateAvailable = results.filter((r) => r.integrityStatus === 'outdated').length;
     const updateSummary = updateAvailable > 0 ? `, ${chalk.yellow(`${updateAvailable} update available`)}` : '';
-    logger.log(`  Summary: ${chalk.yellow(`${modified.length} modified`)}, ${chalk.green(`${upToDate.length} up-to-date`)}, ${chalk.gray(`${notInstalled.length} local-only`)}${updateSummary}`);
+    logger.log(`  Summary: ${chalk.yellow(`${modified.length} modified`)}, ${chalk.green(`${upToDate.length} up-to-date`)}, ${chalk.gray(`${notInstalled.length} not in registry`)}, ${chalk.gray(`${localOnly.length} local-only`)}${updateSummary}`);
     logger.newLine();
 }
 
 export async function diff(options: DiffOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
 
-    if ((options as Record<string, unknown>).cache === false) {
+    if (options.cache === false) {
         process.env.BRUTX_NO_CACHE = '1';
     }
 

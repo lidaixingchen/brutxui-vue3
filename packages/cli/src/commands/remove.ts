@@ -59,6 +59,12 @@ export async function remove(components: string[], options: RemoveOptions): Prom
         logger.newLine();
     }
 
+    if (removal.dependencyCheckFailures.length > 0) {
+        logger.newLine();
+        logger.warn(`Warning: dependency check failed for ${removal.dependencyCheckFailures.length} component(s) — registry may be unreachable. Hidden dependencies could exist for the components being removed: ${removal.dependencyCheckFailures.join(', ')}`);
+        logger.newLine();
+    }
+
     if (options.dryRun) {
         logger.newLine();
         logger.bold('[Dry Run] Would remove:');

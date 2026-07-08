@@ -235,7 +235,10 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
                 cleanName = match[1];
                 const version = match[2];
 
-                if (source === DEFAULT_REGISTRY_URL) {
+                // Explicit @version overrides the registry source only when the
+                // caller is resolving against the default registry; inherited
+                // (already-versioned) sources are preserved as-is.
+                if (itemSource === DEFAULT_REGISTRY_URL) {
                     itemSource = `https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/${version}/packages/registry/registry`;
                 }
             }

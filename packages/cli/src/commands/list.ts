@@ -109,7 +109,7 @@ function printTable(infos: InstalledComponentInfo[], showUpdates: boolean): void
 export async function list(options: ListOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
 
-    if ((options as Record<string, unknown>).cache === false) {
+    if (options.cache === false) {
         process.env.BRUTX_NO_CACHE = '1';
     }
 

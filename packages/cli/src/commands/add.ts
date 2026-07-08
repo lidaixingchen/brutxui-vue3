@@ -143,7 +143,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const cwd = options.cwd ?? process.cwd();
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
 
-    if ((options as Record<string, unknown>).cache === false) {
+    if (options.cache === false) {
         process.env.BRUTX_NO_CACHE = '1';
     }
 

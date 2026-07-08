@@ -10,10 +10,11 @@ import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, C
 import { logger } from '../lib/logger.js';
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
-const MIN_NODE_VERSION = '22.0.0';
+const MIN_NODE_VERSION = '22.5.0';
 
 function isNodeVersionSupported(version: string): boolean {
-    const [major = 0, minor = 0, patch = 0] = version.split('.').map(Number);
+    const cleanVersion = version.split('-')[0];
+    const [major = 0, minor = 0, patch = 0] = cleanVersion.split('.').map(Number);
     const [minMajor, minMinor, minPatch] = MIN_NODE_VERSION.split('.').map(Number);
 
     if (major !== minMajor) return major > minMajor;
@@ -310,22 +311,38 @@ async function checkComponentIntegrity(cwd: string, config: BrutalistConfig): Pr
         return results;
     }
 
-    try {
-        const dirs = await fs.readdir(componentsPath, { withFileTypes: true });
-        for (const dir of dirs) {
-            if (dir.isDirectory()) {
-                const componentPath = path.join(componentsPath, dir.name);
-                const files = await fs.readdir(componentPath);
-                const hasFiles = files.length > 0;
-
-                results.push({
-                    name: `component ${dir.name}`,
-                    status: hasFiles ? 'pass' : 'warn',
-                    message: hasFiles
-                        ? `${files.length} files found.`
-                        : 'Component directory is empty.',
-                });
+    const collectComponentDirs = async (baseDir: string): Promise<string[]> => {
+        const entries = await fs.readdir(baseDir, { withFileTypes: true });
+        const subDirs: string[] = [];
+        for (const entry of entries) {
+            if (!entry.isDirectory()) continue;
+            const subPath = path.join(baseDir, entry.name);
+            const inner = await fs.readdir(subPath, { withFileTypes: true });
+            const hasVueOrTs = inner.some(e => e.isFile() && (e.name.endsWith('.vue') || e.name.endsWith('.ts')));
+            if (hasVueOrTs) {
+                subDirs.push(subPath);
+            } else {
+                subDirs.push(...await collectComponentDirs(subPath));
             }
+        }
+        return subDirs;
+    };
+
+    try {
+        const componentDirs = await collectComponentDirs(componentsPath);
+        for (const componentPath of componentDirs) {
+            const files = await fs.readdir(componentPath);
+            const fileCount = files.filter(f => !fs.statSync(path.join(componentPath, f)).isDirectory()).length;
+            const hasFiles = fileCount > 0;
+            const componentName = path.relative(componentsPath, componentPath).split(path.sep).join('/');
+
+            results.push({
+                name: `component ${componentName}`,
+                status: hasFiles ? 'pass' : 'warn',
+                message: hasFiles
+                    ? `${fileCount} files found.`
+                    : 'Component directory is empty.',
+            });
         }
     } catch (error) {
         // Log error in debug mode but don't fail the check
@@ -461,6 +478,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                 }
             }
             applied++;
+            check.status = 'pass';
         } catch (error) {
             const rollbackFailures = await transaction.rollback();
             logger.error(`Failed to fix: ${check.name}`);

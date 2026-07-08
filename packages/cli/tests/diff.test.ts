@@ -759,9 +759,22 @@ describe('diff command', () => {
             expect(output).toHaveLength(0);
         });
 
-        it('should return not-installed when registry is unreachable', async () => {
+        it('should return local-only when registry is unreachable but local files exist', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>btn</template>');
+
+            mockedGetItem.mockRejectedValue(new Error('Network error: registry unreachable'));
+
+            const results = await runDiffJson(tmpDir, { components: ['button'] });
+
+            expect(results).toHaveLength(1);
+            expect(results[0].component).toBe('button');
+            expect(results[0].status).toBe('local-only');
+            expect(results[0].files).toHaveLength(0);
+        });
+
+        it('should return not-installed when registry is unreachable and no local files exist', async () => {
+            mockedReadConfigSafe.mockResolvedValue(createConfig());
 
             mockedGetItem.mockRejectedValue(new Error('Network error: registry unreachable'));
 

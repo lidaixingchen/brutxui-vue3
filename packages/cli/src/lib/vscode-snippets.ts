@@ -375,7 +375,10 @@ export async function mergeSnippetsFile(
     let existingSnippets: VscodeSnippetFile = {};
     if (await fs.pathExists(snippetPath)) {
         try {
-            existingSnippets = await fs.readJson(snippetPath) as VscodeSnippetFile;
+            const parsed: unknown = await fs.readJson(snippetPath);
+            if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
+                existingSnippets = parsed as VscodeSnippetFile;
+            }
         } catch {
             existingSnippets = {};
         }

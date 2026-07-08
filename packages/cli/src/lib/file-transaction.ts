@@ -52,7 +52,6 @@ export class FileTransaction {
         for (const [targetPath, snapshot] of entries) {
             try {
                 if (snapshot.existed && snapshot.backupPath) {
-                    await fs.remove(targetPath);
                     await fs.copy(snapshot.backupPath, targetPath);
                 } else {
                     await fs.remove(targetPath);
