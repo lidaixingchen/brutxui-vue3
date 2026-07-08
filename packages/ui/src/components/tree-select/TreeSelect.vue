@@ -197,8 +197,8 @@ const filteredNodes = computed(() => {
 // 更新焦点节点当搜索结果变化时
 watch(filteredNodes, (nodes) => {
     if (open.value && focusedId.value) {
-        // 检查当前焦点节点是否仍在过滤结果中
-        const isFocusedVisible = nodes.some(node => node.id === focusedId.value)
+        // 检查当前焦点节点是否仍在过滤结果中（递归检查子节点）
+        const isFocusedVisible = flattenNodes(nodes).some(node => node.id === focusedId.value)
         if (!isFocusedVisible) {
             // 焦点节点不在过滤结果中，重置为第一个节点
             const firstNode = nodes[0]
@@ -324,7 +324,7 @@ const contentId = `tree-select-content-${useId()}`
                 @mouseenter="onClearableMouseEnter"
                 @mouseleave="onClearableMouseLeave"
                 @keydown.enter="!disabled && (open = !open)"
-                @keydown.space="!disabled && (open = !open)"
+                @keydown.space.prevent="!disabled && (open = !open)"
                 @keydown.escape="open = false"
             >
                 <span class="truncate">{{ displayText }}</span>

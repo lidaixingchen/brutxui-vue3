@@ -24,6 +24,8 @@ function parseDateValue(value: string | number | Date, endOfDay = false): number
         return Number.isNaN(time) ? null : time
     }
 
+    if (typeof value !== 'string') return null
+
     const text = value.trim()
     if (!text) return null
 

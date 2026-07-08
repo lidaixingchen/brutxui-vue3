@@ -40,6 +40,10 @@ const columns = computed(() => props.modelValue);
 
 function onDragStart(e: DragEvent, cardId: string, fromColumn: string) {
     if (draggingColumn.value) return;
+    if (dragEndRafId !== null) {
+        cancelAnimationFrame(dragEndRafId);
+        dragEndRafId = null;
+    }
     draggingCard.value = { cardId, fromColumn };
     isDragging.value = true;
     if (e.dataTransfer) {

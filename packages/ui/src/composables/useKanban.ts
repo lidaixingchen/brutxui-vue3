@@ -1,4 +1,4 @@
-import { type Ref, ref } from 'vue'
+import { type Ref, ref, onUnmounted } from 'vue'
 import type { MoveDirection } from '@/types'
 
 export interface KanbanCard {
@@ -44,9 +44,14 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     const grabbedCard = ref<{ cardId: string; columnId: string } | null>(null)
     const dragOverColumn = ref<string | null>(null)
     const isDragging = ref(false)
+    let dragEndRafId: number | null = null
 
     function onDragStart(cardId: string, fromColumn: string) {
         if (draggingColumn.value) return
+        if (dragEndRafId !== null) {
+            cancelAnimationFrame(dragEndRafId)
+            dragEndRafId = null
+        }
         draggingCard.value = { cardId, fromColumn }
         isDragging.value = true
     }
@@ -54,8 +59,17 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     function onDragEnd() {
         draggingCard.value = null
         dragOverColumn.value = null
-        requestAnimationFrame(() => { isDragging.value = false })
+        dragEndRafId = requestAnimationFrame(() => {
+            isDragging.value = false
+            dragEndRafId = null
+        })
     }
+
+    onUnmounted(() => {
+        if (dragEndRafId !== null) {
+            cancelAnimationFrame(dragEndRafId)
+        }
+    })
 
     function onDragOver(e: DragEvent, columnId: string) {
         if (draggingColumn.value) return

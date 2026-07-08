@@ -3,21 +3,36 @@ import type { TreeNode } from './types'
 export type CheckState = 'checked' | 'unchecked' | 'indeterminate'
 
 export function getAllDescendantIds(node: TreeNode): string[] {
-    const result: string[] = [node.id]
-    if (node.children) {
-        for (const child of node.children) {
-            result.push(...getAllDescendantIds(child))
+    const result: string[] = []
+    const stack: TreeNode[] = [node]
+    while (stack.length > 0) {
+        const current = stack.pop() as TreeNode
+        result.push(current.id)
+        if (current.children) {
+            for (let i = current.children.length - 1; i >= 0; i--) {
+                stack.push(current.children[i])
+            }
         }
     }
     return result
 }
 
 export function getCheckState(node: TreeNode, checkedIds: Set<string>): CheckState {
-    const descendantIds = getAllDescendantIds(node)
-    const checkedCount = descendantIds.filter(id => checkedIds.has(id)).length
-
-    if (checkedCount === descendantIds.length) return 'checked'
-    if (checkedCount === 0) return 'unchecked'
+    let total = 0
+    let checked = 0
+    const stack: TreeNode[] = [node]
+    while (stack.length > 0) {
+        const current = stack.pop() as TreeNode
+        total++
+        if (checkedIds.has(current.id)) checked++
+        if (current.children) {
+            for (const child of current.children) {
+                stack.push(child)
+            }
+        }
+    }
+    if (checked === total) return 'checked'
+    if (checked === 0) return 'unchecked'
     return 'indeterminate'
 }
 
@@ -90,7 +105,7 @@ export function moveNode(
     dropType: 'before' | 'after' | 'inner'
 ): TreeNode[] {
     if (dragId === dropId) {
-        return cloneTreeAndExtract(nodes, '')[0]
+        return nodes
     }
 
     const [treeWithoutDrag, dragNode] = cloneTreeAndExtract(nodes, dragId)

@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
-import { computed, shallowRef, watch, markRaw, useSlots } from 'vue'
+import { computed, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_PAGE_SIZE_OPTIONS } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
@@ -94,12 +94,9 @@ watch(() => props.expandRowKeys, (newKeys) => {
     }
 }, { deep: true })
 
-// 获取行的唯一 key
+// 获取行的唯一 key（复用 selection.getRowKey 的兜底逻辑）
 function getRowKeyValue(row: T): string | number {
-    if (typeof props.rowKey === 'function') {
-        return props.rowKey(row)
-    }
-    return row[props.rowKey] as string | number
+    return selection.getRowKey(row)
 }
 
 // 切换展开行
@@ -249,6 +246,16 @@ watch(filter.filterState, (newState) => {
 
 const warnedColumns = new Set<string>()
 
+watchEffect(() => {
+    if (!props.virtualScroll?.enabled) return
+    visibleColumns.value.forEach((col) => {
+        if (!col.width && !warnedColumns.has(col.id)) {
+            console.warn(`[BrutxUI] Column "${col.id}" must have an explicit width when virtualScroll is enabled.`)
+            warnedColumns.add(col.id)
+        }
+    })
+})
+
 const gridTemplateColumns = computed(() => {
     const parts: string[] = []
     if (props.expandable) parts.push('40px')
@@ -256,10 +263,6 @@ const gridTemplateColumns = computed(() => {
 
     visibleColumns.value.forEach((col) => {
         if (!col.width) {
-            if (!warnedColumns.has(col.id)) {
-                console.warn(`[BrutxUI] Column "${col.id}" must have an explicit width when virtualScroll is enabled.`)
-                warnedColumns.add(col.id)
-            }
             parts.push('1fr')
         } else if (typeof col.width === 'number') {
             parts.push(`${col.width}px`)
@@ -747,7 +750,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                     <template v-else>
                         <tr>
                             <td
-                                :colspan="visibleColumns.length + (selectable ? 1 : 0)"
+                                :colspan="visibleColumns.length + (selectable ? 1 : 0) + (expandable ? 1 : 0)"
                                 :class="emptyClasses"
                                 role="gridcell"
                             >

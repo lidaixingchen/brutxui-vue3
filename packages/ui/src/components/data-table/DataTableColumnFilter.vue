@@ -71,7 +71,7 @@ function isMultiSelectChecked(value: string | number | boolean): boolean {
 function handleMultiSelectChange(value: string | number | boolean, checked: boolean | 'indeterminate') {
     const columns = { ...(props.filterState.columns || {}) }
     const current = columns[props.column.id]
-    const vals: MultiSelectValue = Array.isArray(current) ? (current as MultiSelectValue) : []
+    const vals: MultiSelectValue = Array.isArray(current) ? [...(current as MultiSelectValue)] : []
     if (checked === true || checked === 'indeterminate') {
         if (!vals.includes(value)) {
             vals.push(value)

@@ -24,7 +24,7 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
 
     const totalPages = computed(() => {
         const total = toValue(options.totalItems)
-        return Math.max(1, Math.ceil(total / currentPageSize.value))
+        return Math.max(1, Math.ceil(total / Math.max(1, currentPageSize.value)))
     })
 
     watch(() => toValue(options.pageSize), (newSize) => {
@@ -53,6 +53,7 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
     }
 
     function setPageSize(size: number) {
+        if (size <= 0) return
         currentPageSize.value = size
         currentPage.value = 1
     }

@@ -58,8 +58,13 @@ export function useDataTableSort<T extends object>(
                 return sortState.value.direction === 'asc' ? comparison : -comparison
             }
 
-            if (typeof valueA === 'number' && typeof valueB === 'number') {
-                const comparison = valueA - valueB
+            const numericA = typeof valueA === 'number' ? valueA
+                : (valueA instanceof Date ? valueA.getTime() : null)
+            const numericB = typeof valueB === 'number' ? valueB
+                : (valueB instanceof Date ? valueB.getTime() : null)
+
+            if (numericA !== null && numericB !== null) {
+                const comparison = numericA - numericB
                 return sortState.value.direction === 'asc' ? comparison : -comparison
             }
 
