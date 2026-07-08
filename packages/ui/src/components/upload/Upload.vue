@@ -104,24 +104,31 @@ async function doUpload(file: UploadFile): Promise<void> {
     file.status = 'uploading'
     file.progress = 0
 
+    const abortController = new AbortController()
+    file.abortController = abortController
+
     // 防止 onError 回调与 catch 同时处理导致 file-error 重复触发
     let settled = false
+    // 文件被移除后中止上传，回调中跳过已取消的文件，避免触发 file-success/file-error
+    const isCancelled = () => abortController.signal.aborted
 
     try {
         await props.httpRequest({
             file: file.raw!,
+            signal: abortController.signal,
             onProgress: (percent) => {
+                if (isCancelled()) return
                 file.progress = percent
             },
             onSuccess: () => {
-                if (settled) return
+                if (settled || isCancelled()) return
                 settled = true
                 file.status = 'success'
                 file.progress = 100
                 emit('file-success', file)
             },
             onError: (error) => {
-                if (settled) return
+                if (settled || isCancelled()) return
                 settled = true
                 file.status = 'error'
                 file.error = error
@@ -130,7 +137,7 @@ async function doUpload(file: UploadFile): Promise<void> {
             },
         })
     } catch (error) {
-        if (settled) return
+        if (settled || isCancelled()) return
         settled = true
         const uploadError: UploadError = {
             message: error instanceof Error ? error.message : 'Upload failed',
@@ -144,6 +151,10 @@ async function doUpload(file: UploadFile): Promise<void> {
 
 // 重试上传
 async function retryUpload(file: UploadFile): Promise<void> {
+    if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
+        return
+    }
+    file.retryCount = (file.retryCount ?? 0) + 1
     file.error = undefined
     await doUpload(file)
 }
@@ -168,6 +179,8 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
         })
         return
     }
+
+    const pendingUploads: UploadFile[] = []
 
     for (const file of fileArray) {
         // 验证文件大小
@@ -213,9 +226,12 @@ async function handleFileSelect(files: FileList | File[]): Promise<void> {
         internalFileList.value.push(uploadFile)
         emit('update:fileList', [...internalFileList.value])
         emit('file-change', uploadFile)
+        pendingUploads.push(uploadFile)
+    }
 
-        // 自动上传
-        if (props.autoUpload) {
+    // 统一启动上传，不阻塞列表渲染
+    if (props.autoUpload) {
+        for (const uploadFile of pendingUploads) {
             await doUpload(uploadFile)
         }
     }
@@ -227,6 +243,9 @@ async function handleFileRemove(file: UploadFile): Promise<void> {
         const result = await props.beforeRemove(file)
         if (result === false) return
     }
+
+    // 中止进行中的上传，避免移除后仍触发 file-success/file-error
+    file.abortController?.abort()
 
     const index = internalFileList.value.findIndex(f => f.id === file.id)
     if (index > -1) {

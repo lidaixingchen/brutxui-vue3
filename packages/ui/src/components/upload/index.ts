@@ -13,6 +13,8 @@ export interface UploadFile {
     url?: string
     raw?: File
     error?: UploadError
+    retryCount?: number
+    abortController?: AbortController
 }
 
 export interface UploadError {
@@ -23,6 +25,7 @@ export interface UploadError {
 
 export interface UploadRequestOptions {
     file: File
+    signal: AbortSignal
     onProgress: (percent: number) => void
     onSuccess: (response: unknown) => void
     onError: (error: UploadError) => void
