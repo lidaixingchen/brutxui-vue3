@@ -64,11 +64,41 @@ jobs:
 
             - name: Publish brutx-ui-vue
               working-directory: packages/ui
-              run: pnpm publish --no-git-checks --access public --provenance || echo "::warning::brutx-ui-vue version already exists, skipped"
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  set +e
+                  pnpm publish --no-git-checks --access public --provenance > /tmp/publish-ui.log 2>&1
+                  status=$?
+                  if [ $status -eq 0 ]; then
+                    cat /tmp/publish-ui.log
+                    exit 0
+                  fi
+                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists" /tmp/publish-ui.log; then
+                    echo "::warning::brutx-ui-vue version already exists, skipped"
+                    exit 0
+                  fi
+                  cat /tmp/publish-ui.log >&2
+                  exit $status
 
             - name: Publish brutx-vue
               working-directory: packages/cli
-              run: pnpm publish --no-git-checks --access public --provenance || echo "::warning::brutx-vue version already exists, skipped"
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: |
+                  set +e
+                  pnpm publish --no-git-checks --access public --provenance > /tmp/publish-cli.log 2>&1
+                  status=$?
+                  if [ $status -eq 0 ]; then
+                    cat /tmp/publish-cli.log
+                    exit 0
+                  fi
+                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists" /tmp/publish-cli.log; then
+                    echo "::warning::brutx-vue version already exists, skipped"
+                    exit 0
+                  fi
+                  cat /tmp/publish-cli.log >&2
+                  exit $status
 
             - name: Create GitHub Release
               env:

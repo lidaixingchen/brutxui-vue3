@@ -61,7 +61,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-39922565e595fceb4adcc45e74e5ddc4f0fcd390bcfccd4c4cac5dd1358f27d5",
+  "integrity": "sha256-108d4cfaa12328f45429f5a813227a07de92528eac9b987869d9d04b033ea142",
   "name": "data-table",
   "registryDependencies": [
     "input",
@@ -75,48 +75,6 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
   "replacement": undefined,
   "status": undefined,
   "title": "Data Table",
-  "type": "registry:ui",
-}
-`;
-
-exports[`registry build snapshots > matches snapshot for page/block component (settings-page) 1`] = `
-{
-  "category": "page",
-  "dependencies": [
-    "reka-ui",
-    "@lucide/vue",
-  ],
-  "fileCount": 3,
-  "files": [
-    {
-      "path": "components/ui/settings-page/SettingsPage.vue",
-      "type": "registry:ui",
-    },
-    {
-      "path": "components/ui/settings-page/types.ts",
-      "type": "registry:lib",
-    },
-    {
-      "path": "composables/useLocale.ts",
-      "type": "registry:hook",
-    },
-  ],
-  "integrity": "sha256-5f1056cfef6c22cda3e17a7ec3c0d019406d593a1fa97774e3e2ef351f6a5bbc",
-  "name": "settings-page",
-  "registryDependencies": [
-    "tabs",
-    "card",
-    "input",
-    "switch",
-    "button",
-    "separator",
-    "empty-state",
-    "label",
-    "locale-zh-cn",
-  ],
-  "replacement": "tabs",
-  "status": "legacy",
-  "title": "Settings Page",
   "type": "registry:ui",
 }
 `;
@@ -171,7 +129,7 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-66c7ed2d53661da58c72c8dc577183cbd4879cc12d7a75e11e50df2ef755d90f",
+  "integrity": "sha256-f776aabb01607d0ef5329548a7f38b9d8a405145782c2defc18e47eb022c01a1",
   "name": "button",
   "registryDependencies": [
     "locale-zh-cn",

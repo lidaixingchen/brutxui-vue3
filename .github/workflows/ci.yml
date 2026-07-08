@@ -63,6 +63,8 @@ jobs:
 
             - run: pnpm --filter brutx-vue build
 
+            - run: pnpm --filter brutx-registry-vue build
+
             - run: pnpm --filter brutx-registry-vue validate
 
             - run: pnpm --filter brutx-ui-vue test

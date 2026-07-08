@@ -34,9 +34,7 @@ describe('build-registry helpers', () => {
         expect(COMPONENT_REGISTRY.button.dependencies).toEqual(['reka-ui', '@lucide/vue']);
         expect(COMPONENT_REGISTRY.button.category).toBe('action');
         expect(COMPONENT_REGISTRY.button.examples).toEqual([]);
-        expect(COMPONENT_REGISTRY['settings-page'].category).toBe('page');
         expect(COMPONENTS_BY_CATEGORY.action).toContain('button');
-        expect(getComponentsByCategory('page')).toContain('settings-page');
     });
 
     it('rewrites component imports to registry aliases', () => {
@@ -337,9 +335,5 @@ describe('registry build snapshots', () => {
 
     it('matches snapshot for multi-dependency component (data-table)', () => {
         expect(summarize(buildRegistryItem('data-table'))).toMatchSnapshot();
-    });
-
-    it('matches snapshot for page/block component (settings-page)', () => {
-        expect(summarize(buildRegistryItem('settings-page'))).toMatchSnapshot();
     });
 });

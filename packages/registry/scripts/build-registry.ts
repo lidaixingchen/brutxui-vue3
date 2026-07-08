@@ -153,25 +153,26 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
     })];
     const componentDeps = new Set(fileMapping.files);
     const addedComponentDeps = new Set<string>();
+    const composableDeps = new Set(fileMapping.composables ?? []);
+    const addedComposableDeps = new Set<string>();
+    const localeDeps = new Set<string>();
     const libDeps = new Set<string>();
 
-    while (addedComponentDeps.size < componentDeps.size) {
-        const pendingComponentDeps = Array.from(componentDeps).filter(fileName => !addedComponentDeps.has(fileName));
-
-        for (const fileName of pendingComponentDeps) {
-            const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
-            if (!fs.existsSync(filePath)) {
-                throw new Error(`Source file not found: ${filePath}`);
-            }
-            const code = readComponentSource(filePath);
-            parts.push(code);
-            const rewritten = rewriteImports(code, name, 'component');
-            extractComponentFileDeps(rewritten, name).forEach(d => componentDeps.add(d));
-            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
-            addedComponentDeps.add(fileName);
+    const addComponentFile = (fileName: string) => {
+        const filePath = path.join(UI_COMPONENTS_DIR, name, fileName);
+        if (!fs.existsSync(filePath)) {
+            throw new Error(`Source file not found: ${filePath}`);
         }
-    }
-    for (const composableName of fileMapping.composables ?? []) {
+        const code = readComponentSource(filePath);
+        parts.push(code);
+        const rewritten = rewriteImports(code, name, 'component');
+        extractComponentFileDeps(rewritten, name).forEach(d => componentDeps.add(d));
+        extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
+        extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
+        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+        addedComponentDeps.add(fileName);
+    };
+    const addComposableFile = (composableName: string) => {
         const composablePath = path.join(UI_COMPOSABLES_DIR, composableName);
         if (!fs.existsSync(composablePath)) {
             throw new Error(`Composable file not found: ${composablePath}`);
@@ -179,7 +180,17 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
         const code = readComponentSource(composablePath);
         parts.push(code);
         const rewritten = rewriteImports(code, name, 'composable');
+        extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
+        extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
         extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+        addedComposableDeps.add(composableName);
+    };
+
+    while (addedComponentDeps.size < componentDeps.size) {
+        const pendingComponentDeps = Array.from(componentDeps).filter(fileName => !addedComponentDeps.has(fileName));
+        for (const fileName of pendingComponentDeps) {
+            addComponentFile(fileName);
+        }
     }
     for (const directiveName of fileMapping.directives ?? []) {
         const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
@@ -189,7 +200,22 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
         const code = readComponentSource(directivePath);
         parts.push(code);
         const rewritten = rewriteImports(code, name, 'directive');
+        extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
+        extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
         extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+    }
+    while (addedComposableDeps.size < composableDeps.size) {
+        const pendingComposables = Array.from(composableDeps).filter(c => !addedComposableDeps.has(c));
+        for (const composableName of pendingComposables) {
+            addComposableFile(composableName);
+        }
+    }
+
+    for (const localeName of localeDeps) {
+        const localePath = path.join(UI_LOCALES_DIR, localeName);
+        if (fs.existsSync(localePath)) {
+            parts.push(readComponentSource(localePath));
+        }
     }
 
     for (const libName of libDeps) {
@@ -289,9 +315,16 @@ export function extractModuleSpecifiers(code: string): string[] {
 function extractScriptBlocks(code: string): string[] {
     const blocks: string[] = [];
     const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
+    const stringLiteralPattern = /(['"`])(?:\\.|(?!\1)[\s\S])*?\1/g;
+    const placeholders: string[] = [];
+    const masked = code.replace(stringLiteralPattern, (m) => {
+        const idx = placeholders.length;
+        placeholders.push(m);
+        return `__STR_LITERAL_${idx}__`;
+    });
 
-    for (const match of code.matchAll(scriptPattern)) {
-        blocks.push(match[1]);
+    for (const match of masked.matchAll(scriptPattern)) {
+        blocks.push(match[1].replace(/__STR_LITERAL_(\d+)__/g, (_, i) => placeholders[Number(i)] ?? ''));
     }
 
     return blocks.length > 0 ? blocks : [code];
@@ -819,6 +852,9 @@ export async function run() {
 
     if (errorCount > 0) {
         console.warn(`⚠ Registry build completed with ${errorCount} component error(s). Failed components are excluded from index.json.`);
+        if (!isVitestRuntime) {
+            process.exitCode = 1;
+        }
     }
 
     console.log('🎉 Registry built!');
