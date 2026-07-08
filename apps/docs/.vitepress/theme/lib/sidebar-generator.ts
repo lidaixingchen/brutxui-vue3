@@ -162,7 +162,6 @@ const DEFAULT_CATEGORY_TO_SIDEBAR_GROUP: Record<ComponentCategory, SidebarGroup>
     'visual-effect': 'visual-effect',
     utility: 'utility',
     marketing: 'blocks-sections',
-    page: 'blocks-pages',
 }
 
 function resolveSidebarGroup(entry: ComponentRegistryEntry): SidebarGroup {

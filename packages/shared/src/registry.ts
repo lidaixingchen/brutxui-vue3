@@ -248,7 +248,6 @@ function assertCategory(
         'marketing',
         'navigation',
         'overlay',
-        'page',
         'utility',
         'visual-effect',
     ];

@@ -1,6 +1,9 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+shamefullyHoist: true
+strictPeerDependencies: false
+autoInstallPeers: true
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true

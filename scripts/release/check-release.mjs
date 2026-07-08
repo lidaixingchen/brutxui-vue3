@@ -202,15 +202,9 @@ function runRequiredCommands() {
     printGroup('Running build and tests');
 
     for (const entry of requiredCommands) {
-        const command = Array.isArray(entry) ? entry[0] : entry.command;
         const args = Array.isArray(entry) ? entry.slice(1) : entry.args;
         const options = Array.isArray(entry) ? {} : { env: entry.env };
-
-        if (command === 'pnpm') {
-            runPnpm(args, options);
-        } else {
-            runCommand(command, args, options);
-        }
+        runPnpm(args, options);
     }
 }
 

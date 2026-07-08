@@ -44,6 +44,19 @@ function getLatestTag() {
     }
 }
 
+function getFirstCommitSha() {
+    try {
+        const result = spawnSync('git', ['rev-list', '--max-parents=0', 'HEAD'], {
+            cwd: repoRoot,
+            encoding: 'utf-8',
+        });
+        if (result.error || result.status !== 0) return null;
+        return result.stdout.trim().split('\n')[0];
+    } catch {
+        return null;
+    }
+}
+
 function getVersionFromPackageJson() {
     const pkgPath = path.join(repoRoot, 'packages', 'ui', 'package.json');
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
@@ -120,10 +133,14 @@ function categorize(commits) {
     return categories;
 }
 
-function renderMarkdown(version, date, categories, latestTag) {
+function renderMarkdown(version, date, categories, compareBase) {
     const lines = [];
     const compareEnd = version === 'Unreleased' ? 'HEAD' : `v${version}`;
-    lines.push(`## [${version}](${REPO_URL}/compare/${latestTag || 'v0.0.0'}...${compareEnd}) (${date})`);
+    if (compareBase) {
+        lines.push(`## [${version}](${REPO_URL}/compare/${compareBase}...${compareEnd}) (${date})`);
+    } else {
+        lines.push(`## [${version}] (${date})`);
+    }
     lines.push('');
 
     function renderCommit(commit) {
@@ -204,7 +221,7 @@ function main() {
         : parsed;
 
     const categorized = categorize(filtered);
-    const entry = renderMarkdown(displayVersion, new Date().toISOString().slice(0, 10), categorized, tag);
+    const entry = renderMarkdown(displayVersion, new Date().toISOString().slice(0, 10), categorized, tag ?? getFirstCommitSha());
 
     if (isDryRun) {
         console.log(entry);

@@ -32,6 +32,7 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     'color-picker': 'form',
     combobox: 'form',
     command: 'overlay',
+    'cookie-consent': 'marketing',
     'copy-to-clipboard': 'utility',
     counter: 'data-display',
     'data-table': 'data-display',
@@ -39,6 +40,7 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     descriptions: 'data-display',
     dialog: 'overlay',
     'dropdown-menu': 'overlay',
+    'feedback-form': 'marketing',
     form: 'form',
     'hardcore-input': 'form',
     image: 'data-display',
@@ -139,10 +141,6 @@ function inferCategory(name: string): ComponentCategory {
         return CATEGORY_OVERRIDES[name];
     }
 
-    if (name.endsWith('-page')) {
-        return 'page';
-    }
-
     if (name.endsWith('-section') || name.endsWith('-hero')) {
         return 'marketing';
     }
@@ -168,7 +166,6 @@ function createComponentsByCategory(): Record<ComponentCategory, string[]> {
         marketing: [],
         navigation: [],
         overlay: [],
-        page: [],
         utility: [],
         'visual-effect': [],
     };

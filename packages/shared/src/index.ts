@@ -1,4 +1,4 @@
-export type { RegistryComponentMeta } from './types.js';
+export type { RegistryComponentMeta, ComponentCategory, SidebarGroup, ComponentKind } from './types.js';
 export { COMPONENTS } from './components.js';
 export type { ComponentFileMapping } from './component-files.js';
 export { COMPONENT_FILES } from './component-files.js';

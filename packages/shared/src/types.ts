@@ -7,7 +7,6 @@ export type ComponentCategory =
     | 'marketing'
     | 'navigation'
     | 'overlay'
-    | 'page'
     | 'utility'
     | 'visual-effect';
 
