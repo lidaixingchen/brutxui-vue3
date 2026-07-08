@@ -27,6 +27,7 @@ const emit = defineEmits<{
 
 const activeIndex = ref(props.defaultActive)
 const openedMenus = ref<Set<string>>(new Set())
+const instance = getCurrentInstance()
 
 watch(() => props.defaultActive, (val) => {
     activeIndex.value = val
@@ -35,17 +36,16 @@ watch(() => props.defaultActive, (val) => {
 function selectItem(index: string, route?: string | object) {
     activeIndex.value = index
     emit('select', index)
-    
+
     if (props.router) {
         const to = route || index
         if (to) {
-            const instance = getCurrentInstance()
             interface GlobalRouterProperties {
                 $router?: {
                     push: (to: string | object) => void
                 }
             }
-            const router = (instance?.proxy as unknown as GlobalRouterProperties)?.$router || 
+            const router = (instance?.proxy as unknown as GlobalRouterProperties)?.$router ||
                            (instance?.appContext.config.globalProperties as unknown as GlobalRouterProperties).$router
             if (router) {
                 router.push(to)

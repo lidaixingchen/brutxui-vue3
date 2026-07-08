@@ -33,10 +33,11 @@ export function renderImperative(
     let isDestroyed = false
 
     const handleClose = () => {
-        if (options.onClose) {
-            options.onClose()
+        try {
+            options.onClose?.()
+        } finally {
+            destroy()
         }
-        destroy()
     }
 
     const vnode = createVNode(component, {
@@ -57,17 +58,17 @@ export function renderImperative(
         if (isDestroyed) return
         isDestroyed = true
 
-        const cleanup = () => {
-            render(null, container)
+        render(null, container)
+
+        const removeContainer = () => {
             container.remove()
         }
 
-        // 延迟卸载 DOM，确保退场 Transition 动画能完整执行完毕
         const delay = options.transitionDuration ?? DEFAULT_DIALOG_TRANSITION_MS
         if (delay > 0) {
-            setTimeout(cleanup, delay)
+            setTimeout(removeContainer, delay)
         } else {
-            cleanup()
+            removeContainer()
         }
     }
 

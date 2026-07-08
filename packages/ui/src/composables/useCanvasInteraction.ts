@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
-import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_INTERVAL_MS, CANVAS_PROGRESS_THROTTLE_MS } from '../lib/defaults'
+import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_FRAME_INTERVAL, CANVAS_PROGRESS_THROTTLE_MS } from '../lib/defaults'
 import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor } from '../lib/env'
 
 const REVEAL_COMPLETED_FALLBACK_DURATION = 0
@@ -168,7 +168,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         ctxVal.restore()
 
         drawFrameCount++
-        if (drawFrameCount % CANVAS_PROGRESS_CHECK_INTERVAL_MS === 0) {
+        if (drawFrameCount % CANVAS_PROGRESS_CHECK_FRAME_INTERVAL === 0) {
             const now = Date.now()
             if (now - lastProgressTime > CANVAS_PROGRESS_THROTTLE_MS) {
                 checkProgress()

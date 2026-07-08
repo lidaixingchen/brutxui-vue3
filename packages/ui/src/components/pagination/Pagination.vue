@@ -221,7 +221,9 @@ function onPageChange(page: number) {
 function onPageSizeChange(size: number) {
     emit('update:pageSize', size)
     // 重新计算当前页
-    const newTotalPages = props.total ? Math.ceil(props.total / size) : computedTotalPages.value
+    const newTotalPages = props.total !== undefined
+        ? Math.max(1, Math.ceil(props.total / size))
+        : computedTotalPages.value
     if (props.modelValue > newTotalPages) {
         emit('update:modelValue', newTotalPages)
     }
@@ -306,7 +308,7 @@ function onJumpToPage() {
 
         <!-- 页码 -->
         <template v-if="layoutComponents.includes('pager') && showPageNumbers">
-            <template v-for="(pageNumber, index) in paginationRange" :key="index">
+            <template v-for="(pageNumber, index) in paginationRange" :key="`${pageNumber}-${index}`">
                 <button
                     v-if="pageNumber === 'dots'"
                     type="button"

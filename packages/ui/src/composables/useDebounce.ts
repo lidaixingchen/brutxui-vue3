@@ -4,7 +4,7 @@ import { onUnmounted } from 'vue'
  * useDebounce 选项
  */
 export interface UseDebounceOptions {
-    /** 是否在首次调用时立即执行（后续调用在 delay 后才执行） */
+    /** 是否在首次调用时立即执行（leading-edge：delay 窗口内的后续调用被忽略，可用 flush 主动补执行） */
     immediate?: boolean
 }
 

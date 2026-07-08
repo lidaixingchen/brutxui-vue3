@@ -84,8 +84,8 @@ export const GLITCH_MIN_INTERVAL_MS = 50
 /** Grid size (samples per axis) for canvas hover progress sampling */
 export const CANVAS_SAMPLE_GRID_SIZE = 8
 
-/** Interval (ms) between canvas progress checks */
-export const CANVAS_PROGRESS_CHECK_INTERVAL_MS = 10
+/** Frame interval (frames) between canvas progress checks */
+export const CANVAS_PROGRESS_CHECK_FRAME_INTERVAL = 10
 
 /** Throttle (ms) for canvas progress updates */
 export const CANVAS_PROGRESS_THROTTLE_MS = 150

@@ -112,7 +112,11 @@ function init() {
 
 // 监听 text 变化重新开始
 watch(() => props.text, () => {
-    init()
+    if (props.text) {
+        init()
+    } else {
+        reset()
+    }
 })
 
 onMounted(() => {

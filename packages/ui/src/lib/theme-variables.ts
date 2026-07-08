@@ -539,10 +539,10 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
     } = options
 
     // 合并默认主题和自定义主题 - 使用 reactive 确保响应式更新
-    const themes = reactive<Record<string, ThemeVariables>>({
-        ...DEFAULT_THEMES,
-        ...customThemes,
-    })
+    // 深拷贝 DEFAULT_THEMES 防止通过 reactive 修改时污染模块级常量
+    const themes = reactive<Record<string, ThemeVariables>>(
+        structuredClone({ ...DEFAULT_THEMES, ...customThemes })
+    )
 
     // 响应式状态
     const currentTheme = ref<string>(defaultTheme)
@@ -653,6 +653,11 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
         // 清理 DOM 上的自定义变量
         const cssVars = themeVariablesToCssVars(themeVariables.value)
         removeCssVarsFromDom(cssVars)
+
+        // 移除 dark class
+        if (hasDocument) {
+            document.documentElement.classList.remove('dark')
+        }
 
         initialized = false
     }

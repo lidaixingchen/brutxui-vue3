@@ -2,6 +2,7 @@
 /* global ScrollIntoViewOptions */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import { useLocale } from '@/composables/useLocale'
+import { useThrottle } from '@/composables/useThrottle'
 import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, getViewportSize, hasDocument } from '@/lib/env'
 import { Z_INDEX } from '@/lib/z-index'
 
@@ -38,6 +39,7 @@ const POPOVER_GAP = 12
 const VIEWPORT_MARGIN = 8
 const BORDER_FALLBACK_COLOR = '#000000'
 const CANVAS_ALPHA_FILL = 'rgba(0, 0, 0, 0.5)'
+const SCROLL_THROTTLE_MS = 100
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const popoverRef = ref<HTMLElement | null>(null)
@@ -52,16 +54,15 @@ const popoverStyle = ref<CSSProperties>({
     zIndex: Z_INDEX.TOUR_POPOVER,
 })
 
-const { locale } = useLocale()
-
-const isZh = computed<boolean>(() => {
-    return locale.value.dialog.close === '关闭'
-})
+const { t } = useLocale()
 
 const texts = computed<{ prev: string; next: string; finish: string; skip: string }>(() => {
-    return isZh.value
-        ? { prev: '上一步', next: '下一步', finish: '结束', skip: '跳过' }
-        : { prev: 'Previous', next: 'Next', finish: 'Finish', skip: 'Skip' }
+    return {
+        prev: t('tour.prev'),
+        next: t('tour.next'),
+        finish: t('tour.finish'),
+        skip: t('tour.skip'),
+    }
 })
 
 const currentStepVal = computed<TourStep | undefined>(() => {
@@ -330,12 +331,14 @@ const handleKeyDown = (e: KeyboardEvent): void => {
     }
 }
 
-const handleScrollOrResize = (): void => {
+const onScrollOrResize = (): void => {
     if (!isOpen.value) {
         return
     }
     recalculatePosition()
 }
+
+const { throttled: handleScrollOrResize } = useThrottle(onScrollOrResize, SCROLL_THROTTLE_MS)
 
 watch(
     [isOpen, currentStep],

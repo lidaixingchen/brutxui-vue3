@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed, type CSSProperties } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, type CSSProperties } from 'vue'
 import { ArrowUp } from '@lucide/vue'
 import { useThrottle } from '@/composables/useThrottle'
 import { cn } from '@/lib/utils'
@@ -76,12 +76,23 @@ function scrollToTop() {
     }
 }
 
-onMounted(() => {
+function bindContainer() {
+    if (container) {
+        container.removeEventListener('scroll', throttledScroll)
+    }
     container = getScrollContainer()
     if (container) {
         container.addEventListener('scroll', throttledScroll, { passive: true })
         handleScroll()
     }
+}
+
+onMounted(() => {
+    bindContainer()
+})
+
+watch(() => props.target, () => {
+    bindContainer()
 })
 
 onBeforeUnmount(() => {

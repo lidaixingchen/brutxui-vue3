@@ -2,6 +2,7 @@
 import { computed, inject, onMounted, onUnmounted, provide, ref } from 'vue'
 import { ChevronDown } from '@lucide/vue'
 import { MENU_KEY } from './menu-types'
+import { hasDocument } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
 interface SubMenuProps {
@@ -36,6 +37,7 @@ const isVertical = computed(() => context?.mode.value === 'vertical')
 
 const isHovered = ref(false)
 const isOpenClick = ref(false)
+const rootRef = ref<HTMLElement | null>(null)
 
 const isOpened = computed(() => {
     if (isVertical.value) {
@@ -79,11 +81,17 @@ onMounted(() => {
     if (parentSubMenu) {
         parentSubMenu.registerChild(props.index)
     }
+    if (hasDocument) {
+        document.addEventListener('click', handleDocumentClick)
+    }
 })
 
 onUnmounted(() => {
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(props.index)
+    }
+    if (hasDocument) {
+        document.removeEventListener('click', handleDocumentClick)
     }
 })
 
@@ -134,6 +142,16 @@ function handleTriggerClick() {
     }
 }
 
+function handleDocumentClick(event: MouseEvent) {
+    if (isVertical.value) return
+    if (!isOpenClick.value) return
+    const target = event.target
+    if (!(target instanceof Node)) return
+    if (rootRef.value && !rootRef.value.contains(target)) {
+        isOpenClick.value = false
+    }
+}
+
 // Fold Transition animation hooks for vertical accordion collapsible list
 function onEnter(el: Element) {
     const htmlEl = el as HTMLElement
@@ -170,6 +188,7 @@ function onAfterLeave(el: Element) {
 
 <template>
     <li
+        ref="rootRef"
         :class="subMenuClasses"
         role="none"
         @mouseenter="handleMouseEnter"

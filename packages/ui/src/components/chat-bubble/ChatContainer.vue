@@ -5,6 +5,8 @@ import ChatBubble from './ChatBubble.vue';
 import type { ChatMessage } from './types';
 import { useLocale } from '@/composables/useLocale';
 
+const MS_PER_MINUTE = 60 * 1000;
+
 const { t } = useLocale();
 
 interface ChatMessageGroup {
@@ -56,7 +58,10 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
 
     const groups: ChatMessageGroup[] = [];
     let currentGroup: ChatMessage[] = [];
-    let currentLabel = '';
+    let currentDisplayLabel = '';
+    let currentDateLabel = '';
+    let lastTimestamp: Date | null = null;
+    const intervalMs = props.groupInterval * MS_PER_MINUTE;
 
     for (const message of messages) {
         const timestamp = message.timestamp;
@@ -68,21 +73,37 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
             date = new Date(timestamp);
         }
 
-        const label = date ? getDateLabel(date) : '';
+        const dateLabel = date ? getDateLabel(date) : '';
 
-        if (label !== currentLabel) {
+        const isNewDate = dateLabel !== currentDateLabel;
+        const exceedsInterval =
+            date !== null &&
+            lastTimestamp !== null &&
+            !isNewDate &&
+            date.getTime() - lastTimestamp.getTime() > intervalMs;
+
+        if (isNewDate) {
             if (currentGroup.length > 0) {
-                groups.push({ label: currentLabel, messages: currentGroup });
+                groups.push({ label: currentDisplayLabel, messages: currentGroup });
             }
             currentGroup = [message];
-            currentLabel = label;
+            currentDateLabel = dateLabel;
+            currentDisplayLabel = dateLabel;
+        } else if (exceedsInterval) {
+            if (currentGroup.length > 0) {
+                groups.push({ label: currentDisplayLabel, messages: currentGroup });
+            }
+            currentGroup = [message];
+            currentDisplayLabel = '';
         } else {
             currentGroup.push(message);
         }
+
+        lastTimestamp = date;
     }
 
     if (currentGroup.length > 0) {
-        groups.push({ label: currentLabel, messages: currentGroup });
+        groups.push({ label: currentDisplayLabel, messages: currentGroup });
     }
 
     return groups;

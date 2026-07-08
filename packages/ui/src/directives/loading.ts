@@ -5,6 +5,7 @@ import Spinner from '../components/spinner/Spinner.vue'
 interface LoadingEl extends HTMLElement {
     _loading?: {
         mask: HTMLDivElement
+        spinnerContainer: HTMLDivElement
         originalPosition: string
         textSpan?: HTMLSpanElement
     }
@@ -49,6 +50,7 @@ export const vLoading: Directive<LoadingEl, boolean> & { getSSRProps?: () => Rec
         // 5. 保存参数
         el._loading = {
             mask,
+            spinnerContainer,
             originalPosition,
             textSpan
         }
@@ -93,14 +95,13 @@ export const vLoading: Directive<LoadingEl, boolean> & { getSSRProps?: () => Rec
     unmounted(el) {
         if (!isClient || !el._loading) return
 
-        const { mask, originalPosition } = el._loading
+        const { mask, spinnerContainer } = el._loading
 
-        // 还原宿主 position
-        if (originalPosition) {
-            el.style.position = originalPosition
-        } else {
-            el.style.removeProperty('position')
-        }
+        // 还原宿主 position（复用 togglePosition 保证与挂载时一致）
+        togglePosition(el, false)
+
+        // 卸载 Spinner 组件实例，避免 watchers/onUnmounted 钩子泄漏
+        render(null, spinnerContainer)
 
         // 卸载与清理
         mask.remove()

@@ -424,6 +424,13 @@ export interface InfiniteScrollLocale {
     loading: string
 }
 
+export interface TourLocale {
+    prev: string
+    next: string
+    finish: string
+    skip: string
+}
+
 export interface Locale {
     command: CommandLocale
     combobox: ComboboxLocale
@@ -479,4 +486,5 @@ export interface Locale {
     popconfirm: PopconfirmLocale
     upload: UploadLocale
     infiniteScroll: InfiniteScrollLocale
+    tour: TourLocale
 }

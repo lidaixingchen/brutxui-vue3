@@ -112,10 +112,13 @@ const containerClasses = computed(() =>
     cn(scratchCardVariants(), props.class)
 )
 
-const canvasStyle = computed(() => ({
-    transition: `opacity ${props.fadeDuration}ms ease-out`,
-    opacity: isRevealed.value ? 0 : 1,
-}))
+const canvasStyle = computed(() => {
+    const duration = prefersReducedMotion.value ? 0 : props.fadeDuration
+    return {
+        transition: `opacity ${duration}ms ease-out`,
+        opacity: isRevealed.value ? 0 : 1,
+    }
+})
 
 function resetCanvasOverlay() {
     const canvas = canvasRef.value

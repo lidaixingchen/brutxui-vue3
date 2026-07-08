@@ -96,7 +96,9 @@ const previewImageStyle = computed(() => {
 
 const currentPreviewSrc = computed(() => {
     if (props.previewSrcList && props.previewSrcList.length > 0) {
-        return props.previewSrcList[currentIndex.value]
+        const len = props.previewSrcList.length
+        const index = Math.min(Math.max(currentIndex.value, 0), len - 1)
+        return props.previewSrcList[index] ?? props.src
     }
     return props.src
 })
@@ -122,8 +124,24 @@ watch(
 watch(
     () => props.initialIndex,
     (val) => {
-        currentIndex.value = val
+        const len = props.previewSrcList?.length ?? 0
+        const maxIndex = len > 0 ? len - 1 : 0
+        currentIndex.value = Math.min(Math.max(val, 0), maxIndex)
     }
+)
+
+watch(
+    () => props.previewSrcList,
+    (list) => {
+        if (list && list.length > 0) {
+            if (currentIndex.value >= list.length) {
+                currentIndex.value = list.length - 1
+            } else if (currentIndex.value < 0) {
+                currentIndex.value = 0
+            }
+        }
+    },
+    { deep: true, immediate: true }
 )
 
 const handleLoad = (e: Event) => {

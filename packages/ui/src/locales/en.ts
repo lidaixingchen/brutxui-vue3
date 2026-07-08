@@ -373,4 +373,10 @@ export const en: Locale = {
     infiniteScroll: {
         loading: 'Loading...',
     },
+    tour: {
+        prev: 'Previous',
+        next: 'Next',
+        finish: 'Finish',
+        skip: 'Skip',
+    },
 }

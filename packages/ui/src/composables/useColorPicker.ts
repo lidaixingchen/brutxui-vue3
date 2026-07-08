@@ -38,7 +38,7 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
             options.emit('close')
             const currentModel = toValue(options.modelValue) ?? null
             if (displayValue.value !== currentModel) {
-                options.emit('change', displayValue.value)
+                displayValue.value = currentModel
             }
         }
     })

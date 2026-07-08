@@ -373,4 +373,10 @@ export const zhCN: Locale = {
     infiniteScroll: {
         loading: '加载中...',
     },
+    tour: {
+        prev: '上一步',
+        next: '下一步',
+        finish: '结束',
+        skip: '跳过',
+    },
 }

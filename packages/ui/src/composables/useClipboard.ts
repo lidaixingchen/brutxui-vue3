@@ -13,8 +13,10 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
     const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)
 
     let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let disposed = false
 
     onUnmounted(() => {
+        disposed = true
         if (timeoutId) clearTimeout(timeoutId)
     })
 
@@ -23,6 +25,7 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
 
         try {
             await navigator.clipboard.writeText(text)
+            if (disposed) return true
             copied.value = true
 
             if (timeoutId) clearTimeout(timeoutId)

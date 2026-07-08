@@ -6,7 +6,7 @@ interface WatermarkFont {
     color?: string
     fontSize?: number | string
     fontWeight?: 'normal' | 'light' | 'weight' | 'bold' | number
-    fontStyle?: 'none' | 'normal' | 'italic' | 'oblique'
+    fontStyle?: 'normal' | 'italic' | 'oblique'
     fontFamily?: string
 }
 
@@ -47,6 +47,8 @@ const watermarkKey = ref<number>(0)
 
 let observer: MutationObserver | null = null
 let isRecreating = false
+let renderVersion = 0
+let isUnmounted = false
 
 function getMarkSize() {
     return [props.width, props.height]
@@ -106,6 +108,8 @@ function drawSvgFallback() {
 function renderWatermark() {
     if (!isClient) return
 
+    const currentVersion = ++renderVersion
+
     const contents = Array.isArray(props.content) ? props.content : [props.content]
     const hasTextContent = contents.some(text => text)
     if (!props.image && !hasTextContent) {
@@ -136,17 +140,25 @@ function renderWatermark() {
     ctx.translate(canvasWidth / 2, canvasHeight / 2)
     ctx.rotate((props.rotate * Math.PI) / 180)
 
+    const isStale = () => isUnmounted || currentVersion !== renderVersion
+
     if (props.image) {
         const img = new Image()
         img.crossOrigin = 'anonymous'
         img.referrerPolicy = 'no-referrer'
         img.src = props.image
         img.onload = () => {
+            if (isStale()) return
             ctx.drawImage(img, -markWidth / 2, -markHeight / 2, markWidth, markHeight)
+            if (isStale()) return
             watermarkUrl.value = canvas.toDataURL()
-            nextTick(() => initObserver())
+            nextTick(() => {
+                if (isStale()) return
+                initObserver()
+            })
         }
         img.onerror = () => {
+            if (isStale()) return
             drawTextWatermark(ctx, canvas)
         }
     } else {
@@ -245,6 +257,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+    isUnmounted = true
     destroyObserver()
 })
 

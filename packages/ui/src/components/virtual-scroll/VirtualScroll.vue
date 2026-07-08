@@ -94,6 +94,8 @@ const totalSize = computed(() => virtualizerRef.value?.getTotalSize() ?? 0)
 
 const isEmpty = computed(() => props.items.length === 0)
 
+const isScrollEndEmitting = ref(false)
+
 function handleScroll() {
     if (!parentRef.value) return
 
@@ -101,14 +103,18 @@ function handleScroll() {
 
     emit('scroll', scrollTop)
 
-    // 检测是否滚动到底部
-    if (scrollHeight - scrollTop - clientHeight < props.scrollEndThreshold) {
+    const isNearEnd = scrollHeight - scrollTop - clientHeight < props.scrollEndThreshold
+    if (isNearEnd && !isScrollEndEmitting.value) {
+        isScrollEndEmitting.value = true
         emit('scroll-end')
+    } else if (!isNearEnd) {
+        isScrollEndEmitting.value = false
     }
 }
 
 watch(() => props.items.length, () => {
     virtualizerRef.value?.measure()
+    isScrollEndEmitting.value = false
 })
 
 onMounted(() => {

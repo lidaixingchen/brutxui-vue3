@@ -151,17 +151,31 @@ const pieSlices = computed(() => {
         const sliceAngle = (d.value / total) * Math.PI * 2
         const startAngle = currentAngle
         const endAngle = currentAngle + sliceAngle
-        const largeArc = sliceAngle > Math.PI ? 1 : 0
         const x1 = cx + radius * Math.cos(startAngle)
         const y1 = cy + radius * Math.sin(startAngle)
         const x2 = cx + radius * Math.cos(endAngle)
         const y2 = cy + radius * Math.sin(endAngle)
-        const path = [
-            `M ${cx} ${cy}`,
-            `L ${x1} ${y1}`,
-            `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
-            'Z',
-        ].join(' ')
+        let path: string
+        if (sliceAngle >= Math.PI * 2) {
+            // 完整圆需拆为两段半圆：A 命令在起止点重合时不渲染
+            const midX = cx + radius * Math.cos(startAngle + Math.PI)
+            const midY = cy + radius * Math.sin(startAngle + Math.PI)
+            path = [
+                `M ${cx} ${cy}`,
+                `L ${x1} ${y1}`,
+                `A ${radius} ${radius} 0 0 1 ${midX} ${midY}`,
+                `A ${radius} ${radius} 0 0 1 ${x1} ${y1}`,
+                'Z',
+            ].join(' ')
+        } else {
+            const largeArc = sliceAngle > Math.PI ? 1 : 0
+            path = [
+                `M ${cx} ${cy}`,
+                `L ${x1} ${y1}`,
+                `A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2}`,
+                'Z',
+            ].join(' ')
+        }
         currentAngle = endAngle
         return {
             path,

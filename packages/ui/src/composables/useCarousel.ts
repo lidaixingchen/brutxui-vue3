@@ -128,9 +128,13 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         if (reduced) {
             stopAutoplay()
             emblaApi.value.reInit({ duration: 0 })
+            options.onAutoplayChange?.(false)
         } else {
             emblaApi.value.reInit({})
-            if (toValue(options.autoplay)) startAutoplay()
+            if (toValue(options.autoplay)) {
+                startAutoplay()
+                options.onAutoplayChange?.(true)
+            }
         }
     })
 

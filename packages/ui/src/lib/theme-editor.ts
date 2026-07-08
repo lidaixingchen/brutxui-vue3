@@ -352,7 +352,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
             const parsed: unknown = JSON.parse(json)
             if (!validateTheme(parsed)) return false
 
-            themes[name] = parsed
+            themes[name] = structuredClone(parsed)
             if (autoApply) {
                 applyToDom(parsed)
             }
@@ -377,7 +377,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
 
             // 使用文件名（去掉扩展名）作为主题名
             const name = file.name.replace(/\.json$/i, '')
-            themes[name] = parsed
+            themes[name] = structuredClone(parsed)
 
             if (autoApply) {
                 applyToDom(parsed)
@@ -544,7 +544,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
             }
 
             for (const [name, value] of entries) {
-                themes[name] = value as ThemeVariables
+                themes[name] = structuredClone(value) as ThemeVariables
             }
 
             return true
