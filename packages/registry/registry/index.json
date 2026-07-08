@@ -108,7 +108,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5948c66ee071e2d2bd97de7b68972ffadf5dbf5947c74db9f7d3182e54889999"
+      "integrity": "sha256-705d0d9b56b2413aa334c3c3fc07b44b644a0eab0c67901ae25ab5682b3b142f"
     },
     {
       "name": "alert",
@@ -474,7 +474,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e941093d1801ec8d0e7ac214c63d682dadc05aa83ca61aa4d0aadc9028d66b37"
+      "integrity": "sha256-d42245522e731fb709a6d57414cf16069cd02385d7c99e7476d0f117699693a7"
     },
     {
       "name": "badge",
@@ -739,7 +739,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f776aabb01607d0ef5329548a7f38b9d8a405145782c2defc18e47eb022c01a1"
+      "integrity": "sha256-f73c650646234e8e76b2b7130959b319b5250b2f48f796fc0a9a56e2c4c4532c"
     },
     {
       "name": "calendar",
@@ -859,7 +859,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6bce7bdb550b93ad566b8c34df0006c6c16d295f50f042ca2f93c9414ef5e976"
+      "integrity": "sha256-f45fb77dd38acb42ae932c9f88613f7d5c7241382ca6a15b9c83d96e2fe69b48"
     },
     {
       "name": "card",
@@ -1140,7 +1140,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d6aee6dd79e588d832260c24cb99d4639017a2ebebd3e01344f7e80c673a353a"
+      "integrity": "sha256-74770a7973134e5a72f74a68bb04a083705856959e1b58434c6b7008c393b107"
     },
     {
       "name": "checkbox",
@@ -1404,7 +1404,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-ad53911cff228afa59a37998804c9eaa8f15e0c58b5dfa0808f7f3a7d4acf170"
+      "integrity": "sha256-0fd69ce5119604513231121af9231a8f2526b1fd46db95f6f2e44577febd6361"
     },
     {
       "name": "command",
@@ -1620,6 +1620,10 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useDialogEnhanced.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/icon-size-variants.ts",
           "type": "registry:lib"
         },
@@ -1730,7 +1734,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d04da1814b4e26f6f9f65e19af9691d3c84f05b0efb1ced946bf5a5978751f7b"
+      "integrity": "sha256-6349b9238d85b55c8b6aec6959b50e9fa7d9509b5bf7be966fabd2c31ebd33aa"
     },
     {
       "name": "dropdown-menu",
@@ -2013,7 +2017,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-14f31d142b8f2033564e01c352fe6157821c388615e4f53b8130752f8c35ee1d"
+      "integrity": "sha256-781c6dc7fc46f337d3c2d485f85e419dbc1d4a8a58abcc0243ab770e16ddf959"
     },
     {
       "name": "image",
@@ -2127,7 +2131,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1d57d65fdb9802b81d8a138e38f5edeaa7aac9970f36f84255f4af57c20901fe"
+      "integrity": "sha256-b0fe11f0472e560fd2a64bba73c7f0f1398ff39bf612e55cf9eab9b4f8667219"
     },
     {
       "name": "label",
@@ -2351,7 +2355,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-52a7fe48ec571adf79a748687c8dee8de13390c116514e5b10f7d1b9e8862e1e"
+      "integrity": "sha256-82c439c9d559de1d4e960096b375520c9615d97695623cc409628bd5960ca5d1"
     },
     {
       "name": "pagination",
@@ -2476,7 +2480,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-44bd5322a18a543ef660acfdebd8a9adf927cf03ae2e2d29b2eab7a6002f4f8d"
+      "integrity": "sha256-4e60f653540dfebd186c7fbc0d5b4e824b4b70128c254476a57c366b04fd7501"
     },
     {
       "name": "popover",
@@ -2860,7 +2864,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-84a3a31445305aee070fc3415737445f357c0eba0b323dea107e0866b3ce9c60"
+      "integrity": "sha256-1c57cfef86aa3c1df365e104ab3cfbea65a1497183d1d30e9927aa6188a87eeb"
     },
     {
       "name": "separator",
@@ -3724,7 +3728,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-94cc5a6ada54a86a64c88a622adb49990d3ad258281a534d78bc74652ac44de5"
+      "integrity": "sha256-42cd55b250ad45309c6c124e40e737b9a12b03a27b10d7faed2959f44d44b823"
     },
     {
       "name": "toast",
@@ -3860,7 +3864,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b4e04a6e44f92baf1d6093ae1b1da13659ecaaaf6d0ff3452be7d9b35720edd5"
+      "integrity": "sha256-30dae1b986c0052b9a4a5f7cc6632015797b1422ec458163259f931e0040429b"
     },
     {
       "name": "tooltip",
@@ -4136,7 +4140,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6a6658b4a76ec09d9b4e0f08834876b81206821a9cf611e3e0c3f045f34e4463"
+      "integrity": "sha256-476e1cf85654057782f8f97e94a5a6a33e108bf6bb5219b5f37061218f5d7a41"
     },
     {
       "name": "alert-dialog",
@@ -4658,7 +4662,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b2b45d1f44ce3616778d4338895dbd4bbc094c6cda1f497eb82e781d1e0e2435"
+      "integrity": "sha256-89b048ac4b9570fb6159b92e04301ebe27f89c42f81d5f7c4f338f96c3330cc1"
     },
     {
       "name": "progress",
@@ -5997,7 +6001,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-63ccae04ae2bc0b0c8289cb9fb280e79ed9768bd401de6195b80f402b97fcca2"
+      "integrity": "sha256-0fd861cafbad03445bad99584862d6f615cde82372c3ce56535abcebf9852b7a"
     },
     {
       "name": "breadcrumb",
@@ -6293,6 +6297,10 @@
         {
           "path": "components/ui/menu/index.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -6381,7 +6389,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e193e96915560fd9d95824cb2865d93aa1c951c130b48c12d5dde61a851de73d"
+      "integrity": "sha256-8e09dd630d8fbe5e7c25ae35db42990a41661b8b3dacb2e643674f2bc816635e"
     },
     {
       "name": "before-after",
@@ -6929,7 +6937,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f7a1205259e15ed2dad2d6f81c45715c575cd7ef249d879218269cd98b4fa3ce"
+      "integrity": "sha256-69648d2370a6efa7370dc869bd52ff86fe59b1d703871c0caefde6e5b6571c8a"
     },
     {
       "name": "tree-view",
@@ -7070,7 +7078,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5186fb2f2e83ce6a06ec41de03afd6318c6c157d335c54f915850872d7e37114"
+      "integrity": "sha256-9b0bd3988f0c646a20e7697982d2c208efe03a281275ae78eb89e6b1da44b71b"
     },
     {
       "name": "kanban",
@@ -7198,7 +7206,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5289153d68835a6b0a317bdcb867fb8e8f7ff0678bcba819cf7ea5f19b87092c"
+      "integrity": "sha256-03594f868f421cde738ba0fd31d511c65fa2d67e4a5fea42d54cff5d22288005"
     },
     {
       "name": "chat-bubble",
@@ -7661,7 +7669,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8bcc93d28785258aa8ad45f8459361e9df79c2cc1d6260647db0a9642c385816"
+      "integrity": "sha256-07f33b9e7560346af1b35196c0079ff69440fdd2b25408234e6e405319ac4e18"
     },
     {
       "name": "card-3d",
@@ -7786,7 +7794,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-56dd8a6c8af9e47dc4c89e3b630b6fc49876c3ddb91cf6f6372816f88d4bf366"
+      "integrity": "sha256-200a3e91e263fa627d38a969e5ba7ddb131fbb926b770b10cd04bda9da6c3f4c"
     },
     {
       "name": "glitch-text",
@@ -7909,7 +7917,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-4676db827386668a749fa227b6f5317ed4ea26f73693620f67c7ab27ca7742a6"
+      "integrity": "sha256-a08e1dfc2268bfc0e825796723a09e4faa487ed3c14654820ba7eb29febc3109"
     },
     {
       "name": "scratch-card",
@@ -8042,7 +8050,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-57139445f55757e9e92e0fd36ab628bdf0187eecbeb1d34d1901e40107929c2c"
+      "integrity": "sha256-fddcf5c875d490cf40e0e244c33679c33c070f7b5fe370fad9dd0e61e95b9442"
     },
     {
       "name": "sketchy-chart",
@@ -8159,7 +8167,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-90f768b08ed58fc1deff9a1ef3f0b8ca3004c28dd7a2073a2bc90cb9c791c4ec"
+      "integrity": "sha256-2a343c498031e2d31ff9cbe66cb96566fc35e1fbba7764a747322af6d68c2498"
     },
     {
       "name": "hardcore-input",
@@ -8290,7 +8298,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-08cce227d867b8455b5da2cb24b35016a88111a5963cb6a3eea850419923bf52"
+      "integrity": "sha256-2733c822b43665a3293a766a8f5777442709714ae2fbf7a1fe62357a68cedfbc"
     },
     {
       "name": "header-section",
@@ -8934,7 +8942,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-b14a66acc4c367272ff3603ef2201516de27a72009a4c3eb7af2313be8a22e42"
+      "integrity": "sha256-6e4518c5ca18cb8ffd3b1a2a7fb0e0be3925b2961387b5a746a2a5711f711b2c"
     },
     {
       "name": "date-picker",
@@ -9134,7 +9142,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d9fa8af904e5b490e2565b9546c9cd7c1899986a42486ff62da9d38d9ffda315"
+      "integrity": "sha256-24eecb2af919c818855ecc2edd614d299e0c4fbaf92b4650cad8d40ba2dd00b0"
     },
     {
       "name": "color-mode-switcher",
@@ -9416,7 +9424,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-108d4cfaa12328f45429f5a813227a07de92528eac9b987869d9d04b033ea142"
+      "integrity": "sha256-36fb7951373a672c9e143ad296aedd69e170a45f68f7195c7b89b52e718ffa8f"
     },
     {
       "name": "tree-select",
@@ -9574,7 +9582,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8a7fbe4ba0a738c04e7e3450c8b0bb6b4b7613be751efc5746b33f22317d97bd"
+      "integrity": "sha256-d74c88e5f7812dcbafa3abc387c56e647ae109a113c1844583e1a5f3d37ec58a"
     },
     {
       "name": "typewriter-text",
@@ -9689,7 +9697,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-47f5059ab9f20b255b551c37fe562b0c45f5cfa345e3fd62f7ca969a47731d59"
+      "integrity": "sha256-ebdfef26d96be609085197fbc02fbc2253e8166376d458327cf39384e1ad7d9a"
     },
     {
       "name": "noise-background",
@@ -9923,7 +9931,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8bc15bec2682d5b1e3c9007fa51a82d75990c6b65c53a2afee60e49af557632e"
+      "integrity": "sha256-e8343d3a0e214ddd5939ce3c6e71009d8ce91f25d5c5c62c664b7f6ecc26d857"
     },
     {
       "name": "upload",
@@ -10054,7 +10062,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8530018bab74c38aeaaef0071b9ae1ef6e73e7d23674d55f88bb6f66146a361f"
+      "integrity": "sha256-1773a36f430d2698ab8e8798983f39b2961c4bba4fd5b5b156fa84abec4f645d"
     },
     {
       "name": "popconfirm",
@@ -10623,7 +10631,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-315b92e9db013f36861e1dd44eb8bb5ec4abc908695206c33bd0def7167aec49"
+      "integrity": "sha256-c62d90d0e289bbbed3edb2381b95de9e14790da42bdbe37c51dadb42b756da9c"
     },
     {
       "name": "result",
@@ -10747,6 +10755,10 @@
         {
           "path": "components/ui/watermark/Watermark.vue",
           "type": "registry:ui"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {
@@ -10835,7 +10847,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-656a5d2543fa65fc3e71a58f658ef0cceac94cf1c4e18491e7e3691c27f17d93"
+      "integrity": "sha256-9c95aac240ef661b18eb98c01de2c0d8e413176d69e7de8d7678ca3726c88c76"
     },
     {
       "name": "tour",
@@ -10855,6 +10867,10 @@
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useThrottle.ts",
           "type": "registry:hook"
         },
         {
@@ -10952,7 +10968,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c7c8262f3a7ff20e8b9c1a15a8b53bc13fec02d582d746c23869e602aa6e70b6"
+      "integrity": "sha256-82b2acb9da12470fa6e335f2145789a09cfd2f2de23675a779951fa56098c721"
     },
     {
       "name": "message",
@@ -11088,7 +11104,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-3de9b5818eae9bbf9904e0d4ef4cbb90277082e7196a456e174e7e123aa55f37"
+      "integrity": "sha256-a45a9ac47132f87f67b66064a1eb22542d5a1d802e987fbf4c44bf04bf16bc90"
     }
   ]
 }

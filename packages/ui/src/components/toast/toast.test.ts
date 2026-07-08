@@ -1,6 +1,8 @@
+import { nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import { provideToast } from '@/composables/useToast'
 import Toast from './Toast.vue'
 import ToastContainer from './ToastContainer.vue'
 
@@ -307,4 +309,48 @@ describe('ToastContainer', () => {
         })
         expect(wrapper.find('.toast-item').exists()).toBe(true)
     })
+
+    it('respects maxVisible by removing the oldest toast when limit exceeded', async () => {
+        let toastStore: any = null
+
+        const wrapper = mount({
+            components: { ToastContainer, Toast },
+            setup() {
+                toastStore = provideToast()
+                return { toasts: toastStore.toasts }
+            },
+            template: `
+                <ToastContainer :stack="{ maxVisible: 3 }">
+                    <Toast
+                        v-for="toast in toasts"
+                        :key="toast.id"
+                        :title="toast.title"
+                    />
+                </ToastContainer>
+            `
+        }, {
+            global: {
+                provide: {
+                    [LOCALE_INJECTION_KEY]: en
+                }
+            }
+        })
+
+        const id1 = toastStore.addToast({ title: 'Toast 1' })
+        const id2 = toastStore.addToast({ title: 'Toast 2' })
+        toastStore.addToast({ title: 'Toast 3' })
+
+        await nextTick()
+        expect(toastStore.toasts.value.length).toBe(3)
+
+        toastStore.addToast({ title: 'Toast 4' })
+        await nextTick()
+
+        expect(toastStore.toasts.value.length).toBe(3)
+        expect(toastStore.toasts.value.find((t: any) => t.id === id1)).toBeUndefined()
+        expect(toastStore.toasts.value[0].id).toBe(id2)
+
+        expect(wrapper.findAllComponents(Toast).length).toBe(3)
+    })
 })
+

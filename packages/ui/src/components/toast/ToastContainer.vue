@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { DEFAULT_TOAST_MAX_VISIBLE, DEFAULT_TOAST_GAP_PX } from '@/lib/defaults'
 import type { ToastPosition, ToastStackOptions } from '@/composables/useToast'
 import { useLocale } from '@/composables/useLocale'
+import { useToast } from '@/composables/useToast'
 
 const { t } = useLocale()
+const { toasts, removeToast } = useToast()
 
 const DEFAULT_EXPAND_DIRECTION: ToastStackOptions['expandDirection'] = 'down'
 
@@ -90,6 +92,24 @@ const classes = computed(() =>
 const gapStyle = computed(() => ({
     gap: `${gap.value}px`,
 }))
+
+const maxVisible = computed(() => {
+    return Math.max(1, props.stack?.maxVisible ?? DEFAULT_TOAST_MAX_VISIBLE)
+})
+
+watch(
+    [() => toasts.value.length, maxVisible],
+    ([newLength, maxVal]) => {
+        if (newLength > maxVal) {
+            const overflowCount = newLength - maxVal
+            const toRemove = toasts.value.slice(0, overflowCount)
+            toRemove.forEach((toast) => {
+                removeToast(toast.id)
+            })
+        }
+    },
+    { immediate: true }
+)
 </script>
 
 <template>
