@@ -40,17 +40,21 @@ const currentHour = computed(() => props.modelValue?.getHours() ?? 0)
 const currentMinute = computed(() => props.modelValue?.getMinutes() ?? 0)
 const currentSecond = computed(() => props.modelValue?.getSeconds() ?? 0)
 
-function buildOptions(max: number, step: number): number[] {
+function buildOptions(max: number, step: number, currentValue?: number): number[] {
     const options: number[] = []
     for (let i = 0; i < max; i += step) {
         options.push(i)
     }
+    if (currentValue !== undefined && !options.includes(currentValue)) {
+        options.push(currentValue)
+        options.sort((a, b) => a - b)
+    }
     return options
 }
 
-const hourOptions = computed(() => buildOptions(24, hourStep.value))
-const minuteOptions = computed(() => buildOptions(60, minuteStep.value))
-const secondOptions = computed(() => buildOptions(60, secondStep.value))
+const hourOptions = computed(() => buildOptions(24, hourStep.value, currentHour.value))
+const minuteOptions = computed(() => buildOptions(60, minuteStep.value, currentMinute.value))
+const secondOptions = computed(() => buildOptions(60, secondStep.value, currentSecond.value))
 
 function pad2(value: number): string {
     return value.toString().padStart(2, '0')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
@@ -36,8 +36,16 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-const currentYear = props.modelValue?.getFullYear() ?? new Date().getFullYear()
-const viewDecadeStart = ref<number>(Math.floor(currentYear / 10) * 10)
+const modelYear = props.modelValue?.getFullYear()
+const viewDecadeStart = ref<number>(
+    Number.isFinite(modelYear) ? Math.floor(modelYear! / 10) * 10 : 0
+)
+
+onMounted(() => {
+    if (!Number.isFinite(props.modelValue?.getFullYear())) {
+        viewDecadeStart.value = Math.floor(new Date().getFullYear() / 10) * 10
+    }
+})
 
 watch(() => props.modelValue, (value) => {
     if (value) {
@@ -83,11 +91,11 @@ function handleYearSelect(year: number) {
 }
 
 function handlePrevDecade() {
-    viewDecadeStart.value -= 10
+    viewDecadeStart.value -= props.yearRange
 }
 
 function handleNextDecade() {
-    viewDecadeStart.value += 10
+    viewDecadeStart.value += props.yearRange
 }
 
 function handleConfirm() {

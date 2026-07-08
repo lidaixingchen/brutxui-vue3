@@ -147,7 +147,7 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
                     :max-date="maxDate"
                     :select-attribute="selectAttribute"
                     trim-weeks
-                    :first-day-of-week="1"
+                    :first-day-of-week="2"
                     :popover="false"
                     @update:model-value="handleUpdate"
                 >

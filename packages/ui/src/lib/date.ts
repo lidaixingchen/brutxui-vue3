@@ -90,8 +90,5 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     if (date.getFullYear() !== year) return null
     if (date.getMonth() !== month) return null
     if (date.getDate() !== day) return null
-    if (date.getHours() !== hours) return null
-    if (date.getMinutes() !== minutes) return null
-    if (date.getSeconds() !== seconds) return null
     return date
 }

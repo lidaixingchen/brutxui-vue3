@@ -96,7 +96,8 @@ function handleUpdate(value: Date | DateRangeValue | null) {
 function handleDrag(value: DateRangeValue) {
     if (props.disabled) return
     if (value && typeof value === 'object' && 'start' in value && 'end' in value) {
-        emit('update:modelValue', [value.start, value.end])
+        const [start, end] = [value.start, value.end].sort((a, b) => a.getTime() - b.getTime())
+        emit('update:modelValue', [start, end])
     }
 }
 
@@ -127,6 +128,7 @@ const dayBaseClasses = computed(() => {
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
 const dayDisabledClasses = computed(() => 'opacity-40 cursor-not-allowed')
 
+const DAY_CLASSES_CACHE_LIMIT = 128
 const dayClassesCache = new Map<string, string>()
 
 watch([dayBaseClasses, dayOutsideClasses, dayDisabledClasses], () => {
@@ -137,6 +139,10 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     const key = `${day.isToday}-${day.isDisabled}-${day.inMonth}-${dayPropsClass ?? ''}`
     const cached = dayClassesCache.get(key)
     if (cached !== undefined) return cached
+
+    if (dayClassesCache.size >= DAY_CLASSES_CACHE_LIMIT) {
+        dayClassesCache.clear()
+    }
 
     const isOutside = !day.inMonth
     const result = cn(
@@ -152,9 +158,14 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
 }
 
 function isSameDay(date1: Date | string, date2: Date) {
-    const d1 = typeof date1 === 'string'
-        ? parseFormattedDate(date1, 'YYYY-MM-DD') ?? new Date(date1)
-        : date1
+    let d1: Date
+    if (typeof date1 === 'string') {
+        d1 = date1.includes('T')
+            ? new Date(date1)
+            : (parseFormattedDate(date1, 'YYYY-MM-DD') ?? new Date(date1))
+    } else {
+        d1 = date1
+    }
     if (!(d1 instanceof Date) || isNaN(d1.getTime())) return false
     return (
         d1.getFullYear() === date2.getFullYear() &&
@@ -179,7 +190,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
         :select-attribute="selectAttribute"
         :drag-attribute="dragAttribute"
         trim-weeks
-        :first-day-of-week="1"
+        :first-day-of-week="2"
         :popover="false"
         @update:model-value="handleUpdate"
         @drag="handleDrag"

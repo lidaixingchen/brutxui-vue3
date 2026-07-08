@@ -36,18 +36,28 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
             return controlled !== undefined ? controlled : internalOpen.value
         },
         set: (val) => {
-            internalOpen.value = val
+            const controlled = toValue(options.openProp)
+            if (controlled === undefined) {
+                internalOpen.value = val
+            }
             options.emitUpdateOpen?.(val)
         },
     })
 
     const displayValue = ref<Date | null>(toValue(options.modelValue) ?? null)
 
+    let suppressCloseChange = false
+
     watch(open, (isOpen) => {
         if (isOpen) {
+            suppressCloseChange = false
             options.emit('open')
         } else {
             options.emit('close')
+            if (suppressCloseChange) {
+                suppressCloseChange = false
+                return
+            }
             const currentModel = toValue(options.modelValue) ?? null
             if (displayValue.value?.getTime() !== currentModel?.getTime()) {
                 options.emit('change', displayValue.value)
@@ -80,6 +90,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
         displayValue.value = value
         options.emit('update:modelValue', value)
         options.emit('change', value)
+        suppressCloseChange = true
         open.value = false
     }
 

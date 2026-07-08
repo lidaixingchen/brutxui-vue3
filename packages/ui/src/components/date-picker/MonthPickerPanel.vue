@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
@@ -32,7 +32,14 @@ const emit = defineEmits<{
 
 const { locale, t } = useLocale()
 
-const viewYear = ref<number>(props.modelValue?.getFullYear() ?? new Date().getFullYear())
+const modelYear = props.modelValue?.getFullYear()
+const viewYear = ref<number>(Number.isFinite(modelYear) ? modelYear! : 0)
+
+onMounted(() => {
+    if (!Number.isFinite(props.modelValue?.getFullYear())) {
+        viewYear.value = new Date().getFullYear()
+    }
+})
 
 watch(() => props.modelValue, (value) => {
     if (value) viewYear.value = value.getFullYear()

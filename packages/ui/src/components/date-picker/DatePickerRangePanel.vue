@@ -88,7 +88,7 @@ function handleShortcutSelect(shortcut: DatePickerRangeShortcut) {
 }
 
 function isShortcutActive(shortcut: DatePickerRangeShortcut): boolean {
-    if (!props.modelValue) return false
+    if (!props.modelValue || props.modelValue.length !== 2 || !props.modelValue[0] || !props.modelValue[1]) return false
     const value = resolveRangeShortcutValue(shortcut)
     return (
         props.modelValue[0].toDateString() === value[0].toDateString() &&
@@ -178,7 +178,7 @@ function getShortcutClasses(shortcut: DatePickerRangeShortcut): string {
                     :select-attribute="selectAttribute"
                     :drag-attribute="dragAttribute"
                     trim-weeks
-                    :first-day-of-week="1"
+                    :first-day-of-week="2"
                     :popover="false"
                     @update:model-value="handleUpdate"
                     @drag="handleDrag"
