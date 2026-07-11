@@ -43,6 +43,7 @@ const errorId = `input-error-${useId().replace(/:/g, '-')}`
 
 const triggerShake = ref(false)
 const shakeTimer = ref<number | undefined>(undefined)
+const isComposing = ref(false)
 
 const audioEngine = useAudioEngine(toRef(props, 'sound'))
 const { t } = useLocale()
@@ -103,6 +104,7 @@ const validate = (value: string) => {
 const onInput = (e: Event) => {
     const target = e.target
     if (!(target instanceof HTMLInputElement)) return
+    if (isComposing.value) return
     emit('update:modelValue', target.value)
 
     if (formField) {
@@ -110,6 +112,21 @@ const onInput = (e: Event) => {
     }
 
     audioEngine.playSound('type')
+
+    if (props.validateOn === 'input') {
+        validate(target.value)
+    }
+}
+
+const onCompositionEnd = (e: CompositionEvent) => {
+    const target = e.target
+    if (!(target instanceof HTMLInputElement)) return
+    isComposing.value = false
+    emit('update:modelValue', target.value)
+
+    if (formField) {
+        formField.setValue(target.value)
+    }
 
     if (props.validateOn === 'input') {
         validate(target.value)
@@ -172,6 +189,8 @@ const faceClasses = computed(() =>
                 @input="onInput"
                 @blur="onBlur"
                 @animationend="onAnimationEnd"
+                @compositionstart="isComposing = true"
+                @compositionend="onCompositionEnd"
             >
             
             <!-- 右侧校验反馈表情 -->

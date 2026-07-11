@@ -93,7 +93,7 @@ function focusParent() {
     const currentItem = activeEl.closest('[role="treeitem"]')
     if (!currentItem) return
     const parentGroup = currentItem.parentElement?.closest('[role="treeitem"]')
-    if (parentGroup) (parentGroup as HTMLElement).focus()
+    if (parentGroup instanceof HTMLElement) parentGroup.focus()
 }
 
 function focusFirstChild() {
@@ -104,8 +104,8 @@ function focusFirstChild() {
     if (!currentItem) return
     const childGroup = currentItem.querySelector('[role="group"]')
     if (childGroup) {
-        const firstChild = childGroup.querySelector('[role="treeitem"]') as HTMLElement | null
-        firstChild?.focus()
+        const firstChild = childGroup.querySelector('[role="treeitem"]')
+        if (firstChild instanceof HTMLElement) firstChild.focus()
     }
 }
 

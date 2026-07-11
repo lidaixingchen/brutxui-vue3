@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject, ref, computed } from 'vue'
+import { Primitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { formFieldKey, formItemKey } from './form-context'
 
@@ -22,10 +23,13 @@ const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptio
 </script>
 
 <template>
-    <slot
-        :id="itemContext.formItemId"
+    <Primitive
+        as-child
+        :id="itemContext.formItemId || undefined"
         :class="rootClasses"
-        :aria-describedby="!fieldContext.error.value ? itemContext.formDescriptionId : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`"
-        :aria-invalid="!!fieldContext.error.value"
-    />
+        :aria-describedby="!fieldContext.error.value ? (itemContext.formDescriptionId || undefined) : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`"
+        :aria-invalid="!!fieldContext.error.value || undefined"
+    >
+        <slot />
+    </Primitive>
 </template>

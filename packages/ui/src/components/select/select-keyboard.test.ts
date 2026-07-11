@@ -162,6 +162,75 @@ describe('Select keyboard navigation support', () => {
             expect((wrapper.props() as Record<string, unknown>).modelValue).toBe('test')
             wrapper.unmount()
         })
+
+        it('SelectTrigger emits clear event when Backspace or Delete is pressed on focused trigger', async () => {
+            const wrapper = mount(SelectTrigger, {
+                props: { clearable: true, modelValue: 'test' },
+                global: {
+                    stubs: {
+                        SelectTrigger: {
+                            template: '<button role="combobox" aria-haspopup="listbox"><slot /></button>',
+                        },
+                        SelectIcon: { template: '<slot />' },
+                    },
+                },
+            })
+
+            const trigger = wrapper.find('[role="combobox"]')
+            expect(trigger.exists()).toBe(true)
+
+            // Trigger Backspace keydown
+            await trigger.trigger('keydown', { key: 'Backspace' })
+            expect(wrapper.emitted('clear')).toBeTruthy()
+
+            // Trigger Delete keydown
+            const wrapper2 = mount(SelectTrigger, {
+                props: { clearable: true, modelValue: 'test' },
+                global: {
+                    stubs: {
+                        SelectTrigger: {
+                            template: '<button role="combobox" aria-haspopup="listbox"><slot /></button>',
+                        },
+                        SelectIcon: { template: '<slot />' },
+                    },
+                },
+            })
+            const trigger2 = wrapper2.find('[role="combobox"]')
+            await trigger2.trigger('keydown', { key: 'Delete' })
+            expect(wrapper2.emitted('clear')).toBeTruthy()
+
+            // Should not emit clear when not clearable
+            const wrapper3 = mount(SelectTrigger, {
+                props: { clearable: false, modelValue: 'test' },
+                global: {
+                    stubs: {
+                        SelectTrigger: {
+                            template: '<button role="combobox" aria-haspopup="listbox"><slot /></button>',
+                        },
+                        SelectIcon: { template: '<slot />' },
+                    },
+                },
+            })
+            const trigger3 = wrapper3.find('[role="combobox"]')
+            await trigger3.trigger('keydown', { key: 'Backspace' })
+            expect(wrapper3.emitted('clear')).toBeFalsy()
+
+            // Should not emit clear when disabled
+            const wrapper4 = mount(SelectTrigger, {
+                props: { clearable: true, modelValue: 'test', disabled: true },
+                global: {
+                    stubs: {
+                        SelectTrigger: {
+                            template: '<button role="combobox" aria-haspopup="listbox"><slot /></button>',
+                        },
+                        SelectIcon: { template: '<slot />' },
+                    },
+                },
+            })
+            const trigger4 = wrapper4.find('[role="combobox"]')
+            await trigger4.trigger('keydown', { key: 'Backspace' })
+            expect(wrapper4.emitted('clear')).toBeFalsy()
+        })
     })
 
     describe('ARIA attributes', () => {

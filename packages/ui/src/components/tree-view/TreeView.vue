@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, provide, type Ref, type ComputedRef } from 'vue';
+import { ref, shallowRef, computed, watch, provide, getCurrentInstance, type Ref, type ComputedRef } from 'vue';
 import { hasDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
@@ -105,7 +105,11 @@ watch(
 );
 
 function emitNodesUpdate() {
-    isUpdatingInternally = true;
+    const instance = getCurrentInstance();
+    const hasListener = !!instance?.vnode.props?.['onUpdate:nodes'];
+    if (hasListener) {
+        isUpdatingInternally = true;
+    }
     emit('update:nodes', localNodes.value);
 }
 

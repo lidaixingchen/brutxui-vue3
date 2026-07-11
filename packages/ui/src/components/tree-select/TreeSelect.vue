@@ -94,7 +94,9 @@ const internalOpen = ref(false)
 const open = computed<boolean>({
     get: () => props.open !== undefined ? props.open : internalOpen.value,
     set: (val) => {
-        internalOpen.value = val
+        if (props.open === undefined) {
+            internalOpen.value = val
+        }
         emit('update:open', val)
     },
 })

@@ -18,7 +18,7 @@ export interface UseStepperReturn {
     totalSteps: ComputedRef<number>
     isFirstStep: ComputedRef<boolean>
     isLastStep: ComputedRef<boolean>
-    goToStep: (index: number) => void
+    goToStep: (index: number, force?: boolean) => void
     nextStep: () => void
     previousStep: () => void
     handleKeydown: (e: KeyboardEvent) => void
@@ -30,9 +30,9 @@ export function useStepper(options: UseStepperOptions): UseStepperReturn {
     const isFirstStep = computed(() => currentStep.value === 0)
     const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
 
-    function goToStep(index: number) {
+    function goToStep(index: number, force = false) {
         if (index < 0 || index >= totalSteps.value) return
-        if (options.linear) {
+        if (options.linear && !force) {
             if (Math.abs(index - currentStep.value) > 1) return
         }
         currentStep.value = index
@@ -63,11 +63,11 @@ export function useStepper(options: UseStepperOptions): UseStepperReturn {
                 break
             case 'Home':
                 e.preventDefault()
-                goToStep(0)
+                goToStep(0, true)
                 break
             case 'End':
                 e.preventDefault()
-                goToStep(totalSteps.value - 1)
+                goToStep(totalSteps.value - 1, true)
                 break
         }
     }

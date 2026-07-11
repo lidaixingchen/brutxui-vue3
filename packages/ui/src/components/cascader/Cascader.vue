@@ -378,7 +378,8 @@ watch(open, (isOpen) => {
             activeColumnIndex.value = valPath.length - 1
             const currentOptions = columns.value[activeColumnIndex.value] || []
             const activeVal = valPath[activeColumnIndex.value]
-            activeItemIndex.value = Math.max(0, currentOptions.findIndex(o => o.value === activeVal))
+            const foundIndex = currentOptions.findIndex(o => o.value === activeVal)
+            activeItemIndex.value = foundIndex !== -1 ? foundIndex : 0
         } else {
             activePath.value = []
             activeColumnIndex.value = 0

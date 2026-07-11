@@ -70,6 +70,18 @@ defineExpose({
     blur: () => textareaRef.value?.blur(),
     select: () => textareaRef.value?.select(),
 })
+
+// 输入处理（IME 组合期间不 emit）
+function handleInput(event: Event) {
+    if (isComposing.value) return
+    emit('update:modelValue', (event.target as HTMLTextAreaElement).value)
+}
+
+// IME 组合结束时 emit 最终值
+function handleCompositionEnd(event: CompositionEvent) {
+    isComposing.value = false
+    emit('update:modelValue', (event.target as HTMLTextAreaElement).value)
+}
 </script>
 
 <template>
@@ -88,8 +100,8 @@ defineExpose({
             :aria-errormessage="ariaErrormessage"
             :aria-required="ariaRequired"
             @compositionstart="isComposing = true"
-            @compositionend="isComposing = false"
-            @input="!isComposing && emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
+            @compositionend="handleCompositionEnd"
+            @input="handleInput"
         />
         <p
             v-if="variant === 'error' && errorMessage"

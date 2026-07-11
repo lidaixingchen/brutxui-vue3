@@ -81,7 +81,8 @@ const searchQuery = ref('')
 
 const selectedOptions = computed(() => {
     if (props.multiple) {
-        return props.options.filter((o) => (props.modelValue as string[])?.includes(o.value))
+        const selected = Array.isArray(props.modelValue) ? props.modelValue : []
+        return props.options.filter((o) => selected.includes(o.value))
     }
     const found = props.options.find((o) => o.value === props.modelValue)
     return found ? [found] : []
@@ -139,14 +140,14 @@ const contentId = `combobox-content-${useId()}`
 
 function isSelected(optionValue: string): boolean {
     if (props.multiple) {
-        return (props.modelValue as string[])?.includes(optionValue) ?? false
+        return Array.isArray(props.modelValue) && props.modelValue.includes(optionValue)
     }
     return props.modelValue === optionValue
 }
 
 function handleSelect(value: string) {
     if (props.multiple) {
-        const current = (props.modelValue as string[]) ?? []
+        const current = Array.isArray(props.modelValue) ? props.modelValue : []
         const newValue = current.includes(value)
             ? current.filter((v) => v !== value)
             : [...current, value]

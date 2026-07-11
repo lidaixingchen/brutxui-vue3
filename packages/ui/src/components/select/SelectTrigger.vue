@@ -68,8 +68,24 @@ const iconClasses = computed(() =>
     )
 )
 
+const hasValue = computed(() => {
+    const value = props.modelValue
+    if (value === null || value === undefined || value === '') return false
+    if (Array.isArray(value)) return value.length > 0
+    return true
+})
+
 function handleClear(e: Event) {
     handleClearEvent(e)
+}
+
+function handleKeyDown(e: KeyboardEvent) {
+    const isClearableEnabled = props.clearable && !props.disabled && hasValue.value
+    if (isClearableEnabled && (e.key === 'Backspace' || e.key === 'Delete')) {
+        e.preventDefault()
+        e.stopPropagation()
+        handleClear(e)
+    }
 }
 </script>
 
@@ -79,7 +95,13 @@ function handleClear(e: Event) {
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
     >
-        <SelectTriggerPrimitive :id="id" :class="classes" :disabled="disabled" aria-haspopup="listbox">
+        <SelectTriggerPrimitive
+            :id="id"
+            :class="classes"
+            :disabled="disabled"
+            aria-haspopup="listbox"
+            @keydown="handleKeyDown"
+        >
             <slot />
             <SelectIconPrimitive as-child>
                 <div class="flex items-center gap-1">
@@ -87,11 +109,10 @@ function handleClear(e: Event) {
                     <span
                         v-if="showClear"
                         role="button"
-                        class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors focus:outline-none focus:ring-2 focus:ring-brutal-ring"
-                        tabindex="0"
+                        class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
+                        tabindex="-1"
+                        aria-hidden="true"
                         @click.stop="handleClear"
-                        @keydown.enter.prevent.stop="handleClear"
-                        @keydown.space.prevent.stop="handleClear"
                     >
                         <X :class="cn(iconSizeVariants({ size: 'sm' }), 'stroke-3')" />
                     </span>

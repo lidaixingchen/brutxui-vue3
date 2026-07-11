@@ -58,6 +58,7 @@ const canGoNext = computed(() => {
 
 watch(() => props.modelValue, () => {
     stepErrors.value.delete(currentStep.value)
+    completedSteps.value.delete(currentStep.value)
 }, { deep: true })
 
 watch(currentStep, () => {

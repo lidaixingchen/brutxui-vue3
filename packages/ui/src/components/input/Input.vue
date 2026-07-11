@@ -173,6 +173,18 @@ function handleClear(e: MouseEvent) {
     handleClearEvent(e)
 }
 
+// 输入处理（IME 组合期间不 emit）
+function handleInput(event: Event) {
+    if (isComposing.value) return
+    emit('update:modelValue', (event.target as HTMLInputElement).value)
+}
+
+// IME 组合结束时 emit 最终值
+function handleCompositionEnd(event: CompositionEvent) {
+    isComposing.value = false
+    emit('update:modelValue', (event.target as HTMLInputElement).value)
+}
+
 defineExpose({
     ref: inputRef,
     focus: () => inputRef.value?.focus(),
@@ -224,8 +236,8 @@ defineExpose({
                     :aria-errormessage="ariaErrormessage"
                     :aria-required="ariaRequired"
                     @compositionstart="isComposing = true"
-                    @compositionend="isComposing = false"
-                    @input="!isComposing && emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+                    @compositionend="handleCompositionEnd"
+                    @input="handleInput"
                 >
 
                 <!-- 后缀功能区 (清除 / 密码切换 / 后缀图标) -->
