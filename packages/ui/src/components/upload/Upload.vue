@@ -68,10 +68,10 @@ function generateId(): string {
     return `file-${Date.now()}-${++fileIdCounter}`
 }
 
-// 同步外部 fileList
+// 同步外部 fileList（引用变化时同步，避免 deep 监听在进度更新时频繁触发）
 watch(() => props.fileList, (newList) => {
     internalFileList.value = [...newList]
-}, { deep: true })
+})
 
 const { validateFileSize, matchesAccept } = useUpload({
     maxSize: () => props.maxSize,
@@ -153,6 +153,9 @@ async function doUpload(file: UploadFile): Promise<void> {
 async function retryUpload(file: UploadFile): Promise<void> {
     if (props.maxRetries !== undefined && (file.retryCount ?? 0) >= props.maxRetries) {
         return
+    }
+    if (file.status === 'uploading') {
+        file.abortController?.abort()
     }
     file.retryCount = (file.retryCount ?? 0) + 1
     file.error = undefined
