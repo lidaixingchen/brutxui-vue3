@@ -97,7 +97,7 @@ describe('add service', () => {
 
         const result = await resolveComponents(['badge', 'card'], 'local-registry');
 
-        expect(resolveDeps).toHaveBeenCalledWith(['badge', 'card'], 'local-registry');
+        expect(resolveDeps).toHaveBeenCalledWith(['badge', 'card'], 'local-registry', true);
         expect(result.items).toEqual([
             { ...badgeItem, dependencies: ['clsx'] },
             cardItem,

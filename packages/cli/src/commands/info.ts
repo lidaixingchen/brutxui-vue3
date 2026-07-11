@@ -69,10 +69,10 @@ async function getComponentInfo(
         status = 'not-installed';
     } else if (!registryItem && registryFetchError && localFiles.length > 0) {
         status = 'registry-unreachable';
-    } else if (localFiles.length > 0) {
-        status = 'installed';
     } else if (!registryItem && registryFetchError) {
         status = 'registry-unreachable';
+    } else if (localFiles.length > 0) {
+        status = 'installed';
     } else {
         status = 'not-found';
     }

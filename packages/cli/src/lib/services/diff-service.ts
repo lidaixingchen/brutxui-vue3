@@ -16,12 +16,16 @@ function normalizeLineEndings(content: string): string {
     return content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 }
 
-function matchFileByPath(registryPath: string, localRelativePath: string): boolean {
+function matchFileByPath(registryPath: string, localRelativePath: string, componentName: string): boolean {
     const normalizedRegistry = registryPath.replace(/\\/g, '/');
     const normalizedLocal = localRelativePath.replace(/\\/g, '/');
 
-    return normalizedRegistry.endsWith('/' + normalizedLocal) ||
-           normalizedRegistry === normalizedLocal;
+    const prefix = `components/ui/${componentName}/`;
+    if (normalizedRegistry.startsWith(prefix)) {
+        return normalizedRegistry.slice(prefix.length) === normalizedLocal;
+    }
+
+    return normalizedRegistry === normalizedLocal;
 }
 
 function generateUnifiedDiff(
@@ -114,22 +118,28 @@ export async function diffComponent(
     config: BrutalistConfig,
     componentName: string,
     registryOverride?: string,
-    manifestEntry?: InstalledComponentManifest
+    manifestEntry?: InstalledComponentManifest,
+    useCache: boolean = true
 ): Promise<DiffResult> {
     let registryItem: RegistryItem | null = null;
+    let registryError: Error | null = null;
 
     try {
-        registryItem = await getItem(componentName, registryOverride);
-    } catch {
+        registryItem = await getItem(componentName, registryOverride, useCache);
+    } catch (error) {
         registryItem = null;
+        registryError = error instanceof Error ? error : new Error(String(error));
     }
 
     if (!registryItem) {
         const localFiles = await getLocalComponentFiles(cwd, config, componentName);
         return {
             component: componentName,
-            status: localFiles.length > 0 ? 'local-only' : 'not-installed',
+            status: registryError
+                ? 'registry-unreachable'
+                : (localFiles.length > 0 ? 'local-only' : 'not-installed'),
             files: [],
+            registryError: registryError?.message,
             ...getIntegrityMetadata(registryItem, manifestEntry),
         };
     }
@@ -138,7 +148,7 @@ export async function diffComponent(
     const fileDiffs: FileDiff[] = [];
 
     for (const registryFile of registryItem.files) {
-        const localFile = localFiles.find((f) => matchFileByPath(registryFile.path, f.relativePath));
+        const localFile = localFiles.find((f) => matchFileByPath(registryFile.path, f.relativePath, componentName));
 
         if (!localFile) {
             fileDiffs.push({
@@ -178,7 +188,7 @@ export async function diffComponent(
     }
 
     for (const localFile of localFiles) {
-        const isInRegistry = registryItem.files.some((f) => matchFileByPath(f.path, localFile.relativePath));
+        const isInRegistry = registryItem.files.some((f) => matchFileByPath(f.path, localFile.relativePath, componentName));
 
         if (!isInRegistry) {
             fileDiffs.push({
@@ -203,7 +213,8 @@ export async function diffComponents(
     config: BrutalistConfig,
     componentNames: string[],
     getRegistrySource: (componentName: string) => string | undefined,
-    getManifestEntry: (componentName: string) => InstalledComponentManifest | undefined
+    getManifestEntry: (componentName: string) => InstalledComponentManifest | undefined,
+    useCache: boolean = true
 ): Promise<DiffResult[]> {
     return Promise.all(
         componentNames.map(component => diffComponent(
@@ -212,6 +223,7 @@ export async function diffComponents(
             component,
             getRegistrySource(component),
             getManifestEntry(component),
+            useCache,
         ))
     );
 }

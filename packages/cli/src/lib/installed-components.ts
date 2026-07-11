@@ -27,14 +27,13 @@ async function scanComponentFiles(dir: string): Promise<string[]> {
 
 async function extractDependencies(componentDir: string): Promise<string[]> {
     const deps = new Set<string>();
-    const files = await fs.readdir(componentDir, { withFileTypes: true });
+    const files = await scanComponentFiles(componentDir);
 
     for (const file of files) {
-        if (!file.isFile()) continue;
-        const ext = path.extname(file.name);
+        const ext = path.extname(file);
         if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
 
-        const content = await fs.readFile(path.join(componentDir, file.name), 'utf-8');
+        const content = await fs.readFile(path.join(componentDir, file), 'utf-8');
         const importRegex = /from\s+['"]([^'"./][^'"]*)['"]/g;
         let match: RegExpExecArray | null;
 

@@ -119,6 +119,7 @@ export interface RemoveOptions {
     yes?: boolean;
     silent?: boolean;
     dryRun?: boolean;
+    cache?: boolean;
 }
 
 export interface InstalledComponentInfo {
@@ -188,7 +189,7 @@ export interface FileDiff {
     patch?: string;
 }
 
-export type DiffComponentStatus = 'up-to-date' | 'modified' | 'not-installed' | 'local-only';
+export type DiffComponentStatus = 'up-to-date' | 'modified' | 'not-installed' | 'local-only' | 'registry-unreachable';
 export type DiffIntegrityStatus = 'unknown' | 'current' | 'outdated';
 
 export interface DiffResult {
@@ -200,4 +201,5 @@ export interface DiffResult {
     integrityStatus?: DiffIntegrityStatus;
     registrySource?: string;
     installedAt?: string;
+    registryError?: string;
 }

@@ -240,6 +240,7 @@ describe('update command', () => {
                 'button',
                 'https://example.test/registry-a',
                 expect.objectContaining({ name: 'button' }),
+                true,
             );
             expect(mockedAdd).toHaveBeenCalledWith(
                 ['button'],
@@ -294,6 +295,7 @@ describe('update command', () => {
                 'button',
                 'https://override.test/registry',
                 expect.objectContaining({ name: 'button' }),
+                true,
             );
             expect(mockedAdd).toHaveBeenCalledWith(
                 ['button'],
@@ -407,14 +409,20 @@ describe('update command', () => {
     });
 
     describe('--no-cache flag', () => {
-        it('should set BRUTX_NO_CACHE env when cache is false', async () => {
-            delete process.env.BRUTX_NO_CACHE;
+        it('should pass useCache=false to diffComponent when cache is false', async () => {
             mockedGetInstalledComponents.mockResolvedValue(['badge']);
             mockedDiffComponent.mockResolvedValue(upToDateResult);
 
             await update([], { cwd: '/tmp', silent: true, cache: false } as any);
 
-            expect(process.env.BRUTX_NO_CACHE).toBe('1');
+            expect(mockedDiffComponent).toHaveBeenCalledWith(
+                '/tmp',
+                defaultConfig,
+                'badge',
+                undefined,
+                undefined,
+                false,
+            );
         });
     });
 });

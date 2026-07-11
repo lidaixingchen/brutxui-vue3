@@ -40,7 +40,8 @@ export async function remove(components: string[], options: RemoveOptions): Prom
     }
 
     const manifest = await readManifest(cwd).catch(() => null);
-    const removal = await prepareRemoveComponents(cwd, config, components, manifest);
+    const useCache = options.cache !== false;
+    const removal = await prepareRemoveComponents(cwd, config, components, manifest, useCache);
 
     if (removal.notFound.length > 0) {
         logger.warn(`Component(s) not installed: ${removal.notFound.join(', ')}`);

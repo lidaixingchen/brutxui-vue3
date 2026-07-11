@@ -43,9 +43,10 @@ export interface ComponentFileWriteFailure {
 
 export async function resolveComponents(
     components: string[],
-    registry?: string
+    registry?: string,
+    useCache: boolean = true
 ): Promise<ComponentResolutionResult> {
-    const items = await resolveDeps(components, registry);
+    const items = await resolveDeps(components, registry, useCache);
     const dependencies = new Set<string>();
 
     for (const item of items) {

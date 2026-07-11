@@ -7,10 +7,7 @@ import { add } from './add.js';
 
 export async function update(components: string[], options: UpdateOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
-
-    if (options.cache === false) {
-        process.env.BRUTX_NO_CACHE = '1';
-    }
+    const useCache = options.cache !== false;
 
     logger.setSilent(options.silent ?? false);
 
@@ -41,6 +38,7 @@ export async function update(components: string[], options: UpdateOptions): Prom
             name,
             options.registry ?? manifest?.components[name]?.registrySource,
             manifest?.components[name],
+            useCache,
         ))
     );
 

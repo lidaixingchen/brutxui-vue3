@@ -171,7 +171,7 @@ describe('diff service', () => {
             manifestEntry
         );
 
-        expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry');
+        expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry', true);
         expect(result).toMatchObject({
             installedIntegrity: 'sha256-old',
             latestIntegrity: 'sha256-new',
@@ -225,24 +225,25 @@ describe('diff service', () => {
         expect(installed).toEqual(['button', 'card']);
         expect(results.map(result => result.component)).toEqual(['button', 'card']);
         expect(results.every(result => result.integrityStatus === 'outdated')).toBe(true);
-        expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/a');
-        expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://example.test/b');
+        expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/a', true);
+        expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://example.test/b', true);
     });
 
-    it('returns not-installed when registry lookup fails', async () => {
+    it('returns registry-unreachable when registry lookup fails', async () => {
         mockedGetItem.mockRejectedValue(new Error('not found'));
 
         const result = await diffComponent(tmpDir, defaultConfig, 'missing');
 
         expect(result).toEqual({
             component: 'missing',
-            status: 'not-installed',
+            status: 'registry-unreachable',
             files: [],
             installedIntegrity: undefined,
             latestIntegrity: undefined,
             integrityStatus: 'unknown',
             registrySource: undefined,
             installedAt: undefined,
+            registryError: 'not found',
         });
     });
 });

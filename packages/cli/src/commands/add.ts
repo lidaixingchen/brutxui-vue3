@@ -44,13 +44,17 @@ async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
     }
 }
 
-async function validateComponents(components: string[]): Promise<void> {
+async function validateComponents(components: string[], registryOverride?: string): Promise<void> {
     const MAX_COMPONENT_NAME_LENGTH = 100;
 
     for (const component of components) {
         if (component.length > MAX_COMPONENT_NAME_LENGTH) {
             throw new CliError(`Component name too long: "${component.slice(0, 50)}..." (max ${MAX_COMPONENT_NAME_LENGTH} characters)`);
         }
+    }
+
+    if (registryOverride) {
+        return;
     }
 
     const cleanComponents = components.map(c => c.split('@')[0]);
@@ -143,9 +147,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const cwd = options.cwd ?? process.cwd();
     const targetCwd = options.path ? path.resolve(cwd, options.path) : cwd;
 
-    if (options.cache === false) {
-        process.env.BRUTX_NO_CACHE = '1';
-    }
+    const useCache = options.cache !== false;
 
     if (options.path && !(await isSafePath(targetCwd, cwd))) {
         throw new CliError(`Security Error: Path traversal detected. Access denied to path "${targetCwd}".`, {
@@ -158,7 +160,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     const config = await ensureInitialized(cwd);
 
-    await validateComponents(components);
+    await validateComponents(components, options.registry);
 
     const selectedComponents = await selectComponents(components, options);
 
@@ -170,7 +172,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
     try {
-        const { items: registryItems, dependencies: allDeps } = await resolveComponents(selectedComponents, options.registry);
+        const { items: registryItems, dependencies: allDeps } = await resolveComponents(selectedComponents, options.registry, useCache);
 
         if (spinner) {
             spinner.stop();
@@ -276,11 +278,11 @@ export async function add(components: string[], options: AddOptions): Promise<vo
             );
 
             const shouldUpdateSnippets = options.vscode === true
-                || (options.vscode !== false && await hasVscodeDir(cwd));
+                || (options.vscode !== false && await hasVscodeDir(targetCwd));
 
             if (shouldUpdateSnippets) {
-                const snippetPath = await mergeSnippetsFile(cwd, added);
-                logger.success(`✓ VS Code snippets updated at ${path.relative(cwd, snippetPath)}`);
+                const snippetPath = await mergeSnippetsFile(targetCwd, added);
+                logger.success(`✓ VS Code snippets updated at ${path.relative(targetCwd, snippetPath)}`);
             }
         }
 

@@ -79,10 +79,17 @@ async function scaffoldProject(
 
 const VALID_PACKAGE_MANAGERS: readonly PackageManager[] = ['pnpm', 'yarn', 'bun', 'npm'];
 const VALID_TEMPLATES = Object.keys(TEMPLATES) as CreateTemplate[];
+const PROJECT_NAME_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
 export async function create(projectName: string, options: CreateOptions): Promise<void> {
     const template: CreateTemplate = options.template ?? 'default';
     const packageManager: PackageManager = options.packageManager ?? 'pnpm';
+
+    if (!PROJECT_NAME_PATTERN.test(projectName)) {
+        throw new CliError(
+            `Invalid project name: "${projectName}". Only letters, digits, ".", "-", and "_" are allowed.`
+        );
+    }
 
     if (!VALID_TEMPLATES.includes(template)) {
         throw new CliError(

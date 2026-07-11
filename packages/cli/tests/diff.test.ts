@@ -340,7 +340,7 @@ describe('diff command', () => {
             expect(results[0].integrityStatus).toBe('outdated');
             expect(results[0].registrySource).toBe('https://example.test/registry');
             expect(results[0].installedAt).toBe('2026-07-07T00:00:00.000Z');
-            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry');
+            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry', true);
         });
 
         it('should let --registry override manifest registry source', async () => {
@@ -378,7 +378,7 @@ describe('diff command', () => {
                 registry: 'https://override.test/registry',
             });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://override.test/registry');
+            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://override.test/registry', true);
         });
 
         it('should include unified diff patch for modified files', async () => {
@@ -759,7 +759,7 @@ describe('diff command', () => {
             expect(output).toHaveLength(0);
         });
 
-        it('should return local-only when registry is unreachable but local files exist', async () => {
+        it('should return registry-unreachable when registry is unreachable but local files exist', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>btn</template>');
 
@@ -769,11 +769,12 @@ describe('diff command', () => {
 
             expect(results).toHaveLength(1);
             expect(results[0].component).toBe('button');
-            expect(results[0].status).toBe('local-only');
+            expect(results[0].status).toBe('registry-unreachable');
             expect(results[0].files).toHaveLength(0);
+            expect(results[0].registryError).toBe('Network error: registry unreachable');
         });
 
-        it('should return not-installed when registry is unreachable and no local files exist', async () => {
+        it('should return registry-unreachable when registry is unreachable and no local files exist', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
 
             mockedGetItem.mockRejectedValue(new Error('Network error: registry unreachable'));
@@ -782,8 +783,9 @@ describe('diff command', () => {
 
             expect(results).toHaveLength(1);
             expect(results[0].component).toBe('button');
-            expect(results[0].status).toBe('not-installed');
+            expect(results[0].status).toBe('registry-unreachable');
             expect(results[0].files).toHaveLength(0);
+            expect(results[0].registryError).toBe('Network error: registry unreachable');
         });
 
         it('should handle component with no files in registry', async () => {

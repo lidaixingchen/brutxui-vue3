@@ -23,6 +23,7 @@ function printDiffReport(results: DiffResult[]): void {
     const upToDate = results.filter((r) => r.status === 'up-to-date');
     const notInstalled = results.filter((r) => r.status === 'not-installed');
     const localOnly = results.filter((r) => r.status === 'local-only');
+    const registryUnreachable = results.filter((r) => r.status === 'registry-unreachable');
 
     if (modified.length > 0) {
         logger.log(chalk.yellow(`  🔄 MODIFIED (${modified.length})`));
@@ -65,26 +66,32 @@ function printDiffReport(results: DiffResult[]): void {
         logger.newLine();
     }
 
+    if (registryUnreachable.length > 0) {
+        logger.log(chalk.red(`  ⚠️  REGISTRY UNREACHABLE (${registryUnreachable.length})`));
+        for (const result of registryUnreachable) {
+            const detail = result.registryError ? `: ${result.registryError}` : '';
+            logger.log(`    — ${result.component}${detail}`);
+        }
+        logger.newLine();
+    }
+
     if (localOnly.length > 0) {
         logger.log(chalk.gray(`  📦 LOCAL ONLY (${localOnly.length})`));
         for (const result of localOnly) {
-            logger.log(`    — ${result.component} (registry unreachable)`);
+            logger.log(`    — ${result.component}`);
         }
         logger.newLine();
     }
 
     const updateAvailable = results.filter((r) => r.integrityStatus === 'outdated').length;
     const updateSummary = updateAvailable > 0 ? `, ${chalk.yellow(`${updateAvailable} update available`)}` : '';
-    logger.log(`  Summary: ${chalk.yellow(`${modified.length} modified`)}, ${chalk.green(`${upToDate.length} up-to-date`)}, ${chalk.gray(`${notInstalled.length} not in registry`)}, ${chalk.gray(`${localOnly.length} local-only`)}${updateSummary}`);
+    logger.log(`  Summary: ${chalk.yellow(`${modified.length} modified`)}, ${chalk.green(`${upToDate.length} up-to-date`)}, ${chalk.gray(`${notInstalled.length} not in registry`)}, ${chalk.gray(`${localOnly.length} local-only`)}, ${chalk.red(`${registryUnreachable.length} registry unreachable`)}${updateSummary}`);
     logger.newLine();
 }
 
 export async function diff(options: DiffOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
-
-    if (options.cache === false) {
-        process.env.BRUTX_NO_CACHE = '1';
-    }
+    const useCache = options.cache !== false;
 
     logger.setSilent(options.silent ?? false);
 
@@ -112,6 +119,7 @@ export async function diff(options: DiffOptions): Promise<void> {
         targetComponents,
         component => options.registry ?? manifest?.components[component]?.registrySource,
         component => manifest?.components[component],
+        useCache,
     );
 
     if (options.json) {

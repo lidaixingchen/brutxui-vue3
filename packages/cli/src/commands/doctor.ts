@@ -543,14 +543,32 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         checks.push(...await checkComponentIntegrity(cwd, config));
     }
 
+    if (options.fix || options.fixOnly) {
+        await applyFixes(checks, options);
+
+        // 修复后重新运行检测，刷新 checks 数组，以便获取最真实的错误状态
+        checks.length = 0;
+        const freshConfig = await readConfigSafe(cwd);
+        checks.push(checkNodeVersion());
+        checks.push(checkConfigExists(cwd, freshConfig));
+
+        if (freshConfig) {
+            checks.push(checkSchema(freshConfig));
+            checks.push(checkConfigVersion(freshConfig));
+            checks.push(checkStyle(freshConfig));
+            checks.push(await checkTailwindCss(cwd, freshConfig));
+            checks.push(await checkDeprecatedBrutalismPlugin(cwd, freshConfig));
+            checks.push(...await checkAliases(cwd, freshConfig));
+            checks.push(...await checkDependencies(cwd));
+            checks.push(await checkUtilsFunction(cwd, freshConfig));
+            checks.push(...await checkComponentIntegrity(cwd, freshConfig));
+        }
+    }
+
     if (options.json) {
         process.stdout.write(JSON.stringify(checks, null, 2) + '\n');
     } else {
         printReport(checks);
-    }
-
-    if (options.fix || options.fixOnly) {
-        await applyFixes(checks, options);
     }
 
     const hasErrors = checks.some((c) => c.status === 'error');

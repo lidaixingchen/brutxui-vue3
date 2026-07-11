@@ -203,7 +203,8 @@ async function getDependents(
     cwd: string,
     config: BrutalistConfig,
     componentsToRemove: string[],
-    manifest: BrutxManifest | null
+    manifest: BrutxManifest | null,
+    useCache: boolean = true
 ): Promise<{ dependents: Map<string, string[]>; failures: string[] }> {
     const dependents = new Map<string, string[]>();
     const failures = new Set<string>();
@@ -213,7 +214,7 @@ async function getDependents(
     for (const name of componentsToRemove) {
         for (const other of remaining) {
             try {
-                const otherItem: RegistryItem = await getItem(other, manifest?.components[other]?.registrySource);
+                const otherItem: RegistryItem = await getItem(other, manifest?.components[other]?.registrySource, useCache);
                 if (otherItem.registryDependencies?.includes(name)) {
                     if (!dependents.has(name)) {
                         dependents.set(name, []);
@@ -242,22 +243,36 @@ export async function countComponentFiles(
         return null;
     }
 
-    const entries = await fs.readdir(componentPath, { withFileTypes: true });
-    return entries.filter(e => e.isFile()).length;
+    return countFilesRecursive(componentPath);
+}
+
+async function countFilesRecursive(dir: string): Promise<number> {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    let count = 0;
+    for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            count += await countFilesRecursive(fullPath);
+        } else if (entry.isFile()) {
+            count++;
+        }
+    }
+    return count;
 }
 
 export async function prepareRemoveComponents(
     cwd: string,
     config: BrutalistConfig,
     components: string[],
-    manifest: BrutxManifest | null
+    manifest: BrutxManifest | null,
+    useCache: boolean = true
 ): Promise<RemovePreparation> {
     const installed = await getInstalledComponentNames(cwd, config);
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
     const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
-        ? await getDependents(cwd, config, toRemove, manifest)
+        ? await getDependents(cwd, config, toRemove, manifest, useCache)
         : { dependents: new Map<string, string[]>(), failures: [] as string[] };
     const orphanedFiles = toRemove.length > 0
         ? [
@@ -296,8 +311,7 @@ export async function removeComponents(
             const componentPath = path.join(componentsPath, comp);
 
             if (await fs.pathExists(componentPath)) {
-                const entries = await fs.readdir(componentPath, { withFileTypes: true });
-                const fileCount = entries.filter(e => e.isFile()).length;
+                const fileCount = await countFilesRecursive(componentPath);
                 options.onRemoveComponent?.(comp, fileCount);
                 await transaction.remove(componentPath);
                 totalRemoved += fileCount;

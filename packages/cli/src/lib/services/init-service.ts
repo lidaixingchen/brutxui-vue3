@@ -18,6 +18,10 @@ export interface ProjectInitializationSettings {
     aliases: AliasConfig;
 }
 
+function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export type NuxtConfigStatus =
     | 'not-found'
     | 'manual-required'
@@ -90,7 +94,9 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
     let content = '';
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
-        const markerPattern = /\/\* brutx-ui:start \*\/[\s\S]*?\/\* brutx-ui:end \*\//;
+        const markerPattern = new RegExp(
+            `${escapeRegex(BRUTX_CSS_START_MARKER)}[\\s\\S]*?${escapeRegex(BRUTX_CSS_END_MARKER)}`
+        );
         if (markerPattern.test(content)) {
             content = content.replace(markerPattern, brutxBlock);
         } else if (
@@ -137,8 +143,21 @@ export function injectNuxtConfig(content: string, cssPath: string, componentsRel
         return null;
     }
 
-    const hasComponents = /\bcomponents\s*:/.test(content);
-    const hasCss = /\bcss\s*:/.test(content);
+    let depth = 0;
+    let rootEnd = content.length;
+    for (let i = braceIndex; i < content.length; i++) {
+        if (content[i] === '{') depth++;
+        else if (content[i] === '}') {
+            depth--;
+            if (depth === 0) {
+                rootEnd = i;
+                break;
+            }
+        }
+    }
+    const rootBlock = content.slice(braceIndex, rootEnd + 1);
+    const hasComponents = /\bcomponents\s*:/.test(rootBlock);
+    const hasCss = /\bcss\s*:/.test(rootBlock);
 
     if (hasComponents && hasCss) {
         return content;
@@ -253,6 +272,10 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
                 componentsRelDir: path.relative(cwd, componentsDir).replace(/\\/g, '/'),
             };
         callbacks?.onNuxtConfig?.(nuxt);
+
+        if (nuxt.status === 'write-failed') {
+            throw new Error(`Failed to write Nuxt config at ${nuxt.configFile}`);
+        }
 
         await transaction.commit();
 
