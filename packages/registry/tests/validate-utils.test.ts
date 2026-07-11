@@ -376,7 +376,7 @@ describe('validate-registry helpers', () => {
         ])
     })
 
-    it('ignores utils imports and external registry component imports', () => {
+    it('ignores utils imports but validates cross-component imports against registryDependencies', () => {
         const item = createRegistryItem('dialog', {
             description: 'Dialog component',
             files: [
@@ -387,6 +387,21 @@ describe('validate-registry helpers', () => {
             "import { cn } from '@/lib/utils'",
             "import Button from '@/components/ui/button/Button.vue'",
         ].join('\n')
+
+        expect(validateRegistryItemInternalImports(item)).toEqual([
+            'file "components/ui/dialog/DialogContent.vue" imports "@/components/ui/button/...", but "button" is not declared in registryDependencies',
+        ])
+    })
+
+    it('passes cross-component imports when declared in registryDependencies', () => {
+        const item = createRegistryItem('dialog', {
+            description: 'Dialog component',
+            files: [
+                'components/ui/dialog/DialogContent.vue',
+            ],
+        })
+        item.files[0].content = "import Button from '@/components/ui/button/Button.vue'\n"
+        item.registryDependencies = ['button']
 
         expect(validateRegistryItemInternalImports(item)).toEqual([])
     })

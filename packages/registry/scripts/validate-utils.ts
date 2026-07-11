@@ -163,7 +163,7 @@ export function validateRegistryManifestConsistency(
         errors.push('gitCommit must be null or a non-empty string')
     }
 
-    if (manifestItemNames.join('\0') !== [...manifestItemNames].sort().join('\0')) {
+    if (manifestItemNames.join('\0') !== [...manifestItemNames].sort((a, b) => a.localeCompare(b)).join('\0')) {
         errors.push('manifest items must be sorted by name')
     }
 
@@ -385,11 +385,20 @@ export function validateRegistryItemInternalImports(
                 errors.push(`file "${file.path}" imports "${specifier}", but generated registry item is missing "${expectedPath}"`)
             }
         }
+
+        for (const depName of extractCrossComponentImports(item.name, file.content)) {
+            if (!registryDependencies.has(depName)) {
+                errors.push(`file "${file.path}" imports "@/components/ui/${depName}/...", but "${depName}" is not declared in registryDependencies`)
+            }
+        }
     }
 
     return errors
 }
 
+// Only matches single/double-quoted specifiers, not backtick template literals.
+// This is correct per ES spec: static import/export module specifiers must be
+// string literals (single/double quotes), not template literals.
 function extractStaticModuleSpecifiers(code: string): string[] {
     const specifiers = new Set<string>()
     const importPattern = /\b(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]/g
@@ -399,6 +408,23 @@ function extractStaticModuleSpecifiers(code: string): string[] {
     }
 
     return Array.from(specifiers)
+}
+
+function extractCrossComponentImports(itemName: string, code: string): string[] {
+    const deps = new Set<string>()
+    const pattern = /^@\/components\/ui\/([a-zA-Z0-9-]+)(?:\/|$)/
+
+    for (const specifier of extractStaticModuleSpecifiers(code)) {
+        const cleanSpecifier = specifier.split(/[?#]/)[0]
+        const match = pattern.exec(cleanSpecifier)
+        if (!match) continue
+        const depName = match[1]
+        if (depName !== itemName) {
+            deps.add(depName)
+        }
+    }
+
+    return Array.from(deps)
 }
 
 function resolveRegistryAliasImport(itemName: string, specifier: string): string | null {

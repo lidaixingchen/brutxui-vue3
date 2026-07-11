@@ -29,7 +29,7 @@ describe('build-registry helpers', () => {
         expect(REGISTRY_COMPONENT_FILES).toBe(COMPONENT_FILES);
         expect(AVAILABLE_COMPONENTS).toEqual(Object.keys(COMPONENT_REGISTRY));
         expect(COMPONENT_FILES.button.files).toContain('Button.vue');
-        expect(COMPONENT_REGISTRY.button.files).toBe(COMPONENT_FILES.button.files);
+        expect(COMPONENT_REGISTRY.button.files).toEqual(COMPONENT_FILES.button.files);
         expect(COMPONENT_REGISTRY.button.title).toBe('Button');
         expect(COMPONENT_REGISTRY.button.dependencies).toEqual(['reka-ui', '@lucide/vue']);
         expect(COMPONENT_REGISTRY.button.category).toBe('action');
@@ -71,7 +71,7 @@ describe('build-registry helpers', () => {
 
         expect(extractDeps(code, 'lib')).toEqual(['utils.ts', 'data-table-types.ts', 'table-key.ts']);
         expect(extractDeps(code, 'composables')).toEqual(['useForwardProps.ts']);
-        expect(extractRegistryDeps(code, 'data-table')).toEqual(['button']);
+        expect(extractRegistryDeps(code, 'data-table')).toEqual(['button', 'popover']);
         expect(extractUnknownRegistryDeps(code)).toEqual([]);
     });
 
@@ -93,7 +93,7 @@ describe('build-registry helpers', () => {
             .toThrow('Unknown registry component import(s) in "dialog" (useDialog.ts): missing-widget');
     });
 
-    it('extracts static import and export module specifiers without matching dynamic imports', () => {
+    it('extracts static and dynamic import/export module specifiers', () => {
         const code = [
             "import '@/components/ui/button/button.css'",
             "import type {",
@@ -109,6 +109,7 @@ describe('build-registry helpers', () => {
             '@/components/ui/button/types',
             '@/lib/data-table-utils',
             '@/lib/utils',
+            '@/components/ui/dialog/DialogContent.vue',
         ]);
     });
 
@@ -158,6 +159,7 @@ describe('build-registry helpers', () => {
         expect(extractModuleSpecifiers(code)).toEqual([
             '@/components/ui/button/Button.vue',
             '@/composables/useLocale',
+            '@/components/ui/dialog/DialogContent.vue',
         ]);
     });
 

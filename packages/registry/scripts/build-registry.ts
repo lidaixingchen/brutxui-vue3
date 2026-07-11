@@ -36,7 +36,22 @@ type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale
 
 // utils.ts is excluded from registry — consumers must create their own lib/utils.ts via CLI init.
 // This file provides the cn() utility (clsx + tailwind-merge) and is project-specific.
+// Excluded files' content is not published or hashed, but their imports are still
+// scanned to discover transitive dependencies.
 const LIB_FILE_EXCLUDE = new Set<string>(['utils.ts']);
+
+const DIR_PREFIX_TO_BASE: Record<string, string> = {
+    composables: UI_COMPOSABLES_DIR,
+    locales: UI_LOCALES_DIR,
+    lib: UI_LIB_DIR,
+    directives: UI_DIRECTIVES_DIR,
+};
+
+function resolveExtension(rawFileName: string, baseDir: string): string {
+    if (path.extname(rawFileName)) return rawFileName;
+    if (fs.existsSync(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
+    return `${rawFileName}.ts`;
+}
 
 const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
 const CACHE_VERSION = 4;
@@ -192,27 +207,32 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
             addComponentFile(fileName);
         }
     }
-    for (const directiveName of fileMapping.directives ?? []) {
-        const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
-        if (!fs.existsSync(directivePath)) {
-            throw new Error(`Directive file not found: ${directivePath}`);
+    const directiveDeps = new Set<string>(fileMapping.directives ?? []);
+    const addedDirectiveDeps = new Set<string>();
+    while (addedDirectiveDeps.size < directiveDeps.size) {
+        const pendingDirectiveDeps = Array.from(directiveDeps).filter(d => !addedDirectiveDeps.has(d));
+        for (const directiveName of pendingDirectiveDeps) {
+            const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
+            if (!fs.existsSync(directivePath)) {
+                throw new Error(`Directive file not found: ${directivePath}`);
+            }
+            const code = readComponentSource(directivePath);
+            parts.push(code);
+            const rewritten = rewriteImports(code, name, 'directive');
+            extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
+            extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
+            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+            extractDeps(rewritten, 'directives').forEach(d => directiveDeps.add(d));
+            addedDirectiveDeps.add(directiveName);
         }
-        const code = readComponentSource(directivePath);
-        parts.push(code);
-        const rewritten = rewriteImports(code, name, 'directive');
-        extractDeps(rewritten, 'composables').forEach(d => composableDeps.add(d));
-        extractDeps(rewritten, 'locales').forEach(d => localeDeps.add(d));
-        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
     }
-    while (addedComposableDeps.size < composableDeps.size) {
+    const addedLocaleDeps = new Set<string>();
+    while (addedComposableDeps.size < composableDeps.size || addedLocaleDeps.size < localeDeps.size) {
         const pendingComposables = Array.from(composableDeps).filter(c => !addedComposableDeps.has(c));
         for (const composableName of pendingComposables) {
             addComposableFile(composableName);
         }
-    }
 
-    const addedLocaleDeps = new Set<string>();
-    while (addedLocaleDeps.size < localeDeps.size) {
         const pendingLocaleDeps = Array.from(localeDeps).filter(localeName => !addedLocaleDeps.has(localeName));
         for (const localeName of pendingLocaleDeps) {
             const localePath = path.join(UI_LOCALES_DIR, localeName);
@@ -229,14 +249,16 @@ function computeSourceHash(name: string, fileMapping: { files: string[]; composa
     }
 
     for (const libName of libDeps) {
-        if (LIB_FILE_EXCLUDE.has(libName)) continue;
         const libPath = path.join(UI_LIB_DIR, libName);
-        if (fs.existsSync(libPath)) {
-            const code = readComponentSource(libPath);
-            parts.push(code);
-            const rewritten = rewriteImports(code, name, 'lib');
-            extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+        if (!fs.existsSync(libPath)) {
+            throw new Error(`Lib file not found: ${libPath}`);
         }
+        const code = readComponentSource(libPath);
+        const rewritten = rewriteImports(code, name, 'lib');
+        extractDeps(rewritten, 'lib').forEach(d => libDeps.add(d));
+
+        if (LIB_FILE_EXCLUDE.has(libName)) continue;
+        parts.push(code);
     }
 
     return crypto.createHash('sha256').update(parts.join('\0')).digest('hex');
@@ -248,13 +270,13 @@ function readComponentSource(filePath: string): string {
 
 export function rewriteImports(code: string, componentName: string, context: RewriteContext = 'component'): string {
     // Rewrite relative imports from composable/lib files to @/ aliases
-    code = code.replace(/['"]\.\.\/composables\/([^'"]+)['"]/g, "'@/composables/$1'");
-    code = code.replace(/['"]\.\.\/lib\/([^'"]+)['"]/g, "'@/lib/$1'");
-    code = code.replace(/['"]\.\.\/locales\/([^'"]+)['"]/g, "'@/locales/$1'");
+    code = code.replace(/(['"])\.\.\/composables\/([^'"]+)\1/g, (_m, q, rest) => `${q}@/composables/${rest}${q}`);
+    code = code.replace(/(['"])\.\.\/lib\/([^'"]+)\1/g, (_m, q, rest) => `${q}@/lib/${rest}${q}`);
+    code = code.replace(/(['"])\.\.\/locales\/([^'"]+)\1/g, (_m, q, rest) => `${q}@/locales/${rest}${q}`);
 
     code = code.replace(
-        /['"]\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)['"]/g,
-        (m, comp, rest) => (COMPONENT_REGISTRY[comp] ? `'@/components/ui/${comp}/${rest}'` : m)
+        /(['"])\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
+        (m, quote, comp, rest) => (COMPONENT_REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
     );
 
     // Rewrite cross-component imports: ../{component}/{file} → @/components/ui/{component}/{file}
@@ -267,6 +289,8 @@ export function rewriteImports(code: string, componentName: string, context: Rew
     // Rewrite same-directory imports: ./{file} → @/<context-dir>/{file}
     // Context determines the target alias directory so same-directory imports in
     // composables/libs/directives aren't misrouted to @/components/ui/{componentName}/.
+    // Only apply within <script> blocks for Vue files to avoid rewriting
+    // CSS url('./...') or template attribute strings.
     const contextAliasPrefix: Record<RewriteContext, string> = {
         component: `@/components/ui/${componentName}/`,
         composable: '@/composables/',
@@ -274,10 +298,21 @@ export function rewriteImports(code: string, componentName: string, context: Rew
         directive: '@/directives/',
         locale: '@/locales/',
     };
-    code = code.replace(
-        /(['"])\.\/([^'"]+)\1/g,
-        `$1${contextAliasPrefix[context]}$2$1`
-    );
+    const sameDirReplace = (block: string): string =>
+        block.replace(
+            /(['"])\.\/([^'"]+)\1/g,
+            `$1${contextAliasPrefix[context]}$2$1`
+        );
+
+    if (/<script\b/i.test(code)) {
+        code = code.replace(
+            /(<script\b[^>]*>)([\s\S]*?)(<\/script>)/gi,
+            (_m, openTag: string, scriptContent: string, closeTag: string) =>
+                `${openTag}${sameDirReplace(scriptContent)}${closeTag}`
+        );
+    } else {
+        code = sameDirReplace(code);
+    }
 
     return code;
 }
@@ -285,12 +320,13 @@ export function rewriteImports(code: string, componentName: string, context: Rew
 export function extractDeps(code: string, dirPrefix: string): string[] {
     const deps = new Set<string>();
     const aliasPrefix = `@/${dirPrefix}/`;
+    const baseDir = DIR_PREFIX_TO_BASE[dirPrefix];
 
     for (const specifier of extractModuleSpecifiers(code)) {
         if (!specifier.startsWith(aliasPrefix)) continue;
 
         const rawFileName = specifier.slice(aliasPrefix.length).split(/[?#]/)[0];
-        const fileName = path.extname(rawFileName) ? rawFileName : `${rawFileName}.ts`;
+        const fileName = resolveExtension(rawFileName, baseDir);
         deps.add(fileName);
     }
     return Array.from(deps);
@@ -308,15 +344,22 @@ export function extractModuleSpecifiers(code: string): string[] {
             ts.ScriptKind.TSX
         );
 
-        for (const statement of sourceFile.statements) {
-            if (ts.isImportDeclaration(statement) && ts.isStringLiteral(statement.moduleSpecifier)) {
-                specifiers.add(statement.moduleSpecifier.text);
-                continue;
+        const visit = (node: ts.Node): void => {
+            if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
+                specifiers.add(node.moduleSpecifier.text);
+            } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
+                specifiers.add(node.moduleSpecifier.text);
+            } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+                const arg = node.arguments[0];
+                if (arg && ts.isStringLiteral(arg)) {
+                    specifiers.add(arg.text);
+                }
             }
+            ts.forEachChild(node, visit);
+        };
 
-            if (ts.isExportDeclaration(statement) && statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
-                specifiers.add(statement.moduleSpecifier.text);
-            }
+        for (const statement of sourceFile.statements) {
+            visit(statement);
         }
     }
 
@@ -376,12 +419,13 @@ export function extractRegistryDeps(code: string, componentName: string): string
 export function extractComponentFileDeps(code: string, componentName: string): string[] {
     const deps = new Set<string>();
     const prefix = `@/components/ui/${componentName}/`;
+    const baseDir = path.join(UI_COMPONENTS_DIR, componentName);
 
     for (const specifier of extractModuleSpecifiers(code)) {
         if (!specifier.startsWith(prefix)) continue;
 
         const rawFileName = specifier.slice(prefix.length).split(/[?#]/)[0];
-        const fileName = path.extname(rawFileName) ? rawFileName : `${rawFileName}.ts`;
+        const fileName = resolveExtension(rawFileName, baseDir);
         deps.add(fileName);
     }
 
@@ -586,36 +630,57 @@ export function buildRegistryItem(name: string): RegistryItem {
     const addedComposables = new Set<string>();
     processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
 
-    for (const directiveName of componentInfo.directives ?? []) {
-        const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
+    const addedDirectives = new Set<string>();
+    const directiveDeps = new Set<string>(componentInfo.directives ?? []);
+    while (addedDirectives.size < directiveDeps.size) {
+        const pendingDirectives = Array.from(directiveDeps).filter(d => !addedDirectives.has(d));
+        for (const directiveName of pendingDirectives) {
+            const directivePath = path.join(UI_DIRECTIVES_DIR, directiveName);
 
-        if (!fs.existsSync(directivePath)) {
-            throw new Error(`Directive file not found at ${directivePath}`);
+            if (!fs.existsSync(directivePath)) {
+                throw new Error(`Directive file not found at ${directivePath}`);
+            }
+
+            let code = readComponentSource(directivePath);
+            code = rewriteImports(code, name, 'directive');
+            assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
+            extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+            extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+            extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+            extractDeps(code, 'directives').forEach(d => directiveDeps.add(d));
+
+            files.push({
+                path: `directives/${directiveName}`,
+                content: code,
+                type: getFileType(`directives/${directiveName}`)
+            });
+            addedDirectives.add(directiveName);
         }
-
-        let code = readComponentSource(directivePath);
-        code = rewriteImports(code, name, 'directive');
-        assertKnownRegistryDeps(code, name, directiveName).forEach(d => allRegistryDeps.add(d));
-        extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
-        extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
-        extractDeps(code, 'lib').forEach(d => libDeps.add(d));
-
-        files.push({
-            path: `directives/${directiveName}`,
-            content: code,
-            type: getFileType(`directives/${directiveName}`)
-        });
     }
 
     processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
+
+    const addedLocaleDeps = new Set<string>();
+    while (addedLocaleDeps.size < localeDeps.size || (addedComposables.size < composableDeps.size)) {
+        const pendingLocaleDeps = Array.from(localeDeps).filter(localeName => !addedLocaleDeps.has(localeName));
+        for (const localeName of pendingLocaleDeps) {
+            const localePath = path.join(UI_LOCALES_DIR, localeName);
+            if (fs.existsSync(localePath)) {
+                const code = rewriteImports(readComponentSource(localePath), name, 'locale');
+                extractDeps(code, 'locales').forEach(d => localeDeps.add(d));
+                extractDeps(code, 'composables').forEach(d => composableDeps.add(d));
+                extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+            }
+            addedLocaleDeps.add(localeName);
+        }
+        processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);
+    }
 
     if (localeDeps.size > 0) {
         allRegistryDeps.add('locale-zh-cn');
     }
 
     for (const libName of libDeps) {
-        if (LIB_FILE_EXCLUDE.has(libName)) continue;
-
         const libPath = path.join(UI_LIB_DIR, libName);
 
         if (!fs.existsSync(libPath)) {
@@ -625,6 +690,8 @@ export function buildRegistryItem(name: string): RegistryItem {
         const code = rewriteImports(readComponentSource(libPath), name, 'lib');
         assertKnownRegistryDeps(code, name, libName).forEach(d => allRegistryDeps.add(d));
         extractDeps(code, 'lib').forEach(d => libDeps.add(d));
+
+        if (LIB_FILE_EXCLUDE.has(libName)) continue;
 
         files.push({
             path: `lib/${libName}`,
@@ -683,7 +750,7 @@ export async function run() {
     for (const localeFile of LOCALE_FILES) {
         const localePath = path.join(UI_LOCALES_DIR, localeFile);
         if (fs.existsSync(localePath)) {
-            const code = readComponentSource(localePath);
+            const code = rewriteImports(readComponentSource(localePath), 'locale', 'locale');
             localeFiles.push({
                 path: `locales/${localeFile}`,
                 content: code,
