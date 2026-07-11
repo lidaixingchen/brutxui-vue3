@@ -86,9 +86,8 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
 
     let cachedApi: NonNullable<typeof emblaApi.value> | null = null
 
-    onMounted(() => {
-        if (!emblaApi.value) return
-        cachedApi = emblaApi.value
+    function initCarousel(api: NonNullable<typeof emblaApi.value>) {
+        cachedApi = api
         cachedApi.on('init', onInit)
         cachedApi.on('select', onSelect)
         cachedApi.on('reInit', onInit)
@@ -100,6 +99,16 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         if (toValue(options.autoplay) && !prefersReducedMotion.value) {
             options.onAutoplayChange?.(true)
         }
+    }
+
+    onMounted(() => {
+        if (!emblaApi.value) return
+        initCarousel(emblaApi.value)
+    })
+
+    watch(emblaApi, (api) => {
+        if (!api || cachedApi === api) return
+        initCarousel(api)
     })
 
     watch(() => toValue(options.autoplay), (val) => {

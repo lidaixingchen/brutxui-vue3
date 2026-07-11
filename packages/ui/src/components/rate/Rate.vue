@@ -79,6 +79,7 @@ const handleMouseLeave = () => {
 
 const handleSelect = (val: number) => {
     if (props.readonly) return
+    if (val === props.modelValue) return
     emit('update:modelValue', val)
     emit('change', val)
 }
@@ -92,9 +93,13 @@ const handleKeydown = (event: KeyboardEvent) => {
         nextValue = Math.min(props.max, props.modelValue + step)
     } else if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
         nextValue = Math.max(0, props.modelValue - step)
+    } else if (event.key === 'Home') {
+        nextValue = 0
+    } else if (event.key === 'End') {
+        nextValue = props.max
     }
 
-    if (nextValue !== null) {
+    if (nextValue !== null && nextValue !== props.modelValue) {
         event.preventDefault()
         emit('update:modelValue', nextValue)
         emit('change', nextValue)

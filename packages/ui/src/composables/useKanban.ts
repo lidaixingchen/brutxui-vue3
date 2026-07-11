@@ -59,6 +59,9 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     function onDragEnd() {
         draggingCard.value = null
         dragOverColumn.value = null
+        if (dragEndRafId !== null) {
+            cancelAnimationFrame(dragEndRafId)
+        }
         dragEndRafId = requestAnimationFrame(() => {
             isDragging.value = false
             dragEndRafId = null

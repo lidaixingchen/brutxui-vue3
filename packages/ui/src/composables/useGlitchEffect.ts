@@ -1,5 +1,5 @@
 import { computed, onBeforeUnmount, onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter } from 'vue'
-import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '@/lib/defaults'
+import { DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS, GLITCH_MIN_INTERVAL_MS } from '@/lib/defaults'
 import { useReducedMotion } from './useReducedMotion'
 
 export type GlitchTrigger = 'hover' | 'click' | 'autoplay' | 'none'
@@ -9,9 +9,6 @@ export interface UseGlitchEffectOptions {
     interval?: MaybeRefOrGetter<number | undefined>
     disabled?: MaybeRefOrGetter<boolean | undefined>
 }
-
-const AUTOPLAY_ACTIVE_DURATION_MS = 1000
-const MIN_AUTOPLAY_INTERVAL_MS = 100
 
 export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     const isActive = shallowRef(false)
@@ -36,7 +33,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
 
     function startAutoplay() {
         stopAutoplay()
-        const interval = Math.max(Number(toValue(options.interval)) || DEFAULT_AUTOPLAY_INTERVAL_MS, MIN_AUTOPLAY_INTERVAL_MS)
+        const interval = Math.max(Number(toValue(options.interval)) || DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_MIN_INTERVAL_MS)
         autoplayTimer.value = setInterval(() => {
             if (prefersReducedMotion.value) return
             isActive.value = true
@@ -45,7 +42,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
             }
             autoplayStopTimer.value = setTimeout(() => {
                 isActive.value = false
-            }, AUTOPLAY_ACTIVE_DURATION_MS)
+            }, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)
         }, interval)
     }
 

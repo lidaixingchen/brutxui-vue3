@@ -136,7 +136,7 @@ function updateScale() {
     const root = rootRef.value;
     if (!measure || !root) return;
     const naturalWidth = measure.scrollWidth;
-    const constrainedWidth = root.clientWidth;
+    const constrainedWidth = root.parentElement?.clientWidth ?? root.clientWidth;
     if (naturalWidth > constrainedWidth) {
         scaleFactor.value = constrainedWidth / naturalWidth;
     } else {
@@ -153,7 +153,8 @@ onMounted(() => {
         const ResizeObserverCtor = getResizeObserverCtor();
         if (!ResizeObserverCtor) return;
         resizeObserver = new ResizeObserverCtor(updateScale);
-        resizeObserver.observe(root);
+        const observeTarget = root.parentElement ?? root;
+        resizeObserver.observe(observeTarget);
     });
 });
 

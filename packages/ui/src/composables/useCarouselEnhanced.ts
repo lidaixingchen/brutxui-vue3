@@ -1,6 +1,7 @@
 import { ref, computed, onUnmounted, toValue, type MaybeRefOrGetter } from 'vue'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../lib/defaults'
 import { useCarousel, type UseCarouselOptions } from './useCarousel'
+import { useReducedMotion } from './useReducedMotion'
 
 const DEFAULT_PROGRESS_INTERVAL = 50
 
@@ -30,6 +31,7 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     })
 
     // 增强功能：进度追踪
+    const prefersReducedMotion = useReducedMotion()
     const autoplayProgress = ref(0)
     let progressTimer: ReturnType<typeof setInterval> | null = null
 
@@ -40,6 +42,7 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
     function startProgressTimer() {
         stopProgressTimer()
         if (!toValue(options.trackProgress)) return
+        if (!toValue(options.autoplay) || prefersReducedMotion.value) return
 
         const delay = toValue(options.autoplayDelay) ?? DEFAULT_AUTOPLAY_INTERVAL_MS
         const interval = progressUpdateInterval.value

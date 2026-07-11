@@ -105,7 +105,7 @@ watch(() => props.disabled, (disabled) => {
         }
     } else {
         const observerResult = setupObserver()
-        if (observerResult === 'unsupported') {
+        if (props.immediate || observerResult === 'unsupported') {
             triggerLoad()
         }
     }

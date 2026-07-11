@@ -37,6 +37,9 @@ const startAutoplay = () => {
     autoplayTimer.value = setInterval(() => {
         if (prefersReducedMotion.value) return
         isActive.value = true
+        if (autoplayStopTimer.value) {
+            clearTimeout(autoplayStopTimer.value)
+        }
         autoplayStopTimer.value = setTimeout(() => {
             isActive.value = false
         }, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS)

@@ -203,7 +203,7 @@ function onAfterLeave(el: Element) {
             :tabindex="disabled ? -1 : 0"
             @click="handleTriggerClick"
             @keydown.enter="handleTriggerClick"
-            @keydown.space="handleTriggerClick"
+            @keydown.space.prevent="handleTriggerClick"
         >
             <span class="flex items-center gap-2 truncate">
                 <slot name="title">{{ title }}</slot>
@@ -230,11 +230,10 @@ function onAfterLeave(el: Element) {
         </Transition>
 
         <!-- Horizontal absolute dropdown overlays -->
-        <ul
-            v-else-if="isOpened"
-            class="absolute top-full left-0 z-50 mt-1.5 min-w-[200px] border-3 border-brutal bg-brutal-bg p-1.5 shadow-brutal rounded-brutal flex flex-col gap-1 list-none"
-        >
-            <slot />
-        </ul>
+        <div v-else-if="isOpened" class="absolute top-full left-0 z-50 pt-1.5">
+            <ul class="min-w-[200px] border-3 border-brutal bg-brutal-bg p-1.5 shadow-brutal rounded-brutal flex flex-col gap-1 list-none">
+                <slot />
+            </ul>
+        </div>
     </li>
 </template>

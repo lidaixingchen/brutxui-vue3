@@ -222,7 +222,9 @@ const recalculatePosition = (): void => {
     updatePopoverPosition()
 }
 
+let positionRequestId = 0
 const updatePosition = async (): Promise<void> => {
+    const requestId = ++positionRequestId
     const step = props.steps[currentStep.value]
     if (!step) {
         return
@@ -239,6 +241,8 @@ const updatePosition = async (): Promise<void> => {
     el.scrollIntoView(props.scrollIntoViewOptions || { block: 'center', inline: 'nearest' })
 
     await nextTick()
+
+    if (requestId !== positionRequestId) return
 
     const rect = el.getBoundingClientRect()
     highlightRect.value = {
@@ -321,6 +325,13 @@ const handleNextOrFinish = (): void => {
 const handleKeyDown = (e: KeyboardEvent): void => {
     if (!isOpen.value) {
         return
+    }
+    const target = e.target as HTMLElement
+    if (target) {
+        const tag = target.tagName
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) {
+            return
+        }
     }
     if (e.key === 'Escape') {
         e.preventDefault()

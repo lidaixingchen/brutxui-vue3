@@ -74,7 +74,7 @@ function handleClick() {
         :tabindex="disabled ? -1 : 0"
         @click="handleClick"
         @keydown.enter="handleClick"
-        @keydown.space="handleClick"
+        @keydown.space.prevent="handleClick"
     >
         <slot />
     </li>
