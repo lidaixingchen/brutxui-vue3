@@ -96,7 +96,7 @@ export const AVAILABLE_COMPONENTS = Object.keys(COMPONENT_REGISTRY);
 export const COMPONENTS_BY_CATEGORY: Record<ComponentCategory, string[]> = createComponentsByCategory();
 
 export function getComponentsByCategory(category: ComponentCategory): string[] {
-    return COMPONENTS_BY_CATEGORY[category];
+    return [...COMPONENTS_BY_CATEGORY[category]];
 }
 
 function createComponentRegistry(): Record<string, ComponentRegistryEntry> {
@@ -116,7 +116,11 @@ function createComponentRegistry(): Record<string, ComponentRegistryEntry> {
             title: meta.title ?? formatTitle(name),
             description: meta.description ?? `A highly customizable neo-brutalist ${formatTitle(name)} component built with Brutx design tokens for Vue 3.`,
             category: meta.category ?? inferCategory(name),
-            examples: meta.examples ?? [],
+            examples: [...(meta.examples ?? [])],
+            dependencies: [...meta.dependencies],
+            files: [...fileMapping.files],
+            composables: fileMapping.composables ? [...fileMapping.composables] : fileMapping.composables,
+            directives: fileMapping.directives ? [...fileMapping.directives] : fileMapping.directives,
         };
     }
 
@@ -171,6 +175,7 @@ function createComponentsByCategory(): Record<ComponentCategory, string[]> {
     };
 
     for (const entry of Object.values(COMPONENT_REGISTRY)) {
+        if (entry.kind === 'block') continue;
         groups[entry.category].push(entry.name);
     }
 

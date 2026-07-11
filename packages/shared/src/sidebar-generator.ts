@@ -205,6 +205,27 @@ function buildGroup(
     }
 }
 
+function buildFallbackGroup(
+    entries: ComponentRegistryEntry[],
+    validGroups: Set<SidebarGroup>,
+    locale: SidebarLocale,
+): SidebarItem | null {
+    const orphanedEntries = entries
+        .filter(entry => !validGroups.has(resolveSidebarGroup(entry)))
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .map(entry => ({
+            text: getItemText(entry, locale),
+            link: getItemLink(entry, locale),
+        }))
+
+    if (orphanedEntries.length === 0) return null
+
+    return {
+        text: locale === 'en' ? 'Other' : '其他',
+        items: orphanedEntries,
+    }
+}
+
 export function generateComponentsSidebar(locale: SidebarLocale): SidebarItem[] {
     const overviewText = locale === 'en' ? 'Overview' : '组件总览'
     const overviewLink = locale === 'en' ? '/en/components/' : '/components/'
@@ -213,13 +234,17 @@ export function generateComponentsSidebar(locale: SidebarLocale): SidebarItem[] 
         .filter(entry => entry.kind !== 'block')
         .filter(entry => entry.docsHidden !== true)
 
+    const validGroups = new Set(COMPONENT_GROUP_ORDER)
     const groups = COMPONENT_GROUP_ORDER
         .map(group => buildGroup(group, entries, locale))
         .filter((group): group is SidebarItem => group !== null)
 
+    const fallback = buildFallbackGroup(entries, validGroups, locale)
+
     return [
         { text: overviewText, link: overviewLink },
         ...groups,
+        ...(fallback ? [fallback] : []),
     ]
 }
 
@@ -231,12 +256,16 @@ export function generateBlocksSidebar(locale: SidebarLocale): SidebarItem[] {
         .filter(entry => entry.kind === 'block')
         .filter(entry => entry.docsHidden !== true)
 
+    const validGroups = new Set(BLOCK_GROUP_ORDER)
     const groups = BLOCK_GROUP_ORDER
         .map(group => buildGroup(group, entries, locale))
         .filter((group): group is SidebarItem => group !== null)
 
+    const fallback = buildFallbackGroup(entries, validGroups, locale)
+
     return [
         { text: overviewText, link: overviewLink },
         ...groups,
+        ...(fallback ? [fallback] : []),
     ]
 }
