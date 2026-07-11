@@ -21,7 +21,7 @@ export interface ResizableDialogOptions {
 }
 
 export interface UseDialogEnhancedOptions extends DraggableDialogOptions, ResizableDialogOptions {
-    beforeClose?: ((done: () => void) => void) | (() => boolean | Promise<boolean>)
+    beforeClose?: () => boolean | Promise<boolean>
     onOpen?: () => void
     onClose?: () => void
     onUpdateOpen?: (value: boolean) => void
@@ -269,18 +269,9 @@ export function useDialogEnhanced(
             return
         }
 
-        // Detect mode: callback mode (parameter length > 0) or Promise mode
-        if (opt.beforeClose.length > 0) {
-            // Callback mode
-            (opt.beforeClose as (done: () => void) => void)(() => {
-                performClose()
-            })
-        } else {
-            // Promise mode
-            const result = await (opt.beforeClose as () => boolean | Promise<boolean>)()
-            if (result !== false) {
-                performClose()
-            }
+        const result = await opt.beforeClose()
+        if (result !== false) {
+            performClose()
         }
     }
 

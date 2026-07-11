@@ -749,34 +749,6 @@ describe('DialogEnhanced', () => {
             expect(wrapper.emitted('update:open')![0]).toEqual([false])
         })
 
-        it('callback mode: calls done to close', async () => {
-            const beforeClose = vi.fn((done: () => void) => {
-                done()
-            })
-            const wrapper = mountDialog({ beforeClose })
-
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
-            await nextTick()
-
-            expect(beforeClose).toHaveBeenCalledTimes(1)
-            expect(wrapper.emitted('close')).toBeTruthy()
-            expect(wrapper.emitted('update:open')![0]).toEqual([false])
-        })
-
-        it('callback mode: does not close when done is never called', async () => {
-            const beforeClose = vi.fn((_done: () => void) => {
-                /* intentionally not calling done */
-            })
-            const wrapper = mountDialog({ beforeClose })
-
-            await wrapper.find('[data-testid="close-button"]').trigger('click')
-            await nextTick()
-
-            expect(beforeClose).toHaveBeenCalledTimes(1)
-            expect(wrapper.emitted('close')).toBeUndefined()
-            expect(wrapper.emitted('update:open')).toBeUndefined()
-        })
-
         it('promise mode: closes when function returns true', async () => {
             const beforeClose = vi.fn(() => true)
             const wrapper = mountDialog({ beforeClose })

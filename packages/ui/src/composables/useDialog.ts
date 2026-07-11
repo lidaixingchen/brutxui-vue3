@@ -17,6 +17,9 @@ export function useDialog(): UseDialogReturn {
     let currentInstance: DialogInstance | null = null
 
     const show = (options?: ShowDialogOptions): DialogInstance => {
+        if (currentInstance) {
+            currentInstance.close()
+        }
         const instance = showDialog(options)
         currentInstance = instance
         isOpen.value = true

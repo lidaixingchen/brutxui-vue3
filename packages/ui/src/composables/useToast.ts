@@ -1,8 +1,9 @@
 import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey, type Ref } from 'vue'
-import { isClient } from '../lib/env'
 import { MAX_TOASTS } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
+import { isClient } from '../lib/env'
+
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
 
@@ -92,11 +93,12 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
                 newToasts[existingIndex] = updatedToast
                 toasts.value = newToasts
 
-                const duration = toast.duration ?? existing.duration ?? DEFAULT_TOAST_DURATION
+                const duration = updatedToast.duration ?? DEFAULT_TOAST_DURATION
                 if (duration > 0 && isClient) {
                     const timerId = window.setTimeout(() => removeToast(existing.id), duration)
                     timerMap.set(existing.id, timerId)
                 }
+
                 return existing.id
             }
         }
@@ -110,11 +112,13 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
             toasts.value = toasts.value.slice(1)
         }
         toasts.value = [...toasts.value, { ...toast, id, count: toast.count ?? 1 }]
+
         const duration = toast.duration ?? DEFAULT_TOAST_DURATION
         if (duration > 0 && isClient) {
             const timerId = window.setTimeout(() => removeToast(id), duration)
             timerMap.set(id, timerId)
         }
+
         return id
     }
 

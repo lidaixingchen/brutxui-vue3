@@ -43,7 +43,7 @@ export interface ShowDialogOptions {
     showCloseButton?: boolean
     forceMount?: boolean
     fullscreen?: boolean
-    beforeClose?: ((done: () => void) => void) | (() => boolean | Promise<boolean>)
+    beforeClose?: () => boolean | Promise<boolean>
     destroyOnClose?: boolean
     zIndex?: number
     class?: string
@@ -243,7 +243,7 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
     const isOpen = ref(true)
     const inputValue = ref(options.inputValue || '')
     const hasValidationError = ref(false)
-    const errorMessage = ref(options.inputErrorMessage || '输入格式不正确')
+    const errorMessage = ref(options.inputErrorMessage || '')
 
     let resolvePromise: (value: { value: string } | undefined) => void
     let rejectPromise: (reason?: unknown) => void
@@ -290,13 +290,17 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
 
     const component = defineComponent({
         setup() {
-            const { locale } = useLocale()
+            const { locale, t } = useLocale()
             const isZh = computed(() => {
                 return locale.value.dialog.close === '关闭'
             })
 
             const defaultConfirmText = computed(() => isZh.value ? '确定' : 'Confirm')
             const defaultCancelText = computed(() => isZh.value ? '取消' : 'Cancel')
+
+            if (!options.inputErrorMessage) {
+                errorMessage.value = t('dialog.inputError')
+            }
 
             return () => {
                 return h(DialogRoot, {

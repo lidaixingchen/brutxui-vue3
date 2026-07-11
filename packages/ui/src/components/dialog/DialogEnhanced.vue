@@ -30,8 +30,8 @@ interface DialogEnhancedProps {
     forceMount?: boolean
     /** 真正全屏模式 */
     fullscreen?: boolean
-    /** 关闭前钩子（支持回调模式和 Promise 模式） */
-    beforeClose?: ((done: () => void) => void) | (() => boolean | Promise<boolean>)
+    /** 关闭前钩子 */
+    beforeClose?: () => boolean | Promise<boolean>
     /** 关闭后销毁内容 */
     destroyOnClose?: boolean
     /** 自定义层级 */

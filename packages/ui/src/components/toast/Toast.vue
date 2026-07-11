@@ -72,6 +72,7 @@ function pauseTimer() {
 }
 
 function resumeTimer() {
+    if (!props.duration) return
     if (isLeaving.value || timer.value) return
     if (remainingTime.value <= 0) {
         startLeave()

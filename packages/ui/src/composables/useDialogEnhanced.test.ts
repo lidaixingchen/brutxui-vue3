@@ -652,32 +652,6 @@ describe('useDialogEnhanced', () => {
         expect(onUpdateOpen).toHaveBeenCalledWith(false)
     })
 
-    it('handleClose with callback-mode beforeClose', async () => {
-        const onClose = vi.fn()
-        const onUpdateOpen = vi.fn()
-        const beforeClose = vi.fn((done: () => void) => {
-            done()
-        })
-        const { result } = createWrapper({ beforeClose, onClose, onUpdateOpen })
-        await result.handleClose()
-        expect(beforeClose).toHaveBeenCalledTimes(1)
-        expect(onClose).toHaveBeenCalledTimes(1)
-        expect(onUpdateOpen).toHaveBeenCalledWith(false)
-    })
-
-    it('handleClose with callback-mode beforeClose that does NOT call done', async () => {
-        const onClose = vi.fn()
-        const onUpdateOpen = vi.fn()
-        const beforeClose = vi.fn((_done: () => void) => {
-            // Intentionally not calling done
-        })
-        const { result } = createWrapper({ beforeClose, onClose, onUpdateOpen })
-        await result.handleClose()
-        expect(beforeClose).toHaveBeenCalledTimes(1)
-        expect(onClose).not.toHaveBeenCalled()
-        expect(onUpdateOpen).not.toHaveBeenCalled()
-    })
-
     it('handleClose with promise-mode beforeClose that returns true', async () => {
         const onClose = vi.fn()
         const onUpdateOpen = vi.fn()

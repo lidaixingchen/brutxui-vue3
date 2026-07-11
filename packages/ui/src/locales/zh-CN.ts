@@ -90,6 +90,7 @@ export const zhCN: Locale = {
     },
     dialog: {
         close: '关闭',
+        inputError: '输入格式不正确',
     },
     sheet: {
         close: '关闭',

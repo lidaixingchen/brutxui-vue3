@@ -90,6 +90,7 @@ export const en: Locale = {
     },
     dialog: {
         close: 'Close',
+        inputError: 'Invalid input format',
     },
     sheet: {
         close: 'Close',
