@@ -473,7 +473,7 @@ describe('remove command', () => {
 
             await remove(['button'], { cwd: tmpDir, silent: true, yes: true });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://custom.example.test/registry');
+            expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://custom.example.test/registry', true);
             const warnMessages = getLoggedMessages(warnSpy);
             expect(warnMessages.some(m => m.includes('card') && m.includes('depends on') && m.includes('button'))).toBe(true);
         });
