@@ -11,6 +11,8 @@
     "prismjs"
   ],
   "registryDependencies": [
+    "copy-to-clipboard",
+    "button",
     "locale-zh-cn"
   ],
   "files": [

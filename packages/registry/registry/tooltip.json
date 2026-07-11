@@ -12,6 +12,11 @@
   "registryDependencies": [],
   "files": [
     {
+      "path": "components/ui/tooltip/TooltipProvider.vue",
+      "content": "<script setup lang=\"ts\">\nimport type { TooltipProviderProps } from 'reka-ui'\nimport { TooltipProvider as TooltipProviderPrimitive, useForwardProps } from 'reka-ui'\n\nconst DEFAULT_DELAY_DURATION = 400\n\nconst props = withDefaults(defineProps<TooltipProviderProps>(), {\n    delayDuration: DEFAULT_DELAY_DURATION,\n})\n\nconst forwardedProps = useForwardProps(props)\n</script>\n\n<template>\n    <TooltipProviderPrimitive v-bind=\"forwardedProps\">\n        <slot />\n    </TooltipProviderPrimitive>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
       "path": "components/ui/tooltip/TooltipContent.vue",
       "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { TooltipPortal, TooltipContent as TooltipContentPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { floatingContentSideOffsets } from '@/lib/floating-content-variants'\nimport { tooltipContentVariants } from '@/components/ui/tooltip/tooltip-variants'\n\ndefineOptions({ inheritAttrs: false })\n\ninterface TooltipContentProps {\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TooltipContentProps>(), {\n    sideOffset: floatingContentSideOffsets.tooltip,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(tooltipContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <TooltipPortal>\n        <TooltipContentPrimitive v-bind=\"$attrs\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </TooltipContentPrimitive>\n    </TooltipPortal>\n</template>\n",
       "type": "registry:ui"
@@ -113,5 +118,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-e95d20072fe569f5d8fc30f84d916c2886ceb4715770566d645d1af0ff8a6e3d"
+  "integrity": "sha256-15d7e470989c85710f41e02d319d65b15e7b9b77609025cde2a8e9e05c1e98cc"
 }

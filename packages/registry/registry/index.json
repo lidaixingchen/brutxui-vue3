@@ -108,7 +108,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-705d0d9b56b2413aa334c3c3fc07b44b644a0eab0c67901ae25ab5682b3b142f"
+      "integrity": "sha256-54cdbd4f683c559f9e6dad45ba15ae796b077ac695430bd3baff449b5af0e0d1"
     },
     {
       "name": "alert",
@@ -739,7 +739,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f73c650646234e8e76b2b7130959b319b5250b2f48f796fc0a9a56e2c4c4532c"
+      "integrity": "sha256-8b80bf1b1bb0c3874265ff91bdde95e23616f0f26019eee3a5674432e5cceed1"
     },
     {
       "name": "calendar",
@@ -859,7 +859,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f45fb77dd38acb42ae932c9f88613f7d5c7241382ca6a15b9c83d96e2fe69b48"
+      "integrity": "sha256-230c2f7c843f8a0489a269afc1a155c1e0e0004c26e8404b8188048d9d5ce1b2"
     },
     {
       "name": "card",
@@ -1140,7 +1140,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-74770a7973134e5a72f74a68bb04a083705856959e1b58434c6b7008c393b107"
+      "integrity": "sha256-863fd748bf76d1ccfeeeb7723d5bf2fde570f62e5c74e491302eed4fda3c9012"
     },
     {
       "name": "checkbox",
@@ -1404,7 +1404,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-0fd69ce5119604513231121af9231a8f2526b1fd46db95f6f2e44577febd6361"
+      "integrity": "sha256-c0431d9882c2b5dbc6f25f18614e283c449a7aec54494cd41e60be876e4ebef6"
     },
     {
       "name": "command",
@@ -1734,7 +1734,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6349b9238d85b55c8b6aec6959b50e9fa7d9509b5bf7be966fabd2c31ebd33aa"
+      "integrity": "sha256-6222cf57a66d4db99f4bb70e392f6d25a9c5833de02f1ff7a4bf3db505fe215f"
     },
     {
       "name": "dropdown-menu",
@@ -2017,7 +2017,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-781c6dc7fc46f337d3c2d485f85e419dbc1d4a8a58abcc0243ab770e16ddf959"
+      "integrity": "sha256-fc6c7471961844b6b54c4e4705616442b7cb5dab2a059c0d39a63abbf3f160f6"
     },
     {
       "name": "image",
@@ -2495,12 +2495,24 @@
       "registryDependencies": [],
       "files": [
         {
+          "path": "components/ui/popover/Popover.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/popover/PopoverTrigger.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/popover/PopoverContent.vue",
           "type": "registry:ui"
         },
         {
           "path": "components/ui/popover/popover-variants.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/popover/index.ts",
+          "type": "registry:ui"
         },
         {
           "path": "lib/floating-content-variants.ts",
@@ -2597,7 +2609,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-f94aed9d9db47c14a03923fb31ebc8f9bf46c3cc9a001a70c48b202b1cdfcae9"
+      "integrity": "sha256-b493be3e461ee52f87c21b2be8c4dd321419f7b1573eca15579381019d434b96"
     },
     {
       "name": "scroll-area",
@@ -2864,7 +2876,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1c57cfef86aa3c1df365e104ab3cfbea65a1497183d1d30e9927aa6188a87eeb"
+      "integrity": "sha256-5dcbf8a57555d54f5ede63e9c9ec72f0e3e1a937f40263cac18d73268cae6e9a"
     },
     {
       "name": "separator",
@@ -3492,9 +3504,15 @@
         "reka-ui"
       ],
       "registryDependencies": [
+        "card",
+        "result",
         "locale-zh-cn"
       ],
       "files": [
+        {
+          "path": "components/ui/tabs/Tabs.vue",
+          "type": "registry:ui"
+        },
         {
           "path": "components/ui/tabs/TabsContent.vue",
           "type": "registry:ui"
@@ -3610,7 +3628,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-74f1abe9211ef012d20e2806764a38cec85d1cb258ff5cea901e65b6eee8eb4a"
+      "integrity": "sha256-b355a6a86b51a4e3ec378f241ed5117c3e38316dbb97a8cf6d4e0b493379a6e8"
     },
     {
       "name": "textarea",
@@ -3728,7 +3746,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-42cd55b250ad45309c6c124e40e737b9a12b03a27b10d7faed2959f44d44b823"
+      "integrity": "sha256-1a02d4996ea6eca729cc5f672b669070351967d151afa9cb66f0ab28421ce56b"
     },
     {
       "name": "toast",
@@ -3864,7 +3882,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-30dae1b986c0052b9a4a5f7cc6632015797b1422ec458163259f931e0040429b"
+      "integrity": "sha256-7c16d119f38d04ebd3e641d1d31d99257c757a252a527d1268ed63db06c59912"
     },
     {
       "name": "tooltip",
@@ -3878,6 +3896,10 @@
       ],
       "registryDependencies": [],
       "files": [
+        {
+          "path": "components/ui/tooltip/TooltipProvider.vue",
+          "type": "registry:ui"
+        },
         {
           "path": "components/ui/tooltip/TooltipContent.vue",
           "type": "registry:ui"
@@ -3977,7 +3999,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-e95d20072fe569f5d8fc30f84d916c2886ceb4715770566d645d1af0ff8a6e3d"
+      "integrity": "sha256-15d7e470989c85710f41e02d319d65b15e7b9b77609025cde2a8e9e05c1e98cc"
     },
     {
       "name": "form",
@@ -4140,7 +4162,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-476e1cf85654057782f8f97e94a5a6a33e108bf6bb5219b5f37061218f5d7a41"
+      "integrity": "sha256-f31693d91f6b52d8f98b0eaa8ba8f0bc90c82cd36fe0578964ca6405b601ec7e"
     },
     {
       "name": "alert-dialog",
@@ -6389,7 +6411,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-8e09dd630d8fbe5e7c25ae35db42990a41661b8b3dacb2e643674f2bc816635e"
+      "integrity": "sha256-e1290bb002babcdb337f789fe88bd74ffc487cccf03f9c7bd62174ccd0162956"
     },
     {
       "name": "before-after",
@@ -6530,6 +6552,8 @@
         "prismjs"
       ],
       "registryDependencies": [
+        "copy-to-clipboard",
+        "button",
         "locale-zh-cn"
       ],
       "files": [
@@ -6937,7 +6961,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-69648d2370a6efa7370dc869bd52ff86fe59b1d703871c0caefde6e5b6571c8a"
+      "integrity": "sha256-2387515a999ae4a0d3f5cfcee9e0462cf72f8e863ac9b4aa68f164ed84ffd546"
     },
     {
       "name": "tree-view",
@@ -7078,7 +7102,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-5814620ea2b0324db915e7a40723d6e0f0df6b05dc558f6d1c5fc2630d0a1d2a"
+      "integrity": "sha256-3ed856ecae1fcd46eec8ec0dbd74151516fd80d760df661e6ae57621115cc653"
     },
     {
       "name": "kanban",
@@ -7219,10 +7243,16 @@
         "reka-ui",
         "@lucide/vue"
       ],
-      "registryDependencies": [],
+      "registryDependencies": [
+        "locale-zh-cn"
+      ],
       "files": [
         {
           "path": "components/ui/chat-bubble/ChatBubble.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/chat-bubble/ChatContainer.vue",
           "type": "registry:ui"
         },
         {
@@ -7232,6 +7262,10 @@
         {
           "path": "components/ui/chat-bubble/types.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
         }
       ],
       "tailwind": {
@@ -7320,7 +7354,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d6908fe2e38817c1ff5a778334c78f464d033b27cb4057f969355125ada4b3ae"
+      "integrity": "sha256-07aae0628336b63242382feb6af983dc3f4a949e78dba4d87b04e5611dd04b8a"
     },
     {
       "name": "kbd",
@@ -7546,7 +7580,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-bded685578756942923f720201d485e3fd068e38840d0a2d26af9b69158af9f6"
+      "integrity": "sha256-3168b3921963de32218064380e2d4d52b72c1cc68b44ccb2f230da360ceff0cc"
     },
     {
       "name": "stepper",
@@ -7794,7 +7828,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-200a3e91e263fa627d38a969e5ba7ddb131fbb926b770b10cd04bda9da6c3f4c"
+      "integrity": "sha256-d8207b577f6708574c2e1cf7a1e41836e846d7e724fd96f223ccd1d3a0e3ff07"
     },
     {
       "name": "glitch-text",
@@ -7917,7 +7951,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a08e1dfc2268bfc0e825796723a09e4faa487ed3c14654820ba7eb29febc3109"
+      "integrity": "sha256-0215576d34aecbd80cb2d5885ff80d3e53e899e04e12e83c9e3962eed0150246"
     },
     {
       "name": "scratch-card",
@@ -8050,7 +8084,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-fddcf5c875d490cf40e0e244c33679c33c070f7b5fe370fad9dd0e61e95b9442"
+      "integrity": "sha256-20f6a54e956eceac7c31dddbaa5db65c0363875a49d39a33439339f2d855dcdf"
     },
     {
       "name": "sketchy-chart",
@@ -8167,7 +8201,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2a343c498031e2d31ff9cbe66cb96566fc35e1fbba7764a747322af6d68c2498"
+      "integrity": "sha256-5f6232a6a1eef3ea3c3b6720da7687d42a00d1094dd80ddddf06811677676b03"
     },
     {
       "name": "hardcore-input",
@@ -8298,7 +8332,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-2733c822b43665a3293a766a8f5777442709714ae2fbf7a1fe62357a68cedfbc"
+      "integrity": "sha256-e1bb605a2dfa180525be1c5ff39082fa42ac15c251451dee7eb287fe0a7fc23a"
     },
     {
       "name": "header-section",
@@ -8942,7 +8976,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-6e4518c5ca18cb8ffd3b1a2a7fb0e0be3925b2961387b5a746a2a5711f711b2c"
+      "integrity": "sha256-e120a9eedffcec2647e61e065b808ffa43ea61bef82944bc2b8f299cb66a6b2b"
     },
     {
       "name": "date-picker",
@@ -9142,7 +9176,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-24eecb2af919c818855ecc2edd614d299e0c4fbaf92b4650cad8d40ba2dd00b0"
+      "integrity": "sha256-12fd7cd846df86ffa3081e320e2b0544b132762f1719cf137e11efd5089bc918"
     },
     {
       "name": "color-mode-switcher",
@@ -9424,7 +9458,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-36fb7951373a672c9e143ad296aedd69e170a45f68f7195c7b89b52e718ffa8f"
+      "integrity": "sha256-ba4351bc048fa1e9437e6eda521704f048f5fcba9eb29a6d6f4833667e29e867"
     },
     {
       "name": "tree-select",
@@ -9582,7 +9616,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-d74c88e5f7812dcbafa3abc387c56e647ae109a113c1844583e1a5f3d37ec58a"
+      "integrity": "sha256-97345e1c1f917ac9c91decccdc149707be3aa432ff3a2baf0f6d21d6f8ba45dc"
     },
     {
       "name": "typewriter-text",
@@ -10062,7 +10096,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-1773a36f430d2698ab8e8798983f39b2961c4bba4fd5b5b156fa84abec4f645d"
+      "integrity": "sha256-e02605d193483259db23fe49b2e0115ba795caaf0a994e78685e8062e8713cca"
     },
     {
       "name": "popconfirm",
@@ -10399,7 +10433,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-648c0f3c66f8ee70d185ec35d8d4f737cbcda387f47b9e9ba01251f39bf969b6"
+      "integrity": "sha256-d0446d08017aaaee77aca33c24ad7a9525342f90d9a78545caf691e1cd172e5a"
     },
     {
       "name": "transfer",
@@ -10631,7 +10665,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-c62d90d0e289bbbed3edb2381b95de9e14790da42bdbe37c51dadb42b756da9c"
+      "integrity": "sha256-a0b921f69962e0671c8ad72dc4bcff6bf0b2a86604868d9e6fd9666b19de725d"
     },
     {
       "name": "result",
@@ -10968,7 +11002,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-82b2acb9da12470fa6e335f2145789a09cfd2f2de23675a779951fa56098c721"
+      "integrity": "sha256-5b96dd92025be6a327f7568ddc938fb05c327a66202160fc4e8d7320d6df70bd"
     },
     {
       "name": "message",
@@ -11104,7 +11138,7 @@
           "brutal-placeholder": "#6B7280"
         }
       },
-      "integrity": "sha256-a45a9ac47132f87f67b66064a1eb22542d5a1d802e987fbf4c44bf04bf16bc90"
+      "integrity": "sha256-83fed7a732d816bbab6b2d6f1b1f6bd5c9c642e8713a2fab0e4c486ca58bb199"
     }
   ]
 }

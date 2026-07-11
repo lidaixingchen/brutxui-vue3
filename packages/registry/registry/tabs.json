@@ -10,9 +10,16 @@
     "reka-ui"
   ],
   "registryDependencies": [
+    "card",
+    "result",
     "locale-zh-cn"
   ],
   "files": [
+    {
+      "path": "components/ui/tabs/Tabs.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed, provide, ref, type ComputedRef } from 'vue'\nimport { TabsRoot } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { useLocale } from '@/composables/useLocale'\nimport TabsList from '@/components/ui/tabs/TabsList.vue'\nimport TabsTrigger from '@/components/ui/tabs/TabsTrigger.vue'\nimport TabsContent from '@/components/ui/tabs/TabsContent.vue'\nimport Card from '@/components/ui/card/Card.vue'\nimport Result from '@/components/ui/result/Result.vue'\nimport type { TabItem } from '@/components/ui/tabs/types'\n\nexport type { TabItem }\n\ninterface TabsProps {\n    modelValue?: string\n    tabs?: TabItem[]\n    orientation?: 'horizontal' | 'vertical'\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TabsProps>(), {\n    modelValue: undefined,\n    tabs: undefined,\n    orientation: 'horizontal',\n    class: undefined,\n})\n\nconst emit = defineEmits<{ 'update:modelValue': [value: string] }>()\n\nconst { t } = useLocale()\n\nconst orientation = computed(() => props.orientation)\nprovide<ComputedRef<'horizontal' | 'vertical'>>('brutx-tabs-orientation', orientation)\n\nconst internalValue = ref<string>('')\n\nconst activeValue = computed<string | undefined>(() => {\n    if (props.modelValue !== undefined) return props.modelValue\n    if (props.tabs && props.tabs.length > 0) {\n        return internalValue.value || props.tabs[0].value\n    }\n    return undefined\n})\n\nfunction handleUpdateModelValue(value: string) {\n    internalValue.value = value\n    emit('update:modelValue', value)\n}\n\nconst wrapperClasses = computed(() => cn('w-full max-w-4xl mx-auto', props.class))\n</script>\n\n<template>\n    <div v-if=\"tabs && tabs.length > 0\" :class=\"wrapperClasses\">\n        <slot name=\"header\" />\n\n        <TabsRoot\n            :model-value=\"activeValue\"\n            :orientation=\"orientation\"\n            class=\"w-full\"\n            @update:model-value=\"handleUpdateModelValue\"\n        >\n            <TabsList class=\"w-full flex\">\n                <TabsTrigger\n                    v-for=\"tab in tabs\"\n                    :key=\"tab.value\"\n                    :value=\"tab.value\"\n                    class=\"flex-1\"\n                >\n                    {{ tab.label }}\n                </TabsTrigger>\n            </TabsList>\n\n            <slot>\n                <TabsContent\n                    v-for=\"tab in tabs\"\n                    :key=\"tab.value\"\n                    :value=\"tab.value\"\n                >\n                    <Card variant=\"flat\">\n                        <p class=\"text-brutal-muted-foreground font-medium\">\n                            {{ tab.label }}\n                        </p>\n                    </Card>\n                </TabsContent>\n            </slot>\n        </TabsRoot>\n\n        <slot name=\"footer\" />\n    </div>\n\n    <div v-else-if=\"tabs && tabs.length === 0\" :class=\"wrapperClasses\">\n        <slot name=\"header\" />\n        <Result status=\"empty\" :title=\"t('tabs.emptyTitle')\" />\n        <slot name=\"footer\" />\n    </div>\n\n    <TabsRoot\n        v-else\n        :model-value=\"modelValue\"\n        :orientation=\"orientation\"\n        :class=\"cn(props.class)\"\n        @update:model-value=\"(val) => { if (typeof val === 'string') emit('update:modelValue', val) }\"\n    >\n        <slot />\n    </TabsRoot>\n</template>\n",
+      "type": "registry:ui"
+    },
     {
       "path": "components/ui/tabs/TabsContent.vue",
       "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { TabsContent as TabsContentPrimitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { tabsContentVariants } from '@/components/ui/tabs/tabs-variants'\n\ninterface TabsContentProps {\n    value: string\n    class?: string\n}\n\nconst props = defineProps<TabsContentProps>()\n\nconst classes = computed(() =>\n    cn(tabsContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <TabsContentPrimitive :value=\"value\" :class=\"classes\">\n        <slot />\n    </TabsContentPrimitive>\n</template>\n",
@@ -135,5 +142,5 @@
       "brutal-placeholder": "#6B7280"
     }
   },
-  "integrity": "sha256-74f1abe9211ef012d20e2806764a38cec85d1cb258ff5cea901e65b6eee8eb4a"
+  "integrity": "sha256-b355a6a86b51a4e3ec378f241ed5117c3e38316dbb97a8cf6d4e0b493379a6e8"
 }
