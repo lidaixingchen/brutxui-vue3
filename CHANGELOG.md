@@ -5,7 +5,36 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.3...HEAD)
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.4...HEAD)
+
+## [0.9.4](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.3...v0.9.4) - 2026-07-12
+
+### ⚠️ Breaking Changes
+
+* **ui/popup:** 解决 Toast 定时器冲突、Dialog 内存泄漏并废止回调式 beforeClose 接口。beforeClose 接口不再接收 done 回调参数，需改写为返回 boolean 或 Promise<boolean> ([81d4358](https://github.com/lidaixingchen/brutxui-vue3/commit/81d43589bd1e86ffe7ac3232230a4471627d91b4))
+
+### 📦 Build
+
+* **registry:** 重新生成组件注册表及清单产物 ([294bac0](https://github.com/lidaixingchen/brutxui-vue3/commit/294bac0cb9da2a3c640d7e8189e13384ccf3f88b))
+
+### 🐛 Bug Fixes
+
+* **registry:** 修复构建脚本正则重写过度、Locale依赖及哈希计算不一致问题 ([cc142c3](https://github.com/lidaixingchen/brutxui-vue3/commit/cc142c3fdfe14d890c1d7511563731a9b0edb88d))
+* **ui:** 提取 DataTable 的魔法数字为默认常量 ([0640071](https://github.com/lidaixingchen/brutxui-vue3/commit/0640071ecc5acde132722a98b84d6d09587881ad))
+* **cli:** 修复安全漏洞、事务回滚失效、多选项目录匹配及路径匹配假阳性问题 ([3aa8348](https://github.com/lidaixingchen/brutxui-vue3/commit/3aa834808eab2d0898a20cf2982fdd56c3196bf0))
+* **shared:** 修复组件文件遗漏、分类数据混淆及侧边栏分组问题 ([5167691](https://github.com/lidaixingchen/brutxui-vue3/commit/5167691bb77b73cf83c526887beab7dc6b15f40f))
+* **ui/interaction:** 修复 Counter 缩放、Tour 全局按键拦截及其他交互组件的 boundary 问题 ([10e7572](https://github.com/lidaixingchen/brutxui-vue3/commit/10e757277eca4b6afd4892a4653a34f140a3366c))
+* **ui/upload:** 解决 Upload 组件重试上传竞态与进度更新时的频繁重渲染性能问题 ([e8da15d](https://github.com/lidaixingchen/brutxui-vue3/commit/e8da15dea68b45cd689eedaa160cdb00d17c2b2a))
+* **ui/form:** 修复 FormControl 属性丢失、FormWizard 步骤失效及输入类组件的 A11y/IME 问题 ([8f055a9](https://github.com/lidaixingchen/brutxui-vue3/commit/8f055a926dfedcd5cfb5cd24a110841d5480b68a))
+* **ui/data-table:** 修复 DataTable 单元格合并失效及系列交互、性能问题 ([7de59fd](https://github.com/lidaixingchen/brutxui-vue3/commit/7de59fd3cfd418d37e647dcdd1b8d0049527d594))
+
+### 📝 Documentation
+
+* **review:** 新增 UI 与辅助包 Bug 扫描报告 ([cc1bf10](https://github.com/lidaixingchen/brutxui-vue3/commit/cc1bf10d16c36a9b09e182b8b0ccc3ec40f3bf1e))
+
+### ✅ Tests
+
+* **cli:** 修复 remove 命令测试中 mockedGetItem 调用的断言参数不一致问题 ([ba645ac](https://github.com/lidaixingchen/brutxui-vue3/commit/ba645ac8))
 
 ## [0.9.3](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.2...v0.9.3) - 2026-07-09
 
