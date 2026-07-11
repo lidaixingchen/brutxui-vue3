@@ -158,6 +158,18 @@ export const HARDCORE_INPUT_SHAKE_DELAY_MS = 10
 /** Default page size when no pageSize prop is provided */
 export const DEFAULT_PAGE_SIZE = 10
 
+/** Fallback column width (px) when column.width is not a number */
+export const DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX = 150
+
+/** Width (px) of the expand toggle column */
+export const DATA_TABLE_EXPAND_COLUMN_WIDTH_PX = 40
+
+/** Width (px) of the selection checkbox column */
+export const DATA_TABLE_SELECT_COLUMN_WIDTH_PX = 48
+
+/** Fallback row height (px) for virtual scroll when rowHeight is 'auto' or undefined */
+export const DATA_TABLE_ROW_HEIGHT_FALLBACK_PX = 48
+
 // ── Carousel ──────────────────────────────────────────────────
 
 /** Default autoplay delay in milliseconds */
