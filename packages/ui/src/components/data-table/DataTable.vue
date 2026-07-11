@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
 import { computed, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
-import { DEFAULT_PAGE_SIZE_OPTIONS } from '@/lib/defaults'
+import { DEFAULT_PAGE_SIZE_OPTIONS, DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX, DATA_TABLE_EXPAND_COLUMN_WIDTH_PX, DATA_TABLE_SELECT_COLUMN_WIDTH_PX, DATA_TABLE_ROW_HEIGHT_FALLBACK_PX } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
 import { useDataTableSort } from '@/composables/useDataTableSort'
@@ -89,9 +89,7 @@ if (props.expandRowKeys) {
 }
 
 watch(() => props.expandRowKeys, (newKeys) => {
-    if (newKeys) {
-        expandedRowKeys.value = new Set(newKeys)
-    }
+    expandedRowKeys.value = newKeys ? new Set(newKeys) : new Set()
 }, { deep: true })
 
 // 获取行的唯一 key（复用 selection.getRowKey 的兜底逻辑）
@@ -127,15 +125,32 @@ function getFixedColumnOffset(column: DataTableColumn<T>, side: 'left' | 'right'
     let offset = 0
     for (let i = 0; i < index; i++) {
         const w = cols[i].width
-        offset += typeof w === 'number' ? w : 150
+        offset += typeof w === 'number' ? w : DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX
     }
     return offset
 }
 
-// 获取合并单元格的 rowspan 和 colspan
-function getSpanMethodResult(row: T, column: DataTableColumn<T>, rowIndex: number, columnIndex: number): [number, number] | void {
-    if (!props.spanMethod) return undefined
-    return props.spanMethod({ row, column, rowIndex, columnIndex })
+// 预计算所有单元格的合并结果，避免模板中重复调用 spanMethod
+const cellSpanInfo = computed(() => {
+    if (!props.spanMethod) return null
+    const map = new Map<string, [number, number] | undefined>()
+    const rows = displayData.value
+    const cols = visibleColumns.value
+    for (let r = 0; r < rows.length; r++) {
+        for (let c = 0; c < cols.length; c++) {
+            map.set(`${r}-${c}`, props.spanMethod({ row: rows[r]!, column: cols[c]!, rowIndex: r, columnIndex: c }) ?? undefined)
+        }
+    }
+    return map
+})
+
+function getCellSpan(rowIndex: number, columnIndex: number): [number, number] | undefined {
+    return cellSpanInfo.value?.get(`${rowIndex}-${columnIndex}`)
+}
+
+function isCellVisible(rowIndex: number, columnIndex: number): boolean {
+    const span = getCellSpan(rowIndex, columnIndex)
+    return !span || (span[0] !== 0 && span[1] !== 0)
 }
 
 const visibleColumns = computed(() =>
@@ -258,8 +273,8 @@ watchEffect(() => {
 
 const gridTemplateColumns = computed(() => {
     const parts: string[] = []
-    if (props.expandable) parts.push('40px')
-    if (props.selectable) parts.push('48px')
+    if (props.expandable) parts.push(`${DATA_TABLE_EXPAND_COLUMN_WIDTH_PX}px`)
+    if (props.selectable) parts.push(`${DATA_TABLE_SELECT_COLUMN_WIDTH_PX}px`)
 
     visibleColumns.value.forEach((col) => {
         if (!col.width) {
@@ -289,7 +304,7 @@ const rootClasses = computed(() =>
 const rootStyle = computed(() => {
     if (!props.virtualScroll?.enabled) return undefined
     return {
-        '--row-height': `${props.virtualScroll.rowHeight ?? 48}px`,
+        '--row-height': `${props.virtualScroll.rowHeight ?? DATA_TABLE_ROW_HEIGHT_FALLBACK_PX}px`,
     }
 })
 
@@ -446,6 +461,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                                 @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
                                 @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                                @keydown.space.prevent="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
                             >
                                 <div class="flex items-center gap-2 w-full" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                     <span>{{ getHeaderLabel(column) }}</span>
@@ -472,7 +488,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                     <VirtualScroll
                         v-if="displayData.length > 0"
                         :items="displayData"
-                        :item-height="props.virtualScroll.rowHeight === 'auto' ? 48 : props.virtualScroll.rowHeight"
+                        :item-height="props.virtualScroll.rowHeight === 'auto' ? DATA_TABLE_ROW_HEIGHT_FALLBACK_PX : props.virtualScroll.rowHeight"
                         :dynamic-height="props.virtualScroll.rowHeight === 'auto'"
                         role="rowgroup"
                         item-role="none"
@@ -622,6 +638,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                             :aria-sort="sort.sortState.value.column === column.id ? (sort.sortState.value.direction === 'asc' ? 'ascending' : 'descending') : 'none'"
                             @click="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
                             @keydown.enter="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
+                            @keydown.space.prevent="sortable && column.sortable !== false ? handleSort(column.id) : undefined"
                         >
                             <div class="flex items-center gap-2" :class="{ 'justify-center': column.align === 'center', 'justify-end': column.align === 'right' }">
                                 <span>{{ getHeaderLabel(column) }}</span>
@@ -696,13 +713,11 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
                                         right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
                                         zIndex: column.fixed ? 10 : undefined,
-                                        ...(getSpanMethodResult(row, column, rowIndex, columnIndex) ? {
-                                            rowspan: getSpanMethodResult(row, column, rowIndex, columnIndex)![0],
-                                            colspan: getSpanMethodResult(row, column, rowIndex, columnIndex)![1],
-                                        } : {}),
                                     }"
+                                    :rowspan="getCellSpan(rowIndex, columnIndex)?.[0] || undefined"
+                                    :colspan="getCellSpan(rowIndex, columnIndex)?.[1] || undefined"
                                     role="gridcell"
-                                    v-show="!getSpanMethodResult(row, column, rowIndex, columnIndex) || (getSpanMethodResult(row, column, rowIndex, columnIndex)![0] !== 0 && getSpanMethodResult(row, column, rowIndex, columnIndex)![1] !== 0)"
+                                    v-show="isCellVisible(rowIndex, columnIndex)"
                                 >
                                     <template v-if="column.type === 'expand'">
                                         <Button
