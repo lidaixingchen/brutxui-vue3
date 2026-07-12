@@ -2,13 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import {
-    COMPONENT_REGISTRY,
+    COMPONENT_METADATA,
     generateComponentsSidebar,
     generateBlocksSidebar,
     validateRegistryIndex,
     validateRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
+import { loadMergedRegistry } from './build-registry.js';
 import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
@@ -144,7 +145,7 @@ function validateIndexConsistency(files: string[]): number {
 
     for (const name of fileNames) {
         if (!indexNames.has(name)) {
-            console.error(`✗ [${name}.json] Exists in registry directory but is missing from index.json. Register it in COMPONENT_REGISTRY and run pnpm build.`);
+            console.error(`✗ [${name}.json] Exists in registry directory but is missing from index.json. Register it in COMPONENT_METADATA and run pnpm build.`);
             consistencyErrors++;
         }
     }
@@ -173,37 +174,38 @@ function validateSourceConsistency(): number {
             .filter((entry) => entry.isDirectory())
             .map((entry) => entry.name)
     );
-    const registered = new Set(Object.keys(COMPONENT_REGISTRY));
+    const registered = new Set(Object.keys(COMPONENT_METADATA));
 
     let sourceErrors = 0;
 
     for (const name of sourceDirs) {
         if (!registered.has(name)) {
-            console.error(`✗ [${name}] Source directory exists at packages/ui/src/components/${name}/ but is not registered in COMPONENT_REGISTRY. Add an entry in shared metadata and run pnpm build.`);
+            console.error(`✗ [${name}] Source directory exists at packages/ui/src/components/${name}/ but is not registered in COMPONENT_METADATA. Add an entry in shared metadata and run pnpm build.`);
             sourceErrors++;
         }
     }
     for (const name of registered) {
         if (!sourceDirs.has(name)) {
-            console.error(`✗ [${name}] Registered in COMPONENT_REGISTRY but no source directory exists at packages/ui/src/components/${name}/.`);
+            console.error(`✗ [${name}] Registered in COMPONENT_METADATA but no source directory exists at packages/ui/src/components/${name}/.`);
             sourceErrors++;
         }
     }
 
     if (sourceErrors === 0) {
-        console.log(`✓ Source directories are consistent with COMPONENT_REGISTRY (${sourceDirs.size} components).`);
+        console.log(`✓ Source directories are consistent with COMPONENT_METADATA (${sourceDirs.size} components).`);
     }
 
     return sourceErrors;
 }
 
 function validateComponentsSync(): number {
-    const registryKeys = new Set(Object.keys(COMPONENT_REGISTRY));
+    const mergedRegistry = loadMergedRegistry();
+    const registryKeys = new Set(Object.keys(mergedRegistry));
     const composables = readRelativeFiles(UI_COMPOSABLES_DIR);
     const directives = readRelativeFiles(UI_DIRECTIVES_DIR);
     let syncErrors = 0;
 
-    for (const [name, entry] of Object.entries(COMPONENT_REGISTRY)) {
+    for (const [name, entry] of Object.entries(mergedRegistry)) {
         const componentFiles = readRelativeFiles(path.join(UI_COMPONENTS_DIR, name));
         const errors = validateComponentSourceFiles(name, entry, {
             componentFiles,
@@ -218,14 +220,14 @@ function validateComponentsSync(): number {
     }
 
     if (syncErrors === 0) {
-        console.log(`✓ COMPONENT_REGISTRY metadata is valid (${registryKeys.size} components).`);
+        console.log(`✓ Registry manifest is valid (${registryKeys.size} components).`);
     }
 
     return syncErrors;
 }
 
 function validateDocsCoverage(): number {
-    const componentNames = Object.keys(COMPONENT_REGISTRY);
+    const componentNames = Object.keys(COMPONENT_METADATA);
     const locales = [
         {
             locale: 'zh-CN',
@@ -254,14 +256,14 @@ function validateDocsCoverage(): number {
     }
 
     if (docsErrors === 0) {
-        console.log(`✓ Docs component pages cover COMPONENT_REGISTRY (${componentNames.length} components).`);
+        console.log(`✓ Docs component pages cover COMPONENT_METADATA (${componentNames.length} components).`);
     }
 
     return docsErrors;
 }
 
 function validateSidebar(): number {
-    const entries = Object.values(COMPONENT_REGISTRY);
+    const entries = Object.values(COMPONENT_METADATA);
     const checks: Array<{ locale: 'zh' | 'en'; section: 'components' | 'blocks'; items: ReturnType<typeof generateComponentsSidebar> }> = [
         { locale: 'zh', section: 'components', items: generateComponentsSidebar('zh') },
         { locale: 'en', section: 'components', items: generateComponentsSidebar('en') },
@@ -283,7 +285,7 @@ function validateSidebar(): number {
     }
 
     if (sidebarErrors === 0) {
-        console.log(`✓ Sidebar coverage is consistent with COMPONENT_REGISTRY (zh/en × components/blocks).`);
+        console.log(`✓ Sidebar coverage is consistent with COMPONENT_METADATA (zh/en × components/blocks).`);
     }
 
     return sidebarErrors;
@@ -301,6 +303,7 @@ function validate() {
     console.log(`📋 Found ${files.length} registry items to validate.`);
 
     const knownNames = new Set(files.map((f: string) => path.basename(f, '.json')));
+    const mergedRegistry = loadMergedRegistry();
 
     let errorCount = 0;
     let totalFiles = 0;
@@ -320,9 +323,9 @@ function validate() {
                 errorCount++;
             }
 
-            const metadata = COMPONENT_REGISTRY[data.name];
-            if (metadata) {
-                for (const error of validateGeneratedItemMatchesMetadata(data, metadata)) {
+            const mergedEntry = mergedRegistry[data.name];
+            if (mergedEntry) {
+                for (const error of validateGeneratedItemMatchesMetadata(data, mergedEntry)) {
                     console.error(`✗ [${file}] ${error}.`);
                     errorCount++;
                 }

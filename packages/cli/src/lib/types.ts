@@ -32,6 +32,7 @@ export interface BrutalistConfig {
     style: string;
     tailwind: TailwindConfig;
     aliases: AliasConfig;
+    sharedBase?: string;
 }
 
 export interface InitOptions {

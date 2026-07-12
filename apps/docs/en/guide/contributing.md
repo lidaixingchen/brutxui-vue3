@@ -102,7 +102,7 @@ packages/ui/src/components/
 
 ### 2. Register in the Registry
 
-Add the component mapping in `packages/registry/scripts/component-files.ts`.
+Add the component metadata in `packages/shared/src/components.ts` (`COMPONENTS`), then run `pnpm --filter brutx-ui-vue prebuild:scan` to generate the manifest (file mappings are discovered by AST automatically).
 
 ### 3. Write Documentation
 

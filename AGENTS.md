@@ -64,8 +64,10 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - CLI 操作：`packages/cli/src/commands/`
   - 核心逻辑：`packages/cli/src/lib/`
 - **注册表构建器：** `packages/registry/`
-  - 组件映射表：`packages/shared/src/component-files.ts`（`COMPONENT_FILES` 数据源，新增组件在此登记；`packages/registry/scripts/component-files.ts` 仅为 re-export）
-  - 构建脚本：`packages/registry/scripts/build-registry.ts`、`validate-registry.ts`
+  - 组件清单（自动生成）：`packages/ui/registry-manifest.json`（由 `packages/ui/scripts/prebuild-scan.ts` 通过 AST 扫描 `packages/ui/src/components/` 自动生成，已接入 `pnpm build`；勿手动编辑）
+  - 人工元数据：`packages/shared/src/component-metadata.ts`（`COMPONENT_METADATA`，由 `packages/shared/src/components.ts` 的 `COMPONENTS` 派生 title/description/category 等）
+  - 扫描器：`packages/shared/src/scan-component-files.ts`（AST 依赖发现，供 prebuild-scan 调用）
+  - 构建脚本：`packages/registry/scripts/build-registry.ts`、`validate-registry.ts`（build 时合并 manifest + metadata）
   - 生成的组件 JSON：`packages/registry/registry/`（由 build 自动生成，勿手动编辑）
 - **共享类型：** `packages/shared/`
 - **为此UI库创建的Skills：** `skills/`

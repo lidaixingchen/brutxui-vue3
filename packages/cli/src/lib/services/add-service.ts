@@ -64,6 +64,7 @@ export async function resolveComponentFilePath(
     config: BrutalistConfig,
     cwd: string
 ): Promise<string> {
+    const sharedBase = config.sharedBase;
     let resolved: string;
 
     if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.components)) {
@@ -72,8 +73,13 @@ export async function resolveComponentFilePath(
         resolved = path.join(aliasPath, relative);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.composables)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.composables.length);
-        const aliasPath = await resolveAliasPath(config.aliases.composables, cwd);
-        resolved = path.join(aliasPath, relative);
+        if (sharedBase) {
+            const aliasPath = await resolveAliasPath(sharedBase, cwd);
+            resolved = path.join(aliasPath, 'hooks', relative);
+        } else {
+            const aliasPath = await resolveAliasPath(config.aliases.composables, cwd);
+            resolved = path.join(aliasPath, relative);
+        }
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.locales)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.locales.length);
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
@@ -83,11 +89,21 @@ export async function resolveComponentFilePath(
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'directives', relative);
     } else if (registryPath === REGISTRY_PATH_PREFIXES.libUtils || registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils + '/')) {
-        resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+        if (sharedBase) {
+            const aliasPath = await resolveAliasPath(sharedBase, cwd);
+            resolved = path.join(aliasPath, 'utils.ts');
+        } else {
+            resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+        }
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
-        const aliasPath = await resolveAliasPath(config.aliases.utils, cwd);
-        resolved = path.join(path.dirname(aliasPath), relative);
+        if (sharedBase) {
+            const aliasPath = await resolveAliasPath(sharedBase, cwd);
+            resolved = path.join(aliasPath, 'lib', relative);
+        } else {
+            const aliasPath = await resolveAliasPath(config.aliases.utils, cwd);
+            resolved = path.join(path.dirname(aliasPath), relative);
+        }
     } else {
         resolved = path.join(cwd, registryPath);
     }
@@ -103,7 +119,9 @@ export async function resolveComponentFilePath(
 }
 
 export async function ensureUtilsFile(cwd: string, config: BrutalistConfig): Promise<EnsureUtilsFileResult> {
-    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+    const utilsPath = config.sharedBase
+        ? path.join(await resolveAliasPath(config.sharedBase, cwd), 'utils.ts')
+        : await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
 
     if (await fs.pathExists(utilsPath)) {
         return {

@@ -1,13 +1,19 @@
-import { COMPONENT_FILES, type ComponentFileMapping } from './component-files.js';
 import { COMPONENTS } from './components.js';
-import type { ComponentCategory, RegistryComponentMeta } from './types.js';
+import type { ComponentCategory, ComponentKind, RegistryComponentMeta, SidebarGroup } from './types.js';
 
-export interface ComponentRegistryEntry extends Omit<RegistryComponentMeta, 'description' | 'title'>, ComponentFileMapping {
+export interface ComponentMetadataEntry {
     name: string;
     title: string;
     description: string;
     category: ComponentCategory;
     examples: string[];
+    dependencies: string[];
+    status?: 'stable' | 'legacy' | 'deprecated';
+    replacement?: string;
+    sidebarGroup?: SidebarGroup;
+    kind?: ComponentKind;
+    docsHidden?: boolean;
+    docsSlug?: string;
 }
 
 const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
@@ -91,46 +97,35 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     watermark: 'utility',
 };
 
-export const COMPONENT_REGISTRY: Record<string, ComponentRegistryEntry> = createComponentRegistry();
-export const AVAILABLE_COMPONENTS = Object.keys(COMPONENT_REGISTRY);
+export const COMPONENT_METADATA: Record<string, ComponentMetadataEntry> = createComponentMetadata();
+export const AVAILABLE_COMPONENTS = Object.keys(COMPONENT_METADATA);
 export const COMPONENTS_BY_CATEGORY: Record<ComponentCategory, string[]> = createComponentsByCategory();
 
 export function getComponentsByCategory(category: ComponentCategory): string[] {
     return [...COMPONENTS_BY_CATEGORY[category]];
 }
 
-function createComponentRegistry(): Record<string, ComponentRegistryEntry> {
-    const registry: Record<string, ComponentRegistryEntry> = {};
+function createComponentMetadata(): Record<string, ComponentMetadataEntry> {
+    const metadata: Record<string, ComponentMetadataEntry> = {};
 
-    for (const [name, fileMapping] of Object.entries(COMPONENT_FILES)) {
-        const meta = COMPONENTS[name];
-
-        if (!meta) {
-            throw new Error(`Missing component metadata for "${name}".`);
-        }
-
-        registry[name] = {
+    for (const [name, meta] of Object.entries(COMPONENTS)) {
+        metadata[name] = {
             name,
-            ...meta,
-            ...fileMapping,
             title: meta.title ?? formatTitle(name),
             description: meta.description ?? `A highly customizable neo-brutalist ${formatTitle(name)} component built with Brutx design tokens for Vue 3.`,
             category: meta.category ?? inferCategory(name),
             examples: [...(meta.examples ?? [])],
             dependencies: [...meta.dependencies],
-            files: [...fileMapping.files],
-            composables: fileMapping.composables ? [...fileMapping.composables] : fileMapping.composables,
-            directives: fileMapping.directives ? [...fileMapping.directives] : fileMapping.directives,
+            status: meta.status,
+            replacement: meta.replacement,
+            sidebarGroup: meta.sidebarGroup,
+            kind: meta.kind,
+            docsHidden: meta.docsHidden,
+            docsSlug: meta.docsSlug,
         };
     }
 
-    for (const name of Object.keys(COMPONENTS)) {
-        if (!registry[name]) {
-            throw new Error(`Missing component file mapping for "${name}".`);
-        }
-    }
-
-    return registry;
+    return metadata;
 }
 
 function formatTitle(name: string): string {
@@ -174,7 +169,7 @@ function createComponentsByCategory(): Record<ComponentCategory, string[]> {
         'visual-effect': [],
     };
 
-    for (const entry of Object.values(COMPONENT_REGISTRY)) {
+    for (const entry of Object.values(COMPONENT_METADATA)) {
         if (entry.kind === 'block') continue;
         groups[entry.category].push(entry.name);
     }
@@ -185,3 +180,5 @@ function createComponentsByCategory(): Record<ComponentCategory, string[]> {
 
     return groups;
 }
+
+export type { RegistryComponentMeta };

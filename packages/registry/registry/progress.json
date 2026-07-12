@@ -17,6 +17,11 @@
       "type": "registry:ui"
     },
     {
+      "path": "components/ui/progress/index.ts",
+      "content": "export { default as Progress } from '@/components/ui/progress/Progress.vue'\nexport { progressRootVariants, progressIndicatorVariants } from '@/components/ui/progress/progress-variants'\n",
+      "type": "registry:ui"
+    },
+    {
       "path": "components/ui/progress/progress-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\n\nexport const progressRootVariants = cva(\n    [\n        'relative w-full overflow-hidden rounded-brutal',\n        'border-3 border-brutal bg-brutal-bg',\n        'shadow-brutal-sm',\n    ],\n    {\n        variants: {\n            size: {\n                sm: 'h-3',\n                default: 'h-6',\n                lg: 'h-8',\n            },\n        },\n        defaultVariants: {\n            size: 'default',\n        },\n    }\n)\n\nexport const progressIndicatorVariants = cva(\n    [\n        'h-full w-full flex-1 transition-all duration-300 ease-out',\n    ],\n    {\n        variants: {\n            variant: {\n                default: 'bg-brutal-primary',\n                secondary: 'bg-brutal-secondary',\n                accent: 'bg-brutal-accent',\n                success: 'bg-brutal-success',\n                danger: 'bg-brutal-destructive',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n",
       "type": "registry:lib"
@@ -85,5 +90,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-4f25faa6f05c7c1470c042618733530fa59b074aaaaba6768690432eac05c9b9"
+  "integrity": "sha256-765c0ace7c9605f4054d3e1add0deaf6165b174c5fe2f8b107871a7b065fde53"
 }

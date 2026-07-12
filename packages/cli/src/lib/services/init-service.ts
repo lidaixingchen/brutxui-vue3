@@ -16,6 +16,7 @@ import { isSafePath, resolveAliasPath } from '../project.js';
 export interface ProjectInitializationSettings {
     tailwind: TailwindConfig;
     aliases: AliasConfig;
+    sharedBase?: string;
 }
 
 function escapeRegex(str: string): string {
@@ -72,6 +73,7 @@ async function createConfigFile(
         style: 'brutalism',
         tailwind: settings.tailwind,
         aliases: settings.aliases,
+        ...(settings.sharedBase ? { sharedBase: settings.sharedBase } : {}),
     };
 
     await transaction.writeJson(path.join(cwd, 'components.json'), config, { spaces: 2 });
@@ -245,13 +247,19 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
     try {
         const config = await createConfigFile(cwd, settings, transaction);
 
-        const utilsPath = await resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
+        const utilsPath = settings.sharedBase
+            ? path.join(await resolveAliasPath(settings.sharedBase, cwd), 'utils.ts')
+            : await resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
         await transaction.ensureDir(path.dirname(utilsPath));
         const utilsCreated = !(await fs.pathExists(utilsPath));
         if (utilsCreated) {
             await transaction.writeFile(utilsPath, UTILS_TEMPLATE);
         }
-        callbacks?.onUtilityHelper?.({ alias: settings.aliases.utils, path: utilsPath, created: utilsCreated });
+        callbacks?.onUtilityHelper?.({
+            alias: settings.sharedBase ? `${settings.sharedBase}/utils` : settings.aliases.utils,
+            path: utilsPath,
+            created: utilsCreated,
+        });
 
         const componentsDir = await resolveAliasPath(settings.aliases.components, cwd);
         await transaction.ensureDir(path.join(componentsDir, 'ui'));

@@ -243,7 +243,7 @@ describe('validate-registry helpers', () => {
             composables: new Set(),
             directives: new Set(),
         })).toEqual([
-            '[button] COMPONENT_REGISTRY entry name "wrong-button" does not match its key',
+            '[button] registry metadata entry name "wrong-button" does not match its key',
             '[button] duplicate component file "Button.vue"',
             '[button] component file "../escape.ts" must be a portable relative file path',
             '[button] declared component file "Missing.vue" does not exist in source',
@@ -271,7 +271,7 @@ describe('validate-registry helpers', () => {
             pageSlugs: new Set(['button', 'ghost']),
         })).toEqual([
             '[docs:zh] Missing docs page for "tree-select" at "tree-select.md"',
-            '[docs:zh] Docs page "ghost.md" does not map to COMPONENT_REGISTRY',
+            '[docs:zh] Docs page "ghost.md" does not map to registry metadata',
         ])
     })
 
@@ -324,13 +324,13 @@ describe('validate-registry helpers', () => {
             replacement: 'new-button',
             files: ['Button.vue', 'button-variants.ts'],
         })).toEqual([
-            'title does not match COMPONENT_REGISTRY',
-            'description does not match COMPONENT_REGISTRY',
+            'title does not match registry metadata',
+            'description does not match registry metadata',
             'item "button" dependencies mismatch',
             'item "button" examples mismatch',
-            'category does not match COMPONENT_REGISTRY',
-            'status does not match COMPONENT_REGISTRY',
-            'replacement does not match COMPONENT_REGISTRY',
+            'category does not match registry metadata',
+            'status does not match registry metadata',
+            'replacement does not match registry metadata',
             'declared file "components/ui/button/button-variants.ts" is missing from generated registry item',
         ])
     })

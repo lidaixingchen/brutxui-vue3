@@ -144,6 +144,12 @@ async function findOrphanedFiles(
     const localesPath = path.join(path.dirname(composablesPath), 'locales');
     const directivesPath = path.join(path.dirname(composablesPath), 'directives');
 
+    const sharedBasePath = config.sharedBase
+        ? await resolveAliasPath(config.sharedBase, cwd)
+        : null;
+    const sharedHooksPath = sharedBasePath ? path.join(sharedBasePath, 'hooks') : null;
+    const sharedLibPath = sharedBasePath ? path.join(sharedBasePath, 'lib') : null;
+
     const orphaned: string[] = [];
 
     const stripAliasPrefix = (specifier: string, aliasDir: string): string => {
@@ -162,7 +168,8 @@ async function findOrphanedFiles(
         const wasOnlyUsedByRemoved = [...importers].every(c => removedComponents.includes(c));
         if (!wasOnlyUsedByRemoved) continue;
 
-        const isComposable = importPath.includes('/composables/');
+        const isComposable = importPath.includes('/composables/')
+            || (sharedHooksPath !== null && importPath.includes('/hooks/'));
         const isLocale = importPath.includes('/locales/');
         const isDirective = importPath.includes('/directives/');
         const isUtils = importPath.includes('/lib/') && !importPath.endsWith('/utils');
@@ -171,9 +178,15 @@ async function findOrphanedFiles(
 
         let resolvedPath: string | null = null;
 
-        if (isComposable && await fs.pathExists(composablesPath)) {
-            const relativePath = stripAliasPrefix(importPath, 'composables');
-            resolvedPath = await resolveScriptFile(composablesPath, relativePath);
+        if (isComposable) {
+            if (sharedHooksPath && importPath.includes('/hooks/') && await fs.pathExists(sharedHooksPath)) {
+                const relativePath = stripAliasPrefix(importPath, 'hooks');
+                resolvedPath = await resolveScriptFile(sharedHooksPath, relativePath);
+            }
+            if (!resolvedPath && await fs.pathExists(composablesPath)) {
+                const relativePath = stripAliasPrefix(importPath, 'composables');
+                resolvedPath = await resolveScriptFile(composablesPath, relativePath);
+            }
         }
 
         if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
@@ -186,9 +199,15 @@ async function findOrphanedFiles(
             resolvedPath = await resolveScriptFile(directivesPath, relativePath);
         }
 
-        if (!resolvedPath && isUtils && await fs.pathExists(utilsPath)) {
-            const relativePath = stripAliasPrefix(importPath, 'lib');
-            resolvedPath = await resolveScriptFile(utilsPath, relativePath);
+        if (!resolvedPath && isUtils) {
+            if (sharedLibPath && await fs.pathExists(sharedLibPath)) {
+                const relativePath = stripAliasPrefix(importPath, 'lib');
+                resolvedPath = await resolveScriptFile(sharedLibPath, relativePath);
+            }
+            if (!resolvedPath && await fs.pathExists(utilsPath)) {
+                const relativePath = stripAliasPrefix(importPath, 'lib');
+                resolvedPath = await resolveScriptFile(utilsPath, relativePath);
+            }
         }
 
         if (resolvedPath) {

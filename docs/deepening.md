@@ -402,7 +402,7 @@ Phase 5 (架构优化) ————————— [ ] (函数式 Composable 封
 ```
 
 > [!IMPORTANT]
-> **注册表登记规范**：所有新开发及重构的组件在开发完成并通过测试后，**必须在组件映射表 `packages/registry/scripts/component-files.ts` 中登记**，以确保 `pnpm build` 能正确编译出组件的 JSON 注册表数据。
+> **注册表登记规范**：所有新开发及重构的组件在开发完成并通过测试后，**必须在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记元数据**，并运行 `pnpm --filter brutx-ui-vue prebuild:scan` 生成组件清单，以确保 `pnpm build` 能正确编译出组件的 JSON 注册表数据。
 
 ---
 

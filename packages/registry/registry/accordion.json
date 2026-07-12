@@ -18,6 +18,11 @@
       "type": "registry:ui"
     },
     {
+      "path": "components/ui/accordion/AccordionContent.vue",
+      "content": "<script setup lang=\"ts\">\nimport { AccordionContent, type AccordionContentProps } from 'reka-ui'\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { accordionContentVariants } from '@/components/ui/accordion/accordion-variants'\nimport { accordionItemKey } from '@/components/ui/accordion/accordion-key'\n\nconst props = defineProps<AccordionContentProps & { class?: string }>()\n\nconst defaultContext = { variant: computed(() => undefined) }\nconst context = inject(accordionItemKey, defaultContext)\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(accordionContentVariants({ variant: context.variant.value }), props.class)\n)\n</script>\n\n<template>\n    <AccordionContent\n        v-bind=\"delegatedProps\"\n        class=\"overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down\"\n    >\n        <div :class=\"classes\">\n            <slot />\n        </div>\n    </AccordionContent>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
       "path": "components/ui/accordion/AccordionItem.vue",
       "content": "<script setup lang=\"ts\">\nimport { computed, provide, toRef } from 'vue'\nimport { AccordionItem, type AccordionItemProps as RekaAccordionItemProps, useForwardProps } from 'reka-ui'\nimport { type VariantProps } from 'class-variance-authority'\nimport { cn } from '@/lib/utils'\nimport { accordionItemVariants } from '@/components/ui/accordion/accordion-variants'\nimport { accordionItemKey } from '@/components/ui/accordion/accordion-key'\n\ntype AccordionItemVariantProps = VariantProps<typeof accordionItemVariants>\n\ninterface AccordionItemProps extends RekaAccordionItemProps {\n    variant?: NonNullable<AccordionItemVariantProps['variant']>\n    class?: string\n}\n\nconst props = withDefaults(defineProps<AccordionItemProps>(), {\n    variant: 'default',\n    class: undefined,\n})\n\nconst delegatedProps = computed(() => {\n    const { class: _, variant: __, ...delegated } = props\n    return delegated\n})\n\nconst forwardedProps = useForwardProps(delegatedProps)\n\nconst classes = computed(() =>\n    cn(accordionItemVariants({ variant: props.variant }), props.class)\n)\n\nprovide(accordionItemKey, { variant: toRef(props, 'variant') })\n</script>\n\n<template>\n    <AccordionItem v-bind=\"forwardedProps\" :class=\"classes\">\n        <slot />\n    </AccordionItem>\n</template>\n",
       "type": "registry:ui"
@@ -25,11 +30,6 @@
     {
       "path": "components/ui/accordion/AccordionTrigger.vue",
       "content": "<script setup lang=\"ts\">\nimport { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'\nimport { computed, inject } from 'vue'\nimport { ChevronDown } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { accordionTriggerVariants } from '@/components/ui/accordion/accordion-variants'\nimport { accordionItemKey } from '@/components/ui/accordion/accordion-key'\nimport { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'\n\nconst props = withDefaults(defineProps<AccordionTriggerProps & { class?: string; iconSize?: IconSize }>(), {\n    iconSize: 'lg',\n})\n\nconst defaultContext = { variant: computed(() => undefined) }\nconst context = inject(accordionItemKey, defaultContext)\n\nconst delegatedProps = computed(() => {\n    const { class: _, iconSize: __, ...delegated } = props\n    return delegated\n})\n\nconst forwarded = useForwardProps(delegatedProps)\n\nconst classes = computed(() =>\n    cn(\n        accordionTriggerVariants({ variant: context.variant.value }),\n        '[&[data-state=open]>svg]:rotate-180',\n        props.class\n    )\n)\n\nconst iconClasses = computed(() =>\n    cn(\n        iconSizeVariants({ size: props.iconSize }),\n        'shrink-0 transition-transform duration-200 border-3 border-brutal rounded-brutal bg-brutal-bg p-0.5 shadow-brutal-sm'\n    )\n)\n</script>\n\n<template>\n    <AccordionHeader class=\"flex !m-0\">\n        <AccordionTrigger v-bind=\"forwarded\" :class=\"classes\">\n            <slot />\n            <slot name=\"icon\">\n                <ChevronDown :class=\"iconClasses\" />\n            </slot>\n        </AccordionTrigger>\n    </AccordionHeader>\n</template>\n",
-      "type": "registry:ui"
-    },
-    {
-      "path": "components/ui/accordion/AccordionContent.vue",
-      "content": "<script setup lang=\"ts\">\nimport { AccordionContent, type AccordionContentProps } from 'reka-ui'\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { accordionContentVariants } from '@/components/ui/accordion/accordion-variants'\nimport { accordionItemKey } from '@/components/ui/accordion/accordion-key'\n\nconst props = defineProps<AccordionContentProps & { class?: string }>()\n\nconst defaultContext = { variant: computed(() => undefined) }\nconst context = inject(accordionItemKey, defaultContext)\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(accordionContentVariants({ variant: context.variant.value }), props.class)\n)\n</script>\n\n<template>\n    <AccordionContent\n        v-bind=\"delegatedProps\"\n        class=\"overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down\"\n    >\n        <div :class=\"classes\">\n            <slot />\n        </div>\n    </AccordionContent>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -116,5 +116,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-3139e16e960438e55f207b6ee2fc802c6292402c43a40fd03f7b9e9fd2817ee0"
+  "integrity": "sha256-4c5f34dde75d7da456871e431bf5548ab05675efa7b6807a1893e02ee47ac16b"
 }

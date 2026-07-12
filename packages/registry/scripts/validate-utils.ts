@@ -1,4 +1,4 @@
-import type { ComponentRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
+import type { ComponentMetadataEntry, MergedRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
 
 export const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json'
 
@@ -210,17 +210,17 @@ export function validateRegistryManifestConsistency(
 
 export function validateComponentSourceFiles(
     name: string,
-    entry: ComponentRegistryEntry,
+    entry: MergedRegistryEntry,
     inventory: ComponentSourceFileInventory
 ): string[] {
     const errors: string[] = []
 
     if (entry.name !== name) {
-        errors.push(`[${name}] COMPONENT_REGISTRY entry name "${entry.name}" does not match its key`)
+        errors.push(`[${name}] registry metadata entry name "${entry.name}" does not match its key`)
     }
 
     if (entry.files.length === 0) {
-        errors.push(`[${name}] COMPONENT_REGISTRY entry must list at least one component file`)
+        errors.push(`[${name}] registry metadata entry must list at least one component file`)
     }
 
     validateDeclaredFiles(errors, name, 'component file', entry.files, inventory.componentFiles)
@@ -251,7 +251,7 @@ export function validateDocsComponentPageCoverage(options: DocsComponentPageCove
 
     for (const slug of options.pageSlugs) {
         if (!expectedSlugs.has(slug)) {
-            errors.push(`[docs:${options.locale}] Docs page "${slug}.md" does not map to COMPONENT_REGISTRY`)
+            errors.push(`[docs:${options.locale}] Docs page "${slug}.md" does not map to registry metadata`)
         }
     }
 
@@ -260,31 +260,31 @@ export function validateDocsComponentPageCoverage(options: DocsComponentPageCove
 
 export function validateGeneratedItemMatchesMetadata(
     item: Pick<RegistryItem, 'name' | 'title' | 'description' | 'dependencies' | 'category' | 'examples' | 'status' | 'replacement' | 'files'>,
-    entry: ComponentRegistryEntry
+    entry: MergedRegistryEntry
 ): string[] {
     const errors: string[] = []
 
     if (item.title !== entry.title) {
-        errors.push('title does not match COMPONENT_REGISTRY')
+        errors.push('title does not match registry metadata')
     }
 
     if (item.description !== entry.description) {
-        errors.push('description does not match COMPONENT_REGISTRY')
+        errors.push('description does not match registry metadata')
     }
 
     compareStringArrays(errors, item.name, 'dependencies', item.dependencies, entry.dependencies)
     compareStringArrays(errors, item.name, 'examples', item.examples ?? [], entry.examples ?? [])
 
     if (item.category !== entry.category) {
-        errors.push('category does not match COMPONENT_REGISTRY')
+        errors.push('category does not match registry metadata')
     }
 
     if (item.status !== entry.status) {
-        errors.push('status does not match COMPONENT_REGISTRY')
+        errors.push('status does not match registry metadata')
     }
 
     if (item.replacement !== entry.replacement) {
-        errors.push('replacement does not match COMPONENT_REGISTRY')
+        errors.push('replacement does not match registry metadata')
     }
 
     const generatedFiles = new Set(item.files.map(file => file.path))
@@ -313,7 +313,7 @@ export interface SidebarCoverageOptions {
     locale: 'zh' | 'en'
     section: 'components' | 'blocks'
     sidebarItems: SidebarItemLike[]
-    entries: ComponentRegistryEntry[]
+    entries: ComponentMetadataEntry[]
 }
 
 export function validateSidebarCoverage(options: SidebarCoverageOptions): string[] {
@@ -350,7 +350,7 @@ export function validateSidebarCoverage(options: SidebarCoverageOptions): string
 
     for (const slug of sidebarSlugs) {
         if (!expectedSlugs.has(slug)) {
-            errors.push(`[sidebar:${locale}:${section}] Sidebar entry "${slug}" does not map to any COMPONENT_REGISTRY entry`)
+            errors.push(`[sidebar:${locale}:${section}] Sidebar entry "${slug}" does not map to any registry metadata entry`)
         }
     }
 

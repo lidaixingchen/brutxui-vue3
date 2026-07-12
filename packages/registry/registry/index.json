@@ -219,11 +219,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/avatar/avatar-variants.ts",
+          "path": "components/ui/avatar/avatar-key.ts",
           "type": "registry:lib"
         },
         {
-          "path": "components/ui/avatar/avatar-key.ts",
+          "path": "components/ui/avatar/avatar-variants.ts",
           "type": "registry:lib"
         },
         {
@@ -294,95 +294,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-32f6d0e3c8ff1d8c3cd1254aecf31d2ceaaa1903c190df4f59e43dcf0a472473"
-    },
-    {
-      "name": "backtop",
-      "type": "registry:ui",
-      "title": "Backtop",
-      "description": "Brutalist back-to-top button with scroll detection and click behavior.",
-      "category": "navigation",
-      "examples": [],
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button"
-      ],
-      "files": [
-        {
-          "path": "components/ui/backtop/Backtop.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useThrottle.ts",
-          "type": "registry:hook"
-        }
-      ],
-      "tailwind": {},
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#f3f4f6",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#1e1e1e",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        }
-      },
-      "integrity": "sha256-d42245522e731fb709a6d57414cf16069cd02385d7c99e7476d0f117699693a7"
+      "integrity": "sha256-9e535a67c88226ceea76a2a19dbe9ba68f66fda2d8e7ca38e65f0a756528aba9"
     },
     {
       "name": "badge",
@@ -506,15 +418,19 @@
           "type": "registry:lib"
         },
         {
+          "path": "components/ui/button/index.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/button/shared-button-variants.ts",
           "type": "registry:lib"
         },
         {
-          "path": "composables/useLocale.ts",
+          "path": "composables/useGlitchEffect.ts",
           "type": "registry:hook"
         },
         {
-          "path": "composables/useGlitchEffect.ts",
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
@@ -601,7 +517,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-8b80bf1b1bb0c3874265ff91bdde95e23616f0f26019eee3a5674432e5cceed1"
+      "integrity": "sha256-ba37ead5b78ee48ff905284524e7f269e1e596fc1af89d005fc3e1d91dd7e25d"
     },
     {
       "name": "calendar",
@@ -807,133 +723,6 @@
         }
       },
       "integrity": "sha256-d340ac68167d967573a463738a04aaa2500b784e9669f781ad7a391a4335641c"
-    },
-    {
-      "name": "cascader",
-      "type": "registry:ui",
-      "title": "Cascader",
-      "description": "Cascading selector with multi-level option navigation and search support.",
-      "category": "form",
-      "examples": [],
-      "dependencies": [
-        "reka-ui",
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "popover",
-        "checkbox",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/cascader/Cascader.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/cascader/cascader-variants.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/cascader/cascader-types.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/cascader/index.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useClearable.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useClearableSelection.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useSelectableTrigger.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useSelectionDisplayText.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/floating-animation-classes.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {},
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#f3f4f6",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#1e1e1e",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        }
-      },
-      "integrity": "sha256-863fd748bf76d1ccfeeeb7723d5bf2fde570f62e5c74e491302eed4fda3c9012"
     },
     {
       "name": "checkbox",
@@ -1312,6 +1101,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/dialog/DialogEnhanced.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/dialog/DialogFooter.vue",
           "type": "registry:ui"
         },
@@ -1332,23 +1125,23 @@
           "type": "registry:lib"
         },
         {
-          "path": "components/ui/dialog/DialogEnhanced.vue",
-          "type": "registry:ui"
-        },
-        {
           "path": "components/ui/dialog/functional.ts",
           "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
         },
         {
           "path": "composables/useDialogEnhanced.ts",
           "type": "registry:hook"
         },
         {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/icon-size-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/defaults.ts",
           "type": "registry:lib"
         },
         {
@@ -1357,10 +1150,6 @@
         },
         {
           "path": "lib/floating-animation-classes.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/defaults.ts",
           "type": "registry:lib"
         },
         {
@@ -1435,7 +1224,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6222cf57a66d4db99f4bb70e392f6d25a9c5833de02f1ff7a4bf3db505fe215f"
+      "integrity": "sha256-0f75f8921c577b9f0f2a4e16136aa87e845a5c7b4fa7276db3c33331ae23cdcd"
     },
     {
       "name": "dropdown-menu",
@@ -2062,20 +1851,20 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/popover/PopoverContent.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/popover/PopoverTrigger.vue",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/popover/PopoverContent.vue",
+          "path": "components/ui/popover/index.ts",
           "type": "registry:ui"
         },
         {
           "path": "components/ui/popover/popover-variants.ts",
           "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/popover/index.ts",
-          "type": "registry:ui"
         },
         {
           "path": "lib/floating-content-variants.ts",
@@ -2149,7 +1938,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b493be3e461ee52f87c21b2be8c4dd321419f7b1573eca15579381019d434b96"
+      "integrity": "sha256-dcfc2cb7e5f409dc6c9cd02752ce862ed59f0078968268d12d0ed4c5a0aab530"
     },
     {
       "name": "scroll-area",
@@ -2571,10 +2360,6 @@
       ],
       "files": [
         {
-          "path": "components/ui/spinner/Spinner.vue",
-          "type": "registry:ui"
-        },
-        {
           "path": "components/ui/spinner/BarsSpinner.vue",
           "type": "registry:ui"
         },
@@ -2584,6 +2369,10 @@
         },
         {
           "path": "components/ui/spinner/DotsSpinner.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/spinner/Spinner.vue",
           "type": "registry:ui"
         },
         {
@@ -2658,7 +2447,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f883a757ce3d55934547c534d68555be9938b9205a42dc2eba6cecd3ab475d92"
+      "integrity": "sha256-1a4e412bf9e699bc8c1f5e9e69c10fd0e30122d8e445f564b829628bb579c7c5"
     },
     {
       "name": "switch",
@@ -3109,11 +2898,11 @@
           "type": "registry:lib"
         },
         {
-          "path": "composables/useToast.ts",
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
-          "path": "composables/useLocale.ts",
+          "path": "composables/useToast.ts",
           "type": "registry:hook"
         },
         {
@@ -3192,7 +2981,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-7c16d119f38d04ebd3e641d1d31d99257c757a252a527d1268ed63db06c59912"
+      "integrity": "sha256-32644d91048da5cee52fac530955c49d8b0e386a73d498bb2fe24b0740f23ef5"
     },
     {
       "name": "tooltip",
@@ -3207,11 +2996,11 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "components/ui/tooltip/TooltipProvider.vue",
+          "path": "components/ui/tooltip/TooltipContent.vue",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/tooltip/TooltipContent.vue",
+          "path": "components/ui/tooltip/TooltipProvider.vue",
           "type": "registry:ui"
         },
         {
@@ -3286,7 +3075,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-15d7e470989c85710f41e02d319d65b15e7b9b77609025cde2a8e9e05c1e98cc"
+      "integrity": "sha256-db77c12d18fac3f8ef88bbae5837d93bbb4529d86184846368506d094ebeae47"
     },
     {
       "name": "form",
@@ -3308,6 +3097,10 @@
       "files": [
         {
           "path": "components/ui/form/Form.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/FormConditional.vue",
           "type": "registry:ui"
         },
         {
@@ -3335,7 +3128,7 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/form/FormConditional.vue",
+          "path": "components/ui/form/FormWizard.vue",
           "type": "registry:ui"
         },
         {
@@ -3343,20 +3136,16 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/form/FormWizard.vue",
-          "type": "registry:ui"
-        },
-        {
           "path": "components/ui/form/form-wizard-types.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/form/form-wizard-variants.ts",
           "type": "registry:lib"
         },
         {
           "path": "components/ui/form/form-wizard-utils.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/form/form-wizard-variants.ts",
+          "type": "registry:lib"
         },
         {
           "path": "composables/useLocale.ts",
@@ -3426,7 +3215,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f31693d91f6b52d8f98b0eaa8ba8f0bc90c82cd36fe0578964ca6405b601ec7e"
+      "integrity": "sha256-db2b698017bb635df85320387c3894a702de5ae3c474bef7b69f8ab385cd3a0a"
     },
     {
       "name": "alert-dialog",
@@ -3875,6 +3664,10 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/progress/index.ts",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/progress/progress-variants.ts",
           "type": "registry:lib"
         }
@@ -3942,7 +3735,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-4f25faa6f05c7c1470c042618733530fa59b074aaaaba6768690432eac05c9b9"
+      "integrity": "sha256-765c0ace7c9605f4054d3e1add0deaf6165b174c5fe2f8b107871a7b065fde53"
     },
     {
       "name": "toggle",
@@ -4532,15 +4325,15 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/accordion/AccordionContent.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/accordion/AccordionItem.vue",
           "type": "registry:ui"
         },
         {
           "path": "components/ui/accordion/AccordionTrigger.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/accordion/AccordionContent.vue",
           "type": "registry:ui"
         },
         {
@@ -4623,7 +4416,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-3139e16e960438e55f207b6ee2fc802c6292402c43a40fd03f7b9e9fd2817ee0"
+      "integrity": "sha256-4c5f34dde75d7da456871e431bf5548ab05675efa7b6807a1893e02ee47ac16b"
     },
     {
       "name": "tags-input",
@@ -4653,11 +4446,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/tags-input/TagsInputItemText.vue",
+          "path": "components/ui/tags-input/TagsInputItemDelete.vue",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/tags-input/TagsInputItemDelete.vue",
+          "path": "components/ui/tags-input/TagsInputItemText.vue",
           "type": "registry:ui"
         },
         {
@@ -4736,7 +4529,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-bb452bfaeca16002ece1ab47afbd4fb02a48cb3b0bc428180689fc61c36074b0"
+      "integrity": "sha256-8e5d2f8b91f654e4c8c87594d722ebe9044cdc623bf8951361d32d317a75db07"
     },
     {
       "name": "number-input",
@@ -4964,7 +4757,7 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/breadcrumb/BreadcrumbList.vue",
+          "path": "components/ui/breadcrumb/BreadcrumbEllipsis.vue",
           "type": "registry:ui"
         },
         {
@@ -4976,15 +4769,15 @@
           "type": "registry:ui"
         },
         {
+          "path": "components/ui/breadcrumb/BreadcrumbList.vue",
+          "type": "registry:ui"
+        },
+        {
           "path": "components/ui/breadcrumb/BreadcrumbPage.vue",
           "type": "registry:ui"
         },
         {
           "path": "components/ui/breadcrumb/BreadcrumbSeparator.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/breadcrumb/BreadcrumbEllipsis.vue",
           "type": "registry:ui"
         },
         {
@@ -5067,7 +4860,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-965fde1c57170c2478542b44038e2ccd62803a7c84e64e9155fe73f983175de4"
+      "integrity": "sha256-66d70380c98976530296c4c8e2fa4c56d48ebd15ff490b9d6c1fc5be772f7a68"
     },
     {
       "name": "marquee",
@@ -5160,108 +4953,6 @@
         }
       },
       "integrity": "sha256-c839e6019d866a77b6270eb91bc91ff1a872d7ca8798d3ec16ba3d31fa46668f"
-    },
-    {
-      "name": "menu",
-      "type": "registry:ui",
-      "title": "Menu",
-      "description": "Horizontal or vertical navigation menu with sub-menu support.",
-      "category": "navigation",
-      "examples": [],
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "components/ui/menu/Menu.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/menu/MenuItem.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/menu/SubMenu.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/menu/menu-types.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/menu/index.ts",
-          "type": "registry:ui"
-        },
-        {
-          "path": "lib/env.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {},
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#f3f4f6",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#1e1e1e",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        }
-      },
-      "integrity": "sha256-e1290bb002babcdb337f789fe88bd74ffc487cccf03f9c7bd62174ccd0162956"
     },
     {
       "name": "before-after",
@@ -5389,16 +5080,16 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/code-block/prism-languages.ts",
-          "type": "registry:ui"
-        },
-        {
           "path": "components/ui/code-block/brutx-prism.css",
           "type": "registry:ui"
         },
         {
           "path": "components/ui/code-block/code-block-variants.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/code-block/prism-languages.ts",
+          "type": "registry:ui"
         },
         {
           "path": "composables/useLocale.ts",
@@ -5472,7 +5163,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-957adb63f42b264397360fcccbbcd5ef0e97027c4ffdb51d820e9e1bb78eaee9"
+      "integrity": "sha256-9cd462e4ff67e0658b4e5f0e2672a6a9cb2dbd3b09f2f554089b30c02fc23d65"
     },
     {
       "name": "timeline",
@@ -5494,11 +5185,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/timeline/TimelineItem.vue",
+          "path": "components/ui/timeline/TimelineConnector.vue",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/timeline/TimelineSeparator.vue",
+          "path": "components/ui/timeline/TimelineContent.vue",
           "type": "registry:ui"
         },
         {
@@ -5506,11 +5197,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/timeline/TimelineConnector.vue",
+          "path": "components/ui/timeline/TimelineItem.vue",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/timeline/TimelineContent.vue",
+          "path": "components/ui/timeline/TimelineSeparator.vue",
           "type": "registry:ui"
         },
         {
@@ -5589,7 +5280,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-4a8f4e252cf16f99dca4804f1e3cc8764768bbca6e6fe0a3401782f942141fc5"
+      "integrity": "sha256-e1eba8c52b181ccb5dbd7ec3e03a3cf00ab6a6f592dad70010f1d24e75c4c242"
     },
     {
       "name": "carousel",
@@ -5616,20 +5307,16 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/carousel/carousel-variants.ts",
-          "type": "registry:lib"
-        },
-        {
           "path": "components/ui/carousel/carousel-shared.ts",
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/carousel/types.ts",
+          "path": "components/ui/carousel/carousel-variants.ts",
           "type": "registry:lib"
         },
         {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
+          "path": "components/ui/carousel/types.ts",
+          "type": "registry:lib"
         },
         {
           "path": "composables/useCarousel.ts",
@@ -5637,6 +5324,10 @@
         },
         {
           "path": "composables/useCarouselEnhanced.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
@@ -5719,7 +5410,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-2387515a999ae4a0d3f5cfcee9e0462cf72f8e863ac9b4aa68f164ed84ffd546"
+      "integrity": "sha256-92df69eedbc0e9c473f37c2a23c3955fcf03993a8601c23feac0984505ccde06"
     },
     {
       "name": "tree-view",
@@ -5746,12 +5437,12 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/tree-view/tree-view-variants.ts",
-          "type": "registry:lib"
-        },
-        {
           "path": "components/ui/tree-view/tree-view-utils.ts",
           "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/tree-view/tree-view-variants.ts",
+          "type": "registry:lib"
         },
         {
           "path": "components/ui/tree-view/types.ts",
@@ -5837,7 +5528,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-3ed856ecae1fcd46eec8ec0dbd74151516fd80d760df661e6ae57621115cc653"
+      "integrity": "sha256-32fe75bbed196effe1656d53d7c228bfc5b50744cee9d782b9a71e60b4c0c567"
     },
     {
       "name": "kanban",
@@ -6346,11 +6037,11 @@
           "type": "registry:lib"
         },
         {
-          "path": "composables/useReducedMotion.ts",
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
-          "path": "composables/useLocale.ts",
+          "path": "composables/useReducedMotion.ts",
           "type": "registry:hook"
         },
         {
@@ -6425,7 +6116,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-d8207b577f6708574c2e1cf7a1e41836e846d7e724fd96f223ccd1d3a0e3ff07"
+      "integrity": "sha256-0de50eab9825ae645e5d823d8971e63baddd592848740ab3f0f5fa323f693b78"
     },
     {
       "name": "glitch-text",
@@ -6548,15 +6239,15 @@
           "type": "registry:lib"
         },
         {
-          "path": "composables/useReducedMotion.ts",
-          "type": "registry:hook"
-        },
-        {
           "path": "composables/useCanvasInteraction.ts",
           "type": "registry:hook"
         },
         {
           "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useReducedMotion.ts",
           "type": "registry:hook"
         },
         {
@@ -6635,7 +6326,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-20f6a54e956eceac7c31dddbaa5db65c0363875a49d39a33439339f2d855dcdf"
+      "integrity": "sha256-4e051047a462b23520b75cb64ec410ebadb0521bc24b9c25e98f5edfbcd469a9"
     },
     {
       "name": "sketchy-chart",
@@ -6758,11 +6449,11 @@
           "type": "registry:hook"
         },
         {
-          "path": "composables/useLocale.ts",
+          "path": "composables/useFormFieldValidation.ts",
           "type": "registry:hook"
         },
         {
-          "path": "composables/useFormFieldValidation.ts",
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
@@ -6837,7 +6528,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e1bb605a2dfa180525be1c5ff39082fa42ac15c251451dee7eb287fe0a7fc23a"
+      "integrity": "sha256-661fc6c33947459acd5021286395f8bcbf963151f0dd907c53ba2fcfcab7b3f5"
     },
     {
       "name": "header-section",
@@ -7247,11 +6938,7 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/color-picker/ColorPickerPanel.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/color-picker/ColorPickerSwatch.vue",
+          "path": "components/ui/color-picker/ColorPickerHistory.vue",
           "type": "registry:ui"
         },
         {
@@ -7259,7 +6946,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/color-picker/ColorPickerHistory.vue",
+          "path": "components/ui/color-picker/ColorPickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/color-picker/ColorPickerSwatch.vue",
           "type": "registry:ui"
         },
         {
@@ -7271,10 +6962,6 @@
           "type": "registry:lib"
         },
         {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
           "path": "composables/useColorHistory.ts",
           "type": "registry:hook"
         },
@@ -7283,15 +6970,19 @@
           "type": "registry:hook"
         },
         {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
           "path": "lib/default-presets.ts",
           "type": "registry:lib"
         },
         {
-          "path": "lib/defaults.ts",
+          "path": "lib/color.ts",
           "type": "registry:lib"
         },
         {
-          "path": "lib/color.ts",
+          "path": "lib/defaults.ts",
           "type": "registry:lib"
         },
         {
@@ -7366,7 +7057,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e120a9eedffcec2647e61e065b808ffa43ea61bef82944bc2b8f299cb66a6b2b"
+      "integrity": "sha256-a848dbe9bc5c48559df8d98b85607afea87a7c4faaa3e790b4e7c4ccd7cbb39b"
     },
     {
       "name": "date-picker",
@@ -7408,10 +7099,6 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/date-picker/TimePicker.vue",
-          "type": "registry:ui"
-        },
-        {
           "path": "components/ui/date-picker/DateTimePicker.vue",
           "type": "registry:ui"
         },
@@ -7420,19 +7107,23 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/date-picker/WeekPicker.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/date-picker/WeekPickerPanel.vue",
-          "type": "registry:ui"
-        },
-        {
           "path": "components/ui/date-picker/MonthPicker.vue",
           "type": "registry:ui"
         },
         {
           "path": "components/ui/date-picker/MonthPickerPanel.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/TimePicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/WeekPicker.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/date-picker/WeekPickerPanel.vue",
           "type": "registry:ui"
         },
         {
@@ -7448,19 +7139,19 @@
           "type": "registry:lib"
         },
         {
-          "path": "components/ui/date-picker/types.ts",
-          "type": "registry:lib"
-        },
-        {
           "path": "components/ui/date-picker/panel-styles.css",
           "type": "registry:ui"
         },
         {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
+          "path": "components/ui/date-picker/types.ts",
+          "type": "registry:lib"
         },
         {
           "path": "composables/useDatePicker.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
@@ -7543,243 +7234,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-12fd7cd846df86ffa3081e320e2b0544b132762f1719cf137e11efd5089bc918"
-    },
-    {
-      "name": "color-mode-switcher",
-      "type": "registry:ui",
-      "title": "Color Mode Switcher",
-      "description": "Toggle between light, dark, and system color modes.",
-      "category": "utility",
-      "examples": [],
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "button",
-        "select",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/color-mode-switcher/ColorModeSwitcher.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useTheme.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/env.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {},
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#f3f4f6",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#1e1e1e",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        }
-      },
-      "integrity": "sha256-8c33d8176cebb97e71c29a2620662e1071873cfb135554ee7fc10cb2fabab019"
-    },
-    {
-      "name": "data-table",
-      "type": "registry:ui",
-      "title": "Data Table",
-      "description": "Full-featured data table with sorting, filtering, pagination, and row selection.",
-      "category": "data-display",
-      "examples": [],
-      "dependencies": [
-        "@lucide/vue"
-      ],
-      "registryDependencies": [
-        "input",
-        "button",
-        "checkbox",
-        "select",
-        "virtual-scroll",
-        "popover",
-        "locale-zh-cn"
-      ],
-      "files": [
-        {
-          "path": "components/ui/data-table/DataTable.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/data-table/data-table-variants.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/data-table/types.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "components/ui/data-table/DataTableColumnFilter.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useDataTableSort.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useDataTableFilter.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useDataTableSelection.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useDataTablePagination.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "lib/defaults.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/data-table-utils.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/brutal-interaction-variants.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "lib/date.ts",
-          "type": "registry:lib"
-        }
-      ],
-      "tailwind": {},
-      "cssVars": {
-        "light": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#000000",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#000000",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#ffffff",
-          "brutal-fg": "#000000",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#f3f4f6",
-          "brutal-muted-foreground": "#4B5563",
-          "brutal-ring": "#000000",
-          "brutal-info": "#4A90D9",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
-          "brutal-placeholder": "#9CA3AF",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        },
-        "dark": {
-          "brutal-border-width": "3px",
-          "brutal-border-color": "#ffffff",
-          "brutal-shadow-offset-x": "4px",
-          "brutal-shadow-offset-y": "4px",
-          "brutal-shadow-color": "#ffffff",
-          "brutal-radius": "0px",
-          "brutal-pressed-offset": "2px",
-          "brutal-bg": "#141414",
-          "brutal-fg": "#ffffff",
-          "brutal-primary": "#FF6B6B",
-          "brutal-primary-foreground": "#000000",
-          "brutal-secondary": "#4ECDC4",
-          "brutal-secondary-foreground": "#000000",
-          "brutal-accent": "#FFE66D",
-          "brutal-accent-foreground": "#000000",
-          "brutal-destructive": "#EF476F",
-          "brutal-destructive-foreground": "#ffffff",
-          "brutal-success": "#7FB069",
-          "brutal-success-foreground": "#000000",
-          "brutal-muted": "#1e1e1e",
-          "brutal-muted-foreground": "#9CA3AF",
-          "brutal-ring": "#ffffff",
-          "brutal-info": "#3B82F6",
-          "brutal-info-foreground": "#ffffff",
-          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
-          "brutal-placeholder": "#6B7280",
-          "brutal-black": "#000000",
-          "brutal-yellow": "#FFE66D"
-        }
-      },
-      "integrity": "sha256-ba4351bc048fa1e9437e6eda521704f048f5fcba9eb29a6d6f4833667e29e867"
+      "integrity": "sha256-738b9990e35442fc02c1c4a0d27bea7c953b8590ce554872cbfec394aa886ffb"
     },
     {
       "name": "tree-select",
@@ -7807,23 +7262,19 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/tree-select/tree-select-variants.ts",
-          "type": "registry:lib"
-        },
-        {
           "path": "components/ui/tree-select/tree-select-types.ts",
           "type": "registry:lib"
         },
         {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
-        },
-        {
-          "path": "composables/useClearable.ts",
-          "type": "registry:hook"
+          "path": "components/ui/tree-select/tree-select-variants.ts",
+          "type": "registry:lib"
         },
         {
           "path": "composables/useClearableSelection.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
@@ -7832,6 +7283,10 @@
         },
         {
           "path": "composables/useSelectionDisplayText.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useClearable.ts",
           "type": "registry:hook"
         },
         {
@@ -7914,7 +7369,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-97345e1c1f917ac9c91decccdc149707be3aa432ff3a2baf0f6d21d6f8ba45dc"
+      "integrity": "sha256-d830816d5fe51b2d7e34a93f102877cfe81ba1a6d7997ca81c5948ca5db99e47"
     },
     {
       "name": "typewriter-text",
@@ -8119,11 +7574,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/virtual-scroll/virtual-scroll-variants.ts",
+          "path": "components/ui/virtual-scroll/types.ts",
           "type": "registry:lib"
         },
         {
-          "path": "components/ui/virtual-scroll/types.ts",
+          "path": "components/ui/virtual-scroll/virtual-scroll-variants.ts",
           "type": "registry:lib"
         },
         {
@@ -8194,7 +7649,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e8343d3a0e214ddd5939ce3c6e71009d8ce91f25d5c5c62c664b7f6ecc26d857"
+      "integrity": "sha256-cd5254fba1ab307f02dfc0e57a6d37b5cedca0df670d8af836def3ffeb3aa3b0"
     },
     {
       "name": "upload",
@@ -8206,20 +7661,10 @@
       "dependencies": [
         "@lucide/vue"
       ],
-      "registryDependencies": [
-        "locale-zh-cn"
-      ],
+      "registryDependencies": [],
       "files": [
         {
           "path": "components/ui/upload/Upload.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/upload/UploadTrigger.vue",
-          "type": "registry:ui"
-        },
-        {
-          "path": "components/ui/upload/UploadFileList.vue",
           "type": "registry:ui"
         },
         {
@@ -8227,12 +7672,16 @@
           "type": "registry:ui"
         },
         {
-          "path": "components/ui/upload/index.ts",
+          "path": "components/ui/upload/UploadFileList.vue",
           "type": "registry:ui"
         },
         {
-          "path": "composables/useLocale.ts",
-          "type": "registry:hook"
+          "path": "components/ui/upload/UploadTrigger.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/upload/index.ts",
+          "type": "registry:ui"
         },
         {
           "path": "composables/useUpload.ts",
@@ -8302,7 +7751,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e02605d193483259db23fe49b2e0115ba795caaf0a994e78685e8062e8713cca"
+      "integrity": "sha256-97918df5e95f90a21e7094bb8165460f91d94a56a378288e4e265a3d02f87248"
     },
     {
       "name": "popconfirm",
@@ -8573,6 +8022,471 @@
       "integrity": "sha256-d0446d08017aaaee77aca33c24ad7a9525342f90d9a78545caf691e1cd172e5a"
     },
     {
+      "name": "color-mode-switcher",
+      "type": "registry:ui",
+      "title": "Color Mode Switcher",
+      "description": "Toggle between light, dark, and system color modes.",
+      "category": "utility",
+      "examples": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "button",
+        "select",
+        "locale-zh-cn"
+      ],
+      "files": [
+        {
+          "path": "components/ui/color-mode-switcher/ColorModeSwitcher.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useTheme.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {},
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#f3f4f6",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#1e1e1e",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        }
+      },
+      "integrity": "sha256-afe717844b172897951a12c3d3afd4dfd71460da434d4ff775f494f425816823"
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "Full-featured data table with sorting, filtering, pagination, and row selection.",
+      "category": "data-display",
+      "examples": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "input",
+        "button",
+        "checkbox",
+        "select",
+        "virtual-scroll",
+        "popover",
+        "locale-zh-cn"
+      ],
+      "files": [
+        {
+          "path": "components/ui/data-table/DataTable.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/data-table/DataTableColumnFilter.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/data-table/data-table-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/data-table/types.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "composables/useDataTableFilter.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useDataTablePagination.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useDataTableSelection.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useDataTableSort.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "lib/defaults.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/data-table-utils.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/date.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {},
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#f3f4f6",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#1e1e1e",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        }
+      },
+      "integrity": "sha256-70c9a46ed33c7d5786bb6697d66501b92adef502d0d005d0aac28e9550aebb84"
+    },
+    {
+      "name": "cascader",
+      "type": "registry:ui",
+      "title": "Cascader",
+      "description": "Cascading selector with multi-level option navigation and search support.",
+      "category": "form",
+      "examples": [],
+      "dependencies": [
+        "reka-ui",
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "popover",
+        "checkbox",
+        "locale-zh-cn"
+      ],
+      "files": [
+        {
+          "path": "components/ui/cascader/Cascader.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/cascader/cascader-types.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/cascader/cascader-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/ui/cascader/index.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useClearableSelection.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useLocale.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useSelectableTrigger.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useSelectionDisplayText.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "composables/useClearable.ts",
+          "type": "registry:hook"
+        },
+        {
+          "path": "lib/brutal-interaction-variants.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {},
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#f3f4f6",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#1e1e1e",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        }
+      },
+      "integrity": "sha256-f850aee0bfedeb71e0351e7d9e854c00e38e9fbe01d24e48b76cee4f5f302309"
+    },
+    {
+      "name": "menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "Horizontal or vertical navigation menu with sub-menu support.",
+      "category": "navigation",
+      "examples": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/menu/Menu.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/MenuItem.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/SubMenu.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/index.ts",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/ui/menu/menu-types.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "tailwind": {},
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#f3f4f6",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#1e1e1e",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        }
+      },
+      "integrity": "sha256-8bb40a671f31ae20bc6fdaad6a0a4d293e7b80281bbc96187dd84d3d1fc46b99"
+    },
+    {
       "name": "transfer",
       "type": "registry:ui",
       "title": "Transfer",
@@ -8757,6 +8671,94 @@
         }
       },
       "integrity": "sha256-a0b921f69962e0671c8ad72dc4bcff6bf0b2a86604868d9e6fd9666b19de725d"
+    },
+    {
+      "name": "backtop",
+      "type": "registry:ui",
+      "title": "Backtop",
+      "description": "Brutalist back-to-top button with scroll detection and click behavior.",
+      "category": "navigation",
+      "examples": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/ui/backtop/Backtop.vue",
+          "type": "registry:ui"
+        },
+        {
+          "path": "composables/useThrottle.ts",
+          "type": "registry:hook"
+        }
+      ],
+      "tailwind": {},
+      "cssVars": {
+        "light": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#000000",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#000000",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#ffffff",
+          "brutal-fg": "#000000",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#f3f4f6",
+          "brutal-muted-foreground": "#4B5563",
+          "brutal-ring": "#000000",
+          "brutal-info": "#4A90D9",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.5)",
+          "brutal-placeholder": "#9CA3AF",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        },
+        "dark": {
+          "brutal-border-width": "3px",
+          "brutal-border-color": "#ffffff",
+          "brutal-shadow-offset-x": "4px",
+          "brutal-shadow-offset-y": "4px",
+          "brutal-shadow-color": "#ffffff",
+          "brutal-radius": "0px",
+          "brutal-pressed-offset": "2px",
+          "brutal-bg": "#141414",
+          "brutal-fg": "#ffffff",
+          "brutal-primary": "#FF6B6B",
+          "brutal-primary-foreground": "#000000",
+          "brutal-secondary": "#4ECDC4",
+          "brutal-secondary-foreground": "#000000",
+          "brutal-accent": "#FFE66D",
+          "brutal-accent-foreground": "#000000",
+          "brutal-destructive": "#EF476F",
+          "brutal-destructive-foreground": "#ffffff",
+          "brutal-success": "#7FB069",
+          "brutal-success-foreground": "#000000",
+          "brutal-muted": "#1e1e1e",
+          "brutal-muted-foreground": "#9CA3AF",
+          "brutal-ring": "#ffffff",
+          "brutal-info": "#3B82F6",
+          "brutal-info-foreground": "#ffffff",
+          "brutal-overlay": "rgba(0, 0, 0, 0.7)",
+          "brutal-placeholder": "#6B7280",
+          "brutal-black": "#000000",
+          "brutal-yellow": "#FFE66D"
+        }
+      },
+      "integrity": "sha256-d42245522e731fb709a6d57414cf16069cd02385d7c99e7476d0f117699693a7"
     },
     {
       "name": "result",
@@ -9046,11 +9048,11 @@
           "type": "registry:ui"
         },
         {
-          "path": "composables/useMessage.ts",
+          "path": "composables/useLocale.ts",
           "type": "registry:hook"
         },
         {
-          "path": "composables/useLocale.ts",
+          "path": "composables/useMessage.ts",
           "type": "registry:hook"
         },
         {
@@ -9137,7 +9139,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-83fed7a732d816bbab6b2d6f1b1f6bd5c9c642e8713a2fab0e4c486ca58bb199"
+      "integrity": "sha256-651a2b89a0395f7713d55c692c9d05bfce56403cab0460bc6076709befd48ade"
     }
   ]
 }

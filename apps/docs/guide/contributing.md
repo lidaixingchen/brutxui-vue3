@@ -101,7 +101,7 @@ packages/ui/src/components/
 
 ### 2. 注册到注册表
 
-在 `packages/registry/scripts/component-files.ts` 中添加组件映射。
+在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中添加组件元数据，然后运行 `pnpm --filter brutx-ui-vue prebuild:scan` 生成组件清单（文件映射由 AST 自动发现）。
 
 ### 3. 编写文档
 

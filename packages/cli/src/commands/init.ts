@@ -42,6 +42,7 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
             css: cssFile ?? fallbackCss,
         },
         aliases,
+        sharedBase: `${aliases.components}/brutx/shared`,
     };
 }
 
@@ -83,6 +84,7 @@ async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSett
             utils: utilsAlias,
             composables: composablesAlias,
         },
+        sharedBase: `${componentsAlias}/brutx/shared`,
     };
 }
 

@@ -13,6 +13,10 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:ui",
     },
     {
+      "path": "components/ui/data-table/DataTableColumnFilter.vue",
+      "type": "registry:ui",
+    },
+    {
       "path": "components/ui/data-table/data-table-variants.ts",
       "type": "registry:lib",
     },
@@ -21,19 +25,11 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:lib",
     },
     {
-      "path": "components/ui/data-table/DataTableColumnFilter.vue",
-      "type": "registry:ui",
-    },
-    {
-      "path": "composables/useLocale.ts",
-      "type": "registry:hook",
-    },
-    {
-      "path": "composables/useDataTableSort.ts",
-      "type": "registry:hook",
-    },
-    {
       "path": "composables/useDataTableFilter.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useDataTablePagination.ts",
       "type": "registry:hook",
     },
     {
@@ -41,7 +37,11 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:hook",
     },
     {
-      "path": "composables/useDataTablePagination.ts",
+      "path": "composables/useDataTableSort.ts",
+      "type": "registry:hook",
+    },
+    {
+      "path": "composables/useLocale.ts",
       "type": "registry:hook",
     },
     {
@@ -61,7 +61,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-ba4351bc048fa1e9437e6eda521704f048f5fcba9eb29a6d6f4833667e29e867",
+  "integrity": "sha256-70c9a46ed33c7d5786bb6697d66501b92adef502d0d005d0aac28e9550aebb84",
   "name": "data-table",
   "registryDependencies": [
     "input",
@@ -86,7 +86,7 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
     "reka-ui",
     "@lucide/vue",
   ],
-  "fileCount": 10,
+  "fileCount": 11,
   "files": [
     {
       "path": "components/ui/button/Button.vue",
@@ -97,15 +97,19 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
     {
+      "path": "components/ui/button/index.ts",
+      "type": "registry:ui",
+    },
+    {
       "path": "components/ui/button/shared-button-variants.ts",
       "type": "registry:lib",
     },
     {
-      "path": "composables/useLocale.ts",
+      "path": "composables/useGlitchEffect.ts",
       "type": "registry:hook",
     },
     {
-      "path": "composables/useGlitchEffect.ts",
+      "path": "composables/useLocale.ts",
       "type": "registry:hook",
     },
     {
@@ -129,7 +133,7 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-8b80bf1b1bb0c3874265ff91bdde95e23616f0f26019eee3a5674432e5cceed1",
+  "integrity": "sha256-ba37ead5b78ee48ff905284524e7f269e1e596fc1af89d005fc3e1d91dd7e25d",
   "name": "button",
   "registryDependencies": [
     "locale-zh-cn",

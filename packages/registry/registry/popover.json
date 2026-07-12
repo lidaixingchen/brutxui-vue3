@@ -17,24 +17,24 @@
       "type": "registry:ui"
     },
     {
+      "path": "components/ui/popover/PopoverContent.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport {\n    PopoverPortal as PopoverPortalPrimitive,\n    PopoverContent as PopoverContentPrimitive,\n} from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { floatingContentSideOffsets } from '@/lib/floating-content-variants'\nimport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n\ndefineOptions({ inheritAttrs: false })\n\ninterface PopoverContentProps {\n    align?: 'center' | 'start' | 'end'\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<PopoverContentProps>(), {\n    align: 'center',\n    sideOffset: floatingContentSideOffsets.popover,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(popoverContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <PopoverPortalPrimitive>\n        <PopoverContentPrimitive v-bind=\"$attrs\" :align=\"align\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </PopoverContentPrimitive>\n    </PopoverPortalPrimitive>\n</template>\n",
+      "type": "registry:ui"
+    },
+    {
       "path": "components/ui/popover/PopoverTrigger.vue",
       "content": "<script setup lang=\"ts\">\nimport type { PopoverTriggerProps } from 'reka-ui'\nimport { PopoverTrigger as PopoverTriggerPrimitive } from 'reka-ui'\n\nconst props = defineProps<PopoverTriggerProps>()\n</script>\n\n<template>\n    <PopoverTriggerPrimitive v-bind=\"props\">\n        <slot />\n    </PopoverTriggerPrimitive>\n</template>\n",
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/popover/PopoverContent.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport {\n    PopoverPortal as PopoverPortalPrimitive,\n    PopoverContent as PopoverContentPrimitive,\n} from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { floatingContentSideOffsets } from '@/lib/floating-content-variants'\nimport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n\ndefineOptions({ inheritAttrs: false })\n\ninterface PopoverContentProps {\n    align?: 'center' | 'start' | 'end'\n    sideOffset?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<PopoverContentProps>(), {\n    align: 'center',\n    sideOffset: floatingContentSideOffsets.popover,\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(popoverContentVariants(), props.class)\n)\n</script>\n\n<template>\n    <PopoverPortalPrimitive>\n        <PopoverContentPrimitive v-bind=\"$attrs\" :align=\"align\" :side-offset=\"sideOffset\" :class=\"classes\">\n            <slot />\n        </PopoverContentPrimitive>\n    </PopoverPortalPrimitive>\n</template>\n",
+      "path": "components/ui/popover/index.ts",
+      "content": "export { default as Popover } from '@/components/ui/popover/Popover.vue'\nexport { default as PopoverTrigger } from '@/components/ui/popover/PopoverTrigger.vue'\nexport { default as PopoverContent } from '@/components/ui/popover/PopoverContent.vue'\nexport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n",
       "type": "registry:ui"
     },
     {
       "path": "components/ui/popover/popover-variants.ts",
       "content": "import { cva } from 'class-variance-authority'\nimport { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\nimport { brutalFloatingSurfaceClasses } from '@/lib/floating-content-variants'\n\nexport const popoverContentVariants = cva(\n    [\n        'z-50 w-72 p-4',\n        ...brutalFloatingSurfaceClasses,\n        'outline-none',\n        ...floatingContentAnimationClasses,\n    ]\n)\n",
       "type": "registry:lib"
-    },
-    {
-      "path": "components/ui/popover/index.ts",
-      "content": "export { default as Popover } from '@/components/ui/popover/Popover.vue'\nexport { default as PopoverTrigger } from '@/components/ui/popover/PopoverTrigger.vue'\nexport { default as PopoverContent } from '@/components/ui/popover/PopoverContent.vue'\nexport { popoverContentVariants } from '@/components/ui/popover/popover-variants'\n",
-      "type": "registry:ui"
     },
     {
       "path": "lib/floating-content-variants.ts",
@@ -110,5 +110,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-b493be3e461ee52f87c21b2be8c4dd321419f7b1573eca15579381019d434b96"
+  "integrity": "sha256-dcfc2cb7e5f409dc6c9cd02752ce862ed59f0078968268d12d0ed4c5a0aab530"
 }

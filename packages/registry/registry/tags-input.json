@@ -30,13 +30,13 @@
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/tags-input/TagsInputItemText.vue",
-      "content": "<script setup lang=\"ts\">\nimport { TagsInputItemText, type TagsInputItemTextProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\nconst props = defineProps<TagsInputItemTextProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn('text-xs font-black uppercase tracking-wide', props.class)\n)\n</script>\n\n<template>\n    <TagsInputItemText v-bind=\"delegatedProps\" :class=\"classes\">\n        <slot />\n    </TagsInputItemText>\n</template>\n",
+      "path": "components/ui/tags-input/TagsInputItemDelete.vue",
+      "content": "<script setup lang=\"ts\">\nimport { TagsInputItemDelete, type TagsInputItemDeleteProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { X } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\n\nconst props = defineProps<TagsInputItemDeleteProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(\n        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal',\n        brutalPress,\n        props.class\n    )\n)\n</script>\n\n<template>\n    <TagsInputItemDelete v-bind=\"delegatedProps\" :class=\"classes\">\n        <slot>\n            <X class=\"h-3.5 w-3.5 stroke-[3]\" />\n        </slot>\n    </TagsInputItemDelete>\n</template>\n",
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/tags-input/TagsInputItemDelete.vue",
-      "content": "<script setup lang=\"ts\">\nimport { TagsInputItemDelete, type TagsInputItemDeleteProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { X } from '@lucide/vue'\nimport { cn } from '@/lib/utils'\nimport { brutalPress } from '@/lib/brutal-interaction-variants'\n\nconst props = defineProps<TagsInputItemDeleteProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn(\n        'h-4 w-4 flex items-center justify-center border-3 border-brutal bg-brutal-bg text-brutal-fg shadow-brutal-sm transition-all hover:bg-brutal-destructive hover:text-brutal-fg hover:shadow-brutal-sm hover:-translate-y-0.5 rounded-brutal',\n        brutalPress,\n        props.class\n    )\n)\n</script>\n\n<template>\n    <TagsInputItemDelete v-bind=\"delegatedProps\" :class=\"classes\">\n        <slot>\n            <X class=\"h-3.5 w-3.5 stroke-[3]\" />\n        </slot>\n    </TagsInputItemDelete>\n</template>\n",
+      "path": "components/ui/tags-input/TagsInputItemText.vue",
+      "content": "<script setup lang=\"ts\">\nimport { TagsInputItemText, type TagsInputItemTextProps } from 'reka-ui'\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\nconst props = defineProps<TagsInputItemTextProps & { class?: string }>()\n\nconst delegatedProps = computed(() => {\n    const { class: _, ...delegated } = props\n    return delegated\n})\n\nconst classes = computed(() =>\n    cn('text-xs font-black uppercase tracking-wide', props.class)\n)\n</script>\n\n<template>\n    <TagsInputItemText v-bind=\"delegatedProps\" :class=\"classes\">\n        <slot />\n    </TagsInputItemText>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -118,5 +118,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-bb452bfaeca16002ece1ab47afbd4fb02a48cb3b0bc428180689fc61c36074b0"
+  "integrity": "sha256-8e5d2f8b91f654e4c8c87594d722ebe9044cdc623bf8951361d32d317a75db07"
 }

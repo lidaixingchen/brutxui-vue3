@@ -1,4 +1,4 @@
-import { COMPONENT_REGISTRY, type ComponentRegistryEntry } from './component-registry.js'
+import { COMPONENT_METADATA, type ComponentMetadataEntry } from './component-metadata.js'
 import type { ComponentCategory, SidebarGroup } from './types.js'
 
 export type SidebarLocale = 'zh' | 'en'
@@ -164,21 +164,21 @@ const DEFAULT_CATEGORY_TO_SIDEBAR_GROUP: Record<ComponentCategory, SidebarGroup>
     marketing: 'blocks-sections',
 }
 
-function resolveSidebarGroup(entry: ComponentRegistryEntry): SidebarGroup {
+function resolveSidebarGroup(entry: ComponentMetadataEntry): SidebarGroup {
     return entry.sidebarGroup ?? DEFAULT_CATEGORY_TO_SIDEBAR_GROUP[entry.category]
 }
 
-function resolveSlug(entry: ComponentRegistryEntry): string {
+function resolveSlug(entry: ComponentMetadataEntry): string {
     return entry.docsSlug ?? entry.name
 }
 
-function getItemText(entry: ComponentRegistryEntry, locale: SidebarLocale): string {
+function getItemText(entry: ComponentMetadataEntry, locale: SidebarLocale): string {
     if (locale === 'en') return entry.title
     const zhLabel = componentLabelsZh[entry.name]
     return zhLabel ? `${entry.title} ${zhLabel}` : entry.title
 }
 
-function getItemLink(entry: ComponentRegistryEntry, locale: SidebarLocale): string {
+function getItemLink(entry: ComponentMetadataEntry, locale: SidebarLocale): string {
     const prefix = locale === 'en' ? '/en' : ''
     const section = entry.kind === 'block' ? 'blocks' : 'components'
     return `${prefix}/${section}/${resolveSlug(entry)}`
@@ -186,7 +186,7 @@ function getItemLink(entry: ComponentRegistryEntry, locale: SidebarLocale): stri
 
 function buildGroup(
     group: SidebarGroup,
-    entries: ComponentRegistryEntry[],
+    entries: ComponentMetadataEntry[],
     locale: SidebarLocale,
 ): SidebarItem | null {
     const items = entries
@@ -206,7 +206,7 @@ function buildGroup(
 }
 
 function buildFallbackGroup(
-    entries: ComponentRegistryEntry[],
+    entries: ComponentMetadataEntry[],
     validGroups: Set<SidebarGroup>,
     locale: SidebarLocale,
 ): SidebarItem | null {
@@ -230,7 +230,7 @@ export function generateComponentsSidebar(locale: SidebarLocale): SidebarItem[] 
     const overviewText = locale === 'en' ? 'Overview' : '组件总览'
     const overviewLink = locale === 'en' ? '/en/components/' : '/components/'
 
-    const entries = Object.values(COMPONENT_REGISTRY)
+    const entries = Object.values(COMPONENT_METADATA)
         .filter(entry => entry.kind !== 'block')
         .filter(entry => entry.docsHidden !== true)
 
@@ -252,7 +252,7 @@ export function generateBlocksSidebar(locale: SidebarLocale): SidebarItem[] {
     const overviewText = locale === 'en' ? 'Overview' : '概览'
     const overviewLink = locale === 'en' ? '/en/blocks/' : '/blocks/'
 
-    const entries = Object.values(COMPONENT_REGISTRY)
+    const entries = Object.values(COMPONENT_METADATA)
         .filter(entry => entry.kind === 'block')
         .filter(entry => entry.docsHidden !== true)
 

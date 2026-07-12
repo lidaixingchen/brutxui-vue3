@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from '../lib/i18n'
-import { COMPONENT_REGISTRY } from '../../../../../packages/shared/src/component-registry'
+import { COMPONENT_METADATA } from '../../../../../packages/shared/src/component-metadata'
 import { VALID_THEMES } from '../../../../../packages/ui/src/composables/useTheme'
 
 const { t } = useI18n()
@@ -12,8 +12,8 @@ interface StatItem {
   suffix?: string
 }
 
-const componentCount = Object.values(COMPONENT_REGISTRY).filter((entry) => entry.kind !== 'block').length
-const blockCount = Object.values(COMPONENT_REGISTRY).filter((entry) => entry.kind === 'block').length
+const componentCount = Object.values(COMPONENT_METADATA).filter((entry) => entry.kind !== 'block').length
+const blockCount = Object.values(COMPONENT_METADATA).filter((entry) => entry.kind === 'block').length
 const themeCount = VALID_THEMES.length
 
 const stats = computed<StatItem[]>(() => [

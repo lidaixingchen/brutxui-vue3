@@ -216,6 +216,7 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
             utils: (typeof aliases?.utils === 'string' ? aliases.utils : undefined) ?? DEFAULT_ALIASES.utils,
             composables: (typeof aliases?.composables === 'string' ? aliases.composables : undefined) ?? DEFAULT_ALIASES.composables,
         },
+        sharedBase: typeof raw.sharedBase === 'string' ? raw.sharedBase : undefined,
     };
 }
 

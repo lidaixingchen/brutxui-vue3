@@ -67,7 +67,8 @@ describe('init', () => {
                 dependencies: { vue: '^3.5.0', tailwindcss: '^4.0.0' },
             });
             await fs.writeFile(path.join(cwd, 'src', 'index.css'), '@import "tailwindcss";\n');
-            await fs.writeFile(path.join(cwd, 'src', 'lib'), 'not-a-directory', 'utf-8');
+            await fs.ensureDir(path.join(cwd, 'src', 'components', 'brutx'));
+            await fs.writeFile(path.join(cwd, 'src', 'components', 'brutx', 'shared'), 'not-a-directory', 'utf-8');
 
             const { init } = await import('../src/commands/init.js');
 
@@ -76,7 +77,7 @@ describe('init', () => {
             } satisfies Partial<CliError>);
 
             expect(await fs.pathExists(path.join(cwd, 'components.json'))).toBe(false);
-            expect(await fs.readFile(path.join(cwd, 'src', 'lib'), 'utf-8')).toBe('not-a-directory');
+            expect(await fs.readFile(path.join(cwd, 'src', 'components', 'brutx', 'shared'), 'utf-8')).toBe('not-a-directory');
         } finally {
             await fs.remove(cwd);
         }

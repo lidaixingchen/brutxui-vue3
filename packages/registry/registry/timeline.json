@@ -20,13 +20,13 @@
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/timeline/TimelineItem.vue",
-      "content": "<script setup lang=\"ts\">\nimport { inject, computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { timelineOrientationKey, timelineAlternateKey } from '@/components/ui/timeline/timeline-key'\n\ninterface TimelineItemProps {\n    index?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineItemProps>(), {\n    index: undefined,\n    class: undefined,\n})\n\nconst orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))\nconst alternate = inject(timelineAlternateKey, computed(() => false))\n\nconst isAlternateLeft = computed(() =>\n    alternate.value &&\n    props.index !== undefined &&\n    props.index % 2 === 0\n)\n\nconst classes = computed(() =>\n    cn(\n        'relative flex',\n        orientation.value === 'vertical'\n            ? isAlternateLeft.value\n                ? 'flex-row-reverse gap-4 items-stretch'\n                : 'flex-row gap-4 items-stretch'\n            : 'flex-col gap-4 items-center min-w-48 flex-1',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <div :class=\"classes\" role=\"listitem\">\n        <slot />\n    </div>\n</template>\n",
+      "path": "components/ui/timeline/TimelineConnector.vue",
+      "content": "<script setup lang=\"ts\">\nimport { inject, computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { timelineOrientationKey } from '@/components/ui/timeline/timeline-key'\n\ninterface TimelineConnectorProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineConnectorProps>(), {\n    class: undefined,\n})\n\nconst orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))\n\nconst classes = computed(() =>\n    cn(\n        'bg-brutal-fg transition-all shrink-0',\n        orientation.value === 'vertical' ? 'w-[3px] flex-1 min-h-8' : 'absolute inset-x-0 top-1/2 -translate-y-1/2 h-[3px]',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <div :class=\"classes\" />\n</template>\n",
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/timeline/TimelineSeparator.vue",
-      "content": "<script setup lang=\"ts\">\nimport { inject, computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { timelineOrientationKey } from '@/components/ui/timeline/timeline-key'\n\ninterface TimelineSeparatorProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineSeparatorProps>(), {\n    class: undefined,\n})\n\nconst orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))\n\nconst classes = computed(() =>\n    cn(\n        'relative flex items-center shrink-0',\n        orientation.value === 'vertical' ? 'flex-col' : 'flex-row w-full justify-center',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <div :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
+      "path": "components/ui/timeline/TimelineContent.vue",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TimelineContentProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineContentProps>(), {\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn('flex-1 min-w-0 pb-4 text-sm font-bold text-brutal-fg', props.class)\n)\n</script>\n\n<template>\n    <div :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -35,13 +35,13 @@
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/timeline/TimelineConnector.vue",
-      "content": "<script setup lang=\"ts\">\nimport { inject, computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { timelineOrientationKey } from '@/components/ui/timeline/timeline-key'\n\ninterface TimelineConnectorProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineConnectorProps>(), {\n    class: undefined,\n})\n\nconst orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))\n\nconst classes = computed(() =>\n    cn(\n        'bg-brutal-fg transition-all shrink-0',\n        orientation.value === 'vertical' ? 'w-[3px] flex-1 min-h-8' : 'absolute inset-x-0 top-1/2 -translate-y-1/2 h-[3px]',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <div :class=\"classes\" />\n</template>\n",
+      "path": "components/ui/timeline/TimelineItem.vue",
+      "content": "<script setup lang=\"ts\">\nimport { inject, computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { timelineOrientationKey, timelineAlternateKey } from '@/components/ui/timeline/timeline-key'\n\ninterface TimelineItemProps {\n    index?: number\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineItemProps>(), {\n    index: undefined,\n    class: undefined,\n})\n\nconst orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))\nconst alternate = inject(timelineAlternateKey, computed(() => false))\n\nconst isAlternateLeft = computed(() =>\n    alternate.value &&\n    props.index !== undefined &&\n    props.index % 2 === 0\n)\n\nconst classes = computed(() =>\n    cn(\n        'relative flex',\n        orientation.value === 'vertical'\n            ? isAlternateLeft.value\n                ? 'flex-row-reverse gap-4 items-stretch'\n                : 'flex-row gap-4 items-stretch'\n            : 'flex-col gap-4 items-center min-w-48 flex-1',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <div :class=\"classes\" role=\"listitem\">\n        <slot />\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/timeline/TimelineContent.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TimelineContentProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineContentProps>(), {\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn('flex-1 min-w-0 pb-4 text-sm font-bold text-brutal-fg', props.class)\n)\n</script>\n\n<template>\n    <div :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
+      "path": "components/ui/timeline/TimelineSeparator.vue",
+      "content": "<script setup lang=\"ts\">\nimport { inject, computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { timelineOrientationKey } from '@/components/ui/timeline/timeline-key'\n\ninterface TimelineSeparatorProps {\n    class?: string\n}\n\nconst props = withDefaults(defineProps<TimelineSeparatorProps>(), {\n    class: undefined,\n})\n\nconst orientation = inject(timelineOrientationKey, computed(() => 'vertical' as const))\n\nconst classes = computed(() =>\n    cn(\n        'relative flex items-center shrink-0',\n        orientation.value === 'vertical' ? 'flex-col' : 'flex-row w-full justify-center',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <div :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -123,5 +123,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-4a8f4e252cf16f99dca4804f1e3cc8764768bbca6e6fe0a3401782f942141fc5"
+  "integrity": "sha256-e1eba8c52b181ccb5dbd7ec3e03a3cf00ab6a6f592dad70010f1d24e75c4c242"
 }

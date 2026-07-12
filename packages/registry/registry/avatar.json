@@ -29,13 +29,13 @@
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/avatar/avatar-variants.ts",
-      "content": "import { cva } from 'class-variance-authority'\n\nconst avatarColorVariants = {\n    default: 'bg-brutal-muted',\n    primary: 'bg-brutal-primary/20',\n    secondary: 'bg-brutal-secondary/20',\n    accent: 'bg-brutal-accent/20',\n}\n\nexport const avatarVariants = cva(\n    ['relative flex shrink-0 overflow-hidden', 'border-3 border-brutal'],\n    {\n        variants: {\n            variant: avatarColorVariants,\n            size: {\n                sm: 'h-8 w-8',\n                default: 'h-10 w-10',\n                lg: 'h-14 w-14',\n                xl: 'h-20 w-20',\n            },\n            shape: {\n                square: '',\n                rounded: 'rounded-brutal',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            shape: 'square',\n        },\n    }\n)\n\nconst avatarFallbackColorVariants = {\n    default: 'bg-brutal-muted text-brutal-muted-foreground',\n    primary: 'bg-brutal-primary text-brutal-primary-foreground',\n    secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',\n    accent: 'bg-brutal-accent text-brutal-accent-foreground',\n}\n\nexport const avatarFallbackVariants = cva(\n    ['flex h-full w-full items-center justify-center font-bold'],\n    {\n        variants: {\n            variant: avatarFallbackColorVariants,\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n",
+      "path": "components/ui/avatar/avatar-key.ts",
+      "content": "import type { InjectionKey, ComputedRef } from 'vue'\nimport type { VariantProps } from 'class-variance-authority'\nimport { avatarVariants } from '@/components/ui/avatar/avatar-variants'\n\ntype AvatarVariantProps = VariantProps<typeof avatarVariants>\n\nexport const avatarKey: InjectionKey<{\n    variant: ComputedRef<NonNullable<AvatarVariantProps['variant']>>\n}> = Symbol('avatar')\n",
       "type": "registry:lib"
     },
     {
-      "path": "components/ui/avatar/avatar-key.ts",
-      "content": "import type { InjectionKey, ComputedRef } from 'vue'\nimport type { VariantProps } from 'class-variance-authority'\nimport { avatarVariants } from '@/components/ui/avatar/avatar-variants'\n\ntype AvatarVariantProps = VariantProps<typeof avatarVariants>\n\nexport const avatarKey: InjectionKey<{\n    variant: ComputedRef<NonNullable<AvatarVariantProps['variant']>>\n}> = Symbol('avatar')\n",
+      "path": "components/ui/avatar/avatar-variants.ts",
+      "content": "import { cva } from 'class-variance-authority'\n\nconst avatarColorVariants = {\n    default: 'bg-brutal-muted',\n    primary: 'bg-brutal-primary/20',\n    secondary: 'bg-brutal-secondary/20',\n    accent: 'bg-brutal-accent/20',\n}\n\nexport const avatarVariants = cva(\n    ['relative flex shrink-0 overflow-hidden', 'border-3 border-brutal'],\n    {\n        variants: {\n            variant: avatarColorVariants,\n            size: {\n                sm: 'h-8 w-8',\n                default: 'h-10 w-10',\n                lg: 'h-14 w-14',\n                xl: 'h-20 w-20',\n            },\n            shape: {\n                square: '',\n                rounded: 'rounded-brutal',\n            },\n        },\n        defaultVariants: {\n            variant: 'default',\n            size: 'default',\n            shape: 'square',\n        },\n    }\n)\n\nconst avatarFallbackColorVariants = {\n    default: 'bg-brutal-muted text-brutal-muted-foreground',\n    primary: 'bg-brutal-primary text-brutal-primary-foreground',\n    secondary: 'bg-brutal-secondary text-brutal-secondary-foreground',\n    accent: 'bg-brutal-accent text-brutal-accent-foreground',\n}\n\nexport const avatarFallbackVariants = cva(\n    ['flex h-full w-full items-center justify-center font-bold'],\n    {\n        variants: {\n            variant: avatarFallbackColorVariants,\n        },\n        defaultVariants: {\n            variant: 'default',\n        },\n    }\n)\n",
       "type": "registry:lib"
     },
     {
@@ -107,5 +107,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-32f6d0e3c8ff1d8c3cd1254aecf31d2ceaaa1903c190df4f59e43dcf0a472473"
+  "integrity": "sha256-9e535a67c88226ceea76a2a19dbe9ba68f66fda2d8e7ca38e65f0a756528aba9"
 }

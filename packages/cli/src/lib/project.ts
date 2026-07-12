@@ -249,6 +249,7 @@ function extractScriptBlocks(content: string): Array<{ start: number; end: numbe
 }
 
 export function resolveImportAlias(content: string, config: BrutalistConfig): string {
+    const sharedBase = config.sharedBase;
     const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
     const localesAlias = `${path.dirname(composablesAlias)}/locales`;
     const directivesAlias = `${path.dirname(composablesAlias)}/directives`;
@@ -265,11 +266,17 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
 
                 let newPath: string | null = null;
                 if (imp.n === '@/lib/utils') {
-                    newPath = config.aliases.utils;
+                    newPath = sharedBase ? `${sharedBase}/utils` : config.aliases.utils;
                 } else if (imp.n.startsWith('@/components/')) {
                     newPath = imp.n.replace('@/components', config.aliases.components);
                 } else if (imp.n.startsWith('@/composables/')) {
-                    newPath = imp.n.replace('@/composables', composablesAlias);
+                    newPath = sharedBase
+                        ? imp.n.replace('@/composables', `${sharedBase}/hooks`)
+                        : imp.n.replace('@/composables', composablesAlias);
+                } else if (imp.n.startsWith('@/lib/')) {
+                    if (sharedBase) {
+                        newPath = imp.n.replace('@/lib', `${sharedBase}/lib`);
+                    }
                 } else if (imp.n.startsWith('@/locales/')) {
                     newPath = imp.n.replace('@/locales', localesAlias);
                 } else if (imp.n.startsWith('@/directives/')) {

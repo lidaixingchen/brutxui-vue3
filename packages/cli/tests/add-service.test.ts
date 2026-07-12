@@ -203,4 +203,43 @@ describe('add service', () => {
         expect(await fs.readFile(badgePath, 'utf-8')).toBe('existing badge');
         expect(await fs.pathExists(helperPath)).toBe(false);
     });
+
+    describe('sharedBase', () => {
+        const sharedBaseConfig: BrutalistConfig = {
+            ...config,
+            sharedBase: '@/widgets/brutx/shared',
+        };
+
+        it('resolves composables to sharedBase/hooks/', async () => {
+            const resolved = await resolveComponentFilePath('composables/useLocale.ts', sharedBaseConfig, tmpDir);
+            expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'hooks', 'useLocale.ts'));
+        });
+
+        it('resolves lib/utils to sharedBase/utils.ts', async () => {
+            const resolved = await resolveComponentFilePath('lib/utils', sharedBaseConfig, tmpDir);
+            expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'utils.ts'));
+        });
+
+        it('resolves lib/{name} to sharedBase/lib/{name}', async () => {
+            const resolved = await resolveComponentFilePath('lib/env.ts', sharedBaseConfig, tmpDir);
+            expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'lib', 'env.ts'));
+        });
+
+        it('creates utils file at sharedBase path', async () => {
+            const result = await ensureUtilsFile(tmpDir, sharedBaseConfig);
+            expect(result.path).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'utils.ts'));
+            expect(result.created).toBe(true);
+            expect(await fs.readFile(result.path, 'utf-8')).toContain('export function cn');
+        });
+
+        it('keeps locales at original path even with sharedBase', async () => {
+            const resolved = await resolveComponentFilePath('locales/zh-CN.ts', sharedBaseConfig, tmpDir);
+            expect(resolved).toBe(path.join(tmpDir, 'src', 'locales', 'zh-CN.ts'));
+        });
+
+        it('keeps directives at original path even with sharedBase', async () => {
+            const resolved = await resolveComponentFilePath('directives/ripple.ts', sharedBaseConfig, tmpDir);
+            expect(resolved).toBe(path.join(tmpDir, 'src', 'directives', 'ripple.ts'));
+        });
+    });
 });

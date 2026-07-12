@@ -60,6 +60,67 @@ describe('resolveImportAlias', () => {
         expect(resolved).toContain('import { useLocale } from "~/shared/composables/useLocale";');
         expect(resolved).toContain('import { zhCN } from "~/shared/locales/zh-CN";');
     });
+
+    it('should rewrite composables and lib imports to sharedBase when set', () => {
+        const content = `import { useLocale } from "@/composables/useLocale";\nimport { cn } from "@/lib/utils";\nimport { env } from "@/lib/env";`;
+
+        const config = {
+            style: 'brutalism',
+            tailwind: { config: '', css: 'src/index.css' },
+            aliases: {
+                components: '@/components',
+                utils: '@/lib/utils',
+                composables: '@/composables',
+            },
+            sharedBase: '@/components/brutx/shared',
+        };
+
+        const resolved = resolveImportAlias(content, config);
+
+        expect(resolved).toContain('from "@/components/brutx/shared/hooks/useLocale"');
+        expect(resolved).toContain('from "@/components/brutx/shared/utils"');
+        expect(resolved).toContain('from "@/components/brutx/shared/lib/env"');
+    });
+
+    it('should preserve old behavior when sharedBase is not set', () => {
+        const content = `import { useLocale } from "@/composables/useLocale";\nimport { cn } from "@/lib/utils";\nimport { env } from "@/lib/env";`;
+
+        const config = {
+            style: 'brutalism',
+            tailwind: { config: '', css: 'src/index.css' },
+            aliases: {
+                components: '~/components',
+                utils: '~/lib/utils',
+                composables: '~/composables',
+            },
+        };
+
+        const resolved = resolveImportAlias(content, config);
+
+        expect(resolved).toContain('from "~/composables/useLocale"');
+        expect(resolved).toContain('from "~/lib/utils"');
+        expect(resolved).toContain('from "@/lib/env"');
+    });
+
+    it('should keep locales and directives unchanged with sharedBase', () => {
+        const content = `import { zhCN } from "@/locales/zh-CN";\nimport { vRipple } from "@/directives/ripple";`;
+
+        const config = {
+            style: 'brutalism',
+            tailwind: { config: '', css: 'src/index.css' },
+            aliases: {
+                components: '@/components',
+                utils: '@/lib/utils',
+                composables: '@/composables',
+            },
+            sharedBase: '@/components/brutx/shared',
+        };
+
+        const resolved = resolveImportAlias(content, config);
+
+        expect(resolved).toContain('from "@/locales/zh-CN"');
+        expect(resolved).toContain('from "@/directives/ripple"');
+    });
 });
 
 describe('tsconfig alias parsing', () => {

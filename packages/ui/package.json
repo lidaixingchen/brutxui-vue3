@@ -105,7 +105,8 @@
         "*.css"
     ],
     "scripts": {
-        "build": "vite build && npm run build:preflight",
+        "build": "pnpm prebuild:scan && vite build && npm run build:preflight",
+        "prebuild:scan": "tsx scripts/prebuild-scan.ts",
         "build:preflight": "tailwindcss -i src/preflight.css -o dist/preflight.css",
         "prepack": "npm run build",
         "dev": "vite build --watch",

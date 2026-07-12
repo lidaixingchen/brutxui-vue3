@@ -27,14 +27,14 @@
       "type": "registry:ui"
     },
     {
-      "path": "components/ui/menu/menu-types.ts",
-      "content": "import type { InjectionKey, Ref } from 'vue'\n\nexport interface MenuContext {\n    activeIndex: Ref<string>\n    mode: Ref<'horizontal' | 'vertical'>\n    router: Ref<boolean>\n    selectItem: (index: string, route?: string | object) => void\n    openedMenus: Ref<Set<string>>\n    toggleSubMenu: (index: string) => void\n}\n\nexport const MENU_KEY: InjectionKey<MenuContext> = Symbol('BrutxMenu')\n",
-      "type": "registry:lib"
-    },
-    {
       "path": "components/ui/menu/index.ts",
       "content": "export { default as Menu } from '@/components/ui/menu/Menu.vue'\nexport { default as MenuItem } from '@/components/ui/menu/MenuItem.vue'\nexport { default as SubMenu } from '@/components/ui/menu/SubMenu.vue'\nexport { MENU_KEY } from '@/components/ui/menu/menu-types'\nexport type { MenuContext } from '@/components/ui/menu/menu-types'\n",
       "type": "registry:ui"
+    },
+    {
+      "path": "components/ui/menu/menu-types.ts",
+      "content": "import type { InjectionKey, Ref } from 'vue'\n\nexport interface MenuContext {\n    activeIndex: Ref<string>\n    mode: Ref<'horizontal' | 'vertical'>\n    router: Ref<boolean>\n    selectItem: (index: string, route?: string | object) => void\n    openedMenus: Ref<Set<string>>\n    toggleSubMenu: (index: string) => void\n}\n\nexport const MENU_KEY: InjectionKey<MenuContext> = Symbol('BrutxMenu')\n",
+      "type": "registry:lib"
     },
     {
       "path": "lib/env.ts",
@@ -105,5 +105,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-e1290bb002babcdb337f789fe88bd74ffc487cccf03f9c7bd62174ccd0162956"
+  "integrity": "sha256-8bb40a671f31ae20bc6fdaad6a0a4d293e7b80281bbc96187dd84d3d1fc46b99"
 }

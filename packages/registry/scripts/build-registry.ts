@@ -1,27 +1,29 @@
 import crypto from 'node:crypto';
 import fs from 'fs';
 import path from 'path';
-import ts from 'typescript';
 import { fileURLToPath, pathToFileURL } from 'url';
 import {
-    COMPONENT_REGISTRY,
+    COMPONENT_METADATA,
     computeRegistryIntegrity,
     validateRegistryIntegrity,
     validateRegistryItem,
     CSS_VARS,
+    extractModuleSpecifiers,
 } from 'brutx-shared-vue';
-import {
-    findRegistryDependencyCycles,
-    REGISTRY_MANIFEST_SCHEMA_URL,
-    validateRegistryItemInternalImports,
-} from './validate-utils';
 import type {
+    MergedRegistryEntry,
+    RegistryManifest,
     RegistryFile,
     RegistryFileType,
     RegistryIndex,
     RegistryIndexItem,
     RegistryItem,
 } from 'brutx-shared-vue';
+import {
+    findRegistryDependencyCycles,
+    REGISTRY_MANIFEST_SCHEMA_URL,
+    validateRegistryItemInternalImports,
+} from './validate-utils';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,7 +33,38 @@ const UI_COMPOSABLES_DIR = path.resolve(__dirname, '../../ui/src/composables');
 const UI_LOCALES_DIR = path.resolve(__dirname, '../../ui/src/locales');
 const UI_LIB_DIR = path.resolve(__dirname, '../../ui/src/lib');
 const UI_DIRECTIVES_DIR = path.resolve(__dirname, '../../ui/src/directives');
+const MANIFEST_PATH = path.resolve(__dirname, '../../ui/registry-manifest.json');
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
+
+export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
+    const manifestRaw = fs.readFileSync(MANIFEST_PATH, 'utf-8');
+    const manifest = JSON.parse(manifestRaw) as RegistryManifest;
+    const merged: Record<string, MergedRegistryEntry> = {};
+
+    for (const [name, meta] of Object.entries(COMPONENT_METADATA)) {
+        const fileManifest = manifest[name];
+        if (!fileManifest) {
+            throw new Error(`Component "${name}" has metadata but is missing from registry-manifest.json. Run pnpm --filter brutx-ui-vue prebuild:scan.`);
+        }
+        merged[name] = {
+            ...meta,
+            files: [...fileManifest.files],
+            composables: [...fileManifest.composables],
+            directives: [...fileManifest.directives],
+            lib: [...fileManifest.lib],
+        };
+    }
+
+    for (const name of Object.keys(manifest)) {
+        if (!COMPONENT_METADATA[name]) {
+            throw new Error(`Component "${name}" is in registry-manifest.json but has no metadata in COMPONENT_METADATA. Add an entry in packages/shared/src/components.ts.`);
+        }
+    }
+
+    return merged;
+}
+
+const REGISTRY: Record<string, MergedRegistryEntry> = loadMergedRegistry();
 
 type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale';
 
@@ -162,7 +195,7 @@ function removeStaleRegistryFiles(expectedFiles: Set<string>): void {
 function computeSourceHash(name: string, fileMapping: { files: string[]; composables?: string[]; directives?: string[] }): string {
     const parts: string[] = [JSON.stringify({
         cacheVersion: CACHE_VERSION,
-        componentInfo: COMPONENT_REGISTRY[name] ?? null,
+        componentInfo: REGISTRY[name] ?? null,
         fileMapping,
         tailwind: TAILWIND_CONFIG,
         cssVars: CSS_VARS,
@@ -277,14 +310,14 @@ export function rewriteImports(code: string, componentName: string, context: Rew
 
     code = code.replace(
         /(['"])\.\.\/components\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
-        (m, quote, comp, rest) => (COMPONENT_REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
+        (m, quote, comp, rest) => (REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
     );
 
     // Rewrite cross-component imports: ../{component}/{file} → @/components/ui/{component}/{file}
     // Extract the component name directly from the path to avoid filename collision issues.
     code = code.replace(
         /(['"])\.\.\/([a-zA-Z0-9-]+)\/([^'"]+)\1/g,
-        (m, quote, comp, rest) => (COMPONENT_REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
+        (m, quote, comp, rest) => (REGISTRY[comp] ? `${quote}@/components/ui/${comp}/${rest}${quote}` : m)
     );
 
     // Rewrite same-directory imports: ./{file} → @/<context-dir>/{file}
@@ -333,61 +366,6 @@ export function extractDeps(code: string, dirPrefix: string): string[] {
     return Array.from(deps);
 }
 
-export function extractModuleSpecifiers(code: string): string[] {
-    const specifiers = new Set<string>();
-
-    for (const scriptCode of extractScriptBlocks(code)) {
-        const sourceFile = ts.createSourceFile(
-            'registry-source.ts',
-            scriptCode,
-            ts.ScriptTarget.Latest,
-            false,
-            ts.ScriptKind.TSX
-        );
-
-        const visit = (node: ts.Node): void => {
-            if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-                specifiers.add(node.moduleSpecifier.text);
-            } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
-                specifiers.add(node.moduleSpecifier.text);
-            } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
-                const arg = node.arguments[0];
-                if (arg && ts.isStringLiteral(arg)) {
-                    specifiers.add(arg.text);
-                }
-            }
-            ts.forEachChild(node, visit);
-        };
-
-        for (const statement of sourceFile.statements) {
-            visit(statement);
-        }
-    }
-
-    return Array.from(specifiers);
-}
-
-function extractScriptBlocks(code: string): string[] {
-    const blocks: string[] = [];
-    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
-    
-    // 精确匹配单/双引号字面量（不允许跨行）和反引号模板字符串（允许跨行），防止注释中的单引号引发的跨行误匹配
-    const stringLiteralPattern = /'(?:[^'\r\n\\]|\\.)*'|"(?:[^"\r\n\\]|\\.)*"|`(?:[^`\\]|\\.)*`/g;
-    
-    const placeholders: string[] = [];
-    const masked = code.replace(stringLiteralPattern, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `__STR_LITERAL_${idx}__`;
-    });
-
-    for (const match of masked.matchAll(scriptPattern)) {
-        blocks.push(match[1].replace(/__STR_LITERAL_(\d+)__/g, (_, i) => placeholders[Number(i)] ?? ''));
-    }
-
-    return blocks.length > 0 ? blocks : [code];
-}
-
 export function getFileType(filePath: string): RegistryFileType {
     const fileName = path.basename(filePath);
 
@@ -409,7 +387,7 @@ export function extractRegistryDeps(code: string, componentName: string): string
         if (!specifier.startsWith(prefix)) continue;
 
         const depName = specifier.slice(prefix.length).split('/')[0];
-        if (depName !== componentName && COMPONENT_REGISTRY[depName]) {
+        if (depName !== componentName && REGISTRY[depName]) {
             deps.add(depName);
         }
     }
@@ -441,7 +419,7 @@ export function extractUnknownRegistryDeps(code: string): string[] {
         if (!specifier.startsWith(prefix)) continue;
 
         const depName = specifier.slice(prefix.length).split('/')[0];
-        if (depName && !COMPONENT_REGISTRY[depName]) {
+        if (depName && !REGISTRY[depName]) {
             deps.add(depName);
         }
     }
@@ -499,7 +477,7 @@ function processComposables(
 }
 
 export function buildRegistryItem(name: string): RegistryItem {
-    const componentInfo = COMPONENT_REGISTRY[name];
+    const componentInfo = REGISTRY[name];
     if (!componentInfo) {
         throw new Error(`No file mapping found for component "${name}"`);
     }
@@ -645,7 +623,7 @@ export async function run() {
 
     const cache = loadCache();
     const newCache: Record<string, string> = {};
-    const componentNames = Object.keys(COMPONENT_REGISTRY);
+    const componentNames = Object.keys(REGISTRY);
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
     const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };
@@ -748,7 +726,7 @@ export async function run() {
 
     for (const name of componentNames) {
         try {
-            const componentInfo = COMPONENT_REGISTRY[name];
+            const componentInfo = REGISTRY[name];
             const fileMapping = componentInfo;
 
             if (!fileMapping) {

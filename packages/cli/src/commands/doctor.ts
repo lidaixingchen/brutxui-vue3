@@ -12,6 +12,19 @@ import { logger } from '../lib/logger.js';
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const MIN_NODE_VERSION = '22.5.0';
 
+async function resolveUtilsPath(config: BrutalistConfig, cwd: string): Promise<string> {
+    if (config.sharedBase) {
+        return path.join(await resolveAliasPath(config.sharedBase, cwd), 'utils');
+    }
+    return await resolveAliasPath(config.aliases.utils, cwd);
+}
+
+function getUtilsDisplayName(config: BrutalistConfig): string {
+    return config.sharedBase
+        ? `sharedBase/utils (${config.sharedBase}/utils)`
+        : `aliases.utils → ${config.aliases.utils}`;
+}
+
 function isNodeVersionSupported(version: string): boolean {
     const cleanVersion = version.split('-')[0];
     const [major = 0, minor = 0, patch = 0] = cleanVersion.split('.').map(Number);
@@ -188,7 +201,7 @@ async function checkAliases(cwd: string, config: BrutalistConfig): Promise<Check
         fixDescription: 'Create directory',
     });
 
-    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+    const utilsPath = await resolveUtilsPath(config, cwd);
     let utilsExists = false;
     for (const ext of UTILS_EXTENSIONS) {
         if (await fs.pathExists(utilsPath + ext)) {
@@ -198,7 +211,7 @@ async function checkAliases(cwd: string, config: BrutalistConfig): Promise<Check
     }
 
     results.push({
-        name: `aliases.utils → ${config.aliases.utils}`,
+        name: getUtilsDisplayName(config),
         status: utilsExists ? 'pass' : 'error',
         message: utilsExists ? 'File exists.' : 'File does not exist.',
         fixId: FixId.CreateUtilsFile,
@@ -266,7 +279,7 @@ async function checkDependencies(cwd: string): Promise<CheckResult[]> {
 }
 
 async function checkUtilsFunction(cwd: string, config: BrutalistConfig): Promise<CheckResult> {
-    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+    const utilsPath = await resolveUtilsPath(config, cwd);
     let utilsFile: string | undefined;
     for (const ext of UTILS_EXTENSIONS) {
         if (await fs.pathExists(utilsPath + ext)) {
@@ -453,14 +466,14 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                 }
 
                 case FixId.CreateUtilsFile: {
-                    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+                    const utilsPath = await resolveUtilsPath(config, cwd);
                     await transaction.writeFile(utilsPath + '.ts', UTILS_TEMPLATE);
                     logger.success('Created utils file.');
                     break;
                 }
 
                 case FixId.AddCnFunction: {
-                    const utilsPath = await resolveAliasPath(config.aliases.utils, cwd);
+                    const utilsPath = await resolveUtilsPath(config, cwd);
                     let utilsFile: string | undefined;
                     for (const ext of UTILS_EXTENSIONS) {
                         if (await fs.pathExists(utilsPath + ext)) {

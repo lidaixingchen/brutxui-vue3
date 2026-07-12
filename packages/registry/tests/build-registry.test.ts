@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import {
     AVAILABLE_COMPONENTS,
-    COMPONENT_FILES,
+    COMPONENT_METADATA,
     COMPONENTS_BY_CATEGORY,
-    COMPONENT_REGISTRY,
     computeRegistryIntegrity,
+    extractModuleSpecifiers,
     validateRegistryIndex,
     getComponentsByCategory,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import { COMPONENT_FILES as REGISTRY_COMPONENT_FILES } from '../scripts/component-files';
 import {
     assertRegistryDependencyGraph,
     assertKnownRegistryDeps,
@@ -17,23 +16,22 @@ import {
     buildRegistryManifest,
     extractComponentFileDeps,
     extractDeps,
-    extractModuleSpecifiers,
     extractRegistryDeps,
     extractUnknownRegistryDeps,
     getFileType,
+    loadMergedRegistry,
     rewriteImports,
 } from '../scripts/build-registry';
 
 describe('build-registry helpers', () => {
-    it('keeps the registry compatibility mapping pointed at shared metadata', () => {
-        expect(REGISTRY_COMPONENT_FILES).toBe(COMPONENT_FILES);
-        expect(AVAILABLE_COMPONENTS).toEqual(Object.keys(COMPONENT_REGISTRY));
-        expect(COMPONENT_FILES.button.files).toContain('Button.vue');
-        expect(COMPONENT_REGISTRY.button.files).toEqual(COMPONENT_FILES.button.files);
-        expect(COMPONENT_REGISTRY.button.title).toBe('Button');
-        expect(COMPONENT_REGISTRY.button.dependencies).toEqual(['reka-ui', '@lucide/vue']);
-        expect(COMPONENT_REGISTRY.button.category).toBe('action');
-        expect(COMPONENT_REGISTRY.button.examples).toEqual([]);
+    it('loads merged registry from manifest and metadata', () => {
+        const registry = loadMergedRegistry();
+        expect(AVAILABLE_COMPONENTS).toEqual(Object.keys(registry));
+        expect(registry.button.files).toContain('Button.vue');
+        expect(registry.button.title).toBe('Button');
+        expect(registry.button.dependencies).toEqual(['reka-ui', '@lucide/vue']);
+        expect(registry.button.category).toBe('action');
+        expect(registry.button.examples).toEqual([]);
         expect(COMPONENTS_BY_CATEGORY.action).toContain('button');
     });
 

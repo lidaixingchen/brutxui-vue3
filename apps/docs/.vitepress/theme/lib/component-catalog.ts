@@ -1,4 +1,4 @@
-import { COMPONENT_REGISTRY, type ComponentRegistryEntry } from '../../../../../packages/shared/src/component-registry'
+import { COMPONENT_METADATA, type ComponentMetadataEntry } from '../../../../../packages/shared/src/component-metadata'
 
 export type CatalogLocale = 'zh' | 'en'
 
@@ -6,19 +6,19 @@ export interface CatalogItem {
     name: string
     title: string
     description: string
-    category: ComponentRegistryEntry['category']
+    category: ComponentMetadataEntry['category']
     href: string
-    status?: ComponentRegistryEntry['status']
+    status?: ComponentMetadataEntry['status']
     replacement?: string
 }
 
 export interface CatalogSection {
-    key: ComponentRegistryEntry['category']
+    key: ComponentMetadataEntry['category']
     title: string
     items: CatalogItem[]
 }
 
-const categoryOrder: ComponentRegistryEntry['category'][] = [
+const categoryOrder: ComponentMetadataEntry['category'][] = [
     'action',
     'form',
     'data-display',
@@ -30,7 +30,7 @@ const categoryOrder: ComponentRegistryEntry['category'][] = [
     'utility',
 ]
 
-const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['category'], string>> = {
+const categoryLabels: Record<CatalogLocale, Record<ComponentMetadataEntry['category'], string>> = {
     zh: {
         action: '操作',
         form: '表单与输入',
@@ -149,7 +149,7 @@ const descriptionLabels: Record<CatalogLocale, Record<string, string>> = {
     en: {},
 }
 
-function getHref(entry: ComponentRegistryEntry, locale: CatalogLocale): string {
+function getHref(entry: ComponentMetadataEntry, locale: CatalogLocale): string {
     const prefix = locale === 'en' ? '/en' : ''
     const section = entry.kind === 'block' ? 'blocks' : 'components'
     const slug = entry.docsSlug ?? entry.name
@@ -157,7 +157,7 @@ function getHref(entry: ComponentRegistryEntry, locale: CatalogLocale): string {
 }
 
 export function getComponentCatalog(locale: CatalogLocale): CatalogSection[] {
-    const entries = Object.values(COMPONENT_REGISTRY)
+    const entries = Object.values(COMPONENT_METADATA)
         .filter(entry => entry.docsHidden !== true && entry.kind !== 'block')
         .map<CatalogItem>(entry => ({
             name: entry.name,

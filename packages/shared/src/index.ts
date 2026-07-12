@@ -1,14 +1,17 @@
 export type { RegistryComponentMeta, ComponentCategory, SidebarGroup, ComponentKind } from './types.js';
 export { COMPONENTS } from './components.js';
-export type { ComponentFileMapping } from './component-files.js';
-export { COMPONENT_FILES } from './component-files.js';
-export type { ComponentRegistryEntry } from './component-registry.js';
+export type { ComponentMetadataEntry } from './component-metadata.js';
 export {
+    COMPONENT_METADATA,
     AVAILABLE_COMPONENTS,
-    COMPONENT_REGISTRY,
     COMPONENTS_BY_CATEGORY,
     getComponentsByCategory,
-} from './component-registry.js';
+} from './component-metadata.js';
+export type {
+    ComponentFileManifest,
+    MergedRegistryEntry,
+    RegistryManifest,
+} from './registry-manifest.types.js';
 export type {
     RegistryFileType,
     RegistryFile,
@@ -36,3 +39,9 @@ export {
     CSS_VARS,
     toCssVars,
 } from './design-tokens.js';
+export {
+    extractModuleSpecifiers,
+    extractScriptBlocks,
+} from './extract-module-specifiers.js';
+export type { ScanOptions } from './scan-component-files.js';
+export { scanComponentFiles } from './scan-component-files.js';
