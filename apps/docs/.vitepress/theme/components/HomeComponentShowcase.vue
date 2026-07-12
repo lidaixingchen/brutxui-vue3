@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from '../lib/i18n'
+import { Button, Badge } from 'brutx-ui-vue'
+import { Mail, ArrowRight } from '@lucide/vue'
 
 const { isEn, t } = useI18n()
 </script>
@@ -12,24 +14,67 @@ const { isEn, t } = useI18n()
     </div>
 
     <div class="showcase-grid">
+      <!-- 1. Button Showcase -->
       <div class="showcase-item">
         <div class="showcase-label">{{ isEn ? 'Button' : 'Button 按钮' }}</div>
-        <div class="showcase-content vp-raw">
-          <ButtonDemo />
+        <div class="showcase-content vp-raw flex flex-wrap gap-4 items-center justify-center min-h-[120px]">
+          <Button variant="primary">主要</Button>
+          <Button variant="secondary">
+            <template #icon><Mail class="w-4 h-4" /></template>
+            次要
+          </Button>
+          <Button variant="accent">强调</Button>
+          <Button variant="outline" :loading="true">加载中</Button>
         </div>
       </div>
 
+      <!-- 2. Badge Showcase -->
       <div class="showcase-item">
         <div class="showcase-label">{{ isEn ? 'Badge' : 'Badge 徽标' }}</div>
-        <div class="showcase-content vp-raw">
-          <BadgeDemo />
+        <div class="showcase-content vp-raw flex flex-wrap gap-3 items-center justify-center min-h-[120px]">
+          <Badge variant="primary">New</Badge>
+          <Badge variant="success" dot>Online</Badge>
+          <Badge variant="danger" pulse>Live</Badge>
+          <Badge variant="accent" closable>Feature</Badge>
         </div>
       </div>
 
+      <!-- 3. Card Showcase (Styled using the card wrapper grid block itself) -->
       <div class="showcase-item showcase-item-wide">
         <div class="showcase-label">{{ isEn ? 'Card' : 'Card 卡片' }}</div>
-        <div class="showcase-content vp-raw">
-          <CardDemo />
+        
+        <!-- Diagonal hazard stripes header -->
+        <div class="h-28 flex items-center justify-center relative overflow-hidden" style="background: repeating-linear-gradient(45deg, var(--brutal-accent) 0, var(--brutal-accent) 10px, #000000 10px, #000000 12px)">
+          <span class="text-lg font-black text-black bg-white border-2 border-black px-4 py-2 shadow-[3px_3px_0_0_#000] select-none tracking-widest uppercase">
+            BrutxUI Design
+          </span>
+        </div>
+
+        <div class="showcase-content vp-raw space-y-4 p-6">
+          <div class="flex gap-2">
+            <Badge variant="primary">Vue 3.5+</Badge>
+            <Badge variant="accent">Tailwind 4</Badge>
+          </div>
+          
+          <h4 class="text-xl font-black text-black dark:text-white m-0">用像素践行粗野设计哲学</h4>
+          
+          <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 m-0 leading-relaxed">
+            BrutxUI 彻底打破常规的扁平化与柔和渐变设计，以极具视觉冲击力的 3px 厚重黑边框、4px 硬阴影以及高饱和度的主题配色，为 Vue 生态打造极具个性的现代化数字界面。
+          </p>
+          
+          <!-- Bottom author & action bar -->
+          <div class="flex justify-between items-center border-t-3 border-brutal pt-4 mt-2">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full border-2 border-black bg-brutal-primary flex items-center justify-center text-xs font-bold text-black">
+                GX
+              </div>
+              <span class="text-xs font-bold text-black dark:text-white">Brutx Team</span>
+            </div>
+            <Button size="sm" variant="primary">
+              开始使用
+              <template #icon><ArrowRight class="w-4 h-4 ml-1" /></template>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -107,6 +152,10 @@ const { isEn, t } = useI18n()
 
 .dark .showcase-item:hover {
   box-shadow: 6px 6px 0 0 var(--brutal-border-color);
+}
+
+.dark .showcase-label {
+  border-bottom-color: var(--brutal-border-color);
 }
 
 /* Mobile */
