@@ -154,7 +154,7 @@ function getHref(entry: ComponentRegistryEntry, locale: CatalogLocale): string {
     const prefix = locale === 'en' ? '/en' : ''
     const section = entry.kind === 'block' ? 'blocks' : 'components'
     const slug = entry.docsSlug ?? entry.name
-    return `${prefix}/${section}/${slug}`
+    return `${prefix}/${section}/${slug}.html`
 }
 
 export function getComponentCatalog(locale: CatalogLocale): CatalogSection[] {

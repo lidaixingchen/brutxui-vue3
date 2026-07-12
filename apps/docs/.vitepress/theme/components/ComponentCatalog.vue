@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { getComponentCatalog, type CatalogLocale } from '../lib/component-catalog'
 import { useI18n } from '../lib/i18n'
+import { withBase } from 'vitepress'
 
 const props = defineProps<{
     locale?: CatalogLocale
@@ -35,7 +36,7 @@ function getStatusText(status: string | undefined, replacement: string | undefin
                 <tbody>
                     <tr v-for="item in section.items" :key="item.name">
                         <td>
-                            <a :href="item.href">{{ item.title }}</a>
+                            <a :href="withBase(item.href)">{{ item.title }}</a>
                             <span v-if="getStatusText(item.status, item.replacement)" class="component-catalog__status">
                                 {{ getStatusText(item.status, item.replacement) }}
                             </span>
