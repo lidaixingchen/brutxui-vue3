@@ -159,50 +159,10 @@ Claude 会自动参考组件文档、样式规范和代码模板，生成符合 
 
 ## 贡献与开发
 
-在本地运行、测试和打包 BrutxUI：
-
-本仓库开发和发布要求 **Node.js 22.5+** 与 **pnpm 11+**。**这是维护环境的硬性要求，开发本仓库时仅允许使用 `pnpm`，禁止使用 `npm` 或 `yarn`，以防在本地生成不一致的 lockfile。** 通过 `brutx-vue` 添加组件的用户项目仍可使用 npm、yarn、pnpm 或 bun，CLI 会根据 lockfile 或 `--package-manager` 选择包管理器。
-
-### 1. 仓库设置
-```bash
-# 克隆仓库
-git clone https://github.com/lidaixingchen/brutxui-vue3.git
-cd brutxui-vue3
-
-# 安装工作区依赖
-pnpm install
-
-# 构建 UI 模块和 CLI 二进制文件
-pnpm --filter brutx-ui-vue build && pnpm --filter brutx-vue build
-```
-
-### 2. 运行测试套件
-```bash
-pnpm test
-```
-
-### 3. 重新编译组件 JSON 注册表
-如果你修改了 `packages/ui/src/components/*.vue` 中的核心组件，请编译并验证模式：
-```bash
-# 编译为注册表 JSON 文件
-pnpm --filter brutx-registry-vue build
-
-# 根据 shadcn CLI 模式验证 JSON 文件
-pnpm --filter brutx-registry-vue validate
-```
-
-### 4. 发布前完整检查
-发布前或改动发布产物、CLI、注册表、文档构建时，请运行统一门禁：
-```bash
-pnpm release:check
-```
-
-如果要验证 release tag 与 UI 包版本是否一致，可以传入 `RELEASE_TAG`：
-```bash
-RELEASE_TAG=v0.6.6 pnpm release:check
-```
+详细的本地开发设置、测试套件运行、组件注册表编译以及贡献提交流程，请参阅 [贡献指南 (CONTRIBUTING.md)](CONTRIBUTING.md)。
 
 ---
+
 
 ## 致谢 / Credits
 

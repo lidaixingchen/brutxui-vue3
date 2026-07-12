@@ -219,50 +219,10 @@ Claude will automatically reference component documentation, style specification
 
 ## Contributing & Development
 
-Run, test, and build BrutxUI locally:
-
-Developing and publishing this repository requires **Node.js 22.5+** and **pnpm 11+**. This is a maintainer environment requirement; projects that install components with `brutx-vue` can still use npm, yarn, pnpm, or bun, and the CLI will choose the package manager from the lockfile or `--package-manager`.
-
-### 1. Repository Setup
-```bash
-# Clone the repository
-git clone https://github.com/lidaixingchen/brutxui-vue3.git
-cd brutxui-vue3
-
-# Install workspace dependencies
-pnpm install
-
-# Build UI module and CLI binary
-pnpm --filter brutx-ui-vue build && pnpm --filter brutx-vue build
-```
-
-### 2. Run Test Suite
-```bash
-pnpm test
-```
-
-### 3. Rebuild Component JSON Registry
-If you modify core components in `packages/ui/src/components/*.vue`, compile and validate the schema:
-```bash
-# Compile to registry JSON files
-pnpm --filter brutx-registry-vue build
-
-# Validate JSON files against shadcn CLI schema
-pnpm --filter brutx-registry-vue validate
-```
-
-### 4. Full Pre-Release Check
-Before publishing, or when changing release artifacts, the CLI, registry, or docs build, run the shared gate:
-```bash
-pnpm release:check
-```
-
-To verify that the release tag matches the UI package version, pass `RELEASE_TAG`:
-```bash
-RELEASE_TAG=v0.6.6 pnpm release:check
-```
+For detailed local development setup, running tests, registry compilation, and contribution guidelines, please refer to the [Contribution Guide (CONTRIBUTING.md)](../CONTRIBUTING.md).
 
 ---
+
 
 ## Acknowledgements / Credits
 
