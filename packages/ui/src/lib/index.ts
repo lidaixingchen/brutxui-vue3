@@ -117,6 +117,7 @@ export type {
     ThemeApi,
     ThemeVariablesApi,
 } from './theme-variables'
+export { VALID_THEMES } from '../composables/useTheme'
 
 // 主题编辑器
 export { createThemeEditor } from './theme-editor'

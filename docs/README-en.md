@@ -107,10 +107,11 @@ BrutxUI exposes CSS custom properties in your stylesheet. You can globally softe
 }
 ```
 
-Three built-in visual presets:
+Four built-in visual presets:
 1. **Classic Brutalist (`.theme-classic`):** Deep black shadows, neon accents, sharp corners.
 2. **Pastel Neo-Brutal (`.theme-pastel`):** Soft colors, lighter contrast, `8px` border radius.
 3. **Monochrome (`.theme-mono`):** Grayscale colors and thicker black lines for minimal interfaces.
+4. **Warm Brutalist (`.theme-warm`):** Warm earthy tones and brown hard shadows for comfort and raw personality.
 
 If you want to tune a theme visually first, open the [Theme Playground](https://lidaixingchen.github.io/brutxui-vue3/guide/theme-playground). It provides a product preview, component matrix, contrast checks, token coverage, and generated `.theme-custom` CSS.
 

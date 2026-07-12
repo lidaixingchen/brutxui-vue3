@@ -22,7 +22,7 @@ export interface UseThemeReturn {
 const THEME_KEY: InjectionKey<UseThemeReturn> = Symbol('brutx-theme')
 
 // 常量定义
-const VALID_THEMES: readonly ThemeName[] = ['classic', 'pastel', 'mono', 'warm'] as const
+export const VALID_THEMES: readonly ThemeName[] = ['classic', 'pastel', 'mono', 'warm'] as const
 const VALID_MODES: readonly ColorMode[] = ['light', 'dark', 'system'] as const
 
 // 类型守卫

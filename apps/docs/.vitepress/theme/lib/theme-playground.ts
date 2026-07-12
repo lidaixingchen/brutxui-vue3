@@ -1,4 +1,4 @@
-export type ThemeName = 'classic' | 'pastel' | 'mono'
+export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
 export type ColorMode = 'light' | 'dark'
 
 export interface ThemeTokens {
@@ -340,6 +340,68 @@ export const themePresets: Record<ThemeName, ThemePreset> = {
             },
         },
     },
+    warm: {
+        label: 'Warm',
+        description: '温暖色调风格，兼顾泥土感与粗野主义硬阴影。',
+        modes: {
+            light: {
+                borderWidth: '3px',
+                borderColor: '#5C3D2E',
+                shadowOffsetX: '4px',
+                shadowOffsetY: '4px',
+                shadowColor: '#5C3D2E',
+                radius: '4px',
+                bg: '#FFF8F0',
+                fg: '#2D1810',
+                primary: '#E8722A',
+                primaryForeground: '#FFFFFF',
+                secondary: '#8B6F47',
+                secondaryForeground: '#FFFFFF',
+                accent: '#F2C078',
+                accentForeground: '#2D1810',
+                destructive: '#C0392B',
+                destructiveForeground: '#FFFFFF',
+                success: '#7B8B3A',
+                successForeground: '#FFFFFF',
+                muted: '#F5EDE3',
+                mutedForeground: '#6B5B4F',
+                ring: '#E8722A',
+                pressedOffset: '2px',
+                info: '#D4956A',
+                infoForeground: '#FFFFFF',
+                overlay: 'rgba(45, 24, 16, 0.5)',
+                placeholder: '#B8A898',
+            },
+            dark: {
+                borderWidth: '3px',
+                borderColor: '#C4A882',
+                shadowOffsetX: '4px',
+                shadowOffsetY: '4px',
+                shadowColor: '#C4A882',
+                radius: '4px',
+                bg: '#1A1410',
+                fg: '#F5E6D3',
+                primary: '#F59E4C',
+                primaryForeground: '#1A1410',
+                secondary: '#B8956A',
+                secondaryForeground: '#1A1410',
+                accent: '#FFD89B',
+                accentForeground: '#1A1410',
+                destructive: '#E74C3C',
+                destructiveForeground: '#FFFFFF',
+                success: '#A3B556',
+                successForeground: '#1A1410',
+                muted: '#2A2018',
+                mutedForeground: '#B8A898',
+                ring: '#F59E4C',
+                pressedOffset: '2px',
+                info: '#E8B88A',
+                infoForeground: '#1A1410',
+                overlay: 'rgba(0, 0, 0, 0.7)',
+                placeholder: '#6B5B4F',
+            },
+        },
+    },
 }
 
 export const tokenKeys: (keyof ThemeTokens)[] = [
@@ -426,6 +488,7 @@ export const themeOptions: { value: ThemeName; label: string }[] = [
     { value: 'classic', label: 'Classic' },
     { value: 'pastel', label: 'Pastel' },
     { value: 'mono', label: 'Mono' },
+    { value: 'warm', label: 'Warm' },
 ]
 
 export const modeOptions: { value: ColorMode; label: string }[] = [

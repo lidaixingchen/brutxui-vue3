@@ -1,56 +1,42 @@
 # Brutx UI
 
-A Neo-Brutalism styled Vue 3 component library with CLI tool support. Copy components into your codebase for full customization control.
+A Neo-Brutalist styled Vue 3 component library with rich CLI tool support. Copy components into your codebase for full customization and control.
 
 **[中文](/packages/ui/README.md)**
 
 [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
 [![npm downloads](https://img.shields.io/npm/dm/brutx-ui-vue.svg?style=flat-square)](https://www.npmjs.com/package/brutx-ui-vue)
 [![License: MIT](https://img.shields.io/badge/License-MIT-4ECDC4.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0+-FFE66D.svg?style=flat-square)](https://www.typescriptlang.org/)
 
 ## Features
 
-- **CLI Tool**: Copy components into your codebase via `npx brutx@latest`
-- **Full Control**: Own and customize every component
-- **Brutalist Style**: Bold borders, offset shadows, vivid colors
-- **Tailwind-ready Tokens**: background/foreground/primary/secondary/destructive, ring, input, card, etc. Dark mode support via `.dark`
-- **Headless Primitives**: Built on reka-ui, CVA variants, tailwind-merge `cn()`
-- **i18n Support**: Built-in `useLocale()` composable for multi-language support
-- **Theme Presets**: Classic (default), Pastel, and Mono themes
+- **CLI Tool**: Setup, add, update, remove, and debug components via `npx brutx-vue@latest`.
+- **Full Control**: Components are copied directly to your directory. You own the code and can customize every line.
+- **Neo-Brutalist Style**: Bold borders, offset hard shadows, neon accent colors, zero compromises.
+- **Tailwind-ready Tokens**: Built on CSS custom properties. Out-of-the-box support for dark mode via `.dark`.
+- **Modern Headless Primitives**: Powered by reka-ui headless primitives, CVA variants, and tailwind-merge `cn()`.
+- **Internationalization**: Lightweight built-in `useLocale()` composable for runtime language switching.
+- **4 Theme Presets**: Built-in presets for Classic, Pastel, Mono, and Warm themes.
 
-## Installation
+## Quick Start
 
-Add components to your project using the CLI:
-
-```bash
-# Initialize your project
-npx brutx@latest init
-
-# Add components
-npx brutx@latest add button card badge
-
-# Or add all components
-npx brutx@latest add --all
-```
-
-## Upgrading
-
-When a new version of BrutxUI is released, re-run the init command to upgrade:
+Initialize your project and add components using the CLI:
 
 ```bash
-npx brutx@latest init
-```
+# Initialize your project config (generates components.json)
+npx brutx-vue@latest init
 
-You can also update individual components:
+# Add specific components
+npx brutx-vue@latest add button card badge
 
-```bash
-npx brutx@latest add button --overwrite
+# Or add all components at once
+npx brutx-vue@latest add --all
 ```
 
 ## Usage
 
-After adding components, import them from your project:
+Once components are added to your project (default `@/components/ui`), import and use them:
 
 ```vue
 <script setup lang="ts">
@@ -77,29 +63,23 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 ## CLI Commands
 
-| Command                             | Description                        |
-| ----------------------------------- | ---------------------------------- |
-| `npx brutx@latest init`             | Initialize project with components.json |
-| `npx brutx@latest add <component>`  | Add a specific component           |
-| `npx brutx@latest add --all`        | Add all components                 |
+`brutx-vue` CLI provides a suite of commands to help you manage your local components:
 
-## Component List
-
-### Base Components
-
-Accordion · Alert · AlertDialog · Avatar · Badge · Button · Card · Card3D · Checkbox · Combobox · Command · Dialog · DropdownMenu · Input · Label · NumberInput · Popover · Progress · RadioGroup · ScrollArea · Select · Separator · Sheet · Skeleton · Slider · Switch · Table · Tabs · TagsInput · Textarea · Toast · Toggle · ToggleGroup · Tooltip
-
-### Pages & Sections
-
-AuthCard · BrutalistHero · CookieConsent · DashboardShell · FeedbackForm · FooterSection · HeaderSection · PricingSection
-
-### Featured Components
-
-BeforeAfter · Calendar · Carousel · ChatBubble · CodeBlock · CopyToClipboard · Counter · DataTable · GlitchText · HardcoreInput · Kanban · Kbd · Marquee · Pagination · ScratchCard · SketchyChart · Spinner · Stepper · Timeline · TreeView · Upload
+| Command | Options / Flags | Description |
+| :--- | :--- | :--- |
+| `init` | - | Initialize components config `components.json` in your project root |
+| `add <components...>` | `--all`, `--overwrite`, `--yes` | Copy specified components (or all) to your project. Use `--overwrite` to replace existing ones |
+| `remove <components...>` | `--dry-run`, `--yes` | Safely delete components and clean up unused locales or composables automatically |
+| `list` | - | List all available components to install and the ones already installed |
+| `info <component>` | - | View detailed component metadata including external dependencies and descriptions |
+| `diff <component>` | - | Compare line-by-line differences between your local component and the latest registry version |
+| `update` | `--dry-run`, `--all`, `--yes` | Automatically check and update installed components. Use `--dry-run` to preview first |
+| `doctor` | `--fix`, `--yes` | Diagnose and automatically fix 8 types of issues including config, dependencies, and CSS tokens |
+| `create <name>` | - | Scaffold new custom component or block files following the library structures |
 
 ## Claude Code Skill
 
-BrutxUI provides a Claude Code Skill that enables AI assistants to generate component code following BrutxUI design specifications.
+BrutxUI provides a Claude Code Skill that allows AI assistants to generate compliant Neo-Brutalist component code based on the library structure.
 
 ### Installation
 
@@ -115,21 +95,16 @@ cp -r skills/brutxui ~/.claude/skills/brutxui
 
 ### Usage
 
-After installation, simply describe your needs in Claude Code:
+Simply describe your layout requirements to Claude:
+- "Create a login form with BrutxUI"
+- "Help me build a Neo-Brutalist pricing page"
 
-- "Create a login form using BrutxUI"
-- "Build a neo-brutalist pricing page"
-- "How do I use the BrutxUI Button component?"
+## Customization & Custom Tokens
 
-Claude will automatically reference component documentation, style specifications, and code templates to generate code that follows BrutxUI design conventions.
-
-## Notes
-
-- **Dark Mode**: Add/remove `.dark` on `html` or `body` to toggle the theme
-- **Component Ownership**: Components are copied into your project, giving you full ownership and customization control
-- **Token Overrides**: Override CSS variables (`--brutal-*`) to customize the design system
-- **Theme Presets**: `.theme-classic` (default) · `.theme-pastel` (soft) · `.theme-mono` (monochrome)
+- **Dark Mode**: Add or remove the `.dark` class on `html` or `body` element.
+- **Custom Visual Properties**: Customize visual attributes by overriding CSS variables (e.g. `--brutal-border-width`, `--brutal-radius`, `--brutal-shadow-offset-x`).
+- **Theme Presets**: `.theme-classic` (default) · `.theme-pastel` (soft) · `.theme-mono` (mono) · `.theme-warm` (warm).
 
 ## License
 
-[MIT](https://opensource.org/licenses/MIT)
+Licensed under the [MIT License](https://opensource.org/licenses/MIT).
