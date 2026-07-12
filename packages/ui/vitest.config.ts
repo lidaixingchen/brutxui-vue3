@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, defaultExclude } from 'vitest/config'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 
@@ -15,6 +15,7 @@ export default defineConfig({
         environment: 'happy-dom',
         setupFiles: ['./src/vitest.setup.ts'],
         include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        exclude: ['src/**/*.browser.test.ts', ...defaultExclude],
         pool: 'threads',
         maxWorkers: 4,
         deps: {

@@ -79,6 +79,9 @@ jobs:
 
             - run: pnpm --filter brutx-ui-vue test
 
+            - run: pnpm --filter brutx-ui-vue test:browser
+              if: matrix.node-version == 22
+
             - run: pnpm --filter brutx-ui-vue test:visual
               if: matrix.node-version == 22
 

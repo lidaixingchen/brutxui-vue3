@@ -56,4 +56,35 @@ describe('preserve modules path rewriting', () => {
             distDir,
         )).toContain('"./_virtual/_plugin-vue_export-helper.cjs"')
     })
+
+    it('does not rewrite import-like patterns inside string literals', () => {
+        const filePath = `${distDir}/components/button/Button.js`
+        const content = 'const msg = "import x from \\"../../_virtual/chunk.js\\""'
+
+        expect(rewriteFlattenedChunkImports(content, filePath, distDir)).toBe(content)
+    })
+
+    it('does not rewrite import-like patterns inside comments', () => {
+        const filePath = `${distDir}/components/button/Button.js`
+        const content = '// import x from "../../_virtual/chunk.js"'
+
+        expect(rewriteFlattenedChunkImports(content, filePath, distDir)).toBe(content)
+    })
+
+    it('rewrites CJS require() calls', () => {
+        const nestedFilePath = `${distDir}/components/button/Button.vue.cjs`
+        const content = 'const e=require("../../_virtual/_plugin-vue_export-helper.cjs")'
+
+        const result = rewriteFlattenedChunkImports(content, nestedFilePath, distDir)
+        expect(result).toContain('"../../_virtual/_plugin-vue_export-helper.cjs"')
+    })
+
+    it('rewrites dynamic import() expressions', () => {
+        const filePath = `${distDir}/components/button/Button.js`
+        const content = 'const mod = import("../../../_virtual/chunk.js")'
+
+        const result = rewriteFlattenedChunkImports(content, filePath, distDir)
+        expect(result).toContain('"../../_virtual/chunk.js"')
+        expect(result).not.toContain('"../../../_virtual/chunk.js"')
+    })
 })
