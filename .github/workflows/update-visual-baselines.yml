@@ -3,6 +3,10 @@ name: Update Visual Baselines
 on:
     workflow_dispatch:
 
+permissions:
+    contents: read
+    actions: read
+
 jobs:
     update-snapshots:
         runs-on: ubuntu-latest
