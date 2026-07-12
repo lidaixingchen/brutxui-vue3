@@ -325,4 +325,4 @@ pnpm start
 
 ## 许可证
 
-MIT
+基于 [MIT 许可证](../../LICENSE) 开源。

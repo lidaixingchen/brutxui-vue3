@@ -107,4 +107,4 @@ Simply describe your layout requirements to Claude:
 
 ## License
 
-Licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Licensed under the [MIT License](../../LICENSE).

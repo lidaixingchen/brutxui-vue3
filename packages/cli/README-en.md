@@ -150,4 +150,4 @@ pnpm start
 
 ## License
 
-MIT
+Licensed under the [MIT License](../../LICENSE).

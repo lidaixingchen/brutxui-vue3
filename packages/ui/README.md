@@ -107,4 +107,4 @@ cp -r skills/brutxui ~/.claude/skills/brutxui
 
 ## 许可证
 
-基于 [MIT 许可证](https://opensource.org/licenses/MIT) 开源。
+基于 [MIT 许可证](../../LICENSE) 开源。
