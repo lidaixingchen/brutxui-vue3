@@ -463,12 +463,41 @@
     background-color: var(--feature-accent, var(--brutal-primary));
 }
 
-.VPFeatures .VPFeature:nth-child(6n+1) { --feature-accent: var(--brutal-primary); }
-.VPFeatures .VPFeature:nth-child(6n+2) { --feature-accent: var(--brutal-secondary); }
-.VPFeatures .VPFeature:nth-child(6n+3) { --feature-accent: var(--brutal-accent); }
-.VPFeatures .VPFeature:nth-child(6n+4) { --feature-accent: var(--brutal-destructive); }
-.VPFeatures .VPFeature:nth-child(6n+5) { --feature-accent: var(--brutal-success); }
-.VPFeatures .VPFeature:nth-child(6n+6) { --feature-accent: var(--brutal-info); }
+.VPFeatures .item:nth-child(6n+1) { --feature-accent: var(--brutal-primary); }
+.VPFeatures .item:nth-child(6n+2) { --feature-accent: var(--brutal-secondary); }
+.VPFeatures .item:nth-child(6n+3) { --feature-accent: var(--brutal-accent); }
+.VPFeatures .item:nth-child(6n+4) { --feature-accent: var(--brutal-destructive); }
+.VPFeatures .item:nth-child(6n+5) { --feature-accent: var(--brutal-success); }
+.VPFeatures .item:nth-child(6n+6) { --feature-accent: var(--brutal-info); }
+
+/* Style for default icon container in feature cards */
+.VPFeature .icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 48px !important;
+    height: 48px !important;
+    border: 2px solid #000000 !important;
+    box-shadow: 2px 2px 0 0 #000000 !important;
+    background-color: var(--feature-accent) !important;
+    margin-bottom: 1.25rem !important;
+    border-radius: 0px !important;
+    transition: transform 150ms, box-shadow 150ms !important;
+}
+
+/* Micro-interaction on card hover */
+.VPFeature:hover .icon {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 3px 3px 0 0 #000000 !important;
+}
+
+/* Ensure the SVG/img inside features scales well */
+.VPFeature .icon svg,
+.VPFeature .icon img {
+    width: 24px !important;
+    height: 24px !important;
+    color: #000000 !important;
+}
 
 /* Dark mode features */
 .dark .VPFeature {
@@ -479,6 +508,15 @@
 
 .dark .VPFeature:hover {
     box-shadow: 6px 6px 0 0 var(--brutal-border-color) !important;
+}
+
+.dark .VPFeature .icon {
+    border-color: var(--brutal-border-color) !important;
+    box-shadow: 2px 2px 0 0 var(--brutal-border-color) !important;
+}
+
+.dark .VPFeature:hover .icon {
+    box-shadow: 3px 3px 0 0 var(--brutal-border-color) !important;
 }
 
 /* ============================================
