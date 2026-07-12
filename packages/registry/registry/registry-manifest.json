@@ -248,7 +248,7 @@
       "examples": []
     },
     "color-mode-switcher": {
-      "integrity": "sha256-6200a52fd9d77bff4d530dccc7c10ab9316cae5c0075312c446ff83b2ec83474",
+      "integrity": "sha256-8c33d8176cebb97e71c29a2620662e1071873cfb135554ee7fc10cb2fabab019",
       "fileCount": 4,
       "dependencies": [
         "@lucide/vue"

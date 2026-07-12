@@ -9,15 +9,12 @@ import {
     COMPONENT_DEPENDENCIES,
     BASE_DEPENDENCIES,
     DOCS_URL,
-    DEFAULT_TAILWIND_CONFIG,
     CliError,
     detectProjectType,
     detectPackageManager,
     detectWorkspaceRoot,
-    findTailwindConfig,
     findCssFile,
     getDefaultAliases,
-    detectTailwindVersion,
     installPackages,
     getInstallCommand,
     logger,
@@ -32,9 +29,6 @@ type DetectedSettings = ProjectInitializationSettings;
 
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const projectType = await detectProjectType(cwd);
-    const tailwindVersion = await detectTailwindVersion(cwd);
-
-    const tailwindConfig = await findTailwindConfig(cwd);
     const cssFile = await findCssFile(cwd, projectType);
     const aliases = await getDefaultAliases(cwd);
 
@@ -44,7 +38,7 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
 
     return {
         tailwind: {
-            config: tailwindVersion === 'v4' ? '' : (tailwindConfig ?? DEFAULT_TAILWIND_CONFIG),
+            config: '',
             css: cssFile ?? fallbackCss,
         },
         aliases,

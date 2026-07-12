@@ -1,3 +1,19 @@
+/**
+ * L1 单元测试：useReducedMotion composable 的 JS 响应式逻辑。
+ *
+ * 范围（L1，happy-dom + vi.mock）：
+ * - ref 初始值与 mount 后的 matchMedia.matches 同步
+ * - change 事件触发后 ref 响应式更新
+ * - unmount 时 removeEventListener 清理
+ * - SSR（isClient=false）下跳过 matchMedia 调用
+ *
+ * 不在 L1 覆盖的范围（属于 L2 browser mode，见 ARCHITECTURE_OPTIMIZATION_PLAN.md §5）：
+ * - CSS 媒体查询驱动的样式计算（如 getComputedStyle().animationName）
+ * - emulateMedia 真实触发 prefers-reduced-motion 对渲染的影响
+ *
+ * 禁止在此文件中添加 getComputedStyle / CSS 属性断言——happy-dom 无真实 CSS 引擎，
+ * mock window.matchMedia 不影响 CSS 媒体查询。此类断言属于 L2（P2 实现）。
+ */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, nextTick, type Ref } from 'vue'

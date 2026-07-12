@@ -64,6 +64,9 @@ jobs:
 
             - run: pnpm --filter brutx-ui-vue build
 
+            - name: Audit CSS fallback coverage
+              run: pnpm --filter brutx-ui-vue audit:fallback:check
+
             - run: pnpm -r typecheck
 
             - run: pnpm -r lint

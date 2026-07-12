@@ -8,6 +8,7 @@ import {
     computeRegistryIntegrity,
     validateRegistryIntegrity,
     validateRegistryItem,
+    CSS_VARS,
 } from 'brutx-shared-vue';
 import {
     findRegistryDependencyCycles,
@@ -457,93 +458,7 @@ export function assertKnownRegistryDeps(code: string, ownerName: string, sourceL
     return extractRegistryDeps(code, ownerName);
 }
 
-const TAILWIND_CONFIG = {
-    config: {
-        theme: {
-            extend: {
-                borderWidth: {
-                    '3': 'var(--brutal-border-width, 3px)'
-                },
-                borderColor: {
-                    brutal: 'var(--brutal-border-color, #000000)'
-                },
-                borderRadius: {
-                    brutal: 'var(--brutal-radius, 0px)'
-                },
-                colors: {
-                    'brutal-bg': 'var(--brutal-bg)',
-                    'brutal-fg': 'var(--brutal-fg)',
-                    'brutal-primary': 'var(--brutal-primary)',
-                    'brutal-secondary': 'var(--brutal-secondary)',
-                    'brutal-accent': 'var(--brutal-accent)',
-                    'brutal-destructive': 'var(--brutal-destructive)',
-                    'brutal-success': 'var(--brutal-success)',
-                    'brutal-muted': 'var(--brutal-muted)',
-                    'brutal-ring': 'var(--brutal-ring)',
-                    'brutal-info': 'var(--brutal-info)',
-                    'brutal-muted-foreground': 'var(--brutal-muted-foreground)',
-                    'brutal-overlay': 'var(--brutal-overlay)',
-                    'brutal-placeholder': 'var(--brutal-placeholder)'
-                },
-                boxShadow: {
-                    brutal: 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-sm': 'calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-lg': 'calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-xl': 'calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000)',
-                    'brutal-primary': 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary)',
-                    'brutal-secondary': 'var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary)'
-                }
-            }
-        }
-    }
-};
-
-const CSS_VARS = {
-    light: {
-        'brutal-border-width': '3px',
-        'brutal-border-color': '#000000',
-        'brutal-shadow-offset-x': '4px',
-        'brutal-shadow-offset-y': '4px',
-        'brutal-shadow-color': '#000000',
-        'brutal-radius': '0px',
-        'brutal-pressed-offset': '2px',
-        'brutal-bg': '#ffffff',
-        'brutal-fg': '#000000',
-        'brutal-primary': '#FF6B6B',
-        'brutal-secondary': '#4ECDC4',
-        'brutal-accent': '#FFE66D',
-        'brutal-destructive': '#EF476F',
-        'brutal-success': '#7FB069',
-        'brutal-muted': '#f3f4f6',
-        'brutal-ring': '#000000',
-        'brutal-info': '#4A90D9',
-        'brutal-muted-foreground': '#4B5563',
-        'brutal-overlay': 'rgba(0, 0, 0, 0.5)',
-        'brutal-placeholder': '#9CA3AF'
-    },
-    dark: {
-        'brutal-border-width': '3px',
-        'brutal-border-color': '#ffffff',
-        'brutal-shadow-offset-x': '4px',
-        'brutal-shadow-offset-y': '4px',
-        'brutal-shadow-color': '#ffffff',
-        'brutal-radius': '0px',
-        'brutal-pressed-offset': '2px',
-        'brutal-bg': '#141414',
-        'brutal-fg': '#ffffff',
-        'brutal-primary': '#FF6B6B',
-        'brutal-secondary': '#4ECDC4',
-        'brutal-accent': '#FFE66D',
-        'brutal-destructive': '#EF476F',
-        'brutal-success': '#7FB069',
-        'brutal-muted': '#1e1e1e',
-        'brutal-ring': '#ffffff',
-        'brutal-info': '#3B82F6',
-        'brutal-muted-foreground': '#9CA3AF',
-        'brutal-overlay': 'rgba(0, 0, 0, 0.7)',
-        'brutal-placeholder': '#6B7280'
-    }
-};
+const TAILWIND_CONFIG = {};
 
 function processComposables(
     composableDeps: Set<string>,

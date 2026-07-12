@@ -11,7 +11,7 @@ import {
     UTILS_TEMPLATE,
 } from '../constants.js';
 import { FileTransaction } from '../file-transaction.js';
-import { detectTailwindVersion, isSafePath, resolveAliasPath } from '../project.js';
+import { isSafePath, resolveAliasPath } from '../project.js';
 
 export interface ProjectInitializationSettings {
     tailwind: TailwindConfig;
@@ -87,7 +87,6 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
 
     await transaction.ensureDir(path.dirname(fullPath));
 
-    const tailwindVersion = await detectTailwindVersion(cwd);
     const brutalistCss = await getBrutalistCssStyles();
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
 
@@ -111,10 +110,8 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
             }
             content += brutxBlock;
         }
-    } else if (tailwindVersion === 'v4') {
-        content = `@import "tailwindcss";\n${brutxBlock}`;
     } else {
-        content = `@tailwind base;\n@tailwind components;\n@tailwind utilities;\n${brutxBlock}`;
+        content = `@import "tailwindcss";\n${brutxBlock}`;
     }
 
     await transaction.writeFile(fullPath, content);

@@ -18,7 +18,6 @@ export {
     resolveImportAlias,
     isSafePath,
     verifyWrittenPath,
-    detectTailwindVersion,
 } from './project.js';
 
 export { installPackages, getInstallCommand } from './package-manager.js';

@@ -223,13 +223,6 @@ async function resolveByProjectType(cwd: string, relativePath: string): Promise<
     return path.join(cwd, base, relativePath);
 }
 
-async function inferTailwindVersionFromConfig(cwd: string): Promise<'v3' | 'v4'> {
-    for (const file of CONFIG_FILES.tailwind) {
-        if (await fs.pathExists(path.join(cwd, file))) return 'v3';
-    }
-    return 'v4';
-}
-
 export async function getDefaultAliases(cwd: string): Promise<AliasConfig> {
     return await getAliasFromTsConfig(cwd) ?? { ...DEFAULT_ALIASES };
 }
@@ -368,27 +361,4 @@ export async function verifyWrittenPath(targetPath: string, cwd: string): Promis
             `This may indicate a symlink attack. The file has been removed.`
         );
     }
-}
-
-export async function detectTailwindVersion(cwd: string): Promise<'v3' | 'v4'> {
-    try {
-        const pkgJsonPath = path.join(cwd, 'package.json');
-        if (await fs.pathExists(pkgJsonPath)) {
-            const pkg: Record<string, Record<string, string> | undefined> = await fs.readJson(pkgJsonPath);
-            const tailwindVersion = pkg.dependencies?.['tailwindcss'] || pkg.devDependencies?.['tailwindcss'];
-
-            if (tailwindVersion) {
-                const match = tailwindVersion.match(/(\d+)\.\d+\.\d+/);
-                if (match) {
-                    const major = parseInt(match[1], 10);
-                    if (major >= 4) return 'v4';
-                    if (major >= 3) return 'v3';
-                }
-            }
-        }
-    } catch {
-        return inferTailwindVersionFromConfig(cwd);
-    }
-
-    return inferTailwindVersionFromConfig(cwd);
 }

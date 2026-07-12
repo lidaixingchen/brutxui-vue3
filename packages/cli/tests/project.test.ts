@@ -3,7 +3,7 @@ import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
 import type { PathLike } from 'fs';
-import { resolveImportAlias, detectProjectType, detectPackageManager, detectTailwindVersion, getAliasFromTsConfig, resolveAliasPath, clearProjectTypeCache } from '../src/lib/project.js';
+import { resolveImportAlias, detectProjectType, detectPackageManager, getAliasFromTsConfig, resolveAliasPath, clearProjectTypeCache } from '../src/lib/project.js';
 
 describe('resolveImportAlias', () => {
     it('should correctly resolve import aliases based on config', () => {
@@ -184,44 +184,5 @@ describe('detectProjectType', () => {
         });
         const type = await detectProjectType('/dummy/path');
         expect(type).toBe('vite-vue-src');
-    });
-});
-
-describe('detectTailwindVersion', () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
-    it('should detect v4 if package.json has tailwindcss v4', async () => {
-        vi.spyOn(fs, 'pathExists').mockResolvedValue(true);
-        vi.spyOn(fs, 'readJson').mockResolvedValue({
-            devDependencies: {
-                tailwindcss: '^4.0.0'
-            }
-        });
-
-        const version = await detectTailwindVersion('/dummy/path');
-        expect(version).toBe('v4');
-    });
-
-    it('should detect v3 if package.json has tailwindcss v3', async () => {
-        vi.spyOn(fs, 'pathExists').mockResolvedValue(true);
-        vi.spyOn(fs, 'readJson').mockResolvedValue({
-            devDependencies: {
-                tailwindcss: '^3.4.1'
-            }
-        });
-
-        const version = await detectTailwindVersion('/dummy/path');
-        expect(version).toBe('v3');
-    });
-
-    it('should fallback to v3 if tailwind config file exists', async () => {
-        vi.spyOn(fs, 'pathExists').mockImplementation((p: PathLike) => {
-            return Promise.resolve(p.toString().endsWith('tailwind.config.js'));
-        });
-
-        const version = await detectTailwindVersion('/dummy/path');
-        expect(version).toBe('v3');
     });
 });
