@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import { Combobox, Button } from 'brutx-ui-vue'
 
 const selected = ref<string | undefined>(undefined)
@@ -12,11 +12,16 @@ const options = [
 ]
 
 const loading = ref(false)
+const timers: ReturnType<typeof setTimeout>[] = []
 
 function toggleLoading() {
     loading.value = true
-    setTimeout(() => { loading.value = false }, 2000)
+    timers.push(setTimeout(() => { loading.value = false }, 2000))
 }
+
+onUnmounted(() => {
+    timers.forEach(clearTimeout)
+})
 
 const creativeOptions = ref([
     { value: 'vue', label: 'Vue' },

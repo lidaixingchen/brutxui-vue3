@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useI18n } from '../lib/i18n'
 
 const { isEn, t } = useI18n()
 
 const activeTab = ref<'cli' | 'usage'>('cli')
+const cliTabRef = ref<HTMLButtonElement | null>(null)
+const usageTabRef = ref<HTMLButtonElement | null>(null)
+
+function switchTab(tab: 'cli' | 'usage') {
+    activeTab.value = tab
+    nextTick(() => {
+        const el = tab === 'cli' ? cliTabRef.value : usageTabRef.value
+        el?.focus()
+    })
+}
 
 const cliCode = computed(() =>
     isEn.value
@@ -50,26 +60,43 @@ import { BButton } from '@/components/ui/button'
       <p class="code-subtitle">{{ t('copyPasteFirst') }}</p>
     </div>
 
-    <div class="code-tabs" role="tablist">
+    <div class="code-tabs" role="tablist" :aria-label="t('codeExamples')">
       <button
+        ref="cliTabRef"
         :class="['tab-button', { active: activeTab === 'cli' }]"
         role="tab"
+        id="code-tab-cli"
         :aria-selected="activeTab === 'cli'"
+        :tabindex="activeTab === 'cli' ? 0 : -1"
+        aria-controls="code-panel"
         @click="activeTab = 'cli'"
+        @keydown.arrow-right="switchTab('usage')"
+        @keydown.arrow-left="switchTab('usage')"
       >
         {{ t('cliInstall') }}
       </button>
       <button
+        ref="usageTabRef"
         :class="['tab-button', { active: activeTab === 'usage' }]"
         role="tab"
+        id="code-tab-usage"
         :aria-selected="activeTab === 'usage'"
+        :tabindex="activeTab === 'usage' ? 0 : -1"
+        aria-controls="code-panel"
         @click="activeTab = 'usage'"
+        @keydown.arrow-right="switchTab('cli')"
+        @keydown.arrow-left="switchTab('cli')"
       >
         {{ t('componentUsage') }}
       </button>
     </div>
 
-    <div class="code-block">
+    <div
+      class="code-block"
+      id="code-panel"
+      role="tabpanel"
+      :aria-labelledby="activeTab === 'cli' ? 'code-tab-cli' : 'code-tab-usage'"
+    >
       <div class="code-label">{{ activeTab === 'cli' ? 'bash' : 'vue' }}</div>
       <pre><code>{{ activeTab === 'cli' ? cliCode : usageCode }}</code></pre>
     </div>

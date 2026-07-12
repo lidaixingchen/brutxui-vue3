@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import {
     Upload,
     UploadTrigger,
@@ -61,6 +61,21 @@ const PICTURE_CARD_LIMIT = 3
 const PROGRESS_INCREMENT = 25
 const INTERVAL_MS = 250
 
+const activeTimers = new Set<ReturnType<typeof setInterval>>()
+
+function revokeBlobUrl(file: UploadFile) {
+    if (file.url?.startsWith('blob:')) {
+        URL.revokeObjectURL(file.url)
+    }
+}
+
+function wrapRemove(remove: (file: UploadFile) => void) {
+    return (file: UploadFile) => {
+        revokeBlobUrl(file)
+        remove(file)
+    }
+}
+
 // 模拟上传请求
 async function mockHttpRequest(options: UploadRequestOptions): Promise<void> {
     return new Promise<void>((resolve) => {
@@ -69,6 +84,7 @@ async function mockHttpRequest(options: UploadRequestOptions): Promise<void> {
             progress += PROGRESS_INCREMENT
             if (progress >= 100) {
                 clearInterval(interval)
+                activeTimers.delete(interval)
                 const url = options.file.type.startsWith('image/')
                     ? URL.createObjectURL(options.file)
                     : undefined
@@ -78,8 +94,15 @@ async function mockHttpRequest(options: UploadRequestOptions): Promise<void> {
                 options.onProgress(progress)
             }
         }, INTERVAL_MS)
+        activeTimers.add(interval)
     })
 }
+
+onUnmounted(() => {
+    activeTimers.forEach(clearInterval)
+    activeTimers.clear()
+    ;[...textFileList.value, ...pictureFileList.value, ...cardFileList.value].forEach(revokeBlobUrl)
+})
 </script>
 
 <template>
@@ -97,7 +120,7 @@ async function mockHttpRequest(options: UploadRequestOptions): Promise<void> {
                     <UploadTrigger :drag="drag" @select="selectFiles" />
                 </template>
                 <template #file-list="{ files, remove, retry }">
-                    <UploadFileList :files="files" list-type="text" @remove="remove" @retry="retry" />
+                    <UploadFileList :files="files" list-type="text" @remove="wrapRemove(remove)" @retry="retry" />
                 </template>
             </Upload>
         </div>
@@ -116,7 +139,7 @@ async function mockHttpRequest(options: UploadRequestOptions): Promise<void> {
                     <UploadTrigger :drag="drag" @select="selectFiles" />
                 </template>
                 <template #file-list="{ files, remove, retry }">
-                    <UploadFileList :files="files" list-type="picture" @remove="remove" @retry="retry" />
+                    <UploadFileList :files="files" list-type="picture" @remove="wrapRemove(remove)" @retry="retry" />
                 </template>
             </Upload>
         </div>
@@ -136,7 +159,7 @@ async function mockHttpRequest(options: UploadRequestOptions): Promise<void> {
                     <UploadTrigger @select="selectFiles" />
                 </template>
                 <template #file-list="{ files, remove }">
-                    <UploadFileList :files="files" list-type="picture-card" @remove="remove" />
+                    <UploadFileList :files="files" list-type="picture-card" @remove="wrapRemove(remove)" />
                 </template>
             </Upload>
         </div>

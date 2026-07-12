@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import CopyButton from './CopyButton.vue'
 import { cn } from '../lib/utils'
 import { useI18n } from '../lib/i18n'
@@ -100,6 +100,16 @@ const componentImports: Record<string, string[]> = {
 
 const activeTab = ref<InstallTab>('cli')
 const activePackageManager = ref<PackageManager>('pnpm')
+const cliTabRef = ref<HTMLButtonElement | null>(null)
+const manualTabRef = ref<HTMLButtonElement | null>(null)
+
+function switchTab(tab: InstallTab) {
+    activeTab.value = tab
+    nextTick(() => {
+        const el = tab === 'cli' ? cliTabRef.value : manualTabRef.value
+        el?.focus()
+    })
+}
 
 const packageManagers: { key: PackageManager; label: string }[] = [
     { key: 'pnpm', label: 'pnpm' },
@@ -191,28 +201,30 @@ const getPmTabClass = (pm: PackageManager) =>
 
 <template>
     <div class="border-3 border-brutal shadow-brutal overflow-hidden vp-raw">
-        <div class="flex border-b-3 border-brutal" role="tablist">
+        <div class="flex border-b-3 border-brutal" role="tablist" :aria-label="t('installMethod')">
             <button
+                ref="cliTabRef"
                 type="button"
                 role="tab"
                 :aria-selected="activeTab === 'cli'"
                 :tabindex="activeTab === 'cli' ? 0 : -1"
                 :class="getTabClass('cli')"
                 @click="activeTab = 'cli'"
-                @keydown.arrow-right="activeTab = 'manual'"
-                @keydown.arrow-left="activeTab = 'manual'"
+                @keydown.arrow-right="switchTab('manual')"
+                @keydown.arrow-left="switchTab('manual')"
             >
                 CLI
             </button>
             <button
+                ref="manualTabRef"
                 type="button"
                 role="tab"
                 :aria-selected="activeTab === 'manual'"
                 :tabindex="activeTab === 'manual' ? 0 : -1"
                 :class="getTabClass('manual')"
                 @click="activeTab = 'manual'"
-                @keydown.arrow-right="activeTab = 'cli'"
-                @keydown.arrow-left="activeTab = 'cli'"
+                @keydown.arrow-right="switchTab('cli')"
+                @keydown.arrow-left="switchTab('cli')"
             >
                 {{ t('manual') }}
             </button>

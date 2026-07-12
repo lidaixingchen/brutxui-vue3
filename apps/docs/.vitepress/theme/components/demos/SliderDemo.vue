@@ -15,7 +15,7 @@ const tooltipValue = ref([50])
     <div class="flex flex-col gap-8 w-full max-w-sm">
         <div class="space-y-2">
             <p class="text-sm font-bold">基础用法</p>
-            <Slider v-model="value" :default-value="[60]" />
+            <Slider v-model="value" />
             <p class="text-sm font-bold text-brutal-muted-foreground">
                 值：{{ value[0] }}
             </p>

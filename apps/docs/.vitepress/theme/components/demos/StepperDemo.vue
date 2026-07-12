@@ -10,7 +10,7 @@ const steps: StepperStep[] = [
     { id: 4, title: '完成', description: '注册成功' },
 ]
 
-const current = ref(1)
+const current = ref(0)
 
 function prev() { if (current.value > 0) current.value-- }
 function next() { if (current.value < steps.length - 1) current.value++ }

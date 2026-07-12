@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import { Counter } from 'brutx-ui-vue'
 import { RotateCcw } from '@lucide/vue'
 
@@ -15,10 +15,16 @@ const key = ref(0)
 function restart() { key.value++ }
 
 const completeMessage = ref('')
+const timers: ReturnType<typeof setTimeout>[] = []
+
 function onComplete() {
     completeMessage.value = '计数完成！'
-    setTimeout(() => { completeMessage.value = '' }, RESET_DELAY)
+    timers.push(setTimeout(() => { completeMessage.value = '' }, RESET_DELAY))
 }
+
+onUnmounted(() => {
+    timers.forEach(clearTimeout)
+})
 </script>
 
 <template>

@@ -18,10 +18,6 @@ const data = ref(generateData())
 const value = ref<(string | number)[]>([1, 4])
 const value2 = ref<(string | number)[]>([2])
 const value3 = ref<(string | number)[]>([])
-
-const handleChange = (val: (string | number)[], direction: 'left' | 'right', movedKeys: (string | number)[]) => {
-    console.log('change:', val, direction, movedKeys)
-}
 </script>
 
 <template>
@@ -31,7 +27,6 @@ const handleChange = (val: (string | number)[], direction: 'left' | 'right', mov
             <Transfer
                 v-model="value"
                 :data="data"
-                @change="handleChange"
             />
         </div>
 
@@ -41,7 +36,6 @@ const handleChange = (val: (string | number)[], direction: 'left' | 'right', mov
                 v-model="value2"
                 :data="data"
                 filterable
-                @change="handleChange"
             />
         </div>
 
@@ -52,7 +46,6 @@ const handleChange = (val: (string | number)[], direction: 'left' | 'right', mov
                 :data="data"
                 :titles="['可选择项', '已选择项']"
                 :button-texts="['撤销', '添加']"
-                @change="handleChange"
             />
         </div>
     </div>

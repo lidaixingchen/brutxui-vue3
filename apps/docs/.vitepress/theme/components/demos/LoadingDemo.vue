@@ -1,23 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
 import { Loading, vLoading } from 'brutx-ui-vue'
 
 const isLoading1 = ref(false)
 const isLoading2 = ref(false)
 
+const timers: ReturnType<typeof setTimeout>[] = []
+
 function toggleLoading1() {
     isLoading1.value = true
-    setTimeout(() => {
+    timers.push(setTimeout(() => {
         isLoading1.value = false
-    }, 2000)
+    }, 2000))
 }
 
 function toggleLoading2() {
     isLoading2.value = true
-    setTimeout(() => {
+    timers.push(setTimeout(() => {
         isLoading2.value = false
-    }, 2000)
+    }, 2000))
 }
+
+onUnmounted(() => {
+    timers.forEach(clearTimeout)
+})
 </script>
 
 <template>

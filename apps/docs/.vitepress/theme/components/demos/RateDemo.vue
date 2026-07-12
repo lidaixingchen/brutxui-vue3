@@ -7,23 +7,19 @@ const val2 = ref(2.5)
 const val3 = ref(6)
 const val4 = ref(4)
 const sizeVal = ref(3)
-
-const handleChange = (val: number) => {
-    console.log('rate changed:', val)
-}
 </script>
 
 <template>
     <div class="flex flex-col gap-8 w-full max-w-xl">
         <div>
             <h3 class="text-lg font-bold mb-3">基础评分</h3>
-            <Rate v-model="val1" @change="handleChange" />
+            <Rate v-model="val1" />
             <div class="mt-2 text-sm text-neutral-500">当前分值: {{ val1 }}</div>
         </div>
 
         <div>
             <h3 class="text-lg font-bold mb-3">允许半星</h3>
-            <Rate v-model="val2" allow-half @change="handleChange" />
+            <Rate v-model="val2" allow-half />
             <div class="mt-2 text-sm text-neutral-500">当前分值: {{ val2 }}</div>
         </div>
 

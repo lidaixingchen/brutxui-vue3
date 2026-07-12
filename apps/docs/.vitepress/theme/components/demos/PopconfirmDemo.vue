@@ -6,7 +6,6 @@ function handleConfirm(): void {
 }
 
 function handleCancel(): void {
-    console.log('操作已取消')
 }
 </script>
 
