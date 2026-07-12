@@ -41,10 +41,10 @@
     "devDependencies": {
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^25.9.1",
-        "@vitest/coverage-v8": "^4.1.8",
+        "@vitest/coverage-v8": "^4.1.10",
         "tsup": "^8.0.1",
         "typescript": "^6.0.3",
-        "vitest": "^4.1.8"
+        "vitest": "^4.1.10"
     },
     "keywords": [
         "brutx-vue",
