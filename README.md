@@ -160,7 +160,7 @@ Claude 会自动参考组件文档、样式规范和代码模板，生成符合 
 
 在本地运行、测试和打包 BrutxUI：
 
-本仓库开发和发布要求 **Node.js 22.5+** 与 **pnpm 11+**。这是维护环境要求；通过 `brutx-vue` 添加组件的用户项目仍可使用 npm、yarn、pnpm 或 bun，CLI 会根据 lockfile 或 `--package-manager` 选择包管理器。
+本仓库开发和发布要求 **Node.js 22.5+** 与 **pnpm 11+**。**这是维护环境的硬性要求，开发本仓库时仅允许使用 `pnpm`，禁止使用 `npm` 或 `yarn`，以防在本地生成不一致的 lockfile。** 通过 `brutx-vue` 添加组件的用户项目仍可使用 npm、yarn、pnpm 或 bun，CLI 会根据 lockfile 或 `--package-manager` 选择包管理器。
 
 ### 1. 仓库设置
 ```bash
