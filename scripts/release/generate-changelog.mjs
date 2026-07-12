@@ -96,7 +96,7 @@ function parseCommit(line) {
     }
 
     const [, type, scope, breakingMark, description] = match;
-    const isBreaking = breakingMark === '!' || (body && body.includes('BREAKING CHANGE:'));
+    const isBreaking = breakingMark === '!' || (body && /BREAKING[ -]CHANGE:/.test(body));
 
     return {
         hash,
@@ -183,7 +183,7 @@ function prependToChangelog(newEntry) {
             const existing = readFileSync(changelogPath, 'utf-8');
             const firstEntryIndex = existing.indexOf('\n## [');
             const header = firstEntryIndex !== -1 ? existing.slice(0, firstEntryIndex + 1) : defaultHeader;
-            const contentWithoutHeader = firstEntryIndex !== -1 ? existing.slice(firstEntryIndex + 1) : '';
+            const contentWithoutHeader = firstEntryIndex !== -1 ? existing.slice(firstEntryIndex + 1) : existing;
             writeFileSync(changelogPath, header + newEntry + '\n' + contentWithoutHeader, 'utf-8');
         } else {
             writeFileSync(changelogPath, defaultHeader + newEntry, 'utf-8');

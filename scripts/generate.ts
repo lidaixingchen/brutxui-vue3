@@ -10,6 +10,7 @@
 
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'fs'
 import { join, resolve, dirname, relative } from 'path'
+import { fileURLToPath } from 'url'
 
 // ============================================================
 // 类型定义
@@ -84,7 +85,7 @@ const TYPE_LABEL_MAP: Record<GenerateType, string> = {
 }
 
 /** 项目根目录 */
-const PROJECT_ROOT = resolve(__dirname, '..')
+const PROJECT_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 /** UI 包源码目录 */
 const UI_SRC_DIR = join(PROJECT_ROOT, 'packages', 'ui', 'src')
@@ -615,22 +616,26 @@ function updateIndexFile(exports: string[]): boolean {
 
     const content = readFileSync(INDEX_FILE, 'utf-8')
 
-    // 检查是否已有重复导出
+    const newExports = exports.filter((exp) => !content.includes(exp))
     const duplicateExports = exports.filter((exp) => content.includes(exp))
+
     if (duplicateExports.length > 0) {
-        logWarning('以下导出已存在，跳过更新:')
+        logWarning('以下导出已存在，跳过:')
         for (const exp of duplicateExports) {
             logWarning(`  ${exp}`)
         }
+    }
+
+    if (newExports.length === 0) {
         return true
     }
 
     // 在文件末尾追加新导出
-    const newContent = content.trimEnd() + '\n\n// 自动生成的导出\n' + exports.join('\n') + '\n'
+    const newContent = content.trimEnd() + '\n\n// 自动生成的导出\n' + newExports.join('\n') + '\n'
     writeFileSync(INDEX_FILE, newContent, 'utf-8')
 
     logSuccess(`更新导出: ${colorize('cyan', relative(PROJECT_ROOT, INDEX_FILE))}`)
-    for (const exp of exports) {
+    for (const exp of newExports) {
         logInfo(`  ${exp}`)
     }
 
