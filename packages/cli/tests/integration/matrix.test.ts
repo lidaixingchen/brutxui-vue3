@@ -29,7 +29,6 @@ describe('CLI integration matrix', () => {
     it('keeps the release matrix explicit and local-registry friendly', () => {
         expect(CLI_INTEGRATION_MATRIX.map(item => item.name)).toEqual([
             'vite-vue-tailwind-v4',
-            'vite-vue-tailwind-v3',
             'nuxt-tailwind-v4',
             'monorepo-subpackage-tailwind-v4',
         ])
@@ -92,12 +91,10 @@ describe('CLI integration matrix', () => {
         for (const item of CLI_INTEGRATION_MATRIX) {
             const project = await createTestProject({
                 template: item.template,
-                tailwindMajor: item.tailwindMajor,
             })
             projects.push(project)
 
             expect(project.template).toBe(item.template)
-            expect(project.tailwindMajor).toBe(item.tailwindMajor)
             expect(await fs.pathExists(path.join(project.root, 'package.json'))).toBe(true)
             expect(await fs.pathExists(project.fakeBin)).toBe(true)
             expect(localRegistry).toContain(path.join('packages', 'registry', 'registry'))
@@ -108,12 +105,6 @@ describe('CLI integration matrix', () => {
             } else {
                 expect(await fs.pathExists(path.join(project.root, 'src', 'main.ts'))).toBe(true)
                 expect(await fs.pathExists(path.join(project.root, 'src', 'index.css'))).toBe(true)
-            }
-
-            if (item.tailwindMajor === 3) {
-                expect(await fs.pathExists(path.join(project.root, 'tailwind.config.ts'))).toBe(true)
-            } else {
-                expect(await fs.pathExists(path.join(project.root, 'tailwind.config.ts'))).toBe(false)
             }
 
             if (item.template === 'monorepo-subpackage') {

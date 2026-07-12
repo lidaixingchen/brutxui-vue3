@@ -51,7 +51,6 @@ describeFullMatrix('brutx-vue full CLI integration matrix', { timeout: 120000 },
         for (const item of getIntegrationMatrixCases({ includeHeavy: true })) {
             const project = await createTestProject({
                 template: item.template,
-                tailwindMajor: item.tailwindMajor,
             });
             projects.push(project);
 

@@ -6,8 +6,9 @@
 @source "../**/*.ts";
 
 @theme {
+    /* @brutx:theme-tokens:start */
     /* Dynamic: resolve at runtime via --brutal-* for dark mode support.
-       Fallbacks mirror BASE_THEME.light from packages/shared/src/design-tokens.ts. */
+       Fallbacks sourced from BASE_THEME.light (see @brutx:root-tokens markers below). */
     --color-brutal-bg: var(--brutal-bg, #ffffff);
     --color-brutal-fg: var(--brutal-fg, #000000);
     --color-brutal-muted: var(--brutal-muted, #f3f4f6);
@@ -47,6 +48,7 @@
     /* Dynamic: border/radius use --brutal-* for theme support */
     --border-width-3: var(--brutal-border-width, 3px);
     --radius-brutal: var(--brutal-radius, 0px);
+    /* @brutx:theme-tokens:end */
 }
 
 @layer base {
@@ -63,6 +65,7 @@
         content: none !important;
     }
 
+    /* @brutx:root-tokens:start */
     :root {
         --brutal-border-width: 3px;
         --brutal-border-color: #000000;
@@ -70,6 +73,7 @@
         --brutal-shadow-offset-y: 4px;
         --brutal-shadow-color: #000000;
         --brutal-radius: 0px;
+        --brutal-pressed-offset: 2px;
         --brutal-bg: #ffffff;
         --brutal-fg: #000000;
         --brutal-primary: #FF6B6B;
@@ -85,7 +89,6 @@
         --brutal-muted: #f3f4f6;
         --brutal-muted-foreground: #4B5563;
         --brutal-ring: #000000;
-        --brutal-pressed-offset: 2px;
         --brutal-info: #4A90D9;
         --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.5);
@@ -101,6 +104,7 @@
         --brutal-shadow-offset-y: 4px;
         --brutal-shadow-color: #ffffff;
         --brutal-radius: 0px;
+        --brutal-pressed-offset: 2px;
         --brutal-bg: #141414;
         --brutal-fg: #ffffff;
         --brutal-primary: #FF6B6B;
@@ -116,12 +120,14 @@
         --brutal-muted: #1e1e1e;
         --brutal-muted-foreground: #9CA3AF;
         --brutal-ring: #ffffff;
-        --brutal-pressed-offset: 2px;
         --brutal-info: #3B82F6;
         --brutal-info-foreground: #ffffff;
         --brutal-overlay: rgba(0, 0, 0, 0.7);
         --brutal-placeholder: #6B7280;
+        --brutal-black: #000000;
+        --brutal-yellow: #FFE66D;
     }
+    /* @brutx:root-tokens:end */
 
     /* Classic theme: light mode inherits all values from :root above.
        Only the dark override is needed to reset variables when switching themes. */

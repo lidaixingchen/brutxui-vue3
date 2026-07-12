@@ -58,6 +58,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - 组合式函数：`packages/ui/src/composables/`
   - 语言包：`packages/ui/src/locales/`
   - 工具函数：`packages/ui/src/lib/utils.ts`、`packages/ui/src/lib/data-table-utils.ts`
+  - 设计令牌：`packages/shared/src/design-tokens.ts`（`BASE_THEME` 单一数据源）；`packages/ui/src/styles.css` 的 `@theme` 变量声明（含 fallback，标记 `@brutx:theme-tokens`）与 `:root`/`.dark` 块（纯运行时值，标记 `@brutx:root-tokens`）均由 `packages/ui/scripts/generate-styles-tokens.ts` 在 `pnpm prebuild:tokens` 时从该文件注入（勿手动编辑）
   - 测试文件：`packages/ui/src/components/*.test.ts`
   - 构建产物：`packages/ui/dist/`
 - **CLI 工具：** `packages/cli/`

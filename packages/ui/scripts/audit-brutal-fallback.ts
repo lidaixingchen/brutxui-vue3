@@ -135,7 +135,7 @@ function auditFile(filePath: string): { violations: Violation[]; referenceCount:
             const varName = varNameMatch ? varNameMatch[0] : '--brutal-?';
             const { line, column } = computeLineColumn(content, idx);
             violations.push({
-                file: path.relative(SCAN_ROOT, filePath),
+                file: path.relative(SCAN_ROOT, filePath).replace(/\\/g, '/'),
                 line,
                 column,
                 snippet: extractSnippet(content, idx, parsed.endIdx),

@@ -2,10 +2,10 @@
  * Design tokens single source of truth.
  *
  * All brutalist design token values (border, shadow, radius, colors, etc.)
- * are defined here. Consumers derive their format-specific output:
+ * Consumers derive their format-specific output:
  * - `packages/registry/scripts/build-registry.ts` -> registry JSON `cssVars` field
- * - `packages/ui/src/styles.css` -> `:root` / `.dark` blocks (planned: build-time injection)
- * - CSS `var(--brutal-*, fallback)` fallbacks (planned: reference these constants)
+ * - `packages/ui/src/styles.css` -> `@theme` (with fallbacks) + `:root` / `.dark` blocks (build-time injection via `packages/ui/scripts/generate-styles-tokens.ts`)
+ * - CSS `var(--brutal-*, fallback)` fallbacks sourced from `BASE_THEME.light`
  *
  * Keep this file free of imports so it can be consumed by both the ui and
  * registry packages without creating cross-package dependencies.

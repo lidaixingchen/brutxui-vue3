@@ -1,13 +1,13 @@
 {
-  "components\\auth-card\\AuthCard.vue": 4,
-  "components\\button\\Button.vue": 6,
-  "components\\calendar\\Calendar.vue": 33,
-  "components\\code-block\\brutx-prism.css": 3,
-  "components\\date-picker\\DatePickerPanel.vue": 23,
-  "components\\date-picker\\DatePickerRangePanel.vue": 26,
-  "components\\date-picker\\DateTimePickerPanel.vue": 23,
-  "components\\date-picker\\WeekPickerPanel.vue": 26,
-  "components\\date-picker\\panel-styles.css": 7,
-  "components\\glitch-text\\GlitchText.vue": 6,
-  "components\\hardcore-input\\HardcoreInput.vue": 2
+  "components/auth-card/AuthCard.vue": 4,
+  "components/button/Button.vue": 6,
+  "components/calendar/Calendar.vue": 33,
+  "components/code-block/brutx-prism.css": 3,
+  "components/date-picker/DatePickerPanel.vue": 23,
+  "components/date-picker/DatePickerRangePanel.vue": 26,
+  "components/date-picker/DateTimePickerPanel.vue": 23,
+  "components/date-picker/WeekPickerPanel.vue": 26,
+  "components/date-picker/panel-styles.css": 7,
+  "components/glitch-text/GlitchText.vue": 6,
+  "components/hardcore-input/HardcoreInput.vue": 2
 }
