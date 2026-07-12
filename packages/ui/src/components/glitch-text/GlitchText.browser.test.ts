@@ -1,10 +1,8 @@
 import { test, expect } from 'vitest'
 import { cdp } from '@vitest/browser/context'
-import { mount } from '@vue/test-utils'
 import GlitchText from './GlitchText.vue'
+import { mount } from '@/test/browser-mount'
 
-// @vitest/browser v4 的 BrowserPage 没有 emulateMedia 方法，
-// 通过 CDP Emulation.setEmulatedMedia 直接模拟 prefers-reduced-motion 媒体特性
 async function emulateReducedMotion(value: 'reduce' | 'no-preference') {
     const session = cdp() as unknown as {
         send(method: string, params?: Record<string, unknown>): Promise<unknown>

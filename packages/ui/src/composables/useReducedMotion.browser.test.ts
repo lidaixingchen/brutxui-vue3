@@ -1,11 +1,9 @@
-import { test, expect } from 'vitest'
+import { test, expect, vi } from 'vitest'
 import { cdp } from '@vitest/browser/context'
-import { mount } from '@vue/test-utils'
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, h, nextTick, type Ref } from 'vue'
 import { useReducedMotion } from './useReducedMotion'
+import { mount } from '@/test/browser-mount'
 
-// @vitest/browser v4 的 BrowserPage 没有 emulateMedia 方法，
-// 通过 CDP Emulation.setEmulatedMedia 直接模拟 prefers-reduced-motion 媒体特性
 async function emulateReducedMotion(value: 'reduce' | 'no-preference') {
     const session = cdp() as unknown as {
         send(method: string, params?: Record<string, unknown>): Promise<unknown>
@@ -15,38 +13,39 @@ async function emulateReducedMotion(value: 'reduce' | 'no-preference') {
     })
 }
 
+function mountProbe() {
+    let prefersReduced: Ref<boolean> | undefined
+    const wrapper = mount(defineComponent({
+        setup() {
+            prefersReduced = useReducedMotion()
+            return { prefersReduced }
+        },
+        render: () => h('div'),
+    }))
+    return { wrapper, get value() { return prefersReduced?.value } }
+}
+
 test('returns true when browser media query is reduce', async () => {
     await emulateReducedMotion('reduce')
 
-    const wrapper = mount(defineComponent({
-        setup() {
-            const prefersReduced = useReducedMotion()
-            return { prefersReduced }
-        },
-        template: '<div>{{ prefersReduced }}</div>',
-    }))
+    const { wrapper, value } = mountProbe()
     await nextTick()
 
-    expect(wrapper.vm.prefersReduced).toBe(true)
+    expect(value).toBe(true)
     wrapper.unmount()
 })
 
 test('updates to false when switching to no-preference', async () => {
     await emulateReducedMotion('reduce')
 
-    const wrapper = mount(defineComponent({
-        setup() {
-            const prefersReduced = useReducedMotion()
-            return { prefersReduced }
-        },
-        template: '<div>{{ prefersReduced }}</div>',
-    }))
+    const { wrapper, value } = mountProbe()
     await nextTick()
-    expect(wrapper.vm.prefersReduced).toBe(true)
+    expect(value).toBe(true)
 
     await emulateReducedMotion('no-preference')
-    await nextTick()
+    await vi.waitFor(() => {
+        expect(value).toBe(false)
+    })
 
-    expect(wrapper.vm.prefersReduced).toBe(false)
     wrapper.unmount()
 })

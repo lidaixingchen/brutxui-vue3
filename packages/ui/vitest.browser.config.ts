@@ -9,16 +9,17 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
         },
+        dedupe: ['vue'],
     },
     test: {
         browser: {
             enabled: true,
-            provider: playwright,
+            provider: playwright(),
             instances: [
                 { browser: 'chromium' },
             ],
         },
         include: ['src/**/*.browser.test.ts'],
-        setupFiles: ['./src/vitest.setup.ts'],
+        setupFiles: ['./src/vitest.browser.setup.ts'],
     },
 })

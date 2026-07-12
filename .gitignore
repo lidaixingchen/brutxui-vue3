@@ -46,6 +46,8 @@ lerna-debug.log*
 coverage
 playwright-report
 test-results
+.vitest-attachments
+__screenshots__
 
 # Cache
 .cache
