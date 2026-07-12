@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useData, useRoute } from 'vitepress'
+import { useI18n } from '../lib/i18n'
 
 const { frontmatter, lang } = useData()
 const route = useRoute()
+const { t } = useI18n()
 
 const translated = computed(() => frontmatter.value.translated ?? true)
 const isEn = computed(() => lang.value.startsWith('en'))
@@ -14,7 +16,7 @@ const zhHref = computed(() => route.path.replace(/^\/en\//, '/').replace(/^\/en$
     <div v-if="isEn && !translated" class="translation-banner">
         <span class="banner-icon">🌐</span>
         <span class="banner-text">
-            This page is currently available in Chinese only.
+            {{ t('translationBanner') }}
         </span>
         <a class="banner-link" :href="zhHref">Switch back</a>
     </div>

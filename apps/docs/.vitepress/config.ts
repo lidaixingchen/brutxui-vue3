@@ -122,11 +122,9 @@ export default defineConfig({
         ['meta', { name: 'theme-color', content: '#FF6B6B' }],
         ['meta', { property: 'og:type', content: 'website' }],
         ['meta', { property: 'og:title', content: 'BrutxUI' }],
-        ['meta', { property: 'og:description', content: 'Neo-Brutalism 风格 Vue 3 组件库' }],
         ['meta', { property: 'og:image', content: 'https://lidaixingchen.github.io/brutxui-vue3/og-image.svg' }],
         ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
         ['meta', { name: 'twitter:title', content: 'BrutxUI' }],
-        ['meta', { name: 'twitter:description', content: 'Neo-Brutalism 风格 Vue 3 组件库' }],
         ['meta', { name: 'twitter:image', content: 'https://lidaixingchen.github.io/brutxui-vue3/og-image.svg' }],
         ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
         ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
@@ -138,7 +136,7 @@ export default defineConfig({
         if (pageUrl === 'index') pageUrl = ''
         pageUrl = pageUrl.replace(/\/index$/, '')
         const isEn = pageUrl === 'en' || pageUrl.startsWith('en/')
-        const basePath = isEn ? pageUrl.replace(/^en\//, '') : pageUrl
+        const basePath = isEn ? pageUrl.replace(/^en\/?/, '') : pageUrl
         const baseUrl = 'https://lidaixingchen.github.io/brutxui-vue3'
         const canonicalUrl = isEn ? `${baseUrl}/en/${basePath}` : `${baseUrl}/${basePath}`
         const description = isEn

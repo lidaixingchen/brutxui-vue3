@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getComponentCatalog, type CatalogLocale } from '../lib/component-catalog'
+import { useI18n } from '../lib/i18n'
 
-const props = withDefaults(defineProps<{
+const props = defineProps<{
     locale?: CatalogLocale
-}>(), {
-    locale: 'zh',
-})
+}>()
 
-const sections = computed(() => getComponentCatalog(props.locale))
+const { isEn, t } = useI18n()
+const effectiveLocale = computed<CatalogLocale>(() => props.locale ?? (isEn.value ? 'en' : 'zh'))
+const sections = computed(() => getComponentCatalog(effectiveLocale.value))
 
 function getStatusText(status: string | undefined, replacement: string | undefined): string {
     if (!status || status === 'stable') return ''
@@ -27,8 +28,8 @@ function getStatusText(status: string | undefined, replacement: string | undefin
             <table>
                 <thead>
                     <tr>
-                        <th>{{ locale === 'en' ? 'Component' : '组件' }}</th>
-                        <th>{{ locale === 'en' ? 'Description' : '说明' }}</th>
+                        <th>{{ t('catalogComponent') }}</th>
+                        <th>{{ t('catalogDescription') }}</th>
                     </tr>
                 </thead>
                 <tbody>

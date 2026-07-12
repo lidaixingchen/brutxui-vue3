@@ -34,6 +34,9 @@ import {
     type ThemeName,
     type ThemeTokens,
 } from '../lib/theme-playground'
+import { useI18n } from '../lib/i18n'
+
+const { isEn, t } = useI18n()
 
 type CopyState = 'idle' | 'success' | 'error'
 
@@ -76,6 +79,13 @@ const contrastSummary = computed(() => {
         total: contrastChecks.value.length,
     }
 })
+const contrastSummaryText = computed(() => {
+    const { passed, total, warnings } = contrastSummary.value
+    if (isEn.value) {
+        return `${passed}/${total} passed, ${warnings} low`
+    }
+    return `${passed}/${total} 通过，${warnings} 个偏低`
+})
 
 function selectBaseTheme(name: ThemeName) {
     baseTheme.value = name
@@ -97,7 +107,7 @@ function updateColorToken(key: ColorTokenKey, value: string) {
     if (!isValidHex(nextValue)) {
         validationErrors.value = {
             ...validationErrors.value,
-            [key]: '请输入 #RGB 或 #RRGGBB',
+            [key]: t('themeLabHexError'),
         }
         return
     }
@@ -152,9 +162,9 @@ function getContrastStatusClass(status: ContrastCheckResult['status']): string[]
 }
 
 function getContrastStatusLabel(status: ContrastCheckResult['status']): string {
-    if (status === 'pass') return '通过'
-    if (status === 'warn') return '偏低'
-    return '不可检查'
+    if (status === 'pass') return t('themeLabContrastPass')
+    if (status === 'warn') return t('themeLabContrastWarn')
+    return t('themeLabContrastUnavailable')
 }
 
 function formatContrastRatio(ratio: number | null): string {
@@ -198,10 +208,10 @@ onBeforeUnmount(() => {
                 Theme Lab
             </p>
             <h2 class="!m-0 !mt-1 !border-0 !p-0 text-2xl font-black text-black sm:text-3xl">
-                调出属于你的 BrutxUI 主题
+                {{ t('themeLabTitle') }}
             </h2>
             <p class="m-0 mt-2 max-w-3xl text-sm font-bold leading-6 text-black">
-                选择基底主题，调节色彩、边框、圆角和硬阴影，右侧预览会局部响应，复制的 CSS 可以直接粘贴到使用 BrutxUI 的项目里。
+                {{ t('themeLabDescription') }}
             </p>
         </div>
 
@@ -326,19 +336,19 @@ onBeforeUnmount(() => {
                 <div class="flex flex-wrap gap-3 pt-1">
                     <Button type="button" variant="outline" class="gap-2" @click="resetCurrentPreset">
                         <RotateCcw class="h-4 w-4" />
-                        重置
+                        {{ t('themeLabReset') }}
                     </Button>
                     <Button type="button" variant="primary" class="gap-2" @click="copyCss">
                         <Check v-if="copyState === 'success'" class="h-4 w-4" />
                         <Copy v-else class="h-4 w-4" />
-                        {{ copyState === 'success' ? '已复制' : '复制 CSS' }}
+                        {{ copyState === 'success' ? t('themeLabCopied') : t('themeLabCopyCss') }}
                     </Button>
                 </div>
                 <p
                     v-if="copyState === 'error'"
                     class="m-0 border-3 border-brutal bg-brutal-destructive p-3 text-sm font-black text-black shadow-brutal-sm"
                 >
-                    无法自动复制，CSS 已被选中，请手动复制。
+                    {{ t('themeLabCopyError') }}
                 </p>
             </aside>
 
@@ -350,16 +360,16 @@ onBeforeUnmount(() => {
                 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <p class="m-0 text-xs font-black uppercase tracking-[0.16em] text-brutal-muted-foreground">
-                            实时预览
+                            {{ t('themeLabLivePreview') }}
                         </p>
                         <h3 class="!m-0 !border-0 !p-0 text-xl font-black text-brutal-fg">
                             {{ currentPreset.label }} / {{ colorMode }}
                         </h3>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <Badge variant="primary">主要</Badge>
-                        <Badge variant="secondary">次要</Badge>
-                        <Badge variant="accent">强调</Badge>
+                        <Badge variant="primary">{{ t('themeLabBadgePrimary') }}</Badge>
+                        <Badge variant="secondary">{{ t('themeLabBadgeSecondary') }}</Badge>
+                        <Badge variant="accent">{{ t('themeLabBadgeAccent') }}</Badge>
                     </div>
                 </div>
 
@@ -368,78 +378,78 @@ onBeforeUnmount(() => {
                         <CardHeader>
                             <div class="flex flex-wrap items-start justify-between gap-3">
                                 <div>
-                                    <CardTitle>启动控制台</CardTitle>
+                                    <CardTitle>{{ t('themeLabConsoleTitle') }}</CardTitle>
                                     <CardDescription>
-                                        产品控制台预览，用来判断主题在真实界面里的整体气质。
+                                        {{ t('themeLabConsoleDescription') }}
                                     </CardDescription>
                                 </div>
-                                <Badge variant="success">上线</Badge>
+                                <Badge variant="success">{{ t('themeLabStatusOnline') }}</Badge>
                             </div>
                         </CardHeader>
                         <CardContent class="space-y-4">
                             <div class="grid gap-3 md:grid-cols-3">
                                 <div class="border-3 border-brutal bg-brutal-primary p-3 shadow-brutal-sm">
-                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">收入</p>
+                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">{{ t('themeLabStatRevenue') }}</p>
                                     <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">42.8K</p>
-                                    <p class="m-0 text-xs font-bold text-brutal-fg">本周 +18%</p>
+                                    <p class="m-0 text-xs font-bold text-brutal-fg">{{ t('themeLabStatRevenueDelta') }}</p>
                                 </div>
                                 <div class="border-3 border-brutal bg-brutal-secondary p-3 shadow-brutal-sm">
-                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">活跃</p>
+                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">{{ t('themeLabStatActive') }}</p>
                                     <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">1,284</p>
-                                    <p class="m-0 text-xs font-bold text-brutal-fg">用户在线</p>
+                                    <p class="m-0 text-xs font-bold text-brutal-fg">{{ t('themeLabStatActiveDesc') }}</p>
                                 </div>
                                 <div class="border-3 border-brutal bg-brutal-accent p-3 shadow-brutal-sm">
-                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">阴影</p>
+                                    <p class="m-0 text-xs font-black uppercase tracking-wide text-brutal-fg">{{ t('themeLabStatShadow') }}</p>
                                     <p class="m-0 mt-1 font-mono text-2xl font-black text-brutal-fg">{{ currentTokens.shadowOffsetX }}</p>
-                                    <p class="m-0 text-xs font-bold text-brutal-fg">硬偏移</p>
+                                    <p class="m-0 text-xs font-bold text-brutal-fg">{{ t('themeLabStatShadowDesc') }}</p>
                                 </div>
                             </div>
 
                             <div class="grid gap-3 xl:grid-cols-[minmax(0,1fr)_max-content]">
                                 <div class="relative">
                                     <Search class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brutal-muted-foreground" />
-                                    <Input v-model="sampleEmail" class="pl-9" placeholder="筛选客户" />
+                                    <Input v-model="sampleEmail" class="pl-9" :placeholder="t('themeLabFilterPlaceholder')" />
                                 </div>
-                                <Button type="button" variant="primary" class="whitespace-nowrap">创建分群</Button>
+                                <Button type="button" variant="primary" class="whitespace-nowrap">{{ t('themeLabCreateSegment') }}</Button>
                             </div>
 
                             <div class="overflow-hidden border-3 border-brutal bg-brutal-bg shadow-brutal-sm">
                                 <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-3 border-b-3 border-brutal bg-brutal-muted p-3 text-xs font-black uppercase tracking-wide text-brutal-muted-foreground">
-                                    <span>账户</span>
-                                    <span>状态</span>
-                                    <span>风险</span>
+                                    <span>{{ t('themeLabColAccount') }}</span>
+                                    <span>{{ t('themeLabColStatus') }}</span>
+                                    <span>{{ t('themeLabColRisk') }}</span>
                                 </div>
                                 <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 border-b-3 border-brutal p-3">
                                     <div class="min-w-0">
                                         <p class="m-0 truncate text-sm font-black text-brutal-fg">brutal-studio.io</p>
                                         <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">hello@brutx.dev</p>
                                     </div>
-                                    <Badge variant="success" size="sm">健康</Badge>
-                                    <Badge variant="outline" size="sm">低</Badge>
+                                    <Badge variant="success" size="sm">{{ t('themeLabStatusHealthy') }}</Badge>
+                                    <Badge variant="outline" size="sm">{{ t('themeLabRiskLow') }}</Badge>
                                 </div>
                                 <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 p-3">
                                     <div class="min-w-0">
                                         <p class="m-0 truncate text-sm font-black text-brutal-fg">mono-labs.dev</p>
                                         <p class="m-0 truncate text-xs font-bold text-brutal-muted-foreground">ops@brutx.dev</p>
                                     </div>
-                                    <Badge variant="primary" size="sm">试用</Badge>
-                                    <Badge variant="danger" size="sm">高</Badge>
+                                    <Badge variant="primary" size="sm">{{ t('themeLabStatusTrial') }}</Badge>
+                                    <Badge variant="danger" size="sm">{{ t('themeLabRiskHigh') }}</Badge>
                                 </div>
                             </div>
                         </CardContent>
                         <CardFooter class="flex flex-wrap gap-3">
-                            <Button type="button" variant="secondary">发布预设</Button>
-                            <Button type="button" variant="danger">暂停账户</Button>
-                            <Button type="button" variant="outline">查看 CSS</Button>
+                            <Button type="button" variant="secondary">{{ t('themeLabPublishPreset') }}</Button>
+                            <Button type="button" variant="danger">{{ t('themeLabPauseAccount') }}</Button>
+                            <Button type="button" variant="outline">{{ t('themeLabViewCss') }}</Button>
                         </CardFooter>
                     </Card>
 
                         <div class="space-y-4">
                             <Card class="bg-brutal-bg min-w-0">
                                 <CardHeader>
-                                    <CardTitle>组件矩阵</CardTitle>
+                                    <CardTitle>{{ t('themeLabMatrixTitle') }}</CardTitle>
                                     <CardDescription>
-                                        快速扫一眼常用组件状态是否清晰。
+                                        {{ t('themeLabMatrixDescription') }}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent class="space-y-4">
@@ -449,7 +459,7 @@ onBeforeUnmount(() => {
                                         <Button type="button" variant="accent">Accent</Button>
                                         <Button type="button" variant="danger">Danger</Button>
                                     </div>
-                                    <Input placeholder="令牌感知输入" />
+                                    <Input :placeholder="t('themeLabTokenInputPlaceholder')" />
                                     <div class="flex flex-wrap gap-2">
                                         <Badge>Default</Badge>
                                         <Badge variant="primary">Primary</Badge>
@@ -457,15 +467,15 @@ onBeforeUnmount(() => {
                                         <Badge variant="danger">Danger</Badge>
                                     </div>
                                     <Alert variant="info">
-                                        <AlertTitle>信息表面</AlertTitle>
+                                        <AlertTitle>{{ t('themeLabAlertInfoTitle') }}</AlertTitle>
                                         <AlertDescription>
-                                            提示、卡片和徽标都继承本地主题变量。
+                                            {{ t('themeLabAlertInfoDesc') }}
                                         </AlertDescription>
                                     </Alert>
                                     <Alert variant="danger">
-                                        <AlertTitle>危险表面</AlertTitle>
+                                        <AlertTitle>{{ t('themeLabAlertDangerTitle') }}</AlertTitle>
                                         <AlertDescription>
-                                            破坏性颜色对比度在下方检查。
+                                            {{ t('themeLabAlertDangerDesc') }}
                                         </AlertDescription>
                                     </Alert>
                                 </CardContent>
@@ -473,7 +483,7 @@ onBeforeUnmount(() => {
 
                             <div class="border-3 border-brutal bg-brutal-bg p-4 shadow-brutal">
                                 <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                                    色板
+                                    {{ t('themeLabSwatchPanel') }}
                                 </p>
                                 <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
                                     <div
@@ -505,10 +515,10 @@ onBeforeUnmount(() => {
             <div class="border-3 border-brutal bg-brutal-bg shadow-brutal">
                 <div class="border-b-3 border-brutal bg-brutal-muted p-3">
                     <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                        质量检查
+                        {{ t('themeLabQualityCheck') }}
                     </p>
                     <p class="m-0 text-sm font-bold text-brutal-fg">
-                        {{ contrastSummary.passed }}/{{ contrastSummary.total }} 通过，{{ contrastSummary.warnings }} 个偏低。
+                        {{ contrastSummaryText }}
                     </p>
                 </div>
 
@@ -522,10 +532,10 @@ onBeforeUnmount(() => {
                             <ShieldAlert v-else class="mt-0.5 h-5 w-5 shrink-0" />
                             <div class="min-w-0">
                                 <p class="m-0 text-sm font-black">
-                                    CSS 覆盖率 {{ themeCoverage.covered }}/{{ themeCoverage.total }} tokens
+                                    {{ t('themeLabCoverageLabel') }} {{ themeCoverage.covered }}/{{ themeCoverage.total }} tokens
                                 </p>
                                 <p class="m-0 mt-1 text-xs font-bold">
-                                    {{ themeCoverage.isComplete ? 'light 和 dark 输出都覆盖完整。' : '存在缺失变量，请检查输出。' }}
+                                    {{ themeCoverage.isComplete ? t('themeLabCoverageComplete') : t('themeLabCoverageMissing') }}
                                 </p>
                             </div>
                         </div>
@@ -568,16 +578,16 @@ onBeforeUnmount(() => {
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b-3 border-brutal bg-brutal-muted p-3">
                     <div>
                         <p class="m-0 text-xs font-black uppercase tracking-[0.14em] text-brutal-muted-foreground">
-                            生成的 CSS
+                            {{ t('themeLabGeneratedCss') }}
                         </p>
                         <p class="m-0 text-sm font-bold text-brutal-fg">
-                            复制到项目 CSS 中即可使用 `.theme-custom`。
+                            {{ t('themeLabGeneratedCssHint') }}
                         </p>
                     </div>
                     <Button type="button" variant="primary" class="gap-2" @click="copyCss">
                         <Check v-if="copyState === 'success'" class="h-4 w-4" />
                         <Copy v-else class="h-4 w-4" />
-                        {{ copyState === 'success' ? '已复制' : '复制 CSS' }}
+                        {{ copyState === 'success' ? t('themeLabCopied') : t('themeLabCopyCss') }}
                     </Button>
                 </div>
                 <textarea
