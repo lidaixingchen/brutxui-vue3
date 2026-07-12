@@ -28,7 +28,6 @@ const categoryOrder: ComponentRegistryEntry['category'][] = [
     'layout',
     'visual-effect',
     'utility',
-    'marketing',
 ]
 
 const categoryLabels: Record<CatalogLocale, Record<ComponentRegistryEntry['category'], string>> = {
@@ -159,7 +158,7 @@ function getHref(entry: ComponentRegistryEntry, locale: CatalogLocale): string {
 
 export function getComponentCatalog(locale: CatalogLocale): CatalogSection[] {
     const entries = Object.values(COMPONENT_REGISTRY)
-        .filter(entry => entry.docsHidden !== true)
+        .filter(entry => entry.docsHidden !== true && entry.kind !== 'block')
         .map<CatalogItem>(entry => ({
             name: entry.name,
             title: entry.title,
