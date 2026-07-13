@@ -42,7 +42,8 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
             utils: '@/lib/utils',
             composables: '@/composables',
         });
-        expect(await fs.pathExists(path.join(project.root, 'src', 'lib', 'utils.ts'))).toBe(true);
+        expect(config.sharedBase).toBe('@/components/brutx/shared');
+        expect(await fs.pathExists(path.join(project.root, 'src', 'components', 'brutx', 'shared', 'utils.ts'))).toBe(true);
         expect(await fs.pathExists(path.join(project.root, 'src', 'components', 'ui'))).toBe(true);
 
         const cssPath = path.join(project.root, 'src', 'index.css');
@@ -89,7 +90,7 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
         expect(await fs.pathExists(cardPath)).toBe(true);
 
         const buttonContent = await fs.readFile(buttonPath, 'utf-8');
-        expect(buttonContent).toContain("from '@/lib/utils'");
+        expect(buttonContent).toContain("from '@/components/brutx/shared/utils'");
         expect(buttonContent).toContain("from '@/components/ui/button/button-variants'");
         expect(buttonContent).not.toContain("from '@/components/button");
 
@@ -249,9 +250,9 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
         const variantsFile = path.join(
             project.root, 'src', 'components', 'ui', 'color-picker', 'color-picker-variants.ts'
         );
-        const composableFile = path.join(project.root, 'src', 'composables', 'useColorPicker.ts');
+        const composableFile = path.join(project.root, 'src', 'components', 'brutx', 'shared', 'hooks', 'useColorPicker.ts');
         const localeFile = path.join(project.root, 'src', 'locales', 'zh-CN.ts');
-        const libFile = path.join(project.root, 'src', 'lib', 'color.ts');
+        const libFile = path.join(project.root, 'src', 'components', 'brutx', 'shared', 'lib', 'color.ts');
 
         expect(await fs.pathExists(colorPickerFile)).toBe(true);
         expect(await fs.pathExists(variantsFile)).toBe(true);
@@ -260,8 +261,8 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
         expect(await fs.pathExists(libFile)).toBe(true);
 
         const colorPickerContent = await fs.readFile(colorPickerFile, 'utf-8');
-        expect(colorPickerContent).toContain("from '@/lib/utils'");
-        expect(colorPickerContent).toContain("from '@/composables/useLocale'");
+        expect(colorPickerContent).toContain("from '@/components/brutx/shared/utils'");
+        expect(colorPickerContent).toContain("from '@/components/brutx/shared/hooks/useLocale'");
 
         const popoverFile = path.join(
             project.root, 'src', 'components', 'ui', 'popover', 'PopoverContent.vue'
