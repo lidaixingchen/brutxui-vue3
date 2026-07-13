@@ -8,8 +8,8 @@ import {
     validateRegistryIntegrity,
     validateRegistryItem,
     CSS_VARS,
-    extractModuleSpecifiers,
 } from 'brutx-shared-vue';
+import { extractModuleSpecifiers } from 'brutx-shared-vue/scan';
 import type {
     MergedRegistryEntry,
     RegistryManifest,

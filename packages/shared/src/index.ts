@@ -39,9 +39,3 @@ export {
     CSS_VARS,
     toCssVars,
 } from './design-tokens.js';
-export {
-    extractModuleSpecifiers,
-    extractScriptBlocks,
-} from './extract-module-specifiers.js';
-export type { ScanOptions } from './scan-component-files.js';
-export { scanComponentFiles } from './scan-component-files.js';

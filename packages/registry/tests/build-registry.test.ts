@@ -4,11 +4,11 @@ import {
     COMPONENT_METADATA,
     COMPONENTS_BY_CATEGORY,
     computeRegistryIntegrity,
-    extractModuleSpecifiers,
     validateRegistryIndex,
     getComponentsByCategory,
     validateRegistryItem,
 } from 'brutx-shared-vue';
+import { extractModuleSpecifiers } from 'brutx-shared-vue/scan';
 import {
     assertRegistryDependencyGraph,
     assertKnownRegistryDeps,
