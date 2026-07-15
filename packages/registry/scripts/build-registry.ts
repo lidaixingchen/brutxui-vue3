@@ -98,6 +98,7 @@ export interface RegistryBuildManifest {
     registryVersion: string;
     buildTimestamp: string | null;
     gitCommit: string | null;
+    integrity: string;
     itemCount: number;
     items: Record<string, {
         integrity: string;
@@ -116,6 +117,26 @@ export interface RegistryBuildManifestOptions {
     schemaVersion?: number;
     buildTimestamp?: string | null;
     gitCommit?: string | null;
+}
+
+/**
+ * 计算 registry-manifest 自身完整性哈希。
+ * 对 items 的规范化 JSON 序列求 sha256（按 name 字典序），
+ * 排除 buildTimestamp/gitCommit/integrity 本身（这些字段在两次 build 间会变）。
+ * 用于 CLI 拉取 manifest 后校验其未被篡改（v2.2 补强）。
+ */
+function computeManifestIntegrity(
+    manifest: Pick<RegistryBuildManifest, 'name' | 'schemaVersion' | 'registryVersion' | 'items'>,
+): string {
+    const sortedItems: Array<[string, unknown]> = Object.entries(manifest.items)
+        .sort(([a], [b]) => a.localeCompare(b));
+    const canonical = JSON.stringify({
+        name: manifest.name,
+        schemaVersion: manifest.schemaVersion,
+        registryVersion: manifest.registryVersion,
+        items: sortedItems,
+    });
+    return crypto.createHash('sha256').update(canonical).digest('hex');
 }
 
 export function buildRegistryManifest(
@@ -138,7 +159,7 @@ export function buildRegistryManifest(
         };
     }
 
-    return {
+    const baseManifest = {
         $schema: REGISTRY_MANIFEST_SCHEMA_URL,
         name: index.name,
         schemaVersion: options.schemaVersion ?? index.schemaVersion,
@@ -147,6 +168,13 @@ export function buildRegistryManifest(
         gitCommit: options.gitCommit ?? null,
         itemCount: sortedItems.length,
         items,
+    };
+
+    const integrity = computeManifestIntegrity(baseManifest);
+
+    return {
+        ...baseManifest,
+        integrity,
     };
 }
 

@@ -9,7 +9,7 @@ import { list } from './commands/list.js';
 import { info } from './commands/info.js';
 import { remove } from './commands/remove.js';
 import { create } from './commands/create.js';
-import { CliError, getCliErrorAdvice, logger } from './lib/index.js';
+import { CliError, getCliErrorAdvice, logger, clearCache } from './lib/index.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -126,6 +126,29 @@ program
     .option('-c, --cwd <cwd>', 'The directory to create the project in', process.cwd())
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .action(create);
+
+program
+    .command('cache')
+    .description('Manage the brutx-vue component cache')
+    .argument('<action>', 'Cache action to perform (clear)')
+    .option('--max-age <days>', 'Only clear cache entries older than N days (clear action only)', undefined)
+    .action(async (action: string, options: { maxAge?: string }) => {
+        if (action !== 'clear') {
+            logger.error(`Unknown cache action: ${action}. Supported: clear`);
+            process.exit(1);
+        }
+        const maxAgeDays = options.maxAge !== undefined ? Number.parseInt(options.maxAge, 10) : undefined;
+        if (maxAgeDays !== undefined && (Number.isNaN(maxAgeDays) || maxAgeDays <= 0)) {
+            logger.error(`--max-age must be a positive integer (got: ${options.maxAge})`);
+            process.exit(1);
+        }
+        await clearCache(maxAgeDays);
+        if (maxAgeDays !== undefined) {
+            logger.success(`Cleared cache entries older than ${maxAgeDays} day(s).`);
+        } else {
+            logger.success('Cache cleared.');
+        }
+    });
 
 async function main(): Promise<void> {
     try {

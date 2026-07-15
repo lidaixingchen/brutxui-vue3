@@ -208,3 +208,13 @@ export interface DiffResult {
     installedAt?: string;
     registryError?: string;
 }
+
+/**
+ * registry-manifest.json 的摘要（CLI 侧消费的字段子集）。
+ * 用于缓存版本绑定：registry 版本变化时旧缓存条目自动跳过。
+ * integrity 字段为 manifest 自身完整性哈希（v2.2 补强），CLI 拉取后必须先校验。
+ */
+export interface RegistryManifestSummary {
+    registryVersion: string;
+    integrity?: string;
+}

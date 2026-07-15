@@ -27,7 +27,15 @@ export type { LoggerOptions } from './logger.js';
 
 export { getItem, resolveDeps, readConfig, readConfigSafe, migrateConfig } from './registry.js';
 
-export { clearCache } from './cache.js';
+export {
+    clearCache,
+    getCachedEntry,
+    setCachedEntry,
+    touchCachedEntry,
+    dedupeInflight,
+    type CacheReadResult,
+    type CacheWriteInput,
+} from './cache.js';
 export { FileTransaction } from './file-transaction.js';
 export {
     MANIFEST_RELATIVE_PATH,

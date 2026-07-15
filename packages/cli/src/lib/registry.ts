@@ -4,22 +4,64 @@ import {
     validateRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
-import type { RegistryItem, BrutalistConfig } from './types.js';
+import type { RegistryItem, BrutalistConfig, RegistryManifestSummary } from './types.js';
 import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG, CURRENT_CONFIG_VERSION } from './constants.js';
 import { CliError } from './error.js';
-import { getCached, setCache } from './cache.js';
+import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight } from './cache.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
 }
 
-async function fetchWithRetry(url: string, maxRetries: number = 3): Promise<Response> {
+/**
+ * 进程级 registry-manifest 缓存：首次 getItem 时按需拉取一次，
+ * 避免每条目多一次请求。key 为 registry source URL。
+ */
+const registryManifestCache = new Map<string, RegistryManifestSummary | null>();
+
+/**
+ * 拉取 registry-manifest.json 获取 registryVersion 与 integrity。
+ * 信任 registry 端计算的 integrity 字段（端到端校验留待 P1-6 签名落地）。
+ * 拉取失败时返回 null——缓存版本绑定降级为"不校验版本"，由 integrity 兜底。
+ */
+async function fetchRegistryManifestSummary(source: string): Promise<RegistryManifestSummary | null> {
+    const cached = registryManifestCache.get(source);
+    if (cached !== undefined) return cached;
+
+    const manifestUrl = `${source}/registry-manifest.json`;
+    try {
+        const res = await fetchWithRetry(manifestUrl);
+        if (!res.ok) {
+            registryManifestCache.set(source, null);
+            return null;
+        }
+        const manifest = await res.json() as { registryVersion?: string; integrity?: string };
+        if (typeof manifest.registryVersion !== 'string' || manifest.registryVersion.length === 0) {
+            registryManifestCache.set(source, null);
+            return null;
+        }
+        const summary: RegistryManifestSummary = {
+            registryVersion: manifest.registryVersion,
+            integrity: typeof manifest.integrity === 'string' ? manifest.integrity : undefined,
+        };
+        registryManifestCache.set(source, summary);
+        return summary;
+    } catch {
+        registryManifestCache.set(source, null);
+        return null;
+    }
+}
+
+async function fetchWithRetry(url: string, maxRetries: number = 3, headers?: Record<string, string>): Promise<Response> {
     const delays = [1000, 2000, 4000];
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-            return await fetch(url, { signal: AbortSignal.timeout(30000) });
+            return await fetch(url, {
+                headers,
+                signal: AbortSignal.timeout(30000),
+            });
         } catch (error: unknown) {
             lastError = error instanceof Error ? error : new Error(String(error));
             const isRetryable = lastError.name === 'TimeoutError' ||
@@ -53,34 +95,15 @@ function verifyRegistryIntegrity(item: RegistryItem, name: string): void {
 }
 
 export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem> {
-    let data: unknown;
-
     if (isUrl(source)) {
         const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
 
         if (effectiveUseCache) {
-            const cached = await getCached<RegistryItem>(name, source);
-            if (cached) return cached;
+            return dedupeInflight(name, source, async () => {
+                return await fetchItemWithConditionalRequest(name, source);
+            }) as Promise<RegistryItem>;
         }
-
-        const url = `${source}/${name}.json`;
-        const res = await fetchWithRetry(url);
-        if (!res.ok) {
-            throw new CliError(
-                `Failed to fetch component "${name}" from registry: ${res.statusText}`,
-                { code: 'REGISTRY_FETCH_FAILED' }
-            );
-        }
-        data = await res.json();
-
-        validateRegistryItem(data, { name });
-        verifyRegistryIntegrity(data, name);
-
-        if (effectiveUseCache) {
-            await setCache(name, source, data).catch(() => {});
-        }
-
-        return data;
+        return await fetchItemWithConditionalRequest(name, source, false);
     } else {
         const filePath = path.resolve(source, `${name}.json`);
         if (!filePath.startsWith(path.resolve(source) + path.sep)) {
@@ -92,12 +115,73 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         if (!(await fs.pathExists(filePath))) {
             throw new Error(`Component "${name}" not found in local registry: ${filePath}`);
         }
-        data = await fs.readJson(filePath);
+        const data = await fs.readJson(filePath);
 
         validateRegistryItem(data, { name });
         verifyRegistryIntegrity(data, name);
         return data;
     }
+}
+
+/**
+ * 带条件请求的 fetch：先查缓存，TTL 过期则发 If-None-Match/If-Modified-Since，
+ * 304 则 touch 复用 body，200 则校验 integrity 后写入缓存。
+ */
+async function fetchItemWithConditionalRequest(
+    name: string,
+    source: string,
+    useCache: boolean = true,
+): Promise<RegistryItem> {
+    let cachedEntry: Awaited<ReturnType<typeof getCachedEntry<RegistryItem>>> = null;
+    let currentRegistryVersion: string | undefined;
+
+    if (useCache) {
+        currentRegistryVersion = (await fetchRegistryManifestSummary(source))?.registryVersion;
+        cachedEntry = await getCachedEntry<RegistryItem>(name, source);
+
+        if (cachedEntry) {
+            const versionMatch = !currentRegistryVersion ||
+                !cachedEntry.registryVersion ||
+                cachedEntry.registryVersion === currentRegistryVersion;
+
+            if (!cachedEntry.expired && versionMatch) {
+                return cachedEntry.data;
+            }
+        }
+    }
+
+    const url = `${source}/${name}.json`;
+    const headers: Record<string, string> = {};
+    if (cachedEntry?.etag) headers['If-None-Match'] = cachedEntry.etag;
+    if (cachedEntry?.lastModified) headers['If-Modified-Since'] = cachedEntry.lastModified;
+
+    const res = await fetchWithRetry(url, 3, headers);
+    if (res.status === 304 && cachedEntry) {
+        await touchCachedEntry(name, source).catch(() => {});
+        return cachedEntry.data;
+    }
+    if (!res.ok) {
+        throw new CliError(
+            `Failed to fetch component "${name}" from registry: ${res.statusText}`,
+            { code: 'REGISTRY_FETCH_FAILED' }
+        );
+    }
+
+    const data = await res.json() as RegistryItem;
+    validateRegistryItem(data, { name });
+    verifyRegistryIntegrity(data, name);
+
+    if (useCache) {
+        const etag = res.headers.get('etag') ?? undefined;
+        const lastModified = res.headers.get('last-modified') ?? undefined;
+        await setCachedEntry(name, source, data, {
+            etag,
+            lastModified,
+            registryVersion: currentRegistryVersion,
+        }).catch(() => {});
+    }
+
+    return data;
 }
 
 function validateBrutalistConfig(data: unknown): asserts data is Record<string, unknown> {
