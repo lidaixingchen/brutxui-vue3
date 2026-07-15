@@ -297,6 +297,6 @@ function getButtonVariant(plan: BrutalistPricingPlan): ButtonVariant {
                 </div>
             </div>
         </template>
-        <Result status="empty" v-else :title="t('pricingSection.emptyTitle')" />
+        <Result v-else status="empty" :title="t('pricingSection.emptyTitle')" />
     </div>
 </template>
