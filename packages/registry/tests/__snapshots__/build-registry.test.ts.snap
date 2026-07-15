@@ -61,7 +61,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-70c9a46ed33c7d5786bb6697d66501b92adef502d0d005d0aac28e9550aebb84",
+  "integrity": "sha256-4fd9de67b233e50e2cd8c4e22a4d7e4fd926581c61e09d07a45c7359b3038a26",
   "name": "data-table",
   "registryDependencies": [
     "input",

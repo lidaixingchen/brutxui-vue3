@@ -29,7 +29,7 @@
     },
     {
       "path": "components/ui/form/FormControl.vue",
-      "content": "<script setup lang=\"ts\">\nimport { inject, ref, computed } from 'vue'\nimport { Primitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { formFieldKey, formItemKey } from '@/components/ui/form/form-context'\n\ninterface FormControlProps {\n    class?: string\n}\n\nconst props = defineProps<FormControlProps>()\n\nconst rootClasses = computed(() => cn(props.class))\n\nconst fieldContext = inject(formFieldKey, {\n    name: computed(() => ''),\n    error: ref<string | undefined>(undefined),\n    value: ref<unknown>(undefined),\n    setValue: () => {},\n    setError: () => {},\n})\nconst itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })\n</script>\n\n<template>\n    <Primitive\n        as-child\n        :id=\"itemContext.formItemId || undefined\"\n        :class=\"rootClasses\"\n        :aria-describedby=\"!fieldContext.error.value ? (itemContext.formDescriptionId || undefined) : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`\"\n        :aria-invalid=\"!!fieldContext.error.value || undefined\"\n    >\n        <slot />\n    </Primitive>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { inject, ref, computed } from 'vue'\nimport { Primitive } from 'reka-ui'\nimport { cn } from '@/lib/utils'\nimport { formFieldKey, formItemKey } from '@/components/ui/form/form-context'\n\ninterface FormControlProps {\n    class?: string\n}\n\nconst props = defineProps<FormControlProps>()\n\nconst rootClasses = computed(() => cn(props.class))\n\nconst fieldContext = inject(formFieldKey, {\n    name: computed(() => ''),\n    error: ref<string | undefined>(undefined),\n    value: ref<unknown>(undefined),\n    setValue: () => {},\n    setError: () => {},\n})\nconst itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptionId: '', formMessageId: '' })\n</script>\n\n<template>\n    <Primitive\n        :id=\"itemContext.formItemId || undefined\"\n        as-child\n        :class=\"rootClasses\"\n        :aria-describedby=\"!fieldContext.error.value ? (itemContext.formDescriptionId || undefined) : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`\"\n        :aria-invalid=\"!!fieldContext.error.value || undefined\"\n    >\n        <slot />\n    </Primitive>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -151,5 +151,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-db2b698017bb635df85320387c3894a702de5ae3c474bef7b69f8ab385cd3a0a"
+  "integrity": "sha256-1f3a2225c0aee50f3cc712d11ed872b1c161e99629421ac24023267025e46062"
 }

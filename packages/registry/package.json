@@ -5,6 +5,8 @@
     "type": "module",
     "scripts": {
         "build": "tsx scripts/build-registry.ts",
+        "build:verify": "tsx scripts/verify-build.ts",
+        "build:bench": "tsx scripts/build-registry.ts --bench",
         "validate": "tsx scripts/validate-registry.ts",
         "test": "vitest run",
         "typecheck": "tsc --noEmit"
