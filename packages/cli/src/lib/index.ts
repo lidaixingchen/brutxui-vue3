@@ -45,6 +45,13 @@ export {
     withOfflineScope,
 } from './registry-source.js';
 export type { RegistrySourceStatus } from './types.js';
+export {
+    loadTrustedPublicKeys,
+    verifyManifestSignature,
+    generateEd25519KeyPair,
+    signManifestIntegrity,
+} from './signature.js';
+export type { TrustedPublicKey } from './signature.js';
 export { FileTransaction } from './file-transaction.js';
 export {
     MANIFEST_RELATIVE_PATH,

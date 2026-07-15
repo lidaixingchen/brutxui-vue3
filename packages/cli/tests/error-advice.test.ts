@@ -48,6 +48,15 @@ describe('getCliErrorAdvice', () => {
         expect(advice.join('\n')).toContain('pre-cache');
     });
 
+    it('suggests verifying public keys for signature-invalid errors (P1-6)', () => {
+        const advice = getCliErrorAdvice(new CliError('Bad signature', {
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        }));
+
+        expect(advice.join('\n')).toContain('tampering');
+        expect(advice.join('\n')).toContain('BRUTX_REGISTRY_PUBLIC_KEYS');
+    });
+
     it('suggests path and alias checks for unsafe paths', () => {
         const advice = getCliErrorAdvice(new CliError('Unsafe path', {
             code: 'PATH_UNSAFE',

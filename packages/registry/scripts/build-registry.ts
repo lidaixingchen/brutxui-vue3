@@ -148,6 +148,17 @@ export interface RegistryBuildManifest {
         status?: RegistryIndexItem['status'];
         replacement?: string;
     }>;
+    /**
+     * P1-6：对 integrity 字段值的 Ed25519 签名（base64）。
+     * 由签名工具离线计算后注入；CLI 拉取 manifest 时按 keyId 查找受信任公钥验签。
+     * 未设置时 CLI 跳过验签（向后兼容旧 manifest）。
+     */
+    signature?: string;
+    /**
+     * P1-6：标识签名所用密钥，便于密钥轮换——CLI 持有的公钥列表按 keyId 索引。
+     * 与 signature 字段成对出现；两者皆存在时才触发验签。
+     */
+    keyId?: string;
 }
 
 export interface RegistryBuildManifestOptions {

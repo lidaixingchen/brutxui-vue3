@@ -4,6 +4,8 @@ import os from 'os';
 import path from 'path';
 import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import * as registry from '../src/lib/registry.js';
+import { generateEd25519KeyPair, signManifestIntegrity } from '../src/lib/signature.js';
+import { CliError } from '../src/lib/error.js';
 
 function createRegistryItem(name: string, overrides: Record<string, any> = {}) {
     const files = overrides.files ?? [{
@@ -407,6 +409,249 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
         ).rejects.toMatchObject({
             code: 'REGISTRY_VERSION_UNSUPPORTED',
         });
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Manifest signature verification integration (P1-6)
+// ---------------------------------------------------------------------------
+describe('getItem with manifest signature verification (P1-6)', () => {
+    let tempCacheDir: string;
+    let keyPair: { keyId: string; publicKey: string; privateKey: string };
+
+    beforeEach(() => {
+        tempCacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-sig-cache-'));
+        process.env.BRUTX_CACHE_DIR = tempCacheDir;
+        delete process.env.BRUTX_OFFLINE;
+        delete process.env.BRUTX_NO_CACHE;
+        keyPair = generateEd25519KeyPair();
+    });
+
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        delete process.env.BRUTX_CACHE_DIR;
+        delete process.env.BRUTX_REGISTRY_PUBLIC_KEYS;
+        delete process.env.BRUTX_OFFLINE;
+        delete process.env.BRUTX_NO_CACHE;
+        if (tempCacheDir && fs.existsSync(tempCacheDir)) {
+            fs.removeSync(tempCacheDir);
+        }
+    });
+
+    function makeSignedManifest(integrity: string, keyId: string, privateKey: string) {
+        return {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity,
+            signature: signManifestIntegrity(integrity, privateKey),
+            keyId,
+        };
+    }
+
+    function stubFetchWithManifest(manifest: unknown, item: unknown) {
+        vi.stubGlobal('fetch', async (url: string | URL | Request) => {
+            const u = typeof url === 'string' ? url : url.toString();
+            if (u.endsWith('/registry-manifest.json')) {
+                return {
+                    ok: true,
+                    json: async () => manifest,
+                    headers: new Map(),
+                    status: 200,
+                };
+            }
+            if (u.endsWith('/button.json')) {
+                return {
+                    ok: true,
+                    json: async () => item,
+                    headers: new Map(),
+                    status: 200,
+                };
+            }
+            return { ok: false, statusText: 'Not Found', status: 404, headers: new Map() };
+        });
+    }
+
+    it('succeeds when manifest has valid signature and matching trusted key', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const manifestIntegrity = 'a'.repeat(64);
+        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-valid.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
+    it('succeeds when manifest is unsigned (backward compatibility)', async () => {
+        delete process.env.BRUTX_REGISTRY_PUBLIC_KEYS;
+        const manifest = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity: 'b'.repeat(64),
+            // 无 signature/keyId 字段
+        };
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-unsigned.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
+    it('succeeds when manifest is signed but BRUTX_REGISTRY_PUBLIC_KEYS is unset (verification skipped)', async () => {
+        delete process.env.BRUTX_REGISTRY_PUBLIC_KEYS;
+        const manifestIntegrity = 'c'.repeat(64);
+        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-nokeys.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is tampered', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const manifestIntegrity = 'd'.repeat(64);
+        const validSig = signManifestIntegrity(manifestIntegrity, keyPair.privateKey);
+        // 篡改签名最后 4 个字符
+        const tamperedSig = validSig.slice(0, -4) + 'XXXX';
+        const manifest = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity: manifestIntegrity,
+            signature: tamperedSig,
+            keyId: keyPair.keyId,
+        };
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-tampered.mock')).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        });
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when keyId does not match any trusted key', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const manifestIntegrity = 'e'.repeat(64);
+        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        // 覆盖 keyId 为未知值
+        (manifest as { keyId: string }).keyId = 'unknown-key-id';
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-unknown-key.mock')).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        });
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is for different integrity (content swapped)', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        // 用 integrity-A 的签名，但 manifest 的 integrity 字段是 B
+        const sigForA = signManifestIntegrity('integrity-a-value', keyPair.privateKey);
+        const manifest = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity: 'integrity-b-value',  // 不匹配签名
+            signature: sigForA,
+            keyId: keyPair.keyId,
+        };
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-content-swap.mock')).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        });
+    });
+
+    it('supports key rotation: new keyId signature passes when both old+new keys trusted', async () => {
+        const keyPairV2 = generateEd25519KeyPair();
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },       // v1（仍在过渡期）
+            { keyId: keyPairV2.keyId, publicKey: keyPairV2.publicKey },   // v2（新）
+        ]);
+        const manifestIntegrity = 'f'.repeat(64);
+        // 用 v2 签名
+        const manifest = makeSignedManifest(manifestIntegrity, keyPairV2.keyId, keyPairV2.privateKey);
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-rotation.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
+    it('REGISTRY_SIGNATURE_INVALID is a CliError instance (not generic Error)', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const manifestIntegrity = '1'.repeat(64);
+        const validSig = signManifestIntegrity(manifestIntegrity, keyPair.privateKey);
+        const tamperedSig = validSig.slice(0, -4) + 'YYYY';
+        const manifest = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity: manifestIntegrity,
+            signature: tamperedSig,
+            keyId: keyPair.keyId,
+        };
+
+        stubFetchWithManifest(manifest, createRegistryItem('button'));
+
+        try {
+            await registry.getItem('button', 'https://sig-clierror.mock');
+            throw new Error('should have thrown');
+        } catch (error) {
+            expect(error).toBeInstanceOf(CliError);
+            expect((error as CliError).code).toBe('REGISTRY_SIGNATURE_INVALID');
+            expect((error as CliError).exitCode).toBe(1);
+        }
     });
 });
 

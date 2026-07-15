@@ -32,6 +32,11 @@ export function getCliErrorAdvice(error: CliError): string[] {
                 'Offline mode is active (BRUTX_OFFLINE=1 or --offline) and the requested component is not in cache.',
                 'Run without --offline to fetch from the registry, or pre-cache the component by running add/list --check-updates while online.',
             ];
+        case 'REGISTRY_SIGNATURE_INVALID':
+            return [
+                'The registry manifest signature verification failed. This may indicate tampering or a mismatched signing key.',
+                'Verify BRUTX_REGISTRY_PUBLIC_KEYS matches the registry publisher\'s public keys, or unset it to skip verification (not recommended for production).',
+            ];
         case 'PATH_UNSAFE':
             return [
                 'Check the target path and aliases in components.json.',

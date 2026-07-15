@@ -9,6 +9,7 @@ import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CON
 import { CliError } from './error.js';
 import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight, isOfflineMode } from './cache.js';
 import { buildAuthHeaders } from './registry-source.js';
+import { verifyManifestSignature } from './signature.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
@@ -22,8 +23,10 @@ const registryManifestCache = new Map<string, RegistryManifestSummary | null>();
 
 /**
  * 拉取 registry-manifest.json 获取 registryVersion 与 integrity。
- * 信任 registry 端计算的 integrity 字段（端到端校验留待 P1-6 签名落地）。
  * 拉取失败时返回 null——缓存版本绑定降级为"不校验版本"，由 integrity 兜底。
+ *
+ * P1-6：若 manifest 含 signature/keyId 字段且 BRUTX_REGISTRY_PUBLIC_KEYS 已配置，
+ * 在此触发签名验证。REGISTRY_SIGNATURE_INVALID 必须冒泡（不降级为 null）。
  */
 async function fetchRegistryManifestSummary(source: string): Promise<RegistryManifestSummary | null> {
     const cached = registryManifestCache.get(source);
@@ -31,23 +34,35 @@ async function fetchRegistryManifestSummary(source: string): Promise<RegistryMan
 
     const manifestUrl = `${source}/registry-manifest.json`;
     try {
-        const res = await fetchWithRetry(manifestUrl);
+        const res = await fetchWithRetry(manifestUrl, 3, buildAuthHeaders(source));
         if (!res.ok) {
             registryManifestCache.set(source, null);
             return null;
         }
-        const manifest = await res.json() as { registryVersion?: string; integrity?: string };
+        const manifest = await res.json() as {
+            registryVersion?: string;
+            integrity?: string;
+            signature?: string;
+            keyId?: string;
+        };
         if (typeof manifest.registryVersion !== 'string' || manifest.registryVersion.length === 0) {
             registryManifestCache.set(source, null);
             return null;
         }
+        // P1-6：签名校验。REGISTRY_SIGNATURE_INVALID 必须冒泡，由 catch 块特判放行。
+        verifyManifestSignature(manifest);
+
         const summary: RegistryManifestSummary = {
             registryVersion: manifest.registryVersion,
             integrity: typeof manifest.integrity === 'string' ? manifest.integrity : undefined,
         };
         registryManifestCache.set(source, summary);
         return summary;
-    } catch {
+    } catch (error) {
+        // 签名失败必须冒泡——降级为 null 会让篡改的 manifest 静默通过
+        if (error instanceof CliError && error.code === 'REGISTRY_SIGNATURE_INVALID') {
+            throw error;
+        }
         registryManifestCache.set(source, null);
         return null;
     }
