@@ -95,7 +95,39 @@ npx brutx-vue@latest add --all
 npx brutx-vue@latest add button@1.2.0
 ```
 
-使用 `@` 语法将组件锁定到指定版本（映射到注册表中对应的 GitHub tag）。
+使用 `@` 语法将组件锁定到指定版本。`@` 后的字符串作为 git ref（分支、tag、commit）注入到注册表源 URL 中，因此会拉取对应版本的全部组件文件。
+
+#### 与 `--registry` 的交互
+
+`@version` 仅对 GitHub raw URL 结构的注册表生效（形如 `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`）。CLI 会将当前 `--registry` URL 中的 `{ref}` 段替换为 `@version`，其余路径保持不变，因此可与自定义 fork 配合使用：
+
+```bash
+# 从个人 fork 的 v1.2.0 tag 拉取 button
+npx brutx-vue@latest add button@1.2.0 \
+  --registry https://raw.githubusercontent.com/<you>/<fork>/main/registry
+```
+
+若 `--registry` 不是 GitHub raw URL 结构（如本地路径、自建 HTTP registry），使用 `@version` 会抛 `REGISTRY_VERSION_UNSUPPORTED` 错误。此时请移除 `@version` 或将 `--registry` 切换为 GitHub raw URL。
+
+#### 版本混用提示
+
+当已安装组件的版本与本次请求的版本不一致时，CLI 会输出 warn（不阻塞）：
+
+```text
+⚠ Version mismatch: "button" is already installed at version 1.0.0, but you requested 1.2.0.
+```
+
+#### update 命令的版本约束
+
+`update` 默认**跳过**版本锁定的组件（避免擅自改变用户显式锁定的 ref）。如需跨版本更新，需显式传入 `--across-versions`：
+
+```bash
+# 默认跳过 button@1.0.0
+npx brutx-vue@latest update
+
+# 显式跨版本更新
+npx brutx-vue@latest update --across-versions
+```
 
 ## brutx-vue doctor
 
@@ -146,6 +178,8 @@ npx brutx-vue@latest doctor --json
 | `--json`             | 输出 JSON 格式报告 | `false` |
 | `--yes` / `-y`       | 跳过确认提示       | `false` |
 | `--silent` / `-s`    | 静默输出         | `false` |
+| `--sbom`             | 生成 CycloneDX 1.5 SBOM 并退出（不运行 doctor 检查） | `false` |
+| `--sbom-output <path>` | SBOM 输出路径 | `./brutx-sbom.json` |
 
 ### 输出示例
 
@@ -301,6 +335,7 @@ npx brutx-vue@latest update --dry-run
 | `--registry <registry>` / `-r` | 指定注册表 URL | —       |
 | `--no-cache`                   | 跳过注册表缓存   | `false` |
 | `--silent` / `-s`              | 静默输出      | `false` |
+| `--across-versions`            | 允许跨版本更新已锁定的组件（见[版本锁定](#版本锁定)） | `false` |
 
 ## brutx-vue list
 
@@ -469,6 +504,7 @@ npx brutx-vue@latest [global-options] <command> [command-options]
 | ------------------------ | ------------------------------------------------- | ------- |
 | `--verbose`              | 显示详细错误输出（等价于 `-v`）                                | `false` |
 | `--dry-run`              | 全局 dry-run：模拟所有写操作但不落盘（与命令级 `--dry-run` 叠加生效）      | `false` |
+| `--require-signature`    | 严格签名模式：manifest 签名校验失败时升级为 error（默认为 warn，见[供应链安全](#供应链安全签名与-sbom)） | `false` |
 | `--verbose-level <level>` | verbose 等级（`1`=步骤、`2`=缓存/网络细节、`3`=堆栈）           | `0`     |
 | `-v`                     | 等价于 `--verbose-level 1`                           | —       |
 | `-vv`                    | 等价于 `--verbose-level 2`                           | —       |
@@ -520,3 +556,76 @@ npx brutx-vue@latest doctor
 ⚠ audit log health — 1 recent failure(s) in audit log: update(button).
   Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
 ```
+
+## 供应链安全：签名与 SBOM
+
+P1-6 引入了 manifest Ed25519 签名校验与 CycloneDX 1.5 SBOM 生成，用于检测供应链篡改。
+
+### Manifest 签名
+
+注册表构建时，`registry-manifest.json` 会附带 `signature` + `keyId` 字段，对 `integrity` 字段做 Ed25519 签名。CLI 在拉取 manifest 时自动校验签名。
+
+#### 信任公钥配置
+
+通过 `BRUTX_REGISTRY_PUBLIC_KEYS` 环境变量注入受信任公钥列表（JSON 数组）：
+
+```bash
+BRUTX_REGISTRY_PUBLIC_KEYS='[{"keyId":"v1","publicKey":"<base64-SPKI-DER>"}]' \
+  npx brutx-vue@latest add button
+```
+
+`publicKey` 为 base64 编码的 SPKI DER 格式（单行，便于嵌入 JSON）。未设置环境变量时，验签自动降级为跳过（向后兼容）。
+
+#### 默认 warn 与严格模式
+
+签名校验失败时，**默认行为是 warn**（打印警告并继续），避免迁移期未配置公钥的项目卡死：
+
+```text
+[Signature] Manifest signed with unknown keyId "v1". No matching trusted public key found.
+  (use --require-signature to enforce)
+```
+
+如需在签名失败时直接拒绝执行，激活严格模式：
+
+```bash
+# 通过 flag
+npx brutx-vue@latest --require-signature add button
+
+# 或通过环境变量
+BRUTX_REQUIRE_SIGNATURE=1 npx brutx-vue@latest add button
+```
+
+严格模式下签名失败会抛 `REGISTRY_SIGNATURE_INVALID`（exit 1）。`integrity` 字段仍兜底防篡改（即使签名跳过，被篡改的内容也会因 integrity 不匹配而失败）。
+
+#### 密钥轮换
+
+公钥列表按 `keyId` 索引。轮换密钥时：
+
+1. 新 key 签发的 manifest：将新公钥加入 `BRUTX_REGISTRY_PUBLIC_KEYS` 即可
+2. 过渡期：旧 key 仍在列表中，旧 manifest 仍可信
+3. 撤销旧 key：从环境变量中移除即可
+
+### SBOM 生成
+
+#### 注册表 SBOM（构建时）
+
+`pnpm --filter brutx-registry-vue build` 会自动生成 `packages/registry/registry/registry-sbom.json`，包含：
+
+- 所有注册表组件（`type: application`，含 `bom-ref: brutx:<name>`）
+- 所有 npm 依赖（`type: library`，含 `bom-ref: npm:<dep>`）
+- `dependencies` 数组引用其他 bom-ref，构成依赖图
+- `integrity` 字段（对 `bomFormat`/`specVersion`/`components` 的 sha256）
+- `manifestIntegrity` 字段，绑定对应的 `registry-manifest.json` integrity
+
+`serialNumber` 为随机 UUID（每次构建重新生成），不参与 integrity 计算，已加入 `build:verify` 的 diff 排除字段。
+
+#### 项目 SBOM（doctor --sbom）
+
+`doctor --sbom` 生成已安装组件的 SBOM，写入 `./brutx-sbom.json`（可用 `--sbom-output` 自定义路径）：
+
+```bash
+npx brutx-vue@latest doctor --sbom
+npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
+```
+
+读取 `.brutx/components.json` manifest 中已安装组件的版本、依赖、`registryDependencies` 与 integrity，生成 CycloneDX 1.5 格式 SBOM。无组件安装时报错退出。

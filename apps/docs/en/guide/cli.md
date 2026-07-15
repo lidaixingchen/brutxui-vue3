@@ -77,10 +77,42 @@ npx brutx-vue@latest add --all
 
 ### Version Pinning
 
-Use the `@` syntax to pin a component to a specific version. This maps to the corresponding GitHub tag in the registry:
+Use the `@` syntax to pin a component to a specific version. The string after `@` is injected as a git ref (branch, tag, commit) into the registry source URL, so all component files are fetched from that ref:
 
 ```bash
 npx brutx-vue@latest add button@1.2.0
+```
+
+#### Interaction with `--registry`
+
+`@version` only works with GitHub raw URL registries (matching `https://raw.githubusercontent.com/{owner}/{repo}/{ref}/...`). The CLI replaces the `{ref}` segment of the current `--registry` URL with the `@version`, leaving the rest of the path intact. This means it composes cleanly with custom forks:
+
+```bash
+# Pull button from the v1.2.0 tag of your personal fork
+npx brutx-vue@latest add button@1.2.0 \
+  --registry https://raw.githubusercontent.com/<you>/<fork>/main/registry
+```
+
+If `--registry` is not a GitHub raw URL (e.g. a local path or self-hosted HTTP registry), using `@version` throws a `REGISTRY_VERSION_UNSUPPORTED` error. Remove `@version` or switch `--registry` to a GitHub raw URL.
+
+#### Version mismatch warning
+
+When the installed component version differs from the requested version, the CLI prints a warning (non-blocking):
+
+```text
+⚠ Version mismatch: "button" is already installed at version 1.0.0, but you requested 1.2.0.
+```
+
+#### Version constraints in `update`
+
+`update` **skips** version-pinned components by default (it should not silently change a ref the user explicitly locked). To update across versions, pass `--across-versions`:
+
+```bash
+# Skips button@1.0.0 by default
+npx brutx-vue@latest update
+
+# Explicitly update across the locked version
+npx brutx-vue@latest update --across-versions
 ```
 
 ### Options
@@ -154,6 +186,8 @@ npx brutx-vue@latest doctor --json
 | `--json` | Output JSON format report | `false` |
 | `--yes` / `-y` | Skip confirmation prompts | `false` |
 | `--silent` / `-s` | Silent output | `false` |
+| `--sbom` | Generate a CycloneDX 1.5 SBOM and exit (skips doctor checks) | `false` |
+| `--sbom-output <path>` | SBOM output file path | `./brutx-sbom.json` |
 
 ### Output Example
 
@@ -308,6 +342,7 @@ npx brutx-vue@latest update --dry-run
 | `--registry <registry>` / `-r` | Specify registry URL | — |
 | `--no-cache` | Skip registry cache | `false` |
 | `--silent` / `-s` | Silent output | `false` |
+| `--across-versions` | Allow updating version-pinned components across their locked version (see [Version Pinning](#version-pinning)) | `false` |
 
 ## brutx-vue list
 
@@ -503,6 +538,7 @@ npx brutx-vue@latest [global-options] <command> [command-options]
 |------|-------------|---------|
 | `--verbose` | Show detailed error output (equivalent to `-v`) | `false` |
 | `--dry-run` | Global dry-run: simulate all write operations without touching disk (stacks with command-level `--dry-run`) | `false` |
+| `--require-signature` | Strict signature mode: fail when manifest signature is invalid (default is warn, see [Supply Chain Security](#supply-chain-security-signature-sbom)) | `false` |
 | `--verbose-level <level>` | Verbose output level (`1`=steps, `2`=cache/network details, `3`=stack traces) | `0` |
 | `-v` | Equivalent to `--verbose-level 1` | — |
 | `-vv` | Equivalent to `--verbose-level 2` | — |
@@ -554,6 +590,79 @@ Example output:
 ⚠ audit log health — 1 recent failure(s) in audit log: update(button).
   Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
 ```
+
+## Supply Chain Security: Signature & SBOM
+
+P1-6 introduces manifest Ed25519 signature verification and CycloneDX 1.5 SBOM generation to detect supply chain tampering.
+
+### Manifest Signature
+
+At registry build time, `registry-manifest.json` carries `signature` + `keyId` fields holding an Ed25519 signature over the `integrity` field. The CLI automatically verifies the signature when fetching the manifest.
+
+#### Trusted Public Keys
+
+Trusted public keys are injected via the `BRUTX_REGISTRY_PUBLIC_KEYS` environment variable (JSON array):
+
+```bash
+BRUTX_REGISTRY_PUBLIC_KEYS='[{"keyId":"v1","publicKey":"<base64-SPKI-DER>"}]' \
+  npx brutx-vue@latest add button
+```
+
+`publicKey` is a base64-encoded SPKI DER (single-line, easy to embed in JSON). When the env var is unset, verification degrades to skip (backward compatible).
+
+#### Default warn vs strict mode
+
+On signature failure, the **default behavior is `warn`** (print a warning and continue) so that projects without configured keys are not blocked during migration:
+
+```text
+[Signature] Manifest signed with unknown keyId "v1". No matching trusted public key found.
+  (use --require-signature to enforce)
+```
+
+To fail hard on signature errors, activate strict mode:
+
+```bash
+# Via flag
+npx brutx-vue@latest --require-signature add button
+
+# Or via environment variable
+BRUTX_REQUIRE_SIGNATURE=1 npx brutx-vue@latest add button
+```
+
+In strict mode, a signature failure throws `REGISTRY_SIGNATURE_INVALID` (exit 1). The `integrity` field still backstops tampering: even when signature verification is skipped, tampered content will fail because integrity no longer matches.
+
+#### Key Rotation
+
+Public keys are indexed by `keyId`. When rotating keys:
+
+1. New key signs the manifest: add the new public key to `BRUTX_REGISTRY_PUBLIC_KEYS`
+2. Transition period: the old key remains in the list, old manifests stay trusted
+3. Revoke the old key: remove it from the env var
+
+### SBOM Generation
+
+#### Registry SBOM (build time)
+
+`pnpm --filter brutx-registry-vue build` automatically generates `packages/registry/registry/registry-sbom.json` containing:
+
+- All registry components (`type: application`, `bom-ref: brutx:<name>`)
+- All npm dependencies (`type: library`, `bom-ref: npm:<dep>`)
+- `dependencies` arrays referencing other bom-refs to form the dependency graph
+- `integrity` field (sha256 over `bomFormat`/`specVersion`/`components`)
+- `manifestIntegrity` field binding the SBOM to the corresponding `registry-manifest.json` integrity
+
+`serialNumber` is a random UUID regenerated each build, excluded from integrity computation, and added to the `build:verify` diff exclusion set.
+
+#### Project SBOM (`doctor --sbom`)
+
+`doctor --sbom` generates an SBOM for installed components, written to `./brutx-sbom.json` (customize with `--sbom-output`):
+
+```bash
+npx brutx-vue@latest doctor --sbom
+npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
+```
+
+It reads installed component versions, dependencies, `registryDependencies`, and integrity from the `.brutx/components.json` manifest and emits a CycloneDX 1.5 SBOM. Errors out if no components are installed.
 
 ## Available Components
 
