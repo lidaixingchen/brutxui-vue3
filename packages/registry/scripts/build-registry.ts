@@ -135,6 +135,9 @@ const CACHE_FILE = path.resolve(__dirname, '../.registry-cache.json');
 const CACHE_VERSION = 4;
 const REGISTRY_SCHEMA_VERSION = 1;
 const BENCH_FILE = path.resolve(__dirname, '../bench.json');
+const SBOM_FILE = path.resolve(OUTPUT_DIR, 'registry-sbom.json');
+const SBOM_SPEC_VERSION = '1.5';
+const SBOM_FORMAT = 'CycloneDX';
 
 /**
  * 增量构建缓存策略（P0-4 文档化）
@@ -739,6 +742,132 @@ export function buildRegistryItem(name: string): RegistryItem {
     } satisfies RegistryItem;
 }
 
+/**
+ * 构建 CycloneDX 格式的 SBOM（P1-6 供应链安全）。
+ *
+ * 范围：列出所有 registry 组件及其声明的 npm 依赖（dependencies 字段）。
+ *   - 组件 → SBOM component（type: 'application'）
+ *   - npm 依赖 → SBOM component（type: 'library'）
+ *   - registryDependencies → SBOM dependency 关系（组件间）
+ *
+ * 完整性：SBOM 自身 integrity 字段对 components 数组规范化序列求 sha256（按 bom-ref 字典序）。
+ *   与 registry-manifest 的 integrity 独立计算，避免互相影响。
+ */
+export function buildRegistrySbom(
+    index: RegistryIndex,
+    manifestIntegrity: string,
+): RegistrySbom {
+    const components: SbomComponent[] = [];
+    const seenNpmDeps = new Set<string>();
+
+    for (const item of index.items) {
+        // 组件本身作为 SBOM component
+        components.push({
+            'bom-ref': `brutx:${item.name}`,
+            type: 'application',
+            name: item.name,
+            version: index.registryVersion,
+            description: item.description,
+            hashes: [
+                { alg: 'SHA-256', content: item.integrity.replace(/^sha256-/, '') },
+            ],
+            dependencies: [
+                ...item.dependencies.map(dep => `npm:${dep}`),
+                ...item.registryDependencies.map(dep => `brutx:${dep}`),
+            ],
+        });
+
+        // 收集 npm 依赖（去重，按字典序保证稳定）
+        for (const dep of item.dependencies) {
+            if (!seenNpmDeps.has(dep)) {
+                seenNpmDeps.add(dep);
+            }
+        }
+    }
+
+    for (const dep of [...seenNpmDeps].sort()) {
+        components.push({
+            'bom-ref': `npm:${dep}`,
+            type: 'library',
+            name: dep,
+        });
+    }
+
+    // 规范化排序，确保 SBOM 可重复构建
+    components.sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
+
+    const sbomBase: Omit<RegistrySbom, 'integrity' | 'manifestIntegrity'> = {
+        $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',
+        bomFormat: SBOM_FORMAT,
+        specVersion: SBOM_SPEC_VERSION,
+        version: 1,
+        serialNumber: `urn:uuid:${crypto.randomUUID()}`,
+        metadata: {
+            timestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
+            tools: [
+                {
+                    vendor: 'brutx-vue',
+                    name: 'registry-builder',
+                    version: index.registryVersion,
+                },
+            ],
+            component: {
+                'bom-ref': 'brutx:registry',
+                type: 'application',
+                name: index.name,
+                version: index.registryVersion,
+            },
+        },
+        components,
+    };
+
+    // SBOM 自身完整性：对 components 数组规范化求 sha256（按 bom-ref 字典序）
+    const sbomIntegrity = computeSbomIntegrity(sbomBase);
+    return { ...sbomBase, integrity: sbomIntegrity, manifestIntegrity };
+}
+
+/**
+ * 计算 SBOM 完整性哈希。对 SBOM 的 bomFormat/specVersion/components 求规范化 sha256，
+ * 排除 serialNumber/metadata.timestamp/integrity 自身（这些字段在两次 build 间会变）。
+ */
+export function computeSbomIntegrity(
+    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>,
+): string {
+    const canonical = JSON.stringify({
+        bomFormat: sbom.bomFormat,
+        specVersion: sbom.specVersion,
+        components: sbom.components,
+    });
+    return 'sha256-' + crypto.createHash('sha256').update(canonical).digest('hex');
+}
+
+interface SbomComponent {
+    'bom-ref': string;
+    type: 'application' | 'library';
+    name: string;
+    version?: string;
+    description?: string;
+    hashes?: Array<{ alg: 'SHA-256'; content: string }>;
+    dependencies?: string[];
+}
+
+interface RegistrySbom {
+    $schema: string;
+    bomFormat: string;
+    specVersion: string;
+    version: number;
+    serialNumber: string;
+    metadata: {
+        timestamp: string | null;
+        tools: Array<{ vendor: string; name: string; version: string }>;
+        component: { 'bom-ref': string; type: 'application'; name: string; version: string };
+    };
+    components: SbomComponent[];
+    integrity: string;
+    /** 关联的 registry-manifest.json 的 integrity，便于追溯 SBOM 与 manifest 的对应关系 */
+    manifestIntegrity: string;
+}
+
 export async function run() {
     console.log('🚀 Starting registry build...');
 
@@ -959,9 +1088,15 @@ export async function run() {
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
     console.log('✓ Generated registry-manifest.json');
 
+    // P1-6 供应链安全：生成 CycloneDX 格式 SBOM，列出所有组件及 npm 依赖
+    const sbom = buildRegistrySbom(registryIndex, manifest.integrity);
+    fs.writeFileSync(SBOM_FILE, JSON.stringify(sbom, null, 2), 'utf-8');
+    console.log(`✓ Generated registry-sbom.json (${sbom.components.length} components)`);
+
     removeStaleRegistryFiles(new Set([
         'index.json',
         'registry-manifest.json',
+        'registry-sbom.json',
         ...registryIndex.items.map(item => `${item.name}.json`),
     ]));
 

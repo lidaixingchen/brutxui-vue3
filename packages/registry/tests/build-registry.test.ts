@@ -14,6 +14,8 @@ import {
     assertKnownRegistryDeps,
     buildRegistryItem,
     buildRegistryManifest,
+    buildRegistrySbom,
+    computeSbomIntegrity,
     computeSourceHash,
     extractComponentFileDeps,
     extractDeps,
@@ -536,5 +538,99 @@ describe('extractRegistryDeps type-only handling (P1-7)', () => {
         // silently slip through.
         const code = "import type { Foo } from '@/components/ui/buton/types'";
         expect(extractUnknownRegistryDeps(code)).toEqual(['buton']);
+    });
+});
+
+describe('buildRegistrySbom (P1-6)', () => {
+    const sampleIndex = {
+        $schema: 'https://ui.shadcn.com/schema/registry.json',
+        name: 'brutx-vue',
+        homepage: 'https://example.test',
+        schemaVersion: 1,
+        registryVersion: '0.1.0',
+        items: [
+            {
+                name: 'dialog',
+                type: 'registry:ui' as const,
+                title: 'Dialog',
+                description: 'Dialog component',
+                dependencies: ['reka-ui', '@lucide/vue'],
+                registryDependencies: ['button'],
+                files: [
+                    { path: 'components/ui/dialog/Dialog.vue', type: 'registry:ui' as const },
+                ],
+                tailwind: {},
+                cssVars: {},
+                integrity: 'sha256-abc',
+            },
+            {
+                name: 'button',
+                type: 'registry:ui' as const,
+                title: 'Button',
+                description: 'Button component',
+                dependencies: ['reka-ui'],
+                registryDependencies: [],
+                files: [
+                    { path: 'components/ui/button/Button.vue', type: 'registry:ui' as const },
+                ],
+                tailwind: {},
+                cssVars: {},
+                integrity: 'sha256-def',
+            },
+        ],
+    };
+
+    it('generates CycloneDX 1.5 SBOM with components and npm dependencies', () => {
+        const sbom = buildRegistrySbom(sampleIndex, 'manifest-hash');
+
+        expect(sbom.bomFormat).toBe('CycloneDX');
+        expect(sbom.specVersion).toBe('1.5');
+        expect(sbom.manifestIntegrity).toBe('manifest-hash');
+
+        // 组件按 bom-ref 字典序：brutx:button, brutx:dialog, npm:@lucide/vue, npm:reka-ui
+        const refs = sbom.components.map(c => c['bom-ref']);
+        expect(refs).toEqual([
+            'brutx:button',
+            'brutx:dialog',
+            'npm:@lucide/vue',
+            'npm:reka-ui',
+        ]);
+
+        const dialog = sbom.components.find(c => c['bom-ref'] === 'brutx:dialog')!;
+        expect(dialog.type).toBe('application');
+        expect(dialog.dependencies).toContain('npm:reka-ui');
+        expect(dialog.dependencies).toContain('npm:@lucide/vue');
+        expect(dialog.dependencies).toContain('brutx:button');
+        expect(dialog.hashes).toEqual([{ alg: 'SHA-256', content: 'abc' }]);
+
+        const rekaUi = sbom.components.find(c => c['bom-ref'] === 'npm:reka-ui')!;
+        expect(rekaUi.type).toBe('library');
+    });
+
+    it('computes SBOM integrity deterministically (excludes serialNumber/timestamp)', () => {
+        const sbom1 = buildRegistrySbom(sampleIndex, 'hash-1');
+        const sbom2 = buildRegistrySbom(sampleIndex, 'hash-1');
+
+        // 两次构建（serialNumber 不同）的 integrity 必须一致
+        expect(sbom1.integrity).toBe(sbom2.integrity);
+        expect(sbom1.serialNumber).not.toBe(sbom2.serialNumber);
+    });
+
+    it('produces different integrity when components change', () => {
+        const sbomA = buildRegistrySbom(sampleIndex, 'hash');
+        const modifiedIndex = {
+            ...sampleIndex,
+            items: sampleIndex.items.map(i =>
+                i.name === 'button' ? { ...i, integrity: 'sha256-changed' } : i
+            ),
+        };
+        const sbomB = buildRegistrySbom(modifiedIndex, 'hash');
+        expect(sbomA.integrity).not.toBe(sbomB.integrity);
+    });
+
+    it('exposes computeSbomIntegrity for direct verification', () => {
+        const sbom = buildRegistrySbom(sampleIndex, 'hash');
+        const recomputed = computeSbomIntegrity(sbom);
+        expect(recomputed).toBe(sbom.integrity);
     });
 });

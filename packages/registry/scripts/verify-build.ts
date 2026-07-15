@@ -6,9 +6,10 @@
  *   2. 删除 .registry-cache.json，跑一次全量 build → 输出集 A
  *   3. 把 A 移到临时目录，恢复 cache，跑一次增量 build → 输出集 B
  *   4. 深度 diff(A, B)：
- *      - 排除字段：仅 registry-manifest.json 的 `buildTimestamp`
- *        （buildTimestamp 由 BRUTX_REGISTRY_BUILD_TIMESTAMP 注入，两次 build 必然不同）
- *      - 其余字段（含 gitCommit、registryVersion、所有 items integrity）必须完全一致
+ *      - 排除字段（按文件）：
+ *        - registry-manifest.json 的 `buildTimestamp`（buildTimestamp 由 BRUTX_REGISTRY_BUILD_TIMESTAMP 注入，两次 build 必然不同）
+ *        - registry-sbom.json 的 `serialNumber`（UUID v4，每次 build 随机生成）
+ *      - 其余字段（含 gitCommit、registryVersion、所有 items integrity、SBOM components）必须完全一致
  *   5. 输出 diff 报告；不一致则 exit 1（CI 门禁）
  *
  * 用法：
@@ -32,7 +33,17 @@ const OUTPUT_DIR = path.resolve(REGISTRY_DIR, 'registry');
 const CACHE_FILE = path.resolve(REGISTRY_DIR, '.registry-cache.json');
 const TMP_DIR = path.resolve(REGISTRY_DIR, '.verify-tmp');
 
-const DIFF_EXCLUDED_FIELDS = new Set<string>(['buildTimestamp']);
+/**
+ * 文件级排除字段配置。
+ * - registry-manifest.json: buildTimestamp（由 BRUTX_REGISTRY_BUILD_TIMESTAMP 注入，两次 build 必不同）
+ * - registry-sbom.json: serialNumber（UUID v4，每次 build 随机生成）
+ *   注：metadata.timestamp 来自 BRUTX_REGISTRY_BUILD_TIMESTAMP，verify-build 流程中两
+ *   次共用同一 process.env，故 timestamp 字段天然一致，无需排除。
+ */
+const FILE_EXCLUDED_FIELDS: Record<string, Set<string>> = {
+    'registry-manifest.json': new Set(['buildTimestamp']),
+    'registry-sbom.json': new Set(['serialNumber']),
+};
 
 interface DiffEntry {
     file: string;
@@ -52,7 +63,7 @@ function readJson(file: string): unknown {
 
 /**
  * 规范化 JSON：按 key 字典序排列对象字段，便于深度比较。
- * 排除 DIFF_EXCLUDED_FIELDS 中的顶层字段（仅作用于 registry-manifest.json 的顶层）。
+ * 排除 excludeTopLevel 中的顶层字段（仅作用于调用方指定的文件，见 FILE_EXCLUDED_FIELDS）。
  */
 function normalize(value: unknown, excludeTopLevel: Set<string> = new Set()): unknown {
     if (Array.isArray(value)) {
@@ -71,8 +82,8 @@ function normalize(value: unknown, excludeTopLevel: Set<string> = new Set()): un
     return value;
 }
 
-function stringifyForDiff(value: unknown): string {
-    return JSON.stringify(normalize(value), null, 2);
+function stringifyForDiff(value: unknown, excludeTopLevel: Set<string> = new Set()): string {
+    return JSON.stringify(normalize(value, excludeTopLevel), null, 2);
 }
 
 function rmrf(target: string): void {
@@ -128,10 +139,10 @@ function diffOutputs(fullDir: string, incrDir: string): DiffEntry[] {
         if (!incrFiles.has(file)) continue;
         const fullData = readJson(path.join(fullDir, file));
         const incrData = readJson(path.join(incrDir, file));
-        // 仅 registry-manifest.json 顶层排除 buildTimestamp；其余文件全字段比较
-        const exclude = file === 'registry-manifest.json' ? DIFF_EXCLUDED_FIELDS : new Set<string>();
-        const fullStr = stringifyForDiff(fullData);
-        const incrStr = stringifyForDiff(incrData);
+        // 按文件名查找排除字段集；未配置的文件全字段比较
+        const exclude = FILE_EXCLUDED_FIELDS[file] ?? new Set<string>();
+        const fullStr = stringifyForDiff(fullData, exclude);
+        const incrStr = stringifyForDiff(incrData, exclude);
         if (fullStr !== incrStr) {
             diffs.push({
                 file,
@@ -187,7 +198,7 @@ function main(): void {
 
         if (diffs.length === 0) {
             console.log('\n✓ build:verify PASSED — 增量与全量输出完全一致');
-            console.log('  (排除字段: registry-manifest.json.buildTimestamp)');
+            console.log('  (排除字段: registry-manifest.json.buildTimestamp, registry-sbom.json.serialNumber)');
             process.exitCode = 0;
         } else {
             console.error(`\n✗ build:verify FAILED — 发现 ${diffs.length} 处差异`);
