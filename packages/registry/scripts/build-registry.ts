@@ -9,7 +9,7 @@ import {
     validateRegistryItem,
     CSS_VARS,
 } from 'brutx-shared-vue';
-import { extractModuleSpecifiers } from 'brutx-shared-vue/scan';
+import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
 import type {
     MergedRegistryEntry,
     RegistryManifest,
@@ -460,10 +460,14 @@ export function extractRegistryDeps(code: string, componentName: string): string
     const deps = new Set<string>();
     const prefix = '@/components/ui/';
 
-    for (const specifier of extractModuleSpecifiers(code)) {
-        if (!specifier.startsWith(prefix)) continue;
+    // P1-7: skip type-only imports — `import type { Foo } from '@/components/ui/x'`
+    // does not create a runtime registry dependency. Mixed imports
+    // (`import { type Foo, useBar } from '...'`) are NOT type-only and are kept.
+    for (const classified of extractClassifiedModuleSpecifiers(code)) {
+        if (classified.isTypeOnly) continue;
+        if (!classified.specifier.startsWith(prefix)) continue;
 
-        const depName = specifier.slice(prefix.length).split('/')[0];
+        const depName = classified.specifier.slice(prefix.length).split('/')[0];
         if (depName !== componentName && REGISTRY[depName]) {
             deps.add(depName);
         }

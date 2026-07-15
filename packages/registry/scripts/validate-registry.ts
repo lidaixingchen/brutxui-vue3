@@ -14,6 +14,8 @@ import {
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
     formatRegistryDependencyGraph,
+    formatDependencyGraphDot,
+    formatDependencyGraphJson,
     validateComponentSourceFiles,
     validateDocsComponentPageCoverage,
     validateGeneratedItemMatchesMetadata,
@@ -291,7 +293,30 @@ function validateSidebar(): number {
     return sidebarErrors;
 }
 
+function parseArgs(argv: string[]): { graph: boolean } {
+    return {
+        graph: argv.includes('--graph'),
+    };
+}
+
+function writeGraphArtifacts(referenceItems: RegistryReferenceItem[]): void {
+    const dotPath = path.join(REGISTRY_DIR, 'deps.dot');
+    const jsonPath = path.join(REGISTRY_DIR, 'deps.json');
+
+    const dot = formatDependencyGraphDot(referenceItems);
+    const json = JSON.stringify(formatDependencyGraphJson(referenceItems), null, 2);
+
+    fs.writeFileSync(dotPath, dot + '\n', 'utf-8');
+    fs.writeFileSync(jsonPath, json + '\n', 'utf-8');
+
+    const edgeCount = JSON.parse(json).edges.length;
+    console.log(`✓ Wrote dependency graph: ${dotPath} (DOT, ${referenceItems.length} nodes)`);
+    console.log(`✓ Wrote dependency graph: ${jsonPath} (JSON, ${edgeCount} edges)`);
+}
+
 function validate() {
+    const args = parseArgs(process.argv.slice(2));
+
     console.log('🔍 Validating registry files...');
 
     if (!fs.existsSync(REGISTRY_DIR)) {
@@ -390,6 +415,10 @@ function validate() {
         for (const line of formatRegistryDependencyGraph(referenceItems)) {
             console.log(`  ${line}`);
         }
+    }
+
+    if (args.graph) {
+        writeGraphArtifacts(referenceItems);
     }
 
     errorCount += validateIndexConsistency(files);

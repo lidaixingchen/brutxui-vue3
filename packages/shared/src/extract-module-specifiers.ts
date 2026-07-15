@@ -11,6 +11,22 @@
 import ts from 'typescript';
 
 /**
+ * Classified module specifier.
+ *
+ * - `isTypeOnly` is `true` when the entire declaration is `import type { ... }`
+ *   or `export type { ... } from '...'` — i.e. no runtime value is imported.
+ *   Mixed `import { type Foo, bar }` is NOT type-only (the declaration still
+ *   loads the module at runtime because of `bar`).
+ * - `isDynamic` is `true` for `import('...')` calls. Dynamic imports are always
+ *   runtime dependencies.
+ */
+export interface ClassifiedModuleSpecifier {
+    specifier: string;
+    isTypeOnly: boolean;
+    isDynamic: boolean;
+}
+
+/**
  * Extract all module specifiers from source code.
  *
  * Handles:
@@ -23,7 +39,18 @@ import ts from 'typescript';
  * @returns Array of unique module specifiers (e.g. `['@/composables/useLocale', 'vue']`)
  */
 export function extractModuleSpecifiers(code: string): string[] {
-    const specifiers = new Set<string>();
+    return extractClassifiedModuleSpecifiers(code).map(item => item.specifier);
+}
+
+/**
+ * Extract module specifiers with type-only / dynamic classification.
+ *
+ * Use this when the caller needs to distinguish runtime imports from type-only
+ * imports. Registry dependency tracking skips type-only specifiers; typo
+ * detection and file-presence checks still consider them.
+ */
+export function extractClassifiedModuleSpecifiers(code: string): ClassifiedModuleSpecifier[] {
+    const seen = new Map<string, ClassifiedModuleSpecifier>();
 
     for (const scriptCode of extractScriptBlocks(code)) {
         const sourceFile = ts.createSourceFile(
@@ -36,13 +63,20 @@ export function extractModuleSpecifiers(code: string): string[] {
 
         const visit = (node: ts.Node): void => {
             if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
-                specifiers.add(node.moduleSpecifier.text);
+                const specifier = node.moduleSpecifier.text;
+                const isTypeOnly = node.importClause?.isTypeOnly === true;
+                upsert(seen, specifier, isTypeOnly, false);
             } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
-                specifiers.add(node.moduleSpecifier.text);
+                const specifier = node.moduleSpecifier.text;
+                // `export type { Foo } from './bar'` sets isTypeOnly on the
+                // ExportDeclaration itself (TS 5+). `export type * as ns from`
+                // also sets it here.
+                const isTypeOnly = node.isTypeOnly;
+                upsert(seen, specifier, isTypeOnly, false);
             } else if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
                 const arg = node.arguments[0];
                 if (arg && ts.isStringLiteral(arg)) {
-                    specifiers.add(arg.text);
+                    upsert(seen, arg.text, false, true);
                 }
             }
             ts.forEachChild(node, visit);
@@ -53,7 +87,29 @@ export function extractModuleSpecifiers(code: string): string[] {
         }
     }
 
-    return Array.from(specifiers);
+    return Array.from(seen.values());
+}
+
+function upsert(
+    seen: Map<string, ClassifiedModuleSpecifier>,
+    specifier: string,
+    isTypeOnly: boolean,
+    isDynamic: boolean,
+): void {
+    const existing = seen.get(specifier);
+    if (!existing) {
+        seen.set(specifier, { specifier, isTypeOnly, isDynamic });
+        return;
+    }
+    // A specifier referenced by multiple import statements is a runtime dep
+    // if ANY of those references is a value import (isTypeOnly=false) or a
+    // dynamic import. Type-only wins only when every reference is type-only.
+    if (!isTypeOnly || isDynamic) {
+        existing.isTypeOnly = false;
+    }
+    if (isDynamic) {
+        existing.isDynamic = true;
+    }
 }
 
 /**

@@ -1,4 +1,5 @@
 import type { ComponentMetadataEntry, MergedRegistryEntry, RegistryIndex, RegistryIndexItem, RegistryItem } from 'brutx-shared-vue'
+import { extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan'
 
 export const REGISTRY_MANIFEST_SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/registry-manifest.schema.json'
 
@@ -123,6 +124,115 @@ export function formatRegistryDependencyGraph(items: RegistryReferenceItem[]): s
                 ? `${item.name} -> ${dependencies.join(', ')}`
                 : `${item.name} -> (none)`
         })
+}
+
+/**
+ * P1-7: Dependency graph node metadata.
+ */
+export interface DependencyGraphNode {
+    name: string
+    /** Number of outgoing registry-component edges. */
+    outDegree: number
+    /** Number of incoming registry-component edges. */
+    inDegree: number
+}
+
+/**
+ * P1-7: Dependency graph edge.
+ */
+export interface DependencyGraphEdge {
+    from: string
+    to: string
+}
+
+/**
+ * P1-7: Serializable dependency graph for tools / docs consumption.
+ *
+ * Nodes are derived from `items` (every item is a node, even if it has no
+ * edges). Edges come from `registryDependencies` (registry-component deps).
+ * `locale-zh-cn` and similar non-component entries are filtered out — they
+ * are not registry components and would clutter the visualization.
+ */
+export interface DependencyGraph {
+    nodes: DependencyGraphNode[]
+    edges: DependencyGraphEdge[]
+}
+
+const NON_COMPONENT_DEP_NAMES = new Set<string>([
+    'locale-zh-cn',
+    'locale-en',
+])
+
+export function buildDependencyGraph(items: RegistryReferenceItem[]): DependencyGraph {
+    const knownNames = new Set(items.map(item => item.name))
+    const edges: DependencyGraphEdge[] = []
+    const outDegrees = new Map<string, number>()
+    const inDegrees = new Map<string, number>()
+
+    for (const item of items) {
+        outDegrees.set(item.name, 0)
+        if (!inDegrees.has(item.name)) inDegrees.set(item.name, 0)
+    }
+
+    for (const item of items) {
+        for (const dep of new Set(item.registryDependencies)) {
+            if (NON_COMPONENT_DEP_NAMES.has(dep)) continue
+            if (!knownNames.has(dep)) continue
+            if (dep === item.name) continue
+            edges.push({ from: item.name, to: dep })
+            outDegrees.set(item.name, (outDegrees.get(item.name) ?? 0) + 1)
+            inDegrees.set(dep, (inDegrees.get(dep) ?? 0) + 1)
+        }
+    }
+
+    edges.sort((a, b) => {
+        if (a.from !== b.from) return a.from.localeCompare(b.from)
+        return a.to.localeCompare(b.to)
+    })
+
+    const nodes: DependencyGraphNode[] = items
+        .map(item => item.name)
+        .sort((a, b) => a.localeCompare(b))
+        .map(name => ({
+            name,
+            outDegree: outDegrees.get(name) ?? 0,
+            inDegree: inDegrees.get(name) ?? 0,
+        }))
+
+    return { nodes, edges }
+}
+
+/**
+ * P1-7: Render the dependency graph as a Graphviz DOT document.
+ *
+ * Output is deterministic — nodes are emitted in alphabetical order, edges
+ * are emitted in (from, to) alphabetical order. Cycles are preserved (DOT
+ * renders them as loops in the visualization).
+ */
+export function formatDependencyGraphDot(items: RegistryReferenceItem[]): string {
+    const graph = buildDependencyGraph(items)
+    const lines: string[] = []
+    lines.push('digraph registry {')
+    lines.push('  rankdir=LR;')
+    lines.push('  node [shape=box, fontname="Helvetica"];')
+    for (const node of graph.nodes) {
+        lines.push(`  "${node.name}";`)
+    }
+    for (const edge of graph.edges) {
+        lines.push(`  "${edge.from}" -> "${edge.to}";`)
+    }
+    lines.push('}')
+    return lines.join('\n')
+}
+
+/**
+ * P1-7: Serialize the dependency graph to a JSON-compatible object.
+ *
+ * The returned object is stable (sorted by node name and edge endpoint),
+ * making it suitable for committing to the registry alongside the manifest.
+ */
+export function formatDependencyGraphJson(items: RegistryReferenceItem[]): DependencyGraph {
+    return buildDependencyGraph(items)
 }
 
 export function validateRegistryManifestConsistency(
@@ -370,8 +480,16 @@ export function validateRegistryItemInternalImports(
     const registryDependencies = new Set(item.registryDependencies)
 
     for (const file of item.files) {
-        for (const specifier of extractStaticModuleSpecifiers(file.content)) {
-            const expectedPath = resolveRegistryAliasImport(item.name, specifier)
+        for (const classified of extractClassifiedModuleSpecifiers(file.content)) {
+            // Type-only imports don't add runtime file or component deps, but
+            // their specifiers must still resolve to known paths (we don't
+            // validate type-only resolution here — file-presence check below
+            // applies to runtime imports only).
+            if (classified.isTypeOnly) {
+                continue
+            }
+
+            const expectedPath = resolveRegistryAliasImport(item.name, classified.specifier)
 
             if (!expectedPath || REGISTRY_ITEM_IGNORED_IMPORTS.has(expectedPath)) {
                 continue
@@ -382,7 +500,7 @@ export function validateRegistryItemInternalImports(
                     continue
                 }
 
-                errors.push(`file "${file.path}" imports "${specifier}", but generated registry item is missing "${expectedPath}"`)
+                errors.push(`file "${file.path}" imports "${classified.specifier}", but generated registry item is missing "${expectedPath}"`)
             }
         }
 
@@ -396,27 +514,111 @@ export function validateRegistryItemInternalImports(
     return errors
 }
 
-// Only matches single/double-quoted specifiers, not backtick template literals.
-// This is correct per ES spec: static import/export module specifiers must be
-// string literals (single/double quotes), not template literals.
-function extractStaticModuleSpecifiers(code: string): string[] {
-    const specifiers = new Set<string>()
-    const importPattern = /\b(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]/g
+/**
+ * P1-7: Classify a module specifier into one of four registry-relevant categories.
+ *
+ * - `registry-component`: cross-component import (`@/components/ui/{other}/...`)
+ * - `registry-shared`: composables / lib / directives / locales / internal files
+ * - `npm`: bare specifier (`vue`, `reka-ui`, `@vueuse/core`, ...)
+ * - `style-asset`: CSS / SCSS / Less imports
+ * - `other`: anything that doesn't match the patterns above (rare)
+ */
+export type RegistryImportKind = 'registry-component' | 'registry-shared' | 'npm' | 'style-asset' | 'other'
 
-    for (const match of code.matchAll(importPattern)) {
-        specifiers.add(match[1])
+export interface ClassifiedRegistryImport {
+    specifier: string
+    kind: RegistryImportKind
+    /** Component name when kind === 'registry-component'; undefined otherwise. */
+    componentName?: string
+    isTypeOnly: boolean
+    isDynamic: boolean
+}
+
+export function classifyRegistryImport(
+    specifier: string,
+    ownerComponentName: string,
+    isTypeOnly: boolean,
+    isDynamic: boolean,
+): ClassifiedRegistryImport {
+    if (isStyleAssetSpecifier(specifier)) {
+        return { specifier, kind: 'style-asset', isTypeOnly, isDynamic }
     }
 
-    return Array.from(specifiers)
+    const aliasComponentPrefix = '@/components/ui/'
+    if (specifier.startsWith(aliasComponentPrefix)) {
+        const rest = specifier.slice(aliasComponentPrefix.length)
+        const depName = rest.split('/')[0]
+        if (depName === ownerComponentName) {
+            // Internal file of the owner component — shared asset, not a dep.
+            return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
+        }
+        return { specifier, kind: 'registry-component', componentName: depName, isTypeOnly, isDynamic }
+    }
+
+    if (
+        specifier.startsWith('@/composables/') ||
+        specifier.startsWith('@/lib/') ||
+        specifier.startsWith('@/directives/') ||
+        specifier.startsWith('@/locales/')
+    ) {
+        return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
+    }
+
+    // Relative specifiers in source (before rewrite). These only appear in
+    // source-tree scans, not in generated registry JSON, but we handle them
+    // for completeness so the classifier is reusable.
+    if (specifier.startsWith('./')) {
+        return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
+    }
+    if (
+        specifier.startsWith('../composables/') ||
+        specifier.startsWith('../lib/') ||
+        specifier.startsWith('../directives/') ||
+        specifier.startsWith('../locales/')
+    ) {
+        return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
+    }
+    const crossCompRelative = specifier.match(/^\.\.\/([a-zA-Z0-9-]+)\//)
+    if (crossCompRelative && crossCompRelative[1] !== ownerComponentName) {
+        return {
+            specifier,
+            kind: 'registry-component',
+            componentName: crossCompRelative[1],
+            isTypeOnly,
+            isDynamic,
+        }
+    }
+
+    if (specifier.startsWith('@/') || specifier.startsWith('~/')) {
+        // Unrecognized alias — treat as shared to surface in audits.
+        return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
+    }
+
+    if (specifier.startsWith('.') || specifier.startsWith('/')) {
+        return { specifier, kind: 'registry-shared', isTypeOnly, isDynamic }
+    }
+
+    return { specifier, kind: 'npm', isTypeOnly, isDynamic }
 }
+
+function isStyleAssetSpecifier(specifier: string): boolean {
+    return /\.(?:css|scss|sass|less|styl|pcss|postcss)$/.test(specifier)
+}
+
+// Replaced by AST-based extractClassifiedModuleSpecifiers. The previous regex
+// matched import/export statements but could not distinguish `import type { ... }`
+// from value imports, causing type-only cross-component imports to be flagged
+// as missing registryDependencies (see P1-7).
 
 function extractCrossComponentImports(itemName: string, code: string): string[] {
     const deps = new Set<string>()
-    const pattern = /^@\/components\/ui\/([a-zA-Z0-9-]+)(?:\/|$)/
 
-    for (const specifier of extractStaticModuleSpecifiers(code)) {
-        const cleanSpecifier = specifier.split(/[?#]/)[0]
-        const match = pattern.exec(cleanSpecifier)
+    for (const classified of extractClassifiedModuleSpecifiers(code)) {
+        // P1-7: type-only imports don't create runtime registry dependencies.
+        if (classified.isTypeOnly) continue
+
+        const cleanSpecifier = classified.specifier.split(/[?#]/)[0]
+        const match = /^@\/components\/ui\/([a-zA-Z0-9-]+)(?:\/|$)/.exec(cleanSpecifier)
         if (!match) continue
         const depName = match[1]
         if (depName !== itemName) {

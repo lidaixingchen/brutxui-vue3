@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import {
+    buildDependencyGraph,
+    classifyRegistryImport,
     findRegistryDependencyCycles,
     findUnknownRegistryReferences,
+    formatDependencyGraphDot,
+    formatDependencyGraphJson,
     formatRegistryDependencyGraph,
     REGISTRY_MANIFEST_SCHEMA_URL,
     validateComponentSourceFiles,
@@ -404,6 +408,213 @@ describe('validate-registry helpers', () => {
         item.registryDependencies = ['button']
 
         expect(validateRegistryItemInternalImports(item)).toEqual([])
+    })
+
+    it('ignores type-only cross-component imports when checking registryDependencies', () => {
+        // P1-7: `import type { Foo } from '@/components/ui/button/types'` does not
+        // create a runtime registry dependency. Without this fix, the validator
+        // would flag `button` as a missing registryDependency even though no
+        // runtime value is imported.
+        const item = createRegistryItem('dialog', {
+            description: 'Dialog component',
+            files: [
+                'components/ui/dialog/DialogContent.vue',
+            ],
+        })
+        item.files[0].content = "import type { ButtonVariant } from '@/components/ui/button/types'\n"
+
+        expect(validateRegistryItemInternalImports(item)).toEqual([])
+    })
+
+    it('still flags mixed type-and-value cross-component imports when only type-only is detected', () => {
+        // Mixed `import { type Foo, useBar }` is NOT type-only — it's a runtime
+        // import. The validator should still flag missing registryDependencies.
+        const item = createRegistryItem('dialog', {
+            description: 'Dialog component',
+            files: [
+                'components/ui/dialog/DialogContent.vue',
+            ],
+        })
+        item.files[0].content = "import { type ButtonVariant, useButton } from '@/components/ui/button/use-button'\n"
+
+        expect(validateRegistryItemInternalImports(item)).toEqual([
+            'file "components/ui/dialog/DialogContent.vue" imports "@/components/ui/button/...", but "button" is not declared in registryDependencies',
+        ])
+    })
+})
+
+describe('classifyRegistryImport (P1-7)', () => {
+    it('classifies cross-component @/components/ui imports as registry-component', () => {
+        const result = classifyRegistryImport('@/components/ui/button/Button.vue', 'dialog', false, false)
+        expect(result).toEqual({
+            specifier: '@/components/ui/button/Button.vue',
+            kind: 'registry-component',
+            componentName: 'button',
+            isTypeOnly: false,
+            isDynamic: false,
+        })
+    })
+
+    it('classifies internal component files as registry-shared', () => {
+        const result = classifyRegistryImport('@/components/ui/dialog/DialogContent.vue', 'dialog', false, false)
+        expect(result.kind).toBe('registry-shared')
+        expect(result.componentName).toBeUndefined()
+    })
+
+    it('classifies composables / lib / directives / locales as registry-shared', () => {
+        expect(classifyRegistryImport('@/composables/useLocale', 'dialog', false, false).kind).toBe('registry-shared')
+        expect(classifyRegistryImport('@/lib/utils', 'dialog', false, false).kind).toBe('registry-shared')
+        expect(classifyRegistryImport('@/directives/scroll', 'dialog', false, false).kind).toBe('registry-shared')
+        expect(classifyRegistryImport('@/locales/zh-cn', 'dialog', false, false).kind).toBe('registry-shared')
+    })
+
+    it('classifies bare specifiers as npm', () => {
+        expect(classifyRegistryImport('vue', 'dialog', false, false).kind).toBe('npm')
+        expect(classifyRegistryImport('reka-ui', 'dialog', false, false).kind).toBe('npm')
+        expect(classifyRegistryImport('@vueuse/core', 'dialog', false, false).kind).toBe('npm')
+        expect(classifyRegistryImport('@lucide/vue', 'dialog', false, false).kind).toBe('npm')
+    })
+
+    it('classifies CSS / SCSS / Less imports as style-asset', () => {
+        expect(classifyRegistryImport('./style.css', 'dialog', false, false).kind).toBe('style-asset')
+        expect(classifyRegistryImport('@/components/ui/dialog/theme.scss', 'dialog', false, false).kind).toBe('style-asset')
+        expect(classifyRegistryImport('tailwindcss/index.css', 'dialog', false, false).kind).toBe('style-asset')
+    })
+
+    it('preserves isTypeOnly and isDynamic flags from the AST extraction', () => {
+        const typeOnly = classifyRegistryImport('@/components/ui/button/types', 'dialog', true, false)
+        expect(typeOnly.isTypeOnly).toBe(true)
+        expect(typeOnly.isDynamic).toBe(false)
+        expect(typeOnly.kind).toBe('registry-component')
+
+        const dynamic = classifyRegistryImport('@/components/ui/button/Button.vue', 'dialog', false, true)
+        expect(dynamic.isTypeOnly).toBe(false)
+        expect(dynamic.isDynamic).toBe(true)
+    })
+
+    it('classifies relative cross-component imports (source-tree form)', () => {
+        const result = classifyRegistryImport('../button/Button.vue', 'dialog', false, false)
+        expect(result.kind).toBe('registry-component')
+        expect(result.componentName).toBe('button')
+    })
+
+    it('classifies relative composables / lib imports (source-tree form)', () => {
+        expect(classifyRegistryImport('../composables/useLocale', 'dialog', false, false).kind).toBe('registry-shared')
+        expect(classifyRegistryImport('../lib/utils', 'dialog', false, false).kind).toBe('registry-shared')
+        expect(classifyRegistryImport('./types', 'dialog', false, false).kind).toBe('registry-shared')
+    })
+})
+
+describe('buildDependencyGraph / formatDependencyGraphDot / formatDependencyGraphJson (P1-7)', () => {
+    const items = [
+        { name: 'alert-dialog', registryDependencies: ['button', 'dialog'] },
+        { name: 'button', registryDependencies: [] },
+        { name: 'dialog', registryDependencies: ['button'] },
+        { name: 'popover', registryDependencies: ['button'] },
+    ]
+
+    it('builds nodes for every item and edges for every cross-component dep', () => {
+        const graph = buildDependencyGraph(items)
+        const nodeNames = graph.nodes.map(n => n.name)
+        expect(nodeNames).toEqual(['alert-dialog', 'button', 'dialog', 'popover'])
+    })
+
+    it('filters out non-component deps like locale-zh-cn', () => {
+        const graph = buildDependencyGraph([
+            { name: 'combobox', registryDependencies: ['button', 'locale-zh-cn'] },
+            { name: 'button', registryDependencies: [] },
+        ])
+        expect(graph.edges).toEqual([{ from: 'combobox', to: 'button' }])
+    })
+
+    it('filters out unknown dep names (not in node set)', () => {
+        const graph = buildDependencyGraph([
+            { name: 'a', registryDependencies: ['b', 'missing'] },
+            { name: 'b', registryDependencies: [] },
+        ])
+        expect(graph.edges).toEqual([{ from: 'a', to: 'b' }])
+    })
+
+    it('filters out self-edges', () => {
+        const graph = buildDependencyGraph([
+            { name: 'a', registryDependencies: ['a'] },
+        ])
+        expect(graph.edges).toEqual([])
+    })
+
+    it('deduplicates repeated deps within one item', () => {
+        const graph = buildDependencyGraph([
+            { name: 'a', registryDependencies: ['b', 'b', 'b'] },
+            { name: 'b', registryDependencies: [] },
+        ])
+        expect(graph.edges).toEqual([{ from: 'a', to: 'b' }])
+    })
+
+    it('computes in-degree and out-degree correctly', () => {
+        const graph = buildDependencyGraph(items)
+        const byName = new Map(graph.nodes.map(n => [n.name, n]))
+        // alert-dialog -> button, dialog
+        expect(byName.get('alert-dialog')).toEqual({ name: 'alert-dialog', outDegree: 2, inDegree: 0 })
+        // button <- alert-dialog, dialog, popover
+        expect(byName.get('button')).toEqual({ name: 'button', outDegree: 0, inDegree: 3 })
+        // dialog <- alert-dialog, dialog -> button
+        expect(byName.get('dialog')).toEqual({ name: 'dialog', outDegree: 1, inDegree: 1 })
+        // popover -> button
+        expect(byName.get('popover')).toEqual({ name: 'popover', outDegree: 1, inDegree: 0 })
+    })
+
+    it('emits DOT in deterministic alphabetical order', () => {
+        const dot = formatDependencyGraphDot(items)
+        const lines = dot.split('\n')
+        expect(lines[0]).toBe('digraph registry {')
+        expect(lines[1]).toBe('  rankdir=LR;')
+        expect(lines[2]).toBe('  node [shape=box, fontname="Helvetica"];')
+        // Nodes come before edges, in alphabetical order
+        expect(lines[3]).toBe('  "alert-dialog";')
+        // Edges sorted by (from, to)
+        const edgeLines = lines.filter(l => l.includes('->'))
+        expect(edgeLines).toEqual([
+            '  "alert-dialog" -> "button";',
+            '  "alert-dialog" -> "dialog";',
+            '  "dialog" -> "button";',
+            '  "popover" -> "button";',
+        ])
+        expect(lines[lines.length - 1]).toBe('}')
+    })
+
+    it('emits JSON in stable shape', () => {
+        const json = formatDependencyGraphJson(items)
+        expect(json).toEqual({
+            nodes: [
+                { name: 'alert-dialog', outDegree: 2, inDegree: 0 },
+                { name: 'button', outDegree: 0, inDegree: 3 },
+                { name: 'dialog', outDegree: 1, inDegree: 1 },
+                { name: 'popover', outDegree: 1, inDegree: 0 },
+            ],
+            edges: [
+                { from: 'alert-dialog', to: 'button' },
+                { from: 'alert-dialog', to: 'dialog' },
+                { from: 'dialog', to: 'button' },
+                { from: 'popover', to: 'button' },
+            ],
+        })
+    })
+
+    it('handles empty input', () => {
+        const graph = buildDependencyGraph([])
+        expect(graph).toEqual({ nodes: [], edges: [] })
+        expect(formatDependencyGraphDot([])).toBe('digraph registry {\n  rankdir=LR;\n  node [shape=box, fontname="Helvetica"];\n}')
+    })
+
+    it('preserves cycles in DOT output', () => {
+        const cycle = [
+            { name: 'a', registryDependencies: ['b'] },
+            { name: 'b', registryDependencies: ['a'] },
+        ]
+        const dot = formatDependencyGraphDot(cycle)
+        const edgeLines = dot.split('\n').filter(l => l.includes('->'))
+        expect(edgeLines).toContain('  "a" -> "b";')
+        expect(edgeLines).toContain('  "b" -> "a";')
     })
 })
 
