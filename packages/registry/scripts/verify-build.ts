@@ -88,15 +88,24 @@ function moveDir(src: string, dst: string): void {
 }
 
 function runBuild(env: NodeJS.ProcessEnv): void {
-    // Windows 上 npm_execpath 指向 pnpm.mjs（不能直接 execFileSync），
-    // 需要用 node 显式执行。其他平台同样兼容。
-    const pnpmPath = process.env.npm_execpath ?? 'pnpm';
-    const args = [pnpmPath, 'run', 'build'];
-    execFileSync(process.execPath, args, {
-        cwd: REGISTRY_DIR,
-        stdio: 'inherit',
-        env,
-    });
+    // npm_execpath 指向 pnpm 的 JS 入口（如 pnpm.mjs），需用 node 显式执行；
+    // 当未通过 pnpm/npm 启动（npm_execpath 缺失）时，回退到 PATH 中的 pnpm 可执行文件，
+    // 需启用 shell 让 Windows 解析 pnpm.CMD（否则 node 会把 'pnpm' 当 JS 模块加载或 ENOENT）。
+    const pnpmPath = process.env.npm_execpath;
+    if (pnpmPath) {
+        execFileSync(process.execPath, [pnpmPath, 'run', 'build'], {
+            cwd: REGISTRY_DIR,
+            stdio: 'inherit',
+            env,
+        });
+    } else {
+        execFileSync('pnpm', ['run', 'build'], {
+            cwd: REGISTRY_DIR,
+            stdio: 'inherit',
+            env,
+            shell: true,
+        });
+    }
 }
 
 function diffOutputs(fullDir: string, incrDir: string): DiffEntry[] {
