@@ -84,6 +84,7 @@ program
     .option('--dry-run', 'Show which components would be updated without writing', false)
     .option('-r, --registry <registry>', 'Specify registry URL')
     .option('--no-cache', 'Skip registry cache')
+    .option('--across-versions', 'Allow updating version-pinned components across their locked version', false)
     .action(update);
 
 program

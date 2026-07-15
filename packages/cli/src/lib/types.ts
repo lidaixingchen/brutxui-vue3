@@ -97,6 +97,7 @@ export interface UpdateOptions {
     dryRun?: boolean;
     registry?: string;
     cache?: boolean;
+    acrossVersions?: boolean;
 }
 
 export interface ListOptions {

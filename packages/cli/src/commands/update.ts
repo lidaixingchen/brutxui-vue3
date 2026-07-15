@@ -31,8 +31,40 @@ export async function update(components: string[], options: UpdateOptions): Prom
     logger.info('Checking for updates...');
     const manifest = await readManifest(cwd).catch(() => null);
 
+    // 版本约束（P0-3 延续）：version-pinned 组件默认锁定，需 --across-versions 才跨版本更新。
+    // 语义：name@version 是 git ref（非 semver），用户显式锁定即不应被 update 擅自改变。
+    // version='latest' 或无 version 字段的组件视为未锁定，正常更新。
+    const acrossVersions = options.acrossVersions === true;
+    const versionPinnedNames: string[] = [];
+    if (!acrossVersions && manifest) {
+        for (const name of installedComponents) {
+            const entry = manifest.components[name];
+            if (entry?.version && entry.version !== 'latest') {
+                versionPinnedNames.push(name);
+            }
+        }
+    }
+
+    if (versionPinnedNames.length > 0) {
+        logger.newLine();
+        logger.warn(`The following ${versionPinnedNames.length} component(s) are version-pinned and will be skipped:`);
+        for (const name of versionPinnedNames) {
+            const pinnedVersion = manifest!.components[name].version;
+            logger.log(`  ${chalk.yellow('●')} ${name} ${chalk.dim(`(locked to ${pinnedVersion})`)}`);
+        }
+        logger.info(`To update across versions, re-run with ${chalk.cyan('--across-versions')}.`);
+        logger.newLine();
+    }
+
+    const updatableComponents = installedComponents.filter(name => !versionPinnedNames.includes(name));
+
+    if (updatableComponents.length === 0) {
+        logger.info('No updatable components found (all are version-pinned or none installed).');
+        return;
+    }
+
     const results = await Promise.all(
-        installedComponents.map(name => diffComponent(
+        updatableComponents.map(name => diffComponent(
             cwd,
             config,
             name,

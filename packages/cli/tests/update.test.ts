@@ -91,23 +91,29 @@ describe('update command', () => {
         else process.env.BRUTX_NO_CACHE = savedEnv;
     });
 
-    async function createProjectWithManifest(components: Record<string, { registrySource: string }>): Promise<string> {
+    async function createProjectWithManifest(components: Record<string, { registrySource: string; version?: string }>): Promise<string> {
         const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-update-'));
         tmpDirs.push(tmpDir);
         const manifestPath = path.join(tmpDir, '.brutx', 'manifest.json');
         await fs.ensureDir(path.dirname(manifestPath));
         await fs.writeJson(manifestPath, {
             version: 1,
-            components: Object.fromEntries(Object.entries(components).map(([name, entry]) => [name, {
-                name,
-                registrySource: entry.registrySource,
-                integrity: `sha256-${name}`,
-                installedAt: '2026-07-07T00:00:00.000Z',
-                files: [`src/components/ui/${name}/${name}.vue`],
-                dependencies: [],
-                registryDependencies: [],
-                examples: [],
-            }])),
+            components: Object.fromEntries(Object.entries(components).map(([name, entry]) => {
+                const item: Record<string, unknown> = {
+                    name,
+                    registrySource: entry.registrySource,
+                    integrity: `sha256-${name}`,
+                    installedAt: '2026-07-07T00:00:00.000Z',
+                    files: [`src/components/ui/${name}/${name}.vue`],
+                    dependencies: [],
+                    registryDependencies: [],
+                    examples: [],
+                };
+                if (entry.version !== undefined) {
+                    item.version = entry.version;
+                }
+                return [name, item];
+            })),
         });
         return tmpDir;
     }
@@ -395,6 +401,158 @@ describe('update command', () => {
             await update([], { cwd: '/tmp', silent: true });
 
             expect(mockedAdd).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('version-pinned components (P0-3 update version constraints)', () => {
+        // Helper: build a modified DiffResult whose `component` matches the name being diffed.
+        // update.ts reads `result.component` (not the input name) when grouping selected updates,
+        // so reusing a constant result with a mismatched name causes wrong components to be selected.
+        const modifiedFor = (name: string): DiffResult => ({
+            component: name,
+            status: 'modified',
+            files: [
+                { path: `components/${name}/${name}.vue`, status: 'modified', patch: '--- a\n+++ b\n-old\n+new' },
+            ],
+        });
+
+        it('should skip version-pinned components by default', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry', version: 'v1.2.0' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedDiffComponent).not.toHaveBeenCalled();
+            expect(mockedAdd).not.toHaveBeenCalled();
+        });
+
+        it('should update version-pinned components when --across-versions is passed', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry', version: 'v1.2.0' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true, acrossVersions: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledOnce();
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
+        });
+
+        it('should treat version="latest" as not pinned and update normally', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry', version: 'latest' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledOnce();
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
+        });
+
+        it('should treat missing version field as not pinned and update normally', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledOnce();
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
+        });
+
+        it('should update only non-pinned components in a mixed install', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry', version: 'v1.2.0' },
+                badge: { registrySource: 'https://example.test/registry' },
+                card: { registrySource: 'https://example.test/registry', version: 'v0.9.0' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button', 'badge', 'card']);
+            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+                if (name === 'badge') return modifiedFor('badge');
+                return upToDateResult;
+            });
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            // only badge should be diffed and updated; button/card are version-pinned
+            expect(mockedDiffComponent).toHaveBeenCalledTimes(1);
+            expect(mockedDiffComponent).toHaveBeenCalledWith(
+                tmpDir,
+                defaultConfig,
+                'badge',
+                'https://example.test/registry',
+                expect.objectContaining({ name: 'badge' }),
+                true,
+            );
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['badge'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
+        });
+
+        it('should return early when all installed components are version-pinned', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry', version: 'v1.2.0' },
+                badge: { registrySource: 'https://example.test/registry', version: 'v2.0.0' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button', 'badge']);
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true });
+
+            expect(mockedDiffComponent).not.toHaveBeenCalled();
+            expect(mockedAdd).not.toHaveBeenCalled();
+        });
+
+        it('should respect --across-versions for mixed install and update all components', async () => {
+            const tmpDir = await createProjectWithManifest({
+                button: { registrySource: 'https://example.test/registry', version: 'v1.2.0' },
+                badge: { registrySource: 'https://example.test/registry' },
+            });
+            mockedGetInstalledComponents.mockResolvedValue(['button', 'badge']);
+            mockedDiffComponent.mockImplementation(async (_cwd, _config, name) => {
+                return modifiedFor(name);
+            });
+
+            await update([], { cwd: tmpDir, silent: true, yes: true, all: true, acrossVersions: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledTimes(2);
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button', 'badge'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
+        });
+
+        it('should not skip version-pinned components when manifest is unavailable', async () => {
+            // When readManifest fails (returns null), update should proceed normally
+            // without version-pinning logic, since we cannot determine pinned state.
+            mockedGetInstalledComponents.mockResolvedValue(['button']);
+            mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
+
+            await update([], { cwd: '/tmp', silent: true, yes: true, all: true });
+
+            expect(mockedDiffComponent).toHaveBeenCalledOnce();
+            expect(mockedAdd).toHaveBeenCalledWith(
+                ['button'],
+                expect.objectContaining({ overwrite: true, yes: true })
+            );
         });
     });
 
