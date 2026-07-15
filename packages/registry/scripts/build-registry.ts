@@ -10,6 +10,7 @@ import {
     CSS_VARS,
 } from 'brutx-shared-vue';
 import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
+import { scanComponentFiles, type ComponentFileManifest } from 'brutx-shared-vue/scan';
 import type {
     MergedRegistryEntry,
     RegistryManifest,
@@ -64,7 +65,50 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
     return merged;
 }
 
-const REGISTRY: Record<string, MergedRegistryEntry> = loadMergedRegistry();
+let REGISTRY: Record<string, MergedRegistryEntry> = loadMergedRegistry();
+
+/**
+ * 重新加载 REGISTRY（watch 模式使用，当 registry-manifest.json 变化后调用）。
+ */
+export function reloadRegistry(): void {
+    REGISTRY = loadMergedRegistry();
+}
+
+/**
+ * 重新生成 registry-manifest.json（复用 prebuild-scan 逻辑，供 watch 模式使用）。
+ * 当用户新增/删除组件文件时，manifest 需要更新才能让 build 感知到新的组件。
+ */
+const SCAN_LIB_EXCLUDE = new Set<string>(['utils.ts']);
+
+const SCAN_MANIFEST_OVERRIDES: Record<string, Partial<ComponentFileManifest>> = {
+    loading: {
+        directives: ['loading.ts'],
+    },
+};
+
+function applyScanOverrides(manifest: Record<string, ComponentFileManifest>): void {
+    for (const [name, override] of Object.entries(SCAN_MANIFEST_OVERRIDES)) {
+        if (!manifest[name]) continue;
+        if (override.directives) {
+            const existing = new Set(manifest[name].directives);
+            for (const d of override.directives) existing.add(d);
+            manifest[name].directives = Array.from(existing).sort();
+        }
+    }
+}
+
+export function runPrebuildScan(): void {
+    const manifest = scanComponentFiles({
+        componentsDir: UI_COMPONENTS_DIR,
+        composablesDir: UI_COMPOSABLES_DIR,
+        libDir: UI_LIB_DIR,
+        directivesDir: UI_DIRECTIVES_DIR,
+        libExclude: SCAN_LIB_EXCLUDE,
+    });
+    applyScanOverrides(manifest);
+    const output = JSON.stringify(manifest, null, 2) + '\n';
+    fs.writeFileSync(MANIFEST_PATH, output, 'utf-8');
+}
 
 type RewriteContext = 'component' | 'composable' | 'lib' | 'directive' | 'locale';
 
@@ -952,11 +996,170 @@ export async function run() {
     console.log('🎉 Registry built!');
 }
 
+/**
+ * Watch 模式（P2.3）：监听 UI 源码变化，增量 rebuild registry JSON。
+ *
+ * 工作流：
+ *   1. 启动时先跑一次完整 build（含 prebuild:scan + run）
+ *   2. 递归监听 UI 源码目录（components/composables/locales/lib/directives）
+ *   3. 检测到 .vue/.ts 文件变化时（debounce 300ms）：
+ *      a. runPrebuildScan() —— 更新 registry-manifest.json（应对新增/删除文件）
+ *      b. reloadRegistry() —— 重新加载 REGISTRY 常量
+ *      c. run() —— 增量 build（cache 命中时跳过未变化组件）
+ *   4. 也监听 shared/src/components.ts（COMPONENT_METADATA 来源）
+ *
+ * 防并发：isBuilding 标志确保上一次 build 完成后才启动下一次。
+ * 退出：Ctrl+C 触发 SIGINT，关闭所有 watcher。
+ */
+const WATCH_DEBOUNCE_MS = 300;
+
+const WATCHED_EXTENSIONS = new Set(['.vue', '.ts', '.tsx']);
+
+// shared/src/components.ts 的路径（COMPONENT_METADATA 来源，影响所有组件的元数据）
+const SHARED_COMPONENTS_FILE = path.resolve(__dirname, '../../shared/src/components.ts');
+
+interface WatchState {
+    isBuilding: boolean;
+    pendingChange: boolean;
+    watchers: fs.FSWatcher[];
+}
+
+export async function runWatch(): Promise<void> {
+    console.log('👀 Starting registry build in watch mode...');
+
+    // 初始 build：先 scan，再 build
+    console.log('📦 Initial prebuild:scan...');
+    runPrebuildScan();
+    reloadRegistry();
+    console.log('📦 Initial build...');
+    await run();
+
+    const state: WatchState = {
+        isBuilding: false,
+        pendingChange: false,
+        watchers: [],
+    };
+
+    const dirsToWatch = [
+        UI_COMPONENTS_DIR,
+        UI_COMPOSABLES_DIR,
+        UI_LOCALES_DIR,
+        UI_LIB_DIR,
+        UI_DIRECTIVES_DIR,
+    ];
+
+    for (const dir of dirsToWatch) {
+        if (!fs.existsSync(dir)) continue;
+        try {
+            const watcher = fs.watch(dir, { recursive: true }, (eventType, filename) => {
+                if (!filename) return;
+                handleFileChange(filename, state);
+            });
+            state.watchers.push(watcher);
+            console.log(`  Watching ${path.relative(process.cwd(), dir)}/`);
+        } catch (error) {
+            console.warn(`  Failed to watch ${dir}: ${error instanceof Error ? error.message : error}`);
+        }
+    }
+
+    // 监听 shared/src/components.ts（单文件）
+    const sharedDir = path.dirname(SHARED_COMPONENTS_FILE);
+    if (fs.existsSync(sharedDir)) {
+        try {
+            const watcher = fs.watch(sharedDir, (eventType, filename) => {
+                if (filename === 'components.ts') {
+                    handleFileChange('shared/components.ts', state);
+                }
+            });
+            state.watchers.push(watcher);
+            console.log(`  Watching ${path.relative(process.cwd(), SHARED_COMPONENTS_FILE)}`);
+        } catch (error) {
+            console.warn(`  Failed to watch shared/components.ts: ${error instanceof Error ? error.message : error}`);
+        }
+    }
+
+    console.log(`\n👀 Watching for changes (debounce ${WATCH_DEBOUNCE_MS}ms). Press Ctrl+C to stop.\n`);
+
+    // SIGINT 清理
+    process.on('SIGINT', () => {
+        console.log('\n👋 Stopping watchers...');
+        for (const watcher of state.watchers) {
+            watcher.close();
+        }
+        process.exit(0);
+    });
+}
+
+function handleFileChange(filename: string, state: WatchState): void {
+    // 只关心 .vue/.ts/.tsx 文件
+    const ext = path.extname(filename);
+    if (!WATCHED_EXTENSIONS.has(ext)) return;
+
+    // 忽略测试文件
+    if (/\.(test|spec)\.(ts|tsx)$/.test(filename)) return;
+
+    // debounce：标记有待处理的变化
+    state.pendingChange = true;
+
+    if (state.isBuilding) {
+        // build 进行中，等 build 完成后会检查 pendingChange
+        return;
+    }
+
+    // debounce 延迟
+    setTimeout(() => {
+        if (!state.pendingChange) return;
+        state.pendingChange = false;
+        void triggerRebuild(state);
+    }, WATCH_DEBOUNCE_MS);
+}
+
+async function triggerRebuild(state: WatchState): Promise<void> {
+    if (state.isBuilding) return;
+    state.isBuilding = true;
+
+    const startTime = Date.now();
+    try {
+        console.log(`\n🔄 Change detected, rebuilding...`);
+
+        // 1. 重新生成 registry-manifest.json（应对新增/删除文件）
+        runPrebuildScan();
+
+        // 2. 重新加载 REGISTRY（manifest 变化后）
+        reloadRegistry();
+
+        // 3. 增量 build（cache 命中时跳过未变化组件）
+        await run();
+
+        const elapsed = Date.now() - startTime;
+        console.log(`✅ Rebuild complete in ${elapsed}ms. Watching for more changes...`);
+    } catch (error) {
+        console.error('❌ Rebuild failed:', error instanceof Error ? error.message : error);
+        console.log('  (watch mode continues, fix the error and save again)');
+    } finally {
+        state.isBuilding = false;
+
+        // 如果在 build 期间有新的文件变化，再触发一次
+        if (state.pendingChange) {
+            state.pendingChange = false;
+            setTimeout(() => void triggerRebuild(state), WATCH_DEBOUNCE_MS);
+        }
+    }
+}
+
 const isVitestRuntime = process.env.VITEST === 'true' || process.env.VITEST_WORKER_ID !== undefined;
 
 if (!isVitestRuntime && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-    run().catch((error) => {
-        console.error(error);
-        process.exitCode = 1;
-    });
+    const isWatchMode = process.argv.includes('--watch') || process.env.BRUTX_WATCH === '1';
+    if (isWatchMode) {
+        runWatch().catch((error) => {
+            console.error(error);
+            process.exitCode = 1;
+        });
+    } else {
+        run().catch((error) => {
+            console.error(error);
+            process.exitCode = 1;
+        });
+    }
 }

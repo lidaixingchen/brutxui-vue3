@@ -164,10 +164,11 @@ program
 async function main(): Promise<void> {
     // 在 commander 解析前应用全局 dry-run 和 verbose level。
     // 命令 action 在 parseAsync 期间执行，全局选项必须先于 action 生效。
-    applyGlobalOptionsFromArgv(process.argv);
+    const preprocessedArgv = preprocessArgv(process.argv);
+    applyGlobalOptionsFromArgv(preprocessedArgv);
 
     try {
-        await program.parseAsync(preprocessArgv(process.argv));
+        await program.parseAsync(preprocessedArgv);
     } catch (error) {
         const verbose = program.opts().verbose as boolean;
 
@@ -224,7 +225,8 @@ function preprocessArgv(argv: string[]): string[] {
 }
 
 /**
- * 在 commander 解析前从原始 argv 应用全局 dry-run 和 verbose level。
+ * 在 commander 解析前从预处理后的 argv 应用全局 dry-run 和 verbose level。
+ * 调用方应先经过 preprocessArgv 处理，使 -v/-vv/-vvv 统一为 --verbose-level。
  * 命令 action 在 parseAsync 期间执行，全局选项必须先于 action 生效。
  * 环境变量 BRUTX_DRY_RUN=1 / BRUTX_VERBOSE 由各自模块自动检测，这里只处理 CLI flag。
  */
@@ -241,14 +243,7 @@ function applyGlobalOptionsFromArgv(argv: string[]): void {
             verboseLevel = parsed;
         }
     }
-    // -v / -vv / -vvv 在 preprocessArgv 后变为 --verbose-level，但原始 argv 仍需检测
-    if (argv.includes('-vvv')) {
-        verboseLevel = Math.max(verboseLevel, VERBOSE_LEVEL_TRACE);
-    } else if (argv.includes('-vv')) {
-        verboseLevel = Math.max(verboseLevel, 2);
-    } else if (argv.includes('-v')) {
-        verboseLevel = Math.max(verboseLevel, VERBOSE_LEVEL_STEP);
-    }
+    // -v / -vv / -vvv 已由 preprocessArgv 转换为 --verbose-level，此处无需重复检测
     // --verbose（旧 flag）也提升到至少 STEP 级
     if (argv.includes('--verbose') && verboseLevel < VERBOSE_LEVEL_STEP) {
         verboseLevel = VERBOSE_LEVEL_STEP;
