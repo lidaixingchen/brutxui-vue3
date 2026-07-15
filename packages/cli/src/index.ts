@@ -10,6 +10,8 @@ import { info } from './commands/info.js';
 import { remove } from './commands/remove.js';
 import { create } from './commands/create.js';
 import { CliError, getCliErrorAdvice, logger, clearCache } from './lib/index.js';
+import { setGlobalDryRun } from './lib/global-dry-run.js';
+import { VERBOSE_LEVEL_NONE, VERBOSE_LEVEL_STEP, VERBOSE_LEVEL_TRACE } from './lib/logger.js';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
@@ -20,7 +22,9 @@ program
     .name('brutx-vue')
     .description('CLI for adding Brutx-Vue components to your project')
     .version(pkg.version)
-    .option('--verbose', 'Show detailed error output', false);
+    .option('--verbose', 'Show detailed error output', false)
+    .option('--dry-run', 'Global dry-run: simulate all write operations without touching disk', false)
+    .option('--verbose-level <level>', 'Verbose output level (1=steps, 2=details, 3=trace)', '0');
 
 program
     .command('init')
@@ -158,8 +162,12 @@ program
     });
 
 async function main(): Promise<void> {
+    // 在 commander 解析前应用全局 dry-run 和 verbose level。
+    // 命令 action 在 parseAsync 期间执行，全局选项必须先于 action 生效。
+    applyGlobalOptionsFromArgv(process.argv);
+
     try {
-        await program.parseAsync();
+        await program.parseAsync(preprocessArgv(process.argv));
     } catch (error) {
         const verbose = program.opts().verbose as boolean;
 
@@ -192,6 +200,61 @@ async function main(): Promise<void> {
         }
 
         process.exit(1);
+    }
+}
+
+/**
+ * 预处理 argv：把 -v / -vv / -vvv 转换为 --verbose-level 1/2/3。
+ * commander 不原生支持 -vvv 风格的重复短选项，这里展开。
+ */
+function preprocessArgv(argv: string[]): string[] {
+    const result: string[] = [];
+    for (const arg of argv) {
+        if (arg === '-vvv') {
+            result.push('--verbose-level', String(VERBOSE_LEVEL_TRACE));
+        } else if (arg === '-vv') {
+            result.push('--verbose-level', String(2));
+        } else if (arg === '-v') {
+            result.push('--verbose-level', String(VERBOSE_LEVEL_STEP));
+        } else {
+            result.push(arg);
+        }
+    }
+    return result;
+}
+
+/**
+ * 在 commander 解析前从原始 argv 应用全局 dry-run 和 verbose level。
+ * 命令 action 在 parseAsync 期间执行，全局选项必须先于 action 生效。
+ * 环境变量 BRUTX_DRY_RUN=1 / BRUTX_VERBOSE 由各自模块自动检测，这里只处理 CLI flag。
+ */
+function applyGlobalOptionsFromArgv(argv: string[]): void {
+    if (argv.includes('--dry-run')) {
+        setGlobalDryRun(true);
+    }
+
+    let verboseLevel = VERBOSE_LEVEL_NONE;
+    const verboseLevelIdx = argv.indexOf('--verbose-level');
+    if (verboseLevelIdx !== -1 && verboseLevelIdx + 1 < argv.length) {
+        const parsed = Number.parseInt(argv[verboseLevelIdx + 1], 10);
+        if (!Number.isNaN(parsed)) {
+            verboseLevel = parsed;
+        }
+    }
+    // -v / -vv / -vvv 在 preprocessArgv 后变为 --verbose-level，但原始 argv 仍需检测
+    if (argv.includes('-vvv')) {
+        verboseLevel = Math.max(verboseLevel, VERBOSE_LEVEL_TRACE);
+    } else if (argv.includes('-vv')) {
+        verboseLevel = Math.max(verboseLevel, 2);
+    } else if (argv.includes('-v')) {
+        verboseLevel = Math.max(verboseLevel, VERBOSE_LEVEL_STEP);
+    }
+    // --verbose（旧 flag）也提升到至少 STEP 级
+    if (argv.includes('--verbose') && verboseLevel < VERBOSE_LEVEL_STEP) {
+        verboseLevel = VERBOSE_LEVEL_STEP;
+    }
+    if (verboseLevel > VERBOSE_LEVEL_NONE) {
+        logger.setVerboseLevel(verboseLevel);
     }
 }
 

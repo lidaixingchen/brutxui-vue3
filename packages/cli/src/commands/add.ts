@@ -26,6 +26,8 @@ import {
     writeComponentFiles,
     withOfflineScope,
     type ComponentFileWriteFailure,
+    mergeDryRun,
+    withAuditLog,
 } from '../lib/index.js';
 
 async function ensureInitialized(cwd: string): Promise<BrutalistConfig> {
@@ -161,9 +163,22 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     logger.setSilent(options.silent ?? false);
 
+    // P1-8: 合并全局 dry-run（BRUTX_DRY_RUN=1 或 --dry-run 全局 flag）
+    const effectiveDryRun = mergeDryRun(options.dryRun);
+
     const restoreOffline = withOfflineScope(options.offline === true);
     try {
-        await addInner(components, options, cwd, targetCwd, useCache);
+        await withAuditLog(
+            targetCwd,
+            {
+                command: 'add',
+                components,
+                cwd: targetCwd,
+                dryRun: effectiveDryRun,
+                registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
+            },
+            () => addInner(components, { ...options, dryRun: effectiveDryRun }, cwd, targetCwd, useCache),
+        );
     } finally {
         restoreOffline();
     }

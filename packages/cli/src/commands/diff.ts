@@ -3,7 +3,7 @@ import type {
     DiffResult,
     DiffOptions,
 } from '../lib/types.js';
-import { readConfigSafe, CliError, readManifest, withOfflineScope } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest, withOfflineScope, withAuditLog } from '../lib/index.js';
 import { diffComponents, getInstalledComponents } from '../lib/services/diff-service.js';
 import { logger } from '../lib/logger.js';
 export { diffComponent, getInstalledComponents } from '../lib/services/diff-service.js';
@@ -97,7 +97,16 @@ export async function diff(options: DiffOptions): Promise<void> {
 
     const restoreOffline = withOfflineScope(options.offline === true);
     try {
-        await diffInner(options, cwd, useCache);
+        await withAuditLog(
+            cwd,
+            {
+                command: 'diff',
+                components: options.components ?? [],
+                cwd,
+                dryRun: false, // diff 是只读操作，无 dry-run 语义
+            },
+            () => diffInner(options, cwd, useCache),
+        );
     } finally {
         restoreOffline();
     }

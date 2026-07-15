@@ -4,7 +4,7 @@ import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest, RegistrySourceStatus } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -627,6 +627,43 @@ async function probeHttpSource(source: string): Promise<RegistrySourceStatus> {
     }
 }
 
+/**
+ * 审计日志诊断（P1-8）：读取 .brutx/audit.log 中的最近失败记录。
+ * 帮助用户发现"上次 update 失败"等历史线索。
+ */
+const AUDIT_FAILURE_REPORT_LIMIT = 5;
+
+async function checkAuditLog(cwd: string): Promise<CheckResult[]> {
+    const results: CheckResult[] = [];
+
+    if (!(await auditLogExists(cwd))) {
+        // 无审计日志是正常状态（新项目或未执行过操作）
+        return results;
+    }
+
+    const total = await countAuditEntries(cwd);
+    const failures = await getRecentFailures(cwd, AUDIT_FAILURE_REPORT_LIMIT);
+
+    if (failures.length === 0) {
+        results.push({
+            name: 'audit log health',
+            status: 'pass',
+            message: `No failures in ${total} audit log entr${total !== 1 ? 'ies' : 'y'}.`,
+        });
+        return results;
+    }
+
+    const latestFailure = failures[failures.length - 1];
+    const failureSummary = failures.map(f => `${f.command}(${f.components.join(',')})`).join(', ');
+    results.push({
+        name: 'audit log health',
+        status: 'warn',
+        message: `${failures.length} recent failure(s) in audit log: ${failureSummary}. Latest: ${latestFailure.command} failed at ${latestFailure.timestamp}${latestFailure.error ? ` — ${latestFailure.error}` : ''}`,
+    });
+
+    return results;
+}
+
 function printReport(checks: CheckResult[]): void {
     logger.newLine();
     logger.bold(' Brutx-Vue Doctor');
@@ -873,6 +910,7 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
         checks.push(await checkUtilsFunction(cwd, config));
         checks.push(...await checkComponentIntegrity(cwd, config));
         checks.push(...await checkRegistryReachability(config, { offline }));
+        checks.push(...await checkAuditLog(cwd));
     }
 
     if (options.fix || options.fixOnly) {
@@ -895,6 +933,7 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
             checks.push(await checkUtilsFunction(cwd, freshConfig));
             checks.push(...await checkComponentIntegrity(cwd, freshConfig));
             checks.push(...await checkRegistryReachability(freshConfig, { offline }));
+            checks.push(...await checkAuditLog(cwd));
         }
     }
 

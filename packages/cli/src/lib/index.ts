@@ -24,6 +24,12 @@ export { installPackages, getInstallCommand } from './package-manager.js';
 
 export { Logger, logger } from './logger.js';
 export type { LoggerOptions } from './logger.js';
+export {
+    VERBOSE_LEVEL_NONE,
+    VERBOSE_LEVEL_STEP,
+    VERBOSE_LEVEL_DETAIL,
+    VERBOSE_LEVEL_TRACE,
+} from './logger.js';
 
 export { getItem, resolveDeps, readConfig, readConfigSafe, migrateConfig } from './registry.js';
 
@@ -61,6 +67,33 @@ export {
     removeInstalledComponents,
     computeInstalledContentHash,
 } from './manifest.js';
+
+export {
+    AUDIT_LOG_RELATIVE_PATH,
+    getAuditLogPath,
+    appendAuditLog,
+    readAuditLog,
+    getRecentFailures,
+    getRecentByCommand,
+    createAuditEntry,
+    withAuditLog,
+    auditLogExists,
+    countAuditEntries,
+} from './audit.js';
+export type {
+    AuditCommand,
+    AuditEntry,
+    AuditReadFilter,
+} from './audit.js';
+
+export {
+    isDryRunEnvActive,
+    isGlobalDryRun,
+    setGlobalDryRun,
+    mergeDryRun,
+    resetGlobalDryRun,
+    printDryRunAction,
+} from './global-dry-run.js';
 
 export {
     getInstalledComponentInfos,

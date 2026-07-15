@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import { confirm } from '@inquirer/prompts';
 import type { RemoveOptions } from '../lib/types.js';
-import { readConfigSafe, CliError, readManifest } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest, mergeDryRun, withAuditLog } from '../lib/index.js';
 import {
     countComponentFiles,
     prepareRemoveComponents,
@@ -27,6 +27,22 @@ export async function remove(components: string[], options: RemoveOptions): Prom
 
     logger.setSilent(options.silent ?? false);
 
+    // P1-8: 合并全局 dry-run
+    const effectiveDryRun = mergeDryRun(options.dryRun);
+
+    await withAuditLog(
+        cwd,
+        {
+            command: 'remove',
+            components,
+            cwd,
+            dryRun: effectiveDryRun,
+        },
+        () => removeInner(components, { ...options, dryRun: effectiveDryRun }, cwd),
+    );
+}
+
+async function removeInner(components: string[], options: RemoveOptions, cwd: string): Promise<void> {
     if (components.length === 0) {
         throw new CliError('Please specify at least one component to remove.');
     }
