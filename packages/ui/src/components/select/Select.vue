@@ -147,7 +147,9 @@ const grouped = computed<GroupedItems[]>(() => {
                         v-for="group in grouped"
                         :key="group.key"
                     >
-                        <SelectLabel v-if="group.label">{{ group.label }}</SelectLabel>
+                        <SelectLabel v-if="group.label">
+{{ group.label }}
+</SelectLabel>
                         <SelectItem
                             v-for="opt in group.options"
                             :key="opt.value"

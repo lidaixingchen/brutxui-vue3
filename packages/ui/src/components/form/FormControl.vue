@@ -24,8 +24,8 @@ const itemContext = inject(formItemKey, { id: '', formItemId: '', formDescriptio
 
 <template>
     <Primitive
-        as-child
         :id="itemContext.formItemId || undefined"
+        as-child
         :class="rootClasses"
         :aria-describedby="!fieldContext.error.value ? (itemContext.formDescriptionId || undefined) : `${itemContext.formDescriptionId} ${itemContext.formMessageId}`"
         :aria-invalid="!!fieldContext.error.value || undefined"

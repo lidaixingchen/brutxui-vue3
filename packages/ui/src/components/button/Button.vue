@@ -138,7 +138,9 @@ defineExpose({
     >
         <Loader2 v-if="loading" :class="loaderClasses" />
         <slot>
-            <template v-if="showPendingText">{{ resolvedPendingText }}</template>
+            <template v-if="showPendingText">
+{{ resolvedPendingText }}
+</template>
         </slot>
     </Primitive>
 </template>
