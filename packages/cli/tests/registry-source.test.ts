@@ -257,6 +257,42 @@ describe('fetchWithSources (P1-5)', () => {
         expect(fetcher).toHaveBeenCalledTimes(2);
     });
 
+    it('preserves first CliError as cause when all sources fail in offline mode', async () => {
+        const firstCliError = new CliError('cache miss for primary', {
+            code: 'REGISTRY_FETCH_FAILED',
+        });
+        const fetcher = vi.fn(async (source: string) => {
+            if (source === 'https://a.example.com') throw firstCliError;
+            throw new Error('generic failure');
+        });
+        await expect(
+            fetchWithSources(
+                ['https://a.example.com', 'https://b.example.com'],
+                fetcher,
+                { offline: true },
+            ),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_OFFLINE_UNAVAILABLE',
+            cause: firstCliError,
+        });
+    });
+
+    it('keeps cause null when offline failures are non-CliError', async () => {
+        const fetcher = vi.fn(async () => {
+            throw new Error('not in cache');
+        });
+        await expect(
+            fetchWithSources(
+                ['https://a.example.com', 'https://b.example.com'],
+                fetcher,
+                { offline: true },
+            ),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_OFFLINE_UNAVAILABLE',
+            cause: null,
+        });
+    });
+
     it('returns first cached source in offline mode when fetcher succeeds', async () => {
         const fetcher = vi.fn(async (source: string) => `cached-${source}`);
         const result = await fetchWithSources(

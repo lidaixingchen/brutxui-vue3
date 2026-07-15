@@ -110,7 +110,7 @@ export async function fetchWithSources<T>(
         // 离线模式：fetcher 实现必须先查缓存再触网，离线时不应触网。
         // 这里不直接拦截——而是把 offline 标志交给 fetcher，由它决定读缓存或抛错。
         // 但若 fetcher 抛 REGISTRY_OFFLINE_UNAVAILABLE，直接冒泡（无 fallback 意义）。
-        const firstError: CliError | null = null;
+        let firstError: CliError | null = null;
         for (const source of sources) {
             try {
                 const result = await fetcher(source);
@@ -120,6 +120,9 @@ export async function fetchWithSources<T>(
                     throw error;
                 }
                 // 其他错误在离线模式下视为该源不可用，尝试下一个
+                if (firstError === null && error instanceof CliError) {
+                    firstError = error;
+                }
                 logger.debug(`Offline source ${source} failed: ${error instanceof Error ? error.message : String(error)}`);
             }
         }
