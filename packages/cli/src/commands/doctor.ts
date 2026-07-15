@@ -221,6 +221,20 @@ async function checkAliases(cwd: string, config: BrutalistConfig): Promise<Check
     return results;
 }
 
+async function checkWorkspaceHint(cwd: string): Promise<CheckResult[]> {
+    const workspaceRoot = await detectWorkspaceRoot(cwd);
+    const resolvedCwd = path.resolve(cwd);
+    if (!workspaceRoot || workspaceRoot === resolvedCwd) {
+        return [];
+    }
+    const relativeRoot = path.relative(resolvedCwd, workspaceRoot);
+    return [{
+        name: 'workspace hint',
+        status: 'warn',
+        message: `Detected monorepo subpackage (workspace root: ${relativeRoot}). BrutxUI does not provide cross-package batch init/add/remove; run \`brutx-vue init\`/\`add\` independently inside each package, and manage shared dependencies via pnpm-workspace.yaml.`,
+    }];
+}
+
 async function checkDependencies(cwd: string): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
@@ -897,6 +911,7 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
     const checks: CheckResult[] = [];
 
     checks.push(checkNodeVersion());
+    checks.push(...await checkWorkspaceHint(cwd));
     checks.push(checkConfigExists(cwd, config));
 
     if (config) {
@@ -920,6 +935,7 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
         checks.length = 0;
         const freshConfig = await readConfigSafe(cwd);
         checks.push(checkNodeVersion());
+        checks.push(...await checkWorkspaceHint(cwd));
         checks.push(checkConfigExists(cwd, freshConfig));
 
         if (freshConfig) {

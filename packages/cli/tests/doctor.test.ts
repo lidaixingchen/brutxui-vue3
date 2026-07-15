@@ -433,6 +433,57 @@ describe('checkDependencies', () => {
 });
 
 // ---------------------------------------------------------------------------
+// checkWorkspaceHint
+// ---------------------------------------------------------------------------
+describe('checkWorkspaceHint', () => {
+    it('should not emit workspace hint in non-monorepo project', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            const results = await runDoctor(cwd, { silent: true });
+            const hint = results.find((r) => r.name === 'workspace hint');
+            expect(hint).toBeUndefined();
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('should not emit workspace hint when cwd is the workspace root itself', async () => {
+        const root = await createTempProject();
+        try {
+            await setupHealthyProject(root);
+            await fs.writeFile(path.join(root, 'pnpm-workspace.yaml'), 'packages:\n  - packages/*\n');
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            const results = await runDoctor(root, { silent: true });
+            const hint = results.find((r) => r.name === 'workspace hint');
+            expect(hint).toBeUndefined();
+        } finally {
+            await fs.remove(root);
+        }
+    });
+
+    it('should warn when running inside a monorepo subpackage', async () => {
+        const root = await createTempProject();
+        try {
+            await fs.writeFile(path.join(root, 'pnpm-workspace.yaml'), 'packages:\n  - apps/*\n');
+            const subpkg = path.join(root, 'apps', 'web');
+            await fs.ensureDir(subpkg);
+            await setupHealthyProject(subpkg);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            const results = await runDoctor(subpkg, { silent: true });
+            const hint = results.find((r) => r.name === 'workspace hint');
+            expect(hint).toBeDefined();
+            expect(hint?.status).toBe('warn');
+            expect(hint?.message).toContain('monorepo subpackage');
+            expect(hint?.message).toContain('pnpm-workspace.yaml');
+        } finally {
+            await fs.remove(root);
+        }
+    });
+});
+
+// ---------------------------------------------------------------------------
 // checkUtilsFunction
 // ---------------------------------------------------------------------------
 describe('checkUtilsFunction', () => {

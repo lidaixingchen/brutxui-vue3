@@ -64,3 +64,52 @@ Breaking Change 标记方式：
   }
 }
 ```
+
+## Breaking Change 迁移文档规范
+
+任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](./AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
+
+### Commit 标记
+
+- 标题行使用 `!` 标记 breaking：`feat(ui)!: 重命名 Button 的 variant 属性`
+- 或在 commit body 中显式写 `BREAKING CHANGE: <描述>`
+
+### 迁移指南模板
+
+每个 breaking change 必须在 CHANGELOG 与 release notes 中按以下结构记录：
+
+```markdown
+#### ⚠️ Breaking Change: <组件名> — <变更概述>
+
+**影响范围**
+- <受影响的 props / slots / events / 方法列表>
+
+**变更原因**
+- <为什么这个 breaking 是必要的>
+
+**迁移步骤**
+
+Before（旧 API）：
+\`\`\`vue
+<template>
+  <Button variant="primary" />
+</template>
+\`\`\`
+
+After（新 API）：
+\`\`\`vue
+<template>
+  <Button variant="default" />
+</template>
+\`\`\`
+
+**自动迁移可行性**
+- <评估是否需要 codemod：例如"全局替换 `variant="primary"` 为 `variant="default"` 即可"，或"涉及类型推断，需手动检查">
+```
+
+### 落地要求
+
+- 没有 breaking change 的 release 可以省略此章节。
+- 单个 release 含多个 breaking change 时，每个组件独立成段。
+- 迁移步骤必须给出可复制的 before/after 代码片段，不允许仅文字描述。
+- "自动迁移可行性" 字段用于在未来累积 codemod 候选清单——当评估为"需要 codemod"的 case 累计 ≥ 3 个时，触发 Item 9 启动条件。
