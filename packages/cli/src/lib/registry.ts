@@ -306,9 +306,35 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
 
 export async function resolveDeps(names: string[], source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem[]> {
     const resolved: RegistryItem[] = [];
+    // 去重键为 (cleanName, itemSource) 二元组——版本信息已隐含在 itemSource 中。
+    // 同源同名去重（A、B 都依赖 button@v1 只拉一次），跨版本各自解析（button@v1 与 button@v2 并存）。
+    // 不可额外拼 version 进键——会造成同版本重复拉取，破坏现存去重行为。
     const visited = new Set<string>();
     const active = new Set<string>();
     const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
+
+    function makeKey(cleanName: string, itemSource: string): string {
+        return `${cleanName}::${itemSource}`;
+    }
+
+    /**
+     * 把 @version 解析为相对当前 source 的 ref URL。
+     * 仅支持 GitHub raw URL 结构（raw.githubusercontent.com/{owner}/{repo}/{ref}/...），
+     * 其他结构显式报错而非静默忽略（v2.2 补强：去硬编码，与 --registry 一致）。
+     */
+    function resolveVersionedSource(baseSource: string, version: string): string {
+        const githubRawPattern = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.*)$/;
+        const match = baseSource.match(githubRawPattern);
+        if (!match) {
+            throw new CliError(
+                `@version syntax requires a GitHub raw URL registry, but got: ${baseSource}. ` +
+                `Use --registry to specify a GitHub raw URL, or remove @version from the component name.`,
+                { code: 'REGISTRY_VERSION_UNSUPPORTED' }
+            );
+        }
+        const [, owner, repo, , rest] = match;
+        return `https://raw.githubusercontent.com/${owner}/${repo}/${version}/${rest}`;
+    }
 
     async function dfs(fullName: string, inheritedSource?: string) {
         let cleanName = fullName;
@@ -319,24 +345,23 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
             if (match) {
                 cleanName = match[1];
                 const version = match[2];
-
-                // Explicit @version overrides the registry source only when the
-                // caller is resolving against the default registry; inherited
-                // (already-versioned) sources are preserved as-is.
-                if (itemSource === DEFAULT_REGISTRY_URL) {
-                    itemSource = `https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/${version}/packages/registry/registry`;
+                // @version 相对当前 source 解析 ref（去硬编码，支持任意 --registry）。
+                // inheritedSource 已是 version-specific 时不重复解析。
+                if (!inheritedSource || inheritedSource === source) {
+                    itemSource = resolveVersionedSource(source, version);
                 }
             }
         }
 
-        if (active.has(cleanName)) {
-            throw new Error(`Circular dependency detected: ${cleanName}`);
+        const key = makeKey(cleanName, itemSource);
+        if (active.has(key)) {
+            throw new Error(`Circular dependency detected: ${cleanName} (source: ${itemSource})`);
         }
-        if (visited.has(cleanName)) {
+        if (visited.has(key)) {
             return;
         }
 
-        active.add(cleanName);
+        active.add(key);
 
         try {
             const item = await getItem(cleanName, itemSource, effectiveUseCache);
@@ -347,11 +372,11 @@ export async function resolveDeps(names: string[], source: string = DEFAULT_REGI
                 }
             }
 
-            active.delete(cleanName);
-            visited.add(cleanName);
+            active.delete(key);
+            visited.add(key);
             resolved.push(item);
         } catch (err) {
-            active.delete(cleanName);
+            active.delete(key);
             throw err;
         }
     }

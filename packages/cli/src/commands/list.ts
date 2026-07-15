@@ -76,11 +76,12 @@ function printTable(infos: InstalledComponentInfo[], showUpdates: boolean): void
     const categoryWidth = Math.max(10, ...infos.map(i => formatCategory(i).length)) + 2;
     const statusWidth = Math.max(10, ...infos.map(i => formatStatus(i).length)) + 2;
     const sourceWidth = Math.max(10, ...infos.map(i => formatSource(i.registrySource).length)) + 2;
+    const versionWidth = Math.max(7, ...infos.map(i => (i.version ?? '-').length)) + 2;
     const updateWidth = showUpdates ? Math.max(10, ...infos.map(i => formatUpdate(i).length)) + 2 : 0;
     const updateHeader = showUpdates ? 'Update'.padEnd(updateWidth) : '';
     const updateSeparator = showUpdates ? '─'.repeat(updateWidth) : '';
-    const header = `  ${'Name'.padEnd(nameWidth)}${'Files'.padEnd(filesWidth)}${'Category'.padEnd(categoryWidth)}${'Status'.padEnd(statusWidth)}${'Source'.padEnd(sourceWidth)}${updateHeader}Dependencies`;
-    const separator = `  ${'─'.repeat(nameWidth)}${'─'.repeat(filesWidth)}${'─'.repeat(categoryWidth)}${'─'.repeat(statusWidth)}${'─'.repeat(sourceWidth)}${updateSeparator}${'─'.repeat(20)}`;
+    const header = `  ${'Name'.padEnd(nameWidth)}${'Files'.padEnd(filesWidth)}${'Category'.padEnd(categoryWidth)}${'Status'.padEnd(statusWidth)}${'Version'.padEnd(versionWidth)}${'Source'.padEnd(sourceWidth)}${updateHeader}Dependencies`;
+    const separator = `  ${'─'.repeat(nameWidth)}${'─'.repeat(filesWidth)}${'─'.repeat(categoryWidth)}${'─'.repeat(statusWidth)}${'─'.repeat(versionWidth)}${'─'.repeat(sourceWidth)}${updateSeparator}${'─'.repeat(20)}`;
 
     logger.log(header);
     logger.log(separator);
@@ -95,10 +96,12 @@ function printTable(infos: InstalledComponentInfo[], showUpdates: boolean): void
         const categoryStr = info.category ? category : chalk.dim(category);
         const status = formatStatus(info);
         const statusStr = info.status && info.status !== 'stable' ? chalk.yellow(status) : status;
+        const version = info.version ?? '-';
+        const versionStr = info.version && info.version !== 'latest' ? chalk.cyan(version) : chalk.dim(version);
         const update = formatUpdate(info);
         const updateStr = info.updateAvailable ? chalk.yellow(update) : update;
         const updateColumn = showUpdates ? updateStr.padEnd(updateWidth) : '';
-        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${categoryStr.padEnd(categoryWidth)}${statusStr.padEnd(statusWidth)}${sourceStr.padEnd(sourceWidth)}${updateColumn}${depsStr}`);
+        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${categoryStr.padEnd(categoryWidth)}${statusStr.padEnd(statusWidth)}${versionStr.padEnd(versionWidth)}${sourceStr.padEnd(sourceWidth)}${updateColumn}${depsStr}`);
     }
 
     logger.newLine();

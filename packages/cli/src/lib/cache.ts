@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
 import fs from 'fs-extra';
+import { logger } from './logger.js';
 
 const DEFAULT_CACHE_DIR = path.join(os.homedir(), '.brutx-vue', 'cache');
 const DEFAULT_TTL = 3600000;
@@ -153,7 +154,7 @@ async function enforceLimits(): Promise<void> {
     }
 
     if (removed > 0) {
-        process.stderr.write(`Cache: evicted ${removed} entries (LRU).\n`);
+        logger.debug(`Cache: evicted ${removed} entries (LRU).`);
     }
 }
 

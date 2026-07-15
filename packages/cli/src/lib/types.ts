@@ -141,6 +141,7 @@ export interface InstalledComponentInfo {
     installedAt?: string;
     manifestFiles?: string[];
     managed?: boolean;
+    version?: string;
 }
 
 export interface BrutxManifest {
@@ -153,6 +154,7 @@ export interface InstalledComponentManifest {
     registrySource: string;
     integrity: string;
     installedContentHash?: string;
+    version?: string;
     installedAt: string;
     files: string[];
     dependencies: string[];

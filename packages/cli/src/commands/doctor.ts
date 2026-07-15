@@ -502,11 +502,6 @@ async function checkManifestEntryIntegrityDrift(
 
     try {
         const absFiles = entry.files.map(f => path.resolve(cwd, f));
-        for (const abs of absFiles) {
-            if (!(await fs.pathExists(abs))) {
-                return [];
-            }
-        }
         const currentHash = await computeInstalledContentHash(absFiles);
         if (currentHash !== entry.installedContentHash) {
             return [{

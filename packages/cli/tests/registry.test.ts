@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
@@ -174,7 +174,9 @@ describe('resolveDeps with mocked fetch', () => {
             if (mockRegistry[name]) {
                 return {
                     ok: true,
-                    json: async () => mockRegistry[name]
+                    json: async () => mockRegistry[name],
+                    headers: new Map(),
+                    status: 200,
                 };
             }
             return {
@@ -201,6 +203,8 @@ describe('resolveDeps with mocked fetch', () => {
                 files,
                 integrity,
             }),
+            headers: new Map(),
+            status: 200,
         }));
 
         await expect(registry.getItem('button', 'https://registry.mock', false)).resolves.toMatchObject({
@@ -213,7 +217,9 @@ describe('resolveDeps with mocked fetch', () => {
             const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
             return {
                 ok: true,
-                json: async () => mockRegistry[name]
+                json: async () => mockRegistry[name],
+                headers: new Map(),
+                status: 200,
             };
         });
 
@@ -226,7 +232,9 @@ describe('resolveDeps with mocked fetch', () => {
             const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
             return {
                 ok: true,
-                json: async () => mockRegistry[name]
+                json: async () => mockRegistry[name],
+                headers: new Map(),
+                status: 200,
             };
         });
 
@@ -254,7 +262,9 @@ describe('resolveDeps with mocked fetch', () => {
             return {
                 ok: Boolean(item),
                 statusText: 'Not Found',
-                json: async () => item
+                json: async () => item,
+                headers: new Map(),
+                status: item ? 200 : 404,
             };
         });
 
@@ -291,3 +301,112 @@ describe('migrateConfig', () => {
         expect(result.$version).toBe(1);
     });
 });
+
+describe('resolveDeps version-pinned deduplication (P0-3)', () => {
+    const mockRegistry: Record<string, any> = {
+        aV1: {
+            ...createRegistryItem('button'),
+            name: 'button',
+            registryDependencies: [],
+        },
+        aV2: {
+            ...createRegistryItem('button'),
+            name: 'button',
+            registryDependencies: [],
+        },
+        parentA: createRegistryItem('parentA', {
+            registryDependencies: ['button@v1'],
+        }),
+        parentB: createRegistryItem('parentB', {
+            registryDependencies: ['button@v2'],
+        }),
+    };
+
+    beforeEach(() => {
+        // 跳过磁盘缓存，确保每次都走 fetch mock（避免跨测试缓存命中导致 fetch 计数失真）
+        process.env.BRUTX_NO_CACHE = '1';
+    });
+
+    afterEach(() => {
+        delete process.env.BRUTX_NO_CACHE;
+        vi.unstubAllGlobals();
+    });
+
+    it('should resolve both button@v1 and button@v2 without silently dropping either (bug 4 fix)', async () => {
+        const fetchedUrls: string[] = [];
+        vi.stubGlobal('fetch', async (url: string) => {
+            fetchedUrls.push(url);
+            // parentA/parentB 本身不带 @version，走默认 ref（main）；它们的依赖 button@v1/v2 走版本化 ref
+            const isV1 = url.includes('/v1/');
+            const isV2 = url.includes('/v2/');
+            const endsWithButton = url.endsWith('/button.json');
+            const endsWithParentA = url.endsWith('/parentA.json');
+            const endsWithParentB = url.endsWith('/parentB.json');
+            const item = isV1 && endsWithButton ? mockRegistry.aV1
+                : isV2 && endsWithButton ? mockRegistry.aV2
+                : endsWithParentA ? mockRegistry.parentA
+                : endsWithParentB ? mockRegistry.parentB
+                : null;
+            return {
+                ok: Boolean(item),
+                statusText: 'Not Found',
+                json: async () => item,
+                headers: new Map(),
+                status: item ? 200 : 404,
+            };
+        });
+
+        const resolved = await registry.resolveDeps(['parentA', 'parentB']);
+        const names = resolved.map(r => r.name);
+
+        // 两个 button 实例都应被解析（不同 version）
+        expect(names.filter(n => n === 'button').length).toBe(2);
+        expect(fetchedUrls.some(u => u.includes('/v1/'))).toBe(true);
+        expect(fetchedUrls.some(u => u.includes('/v2/'))).toBe(true);
+    });
+
+    it('should still deduplicate same-version dependencies (button@v1 appears once)', async () => {
+        const fetchedUrls: string[] = [];
+        const parentC = createRegistryItem('parentC', { registryDependencies: ['button@v1'] });
+        vi.stubGlobal('fetch', async (url: string) => {
+            fetchedUrls.push(url);
+            const isV1 = url.includes('/v1/');
+            const endsWithButton = url.endsWith('/button.json');
+            const endsWithParentA = url.endsWith('/parentA.json');
+            const endsWithParentC = url.endsWith('/parentC.json');
+            const item = isV1 && endsWithButton ? mockRegistry.aV1
+                : endsWithParentA ? mockRegistry.parentA
+                : endsWithParentC ? parentC
+                : null;
+            return {
+                ok: Boolean(item),
+                statusText: 'Not Found',
+                json: async () => item,
+                headers: new Map(),
+                status: item ? 200 : 404,
+            };
+        });
+
+        const resolved = await registry.resolveDeps(['parentA', 'parentC']);
+        const buttonFetchCount = fetchedUrls.filter(u => u.endsWith('/button.json') && u.includes('/v1/')).length;
+        expect(buttonFetchCount).toBe(1);
+        const names = resolved.map(r => r.name);
+        expect(names.filter(n => n === 'button').length).toBe(1);
+    });
+
+    it('should throw REGISTRY_VERSION_UNSUPPORTED for non-GitHub raw URL with @version', async () => {
+        vi.stubGlobal('fetch', async () => ({
+            ok: true,
+            json: async () => mockRegistry.aV1,
+            headers: new Map(),
+            status: 200,
+        }));
+
+        await expect(
+            registry.resolveDeps(['button@v1'], 'https://non-github.example.com/registry')
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_VERSION_UNSUPPORTED',
+        });
+    });
+});
+

@@ -22,6 +22,11 @@ export function getCliErrorAdvice(error: CliError): string[] {
                 'Use --no-cache to refetch registry data.',
                 'If you use a custom registry, rebuild and validate it before retrying.',
             ];
+        case 'REGISTRY_VERSION_UNSUPPORTED':
+            return [
+                'The @version syntax requires a GitHub raw URL registry.',
+                'Use --registry to specify a GitHub raw URL, or remove @version from the component name.',
+            ];
         case 'PATH_UNSAFE':
             return [
                 'Check the target path and aliases in components.json.',

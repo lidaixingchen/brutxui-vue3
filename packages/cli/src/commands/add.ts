@@ -14,6 +14,7 @@ import {
     getInstallCommand,
     getItem,
     readConfig,
+    readManifest,
     isSafePath,
     logger,
     mergeSnippetsFile,
@@ -267,6 +268,28 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
 
         if (!options.dryRun && added.length > 0) {
+            // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
+            const versionByName = new Map<string, string>();
+            for (const inputName of components) {
+                const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
+                if (match) {
+                    versionByName.set(match[1], match[2]);
+                }
+            }
+
+            // 版本混用兼容性提示：检测已安装组件与即将安装组件的版本差异
+            if (versionByName.size > 0) {
+                const existingManifest = await readManifest(targetCwd);
+                if (existingManifest) {
+                    for (const [name, newVersion] of versionByName) {
+                        const existing = existingManifest.components[name];
+                        if (existing?.version && existing.version !== 'latest' && existing.version !== newVersion) {
+                            logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
+                        }
+                    }
+                }
+            }
+
             const manifestEntries = await Promise.all(
                 registryItems
                     .filter(item => added.includes(item.name))
@@ -280,6 +303,7 @@ export async function add(components: string[], options: AddOptions): Promise<vo
                             registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
                             files,
                             installedContentHash,
+                            version: versionByName.get(item.name) ?? 'latest',
                         };
                     })
             );

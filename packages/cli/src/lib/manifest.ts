@@ -23,6 +23,7 @@ export interface InstalledManifestEntryInput {
     registrySource: string;
     files: string[];
     installedContentHash?: string;
+    version?: string;
 }
 
 interface ManifestWriteOptions {
@@ -91,11 +92,17 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         throw new Error(`Invalid manifest entry for "${componentName}": "installedContentHash" must be a non-empty string when provided.`);
     }
 
+    const version = value.version;
+    if (version !== undefined && (typeof version !== 'string' || version.length === 0)) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "version" must be a non-empty string when provided.`);
+    }
+
     return {
         name: value.name,
         registrySource,
         integrity,
         installedContentHash,
+        version,
         installedAt,
         files: value.files,
         dependencies: value.dependencies,
@@ -205,6 +212,7 @@ export async function updateInstalledComponents(
             registrySource: entry.registrySource,
             integrity: entry.item.integrity,
             installedContentHash: entry.installedContentHash,
+            version: entry.version,
             installedAt,
             // files 顺序必须与 registry build 顺序一致（来自 add-service 的 filesByComponent，
             // 该顺序源于 item.files 数组顺序），不可 .sort()——否则 doctor 重算 computeRegistryIntegrity

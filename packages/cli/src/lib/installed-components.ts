@@ -78,6 +78,7 @@ function createManifestInfo(entry: InstalledComponentManifest): InstalledCompone
         installedAt: entry.installedAt,
         manifestFiles: entry.files,
         managed: true,
+        version: entry.version,
     };
 }
 
