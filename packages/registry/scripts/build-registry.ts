@@ -1022,6 +1022,7 @@ interface WatchState {
     isBuilding: boolean;
     pendingChange: boolean;
     watchers: fs.FSWatcher[];
+    debounceTimer: NodeJS.Timeout | null;
 }
 
 export async function runWatch(): Promise<void> {
@@ -1038,6 +1039,7 @@ export async function runWatch(): Promise<void> {
         isBuilding: false,
         pendingChange: false,
         watchers: [],
+        debounceTimer: null,
     };
 
     const dirsToWatch = [
@@ -1083,6 +1085,9 @@ export async function runWatch(): Promise<void> {
     // SIGINT 清理
     process.on('SIGINT', () => {
         console.log('\n👋 Stopping watchers...');
+        if (state.debounceTimer) {
+            clearTimeout(state.debounceTimer);
+        }
         for (const watcher of state.watchers) {
             watcher.close();
         }
@@ -1106,8 +1111,12 @@ function handleFileChange(filename: string, state: WatchState): void {
         return;
     }
 
-    // debounce 延迟
-    setTimeout(() => {
+    // debounce 延迟：清除前一个定时器，避免堆积多个 timer 导致 pendingChange 被错误消费
+    if (state.debounceTimer) {
+        clearTimeout(state.debounceTimer);
+    }
+    state.debounceTimer = setTimeout(() => {
+        state.debounceTimer = null;
         if (!state.pendingChange) return;
         state.pendingChange = false;
         void triggerRebuild(state);
@@ -1142,7 +1151,13 @@ async function triggerRebuild(state: WatchState): Promise<void> {
         // 如果在 build 期间有新的文件变化，再触发一次
         if (state.pendingChange) {
             state.pendingChange = false;
-            setTimeout(() => void triggerRebuild(state), WATCH_DEBOUNCE_MS);
+            if (state.debounceTimer) {
+                clearTimeout(state.debounceTimer);
+            }
+            state.debounceTimer = setTimeout(() => {
+                state.debounceTimer = null;
+                void triggerRebuild(state);
+            }, WATCH_DEBOUNCE_MS);
         }
     }
 }

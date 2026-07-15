@@ -96,6 +96,47 @@ brutx-vue add button@1.2.0
 
 This maps to the corresponding GitHub branch in the registry.
 
+## Global Options
+
+The following options apply to all commands and must precede the subcommand:
+
+```bash
+brutx-vue [global-options] <command> [command-options]
+```
+
+| Option | Description | Default |
+| --- | --- | --- |
+| `--verbose` | Show verbose error output (equivalent to `-v`) | `false` |
+| `--dry-run` | Global dry-run: simulate all write operations without persisting | `false` |
+| `--verbose-level <level>` | Verbose level (`1`=step, `2`=cache/network detail, `3`=stack) | `0` |
+| `-v` | Equivalent to `--verbose-level 1` | — |
+| `-vv` | Equivalent to `--verbose-level 2` | — |
+| `-vvv` | Equivalent to `--verbose-level 3` | — |
+
+### Global dry-run
+
+The `--dry-run` global flag activates dry-run semantics for all commands. It can also be activated via the `BRUTX_DRY_RUN=1` environment variable:
+
+```bash
+# The following two are equivalent
+BRUTX_DRY_RUN=1 brutx-vue add button
+brutx-vue --dry-run add button
+```
+
+### Verbose levels
+
+Control output verbosity via `-v`/`-vv`/`-vvv` or `BRUTX_VERBOSE=<n>`:
+
+| Level | Label | Meaning |
+| --- | --- | --- |
+| `1` | `[STEP]` | Step-level |
+| `2` | `[DETAIL]` | Cache/network detail |
+| `3` | `[TRACE]` | Stack/debug detail |
+
+## Audit Log
+
+After `add`/`remove`/`update`/`diff` commands execute, a JSONL record is appended to `.brutx/audit.log`, including timestamp, command, components, source, and success status. `doctor` reads the most recent 5 failed records as diagnostic hints.
+
 ## Configuration
 
 After running `init`, a `components.json` file is generated in your project root:

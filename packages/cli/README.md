@@ -264,6 +264,47 @@ brutx-vue diff --json
 | `--no-cache` | 跳过注册表缓存 |
 | `-s, --silent` | 静默输出 |
 
+## 全局选项
+
+以下选项适用于所有命令，需放在子命令之前：
+
+```bash
+brutx-vue [global-options] <command> [command-options]
+```
+
+| 选项 | 说明 | 默认值 |
+| --- | --- | --- |
+| `--verbose` | 显示详细错误输出（等价于 `-v`） | `false` |
+| `--dry-run` | 全局 dry-run：模拟所有写操作但不落盘 | `false` |
+| `--verbose-level <level>` | verbose 等级（`1`=步骤、`2`=缓存/网络细节、`3`=堆栈） | `0` |
+| `-v` | 等价于 `--verbose-level 1` | — |
+| `-vv` | 等价于 `--verbose-level 2` | — |
+| `-vvv` | 等价于 `--verbose-level 3` | — |
+
+### 全局 dry-run
+
+`--dry-run` 全局 flag 激活所有命令的 dry-run 语义，也可通过 `BRUTX_DRY_RUN=1` 环境变量激活：
+
+```bash
+# 以下两条等价
+BRUTX_DRY_RUN=1 brutx-vue add button
+brutx-vue --dry-run add button
+```
+
+### verbose 等级
+
+通过 `-v`/`-vv`/`-vvv` 或 `BRUTX_VERBOSE=<n>` 控制输出详细程度：
+
+| 等级 | 标签 | 含意 |
+| --- | --- | --- |
+| `1` | `[STEP]` | 步骤级 |
+| `2` | `[DETAIL]` | 缓存/网络细节 |
+| `3` | `[TRACE]` | 堆栈/调试细节 |
+
+## 审计日志
+
+`add`/`remove`/`update`/`diff` 命令执行后会在 `.brutx/audit.log` 追加一条 JSONL 记录，包含时间戳、命令、组件、源、成功状态等信息。`doctor` 会读取最近 5 条失败记录作为诊断线索。
+
 ## 配置文件
 
 运行 `init` 后，项目根目录会生成 `components.json`：

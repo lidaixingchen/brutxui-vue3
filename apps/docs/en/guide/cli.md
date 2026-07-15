@@ -491,6 +491,70 @@ The `components.json` file is created by `brutx-vue init` and stores your projec
 | `aliases.utils` | Import alias for the utility file containing `cn()` (e.g. `@/lib/utils`). |
 | `aliases.composables` | Import alias for the composables directory (e.g. `@/composables`). |
 
+## Global Options
+
+The following options apply to all commands and must be placed before the subcommand:
+
+```bash
+npx brutx-vue@latest [global-options] <command> [command-options]
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--verbose` | Show detailed error output (equivalent to `-v`) | `false` |
+| `--dry-run` | Global dry-run: simulate all write operations without touching disk (stacks with command-level `--dry-run`) | `false` |
+| `--verbose-level <level>` | Verbose output level (`1`=steps, `2`=cache/network details, `3`=stack traces) | `0` |
+| `-v` | Equivalent to `--verbose-level 1` | — |
+| `-vv` | Equivalent to `--verbose-level 2` | — |
+| `-vvv` | Equivalent to `--verbose-level 3` | — |
+
+### Global dry-run
+
+The `--dry-run` global flag activates dry-run semantics for all commands without needing to add `--dry-run` after each subcommand. Can also be activated via the `BRUTX_DRY_RUN=1` environment variable:
+
+```bash
+# These two are equivalent
+BRUTX_DRY_RUN=1 npx brutx-vue@latest add button
+npx brutx-vue@latest --dry-run add button
+```
+
+When activated, `add`/`update`/`remove` only print paths that would be written; no files are modified.
+
+### Verbose levels
+
+Control output verbosity via `-v`/`-vv`/`-vvv` or the `BRUTX_VERBOSE=<n>` environment variable:
+
+| Level | Label | Meaning |
+| --- | --- | --- |
+| `1` | `[STEP]` | Step-level, e.g. "resolving dependencies" |
+| `2` | `[DETAIL]` | Cache/network details, e.g. "cache hit button@v1" |
+| `3` | `[TRACE]` | Stack/debug details |
+
+## Audit Log
+
+After `add`/`remove`/`update`/`diff` commands execute, a JSONL record is appended to `.brutx/audit.log` containing:
+
+- `timestamp`: ISO timestamp
+- `command`: command type (`add`/`remove`/`update`/`diff`)
+- `components`: list of components operated on
+- `registrySource`: registry source
+- `success`: whether the operation succeeded
+- `dryRun`: whether it was a dry-run
+- `error`: error message on failure
+
+`doctor` reads the last 5 failure records from the audit log as diagnostic clues:
+
+```bash
+npx brutx-vue@latest doctor
+```
+
+Example output:
+
+```text
+⚠ audit log health — 1 recent failure(s) in audit log: update(button).
+  Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
+```
+
 ## Available Components
 
 accordion, activity-log-page, alert, alert-dialog, auth-card, avatar, badge, before-after, blog-card, blog-list-page, breadcrumb, brutalist-hero, button, calendar, card, card-3d, carousel, chat-bubble, checkbox, code-block, combobox, command, cookie-consent, copy-to-clipboard, counter, dashboard-shell, dashboard-stats, data-table, dialog, dropdown-menu, empty-state, faq-section, feedback-form, file-card, footer-section, form, gallery-section, glitch-text, hardcore-input, header-section, input, kbd, kanban, loading, marquee, not-found-page, number-input, overview-page, pagination, popover, pricing-section, profile-page, progress, quick-actions, radio-group, result, scratch-card, scroll-area, search-widget, select, separator, settings-page, sheet, skeleton, sketchy-chart, slider, spinner, stepper, switch, table, tabs, tags-input, testimonial-card, textarea, timeline, toast, toggle, toggle-group, tooltip, tree-view, upload, waitlist-page

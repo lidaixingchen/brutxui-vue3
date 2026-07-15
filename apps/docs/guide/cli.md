@@ -456,3 +456,67 @@ npx brutx-vue@latest create my-app --template nuxt
 | `aliases.components`  | 组件导入别名                      |
 | `aliases.utils`       | 工具函数导入别名                    |
 | `aliases.composables` | 组合式函数导入别名                   |
+
+## 全局选项
+
+以下选项适用于所有命令，需放在子命令之前：
+
+```bash
+npx brutx-vue@latest [global-options] <command> [command-options]
+```
+
+| 标志                       | 描述                                                | 默认值     |
+| ------------------------ | ------------------------------------------------- | ------- |
+| `--verbose`              | 显示详细错误输出（等价于 `-v`）                                | `false` |
+| `--dry-run`              | 全局 dry-run：模拟所有写操作但不落盘（与命令级 `--dry-run` 叠加生效）      | `false` |
+| `--verbose-level <level>` | verbose 等级（`1`=步骤、`2`=缓存/网络细节、`3`=堆栈）           | `0`     |
+| `-v`                     | 等价于 `--verbose-level 1`                           | —       |
+| `-vv`                    | 等价于 `--verbose-level 2`                           | —       |
+| `-vvv`                   | 等价于 `--verbose-level 3`                           | —       |
+
+### 全局 dry-run
+
+`--dry-run` 全局 flag 会激活所有命令的 dry-run 语义，无需在每个子命令后加 `--dry-run`。也可通过环境变量 `BRUTX_DRY_RUN=1` 激活：
+
+```bash
+# 以下两条等价
+BRUTX_DRY_RUN=1 npx brutx-vue@latest add button
+npx brutx-vue@latest --dry-run add button
+```
+
+激活后，`add`/`update`/`remove` 只打印将写入的路径，不修改任何文件。
+
+### verbose 等级
+
+通过 `-v`/`-vv`/`-vvv` 或环境变量 `BRUTX_VERBOSE=<n>` 控制输出详细程度：
+
+| 等级 | 标签       | 含意                      |
+| --- | --------- | ----------------------- |
+| `1` | `[STEP]`  | 步骤级，如"正在解析依赖"           |
+| `2` | `[DETAIL]` | 缓存/网络细节，如"缓存命中 button@v1" |
+| `3` | `[TRACE]` | 堆栈/调试细节                 |
+
+## 审计日志
+
+`add`/`remove`/`update`/`diff` 命令执行后会在 `.brutx/audit.log` 追加一条 JSONL 记录，包含：
+
+- `timestamp`：ISO 时间戳
+- `command`：命令类型（`add`/`remove`/`update`/`diff`）
+- `components`：操作的组件列表
+- `registrySource`：注册表源
+- `success`：是否成功
+- `dryRun`：是否为 dry-run
+- `error`：失败时的错误信息
+
+`doctor` 会读取审计日志中最近 5 条失败记录，作为诊断线索：
+
+```bash
+npx brutx-vue@latest doctor
+```
+
+输出示例：
+
+```text
+⚠ audit log health — 1 recent failure(s) in audit log: update(button).
+  Latest: update failed at 2026-07-16T02:30:00Z — Network unreachable
+```

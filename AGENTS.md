@@ -23,6 +23,19 @@ pnpm test:watch     # 监视模式运行测试
 pnpm release:check  # 执行发布前完整门禁
 ```
 
+### Registry 包命令
+
+```bash
+pnpm --filter brutx-registry-vue build          # 编译 registry JSON（含增量缓存）
+pnpm --filter brutx-registry-vue build:watch    # watch 模式：监听 UI 源码变化增量 rebuild
+pnpm --filter brutx-registry-vue build:verify   # 增量与全量 build 对照验证
+pnpm --filter brutx-registry-vue build:bench    # 输出每组件构建耗时与总耗时
+pnpm --filter brutx-registry-vue validate       # 校验 registry 完整性 + 依赖图
+pnpm --filter brutx-registry-vue validate -- --graph  # 额外导出 deps.dot / deps.json
+```
+
+watch 模式也可通过 `BRUTX_WATCH=1` 环境变量激活，详见 [build-registry.ts](packages/registry/scripts/build-registry.ts) 的 `runWatch()`。
+
 ### 命令执行与测试约定
 - **包管理器限定**：本单体仓库开发阶段仅允许使用 `pnpm`，严禁使用 `npm` 或 `yarn` 进行本地依赖安装与脚本执行，以防生成不一致的 lockfile。
 - **测试最小化**：运行测试时必须尽可能最小化（仅针对当前修改的文件或特定目录，例如 `pnpm test path/to/modified.test.ts`）。
@@ -64,12 +77,17 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - **CLI 工具：** `packages/cli/`
   - CLI 操作：`packages/cli/src/commands/`
   - 核心逻辑：`packages/cli/src/lib/`
+  - 审计日志：`packages/cli/src/lib/audit.ts`（`.brutx/audit.log` JSONL，记录 add/remove/update/diff 操作）
+  - 全局 dry-run：`packages/cli/src/lib/global-dry-run.ts`（`BRUTX_DRY_RUN=1` 或 `--dry-run` 全局 flag 激活）
+  - verbose 等级：`packages/cli/src/lib/logger.ts` 支持 `-v`/`-vv`/`-vvv` 与 `BRUTX_VERBOSE` 环境变量
 - **注册表构建器：** `packages/registry/`
   - 组件清单（自动生成）：`packages/ui/registry-manifest.json`（由 `packages/ui/scripts/prebuild-scan.ts` 通过 AST 扫描 `packages/ui/src/components/` 自动生成，已接入 `pnpm build`；勿手动编辑）
   - 人工元数据：`packages/shared/src/component-metadata.ts`（`COMPONENT_METADATA`，由 `packages/shared/src/components.ts` 的 `COMPONENTS` 派生 title/description/category 等）
   - 扫描器：`packages/shared/src/scan-component-files.ts`（AST 依赖发现，供 prebuild-scan 调用）
-  - 构建脚本：`packages/registry/scripts/build-registry.ts`、`validate-registry.ts`（build 时合并 manifest + metadata）
+  - 构建脚本：`packages/registry/scripts/build-registry.ts`（build 时合并 manifest + metadata；含 watch 模式 `runWatch()`）、`validate-registry.ts`（build 时校验 + `--graph` 导出依赖图）
+  - 依赖分析工具：`packages/registry/scripts/validate-utils.ts`（`classifyRegistryImport` 区分 type-only / `buildDependencyGraph` 构建依赖图）
   - 生成的组件 JSON：`packages/registry/registry/`（由 build 自动生成，勿手动编辑）
+  - 依赖图产物（自动生成）：`packages/registry/registry/deps.dot`、`deps.json`（由 `validate --graph` 生成，已 gitignore）
 - **共享类型：** `packages/shared/`
 - **为此UI库创建的Skills：** `skills/`
   - BrutxUI Skill：`skills/brutxui/`
