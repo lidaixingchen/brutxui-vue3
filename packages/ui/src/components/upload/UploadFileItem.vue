@@ -158,9 +158,7 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
 
         <!-- 文件名提示 -->
         <div class="absolute bottom-0 left-0 right-0 bg-brutal-bg/80 px-1 py-0.5">
-            <p class="text-xs truncate text-brutal-fg">
-{{ file.name }}
-</p>
+            <p class="text-xs truncate text-brutal-fg">{{ file.name }}</p>
         </div>
     </div>
 
@@ -201,19 +199,13 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
 
         <!-- 文件信息 -->
         <div class="flex-1 min-w-0">
-            <p class="font-medium text-brutal-fg truncate">
-{{ file.name }}
-</p>
-            <p class="text-sm text-brutal-placeholder">
-{{ formatFileSize(file.size) }}
-</p>
+            <p class="font-medium text-brutal-fg truncate">{{ file.name }}</p>
+            <p class="text-sm text-brutal-placeholder">{{ formatFileSize(file.size) }}</p>
 
             <!-- 进度条 -->
             <div v-if="showProgress" class="mt-2">
                 <Progress :value="file.progress" class="h-1.5" />
-                <p class="text-xs text-brutal-placeholder mt-1">
-{{ file.progress }}%
-</p>
+                <p class="text-xs text-brutal-placeholder mt-1">{{ file.progress }}%</p>
             </div>
 
             <!-- 错误信息 -->

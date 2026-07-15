@@ -22,7 +22,7 @@ interface CheckboxProps {
 
 const props = withDefaults(defineProps<CheckboxProps>(), {
     disabled: false,
-    checked: false,
+    checked: undefined,
     variant: 'default',
     size: 'default',
     class: undefined,
