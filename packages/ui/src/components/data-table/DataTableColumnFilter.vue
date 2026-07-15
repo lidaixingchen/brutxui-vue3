@@ -163,7 +163,9 @@ function resetColumnFilter() {
                         <SelectValue :placeholder="t('dataTable.filterAll')" />
                     </SelectTrigger>
                     <SelectContent class="z-50">
-                        <SelectItem value="">{{ t('dataTable.filterAll') }}</SelectItem>
+                        <SelectItem value="">
+{{ t('dataTable.filterAll') }}
+</SelectItem>
                         <SelectItem
                             v-for="opt in column.filterOptions"
                             :key="opt.value"

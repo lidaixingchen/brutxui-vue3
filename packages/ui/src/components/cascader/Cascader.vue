@@ -530,8 +530,8 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 >
                     <div
                         v-for="(option, optIdx) in col"
-                        :key="option.value"
                         :id="getOptionId(colIdx, optIdx)"
+                        :key="option.value"
                         role="option"
                         :aria-selected="isPathSelected(getOptionPath(option, colIdx))"
                         :class="getItemClasses(option, colIdx)"
