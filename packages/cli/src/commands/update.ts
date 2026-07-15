@@ -1,7 +1,7 @@
 import { checkbox, confirm } from '@inquirer/prompts';
 import chalk from 'chalk';
 import type { UpdateOptions, DiffResult } from '../lib/types.js';
-import { readConfigSafe, CliError, logger, readManifest } from '../lib/index.js';
+import { readConfigSafe, CliError, logger, readManifest, withOfflineScope } from '../lib/index.js';
 import { getInstalledComponents, diffComponent } from '../lib/services/diff-service.js';
 import { add } from './add.js';
 
@@ -11,6 +11,15 @@ export async function update(components: string[], options: UpdateOptions): Prom
 
     logger.setSilent(options.silent ?? false);
 
+    const restoreOffline = withOfflineScope(options.offline === true);
+    try {
+        await updateInner(components, options, cwd, useCache);
+    } finally {
+        restoreOffline();
+    }
+}
+
+async function updateInner(components: string[], options: UpdateOptions, cwd: string, useCache: boolean): Promise<void> {
     const config = await readConfigSafe(cwd);
 
     if (!config) {
@@ -166,6 +175,7 @@ export async function update(components: string[], options: UpdateOptions): Prom
             silent: options.silent,
             dryRun: options.dryRun,
             registry: registrySource,
+            offline: options.offline,
         });
     }
 

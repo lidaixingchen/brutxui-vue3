@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import type { ListOptions, InstalledComponentInfo } from '../lib/types.js';
-import { readConfigSafe, CliError, getInstalledComponentInfos } from '../lib/index.js';
+import { readConfigSafe, CliError, getInstalledComponentInfos, withOfflineScope } from '../lib/index.js';
 import { getItem } from '../lib/registry.js';
 import { logger } from '../lib/logger.js';
 
@@ -114,6 +114,15 @@ export async function list(options: ListOptions): Promise<void> {
 
     logger.setSilent(options.silent ?? false);
 
+    const restoreOffline = withOfflineScope(options.offline === true);
+    try {
+        await listInner(options, cwd);
+    } finally {
+        restoreOffline();
+    }
+}
+
+async function listInner(options: ListOptions, cwd: string): Promise<void> {
     const config = await readConfigSafe(cwd);
 
     if (!config) {

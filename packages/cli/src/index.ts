@@ -47,6 +47,7 @@ program
     .option('--dry-run', 'Simulate addition without writing files', false)
     .option('-r, --registry <registry>', 'Specify registry path or URL')
     .option('--no-cache', 'Skip registry cache')
+    .option('--offline', 'Use only cached data, never hit the network', false)
     .option('--vscode', 'Update VS Code snippets with new components')
     .action(add);
 
@@ -59,6 +60,7 @@ program
     .option('--json', 'Output JSON report', false)
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .option('-s, --silent', 'Mute output', false)
+    .option('--offline', 'Skip registry reachability checks', false)
     .action(doctor);
 
 program
@@ -71,6 +73,7 @@ program
     .option('--json', 'Output JSON format', false)
     .option('-s, --silent', 'Mute output', false)
     .option('--no-cache', 'Skip registry cache')
+    .option('--offline', 'Use only cached data, never hit the network', false)
     .action(diff);
 
 program
@@ -85,6 +88,7 @@ program
     .option('-r, --registry <registry>', 'Specify registry URL')
     .option('--no-cache', 'Skip registry cache')
     .option('--across-versions', 'Allow updating version-pinned components across their locked version', false)
+    .option('--offline', 'Use only cached data, never hit the network', false)
     .action(update);
 
 program
@@ -96,6 +100,7 @@ program
     .option('-r, --registry <registry>', 'Specify registry path or URL for update checks')
     .option('--check-updates', 'Check registry integrity to show available updates', false)
     .option('--no-cache', 'Skip registry cache when checking updates')
+    .option('--offline', 'Use only cached data, never hit the network', false)
     .action(list);
 
 program
@@ -106,6 +111,7 @@ program
     .option('--json', 'Output JSON format', false)
     .option('-s, --silent', 'Mute output', false)
     .option('-r, --registry <registry>', 'Specify registry path or URL')
+    .option('--offline', 'Use only cached data, never hit the network', false)
     .action(info);
 
 program

@@ -24,6 +24,7 @@ import {
     ensureUtilsFile,
     resolveComponents,
     writeComponentFiles,
+    withOfflineScope,
     type ComponentFileWriteFailure,
 } from '../lib/index.js';
 
@@ -160,6 +161,21 @@ export async function add(components: string[], options: AddOptions): Promise<vo
 
     logger.setSilent(options.silent ?? false);
 
+    const restoreOffline = withOfflineScope(options.offline === true);
+    try {
+        await addInner(components, options, cwd, targetCwd, useCache);
+    } finally {
+        restoreOffline();
+    }
+}
+
+async function addInner(
+    components: string[],
+    options: AddOptions,
+    cwd: string,
+    targetCwd: string,
+    useCache: boolean,
+): Promise<void> {
     const config = await ensureInitialized(cwd);
 
     await validateComponents(components, options.registry);

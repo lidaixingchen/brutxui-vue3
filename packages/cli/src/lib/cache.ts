@@ -53,6 +53,15 @@ function isCacheDisabled(): boolean {
     return process.env.BRUTX_NO_CACHE === '1';
 }
 
+/**
+ * 离线模式（P1-5）：BRUTX_OFFLINE=1 或 --offline 触发。
+ * 语义：只读缓存，TTL 过期也复用（但必须通过 integrity 校验）。
+ * 缓存未命中时调用方应抛 REGISTRY_OFFLINE_UNAVAILABLE。
+ */
+export function isOfflineMode(): boolean {
+    return process.env.BRUTX_OFFLINE === '1';
+}
+
 function getMaxEntries(): number {
     const raw = process.env[MAX_ENTRIES_ENV];
     if (!raw) return DEFAULT_MAX_ENTRIES;
@@ -186,7 +195,7 @@ export async function getCachedEntry<T>(
         const raw = await fs.readJson(filePath) as CacheFileRaw<T>;
         if (typeof raw.timestamp !== 'number') return null;
 
-        const expired = Date.now() - raw.timestamp > ttl;
+        const expired = Date.now() - raw.timestamp >= ttl;
         return {
             data: raw.data as T,
             timestamp: raw.timestamp,

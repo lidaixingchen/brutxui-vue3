@@ -7,7 +7,8 @@ import {
 import type { RegistryItem, BrutalistConfig, RegistryManifestSummary } from './types.js';
 import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG, CURRENT_CONFIG_VERSION } from './constants.js';
 import { CliError } from './error.js';
-import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight } from './cache.js';
+import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight, isOfflineMode } from './cache.js';
+import { buildAuthHeaders } from './registry-source.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
@@ -126,6 +127,9 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
 /**
  * 带条件请求的 fetch：先查缓存，TTL 过期则发 If-None-Match/If-Modified-Since，
  * 304 则 touch 复用 body，200 则校验 integrity 后写入缓存。
+ *
+ * 离线模式（P1-5）：BRUTX_OFFLINE=1 时只读缓存，TTL 过期也复用（integrity 仍校验），
+ * 缓存未命中则抛 REGISTRY_OFFLINE_UNAVAILABLE。
  */
 async function fetchItemWithConditionalRequest(
     name: string,
@@ -136,7 +140,10 @@ async function fetchItemWithConditionalRequest(
     let currentRegistryVersion: string | undefined;
 
     if (useCache) {
-        currentRegistryVersion = (await fetchRegistryManifestSummary(source))?.registryVersion;
+        // 离线模式下不拉 manifest（manifest 也走网络），直接读缓存。
+        if (!isOfflineMode()) {
+            currentRegistryVersion = (await fetchRegistryManifestSummary(source))?.registryVersion;
+        }
         cachedEntry = await getCachedEntry<RegistryItem>(name, source);
 
         if (cachedEntry) {
@@ -144,14 +151,25 @@ async function fetchItemWithConditionalRequest(
                 !cachedEntry.registryVersion ||
                 cachedEntry.registryVersion === currentRegistryVersion;
 
-            if (!cachedEntry.expired && versionMatch) {
+            // 离线模式：TTL 过期也复用（只要版本匹配）；在线模式：TTL 未过期且版本匹配才复用
+            const offlineOk = isOfflineMode() && versionMatch;
+            const onlineFresh = !cachedEntry.expired && versionMatch;
+            if (offlineOk || onlineFresh) {
                 return cachedEntry.data;
             }
         }
     }
 
+    // 离线模式：缓存未命中（或版本不匹配且无法触网），抛错
+    if (isOfflineMode()) {
+        throw new CliError(
+            `Offline mode is active and component "${name}" is not in cache for source ${source}.`,
+            { code: 'REGISTRY_OFFLINE_UNAVAILABLE' }
+        );
+    }
+
     const url = `${source}/${name}.json`;
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = { ...buildAuthHeaders(source) };
     if (cachedEntry?.etag) headers['If-None-Match'] = cachedEntry.etag;
     if (cachedEntry?.lastModified) headers['If-Modified-Since'] = cachedEntry.lastModified;
 
@@ -225,6 +243,12 @@ function validateBrutalistConfig(data: unknown): asserts data is Record<string, 
         }
         if (aliases.composables !== undefined && typeof aliases.composables !== 'string') {
             throw new Error('Invalid components.json: "aliases.composables" must be a string.');
+        }
+    }
+
+    if (config.registries !== undefined) {
+        if (!Array.isArray(config.registries) || config.registries.some(url => typeof url !== 'string' || url.length === 0)) {
+            throw new Error('Invalid components.json: "registries" must be an array of non-empty strings.');
         }
     }
 }
@@ -301,6 +325,9 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
             composables: (typeof aliases?.composables === 'string' ? aliases.composables : undefined) ?? DEFAULT_ALIASES.composables,
         },
         sharedBase: typeof raw.sharedBase === 'string' ? raw.sharedBase : undefined,
+        registries: Array.isArray(raw.registries)
+            ? raw.registries.filter((url): url is string => typeof url === 'string' && url.length > 0)
+            : undefined,
     };
 }
 

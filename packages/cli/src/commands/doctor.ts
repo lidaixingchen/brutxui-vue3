@@ -2,9 +2,9 @@ import { confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
-import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest } from '../lib/types.js';
+import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest, RegistrySourceStatus } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -551,6 +551,82 @@ function checkManifestEntryRegistryDepsClosure(
     }];
 }
 
+/**
+ * registry 可达性检查（P1-5）：对配置中的所有 registry 源做 HEAD/GET 探测。
+ * --offline 或 BRUTX_OFFLINE=1 时跳过网络探测，仅报告源列表。
+ */
+async function checkRegistryReachability(
+    config: BrutalistConfig,
+    options: { offline: boolean },
+): Promise<CheckResult[]> {
+    const sources = resolveRegistrySources(config);
+    const results: CheckResult[] = [];
+
+    if (options.offline) {
+        // 离线模式：跳过网络探测，报告配置的源列表
+        for (const source of sources) {
+            results.push({
+                name: `registry source ${source}`,
+                status: 'pass',
+                message: `Configured (offline mode, reachability check skipped).`,
+            });
+        }
+        return results;
+    }
+
+    for (const source of sources) {
+        if (!source.startsWith('http://') && !source.startsWith('https://')) {
+            // 本地路径源：检查目录是否存在
+            const exists = await fs.pathExists(source);
+            results.push({
+                name: `registry source ${source}`,
+                status: exists ? 'pass' : 'error',
+                message: exists
+                    ? 'Local registry directory exists.'
+                    : `Local registry path does not exist: ${source}`,
+            });
+            continue;
+        }
+
+        const status = await probeHttpSource(source);
+        results.push({
+            name: `registry source ${source}`,
+            status: status.reachable ? 'pass' : 'warn',
+            message: status.reachable
+                ? `Reachable${status.latencyMs !== undefined ? ` (${status.latencyMs}ms)` : ''}.`
+                : `Unreachable: ${status.error ?? 'unknown error'}`,
+        });
+    }
+
+    return results;
+}
+
+async function probeHttpSource(source: string): Promise<RegistrySourceStatus> {
+    const probeUrl = `${source}/registry-manifest.json`;
+    const start = Date.now();
+    try {
+        const res = await fetch(probeUrl, {
+            method: 'GET',
+            signal: AbortSignal.timeout(10000),
+        });
+        const latencyMs = Date.now() - start;
+        return {
+            url: source,
+            reachable: res.ok,
+            latencyMs,
+            error: res.ok ? undefined : `HTTP ${res.status} ${res.statusText}`,
+        };
+    } catch (error) {
+        const latencyMs = Date.now() - start;
+        return {
+            url: source,
+            reachable: false,
+            latencyMs,
+            error: error instanceof Error ? error.message : String(error),
+        };
+    }
+}
+
 function printReport(checks: CheckResult[]): void {
     logger.newLine();
     logger.bold(' Brutx-Vue Doctor');
@@ -770,6 +846,16 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         logger.setSilent(true);
     }
 
+    const offline = isOfflineRequested(options.offline);
+    const restoreOffline = withOfflineScope(offline);
+    try {
+        await doctorInner(options, cwd, offline);
+    } finally {
+        restoreOffline();
+    }
+}
+
+async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean): Promise<void> {
     const config = await readConfigSafe(cwd);
     const checks: CheckResult[] = [];
 
@@ -786,6 +872,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         checks.push(...await checkDependencies(cwd));
         checks.push(await checkUtilsFunction(cwd, config));
         checks.push(...await checkComponentIntegrity(cwd, config));
+        checks.push(...await checkRegistryReachability(config, { offline }));
     }
 
     if (options.fix || options.fixOnly) {
@@ -807,6 +894,7 @@ export async function doctor(options: DoctorOptions): Promise<void> {
             checks.push(...await checkDependencies(cwd));
             checks.push(await checkUtilsFunction(cwd, freshConfig));
             checks.push(...await checkComponentIntegrity(cwd, freshConfig));
+            checks.push(...await checkRegistryReachability(freshConfig, { offline }));
         }
     }
 

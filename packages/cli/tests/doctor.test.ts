@@ -120,6 +120,10 @@ beforeEach(() => {
         return path.join(cwd, 'src', relativePath);
     });
     mockedGetBrutalistCssStyles.mockResolvedValue('/* injected brutalist css tokens */');
+    // P1-5：避免 checkRegistryReachability 发真实网络请求，默认返回 200 OK
+    vi.spyOn(global, 'fetch').mockResolvedValue(
+        new Response('{}', { status: 200, statusText: 'OK' }),
+    );
 });
 
 afterEach(() => {
@@ -1038,6 +1042,146 @@ describe('manifest-driven integrity checks', () => {
             await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.RemoveOrphans });
 
             expect(await fs.pathExists(orphanPath)).toBe(false);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+});
+
+// ---------------------------------------------------------------------------
+// checkRegistryReachability (P1-5)
+// ---------------------------------------------------------------------------
+describe('checkRegistryReachability (P1-5)', () => {
+    it('reports pass for default registry when fetch returns 200', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
+                new Response('{}', { status: 200, statusText: 'OK' }),
+            );
+
+            const results = await runDoctor(cwd, { silent: true });
+            const reachChecks = results.filter((r) => r.name.startsWith('registry source'));
+            expect(reachChecks).toHaveLength(1);
+            expect(reachChecks[0].status).toBe('pass');
+            expect(reachChecks[0].message).toContain('Reachable');
+            expect(fetchSpy).toHaveBeenCalledTimes(1);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('reports warn when fetch returns non-200 status', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            vi.spyOn(global, 'fetch').mockResolvedValue(
+                new Response('Not Found', { status: 404, statusText: 'Not Found' }),
+            );
+
+            const results = await runDoctor(cwd, { silent: true });
+            const reachCheck = results.find((r) => r.name.startsWith('registry source'));
+            expect(reachCheck?.status).toBe('warn');
+            expect(reachCheck?.message).toContain('Unreachable');
+            expect(reachCheck?.message).toContain('404');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('reports warn when fetch throws (network error)', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            vi.spyOn(global, 'fetch').mockRejectedValue(new Error('connect ECONNREFUSED'));
+
+            const results = await runDoctor(cwd, { silent: true });
+            const reachCheck = results.find((r) => r.name.startsWith('registry source'));
+            expect(reachCheck?.status).toBe('warn');
+            expect(reachCheck?.message).toContain('Unreachable');
+            expect(reachCheck?.message).toContain('ECONNREFUSED');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('probes all configured registries in order', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig({
+                registries: [
+                    'https://primary.example.com',
+                    'https://mirror.example.com',
+                ],
+            }));
+            const fetchSpy = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+                const u = typeof url === 'string' ? url : url.toString();
+                if (u.includes('primary.example.com')) {
+                    return new Response('err', { status: 500, statusText: 'Internal Server Error' });
+                }
+                return new Response('{}', { status: 200, statusText: 'OK' });
+            });
+            vi.spyOn(global, 'fetch').mockImplementation(fetchSpy as never);
+
+            const results = await runDoctor(cwd, { silent: true });
+            const reachChecks = results.filter((r) => r.name.startsWith('registry source'));
+            expect(reachChecks).toHaveLength(2);
+            expect(reachChecks[0].status).toBe('warn'); // primary 500
+            expect(reachChecks[1].status).toBe('pass'); // mirror 200
+            expect(fetchSpy).toHaveBeenCalledTimes(2);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('skips network probing in offline mode and reports pass with skipped message', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig({
+                registries: ['https://primary.example.com'],
+            }));
+            const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
+                new Response('{}', { status: 200 }),
+            );
+
+            const results = await runDoctor(cwd, { silent: true, offline: true });
+            const reachCheck = results.find((r) => r.name.startsWith('registry source'));
+            expect(reachCheck?.status).toBe('pass');
+            expect(reachCheck?.message).toContain('offline');
+            expect(reachCheck?.message).toContain('skipped');
+            expect(fetchSpy).not.toHaveBeenCalled();
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('checks directory existence for local path sources', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            const existingDir = path.join(cwd, 'local-registry');
+            await fs.ensureDir(existingDir);
+            mockedReadConfigSafe.mockResolvedValue(makeConfig({
+                registries: [existingDir, path.join(cwd, 'missing-registry')],
+            }));
+            // 本地路径源不应触发 fetch
+            const fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
+                new Response('{}', { status: 200 }),
+            );
+
+            const results = await runDoctor(cwd, { silent: true });
+            const reachChecks = results.filter((r) => r.name.startsWith('registry source'));
+            expect(reachChecks).toHaveLength(2);
+            expect(reachChecks[0].status).toBe('pass');
+            expect(reachChecks[0].message).toContain('Local registry directory exists');
+            expect(reachChecks[1].status).toBe('error');
+            expect(reachChecks[1].message).toContain('does not exist');
+            expect(fetchSpy).not.toHaveBeenCalled();
         } finally {
             await fs.remove(cwd);
         }

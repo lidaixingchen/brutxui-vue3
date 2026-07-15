@@ -27,6 +27,11 @@ export function getCliErrorAdvice(error: CliError): string[] {
                 'The @version syntax requires a GitHub raw URL registry.',
                 'Use --registry to specify a GitHub raw URL, or remove @version from the component name.',
             ];
+        case 'REGISTRY_OFFLINE_UNAVAILABLE':
+            return [
+                'Offline mode is active (BRUTX_OFFLINE=1 or --offline) and the requested component is not in cache.',
+                'Run without --offline to fetch from the registry, or pre-cache the component by running add/list --check-updates while online.',
+            ];
         case 'PATH_UNSAFE':
             return [
                 'Check the target path and aliases in components.json.',

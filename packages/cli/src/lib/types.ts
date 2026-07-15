@@ -33,6 +33,23 @@ export interface BrutalistConfig {
     tailwind: TailwindConfig;
     aliases: AliasConfig;
     sharedBase?: string;
+    /**
+     * 多 registry 源（P1-5）：主源 + 镜像列表，CLI 按序 fallback。
+     * 未配置时回退到 DEFAULT_REGISTRY_URL。
+     * 命令行 --registry 临时覆盖整个列表。
+     */
+    registries?: string[];
+}
+
+/**
+ * 解析后的 registry 源描述（P1-5）。
+ * 用于 doctor 健康检查与日志输出。
+ */
+export interface RegistrySourceStatus {
+    url: string;
+    reachable: boolean;
+    latencyMs?: number;
+    error?: string;
 }
 
 export interface InitOptions {
@@ -65,6 +82,7 @@ export interface AddOptions {
     registry?: string;
     vscode?: boolean;
     cache?: boolean;
+    offline?: boolean;
 }
 
 export type { RegistryFile, RegistryItem };
@@ -76,6 +94,7 @@ export interface DoctorOptions {
     silent?: boolean;
     yes?: boolean;
     fixOnly?: string;
+    offline?: boolean;
 }
 
 export interface DiffOptions {
@@ -86,6 +105,7 @@ export interface DiffOptions {
     json?: boolean;
     silent?: boolean;
     cache?: boolean;
+    offline?: boolean;
 }
 
 export interface UpdateOptions {
@@ -98,6 +118,7 @@ export interface UpdateOptions {
     registry?: string;
     cache?: boolean;
     acrossVersions?: boolean;
+    offline?: boolean;
 }
 
 export interface ListOptions {
@@ -107,6 +128,7 @@ export interface ListOptions {
     registry?: string;
     checkUpdates?: boolean;
     cache?: boolean;
+    offline?: boolean;
 }
 
 export interface InfoOptions {
@@ -114,6 +136,7 @@ export interface InfoOptions {
     json?: boolean;
     silent?: boolean;
     registry?: string;
+    offline?: boolean;
 }
 
 export interface RemoveOptions {

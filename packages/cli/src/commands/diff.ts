@@ -3,7 +3,7 @@ import type {
     DiffResult,
     DiffOptions,
 } from '../lib/types.js';
-import { readConfigSafe, CliError, readManifest } from '../lib/index.js';
+import { readConfigSafe, CliError, readManifest, withOfflineScope } from '../lib/index.js';
 import { diffComponents, getInstalledComponents } from '../lib/services/diff-service.js';
 import { logger } from '../lib/logger.js';
 export { diffComponent, getInstalledComponents } from '../lib/services/diff-service.js';
@@ -95,6 +95,15 @@ export async function diff(options: DiffOptions): Promise<void> {
 
     logger.setSilent(options.silent ?? false);
 
+    const restoreOffline = withOfflineScope(options.offline === true);
+    try {
+        await diffInner(options, cwd, useCache);
+    } finally {
+        restoreOffline();
+    }
+}
+
+async function diffInner(options: DiffOptions, cwd: string, useCache: boolean): Promise<void> {
     const config = await readConfigSafe(cwd);
 
     if (!config) {

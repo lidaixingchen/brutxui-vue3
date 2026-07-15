@@ -39,6 +39,15 @@ describe('getCliErrorAdvice', () => {
         expect(advice.join('\n')).toContain('rebuild and validate');
     });
 
+    it('suggests disabling offline mode for offline-unavailable errors (P1-5)', () => {
+        const advice = getCliErrorAdvice(new CliError('Offline miss', {
+            code: 'REGISTRY_OFFLINE_UNAVAILABLE',
+        }));
+
+        expect(advice.join('\n')).toContain('--offline');
+        expect(advice.join('\n')).toContain('pre-cache');
+    });
+
     it('suggests path and alias checks for unsafe paths', () => {
         const advice = getCliErrorAdvice(new CliError('Unsafe path', {
             code: 'PATH_UNSAFE',

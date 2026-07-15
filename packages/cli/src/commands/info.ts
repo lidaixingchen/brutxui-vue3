@@ -3,7 +3,7 @@ import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../lib/types.js';
 import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, DEFAULT_REGISTRY_URL } from '../lib/index.js';
+import { readConfigSafe, CliError, DEFAULT_REGISTRY_URL, withOfflineScope } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -126,6 +126,15 @@ export async function info(component: string, options: InfoOptions): Promise<voi
 
     logger.setSilent(options.silent ?? false);
 
+    const restoreOffline = withOfflineScope(options.offline === true);
+    try {
+        await infoInner(component, options, cwd);
+    } finally {
+        restoreOffline();
+    }
+}
+
+async function infoInner(component: string, options: InfoOptions, cwd: string): Promise<void> {
     const config = await readConfigSafe(cwd);
 
     if (!config) {

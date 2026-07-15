@@ -33,9 +33,18 @@ export {
     setCachedEntry,
     touchCachedEntry,
     dedupeInflight,
+    isOfflineMode,
     type CacheReadResult,
     type CacheWriteInput,
 } from './cache.js';
+export {
+    resolveRegistrySources,
+    isOfflineRequested,
+    buildAuthHeaders,
+    fetchWithSources,
+    withOfflineScope,
+} from './registry-source.js';
+export type { RegistrySourceStatus } from './types.js';
 export { FileTransaction } from './file-transaction.js';
 export {
     MANIFEST_RELATIVE_PATH,
