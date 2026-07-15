@@ -9,6 +9,7 @@ import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 
 const props = withDefaults(defineProps<AccordionTriggerProps & { class?: string; iconSize?: IconSize }>(), {
     iconSize: 'lg',
+    class: undefined,
 })
 
 const defaultContext = { variant: computed(() => undefined) }

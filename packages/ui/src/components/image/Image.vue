@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<ImageProps>(), {
     zoomRate: 1.2,
     preview: false,
     loading: 'eager',
+    fallback: undefined,
 })
 
 const emit = defineEmits<{
@@ -334,7 +335,7 @@ onUnmounted(() => {
             @load="handleLoad"
             @error="handleError"
             @click="handlePreview"
-        />
+        >
 
         <!-- 占位符/加载状态 -->
         <slot v-if="isLoading" name="placeholder">
@@ -364,9 +365,9 @@ onUnmounted(() => {
                 <button
                     class="absolute top-6 right-6 flex items-center justify-center w-12 h-12 bg-brutal-accent text-brutal-accent-foreground border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
-                    @click="closeViewer"
                     aria-label="关闭预览"
                     data-testid="image-viewer-close"
+                    @click="closeViewer"
                 >
                     <X class="w-6 h-6 stroke-[3]" />
                 </button>
@@ -376,9 +377,9 @@ onUnmounted(() => {
                     v-if="previewSrcList && previewSrcList.length > 1"
                     class="absolute left-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
-                    @click="prevImage"
                     aria-label="上一张"
                     data-testid="image-viewer-prev"
+                    @click="prevImage"
                 >
                     <ChevronLeft class="w-6 h-6 stroke-[3]" />
                 </button>
@@ -388,9 +389,9 @@ onUnmounted(() => {
                     v-if="previewSrcList && previewSrcList.length > 1"
                     class="absolute right-6 flex items-center justify-center w-12 h-12 bg-brutal-bg text-brutal-fg border-3 border-brutal rounded-brutal shadow-brutal transition-all hover:translate-y-[-2px] hover:shadow-brutal-lg active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none cursor-pointer focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2"
                     :style="{ zIndex: Z_INDEX.IMAGE_PREVIEW_CONTROL }"
-                    @click="nextImage"
                     aria-label="下一张"
                     data-testid="image-viewer-next"
+                    @click="nextImage"
                 >
                     <ChevronRight class="w-6 h-6 stroke-[3]" />
                 </button>
@@ -406,7 +407,7 @@ onUnmounted(() => {
                         class="max-w-full max-h-[70vh] select-none transition-transform duration-100 ease-out cursor-grab active:cursor-grabbing"
                         :style="previewImageStyle"
                         @mousedown="handleDragStart"
-                    />
+                    >
                 </div>
 
                 <!-- 工具栏 -->
@@ -417,45 +418,45 @@ onUnmounted(() => {
                     <!-- 缩小 -->
                     <button
                         class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
-                        @click="zoomOut"
                         title="缩小"
                         data-testid="image-viewer-zoom-out"
+                        @click="zoomOut"
                     >
                         <ZoomOut class="w-5 h-5 stroke-[2.5]" />
                     </button>
                     <!-- 放大 -->
                     <button
                         class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
-                        @click="zoomIn"
                         title="放大"
                         data-testid="image-viewer-zoom-in"
+                        @click="zoomIn"
                     >
                         <ZoomIn class="w-5 h-5 stroke-[2.5]" />
                     </button>
                     <!-- 左旋 -->
                     <button
                         class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
-                        @click="rotateLeft"
                         title="向左旋转"
                         data-testid="image-viewer-rotate-left"
+                        @click="rotateLeft"
                     >
                         <RotateCcw class="w-5 h-5 stroke-[2.5]" />
                     </button>
                     <!-- 右旋 -->
                     <button
                         class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
-                        @click="rotateRight"
                         title="向右旋转"
                         data-testid="image-viewer-rotate-right"
+                        @click="rotateRight"
                     >
                         <RotateCw class="w-5 h-5 stroke-[2.5]" />
                     </button>
                     <!-- 翻转 -->
                     <button
                         class="flex items-center justify-center w-10 h-10 bg-brutal-muted hover:bg-brutal-muted/80 text-brutal-fg border-2 border-brutal rounded-brutal shadow-brutal-sm hover:translate-y-[-1px] hover:shadow-brutal active:translate-y-[var(--brutal-pressed-offset,1px)] active:shadow-none cursor-pointer focus:outline focus:outline-[2px] focus:outline-brutal-ring focus:outline-offset-2"
-                        @click="flipHorizontal"
                         title="左右翻转"
                         data-testid="image-viewer-flip"
+                        @click="flipHorizontal"
                     >
                         <FlipHorizontal class="w-5 h-5 stroke-[2.5]" />
                     </button>

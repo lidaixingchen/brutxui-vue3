@@ -469,8 +469,8 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     <!-- Column Filter UI -->
                                     <DataTableColumnFilter
                                         v-if="props.filterable && column.filterType"
-                                        :column="column"
                                         v-model:filter-state="filter.filterState.value"
+                                        :column="column"
                                         :header-label="getHeaderLabel(column)"
                                     />
                                     
@@ -646,8 +646,8 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 <!-- Column Filter UI (Native Table) -->
                                 <DataTableColumnFilter
                                     v-if="props.filterable && column.filterType"
-                                    :column="column"
                                     v-model:filter-state="filter.filterState.value"
+                                    :column="column"
                                     :header-label="getHeaderLabel(column)"
                                 />
 
@@ -706,6 +706,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 </td>
                                 <td
                                     v-for="(column, columnIndex) in visibleColumns"
+                                    v-show="isCellVisible(rowIndex, columnIndex)"
                                     :key="column.id"
                                     :class="getCellClasses(column)"
                                     :style="{
@@ -717,7 +718,6 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     :rowspan="getCellSpan(rowIndex, columnIndex)?.[0] || undefined"
                                     :colspan="getCellSpan(rowIndex, columnIndex)?.[1] || undefined"
                                     role="gridcell"
-                                    v-show="isCellVisible(rowIndex, columnIndex)"
                                 >
                                     <template v-if="column.type === 'expand'">
                                         <Button

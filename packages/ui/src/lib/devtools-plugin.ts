@@ -162,7 +162,7 @@ interface VueDevtoolsApi {
 
 /** 声明全局 __VUE_DEVTOOLS_GLOBAL_HOOK__ */
 declare global {
-    // eslint-disable-next-line no-var
+
     var __VUE_DEVTOOLS_GLOBAL_HOOK__: VueDevtoolsApi | undefined
 }
 

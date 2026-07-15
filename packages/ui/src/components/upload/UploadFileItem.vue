@@ -105,8 +105,8 @@ const previewUrl = computed(() => props.file.url ?? objectUrl.value)
         >
         <!-- 文件图标 -->
         <component
-            v-else
             :is="fileIcon"
+            v-else
             class="h-8 w-8 text-brutal-placeholder"
         />
 
