@@ -152,6 +152,7 @@ export interface InstalledComponentManifest {
     name: string;
     registrySource: string;
     integrity: string;
+    installedContentHash?: string;
     installedAt: string;
     files: string[];
     dependencies: string[];
@@ -172,6 +173,8 @@ export enum FixId {
     CreateUtilsFile = 'create-utils-file',
     AddCnFunction = 'add-cn-function',
     AddConfigVersion = 'add-config-version',
+    RestoreIntegrity = 'restore-integrity',
+    RemoveOrphans = 'remove-orphans',
 }
 
 export interface CheckResult {
@@ -180,6 +183,7 @@ export interface CheckResult {
     message: string;
     fixId?: FixId;
     fixDescription?: string;
+    componentName?: string;
 }
 
 export type DiffFileStatus = 'unchanged' | 'modified' | 'added' | 'removed';

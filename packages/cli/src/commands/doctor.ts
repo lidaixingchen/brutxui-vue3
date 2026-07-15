@@ -2,9 +2,9 @@ import { confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
-import type { BrutalistConfig, CheckResult, DoctorOptions } from '../lib/types.js';
+import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -317,6 +317,14 @@ async function checkUtilsFunction(cwd: string, config: BrutalistConfig): Promise
 }
 
 async function checkComponentIntegrity(cwd: string, config: BrutalistConfig): Promise<CheckResult[]> {
+    const manifest = await readManifest(cwd);
+    if (manifest && Object.keys(manifest.components).length > 0) {
+        return checkComponentIntegrityManifest(cwd, manifest);
+    }
+    return checkComponentIntegrityLegacy(cwd, config);
+}
+
+async function checkComponentIntegrityLegacy(cwd: string, config: BrutalistConfig): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
 
@@ -353,16 +361,199 @@ async function checkComponentIntegrity(cwd: string, config: BrutalistConfig): Pr
                 name: `component ${componentName}`,
                 status: hasFiles ? 'pass' : 'warn',
                 message: hasFiles
-                    ? `${fileCount} files found.`
-                    : 'Component directory is empty.',
+                    ? `${fileCount} files found. (legacy scan)`
+                    : 'Component directory is empty. (legacy scan)',
             });
         }
     } catch (error) {
-        // Log error in debug mode but don't fail the check
         logger.debug(`Error reading component directory: ${error instanceof Error ? error.message : String(error)}`);
     }
 
     return results;
+}
+
+const ORPHAN_EXTENSIONS = new Set(['.vue', '.ts', '.tsx', '.js', '.jsx']);
+
+/**
+ * Manifest 驱动的三类检查：
+ * 1. manifest 与文件系统一致性（缺失文件 / 孤儿文件）
+ * 2. integrity 漂移检测（重算 installedContentHash 与 manifest 比对）
+ * 3. registryDependencies 闭环检查
+ */
+async function checkComponentIntegrityManifest(cwd: string, manifest: BrutxManifest): Promise<CheckResult[]> {
+    const results: CheckResult[] = [];
+    const manifestComponentNames = new Set(Object.keys(manifest.components));
+
+    for (const [componentName, entry] of Object.entries(manifest.components)) {
+        results.push(...await checkManifestEntryConsistency(cwd, componentName, entry));
+        results.push(...await checkManifestEntryIntegrityDrift(cwd, componentName, entry));
+        results.push(...checkManifestEntryRegistryDepsClosure(componentName, entry, manifestComponentNames));
+    }
+
+    return results;
+}
+
+async function checkManifestEntryConsistency(
+    cwd: string,
+    componentName: string,
+    entry: InstalledComponentManifest,
+): Promise<CheckResult[]> {
+    const results: CheckResult[] = [];
+    const missingFiles: string[] = [];
+    const existingAbsPaths: Set<string> = new Set();
+
+    for (const relativeFile of entry.files) {
+        const absPath = path.resolve(cwd, relativeFile);
+        if (await fs.pathExists(absPath)) {
+            existingAbsPaths.add(absPath);
+        } else {
+            missingFiles.push(relativeFile);
+        }
+    }
+
+    if (missingFiles.length > 0) {
+        results.push({
+            name: `component ${componentName} files present`,
+            status: 'error',
+            message: `Missing ${missingFiles.length} file(s) recorded in manifest: ${missingFiles.join(', ')}`,
+            fixId: FixId.RestoreIntegrity,
+            fixDescription: `Run \`brutx-vue update ${componentName}\` to restore missing files`,
+            componentName,
+        });
+    } else if (entry.files.length > 0) {
+        results.push({
+            name: `component ${componentName} files present`,
+            status: 'pass',
+            message: `All ${entry.files.length} manifest file(s) exist on disk.`,
+            componentName,
+        });
+    }
+
+    const orphans = await findOrphanFiles(cwd, entry);
+    if (orphans.length > 0) {
+        results.push({
+            name: `component ${componentName} no orphans`,
+            status: 'warn',
+            message: `Found ${orphans.length} orphan file(s) not recorded in manifest: ${orphans.join(', ')}`,
+            fixId: FixId.RemoveOrphans,
+            fixDescription: `Remove orphan files or add them to manifest via reinstall`,
+            componentName,
+        });
+    } else if (entry.files.length > 0) {
+        results.push({
+            name: `component ${componentName} no orphans`,
+            status: 'pass',
+            message: 'No orphan files detected in component directory.',
+            componentName,
+        });
+    }
+
+    return results;
+}
+
+async function findOrphanFiles(cwd: string, entry: InstalledComponentManifest): Promise<string[]> {
+    const orphans: string[] = [];
+    if (entry.files.length === 0) return orphans;
+
+    const manifestAbsSet = new Set(entry.files.map(f => path.resolve(cwd, f)));
+    const directories = new Set<string>();
+    for (const relFile of entry.files) {
+        let dir = path.dirname(path.resolve(cwd, relFile));
+        while (dir !== cwd && path.dirname(dir) !== dir) {
+            directories.add(dir);
+            dir = path.dirname(dir);
+        }
+    }
+
+    for (const dir of directories) {
+        if (!(await fs.pathExists(dir))) continue;
+        const entries = await fs.readdir(dir, { withFileTypes: true });
+        for (const e of entries) {
+            if (!e.isFile()) continue;
+            const ext = path.extname(e.name).toLowerCase();
+            if (!ORPHAN_EXTENSIONS.has(ext)) continue;
+            const absPath = path.join(dir, e.name);
+            if (!manifestAbsSet.has(absPath)) {
+                orphans.push(path.relative(cwd, absPath).split(path.sep).join('/'));
+            }
+        }
+    }
+
+    return orphans;
+}
+
+async function checkManifestEntryIntegrityDrift(
+    cwd: string,
+    componentName: string,
+    entry: InstalledComponentManifest,
+): Promise<CheckResult[]> {
+    if (!entry.installedContentHash) {
+        return [{
+            name: `component ${componentName} integrity`,
+            status: 'warn',
+            message: 'No installedContentHash recorded (pre-P0-1 manifest). Run update to enable drift detection.',
+            componentName,
+        }];
+    }
+
+    if (entry.files.length === 0) {
+        return [];
+    }
+
+    try {
+        const absFiles = entry.files.map(f => path.resolve(cwd, f));
+        for (const abs of absFiles) {
+            if (!(await fs.pathExists(abs))) {
+                return [];
+            }
+        }
+        const currentHash = await computeInstalledContentHash(absFiles);
+        if (currentHash !== entry.installedContentHash) {
+            return [{
+                name: `component ${componentName} integrity`,
+                status: 'warn',
+                message: `Integrity drift detected — component files have been modified since install. Run \`brutx-vue update ${componentName}\` to restore.`,
+                fixId: FixId.RestoreIntegrity,
+                fixDescription: `Restore ${componentName} from registry`,
+                componentName,
+            }];
+        }
+        return [{
+            name: `component ${componentName} integrity`,
+            status: 'pass',
+            message: 'Component files match installed snapshot.',
+            componentName,
+        }];
+    } catch (error) {
+        logger.debug(`Error computing integrity for ${componentName}: ${error instanceof Error ? error.message : String(error)}`);
+        return [];
+    }
+}
+
+function checkManifestEntryRegistryDepsClosure(
+    componentName: string,
+    entry: InstalledComponentManifest,
+    manifestComponentNames: Set<string>,
+): CheckResult[] {
+    if (entry.registryDependencies.length === 0) {
+        return [];
+    }
+
+    const missingDeps = entry.registryDependencies.filter(dep => !manifestComponentNames.has(dep));
+    if (missingDeps.length > 0) {
+        return [{
+            name: `component ${componentName} registry deps closed`,
+            status: 'warn',
+            message: `Registry dependency ${missingDeps.map(d => `'${d}'`).join(', ')} not installed. Run \`brutx-vue add ${missingDeps[0]}\` to install.`,
+            componentName,
+        }];
+    }
+    return [{
+        name: `component ${componentName} registry deps closed`,
+        status: 'pass',
+        message: `All ${entry.registryDependencies.length} registry dependency(ies) installed.`,
+        componentName,
+    }];
 }
 
 function printReport(checks: CheckResult[]): void {
@@ -486,6 +677,52 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                         const existing = await fs.readFile(utilsPath + utilsFile, 'utf-8');
                         await transaction.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE);
                         logger.success('Added cn() function.');
+                    }
+                    break;
+                }
+
+                case FixId.RemoveOrphans: {
+                    if (!check.componentName) break;
+                    const manifest = await readManifest(cwd);
+                    const entry = manifest?.components[check.componentName];
+                    if (!entry) break;
+
+                    const orphans = await findOrphanFiles(cwd, entry);
+                    for (const orphan of orphans) {
+                        const absPath = path.resolve(cwd, orphan);
+                        await transaction.remove(absPath);
+                    }
+                    if (orphans.length > 0) {
+                        logger.success(`Removed ${orphans.length} orphan file(s) for ${check.componentName}.`);
+                    }
+                    break;
+                }
+
+                case FixId.RestoreIntegrity: {
+                    if (!check.componentName) break;
+                    const manifest = await readManifest(cwd);
+                    const entry = manifest?.components[check.componentName];
+                    if (!entry) break;
+
+                    // --fix 时允许触网拉取 registry 恢复权威内容
+                    const { getItem, resolveImportAlias } = await import('../lib/index.js');
+                    try {
+                        const item = await getItem(check.componentName, entry.registrySource, true);
+                        // manifest.files 顺序与 item.files 顺序一致（manifest 不再 .sort()，
+                        // 来自 add-service 的 filesByComponent，源于 item.files 数组顺序）
+                        if (entry.files.length !== item.files.length) {
+                            logger.warn(`File count mismatch for ${check.componentName} (manifest: ${entry.files.length}, registry: ${item.files.length}). Run \`brutx-vue update ${check.componentName}\` instead.`);
+                            break;
+                        }
+                        for (let i = 0; i < item.files.length; i++) {
+                            const targetPath = path.resolve(cwd, entry.files[i]);
+                            const resolvedContent = resolveImportAlias(item.files[i].content, config);
+                            await transaction.writeFile(targetPath, resolvedContent);
+                        }
+                        logger.success(`Restored ${check.componentName} from registry.`);
+                    } catch (restoreError) {
+                        logger.warn(`Could not restore ${check.componentName} from registry: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
+                        logger.info(`Run \`brutx-vue update ${check.componentName}\` manually to restore.`);
                     }
                     break;
                 }

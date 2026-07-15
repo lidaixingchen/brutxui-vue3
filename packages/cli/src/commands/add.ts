@@ -19,6 +19,7 @@ import {
     mergeSnippetsFile,
     hasVscodeDir,
     updateInstalledComponents,
+    computeInstalledContentHash,
     ensureUtilsFile,
     resolveComponents,
     writeComponentFiles,
@@ -266,16 +267,23 @@ export async function add(components: string[], options: AddOptions): Promise<vo
         await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
 
         if (!options.dryRun && added.length > 0) {
-            await updateInstalledComponents(
-                targetCwd,
+            const manifestEntries = await Promise.all(
                 registryItems
                     .filter(item => added.includes(item.name))
-                    .map(item => ({
-                        item,
-                        registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
-                        files: filesByComponent[item.name] ?? [],
-                    })),
+                    .map(async item => {
+                        const files = filesByComponent[item.name] ?? [];
+                        const installedContentHash = files.length > 0
+                            ? await computeInstalledContentHash(files)
+                            : undefined;
+                        return {
+                            item,
+                            registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
+                            files,
+                            installedContentHash,
+                        };
+                    })
             );
+            await updateInstalledComponents(targetCwd, manifestEntries);
 
             const shouldUpdateSnippets = options.vscode === true
                 || (options.vscode !== false && await hasVscodeDir(targetCwd));

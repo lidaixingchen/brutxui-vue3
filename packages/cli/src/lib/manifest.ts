@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
 import type { FileTransaction } from './file-transaction.js';
 
@@ -21,6 +22,7 @@ export interface InstalledManifestEntryInput {
     item: RegistryItem;
     registrySource: string;
     files: string[];
+    installedContentHash?: string;
 }
 
 interface ManifestWriteOptions {
@@ -84,10 +86,16 @@ function validateManifestEntry(value: unknown, componentName: string): Installed
         throw new Error(`Invalid manifest entry for "${componentName}": "replacement" must be a non-empty string when provided.`);
     }
 
+    const installedContentHash = value.installedContentHash;
+    if (installedContentHash !== undefined && (typeof installedContentHash !== 'string' || installedContentHash.length === 0)) {
+        throw new Error(`Invalid manifest entry for "${componentName}": "installedContentHash" must be a non-empty string when provided.`);
+    }
+
     return {
         name: value.name,
         registrySource,
         integrity,
+        installedContentHash,
         installedAt,
         files: value.files,
         dependencies: value.dependencies,
@@ -138,6 +146,21 @@ export function getManifestPath(cwd: string): string {
     return path.join(cwd, MANIFEST_RELATIVE_PATH);
 }
 
+/**
+ * 按给定绝对路径顺序读取磁盘文件内容，用 computeRegistryIntegrity 算 hash。
+ * 顺序敏感：files 数组顺序必须与安装时写入磁盘的顺序一致（即 registry item.files 顺序）。
+ * 此 hash 用于 doctor 漂移检测——规避 resolveImportAlias 改写磁盘内容导致
+ * 磁盘 hash ≠ registry integrity 的问题。
+ */
+export async function computeInstalledContentHash(files: string[]): Promise<string> {
+    const contents: string[] = [];
+    for (const filePath of files) {
+        const content = await fs.readFile(filePath, 'utf-8');
+        contents.push(content);
+    }
+    return computeRegistryIntegrity(contents.map(content => ({ content })));
+}
+
 export async function readManifest(cwd: string): Promise<BrutxManifest | null> {
     const manifestPath = getManifestPath(cwd);
 
@@ -181,8 +204,13 @@ export async function updateInstalledComponents(
             name: entry.item.name,
             registrySource: entry.registrySource,
             integrity: entry.item.integrity,
+            installedContentHash: entry.installedContentHash,
             installedAt,
-            files: entry.files.map(file => toPortableRelativePath(cwd, file)).sort(),
+            // files 顺序必须与 registry build 顺序一致（来自 add-service 的 filesByComponent，
+            // 该顺序源于 item.files 数组顺序），不可 .sort()——否则 doctor 重算 computeRegistryIntegrity
+            // 会因顺序不同而误报漂移（computeRegistryIntegrity 对数组顺序敏感）。
+            files: entry.files.map(file => toPortableRelativePath(cwd, file)),
+            // dependencies/registryDependencies/examples 不参与 integrity 计算，保留 .sort() 以稳定可读。
             dependencies: [...entry.item.dependencies].sort(),
             registryDependencies: [...entry.item.registryDependencies].sort(),
             category: entry.item.category,

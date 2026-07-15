@@ -2,8 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import type { BrutalistConfig, CheckResult, DoctorOptions } from '../src/lib/types.js';
+import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest } from '../src/lib/types.js';
 import { FixId } from '../src/lib/types.js';
+import { computeInstalledContentHash } from '../src/lib/manifest.js';
 
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
@@ -765,6 +766,278 @@ describe('edge cases', () => {
 
             const cnCheck = results.find((r) => r.name === 'cn() function exists');
             expect(cnCheck?.status).toBe('pass');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+});
+
+// ---------------------------------------------------------------------------
+// Manifest-driven integrity drift detection (P0-1)
+// ---------------------------------------------------------------------------
+
+function makeManifestEntry(
+    componentName: string,
+    files: string[],
+    installedContentHash: string,
+    overrides: Partial<InstalledComponentManifest> = {},
+): InstalledComponentManifest {
+    return {
+        name: componentName,
+        registrySource: 'https://example.test/registry',
+        integrity: `sha256-${componentName}-integrity`,
+        installedContentHash,
+        installedAt: '2026-07-16T00:00:00.000Z',
+        files,
+        dependencies: ['vue'],
+        registryDependencies: [],
+        category: 'action',
+        examples: [],
+        status: 'stable',
+        ...overrides,
+    };
+}
+
+async function writeManifest(cwd: string, manifest: BrutxManifest): Promise<void> {
+    await fs.ensureDir(path.join(cwd, '.brutx'));
+    await fs.writeJson(path.join(cwd, '.brutx', 'manifest.json'), manifest, { spaces: 4 });
+}
+
+async function setupManifestProject(
+    cwd: string,
+    components: Record<string, { files: Array<{ relPath: string; content: string }>; registryDeps?: string[] }>,
+): Promise<BrutxManifest> {
+    const manifestComponents: Record<string, InstalledComponentManifest> = {};
+    for (const [name, spec] of Object.entries(components)) {
+        const absPaths: string[] = [];
+        for (const f of spec.files) {
+            const absPath = path.join(cwd, f.relPath);
+            await fs.ensureDir(path.dirname(absPath));
+            await fs.writeFile(absPath, f.content, 'utf-8');
+            absPaths.push(absPath);
+        }
+        const installedContentHash = await computeInstalledContentHash(absPaths);
+        manifestComponents[name] = makeManifestEntry(
+            name,
+            absPaths.map(p => path.relative(cwd, p).split(path.sep).join('/')),
+            installedContentHash,
+            { registryDependencies: spec.registryDeps ?? [] },
+        );
+    }
+    const manifest: BrutxManifest = { version: 1, components: manifestComponents };
+    await writeManifest(cwd, manifest);
+    return manifest;
+}
+
+describe('manifest-driven integrity checks', () => {
+    beforeEach(() => {
+        suppressConsole();
+    });
+
+    it('passes when component files match installed snapshot', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button /></template>' },
+                        { relPath: 'src/components/ui/button/button-variants.ts', content: 'export const buttonVariants = {}' },
+                    ],
+                },
+            });
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const results = await runDoctor(cwd, { silent: true });
+            const filesCheck = results.find((r) => r.name === 'component button files present');
+            const integrityCheck = results.find((r) => r.name === 'component button integrity');
+            const orphansCheck = results.find((r) => r.name === 'component button no orphans');
+
+            expect(filesCheck?.status).toBe('pass');
+            expect(integrityCheck?.status).toBe('pass');
+            expect(orphansCheck?.status).toBe('pass');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('warns with RestoreIntegrity fixId when component file is modified (drift)', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button /></template>' },
+                    ],
+                },
+            });
+            // 用户手动修改组件文件
+            await fs.writeFile(
+                path.join(cwd, 'src/components/ui/button/Button.vue'),
+                '<template><button class="modified" /></template>',
+                'utf-8',
+            );
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const results = await runDoctor(cwd, { silent: true });
+            const integrityCheck = results.find((r) => r.name === 'component button integrity');
+
+            expect(integrityCheck?.status).toBe('warn');
+            expect(integrityCheck?.fixId).toBe(FixId.RestoreIntegrity);
+            expect(integrityCheck?.message).toContain('drift');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('errors when manifest-recorded file is missing', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button /></template>' },
+                        { relPath: 'src/components/ui/button/button-variants.ts', content: 'export const v = {}' },
+                    ],
+                },
+            });
+            // 删除 manifest 记录的文件
+            await fs.remove(path.join(cwd, 'src/components/ui/button/button-variants.ts'));
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const results = await runDoctor(cwd, { silent: true });
+            const filesCheck = results.find((r) => r.name === 'component button files present');
+
+            expect(filesCheck?.status).toBe('error');
+            expect(filesCheck?.fixId).toBe(FixId.RestoreIntegrity);
+            expect(filesCheck?.message).toContain('Missing');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('warns with RemoveOrphans fixId when orphan file exists', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button /></template>' },
+                    ],
+                },
+            });
+            // 添加孤儿文件
+            await fs.writeFile(
+                path.join(cwd, 'src/components/ui/button/old-Button.vue'),
+                '<template><old-button /></template>',
+                'utf-8',
+            );
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const results = await runDoctor(cwd, { silent: true });
+            const orphansCheck = results.find((r) => r.name === 'component button no orphans');
+
+            expect(orphansCheck?.status).toBe('warn');
+            expect(orphansCheck?.fixId).toBe(FixId.RemoveOrphans);
+            expect(orphansCheck?.message).toContain('orphan');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('warns when registryDependency is not installed (closure check)', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button /></template>' },
+                    ],
+                    registryDeps: ['primitive'],
+                },
+            });
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const results = await runDoctor(cwd, { silent: true });
+            const depsCheck = results.find((r) => r.name === 'component button registry deps closed');
+
+            expect(depsCheck?.status).toBe('warn');
+            expect(depsCheck?.message).toContain('primitive');
+            expect(depsCheck?.message).toContain('not installed');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('falls back to legacy scan when no manifest exists', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            // 不写 manifest，直接放组件文件
+            await fs.ensureDir(path.join(cwd, 'src/components/ui/button'));
+            await fs.writeFile(
+                path.join(cwd, 'src/components/ui/button/Button.vue'),
+                '<template><button /></template>',
+                'utf-8',
+            );
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            const results = await runDoctor(cwd, { silent: true });
+            // legacy scan 输出应包含 "legacy scan"
+            const componentChecks = results.filter((r) => r.name.startsWith('component'));
+            expect(componentChecks.length).toBeGreaterThan(0);
+            expect(componentChecks.some((c) => c.message.includes('legacy scan'))).toBe(true);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('does not false-positive when files are unchanged (order stability)', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            // manifest.files 顺序与磁盘写入顺序天然一致（installedContentHash 按此序算）
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button>first</button></template>' },
+                        { relPath: 'src/components/ui/button/button-variants.ts', content: 'export const a = 1' },
+                    ],
+                },
+            });
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            // 再次运行 doctor，文件未改动
+            const results = await runDoctor(cwd, { silent: true });
+            const integrityCheck = results.find((r) => r.name === 'component button integrity');
+            expect(integrityCheck?.status).toBe('pass');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('RemoveOrphans fix deletes orphan files', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await setupManifestProject(cwd, {
+                button: {
+                    files: [
+                        { relPath: 'src/components/ui/button/Button.vue', content: '<template><button /></template>' },
+                    ],
+                },
+            });
+            const orphanPath = path.join(cwd, 'src/components/ui/button/old-Button.vue');
+            await fs.writeFile(orphanPath, '<template><old /></template>', 'utf-8');
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+
+            await runDoctor(cwd, { fix: true, yes: true, fixOnly: FixId.RemoveOrphans });
+
+            expect(await fs.pathExists(orphanPath)).toBe(false);
         } finally {
             await fs.remove(cwd);
         }

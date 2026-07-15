@@ -623,7 +623,9 @@ export async function run() {
 
     const cache = loadCache();
     const newCache: Record<string, string> = {};
-    const componentNames = Object.keys(REGISTRY);
+    // 字典序遍历：让 registry build 顺序成为稳定契约，doctor 漂移检测重算 integrity 时
+    // 可与 manifest 的 files 顺序对齐（manifest 不再 .sort()，按此序存储）。
+    const componentNames = Object.keys(REGISTRY).sort();
     console.log(`📦 Found ${componentNames.length} components to process.`);
     let errorCount = 0;
     const packageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf-8')) as { version: string };

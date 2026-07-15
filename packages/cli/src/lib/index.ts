@@ -35,6 +35,7 @@ export {
     readManifest,
     updateInstalledComponents,
     removeInstalledComponents,
+    computeInstalledContentHash,
 } from './manifest.js';
 
 export {
