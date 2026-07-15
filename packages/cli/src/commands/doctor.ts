@@ -1,6 +1,7 @@
 import { confirm } from '@inquirer/prompts';
 import fs from 'fs-extra';
 import path from 'path';
+import { createRequire } from 'module';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest, RegistrySourceStatus } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
@@ -8,6 +9,9 @@ import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readMan
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../../package.json') as { version: string };
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const MIN_NODE_VERSION = '22.5.0';
@@ -897,6 +901,12 @@ export async function doctor(options: DoctorOptions): Promise<void> {
         logger.setSilent(true);
     }
 
+    // P1-6: --sbom 模式——生成用户项目 SBOM 后退出，不运行常规检查
+    if (options.sbom) {
+        await generateProjectSbom(cwd, options.sbomOutput);
+        return;
+    }
+
     const offline = isOfflineRequested(options.offline);
     const restoreOffline = withOfflineScope(offline);
     try {
@@ -904,6 +914,102 @@ export async function doctor(options: DoctorOptions): Promise<void> {
     } finally {
         restoreOffline();
     }
+}
+
+/**
+ * 生成用户项目 SBOM（P1-6 供应链安全）。
+ *
+ * 数据来源：.brutx/manifest.json 中已安装组件的 dependencies（npm 依赖）+ registryDependencies（组件间依赖）。
+ * 输出格式：CycloneDX 1.5 JSON，写入 ./brutx-sbom.json（可通过 --sbom-output 覆盖）。
+ *
+ * 与 registry-sbom.json 的区别：
+ *   - registry-sbom.json：registry 构建时生成，列出所有 registry 组件
+ *   - brutx-sbom.json：用户项目级，仅列出该项目已安装的组件及其依赖
+ */
+async function generateProjectSbom(cwd: string, outputPath?: string): Promise<void> {
+    const manifest = await readManifest(cwd);
+    if (!manifest || Object.keys(manifest.components).length === 0) {
+        throw new CliError(
+            'No installed components found. Run `brutx-vue add <component>` first.',
+            { code: 'CONFIG_NOT_FOUND' }
+        );
+    }
+
+    const components: ProjectSbomComponent[] = [];
+    const seenNpmDeps = new Set<string>();
+
+    for (const [name, entry] of Object.entries(manifest.components)) {
+        components.push({
+            'bom-ref': `brutx:${name}`,
+            type: 'application',
+            name,
+            version: entry.version ?? 'latest',
+            hashes: entry.integrity
+                ? [{ alg: 'SHA-256' as const, content: entry.integrity.replace(/^sha256-/, '') }]
+                : undefined,
+            dependencies: [
+                ...entry.dependencies.map(dep => `npm:${dep}`),
+                ...entry.registryDependencies.map(dep => `brutx:${dep}`),
+            ],
+        });
+
+        for (const dep of entry.dependencies) {
+            if (!seenNpmDeps.has(dep)) {
+                seenNpmDeps.add(dep);
+            }
+        }
+    }
+
+    // npm 依赖归一为 library 类型
+    for (const dep of [...seenNpmDeps].sort()) {
+        components.push({
+            'bom-ref': `npm:${dep}`,
+            type: 'library',
+            name: dep,
+        });
+    }
+
+    // 规范化排序，确保可重复构建
+    components.sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
+
+    const sbom = {
+        $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',
+        bomFormat: 'CycloneDX',
+        specVersion: '1.5',
+        version: 1,
+        metadata: {
+            timestamp: new Date().toISOString(),
+            tools: [
+                {
+                    vendor: 'brutx-vue',
+                    name: 'doctor',
+                    version: pkg.version,
+                },
+            ],
+            component: {
+                'bom-ref': 'brutx:project',
+                type: 'application',
+                name: 'user-project',
+            },
+        },
+        components,
+    };
+
+    const targetPath = path.resolve(cwd, outputPath ?? 'brutx-sbom.json');
+    await fs.ensureDir(path.dirname(targetPath));
+    await fs.writeJson(targetPath, sbom, { spaces: 2 });
+
+    logger.success(`Generated SBOM: ${path.relative(cwd, targetPath)} (${components.length} components)`);
+    logger.info(`Format: CycloneDX ${sbom.specVersion}`);
+}
+
+interface ProjectSbomComponent {
+    'bom-ref': string;
+    type: 'application' | 'library';
+    name: string;
+    version?: string;
+    hashes?: Array<{ alg: 'SHA-256'; content: string }>;
+    dependencies?: string[];
 }
 
 async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean): Promise<void> {

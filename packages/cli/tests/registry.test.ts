@@ -5,6 +5,7 @@ import path from 'path';
 import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import * as registry from '../src/lib/registry.js';
 import { generateEd25519KeyPair, signManifestIntegrity } from '../src/lib/signature.js';
+import { setRequireSignature, resetRequireSignature } from '../src/lib/signature-mode.js';
 import { CliError } from '../src/lib/error.js';
 
 function createRegistryItem(name: string, overrides: Record<string, any> = {}) {
@@ -433,6 +434,7 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         delete process.env.BRUTX_REGISTRY_PUBLIC_KEYS;
         delete process.env.BRUTX_OFFLINE;
         delete process.env.BRUTX_NO_CACHE;
+        resetRequireSignature();
         if (tempCacheDir && fs.existsSync(tempCacheDir)) {
             fs.removeSync(tempCacheDir);
         }
@@ -528,7 +530,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         });
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when signature is tampered', async () => {
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is tampered (strict mode)', async () => {
+        setRequireSignature(true);
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
@@ -558,7 +561,38 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         });
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when keyId does not match any trusted key', async () => {
+    it('warns but does not throw when signature is tampered (default mode)', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const manifestIntegrity = 'd2'.repeat(32);
+        const validSig = signManifestIntegrity(manifestIntegrity, keyPair.privateKey);
+        const tamperedSig = validSig.slice(0, -4) + 'XXXX';
+        const manifest = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity: manifestIntegrity,
+            signature: tamperedSig,
+            keyId: keyPair.keyId,
+        };
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        // 默认 warn：getItem 不抛错，正常返回（integrity 兜底）
+        await expect(registry.getItem('button', 'https://sig-tampered-warn.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when keyId does not match any trusted key (strict mode)', async () => {
+        setRequireSignature(true);
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
@@ -575,7 +609,24 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         });
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when signature is for different integrity (content swapped)', async () => {
+    it('warns but does not throw when keyId does not match any trusted key (default mode)', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const manifestIntegrity = 'e2'.repeat(32);
+        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        (manifest as { keyId: string }).keyId = 'unknown-key-id';
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-unknown-key-warn.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is for different integrity (content swapped) (strict mode)', async () => {
+        setRequireSignature(true);
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
@@ -603,6 +654,35 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         });
     });
 
+    it('warns but does not throw when signature is for different integrity (default mode)', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        // 用 integrity-A 的签名，但 manifest 的 integrity 字段是 B（但 B 与 item.integrity 自洽）
+        const sigForA = signManifestIntegrity('integrity-a-value', keyPair.privateKey);
+        // 这里 manifest.integrity 与 item 内容无关，仅影响签名验证；使用自洽的 item
+        const manifest = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {},
+            integrity: 'integrity-b-value',
+            signature: sigForA,
+            keyId: keyPair.keyId,
+        };
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-content-swap-warn.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+    });
+
     it('supports key rotation: new keyId signature passes when both old+new keys trusted', async () => {
         const keyPairV2 = generateEd25519KeyPair();
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
@@ -621,7 +701,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         });
     });
 
-    it('REGISTRY_SIGNATURE_INVALID is a CliError instance (not generic Error)', async () => {
+    it('REGISTRY_SIGNATURE_INVALID is a CliError instance (not generic Error) (strict mode)', async () => {
+        setRequireSignature(true);
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);

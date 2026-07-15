@@ -96,6 +96,13 @@ export {
 } from './global-dry-run.js';
 
 export {
+    isRequireSignatureEnvActive,
+    isRequireSignature,
+    setRequireSignature,
+    resetRequireSignature,
+} from './signature-mode.js';
+
+export {
     getInstalledComponentInfos,
     getInstalledComponentNames,
 } from './installed-components.js';

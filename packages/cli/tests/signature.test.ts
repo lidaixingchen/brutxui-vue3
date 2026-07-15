@@ -7,7 +7,12 @@ import {
     signManifestIntegrity,
     type TrustedPublicKey,
 } from '../src/lib/signature.js';
+import {
+    setRequireSignature,
+    resetRequireSignature,
+} from '../src/lib/signature-mode.js';
 import { CliError } from '../src/lib/error.js';
+import { logger } from '../src/lib/logger.js';
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
 
@@ -76,6 +81,7 @@ describe('verifyManifestSignature (P1-6)', () => {
     afterEach(() => {
         vi.restoreAllMocks();
         delete process.env[PUBLIC_KEYS_ENV];
+        resetRequireSignature();
     });
 
     it('returns false (skip) when manifest is unsigned (no signature/keyId)', () => {
@@ -148,7 +154,8 @@ describe('verifyManifestSignature (P1-6)', () => {
         expect(result).toBe(true);
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when keyId does not match any trusted key', () => {
+    it('throws REGISTRY_SIGNATURE_INVALID when keyId does not match any trusted key (strict mode)', () => {
+        setRequireSignature(true);
         expect(() => verifyManifestSignature(
             { integrity: manifestIntegrity, signature: validSignature, keyId: 'unknown-key-id' },
             [keyPair],
@@ -165,7 +172,20 @@ describe('verifyManifestSignature (P1-6)', () => {
         }
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when signature is invalid (tampered)', () => {
+    it('warns and returns false when keyId does not match any trusted key (default mode)', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const result = verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: validSignature, keyId: 'unknown-key-id' },
+            [keyPair],
+        );
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy.mock.calls[0][0]).toContain('unknown keyId');
+        expect(warnSpy.mock.calls[0][0]).toContain('--require-signature');
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is invalid (tampered) (strict mode)', () => {
+        setRequireSignature(true);
         const tamperedSig = validSignature.slice(0, -2) + 'XX';
         expect(() => verifyManifestSignature(
             { integrity: manifestIntegrity, signature: tamperedSig, keyId: keyPair.keyId },
@@ -183,7 +203,20 @@ describe('verifyManifestSignature (P1-6)', () => {
         }
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when signature is for different content', () => {
+    it('warns and returns false when signature is invalid (tampered) (default mode)', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const tamperedSig = validSignature.slice(0, -2) + 'XX';
+        const result = verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: tamperedSig, keyId: keyPair.keyId },
+            [keyPair],
+        );
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy.mock.calls[0][0]).toContain('signature verification failed');
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is for different content (strict mode)', () => {
+        setRequireSignature(true);
         // 用同一个密钥对不同内容签名，再尝试验旧 manifest
         const otherSignature = signManifestIntegrity('different-integrity-value', keyPair.privateKey);
         expect(() => verifyManifestSignature(
@@ -202,7 +235,20 @@ describe('verifyManifestSignature (P1-6)', () => {
         }
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when public key is malformed', () => {
+    it('warns and returns false when signature is for different content (default mode)', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const otherSignature = signManifestIntegrity('different-integrity-value', keyPair.privateKey);
+        const result = verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: otherSignature, keyId: keyPair.keyId },
+            [keyPair],
+        );
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy.mock.calls[0][0]).toContain('signature verification failed');
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when public key is malformed (strict mode)', () => {
+        setRequireSignature(true);
         const malformedKey: TrustedPublicKey = {
             keyId: keyPair.keyId,
             publicKey: 'not-valid-base64-!!@#$',
@@ -223,13 +269,40 @@ describe('verifyManifestSignature (P1-6)', () => {
         }
     });
 
-    it('throws REGISTRY_SIGNATURE_INVALID when signature is malformed (not valid base64)', () => {
+    it('warns and returns false when public key is malformed (default mode)', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const malformedKey: TrustedPublicKey = {
+            keyId: keyPair.keyId,
+            publicKey: 'not-valid-base64-!!@#$',
+        };
+        const result = verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: validSignature, keyId: keyPair.keyId },
+            [malformedKey],
+        );
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy.mock.calls[0][0]).toContain('parse trusted public key');
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when signature is malformed (not valid base64) (strict mode)', () => {
+        setRequireSignature(true);
         // base64 解码能成功但内容长度不对，verify 会失败
         const malformedSig = 'short';
         expect(() => verifyManifestSignature(
             { integrity: manifestIntegrity, signature: malformedSig, keyId: keyPair.keyId },
             [keyPair],
         )).toThrow();
+    });
+
+    it('warns and returns false when signature is malformed (default mode)', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const malformedSig = 'short';
+        const result = verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: malformedSig, keyId: keyPair.keyId },
+            [keyPair],
+        );
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
     });
 
     it('supports multiple trusted keys with keyId-based selection', () => {
@@ -251,7 +324,8 @@ describe('verifyManifestSignature (P1-6)', () => {
         expect(result1).toBe(true);
     });
 
-    it('simulates key rotation: old key removed from list, new signature uses new keyId', () => {
+    it('simulates key rotation: old key removed from list, new signature uses new keyId (strict mode)', () => {
+        setRequireSignature(true);
         // 阶段 1: v1 密钥签发
         const v1Result = verifyManifestSignature(
             { integrity: manifestIntegrity, signature: validSignature, keyId: keyPair.keyId },
@@ -274,6 +348,26 @@ describe('verifyManifestSignature (P1-6)', () => {
             { integrity: manifestIntegrity, signature: validSignature, keyId: keyPair.keyId },
             [keyPair2],
         )).toThrow(/unknown keyId/);
+    });
+
+    it('simulates key rotation: old signature warns when old key removed (default mode)', () => {
+        // 阶段 1: v1 签名验证通过
+        expect(verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: validSignature, keyId: keyPair.keyId },
+            [keyPair],
+        )).toBe(true);
+
+        // 阶段 2: 轮换到 v2，v1 不在受信任列表
+        const keyPair2 = generateEd25519KeyPair();
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+
+        const result = verifyManifestSignature(
+            { integrity: manifestIntegrity, signature: validSignature, keyId: keyPair.keyId },
+            [keyPair2],
+        );
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy.mock.calls[0][0]).toContain('unknown keyId');
     });
 });
 

@@ -11,6 +11,7 @@ import { remove } from './commands/remove.js';
 import { create } from './commands/create.js';
 import { CliError, getCliErrorAdvice, logger, clearCache } from './lib/index.js';
 import { setGlobalDryRun } from './lib/global-dry-run.js';
+import { setRequireSignature } from './lib/signature-mode.js';
 import { VERBOSE_LEVEL_NONE, VERBOSE_LEVEL_STEP, VERBOSE_LEVEL_TRACE } from './lib/logger.js';
 
 const require = createRequire(import.meta.url);
@@ -24,7 +25,8 @@ program
     .version(pkg.version)
     .option('--verbose', 'Show detailed error output', false)
     .option('--dry-run', 'Global dry-run: simulate all write operations without touching disk', false)
-    .option('--verbose-level <level>', 'Verbose output level (1=steps, 2=details, 3=trace)', '0');
+    .option('--verbose-level <level>', 'Verbose output level (1=steps, 2=details, 3=trace)', '0')
+    .option('--require-signature', 'Strict mode: fail when manifest signature is invalid (default: warn)', false);
 
 program
     .command('init')
@@ -65,6 +67,8 @@ program
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .option('-s, --silent', 'Mute output', false)
     .option('--offline', 'Skip registry reachability checks', false)
+    .option('--sbom', 'Generate CycloneDX SBOM for installed components and exit', false)
+    .option('--sbom-output <path>', 'SBOM output file path (default: ./brutx-sbom.json)')
     .action(doctor);
 
 program

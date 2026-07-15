@@ -1238,3 +1238,95 @@ describe('checkRegistryReachability (P1-5)', () => {
         }
     });
 });
+
+describe('doctor --sbom (P1-6)', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    async function writeManifestWithComponents(cwd: string): Promise<void> {
+        const manifest: BrutxManifest = {
+            version: 1,
+            components: {
+                button: {
+                    name: 'button',
+                    registrySource: 'https://example.test',
+                    integrity: 'sha256-abc123',
+                    installedAt: '2026-07-16T00:00:00.000Z',
+                    files: ['src/components/ui/button/Button.vue'],
+                    dependencies: ['reka-ui', '@lucide/vue'],
+                    registryDependencies: [],
+                    examples: [],
+                },
+                dialog: {
+                    name: 'dialog',
+                    registrySource: 'https://example.test',
+                    integrity: 'sha256-def456',
+                    installedAt: '2026-07-16T00:00:00.000Z',
+                    files: ['src/components/ui/dialog/Dialog.vue'],
+                    dependencies: ['reka-ui'],
+                    registryDependencies: ['button'],
+                    examples: [],
+                    version: 'v1.2.0',
+                },
+            },
+        };
+        await fs.ensureDir(path.join(cwd, '.brutx'));
+        await fs.writeJson(path.join(cwd, '.brutx', 'manifest.json'), manifest);
+    }
+
+    it('generates CycloneDX SBOM from installed manifest', async () => {
+        const cwd = await createTempProject();
+        try {
+            await writeManifestWithComponents(cwd);
+
+            const output = path.join(cwd, 'brutx-sbom.json');
+            await doctor({ cwd, sbom: true, sbomOutput: output });
+
+            const sbom = await fs.readJson(output);
+            expect(sbom.bomFormat).toBe('CycloneDX');
+            expect(sbom.specVersion).toBe('1.5');
+            expect(sbom.metadata.component.name).toBe('user-project');
+
+            const refs = sbom.components.map((c: { 'bom-ref': string }) => c['bom-ref']);
+            // 字典序：brutx:button, brutx:dialog, npm:@lucide/vue, npm:reka-ui
+            expect(refs).toEqual([
+                'brutx:button',
+                'brutx:dialog',
+                'npm:@lucide/vue',
+                'npm:reka-ui',
+            ]);
+
+            const dialog = sbom.components.find((c: { 'bom-ref': string }) => c['bom-ref'] === 'brutx:dialog');
+            expect(dialog.version).toBe('v1.2.0');
+            expect(dialog.dependencies).toContain('brutx:button');
+            expect(dialog.hashes[0].content).toBe('def456');
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('errors when no components are installed', async () => {
+        const cwd = await createTempProject();
+        try {
+            // No manifest → should throw CONFIG_NOT_FOUND
+            await expect(doctor({ cwd, sbom: true })).rejects.toThrow(/No installed components/);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('defaults output path to ./brutx-sbom.json', async () => {
+        const cwd = await createTempProject();
+        try {
+            await writeManifestWithComponents(cwd);
+            await doctor({ cwd, sbom: true, silent: true });
+
+            const defaultPath = path.join(cwd, 'brutx-sbom.json');
+            const exists = await fs.pathExists(defaultPath);
+            expect(exists).toBe(true);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+});

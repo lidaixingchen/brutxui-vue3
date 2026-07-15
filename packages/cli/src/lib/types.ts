@@ -95,6 +95,10 @@ export interface DoctorOptions {
     yes?: boolean;
     fixOnly?: string;
     offline?: boolean;
+    /** 生成用户项目 SBOM（CycloneDX 格式）后退出，不运行常规检查 */
+    sbom?: boolean;
+    /** SBOM 输出文件路径，默认 ./brutx-sbom.json */
+    sbomOutput?: string;
 }
 
 export interface DiffOptions {

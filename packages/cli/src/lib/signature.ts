@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
+import { isRequireSignature } from './signature-mode.js';
 
 /**
  * 供应链安全：manifest 签名与验签（P1-6）
@@ -23,6 +24,12 @@ import { logger } from './logger.js';
  *   - 公钥列表按 keyId 索引，manifest.keyId 指定所用密钥
  *   - 旧 key 签发的 manifest 在过渡期（旧 key 仍在列表中）仍可信
  *   - 撤销旧 key 时从环境变量中移除即可
+ *
+ * 严格模式（P1-6 v2.2 修正）：
+ *   - 默认行为：签名无效时 `warn`（不阻塞发布，避免迁移期卡死）
+ *   - 严格模式：`--require-signature` flag 或 `BRUTX_REQUIRE_SIGNATURE=1` 激活，
+ *     签名无效时升级为抛 REGISTRY_SIGNATURE_INVALID
+ *   - 详见 AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md 风险与取舍
  */
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
@@ -65,13 +72,18 @@ export function loadTrustedPublicKeys(): TrustedPublicKey[] {
  *   1. manifest.signature 或 manifest.keyId 缺失 → 跳过验签（debug 日志），返回 false
  *   2. manifest.integrity 缺失 → 跳过验签（debug 日志），返回 false
  *   3. trustedKeys 为空 → 跳过验签（debug 日志），返回 false
- *   4. keyId 匹配的公钥不存在 → 抛 REGISTRY_SIGNATURE_INVALID
- *   5. 公钥格式错误 → 抛 REGISTRY_SIGNATURE_INVALID
- *   6. 签名验证失败 → 抛 REGISTRY_SIGNATURE_INVALID
+ *   4. keyId 匹配的公钥不存在 → handleSignatureFailure()
+ *   5. 公钥格式错误 → handleSignatureFailure()
+ *   6. 签名验证失败 → handleSignatureFailure()
  *   7. 验证通过 → 返回 true
  *
- * @returns true 表示签名通过验证；false 表示跳过验签（不抛错）
- * @throws CliError code=REGISTRY_SIGNATURE_INVALID 签名无效或 keyId 未匹配
+ * 严格模式（--require-signature 或 BRUTX_REQUIRE_SIGNATURE=1）：
+ *   签名失败时抛 REGISTRY_SIGNATURE_INVALID。
+ * 默认模式（迁移期推荐）：
+ *   签名失败时 warn 日志并返回 false，不阻塞 getItem 流程（integrity 仍兜底防篡改）。
+ *
+ * @returns true 表示签名通过验证；false 表示跳过验签或签名失败已降级为 warn
+ * @throws CliError code=REGISTRY_SIGNATURE_INVALID 严格模式下签名无效
  */
 export function verifyManifestSignature(
     manifest: { integrity?: string; signature?: string; keyId?: string },
@@ -94,13 +106,24 @@ export function verifyManifestSignature(
 
     const key = trustedKeys.find(k => k.keyId === manifest.keyId);
     if (!key) {
-        throw new CliError(
+        return handleSignatureFailure(
             `Manifest signed with unknown keyId "${manifest.keyId}". No matching trusted public key found.`,
-            { code: 'REGISTRY_SIGNATURE_INVALID' },
         );
     }
 
-    const publicKeyObject = parsePublicKey(key.publicKey);
+    let publicKeyObject: crypto.KeyObject;
+    try {
+        publicKeyObject = parsePublicKey(key.publicKey);
+    } catch (error) {
+        // parsePublicKey 抛 CliError(REGISTRY_SIGNATURE_INVALID)——走统一降级路径
+        if (error instanceof CliError) {
+            return handleSignatureFailure(error.message);
+        }
+        return handleSignatureFailure(
+            `Failed to parse trusted public key: ${error instanceof Error ? error.message : String(error)}`,
+        );
+    }
+
     const signatureBuffer = decodeBase64(manifest.signature);
     const messageBuffer = Buffer.from(manifest.integrity, 'utf-8');
 
@@ -112,35 +135,38 @@ export function verifyManifestSignature(
             signatureBuffer,
         );
         if (!valid) {
-            throw new CliError(
-                `Manifest signature verification failed. The manifest may have been tampered with.`,
-                { code: 'REGISTRY_SIGNATURE_INVALID' },
+            return handleSignatureFailure(
+                'Manifest signature verification failed. The manifest may have been tampered with.',
             );
         }
         return true;
     } catch (error) {
         if (error instanceof CliError) throw error;
-        throw new CliError(
+        return handleSignatureFailure(
             `Manifest signature verification failed: ${error instanceof Error ? error.message : String(error)}`,
-            { code: 'REGISTRY_SIGNATURE_INVALID' },
         );
     }
 }
 
-function parsePublicKey(publicKeyBase64: string): crypto.KeyObject {
-    try {
-        const derBuffer = decodeBase64(publicKeyBase64);
-        return crypto.createPublicKey({
-            key: derBuffer,
-            format: 'der',
-            type: 'spki',
-        });
-    } catch (error) {
-        throw new CliError(
-            `Failed to parse trusted public key (invalid base64 SPKI): ${error instanceof Error ? error.message : String(error)}`,
-            { code: 'REGISTRY_SIGNATURE_INVALID' },
-        );
+/**
+ * 处理签名失败：默认模式 warn，严格模式抛错。
+ * 返回 false 表示已降级为 warn，调用方应继续流程（integrity 会兜底校验）。
+ */
+function handleSignatureFailure(message: string): false {
+    if (isRequireSignature()) {
+        throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
     }
+    logger.warn(`[Signature] ${message} (use --require-signature to enforce)`);
+    return false;
+}
+
+function parsePublicKey(publicKeyBase64: string): crypto.KeyObject {
+    const derBuffer = decodeBase64(publicKeyBase64);
+    return crypto.createPublicKey({
+        key: derBuffer,
+        format: 'der',
+        type: 'spki',
+    });
 }
 
 function decodeBase64(value: string): Buffer {
