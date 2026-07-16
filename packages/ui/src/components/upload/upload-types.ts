@@ -1,8 +1,3 @@
-export { default as Upload } from './Upload.vue'
-export { default as UploadTrigger } from './UploadTrigger.vue'
-export { default as UploadFileList } from './UploadFileList.vue'
-export { default as UploadFileItem } from './UploadFileItem.vue'
-
 export interface UploadFile {
     id: string
     name: string

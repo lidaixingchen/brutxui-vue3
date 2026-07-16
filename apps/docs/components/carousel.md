@@ -62,8 +62,8 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 `Carousel` 组件内部逻辑已抽取为独立的 `useCarousel` 组合式函数，可单独使用以构建完全自定义的轮播 UI。它基于 `embla-carousel-vue` 封装，内置自动播放、循环控制、选中索引追踪，并自动遵守 `prefers-reduced-motion` 系统偏好（启用减少动效时会停止自动播放并禁用过渡动画）。
 
 ```ts
-import { useCarousel } from 'brutx-ui-vue/carousel'
-import type { UseCarouselOptions } from 'brutx-ui-vue/carousel'
+import { useCarousel } from 'brutx-ui-vue/useCarousel'
+import type { UseCarouselOptions } from 'brutx-ui-vue/useCarousel'
 
 const options: UseCarouselOptions = {
     loop: true,

@@ -6,7 +6,8 @@
       "AccordionItem.vue",
       "AccordionTrigger.vue",
       "accordion-key.ts",
-      "accordion-variants.ts"
+      "accordion-variants.ts",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -20,7 +21,8 @@
       "Alert.vue",
       "AlertDescription.vue",
       "AlertTitle.vue",
-      "alert-variants.ts"
+      "alert-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -39,7 +41,8 @@
       "AlertDialogFooter.vue",
       "AlertDialogHeader.vue",
       "AlertDialogTitle.vue",
-      "alert-dialog-variants.ts"
+      "alert-dialog-variants.ts",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -50,7 +53,8 @@
   },
   "auth-card": {
     "files": [
-      "AuthCard.vue"
+      "AuthCard.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -67,7 +71,8 @@
       "AvatarFallback.vue",
       "AvatarImage.vue",
       "avatar-key.ts",
-      "avatar-variants.ts"
+      "avatar-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -77,7 +82,8 @@
   },
   "backtop": {
     "files": [
-      "Backtop.vue"
+      "Backtop.vue",
+      "index.ts"
     ],
     "composables": [
       "useThrottle.ts"
@@ -88,7 +94,8 @@
   "badge": {
     "files": [
       "Badge.vue",
-      "badge-variants.ts"
+      "badge-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -102,7 +109,8 @@
   "before-after": {
     "files": [
       "BeforeAfter.vue",
-      "before-after-variants.ts"
+      "before-after-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -122,7 +130,8 @@
       "BreadcrumbList.vue",
       "BreadcrumbPage.vue",
       "BreadcrumbSeparator.vue",
-      "breadcrumb-variants.ts"
+      "breadcrumb-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -135,7 +144,8 @@
   },
   "brutalist-hero": {
     "files": [
-      "BrutalistHero.vue"
+      "BrutalistHero.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -165,7 +175,8 @@
   },
   "calendar": {
     "files": [
-      "Calendar.vue"
+      "Calendar.vue",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -182,7 +193,8 @@
       "CardFooter.vue",
       "CardHeader.vue",
       "CardTitle.vue",
-      "card-variants.ts"
+      "card-variants.ts",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -193,7 +205,8 @@
   "card-3d": {
     "files": [
       "Card3D.vue",
-      "card-3d-variants.ts"
+      "card-3d-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -210,6 +223,7 @@
       "CarouselItem.vue",
       "carousel-shared.ts",
       "carousel-variants.ts",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -246,6 +260,7 @@
       "ChatBubble.vue",
       "ChatContainer.vue",
       "chat-bubble-variants.ts",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -257,7 +272,8 @@
   "checkbox": {
     "files": [
       "Checkbox.vue",
-      "checkbox-variants.ts"
+      "checkbox-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -273,6 +289,7 @@
       "CodeBlock.vue",
       "brutx-prism.css",
       "code-block-variants.ts",
+      "index.ts",
       "prism-languages.ts"
     ],
     "composables": [
@@ -285,7 +302,8 @@
   },
   "color-mode-switcher": {
     "files": [
-      "ColorModeSwitcher.vue"
+      "ColorModeSwitcher.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -302,6 +320,7 @@
       "ColorPickerPanel.vue",
       "ColorPickerSwatch.vue",
       "color-picker-variants.ts",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -321,7 +340,8 @@
     "files": [
       "Combobox.vue",
       "combobox-types.ts",
-      "combobox-variants.ts"
+      "combobox-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -345,7 +365,8 @@
       "CommandSeparator.vue",
       "CommandShortcut.vue",
       "command-context.ts",
-      "command-variants.ts"
+      "command-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -357,7 +378,8 @@
   },
   "cookie-consent": {
     "files": [
-      "CookieConsent.vue"
+      "CookieConsent.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -370,7 +392,8 @@
   "copy-to-clipboard": {
     "files": [
       "CopyToClipboard.vue",
-      "copy-to-clipboard-variants.ts"
+      "copy-to-clipboard-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useClipboard.ts",
@@ -385,7 +408,8 @@
   "counter": {
     "files": [
       "Counter.vue",
-      "counter-variants.ts"
+      "counter-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useReducedMotion.ts"
@@ -397,7 +421,8 @@
   },
   "dashboard-shell": {
     "files": [
-      "DashboardShell.vue"
+      "DashboardShell.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -412,6 +437,7 @@
       "DataTable.vue",
       "DataTableColumnFilter.vue",
       "data-table-variants.ts",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -445,6 +471,7 @@
       "YearPicker.vue",
       "YearPickerPanel.vue",
       "date-picker-variants.ts",
+      "index.ts",
       "panel-styles.css",
       "types.ts"
     ],
@@ -463,7 +490,8 @@
     "files": [
       "Descriptions.vue",
       "DescriptionsItem.vue",
-      "descriptions-key.ts"
+      "descriptions-key.ts",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -479,7 +507,8 @@
       "DialogOverlay.vue",
       "DialogTitle.vue",
       "dialog-variants.ts",
-      "functional.ts"
+      "functional.ts",
+      "index.ts"
     ],
     "composables": [
       "useDialogEnhanced.ts",
@@ -505,7 +534,8 @@
       "DropdownMenuShortcut.vue",
       "DropdownMenuSubContent.vue",
       "DropdownMenuSubTrigger.vue",
-      "dropdown-menu-variants.ts"
+      "dropdown-menu-variants.ts",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -518,7 +548,8 @@
   },
   "feedback-form": {
     "files": [
-      "FeedbackForm.vue"
+      "FeedbackForm.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -531,6 +562,7 @@
   "footer-section": {
     "files": [
       "FooterSection.vue",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -553,7 +585,8 @@
       "form-context.ts",
       "form-wizard-types.ts",
       "form-wizard-utils.ts",
-      "form-wizard-variants.ts"
+      "form-wizard-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -564,7 +597,8 @@
   "glitch-text": {
     "files": [
       "GlitchText.vue",
-      "glitch-text-variants.ts"
+      "glitch-text-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useReducedMotion.ts"
@@ -578,7 +612,8 @@
   "hardcore-input": {
     "files": [
       "HardcoreInput.vue",
-      "hardcore-input-variants.ts"
+      "hardcore-input-variants.ts",
+      "index.ts"
     ],
     "composables": [
       "useAudioEngine.ts",
@@ -593,6 +628,7 @@
   "header-section": {
     "files": [
       "HeaderSection.vue",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -605,7 +641,8 @@
   },
   "image": {
     "files": [
-      "Image.vue"
+      "Image.vue",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -617,6 +654,7 @@
   "infinite-scroll": {
     "files": [
       "InfiniteScroll.vue",
+      "index.ts",
       "useInfiniteScroll.ts"
     ],
     "composables": [
@@ -630,6 +668,7 @@
   "input": {
     "files": [
       "Input.vue",
+      "index.ts",
       "input-variants.ts",
       "shared-input-variants.ts"
     ],
@@ -645,6 +684,7 @@
   "kanban": {
     "files": [
       "KanbanBoard.vue",
+      "index.ts",
       "kanban-variants.ts",
       "types.ts"
     ],
@@ -660,6 +700,7 @@
   "kbd": {
     "files": [
       "Kbd.vue",
+      "index.ts",
       "kbd-variants.ts"
     ],
     "composables": [],
@@ -671,6 +712,7 @@
   "label": {
     "files": [
       "Label.vue",
+      "index.ts",
       "label-variants.ts"
     ],
     "composables": [],
@@ -679,7 +721,8 @@
   },
   "loading": {
     "files": [
-      "Loading.vue"
+      "Loading.vue",
+      "index.ts"
     ],
     "composables": [],
     "directives": [
@@ -690,6 +733,7 @@
   "marquee": {
     "files": [
       "Marquee.vue",
+      "index.ts",
       "marquee-variants.ts"
     ],
     "composables": [
@@ -714,7 +758,8 @@
   },
   "message": {
     "files": [
-      "MessageContainer.vue"
+      "MessageContainer.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -729,6 +774,7 @@
   "noise-background": {
     "files": [
       "NoiseBackground.vue",
+      "index.ts",
       "noise-background-variants.ts"
     ],
     "composables": [
@@ -742,6 +788,7 @@
   "number-input": {
     "files": [
       "NumberInput.vue",
+      "index.ts",
       "number-input-variants.ts"
     ],
     "composables": [
@@ -756,6 +803,7 @@
   "pagination": {
     "files": [
       "Pagination.vue",
+      "index.ts",
       "pagination-variants.ts"
     ],
     "composables": [
@@ -769,7 +817,8 @@
   },
   "popconfirm": {
     "files": [
-      "Popconfirm.vue"
+      "Popconfirm.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts"
@@ -795,6 +844,7 @@
   "pricing-section": {
     "files": [
       "PricingSection.vue",
+      "index.ts",
       "types.ts"
     ],
     "composables": [
@@ -817,6 +867,7 @@
     "files": [
       "RadioGroup.vue",
       "RadioGroupItem.vue",
+      "index.ts",
       "radio-group-variants.ts"
     ],
     "composables": [],
@@ -836,7 +887,8 @@
   },
   "result": {
     "files": [
-      "Result.vue"
+      "Result.vue",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],
@@ -847,6 +899,7 @@
   "scratch-card": {
     "files": [
       "ScratchCard.vue",
+      "index.ts",
       "scratch-card-variants.ts"
     ],
     "composables": [
@@ -864,6 +917,7 @@
     "files": [
       "ScrollArea.vue",
       "ScrollBar.vue",
+      "index.ts",
       "scroll-area-variants.ts"
     ],
     "composables": [],
@@ -880,6 +934,7 @@
       "SelectScrollUpButton.vue",
       "SelectSeparator.vue",
       "SelectTrigger.vue",
+      "index.ts",
       "select-variants.ts"
     ],
     "composables": [
@@ -895,6 +950,7 @@
   "separator": {
     "files": [
       "Separator.vue",
+      "index.ts",
       "separator-variants.ts"
     ],
     "composables": [],
@@ -908,6 +964,7 @@
       "SheetFooter.vue",
       "SheetHeader.vue",
       "SheetTitle.vue",
+      "index.ts",
       "sheet-variants.ts"
     ],
     "composables": [
@@ -926,6 +983,7 @@
       "SkeletonCard.vue",
       "SkeletonTable.vue",
       "SkeletonText.vue",
+      "index.ts",
       "skeleton-variants.ts"
     ],
     "composables": [],
@@ -935,6 +993,7 @@
   "sketchy-chart": {
     "files": [
       "SketchyChart.vue",
+      "index.ts",
       "sketchy-chart-variants.ts"
     ],
     "composables": [
@@ -948,6 +1007,7 @@
   "slider": {
     "files": [
       "Slider.vue",
+      "index.ts",
       "slider-variants.ts"
     ],
     "composables": [],
@@ -962,6 +1022,7 @@
       "BlockSpinner.vue",
       "DotsSpinner.vue",
       "Spinner.vue",
+      "index.ts",
       "spinner-variants.ts"
     ],
     "composables": [
@@ -973,6 +1034,7 @@
   "stepper": {
     "files": [
       "Stepper.vue",
+      "index.ts",
       "stepper-variants.ts",
       "types.ts"
     ],
@@ -987,6 +1049,7 @@
   "switch": {
     "files": [
       "Switch.vue",
+      "index.ts",
       "switch-variants.ts"
     ],
     "composables": [
@@ -1007,6 +1070,7 @@
       "TableHead.vue",
       "TableHeader.vue",
       "TableRow.vue",
+      "index.ts",
       "table-variants.ts"
     ],
     "composables": [],
@@ -1019,6 +1083,7 @@
       "TabsContent.vue",
       "TabsList.vue",
       "TabsTrigger.vue",
+      "index.ts",
       "tabs-variants.ts",
       "types.ts"
     ],
@@ -1037,6 +1102,7 @@
       "TagsInputItem.vue",
       "TagsInputItemDelete.vue",
       "TagsInputItemText.vue",
+      "index.ts",
       "tags-input-variants.ts"
     ],
     "composables": [
@@ -1050,6 +1116,7 @@
   "textarea": {
     "files": [
       "Textarea.vue",
+      "index.ts",
       "textarea-variants.ts"
     ],
     "composables": [
@@ -1068,6 +1135,7 @@
       "TimelineDot.vue",
       "TimelineItem.vue",
       "TimelineSeparator.vue",
+      "index.ts",
       "timeline-key.ts",
       "timeline-variants.ts"
     ],
@@ -1081,6 +1149,7 @@
     "files": [
       "Toast.vue",
       "ToastContainer.vue",
+      "index.ts",
       "toast-variants.ts"
     ],
     "composables": [
@@ -1096,6 +1165,7 @@
   "toggle": {
     "files": [
       "Toggle.vue",
+      "index.ts",
       "toggle-variants.ts"
     ],
     "composables": [],
@@ -1109,6 +1179,7 @@
     "files": [
       "ToggleGroup.vue",
       "ToggleGroupItem.vue",
+      "index.ts",
       "toggle-group-key.ts"
     ],
     "composables": [],
@@ -1119,6 +1190,7 @@
     "files": [
       "TooltipContent.vue",
       "TooltipProvider.vue",
+      "index.ts",
       "tooltip-variants.ts"
     ],
     "composables": [],
@@ -1129,7 +1201,8 @@
   },
   "tour": {
     "files": [
-      "Tour.vue"
+      "Tour.vue",
+      "index.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -1157,6 +1230,7 @@
     "files": [
       "TreeSelect.vue",
       "TreeSelectNode.vue",
+      "index.ts",
       "tree-select-types.ts",
       "tree-select-variants.ts"
     ],
@@ -1178,6 +1252,7 @@
     "files": [
       "TreeView.vue",
       "TreeViewNode.vue",
+      "index.ts",
       "tree-view-utils.ts",
       "tree-view-variants.ts",
       "types.ts"
@@ -1195,6 +1270,7 @@
   "typewriter-text": {
     "files": [
       "TypewriterText.vue",
+      "index.ts",
       "typewriter-text-variants.ts"
     ],
     "composables": [
@@ -1209,7 +1285,8 @@
       "UploadFileItem.vue",
       "UploadFileList.vue",
       "UploadTrigger.vue",
-      "index.ts"
+      "index.ts",
+      "upload-types.ts"
     ],
     "composables": [
       "useUpload.ts"
@@ -1220,6 +1297,7 @@
   "virtual-scroll": {
     "files": [
       "VirtualScroll.vue",
+      "index.ts",
       "types.ts",
       "virtual-scroll-variants.ts"
     ],
@@ -1231,7 +1309,8 @@
   },
   "watermark": {
     "files": [
-      "Watermark.vue"
+      "Watermark.vue",
+      "index.ts"
     ],
     "composables": [],
     "directives": [],

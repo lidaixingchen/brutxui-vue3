@@ -170,10 +170,17 @@ export { commandInputWrapperVariants, commandItemVariants } from './components/c
 export { default as Combobox } from './components/combobox/Combobox.vue'
 export type { ComboboxOption } from './components/combobox/combobox-types'
 
-export * from './calendar'
-export * from './carousel'
-export * from './code-block'
-export * from './form'
+export * from './components/calendar'
+export * from './components/date-picker'
+export * from './components/carousel'
+export * from './components/code-block'
+export * from './components/form'
+
+// Composables previously re-exported via root-level wrappers (./calendar, ./carousel)
+export { useDatePicker } from './composables/useDatePicker'
+export type { UseDatePickerOptions, UseDatePickerReturn } from './composables/useDatePicker'
+export { useCarousel, DEFAULT_AUTOPLAY_DELAY } from './composables/useCarousel'
+export type { UseCarouselOptions, UseCarouselReturn } from './composables/useCarousel'
 
 
 

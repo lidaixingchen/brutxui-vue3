@@ -8,7 +8,7 @@ import {
     WeekPicker,
     MonthPicker,
     YearPicker,
-} from 'brutx-ui-vue/calendar'
+} from 'brutx-ui-vue/date-picker'
 
 const date = ref<Date | null>(null)
 const dateRange = ref<[Date, Date] | null>(null)

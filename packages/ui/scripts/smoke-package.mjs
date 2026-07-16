@@ -101,10 +101,17 @@ function collectConsumerSmokeSpecifiers() {
         }
     }
 
+    // CJS smoke is only meaningful when the package actually exposes CJS —
+    // either via a `main` field or at least one `require` condition in exports.
+    // ESM-only packages (no main, no require) cannot be require()'d by CJS
+    // consumers, so attempting CJS resolution would always fail.
+    const cjsSupported = Boolean(packageJson.main) || requireSpecifiers.size > 0
+
     return {
         resolveSpecifiers: [...resolveSpecifiers],
         importSpecifiers: [...importSpecifiers],
         requireSpecifiers: [...requireSpecifiers],
+        cjsSupported,
     }
 }
 
@@ -209,7 +216,13 @@ function smokeConsumerResolution() {
         const { importScriptPath, requireScriptPath } = writeConsumerProjectScripts(consumerRoot, specifiers)
 
         runConsumerScript(importScriptPath, 'consumer ESM package resolution')
-        runConsumerScript(requireScriptPath, 'consumer CJS package resolution')
+        if (specifiers.cjsSupported) {
+            runConsumerScript(requireScriptPath, 'consumer CJS package resolution')
+        } else {
+            // ESM-only package — CJS smoke skipped (no main, no require conditions).
+            // require-smoke.cjs is still written for debugging but not executed.
+            console.log('• CJS smoke skipped (ESM-only package: no main field, no require conditions)')
+        }
 
         for (const specifier of specifiers.resolveSpecifiers) {
             resolvedConsumerEntries.add(specifier)

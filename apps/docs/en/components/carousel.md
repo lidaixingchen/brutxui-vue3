@@ -63,8 +63,8 @@ import { Carousel, CarouselItem } from 'brutx-ui-vue/carousel'
 The internal logic of the `Carousel` component has been extracted into a standalone `useCarousel` composable, which can be used independently to build fully custom carousel UIs. It wraps `embla-carousel-vue` with built-in autoplay, loop control, selected index tracking, and automatically respects the `prefers-reduced-motion` system preference (stops autoplay and disables transition animations when reduced motion is enabled).
 
 ```ts
-import { useCarousel } from 'brutx-ui-vue/carousel'
-import type { UseCarouselOptions } from 'brutx-ui-vue/carousel'
+import { useCarousel } from 'brutx-ui-vue/useCarousel'
+import type { UseCarouselOptions } from 'brutx-ui-vue/useCarousel'
 
 const options: UseCarouselOptions = {
     loop: true,

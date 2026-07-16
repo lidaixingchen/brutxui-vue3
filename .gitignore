@@ -61,6 +61,9 @@ packages/registry/bench.json
 packages/registry/registry/deps.dot
 packages/registry/registry/deps.json
 
+# Auto-generated component index.ts (derived from registry-manifest.json by prebuild:component-index)
+packages/ui/src/components/*/index.ts
+
 # VitePress
 **/.vitepress/cache
 packages/ui/visual/dist
