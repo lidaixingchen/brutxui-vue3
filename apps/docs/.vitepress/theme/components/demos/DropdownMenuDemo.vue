@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import {
-    DropdownMenu,
-    DropdownMenuTrigger,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuLabel,
     DropdownMenuItem,
     DropdownMenuSeparator,
     Button,
 } from 'brutx-ui-vue'
+import { DropdownMenuRoot as DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup } from 'reka-ui'
 </script>
 
 <template>

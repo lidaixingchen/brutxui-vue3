@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from 'brutx-ui-vue'
+import { Select, SelectTrigger, SelectContent, SelectItem } from 'brutx-ui-vue'
+import { SelectValue } from 'reka-ui'
 </script>
 
 <template>

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import {
-    AlertDialog,
-    AlertDialogTrigger,
     AlertDialogContent,
     AlertDialogHeader,
     AlertDialogTitle,
@@ -11,6 +9,7 @@ import {
     AlertDialogCancel,
     Button,
 } from 'brutx-ui-vue'
+import { AlertDialogRoot as AlertDialog, AlertDialogTrigger } from 'reka-ui'
 </script>
 
 <template>

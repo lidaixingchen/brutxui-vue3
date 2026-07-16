@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {
-    Sheet, SheetTrigger, SheetContent, SheetHeader,
+    SheetContent, SheetHeader,
     SheetTitle, SheetDescription, SheetFooter, Button,
 } from 'brutx-ui-vue'
+import { DialogRoot as Sheet, DialogTrigger as SheetTrigger } from 'reka-ui'
 </script>
 
 <template>

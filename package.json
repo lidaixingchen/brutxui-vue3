@@ -5,15 +5,16 @@
     "description": "Neo-Brutalism UI Library Monorepo (Vue 3)",
     "scripts": {
         "dev": "pnpm --filter docs dev",
-        "build": "pnpm --filter brutx-ui-vue build",
-        "build:ui": "pnpm --filter brutx-ui-vue build",
-        "build:docs": "pnpm --filter docs build",
-        "lint": "pnpm -r lint",
-        "clean": "pnpm -r clean",
-        "typecheck": "pnpm -r typecheck",
-        "test": "pnpm --filter brutx-ui-vue test",
+        "build": "turbo run build",
+        "build:docs": "turbo run build --filter=docs",
+        "lint": "turbo run lint",
+        "clean": "turbo run clean",
+        "typecheck": "turbo run typecheck",
+        "test": "turbo run test",
+        "test:ssr": "turbo run test:ssr",
         "test:watch": "pnpm --filter brutx-ui-vue test:watch",
         "test:coverage": "pnpm --filter brutx-ui-vue test:coverage",
+        "bench": "turbo run bench",
         "release:check": "node scripts/release/check-release.mjs",
         "changelog": "node scripts/release/generate-changelog.mjs",
         "changelog:dry": "node scripts/release/generate-changelog.mjs --dry-run",
@@ -28,5 +29,8 @@
         "node": ">=22.5.0",
         "pnpm": ">=11.0.0"
     },
-    "packageManager": "pnpm@11.10.0"
+    "packageManager": "pnpm@11.10.0",
+    "devDependencies": {
+        "turbo": "^2.10.5"
+    }
 }

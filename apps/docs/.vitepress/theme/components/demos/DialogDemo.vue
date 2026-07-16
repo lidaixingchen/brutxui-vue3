@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import {
-    Dialog,
-    DialogTrigger,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogDescription,
     DialogFooter,
-    DialogClose,
     Button,
 } from 'brutx-ui-vue'
+import { DialogRoot as Dialog, DialogTrigger, DialogClose } from 'reka-ui'
 </script>
 
 <template>

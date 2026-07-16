@@ -22,6 +22,9 @@ jobs:
                 node-version: [22, 24]
         env:
             FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+            # Turbo Remote Cache — 需在仓库 Secrets 中配置（见 docs/ARCHITECTURE_OPTIMIZATION_PLAN_V2.md §5.1）
+            # TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         steps:
             - uses: actions/checkout@v4
 
@@ -62,7 +65,8 @@ jobs:
               if: matrix.node-version == 22
               run: sudo apt-get install -y fonts-inter || (sudo apt-get update && sudo apt-get install -y fonts-inter)
 
-            - run: pnpm --filter brutx-ui-vue build
+            - name: Build all packages (turbo)
+              run: pnpm build
 
             - name: Check bundle size limits
               if: matrix.node-version == 22
@@ -71,17 +75,20 @@ jobs:
             - name: Audit CSS fallback coverage
               run: pnpm --filter brutx-ui-vue audit:fallback:check
 
-            - run: pnpm -r typecheck
+            - name: Typecheck all packages (turbo)
+              run: pnpm typecheck
 
-            - run: pnpm -r lint
+            - name: Lint all packages (turbo)
+              run: pnpm lint
 
-            - run: pnpm --filter brutx-vue build
+            - name: Validate registry
+              run: turbo run validate --filter=brutx-registry-vue
 
-            - run: pnpm --filter brutx-registry-vue build
+            - name: Test all packages (turbo)
+              run: pnpm test
 
-            - run: pnpm --filter brutx-registry-vue validate
-
-            - run: pnpm --filter brutx-ui-vue test
+            - name: SSR smoke tests
+              run: pnpm test:ssr
 
             - run: pnpm --filter brutx-ui-vue test:browser
               if: matrix.node-version == 22
@@ -96,8 +103,6 @@ jobs:
                   path: |
                       packages/ui/playwright-report
                       packages/ui/test-results
-
-            - run: pnpm --filter brutx-vue test
 
             - run: pnpm --filter brutx-vue test:integration
               if: matrix.node-version == 22

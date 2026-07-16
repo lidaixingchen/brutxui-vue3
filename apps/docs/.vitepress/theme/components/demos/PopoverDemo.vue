@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {
-    Popover,
-    PopoverTrigger,
     PopoverContent,
     Button,
 } from 'brutx-ui-vue'
+import { PopoverRoot as Popover, PopoverTrigger } from 'reka-ui'
 </script>
 
 <template>

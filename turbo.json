@@ -1,0 +1,50 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "tasks": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["dist/**"],
+            "inputs": [
+                "src/**",
+                "scripts/**",
+                "package.json",
+                "tsconfig.json",
+                "tsconfig.*.json",
+                "vite.config.ts",
+                "tailwind.config.*",
+                "postcss.config.*"
+            ]
+        },
+        "test": {
+            "dependsOn": ["build"],
+            "inputs": [
+                "src/**",
+                "tests/**",
+                "vitest.config.ts",
+                "vitest.browser.config.ts",
+                "vitest.ssr.config.ts"
+            ]
+        },
+        "test:ssr": {
+            "dependsOn": ["build"],
+            "inputs": ["src/ssr/**", "vitest.ssr.config.ts"]
+        },
+        "typecheck": {
+            "inputs": ["src/**", "tsconfig.json", "tsconfig.*.json"]
+        },
+        "lint": {
+            "inputs": ["src/**", "eslint.config.js", ".eslintrc.*"]
+        },
+        "validate": {
+            "dependsOn": ["build"],
+            "inputs": ["scripts/**", "registry/**"]
+        },
+        "bench": {
+            "cache": false,
+            "inputs": ["perf/**", "src/**"]
+        },
+        "clean": {
+            "cache": false
+        }
+    }
+}

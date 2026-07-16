@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {
-    TooltipProvider, Tooltip, TooltipTrigger, TooltipContent, Button,
+    TooltipProvider, TooltipContent, Button,
 } from 'brutx-ui-vue'
+import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 </script>
 
 <template>
