@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, useSlots, type Component, type CSSProperties } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { getResizeObserverCtor } from '@/lib/env';
+import { getResizeObserverCtor, requestAnimationFrame, cancelAnimationFrame } from '@/lib/env';
 import { useReducedMotion } from '@/composables/useReducedMotion';
 import { counterVariants } from './counter-variants';
 

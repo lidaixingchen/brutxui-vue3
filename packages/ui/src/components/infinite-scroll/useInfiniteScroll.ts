@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted, watch, type Ref } from 'vue'
-import { hasIntersectionObserver } from '@/lib/env'
+import { hasIntersectionObserver, getIntersectionObserverCtor } from '@/lib/env'
 
 export interface UseInfiniteScrollOptions {
     /** 触发距离阈值 (px) */
@@ -54,7 +54,10 @@ export function useInfiniteScroll(
         if (!targetRef.value) return 'missing-target'
         if (!hasIntersectionObserver) return 'unsupported'
 
-        observer.value = new IntersectionObserver(
+        const Ctor = getIntersectionObserverCtor()
+        if (!Ctor) return 'unsupported'
+
+        observer.value = new Ctor(
             (entries) => {
                 const entry = entries[0]
                 if (entry.isIntersecting) {

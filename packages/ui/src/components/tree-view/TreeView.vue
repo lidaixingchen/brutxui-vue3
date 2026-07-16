@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, shallowRef, computed, watch, provide, getCurrentInstance, type Ref, type ComputedRef } from 'vue';
-import { hasDocument } from '@/lib/env';
+import { getDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
 import { getCheckState, getAllDescendantIds, moveNode, cloneTree } from './tree-view-utils';
@@ -168,10 +168,11 @@ function getVisibleTreeItems(): HTMLElement[] {
 }
 
 function focusAdjacent(direction: -1 | 1) {
-    if (!hasDocument) return
+    const doc = getDocument()
+    if (!doc) return
     const items = getVisibleTreeItems()
     if (items.length === 0) return
-    const activeEl = document.activeElement
+    const activeEl = doc.activeElement
     const currentItem = activeEl instanceof HTMLElement
         ? activeEl.closest('[role="treeitem"]')
         : null
@@ -193,10 +194,11 @@ function handleFocusNext() {
 }
 
 function handleFocusParent() {
-    if (!hasDocument) return
+    const doc = getDocument()
+    if (!doc) return
     const items = getVisibleTreeItems()
     if (items.length === 0) return
-    const activeEl = document.activeElement
+    const activeEl = doc.activeElement
     if (!(activeEl instanceof HTMLElement)) return
     const currentItem = activeEl.closest('[role="treeitem"]')
     if (!(currentItem instanceof HTMLElement)) return
@@ -207,8 +209,9 @@ function handleFocusParent() {
 }
 
 function handleFocusFirstChild() {
-    if (!hasDocument) return
-    const activeEl = document.activeElement
+    const doc = getDocument()
+    if (!doc) return
+    const activeEl = doc.activeElement
     if (!(activeEl instanceof HTMLElement)) return
     const currentItem = activeEl.closest('[role="treeitem"]')
     if (!(currentItem instanceof HTMLElement)) return

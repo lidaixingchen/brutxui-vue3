@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
-import { hasDocument } from '@/lib/env'
+import { getDocument } from '@/lib/env'
 import { Check, ChevronRight, Folder, FolderOpen } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { treeSelectNodeVariants } from './tree-select-variants'
@@ -68,17 +68,19 @@ function handleClick() {
 }
 
 function getVisibleTreeItems(): HTMLElement[] {
-    if (!hasDocument) return []
-    const tree = document.activeElement?.closest('[role="tree"]')
+    const doc = getDocument()
+    if (!doc) return []
+    const tree = doc.activeElement?.closest('[role="tree"]')
     if (!tree) return []
     return Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
 }
 
 function focusAdjacent(direction: -1 | 1) {
-    if (!hasDocument) return
+    const doc = getDocument()
+    if (!doc) return
     const items = getVisibleTreeItems()
     if (items.length === 0) return
-    const activeEl = document.activeElement as HTMLElement | null
+    const activeEl = doc.activeElement as HTMLElement | null
     const currentIndex = activeEl ? items.indexOf(activeEl) : -1
     const nextIndex = currentIndex + direction
     if (nextIndex >= 0 && nextIndex < items.length) {
@@ -87,8 +89,9 @@ function focusAdjacent(direction: -1 | 1) {
 }
 
 function focusParent() {
-    if (!hasDocument) return
-    const activeEl = document.activeElement as HTMLElement | null
+    const doc = getDocument()
+    if (!doc) return
+    const activeEl = doc.activeElement as HTMLElement | null
     if (!activeEl) return
     const currentItem = activeEl.closest('[role="treeitem"]')
     if (!currentItem) return
@@ -97,8 +100,9 @@ function focusParent() {
 }
 
 function focusFirstChild() {
-    if (!hasDocument) return
-    const activeEl = document.activeElement as HTMLElement | null
+    const doc = getDocument()
+    if (!doc) return
+    const activeEl = doc.activeElement as HTMLElement | null
     if (!activeEl) return
     const currentItem = activeEl.closest('[role="treeitem"]')
     if (!currentItem) return

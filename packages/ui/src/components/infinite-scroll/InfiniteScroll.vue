@@ -2,7 +2,7 @@
 import { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
-import { hasIntersectionObserver } from '@/lib/env'
+import { hasIntersectionObserver, getIntersectionObserverCtor } from '@/lib/env'
 
 interface InfiniteScrollProps {
     /** 触发距离阈值 (px) */
@@ -64,7 +64,10 @@ function setupObserver(): ObserverSetupResult {
     if (!sentinelRef.value) return 'missing-target'
     if (!hasIntersectionObserver) return 'unsupported'
 
-    observer.value = new IntersectionObserver(
+    const Ctor = getIntersectionObserverCtor()
+    if (!Ctor) return 'unsupported'
+
+    observer.value = new Ctor(
         (entries) => {
             const entry = entries[0]
             if (entry.isIntersecting) {

@@ -1,4 +1,5 @@
 import { type Ref, ref, onUnmounted } from 'vue'
+import { requestAnimationFrame, cancelAnimationFrame } from '../lib/env'
 import type { MoveDirection } from '@/types'
 
 export interface KanbanCard {

@@ -412,8 +412,11 @@ export { useThrottle } from './composables/useThrottle'
 export type { UseThrottleOptions, UseThrottleReturn } from './composables/useThrottle'
 
 // 新增组件 - Upload 系统
-export { Upload, UploadTrigger, UploadFileList, UploadFileItem } from './components/upload'
-export type { UploadFile, UploadError, UploadRequestOptions } from './components/upload'
+export { default as Upload } from './components/upload/Upload.vue'
+export { default as UploadTrigger } from './components/upload/UploadTrigger.vue'
+export { default as UploadFileList } from './components/upload/UploadFileList.vue'
+export { default as UploadFileItem } from './components/upload/UploadFileItem.vue'
+export type { UploadFile, UploadError, UploadRequestOptions } from './components/upload/upload-types'
 
 // 新增组件 - Popconfirm
 export { default as Popconfirm } from './components/popconfirm/Popconfirm.vue'

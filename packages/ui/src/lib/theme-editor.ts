@@ -6,7 +6,7 @@
  * 与 theme-variables 模块配合使用，实现类型安全的主题配置管理。
  */
 
-import { hasDocument } from './env'
+import { hasDocument, getDocument } from './env'
 import {
     DEFAULT_THEMES,
     type ThemeVariables,
@@ -280,7 +280,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
     function applyToDom(variables: ThemeVariables): void {
         if (!hasDocument) return
         const cssVars = themeVariablesToCssVars(variables, '--brutal')
-        const root = document.documentElement
+        const root = getDocument()!.documentElement
         for (const [key, value] of Object.entries(cssVars)) {
             root.style.setProperty(key, value)
         }
@@ -292,7 +292,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      */
     function removeFromDom(): void {
         if (!hasDocument || !previewedVars) return
-        const root = document.documentElement
+        const root = getDocument()!.documentElement
         for (const key of Object.keys(previewedVars)) {
             root.style.removeProperty(key)
         }

@@ -1,5 +1,5 @@
 import { createVNode, render, type Component, type AppContext } from 'vue'
-import { canUseDocumentBody } from './env'
+import { canUseDocumentBody, getDocument } from './env'
 import { DEFAULT_DIALOG_TRANSITION_MS } from './defaults'
 import { getGlobalAppContext } from '../plugin'
 
@@ -29,7 +29,8 @@ export function renderImperative(
         }
     }
 
-    const container = document.createElement('div')
+    const doc = getDocument()!
+    const container = doc.createElement('div')
     let isDestroyed = false
 
     const handleClose = () => {
@@ -52,7 +53,7 @@ export function renderImperative(
     render(vnode, container)
 
     // 挂载整个容器而非仅 firstElementChild，避免多根 fragment 场景下丢失其他根节点
-    document.body.appendChild(container)
+    doc.body!.appendChild(container)
 
     function destroy() {
         if (isDestroyed) return

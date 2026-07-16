@@ -3,7 +3,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import { useThrottle } from '@/composables/useThrottle'
-import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, getViewportSize, hasDocument } from '@/lib/env'
+import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, getViewportSize, hasDocument, getWindow, getDocument, getComputedStyle } from '@/lib/env'
 import { Z_INDEX } from '@/lib/z-index'
 
 export interface TourStep {
@@ -75,7 +75,7 @@ const getTargetElement = (target: string | HTMLElement | undefined): HTMLElement
     }
     if (typeof target === 'string') {
         if (!hasDocument) return null
-        return document.querySelector(target)
+        return getDocument()!.querySelector(target)
     }
     return target
 }
@@ -118,8 +118,8 @@ const drawCanvas = (): void => {
 
         let strokeColor = BORDER_FALLBACK_COLOR
         if (hasDocument) {
-            const style = getComputedStyle(document.documentElement)
-            strokeColor = style.getPropertyValue('--brutal-black').trim() || BORDER_FALLBACK_COLOR
+            const style = getComputedStyle(getDocument()!.documentElement)
+            strokeColor = style?.getPropertyValue('--brutal-black').trim() || BORDER_FALLBACK_COLOR
         }
 
         ctx.strokeStyle = strokeColor
@@ -369,16 +369,18 @@ watch(
 )
 
 onMounted((): void => {
-    window.addEventListener('resize', handleScrollOrResize, { passive: true })
-    window.addEventListener('scroll', handleScrollOrResize, { passive: true })
-    window.addEventListener('keydown', handleKeyDown)
+    const win = getWindow()
+    win?.addEventListener('resize', handleScrollOrResize, { passive: true })
+    win?.addEventListener('scroll', handleScrollOrResize, { passive: true })
+    win?.addEventListener('keydown', handleKeyDown)
 })
 
 onBeforeUnmount((): void => {
     isUnmounted = true
-    window.removeEventListener('resize', handleScrollOrResize)
-    window.removeEventListener('scroll', handleScrollOrResize)
-    window.removeEventListener('keydown', handleKeyDown)
+    const win = getWindow()
+    win?.removeEventListener('resize', handleScrollOrResize)
+    win?.removeEventListener('scroll', handleScrollOrResize)
+    win?.removeEventListener('keydown', handleKeyDown)
     cleanupResizeObserver()
 })
 </script>

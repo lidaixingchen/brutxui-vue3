@@ -26,6 +26,7 @@ vi.mock('./env', () => ({
             window.localStorage.setItem(key, value)
         }
     }),
+    getDocument: () => document,
 }))
 
 describe('theme-variables', () => {

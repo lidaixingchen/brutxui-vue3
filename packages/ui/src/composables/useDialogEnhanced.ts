@@ -1,5 +1,5 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, type ComputedRef, type CSSProperties, type MaybeRefOrGetter } from 'vue'
-import { getViewportSize, hasDocument } from '@/lib/env'
+import { getViewportSize, getDocument, requestAnimationFrame, cancelAnimationFrame } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import type { ResizeCorner } from '@/types'
 export type { ResizeCorner }
@@ -150,7 +150,8 @@ export function useDialogEnhanced(
     // ── Drag Handlers ──────────────────────────────────────────────
 
     function onDragStart(e: MouseEvent) {
-        if (!hasDocument) return
+        const doc = getDocument()
+        if (!doc) return
         if (!opt.draggable) return
 
         const target = e.target
@@ -165,8 +166,8 @@ export function useDialogEnhanced(
             y: e.clientY - position.value.y,
         }
 
-        document.addEventListener('mousemove', onDragMove)
-        document.addEventListener('mouseup', onDragEnd)
+        doc.addEventListener('mousemove', onDragMove)
+        doc.addEventListener('mouseup', onDragEnd)
         e.preventDefault()
     }
 
@@ -180,16 +181,18 @@ export function useDialogEnhanced(
     }
 
     function onDragEnd() {
-        if (!hasDocument) return
+        const doc = getDocument()
+        if (!doc) return
         isDragging.value = false
-        document.removeEventListener('mousemove', onDragMove)
-        document.removeEventListener('mouseup', onDragEnd)
+        doc.removeEventListener('mousemove', onDragMove)
+        doc.removeEventListener('mouseup', onDragEnd)
     }
 
     // ── Resize Handlers ────────────────────────────────────────────
 
     function onResizeStart(e: MouseEvent, corner: ResizeCorner) {
-        if (!hasDocument) return
+        const doc = getDocument()
+        if (!doc) return
         if (!opt.resizable) return
 
         isResizing.value = true
@@ -201,8 +204,8 @@ export function useDialogEnhanced(
             corner,
         }
 
-        document.addEventListener('mousemove', onResizeMove)
-        document.addEventListener('mouseup', onResizeEnd)
+        doc.addEventListener('mousemove', onResizeMove)
+        doc.addEventListener('mouseup', onResizeEnd)
         e.preventDefault()
         e.stopPropagation()
     }
@@ -250,10 +253,11 @@ export function useDialogEnhanced(
     }
 
     function onResizeEnd() {
-        if (!hasDocument) return
+        const doc = getDocument()
+        if (!doc) return
         isResizing.value = false
-        document.removeEventListener('mousemove', onResizeMove)
-        document.removeEventListener('mouseup', onResizeEnd)
+        doc.removeEventListener('mousemove', onResizeMove)
+        doc.removeEventListener('mouseup', onResizeEnd)
     }
 
     // ── Close Handling ─────────────────────────────────────────────
@@ -321,11 +325,12 @@ export function useDialogEnhanced(
         if (sizeRafId !== null) {
             cancelAnimationFrame(sizeRafId)
         }
-        if (!hasDocument) return
-        document.removeEventListener('mousemove', onDragMove)
-        document.removeEventListener('mouseup', onDragEnd)
-        document.removeEventListener('mousemove', onResizeMove)
-        document.removeEventListener('mouseup', onResizeEnd)
+        const doc = getDocument()
+        if (!doc) return
+        doc.removeEventListener('mousemove', onDragMove)
+        doc.removeEventListener('mouseup', onDragEnd)
+        doc.removeEventListener('mousemove', onResizeMove)
+        doc.removeEventListener('mouseup', onResizeEnd)
     })
 
     return {

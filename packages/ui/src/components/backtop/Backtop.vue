@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeUnmount, computed, watch, type CSSProperties } 
 import { ArrowUp } from '@lucide/vue'
 import { useThrottle } from '@/composables/useThrottle'
 import { cn } from '@/lib/utils'
+import { getWindow, getDocument } from '@/lib/env'
 import Button from '../button/Button.vue'
 import type { ButtonVariant } from '../button/shared-button-variants'
 
@@ -38,18 +39,21 @@ const styles = computed<CSSProperties>(() => ({
     bottom: `${props.bottom}px`
 }))
 
-function getScrollContainer() {
-    if (!props.target) return window
+function getScrollContainer(): HTMLElement | Window | null {
+    if (!props.target) return getWindow() ?? null
     if (typeof props.target === 'string') {
-        return document.querySelector(props.target) as HTMLElement
+        const doc = getDocument()
+        return doc ? doc.querySelector(props.target) as HTMLElement : null
     }
     return props.target
 }
 
 function handleScroll() {
     if (!container) return
-    const scrollTop = (container === window || !('scrollTop' in container))
-        ? (window.scrollY || document.documentElement.scrollTop || document.body.scrollTop)
+    const win = getWindow()
+    const doc = getDocument()
+    const scrollTop = (container === win || !('scrollTop' in container))
+        ? (win?.scrollY || doc?.documentElement?.scrollTop || doc?.body?.scrollTop || 0)
         : (container as HTMLElement).scrollTop
     visible.value = scrollTop >= props.visibilityHeight
 }
@@ -64,7 +68,7 @@ function handleClick(event: MouseEvent) {
 function scrollToTop() {
     if (!container) return
     if (container instanceof Window) {
-        window.scrollTo({
+        getWindow()?.scrollTo({
             top: 0,
             behavior: 'smooth'
         })

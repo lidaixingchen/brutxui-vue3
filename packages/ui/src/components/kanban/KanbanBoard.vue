@@ -2,6 +2,7 @@
 import { ref, computed, onBeforeUnmount } from 'vue';
 import { Plus } from '@lucide/vue';
 import { cn } from '@/lib/utils';
+import { requestAnimationFrame, cancelAnimationFrame } from '@/lib/env';
 import { useLocale } from '@/composables/useLocale';
 import { iconSizeVariants } from '@/lib/icon-size-variants';
 import { kanbanColumnVariants, kanbanCardVariants, kanbanColumnHeaderVariants } from './kanban-variants';

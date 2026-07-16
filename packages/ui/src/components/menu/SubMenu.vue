@@ -2,7 +2,7 @@
 import { computed, inject, onMounted, onUnmounted, provide, ref } from 'vue'
 import { ChevronDown } from '@lucide/vue'
 import { MENU_KEY } from './menu-types'
-import { hasDocument } from '@/lib/env'
+import { hasDocument, getDocument } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
 interface SubMenuProps {
@@ -82,7 +82,7 @@ onMounted(() => {
         parentSubMenu.registerChild(props.index)
     }
     if (hasDocument) {
-        document.addEventListener('click', handleDocumentClick)
+        getDocument()?.addEventListener('click', handleDocumentClick)
     }
 })
 
@@ -91,7 +91,7 @@ onUnmounted(() => {
         parentSubMenu.unregisterChild(props.index)
     }
     if (hasDocument) {
-        document.removeEventListener('click', handleDocumentClick)
+        getDocument()?.removeEventListener('click', handleDocumentClick)
     }
 })
 

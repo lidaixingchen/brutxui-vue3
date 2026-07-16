@@ -1,5 +1,5 @@
 import { ref, inject, provide, computed, onMounted, onUnmounted, getCurrentInstance, type ComputedRef, type InjectionKey, type Ref } from 'vue'
-import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem } from '../lib/env'
+import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument, matchMedia, getWindow } from '../lib/env'
 
 export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
 export type ColorMode = 'light' | 'dark' | 'system'
@@ -55,7 +55,7 @@ export function createTheme(): UseThemeReturn {
 
     function applyTheme(name: ThemeName) {
         if (!hasDocument) return
-        const root = document.documentElement
+        const root = getDocument()!.documentElement
         // 移除旧主题类名（如果存在）
         if (theme.value !== name) {
             root.classList.remove(getThemeClass(theme.value))
@@ -70,7 +70,7 @@ export function createTheme(): UseThemeReturn {
 
     function applyResolvedMode(mode: ResolvedColorMode) {
         if (!hasDocument) return
-        const root = document.documentElement
+        const root = getDocument()!.documentElement
         if (mode === 'dark') {
             root.classList.add('dark')
         } else {
@@ -102,12 +102,12 @@ export function createTheme(): UseThemeReturn {
 
     function setCustomVariable(name: `--${string}`, value: string) {
         if (!hasDocument) return
-        document.documentElement.style.setProperty(name, value)
+        getDocument()!.documentElement.style.setProperty(name, value)
     }
 
     function removeCustomVariable(name: `--${string}`) {
         if (!hasDocument) return
-        document.documentElement.style.removeProperty(name)
+        getDocument()!.documentElement.style.removeProperty(name)
     }
 
     // 监听系统暗色模式变化
@@ -125,9 +125,12 @@ export function createTheme(): UseThemeReturn {
 
         // 第一步：初始化系统暗色模式检测（必须在应用颜色模式之前，isSystemDark 需先就绪）
         if (isClient) {
-            mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-            isSystemDark.value = mediaQuery.matches
-            mediaQuery.addEventListener('change', onSystemDarkChange)
+            const mq = matchMedia('(prefers-color-scheme: dark)')
+            if (mq) {
+                mediaQuery = mq
+                isSystemDark.value = mq.matches
+                mq.addEventListener('change', onSystemDarkChange)
+            }
         }
 
         // 第二步：应用保存的主题（复用 applyTheme，避免重复 DOM 操作与持久化逻辑）
@@ -201,6 +204,6 @@ export function destroyFallback() {
     }
 }
 
-if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', destroyFallback)
+if (isClient) {
+    getWindow()?.addEventListener('beforeunload', destroyFallback)
 }

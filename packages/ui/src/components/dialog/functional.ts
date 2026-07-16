@@ -11,7 +11,7 @@ import Button from '../button/Button.vue'
 import Input from '../input/Input.vue'
 import { useLocale } from '@/composables/useLocale'
 import { DEFAULT_DIALOG_TRANSITION_MS } from '@/lib/defaults'
-import { canUseDocumentBody } from '@/lib/env'
+import { canUseDocumentBody, getDocument } from '@/lib/env'
 import { getGlobalAppContext } from '@/plugin'
 
 export type RenderableContent = string | Component | VNode | (() => string | Component | VNode | null)
@@ -116,8 +116,9 @@ export function showDialog(options: ShowDialogOptions = {}) {
         }
     }
 
-    const container = document.createElement('div')
-    document.body.appendChild(container)
+    const doc = getDocument()!
+    const container = doc.createElement('div')
+    doc.body!.appendChild(container)
 
     const isOpen = ref(true)
 
@@ -237,8 +238,9 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
         }
     }
 
-    const container = document.createElement('div')
-    document.body.appendChild(container)
+    const doc = getDocument()!
+    const container = doc.createElement('div')
+    doc.body!.appendChild(container)
 
     const isOpen = ref(true)
     const inputValue = ref(options.inputValue || '')

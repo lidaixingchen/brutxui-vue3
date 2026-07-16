@@ -89,7 +89,9 @@
       "useThrottle.ts"
     ],
     "directives": [],
-    "lib": []
+    "lib": [
+      "env.ts"
+    ]
   },
   "badge": {
     "files": [
@@ -214,7 +216,8 @@
     ],
     "directives": [],
     "lib": [
-      "defaults.ts"
+      "defaults.ts",
+      "env.ts"
     ]
   },
   "carousel": {
@@ -694,6 +697,7 @@
     "directives": [],
     "lib": [
       "brutal-interaction-variants.ts",
+      "env.ts",
       "icon-size-variants.ts"
     ]
   },

@@ -9,6 +9,9 @@ vi.mock('../lib/env', () => ({
     isClient: true,
     safeGetStorageItem: vi.fn(() => null),
     safeSetStorageItem: vi.fn(),
+    getDocument: () => document,
+    getWindow: () => window,
+    matchMedia: (q: string) => window.matchMedia(q),
 }))
 
 const envModule = await import('../lib/env')

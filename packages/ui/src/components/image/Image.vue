@@ -4,7 +4,7 @@ import { FocusScope } from 'reka-ui'
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCw, RotateCcw, FlipHorizontal } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { Z_INDEX } from '@/lib/z-index'
-import { hasIntersectionObserver } from '@/lib/env'
+import { hasIntersectionObserver, getDocument, getWindow, getIntersectionObserverCtor } from '@/lib/env'
 
 interface ImageProps {
     src: string
@@ -239,8 +239,8 @@ const handleDragStart = (e: MouseEvent) => {
     startY = e.clientY
     initialX = offset.value.x
     initialY = offset.value.y
-    document.addEventListener('mousemove', handleDragMove)
-    document.addEventListener('mouseup', handleDragEnd)
+    getDocument()?.addEventListener('mousemove', handleDragMove)
+    getDocument()?.addEventListener('mouseup', handleDragEnd)
 }
 
 const handleDragMove = (e: MouseEvent) => {
@@ -255,8 +255,8 @@ const handleDragMove = (e: MouseEvent) => {
 
 const handleDragEnd = () => {
     isDragging = false
-    document.removeEventListener('mousemove', handleDragMove)
-    document.removeEventListener('mouseup', handleDragEnd)
+    getDocument()?.removeEventListener('mousemove', handleDragMove)
+    getDocument()?.removeEventListener('mouseup', handleDragEnd)
 }
 
 // 键盘事件
@@ -273,10 +273,11 @@ const handleKeyDown = (e: KeyboardEvent) => {
 
 // 绑定/解绑键盘事件
 watch(showViewer, (val) => {
+    const win = getWindow()
     if (val) {
-        window.addEventListener('keydown', handleKeyDown)
+        win?.addEventListener('keydown', handleKeyDown)
     } else {
-        window.removeEventListener('keydown', handleKeyDown)
+        win?.removeEventListener('keydown', handleKeyDown)
     }
 })
 
@@ -289,7 +290,10 @@ const initObserver = () => {
     }
     if (!containerRef.value) return
 
-    observer = new IntersectionObserver(
+    const Ctor = getIntersectionObserverCtor()
+    if (!Ctor) return
+
+    observer = new Ctor(
         (entries) => {
             const entry = entries[0]
             if (entry && entry.isIntersecting) {
@@ -315,9 +319,9 @@ onUnmounted(() => {
     if (observer) {
         observer.disconnect()
     }
-    window.removeEventListener('keydown', handleKeyDown)
-    document.removeEventListener('mousemove', handleDragMove)
-    document.removeEventListener('mouseup', handleDragEnd)
+    getWindow()?.removeEventListener('keydown', handleKeyDown)
+    getDocument()?.removeEventListener('mousemove', handleDragMove)
+    getDocument()?.removeEventListener('mouseup', handleDragEnd)
 })
 </script>
 

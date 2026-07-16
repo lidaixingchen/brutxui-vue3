@@ -2,6 +2,7 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { getComputedStyle } from '@/lib/env'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
 import { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './card-3d-variants'
@@ -51,8 +52,8 @@ const CSS_VAR_OFFSET_FALLBACK = DEFAULT_CARD3D_OFFSET_PX
 const readOffsetFromCSSVar = (): number => {
     if (!cardRef.value) return CSS_VAR_OFFSET_FALLBACK
     const computed = getComputedStyle(cardRef.value)
-    const val = computed.getPropertyValue('--card3d-offset').trim()
-    const parsed = parseInt(val, 10)
+    const val = computed?.getPropertyValue('--card3d-offset').trim()
+    const parsed = val ? parseInt(val, 10) : Number.NaN
     return Number.isNaN(parsed) ? CSS_VAR_OFFSET_FALLBACK : parsed
 }
 

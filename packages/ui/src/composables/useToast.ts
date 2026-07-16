@@ -2,7 +2,7 @@ import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKe
 import { MAX_TOASTS } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
-import { isClient } from '../lib/env'
+import { isClient, getWindow } from '../lib/env'
 
 
 type ToastVariantProps = VariantProps<typeof toastVariants>
@@ -95,7 +95,7 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
 
                 const duration = updatedToast.duration ?? DEFAULT_TOAST_DURATION
                 if (duration > 0 && isClient) {
-                    const timerId = window.setTimeout(() => removeToast(existing.id), duration)
+                    const timerId = setTimeout(() => removeToast(existing.id), duration)
                     timerMap.set(existing.id, timerId)
                 }
 
@@ -115,7 +115,7 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
 
         const duration = toast.duration ?? DEFAULT_TOAST_DURATION
         if (duration > 0 && isClient) {
-            const timerId = window.setTimeout(() => removeToast(id), duration)
+            const timerId = setTimeout(() => removeToast(id), duration)
             timerMap.set(id, timerId)
         }
 
@@ -220,8 +220,8 @@ function destroyFallback() {
     }
 }
 
-if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', destroyFallback)
+if (isClient) {
+    getWindow()?.addEventListener('beforeunload', destroyFallback)
 }
 
 export function provideToast(globalOptions?: { grouping?: boolean }): UseToastReturn {

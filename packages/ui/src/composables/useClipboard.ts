@@ -1,4 +1,5 @@
 import { ref, onUnmounted, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
+import { getNavigator } from '../lib/env'
 
 export const DEFAULT_COPIED_DURATION = 2000
 
@@ -10,7 +11,7 @@ export interface UseClipboardReturn {
 
 export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}): UseClipboardReturn {
     const copied = ref(false)
-    const isSupported = ref(typeof navigator !== 'undefined' && !!navigator.clipboard?.writeText)
+    const isSupported = ref(!!getNavigator()?.clipboard?.writeText)
 
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let disposed = false
@@ -23,8 +24,11 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
     async function copy(text: string) {
         if (!isSupported.value) return false
 
+        const writeText = getNavigator()?.clipboard?.writeText
+        if (!writeText) return false
+
         try {
-            await navigator.clipboard.writeText(text)
+            await writeText(text)
             if (disposed) return true
             copied.value = true
 

@@ -7,7 +7,7 @@
  */
 
 import { ref, reactive, computed, type Ref, type ComputedRef } from 'vue'
-import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem } from './env'
+import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument } from './env'
 
 // ============================================================================
 // 类型定义
@@ -502,7 +502,7 @@ function themeVariablesToCssVars(variables: ThemeVariables): Record<string, stri
 function applyCssVarsToDom(vars: Record<string, string>): void {
     if (!hasDocument) return
 
-    const root = document.documentElement
+    const root = getDocument()!.documentElement
     for (const [key, value] of Object.entries(vars)) {
         root.style.setProperty(key, value)
     }
@@ -514,7 +514,7 @@ function applyCssVarsToDom(vars: Record<string, string>): void {
 function removeCssVarsFromDom(vars: Record<string, string>): void {
     if (!hasDocument) return
 
-    const root = document.documentElement
+    const root = getDocument()!.documentElement
     for (const key of Object.keys(vars)) {
         root.style.removeProperty(key)
     }
@@ -579,7 +579,7 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
         safeSetStorageItem(`${storageKey}-dark`, String(isDark.value))
 
         if (hasDocument) {
-            document.documentElement.classList.toggle('dark', isDark.value)
+            getDocument()!.documentElement.classList.toggle('dark', isDark.value)
         }
     }
 
@@ -590,7 +590,7 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
         safeSetStorageItem(`${storageKey}-dark`, String(dark))
 
         if (hasDocument) {
-            document.documentElement.classList.toggle('dark', dark)
+            getDocument()!.documentElement.classList.toggle('dark', dark)
         }
     }
 
@@ -640,7 +640,7 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
         if (savedDark === 'true') {
             isDark.value = true
             if (hasDocument) {
-                document.documentElement.classList.add('dark')
+                getDocument()!.documentElement.classList.add('dark')
             }
         }
 
@@ -656,7 +656,7 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
         // 移除 dark class
         if (hasDocument) {
-            document.documentElement.classList.remove('dark')
+            getDocument()!.documentElement.classList.remove('dark')
         }
 
         initialized = false
@@ -695,7 +695,7 @@ export function createDarkModeToggle(storageKey = 'brutx-theme-variables') {
         safeSetStorageItem(`${storageKey}-dark`, String(isDark.value))
 
         if (hasDocument) {
-            document.documentElement.classList.toggle('dark', isDark.value)
+            getDocument()!.documentElement.classList.toggle('dark', isDark.value)
         }
     }
 
@@ -704,7 +704,7 @@ export function createDarkModeToggle(storageKey = 'brutx-theme-variables') {
         if (savedDark === 'true') {
             isDark.value = true
             if (hasDocument) {
-                document.documentElement.classList.add('dark')
+                getDocument()!.documentElement.classList.add('dark')
             }
         }
     }
