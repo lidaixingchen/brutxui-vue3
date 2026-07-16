@@ -1,5 +1,12 @@
 @import "../src/styles.css";
 
+/* 视觉回归测试专用：强制使用 Inter（index.html 已从 Google Fonts CDN 加载），
+   避免 Windows（Segoe UI）与 Linux CI（DejaVu Sans）系统字体 metrics 差异导致尺寸漂移。
+   测试已通过 document.fonts.ready 等待字体加载完成，CDN 失败时回退到 system-ui。 */
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
 .visual-shell,
 .visual-suite {
     --color-brutal-bg: var(--brutal-bg);
