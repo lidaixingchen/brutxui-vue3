@@ -35,7 +35,7 @@ import {
     Textarea,
     Toast,
 } from '../src'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, SelectValue } from 'reka-ui'
+import { DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuGroup, SelectValue } from 'reka-ui'
 
 type VisualSuite = 'forms' | 'overlays' | 'feedback' | 'containers'
 type VisualTheme = 'light' | 'dark'
@@ -465,7 +465,7 @@ const frameworkOptions = [
                         <CardDescription>Open menu with common action states.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <DropdownMenu open>
+                        <DropdownMenuRoot open>
                             <DropdownMenuTrigger as-child>
                                 <Button variant="outline">Open Menu</Button>
                             </DropdownMenuTrigger>
@@ -480,7 +480,7 @@ const frameworkOptions = [
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
                             </DropdownMenuContent>
-                        </DropdownMenu>
+                        </DropdownMenuRoot>
                     </CardContent>
                 </Card>
             </div>
