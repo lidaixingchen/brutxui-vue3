@@ -33,7 +33,7 @@ pnpm lint           # 代码检查
 pnpm typecheck      # 类型检查
 pnpm test           # 运行测试
 pnpm test:watch     # 监视模式运行测试
-pnpm release:check  # 发布前完整门禁
+pnpm changeset  # 声明变更
 ```
 
 ---
@@ -116,7 +116,7 @@ packages/ui/src/components/
 确保通过所有检查：
 
 ```bash
-pnpm release:check
+pnpm release
 ```
 
 ---

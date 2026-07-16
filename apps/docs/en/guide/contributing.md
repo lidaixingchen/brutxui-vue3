@@ -34,7 +34,7 @@ pnpm lint           # Lint code
 pnpm typecheck      # Type check
 pnpm test           # Run tests
 pnpm test:watch     # Run tests in watch mode
-pnpm release:check  # Full pre-release gate
+pnpm changeset  # Declare changes
 ```
 
 ---
@@ -117,7 +117,7 @@ Add `*.test.ts` files in the component directory.
 Ensure all checks pass:
 
 ```bash
-pnpm release:check
+pnpm release
 ```
 
 ---

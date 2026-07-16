@@ -15,12 +15,9 @@
         "test:watch": "pnpm --filter brutx-ui-vue test:watch",
         "test:coverage": "pnpm --filter brutx-ui-vue test:coverage",
         "bench": "turbo run bench",
-        "release:check": "node scripts/release/check-release.mjs",
-        "changelog": "node scripts/release/generate-changelog.mjs",
-        "changelog:dry": "node scripts/release/generate-changelog.mjs --dry-run",
-        "changelog:full": "node scripts/release/generate-changelog.mjs --full-history",
-        "changelog:ui": "node scripts/release/generate-changelog.mjs --scope ui",
-        "changelog:cli": "node scripts/release/generate-changelog.mjs --scope cli",
+        "changeset": "changeset",
+        "version-packages": "changeset version",
+        "release": "turbo run build test typecheck lint && changeset publish",
         "generate:component": "tsx scripts/generate.ts component",
         "generate:composable": "tsx scripts/generate.ts composable",
         "generate:page": "tsx scripts/generate.ts page"
@@ -31,6 +28,7 @@
     },
     "packageManager": "pnpm@11.10.0",
     "devDependencies": {
+        "@changesets/cli": "^2.31.1",
         "turbo": "^2.10.5"
     }
 }

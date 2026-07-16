@@ -20,7 +20,7 @@ pnpm lint           # 对所有包执行 lint
 pnpm typecheck      # 对所有包执行类型检查
 pnpm test           # 运行 UI 测试
 pnpm test:watch     # 监视模式运行测试
-pnpm release:check  # 执行发布前完整门禁
+pnpm release  # 构建门禁 + changeset publish
 ```
 
 ### Registry 包命令
@@ -39,7 +39,7 @@ watch 模式也可通过 `BRUTX_WATCH=1` 环境变量激活，详见 [build-regi
 ### 命令执行与测试约定
 - **包管理器限定**：本单体仓库开发阶段仅允许使用 `pnpm`，严禁使用 `npm` 或 `yarn` 进行本地依赖安装与脚本执行，以防生成不一致的 lockfile。
 - **测试最小化**：运行测试时必须尽可能最小化（仅针对当前修改的文件或特定目录，例如 `pnpm test path/to/modified.test.ts`）。
-- **避免重型测试**：除非用户明确指示或到了关键发布阶段，否则**禁止**在开发机上运行重型测试或全局完整门禁（如 `pnpm release:check`、全量 `pnpm test`），以防过度占用系统资源导致电脑卡顿。
+- **避免重型测试**：除非用户明确指示或到了关键发布阶段，否则**禁止**在开发机上运行重型测试或全局完整门禁（如 `pnpm release`、全量 `pnpm test`），以防过度占用系统资源导致电脑卡顿。
 
 
 ## 技术栈

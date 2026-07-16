@@ -184,13 +184,15 @@ pnpm build
 如果改动会影响发布产物、CLI 安装、注册表 JSON、文档构建或包内容，请在本地运行完整发布门禁：
 
 ```bash
-pnpm release:check
+pnpm release
 ```
 
-发布 tag 检查会读取 `RELEASE_TAG` 或 GitHub Actions 的 `GITHUB_REF_NAME`，并要求 tag 与 UI 包版本一致，例如：
+发布使用 changeset 流程，例如：
 
 ```bash
-RELEASE_TAG=v0.6.6 pnpm release:check
+pnpm changeset  # 声明变更
+pnpm version-packages  # bump 版本 + CHANGELOG
+pnpm release  # 构建 + 测试 + 发布
 ```
 
 ### 视觉回归基线

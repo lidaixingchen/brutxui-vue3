@@ -27,6 +27,21 @@ jobs:
             # TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         steps:
             - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0 # changeset diff 需要完整历史
+
+            - name: Check changeset presence (PR only)
+              if: github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[no-changeset]')
+              run: |
+                  base="origin/${{ github.base_ref }}"
+                  git fetch origin "${{ github.base_ref }}" --depth=1 || true
+                  added=$(git diff --name-only "$base...HEAD" -- '.changeset/*.md' ':!.changeset/README.md' | wc -l)
+                  code_changed=$(git diff --name-only "$base...HEAD" -- 'packages/ui/src/' 'packages/cli/src/' 'packages/ui/package.json' 'packages/cli/package.json' | wc -l)
+                  if [ "$code_changed" -gt 0 ] && [ "$added" -eq 0 ]; then
+                    echo "::error::代码变更未声明 changeset。请运行 'pnpm changeset' 生成变更说明；纯文档/CI 改动请在 PR 标题加 '[no-changeset]'。"
+                    exit 1
+                  fi
+                  echo "✓ Changeset 检查通过（$added 个新增 changeset）"
 
             - uses: pnpm/action-setup@v4
 
