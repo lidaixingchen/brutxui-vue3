@@ -3,6 +3,9 @@
 [brutx-ui-vue] (packages/ui/src)
   none
 
+[brutx-ui-vue] (packages/ui/scripts)
+  none
+
 [brutx-vue] (packages/cli/src)
   none
 

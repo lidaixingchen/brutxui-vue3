@@ -437,7 +437,7 @@ async function loadMore() {
 3. 小列表（< 100 项）无需 `v-memo`——依赖追踪的开销可能抵消收益
 4. `v-memo` 不能用于依赖全局布局状态的场景（如单元格合并、固定列偏移）
 
-> BrutxUI 内部组件（DataTable、TreeView）未使用 `v-memo`——行渲染状态依赖复杂（选中态 + 展开态 + 拖拽态 + 单元格合并），盲目添加会导致渲染错误。详见 [性能审计报告](../../../audit/perf-audit.md)。
+> BrutxUI 内部组件（DataTable、TreeView）未使用 `v-memo`——行渲染状态依赖复杂（选中态 + 展开态 + 拖拽态 + 单元格合并），盲目添加会导致渲染错误。详见仓库内 `docs/audit/perf-audit.md` 性能审计报告。
 
 ### 7.2 何时使用 markRaw
 
@@ -512,4 +512,4 @@ CI 会自动在 PR 评论中发布 bench 对比报告（非门禁，仅信息性
 - `delta > 5%`：改善
 - 疑似回归超过 2 个时，维护者需人工复核后再合并
 
-详见 [性能审计报告](../../../audit/perf-audit.md) 和 [架构优化方案 §4.1](../../../ARCHITECTURE_OPTIMIZATION_PLAN_V2.md#4-运行时性能基准与关键组件优化)。
+详见仓库内 `docs/audit/perf-audit.md` 性能审计报告和 `docs/ARCHITECTURE_OPTIMIZATION_PLAN_V2.md` §4.1 架构优化方案。

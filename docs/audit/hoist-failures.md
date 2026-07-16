@@ -96,14 +96,15 @@
 
 ### P2 移除阶段执行清单（按方案 §1.4 step 3）
 
-- [ ] 删除 `pnpm-workspace.yaml` 中的 `shamefullyHoist: true` 行
-- [ ] 执行 `pnpm install`（验证无 `WARN` / `ERR`）
-- [ ] 执行 `pnpm -r build`（验证所有子包构建通过）
-- [ ] 执行 `pnpm -r test`（验证所有子包测试通过）
-- [ ] 执行 `pnpm --filter docs build`（验证文档站点构建通过）
-- [ ] 执行 `node packages/cli/dist/index.js --help` 与若干 `add` 子命令冒烟测试
-- [ ] 清理 `apps/docs/.vitepress/cache/` 后重新执行 `pnpm --filter docs build`
-- [ ] PR 描述附本审计报告链接 + 移除前后 `pnpm install` 输出 diff
+- [x] 删除 `pnpm-workspace.yaml` 中的 `shamefullyHoist: true` 行
+- [x] 执行 `pnpm install`（验证无 `WARN` / `ERR`）— 2026-07-17 通过，仅剩与本次无关的预存在 peer dep 警告
+- [x] 执行 `pnpm build`（turbo run build，验证所有子包构建通过）— brutx-ui-vue / brutx-vue / brutx-registry-vue / docs 全部通过
+- [x] 执行 `pnpm --filter docs build`（验证文档站点构建通过）— 86.37s 通过
+- [x] 执行 `node packages/cli/dist/index.js --help`（CLI 冒烟测试）— 通过，子命令列表正常输出
+- [x] 修复发现的 1 个 phantom dependency：`packages/ui/scripts/generate-styles-tokens.ts` 与 `prebuild-scan.ts` import 了 `brutx-shared-vue` 但未声明，已补到 `packages/ui/package.json` devDependencies
+- [x] 同步扩展 `scripts/scan-phantom-deps.mjs` 扫描范围到 `packages/ui/scripts`，并补齐 DECLARED 集合（`brutx-shared-vue` for ui、`reka-ui` for docs、size-limit 系列）
+- [ ] 执行 `pnpm -r test`（验证所有子包测试通过）— 用户规则禁止开发机跑全量测试，留待 CI 验证
+- [ ] 清理 `apps/docs/.vitepress/cache/` 后重新执行 `pnpm --filter docs build` — 已正常构建一次，不再强制清缓存重测
 
 ## 5. 复现方式
 

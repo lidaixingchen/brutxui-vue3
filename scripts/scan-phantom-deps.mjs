@@ -5,6 +5,7 @@ const ROOT = process.cwd()
 
 const PKG_ROOTS = [
     { dir: 'packages/ui/src', pkg: 'brutx-ui-vue' },
+    { dir: 'packages/ui/scripts', pkg: 'brutx-ui-vue' },
     { dir: 'packages/cli/src', pkg: 'brutx-vue' },
     { dir: 'packages/registry/scripts', pkg: 'brutx-registry-vue' },
     { dir: 'packages/shared/src', pkg: 'brutx-shared-vue' },
@@ -20,13 +21,15 @@ const DECLARED = {
         '@eslint/js', '@playwright/test', '@tailwindcss/cli', '@tailwindcss/vite',
         '@types/node', '@types/prismjs', '@vitejs/plugin-vue',
         '@vitest/browser', '@vitest/browser-playwright', '@vitest/coverage-v8',
-        '@vue/test-utils', 'acorn', 'acorn-walk', 'embla-carousel',
+        '@vue/server-renderer', '@vue/test-utils', 'acorn', 'acorn-walk', 'embla-carousel',
         'eslint', 'eslint-plugin-vue', 'globals', 'happy-dom',
-        'magic-string', 'tailwindcss', 'tsx', 'typedoc',
+        'magic-string', 'size-limit', '@size-limit/esbuild', '@size-limit/file',
+        'tailwindcss', 'tsx', 'typedoc',
         'typedoc-plugin-markdown', 'typescript', 'typescript-eslint',
         'vite', 'vite-plugin-dts', 'vitest', 'axe-core', 'vue', 'vue-tsc',
         '@lucide/vue', '@tanstack/vue-virtual', 'embla-carousel-vue',
         'prismjs', 'reka-ui', 'v-calendar', 'vee-validate',
+        'brutx-shared-vue',
     ]),
     'brutx-vue': new Set([
         '@inquirer/prompts', 'brutx-shared-vue', 'chalk', 'commander',
@@ -42,7 +45,7 @@ const DECLARED = {
     ]),
     'docs': new Set([
         '@lucide/vue', 'brutx-ui-vue', 'brutx-shared-vue', 'clsx',
-        'tailwind-merge', 'v-calendar', 'vue',
+        'reka-ui', 'tailwind-merge', 'v-calendar', 'vue',
         '@tailwindcss/vite', '@types/node', 'tailwindcss',
         'typescript', 'vite', 'vitepress', 'vue-tsc',
     ]),
