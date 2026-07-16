@@ -21,7 +21,8 @@ import 'brutx-ui-vue/styles.css'
 ```typescript
 // 仅对白名单子路径使用直接导入
 import { Button, buttonVariants } from 'brutx-ui-vue/button'
-import { Dialog, DialogContent } from 'brutx-ui-vue/dialog'
+import { DialogRoot as Dialog } from 'reka-ui'
+import { DialogContent } from 'brutx-ui-vue/dialog'
 ```
 
 ### 1.3 Vite 配置优化

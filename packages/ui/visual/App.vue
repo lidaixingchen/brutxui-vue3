@@ -17,13 +17,10 @@ import {
     Checkbox,
     Combobox,
     DotsSpinner,
-    DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
     GlitchText,
     Input,
     NumberInput,
@@ -33,12 +30,12 @@ import {
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
     Spinner,
     Switch,
     Textarea,
     Toast,
 } from '../src'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, SelectValue } from 'reka-ui'
 
 type VisualSuite = 'forms' | 'overlays' | 'feedback' | 'containers'
 type VisualTheme = 'light' | 'dark'

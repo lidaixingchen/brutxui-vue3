@@ -22,7 +22,8 @@ A neo-brutalist modal dialog built on top of reka-ui's Dialog primitive. Support
 
 ```vue
 <script setup>
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription, DialogClose } from 'brutx-ui-vue'
+import { DialogRoot as Dialog, DialogTrigger, DialogClose } from 'reka-ui'
+import { DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from 'brutx-ui-vue'
 import { Button } from 'brutx-ui-vue'
 </script>
 
@@ -63,7 +64,8 @@ Control the max-width of the dialog via the `size` prop on `DialogContent`. Defa
 
 ```vue
 <script setup>
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'brutx-ui-vue'
+import { DialogRoot as Dialog, DialogTrigger } from 'reka-ui'
+import { DialogContent, DialogHeader, DialogTitle, DialogDescription } from 'brutx-ui-vue'
 import { Button } from 'brutx-ui-vue'
 </script>
 
@@ -86,16 +88,16 @@ import { Button } from 'brutx-ui-vue'
 
 | Component | Description |
 |-----------|-------------|
-| `Dialog` | Root component (re-exported from reka-ui's `DialogRoot`) |
-| `DialogTrigger` | Button that opens the dialog (re-exported from reka-ui) |
+| `Dialog` | Root component (import directly from reka-ui: `import { DialogRoot as Dialog } from 'reka-ui'`) |
+| `DialogTrigger` | Button that opens the dialog (import directly from reka-ui: `import { DialogTrigger } from 'reka-ui'`) |
 | `DialogContent` | Dialog content panel with overlay |
 | `DialogHeader` | Header container |
 | `DialogFooter` | Footer container with flex layout |
 | `DialogTitle` | Dialog title |
 | `DialogDescription` | Dialog description text |
-| `DialogClose` | Close button (re-exported from reka-ui) |
+| `DialogClose` | Close button (import directly from reka-ui: `import { DialogClose } from 'reka-ui'`) |
 | `DialogOverlay` | Background overlay |
-| `DialogPortal` | Portal container (re-exported from reka-ui) |
+| `DialogPortal` | Portal container (import directly from reka-ui: `import { DialogPortal } from 'reka-ui'`) |
 | `DialogEnhanced` | Enhanced dialog with draggable and resizable support |
 
 ### DialogEnhanced Usage
@@ -104,7 +106,8 @@ An enhanced dialog that supports dragging and resizing:
 
 ```vue
 <script setup>
-import { Dialog, DialogTrigger, DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
+import { DialogRoot as Dialog, DialogTrigger } from 'reka-ui'
+import { DialogEnhanced, DialogHeader, DialogTitle } from 'brutx-ui-vue'
 </script>
 
 <template>

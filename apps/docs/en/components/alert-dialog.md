@@ -22,7 +22,8 @@ A neo-brutalist confirmation dialog that requires user interaction. Built on top
 
 ```vue
 <script setup>
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from 'brutx-ui-vue'
+import { AlertDialogRoot as AlertDialog, AlertDialogTrigger } from 'reka-ui'
+import { AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from 'brutx-ui-vue'
 import { Button } from 'brutx-ui-vue'
 </script>
 
@@ -51,9 +52,9 @@ import { Button } from 'brutx-ui-vue'
 
 | Component | Description |
 |-----------|-------------|
-| `AlertDialog` | Root component (re-exported from reka-ui's `AlertDialogRoot`) |
-| `AlertDialogTrigger` | Button that opens the dialog (re-exported from reka-ui) |
-| `AlertDialogPortal` | Portal component (re-exported from reka-ui) |
+| `AlertDialog` | Root component (import directly from reka-ui: `import { AlertDialogRoot as AlertDialog } from 'reka-ui'`) |
+| `AlertDialogTrigger` | Button that opens the dialog (import directly from reka-ui: `import { AlertDialogTrigger } from 'reka-ui'`) |
+| `AlertDialogPortal` | Portal component (import directly from reka-ui: `import { AlertDialogPortal } from 'reka-ui'`) |
 | `AlertDialogContent` | Dialog content panel |
 | `AlertDialogHeader` | Header container for title and description |
 | `AlertDialogFooter` | Footer container for action buttons |

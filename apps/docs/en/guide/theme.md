@@ -383,7 +383,8 @@ Switch themes and dark mode within a component:
 
 ```vue
 <script setup lang="ts">
-import { useTheme, Select, SelectTrigger, SelectContent, SelectItem, SelectValue, Button } from 'brutx-ui-vue'
+import { SelectValue } from 'reka-ui'
+import { useTheme, Select, SelectTrigger, SelectContent, SelectItem, Button } from 'brutx-ui-vue'
 import type { AcceptableValue } from 'reka-ui'
 
 const { theme, colorMode, setTheme, toggleColorMode } = useTheme()

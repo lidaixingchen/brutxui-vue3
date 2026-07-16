@@ -37,7 +37,6 @@ export { default as SkeletonCard } from './components/skeleton/SkeletonCard.vue'
 export { default as SkeletonTable } from './components/skeleton/SkeletonTable.vue'
 export { skeletonVariants } from './components/skeleton/skeleton-variants'
 
-export { DialogRoot as Dialog, DialogTrigger, DialogPortal, DialogClose } from 'reka-ui'
 export { default as DialogOverlay } from './components/dialog/DialogOverlay.vue'
 export { default as DialogContent } from './components/dialog/DialogContent.vue'
 export { default as DialogEnhanced } from './components/dialog/DialogEnhanced.vue'
@@ -55,7 +54,6 @@ export { useMessage, messageStore, removeMessage, destroyMessageSystem } from '.
 export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './composables/useMessage'
 export { destroyBrutxFallbacks } from './composables/destroyFallbacks'
 
-export { AlertDialogRoot as AlertDialog, AlertDialogTrigger, AlertDialogPortal } from 'reka-ui'
 export { default as AlertDialogContent } from './components/alert-dialog/AlertDialogContent.vue'
 export { default as AlertDialogHeader } from './components/alert-dialog/AlertDialogHeader.vue'
 export { default as AlertDialogFooter } from './components/alert-dialog/AlertDialogFooter.vue'
@@ -64,7 +62,6 @@ export { default as AlertDialogDescription } from './components/alert-dialog/Ale
 export { default as AlertDialogAction } from './components/alert-dialog/AlertDialogAction.vue'
 export { default as AlertDialogCancel } from './components/alert-dialog/AlertDialogCancel.vue'
 
-export { DialogRoot as Sheet, DialogTrigger as SheetTrigger, DialogPortal as SheetPortal, DialogClose as SheetClose } from 'reka-ui'
 export { default as SheetContent } from './components/sheet/SheetContent.vue'
 export { default as SheetHeader } from './components/sheet/SheetHeader.vue'
 export { default as SheetFooter } from './components/sheet/SheetFooter.vue'
@@ -72,17 +69,14 @@ export { default as SheetTitle } from './components/sheet/SheetTitle.vue'
 export { default as SheetDescription } from './components/sheet/SheetDescription.vue'
 export { sheetVariants } from './components/sheet/sheet-variants'
 
-export { PopoverRoot as Popover, PopoverTrigger, PopoverAnchor } from 'reka-ui'
 export { default as PopoverContent } from './components/popover/PopoverContent.vue'
 export { popoverContentVariants } from './components/popover/popover-variants'
 
 export { default as TooltipProvider } from './components/tooltip/TooltipProvider.vue'
-export { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 export { default as TooltipContent } from './components/tooltip/TooltipContent.vue'
 export { tooltipContentVariants } from './components/tooltip/tooltip-variants'
 
 export { default as Select } from './components/select/Select.vue'
-export { SelectGroup, SelectValue } from 'reka-ui'
 export { default as SelectTrigger } from './components/select/SelectTrigger.vue'
 export { default as SelectContent } from './components/select/SelectContent.vue'
 export { default as SelectItem } from './components/select/SelectItem.vue'
@@ -92,7 +86,6 @@ export { default as SelectScrollUpButton } from './components/select/SelectScrol
 export { default as SelectScrollDownButton } from './components/select/SelectScrollDownButton.vue'
 export { selectTriggerVariants, selectContentVariants, selectItemVariants } from './components/select/select-variants'
 
-export { DropdownMenuRoot as DropdownMenu, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuPortal, DropdownMenuSub, DropdownMenuRadioGroup } from 'reka-ui'
 export { default as DropdownMenuContent } from './components/dropdown-menu/DropdownMenuContent.vue'
 export { default as DropdownMenuItem } from './components/dropdown-menu/DropdownMenuItem.vue'
 export { default as DropdownMenuCheckboxItem } from './components/dropdown-menu/DropdownMenuCheckboxItem.vue'
@@ -118,7 +111,6 @@ export { default as ToggleGroup } from './components/toggle-group/ToggleGroup.vu
 export { default as ToggleGroupItem } from './components/toggle-group/ToggleGroupItem.vue'
 
 export { default as Tabs } from './components/tabs/Tabs.vue'
-export { TabsRoot } from 'reka-ui'
 export { default as TabsList } from './components/tabs/TabsList.vue'
 export { default as TabsTrigger } from './components/tabs/TabsTrigger.vue'
 export { default as TabsContent } from './components/tabs/TabsContent.vue'

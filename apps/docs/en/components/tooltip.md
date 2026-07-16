@@ -24,7 +24,8 @@ A neo-brutalist tooltip built on reka-ui's Tooltip primitive, showing informatio
 
 ```vue
 <script setup>
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent, Button } from 'brutx-ui-vue'
+import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
+import { TooltipProvider, TooltipContent, Button } from 'brutx-ui-vue'
 </script>
 
 <template>
@@ -92,7 +93,8 @@ Control the tooltip's visibility via `open` and `@update:open`:
 ```vue
 <script setup>
 import { ref } from 'vue'
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent, Button } from 'brutx-ui-vue'
+import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
+import { TooltipProvider, TooltipContent, Button } from 'brutx-ui-vue'
 
 const isOpen = ref(false)
 </script>

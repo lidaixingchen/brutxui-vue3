@@ -22,15 +22,13 @@ A neo-brutalist side panel component that can slide in from any edge. Built on t
 
 ```vue
 <script setup>
+import { DialogRoot as Sheet, DialogTrigger as SheetTrigger, DialogClose as SheetClose } from 'reka-ui'
 import {
-    Sheet,
-    SheetTrigger,
     SheetContent,
     SheetHeader,
     SheetFooter,
     SheetTitle,
     SheetDescription,
-    SheetClose,
     Button,
 } from 'brutx-ui-vue'
 </script>
@@ -72,7 +70,8 @@ import {
 
 ```vue
 <script setup>
-import { Sheet, SheetTrigger, SheetContent, Button } from 'brutx-ui-vue'
+import { DialogRoot as Sheet, DialogTrigger as SheetTrigger } from 'reka-ui'
+import { SheetContent, Button } from 'brutx-ui-vue'
 </script>
 
 <template>

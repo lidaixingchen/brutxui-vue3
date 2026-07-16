@@ -22,7 +22,8 @@ A neo-brutalist popover component for displaying floating content anchored to a 
 
 ```vue
 <script setup>
-import { Popover, PopoverTrigger, PopoverAnchor, PopoverContent, Button } from 'brutx-ui-vue'
+import { PopoverRoot as Popover, PopoverTrigger, PopoverAnchor } from 'reka-ui'
+import { PopoverContent, Button } from 'brutx-ui-vue'
 </script>
 
 <template>
