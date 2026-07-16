@@ -1,0 +1,46 @@
+# -----------------------------------------------------------------------------
+# BrutxUI Vue 3 - Git Attributes Configuration
+# -----------------------------------------------------------------------------
+
+# 1. 换行符归一化 (Line Endings)
+# 强制所有文本文件在 Git 仓库内统一使用 LF 换行符。
+# 这样可以避免 Windows (CRLF) 与 Linux/Mac (LF) 混合，防止 ESLint/Prettier 报错或 Git Diff 产生不必要的噪点。
+* text=auto eol=lf
+
+# 明确指定常见文本文件的换行规则
+*.vue text eol=lf
+*.ts text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.css text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.html text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# 2. 隐藏/折叠自动生成的文件 (GitHub/GitLab Linguist)
+# 告诉 Git 和 GitHub：这些是自动生成的组件注册表 JSON，在 Diff 和语言统计中予以折叠和忽略。
+# 这样做能极大提升 Pull Request (PR) 的审查体验，避免成千上万行自动生成的 JSON 掩盖了实际的 Vue/TS 代码改动。
+packages/registry/registry/**/*.json linguist-generated=true
+packages/ui/registry-manifest.json linguist-generated=true
+
+# 3. 锁文件和二进制文件
+# pnpm 锁文件标记为由工具生成，这样 GitHub 在 PR 中会自动折叠它，避免 Diff 噪音
+pnpm-lock.yaml linguist-generated=true
+
+# 常见图片/媒体资源标记为二进制文件
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.svg text eol=lf
+
+# 4. 导出忽略 (打包瘦身)
+# 如果使用 git archive 命令打包，忽略测试、本地配置等非发布必要内容
+/tests/ export-ignore
+.github/ export-ignore
+.gitignore export-ignore
+.gitattributes export-ignore
