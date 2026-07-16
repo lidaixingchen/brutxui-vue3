@@ -1,0 +1,86 @@
+name: Bench
+
+on:
+    pull_request:
+        branches: [main, vue]
+
+concurrency:
+    group: bench-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: read
+    pull-requests: write
+
+jobs:
+    baseline:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: main
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - run: pnpm --filter brutx-ui-vue build
+
+            - name: Run bench (main baseline)
+              run: pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > bench-main.json
+              continue-on-error: true
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: bench-main
+                  path: bench-main.json
+
+    pr-compare:
+        runs-on: ubuntu-latest
+        needs: baseline
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - run: pnpm --filter brutx-ui-vue build
+
+            - name: Run bench (PR)
+              run: pnpm --filter brutx-ui-vue exec vitest bench --reporter=json > bench-pr.json
+              continue-on-error: true
+
+            - uses: actions/download-artifact@v4
+              with:
+                  name: bench-main
+                  path: bench-artifacts
+
+            - name: Generate diff report
+              run: node scripts/bench-diff.mjs bench-artifacts/bench-main.json bench-pr.json > bench-report.md
+
+            - name: Find comment
+              uses: peter-evans/find-comment@v3
+              id: fc
+              with:
+                  issue-number: ${{ github.event.pull_request.number }}
+                  comment-author: github-actions[bot]
+                  body-includes: Performance Bench Report
+
+            - name: Create or update comment
+              uses: peter-evans/create-or-update-comment@v4
+              with:
+                  issue-number: ${{ github.event.pull_request.number }}
+                  comment-id: ${{ steps.fc.outputs.comment-id }}
+                  body-path: bench-report.md
+                  edit-mode: replace

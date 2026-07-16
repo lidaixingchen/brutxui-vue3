@@ -397,3 +397,119 @@ async function loadMore() {
   </div>
 </template>
 ```
+
+## 7. 渲染优化进阶（v-memo 与 markRaw）
+
+### 7.1 何时使用 v-memo
+
+`v-memo` 是 Vue 3 的渲染缓存指令：当依赖数组未变化时，跳过该子树的 re-render。适用于**大列表 `v-for` 且行数据独立**的场景。
+
+**正例：行数据独立、状态可枚举**
+
+```vue
+<template>
+  <div
+    v-for="item in list"
+    :key="item.id"
+    v-memo="[item.id, item.selected, item.expanded]"
+  >
+    {{ item.name }}
+  </div>
+</template>
+```
+
+**反例：行内联动状态**
+
+```vue
+<!-- 反例：依赖数组遗漏 isExpanded 会导致展开态不更新 -->
+<div
+  v-for="item in list"
+  :key="item.id"
+  v-memo="[item.id, item.selected]"
+>
+  <span v-if="item.expanded">{{ item.detail }}</span>
+</div>
+```
+
+**使用规则**：
+1. 依赖数组必须覆盖所有影响该子树渲染的响应式状态（数据、选中态、展开态等）
+2. 依赖数组遗漏会导致渲染不更新——这是 `v-memo` 最常见的陷阱
+3. 小列表（< 100 项）无需 `v-memo`——依赖追踪的开销可能抵消收益
+4. `v-memo` 不能用于依赖全局布局状态的场景（如单元格合并、固定列偏移）
+
+> BrutxUI 内部组件（DataTable、TreeView）未使用 `v-memo`——行渲染状态依赖复杂（选中态 + 展开态 + 拖拽态 + 单元格合并），盲目添加会导致渲染错误。详见 [性能审计报告](../../../audit/perf-audit.md)。
+
+### 7.2 何时使用 markRaw
+
+`markRaw` 标记对象为永不响应式，适用于**不需要响应式的第三方实例**（如地图实例、图表实例、组件渲染器）。
+
+```typescript
+import { markRaw } from 'vue'
+
+// 第三方实例无需响应式追踪
+const chartInstance = markRaw(echarts.init(domEl))
+
+// 组件对象作为渲染器时
+const CellRenderer = markRaw({
+  props: { cellFn: Function, row: Object, value: null },
+  render(props) { return props.cellFn({ row: props.row, value: props.value }) },
+})
+```
+
+**反例：需要响应式更新的数据对象**
+
+```typescript
+// 反例：markRaw 后数据变更不会触发视图更新
+const tableData = markRaw(largeDataSet)
+tableData[0].name = 'updated' // 视图不会更新！
+```
+
+> BrutxUI 内部使用 `markRaw` 的场景：DataTable 的 `CellRenderer` 渲染器对象（避免组件对象被响应式代理）。
+
+### 7.3 shallowRef 与 ref 的取舍
+
+| 场景 | 推荐 | 原因 |
+| --- | --- | --- |
+| 大型列表数据（> 1000 项） | `shallowRef` | 避免对每个元素深层响应式追踪 |
+| Set/Map 状态集合 | `shallowRef` | Set/Map 的深层响应式开销大 |
+| 第三方实例（图表、编辑器） | `shallowRef` + `markRaw` | 实例无需响应式 |
+| 需要表单双向绑定的对象 | `ref` | 需要深层响应式追踪属性变更 |
+| 简单值（string/number/boolean） | `ref` | `shallowRef` 无收益 |
+
+## 8. 性能基准（bench）
+
+### 8.1 当前基线数据
+
+> 基线环境：本地开发机（Windows 11），Node.js 22，`--time=200` 快速采样
+> 正式基线以 CI（`ubuntu-latest`，`--time=1000`）为准，每次发版后同步
+
+| 组件 | 场景 | hz | 说明 |
+| --- | --- | --- | --- |
+| DataTable | 100 rows | ~30 | 小列表基线 |
+| DataTable | 1000 rows | ~3 | 大列表观测点 |
+| TreeView | 100 nodes | ~9 | 小列表基线 |
+| TreeView | 1000 nodes | ~1 | 大列表观测点 |
+
+### 8.2 复现方法
+
+```bash
+# 本地运行 bench（markdown 表格输出）
+pnpm --filter brutx-ui-vue bench
+
+# 输出 JSON（供 CI 对比脚本消费）
+pnpm --filter brutx-ui-vue bench:json
+
+# CI 对比两份 bench JSON
+node scripts/bench-diff.mjs bench-main.json bench-pr.json
+```
+
+### 8.3 回归判定标准
+
+CI 会自动在 PR 评论中发布 bench 对比报告（非门禁，仅信息性）：
+
+- `|delta| < 5%`：噪声范围内（GitHub-hosted runner 典型噪声带）
+- `delta < -5%`：疑似回归
+- `delta > 5%`：改善
+- 疑似回归超过 2 个时，维护者需人工复核后再合并
+
+详见 [性能审计报告](../../../audit/perf-audit.md) 和 [架构优化方案 §4.1](../../../ARCHITECTURE_OPTIMIZATION_PLAN_V2.md#4-运行时性能基准与关键组件优化)。

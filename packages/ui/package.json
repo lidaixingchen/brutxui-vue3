@@ -526,6 +526,8 @@
         "test:ssr": "vitest run --config vitest.ssr.config.ts",
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
+        "bench": "vitest bench",
+        "bench:json": "vitest bench --reporter=json",
         "test:package": "node scripts/smoke-package.mjs",
         "size": "size-limit",
         "size:why": "size-limit --why",
