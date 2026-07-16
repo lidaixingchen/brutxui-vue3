@@ -99,6 +99,11 @@ jobs:
             - name: Validate registry
               run: turbo run validate --filter=brutx-registry-vue
 
+            - name: i18n mirror check (report)
+              if: matrix.node-version == 22
+              run: pnpm check:i18n
+              continue-on-error: true
+
             - name: Test all packages (turbo)
               run: pnpm test
 
