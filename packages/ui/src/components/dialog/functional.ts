@@ -108,7 +108,8 @@ function getDialogEnhancedProps(options: ShowDialogOptions): Record<string, unkn
 }
 
 export function showDialog(options: ShowDialogOptions = {}) {
-    if (!canUseDocumentBody()) {
+    const doc = getDocument()
+    if (!doc || !doc.body) {
         return {
             close: () => {},
             promise: Promise.resolve(),
@@ -116,9 +117,8 @@ export function showDialog(options: ShowDialogOptions = {}) {
         }
     }
 
-    const doc = getDocument()!
     const container = doc.createElement('div')
-    doc.body!.appendChild(container)
+    doc.body.appendChild(container)
 
     const isOpen = ref(true)
 
