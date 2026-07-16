@@ -107,7 +107,7 @@ jobs:
               run: pnpm lint
 
             - name: Validate registry
-              run: turbo run validate --filter=brutx-registry-vue
+              run: pnpm exec turbo run validate --filter=brutx-registry-vue
 
             - name: i18n mirror check (report)
               if: matrix.node-version == 22
