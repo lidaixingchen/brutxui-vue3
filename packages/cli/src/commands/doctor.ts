@@ -11,7 +11,16 @@ import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, C
 import { logger } from '../lib/logger.js';
 
 const require = createRequire(import.meta.url);
-const pkg = require('../../package.json') as { version: string };
+let pkg: { version: string };
+try {
+    pkg = require('../../package.json') as { version: string };
+} catch {
+    try {
+        pkg = require('../package.json') as { version: string };
+    } catch {
+        pkg = { version: '0.0.0' };
+    }
+}
 
 const UTILS_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const MIN_NODE_VERSION = '22.5.0';
