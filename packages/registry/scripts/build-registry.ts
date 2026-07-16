@@ -10,7 +10,7 @@ import {
     CSS_VARS,
 } from 'brutx-shared-vue';
 import { extractModuleSpecifiers, extractClassifiedModuleSpecifiers } from 'brutx-shared-vue/scan';
-import { scanComponentFiles, type ComponentFileManifest } from 'brutx-shared-vue/scan';
+import { scanComponentFiles, buildComponentIndexContent, type ComponentFileManifest } from 'brutx-shared-vue/scan';
 import type {
     MergedRegistryEntry,
     RegistryManifest,
@@ -365,6 +365,10 @@ export function computeSourceHash(name: string, fileMapping: { files: string[]; 
             addComponentFile(fileName);
         }
     }
+    // Include the derived index.ts barrel content in the hash so that changes
+    // to the component file list (which determines the barrel's exports) are
+    // detected. The barrel is generated inline — see buildRegistryItem.
+    parts.push(buildComponentIndexContent(Array.from(componentDeps)));
     const directiveDeps = new Set<string>(fileMapping.directives ?? []);
     const addedDirectiveDeps = new Set<string>();
     while (addedDirectiveDeps.size < directiveDeps.size) {
@@ -647,6 +651,21 @@ export function buildRegistryItem(name: string): RegistryItem {
             addedComponentFiles.add(fileName);
         }
     }
+
+    // Generate index.ts barrel content inline.
+    // The barrel is a derived artifact (gitignored, auto-generated from the
+    // component file list). Generating it here avoids depending on the file
+    // existing on disk, which breaks on clean CI checkouts.
+    const indexContent = rewriteImports(
+        buildComponentIndexContent(Array.from(componentFileDeps)),
+        name,
+        'component'
+    );
+    files.push({
+        path: `components/ui/${name}/index.ts`,
+        content: indexContent,
+        type: getFileType(`components/ui/${name}/index.ts`)
+    });
 
     const addedComposables = new Set<string>();
     processComposables(composableDeps, addedComposables, name, files, allRegistryDeps, localeDeps, libDeps);

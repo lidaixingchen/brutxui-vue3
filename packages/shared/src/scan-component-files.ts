@@ -39,6 +39,16 @@ function resolveExtension(rawFileName: string, baseDir: string): string {
 
 const TEST_FILE_PATTERN = /\.(test|spec)\.(ts|js|tsx|jsx)$/;
 
+/**
+ * `index.ts` barrel files are auto-generated derived artifacts (produced by
+ * generate-component-index.ts from this manifest). They are gitignored and may
+ * not exist on a clean checkout. Skipping them here avoids:
+ *   - Circular dependency (manifest → generate index.ts → manifest)
+ *   - CI failures when index.ts doesn't exist yet at scan time
+ * The registry build generates index.ts content inline instead.
+ */
+const DERIVED_BARREL_FILE = 'index.ts';
+
 function listComponentFiles(componentDir: string): string[] {
     const results: string[] = [];
     const stack: string[] = ['.'];
@@ -57,6 +67,7 @@ function listComponentFiles(componentDir: string): string[] {
                 stack.push(entryRel);
             } else if (entry.isFile()) {
                 if (TEST_FILE_PATTERN.test(entry.name)) continue;
+                if (entry.name === DERIVED_BARREL_FILE) continue;
                 const ext = path.extname(entry.name);
                 if (ext === '.vue' || ext === '.ts' || ext === '.css') {
                     results.push(entryRel.replace(/\\/g, '/'));

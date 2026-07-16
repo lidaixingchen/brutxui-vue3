@@ -6,7 +6,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
   "dependencies": [
     "@lucide/vue",
   ],
-  "fileCount": 13,
+  "fileCount": 14,
   "files": [
     {
       "path": "components/ui/data-table/DataTable.vue",
@@ -23,6 +23,10 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
     {
       "path": "components/ui/data-table/types.ts",
       "type": "registry:lib",
+    },
+    {
+      "path": "components/ui/data-table/index.ts",
+      "type": "registry:ui",
     },
     {
       "path": "composables/useDataTableFilter.ts",
@@ -61,7 +65,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-4fd9de67b233e50e2cd8c4e22a4d7e4fd926581c61e09d07a45c7359b3038a26",
+  "integrity": "sha256-945880a34fcae3ccf06d42b34d7c8bc11ef41d47d96332ee71310a1d4c90a81c",
   "name": "data-table",
   "registryDependencies": [
     "input",
@@ -97,12 +101,12 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
     {
-      "path": "components/ui/button/index.ts",
-      "type": "registry:ui",
-    },
-    {
       "path": "components/ui/button/shared-button-variants.ts",
       "type": "registry:lib",
+    },
+    {
+      "path": "components/ui/button/index.ts",
+      "type": "registry:ui",
     },
     {
       "path": "composables/useGlitchEffect.ts",
@@ -133,7 +137,7 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-ba37ead5b78ee48ff905284524e7f269e1e596fc1af89d005fc3e1d91dd7e25d",
+  "integrity": "sha256-1cc96262b0d93fcea39928a1137b4aed60f6c45b4464382f48657cac4dc6b7fa",
   "name": "button",
   "registryDependencies": [
     "locale-zh-cn",
