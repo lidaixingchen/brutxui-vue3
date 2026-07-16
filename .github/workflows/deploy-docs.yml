@@ -21,11 +21,12 @@ jobs:
             url: ${{ steps.deployment.outputs.page_url }}
         runs-on: ubuntu-latest
         env:
-            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
         steps:
             - uses: actions/checkout@v4
               with:
-                  fetch-depth: 0
+                  fetch-depth: 0 # VitePress lastUpdated 需要 git 历史获取每页最后修改时间
 
             - uses: pnpm/action-setup@v4
 
@@ -34,14 +35,19 @@ jobs:
                   node-version: 22
                   cache: pnpm
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+            - run: pnpm install --frozen-lockfile
 
-            - name: Build UI library
-              run: pnpm --filter brutx-ui-vue build
+            - name: Cache turbo local build cache
+              uses: actions/cache@v4
+              with:
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
+                  restore-keys: ${{ runner.os }}-turbo-
 
-            - name: Build docs
-              run: pnpm --filter docs build
+            # turbo 自动处理依赖顺序：先 build brutx-ui-vue（及 shared），再 build docs
+            # 配合 turbo 缓存，若 UI 源码未变则跳过 UI 构建
+            - name: Build docs (turbo)
+              run: pnpm build:docs
 
             - name: Setup Pages
               uses: actions/configure-pages@v4

@@ -13,7 +13,6 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         env:
-            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
             # Turbo Remote Cache — Vercel Remote Cache（方案 §5.1；发布门禁 turbo run build/test/typecheck/lint 同样受益）
             # 配置步骤见 ci.yml 同名注释（TURBO_TOKEN 用 secrets，TURBO_TEAM 用 vars）
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -23,6 +22,8 @@ jobs:
             id-token: write
         steps:
             - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1 # 发布门禁不需要 git 历史；gh release --generate-notes 走 API
 
             - uses: pnpm/action-setup@v4
 
@@ -34,31 +35,15 @@ jobs:
 
             - run: pnpm install --frozen-lockfile
 
-            - name: Cache Playwright Browser Binaries
-              id: playwright-cache
+            - name: Cache turbo local build cache
               uses: actions/cache@v4
               with:
-                  path: ~/.cache/ms-playwright
-                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-playwright-
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
+                  restore-keys: ${{ runner.os }}-turbo-
 
-            - name: Clean up problematic APT repositories
-              run: |
-                  sudo rm -f /etc/apt/sources.list.d/azure-cli.list*
-                  sudo rm -f /etc/apt/sources.list.d/microsoft*
-
-            - name: Install Playwright Browser and Deps
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
-              run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
-
-            - name: Install Playwright Dependencies (when cache hit)
-              if: steps.playwright-cache.outputs.cache-hit == 'true'
-              run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
-
-            - name: Install fonts for visual tests
-              run: sudo apt-get install -y fonts-inter || (sudo apt-get update && sudo apt-get install -y fonts-inter)
-
+            # 发布门禁：build + test + typecheck + lint（turbo 并行，test 依赖 build 自动等待）
+            # test = vitest run（Node 环境），不需要 Playwright/浏览器
             - name: Release gate (turbo)
               run: pnpm exec turbo run build test typecheck lint
 
@@ -69,14 +54,6 @@ jobs:
                     ls -A .changeset
                     exit 1
                   fi
-
-            - uses: actions/upload-artifact@v4
-              if: failure()
-              with:
-                  name: playwright-visual-report
-                  path: |
-                      packages/ui/playwright-report
-                      packages/ui/test-results
 
             - name: Publish brutx-ui-vue
               working-directory: packages/ui

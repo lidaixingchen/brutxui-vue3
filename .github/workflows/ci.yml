@@ -13,29 +13,29 @@ concurrency:
 permissions:
     contents: read
 
+# Turbo Remote Cache — Vercel Remote Cache（方案 §5.1 强制要求，禁止不配置远程缓存就上线 turbo）
+# 配置步骤（仅需一次）：
+#   1. 在仓库根目录运行 `pnpm dlx turbo login`，浏览器授权 Vercel 账号
+#   2. 运行 `pnpm dlx turbo link`，选择目标 Vercel 团队并启用 Remote Caching
+#   3. 在 GitHub 仓库 Settings 配置：
+#      - Secrets → Actions → New repository secret：`TURBO_TOKEN`（值见 ~/.turbo/config.json 的 token 字段）
+#      - Variables → Actions → New repository variable：`TURBO_TEAM`（Vercel 团队 slug，即 vercel.com/<team-slug>）
+#   4. 在 Vercel 团队 Settings → Remote Caching，确保 TURBO_TOKEN 对应的角色拥有
+#      "Remote Cache Artifact" 写权限（默认 token 可能只有读权限，需手动授予写权限）
+# 注：TURBO_TEAM 使用 variables 而非 secrets，因为团队 slug 非敏感信息（GitHub 最佳实践）
+
 jobs:
-    build-and-test:
+    quality:
+        name: Quality (build + typecheck + lint + validate)
         runs-on: ubuntu-latest
-        strategy:
-            fail-fast: false
-            matrix:
-                node-version: [22, 24]
         env:
-            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-            # Turbo Remote Cache — Vercel Remote Cache（方案 §5.1 强制要求，禁止不配置远程缓存就上线 turbo）
-            # 配置步骤（仅需一次）：
-            #   1. 在仓库根目录运行 `pnpm dlx turbo login`，浏览器授权 Vercel 账号
-            #   2. 运行 `pnpm dlx turbo link`，选择目标 Vercel 团队并启用 Remote Caching
-            #   3. 在 GitHub 仓库 Settings 配置：
-            #      - Secrets → Actions → New repository secret：`TURBO_TOKEN`（值见 ~/.turbo/config.json 的 token 字段）
-            #      - Variables → Actions → New repository variable：`TURBO_TEAM`（Vercel 团队 slug，即 vercel.com/<team-slug>）
-            #   注：TURBO_TEAM 使用 variables 而非 secrets，因为团队 slug 非敏感信息（GitHub 最佳实践）
             TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
             TURBO_TEAM: ${{ vars.TURBO_TEAM }}
         steps:
             - uses: actions/checkout@v4
               with:
-                  fetch-depth: 0 # changeset diff 需要完整历史
+                  # PR 需要 0 用于 changeset 三点 diff；push 用 1 节省时间
+                  fetch-depth: ${{ github.event_name == 'pull_request' && 0 || 1 }}
 
             - name: Check changeset presence (PR only)
               if: github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[no-changeset]')
@@ -54,85 +54,170 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: 22
                   cache: pnpm
 
             - run: pnpm install --frozen-lockfile
 
-            - name: Cache Playwright Browser Binaries
-              if: matrix.node-version == 22
-              id: playwright-cache
+            - name: Cache turbo local build cache
               uses: actions/cache@v4
               with:
-                  path: ~/.cache/ms-playwright
-                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: |
-                      ${{ runner.os }}-playwright-
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
+                  restore-keys: ${{ runner.os }}-turbo-
 
-            - name: Clean up problematic APT repositories
-              if: matrix.node-version == 22
-              run: |
-                  sudo rm -f /etc/apt/sources.list.d/azure-cli.list*
-                  sudo rm -f /etc/apt/sources.list.d/microsoft*
+            # turbo 并行执行：typecheck/lint 不依赖 build，与 build 同时跑；validate 依赖 build 会自动等待
+            - name: Build + typecheck + lint (turbo parallel)
+              run: pnpm exec turbo run build typecheck lint
 
-            - name: Install Playwright Browser and Deps
-              if: matrix.node-version == 22 && steps.playwright-cache.outputs.cache-hit != 'true'
-              run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
-
-            - name: Install Playwright Dependencies (when cache hit)
-              if: matrix.node-version == 22 && steps.playwright-cache.outputs.cache-hit == 'true'
-              run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
-
-            - name: Install fonts for visual tests
-              if: matrix.node-version == 22
-              run: sudo apt-get install -y fonts-inter || (sudo apt-get update && sudo apt-get install -y fonts-inter)
-
-            - name: Build all packages (turbo)
-              run: pnpm build
+            - name: Validate registry
+              run: pnpm exec turbo run validate --filter=brutx-registry-vue
 
             - name: Verify exports field consistency
               run: pnpm --filter brutx-ui-vue check:exports
 
             - name: Check bundle size limits
-              if: matrix.node-version == 22
               run: pnpm --filter brutx-ui-vue size
 
             - name: Audit CSS fallback coverage
               run: pnpm --filter brutx-ui-vue audit:fallback:check
 
-            - name: Typecheck all packages (turbo)
-              run: pnpm typecheck
-
-            - name: Lint all packages (turbo)
-              run: pnpm lint
-
-            - name: Validate registry
-              run: pnpm exec turbo run validate --filter=brutx-registry-vue
-
             - name: i18n mirror check (report)
-              if: matrix.node-version == 22
               run: pnpm check:i18n
               continue-on-error: true
 
-            - name: Test all packages (turbo)
-              run: pnpm test
+    test:
+        name: Test (Node ${{ matrix.node-version }})
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                node-version: [22, 24]
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
 
-            - name: SSR smoke tests
-              run: pnpm test:ssr
+            - uses: pnpm/action-setup@v4
 
-            - run: pnpm --filter brutx-ui-vue test:browser
-              if: matrix.node-version == 22
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: pnpm
 
-            - run: pnpm --filter brutx-ui-vue test:visual
-              if: matrix.node-version == 22
+            - run: pnpm install --frozen-lockfile
+
+            - name: Cache turbo local build cache
+              uses: actions/cache@v4
+              with:
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
+                  restore-keys: ${{ runner.os }}-turbo-
+
+            # test 与 test:ssr 都依赖 build，turbo 会先 build 再并行跑两个测试任务
+            - name: Build + test + SSR (turbo)
+              run: pnpm exec turbo run build test test:ssr
+
+    visual:
+        name: Visual & Browser tests
+        runs-on: ubuntu-latest
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Cache turbo local build cache
+              uses: actions/cache@v4
+              with:
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
+                  restore-keys: ${{ runner.os }}-turbo-
+
+            - name: Cache Playwright Browser Binaries
+              id: playwright-cache
+              uses: actions/cache@v4
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+                  restore-keys: ${{ runner.os }}-playwright-
+
+            - name: Clean up problematic APT repositories
+              run: |
+                  sudo rm -f /etc/apt/sources.list.d/azure-cli.list*
+                  sudo rm -f /etc/apt/sources.list.d/microsoft*
+
+            - name: Install Playwright Browser and Deps
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
+              run: pnpm --filter brutx-ui-vue exec playwright install --with-deps chromium
+
+            - name: Install Playwright Dependencies (when cache hit)
+              if: steps.playwright-cache.outputs.cache-hit == 'true'
+              run: pnpm --filter brutx-ui-vue exec playwright install-deps chromium
+
+            - name: Install fonts for visual tests
+              run: sudo apt-get install -y fonts-inter || (sudo apt-get update && sudo apt-get install -y fonts-inter)
+
+            - name: Build (turbo)
+              run: pnpm build
+
+            - name: Browser tests
+              run: pnpm --filter brutx-ui-vue test:browser
+
+            - name: Visual regression tests
+              run: pnpm --filter brutx-ui-vue test:visual
 
             - uses: actions/upload-artifact@v4
-              if: matrix.node-version == 22 && failure()
+              if: failure()
               with:
                   name: playwright-visual-report
                   path: |
                       packages/ui/playwright-report
                       packages/ui/test-results
 
-            - run: pnpm --filter brutx-vue test:integration
-              if: matrix.node-version == 22
+    integration:
+        name: CLI Integration tests
+        runs-on: ubuntu-latest
+        env:
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - uses: pnpm/action-setup@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Cache turbo local build cache
+              uses: actions/cache@v4
+              with:
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
+                  restore-keys: ${{ runner.os }}-turbo-
+
+            - name: Build (turbo)
+              run: pnpm build
+
+            - name: CLI Integration tests
+              run: pnpm --filter brutx-vue test:integration
