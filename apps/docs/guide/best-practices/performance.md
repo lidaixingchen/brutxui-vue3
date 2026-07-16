@@ -14,15 +14,17 @@ import { Button, Input, Card } from 'brutx-ui-vue'
 import 'brutx-ui-vue/styles.css'
 ```
 
-### 1.2 子路径导入（稳定白名单）
+### 1.2 子路径导入
 
-主入口是 BrutxUI 的稳定组件导入面。子路径导入只对 `package.json` `exports` 中声明的稳定白名单开放，当前包括 `button`、`input`、`dialog`、`toast`、`form`、`select`、`dropdown-menu`、`table`、`card`、`tabs`、`calendar`、`carousel`、`code-block`、`hooks`、`locales`、`devtools-plugin` 以及样式入口。未列出的组件请从主入口导入。
+`package.json` 的 `exports` 字段由 `packages/ui/scripts/generate-exports.ts` 自动生成（§2.1），为每个组件目录（`packages/ui/src/components/<name>/index.ts`）生成对应的子路径。包括 `button`、`input`、`dialog`、`toast`、`form`、`select`、`dropdown-menu`、`table`、`card`、`tabs`、`calendar`、`carousel`、`code-block`、`locales`、`style.css`、`preflight.css` 等所有存在 `index.ts` 的组件目录。
 
 ```typescript
-// 仅对白名单子路径使用直接导入
+// 从组件子路径导入
 import { Button, buttonVariants } from 'brutx-ui-vue/button'
-import { DialogRoot as Dialog } from 'reka-ui'
 import { DialogContent } from 'brutx-ui-vue/dialog'
+
+// reka-ui 原语需直接从 reka-ui 导入（brutx-ui-vue 不再 re-export，见 §2.2 迁移指南）
+import { DialogRoot as Dialog } from 'reka-ui'
 ```
 
 ### 1.3 Vite 配置优化

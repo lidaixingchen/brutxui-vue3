@@ -14,6 +14,10 @@ jobs:
         runs-on: ubuntu-latest
         env:
             FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+            # Turbo Remote Cache — Vercel Remote Cache（方案 §5.1；发布门禁 turbo run build/test/typecheck/lint 同样受益）
+            # 配置步骤见 ci.yml 同名注释（TURBO_TOKEN 用 secrets，TURBO_TEAM 用 vars）
+            TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+            TURBO_TEAM: ${{ vars.TURBO_TEAM }}
         permissions:
             contents: write
             id-token: write

@@ -12,7 +12,7 @@
 - [ ] **Conventional Commits**：commit 信息符合 `<type>(<scope>): <subject>` 规范
 - [ ] **本地验证通过**：`pnpm build && pnpm typecheck && pnpm lint && pnpm test`
 - [ ] **SSR 安全**（涉及组件/组合式函数时）：未在模块顶层访问 `window`/`document`/`navigator`
-- [ ] **可访问性**（涉及交互组件时）：通过 `vitest-axe` / `@axe-core/playwright` 校验
+- [ ] **可访问性**（涉及交互组件时）：通过 `axe-core`（`expectNoA11yViolations`）/ `@axe-core/playwright` 校验
 - [ ] **视觉回归**（涉及 UI 视觉变更时）：已更新 `packages/ui/visual/baselines` 并附说明
 - [ ] **包体积**（涉及 `packages/ui` 时）：`pnpm --filter brutx-ui-vue size` 未超 size-limit 阈值
 - [ ] **文档同步**：受影响的 API/示例/迁移指南已在 `apps/docs` 与 `docs/RELEASE.md` 中同步
