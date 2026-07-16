@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import Upload from './Upload.vue'
-import type { UploadError, UploadFile } from './index'
+import type { UploadError, UploadFile } from './upload-types'
 
 function createFile(name: string, type: string): File {
     return new File(['content'], name, { type })

@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useUpload } from '@/composables/useUpload'
-import type { UploadFile, UploadError, UploadRequestOptions } from './index'
+import type { UploadFile, UploadError, UploadRequestOptions } from './upload-types'
 
 interface UploadProps {
     /** 文件列表 v-model */

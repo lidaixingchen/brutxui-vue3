@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { nextTick } from 'vue'
 import UploadFileItem from './UploadFileItem.vue'
-import type { UploadFile } from './index'
+import type { UploadFile } from './upload-types'
 
 function createImageFile(name = 'a.png', size = 100): File {
     return new File([new ArrayBuffer(size)], name, { type: 'image/png' })

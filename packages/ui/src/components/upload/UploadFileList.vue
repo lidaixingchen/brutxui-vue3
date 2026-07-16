@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils'
-import type { UploadFile } from './index'
+import type { UploadFile } from './upload-types'
 import UploadFileItem from './UploadFileItem.vue'
 
 interface UploadFileListProps {

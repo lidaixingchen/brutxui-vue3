@@ -12,7 +12,7 @@ import {
     RefreshCw,
 } from '@lucide/vue'
 import { cn } from '@/lib/utils'
-import type { UploadFile } from './index'
+import type { UploadFile } from './upload-types'
 import { Progress } from '@/components/progress'
 import { Button } from '@/components/button'
 
