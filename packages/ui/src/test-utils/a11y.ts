@@ -1,12 +1,7 @@
 import { mount } from '@vue/test-utils'
 import type { Component } from 'vue'
-import { expect, vi } from 'vitest'
+import { vi } from 'vitest'
 import { axe } from '../vitest.setup'
-
-// FIXME(vitest-axe): vitest-axe ^0.1.0 的模块增强（vitest-axe.d.ts 中 4 个 module target 的 augmentation）
-// 无法覆盖 Vitest 4.x 的 expect 类型，导致 toHaveNoViolations matcher 在类型系统中不可见。
-// 短期方案：下方 expect(results) 使用 as unknown as 强转绕过类型检查。
-// 长期方案：升级 vitest-axe 到与 Vitest 4.x 兼容的版本，或切换到社区 fork，然后移除强转。
 
 /**
  * 检测组件无 accessibility 违规
@@ -14,7 +9,7 @@ import { axe } from '../vitest.setup'
  * 使用 axe-core 对渲染后的组件进行可访问性检测，
  * 确保没有违反 WCAG 标准的问题。
  *
- * @param component - 要测试 My Vue 组件
+ * @param component - 要测试的 Vue 组件
  * @param options - 挂载选项（props、slots、attrs 等）
  * @returns Vue Test Utils 的 VueWrapper 实例
  *
@@ -40,8 +35,14 @@ export async function expectNoA11yViolations(
     const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
     try {
         const results = await axe(wrapper.element)
-        // vitest-axe augments expect with toHaveNoViolations at runtime
-        ;(expect(results) as unknown as { toHaveNoViolations: () => void }).toHaveNoViolations()
+        // 自定义失败信息：仅 toHaveLength(0) 失败时只输出数量，不显示违规详情
+        // 需格式化输出 rule id / help / 涉及元素，便于定位
+        if (results.violations.length > 0) {
+            const detail = results.violations
+                .map(v => `  - ${v.id} (${v.help}): ${v.nodes.map(n => n.html).join(', ')}`)
+                .join('\n')
+            throw new Error(`a11y violations (${results.violations.length}):\n${detail}`)
+        }
         return wrapper
     } finally {
         wrapper.unmount()

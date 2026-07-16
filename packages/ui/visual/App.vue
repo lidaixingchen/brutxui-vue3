@@ -4,6 +4,9 @@ import {
     Alert,
     AlertDescription,
     AlertTitle,
+    Badge,
+    BlockSpinner,
+    BarsSpinner,
     Button,
     Card,
     CardContent,
@@ -13,6 +16,7 @@ import {
     CardTitle,
     Checkbox,
     Combobox,
+    DotsSpinner,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuGroup,
@@ -20,6 +24,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    GlitchText,
     Input,
     NumberInput,
     RadioGroup,
@@ -29,6 +34,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
+    Spinner,
     Switch,
     Textarea,
     Toast,
@@ -36,16 +42,24 @@ import {
 
 type VisualSuite = 'forms' | 'overlays' | 'feedback' | 'containers'
 type VisualTheme = 'light' | 'dark'
+type CoreComponent = 'button' | 'card' | 'glitch-text' | 'spinner' | 'badge'
 
-const query = new URLSearchParams(window.location.search)
+const coreComponents: readonly CoreComponent[] = ['button', 'card', 'glitch-text', 'spinner', 'badge']
+
+const params = new URLSearchParams(window.location.search)
+
+const component = computed<CoreComponent | null>(() => {
+    const value = params.get('component')
+    return coreComponents.find(c => c === value) ?? null
+})
 
 const suite = computed<VisualSuite>(() => {
-    const value = query.get('suite')
+    const value = params.get('suite')
     if (value === 'overlays' || value === 'feedback' || value === 'containers') return value
     return 'forms'
 })
 
-const theme = computed<VisualTheme>(() => query.get('theme') === 'dark' ? 'dark' : 'light')
+const theme = computed<VisualTheme>(() => (params.get('theme') === 'dark' ? 'dark' : 'light'))
 
 const suiteTitle = computed(() => {
     const titles: Record<VisualSuite, string> = {
@@ -54,8 +68,18 @@ const suiteTitle = computed(() => {
         feedback: 'Feedback States',
         containers: 'Card Containers',
     }
-
     return titles[suite.value]
+})
+
+const componentTitle = computed(() => {
+    const titles: Record<CoreComponent, string> = {
+        button: 'Button',
+        card: 'Card',
+        'glitch-text': 'Glitch Text',
+        spinner: 'Spinner',
+        badge: 'Badge',
+    }
+    return component.value ? titles[component.value] : ''
 })
 
 const shellClasses = computed(() => [
@@ -68,6 +92,12 @@ const suiteClasses = computed(() => [
     suite.value === 'overlays' ? 'min-h-[520px]' : '',
 ])
 
+// 单组件容器：固定 min-height 防止视口或内容微抖动导致基线漂移；与 .visual-suite 对齐
+const componentShellClasses = [
+    'visual-component mx-auto w-[1080px] border-3 border-brutal bg-brutal-bg p-6 text-brutal-fg shadow-brutal-xl',
+    'min-h-24', // 6rem — 覆盖多数单行组件的自然高度，留出 padding 余量
+]
+
 const frameworkOptions = [
     { value: 'vue', label: 'Vue' },
     { value: 'vite', label: 'Vite' },
@@ -78,7 +108,209 @@ const frameworkOptions = [
 
 <template>
     <main :class="shellClasses">
-        <section :class="suiteClasses">
+        <!-- 单组件模式：?component=xxx -->
+        <section v-if="component" :class="componentShellClasses">
+            <header class="mb-6 flex items-start justify-between border-b-3 border-brutal pb-4">
+                <div>
+                    <p class="text-sm font-black uppercase tracking-normal text-brutal-muted-foreground">
+                        BrutxUI Visual Regression · Core Component
+                    </p>
+                    <h1 class="mt-2 text-4xl font-black tracking-normal">
+                        {{ componentTitle }}
+                    </h1>
+                </div>
+                <div class="border-3 border-brutal bg-brutal-accent px-4 py-2 text-sm font-black shadow-brutal-sm">
+                    {{ theme }}
+                </div>
+            </header>
+
+            <!-- Button: variants × sizes + states -->
+            <div v-if="component === 'button'" class="grid grid-cols-3 gap-4">
+                <Button>Default</Button>
+                <Button variant="primary">Primary</Button>
+                <Button variant="secondary">Secondary</Button>
+                <Button variant="accent">Accent</Button>
+                <Button variant="danger">Danger</Button>
+                <Button variant="success">Success</Button>
+                <Button variant="outline">Outline</Button>
+                <Button variant="ghost">Ghost</Button>
+                <Button variant="link">Link</Button>
+                <Button size="sm">Small</Button>
+                <Button size="default">Default</Button>
+                <Button size="lg">Large</Button>
+                <Button size="xl">Extra Large</Button>
+                <Button loading>Loading</Button>
+                <Button disabled>Disabled</Button>
+            </div>
+
+            <!-- Card: variants × sections -->
+            <div v-else-if="component === 'card'" class="grid grid-cols-3 gap-4">
+                <Card variant="default">
+                    <CardHeader>
+                        <CardTitle>Default</CardTitle>
+                        <CardDescription>Base border and brutal shadow.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm font-bold text-brutal-muted-foreground">Default padding and elevation.</p>
+                    </CardContent>
+                    <CardFooter>
+                        <Button size="sm">Save</Button>
+                    </CardFooter>
+                </Card>
+                <Card variant="elevated">
+                    <CardHeader>
+                        <CardTitle>Elevated</CardTitle>
+                        <CardDescription>Larger shadow for emphasis.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm font-bold text-brutal-muted-foreground">Uses shadow-brutal-lg.</p>
+                    </CardContent>
+                </Card>
+                <Card variant="flat">
+                    <CardHeader>
+                        <CardTitle>Flat</CardTitle>
+                        <CardDescription>No shadow, border only.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm font-bold text-brutal-muted-foreground">Shadow-none.</p>
+                    </CardContent>
+                </Card>
+                <Card variant="interactive">
+                    <CardHeader>
+                        <CardTitle>Interactive</CardTitle>
+                        <CardDescription>Hover lift and press.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm font-bold text-brutal-muted-foreground">Cursor pointer.</p>
+                    </CardContent>
+                </Card>
+                <Card variant="primary">
+                    <CardHeader>
+                        <CardTitle>Primary</CardTitle>
+                        <CardDescription>Primary-colored border and shadow.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm font-bold text-brutal-muted-foreground">Themed accent.</p>
+                    </CardContent>
+                </Card>
+                <Card variant="secondary">
+                    <CardHeader>
+                        <CardTitle>Secondary</CardTitle>
+                        <CardDescription>Secondary-colored border and shadow.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p class="text-sm font-bold text-brutal-muted-foreground">Themed accent.</p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <!-- GlitchText: directions × speeds (static state — animation disabled in test) -->
+            <div v-else-if="component === 'glitch-text'" class="space-y-6">
+                <div>
+                    <p class="mb-3 text-sm font-black uppercase tracking-normal text-brutal-muted-foreground">Horizontal</p>
+                    <div class="space-y-3">
+                        <GlitchText text="Brutal Slow" direction="horizontal" speed="slow" class="text-3xl" />
+                        <GlitchText text="Brutal Medium" direction="horizontal" speed="medium" class="text-3xl" />
+                        <GlitchText text="Brutal Fast" direction="horizontal" speed="fast" class="text-3xl" />
+                    </div>
+                </div>
+                <div>
+                    <p class="mb-3 text-sm font-black uppercase tracking-normal text-brutal-muted-foreground">Vertical</p>
+                    <div class="space-y-3">
+                        <GlitchText text="Brutal Slow" direction="vertical" speed="slow" class="text-3xl" />
+                        <GlitchText text="Brutal Medium" direction="vertical" speed="medium" class="text-3xl" />
+                        <GlitchText text="Brutal Fast" direction="vertical" speed="fast" class="text-3xl" />
+                    </div>
+                </div>
+                <div>
+                    <p class="mb-3 text-sm font-black uppercase tracking-normal text-brutal-muted-foreground">Both</p>
+                    <div class="space-y-3">
+                        <GlitchText text="Brutal Slow" direction="both" speed="slow" class="text-3xl" />
+                        <GlitchText text="Brutal Medium" direction="both" speed="medium" class="text-3xl" />
+                        <GlitchText text="Brutal Fast" direction="both" speed="fast" class="text-3xl" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spinner: types × sizes × variants -->
+            <div v-else-if="component === 'spinner'" class="grid grid-cols-4 gap-6">
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · sm</p>
+                    <Spinner size="sm" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · default</p>
+                    <Spinner size="default" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · lg</p>
+                    <Spinner size="lg" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · xl</p>
+                    <Spinner size="xl" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · primary</p>
+                    <Spinner variant="primary" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · secondary</p>
+                    <Spinner variant="secondary" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">Spinner · accent</p>
+                    <Spinner variant="accent" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">BlockSpinner</p>
+                    <BlockSpinner />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">BlockSpinner · lg</p>
+                    <BlockSpinner size="lg" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">DotsSpinner</p>
+                    <DotsSpinner />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">DotsSpinner · lg</p>
+                    <DotsSpinner size="lg" />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">BarsSpinner</p>
+                    <BarsSpinner />
+                </div>
+                <div class="space-y-3">
+                    <p class="text-sm font-black uppercase tracking-normal">BarsSpinner · lg</p>
+                    <BarsSpinner size="lg" />
+                </div>
+            </div>
+
+            <!-- Badge: variants × sizes + states -->
+            <div v-else-if="component === 'badge'" class="grid grid-cols-4 gap-4">
+                <Badge>Default</Badge>
+                <Badge variant="primary">Primary</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="accent">Accent</Badge>
+                <Badge variant="danger">Danger</Badge>
+                <Badge variant="success">Success</Badge>
+                <Badge variant="outline">Outline</Badge>
+                <Badge closable>Closable</Badge>
+                <Badge dot>Dot</Badge>
+                <Badge pulse>Pulse</Badge>
+                <Badge size="sm">Small</Badge>
+                <Badge size="default">Default</Badge>
+                <Badge size="lg">Large</Badge>
+                <Badge variant="primary" dot>Primary Dot</Badge>
+                <Badge variant="success" closable>Success Close</Badge>
+                <Badge variant="danger" pulse>Danger Pulse</Badge>
+            </div>
+        </section>
+
+        <!-- 类别 suite 模式（保留作为粗粒度回归）：?suite=xxx -->
+        <section v-else :class="suiteClasses">
             <header class="mb-6 flex items-start justify-between border-b-3 border-brutal pb-4">
                 <div>
                     <p class="text-sm font-black uppercase tracking-normal text-brutal-muted-foreground">

@@ -1,0 +1,18 @@
+=== Phantom Dependency Scan ===
+
+[brutx-ui-vue] (packages/ui/src)
+  none
+
+[brutx-vue] (packages/cli/src)
+  none
+
+[brutx-registry-vue] (packages/registry/scripts)
+  none
+
+[brutx-shared-vue] (packages/shared/src)
+  none
+
+[docs] (apps/docs/.vitepress)
+  none
+
+Total phantom candidates: 0

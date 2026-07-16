@@ -123,6 +123,8 @@
         "test:watch": "vitest",
         "test:coverage": "vitest run --coverage",
         "test:package": "node scripts/smoke-package.mjs",
+        "size": "size-limit",
+        "size:why": "size-limit --why",
         "visual:dev": "vite --config visual/vite.config.ts --host 127.0.0.1",
         "test:visual": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts",
         "test:visual:update": "vite build --config visual/vite.config.ts && playwright test --config playwright.config.ts --update-snapshots",
@@ -130,6 +132,25 @@
         "docs:api:full": "npx tsx scripts/generate-api-docs.ts",
         "docs:api:vue": "npx tsx scripts/generate-api-docs.ts --skip-typedoc"
     },
+    "size-limit": [
+        {
+            "name": "main entry (ESM, full)",
+            "path": "dist/index.js",
+            "limit": "155 KB",
+            "import": "*"
+        },
+        {
+            "name": "Button (tree-shaken)",
+            "path": "dist/index.js",
+            "limit": "20 KB",
+            "import": "{ Button }"
+        },
+        {
+            "name": "CSS",
+            "path": "dist/styles.css",
+            "limit": "20 KB"
+        }
+    ],
     "peerDependencies": {
         "@lucide/vue": "^1.0.0",
         "@tanstack/vue-virtual": "^3.0.0",
@@ -169,6 +190,8 @@
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@playwright/test": "^1.60.0",
+        "@size-limit/esbuild": "^12.1.0",
+        "@size-limit/file": "^12.1.0",
         "@tailwindcss/cli": "^4.3.2",
         "@tailwindcss/vite": "^4.3.0",
         "@types/node": "^25.9.1",
@@ -180,12 +203,14 @@
         "@vue/test-utils": "^2.4.11",
         "acorn": "^8.14.0",
         "acorn-walk": "^8.3.1",
+        "axe-core": "^4.12.1",
         "embla-carousel": "8.6.0",
         "eslint": "^10.4.1",
         "eslint-plugin-vue": "^10.9.2",
         "globals": "^17.6.0",
         "happy-dom": "^20.9.0",
         "magic-string": "^0.30.17",
+        "size-limit": "^12.1.0",
         "tailwindcss": "^4.3.0",
         "tsx": "^4.22.4",
         "typedoc": "^0.28.19",
@@ -195,7 +220,6 @@
         "vite": "^8.0.16",
         "vite-plugin-dts": "^5.0.2",
         "vitest": "^4.1.10",
-        "vitest-axe": "^0.1.0",
         "vue": "^3.5.0",
         "vue-tsc": "^3.3.3"
     },

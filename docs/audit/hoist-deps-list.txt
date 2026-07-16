@@ -1,0 +1,52 @@
+@eslint/js	# used by: ui
+@inquirer/prompts	# used by: cli
+@lucide/vue	# used by: docs
+@playwright/test	# used by: ui
+@size-limit/esbuild	# used by: ui
+@size-limit/file	# used by: ui
+@tailwindcss/cli	# used by: ui
+@tailwindcss/vite	# used by: ui, docs
+@types/fs-extra	# used by: cli
+@types/node	# used by: cli, registry, shared, ui, docs
+@types/prismjs	# used by: ui
+@vitejs/plugin-vue	# used by: ui
+@vitest/browser	# used by: ui
+@vitest/browser-playwright	# used by: ui
+@vitest/coverage-v8	# used by: cli, ui
+@vue/test-utils	# used by: ui
+acorn	# used by: ui
+acorn-walk	# used by: ui
+axe-core	# used by: ui
+brutx-shared-vue	# used by: cli, registry, docs
+brutx-ui-vue	# used by: docs
+chalk	# used by: cli
+class-variance-authority	# used by: ui
+clsx	# used by: ui, docs
+commander	# used by: cli
+diff	# used by: cli
+embla-carousel	# used by: ui
+es-module-lexer	# used by: cli
+eslint	# used by: ui
+eslint-plugin-vue	# used by: ui
+fs-extra	# used by: cli
+globals	# used by: ui
+happy-dom	# used by: ui
+jsonc-parser	# used by: cli
+magic-string	# used by: ui
+ora	# used by: cli
+size-limit	# used by: ui
+tailwind-merge	# used by: ui, docs
+tailwindcss	# used by: ui, docs
+tsup	# used by: cli
+tsx	# used by: registry, ui
+typedoc	# used by: ui
+typedoc-plugin-markdown	# used by: ui
+typescript	# used by: cli, registry, shared, ui, docs
+typescript-eslint	# used by: ui
+v-calendar	# used by: docs
+vite	# used by: ui, docs
+vite-plugin-dts	# used by: ui
+vitepress	# used by: docs
+vitest	# used by: cli, registry, ui
+vue	# used by: ui, docs
+vue-tsc	# used by: ui, docs

@@ -64,6 +64,10 @@ jobs:
 
             - run: pnpm --filter brutx-ui-vue build
 
+            - name: Check bundle size limits
+              if: matrix.node-version == 22
+              run: pnpm --filter brutx-ui-vue size
+
             - name: Audit CSS fallback coverage
               run: pnpm --filter brutx-ui-vue audit:fallback:check
 
