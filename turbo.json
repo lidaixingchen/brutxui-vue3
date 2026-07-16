@@ -30,6 +30,7 @@
             "inputs": ["src/ssr/**", "vitest.ssr.config.ts"]
         },
         "typecheck": {
+            "dependsOn": ["^build"],
             "inputs": ["src/**", "tsconfig.json", "tsconfig.*.json"]
         },
         "lint": {
