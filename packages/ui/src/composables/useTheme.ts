@@ -170,6 +170,9 @@ export function createTheme(): UseThemeReturn {
 }
 
 let fallbackInstance: UseThemeReturn | null = null
+// 引用计数：多组件共享 fallback 单例时，仅在最后一个组件卸载时才销毁单例，
+// 避免提前 destroy 导致其他仍使用单例的组件丢失 mediaQuery 监听器
+let fallbackRefCount = 0
 
 export function provideTheme(): UseThemeReturn {
     const theme = createTheme()
@@ -194,6 +197,17 @@ export function useTheme(): UseThemeReturn {
         fallbackInstance = createTheme()
         fallbackInstance.initTheme()
     }
+    // 组件级清理：引用计数归零时销毁单例，释放 mediaQuery 监听器。
+    // 仅当在组件 setup 上下文中调用时才注册清理（与 provideTheme 行为一致）。
+    if (getCurrentInstance()) {
+        fallbackRefCount++
+        onUnmounted(() => {
+            fallbackRefCount--
+            if (fallbackRefCount <= 0) {
+                destroyFallback()
+            }
+        })
+    }
     return fallbackInstance
 }
 
@@ -201,6 +215,7 @@ export function destroyFallback() {
     if (fallbackInstance) {
         fallbackInstance.destroy()
         fallbackInstance = null
+        fallbackRefCount = 0
     }
 }
 

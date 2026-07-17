@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { effectScope } from 'vue'
+import { mount } from '@vue/test-utils'
+import { effectScope, defineComponent, h } from 'vue'
 import { createTheme, provideTheme, useTheme, destroyFallback } from './useTheme'
 import type { ThemeName, ColorMode } from './useTheme'
 
@@ -436,6 +437,62 @@ describe('useTheme', () => {
             const theme2 = scope.run(() => useTheme())!
             expect(theme1).not.toBe(theme2)
 
+            consoleSpy.mockRestore()
+        })
+
+        it('ref-counts component-level cleanup: destroy only when last component unmounts', async () => {
+            // 多组件共享 fallback 单例时，仅最后一个组件卸载才销毁单例，
+            // 避免提前 destroy 导致其他仍使用单例的组件丢失 mediaQuery 监听器
+            const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+            const Consumer = defineComponent({
+                setup() {
+                    const theme = useTheme()
+                    return () => h('div', theme.theme.value)
+                },
+            })
+
+            // 挂载两个消费组件
+            const w1 = mount(Consumer)
+            const w2 = mount(Consumer)
+            const fallbackTheme = useTheme() // 取同一个单例
+            const destroySpy = vi.spyOn(fallbackTheme, 'destroy')
+
+            // 卸载第一个：不应触发 destroy（仍有第二个组件在用）
+            w1.unmount()
+            expect(destroySpy).not.toHaveBeenCalled()
+
+            // 卸载第二个：引用计数归零，应触发 destroy
+            w2.unmount()
+            expect(destroySpy).toHaveBeenCalled()
+
+            consoleSpy.mockRestore()
+        })
+
+        it('ref-counts cleanup: destroying first component does not break second component', async () => {
+            const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+            const Consumer = defineComponent({
+                setup() {
+                    const theme = useTheme()
+                    return () => h('div', theme.theme.value)
+                },
+            })
+
+            const w1 = mount(Consumer)
+            const w2 = mount(Consumer)
+
+            // 卸载第一个：单例仍存活，第二个组件应仍可访问
+            w1.unmount()
+            const fallbackTheme = useTheme()
+            expect(fallbackTheme).toBeDefined()
+            expect(fallbackTheme.theme.value).toBe('classic')
+
+            // 第二个组件仍可正常工作
+            fallbackTheme.setTheme('mono')
+            expect(fallbackTheme.theme.value).toBe('mono')
+
+            w2.unmount()
             consoleSpy.mockRestore()
         })
     })
