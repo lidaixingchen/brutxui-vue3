@@ -236,7 +236,7 @@ export default defineConfig({
             { text: '指南', link: '/guide/getting-started' },
             { text: '组件', link: '/components/' },
             { text: '区块与模板', link: '/blocks/' },
-            { text: '更新日志', link: '/changelog/' },
+            { text: '更新日志', link: '/guide/changelog' },
             {
                 text: 'GitHub',
                 link: 'https://github.com/lidaixingchen/brutxui-vue3',
