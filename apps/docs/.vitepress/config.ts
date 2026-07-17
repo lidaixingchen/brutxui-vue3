@@ -95,6 +95,7 @@ export default defineConfig({
                     { text: 'Guide', link: '/en/guide/getting-started' },
                     { text: 'Components', link: '/en/components/' },
                     { text: 'Blocks', link: '/en/blocks/' },
+                    { text: 'Changelog', link: '/en/guide/changelog' },
                     { text: 'GitHub', link: 'https://github.com/lidaixingchen/brutxui-vue3' },
                 ],
                 sidebar: {
@@ -235,6 +236,7 @@ export default defineConfig({
             { text: '指南', link: '/guide/getting-started' },
             { text: '组件', link: '/components/' },
             { text: '区块与模板', link: '/blocks/' },
+            { text: '更新日志', link: '/changelog/' },
             {
                 text: 'GitHub',
                 link: 'https://github.com/lidaixingchen/brutxui-vue3',
