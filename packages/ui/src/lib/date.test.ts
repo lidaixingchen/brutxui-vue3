@@ -1,6 +1,7 @@
 import {
     formatDate,
     parseFormattedDate,
+    getISOWeekNumber,
 } from './date'
 
 describe('formatDate', () => {
@@ -56,7 +57,24 @@ describe('formatDate', () => {
         const date = new Date(2026, 0, 5)
         expect(formatDate(date, 'YYYY YY')).toBe('2026 26')
     })
+
+    it('formats WW as ISO week number with zero padding', () => {
+        // 2026-01-01 是周四，所以 ISO week 1 的周一是 2025-12-29，2026-01-05 是 week 2 的周一
+        const date = new Date(2026, 0, 5)
+        expect(formatDate(date, 'YYYY-WW')).toBe('2026-02')
+    })
+
+    it('formats WW with two-digit padding for week 10+', () => {
+        // 2026-03-09 大约是第 11 周
+        const date = new Date(2026, 2, 9)
+        const weekNum = getISOWeekNumber(date)
+        expect(formatDate(date, 'YYYY-WW')).toBe(`2026-${pad2(weekNum)}`)
+    })
 })
+
+function pad2(value: number): string {
+    return value.toString().padStart(2, '0')
+}
 
 describe('parseFormattedDate', () => {
     it('parses YYYY-MM-DD correctly', () => {
@@ -141,5 +159,51 @@ describe('parseFormattedDate', () => {
         const result = parseFormattedDate('98-06-26', 'YY-MM-DD')
         expect(result).not.toBeNull()
         expect(result!.getFullYear()).toBe(1998)
+    })
+
+    it('parses YYYY-WW as the Monday of that ISO week', () => {
+        // 2026-W01 的周一是 2025-12-29（2026-01-01 是周四，故 week 1 的周一在前一年 12 月）
+        const result = parseFormattedDate('2026-01', 'YYYY-WW')
+        expect(result).not.toBeNull()
+        expect(result!.getDay()).toBe(1) // 周一
+        expect(getISOWeekNumber(result!)).toBe(1)
+        // 该日期在 ISO 周历中属于 2026 年第 1 周，但日历上属于 2025-12-29
+        expect(result!.getFullYear()).toBe(2025)
+        expect(result!.getMonth()).toBe(11)
+        expect(result!.getDate()).toBe(29)
+    })
+
+    it('parses YYYY-WW for week 2 correctly (Monday in same year)', () => {
+        // 2026-W02 的周一是 2026-01-05
+        const result = parseFormattedDate('2026-02', 'YYYY-WW')
+        expect(result).not.toBeNull()
+        expect(result!.getFullYear()).toBe(2026)
+        expect(result!.getMonth()).toBe(0)
+        expect(result!.getDate()).toBe(5)
+        expect(result!.getDay()).toBe(1) // 周一
+    })
+
+    it('roundtrips YYYY-WW format', () => {
+        // 取一个日期，格式化为 YYYY-WW，再解析回来，应得到同一周周一
+        const original = new Date(2026, 2, 11) // 某个周三
+        const formatted = formatDate(original, 'YYYY-WW')
+        const parsed = parseFormattedDate(formatted, 'YYYY-WW')
+        expect(parsed).not.toBeNull()
+        // 解析结果应为 original 所在周的周一
+        expect(getISOWeekNumber(parsed!)).toBe(getISOWeekNumber(original))
+        expect(parsed!.getDay()).toBe(1) // 周一
+    })
+
+    it('returns null for invalid WW week number', () => {
+        expect(parseFormattedDate('2026-00', 'YYYY-WW')).toBeNull()
+        expect(parseFormattedDate('2026-54', 'YYYY-WW')).toBeNull()
+    })
+
+    it('WW is ignored when MM/DD is also provided', () => {
+        // MM/DD 与 WW 共存时优先使用 MM/DD，避免语义冲突
+        const result = parseFormattedDate('2026-03-09-11', 'YYYY-MM-DD-WW')
+        expect(result).not.toBeNull()
+        expect(result!.getMonth()).toBe(2) // 3月
+        expect(result!.getDate()).toBe(9)
     })
 })

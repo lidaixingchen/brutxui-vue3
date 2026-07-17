@@ -32,6 +32,8 @@ export function renderImperative(
     const doc = getDocument()!
     const container = doc.createElement('div')
     let isDestroyed = false
+    // 跟踪未触发的 removeContainer timer，避免快速导航场景下多个 timeout 堆积
+    let pendingRemoveTimer: ReturnType<typeof setTimeout> | null = null
 
     const handleClose = () => {
         try {
@@ -62,12 +64,18 @@ export function renderImperative(
         render(null, container)
 
         const removeContainer = () => {
+            pendingRemoveTimer = null
             container.remove()
         }
 
         const delay = options.transitionDuration ?? DEFAULT_DIALOG_TRANSITION_MS
         if (delay > 0) {
-            setTimeout(removeContainer, delay)
+            // 防御性清理：isDestroyed 已防止重复进入 destroy，但显式跟踪 timer
+            // 可在 isDestroyed 逻辑变更时仍保证不堆积，符合通用 timer 管理最佳实践
+            if (pendingRemoveTimer !== null) {
+                clearTimeout(pendingRemoveTimer)
+            }
+            pendingRemoveTimer = setTimeout(removeContainer, delay)
         } else {
             removeContainer()
         }

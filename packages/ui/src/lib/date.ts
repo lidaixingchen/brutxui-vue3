@@ -56,6 +56,7 @@ export function parseFormattedDate(text: string, format: string): Date | null {
         .replace(/MM/g, '(\\d{1,2})')
         .replace(/DD/g, '(\\d{1,2})')
         .replace(/HH/g, '(\\d{1,2})')
+        .replace(/WW/g, '(\\d{1,2})')
         .replace(/mm/g, '(\\d{1,2})')
         .replace(/ss/g, '(\\d{1,2})')
     const match = trimmed.match(new RegExp(`^${tokenRegex}$`))
@@ -64,7 +65,7 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     let i = 0
     while (i < format.length) {
         let matched = false
-        for (const token of ['YYYY', 'YY', 'MM', 'DD', 'HH', 'mm', 'ss']) {
+        for (const token of ['YYYY', 'YY', 'MM', 'DD', 'HH', 'WW', 'mm', 'ss']) {
             if (format.startsWith(token, i)) {
                 formatTokens.push(token)
                 i += token.length
@@ -80,6 +81,19 @@ export function parseFormattedDate(text: string, format: string): Date | null {
         if (!Number.isNaN(value)) parts[token] = value
     })
     const year = parts.YYYY ?? (parts.YY !== undefined ? pivotTwoDigitYear(parts.YY) : new Date().getFullYear())
+
+    // 若提供 WW（ISO 周数）而未提供 MM/DD，按 ISO 8601 反推该周周一的日期；
+    // 否则 WW 与 MM/DD 共存时优先使用 MM/DD（避免语义冲突）
+    if (parts.WW !== undefined && parts.MM === undefined && parts.DD === undefined) {
+        const isoDate = dateFromISOWeek(year, parts.WW)
+        if (!isoDate) return null
+        const hours = parts.HH ?? 0
+        const minutes = parts.mm ?? 0
+        const seconds = parts.ss ?? 0
+        const date = new Date(isoDate.getFullYear(), isoDate.getMonth(), isoDate.getDate(), hours, minutes, seconds)
+        if (Number.isNaN(date.getTime())) return null
+        return date
+    }
     const month = (parts.MM ?? 1) - 1
     const day = parts.DD ?? 1
     const hours = parts.HH ?? 0
@@ -91,4 +105,19 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     if (date.getMonth() !== month) return null
     if (date.getDate() !== day) return null
     return date
+}
+
+// 按 ISO 8601 周数反推该周周一的日期：week 1 是包含当年第一个周四的周
+function dateFromISOWeek(year: number, week: number): Date | null {
+    if (week < 1 || week > 53) return null
+    // Jan 4 始终在第 1 周
+    const jan4 = new Date(year, 0, 4)
+    const jan4Day = jan4.getDay() || 7 // 周日=7
+    // 第 1 周的周一 = Jan 4 - (jan4Day - 1) 天
+    // 注意：week 1 的周一可能落在 year-1 的 12 月底（如 2025-W01 周一为 2024-12-30）
+    const week1Monday = new Date(jan4)
+    week1Monday.setDate(jan4.getDate() - (jan4Day - 1))
+    const result = new Date(week1Monday)
+    result.setDate(week1Monday.getDate() + (week - 1) * 7)
+    return result
 }
