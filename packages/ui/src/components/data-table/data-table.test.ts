@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { vi, beforeEach, afterEach } from 'vitest'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import DataTable from './DataTable.vue'
@@ -689,5 +690,67 @@ describe('DataTable virtual scroll & column filtering options', () => {
         await nextTick()
         expect(wrapper.findAll('tbody tr')).toHaveLength(1)
         expect(wrapper.text()).toContain('B')
+    })
+})
+
+describe('DataTable virtualScroll column width warning', () => {
+    let warnSpy: ReturnType<typeof vi.spyOn>
+
+    beforeEach(() => {
+        warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+        warnSpy.mockRestore()
+    })
+
+    it('re-warns when a previously-removed column is re-added without width', async () => {
+        // 列被动态移除再添加后，warnedColumns 应清除已移除列的记录，
+        // 使警告在列重新出现时再次触发，避免警告永久静默。
+        const cols: DataTableColumn<TestRow>[] = [
+            { id: 'name', header: 'Name', accessorKey: 'name' },
+        ]
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: cols,
+            rowKey: 'id',
+            virtualScroll: { enabled: true, rowHeight: 'auto' },
+        })
+
+        // 初次挂载：name 列无 width，应触发警告
+        await nextTick()
+        const firstCallCount = warnSpy.mock.calls.filter(
+            (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('Column "name"')
+        ).length
+        expect(firstCallCount).toBeGreaterThanOrEqual(1)
+
+        // 改为有 width 的列：不再触发警告
+        warnSpy.mockClear()
+        await wrapper.setProps({ columns: [{ id: 'name', header: 'Name', accessorKey: 'name', width: 120 }] } as any)
+        await nextTick()
+        const noWarnCount = warnSpy.mock.calls.filter(
+            (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('Column "name"')
+        ).length
+        expect(noWarnCount).toBe(0)
+
+        // 移除 name 列、添加 email 列（无 width）：应触发 email 列警告
+        warnSpy.mockClear()
+        await wrapper.setProps({ columns: [{ id: 'email', header: 'Email', accessorKey: 'email' }] } as any)
+        await nextTick()
+        const emailWarnCount = warnSpy.mock.calls.filter(
+            (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('Column "email"')
+        ).length
+        expect(emailWarnCount).toBeGreaterThanOrEqual(1)
+
+        // 再次添加 name 列（无 width）：warnedColumns 已清除 name 的记录，应再次触发警告
+        warnSpy.mockClear()
+        await wrapper.setProps({ columns: [{ id: 'name', header: 'Name', accessorKey: 'name' }] } as any)
+        await nextTick()
+        const rewarnCount = warnSpy.mock.calls.filter(
+            (args: unknown[]) => typeof args[0] === 'string' && (args[0] as string).includes('Column "name"')
+        ).length
+        expect(rewarnCount).toBeGreaterThanOrEqual(1)
+
+        wrapper.unmount()
     })
 })

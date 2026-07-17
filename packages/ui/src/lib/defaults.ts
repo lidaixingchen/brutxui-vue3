@@ -170,6 +170,9 @@ export const DATA_TABLE_SELECT_COLUMN_WIDTH_PX = 48
 /** Fallback row height (px) for virtual scroll when rowHeight is 'auto' or undefined */
 export const DATA_TABLE_ROW_HEIGHT_FALLBACK_PX = 48
 
+/** z-index for sticky/fixed columns so they overlay horizontal scroll content */
+export const DATA_TABLE_FIXED_COLUMN_Z_INDEX = 10
+
 // ── Carousel ──────────────────────────────────────────────────
 
 /** Default autoplay delay in milliseconds */

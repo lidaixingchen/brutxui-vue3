@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends object = Record<string, unknown>">
 import { computed, shallowRef, watch, watchEffect, markRaw, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
-import { DEFAULT_PAGE_SIZE_OPTIONS, DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX, DATA_TABLE_EXPAND_COLUMN_WIDTH_PX, DATA_TABLE_SELECT_COLUMN_WIDTH_PX, DATA_TABLE_ROW_HEIGHT_FALLBACK_PX } from '@/lib/defaults'
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_SIZE_OPTIONS, DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX, DATA_TABLE_EXPAND_COLUMN_WIDTH_PX, DATA_TABLE_SELECT_COLUMN_WIDTH_PX, DATA_TABLE_ROW_HEIGHT_FALLBACK_PX, DATA_TABLE_FIXED_COLUMN_Z_INDEX } from '@/lib/defaults'
 import { useLocale } from '@/composables/useLocale'
 import { getCellValue } from '@/lib/data-table-utils'
 import { useDataTableSort } from '@/composables/useDataTableSort'
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<DataTableProps<T>>(), {
     filterPlaceholder: undefined,
     selectable: false,
     paginated: false,
-    pageSize: 10,
+    pageSize: DEFAULT_PAGE_SIZE,
     pageSizeOptions: () => [...DEFAULT_PAGE_SIZE_OPTIONS],
     loading: false,
     size: 'default',
@@ -263,6 +263,12 @@ const warnedColumns = new Set<string>()
 
 watchEffect(() => {
     if (!props.virtualScroll?.enabled) return
+    // 清除已移除列的警告记录：列被动态移除再添加后，警告应重新触发，
+    // 否则开发者无法察觉配置问题（warnedColumns 只增不减导致警告永久静默）
+    const currentIds = new Set(visibleColumns.value.map(c => c.id))
+    for (const id of warnedColumns) {
+        if (!currentIds.has(id)) warnedColumns.delete(id)
+    }
     visibleColumns.value.forEach((col) => {
         if (!col.width && !warnedColumns.has(col.id)) {
             console.warn(`[BrutxUI] Column "${col.id}" must have an explicit width when virtualScroll is enabled.`)
@@ -454,7 +460,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     position: column.fixed ? 'sticky' : undefined,
                                     left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
                                     right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
-                                    zIndex: column.fixed ? 10 : undefined,
+                                    zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                 }"
                                 role="columnheader"
                                 :tabindex="sortable && column.sortable !== false ? 0 : undefined"
@@ -541,7 +547,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                             position: column.fixed ? 'sticky' : undefined,
                                             left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
                                             right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
-                                            zIndex: column.fixed ? 10 : undefined,
+                                            zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                         }"
                                         role="gridcell"
                                     >
@@ -631,7 +637,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 position: column.fixed ? 'sticky' : undefined,
                                 left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
                                 right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
-                                zIndex: column.fixed ? 10 : undefined,
+                                zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                             }"
                             role="columnheader"
                             :tabindex="sortable && column.sortable !== false ? 0 : undefined"
@@ -713,7 +719,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         position: column.fixed ? 'sticky' : undefined,
                                         left: column.fixed === 'left' ? `${getFixedColumnOffset(column, 'left')}px` : undefined,
                                         right: column.fixed === 'right' ? `${getFixedColumnOffset(column, 'right')}px` : undefined,
-                                        zIndex: column.fixed ? 10 : undefined,
+                                        zIndex: column.fixed ? DATA_TABLE_FIXED_COLUMN_Z_INDEX : undefined,
                                     }"
                                     :rowspan="getCellSpan(rowIndex, columnIndex)?.[0] || undefined"
                                     :colspan="getCellSpan(rowIndex, columnIndex)?.[1] || undefined"
