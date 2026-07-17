@@ -267,15 +267,25 @@ export function useDialogEnhanced(
         opt.onUpdateOpen?.(false)
     }
 
+    // 并发锁：防止用户快速触发关闭（如双击关闭按钮）导致 beforeClose 并发执行
+    // 产生重复 API 调用或状态紊乱
+    let isClosing = false
+
     async function handleClose(): Promise<void> {
+        if (isClosing) return
         if (!opt.beforeClose) {
             performClose()
             return
         }
 
-        const result = await opt.beforeClose()
-        if (result !== false) {
-            performClose()
+        isClosing = true
+        try {
+            const result = await opt.beforeClose()
+            if (result !== false) {
+                performClose()
+            }
+        } finally {
+            isClosing = false
         }
     }
 
@@ -292,8 +302,15 @@ export function useDialogEnhanced(
     let sizeRafId: number | null = null
 
     function initSize(): void {
+        // 取消前一个未触发的 rAF，避免 contentRef 变化时多个 rAF 堆积
+        // 导致过期回调读取到错误的 bounding rect
+        if (sizeRafId !== null) {
+            cancelAnimationFrame(sizeRafId)
+            sizeRafId = null
+        }
         if (contentRef.value) {
             sizeRafId = requestAnimationFrame(() => {
+                sizeRafId = null
                 const rect = contentRef.value?.getBoundingClientRect()
                 if (rect && rect.width > 0 && rect.height > 0) {
                     size.value = { width: rect.width, height: rect.height }

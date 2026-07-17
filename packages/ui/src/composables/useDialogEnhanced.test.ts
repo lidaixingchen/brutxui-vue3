@@ -154,6 +154,43 @@ describe('useDialogEnhanced', () => {
         expect(result.size.value).toEqual({ width: 0, height: 0 })
     })
 
+    it('initSize cancels pending rAF when called again before previous fires', () => {
+        // 重置同步 rAF mock，改用延迟版本以便观察取消行为
+        rafSpy.mockRestore()
+        const callbacks: FrameRequestCallback[] = []
+        rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+            callbacks.push(cb)
+            return callbacks.length
+        })
+        const cancelSpy = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {})
+
+        const { result } = createWrapper()
+        result.contentRef.value = {
+            getBoundingClientRect: () => mockDOMRect({ width: 400, height: 300, top: 0, left: 0, right: 400, bottom: 300 }),
+        } as unknown as HTMLElement
+
+        // createWrapper 的 onMounted 已调度第一个 rAF（id=1）
+        const initialCount = callbacks.length
+        expect(initialCount).toBeGreaterThanOrEqual(1)
+
+        // 显式调用 initSize：应取消前一个 rAF，调度新的 rAF
+        result.initSize()
+        expect(cancelSpy).toHaveBeenCalled()
+        expect(callbacks.length).toBe(initialCount + 1)
+
+        // 再次调用：应再次取消
+        const lastId = callbacks.length
+        result.initSize()
+        expect(cancelSpy).toHaveBeenCalledWith(lastId)
+        expect(callbacks.length).toBe(lastId + 1)
+
+        // 触发最后一个回调：size 应反映 contentRef 当前尺寸
+        callbacks[callbacks.length - 1](0)
+        expect(result.size.value).toEqual({ width: 400, height: 300 })
+
+        cancelSpy.mockRestore()
+    })
+
     // ── Content Style (draggable) ─────────────────────────────────
 
     it('contentStyle has transform and fixed positioning when draggable=true', () => {
@@ -682,6 +719,48 @@ describe('useDialogEnhanced', () => {
         await result.handleClose()
         expect(onClose).toHaveBeenCalledTimes(1)
         expect(onUpdateOpen).toHaveBeenCalledWith(false)
+    })
+
+    it('handleClose guards against concurrent invocation during async beforeClose', async () => {
+        // 场景：用户双击关闭按钮，handleClose 被并发调用两次。
+        // 修复后：第二次调用应在 isClosing 检查处直接返回，beforeClose 仅执行一次。
+        const onClose = vi.fn()
+        const onUpdateOpen = vi.fn()
+        let resolveBeforeClose!: (val: boolean) => void
+        const beforeClose = vi.fn(() => new Promise<boolean>((resolve) => {
+            resolveBeforeClose = resolve
+        }))
+        const { result } = createWrapper({ beforeClose, onClose, onUpdateOpen })
+
+        // 第一次调用：进入 isClosing=true，await beforeClose（pending）
+        const promise1 = result.handleClose()
+        // 让微任务执行，确保 promise1 已执行到 await
+        await Promise.resolve()
+
+        // 第二次调用：isClosing=true，应直接 return，不触发 beforeClose
+        const promise2 = result.handleClose()
+        await Promise.resolve()
+
+        // beforeClose 仅被第一个调用触发
+        expect(beforeClose).toHaveBeenCalledTimes(1)
+
+        // 解析 beforeClose promise，让第一个调用完成
+        resolveBeforeClose(true)
+        await promise1
+        await promise2
+
+        // performClose 仅执行一次
+        expect(onClose).toHaveBeenCalledTimes(1)
+        expect(onUpdateOpen).toHaveBeenCalledTimes(1)
+
+        // 守卫释放后，后续 handleClose 可正常调用
+        // 注意：beforeClose 每次调用都会创建新的 Promise，需再次 resolve 才能完成
+        const promise3 = result.handleClose()
+        await Promise.resolve()
+        resolveBeforeClose(true)
+        await promise3
+        expect(beforeClose).toHaveBeenCalledTimes(2)
+        expect(onClose).toHaveBeenCalledTimes(2)
     })
 
     // ── Lifecycle ─────────────────────────────────────────────────
