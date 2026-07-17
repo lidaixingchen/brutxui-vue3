@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -201,7 +201,7 @@ function archiveOldestVersion(fullContent, newVersion) {
 
     // 5. 自动写入或更新 `apps/docs/changelog/v${oldestVersion}.md`
     if (!existsSync(docsChangelogDir)) {
-        fs.mkdirSync(docsChangelogDir, { recursive: true });
+        mkdirSync(docsChangelogDir, { recursive: true });
     }
     const archiveFilePath = path.join(docsChangelogDir, `v${oldestVersion}.md`);
     writeFileSync(archiveFilePath, archiveFileContent, 'utf-8');
@@ -213,17 +213,28 @@ function archiveOldestVersion(fullContent, newVersion) {
     // 7. 同步在主 CHANGELOG 的“## 归档版本”列表顶部插入新归档链接
     const changelogArchiveLink = `* **[${oldestVersion}](apps/docs/changelog/v${oldestVersion}.md)** - ${oldestDate}`;
     let updatedContent = cleanedBody;
-    if (cleanedBody.includes('## 归档版本') && !cleanedBody.includes(changelogArchiveLink)) {
-        updatedContent = cleanedBody.replace(
-            /## 归档版本\n\n>\s*以下版本已归档至[^\n]*\n\n/,
-            `## 归档版本\n\n> 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：\n\n${changelogArchiveLink}\n`
-        );
+
+    const archiveHeader = '## 归档版本';
+    const archiveDescription = '> 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：';
+
+    if (!cleanedBody.includes('## 归档版本')) {
+        // 退路机制：章节缺失时自动拼装补全在 CHANGELOG 末尾
+        updatedContent = cleanedBody.trim() + `\n\n${archiveHeader}\n\n${archiveDescription}\n\n${changelogArchiveLink}\n`;
+    } else if (!cleanedBody.includes(changelogArchiveLink)) {
+        // 高容错性正则：支持多变空行与微调
+        const archiveTitleRegex = /## 归档版本[\s\S]*?点击版本号查看完整变更记录：\s*/;
+        if (cleanedBody.match(archiveTitleRegex)) {
+            updatedContent = cleanedBody.replace(
+                archiveTitleRegex,
+                `## 归档版本\n\n${archiveDescription}\n\n${changelogArchiveLink}\n`
+            );
+        }
     }
 
-    // 8. 同步更新文档站 `changelog/index.md` 列表顶部插入新归档链接
+    // 8. 同步更新文档站 `changelog/index.md` 列表顶部插入新归档链接，使用 .md 后缀保持 GitHub 可跳转
     if (existsSync(docsIndexImg)) {
         let indexContent = readFileSync(docsIndexImg, 'utf-8');
-        const docsArchiveLink = `* **[v${oldestVersion}](./v${oldestVersion})** - ${oldestDate}`;
+        const docsArchiveLink = `* **[v${oldestVersion}](./v${oldestVersion}.md)** - ${oldestDate}`;
         if (!indexContent.includes(docsArchiveLink)) {
             indexContent = indexContent.replace(
                 '## 归档列表\n\n',
