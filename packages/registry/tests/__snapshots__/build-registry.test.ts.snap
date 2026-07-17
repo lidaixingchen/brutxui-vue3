@@ -65,7 +65,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-945880a34fcae3ccf06d42b34d7c8bc11ef41d47d96332ee71310a1d4c90a81c",
+  "integrity": "sha256-c419e56f38e52b97e301469471cd2182d09e400b2efb60c4665674aa1878f818",
   "name": "data-table",
   "registryDependencies": [
     "input",
@@ -137,7 +137,7 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-1cc96262b0d93fcea39928a1137b4aed60f6c45b4464382f48657cac4dc6b7fa",
+  "integrity": "sha256-4a856e73a6d2c45065cfd8b179a689d1479c91e4a836ecd6a038e27ab9f16627",
   "name": "button",
   "registryDependencies": [
     "locale-zh-cn",
