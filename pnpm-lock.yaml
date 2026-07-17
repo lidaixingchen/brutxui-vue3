@@ -69,9 +69,6 @@ importers:
       '@inquirer/prompts':
         specifier: ^8.5.2
         version: 8.5.2(@types/node@25.9.1)
-      brutx-shared-vue:
-        specifier: workspace:*
-        version: link:../shared
       chalk:
         specifier: ^5.3.0
         version: 5.6.2
@@ -103,6 +100,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
+      brutx-shared-vue:
+        specifier: workspace:*
+        version: link:../shared
       tsup:
         specifier: ^8.0.1
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.16)(tsx@4.22.4)(typescript@6.0.3)(yaml@2.9.0)

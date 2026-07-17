@@ -9,7 +9,8 @@
                 ".vitepress/dist/**",
                 "registry-manifest.json",
                 "exports-manifest.json",
-                "src/components/*/index.ts"
+                "src/components/*/index.ts",
+                "registry/**"
             ],
             "inputs": [
                 "src/**",
@@ -22,6 +23,20 @@
                 "postcss.config.*"
             ]
         },
+        "docs#build": {
+            "dependsOn": ["^build"],
+            "outputs": [
+                ".vitepress/dist/**"
+            ],
+            "inputs": [
+                "**/*.md",
+                ".vitepress/config.ts",
+                ".vitepress/theme/**/*",
+                "public/**/*",
+                "package.json",
+                "tsconfig.json"
+            ]
+        },
         "test": {
             "dependsOn": ["build"],
             "inputs": [
@@ -29,12 +44,13 @@
                 "tests/**",
                 "vitest.config.ts",
                 "vitest.browser.config.ts",
-                "vitest.ssr.config.ts"
+                "vitest.ssr.config.ts",
+                "registry/**"
             ]
         },
         "test:ssr": {
             "dependsOn": ["build"],
-            "inputs": ["src/ssr/**", "vitest.ssr.config.ts"]
+            "inputs": ["src/**", "vitest.ssr.config.ts"]
         },
         "typecheck": {
             "dependsOn": ["^build"],
@@ -45,7 +61,15 @@
         },
         "validate": {
             "dependsOn": ["build"],
-            "inputs": ["scripts/**", "registry/**"]
+            "inputs": [
+                "scripts/**",
+                "registry/**",
+                "/packages/ui/src/components/**",
+                "/packages/ui/src/composables/**",
+                "/packages/ui/src/directives/**",
+                "/apps/docs/**/*.md",
+                "/packages/shared/src/**"
+            ]
         },
         "bench": {
             "cache": false,

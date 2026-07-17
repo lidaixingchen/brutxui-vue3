@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
     group: pages
-    cancel-in-progress: true
+    cancel-in-progress: false
 
 jobs:
     deploy:
@@ -40,9 +40,11 @@ jobs:
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: .turbo
-                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
-                  restore-keys: ${{ runner.os }}-turbo-
+                  path: node_modules/.cache/turbo
+                  key: ${{ runner.os }}-turbo-docs-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-docs-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-docs-
 
             # turbo 自动处理依赖顺序：先 build brutx-ui-vue（及 shared），再 build docs
             # 配合 turbo 缓存，若 UI 源码未变则跳过 UI 构建

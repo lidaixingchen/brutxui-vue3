@@ -29,5 +29,6 @@ export default defineConfig([
         dts: true,
         sourcemap: true,
         target: 'node22',
+        noExternal: ['brutx-shared-vue'],
     },
 ]);

@@ -62,9 +62,11 @@ jobs:
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: .turbo
-                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
-                  restore-keys: ${{ runner.os }}-turbo-
+                  path: node_modules/.cache/turbo
+                  key: ${{ runner.os }}-turbo-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-quality-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-quality-
 
             # turbo 并行执行：typecheck/lint 不依赖 build，与 build 同时跑；validate 依赖 build 会自动等待
             - name: Build + typecheck + lint (turbo parallel)
@@ -113,9 +115,11 @@ jobs:
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: .turbo
-                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
-                  restore-keys: ${{ runner.os }}-turbo-
+                  path: node_modules/.cache/turbo
+                  key: ${{ runner.os }}-turbo-test-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-test-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-test-
 
             # test 与 test:ssr 都依赖 build，turbo 会先 build 再并行跑两个测试任务
             - name: Build + test + SSR (turbo)
@@ -144,9 +148,11 @@ jobs:
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: .turbo
-                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
-                  restore-keys: ${{ runner.os }}-turbo-
+                  path: node_modules/.cache/turbo
+                  key: ${{ runner.os }}-turbo-visual-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-visual-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-visual-
 
             - name: Cache Playwright Browser Binaries
               id: playwright-cache
@@ -212,9 +218,11 @@ jobs:
             - name: Cache turbo local build cache
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
-                  path: .turbo
-                  key: ${{ runner.os }}-turbo-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}
-                  restore-keys: ${{ runner.os }}-turbo-
+                  path: node_modules/.cache/turbo
+                  key: ${{ runner.os }}-turbo-integration-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-integration-${{ hashFiles('**/pnpm-lock.yaml', 'turbo.json') }}-
+                      ${{ runner.os }}-turbo-integration-
 
             - name: Build (turbo)
               run: pnpm build
