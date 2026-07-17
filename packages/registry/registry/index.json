@@ -85,7 +85,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-54cdbd4f683c559f9e6dad45ba15ae796b077ac695430bd3baff449b5af0e0d1"
+      "integrity": "sha256-6b8387cc24b2f99f2f596383f9e45d426c5dc49e1b23554b54b933b155f5e958"
     },
     {
       "name": "accordion",
@@ -1308,7 +1308,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-1cc96262b0d93fcea39928a1137b4aed60f6c45b4464382f48657cac4dc6b7fa"
+      "integrity": "sha256-4a856e73a6d2c45065cfd8b179a689d1479c91e4a836ecd6a038e27ab9f16627"
     },
     {
       "name": "calendar",
@@ -1409,7 +1409,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-bbb76fffe776c4d52eb4218da02ce9b66872f31e8df49732091c77fea97f7c8e"
+      "integrity": "sha256-a5945578ffa469a97dbed8e1cf2a62068a0f66cf69869beead9c451a32f29db8"
     },
     {
       "name": "card",
@@ -1627,7 +1627,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e11c5bfa53934af9f4369bf14cc767ef38db07990c4d39d926a6ae55fc2230f2"
+      "integrity": "sha256-c2c9271e5fb5e9b56d05433e9b3e532a169cccedca063bfe34ffa179f6539ca6"
     },
     {
       "name": "carousel",
@@ -1761,7 +1761,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-d2830066dae8f843f757e751c0e420fe18b5f9cac8d27fca7e84db8d22794a67"
+      "integrity": "sha256-e80a58b663c91a03bb04aed890829bee79debe5b8d9455834e31bffbfc89665c"
     },
     {
       "name": "cascader",
@@ -1888,7 +1888,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-cc7b8f6c875180b49623a3bd0d43dc877eb5707eb2615db8f5046559fd718268"
+      "integrity": "sha256-31c831aff24e1d50e83d56c3082d077211ba60209f547e0377c125aacfde2dda"
     },
     {
       "name": "chat-bubble",
@@ -2315,7 +2315,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-60b2fd180e2c4535a3111d83ea0ee3e387fbf8f551e4e0cbffe34904e0f3fb5d"
+      "integrity": "sha256-ef1d4d44329839ee13290cc4eb3ad73dd8f4593b76530f93cdb7933963b3bfe7"
     },
     {
       "name": "color-picker",
@@ -2462,7 +2462,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-fce09ffdf3fd6e2a4e3ce741bdcefc1aadd140d8a4cbdd143fc242c968ad0fc2"
+      "integrity": "sha256-41ae3f33dc5b25df85009b6e7b18ee24d89e376a3e2e99d805a940156808f684"
     },
     {
       "name": "combobox",
@@ -3261,7 +3261,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-945880a34fcae3ccf06d42b34d7c8bc11ef41d47d96332ee71310a1d4c90a81c"
+      "integrity": "sha256-c419e56f38e52b97e301469471cd2182d09e400b2efb60c4665674aa1878f818"
     },
     {
       "name": "date-picker",
@@ -3442,7 +3442,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-7f9d002636cc4c9904ee4fbbfbde97689f29a06710f252103b3bbba2093afe08"
+      "integrity": "sha256-66363781f672144b6d5a15f23e1b48391f58ce56be27708ed6c182f770a41a31"
     },
     {
       "name": "descriptions",
@@ -3689,7 +3689,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f55b3ea16298245f64ca0825eb5acf603d0dd5c1ff7967f09cb8093fccaec041"
+      "integrity": "sha256-3352088ebc38ef2a19d86072877ddcb3aff101285d6a906b7005cabf50406316"
     },
     {
       "name": "dropdown-menu",
@@ -4172,7 +4172,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-248bdf3f3a600c780f65ed8b672faa2ff34a4ba36bd223dbc22abf8680a34f1e"
+      "integrity": "sha256-01aba38f3cee60e11a0eb437a56db1d91129f9d832a50bb5e2b1f95a09f608a0"
     },
     {
       "name": "glitch-text",
@@ -4276,7 +4276,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c1ca26fc23b21e7b25c04f1142c212626231b6d8e84e1809589ada5ce1b99950"
+      "integrity": "sha256-738d6083dd1e7ad084275574ac40b89ef9220e159f3856a4aee8ae27649b025a"
     },
     {
       "name": "hardcore-input",
@@ -4388,7 +4388,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-2b4dcee2a8356c398612f216fd52614a3d263eef91c3e15103bf76f11b1cf278"
+      "integrity": "sha256-1246e8762ec21ba2b0df289c10f3f5237d3d088434bc949b3d1ac0ead3d58716"
     },
     {
       "name": "header-section",
@@ -5495,7 +5495,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-886af4d60ab85053e7ee386ee9bc6576ecc8c7e971c4b2aea32da106e9c142e5"
+      "integrity": "sha256-e59ee690e6e38abb00aae575fa7f5e1604d571ed44f8131e33844be17c8c2b52"
     },
     {
       "name": "noise-background",
@@ -6580,7 +6580,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-be020eb40c8a7e859779a557a81ac8bcafa8e94452ccdec2bee92a0b3c9fe08b"
+      "integrity": "sha256-442c4fe3cfad2d5821610cc5fc421855d15578631b9c1dfa33f2c67c2053c548"
     },
     {
       "name": "scroll-area",
@@ -7226,7 +7226,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-23bd1665fac7e2dbcef3c3c898b57b0d89a9d0ff1a3aed4df7403f92b9a0a10f"
+      "integrity": "sha256-dced5fcacfeba1a206e5bc3cf620015b55458e73e138d210168add151cfcef42"
     },
     {
       "name": "slider",
@@ -8322,7 +8322,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-bbc67d99c3cce1f77e2b99984ebc2bc65989f9b4a8686b622ccf8330f5fba8cb"
+      "integrity": "sha256-7595c4b6c6c15ee2ef635adbf22cff2a42a35a5a37ddd1998e6b216ed604519c"
     },
     {
       "name": "toggle",
@@ -9077,7 +9077,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-88abc9f460c1da56edb6254521e7d3d11845de83bbd09707cd3e8764883952ae"
+      "integrity": "sha256-1985e030a1e22b9ce17e7cab1fa4d662686394cc08873d9c323eff6b5c7afc20"
     },
     {
       "name": "typewriter-text",
