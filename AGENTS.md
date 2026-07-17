@@ -2,6 +2,13 @@
 
 面向 Vue 3 + Tailwind CSS 的 Neo-Brutalist UI 组件库。独立维护的 Vue 3 版本。
 
+> [!WARNING]
+> **禁止手动编辑以下自动生成/自动注入的文件**。所有对这些文件的变更必须通过特定脚本或上游源文件触发：
+> - `packages/ui/registry-manifest.json`：由 `prebuild-scan.ts` 自动生成，请通过 `pnpm build` 或 `pnpm --filter brutx-ui-vue prebuild:scan` 触发更新。
+> - `packages/ui/src/styles.css`：其中的 `@theme` 变量声明和运行时 tokens（标记有 `@brutx:theme-tokens` 和 `@brutx:root-tokens`）由 `generate-styles-tokens.ts` 自动注入，其唯一数据源为 `packages/shared/src/design-tokens.ts`。
+> - `packages/registry/registry/` 目录下的所有 JSON 文件：由注册表构建器自动编译，请勿手动编辑。
+> - `packages/registry/registry/deps.dot` 与 `deps.json`：由 validate 脚本自动生成。
+
 ## 单体仓库
 
 | 包名                   | 路径                   | 说明                      |
@@ -25,6 +32,15 @@ pnpm changelog      # 生成根 CHANGELOG.md 新版本段（详见 docs/RELEASE.
 pnpm changelog:dry  # 干跑：仅打印不写文件
 ```
 
+### 脚手架（组件与页面生成）
+
+在**根目录**下运行，严禁手动从零拼装基础骨架文件：
+```bash
+pnpm generate:component    # 自动生成新组件骨架（含组件、variants、测试文件）
+pnpm generate:composable   # 自动生成 Composition API 组合式函数
+pnpm generate:page         # 自动生成文档测试页面
+```
+
 ### Registry 包命令
 
 ```bash
@@ -38,15 +54,28 @@ pnpm --filter brutx-registry-vue validate -- --graph  # 额外导出 deps.dot / 
 
 watch 模式也可通过 `BRUTX_WATCH=1` 环境变量激活，详见 [build-registry.ts](packages/registry/scripts/build-registry.ts) 的 `runWatch()`。
 
-### 命令执行与测试约定
+### 命令执行与开发自检约定
 - **包管理器限定**：本单体仓库开发阶段仅允许使用 `pnpm`，严禁使用 `npm` 或 `yarn` 进行本地依赖安装与脚本执行，以防生成不一致的 lockfile。
-- **测试最小化**：运行测试时必须尽可能最小化（仅针对当前修改的文件或特定目录，例如 `pnpm test path/to/modified.test.ts`）。
-- **避免重型测试**：除非用户明确指示或到了关键发布阶段，否则**禁止**在开发机上运行重型测试或全局完整门禁（如 `pnpm release`、全量 `pnpm test`），以防过度占用系统资源导致电脑卡顿。
+- **校验与测试最小化（核心）**：为了防止过度占用开发机资源，**严禁在开发阶段运行全局重型校验与全量测试**（如根目录下的全局 `pnpm test`、`pnpm lint`、`pnpm typecheck`）。必须精准到修改的文件/包：
+  - **测试最小化**：仅针对当前修改的文件或特定目录运行测试，使用带具体路径的命令，例如：
+    ```bash
+    pnpm --filter brutx-ui-vue test src/components/button/Button.test.ts
+    ```
+  - **Lint 最小化**：仅对修改的文件进行 lint，例如使用：
+    ```bash
+    npx eslint packages/ui/src/components/button/Button.vue --fix
+    ```
+  - **Typecheck 最小化**：仅对发生修改的子包运行类型检查，而不是全局检查，例如：
+    ```bash
+    pnpm --filter brutx-ui-vue typecheck
+    ```
 
 
 ## 技术栈
 
 Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+ · reka-ui 2.9+（无头原语）· CVA 0.7+（变体）· clsx + tailwind-merge 通过 `cn()` · Vite 8+ · Vitest 4+ · pnpm 11+ · Node.js 22.5+
+
+- **Tailwind v4 配置单一源**：所有设计令牌、主题变量变更**只能**在 `packages/shared/src/design-tokens.ts` 中修改，禁止手动在 `styles.css` 中编辑 `@theme` 部分，禁止创建 `tailwind.config.js`。
 
 ## 导入
 
@@ -60,6 +89,10 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 - 除非要求否则不写注释 · 无魔法数字 · 无硬编码值
 - 4 空格缩进 · 单引号 · PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
+- **变体隔离**：变体逻辑必须提取到同目录的独立的 `*-variants.ts` 中，组件中 `import` 引入，不得在 `.vue` 中内联定义。
+- **类合并**：必须使用 `computed()` 包裹 `cn(...)` 进行类名计算，严禁在 `<template>` 模板中直接内联调用 `cn()`（会引发重复计算与性能问题）。
+- **无障碍与组件复用**：必须以 `reka-ui`（原 `radix-vue`）的无头原语作为基础。优先复用库中已有的 BrutxUI 组件（如使用 `Button` 代替 `<button>`，`Input` 代替 `<input>`），严禁使用 native 元素替代。
+- **国际化文本**：文本 props 默认值必须设为 `undefined`，必须通过 `useLocale().t()` 提供翻译默认值，优先级为：`props > t() > zh-CN 默认文本`。
 
 ## Shell git注意事项
 
@@ -108,6 +141,10 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - [提交信息规范](docs/COMMIT_CONVENTION.md)
 - [发布流程与 Changelog](docs/RELEASE.md)
 - [组件开发指南](docs/COMPONENT_GUIDE.md)
+- [视觉系统指南](docs/VISUAL_SYSTEM.md)
+- [CVA 变体声明规范](docs/CVA.md)
+- [组件文档模板](docs/COMPONENT_DOC_TEMPLATE.md)
+- [AI 技能描述](skills/brutxui/SKILL.md)
 
 ## AGENTS.md 维护约定
 

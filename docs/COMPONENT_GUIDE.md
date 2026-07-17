@@ -25,15 +25,18 @@
 - `pnpm --filter brutx-registry-vue validate` 会执行三道一致性校验：① 源码目录 ↔ `registry-manifest.json`（防止清单与源码不同步）；② `{name}.json` ↔ `index.json`（防止手写孤儿 JSON）；③ 字段完整性。
 - ⚠️ **CI 会强制检查**：`validate` 脚本会扫描 `packages/ui/src/components/` 下所有目录，与 `COMPONENT_METADATA` 比对。未登记的组件会导致 CI 失败，必须先登记再提交。
 
-## 新建组件后同步清单
+## 组件开发与同步生命周期 (Workflow Checklist)
 
-新增组件（或为已有组件新增 composable）后，必须同步以下文件，否则 CI 会失败：
+当新增组件、为已有组件新增 composable、或者对公共依赖进行修改时，在 `git commit` 本地提交前，必须按照以下顺序同步并校验（**严禁全局重型自检**，以节省开发机资源）：
 
-| 顺序 | 文件 | 操作 | 验证 |
+| 顺序 | 阶段 | 操作 / 运行命令 | 说明 / 验证方式 |
 | --- | --- | --- | --- |
-| 1 | `packages/shared/src/components.ts` | 在 `COMPONENTS` 中添加条目（先 grep 确认 key 不存在，防止 TS1117 重复键），声明 `dependencies`/`category`/`kind` 等元数据 | — |
-| 2 | `packages/ui/` | 运行 `pnpm --filter brutx-ui-vue prebuild:scan` 生成 `registry-manifest.json`（AST 自动发现 files/composables/directives/lib） | — |
-| 3 | `packages/registry/` | 运行 `pnpm --filter brutx-registry-vue build` 生成注册表 JSON | `pnpm --filter brutx-registry-vue validate` |
-| 4 | `apps/docs/components/{name}.md` + `apps/docs/en/components/{name}.md` | 按 `docs/COMPONENT_DOC_TEMPLATE.md` 模板编写中英文文档和demo组件演示 | `pnpm --filter docs build` |
-| 5 | `apps/docs/.vitepress/config.ts` | 在中文和英文 sidebar 各添加条目 | 同上 |
-| 6 | `skills/brutxui/SKILL.md` | 更新组件列表和组合式函数表 | — |
+| 1 | **元数据登记** | 在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中登记元数据（先 grep 确认 key 未被占用） | 声明 `dependencies`、`category`、`kind` 等元数据 |
+| 2 | **生成清单** | 在根目录下运行 `pnpm --filter brutx-ui-vue prebuild:scan` | 自动发现新组件文件，更新 `registry-manifest.json` |
+| 3 | **编译注册表** | 在根目录下运行 `pnpm --filter brutx-registry-vue build` | 编译组件 JSON，可用 `pnpm --filter brutx-registry-vue validate` 验证 |
+| 4 | **国际化检查** | 运行 `pnpm check:i18n:strict` | 严格校验中英文国际化 key 的镜像对称性 |
+| 5 | **本地局部自检** | ① 对修改文件运行 `npx eslint <changed-files> --fix`<br>② 对修改的子包运行类型检查（如 `pnpm --filter brutx-ui-vue typecheck`） | **核心**：仅自检被修改的文件或子包，严禁全局重型自检以节省资源 |
+| 6 | **编写演示组件** | 在 `apps/docs/.vitepress/theme/components/demos/` 目录下创建或更新 `{ComponentName}Demo.vue` | 遵循 `PascalCaseDemo.vue` 命名规范，用作文档预览 |
+| 7 | **编写文档** | 在 `apps/docs/components/` 和 `apps/docs/en/components/` 创建或更新 `{name}.md` 文档，并通过 `<{ComponentName}Demo />` 引入演示 | 必须符合 [COMPONENT_DOC_TEMPLATE.md](COMPONENT_DOC_TEMPLATE.md) 模板 |
+| 8 | **文档侧边栏** | 在 `apps/docs/.vitepress/config.ts` 中配置中文/英文 sidebar | 可通过 `pnpm --filter docs build` 验证文档构建 |
+| 9 | **更新 AI 技能** | 在 `skills/brutxui/SKILL.md` 中同步新组件和函数 | 便于后续 AI Agent 能够识别并合理复用 |
