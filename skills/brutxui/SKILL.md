@@ -11,7 +11,7 @@ description: >
 
 BrutxUI 是面向 Vue 3 + Tailwind CSS 的新粗野主义（Neo-Brutalist）UI 组件库，采用**复制粘贴式**工作流。
 
-**技术栈：** Vue 3.5+ · TypeScript 6.0+ · Tailwind CSS 4.3+ · reka-ui 2.9+ · CVA 0.7+ · vee-validate 4+
+**技术栈：** Vue 3.5+ · TypeScript 6.0+ · Tailwind CSS 4.3+ · reka-ui 2.9+ · CVA 0.7+ · vee-validate 4+ · pnpm 11+ · Node.js 22.5+
 
 ## 核心原则
 
@@ -31,6 +31,13 @@ BrutxUI 支持两种导入方式：
 import { Button, Card, Badge, cn } from 'brutx-ui-vue'
 import type { PricingPlan, TreeNode, KanbanColumn } from 'brutx-ui-vue'
 ```
+
+> [!IMPORTANT]
+> **导入路径规范：**
+> 1. **禁止从 `brutx-ui-vue` 导入 `reka-ui` 原语**：`Dialog`, `Popover`, `Tooltip`, `Primitive` 等无头原语必须直接从 `reka-ui` 导入。
+> 2. **部分组件与 Composable 必须从独立子路径导入**：
+>    * `DatePicker` 与 `useDatePicker` 必须从 `brutx-ui-vue/date-picker` 导入。
+>    * `useCarousel` 必须从 `brutx-ui-vue/carousel` 导入。
 
 ### 复制粘贴导入（推荐用于生产项目）
 
@@ -65,7 +72,7 @@ import { cn } from '@/lib/utils'
 | TagsInput | 标签输入 | 支持子组件组合、ariaLabel 无障碍标签 |
 | Calendar | 日历 | 日期选择器，支持范围模式、事件标记（events/CalendarEvent 类型）、自定义渲染（eventRenderer）、显示模式（mode: default 圆点 + Tooltip / card 胶囊徽章） |
 | ColorPicker | 颜色选择器 | 支持 HEX/RGB/HSL、透明度、预设与历史记录、defineExpose({ open }) 程序化控制面板 |
-| DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，支持 v-model、displayFormat 格式化、快捷选项、defineExpose({ open }) 程序化控制面板 |
+| DatePicker | 日期选择器 | 单日期/范围/日期时间/周/月/年，支持 v-model、displayFormat 格式化、快捷选项、defineExpose({ open }) 程序化控制面板（从 `brutx-ui-vue/date-picker` 导入） |
 | Upload | 上传 | 文件上传系统，支持拖拽、文件列表管理、进度追踪、错误处理、beforeUpload/beforeRemove 钩子、httpRequest 自定义上传、listType 列表类型 |
 | Form | 表单 | 集成 vee-validate + Zod 校验，支持 inline 行内布局、labelPosition 标签位置、scrollToError 滚动到错误字段、defineExpose 暴露 validate/validateField/resetFields/clearValidate/scrollToField 方法 |
 | Label | 标签 | 表单字段标签，支持尺寸/必填标记 |
@@ -85,7 +92,7 @@ import { cn } from '@/lib/utils'
 | Stepper | 步骤条 | 支持水平/垂直方向，step-click 事件，垂直内容插槽，变体/尺寸/可点击，defineExpose 暴露 currentStep/goToStep/nextStep/previousStep 等方法 |
 | Timeline | 时间线 | 支持垂直/水平布局，3 种节点形状，交替布局，role="list" 和 role="listitem" 无障碍语义 |
 | Carousel | 轮播 | 支持循环/自动播放/箭头/圆点、缩略图导航、自动播放指示器（进度条/圆点/分数）、视差动画；defineExpose 暴露滚动方法、useCarousel composable、prefers-reduced-motion 动效降级 |
-| TreeView | 树形视图 | 支持展开/选中/复选选择模式、拖拽排序（draggable/allowDrag/allowDrop/v-model:nodes/moveNode 工具函数）、懒加载（lazy/load/retryOnError）、节点过滤（filterable/filterMethod/filter 方法）、reloadNode 重载节点、defineExpose 暴露 filter/reloadNode 方法 |
+| TreeView | 树形视图 | 基于 `localNodes` 状态代理实现单向数据流以防止 watch 死循环。支持展开/选中/复选选择模式、拖拽排序（draggable/allowDrag/allowDrop/v-model:nodes/moveNode 工具函数）、懒加载（lazy/load/retryOnError）、节点过滤、reloadNode 重载节点、defineExpose 暴露 filter/reloadNode 方法 |
 | Watermark | 水印 | 平铺水印层，支持防篡改与自适应防 Diff 缓存重绘 |
 | Backtop | 回到顶部 | 带滚动节流与跨沙箱容器探测支持的回到顶部组件 |
 
@@ -116,7 +123,7 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 | --- | --- | --- |
-| Dialog | 对话框 | 支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full）、fullscreen 全屏、beforeClose 关闭前钩子、destroyOnClose 关闭后销毁；函数式 API：showDialog/showMessageBox 命令式调用，useDialog/useMessageBox composable 封装 |
+| Dialog | 对话框 | 支持 Header/Footer/Title/Description、size 变体（sm/default/lg/xl/full）、fullscreen 全屏、beforeClose 关闭前钩子（须返回 `boolean \| Promise<boolean>`，不支持 done 回调）、destroyOnClose 关闭后销毁；函数式 API：showDialog/showMessageBox 命令式调用，useDialog/useMessageBox composable 封装 |
 | AlertDialog | 确认弹窗 | 支持 Action/Cancel |
 | Alert | 提示 | 7 种变体、closable、actions 插槽 |
 | Toast | 通知 | 搭配 useToast 组合式函数、pauseOnHover 悬停暂停 |
@@ -355,9 +362,9 @@ BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使
 
 | Composable | 说明 |
 | --- | --- |
-| `useCarousel` | 轮播逻辑（embla 初始化、autoplay、状态管理），自动尊重 prefers-reduced-motion |
-| `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认） |
-| `useColorPicker` | 颜色选择逻辑（面板开关、颜色转换、选择确认） |
+| `useCarousel` | 轮播逻辑（embla 初始化、autoplay、状态管理），自动尊重 prefers-reduced-motion（从 `brutx-ui-vue/carousel` 导入） |
+| `useDatePicker` | 日期选择逻辑（面板开关、显示值、选择确认）（从 `brutx-ui-vue/date-picker` 导入） |
+| `useColorPicker` | 颜色选择逻辑（从 `brutx-ui-vue/color-picker` 导入） |
 | `useColorHistory` | 颜色历史记录管理（localStorage 持久化、去重、最大数量限制） |
 | `useAnimation` | 统一动画降级策略，自动尊重 prefers-reduced-motion |
 | `useReducedMotion` | 检测用户 prefers-reduced-motion 系统设置 |
@@ -376,10 +383,10 @@ BrutxUI 导出以下可复用组合式函数，可在自定义组件中独立使
 | `useDataTableFilter` | DataTable 筛选状态管理 |
 | `useDataTableSelection` | DataTable 行选择管理 |
 | `useDataTablePagination` | DataTable 分页状态管理 |
-| `useUpload` | 文件上传逻辑（文件选择、大小/类型校验、列表管理），所有选项支持 MaybeRefOrGetter 响应式更新 |
+| `useUpload` | 文件上传逻辑（支持 AbortController 取消上传），所有选项支持 MaybeRefOrGetter 响应式更新 |
 | `useMessage` | 函数式消息提示（info/success/warning/error/show），单例挂载 + TransitionGroup 堆叠 + 自动 GC |
-| `useDialog` | 函数式对话框（show 方法封装 showDialog），返回 `{ close, promise }` |
-| `useMessageBox` | 函数式确认框（show 方法封装 showMessageBox），支持输入验证，返回 `{ close, promise }` |
+| `useDialog` | 函数式对话框，优化了生命周期与 DOM 泄露，返回 `{ close, promise }` |
+| `useMessageBox` | 函数式确认框，支持输入验证，返回 `{ close, promise }` |
 
 ## 代码模板
 
@@ -501,6 +508,7 @@ const chartData = [
 8. **使用 `<script setup>` 语法**，不要使用 Options API
 9. **使用 `v-model` 进行双向绑定**，不要使用 `onChange`/`onInput`
 10. **使用 `@click` 事件处理器**，不要使用 `onClick`
+11. **注意 SSR 兼容性**，避免在 Setup 顶层直接访问 `window`、`document` 等浏览器全局对象，必须使用 `isBrowser` 工具函数（来自 `src/lib/env.ts`）判断，或在 `onMounted` 钩子中执行。
 
 ## 参考文件指引
 

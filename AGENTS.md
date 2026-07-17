@@ -109,8 +109,9 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - [发布流程与 Changelog](docs/RELEASE.md)
 - [组件开发指南](docs/COMPONENT_GUIDE.md)
 
-## AGENTS.md 维护约定
+## AGENTS.md 与 Skills 维护约定
 
 - 编写或修改本文件时，如果对项目约定、发布流程、命令用途、包职责或用户偏好有不确定之处，先询问用户，不要自行补全。
 - 只记录已确认的事实和约定；从历史提交、tag 或现有文件推断出的内容，应先向用户确认后再写入。
 - 不要把一次性的操作经验写成本项目长期规则，除非用户明确确认。
+- **AI 技能文档维护规范**：编写或修改 AI 技能文档（如 `skills/brutxui/SKILL.md` 等）时，应仅提供并保留最新的 API 和编码规范，严禁包含任何历史版本的变迁描述（如不再支持、废弃了哪些、从 xx 版本起改为什么等），防止 AI 在阅读时混淆。
