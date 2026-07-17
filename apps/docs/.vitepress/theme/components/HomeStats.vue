@@ -19,7 +19,7 @@ const themeCount = VALID_THEMES.length
 const stats = computed<StatItem[]>(() => [
   { value: String(componentCount), suffix: '+', label: t('components') },
   { value: String(blockCount), suffix: '+', label: t('blocks') },
-  { value: '100', suffix: '%', label: t('typescript') },
+  { value: '100', suffix: '%', label: t('sourceOwnership') },
   { value: String(themeCount), label: t('themes') },
 ])
 

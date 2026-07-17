@@ -16,7 +16,7 @@ export type LocaleKey =
     | 'brutalVisualImpact'
     | 'components'
     | 'blocks'
-    | 'typescript'
+    | 'sourceOwnership'
     | 'themes'
     | 'pageNotFound'
     | 'pageNotFoundDesc'
@@ -92,7 +92,7 @@ const i18n: Record<string, Record<LocaleKey, string>> = {
         brutalVisualImpact: '粗野主义视觉冲击力，一眼可见',
         components: '组件',
         blocks: '区块',
-        typescript: 'TypeScript',
+        sourceOwnership: '源码掌控',
         themes: '套主题',
         pageNotFound: '页面未找到',
         pageNotFoundDesc: '您访问的页面不存在或已被移除。',
@@ -167,7 +167,7 @@ const i18n: Record<string, Record<LocaleKey, string>> = {
         brutalVisualImpact: 'Neo-Brutalism visual impact, at a glance',
         components: 'Components',
         blocks: 'Blocks',
-        typescript: 'TypeScript',
+        sourceOwnership: 'Source Ownership',
         themes: 'Themes',
         pageNotFound: 'Page Not Found',
         pageNotFoundDesc: 'The page you are looking for does not exist or has been removed.',
