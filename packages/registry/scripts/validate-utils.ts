@@ -160,7 +160,6 @@ export interface DependencyGraph {
 
 const NON_COMPONENT_DEP_NAMES = new Set<string>([
     'locale-zh-cn',
-    'locale-en',
 ])
 
 export function buildDependencyGraph(items: RegistryReferenceItem[]): DependencyGraph {

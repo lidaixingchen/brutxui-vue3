@@ -82,7 +82,11 @@ describe('resolveImportAlias', () => {
         expect(resolved).toContain('from "@/components/brutx/shared/lib/env"');
     });
 
-    it('should preserve old behavior when sharedBase is not set', () => {
+    it('should rewrite composables and lib imports to user-configured aliases when sharedBase is not set', () => {
+        // N1 fix: `@/lib/<x>` imports are now rewritten symmetrically with
+        // `@/composables/`, `@/locales/`, `@/directives/`. The lib alias is
+        // derived as `path.dirname(config.aliases.utils)`, matching where
+        // add-service.ts writes non-utils lib files.
         const content = `import { useLocale } from "@/composables/useLocale";\nimport { cn } from "@/lib/utils";\nimport { env } from "@/lib/env";`;
 
         const config = {
@@ -99,7 +103,29 @@ describe('resolveImportAlias', () => {
 
         expect(resolved).toContain('from "~/composables/useLocale"');
         expect(resolved).toContain('from "~/lib/utils"');
-        expect(resolved).toContain('from "@/lib/env"');
+        expect(resolved).toContain('from "~/lib/env"');
+    });
+
+    it('should rewrite @/lib/<x> to parent of aliases.utils when utils is not under @/lib (N1 trigger case)', () => {
+        // N1 trigger: when `aliases.utils` is `@/utils` (not the default
+        // `@/lib/utils`), add-service.ts writes lib files to `src/<x>.ts`
+        // (parent of utils file). The rewrite must keep imports aligned:
+        // `@/lib/<x>` → `@/<x>` so tsconfig `@/* → src/*` resolves correctly.
+        const content = `import { env } from "@/lib/env";\nimport { cn } from "@/lib/utils";`;
+
+        const config = {
+            style: 'brutalism',
+            tailwind: { config: '', css: 'src/index.css' },
+            aliases: {
+                components: '@/components',
+                utils: '@/utils',
+            },
+        };
+
+        const resolved = resolveImportAlias(content, config);
+
+        expect(resolved).toContain('from "@/env"');
+        expect(resolved).toContain('from "@/utils"');
     });
 
     it('should keep locales and directives unchanged with sharedBase', () => {

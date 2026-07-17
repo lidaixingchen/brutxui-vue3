@@ -10,7 +10,9 @@ const INSTALL_COMMANDS: Record<PackageManager, string> = {
 };
 
 function sanitizePackageName(name: string): string {
-    return name.replace(/[^a-zA-Z0-9@/._-]/g, '');
+    // Whitelist npm alias syntax: `pkg@npm:other-pkg@version` requires `:`.
+    // `=` is included for completeness (npm packument "name@=version" pin form).
+    return name.replace(/[^a-zA-Z0-9@:/._=-]/g, '');
 }
 
 export function installPackages(

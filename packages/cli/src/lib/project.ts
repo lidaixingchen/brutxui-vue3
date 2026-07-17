@@ -201,9 +201,20 @@ async function resolveFromTsConfig(
     const baseUrl = tsConfig?.compilerOptions?.baseUrl || '.';
 
     if (paths[aliasPattern]) {
-        const targetPath = paths[aliasPattern][0];
-        const resolvedBase = targetPath.replace('/*', '');
-        return path.join(cwd, baseUrl, resolvedBase, relativePath);
+        const targets = paths[aliasPattern];
+        // TypeScript `paths` arrays are ordered fallbacks. Return the first
+        // target whose resolved path actually exists on disk; if none match
+        // (e.g. file not yet created, or no-extension file path), fall back
+        // to the first target to preserve prior single-target behavior.
+        for (const targetPath of targets) {
+            const resolvedBase = targetPath.replace('/*', '');
+            const candidate = path.join(cwd, baseUrl, resolvedBase, relativePath);
+            if (await fs.pathExists(candidate)) {
+                return candidate;
+            }
+        }
+        const firstBase = targets[0].replace('/*', '');
+        return path.join(cwd, baseUrl, firstBase, relativePath);
     }
 
     return null;
@@ -253,6 +264,11 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
     const composablesAlias = config.aliases.composables ?? config.aliases.utils.replace(/\/utils$/, '/composables');
     const localesAlias = `${path.dirname(composablesAlias)}/locales`;
     const directivesAlias = `${path.dirname(composablesAlias)}/directives`;
+    // libAlias mirrors where add-service.ts writes non-utils lib files
+    // (path.dirname(resolveAliasPath(config.aliases.utils))): keeps write/rewrite
+    // paths symmetric so cross-file `@/lib/<x>` imports resolve correctly under
+    // any user-customized `aliases.utils` value, not just the default `@/lib/utils`.
+    const libAlias = path.dirname(config.aliases.utils);
     const isVueSfc = /<script[\s>]/i.test(content);
 
     interface Replacement { start: number; end: number; replacement: string }
@@ -276,6 +292,10 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
                 } else if (imp.n.startsWith('@/lib/')) {
                     if (sharedBase) {
                         newPath = imp.n.replace('@/lib', `${sharedBase}/lib`);
+                    } else {
+                        // Symmetric with composables/locales/directives: rewrite to
+                        // the user-configured lib directory derived from aliases.utils.
+                        newPath = imp.n.replace('@/lib', libAlias);
                     }
                 } else if (imp.n.startsWith('@/locales/')) {
                     newPath = imp.n.replace('@/locales', localesAlias);

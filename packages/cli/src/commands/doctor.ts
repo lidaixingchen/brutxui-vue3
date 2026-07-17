@@ -632,8 +632,10 @@ async function probeHttpSource(source: string): Promise<RegistrySourceStatus> {
     const probeUrl = `${source}/registry-manifest.json`;
     const start = Date.now();
     try {
+        // HEAD is sufficient for reachability detection and avoids downloading
+        // the (potentially large) manifest body that GET would transfer.
         const res = await fetch(probeUrl, {
-            method: 'GET',
+            method: 'HEAD',
             signal: AbortSignal.timeout(10000),
         });
         const latencyMs = Date.now() - start;
