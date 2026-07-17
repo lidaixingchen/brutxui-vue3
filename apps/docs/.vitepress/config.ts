@@ -113,7 +113,7 @@ export default defineConfig({
         },
     },
     description: 'Neo-Brutalism 风格 Vue 3 组件库',
-    base: '/brutxui-vue3/',
+    base: process.env.VERCEL ? '/' : '/brutxui-vue3/',
     lastUpdated: true,
     sitemap: {
         hostname: 'https://lidaixingchen.github.io/brutxui-vue3/',
