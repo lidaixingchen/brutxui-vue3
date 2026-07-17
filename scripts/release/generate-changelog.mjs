@@ -68,15 +68,21 @@ function getCommitsBetween(fromRef, toRef) {
 }
 
 function parseCommit(line) {
-    const [hash, subject, body, author, email] = line.split('\x1f').map((s) => s.trim());
-    const match = subject.match(COMMIT_PATTERN);
+    const parts = line.split('\x1f').map((s) => s ? s.trim() : '');
+    const hash = parts[0] || '';
+    const subject = parts[1] || '';
+    const body = parts[2] || '';
+    const author = parts[3] || '';
+    const email = parts[4] || '';
+
+    const match = subject ? subject.match(COMMIT_PATTERN) : null;
 
     if (!match) {
         return {
             hash,
             type: 'chore',
             scope: null,
-            subject,
+            subject: subject || '脏提交或无法解析的空提交',
             body,
             author,
             email,
@@ -186,12 +192,12 @@ function archiveOldestVersion(fullContent, newVersion) {
     const oldestDate = oldestActive[2];
     const oldestStartIndex = oldestActive.index;
 
-    // 确定第 4 个版本的结束边界
+    // 确定第 4 个版本的结束边界，施加安全下限保护，防止冲突和乱序导致 slice 顺序错乱引发死循环爆栈
     let oldestEndIndex = fullContent.indexOf('\n## 归档版本');
-    if (oldestEndIndex === -1) {
+    if (oldestEndIndex === -1 || oldestEndIndex <= oldestStartIndex) {
         oldestEndIndex = fullContent.length;
     }
-    if (matches[4] && matches[4].index < oldestEndIndex) {
+    if (matches[4] && matches[4].index < oldestEndIndex && matches[4].index > oldestStartIndex) {
         oldestEndIndex = matches[4].index;
     }
 
