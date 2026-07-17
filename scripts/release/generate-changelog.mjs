@@ -167,6 +167,77 @@ function stripUnreleasedSection(content) {
     return content.replace(unreleasedPattern, '');
 }
 
+function archiveOldestVersion(fullContent, newVersion) {
+    const docsChangelogDir = path.join(repoRoot, 'apps/docs/changelog');
+    const docsIndexImg = path.join(docsChangelogDir, 'index.md');
+
+    // 1. 使用正则匹配所有的版本标题 (包括刚刚 prepended 的新版本)
+    const versionHeaderRegex = /## \[(0|[1-9]\d*\.\d+\.\d+)\]\([^\)]+\)\s+-\s+(\d{4}-\d{2}-\d{2})/g;
+    const matches = [...fullContent.matchAll(versionHeaderRegex)];
+
+    // 2. 如果版本号数量没有超过 3 个，则不需要裁剪归档，直接返回原内容
+    if (matches.length <= 3) {
+        return fullContent;
+    }
+
+    // 3. 超过 3 个，第 4 个版本即为需要被归档的最老活跃版本 (索引为 3)
+    const oldestActive = matches[3];
+    const oldestVersion = oldestActive[1];
+    const oldestDate = oldestActive[2];
+    const oldestStartIndex = oldestActive.index;
+
+    // 确定第 4 个版本的结束边界
+    let oldestEndIndex = fullContent.indexOf('\n## 归档版本');
+    if (oldestEndIndex === -1) {
+        oldestEndIndex = fullContent.length;
+    }
+    if (matches[4] && matches[4].index < oldestEndIndex) {
+        oldestEndIndex = matches[4].index;
+    }
+
+    // 4. 提取该段归档内容并清洗格式
+    const rawArchiveText = fullContent.slice(oldestStartIndex, oldestEndIndex).trim();
+    const archiveFileContent = `# v${oldestVersion}\n\n> [← 返回主 CHANGELOG](../guide/changelog.md)\n\n${rawArchiveText}\n`;
+
+    // 5. 自动写入或更新 `apps/docs/changelog/v${oldestVersion}.md`
+    if (!existsSync(docsChangelogDir)) {
+        fs.mkdirSync(docsChangelogDir, { recursive: true });
+    }
+    const archiveFilePath = path.join(docsChangelogDir, `v${oldestVersion}.md`);
+    writeFileSync(archiveFilePath, archiveFileContent, 'utf-8');
+    console.log(`[Archive] 自动归档旧版本至: apps/docs/changelog/v${oldestVersion}.md`);
+
+    // 6. 从主 CHANGELOG 内容中裁剪掉该版本段
+    const cleanedBody = fullContent.slice(0, oldestStartIndex) + fullContent.slice(oldestEndIndex);
+
+    // 7. 同步在主 CHANGELOG 的“## 归档版本”列表顶部插入新归档链接
+    const changelogArchiveLink = `* **[${oldestVersion}](apps/docs/changelog/v${oldestVersion}.md)** - ${oldestDate}`;
+    let updatedContent = cleanedBody;
+    if (cleanedBody.includes('## 归档版本') && !cleanedBody.includes(changelogArchiveLink)) {
+        updatedContent = cleanedBody.replace(
+            /## 归档版本\n\n>\s*以下版本已归档至[^\n]*\n\n/,
+            `## 归档版本\n\n> 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：\n\n${changelogArchiveLink}\n`
+        );
+    }
+
+    // 8. 同步更新文档站 `changelog/index.md` 列表顶部插入新归档链接
+    if (existsSync(docsIndexImg)) {
+        let indexContent = readFileSync(docsIndexImg, 'utf-8');
+        const docsArchiveLink = `* **[v${oldestVersion}](./v${oldestVersion})** - ${oldestDate}`;
+        if (!indexContent.includes(docsArchiveLink)) {
+            indexContent = indexContent.replace(
+                '## 归档列表\n\n',
+                `## 归档列表\n\n${docsArchiveLink}\n`
+            );
+            writeFileSync(docsIndexImg, indexContent, 'utf-8');
+            console.log(`[Archive] 自动更新文档站归档索引: apps/docs/changelog/index.md`);
+        }
+    }
+
+    // 9. 递归：如果裁剪后版本数量依然大于 3，则继续裁剪直到剩下 3 个最新版
+    return archiveOldestVersion(updatedContent, newVersion);
+}
+
 function prependToChangelog(newEntry, version) {
     const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
     const defaultHeader =
@@ -179,20 +250,24 @@ function prependToChangelog(newEntry, version) {
         `## [Unreleased](${REPO_URL}/compare/v${version}...HEAD)\n\n`;
 
     try {
+        let finalChangelogContent = '';
         if (existsSync(changelogPath)) {
             let existing = readFileSync(changelogPath, 'utf-8');
             existing = stripUnreleasedSection(existing);
             const firstEntryIndex = existing.indexOf('\n## [');
             const header = firstEntryIndex !== -1 ? existing.slice(0, firstEntryIndex + 1) : defaultHeader;
             const contentWithoutHeader = firstEntryIndex !== -1 ? existing.slice(firstEntryIndex + 1) : existing;
-            writeFileSync(
-                changelogPath,
-                header + unreleasedEntry + newEntry + '\n' + contentWithoutHeader,
-                'utf-8',
-            );
+            
+            // 拼出带有新 Entry 的完整内容
+            const fullContent = header + unreleasedEntry + newEntry + '\n' + contentWithoutHeader;
+            // 触发自动归档裁剪
+            finalChangelogContent = archiveOldestVersion(fullContent, version);
         } else {
-            writeFileSync(changelogPath, defaultHeader + unreleasedEntry + newEntry, 'utf-8');
+            const fullContent = defaultHeader + unreleasedEntry + newEntry;
+            finalChangelogContent = archiveOldestVersion(fullContent, version);
         }
+        
+        writeFileSync(changelogPath, finalChangelogContent, 'utf-8');
     } catch (error) {
         console.error('Error updating CHANGELOG.md:', error instanceof Error ? error.message : String(error));
         process.exit(1);

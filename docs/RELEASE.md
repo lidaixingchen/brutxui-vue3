@@ -144,17 +144,16 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 
 访问入口：文档站点侧边栏的"归档版本"分组（路径 `/changelog/`）。
 
-### 维护流程
+### 维护流程与自动归档
 
 发布新版本时：
 
-1. 运行 `pnpm changelog` 生成新版本段并写入根 `CHANGELOG.md` 顶部
-2. 检查根文件保留的版本数是否超过 3 个
-3. 若超过，将最旧的版本段移动到 `apps/docs/changelog/v<version>.md`（保留原内容 + 添加返回链接）
-4. 在根文件末尾的"归档版本"段添加该版本的链接条目
-5. 侧边栏会自动包含新归档文件，无需手动修改 config.ts
-
-> 注意：当前归档操作需手动执行，`generate-changelog.mjs` 脚本尚未集成自动归档逻辑。
+1. 运行 `pnpm changelog` 会自动：
+   - 生成新版本段并写入根 `CHANGELOG.md` 顶部。
+   - 自动运行 **滑动窗口裁剪与递归归档逻辑**：若主日志文件中的版本数超过 3 个，脚本会自动将超出范围的最旧版本切分并写入 `apps/docs/changelog/v<version>.md` 独立文件。
+   - 自动在主 `CHANGELOG.md` 末尾的“归档版本”段追加该版本的链接条目。
+   - 自动将该版本连入文档站归档索引 [apps/docs/changelog/index.md](apps/docs/changelog/index.md)。
+2. 侧边栏会自动包含并更新新归档文件，无需任何手动维护。
 
 ## Breaking Change 迁移文档规范
 
