@@ -167,4 +167,57 @@ describe('FormWizard', () => {
         await stepButtons[2].trigger('click')
         expect(wrapper.emitted('step-change')).toBeTruthy()
     })
+
+    it('clears completedSteps of downstream steps when modelValue changes', async () => {
+        // 区分修复前后行为的关键场景：
+        // 1. 完成步骤 0、1（completedSteps={0,1}）
+        // 2. 返回步骤 0，修改 modelValue
+        //    - 修复版：清除 0 及下游 1、2 → completedSteps={}
+        //    - 未修复：仅清除 0 → completedSteps={1}
+        // 3. 点击 Next 完成步骤 0（completedSteps={0}，currentStep=1）
+        // 4. linear 跳到步骤 2：
+        //    - 修复版：i=1 不在 completedSteps → navigation-blocked
+        //    - 未修复：i=1 在 completedSteps → 通过 step-change
+        const wrapper = mount(FormWizard, {
+            props: {
+                steps: testSteps,
+                validateOnNext: false,
+                linear: true,
+                modelValue: { name: 'Alice' },
+            },
+            global: globalProvide,
+        })
+
+        const nextButton = () => wrapper.findAll('button').find(b => b.text() === 'Next')!
+        const prevButton = () => wrapper.findAll('button').find(b => b.text() === 'Previous')!
+
+        // 前进两步：0 → 1 → 2，completedSteps={0,1}
+        await nextButton().trigger('click')
+        await nextButton().trigger('click')
+
+        // 返回步骤 0
+        await prevButton().trigger('click') // 2 → 1
+        await prevButton().trigger('click') // 1 → 0
+
+        // 修改 modelValue：修复版应清除 0、1、2 的 completedSteps
+        await wrapper.setProps({ modelValue: { name: 'Bob' } })
+
+        // 点击 Next 完成步骤 0，currentStep → 1
+        await nextButton().trigger('click')
+
+        // 记录当前 navigation-blocked 与 step-change 事件次数
+        const blockedBefore = wrapper.emitted('navigation-blocked')?.length ?? 0
+        const stepChangeBefore = wrapper.emitted('step-change')?.length ?? 0
+
+        // linear 跳到步骤 2：修复版应阻塞（步骤 1 不在 completedSteps）
+        const stepButtons = wrapper.findAll('[role="listitem"] button')
+        await stepButtons[2].trigger('click')
+
+        const blockedAfter = wrapper.emitted('navigation-blocked')?.length ?? 0
+        const stepChangeAfter = wrapper.emitted('step-change')?.length ?? 0
+
+        // 修复版：navigation-blocked 次数增加，step-change 次数不变
+        expect(blockedAfter).toBeGreaterThan(blockedBefore)
+        expect(stepChangeAfter).toBe(stepChangeBefore)
+    })
 })

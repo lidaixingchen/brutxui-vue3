@@ -91,6 +91,8 @@ export const en: Locale = {
     dialog: {
         close: 'Close',
         inputError: 'Invalid input format',
+        confirm: 'Confirm',
+        cancel: 'Cancel',
     },
     sheet: {
         close: 'Close',

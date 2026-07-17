@@ -91,6 +91,8 @@ export const zhCN: Locale = {
     dialog: {
         close: '关闭',
         inputError: '输入格式不正确',
+        confirm: '确定',
+        cancel: '取消',
     },
     sheet: {
         close: '关闭',

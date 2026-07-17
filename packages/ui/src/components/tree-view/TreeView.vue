@@ -114,11 +114,9 @@ function emitNodesUpdate() {
 }
 
 // 使用 shallowRef 避免对 Set 进行深层响应式转换
+// defaultExpanded 仅作为非受控初始值：初始化时生效，后续变化不覆盖用户手动展开状态。
+// 若需受控同步展开状态，应通过 v-model:expanded（expanded prop + update:expanded event）实现。
 const expandedIds = shallowRef<Set<string>>(new Set(props.defaultExpanded));
-
-watch(() => props.defaultExpanded, (newVal) => {
-    expandedIds.value = new Set(newVal);
-});
 
 const checkedSet = computed(() => new Set(props.checkedIds));
 

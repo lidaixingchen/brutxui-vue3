@@ -101,6 +101,8 @@ export interface MessageLocale {
 export interface DialogLocale {
     close: string
     inputError: string
+    confirm: string
+    cancel: string
 }
 
 export interface SheetLocale {

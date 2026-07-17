@@ -132,15 +132,25 @@ describe('TreeView', () => {
         expect(items.length).toBe(4) // src + main.ts + utils.ts + package.json
     })
 
-    it('watches defaultExpanded changes', async () => {
+    it('defaultExpanded is non-controlled initial value: changes do not override user expansion', async () => {
+        // defaultExpanded 语义为非受控初始值，仅在初始化时生效。
+        // 用户手动展开节点后，父组件传入新的 defaultExpanded 数组不应覆盖用户展开状态。
+        // 若需受控同步，应使用 v-model:expanded。
         const wrapper = mount(TreeView, {
             props: { nodes: sampleNodes, defaultExpanded: [] },
             global: { provide: localeProvide },
         })
         expect(wrapper.findAll('[role="treeitem"]').length).toBe(2)
 
-        await wrapper.setProps({ defaultExpanded: ['src'] } as Record<string, unknown>)
+        // 用户手动展开 src
+        const srcNode = wrapper.findAll('[role="treeitem"]')[0]
+        await srcNode.find('div').trigger('click')
+        expect(wrapper.findAll('[role="treeitem"]').length).toBe(4)
+
+        // 父组件传入新的 defaultExpanded（即使内容不同），不应覆盖用户展开
+        await wrapper.setProps({ defaultExpanded: ['nonexistent'] } as Record<string, unknown>)
         await nextTick()
+        // src 仍应展开（用户手动展开的状态保留）
         expect(wrapper.findAll('[role="treeitem"]').length).toBe(4)
     })
 

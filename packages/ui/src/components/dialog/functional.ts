@@ -292,13 +292,10 @@ export function showMessageBox(options: MessageBoxOptions = {}) {
 
     const component = defineComponent({
         setup() {
-            const { locale, t } = useLocale()
-            const isZh = computed(() => {
-                return locale.value.dialog.close === '关闭'
-            })
+            const { t } = useLocale()
 
-            const defaultConfirmText = computed(() => isZh.value ? '确定' : 'Confirm')
-            const defaultCancelText = computed(() => isZh.value ? '取消' : 'Cancel')
+            const defaultConfirmText = computed(() => t('dialog.confirm'))
+            const defaultCancelText = computed(() => t('dialog.cancel'))
 
             if (!options.inputErrorMessage) {
                 errorMessage.value = t('dialog.inputError')

@@ -59,6 +59,12 @@ const canGoNext = computed(() => {
 watch(() => props.modelValue, () => {
     stepErrors.value.delete(currentStep.value)
     completedSteps.value.delete(currentStep.value)
+    // 清除当前步骤之后所有已完成/有错误的步骤：当前步骤数据变更可能使下游步骤失效，
+    // 用户若返回上游修改数据后再次前进，需重新验证下游步骤而非跳过
+    for (let i = currentStep.value + 1; i < props.steps.length; i++) {
+        completedSteps.value.delete(i)
+        stepErrors.value.delete(i)
+    }
 }, { deep: true })
 
 watch(currentStep, () => {
