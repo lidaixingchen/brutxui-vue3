@@ -6,6 +6,11 @@
 # 注意：Dependabot 仅维护已有 SHA pin，不会自动将 tag 转为 SHA。
 # 新增 workflow 时请直接使用 SHA pin 格式：owner/repo@<40-char-sha> # vN
 #
+# 分组策略：
+# - actions-official：官方 actions/* 的 minor/patch 升级合并为一个 PR
+# - actions-third-party：第三方 actions 的 minor/patch 升级合并为另一个 PR
+# - 所有 major 升级：单独开 PR（不分组），便于逐个 review breaking changes
+#
 # 参考：
 #   https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
@@ -19,9 +24,20 @@ updates:
       day: monday
     open-pull-requests-limit: 5
     groups:
-      github-actions:
+      actions-official:
+        patterns:
+          - 'actions/*'
+        update-types:
+          - minor
+          - patch
+      actions-third-party:
         patterns:
           - '*'
+        exclude-patterns:
+          - 'actions/*'
+        update-types:
+          - minor
+          - patch
     commit-message:
       prefix: ci
       include: scope
