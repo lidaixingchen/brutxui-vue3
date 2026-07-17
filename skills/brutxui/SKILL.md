@@ -154,7 +154,7 @@ import { cn } from '@/lib/utils'
 
 | 组件 | 中文名 | 说明 |
 |------|--------|------|
-| PricingSection | 统一定价区域 | 支持 v-model、一次性价格，订阅切换和功能状态（已合并原 SaaSPricing） |
+| PricingSection | 统一定价区域 | 支持 v-model、一次性价格，订阅切换和功能状态 |
 | BrutalistHero | 英雄区块 | 支持主/次操作按钮 |
 | HeaderSection | 页头导航 | 支持导航项/Logo |
 | FooterSection | 页脚 | 支持链接分组/版权 |
@@ -398,12 +398,14 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { z } from 'zod'
 import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'brutx-ui-vue'
 
-const schema = toTypedSchema(z.object({
+const formSchema = z.object({
   username: z.string().min(2).max(50),
   email: z.string().email(),
-}))
+})
 
-function onSubmit(values: Record<string, unknown>) {
+const schema = toTypedSchema(formSchema)
+
+function onSubmit(values: z.infer<typeof formSchema>) {
   console.log('Form submitted:', values)
 }
 </script>
@@ -495,6 +497,52 @@ const chartData = [
   <SketchyChart type="pie" :data="chartData" :width="400" :height="400" />
 </template>
 ```
+
+## TS 严格模式使用指南
+
+在使用本组件库构建业务页面时，请确保开启 TS 严格模式，不要使用 `any` 类型。对于复杂数据结构（如树、看板、定价周期、面包屑等），应直接引入库中定义的 TS 类型进行类型标注：
+
+```typescript
+import { ref } from 'vue'
+import type { 
+  PricingPlan, 
+  TreeNode, 
+  CalendarEvent, 
+  KanbanColumn, 
+  TabItem, 
+  BreadcrumbItem,
+  StepperStep 
+} from 'brutx-ui-vue'
+
+// 显式声明响应式数据类型，避免推导为 any
+const treeNodes = ref<TreeNode[]>([
+  {
+    id: 'node-1',
+    label: '概览',
+    children: []
+  }
+])
+```
+
+## A11y 无障碍使用最佳实践
+
+为了确保生成的业务系统具有良好的无障碍（Accessibility）体验，请遵循以下规范：
+
+1. **显式标签关联**：所有交互组件（如 `Input`、`Select` 等）如果没有邻近的显式文本 Label 进行绑定，必须配置 `ariaLabel` 或 `aria-label`。
+2. **错误描述绑定**：当表单项发生错误时，使用 `aria-describedby` 绑定指向对应的 `FormMessage` 错误提示 ID，使屏幕阅读器能够自动播报。
+3. **非语义元素的键盘交互**：如果使用非原生交互元素（如可点击的 `Card` 或 `div` 容器）作为交互按钮，必须显式附加 `role="button"`、`tabindex="0"`，并同时绑定 `@click` 与 `@keydown.enter.prevent` / `@keydown.space.prevent` 事件：
+   ```vue
+   <Card
+     role="button"
+     tabindex="0"
+     aria-label="查看详情"
+     @click="viewDetails"
+     @keydown.enter.prevent="viewDetails"
+     @keydown.space.prevent="viewDetails"
+   >
+     <!-- 内容 -->
+   </Card>
+   ```
 
 ## 生成规则
 

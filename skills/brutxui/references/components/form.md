@@ -929,6 +929,119 @@ interface UploadFile {
 }
 ```
 
+### Upload 高级用法与防错示例
+
+在业务系统中使用 `Upload` 时，推荐通过以下模板实现文件拦截校验与大文件上传的中断控制。
+
+#### 1. 格式校验与 HTTP 请求中断控制
+当用户在文件列表中点击“删除/取消”时，为了真正停止后台的文件传输（节省服务器和客户端带宽），需在自定义的 `httpRequest` 里使用 `AbortController` 并监听 `before-remove` 勾子。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { Upload, UploadTrigger, UploadFileList, type UploadFile } from 'brutx-ui-vue'
+
+const fileList = ref<UploadFile[]>([])
+
+// 保存每个正在上传文件的 AbortController，用于手动取消
+const abortControllers = new Map<string, AbortController>()
+
+// 1. 上传前的校验拦截
+function handleBeforeUpload(file: File): boolean {
+  const isImage = file.type.startsWith('image/')
+  const isLt2M = file.size / 1024 / 1024 < 2
+
+  if (!isImage) {
+    alert('只能上传图片文件！')
+    return false
+  }
+  if (!isLt2M) {
+    alert('图片大小不能超过 2MB！')
+    return false
+  }
+  return true
+}
+
+// 2. 自定义上传实现，并支持取消
+async function handleCustomUpload(options: any) {
+  const { file, onProgress, onSuccess, onError } = options
+  
+  // 创建该文件对应的 AbortController
+  const controller = new AbortController()
+  abortControllers.set(file.name, controller)
+
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    // 使用 XMLHttpRequest 实现带进度和中断的请求
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', '/api/upload', true)
+
+    // 上传进度监听
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100)
+        onProgress({ percent }) // 触发进度条更新
+      }
+    }
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const res = JSON.parse(xhr.responseText)
+        onSuccess(res)
+      } else {
+        onError(new Error('上传失败'))
+      }
+      abortControllers.delete(file.name)
+    }
+
+    xhr.onerror = () => {
+      onError(new Error('网络错误'))
+      abortControllers.delete(file.name)
+    }
+
+    // 监听外部中断信号
+    controller.signal.addEventListener('abort', () => {
+      xhr.abort()
+    })
+
+    xhr.send(formData)
+  } catch (err: any) {
+    onError(err)
+    abortControllers.delete(file.name)
+  }
+}
+
+// 3. 当文件被移除时，如果有正在进行的请求，则执行中断
+function handleBeforeRemove(file: UploadFile): boolean {
+  const controller = abortControllers.get(file.name)
+  if (controller) {
+    controller.abort() // 中断请求
+    abortControllers.delete(file.name)
+  }
+  return true
+}
+</script>
+
+<template>
+  <Upload
+    v-model:file-list="fileList"
+    :http-request="handleCustomUpload"
+    :before-upload="handleBeforeUpload"
+    :before-remove="handleBeforeRemove"
+    accept="image/*"
+  >
+    <template #trigger="{ selectFiles, drag }">
+      <UploadTrigger :drag="drag" @select="selectFiles" />
+    </template>
+    <template #file-list="{ files, remove, retry }">
+      <UploadFileList :files="files" @remove="remove" @retry="retry" />
+    </template>
+  </Upload>
+</template>
+```
+
 ## useUpload
 
 `Upload` / `UploadCard` 内部的文件选择、校验与列表管理逻辑已抽取为独立的 `useUpload` 组合式函数，可用于构建完全自定义的上传 UI。所有选项均支持 `MaybeRefOrGetter`，可响应式更新。

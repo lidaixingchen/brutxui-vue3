@@ -294,3 +294,83 @@ interface KanbanCard {
 | `addCard` | `(columnId)` | 触发添加卡片事件 |
 | `getColumn` | `(columnId)` | 获取指定列数据 |
 | `getAllColumns` | — | 获取所有列数据（计算属性） |
+
+### KanbanBoard 业务集成与防错示例
+
+在业务系统中使用 `KanbanBoard` 时，通常需要与后端接口同步，为了保障拖拽的顺畅以及失败时的回滚体验，可参考以下最佳实践模板。
+
+#### 1. 拖拽与键盘移动的业务同步及失败回滚
+当用户通过鼠标拖拽或键盘（`Space` + 方向键）移动卡片或列时，组件会触发 `v-model` 的更新并抛出事件。为了防止网络延迟导致页面卡顿，推荐使用**乐观更新（Optimistic Update）**：先应用本地数据，失败时再回滚。
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { KanbanBoard, type KanbanColumn } from 'brutx-ui-vue'
+
+// 本地状态
+const columns = ref<KanbanColumn[]>([
+  {
+    id: 'todo',
+    title: '待办',
+    cards: [{ id: 'card-1', title: '完成项目初始化' }]
+  },
+  {
+    id: 'doing',
+    title: '进行中',
+    cards: []
+  }
+])
+
+// 备份状态，用于失败回滚
+let backupColumns: KanbanColumn[] = []
+
+function saveBackup() {
+  backupColumns = JSON.parse(JSON.stringify(columns.value))
+}
+
+// 卡片跨列移动事件
+async function handleCardMove(cardId: string, fromColumnId: string, toColumnId: string) {
+  saveBackup()
+  console.log(`卡片 ${cardId} 从 ${fromColumnId} 移动到 ${toColumnId}`)
+  
+  try {
+    const response = await fetch('/api/kanban/card-move', {
+      method: 'POST',
+      body: JSON.stringify({ cardId, fromColumnId, toColumnId })
+    })
+    
+    if (!response.ok) throw new Error('同步失败')
+  } catch (error) {
+    // 乐观更新失败，回滚到移动前的状态
+    alert('移动同步失败，已回滚')
+    columns.value = backupColumns
+  }
+}
+
+// 列位置排序变化事件
+async function handleColumnMove(columnId: string, fromIndex: number, toIndex: number) {
+  saveBackup()
+  
+  try {
+    const response = await fetch('/api/kanban/column-move', {
+      method: 'POST',
+      body: JSON.stringify({ columnId, fromIndex, toIndex })
+    })
+    
+    if (!response.ok) throw new Error('同步失败')
+  } catch (error) {
+    alert('排序同步失败，已回滚')
+    columns.value = backupColumns
+  }
+}
+</script>
+
+<template>
+  <KanbanBoard
+    v-model="columns"
+    @card-move="handleCardMove"
+    @column-move="handleColumnMove"
+  />
+</template>
+```
+

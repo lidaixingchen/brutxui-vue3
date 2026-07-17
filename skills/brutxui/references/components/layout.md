@@ -498,6 +498,126 @@ interface TreeNode {
 | `expand` | `[id: string, expanded: boolean]` | 展开/折叠节点时触发 |
 | `check` | `[node: TreeNode, checked: boolean]` | 勾选/取消勾选节点时触发 |
 
+### TreeView 高级用法与防错示例
+
+在业务系统中集成 `TreeView` 时，为了避免数据流混乱并提供更好的交互体验，可参考以下最佳实践模板。
+
+#### 1. 懒加载与错误重试
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { TreeView, type TreeNode } from 'brutx-ui-vue'
+
+const treeNodes = ref<TreeNode[]>([
+  { id: '1', label: '项目 A', children: [], data: { isLeaf: false } },
+  { id: '2', label: '项目 B', children: [], data: { isLeaf: false } },
+])
+
+// 懒加载节点函数
+async function handleLoadNode(node: TreeNode): Promise<TreeNode[]> {
+  try {
+    const response = await fetch(`/api/nodes/${node.id}`)
+    if (!response.ok) throw new Error('加载失败')
+    const data = await response.json()
+    return data.map((item: any) => ({
+      id: item.id,
+      label: item.name,
+      children: item.hasChildren ? [] : undefined,
+      data: item
+    }))
+  } catch (err) {
+    // 抛出错误以使节点置为加载失败状态，组件会自动渲染重试按钮
+    throw err
+  }
+}
+</script>
+
+<template>
+  <TreeView
+    :nodes="treeNodes"
+    :lazy="true"
+    :load="handleLoadNode"
+  />
+</template>
+```
+
+#### 2. 节点拖拽排序与局部数据流控制
+在开启拖拽 (`draggable`) 时，组件在拖拽释放后会自动更新传入的 `v-model:nodes`。业务侧若需要与后端接口同步，应通过监听事件来捕获最新状态：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { TreeView, type TreeNode } from 'brutx-ui-vue'
+
+const treeNodes = ref<TreeNode[]>([
+  {
+    id: '1',
+    label: '文件夹 1',
+    children: [
+      { id: '1-1', label: '子项 1-1' },
+      { id: '1-2', label: '子项 1-2' }
+    ]
+  }
+])
+
+// 节点拖放发生变化时的事件，用于同步后端
+function handleNodeDrop(event: { node: TreeNode; parent: TreeNode | null; index: number }) {
+  const { node, parent, index } = event
+  console.log(`节点 ${node.id} 移动到了父节点 ${parent?.id || '根节点'} 的第 ${index} 位`)
+  
+  // 发送网络请求更新后端关系树
+  fetch('/api/nodes/move', {
+    method: 'POST',
+    body: JSON.stringify({
+      nodeId: node.id,
+      targetParentId: parent?.id || null,
+      targetIndex: index
+    })
+  })
+}
+</script>
+
+<template>
+  <TreeView
+    v-model:nodes="treeNodes"
+    :draggable="true"
+    @node-drop="handleNodeDrop"
+  />
+</template>
+```
+
+#### 3. 程序化搜索与过滤
+```vue
+<script setup lang="ts">
+import { ref, useTemplateRef } from 'vue'
+import { TreeView, Input } from 'brutx-ui-vue'
+
+// 使用 Vue 3.5+ 的 useTemplateRef 获取组件实例
+const treeRef = useTemplateRef<InstanceType<typeof TreeView>>('tree')
+const searchQuery = ref('')
+
+function handleSearch(val: string) {
+  // 调用 TreeView 暴露的 filter 方法实现本地模糊过滤
+  treeRef.value?.filter(val)
+}
+</script>
+
+<template>
+  <div class="space-y-4">
+    <Input 
+      v-model="searchQuery" 
+      placeholder="输入关键字过滤..." 
+      clearable
+      @update:model-value="handleSearch"
+    />
+    <TreeView
+      ref="tree"
+      :nodes="treeNodes"
+    />
+  </div>
+</template>
+```
+
 ## Menu 导航菜单
 
 导航菜单组件，支持横向 (horizontal) 与纵向 (vertical) 排版，支持嵌套 `SubMenu` 及 router 自动跳转。

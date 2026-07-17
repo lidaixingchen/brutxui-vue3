@@ -61,4 +61,4 @@
 - `tabs`: `TabItem[]` — `{ label: string; value: string }[]`，传入时自动渲染 TabsList/TabsTrigger/TabsContent
 - `modelValue`: `string` — v-model，当前激活标签（未传时回退到首个 tab）
 - Slots: `header`, `default`（替代默认 Card 内容）, `footer`
-- 未传 `tabs` 时退化为原 Tabs slot 组合用法
+- 未传入 `tabs` 属性时，支持通过子组件插槽进行灵活的组合式自定义渲染
