@@ -379,7 +379,8 @@ watch(open, (isOpen) => {
             const currentOptions = columns.value[activeColumnIndex.value] || []
             const activeVal = valPath[activeColumnIndex.value]
             const foundIndex = currentOptions.findIndex(o => o.value === activeVal)
-            activeItemIndex.value = foundIndex !== -1 ? foundIndex : 0
+            // 预选值未找到时不高亮任何项（-1），避免错误高亮首项误导用户
+            activeItemIndex.value = foundIndex
         } else {
             activePath.value = []
             activeColumnIndex.value = 0

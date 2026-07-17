@@ -277,5 +277,23 @@ describe('Cascader', () => {
             expect(vm.activePath).toEqual(['zh', 'bj', 'hd'])
             expect(vm.activeColumnIndex).toBe(2)
         })
+
+        it('does not highlight any item when modelValue path not found in options', async () => {
+            // 预选值在当前列选项中未找到时，activeItemIndex 应为 -1（无高亮），
+            // 而非错误高亮首项（0）。
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options, modelValue: ['zh', 'nonexistent', 'hd'] },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+
+            expect(vm.activePath).toEqual(['zh', 'nonexistent', 'hd'])
+            expect(vm.activeColumnIndex).toBe(2)
+            // 'nonexistent' 不在 columns[1]（zh 的子选项 bj/sh）中
+            expect(vm.activeItemIndex).toBe(-1)
+        })
     })
 })
