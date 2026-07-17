@@ -182,7 +182,9 @@
 * **[0.4.0](apps/docs/changelog/v0.4.0.md)** - 2026-05-30
 * **[0.3.1](apps/docs/changelog/v0.3.1.md)** - 2026-05-29
 * **[0.3.0](apps/docs/changelog/v0.3.0.md)** - 2026-05-29
+* **[0.2.2](apps/docs/changelog/v0.2.2.md)** - 2026-05-28
 * **[0.2.1](apps/docs/changelog/v0.2.1.md)** - 2026-05-28
 * **[0.2.0](apps/docs/changelog/v0.2.0.md)** - 2026-05-28
+* **[0.1.1](apps/docs/changelog/v0.1.1.md)** - 2026-05-27
 * **[0.1.0](apps/docs/changelog/v0.1.0.md)** - 2026-05-26
 
