@@ -232,17 +232,23 @@ function archiveOldestVersion(fullContent, newVersion) {
     }
 
     // 8. 同步更新文档站 `changelog/index.md` 列表顶部插入新归档链接，使用 .md 后缀保持 GitHub 可跳转
-    if (existsSync(docsIndexImg)) {
-        let indexContent = readFileSync(docsIndexImg, 'utf-8');
-        const docsArchiveLink = `* **[v${oldestVersion}](./v${oldestVersion}.md)** - ${oldestDate}`;
-        if (!indexContent.includes(docsArchiveLink)) {
-            indexContent = indexContent.replace(
-                '## 归档列表\n\n',
-                `## 归档列表\n\n${docsArchiveLink}\n`
-            );
-            writeFileSync(docsIndexImg, indexContent, 'utf-8');
-            console.log(`[Archive] 自动更新文档站归档索引: apps/docs/changelog/index.md`);
-        }
+    if (!existsSync(docsIndexImg)) {
+        // 兜底机制：文档索引页不存在时自动初始化
+        const defaultIndexContent = `# 归档版本\n\n> 本页面汇总了所有已归档的历史版本日志。\n\n## 归档列表\n\n`;
+        writeFileSync(docsIndexImg, defaultIndexContent, 'utf-8');
+        console.log(`[Archive] 自动初始化文档站归档索引: apps/docs/changelog/index.md`);
+    }
+
+    let indexContent = readFileSync(docsIndexImg, 'utf-8');
+    const docsArchiveLink = `* **[v${oldestVersion}](./v${oldestVersion}.md)** - ${oldestDate}`;
+    if (!indexContent.includes(docsArchiveLink)) {
+        // 使用支持 CRLF 的高容错正则，确保在 Windows 换行符环境下匹配成功并插入
+        indexContent = indexContent.replace(
+            /(## 归档列表\r?\n\r?\n)/,
+            `$1${docsArchiveLink}\n`
+        );
+        writeFileSync(docsIndexImg, indexContent, 'utf-8');
+        console.log(`[Archive] 自动更新文档站归档索引: apps/docs/changelog/index.md`);
     }
 
     // 9. 递归：如果裁剪后版本数量依然大于 3，则继续裁剪直到剩下 3 个最新版
