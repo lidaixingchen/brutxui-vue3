@@ -544,6 +544,99 @@ const treeNodes = ref<TreeNode[]>([
    </Card>
    ```
 
+## 新粗野极致视觉（Premium Aesthetic）规范
+
+新粗野主义（Neo-brutalism）如果运用不当，极易沦为刺眼的高饱和色彩拼贴与廉价的粗线框。为了确保页面具有高端的设计感，请遵循以下美学限制：
+
+1. **色彩“60-30-10”黄金比例**：
+   - **60% 的背景低饱和度**：页面主体背景使用柔和的低饱和度灰色或中性色（如 `bg-brutal-muted` 或暗色背景下的深灰），避免直接大面积使用刺眼的高饱和底色。
+   - **30% 的结构中性色**：卡片、容器、输入框等结构边框和辅助性背景使用白、黑、深灰进行合理分区。
+   - **10% 的高饱和对比色**：仅在最核心的交互触点（如 Primary 按钮、重点高亮的 Badge、活动引导链接）上调用 `--brutal-primary` 或 `--brutal-accent` 等高饱和珊瑚红/柠檬黄，聚焦用户视线。
+2. **物理材质融合（打破扁平化）**：
+   - **添加实体噪点**：在大卡片或主要面板背景上，组合使用 `NoiseBackground`（噪点背景）给容器增加类似“实体复古粗糙纸张”的微颗粒质感：
+     ```vue
+     <template>
+       <div class="relative overflow-hidden border-3 border-brutal bg-white p-6">
+         <!-- 背景引入微妙噪点（动画设为静态防晃眼，尊重降级） -->
+         <NoiseBackground class="opacity-15" :animated="false" />
+         <!-- 内容区 -->
+       </div>
+     </template>
+     ```
+   - **利用 3D 物理悬浮**：关键的核心卡片首选 `Card3D` 组件，通过悬停鼠标的重力偏转和随鼠标移动的反向阴影，增加页面微立体的生动高级感。
+
+## 微交互与动效控制规范
+
+1. **位置偏移与阴影的物理映射**：
+   - 按钮和交互卡片被悬停或按压时，其位移（`translate`）与阴影的变化必须符合真实物理投射规律。
+   - **悬停悬浮**：当 `hover` 发生向左上方的偏移时（如 `hover:-translate-x-0.5 hover:-translate-y-0.5`），其阴影必须放大（如 `hover:shadow-brutal-lg`）。
+   - **按压贴合**：当 `active` 被按下时，卡片下移贴紧地面，其阴影必须消失。即 `active:translate-y-[var(--brutal-pressed-offset,2px)]` 必须与 `active:shadow-none` **成对使用**，严禁只发生向下位移但仍然留有硬边大阴影的视觉 Bug。
+2. **动效静音降级（Reduced Motion）**：
+   - 对于包含高频位移、字符闪烁、横向滚动的组件（如 `GlitchText`、`TypewriterText`、`Marquee`），必须防范动效带来的视觉疲劳。
+   - 对于在 CSS 中自定义过渡，务必遵循 `@media (prefers-reduced-motion: reduce)` 条件，禁用所有平滑滚动与高频缩放：
+     ```css
+     @media (prefers-reduced-motion: reduce) {
+       * {
+         animation-delay: -1ms !important;
+         animation-duration: 1ms !important;
+         animation-iteration-count: 1 !important;
+         background-attachment: scroll !important;
+         scroll-behavior: auto !important;
+         transition-duration: 0s !important;
+         transition-delay: 0s !important;
+       }
+     }
+     ```
+   - 对组件提供动效支持时，在用户开启了 Reduced Motion 的情况下，应主动降级为静态样式（如 `Marquee` 降级为普通列表展示，`GlitchText` 禁用闪烁）。
+
+## SSR 服务端渲染安全最佳实践
+
+由于 BrutxUI 提供了诸多涉及 Canvas（刮刮卡、导览挖空等）、音频 API（8-bit 音效 input）以及浏览器独有全局对象的交互，在 Nuxt 或 VitePress 等 SSR 服务端渲染框架下，必须严格防御 Hydration Mismatch 导致的运行时报错崩溃：
+
+1. **浏览器专属逻辑的生命周期隔离**：
+   - 严禁在 `<script setup>` 顶层直接访问 `window`、`document`、`navigator`（如物理震动 `navigator.vibrate`）或 `AudioContext` 构造器。
+   - 所有类似操作、Canvas 渲染的 DOM 绑定必须放置在 `onMounted` 生命周期钩子内：
+     ```vue
+     <script setup lang="ts">
+     import { onMounted, ref } from 'vue'
+     
+     const hasVibration = ref(false)
+     
+     onMounted(() => {
+       // 安全：在客户端挂载后再访问宿主 API
+       hasVibration.value = 'vibrate' in navigator
+     })
+     </script>
+     ```
+2. **ClientOnly 渲染兜底**：
+   - 对于对 DOM 结构高度依赖客户端特征渲染的组件（如 `ScratchCard` 擦除覆盖、`SketchyChart` 分形手绘图表、`Tour` 步骤挖空），在 SSR 环境下，必须使用 `<ClientOnly>`（或其他框架等效的客户端容器组件）包裹：
+     ```vue
+     <template>
+       <ClientOnly>
+         <ScratchCard :percentage="50">
+           <div>刮奖内容</div>
+         </ScratchCard>
+       </ClientOnly>
+     </template>
+     ```
+
+## I18n 鲁棒性与插值防错规范
+
+1. **参数安全兜底**：
+   - 当调用 `useLocale()` 暴露的 `t` 方法传入包含动态插值的文本（例如带有 `{count}` 或 `{name}`）时，如果变量可能在初始化时为 `null`、`undefined` 或空，必须进行防报错保护：
+     ```typescript
+     import { useLocale } from 'brutx-ui-vue'
+     const { t } = useLocale()
+     
+     // ❌ 错误示范：如果 activeCount 为 null/undefined，将导致插值不匹配显示 undefined 甚至报错
+     const label = t('combobox.selectedCount', { count: activeCount })
+     
+     // 确定示范：提供防御性兜底值，避免 NaN 或 undefined 溢出到 UI
+     const safeLabel = t('combobox.selectedCount', { count: activeCount.value ?? 0 })
+     ```
+2. **多语言词条完整性保证**：
+   - 如果用户在业务中覆盖或定制了多语言配置，确保所有键值保持对应的中英文结构对齐，以防在切换语言时因 key 缺失而直接裸露原 path。
+
 ## 生成规则
 
 1. **优先使用 BrutxUI 组件**，不要从头创建功能相同的组件。禁止用 native HTML 元素替代已有组件：用 `Button` 而非 `<button>`、用 `Select` 系列而非 `<select>`/`<option>`、用 `Badge` 而非手写 badge `<div>`、用 `Input` 而非 `<input>`（除非有特殊 ARIA 角色、内联图标切换等特殊场景）
