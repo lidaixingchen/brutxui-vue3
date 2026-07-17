@@ -3,7 +3,13 @@
     "tasks": {
         "build": {
             "dependsOn": ["^build"],
-            "outputs": ["dist/**"],
+            "outputs": [
+                "dist/**",
+                ".vitepress/dist/**",
+                "registry-manifest.json",
+                "exports-manifest.json",
+                "src/components/*/index.ts"
+            ],
             "inputs": [
                 "src/**",
                 "scripts/**",
