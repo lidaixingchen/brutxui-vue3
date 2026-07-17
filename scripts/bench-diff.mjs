@@ -13,8 +13,12 @@
  *   delta > 5%    → 改善
  *
  * 错误处理：
- *   任何输入/解析失败均不硬退出，而是输出结构化 markdown 错误报告到 stdout，
- *   供下游 PR 评论步骤展示（避免空评论），同时以 exit 1 标记 step 失败。
+ *   任何输入/解析失败均不硬退出（不调用 process.exit(1)），而是输出结构化
+ *   markdown 错误报告到 stdout，供下游 PR 评论步骤展示（避免空评论）。
+ *   这是有意为之：bench.yml 的 "Generate diff report" 步骤未设置 continue-on-error，
+ *   一旦本脚本以非 0 退出，后续 Find/Create comment 步骤将不会执行，
+ *   PR 评论无法创建，结构化错误报告也就无法触达维护者。错误详情仅同步打印到
+ *   stderr 供 CI 日志排查。
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
