@@ -570,8 +570,7 @@ const { locale } = useI18n()
 provideLocale(computed(() => LOCALE_MAP[locale.value] ?? zhCN))
 ```
 
-### 最佳实践
+### 最佳实践 (使用 i18n)
 
-1. **文本 props 默认值设为 `undefined`**，通过 `t()` 提供默认文本
-2. **不要硬编码文案**，始终使用 `t()` 函数
-3. **支持插值**，使用 `{变量名}` 语法：`t('greeting', { name: '用户' })`
+1. **库组件文案覆写**：若想覆盖 BrutxUI 组件的内部默认文案（例如分页按钮文本或输入框占位符），建议通过全局插件配置 `locale` 或局部 `provideLocale` 来注入自定义语言包，而非直接修改组件源码。
+2. **多语言状态共存**：如果您的项目使用 `vue-i18n` 进行全局国际化管理，建议通过 `provideLocale(computed(...))` 将您的 `vue-i18n` 状态与库的组件关联起来，实现一键同步切换。
