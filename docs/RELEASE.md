@@ -109,3 +109,7 @@ After（新 API）：
 - 单个 release 含多个 breaking change 时，每个组件独立成段。
 - 迁移步骤必须给出可复制的 before/after 代码片段，不允许仅文字描述。
 - "自动迁移可行性" 字段用于在未来累积 codemod 候选清单——当评估为"需要 codemod"的 case 累计 ≥ 3 个时，触发 Item 9 启动条件。
+
+## 供应链安全
+
+GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dependabot.yml](../.github/dependabot.yml) 自动管理升级（每周一开 PR）。

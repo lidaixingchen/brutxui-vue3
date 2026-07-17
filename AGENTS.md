@@ -93,6 +93,9 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - BrutxUI Skill：`skills/brutxui/`
   - 参考文档：`skills/brutxui/references/`
 - **方案文档：** `docs/`
+- **仓库基础设施：** `.github/`
+  - GitHub Actions 工作流：`.github/workflows/`（新增 workflow 时使用 SHA pin 格式 `owner/repo@<40-char-sha> # vN`，由 dependabot 自动维护后续升级）
+  - Dependabot 配置：`.github/dependabot.yml`（自动管理 GitHub Actions 的 SHA pin 升级，每周一开 PR）
 
 ## 详细文档
 
