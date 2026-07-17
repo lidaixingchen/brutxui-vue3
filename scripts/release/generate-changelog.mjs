@@ -265,9 +265,7 @@ function prependToChangelog(newEntry, version) {
     const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
     const defaultHeader =
         '# 更新日志\n\n' +
-        '本项目所有重要变更均记录于此。\n\n' +
-        '格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，\n' +
-        '版本号遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。\n\n';
+        '根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。\n\n';
 
     const unreleasedEntry =
         `## [Unreleased](${REPO_URL}/compare/v${version}...HEAD)\n\n`;
