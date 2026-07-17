@@ -18,6 +18,8 @@
         "changeset": "changeset",
         "version-packages": "changeset version",
         "release": "turbo run build test typecheck lint && changeset publish",
+        "changelog": "node scripts/release/generate-changelog.mjs",
+        "changelog:dry": "node scripts/release/generate-changelog.mjs --dry-run",
         "check:i18n": "node scripts/check-i18n.mjs --report",
         "check:i18n:strict": "node scripts/check-i18n.mjs",
         "generate:component": "tsx scripts/generate.ts component",

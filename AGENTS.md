@@ -20,7 +20,9 @@ pnpm lint           # 对所有包执行 lint
 pnpm typecheck      # 对所有包执行类型检查
 pnpm test           # 运行 UI 测试
 pnpm test:watch     # 监视模式运行测试
-pnpm release  # 构建门禁 + changeset publish
+pnpm release        # 构建门禁 + changeset publish
+pnpm changelog      # 生成根 CHANGELOG.md 新版本段（详见 docs/RELEASE.md）
+pnpm changelog:dry  # 干跑：仅打印不写文件
 ```
 
 ### Registry 包命令
@@ -93,6 +95,10 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
   - BrutxUI Skill：`skills/brutxui/`
   - 参考文档：`skills/brutxui/references/`
 - **方案文档：** `docs/`
+- **仓库脚本：** `scripts/`
+  - 根 CHANGELOG 生成：`scripts/release/generate-changelog.mjs`（由 `pnpm changelog` / `pnpm changelog:dry` 调用，详见 [docs/RELEASE.md](docs/RELEASE.md#根-changelogmd-生成)）
+  - i18n 镜像校验：`scripts/check-i18n.mjs`（由 `pnpm check:i18n` 调用）
+  - 组件生成器：`scripts/generate.ts`（由 `pnpm generate:component` 等调用）
 - **仓库基础设施：** `.github/`
   - GitHub Actions 工作流：`.github/workflows/`（新增 workflow 时使用 SHA pin 格式 `owner/repo@<40-char-sha> # vN`，由 dependabot 自动维护后续升级）
   - Dependabot 配置：`.github/dependabot.yml`（自动管理 GitHub Actions 的 SHA pin 升级，每周一开 PR）

@@ -1,6 +1,58 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { defineConfig } from 'vitepress'
 import tailwindcss from '@tailwindcss/vite'
 import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/sidebar-generator'
+
+/**
+ * 扫描 apps/docs/changelog/ 目录，按 major 版本分组生成侧边栏。
+ * 归档版本增长时自动更新，无需手动维护。
+ */
+function generateChangelogSidebar(locale: 'zh' | 'en'): any[] {
+    const changelogDir = path.resolve(import.meta.dirname, '../changelog')
+    if (!fs.existsSync(changelogDir)) return []
+
+    const prefix = locale === 'en' ? '/en' : ''
+    const files = fs
+        .readdirSync(changelogDir)
+        .filter((f) => /^v[\d.]+\.md$/.test(f))
+        .map((f) => f.replace(/\.md$/, ''))
+        .sort((a, b) => {
+            const parse = (v: string) => v.slice(1).split('.').map(Number)
+            const [aM, aMin, aP] = parse(a)
+            const [bM, bMin, bP] = parse(b)
+            return bM - aM || bMin - aMin || bP - aP
+        })
+
+    const groups = new Map<number, string[]>()
+    for (const file of files) {
+        const major = Number(file.slice(1).split('.')[0])
+        if (!groups.has(major)) groups.set(major, [])
+        groups.get(major)!.push(file)
+    }
+
+    const result: any[] = [
+        {
+            text: locale === 'en' ? 'Archive Index' : '归档版本',
+            link: `${prefix}/changelog/`,
+        },
+    ]
+
+    // 当前 major（最大值）展开，更早的折叠
+    const currentMajor = Math.max(...groups.keys())
+    for (const [major, items] of [...groups.entries()].sort((a, b) => b[0] - a[0])) {
+        result.push({
+            text: `v${major}.x`,
+            collapsed: major !== currentMajor,
+            items: items.map((file) => ({
+                text: file,
+                link: `${prefix}/changelog/${file}`,
+            })),
+        })
+    }
+
+    return result
+}
 
 // @ts-expect-error VitePress 1.x 内置 Vite 类型与 Vite 8 不兼容 (TS2321: Excessive stack depth)
 // @see https://github.com/vuejs/vitepress/issues/4600
@@ -243,6 +295,7 @@ export default defineConfig({
             ],
             '/components/': generateComponentsSidebar('zh'),
             '/blocks/': generateBlocksSidebar('zh'),
+            '/changelog/': generateChangelogSidebar('zh'),
         },
         search: {
             provider: 'local',

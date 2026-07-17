@@ -61,6 +61,101 @@ Breaking Change 标记方式：
 }
 ```
 
+## 根 CHANGELOG.md 生成
+
+根仓库的 [CHANGELOG.md](../CHANGELOG.md) 由 [scripts/release/generate-changelog.mjs](../scripts/release/generate-changelog.mjs) 维护，与 changeset 各包独立 CHANGELOG 互补：脚本汇总两个 tag 之间的 conventional commits，按类型分组并生成单行条目（与 v0.9.4 起的精简风格一致）。
+
+### 使用方法
+
+```bash
+pnpm changelog                          # 生成新版本段并插入到 CHANGELOG.md 顶部
+pnpm changelog:dry                      # 干跑：仅打印到 stdout，不写文件
+pnpm changelog -- --from v0.9.4         # 显式指定起始 tag
+pnpm changelog -- --version 0.9.6 --date 2026-08-01
+pnpm changelog -- --scope ui            # 仅生成 ui scope 的条目
+```
+
+### 工作原理
+
+1. **解析范围**：默认从 `packages/ui/package.json` 读取版本号，组装 `v<version>` tag。若该 tag 已存在 → 起点取上一个 tag、终点取该 tag；否则起点取最新 tag、终点取 `HEAD`（开发中未打 tag 场景）
+2. **收集 commits**：`git log <from>..<to>` 按 `%H%x1f%s%x1f%b%x1f%an%x1f%ae` 分隔提取
+3. **解析与过滤**：按 [Conventional Commits](https://www.conventionalcommits.org/zh-hans/v1.0.0/) 正则拆解 type/scope/subject；`release` 类型一律剔除；`chore` 类型仅在标记为 breaking 时保留
+4. **分类与渲染**：breaking 独立置顶；其余按 `feat / fix / refactor / perf / docs / ci / build / test / style / revert / chore` 顺序成段。每个条目格式 `* **scope:** subject ([sha7](commit-url))`，body 默认不展开
+5. **写入**：`stripUnreleasedSection` 移除旧的 `## [Unreleased]` 段，再在保留的文件头之后插入 `## [Unreleased](.../compare/v<version>...HEAD)` 与新版本段
+
+### 注意事项
+
+- 该脚本仅维护根 `CHANGELOG.md`；各包（`packages/ui/CHANGELOG.md`、`packages/cli/CHANGELOG.md`）仍由 changeset 在 `pnpm version-packages` 时生成
+- 生成的条目依赖 commit message 质量——请严格遵守 [提交信息规范](./COMMIT_CONVENTION.md)
+- dependabot 等 bot 的 PR body 默认会被忽略（脚本只取 subject + body，不展开多行表格）
+- 推荐在 `pnpm version-packages` 之后、`git commit` 之前运行 `pnpm changelog:dry` 预览，确认无误后再 `pnpm changelog` 写入并随版本提升 commit 一起提交
+
+## CHANGELOG 归档机制
+
+为避免根 [CHANGELOG.md](../CHANGELOG.md) 随版本累积无限增长，自 v0.9.5 起引入归档机制：根文件仅保留**最近 3 个版本**的完整段落，更早的版本归档至独立文件。
+
+### 目录结构
+
+```
+CHANGELOG.md                                  # 根文件：保留最近 3 个版本 + 归档索引段
+apps/docs/changelog/                          # 归档目录（VitePress srcDir 下，可在文档站点访问）
+├── index.md                                  # 归档索引页
+├── v0.9.2.md                                 # 各版本独立文件
+├── v0.9.1.md
+└── ...
+```
+
+### 根文件格式
+
+根 `CHANGELOG.md` 末尾的"归档版本"段仅保留版本号链接与日期，不展开内容：
+
+```markdown
+## 归档版本
+
+> 以下版本已归档至 [`apps/docs/changelog/`](apps/docs/changelog/)，点击版本号查看完整变更记录：
+
+* **[0.9.2](apps/docs/changelog/v0.9.2.md)** - 2026-07-08
+* **[0.9.1](apps/docs/changelog/v0.9.1.md)** - 2026-07-06
+...
+```
+
+### 归档文件格式
+
+每个归档文件以 `v<version>.md` 命名，包含返回根 CHANGELOG 的链接和原版本段完整内容：
+
+```markdown
+# v<version>
+
+> [← 返回主 CHANGELOG](../../../CHANGELOG.md)
+
+## [<version>](https://github.com/lidaixingchen/brutxui-vue3/compare/v<previous>...v<version>) - <date>
+
+[原版本段完整内容]
+```
+
+### VitePress 集成
+
+归档目录通过 [apps/docs/.vitepress/config.ts](../apps/docs/.vitepress/config.ts) 中的 `generateChangelogSidebar()` 函数自动生成侧边栏：
+
+- 扫描 `apps/docs/changelog/` 下的 `v*.md` 文件
+- 按 major 版本分组（如 `v0.x`、`v1.x`）
+- 当前 major 默认展开，更早的 major 折叠
+- 归档版本增长时侧边栏自动更新，无需手动维护
+
+访问入口：文档站点侧边栏的"归档版本"分组（路径 `/changelog/`）。
+
+### 维护流程
+
+发布新版本时：
+
+1. 运行 `pnpm changelog` 生成新版本段并写入根 `CHANGELOG.md` 顶部
+2. 检查根文件保留的版本数是否超过 3 个
+3. 若超过，将最旧的版本段移动到 `apps/docs/changelog/v<version>.md`（保留原内容 + 添加返回链接）
+4. 在根文件末尾的"归档版本"段添加该版本的链接条目
+5. 侧边栏会自动包含新归档文件，无需手动修改 config.ts
+
+> 注意：当前归档操作需手动执行，`generate-changelog.mjs` 脚本尚未集成自动归档逻辑。
+
 ## Breaking Change 迁移文档规范
 
 任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](./AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。

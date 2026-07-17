@@ -1,64 +1,45 @@
 ---
 title: 版本历史
-description: BrutxUI 版本更新记录。
+description: BrutxUI 版本更新记录入口。
 ---
 
 # 版本历史
 
-本项目所有重要变更均记录于此。
+本项目所有重要变更均记录于 [CHANGELOG.md](https://github.com/lidaixingchen/brutxui-vue3/blob/main/CHANGELOG.md)。
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 版本号遵循 [语义化版本控制](https://semver.org/lang/zh-CN/)。
 
-完整变更日志请查看 GitHub 上的 [CHANGELOG.md](https://github.com/lidaixingchen/brutxui-vue3/blob/main/CHANGELOG.md)。
-
 ---
 
-## 最新版本
+## 查看变更记录
 
-### [0.8.1] - 2026-06-30
+BrutxUI 采用「根 CHANGELOG + 归档目录」的分段策略，避免单一文件无限增长。
 
-#### ♻️ 代码重构
+### 最新版本
 
-- **兼容性审查修复**：执行 5 大类约 30 处修复
-  - defaultValue/defaultXxx 双模式修复（8 处）
-  - 命名不一致修复（6 处）
-  - 死代码清理（10 处）
-  - 类型与 TS 副作用修复（8 处）
-  - CVA 空变体值清理（3 处）
-- **全组件兼容性清理**：清除 12 类约 96 处兼容性包袱
-- **组件深化拓展**：8 批全量改动
-  - 无障碍合规与动效降级
-  - 变体实现与 API 一致性
-  - 组件功能增强
-  - 程序化控制暴露
-  - Composable 抽取
+根 [`CHANGELOG.md`](https://github.com/lidaixingchen/brutxui-vue3/blob/main/CHANGELOG.md) 仅保留**最近 3 个版本**的完整变更记录（含 Breaking Changes、Features、Bug Fixes 等分类）。
 
-#### 📝 文档
-
-- 更新全组件文档，补充完整 props、事件、插槽说明
-
-#### 🐛 Bug 修复
-
-- 修复 5 个组件的 CI 测试失败问题
-- 修复多个组件 demo 溢出及容器比例问题
-- 修复 Slider、KanbanBoard、ChatBubble 等组件具体问题
-
----
-
-## 历史版本摘要
-
-| 版本 | 日期 | 主要变更 |
-| --- | --- | --- |
-| 0.8.0 | 2026-06-29 | 图标尺寸系统、多组件增强、CLI 安全加固 |
-| 0.7.8 | 2026-06-28 | DataTable 组合式函数、GlitchButton/GlitchText 方向控制 |
-| 0.7.5 | 2026-06-27 | GlitchButton、VirtualScroll 组件 |
-| 0.7.4 | 2026-06-27 | TreeSelect、TypewriterText、NoiseBackground 组件 |
-| 0.7.2 | 2026-06-26 | ColorPicker、DatePicker 组件 |
-| 0.7.0 | 2026-06-26 | Warm 主题、DataTable、主题实验室、CLI 增强 |
-
----
-
-::: tip
-完整变更日志请查看 [CHANGELOG.md](https://github.com/lidaixingchen/brutxui-vue3/blob/main/CHANGELOG.md)
+::: tip 直接查看
+- 仓库源文件：[CHANGELOG.md](https://github.com/lidaixingchen/brutxui-vue3/blob/main/CHANGELOG.md)
+- 各包独立 CHANGELOG：
+  - [`packages/ui/CHANGELOG.md`](https://github.com/lidaixingchen/brutxui-vue3/blob/main/packages/ui/CHANGELOG.md)（`brutx-ui-vue`）
+  - [`packages/cli/CHANGELOG.md`](https://github.com/lidaixingchen/brutxui-vue3/blob/main/packages/cli/CHANGELOG.md)（`brutx-vue`）
 :::
+
+### 历史归档版本
+
+更早的版本已归档至 [`/changelog/`](../changelog/) 目录，按版本号独立成文，便于回溯。
+
+::: tip 浏览归档
+- 文档站点入口：[归档版本索引](../changelog/)
+- 归档文件目录：[`apps/docs/changelog/`](https://github.com/lidaixingchen/brutxui-vue3/tree/main/apps/docs/changelog)
+:::
+
+---
+
+## 发布与归档机制
+
+- **发布流程**：参见 [发布流程文档](https://github.com/lidaixingchen/brutxui-vue3/blob/main/docs/RELEASE.md)
+- **归档策略**：根 CHANGELOG 保留最近 3 个版本完整段落，更早版本移入 `apps/docs/changelog/v<version>.md`
+- **自动侧边栏**：文档站点的归档侧边栏由 [config.ts](https://github.com/lidaixingchen/brutxui-vue3/blob/main/apps/docs/.vitepress/config.ts) 中的 `generateChangelogSidebar()` 函数扫描归档目录自动生成，按 major 版本分组
