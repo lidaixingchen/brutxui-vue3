@@ -64,11 +64,11 @@
             "inputs": [
                 "scripts/**",
                 "registry/**",
-                "/packages/ui/src/components/**",
-                "/packages/ui/src/composables/**",
-                "/packages/ui/src/directives/**",
-                "/apps/docs/**/*.md",
-                "/packages/shared/src/**"
+                "../../packages/ui/src/components/**",
+                "../../packages/ui/src/composables/**",
+                "../../packages/ui/src/directives/**",
+                "../../apps/docs/**/*.md",
+                "../../packages/shared/src/**"
             ]
         },
         "bench": {
