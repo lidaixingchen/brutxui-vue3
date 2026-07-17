@@ -33,22 +33,22 @@ npx brutx-vue add button card badge`,
 const usageCode = computed(() =>
     isEn.value
         ? `<script setup lang="ts">
-import { BButton } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 <\/script>
 
 <template>
-  <BButton variant="primary" size="lg">
+  <Button variant="primary" size="lg">
     Neo-Brutalism Button
-  </BButton>
+  </Button>
 </template>`
         : `<script setup lang="ts">
-import { BButton } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 <\/script>
 
 <template>
-  <BButton variant="primary" size="lg">
+  <Button variant="primary" size="lg">
     粗野主义按钮
-  </BButton>
+  </Button>
 </template>`,
 )
 </script>

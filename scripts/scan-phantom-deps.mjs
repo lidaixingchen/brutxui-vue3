@@ -12,44 +12,43 @@ const PKG_ROOTS = [
     { dir: 'apps/docs/.vitepress', pkg: 'docs' },
 ]
 
-// Direct dependencies declared in each package's package.json (aggregated from deps + devDeps).
-// Keep in sync with the actual package.json files; the script does NOT auto-read them
-// so the diff is explicit when a new phantom appears.
-const DECLARED = {
-    'brutx-ui-vue': new Set([
-        'class-variance-authority', 'clsx', 'tailwind-merge',
-        '@eslint/js', '@playwright/test', '@tailwindcss/cli', '@tailwindcss/vite',
-        '@types/node', '@types/prismjs', '@vitejs/plugin-vue',
-        '@vitest/browser', '@vitest/browser-playwright', '@vitest/coverage-v8',
-        '@vue/server-renderer', '@vue/test-utils', 'acorn', 'acorn-walk', 'embla-carousel',
-        'eslint', 'eslint-plugin-vue', 'globals', 'happy-dom',
-        'magic-string', 'size-limit', '@size-limit/esbuild', '@size-limit/file',
-        'tailwindcss', 'tsx', 'typedoc',
-        'typedoc-plugin-markdown', 'typescript', 'typescript-eslint',
-        'vite', 'vite-plugin-dts', 'vitest', 'axe-core', 'vue', 'vue-tsc',
-        '@lucide/vue', '@tanstack/vue-virtual', 'embla-carousel-vue',
-        'prismjs', 'reka-ui', 'v-calendar', 'vee-validate',
-        'brutx-shared-vue',
-    ]),
-    'brutx-vue': new Set([
-        '@inquirer/prompts', 'brutx-shared-vue', 'chalk', 'commander',
-        'diff', 'es-module-lexer', 'fs-extra', 'jsonc-parser', 'ora',
-        '@types/fs-extra', '@types/node', '@vitest/coverage-v8',
-        'tsup', 'typescript', 'vitest',
-    ]),
-    'brutx-registry-vue': new Set([
-        'brutx-shared-vue', '@types/node', 'tsx', 'typescript', 'vitest',
-    ]),
-    'brutx-shared-vue': new Set([
-        '@types/node', 'typescript',
-    ]),
-    'docs': new Set([
-        '@lucide/vue', 'brutx-ui-vue', 'brutx-shared-vue', 'clsx',
-        'reka-ui', 'tailwind-merge', 'v-calendar', 'vue',
-        '@tailwindcss/vite', '@types/node', 'tailwindcss',
-        'typescript', 'vite', 'vitepress', 'vue-tsc',
-    ]),
+// 包名 → package.json 相对路径映射。新增包时只需在此登记路径，
+// declared 依赖集合会在运行时从对应 package.json 自动读取（deps + devDeps），
+// 避免硬编码白名单与 package.json 双源漂移。
+const PKG_JSON = {
+    'brutx-ui-vue': 'packages/ui/package.json',
+    'brutx-vue': 'packages/cli/package.json',
+    'brutx-registry-vue': 'packages/registry/package.json',
+    'brutx-shared-vue': 'packages/shared/package.json',
+    'docs': 'apps/docs/package.json',
 }
+
+function loadDeclared(pkgName) {
+    const pkgPath = PKG_JSON[pkgName]
+    if (!pkgPath) {
+        console.error(`[scan-phantom-deps] 未登记包 \`${pkgName}\` 的 package.json 路径，请在 PKG_JSON 中补充。`)
+        return new Set()
+    }
+    let pkg
+    try {
+        pkg = JSON.parse(readFileSync(join(ROOT, pkgPath), 'utf8'))
+    } catch (err) {
+        console.error(`[scan-phantom-deps] 无法读取 ${pkgPath}: ${err.message}`)
+        return new Set()
+    }
+    // 包含 peerDependencies 与 optionalDependencies：UI 库源码导入 peerDep 是合法模式
+    //（consumer 提供实现），不应报为 phantom。
+    return new Set([
+        ...Object.keys(pkg.dependencies ?? {}),
+        ...Object.keys(pkg.devDependencies ?? {}),
+        ...Object.keys(pkg.peerDependencies ?? {}),
+        ...Object.keys(pkg.optionalDependencies ?? {}),
+    ])
+}
+
+const DECLARED = Object.fromEntries(
+    Object.keys(PKG_JSON).map(pkg => [pkg, loadDeclared(pkg)]),
+)
 
 const BUILTINS = new Set([
     'fs', 'path', 'os', 'crypto', 'child_process', 'module', 'url',

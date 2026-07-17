@@ -12,9 +12,9 @@
  *   delta < -5%   → 疑似回归
  *   delta > 5%    → 改善
  *
- * 退出码：
- *   0 — 正常输出报告（bench 结果不作门禁）
- *   1 — 输入文件读取失败
+ * 错误处理：
+ *   任何输入/解析失败均不硬退出，而是输出结构化 markdown 错误报告到 stdout，
+ *   供下游 PR 评论步骤展示（避免空评论），同时以 exit 1 标记 step 失败。
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -22,14 +22,30 @@ import { resolve } from 'node:path'
 const NOISE_THRESHOLD = 0.05 // 5%
 const REGRESSION_FLAG_LIMIT = 2 // 疑似回归超过 2 个时提示人工复核
 
+class BenchDiffError extends Error {
+    constructor(message, { cause } = {}) {
+        super(message, { cause })
+        this.name = 'BenchDiffError'
+    }
+}
+
 function loadBenchResult(filePath) {
+    let raw
     try {
-        const raw = readFileSync(resolve(filePath), 'utf-8')
+        raw = readFileSync(resolve(filePath), 'utf-8')
+    } catch (err) {
+        throw new BenchDiffError(
+            `无法读取基准文件 \`${filePath}\`：${err.message}。请检查 baseline artifact 是否上传成功，或重试 workflow。`,
+            { cause: err },
+        )
+    }
+    try {
         return JSON.parse(raw)
     } catch (err) {
-        console.error(`Failed to read bench JSON: ${filePath}`)
-        console.error(err.message)
-        process.exit(1)
+        throw new BenchDiffError(
+            `基准文件 \`${filePath}\` JSON 解析失败：${err.message}。可能 vitest bench 输出被截断或包含非 JSON 日志。`,
+            { cause: err },
+        )
     }
 }
 
@@ -74,53 +90,82 @@ function classifyDelta(delta) {
 
 function main() {
     const [mainPath, prPath] = process.argv.slice(2)
-    if (!mainPath || !prPath) {
-        console.error('Usage: node scripts/bench-diff.mjs <bench-main.json> <bench-pr.json>')
-        process.exit(1)
-    }
 
-    const mainTasks = new Map(
-        extractTasks(loadBenchResult(mainPath)).map(t => [t.name, t.hz]),
-    )
-    const prTasks = extractTasks(loadBenchResult(prPath))
-
-    const rows = []
-    let regressionCount = 0
-
-    for (const { name, hz: prHz } of prTasks) {
-        const mainHz = mainTasks.get(name)
-        if (mainHz === undefined) {
-            rows.push(`| ${name} | — | ${formatHz(prHz)} | 新增基准 |`)
-            continue
+    try {
+        if (!mainPath || !prPath) {
+            throw new BenchDiffError(
+                '参数缺失。用法：`node scripts/bench-diff.mjs <bench-main.json> <bench-pr.json>`。请检查 workflow 配置。',
+            )
         }
-        const delta = (prHz - mainHz) / mainHz
-        const label = classifyDelta(delta)
-        if (label === '疑似回归') regressionCount += 1
-        rows.push(
-            `| ${name} | ${formatHz(mainHz)} | ${formatHz(prHz)} | ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(1)}% (${label}) |`,
+
+        const mainTasks = new Map(
+            extractTasks(loadBenchResult(mainPath)).map(t => [t.name, t.hz]),
         )
+        const prTasks = extractTasks(loadBenchResult(prPath))
+
+        const rows = []
+        let regressionCount = 0
+
+        for (const { name, hz: prHz } of prTasks) {
+            const mainHz = mainTasks.get(name)
+            if (mainHz === undefined) {
+                rows.push(`| ${name} | — | ${formatHz(prHz)} | 新增基准 |`)
+                continue
+            }
+            const delta = (prHz - mainHz) / mainHz
+            const label = classifyDelta(delta)
+            if (label === '疑似回归') regressionCount += 1
+            rows.push(
+                `| ${name} | ${formatHz(mainHz)} | ${formatHz(prHz)} | ${delta >= 0 ? '+' : ''}${(delta * 100).toFixed(1)}% (${label}) |`,
+            )
+        }
+
+        const lines = [
+            '## Performance Bench Report',
+            '',
+            '| Task | main (hz) | PR (hz) | 变化 |',
+            '| --- | --- | --- | --- |',
+            ...rows,
+            '',
+        ]
+
+        if (regressionCount > REGRESSION_FLAG_LIMIT) {
+            lines.push(
+                `> ⚠️ 检测到 ${regressionCount} 个疑似回归（阈值 ${REGRESSION_FLAG_LIMIT}），建议维护者人工复核后再合并。`,
+            )
+        } else {
+            lines.push(
+                `> 疑似回归 ${regressionCount} 个（≤ 阈值 ${REGRESSION_FLAG_LIMIT}），bench 结果仅作信息性参考。`,
+            )
+        }
+
+        console.log(lines.join('\n'))
+    } catch (err) {
+        // 输出结构化错误报告到 stdout（落入 bench-report.md），确保 PR 评论有内容可展示。
+        const errLines = [
+            '## ⚠️ Performance Bench Report — 基准数据缺失',
+            '',
+            `> **错误类型**：${err.name}`,
+            '',
+            `> **详情**：${err.message}`,
+            '',
+            'bench 对比未能完成，结果仅作信息性参考。请维护者检查 baseline artifact 是否上传成功、vitest bench 是否正常退出，或重试本 workflow。',
+        ]
+        if (err.cause?.message) {
+            errLines.push(
+                '',
+                '<details><summary>底层错误</summary>',
+                '',
+                `\`${err.cause.message}\``,
+                '',
+                '</details>',
+            )
+        }
+        console.log(errLines.join('\n'))
+        // 同步打印到 stderr，便于 CI 日志排查；不 exit(1) 以确保下游 PR 评论步骤仍可执行。
+        console.error(`[bench-diff] ${err.name}: ${err.message}`)
+        if (err.cause) console.error(`[bench-diff] cause: ${err.cause.message}`)
     }
-
-    const lines = [
-        '## Performance Bench Report',
-        '',
-        '| Task | main (hz) | PR (hz) | 变化 |',
-        '| --- | --- | --- | --- |',
-        ...rows,
-        '',
-    ]
-
-    if (regressionCount > REGRESSION_FLAG_LIMIT) {
-        lines.push(
-            `> ⚠️ 检测到 ${regressionCount} 个疑似回归（阈值 ${REGRESSION_FLAG_LIMIT}），建议维护者人工复核后再合并。`,
-        )
-    } else {
-        lines.push(
-            `> 疑似回归 ${regressionCount} 个（≤ 阈值 ${REGRESSION_FLAG_LIMIT}），bench 结果仅作信息性参考。`,
-        )
-    }
-
-    console.log(lines.join('\n'))
 }
 
 main()

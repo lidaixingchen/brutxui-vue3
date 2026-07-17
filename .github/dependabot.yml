@@ -1,0 +1,30 @@
+# Dependabot 配置 — 自动管理 GitHub Actions 的 SHA pin 升级
+#
+# 解决 root-scan-2026-07-18 N-2 + L-17：所有 uses: 已手动 pin 到 commit SHA，
+# Dependabot 会在 Action 发布新版本时自动开 PR 升级 SHA，避免供应链 tag 移动攻击。
+#
+# 注意：Dependabot 仅维护已有 SHA pin，不会自动将 tag 转为 SHA。
+# 新增 workflow 时请直接使用 SHA pin 格式：owner/repo@<40-char-sha> # vN
+#
+# 参考：
+#   https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: ci
+      include: scope
+    labels:
+      - dependencies
+      - github-actions
