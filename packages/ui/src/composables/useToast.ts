@@ -61,16 +61,14 @@ export const DEFAULT_TOAST_DURATION = 5000
 
 export function createToast(isFallback = false, globalOptions?: { grouping?: boolean }): UseToastReturn {
     const toasts = ref<ToastItem[]>([])
-    const timerMap = new Map<string, ReturnType<typeof setTimeout>>()
     const globalGrouping = globalOptions?.grouping ?? false
 
-    function clearTimer(id: string) {
-        const timerId = timerMap.get(id)
-        if (timerId !== undefined) {
-            clearTimeout(timerId)
-            timerMap.delete(id)
-        }
-    }
+    // 注意：useToast 层不再启动自动移除定时器。离场倒计时由渲染层（Toast.vue）的
+    // duration 定时器驱动，Toast.vue 在动画完成后 emit('close')，调用方通过
+    // @close="removeToast(toast.id)" 触发状态层移除。这样：
+    // 1. 避免双定时器冲突（useToast + Toast.vue 各起一个 setTimeout）
+    // 2. pauseOnHover 自然生效（仅 Toast.vue 控制 pause/resume）
+    // 3. 离场动画能正常播放（useToast 不会提前从数组移除导致组件卸载）
 
     function addToast(toast: Omit<ToastItem, 'id'>) {
         const isGroupingEnabled = toast.grouping ?? globalGrouping
@@ -81,7 +79,6 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
             if (existingIndex !== -1) {
                 const existing = toasts.value[existingIndex]
                 const updatedCount = (existing.count ?? 1) + 1
-                clearTimer(existing.id)
 
                 const updatedToast: ToastItem = {
                     ...existing,
@@ -93,47 +90,27 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
                 newToasts[existingIndex] = updatedToast
                 toasts.value = newToasts
 
-                const duration = updatedToast.duration ?? DEFAULT_TOAST_DURATION
-                if (duration > 0 && isClient) {
-                    const timerId = setTimeout(() => removeToast(existing.id), duration)
-                    timerMap.set(existing.id, timerId)
-                }
-
                 return existing.id
             }
         }
 
         const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
         if (toasts.value.length >= MAX_TOASTS) {
-            const removed = toasts.value[0]
-            if (removed) {
-                clearTimer(removed.id)
-            }
             toasts.value = toasts.value.slice(1)
         }
         toasts.value = [...toasts.value, { ...toast, id, count: toast.count ?? 1 }]
-
-        const duration = toast.duration ?? DEFAULT_TOAST_DURATION
-        if (duration > 0 && isClient) {
-            const timerId = setTimeout(() => removeToast(id), duration)
-            timerMap.set(id, timerId)
-        }
 
         return id
     }
 
     function removeToast(id: string) {
-        clearTimer(id)
         toasts.value = toasts.value.filter((t) => t.id !== id)
     }
 
-    function clearAllTimers() {
-        timerMap.forEach((timerId) => clearTimeout(timerId))
-        timerMap.clear()
-    }
+    // 保留为 no-op 以维持 API 兼容性；定时器已迁移至 Toast.vue 渲染层
+    function clearAllTimers() {}
 
     function clearToasts() {
-        clearAllTimers()
         toasts.value = []
     }
 

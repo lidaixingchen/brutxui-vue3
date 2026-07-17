@@ -131,58 +131,36 @@ describe('useToast', () => {
         expect(toasts.value[toasts.value.length - 1].id).toBe(newId)
     })
 
-    it('clears timer of evicted toast on MAX_TOASTS overflow', () => {
-        const { addToast } = createToast()
-        // Use duration: 0 so toasts do not auto-expire
-        for (let i = 0; i < MAX_TOASTS; i++) {
-            addToast({ title: `Toast ${i}`, duration: 0 })
-        }
-        // The first toast has no timer (duration: 0), so evicting it is safe.
-        // Now test with a timer-having first toast to verify clearTimer is called.
-        // Reset: create a fresh instance where the first toast has a real timer.
+    it('evicts oldest toast on MAX_TOASTS overflow regardless of duration', () => {
+        // 状态层不再启动定时器，eviction 仅基于数组长度
         const { toasts: t2, addToast: add2 } = createToast()
         const evictedId = add2({ title: 'Will be evicted', duration: 60_000 })
         for (let i = 1; i < MAX_TOASTS; i++) {
             add2({ title: `Toast ${i}`, duration: 0 })
         }
-        // Overflow: evicts the first toast (with a 60s timer)
+        // Overflow: evicts the first toast
         add2({ title: 'Overflow', duration: 0 })
         expect(t2.value.length).toBe(MAX_TOASTS)
         expect(t2.value.find((t) => t.id === evictedId)).toBeUndefined()
 
-        // Advance past the evicted toast's original duration.
-        // Its timer was cleared, so the remaining toasts should stay.
+        // 推进时间，剩余 toast 不受影响（状态层无定时器）
         vi.advanceTimersByTime(70_000)
         expect(t2.value.length).toBe(MAX_TOASTS)
     })
 
-    // ── Auto-remove timer ───────────────────────────────────────
+    // ── Auto-remove timer（已迁移至渲染层 Toast.vue）────────────
 
-    it('auto-removes toast after duration expires', () => {
+    it('addToast does not auto-remove toast (timers live in Toast.vue render layer)', () => {
         const { toasts, addToast } = createToast()
-        addToast({ title: 'Auto remove', duration: 3000 })
+        addToast({ title: 'No auto remove', duration: 3000 })
         expect(toasts.value.length).toBe(1)
 
-        vi.advanceTimersByTime(2999)
+        // 即使 duration 到期，状态层也不会移除 toast
+        vi.advanceTimersByTime(10_000)
         expect(toasts.value.length).toBe(1)
-
-        vi.advanceTimersByTime(1)
-        expect(toasts.value.length).toBe(0)
     })
 
-    it('auto-removes toast using DEFAULT_TOAST_DURATION when duration is omitted', () => {
-        const { toasts, addToast } = createToast()
-        addToast({ title: 'Default duration' })
-        expect(toasts.value.length).toBe(1)
-
-        vi.advanceTimersByTime(DEFAULT_TOAST_DURATION - 1)
-        expect(toasts.value.length).toBe(1)
-
-        vi.advanceTimersByTime(1)
-        expect(toasts.value.length).toBe(0)
-    })
-
-    it('does not auto-remove toast when duration is 0', () => {
+    it('addToast keeps toast when duration is 0', () => {
         const { toasts, addToast } = createToast()
         addToast({ title: 'Persistent', duration: 0 })
         expect(toasts.value.length).toBe(1)
@@ -191,39 +169,42 @@ describe('useToast', () => {
         expect(toasts.value.length).toBe(1)
     })
 
-    it('does not set timer when duration is negative', () => {
+    it('addToast keeps toast when duration is omitted (uses DEFAULT_TOAST_DURATION as metadata only)', () => {
         const { toasts, addToast } = createToast()
-        addToast({ title: 'Negative', duration: -1 })
+        addToast({ title: 'Default duration' })
         expect(toasts.value.length).toBe(1)
 
-        vi.advanceTimersByTime(100_000)
+        vi.advanceTimersByTime(DEFAULT_TOAST_DURATION + 10_000)
+        // 状态层不启动定时器；DEFAULT_TOAST_DURATION 仅作为 ToastItem.duration 元数据
+        // 传递给渲染层，由 Toast.vue 决定何时 emit('close')
         expect(toasts.value.length).toBe(1)
     })
 
-    // ── clearAllTimers ──────────────────────────────────────────
+    // ── clearAllTimers（已废弃为 no-op，保留 API 兼容性）──────
 
-    it('clearAllTimers cancels all pending auto-remove timers', () => {
+    it('clearAllTimers is a no-op (timers migrated to Toast.vue render layer)', () => {
         const { toasts, addToast, clearAllTimers } = createToast()
         addToast({ title: 'Toast 1', duration: 3000 })
         addToast({ title: 'Toast 2', duration: 5000 })
         expect(toasts.value.length).toBe(2)
 
-        clearAllTimers()
+        // clearAllTimers 不再做任何事，但调用应安全
+        expect(() => clearAllTimers()).not.toThrow()
 
         vi.advanceTimersByTime(10_000)
-        // Timers were cleared, so toasts should still be present
+        // 状态层本就没有定时器，toast 仍存在
         expect(toasts.value.length).toBe(2)
     })
 
-    // ── removeToast clears timer ────────────────────────────────
+    // ── removeToast 仅移除状态 ─────────────────────────────────
 
-    it('removeToast clears the associated timer', () => {
+    it('removeToast removes the toast from state', () => {
         const { toasts, addToast, removeToast } = createToast()
-        const id = addToast({ title: 'With timer', duration: 5000 })
+        const id = addToast({ title: 'To remove', duration: 5000 })
         removeToast(id)
         expect(toasts.value.length).toBe(0)
 
-        // Advancing time should not cause errors or affect other toasts
+        // 推进时间不会引发错误
         vi.advanceTimersByTime(10_000)
         expect(toasts.value.length).toBe(0)
     })
@@ -595,24 +576,25 @@ describe('useToast', () => {
             expect(toasts.value.length).toBe(2)
         })
 
-        it('resets duration timer and extends lifetime when grouped', () => {
+        it('grouping updates count and duration metadata (timers live in Toast.vue)', () => {
+            // 状态层不再有 timer 重置语义；grouping 仅更新 count 与 duration 元数据，
+            // 离场倒计时由渲染层 Toast.vue 在收到新 duration 时重新启动
             const { toasts, addToast } = createToast(false, { grouping: true })
             addToast({ title: 'Test', variant: 'success', duration: 5000 })
-            
+
             vi.advanceTimersByTime(3000)
             expect(toasts.value.length).toBe(1)
-            
-            // Add identical toast at t = 3000ms. Timer should be reset to a new 5000ms duration.
+
+            // 在 t=3000ms 添加相同 toast，count 应递增，duration 元数据应更新
             addToast({ title: 'Test', variant: 'success', duration: 5000 })
-            
-            // Advance by another 3000ms (total 6000ms). If timer wasn't reset, it would have expired at 5000ms.
-            vi.advanceTimersByTime(3000)
             expect(toasts.value.length).toBe(1)
             expect(toasts.value[0].count).toBe(2)
-            
-            // Advance by remaining 2000ms (total 8000ms). It should now expire.
-            vi.advanceTimersByTime(2000)
-            expect(toasts.value.length).toBe(0)
+            expect(toasts.value[0].duration).toBe(5000)
+
+            // 推进时间，状态层不会移除 toast（无定时器）
+            vi.advanceTimersByTime(10_000)
+            expect(toasts.value.length).toBe(1)
+            expect(toasts.value[0].count).toBe(2)
         })
     })
 })

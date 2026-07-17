@@ -310,6 +310,40 @@ describe('ToastContainer', () => {
         expect(wrapper.find('.toast-item').exists()).toBe(true)
     })
 
+    it('auto-renders Toast list from useToast when no slot provided', async () => {
+        let toastStore: any = null
+
+        const wrapper = mount({
+            components: { ToastContainer },
+            setup() {
+                toastStore = provideToast()
+                return {}
+            },
+            template: `<ToastContainer />`,
+        }, {
+            global: {
+                provide: {
+                    [LOCALE_INJECTION_KEY]: en
+                }
+            }
+        })
+
+        // 初始无 toast
+        expect(wrapper.findAllComponents(Toast).length).toBe(0)
+
+        // 添加 toast 后应自动渲染
+        toastStore.addToast({ title: 'Auto rendered', variant: 'success' })
+        await nextTick()
+        expect(wrapper.findAllComponents(Toast).length).toBe(1)
+        expect(wrapper.text()).toContain('Auto rendered')
+
+        // close 事件应触发 removeToast
+        const toastComponent = wrapper.findComponent(Toast)
+        await toastComponent.vm.$emit('close')
+        await nextTick()
+        expect(wrapper.findAllComponents(Toast).length).toBe(0)
+    })
+
     it('respects maxVisible by removing the oldest toast when limit exceeded', async () => {
         let toastStore: any = null
 

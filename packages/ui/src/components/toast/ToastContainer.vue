@@ -5,9 +5,16 @@ import { DEFAULT_TOAST_MAX_VISIBLE, DEFAULT_TOAST_GAP_PX } from '@/lib/defaults'
 import type { ToastPosition, ToastStackOptions } from '@/composables/useToast'
 import { useLocale } from '@/composables/useLocale'
 import { useToast } from '@/composables/useToast'
+import Toast from './Toast.vue'
 
 const { t } = useLocale()
 const { toasts, removeToast } = useToast()
+
+// 当用户未提供 default slot 时，自动渲染 Toast 列表并连接 @close 事件。
+// 这使 <ToastContainer /> 简化用法可用：useToast.addToast 后 toast 自动显示，
+// 离场动画由 Toast.vue 内部定时器驱动，动画完成后 emit('close') 触发 removeToast。
+// 用户仍可通过 <ToastContainer><Toast v-for @close="removeToast" /></ToastContainer>
+// 完全自定义渲染。
 
 const DEFAULT_EXPAND_DIRECTION: ToastStackOptions['expandDirection'] = 'down'
 
@@ -114,6 +121,18 @@ watch(
 
 <template>
     <div :class="classes" :style="{ ...positionStyle, ...gapStyle }" aria-live="polite" :aria-label="t('toast.container')">
-        <slot />
+        <slot>
+            <Toast
+                v-for="toast in toasts"
+                :key="toast.id"
+                :variant="toast.variant"
+                :size="toast.size"
+                :title="toast.title"
+                :description="toast.description"
+                :duration="toast.duration"
+                :count="toast.count"
+                @close="removeToast(toast.id)"
+            />
+        </slot>
     </div>
 </template>
