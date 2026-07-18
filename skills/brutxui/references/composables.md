@@ -16,7 +16,6 @@
 | `useReducedMotion` | 检测用户 prefers-reduced-motion 系统设置 | 默认导出 |
 | `useFormFieldValidation` | 通用表单验证（rules、validateOn、validationState） | 默认导出 |
 | `useTheme` | 主题切换与运行时定制（支持 `setCustomVariable` / `removeCustomVariable` 动态修改单个变量） | 默认导出 |
-| `useLocale` | 国际化文本获取（支持 `{count}` 插值和嵌套路径获取） | 默认导出 |
 | `useToast` | Toast 通知生命周期与队列管理 | 默认导出 |
 | `useClipboard` | 剪贴板复制功能（含 `isSupported` 及 `copied` 临时状态） | 默认导出 |
 | `useAudioEngine` | Web Audio API 音效引擎，提供 8-bit 复古点击、成功、失败音效 | 默认导出 |
@@ -52,18 +51,4 @@ setCustomVariable('--brutal-primary', '#8B5CF6')
 
 // 恢复默认
 removeCustomVariable('--brutal-primary')
-```
-
-### 2. 国际化翻译与防错插值 (`useLocale`)
-```typescript
-import { useLocale } from 'brutx-ui-vue'
-import { computed } from 'vue'
-
-const { t } = useLocale()
-const selectedCount = ref<number | null>(null)
-
-// 安全防空处理，避免在加载时传 undefined 导致插值报错
-const label = computed(() => {
-  return t('combobox.selectedCount', { count: selectedCount.value ?? 0 })
-})
 ```

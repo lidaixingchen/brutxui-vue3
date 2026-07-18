@@ -8,11 +8,10 @@ import { generateComponentsSidebar, generateBlocksSidebar } from './theme/lib/si
  * 扫描 apps/docs/changelog/ 目录，按 major 版本分组生成侧边栏。
  * 归档版本增长时自动更新，无需手动维护。
  */
-function generateChangelogSidebar(locale: 'zh' | 'en'): any[] {
+function generateChangelogSidebar(): any[] {
     const changelogDir = path.resolve(import.meta.dirname, '../changelog')
     if (!fs.existsSync(changelogDir)) return []
 
-    const prefix = locale === 'en' ? '/en' : ''
     const files = fs
         .readdirSync(changelogDir)
         .filter((f) => /^v[\d.]+\.md$/.test(f))
@@ -33,8 +32,8 @@ function generateChangelogSidebar(locale: 'zh' | 'en'): any[] {
 
     const result: any[] = [
         {
-            text: locale === 'en' ? 'Archive Index' : '归档版本',
-            link: `${prefix}/changelog/`,
+            text: '归档版本',
+            link: '/changelog/',
         },
     ]
 
@@ -46,7 +45,7 @@ function generateChangelogSidebar(locale: 'zh' | 'en'): any[] {
             collapsed: major !== currentMajor,
             items: items.map((file) => ({
                 text: file,
-                link: `${prefix}/changelog/${file}`,
+                link: `/changelog/${file}`,
             })),
         })
     }
@@ -297,7 +296,7 @@ export default defineConfig({
             ],
             '/components/': generateComponentsSidebar('zh'),
             '/blocks/': generateBlocksSidebar('zh'),
-            '/changelog/': generateChangelogSidebar('zh'),
+            '/changelog/': generateChangelogSidebar(),
         },
         search: {
             provider: 'local',

@@ -654,7 +654,7 @@ function handleSearch(val: string) {
 新粗野主义平铺水印容器。支持防物理篡改、防 VDOM 更新 Diff 异常、防高分屏失真，以及测试环境（无 Canvas 浏览器）自动向 SVG Fallback 降级。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { Watermark } from 'brutx-ui-vue'
 </script>
 
@@ -690,7 +690,7 @@ import { Watermark } from 'brutx-ui-vue'
 回到顶部组件。带有节流保护、跨沙箱 Window 构造探测、自定义显示高度以及硬核浮角定位。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { Backtop } from 'brutx-ui-vue'
 </script>
 

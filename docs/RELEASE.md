@@ -40,7 +40,7 @@ pnpm release          # turbo run build test typecheck lint && changeset publish
 <type>(<scope>): <subject>
 
 type: feat | fix | docs | style | refactor | perf | test | build | ci | chore | revert
-scope: ui | cli | docs | registry | shared | theme（可选）
+scope: ui | cli | docs | registry | shared | deps | theme（可选，支持并推荐使用如 `ui/toast` 的子 Scope）
 ```
 
 Breaking Change 标记方式：
@@ -48,18 +48,6 @@ Breaking Change 标记方式：
 - `feat(ui)!: 重命名 Button API`（加 `!`）
 - commit body 中写 `BREAKING CHANGE: description`
 
-### 配置
-
-可在 `package.json` 中配置：
-
-```json
-{
-  "changelog": {
-    "repoUrl": "https://github.com/lidaixingchen/brutxui-vue3",
-    "excludeTypes": ["release", "chore"]
-  }
-}
-```
 
 ## 根 CHANGELOG.md 生成
 
@@ -112,7 +100,7 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 ```markdown
 ## 归档版本
 
-> 以下版本已归档至 [`apps/docs/changelog/`](apps/docs/changelog/)，点击版本号查看完整变更记录：
+> 以下版本已归档至 [`../apps/docs/changelog/`](../apps/docs/changelog/)，点击版本号查看完整变更记录：
 
 * **[0.9.2](apps/docs/changelog/v0.9.2.md)** - 2026-07-08
 * **[0.9.1](apps/docs/changelog/v0.9.1.md)** - 2026-07-06
@@ -126,7 +114,7 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 ```markdown
 # v<version>
 
-> [← 返回主 CHANGELOG](../../../CHANGELOG.md)
+> [← 返回主 CHANGELOG](../guide/changelog.md)
 
 ## [<version>](https://github.com/lidaixingchen/brutxui-vue3/compare/v<previous>...v<version>) - <date>
 

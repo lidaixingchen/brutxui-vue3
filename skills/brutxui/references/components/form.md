@@ -98,11 +98,11 @@
 | `select()` | 选中输入框中的文本 |
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Input } from 'brutx-ui-vue'
 
-const inputRef = ref(null)
+const inputRef = ref<InstanceType<typeof Input> | null>(null)
 function handleFocus() {
     inputRef.value?.focus()
 }
@@ -865,13 +865,13 @@ const { validationState, errorMessage, validate, reset, shouldValidateOnInput, s
 文件上传系统，支持拖拽、文件列表管理、进度追踪和错误处理。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
-import { Upload, UploadTrigger, UploadFileList, type UploadFile } from 'brutx-ui-vue'
+import { Upload, UploadTrigger, UploadFileList, type UploadFile, type UploadRequestOptions } from 'brutx-ui-vue'
 
 const fileList = ref<UploadFile[]>([])
 
-async function handleUpload(options) {
+async function handleUpload(options: UploadRequestOptions): Promise<void> {
     const formData = new FormData()
     formData.append('file', options.file)
     const response = await fetch('/api/upload', { method: 'POST', body: formData })
@@ -939,7 +939,7 @@ interface UploadFile {
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Upload, UploadTrigger, UploadFileList, type UploadFile } from 'brutx-ui-vue'
+import { Upload, UploadTrigger, UploadFileList, type UploadFile, type UploadRequestOptions } from 'brutx-ui-vue'
 
 const fileList = ref<UploadFile[]>([])
 
@@ -963,7 +963,7 @@ function handleBeforeUpload(file: File): boolean {
 }
 
 // 2. 自定义上传实现，并支持取消
-async function handleCustomUpload(options: any) {
+async function handleCustomUpload(options: UploadRequestOptions): Promise<void> {
   const { file, onProgress, onSuccess, onError } = options
   
   // 创建该文件对应的 AbortController

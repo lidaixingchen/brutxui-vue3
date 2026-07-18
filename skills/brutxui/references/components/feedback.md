@@ -147,14 +147,16 @@
 全局通知气泡系统，提供 `useToast` 组合式函数。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { useToast, ToastContainer } from 'brutx-ui-vue'
 const { success, error, warning, info, addToast, promise } = useToast()
 
 success('成功', '已保存。')
 error('错误', '操作失败。')
 
-// Promise Toast
+// 模拟 Promise 函数
+const saveData = (): Promise<void> => new Promise((resolve) => setTimeout(resolve, 1000))
+
 await promise(saveData(), {
   loading: '保存中...',
   success: '保存成功！',
@@ -466,13 +468,18 @@ interface ToastItem {
 无限滚动组件，滚动到底部自动加载更多数据。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { InfiniteScroll } from 'brutx-ui-vue'
 
-const items = ref([])
+interface Item {
+  id: number
+  name: string
+}
 
-async function loadMore() {
+const items = ref<Item[]>([])
+
+async function loadMore(): Promise<void> {
     // 加载数据
 }
 </script>
@@ -523,11 +530,11 @@ const { isLoading, resetLoading } = useInfiniteScroll(targetRef, {
 ### 声明式组件
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { Loading } from 'brutx-ui-vue'
 
-const isLoading = ref(true)
+const isLoading = ref<boolean>(true)
 </script>
 
 <template>
@@ -543,11 +550,11 @@ const isLoading = ref(true)
 ### 指令式用法 (v-loading)
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { vLoading } from 'brutx-ui-vue'
 
-const isLoading = ref(true)
+const isLoading = ref<boolean>(true)
 </script>
 
 <template>
@@ -586,7 +593,7 @@ const isLoading = ref(true)
 新粗野主义结果反馈组件，用于成功、警告、普通、失败等结果的状态告知。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { Result, Button } from 'brutx-ui-vue'
 </script>
 

@@ -462,20 +462,6 @@ provideLocale(en)
 </script>
 ```
 
-### useLocale 组合式函数
-
-```typescript
-import { useLocale } from 'brutx-ui-vue'
-
-const { t, locale } = useLocale()
-
-// 使用翻译（点号路径）
-const title = t('saasPricing.title')
-
-// 带插值
-const message = t('combobox.selectedCount', { count: 3 })
-```
-
 ### 通过 props 或 texts 覆盖
 
 props 优先级最高，可以覆盖任何 locale 文本：
@@ -523,36 +509,12 @@ const jaJP: Locale = {
 app.use(BrutxUIPlugin, { locale: jaJP })
 ```
 
-### t() 翻译函数
-
-`useLocale()` 返回的 `t()` 函数支持点号路径访问和插值参数：
-
-```typescript
-const { t } = useLocale()
-
-t('command.placeholder')
-// → '输入命令或搜索...'
-
-t('combobox.selectedCount', { count: 3 })
-// → '已选 3 项'
-
-t('pagination.page', { number: 5 })
-// → '第 5 页'
-```
-
-### 回退链
-
-1. 当前 locale 中查找 `path` 对应的值
-2. 不存在 → 回退到 zh-CN 语言包中 `path` 对应的值
-3. 仍不存在 → 返回路径字符串 `path` 本身
-
 ### API 参考
 
 | API | 说明 |
 |-----|------|
 | `BrutxUIPlugin` | Vue 插件，用于全局配置 locale：`app.use(BrutxUIPlugin, { locale: en })` |
 | `provideLocale(locale)` | 在组件子树内注入 locale 配置 |
-| `useLocale()` | 返回 `{ locale, t }`，`t(path, params?)` 支持点号路径和插值 |
 | `mergeLocale(base, override)` | 深合并语言包，用于部分覆盖 |
 | `zhCN` | 简体中文语言包（默认） |
 | `en` | 英文语言包 |

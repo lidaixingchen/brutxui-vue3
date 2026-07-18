@@ -22,10 +22,10 @@
 ## 命令
 
 ```bash
-pnpm build          # 构建 UI 包
+pnpm build          # 运行 Turbo 并行构建所有包（含 UI, CLI, Registry, Docs；可用 --filter brutx-ui-vue build 仅构建 UI 包）
 pnpm lint           # 对所有包执行 lint
 pnpm typecheck      # 对所有包执行类型检查
-pnpm test           # 运行 UI 测试
+pnpm test           # 运行所有子包测试（含 UI, CLI, Registry；可用 --filter brutx-ui-vue test 仅运行 UI 测试）
 pnpm test:watch     # 监视模式运行测试
 pnpm release        # 构建门禁 + changeset publish
 pnpm changelog      # 生成根 CHANGELOG.md 新版本段（详见 docs/RELEASE.md）
@@ -47,7 +47,7 @@ pnpm generate:page         # 自动生成文档测试页面
 pnpm --filter brutx-registry-vue build          # 编译 registry JSON（含增量缓存）
 pnpm --filter brutx-registry-vue build:watch    # watch 模式：监听 UI 源码变化增量 rebuild
 pnpm --filter brutx-registry-vue build:verify   # 增量与全量 build 对照验证
-pnpm --filter brutx-registry-vue build:bench    # 输出每组件构建耗时与总耗时
+pnpm --filter brutx-registry-vue bench          # 输出每组件构建耗时与总耗时
 pnpm --filter brutx-registry-vue validate       # 校验 registry 完整性 + 依赖图
 pnpm --filter brutx-registry-vue validate -- --graph  # 额外导出 deps.dot / deps.json
 ```
@@ -96,7 +96,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 ## Shell git注意事项
 
-详见 [提交信息规范 - Shell 注意事项](docs/COMMIT_CONVENTION.md#shell-注意事项)。
+详见 [提交信息规范 - Shell 注意事项](docs/COMMIT_CONVENTION.md#shell-提交注意事项)。
 
 ## 目录结构
 

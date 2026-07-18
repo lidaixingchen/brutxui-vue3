@@ -668,7 +668,7 @@ interface VirtualScrollItem {
 新粗野主义高对比度统计数值组件，支持数字滚动动画、前缀后缀、千分位分隔符等。
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { Statistic } from 'brutx-ui-vue'
 import { ArrowUp } from '@lucide/vue'
 </script>

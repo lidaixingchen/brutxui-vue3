@@ -69,9 +69,10 @@
 
 ### 多区块联动控制（三栏协同 Dashboard）
 此示例展示了如何实现：
-1. 监听全局快捷键 `Ctrl + K` 唤起 [Command](../../../../packages/ui/src/components/Command.vue) 命令面板。
-2. [HeaderSection](../../../../packages/ui/src/components/HeaderSection.vue) 顶部搜索框与 [Command](../../../../packages/ui/src/components/Command.vue) 的搜索词双向协同。
-3. [DashboardShell](../../../../packages/ui/src/components/DashboardShell.vue) 折叠状态及多层级导航激活项传递。
+1. 监听全局快捷键 `Ctrl + K` 唤起 **Command** 命令面板。
+2. **HeaderSection** 顶部搜索框与 **Command** 的搜索词双向协同。
+3. **DashboardShell** 折叠状态及多层级导航激活项传递。
+
 
 ```vue
 <script setup lang="ts">
