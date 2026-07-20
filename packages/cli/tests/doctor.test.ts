@@ -1171,7 +1171,7 @@ describe('checkRegistryReachability (P1-5)', () => {
             }));
             const fetchSpy = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
                 const u = typeof url === 'string' ? url : url.toString();
-                if (u.includes('primary.example.com')) {
+                if (new URL(u).hostname === 'primary.example.com') {
                     return new Response('err', { status: 500, statusText: 'Internal Server Error' });
                 }
                 return new Response('{}', { status: 200, statusText: 'OK' });

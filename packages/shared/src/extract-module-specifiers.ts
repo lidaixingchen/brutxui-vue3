@@ -113,6 +113,57 @@ function upsert(
 }
 
 /**
+ * Masks string literals with `__STR_LITERAL_{idx}__` placeholders in a single
+ * linear pass. Single/double-quoted strings terminate at line breaks, backtick
+ * templates may span lines, and a backslash skips the next character. Unclosed
+ * literals are left untouched.
+ */
+function maskStringLiterals(code: string, placeholders: string[]): string {
+    const parts: string[] = [];
+    let runStart = 0;
+    let i = 0;
+    while (i < code.length) {
+        const quote = code[i];
+        if (quote !== '\'' && quote !== '"' && quote !== '`') {
+            i += 1;
+            continue;
+        }
+        const isTemplate = quote === '`';
+        let j = i + 1;
+        let closed = false;
+        while (j < code.length) {
+            const ch = code[j];
+            if (ch === '\\') {
+                j += 2;
+            } else if (ch === quote) {
+                closed = true;
+                break;
+            } else if (!isTemplate && (ch === '\r' || ch === '\n')) {
+                break;
+            } else {
+                j += 1;
+            }
+        }
+        if (!closed) {
+            i += 1;
+            continue;
+        }
+        if (i > runStart) {
+            parts.push(code.slice(runStart, i));
+        }
+        const idx = placeholders.length;
+        placeholders.push(code.slice(i, j + 1));
+        parts.push(`__STR_LITERAL_${idx}__`);
+        i = j + 1;
+        runStart = i;
+    }
+    if (runStart < code.length) {
+        parts.push(code.slice(runStart));
+    }
+    return parts.join('');
+}
+
+/**
  * Extract `<script>` block contents from Vue SFC source code.
  *
  * Masks string literals before matching to prevent false positives from
@@ -121,16 +172,10 @@ function upsert(
  */
 export function extractScriptBlocks(code: string): string[] {
     const blocks: string[] = [];
-    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
-
-    const stringLiteralPattern = /'(?:[^'\r\n\\]|\\.)*'|"(?:[^"\r\n\\]|\\.)*"|`(?:[^`\\]|\\.)*`/g;
+    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi;
 
     const placeholders: string[] = [];
-    const masked = code.replace(stringLiteralPattern, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `__STR_LITERAL_${idx}__`;
-    });
+    const masked = maskStringLiterals(code, placeholders);
 
     for (const match of masked.matchAll(scriptPattern)) {
         blocks.push(match[1].replace(/__STR_LITERAL_(\d+)__/g, (_m, i) => placeholders[Number(i)] ?? ''));
