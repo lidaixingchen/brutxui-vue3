@@ -53,8 +53,6 @@ function generateChangelogSidebar(): any[] {
     return result
 }
 
-// @ts-expect-error VitePress 1.x 内置 Vite 类型与 Vite 8 不兼容 (TS2321: Excessive stack depth)
-// @see https://github.com/vuejs/vitepress/issues/4600
 export default defineConfig({
     lang: 'zh-CN',
     title: 'BrutxUI',
