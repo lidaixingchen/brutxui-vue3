@@ -244,7 +244,7 @@ function extractScriptBlocks(content: string): Array<{ start: number; end: numbe
     // inside <script> contains the substring "</script>". Current codebase does not
     // trigger this, but it remains a known limitation; switching to
     // @vue/compiler-sfc would resolve it definitively.
-    const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi;
+    const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi;
     let match;
     while ((match = scriptRegex.exec(content)) !== null) {
         const scriptCode = match[1];

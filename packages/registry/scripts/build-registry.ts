@@ -468,7 +468,7 @@ export function rewriteImports(code: string, componentName: string, context: Rew
 
     if (/<script\b/i.test(code)) {
         code = code.replace(
-            /(<script\b[^>]*>)([\s\S]*?)(<\/script\s*>)/gi,
+            /(<script\b[^>]*>)([\s\S]*?)(<\/script\b[^>]*>)/gi,
             (_m, openTag: string, scriptContent: string, closeTag: string) =>
                 `${openTag}${sameDirReplace(scriptContent)}${closeTag}`
         );

@@ -172,7 +172,7 @@ function maskStringLiterals(code: string, placeholders: string[]): string {
  */
 export function extractScriptBlocks(code: string): string[] {
     const blocks: string[] = [];
-    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script\s*>/gi;
+    const scriptPattern = /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>/gi;
 
     const placeholders: string[] = [];
     const masked = maskStringLiterals(code, placeholders);
