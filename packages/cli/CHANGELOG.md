@@ -1,5 +1,11 @@
 # brutx-vue
 
+## 0.8.1
+
+### Patch Changes
+
+- 修复 changelog 归档机制多项 bug，修复 CI typecheck 失败问题，更新依赖以解决安全漏洞，重构 CI/CD 流水线与构建缓存配置，完善组件与项目文档。
+
 ## 0.8.0
 
 ### Minor Changes

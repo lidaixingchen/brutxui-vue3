@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.9.6
+
+### Patch Changes
+
+- 修复 changelog 归档机制多项 bug，修复 CI typecheck 失败问题，更新依赖以解决安全漏洞，重构 CI/CD 流水线与构建缓存配置，完善组件与项目文档。
+
 ## 0.9.5
 
 ### Patch Changes
