@@ -6,19 +6,9 @@
 
 ## [0.9.6](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.5...v0.9.6) - 2026-07-27
 
-### 🧹 Chores
-
-* Releasing 2 package(s) ([3f79276](https://github.com/lidaixingchen/brutxui-vue3/commit/3f792767bc6274973222d509c56dca23a9b32f3d))
-  Releases:
-    brutx-ui-vue@0.9.6
-    brutx-vue@0.8.1
-  [skip ci]
-
 ### 🐛 Bug Fixes
 
 * **docs:** 移除失效的 @ts-expect-error 指令修复 CI typecheck ([76f6909](https://github.com/lidaixingchen/brutxui-vue3/commit/76f690933b71a68444c9cf39f4c16dec2b3af527))
-  vitepress 内置 vite 升级至 6.4.3 后，原 Vite 5 与 Vite 8 类型冲突
-  （TS2321 Excessive stack depth）不再出现，残留指令触发 TS2578。
 * **changelog:** 修复脏提交引发的 TypeError 崩溃与切片倒序引发的爆栈风险 ([432ffa2](https://github.com/lidaixingchen/brutxui-vue3/commit/432ffa2075c9cc364b489b1b826232531a449a32))
 * **changelog:** 修复 Windows CRLF 换行替换失效并添加 index.md 缺失兜底机制 ([2573ca3](https://github.com/lidaixingchen/brutxui-vue3/commit/2573ca3cce65f2421be2b969646b12c5485d4520))
 * **changelog:** 修复 fs 引用 ReferenceError 致命 bug 并优化正则与链接兼容性 ([5d437a9](https://github.com/lidaixingchen/brutxui-vue3/commit/5d437a96d058239b1517e8262f9d08c1a96e44a1))
@@ -26,53 +16,22 @@
 ### 📝 Documentation
 
 * 更新文档规范、示例与配置，移除废弃的useLocale内容 ([d176bcc](https://github.com/lidaixingchen/brutxui-vue3/commit/d176bcc2b95a066f0bbaca3eed54e07de2372721))
-  1. 新增theme提交scope说明并补充子scope使用建议
-  2. 为所有vue示例添加lang="ts"类型支持
-  3. 格式化导航示例的组件名称为粗体
-  4. 移除文档中废弃的useLocale相关内容
-  5. 更新AGENTS.md、RELEASE.md的命令与链接
-  6. 简化changelog侧边栏生成函数的多语言逻辑
-  7. 为表单、反馈组件示例补充完整类型定义
 * 更新组件开发文档与项目维护指南 ([9430fc6](https://github.com/lidaixingchen/brutxui-vue3/commit/9430fc637a4025449da6aeeae23cc85252a7a663))
-  重构组件开发流程文档，新增开发自检约束与自动生成文件警告，补充脚手架命令、代码规范与文档链接
 * 批量更新文档与新增组件词典、组合式函数词典 ([4197de6](https://github.com/lidaixingchen/brutxui-vue3/commit/4197de69fd551000b2c41727423e24c2cd85e1bf))
-  1. 更新设计令牌文档的最佳实践，替换为国际化最佳实践内容
-  2. 修复layout-nav.md中的本地绝对路径链接为相对路径
-  3. 拆分并重构SKILL.md主文档，新增独立的维护约定章节
-  4. 新增完整的组件词典与组合式函数词典文档
 * **ui:** 新增 AI 技能高阶优化指南与复合区块协同示例 ([9542faa](https://github.com/lidaixingchen/brutxui-vue3/commit/9542faa593683a3decd6f9ce64eb70341fbf2357))
-  - 在 SKILL.md 中补充新粗野极致视觉、微交互动效一致性、SSR 兼容和 I18n 插值防错规范
-  - 在 layout-nav.md 中补充三栏协同 Dashboard 大页面复合状态流协同模板
 * **ui:** 优化 AI 技能文档与参考指南 ([3ce994a](https://github.com/lidaixingchen/brutxui-vue3/commit/3ce994ae7d75bdaef8b3df9eb462be645bb394e4))
-  - 清理历史遗留版本描述并优化表单类型
-  - 引入 TS 严格模式和 A11y 最佳实践小节
-  - 补充 TreeView、Upload、KanbanBoard 复杂业务模板及 Tailwind v4 theme 规范
 * **skills:** 更新 brutxui 技能文档与 AGENTS.md 维护约定 ([8945992](https://github.com/lidaixingchen/brutxui-vue3/commit/89459924c396d3789ecf57f2054b194b2b00d1d4))
-  - 将 SKILL.md 同步更新至 v0.9.5 最新规范，移除历史版本变迁信息
-  - 在 AGENTS.md 中新增技能文档维护规范，约定只保留最新 API 与编码规范
 * **changelog:** 精简主 CHANGELOG.md 头部描述并同步更新发版初始化头 ([b2f054a](https://github.com/lidaixingchen/brutxui-vue3/commit/b2f054a48dd10025c278b4f7d16bd8c23da9f09d))
 * **changelog:** 补齐遗漏的历史归档版本 v0.2.2 与 v0.1.1 ([f873419](https://github.com/lidaixingchen/brutxui-vue3/commit/f873419a5e4b3c2a9d2ed07b2caa2d2fce67e518))
 * **changelog:** 全面重构、精炼并规范化 v0.8.0 至 v0.1.0 之间的所有历史归档日志 ([2b773ee](https://github.com/lidaixingchen/brutxui-vue3/commit/2b773eedc6f646a83ffdabefc9f0ff34f27e2995))
 * **changelog:** 补全并精炼 v0.6.8 至 v0.1.0 历史归档更新日志 ([dac2c6f](https://github.com/lidaixingchen/brutxui-vue3/commit/dac2c6fc876594ee05a671f9810e2fbb99e3667e))
 * **changelog:** 统一中英文主导航链接路径结构 ([6e533ff](https://github.com/lidaixingchen/brutxui-vue3/commit/6e533ffcaa8fa0d29cf5190935f94f21370064ab))
-  中文 nav 链接从 /changelog/ 改为 /guide/changelog，与英文 /en/guide/changelog 保持路径结构一致。原 /changelog/ 路由仍可通过引导页或侧边栏访问。
 * **changelog:** 在主导航栏添加更新日志入口 ([cdd1a21](https://github.com/lidaixingchen/brutxui-vue3/commit/cdd1a21bdba1029b8e5008086b54f83275a90be1))
-  - 中文 nav 添加「更新日志」链接到 /changelog/ 归档索引页
-  - 英文 nav 添加「Changelog」链接到 /en/guide/changelog 引导页（英文 locale 无独立归档目录）
 * **changelog:** 引入归档机制与根 CHANGELOG 生成脚本 ([f0eff9e](https://github.com/lidaixingchen/brutxui-vue3/commit/f0eff9e85b63c9dcec85e504edd938ee731c15f9))
-  - 新增 generate-changelog.mjs 脚本（pnpm changelog / changelog:dry）汇总 conventional commits 生成根 CHANGELOG 段
-  - 引入归档机制：根文件仅保留最近 3 个版本完整段落，更早版本归档至 apps/docs/changelog/ 独立文件
-  - 重写根 CHANGELOG.md：v0.9.5/v0.9.4/v0.9.3 完整段落 + 17 个归档版本索引
-  - VitePress config 添加 generateChangelogSidebar() 自动生成归档侧边栏（按 major 分组）
-  - guide/changelog.md 改造为引导页，避免版本内容重复维护
-  - RELEASE.md 补充根 CHANGELOG 生成与归档机制章节
-  - AGENTS.md 添加 pnpm changelog / changelog:dry 命令与脚本路径
 
 ### ✨ Features
 
 * **changelog:** 实现全自动滑动窗口归档与裁剪逻辑，并同步更新发版规范文档 ([482f8ce](https://github.com/lidaixingchen/brutxui-vue3/commit/482f8ce1c15510f28588f005113eb0c1b4a32673))
-
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.5...HEAD)
 
 ## [0.9.5](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.4...v0.9.5) - 2026-07-18
 
@@ -177,42 +136,11 @@
 
 * **cli:** 修复 remove 命令测试中 mockedGetItem 调用的断言参数不一致问题 ([ba645ac](https://github.com/lidaixingchen/brutxui-vue3/commit/ba645ac8))
 
-## [0.9.3](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.2...v0.9.3) - 2026-07-09
-
-### ♻️ Code Refactoring
-
-* **ui,docs:** 整理多处组件与工具代码，修复 useClipboard、textarea、backtop、select、typewriterText、rate 等组件细节问题并进行细节清理 ([e21dac6](https://github.com/lidaixingchen/brutxui-vue3/commit/e21dac6b01e6f23e287d77f2631a9419176f548a))
-* **ui:** 重构 TreeView 数据流，引入 localNodes 代理状态与 update:nodes 机制，遵循单向数据流原则并优化测试用例 ([9ade098](https://github.com/lidaixingchen/brutxui-vue3/commit/9ade0986193b0168aa292f939ee6e99521e1ab21))
-* **shared,docs,cli,registry:** 提取公共侧边栏生成逻辑至 shared 包，重构文档侧边栏实现并优化 registry 缓存校验 ([c0117e9](https://github.com/lidaixingchen/brutxui-vue3/commit/c0117e9f1bfa13c31e9244024e3b88cff452ba0b))
-
-### ⚡ Performance
-
-* **ui:** 移除 props.nodes 的 deep watch 监听，由 localNodes 本地状态直接托管内部树属性变化，斩断 watch 死循环并极大降低响应式性能开销 ([c27e5f6](https://github.com/lidaixingchen/brutxui-vue3/commit/c27e5f6baca5f81344a5b799e29c13521a2e8df6))
-
-### 🐛 Bug Fixes
-
-* **ui:** 修复 ToastContainer 堆叠未响应 maxVisible 限制的问题，并在单元测试中进行沙箱化隔离 ([15b580f](https://github.com/lidaixingchen/brutxui-vue3/commit/15b580fa36d308d576bc284ea8dbd762ecac2f0e))
-* **cli,docs:** 修复 CLI 的 add 服务流程中特定逻辑边界并同步更新相关组件说明文档 ([25401f8](https://github.com/lidaixingchen/brutxui-vue3/commit/25401f8af3f0a4c74034e117ef09fee2f18ad79f))
-* **ui:** 修复 directives/loading、Watermark、theme-variables、useClipboard、useDebounce、useColorPicker、TypewriterText、SketchyChart、Backtop、Menu、SubMenu、Pagination、Tour 等组件与指令的内存泄漏及边缘逻辑缺陷 ([93c93b8](https://github.com/lidaixingchen/brutxui-vue3/commit/93c93b8b61a42f60145de3e427aece8b2436fb0b))
-* **ui:** 优化 Upload 并发模型与取消机制（引入 AbortController 支持取消），修复文件大小格式化输出边界缺陷 ([71ae6c5](https://github.com/lidaixingchen/brutxui-vue3/commit/71ae6c59315254ef15df8680589cec64bb4937d4))
-* **ui:** 修复 useDialog、DialogEnhanced 和 useToast 函数式调用的 Promise 悬挂及 DOM 泄漏，保证 Escape 键与点击遮罩正常触发 beforeClose 钩子 ([48126c3](https://github.com/lidaixingchen/brutxui-vue3/commit/48126c3d5d1ca0bb0ea1c4157964c48782f3fecd))
-* **ui:** 修复 FormWizard、Input/Textarea（拼音 IME 输入法缓冲）、Cascader、ColorPicker、Slider、Rate、Stepper 等表单与输入组件交互、清除按钮事件冒泡及无障碍键盘导航问题 ([14fd4ac](https://github.com/lidaixingchen/brutxui-vue3/commit/14fd4ac6a94a612f98483fd2d6ff70f0c45df4bd))
-* **ui:** 修复 DataTable 展开行 colspan 表格错位、KanbanBoard 拖动 rAF 竞态泄漏、TreeViewUtils 迭代算法避免深层树栈溢出等逻辑缺陷 ([fe04f57](https://github.com/lidaixingchen/brutxui-vue3/commit/fe04f57c912913654b2dafd5d208ed36cd564b97))
-* **ui:** 修复 lib/date DST 期间解析失效，以及 Calendar、TimePicker、DatePickerRangePanel、YearPicker 跨时区匹配和边界数值处理，统一周起始日为周一 ([e6a0c69](https://github.com/lidaixingchen/brutxui-vue3/commit/e6a0c69e38831406eca589fe1f6aacfae7b686ee))
-* **docs:** 修复文档站 CopyButton、TranslationBanner 等组件的内存泄漏与响应性更新缺陷，补充全面的 Bug 扫描报告 ([1d92bd8](https://github.com/lidaixingchen/brutxui-vue3/commit/1d92bd8a348ef783b508d72f6621201989d952d6))
-* **shared:** 补齐桶导出类型，重新分类 feedback-form 等 block 组件，并移除 page 相关的无用死代码 ([f93e158](https://github.com/lidaixingchen/brutxui-vue3/commit/f93e158696837c19101d7ce2449d3c9637d67347))
-* **cli:** 修复 doctor --fix 状态不更新、diff 误报 not-installed、remove 依赖警告失效等命令逻辑错误，优化 rollback 回滚事务机制，升级 Node 版本要求至 22.5.0 ([64551a0](https://github.com/lidaixingchen/brutxui-vue3/commit/64551a0957826a5a3948549d1cfcc1868b0a3031))
-* **registry:** 优化 computeSourceHash 依赖哈希提取逻辑，解决 composables 依赖变更未触发构建的缓存问题，当构建失败时正确设置非零退出码 ([e5a3533](https://github.com/lidaixingchen/brutxui-vue3/commit/e5a35337182716b994b44ced499ddb46a842e581))
-
-### ✅ Tests
-
-* **ui:** 使用 try-finally 确保 Tour 测试中假计时器在断言失败时也能被清理以防用例间环境污染 ([114e32e](https://github.com/lidaixingchen/brutxui-vue3/commit/114e32e80c0b1480f9b3cda85214fe7efc838a5e))
-* **ui:** 更新 useColorPicker、year-picker 和 tour 的单元测试以适配最新的交互与性能优化变更 ([14c2282](https://github.com/lidaixingchen/brutxui-vue3/commit/14c228225656b84fd6c6ec2cf2c40b4fd5369010))
-
 ## 归档版本
 
 > 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：
 
+* **[0.9.3](apps/docs/changelog/v0.9.3.md)** - 2026-07-09
 * **[0.9.2](apps/docs/changelog/v0.9.2.md)** - 2026-07-08
 * **[0.9.1](apps/docs/changelog/v0.9.1.md)** - 2026-07-06
 * **[0.9.0](apps/docs/changelog/v0.9.0.md)** - 2026-07-03

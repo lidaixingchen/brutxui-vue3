@@ -21,7 +21,7 @@ const TYPE_LABELS = {
     revert: '⏪ Reverts',
 };
 
-const EXCLUDED_TYPES = ['release'];
+const EXCLUDED_TYPES = ['release', 'RELEASING'];
 
 const COMMIT_PATTERN = /^(\w+)(?:\(([^)]+)\))?\s*(!)?\s*:\s*(.+)$/;
 
@@ -138,9 +138,7 @@ function renderMarkdown(version, date, categories, compareBase) {
     function renderCommit(commit) {
         const scope = commit.scope ? `**${commit.scope}:** ` : '';
         const header = `* ${scope}${commit.subject} ([${commit.hash.slice(0, 7)}](${REPO_URL}/commit/${commit.hash}))`;
-        if (!commit.body) return [header];
-        const bodyLines = commit.body.split('\n').filter(Boolean);
-        return [header, ...bodyLines.map((line) => `  ${line}`)];
+        return [header];
     }
 
     if (categories.has('breaking')) {
