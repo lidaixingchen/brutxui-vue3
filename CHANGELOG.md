@@ -2,6 +2,76 @@
 
 根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。
 
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.6...HEAD)
+
+## [0.9.6](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.5...v0.9.6) - 2026-07-27
+
+### 🧹 Chores
+
+* Releasing 2 package(s) ([3f79276](https://github.com/lidaixingchen/brutxui-vue3/commit/3f792767bc6274973222d509c56dca23a9b32f3d))
+  Releases:
+    brutx-ui-vue@0.9.6
+    brutx-vue@0.8.1
+  [skip ci]
+
+### 🐛 Bug Fixes
+
+* **docs:** 移除失效的 @ts-expect-error 指令修复 CI typecheck ([76f6909](https://github.com/lidaixingchen/brutxui-vue3/commit/76f690933b71a68444c9cf39f4c16dec2b3af527))
+  vitepress 内置 vite 升级至 6.4.3 后，原 Vite 5 与 Vite 8 类型冲突
+  （TS2321 Excessive stack depth）不再出现，残留指令触发 TS2578。
+* **changelog:** 修复脏提交引发的 TypeError 崩溃与切片倒序引发的爆栈风险 ([432ffa2](https://github.com/lidaixingchen/brutxui-vue3/commit/432ffa2075c9cc364b489b1b826232531a449a32))
+* **changelog:** 修复 Windows CRLF 换行替换失效并添加 index.md 缺失兜底机制 ([2573ca3](https://github.com/lidaixingchen/brutxui-vue3/commit/2573ca3cce65f2421be2b969646b12c5485d4520))
+* **changelog:** 修复 fs 引用 ReferenceError 致命 bug 并优化正则与链接兼容性 ([5d437a9](https://github.com/lidaixingchen/brutxui-vue3/commit/5d437a96d058239b1517e8262f9d08c1a96e44a1))
+
+### 📝 Documentation
+
+* 更新文档规范、示例与配置，移除废弃的useLocale内容 ([d176bcc](https://github.com/lidaixingchen/brutxui-vue3/commit/d176bcc2b95a066f0bbaca3eed54e07de2372721))
+  1. 新增theme提交scope说明并补充子scope使用建议
+  2. 为所有vue示例添加lang="ts"类型支持
+  3. 格式化导航示例的组件名称为粗体
+  4. 移除文档中废弃的useLocale相关内容
+  5. 更新AGENTS.md、RELEASE.md的命令与链接
+  6. 简化changelog侧边栏生成函数的多语言逻辑
+  7. 为表单、反馈组件示例补充完整类型定义
+* 更新组件开发文档与项目维护指南 ([9430fc6](https://github.com/lidaixingchen/brutxui-vue3/commit/9430fc637a4025449da6aeeae23cc85252a7a663))
+  重构组件开发流程文档，新增开发自检约束与自动生成文件警告，补充脚手架命令、代码规范与文档链接
+* 批量更新文档与新增组件词典、组合式函数词典 ([4197de6](https://github.com/lidaixingchen/brutxui-vue3/commit/4197de69fd551000b2c41727423e24c2cd85e1bf))
+  1. 更新设计令牌文档的最佳实践，替换为国际化最佳实践内容
+  2. 修复layout-nav.md中的本地绝对路径链接为相对路径
+  3. 拆分并重构SKILL.md主文档，新增独立的维护约定章节
+  4. 新增完整的组件词典与组合式函数词典文档
+* **ui:** 新增 AI 技能高阶优化指南与复合区块协同示例 ([9542faa](https://github.com/lidaixingchen/brutxui-vue3/commit/9542faa593683a3decd6f9ce64eb70341fbf2357))
+  - 在 SKILL.md 中补充新粗野极致视觉、微交互动效一致性、SSR 兼容和 I18n 插值防错规范
+  - 在 layout-nav.md 中补充三栏协同 Dashboard 大页面复合状态流协同模板
+* **ui:** 优化 AI 技能文档与参考指南 ([3ce994a](https://github.com/lidaixingchen/brutxui-vue3/commit/3ce994ae7d75bdaef8b3df9eb462be645bb394e4))
+  - 清理历史遗留版本描述并优化表单类型
+  - 引入 TS 严格模式和 A11y 最佳实践小节
+  - 补充 TreeView、Upload、KanbanBoard 复杂业务模板及 Tailwind v4 theme 规范
+* **skills:** 更新 brutxui 技能文档与 AGENTS.md 维护约定 ([8945992](https://github.com/lidaixingchen/brutxui-vue3/commit/89459924c396d3789ecf57f2054b194b2b00d1d4))
+  - 将 SKILL.md 同步更新至 v0.9.5 最新规范，移除历史版本变迁信息
+  - 在 AGENTS.md 中新增技能文档维护规范，约定只保留最新 API 与编码规范
+* **changelog:** 精简主 CHANGELOG.md 头部描述并同步更新发版初始化头 ([b2f054a](https://github.com/lidaixingchen/brutxui-vue3/commit/b2f054a48dd10025c278b4f7d16bd8c23da9f09d))
+* **changelog:** 补齐遗漏的历史归档版本 v0.2.2 与 v0.1.1 ([f873419](https://github.com/lidaixingchen/brutxui-vue3/commit/f873419a5e4b3c2a9d2ed07b2caa2d2fce67e518))
+* **changelog:** 全面重构、精炼并规范化 v0.8.0 至 v0.1.0 之间的所有历史归档日志 ([2b773ee](https://github.com/lidaixingchen/brutxui-vue3/commit/2b773eedc6f646a83ffdabefc9f0ff34f27e2995))
+* **changelog:** 补全并精炼 v0.6.8 至 v0.1.0 历史归档更新日志 ([dac2c6f](https://github.com/lidaixingchen/brutxui-vue3/commit/dac2c6fc876594ee05a671f9810e2fbb99e3667e))
+* **changelog:** 统一中英文主导航链接路径结构 ([6e533ff](https://github.com/lidaixingchen/brutxui-vue3/commit/6e533ffcaa8fa0d29cf5190935f94f21370064ab))
+  中文 nav 链接从 /changelog/ 改为 /guide/changelog，与英文 /en/guide/changelog 保持路径结构一致。原 /changelog/ 路由仍可通过引导页或侧边栏访问。
+* **changelog:** 在主导航栏添加更新日志入口 ([cdd1a21](https://github.com/lidaixingchen/brutxui-vue3/commit/cdd1a21bdba1029b8e5008086b54f83275a90be1))
+  - 中文 nav 添加「更新日志」链接到 /changelog/ 归档索引页
+  - 英文 nav 添加「Changelog」链接到 /en/guide/changelog 引导页（英文 locale 无独立归档目录）
+* **changelog:** 引入归档机制与根 CHANGELOG 生成脚本 ([f0eff9e](https://github.com/lidaixingchen/brutxui-vue3/commit/f0eff9e85b63c9dcec85e504edd938ee731c15f9))
+  - 新增 generate-changelog.mjs 脚本（pnpm changelog / changelog:dry）汇总 conventional commits 生成根 CHANGELOG 段
+  - 引入归档机制：根文件仅保留最近 3 个版本完整段落，更早版本归档至 apps/docs/changelog/ 独立文件
+  - 重写根 CHANGELOG.md：v0.9.5/v0.9.4/v0.9.3 完整段落 + 17 个归档版本索引
+  - VitePress config 添加 generateChangelogSidebar() 自动生成归档侧边栏（按 major 分组）
+  - guide/changelog.md 改造为引导页，避免版本内容重复维护
+  - RELEASE.md 补充根 CHANGELOG 生成与归档机制章节
+  - AGENTS.md 添加 pnpm changelog / changelog:dry 命令与脚本路径
+
+### ✨ Features
+
+* **changelog:** 实现全自动滑动窗口归档与裁剪逻辑，并同步更新发版规范文档 ([482f8ce](https://github.com/lidaixingchen/brutxui-vue3/commit/482f8ce1c15510f28588f005113eb0c1b4a32673))
+
 ## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.5...HEAD)
 
 ## [0.9.5](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.4...v0.9.5) - 2026-07-18
