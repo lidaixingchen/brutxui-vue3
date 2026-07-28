@@ -65,12 +65,16 @@ jobs:
                     packages/ui/registry-manifest.json \
                     packages/ui/src/styles.css \
                     packages/registry/registry \
+                    ':(exclude)packages/registry/registry/registry-manifest.json' \
+                    ':(exclude)packages/registry/registry/registry-sbom.json' \
                   || {
                     echo "::error::Generated artifacts are stale — run 'pnpm build' and commit the result before tagging"
                     git diff --stat -- \
                       packages/ui/registry-manifest.json \
                       packages/ui/src/styles.css \
-                      packages/registry/registry
+                      packages/registry/registry \
+                      ':(exclude)packages/registry/registry/registry-manifest.json' \
+                      ':(exclude)packages/registry/registry/registry-sbom.json'
                     exit 1
                   }
 

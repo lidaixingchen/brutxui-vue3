@@ -77,7 +77,9 @@ jobs:
                   if ! git diff --exit-code -- \
                     packages/ui/registry-manifest.json \
                     packages/ui/src/styles.css \
-                    packages/registry/registry; then
+                    packages/registry/registry \
+                    ':(exclude)packages/registry/registry/registry-manifest.json' \
+                    ':(exclude)packages/registry/registry/registry-sbom.json'; then
                     echo "::error::自动生成文件与提交态不一致（drift）。请运行 pnpm build 后提交更新。"
                     exit 1
                   fi
