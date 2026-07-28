@@ -57,7 +57,7 @@
             "inputs": ["src/**", "tsconfig.json", "tsconfig.*.json"]
         },
         "lint": {
-            "inputs": ["src/**", "eslint.config.js", ".eslintrc.*"]
+            "inputs": ["src/**", "scripts/**", "tests/**", "eslint.config.js", ".eslintrc.*"]
         },
         "validate": {
             "dependsOn": ["build"],

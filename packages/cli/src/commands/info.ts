@@ -50,7 +50,7 @@ async function getComponentInfo(
     registryOverride?: string
 ): Promise<ComponentInfoResult> {
     const source = registryOverride ?? DEFAULT_REGISTRY_URL;
-    let registryItem: RegistryItem | null = null;
+    let registryItem: RegistryItem | null;
     let registryFetchError: Error | null = null;
 
     try {

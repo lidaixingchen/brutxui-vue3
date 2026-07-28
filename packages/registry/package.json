@@ -9,6 +9,7 @@
         "build:verify": "tsx scripts/verify-build.ts",
         "bench": "tsx scripts/build-registry.ts --bench",
         "validate": "tsx scripts/validate-registry.ts",
+        "lint": "eslint scripts tests",
         "test": "vitest run",
         "typecheck": "tsc --noEmit"
     },
@@ -16,9 +17,13 @@
         "brutx-shared-vue": "workspace:*"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@types/node": "^25.9.1",
+        "eslint": "^10.4.1",
+        "globals": "^17.6.0",
         "tsx": "^4.22.4",
         "typescript": "^6.0.3",
+        "typescript-eslint": "^8.60.1",
         "vitest": "^4.1.10"
     }
 }

@@ -83,8 +83,7 @@ export async function detectWorkspaceRoot(cwd: string): Promise<string | null> {
                 if (pkg.workspaces) {
                     return current;
                 }
-            } catch {
-            }
+            } catch { /* ignore malformed package.json */ }
         }
 
         const parent = path.dirname(current);
@@ -311,8 +310,7 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
                     });
                 }
             }
-        } catch {
-        }
+        } catch { /* ignore parse failures in import rewriting */ }
     };
 
     if (isVueSfc) {

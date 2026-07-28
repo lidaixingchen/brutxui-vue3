@@ -275,7 +275,7 @@ export async function migrateConfig(raw: Record<string, unknown>): Promise<Recor
         return raw;
     }
 
-    let migrated = { ...raw };
+    const migrated = { ...raw };
 
     // v0 → v1: add $schema and $version if missing
     if (version < 1) {
@@ -309,7 +309,7 @@ export async function readConfig(cwd: string): Promise<BrutalistConfig> {
     try {
         config = await fs.readJson(configPath);
     } catch (error) {
-        throw new Error(`Failed to parse components.json: invalid JSON. ${error instanceof Error ? error.message : ''}`);
+        throw new Error(`Failed to parse components.json: invalid JSON. ${error instanceof Error ? error.message : ''}`, { cause: error });
     }
 
     validateBrutalistConfig(config);

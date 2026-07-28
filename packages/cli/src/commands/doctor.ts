@@ -251,7 +251,7 @@ async function checkWorkspaceHint(cwd: string): Promise<CheckResult[]> {
 async function checkDependencies(cwd: string): Promise<CheckResult[]> {
     const results: CheckResult[] = [];
 
-    let packageJson: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> } = {};
+    let packageJson: { dependencies?: Record<string, string>; devDependencies?: Record<string, string> };
     try {
         packageJson = await fs.readJson(path.join(cwd, 'package.json'));
     } catch {

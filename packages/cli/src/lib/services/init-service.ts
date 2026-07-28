@@ -92,7 +92,7 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
     const brutalistCss = await getBrutalistCssStyles();
     const brutxBlock = `${BRUTX_CSS_START_MARKER}\n${brutalistCss}\n${BRUTX_CSS_END_MARKER}`;
 
-    let content = '';
+    let content: string;
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
         const markerPattern = new RegExp(

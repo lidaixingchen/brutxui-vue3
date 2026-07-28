@@ -220,8 +220,7 @@ export async function writeComponentFiles(
         for (const dir of sortedDirs) {
             try {
                 await fs.promises.rmdir(dir);
-            } catch {
-            }
+            } catch { /* best-effort cleanup */ }
         }
 
         return Promise.reject(Object.assign(writeError instanceof Error ? writeError : new Error(String(writeError)), {

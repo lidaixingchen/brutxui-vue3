@@ -126,8 +126,8 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         });
     }
 
-    let totalRemoved = 0;
-    let orphanedRemoved = 0;
+    let totalRemoved: number;
+    let orphanedRemoved: number;
 
     try {
         const result = await removeComponents(

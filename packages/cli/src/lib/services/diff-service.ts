@@ -121,7 +121,7 @@ export async function diffComponent(
     manifestEntry?: InstalledComponentManifest,
     useCache: boolean = true
 ): Promise<DiffResult> {
-    let registryItem: RegistryItem | null = null;
+    let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
     try {

@@ -57,6 +57,23 @@ jobs:
                     exit 1
                   fi
 
+            # 生成物一致性门禁：build 后校验自动生成文件与 commit 一致
+            # 防止漏跑 prebuild-scan / generate-styles-tokens / registry build 的 tag 通过发布
+            - name: Verify generated artifacts consistency
+              run: |
+                  git diff --exit-code -- \
+                    packages/ui/registry-manifest.json \
+                    packages/ui/src/styles.css \
+                    packages/registry/registry \
+                  || {
+                    echo "::error::Generated artifacts are stale — run 'pnpm build' and commit the result before tagging"
+                    git diff --stat -- \
+                      packages/ui/registry-manifest.json \
+                      packages/ui/src/styles.css \
+                      packages/registry/registry
+                    exit 1
+                  }
+
             - name: Publish brutx-ui-vue
               working-directory: packages/ui
               env:

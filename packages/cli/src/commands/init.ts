@@ -180,7 +180,7 @@ export async function init(options: InitOptions): Promise<void> {
     logger.bold('\n🎨 Brutx-Vue - Neo-Brutalism Vue 3 Component Library\n');
     logger.info(`   Detected project: ${projectType}\n`);
 
-    let workspaceRoot: string | null = null;
+    let workspaceRoot: string | null;
     let configTarget = cwd;
     let sharedDepsTarget = cwd;
     let componentDepsTarget = cwd;
