@@ -1,5 +1,7 @@
 # GitHub Copilot BrutxUI 系统规则
 
+> **Canonical 来源声明**：本仓库规范的 canonical 来源为根目录 [AGENTS.md](../AGENTS.md)。本文件仅作为 GitHub Copilot 的补充提示；凡与 AGENTS.md 主题重复的规则一律以引用方式指向，不在此维护独立措辞。如有冲突，以 AGENTS.md 为准。
+
 你是一名精通 Vue 3 和 Tailwind CSS 的开发者，负责为 BrutxUI 代码库生成高保真组件、定价块和实用 CLI 命令。请严格遵循以下准则：
 
 ---
@@ -14,19 +16,18 @@ BrutxUI 中的每个元素都基于高对比度 Neo-Brutalist 设计语言：
   - `shadow-brutal-lg`（6px 偏移）
   - `shadow-brutal-xl`（8px 偏移）
 - **锐利圆角：** 默认通过 `rounded-none` 实现锐利无圆角边缘，或使用全局参数类如 `rounded-brutal`。
-- **物理按压反馈：** 按钮在激活时向下位移：`active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all`。
-- **对比强调色：** 通过 CSS 变量使用饱和高对比度颜色：珊瑚红 `#FF6B6B`（`bg-brutal-primary`）、薄荷青 `#4ECDC4`（`bg-brutal-secondary`）、饱和黄 `#FFE66D`（`bg-brutal-accent`）。
+- **物理按压反馈：** 按钮在激活时向下位移：优先复用 `@/lib/brutal-interaction-variants` 的 `brutalPress`（即 `active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none`），配合 `transition-all`。
+- **对比强调色：** 严禁在组件或文档中硬编码任何色值；所有颜色一律使用语义类（如 `bg-brutal-primary`、`bg-brutal-secondary`、`bg-brutal-accent`）及对应的 `--brutal-*` CSS 变量，其唯一数据源为 `packages/shared/src/design-tokens.ts`（`BASE_THEME`）。
 
 ---
 
 ## 组件蓝图与架构
 
+组件编码规范（变体隔离到 `*-variants.ts`、`cn(...)` 类合并必须 `computed()` 包裹、以 reka-ui 无头原语为基础并优先复用 BrutxUI 组件、国际化文本约定、导入路径别名等）以 [AGENTS.md](../AGENTS.md) 的「代码风格」「导入」「技术栈」章节为准，此处不复述。
+
+以下为本文件补充项：
 1. **Vue 3 SFC：** 所有组件使用 `<script setup lang="ts">` 配合 `defineProps<T>()` + `withDefaults()`。
-2. **类变体权限：** 通过 CVA 在与组件同目录的独立 `*-variants.ts` 文件中定义所有变体。
-3. **合并辅助工具：** 通过来自 `@/lib/utils` 或等效嵌套深度的 `cn(...)` 合并外部类。
-4. **计算属性类：** 始终使用 `computed()` 进行动态类合并——切勿在模板中调用 `cn()`。
-5. **无障碍：** 使用 reka-ui 处理模态框、对话框、弹出框和输入框，以保持标记健壮且完全无障碍。
-6. **导出：** 始终从 `src/index.ts` 导出新组件。
+2. **导出：** 始终从 `src/index.ts` 导出新组件。
 
 ---
 
