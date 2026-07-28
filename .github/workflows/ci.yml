@@ -72,6 +72,16 @@ jobs:
             - name: Build + typecheck + lint (turbo parallel)
               run: pnpm exec turbo run build typecheck lint
 
+            - name: Verify generated files are up-to-date
+              run: |
+                  if ! git diff --exit-code -- \
+                    packages/ui/registry-manifest.json \
+                    packages/ui/src/styles.css \
+                    packages/registry/registry; then
+                    echo "::error::自动生成文件与提交态不一致（drift）。请运行 pnpm build 后提交更新。"
+                    exit 1
+                  fi
+
             - name: Validate registry
               run: pnpm exec turbo run validate --filter=brutx-registry-vue
 

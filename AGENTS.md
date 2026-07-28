@@ -4,7 +4,7 @@
 
 > [!WARNING]
 > **禁止手动编辑以下自动生成/自动注入的文件**。所有对这些文件的变更必须通过特定脚本或上游源文件触发：
-> - `packages/ui/registry-manifest.json`：由 `prebuild-scan.ts` 自动生成，请通过 `pnpm build` 或 `pnpm --filter brutx-ui-vue prebuild:scan` 触发更新。
+> - `packages/ui/registry-manifest.json`：由 `prebuild-scan.ts` 自动生成，请通过 `pnpm build` 或 `pnpm --filter brutx-ui-vue prebuild:scan` 触发更新。注意 `lint` 和 `typecheck` 脚本也会前置执行 `prebuild:scan`，其输出已验证幂等（相同源码 → 相同 manifest，不会产生噪音 diff）。
 > - `packages/ui/src/styles.css`：其中的 `@theme` 变量声明和运行时 tokens（标记有 `@brutx:theme-tokens` 和 `@brutx:root-tokens`）由 `generate-styles-tokens.ts` 自动注入，其唯一数据源为 `packages/shared/src/design-tokens.ts`。
 > - `packages/registry/registry/` 目录下的所有 JSON 文件：由注册表构建器自动编译，请勿手动编辑。
 > - `packages/registry/registry/deps.dot` 与 `deps.json`：由 validate 脚本自动生成。
