@@ -303,6 +303,9 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
                 }
 
                 if (newPath) {
+                    // es-module-lexer 的 imp.s/imp.e 指向去引号后的模块说明符区间
+                    //（import specifier 的引号不在区间内，保留在原文中），
+                    // 因此直接替换为 newPath 即可，不能用 JSON.stringify 再加引号（会叠加成双引号）。
                     replacements.push({
                         start: offset + imp.s,
                         end: offset + imp.e,

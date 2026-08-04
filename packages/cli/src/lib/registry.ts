@@ -471,11 +471,10 @@ export async function resolveDeps(
             if (match) {
                 cleanName = match[1];
                 const version = match[2];
-                // @version 相对当前 source 解析 ref（去硬编码，支持任意 --registry）。
-                // inheritedSource 已是 version-specific 时不重复解析。
-                if (!inheritedSource || inheritedSource === source) {
-                    requestedSource = resolveVersionedSource(source, version);
-                }
+                // 版本号始终相对顶层 source 解析，避免嵌套依赖的显式版本被静默丢弃
+                // （例如顶层 button@v1 解析出 v1 ref 后，依赖 card@v2 仍应按 v2 解析，
+                //   而非在 button 的 v1 ref 下按纯名 card 拉取）。
+                requestedSource = resolveVersionedSource(source, version);
             }
         }
 

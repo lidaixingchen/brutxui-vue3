@@ -9,10 +9,15 @@ const INSTALL_COMMANDS: Record<PackageManager, string> = {
     npm: 'npm install',
 };
 
+const PACKAGE_SPEC_PATTERN = /^[a-zA-Z0-9@:/._=-]+$/;
+
 function sanitizePackageName(name: string): string {
-    // Whitelist npm alias syntax: `pkg@npm:other-pkg@version` requires `:`.
-    // `=` is included for completeness (npm packument "name@=version" pin form).
-    return name.replace(/[^a-zA-Z0-9@:/._=-]/g, '');
+    // 显式校验而非静默清洗：非法 spec（含 semver 范围符 ^~*<>| 等）直接报错，
+    // 避免 vue@^3.5.0 被改写为 vue@3.5.0、pkg@* 变成 pkg@ 等语义被篡改的问题。
+    if (!PACKAGE_SPEC_PATTERN.test(name)) {
+        throw new Error(`Unsupported package spec: "${name}"`);
+    }
+    return name;
 }
 
 export function installPackages(
@@ -45,7 +50,11 @@ export function installPackages(
         });
 
         const onSigint = () => {
+            // 与 create.ts runCommand 保持一致：移除监听 + 转发中断 + 显式以 130 退出，
+            // 避免子进程忽略 SIGINT 时父进程挂起。
+            process.removeListener('SIGINT', onSigint);
             child.kill('SIGINT');
+            process.exit(130);
         };
         process.on('SIGINT', onSigint);
 

@@ -66,16 +66,30 @@ function parseEnvTrustedPublicKeys(): TrustedPublicKey[] {
     try {
         const parsed: unknown = JSON.parse(env);
         if (!Array.isArray(parsed)) {
-            logger.debug(`${PUBLIC_KEYS_ENV} is not a JSON array, signature verification disabled.`);
+            const message = `${PUBLIC_KEYS_ENV} is not a JSON array, signature verification disabled.`;
+            if (isRequireSignature()) {
+                throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
+            }
+            logger.warn(message);
             return [];
         }
-        return parsed.filter((k): k is TrustedPublicKey =>
+        const filtered = parsed.filter((k): k is TrustedPublicKey =>
             typeof k === 'object' && k !== null &&
             typeof (k as { keyId?: unknown }).keyId === 'string' && (k as { keyId: string }).keyId.length > 0 &&
             typeof (k as { publicKey?: unknown }).publicKey === 'string' && (k as { publicKey: string }).publicKey.length > 0
         );
-    } catch {
-        logger.debug(`${PUBLIC_KEYS_ENV} is not valid JSON, signature verification disabled.`);
+        if (filtered.length < parsed.length) {
+            logger.warn(`${PUBLIC_KEYS_ENV} contains ${parsed.length - filtered.length} invalid entr${parsed.length - filtered.length !== 1 ? 'ies' : 'y'} (missing keyId/publicKey); they were ignored.`);
+        }
+        return filtered;
+    } catch (error) {
+        // 解析失败：严格模式下拒绝继续（避免验签被静默降级跳过），否则 warn 提示配置错误
+        if (error instanceof CliError) throw error;
+        const message = `${PUBLIC_KEYS_ENV} is not valid JSON, signature verification disabled.`;
+        if (isRequireSignature()) {
+            throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
+        }
+        logger.warn(message);
         return [];
     }
 }
@@ -130,19 +144,26 @@ export function verifyManifestSignature(
     manifest: { integrity?: string; signature?: string; keyId?: string },
     trustedKeys: TrustedPublicKey[] = loadTrustedPublicKeys(),
 ): boolean {
-    if (!manifest.signature || !manifest.keyId) {
-        logger.debug('Manifest is unsigned (signature/keyId missing), skipping signature verification.');
+    // 缺失签名/完整性/信任公钥：严格模式下不得静默放行（否则删除 signature/keyId 即可绕过强制验签），
+    // 默认模式保持原有的跳过（debug 日志）语义。
+    const strictOrSkip = (message: string): false => {
+        if (isRequireSignature()) {
+            throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
+        }
+        logger.debug(message);
         return false;
+    };
+
+    if (!manifest.signature || !manifest.keyId) {
+        return strictOrSkip('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.');
     }
 
     if (!manifest.integrity) {
-        logger.debug('Manifest has signature but no integrity field, cannot verify.');
-        return false;
+        return strictOrSkip('Manifest has signature but no integrity field, cannot verify. Strict signature mode requires an integrity field.');
     }
 
     if (trustedKeys.length === 0) {
-        logger.debug(`No trusted public keys configured (set ${PUBLIC_KEYS_ENV} env var), skipping signature verification.`);
-        return false;
+        return strictOrSkip(`No trusted public keys configured (set ${PUBLIC_KEYS_ENV} env var). Strict signature mode requires a trusted key.`);
     }
 
     const key = trustedKeys.find(k => k.keyId === manifest.keyId);

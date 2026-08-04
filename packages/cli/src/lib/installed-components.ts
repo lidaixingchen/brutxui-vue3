@@ -39,8 +39,12 @@ async function extractDependencies(componentDir: string): Promise<string[]> {
 
         while ((match = importRegex.exec(content)) !== null) {
             const pkg = match[1];
-            if (pkg.startsWith('@') && pkg.includes('/')) {
-                deps.add(pkg.split('/').slice(0, 2).join('/'));
+            if (pkg.startsWith('@')) {
+                const parts = pkg.split('/');
+                // 仅将真实的 scoped 包（scope 名长度 > 1）视为依赖，过滤 @/ 等路径别名
+                if (parts.length >= 2 && parts[0].length > 1) {
+                    deps.add(parts.slice(0, 2).join('/'));
+                }
             } else {
                 deps.add(pkg.split('/')[0]);
             }
