@@ -25,7 +25,13 @@ const BROWSER_TEST_PATTERN = /\.browser\.test\.(ts|js)$/;
 const SKIP_FILES = new Set(['index.ts']);
 
 function vueFileNameToExportName(fileName: string): string {
-    return fileName.replace(/\.vue$/, '');
+    // kebab-case / snake_case / 空白分隔 → PascalCase，保证导出名是合法 JS 标识符，
+    // 例如 my-button.vue → MyButton、color-mode-switcher.vue → ColorModeSwitcher
+    return fileName
+        .replace(/\.vue$/, '')
+        .split(/[-_\s]+/)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join('');
 }
 
 function tsFileNameToModuleSpec(fileName: string): string {

@@ -1,11 +1,11 @@
 import type { RegistryComponentMeta } from './types.js';
 
 export const COMPONENTS: Record<string, RegistryComponentMeta> = {
-    alert: { dependencies: ['@lucide/vue'], description: 'Contextual alert banners with variants for info, success, warning, and error states.' },
+    alert: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Contextual alert banners with variants for info, success, warning, and error states.' },
     avatar: { dependencies: ['reka-ui'], description: 'User avatar with image, fallback initials, and status indicator support.' },
-    badge: { dependencies: [], description: 'Inline status badges and labels with color variants.' },
+    badge: { dependencies: ['@lucide/vue'], description: 'Inline status badges and labels with color variants.' },
     button: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Interactive button with loading state, icon support, and multiple style variants.' },
-    calendar: { dependencies: ['v-calendar', '@lucide/vue'], description: 'Date calendar with single and range selection powered by v-calendar.', sidebarGroup: 'date-time' },
+    calendar: { dependencies: ['reka-ui', 'v-calendar', '@lucide/vue'], description: 'Date calendar with single and range selection powered by v-calendar.', sidebarGroup: 'date-time' },
     card: { dependencies: [], description: 'Content card container with header, body, footer, and description sections.' },
     checkbox: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Accessible checkbox with label and indeterminate state support.' },
     combobox: {

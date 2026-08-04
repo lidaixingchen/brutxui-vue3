@@ -31,10 +31,12 @@ const ALIAS_PREFIXES = {
     directives: '@/directives/',
 } as const;
 
-function resolveExtension(rawFileName: string, baseDir: string): string {
+function resolveExtension(rawFileName: string, baseDir: string): string | null {
     if (path.extname(rawFileName)) return rawFileName;
     if (fs.existsSync(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
-    return `${rawFileName}.ts`;
+    // 校验存在性后再返回 .ts，避免干净检出下解析到不存在的文件导致 readFileSync 崩溃
+    if (fs.existsSync(path.join(baseDir, `${rawFileName}.ts`))) return `${rawFileName}.ts`;
+    return null;
 }
 
 const TEST_FILE_PATTERN = /\.(test|spec)\.(ts|js|tsx|jsx)$/;
@@ -166,27 +168,35 @@ function scanComponent(
         if (ext !== '.vue' && ext !== '.ts') continue;
 
         const filePath = path.join(componentDir, file);
+        // 干净检出下派生文件（如 index.ts）可能不存在，跳过而非崩溃
+        if (!fs.existsSync(filePath)) continue;
         const content = fs.readFileSync(filePath, 'utf-8');
 
         for (const specifier of extractModuleSpecifiers(content)) {
             const classified = classifySpecifier(specifier, componentName, options);
             switch (classified.kind) {
-                case 'composable':
-                    composables.add(resolveExtension(classified.name, options.composablesDir));
+                case 'composable': {
+                    const resolved = resolveExtension(classified.name, options.composablesDir);
+                    if (resolved !== null) composables.add(resolved);
                     break;
+                }
                 case 'lib': {
                     const resolved = resolveExtension(classified.name, options.libDir);
-                    if (!options.libExclude?.has(resolved)) {
+                    if (resolved !== null && !options.libExclude?.has(resolved)) {
                         lib.add(resolved);
                     }
                     break;
                 }
-                case 'directive':
-                    directives.add(resolveExtension(classified.name, options.directivesDir));
+                case 'directive': {
+                    const resolved = resolveExtension(classified.name, options.directivesDir);
+                    if (resolved !== null) directives.add(resolved);
                     break;
+                }
                 case 'internal': {
                     const resolved = resolveExtension(classified.name, componentDir);
-                    if (!internalFiles.has(resolved)) {
+                    // 派生 barrel（index.ts）已由 listComponentFiles 跳过，这里同样过滤，
+                    // 避免被重新加入扫描队列（干净检出下不存在、readFileSync 崩溃）
+                    if (resolved !== null && resolved !== DERIVED_BARREL_FILE && !internalFiles.has(resolved)) {
                         internalFiles.add(resolved);
                         queue.push(resolved);
                     }
