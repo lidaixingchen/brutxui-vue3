@@ -145,8 +145,11 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     for (const result of outdated) {
         if (!selected.includes(result.component)) continue;
         const modifiedFiles = result.files.filter(f => f.status === 'modified').length;
-        if (modifiedFiles > 0) {
-            filesToOverwrite.push({ component: result.component, modifiedFiles });
+        // 完整性漂移（本地文件相对安装记录被改动/篡改）同样会被覆盖更新，
+        // 计入待确认的 overwrite 项，避免静默覆盖本地改动。
+        const integrityDrift = result.integrityStatus === 'outdated' ? 1 : 0;
+        if (modifiedFiles + integrityDrift > 0) {
+            filesToOverwrite.push({ component: result.component, modifiedFiles: modifiedFiles + integrityDrift });
         }
     }
 

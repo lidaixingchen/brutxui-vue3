@@ -757,11 +757,8 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
         return;
     }
 
-    if (options.silent) {
-        return;
-    }
-
-    const isInteractive = !options.yes && !!process.stdin.isTTY;
+    // silent 只抑制输出/交互，不应跳过修复执行：silent 时视为已确认，直接应用修复。
+    const isInteractive = !options.yes && !options.silent && !!process.stdin.isTTY;
 
     const cwd = options.cwd ?? process.cwd();
     const config = await readConfigSafe(cwd);
@@ -775,6 +772,9 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
     for (const check of fixable) {
         if (!check.fixId) continue;
 
+        // didWrite 记录本次修复是否真正执行了写入/修改，避免"未写入仍计入已修复"
+        let didWrite = false;
+
         if (isInteractive) {
             const shouldFix = await confirm({
                 message: `Apply fix: ${check.fixId}?`,
@@ -787,16 +787,19 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
             switch (check.fixId) {
                 case FixId.AddSchema:
                     config.$schema = SCHEMA_URL;
+                    didWrite = true;
                     logger.success('Added $schema field.');
                     break;
 
                 case FixId.AddConfigVersion:
                     config.$version = CURRENT_CONFIG_VERSION;
+                    didWrite = true;
                     logger.success(`Set $version to ${CURRENT_CONFIG_VERSION}.`);
                     break;
 
                 case FixId.SetStyle:
                     config.style = 'brutalism';
+                    didWrite = true;
                     logger.success('Set style to "brutalism".');
                     break;
 
@@ -804,6 +807,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                     const cssPath = await resolveAliasPath(config.tailwind.css, cwd);
                     const existing = await fs.readFile(cssPath, 'utf-8');
                     await transaction.writeFile(cssPath, existing + '\n' + await getBrutalistCssStyles());
+                    didWrite = true;
                     logger.success('Injected BrutxUI CSS tokens.');
                     break;
                 }
@@ -811,6 +815,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                 case FixId.CreateComponentsDir: {
                     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
                     await transaction.ensureDir(componentsPath);
+                    didWrite = true;
                     logger.success('Created components directory.');
                     break;
                 }
@@ -818,6 +823,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                 case FixId.CreateUtilsFile: {
                     const utilsPath = await resolveUtilsPath(config, cwd);
                     await transaction.writeFile(utilsPath + '.ts', UTILS_TEMPLATE);
+                    didWrite = true;
                     logger.success('Created utils file.');
                     break;
                 }
@@ -834,8 +840,12 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
 
                     if (utilsFile) {
                         const existing = await fs.readFile(utilsPath + utilsFile, 'utf-8');
-                        await transaction.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE);
-                        logger.success('Added cn() function.');
+                        // 避免 utils 文件已含 cn 函数时重复导出
+                        if (!existing.includes('export function cn') && !existing.includes('export const cn')) {
+                            await transaction.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE);
+                            didWrite = true;
+                            logger.success('Added cn() function.');
+                        }
                     }
                     break;
                 }
@@ -852,6 +862,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                         await transaction.remove(absPath);
                     }
                     if (orphans.length > 0) {
+                        didWrite = true;
                         logger.success(`Removed ${orphans.length} orphan file(s) for ${check.componentName}.`);
                     }
                     break;
@@ -878,6 +889,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                             const resolvedContent = resolveImportAlias(item.files[i].content, config);
                             await transaction.writeFile(targetPath, resolvedContent);
                         }
+                        didWrite = true;
                         logger.success(`Restored ${check.componentName} from registry.`);
                     } catch (restoreError) {
                         logger.warn(`Could not restore ${check.componentName} from registry: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
@@ -886,8 +898,12 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                     break;
                 }
             }
-            applied++;
-            check.status = 'pass';
+            if (didWrite) {
+                applied++;
+                check.status = 'pass';
+            } else {
+                logger.info(`No changes needed for fix: ${check.name}.`);
+            }
         } catch (error) {
             const rollbackFailures = await transaction.rollback();
             logger.error(`Failed to fix: ${check.name}`);

@@ -31,7 +31,11 @@ function runCommand(
         });
 
         const onSigint = () => {
+            // 收到 SIGINT 时先移除监听（避免监听器泄漏/父进程挂起），
+            // 转发中断给子进程并显式以标准中断码 130 退出父进程。
+            process.removeListener('SIGINT', onSigint);
             child.kill('SIGINT');
+            process.exit(130);
         };
         process.on('SIGINT', onSigint);
 

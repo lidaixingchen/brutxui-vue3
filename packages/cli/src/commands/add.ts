@@ -92,8 +92,8 @@ async function selectComponents(inputComponents: string[], options: AddOptions):
     return selected;
 }
 
-async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<void> {
-    if (deps.length === 0) return;
+async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean): Promise<boolean> {
+    if (deps.length === 0) return true;
 
     const packageManager = await detectPackageManager(cwd);
     logger.newLine();
@@ -101,7 +101,7 @@ async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean
     if (dryRun) {
         logger.bold(`[Dry Run] Would install dependencies using ${packageManager}:`);
         logger.info(`  ${deps.join(', ')}`);
-        return;
+        return true;
     }
 
     logger.bold(`Installing dependencies with ${packageManager}...`);
@@ -109,9 +109,11 @@ async function installComponentDeps(deps: string[], cwd: string, dryRun: boolean
     try {
         await installPackages(packageManager, deps, cwd);
         logger.success('✓ Dependencies installed');
+        return true;
     } catch {
         logger.warn('⚠ Failed to install dependencies automatically.');
         logger.info(`  Run manually: ${getInstallCommand(packageManager, deps)}`);
+        return false;
     }
 }
 
@@ -301,56 +303,62 @@ async function addInner(
             }
         }
 
-        await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
+        const depsInstalled = await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
 
         if (!options.dryRun && added.length > 0) {
-            // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
-            const versionByName = new Map<string, string>();
-            for (const inputName of components) {
-                const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
-                if (match) {
-                    versionByName.set(match[1], match[2]);
+            if (allDeps.length > 0 && !depsInstalled) {
+                // 依赖安装失败时不注册组件：避免组件文件已写入、依赖缺失却仍标记为 installed 的半安装状态
+                logger.warn('⚠ Dependency installation failed. Files were written but the component was NOT registered as installed.');
+                logger.info('  Install dependencies manually, then re-run the add command to register it.');
+            } else {
+                // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
+                const versionByName = new Map<string, string>();
+                for (const inputName of components) {
+                    const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
+                    if (match) {
+                        versionByName.set(match[1], match[2]);
+                    }
                 }
-            }
 
-            // 版本混用兼容性提示：检测已安装组件与即将安装组件的版本差异
-            if (versionByName.size > 0) {
-                const existingManifest = await readManifest(targetCwd);
-                if (existingManifest) {
-                    for (const [name, newVersion] of versionByName) {
-                        const existing = existingManifest.components[name];
-                        if (existing?.version && existing.version !== 'latest' && existing.version !== newVersion) {
-                            logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
+                // 版本混用兼容性提示：检测已安装组件与即将安装组件的版本差异
+                if (versionByName.size > 0) {
+                    const existingManifest = await readManifest(targetCwd);
+                    if (existingManifest) {
+                        for (const [name, newVersion] of versionByName) {
+                            const existing = existingManifest.components[name];
+                            if (existing?.version && existing.version !== 'latest' && existing.version !== newVersion) {
+                                logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
+                            }
                         }
                     }
                 }
-            }
 
-            const manifestEntries = await Promise.all(
-                registryItems
-                    .filter(item => added.includes(item.name))
-                    .map(async item => {
-                        const files = filesByComponent[item.name] ?? [];
-                        const installedContentHash = files.length > 0
-                            ? await computeInstalledContentHash(files)
-                            : undefined;
-                        return {
-                            item,
-                            registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
-                            files,
-                            installedContentHash,
-                            version: versionByName.get(item.name) ?? 'latest',
-                        };
-                    })
-            );
-            await updateInstalledComponents(targetCwd, manifestEntries);
+                const manifestEntries = await Promise.all(
+                    registryItems
+                        .filter(item => added.includes(item.name))
+                        .map(async item => {
+                            const files = filesByComponent[item.name] ?? [];
+                            const installedContentHash = files.length > 0
+                                ? await computeInstalledContentHash(files)
+                                : undefined;
+                            return {
+                                item,
+                                registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
+                                files,
+                                installedContentHash,
+                                version: versionByName.get(item.name) ?? 'latest',
+                            };
+                        })
+                );
+                await updateInstalledComponents(targetCwd, manifestEntries);
 
-            const shouldUpdateSnippets = options.vscode === true
-                || (options.vscode !== false && await hasVscodeDir(targetCwd));
+                const shouldUpdateSnippets = options.vscode === true
+                    || (options.vscode !== false && await hasVscodeDir(targetCwd));
 
-            if (shouldUpdateSnippets) {
-                const snippetPath = await mergeSnippetsFile(targetCwd, added);
-                logger.success(`✓ VS Code snippets updated at ${path.relative(targetCwd, snippetPath)}`);
+                if (shouldUpdateSnippets) {
+                    const snippetPath = await mergeSnippetsFile(targetCwd, added);
+                    logger.success(`✓ VS Code snippets updated at ${path.relative(targetCwd, snippetPath)}`);
+                }
             }
         }
 

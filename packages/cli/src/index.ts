@@ -260,7 +260,12 @@ function preprocessArgv(argv: string[]): string[] {
  * 环境变量 BRUTX_DRY_RUN=1 / BRUTX_VERBOSE 由各自模块自动检测，这里只处理 CLI flag。
  */
 function applyGlobalOptionsFromArgv(argv: string[]): void {
-    if (argv.includes('--dry-run')) {
+    // 仅当 --dry-run 出现在子命令名之前（全局位置）时才启用全局 dry-run，
+    // 避免 add/update/remove 子命令自身的 --dry-run 被误提升为全局 dry-run。
+    // argv 前两项是 node 可执行文件与脚本路径，从第三项起找第一个位置参数（子命令名）。
+    const cmdIdx = argv.findIndex((arg, index) => index >= 2 && !arg.startsWith('-'));
+    const globalDryRunIdx = argv.indexOf('--dry-run');
+    if (globalDryRunIdx !== -1 && (cmdIdx === -1 || globalDryRunIdx < cmdIdx)) {
         setGlobalDryRun(true);
     }
 
