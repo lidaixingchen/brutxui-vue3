@@ -130,6 +130,54 @@ async function findNuxtConfig(cwd: string): Promise<string | null> {
     return null;
 }
 
+/**
+ * 检测 rootBlock（形如 `{ ... }` 的根对象文本）第一层是否存在指定键。
+ * 跳过字符串、注释与嵌套对象，避免 /\bkey\s*:/ 因 \s* 跨行而误命中
+ * 嵌套对象（如 vite: { css: ... }）或注释里的字面量，导致根级配置漏注入。
+ */
+function hasRootObjectKey(rootBlock: string, key: string): boolean {
+    let depth = 0;
+    let i = 0;
+    while (i < rootBlock.length) {
+        const ch = rootBlock[i];
+        const next = rootBlock[i + 1];
+
+        if (ch === '/' && next === '/') {
+            while (i < rootBlock.length && rootBlock[i] !== '\n') i++;
+            continue;
+        }
+        if (ch === '/' && next === '*') {
+            const end = rootBlock.indexOf('*/', i + 2);
+            i = end === -1 ? rootBlock.length : end + 2;
+            continue;
+        }
+        if (ch === '"' || ch === "'" || ch === '`') {
+            const quote = ch;
+            i++;
+            while (i < rootBlock.length) {
+                if (rootBlock[i] === '\\') { i += 2; continue; }
+                if (rootBlock[i] === quote) { i++; break; }
+                i++;
+            }
+            continue;
+        }
+        if (ch === '{') { depth++; i++; continue; }
+        if (ch === '}') { depth--; i++; continue; }
+
+        // 仅匹配根对象第一层（depth === 1，rootBlock 以外层 { 开头）
+        if (depth === 1 && ch === key[0] && rootBlock.startsWith(key, i)) {
+            const prev = i > 0 ? rootBlock[i - 1] : '';
+            const isWordBoundary = prev === '' || !/[a-zA-Z0-9_$]/.test(prev);
+            const after = rootBlock.slice(i + key.length);
+            if (isWordBoundary && (after.startsWith(':') || /^\s+:/.test(after))) {
+                return true;
+            }
+        }
+        i++;
+    }
+    return false;
+}
+
 export function injectNuxtConfig(content: string, cssPath: string, componentsRelDir: string): string | null {
     const defineMatch = content.match(/defineNuxtConfig\s*\(/);
     if (!defineMatch || defineMatch.index === undefined) {
@@ -155,8 +203,9 @@ export function injectNuxtConfig(content: string, cssPath: string, componentsRel
         }
     }
     const rootBlock = content.slice(braceIndex, rootEnd + 1);
-    const hasComponents = /\bcomponents\s*:/.test(rootBlock);
-    const hasCss = /\bcss\s*:/.test(rootBlock);
+    // 只检测根对象第一层的键名（跳过字符串/注释/嵌套对象），避免误判导致根级配置漏注入
+    const hasComponents = hasRootObjectKey(rootBlock, 'components');
+    const hasCss = hasRootObjectKey(rootBlock, 'css');
 
     if (hasComponents && hasCss) {
         return content;

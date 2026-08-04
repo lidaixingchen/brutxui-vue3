@@ -152,21 +152,32 @@ async function findOrphanedFiles(
 
     const orphaned: string[] = [];
 
-    const stripAliasPrefix = (specifier: string, aliasDir: string): string => {
+    const stripAliasPrefix = (specifier: string, aliasDir: string): string | null => {
+        const strip = (rel: string): string | null => {
+            const clean = rel.split(/[?#]/)[0];
+            // 拒绝路径穿越（..）与空相对路径，避免解析到基础目录之外或目录本身
+            if (clean === '' || clean.split('/').includes('..')) return null;
+            return clean;
+        };
         const prefix = `@/${aliasDir}/`;
         if (specifier.startsWith(prefix)) {
-            return specifier.slice(prefix.length).split(/[?#]/)[0];
+            return strip(specifier.slice(prefix.length));
         }
         const legacyPrefix = `${aliasDir}/`;
         if (specifier.startsWith(legacyPrefix)) {
-            return specifier.slice(legacyPrefix.length).split(/[?#]/)[0];
+            return strip(specifier.slice(legacyPrefix.length));
         }
-        return specifier.split('/').pop() ?? '';
+        // 相对导入或无法识别的 specifier（如 ~/...）不做按文件名猜测，
+        // 避免解析到无关的同名文件并被删除
+        return null;
     };
 
     for (const [importPath, importers] of importMap) {
         const wasOnlyUsedByRemoved = [...importers].every(c => removedComponents.includes(c));
         if (!wasOnlyUsedByRemoved) continue;
+
+        // 相对导入无法可靠定位（需按导入文件所在目录解析），跳过避免误删无关同名文件
+        if (importPath.startsWith('.')) continue;
 
         const isComposable = importPath.includes('/composables/')
             || (sharedHooksPath !== null && importPath.includes('/hooks/'));
@@ -181,36 +192,50 @@ async function findOrphanedFiles(
         if (isComposable) {
             if (sharedHooksPath && importPath.includes('/hooks/') && await fs.pathExists(sharedHooksPath)) {
                 const relativePath = stripAliasPrefix(importPath, 'hooks');
-                resolvedPath = await resolveScriptFile(sharedHooksPath, relativePath);
+                if (relativePath !== null) {
+                    resolvedPath = await resolveScriptFile(sharedHooksPath, relativePath);
+                }
             }
             if (!resolvedPath && await fs.pathExists(composablesPath)) {
                 const relativePath = stripAliasPrefix(importPath, 'composables');
-                resolvedPath = await resolveScriptFile(composablesPath, relativePath);
+                if (relativePath !== null) {
+                    resolvedPath = await resolveScriptFile(composablesPath, relativePath);
+                }
             }
         }
 
         if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
             const relativePath = stripAliasPrefix(importPath, 'locales');
-            resolvedPath = await resolveScriptFile(localesPath, relativePath);
+            if (relativePath !== null) {
+                resolvedPath = await resolveScriptFile(localesPath, relativePath);
+            }
         }
 
         if (!resolvedPath && isDirective && await fs.pathExists(directivesPath)) {
             const relativePath = stripAliasPrefix(importPath, 'directives');
-            resolvedPath = await resolveScriptFile(directivesPath, relativePath);
+            if (relativePath !== null) {
+                resolvedPath = await resolveScriptFile(directivesPath, relativePath);
+            }
         }
 
         if (!resolvedPath && isUtils) {
             if (sharedLibPath && await fs.pathExists(sharedLibPath)) {
                 const relativePath = stripAliasPrefix(importPath, 'lib');
-                resolvedPath = await resolveScriptFile(sharedLibPath, relativePath);
+                if (relativePath !== null) {
+                    resolvedPath = await resolveScriptFile(sharedLibPath, relativePath);
+                }
             }
             if (!resolvedPath && await fs.pathExists(utilsPath)) {
                 const relativePath = stripAliasPrefix(importPath, 'lib');
-                resolvedPath = await resolveScriptFile(utilsPath, relativePath);
+                if (relativePath !== null) {
+                    resolvedPath = await resolveScriptFile(utilsPath, relativePath);
+                }
             }
         }
 
         if (resolvedPath) {
+            // 路径穿越防护：解析结果必须位于 cwd 内，非安全路径不加入 orphaned
+            if (!await isSafePath(resolvedPath, cwd)) continue;
             orphaned.push(resolvedPath);
         }
     }
@@ -339,6 +364,8 @@ export async function removeComponents(
 
         if (options.removeOrphaned) {
             for (const f of orphanedFiles) {
+                // 统一安全路径校验：拒绝任何解析到 cwd 之外的路径，防止删除目录外文件
+                if (!await isSafePath(f, cwd)) continue;
                 if (await fs.pathExists(f)) {
                     await transaction.remove(f);
                     orphanedRemoved++;

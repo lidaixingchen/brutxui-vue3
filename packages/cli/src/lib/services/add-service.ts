@@ -162,13 +162,14 @@ export async function writeComponentFiles(
             options.callbacks?.onProgress?.({ item, index: i, total: items.length });
 
             let itemAdded = false;
+            let itemSkipped = false;
 
             for (const file of item.files) {
                 const targetPath = await resolveComponentFilePath(file.path, config, cwd);
 
                 if (await fs.pathExists(targetPath) && !options.overwrite) {
                     options.callbacks?.onSkipFile?.({ item, filePath: file.path });
-                    skippedSet.add(item.name);
+                    itemSkipped = true;
                     continue;
                 }
 
@@ -200,6 +201,9 @@ export async function writeComponentFiles(
 
             if (itemAdded) {
                 added.push(item.name);
+            } else if (itemSkipped) {
+                // 仅当该组件没有任何文件写入成功时才放入 skippedSet，避免与 added 自相矛盾
+                skippedSet.add(item.name);
             }
         }
     } catch (writeError) {
