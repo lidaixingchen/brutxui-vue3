@@ -75,6 +75,39 @@ export function computeRegistryIntegrity(files: Array<Pick<RegistryFile, 'conten
     return 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
 }
 
+/**
+ * registry-manifest.json 自身完整性哈希的规范化输入（与 build 侧、CLI 验签侧共享）。
+ * 见 computeRegistryManifestIntegrity 的说明。
+ */
+export interface RegistryManifestIntegrityInput {
+    name: string;
+    schemaVersion: number;
+    registryVersion: string;
+    items: Record<string, unknown>;
+}
+
+/**
+ * 计算 registry-manifest 自身完整性哈希（基础设施闭环 P1 安全契约）。
+ *
+ * 规范化契约（CLI 验签侧与 build 侧共用同一实现，严禁单独修改其一）：
+ *   1. items 按 name 字典序排序（Object.entries 再 sort，与字段写入顺序无关）
+ *   2. 规范化 JSON 仅含 name / schemaVersion / registryVersion / items 四个字段，顺序固定
+ *   3. 排除 buildTimestamp / gitCommit / integrity / signature / keyId 自身（两次 build 间会变）
+ *
+ * 返回 sha256 hex（不含 "sha256-" 前缀）。
+ */
+export function computeRegistryManifestIntegrity(manifest: RegistryManifestIntegrityInput): string {
+    const sortedItems = Object.entries(manifest.items)
+        .sort(([a], [b]) => a.localeCompare(b));
+    const canonical = JSON.stringify({
+        name: manifest.name,
+        schemaVersion: manifest.schemaVersion,
+        registryVersion: manifest.registryVersion,
+        items: sortedItems,
+    });
+    return crypto.createHash('sha256').update(canonical).digest('hex');
+}
+
 export function validateRegistryIntegrity(item: RegistryItem, context = item.name): void {
     const expected = computeRegistryIntegrity(item.files);
 

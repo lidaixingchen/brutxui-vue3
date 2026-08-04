@@ -24,9 +24,13 @@ export type {
 export {
     REGISTRY_FILE_TYPES,
     computeRegistryIntegrity,
+    computeRegistryManifestIntegrity,
     validateRegistryIntegrity,
     validateRegistryItem,
     validateRegistryIndex,
+} from './registry.js';
+export type {
+    RegistryManifestIntegrityInput,
 } from './registry.js';
 export type { SidebarLocale, SidebarItem } from './sidebar-generator.js';
 export {
