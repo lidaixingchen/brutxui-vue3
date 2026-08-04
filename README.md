@@ -80,6 +80,8 @@ npx brutx-vue@latest add --all --overwrite
 ```
 
 > **升级提示：** 始终使用 `npx brutx-vue@latest` 确保运行最新版 CLI。升级组件时加 `--overwrite` 会覆盖本地修改，请提前备份或使用版本控制。
+>
+> **供应链安全：** 官方 Registry 的 manifest 使用 Ed25519 签名，CLI 内置官方公钥，零配置开箱即验；强制校验用 `--require-signature`。默认多源（GitHub Raw + jsDelivr CDN）自动 fallback，`--offline` 完全离线使用本地缓存。
 
 ### 方式 B：官方 `shadcn` CLI
 

@@ -196,3 +196,13 @@ After（新 API）：
 ## 供应链安全
 
 GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dependabot.yml](../.github/dependabot.yml) 自动管理升级（每周一开 PR）。
+
+### Registry manifest 自动签名
+
+发布链路会对 `registry-manifest.json` 做 Ed25519 签名，CLI 零配置即可验签官方 Registry：
+
+- **Secret 配置**：仓库需配置 `BRUTX_REGISTRY_PRIVATE_KEY`（PKCS8 DER base64 单行）与 `BRUTX_REGISTRY_KEY_ID`（`official-v1`）。私钥对应公钥硬编码于 CLI 的 `OFFICIAL_PUBLIC_KEYS`（`packages/cli/src/lib/constants.ts`），**二者必须匹配**，否则 CLI 严格模式验签会失败。
+- **发布时**：`publish.yml` 注入私钥环境变量，`brutx-registry-vue build` 自动签名（`signManifestFromEnv`）。
+- **main 同步**：`ci.yml` 的 `sign-manifest` job 在每次 push 到 main 时用官方私钥重建并提交带签名 manifest，保证 GitHub Raw / jsDelivr CDN 上的线上产物始终已签名。该 job 需 `BRUTX_REGISTRY_PRIVATE_KEY` Secret 已配置，且 main 未被分支保护禁用 bot 直推（GITHUB_TOKEN 无法绕过）。
+- **未签名回退**：Fork / 本地 build 未注入私钥时保持未签名，CLI 向后兼容跳过。
+- **幂等性**：manifest 的 `buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 均不参与 integrity 计算，签名稳定；`sign-manifest` job 已 `unset GITHUB_SHA`，产物完全幂等（首次补签后不再产生提交抖动）。
