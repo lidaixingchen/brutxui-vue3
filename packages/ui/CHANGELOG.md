@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.9.7
+
+### Patch Changes
+
+- 同步版本号以匹配 CLI 基础设施闭环发布（无组件功能变更）。
+
 ## 0.9.6
 
 ### Patch Changes
