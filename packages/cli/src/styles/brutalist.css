@@ -276,9 +276,20 @@
     border-color: var(--brutal-border-color, #000000);
 }
 
-.border-t-brutal,
+.border-t-brutal {
+    border-top-color: var(--brutal-border-color, #000000);
+}
+
 .border-r-brutal {
-    border-color: var(--brutal-border-color, #000000);
+    border-right-color: var(--brutal-border-color, #000000);
+}
+
+.border-b-brutal {
+    border-bottom-color: var(--brutal-border-color, #000000);
+}
+
+.border-l-brutal {
+    border-left-color: var(--brutal-border-color, #000000);
 }
 
 .border-t-brutal-fg {
