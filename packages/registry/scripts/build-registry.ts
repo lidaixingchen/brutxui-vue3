@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'url';
 import {
     COMPONENT_METADATA,
     computeRegistryIntegrity,
+    computeRegistryManifestIntegrity,
     validateRegistryIntegrity,
     validateRegistryItem,
     CSS_VARS,
@@ -219,22 +220,9 @@ export interface RegistryBuildManifestOptions {
  * 计算 registry-manifest 自身完整性哈希。
  * 对 items 的规范化 JSON 序列求 sha256（按 name 字典序），
  * 排除 buildTimestamp/gitCommit/integrity 本身（这些字段在两次 build 间会变）。
- * 用于 CLI 拉取 manifest 后校验其未被篡改（v2.2 补强）。
+ * 规范化契约实现位于 brutx-shared-vue 的 computeRegistryManifestIntegrity，
+ * CLI 验签侧复用同一实现——两处必须保持逐字一致，严禁各自单独实现。
  */
-function computeManifestIntegrity(
-    manifest: Pick<RegistryBuildManifest, 'name' | 'schemaVersion' | 'registryVersion' | 'items'>,
-): string {
-    const sortedItems: Array<[string, unknown]> = Object.entries(manifest.items)
-        .sort(([a], [b]) => a.localeCompare(b));
-    const canonical = JSON.stringify({
-        name: manifest.name,
-        schemaVersion: manifest.schemaVersion,
-        registryVersion: manifest.registryVersion,
-        items: sortedItems,
-    });
-    return crypto.createHash('sha256').update(canonical).digest('hex');
-}
-
 export function buildRegistryManifest(
     index: RegistryIndex,
     options: RegistryBuildManifestOptions
@@ -266,7 +254,7 @@ export function buildRegistryManifest(
         items,
     };
 
-    const integrity = computeManifestIntegrity(baseManifest);
+    const integrity = computeRegistryManifestIntegrity(baseManifest);
 
     return {
         ...baseManifest,
@@ -887,6 +875,47 @@ interface RegistrySbom {
     manifestIntegrity: string;
 }
 
+// --- 基础设施闭环 P0：CI/CD 自动签发 --------------------------------------
+// 在 GitHub Actions 发布工作流（main/tag 受信环境）注入以下 Secret：
+//   - BRUTX_REGISTRY_PRIVATE_KEY：Ed25519 私钥（PEM 或 PKCS8 DER base64 单行）
+//   - BRUTX_REGISTRY_KEY_ID：签发密钥标识，与 CLI 内置官方公钥的 keyId 对应
+// Fork PR / 本地 build 不注入私钥，产物保持未签名（向后兼容）。
+
+const PRIVATE_KEY_ENV = 'BRUTX_REGISTRY_PRIVATE_KEY';
+const KEY_ID_ENV = 'BRUTX_REGISTRY_KEY_ID';
+
+/**
+ * 根据环境变量对 registry-manifest 签名（Ed25519）。
+ * - 私钥与 keyId 同时存在时签发 signature/keyId 字段（对 manifest.integrity 值签名）。
+ * - 未配置私钥时返回未签名 manifest 并输出提示（本地开发 / Fork CI 保留未签名状态）。
+ * - 配置了私钥但签名失败时抛错阻断，避免发布无效签名产物。
+ */
+export function signManifestFromEnv(manifest: RegistryBuildManifest): RegistryBuildManifest {
+    const privateKeyRaw = process.env[PRIVATE_KEY_ENV];
+    const keyId = process.env[KEY_ID_ENV];
+    if (!privateKeyRaw || !keyId) {
+        console.log('ℹ Registry manifest left unsigned (BRUTX_REGISTRY_PRIVATE_KEY / BRUTX_REGISTRY_KEY_ID not set).');
+        return manifest;
+    }
+
+    const privateKey = createPrivateKeyFromInput(privateKeyRaw);
+    const signature = crypto.sign(null, Buffer.from(manifest.integrity, 'utf-8'), privateKey).toString('base64');
+    console.log(`🔏 Signed registry manifest integrity with keyId "${keyId}" (Ed25519).`);
+    return { ...manifest, signature, keyId };
+}
+
+/** 兼容 PEM 文本与 PKCS8 DER base64 单行两种私钥格式。 */
+function createPrivateKeyFromInput(raw: string): crypto.KeyObject {
+    if (raw.includes('-----BEGIN')) {
+        return crypto.createPrivateKey(raw);
+    }
+    return crypto.createPrivateKey({
+        key: Buffer.from(raw, 'base64'),
+        format: 'der',
+        type: 'pkcs8',
+    });
+}
+
 export async function run() {
     console.log('🚀 Starting registry build...');
 
@@ -1103,9 +1132,13 @@ export async function run() {
         buildTimestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
         gitCommit: process.env.GITHUB_SHA ?? process.env.COMMIT_SHA ?? null,
     });
+    // 基础设施闭环 P0：CI 检测到私钥环境变量时自动签发（Fork/本地保持未签名）
+    const signedManifest = signManifestFromEnv(manifest);
     const manifestPath = path.join(OUTPUT_DIR, 'registry-manifest.json');
-    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), 'utf-8');
-    console.log('✓ Generated registry-manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify(signedManifest, null, 2), 'utf-8');
+    console.log(signedManifest.signature
+        ? `✓ Generated registry-manifest.json (signed by ${signedManifest.keyId})`
+        : '✓ Generated registry-manifest.json (unsigned)');
 
     // P1-6 供应链安全：生成 CycloneDX 格式 SBOM，列出所有组件及 npm 依赖
     const sbom = buildRegistrySbom(registryIndex, manifest.integrity);

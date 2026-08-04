@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, afterEach } from 'vitest';
+import crypto from 'crypto';
 import {
     AVAILABLE_COMPONENTS,
     COMPONENT_METADATA,
@@ -24,6 +25,7 @@ import {
     getFileType,
     loadMergedRegistry,
     rewriteImports,
+    signManifestFromEnv,
 } from '../scripts/build-registry';
 
 describe('build-registry helpers', () => {
@@ -632,5 +634,99 @@ describe('buildRegistrySbom (P1-6)', () => {
         const sbom = buildRegistrySbom(sampleIndex, 'hash');
         const recomputed = computeSbomIntegrity(sbom);
         expect(recomputed).toBe(sbom.integrity);
+    });
+});
+
+describe('signManifestFromEnv (基础设施闭环 P0 自动签发)', () => {
+    const ENV_KEYS = ['BRUTX_REGISTRY_PRIVATE_KEY', 'BRUTX_REGISTRY_KEY_ID'] as const;
+
+    afterEach(() => {
+        for (const key of ENV_KEYS) delete process.env[key];
+    });
+
+    function makeManifest() {
+        return {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 0,
+            items: {},
+            integrity: 'sha256-abc',
+        };
+    }
+
+    it('returns unsigned manifest when signing env vars are not set', () => {
+        const manifest = makeManifest();
+        const result = signManifestFromEnv(manifest);
+        expect(result.signature).toBeUndefined();
+        expect(result.keyId).toBeUndefined();
+        expect(result).toEqual(manifest);
+    });
+
+    it('signs manifest integrity with PKCS8 DER base64 private key and keyId', () => {
+        const { publicKey, privateKey } = crypto.generateKeyPairSync('ed25519');
+        const publicDer = publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
+        const privateDer = privateKey.export({ type: 'pkcs8', format: 'der' }).toString('base64');
+        process.env.BRUTX_REGISTRY_PRIVATE_KEY = privateDer;
+        process.env.BRUTX_REGISTRY_KEY_ID = 'test-key';
+
+        const manifest = makeManifest();
+        const result = signManifestFromEnv(manifest);
+        expect(result.keyId).toBe('test-key');
+        expect(result.signature).toBeDefined();
+        expect(result.signature!.length).toBeGreaterThan(0);
+
+        // 用对应公钥验证签名有效
+        const valid = crypto.verify(
+            null,
+            Buffer.from(manifest.integrity, 'utf-8'),
+            crypto.createPublicKey({
+                key: Buffer.from(publicDer, 'base64'),
+                format: 'der',
+                type: 'spki',
+            }),
+            Buffer.from(result.signature!, 'base64'),
+        );
+        expect(valid).toBe(true);
+    });
+
+    it('signs manifest with PEM private key format', () => {
+        const { privateKey } = crypto.generateKeyPairSync('ed25519');
+        const privatePem = privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+        process.env.BRUTX_REGISTRY_PRIVATE_KEY = privatePem;
+        process.env.BRUTX_REGISTRY_KEY_ID = 'test-key';
+
+        const result = signManifestFromEnv(makeManifest());
+        expect(result.signature).toBeDefined();
+        expect(result.keyId).toBe('test-key');
+    });
+
+    it('preserves manifest integrity (signing does not alter integrity)', () => {
+        const { privateKey } = crypto.generateKeyPairSync('ed25519');
+        const privatePem = privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+        process.env.BRUTX_REGISTRY_PRIVATE_KEY = privatePem;
+        process.env.BRUTX_REGISTRY_KEY_ID = 'test-key';
+
+        const manifest = makeManifest();
+        const result = signManifestFromEnv(manifest);
+        expect(result.integrity).toBe(manifest.integrity);
+    });
+
+    it('throws when private key is malformed (block invalid signed artifacts)', () => {
+        process.env.BRUTX_REGISTRY_PRIVATE_KEY = 'not-a-valid-key';
+        process.env.BRUTX_REGISTRY_KEY_ID = 'test-key';
+        expect(() => signManifestFromEnv(makeManifest())).toThrow();
+    });
+
+    it('leaves manifest unsigned when keyId is missing even if private key is set', () => {
+        const { privateKey } = crypto.generateKeyPairSync('ed25519');
+        const privatePem = privateKey.export({ type: 'pkcs8', format: 'pem' }).toString();
+        process.env.BRUTX_REGISTRY_PRIVATE_KEY = privatePem;
+        const result = signManifestFromEnv(makeManifest());
+        expect(result.signature).toBeUndefined();
+        expect(result.keyId).toBeUndefined();
     });
 });
