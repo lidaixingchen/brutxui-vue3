@@ -79,3 +79,6 @@ next-env.d.ts
 DEVELOPMENT.md
 DEV_*.md
 
+# OCR scan reports
+.ocr-reports
+
