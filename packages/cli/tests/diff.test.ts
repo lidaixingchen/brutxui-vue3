@@ -13,12 +13,17 @@ vi.mock('../src/lib/registry.js', async (importOriginal) => {
     return {
         ...original,
         readConfigSafe: vi.fn(),
-        getItem: vi.fn(),
+        getItemFromSources: vi.fn(),
     };
 });
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItem = vi.mocked(registry.getItem);
+const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
+
+/** stub getItemFromSources：接受裸 item，包装为 { item, source }。 */
+function stubRegistryItem(item: RegistryItem, source = 'https://example.test/registry') {
+    mockedGetItemFromSources.mockResolvedValue({ item, source });
+}
 
 function createConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
     return {
@@ -117,7 +122,7 @@ describe('diff command', () => {
                 },
             });
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -150,7 +155,7 @@ describe('diff command', () => {
                     content: '<template>old</template>',
                 }],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 
@@ -171,7 +176,7 @@ describe('diff command', () => {
                     content: '<template>old</template>',
                 }],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 
@@ -192,7 +197,7 @@ describe('diff command', () => {
                     content: '<template>old</template>',
                 }],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 
@@ -210,7 +215,7 @@ describe('diff command', () => {
             const crlfContent = 'line1\r\nline2\r\nline3\r\n';
             await writeLocalFile(tmpDir, 'button', 'Button.vue', crlfContent);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content: lfContent }],
@@ -229,7 +234,7 @@ describe('diff command', () => {
             const crContent = 'line1\rline2\r';
             await writeLocalFile(tmpDir, 'button', 'Button.vue', crContent);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content: lfContent }],
@@ -248,7 +253,7 @@ describe('diff command', () => {
             const mixedContent = 'line1\r\nline2\nline3\r\n';
             await writeLocalFile(tmpDir, 'button', 'Button.vue', mixedContent);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content: lfContent }],
@@ -267,7 +272,7 @@ describe('diff command', () => {
             const localContent = 'line1\r\nmodified\r\nline3\r\n';
             await writeLocalFile(tmpDir, 'button', 'Button.vue', localContent);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content: registryContent }],
@@ -285,7 +290,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>local version</template>');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -322,7 +327,7 @@ describe('diff command', () => {
                 },
             });
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -340,7 +345,7 @@ describe('diff command', () => {
             expect(results[0].integrityStatus).toBe('outdated');
             expect(results[0].registrySource).toBe('https://example.test/registry');
             expect(results[0].installedAt).toBe('2026-07-07T00:00:00.000Z');
-            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry', true);
+            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://example.test/registry'], true);
         });
 
         it('should let --registry override manifest registry source', async () => {
@@ -363,7 +368,7 @@ describe('diff command', () => {
                 },
             });
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -378,14 +383,14 @@ describe('diff command', () => {
                 registry: 'https://override.test/registry',
             });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://override.test/registry', true);
+            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://override.test/registry'], true);
         });
 
         it('should include unified diff patch for modified files', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>local</template>\n');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -408,7 +413,7 @@ describe('diff command', () => {
             const content = '<template>exact same content</template>\n';
             await writeLocalFile(tmpDir, 'button', 'Button.vue', content);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content }],
@@ -425,7 +430,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await fs.mkdirp(path.join(tmpDir, 'src', 'components', 'button'));
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -449,7 +454,7 @@ describe('diff command', () => {
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>button</template>');
             await writeLocalFile(tmpDir, 'button', 'ExtraFile.vue', '<template>extra</template>');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -474,7 +479,7 @@ describe('diff command', () => {
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>same</template>\n');
             await writeLocalFile(tmpDir, 'button', 'Helper.vue', '<template>local only</template>');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -509,28 +514,31 @@ describe('diff command', () => {
             await writeLocalFile(tmpDir, 'button', 'Button.vue', buttonContent);
             await writeLocalFile(tmpDir, 'input', 'Input.vue', inputContent);
 
-            mockedGetItem.mockImplementation(async (name: string) => {
-                if (name === 'button') {
-                    return {
-                        name: 'button',
-                        type: 'registry:ui',
-                        files: [{
-                            path: 'components/ui/button/Button.vue',
-                            content: buttonContent,
-                        }],
-                    };
-                }
-                if (name === 'input') {
-                    return {
-                        name: 'input',
-                        type: 'registry:ui',
-                        files: [{
-                            path: 'components/ui/input/Input.vue',
-                            content: '<template>different</template>\n',
-                        }],
-                    };
-                }
-                throw new Error(`Component "${name}" not found`);
+            mockedGetItemFromSources.mockImplementation(async (name: string) => {
+                const item = (() => {
+                    if (name === 'button') {
+                        return {
+                            name: 'button',
+                            type: 'registry:ui',
+                            files: [{
+                                path: 'components/ui/button/Button.vue',
+                                content: buttonContent,
+                            }],
+                        };
+                    }
+                    if (name === 'input') {
+                        return {
+                            name: 'input',
+                            type: 'registry:ui',
+                            files: [{
+                                path: 'components/ui/input/Input.vue',
+                                content: '<template>different</template>\n',
+                            }],
+                        };
+                    }
+                    throw new Error(`Component "${name}" not found`);
+                })();
+                return { item, source: 'https://example.test/registry' };
             });
 
             const results = await runDiffJson(tmpDir, {
@@ -551,7 +559,7 @@ describe('diff command', () => {
             await writeLocalFile(tmpDir, 'button', 'Button.vue', 'btn');
             await writeLocalFile(tmpDir, 'input', 'Input.vue', 'inp');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content: 'btn' }],
@@ -581,7 +589,7 @@ describe('diff command', () => {
                 'utf-8',
             );
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'data-table',
                 type: 'registry:ui',
                 files: [
@@ -607,7 +615,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', 'btn');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'components/ui/button/Button.vue', content: 'btn' }],
@@ -659,7 +667,7 @@ describe('diff command', () => {
                 },
             });
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -703,7 +711,7 @@ describe('diff command', () => {
 
             const registryContent = '<script>\nimport { cn } from "@/lib/utils";\n</script>\n<template>btn</template>\n';
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{
@@ -763,7 +771,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>btn</template>');
 
-            mockedGetItem.mockRejectedValue(new Error('Network error: registry unreachable'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error: registry unreachable'));
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 
@@ -777,7 +785,7 @@ describe('diff command', () => {
         it('should return registry-unreachable when registry is unreachable and no local files exist', async () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
 
-            mockedGetItem.mockRejectedValue(new Error('Network error: registry unreachable'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error: registry unreachable'));
 
             const results = await runDiffJson(tmpDir, { components: ['button'] });
 
@@ -792,7 +800,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await writeLocalFile(tmpDir, 'button', 'Button.vue', '<template>btn</template>');
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [],
@@ -818,7 +826,7 @@ describe('diff command', () => {
             mockedReadConfigSafe.mockResolvedValue(createConfig());
             await fs.mkdirp(path.join(tmpDir, 'src', 'components', 'card'));
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'card',
                 type: 'registry:ui',
                 files: [

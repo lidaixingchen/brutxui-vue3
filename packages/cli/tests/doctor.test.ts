@@ -1114,10 +1114,13 @@ describe('checkRegistryReachability (P1-5)', () => {
 
             const results = await runDoctor(cwd, { silent: true });
             const reachChecks = results.filter((r) => r.name.startsWith('registry source'));
-            expect(reachChecks).toHaveLength(1);
-            expect(reachChecks[0].status).toBe('pass');
-            expect(reachChecks[0].message).toContain('Reachable');
-            expect(fetchSpy).toHaveBeenCalledTimes(1);
+            // 基础设施闭环 P0：默认多源 = GitHub Raw + jsDelivr CDN
+            expect(reachChecks).toHaveLength(2);
+            for (const check of reachChecks) {
+                expect(check.status).toBe('pass');
+                expect(check.message).toContain('Reachable');
+            }
+            expect(fetchSpy).toHaveBeenCalledTimes(2);
         } finally {
             await fs.remove(cwd);
         }

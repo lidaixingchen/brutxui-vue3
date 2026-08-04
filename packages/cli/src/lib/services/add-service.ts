@@ -9,6 +9,8 @@ import { resolveDeps } from '../registry.js';
 export interface ComponentResolutionResult {
     items: RegistryItem[];
     dependencies: string[];
+    /** 各组件实际命中的 registry 源（多源 fallback 下可能非主源），用于 manifest 记录 registrySource */
+    registrySources: Record<string, string>;
 }
 
 export interface EnsureUtilsFileResult {
@@ -44,9 +46,11 @@ export interface ComponentFileWriteFailure {
 export async function resolveComponents(
     components: string[],
     registry?: string,
-    useCache: boolean = true
+    useCache: boolean = true,
+    sources?: string[]
 ): Promise<ComponentResolutionResult> {
-    const items = await resolveDeps(components, registry, useCache);
+    const hitSources = new Map<string, string>();
+    const items = await resolveDeps(components, registry, useCache, sources, hitSources);
     const dependencies = new Set<string>();
 
     for (const item of items) {
@@ -56,6 +60,7 @@ export async function resolveComponents(
     return {
         items,
         dependencies: Array.from(dependencies),
+        registrySources: Object.fromEntries(hitSources),
     };
 }
 

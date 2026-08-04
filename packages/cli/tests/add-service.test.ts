@@ -97,12 +97,20 @@ describe('add service', () => {
 
         const result = await resolveComponents(['badge', 'card'], 'local-registry');
 
-        expect(resolveDeps).toHaveBeenCalledWith(['badge', 'card'], 'local-registry', true);
+        // 基础设施闭环 P0：resolveDeps 额外接收多源列表与命中源记录 Map（此处均未提供）
+        expect(resolveDeps).toHaveBeenCalledWith(
+            ['badge', 'card'],
+            'local-registry',
+            true,
+            undefined,
+            expect.any(Map),
+        );
         expect(result.items).toEqual([
             { ...badgeItem, dependencies: ['clsx'] },
             cardItem,
         ]);
         expect(result.dependencies).toEqual(['clsx', 'reka-ui']);
+        expect(result.registrySources).toEqual({});
     });
 
     it('resolves registry component paths through configured aliases', async () => {

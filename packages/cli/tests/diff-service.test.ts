@@ -15,11 +15,16 @@ vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const original = await importOriginal<typeof registry>();
     return {
         ...original,
-        getItem: vi.fn(),
+        getItemFromSources: vi.fn(),
     };
 });
 
-const mockedGetItem = vi.mocked(registry.getItem);
+const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
+
+/** stub getItemFromSources：接受裸 item，包装为 { item, source }。 */
+function stubRegistryItem(item: RegistryItem, source = 'https://example.test/registry') {
+    mockedGetItemFromSources.mockResolvedValue({ item, source });
+}
 
 const defaultConfig: BrutalistConfig = {
     $schema: 'https://example.com/schema.json',
@@ -98,7 +103,7 @@ describe('diff service', () => {
                 type: 'registry:ui',
             },
         ], 'sha256-current');
-        mockedGetItem.mockResolvedValue(registryItem);
+        stubRegistryItem(registryItem);
 
         const result = await diffComponent(tmpDir, defaultConfig, 'button');
 
@@ -116,7 +121,7 @@ describe('diff service', () => {
     it('reports modified, added, and removed files for a component', async () => {
         await writeComponentFile(tmpDir, 'button', 'Button.vue', '<template>local</template>\n');
         await writeComponentFile(tmpDir, 'button', 'local-only.ts', 'export const localOnly = true;\n');
-        mockedGetItem.mockResolvedValue(makeRegistryItem('button', [
+        stubRegistryItem(makeRegistryItem('button', [
             {
                 path: 'components/ui/button/Button.vue',
                 content: '<template>registry</template>\n',
@@ -155,7 +160,7 @@ describe('diff service', () => {
             registryDependencies: [],
             examples: [],
         };
-        mockedGetItem.mockResolvedValue(makeRegistryItem('button', [
+        stubRegistryItem(makeRegistryItem('button', [
             {
                 path: 'components/ui/button/Button.vue',
                 content: '<template>button</template>\n',
@@ -171,7 +176,7 @@ describe('diff service', () => {
             manifestEntry
         );
 
-        expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry', true);
+        expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://example.test/registry'], true);
         expect(result).toMatchObject({
             installedIntegrity: 'sha256-old',
             latestIntegrity: 'sha256-new',
@@ -196,13 +201,16 @@ describe('diff service', () => {
                 files: [cardFile],
             },
         ]);
-        mockedGetItem.mockImplementation(async (name) => makeRegistryItem(name, [
-            {
-                path: `components/ui/${name}/${name === 'button' ? 'Button' : 'Card'}.vue`,
-                content: `<template>${name}</template>\n`,
-                type: 'registry:ui',
-            },
-        ], `sha256-${name}-new`));
+        mockedGetItemFromSources.mockImplementation(async (name) => ({
+            item: makeRegistryItem(name, [
+                {
+                    path: `components/ui/${name}/${name === 'button' ? 'Button' : 'Card'}.vue`,
+                    content: `<template>${name}</template>\n`,
+                    type: 'registry:ui',
+                },
+            ], `sha256-${name}-new`),
+            source: `https://example.test/${name === 'button' ? 'a' : 'b'}`,
+        }));
 
         const installed = await getInstalledComponents(tmpDir, defaultConfig);
         const results = await diffComponents(
@@ -225,12 +233,12 @@ describe('diff service', () => {
         expect(installed).toEqual(['button', 'card']);
         expect(results.map(result => result.component)).toEqual(['button', 'card']);
         expect(results.every(result => result.integrityStatus === 'outdated')).toBe(true);
-        expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/a', true);
-        expect(mockedGetItem).toHaveBeenCalledWith('card', 'https://example.test/b', true);
+        expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', ['https://example.test/a'], true);
+        expect(mockedGetItemFromSources).toHaveBeenCalledWith('card', ['https://example.test/b'], true);
     });
 
     it('returns registry-unreachable when registry lookup fails', async () => {
-        mockedGetItem.mockRejectedValue(new Error('not found'));
+        mockedGetItemFromSources.mockRejectedValue(new Error('not found'));
 
         const result = await diffComponent(tmpDir, defaultConfig, 'missing');
 

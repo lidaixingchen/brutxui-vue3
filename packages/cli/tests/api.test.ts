@@ -27,6 +27,7 @@ describe('programmatic API entry point', () => {
         expect(result).toEqual({
             items: [],
             dependencies: [],
+            registrySources: {},
         });
     });
 

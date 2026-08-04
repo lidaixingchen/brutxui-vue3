@@ -5,7 +5,7 @@ import { createRequire } from 'module';
 import chalk from 'chalk';
 import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, InstalledComponentManifest, RegistrySourceStatus } from '../lib/types.js';
 import { FixId } from '../lib/types.js';
-import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries } from '../lib/index.js';
+import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries, getCacheStats } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
@@ -693,6 +693,28 @@ async function checkAuditLog(cwd: string): Promise<CheckResult[]> {
     return results;
 }
 
+function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/**
+ * 缓存可观测性（基础设施闭环 P2）：报告缓存条目数、占用体积与离线可用状态。
+ * 让用户了解离线模式下可用的缓存覆盖范围。
+ */
+async function checkCacheHealth(): Promise<CheckResult[]> {
+    const stats = await getCacheStats();
+    const sizeLabel = formatBytes(stats.totalBytes);
+    return [{
+        name: 'registry cache',
+        status: stats.entryCount > 0 ? 'pass' : 'warn',
+        message: stats.entryCount > 0
+            ? `${stats.entryCount} cached entr${stats.entryCount !== 1 ? 'ies' : 'y'}, ${sizeLabel} (${stats.dir}). Offline-available for cached components.`
+            : 'Empty cache. Running add online will populate it for offline use.',
+    }];
+}
+
 function printReport(checks: CheckResult[]): void {
     logger.newLine();
     logger.bold(' Brutx-Vue Doctor');
@@ -1042,6 +1064,7 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
         checks.push(await checkUtilsFunction(cwd, config));
         checks.push(...await checkComponentIntegrity(cwd, config));
         checks.push(...await checkRegistryReachability(config, { offline }));
+        checks.push(...await checkCacheHealth());
         checks.push(...await checkAuditLog(cwd));
     }
 
@@ -1066,6 +1089,7 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
             checks.push(await checkUtilsFunction(cwd, freshConfig));
             checks.push(...await checkComponentIntegrity(cwd, freshConfig));
             checks.push(...await checkRegistryReachability(freshConfig, { offline }));
+            checks.push(...await checkCacheHealth());
             checks.push(...await checkAuditLog(cwd));
         }
     }

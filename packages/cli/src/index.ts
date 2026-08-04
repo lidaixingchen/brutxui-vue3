@@ -9,6 +9,7 @@ import { list } from './commands/list.js';
 import { info } from './commands/info.js';
 import { remove } from './commands/remove.js';
 import { create } from './commands/create.js';
+import { registryList, registryAdd, registryRemove } from './commands/registry.js';
 import { CliError, getCliErrorAdvice, logger, clearCache } from './lib/index.js';
 import { setGlobalDryRun } from './lib/global-dry-run.js';
 import { setRequireSignature } from './lib/signature-mode.js';
@@ -142,6 +143,30 @@ program
     .option('-y, --yes', 'Skip confirmation prompts', false)
     .action(create);
 
+const registryCmd = program
+    .command('registry')
+    .description('Manage Brutx-Vue registry sources');
+
+registryCmd
+    .command('list')
+    .description('List resolved registry sources and their reachability')
+    .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
+    .option('--json', 'Output JSON format', false)
+    .option('--offline', 'Skip network reachability probes', false)
+    .action(registryList);
+
+registryCmd
+    .command('add <url>')
+    .description('Add a registry source to components.json')
+    .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
+    .action(registryAdd);
+
+registryCmd
+    .command('remove <url>')
+    .description('Remove a registry source from components.json')
+    .option('-c, --cwd <cwd>', 'The working directory', process.cwd())
+    .action(registryRemove);
+
 program
     .command('cache')
     .description('Manage the brutx-vue component cache')
@@ -237,6 +262,12 @@ function preprocessArgv(argv: string[]): string[] {
 function applyGlobalOptionsFromArgv(argv: string[]): void {
     if (argv.includes('--dry-run')) {
         setGlobalDryRun(true);
+    }
+
+    // 基础设施闭环 P1：--require-signature 全局 flag 激活严格签名模式（优先级最高，
+    // 高于 BRUTX_REQUIRE_SIGNATURE 环境变量与 config.requireSignature）。
+    if (argv.includes('--require-signature')) {
+        setRequireSignature(true);
     }
 
     let verboseLevel = VERBOSE_LEVEL_NONE;

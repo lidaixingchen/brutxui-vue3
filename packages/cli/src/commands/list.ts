@@ -1,26 +1,24 @@
 import chalk from 'chalk';
-import type { ListOptions, InstalledComponentInfo } from '../lib/types.js';
-import { readConfigSafe, CliError, getInstalledComponentInfos, withOfflineScope } from '../lib/index.js';
-import { getItem } from '../lib/registry.js';
+import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../lib/types.js';
+import { readConfigSafe, CliError, getInstalledComponentInfos, withOfflineScope, resolveRegistrySources } from '../lib/index.js';
+import { getItemFromSources } from '../lib/registry.js';
 import { logger } from '../lib/logger.js';
 
 async function attachUpdateInfo(
     infos: InstalledComponentInfo[],
+    config: BrutalistConfig,
     registryOverride: string | undefined,
     useCache: boolean
 ): Promise<InstalledComponentInfo[]> {
+    const sources = resolveRegistrySources(config, registryOverride);
+
     return Promise.all(infos.map(async (info) => {
         if (!info.installedIntegrity) {
             return info;
         }
 
-        const source = registryOverride ?? info.registrySource;
-        if (!source) {
-            return info;
-        }
-
         try {
-            const latest = await getItem(info.name, source, useCache);
+            const { item: latest } = await getItemFromSources(info.name, sources, useCache);
             return {
                 ...info,
                 latestIntegrity: latest.integrity,
@@ -139,7 +137,7 @@ async function listInner(options: ListOptions, cwd: string): Promise<void> {
     }
 
     if (options.checkUpdates) {
-        infos = await attachUpdateInfo(infos, options.registry, options.cache !== false);
+        infos = await attachUpdateInfo(infos, config, options.registry, options.cache !== false);
     }
 
     if (options.json) {

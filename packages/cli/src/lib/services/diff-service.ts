@@ -8,7 +8,8 @@ import type {
     InstalledComponentManifest,
     RegistryItem,
 } from '../types.js';
-import { getItem } from '../registry.js';
+import { getItemFromSources } from '../registry.js';
+import { resolveRegistrySources } from '../registry-source.js';
 import { getInstalledComponentNames } from '../installed-components.js';
 import { resolveAliasPath, resolveImportAlias } from '../project.js';
 
@@ -124,8 +125,10 @@ export async function diffComponent(
     let registryItem: RegistryItem | null;
     let registryError: Error | null = null;
 
+    const sources = resolveRegistrySources(config, registryOverride);
     try {
-        registryItem = await getItem(componentName, registryOverride, useCache);
+        const { item } = await getItemFromSources(componentName, sources, useCache);
+        registryItem = item;
     } catch (error) {
         registryItem = null;
         registryError = error instanceof Error ? error : new Error(String(error));

@@ -8,7 +8,7 @@ vi.mock('../src/lib/registry.js', async (importOriginal) => {
     return {
         ...original,
         readConfigSafe: vi.fn(),
-        getItem: vi.fn(),
+        getItemFromSources: vi.fn(),
     };
 });
 
@@ -21,11 +21,16 @@ import * as registry from '../src/lib/registry.js';
 import * as project from '../src/lib/project.js';
 import { info } from '../src/commands/info.js';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../src/lib/types.js';
-import { DEFAULT_REGISTRY_URL } from '../src/lib/constants.js';
+import { DEFAULT_REGISTRY_URL, DEFAULT_REGISTRY_SOURCES } from '../src/lib/constants.js';
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItem = vi.mocked(registry.getItem);
+const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
+
+/** stub getItemFromSources：接受裸 item，包装为 { item, source }（source 默认官方主源）。 */
+function stubRegistryItem(item: RegistryItem, source: string = DEFAULT_REGISTRY_URL) {
+    mockedGetItemFromSources.mockResolvedValue({ item, source });
+}
 
 const defaultConfig: BrutalistConfig = {
     $schema: 'https://example.com/schema.json',
@@ -113,7 +118,7 @@ describe('info command', () => {
                 ],
                 dependencies: ['reka-ui'],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const componentDir = path.join(tmpDir, 'src', 'components', 'button');
             await fs.mkdirp(componentDir);
@@ -135,7 +140,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -147,7 +152,7 @@ describe('info command', () => {
 
             await runInfoJson('button', { cwd: tmpDir });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('button', DEFAULT_REGISTRY_URL);
+            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [...DEFAULT_REGISTRY_SOURCES]);
         });
     });
 
@@ -163,7 +168,7 @@ describe('info command', () => {
                     { path: 'components/ui/button/Button.vue', content: '<template>btn</template>' },
                 ],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const result = await runInfoJson('button', { cwd: tmpDir });
 
@@ -177,7 +182,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'card',
                 type: 'registry:ui',
                 files: [{ path: 'Card.vue', content: '<template>card</template>' }],
@@ -196,7 +201,7 @@ describe('info command', () => {
         it('should report status as registry-unreachable when registry throws but local files exist', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('Network error'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
 
             const componentDir = path.join(tmpDir, 'src', 'components', 'button');
             await fs.mkdirp(componentDir);
@@ -214,7 +219,7 @@ describe('info command', () => {
         it('should gracefully handle various registry error types', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('ETIMEDOUT'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('ETIMEDOUT'));
 
             const componentDir = path.join(tmpDir, 'src', 'components', 'button');
             await fs.mkdirp(componentDir);
@@ -231,7 +236,7 @@ describe('info command', () => {
         it('should report status as registry-unreachable when both registry and local files are unavailable', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('Network error'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
 
             const result = await runInfoJson('nonexistent', { cwd: tmpDir });
 
@@ -244,7 +249,7 @@ describe('info command', () => {
         it('should report registry-unreachable when component directory is empty and registry fails', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('Network error'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
 
             await fs.mkdirp(path.join(tmpDir, 'src', 'components', 'ghost'));
 
@@ -260,7 +265,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -289,7 +294,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -308,7 +313,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -326,7 +331,7 @@ describe('info command', () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
             const customRegistry = 'https://custom-registry.example.com/registry';
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -334,7 +339,7 @@ describe('info command', () => {
 
             await runInfoJson('button', { cwd: tmpDir, registry: customRegistry });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('button', customRegistry);
+            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [customRegistry]);
         });
 
         it('should reflect custom registry source in JSON output', async () => {
@@ -342,11 +347,11 @@ describe('info command', () => {
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
             const customRegistry = 'https://custom-registry.example.com/registry';
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
-            });
+            }, customRegistry);
 
             const result = await runInfoJson('button', { cwd: tmpDir, registry: customRegistry });
 
@@ -357,7 +362,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -365,7 +370,7 @@ describe('info command', () => {
 
             const result = await runInfoJson('button', { cwd: tmpDir });
 
-            expect(mockedGetItem).toHaveBeenCalledWith('button', DEFAULT_REGISTRY_URL);
+            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [...DEFAULT_REGISTRY_SOURCES]);
             expect(result.source).toBe(DEFAULT_REGISTRY_URL);
         });
     });
@@ -384,7 +389,7 @@ describe('info command', () => {
                 dependencies: ['reka-ui', '@lucide/vue'],
                 registryDependencies: ['button', 'input'],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const result = await runInfoJson('data-table', { cwd: tmpDir });
 
@@ -405,7 +410,7 @@ describe('info command', () => {
                     { path: 'Badge.vue', content: '<template>badge</template>' },
                 ],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const result = await runInfoJson('badge', { cwd: tmpDir });
 
@@ -427,7 +432,7 @@ describe('info command', () => {
                 dependencies: [],
                 registryDependencies: [],
             };
-            mockedGetItem.mockResolvedValue(registryItem);
+            stubRegistryItem(registryItem);
 
             const result = await runInfoJson('badge', { cwd: tmpDir });
 
@@ -442,7 +447,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'data-table',
                 type: 'registry:ui',
                 files: [
@@ -469,7 +474,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'complex',
                 type: 'registry:ui',
                 files: [
@@ -496,7 +501,7 @@ describe('info command', () => {
         it('should report registry-unreachable with subdirectory files even when registry is unreachable', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('Network error'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
 
             const baseDir = path.join(tmpDir, 'src', 'components', 'data-table');
             await fs.mkdirp(baseDir);
@@ -518,7 +523,7 @@ describe('info command', () => {
         it('should use cwd from options instead of process.cwd()', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('Network error'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
 
             await runInfoJson('button', { cwd: tmpDir });
 
@@ -529,7 +534,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'badge',
                 type: 'registry:ui',
                 files: [{ path: 'Badge.vue', content: '<template>badge</template>' }],
@@ -550,7 +555,7 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            mockedGetItem.mockResolvedValue({
+            stubRegistryItem({
                 name: 'button',
                 type: 'registry:ui',
                 files: [{ path: 'Button.vue', content: '<template>btn</template>' }],
@@ -576,7 +581,7 @@ describe('info command', () => {
         it('should correctly resolve alias path using config aliases', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
-            mockedGetItem.mockRejectedValue(new Error('Network error'));
+            mockedGetItemFromSources.mockRejectedValue(new Error('Network error'));
 
             await runInfoJson('button', { cwd: tmpDir });
 

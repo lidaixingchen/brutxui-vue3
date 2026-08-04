@@ -2,8 +2,8 @@ import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../lib/types.js';
-import { getItem } from '../lib/registry.js';
-import { readConfigSafe, CliError, DEFAULT_REGISTRY_URL, withOfflineScope } from '../lib/index.js';
+import { getItemFromSources } from '../lib/registry.js';
+import { readConfigSafe, CliError, resolveRegistrySources, withOfflineScope } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
 import { logger } from '../lib/logger.js';
 
@@ -49,12 +49,15 @@ async function getComponentInfo(
     componentName: string,
     registryOverride?: string
 ): Promise<ComponentInfoResult> {
-    const source = registryOverride ?? DEFAULT_REGISTRY_URL;
+    const sources = resolveRegistrySources(config, registryOverride);
+    let source = sources[0];
     let registryItem: RegistryItem | null;
     let registryFetchError: Error | null = null;
 
     try {
-        registryItem = await getItem(componentName, source);
+        const result = await getItemFromSources(componentName, sources);
+        registryItem = result.item;
+        source = result.source;
     } catch (error) {
         registryItem = null;
         registryFetchError = error instanceof Error ? error : new Error(String(error));
@@ -65,16 +68,12 @@ async function getComponentInfo(
     let status: ComponentInfoResult['status'];
     if (registryItem && localFiles.length > 0) {
         status = 'installed';
-    } else if (registryItem && localFiles.length === 0) {
+    } else if (registryItem) {
         status = 'not-installed';
-    } else if (!registryItem && registryFetchError && localFiles.length > 0) {
-        status = 'registry-unreachable';
-    } else if (!registryItem && registryFetchError) {
-        status = 'registry-unreachable';
-    } else if (localFiles.length > 0) {
-        status = 'installed';
     } else {
-        status = 'not-found';
+        // registryItem 为 null 时 registryFetchError 恒非空（catch 中赋值），
+        // 此处分支不可达时保留 not-found 作为兜底。
+        status = registryFetchError ? 'registry-unreachable' : 'not-found';
     }
 
     return {

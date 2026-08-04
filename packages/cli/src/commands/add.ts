@@ -8,11 +8,11 @@ import {
     type RegistryItem,
     AVAILABLE_COMPONENTS,
     DEFAULT_REGISTRY_URL,
+    resolveRegistrySources,
     CliError,
     detectPackageManager,
     installPackages,
     getInstallCommand,
-    getItem,
     readConfig,
     readManifest,
     isSafePath,
@@ -202,10 +202,15 @@ async function addInner(
         return;
     }
 
+    // 多源解析（基础设施闭环 P0）：--registry 覆盖整个源列表，否则用 config.registries，
+    // 未配置时回退到官方默认多源（GitHub Raw + jsDelivr CDN）。
+    const sources = resolveRegistrySources(config, options.registry);
+
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();
 
     try {
-        const { items: registryItems, dependencies: allDeps } = await resolveComponents(selectedComponents, options.registry, useCache);
+        const { items: registryItems, dependencies: allDeps, registrySources: hitRegistrySources } =
+            await resolveComponents(selectedComponents, options.registry, useCache, sources);
 
         if (spinner) {
             spinner.stop();
@@ -331,7 +336,7 @@ async function addInner(
                             : undefined;
                         return {
                             item,
-                            registrySource: options.registry ?? DEFAULT_REGISTRY_URL,
+                            registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
                             files,
                             installedContentHash,
                             version: versionByName.get(item.name) ?? 'latest',

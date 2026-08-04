@@ -6,7 +6,7 @@ import type { BrutalistConfig, ListOptions, InstalledComponentInfo } from '../sr
 
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const actual = await importOriginal<typeof import('../src/lib/registry.js')>();
-    return { ...actual, readConfigSafe: vi.fn(), getItem: vi.fn() };
+    return { ...actual, readConfigSafe: vi.fn(), getItemFromSources: vi.fn() };
 });
 
 vi.mock('../src/lib/project.js', async (importOriginal) => {
@@ -18,9 +18,10 @@ import * as registry from '../src/lib/registry.js';
 import * as project from '../src/lib/project.js';
 import { list } from '../src/commands/list.js';
 import { CliError } from '../src/lib/error.js';
+import { DEFAULT_REGISTRY_SOURCES } from '../src/lib/constants.js';
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
-const mockedGetItem = vi.mocked(registry.getItem);
+const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
 const mockedResolveAliasPath = vi.mocked(project.resolveAliasPath);
 
 function makeConfig(overrides: Partial<BrutalistConfig> = {}): BrutalistConfig {
@@ -57,7 +58,7 @@ describe('list command', () => {
     beforeEach(async () => {
         tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-list-'));
         mockedReadConfigSafe.mockReset();
-        mockedGetItem.mockReset();
+        mockedGetItemFromSources.mockReset();
         mockedResolveAliasPath.mockReset();
 
         mockedResolveAliasPath.mockImplementation(async (alias: string) => {
@@ -248,23 +249,26 @@ describe('list command', () => {
 
         it('checks manifest integrity against registry when requested', async () => {
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
-            mockedGetItem.mockResolvedValue({
-                name: 'button',
-                type: 'registry:ui',
-                title: 'Button',
-                description: 'Button component',
-                dependencies: [],
-                registryDependencies: [],
-                files: [
-                    {
-                        path: 'components/ui/button/Button.vue',
-                        content: '<template><button /></template>',
-                        type: 'registry:ui',
-                    },
-                ],
-                tailwind: {},
-                cssVars: {},
-                integrity: 'sha256-button-new',
+            mockedGetItemFromSources.mockResolvedValue({
+                item: {
+                    name: 'button',
+                    type: 'registry:ui',
+                    title: 'Button',
+                    description: 'Button component',
+                    dependencies: [],
+                    registryDependencies: [],
+                    files: [
+                        {
+                            path: 'components/ui/button/Button.vue',
+                            content: '<template><button /></template>',
+                            type: 'registry:ui',
+                        },
+                    ],
+                    tailwind: {},
+                    cssVars: {},
+                    integrity: 'sha256-button-new',
+                },
+                source: 'https://example.test/registry',
             });
 
             const buttonDir = path.join(tmpDir, 'src', 'components', 'button');
@@ -291,7 +295,7 @@ describe('list command', () => {
             const { parsed } = await captureListJson({ cwd: tmpDir, json: true, silent: true, checkUpdates: true });
             const button = parsed.find(c => c.name === 'button')!;
 
-            expect(mockedGetItem).toHaveBeenCalledWith('button', 'https://example.test/registry', true);
+            expect(mockedGetItemFromSources).toHaveBeenCalledWith('button', [...DEFAULT_REGISTRY_SOURCES], true);
             expect(button.latestIntegrity).toBe('sha256-button-new');
             expect(button.updateAvailable).toBe(true);
         });
