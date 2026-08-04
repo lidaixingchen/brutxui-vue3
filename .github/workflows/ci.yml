@@ -241,3 +241,68 @@ jobs:
 
             - name: CLI Integration tests
               run: pnpm --filter brutx-vue test:integration
+
+    sign-manifest:
+        # 基础设施闭环 P0：main 分支用官方私钥重新构建并提交带签名的 registry-manifest.json。
+        # 未配置 BRUTX_REGISTRY_PRIVATE_KEY secret 时签名相关步骤跳过（Fork/未启用签名的仓库不受影响）。
+        # GITHUB_TOKEN 创建的提交不会再次触发 workflow（GitHub 安全机制），因此不会形成无限循环。
+        name: Sign & commit registry manifest (main)
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        permissions:
+            contents: write
+        env:
+            # 签名私钥是否已配置（job env 中允许引用 secrets；供 step 级 if 门控）
+            HAS_SIGNING_KEY: ${{ secrets.BRUTX_REGISTRY_PRIVATE_KEY != '' }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+
+            - uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
+
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version: 22
+                  cache: pnpm
+
+            - run: pnpm install --frozen-lockfile
+
+            - name: Build signed registry manifest
+              if: env.HAS_SIGNING_KEY == 'true'
+              env:
+                  BRUTX_REGISTRY_PRIVATE_KEY: ${{ secrets.BRUTX_REGISTRY_PRIVATE_KEY }}
+                  BRUTX_REGISTRY_KEY_ID: ${{ secrets.BRUTX_REGISTRY_KEY_ID }}
+              run: |
+                  # 固定 gitCommit 为空（unset GITHUB_SHA/COMMIT_SHA）：manifest integrity 排除
+                  # buildTimestamp/gitCommit，故签名稳定；但 gitCommit 若跟随每次 push 的 SHA 变化，
+                  # 会导致每次 push 都产生一次 bot 提交抖动。unset 后与仓库内已提交的 manifest
+                  # 保持一致，产物完全幂等（首次补签后不再产生 diff）。
+                  unset GITHUB_SHA
+                  unset COMMIT_SHA
+                  pnpm --filter brutx-registry-vue build
+
+            - name: Verify signature present
+              if: env.HAS_SIGNING_KEY == 'true'
+              run: |
+                  node -e "
+                  const m = require('./packages/registry/registry/registry-manifest.json');
+                  if (!m.signature || !m.keyId) {
+                    console.error('registry-manifest.json is missing signature/keyId');
+                    process.exit(1);
+                  }
+                  console.log('Signed manifest verified (keyId: ' + m.keyId + ')');
+                  "
+
+            - name: Commit signed manifest to main
+              if: env.HAS_SIGNING_KEY == 'true'
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add packages/registry/registry/registry-manifest.json
+                  if git diff --cached --quiet; then
+                    echo "Manifest unchanged, nothing to commit"
+                  else
+                    git commit -m "chore(registry): sign registry manifest with official key [skip ci]"
+                    git push origin HEAD:main
+                  fi
