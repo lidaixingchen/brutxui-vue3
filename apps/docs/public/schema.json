@@ -1,0 +1,117 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://lidaixingchen.github.io/brutxui-vue3/schema.json",
+    "title": "BrutxUI Vue components.json",
+    "description": "brutx-vue init 生成的 components.json 配置文件 JSON Schema，提供 IDE 校验与补全。",
+    "type": "object",
+    "required": [
+        "style",
+        "tailwind",
+        "aliases"
+    ],
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "const": "https://lidaixingchen.github.io/brutxui-vue3/schema.json"
+        },
+        "$version": {
+            "type": "integer",
+            "minimum": 1
+        },
+        "style": {
+            "type": "string",
+            "enum": [
+                "brutalism"
+            ]
+        },
+        "sharedBase": {
+            "type": "string",
+            "description": "monorepo 共享基础目录（可选），配置后 composables/lib 等共享文件落位到该目录。"
+        },
+        "tailwind": {
+            "type": "object",
+            "required": [
+                "config",
+                "css"
+            ],
+            "properties": {
+                "config": {
+                    "type": "string",
+                    "description": "Tailwind 配置文件路径；Tailwind v4 项目为空字符串。"
+                },
+                "css": {
+                    "type": "string",
+                    "description": "全局 CSS 文件路径（注入 BrutxUI 设计 token）。"
+                }
+            }
+        },
+        "aliases": {
+            "type": "object",
+            "required": [
+                "components",
+                "utils",
+                "composables"
+            ],
+            "properties": {
+                "components": {
+                    "type": "string"
+                },
+                "utils": {
+                    "type": "string"
+                },
+                "composables": {
+                    "type": "string"
+                }
+            }
+        },
+        "registries": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            },
+            "description": "多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用默认官方双源（GitHub Raw + jsDelivr CDN）。命令行 --registry 临时覆盖整个列表。"
+        },
+        "requireSignature": {
+            "type": "boolean",
+            "description": "项目级严格签名模式：为 true 时强制 manifest 签名校验，失败抛 REGISTRY_SIGNATURE_INVALID。优先级低于 BRUTX_REQUIRE_SIGNATURE 环境变量与 --require-signature flag。"
+        },
+        "trustedPublicKeys": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/trustedPublicKey"
+            },
+            "description": "项目级追加信任公钥列表，在官方 Root 公钥（OFFICIAL_PUBLIC_KEYS）之外追加信任。未配置时回退到 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量，再回退到内置官方公钥。"
+        }
+    },
+    "$defs": {
+        "trustedPublicKey": {
+            "type": "object",
+            "required": [
+                "keyId",
+                "publicKey"
+            ],
+            "properties": {
+                "keyId": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "publicKey": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "base64 编码的 SPKI DER 格式 Ed25519 公钥（单行）。"
+                },
+                "status": {
+                    "enum": [
+                        "active",
+                        "rotated",
+                        "revoked"
+                    ]
+                },
+                "note": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

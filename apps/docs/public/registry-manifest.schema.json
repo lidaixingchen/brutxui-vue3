@@ -12,7 +12,8 @@
         "buildTimestamp",
         "gitCommit",
         "itemCount",
-        "items"
+        "items",
+        "integrity"
     ],
     "properties": {
         "$schema": {
@@ -53,6 +54,21 @@
             "additionalProperties": {
                 "$ref": "#/$defs/manifestItem"
             }
+        },
+        "integrity": {
+            "description": "Manifest 自身完整性哈希：对 name/schemaVersion/registryVersion/items 规范化 JSON 求 sha256（hex，无前缀），排除 buildTimestamp/gitCommit/integrity/signature/keyId。CLI 拉取后复算比对并验签。",
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+        },
+        "signature": {
+            "description": "对 integrity 字段值的 Ed25519 签名（base64）。与 keyId 成对出现，两者皆存在时 CLI 才触发验签；缺省时向后兼容跳过。",
+            "type": "string",
+            "minLength": 1
+        },
+        "keyId": {
+            "description": "标识签名所用密钥，CLI 持有的受信任公钥列表按 keyId 索引。",
+            "type": "string",
+            "minLength": 1
         }
     },
     "$defs": {
