@@ -9,6 +9,7 @@
 > 3. **CI 自动校验（已机械化）**：`publish.yml` 在发布前执行 `git diff --exit-code` 校验 `registry-manifest.json`、`styles.css`、`packages/registry/registry` 与 commit 一致。若漏做上述重建步骤，tag 触发的发布将被门禁拦截而非产出滞后产物。
 
 - 提交信息格式固定为 `release: bump version to <ui-version> for ui and <cli-version> for cli`。如果只发布其中一个包，仍保持该格式，并填写当前实际版本。
+- **⚠️ `[skip ci]` 陷阱（已配置规避，仍需注意）**：changeset 2.31 在 `"commit": true` 时，`pnpm version-packages` 生成的 `RELEASING` 提交**默认带 `[skip ci]`**（见 `.changeset/config.json` 的 `commit.skipCI` 归一化逻辑）。若 tag 指向该提交，`publish.yml`（由 `v*` tag 触发）会被 `[skip ci]` **静默跳过，npm 不会发布**。已通过 `"commit": ["@changesets/cli/commit", { "skipCI": false }]` 关闭此行为；即便如此，发布时仍建议让 tag 指向不含 `[skip ci]` 的 `release: bump version to ...` 提交（见上），并**发布后核对 GitHub Actions 的 Publish run 是否成功、npm 是否真的出新版本**。
 - 哪个 NPM 包版本发生变化就发布哪个包；当前公开发布包为 `brutx-ui-vue`（`packages/ui/`）和 `brutx-vue`（`packages/cli/`）。
 - tag 命名固定以 UI 包版本为主，格式为 `v<ui-version>`，例如 `v0.6.6`。CLI 版本不单独创建 tag。
 - 推送 `main` 和对应的 `v*` tag 后，由云端自动发布。
