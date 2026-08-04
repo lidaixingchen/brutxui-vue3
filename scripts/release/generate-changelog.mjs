@@ -176,7 +176,11 @@ function archiveOldestVersion(fullContent, newVersion) {
     const docsIndexImg = path.join(docsChangelogDir, 'index.md');
 
     // 1. 使用正则匹配所有的版本标题 (包括刚刚 prepended 的新版本)
-    const versionHeaderRegex = /## \[(0|[1-9]\d*\.\d+\.\d+)\]\([^\)]+\)\s+-\s+(\d{4}-\d{2}-\d{2})/g;
+    // 匹配版本标题：`## [x.y.z](compare-url) - date`。
+    // 注意版本号必须用 `\d+\.\d+\.\d+`，不能写成 `(0|[1-9]\d*\.\d+\.\d+)`——
+    // 后者 `0` 分支只匹配裸 "0"、`[1-9]` 分支不匹配 0 开头，导致 0.x.y 版本段全部匹配不到，
+    // 归档裁剪永不触发（历史曾因此让根文件累积超过 3 个版本）。
+    const versionHeaderRegex = /## \[(\d+\.\d+\.\d+)\]\([^\)]+\)\s+-\s+(\d{4}-\d{2}-\d{2})/g;
     const matches = [...fullContent.matchAll(versionHeaderRegex)];
 
     // 2. 如果版本号数量没有超过 3 个，则不需要裁剪归档，直接返回原内容
