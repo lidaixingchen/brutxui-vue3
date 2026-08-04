@@ -2,7 +2,39 @@
 
 根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。
 
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.6...HEAD)
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.7...HEAD)
+
+## [0.9.7](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.6...v0.9.7) - 2026-08-04
+
+### 🧹 Chores
+
+* 合并远程 main（sign-manifest job 签名提交 1729e7a6） ([adc900f](https://github.com/lidaixingchen/brutxui-vue3/commit/adc900f54eaac1e14c1f9e9ec57289747a13a928))
+
+### 📝 Documentation
+
+* **agents:** 重构 AGENTS.md 为表格化结构 ([e8e52b6](https://github.com/lidaixingchen/brutxui-vue3/commit/e8e52b68f22c6436369bcd1c6f5f0204200bc6a3))
+* README 补供应链安全与离线要点，RELEASE 补签名产物发布流程 ([69ceb5f](https://github.com/lidaixingchen/brutxui-vue3/commit/69ceb5fcbbc1ff02459bf1619629eca0a18c92d7))
+* **schema:** registry-manifest 补 signature/keyId/integrity，新增 components.json schema ([35282e6](https://github.com/lidaixingchen/brutxui-vue3/commit/35282e6a04948eb15df696fe585168013c4441f8))
+* **cli:** 更新 CLI 文档 — registry 子命令、多源/离线、签名信任链 ([dad69af](https://github.com/lidaixingchen/brutxui-vue3/commit/dad69af92536565cc78081f54824df8c1e0505ae))
+* 基础设施闭环验收契约与依赖说明 ([7e5efd6](https://github.com/lidaixingchen/brutxui-vue3/commit/7e5efd63b6826ae1036da6c973720f51d9ed9ec9))
+* **copilot-instructions:** 更新 GitHub Copilot 使用说明补充规范 ([3760477](https://github.com/lidaixingchen/brutxui-vue3/commit/37604776f6a5b885be79461d26cc6763cba0c06c))
+* **changelog:** 整理 v0.9.6 CHANGELOG 格式并归档 v0.9.3，修复生成脚本 ([aee9820](https://github.com/lidaixingchen/brutxui-vue3/commit/aee98208019212c7c0120a2ec668e0fec2b663ac))
+
+### 🔧 CI
+
+* main 签名 job 与发布注入官方私钥 ([819eaa7](https://github.com/lidaixingchen/brutxui-vue3/commit/819eaa7cb577a0c312dc60323e930f6349dc0c5f))
+* **deps:** bump actions/checkout in the actions-official group (#3) ([b5c9a2d](https://github.com/lidaixingchen/brutxui-vue3/commit/b5c9a2d51c7ddeb78abc3133fb336f38adba960c))
+
+### ✨ Features
+
+* **registry:** 构建侧 CI 自动签发 registry-manifest ([446fb7e](https://github.com/lidaixingchen/brutxui-vue3/commit/446fb7e755ca986c401cc0386b7a69239b259b11))
+* **cli:** registry 源管理子命令并接入多源至 add/info/list/diff/doctor ([d80ee68](https://github.com/lidaixingchen/brutxui-vue3/commit/d80ee68cf5a3c1f157c562acebbb741afb92403f))
+* **cli:** 多源 fallback 与离线韧性 — 错误透出、逐源缓存与可观测性 ([85ed364](https://github.com/lidaixingchen/brutxui-vue3/commit/85ed364eeacb50a428171d58bcdf6e9299bdfff9))
+* **cli:** 签名信任链闭环 — manifest 完整性复算校验与严格模式 ([235f34f](https://github.com/lidaixingchen/brutxui-vue3/commit/235f34ff7856f28afdd7fb6556888a5a32368d13))
+
+### 🐛 Bug Fixes
+
+* **ci:** 排除 drift gate 中非确定性生成文件 ([036e791](https://github.com/lidaixingchen/brutxui-vue3/commit/036e791d932b695d9b02ad907e2bfccfeebe2781))
 
 ## [0.9.6](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.5...v0.9.6) - 2026-07-27
 
