@@ -9,6 +9,7 @@ const {
     touchCachedEntry,
     clearCache,
     dedupeInflight,
+    getCacheStats,
 } = await import('../src/lib/cache.js');
 
 let tmpRoot: string;
@@ -240,6 +241,30 @@ describe('cache layer', () => {
             await clearCache(365);
             const entry = await getCachedEntry('a', 'https://reg.test');
             expect(entry).not.toBeNull();
+        });
+    });
+
+    describe('getCacheStats (基础设施闭环 P2 缓存可观测性)', () => {
+        it('reports entry count and total bytes', async () => {
+            await setCachedEntry('a', 'https://reg.test', { x: 1 });
+            await setCachedEntry('b', 'https://reg2.test', { x: 2 });
+            const stats = await getCacheStats();
+            expect(stats.entryCount).toBe(2);
+            expect(stats.totalBytes).toBeGreaterThan(0);
+            expect(stats.dir).toBe(cacheDir);
+        });
+
+        it('reports zero entries when cache directory is empty', async () => {
+            const stats = await getCacheStats();
+            expect(stats.entryCount).toBe(0);
+            expect(stats.totalBytes).toBe(0);
+        });
+
+        it('counts only .json files', async () => {
+            await setCachedEntry('a', 'https://reg.test', { x: 1 });
+            await fs.writeFile(path.join(cacheDir, 'readme.txt'), 'ignore me');
+            const stats = await getCacheStats();
+            expect(stats.entryCount).toBe(1);
         });
     });
 

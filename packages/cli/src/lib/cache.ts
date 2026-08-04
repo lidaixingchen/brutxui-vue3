@@ -304,3 +304,38 @@ export async function clearCache(maxAgeDays?: number): Promise<void> {
         }
     }
 }
+
+export interface CacheStats {
+    /** 缓存目录路径 */
+    dir: string;
+    /** 缓存条目数（.json 文件数） */
+    entryCount: number;
+    /** 占用体积（字节） */
+    totalBytes: number;
+}
+
+/**
+ * 缓存可观测性（基础设施闭环 P2）：统计缓存条目数与占用体积。
+ * 供 `brutx doctor` 报告缓存健康状况与离线可用状态。
+ */
+export async function getCacheStats(): Promise<CacheStats> {
+    const cacheDir = getCacheDir();
+    let entryCount = 0;
+    let totalBytes = 0;
+
+    if (await fs.pathExists(cacheDir)) {
+        const entries = await fs.readdir(cacheDir, { withFileTypes: true });
+        for (const entry of entries) {
+            if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
+            try {
+                const stat = await fs.stat(path.join(cacheDir, entry.name));
+                entryCount += 1;
+                totalBytes += stat.size;
+            } catch {
+                // stat 失败的文件不计入
+            }
+        }
+    }
+
+    return { dir: cacheDir, entryCount, totalBytes };
+}

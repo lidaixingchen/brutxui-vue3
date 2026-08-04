@@ -1,21 +1,21 @@
-import { DEFAULT_REGISTRY_URL } from './constants.js';
+import { DEFAULT_REGISTRY_SOURCES } from './constants.js';
 import { isOfflineMode } from './cache.js';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
 import type { BrutalistConfig } from './types.js';
 
 /**
- * 多 registry 源与离线韧性（P1-5）
+ * 多 registry 源与离线韧性（P1-5 / 基础设施闭环 P0）
  *
  * 解析优先级（高 → 低）：
  *   1. 命令行 --registry（覆盖整个源列表）
  *   2. components.json 的 registries 数组（主源 + 镜像）
- *   3. DEFAULT_REGISTRY_URL（兜底）
+ *   3. DEFAULT_REGISTRY_SOURCES（GitHub Raw 主源 + jsDelivr CDN 镜像）
  *
  * 离线模式（BRUTX_OFFLINE=1 或 --offline）：
  *   - 不发网络请求，只读缓存
  *   - TTL 过期也复用（但调用方必须通过 integrity 校验）
- *   - 缓存未命中时抛 REGISTRY_OFFLINE_UNAVAILABLE
+ *   - 默认多源下依次尝试各源缓存，全部未命中才抛 REGISTRY_OFFLINE_UNAVAILABLE
  *
  * 认证：
  *   - BRUTX_REGISTRY_TOKEN → 注入 Authorization: Bearer <token>
@@ -31,7 +31,7 @@ const OFFLINE_ENV = 'BRUTX_OFFLINE';
  * 返回按优先级排列的 registry 源列表。
  * - override 非空时只返回 [override]
  * - 否则取 config.registries（过滤空串）
- * - 都没有时返回 [DEFAULT_REGISTRY_URL]
+ * - 都没有时返回 DEFAULT_REGISTRY_SOURCES 副本（GitHub Raw + jsDelivr CDN）
  */
 export function resolveRegistrySources(
     config: BrutalistConfig | null,
@@ -44,7 +44,7 @@ export function resolveRegistrySources(
     if (fromConfig && fromConfig.length > 0) {
         return fromConfig;
     }
-    return [DEFAULT_REGISTRY_URL];
+    return [...DEFAULT_REGISTRY_SOURCES];
 }
 
 /**
@@ -108,18 +108,15 @@ export async function fetchWithSources<T>(
 
     if (options.offline) {
         // 离线模式：fetcher 实现必须先查缓存再触网，离线时不应触网。
-        // 这里不直接拦截——而是把 offline 标志交给 fetcher，由它决定读缓存或抛错。
-        // 但若 fetcher 抛 REGISTRY_OFFLINE_UNAVAILABLE，直接冒泡（无 fallback 意义）。
+        // 默认多源下，组件可能缓存在任一源（如 CDN 镜像），故 REGISTRY_OFFLINE_UNAVAILABLE
+        // 不立即冒泡——依次尝试各源缓存，全部未命中才抛 REGISTRY_OFFLINE_UNAVAILABLE。
         let firstError: CliError | null = null;
         for (const source of sources) {
             try {
                 const result = await fetcher(source);
                 return { result, source };
             } catch (error) {
-                if (error instanceof CliError && error.code === 'REGISTRY_OFFLINE_UNAVAILABLE') {
-                    throw error;
-                }
-                // 其他错误在离线模式下视为该源不可用，尝试下一个
+                // 其他错误在离线模式下同样视为该源不可用，尝试下一个
                 if (firstError === null && error instanceof CliError) {
                     firstError = error;
                 }
@@ -133,6 +130,7 @@ export async function fetchWithSources<T>(
         );
     }
 
+    const sourceErrors: CliError[] = [];
     let lastError: Error | null = null;
     for (let i = 0; i < sources.length; i++) {
         const source = sources[i];
@@ -143,11 +141,30 @@ export async function fetchWithSources<T>(
             }
             return { result, source };
         } catch (error) {
-            lastError = error instanceof Error ? error : new Error(String(error));
+            const err = error instanceof Error ? error : new Error(String(error));
+            if (err instanceof CliError) sourceErrors.push(err);
+            lastError = err;
             if (i < sources.length - 1) {
-                logger.warn(`Registry source ${source} failed: ${lastError.message}. Trying next source...`);
+                logger.warn(`Registry source ${source} failed: ${err.message}. Trying next source...`);
             }
         }
+    }
+
+    // 信任链/完整性失败不折叠成泛化 REGISTRY_FETCH_FAILED——透出原始错误码与信息，
+    // 避免把"签名被篡改/内容被篡改"误判为普通网络故障。
+    // REGISTRY_SIGNATURE_INVALID 优先（信任链断裂最严重），其次 REGISTRY_INTEGRITY_FAILED（内容被篡改）。
+    const signatureError = sourceErrors.find(e => e.code === 'REGISTRY_SIGNATURE_INVALID');
+    if (signatureError) {
+        throw signatureError;
+    }
+    const integrityError = sourceErrors.find(e => e.code === 'REGISTRY_INTEGRITY_FAILED');
+    if (integrityError) {
+        // 多源下 integrity 失败也可能是源间内容滞后（如 CDN 缓存延迟），附提示但保留原错误码
+        throw new CliError(
+            `${integrityError.message} This may indicate a consistency delay between registry sources ` +
+            `(e.g. CDN cache lag). Retry later, or force the primary source with --registry.`,
+            { code: 'REGISTRY_INTEGRITY_FAILED', cause: integrityError }
+        );
     }
 
     throw new CliError(

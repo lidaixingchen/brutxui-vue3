@@ -6,7 +6,7 @@ import {
     fetchWithSources,
     withOfflineScope,
 } from '../src/lib/registry-source.js';
-import { DEFAULT_REGISTRY_URL } from '../src/lib/constants.js';
+import { DEFAULT_REGISTRY_SOURCES } from '../src/lib/constants.js';
 import { CliError } from '../src/lib/error.js';
 import type { BrutalistConfig } from '../src/lib/types.js';
 
@@ -45,13 +45,13 @@ describe('resolveRegistrySources (P1-5)', () => {
         ]);
     });
 
-    it('falls back to DEFAULT_REGISTRY_URL when override and registries are both absent', () => {
+    it('falls back to DEFAULT_REGISTRY_SOURCES when override and registries are both absent', () => {
         const config = makeConfig();
-        expect(resolveRegistrySources(config)).toEqual([DEFAULT_REGISTRY_URL]);
+        expect(resolveRegistrySources(config)).toEqual([...DEFAULT_REGISTRY_SOURCES]);
     });
 
-    it('falls back to DEFAULT_REGISTRY_URL when config is null', () => {
-        expect(resolveRegistrySources(null)).toEqual([DEFAULT_REGISTRY_URL]);
+    it('falls back to DEFAULT_REGISTRY_SOURCES when config is null', () => {
+        expect(resolveRegistrySources(null)).toEqual([...DEFAULT_REGISTRY_SOURCES]);
     });
 
     it('filters out empty strings and non-strings from config.registries', () => {
@@ -64,7 +64,7 @@ describe('resolveRegistrySources (P1-5)', () => {
 
     it('falls back to default when all registries entries are empty strings', () => {
         const config = makeConfig({ registries: ['', '', ''] });
-        expect(resolveRegistrySources(config)).toEqual([DEFAULT_REGISTRY_URL]);
+        expect(resolveRegistrySources(config)).toEqual([...DEFAULT_REGISTRY_SOURCES]);
     });
 });
 
@@ -224,7 +224,69 @@ describe('fetchWithSources (P1-5)', () => {
         expect(fetcher).toHaveBeenCalledTimes(2);
     });
 
-    it('bubbles REGISTRY_OFFLINE_UNAVAILABLE immediately in offline mode', async () => {
+    // --- 基础设施闭环 P0：信任链/完整性失败不透出泛化 REGISTRY_FETCH_FAILED ---
+
+    it('rethrows REGISTRY_SIGNATURE_INVALID when all sources fail with signature error', async () => {
+        const fetcher = vi.fn(async () => {
+            throw new CliError('Manifest signature verification failed', {
+                code: 'REGISTRY_SIGNATURE_INVALID',
+            });
+        });
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+            message: expect.stringContaining('signature verification failed'),
+        });
+        expect(fetcher).toHaveBeenCalledTimes(2);
+    });
+
+    it('rethrows REGISTRY_INTEGRITY_FAILED with multi-source consistency hint when all sources fail with integrity error', async () => {
+        const fetcher = vi.fn(async () => {
+            throw new CliError('Integrity check failed for component button', {
+                code: 'REGISTRY_INTEGRITY_FAILED',
+            });
+        });
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_INTEGRITY_FAILED',
+            message: expect.stringContaining('Integrity check failed'),
+        });
+        // 附上 CDN 缓存滞后提示，但不改变原始错误码
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            message: expect.stringContaining('consistency delay'),
+        });
+    });
+
+    it('prefers REGISTRY_SIGNATURE_INVALID over REGISTRY_INTEGRITY_FAILED when both present', async () => {
+        const fetcher = vi.fn(async (source: string) => {
+            if (source === 'https://a.example.com') {
+                throw new CliError('integrity fail', { code: 'REGISTRY_INTEGRITY_FAILED' });
+            }
+            throw new CliError('signature fail', { code: 'REGISTRY_SIGNATURE_INVALID' });
+        });
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        });
+    });
+
+    it('keeps REGISTRY_FETCH_FAILED for generic network errors', async () => {
+        const fetcher = vi.fn(async () => {
+            throw new Error('ECONNRESET');
+        });
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_FETCH_FAILED',
+        });
+    });
+
+    it('tries all sources in offline mode before throwing REGISTRY_OFFLINE_UNAVAILABLE', async () => {
         const fetcher = vi.fn(async () => {
             throw new CliError('offline miss', { code: 'REGISTRY_OFFLINE_UNAVAILABLE' });
         });
@@ -237,8 +299,8 @@ describe('fetchWithSources (P1-5)', () => {
         ).rejects.toMatchObject({
             code: 'REGISTRY_OFFLINE_UNAVAILABLE',
         });
-        // 应当在第一个源抛错后立即冒泡，不尝试后续源
-        expect(fetcher).toHaveBeenCalledTimes(1);
+        // 默认多源下，组件可能缓存在任一镜像源——离线时须尝试全部源后才报不可用
+        expect(fetcher).toHaveBeenCalledTimes(2);
     });
 
     it('throws REGISTRY_OFFLINE_UNAVAILABLE when all sources fail in offline mode', async () => {

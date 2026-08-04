@@ -2,8 +2,10 @@ import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import fs from 'fs-extra';
 import os from 'os';
 import path from 'path';
-import { computeRegistryIntegrity } from 'brutx-shared-vue';
+import { computeRegistryIntegrity, computeRegistryManifestIntegrity } from 'brutx-shared-vue';
 import * as registry from '../src/lib/registry.js';
+import { setCachedEntry } from '../src/lib/cache.js';
+import { logger } from '../src/lib/logger.js';
 import { generateEd25519KeyPair, signManifestIntegrity } from '../src/lib/signature.js';
 import { setRequireSignature, resetRequireSignature } from '../src/lib/signature-mode.js';
 import { CliError } from '../src/lib/error.js';
@@ -440,7 +442,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         }
     });
 
-    function makeSignedManifest(integrity: string, keyId: string, privateKey: string) {
+    /** 构建一个内容可覆盖的 manifest 基础对象（不含 integrity/signature，由调用方决定如何补）。 */
+    function buildManifest(overrides: Record<string, unknown> = {}) {
         return {
             $schema: 'https://example.com/schema.json',
             name: 'brutx-vue',
@@ -449,7 +452,21 @@ describe('getItem with manifest signature verification (P1-6)', () => {
             buildTimestamp: null,
             gitCommit: null,
             itemCount: 1,
-            items: {},
+            items: {} as Record<string, unknown>,
+            ...overrides,
+        };
+    }
+
+    /**
+     * 构建一份用真实 integrity 签名的 manifest。
+     * integrity 由 computeRegistryManifestIntegrity 对内容规范化求得，签名再对 integrity 签发——
+     * 这样复算比对与验签都能真实通过（测试必须用真实 integrity，否则会触发完整性复算失败）。
+     */
+    function makeSignedManifest(keyId: string, privateKey: string, overrides: Record<string, unknown> = {}) {
+        const base = buildManifest(overrides);
+        const integrity = computeRegistryManifestIntegrity(base);
+        return {
+            ...base,
             integrity,
             signature: signManifestIntegrity(integrity, privateKey),
             keyId,
@@ -483,8 +500,7 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        const manifestIntegrity = 'a'.repeat(64);
-        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey);
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -519,8 +535,7 @@ describe('getItem with manifest signature verification (P1-6)', () => {
 
     it('succeeds when manifest is signed but BRUTX_REGISTRY_PUBLIC_KEYS is unset (verification skipped)', async () => {
         delete process.env.BRUTX_REGISTRY_PUBLIC_KEYS;
-        const manifestIntegrity = 'c'.repeat(64);
-        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey);
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -535,23 +550,9 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        const manifestIntegrity = 'd'.repeat(64);
-        const validSig = signManifestIntegrity(manifestIntegrity, keyPair.privateKey);
-        // 篡改签名最后 4 个字符
-        const tamperedSig = validSig.slice(0, -4) + 'XXXX';
-        const manifest = {
-            $schema: 'https://example.com/schema.json',
-            name: 'brutx-vue',
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            buildTimestamp: null,
-            gitCommit: null,
-            itemCount: 1,
-            items: {},
-            integrity: manifestIntegrity,
-            signature: tamperedSig,
-            keyId: keyPair.keyId,
-        };
+        // 用真实 integrity 签发后，篡改签名最后 4 个字符（完整性复算通过、签名验证失败）
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { signature: string };
+        manifest.signature = manifest.signature.slice(0, -4) + 'XXXX';
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -565,22 +566,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        const manifestIntegrity = 'd2'.repeat(32);
-        const validSig = signManifestIntegrity(manifestIntegrity, keyPair.privateKey);
-        const tamperedSig = validSig.slice(0, -4) + 'XXXX';
-        const manifest = {
-            $schema: 'https://example.com/schema.json',
-            name: 'brutx-vue',
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            buildTimestamp: null,
-            gitCommit: null,
-            itemCount: 1,
-            items: {},
-            integrity: manifestIntegrity,
-            signature: tamperedSig,
-            keyId: keyPair.keyId,
-        };
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { signature: string };
+        manifest.signature = manifest.signature.slice(0, -4) + 'XXXX';
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -596,10 +583,9 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        const manifestIntegrity = 'e'.repeat(64);
-        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { keyId: string };
         // 覆盖 keyId 为未知值
-        (manifest as { keyId: string }).keyId = 'unknown-key-id';
+        manifest.keyId = 'unknown-key-id';
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -613,9 +599,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        const manifestIntegrity = 'e2'.repeat(32);
-        const manifest = makeSignedManifest(manifestIntegrity, keyPair.keyId, keyPair.privateKey);
-        (manifest as { keyId: string }).keyId = 'unknown-key-id';
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { keyId: string };
+        manifest.keyId = 'unknown-key-id';
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -630,21 +615,10 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        // 用 integrity-A 的签名，但 manifest 的 integrity 字段是 B
-        const sigForA = signManifestIntegrity('integrity-a-value', keyPair.privateKey);
-        const manifest = {
-            $schema: 'https://example.com/schema.json',
-            name: 'brutx-vue',
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            buildTimestamp: null,
-            gitCommit: null,
-            itemCount: 1,
-            items: {},
-            integrity: 'integrity-b-value',  // 不匹配签名
-            signature: sigForA,
-            keyId: keyPair.keyId,
-        };
+        // manifest 内容自洽（integrity 与内容一致、复算通过），但签名是对另一个值签发的 →
+        // 触发签名 ↔ integrity 字段的绑定校验（REGISTRY_SIGNATURE_INVALID）
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { signature: string };
+        manifest.signature = signManifestIntegrity('different-integrity-value', keyPair.privateKey);
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -658,22 +632,9 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        // 用 integrity-A 的签名，但 manifest 的 integrity 字段是 B（但 B 与 item.integrity 自洽）
-        const sigForA = signManifestIntegrity('integrity-a-value', keyPair.privateKey);
-        // 这里 manifest.integrity 与 item 内容无关，仅影响签名验证；使用自洽的 item
-        const manifest = {
-            $schema: 'https://example.com/schema.json',
-            name: 'brutx-vue',
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            buildTimestamp: null,
-            gitCommit: null,
-            itemCount: 1,
-            items: {},
-            integrity: 'integrity-b-value',
-            signature: sigForA,
-            keyId: keyPair.keyId,
-        };
+        // manifest 内容自洽，但签名针对另一个值签发 → 默认模式 warn 不抛错
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { signature: string };
+        manifest.signature = signManifestIntegrity('different-integrity-value', keyPair.privateKey);
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -689,9 +650,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },       // v1（仍在过渡期）
             { keyId: keyPairV2.keyId, publicKey: keyPairV2.publicKey },   // v2（新）
         ]);
-        const manifestIntegrity = 'f'.repeat(64);
         // 用 v2 签名
-        const manifest = makeSignedManifest(manifestIntegrity, keyPairV2.keyId, keyPairV2.privateKey);
+        const manifest = makeSignedManifest(keyPairV2.keyId, keyPairV2.privateKey);
         const item = createRegistryItem('button');
 
         stubFetchWithManifest(manifest, item);
@@ -706,22 +666,8 @@ describe('getItem with manifest signature verification (P1-6)', () => {
         process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
             { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
         ]);
-        const manifestIntegrity = '1'.repeat(64);
-        const validSig = signManifestIntegrity(manifestIntegrity, keyPair.privateKey);
-        const tamperedSig = validSig.slice(0, -4) + 'YYYY';
-        const manifest = {
-            $schema: 'https://example.com/schema.json',
-            name: 'brutx-vue',
-            schemaVersion: 1,
-            registryVersion: '0.1.0',
-            buildTimestamp: null,
-            gitCommit: null,
-            itemCount: 1,
-            items: {},
-            integrity: manifestIntegrity,
-            signature: tamperedSig,
-            keyId: keyPair.keyId,
-        };
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as { signature: string };
+        manifest.signature = manifest.signature.slice(0, -4) + 'YYYY';
 
         stubFetchWithManifest(manifest, createRegistryItem('button'));
 
@@ -733,6 +679,95 @@ describe('getItem with manifest signature verification (P1-6)', () => {
             expect((error as CliError).code).toBe('REGISTRY_SIGNATURE_INVALID');
             expect((error as CliError).exitCode).toBe(1);
         }
+    });
+
+    // --- 基础设施闭环 P0：manifest 内容 ↔ integrity 自洽校验 ---
+    // 攻击场景：篡改内容字段（registryVersion/items）但保留原 integrity + signature，
+    // 签名对 integrity 字符串仍有效——必须通过复算比对识破。
+
+    it('throws REGISTRY_SIGNATURE_INVALID when content is tampered but signature+integrity kept (strict mode)', async () => {
+        setRequireSignature(true);
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        // 正常签发的 manifest，随后篡改 registryVersion（不重算 integrity、不动签名）
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as {
+            integrity: string;
+            signature: string;
+            keyId: string;
+            registryVersion: string;
+        };
+        manifest.registryVersion = '9.9.9-tampered';
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        await expect(registry.getItem('button', 'https://sig-content-tamper.mock')).rejects.toMatchObject({
+            code: 'REGISTRY_SIGNATURE_INVALID',
+        });
+    });
+
+    it('warns but does not throw when content is tampered but signature+integrity kept (default mode)', async () => {
+        process.env.BRUTX_REGISTRY_PUBLIC_KEYS = JSON.stringify([
+            { keyId: keyPair.keyId, publicKey: keyPair.publicKey },
+        ]);
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const manifest = makeSignedManifest(keyPair.keyId, keyPair.privateKey) as {
+            integrity: string;
+            signature: string;
+            keyId: string;
+            registryVersion: string;
+        };
+        manifest.registryVersion = '9.9.9-tampered';
+        const item = createRegistryItem('button');
+
+        stubFetchWithManifest(manifest, item);
+
+        // 默认模式：integrity 复算不一致 → warn，但不抛错（getItem 正常返回）
+        await expect(registry.getItem('button', 'https://sig-content-tamper-warn.mock')).resolves.toMatchObject({
+            name: 'button',
+        });
+        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Manifest integrity mismatch'));
+        warnSpy.mockRestore();
+    });
+});
+
+describe('offline cache hit (基础设施闭环 P2)', () => {
+    let tempCacheDir: string;
+
+    beforeEach(() => {
+        tempCacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'brutx-offline-cache-'));
+        process.env.BRUTX_CACHE_DIR = tempCacheDir;
+        process.env.BRUTX_OFFLINE = '1';
+        delete process.env.BRUTX_NO_CACHE;
+    });
+
+    afterEach(() => {
+        delete process.env.BRUTX_OFFLINE;
+        delete process.env.BRUTX_CACHE_DIR;
+        if (tempCacheDir && fs.existsSync(tempCacheDir)) {
+            fs.removeSync(tempCacheDir);
+        }
+    });
+
+    it('reuses cached item offline and emits [OFFLINE CACHE HIT]', async () => {
+        const item = createRegistryItem('button');
+        await setCachedEntry('button', 'https://offline.mock', item, { registryVersion: '1.0.0' });
+        const infoSpy = vi.spyOn(logger, 'info').mockImplementation(() => {});
+
+        const result = await registry.getItem('button', 'https://offline.mock', true);
+
+        expect(result.name).toBe('button');
+        expect(infoSpy).toHaveBeenCalledWith(expect.stringContaining('[OFFLINE CACHE HIT]'));
+        infoSpy.mockRestore();
+    });
+
+    it('throws REGISTRY_OFFLINE_UNAVAILABLE when component is not cached offline', async () => {
+        const infoSpy = vi.spyOn(logger, 'info').mockImplementation(() => {});
+        await expect(registry.getItem('missing', 'https://offline.mock', true)).rejects.toMatchObject({
+            code: 'REGISTRY_OFFLINE_UNAVAILABLE',
+        });
+        infoSpy.mockRestore();
     });
 });
 
