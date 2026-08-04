@@ -128,6 +128,7 @@ npx brutx-vue@latest update --across-versions
 | `--dry-run` | Simulate adding without writing files | `false` |
 | `--registry <registry>` / `-r` | Specify registry path or URL | — |
 | `--no-cache` | Skip registry cache | `false` |
+| `--offline` | Use only cached data, never hit the network (same as `BRUTX_OFFLINE=1`) | `false` |
 | `--vscode` | Update VS Code snippets with new components | `false` |
 
 ## brutx-vue doctor
@@ -149,6 +150,8 @@ The doctor command will check:
 7. Whether required dependencies are installed (`reka-ui`, `class-variance-authority`, `clsx`, `tailwind-merge`)
 8. Whether the `cn()` utility function exists
 9. File integrity of installed components
+10. Reachability of each registry source (skipped with `--offline`)
+11. Registry cache entry count and total size (offline availability)
 
 ### Examples
 
@@ -186,6 +189,7 @@ npx brutx-vue@latest doctor --json
 | `--json` | Output JSON format report | `false` |
 | `--yes` / `-y` | Skip confirmation prompts | `false` |
 | `--silent` / `-s` | Silent output | `false` |
+| `--offline` | Skip registry reachability probes and cache stats | `false` |
 | `--sbom` | Generate a CycloneDX 1.5 SBOM and exit (skips doctor checks) | `false` |
 | `--sbom-output <path>` | SBOM output file path | `./brutx-sbom.json` |
 
@@ -264,6 +268,7 @@ npx brutx-vue@latest diff --all --json
 | `--json` | Output JSON format | `false` |
 | `--silent` / `-s` | Silent output | `false` |
 | `--no-cache` | Skip registry cache | `false` |
+| `--offline` | Use only cached data, never hit the network | `false` |
 
 ### Output Example
 
@@ -341,6 +346,7 @@ npx brutx-vue@latest update --dry-run
 | `--dry-run` | Show which components would be updated without writing | `false` |
 | `--registry <registry>` / `-r` | Specify registry URL | — |
 | `--no-cache` | Skip registry cache | `false` |
+| `--offline` | Use only cached data, never hit the network | `false` |
 | `--silent` / `-s` | Silent output | `false` |
 | `--across-versions` | Allow updating version-pinned components across their locked version (see [Version Pinning](#version-pinning)) | `false` |
 
@@ -373,6 +379,10 @@ npx brutx-vue@latest list --json
 | `--cwd <path>` | Set working directory | Current directory |
 | `--json` | Output JSON format | `false` |
 | `--silent` / `-s` | Silent output | `false` |
+| `--registry <path>` / `-r` | Specify registry path or URL (for update checks) | — |
+| `--check-updates` | Check registry integrity to show available updates | `false` |
+| `--no-cache` | Skip registry cache when checking updates | `false` |
+| `--offline` | Use only cached data, never hit the network | `false` |
 
 ### Output Example
 
@@ -419,6 +429,7 @@ npx brutx-vue@latest info button --json
 | `--json` | Output JSON format | `false` |
 | `--registry <registry>` / `-r` | Specify registry path or URL | — |
 | `--silent` / `-s` | Silent output | `false` |
+| `--offline` | Use only cached data, never hit the network | `false` |
 
 ## brutx-vue remove
 
@@ -494,6 +505,48 @@ npx brutx-vue@latest create my-app --package-manager npm
 | `--cwd <path>` | The directory to create the project in | Current directory |
 | `--yes` / `-y` | Skip confirmation prompts | `false` |
 
+## brutx-vue registry
+
+Manage the registry sources of your project (`registries` field in `components.json`). Sources are tried in order: when the primary source fails, the CLI automatically falls back to mirror sources for zero-config CDN redundancy.
+
+### registry list
+
+Print all resolved sources and their reachability:
+
+```bash
+npx brutx-vue@latest registry list
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--cwd <path>` | Set working directory | Current directory |
+| `--json` | Output JSON format | `false` |
+| `--offline` | Skip network probes, only report configured sources | `false` |
+
+### registry add
+
+Append a source to the `registries` list in `components.json` (deduplicated):
+
+```bash
+npx brutx-vue@latest registry add https://mirror.example.com
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--cwd <path>` | Set working directory | Current directory |
+
+### registry remove
+
+Remove a source from `components.json`. Removing the last custom source deletes the `registries` field and restores the official default multi-source:
+
+```bash
+npx brutx-vue@latest registry remove https://mirror.example.com
+```
+
+| Flag | Description | Default |
+|------|-------------|---------|
+| `--cwd <path>` | Set working directory | Current directory |
+
 ## `components.json` Configuration File
 
 The `components.json` file is created by `brutx-vue init` and stores your project configuration. All CLI commands read this file to locate components, utilities, and styles.
@@ -525,6 +578,31 @@ The `components.json` file is created by `brutx-vue init` and stores your projec
 | `aliases.components` | Import alias for the components directory (e.g. `@/components`). |
 | `aliases.utils` | Import alias for the utility file containing `cn()` (e.g. `@/lib/utils`). |
 | `aliases.composables` | Import alias for the composables directory (e.g. `@/composables`). |
+| `sharedBase` | Optional monorepo shared base directory. |
+| `registries` | Multi-registry source list (primary + mirrors), tried in order; defaults to the official dual sources (GitHub Raw + jsDelivr CDN) when unset. |
+| `requireSignature` | Project-level strict signature mode: when `true`, enforces manifest signature verification (lower priority than the `BRUTX_REQUIRE_SIGNATURE` env var and the `--require-signature` flag, see [Supply Chain Security](#supply-chain-security-signature-sbom)). |
+| `trustedPublicKeys` | Project-level additional trusted public keys (`{ keyId, publicKey }` array), appended on top of the official root keys. |
+
+### Optional fields example
+
+All fields below are optional and silently compatible when absent:
+
+```json
+{
+  "registries": [
+    "https://raw.githubusercontent.com/<you>/<fork>/main/packages/registry/registry",
+    "https://mirror.example.com/registry"
+  ],
+  "requireSignature": true,
+  "trustedPublicKeys": [
+    {
+      "keyId": "my-org-v1",
+      "publicKey": "<base64-SPKI-DER>",
+      "note": "Internal mirror signing key"
+    }
+  ]
+}
+```
 
 ## Global Options
 
@@ -597,18 +675,26 @@ P1-6 introduces manifest Ed25519 signature verification and CycloneDX 1.5 SBOM g
 
 ### Manifest Signature
 
-At registry build time, `registry-manifest.json` carries `signature` + `keyId` fields holding an Ed25519 signature over the `integrity` field. The CLI automatically verifies the signature when fetching the manifest.
+At registry build time, `registry-manifest.json` carries an `integrity` field (canonical sha256 of the content) plus `signature` + `keyId` (an Ed25519 signature over the integrity). When fetching the manifest, the CLI performs two checks:
+
+1. **Integrity recomputation**: recomputes sha256 over `name`/`schemaVersion`/`registryVersion`/`items` and compares it to the `integrity` field — this closes the gap of "tampering with content fields while keeping the original signature" (`buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` are excluded from the hash so builds stay idempotent).
+2. **Signature verification**: looks up the trusted public key by `keyId` and verifies the signature was issued by a trusted maintainer.
 
 #### Trusted Public Keys
 
-Trusted public keys are injected via the `BRUTX_REGISTRY_PUBLIC_KEYS` environment variable (JSON array):
+Trusted public keys are resolved by priority, with the official root key always merged in as a trust anchor:
+
+1. **Project-level** `trustedPublicKeys` in `components.json` (highest priority; same `keyId` overrides the official key)
+2. **Environment variable** `BRUTX_REGISTRY_PUBLIC_KEYS` (JSON array)
+3. **Built-in official root keys** `OFFICIAL_PUBLIC_KEYS` (zero-config fallback)
 
 ```bash
+# Inject custom public keys via env var
 BRUTX_REGISTRY_PUBLIC_KEYS='[{"keyId":"v1","publicKey":"<base64-SPKI-DER>"}]' \
   npx brutx-vue@latest add button
 ```
 
-`publicKey` is a base64-encoded SPKI DER (single-line, easy to embed in JSON). When the env var is unset, verification degrades to skip (backward compatible).
+`publicKey` is a base64-encoded SPKI DER (single-line, easy to embed in JSON). **The official registry works out of the box**: with no keys configured, the CLI verifies the official registry signature using the built-in public key. Unsigned (legacy) manifests stay backward-compatible and are skipped.
 
 #### Default warn vs strict mode
 
@@ -663,6 +749,29 @@ npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
 ```
 
 It reads installed component versions, dependencies, `registryDependencies`, and integrity from the `.brutx/components.json` manifest and emits a CycloneDX 1.5 SBOM. Errors out if no components are installed.
+
+## Default Multi-Source & Offline Mode
+
+### Multi-Source Fallback
+
+The default registry is **dual-source**: GitHub Raw primary + jsDelivr CDN mirror. When `registries` is not configured, the CLI tries, in order:
+
+1. `https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry`
+2. `https://cdn.jsdelivr.net/gh/lidaixingchen/brutxui-vue3@main/packages/registry/registry`
+
+When the primary source times out or fails, the CLI automatically falls back to the mirror and prints a warning. Override the whole source list via the `registries` field in `components.json` (see [configuration](#componentsjson-configuration-file)) or the `--registry` flag. If every source fails signature/integrity verification, the CLI surfaces the original error codes `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED` (instead of a generic network error) and hints at possible inter-source consistency lag.
+
+### Offline Mode
+
+Activate offline mode with the `--offline` flag or the `BRUTX_OFFLINE=1` environment variable: **no network requests are made**, only the local cache is read (TTL-expired entries are still reused; integrity is still verified). With multiple sources, each source's cache is tried in turn; on a hit the CLI prints:
+
+```text
+[OFFLINE CACHE HIT] button (source: https://raw.githubusercontent.com/...)
+```
+
+A cache miss throws `REGISTRY_OFFLINE_UNAVAILABLE`. Run `brutx add` or `brutx list --check-updates` once online to warm the cache for offline use.
+
+`brutx doctor` reports the cache entry count, total size, and offline availability.
 
 ## Available Components
 

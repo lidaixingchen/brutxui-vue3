@@ -87,6 +87,7 @@ npx brutx-vue@latest add --all
 | `--dry-run`                    | 模拟添加，不写入文件      | `false` |
 | `--registry <registry>` / `-r` | 指定注册表路径或 URL    | —       |
 | `--no-cache`                   | 跳过注册表缓存         | `false` |
+| `--offline`                    | 只读缓存，不发起网络请求（同 `BRUTX_OFFLINE=1`） | `false` |
 | `--vscode`                     | 更新 VS Code 代码片段 | `false` |
 
 ### 版本锁定
@@ -147,6 +148,8 @@ doctor 命令将检查：
 6. CSS 文件中是否包含 BrutxUI 设计 token
 7. 已安装组件的文件完整性
 8. `$version` 配置版本检查
+9. 各 registry 源的可达性（`--offline` 时跳过网络探测）
+10. 注册表缓存的条目数与占用体积（离线可用性）
 
 ### 示例
 
@@ -178,6 +181,7 @@ npx brutx-vue@latest doctor --json
 | `--json`             | 输出 JSON 格式报告 | `false` |
 | `--yes` / `-y`       | 跳过确认提示       | `false` |
 | `--silent` / `-s`    | 静默输出         | `false` |
+| `--offline`          | 跳过 registry 源网络探测与缓存统计 | `false` |
 | `--sbom`             | 生成 CycloneDX 1.5 SBOM 并退出（不运行 doctor 检查） | `false` |
 | `--sbom-output <path>` | SBOM 输出路径 | `./brutx-sbom.json` |
 
@@ -255,6 +259,7 @@ npx brutx-vue@latest diff --all --json
 | `--json`                   | 输出 JSON 格式 | `false` |
 | `--silent` / `-s`          | 静默输出       | `false` |
 | `--no-cache`               | 跳过注册表缓存    | `false` |
+| `--offline`                | 只读缓存，不发起网络请求 | `false` |
 
 ### 输出示例
 
@@ -334,6 +339,7 @@ npx brutx-vue@latest update --dry-run
 | `--dry-run`                    | 仅预览，不写入文件 | `false` |
 | `--registry <registry>` / `-r` | 指定注册表 URL | —       |
 | `--no-cache`                   | 跳过注册表缓存   | `false` |
+| `--offline`                    | 只读缓存，不发起网络请求 | `false` |
 | `--silent` / `-s`              | 静默输出      | `false` |
 | `--across-versions`            | 允许跨版本更新已锁定的组件（见[版本锁定](#版本锁定)） | `false` |
 
@@ -349,9 +355,13 @@ npx brutx-vue@latest list
 
 | 标志                | 描述         | 默认值     |
 | ----------------- | ---------- | ------- |
-| `--cwd <path>`    | 设置工作目录     | 当前目录    |
-| `--json`          | 输出 JSON 格式 | `false` |
-| `--silent` / `-s` | 静默输出       | `false` |
+| `--cwd <path>`             | 设置工作目录           | 当前目录    |
+| `--json`                   | 输出 JSON 格式       | `false` |
+| `--silent` / `-s`          | 静默输出             | `false` |
+| `--registry <path>` / `-r` | 指定注册表路径或 URL（用于更新检查） | —       |
+| `--check-updates`          | 检查注册表 integrity 以显示可用更新 | `false` |
+| `--no-cache`               | 检查更新时跳过注册表缓存     | `false` |
+| `--offline`                | 只读缓存，不发起网络请求    | `false` |
 
 ### 输出示例
 
@@ -389,6 +399,7 @@ npx brutx-vue@latest info button
 | `--json`                       | 输出 JSON 格式   | `false` |
 | `--registry <registry>` / `-r` | 指定注册表路径或 URL | —       |
 | `--silent` / `-s`              | 静默输出         | `false` |
+| `--offline`                    | 只读缓存，不发起网络请求 | `false` |
 
 ## brutx-vue remove
 
@@ -460,6 +471,48 @@ npx brutx-vue@latest create my-app --template nuxt
 | `--cwd <path>`                 | 设置工作目录                          | 当前目录      |
 | `--yes` / `-y`                 | 跳过确认提示                          | `false`   |
 
+## brutx-vue registry
+
+管理项目配置的 registry 源（`components.json` 的 `registries` 字段）。多源按序 fallback：主源失败时自动切换镜像源，实现零配置 CDN 冗余。
+
+### registry list
+
+打印当前生效的所有源及其连通性状态：
+
+```bash
+npx brutx-vue@latest registry list
+```
+
+| 标志                | 描述              | 默认值  |
+| ----------------- | --------------- | ---- |
+| `--cwd <path>`    | 设置工作目录          | 当前目录 |
+| `--json`          | 输出 JSON 格式      | `false` |
+| `--offline`       | 跳过网络探测，仅报告已配置源 | `false` |
+
+### registry add
+
+向 `components.json` 的 `registries` 列表添加一个源（自动去重）：
+
+```bash
+npx brutx-vue@latest registry add https://mirror.example.com
+```
+
+| 标志             | 描述     | 默认值  |
+| -------------- | ------ | ---- |
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+
+### registry remove
+
+从 `components.json` 移除指定源。移除最后一个自定义源后自动删除 `registries` 字段，恢复官方默认多源：
+
+```bash
+npx brutx-vue@latest registry remove https://mirror.example.com
+```
+
+| 标志             | 描述     | 默认值  |
+| -------------- | ------ | ---- |
+| `--cwd <path>` | 设置工作目录 | 当前目录 |
+
 ## components.json 配置文件
 
 运行 `init` 后，项目根目录会生成 `components.json`：
@@ -491,6 +544,31 @@ npx brutx-vue@latest create my-app --template nuxt
 | `aliases.components`  | 组件导入别名                      |
 | `aliases.utils`       | 工具函数导入别名                    |
 | `aliases.composables` | 组合式函数导入别名                   |
+| `sharedBase`          | monorepo 共享基础目录（可选）          |
+| `registries`          | 多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用官方默认双源（GitHub Raw + jsDelivr CDN） |
+| `requireSignature`    | 项目级严格签名模式：为 `true` 时强制 manifest 签名校验（优先级低于 `BRUTX_REQUIRE_SIGNATURE` 环境变量与 `--require-signature` flag，见[供应链安全](#供应链安全签名与-sbom)） |
+| `trustedPublicKeys`   | 项目级追加信任公钥数组（`{ keyId, publicKey }`），在官方 Root 公钥之外追加信任 |
+
+### 可选字段示例
+
+以下字段均为可选，缺省时静默兼容：
+
+```json
+{
+  "registries": [
+    "https://raw.githubusercontent.com/<you>/<fork>/main/packages/registry/registry",
+    "https://mirror.example.com/registry"
+  ],
+  "requireSignature": true,
+  "trustedPublicKeys": [
+    {
+      "keyId": "my-org-v1",
+      "publicKey": "<base64-SPKI-DER>",
+      "note": "内部镜像签名密钥"
+    }
+  ]
+}
+```
 
 ## 全局选项
 
@@ -563,18 +641,26 @@ P1-6 引入了 manifest Ed25519 签名校验与 CycloneDX 1.5 SBOM 生成，用�
 
 ### Manifest 签名
 
-注册表构建时，`registry-manifest.json` 会附带 `signature` + `keyId` 字段，对 `integrity` 字段做 Ed25519 签名。CLI 在拉取 manifest 时自动校验签名。
+注册表构建时，`registry-manifest.json` 会附带 `integrity`（内容规范化 sha256）与 `signature` + `keyId`（对 integrity 的 Ed25519 签名）。CLI 拉取 manifest 时自动执行两道校验：
+
+1. **完整性复算**：对 `name`/`schemaVersion`/`registryVersion`/`items` 复算 sha256 并与 `integrity` 字段比对——封堵"篡改内容字段但保留原签名"的攻击（`buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 不参与计算，保证构建幂等）。
+2. **签名验签**：按 `keyId` 查找受信任公钥，验证签名确由受信任维护者签发。
 
 #### 信任公钥配置
 
-通过 `BRUTX_REGISTRY_PUBLIC_KEYS` 环境变量注入受信任公钥列表（JSON 数组）：
+信任公钥按优先级解析，官方 Root 公钥始终作为信任锚并入：
+
+1. **项目级** `components.json` 的 `trustedPublicKeys`（最高优先级，同名 keyId 覆盖官方）
+2. **环境变量** `BRUTX_REGISTRY_PUBLIC_KEYS`（JSON 数组）
+3. **内置官方 Root 公钥** `OFFICIAL_PUBLIC_KEYS`（零配置兜底）
 
 ```bash
+# 环境变量注入自定义公钥
 BRUTX_REGISTRY_PUBLIC_KEYS='[{"keyId":"v1","publicKey":"<base64-SPKI-DER>"}]' \
   npx brutx-vue@latest add button
 ```
 
-`publicKey` 为 base64 编码的 SPKI DER 格式（单行，便于嵌入 JSON）。未设置环境变量时，验签自动降级为跳过（向后兼容）。
+`publicKey` 为 base64 编码的 SPKI DER 格式（单行，便于嵌入 JSON）。**官方 Registry 开箱即验**：不配置任何公钥时，CLI 用内置官方公钥校验官方 Registry 的签名。未签名（旧版）manifest 保持向后兼容跳过。
 
 #### 默认 warn 与严格模式
 
@@ -629,3 +715,26 @@ npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
 ```
 
 读取 `.brutx/components.json` manifest 中已安装组件的版本、依赖、`registryDependencies` 与 integrity，生成 CycloneDX 1.5 格式 SBOM。无组件安装时报错退出。
+
+## 默认多源与离线模式
+
+### 多源 Fallback
+
+默认注册表源为**双源**：GitHub Raw 主源 + jsDelivr CDN 镜像。未配置 `registries` 时，CLI 按序尝试：
+
+1. `https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry`
+2. `https://cdn.jsdelivr.net/gh/lidaixingchen/brutxui-vue3@main/packages/registry/registry`
+
+主源超时/失败时自动切换到镜像源并输出警告。可通过 `components.json` 的 `registries` 字段（[见配置](#componentsjson-配置文件)）或 `--registry` 命令临时覆盖整个源列表。若所有源均因签名/完整性校验失败，CLI 透出原始错误码 `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED`（而非泛化网络错误），并提示可能存在源间一致性延迟。
+
+### 离线模式
+
+`--offline` flag 或 `BRUTX_OFFLINE=1` 环境变量激活离线模式：**不发起任何网络请求**，只读本地缓存（TTL 过期也复用，integrity 仍校验）。多源下依次尝试各源缓存，命中时输出：
+
+```text
+[OFFLINE CACHE HIT] button (source: https://raw.githubusercontent.com/...)
+```
+
+缓存未命中时抛 `REGISTRY_OFFLINE_UNAVAILABLE`。先在线执行一次 `brutx add` 或 `brutx list --check-updates` 可预热缓存供离线使用。
+
+`brutx doctor` 会报告缓存条目数、占用体积与离线可用状态。
