@@ -1,8 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import crypto from 'crypto';
+import { computeRegistryManifestIntegrity } from 'brutx-shared-vue';
 import {
     loadTrustedPublicKeys,
+    setTrustedPublicKeys,
+    resetTrustedPublicKeys,
     verifyManifestSignature,
+    verifyManifestIntegrityAndSignature,
     generateEd25519KeyPair,
     signManifestIntegrity,
     type TrustedPublicKey,
@@ -11,44 +15,48 @@ import {
     setRequireSignature,
     resetRequireSignature,
 } from '../src/lib/signature-mode.js';
+import { OFFICIAL_PUBLIC_KEYS } from '../src/lib/constants.js';
 import { CliError } from '../src/lib/error.js';
 import { logger } from '../src/lib/logger.js';
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
 
-describe('loadTrustedPublicKeys (P1-6)', () => {
+describe('loadTrustedPublicKeys (P1-6 / 基础设施闭环 P1)', () => {
     beforeEach(() => {
         delete process.env[PUBLIC_KEYS_ENV];
+        resetTrustedPublicKeys();
     });
 
     afterEach(() => {
         delete process.env[PUBLIC_KEYS_ENV];
+        resetTrustedPublicKeys();
     });
 
-    it('returns empty array when env var is unset', () => {
-        expect(loadTrustedPublicKeys()).toEqual([]);
+    it('returns OFFICIAL_PUBLIC_KEYS when env var is unset and no override (开箱即验)', () => {
+        expect(loadTrustedPublicKeys()).toEqual([...OFFICIAL_PUBLIC_KEYS]);
     });
 
-    it('returns parsed array when env var contains valid JSON', () => {
+    it('returns parsed array merged with official keys when env var contains valid JSON', () => {
         const keys: TrustedPublicKey[] = [
             { keyId: 'v1', publicKey: 'a'.repeat(44) + '=' },
             { keyId: 'v2', publicKey: 'b'.repeat(44) + '=' },
         ];
         process.env[PUBLIC_KEYS_ENV] = JSON.stringify(keys);
-        expect(loadTrustedPublicKeys()).toEqual(keys);
+        // 官方 Root 公钥作为信任锚始终并入
+        expect(loadTrustedPublicKeys()).toEqual([...keys, ...OFFICIAL_PUBLIC_KEYS]);
     });
 
-    it('returns empty array when env var is not valid JSON', () => {
+    it('falls back to OFFICIAL_PUBLIC_KEYS when env var is not valid JSON', () => {
         process.env[PUBLIC_KEYS_ENV] = '{invalid json';
-        expect(loadTrustedPublicKeys()).toEqual([]);
+        expect(loadTrustedPublicKeys()).toEqual([...OFFICIAL_PUBLIC_KEYS]);
     });
 
-    it('returns empty array when env var is valid JSON but not an array', () => {
+    it('falls back to OFFICIAL_PUBLIC_KEYS when env var is valid JSON but not an array', () => {
         process.env[PUBLIC_KEYS_ENV] = JSON.stringify({ keyId: 'v1', publicKey: 'x' });
-        expect(loadTrustedPublicKeys()).toEqual([]);
+        expect(loadTrustedPublicKeys()).toEqual([...OFFICIAL_PUBLIC_KEYS]);
     });
 
-    it('filters out entries with missing keyId or publicKey', () => {
+    it('filters out entries with missing keyId or publicKey, then merges official keys', () => {
         process.env[PUBLIC_KEYS_ENV] = JSON.stringify([
             { keyId: 'v1', publicKey: 'valid-key' },
             { keyId: '', publicKey: 'empty-keyId' },
@@ -60,7 +68,38 @@ describe('loadTrustedPublicKeys (P1-6)', () => {
         ]);
         expect(loadTrustedPublicKeys()).toEqual([
             { keyId: 'v1', publicKey: 'valid-key' },
+            ...OFFICIAL_PUBLIC_KEYS,
         ]);
+    });
+
+    it('prefers setTrustedPublicKeys override over env and official keys', () => {
+        const override: TrustedPublicKey[] = [{ keyId: 'project-key', publicKey: 'c'.repeat(44) + '=' }];
+        process.env[PUBLIC_KEYS_ENV] = JSON.stringify([{ keyId: 'env-key', publicKey: 'd'.repeat(44) + '=' }]);
+        setTrustedPublicKeys(override);
+        // override 在前，官方公钥作为信任锚并入
+        expect(loadTrustedPublicKeys()).toEqual([...override, ...OFFICIAL_PUBLIC_KEYS]);
+    });
+
+    it('clears override with empty array, falling back to env', () => {
+        const override: TrustedPublicKey[] = [{ keyId: 'project-key', publicKey: 'c'.repeat(44) + '=' }];
+        process.env[PUBLIC_KEYS_ENV] = JSON.stringify([{ keyId: 'env-key', publicKey: 'd'.repeat(44) + '=' }]);
+        setTrustedPublicKeys(override);
+        setTrustedPublicKeys([]);
+        expect(loadTrustedPublicKeys()).toEqual([
+            { keyId: 'env-key', publicKey: 'd'.repeat(44) + '=' },
+            ...OFFICIAL_PUBLIC_KEYS,
+        ]);
+    });
+
+    it('deduplicates by keyId when override and official keys overlap', () => {
+        setTrustedPublicKeys([...OFFICIAL_PUBLIC_KEYS]);
+        expect(loadTrustedPublicKeys()).toEqual([...OFFICIAL_PUBLIC_KEYS]);
+    });
+
+    it('resetTrustedPublicKeys clears the override', () => {
+        setTrustedPublicKeys([{ keyId: 'project-key', publicKey: 'c'.repeat(44) + '=' }]);
+        resetTrustedPublicKeys();
+        expect(loadTrustedPublicKeys()).toEqual([...OFFICIAL_PUBLIC_KEYS]);
     });
 });
 
@@ -71,6 +110,7 @@ describe('verifyManifestSignature (P1-6)', () => {
 
     beforeEach(() => {
         delete process.env[PUBLIC_KEYS_ENV];
+        resetTrustedPublicKeys();
         vi.spyOn(console, 'log').mockImplementation(() => {});
         vi.spyOn(console, 'warn').mockImplementation(() => {});
         vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -81,6 +121,7 @@ describe('verifyManifestSignature (P1-6)', () => {
     afterEach(() => {
         vi.restoreAllMocks();
         delete process.env[PUBLIC_KEYS_ENV];
+        resetTrustedPublicKeys();
         resetRequireSignature();
     });
 
@@ -431,5 +472,141 @@ describe('generateEd25519KeyPair + signManifestIntegrity (P1-6)', () => {
             ids.add(generateEd25519KeyPair().keyId);
         }
         expect(ids.size).toBe(20);
+    });
+});
+
+describe('verifyManifestIntegrityAndSignature (基础设施闭环 P0 内容↔integrity 自洽)', () => {
+    let keyPair: { keyId: string; publicKey: string; privateKey: string };
+
+    const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
+
+    /** 构造一个真实 integrity 签发的 manifest（内容字段齐全，供复算比对）。 */
+    function makeSignedManifest(overrides: Record<string, unknown> = {}) {
+        const base = {
+            $schema: 'https://example.com/schema.json',
+            name: 'brutx-vue',
+            schemaVersion: 1,
+            registryVersion: '0.1.0',
+            buildTimestamp: null,
+            gitCommit: null,
+            itemCount: 1,
+            items: {} as Record<string, unknown>,
+            ...overrides,
+        };
+        const integrity = computeRegistryManifestIntegrity(base);
+        return {
+            ...base,
+            integrity,
+            signature: signManifestIntegrity(integrity, keyPair.privateKey),
+            keyId: keyPair.keyId,
+        };
+    }
+
+    beforeEach(() => {
+        delete process.env[PUBLIC_KEYS_ENV];
+        resetTrustedPublicKeys();
+        vi.spyOn(console, 'log').mockImplementation(() => {});
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        keyPair = generateEd25519KeyPair();
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+        delete process.env[PUBLIC_KEYS_ENV];
+        resetTrustedPublicKeys();
+        resetRequireSignature();
+    });
+
+    const trustedKeys = () => [keyPair] as TrustedPublicKey[];
+
+    it('skips unsigned manifests (backward compatibility)', () => {
+        const manifest = makeSignedManifest();
+        delete manifest.signature;
+        expect(verifyManifestIntegrityAndSignature(manifest, trustedKeys())).toBe(false);
+    });
+
+    it('returns true for a valid signed manifest (content matches integrity, signature valid)', () => {
+        expect(verifyManifestIntegrityAndSignature(makeSignedManifest(), trustedKeys())).toBe(true);
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when content is tampered but signature+integrity kept (strict mode)', () => {
+        setRequireSignature(true);
+        const manifest = makeSignedManifest() as { registryVersion: string };
+        // 篡改内容字段但不重算 integrity、不动签名——正是被复算比对封堵的攻击
+        manifest.registryVersion = '9.9.9-tampered';
+        expect(() => verifyManifestIntegrityAndSignature(manifest, trustedKeys())).toThrow(CliError);
+        try {
+            verifyManifestIntegrityAndSignature(manifest, trustedKeys());
+            throw new Error('should have thrown');
+        } catch (error) {
+            expect(error).toBeInstanceOf(CliError);
+            expect((error as CliError).code).toBe('REGISTRY_SIGNATURE_INVALID');
+        }
+    });
+
+    it('warns and returns false when content is tampered but signature+integrity kept (default mode)', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const manifest = makeSignedManifest() as { registryVersion: string };
+        manifest.registryVersion = '9.9.9-tampered';
+        const result = verifyManifestIntegrityAndSignature(manifest, trustedKeys());
+        expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Manifest integrity mismatch'));
+        expect(warnSpy.mock.calls[0][0]).toContain('--require-signature');
+    });
+
+    it('detects integrity field tampering (signature over old integrity no longer matches)', () => {
+        setRequireSignature(true);
+        const manifest = makeSignedManifest() as { integrity: string };
+        // 篡改 integrity 字段：复算（基于内容）与新值不一致 → 失败
+        manifest.integrity = 'f'.repeat(64);
+        expect(() => verifyManifestIntegrityAndSignature(manifest, trustedKeys())).toThrow(CliError);
+        try {
+            verifyManifestIntegrityAndSignature(manifest, trustedKeys());
+            throw new Error('should have thrown');
+        } catch (error) {
+            expect((error as CliError).code).toBe('REGISTRY_SIGNATURE_INVALID');
+        }
+    });
+
+    it('skips recomputation and still verifies signature when manifest lacks recomputable fields', () => {
+        // 缺 items 等字段 → recompute 返回 null，跳过复算，仅验签名
+        const integrity = 'a'.repeat(64);
+        const manifest = {
+            integrity,
+            signature: signManifestIntegrity(integrity, keyPair.privateKey),
+            keyId: keyPair.keyId,
+        };
+        expect(verifyManifestIntegrityAndSignature(manifest, trustedKeys())).toBe(true);
+
+        // 签名无效时仍走签名校验失败（默认模式 warn；严格模式抛 REGISTRY_SIGNATURE_INVALID）
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const tampered = { ...manifest, signature: 'invalid-signature' };
+        expect(verifyManifestIntegrityAndSignature(tampered, trustedKeys())).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+
+        setRequireSignature(true);
+        expect(() => verifyManifestIntegrityAndSignature(tampered, trustedKeys())).toThrow(CliError);
+        resetRequireSignature();
+    });
+
+    it('skips verification when no trusted keys configured', () => {
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
+        const manifest = makeSignedManifest() as { registryVersion: string };
+        manifest.registryVersion = '9.9.9-tampered';
+        // 无信任公钥 → 跳过完整性复算与验签，不告警（用户未主动开启校验）
+        expect(verifyManifestIntegrityAndSignature(manifest, [])).toBe(false);
+        expect(warnSpy).not.toHaveBeenCalledWith(expect.stringContaining('Manifest integrity mismatch'));
+    });
+
+    it('recomputes using sorted items so field order in JSON does not affect integrity', () => {
+        // items 顺序不同但集合相同 → 复算一致（build 侧与 CLI 侧都按 name 排序）
+        const manifest = makeSignedManifest({
+            items: {
+                b: { integrity: 'x', fileCount: 1, dependencies: [], registryDependencies: [] },
+                a: { integrity: 'y', fileCount: 1, dependencies: [], registryDependencies: [] },
+            },
+        });
+        expect(verifyManifestIntegrityAndSignature(manifest, trustedKeys())).toBe(true);
     });
 });

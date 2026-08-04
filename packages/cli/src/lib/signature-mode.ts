@@ -41,6 +41,18 @@ export function setRequireSignature(enabled: boolean): void {
 }
 
 /**
+ * 依据优先级应用配置级严格签名开关（基础设施闭环 P1）。
+ * 优先级：--require-signature flag（index.ts 已设全局）> BRUTX_REQUIRE_SIGNATURE env > config.requireSignature。
+ * 命令入口在读取 components.json 后调用；config 为 null 或未启用时无副作用。
+ */
+export function applyRequireSignatureConfig(config: { requireSignature?: boolean } | null | undefined): void {
+    if (config?.requireSignature !== true) return;
+    // env 激活时以 env 为准（优先级更高）；flag 激活时全局值已为 true，重复设置无害。
+    if (isRequireSignatureEnvActive()) return;
+    setRequireSignature(true);
+}
+
+/**
  * 重置严格签名模式状态（供测试隔离使用）。
  */
 export function resetRequireSignature(): void {

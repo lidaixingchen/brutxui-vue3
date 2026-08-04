@@ -1,7 +1,12 @@
 import crypto from 'crypto';
+import { computeRegistryManifestIntegrity } from 'brutx-shared-vue';
 import { CliError } from './error.js';
 import { logger } from './logger.js';
 import { isRequireSignature } from './signature-mode.js';
+import { OFFICIAL_PUBLIC_KEYS } from './constants.js';
+import type { TrustedPublicKey } from './types.js';
+
+export type { TrustedPublicKey } from './types.js';
 
 /**
  * 供应链安全：manifest 签名与验签（P1-6）
@@ -13,7 +18,9 @@ import { isRequireSignature } from './signature-mode.js';
  *
  * 签名范围：对 manifest 的 `integrity` 字段值（hex 字符串）做 Ed25519 签名。
  *   - integrity 已对 manifest 的 name/schemaVersion/registryVersion/items 做规范化 sha256
- *   - 签名 integrity 即绑定整个 manifest 内容，避免 CLI 侧重复规范化逻辑
+ *     （算法单一来源：brutx-shared-vue 的 computeRegistryManifestIntegrity）
+ *   - 验签侧（verifyManifestIntegrityAndSignature）会先复算 integrity 并与 manifest.integrity 比对，
+ *     再验签名——确保签名不仅绑定 integrity 字符串，也真正绑定 manifest 内容（防"改内容但保留原签名"）。
  *
  * 公钥分发：
  *   - 通过 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量注入（JSON 数组 [{keyId, publicKey}]）
@@ -34,18 +41,26 @@ import { isRequireSignature } from './signature-mode.js';
 
 const PUBLIC_KEYS_ENV = 'BRUTX_REGISTRY_PUBLIC_KEYS';
 
-export interface TrustedPublicKey {
-    keyId: string;
-    /** base64 编码的 SPKI DER 格式公钥 */
-    publicKey: string;
-}
+/** 项目级受信任公钥 override（由命令入口从 components.json 的 trustedPublicKeys 设置）。 */
+let trustedPublicKeysOverride: TrustedPublicKey[] | undefined;
 
 /**
- * 从 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量加载受信任公钥列表。
- * 格式：JSON 数组 [{keyId: "v1", publicKey: "base64..."}]
- * 未设置或解析失败时返回空数组（验签降级为跳过）。
+ * 设置项目级受信任公钥 override（基础设施闭环 P1）。
+ * 传入空数组/null/undefined 时清空 override，回退到 env 与官方内置公钥。
  */
-export function loadTrustedPublicKeys(): TrustedPublicKey[] {
+export function setTrustedPublicKeys(keys: TrustedPublicKey[] | null | undefined): void {
+    trustedPublicKeysOverride = keys === null || keys === undefined || keys.length === 0
+        ? undefined
+        : [...keys];
+}
+
+/** 重置项目级受信任公钥 override（供测试隔离使用）。 */
+export function resetTrustedPublicKeys(): void {
+    trustedPublicKeysOverride = undefined;
+}
+
+/** 从 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量解析受信任公钥（原有逻辑）。 */
+function parseEnvTrustedPublicKeys(): TrustedPublicKey[] {
     const env = process.env[PUBLIC_KEYS_ENV];
     if (!env) return [];
     try {
@@ -63,6 +78,32 @@ export function loadTrustedPublicKeys(): TrustedPublicKey[] {
         logger.debug(`${PUBLIC_KEYS_ENV} is not valid JSON, signature verification disabled.`);
         return [];
     }
+}
+
+/**
+ * 合并受信任公钥：配置源（override 或 env）优先，官方 Root 公钥作为信任锚兜底。
+ * 按 keyId 去重，配置在前（同名 keyId 时配置覆盖官方）。
+ */
+function mergeTrustedKeys(configured: TrustedPublicKey[]): TrustedPublicKey[] {
+    if (configured.length === 0) {
+        return [...OFFICIAL_PUBLIC_KEYS];
+    }
+    const byKeyId = new Map<string, TrustedPublicKey>();
+    for (const key of [...configured, ...OFFICIAL_PUBLIC_KEYS]) {
+        byKeyId.set(key.keyId, key);
+    }
+    return Array.from(byKeyId.values());
+}
+
+/**
+ * 加载受信任公钥列表（基础设施闭环 P1）。
+ * 优先级：项目级 setTrustedPublicKeys → BRUTX_REGISTRY_PUBLIC_KEYS 环境变量 → OFFICIAL_PUBLIC_KEYS。
+ * 官方 Root 公钥始终作为信任锚并入结果（配置同名 keyId 时以配置为准）。
+ * 零配置时返回 OFFICIAL_PUBLIC_KEYS，实现官方 Registry 签名开箱即验。
+ */
+export function loadTrustedPublicKeys(): TrustedPublicKey[] {
+    const configured = trustedPublicKeysOverride ?? parseEnvTrustedPublicKeys();
+    return mergeTrustedKeys(configured);
 }
 
 /**
@@ -115,10 +156,7 @@ export function verifyManifestSignature(
     try {
         publicKeyObject = parsePublicKey(key.publicKey);
     } catch (error) {
-        // parsePublicKey 抛 CliError(REGISTRY_SIGNATURE_INVALID)——走统一降级路径
-        if (error instanceof CliError) {
-            return handleSignatureFailure(error.message);
-        }
+        // parsePublicKey 抛通用 Error——统一走降级路径（warn / 严格模式抛 REGISTRY_SIGNATURE_INVALID）
         return handleSignatureFailure(
             `Failed to parse trusted public key: ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -146,6 +184,88 @@ export function verifyManifestSignature(
             `Manifest signature verification failed: ${error instanceof Error ? error.message : String(error)}`,
         );
     }
+}
+
+/**
+ * 已签名 manifest 的字段子集（供 integrity 复算 + 验签）。
+ * name/schemaVersion/registryVersion/items 由 build 侧写入，用于复算 integrity。
+ */
+export interface SignedManifestVerifyInput {
+    name?: unknown;
+    schemaVersion?: unknown;
+    registryVersion?: unknown;
+    items?: unknown;
+    integrity?: string;
+    signature?: string;
+    keyId?: string;
+}
+
+/**
+ * 复算 manifest 自身 integrity 并与字段声明值比对。
+ * - 仅当 name/schemaVersion/registryVersion/items 字段齐全且 items 为对象时才复算，
+ *   否则返回 null（无法复算，调用方应跳过该项校验，避免误伤旧版/非标准 manifest）。
+ * @returns 复算得到的 sha256 hex；字段不齐或无法复算时返回 null
+ */
+function recomputeManifestIntegrity(manifest: SignedManifestVerifyInput): string | null {
+    const items = manifest.items;
+    if (
+        typeof manifest.name !== 'string' ||
+        typeof manifest.schemaVersion !== 'number' ||
+        typeof manifest.registryVersion !== 'string' ||
+        typeof items !== 'object' || items === null || Array.isArray(items)
+    ) {
+        return null;
+    }
+    try {
+        return computeRegistryManifestIntegrity({
+            name: manifest.name,
+            schemaVersion: manifest.schemaVersion,
+            registryVersion: manifest.registryVersion,
+            items: items as Record<string, unknown>,
+        });
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * 完整校验已签名 manifest（基础设施闭环 P0 安全契约）：integrity 自洽 + 签名真实性。
+ *
+ * 在 verifyManifestSignature（仅对 integrity 字符串验签）之上，先复算 integrity 并比对
+ * manifest.integrity，封堵"攻击者改写 registryVersion/items 等内容字段、保留原 integrity+签名"
+ * 的空子——签名不再只是"绑定一个字符串"，而是真正绑定 manifest 内容。
+ *
+ * 规则（短路顺序）：
+ *   1. 未签名（缺 signature/keyId）→ 交给 verifyManifestSignature 跳过（向后兼容旧 registry）
+ *   2. 缺 integrity → 交给 verifyManifestSignature（保留原有"无法验证"跳过语义）
+ *   3. trustedKeys 为空 → 跳过（用户未配置任何信任公钥，不强制校验）
+ *   4. 复算 integrity 与 manifest.integrity 不一致 → handleSignatureFailure()
+ *   5. 剩余校验（keyId 匹配、公钥解析、签名验证）→ 交给 verifyManifestSignature
+ *
+ * @throws CliError code=REGISTRY_SIGNATURE_INVALID 严格模式下 integrity 复算不一致或签名无效
+ */
+export function verifyManifestIntegrityAndSignature(
+    manifest: SignedManifestVerifyInput,
+    trustedKeys: TrustedPublicKey[] = loadTrustedPublicKeys(),
+): boolean {
+    // 未签名 / 缺 integrity / 无信任公钥 → 保留原有跳过语义（不额外校验）
+    if (!manifest.signature || !manifest.keyId || !manifest.integrity) {
+        return verifyManifestSignature(manifest, trustedKeys);
+    }
+    if (trustedKeys.length === 0) {
+        return verifyManifestSignature(manifest, trustedKeys);
+    }
+
+    // 内容 ↔ integrity 自洽：复算并比对（与 build 侧共用 computeRegistryManifestIntegrity）
+    const recomputed = recomputeManifestIntegrity(manifest);
+    if (recomputed !== null && recomputed !== manifest.integrity) {
+        return handleSignatureFailure(
+            'Manifest integrity mismatch: manifest content does not match its integrity field. ' +
+            'The manifest may have been tampered with.',
+        );
+    }
+
+    return verifyManifestSignature(manifest, trustedKeys);
 }
 
 /**

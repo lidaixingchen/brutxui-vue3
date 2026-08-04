@@ -5,6 +5,7 @@ const {
     isRequireSignature,
     setRequireSignature,
     resetRequireSignature,
+    applyRequireSignatureConfig,
 } = await import('../src/lib/signature-mode.js');
 
 describe('signature strict mode (P1-6)', () => {
@@ -86,6 +87,36 @@ describe('signature strict mode (P1-6)', () => {
             process.env.BRUTX_REQUIRE_SIGNATURE = '1';
             setRequireSignature(true);
             resetRequireSignature();
+            expect(isRequireSignature()).toBe(true);
+        });
+    });
+
+    describe('applyRequireSignatureConfig (基础设施闭环 P1)', () => {
+        it('does nothing when config is null or requireSignature is not true', () => {
+            applyRequireSignatureConfig(null);
+            expect(isRequireSignature()).toBe(false);
+            applyRequireSignatureConfig(undefined);
+            expect(isRequireSignature()).toBe(false);
+            applyRequireSignatureConfig({});
+            expect(isRequireSignature()).toBe(false);
+            applyRequireSignatureConfig({ requireSignature: false });
+            expect(isRequireSignature()).toBe(false);
+        });
+
+        it('enables strict mode when config.requireSignature is true', () => {
+            applyRequireSignatureConfig({ requireSignature: true });
+            expect(isRequireSignature()).toBe(true);
+        });
+
+        it('does not override env when BRUTX_REQUIRE_SIGNATURE is already active (priority)', () => {
+            process.env.BRUTX_REQUIRE_SIGNATURE = '1';
+            applyRequireSignatureConfig({ requireSignature: true });
+            expect(isRequireSignature()).toBe(true);
+        });
+
+        it('keeps global flag (from --require-signature) active after applying config', () => {
+            setRequireSignature(true);
+            applyRequireSignatureConfig({ requireSignature: false });
             expect(isRequireSignature()).toBe(true);
         });
     });

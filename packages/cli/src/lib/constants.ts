@@ -1,7 +1,7 @@
 import { readFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import type { ProjectType } from './types.js';
+import type { ProjectType, TrustedPublicKey } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -91,7 +91,42 @@ export const REGISTRY_PATH_PREFIXES = {
 
 export const SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/schema.json';
 
-export const DEFAULT_REGISTRY_URL = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
+/**
+ * 默认多 registry 源（基础设施闭环 P0）：GitHub Raw 主源 + jsDelivr CDN 镜像。
+ * 未配置自定义源时，resolveRegistrySources 返回此数组的副本，
+ * 使多源 fallback 引擎在零配置下即可提供 CDN 冗余高可用。
+ */
+export const DEFAULT_REGISTRY_SOURCES = [
+    'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry',
+    'https://cdn.jsdelivr.net/gh/lidaixingchen/brutxui-vue3@main/packages/registry/registry',
+] as const;
+
+/**
+ * 默认主源（即 DEFAULT_REGISTRY_SOURCES 首项）。
+ * 保留该导出以向后兼容旧调用方与测试；新代码优先使用 DEFAULT_REGISTRY_SOURCES。
+ */
+export const DEFAULT_REGISTRY_URL: string = DEFAULT_REGISTRY_SOURCES[0];
+
+/**
+ * 官方 Root 签名公钥 keyId（基础设施闭环 P1）。
+ * 与 CI 发布工作流中的 BRUTX_REGISTRY_KEY_ID secret 保持一致。
+ */
+export const OFFICIAL_KEY_ID = 'official-v1';
+
+/**
+ * 官方 Root 公钥 Trust Store（基础设施闭环 P1）。
+ * 集中收拢至 constants.ts，避免业务代码内联硬编码。
+ * 用户零配置时 CLI 以这里的内置公钥校验官方 Registry manifest 签名。
+ * 对应私钥保存在 CI Secret（BRUTX_REGISTRY_PRIVATE_KEY），永不入库。
+ */
+export const OFFICIAL_PUBLIC_KEYS: readonly TrustedPublicKey[] = [
+    {
+        keyId: OFFICIAL_KEY_ID,
+        publicKey: 'MCowBQYDK2VwAyEAInjbAbxBUpf2XNWYyiUmp4owBPrUYLcz4IbTgFtTahM=',
+        status: 'active',
+        note: 'BrutxUI 官方注册表 Ed25519 签名密钥（SPKI DER / base64）',
+    },
+] as const;
 
 export const DOCS_URL = 'https://lidaixingchen.github.io/brutxui-vue3/';
 

@@ -8,6 +8,21 @@ export type ProjectType =
 
 export type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
 
+/**
+ * 受信任的 manifest 签名公钥（P1-6 信任链）。
+ * publicKey 为 base64 编码的 SPKI DER 格式 Ed25519 公钥。
+ * status 用于标识密钥生命周期，便于轮换与撤销审计。
+ */
+export interface TrustedPublicKey {
+    keyId: string;
+    /** base64 编码的 SPKI DER 格式公钥 */
+    publicKey: string;
+    /** 密钥状态：active / rotated / revoked */
+    status?: 'active' | 'rotated' | 'revoked';
+    /** 备注（来源、用途等） */
+    note?: string;
+}
+
 export interface TsConfig {
     compilerOptions?: {
         baseUrl?: string;
@@ -35,10 +50,21 @@ export interface BrutalistConfig {
     sharedBase?: string;
     /**
      * 多 registry 源（P1-5）：主源 + 镜像列表，CLI 按序 fallback。
-     * 未配置时回退到 DEFAULT_REGISTRY_URL。
+     * 未配置时回退到 DEFAULT_REGISTRY_SOURCES。
      * 命令行 --registry 临时覆盖整个列表。
      */
     registries?: string[];
+    /**
+     * 严格签名模式（基础设施闭环 P1）：为 true 时强制 manifest 签名校验。
+     * 优先级低于 BRUTX_REQUIRE_SIGNATURE 环境变量与 --require-signature flag，
+     * 用于团队在项目中声明强制验签，旧版本 components.json 缺省时静默兼容。
+     */
+    requireSignature?: boolean;
+    /**
+     * 项目级追加信任公钥（基础设施闭环 P1）：在官方 Root 公钥之外追加信任。
+     * 未配置时回退到 BRUTX_REGISTRY_PUBLIC_KEYS 环境变量，再回退到官方内置公钥。
+     */
+    trustedPublicKeys?: TrustedPublicKey[];
 }
 
 /**

@@ -31,7 +31,7 @@ export {
     VERBOSE_LEVEL_TRACE,
 } from './logger.js';
 
-export { getItem, resolveDeps, readConfig, readConfigSafe, migrateConfig } from './registry.js';
+export { getItem, getItemFromSources, resolveDeps, readConfig, readConfigSafe, migrateConfig } from './registry.js';
 
 export {
     clearCache,
@@ -40,8 +40,10 @@ export {
     touchCachedEntry,
     dedupeInflight,
     isOfflineMode,
+    getCacheStats,
     type CacheReadResult,
     type CacheWriteInput,
+    type CacheStats,
 } from './cache.js';
 export {
     resolveRegistrySources,
@@ -53,7 +55,10 @@ export {
 export type { RegistrySourceStatus } from './types.js';
 export {
     loadTrustedPublicKeys,
+    setTrustedPublicKeys,
+    resetTrustedPublicKeys,
     verifyManifestSignature,
+    verifyManifestIntegrityAndSignature,
     generateEd25519KeyPair,
     signManifestIntegrity,
 } from './signature.js';
@@ -100,6 +105,7 @@ export {
     isRequireSignature,
     setRequireSignature,
     resetRequireSignature,
+    applyRequireSignatureConfig,
 } from './signature-mode.js';
 
 export {
