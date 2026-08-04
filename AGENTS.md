@@ -1,6 +1,6 @@
 # AGENTS.md — BrutxUI Vue 3
 
-面向 Vue 3 + Tailwind CSS 的 Neo-Brutalist UI 组件库（独立维护的 Vue 3 版本）。
+面向 Vue 3 + Tailwind CSS 的 Neo-Brutalist UI 组件库。
 
 ## 自动生成文件（勿手动编辑）
 
@@ -94,7 +94,7 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 - `packages/cli/`：`src/commands/` + `src/lib/`（`audit.log` 审计、`BRUTX_DRY_RUN=1` 全局 dry-run、`-v/-vv/-vvv` 与 `BRUTX_VERBOSE`）
 - `packages/registry/` + `packages/shared/`：构建脚本与组件元数据（自动生成文件见上方表格）
 - `scripts/`：组件生成器、i18n 校验（`pnpm check:i18n`）、根 CHANGELOG 生成
-- `.github/`：新增 workflow 用 SHA pin `owner/repo@<40-char-sha> # vN`，dependabot 每周一自动升级
+- `.github/`：GitHub Actions 工作流 `workflows/`（SHA pin 格式 `owner/repo@<40-char-sha> # vN`）+ Dependabot 配置 `dependabot.yml`（自动升级 Actions SHA，每周一开 PR）
 
 ## 详细文档
 
