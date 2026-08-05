@@ -11,7 +11,7 @@ const DatePicker = defineAsyncComponent(async () => {
         return mod.DatePicker
     } catch {
         console.warn('[BrutxUI] Calendar component requires v-calendar. Install it: pnpm add v-calendar')
-        return { template: '<div/>' }
+        return { render: () => null }
     }
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
