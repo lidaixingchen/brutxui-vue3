@@ -26,16 +26,21 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('command.place
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const searchValue = ref(props.modelValue ?? '')
-rootContext.filterSearch.value = searchValue.value
+
+function applyFilterSearch(val: string) {
+    rootContext.filterSearch.value = val
+}
 
 watch(() => props.modelValue, (val) => {
     searchValue.value = val ?? ''
 })
 
 watch(searchValue, (val) => {
-    rootContext.filterSearch.value = val
+    applyFilterSearch(val)
     emit('update:modelValue', val)
 })
+
+applyFilterSearch(searchValue.value)
 
 function handleInput(event: Event) {
     const target = event.target
