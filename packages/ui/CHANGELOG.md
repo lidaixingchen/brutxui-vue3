@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.9.8
+
+### Patch Changes
+
+- fix(ui): 补齐组件依赖元数据，修复 variants 样式、组件逻辑与 composables 边界问题（含代码审查回归与测试补充）
+
 ## 0.9.7
 
 ### Patch Changes
