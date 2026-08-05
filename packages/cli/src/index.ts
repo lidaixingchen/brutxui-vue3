@@ -253,9 +253,6 @@ function preprocessArgv(argv: string[]): string[] {
     return result;
 }
 
-/** 已注册的子命令名集合（从 commander 注册表派生，单一事实来源），用于从 argv 中定位子命令在参数中的位置。 */
-const SUBCOMMANDS = new Set(program.commands.map((command) => command.name()));
-
 /**
  * 在 commander 解析前从预处理后的 argv 应用全局 dry-run 和 verbose level。
  * 调用方应先经过 preprocessArgv 处理，使 -v/-vv/-vvv 统一为 --verbose-level。
@@ -263,14 +260,12 @@ const SUBCOMMANDS = new Set(program.commands.map((command) => command.name()));
  * 环境变量 BRUTX_DRY_RUN=1 / BRUTX_VERBOSE 由各自模块自动检测，这里只处理 CLI flag。
  */
 function applyGlobalOptionsFromArgv(argv: string[]): void {
-    // 仅当 --dry-run 出现在子命令名之前（全局位置）时才启用全局 dry-run，
-    // 避免 add/update/remove 子命令自身的 --dry-run 被误提升为全局 dry-run。
-    // 用已知子命令名集合定位子命令，而非"第一个非 - token"（后者会把全局选项的值
-    // 如 --verbose-level 2 误判为子命令位置，导致全局 --dry-run 漏判）。
-    // argv 前两项是 node 可执行文件与脚本路径，从第三项起查找。
-    const cmdIdx = argv.findIndex((arg, index) => index >= 2 && SUBCOMMANDS.has(arg));
-    const globalDryRunIdx = argv.indexOf('--dry-run');
-    if (globalDryRunIdx !== -1 && (cmdIdx === -1 || globalDryRunIdx < cmdIdx)) {
+    // 全局与各子命令（add/update/remove 等）均注册了同名 `--dry-run` option。
+    // commander 解析子命令参数时，同名 flag 会被全局 option 捕获，子命令自身的
+    // options.dryRun 保持默认 false；因此这里对任意位置的 `--dry-run` 统一激活
+    // 全局 dry-run，再由各命令入口的 mergeDryRun() 合并生效。
+    // 进程内单命令执行，全局 dry-run 只作用于当前命令的写操作，不会波及其他命令。
+    if (argv.includes('--dry-run')) {
         setGlobalDryRun(true);
     }
 
