@@ -36,6 +36,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
             return controlled !== undefined ? controlled : internalOpen.value
         },
         set: (val) => {
+            if (val && toValue(options.readonly)) return
             const controlled = toValue(options.openProp)
             if (controlled === undefined) {
                 internalOpen.value = val

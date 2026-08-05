@@ -65,7 +65,14 @@ function handleUpdate(value: Date | null) {
 
 function handleShortcutSelect(shortcut: DatePickerShortcut) {
     const value = resolveShortcutValue(shortcut)
-    if ((props.minDate && value < props.minDate) || (props.maxDate && value > props.maxDate)) return
+    const valueTime = new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime()
+    const minTime = props.minDate
+        ? new Date(props.minDate.getFullYear(), props.minDate.getMonth(), props.minDate.getDate()).getTime()
+        : -Infinity
+    const maxTime = props.maxDate
+        ? new Date(props.maxDate.getFullYear(), props.maxDate.getMonth(), props.maxDate.getDate()).getTime()
+        : Infinity
+    if (valueTime < minTime || valueTime > maxTime) return
     emit('update:modelValue', value)
 }
 

@@ -1311,7 +1311,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c2a4ba87bbc17ae9440356cf75b081ea44bc7dcf03994c187cb0458eda851fb1"
+      "integrity": "sha256-6ba7a367a5ea0768abeee7425cb872805214838b77d493fdc2ddac38e4a64d90"
     },
     {
       "name": "calendar",
@@ -1631,7 +1631,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-9e1f30697efb0b1cf549cb0477e8dd467ec9c979a0ad98e398349e6b4ae75fa6"
+      "integrity": "sha256-be27c6390e84625b0f13f062ab38e09e35be99da706fe82262dabd76dc208589"
     },
     {
       "name": "carousel",
@@ -2467,7 +2467,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-2b38241e0d3a1ad3b62e57bc7c1d675ec29cac6cf6596a1a2801d96b2dbb193c"
+      "integrity": "sha256-f4a425cc9ee0d25181b5464d621dfcd57cb53f1ff13df55ca4cf45f7cc8e4b62"
     },
     {
       "name": "combobox",
@@ -2722,7 +2722,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-ca9c37f0ef2fe8259a104cc69758c9424400a820401fc9f82dd6d6fd1c88c536"
+      "integrity": "sha256-98b259f92307a688d90585bc6c0418ed43bc76aed208141f831276c486269c2d"
     },
     {
       "name": "cookie-consent",
@@ -3028,7 +3028,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-a049d3a656a8b123f030d37145e26d8a090243e63e262a30879790f191b4bb6d"
+      "integrity": "sha256-6396088203a3c4340ca8694f28ac0e31aa701e053fcfc3ad8b3b8f901abacf63"
     },
     {
       "name": "dashboard-shell",
@@ -3268,7 +3268,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f115a654e190014a2c63dde6601a69f3b995f392d9235f5565ed508969280ab9"
+      "integrity": "sha256-b13ef8896f1a628daf29db767b6b01db845b65b1189cdc76b1462425923fd24d"
     },
     {
       "name": "date-picker",
@@ -3449,7 +3449,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-fca32f554f25eb8bdcd9532b9847d16f6bbba8634b92bf58fbcab55e9a21bc2f"
+      "integrity": "sha256-3504e36011dcabaa088f575f7d5dee0fb4a84240ff23717ad75073bc0135467d"
     },
     {
       "name": "descriptions",
@@ -3541,7 +3541,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-7c1576d88f29d429cd33fb47c1e1e0f0430dacfa56598b5d05712b7679c0e895"
+      "integrity": "sha256-0f2685d9010691928023977416a6a017bada600a93866852aefef72d72d133af"
     },
     {
       "name": "dialog",
@@ -4035,7 +4035,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-80eb0e3de948bc5dc3c76ca3eaf59c093b45fb28ed339e7c822b2ae1e2d663db"
+      "integrity": "sha256-93531a1b2217533bc1ce3afb4e44a160d8f49e08be5b83875f6e385307c0636e"
     },
     {
       "name": "form",
@@ -5387,7 +5387,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c44a1151d92911f3a33a6aa5099d29ea6ebb5b454cf1b39ff21cffb7d215cc6c"
+      "integrity": "sha256-45d050ab92b35ea0252045676a3333ae66019c366455b3a29b01c2ea994ec16f"
     },
     {
       "name": "message",
@@ -5706,7 +5706,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-1be2cf441a61a40b02fdddd8f9fef854162b3d202b8b459e9569c20e18641a63"
+      "integrity": "sha256-7428af13156b68c48a215b55b33d1bd31c4cc943f8428d718f95edd2bd8ac0e7"
     },
     {
       "name": "pagination",

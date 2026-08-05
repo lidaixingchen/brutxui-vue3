@@ -77,13 +77,6 @@ const triggerClasses = computed(() =>
 
 const contentId = `date-picker-content-${useId()}`
 
-function handleTriggerClick(event: Event) {
-    if (props.readonly) {
-        event.stopPropagation()
-        event.preventDefault()
-    }
-}
-
 defineExpose({ open })
 </script>
 
@@ -104,7 +97,6 @@ defineExpose({ open })
                     :aria-disabled="readonly"
                     :class="triggerClasses"
                     @keydown="handleTriggerKeydown"
-                    @click.capture="handleTriggerClick"
                 >
                     <CalendarIcon
                         class="shrink-0 stroke-[3] opacity-70"
