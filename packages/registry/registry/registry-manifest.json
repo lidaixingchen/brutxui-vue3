@@ -8,7 +8,7 @@
   "itemCount": 87,
   "items": {
     "accordion": {
-      "integrity": "sha256-436f7a6df4dcc70a8cdc8fcbc166b28d86569572724f30316461df436b2fc073",
+      "integrity": "sha256-53f06ca63d8df737e12de01e036bb6c3e7fed3324f925a1468871d95c3f679cb",
       "fileCount": 9,
       "dependencies": [
         "@lucide/vue",
@@ -22,7 +22,8 @@
       "integrity": "sha256-42e5fc28900431d64ac2d3e695593e183bb44d793561163c856db512358b3a22",
       "fileCount": 7,
       "dependencies": [
-        "@lucide/vue"
+        "@lucide/vue",
+        "reka-ui"
       ],
       "registryDependencies": [
         "button",
@@ -86,7 +87,9 @@
     "badge": {
       "integrity": "sha256-0c18da022a0d84603cdcf9f022a8ae564df2904bb0ae8e25c03212ebecffe11c",
       "fileCount": 6,
-      "dependencies": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "locale-zh-cn"
       ],
@@ -151,6 +154,7 @@
       "fileCount": 5,
       "dependencies": [
         "@lucide/vue",
+        "reka-ui",
         "v-calendar"
       ],
       "registryDependencies": [
@@ -1045,7 +1049,7 @@
       "examples": []
     }
   },
-  "integrity": "ff85224d43bcdc3d83cd1ef454ecfe63125b54a7983f3e875b3b4762210a2d14",
-  "signature": "sBtNzQbybp/wbN3lIx5h4VuYUjaad5di4thMH5sPKOmtNnzG3KrBPIjfLkxRy07hqC4yaLpYVPQgZHe1XEjjAQ==",
+  "integrity": "e265178e17e098c2fcd5cdf87076777ecb13987ae9222ac9e023adb83761f892",
+  "signature": "Y1LhoIaJJgSxZb+SA5boCPZa5eC0V5lzHqYtvNj73SXDCbX0ehFL/vexg6ta1SuxD8WZvcwu3tQgDqlPXa5YBg==",
   "keyId": "official-v1"
 }
