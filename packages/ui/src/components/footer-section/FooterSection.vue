@@ -43,7 +43,7 @@ const rootClasses = computed(() =>
 )
 
 const isSafeHref = (href?: string): boolean =>
-    !href || /^(https?:|mailto:|tel:)/i.test(href)
+    !href || !/^(?:javascript|data|vbscript):/i.test(href.trim())
 </script>
 
 <template>
