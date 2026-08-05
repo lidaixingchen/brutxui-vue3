@@ -41,6 +41,9 @@ const rootClasses = computed(() =>
         props.class
     )
 )
+
+const isSafeHref = (href?: string): boolean =>
+    !href || /^(https?:|mailto:|tel:)/i.test(href)
 </script>
 
 <template>
@@ -67,7 +70,7 @@ const rootClasses = computed(() =>
                             <li v-for="(link, linkIndex) in group.links" :key="linkIndex" class="flex items-center gap-2">
                                 <span class="h-1.5 w-1.5 bg-brutal-fg flex-shrink-0" />
                                 <a
-                                    v-if="link.href"
+                                    v-if="link.href && isSafeHref(link.href)"
                                     :href="link.href"
                                     class="px-0 text-brutal-muted-foreground hover:text-brutal-fg text-sm font-medium cursor-pointer active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all"
                                     @click="emit('link-click', { groupIndex, linkIndex })"
