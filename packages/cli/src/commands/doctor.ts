@@ -774,6 +774,8 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
 
         // didWrite 记录本次修复是否真正执行了写入/修改，避免"未写入仍计入已修复"
         let didWrite = false;
+        // fixFailed 记录修复未能执行（如 registry 拉取失败），与"确实无需变更"区分
+        let fixFailed = false;
 
         if (isInteractive) {
             const shouldFix = await confirm({
@@ -846,6 +848,10 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                             didWrite = true;
                             logger.success('Added cn() function.');
                         }
+                    } else {
+                        // utils 文件不存在（说明 CreateUtilsFile 未生效），视为修复未能执行而非无需变更
+                        fixFailed = true;
+                        logger.warn(`Cannot add cn() function: utils file not found at ${utilsPath} (expected ${UTILS_EXTENSIONS.join(' or ')}).`);
                     }
                     break;
                 }
@@ -881,6 +887,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                         // manifest.files 顺序与 item.files 顺序一致（manifest 不再 .sort()，
                         // 来自 add-service 的 filesByComponent，源于 item.files 数组顺序）
                         if (entry.files.length !== item.files.length) {
+                            fixFailed = true;
                             logger.warn(`File count mismatch for ${check.componentName} (manifest: ${entry.files.length}, registry: ${item.files.length}). Run \`brutx-vue update ${check.componentName}\` instead.`);
                             break;
                         }
@@ -892,6 +899,7 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                         didWrite = true;
                         logger.success(`Restored ${check.componentName} from registry.`);
                     } catch (restoreError) {
+                        fixFailed = true;
                         logger.warn(`Could not restore ${check.componentName} from registry: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
                         logger.info(`Run \`brutx-vue update ${check.componentName}\` manually to restore.`);
                     }
@@ -901,6 +909,9 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
             if (didWrite) {
                 applied++;
                 check.status = 'pass';
+            } else if (fixFailed) {
+                // 修复未能执行：原因已通过上方 warn/info 输出，不再打印误导性的 "No changes needed"
+                logger.info(`Could not apply fix: ${check.name}. See warnings above.`);
             } else {
                 logger.info(`No changes needed for fix: ${check.name}.`);
             }

@@ -261,7 +261,7 @@ async function addInner(
             }
         }
 
-        const { added, skipped, filesWritten, filesByComponent } = await writeComponentFiles(
+        const { added, skipped, filesWritten, filesByComponent, rollback } = await writeComponentFiles(
             registryItems,
             config,
             targetCwd,
@@ -307,9 +307,16 @@ async function addInner(
 
         if (!options.dryRun && added.length > 0) {
             if (allDeps.length > 0 && !depsInstalled) {
-                // 依赖安装失败时不注册组件：避免组件文件已写入、依赖缺失却仍标记为 installed 的半安装状态
-                logger.warn('⚠ Dependency installation failed. Files were written but the component was NOT registered as installed.');
-                logger.info('  Install dependencies manually, then re-run the add command to register it.');
+                // 依赖安装失败：回滚本次已写入的文件，避免组件陷入"文件已写、manifest 未记录"的不可恢复半安装状态
+                // （否则重跑 add 时文件已存在会被全部 skip，永远无法注册）
+                const { rollbackFailures } = await rollback();
+                logger.warn('⚠ Dependency installation failed. Rolled back written component files.');
+                if (rollbackFailures > 0) {
+                    logger.warn(`⚠ Rollback failed for ${rollbackFailures} file(s). You may need to restore them manually.`);
+                }
+                logger.info('  Install dependencies manually, then re-run the add command.');
+                // 清空 added：避免末尾对"已回滚、未注册"的组件打印误导性的 Usage 示例
+                added.length = 0;
             } else {
                 // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
                 const versionByName = new Map<string, string>();
