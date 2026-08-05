@@ -72,6 +72,21 @@ describe('loadTrustedPublicKeys (P1-6 / 基础设施闭环 P1)', () => {
         ]);
     });
 
+    it('throws REGISTRY_SIGNATURE_INVALID when env array contains partial invalid entries (strict mode)', () => {
+        setRequireSignature(true);
+        process.env[PUBLIC_KEYS_ENV] = JSON.stringify([
+            { keyId: 'v1', publicKey: 'valid-key' },
+            { keyId: '', publicKey: 'empty-keyId' },
+        ]);
+        try {
+            expect(() => loadTrustedPublicKeys()).toThrowError(
+                expect.objectContaining({ code: 'REGISTRY_SIGNATURE_INVALID' })
+            );
+        } finally {
+            resetRequireSignature();
+        }
+    });
+
     it('prefers setTrustedPublicKeys override over env and official keys', () => {
         const override: TrustedPublicKey[] = [{ keyId: 'project-key', publicKey: 'c'.repeat(44) + '=' }];
         process.env[PUBLIC_KEYS_ENV] = JSON.stringify([{ keyId: 'env-key', publicKey: 'd'.repeat(44) + '=' }]);

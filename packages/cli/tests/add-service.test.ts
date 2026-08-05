@@ -212,6 +212,38 @@ describe('add service', () => {
         expect(await fs.pathExists(helperPath)).toBe(false);
     });
 
+    it('manually rolls back newly written files via rollback() after success', async () => {
+        const result = await writeComponentFiles([badgeItem], config, tmpDir, {});
+
+        const targetPath = path.join(tmpDir, 'src', 'widgets', 'ui', 'badge', 'Badge.vue');
+        expect(await fs.pathExists(targetPath)).toBe(true);
+
+        const { rollbackFailures } = await result.rollback();
+
+        expect(rollbackFailures).toBe(0);
+        expect(await fs.pathExists(targetPath)).toBe(false);
+    });
+
+    it('rollback() restores overwritten files and is a no-op for empty snapshots', async () => {
+        // 覆盖已有文件：回滚应恢复原内容
+        const targetPath = path.join(tmpDir, 'src', 'widgets', 'ui', 'badge', 'Badge.vue');
+        await fs.ensureDir(path.dirname(targetPath));
+        await fs.writeFile(targetPath, 'original content', 'utf-8');
+
+        const result = await writeComponentFiles([badgeItem], config, tmpDir, { overwrite: true });
+        expect(await fs.readFile(targetPath, 'utf-8')).not.toBe('original content');
+
+        const { rollbackFailures } = await result.rollback();
+        expect(rollbackFailures).toBe(0);
+        expect(await fs.readFile(targetPath, 'utf-8')).toBe('original content');
+
+        // 空快照（全 skip，未写任何文件）：rollback 为安全 no-op
+        const skipped = await writeComponentFiles([badgeItem], config, tmpDir, {});
+        expect(skipped.added).toEqual([]);
+        const noop = await skipped.rollback();
+        expect(noop.rollbackFailures).toBe(0);
+    });
+
     describe('sharedBase', () => {
         const sharedBaseConfig: BrutalistConfig = {
             ...config,

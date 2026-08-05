@@ -149,3 +149,53 @@ describe('init service', () => {
         expect(await fs.readFile(path.join(tmpDir, 'nuxt.config.ts'), 'utf-8')).toBe('export default {}\n');
     });
 });
+
+describe('injectNuxtConfig root-key detection', () => {
+    it('detects top-level components/css keys only (not nested objects)', () => {
+        const content = `export default defineNuxtConfig({
+    vite: { css: { preprocessorOptions: {} } },
+})
+`;
+        const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
+        // 嵌套对象 vite: { css } 不应被算作根级 css，根级缺少 components/css 时应注入
+        expect(result).toContain("components: ['~/components']");
+        expect(result).toContain("css: ['assets/css/main.css']");
+    });
+
+    it('ignores key literals inside comments and strings', () => {
+        const content = `export default defineNuxtConfig({
+    // components: ['~/fake']
+    const note = "css: []";
+})
+`;
+        const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
+        // 注释与字符串里的字面量不应命中根级键，应注入
+        expect(result).toContain("components: ['~/components']");
+        expect(result).toContain("css: ['assets/css/main.css']");
+    });
+
+    it('does not re-inject when top-level keys already exist', () => {
+        const content = `export default defineNuxtConfig({
+    components: ['~/components'],
+    css: ['assets/css/main.css'],
+})
+`;
+        const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
+        expect(result).toBe(content);
+    });
+
+    it('recognizes top-level key with block comment before colon', () => {
+        const content = `export default defineNuxtConfig({
+    components /* 目录 */ : ['~/components'],
+    css: ['assets/css/main.css'],
+})
+`;
+        const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
+        expect(result).toBe(content);
+    });
+
+    it('returns null when defineNuxtConfig is absent', () => {
+        const result = injectNuxtConfig('export default {}', 'assets/css/main.css', 'components');
+        expect(result).toBeNull();
+    });
+});
