@@ -36,6 +36,8 @@ export interface ComponentFileWriteResult {
     filesWritten: string[];
     filesByComponent: Record<string, string[]>;
     rollbackCount: number;
+    /** 撤销本次全部写入（恢复被覆盖文件、删除新建文件），供后续步骤（如依赖安装）失败时回滚 */
+    rollback: () => Promise<{ rollbackFailures: number }>;
 }
 
 export interface ComponentFileWriteFailure {
@@ -144,6 +146,46 @@ export async function ensureUtilsFile(cwd: string, config: BrutalistConfig): Pro
     };
 }
 
+/**
+ * 依据写入快照撤销文件变更：恢复被覆盖的原始内容、删除本次新建的文件，
+ * 并尽量清理因删除文件而变空的父目录。返回回滚失败的次数。
+ */
+async function restoreSnapshot(snapshot: Map<string, string | null>): Promise<{ rollbackFailures: number }> {
+    let rollbackFailures = 0;
+    const dirsToClean = new Set<string>();
+
+    for (const [filePath, originalContent] of snapshot) {
+        try {
+            if (originalContent !== null) {
+                await fs.writeFile(filePath, originalContent, 'utf-8');
+            } else if (await fs.pathExists(filePath)) {
+                await fs.promises.rm(filePath, { force: true });
+            }
+            if (originalContent === null) {
+                // 收集被删文件的全部祖先目录（ensureDir 递归创建了整条父目录链），自底向上清理
+                const root = path.parse(path.dirname(filePath)).root;
+                let dir = path.dirname(filePath);
+                while (dir !== root) {
+                    dirsToClean.add(dir);
+                    dir = path.dirname(dir);
+                }
+            }
+        } catch {
+            rollbackFailures++;
+        }
+    }
+
+    const sortedDirs = Array.from(dirsToClean).sort((a, b) => b.length - a.length);
+    for (const dir of sortedDirs) {
+        try {
+            // 只删空目录（recursive: false）；非空目录抛错被忽略，保留其中仍有内容的目录
+            await fs.promises.rm(dir, { recursive: false });
+        } catch { /* 目录非空或不存在，跳过 */ }
+    }
+
+    return { rollbackFailures };
+}
+
 export async function writeComponentFiles(
     items: RegistryItem[],
     config: BrutalistConfig,
@@ -207,30 +249,7 @@ export async function writeComponentFiles(
             }
         }
     } catch (writeError) {
-        let rollbackFailures = 0;
-
-        const dirsToClean = new Set<string>();
-        for (const [filePath, originalContent] of snapshot) {
-            try {
-                if (originalContent !== null) {
-                    await fs.writeFile(filePath, originalContent, 'utf-8');
-                } else if (await fs.pathExists(filePath)) {
-                    await fs.promises.rm(filePath, { force: true });
-                }
-                if (originalContent === null) {
-                    dirsToClean.add(path.dirname(filePath));
-                }
-            } catch {
-                rollbackFailures++;
-            }
-        }
-
-        const sortedDirs = Array.from(dirsToClean).sort((a, b) => b.length - a.length);
-        for (const dir of sortedDirs) {
-            try {
-                await fs.promises.rmdir(dir);
-            } catch { /* best-effort cleanup */ }
-        }
+        const { rollbackFailures } = await restoreSnapshot(snapshot);
 
         return Promise.reject(Object.assign(writeError instanceof Error ? writeError : new Error(String(writeError)), {
             rollbackFailures,
@@ -244,5 +263,6 @@ export async function writeComponentFiles(
         filesWritten,
         filesByComponent: Object.fromEntries(filesByComponent),
         rollbackCount: 0,
+        rollback: () => restoreSnapshot(snapshot),
     };
 }

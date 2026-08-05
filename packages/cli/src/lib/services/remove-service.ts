@@ -155,8 +155,11 @@ async function findOrphanedFiles(
     const stripAliasPrefix = (specifier: string, aliasDir: string): string | null => {
         const strip = (rel: string): string | null => {
             const clean = rel.split(/[?#]/)[0];
-            // 拒绝路径穿越（..）与空相对路径，避免解析到基础目录之外或目录本身
-            if (clean === '' || clean.split('/').includes('..')) return null;
+            // 规范化后判断：只拦截会解析到基础目录本身或目录之外的路径
+            // （''、'.'、'./' 会落到目录本身；'..' 前缀会逃逸出目录），
+            // 放行 path.join 会安全规范化的中间 . 段（如 @/hooks/foo/./bar）。
+            const normalized = path.posix.normalize(clean);
+            if (normalized === '' || normalized === '.' || normalized === '..' || normalized.startsWith('../')) return null;
             return clean;
         };
         const prefix = `@/${aliasDir}/`;
@@ -170,6 +173,17 @@ async function findOrphanedFiles(
         // 相对导入或无法识别的 specifier（如 ~/...）不做按文件名猜测，
         // 避免解析到无关的同名文件并被删除
         return null;
+    };
+
+    /**
+     * 统一"取相对路径 + 判空 + 调 resolveScriptFile"的解析模式：
+     * basePath 不存在或 specifier 无法识别时返回 null。
+     */
+    const tryResolve = async (basePath: string | null, specifier: string, aliasDir: string): Promise<string | null> => {
+        if (!basePath || !await fs.pathExists(basePath)) return null;
+        const relativePath = stripAliasPrefix(specifier, aliasDir);
+        if (relativePath === null) return null;
+        return resolveScriptFile(basePath, relativePath);
     };
 
     for (const [importPath, importers] of importMap) {
@@ -190,46 +204,26 @@ async function findOrphanedFiles(
         let resolvedPath: string | null = null;
 
         if (isComposable) {
-            if (sharedHooksPath && importPath.includes('/hooks/') && await fs.pathExists(sharedHooksPath)) {
-                const relativePath = stripAliasPrefix(importPath, 'hooks');
-                if (relativePath !== null) {
-                    resolvedPath = await resolveScriptFile(sharedHooksPath, relativePath);
-                }
+            if (sharedHooksPath && importPath.includes('/hooks/')) {
+                resolvedPath = await tryResolve(sharedHooksPath, importPath, 'hooks');
             }
-            if (!resolvedPath && await fs.pathExists(composablesPath)) {
-                const relativePath = stripAliasPrefix(importPath, 'composables');
-                if (relativePath !== null) {
-                    resolvedPath = await resolveScriptFile(composablesPath, relativePath);
-                }
+            if (!resolvedPath) {
+                resolvedPath = await tryResolve(composablesPath, importPath, 'composables');
             }
         }
 
-        if (!resolvedPath && isLocale && await fs.pathExists(localesPath)) {
-            const relativePath = stripAliasPrefix(importPath, 'locales');
-            if (relativePath !== null) {
-                resolvedPath = await resolveScriptFile(localesPath, relativePath);
-            }
+        if (!resolvedPath && isLocale) {
+            resolvedPath = await tryResolve(localesPath, importPath, 'locales');
         }
 
-        if (!resolvedPath && isDirective && await fs.pathExists(directivesPath)) {
-            const relativePath = stripAliasPrefix(importPath, 'directives');
-            if (relativePath !== null) {
-                resolvedPath = await resolveScriptFile(directivesPath, relativePath);
-            }
+        if (!resolvedPath && isDirective) {
+            resolvedPath = await tryResolve(directivesPath, importPath, 'directives');
         }
 
         if (!resolvedPath && isUtils) {
-            if (sharedLibPath && await fs.pathExists(sharedLibPath)) {
-                const relativePath = stripAliasPrefix(importPath, 'lib');
-                if (relativePath !== null) {
-                    resolvedPath = await resolveScriptFile(sharedLibPath, relativePath);
-                }
-            }
-            if (!resolvedPath && await fs.pathExists(utilsPath)) {
-                const relativePath = stripAliasPrefix(importPath, 'lib');
-                if (relativePath !== null) {
-                    resolvedPath = await resolveScriptFile(utilsPath, relativePath);
-                }
+            resolvedPath = await tryResolve(sharedLibPath, importPath, 'lib');
+            if (!resolvedPath) {
+                resolvedPath = await tryResolve(utilsPath, importPath, 'lib');
             }
         }
 

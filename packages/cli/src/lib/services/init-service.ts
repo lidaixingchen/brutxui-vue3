@@ -134,6 +134,9 @@ async function findNuxtConfig(cwd: string): Promise<string | null> {
  * 检测 rootBlock（形如 `{ ... }` 的根对象文本）第一层是否存在指定键。
  * 跳过字符串、注释与嵌套对象，避免 /\bkey\s*:/ 因 \s* 跨行而误命中
  * 嵌套对象（如 vite: { css: ... }）或注释里的字面量，导致根级配置漏注入。
+ *
+ * 已知限制：不识别正则字面量（如 `/}/`、`/{/` 中的花括号会计入深度）以及模板字符串
+ * 内嵌套反引号（`` `a${`b`}c` ``）；此类写法在 Nuxt 配置中罕见，可接受。
  */
 function hasRootObjectKey(rootBlock: string, key: string): boolean {
     let depth = 0;
@@ -169,7 +172,8 @@ function hasRootObjectKey(rootBlock: string, key: string): boolean {
             const prev = i > 0 ? rootBlock[i - 1] : '';
             const isWordBoundary = prev === '' || !/[a-zA-Z0-9_$]/.test(prev);
             const after = rootBlock.slice(i + key.length);
-            if (isWordBoundary && (after.startsWith(':') || /^\s+:/.test(after))) {
+            // 允许键名与冒号之间存在空白或块注释（如 `components /* 目录 */ :` 这类合法写法）
+            if (isWordBoundary && /^(?:\s|\/\*[\s\S]*?\*\/)*:/.test(after)) {
                 return true;
             }
         }

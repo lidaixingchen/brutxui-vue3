@@ -374,21 +374,22 @@ export async function mergeSnippetsFile(
 
     let existingSnippets: VscodeSnippetFile = {};
     if (await fs.pathExists(snippetPath)) {
+        let parsed: unknown;
         try {
-            const parsed: unknown = await fs.readJson(snippetPath);
-            if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-                existingSnippets = parsed as VscodeSnippetFile;
-            } else {
-                // 结构不符（如 JSON 数组）：备份原文件并抛出明确错误，避免用户自定义片段被静默清空
-                await fs.copy(snippetPath, `${snippetPath}.bak`).catch(() => {});
-                throw new Error(`"${snippetPath}" is not a valid snippets file (expected a JSON object). The original file was backed up to .bak.`);
-            }
+            parsed = await fs.readJson(snippetPath);
         } catch (error) {
             // 解析失败：先备份原文件，再抛出带路径信息的明确错误，
             // 避免静默清空 existingSnippets 后用新组件覆写导致用户自定义片段永久丢失
             await fs.copy(snippetPath, `${snippetPath}.bak`).catch(() => {});
             throw new Error(`Failed to read existing snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}. The original file was backed up to .bak.`);
         }
+        // 结构校验移出 try/catch：与解析失败各走独立分支，避免结构错误被包装成"读取失败"、
+        // 且不再对同一文件执行两次 .bak 备份
+        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+            await fs.copy(snippetPath, `${snippetPath}.bak`).catch(() => {});
+            throw new Error(`"${snippetPath}" is not a valid snippets file (expected a JSON object). The original file was backed up to .bak.`);
+        }
+        existingSnippets = parsed as VscodeSnippetFile;
     }
 
     for (const componentName of newComponents) {
