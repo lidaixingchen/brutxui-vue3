@@ -33,4 +33,31 @@ describe('Upload', () => {
         expect(onError).toHaveBeenCalledTimes(1)
         expect(onError.mock.calls[0][1].name).toBe('notes.txt')
     })
+
+    it('marks an uploading file as canceled when removed', async () => {
+        const uploadingFile: UploadFile = {
+            id: 'f1',
+            name: 'photo.png',
+            size: 1024,
+            type: 'image/png',
+            status: 'uploading',
+            progress: 42,
+        }
+        const wrapper = mount(Upload, {
+            props: {
+                fileList: [uploadingFile],
+                autoUpload: false,
+            },
+        })
+
+        const vm = wrapper.vm as unknown as {
+            handleFileRemove: (file: UploadFile) => Promise<void>
+        }
+        await vm.handleFileRemove(uploadingFile)
+
+        expect(uploadingFile.status).toBe('canceled')
+
+        const files = wrapper.emitted('update:fileList')!.at(-1)![0] as UploadFile[]
+        expect(files.some(f => f.id === 'f1')).toBe(false)
+    })
 })

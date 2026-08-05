@@ -1285,6 +1285,48 @@ describe('tree-view-utils', () => {
             const result = moveNode(tree, '1', '2', 'inner')
             expect(result).toEqual(tree)
         })
+
+        it('extracts and moves a nested child node', () => {
+            const tree: TreeNode[] = [
+                {
+                    id: '1',
+                    label: '1',
+                    children: [
+                        { id: '2', label: '2' },
+                        { id: '3', label: '3' },
+                    ],
+                },
+                { id: '4', label: '4' },
+            ]
+            const result = moveNode(tree, '2', '4', 'after')
+
+            expect(result.map(n => n.id)).toEqual(['1', '4', '2'])
+            const node1 = result.find(n => n.id === '1')!
+            expect(node1.children!.map(c => c.id)).toEqual(['3'])
+
+            // 原树不被修改（不可变更新语义，深拷贝生效）
+            const originalNode1 = tree.find(n => n.id === '1')!
+            expect(originalNode1.children!.map(c => c.id)).toEqual(['2', '3'])
+        })
+
+        it('moves a nested child node inner into another node', () => {
+            const tree: TreeNode[] = [
+                {
+                    id: '1',
+                    label: '1',
+                    children: [{ id: '2', label: '2' }],
+                },
+                { id: '3', label: '3' },
+            ]
+            const result = moveNode(tree, '2', '3', 'inner')
+
+            expect(result.map(n => n.id)).toEqual(['1', '3'])
+            const node1 = result.find(n => n.id === '1')!
+            // 唯一子节点被拖走后 children 清空为空数组（非 undefined）
+            expect(node1.children).toEqual([])
+            const node3 = result.find(n => n.id === '3')!
+            expect(node3.children!.map(c => c.id)).toEqual(['2'])
+        })
     })
 })
 

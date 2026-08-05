@@ -250,4 +250,47 @@ describe('Slider', () => {
             expect(wrapper.find('[role="tooltip"]').text()).toBe('75')
         })
     })
+
+    describe('range style', () => {
+        it('fills from min to value for single thumb horizontal', () => {
+            const wrapper = mount(Slider, {
+                props: { modelValue: [60], min: 0, max: 100 },
+                attachTo: document.body,
+            })
+            const range = wrapper.findAll('span').find(el => el.attributes('style')?.includes('width: 60%'))
+            expect(range).toBeDefined()
+            expect(range!.attributes('style')).toContain('left: 0%')
+            expect(range!.attributes('style')).toContain('width: 60%')
+        })
+
+        it('fills between two values for dual thumb', () => {
+            const wrapper = mount(Slider, {
+                props: { modelValue: [25, 75], min: 0, max: 100 },
+                attachTo: document.body,
+            })
+            const range = wrapper.findAll('span').find(el => el.attributes('style')?.includes('width: 50%'))
+            expect(range).toBeDefined()
+            expect(range!.attributes('style')).toContain('left: 25%')
+        })
+
+        it('uses bottom/height positioning for vertical orientation', () => {
+            const wrapper = mount(Slider, {
+                props: { modelValue: [60], min: 0, max: 100, orientation: 'vertical' },
+                attachTo: document.body,
+            })
+            const range = wrapper.findAll('span').find(el => el.attributes('style')?.includes('height: 60%'))
+            expect(range).toBeDefined()
+            expect(range!.attributes('style')).toContain('bottom: 0%')
+            expect(range!.attributes('style')).toContain('height: 60%')
+        })
+
+        it('clamps values outside [min, max] to 0%~100%', () => {
+            const wrapper = mount(Slider, {
+                props: { modelValue: [120], min: 0, max: 100 },
+                attachTo: document.body,
+            })
+            const range = wrapper.findAll('span').find(el => el.attributes('style')?.includes('width: 100%'))
+            expect(range).toBeDefined()
+        })
+    })
 })
