@@ -110,8 +110,13 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
                 // 首次初始化或画布尚未实际绘制过覆盖层时，绘制覆盖层
                 drawOverlay(ctx.value, w, h)
                 // 每次实际重绘覆盖层后都以当前 alpha 掩码作为相对刮除基准：
-                // 避免首次 0 尺寸/未完成布局时基准永久缺失，或 resize 宽高比变化后尺寸失配
-                baselineMask = sampleAlphaGrid()?.alphas ?? null
+                // 避免首次 0 尺寸/未完成布局时基准永久缺失，或 resize 宽高比变化后尺寸失配。
+                // 若覆盖层初始即全透明（无有效 opaque 区域），则不建立基准，
+                // 进度判定回退为按当前 alpha 阈值直接统计。
+                const sampled = sampleAlphaGrid()
+                baselineMask = sampled && sampled.alphas.some((a) => a >= CANVAS_ALPHA_CLEARED_THRESHOLD)
+                    ? sampled.alphas
+                    : null
             }
 
             initialized = true

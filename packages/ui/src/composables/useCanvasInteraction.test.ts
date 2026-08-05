@@ -87,6 +87,22 @@ function createResizeObserverMock(overrides: Record<string, unknown> = {}) {
 
 describe('useCanvasInteraction', () => {
     let originalDPR: number
+    const originalProtoGetContext = HTMLCanvasElement.prototype.getContext
+
+    beforeAll(() => {
+        // sampleAlphaGrid 用 createCanvasElement()（真实 canvas 元素）缩略采样进度，
+        // 需 mock 原型 getContext 提供 2D 上下文（drawImage/getImageData），
+        // 否则 happy-dom 下缩略图无法采样、进度恒为 0。主 canvas 走 createMockCanvas
+        // 的自定义 getContext 属性，不受此 mock 影响。
+        HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
+            drawImage: vi.fn(),
+            getImageData: vi.fn(() => ({ data: new Uint8ClampedArray(256 * 256 * 4) })),
+        }) as typeof originalProtoGetContext
+    })
+
+    afterAll(() => {
+        HTMLCanvasElement.prototype.getContext = originalProtoGetContext
+    })
 
     beforeEach(() => {
         vi.useFakeTimers()
