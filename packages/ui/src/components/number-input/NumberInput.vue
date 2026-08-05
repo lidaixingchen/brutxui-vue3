@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import {
     NumberFieldRoot,
     type NumberFieldRootProps,
@@ -39,6 +39,11 @@ const { t } = useLocale()
 
 const resolvedPlaceholder = computed(() => props.placeholder ?? t('numberInput.placeholder'))
 
+const errorId = useId()
+const errorTextId = computed(() =>
+    props.variant === 'error' && props.errorMessage ? `number-input-error-${errorId}` : undefined
+)
+
 const delegatedProps = computed(() => {
     const { class: _, layout: __, variant: ___, errorMessage: ____, placeholder: _____, iconSize: ______, ...delegated } = props
     return delegated
@@ -77,6 +82,8 @@ const iconClasses = computed(() =>
 
                 <NumberFieldInput
                     :placeholder="resolvedPlaceholder"
+                    :aria-invalid="variant === 'error' && errorMessage ? true : undefined"
+                    :aria-describedby="errorMessage ? errorTextId : undefined"
                     :class="fieldClasses"
                 />
 
@@ -88,6 +95,8 @@ const iconClasses = computed(() =>
             <template v-else>
                 <NumberFieldInput
                     :placeholder="resolvedPlaceholder"
+                    :aria-invalid="variant === 'error' && errorMessage ? true : undefined"
+                    :aria-describedby="errorMessage ? errorTextId : undefined"
                     :class="fieldClasses"
                 />
 
@@ -103,6 +112,7 @@ const iconClasses = computed(() =>
         </NumberFieldRoot>
         <p
             v-if="variant === 'error' && errorMessage"
+            :id="errorTextId"
             class="text-sm text-brutal-destructive mt-1"
             role="alert"
         >
