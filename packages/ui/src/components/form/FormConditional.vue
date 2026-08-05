@@ -23,7 +23,7 @@ const classes = computed(() => cn(props.class))
 </script>
 
 <template>
-    <div v-show="shouldShow" :class="classes">
+    <div v-if="shouldShow" :class="classes">
         <slot />
     </div>
 </template>
