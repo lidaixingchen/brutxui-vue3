@@ -73,6 +73,10 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
             date = new Date(timestamp);
         }
 
+        if (date && Number.isNaN(date.getTime())) {
+            date = null;
+        }
+
         const dateLabel = date ? getDateLabel(date) : '';
 
         const isNewDate = dateLabel !== currentDateLabel;
