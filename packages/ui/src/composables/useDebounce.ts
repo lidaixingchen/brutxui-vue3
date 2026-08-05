@@ -11,7 +11,8 @@ export interface UseDebounceOptions {
 /**
  * useDebounce 返回类型
  */
-export interface UseDebounceReturn<T extends (...args: never[]) => unknown> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 这里使用 any 是必要的：需要接受任意参数签名的函数，Parameters<T> 仍会推导出具体参数类型
+export interface UseDebounceReturn<T extends (...args: any[]) => unknown> {
     /** 防抖后的函数 */
     debounced: T
     /** 取消待执行的防抖调用 */
@@ -39,7 +40,8 @@ export interface UseDebounceReturn<T extends (...args: never[]) => unknown> {
  * cancel()
  * ```
  */
-export function useDebounce<T extends (...args: never[]) => unknown>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- 使用 any 是必要的：约束需接受任意参数签名的函数，Parameters<T> 仍会推导出具体参数类型
+export function useDebounce<T extends (...args: any[]) => unknown>(
     fn: T,
     delay: number,
     options: UseDebounceOptions = {},

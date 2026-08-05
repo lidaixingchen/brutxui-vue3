@@ -83,6 +83,9 @@ function ensureMounted(): void {
 }
 
 function addMessage(options: MessageOptions): () => void {
+    // SSR 守卫：非客户端环境不写入全局 messageStore，也不启动定时器，避免跨请求共享与定时器堆积
+    if (!isClient) return () => {}
+
     cancelGraceTimer()
 
     const id = `msg-${++messageIdCounter}`

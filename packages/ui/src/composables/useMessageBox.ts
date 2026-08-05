@@ -17,9 +17,9 @@ export function useMessageBox(): UseMessageBoxReturn {
     const confirm = async (options?: MessageBoxOptions): Promise<boolean> => {
         const instance = showMessageBox(options)
         try {
-            const result = await instance.promise
-            // 有返回值表示确认（输入框场景），无返回值表示无确认操作
-            return result !== undefined
+            // showMessageBox 契约：promise 兑现即表示用户点击了确认（有/无输入均兑现），reject 表示取消或关闭
+            await instance.promise
+            return true
         } catch {
             // 用户点击取消或关闭
             return false

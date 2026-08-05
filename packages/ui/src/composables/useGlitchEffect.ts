@@ -20,6 +20,14 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     const isDisabled = computed(() => !!toValue(options.disabled))
     const isGlitching = computed(() => isActive.value && !prefersReducedMotion.value)
 
+    // 禁用时停止 autoplay 并复位激活态，避免 hover 激活期间 disabled 置 true 导致 isActive 永久卡住
+    watch(isDisabled, (disabled) => {
+        if (disabled) {
+            stopAutoplay()
+            isActive.value = false
+        }
+    })
+
     function stopAutoplay() {
         if (autoplayTimer.value) {
             clearInterval(autoplayTimer.value)
@@ -32,8 +40,16 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     }
 
     function startAutoplay() {
+        // 禁用时不启动 autoplay，避免定时器持续 tick 占用资源
+        if (isDisabled.value) return
         stopAutoplay()
-        const interval = Math.max(Number(toValue(options.interval)) || DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_MIN_INTERVAL_MS)
+        // interval 下界同时钳制为激活时长：若 interval 小于激活时长，tick 会反复清掉未到期的 stop
+        // 定时器并重新调度，isActive 永远无法置回 false，故障效果将持续开启
+        const interval = Math.max(
+            Number(toValue(options.interval)) || DEFAULT_AUTOPLAY_INTERVAL_MS,
+            GLITCH_MIN_INTERVAL_MS,
+            GLITCH_AUTOPLAY_ACTIVE_DURATION_MS,
+        )
         autoplayTimer.value = setInterval(() => {
             if (prefersReducedMotion.value) return
             isActive.value = true
