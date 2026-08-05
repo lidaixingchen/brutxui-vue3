@@ -84,8 +84,8 @@ const handlePointerMove = (e: PointerEvent) => {
     const rect = cardEl?.getBoundingClientRect()
     if (!cardEl || !rect || rect.width <= 0 || rect.height <= 0) return
 
-    const width = cardEl.offsetWidth || rect.width
-    const height = cardEl.offsetHeight || rect.height
+    const width = rect.width
+    const height = rect.height
 
     isHovered.value = true
     const x = (e.clientX - rect.left) / width - CENTER_OFFSET // [-0.5, 0.5]
