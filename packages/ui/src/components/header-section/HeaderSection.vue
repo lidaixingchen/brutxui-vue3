@@ -69,6 +69,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                     <Button
                         v-for="(item, index) in navItems"
                         :key="index"
+                        type="button"
                         variant="ghost"
                         size="sm"
                         @click="emit('nav-click', index)"
@@ -81,6 +82,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
             <div class="flex items-center gap-3">
                 <slot name="footer">
                     <Button
+                        type="button"
                         variant="primary"
                         size="sm"
                         class="hidden md:inline-flex"
@@ -91,6 +93,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                 </slot>
 
                 <Button
+                    type="button"
                     variant="outline"
                     size="sm"
                     class="md:hidden"
@@ -112,6 +115,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                     <Button
                         v-for="(item, index) in navItems"
                         :key="index"
+                        type="button"
                         variant="ghost"
                         class="justify-start"
                         @click="emit('nav-click', index); mobileMenuOpen = false"
@@ -122,6 +126,7 @@ const menuIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }
                 <Separator />
                 <div class="pt-4">
                     <Button
+                        type="button"
                         variant="primary"
                         class="w-full"
                         @click="emit('cta-click'); mobileMenuOpen = false"
