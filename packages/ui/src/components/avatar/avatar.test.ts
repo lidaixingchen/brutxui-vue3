@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent } from 'vue'
 import { AvatarRoot } from 'reka-ui'
 import Avatar from './Avatar.vue'
@@ -11,6 +11,17 @@ const AvatarWithImage = defineComponent({
     template: `
         <Avatar>
             <AvatarImage :src="src" :alt="alt" :class="imageClass" />
+        </Avatar>
+    `,
+})
+
+const AvatarWithImageAndFallback = defineComponent({
+    components: { Avatar, AvatarImage, AvatarFallback },
+    props: { src: { type: String, default: '' } },
+    template: `
+        <Avatar>
+            <AvatarImage :src="src" alt="avatar" />
+            <AvatarFallback>JD</AvatarFallback>
         </Avatar>
     `,
 })
@@ -161,6 +172,20 @@ describe('AvatarImage', () => {
         })
         const img = wrapper.find('img')
         expect(img.classes()).toContain('my-image')
+    })
+
+    it('keeps image primitive mounted and shows fallback when src becomes empty', async () => {
+        // 回归：AvatarImage 不再用 v-if 卸载原语，src 从有值变空时 img 元素应保持挂载（由 v-show 控制显隐），fallback 正常显示
+        const wrapper = mount(AvatarWithImageAndFallback, {
+            props: { src: '/photo.jpg' },
+        })
+        expect(wrapper.find('img').exists()).toBe(true)
+
+        await wrapper.setProps({ src: '' })
+        await flushPromises()
+
+        expect(wrapper.find('img').exists()).toBe(true)
+        expect(wrapper.text()).toContain('JD')
     })
 })
 
