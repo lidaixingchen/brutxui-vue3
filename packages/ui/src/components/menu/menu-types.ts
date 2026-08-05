@@ -7,6 +7,8 @@ export interface MenuContext {
     selectItem: (index: string, route?: string | object) => void
     openedMenus: Ref<Set<string>>
     toggleSubMenu: (index: string) => void
+    registerSubMenu: (index: string, children: ReadonlySet<string>) => void
+    unregisterSubMenu: (index: string) => void
 }
 
 export const MENU_KEY: InjectionKey<MenuContext> = Symbol('BrutxMenu')

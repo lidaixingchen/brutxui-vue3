@@ -58,6 +58,7 @@ function registerChild(idx: string) {
     const next = new Set(childIndices.value)
     next.add(idx)
     childIndices.value = next
+    context?.registerSubMenu(props.index, childIndices.value)
     if (parentSubMenu) {
         parentSubMenu.registerChild(idx)
     }
@@ -67,6 +68,7 @@ function unregisterChild(idx: string) {
     const next = new Set(childIndices.value)
     next.delete(idx)
     childIndices.value = next
+    context?.registerSubMenu(props.index, childIndices.value)
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(idx)
     }
@@ -87,6 +89,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+    context?.unregisterSubMenu(props.index)
     if (parentSubMenu) {
         parentSubMenu.unregisterChild(props.index)
     }

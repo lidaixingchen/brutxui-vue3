@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, watch, getCurrentInstance } from 'vue'
+import { computed, provide, ref, watch, getCurrentInstance, onMounted } from 'vue'
 import { MENU_KEY } from './menu-types'
 import { cn } from '@/lib/utils'
 
@@ -29,13 +29,43 @@ const activeIndex = ref(props.defaultActive)
 const openedMenus = ref<Set<string>>(new Set())
 const instance = getCurrentInstance()
 
+const subMenuChildren = new Map<string, ReadonlySet<string>>()
+
+function registerSubMenu(index: string, children: ReadonlySet<string>) {
+    subMenuChildren.set(index, children)
+}
+
+function unregisterSubMenu(index: string) {
+    subMenuChildren.delete(index)
+}
+
+function expandActiveSubMenuChain(target: string) {
+    const toOpen = new Set(openedMenus.value)
+    let changed = false
+    const stack = [target]
+    while (stack.length > 0) {
+        const current = stack.pop()!
+        for (const [subIndex, children] of subMenuChildren) {
+            if (children.has(current) && !toOpen.has(subIndex)) {
+                toOpen.add(subIndex)
+                stack.push(subIndex)
+                changed = true
+            }
+        }
+    }
+    if (changed) openedMenus.value = toOpen
+}
+
 watch(() => props.defaultActive, (val) => {
     activeIndex.value = val
+    if (val) expandActiveSubMenuChain(val)
 })
 
 function selectItem(index: string, route?: string | object) {
     activeIndex.value = index
     emit('select', index)
+
+    expandActiveSubMenuChain(index)
 
     if (props.router) {
         const to = route || index
@@ -73,6 +103,12 @@ provide(MENU_KEY, {
     selectItem,
     openedMenus,
     toggleSubMenu,
+    registerSubMenu,
+    unregisterSubMenu,
+})
+
+onMounted(() => {
+    if (activeIndex.value) expandActiveSubMenuChain(activeIndex.value)
 })
 
 const menuClasses = computed(() => {
