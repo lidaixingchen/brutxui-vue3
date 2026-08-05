@@ -82,7 +82,7 @@ const iconClasses = computed(() =>
 
                 <NumberFieldInput
                     :placeholder="resolvedPlaceholder"
-                    :aria-invalid="variant === 'error' && errorMessage ? true : undefined"
+                    :aria-invalid="variant === 'error' ? true : undefined"
                     :aria-describedby="errorMessage ? errorTextId : undefined"
                     :class="fieldClasses"
                 />
@@ -95,7 +95,7 @@ const iconClasses = computed(() =>
             <template v-else>
                 <NumberFieldInput
                     :placeholder="resolvedPlaceholder"
-                    :aria-invalid="variant === 'error' && errorMessage ? true : undefined"
+                    :aria-invalid="variant === 'error' ? true : undefined"
                     :aria-describedby="errorMessage ? errorTextId : undefined"
                     :class="fieldClasses"
                 />
