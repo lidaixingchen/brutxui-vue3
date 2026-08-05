@@ -6,7 +6,9 @@
   "description": "Text input field with validation styling.",
   "category": "form",
   "examples": [],
-  "dependencies": [],
+  "dependencies": [
+    "@lucide/vue"
+  ],
   "registryDependencies": [
     "locale-zh-cn"
   ],

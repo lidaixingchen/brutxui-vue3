@@ -6,7 +6,9 @@
   "description": "Inline status badges and labels with color variants.",
   "category": "feedback",
   "examples": [],
-  "dependencies": [],
+  "dependencies": [
+    "@lucide/vue"
+  ],
   "registryDependencies": [
     "locale-zh-cn"
   ],

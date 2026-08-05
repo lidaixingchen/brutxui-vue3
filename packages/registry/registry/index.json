@@ -200,7 +200,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-436f7a6df4dcc70a8cdc8fcbc166b28d86569572724f30316461df436b2fc073"
+      "integrity": "sha256-53f06ca63d8df737e12de01e036bb6c3e7fed3324f925a1468871d95c3f679cb"
     },
     {
       "name": "alert",
@@ -210,6 +210,7 @@
       "category": "feedback",
       "examples": [],
       "dependencies": [
+        "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
@@ -754,7 +755,9 @@
       "description": "Inline status badges and labels with color variants.",
       "category": "feedback",
       "examples": [],
-      "dependencies": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "locale-zh-cn"
       ],
@@ -1308,7 +1311,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-4a856e73a6d2c45065cfd8b179a689d1479c91e4a836ecd6a038e27ab9f16627"
+      "integrity": "sha256-17d74dc9dd00ed43532fd6aaadc7ff67a48729b5bb778ff1801ddb30947744e1"
     },
     {
       "name": "calendar",
@@ -1318,6 +1321,7 @@
       "category": "data-display",
       "examples": [],
       "dependencies": [
+        "reka-ui",
         "v-calendar",
         "@lucide/vue"
       ],
@@ -1409,7 +1413,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-a5945578ffa469a97dbed8e1cf2a62068a0f66cf69869beead9c451a32f29db8"
+      "integrity": "sha256-5ca3d6acb7c675eae2c27ed9d199b096f56f9298e41b02312827bfe2832d715f"
     },
     {
       "name": "card",
@@ -1521,7 +1525,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e3da26d2b690349a5d0ad15f6ef2a855abd68c046f25fb3a9d0d832eccebe1a6"
+      "integrity": "sha256-32ea09ad7fd933d388ecef4fa33d211b4eef39b19aa579894fe01c678752f071"
     },
     {
       "name": "card-3d",
@@ -1627,7 +1631,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c2c9271e5fb5e9b56d05433e9b3e532a169cccedca063bfe34ffa179f6539ca6"
+      "integrity": "sha256-01e2f55989220868073327f7b774b9266bb0a7f574e347f463220c6baf70a728"
     },
     {
       "name": "carousel",
@@ -1761,7 +1765,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e80a58b663c91a03bb04aed890829bee79debe5b8d9455834e31bffbfc89665c"
+      "integrity": "sha256-465a86d28f50fc54ca3866a911c94686f1a9d0a8d22d77fca61eb7669274c5dc"
     },
     {
       "name": "cascader",
@@ -1993,7 +1997,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-9637f4c89d9fd48f4dbbe114fd898ef8863bee2660c1f103da8d7eb45c5539ca"
+      "integrity": "sha256-3414d0b5d8893500164d157da877dfdb80141aaf3e2d6425a679e88933d44c74"
     },
     {
       "name": "checkbox",
@@ -2213,7 +2217,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-8326a326c67dba5a1bbf94f066105ddcb97bfcaf6f15b3149cd7a0c0053f0e40"
+      "integrity": "sha256-d24dd4ca2780fa179d590920becb28e8ec7e9cd550a2685b7523fa353dd8f48d"
     },
     {
       "name": "color-mode-switcher",
@@ -2223,6 +2227,7 @@
       "category": "utility",
       "examples": [],
       "dependencies": [
+        "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
@@ -2462,7 +2467,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-41ae3f33dc5b25df85009b6e7b18ee24d89e376a3e2e99d805a940156808f684"
+      "integrity": "sha256-d52662aed4c3825d62a560552ee58bb1f103a870cb86818728604bfabc3bc60f"
     },
     {
       "name": "combobox",
@@ -2589,7 +2594,8 @@
       "category": "overlay",
       "examples": [],
       "dependencies": [
-        "reka-ui"
+        "reka-ui",
+        "@lucide/vue"
       ],
       "registryDependencies": [
         "dialog",
@@ -3129,6 +3135,7 @@
       "category": "data-display",
       "examples": [],
       "dependencies": [
+        "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
@@ -3261,7 +3268,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c419e56f38e52b97e301469471cd2182d09e400b2efb60c4665674aa1878f818"
+      "integrity": "sha256-54c0b6ac5c87a4ad2eeed6799acf6f46bfa6b64456e9ba55b39abe0b211d04a2"
     },
     {
       "name": "date-picker",
@@ -3442,7 +3449,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-66363781f672144b6d5a15f23e1b48391f58ce56be27708ed6c182f770a41a31"
+      "integrity": "sha256-1c5e9ece63897634b861e69513d60837f4bedaa1bd76df572ebf700458bb8ccf"
     },
     {
       "name": "descriptions",
@@ -3689,7 +3696,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-3352088ebc38ef2a19d86072877ddcb3aff101285d6a906b7005cabf50406316"
+      "integrity": "sha256-0bd131039fb690d9cbb85578730a2fcc86c705acaf47b77d4259067fb1e5d46a"
     },
     {
       "name": "dropdown-menu",
@@ -4276,7 +4283,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-738d6083dd1e7ad084275574ac40b89ef9220e159f3856a4aee8ae27649b025a"
+      "integrity": "sha256-3d1639a88e9a8e4bc8236d7e6f4cc77fb5acc3d20d0438dedfc2c86ef2f4bbff"
     },
     {
       "name": "hardcore-input",
@@ -4388,7 +4395,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-1246e8762ec21ba2b0df289c10f3f5237d3d088434bc949b3d1ac0ead3d58716"
+      "integrity": "sha256-8dd0d2c98d9e9f6fbfbbe069b4de75daa0abb67f60913530199e5fb616b5f78c"
     },
     {
       "name": "header-section",
@@ -4683,7 +4690,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-088a75dd1094a79aecfacfb850711c1df61f8598aa9c35a921b621eda29cba2b"
+      "integrity": "sha256-15afe7a81c77d9af5d2088265f7019850f759214bafcc000ab5e44fcec6c0fa4"
     },
     {
       "name": "input",
@@ -4692,7 +4699,9 @@
       "description": "Text input field with validation styling.",
       "category": "form",
       "examples": [],
-      "dependencies": [],
+      "dependencies": [
+        "@lucide/vue"
+      ],
       "registryDependencies": [
         "locale-zh-cn"
       ],
@@ -5495,7 +5504,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e59ee690e6e38abb00aae575fa7f5e1604d571ed44f8131e33844be17c8c2b52"
+      "integrity": "sha256-037db187ebc0e32f234c107d1857db072b65e0347803ecf4ce19801059a42083"
     },
     {
       "name": "noise-background",
@@ -5707,6 +5716,7 @@
       "category": "navigation",
       "examples": [],
       "dependencies": [
+        "reka-ui",
         "@lucide/vue"
       ],
       "registryDependencies": [
@@ -6580,7 +6590,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-442c4fe3cfad2d5821610cc5fc421855d15578631b9c1dfa33f2c67c2053c548"
+      "integrity": "sha256-29c75fae99e7f3eeca31d42b7cde5d81a8f978c084c482baef41b31267fed29c"
     },
     {
       "name": "scroll-area",
@@ -6674,7 +6684,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-a2bfb25173345b29bcd33b381d3d1e8a5e5d340e86bf4361ed8e5e074d08bead"
+      "integrity": "sha256-04ee5a2d33ced9e9e084426527b2a818731f6b02bdd41f4029a363e40852d589"
     },
     {
       "name": "select",
@@ -6809,7 +6819,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6cb9816e0b0b8058cc4a010ee86a258180d39f80b40b6ec08b39e9de91fbff99"
+      "integrity": "sha256-bf79b74157a185f6e3df58a602a9907e6be0666e629ee9da0d25b3377b3dba01"
     },
     {
       "name": "separator",
@@ -7024,7 +7034,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-774eb680cefe196b8b03928a6f52698060d8774ba8999f265ea7b86567fdbdbd"
+      "integrity": "sha256-0448c91879d1542d3b2abdc60e60842856630f57c54b357f9ed29df13d9a11f2"
     },
     {
       "name": "skeleton",
@@ -7226,7 +7236,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-dced5fcacfeba1a206e5bc3cf620015b55458e73e138d210168add151cfcef42"
+      "integrity": "sha256-415de405796ae3ad878c7461e48cf8a824f3dabb280116d0b9a4c44f0ef28f55"
     },
     {
       "name": "slider",
@@ -7320,7 +7330,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-09ce33dc172fed3bdbab4d7f0f84d708a64710e838998974f467ddaee84b7125"
+      "integrity": "sha256-ed299e079ca1c6804ffb9ed5f3cb44cdd554e9e041a763727454134abb606b4c"
     },
     {
       "name": "spinner",
@@ -7530,7 +7540,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-050fdcde4727020628923ac28c5d61bdff62a27b2dfeceb8ae1764f6c740eaca"
+      "integrity": "sha256-5101765761692883110d9fca0a3154226ea145fe9b2920dfc0864dbb4000e6bb"
     },
     {
       "name": "switch",
@@ -8322,7 +8332,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-7595c4b6c6c15ee2ef635adbf22cff2a42a35a5a37ddd1998e6b216ed604519c"
+      "integrity": "sha256-f04d30725d1057f66d9e5cf1842e8bd456a2d4d8e7ec955b1358aa59309c300d"
     },
     {
       "name": "toggle",
@@ -8332,7 +8342,8 @@
       "category": "action",
       "examples": [],
       "dependencies": [
-        "reka-ui"
+        "reka-ui",
+        "@lucide/vue"
       ],
       "registryDependencies": [],
       "files": [
@@ -9077,7 +9088,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-1985e030a1e22b9ce17e7cab1fa4d662686394cc08873d9c323eff6b5c7afc20"
+      "integrity": "sha256-2bff1be589135d9311ac6862978b7e2b4ea7ce643f54302f34d7097f53359043"
     },
     {
       "name": "typewriter-text",
@@ -9279,7 +9290,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-83c7d564762719f9d718334670e0ca5d0c6ff0f83983baa3d55fc63bcea8e12b"
+      "integrity": "sha256-bbcbc37081cb4ce7ba717bbf5e288ffebfb96af1c57582df10aa9c4e42178f00"
     },
     {
       "name": "virtual-scroll",
