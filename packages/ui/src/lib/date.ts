@@ -16,6 +16,14 @@ export function getISOWeekNumber(date: Date): number {
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
 }
 
+/** ISO 8601 周年份：跨年时与自然年可能不同（如 2024-12-31 属于 2025-W01） */
+export function getISOWeekYear(date: Date): number {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+    const dayNum = d.getUTCDay() || 7
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum)
+    return d.getUTCFullYear()
+}
+
 export function getWeekStartDate(date: Date, weekStartsOn: 0 | 1 = 1): Date {
     const result = new Date(date)
     const day = result.getDay()
@@ -38,6 +46,13 @@ export function formatDate(date: Date | null | undefined, format: string): strin
         mm: pad2(date.getMinutes()),
         ss: pad2(date.getSeconds()),
         WW: pad2(getISOWeekNumber(date)),
+    }
+    // 格式含 WW（ISO 周数）时，YYYY/YY 采用 ISO 周年份，保证跨年日期可往返还原
+    //（如 2024-12-31 属 2025-W01，'YYYY-WW' 应输出 '2025-01'）
+    if (format.includes('WW')) {
+        const isoYear = getISOWeekYear(date)
+        tokens.YYYY = String(isoYear)
+        tokens.YY = String(isoYear).slice(-2)
     }
     let result = format
     for (const [token, value] of Object.entries(tokens)) {
@@ -119,5 +134,7 @@ function dateFromISOWeek(year: number, week: number): Date | null {
     week1Monday.setDate(jan4.getDate() - (jan4Day - 1))
     const result = new Date(week1Monday)
     result.setDate(week1Monday.getDate() + (week - 1) * 7)
+    // 仅部分年份存在第 53 周，回验避免静默返回下一年的第 1 周日期
+    if (getISOWeekNumber(result) !== week) return null
     return result
 }

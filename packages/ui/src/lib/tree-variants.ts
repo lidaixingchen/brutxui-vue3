@@ -12,7 +12,8 @@ export const treeNodeBaseClasses = [
     brutalPress,
 ] as const
 
-export const treeSelectedClass = 'bg-brutal-primary border-brutal shadow-brutal'
+// 选中态需显式覆盖文字颜色，否则在 theme-mono/dark 下 --brutal-primary 与 --brutal-fg 相同，会出现黑底黑字/白底白字
+export const treeSelectedClass = 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal'
 
 export const treeChevronBaseClass = 'flex-shrink-0 transition-transform duration-150'
 

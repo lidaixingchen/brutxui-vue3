@@ -493,6 +493,21 @@ function themeVariablesToCssVars(variables: ThemeVariables): Record<string, stri
         '--brutal-shadow-offset-x': variables.shadow.offsetX,
         '--brutal-shadow-offset-y': variables.shadow.offsetY,
         '--brutal-shadow-color': variables.shadow.color,
+
+        // 间距变量
+        '--brutal-spacing-xs': variables.spacing.xs,
+        '--brutal-spacing-sm': variables.spacing.sm,
+        '--brutal-spacing-md': variables.spacing.md,
+        '--brutal-spacing-lg': variables.spacing.lg,
+        '--brutal-spacing-xl': variables.spacing.xl,
+
+        // 排版变量
+        '--brutal-font-family': variables.typography.fontFamily,
+        ...Object.fromEntries(
+            Object.entries(variables.typography.fontSize).map(
+                ([size, value]) => [`--brutal-font-size-${size}`, value],
+            ),
+        ),
     }
 }
 
