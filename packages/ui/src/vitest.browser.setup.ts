@@ -1,3 +1,4 @@
+import { afterAll, vi } from 'vitest'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import { zhCN } from '@/locales/zh-CN'
 
@@ -9,7 +10,13 @@ class ResizeObserverMock {
 
 globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver
 
-Element.prototype.scrollIntoView = function scrollIntoView() {}
+// 将原生 scrollIntoView 替换为空实现，避免浏览器环境下滚动干扰测试。
+// 使用 vi.spyOn 而非直接覆盖原型：不永久污染全局，且可恢复。
+const originalScrollIntoView = Element.prototype.scrollIntoView
+vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(() => {})
+afterAll(() => {
+    Element.prototype.scrollIntoView = originalScrollIntoView
+})
 
 export const LOCALE_KEY = LOCALE_INJECTION_KEY
 export const LOCALE_VALUE = zhCN

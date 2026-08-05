@@ -1,6 +1,7 @@
 import { config } from '@vue/test-utils'
 import axeCore from 'axe-core'
 import type { AxeResults } from 'axe-core'
+import { afterAll, vi } from 'vitest'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import { zhCN } from '@/locales/zh-CN'
 
@@ -15,7 +16,13 @@ class ResizeObserverMock {
 
 globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver
 
-Element.prototype.scrollIntoView = function scrollIntoView() {}
+// 将原生 scrollIntoView 替换为空实现，避免 happy-dom 未实现该方法导致测试报错。
+// 使用 vi.spyOn 而非直接覆盖原型：不永久污染全局，且可恢复。
+const originalScrollIntoView = Element.prototype.scrollIntoView
+vi.spyOn(Element.prototype, 'scrollIntoView').mockImplementation(() => {})
+afterAll(() => {
+    Element.prototype.scrollIntoView = originalScrollIntoView
+})
 
 // 导出配置好的 axe 函数供测试使用
 // 直接基于 axe-core，不依赖 vitest-axe 的 matcher 增强（Vitest 4.x 兼容性问题）

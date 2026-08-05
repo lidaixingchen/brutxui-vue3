@@ -8,7 +8,16 @@ export interface BrutxUIPluginOptions {
     locale?: MaybeRef<Locale>
 }
 
-export let globalApp: App | null = null
+// 模块私有变量：仅通过受控 setter 写入，避免外部模块随意改写全局 App 引用
+let globalApp: App | null = null
+
+function setGlobalApp(app: App): void {
+    // 重复安装时告警，避免命令式 API 静默绑定到最后一个 App，旧 App 引用无法释放
+    if (globalApp && globalApp !== app) {
+        console.warn('[BrutxUI] 检测到重复安装 BrutxUIPlugin，命令式 API 将绑定到最新的 App 实例。')
+    }
+    globalApp = app
+}
 
 /**
  * 获取全局 App 上下文，使命令式 API 能继承 i18n/theme 的 provide 链。
@@ -23,7 +32,7 @@ export function getGlobalAppContext(): AppContext | null {
 
 export const BrutxUIPlugin = {
     install(app: App, options: BrutxUIPluginOptions = {}) {
-        globalApp = app
+        setGlobalApp(app)
 
         const locale = options.locale ?? zhCN
         app.provide(LOCALE_INJECTION_KEY, locale)

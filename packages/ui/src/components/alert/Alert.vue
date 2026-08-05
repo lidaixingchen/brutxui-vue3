@@ -48,6 +48,7 @@ const closeIconClasses = computed(() =>
         </div>
         <Button
             v-if="closable"
+            type="button"
             variant="ghost"
             size="icon"
             class="absolute right-3 top-3 h-8 w-8"

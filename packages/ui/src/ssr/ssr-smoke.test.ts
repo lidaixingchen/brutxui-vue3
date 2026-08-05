@@ -117,9 +117,7 @@ describe('SSR smoke: simple components', () => {
         { name: 'AlertTitle', comp: BrutxUI.AlertTitle, expectContains: '<' },
         { name: 'AlertDescription', comp: BrutxUI.AlertDescription, expectContains: '<' },
 
-        // Avatar 子组件
-        { name: 'AvatarImage', comp: BrutxUI.AvatarImage, expectContains: '<' },
-        // 注：AvatarFallback 需要 AvatarRoot context，移至 provider-wrapped
+        // 注：AvatarImage / AvatarFallback 需要 AvatarRoot context，移至 provider-wrapped
 
         // Breadcrumb 全套
         { name: 'Breadcrumb', comp: BrutxUI.Breadcrumb, expectContains: '<' },
@@ -288,7 +286,8 @@ describe('SSR smoke: provider-wrapped components', () => {
         { name: 'Toast', comp: BrutxUI.Toast, provider: ToastProvider },
         { name: 'ToastContainer', comp: BrutxUI.ToastContainer, provider: ToastProvider },
 
-        // AvatarFallback 需要 AvatarRoot context
+        // AvatarImage / AvatarFallback 需要 AvatarRoot context
+        { name: 'AvatarImage', comp: BrutxUI.AvatarImage, provider: AvatarRoot },
         { name: 'AvatarFallback', comp: BrutxUI.AvatarFallback, provider: AvatarRoot },
 
         // RadioGroupItem 需要 RadioGroupRoot context

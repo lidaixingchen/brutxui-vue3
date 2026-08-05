@@ -44,7 +44,9 @@ export async function expectNoA11yViolations(
             throw new Error(`a11y violations (${results.violations.length}):\n${detail}`)
         }
         return wrapper
-    } finally {
+    } catch (error) {
+        // 仅违规抛错时卸载清理；成功路径保持挂载状态返回，供调用方继续断言
         wrapper.unmount()
+        throw error
     }
 }
