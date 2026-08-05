@@ -83,6 +83,7 @@ onMounted(() => {
     if (parentSubMenu) {
         parentSubMenu.registerChild(props.index)
     }
+    context?.registerSubMenu(props.index, childIndices.value)
     if (hasDocument) {
         getDocument()?.addEventListener('click', handleDocumentClick)
     }

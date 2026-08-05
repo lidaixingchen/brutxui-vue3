@@ -30,12 +30,29 @@ const openedMenus = ref<Set<string>>(new Set())
 const instance = getCurrentInstance()
 
 const subMenuChildren = new Map<string, ReadonlySet<string>>()
+const childToParent = new Map<string, Set<string>>()
 
 function registerSubMenu(index: string, children: ReadonlySet<string>) {
     subMenuChildren.set(index, children)
+    for (const child of children) {
+        const parents = childToParent.get(child)
+        if (parents) parents.add(index)
+        else childToParent.set(child, new Set([index]))
+    }
+    if (activeIndex.value) expandActiveSubMenuChain(activeIndex.value)
 }
 
 function unregisterSubMenu(index: string) {
+    const children = subMenuChildren.get(index)
+    if (children) {
+        for (const child of children) {
+            const parents = childToParent.get(child)
+            if (parents) {
+                parents.delete(index)
+                if (parents.size === 0) childToParent.delete(child)
+            }
+        }
+    }
     subMenuChildren.delete(index)
 }
 
@@ -45,10 +62,12 @@ function expandActiveSubMenuChain(target: string) {
     const stack = [target]
     while (stack.length > 0) {
         const current = stack.pop()!
-        for (const [subIndex, children] of subMenuChildren) {
-            if (children.has(current) && !toOpen.has(subIndex)) {
-                toOpen.add(subIndex)
-                stack.push(subIndex)
+        const parents = childToParent.get(current)
+        if (!parents) continue
+        for (const parent of parents) {
+            if (!toOpen.has(parent)) {
+                toOpen.add(parent)
+                stack.push(parent)
                 changed = true
             }
         }
