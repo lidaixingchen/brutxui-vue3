@@ -10,7 +10,14 @@ export const isClient = typeof window !== 'undefined'
 export const hasDocument = typeof document !== 'undefined'
 
 /** Whether `localStorage` is available (may be blocked in Safari private mode). */
-export const hasLocalStorage = typeof localStorage !== 'undefined'
+export const hasLocalStorage = (() => {
+    try {
+        // 存储被禁用时访问 localStorage 属性本身会抛 SecurityError
+        return typeof localStorage !== 'undefined' && localStorage !== null
+    } catch {
+        return false
+    }
+})()
 
 /** Whether `document.body` is available for imperative mounting. */
 export function canUseDocumentBody(): boolean {
@@ -147,7 +154,13 @@ export function matchMedia(query: string): MediaQueryList | undefined {
  * for callers that need direct Storage access (e.g. bulk iteration).
  */
 export function getLocalStorage(): Storage | undefined {
-    return isClient ? window.localStorage : undefined
+    if (!isClient) return undefined
+    try {
+        return window.localStorage
+    } catch {
+        // 存储被禁用（如 Safari 私有模式）时访问属性本身抛异常，按不可用处理
+        return undefined
+    }
 }
 
 /**
@@ -155,7 +168,12 @@ export function getLocalStorage(): Storage | undefined {
  * Complements the value-level `safeGetStorageItem`/`safeSetStorageItem` helpers.
  */
 export function getSessionStorage(): Storage | undefined {
-    return isClient ? window.sessionStorage : undefined
+    if (!isClient) return undefined
+    try {
+        return window.sessionStorage
+    } catch {
+        return undefined
+    }
 }
 
 /**

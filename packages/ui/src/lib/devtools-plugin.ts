@@ -12,6 +12,7 @@
 
 import { inject } from 'vue'
 import type { App, Plugin } from 'vue'
+import { getWindow, isClient } from '@/lib/env'
 
 // process 在 Vitest/Vite 环境中运行时存在，但 tsconfig 未包含 node 类型
 declare const process: { env: { NODE_ENV: string | undefined } }
@@ -130,40 +131,84 @@ export interface PerformanceReport {
     }>
 }
 
-/** Vue Devtools API 接口（简化版） */
-interface VueDevtoolsApi {
-    notifyComponentUpdate: (componentId: string) => void
-    sendInspectorTree: (inspectorId: string) => void
-    sendInspectorState: (inspectorId: string) => void
-    addInspector: (options: {
-        id: string
-        label: string
-        icon?: string
-        treeFilterPlaceholder?: string
-    }) => void
-    getInspectorTree: (inspectorId: string) => unknown
-    getInspectorState: (inspectorId: string) => unknown
+// ── Vue Devtools 事件协议类型 ──────────────────────────────────
+// 真实 Vue Devtools 的全局 hook（__VUE_DEVTOOLS_GLOBAL_HOOK__）是事件总线（emit/on/off），
+// 插件通过 emit('devtools:plugin:add', descriptor) 注册，devtools 端创建 api 后回调 setupFn(api)。
+// 这里只声明本插件用到的协议子集，形状与 @vue/devtools-api 一致。
+
+/** Vue Devtools 全局 hook（事件总线协议） */
+interface VueDevtoolsHook {
+    emit: (eventName: string, ...args: unknown[]) => void
+    on: (eventName: string, handler: (...args: unknown[]) => void) => void
+    off: (eventName: string, handler: (...args: unknown[]) => void) => void
+}
+
+/** 组件树标签 */
+interface DevtoolsComponentTag {
+    label: string
+    textColor: number
+    backgroundColor: number
+}
+
+/** Inspector 树节点 */
+interface DevtoolsTreeNode {
+    id: string
+    label: string
+    tags?: DevtoolsComponentTag[]
+    children?: DevtoolsTreeNode[]
+}
+
+/** Inspector 状态项 */
+interface DevtoolsInspectorStateItem {
+    key: string
+    value: unknown
+    editable?: boolean
+}
+
+/** Inspector 树请求负载 */
+interface DevtoolsGetInspectorTreePayload {
+    inspectorId: string
+    rootNodes: DevtoolsTreeNode[]
+}
+
+/** Inspector 状态请求负载 */
+interface DevtoolsGetInspectorStatePayload {
+    inspectorId: string
+    nodeId: string
+    state: Record<string, DevtoolsInspectorStateItem[]>
+}
+
+/** Inspector 状态编辑负载 */
+interface DevtoolsEditInspectorStatePayload {
+    inspectorId: string
+    nodeId: string
+    path: string[]
+    state: { value: unknown }
+}
+
+/** setupFn 接收的 Devtools API（仅声明本插件用到的部分） */
+interface VueDevtoolsPluginApi {
+    addInspector: (options: { id: string; label: string; icon?: string; treeFilterPlaceholder?: string }) => void
     on: {
-        visitComponentTree: (handler: (payload: {
-            componentData: { name: string }
-            treeNodes: unknown[]
-        }) => void) => void
-        inspectComponent: (handler: (payload: {
-            componentData: { name: string }
-            state: unknown[]
-        }) => void) => void
-        editComponentState: (handler: (payload: {
-            componentData: { name: string }
-            path: string[]
-            state: { value: unknown }
-        }) => void) => void
+        getInspectorTree: (handler: (payload: DevtoolsGetInspectorTreePayload) => void) => void
+        getInspectorState: (handler: (payload: DevtoolsGetInspectorStatePayload) => void) => void
+        editInspectorState: (handler: (payload: DevtoolsEditInspectorStatePayload) => void) => void
     }
+}
+
+/** 插件描述符 */
+interface VueDevtoolsPluginDescriptor {
+    id: string
+    label: string
+    app: App
+    packageName: string
+    setupFn: (api: VueDevtoolsPluginApi) => void
 }
 
 /** 声明全局 __VUE_DEVTOOLS_GLOBAL_HOOK__ */
 declare global {
 
-    var __VUE_DEVTOOLS_GLOBAL_HOOK__: VueDevtoolsApi | undefined
+    var __VUE_DEVTOOLS_GLOBAL_HOOK__: VueDevtoolsHook | undefined
 }
 
 const PLUGIN_ID = 'brutxui-devtools'
@@ -406,113 +451,110 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
 }
 
 /**
+ * 通过 Vue Devtools 事件协议注册插件（等价于 @vue/devtools-api 的 setupDevToolsPlugin）。
+ *
+ * 真实 hook 是事件总线：emit('devtools:plugin:add', descriptor) 后由 devtools 端创建 api 并回调 setupFn。
+ * 与旧实现不同，这里不再直接调用 hook 上不存在的同步方法（addInspector/on.visitComponentTree 等），
+ * 避免 TypeErorr 被 try/catch 静默吞掉导致功能全部失效。
+ */
+function setupBrutxDevtoolsPlugin(descriptor: VueDevtoolsPluginDescriptor): boolean {
+    // 仅浏览器环境存在 Vue Devtools hook
+    if (!isClient) return false
+    const hook = (getWindow() as (Window & { __VUE_DEVTOOLS_GLOBAL_HOOK__?: VueDevtoolsHook }) | undefined)?.__VUE_DEVTOOLS_GLOBAL_HOOK__
+    // 形状不符（非事件总线）时跳过，避免对 hook 做不存在的同步调用
+    if (!hook || typeof hook.emit !== 'function' || typeof hook.on !== 'function') return false
+    hook.emit('devtools:plugin:add', descriptor)
+    return true
+}
+
+/**
  * 初始化 Vue Devtools 集成
  */
 function initDevtoolsIntegration(
-    _app: App,
+    app: App,
     context: BrutxUIDevtoolsContext,
     options: Required<DevtoolsPluginOptions>
 ): void {
-    // 检查 Vue Devtools 是否可用
-    if (typeof __VUE_DEVTOOLS_GLOBAL_HOOK__ === 'undefined') {
-        console.log(
-            `[${options.libraryName}] Vue Devtools 未检测到，跳过 Devtools 集成初始化`
-        )
-        return
-    }
-
     try {
-        const api = __VUE_DEVTOOLS_GLOBAL_HOOK__ as VueDevtoolsApi
-
-        // 注册 Inspector
-        api.addInspector({
+        const registered = setupBrutxDevtoolsPlugin({
             id: PLUGIN_ID,
             label: PLUGIN_NAME,
-            icon: 'widgets',
-            treeFilterPlaceholder: '搜索 BrutxUI 组件...',
-        })
-
-        // 处理组件树
-        api.on.visitComponentTree((payload) => {
-            if (!options.enableComponentTree) return
-
-            const { componentData, treeNodes } = payload
-            const meta = context.components.get(componentData.name)
-
-            if (meta) {
-                treeNodes.push({
-                    id: `${PLUGIN_ID}-${meta.name}`,
-                    label: meta.name,
-                    tags: [
-                        {
-                            label: options.libraryName,
-                            textColor: 0xffffff,
-                            backgroundColor: 0x000000,
-                        },
-                    ],
-                })
-            }
-        })
-
-        // 处理组件状态检查
-        api.on.inspectComponent((payload) => {
-            const { componentData, state } = payload
-            const meta = context.components.get(componentData.name)
-
-            if (meta) {
-                // 添加组件元数据
-                state.push({
-                    type: `${options.libraryName} 组件信息`,
-                    editable: false,
-                    value: {
-                        版本: meta.version || '未知',
-                        描述: meta.description || '无描述',
-                        注册时间: new Date(meta.registeredAt).toLocaleString(),
-                        最后更新: new Date(meta.lastUpdatedAt).toLocaleString(),
-                    },
+            app,
+            packageName: 'brutx-ui-vue',
+            setupFn: (api) => {
+                // 注册自定义 Inspector，展示已注册的 BrutxUI 组件
+                api.addInspector({
+                    id: PLUGIN_ID,
+                    label: PLUGIN_NAME,
+                    icon: 'widgets',
+                    treeFilterPlaceholder: '搜索 BrutxUI 组件...',
                 })
 
-                // 添加 Props 信息
-                if (meta.props && Object.keys(meta.props).length > 0) {
-                    state.push({
-                        type: `${options.libraryName} Props`,
-                        editable: true,
-                        value: meta.props,
-                    })
-                }
+                // 组件树：将已注册组件作为根节点
+                api.on.getInspectorTree((payload) => {
+                    if (payload.inspectorId !== PLUGIN_ID) return
+                    if (!options.enableComponentTree) return
+                    payload.rootNodes.push(
+                        ...context.getComponents().map((meta) => ({
+                            id: `${PLUGIN_ID}-${meta.name}`,
+                            label: meta.name,
+                            tags: [
+                                {
+                                    label: options.libraryName,
+                                    textColor: 0xffffff,
+                                    backgroundColor: 0x000000,
+                                },
+                            ],
+                        })),
+                    )
+                })
 
-                // 添加事件信息
-                if (meta.events && meta.events.length > 0) {
-                    state.push({
-                        type: `${options.libraryName} 事件`,
-                        editable: false,
-                        value: meta.events,
-                    })
-                }
-            }
-        })
+                // 状态检查：展示组件元数据与可编辑 Props
+                api.on.getInspectorState((payload) => {
+                    if (payload.inspectorId !== PLUGIN_ID || !payload.nodeId) return
+                    const name = payload.nodeId.replace(`${PLUGIN_ID}-`, '')
+                    const meta = context.components.get(name)
+                    if (!meta) return
+                    payload.state = {
+                        [`${options.libraryName} 组件信息`]: [
+                            { key: '版本', value: meta.version || '未知' },
+                            { key: '描述', value: meta.description || '无描述' },
+                            { key: '注册时间', value: new Date(meta.registeredAt).toLocaleString() },
+                            { key: '最后更新', value: new Date(meta.lastUpdatedAt).toLocaleString() },
+                        ],
+                        [`${options.libraryName} Props`]: Object.entries(meta.props ?? {}).map(([key, value]) => ({
+                            key,
+                            value,
+                            editable: true,
+                        })),
+                    }
+                })
 
-        // 处理组件状态编辑
-        api.on.editComponentState((payload) => {
-            const { componentData, path, state } = payload
-            const meta = context.components.get(componentData.name)
-
-            if (meta && path[0] === `${options.libraryName} Props`) {
-                // 更新 Props
-                if (meta.props) {
-                    const key = path[1]
-                    if (key) {
-                        meta.props[key] = state.value
+                // Props 编辑：更新注册组件的元数据
+                api.on.editInspectorState((payload) => {
+                    if (payload.inspectorId !== PLUGIN_ID || !payload.nodeId) return
+                    const name = payload.nodeId.replace(`${PLUGIN_ID}-`, '')
+                    const meta = context.components.get(name)
+                    if (!meta || payload.path[0] !== `${options.libraryName} Props`) return
+                    const key = payload.path[1]
+                    if (key && meta.props) {
+                        meta.props[key] = payload.state.value
                         meta.lastUpdatedAt = Date.now()
-
                         console.log(
-                            `[${options.libraryName}] Props 已更新: ${componentData.name}.${key} =`,
-                            state.value
+                            `[${options.libraryName}] Props 已更新: ${name}.${key} =`,
+                            payload.state.value
                         )
                     }
-                }
-            }
+                })
+            },
         })
+
+        if (!registered) {
+            console.log(
+                `[${options.libraryName}] Vue Devtools 未检测到，跳过 Devtools 集成初始化`
+            )
+            return
+        }
 
         console.log(
             `[${options.libraryName}] Vue Devtools 集成已初始化`
