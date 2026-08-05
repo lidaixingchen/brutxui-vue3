@@ -72,24 +72,30 @@ watch(
     async ([code, lang]) => {
         const version = ++highlightVersion
 
-        if (lang === 'plaintext') {
-            highlightedHtml.value = escapeHtml(code)
-            return
-        }
-
-        if (!isLanguageLoaded(lang)) {
-            const loaded = await loadLanguage(lang)
-            if (version !== highlightVersion) return
-            if (loaded === 'plaintext') {
+        try {
+            if (lang === 'plaintext') {
                 highlightedHtml.value = escapeHtml(code)
                 return
             }
-        }
 
-        const grammar = getGrammar(lang)
-        if (grammar) {
-            highlightedHtml.value = Prism.highlight(code, grammar, lang)
-        } else {
+            if (!isLanguageLoaded(lang)) {
+                const loaded = await loadLanguage(lang)
+                if (version !== highlightVersion) return
+                if (loaded === 'plaintext') {
+                    highlightedHtml.value = escapeHtml(code)
+                    return
+                }
+            }
+
+            const grammar = getGrammar(lang)
+            if (grammar) {
+                highlightedHtml.value = Prism.highlight(code, grammar, lang)
+            } else {
+                highlightedHtml.value = escapeHtml(code)
+            }
+        } catch (e) {
+            if (version !== highlightVersion) return
+            console.error('[CodeBlock] syntax highlighting failed', e)
             highlightedHtml.value = escapeHtml(code)
         }
     },
