@@ -35,7 +35,7 @@ const iconClasses = computed(() =>
 </script>
 
 <template>
-    <DropdownMenuCheckboxItemPrimitive :model-value="modelValue" :class="classes" @update:model-value="emit('update:modelValue', $event)">
+    <DropdownMenuCheckboxItemPrimitive :checked="modelValue" :class="classes" @update:checked="emit('update:modelValue', $event)">
         <span class="absolute left-2 flex h-4 w-4 items-center justify-center">
             <DropdownMenuItemIndicatorPrimitive>
                 <Check :class="iconClasses" />
