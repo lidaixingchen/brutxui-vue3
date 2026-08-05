@@ -8,7 +8,7 @@ const DatePicker = defineAsyncComponent(async () => {
         return mod.DatePicker
     } catch {
         console.warn('[BrutxUI] Calendar component requires v-calendar. Install it: pnpm add v-calendar')
-        return { template: '<div/>' }
+        return { render: () => null }
     }
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
@@ -65,6 +65,7 @@ function handleUpdate(value: Date | null) {
 
 function handleShortcutSelect(shortcut: DatePickerShortcut) {
     const value = resolveShortcutValue(shortcut)
+    if ((props.minDate && value < props.minDate) || (props.maxDate && value > props.maxDate)) return
     emit('update:modelValue', value)
 }
 

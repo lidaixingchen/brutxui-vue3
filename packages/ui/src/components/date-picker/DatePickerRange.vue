@@ -50,10 +50,18 @@ const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('datePicker.startP
 const open = ref(false)
 const displayValue = ref<DateRange | null>(props.modelValue)
 
+let suppressCloseChange = false
+
 watch(open, (isOpen) => {
-    if (isOpen) emit('open')
-    else {
+    if (isOpen) {
+        suppressCloseChange = false
+        emit('open')
+    } else {
         emit('close')
+        if (suppressCloseChange) {
+            suppressCloseChange = false
+            return
+        }
         const display = displayValue.value
         const model = props.modelValue
         if (
@@ -98,6 +106,7 @@ function handlePanelConfirm(value: DateRange | null) {
     displayValue.value = value
     emit('update:modelValue', value)
     emit('change', value)
+    suppressCloseChange = true
     open.value = false
 }
 

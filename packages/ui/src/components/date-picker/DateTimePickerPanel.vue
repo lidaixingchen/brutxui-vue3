@@ -9,7 +9,7 @@ const DatePicker = defineAsyncComponent(async () => {
         return mod.DatePicker
     } catch {
         console.warn('[BrutxUI] Calendar component requires v-calendar. Install it: pnpm add v-calendar')
-        return { template: '<div/>' }
+        return { render: () => null }
     }
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
@@ -224,8 +224,8 @@ function getShortcutClasses(shortcut: DatePickerShortcut): string {
                 @update:model-value="handleTimeUpdate"
             />
 
-            <div v-if="clearable" :class="footerClasses">
-                <Button variant="default" size="sm" type="button" @click="handleClear">
+            <div :class="footerClasses">
+                <Button v-if="clearable" variant="default" size="sm" type="button" @click="handleClear">
                     {{ resolvedClearLabel }}
                 </Button>
                 <Button variant="primary" size="sm" type="button" @click="handleConfirm">

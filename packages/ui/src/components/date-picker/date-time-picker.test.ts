@@ -390,7 +390,7 @@ describe('DateTimePicker', () => {
         expect(texts).toContain('Clear')
     })
 
-    it('does not render footer when not clearable', async () => {
+    it('keeps confirm button but hides clear when not clearable', async () => {
         wrapper = mount(DateTimePicker, {
             ...localeProvide,
             props: { clearable: false },
@@ -400,7 +400,7 @@ describe('DateTimePicker', () => {
         const dialog = document.body.querySelector('[role="dialog"]')
         const buttons = dialog ? dialog.querySelectorAll('button') : []
         const texts = Array.from(buttons).map((b) => b.textContent?.trim())
-        expect(texts).not.toContain('Confirm')
+        expect(texts).toContain('Confirm')
         expect(texts).not.toContain('Clear')
     })
 
@@ -524,7 +524,7 @@ describe('DateTimePickerPanel', () => {
         expect(texts).toContain('Clear')
     })
 
-    it('does not render footer when not clearable', () => {
+    it('keeps confirm button but hides clear when not clearable', () => {
         wrapper = mount(DateTimePickerPanel, {
             ...localeProvide,
             props: { clearable: false },
@@ -532,7 +532,7 @@ describe('DateTimePickerPanel', () => {
         })
         const buttons = wrapper.findAll('button')
         const texts = buttons.map((b) => b.text().trim())
-        expect(texts).not.toContain('Confirm')
+        expect(texts).toContain('Confirm')
         expect(texts).not.toContain('Clear')
     })
 
