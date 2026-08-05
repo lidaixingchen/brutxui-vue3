@@ -18,6 +18,12 @@ function isUrl(str: string): boolean {
 }
 
 /**
+ * GitHub raw URL 完整结构：raw.githubusercontent.com/{owner}/{repo}/{ref}/...
+ * 在 resolveVersionedSource 与嵌套依赖版本解析处共享，避免前缀/完整结构两处模式漂移。
+ */
+const GITHUB_RAW_URL_PATTERN = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.*)$/;
+
+/**
  * 进程级 registry-manifest 缓存：首次 getItem 时按需拉取一次，
  * 避免每条目多一次请求。key 为 registry source URL。
  */
@@ -449,8 +455,7 @@ export async function resolveDeps(
      * 其他结构显式报错而非静默忽略（v2.2 补强：去硬编码，与 --registry 一致）。
      */
     function resolveVersionedSource(baseSource: string, version: string): string {
-        const githubRawPattern = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.*)$/;
-        const match = baseSource.match(githubRawPattern);
+        const match = baseSource.match(GITHUB_RAW_URL_PATTERN);
         if (!match) {
             throw new CliError(
                 `@version syntax requires a GitHub raw URL registry, but got: ${baseSource}. ` +
@@ -471,10 +476,14 @@ export async function resolveDeps(
             if (match) {
                 cleanName = match[1];
                 const version = match[2];
-                // 版本号始终相对顶层 source 解析，避免嵌套依赖的显式版本被静默丢弃
-                // （例如顶层 button@v1 解析出 v1 ref 后，依赖 card@v2 仍应按 v2 解析，
-                //   而非在 button 的 v1 ref 下按纯名 card 拉取）。
-                requestedSource = resolveVersionedSource(source, version);
+                // 版本号优先相对实际命中源（inheritedSource）解析，保证版本语义跟随真实来源；
+                // 用完整结构正则判断（而非前缀），确保 inheritedSource 能被 resolveVersionedSource
+                // 正常解析后再选用，否则回退到顶层 source。
+                // 注意：版本化后 requestedSource !== source，该依赖不再参与多源 fallback（版本需钉在特定 ref）。
+                const versionBase = inheritedSource && GITHUB_RAW_URL_PATTERN.test(inheritedSource)
+                    ? inheritedSource
+                    : source;
+                requestedSource = resolveVersionedSource(versionBase, version);
             }
         }
 

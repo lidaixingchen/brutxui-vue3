@@ -79,7 +79,13 @@ function parseEnvTrustedPublicKeys(): TrustedPublicKey[] {
             typeof (k as { publicKey?: unknown }).publicKey === 'string' && (k as { publicKey: string }).publicKey.length > 0
         );
         if (filtered.length < parsed.length) {
-            logger.warn(`${PUBLIC_KEYS_ENV} contains ${parsed.length - filtered.length} invalid entr${parsed.length - filtered.length !== 1 ? 'ies' : 'y'} (missing keyId/publicKey); they were ignored.`);
+            const invalidCount = parsed.length - filtered.length;
+            const base = `${PUBLIC_KEYS_ENV} contains ${invalidCount} invalid entr${invalidCount !== 1 ? 'ies' : 'y'} (missing keyId/publicKey)`;
+            if (isRequireSignature()) {
+                // 严格模式：不得静默降级跳过，直接拒绝继续（文案不使用"被忽略"以免与实际行为矛盾）
+                throw new CliError(`${base}.`, { code: 'REGISTRY_SIGNATURE_INVALID' });
+            }
+            logger.warn(`${base}; they were ignored.`);
         }
         return filtered;
     } catch (error) {
@@ -146,24 +152,16 @@ export function verifyManifestSignature(
 ): boolean {
     // 缺失签名/完整性/信任公钥：严格模式下不得静默放行（否则删除 signature/keyId 即可绕过强制验签），
     // 默认模式保持原有的跳过（debug 日志）语义。
-    const strictOrSkip = (message: string): false => {
-        if (isRequireSignature()) {
-            throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
-        }
-        logger.debug(message);
-        return false;
-    };
-
     if (!manifest.signature || !manifest.keyId) {
-        return strictOrSkip('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.');
+        return handleSignatureFailure('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.', 'debug');
     }
 
     if (!manifest.integrity) {
-        return strictOrSkip('Manifest has signature but no integrity field, cannot verify. Strict signature mode requires an integrity field.');
+        return handleSignatureFailure('Manifest has signature but no integrity field, cannot verify. Strict signature mode requires an integrity field.', 'debug');
     }
 
     if (trustedKeys.length === 0) {
-        return strictOrSkip(`No trusted public keys configured (set ${PUBLIC_KEYS_ENV} env var). Strict signature mode requires a trusted key.`);
+        return handleSignatureFailure(`No trusted public keys configured (set ${PUBLIC_KEYS_ENV} env var). Strict signature mode requires a trusted key.`, 'debug');
     }
 
     const key = trustedKeys.find(k => k.keyId === manifest.keyId);
@@ -290,14 +288,19 @@ export function verifyManifestIntegrityAndSignature(
 }
 
 /**
- * 处理签名失败：默认模式 warn，严格模式抛错。
- * 返回 false 表示已降级为 warn，调用方应继续流程（integrity 会兜底校验）。
+ * 处理签名失败：默认模式 warn（或 debug），严格模式抛错。
+ * 返回 false 表示已降级为 warn/debug，调用方应继续流程（integrity 会兜底校验）。
+ * @param logLevel 默认模式下记录日志的级别；'debug' 用于"未签名/无法校验"这类预期内的跳过场景。
  */
-function handleSignatureFailure(message: string): false {
+function handleSignatureFailure(message: string, logLevel: 'debug' | 'warn' = 'warn'): false {
     if (isRequireSignature()) {
         throw new CliError(message, { code: 'REGISTRY_SIGNATURE_INVALID' });
     }
-    logger.warn(`[Signature] ${message} (use --require-signature to enforce)`);
+    if (logLevel === 'debug') {
+        logger.debug(message);
+    } else {
+        logger.warn(`[Signature] ${message} (use --require-signature to enforce)`);
+    }
     return false;
 }
 
