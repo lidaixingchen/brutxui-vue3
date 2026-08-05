@@ -20,11 +20,13 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     const isDisabled = computed(() => !!toValue(options.disabled))
     const isGlitching = computed(() => isActive.value && !prefersReducedMotion.value)
 
-    // 禁用时停止 autoplay 并复位激活态，避免 hover 激活期间 disabled 置 true 导致 isActive 永久卡住
+    // 禁用时停止 autoplay 并复位激活态；解除禁用后按 trigger 恢复 autoplay
     watch(isDisabled, (disabled) => {
         if (disabled) {
             stopAutoplay()
             isActive.value = false
+        } else if (trigger.value === 'autoplay') {
+            startAutoplay()
         }
     })
 

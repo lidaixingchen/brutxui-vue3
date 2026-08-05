@@ -81,7 +81,7 @@ export function useDialogEnhanced(
     const position = ref({ x: 0, y: 0 })
     const size = ref({ width: 0, height: 0 })
     const dragStart = ref({ x: 0, y: 0 })
-    const resizeStart = ref({ x: 0, y: 0, width: 0, height: 0, corner: 'se' })
+    const resizeStart = ref({ x: 0, y: 0, width: 0, height: 0, corner: 'se', startX: 0, startY: 0 })
 
     // ── Content Style ──────────────────────────────────────────────
 
@@ -133,26 +133,31 @@ export function useDialogEnhanced(
         const width = targetWidth ?? rect.width
         const height = targetHeight ?? rect.height
 
+        // 尺寸超出约束边界（如对话框宽于视口）时下界 > 上界，直接 Math.max/min 会锁死到一侧；
+        // 统一用 clampAxis 处理：区间无效时固定到居中位置
+        const clampAxis = (value: number, lower: number, upper: number): number =>
+            lower <= upper ? Math.max(lower, Math.min(value, upper)) : 0
+
         if (opt.bounds === 'viewport') {
             const { width: vw, height: vh } = getViewportSize()
             return {
-                x: Math.max(width / 2 - vw / 2, Math.min(newX, vw / 2 - width / 2)),
-                y: Math.max(height / 2 - vh / 2, Math.min(newY, vh / 2 - height / 2)),
+                x: clampAxis(newX, width / 2 - vw / 2, vw / 2 - width / 2),
+                y: clampAxis(newY, height / 2 - vh / 2, vh / 2 - height / 2),
             }
         } else if (opt.bounds === 'parent') {
             const parentRect = contentRef.value?.parentElement?.getBoundingClientRect()
             if (parentRect) {
                 const { width: vw, height: vh } = getViewportSize()
                 return {
-                    x: Math.max(parentRect.left - vw / 2 + width / 2, Math.min(newX, parentRect.right - vw / 2 - width / 2)),
-                    y: Math.max(parentRect.top - vh / 2 + height / 2, Math.min(newY, parentRect.bottom - vh / 2 - height / 2)),
+                    x: clampAxis(newX, parentRect.left - vw / 2 + width / 2, parentRect.right - vw / 2 - width / 2),
+                    y: clampAxis(newY, parentRect.top - vh / 2 + height / 2, parentRect.bottom - vh / 2 - height / 2),
                 }
             }
         } else if (typeof opt.bounds === 'object') {
             const { width: vw, height: vh } = getViewportSize()
             return {
-                x: Math.max(opt.bounds.left - vw / 2 + width / 2, Math.min(newX, opt.bounds.right - vw / 2 - width / 2)),
-                y: Math.max(opt.bounds.top - vh / 2 + height / 2, Math.min(newY, opt.bounds.bottom - vh / 2 - height / 2)),
+                x: clampAxis(newX, opt.bounds.left - vw / 2 + width / 2, opt.bounds.right - vw / 2 - width / 2),
+                y: clampAxis(newY, opt.bounds.top - vh / 2 + height / 2, opt.bounds.bottom - vh / 2 - height / 2),
             }
         }
 
@@ -214,6 +219,9 @@ export function useDialogEnhanced(
             width: size.value.width,
             height: size.value.height,
             corner,
+            // 记录起始位置，供 resize 补偿以起始点为基准计算，避免每帧叠加已计入的偏移
+            startX: position.value.x,
+            startY: position.value.y,
         }
 
         doc.addEventListener('mousemove', onResizeMove)
@@ -265,8 +273,9 @@ export function useDialogEnhanced(
         // 按最终 clamp 后的尺寸差 deltaW/2、deltaH/2 补偿各角对应的位置，使被拖拽边缘跟随光标、对边保持不动
         const deltaW = newWidth - resizeStart.value.width
         const deltaH = newHeight - resizeStart.value.height
-        let newX = position.value.x
-        let newY = position.value.y
+        // 以 resize 起始位置为基准计算补偿，避免每帧基于已补偿位置叠加造成对边二次漂移
+        let newX = resizeStart.value.startX
+        let newY = resizeStart.value.startY
         switch (resizeStart.value.corner) {
             case 'se':
                 newX += deltaW / 2

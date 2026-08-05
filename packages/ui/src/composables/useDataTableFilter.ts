@@ -82,8 +82,9 @@ export function useDataTableFilter<T extends object>(
             } else if (col.filterType === 'multi-select') {
                 result = result.filter((row) => {
                     const val = getCellValue(row, col)
-                    // filterValue 非数组时视为空集合（不误滤），单元格值同样归一化为数组
+                    // filterValue 非数组（异常输入）时视为空过滤条件，直接放行，避免误滤整表
                     const filterArr = Array.isArray(filterValue) ? filterValue : []
+                    if (filterArr.length === 0) return true
                     const cellArr = Array.isArray(val) ? val : [val]
                     return filterArr.some((item) =>
                         cellArr.some((cell) => String(cell) === String(item)),

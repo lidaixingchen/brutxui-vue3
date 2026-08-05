@@ -25,17 +25,20 @@ export interface UseStepperReturn {
 }
 
 export function useStepper(options: UseStepperOptions): UseStepperReturn {
-    // 初始步骤收敛到有效范围，避免 initialStep 越界
-    const initial = Math.min(Math.max(options.initialStep ?? 0, 0), Math.max(options.steps.value.length - 1, 0))
-    const currentStep = ref(initial)
+    // 步骤索引收敛到有效范围，供初始化与 watch 钳制共用
+    const clampStep = (index: number) =>
+        Math.min(Math.max(index, 0), Math.max(options.steps.value.length - 1, 0))
+    const currentStep = ref(clampStep(options.initialStep ?? 0))
     const totalSteps = computed(() => options.steps.value.length)
     const isFirstStep = computed(() => currentStep.value === 0)
     const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
 
-    // steps 动态变化（缩减/清空）时收敛 currentStep 到有效范围，避免 isLastStep/导航状态失真
+    // steps 动态变化（缩减/清空）时收敛 currentStep 到有效范围，避免 isLastStep/导航状态失真；
+    // 钳制后同步触发 onChange，保证依赖回调同步外部状态的使用方不失步
     watch(totalSteps, () => {
         if (currentStep.value > totalSteps.value - 1) {
-            currentStep.value = Math.max(totalSteps.value - 1, 0)
+            currentStep.value = clampStep(currentStep.value)
+            options.onChange?.(currentStep.value)
         }
     })
 

@@ -1,4 +1,5 @@
 import { showMessageBox, type MessageBoxOptions } from '@/components/dialog/functional'
+import { canUseDocumentBody } from '@/lib/env'
 
 export type { MessageBoxOptions }
 
@@ -15,6 +16,9 @@ export function useMessageBox(): UseMessageBoxReturn {
     }
 
     const confirm = async (options?: MessageBoxOptions): Promise<boolean> => {
+        // SSR / 无 DOM 时无法展示对话框，视为取消，避免 confirm 误判为已确认
+        if (!canUseDocumentBody()) return false
+
         const instance = showMessageBox(options)
         try {
             // showMessageBox 契约：promise 兑现即表示用户点击了确认（有/无输入均兑现），reject 表示取消或关闭
