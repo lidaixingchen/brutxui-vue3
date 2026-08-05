@@ -46,6 +46,14 @@ const totalSteps = computed(() => props.steps.length)
 const isFirstStep = computed(() => currentStep.value === 0)
 const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
 
+const dotSizeCss = computed(() => {
+    switch (props.size) {
+        case 'sm': return '0.75rem'
+        case 'lg': return '1.25rem'
+        default: return '1rem'
+    }
+})
+
 function goToStep(index: number) {
     if (index >= 0 && index < totalSteps.value) {
         emit('update:modelValue', index)
@@ -203,6 +211,7 @@ const connectorClasses = computed(() =>
                     <!-- Dot -->
                     <button
                         :class="dotClasses[index]"
+                        :style="{ '--stepper-dot-size': dotSizeCss }"
                         type="button"
                         data-step-button
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
@@ -239,6 +248,7 @@ const connectorClasses = computed(() =>
                         <!-- Dot -->
                         <button
                             :class="dotClasses[index]"
+                            :style="{ '--stepper-dot-size': dotSizeCss }"
                             type="button"
                             data-step-button
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"

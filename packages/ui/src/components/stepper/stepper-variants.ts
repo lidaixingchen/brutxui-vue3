@@ -45,7 +45,7 @@ export const stepperConnectorVariants = cva(
         variants: {
             orientation: {
                 horizontal: 'flex-1 h-[3px] mx-2',
-                vertical: 'w-[var(--brutal-border-width,3px)] flex-1 my-2 ml-[calc(var(--brutal-border-width,3px)/2+1rem/2-3px/2)]',
+                vertical: 'w-[var(--brutal-border-width,3px)] flex-1 my-2 ml-[calc(var(--brutal-border-width,3px)/2_+_var(--stepper-dot-size,1rem)/2_-_3px/2)]',
             },
             completed: {
                 true: 'bg-brutal-success',
