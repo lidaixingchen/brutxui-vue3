@@ -62,6 +62,7 @@ const emit = defineEmits<{
 const slots = useSlots();
 const prefersReducedMotion = useReducedMotion()
 const current = ref(props.from);
+const isAnimating = ref(false);
 const rootRef = ref<HTMLElement | null>(null);
 const measureRef = ref<HTMLElement | null>(null);
 const scaleFactor = ref(1);
@@ -96,6 +97,7 @@ function animate(ts: number) {
         rafId = requestAnimationFrame(animate);
     } else {
         rafId = null;
+        isAnimating.value = false;
         current.value = props.to;
         emit('complete');
     }
@@ -112,6 +114,7 @@ function play() {
         return;
     }
 
+    isAnimating.value = true;
     current.value = props.from;
     rafId = requestAnimationFrame(animate);
 }
@@ -121,6 +124,7 @@ function stop() {
         cancelAnimationFrame(rafId);
         rafId = null;
     }
+    isAnimating.value = false;
 }
 
 defineExpose({ play, stop });
@@ -241,7 +245,7 @@ const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 upperca
             <span ref="measureRef" :class="measureClasses" aria-hidden="true">
                 {{ finalDisplayValue }}
             </span>
-            <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="rafId === null ? 'polite' : 'off'" :aria-label="finalDisplayValue">
+            <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="isAnimating ? 'off' : 'polite'" :aria-label="finalDisplayValue">
                 <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
                     <component :is="prefixComponent" />
                 </span>
@@ -259,7 +263,7 @@ const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 upperca
         <span ref="measureRef" :class="measureClasses" aria-hidden="true">
             {{ finalDisplayValue }}
         </span>
-        <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="rafId === null ? 'polite' : 'off'" :aria-label="finalDisplayValue">
+        <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="isAnimating ? 'off' : 'polite'" :aria-label="finalDisplayValue">
             <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
                 <component :is="prefixComponent" />
             </span>
