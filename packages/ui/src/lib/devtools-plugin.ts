@@ -164,9 +164,10 @@ interface DevtoolsInspectorStateItem {
     editable?: boolean
 }
 
-/** Inspector 树请求负载 */
+/** Inspector 树请求负载（@vue/devtools-api 协议：filter 为 devtools 端输入的搜索关键字） */
 interface DevtoolsGetInspectorTreePayload {
     inspectorId: string
+    filter?: string
     rootNodes: DevtoolsTreeNode[]
 }
 
@@ -489,12 +490,16 @@ function initDevtoolsIntegration(
                     treeFilterPlaceholder: '搜索 BrutxUI 组件...',
                 })
 
-                // 组件树：将已注册组件作为根节点
+                // 组件树：将已注册组件作为根节点，支持按 filter 关键字（大小写不敏感包含匹配）过滤
                 api.on.getInspectorTree((payload) => {
                     if (payload.inspectorId !== PLUGIN_ID) return
                     if (!options.enableComponentTree) return
+                    const query = payload.filter?.trim().toLowerCase()
+                    const components = context.getComponents().filter(
+                        (meta) => !query || meta.name.toLowerCase().includes(query),
+                    )
                     payload.rootNodes.push(
-                        ...context.getComponents().map((meta) => ({
+                        ...components.map((meta) => ({
                             id: `${PLUGIN_ID}-${meta.name}`,
                             label: meta.name,
                             tags: [
