@@ -30,6 +30,11 @@ export const accordionItemVariants = cva(
     }
 )
 
+// 组件私有：trigger 垂直浮起带小投影，不抽取。
+// interactive 变体的 item 已通过 brutalHoverLiftSm 整体浮起，trigger 不再叠加位移，
+// 避免父子同时上移造成"双重浮起"，并与 open 状态的位移叠加。
+const triggerHoverLift = 'hover:bg-brutal-muted hover:shadow-brutal-sm hover:-translate-y-0.5'
+
 export const accordionTriggerVariants = cva(
     [
         'flex flex-1 items-center justify-between py-4 px-6',
@@ -39,12 +44,9 @@ export const accordionTriggerVariants = cva(
     {
         variants: {
             variant: {
-                // 组件私有：垂直浮起带小投影，不抽取。
-                // interactive 变体的 item 已通过 brutalHoverLiftSm 整体浮起，trigger 不再叠加位移，
-                // 避免父子同时上移造成"双重浮起"，并与 open 状态的位移叠加。
-                default: 'hover:bg-brutal-muted hover:shadow-brutal-sm hover:-translate-y-0.5',
-                flat: 'hover:bg-brutal-muted hover:shadow-brutal-sm hover:-translate-y-0.5',
-                ghost: 'hover:bg-brutal-muted hover:shadow-brutal-sm hover:-translate-y-0.5',
+                default: triggerHoverLift,
+                flat: triggerHoverLift,
+                ghost: triggerHoverLift,
                 interactive: 'hover:bg-brutal-muted',
             },
         },

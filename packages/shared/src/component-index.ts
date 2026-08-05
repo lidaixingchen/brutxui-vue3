@@ -25,13 +25,16 @@ const BROWSER_TEST_PATTERN = /\.browser\.test\.(ts|js)$/;
 const SKIP_FILES = new Set(['index.ts']);
 
 function vueFileNameToExportName(fileName: string): string {
-    // kebab-case / snake_case / 空白分隔 → PascalCase，保证导出名是合法 JS 标识符，
-    // 例如 my-button.vue → MyButton、color-mode-switcher.vue → ColorModeSwitcher
+    // kebab-case / snake_case / 空白 / 点分隔 → PascalCase，保证导出名是合法 JS 标识符，
+    // 例如 my-button.vue → MyButton、foo.bar.vue → FooBar。
+    // 对以数字开头的导出名（如 3d-card.vue → 3dCard）加 _ 前缀，避免非法标识符。
     return fileName
         .replace(/\.vue$/, '')
-        .split(/[-_\s]+/)
+        .split(/[-_\s.]+/)
+        .filter(Boolean)
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join('');
+        .join('')
+        .replace(/^\d/, '_$&');
 }
 
 function tsFileNameToModuleSpec(fileName: string): string {

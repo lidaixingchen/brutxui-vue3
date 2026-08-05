@@ -194,9 +194,20 @@ function scanComponent(
                 }
                 case 'internal': {
                     const resolved = resolveExtension(classified.name, componentDir);
-                    // 派生 barrel（index.ts）已由 listComponentFiles 跳过，这里同样过滤，
-                    // 避免被重新加入扫描队列（干净检出下不存在、readFileSync 崩溃）
-                    if (resolved !== null && resolved !== DERIVED_BARREL_FILE && !internalFiles.has(resolved)) {
+                    if (resolved === null) {
+                        // 排除已知良性场景后告警，避免误报：
+                        // - name 为空：@/components/ui/{componentName} 自引用，目标正是派生 barrel index.ts（干净检出下刻意不存在）
+                        // - basename 为 index：同样指向派生 barrel
+                        const baseName = path.basename(classified.name, path.extname(classified.name));
+                        if (classified.name !== '' && baseName !== 'index') {
+                            console.warn(`[scan-component-files] Failed to resolve internal import "${classified.name}" in component "${componentName}"`);
+                        }
+                        break;
+                    }
+                    // 派生 barrel（index.ts）已由 listComponentFiles 递归跳过（任意层级），
+                    // 这里用 basename 同样过滤，避免 sub/index 这类内部导入绕过过滤被重新加入扫描队列
+                    // （干净检出下不存在、readFileSync 崩溃）
+                    if (path.basename(resolved) !== DERIVED_BARREL_FILE && !internalFiles.has(resolved)) {
                         internalFiles.add(resolved);
                         queue.push(resolved);
                     }

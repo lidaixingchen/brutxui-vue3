@@ -312,6 +312,55 @@
     border-color: var(--brutal-accent, #FFE66D);
 }
 
+/* 单方向边框颜色变体：spinner 等组件通过 border-{t,r,b,l}-*-{primary,secondary,accent} 指定单侧颜色 */
+.border-t-brutal-primary {
+    border-top-color: var(--brutal-primary, #FF6B6B);
+}
+
+.border-r-brutal-primary {
+    border-right-color: var(--brutal-primary, #FF6B6B);
+}
+
+.border-b-brutal-primary {
+    border-bottom-color: var(--brutal-primary, #FF6B6B);
+}
+
+.border-l-brutal-primary {
+    border-left-color: var(--brutal-primary, #FF6B6B);
+}
+
+.border-t-brutal-secondary {
+    border-top-color: var(--brutal-secondary, #4ECDC4);
+}
+
+.border-r-brutal-secondary {
+    border-right-color: var(--brutal-secondary, #4ECDC4);
+}
+
+.border-b-brutal-secondary {
+    border-bottom-color: var(--brutal-secondary, #4ECDC4);
+}
+
+.border-l-brutal-secondary {
+    border-left-color: var(--brutal-secondary, #4ECDC4);
+}
+
+.border-t-brutal-accent {
+    border-top-color: var(--brutal-accent, #FFE66D);
+}
+
+.border-r-brutal-accent {
+    border-right-color: var(--brutal-accent, #FFE66D);
+}
+
+.border-b-brutal-accent {
+    border-bottom-color: var(--brutal-accent, #FFE66D);
+}
+
+.border-l-brutal-accent {
+    border-left-color: var(--brutal-accent, #FFE66D);
+}
+
 .border-brutal-destructive {
     border-color: var(--brutal-destructive, #EF476F);
 }
