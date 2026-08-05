@@ -2,7 +2,67 @@
 
 根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。
 
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.8...HEAD)
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.9...HEAD)
+
+## [0.9.9](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.8...v0.9.9) - 2026-08-05
+
+### ✅ Tests
+
+* **registry:** 更新 build-registry 快照（随组件修复变化） ([4865a9e](https://github.com/lidaixingchen/brutxui-vue3/commit/4865a9e785ee55fbdf12a133157c7f48c362ae0a))
+* 补审查修复的回归测试 ([5268b75](https://github.com/lidaixingchen/brutxui-vue3/commit/5268b75ef5021d08c9b6d8290efea13b68be9738))
+* **registry:** 更新 build-registry 快照（integrity 随组件修复更新） ([8c1f220](https://github.com/lidaixingchen/brutxui-vue3/commit/8c1f220996bdeb33c3b3bf4b6c8e775b2cc4cc3b))
+* 补 AvatarImage 回归测试并改进 scrollIntoView spy 恢复 ([4167beb](https://github.com/lidaixingchen/brutxui-vue3/commit/4167bebdd60878a526e8a03c5f65b01a2d8032ff))
+
+### 🐛 Bug Fixes
+
+* **components:** Card3D 指针坐标系统一 ([44e876b](https://github.com/lidaixingchen/brutxui-vue3/commit/44e876b484c7dea20ea52bd3e4c01beb9e1891b3))
+* **components:** NumberInput aria-invalid 依据 variant 判定 ([9b42458](https://github.com/lidaixingchen/brutxui-vue3/commit/9b42458d0a511b14728bdbc81e4eb7e1ddf0b103))
+* **components:** CommandInput 过滤同步收敛为单一函数 ([aca9701](https://github.com/lidaixingchen/brutxui-vue3/commit/aca970103e7801273ecc14c8f0de11acaf013250))
+* **components:** ColorPicker 受控 open 收拢进 composable ([421ce7f](https://github.com/lidaixingchen/brutxui-vue3/commit/421ce7fa823cd3044b49357234834d124051cd19))
+* **components:** Menu 子菜单注册时序与反向索引 ([9646aa3](https://github.com/lidaixingchen/brutxui-vue3/commit/9646aa34886717b5eb2e6e418d913f3a7dc538c1))
+* **components:** DescriptionsItem 合并容器 class 透传与对齐 ([2c4c4ad](https://github.com/lidaixingchen/brutxui-vue3/commit/2c4c4ad059cd34bbc6d17686547e53be2f0cb8c6))
+* **security:** FooterSection 链接过滤改危险协议黑名单 ([9c22f8c](https://github.com/lidaixingchen/brutxui-vue3/commit/9c22f8ce955aa6c4ea84768e9fba74c33df0ddd9))
+* **components:** DataTable 展开/选择列设为 sticky ([f3d2457](https://github.com/lidaixingchen/brutxui-vue3/commit/f3d2457cc2dfe6ce69e2da20a3f3c1e0638e87aa))
+* **components:** Button data-text 随更新同步 ([db1dbf8](https://github.com/lidaixingchen/brutxui-vue3/commit/db1dbf800f54d32ef96827ec85d3fe72a29bff85))
+* **components:** Counter 朗读状态改为响应式 isAnimating ([e45162b](https://github.com/lidaixingchen/brutxui-vue3/commit/e45162b59a52c1d71d9b733e999d3f440948a9bd))
+* **components:** DatePicker readonly 拦截与快捷键边界按天比较 ([bb47ba5](https://github.com/lidaixingchen/brutxui-vue3/commit/bb47ba59dfed7ba759eb27b82c919687bf5ea138))
+* **components:** 修复 NumberInput 错误消息无障碍关联 ([4ffd19b](https://github.com/lidaixingchen/brutxui-vue3/commit/4ffd19b14ba056d2d83184b797fb3c3439fb7ad2))
+* **components:** 修复 Menu 激活项父级子菜单自动展开 ([c40bde3](https://github.com/lidaixingchen/brutxui-vue3/commit/c40bde3816583124cabde94679b917d431426c3e))
+* **components:** 显式声明 HeaderSection 按钮类型 ([618c616](https://github.com/lidaixingchen/brutxui-vue3/commit/618c616282f354bb34ffa95cf329c6a777aba6ae))
+* **components:** 修复 FormConditional 条件字段未卸载 ([a217bf6](https://github.com/lidaixingchen/brutxui-vue3/commit/a217bf61329e5cdbcc129708bd3f63a5fbf0faba))
+* **security:** 过滤 FooterSection 链接危险协议 ([41d376c](https://github.com/lidaixingchen/brutxui-vue3/commit/41d376c7534f99aea0aca56bb897fcbbac0a45c8))
+* **components:** 修复 DropdownMenuCheckboxItem 受控失效 ([792c2d4](https://github.com/lidaixingchen/brutxui-vue3/commit/792c2d4f2aac1fadd46d6f09a48f4ef61382943a))
+* **components:** 修复 DescriptionsItem 跨列错位 ([5551ebb](https://github.com/lidaixingchen/brutxui-vue3/commit/5551ebb44b2459583dc36c7ff84696a9c8a9a128))
+* **components:** 修复 DatePicker 系列 readonly/边界/重复事件/确认按钮 ([a7aac9d](https://github.com/lidaixingchen/brutxui-vue3/commit/a7aac9d538d622ef914aac202847e0b7934935f9))
+* **components:** 修复 DataTable 过滤空值与固定列偏移 ([18f2b53](https://github.com/lidaixingchen/brutxui-vue3/commit/18f2b5334dcc3775b06ba5cda8b074b841a4a7ea))
+* **components:** 修复 Counter 动画时长与朗读播报 ([11376e0](https://github.com/lidaixingchen/brutxui-vue3/commit/11376e0ade94ced05668ac460da154c666114c12))
+* **components:** 修复 CommandInput 初始过滤未同步 ([d8506a5](https://github.com/lidaixingchen/brutxui-vue3/commit/d8506a522b4d61702a2afd8f653af99962a67c34))
+* **components:** 修复 ColorPicker 输入清空/事件冒泡/受控键盘 ([550e79a](https://github.com/lidaixingchen/brutxui-vue3/commit/550e79ace31a44e6b6aefd3898db4cd84c7ca3d9))
+* **components:** 修复 CodeBlock 高亮失败残留旧结果 ([2b3a77f](https://github.com/lidaixingchen/brutxui-vue3/commit/2b3a77f1514714f6fa898627b8126ef63b3a9eae))
+* **components:** 修复 ChatContainer 非法时间戳渲染崩溃 ([6785d6d](https://github.com/lidaixingchen/brutxui-vue3/commit/6785d6d1f14cc67257cd452c91686d71b82241c5))
+* **components:** 修复 Calendar 异步降级组件模板编译错误 ([c97e0c6](https://github.com/lidaixingchen/brutxui-vue3/commit/c97e0c6c508b857f47f6512e6ac1bd9280f12b39))
+* **components:** 修复 Card3D 指针坐标变换反馈漂移 ([4f513c6](https://github.com/lidaixingchen/brutxui-vue3/commit/4f513c66f19835e63691a482ceef5ef875a3abdd))
+* **components:** 修复 Button glitch 文本缺失与 asChild 禁用拦截 ([eb7b25b](https://github.com/lidaixingchen/brutxui-vue3/commit/eb7b25b8a437adc71b757d0500a6acc4bfa47333))
+* **lib:** 修复 Devtools state 协议与日期组合格式（审查反馈） ([752a3a0](https://github.com/lidaixingchen/brutxui-vue3/commit/752a3a0d791bb64d2509cb4b989cb5ef0a5e59ce))
+* **composables:** 修复对话框缩放补偿与消息/动效缺陷（审查反馈） ([b5ad2f9](https://github.com/lidaixingchen/brutxui-vue3/commit/b5ad2f942ec973f4dc5f47abd9690897f9d790cc))
+* **components:** 修复组件缺陷与测试基础设施 ([e872ba0](https://github.com/lidaixingchen/brutxui-vue3/commit/e872ba0cecfccb3c0eb72e9b8e72f627e7766eec))
+* **lib:** 修复环境检测与 Devtools 集成 ([237c753](https://github.com/lidaixingchen/brutxui-vue3/commit/237c753fa4517621f7ccae49b0b0e494e9d908b0))
+* **lib:** 修复日期 ISO 周与主题变量映射 ([d5e7043](https://github.com/lidaixingchen/brutxui-vue3/commit/d5e7043b52ff4c4c051dc888bf3364baf3aa10cf))
+* **composables:** 修复看板/步进器/对话框/主题缺陷 ([aa221e5](https://github.com/lidaixingchen/brutxui-vue3/commit/aa221e5e03d541e1650c929d64e18fca95342fdb))
+* **composables:** 修复防抖与消息类组合式函数 ([a62df5b](https://github.com/lidaixingchen/brutxui-vue3/commit/a62df5bdb65bce3d4f6441c33b0ae8c734b89d0e))
+* **composables:** 修复 DataTable 选择与过滤逻辑 ([0b996fa](https://github.com/lidaixingchen/brutxui-vue3/commit/0b996fa6f2b9b2379df34ada83d4fa4c4d439514))
+
+### 📦 Build
+
+* 引入 pre-commit 自动同步 registry 并修复 turbo 缓存语义 ([893582a](https://github.com/lidaixingchen/brutxui-vue3/commit/893582ad1985cfd5550ba680c8ecaa7929da2167))
+
+### ✨ Features
+
+* **lib:** devtools Inspector 组件树支持 filter 关键字搜索 ([22edae9](https://github.com/lidaixingchen/brutxui-vue3/commit/22edae9707d4d506aaf34bbe0001856c6997843e))
+
+### 📝 Documentation
+
+* **changelog:** 生成 v0.9.8 根 CHANGELOG 段并归档 v0.9.5 ([356803c](https://github.com/lidaixingchen/brutxui-vue3/commit/356803c71a44de2f266b2d59ccd7cbba3a466755))
 
 ## [0.9.8](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.7...v0.9.8) - 2026-08-05
 
@@ -81,40 +141,12 @@
 
 * **ci:** 排除 drift gate 中非确定性生成文件 ([036e791](https://github.com/lidaixingchen/brutxui-vue3/commit/036e791d932b695d9b02ad907e2bfccfeebe2781))
 
-## [0.9.6](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.5...v0.9.6) - 2026-07-27
-
-### 🐛 Bug Fixes
-
-* **docs:** 移除失效的 @ts-expect-error 指令修复 CI typecheck ([76f6909](https://github.com/lidaixingchen/brutxui-vue3/commit/76f690933b71a68444c9cf39f4c16dec2b3af527))
-* **changelog:** 修复脏提交引发的 TypeError 崩溃与切片倒序引发的爆栈风险 ([432ffa2](https://github.com/lidaixingchen/brutxui-vue3/commit/432ffa2075c9cc364b489b1b826232531a449a32))
-* **changelog:** 修复 Windows CRLF 换行替换失效并添加 index.md 缺失兜底机制 ([2573ca3](https://github.com/lidaixingchen/brutxui-vue3/commit/2573ca3cce65f2421be2b969646b12c5485d4520))
-* **changelog:** 修复 fs 引用 ReferenceError 致命 bug 并优化正则与链接兼容性 ([5d437a9](https://github.com/lidaixingchen/brutxui-vue3/commit/5d437a96d058239b1517e8262f9d08c1a96e44a1))
-
-### 📝 Documentation
-
-* 更新文档规范、示例与配置，移除废弃的useLocale内容 ([d176bcc](https://github.com/lidaixingchen/brutxui-vue3/commit/d176bcc2b95a066f0bbaca3eed54e07de2372721))
-* 更新组件开发文档与项目维护指南 ([9430fc6](https://github.com/lidaixingchen/brutxui-vue3/commit/9430fc637a4025449da6aeeae23cc85252a7a663))
-* 批量更新文档与新增组件词典、组合式函数词典 ([4197de6](https://github.com/lidaixingchen/brutxui-vue3/commit/4197de69fd551000b2c41727423e24c2cd85e1bf))
-* **ui:** 新增 AI 技能高阶优化指南与复合区块协同示例 ([9542faa](https://github.com/lidaixingchen/brutxui-vue3/commit/9542faa593683a3decd6f9ce64eb70341fbf2357))
-* **ui:** 优化 AI 技能文档与参考指南 ([3ce994a](https://github.com/lidaixingchen/brutxui-vue3/commit/3ce994ae7d75bdaef8b3df9eb462be645bb394e4))
-* **skills:** 更新 brutxui 技能文档与 AGENTS.md 维护约定 ([8945992](https://github.com/lidaixingchen/brutxui-vue3/commit/89459924c396d3789ecf57f2054b194b2b00d1d4))
-* **changelog:** 精简主 CHANGELOG.md 头部描述并同步更新发版初始化头 ([b2f054a](https://github.com/lidaixingchen/brutxui-vue3/commit/b2f054a48dd10025c278b4f7d16bd8c23da9f09d))
-* **changelog:** 补齐遗漏的历史归档版本 v0.2.2 与 v0.1.1 ([f873419](https://github.com/lidaixingchen/brutxui-vue3/commit/f873419a5e4b3c2a9d2ed07b2caa2d2fce67e518))
-* **changelog:** 全面重构、精炼并规范化 v0.8.0 至 v0.1.0 之间的所有历史归档日志 ([2b773ee](https://github.com/lidaixingchen/brutxui-vue3/commit/2b773eedc6f646a83ffdabefc9f0ff34f27e2995))
-* **changelog:** 补全并精炼 v0.6.8 至 v0.1.0 历史归档更新日志 ([dac2c6f](https://github.com/lidaixingchen/brutxui-vue3/commit/dac2c6fc876594ee05a671f9810e2fbb99e3667e))
-* **changelog:** 统一中英文主导航链接路径结构 ([6e533ff](https://github.com/lidaixingchen/brutxui-vue3/commit/6e533ffcaa8fa0d29cf5190935f94f21370064ab))
-* **changelog:** 在主导航栏添加更新日志入口 ([cdd1a21](https://github.com/lidaixingchen/brutxui-vue3/commit/cdd1a21bdba1029b8e5008086b54f83275a90be1))
-* **changelog:** 引入归档机制与根 CHANGELOG 生成脚本 ([f0eff9e](https://github.com/lidaixingchen/brutxui-vue3/commit/f0eff9e85b63c9dcec85e504edd938ee731c15f9))
-
-### ✨ Features
-
-* **changelog:** 实现全自动滑动窗口归档与裁剪逻辑，并同步更新发版规范文档 ([482f8ce](https://github.com/lidaixingchen/brutxui-vue3/commit/482f8ce1c15510f28588f005113eb0c1b4a32673))
-
 
 ## 归档版本
 
 > 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：
 
+* **[0.9.6](apps/docs/changelog/v0.9.6.md)** - 2026-07-27
 * **[0.9.5](apps/docs/changelog/v0.9.5.md)** - 2026-07-18
 * **[0.9.4](apps/docs/changelog/v0.9.4.md)** - 2026-07-12
 * **[0.9.3](apps/docs/changelog/v0.9.3.md)** - 2026-07-09
