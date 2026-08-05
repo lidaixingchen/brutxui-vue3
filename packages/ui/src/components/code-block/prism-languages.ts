@@ -1,7 +1,10 @@
 import Prism from 'prismjs'
 import type { Grammar } from 'prismjs'
 
-if (typeof globalThis !== 'undefined' && !(globalThis as Record<string, unknown>).Prism) {
+// prismjs 的 prism-* 语言组件依赖全局 Prism 对象注册语言。
+// 必须无条件把本模块实例挂到 globalThis，确保动态加载的语言注册到
+// 与本模块 getGrammar 读取的同一实例（避免宿主页已有其他版本 Prism 时实例分裂）。
+if (typeof globalThis !== 'undefined') {
     (globalThis as Record<string, unknown>).Prism = Prism
 }
 

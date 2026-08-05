@@ -114,6 +114,28 @@ function markStyle(mark: number): Record<string, string> {
     }
 }
 
+function clampPct(pct: number): number {
+    return Math.max(0, Math.min(100, pct))
+}
+
+function rangeStyle(values: number[] | null | undefined): Record<string, string> | undefined {
+    if (!values || values.length === 0) return undefined
+    const low = values.length === 1 ? props.min : Math.min(...values)
+    const high = values.length === 1 ? values[0] : Math.max(...values)
+    const lowPct = clampPct(valueToPercentage(low))
+    const highPct = clampPct(valueToPercentage(high))
+    if (props.orientation === 'vertical') {
+        return {
+            bottom: `${lowPct}%`,
+            height: `${Math.max(0, highPct - lowPct)}%`,
+        }
+    }
+    return {
+        left: `${lowPct}%`,
+        width: `${Math.max(0, highPct - lowPct)}%`,
+    }
+}
+
 function tooltipTextFor(values: number[] | null | undefined): string {
     if (activeThumb.value < 0 || !values || values.length === 0) return ''
     const value = values[activeThumb.value]
@@ -172,7 +194,7 @@ function handleThumbPointerLeave(index: number) {
     >
         <template #default="{ modelValue: slotValues }">
             <SliderTrackPrimitive :class="trackClasses">
-                <SliderRangePrimitive :class="rangeClasses" />
+                <SliderRangePrimitive :class="rangeClasses" :style="rangeStyle(slotValues)" />
                 <span
                     v-for="(mark, index) in marks"
                     :key="`mark-${index}`"

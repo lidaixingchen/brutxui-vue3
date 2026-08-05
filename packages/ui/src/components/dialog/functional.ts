@@ -1,5 +1,5 @@
 /* eslint-disable vue/one-component-per-file */
-import { createVNode, render, ref, h, defineComponent, watch, computed } from 'vue'
+import { createVNode, render, ref, h, defineComponent, watch, computed, isVNode } from 'vue'
 import type { Component, VNode } from 'vue'
 import { DialogRoot } from 'reka-ui'
 import DialogEnhanced from './DialogEnhanced.vue'
@@ -150,7 +150,10 @@ export function showDialog(options: ShowDialogOptions = {}) {
             return h('div', { class: 'text-sm font-medium leading-relaxed' }, slotVal)
         }
         if (typeof slotVal === 'function') {
-            return (slotVal as () => VNode)()
+            return renderSlot((slotVal as () => RenderableContent)())
+        }
+        if (isVNode(slotVal)) {
+            return slotVal
         }
         return h(slotVal as Component)
     }

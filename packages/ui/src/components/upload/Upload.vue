@@ -248,6 +248,9 @@ async function handleFileRemove(file: UploadFile): Promise<void> {
     }
 
     // 中止进行中的上传，避免移除后仍触发 file-success/file-error
+    if (file.status === 'uploading') {
+        file.status = 'canceled'
+    }
     file.abortController?.abort()
 
     const index = internalFileList.value.findIndex(f => f.id === file.id)

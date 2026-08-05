@@ -3,7 +3,7 @@ export interface UploadFile {
     name: string
     size: number
     type: string
-    status: 'ready' | 'uploading' | 'success' | 'error'
+    status: 'ready' | 'uploading' | 'success' | 'error' | 'canceled'
     progress: number
     url?: string
     raw?: File

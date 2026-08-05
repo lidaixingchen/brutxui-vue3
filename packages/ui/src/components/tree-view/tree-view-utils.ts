@@ -46,11 +46,7 @@ function cloneTreeAndExtract(nodes: TreeNode[], dragId: string): [TreeNode[], Tr
                 extracted = cloneNode(node)
                 continue
             }
-            const cloned = cloneNode(node)
-            if (node.children) {
-                cloned.children = clone(node.children)
-            }
-            result.push(cloned)
+            result.push(cloneNode(node))
         }
         return result
     }
@@ -58,7 +54,7 @@ function cloneTreeAndExtract(nodes: TreeNode[], dragId: string): [TreeNode[], Tr
     function cloneNode(node: TreeNode): TreeNode {
         return {
             ...node,
-            children: node.children ? [...node.children] : undefined,
+            children: node.children ? node.children.map(cloneNode) : undefined,
         }
     }
 

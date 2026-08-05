@@ -30,6 +30,8 @@ export function useInfiniteScroll(
     const isLoading = ref(false)
     const observer = ref<IntersectionObserver | null>(null)
     const loadTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+    // 目标元素未渲染（v-if/异步渲染）时，用于等待其出现后重试建立 observer 的 watch 停止函数
+    let stopTargetWatch: (() => void) | undefined
 
     function shouldLoad(): boolean {
         if (getDisabled()) return false
@@ -82,6 +84,19 @@ export function useInfiniteScroll(
         }
     }
 
+    // 目标元素由 v-if/异步渲染产生、onMounted 时尚未存在时，
+    // 监听其出现后重试建立 observer
+    function watchForTarget() {
+        if (stopTargetWatch) return
+        stopTargetWatch = watch(targetRef, (target) => {
+            if (target && !observer.value && !getDisabled()) {
+                stopTargetWatch?.()
+                stopTargetWatch = undefined
+                setupObserver()
+            }
+        })
+    }
+
     function resetLoading() {
         isLoading.value = false
     }
@@ -89,6 +104,9 @@ export function useInfiniteScroll(
     onMounted(() => {
         if (!getDisabled()) {
             const observerResult = setupObserver()
+            if (observerResult === 'missing-target') {
+                watchForTarget()
+            }
 
             if ((options.immediate ?? true) || observerResult === 'unsupported') {
                 triggerLoad()
@@ -115,16 +133,22 @@ export function useInfiniteScroll(
         (newDisabled) => {
             if (newDisabled) {
                 cleanupObserver()
-            } else if (!observer.value && targetRef.value) {
+                stopTargetWatch?.()
+                stopTargetWatch = undefined
+            } else if (!observer.value) {
                 const observerResult = setupObserver()
                 if (observerResult === 'unsupported') {
                     triggerLoad()
+                } else if (observerResult === 'missing-target') {
+                    watchForTarget()
                 }
             }
         }
     )
 
     onUnmounted(() => {
+        stopTargetWatch?.()
+        stopTargetWatch = undefined
         cleanupObserver()
         if (loadTimer.value) {
             clearTimeout(loadTimer.value)
