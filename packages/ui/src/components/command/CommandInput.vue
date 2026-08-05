@@ -26,6 +26,7 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('command.place
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
 const searchValue = ref(props.modelValue ?? '')
+rootContext.filterSearch.value = searchValue.value
 
 watch(() => props.modelValue, (val) => {
     searchValue.value = val ?? ''
