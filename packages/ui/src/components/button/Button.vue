@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUpdated, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { Loader2 } from '@lucide/vue'
@@ -131,6 +131,7 @@ function syncButtonText() {
 }
 
 onMounted(syncButtonText)
+onUpdated(syncButtonText)
 
 defineExpose({
     play,
