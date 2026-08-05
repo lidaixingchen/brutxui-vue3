@@ -20,8 +20,8 @@ export const cardVariants = cva(
                     brutalPress,
                     'cursor-pointer',
                 ],
-                primary: 'shadow-brutal-primary border-[var(--brutal-primary)]',
-                secondary: 'shadow-brutal-secondary border-[var(--brutal-secondary)]',
+                primary: 'shadow-brutal-primary border-brutal-primary',
+                secondary: 'shadow-brutal-secondary border-brutal-secondary',
             },
             padding: {
                 none: 'p-0',
