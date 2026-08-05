@@ -450,10 +450,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                             :style="{ gridTemplateColumns }"
                             role="row"
                         >
-                            <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader">
+                            <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center font-bold" role="columnheader" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                 <span class="sr-only">Expand</span>
                             </div>
-                            <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="columnheader">
+                            <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="columnheader" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                 <Checkbox
                                     :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
                                     size="sm"
@@ -522,7 +522,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     @click="handleRowClick(displayData[rowIndex], $event)"
                                     @keydown.enter="handleRowClick(displayData[rowIndex], $event)"
                                 >
-                                    <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center" role="gridcell">
+                                    <div v-if="expandable" class="w-10 px-2 py-3 text-center flex items-center justify-center" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                         <Button
                                             variant="ghost"
                                             size="sm"
@@ -540,7 +540,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                             />
                                         </Button>
                                     </div>
-                                    <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="gridcell">
+                                    <div v-if="selectable" class="w-12 px-4 py-3 text-center flex items-center justify-center" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                         <Checkbox
                                             :checked="selection.selectedRows.value.has(selection.getRowKey(displayData[rowIndex]))"
                                             size="sm"
@@ -624,10 +624,10 @@ function getCellClasses(column: DataTableColumn<T>): string {
                 <!-- Header -->
                 <thead :class="headerClasses">
                     <tr>
-                        <th v-if="expandable" class="w-10 px-2 py-3 text-center">
+                        <th v-if="expandable" class="w-10 px-2 py-3 text-center" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                             <span class="sr-only">Expand</span>
                         </th>
-                        <th v-if="selectable" class="w-12 px-4 py-3 text-center">
+                        <th v-if="selectable" class="w-12 px-4 py-3 text-center" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                             <Checkbox
                                 :checked="selection.isIndeterminate.value ? 'indeterminate' : selection.isAllSelected.value"
                                 size="sm"
@@ -693,7 +693,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 @click="handleRowClick(row, $event)"
                                 @keydown.enter="handleRowClick(row, $event)"
                             >
-                                <td v-if="expandable" class="w-10 px-2 py-3 text-center" role="gridcell">
+                                <td v-if="expandable" class="w-10 px-2 py-3 text-center" role="gridcell" :style="{ position: 'sticky', left: '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -711,7 +711,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                         />
                                     </Button>
                                 </td>
-                                <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell">
+                                <td v-if="selectable" class="w-12 px-4 py-3 text-center" role="gridcell" :style="{ position: 'sticky', left: expandable ? '40px' : '0px', zIndex: DATA_TABLE_FIXED_COLUMN_Z_INDEX }">
                                     <Checkbox
                                         :checked="selection.selectedRows.value.has(selection.getRowKey(row))"
                                         size="sm"
