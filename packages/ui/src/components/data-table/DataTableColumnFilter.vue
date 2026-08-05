@@ -82,7 +82,11 @@ function handleMultiSelectChange(value: string | number | boolean, checked: bool
             vals.splice(idx, 1)
         }
     }
-    columns[props.column.id] = [...vals]
+    if (vals.length === 0) {
+        delete columns[props.column.id]
+    } else {
+        columns[props.column.id] = [...vals]
+    }
     emit('update:filterState', {
         ...props.filterState,
         columns,

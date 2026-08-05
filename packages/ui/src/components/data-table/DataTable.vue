@@ -122,10 +122,19 @@ function getFixedColumnOffset(column: DataTableColumn<T>, side: 'left' | 'right'
     const index = cols.findIndex(c => c.id === column.id)
     if (index === -1) return 0
 
+    const resolveWidth = (col: DataTableColumn<T>): number => {
+        if (typeof col.width === 'number') return col.width
+        const m = typeof col.width === 'string' ? /^(\d+(?:\.\d+)?)px$/.exec(col.width) : null
+        return m ? Number(m[1]) : DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX
+    }
+
     let offset = 0
-    for (let i = 0; i < index; i++) {
-        const w = cols[i].width
-        offset += typeof w === 'number' ? w : DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX
+    if (side === 'left') {
+        if (props.expandable) offset += DATA_TABLE_EXPAND_COLUMN_WIDTH_PX
+        if (props.selectable) offset += DATA_TABLE_SELECT_COLUMN_WIDTH_PX
+        for (let i = 0; i < index; i++) offset += resolveWidth(cols[i]!)
+    } else {
+        for (let i = index + 1; i < cols.length; i++) offset += resolveWidth(cols[i]!)
     }
     return offset
 }
