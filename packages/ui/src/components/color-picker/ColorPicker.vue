@@ -59,7 +59,6 @@ const {
     handlePanelConfirm,
     handlePanelClear,
     handleClearClick,
-    handleTriggerKeydown,
 } = useColorPicker({
     modelValue: () => props.modelValue,
     format: () => props.format,
@@ -79,6 +78,14 @@ const open = computed<boolean>({
         emit('update:open', val)
     },
 })
+
+function handleTriggerKeydown(event: KeyboardEvent) {
+    if (props.disabled) return
+    if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
+        event.preventDefault()
+        open.value = true
+    }
+}
 
 const triggerClasses = computed(() =>
     cn(
@@ -139,9 +146,9 @@ const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => pro
                         :class="ICON_SIZE_CLASSES.clearButton[size]"
                         :aria-label="t('colorPicker.clear')"
                         tabindex="0"
-                        @click="handleClearClick"
-                        @keydown.enter.prevent="handleClearClick"
-                        @keydown.space.prevent="handleClearClick"
+                        @click.stop="handleClearClick"
+                        @keydown.enter.prevent.stop="handleClearClick"
+                        @keydown.space.prevent.stop="handleClearClick"
                     >
                         <X :class="ICON_SIZE_CLASSES.smallIcon[size]" class="stroke-[3]" />
                     </span>

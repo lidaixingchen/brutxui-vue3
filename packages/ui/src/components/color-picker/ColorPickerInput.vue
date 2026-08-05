@@ -57,7 +57,9 @@ function handleInput(event: Event) {
     const target = event.target
     if (!(target instanceof HTMLInputElement)) return
     text.value = target.value
-    if (isValidColor(target.value)) {
+    if (target.value === '') {
+        emit('update:modelValue', null)
+    } else if (isValidColor(target.value)) {
         emit('update:modelValue', formatToProp(target.value))
     }
 }
