@@ -87,13 +87,15 @@ function formatNumber(val: number): string {
 function animate(ts: number) {
     if (startTime === null) startTime = ts;
     const elapsed = ts - startTime;
-    const progress = Math.min(elapsed / props.duration, 1);
+    const duration = props.duration > 0 ? props.duration : DEFAULT_COUNTER_DURATION;
+    const progress = Math.min(elapsed / duration, 1);
     const eased = easingFn(progress);
     current.value = props.from + (props.to - props.from) * eased;
 
     if (progress < 1) {
         rafId = requestAnimationFrame(animate);
     } else {
+        rafId = null;
         current.value = props.to;
         emit('complete');
     }
@@ -194,10 +196,6 @@ watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decima
 
 const formattedCurrent = computed(() => formatNumber(current.value));
 
-const displayValue = computed(() =>
-    `${props.prefix}${formattedCurrent.value}${props.suffix}`
-);
-
 const finalDisplayValue = computed(() =>
     `${props.prefix}${formatNumber(props.to)}${props.suffix}`
 );
@@ -243,7 +241,7 @@ const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 upperca
             <span ref="measureRef" :class="measureClasses" aria-hidden="true">
                 {{ finalDisplayValue }}
             </span>
-            <span ref="rootRef" :class="classes" :style="scaleStyle" aria-live="polite" :aria-label="displayValue">
+            <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="rafId === null ? 'polite' : 'off'" :aria-label="finalDisplayValue">
                 <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
                     <component :is="prefixComponent" />
                 </span>
@@ -261,7 +259,7 @@ const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 upperca
         <span ref="measureRef" :class="measureClasses" aria-hidden="true">
             {{ finalDisplayValue }}
         </span>
-        <span ref="rootRef" :class="classes" :style="scaleStyle" aria-live="polite" :aria-label="displayValue">
+        <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="rafId === null ? 'polite' : 'off'" :aria-label="finalDisplayValue">
             <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
                 <component :is="prefixComponent" />
             </span>
