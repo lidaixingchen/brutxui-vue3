@@ -47,6 +47,28 @@ describe('Descriptions', () => {
         expect(cells[1].classes()).toContain('items-center')
     })
 
+    it('renders horizontal border span>1 item as a single merged container', () => {
+        const wrapper = mount(Descriptions, {
+            props: {
+                border: true,
+                direction: 'horizontal',
+                column: 3,
+            },
+            slots: {
+                default: h(DescriptionsItem, { label: 'Address', span: 2 }, () => 'China'),
+            },
+        })
+
+        const container = wrapper.find('.grid > div')
+        expect(container.attributes('style')).toContain('grid-column: span 4')
+        expect(container.classes()).toContain('flex')
+        const cells = container.findAll('div')
+        expect(cells[0].text()).toBe('Address')
+        expect(cells[0].classes()).toContain('w-1/2')
+        expect(cells[1].text()).toBe('China')
+        expect(cells[1].classes()).toContain('flex-1')
+    })
+
     it('renders vertical layout with border correctly (column grid columns)', () => {
         const wrapper = mount(Descriptions, {
             props: {

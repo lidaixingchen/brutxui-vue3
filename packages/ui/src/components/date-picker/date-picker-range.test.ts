@@ -288,6 +288,34 @@ describe('DatePickerRange', () => {
         expect(wrapper.emitted('change')![0]).toEqual([null])
     })
 
+    it('emits change exactly once when confirming a selection', async () => {
+        const today = new Date(2026, 5, 26)
+        const tomorrow = new Date(2026, 5, 27)
+        const shortcuts: DatePickerRangeShortcut[] = [
+            { label: 'Next 2 days', value: () => [today, tomorrow] },
+        ]
+        wrapper = mount(DatePickerRange, {
+            ...localeProvide,
+            props: { shortcuts, clearable: true },
+            attachTo: document.body,
+        })
+        await openPanel(wrapper)
+        const shortcut = document.body.querySelector('[role="option"]') as HTMLElement | null
+        expect(shortcut).not.toBeNull()
+        await shortcut!.click()
+        await nextTick()
+        await nextTick()
+        const dialog = document.body.querySelector('[role="dialog"]')
+        const confirmBtn = dialog
+            ? Array.from(dialog.querySelectorAll('button')).find((b) => b.textContent?.trim() === 'Confirm')
+            : undefined
+        expect(confirmBtn).toBeTruthy()
+        await confirmBtn!.click()
+        await nextTick()
+        await nextTick()
+        expect(wrapper.emitted('change')?.length).toBe(1)
+    })
+
     it('opens panel on trigger click', async () => {
         wrapper = mount(DatePickerRange, { ...localeProvide, attachTo: document.body })
         await openPanel(wrapper)

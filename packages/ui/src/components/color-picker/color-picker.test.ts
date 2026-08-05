@@ -485,6 +485,19 @@ describe('ColorPickerInput', () => {
         expect(emitted).toBeTruthy()
         expect(emitted![0]).toEqual(['hsl(120, 100%, 50%)'])
     })
+
+    it('emits update:modelValue null when input is cleared', async () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        await input.setValue('')
+        const emitted = wrapper.emitted('update:modelValue')
+        expect(emitted).toBeTruthy()
+        expect(emitted![0]).toEqual([null])
+    })
 })
 
 describe('ColorPickerPanel pointer interaction', () => {

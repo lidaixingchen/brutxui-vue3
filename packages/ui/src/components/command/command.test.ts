@@ -129,6 +129,32 @@ describe('CommandInput', () => {
         const input = wrapper.find('input')
         expect(input.attributes('placeholder')).toBe('Search items...')
     })
+
+    it('filters items by initial model-value on first render', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput model-value="alpha" />
+                    <CommandList>
+                        <CommandItem value="alpha item">Alpha</CommandItem>
+                        <CommandItem value="beta item">Beta</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+        const items = wrapper.findAll('[data-slot="command-item"]')
+        const alphaItem = items.find(i => i.text().includes('Alpha'))
+        const betaItem = items.find(i => i.text().includes('Beta'))
+        expect(alphaItem?.attributes('style') ?? '').not.toContain('display: none')
+        expect(betaItem?.attributes('style')).toContain('display: none')
+    })
 })
 
 describe('CommandList', () => {
