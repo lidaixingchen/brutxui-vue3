@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { Loader2 } from '@lucide/vue'
@@ -111,9 +111,26 @@ function handleMouseLeave() {
     if (props.effect === 'glitch') onMouseLeave()
 }
 
-function handleClick() {
+function handleClick(event: Event) {
+    if (isDisabled.value) {
+        event.preventDefault()
+        event.stopPropagation()
+        return
+    }
     if (props.effect === 'glitch') onClick()
 }
+
+const rootEl = ref<{ $el: HTMLElement | null } | null>(null)
+const buttonText = ref('')
+
+function syncButtonText() {
+    const el = rootEl.value?.$el
+    if (el instanceof HTMLElement) {
+        buttonText.value = el.textContent?.trim() ?? ''
+    }
+}
+
+onMounted(syncButtonText)
 
 defineExpose({
     play,
@@ -123,10 +140,12 @@ defineExpose({
 
 <template>
     <Primitive
+        ref="rootEl"
         :as="asChild ? undefined : 'button'"
         :as-child="asChild"
         :class="classes"
         :type="type"
+        :data-text="buttonText"
         :disabled="!asChild && isDisabled"
         :aria-disabled="asChild && isDisabled ? true : undefined"
         :aria-busy="loading || undefined"
