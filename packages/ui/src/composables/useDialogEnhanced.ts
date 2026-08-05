@@ -119,28 +119,40 @@ export function useDialogEnhanced(
 
     // ── Position Constraints ───────────────────────────────────────
 
-    function constrainPosition(newX: number, newY: number): { x: number; y: number } {
+    function constrainPosition(
+        newX: number,
+        newY: number,
+        targetWidth?: number,
+        targetHeight?: number,
+    ): { x: number; y: number } {
         const rect = contentRef.value?.getBoundingClientRect()
         if (!rect) return { x: newX, y: newY }
 
+        // 对话框中心锚定（left:50% + translate(calc(-50% + x))），position.x/y 是相对视口中心的偏移，
+        // 实际左上角坐标 = viewport/2 + x - width/2，边界约束必须叠加 50% 基准修正，否则内容会被大幅拖出边界
+        const width = targetWidth ?? rect.width
+        const height = targetHeight ?? rect.height
+
         if (opt.bounds === 'viewport') {
-            const { width, height } = getViewportSize()
+            const { width: vw, height: vh } = getViewportSize()
             return {
-                x: Math.max(-rect.width / 2, Math.min(newX, width - rect.width / 2)),
-                y: Math.max(-rect.height / 2, Math.min(newY, height - rect.height / 2)),
+                x: Math.max(width / 2 - vw / 2, Math.min(newX, vw / 2 - width / 2)),
+                y: Math.max(height / 2 - vh / 2, Math.min(newY, vh / 2 - height / 2)),
             }
         } else if (opt.bounds === 'parent') {
             const parentRect = contentRef.value?.parentElement?.getBoundingClientRect()
             if (parentRect) {
+                const { width: vw, height: vh } = getViewportSize()
                 return {
-                    x: Math.max(parentRect.left - rect.width / 2, Math.min(newX, parentRect.right - rect.width / 2)),
-                    y: Math.max(parentRect.top - rect.height / 2, Math.min(newY, parentRect.bottom - rect.height / 2)),
+                    x: Math.max(parentRect.left - vw / 2 + width / 2, Math.min(newX, parentRect.right - vw / 2 - width / 2)),
+                    y: Math.max(parentRect.top - vh / 2 + height / 2, Math.min(newY, parentRect.bottom - vh / 2 - height / 2)),
                 }
             }
         } else if (typeof opt.bounds === 'object') {
+            const { width: vw, height: vh } = getViewportSize()
             return {
-                x: Math.max(opt.bounds.left - rect.width / 2, Math.min(newX, opt.bounds.right - rect.width / 2)),
-                y: Math.max(opt.bounds.top - rect.height / 2, Math.min(newY, opt.bounds.bottom - rect.height / 2)),
+                x: Math.max(opt.bounds.left - vw / 2 + width / 2, Math.min(newX, opt.bounds.right - vw / 2 - width / 2)),
+                y: Math.max(opt.bounds.top - vh / 2 + height / 2, Math.min(newY, opt.bounds.bottom - vh / 2 - height / 2)),
             }
         }
 
@@ -249,6 +261,31 @@ export function useDialogEnhanced(
             if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
         }
 
+        // 对话框中心锚定，仅改尺寸会围绕中心对称缩放（拖 'sw' 角时右侧对边会移动）。
+        // 按最终 clamp 后的尺寸差 deltaW/2、deltaH/2 补偿各角对应的位置，使被拖拽边缘跟随光标、对边保持不动
+        const deltaW = newWidth - resizeStart.value.width
+        const deltaH = newHeight - resizeStart.value.height
+        let newX = position.value.x
+        let newY = position.value.y
+        switch (resizeStart.value.corner) {
+            case 'se':
+                newX += deltaW / 2
+                newY += deltaH / 2
+                break
+            case 'sw':
+                newX -= deltaW / 2
+                newY += deltaH / 2
+                break
+            case 'ne':
+                newX += deltaW / 2
+                newY -= deltaH / 2
+                break
+            case 'nw':
+                newX -= deltaW / 2
+                newY -= deltaH / 2
+                break
+        }
+        position.value = constrainPosition(newX, newY, newWidth, newHeight)
         size.value = { width: newWidth, height: newHeight }
     }
 

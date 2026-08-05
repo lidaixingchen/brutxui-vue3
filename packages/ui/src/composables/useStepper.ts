@@ -1,4 +1,4 @@
-import { type Ref, ref, computed, type ComputedRef } from 'vue'
+import { type Ref, ref, computed, watch, type ComputedRef } from 'vue'
 
 export interface Step {
     id: string | number
@@ -25,10 +25,19 @@ export interface UseStepperReturn {
 }
 
 export function useStepper(options: UseStepperOptions): UseStepperReturn {
-    const currentStep = ref(options.initialStep ?? 0)
+    // 初始步骤收敛到有效范围，避免 initialStep 越界
+    const initial = Math.min(Math.max(options.initialStep ?? 0, 0), Math.max(options.steps.value.length - 1, 0))
+    const currentStep = ref(initial)
     const totalSteps = computed(() => options.steps.value.length)
     const isFirstStep = computed(() => currentStep.value === 0)
     const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
+
+    // steps 动态变化（缩减/清空）时收敛 currentStep 到有效范围，避免 isLastStep/导航状态失真
+    watch(totalSteps, () => {
+        if (currentStep.value > totalSteps.value - 1) {
+            currentStep.value = Math.max(totalSteps.value - 1, 0)
+        }
+    })
 
     function goToStep(index: number, force = false) {
         if (index < 0 || index >= totalSteps.value) return

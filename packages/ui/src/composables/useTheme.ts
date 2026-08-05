@@ -56,14 +56,11 @@ export function createTheme(): UseThemeReturn {
     function applyTheme(name: ThemeName) {
         if (!hasDocument) return
         const root = getDocument()!.documentElement
-        // 移除旧主题类名（如果存在）
-        if (theme.value !== name) {
-            root.classList.remove(getThemeClass(theme.value))
+        // 移除所有旧主题类，避免切换时残留其他 theme-* 类
+        for (const themeName of VALID_THEMES) {
+            root.classList.remove(getThemeClass(themeName))
         }
-        // 添加新主题类名（检查是否已存在）
-        if (!root.classList.contains(getThemeClass(name))) {
-            root.classList.add(getThemeClass(name))
-        }
+        root.classList.add(getThemeClass(name))
         theme.value = name
         safeSetStorageItem('brutx-theme', name)
     }
@@ -79,7 +76,7 @@ export function createTheme(): UseThemeReturn {
     }
 
     function applyColorMode(mode: ColorMode) {
-        if (mode === colorMode.value) return
+        // 始终同步 DOM，避免同值早退导致 dark 类残留
         colorMode.value = mode
         safeSetStorageItem('brutx-color-mode', mode)
 

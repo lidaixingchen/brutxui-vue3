@@ -84,6 +84,12 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     function onDrop(e: DragEvent, toColumnId: string) {
         if (draggingColumn.value) return
         if (!draggingCard.value) return
+        // 目标列不存在时清理拖拽状态，避免卡片只从源列移除而静默丢失
+        if (!options.columns.value.some((col) => col.id === toColumnId)) {
+            draggingCard.value = null
+            dragOverColumn.value = null
+            return
+        }
         const { cardId, fromColumn } = draggingCard.value
 
         const sourceColumn = options.columns.value.find((col) => col.id === fromColumn)

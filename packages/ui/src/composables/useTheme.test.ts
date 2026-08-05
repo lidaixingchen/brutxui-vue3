@@ -87,14 +87,14 @@ describe('useTheme', () => {
             expect(document.documentElement.classList.contains('theme-pastel')).toBe(false)
         })
 
-        it('should not add class if already exists', () => {
+        it('should sync theme class when setting to the same theme', () => {
             // Pre-add the class
             document.documentElement.classList.add('theme-classic')
             const theme = scope.run(() => createTheme())!
-            const addSpy = vi.spyOn(document.documentElement.classList, 'add')
-
             theme.setTheme('classic')
-            expect(addSpy).not.toHaveBeenCalled()
+            // 始终同步 DOM：同值设置也清理其他主题类残留，避免 theme-* 类堆积
+            expect(document.documentElement.classList.contains('theme-classic')).toBe(true)
+            expect(document.documentElement.classList.contains('theme-warm')).toBe(false)
         })
 
         it('should save theme to localStorage', () => {
@@ -111,12 +111,16 @@ describe('useTheme', () => {
                 expect(mockSafeSetStorageItem).toHaveBeenCalledWith('brutx-color-mode', 'dark')
             })
 
-            it('should not update if same mode', () => {
+            it('should sync DOM when applying the same color mode', () => {
                 const theme = scope.run(() => createTheme())!
+                // 制造 dark 类残留，验证同值 applyColorMode 也会同步移除
+                document.documentElement.classList.add('dark')
                 mockSafeSetStorageItem.mockClear()
 
                 theme.applyColorMode('light')
-                expect(mockSafeSetStorageItem).not.toHaveBeenCalled()
+                expect(theme.colorMode.value).toBe('light')
+                expect(mockSafeSetStorageItem).toHaveBeenCalledWith('brutx-color-mode', 'light')
+                expect(document.documentElement.classList.contains('dark')).toBe(false)
             })
 
             it('should apply system mode based on isSystemDark', () => {
@@ -561,15 +565,21 @@ describe('useTheme', () => {
             expect(theme.colorMode.value).toBe('dark')
         })
 
-        it('should handle setTheme to same value (no-op remove)', () => {
+        it('should clean up stale theme classes when setting to the same value', () => {
             const theme = scope.run(() => createTheme())!
+            // 制造残留主题类，验证同值设置也会清理
+            document.documentElement.classList.add('theme-warm')
+            document.documentElement.classList.add('theme-mono')
             const removeSpy = vi.spyOn(document.documentElement.classList, 'remove')
 
             // Default is 'classic', set to same
             theme.setTheme('classic')
-            // remove should NOT be called since theme.value === name
-            expect(removeSpy).not.toHaveBeenCalled()
+            // 始终同步 DOM：移除所有旧主题类，避免残留
+            expect(removeSpy).toHaveBeenCalledWith('theme-warm')
+            expect(removeSpy).toHaveBeenCalledWith('theme-mono')
             expect(theme.theme.value).toBe('classic')
+            expect(document.documentElement.classList.contains('theme-classic')).toBe(true)
+            expect(document.documentElement.classList.contains('theme-warm')).toBe(false)
         })
 
         it('should set theme class on init with saved theme', () => {
