@@ -24,7 +24,13 @@
             ]
         },
         "brutx-registry-vue#build": {
-            "cache": false
+            "cache": false,
+            "inputs": [
+                "../../packages/ui/src/**",
+                "../../packages/shared/src/**",
+                "src/**",
+                "scripts/**"
+            ]
         },
         "docs#build": {
             "dependsOn": ["^build"],
