@@ -381,7 +381,7 @@ export async function mergeSnippetsFile(
             // 解析失败：先备份原文件，再抛出带路径信息的明确错误，
             // 避免静默清空 existingSnippets 后用新组件覆写导致用户自定义片段永久丢失
             await fs.copy(snippetPath, `${snippetPath}.bak`).catch(() => {});
-            throw new Error(`Failed to read existing snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}. The original file was backed up to .bak.`);
+            throw new Error(`Failed to read existing snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}. The original file was backed up to .bak.`, { cause: error });
         }
         // 结构校验移出 try/catch：与解析失败各走独立分支，避免结构错误被包装成"读取失败"、
         // 且不再对同一文件执行两次 .bak 备份
