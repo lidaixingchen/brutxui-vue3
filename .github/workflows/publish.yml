@@ -94,7 +94,7 @@ jobs:
                     cat /tmp/publish-ui.log
                     exit 0
                   fi
-                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists" /tmp/publish-ui.log; then
+                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists|cannot publish over the previously published" /tmp/publish-ui.log; then
                     echo "::warning::brutx-ui-vue version already exists, skipped"
                     exit 0
                   fi
@@ -113,7 +113,7 @@ jobs:
                     cat /tmp/publish-cli.log
                     exit 0
                   fi
-                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists" /tmp/publish-cli.log; then
+                  if grep -qiE "EPUBLISHCONFLICT|already published|version already exists|cannot publish over the previously published" /tmp/publish-cli.log; then
                     echo "::warning::brutx-vue version already exists, skipped"
                     exit 0
                   fi
