@@ -1,5 +1,5 @@
 import { ref, onMounted, onUnmounted, type Ref } from 'vue'
-import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_FRAME_INTERVAL, CANVAS_PROGRESS_THROTTLE_MS, CANVAS_PROGRESS_SAMPLE_WIDTH, CANVAS_PROGRESS_SAMPLE_MAX_HEIGHT } from '../lib/defaults'
+import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_FRAME_INTERVAL, CANVAS_PROGRESS_THROTTLE_MS, CANVAS_PROGRESS_SAMPLE_WIDTH, CANVAS_PROGRESS_SAMPLE_MAX_HEIGHT, CANVAS_ALPHA_CLEARED_THRESHOLD } from '../lib/defaults'
 import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor } from '../lib/env'
 
 const REVEAL_COMPLETED_FALLBACK_DURATION = 0
@@ -107,15 +107,14 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
                 // 恢复之前保存的内容，保留用户已刮除的进度
                 ctx.value.drawImage(tempCanvas, 0, 0, tempCanvas.width / oldDpr, tempCanvas.height / oldDpr, 0, 0, w, h)
             } else {
-                // 首次初始化，绘制覆盖层
+                // 首次初始化或画布尚未实际绘制过覆盖层时，绘制覆盖层
                 drawOverlay(ctx.value, w, h)
-            }
-
-            if (!initialized) {
-                initialized = true
-                // 以初始覆盖层的 alpha 掩码作为相对刮除基准，处理覆盖层本身含透明/半透明区域的情况
+                // 每次实际重绘覆盖层后都以当前 alpha 掩码作为相对刮除基准：
+                // 避免首次 0 尺寸/未完成布局时基准永久缺失，或 resize 宽高比变化后尺寸失配
                 baselineMask = sampleAlphaGrid()?.alphas ?? null
             }
+
+            initialized = true
         }
     }
 
@@ -156,16 +155,18 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
 
         // 以初始覆盖层 alpha 掩码为基准计算相对刮除比例：初始就透明的点不参与统计，
         // 避免覆盖层本身含透明/半透明区域（PNG 素材、圆角、渐隐遮罩）时初始进度即非 0，
-        // 进而导致无需刮擦就触发 revealAll/onCompleted
+        // 进而导致无需刮擦就触发 revealAll/onCompleted。
+        // alpha 用阈值判定而非严格 ===0：缩略图 drawImage 缩放会产生抗锯齿中间值，
+        // 严格等 0 会漏掉细刮痕导致进度系统性偏低
         const baseline = baselineMask !== null && baselineMask.length === alphas.length ? baselineMask : null
         for (let y = 0; y < h; y += CANVAS_SAMPLE_GRID_SIZE) {
             for (let x = 0; x < w; x += CANVAS_SAMPLE_GRID_SIZE) {
                 const idx = y * w + x
-                if (baseline && baseline[idx] === 0) {
+                if (baseline && baseline[idx] < CANVAS_ALPHA_CLEARED_THRESHOLD) {
                     continue
                 }
                 totalSampled++
-                if (alphas[idx] === 0) {
+                if (alphas[idx] < CANVAS_ALPHA_CLEARED_THRESHOLD) {
                     cleared++
                 }
             }

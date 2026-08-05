@@ -46,11 +46,13 @@ const totalSteps = computed(() => props.steps.length)
 const isFirstStep = computed(() => currentStep.value === 0)
 const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
 
+// --stepper-dot-size 语义为圆点边长（直径）：sm w-6=1.5rem、default w-8=2rem、lg w-10=2.5rem，
+// 连接线 calc 中 var(--stepper-dot-size)/2 即取半径作圆心偏移
 const dotSizeCss = computed(() => {
     switch (props.size) {
-        case 'sm': return '0.75rem'
-        case 'lg': return '1.25rem'
-        default: return '1rem'
+        case 'sm': return '1.5rem'
+        case 'lg': return '2.5rem'
+        default: return '2rem'
     }
 })
 
@@ -211,7 +213,6 @@ const connectorClasses = computed(() =>
                     <!-- Dot -->
                     <button
                         :class="dotClasses[index]"
-                        :style="{ '--stepper-dot-size': dotSizeCss }"
                         type="button"
                         data-step-button
                         :aria-label="t('stepper.step', { index: index + 1, title: step.title })"
@@ -244,11 +245,11 @@ const connectorClasses = computed(() =>
 
                 <!-- Vertical layout -->
                 <template v-if="orientation === 'vertical'">
-                    <div class="flex flex-col items-center">
+                    <!-- --stepper-dot-size 设在圆点与连接线的共同祖先上，连接线（兄弟节点）才能读取该 CSS 变量 -->
+                    <div class="flex flex-col items-center" :style="{ '--stepper-dot-size': dotSizeCss }">
                         <!-- Dot -->
                         <button
                             :class="dotClasses[index]"
-                            :style="{ '--stepper-dot-size': dotSizeCss }"
                             type="button"
                             data-step-button
                             :aria-label="t('stepper.step', { index: index + 1, title: step.title })"

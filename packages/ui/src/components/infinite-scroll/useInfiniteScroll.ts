@@ -92,7 +92,10 @@ export function useInfiniteScroll(
             if (target && !observer.value && !getDisabled()) {
                 stopTargetWatch?.()
                 stopTargetWatch = undefined
-                setupObserver()
+                const observerResult = setupObserver()
+                if (observerResult === 'unsupported') {
+                    triggerLoad()
+                }
             }
         })
     }

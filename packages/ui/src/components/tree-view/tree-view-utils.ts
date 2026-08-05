@@ -54,7 +54,8 @@ function cloneTreeAndExtract(nodes: TreeNode[], dragId: string): [TreeNode[], Tr
     function cloneNode(node: TreeNode): TreeNode {
         return {
             ...node,
-            children: node.children ? node.children.map(cloneNode) : undefined,
+            // 递归走 clone()：既做深拷贝，又能在每个层级检查并提取嵌套的 dragId 节点
+            children: node.children ? clone(node.children) : undefined,
         }
     }
 

@@ -18,11 +18,16 @@ export interface UseDataTablePaginationReturn {
     setPageSize: (size: number) => void
 }
 
+/** pageSize 合法性校验：必须是有限正整数（NaN/Infinity/0/负数/小数均非法） */
+function isValidPageSize(size: number | undefined): size is number {
+    return size !== undefined && Number.isFinite(size) && size > 0 && Number.isInteger(size)
+}
+
 export function useDataTablePagination(options: UseDataTablePaginationOptions): UseDataTablePaginationReturn {
     const currentPage = ref(1)
     const initialPageSize = toValue(options.pageSize)
     const currentPageSize = ref(
-        initialPageSize !== undefined && Number.isFinite(initialPageSize) && initialPageSize > 0 && Number.isInteger(initialPageSize)
+        isValidPageSize(initialPageSize)
             ? initialPageSize
             : DEFAULT_PAGE_SIZE
     )
@@ -35,7 +40,7 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
     })
 
     watch(() => toValue(options.pageSize), (newSize) => {
-        currentPageSize.value = newSize !== undefined && Number.isFinite(newSize) && newSize > 0 && Number.isInteger(newSize)
+        currentPageSize.value = isValidPageSize(newSize)
             ? newSize
             : DEFAULT_PAGE_SIZE
     })
@@ -63,7 +68,7 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
     }
 
     function setPageSize(size: number) {
-        if (!Number.isFinite(size) || size <= 0 || !Number.isInteger(size)) return
+        if (!isValidPageSize(size)) return
         currentPageSize.value = size
         currentPage.value = 1
     }

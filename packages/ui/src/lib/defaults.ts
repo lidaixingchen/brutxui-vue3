@@ -96,6 +96,9 @@ export const CANVAS_PROGRESS_SAMPLE_WIDTH = 64
 /** 进度采样缩略图的最大高度（像素），防止超长画布下缩略图仍过大 */
 export const CANVAS_PROGRESS_SAMPLE_MAX_HEIGHT = 256
 
+/** 进度采样 alpha 阈值：低于该值视为已刮除（处理缩略图缩放抗锯齿产生的中间值） */
+export const CANVAS_ALPHA_CLEARED_THRESHOLD = 128
+
 // ── Audio Engine ──────────────────────────────────────────────
 
 /** Throttle (ms) between consecutive type sounds */
