@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.9.9
+
+### Patch Changes
+
+- 修复自动化审查报告（问题 76-100）与代码审查发现的缺陷：Button glitch 文本与禁用拦截、Card3D 指针坐标、DatePicker 系列 readonly/边界/重复事件/确认按钮、DataTable 过滤与固定列 sticky、ColorPicker 清空同步/受控 open、Menu 激活项子菜单自动展开、Counter 动画时长与朗读播报等
+
 ## 0.9.8
 
 ### Patch Changes
