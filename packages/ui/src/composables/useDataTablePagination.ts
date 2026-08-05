@@ -20,15 +20,24 @@ export interface UseDataTablePaginationReturn {
 
 export function useDataTablePagination(options: UseDataTablePaginationOptions): UseDataTablePaginationReturn {
     const currentPage = ref(1)
-    const currentPageSize = ref(toValue(options.pageSize) ?? DEFAULT_PAGE_SIZE)
+    const initialPageSize = toValue(options.pageSize)
+    const currentPageSize = ref(
+        initialPageSize !== undefined && Number.isFinite(initialPageSize) && initialPageSize > 0 && Number.isInteger(initialPageSize)
+            ? initialPageSize
+            : DEFAULT_PAGE_SIZE
+    )
 
     const totalPages = computed(() => {
         const total = toValue(options.totalItems)
-        return Math.max(1, Math.ceil(total / Math.max(1, currentPageSize.value)))
+        // NaN/Infinity 会使 totalPages 为 NaN，进而无法钳制当前页，统一拦截为非有限值
+        const safeTotal = Number.isFinite(total) && total > 0 ? total : 0
+        return Math.max(1, Math.ceil(safeTotal / Math.max(1, currentPageSize.value)))
     })
 
     watch(() => toValue(options.pageSize), (newSize) => {
-        currentPageSize.value = newSize ?? DEFAULT_PAGE_SIZE
+        currentPageSize.value = newSize !== undefined && Number.isFinite(newSize) && newSize > 0 && Number.isInteger(newSize)
+            ? newSize
+            : DEFAULT_PAGE_SIZE
     })
 
     watch(totalPages, (newTotal) => {
@@ -44,6 +53,7 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
     }
 
     function goToPage(page: number): boolean {
+        if (!Number.isInteger(page) || page < 1) return false
         const newPage = Math.max(1, Math.min(page, totalPages.value))
         if (newPage !== currentPage.value) {
             currentPage.value = newPage
@@ -53,7 +63,7 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
     }
 
     function setPageSize(size: number) {
-        if (size <= 0) return
+        if (!Number.isFinite(size) || size <= 0 || !Number.isInteger(size)) return
         currentPageSize.value = size
         currentPage.value = 1
     }

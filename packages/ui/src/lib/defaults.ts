@@ -90,6 +90,12 @@ export const CANVAS_PROGRESS_CHECK_FRAME_INTERVAL = 10
 /** Throttle (ms) for canvas progress updates */
 export const CANVAS_PROGRESS_THROTTLE_MS = 150
 
+/** 进度采样缩略图的最大宽度（像素），避免高分屏/大画布下全量 getImageData 卡顿 */
+export const CANVAS_PROGRESS_SAMPLE_WIDTH = 64
+
+/** 进度采样缩略图的最大高度（像素），防止超长画布下缩略图仍过大 */
+export const CANVAS_PROGRESS_SAMPLE_MAX_HEIGHT = 256
+
 // ── Audio Engine ──────────────────────────────────────────────
 
 /** Throttle (ms) between consecutive type sounds */

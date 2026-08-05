@@ -30,7 +30,7 @@ const originalGetContext = HTMLCanvasElement.prototype.getContext
 /** Mock 仅实现 ScratchCard 实际使用的 CanvasRenderingContext2D 方法 */
 type MockCanvasContext = Pick<CanvasRenderingContext2D,
     'clearRect' | 'fillRect' | 'beginPath' | 'moveTo' | 'lineTo' |
-    'stroke' | 'save' | 'restore' | 'scale' | 'arc' | 'fill' | 'getImageData'
+    'stroke' | 'save' | 'restore' | 'scale' | 'arc' | 'fill' | 'getImageData' | 'drawImage'
 >
 
 const mockCanvasContext: MockCanvasContext = {
@@ -45,6 +45,7 @@ const mockCanvasContext: MockCanvasContext = {
     scale: vi.fn(),
     arc: vi.fn(),
     fill: vi.fn(),
+    drawImage: vi.fn(),
     getImageData: vi.fn().mockReturnValue({
         data: new Uint8ClampedArray(400)
     }),
