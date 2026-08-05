@@ -80,12 +80,17 @@ const CENTER_OFFSET = 0.5
 
 const handlePointerMove = (e: PointerEvent) => {
     if (props.disabled || prefersReducedMotion.value) return
-    const rect = cardRef.value?.getBoundingClientRect()
-    if (!rect) return
+    const cardEl = cardRef.value
+    const rect = cardEl?.getBoundingClientRect()
+    if (!cardEl || !rect || rect.width <= 0 || rect.height <= 0) return
+
+    const width = cardEl.offsetWidth || rect.width
+    const height = cardEl.offsetHeight || rect.height
 
     isHovered.value = true
-    const x = (e.clientX - rect.left) / rect.width - CENTER_OFFSET // [-0.5, 0.5]
-    const y = (e.clientY - rect.top) / rect.height - CENTER_OFFSET // [-0.5, 0.5]
+    const x = (e.clientX - rect.left) / width - CENTER_OFFSET // [-0.5, 0.5]
+    const y = (e.clientY - rect.top) / height - CENTER_OFFSET // [-0.5, 0.5]
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return
 
     rx.value = -y * props.maxRotation
     ry.value = x * props.maxRotation
