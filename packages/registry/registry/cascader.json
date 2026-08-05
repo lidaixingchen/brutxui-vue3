@@ -68,7 +68,7 @@
     },
     {
       "path": "lib/floating-animation-classes.ts",
-      "content": "export const floatingContentAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n\nexport const centeredModalAnimationClasses = [\n    'duration-200',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',\n    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',\n] as const\n",
+      "content": "export const floatingContentAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n\nexport const centeredModalAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'duration-200',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',\n    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',\n] as const\n",
       "type": "registry:lib"
     }
   ],
@@ -135,5 +135,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-31c831aff24e1d50e83d56c3082d077211ba60209f547e0377c125aacfde2dda"
+  "integrity": "sha256-c58049c920d6a15daaba54f9fb32ae207e08c7aa5f8f78d14eba144d09a1f08e"
 }

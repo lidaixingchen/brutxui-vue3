@@ -24,7 +24,7 @@
     },
     {
       "path": "components/ui/form/FormConditional.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { formContextKey } from '@/components/ui/form/form-context'\n\ninterface FormConditionalProps {\n    when: (values: Record<string, unknown>) => boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<FormConditionalProps>(), {\n    class: undefined,\n})\n\nconst form = inject(formContextKey)\n\nconst shouldShow = computed(() => {\n    if (!form) return false\n    return props.when(form.value.values.value)\n})\n\nconst classes = computed(() => cn(props.class))\n</script>\n\n<template>\n    <div v-show=\"shouldShow\" :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed, inject } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { formContextKey } from '@/components/ui/form/form-context'\n\ninterface FormConditionalProps {\n    when: (values: Record<string, unknown>) => boolean\n    class?: string\n}\n\nconst props = withDefaults(defineProps<FormConditionalProps>(), {\n    class: undefined,\n})\n\nconst form = inject(formContextKey)\n\nconst shouldShow = computed(() => {\n    if (!form) return false\n    return props.when(form.value.values.value)\n})\n\nconst classes = computed(() => cn(props.class))\n</script>\n\n<template>\n    <div v-if=\"shouldShow\" :class=\"classes\">\n        <slot />\n    </div>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -156,5 +156,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-01aba38f3cee60e11a0eb437a56db1d91129f9d832a50bb5e2b1f95a09f608a0"
+  "integrity": "sha256-c4037a12d1455435e3646db6d522e9fc6eb1bafe1709e2741166e9f7e67a8908"
 }

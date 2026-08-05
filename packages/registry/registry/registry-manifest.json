@@ -137,7 +137,7 @@
       "examples": []
     },
     "button": {
-      "integrity": "sha256-b907a9f3b568bc6230368a78d15440efff8f6b366c0f45817923214b8c2ea1cb",
+      "integrity": "sha256-c2a4ba87bbc17ae9440356cf75b081ea44bc7dcf03994c187cb0458eda851fb1",
       "fileCount": 11,
       "dependencies": [
         "@lucide/vue",
@@ -150,7 +150,7 @@
       "examples": []
     },
     "calendar": {
-      "integrity": "sha256-2b6586ac20abf43a4083fb3290dc1bea2cb76b4c76fe24420acbd6aefaa77d69",
+      "integrity": "sha256-40716ad66e4ca850f698b88916edf8595da96ee31f51a187e9bdea41cd8f9fc5",
       "fileCount": 5,
       "dependencies": [
         "@lucide/vue",
@@ -172,7 +172,7 @@
       "examples": []
     },
     "card-3d": {
-      "integrity": "sha256-6624aaa1b908c3ea9fa35d5afdb9e1126466fad2d37a8177cc6f1bd6def35820",
+      "integrity": "sha256-9e1f30697efb0b1cf549cb0477e8dd467ec9c979a0ad98e398349e6b4ae75fa6",
       "fileCount": 7,
       "dependencies": [],
       "registryDependencies": [
@@ -211,7 +211,7 @@
       "examples": []
     },
     "chat-bubble": {
-      "integrity": "sha256-3414d0b5d8893500164d157da877dfdb80141aaf3e2d6425a679e88933d44c74",
+      "integrity": "sha256-b7034e5417f41fa24af1267f8cea339335475bed3ddbb89c39da14f787b190c3",
       "fileCount": 6,
       "dependencies": [
         "@lucide/vue",
@@ -237,7 +237,7 @@
       "examples": []
     },
     "code-block": {
-      "integrity": "sha256-d24dd4ca2780fa179d590920becb28e8ec7e9cd550a2685b7523fa353dd8f48d",
+      "integrity": "sha256-a37a32da4c0e7630d4c04996dbc0b8187047f60203376fabf00888445d9719b9",
       "fileCount": 7,
       "dependencies": [
         "@lucide/vue",
@@ -267,7 +267,7 @@
       "examples": []
     },
     "color-picker": {
-      "integrity": "sha256-2171bf62c24f68f42c07858e12bd1047030fba54a2e6b4eed5df48bab36b72c5",
+      "integrity": "sha256-2b38241e0d3a1ad3b62e57bc7c1d675ec29cac6cf6596a1a2801d96b2dbb193c",
       "fileCount": 16,
       "dependencies": [
         "@lucide/vue",
@@ -299,7 +299,7 @@
       "examples": []
     },
     "command": {
-      "integrity": "sha256-197898d44e3152c7a5dc63182a2b65ecbad4fb98652df22e784d59a8539ed567",
+      "integrity": "sha256-ca9c37f0ef2fe8259a104cc69758c9424400a820401fc9f82dd6d6fd1c88c536",
       "fileCount": 14,
       "dependencies": [
         "@lucide/vue",
@@ -339,7 +339,7 @@
       "examples": []
     },
     "counter": {
-      "integrity": "sha256-2ca4e97c9cc95e61eb7f58510fc942d87f2c35cd64191f162aaa355d68a16df1",
+      "integrity": "sha256-a049d3a656a8b123f030d37145e26d8a090243e63e262a30879790f191b4bb6d",
       "fileCount": 5,
       "dependencies": [],
       "registryDependencies": [],
@@ -360,7 +360,7 @@
       "examples": []
     },
     "data-table": {
-      "integrity": "sha256-2e097d76347794ed2cba6567f813c8303707d8dbc507c1849adcbd3d4877b39c",
+      "integrity": "sha256-f115a654e190014a2c63dde6601a69f3b995f392d9235f5565ed508969280ab9",
       "fileCount": 14,
       "dependencies": [
         "@lucide/vue",
@@ -379,7 +379,7 @@
       "examples": []
     },
     "date-picker": {
-      "integrity": "sha256-8512d6d0b50f663656f5afff5f27a2ab4285f108a689b6da230eba2f98d08396",
+      "integrity": "sha256-fca32f554f25eb8bdcd9532b9847d16f6bbba8634b92bf58fbcab55e9a21bc2f",
       "fileCount": 24,
       "dependencies": [
         "@lucide/vue",
@@ -396,7 +396,7 @@
       "examples": []
     },
     "descriptions": {
-      "integrity": "sha256-977ce78d1379c09283d12225defc41f04fb0958d128da7312388b42544c613a6",
+      "integrity": "sha256-7c1576d88f29d429cd33fb47c1e1e0f0430dacfa56598b5d05712b7679c0e895",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [],
@@ -419,7 +419,7 @@
       "examples": []
     },
     "dropdown-menu": {
-      "integrity": "sha256-604a639b3083d49ffc591a231a2403fdc737a167de6f780fa667fb87f9b4ea38",
+      "integrity": "sha256-134ac8b1376fe5b7714b510232619d4bc6533cc29d24907fd7ec3deb826c6237",
       "fileCount": 15,
       "dependencies": [
         "@lucide/vue",
@@ -448,7 +448,7 @@
       "examples": []
     },
     "footer-section": {
-      "integrity": "sha256-3774e7de92a96dd45e6494e934470979667a9ebd500e0d3bef12153c26641737",
+      "integrity": "sha256-80eb0e3de948bc5dc3c76ca3eaf59c093b45fb28ed339e7c822b2ae1e2d663db",
       "fileCount": 4,
       "dependencies": [
         "@lucide/vue"
@@ -462,7 +462,7 @@
       "examples": []
     },
     "form": {
-      "integrity": "sha256-01aba38f3cee60e11a0eb437a56db1d91129f9d832a50bb5e2b1f95a09f608a0",
+      "integrity": "sha256-c4037a12d1455435e3646db6d522e9fc6eb1bafe1709e2741166e9f7e67a8908",
       "fileCount": 15,
       "dependencies": [
         "reka-ui",
@@ -498,7 +498,7 @@
       "examples": []
     },
     "header-section": {
-      "integrity": "sha256-bb95ff7b09ca5d07a6188cfe40bd5e12aeaf1d120196556e307fd8da49d3cb7f",
+      "integrity": "sha256-0449b66a2d724843cd6c3db98379c2fe0747aeaeaf69326ba0ec051a6e4b30e1",
       "fileCount": 5,
       "dependencies": [
         "@lucide/vue",
@@ -603,7 +603,7 @@
       "examples": []
     },
     "menu": {
-      "integrity": "sha256-beaad24695f2234d53125fbdccb2e38c96fbc657a802af549d4e4a1ab875bae1",
+      "integrity": "sha256-c44a1151d92911f3a33a6aa5099d29ea6ebb5b454cf1b39ff21cffb7d215cc6c",
       "fileCount": 6,
       "dependencies": [
         "@lucide/vue"
@@ -634,7 +634,7 @@
       "examples": []
     },
     "number-input": {
-      "integrity": "sha256-683b1681ed5fcfc673ce4f681e0ef5457dfd4a369d805663f0ea156d49d638bb",
+      "integrity": "sha256-1be2cf441a61a40b02fdddd8f9fef854162b3d202b8b459e9569c20e18641a63",
       "fileCount": 6,
       "dependencies": [
         "@lucide/vue",
@@ -1056,7 +1056,5 @@
       "examples": []
     }
   },
-  "integrity": "27280e7fb12525ab9b763270d70fbabc4588c1ad36ed9b07f9e43525229dfcad",
-  "signature": "GCEz3cwllkBrFoLMrXjxSuQX/ZRJp5UaKtBUWbFGGYx3QDEJ+QGfi34ZeqGcw/Fj1JTJRjCBE4r9RX1P+uYnDw==",
-  "keyId": "official-v1"
+  "integrity": "27d31287f69f7b8bad0741eb0400793b6b00e867230857ab0047c96fbd71245e"
 }
