@@ -46,18 +46,21 @@ const labelStyle = computed(() => {
         <template v-if="parentDirection === 'horizontal'">
             <div
                 v-if="span > 1"
-                :class="cn('flex border-b-3 border-brutal', props.class)"
-                :style="{ gridColumn: `span ${span * 2}` }"
+                class="flex border-b-3 border-brutal"
+                :style="{ gridColumn: `span ${Math.max(1, Math.round(span)) * 2}` }"
             >
                 <div
-                    class="flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal"
+                    :class="cn(
+                        'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal w-1/2 min-w-0 truncate',
+                        props.class,
+                    )"
                     :style="labelStyle"
                 >
                     <slot name="label">
                         {{ label }}
                     </slot>
                 </div>
-                <div class="flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg">
+                <div :class="cn('flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg', props.class)">
                     <slot />
                 </div>
             </div>
