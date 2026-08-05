@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useId, watch } from 'vue'
+import { computed, useId } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronDown, X } from '@lucide/vue'
 import { PopoverRoot, PopoverTrigger } from 'reka-ui'
@@ -51,7 +51,7 @@ const resolvedPlaceholder = computed(() => props.placeholder ?? t('colorPicker.p
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('colorPicker.placeholder'))
 
 const {
-    open: internalOpen,
+    open,
     displayValue,
     normalizedDisplay,
     swatchStyle,
@@ -59,33 +59,16 @@ const {
     handlePanelConfirm,
     handlePanelClear,
     handleClearClick,
+    handleTriggerKeydown,
 } = useColorPicker({
     modelValue: () => props.modelValue,
     format: () => props.format,
     showAlpha: () => props.showAlpha,
     disabled: () => props.disabled,
+    openProp: () => props.open,
+    emitUpdateOpen: (val) => emit('update:open', val),
     emit,
 })
-
-watch(() => props.open, (val) => {
-    if (val !== undefined) internalOpen.value = val
-}, { immediate: true })
-
-const open = computed<boolean>({
-    get: () => props.open !== undefined ? props.open : internalOpen.value,
-    set: (val) => {
-        internalOpen.value = val
-        emit('update:open', val)
-    },
-})
-
-function handleTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled) return
-    if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
-        event.preventDefault()
-        open.value = true
-    }
-}
 
 const triggerClasses = computed(() =>
     cn(

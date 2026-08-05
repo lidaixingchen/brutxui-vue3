@@ -12,6 +12,8 @@ export interface UseColorPickerOptions {
     format?: MaybeRefOrGetter<ColorPickerFormat>
     showAlpha?: MaybeRefOrGetter<boolean>
     disabled?: MaybeRefOrGetter<boolean>
+    openProp?: MaybeRefOrGetter<boolean | undefined>
+    emitUpdateOpen?: (value: boolean) => void
     emit: ColorPickerEmit
 }
 
@@ -28,7 +30,20 @@ export interface UseColorPickerReturn {
 }
 
 export function useColorPicker(options: UseColorPickerOptions): UseColorPickerReturn {
-    const open = ref(false)
+    const internalOpen = ref(false)
+    const open = computed<boolean>({
+        get: () => {
+            const controlled = toValue(options.openProp)
+            return controlled !== undefined ? controlled : internalOpen.value
+        },
+        set: (val) => {
+            const controlled = toValue(options.openProp)
+            if (controlled === undefined) {
+                internalOpen.value = val
+            }
+            options.emitUpdateOpen?.(val)
+        },
+    })
     const displayValue = ref<string | null>(toValue(options.modelValue) ?? null)
 
     watch(open, (isOpen) => {
