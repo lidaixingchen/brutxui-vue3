@@ -505,7 +505,7 @@ function themeVariablesToCssVars(variables: ThemeVariables): Record<string, stri
         '--brutal-font-family': variables.typography.fontFamily,
         ...Object.fromEntries(
             Object.entries(variables.typography.fontSize).map(
-                ([size, value]) => [`--brutal-font-size-${size}`, value],
+                ([size, value]) => [`--brutal-font-size-${size}`, value] as const,
             ),
         ),
     }

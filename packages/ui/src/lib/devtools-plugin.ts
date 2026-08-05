@@ -158,9 +158,8 @@ interface DevtoolsTreeNode {
     children?: DevtoolsTreeNode[]
 }
 
-/** Inspector 状态项 */
+/** Inspector 状态项（@vue/devtools-api 协议：分组下是字段名到状态项的嵌套对象） */
 interface DevtoolsInspectorStateItem {
-    key: string
     value: unknown
     editable?: boolean
 }
@@ -175,7 +174,7 @@ interface DevtoolsGetInspectorTreePayload {
 interface DevtoolsGetInspectorStatePayload {
     inspectorId: string
     nodeId: string
-    state: Record<string, DevtoolsInspectorStateItem[]>
+    state: Record<string, Record<string, DevtoolsInspectorStateItem>>
 }
 
 /** Inspector 状态编辑负载 */
@@ -515,18 +514,19 @@ function initDevtoolsIntegration(
                     const name = payload.nodeId.replace(`${PLUGIN_ID}-`, '')
                     const meta = context.components.get(name)
                     if (!meta) return
+                    // @vue/devtools-api 协议：state 为 Record<分组名, Record<字段名, { value, editable? }>> 嵌套对象
+                    const propsState: Record<string, DevtoolsInspectorStateItem> = {}
+                    for (const [propKey, propValue] of Object.entries(meta.props ?? {})) {
+                        propsState[propKey] = { value: propValue, editable: true }
+                    }
                     payload.state = {
-                        [`${options.libraryName} 组件信息`]: [
-                            { key: '版本', value: meta.version || '未知' },
-                            { key: '描述', value: meta.description || '无描述' },
-                            { key: '注册时间', value: new Date(meta.registeredAt).toLocaleString() },
-                            { key: '最后更新', value: new Date(meta.lastUpdatedAt).toLocaleString() },
-                        ],
-                        [`${options.libraryName} Props`]: Object.entries(meta.props ?? {}).map(([key, value]) => ({
-                            key,
-                            value,
-                            editable: true,
-                        })),
+                        [`${options.libraryName} 组件信息`]: {
+                            '版本': { value: meta.version || '未知' },
+                            '描述': { value: meta.description || '无描述' },
+                            '注册时间': { value: new Date(meta.registeredAt).toLocaleString() },
+                            '最后更新': { value: new Date(meta.lastUpdatedAt).toLocaleString() },
+                        },
+                        [`${options.libraryName} Props`]: propsState,
                     }
                 })
 

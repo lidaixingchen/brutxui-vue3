@@ -47,9 +47,10 @@ export function formatDate(date: Date | null | undefined, format: string): strin
         ss: pad2(date.getSeconds()),
         WW: pad2(getISOWeekNumber(date)),
     }
-    // 格式含 WW（ISO 周数）时，YYYY/YY 采用 ISO 周年份，保证跨年日期可往返还原
-    //（如 2024-12-31 属 2025-W01，'YYYY-WW' 应输出 '2025-01'）
-    if (format.includes('WW')) {
+    // 仅当格式含 WW 且不含 MM/DD 时，YYYY/YY 采用 ISO 周年份，保证跨年日期可往返还原
+    //（如 2024-12-31 属 2025-W01，'YYYY-WW' 应输出 '2025-01'）；
+    // 与解析侧"WW 与 MM/DD 共存时优先 MM/DD"保持一致，避免组合格式（如 'YYYY-MM-DD-WW'）往返回归
+    if (format.includes('WW') && !format.includes('MM') && !format.includes('DD')) {
         const isoYear = getISOWeekYear(date)
         tokens.YYYY = String(isoYear)
         tokens.YY = String(isoYear).slice(-2)
