@@ -742,7 +742,7 @@
       "examples": []
     },
     "scratch-card": {
-      "integrity": "sha256-f444e5b5f42ab8c6b750af7f7fdf928b4402767f6187f82f3f3e5fd5d1ad8829",
+      "integrity": "sha256-29c75fae99e7f3eeca31d42b7cde5d81a8f978c084c482baef41b31267fed29c",
       "fileCount": 9,
       "dependencies": [],
       "registryDependencies": [
@@ -1056,7 +1056,7 @@
       "examples": []
     }
   },
-  "integrity": "49091c79b0f5cee364ef643e579e87adfc2cfda4a29156b7721ecb85d35e0064",
-  "signature": "ltN3CBwKrzapO7KEXhgTWklm+Qv0bCyTQhiS5u/ZFtCU3+rwYr3vuqrERLlaJgXS3WzNlxJdMXziv4QzVLNPDA==",
+  "integrity": "5f93ce7f416246867634ebd6e6645c33c4b1e414d6f500de636b80b4774bbb85",
+  "signature": "iRtjkP00QCgOpYyiPmrQZ7HJeS3KJP5cKULztpL2Ar9yI/jJT/72h5xtzYv1DKWPgCSz/+ArOZ/liezz3S4eDA==",
   "keyId": "official-v1"
 }
