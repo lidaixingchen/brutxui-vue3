@@ -1,6 +1,6 @@
-import { spawn } from 'child_process';
 import type { PackageManager } from './types.js';
 import { logger } from './logger.js';
+import { runProcess } from './run-process.js';
 
 const INSTALL_COMMANDS: Record<PackageManager, string> = {
     pnpm: 'pnpm add',
@@ -9,7 +9,9 @@ const INSTALL_COMMANDS: Record<PackageManager, string> = {
     npm: 'npm install',
 };
 
-const PACKAGE_SPEC_PATTERN = /^[a-zA-Z0-9@:/._=-]+$/;
+// 显式校验白名单：允许 npm alias（pkg@npm:other-pkg@version）、semver-pin（name@=version）与 scope 语法。
+// `+` 是合法的 semver build metadata（pkg@1.0.0+build.5）与 git+ URL（pkg@git+https://...）字符，一并放行。
+const PACKAGE_SPEC_PATTERN = /^[a-zA-Z0-9@:/._=+-]+$/;
 
 function sanitizePackageName(name: string): string {
     // 显式校验而非静默清洗：非法 spec（含 semver 范围符 ^~*<>| 等）直接报错，
@@ -20,65 +22,29 @@ function sanitizePackageName(name: string): string {
     return name;
 }
 
-export function installPackages(
+export async function installPackages(
     packageManager: PackageManager,
     packages: string[],
     cwd: string
 ): Promise<void> {
-    if (packages.length === 0) return Promise.resolve();
+    if (packages.length === 0) return;
 
-    const sanitized = packages.map(sanitizePackageName).filter(Boolean);
-    if (sanitized.length === 0) return Promise.resolve();
-
+    // async 函数体内的同步抛错（如 sanitizePackageName 校验失败）会以 rejected promise 呈现，
+    // 不会像改造前那样在 new Promise 之外同步抛出、破坏调用方的 .catch()/Promise.all 处理。
+    const sanitized = packages.map(sanitizePackageName);
     const [command, ...baseArgs] = INSTALL_COMMANDS[packageManager].split(' ');
-    const isWindows = process.platform === 'win32';
 
-    return new Promise<void>((resolve, reject) => {
-        const child = spawn(command, [...baseArgs, '--', ...sanitized], {
-            cwd,
-            shell: isWindows,
-            env: process.env,
-            stdio: ['inherit', 'pipe', 'pipe'],
-        });
-
-        child.stdout?.on('data', (data) => {
-            logger.log(data.toString().trimEnd());
-        });
-
-        child.stderr?.on('data', (data) => {
-            logger.log(data.toString().trimEnd());
-        });
-
-        const onSigint = () => {
-            // 与 create.ts runCommand 保持一致：移除监听 + 转发中断 + 显式以 130 退出，
-            // 避免子进程忽略 SIGINT 时父进程挂起。
-            process.removeListener('SIGINT', onSigint);
-            child.kill('SIGINT');
-            process.exit(130);
-        };
-        process.on('SIGINT', onSigint);
-
-        child.on('error', (err) => {
-            process.removeListener('SIGINT', onSigint);
-            reject(err);
-        });
-
-        child.on('close', (code, signal) => {
-            process.removeListener('SIGINT', onSigint);
-            if (signal === 'SIGINT') {
-                reject(new Error('Installation interrupted by user'));
-                return;
-            }
-            if (code !== 0) {
-                reject(new Error(`${command} exited with code ${code}`));
-                return;
-            }
-            resolve();
-        });
+    // SIGINT 处理（转发 + 等待子进程 close 自然退出，退出码 130）由 runProcess 统一实现
+    await runProcess(command, [...baseArgs, '--', ...sanitized], {
+        cwd,
+        stdio: 'pipe',
+        onStdout: (line) => logger.log(line),
+        onStderr: (line) => logger.log(line),
     });
 }
 
 export function getInstallCommand(packageManager: PackageManager, packages: string[]): string {
-    const sanitized = packages.map(sanitizePackageName).filter(Boolean);
-    return `${INSTALL_COMMANDS[packageManager]} -- ${sanitized.join(' ')}`;
+    // 仅用于向用户展示安装提示（不执行），直接列出原包名，
+    // 避免在 installPackages 已失败降级时对同一批非法 deps 二次抛错，掩盖 "Run manually" 提示。
+    return `${INSTALL_COMMANDS[packageManager]} -- ${packages.join(' ')}`;
 }

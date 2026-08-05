@@ -1,4 +1,3 @@
-import { spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs-extra';
 
@@ -9,6 +8,7 @@ import {
     CliError,
     logger,
 } from '../lib/index.js';
+import { runProcess } from '../lib/run-process.js';
 import { init } from './init.js';
 
 const TEMPLATES: Record<CreateTemplate, string> = {
@@ -21,42 +21,8 @@ function runCommand(
     args: string[],
     cwd: string,
 ): Promise<void> {
-    const isWindows = process.platform === 'win32';
-
-    return new Promise<void>((resolve, reject) => {
-        const child = spawn(command, args, {
-            cwd,
-            shell: isWindows,
-            stdio: 'inherit',
-        });
-
-        const onSigint = () => {
-            // 收到 SIGINT 时先移除监听（避免监听器泄漏/父进程挂起），
-            // 转发中断给子进程并显式以标准中断码 130 退出父进程。
-            process.removeListener('SIGINT', onSigint);
-            child.kill('SIGINT');
-            process.exit(130);
-        };
-        process.on('SIGINT', onSigint);
-
-        child.on('error', (err) => {
-            process.removeListener('SIGINT', onSigint);
-            reject(err);
-        });
-
-        child.on('close', (code, signal) => {
-            process.removeListener('SIGINT', onSigint);
-            if (signal === 'SIGINT') {
-                reject(new Error('Process interrupted by user'));
-                return;
-            }
-            if (code !== 0) {
-                reject(new Error(`${command} exited with code ${code}`));
-                return;
-            }
-            resolve();
-        });
-    });
+    // SIGINT 处理（转发 + 等待子进程 close 自然退出，退出码 130）由 runProcess 统一实现
+    return runProcess(command, args, { cwd });
 }
 
 function getInstallCommand(pm: PackageManager): { command: string; args: string[] } {
