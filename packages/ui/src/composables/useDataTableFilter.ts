@@ -75,13 +75,19 @@ export function useDataTableFilter<T extends object>(
             if (col.filterType === 'select') {
                 result = result.filter((row) => {
                     const val = getCellValue(row, col)
-                    return String(val) === String(filterValue)
+                    // 单元格值可能是数组（如标签列表），统一归一化为数组做交集判断
+                    const cellArr = Array.isArray(val) ? val : [val]
+                    return cellArr.some((cell) => String(cell) === String(filterValue))
                 })
             } else if (col.filterType === 'multi-select') {
                 result = result.filter((row) => {
                     const val = getCellValue(row, col)
+                    // filterValue 非数组时视为空集合（不误滤），单元格值同样归一化为数组
                     const filterArr = Array.isArray(filterValue) ? filterValue : []
-                    return filterArr.some((item) => String(item) === String(val))
+                    const cellArr = Array.isArray(val) ? val : [val]
+                    return filterArr.some((item) =>
+                        cellArr.some((cell) => String(cell) === String(item)),
+                    )
                 })
             } else if (col.filterType === 'date-range') {
                 result = result.filter((row) => {

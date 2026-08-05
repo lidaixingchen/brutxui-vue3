@@ -29,7 +29,8 @@ export function useDataTableSelection<T extends object>(
         const value = row[key]
         if (typeof value !== 'string' && typeof value !== 'number') {
             console.warn(`[useDataTableSelection] rowKey property "${String(key)}" returned a non-string/number value. Using JSON.stringify for stable identity.`)
-            return JSON.stringify(value)
+            // 带 json: 前缀，避免与合法的字面字符串（如 "true"）碰撞
+            return `json:${JSON.stringify(value)}`
         }
         return value
     }
