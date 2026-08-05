@@ -45,25 +45,43 @@ const labelStyle = computed(() => {
         <!-- 水平方向 -->
         <template v-if="parentDirection === 'horizontal'">
             <div
-                :class="cn(
-                    'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal',
-                    props.class,
-                )"
-                :style="labelStyle"
+                v-if="span > 1"
+                :class="cn('flex border-b-3 border-brutal', props.class)"
+                :style="{ gridColumn: `span ${span * 2}` }"
             >
-                <slot name="label">
-                    {{ label }}
-                </slot>
+                <div
+                    class="flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-r-3 border-brutal"
+                    :style="labelStyle"
+                >
+                    <slot name="label">
+                        {{ label }}
+                    </slot>
+                </div>
+                <div class="flex-1 min-w-0 flex items-center px-3 py-2 text-brutal-fg">
+                    <slot />
+                </div>
             </div>
-            <div
-                :class="cn(
-                    'flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
-                    props.class,
-                )"
-                :style="span > 1 ? { gridColumn: `span ${span * 2 - 1}` } : undefined"
-            >
-                <slot />
-            </div>
+            <template v-else>
+                <div
+                    :class="cn(
+                        'flex items-center px-3 py-2 bg-brutal-muted/30 font-medium text-brutal-fg border-b-3 border-brutal',
+                        props.class,
+                    )"
+                    :style="labelStyle"
+                >
+                    <slot name="label">
+                        {{ label }}
+                    </slot>
+                </div>
+                <div
+                    :class="cn(
+                        'flex items-center px-3 py-2 text-brutal-fg border-b-3 border-brutal',
+                        props.class,
+                    )"
+                >
+                    <slot />
+                </div>
+            </template>
         </template>
 
         <!-- 垂直方向 -->
