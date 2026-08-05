@@ -23,6 +23,9 @@
                 "postcss.config.*"
             ]
         },
+        "brutx-registry-vue#build": {
+            "cache": false
+        },
         "docs#build": {
             "dependsOn": ["^build"],
             "outputs": [
