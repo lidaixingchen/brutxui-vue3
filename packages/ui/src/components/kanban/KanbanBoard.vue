@@ -259,8 +259,9 @@ function onColumnDrop(e: DragEvent, toColumnId: string) {
 
     const newColumns = [...columns.value];
     const [moved] = newColumns.splice(fromIndex, 1);
-    const adjustedIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
-    newColumns.splice(adjustedIndex, 0, moved);
+    // 统一为「移动到目标下标」的标准数组移动语义：移除后插入到 toIndex，
+    // 保证 emit 的 toIndex 与界面实际落点一致，且与 moveColumn 命令式 API 的语义统一。
+    newColumns.splice(toIndex, 0, moved);
 
     emit('update:modelValue', newColumns);
     emit('column-move', fromId, fromIndex, toIndex);
