@@ -53,8 +53,15 @@ const props = withDefaults(defineProps<SliderProps>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: number[]] }>()
 
+// 归一化 modelValue：空数组/undefined 时回退为 [min]，保证 thumb 数量、SliderRoot 与对外暴露值一致
+const effectiveModelValue = computed<number[]>(() =>
+    props.modelValue && props.modelValue.length > 0 ? props.modelValue : [props.min]
+)
+
+const thumbCount = computed(() => effectiveModelValue.value.length)
+
 defineExpose({
-    currentValue: computed(() => props.modelValue),
+    currentValue: effectiveModelValue,
     setValue: (value: number[]) => emit('update:modelValue', value),
 })
 
@@ -86,13 +93,6 @@ const markClasses = computed(() =>
 const tooltipClasses = computed(() =>
     cn(sliderTooltipVariants())
 )
-
-// 归一化 modelValue：空数组/undefined 时回退为 [min]，保证 thumb 数量与 SliderRoot 内部 modelValue 一致
-const effectiveModelValue = computed<number[]>(() =>
-    props.modelValue && props.modelValue.length > 0 ? props.modelValue : [props.min]
-)
-
-const thumbCount = computed(() => effectiveModelValue.value.length)
 
 function valueToPercentage(value: number): number {
     const range = props.max - props.min

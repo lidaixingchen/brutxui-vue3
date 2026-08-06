@@ -293,4 +293,36 @@ describe('Slider', () => {
             expect(range).toBeDefined()
         })
     })
+
+    describe('currentValue normalization', () => {
+        it('renders single thumb and exposes [min] when modelValue is empty array', () => {
+            const wrapper = mount(Slider, {
+                props: { modelValue: [], min: 10, max: 100 },
+                attachTo: document.body,
+            })
+
+            expect(wrapper.findAll('[role="slider"]').length).toBe(1)
+            expect(wrapper.vm.currentValue).toEqual([10])
+        })
+
+        it('renders single thumb and exposes [min] when modelValue is not provided', () => {
+            const wrapper = mount(Slider, {
+                props: { min: 10, max: 100 },
+                attachTo: document.body,
+            })
+
+            expect(wrapper.findAll('[role="slider"]').length).toBe(1)
+            expect(wrapper.vm.currentValue).toEqual([10])
+        })
+
+        it('exposes effective modelValue when modelValue is provided', () => {
+            const wrapper = mount(Slider, {
+                props: { modelValue: [25, 75], min: 0, max: 100 },
+                attachTo: document.body,
+            })
+
+            expect(wrapper.findAll('[role="slider"]').length).toBe(2)
+            expect(wrapper.vm.currentValue).toEqual([25, 75])
+        })
+    })
 })
