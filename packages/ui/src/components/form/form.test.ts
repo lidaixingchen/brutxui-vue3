@@ -437,9 +437,33 @@ describe('Form', () => {
         it('clearValidate clears all field errors when no fields specified', async () => {
             const wrapper = mount(Form)
 
-            // clearValidate without arguments should call resetForm with empty errors
+            // clearValidate without arguments should only clear errors, not reset values
             await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate()
             expect(wrapper.find('form').exists()).toBe(true)
+        })
+
+        it('clearValidate without arguments does not reset form values', async () => {
+            const wrapper = mountFormWithField({
+                initialValues: { name: 'original' },
+                validationSchema: {
+                    name: (value: unknown) => {
+                        if (!value) return 'Name is required'
+                        return true
+                    },
+                },
+            })
+
+            // 先产生用户输入
+            await wrapper.find('input').setValue('changed')
+            await flushPromises()
+            expect((wrapper.find('input').element as HTMLInputElement).value).toBe('changed')
+
+            // 调用 clearValidate：仅清除验证状态，不应把表单值重置回挂载时的 initialValues
+            await ((wrapper.vm as unknown) as Record<string, Function>).clearValidate()
+            await flushPromises()
+
+            // 表单值应保持用户输入，而不是被重置为 'original'
+            expect((wrapper.find('input').element as HTMLInputElement).value).toBe('changed')
         })
 
         it('clearValidate clears specific field errors', async () => {
