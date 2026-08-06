@@ -38,7 +38,11 @@ const internalValue = ref<string>('')
 const activeValue = computed<string | undefined>(() => {
     if (props.modelValue !== undefined) return props.modelValue
     if (props.tabs && props.tabs.length > 0) {
-        return internalValue.value || props.tabs[0].value
+        // 非受控模式下校验 internalValue 是否仍存在于最新 tabs 中，
+        // 若父组件已删除/替换当前选中项，则回退到首项，避免激活不存在的 tab
+        const current = internalValue.value
+        const exists = current !== '' && props.tabs.some(tab => tab.value === current)
+        return exists ? current : props.tabs[0].value
     }
     return undefined
 })
