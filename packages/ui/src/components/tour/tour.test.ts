@@ -242,4 +242,30 @@ describe('Tour.vue', () => {
         await nextTick()
         await nextTick()
     })
+
+    it('clamps currentStep when steps shrink below the active index', async () => {
+        const steps: TourStep[] = [
+            { target: `#${TARGET_ID_1}`, title: 'Step 1 Title' },
+            { target: `#${TARGET_ID_2}`, title: 'Step 2 Title' },
+        ]
+        const wrapper = mount(Tour, {
+            props: {
+                steps,
+                current: 1,
+                open: true,
+            },
+            global: { provide: localeProvide },
+        })
+
+        await nextTick()
+
+        // 异步填充后 steps 缩短为 1，currentStep 越界应被钳制回 0 并 emit
+        await wrapper.setProps({ steps: [{ target: `#${TARGET_ID_1}`, title: 'Step 1 Title' }] })
+        await nextTick()
+        await nextTick()
+
+        const currentEmits = wrapper.emitted('update:current')
+        expect(currentEmits).toBeDefined()
+        expect(currentEmits ? currentEmits.at(-1) : []).toEqual([0])
+    })
 })

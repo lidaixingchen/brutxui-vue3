@@ -358,6 +358,11 @@ watch(
             cleanupResizeObserver()
             return
         }
+        // steps 缩短时钳制 currentStep，避免越界后既不能前进也不能完成（卡死）
+        if (props.steps.length > 0 && currentStep.value > props.steps.length - 1) {
+            currentStep.value = props.steps.length - 1
+            return
+        }
         await nextTick()
         // 卸载发生在 await 期间时停止后续操作，避免泄漏 ResizeObserver
         if (isUnmounted) return
