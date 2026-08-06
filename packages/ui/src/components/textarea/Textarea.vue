@@ -71,16 +71,21 @@ defineExpose({
     select: () => textareaRef.value?.select(),
 })
 
-// 输入处理（IME 组合期间不 emit）
+// 输入处理：IME 组合期间不 emit；组合结束后浏览器会再触发一次携带最终值的 input 事件，
+// 由它唯一一次 emit，避免与 compositionend 重复
 function handleInput(event: Event) {
-    if (isComposing.value) return
+    if (isComposing.value || (event as InputEvent).isComposing) return
     emit('update:modelValue', (event.target as HTMLTextAreaElement).value)
 }
 
-// IME 组合结束时 emit 最终值
-function handleCompositionEnd(event: CompositionEvent) {
+// IME 组合结束：仅复位组合状态，最终值交由组合结束后的 input 事件 emit
+function handleCompositionEnd() {
     isComposing.value = false
-    emit('update:modelValue', (event.target as HTMLTextAreaElement).value)
+}
+
+// IME 组合取消（如按 Esc 取消组合）：复位组合状态，避免后续 input 事件被永久忽略
+function handleCompositionCancel() {
+    isComposing.value = false
 }
 </script>
 
@@ -101,6 +106,7 @@ function handleCompositionEnd(event: CompositionEvent) {
             :aria-required="ariaRequired"
             @compositionstart="isComposing = true"
             @compositionend="handleCompositionEnd"
+            @compositioncancel="handleCompositionCancel"
             @input="handleInput"
         />
         <p
