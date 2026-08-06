@@ -3,7 +3,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:6f5a7cdc-45a9-4884-9463-b5bcdacf98b1",
+  "serialNumber": "urn:uuid:20d6791b-ad7a-420a-9ff6-3f480e154afc",
   "metadata": {
     "timestamp": null,
     "tools": [
@@ -695,7 +695,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1def98af94280cb7197efade3b5c1512f0166f93b9121640c900160885cc4d06"
+          "content": "11792d42852003cf6bc670a222bcf9ac8d80bc777f0a69b459bfedad1a3388af"
         }
       ],
       "dependencies": [
@@ -765,7 +765,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "848438638a43150c0f691d0fb3e3c08a07175e23e0eb111104387234af56d42f"
+          "content": "6fcb7bf7547f28d0c36b9c6eea9757d3d0915272140ccfb263a4b1aa04b8fca7"
         }
       ],
       "dependencies": [
@@ -1579,6 +1579,6 @@
       "name": "vee-validate"
     }
   ],
-  "integrity": "sha256-b0d0ab69e369bf9f7206db084c442c7b665f4e2c1ca30e5d304f9d6259994b1e",
-  "manifestIntegrity": "edd8c4091773580334645669a9b6d5be6b823dfa0eb1ac5990590624dfee6bff"
+  "integrity": "sha256-79ce2947ce92169081bcd6c6f5e85cef34bc2573a7aaaa47e43c9b6ab37856bb",
+  "manifestIntegrity": "d7037dac5e0c89ad70669720a35a8474230e8469cca9f7d144dcb06304bea491"
 }

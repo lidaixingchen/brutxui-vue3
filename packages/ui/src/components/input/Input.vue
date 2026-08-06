@@ -103,6 +103,8 @@ const emit = defineEmits<{
 const slots = useSlots()
 const inputRef = ref<HTMLInputElement | null>(null)
 const isComposing = ref(false)
+// IME 组合结束兜底 emit 后，用于跳过浏览器随后触发的那次携带相同值的 input 事件，避免重复 emit
+let skipNextInput = false
 const passwordVisible = ref(false)
 
 const { t } = useLocale()
@@ -173,16 +175,30 @@ function handleClear(e: MouseEvent) {
     handleClearEvent(e)
 }
 
-// 输入处理（IME 组合期间不 emit）
+// 输入处理：IME 组合期间不 emit；组合结束后浏览器再触发的 input 事件由 skipNextInput 拦截去重
 function handleInput(event: Event) {
-    if (isComposing.value) return
+    if (isComposing.value || (event as InputEvent).isComposing) return
+    if (skipNextInput) {
+        // 跳过 compositionend 兜底 emit 之后那次携带相同值的重复 input
+        skipNextInput = false
+        return
+    }
     emit('update:modelValue', (event.target as HTMLInputElement).value)
 }
 
-// IME 组合结束时 emit 最终值
+// IME 组合结束：复位组合状态并兜底 emit 最终值。
+// 部分浏览器/输入法在 compositionend 之后不再触发携带最终值的 input 事件，此处兜底保证值不丢；
+// 若随后仍触发 input，则由 skipNextInput 拦截去重
 function handleCompositionEnd(event: CompositionEvent) {
     isComposing.value = false
     emit('update:modelValue', (event.target as HTMLInputElement).value)
+    skipNextInput = true
+}
+
+// IME 组合取消（如按 Esc 取消组合）：复位组合状态，避免后续 input 事件被永久忽略；
+// 取消时无最终值，不触发兜底 emit，skipNextInput 保持 false 以确保后续 input 正常 emit
+function handleCompositionCancel() {
+    isComposing.value = false
 }
 
 defineExpose({
@@ -237,6 +253,7 @@ defineExpose({
                     :aria-required="ariaRequired"
                     @compositionstart="isComposing = true"
                     @compositionend="handleCompositionEnd"
+                    @compositioncancel="handleCompositionCancel"
                     @input="handleInput"
                 >
 
