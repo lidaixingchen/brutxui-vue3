@@ -156,4 +156,68 @@ describe('Transfer', () => {
         expect(wrapper.text()).toContain('Item 3')
         expect(wrapper.text()).not.toContain('Item 1')
     })
+
+    it('clears left checked residue when a selected item becomes disabled', async () => {
+        const wrapper = mount(Transfer, {
+            props: {
+                data: [
+                    { key: 1, label: 'Item 1' },
+                    { key: 2, label: 'Item 2' },
+                ],
+                modelValue: [],
+            },
+            attachTo: document.body
+        })
+
+        // 选中 Item 1
+        const items = wrapper.findAll('.cursor-pointer')
+        const item1 = items.find(w => w.text().includes('Item 1'))
+        await item1!.trigger('click')
+        expect(wrapper.text()).toContain('1/2')
+
+        // 数据更新使 Item 1 变为 disabled（选中态残留，keysToMove 会把它过滤掉）
+        await wrapper.setProps({
+            data: [
+                { key: 1, label: 'Item 1', disabled: true },
+                { key: 2, label: 'Item 2' },
+            ],
+        })
+
+        // 点击右移：keysToMove 为空，但整个面板选中态应被清空
+        const buttons = wrapper.findAllComponents(Button)
+        await buttons[0].trigger('click')
+        expect(wrapper.text()).toContain('0/2')
+    })
+
+    it('clears right checked residue when a selected item becomes disabled', async () => {
+        const wrapper = mount(Transfer, {
+            props: {
+                data: [
+                    { key: 1, label: 'Item 1' },
+                    { key: 2, label: 'Item 2' },
+                ],
+                modelValue: [1, 2],
+            },
+            attachTo: document.body
+        })
+
+        // 右侧面板选中 Item 1
+        const items = wrapper.findAll('.cursor-pointer')
+        const item1 = items.find(w => w.text().includes('Item 1'))
+        await item1!.trigger('click')
+        expect(wrapper.text()).toContain('1/2')
+
+        // Item 1 变为 disabled
+        await wrapper.setProps({
+            data: [
+                { key: 1, label: 'Item 1', disabled: true },
+                { key: 2, label: 'Item 2' },
+            ],
+        })
+
+        // 点击左移：keysToMove 为空，但右侧选中态应被清空
+        const buttons = wrapper.findAllComponents(Button)
+        await buttons[1].trigger('click')
+        expect(wrapper.text()).toContain('0/2')
+    })
 })
