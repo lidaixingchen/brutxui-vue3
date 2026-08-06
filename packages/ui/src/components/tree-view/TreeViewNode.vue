@@ -162,6 +162,9 @@ function handleCheckboxUpdate() {
 }
 
 const handleKeydown = (e: KeyboardEvent) => {
+    // 键盘事件只由焦点元素自身处理：Checkbox / 重试按钮等子组件的按键会冒泡到 treeitem，
+    // 若在此一并处理会导致 check/toggle 与子组件自身行为重复触发（如 Checkbox 的 Space 切换被二次拦截）。
+    if (e.target !== e.currentTarget) return;
     switch (e.key) {
         case ' ':
             e.preventDefault();

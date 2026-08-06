@@ -67,12 +67,19 @@ function handleClick() {
     }
 }
 
+function handleFocus() {
+    // 禁用节点不进焦点序列（roving tabindex），点击后也不应获得焦点资格
+    if (props.node.disabled) return
+    emit('focus', props.node.id)
+}
+
 function getVisibleTreeItems(): HTMLElement[] {
     const doc = getDocument()
     if (!doc) return []
     const tree = doc.activeElement?.closest('[role="tree"]')
     if (!tree) return []
     return Array.from(tree.querySelectorAll<HTMLElement>('[role="treeitem"]'))
+        .filter((item) => item.getAttribute('aria-disabled') !== 'true')
 }
 
 function focusAdjacent(direction: -1 | 1) {
@@ -114,7 +121,8 @@ function focusFirstChild() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-    if (props.node.disabled) return
+    // 禁用节点仅拦截 Enter/Space 触发类按键，导航类按键（方向键/Home/End）仍可移走焦点
+    if (props.node.disabled && (e.key === 'Enter' || e.key === ' ')) return
     switch (e.key) {
         case 'Enter':
         case ' ':
@@ -164,11 +172,12 @@ function handleKeydown(e: KeyboardEvent) {
 <template>
     <div
         role="treeitem"
-        :tabindex="focusedId === node.id ? 0 : -1"
+        :tabindex="!node.disabled && focusedId === node.id ? 0 : -1"
         :aria-expanded="!isLeaf ? isExpanded : undefined"
         :aria-controls="!isLeaf ? contentId : undefined"
         :aria-selected="isSelected"
-        @focus="emit('focus', node.id)"
+        :aria-disabled="node.disabled ? true : undefined"
+        @focus="handleFocus"
         @keydown="handleKeydown"
     >
         <div

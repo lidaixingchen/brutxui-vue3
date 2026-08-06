@@ -196,6 +196,40 @@ const filteredNodes = computed(() => {
     return filterTree(props.nodes, searchQuery.value)
 })
 
+// 保存搜索前的展开状态，搜索结束后恢复
+let preSearchExpanded: Set<string> | null = null
+
+// 收集所有命中节点的祖先 id，搜索时自动展开这些祖先，否则命中节点仍被折叠祖先遮住、UI 上不可见
+function collectMatchedAncestors(
+    nodes: TreeNode[],
+    lowerQuery: string,
+    idsToExpand: Set<string>,
+    ancestorIds: string[]
+): void {
+    for (const node of nodes) {
+        if (node.label.toLowerCase().includes(lowerQuery) && ancestorIds.length > 0) {
+            ancestorIds.forEach((id) => idsToExpand.add(id))
+        }
+        if (node.children?.length) {
+            collectMatchedAncestors(node.children, lowerQuery, idsToExpand, [...ancestorIds, node.id])
+        }
+    }
+}
+
+watch(searchQuery, (query) => {
+    if (query) {
+        if (preSearchExpanded === null) {
+            preSearchExpanded = new Set(expandedIds.value)
+        }
+        const next = new Set(expandedIds.value)
+        collectMatchedAncestors(props.nodes, query.toLowerCase(), next, [])
+        expandedIds.value = next
+    } else if (preSearchExpanded !== null) {
+        expandedIds.value = new Set(preSearchExpanded)
+        preSearchExpanded = null
+    }
+})
+
 // 更新焦点节点当搜索结果变化时
 watch(filteredNodes, (nodes) => {
     if (open.value && focusedId.value) {

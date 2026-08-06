@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, shallowRef, computed, watch, provide, getCurrentInstance, type Ref, type ComputedRef } from 'vue';
+import { ref, shallowRef, computed, watch, provide, type Ref, type ComputedRef } from 'vue';
 import { getDocument } from '@/lib/env';
 import { cn } from '@/lib/utils';
 import TreeViewNode from './TreeViewNode.vue';
@@ -90,13 +90,17 @@ const { t } = useLocale();
 const treeRootRef = ref<HTMLDivElement | null>(null);
 
 const localNodes = ref<TreeNode[]>([]);
-let isUpdatingInternally = false;
+// 最近一次 emit 出去的 localNodes 引用。getCurrentInstance() 在事件处理器与 await 之后会返回 null，
+// 无法在 emitNodesUpdate 内动态探测监听器；改为引用比较：父组件通过 v-model:nodes 把该值原样回写时
+// 引用相同即判定为“回写”，跳过重建 localNodes，避免懒加载 await 期间持有的 node 引用变成游离对象，
+// 同时父组件“只监听不回写”时不会残留标志吞掉后续外部 props.nodes 变更。
+let lastEmittedNodes: TreeNode[] | null = null;
 
 watch(
     () => props.nodes,
     (newVal) => {
-        if (isUpdatingInternally) {
-            isUpdatingInternally = false;
+        if (lastEmittedNodes !== null && newVal === lastEmittedNodes) {
+            lastEmittedNodes = null;
             return;
         }
         localNodes.value = cloneTree(newVal);
@@ -105,12 +109,8 @@ watch(
 );
 
 function emitNodesUpdate() {
-    const instance = getCurrentInstance();
-    const hasListener = !!instance?.vnode.props?.['onUpdate:nodes'];
-    if (hasListener) {
-        isUpdatingInternally = true;
-    }
     emit('update:nodes', localNodes.value);
+    lastEmittedNodes = localNodes.value;
 }
 
 // 使用 shallowRef 避免对 Set 进行深层响应式转换
