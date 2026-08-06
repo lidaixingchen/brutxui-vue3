@@ -400,6 +400,7 @@ export interface CheckboxLocale {
 
 export interface TagsInputLocale {
     label: string
+    delete: string
 }
 
 export interface BadgeLocale {

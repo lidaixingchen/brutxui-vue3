@@ -355,6 +355,7 @@ export const zhCN: Locale = {
     },
     tagsInput: {
         label: '标签输入',
+        delete: '删除标签',
     },
     badge: {
         close: '关闭',

@@ -4,6 +4,8 @@ import TagsInputInput from './TagsInputInput.vue'
 import TagsInputItem from './TagsInputItem.vue'
 import TagsInputItemText from './TagsInputItemText.vue'
 import TagsInputItemDelete from './TagsInputItemDelete.vue'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
 const primitiveStub = {
     template: '<div><slot /></div>',
@@ -248,9 +250,19 @@ describe('TagsInputItemDelete', () => {
         expect(wrapper.classes()).toContain('custom-delete')
     })
 
-    it('provides a default aria-label on the delete button', () => {
+    it('provides a default aria-label from locale on the delete button', () => {
         const wrapper = mount(TagsInputItemDelete, {
             global: { stubs: { TagsInputItemDelete: primitiveStub } },
+        })
+        expect(wrapper.attributes('aria-label')).toBe('删除标签')
+    })
+
+    it('uses the en locale default aria-label when English locale is injected', () => {
+        const wrapper = mount(TagsInputItemDelete, {
+            global: {
+                stubs: { TagsInputItemDelete: primitiveStub },
+                provide: { [LOCALE_INJECTION_KEY]: en },
+            },
         })
         expect(wrapper.attributes('aria-label')).toBe('Delete tag')
     })

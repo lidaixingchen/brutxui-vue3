@@ -355,6 +355,7 @@ export const en: Locale = {
     },
     tagsInput: {
         label: 'Tags input',
+        delete: 'Delete tag',
     },
     badge: {
         close: 'Close',

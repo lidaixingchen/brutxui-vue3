@@ -4,11 +4,16 @@ import { computed } from 'vue'
 import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
+import { useLocale } from '@/composables/useLocale'
 
 const props = withDefaults(
     defineProps<TagsInputItemDeleteProps & { class?: string; ariaLabel?: string }>(),
-    { class: undefined, ariaLabel: 'Delete tag' }
+    { class: undefined, ariaLabel: undefined }
 )
+
+const { t } = useLocale()
+
+const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('tagsInput.delete'))
 
 const delegatedProps = computed(() => {
     const { class: _, ariaLabel: _ariaLabel, ...delegated } = props
@@ -25,7 +30,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <TagsInputItemDelete v-bind="delegatedProps" :aria-label="ariaLabel" :class="classes">
+    <TagsInputItemDelete v-bind="delegatedProps" :aria-label="resolvedAriaLabel" :class="classes">
         <slot>
             <X class="h-3.5 w-3.5 stroke-[3]" />
         </slot>
