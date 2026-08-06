@@ -219,18 +219,27 @@ function initObserver() {
 
     observer = new MutationObserverCtor((mutations) => {
         for (const mutation of mutations) {
+            const watermark = watermarkRef.value
             if (mutation.type === 'childList') {
                 const removedNodes = Array.from(mutation.removedNodes)
-                if (removedNodes.includes(watermarkRef.value!)) {
+                // 覆盖三种绕过场景：
+                // 1) watermarkRef 自身被删除
+                // 2) 直接删除包裹层（display: contents 的 wrapper），removedNodes 只含 wrapper
+                // 3) 水印整体被移出容器（contains 判空兜底）
+                if (
+                    (watermark && !containerRef.value?.contains(watermark)) ||
+                    (watermark && removedNodes.some((node) => node.contains(watermark)))
+                ) {
                     recreateWatermark()
                     break
                 }
             }
             if (
-                mutation.type === 'attributes' && 
-                mutation.target === watermarkRef.value && 
+                mutation.type === 'attributes' &&
+                (mutation.target === watermark || mutation.target === watermark?.parentElement) &&
                 (mutation.attributeName === 'style' || mutation.attributeName === 'class')
             ) {
+                // watermarkRef 自身或包裹层（wrapper）的 style/class 被篡改（如 display:none）也触发重建
                 recreateWatermark()
                 break
             }

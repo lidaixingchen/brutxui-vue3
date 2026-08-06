@@ -144,7 +144,8 @@ const addToRight = () => {
     const newValue = [...props.modelValue, ...keysToMove]
     emit('update:modelValue', newValue)
     emit('change', newValue, 'right', keysToMove)
-    removeLeftCheckedKeys(keysToMove)
+    // 清除整个面板选中态：选中后才变为 disabled 的键无法进入 keysToMove，需一并清理，否则计数虚高
+    removeLeftCheckedKeys(leftChecked.value)
 }
 
 // 目标列表 -> 源列表 (右 -> 左)
@@ -157,7 +158,8 @@ const addToLeft = () => {
     const newValue = props.modelValue.filter(key => !keysToMove.includes(key))
     emit('update:modelValue', newValue)
     emit('change', newValue, 'left', keysToMove)
-    removeRightCheckedKeys(keysToMove)
+    // 同上：清除整个面板选中态，清理选中后才变为 disabled 的残留键
+    removeRightCheckedKeys(rightChecked.value)
 }
 </script>
 

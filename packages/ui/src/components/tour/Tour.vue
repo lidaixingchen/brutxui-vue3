@@ -352,7 +352,7 @@ const onScrollOrResize = (): void => {
 const { throttled: handleScrollOrResize } = useThrottle(onScrollOrResize, SCROLL_THROTTLE_MS)
 
 watch(
-    [isOpen, currentStep],
+    [isOpen, currentStep, () => props.steps],
     async ([newOpen]): Promise<void> => {
         if (!newOpen) {
             cleanupResizeObserver()

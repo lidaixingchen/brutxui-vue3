@@ -201,6 +201,7 @@ defineExpose({ scrollToIndex, measureElement, virtualizer: virtualizerRef })
                 v-for="virtualRow in virtualItems"
                 :key="Number(virtualRow.key)"
                 :ref="el => { if (el && props.dynamicHeight) measureElement(el) }"
+                :data-index="virtualRow.index"
                 :class="cn(
                     virtualScrollItemVariants({ variant: props.variant }),
                     props.variant === 'striped' && virtualRow.index % 2 === 1 && 'bg-brutal-muted/50'
