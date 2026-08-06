@@ -22,5 +22,5 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <Skeleton :variant="variant" :size="size" :class="classes" />
+    <Skeleton shape="circle" :variant="variant" :size="size" :class="classes" />
 </template>
