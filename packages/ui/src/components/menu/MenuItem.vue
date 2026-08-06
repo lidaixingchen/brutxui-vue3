@@ -31,6 +31,7 @@ if (!context) {
 interface BrutxSubMenuContext {
     registerChild: (index: string) => void
     unregisterChild: (index: string) => void
+    notifyItemSelected: () => void
 }
 const parentSubMenu = inject<BrutxSubMenuContext | null>('BrutxSubMenu', null)
 
@@ -63,6 +64,8 @@ const classes = computed(() => {
 function handleClick() {
     if (props.disabled) return
     context?.selectItem(props.index, props.route)
+    // 选中后通知直属父级 SubMenu 收起（水平模式生效）
+    parentSubMenu?.notifyItemSelected()
 }
 </script>
 

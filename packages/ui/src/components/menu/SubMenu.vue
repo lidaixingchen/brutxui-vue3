@@ -50,6 +50,8 @@ const isOpened = computed(() => {
 interface BrutxSubMenuContext {
     registerChild: (index: string) => void
     unregisterChild: (index: string) => void
+    /** 通知父级：某个子菜单项已被选中，用于收起水平模式的下拉面板 */
+    notifyItemSelected: () => void
 }
 const parentSubMenu = inject<BrutxSubMenuContext | null>('BrutxSubMenu', null)
 const childIndices = ref<Set<string>>(new Set())
@@ -74,9 +76,19 @@ function unregisterChild(idx: string) {
     }
 }
 
+function notifyItemSelected() {
+    if (!isVertical.value) {
+        // 点击固定打开的水平面板在选中菜单项后自动收起
+        isOpenClick.value = false
+    }
+    // 嵌套场景下沿 provide 链向上通知外层 SubMenu 一并收起
+    parentSubMenu?.notifyItemSelected()
+}
+
 provide('BrutxSubMenu', {
     registerChild,
     unregisterChild,
+    notifyItemSelected,
 })
 
 onMounted(() => {
@@ -86,6 +98,7 @@ onMounted(() => {
     context?.registerSubMenu(props.index, childIndices.value)
     if (hasDocument) {
         getDocument()?.addEventListener('click', handleDocumentClick)
+        getDocument()?.addEventListener('keydown', handleDocumentKeydown)
     }
 })
 
@@ -96,6 +109,7 @@ onUnmounted(() => {
     }
     if (hasDocument) {
         getDocument()?.removeEventListener('click', handleDocumentClick)
+        getDocument()?.removeEventListener('keydown', handleDocumentKeydown)
     }
 })
 
@@ -153,6 +167,15 @@ function handleDocumentClick(event: MouseEvent) {
     const target = event.target
     if (!(target instanceof Node)) return
     if (rootRef.value && !rootRef.value.contains(target)) {
+        isOpenClick.value = false
+    }
+}
+
+// 按 Escape 收起水平模式下点击固定打开的下拉面板
+function handleDocumentKeydown(event: KeyboardEvent) {
+    if (isVertical.value) return
+    if (!isOpenClick.value) return
+    if (event.key === 'Escape') {
         isOpenClick.value = false
     }
 }
