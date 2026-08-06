@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<UploadTriggerProps>(), {
 })
 
 const emit = defineEmits<{
-    select: [files: FileList, source: 'browse' | 'drop']
+    select: [files: File[], source: 'browse' | 'drop']
 }>()
 
 const isDragging = ref(false)
@@ -39,20 +39,26 @@ function triggerFileInput() {
 // 处理文件选择
 function handleFileChange(event: Event) {
     const target = event.target as HTMLInputElement
-    if (target.files && target.files.length > 0) {
-        emit('select', target.files, 'browse')
+    // target.files 是随 input 实时变化的 FileList，重置前先拷贝成数组；
+    // 否则消费方持有该引用稍后读取时，拿到的是被清空的空列表
+    const files = Array.from(target.files ?? [])
+    if (files.length > 0) {
+        emit('select', files, 'browse')
         target.value = '' // 重置 input
     }
 }
 
 // 拖拽处理
 function handleDragEnter(event: DragEvent) {
+    // drag=false 时不再绑定拖拽行为，保持浏览器默认拖放语义
+    if (!props.drag) return
     event.preventDefault()
     if (props.disabled) return
     isDragging.value = true
 }
 
 function handleDragLeave(event: DragEvent) {
+    if (!props.drag) return
     event.preventDefault()
     const el = event.currentTarget
     if (el instanceof HTMLElement) {
@@ -63,17 +69,20 @@ function handleDragLeave(event: DragEvent) {
 }
 
 function handleDragOver(event: DragEvent) {
+    if (!props.drag) return
     event.preventDefault()
 }
 
 function handleDrop(event: DragEvent) {
+    if (!props.drag) return
     event.preventDefault()
     isDragging.value = false
 
     if (props.disabled) return
 
-    const files = event.dataTransfer?.files
-    if (files && files.length > 0) {
+    // dataTransfer.files 同样是实时 FileList，拷贝成数组后再 emit
+    const files = Array.from(event.dataTransfer?.files ?? [])
+    if (files.length > 0) {
         emit('select', files, 'drop')
     }
 }

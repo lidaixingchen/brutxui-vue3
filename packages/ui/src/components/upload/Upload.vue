@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useUpload } from '@/composables/useUpload'
 import type { UploadFile, UploadError, UploadRequestOptions } from './upload-types'
@@ -260,6 +260,15 @@ async function handleFileRemove(file: UploadFile): Promise<void> {
         emit('file-remove', file)
     }
 }
+
+// 卸载时中止所有进行中的上传，避免 httpRequest 回调在组件销毁后触发
+onBeforeUnmount(() => {
+    for (const file of internalFileList.value) {
+        if (file.status === 'uploading') {
+            file.abortController?.abort()
+        }
+    }
+})
 
 // 暴露方法
 defineExpose({
