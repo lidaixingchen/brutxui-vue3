@@ -75,6 +75,15 @@ watch(currentStep, () => {
     stepErrors.value.delete(currentStep.value)
 })
 
+// steps 动态收窄（如父组件移除尾部步骤）时，将 currentStep 重新钳制到合法区间 [0, steps.length - 1]，
+// 与初始化钳制逻辑保持一致（steps 为空钳制为 0），保证模板 v-show 展示与步骤计数器一致
+watch(() => props.steps.length, (length) => {
+    currentStep.value = Math.min(
+        Math.max(currentStep.value, 0),
+        Math.max(length - 1, 0)
+    )
+})
+
 function validateCurrentStep(): boolean {
     if (!props.validateOnNext) return true
 

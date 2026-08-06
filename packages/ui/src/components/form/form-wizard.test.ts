@@ -220,4 +220,42 @@ describe('FormWizard', () => {
         expect(blockedAfter).toBeGreaterThan(blockedBefore)
         expect(stepChangeAfter).toBe(stepChangeBefore)
     })
+
+    describe('currentStep clamping', () => {
+        it('does not crash when steps is empty', () => {
+            const wrapper = mount(FormWizard, {
+                props: { steps: [] },
+                global: globalProvide,
+            })
+            expect(wrapper.find('[role="form"]').exists()).toBe(true)
+        })
+
+        it('clamps negative initialStep to zero', () => {
+            const wrapper = mount(FormWizard, {
+                props: { steps: testSteps, initialStep: -3 },
+                global: globalProvide,
+            })
+            expect(wrapper.text()).toContain('Step 1 of 3')
+        })
+
+        it('clamps out-of-bounds initialStep to last step', () => {
+            const wrapper = mount(FormWizard, {
+                props: { steps: testSteps, initialStep: 99 },
+                global: globalProvide,
+            })
+            expect(wrapper.text()).toContain('Step 3 of 3')
+        })
+
+        it('re-clamps currentStep when steps shrink dynamically', async () => {
+            const wrapper = mount(FormWizard, {
+                props: { steps: testSteps, initialStep: 2 },
+                global: globalProvide,
+            })
+            expect(wrapper.text()).toContain('Step 3 of 3')
+
+            // 动态收窄为 1 步：currentStep 应被 watch 重新钳制到 0
+            await wrapper.setProps({ steps: [testSteps[0]] })
+            expect(wrapper.text()).toContain('Step 1 of 1')
+        })
+    })
 })
