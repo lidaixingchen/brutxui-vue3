@@ -54,11 +54,14 @@ let animationFrame: number | null = null
 const currentFrequency = ref(props.frequency)
 
 function startAnimation() {
+    // 必须先停止旧循环：守卫可能提前 return，若 stopAnimation 在守卫之后，残留的 rAF
+    // 会继续运行，且 animationDuration<=0 时 `elapsed % animationDuration` 对 0 取模产生 NaN，
+    // 持续把 "NaN" 写入 DOM 且不自停
+    stopAnimation()
+
     // SSR 兼容性检查 + 动效降级
     if (!props.animated || !isClient || props.animationDuration <= 0) return
     if (prefersReducedMotion.value) return
-
-    stopAnimation()
 
     const startTime = performance.now()
     const baseFrequency = props.frequency
