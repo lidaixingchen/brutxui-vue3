@@ -41,8 +41,13 @@ const emit = defineEmits<{
     'step-click': [index: number];
 }>();
 
-const currentStep = computed(() => props.modelValue)
 const totalSteps = computed(() => props.steps.length)
+// 激活步骤索引：对 modelValue 做越界钳制，避免 steps 动态变化（如缩减）后索引越界，
+// 状态判定与导航均基于钳制后的值，防止全部判为 completed 或 emit 越界值
+const currentStep = computed(() => {
+    if (totalSteps.value === 0) return -1
+    return Math.min(Math.max(props.modelValue, 0), totalSteps.value - 1)
+})
 const isFirstStep = computed(() => currentStep.value === 0)
 const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
 
@@ -85,8 +90,8 @@ defineExpose({
 })
 
 function getState(index: number): StepperStepStatus {
-    if (index < props.modelValue) return 'completed';
-    if (index === props.modelValue) return 'active';
+    if (index < currentStep.value) return 'completed';
+    if (index === currentStep.value) return 'active';
     return 'upcoming';
 }
 
@@ -203,7 +208,7 @@ const connectorClasses = computed(() =>
             <div
                 :class="stepWrapClasses"
                 role="listitem"
-                :aria-current="index === modelValue ? 'step' : undefined"
+                :aria-current="index === currentStep ? 'step' : undefined"
             >
                 <!-- Horizontal: dot row with connectors -->
                 <div
@@ -278,7 +283,7 @@ const connectorClasses = computed(() =>
                             {{ step.description }}
                         </p>
                         <!-- Content slot for active vertical step -->
-                        <div v-if="index === modelValue" class="mt-3">
+                        <div v-if="index === currentStep" class="mt-3">
                             <slot :name="`step-${step.id}`" />
                         </div>
                     </div>
