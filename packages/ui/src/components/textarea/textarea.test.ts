@@ -94,4 +94,50 @@ describe('Textarea', () => {
         expect(typeof wrapper.vm.blur).toBe('function')
         expect(typeof wrapper.vm.select).toBe('function')
     })
+
+    // 新增测试：IME 组合处理
+    describe('IME composition', () => {
+        it('does not emit update:modelValue while composing', async () => {
+            const wrapper = mount(Textarea, {
+                props: { modelValue: '' },
+            })
+
+            await wrapper.find('textarea').trigger('compositionstart')
+            // 组合期间的 input 事件应被守卫拦截，不 emit
+            await wrapper.find('textarea').setValue('中')
+
+            expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        })
+
+        it('emits final value once when compositionend is followed by a duplicate input', async () => {
+            const wrapper = mount(Textarea, {
+                props: { modelValue: '' },
+            })
+
+            await wrapper.find('textarea').trigger('compositionstart')
+            await wrapper.find('textarea').setValue('中')
+            await wrapper.find('textarea').setValue('中文')
+            // compositionend 兜底 emit 最终值
+            await wrapper.find('textarea').trigger('compositionend')
+            // 浏览器随后再次触发携带相同值的 input，应被 skipNextInput 去重，不再重复 emit
+            await wrapper.find('textarea').trigger('input')
+
+            const emitted = wrapper.emitted('update:modelValue')
+            expect(emitted).toHaveLength(1)
+            expect(emitted![0]).toEqual(['中文'])
+        })
+
+        it('restores input emission after compositioncancel', async () => {
+            const wrapper = mount(Textarea, {
+                props: { modelValue: '' },
+            })
+
+            await wrapper.find('textarea').trigger('compositionstart')
+            await wrapper.find('textarea').trigger('compositioncancel')
+            // 取消组合后 isComposing 已复位，后续普通 input 应正常 emit
+            await wrapper.find('textarea').setValue('hello')
+
+            expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])
+        })
+    })
 })
