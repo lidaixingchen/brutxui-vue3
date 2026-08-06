@@ -2,7 +2,7 @@
 import { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
-import { hasIntersectionObserver, getIntersectionObserverCtor } from '@/lib/env'
+import { hasIntersectionObserver, getIntersectionObserverCtor, getViewportSize } from '@/lib/env'
 
 interface InfiniteScrollProps {
     /** 触发距离阈值 (px) */
@@ -96,6 +96,29 @@ function cleanupObserver() {
 // 重置加载状态（供外部调用）
 function resetLoading() {
     isLoading.value = false
+
+    // 清理未决的防抖定时器，避免与新触发的加载定时器叠加
+    if (loadTimer.value) {
+        clearTimeout(loadTimer.value)
+        loadTimer.value = null
+    }
+
+    // IntersectionObserver 只在交叉状态变化时回调：若加载指示器高度不足以把哨兵
+    // 推出（含 distance 阈值扩展的）视口，resetLoading 后哨兵仍 intersecting，
+    // 不会产生新回调导致无限滚动停滞，需按 rootMargin 同口径主动复查哨兵位置。
+    if (sentinelRef.value && !props.disabled) {
+        const { width, height } = getViewportSize()
+        const threshold = props.distance
+        const rect = sentinelRef.value.getBoundingClientRect()
+        const isWithinViewport =
+            rect.top <= height + threshold &&
+            rect.bottom >= -threshold &&
+            rect.left <= width + threshold &&
+            rect.right >= -threshold
+        if (isWithinViewport) {
+            triggerLoad()
+        }
+    }
 }
 
 // 监听 disabled 变化
@@ -107,6 +130,9 @@ watch(() => props.disabled, (disabled) => {
             loadTimer.value = null
         }
     } else {
+        // 重新启用时复位 isLoading：禁用期间残留的 true 会拦截本次 setupObserver 产生的初始回调，
+        // 导致组件一直无法加载，直到外部手动 resetLoading
+        isLoading.value = false
         const observerResult = setupObserver()
         if (props.immediate || observerResult === 'unsupported') {
             triggerLoad()
