@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, ref, type ComputedRef } from 'vue'
+import { computed, provide, ref, watch, type ComputedRef } from 'vue'
 import { TabsRoot } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { useLocale } from '@/composables/useLocale'
@@ -45,6 +45,18 @@ const activeValue = computed<string | undefined>(() => {
         return exists ? current : props.tabs[0].value
     }
     return undefined
+})
+
+// 非受控模式下，当 tabs 变化导致当前 internalValue 已不存在时，把 internalValue 同步为首项（或空串），
+// 否则 activeValue 仅计算回退、internalValue 仍保留旧值，后续重新加入该 value 时会在无用户操作下自动跳回旧选中项。
+// 受控分支（modelValue 优先）不写 internalValue，避免干扰 v-model 场景
+watch(() => props.tabs, (tabs) => {
+    if (props.modelValue !== undefined) return
+    const current = internalValue.value
+    const exists = current !== '' && !!tabs && tabs.some(tab => tab.value === current)
+    if (!exists) {
+        internalValue.value = tabs?.[0]?.value ?? ''
+    }
 })
 
 function handleUpdateModelValue(value: string) {

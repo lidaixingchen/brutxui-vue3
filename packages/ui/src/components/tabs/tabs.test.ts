@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import Tabs from './Tabs.vue'
 import TabsList from './TabsList.vue'
 import TabsTrigger from './TabsTrigger.vue'
@@ -225,6 +226,28 @@ describe('Tabs (tabs prop array mode)', () => {
         root.vm.$emit('update:modelValue', 'features')
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
         expect(wrapper.emitted('update:modelValue')![0]).toEqual(['features'])
+    })
+
+    it('falls back to first tab and syncs internalValue when active tab is removed', async () => {
+        const wrapper = mount(Tabs, {
+            props: { tabs: mockTabs },
+            global: { stubs: tabsGlobalStubs },
+        })
+        const root = () => wrapper.findComponent({ name: 'TabsRoot' })
+
+        // 非受控模式：先选中第二个 tab
+        root().vm.$emit('update:modelValue', 'features')
+        await nextTick()
+        expect(root().props('modelValue')).toBe('features')
+
+        // 删除当前选中 tab：activeValue 应回退到首项
+        const withoutFeatures = mockTabs.filter(tab => tab.value !== 'features')
+        await wrapper.setProps({ tabs: withoutFeatures })
+        expect(root().props('modelValue')).toBe('overview')
+
+        // 重新加入被删除的 tab：activeValue 应保持首项，internalValue 已同步，不再自动跳回旧选中项
+        await wrapper.setProps({ tabs: mockTabs })
+        expect(root().props('modelValue')).toBe('overview')
     })
 })
 
