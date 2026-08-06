@@ -138,4 +138,49 @@ describe('HardcoreInput', () => {
         )
         expect(typeCalls.length).toBeLessThanOrEqual(3)
     })
+
+    describe('IME composition', () => {
+        it('does not emit update:modelValue while composing', async () => {
+            const wrapper = mount(HardcoreInput, {
+                props: { modelValue: '' },
+            })
+
+            await wrapper.find('input').trigger('compositionstart')
+            // 组合期间的 input 事件应被守卫拦截，不 emit
+            await wrapper.find('input').setValue('中')
+
+            expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        })
+
+        it('emits final value once when compositionend is followed by a duplicate input', async () => {
+            const wrapper = mount(HardcoreInput, {
+                props: { modelValue: '' },
+            })
+
+            await wrapper.find('input').trigger('compositionstart')
+            await wrapper.find('input').setValue('中')
+            await wrapper.find('input').setValue('中文')
+            // compositionend 兜底 emit 最终值
+            await wrapper.find('input').trigger('compositionend')
+            // 浏览器随后再次触发携带相同值的 input，应被 skipNextInput 去重，不再重复 emit
+            await wrapper.find('input').trigger('input')
+
+            const emitted = wrapper.emitted('update:modelValue')
+            expect(emitted).toHaveLength(1)
+            expect(emitted![0]).toEqual(['中文'])
+        })
+
+        it('restores input emission after compositioncancel', async () => {
+            const wrapper = mount(HardcoreInput, {
+                props: { modelValue: '' },
+            })
+
+            await wrapper.find('input').trigger('compositionstart')
+            await wrapper.find('input').trigger('compositioncancel')
+            // 取消组合后 isComposing 已复位，后续普通 input 应正常 emit
+            await wrapper.find('input').setValue('hello')
+
+            expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])
+        })
+    })
 })
