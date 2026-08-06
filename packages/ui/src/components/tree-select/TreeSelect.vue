@@ -200,6 +200,7 @@ const filteredNodes = computed(() => {
 let preSearchExpanded: Set<string> | null = null
 
 // 收集所有命中节点的祖先 id，搜索时自动展开这些祖先，否则命中节点仍被折叠祖先遮住、UI 上不可见
+// 用共享可变数组 push/pop 复用祖先链，避免每次递归复制整条数组（O(n·depth) 分配）
 function collectMatchedAncestors(
     nodes: TreeNode[],
     lowerQuery: string,
@@ -211,9 +212,17 @@ function collectMatchedAncestors(
             ancestorIds.forEach((id) => idsToExpand.add(id))
         }
         if (node.children?.length) {
-            collectMatchedAncestors(node.children, lowerQuery, idsToExpand, [...ancestorIds, node.id])
+            ancestorIds.push(node.id)
+            collectMatchedAncestors(node.children, lowerQuery, idsToExpand, ancestorIds)
+            ancestorIds.pop()
         }
     }
+}
+
+// 选择首个非禁用的节点作为初始焦点（roving tabindex）
+// 若 focusedId 指向禁用节点，所有 treeitem 的 tabindex 均为 -1，键盘将无法进入树
+function findFirstFocusableNode(nodes: TreeNode[]): TreeNode | undefined {
+    return nodes.find((node) => !node.disabled)
 }
 
 watch(searchQuery, (query) => {
@@ -236,8 +245,8 @@ watch(filteredNodes, (nodes) => {
         // 检查当前焦点节点是否仍在过滤结果中（递归检查子节点）
         const isFocusedVisible = flattenNodes(nodes).some(node => node.id === focusedId.value)
         if (!isFocusedVisible) {
-            // 焦点节点不在过滤结果中，重置为第一个节点
-            const firstNode = nodes[0]
+            // 焦点节点不在过滤结果中，重置为首个可聚焦（非禁用）节点
+            const firstNode = findFirstFocusableNode(nodes)
             focusedId.value = firstNode?.id
         }
     }
@@ -310,8 +319,8 @@ watch(open, (isOpen) => {
         searchQuery.value = ''
         focusedId.value = undefined
     } else {
-        // 打开时设置第一个节点为焦点节点（roving tabindex）
-        const firstNode = filteredNodes.value[0]
+        // 打开时设置首个可聚焦（非禁用）节点为焦点节点（roving tabindex）
+        const firstNode = findFirstFocusableNode(filteredNodes.value)
         if (firstNode) {
             focusedId.value = firstNode.id
         }

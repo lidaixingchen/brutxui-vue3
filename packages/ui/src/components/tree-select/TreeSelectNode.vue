@@ -131,7 +131,8 @@ function handleKeydown(e: KeyboardEvent) {
             break
         case 'ArrowRight':
             e.preventDefault()
-            if (!isLeaf.value && !isExpanded.value) {
+            // 禁用节点不可展开/折叠，仅保留导航行为
+            if (!props.node.disabled && !isLeaf.value && !isExpanded.value) {
                 emit('toggle', props.node.id)
             } else if (!isLeaf.value && isExpanded.value) {
                 focusFirstChild()
@@ -139,7 +140,8 @@ function handleKeydown(e: KeyboardEvent) {
             break
         case 'ArrowLeft':
             e.preventDefault()
-            if (!isLeaf.value && isExpanded.value) {
+            // 禁用节点不可展开/折叠，仅保留导航行为
+            if (!props.node.disabled && !isLeaf.value && isExpanded.value) {
                 emit('toggle', props.node.id)
             } else {
                 focusParent()

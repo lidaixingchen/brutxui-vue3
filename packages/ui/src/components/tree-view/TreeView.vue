@@ -110,6 +110,9 @@ watch(
 
 function emitNodesUpdate() {
     emit('update:nodes', localNodes.value);
+    // 契约：父组件应通过 v-model:nodes 把该引用原样回写（newVal === lastEmittedNodes）。
+    // 若父组件在 setter 里拷贝/转换数据，回写判定失效，localNodes 会被重建，
+    // 懒加载 await 期间持有的 node 引用将变成游离对象、加载结果丢失。
     lastEmittedNodes = localNodes.value;
 }
 

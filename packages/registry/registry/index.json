@@ -85,7 +85,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6b8387cc24b2f99f2f596383f9e45d426c5dc49e1b23554b54b933b155f5e958"
+      "integrity": "sha256-c78400ab373edc4ab177e012761cc9a1ac9b88c0caebda7a2641fb9c91d540aa"
     },
     {
       "name": "accordion",
@@ -7995,7 +7995,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c99d8f363da63439aa24613a22ece66cfa0510d8a623dc04572370f20cd6da9b"
+      "integrity": "sha256-2209ad5b2d7f68734394e44abfb7624aac255b33ade4206ac6c7859dcd9a6edf"
     },
     {
       "name": "textarea",
@@ -8727,7 +8727,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-5fc8625a58fa9cac352cdee0baf18f61eae3b11d2678f7f5965659148035b70a"
+      "integrity": "sha256-cc5332d4ac59a16f1de88974e7a1c9a3d6d4f214e79b674946d97adf1931cd9c"
     },
     {
       "name": "transfer",
@@ -8966,7 +8966,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-556779008ae64576dca7b63b9e101121f1352de2b5a6c7e1446c4f5be8f49ae9"
+      "integrity": "sha256-2026a739dd968cf2a697a7ec8e300c918befafb57b3a76b9efed4ea6193db1f3"
     },
     {
       "name": "tree-view",
@@ -9088,7 +9088,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-79802fbe74da82a8a4aae8784dd15772bbbb35349c7fc49b01e7b33e458c5acf"
+      "integrity": "sha256-bd233cbe5bb4101ec9069f369689b8c14b402b3f9b57855ac4db1465dcce8f50"
     },
     {
       "name": "typewriter-text",
@@ -9290,7 +9290,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-97ccc7bad4314f9089bbf9ac26a682fa4d50ebb8b0893a193bc2f39b0b57e0ad"
+      "integrity": "sha256-c2e40f212690a32d2e18a629857e904b10ee1c26f0bcc19cb1eeef59d4b79278"
     },
     {
       "name": "virtual-scroll",
@@ -9478,7 +9478,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-34126ccbd9972295cb49656d98cac1f325f684b06355e7a87f278292790b80d3"
+      "integrity": "sha256-533b589f6e880162fdd38dab1394053662e1cc4c8c1101f1ce18e568f477aa09"
     }
   ]
 }

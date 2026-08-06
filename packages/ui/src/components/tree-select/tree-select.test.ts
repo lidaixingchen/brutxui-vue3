@@ -296,4 +296,57 @@ describe('TreeSelect', () => {
         expect(selectedItem!.classList.contains('bg-brutal-secondary')).toBe(true)
         expect(selectedItem!.classList.contains('text-brutal-secondary-foreground')).toBe(true)
     })
+
+    it('auto-expands ancestors of matched nodes during search', async () => {
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes, searchable: true },
+            attachTo: document.body,
+        })
+        await openTreeSelect(wrapper)
+        const input = document.body.querySelector('input[type="text"]') as HTMLInputElement
+        input.value = 'Grandchild'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        // 命中节点 2-1-1 的祖先 2 与 2-1 应被自动展开，Grandchild 才会渲染出来
+        expect(document.body.textContent).toContain('Grandchild 2-1-1')
+    })
+
+    it('restores original expansion state after clearing search', async () => {
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes, searchable: true },
+            attachTo: document.body,
+        })
+        await openTreeSelect(wrapper)
+        const input = document.body.querySelector('input[type="text"]') as HTMLInputElement
+        input.value = 'Grandchild'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        expect(document.body.textContent).toContain('Grandchild 2-1-1')
+
+        // 清空搜索后恢复原展开状态（Root 2 折叠），Grandchild 不再可见
+        input.value = ''
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        expect(document.body.textContent).not.toContain('Grandchild 2-1-1')
+    })
+
+    it('skips disabled first node when setting initial focus', async () => {
+        const nodesWithDisabledFirst: TreeNode[] = [
+            { id: '1', label: 'Disabled Root', disabled: true, children: [{ id: '1-1', label: 'Child' }] },
+            { id: '2', label: 'Enabled Root' },
+        ]
+        wrapper = mount(TreeSelect, {
+            ...localeProvide,
+            props: { nodes: nodesWithDisabledFirst },
+            attachTo: document.body,
+        })
+        await openTreeSelect(wrapper)
+        const items = document.body.querySelectorAll('[role="treeitem"]')
+        const enabledItem = Array.from(items).find(el => el.textContent?.includes('Enabled Root'))
+        expect(enabledItem?.getAttribute('tabindex')).toBe('0')
+        const disabledItem = Array.from(items).find(el => el.textContent?.includes('Disabled Root'))
+        expect(disabledItem?.getAttribute('tabindex')).toBe('-1')
+    })
 })

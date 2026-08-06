@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import TreeView from './TreeView.vue'
@@ -754,6 +754,36 @@ describe('TreeViewNode - Keyboard Navigation', () => {
         })
         await wrapper.trigger('keydown', { key: 'End' })
         expect(wrapper.emitted('focus-last')).toBeTruthy()
+    })
+
+    it('ignores Space/Enter bubbled from a child element', async () => {
+        const wrapper = mount(TreeViewNode, {
+            props: {
+                node: { id: 'file.ts', label: 'file.ts' },
+                expandedIds: emptyExpandedIds,
+                selectionMode: 'single',
+            },
+            attachTo: document.body,
+        })
+        // 事件从子元素（label span）冒泡上来，Space 是子控件消费的按键，treeitem 不应二次处理
+        const child = wrapper.find('.truncate')
+        await child.trigger('keydown', { key: ' ' })
+        expect(wrapper.emitted('select')).toBeFalsy()
+    })
+
+    it('still navigates when nav keys bubble from a child element', async () => {
+        const wrapper = mount(TreeViewNode, {
+            props: {
+                node: { id: 'file.ts', label: 'file.ts' },
+                expandedIds: emptyExpandedIds,
+                selectionMode: 'single',
+            },
+            attachTo: document.body,
+        })
+        // 导航键子控件不消费，冒泡到 treeitem 后应继续生效（不被无差别拦截吞掉）
+        const child = wrapper.find('.truncate')
+        await child.trigger('keydown', { key: 'ArrowDown' })
+        expect(wrapper.emitted('focus-next')).toBeTruthy()
     })
 })
 
@@ -1544,11 +1574,59 @@ describe('TreeView - Local State Sync and Immutable Props', () => {
 
         const emitted = wrapper.emitted('update:nodes')
         expect(emitted).toBeTruthy()
-        
+
         const lastEmitted = emitted![emitted!.length - 1][0] as TreeNode[]
         expect(lastEmitted[0].loaded).toBe(true)
         expect(lastEmitted[0].children).toHaveLength(1)
         expect(lastEmitted[0].children![0].id).toBe('child')
+    })
+})
+
+describe('TreeView - Echo write-back and external updates', () => {
+    it('preserves lazy-loaded children when parent echoes update:nodes via v-model', async () => {
+        const mockLoad = vi.fn().mockResolvedValue([{ id: 'child', label: 'Child Node', isLeaf: true }])
+        const Parent = defineComponent({
+            components: { TreeView },
+            props: { load: { type: Function, required: true } },
+            setup(props) {
+                const nodes = ref<TreeNode[]>([{ id: 'lazy-root', label: 'Lazy Root' }])
+                return { nodes, loadFn: props.load }
+            },
+            template: `<TreeView :nodes="nodes" :lazy="true" :load="loadFn" @update:nodes="nodes = $event" />`,
+        })
+        const wrapper = mount(Parent, {
+            props: { load: mockLoad },
+            global: { provide: localeProvide },
+        })
+
+        const node = wrapper.findComponent(TreeViewNode)
+        await node.find('[role="treeitem"] > div').trigger('click')
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+
+        // 父组件把 update:nodes 原样回写（v-model:nodes）时，懒加载数据不应被 cloneTree 重建丢失
+        expect(wrapper.text()).toContain('Child Node')
+    })
+
+    it('rebuilds localNodes when external nodes prop changes after internal emit', async () => {
+        const mockLoad = vi.fn().mockResolvedValue([{ id: 'child', label: 'Child Node', isLeaf: true }])
+        const wrapper = mount(TreeView, {
+            props: { nodes: [{ id: 'lazy-root', label: 'Lazy Root' }], lazy: true, load: mockLoad },
+            global: { provide: localeProvide },
+        })
+
+        // 触发内部 emit（update:nodes），父组件不回写
+        const node = wrapper.findComponent(TreeViewNode)
+        await node.find('[role="treeitem"] > div').trigger('click')
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await nextTick()
+        expect(wrapper.text()).toContain('Child Node')
+
+        // 外部用新引用替换 nodes，不应被回写判定吞掉，应触发重建
+        await wrapper.setProps({ nodes: [{ id: 'new-root', label: 'New Root' }] } as Record<string, unknown>)
+        await nextTick()
+        expect(wrapper.text()).toContain('New Root')
+        expect(wrapper.text()).not.toContain('Lazy Root')
     })
 })
 
