@@ -2,7 +2,7 @@
 import { ref, shallowRef, onMounted, onUnmounted, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import { useReducedMotion } from '@/composables/useReducedMotion'
-import { hasIntersectionObserver, getIntersectionObserverCtor, getViewportSize } from '@/lib/env'
+import { hasIntersectionObserver, getIntersectionObserverCtor } from '@/lib/env'
 
 interface InfiniteScrollProps {
     /** 触发距离阈值 (px) */
@@ -93,7 +93,13 @@ function cleanupObserver() {
     }
 }
 
-// 重置加载状态（供外部调用）
+/**
+ * 重置加载状态（供外部调用）。
+ *
+ * 契约：该函数在复位 isLoading 后会主动复查哨兵位置——若哨兵仍位于视口（含 distance 阈值）
+ * 扩展范围内，会立即重新触发一次 load（通过「解除并重新观察」触发 observer 初始回调实现）。
+ * 因此父组件在数据耗尽时必须同步绑定 disabled=true，否则哨兵持续停留视口内将形成自动加载循环。
+ */
 function resetLoading() {
     isLoading.value = false
 
@@ -103,21 +109,19 @@ function resetLoading() {
         loadTimer.value = null
     }
 
-    // IntersectionObserver 只在交叉状态变化时回调：若加载指示器高度不足以把哨兵
-    // 推出（含 distance 阈值扩展的）视口，resetLoading 后哨兵仍 intersecting，
-    // 不会产生新回调导致无限滚动停滞，需按 rootMargin 同口径主动复查哨兵位置。
-    if (sentinelRef.value && !props.disabled) {
-        const { width, height } = getViewportSize()
-        const threshold = props.distance
-        const rect = sentinelRef.value.getBoundingClientRect()
-        const isWithinViewport =
-            rect.top <= height + threshold &&
-            rect.bottom >= -threshold &&
-            rect.left <= width + threshold &&
-            rect.right >= -threshold
-        if (isWithinViewport) {
-            triggerLoad()
-        }
+    if (!sentinelRef.value || props.disabled) return
+
+    if (observer.value) {
+        // 解除并重新观察哨兵，触发一次携带当前相交状态的初始回调。
+        // IntersectionObserver 仅在交叉状态变化时回调，若加载指示器高度不足以把哨兵
+        // 推出（含 distance 阈值扩展的）视口，resetLoading 后哨兵仍 intersecting，
+        // 不会产生新回调导致无限滚动停滞；重新 observe 会复用与 setupObserver 完全一致的
+        // rootMargin/threshold 语义，避免手动几何复查的 DOM-flush 与视口口径偏差。
+        observer.value.unobserve(sentinelRef.value)
+        observer.value.observe(sentinelRef.value)
+    } else {
+        // unsupported（无 IntersectionObserver）环境回退：保守触发一次，避免永久不加载
+        triggerLoad()
     }
 }
 
