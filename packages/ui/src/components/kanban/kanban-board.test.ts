@@ -389,6 +389,34 @@ describe('KanbanBoard', () => {
         expect(newCols[1].id).toBe('todo')
     })
 
+    it('reorders columns correctly when dragging a column to the right', async () => {
+        const wrapper = createWrapper()
+        const headers = wrapper.findAll('[data-slot="kanban-column-header"]')
+        const todoHeader = headers[0]
+        const doneHeader = headers[1]
+
+        // 向右拖拽：把 todo（下标 0）拖到 done（下标 1），模拟 drop 到目标列
+        await todoHeader.trigger('dragstart', { dataTransfer: createDataTransfer() })
+        await doneHeader.trigger('dragover', { dataTransfer: createDataTransfer() })
+        await doneHeader.trigger('drop', { dataTransfer: createDataTransfer() })
+
+        // 向右方向：fromIndex < toIndex
+        const moveEvents = wrapper.emitted('column-move')
+        expect(moveEvents).toBeTruthy()
+        const [columnId, fromIndex, toIndex] = moveEvents![0] as [string, number, number]
+        expect(columnId).toBe('todo')
+        expect(fromIndex).toBe(0)
+        expect(toIndex).toBe(1)
+        expect(fromIndex).toBeLessThan(toIndex)
+
+        // 排序结果：移除 todo 后插入到 done 的下标位置，得到 [done, todo]
+        const updateEvents = wrapper.emitted('update:modelValue')
+        expect(updateEvents).toBeTruthy()
+        const newCols = updateEvents![0][0] as KanbanColumn[]
+        expect(newCols[0].id).toBe('done')
+        expect(newCols[1].id).toBe('todo')
+    })
+
     it('does not emit column-move when dropping on same column', async () => {
         const wrapper = createWrapper()
         const headers = wrapper.findAll('[data-slot="kanban-column-header"]')
