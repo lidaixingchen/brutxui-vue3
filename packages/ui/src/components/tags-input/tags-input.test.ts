@@ -247,4 +247,19 @@ describe('TagsInputItemDelete', () => {
         })
         expect(wrapper.classes()).toContain('custom-delete')
     })
+
+    it('provides a default aria-label on the delete button', () => {
+        const wrapper = mount(TagsInputItemDelete, {
+            global: { stubs: { TagsInputItemDelete: primitiveStub } },
+        })
+        expect(wrapper.attributes('aria-label')).toBe('Delete tag')
+    })
+
+    it('allows overriding the aria-label', () => {
+        const wrapper = mount(TagsInputItemDelete, {
+            props: { ariaLabel: '移除标签' },
+            global: { stubs: { TagsInputItemDelete: primitiveStub } },
+        })
+        expect(wrapper.attributes('aria-label')).toBe('移除标签')
+    })
 })

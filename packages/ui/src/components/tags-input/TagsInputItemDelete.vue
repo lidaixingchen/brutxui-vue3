@@ -5,10 +5,13 @@ import { X } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { brutalPress } from '@/lib/brutal-interaction-variants'
 
-const props = defineProps<TagsInputItemDeleteProps & { class?: string }>()
+const props = withDefaults(
+    defineProps<TagsInputItemDeleteProps & { class?: string; ariaLabel?: string }>(),
+    { class: undefined, ariaLabel: 'Delete tag' }
+)
 
 const delegatedProps = computed(() => {
-    const { class: _, ...delegated } = props
+    const { class: _, ariaLabel: _ariaLabel, ...delegated } = props
     return delegated
 })
 
@@ -22,7 +25,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <TagsInputItemDelete v-bind="delegatedProps" :class="classes">
+    <TagsInputItemDelete v-bind="delegatedProps" :aria-label="ariaLabel" :class="classes">
         <slot>
             <X class="h-3.5 w-3.5 stroke-[3]" />
         </slot>
