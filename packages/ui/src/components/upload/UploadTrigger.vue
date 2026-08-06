@@ -58,7 +58,11 @@ function handleDragEnter(event: DragEvent) {
 }
 
 function handleDragLeave(event: DragEvent) {
-    if (!props.drag) return
+    if (!props.drag) {
+        // drag 在拖拽过程中变 false 时，需复位高亮态，避免残留
+        isDragging.value = false
+        return
+    }
     event.preventDefault()
     const el = event.currentTarget
     if (el instanceof HTMLElement) {
@@ -74,7 +78,11 @@ function handleDragOver(event: DragEvent) {
 }
 
 function handleDrop(event: DragEvent) {
-    if (!props.drag) return
+    if (!props.drag) {
+        // drag 在拖拽过程中变 false 时，需复位高亮态，避免残留
+        isDragging.value = false
+        return
+    }
     event.preventDefault()
     isDragging.value = false
 
