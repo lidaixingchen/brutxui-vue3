@@ -3,7 +3,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:51aa7cf4-b99e-41a8-8d0c-a3694f060c99",
+  "serialNumber": "urn:uuid:e6f807c0-0ba5-45e0-90fe-ec9cbdc6e921",
   "metadata": {
     "timestamp": null,
     "tools": [
@@ -660,7 +660,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "c4037a12d1455435e3646db6d522e9fc6eb1bafe1709e2741166e9f7e67a8908"
+          "content": "057958dc2b63ba6b71d6c146ce51b7a9c3e77f6521a181c3287f03446e42a8f5"
         }
       ],
       "dependencies": [
@@ -751,7 +751,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7e4d90dbea77080ec2af077db117eaa0cb54d0e5e6fbf38b6c59f28f737b18ac"
+          "content": "92cf0458ce1e95b9f858e349ad1e660115c8eea4b3b373bc4e6896b81c492262"
         }
       ],
       "dependencies": []
@@ -782,7 +782,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "2225c107e7f5784a29b2c2340109944f958418b699ecf681ba3798f23e9dba2e"
+          "content": "c0720c07c3fc04b5441ccf6ecbe7edea45602d0aac65fc68d6a03d20bb5c4606"
         }
       ],
       "dependencies": [
@@ -876,7 +876,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "45d050ab92b35ea0252045676a3333ae66019c366455b3a29b01c2ea994ec16f"
+          "content": "7f66a806bc7c48c29072211a62aeea56620cac1ab22779d465995a677e22a58b"
         }
       ],
       "dependencies": [
@@ -910,7 +910,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b25346079de78f86cc62c1d57eb5bf5221befc5c022cd1f4bf953f0b2a0e1bcb"
+          "content": "c25dedf057601005a7fea8881831a6965be7b07ba8e0033ec9b795f3a395d294"
         }
       ],
       "dependencies": []
@@ -1082,7 +1082,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "3edc162c6307928ae6974b82cae62c45db12525ea9f25bfa7dab8e075842e400"
+          "content": "6cdc78485cdd9e1af6158092eaa5dc282f76be4a7e2911f5306a77f23311677a"
         }
       ],
       "dependencies": [
@@ -1114,7 +1114,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0bd571698d6494228228e37857775fed691922886be5788ea1fbf20745998643"
+          "content": "089d73e58775c1f555f7eb6dbf660d3e3408de6420613c4866fed32510ed5cba"
         }
       ],
       "dependencies": [
@@ -1165,7 +1165,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "8026cdbffa2c42525ea70d3451ae395b1ba29eb9d9be9aa6556866a7eb87454a"
+          "content": "fda9ca3432deea6a3fb527cc74eb6173add491b79f487ed2263980390f077ed0"
         }
       ],
       "dependencies": []
@@ -1195,7 +1195,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "ed299e079ca1c6804ffb9ed5f3cb44cdd554e9e041a763727454134abb606b4c"
+          "content": "1863a5107ea5dead16fd8885799f58a9faf0ba9a6216cf70b52d36b9c02026c1"
         }
       ],
       "dependencies": [
@@ -1227,7 +1227,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "5101765761692883110d9fca0a3154226ea145fe9b2920dfc0864dbb4000e6bb"
+          "content": "9a69813e21602404ddb1e6826e09f3cf4c6e9e63aaae1cf7f1af70b3f895732e"
         }
       ],
       "dependencies": [
@@ -1261,7 +1261,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1719fe60672dac5e9adc5cf65e1df63efe7f23955104c6960d7bd77b6f376313"
+          "content": "46db3714304aba0d1c354976e3cdf7025d5e0762310b5f2f669b821778d28f97"
         }
       ],
       "dependencies": []
@@ -1275,7 +1275,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "4133bccb41239e9c2c1df8103054f0f0499bc5b821c90e9cd26b98d5f5f1e6bb"
+          "content": "816fd7bbd6c0860a48f3264bcddfa66d04b78f46bb47cbc870fa732484ee764d"
         }
       ],
       "dependencies": [
@@ -1312,7 +1312,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "e5ad1bca677af1c7073ae97e917ea56ed8a368d93fddad48747e5f0033a6fed1"
+          "content": "a46368c097aa7a1975d84e89df62df7c6debbda57215a3278906c1479e7c04d4"
         }
       ],
       "dependencies": [
@@ -1579,6 +1579,6 @@
       "name": "vee-validate"
     }
   ],
-  "integrity": "sha256-9865ee192015da28a9da60cf13806d0cb94ecb40c1ca03e40c8893579d9b8e45",
-  "manifestIntegrity": "efdb416e5d16573e4d92a54266f384cd730cee58300a8d1904a347f01dcd91ac"
+  "integrity": "sha256-e057434a4b8c966889d24231afa516b937e937e229e4e984df4fb87b3e7fed96",
+  "manifestIntegrity": "70bd2a6d81875441d51b47b6c6f3874cb13c888afca5e696a336e51632e12723"
 }

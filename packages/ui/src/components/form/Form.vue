@@ -71,12 +71,14 @@ function resetFields() {
 
 // 清除验证状态
 function clearValidate(fields?: string[]) {
-    if (fields) {
+    if (fields?.length) {
         fields.forEach(field => {
             form.setFieldError(field, undefined)
         })
     } else {
-        form.resetForm({ errors: {} })
+        // 无参数或空数组时仅清除全部错误，
+        // 避免 resetForm 把表单值一并重置为挂载时捕获的 initialValues
+        form.setErrors({})
     }
 }
 

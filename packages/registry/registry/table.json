@@ -16,7 +16,7 @@
     },
     {
       "path": "components/ui/table/TableBody.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TableBodyProps {\n    class?: string\n}\n\nconst props = defineProps<TableBodyProps>()\n\nconst classes = computed(() =>\n    cn(\n        '[&_tr:last-child]:border-0',\n        '[&_tr:nth-child(even)]:bg-brutal-muted',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <tbody :class=\"classes\">\n        <slot />\n    </tbody>\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\n\ninterface TableBodyProps {\n    class?: string\n}\n\nconst props = defineProps<TableBodyProps>()\n\nconst classes = computed(() =>\n    cn(\n        '[&>tr:last-child]:border-0',\n        '[&>tr:nth-child(even)]:bg-brutal-muted',\n        props.class\n    )\n)\n</script>\n\n<template>\n    <tbody :class=\"classes\">\n        <slot />\n    </tbody>\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -123,5 +123,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-1719fe60672dac5e9adc5cf65e1df63efe7f23955104c6960d7bd77b6f376313"
+  "integrity": "sha256-46db3714304aba0d1c354976e3cdf7025d5e0762310b5f2f669b821778d28f97"
 }

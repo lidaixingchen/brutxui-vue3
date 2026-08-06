@@ -16,7 +16,7 @@
     },
     {
       "path": "components/ui/skeleton/SkeletonAvatar.vue",
-      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { type SkeletonVariantProps, skeletonCircleWidthVariants } from '@/components/ui/skeleton/skeleton-variants'\nimport Skeleton from '@/components/ui/skeleton/Skeleton.vue'\n\ninterface SkeletonAvatarProps {\n    variant?: NonNullable<SkeletonVariantProps['variant']>\n    size?: 'sm' | 'default' | 'lg' | 'xl'\n    class?: string\n}\n\nconst props = withDefaults(defineProps<SkeletonAvatarProps>(), {\n    variant: 'default',\n    size: 'default',\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(skeletonCircleWidthVariants[props.size], props.class)\n)\n</script>\n\n<template>\n    <Skeleton :variant=\"variant\" :size=\"size\" :class=\"classes\" />\n</template>\n",
+      "content": "<script setup lang=\"ts\">\nimport { computed } from 'vue'\nimport { cn } from '@/lib/utils'\nimport { type SkeletonVariantProps, skeletonCircleWidthVariants } from '@/components/ui/skeleton/skeleton-variants'\nimport Skeleton from '@/components/ui/skeleton/Skeleton.vue'\n\ninterface SkeletonAvatarProps {\n    variant?: NonNullable<SkeletonVariantProps['variant']>\n    size?: 'sm' | 'default' | 'lg' | 'xl'\n    class?: string\n}\n\nconst props = withDefaults(defineProps<SkeletonAvatarProps>(), {\n    variant: 'default',\n    size: 'default',\n    class: undefined,\n})\n\nconst classes = computed(() =>\n    cn(skeletonCircleWidthVariants[props.size], props.class)\n)\n</script>\n\n<template>\n    <Skeleton shape=\"circle\" :variant=\"variant\" :size=\"size\" :class=\"classes\" />\n</template>\n",
       "type": "registry:ui"
     },
     {
@@ -108,5 +108,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-8026cdbffa2c42525ea70d3451ae395b1ba29eb9d9be9aa6556866a7eb87454a"
+  "integrity": "sha256-fda9ca3432deea6a3fb527cc74eb6173add491b79f487ed2263980390f077ed0"
 }

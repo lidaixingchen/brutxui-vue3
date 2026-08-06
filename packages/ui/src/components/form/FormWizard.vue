@@ -35,7 +35,11 @@ const emit = defineEmits<{
     'navigation-blocked': [targetStep: number, blockedStep: number]
 }>()
 
-const currentStep = ref(props.initialStep)
+// 钳制初始步骤到合法区间 [0, steps.length - 1]，防止 steps 为空或 initialStep 越界时
+// currentStepConfig 为 undefined 导致校验崩溃；steps 为空时钳制为 0
+const currentStep = ref(
+    Math.min(Math.max(props.initialStep, 0), Math.max(props.steps.length - 1, 0))
+)
 const completedSteps = ref<Set<number>>(new Set())
 const stepErrors = ref<Map<number, Record<string, string>>>(new Map())
 
@@ -75,7 +79,8 @@ function validateCurrentStep(): boolean {
     if (!props.validateOnNext) return true
 
     const step = currentStepConfig.value
-    if (!step.validator) return true
+    // 兜底：steps 为空或 currentStep 越界时 step 可能为 undefined，避免访问其属性崩溃
+    if (!step || !step.validator) return true
 
     const result = step.validator(props.modelValue)
     if (!result.valid) {
