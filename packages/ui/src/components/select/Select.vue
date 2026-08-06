@@ -67,13 +67,17 @@ interface GroupedItems {
 }
 
 const grouped = computed<GroupedItems[]>(() => {
+    // 兜底：父组件可能显式传 null（如 data?.list），解构默认值仅在 undefined 时生效，
+    // 这里统一归一化为空数组，避免遍历 null 时抛 TypeError
+    const list = options ?? []
+
     if (!groupField) {
-        return [{ key: 'all', label: '', options }]
+        return [{ key: 'all', label: '', options: list }]
     }
     const groups: Record<string, SelectOption[]> = {}
     const noGroup: SelectOption[] = []
 
-    options.forEach((opt) => {
+    list.forEach((opt) => {
         const val = opt[groupField]
         if (val !== undefined && val !== null) {
             const key = String(val)
