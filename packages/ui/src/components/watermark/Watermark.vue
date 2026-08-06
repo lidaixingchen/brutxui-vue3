@@ -203,6 +203,15 @@ function recreateWatermark() {
         observer = null
     }
 
+    // 水印/包裹层被移出容器时先归位：直接 bump :key 而旧节点已脱离 DOM 时，
+    // Vue 的 keyed 补丁会拿不到有效锚点，挂载到 null 父节点报错
+    const watermark = watermarkRef.value
+    const container = containerRef.value
+    if (watermark && container && !container.contains(watermark)) {
+        const wrapper = watermark.parentElement
+        container.appendChild(wrapper ?? watermark)
+    }
+
     watermarkKey.value++
 
     renderWatermark()
@@ -227,7 +236,7 @@ function initObserver() {
                 // 2) 直接删除包裹层（display: contents 的 wrapper），removedNodes 只含 wrapper
                 // 3) 水印整体被移出容器（contains 判空兜底）
                 if (
-                    (watermark && !containerRef.value?.contains(watermark)) ||
+                    (watermark && containerRef.value && !containerRef.value.contains(watermark)) ||
                     (watermark && removedNodes.some((node) => node.contains(watermark)))
                 ) {
                     recreateWatermark()

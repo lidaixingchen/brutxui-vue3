@@ -138,6 +138,76 @@ describe('Watermark.vue', () => {
         wrapper.unmount()
     })
 
+    it('re-creates watermark when the wrapping node is deleted', async () => {
+        const wrapper = mount(Watermark, {
+            props: { content: 'TEST_MARK' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+        const parent = wrapper.element as HTMLElement
+        const watermarkDiv = parent.querySelector('.absolute') as HTMLElement
+        expect(watermarkDiv).not.toBeNull()
+
+        // 删除包裹层（display:contents 的 wrapper，即水印的父节点）而非水印自身
+        watermarkDiv.parentElement?.remove()
+
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        await nextTick()
+
+        const recreatedDiv = parent.querySelector('.absolute')
+        expect(recreatedDiv).not.toBeNull()
+
+        wrapper.unmount()
+    })
+
+    it('re-creates watermark when the wrapping node style is tampered with', async () => {
+        const wrapper = mount(Watermark, {
+            props: { content: 'TEST_MARK' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+        const watermarkDiv = wrapper.find('.absolute').element as HTMLElement
+
+        // 把包裹层改为 display:none（包裹层而非水印自身的 style 变更）
+        watermarkDiv.parentElement?.setAttribute('style', 'display: none')
+
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        await nextTick()
+
+        const newWatermark = wrapper.find('.absolute')
+        expect(newWatermark.exists()).toBe(true)
+        const style = (newWatermark.element as HTMLElement).getAttribute('style') || ''
+        expect(style).toContain('background-image')
+
+        wrapper.unmount()
+    })
+
+    it('re-creates watermark when moved outside the container', async () => {
+        const wrapper = mount(Watermark, {
+            props: { content: 'TEST_MARK' },
+            attachTo: document.body
+        })
+
+        await nextTick()
+        const parent = wrapper.element as HTMLElement
+        const watermarkDiv = parent.querySelector('.absolute') as HTMLElement
+        expect(watermarkDiv).not.toBeNull()
+
+        // 把包裹层（含水印）整体移到容器外部
+        document.body.appendChild(watermarkDiv.parentElement!)
+
+        await new Promise((resolve) => setTimeout(resolve, 50))
+        await nextTick()
+
+        // 容器内应重建出水印
+        const recreatedDiv = parent.querySelector('.absolute')
+        expect(recreatedDiv).not.toBeNull()
+
+        wrapper.unmount()
+    })
+
     it('renders watermark with very large content without RangeError (SVG fallback)', async () => {
         const getContextSpy = vi
             .spyOn(HTMLCanvasElement.prototype, 'getContext')
