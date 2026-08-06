@@ -87,10 +87,12 @@ const tooltipClasses = computed(() =>
     cn(sliderTooltipVariants())
 )
 
-const thumbCount = computed(() => {
-    if (props.modelValue && props.modelValue.length > 0) return props.modelValue.length
-    return 1
-})
+// 归一化 modelValue：空数组/undefined 时回退为 [min]，保证 thumb 数量与 SliderRoot 内部 modelValue 一致
+const effectiveModelValue = computed<number[]>(() =>
+    props.modelValue && props.modelValue.length > 0 ? props.modelValue : [props.min]
+)
+
+const thumbCount = computed(() => effectiveModelValue.value.length)
 
 function valueToPercentage(value: number): number {
     const range = props.max - props.min
@@ -182,7 +184,7 @@ function handleThumbPointerLeave(index: number) {
 
 <template>
     <SliderRootPrimitive
-        :model-value="modelValue"
+        :model-value="effectiveModelValue"
         :min="min"
         :max="max"
         :step="step"
