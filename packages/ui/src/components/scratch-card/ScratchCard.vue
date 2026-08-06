@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, toRef, watch } from 'vue'
+import { ref, computed, toRef, watch, onUnmounted } from 'vue'
 import { getCanvas2DContext, getDevicePixelRatio, getDocument, getComputedStyle } from '@/lib/env'
 import { cn } from '@/lib/utils'
 import { FALLBACK_PRIMARY_COLOR, FALLBACK_SECONDARY_COLOR, FALLBACK_FG_COLOR } from '@/lib/theme-fallbacks'
@@ -132,11 +132,35 @@ function resetCanvasOverlay() {
     drawOverlay(ctxVal, w, h)
 }
 
+// 移除画布的定时器：不依赖 @transitionend（duration=0 时部分浏览器不派发该事件，
+// 且重置场景下 0→1 过渡同样触发 transitionend 会把刚恢复的覆盖层再次隐藏），
+// 改为按淡出时长定时移除
+let removeTimer: ReturnType<typeof setTimeout> | null = null
+
+function clearRemoveTimer() {
+    if (removeTimer) {
+        clearTimeout(removeTimer)
+        removeTimer = null
+    }
+}
+
 watch(isRevealed, (revealed) => {
-    if (!revealed) {
+    clearRemoveTimer()
+    if (revealed) {
+        // 已揭示：等淡出动画结束后移除透明画布，避免其以 z-10 + cursor-crosshair 悬浮拦截指针事件
+        const duration = prefersReducedMotion.value ? 0 : props.fadeDuration
+        removeTimer = setTimeout(() => {
+            canvasRemoved.value = true
+            removeTimer = null
+        }, duration)
+    } else {
         canvasRemoved.value = false
         resetCanvasOverlay()
     }
+})
+
+onUnmounted(() => {
+    clearRemoveTimer()
 })
 </script>
 
@@ -156,13 +180,12 @@ watch(isRevealed, (revealed) => {
         <canvas
             v-show="!canvasRemoved"
             ref="canvasRef"
-            class="absolute inset-0 cursor-crosshair select-none z-10"
+            :class="cn('absolute inset-0 cursor-crosshair select-none z-10', isRevealed && 'pointer-events-none')"
             :style="{ ...canvasStyle, touchAction }"
             @pointerdown="handlePointerDown"
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
             @pointercancel="handlePointerUp"
-            @transitionend="canvasRemoved = true"
         />
     </div>
 </template>
