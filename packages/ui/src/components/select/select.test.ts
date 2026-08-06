@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import Select from './Select.vue'
+import Select, { type SelectOption } from './Select.vue'
 import SelectTrigger from './SelectTrigger.vue'
 import SelectContent from './SelectContent.vue'
 import SelectItem from './SelectItem.vue'
@@ -401,6 +401,32 @@ describe('Select.vue', () => {
         })
 
         expect(wrapper.vm.modelValue).toBe('opt1')
+    })
+
+    it('renders without error when options is null (non-grouped)', () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: null as unknown as SelectOption[],
+            },
+            global: { stubs: selectStubs },
+        })
+
+        expect(wrapper.find('[data-testid="select-content"]').exists()).toBe(true)
+        expect(wrapper.findAll('[data-testid="select-item"]').length).toBe(0)
+    })
+
+    it('renders without error when options is null (grouped)', () => {
+        const wrapper = mount(Select, {
+            props: {
+                options: null as unknown as SelectOption[],
+                groupField: 'category',
+            },
+            global: { stubs: selectStubs },
+        })
+
+        expect(wrapper.find('[data-testid="select-content"]').exists()).toBe(true)
+        expect(wrapper.findAll('[data-testid="select-group"]').length).toBe(0)
+        expect(wrapper.findAll('[data-testid="select-item"]').length).toBe(0)
     })
 
     describe('atomic slot mode', () => {

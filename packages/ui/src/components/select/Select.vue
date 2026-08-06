@@ -66,10 +66,12 @@ interface GroupedItems {
     options: SelectOption[]
 }
 
+// 组件级归一化：父组件可能显式传 null（如 data?.list），解构默认值仅在 undefined 时生效，
+// 这里统一归一化为空数组，供分组/非分组两条渲染路径共用，避免各路径各自防御造成不一致
+const normalizedOptions = computed<SelectOption[]>(() => options ?? [])
+
 const grouped = computed<GroupedItems[]>(() => {
-    // 兜底：父组件可能显式传 null（如 data?.list），解构默认值仅在 undefined 时生效，
-    // 这里统一归一化为空数组，避免遍历 null 时抛 TypeError
-    const list = options ?? []
+    const list = normalizedOptions.value
 
     if (!groupField) {
         return [{ key: 'all', label: '', options: list }]
@@ -165,7 +167,7 @@ const grouped = computed<GroupedItems[]>(() => {
                 </template>
                 <template v-else>
                     <SelectItem
-                        v-for="opt in options"
+                        v-for="opt in normalizedOptions"
                         :key="opt.value"
                         :value="opt.value"
                         :disabled="opt.disabled"
