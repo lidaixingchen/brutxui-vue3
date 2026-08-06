@@ -134,7 +134,8 @@ function handleMouseEnter() {
 function handleMouseLeave() {
     if (isVertical.value) return
     isHovered.value = false
-    isOpenClick.value = false
+    // 点击固定打开的菜单由 handleDocumentClick 在外部点击时统一关闭，
+    // 鼠标移出仅清除悬停状态，避免点击固定行为退化为悬停行为。
 }
 
 function handleTriggerClick() {
