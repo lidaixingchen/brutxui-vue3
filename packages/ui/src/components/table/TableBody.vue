@@ -10,8 +10,8 @@ const props = defineProps<TableBodyProps>()
 
 const classes = computed(() =>
     cn(
-        '[&_tr:last-child]:border-0',
-        '[&_tr:nth-child(even)]:bg-brutal-muted',
+        '[&>tr:last-child]:border-0',
+        '[&>tr:nth-child(even)]:bg-brutal-muted',
         props.class
     )
 )
