@@ -3,7 +3,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:05f1e40d-ff6e-4a26-af6c-2157433bb719",
+  "serialNumber": "urn:uuid:ec7538da-e462-41c7-808d-8405f8278d04",
   "metadata": {
     "timestamp": null,
     "tools": [
@@ -660,7 +660,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "057958dc2b63ba6b71d6c146ce51b7a9c3e77f6521a181c3287f03446e42a8f5"
+          "content": "33226f5564ca0ea462f645d84dcb62008d5c2253f5834851bafcaa1af9eee74c"
         }
       ],
       "dependencies": [
@@ -751,7 +751,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "92cf0458ce1e95b9f858e349ad1e660115c8eea4b3b373bc4e6896b81c492262"
+          "content": "4c03176b41b88bfc852c909a104083824f8ec30ad2c74076b0b902a7eb88d227"
         }
       ],
       "dependencies": []
@@ -876,7 +876,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7f66a806bc7c48c29072211a62aeea56620cac1ab22779d465995a677e22a58b"
+          "content": "fe05fc90ed08d4fb22cfb2bb9c94c211d95c1c0e6c111cc74b82841111627e74"
         }
       ],
       "dependencies": [
@@ -1114,7 +1114,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "089d73e58775c1f555f7eb6dbf660d3e3408de6420613c4866fed32510ed5cba"
+          "content": "f3366506ab64f6fd0dc367f6223a07ee3ecfc250cee7b0e02f58b482239eb376"
         }
       ],
       "dependencies": [
@@ -1195,7 +1195,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "1863a5107ea5dead16fd8885799f58a9faf0ba9a6216cf70b52d36b9c02026c1"
+          "content": "a83774c5bca2f43e6ca7562582bc6e4c62aa42e995f120fa402267cca2b7ae48"
         }
       ],
       "dependencies": [
@@ -1227,7 +1227,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "9a69813e21602404ddb1e6826e09f3cf4c6e9e63aaae1cf7f1af70b3f895732e"
+          "content": "cfd840f606f71a1d73ec59cfe40d3ef05c28752ad2523f74cca2809ddf3cc9c4"
         }
       ],
       "dependencies": [
@@ -1275,7 +1275,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "816fd7bbd6c0860a48f3264bcddfa66d04b78f46bb47cbc870fa732484ee764d"
+          "content": "150f737eeee9b13a58e765b10085c06470d1b1fd801ff7edbbf56bc62d759fcd"
         }
       ],
       "dependencies": [
@@ -1312,7 +1312,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a46368c097aa7a1975d84e89df62df7c6debbda57215a3278906c1479e7c04d4"
+          "content": "f8e0ee8607cf4d5cfd5592ccc5352bc8a63b4e333b6ee09fc130c1c7560f6852"
         }
       ],
       "dependencies": [
@@ -1579,6 +1579,6 @@
       "name": "vee-validate"
     }
   ],
-  "integrity": "sha256-e057434a4b8c966889d24231afa516b937e937e229e4e984df4fb87b3e7fed96",
-  "manifestIntegrity": "70bd2a6d81875441d51b47b6c6f3874cb13c888afca5e696a336e51632e12723"
+  "integrity": "sha256-b0d0ab69e369bf9f7206db084c442c7b665f4e2c1ca30e5d304f9d6259994b1e",
+  "manifestIntegrity": "edd8c4091773580334645669a9b6d5be6b823dfa0eb1ac5990590624dfee6bff"
 }

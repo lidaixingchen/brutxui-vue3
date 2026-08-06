@@ -766,4 +766,48 @@ describe('Stepper', () => {
             expect(wrapper.text()).not.toContain('Desc A')
         })
     })
+
+    describe('empty steps & out-of-bounds modelValue', () => {
+        it('clamps out-of-bounds modelValue to last step and judges states correctly', () => {
+            const wrapper = mount(Stepper, {
+                props: { steps, modelValue: 99, variant: 'primary' },
+                global: { provide: localeProvide },
+            })
+            const vm = wrapper.vm as unknown as {
+                currentStep: number
+                isFirstStep: boolean
+                isLastStep: boolean
+            }
+            // 越界 modelValue 被钳制到最后一格
+            expect(vm.currentStep).toBe(2)
+            expect(vm.isFirstStep).toBe(false)
+            expect(vm.isLastStep).toBe(true)
+            const buttons = wrapper.findAll('button')
+            // 前两格为 completed，最后一格为 active（不是 completed）
+            expect(buttons[0].classes()).toContain('bg-brutal-success')
+            expect(buttons[1].classes()).toContain('bg-brutal-success')
+            expect(buttons[2].classes()).toContain('bg-brutal-primary')
+            expect(buttons[2].find('svg').exists()).toBe(false)
+        })
+
+        it('does not emit out-of-bounds values when steps is empty', async () => {
+            const wrapper = mount(Stepper, {
+                props: { steps: [], modelValue: 0 },
+                global: { provide: localeProvide },
+            })
+            const vm = wrapper.vm as unknown as {
+                isFirstStep: boolean
+                isLastStep: boolean
+                previousStep: () => void
+                nextStep: () => void
+            }
+            // 空 steps 时首末判定均为 false（对称），nextStep/previousStep 均被拦截
+            expect(vm.isFirstStep).toBe(false)
+            expect(vm.isLastStep).toBe(false)
+            vm.previousStep()
+            vm.nextStep()
+            await nextTick()
+            expect(wrapper.emitted('update:modelValue')).toBeFalsy()
+        })
+    })
 })

@@ -48,8 +48,13 @@ const currentStep = computed(() => {
     if (totalSteps.value === 0) return -1
     return Math.min(Math.max(props.modelValue, 0), totalSteps.value - 1)
 })
-const isFirstStep = computed(() => currentStep.value === 0)
-const isLastStep = computed(() => currentStep.value === totalSteps.value - 1)
+// 空 steps 时（totalSteps===0）currentStep 为 -1，须显式加 totalSteps>0 守卫，
+// 使 isFirstStep/isLastStep 对称地均为 false（空步无首末之分），修复原先 isLastStep 为 true、
+// isFirstStep 为 false 的不对称判定。真正拦截空 steps 导航由 nextStep/previousStep 内的
+// totalSteps===0 守卫承担——否则两侧 flag 均为 false 时，!isFirstStep/!isLastStep 反而判真，
+// 会让 previousStep/nextStep 绕过拦截 emit 越界值
+const isFirstStep = computed(() => totalSteps.value > 0 && currentStep.value === 0)
+const isLastStep = computed(() => totalSteps.value > 0 && currentStep.value === totalSteps.value - 1)
 
 // --stepper-dot-size 语义为圆点边长（直径）：sm w-6=1.5rem、default w-8=2rem、lg w-10=2.5rem，
 // 连接线 calc 中 var(--stepper-dot-size)/2 即取半径作圆心偏移
@@ -68,12 +73,16 @@ function goToStep(index: number) {
 }
 
 function nextStep() {
+    // 空 steps 时 currentStep 为 -1，直接 emit(+1) 会发出 0 越界值，需先按总步数拦截
+    if (totalSteps.value === 0) return
     if (!isLastStep.value) {
         emit('update:modelValue', currentStep.value + 1)
     }
 }
 
 function previousStep() {
+    // 空 steps 时 currentStep 为 -1，直接 emit(-1) 会发出 -2 越界值，需先按总步数拦截
+    if (totalSteps.value === 0) return
     if (!isFirstStep.value) {
         emit('update:modelValue', currentStep.value - 1)
     }
