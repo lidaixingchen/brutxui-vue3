@@ -121,15 +121,17 @@ export async function create(projectName: string, options: CreateOptions): Promi
     } catch (error) {
         // 与 scaffold/install 步骤一致：包装为带操作上下文的 CliError。
         // init 抛出的 CliError 保留其 code/exitCode/cause，避免丢失错误语义。
+        // 此时脚手架与依赖安装已完成，目录已存在且可恢复：明确告知用户，避免误以为项目不可用
         const message = error instanceof Error ? error.message : String(error);
+        const recoveryHint = ` The project directory "${projectName}" has been created. Run 'cd ${projectName} && npx brutx-vue@latest init' to retry configuration, or delete the directory and re-run create.`;
         if (error instanceof CliError) {
-            throw new CliError(`Failed to configure BrutxUI: ${message}`, {
+            throw new CliError(`Failed to configure BrutxUI: ${message}${recoveryHint}`, {
                 code: error.code,
                 exitCode: error.exitCode,
                 cause: error,
             });
         }
-        throw new CliError(`Failed to configure BrutxUI: ${message}`, { cause: error });
+        throw new CliError(`Failed to configure BrutxUI: ${message}${recoveryHint}`, { cause: error });
     }
 
     logger.newLine();

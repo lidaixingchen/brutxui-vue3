@@ -14,6 +14,7 @@ import {
     detectPackageManager,
     detectWorkspaceRoot,
     findCssFile,
+    findTailwindConfig,
     getDefaultAliases,
     installPackages,
     getInstallCommand,
@@ -27,27 +28,11 @@ import {
 
 type DetectedSettings = ProjectInitializationSettings;
 
-const TAILWIND_CONFIG_FILES: readonly string[] = [
-    'tailwind.config.js',
-    'tailwind.config.ts',
-    'tailwind.config.cjs',
-    'tailwind.config.mjs',
-];
-
-async function findTailwindConfigFile(cwd: string): Promise<string | null> {
-    for (const file of TAILWIND_CONFIG_FILES) {
-        if (await fs.pathExists(path.join(cwd, file))) {
-            return file;
-        }
-    }
-    return null;
-}
-
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const projectType = await detectProjectType(cwd);
     const cssFile = await findCssFile(cwd, projectType);
     const aliases = await getDefaultAliases(cwd);
-    const tailwindConfigFile = await findTailwindConfigFile(cwd);
+    const tailwindConfigFile = await findTailwindConfig(cwd);
 
     const fallbackCss = projectType === 'nuxt'
         ? 'assets/css/main.css'

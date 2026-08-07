@@ -119,6 +119,10 @@ export async function diff(options: DiffOptions): Promise<void> {
 
     const restoreOffline = withOfflineScope(options.offline === true);
     try {
+        // 注意（有意取舍）：config 读取与组件列表解析前置到 withAuditLog 之外，
+        // 使审计记录与实际执行范围一致；代价是配置缺失（CONFIG_NOT_FOUND）与组件列表
+        // 解析失败这两条路径不再写审计（旧实现会记录 success:false 条目）——
+        // 此时命令本身无法正常初始化，审计价值有限，故有意不写
         const config = await readConfigSafe(cwd);
 
         if (!config) {
