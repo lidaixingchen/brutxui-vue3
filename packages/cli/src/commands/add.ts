@@ -72,6 +72,11 @@ async function validateComponents(components: string[], registryOverride?: strin
 
 async function selectComponents(inputComponents: string[], options: AddOptions): Promise<string[]> {
     if (options.all) {
+        // AVAILABLE_COMPONENTS 仅对默认注册表有效；自定义 registry 可能不含这些组件，
+        // 强制显式指定组件名，避免向自定义 registry 请求一批不存在的组件
+        if (options.registry) {
+            throw new CliError('--all is not supported with a custom --registry. Specify component names explicitly.');
+        }
         return [...AVAILABLE_COMPONENTS];
     }
 
@@ -218,6 +223,11 @@ async function addInner(
             spinner.stop();
         }
 
+        if (registryItems.length === 0) {
+            spinner?.warn('No components resolved from registry.');
+            return;
+        }
+
         logger.bold('\n📦 Brutx-Vue CLI - Installation Plan:');
         logger.info(`   Registry source: ${options.registry || 'Default Brutx-Vue hosted registry'}`);
         logger.newLine();
@@ -303,70 +313,88 @@ async function addInner(
             }
         }
 
-        const depsInstalled = await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
+        try {
+            const depsInstalled = await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
 
-        if (!options.dryRun && added.length > 0) {
-            if (allDeps.length > 0 && !depsInstalled) {
-                // 依赖安装失败：回滚本次已写入的文件，避免组件陷入"文件已写、manifest 未记录"的不可恢复半安装状态
-                // （否则重跑 add 时文件已存在会被全部 skip，永远无法注册）
-                const { rollbackFailures } = await rollback();
-                logger.warn('⚠ Dependency installation failed. Rolled back written component files.');
-                if (rollbackFailures > 0) {
-                    logger.warn(`⚠ Rollback failed for ${rollbackFailures} file(s). You may need to restore them manually.`);
-                }
-                logger.info('  Install dependencies manually, then re-run the add command.');
-                // 清空 added：避免末尾对"已回滚、未注册"的组件打印误导性的 Usage 示例
-                added.length = 0;
-            } else {
-                // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
-                const versionByName = new Map<string, string>();
-                for (const inputName of components) {
-                    const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
-                    if (match) {
-                        versionByName.set(match[1], match[2]);
+            if (!options.dryRun && added.length > 0) {
+                if (allDeps.length > 0 && !depsInstalled) {
+                    // 依赖安装失败：回滚本次已写入的文件，避免组件陷入"文件已写、manifest 未记录"的不可恢复半安装状态
+                    // （否则重跑 add 时文件已存在会被全部 skip，永远无法注册）
+                    const { rollbackFailures } = await rollback();
+                    logger.warn('⚠ Dependency installation failed. Rolled back written component files.');
+                    if (rollbackFailures > 0) {
+                        logger.warn(`⚠ Rollback failed for ${rollbackFailures} file(s). You may need to restore them manually.`);
                     }
-                }
+                    logger.info('  Install dependencies manually, then re-run the add command.');
+                    // 清空 added：避免末尾对"已回滚、未注册"的组件打印误导性的 Usage 示例
+                    added.length = 0;
+                } else {
+                    // 解析用户输入的 @version（若有），用于 manifest 记录版本契约
+                    const versionByName = new Map<string, string>();
+                    for (const inputName of components) {
+                        const match = inputName.match(/^(@[a-z0-9-]+\/[a-z0-9-]+|[a-z0-9-]+)@([a-zA-Z0-9._-]+)$/);
+                        if (match) {
+                            versionByName.set(match[1], match[2]);
+                        }
+                    }
 
-                // 版本混用兼容性提示：检测已安装组件与即将安装组件的版本差异
-                if (versionByName.size > 0) {
-                    const existingManifest = await readManifest(targetCwd);
-                    if (existingManifest) {
-                        for (const [name, newVersion] of versionByName) {
-                            const existing = existingManifest.components[name];
-                            if (existing?.version && existing.version !== 'latest' && existing.version !== newVersion) {
-                                logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
+                    // 版本混用兼容性提示：检测已安装组件与即将安装组件的版本差异。
+                    // 已装版本为 'latest'（manifest 未记录具体版本）时同样告警——实际已装版本未知，
+                    // 混用具体版本可能引入兼容性问题
+                    if (versionByName.size > 0) {
+                        const existingManifest = await readManifest(targetCwd);
+                        if (existingManifest) {
+                            for (const [name, newVersion] of versionByName) {
+                                const existing = existingManifest.components[name];
+                                if (existing?.version && existing.version !== newVersion) {
+                                    logger.warn(`⚠ Version mismatch: "${name}" is already installed at version ${existing.version}, but you requested ${newVersion}. Mixing versions may cause compatibility issues.`);
+                                }
                             }
                         }
                     }
-                }
 
-                const manifestEntries = await Promise.all(
-                    registryItems
-                        .filter(item => added.includes(item.name))
-                        .map(async item => {
-                            const files = filesByComponent[item.name] ?? [];
-                            const installedContentHash = files.length > 0
-                                ? await computeInstalledContentHash(files)
-                                : undefined;
-                            return {
-                                item,
-                                registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
-                                files,
-                                installedContentHash,
-                                version: versionByName.get(item.name) ?? 'latest',
-                            };
-                        })
-                );
-                await updateInstalledComponents(targetCwd, manifestEntries);
+                    const manifestEntries = await Promise.all(
+                        registryItems
+                            .filter(item => added.includes(item.name))
+                            .map(async item => {
+                                const files = filesByComponent[item.name] ?? [];
+                                const installedContentHash = files.length > 0
+                                    ? await computeInstalledContentHash(files)
+                                    : undefined;
+                                return {
+                                    item,
+                                    registrySource: hitRegistrySources[item.name] ?? options.registry ?? DEFAULT_REGISTRY_URL,
+                                    files,
+                                    installedContentHash,
+                                    version: versionByName.get(item.name) ?? 'latest',
+                                };
+                            })
+                    );
+                    await updateInstalledComponents(targetCwd, manifestEntries);
 
-                const shouldUpdateSnippets = options.vscode === true
-                    || (options.vscode !== false && await hasVscodeDir(targetCwd));
+                    const shouldUpdateSnippets = options.vscode === true
+                        || (options.vscode !== false && await hasVscodeDir(targetCwd));
 
-                if (shouldUpdateSnippets) {
-                    const snippetPath = await mergeSnippetsFile(targetCwd, added);
-                    logger.success(`✓ VS Code snippets updated at ${path.relative(targetCwd, snippetPath)}`);
+                    if (shouldUpdateSnippets) {
+                        const snippetPath = await mergeSnippetsFile(targetCwd, added);
+                        logger.success(`✓ VS Code snippets updated at ${path.relative(targetCwd, snippetPath)}`);
+                    }
                 }
             }
+        } catch (error: unknown) {
+            // 文件写入之后的步骤（依赖安装/manifest 更新/snippets 合并）失败：
+            // 显式回滚已写入的组件文件，避免项目停留在"文件已写、manifest 未记录"的半安装状态。
+            // rollback 基于写入快照、幂等（重复调用安全）；依赖安装失败分支已自行回滚且不再抛错，
+            // 不会重复触发这里的回滚。
+            try {
+                await rollback();
+                logger.warn('⚠ Installation failed after writing files. Rolled back written component files.');
+            } catch (rollbackError) {
+                const rollbackMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+                logger.error(`⚠ Rollback failed: ${rollbackMessage}`);
+                logger.info('  Run "brutx-vue doctor --fix" to repair.');
+            }
+            throw error;
         }
 
         if (added.length > 0) {
