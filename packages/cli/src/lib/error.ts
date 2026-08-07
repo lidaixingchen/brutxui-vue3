@@ -12,8 +12,9 @@ export type CliErrorCode =
     | 'MANIFEST_READ_FAILED'
     | 'WRITE_FAILED';
 
-// 与 CliErrorCode 联合类型保持一致（联合类型是编译期约束，此处为运行时校验的数据源）
-const VALID_ERROR_CODES: readonly string[] = [
+// 运行时校验的数据源。satisfies 保证每一项都落在 CliErrorCode 联合类型内，
+// 新增错误码必须同时加进联合类型，否则编译期即报错，杜绝两者漂移
+const VALID_ERROR_CODES = [
     'UNKNOWN',
     'CONFIG_NOT_FOUND',
     'CONFIG_INVALID',
@@ -26,7 +27,7 @@ const VALID_ERROR_CODES: readonly string[] = [
     'PATH_UNSAFE',
     'MANIFEST_READ_FAILED',
     'WRITE_FAILED',
-];
+] as const satisfies readonly CliErrorCode[];
 
 export interface CliErrorOptions {
     code?: CliErrorCode;
@@ -61,7 +62,7 @@ export class CliError extends Error {
 
         this.name = 'CliError';
         this.code = typeof normalizedOptions.code === 'string'
-            && (VALID_ERROR_CODES as readonly string[]).includes(normalizedOptions.code)
+            && VALID_ERROR_CODES.includes(normalizedOptions.code as CliErrorCode)
             ? normalizedOptions.code
             : 'UNKNOWN';
         const exitCode = normalizedOptions.exitCode ?? 1;

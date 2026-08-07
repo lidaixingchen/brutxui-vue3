@@ -222,7 +222,9 @@ export interface CacheWriteInput {
  * 也避免并发 touch/set 时用旧数据覆盖新写入的数据（rename 原子替换）。
  */
 async function writeCacheFileAtomic<T>(filePath: string, entry: CacheFileRaw<T>): Promise<void> {
-    const tempPath = `${filePath}.${process.pid}.tmp`;
+    // 临时文件名带 randomUUID：仅 pid 不足以唯一，同进程内并发写同一缓存文件
+    // 会共用同一 temp 路径（互相 rename 覆盖/吞错）
+    const tempPath = `${filePath}.${process.pid}.${crypto.randomUUID()}.tmp`;
     try {
         await fs.writeJson(tempPath, entry);
         await fs.move(tempPath, filePath, { overwrite: true });
