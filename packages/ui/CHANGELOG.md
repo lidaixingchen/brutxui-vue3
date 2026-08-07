@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.9.10
+
+### Patch Changes
+
+- 修复代码审查与回归测试发现的组件缺陷：tree 键盘导航/搜索展开/节点回写、upload 卸载中止上传与拖拽高亮复位、tour steps 缩短时钳制 currentStep、watermark 防篡改重建归位节点、tags-input 删除按钮默认文案接入 i18n 并提供默认 aria-label、transfer 选中项变 disabled 后清除残留选中态、input/hardcore-input/textarea 组合结束兜底 emit 并通过标记去重、select 组件级归一化 options、slider currentValue 对齐归一化值、tabs 选中项移除时同步激活值、menu 子菜单选中项自动收起、infinite-scroll 重新观察哨兵、stepper/form-wizard 动态步骤钳制等
+
 ## 0.9.9
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # brutx-vue
 
+## 0.9.2
+
+### Patch Changes
+
+- 修复全局与子命令同名 --dry-run option 导致命令级 dry-run 失效的问题；vscode-snippets 解析失败时保留异常 cause 链便于诊断
+
 ## 0.9.1
 
 ### Patch Changes
