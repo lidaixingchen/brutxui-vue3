@@ -313,6 +313,9 @@ async function addInner(
             }
         }
 
+        // 标记 manifest 是否已更新成功：决定失败回滚是否还安全（见下方 catch 注释）
+        let manifestUpdated = false;
+
         try {
             const depsInstalled = await installComponentDeps(allDeps, targetCwd, options.dryRun ?? false);
 
@@ -371,6 +374,7 @@ async function addInner(
                             })
                     );
                     await updateInstalledComponents(targetCwd, manifestEntries);
+                    manifestUpdated = true;
 
                     const shouldUpdateSnippets = options.vscode === true
                         || (options.vscode !== false && await hasVscodeDir(targetCwd));
@@ -382,17 +386,23 @@ async function addInner(
                 }
             }
         } catch (error: unknown) {
-            // 文件写入之后的步骤（依赖安装/manifest 更新/snippets 合并）失败：
-            // 显式回滚已写入的组件文件，避免项目停留在"文件已写、manifest 未记录"的半安装状态。
-            // rollback 基于写入快照、幂等（重复调用安全）；依赖安装失败分支已自行回滚且不再抛错，
-            // 不会重复触发这里的回滚。
-            try {
-                await rollback();
-                logger.warn('⚠ Installation failed after writing files. Rolled back written component files.');
-            } catch (rollbackError) {
-                const rollbackMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
-                logger.error(`⚠ Rollback failed: ${rollbackMessage}`);
-                logger.info('  Run "brutx-vue doctor --fix" to repair.');
+            if (!manifestUpdated) {
+                // 失败发生在 manifest 更新之前（依赖安装/manifest 更新本身失败）：
+                // 回滚已写入的组件文件 → "文件已删、manifest 未记录"，两侧状态一致。
+                // rollback 基于写入快照、幂等（重复调用安全）；依赖安装失败分支已自行回滚且不再抛错，
+                // 不会重复触发这里的回滚。
+                try {
+                    await rollback();
+                    logger.warn('⚠ Installation failed after writing files. Rolled back written component files.');
+                } catch (rollbackError) {
+                    const rollbackMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+                    logger.error(`⚠ Rollback failed: ${rollbackMessage}`);
+                    logger.info('  Run "brutx-vue doctor --fix" to repair.');
+                }
+            } else {
+                // manifest 已登记、组件文件已写入，两侧已一致（失败仅发生在 snippets 合并等后续步骤）：
+                // 不再回滚文件，避免产生"manifest 有记录、文件缺失"的反向半安装状态；仅提示失败步骤
+                logger.warn('⚠ Component files and manifest are in sync, but a post-write step failed (e.g. VS Code snippets merge). Re-run the command or fix the failing step manually.');
             }
             throw error;
         }

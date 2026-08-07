@@ -87,11 +87,12 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         logger.bold('[Dry Run] Would remove:');
         logger.newLine();
 
-        // 各组件文件计数相互独立，并行执行避免组件较多时逐个串行等待
+        // 各组件文件计数相互独立，并行执行避免组件较多时逐个串行等待；
+        // 单个组件计数失败（权限不足等真实错误）降级为 null 提示，不中断其余组件的 dry-run 展示
         const fileCounts = await Promise.all(
             removal.toRemove.map(async (comp) => ({
                 comp,
-                fileCount: await countComponentFiles(cwd, config, comp),
+                fileCount: await countComponentFiles(cwd, config, comp).catch(() => null),
             })),
         );
 
