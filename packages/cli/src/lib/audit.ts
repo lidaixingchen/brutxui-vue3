@@ -1,5 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { createReadStream } from 'node:fs';
+import { createInterface } from 'node:readline';
+import { isGlobalDryRun } from './global-dry-run.js';
 
 /**
  * CLI 操作审计日志（P1-8）
@@ -44,11 +47,25 @@ export function getAuditLogPath(cwd: string): string {
     return path.join(cwd, AUDIT_LOG_RELATIVE_PATH);
 }
 
+/** 动态导入避免循环依赖；logger 不可用时静默（审计功能本身不应抛错） */
+async function debugLog(message: string): Promise<void> {
+    try {
+        const { logger } = await import('./logger.js');
+        logger.debug(message);
+    } catch {
+        // logger 不可用：静默丢弃
+    }
+}
+
 /**
  * 追加一条审计记录到 `<cwd>/.brutx/audit.log`。
  * 写入失败不抛错——审计是辅助功能，不应阻塞主操作。
  */
 export async function appendAuditLog(cwd: string, entry: AuditEntry): Promise<void> {
+    // 全局 dry-run（BRUTX_DRY_RUN=1 / --dry-run）：所有写操作只打印不落盘，审计文件同样跳过
+    if (isGlobalDryRun()) {
+        return;
+    }
     try {
         const logPath = getAuditLogPath(cwd);
         await fs.ensureDir(path.dirname(logPath));
@@ -57,15 +74,14 @@ export async function appendAuditLog(cwd: string, entry: AuditEntry): Promise<vo
     } catch (error) {
         // 审计失败不阻塞主操作，仅 debug 日志
         const message = error instanceof Error ? error.message : String(error);
-        // 动态导入避免循环依赖
-        const { logger } = await import('./logger.js');
-        logger.debug(`Failed to append audit log: ${message}`);
+        await debugLog(`Failed to append audit log: ${message}`);
     }
 }
 
 /**
  * 读取审计日志，支持按命令/成功失败/时间/数量过滤。
  * 损坏的行跳过并 debug 日志（不抛错）。
+ * 流式逐行读取：审计日志是 append-only 且无轮转，避免整体读入内存。
  */
 export async function readAuditLog(
     cwd: string,
@@ -76,39 +92,44 @@ export async function readAuditLog(
         return [];
     }
 
-    let content: string;
-    try {
-        content = await fs.readFile(logPath, 'utf-8');
-    } catch {
-        return [];
-    }
-
-    const lines = content.split('\n').filter(line => line.length > 0);
     const entries: AuditEntry[] = [];
-    const { logger } = await import('./logger.js');
 
-    for (const line of lines) {
-        try {
-            const parsed = JSON.parse(line) as AuditEntry;
-            if (!isValidAuditEntry(parsed)) {
-                logger.debug(`Skipping malformed audit entry: ${line.slice(0, 200)}`);
-                continue;
+    try {
+        const readline = createInterface({
+            input: createReadStream(logPath),
+            crlfDelay: Infinity,
+        });
+
+        for await (const line of readline) {
+            if (line.length === 0) continue;
+            try {
+                const parsed = JSON.parse(line) as AuditEntry;
+                if (!isValidAuditEntry(parsed)) {
+                    await debugLog(`Skipping malformed audit entry: ${line.slice(0, 200)}`);
+                    continue;
+                }
+                entries.push(parsed);
+            } catch {
+                await debugLog(`Skipping unparseable audit log line: ${line.slice(0, 200)}`);
             }
-            entries.push(parsed);
-        } catch {
-            logger.debug(`Skipping unparseable audit log line: ${line.slice(0, 200)}`);
         }
+    } catch {
+        // 读取失败（文件被并发删除等）返回已解析部分
     }
 
     return applyFilter(entries, filter);
 }
+
+const AUDIT_COMMANDS: readonly AuditCommand[] = ['add', 'remove', 'update', 'diff'];
 
 function isValidAuditEntry(value: unknown): value is AuditEntry {
     if (typeof value !== 'object' || value === null) return false;
     const entry = value as Partial<AuditEntry>;
     return typeof entry.timestamp === 'string'
         && typeof entry.command === 'string'
+        && (AUDIT_COMMANDS as readonly string[]).includes(entry.command)
         && Array.isArray(entry.components)
+        && entry.components.every(c => typeof c === 'string')
         && typeof entry.success === 'boolean'
         && typeof entry.dryRun === 'boolean'
         && typeof entry.cwd === 'string';
@@ -189,6 +210,7 @@ export function createAuditEntry(params: {
 /**
  * 用 try/catch 包装命令执行，自动写入审计记录。
  * 成功/失败都会记录。失败时重新抛出原错误。
+ * 注：appendAuditLog 自身保证不抛错（全局 dry-run 跳过 / 内部捕获），不会掩盖原错误。
  */
 export async function withAuditLog<T>(
     cwd: string,
@@ -197,22 +219,28 @@ export async function withAuditLog<T>(
 ): Promise<T> {
     try {
         const result = await action();
-        await appendAuditLog(cwd, {
+        await appendAuditLog(cwd, createAuditEntry({
             ...entry,
-            timestamp: new Date().toISOString(),
             success: true,
-        } as AuditEntry);
+        }));
         return result;
     } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        await appendAuditLog(cwd, {
+        const errorMessage = sanitizeErrorMessage(error instanceof Error ? error.message : String(error));
+        await appendAuditLog(cwd, createAuditEntry({
             ...entry,
-            timestamp: new Date().toISOString(),
             success: false,
             error: errorMessage,
-        } as AuditEntry);
+        }));
         throw error;
     }
+}
+
+/** 审计日志持久保存：截断过长的错误消息，避免完整环境信息（路径/URL）长期留存 */
+function sanitizeErrorMessage(message: string): string {
+    const MAX_ERROR_LENGTH = 500;
+    return message.length > MAX_ERROR_LENGTH
+        ? `${message.slice(0, MAX_ERROR_LENGTH)}... (truncated)`
+        : message;
 }
 
 /**
@@ -225,8 +253,24 @@ export async function auditLogExists(cwd: string): Promise<boolean> {
 
 /**
  * 统计审计日志条目数（供 doctor 报告用）。
+ * 只按行计数（审计日志 append-only，非空行即一条记录），跳过 JSON 解析与校验。
  */
 export async function countAuditEntries(cwd: string): Promise<number> {
-    const entries = await readAuditLog(cwd);
-    return entries.length;
+    const logPath = getAuditLogPath(cwd);
+    if (!(await fs.pathExists(logPath))) {
+        return 0;
+    }
+    try {
+        const readline = createInterface({
+            input: createReadStream(logPath),
+            crlfDelay: Infinity,
+        });
+        let count = 0;
+        for await (const line of readline) {
+            if (line.length > 0) count += 1;
+        }
+        return count;
+    } catch {
+        return 0;
+    }
 }
