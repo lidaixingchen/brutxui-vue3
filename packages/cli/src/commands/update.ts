@@ -80,11 +80,13 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     const updatableComponents = installedComponents.filter(name => !versionPinnedNames.includes(name));
 
     if (updatableComponents.length === 0) {
-        logger.info('No updatable components found (all are version-pinned or none installed).');
+        logger.info('No updatable components found (all are version-pinned).');
         return;
     }
 
-    const results = await Promise.all(
+    // 错误隔离：单个组件的更新检查失败（registry 不可达、缓存损坏等）不中止其余组件，
+    // 失败明细告警后继续；全部失败时才抛汇总 CliError
+    const settled = await Promise.allSettled(
         updatableComponents.map(name => diffComponent(
             cwd,
             config,
@@ -94,6 +96,26 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
             useCache,
         ))
     );
+
+    const results: DiffResult[] = [];
+    const checkFailures: Array<{ name: string; message: string }> = [];
+    for (let i = 0; i < settled.length; i++) {
+        const entry = settled[i];
+        if (entry.status === 'fulfilled') {
+            results.push(entry.value);
+        } else {
+            const message = entry.reason instanceof Error ? entry.reason.message : String(entry.reason);
+            checkFailures.push({ name: updatableComponents[i], message });
+            logger.warn(`⚠ Update check failed for "${updatableComponents[i]}": ${message}`);
+        }
+    }
+
+    if (results.length === 0 && checkFailures.length > 0) {
+        throw new CliError(
+            `Update check failed for all ${checkFailures.length} component(s). First error: ${checkFailures[0].message}`,
+            { code: 'REGISTRY_FETCH_FAILED' }
+        );
+    }
 
     const outdated = results.filter((r): r is DiffResult => r.status === 'modified' || r.integrityStatus === 'outdated');
 
@@ -182,18 +204,38 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         ]);
     }
 
+    // 错误隔离：某个分组的 add 失败不阻止其余分组更新；失败明细收集后统一汇总
+    const failedGroups: Array<{ components: string[]; message: string }> = [];
     for (const [registrySource, groupedComponents] of selectedByRegistry) {
-        await add(groupedComponents, {
-            overwrite: true,
-            yes: true,
-            cwd,
-            silent: options.silent,
-            dryRun: options.dryRun,
-            registry: registrySource,
-            offline: options.offline,
-        });
+        try {
+            await add(groupedComponents, {
+                overwrite: true,
+                yes: true,
+                cwd,
+                silent: options.silent,
+                dryRun: options.dryRun,
+                registry: registrySource,
+                offline: options.offline,
+            });
+        } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            failedGroups.push({ components: groupedComponents, message });
+            logger.warn(`⚠ Update failed for: ${groupedComponents.join(', ')} — ${message}`);
+        }
     }
 
-    logger.newLine();
-    logger.success(`Updated ${selected.length} component(s): ${selected.join(', ')}`);
+    const failedComponents = new Set(failedGroups.flatMap(g => g.components));
+    const succeededComponents = selected.filter(c => !failedComponents.has(c));
+
+    if (succeededComponents.length > 0) {
+        logger.newLine();
+        logger.success(`Updated ${succeededComponents.length} component(s): ${succeededComponents.join(', ')}`);
+    }
+
+    if (failedGroups.length > 0) {
+        throw new CliError(
+            `Update failed for ${failedComponents.size} component(s): ${Array.from(failedComponents).join(', ')}. First error: ${failedGroups[0].message}`,
+            { code: 'WRITE_FAILED' }
+        );
+    }
 }
