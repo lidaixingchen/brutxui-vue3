@@ -125,7 +125,7 @@ export async function fetchWithSources<T>(
         }
         throw new CliError(
             `All ${sources.length} registry source(s) unavailable in offline mode. ` +
-            `Pre-cache components by running add/list --check-updates while online.`,
+            `Pre-cache components by running list --check-updates while online.`,
             { code: 'REGISTRY_OFFLINE_UNAVAILABLE', cause: firstError }
         );
     }

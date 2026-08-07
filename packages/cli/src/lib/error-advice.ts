@@ -35,7 +35,7 @@ export function getCliErrorAdvice(error: CliError): string[] {
         case 'REGISTRY_OFFLINE_UNAVAILABLE':
             return [
                 'Offline mode is active (BRUTX_OFFLINE=1 or --offline) and the requested component is not in cache.',
-                'Run without --offline to fetch from the registry, or pre-cache the component by running add/list --check-updates while online.',
+                'Run without --offline to fetch from the registry, or pre-cache the component by running list --check-updates while online.',
             ];
         case 'REGISTRY_SIGNATURE_INVALID':
             return [
