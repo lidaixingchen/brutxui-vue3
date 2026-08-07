@@ -27,10 +27,27 @@ import {
 
 type DetectedSettings = ProjectInitializationSettings;
 
+const TAILWIND_CONFIG_FILES: readonly string[] = [
+    'tailwind.config.js',
+    'tailwind.config.ts',
+    'tailwind.config.cjs',
+    'tailwind.config.mjs',
+];
+
+async function findTailwindConfigFile(cwd: string): Promise<string | null> {
+    for (const file of TAILWIND_CONFIG_FILES) {
+        if (await fs.pathExists(path.join(cwd, file))) {
+            return file;
+        }
+    }
+    return null;
+}
+
 async function detectSettings(cwd: string): Promise<DetectedSettings> {
     const projectType = await detectProjectType(cwd);
     const cssFile = await findCssFile(cwd, projectType);
     const aliases = await getDefaultAliases(cwd);
+    const tailwindConfigFile = await findTailwindConfigFile(cwd);
 
     const fallbackCss = projectType === 'nuxt'
         ? 'assets/css/main.css'
@@ -38,7 +55,7 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
 
     return {
         tailwind: {
-            config: '',
+            config: tailwindConfigFile ?? '',
             css: cssFile ?? fallbackCss,
         },
         aliases,
@@ -47,12 +64,9 @@ async function detectSettings(cwd: string): Promise<DetectedSettings> {
 }
 
 async function promptForConfig(defaults: DetectedSettings): Promise<DetectedSettings> {
-    const tailwindConfig = defaults.tailwind.config !== ''
-        ? await input({
-            message: 'Where is your tailwind.config located?',
-            default: defaults.tailwind.config,
-        })
-        : defaults.tailwind.config;
+    // tailwind.config 已由 detectSettings 真实检测（查找 tailwind.config.* 文件）；
+    // 未检测到（如 Tailwind v4 无独立配置文件）时直接透传，不提供交互式输入
+    const tailwindConfig = defaults.tailwind.config;
 
     const globalCss = await input({
         message: 'Where is your global CSS file?',
@@ -173,12 +187,10 @@ function printNuxtHints(cssPath: string): void {
 
 export async function init(options: InitOptions): Promise<void> {
     const cwd = options.cwd ?? process.cwd();
-    const projectType = await detectProjectType(cwd);
 
     logger.setSilent(options.silent ?? false);
 
     logger.bold('\n🎨 Brutx-Vue - Neo-Brutalism Vue 3 Component Library\n');
-    logger.info(`   Detected project: ${projectType}\n`);
 
     let workspaceRoot: string | null;
     let configTarget = cwd;
@@ -217,6 +229,11 @@ export async function init(options: InitOptions): Promise<void> {
             componentDepsTarget = cwd;
         }
     }
+
+    // 与 initializeProjectFiles 一致：projectType 基于实际配置目标（configTarget）检测，
+    // 避免 workspace 根目录与子包项目类型不一致时按错误的类型生成配置
+    const projectType = await detectProjectType(configTarget);
+    logger.info(`   Detected project: ${projectType}\n`);
 
     if (!(await shouldProceed(configTarget, options))) {
         return;
@@ -261,34 +278,40 @@ export async function init(options: InitOptions): Promise<void> {
 
         spinner?.succeed('Brutx-Vue initialized successfully!');
 
-        const packageManager = await detectPackageManager(cwd);
-
         if (isInWorkspaceSubPackage && configTarget === cwd) {
+            // 共享依赖装到 workspace root、组件依赖装到子包：针对各自安装目标分别检测包管理器，
+            // 避免子包自带与根目录不同的 lockfile 时把错误的包管理器命令应用到 workspace root
+            const sharedPackageManager = await detectPackageManager(sharedDepsTarget);
+
             logger.newLine();
-            logger.bold(`Installing shared dependencies to workspace root with ${packageManager}...`);
+            logger.bold(`Installing shared dependencies to workspace root with ${sharedPackageManager}...`);
 
             try {
-                await installPackages(packageManager, [...SHARED_DEPENDENCIES], sharedDepsTarget);
+                await installPackages(sharedPackageManager, [...SHARED_DEPENDENCIES], sharedDepsTarget);
                 logger.success('✓ Shared dependencies installed to workspace root');
             } catch {
                 logger.warn('⚠ Failed to install shared dependencies to workspace root.');
                 logger.info(
-                    `  Run manually: ${getInstallCommand(packageManager, [...SHARED_DEPENDENCIES])}`
+                    `  Run manually: ${getInstallCommand(sharedPackageManager, [...SHARED_DEPENDENCIES])}`
                 );
             }
 
-            logger.bold(`Installing component dependencies to current package with ${packageManager}...`);
+            const componentPackageManager = await detectPackageManager(componentDepsTarget);
+
+            logger.bold(`Installing component dependencies to current package with ${componentPackageManager}...`);
 
             try {
-                await installPackages(packageManager, [...COMPONENT_DEPENDENCIES], componentDepsTarget);
+                await installPackages(componentPackageManager, [...COMPONENT_DEPENDENCIES], componentDepsTarget);
                 logger.success('✓ Component dependencies installed to current package');
             } catch {
                 logger.warn('⚠ Failed to install component dependencies.');
                 logger.info(
-                    `  Run manually: ${getInstallCommand(packageManager, [...COMPONENT_DEPENDENCIES])}`
+                    `  Run manually: ${getInstallCommand(componentPackageManager, [...COMPONENT_DEPENDENCIES])}`
                 );
             }
         } else {
+            const packageManager = await detectPackageManager(configTarget);
+
             logger.newLine();
             logger.bold(`Installing dependencies with ${packageManager}...`);
 
@@ -307,8 +330,16 @@ export async function init(options: InitOptions): Promise<void> {
             || (options.vscode !== false && await hasVscodeDir(configTarget));
 
         if (shouldGenerateSnippets) {
-            const snippetPath = await writeSnippetsFile(configTarget, initialization.config);
-            logger.success(`✓ VS Code snippets generated at ${path.relative(configTarget, snippetPath)}`);
+            // snippets 写入失败不标记整个初始化失败：初始化主体（配置/组件/样式/依赖）已完成，
+            // 仅告警提示手动重试，避免"初始化已成功却又报失败"的矛盾输出
+            try {
+                const snippetPath = await writeSnippetsFile(configTarget, initialization.config);
+                logger.success(`✓ VS Code snippets generated at ${path.relative(configTarget, snippetPath)}`);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : String(error);
+                logger.warn(`⚠ Failed to write VS Code snippets: ${message}`);
+                logger.info('  Re-run "npx brutx-vue@latest init --force" to retry snippet generation.');
+            }
         }
 
         logger.newLine();
