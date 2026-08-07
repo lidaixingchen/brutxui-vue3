@@ -1,3 +1,12 @@
+vi.mock('../src/lib/audit.js', async (importOriginal) => {
+    const original = await importOriginal<typeof import('../src/lib/audit.js')>();
+    return {
+        ...original,
+        appendAuditLog: vi.fn().mockResolvedValue(undefined),
+        withAuditLog: vi.fn(async (_cwd, _entry, action) => await action()),
+    };
+});
+
 vi.mock('../src/lib/registry.js', async (importOriginal) => {
     const original = await importOriginal<typeof import('../src/lib/registry.js')>();
     return { ...original, readConfigSafe: vi.fn() };
@@ -41,6 +50,8 @@ const defaultConfig = {
     tailwind: { config: 'tailwind.config.js', css: 'src/index.css' },
     aliases: { components: '@/components', utils: '@/lib/utils', composables: '@/composables' },
 };
+
+const dummyCwd = path.join(os.tmpdir(), 'brutx-dummy-cwd');
 
 const upToDateResult: DiffResult = {
     component: 'badge',
@@ -122,7 +133,7 @@ describe('update command', () => {
         it('should throw CliError when components.json not found', async () => {
             mockedReadConfigSafe.mockResolvedValue(null);
 
-            await expect(update([], { cwd: '/tmp', silent: true }))
+            await expect(update([], { cwd: dummyCwd, silent: true }))
                 .rejects.toThrow('No components.json found');
         });
     });
@@ -131,7 +142,7 @@ describe('update command', () => {
         it('should return early when getInstalledComponents returns empty', async () => {
             mockedGetInstalledComponents.mockResolvedValue([]);
 
-            await update([], { cwd: '/tmp', silent: true });
+            await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedDiffComponent).not.toHaveBeenCalled();
             expect(mockedAdd).not.toHaveBeenCalled();
@@ -140,7 +151,7 @@ describe('update command', () => {
         it('should use provided component names instead of auto-discovery', async () => {
             mockedDiffComponent.mockResolvedValue(upToDateResult);
 
-            await update(['badge'], { cwd: '/tmp', silent: true });
+            await update(['badge'], { cwd: dummyCwd, silent: true });
 
             expect(mockedGetInstalledComponents).not.toHaveBeenCalled();
             expect(mockedDiffComponent).toHaveBeenCalledOnce();
@@ -152,7 +163,7 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['badge']);
             mockedDiffComponent.mockResolvedValue(upToDateResult);
 
-            await update([], { cwd: '/tmp', silent: true });
+            await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedAdd).not.toHaveBeenCalled();
         });
@@ -166,7 +177,7 @@ describe('update command', () => {
                 return upToDateResult;
             });
 
-            await update([], { cwd: '/tmp', silent: true, dryRun: true });
+            await update([], { cwd: dummyCwd, silent: true, dryRun: true });
 
             expect(mockedAdd).not.toHaveBeenCalled();
         });
@@ -175,7 +186,7 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
 
-            await update([], { cwd: '/tmp', silent: true, dryRun: true });
+            await update([], { cwd: dummyCwd, silent: true, dryRun: true });
 
             expect(mockedCheckbox).not.toHaveBeenCalled();
             expect(mockedConfirm).not.toHaveBeenCalled();
@@ -190,7 +201,7 @@ describe('update command', () => {
                 return upToDateResult;
             });
 
-            await update([], { cwd: '/tmp', silent: true, yes: true, all: true });
+            await update([], { cwd: dummyCwd, silent: true, yes: true, all: true });
 
             expect(mockedAdd).toHaveBeenCalledOnce();
             expect(mockedAdd).toHaveBeenCalledWith(
@@ -203,7 +214,7 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['badge']);
             mockedDiffComponent.mockResolvedValue(outdatedIntegrityResult);
 
-            await update([], { cwd: '/tmp', silent: true, yes: true, all: true });
+            await update([], { cwd: dummyCwd, silent: true, yes: true, all: true });
 
             expect(mockedAdd).toHaveBeenCalledWith(
                 ['badge'],
@@ -212,11 +223,12 @@ describe('update command', () => {
         });
 
         it('should pass cwd and registry options to add', async () => {
+            const testCwd = path.join(os.tmpdir(), 'my-project');
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
 
             await update([], {
-                cwd: '/my/project',
+                cwd: testCwd,
                 silent: true,
                 yes: true,
                 registry: 'https://custom.registry.com',
@@ -225,7 +237,7 @@ describe('update command', () => {
             expect(mockedAdd).toHaveBeenCalledWith(
                 ['button'],
                 expect.objectContaining({
-                    cwd: '/my/project',
+                    cwd: testCwd,
                     registry: 'https://custom.registry.com',
                 })
             );
@@ -319,7 +331,7 @@ describe('update command', () => {
                 return upToDateResult;
             });
 
-            await update([], { cwd: '/tmp', silent: true, yes: true, all: true });
+            await update([], { cwd: dummyCwd, silent: true, yes: true, all: true });
 
             expect(mockedAdd).toHaveBeenCalledWith(
                 ['button', 'card'],
@@ -333,7 +345,7 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedResult);
 
-            await update([], { cwd: '/tmp', silent: true, yes: true });
+            await update([], { cwd: dummyCwd, silent: true, yes: true });
 
             expect(mockedConfirm).not.toHaveBeenCalled();
             expect(mockedAdd).toHaveBeenCalledOnce();
@@ -345,7 +357,7 @@ describe('update command', () => {
             mockedCheckbox.mockResolvedValue(['button']);
             mockedConfirm.mockResolvedValue(true);
 
-            await update([], { cwd: '/tmp', silent: true });
+            await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedConfirm).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -362,7 +374,7 @@ describe('update command', () => {
             mockedCheckbox.mockResolvedValue(['button']);
             mockedConfirm.mockResolvedValue(false);
 
-            await update([], { cwd: '/tmp', silent: true });
+            await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedAdd).not.toHaveBeenCalled();
         });
@@ -379,7 +391,7 @@ describe('update command', () => {
             mockedCheckbox.mockResolvedValue(['button']);
             mockedConfirm.mockResolvedValue(true);
 
-            await update([], { cwd: '/tmp', silent: true });
+            await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedCheckbox).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -398,7 +410,7 @@ describe('update command', () => {
             mockedDiffComponent.mockResolvedValue(modifiedResult);
             mockedCheckbox.mockResolvedValue([]);
 
-            await update([], { cwd: '/tmp', silent: true });
+            await update([], { cwd: dummyCwd, silent: true });
 
             expect(mockedAdd).not.toHaveBeenCalled();
         });
@@ -546,7 +558,7 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockResolvedValue(modifiedFor('button'));
 
-            await update([], { cwd: '/tmp', silent: true, yes: true, all: true });
+            await update([], { cwd: dummyCwd, silent: true, yes: true, all: true });
 
             expect(mockedDiffComponent).toHaveBeenCalledOnce();
             expect(mockedAdd).toHaveBeenCalledWith(
@@ -561,7 +573,7 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['button']);
             mockedDiffComponent.mockRejectedValue(new Error('Network timeout'));
 
-            await expect(update([], { cwd: '/tmp', silent: true }))
+            await expect(update([], { cwd: dummyCwd, silent: true }))
                 .rejects.toThrow('Network timeout');
         });
     });
@@ -571,10 +583,10 @@ describe('update command', () => {
             mockedGetInstalledComponents.mockResolvedValue(['badge']);
             mockedDiffComponent.mockResolvedValue(upToDateResult);
 
-            await update([], { cwd: '/tmp', silent: true, cache: false } as any);
+            await update([], { cwd: dummyCwd, silent: true, cache: false } as any);
 
             expect(mockedDiffComponent).toHaveBeenCalledWith(
-                '/tmp',
+                dummyCwd,
                 defaultConfig,
                 'badge',
                 undefined,
