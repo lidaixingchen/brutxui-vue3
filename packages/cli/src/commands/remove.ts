@@ -87,10 +87,20 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         logger.bold('[Dry Run] Would remove:');
         logger.newLine();
 
-        for (const comp of removal.toRemove) {
-            const fileCount = await countComponentFiles(cwd, config, comp);
+        // 各组件文件计数相互独立，并行执行避免组件较多时逐个串行等待
+        const fileCounts = await Promise.all(
+            removal.toRemove.map(async (comp) => ({
+                comp,
+                fileCount: await countComponentFiles(cwd, config, comp),
+            })),
+        );
+
+        for (const { comp, fileCount } of fileCounts) {
             if (fileCount !== null) {
                 logger.log(`  ${chalk.red('●')} ${comp} (${fileCount} file${fileCount !== 1 ? 's' : ''})`);
+            } else {
+                // 计数失败也显示该组件，避免 dry-run 结果与真实删除行为不一致
+                logger.warn(`  ${chalk.red('●')} ${comp} (file count unavailable — will be removed)`);
             }
         }
 
@@ -149,7 +159,11 @@ async function removeInner(components: string[], options: RemoveOptions, cwd: st
         if (rollbackFailures.length > 0) {
             logger.error(`Rollback failed for: ${rollbackFailures.join(', ')}`);
         }
-        throw new CliError('Failed to remove components. Rolled back file changes.', {
+        // 回滚未完全成功时如实告知残留的中间状态，避免误导用户认为所有更改都已恢复
+        const message = rollbackFailures.length > 0
+            ? `Failed to remove components. Rollback failed for: ${rollbackFailures.join(', ')}. Some changes may not be rolled back.`
+            : 'Failed to remove components. Rolled back file changes.';
+        throw new CliError(message, {
             code: 'WRITE_FAILED',
             cause: error,
         });

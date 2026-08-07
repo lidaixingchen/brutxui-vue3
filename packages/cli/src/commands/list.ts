@@ -89,17 +89,19 @@ function printTable(infos: InstalledComponentInfo[], showUpdates: boolean): void
             ? info.dependencies.join(', ')
             : chalk.dim('none');
         const source = formatSource(info.registrySource);
-        const sourceStr = info.registrySource ? source : chalk.dim(source);
+        // 先对纯文本 padEnd 再上色：chalk 生成的 ANSI 转义码会被 padEnd 计入宽度，
+        // 直接对彩色字符串 padEnd 会让带颜色的单元格可视宽度变小、后续列错位
+        const sourceStr = info.registrySource ? source.padEnd(sourceWidth) : chalk.dim(source.padEnd(sourceWidth));
         const category = formatCategory(info);
-        const categoryStr = info.category ? category : chalk.dim(category);
+        const categoryStr = info.category ? category.padEnd(categoryWidth) : chalk.dim(category.padEnd(categoryWidth));
         const status = formatStatus(info);
-        const statusStr = info.status && info.status !== 'stable' ? chalk.yellow(status) : status;
+        const statusStr = info.status && info.status !== 'stable' ? chalk.yellow(status.padEnd(statusWidth)) : status.padEnd(statusWidth);
         const version = info.version ?? '-';
-        const versionStr = info.version && info.version !== 'latest' ? chalk.cyan(version) : chalk.dim(version);
+        const versionStr = info.version && info.version !== 'latest' ? chalk.cyan(version.padEnd(versionWidth)) : chalk.dim(version.padEnd(versionWidth));
         const update = formatUpdate(info);
-        const updateStr = info.updateAvailable ? chalk.yellow(update) : update;
-        const updateColumn = showUpdates ? updateStr.padEnd(updateWidth) : '';
-        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${categoryStr.padEnd(categoryWidth)}${statusStr.padEnd(statusWidth)}${versionStr.padEnd(versionWidth)}${sourceStr.padEnd(sourceWidth)}${updateColumn}${depsStr}`);
+        const updateStr = info.updateAvailable ? chalk.yellow(update.padEnd(updateWidth)) : update.padEnd(updateWidth);
+        const updateColumn = showUpdates ? updateStr : '';
+        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${categoryStr}${statusStr}${versionStr}${sourceStr}${updateColumn}${depsStr}`);
     }
 
     logger.newLine();
