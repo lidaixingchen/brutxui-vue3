@@ -1,4 +1,4 @@
-import { readFile, access } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import type { ProjectType, TrustedPublicKey } from './types.js';
@@ -10,15 +10,24 @@ const __dirname = dirname(__filename);
  * 解析 styles 目录路径。
  * - 构建产物（dist/）中：styles/ 与 index.js 同级
  * - 源码（src/lib/）中：styles/ 在上级目录
+ *
+ * 仅对 ENOENT（候选不存在）继续尝试下一候选；权限等其他错误如实抛出，
+ * 避免静默回退掩盖真实错误。候选必须是目录。
  */
 async function resolveStylesDir(): Promise<string> {
-    const direct = join(__dirname, 'styles');
-    try {
-        await access(direct);
-        return direct;
-    } catch {
-        return join(__dirname, '..', 'styles');
+    const candidates = [join(__dirname, 'styles'), join(__dirname, '..', 'styles')];
+    for (const candidate of candidates) {
+        try {
+            if ((await stat(candidate)).isDirectory()) {
+                return candidate;
+            }
+        } catch (error) {
+            if ((error as NodeJS.ErrnoException)?.code !== 'ENOENT') {
+                throw error;
+            }
+        }
     }
+    throw new Error(`无法定位 styles 目录（已尝试: ${candidates.join(', ')}）`);
 }
 
 export { COMPONENTS, AVAILABLE_COMPONENTS } from 'brutx-shared-vue';
@@ -53,14 +62,6 @@ export const CSS_LOCATIONS: Record<ProjectType, readonly string[]> = {
     ],
 } as const;
 
-export const BASE_DEPENDENCIES = [
-    'clsx',
-    'tailwind-merge',
-    'class-variance-authority',
-    '@lucide/vue',
-    'reka-ui',
-] as const;
-
 export const SHARED_DEPENDENCIES = [
     'clsx',
     'tailwind-merge',
@@ -70,6 +71,12 @@ export const SHARED_DEPENDENCIES = [
 export const COMPONENT_DEPENDENCIES = [
     '@lucide/vue',
     'reka-ui',
+] as const;
+
+// 由 SHARED 与 COMPONENT 并集展开生成，保持单一数据源（新增/删除依赖时无需重复维护）
+export const BASE_DEPENDENCIES = [
+    ...SHARED_DEPENDENCIES,
+    ...COMPONENT_DEPENDENCIES,
 ] as const;
 
 export const DEFAULT_ALIASES = {
@@ -84,7 +91,7 @@ export const REGISTRY_PATH_PREFIXES = {
     components: 'components/',
     composables: 'composables/',
     locales: 'locales/',
-    libUtils: 'lib/utils',
+    libUtils: 'lib/utils/',
     lib: 'lib/',
     directives: 'directives/',
 } as const;
@@ -137,18 +144,31 @@ let _brutalistCssStyles: string | undefined;
 
 export async function getBrutalistCssStyles(): Promise<string> {
     if (_brutalistCssStyles === undefined) {
-        const stylesDir = await resolveStylesDir();
-        _brutalistCssStyles = await readFile(
-            join(stylesDir, 'brutalist.css'),
-            'utf-8'
-        );
+        try {
+            const stylesDir = await resolveStylesDir();
+            _brutalistCssStyles = await readFile(
+                join(stylesDir, 'brutalist.css'),
+                'utf-8'
+            );
+        } catch (error) {
+            // 包装为带明确指引的错误，避免原始 ENOENT/EACCES 直接抛给调用方（doctor/init 命令）
+            throw new Error(
+                `读取 brutalist.css 失败，请确认 styles 目录及文件存在: ${(error as Error).message}`,
+                { cause: error }
+            );
+        }
     }
     return _brutalistCssStyles;
 }
 
 export const CURRENT_CONFIG_VERSION = 1;
 
-export const CN_FUNCTION_TEMPLATE = `export function cn(...inputs: ClassValue[]) {
+// 自包含模板：自带 import（与 UTILS_TEMPLATE 一致）。doctor 的 AddCnFunction 会把该模板
+// 追加到已有 utils 文件末尾——若文件此前未导入 clsx/tailwind-merge，缺少 import 会编译失败
+export const CN_FUNCTION_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 `;
