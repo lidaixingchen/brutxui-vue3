@@ -27,11 +27,12 @@ pnpm build          # Turbo 并行构建所有包（--filter <pkg> build 仅构�
 pnpm lint           # 对所有包执行 lint
 pnpm typecheck      # 对所有包执行类型检查
 pnpm test           # 运行所有子包测试（--filter <pkg> test 仅运行指定包）
-pnpm test:watch     # 监视模式运行测试
+pnpm test:ssr       # SSR 测试
 pnpm release        # 构建门禁 + changeset publish
 pnpm changelog      # 生成根 CHANGELOG.md 新版本段（详见 docs/RELEASE.md）
-pnpm changelog:dry  # 干跑：仅打印不写文件
 ```
+
+完整命令清单见根 `package.json`（含 `test:watch`、`test:coverage`、`check:i18n` / `check:i18n:strict`、`version-packages` 等）。
 
 ### 脚手架（组件与页面生成）
 
@@ -51,8 +52,6 @@ pnpm --filter brutx-registry-vue build:watch    # watch 增量 rebuild（或设 
 pnpm --filter brutx-registry-vue validate       # 校验完整性 + 依赖图；加 -- --graph 导出 deps.dot/json
 ```
 
-watch 实现见 `packages/registry/scripts/build-registry.ts` 的 `runWatch()`；其余命令（`build:verify`、`bench`）见 registry 包 scripts。
-
 ### 开发自检约定
 
 - **包管理器限定**：开发阶段仅允许 `pnpm`，严禁 `npm`/`yarn`（避免不一致 lockfile）。
@@ -60,13 +59,13 @@ watch 实现见 `packages/registry/scripts/build-registry.ts` 的 `runWatch()`�
 
 | 校验 | 最小化命令 |
 | --- | --- |
-| 测试 | `pnpm --filter <pkg> test <相对路径>`（如 `src/components/button/Button.test.ts`） |
+| 测试 | `pnpm --filter <pkg> test <相对路径>`（如 `src/components/button/button.test.ts`） |
 | lint | `npx eslint <file> --fix` |
 | typecheck | `pnpm --filter <pkg> typecheck` |
 
 ## 技术栈
 
-Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+ · reka-ui 2.9+（无头原语）· CVA 0.7+（变体）· clsx + tailwind-merge 通过 `cn()` · Vite 8+ · Vitest 4+ · pnpm 11+ · Node.js 22.5+
+Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-ui（无头原语）· CVA（变体）· clsx + tailwind-merge 通过 `cn()` · Vite · Vitest · pnpm · Node.js（具体版本以各包 `package.json` 为准）
 
 - **Tailwind v4 配置单一源**：设计令牌/主题变量**只能**改 `packages/shared/src/design-tokens.ts`，禁止手动编辑 `styles.css` 的 `@theme`，禁止创建 `tailwind.config.js`。
 
@@ -80,18 +79,30 @@ Vue 3.5+（`<script setup>`）· TypeScript 6.0+（strict）· Tailwind CSS 4.3+
 
 ## 代码风格
 
-- 除非要求否则不写注释 · 无魔法数字 · 无硬编码值
-- 4 空格缩进 · 单引号 · PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
+### 通用约定
+
+- 不写注释，除非被要求；无魔法数字、无硬编码值
+- 格式化由 ESLint/Prettier 强制：4 空格缩进、单引号
+- 命名：PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
+
+### 组件库红线
+
 - **变体隔离**：变体逻辑提取到同目录 `*-variants.ts`，组件 `import` 引入，不得在 `.vue` 内联定义。
 - **类合并**：用 `computed()` 包裹 `cn(...)` 计算类名，严禁在 `<template>` 内联调用 `cn()`。
-- **无障碍与组件复用**：以 `reka-ui`（原 radix-vue）无头原语为基础，优先复用库内已有组件（`Button` 代替 `<button>`，`Input` 代替 `<input>`），严禁用 native 元素替代。
+- **原语复用**：以 reka-ui（原 radix-vue）无头原语为基础，优先复用库内已有组件（`Button` 代替 `<button>`，`Input` 代替 `<input>`），严禁用 native 元素替代。
 - **国际化文本**：文本 props 默认值设为 `undefined`，通过 `useLocale().t()` 提供默认值，优先级 `props > t() > zh-CN 默认文本`。
+
+## 测试
+
+- 测试文件与源文件同名、`*.test.ts`，一律 kebab-case（`button.test.ts`）
+- 专项后缀：键盘交互 `-keyboard.test.ts`（`accordion-keyboard.test.ts`）、无障碍 `.a11y.test.ts`（`button.a11y.test.ts`）
+- 与源文件同目录放置（`src/components/<name>/`、`src/composables/`）
 
 ## 目录结构（要点）
 
 - `apps/docs/` VitePress 文档站；`docs/` 方案文档；`skills/brutxui/` AI 技能（参考文档在 `references/`）
 - `packages/ui/`：组件 `src/components/`、组合式函数 `src/composables/`、语言包 `src/locales/`、工具 `src/lib/utils.ts`
-- `packages/cli/`：`src/commands/` + `src/lib/`（`audit.log` 审计、`BRUTX_DRY_RUN=1` 全局 dry-run、`-v/-vv/-vvv` 与 `BRUTX_VERBOSE`）
+- `packages/cli/`：`src/commands/` + `src/lib/`
 - `packages/registry/` + `packages/shared/`：构建脚本与组件元数据（自动生成文件见上方表格）
 - `scripts/`：组件生成器、i18n 校验（`pnpm check:i18n`）、根 CHANGELOG 生成
 - `.github/`：GitHub Actions 工作流 `workflows/`（SHA pin 格式 `owner/repo@<40-char-sha> # vN`）+ Dependabot 配置 `dependabot.yml`（自动升级 Actions SHA，每周一开 PR）
