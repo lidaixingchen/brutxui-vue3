@@ -13,12 +13,24 @@ async function attachUpdateInfo(
     const sources = resolveRegistrySources(config, registryOverride);
 
     return Promise.all(infos.map(async (info) => {
+        // 显式请求 --check-updates 但缺少本地 integrity（旧版本/手工编辑的 manifest）：
+        // 如实写入 updateCheckError，表格显示 'unknown'，避免用户误以为根本没执行检查
         if (!info.installedIntegrity) {
-            return info;
+            return {
+                ...info,
+                updateCheckError: 'missing installed integrity, cannot compare',
+            };
         }
 
         try {
             const { item: latest } = await getItemFromSources(info.name, sources, useCache);
+            // 远端项缺失 integrity 时不能比较：显式判空，避免恒为"可更新"的误判
+            if (!latest.integrity) {
+                return {
+                    ...info,
+                    updateCheckError: 'registry item missing integrity',
+                };
+            }
             return {
                 ...info,
                 latestIntegrity: latest.integrity,
@@ -85,8 +97,10 @@ function printTable(infos: InstalledComponentInfo[], showUpdates: boolean): void
     logger.log(separator);
 
     for (const info of infos) {
-        const depsStr = info.dependencies.length > 0
-            ? info.dependencies.join(', ')
+        // 数据源自运行时解析的 manifest，旧版本/手工编辑可能缺字段：低成本防御
+        const deps = info.dependencies ?? [];
+        const depsStr = deps.length > 0
+            ? deps.join(', ')
             : chalk.dim('none');
         const source = formatSource(info.registrySource);
         // 先对纯文本 padEnd 再上色：chalk 生成的 ANSI 转义码会被 padEnd 计入宽度，
