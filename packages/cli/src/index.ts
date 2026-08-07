@@ -177,9 +177,11 @@ program
             logger.error(`Unknown cache action: ${action}. Supported: clear`);
             process.exit(1);
         }
-        const maxAgeDays = options.maxAge !== undefined ? Number.parseInt(options.maxAge, 10) : undefined;
-        if (maxAgeDays !== undefined && (Number.isNaN(maxAgeDays) || maxAgeDays <= 0)) {
-            logger.error(`--max-age must be a positive integer (got: ${options.maxAge})`);
+        // 严格整数解析：Number.parseInt 会静默接受 "10abc"/"3.5" 等非法输入，改用 Number + Number.isInteger
+        const rawMaxAge = options.maxAge;
+        const maxAgeDays = rawMaxAge !== undefined ? Number(rawMaxAge) : undefined;
+        if (maxAgeDays !== undefined && (!Number.isInteger(maxAgeDays) || maxAgeDays <= 0)) {
+            logger.error(`--max-age must be a positive integer (got: ${rawMaxAge})`);
             process.exit(1);
         }
         await clearCache(maxAgeDays);
@@ -236,11 +238,21 @@ async function main(): Promise<void> {
 /**
  * 预处理 argv：把 -v / -vv / -vvv 转换为 --verbose-level 1/2/3。
  * commander 不原生支持 -vvv 风格的重复短选项，这里展开。
+ * 遇到 `--` 分隔符后停止转换：commander 会把 `--` 之后的内容当作位置参数原样传递，
+ * 展开其中的 -v/-vv/-vvv 会破坏后续位置参数的内容。
  */
 function preprocessArgv(argv: string[]): string[] {
     const result: string[] = [];
+    let afterSeparator = false;
     for (const arg of argv) {
-        if (arg === '-vvv') {
+        if (arg === '--') {
+            afterSeparator = true;
+            result.push(arg);
+            continue;
+        }
+        if (afterSeparator) {
+            result.push(arg);
+        } else if (arg === '-vvv') {
             result.push('--verbose-level', String(VERBOSE_LEVEL_TRACE));
         } else if (arg === '-vv') {
             result.push('--verbose-level', String(2));
