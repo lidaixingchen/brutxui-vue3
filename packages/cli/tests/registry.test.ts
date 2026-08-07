@@ -64,6 +64,34 @@ describe('getItem local', () => {
     });
 });
 
+describe('listLocalRegistryComponents', () => {
+    it('lists component names from a local registry directory, excluding metadata files', async () => {
+        const registryPath = await fs.mkdtemp(path.join(os.tmpdir(), 'brutx-registry-list-'));
+        try {
+            await fs.writeJson(path.join(registryPath, 'button.json'), { name: 'button' });
+            await fs.writeJson(path.join(registryPath, 'accordion.json'), { name: 'accordion' });
+            await fs.writeJson(path.join(registryPath, 'registry-manifest.json'), { registryVersion: '1' });
+
+            const names = await registry.listLocalRegistryComponents(registryPath);
+            expect(names).toEqual(['accordion', 'button']);
+        } finally {
+            await fs.remove(registryPath);
+        }
+    });
+
+    it('returns null for remote http(s) registry URLs (listing unsupported)', async () => {
+        await expect(
+            registry.listLocalRegistryComponents('https://registry.example.com')
+        ).resolves.toBeNull();
+    });
+
+    it('returns null when the directory is missing', async () => {
+        await expect(
+            registry.listLocalRegistryComponents(path.join(os.tmpdir(), 'nonexistent-registry-dir'))
+        ).resolves.toBeNull();
+    });
+});
+
 describe('getItem local validation', () => {
     async function withRegistry(
         itemName: string,

@@ -31,7 +31,7 @@ export {
     VERBOSE_LEVEL_TRACE,
 } from './logger.js';
 
-export { getItem, getItemFromSources, resolveDeps, readConfig, readConfigSafe, migrateConfig } from './registry.js';
+export { getItem, getItemFromSources, resolveDeps, readConfig, readConfigSafe, migrateConfig, listLocalRegistryComponents } from './registry.js';
 
 export {
     clearCache,

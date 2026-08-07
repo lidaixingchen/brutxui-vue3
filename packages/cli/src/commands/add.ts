@@ -24,6 +24,7 @@ import {
     ensureUtilsFile,
     resolveComponents,
     writeComponentFiles,
+    listLocalRegistryComponents,
     withOfflineScope,
     type ComponentFileWriteFailure,
     mergeDryRun,
@@ -72,10 +73,15 @@ async function validateComponents(components: string[], registryOverride?: strin
 
 async function selectComponents(inputComponents: string[], options: AddOptions): Promise<string[]> {
     if (options.all) {
-        // AVAILABLE_COMPONENTS 仅对默认注册表有效；自定义 registry 可能不含这些组件，
-        // 强制显式指定组件名，避免向自定义 registry 请求一批不存在的组件
+        // AVAILABLE_COMPONENTS 仅对默认注册表有效；自定义 registry 可能不含这些组件
         if (options.registry) {
-            throw new CliError('--all is not supported with a custom --registry. Specify component names explicitly.');
+            // 本地目录 registry 支持枚举组件（--all 合法）；远程 HTTP registry 协议
+            // 不支持列表，强制显式指定组件名
+            const componentsFromRegistry = await listLocalRegistryComponents(options.registry);
+            if (componentsFromRegistry !== null) {
+                return componentsFromRegistry;
+            }
+            throw new CliError('--all is not supported with a remote --registry (component listing unavailable). Specify component names explicitly.');
         }
         return [...AVAILABLE_COMPONENTS];
     }

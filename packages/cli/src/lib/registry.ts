@@ -154,6 +154,31 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
     }
 }
 
+// 本地 registry 目录中不作为组件文件的元数据文件名（不含 .json 扩展名）
+const LOCAL_REGISTRY_META_FILES: readonly string[] = ['registry-manifest'];
+
+/**
+ * 列出本地 registry（目录路径）中的全部组件名（*.json 文件名去扩展名），按名称排序。
+ * 供 `add --all --registry <local-path>` 使用：本地目录可枚举，远程 HTTP registry
+ * 协议不支持列表，返回 null 由调用方决定行为（如要求显式指定组件名）。
+ * 目录缺失/不可读同样返回 null。
+ */
+export async function listLocalRegistryComponents(registryPath: string): Promise<string[] | null> {
+    if (isUrl(registryPath)) {
+        return null;
+    }
+    try {
+        const entries = await fs.readdir(registryPath, { withFileTypes: true });
+        return entries
+            .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
+            .map(entry => entry.name.slice(0, -'.json'.length))
+            .filter(name => !LOCAL_REGISTRY_META_FILES.includes(name))
+            .sort();
+    } catch {
+        return null;
+    }
+}
+
 /**
  * 多源拉取（基础设施闭环 P0）：按序尝试 sources，首个成功即返回。
  * - 在线模式：某源 integrity/signature 校验失败会 fallback 下一源（CDN 冗余）；
