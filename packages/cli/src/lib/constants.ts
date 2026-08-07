@@ -163,9 +163,7 @@ export async function getBrutalistCssStyles(): Promise<string> {
 
 export const CURRENT_CONFIG_VERSION = 1;
 
-// 自包含模板：自带 import（与 UTILS_TEMPLATE 一致）。doctor 的 AddCnFunction 会把该模板
-// 追加到已有 utils 文件末尾——若文件此前未导入 clsx/tailwind-merge，缺少 import 会编译失败
-export const CN_FUNCTION_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
+export const UTILS_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -173,10 +171,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 `;
 
-export const UTILS_TEMPLATE = `import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+// 与 UTILS_TEMPLATE 逐字节一致，复用其定义保持单一数据源（须置于 UTILS_TEMPLATE 之后避免 TDZ）。
+// doctor 的 AddCnFunction 用它追加到全新的 utils 文件（自带 import，保证自包含）。
+export const CN_FUNCTION_TEMPLATE = UTILS_TEMPLATE;
 
-export function cn(...inputs: ClassValue[]) {
+// 仅函数体（无 import）：doctor 追加到已导入 clsx/tailwind-merge 的文件时使用，
+// 避免同名 import 重复绑定导致 SyntaxError
+export const CN_FUNCTION_BODY_TEMPLATE = `export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 `;

@@ -7,7 +7,7 @@ import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, Instal
 import { FixId } from '../lib/types.js';
 import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries, getCacheStats } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
-import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
+import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_BODY_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
 
 const require = createRequire(import.meta.url);
@@ -844,7 +844,20 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
                         const existing = await fs.readFile(utilsPath + utilsFile, 'utf-8');
                         // 避免 utils 文件已含 cn 函数时重复导出
                         if (!existing.includes('export function cn') && !existing.includes('export const cn')) {
-                            await transaction.writeFile(utilsPath + utilsFile, existing + '\n' + CN_FUNCTION_TEMPLATE);
+                            // 按缺失的 import 逐个补齐：已导入的模块不再重复追加，
+                            // 否则同名 import 重复绑定会触发 SyntaxError（文件可能是
+                            // 手动编写或经 UTILS_TEMPLATE 初始化过的）
+                            const importLines: string[] = [];
+                            if (!/from\s+["']clsx["']/.test(existing)) {
+                                importLines.push('import { type ClassValue, clsx } from "clsx";');
+                            }
+                            if (!/from\s+["']tailwind-merge["']/.test(existing)) {
+                                importLines.push('import { twMerge } from "tailwind-merge";');
+                            }
+                            const addition = importLines.length > 0
+                                ? `${importLines.join('\n')}\n${CN_FUNCTION_BODY_TEMPLATE}`
+                                : CN_FUNCTION_BODY_TEMPLATE;
+                            await transaction.writeFile(utilsPath + utilsFile, existing + '\n' + addition);
                             didWrite = true;
                             logger.success('Added cn() function.');
                         }
