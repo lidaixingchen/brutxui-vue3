@@ -20,7 +20,10 @@ import { isGlobalDryRun } from './global-dry-run.js';
 
 export const AUDIT_LOG_RELATIVE_PATH = '.brutx/audit.log';
 
-export type AuditCommand = 'add' | 'remove' | 'update' | 'diff';
+// 单一事实来源：AuditCommand 类型由 AUDIT_COMMANDS 推导，
+// 新增命令类型只需改这一处，白名单与类型永不失步
+export const AUDIT_COMMANDS = ['add', 'remove', 'update', 'diff'] as const;
+export type AuditCommand = (typeof AUDIT_COMMANDS)[number];
 
 export interface AuditEntry {
     timestamp: string;
@@ -113,14 +116,14 @@ export async function readAuditLog(
                 await debugLog(`Skipping unparseable audit log line: ${line.slice(0, 200)}`);
             }
         }
-    } catch {
-        // 读取失败（文件被并发删除等）返回已解析部分
+    } catch (error) {
+        // 读取失败（文件被并发删除等）：返回已解析部分，并记录失败原因便于定位
+        const message = error instanceof Error ? error.message : String(error);
+        await debugLog(`Failed to read audit log: ${message}`);
     }
 
     return applyFilter(entries, filter);
 }
-
-const AUDIT_COMMANDS: readonly AuditCommand[] = ['add', 'remove', 'update', 'diff'];
 
 function isValidAuditEntry(value: unknown): value is AuditEntry {
     if (typeof value !== 'object' || value === null) return false;
@@ -267,7 +270,9 @@ export async function countAuditEntries(cwd: string): Promise<number> {
         });
         let count = 0;
         for await (const line of readline) {
-            if (line.length > 0) count += 1;
+            // 只计 JSON 对象行（'{\s*' 开头的行）：崩溃残留的半行/脏数据不计入，
+            // 与 readAuditLog 的有效条目口径保持一致，避免 doctor 诊断总数虚高
+            if (line.length > 0 && line.trimStart().startsWith('{')) count += 1;
         }
         return count;
     } catch {
