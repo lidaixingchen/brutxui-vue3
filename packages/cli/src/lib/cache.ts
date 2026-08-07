@@ -193,7 +193,8 @@ export async function getCachedEntry<T>(
         if (!(await fs.pathExists(filePath))) return null;
 
         const raw = await fs.readJson(filePath) as CacheFileRaw<T>;
-        if (typeof raw.timestamp !== 'number') return null;
+        // 缓存文件损坏（缺字段/写中断残留）时视为未命中，避免把 undefined 强转返回
+        if (typeof raw.timestamp !== 'number' || raw.data === undefined) return null;
 
         const expired = Date.now() - raw.timestamp >= ttl;
         return {
@@ -213,6 +214,22 @@ export interface CacheWriteInput {
     etag?: string;
     lastModified?: string;
     registryVersion?: string;
+}
+
+/**
+ * 原子写缓存文件：先写临时文件再 rename 替换。
+ * 进程崩溃不会留下截断的 JSON 主文件（临时文件残留无碍），
+ * 也避免并发 touch/set 时用旧数据覆盖新写入的数据（rename 原子替换）。
+ */
+async function writeCacheFileAtomic<T>(filePath: string, entry: CacheFileRaw<T>): Promise<void> {
+    const tempPath = `${filePath}.${process.pid}.tmp`;
+    try {
+        await fs.writeJson(tempPath, entry);
+        await fs.move(tempPath, filePath, { overwrite: true });
+    } catch (error) {
+        await fs.remove(tempPath).catch(() => {});
+        throw error;
+    }
 }
 
 /**
@@ -237,8 +254,11 @@ export async function setCachedEntry<T>(
         registryVersion: meta?.registryVersion,
     };
 
-    await fs.writeJson(filePath, entry);
-    await enforceLimits().catch(() => {});
+    await writeCacheFileAtomic(filePath, entry);
+    // LRU 清理失败不应影响主流程，但记录 debug 日志便于定位清理失效原因（缓存膨胀）
+    await enforceLimits().catch((err) => {
+        logger.debug(`Cache: enforceLimits failed: ${err instanceof Error ? err.message : String(err)}`);
+    });
 }
 
 /**
@@ -252,9 +272,10 @@ export async function touchCachedEntry(name: string, source: string): Promise<vo
 
     try {
         const raw = await fs.readJson(filePath) as CacheFileRaw<unknown>;
-        if (typeof raw.timestamp !== 'number') return;
+        // 与 getCachedEntry 一致：data 缺失的损坏条目视为未命中，不续命
+        if (typeof raw.timestamp !== 'number' || raw.data === undefined) return;
         raw.timestamp = Date.now();
-        await fs.writeJson(filePath, raw);
+        await writeCacheFileAtomic(filePath, raw);
     } catch {
         // touch 失败不影响主流程
     }
