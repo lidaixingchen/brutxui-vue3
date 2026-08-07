@@ -177,10 +177,15 @@ program
             logger.error(`Unknown cache action: ${action}. Supported: clear`);
             process.exit(1);
         }
-        // 严格整数解析：Number.parseInt 会静默接受 "10abc"/"3.5" 等非法输入，改用 Number + Number.isInteger
+        // 严格整数解析：/^\d+$/ 预校验拒绝 "10abc"/"3.5"/"0x10"/"1e3" 等非法输入（Number 会接受后两者），
+        // 且限定十进制正整数；"0" 由下方 <= 0 拒绝
         const rawMaxAge = options.maxAge;
+        if (rawMaxAge !== undefined && !/^\d+$/.test(rawMaxAge)) {
+            logger.error(`--max-age must be a positive integer (got: ${rawMaxAge})`);
+            process.exit(1);
+        }
         const maxAgeDays = rawMaxAge !== undefined ? Number(rawMaxAge) : undefined;
-        if (maxAgeDays !== undefined && (!Number.isInteger(maxAgeDays) || maxAgeDays <= 0)) {
+        if (maxAgeDays !== undefined && maxAgeDays <= 0) {
             logger.error(`--max-age must be a positive integer (got: ${rawMaxAge})`);
             process.exit(1);
         }
@@ -270,34 +275,39 @@ function preprocessArgv(argv: string[]): string[] {
  * 调用方应先经过 preprocessArgv 处理，使 -v/-vv/-vvv 统一为 --verbose-level。
  * 命令 action 在 parseAsync 期间执行，全局选项必须先于 action 生效。
  * 环境变量 BRUTX_DRY_RUN=1 / BRUTX_VERBOSE 由各自模块自动检测，这里只处理 CLI flag。
+ * 与 preprocessArgv 一致：`--` 分隔符之后的参数视为位置参数，不参与全局选项扫描。
  */
 function applyGlobalOptionsFromArgv(argv: string[]): void {
+    // 只扫描 `--` 分隔符之前的参数（分隔符之后的内容会原样传给位置参数）
+    const separatorIdx = argv.indexOf('--');
+    const optionsArgv = separatorIdx === -1 ? argv : argv.slice(0, separatorIdx);
+
     // 全局与各子命令（add/update/remove 等）均注册了同名 `--dry-run` option。
     // commander 解析子命令参数时，同名 flag 会被全局 option 捕获，子命令自身的
     // options.dryRun 保持默认 false；因此这里对任意位置的 `--dry-run` 统一激活
     // 全局 dry-run，再由各命令入口的 mergeDryRun() 合并生效。
     // 进程内单命令执行，全局 dry-run 只作用于当前命令的写操作，不会波及其他命令。
-    if (argv.includes('--dry-run')) {
+    if (optionsArgv.includes('--dry-run')) {
         setGlobalDryRun(true);
     }
 
     // 基础设施闭环 P1：--require-signature 全局 flag 激活严格签名模式（优先级最高，
     // 高于 BRUTX_REQUIRE_SIGNATURE 环境变量与 config.requireSignature）。
-    if (argv.includes('--require-signature')) {
+    if (optionsArgv.includes('--require-signature')) {
         setRequireSignature(true);
     }
 
     let verboseLevel = VERBOSE_LEVEL_NONE;
-    const verboseLevelIdx = argv.indexOf('--verbose-level');
-    if (verboseLevelIdx !== -1 && verboseLevelIdx + 1 < argv.length) {
-        const parsed = Number.parseInt(argv[verboseLevelIdx + 1], 10);
+    const verboseLevelIdx = optionsArgv.indexOf('--verbose-level');
+    if (verboseLevelIdx !== -1 && verboseLevelIdx + 1 < optionsArgv.length) {
+        const parsed = Number.parseInt(optionsArgv[verboseLevelIdx + 1], 10);
         if (!Number.isNaN(parsed)) {
             verboseLevel = parsed;
         }
     }
     // -v / -vv / -vvv 已由 preprocessArgv 转换为 --verbose-level，此处无需重复检测
     // --verbose（旧 flag）也提升到至少 STEP 级
-    if (argv.includes('--verbose') && verboseLevel < VERBOSE_LEVEL_STEP) {
+    if (optionsArgv.includes('--verbose') && verboseLevel < VERBOSE_LEVEL_STEP) {
         verboseLevel = VERBOSE_LEVEL_STEP;
     }
     if (verboseLevel > VERBOSE_LEVEL_NONE) {
