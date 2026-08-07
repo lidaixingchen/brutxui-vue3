@@ -588,4 +588,63 @@ describe('info command', () => {
             expect(mockedResolveAliasPath).toHaveBeenCalledWith('@/components', tmpDir);
         });
     });
+
+    describe('not-found component', () => {
+        it('should report not-found when registry returns 404 for the component', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            mockedGetItemFromSources.mockRejectedValue(
+                new Error('All 1 registry source(s) failed. Last error: Failed to fetch component "button" from registry: Not Found')
+            );
+
+            const result = await runInfoJson('button', { cwd: tmpDir });
+
+            expect(result.status).toBe('not-found');
+            expect(result.registryItem).toBeNull();
+        });
+
+        it('should report not-found when local registry file is missing', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            mockedGetItemFromSources.mockRejectedValue(
+                new Error('All 1 registry source(s) failed. Last error: Component "button" not found in local registry: /tmp/registry')
+            );
+
+            const result = await runInfoJson('button', { cwd: tmpDir });
+
+            expect(result.status).toBe('not-found');
+        });
+
+        it('should keep registry-unreachable for network errors without not-found markers', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            mockedGetItemFromSources.mockRejectedValue(
+                new Error('All 1 registry source(s) failed. Last error: Failed to fetch from "https://registry.example.com" after 3 attempts. Last error: ETIMEDOUT')
+            );
+
+            const result = await runInfoJson('button', { cwd: tmpDir });
+
+            expect(result.status).toBe('registry-unreachable');
+        });
+    });
+
+    describe('component name path safety', () => {
+        it('should throw PATH_UNSAFE for component name containing ".."', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+
+            await expect(info('../secret', { cwd: tmpDir, silent: true }))
+                .rejects.toMatchObject({ code: 'PATH_UNSAFE', exitCode: 2 });
+        });
+
+        it('should throw PATH_UNSAFE for component name containing path separators', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+
+            await expect(info('a/b', { cwd: tmpDir, silent: true }))
+                .rejects.toMatchObject({ code: 'PATH_UNSAFE' });
+            await expect(info('a\\b', { cwd: tmpDir, silent: true }))
+                .rejects.toMatchObject({ code: 'PATH_UNSAFE' });
+        });
+    });
 });

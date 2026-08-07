@@ -10,4 +10,23 @@ describe('create command', () => {
             }),
         ).rejects.toThrow('Unsupported template: "react"');
     });
+
+    describe('project name validation', () => {
+        it('should reject "." and ".." as project names (path traversal)', async () => {
+            await expect(create('.', { packageManager: 'pnpm' }))
+                .rejects.toThrow('Invalid project name');
+            await expect(create('..', { packageManager: 'pnpm' }))
+                .rejects.toThrow('Invalid project name');
+        });
+
+        it('should reject option-like names starting with "-"', async () => {
+            await expect(create('-demo', { packageManager: 'pnpm' }))
+                .rejects.toThrow('Invalid project name');
+        });
+
+        it('should reject names with illegal characters', async () => {
+            await expect(create('my app', { packageManager: 'pnpm' }))
+                .rejects.toThrow('Invalid project name');
+        });
+    });
 });
