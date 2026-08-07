@@ -101,12 +101,19 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     const checkFailures: Array<{ name: string; message: string }> = [];
     for (let i = 0; i < settled.length; i++) {
         const entry = settled[i];
-        if (entry.status === 'fulfilled') {
-            results.push(entry.value);
-        } else {
+        const name = updatableComponents[i];
+        if (entry.status === 'rejected') {
             const message = entry.reason instanceof Error ? entry.reason.message : String(entry.reason);
-            checkFailures.push({ name: updatableComponents[i], message });
-            logger.warn(`⚠ Update check failed for "${updatableComponents[i]}": ${message}`);
+            checkFailures.push({ name, message });
+            logger.warn(`⚠ Update check failed for "${name}": ${message}`);
+        } else if (entry.value.status === 'registry-unreachable') {
+            // diffComponent 内部已 catch registry 错误并以 registry-unreachable 返回（不会 reject）：
+            // 必须同样计入失败集合，否则全部 registry 不可达时会被误报为"全部最新"
+            const message = entry.value.registryError ?? 'registry unreachable';
+            checkFailures.push({ name, message });
+            logger.warn(`⚠ Update check failed for "${name}": ${message}`);
+        } else {
+            results.push(entry.value);
         }
     }
 
@@ -120,6 +127,13 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
     const outdated = results.filter((r): r is DiffResult => r.status === 'modified' || r.integrityStatus === 'outdated');
 
     if (outdated.length === 0) {
+        // 部分组件检查失败时不能输出"全部最新"：如实区分成功与失败
+        if (checkFailures.length > 0) {
+            logger.warn(
+                `All reachable components are up-to-date, but update check failed for ${checkFailures.length} component(s): ${checkFailures.map(f => f.name).join(', ')}.`
+            );
+            return;
+        }
         logger.success('All components are up-to-date.');
         return;
     }
@@ -220,7 +234,9 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
             failedGroups.push({ components: groupedComponents, message });
-            logger.warn(`⚠ Update failed for: ${groupedComponents.join(', ')} — ${message}`);
+            // 组内 add 失败时部分组件可能已写入并注册（如 snippets 合并失败不触发回滚），
+            // 如实提示，避免用户误以为整组组件均未更新
+            logger.warn(`⚠ Update failed for: ${groupedComponents.join(', ')} — ${message} (some components in this group may have been updated).`);
         }
     }
 
@@ -234,7 +250,7 @@ async function updateInner(components: string[], options: UpdateOptions, cwd: st
 
     if (failedGroups.length > 0) {
         throw new CliError(
-            `Update failed for ${failedComponents.size} component(s): ${Array.from(failedComponents).join(', ')}. First error: ${failedGroups[0].message}`,
+            `Update failed for ${failedComponents.size} component(s): ${Array.from(failedComponents).join(', ')}. First error: ${failedGroups[0].message} Run "brutx-vue list --check-updates" to verify the actual state.`,
             { code: 'WRITE_FAILED' }
         );
     }
