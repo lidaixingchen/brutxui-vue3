@@ -2,7 +2,56 @@
 
 根 `CHANGELOG.md` 仅保留**最近 3 个版本**的完整变更记录，历史版本详见[归档版本](#归档版本)。
 
-## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.9...HEAD)
+## [Unreleased](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.10...HEAD)
+
+## [0.9.10](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.9...v0.9.10) - 2026-08-07
+
+### ✅ Tests
+
+* **update:** 测试 cwd 改用 os.tmpdir 并 mock audit 适配 Windows 开发环境 ([0c94134](https://github.com/lidaixingchen/brutxui-vue3/commit/0c941349be96bfba3a6de029304ee0a81d0216fc))
+* **transfer:** 补充选中项变 disabled 后选中态残留的回归测试 ([748c1e7](https://github.com/lidaixingchen/brutxui-vue3/commit/748c1e7e52d068cceaf8f572a7aa16d07d28b300))
+* **form:** 补充 clearValidate 不清表单值回归用例 ([a5c834e](https://github.com/lidaixingchen/brutxui-vue3/commit/a5c834ecf43758e83003eb0f87453c87af34b65a))
+* **scratch-card:** 补充画布移除定时器用例 ([6b9f205](https://github.com/lidaixingchen/brutxui-vue3/commit/6b9f20542f349438fc655d5cf5cec3c8edca0e96))
+* **kanban:** 补充向右拖拽排序回归用例 ([8c54657](https://github.com/lidaixingchen/brutxui-vue3/commit/8c546577239012600c6420d92f938423e4c2f66e))
+
+### 🔧 CI
+
+* **deploy-docs:** 并发组启用 cancel-in-progress 防止卡死 run 阻塞部署队列 ([3b1df19](https://github.com/lidaixingchen/brutxui-vue3/commit/3b1df19c818d66c6bf2c19acfbdc6a2c70963efd))
+
+### 🐛 Bug Fixes
+
+* **tags-input:** 删除按钮默认文案接入 i18n ([e95fc1d](https://github.com/lidaixingchen/brutxui-vue3/commit/e95fc1deec377deb80e8598088f9632e1ed54518))
+* **watermark:** 防篡改重建前归位被移出的节点并显式判空 ([7dd77b8](https://github.com/lidaixingchen/brutxui-vue3/commit/7dd77b8888a7d599a0e271dfa63c171b57c9564b))
+* **upload:** 拖拽中止时复位高亮态并补 UploadTrigger 测试 ([597cfcc](https://github.com/lidaixingchen/brutxui-vue3/commit/597cfcc44359e627df7f3e6a459d4de48b85f149))
+* **tour:** steps 缩短时钳制 currentStep 避免卡死 ([c2f3c83](https://github.com/lidaixingchen/brutxui-vue3/commit/c2f3c8388341365a080374956aa2a83612b96fa8))
+* **tree:** 树组件审查修复及回归测试 ([136db61](https://github.com/lidaixingchen/brutxui-vue3/commit/136db61ffd63bfb416d47b1bab9a3b14ff298fa2))
+* **components:** 修复 tour/transfer/virtual-scroll/watermark 缺陷 ([d9a83fc](https://github.com/lidaixingchen/brutxui-vue3/commit/d9a83fcd6a1f9aaa8f5516f05bba2bebf1d1e9c1))
+* **tags-input:** 删除按钮提供默认 aria-label 并允许覆盖 ([d8bfb45](https://github.com/lidaixingchen/brutxui-vue3/commit/d8bfb455dd2eb560d60749ce0303a32e6b726359))
+* **tree:** 修复树组件的键盘导航、搜索展开与节点回写 ([e5e885b](https://github.com/lidaixingchen/brutxui-vue3/commit/e5e885ba2749a7a7cc76c6f7e45c3aabc79b7022))
+* **upload:** 卸载时中止上传并修正 trigger 的 FileList 与 drag 开关 ([07f39e3](https://github.com/lidaixingchen/brutxui-vue3/commit/07f39e3d397723bb6e424b30c66c8ee4e0aec126))
+* **hardcore-input:** 恢复组合结束兜底 emit 并通过标记去重 ([0914c28](https://github.com/lidaixingchen/brutxui-vue3/commit/0914c28b575287947ec61952d4f1ca90deda8ed3))
+* **input:** 恢复组合结束兜底 emit 并通过标记去重 ([aa5c4a5](https://github.com/lidaixingchen/brutxui-vue3/commit/aa5c4a58842f34c123def90ee49ff7e3b4cd86b4))
+* **slider:** 暴露的 currentValue 对齐归一化值 ([71d3eb5](https://github.com/lidaixingchen/brutxui-vue3/commit/71d3eb581f86357066a16e79f65ded9fd6adbd86))
+* **select:** 组件级归一化 options 供分组与非分组共用 ([89c4bd7](https://github.com/lidaixingchen/brutxui-vue3/commit/89c4bd7f1c432e1ca5c1323064469a870f5e0a22))
+* **menu:** 选中子菜单项自动收起并支持 Escape 关闭 ([028e95f](https://github.com/lidaixingchen/brutxui-vue3/commit/028e95fb3d91096b0805a22cc4834471a47c387e))
+* **infinite-scroll:** 重新观察哨兵触发复查并文档化加载契约 ([c57b4dd](https://github.com/lidaixingchen/brutxui-vue3/commit/c57b4ddf062bf05fda37745134a850d90a9a6cab))
+* **textarea:** 组合结束恢复兜底 emit 并通过标记去重 ([0a07681](https://github.com/lidaixingchen/brutxui-vue3/commit/0a0768176fd24240d0736db791686d6a97dcc9e7))
+* **tabs:** 选中项被移除时同步内部激活值 ([136e086](https://github.com/lidaixingchen/brutxui-vue3/commit/136e0861d219bb49b9b52fd6f213b37298fe3e18))
+* **form-wizard:** steps 动态变化时重新钳制当前步骤 ([484d0be](https://github.com/lidaixingchen/brutxui-vue3/commit/484d0becc0f509b35206e834501ae3e2e7d44f60))
+* **stepper:** 空步骤时拦截越界导航 ([866fd97](https://github.com/lidaixingchen/brutxui-vue3/commit/866fd97767a0d69b6cdb906b2d626ff330461552))
+* **textarea:** 完善 IME 组合事件处理避免重复发射与卡死 ([b2146a9](https://github.com/lidaixingchen/brutxui-vue3/commit/b2146a9a2b6452c08a8572eede789581efed880e))
+* **tabs:** 非受控模式校验选中项仍存在 ([6f1d03f](https://github.com/lidaixingchen/brutxui-vue3/commit/6f1d03faf0ef8098f8a4a9caa0251878013d56e6))
+* **table:** 表格样式选择器限定为直接子元素 ([28004c8](https://github.com/lidaixingchen/brutxui-vue3/commit/28004c8a048158d41eaf76341efb23a247a566fb))
+* **stepper:** 越界钳制激活步骤索引 ([0ec2502](https://github.com/lidaixingchen/brutxui-vue3/commit/0ec25022de3842e712de38d41e88b203df66b5ae))
+* **slider:** 归一化 modelValue 保证 thumb 数量一致 ([8af1f59](https://github.com/lidaixingchen/brutxui-vue3/commit/8af1f59c6d53893784383e54bb907e11770090b5))
+* **skeleton:** SkeletonAvatar 显式透传圆形形状 ([b090f8b](https://github.com/lidaixingchen/brutxui-vue3/commit/b090f8b5f1dc1ddf433c3b7780705cdab18c4ea5))
+* **select:** 防御 options 为 null 时分组渲染崩溃 ([0b50d67](https://github.com/lidaixingchen/brutxui-vue3/commit/0b50d6724c2e5a9d89d506e1ca59d45665429087))
+* **scratch-card:** 用定时器替代 transitionend 移除画布 ([eacd775](https://github.com/lidaixingchen/brutxui-vue3/commit/eacd7758631950720e9387ddbe385600a2cef7e2))
+* **noise-background:** 先停止旧动画循环避免 NaN 写入 DOM ([ee59421](https://github.com/lidaixingchen/brutxui-vue3/commit/ee59421baa09e3afb5fc66405965e8f3fbba1fbd))
+* **menu:** 点击固定打开的子菜单不随鼠标移出关闭 ([204e87f](https://github.com/lidaixingchen/brutxui-vue3/commit/204e87ffa74a42b0685c8436a47349edd7ed7a48))
+* **kanban:** 统一列拖拽移动语义使事件下标可精确重放 ([b626167](https://github.com/lidaixingchen/brutxui-vue3/commit/b6261676251af5ddb1b7175a378dbd6486b250ca))
+* **infinite-scroll:** 修复重置后哨兵停滞与禁用态恢复加载失败 ([8b78c8e](https://github.com/lidaixingchen/brutxui-vue3/commit/8b78c8e4292dd75a57db72a19821deb73eb11057))
+* **form:** 修复 clearValidate 误重置表单值与向导步骤越界 ([37f5abf](https://github.com/lidaixingchen/brutxui-vue3/commit/37f5abfbefe3f7172326a9bf5105ded6e426f788))
 
 ## [0.9.9](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.8...v0.9.9) - 2026-08-05
 
@@ -109,43 +158,12 @@
 * **agents:** 修正AGENTS.md ([dfa18a0](https://github.com/lidaixingchen/brutxui-vue3/commit/dfa18a0f7f0f9ba28f51c37703fbe2d45ee3bead))
 * **changelog:** 生成 v0.9.7 根 CHANGELOG 段 ([09141dd](https://github.com/lidaixingchen/brutxui-vue3/commit/09141ddabd5d6a244a0180670fc169576795664a))
 
-## [0.9.7](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.6...v0.9.7) - 2026-08-04
-
-### 🧹 Chores
-
-* 合并远程 main（sign-manifest job 签名提交 1729e7a6） ([adc900f](https://github.com/lidaixingchen/brutxui-vue3/commit/adc900f54eaac1e14c1f9e9ec57289747a13a928))
-
-### 📝 Documentation
-
-* **agents:** 重构 AGENTS.md 为表格化结构 ([e8e52b6](https://github.com/lidaixingchen/brutxui-vue3/commit/e8e52b68f22c6436369bcd1c6f5f0204200bc6a3))
-* README 补供应链安全与离线要点，RELEASE 补签名产物发布流程 ([69ceb5f](https://github.com/lidaixingchen/brutxui-vue3/commit/69ceb5fcbbc1ff02459bf1619629eca0a18c92d7))
-* **schema:** registry-manifest 补 signature/keyId/integrity，新增 components.json schema ([35282e6](https://github.com/lidaixingchen/brutxui-vue3/commit/35282e6a04948eb15df696fe585168013c4441f8))
-* **cli:** 更新 CLI 文档 — registry 子命令、多源/离线、签名信任链 ([dad69af](https://github.com/lidaixingchen/brutxui-vue3/commit/dad69af92536565cc78081f54824df8c1e0505ae))
-* 基础设施闭环验收契约与依赖说明 ([7e5efd6](https://github.com/lidaixingchen/brutxui-vue3/commit/7e5efd63b6826ae1036da6c973720f51d9ed9ec9))
-* **copilot-instructions:** 更新 GitHub Copilot 使用说明补充规范 ([3760477](https://github.com/lidaixingchen/brutxui-vue3/commit/37604776f6a5b885be79461d26cc6763cba0c06c))
-* **changelog:** 整理 v0.9.6 CHANGELOG 格式并归档 v0.9.3，修复生成脚本 ([aee9820](https://github.com/lidaixingchen/brutxui-vue3/commit/aee98208019212c7c0120a2ec668e0fec2b663ac))
-
-### 🔧 CI
-
-* main 签名 job 与发布注入官方私钥 ([819eaa7](https://github.com/lidaixingchen/brutxui-vue3/commit/819eaa7cb577a0c312dc60323e930f6349dc0c5f))
-* **deps:** bump actions/checkout in the actions-official group (#3) ([b5c9a2d](https://github.com/lidaixingchen/brutxui-vue3/commit/b5c9a2d51c7ddeb78abc3133fb336f38adba960c))
-
-### ✨ Features
-
-* **registry:** 构建侧 CI 自动签发 registry-manifest ([446fb7e](https://github.com/lidaixingchen/brutxui-vue3/commit/446fb7e755ca986c401cc0386b7a69239b259b11))
-* **cli:** registry 源管理子命令并接入多源至 add/info/list/diff/doctor ([d80ee68](https://github.com/lidaixingchen/brutxui-vue3/commit/d80ee68cf5a3c1f157c562acebbb741afb92403f))
-* **cli:** 多源 fallback 与离线韧性 — 错误透出、逐源缓存与可观测性 ([85ed364](https://github.com/lidaixingchen/brutxui-vue3/commit/85ed364eeacb50a428171d58bcdf6e9299bdfff9))
-* **cli:** 签名信任链闭环 — manifest 完整性复算校验与严格模式 ([235f34f](https://github.com/lidaixingchen/brutxui-vue3/commit/235f34ff7856f28afdd7fb6556888a5a32368d13))
-
-### 🐛 Bug Fixes
-
-* **ci:** 排除 drift gate 中非确定性生成文件 ([036e791](https://github.com/lidaixingchen/brutxui-vue3/commit/036e791d932b695d9b02ad907e2bfccfeebe2781))
-
 
 ## 归档版本
 
 > 以下版本已归档至 [apps/docs/changelog/](apps/docs/changelog/)，点击版本号查看完整变更记录：
 
+* **[0.9.7](apps/docs/changelog/v0.9.7.md)** - 2026-08-04
 * **[0.9.6](apps/docs/changelog/v0.9.6.md)** - 2026-07-27
 * **[0.9.5](apps/docs/changelog/v0.9.5.md)** - 2026-07-18
 * **[0.9.4](apps/docs/changelog/v0.9.4.md)** - 2026-07-12
