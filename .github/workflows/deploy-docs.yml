@@ -12,7 +12,9 @@ permissions:
 
 concurrency:
     group: pages
-    cancel-in-progress: false
+    # cancel-in-progress: true —— 新 push 会取消卡住的旧部署，避免排队 run 被
+    # 僵尸等待 run 永久阻塞（曾出现 runner 供给故障导致队列死锁 16 小时）。
+    cancel-in-progress: true
 
 jobs:
     deploy:
