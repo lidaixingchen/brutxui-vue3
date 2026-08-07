@@ -22,6 +22,7 @@ import * as project from '../src/lib/project.js';
 import { info } from '../src/commands/info.js';
 import type { BrutalistConfig, InfoOptions, RegistryItem } from '../src/lib/types.js';
 import { DEFAULT_REGISTRY_URL, DEFAULT_REGISTRY_SOURCES } from '../src/lib/constants.js';
+import { CliError } from '../src/lib/error.js';
 
 const mockedReadConfigSafe = vi.mocked(registry.readConfigSafe);
 const mockedGetItemFromSources = vi.mocked(registry.getItemFromSources);
@@ -594,7 +595,9 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItemFromSources.mockRejectedValue(
-                new Error('All 1 registry source(s) failed. Last error: Failed to fetch component "button" from registry: Not Found')
+                new CliError('Component "button" not found in registry: Not Found', {
+                    code: 'COMPONENT_NOT_FOUND',
+                })
             );
 
             const result = await runInfoJson('button', { cwd: tmpDir });
@@ -607,7 +610,9 @@ describe('info command', () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItemFromSources.mockRejectedValue(
-                new Error('All 1 registry source(s) failed. Last error: Component "button" not found in local registry: /tmp/registry')
+                new CliError('Component "button" not found in local registry: /tmp/registry', {
+                    code: 'COMPONENT_NOT_FOUND',
+                })
             );
 
             const result = await runInfoJson('button', { cwd: tmpDir });
@@ -615,11 +620,13 @@ describe('info command', () => {
             expect(result.status).toBe('not-found');
         });
 
-        it('should keep registry-unreachable for network errors without not-found markers', async () => {
+        it('should keep registry-unreachable for network errors', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
             mockedGetItemFromSources.mockRejectedValue(
-                new Error('All 1 registry source(s) failed. Last error: Failed to fetch from "https://registry.example.com" after 3 attempts. Last error: ETIMEDOUT')
+                new CliError('All 1 registry source(s) failed. Last error: ETIMEDOUT', {
+                    code: 'REGISTRY_FETCH_FAILED',
+                })
             );
 
             const result = await runInfoJson('button', { cwd: tmpDir });
@@ -637,14 +644,36 @@ describe('info command', () => {
                 .rejects.toMatchObject({ code: 'PATH_UNSAFE', exitCode: 2 });
         });
 
-        it('should throw PATH_UNSAFE for component name containing path separators', async () => {
+        it('should throw PATH_UNSAFE for component name containing backslash', async () => {
             tmpDir = await createTempDir();
             mockedReadConfigSafe.mockResolvedValue(defaultConfig);
 
-            await expect(info('a/b', { cwd: tmpDir, silent: true }))
-                .rejects.toMatchObject({ code: 'PATH_UNSAFE' });
             await expect(info('a\\b', { cwd: tmpDir, silent: true }))
                 .rejects.toMatchObject({ code: 'PATH_UNSAFE' });
+        });
+
+        it('should throw PATH_UNSAFE for names escaping the components dir after normalization', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+
+            // 'a/../../secret' 归一化后位于 components 目录之外，由解析后越界检查兜底拒绝
+            await expect(info('a/../../secret', { cwd: tmpDir, silent: true }))
+                .rejects.toMatchObject({ code: 'PATH_UNSAFE' });
+        });
+
+        it('should allow scoped component names (containing "/") inside the components dir', async () => {
+            tmpDir = await createTempDir();
+            mockedReadConfigSafe.mockResolvedValue(defaultConfig);
+            mockedGetItemFromSources.mockRejectedValue(
+                new CliError('All 1 registry source(s) failed. Last error: ETIMEDOUT', {
+                    code: 'REGISTRY_FETCH_FAILED',
+                })
+            );
+
+            const result = await runInfoJson('scope/button', { cwd: tmpDir });
+
+            expect(result.name).toBe('scope/button');
+            expect(result.status).toBe('registry-unreachable');
         });
     });
 });

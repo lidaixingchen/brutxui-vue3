@@ -286,6 +286,39 @@ describe('fetchWithSources (P1-5)', () => {
         });
     });
 
+    it('throws COMPONENT_NOT_FOUND when all sources report 404 (deterministic absence)', async () => {
+        const fetcher = vi.fn(async () => {
+            throw new CliError('Component "button" not found in registry: Not Found', {
+                code: 'COMPONENT_NOT_FOUND',
+            });
+        });
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            code: 'COMPONENT_NOT_FOUND',
+        });
+        expect(fetcher).toHaveBeenCalledTimes(2);
+    });
+
+    it('keeps REGISTRY_FETCH_FAILED when only some sources report 404 and others fail with network errors', async () => {
+        const fetcher = vi.fn(async (source: string) => {
+            if (source === 'https://a.example.com') {
+                throw new CliError('Component "button" not found in registry: Not Found', {
+                    code: 'COMPONENT_NOT_FOUND',
+                });
+            }
+            throw new CliError('All 1 registry source(s) failed. Last error: ECONNRESET', {
+                code: 'REGISTRY_FETCH_FAILED',
+            });
+        });
+        // 部分源 404、部分源网络错误：不能确定性判定"组件不存在"，维持 REGISTRY_FETCH_FAILED
+        await expect(
+            fetchWithSources(['https://a.example.com', 'https://b.example.com'], fetcher),
+        ).rejects.toMatchObject({
+            code: 'REGISTRY_FETCH_FAILED',
+        });
+    });
+
     it('tries all sources in offline mode before throwing REGISTRY_OFFLINE_UNAVAILABLE', async () => {
         const fetcher = vi.fn(async () => {
             throw new CliError('offline miss', { code: 'REGISTRY_OFFLINE_UNAVAILABLE' });

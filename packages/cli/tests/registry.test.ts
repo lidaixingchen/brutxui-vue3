@@ -46,6 +46,19 @@ describe('getItem local', () => {
         await expect(registry.getItem('non-existent', '/local/registry')).rejects.toThrow('not found in local registry');
     });
 
+    it('should throw COMPONENT_NOT_FOUND when remote registry returns 404', async () => {
+        vi.stubGlobal('fetch', async () => ({
+            ok: false,
+            statusText: 'Not Found',
+            status: 404,
+            headers: new Map(),
+        }));
+
+        await expect(
+            registry.getItem('missing', 'https://registry.mock')
+        ).rejects.toMatchObject({ code: 'COMPONENT_NOT_FOUND' });
+    });
+
     it('should reject local registry component names that escape the registry directory', async () => {
         await expect(registry.getItem('../button', '/local/registry')).rejects.toThrow('Path traversal');
     });
