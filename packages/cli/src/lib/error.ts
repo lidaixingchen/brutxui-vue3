@@ -8,6 +8,7 @@ export type CliErrorCode =
     | 'REGISTRY_OFFLINE_UNAVAILABLE'
     | 'REGISTRY_SIGNATURE_INVALID'
     | 'PATH_UNSAFE'
+    | 'MANIFEST_READ_FAILED'
     | 'WRITE_FAILED';
 
 export interface CliErrorOptions {
