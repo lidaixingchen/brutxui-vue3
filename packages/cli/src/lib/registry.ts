@@ -141,7 +141,10 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
             );
         }
         if (!(await fs.pathExists(filePath))) {
-            throw new Error(`Component "${name}" not found in local registry: ${filePath}`);
+            throw new CliError(
+                `Component "${name}" not found in local registry: ${filePath}`,
+                { code: 'COMPONENT_NOT_FOUND' }
+            );
         }
         const data = await fs.readJson(filePath);
 
@@ -231,6 +234,14 @@ async function fetchItemWithConditionalRequest(
         return cachedEntry.data;
     }
     if (!res.ok) {
+        // 404 是"组件不存在"的确定性信号，透出独立错误码（供 info/update 等区分
+        // not-found 与 registry-unreachable）；其余 HTTP 错误仍视为获取失败
+        if (res.status === 404) {
+            throw new CliError(
+                `Component "${name}" not found in registry: ${res.statusText}`,
+                { code: 'COMPONENT_NOT_FOUND' }
+            );
+        }
         throw new CliError(
             `Failed to fetch component "${name}" from registry: ${res.statusText}`,
             { code: 'REGISTRY_FETCH_FAILED' }

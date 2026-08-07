@@ -17,6 +17,11 @@ export function getCliErrorAdvice(error: CliError): string[] {
                 'Check your network connection or pass --registry with a reachable registry.',
                 'Use --no-cache if cached registry data may be stale.',
             ];
+        case 'COMPONENT_NOT_FOUND':
+            return [
+                'Check the component name spelling (including any @scope/ prefix).',
+                'The component may not exist in the configured registry; use list or info to verify.',
+            ];
         case 'REGISTRY_INTEGRITY_FAILED':
             return [
                 'Use --no-cache to refetch registry data.',

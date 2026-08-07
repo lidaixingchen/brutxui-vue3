@@ -18,7 +18,18 @@ interface ComponentInfoResult {
 async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName: string): Promise<string[]> {
     try {
         const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-        const componentPath = path.join(componentsPath, componentName);
+        const resolvedComponentsPath = path.resolve(componentsPath);
+        const componentPath = path.resolve(path.join(componentsPath, componentName));
+
+        // 与 registry.ts 本地源校验一致：归一化后路径必须仍在 components 目录内，
+        // 拒绝 "../secret"、绝对路径等越界；"@scope/name" 等作用域组件名位于目录内，放行
+        // （空名/'.' 会让 componentPath 等于 resolvedComponentsPath，已在 getComponentInfo 快速校验拒绝）
+        if (!componentPath.startsWith(resolvedComponentsPath + path.sep)) {
+            throw new CliError(
+                `Security Error: Path traversal detected in component name "${componentName}".`,
+                { code: 'PATH_UNSAFE', exitCode: 2 }
+            );
+        }
 
         if (!await fs.pathExists(componentPath)) {
             return [];
@@ -57,7 +68,11 @@ async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName
         await walk(componentPath, '');
         return files;
     } catch (error) {
-        // 本地扫描失败（别名越界/目录无权限等）不中断 info 命令：返回空列表并告警，
+        // PATH_UNSAFE 是安全错误，必须向上传播，不能降级为空列表
+        if (error instanceof CliError && error.code === 'PATH_UNSAFE') {
+            throw error;
+        }
+        // 其余本地扫描失败（别名越界/目录无权限等）不中断 info 命令：返回空列表并告警，
         // 与 registry 获取错误的降级处理保持一致
         const message = error instanceof Error ? error.message : String(error);
         logger.warn(`Failed to scan local files for "${componentName}": ${message}`);
@@ -67,13 +82,13 @@ async function getLocalFiles(cwd: string, config: BrutalistConfig, componentName
 
 /**
  * 判断注册表错误是否为"组件不存在"（HTTP 404 / 本地 registry 文件缺失）。
- * getItemFromSources 会把各源错误聚合为 "All N registry source(s) failed. Last error: ..."，
- * 真实原因在 cause 链末端，故沿 cause 链逐层匹配。
+ * 按 COMPONENT_NOT_FOUND 错误码精确判定（registry 在 404/本地缺失时透出该错误码），
+ * 沿 cause 链逐层匹配（fetchWithSources 会把各源错误聚合，真实原因在 cause 链上）。
  */
 function isComponentNotFoundError(error: Error | null): boolean {
     let current: unknown = error;
     while (current instanceof Error) {
-        if (current.message.toLowerCase().includes('not found')) {
+        if (current instanceof CliError && current.code === 'COMPONENT_NOT_FOUND') {
             return true;
         }
         const cause = (current as Error & { cause?: unknown }).cause;
@@ -91,9 +106,13 @@ async function getComponentInfo(
     componentName: string,
     registryOverride?: string
 ): Promise<ComponentInfoResult> {
-    // 与 registry.ts 的 PATH_UNSAFE 校验保持一致：拒绝路径分隔符与 ".."，
-    // 防止 path.join 丢弃 componentsPath 前缀后把组件目录之外的文件扫进本地清单
-    if (componentName.includes('/') || componentName.includes('\\') || componentName.includes('..')) {
+    // 快速校验：拒绝空名、"."、".." 与反斜杠（Windows 路径分隔符）。
+    // 注意 ".." 按精确匹配拒绝，不拒绝 "/"——"@scope/name" 作用域组件名合法；
+    // 含 "/" 与 ".." 组合（如 "a/../../x"）由 getLocalFiles 的解析后越界检查兜底。
+    if (componentName.length === 0
+        || componentName === '.'
+        || componentName === '..'
+        || componentName.includes('\\')) {
         throw new CliError(
             `Security Error: Path traversal detected in component name "${componentName}".`,
             { code: 'PATH_UNSAFE', exitCode: 2 }

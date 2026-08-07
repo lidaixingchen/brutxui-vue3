@@ -167,6 +167,17 @@ export async function fetchWithSources<T>(
         );
     }
 
+    // "组件不存在"（404/本地缺失）是确定性信号：全部源均报 not-found 时透出 COMPONENT_NOT_FOUND，
+    // 供调用方区分 not-found 与 registry-unreachable；若任一源是网络/其他错误（或含非 CliError），
+    // 仍聚合为 REGISTRY_FETCH_FAILED，避免把临时网络故障误判为组件不存在
+    if (sourceErrors.length === sources.length
+        && sourceErrors.every(e => e.code === 'COMPONENT_NOT_FOUND')) {
+        throw new CliError(
+            `Component not found in any of the ${sources.length} registry source(s).`,
+            { code: 'COMPONENT_NOT_FOUND', cause: sourceErrors[0] }
+        );
+    }
+
     throw new CliError(
         `All ${sources.length} registry source(s) failed. Last error: ${lastError?.message ?? 'Unknown error'}`,
         { code: 'REGISTRY_FETCH_FAILED', cause: lastError }
