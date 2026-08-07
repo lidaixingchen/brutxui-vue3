@@ -255,8 +255,8 @@ describe('add service', () => {
             expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'hooks', 'useLocale.ts'));
         });
 
-        it('resolves lib/utils to sharedBase/utils.ts', async () => {
-            const resolved = await resolveComponentFilePath('lib/utils', sharedBaseConfig, tmpDir);
+        it('resolves lib/utils/* to sharedBase/utils.ts', async () => {
+            const resolved = await resolveComponentFilePath('lib/utils/utils.ts', sharedBaseConfig, tmpDir);
             expect(resolved).toBe(path.join(tmpDir, 'src', 'widgets', 'brutx', 'shared', 'utils.ts'));
         });
 
