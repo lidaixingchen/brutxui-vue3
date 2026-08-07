@@ -154,14 +154,16 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
     }
 }
 
-// 本地 registry 目录中不作为组件文件的元数据文件名（不含 .json 扩展名）
-const LOCAL_REGISTRY_META_FILES: readonly string[] = ['registry-manifest'];
-
 /**
  * 列出本地 registry（目录路径）中的全部组件名（*.json 文件名去扩展名），按名称排序。
  * 供 `add --all --registry <local-path>` 使用：本地目录可枚举，远程 HTTP registry
  * 协议不支持列表，返回 null 由调用方决定行为（如要求显式指定组件名）。
  * 目录缺失/不可读同样返回 null。
+ *
+ * 过滤非组件文件（两层）：
+ * - 模式过滤：index.json（shadcn 风格 registry 索引）与 `registry-*` 前缀文件
+ *   （registry-manifest.json / registry-sbom.json 及未来元数据）
+ * - 内容校验：读取后顶层缺少组件 name 字段的文件（与 getItem 的校验语义一致）
  */
 export async function listLocalRegistryComponents(registryPath: string): Promise<string[] | null> {
     if (isUrl(registryPath)) {
@@ -169,11 +171,20 @@ export async function listLocalRegistryComponents(registryPath: string): Promise
     }
     try {
         const entries = await fs.readdir(registryPath, { withFileTypes: true });
-        return entries
-            .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
-            .map(entry => entry.name.slice(0, -'.json'.length))
-            .filter(name => !LOCAL_REGISTRY_META_FILES.includes(name))
-            .sort();
+        const names: string[] = [];
+        for (const entry of entries) {
+            if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
+            const name = entry.name.slice(0, -'.json'.length);
+            if (name === 'index' || name.startsWith('registry-')) continue;
+            try {
+                const data = await fs.readJson(path.join(registryPath, entry.name)) as { name?: unknown };
+                if (typeof data.name !== 'string' || data.name.length === 0) continue;
+                names.push(name);
+            } catch {
+                // 读取/解析失败的文件跳过（与 getItem 的容错一致）
+            }
+        }
+        return names.sort();
     } catch {
         return null;
     }

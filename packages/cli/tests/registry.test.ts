@@ -71,6 +71,11 @@ describe('listLocalRegistryComponents', () => {
             await fs.writeJson(path.join(registryPath, 'button.json'), { name: 'button' });
             await fs.writeJson(path.join(registryPath, 'accordion.json'), { name: 'accordion' });
             await fs.writeJson(path.join(registryPath, 'registry-manifest.json'), { registryVersion: '1' });
+            await fs.writeJson(path.join(registryPath, 'registry-sbom.json'), { $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json' });
+            // shadcn 风格 registry 索引（顶层为 registry.json schema，非组件）
+            await fs.writeJson(path.join(registryPath, 'index.json'), { name: 'brutx-vue', items: [] });
+            // 顶层缺少 name 字段的文件视为非组件（内容校验兜底）
+            await fs.writeJson(path.join(registryPath, 'no-name.json'), { description: 'not a component' });
 
             const names = await registry.listLocalRegistryComponents(registryPath);
             expect(names).toEqual(['accordion', 'button']);
