@@ -74,7 +74,7 @@ describe('Functional Dialog APIs', () => {
 
             // Click Confirm button
             const buttons = Array.from(document.body.querySelectorAll('button'))
-            const confirmBtn = buttons.find((btn) => btn.textContent?.trim() === '确定' || btn.textContent?.trim() === 'Confirm')
+            const confirmBtn = buttons.find((btn) => btn.textContent?.trim() === '确认' || btn.textContent?.trim() === 'Confirm')
             expect(confirmBtn).toBeDefined()
 
             if (confirmBtn) {
@@ -136,7 +136,7 @@ describe('Functional Dialog APIs', () => {
 
             // Click Confirm with empty input (fails pattern validation)
             const buttons = Array.from(document.body.querySelectorAll('button'))
-            const confirmBtn = buttons.find((btn) => btn.textContent?.trim() === '确定' || btn.textContent?.trim() === 'Confirm')
+            const confirmBtn = buttons.find((btn) => btn.textContent?.trim() === '确认' || btn.textContent?.trim() === 'Confirm')
             expect(confirmBtn).toBeDefined()
 
             if (confirmBtn) {

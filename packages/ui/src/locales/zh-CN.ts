@@ -91,7 +91,7 @@ export const zhCN: Locale = {
     dialog: {
         close: '关闭',
         inputError: '输入格式不正确',
-        confirm: '确定',
+        confirm: '确认',
         cancel: '取消',
     },
     sheet: {
@@ -297,7 +297,7 @@ export const zhCN: Locale = {
     pricingSection: {
         defaultTitle: '简单、透明的粗野主义方案',
         mostPopular: '最受欢迎',
-        perLifetime: '/ 终身',
+        perLifetime: '/终身',
         emptyTitle: '暂无定价方案',
         perMonth: '/月',
         perMonthBilledAnnually: '每月（按年计费）',

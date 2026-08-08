@@ -184,7 +184,7 @@ export function showDialog(options: ShowDialogOptions = {}) {
                                 close()
                             }
                         }, {
-                            default: () => isZh.value ? '确定' : 'Confirm'
+                            default: () => locale.value.dialog.confirm
                         }) : null,
                     ]
                 }) : null
