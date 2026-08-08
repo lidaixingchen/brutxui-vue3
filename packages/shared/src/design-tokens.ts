@@ -69,7 +69,8 @@ export const BASE_THEME: Record<ThemeMode, ThemeTokens> = {
         mutedForeground: '#4B5563',
         ring: '#000000',
         info: '#4A90D9',
-        infoForeground: '#ffffff',
+        // 黑字对比度 6.28:1 满足 WCAG AA（4.5:1），与 primary/secondary 黑字风格一致
+        infoForeground: '#000000',
         overlay: 'rgba(0, 0, 0, 0.5)',
         placeholder: '#9CA3AF',
         black: '#000000',
@@ -99,7 +100,8 @@ export const BASE_THEME: Record<ThemeMode, ThemeTokens> = {
         mutedForeground: '#9CA3AF',
         ring: '#ffffff',
         info: '#3B82F6',
-        infoForeground: '#ffffff',
+        // 黑字对比度 5.71:1 满足 WCAG AA（4.5:1）
+        infoForeground: '#000000',
         overlay: 'rgba(0, 0, 0, 0.7)',
         placeholder: '#6B7280',
         black: '#000000',

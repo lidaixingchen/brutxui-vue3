@@ -189,7 +189,7 @@ const DEFAULT_THEME: ThemeVariables = {
         success: '#7FB069',
         successForeground: '#000000',
         info: '#4A90D9',
-        // 白字对比度 3.34:1 不达 WCAG AA（4.5:1），改黑字 6.28:1，与 themes/index.ts 预设保持一致
+        // 黑字对比度 6.28:1 满足 WCAG AA（4.5:1），与 themes/index.ts 预设保持一致
         infoForeground: '#000000',
         bg: '#FFFFFF',
         fg: '#000000',
@@ -244,7 +244,7 @@ const DARK_THEME: ThemeVariables = {
         success: '#7FB069',
         successForeground: '#000000',
         info: '#3B82F6',
-        // 白字对比度 3.68:1 不达 WCAG AA（4.5:1），改黑字 5.71:1，与 themes/index.ts 预设保持一致
+        // 黑字对比度 5.71:1 满足 WCAG AA（4.5:1），与 themes/index.ts 预设保持一致
         infoForeground: '#000000',
         bg: '#141414',
         fg: '#FFFFFF',
