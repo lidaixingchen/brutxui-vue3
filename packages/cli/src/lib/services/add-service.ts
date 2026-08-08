@@ -3,7 +3,7 @@ import path from 'path';
 import type { AddOptions, BrutalistConfig, RegistryItem } from '../types.js';
 import { REGISTRY_PATH_PREFIXES, UTILS_TEMPLATE } from '../constants.js';
 import { CliError } from '../error.js';
-import { isSafePath, resolveAliasPath, resolveImportAlias, verifyWrittenPath } from '../project.js';
+import { isSafePath, resolveAliasPath, resolveImportAlias, resolveUtilsFilePath, verifyWrittenPath } from '../project.js';
 import { resolveDeps } from '../registry.js';
 
 export interface ComponentResolutionResult {
@@ -96,12 +96,7 @@ export async function resolveComponentFilePath(
         const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
         resolved = path.join(path.dirname(composablesPath), 'directives', relative);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.libUtils)) {
-        if (sharedBase) {
-            const aliasPath = await resolveAliasPath(sharedBase, cwd);
-            resolved = path.join(aliasPath, 'utils.ts');
-        } else {
-            resolved = await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
-        }
+        resolved = await resolveUtilsFilePath(config, cwd);
     } else if (registryPath.startsWith(REGISTRY_PATH_PREFIXES.lib)) {
         const relative = registryPath.slice(REGISTRY_PATH_PREFIXES.lib.length);
         if (sharedBase) {
@@ -126,9 +121,7 @@ export async function resolveComponentFilePath(
 }
 
 export async function ensureUtilsFile(cwd: string, config: BrutalistConfig): Promise<EnsureUtilsFileResult> {
-    const utilsPath = config.sharedBase
-        ? path.join(await resolveAliasPath(config.sharedBase, cwd), 'utils.ts')
-        : await resolveAliasPath(config.aliases.utils, cwd) + '.ts';
+    const utilsPath = await resolveUtilsFilePath(config, cwd);
 
     if (await fs.pathExists(utilsPath)) {
         return {
@@ -219,6 +212,10 @@ export async function writeComponentFiles(
                     options.callbacks?.onDryRunFile?.({ item, targetPath });
                     itemAdded = true;
                     filesWritten.push(targetPath);
+                    // dry-run 分支同步填充 filesByComponent，保证与正常模式的返回结构一致
+                    const dryRunFiles = filesByComponent.get(item.name) ?? [];
+                    dryRunFiles.push(targetPath);
+                    filesByComponent.set(item.name, dryRunFiles);
                     continue;
                 }
 
@@ -231,6 +228,15 @@ export async function writeComponentFiles(
                 }
 
                 await fs.ensureDir(path.dirname(targetPath));
+                // 写入前对目标路径 realpath 再次校验，收窄 resolveComponentFilePath 预检
+                // 与本处写入之间（pathExists/ensureDir 等 await 操作）的 TOCTOU 窗口，
+                // 避免预检后被替换的符号链接使 writeFile 越界落盘
+                if (!(await isSafePath(targetPath, cwd))) {
+                    throw new CliError(`Security Error: Resolved path "${targetPath}" is outside the project directory.`, {
+                        code: 'PATH_UNSAFE',
+                        exitCode: 2,
+                    });
+                }
                 const resolvedContent = resolveImportAlias(file.content, config);
                 await fs.writeFile(targetPath, resolvedContent, 'utf-8');
                 await verifyWrittenPath(targetPath, cwd);

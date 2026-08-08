@@ -170,6 +170,8 @@ describe('add service', () => {
         const targetPath = path.join(tmpDir, 'src', 'widgets', 'ui', 'badge', 'Badge.vue');
         expect(result.added).toEqual(['badge']);
         expect(result.filesWritten).toEqual([targetPath]);
+        // dry-run 分支的返回结构与正常模式一致：filesByComponent 同样填充
+        expect(result.filesByComponent.badge).toEqual([targetPath]);
         expect(await fs.pathExists(targetPath)).toBe(false);
         expect(onDryRunFile).toHaveBeenCalledWith({ item: badgeItem, targetPath });
     });

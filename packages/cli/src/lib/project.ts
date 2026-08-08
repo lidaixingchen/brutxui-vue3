@@ -233,6 +233,23 @@ async function resolveByProjectType(cwd: string, relativePath: string): Promise<
     return path.join(cwd, base, relativePath);
 }
 
+/**
+ * 解析 utils 文件完整路径（add-service / init-service 共用，避免两处实现漂移）。
+ * - sharedBase 存在时：<sharedBase>/utils.ts
+ * - 否则：aliases.utils 解析路径 + '.ts'（幂等：配置已带 .ts 扩展名时不再拼接，
+ *   避免 `@/lib/utils.ts` 这类配置被拼成 utils.ts.ts）
+ */
+export async function resolveUtilsFilePath(
+    config: Pick<BrutalistConfig, 'aliases' | 'sharedBase'>,
+    cwd: string
+): Promise<string> {
+    if (config.sharedBase) {
+        return path.join(await resolveAliasPath(config.sharedBase, cwd), 'utils.ts');
+    }
+    const resolved = await resolveAliasPath(config.aliases.utils, cwd);
+    return resolved.endsWith('.ts') ? resolved : `${resolved}.ts`;
+}
+
 export async function getDefaultAliases(cwd: string): Promise<AliasConfig> {
     return await getAliasFromTsConfig(cwd) ?? { ...DEFAULT_ALIASES };
 }
