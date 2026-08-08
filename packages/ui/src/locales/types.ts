@@ -11,6 +11,7 @@ export interface ComboboxLocale {
     multiPlaceholder: string
     searchPlaceholder: string
     emptyText: string
+    /** 已选数量文案，占位符：{count}，如「{count} selected」 */
     selectedCount: string
     create: string
 }
@@ -26,13 +27,16 @@ export interface PaginationLocale {
     goto: string
     pageClassifier: string
     perPage: string
+    /** 每页条数选项文案，占位符：{size}，如「{size} / page」 */
     perPageOption: string
+    /** 总数文案，占位符：{total}，如「Total {total} items」 */
     total: string
 }
 
 export interface CarouselLocale {
     previousSlide: string
     nextSlide: string
+    /** 跳转到某张幻灯片的提示文案，占位符：{index}，如「Go to slide {index}」 */
     goToSlide: string
 }
 
@@ -123,6 +127,7 @@ export interface TreeSelectLocale {
     searchPlaceholder: string
     search: string
     emptyText: string
+    /** 已选数量文案，占位符：{count} */
     selectedCount: string
     clear: string
 }
@@ -130,6 +135,7 @@ export interface TreeSelectLocale {
 export interface CascaderLocale {
     placeholder: string
     emptyText: string
+    /** 已选数量文案，占位符：{count} */
     selectedCount: string
     clear: string
 }
@@ -143,6 +149,7 @@ export interface TransferLocale {
 
 export interface StepperLocale {
     progressSteps: string
+    /** 步骤标题文案，占位符：{index}、{title}，如「Step {index}: {title}」 */
     step: string
 }
 
@@ -189,6 +196,7 @@ export interface DataTableLocale {
     exportCsv: string
     exportJson: string
     selectedRows: string
+    /** 分页信息文案，占位符：{current}、{total}，如「Page {current} of {total}」 */
     pageInfo: string
     perPage: string
     firstPage: string
@@ -198,6 +206,7 @@ export interface DataTableLocale {
     sortAscending: string
     sortDescending: string
     clearSort: string
+    /** 筛选标题文案，占位符：{label}，如「Filter {label}」 */
     filterTitle: string
     filterSearchPlaceholder: string
     filterAll: string
@@ -212,6 +221,7 @@ export interface FormWizardLocale {
     previousStep: string
     nextStep: string
     complete: string
+    /** 步骤进度文案，占位符：{current}、{total}，如「Step {current} of {total}」 */
     stepOf: string
     validationErrors: string
 }
@@ -293,7 +303,9 @@ export interface DatePickerLocale {
     nextYear: string
     previousDecade: string
     nextDecade: string
-    months: string[]
+    /** 12 个月份名称（按下标对应 1-12 月），语言包必须提供完整 12 项 */
+    months: readonly string[]
+    /** 年份范围文案，占位符：{start}、{end}，如「{start} - {end}」 */
     yearRange: string
 }
 
@@ -320,6 +332,7 @@ export interface KanbanLocale {
     cardGrabbed: string
     cardReleased: string
     cardMoved: string
+    /** 卡片移动到某列的文案，占位符：{column}，如「Card moved to {column}」 */
     cardMovedToColumn: string
 }
 
@@ -336,6 +349,7 @@ export interface ColorModeSwitcherLocale {
     dark: string
     system: string
     colorMode: string
+    /** 当前颜色模式提示文案，占位符：{mode}，如「Current: {mode}. Click to toggle.」 */
     currentToggle: string
 }
 
@@ -420,6 +434,7 @@ export interface UploadLocale {
     dragText: string
     browseText: string
     maxSizeError: string
+    /** 文件数量超限提示文案，占位符：{limit}，如「Maximum {limit} files can be uploaded」 */
     limitError: string
     retry: string
 }
