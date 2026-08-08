@@ -146,6 +146,11 @@ function createEmptyManifest(): BrutxManifest {
 }
 
 function toPortableRelativePath(cwd: string, filePath: string): string {
+    // 防御性校验：相对路径会基于 process.cwd() 解析，写入 manifest 后 doctor 重算路径
+    // 会定位错误文件或误报漂移，故在此直接拦截
+    if (!path.isAbsolute(filePath)) {
+        throw new Error(`Expected an absolute file path, got: ${filePath}`);
+    }
     return path.relative(cwd, filePath).split(path.sep).join('/');
 }
 
@@ -180,7 +185,13 @@ export async function readManifest(cwd: string): Promise<BrutxManifest | null> {
         return null;
     }
 
-    return validateManifest(await fs.readJson(manifestPath));
+    try {
+        return validateManifest(await fs.readJson(manifestPath));
+    } catch (error) {
+        // 损坏清单（非法 JSON / 校验失败）带上文件路径与原因，避免用户无法定位
+        const detail = error instanceof Error ? error.message : String(error);
+        throw new Error(`Failed to read manifest at ${manifestPath}: ${detail}`, { cause: error });
+    }
 }
 
 async function writeManifest(
