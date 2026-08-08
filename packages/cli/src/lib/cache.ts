@@ -152,27 +152,54 @@ async function enforceLimits(): Promise<void> {
 
     files.sort((a, b) => a.stat.mtimeMs - b.stat.mtimeMs);
 
-    // 先确定需淘汰的条目（最旧优先），再并行删除
-    const toRemove: Array<{ path: string; size: number }> = [];
+    // 先按"假定全部成功"确定需淘汰的最旧条目，再并行删除；
+    // 若个别删除失败，会在下方对剩余最旧文件补偿删除，保持尽力满足限额的语义。
+    const toRemove: string[] = [];
     let currentBytes = totalBytes;
     let currentCount = files.length;
     for (const file of files) {
         if (currentCount <= maxEntries && currentBytes <= maxBytes) break;
-        toRemove.push({ path: file.path, size: file.stat.size });
+        toRemove.push(file.path);
         currentBytes -= file.stat.size;
         currentCount -= 1;
     }
 
-    const results = await Promise.all(toRemove.map(async (file) => {
+    const results = await Promise.all(toRemove.map(async (filePath) => {
         try {
-            await fs.remove(file.path);
+            await fs.remove(filePath);
             return true;
         } catch {
             // 删除失败跳过
             return false;
         }
     }));
-    const removed = results.filter(Boolean).length;
+    let removed = results.filter(Boolean).length;
+
+    // 并行批次存在删除失败时，实际释放小于预期，需补偿删除。
+    // 先重试批次内删除失败的最旧文件（避免持久性失败时反复淘汰更新的文件偏离 LRU），
+    // 仍超限再继续淘汰后续较新的文件
+    if (removed < toRemove.length) {
+        currentBytes = totalBytes;
+        currentCount = files.length;
+        for (let i = 0; i < results.length; i++) {
+            if (results[i]) {
+                currentBytes -= files[i].stat.size;
+                currentCount -= 1;
+            }
+        }
+        for (let i = 0; i < files.length; i++) {
+            if (i < results.length && results[i]) continue;
+            if (currentCount <= maxEntries && currentBytes <= maxBytes) break;
+            try {
+                await fs.remove(files[i].path);
+                currentBytes -= files[i].stat.size;
+                currentCount -= 1;
+                removed += 1;
+            } catch {
+                // 删除失败继续尝试下一个
+            }
+        }
+    }
 
     if (removed > 0) {
         logger.debug(`Cache: evicted ${removed} entries (LRU).`);
