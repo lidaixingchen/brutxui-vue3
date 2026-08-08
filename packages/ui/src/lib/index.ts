@@ -49,8 +49,9 @@ export type { IconSize } from './icon-size-variants'
 export { EMAIL_REGEX } from './validation'
 
 // 默认值
-// 注意：AUDIO_*/CANVAS_*/GLITCH_*/HARDCORE_INPUT_* 属于组件内部调优参数，
-// 仅为兼容既有消费方保留导出，不作为稳定的公共 API 契约，后续重构可收敛回组件模块。
+// 注意：仅导出组件公共 props/配置默认值。AUDIO_*/CANVAS_*/GLITCH_*/HARDCORE_INPUT_*
+// 等音效/画布/特效内部调优参数不再从聚合入口导出（各组件直接 import './defaults'），
+// 以保持公共 API 面精简，允许内部自由调整。
 export {
     DEFAULT_AUTOPLAY_INTERVAL_MS,
     HSV_PERCENT_PRECISION,
@@ -69,30 +70,7 @@ export {
     MESSAGE_GRACE_PERIOD_MS,
     DEFAULT_TOAST_MAX_VISIBLE,
     DEFAULT_TOAST_GAP_PX,
-    GLITCH_AUTOPLAY_ACTIVE_DURATION_MS,
-    GLITCH_MIN_INTERVAL_MS,
-    CANVAS_SAMPLE_GRID_SIZE,
-    CANVAS_PROGRESS_CHECK_FRAME_INTERVAL,
-    CANVAS_PROGRESS_THROTTLE_MS,
-    AUDIO_TYPE_THROTTLE_MS,
-    AUDIO_TYPE_BASE_FREQ,
-    AUDIO_TYPE_FREQ_RANGE,
-    AUDIO_TYPE_GAIN,
-    AUDIO_TYPE_GAIN_END,
-    AUDIO_TYPE_DURATION,
-    AUDIO_SUCCESS_START_FREQ,
-    AUDIO_SUCCESS_END_FREQ,
-    AUDIO_SUCCESS_GAIN,
-    AUDIO_SUCCESS_GAIN_END,
-    AUDIO_SUCCESS_DURATION,
-    AUDIO_FAIL_FREQ_1,
-    AUDIO_FAIL_FREQ_2,
-    AUDIO_FAIL_FREQ_SHIFT_TIME,
-    AUDIO_FAIL_GAIN,
-    AUDIO_FAIL_GAIN_END,
-    AUDIO_FAIL_DURATION,
     DEFAULT_DIALOG_TRANSITION_MS,
-    HARDCORE_INPUT_SHAKE_DELAY_MS,
     DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX,
     DATA_TABLE_EXPAND_COLUMN_WIDTH_PX,
     DATA_TABLE_SELECT_COLUMN_WIDTH_PX,
@@ -124,8 +102,8 @@ export type {
     ThemeApi,
     ThemeVariablesApi,
 } from './theme-variables'
-// VALID_THEMES 属 useTheme（theme-* class 体系）；DEFAULT_THEMES 属 CSS 变量体系，
-// 两者是两套独立主题系统，命名口径不同（见 ./theme-names）
+// VALID_THEMES 属 useTheme（theme-* class 体系）；DEFAULT_THEMES 属 CSS 变量体系。
+// 命名已对齐：基础主题均为 'classic'，VALID_THEMES 是 DEFAULT_THEMES 键集的非 dark 子集（见 ./theme-names）
 export { VALID_THEMES } from './theme-names'
 export type { ThemeName } from './theme-names'
 
