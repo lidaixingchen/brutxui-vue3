@@ -7,7 +7,7 @@
  */
 
 import { ref, reactive, computed, type Ref, type ComputedRef } from 'vue'
-import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument } from './env'
+import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument, getWindow } from './env'
 
 // ============================================================================
 // 类型定义
@@ -587,6 +587,83 @@ function isValidThemeObject(value: unknown): value is ThemeVariables {
 }
 
 // ============================================================================
+// 暗色模式共享状态
+// ============================================================================
+
+/** 暗色模式存储键后缀（与既有 `${storageKey}-dark` 键格式保持一致） */
+const DARK_MODE_STORAGE_SUFFIX = '-dark'
+
+/**
+ * 按 storageKey 共享的暗色模式 store。
+ * createThemeVariables 与 createDarkModeToggle 通过同一 storageKey 共享同一份 isDark 状态，
+ * 避免两套工厂各自维护 ref 导致的状态不同步（一边 toggle 后 class/storage 与另一边 ref 脱节）；
+ * 同时监听 storage 事件，跨标签页写入同一键时跟随切换。
+ */
+interface DarkModeStore {
+    /** 共享的暗色模式响应式状态 */
+    isDark: Ref<boolean>
+    /** 设置暗色状态：更新 ref、持久化到 storage、同步 DOM class */
+    setDark: (dark: boolean) => void
+    /** 释放 storage 监听并从共享表中移除（destroy 时调用） */
+    dispose: () => void
+}
+
+/** 模块级共享表：同一 storageKey 只维护一份暗色状态 */
+const darkModeStores = new Map<string, DarkModeStore>()
+
+function createDarkModeStore(storageKey: string): DarkModeStore {
+    const isDark = ref(false)
+    const darkStorageKey = `${storageKey}${DARK_MODE_STORAGE_SUFFIX}`
+
+    function applyToDom(dark: boolean): void {
+        if (hasDocument) {
+            getDocument()!.documentElement.classList.toggle('dark', dark)
+        }
+    }
+
+    function setDark(dark: boolean): void {
+        isDark.value = dark
+        safeSetStorageItem(darkStorageKey, String(dark))
+        applyToDom(dark)
+    }
+
+    // 跨标签页同步：其他标签页写入同一 storage 键时，跟随其状态切换 class 与 ref
+    function onStorage(event: StorageEvent): void {
+        if (event.key !== darkStorageKey) return
+        const dark = event.newValue === 'true'
+        isDark.value = dark
+        applyToDom(dark)
+    }
+
+    const win = getWindow()
+    if (win) {
+        win.addEventListener('storage', onStorage)
+    }
+
+    return {
+        isDark,
+        setDark,
+        dispose: () => {
+            const win = getWindow()
+            if (win) {
+                win.removeEventListener('storage', onStorage)
+            }
+            darkModeStores.delete(storageKey)
+        },
+    }
+}
+
+/** 获取（必要时创建）指定 storageKey 的共享暗色模式 store */
+function getDarkModeStore(storageKey: string): DarkModeStore {
+    let store = darkModeStores.get(storageKey)
+    if (!store) {
+        store = createDarkModeStore(storageKey)
+        darkModeStores.set(storageKey, store)
+    }
+    return store
+}
+
+// ============================================================================
 // 主题创建函数
 // ============================================================================
 
@@ -621,7 +698,8 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
     // 响应式状态
     const currentTheme = ref<string>(defaultTheme)
-    const isDark = ref(false)
+    // 暗色模式状态与 createDarkModeToggle 同 key 共享，统一 ref/storage/class 三方同步
+    const { isDark, setDark, dispose: disposeDarkMode } = getDarkModeStore(storageKey)
     let initialized = false
     // 记录上一次应用的主题变量键集，切换主题时先移除旧键，避免残留上一主题写入的变量
     let appliedCssVars: Record<string, string> | null = null
@@ -647,28 +725,23 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
         currentTheme.value = theme
         safeSetStorageItem(storageKey, theme)
+        // 内置 dark 主题与暗色模式联动：切到 dark 主题即置 isDark 并加 dark class，
+        // 保证内联应用 DARK_THEME 变量的同时 .dark 类下的 CSS 变量也生效
+        if (theme === 'dark') {
+            setDark(true)
+        }
         applyThemeVariables(themeVariables.value)
     }
 
-    // 暗色模式切换
+    // 暗色模式切换（状态/持久化/class 统一走共享 store）
     function toggleDarkMode() {
-        isDark.value = !isDark.value
-        safeSetStorageItem(`${storageKey}-dark`, String(isDark.value))
-
-        if (hasDocument) {
-            getDocument()!.documentElement.classList.toggle('dark', isDark.value)
-        }
+        setDark(!isDark.value)
     }
 
     function setDarkMode(dark: boolean) {
         if (isDark.value === dark) return
 
-        isDark.value = dark
-        safeSetStorageItem(`${storageKey}-dark`, String(dark))
-
-        if (hasDocument) {
-            getDocument()!.documentElement.classList.toggle('dark', dark)
-        }
+        setDark(dark)
     }
 
     // 主题管理
@@ -730,13 +803,10 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
             currentTheme.value = savedTheme
         }
 
-        // 恢复暗色模式状态
-        const savedDark = safeGetStorageItem(`${storageKey}-dark`)
+        // 恢复暗色模式状态（经共享 store 同步 ref/storage/class；未保存时保持现状，不覆盖其他实例的切换）
+        const savedDark = safeGetStorageItem(`${storageKey}${DARK_MODE_STORAGE_SUFFIX}`)
         if (savedDark === 'true') {
-            isDark.value = true
-            if (hasDocument) {
-                getDocument()!.documentElement.classList.add('dark')
-            }
+            setDark(true)
         }
 
         // 应用主题变量
@@ -753,6 +823,9 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
         if (hasDocument) {
             getDocument()!.documentElement.classList.remove('dark')
         }
+
+        // 释放共享暗色模式 store（storage 监听 + 共享表条目），同一 storageKey 的下一个实例从初始状态开始
+        disposeDarkMode()
 
         initialized = false
     }
@@ -780,27 +853,22 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 }
 
 /**
- * 快速创建暗色模式切换器
+ * 快速创建暗色模式切换器。
+ *
+ * 与 createThemeVariables 共享同一 storageKey 下的暗色状态（ref/storage/DOM class 三方同步，
+ * 并跟随跨标签页 storage 事件），两者可安全混用；storageKey 不同则状态相互独立。
  */
 export function createDarkModeToggle(storageKey = 'brutx-theme-variables') {
-    const isDark = ref(false)
+    const { isDark, setDark } = getDarkModeStore(storageKey)
 
     function toggle() {
-        isDark.value = !isDark.value
-        safeSetStorageItem(`${storageKey}-dark`, String(isDark.value))
-
-        if (hasDocument) {
-            getDocument()!.documentElement.classList.toggle('dark', isDark.value)
-        }
+        setDark(!isDark.value)
     }
 
     function init() {
-        const savedDark = safeGetStorageItem(`${storageKey}-dark`)
+        const savedDark = safeGetStorageItem(`${storageKey}${DARK_MODE_STORAGE_SUFFIX}`)
         if (savedDark === 'true') {
-            isDark.value = true
-            if (hasDocument) {
-                getDocument()!.documentElement.classList.add('dark')
-            }
+            setDark(true)
         }
     }
 

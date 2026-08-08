@@ -28,6 +28,7 @@ vi.mock('./env', () => ({
         }
     }),
     getDocument: () => document,
+    getWindow: () => window,
 }))
 
 describe('theme-variables', () => {
@@ -309,6 +310,59 @@ describe('theme-variables', () => {
 
             // Variables should be removed
             expect(root.style.getPropertyValue('--brutal-primary')).toBeFalsy()
+        })
+
+        it('should share dark mode state with createDarkModeToggle on the same storage key', () => {
+            const sharedKey = 'shared-dark-key'
+            const api = createThemeVariables({ storageKey: sharedKey })
+            const toggle = createDarkModeToggle(sharedKey)
+
+            // 任一工厂切换，另一工厂的 ref 与 DOM class 同步跟随
+            api.toggleDarkMode()
+            expect(toggle.isDark.value).toBe(true)
+            expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+            toggle.toggle()
+            expect(api.isDark.value).toBe(false)
+            expect(document.documentElement.classList.contains('dark')).toBe(false)
+
+            // 后 init 的一方读到当前值后不产生状态覆盖/回跳
+            toggle.init()
+            expect(api.isDark.value).toBe(false)
+            expect(toggle.isDark.value).toBe(false)
+            expect(document.documentElement.classList.contains('dark')).toBe(false)
+        })
+
+        it('should follow dark mode changes from storage events (cross-tab sync)', () => {
+            const api = createThemeVariables({ storageKey: 'cross-tab-key' })
+
+            expect(api.isDark.value).toBe(false)
+            window.dispatchEvent(
+                new StorageEvent('storage', { key: 'cross-tab-key-dark', newValue: 'true' })
+            )
+            expect(api.isDark.value).toBe(true)
+            expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+            window.dispatchEvent(
+                new StorageEvent('storage', { key: 'cross-tab-key-dark', newValue: 'false' })
+            )
+            expect(api.isDark.value).toBe(false)
+            expect(document.documentElement.classList.contains('dark')).toBe(false)
+
+            // 无关键不触发状态变化
+            window.dispatchEvent(new StorageEvent('storage', { key: 'unrelated-key', newValue: 'true' }))
+            expect(api.isDark.value).toBe(false)
+        })
+
+        it('should enable dark mode when switching to the dark theme', () => {
+            const api = createThemeVariables({ storageKey: 'theme-link-key' })
+
+            api.setTheme('dark')
+
+            expect(api.isDark.value).toBe(true)
+            expect(document.documentElement.classList.contains('dark')).toBe(true)
+            expect(localStorage.getItem('theme-link-key-dark')).toBe('true')
+            expect(api.currentTheme.value).toBe('dark')
         })
     })
 
