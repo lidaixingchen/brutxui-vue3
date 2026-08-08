@@ -1,8 +1,13 @@
+import { TWO_DIGIT_YEAR_PIVOT } from './defaults'
+
 function pad2(value: number): string {
     return value.toString().padStart(2, '0')
 }
 
-import { TWO_DIGIT_YEAR_PIVOT } from './defaults'
+/** 校验时分秒是否在合法范围内，避免 Date 构造函数对越界值自动进位（如 00:60 → 01:00） */
+function isValidTime(hours: number, minutes: number, seconds: number): boolean {
+    return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59 && seconds >= 0 && seconds <= 59
+}
 
 function pivotTwoDigitYear(twoDigitYear: number): number {
     return twoDigitYear >= TWO_DIGIT_YEAR_PIVOT ? 1900 + twoDigitYear : 2000 + twoDigitYear
@@ -106,6 +111,7 @@ export function parseFormattedDate(text: string, format: string): Date | null {
         const hours = parts.HH ?? 0
         const minutes = parts.mm ?? 0
         const seconds = parts.ss ?? 0
+        if (!isValidTime(hours, minutes, seconds)) return null
         const date = new Date(isoDate.getFullYear(), isoDate.getMonth(), isoDate.getDate(), hours, minutes, seconds)
         if (Number.isNaN(date.getTime())) return null
         return date
@@ -115,6 +121,7 @@ export function parseFormattedDate(text: string, format: string): Date | null {
     const hours = parts.HH ?? 0
     const minutes = parts.mm ?? 0
     const seconds = parts.ss ?? 0
+    if (!isValidTime(hours, minutes, seconds)) return null
     const date = new Date(year, month, day, hours, minutes, seconds)
     if (Number.isNaN(date.getTime())) return null
     if (date.getFullYear() !== year) return null
