@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { mount, type ComponentMountingOptions } from '@vue/test-utils'
 import type { Component } from 'vue'
 import { vi } from 'vitest'
 import { axe } from '../vitest.setup'
@@ -28,25 +28,33 @@ import { axe } from '../vitest.setup'
  */
 export async function expectNoA11yViolations(
     component: Component,
-    options?: Record<string, unknown>,
+    options?: ComponentMountingOptions<Component>,
 ) {
-    // 强制使用真实定时器，防止外部 vi.useFakeTimers 污染导致 axe 挂起超时
+    // 强制使用真实定时器，防止外部 vi.useFakeTimers 污染导致 axe 挂起超时；
+    // 结束时恢复调用方原有定时器状态（含 mount 抛错路径），避免泄漏到后续用例
+    const wasFakeTimers = vi.isFakeTimers()
     vi.useRealTimers()
-    const wrapper = mount(component, options as unknown as Parameters<typeof mount>[1])
     try {
-        const results = await axe(wrapper.element)
-        // 自定义失败信息：仅 toHaveLength(0) 失败时只输出数量，不显示违规详情
-        // 需格式化输出 rule id / help / 涉及元素，便于定位
-        if (results.violations.length > 0) {
-            const detail = results.violations
-                .map(v => `  - ${v.id} (${v.help}): ${v.nodes.map(n => n.html).join(', ')}`)
-                .join('\n')
-            throw new Error(`a11y violations (${results.violations.length}):\n${detail}`)
+        const wrapper = mount(component, options)
+        try {
+            const results = await axe(wrapper.element)
+            // 自定义失败信息：仅 toHaveLength(0) 失败时只输出数量，不显示违规详情
+            // 需格式化输出 rule id / help / 涉及元素，便于定位
+            if (results.violations.length > 0) {
+                const detail = results.violations
+                    .map(v => `  - ${v.id} (${v.help}): ${v.nodes.map(n => n.html).join(', ')}`)
+                    .join('\n')
+                throw new Error(`a11y violations (${results.violations.length}):\n${detail}`)
+            }
+            return wrapper
+        } catch (error) {
+            // 仅违规抛错时卸载清理；成功路径保持挂载状态返回，供调用方继续断言
+            wrapper.unmount()
+            throw error
         }
-        return wrapper
-    } catch (error) {
-        // 仅违规抛错时卸载清理；成功路径保持挂载状态返回，供调用方继续断言
-        wrapper.unmount()
-        throw error
+    } finally {
+        if (wasFakeTimers) {
+            vi.useFakeTimers()
+        }
     }
 }
