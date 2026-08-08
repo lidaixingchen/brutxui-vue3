@@ -6,6 +6,7 @@
 declare const process: { env: { NODE_ENV: string | undefined } }
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import packageJson from '../../package.json'
 import { createApp, defineComponent, h, type App } from 'vue'
 import {
     devtoolsPlugin,
@@ -62,7 +63,8 @@ describe('devtoolsPlugin', () => {
 
             const context = app.config.globalProperties.__BRUTX_UI_DEVTOOLS__ as BrutxUIDevtoolsContext
             expect(context.libraryName).toBe('BrutxUI')
-            expect(context.version).toBe('0.8.2')
+            // 版本号与 package.json 保持同步（修复后不再硬编码）
+            expect(context.version).toBe(packageJson.version)
         })
 
         it('should accept custom options', () => {
@@ -381,7 +383,7 @@ describe('devtoolsPlugin', () => {
             const exported = context.exportDebugData()
             const data = JSON.parse(exported)
 
-            expect(data).toHaveProperty('version', '0.8.2')
+            expect(data).toHaveProperty('version', packageJson.version)
             expect(data).toHaveProperty('libraryName', 'BrutxUI')
             expect(data).toHaveProperty('components')
             expect(data).toHaveProperty('eventLog')

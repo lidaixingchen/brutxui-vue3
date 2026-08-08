@@ -102,4 +102,12 @@ export default tseslint.config(
             'no-restricted-syntax': 'off',
         },
     },
+    // devtools-plugin.ts 从 package.json 读取版本号（src 外无 @/ 别名可达），
+    // 豁免 no-restricted-imports 以允许 `import packageJson from '../../package.json'`。
+    {
+        files: ['src/lib/devtools-plugin.ts'],
+        rules: {
+            'no-restricted-imports': 'off',
+        },
+    },
 )

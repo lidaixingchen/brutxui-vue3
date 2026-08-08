@@ -12,10 +12,8 @@
 
 import { inject } from 'vue'
 import type { App, Plugin } from 'vue'
-import { getWindow, isClient } from '@/lib/env'
-
-// process 在 Vitest/Vite 环境中运行时存在，但 tsconfig 未包含 node 类型
-declare const process: { env: { NODE_ENV: string | undefined } }
+import { getWindow, isClient, isDev } from '@/lib/env'
+import packageJson from '../../package.json'
 
 /** Devtools 插件配置选项 */
 export interface DevtoolsPluginOptions {
@@ -232,8 +230,34 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
     const eventLog: EventLogEntry[] = []
     const performanceEntries: PerformanceEntry[] = []
 
+    /**
+     * 记录一次性能测量（条目 + 阈值告警）。
+     * 在 measure/measureAsync 的 finally 中调用，保证 fn() 抛异常时也能观测到慢调用。
+     */
+    function recordMeasurement(name: string, startTime: number, component: string | undefined): void {
+        const duration = performance.now() - startTime
+
+        performanceEntries.push({
+            name,
+            startTime,
+            duration,
+            component,
+        })
+
+        // 超过阈值发出警告
+        if (duration > options.performanceThreshold) {
+            console.warn(
+                `[${options.libraryName}] 性能警告: ${name} 耗时 ${duration.toFixed(2)}ms (阈值: ${options.performanceThreshold}ms)`
+            )
+        } else {
+            console.log(
+                `[${options.libraryName}] ${name}: ${duration.toFixed(2)}ms`
+            )
+        }
+    }
+
     const context: BrutxUIDevtoolsContext = {
-        version: '0.8.2',
+        version: packageJson.version,
         libraryName: options.libraryName,
         components,
         eventLog,
@@ -269,30 +293,12 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
             }
 
             const startTime = performance.now()
-            const result = fn()
-            const duration = performance.now() - startTime
-
-            const entry: PerformanceEntry = {
-                name,
-                startTime,
-                duration,
-                component,
+            try {
+                return fn()
+            } finally {
+                // fn() 抛出异常时 finally 仍会执行：耗时数据不丢失，异常语义原样传播
+                recordMeasurement(name, startTime, component)
             }
-
-            performanceEntries.push(entry)
-
-            // 超过阈值发出警告
-            if (duration > options.performanceThreshold) {
-                console.warn(
-                    `[${options.libraryName}] 性能警告: ${name} 耗时 ${duration.toFixed(2)}ms (阈值: ${options.performanceThreshold}ms)`
-                )
-            } else {
-                console.log(
-                    `[${options.libraryName}] ${name}: ${duration.toFixed(2)}ms`
-                )
-            }
-
-            return result
         },
 
         async measureAsync<T>(name: string, fn: () => Promise<T>, component?: string): Promise<T> {
@@ -301,30 +307,12 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
             }
 
             const startTime = performance.now()
-            const result = await fn()
-            const duration = performance.now() - startTime
-
-            const entry: PerformanceEntry = {
-                name,
-                startTime,
-                duration,
-                component,
+            try {
+                return await fn()
+            } finally {
+                // Promise 被拒绝时 finally 仍会执行：耗时数据不丢失，拒绝语义原样传播
+                recordMeasurement(name, startTime, component)
             }
-
-            performanceEntries.push(entry)
-
-            // 超过阈值发出警告
-            if (duration > options.performanceThreshold) {
-                console.warn(
-                    `[${options.libraryName}] 性能警告: ${name} 耗时 ${duration.toFixed(2)}ms (阈值: ${options.performanceThreshold}ms)`
-                )
-            } else {
-                console.log(
-                    `[${options.libraryName}] ${name}: ${duration.toFixed(2)}ms`
-                )
-            }
-
-            return result
         },
 
         registerComponent(name: string, meta?: Partial<DevtoolsComponentMeta>) {
@@ -429,21 +417,30 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
         },
 
         exportDebugData() {
-            const seen = new WeakSet()
-            return JSON.stringify({
+            // 循环引用检测按「当前序列化路径栈」判定，而非全局已访问集合：
+            // 共享引用（同一对象出现在多条路径）不会被误判为循环，仅路径上重复出现的对象才标记 [Circular]
+            const serialize = (value: unknown, stack: unknown[]): unknown => {
+                if (typeof value !== 'object' || value === null) return value
+                if (stack.includes(value)) return '[Circular]'
+                const nextStack = [...stack, value]
+                if (Array.isArray(value)) {
+                    return value.map((item) => serialize(item, nextStack))
+                }
+                const result: Record<string, unknown> = {}
+                for (const [key, item] of Object.entries(value)) {
+                    result[key] = serialize(item, nextStack)
+                }
+                return result
+            }
+
+            return JSON.stringify(serialize({
                 version: context.version,
                 libraryName: context.libraryName,
                 components: Array.from(components.values()),
                 eventLog,
                 performanceReport: context.getPerformanceReport(),
                 exportedAt: new Date().toISOString(),
-            }, (_key: string, value: unknown) => {
-                if (typeof value === 'object' && value !== null) {
-                    if (seen.has(value)) return '[Circular]'
-                    seen.add(value)
-                }
-                return value
-            }, 2)
+            }, []), null, 2)
         },
     }
 
@@ -591,8 +588,8 @@ function initDevtoolsIntegration(
  */
 export const devtoolsPlugin: Plugin = {
     install(app: App, options?: DevtoolsPluginOptions) {
-        // 仅在开发环境加载
-        if (process.env.NODE_ENV !== 'development') {
+        // 仅在开发环境加载（isDev 已判空 process：纯浏览器/CDN 直接引入时安全跳过）
+        if (!isDev()) {
             return
         }
 
@@ -649,7 +646,7 @@ export function setupDevtools(app: App, options?: DevtoolsPluginOptions): void {
  * ```
  */
 export function useDevtools(): BrutxUIDevtoolsContext | null {
-    if (process.env.NODE_ENV !== 'development') {
+    if (!isDev()) {
         return null
     }
 
