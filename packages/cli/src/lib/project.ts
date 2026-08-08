@@ -237,7 +237,7 @@ export async function getDefaultAliases(cwd: string): Promise<AliasConfig> {
     return await getAliasFromTsConfig(cwd) ?? { ...DEFAULT_ALIASES };
 }
 
-function extractScriptBlocks(content: string): Array<{ start: number; end: number; code: string }> {
+export function extractScriptBlocks(content: string): Array<{ start: number; end: number; code: string }> {
     const blocks: Array<{ start: number; end: number; code: string }> = [];
     // Note: this regex is non-greedy and may split prematurely if a string literal
     // inside <script> contains the substring "</script>". Current codebase does not
