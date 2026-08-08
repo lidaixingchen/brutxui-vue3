@@ -160,11 +160,16 @@ export function getManifestPath(cwd: string): string {
  * 磁盘 hash ≠ registry integrity 的问题。
  */
 export async function computeInstalledContentHash(files: string[]): Promise<string> {
-    const contents: string[] = [];
-    for (const filePath of files) {
-        const content = await fs.readFile(filePath, 'utf-8');
-        contents.push(content);
-    }
+    // 文件相互独立，并行读取（数组顺序由映射结果保持，不影响 computeRegistryIntegrity 的顺序敏感）；
+    // 读取失败时带上文件路径，便于 doctor 定位具体组件而非静默跳过
+    const contents = await Promise.all(files.map(async (filePath) => {
+        try {
+            return await fs.readFile(filePath, 'utf-8');
+        } catch (error) {
+            const detail = error instanceof Error ? error.message : String(error);
+            throw new Error(`Failed to read file for integrity check: ${filePath} (${detail})`, { cause: error });
+        }
+    }));
     return computeRegistryIntegrity(contents.map(content => ({ content })));
 }
 
