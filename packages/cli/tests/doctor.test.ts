@@ -1303,7 +1303,8 @@ describe('doctor --sbom (P1-6)', () => {
             const dialog = sbom.components.find((c: { 'bom-ref': string }) => c['bom-ref'] === 'brutx:dialog');
             expect(dialog.version).toBe('v1.2.0');
             expect(dialog.dependencies).toContain('brutx:button');
-            expect(dialog.hashes[0].content).toBe('def456');
+            // CycloneDX 1.5 要求 hashes[].content 为 hex；'def456' 按 base64 解码后转 hex
+            expect(dialog.hashes[0].content).toBe('75e7f8e7');
         } finally {
             await fs.remove(cwd);
         }

@@ -760,6 +760,14 @@ async function applyFixes(checks: CheckResult[], options: DoctorOptions): Promis
     // silent 只抑制输出/交互，不应跳过修复执行：silent 时视为已确认，直接应用修复。
     const isInteractive = !options.yes && !options.silent && !!process.stdin.isTTY;
 
+    // 非交互且未显式确认（--yes/--silent）时，修复不应静默写入用户文件——
+    // CI/管道等非 TTY 环境需显式传 --yes 才自动应用，避免非预期的文件变更。
+    const autoApply = options.yes || options.silent;
+    if (!isInteractive && !autoApply) {
+        logger.warn('Non-interactive mode: pass --yes to apply fixes without confirmation.');
+        return;
+    }
+
     const cwd = options.cwd ?? process.cwd();
     const config = await readConfigSafe(cwd);
 
@@ -1017,8 +1025,10 @@ async function generateProjectSbom(cwd: string, outputPath?: string): Promise<vo
             type: 'application',
             name,
             version: entry.version ?? 'latest',
+            // CycloneDX 1.5 要求 hashes[].content 为十六进制编码；integrity 是 SRI 格式
+            // （sha256- 前缀 + base64），需 base64 解码后再转 hex，否则不通过严格解析器校验。
             hashes: entry.integrity
-                ? [{ alg: 'SHA-256' as const, content: entry.integrity.replace(/^sha256-/, '') }]
+                ? [{ alg: 'SHA-256' as const, content: Buffer.from(entry.integrity.replace(/^sha256-/, ''), 'base64').toString('hex') }]
                 : undefined,
             dependencies: [
                 ...entry.dependencies.map(dep => `npm:${dep}`),
@@ -1085,8 +1095,10 @@ interface ProjectSbomComponent {
     dependencies?: string[];
 }
 
-async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean): Promise<void> {
-    const config = await readConfigSafe(cwd);
+/**
+ * 收集全部检查项。首次运行与修复后复检共用，避免两处重复维护导致新增检查项遗漏。
+ */
+async function collectChecks(cwd: string, config: BrutalistConfig | null, offline: boolean): Promise<CheckResult[]> {
     const checks: CheckResult[] = [];
 
     checks.push(checkNodeVersion());
@@ -1108,30 +1120,19 @@ async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean
         checks.push(...await checkAuditLog(cwd));
     }
 
+    return checks;
+}
+
+async function doctorInner(options: DoctorOptions, cwd: string, offline: boolean): Promise<void> {
+    const config = await readConfigSafe(cwd);
+    let checks = await collectChecks(cwd, config, offline);
+
     if (options.fix || options.fixOnly) {
         await applyFixes(checks, options);
 
         // 修复后重新运行检测，刷新 checks 数组，以便获取最真实的错误状态
-        checks.length = 0;
         const freshConfig = await readConfigSafe(cwd);
-        checks.push(checkNodeVersion());
-        checks.push(...await checkWorkspaceHint(cwd));
-        checks.push(checkConfigExists(cwd, freshConfig));
-
-        if (freshConfig) {
-            checks.push(checkSchema(freshConfig));
-            checks.push(checkConfigVersion(freshConfig));
-            checks.push(checkStyle(freshConfig));
-            checks.push(await checkTailwindCss(cwd, freshConfig));
-            checks.push(await checkDeprecatedBrutalismPlugin(cwd, freshConfig));
-            checks.push(...await checkAliases(cwd, freshConfig));
-            checks.push(...await checkDependencies(cwd));
-            checks.push(await checkUtilsFunction(cwd, freshConfig));
-            checks.push(...await checkComponentIntegrity(cwd, freshConfig));
-            checks.push(...await checkRegistryReachability(freshConfig, { offline }));
-            checks.push(...await checkCacheHealth());
-            checks.push(...await checkAuditLog(cwd));
-        }
+        checks = await collectChecks(cwd, freshConfig, offline);
     }
 
     if (options.json) {
