@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
-    createThemeVariables,
-    createDarkModeToggle,
+    createThemeVariables as createThemeVariablesRaw,
+    createDarkModeToggle as createDarkModeToggleRaw,
     DEFAULT_THEME,
     DARK_THEME,
     PASTEL_THEME,
@@ -31,8 +31,26 @@ vi.mock('./env', () => ({
     getWindow: () => window,
 }))
 
+// 共享暗色 store 按 storageKey 引用计数：每个测试创建的实例须在 afterEach 统一 release，
+// 保证引用归零、store 被真正释放，跨测试无状态泄漏（同一 key 的新实例从初始状态开始）
+const createdInstances: Array<{ dispose: () => void }> = []
+
+function makeThemeApi(options?: Parameters<typeof createThemeVariablesRaw>[0]): ReturnType<typeof createThemeVariablesRaw> {
+    const api = createThemeVariablesRaw(options)
+    // ThemeApi 的释放入口是 destroy，统一包装为 dispose 便于 afterEach 批量回收
+    createdInstances.push({ dispose: () => api.destroy() })
+    return api
+}
+
+function makeDarkToggle(storageKey?: string): ReturnType<typeof createDarkModeToggleRaw> {
+    const toggle = createDarkModeToggleRaw(storageKey)
+    createdInstances.push(toggle)
+    return toggle
+}
+
 describe('theme-variables', () => {
     beforeEach(() => {
+        createdInstances.length = 0
         // 清理 DOM
         document.documentElement.removeAttribute('style')
         document.documentElement.classList.remove('dark')
@@ -40,6 +58,8 @@ describe('theme-variables', () => {
     })
 
     afterEach(() => {
+        // 释放本测试创建的所有实例（含已在测试内 destroy 的，release 有防重复守卫）
+        createdInstances.forEach((instance) => instance.dispose())
         vi.clearAllMocks()
     })
 
@@ -110,7 +130,7 @@ describe('theme-variables', () => {
 
     describe('createThemeVariables', () => {
         it('should create theme API with default options', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             expect(api.currentTheme.value).toBe('classic')
             expect(api.isDark.value).toBe(false)
@@ -119,7 +139,7 @@ describe('theme-variables', () => {
         })
 
         it('should create theme API with custom default theme', () => {
-            const api = createThemeVariables({ defaultTheme: 'pastel' })
+            const api = makeThemeApi({ defaultTheme: 'pastel' })
 
             expect(api.currentTheme.value).toBe('pastel')
             expect(api.themeVariables.value).toEqual(PASTEL_THEME)
@@ -137,7 +157,7 @@ describe('theme-variables', () => {
                 typography: DEFAULT_THEME.typography,
             }
 
-            const api = createThemeVariables({
+            const api = makeThemeApi({
                 themes: { custom: customTheme },
             })
 
@@ -146,7 +166,7 @@ describe('theme-variables', () => {
         })
 
         it('should set theme correctly', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.setTheme('pastel')
 
@@ -155,7 +175,7 @@ describe('theme-variables', () => {
         })
 
         it('should not set invalid theme', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
             const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
             api.setTheme('invalid-theme')
@@ -167,7 +187,7 @@ describe('theme-variables', () => {
         })
 
         it('should toggle dark mode', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             expect(api.isDark.value).toBe(false)
 
@@ -181,7 +201,7 @@ describe('theme-variables', () => {
         })
 
         it('should set dark mode explicitly', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.setDarkMode(true)
             expect(api.isDark.value).toBe(true)
@@ -193,7 +213,7 @@ describe('theme-variables', () => {
         })
 
         it('should register new theme', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
             const newTheme: ThemeVariables = {
                 colors: DEFAULT_THEME.colors,
                 spacing: DEFAULT_THEME.spacing,
@@ -209,7 +229,7 @@ describe('theme-variables', () => {
         })
 
         it('should unregister theme', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.registerTheme('temp-theme', DEFAULT_THEME)
             expect(api.availableThemes.value).toContain('temp-theme')
@@ -219,7 +239,7 @@ describe('theme-variables', () => {
         })
 
         it('should not unregister default theme', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
             const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
             api.unregisterTheme('classic')
@@ -231,7 +251,7 @@ describe('theme-variables', () => {
         })
 
         it('should switch to default theme when current theme is unregistered', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.registerTheme('temp-theme', DEFAULT_THEME)
             api.setTheme('temp-theme')
@@ -242,7 +262,7 @@ describe('theme-variables', () => {
         })
 
         it('should apply theme variables to DOM', () => {
-            const api = createThemeVariables({ autoInit: false })
+            const api = makeThemeApi({ autoInit: false })
 
             api.initTheme()
 
@@ -253,7 +273,7 @@ describe('theme-variables', () => {
         })
 
         it('should apply custom theme variables to DOM', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.setTheme('pastel')
 
@@ -264,7 +284,7 @@ describe('theme-variables', () => {
         })
 
         it('should persist theme to localStorage', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.setTheme('pastel')
 
@@ -272,7 +292,7 @@ describe('theme-variables', () => {
         })
 
         it('should persist dark mode to localStorage', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
 
             api.toggleDarkMode()
 
@@ -282,7 +302,7 @@ describe('theme-variables', () => {
         it('should restore theme from localStorage on init', () => {
             localStorage.setItem('brutx-theme-variables', 'pastel')
 
-            const api = createThemeVariables()
+            const api = makeThemeApi()
             api.initTheme()
 
             expect(api.currentTheme.value).toBe('pastel')
@@ -291,7 +311,7 @@ describe('theme-variables', () => {
         it('should restore dark mode from localStorage on init', () => {
             localStorage.setItem('brutx-theme-variables-dark', 'true')
 
-            const api = createThemeVariables()
+            const api = makeThemeApi()
             api.initTheme()
 
             expect(api.isDark.value).toBe(true)
@@ -299,7 +319,7 @@ describe('theme-variables', () => {
         })
 
         it('should destroy and clean up DOM', () => {
-            const api = createThemeVariables()
+            const api = makeThemeApi()
             api.initTheme()
 
             // Verify variables are applied
@@ -314,8 +334,8 @@ describe('theme-variables', () => {
 
         it('should share dark mode state with createDarkModeToggle on the same storage key', () => {
             const sharedKey = 'shared-dark-key'
-            const api = createThemeVariables({ storageKey: sharedKey })
-            const toggle = createDarkModeToggle(sharedKey)
+            const api = makeThemeApi({ storageKey: sharedKey })
+            const toggle = makeDarkToggle(sharedKey)
 
             // 任一工厂切换，另一工厂的 ref 与 DOM class 同步跟随
             api.toggleDarkMode()
@@ -334,7 +354,7 @@ describe('theme-variables', () => {
         })
 
         it('should follow dark mode changes from storage events (cross-tab sync)', () => {
-            const api = createThemeVariables({ storageKey: 'cross-tab-key' })
+            const api = makeThemeApi({ storageKey: 'cross-tab-key' })
 
             expect(api.isDark.value).toBe(false)
             window.dispatchEvent(
@@ -355,7 +375,7 @@ describe('theme-variables', () => {
         })
 
         it('should enable dark mode when switching to the dark theme', () => {
-            const api = createThemeVariables({ storageKey: 'theme-link-key' })
+            const api = makeThemeApi({ storageKey: 'theme-link-key' })
 
             api.setTheme('dark')
 
@@ -364,11 +384,64 @@ describe('theme-variables', () => {
             expect(localStorage.getItem('theme-link-key-dark')).toBe('true')
             expect(api.currentTheme.value).toBe('dark')
         })
+
+        it('should keep shared dark state alive when one factory is destroyed', () => {
+            const sharedKey = 'refcount-shared-key'
+            const api = makeThemeApi({ storageKey: sharedKey })
+            const toggle = makeDarkToggle(sharedKey)
+
+            toggle.toggle()
+            expect(toggle.isDark.value).toBe(true)
+
+            api.destroy()
+
+            // 仍有同 key 消费者存活：ref 与 DOM class 不受影响
+            expect(toggle.isDark.value).toBe(true)
+            expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+            // 跨标签页 storage 监听仍有效
+            window.dispatchEvent(
+                new StorageEvent('storage', { key: `${sharedKey}-dark`, newValue: 'false' })
+            )
+            expect(toggle.isDark.value).toBe(false)
+            expect(document.documentElement.classList.contains('dark')).toBe(false)
+        })
+
+        it('should reset dark class only when the last consumer is released', () => {
+            const sharedKey = 'refcount-last-key'
+            const api = makeThemeApi({ storageKey: sharedKey })
+            const toggle = makeDarkToggle(sharedKey)
+
+            toggle.toggle()
+            api.destroy()
+
+            // 仍有 toggle 存活：class 保留
+            expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+            toggle.dispose()
+
+            // 最后一位消费者释放：监听移除、class 复位、共享表项清理
+            expect(document.documentElement.classList.contains('dark')).toBe(false)
+
+            // 同一 key 的新实例从初始状态开始
+            const fresh = makeDarkToggle(sharedKey)
+            expect(fresh.isDark.value).toBe(false)
+        })
+
+        it('should remove dark class on destroy when no other consumer exists', () => {
+            const api = makeThemeApi({ storageKey: 'refcount-solo-key' })
+
+            api.toggleDarkMode()
+            expect(document.documentElement.classList.contains('dark')).toBe(true)
+
+            api.destroy()
+            expect(document.documentElement.classList.contains('dark')).toBe(false)
+        })
     })
 
     describe('createDarkModeToggle', () => {
         it('should create dark mode toggle', () => {
-            const { isDark, toggle } = createDarkModeToggle()
+            const { isDark, toggle } = makeDarkToggle()
 
             expect(isDark.value).toBe(false)
 
@@ -384,7 +457,7 @@ describe('theme-variables', () => {
         it('should restore dark mode from localStorage on init', () => {
             localStorage.setItem('brutx-theme-variables-dark', 'true')
 
-            const { isDark, init } = createDarkModeToggle()
+            const { isDark, init } = makeDarkToggle()
             init()
 
             expect(isDark.value).toBe(true)
@@ -393,11 +466,25 @@ describe('theme-variables', () => {
 
         it('should use custom storage key', () => {
             const customKey = 'custom-dark-key'
-            const { toggle } = createDarkModeToggle(customKey)
+            const { toggle } = makeDarkToggle(customKey)
 
             toggle()
 
             expect(localStorage.getItem(customKey + '-dark')).toBe('true')
+        })
+
+        it('should expose dispose to release the shared store', () => {
+            const sharedKey = 'toggle-dispose-key'
+            const toggle = makeDarkToggle(sharedKey)
+
+            toggle.toggle()
+            expect(toggle.isDark.value).toBe(true)
+
+            toggle.dispose()
+
+            // 释放后同一 key 的新实例从初始状态开始
+            const fresh = makeThemeApi({ storageKey: sharedKey })
+            expect(fresh.isDark.value).toBe(false)
         })
     })
 })

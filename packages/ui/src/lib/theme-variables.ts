@@ -149,7 +149,11 @@ export interface ThemeApi {
     themeVariables: ComputedRef<ThemeVariables>
     /** 可用主题列表 */
     availableThemes: ComputedRef<string[]>
-    /** 设置主题 */
+    /**
+     * 设置主题。
+     * 单向联动语义：切到内置 'dark' 主题会同时开启暗色模式（置 isDark、加 .dark class）；
+     * 切离 'dark' 主题不会自动关闭暗色——暗色模式是独立状态，可经 setDarkMode/toggleDarkMode 单独控制。
+     */
     setTheme: (theme: string) => void
     /** 切换暗色模式 */
     toggleDarkMode: () => void
@@ -165,7 +169,11 @@ export interface ThemeApi {
     applyThemeVariables: (variables: ThemeVariables) => void
     /** 初始化主题 */
     initTheme: () => void
-    /** 销毁主题系统 */
+    /**
+     * 销毁主题系统：移除本实例应用的主题 CSS 变量，并释放共享暗色模式 store 的引用。
+     * 同一 storageKey 下仍有其他消费者（createDarkModeToggle 等）时，暗色状态不受影响；
+     * 仅当这是最后一位消费者时才复位 dark class 并清理 storage 监听。
+     */
     destroy: () => void
 }
 
@@ -598,14 +606,20 @@ const DARK_MODE_STORAGE_SUFFIX = '-dark'
  * createThemeVariables 与 createDarkModeToggle 通过同一 storageKey 共享同一份 isDark 状态，
  * 避免两套工厂各自维护 ref 导致的状态不同步（一边 toggle 后 class/storage 与另一边 ref 脱节）；
  * 同时监听 storage 事件，跨标签页写入同一键时跟随切换。
+ *
+ * store 采用引用计数：每个消费者实例（工厂每次调用）acquire 一次，销毁时 release 一次，
+ * 仅当最后一位消费者释放时才真正摘除 storage 监听、移除 dark class 并清理共享表项——
+ * 任一方提前销毁不会切断仍存活同 key 实例的共享状态。
  */
 interface DarkModeStore {
     /** 共享的暗色模式响应式状态 */
     isDark: Ref<boolean>
     /** 设置暗色状态：更新 ref、持久化到 storage、同步 DOM class */
     setDark: (dark: boolean) => void
-    /** 释放 storage 监听并从共享表中移除（destroy 时调用） */
-    dispose: () => void
+    /** 增加一个消费者引用（工厂创建实例时调用） */
+    acquire: () => void
+    /** 释放一个消费者引用；归零时执行真正的释放（destroy/dispose 时调用） */
+    release: () => void
 }
 
 /** 模块级共享表：同一 storageKey 只维护一份暗色状态 */
@@ -614,6 +628,7 @@ const darkModeStores = new Map<string, DarkModeStore>()
 function createDarkModeStore(storageKey: string): DarkModeStore {
     const isDark = ref(false)
     const darkStorageKey = `${storageKey}${DARK_MODE_STORAGE_SUFFIX}`
+    let refCount = 0
 
     function applyToDom(dark: boolean): void {
         if (hasDocument) {
@@ -635,6 +650,16 @@ function createDarkModeStore(storageKey: string): DarkModeStore {
         applyToDom(dark)
     }
 
+    function dispose(): void {
+        const win = getWindow()
+        if (win) {
+            win.removeEventListener('storage', onStorage)
+        }
+        darkModeStores.delete(storageKey)
+        // 最后一位消费者退出，全局暗色 class 一并复位（storage 保留，供新实例 init 恢复）
+        applyToDom(false)
+    }
+
     const win = getWindow()
     if (win) {
         win.addEventListener('storage', onStorage)
@@ -643,23 +668,28 @@ function createDarkModeStore(storageKey: string): DarkModeStore {
     return {
         isDark,
         setDark,
-        dispose: () => {
-            const win = getWindow()
-            if (win) {
-                win.removeEventListener('storage', onStorage)
+        acquire: () => {
+            refCount += 1
+        },
+        release: () => {
+            // 防重复释放：destroy/dispose 被重复调用时不重复执行清理
+            if (refCount <= 0) return
+            refCount -= 1
+            if (refCount === 0) {
+                dispose()
             }
-            darkModeStores.delete(storageKey)
         },
     }
 }
 
-/** 获取（必要时创建）指定 storageKey 的共享暗色模式 store */
-function getDarkModeStore(storageKey: string): DarkModeStore {
+/** 获取（必要时创建）并占用指定 storageKey 的共享暗色模式 store；调用方销毁实例时须 release */
+function acquireDarkModeStore(storageKey: string): DarkModeStore {
     let store = darkModeStores.get(storageKey)
     if (!store) {
         store = createDarkModeStore(storageKey)
         darkModeStores.set(storageKey, store)
     }
+    store.acquire()
     return store
 }
 
@@ -698,8 +728,9 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
     // 响应式状态
     const currentTheme = ref<string>(defaultTheme)
-    // 暗色模式状态与 createDarkModeToggle 同 key 共享，统一 ref/storage/class 三方同步
-    const { isDark, setDark, dispose: disposeDarkMode } = getDarkModeStore(storageKey)
+    // 暗色模式状态与 createDarkModeToggle 同 key 共享，统一 ref/storage/class 三方同步；
+    // acquire 占用一份引用，destroy 时 release 归还
+    const { isDark, setDark, release: releaseDarkMode } = acquireDarkModeStore(storageKey)
     let initialized = false
     // 记录上一次应用的主题变量键集，切换主题时先移除旧键，避免残留上一主题写入的变量
     let appliedCssVars: Record<string, string> | null = null
@@ -819,13 +850,10 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
         const cssVars = themeVariablesToCssVars(themeVariables.value)
         removeCssVarsFromDom(cssVars)
 
-        // 移除 dark class
-        if (hasDocument) {
-            getDocument()!.documentElement.classList.remove('dark')
-        }
-
-        // 释放共享暗色模式 store（storage 监听 + 共享表条目），同一 storageKey 的下一个实例从初始状态开始
-        disposeDarkMode()
+        // 释放共享暗色模式 store 的一份引用：仅当没有其他同 key 消费者（另一份 createThemeVariables
+        // 或 createDarkModeToggle）时才摘除 storage 监听、复位 dark class 并清理共享表项，
+        // 存活实例的 isDark/跨标签页同步不受影响
+        releaseDarkMode()
 
         initialized = false
     }
@@ -857,9 +885,10 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
  *
  * 与 createThemeVariables 共享同一 storageKey 下的暗色状态（ref/storage/DOM class 三方同步，
  * 并跟随跨标签页 storage 事件），两者可安全混用；storageKey 不同则状态相互独立。
+ * 不再使用该实例时调用 `dispose()` 释放引用，便于按业务生命周期回收监听与共享表项。
  */
 export function createDarkModeToggle(storageKey = 'brutx-theme-variables') {
-    const { isDark, setDark } = getDarkModeStore(storageKey)
+    const { isDark, setDark, release } = acquireDarkModeStore(storageKey)
 
     function toggle() {
         setDark(!isDark.value)
@@ -872,7 +901,11 @@ export function createDarkModeToggle(storageKey = 'brutx-theme-variables') {
         }
     }
 
-    return { isDark, toggle, init }
+    function dispose() {
+        release()
+    }
+
+    return { isDark, toggle, init, dispose }
 }
 
 // ============================================================================
