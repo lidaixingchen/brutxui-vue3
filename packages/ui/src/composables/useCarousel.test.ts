@@ -293,9 +293,9 @@ describe('useCarousel', () => {
             const { wrapper } = mountWithCarousel()
 
             // get the registered handlers
-            const initHandler = vi.mocked(api.on).mock.calls.find((c: [string, (...args: unknown[]) => void]) => c[0] === 'init')?.[1]
-            const selectHandler = vi.mocked(api.on).mock.calls.find((c: [string, (...args: unknown[]) => void]) => c[0] === 'select')?.[1]
-            const reInitHandler = vi.mocked(api.on).mock.calls.find((c: [string, (...args: unknown[]) => void]) => c[0] === 'reInit')?.[1]
+            const initHandler = vi.mocked(api.on).mock.calls.find((c) => c[0] === 'init')?.[1]
+            const selectHandler = vi.mocked(api.on).mock.calls.find((c) => c[0] === 'select')?.[1]
+            const reInitHandler = vi.mocked(api.on).mock.calls.find((c) => c[0] === 'reInit')?.[1]
 
             wrapper.unmount()
 

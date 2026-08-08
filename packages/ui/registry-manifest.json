@@ -1127,7 +1127,8 @@
   },
   "tour": {
     "files": [
-      "Tour.vue"
+      "Tour.vue",
+      "types.ts"
     ],
     "composables": [
       "useLocale.ts",
@@ -1141,7 +1142,8 @@
   },
   "transfer": {
     "files": [
-      "Transfer.vue"
+      "Transfer.vue",
+      "types.ts"
     ],
     "composables": [
       "useLocale.ts",

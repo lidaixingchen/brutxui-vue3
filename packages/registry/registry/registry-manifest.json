@@ -404,7 +404,7 @@
       "examples": []
     },
     "dialog": {
-      "integrity": "sha256-ee38a706908545f9ceaf5638f20777073b8251a114dc88b4439ac484a037ceb7",
+      "integrity": "sha256-044774e541f4458db512cb59441a6965affe2f8df2d48826a994ab6d3aa9f0ca",
       "fileCount": 18,
       "dependencies": [
         "@lucide/vue",
@@ -576,7 +576,7 @@
       "examples": []
     },
     "loading": {
-      "integrity": "sha256-312ee87bb07b9bb562994de07bfe8b7dd46e7cecb665d9b0dd06c40dbc44fbcf",
+      "integrity": "sha256-2c6fd47544a939f839aebb91d3d43b7ab79f71ea1c383830395c7d54ae8290c5",
       "fileCount": 4,
       "dependencies": [],
       "registryDependencies": [
@@ -588,7 +588,7 @@
       "examples": []
     },
     "locale-zh-cn": {
-      "integrity": "sha256-c78400ab373edc4ab177e012761cc9a1ac9b88c0caebda7a2641fb9c91d540aa",
+      "integrity": "sha256-2127624f4c5b08fa7b1a5b01dd93ed86621851959665c3e70b8ff962a7ef7ea1",
       "fileCount": 2,
       "dependencies": [],
       "registryDependencies": [],
@@ -963,8 +963,8 @@
       "examples": []
     },
     "tour": {
-      "integrity": "sha256-cc5332d4ac59a16f1de88974e7a1c9a3d6d4f214e79b674946d97adf1931cd9c",
-      "fileCount": 6,
+      "integrity": "sha256-399d9bebb165540cdca7094cdfbba98ea0aeec97c194f4d77637d0ed5cbc182b",
+      "fileCount": 7,
       "dependencies": [],
       "registryDependencies": [
         "locale-zh-cn"
@@ -973,8 +973,8 @@
       "examples": []
     },
     "transfer": {
-      "integrity": "sha256-7b06903817b753f60647497b77c5982b3efbefe67a8cedded7d45997d779097f",
-      "fileCount": 4,
+      "integrity": "sha256-c833e947dd0a5bd01d08f072315a6c111a16797a6df30ea0ccdeb2fabccbc725",
+      "fileCount": 5,
       "dependencies": [
         "@lucide/vue"
       ],
@@ -1056,7 +1056,5 @@
       "examples": []
     }
   },
-  "integrity": "d8d9fb72ee782fc1e268e6c364f5fb433f465a6aa4f88b7523dc4fb3541f8975",
-  "signature": "wvWc9Ik0z5ShMd7ZVHh/az6a/ZjQ/kK7V10IBvIgjYsmIpaWDWpHELhC+ES1TbLfhUES+qVquHpc76D6pU9SAQ==",
-  "keyId": "official-v1"
+  "integrity": "49af317665e39e40de8684b8978a52815198d48f50d7ba831d8ac431307ab9a4"
 }
