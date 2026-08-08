@@ -1,5 +1,11 @@
 # brutx-ui-vue
 
+## 0.9.12
+
+### Patch Changes
+
+- 06e3c6c: fix(ui): 焦点环改用主题令牌并补充透明 outline 降级；统一 createDarkModeToggle 与 createThemeVariables 的暗色模式状态（引用计数共享 store + 跨标签页同步）；tree 节点选中边框改由变体显式控制，消除级联顺序依赖
+
 ## 0.9.11
 
 ### Patch Changes
