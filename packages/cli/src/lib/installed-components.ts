@@ -14,6 +14,11 @@ async function scanComponentFiles(dir: string): Promise<string[]> {
             const relative = base ? `${base}/${entry.name}` : entry.name;
 
             if (entry.isDirectory()) {
+                // 跳过 node_modules 与以 `.` 开头的隐藏目录（.git/.nuxt 等），
+                // 避免把无关文件计入组件文件列表并拖慢扫描
+                if (entry.name === 'node_modules' || entry.name.startsWith('.')) {
+                    continue;
+                }
                 await walk(fullPath, relative);
             } else {
                 files.push(relative);
@@ -34,7 +39,9 @@ async function extractDependencies(componentDir: string): Promise<string[]> {
         if (ext !== '.vue' && ext !== '.ts' && ext !== '.js') continue;
 
         const content = await fs.readFile(path.join(componentDir, file), 'utf-8');
-        const importRegex = /from\s+['"]([^'"./][^'"]*)['"]/g;
+        // 同时覆盖 `from 'pkg'`（具名/默认导入）、`import 'pkg'`（副作用导入）
+        // 与 `import('pkg')`（动态导入），避免漏采依赖
+        const importRegex = /(?:from\s+|import\s*\(\s*|import\s+)['"]([^'"./][^'"]*)['"]/g;
         let match: RegExpExecArray | null;
 
         while ((match = importRegex.exec(content)) !== null) {
@@ -66,22 +73,48 @@ async function getScannedComponentNames(componentsPath: string): Promise<string[
         .sort();
 }
 
+interface ComponentScanBase {
+    name: string;
+    files: string[];
+    fileCount: number;
+    dependencies: string[];
+}
+
+/**
+ * 合并 manifest 元数据默认值：扫描结果中 manifest 已记录的字段以 manifest 为准，
+ * 与 createManifestInfo 共用同一套映射，避免两处维护导致字段漂移。
+ */
+function withManifestDefaults(
+    base: ComponentScanBase,
+    manifestEntry: InstalledComponentManifest | undefined,
+): InstalledComponentInfo {
+    return {
+        ...base,
+        dependencies: manifestEntry?.dependencies ?? base.dependencies,
+        category: manifestEntry?.category,
+        examples: manifestEntry?.examples,
+        status: manifestEntry?.status,
+        replacement: manifestEntry?.replacement,
+        registryDependencies: manifestEntry?.registryDependencies,
+        registrySource: manifestEntry?.registrySource,
+        installedIntegrity: manifestEntry?.integrity,
+        installedAt: manifestEntry?.installedAt,
+        manifestFiles: manifestEntry?.files,
+        managed: manifestEntry !== undefined,
+    };
+}
+
 function createManifestInfo(entry: InstalledComponentManifest): InstalledComponentInfo {
     return {
-        name: entry.name,
-        files: entry.files,
-        fileCount: entry.files.length,
-        dependencies: entry.dependencies,
-        category: entry.category,
-        examples: entry.examples,
-        status: entry.status,
-        replacement: entry.replacement,
-        registryDependencies: entry.registryDependencies,
-        registrySource: entry.registrySource,
-        installedIntegrity: entry.integrity,
-        installedAt: entry.installedAt,
-        manifestFiles: entry.files,
-        managed: true,
+        ...withManifestDefaults(
+            {
+                name: entry.name,
+                files: entry.files,
+                fileCount: entry.files.length,
+                dependencies: entry.dependencies,
+            },
+            entry,
+        ),
         version: entry.version,
     };
 }
@@ -99,48 +132,39 @@ export async function getInstalledComponentInfos(cwd: string, config: BrutalistC
     const manifest = await readManifest(cwd).catch(() => null);
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
     const componentNames = await getInstalledComponentNames(cwd, config);
-    const infos: InstalledComponentInfo[] = [];
 
-    for (const name of componentNames) {
-        const componentDir = path.join(componentsPath, name);
-        const manifestEntry = manifest?.components[name];
+    // 各组件目录扫描相互独立，并行执行提升大量组件场景下的性能；
+    // 单个组件扫描/读取失败不阻断整体，降级为仅返回 manifest 信息。
+    const infos = await Promise.all(
+        componentNames.map(async (name): Promise<InstalledComponentInfo | null> => {
+            const componentDir = path.join(componentsPath, name);
+            const manifestEntry = manifest?.components[name];
 
-        if (!await fs.pathExists(componentDir)) {
-            if (manifestEntry) {
-                infos.push(createManifestInfo(manifestEntry));
+            try {
+                if (!await fs.pathExists(componentDir)) {
+                    return manifestEntry ? createManifestInfo(manifestEntry) : null;
+                }
+
+                const files = await scanComponentFiles(componentDir);
+                const hasVueFile = files.some(f => f.endsWith('.vue'));
+
+                if (files.length === 0 || !hasVueFile) {
+                    return manifestEntry ? createManifestInfo(manifestEntry) : null;
+                }
+
+                const dependencies = await extractDependencies(componentDir);
+                return withManifestDefaults(
+                    { name, files, fileCount: files.length, dependencies },
+                    manifestEntry,
+                );
+            } catch {
+                // 单个组件扫描失败不应阻断整体，降级为仅返回 manifest 信息
+                return manifestEntry ? createManifestInfo(manifestEntry) : null;
             }
-            continue;
-        }
+        }),
+    );
 
-        const files = await scanComponentFiles(componentDir);
-        const hasVueFile = files.some(f => f.endsWith('.vue'));
-
-        if (files.length === 0 || !hasVueFile) {
-            if (manifestEntry) {
-                infos.push(createManifestInfo(manifestEntry));
-            }
-            continue;
-        }
-
-        const dependencies = await extractDependencies(componentDir);
-
-        infos.push({
-            name,
-            files,
-            fileCount: files.length,
-            dependencies: manifestEntry?.dependencies ?? dependencies,
-            category: manifestEntry?.category,
-            examples: manifestEntry?.examples,
-            status: manifestEntry?.status,
-            replacement: manifestEntry?.replacement,
-            registryDependencies: manifestEntry?.registryDependencies,
-            registrySource: manifestEntry?.registrySource,
-            installedIntegrity: manifestEntry?.integrity,
-            installedAt: manifestEntry?.installedAt,
-            manifestFiles: manifestEntry?.files,
-            managed: manifestEntry !== undefined,
-        });
-    }
-
-    return infos.sort((a, b) => a.name.localeCompare(b.name));
+    return infos
+        .filter((info): info is InstalledComponentInfo => info !== null)
+        .sort((a, b) => a.name.localeCompare(b.name));
 }
