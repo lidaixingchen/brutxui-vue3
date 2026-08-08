@@ -62,18 +62,23 @@ export function renderImperative(
     function destroy() {
         if (isDestroyed) return
         isDestroyed = true
+        // 与 handleClose 同步防重入：destroy 也是公开关闭入口，直接调用时同样阻止后续 onClose 副作用
+        isClosing = true
+
+        // 立即卸载组件：延迟卸载会让旧容器在过渡窗口内持续订阅共享状态（如 messageStore），
+        // 新实例创建时造成瞬时重复渲染。Vue 的 <Transition> 在组件树卸载时会自行播放 leave 动画，
+        // 由组件自身驱动关闭动效后再调用 onClose 的消费方也不依赖此处延迟。
+        render(null, container)
 
         const delay = options.transitionDuration ?? DEFAULT_DIALOG_TRANSITION_MS
-        if (delay > 0) {
-            // 延迟到关闭动效结束后再卸载组件并移除容器：立即 render(null) 会让 Vue 的
-            // leave 过渡动画无法播放，与"组件关闭动效结束后提供 GC 销毁"的契约不符
-            setTimeout(() => {
-                render(null, container)
-                container.remove()
-            }, delay)
-        } else {
-            render(null, container)
+        const removeContainer = () => {
             container.remove()
+        }
+        if (delay > 0) {
+            // 仅延迟移除空容器，为组件内部 leave 过渡动画留出播放时间（组件关闭动效结束后再 GC）
+            setTimeout(removeContainer, delay)
+        } else {
+            removeContainer()
         }
     }
 
