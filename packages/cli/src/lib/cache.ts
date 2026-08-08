@@ -127,16 +127,22 @@ async function enforceLimits(): Promise<void> {
     const entries = await fs.readdir(cacheDir, { withFileTypes: true });
     const files: Array<{ path: string; stat: { mtimeMs: number; size: number } }> = [];
 
-    for (const entry of entries) {
-        if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
-        const fullPath = path.join(cacheDir, entry.name);
-        try {
-            const stat = await fs.stat(fullPath);
-            files.push({ path: fullPath, stat: { mtimeMs: stat.mtimeMs, size: stat.size } });
-        } catch {
-            // stat 失败的文件跳过
-        }
-    }
+    // 各文件 stat 相互独立，并行收集避免串行等待拖慢清理
+    const stats = await Promise.all(
+        entries
+            .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
+            .map(async (entry) => {
+                const fullPath = path.join(cacheDir, entry.name);
+                try {
+                    const stat = await fs.stat(fullPath);
+                    return { path: fullPath, stat: { mtimeMs: stat.mtimeMs, size: stat.size } };
+                } catch {
+                    // stat 失败的文件跳过
+                    return null;
+                }
+            }),
+    );
+    files.push(...stats.filter((s): s is NonNullable<typeof s> => s !== null));
 
     const totalBytes = files.reduce((sum, f) => sum + f.stat.size, 0);
     const needsEntryEviction = files.length > maxEntries;
@@ -146,21 +152,27 @@ async function enforceLimits(): Promise<void> {
 
     files.sort((a, b) => a.stat.mtimeMs - b.stat.mtimeMs);
 
-    let removed = 0;
+    // 先确定需淘汰的条目（最旧优先），再并行删除
+    const toRemove: Array<{ path: string; size: number }> = [];
     let currentBytes = totalBytes;
     let currentCount = files.length;
     for (const file of files) {
-        if (!needsEntryEviction && !needsByteEviction) break;
         if (currentCount <= maxEntries && currentBytes <= maxBytes) break;
+        toRemove.push({ path: file.path, size: file.stat.size });
+        currentBytes -= file.stat.size;
+        currentCount -= 1;
+    }
+
+    const results = await Promise.all(toRemove.map(async (file) => {
         try {
             await fs.remove(file.path);
-            currentBytes -= file.stat.size;
-            currentCount -= 1;
-            removed += 1;
+            return true;
         } catch {
             // 删除失败跳过
+            return false;
         }
-    }
+    }));
+    const removed = results.filter(Boolean).length;
 
     if (removed > 0) {
         logger.debug(`Cache: evicted ${removed} entries (LRU).`);
@@ -314,18 +326,26 @@ export async function clearCache(maxAgeDays?: number): Promise<void> {
     const now = Date.now();
     const entries = await fs.readdir(cacheDir, { withFileTypes: true });
 
-    for (const entry of entries) {
-        if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
-        const fullPath = path.join(cacheDir, entry.name);
-        try {
-            const stat = await fs.stat(fullPath);
-            if (now - stat.mtimeMs > maxAgeMs) {
-                await fs.remove(fullPath);
-            }
-        } catch {
-            // stat 失败跳过
-        }
-    }
+    // 各文件 stat 相互独立，并行收集过期条目后统一删除
+    const staleFiles = await Promise.all(
+        entries
+            .filter(entry => entry.isFile() && entry.name.endsWith('.json'))
+            .map(async (entry) => {
+                const fullPath = path.join(cacheDir, entry.name);
+                try {
+                    const stat = await fs.stat(fullPath);
+                    return now - stat.mtimeMs > maxAgeMs ? fullPath : null;
+                } catch {
+                    // stat 失败跳过
+                    return null;
+                }
+            }),
+    );
+    await Promise.all(
+        staleFiles
+            .filter((p): p is string => p !== null)
+            .map(fullPath => fs.remove(fullPath).catch(() => {})),
+    );
 }
 
 export interface CacheStats {
