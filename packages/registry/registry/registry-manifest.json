@@ -989,7 +989,7 @@
       "examples": []
     },
     "tree-select": {
-      "integrity": "sha256-5d870b6957a26f7297b1e0f9b1ec699204dfb7fd658c6115f1256718733cdc05",
+      "integrity": "sha256-ebbeee08680fb2207bfd43b2d5b8f189dd0301565bbcabe5a748b6e430562c4e",
       "fileCount": 14,
       "dependencies": [
         "@lucide/vue",
@@ -1004,7 +1004,7 @@
       "examples": []
     },
     "tree-view": {
-      "integrity": "sha256-46843e6831c82a1d4c1d108c82caa6ca5a434518c9189dfcabe96bfebda049b6",
+      "integrity": "sha256-dd705cc1853bbf27c3efc8849e14dcf7cf021854a803c6125283d0ed5e5717da",
       "fileCount": 10,
       "dependencies": [
         "@lucide/vue",
@@ -1056,5 +1056,5 @@
       "examples": []
     }
   },
-  "integrity": "184fed47b02260acea9ab75b0d5bc583b671c019797728de9c0bbb6a2bfc5785"
+  "integrity": "15692835f12352d2d4826c1145313df279ae4d143838ab97ad6f5604a063fd8e"
 }

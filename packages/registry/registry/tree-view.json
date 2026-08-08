@@ -32,7 +32,7 @@
     },
     {
       "path": "components/ui/tree-view/tree-view-variants.ts",
-      "content": "import { cva } from 'class-variance-authority';\nimport { treeNodeBaseClasses, treeSelectedClass } from '@/lib/tree-variants';\nimport { brutalHoverLift } from '@/lib/brutal-interaction-variants'\n\nexport const treeItemVariants = cva(\n    [\n        ...treeNodeBaseClasses,\n        'hover:border-brutal',\n        brutalHoverLift,\n    ],\n    {\n        variants: {\n            selected: {\n                true: treeSelectedClass,\n                false: '',\n            },\n        },\n        defaultVariants: {\n            selected: false,\n        },\n    }\n);\n",
+      "content": "import { cva } from 'class-variance-authority';\nimport { treeNodeBaseClasses, treeNodeUnselectedClass, treeSelectedClass } from '@/lib/tree-variants';\nimport { brutalHoverLift } from '@/lib/brutal-interaction-variants'\n\nexport const treeItemVariants = cva(\n    [\n        ...treeNodeBaseClasses,\n        'hover:border-brutal',\n        brutalHoverLift,\n    ],\n    {\n        variants: {\n            selected: {\n                true: treeSelectedClass,\n                false: treeNodeUnselectedClass,\n            },\n        },\n        defaultVariants: {\n            selected: false,\n        },\n    }\n);\n",
       "type": "registry:lib"
     },
     {
@@ -57,7 +57,7 @@
     },
     {
       "path": "lib/tree-variants.ts",
-      "content": "import { brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const INDENT_PER_DEPTH = 20\nexport const BASE_INDENT_TREE_VIEW = 4\nexport const BASE_INDENT_TREE_SELECT = 8\n\nexport const treeNodeBaseClasses = [\n    'flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none',\n    'border-3 border-transparent rounded-brutal',\n    'text-sm text-brutal-fg font-medium',\n    'transition-all duration-150',\n    brutalPress,\n] as const\n\n// 选中态需显式覆盖文字颜色，否则在 theme-mono/dark 下 --brutal-primary 与 --brutal-fg 相同，会出现黑底黑字/白底白字\nexport const treeSelectedClass = 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal'\n\nexport const treeChevronBaseClass = 'flex-shrink-0 transition-transform duration-150'\n\nexport const treeChevronExpandedClass = 'rotate-90'\n\nexport const treeLabelBaseClass = 'truncate'\n",
+      "content": "import { brutalPress } from '@/lib/brutal-interaction-variants'\n\nexport const INDENT_PER_DEPTH = 20\nexport const BASE_INDENT_TREE_VIEW = 4\nexport const BASE_INDENT_TREE_SELECT = 8\n\nexport const treeNodeBaseClasses = [\n    'flex items-center gap-2 px-2 py-1.5 cursor-pointer select-none',\n    'border-3 rounded-brutal',\n    'text-sm text-brutal-fg font-medium',\n    'transition-all duration-150',\n    brutalPress,\n] as const\n\n// 未选中态边框透明：与 treeSelectedClass 的 border-brutal 互为互斥变体（通过 cva selected 变体下发），\n// 避免 `border-transparent` 与 `border-brutal` 同时出现在元素上、由样式表源码顺序决定胜负的隐性失效\nexport const treeNodeUnselectedClass = 'border-transparent'\n\n// 选中态需显式覆盖文字颜色，否则在 theme-mono/dark 下 --brutal-primary 与 --brutal-fg 相同，会出现黑底黑字/白底白字\nexport const treeSelectedClass = 'bg-brutal-primary text-brutal-primary-foreground border-brutal shadow-brutal'\n\nexport const treeChevronBaseClass = 'flex-shrink-0 transition-transform duration-150'\n\nexport const treeChevronExpandedClass = 'rotate-90'\n\nexport const treeLabelBaseClass = 'truncate'\n",
       "type": "registry:lib"
     },
     {
@@ -129,5 +129,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-46843e6831c82a1d4c1d108c82caa6ca5a434518c9189dfcabe96bfebda049b6"
+  "integrity": "sha256-dd705cc1853bbf27c3efc8849e14dcf7cf021854a803c6125283d0ed5e5717da"
 }
