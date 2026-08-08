@@ -7,7 +7,7 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
     "reka-ui",
     "@lucide/vue",
   ],
-  "fileCount": 14,
+  "fileCount": 15,
   "files": [
     {
       "path": "components/ui/data-table/DataTable.vue",
@@ -65,8 +65,12 @@ exports[`registry build snapshots > matches snapshot for multi-dependency compon
       "path": "lib/date.ts",
       "type": "registry:lib",
     },
+    {
+      "path": "lib/env.ts",
+      "type": "registry:lib",
+    },
   ],
-  "integrity": "sha256-b13ef8896f1a628daf29db767b6b01db845b65b1189cdc76b1462425923fd24d",
+  "integrity": "sha256-88b9f27b01f11821d62915e33a78b9b22f0e86b4c5a023333238f38c8986496a",
   "name": "data-table",
   "registryDependencies": [
     "input",
@@ -138,7 +142,7 @@ exports[`registry build snapshots > matches snapshot for simple component (butto
       "type": "registry:lib",
     },
   ],
-  "integrity": "sha256-6ba7a367a5ea0768abeee7425cb872805214838b77d493fdc2ddac38e4a64d90",
+  "integrity": "sha256-96ab255ea6f6dd4aa2c34dcd08cc7d95d70986a5ba9f560efd371454a4f7a54e",
   "name": "button",
   "registryDependencies": [
     "locale-zh-cn",

@@ -48,8 +48,14 @@ jobs:
             - run: pnpm install --frozen-lockfile
 
             # 与 pre-commit 钩子相同的构建入口；CI 持有私钥 → 产出签名版 manifest
+            # 固定 gitCommit 为空（unset GITHUB_SHA/COMMIT_SHA）：与 ci.yml 的 sign job
+            # 保持一致。否则 gitCommit 跟随每次 push 的 SHA 变化，导致每次 push 都产生
+            # 一次 bot 提交抖动；unset 后 manifest 产物幂等，签名就绪后不再产生 diff。
             - name: Regenerate registry with official signature
-              run: pnpm --filter brutx-registry-vue build
+              run: |
+                  unset GITHUB_SHA
+                  unset COMMIT_SHA
+                  pnpm --filter brutx-registry-vue build
 
             - name: Commit signed manifest back if changed
               run: |

@@ -609,13 +609,15 @@ describe('buildRegistrySbom (P1-6)', () => {
         expect(rekaUi.type).toBe('library');
     });
 
-    it('computes SBOM integrity deterministically (excludes serialNumber/timestamp)', () => {
+    it('computes SBOM integrity and serialNumber deterministically', () => {
         const sbom1 = buildRegistrySbom(sampleIndex, 'hash-1');
         const sbom2 = buildRegistrySbom(sampleIndex, 'hash-1');
 
-        // 两次构建（serialNumber 不同）的 integrity 必须一致
+        // 完整性对同一内容一致（排除 serialNumber/metadata.timestamp 自身）
         expect(sbom1.integrity).toBe(sbom2.integrity);
-        expect(sbom1.serialNumber).not.toBe(sbom2.serialNumber);
+        // serialNumber 由内容哈希确定性派生：同一内容两次构建必须一致（可复现构建）
+        expect(sbom1.serialNumber).toBe(sbom2.serialNumber);
+        expect(sbom1.serialNumber).toMatch(/^urn:uuid:[0-9a-f-]{36}$/);
     });
 
     it('produces different integrity when components change', () => {

@@ -803,12 +803,16 @@ export function buildRegistrySbom(
     // 规范化排序，确保 SBOM 可重复构建
     components.sort((a, b) => a['bom-ref'].localeCompare(b['bom-ref']));
 
-    const sbomBase: Omit<RegistrySbom, 'integrity' | 'manifestIntegrity'> = {
+    // P1-6 可复现构建：serialNumber 由内容哈希派生（确定性）而非随机 UUID，
+    // 保证同一 registry 内容两次 build 产物逐字一致（幂等）。否则每次 build
+    // 都会让 registry-sbom.json 产生随机 diff，Sign Registry Manifest 工作流
+    // 的 `git pull --rebase` 会因 unstaged changes 失败。
+    const sbomBase = {
         $schema: 'http://cyclonedx.org/schema/bom-1.5.schema.json',
         bomFormat: SBOM_FORMAT,
         specVersion: SBOM_SPEC_VERSION,
         version: 1,
-        serialNumber: `urn:uuid:${crypto.randomUUID()}`,
+        serialNumber: computeSbomSerialNumber({ bomFormat: SBOM_FORMAT, specVersion: SBOM_SPEC_VERSION, components }),
         metadata: {
             timestamp: process.env.BRUTX_REGISTRY_BUILD_TIMESTAMP ?? null,
             tools: [
@@ -826,7 +830,7 @@ export function buildRegistrySbom(
             },
         },
         components,
-    };
+    } satisfies Omit<RegistrySbom, 'integrity' | 'manifestIntegrity'>;
 
     // SBOM 自身完整性：对 components 数组规范化求 sha256（按 bom-ref 字典序）
     const sbomIntegrity = computeSbomIntegrity(sbomBase);
@@ -846,6 +850,28 @@ export function computeSbomIntegrity(
         components: sbom.components,
     });
     return 'sha256-' + crypto.createHash('sha256').update(canonical).digest('hex');
+}
+
+/**
+ * 确定性生成 SBOM serialNumber（UUID v4 格式的 urn）。
+ * 基于 bomFormat/specVersion/components 的规范化内容哈希前 16 字节构造，
+ * 同一内容始终产出同一 serialNumber；内容变化时 serialNumber 随之变化。
+ */
+export function computeSbomSerialNumber(
+    sbom: Pick<RegistrySbom, 'bomFormat' | 'specVersion' | 'components'>,
+): string {
+    const canonical = JSON.stringify({
+        bomFormat: sbom.bomFormat,
+        specVersion: sbom.specVersion,
+        components: sbom.components,
+    });
+    const hash = crypto.createHash('sha256').update(canonical).digest();
+    const bytes = hash.subarray(0, 16);
+    // 标记为 UUID v4 版本与 RFC 4122 变体（保证格式合法、避免与随机 UUID 混淆）
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = bytes.toString('hex');
+    return `urn:uuid:${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
 }
 
 interface SbomComponent {
