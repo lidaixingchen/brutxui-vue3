@@ -4,7 +4,7 @@ import { nextTick } from 'vue'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import { en } from '@/locales/en'
 import Tour from './Tour.vue'
-import type { TourStep } from './Tour.vue'
+import type { TourStep } from './types'
 
 const localeProvide = { [LOCALE_INJECTION_KEY]: en }
 const TARGET_ID_1 = 'test-target-1'

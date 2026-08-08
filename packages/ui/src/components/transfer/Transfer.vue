@@ -8,12 +8,7 @@ import Input from '../input/Input.vue'
 import { ChevronLeft, ChevronRight, Search } from '@lucide/vue'
 import { useLocale } from '@/composables/useLocale'
 import { useTransferPanelSelection } from '@/composables/useTransferPanelSelection'
-
-export interface TransferDataItem {
-    key: string | number
-    label: string
-    disabled?: boolean
-}
+import type { TransferDataItem } from './types'
 
 interface TransferProps {
     modelValue?: (string | number)[]

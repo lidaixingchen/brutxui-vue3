@@ -52,7 +52,10 @@ export { useMessageBox } from './composables/useMessageBox'
 export type { UseMessageBoxReturn } from './composables/useMessageBox'
 export { useMessage, messageStore, removeMessage, destroyMessageSystem } from './composables/useMessage'
 export type { MessageItem, MessageOptions, MessageType, UseMessageReturn } from './composables/useMessage'
-export { destroyBrutxFallbacks } from './composables/destroyFallbacks'
+// 清理类 API 分层说明：
+// - destroyBrutxUI（推荐）/ destroyBrutxFallbacks（旧名，deprecated）：总清理入口，聚合清理 toast/theme/message 的共享 fallback 状态。
+// - destroyMessageSystem / destroyToastFallback / destroyThemeFallback：单项清理，仅需清理某子系统时使用。
+export { destroyBrutxUI, destroyBrutxFallbacks } from './composables/destroyFallbacks'
 
 export { default as AlertDialogContent } from './components/alert-dialog/AlertDialogContent.vue'
 export { default as AlertDialogHeader } from './components/alert-dialog/AlertDialogHeader.vue'
@@ -176,7 +179,9 @@ export * from './components/carousel'
 export * from './components/code-block'
 export * from './components/form'
 
-// Composables previously re-exported via root-level wrappers (./calendar, ./carousel)
+// 以下 composables 仅来自 composables/ 目录——calendar/carousel 子模块目前只导出组件及各自 types，
+// 不再导出 useDatePicker/useCarousel。注意上方 `export *` 与显式具名导出并存时，
+// 子模块若新增同名导出会造成静默遮蔽，新增同名导出应改为显式具名导出。
 export { useDatePicker } from './composables/useDatePicker'
 export type { UseDatePickerOptions, UseDatePickerReturn } from './composables/useDatePicker'
 export { useCarousel, DEFAULT_AUTOPLAY_DELAY } from './composables/useCarousel'
@@ -431,14 +436,14 @@ export { useInfiniteScroll } from './components/infinite-scroll/useInfiniteScrol
 
 // 新增组件 - Transfer & Rate
 export { default as Transfer } from './components/transfer/Transfer.vue'
-export type { TransferDataItem } from './components/transfer/Transfer.vue'
+export type { TransferDataItem } from './components/transfer/types'
 export { default as Rate } from './components/rate/Rate.vue'
 
 export { default as Result } from './components/result/Result.vue'
 export { default as Watermark } from './components/watermark/Watermark.vue'
 export { default as Backtop } from './components/backtop/Backtop.vue'
 export { default as Tour } from './components/tour/Tour.vue'
-export type { TourStep, TourProps } from './components/tour/Tour.vue'
+export type { TourStep, TourProps } from './components/tour/types'
 export { default as Image } from './components/image/Image.vue'
 
 // 通用工具类型

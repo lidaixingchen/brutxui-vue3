@@ -5,20 +5,7 @@ import { useLocale } from '@/composables/useLocale'
 import { useThrottle } from '@/composables/useThrottle'
 import { getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor, getViewportSize, hasDocument, getWindow, getDocument, getComputedStyle } from '@/lib/env'
 import { Z_INDEX } from '@/lib/z-index'
-
-export interface TourStep {
-    target: string | HTMLElement
-    title?: string
-    description?: string
-    placement?: 'top' | 'bottom' | 'left' | 'right'
-    mask?: boolean
-}
-
-export interface TourProps {
-    steps: TourStep[]
-    mask?: boolean
-    scrollIntoViewOptions?: ScrollIntoViewOptions
-}
+import type { TourProps, TourStep } from './types'
 
 const props = withDefaults(defineProps<TourProps>(), {
     mask: true,
