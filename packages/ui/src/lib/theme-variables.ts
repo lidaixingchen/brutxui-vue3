@@ -541,17 +541,23 @@ function removeCssVarsFromDom(vars: Record<string, string>): void {
 }
 
 /**
- * 判断是否为普通对象（用于递归深合并）
+ * 判断是否为普通对象（用于递归深合并）。
+ * 仅接受原型为 Object.prototype 或 null 的纯对象，排除 Date/Map/Set/RegExp、
+ * class 实例以及 Vue 响应式代理/ref，避免被误判展开导致数据丢失或 structuredClone 抛错。
  */
 function isPlainObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value)
+    if (typeof value !== 'object' || value === null) return false
+    const proto = Object.getPrototypeOf(value)
+    return proto === Object.prototype || proto === null
 }
 
 /**
- * 将外部主题与默认主题深度合并，补全缺失字段。
+ * 将外部主题与基线主题深度合并，补全缺失字段。
  * 防止注册的主题缺字段时把 'undefined' 字符串写入 CSS 变量。
+ * @param overrides - 外部传入的主题（可为部分字段）
+ * @param base - 合并基线：覆盖已有主题时传该主题现有值，新增主题默认用 DEFAULT_THEME（classic）
  */
-function mergeThemeWithDefaults(overrides: ThemeVariables): ThemeVariables {
+function mergeThemeWithDefaults(overrides: ThemeVariables, base: ThemeVariables = DEFAULT_THEME): ThemeVariables {
     const merge = (target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> => {
         const result: Record<string, unknown> = { ...target }
         for (const key of Object.keys(source)) {
@@ -568,9 +574,16 @@ function mergeThemeWithDefaults(overrides: ThemeVariables): ThemeVariables {
         return result
     }
     return merge(
-        DEFAULT_THEME as unknown as Record<string, unknown>,
+        base as unknown as Record<string, unknown>,
         overrides as unknown as Record<string, unknown>,
     ) as unknown as ThemeVariables
+}
+
+/**
+ * 校验外部主题变量是否为有效对象（registerTheme 入参保护）。
+ */
+function isValidThemeObject(value: unknown): value is ThemeVariables {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
 // ============================================================================
@@ -592,9 +605,18 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
     } = options
 
     // 合并默认主题和自定义主题 - 使用 reactive 确保响应式更新
-    // 深拷贝 DEFAULT_THEMES 防止通过 reactive 修改时污染模块级常量
+    // 深拷贝 DEFAULT_THEMES 防止通过 reactive 修改时污染模块级常量；
+    // 自定义主题统一经 mergeThemeWithDefaults 补全缺失字段，避免 'undefined' 写入 CSS 变量
+    const mergedCustomThemes: Record<string, ThemeVariables> = {}
+    for (const [name, vars] of Object.entries(customThemes)) {
+        if (!isValidThemeObject(vars)) {
+            console.warn(`[BrutxUI] createThemeVariables: 自定义主题 "${name}" 无效，已跳过`)
+            continue
+        }
+        mergedCustomThemes[name] = mergeThemeWithDefaults(vars, DEFAULT_THEMES[name] ?? DEFAULT_THEME)
+    }
     const themes = reactive<Record<string, ThemeVariables>>(
-        structuredClone({ ...DEFAULT_THEMES, ...customThemes })
+        structuredClone({ ...DEFAULT_THEMES, ...mergedCustomThemes })
     )
 
     // 响应式状态
@@ -651,8 +673,21 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
     // 主题管理
     function registerTheme(name: string, variables: ThemeVariables) {
-        // 深拷贝并合并默认主题：避免外部对象后续修改无法被响应式跟踪，同时补全缺失字段
-        themes[name] = structuredClone(mergeThemeWithDefaults(variables))
+        // 入参保护：非法/缺失 variables 直接告警返回，避免 mergeThemeWithDefaults 抛 TypeError
+        if (!isValidThemeObject(variables)) {
+            console.warn(`[BrutxUI] registerTheme("${name}") 需要有效的主题变量对象`)
+            return
+        }
+        // 覆盖已有主题时以其现有值为基线，避免部分字段被 classic 默认值静默替换
+        const base = themes[name] ?? DEFAULT_THEME
+        try {
+            // 深拷贝并合并：避免外部对象后续修改无法被响应式跟踪，同时补全缺失字段
+            themes[name] = structuredClone(mergeThemeWithDefaults(variables, base))
+        } catch {
+            // structuredClone 对函数/Symbol/DOM 节点等不可克隆值抛 DataCloneError，降级为合并后直接赋值
+            console.warn(`[BrutxUI] registerTheme("${name}") 主题包含不可克隆值，已降级处理`)
+            themes[name] = mergeThemeWithDefaults(variables, base)
+        }
     }
 
     function unregisterTheme(name: string) {
