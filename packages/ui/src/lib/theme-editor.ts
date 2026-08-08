@@ -125,6 +125,22 @@ function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial
 }
 
 /**
+ * 无 CSS.escape 环境下对 CSS 双引号字符串字面量做保守转义，
+ * 避免主题名（外部可控，如文件导入）拼入选择器时注入引号/反斜杠
+ */
+function escapeCssStringLiteral(value: string): string {
+    return value.replace(/[\\"\n\r]/g, (ch) => {
+        switch (ch) {
+            case '\\': return '\\\\'
+            case '"': return '\\"'
+            case '\n': return '\\a '
+            case '\r': return '\\d '
+            default: return ch
+        }
+    })
+}
+
+/**
  * 将主题变量转换为 CSS 变量映射
  */
 function themeVariablesToCssVars(
@@ -283,7 +299,13 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
     // 主题存储（深拷贝默认主题，避免外部修改影响）
     const themes: Record<string, ThemeVariables> = {}
     for (const [name, vars] of Object.entries(initialThemes ?? DEFAULT_THEMES)) {
-        themes[name] = structuredClone(vars)
+        // 构造入口同样校验结构：缺 spacing/typography 等字段的主题会在 applyToDom/generateCSS 崩溃
+        if (!validateTheme(vars)) {
+            console.warn(`[BrutxUI] createThemeEditor: 主题 "${name}" 结构无效，已回退为默认主题`)
+            themes[name] = structuredClone(DEFAULT_THEMES[name] ?? DEFAULT_THEMES.classic)
+        } else {
+            themes[name] = structuredClone(vars)
+        }
     }
 
     // 记录 autoApply 等持久操作写入 DOM 的变量（clearPreview 不应清除）
@@ -292,12 +314,32 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
     let previewedVars: Record<string, string> | null = null
 
     /**
+     * 移除上一轮写入、但本轮新集合不再包含的键，避免主题键集变化时残留旧变量
+     */
+    function removeStaleKeys(previous: Record<string, string> | null, current: Record<string, string>): void {
+        if (!previous || !hasDocument) return
+        const root = getDocument()!.documentElement
+        for (const key of Object.keys(previous)) {
+            if (!(key in current)) {
+                root.style.removeProperty(key)
+            }
+        }
+    }
+
+    /**
      * 应用主题变量到 DOM（实时预览）
      * @param isPreview - true 表示 previewTheme 的临时预览；false 表示 autoApply 的持久应用
      */
     function applyToDom(variables: ThemeVariables, isPreview: boolean): void {
         if (!hasDocument) return
         const cssVars = themeVariablesToCssVars(variables, '--brutal')
+        // 写入前先清理上一轮集合中本集合不再包含的键
+        if (isPreview) {
+            removeStaleKeys(previewedVars, cssVars)
+        } else {
+            removeStaleKeys(previewedVars, cssVars)
+            removeStaleKeys(appliedVars, cssVars)
+        }
         const root = getDocument()!.documentElement
         for (const [key, value] of Object.entries(cssVars)) {
             root.style.setProperty(key, value)
@@ -429,7 +471,9 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
         if (!theme) return null
 
         // 主题名可来自外部输入（如 importThemeFromFile 的文件名），用作选择器值前须转义，防止 CSS 选择器注入
-        const safeName = typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(name) : name
+        const safeName = typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+            ? CSS.escape(name)
+            : escapeCssStringLiteral(name)
         const {
             selector = `[data-theme="${safeName}"]`,
             prefix = '--brutal',
