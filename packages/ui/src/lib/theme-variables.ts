@@ -174,7 +174,8 @@ export interface ThemeApi {
 // ============================================================================
 
 /**
- * 默认主题变量 - 基于 styles.css 中的 :root 变量
+ * 默认（classic）主题变量 - 基于 styles.css 中的 :root 变量。
+ * DEFAULT_THEMES 中以 'classic' 为键，与 useTheme 的 VALID_THEMES 命名对齐。
  */
 const DEFAULT_THEME: ThemeVariables = {
     colors: {
@@ -446,10 +447,12 @@ const WARM_THEME: ThemeVariables = {
 }
 
 /**
- * 默认主题映射
+ * 默认主题映射。
+ * 注意：基础主题键为 'classic'（与 useTheme 的 VALID_THEMES 对齐，是唯一命名来源），
+ * 暗色 'dark' 是完整深色配色（useTheme 中以 colorMode='dark' 实现，故不在 VALID_THEMES 中）。
  */
 const DEFAULT_THEMES: Record<string, ThemeVariables> = {
-    default: DEFAULT_THEME,
+    classic: DEFAULT_THEME,
     dark: DARK_THEME,
     pastel: PASTEL_THEME,
     mono: MONO_THEME,
@@ -582,7 +585,7 @@ function mergeThemeWithDefaults(overrides: ThemeVariables): ThemeVariables {
  */
 export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
     const {
-        defaultTheme = 'default',
+        defaultTheme = 'classic',
         storageKey = 'brutx-theme-variables',
         themes: customThemes = {},
         autoInit = false,
@@ -654,14 +657,14 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
     function unregisterTheme(name: string) {
         // 不允许删除默认主题
-        if (name === 'default') {
+        if (name === 'classic') {
             console.warn('[BrutxUI] Cannot unregister default theme')
             return
         }
 
         // 如果当前主题被删除，切换到默认主题
         if (currentTheme.value === name) {
-            setTheme('default')
+            setTheme('classic')
         }
 
         delete themes[name]

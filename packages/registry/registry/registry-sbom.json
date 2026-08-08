@@ -3,7 +3,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:95e6e18f-9178-45db-9cd9-6a459dbd567c",
+  "serialNumber": "urn:uuid:71994c87-0899-44ff-93e0-9a47a9d931da",
   "metadata": {
     "timestamp": null,
     "tools": [
@@ -372,7 +372,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "b3ed7db3c468701627f25294627e35a4236dc0afe432bd55eb0fff6390d8629d"
+          "content": "13f63542a873da27d2d2b8f971441140c625c6dac7c34b0a66471ab9f7ae3363"
         }
       ],
       "dependencies": [
@@ -1579,6 +1579,6 @@
       "name": "vee-validate"
     }
   ],
-  "integrity": "sha256-04c00b51d8e51dba76291cd4bc8df3a804b5f25fce23fbf508ae8207465f31b0",
-  "manifestIntegrity": "fe67732846a9f778f8aa66577b7119155af0ba07013e5a73729ab66b31e29f47"
+  "integrity": "sha256-33b2a035a6430b9832c28ad9feeafffae8f9b50878c9fef4f6fa534990f47c10",
+  "manifestIntegrity": "3c9f8b12a6efe7fc927f9079927c872b1694c82d22b11f3f1f51127f59063929"
 }

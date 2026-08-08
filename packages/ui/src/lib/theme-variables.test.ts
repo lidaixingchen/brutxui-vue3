@@ -10,6 +10,7 @@ import {
     DEFAULT_THEMES,
     type ThemeVariables,
 } from './theme-variables'
+import { VALID_THEMES } from './theme-names'
 
 // Mock env module
 vi.mock('./env', () => ({
@@ -43,11 +44,19 @@ describe('theme-variables', () => {
 
     describe('DEFAULT_THEMES', () => {
         it('should contain all default themes', () => {
-            expect(DEFAULT_THEMES).toHaveProperty('default')
+            expect(DEFAULT_THEMES).toHaveProperty('classic')
             expect(DEFAULT_THEMES).toHaveProperty('dark')
             expect(DEFAULT_THEMES).toHaveProperty('pastel')
             expect(DEFAULT_THEMES).toHaveProperty('mono')
             expect(DEFAULT_THEMES).toHaveProperty('warm')
+        })
+
+        it('theme-class names (VALID_THEMES) stay a subset of DEFAULT_THEMES keys', () => {
+            // 漂移守卫：#30 统一命名后，useTheme 的 theme-class 主题名必须都存在于 CSS 变量主题集合，
+            // 防止两套主题命名再度漂移
+            for (const name of VALID_THEMES) {
+                expect(DEFAULT_THEMES, `theme-class "${name}" must exist in DEFAULT_THEMES`).toHaveProperty(name)
+            }
         })
 
         it('should have valid ThemeVariables structure for each theme', () => {
@@ -90,7 +99,7 @@ describe('theme-variables', () => {
         })
 
         it('should export individual themes', () => {
-            expect(DEFAULT_THEME).toBe(DEFAULT_THEMES.default)
+            expect(DEFAULT_THEME).toBe(DEFAULT_THEMES.classic)
             expect(DARK_THEME).toBe(DEFAULT_THEMES.dark)
             expect(PASTEL_THEME).toBe(DEFAULT_THEMES.pastel)
             expect(MONO_THEME).toBe(DEFAULT_THEMES.mono)
@@ -102,10 +111,10 @@ describe('theme-variables', () => {
         it('should create theme API with default options', () => {
             const api = createThemeVariables()
 
-            expect(api.currentTheme.value).toBe('default')
+            expect(api.currentTheme.value).toBe('classic')
             expect(api.isDark.value).toBe(false)
             expect(api.themeVariables.value).toEqual(DEFAULT_THEME)
-            expect(api.availableThemes.value).toContain('default')
+            expect(api.availableThemes.value).toContain('classic')
         })
 
         it('should create theme API with custom default theme', () => {
@@ -150,7 +159,7 @@ describe('theme-variables', () => {
 
             api.setTheme('invalid-theme')
 
-            expect(api.currentTheme.value).toBe('default')
+            expect(api.currentTheme.value).toBe('classic')
             expect(consoleSpy).toHaveBeenCalled()
 
             consoleSpy.mockRestore()
@@ -212,9 +221,9 @@ describe('theme-variables', () => {
             const api = createThemeVariables()
             const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-            api.unregisterTheme('default')
+            api.unregisterTheme('classic')
 
-            expect(api.availableThemes.value).toContain('default')
+            expect(api.availableThemes.value).toContain('classic')
             expect(consoleSpy).toHaveBeenCalled()
 
             consoleSpy.mockRestore()
@@ -228,7 +237,7 @@ describe('theme-variables', () => {
             expect(api.currentTheme.value).toBe('temp-theme')
 
             api.unregisterTheme('temp-theme')
-            expect(api.currentTheme.value).toBe('default')
+            expect(api.currentTheme.value).toBe('classic')
         })
 
         it('should apply theme variables to DOM', () => {

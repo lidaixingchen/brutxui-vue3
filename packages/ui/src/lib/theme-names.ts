@@ -1,10 +1,10 @@
 /**
  * useTheme（theme-* class 体系）的合法主题名。
  *
- * 注意：这套主题名属于传统的「主题类切换」系统（应用 `theme-classic` 等 class 到根元素），
- * 与 theme-variables 的 DEFAULT_THEMES（CSS 变量体系，键为 default/dark/pastel/mono/warm）是
- * 两套相互独立的主题系统，命名口径不同，勿混淆；'classic' 在 DEFAULT_THEMES 中不存在，
- * 而 'default'/'dark' 也不属于 VALID_THEMES。
+ * 命名与 theme-variables 的 DEFAULT_THEMES（CSS 变量体系）对齐：
+ * 基础主题均为 'classic'，共享 pastel/mono/warm；DEFAULT_THEMES 额外含 'dark'（完整深色配色，
+ * useTheme 中深色以 colorMode='dark' 实现，故 'dark' 不是 theme-class 主题名）。
+ * VALID_THEMES 是 DEFAULT_THEMES 键集的非 dark 子集，由 theme-names 单一来源定义。
  */
 export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
 

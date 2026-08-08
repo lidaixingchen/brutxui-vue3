@@ -11,7 +11,7 @@ describe('createThemeEditor', () => {
 
         it('creates editor with custom themes', () => {
             const custom: Record<string, ThemeVariables> = {
-                myTheme: { ...DEFAULT_THEMES.default },
+                myTheme: { ...DEFAULT_THEMES.classic },
             }
             const editor = createThemeEditor({ themes: custom })
             const themes = editor.getAllThemes()
@@ -21,16 +21,16 @@ describe('createThemeEditor', () => {
         it('deep clones themes to prevent external mutation', () => {
             const editor = createThemeEditor()
             const themes = editor.getAllThemes()
-            themes.default.colors.primary = '#000000'
+            themes.classic.colors.primary = '#000000'
             // Original should not be mutated
-            expect(editor.getTheme('default')!.colors.primary).toBe('#FF6B6B')
+            expect(editor.getTheme('classic')!.colors.primary).toBe('#FF6B6B')
         })
     })
 
     describe('getTheme', () => {
         it('returns existing theme', () => {
             const editor = createThemeEditor()
-            const theme = editor.getTheme('default')
+            const theme = editor.getTheme('classic')
             expect(theme).toBeDefined()
             expect(theme!.colors.primary).toBe('#FF6B6B')
         })
@@ -44,41 +44,41 @@ describe('createThemeEditor', () => {
     describe('updateTheme', () => {
         it('updates color variables', () => {
             const editor = createThemeEditor()
-            const result = editor.updateTheme('default', {
+            const result = editor.updateTheme('classic', {
                 colors: { primary: '#FF0000' },
             })
             expect(result).toBe(true)
-            expect(editor.getTheme('default')!.colors.primary).toBe('#FF0000')
+            expect(editor.getTheme('classic')!.colors.primary).toBe('#FF0000')
             // Other colors should remain unchanged
-            expect(editor.getTheme('default')!.colors.secondary).toBe('#4ECDC4')
+            expect(editor.getTheme('classic')!.colors.secondary).toBe('#4ECDC4')
         })
 
         it('updates border variables', () => {
             const editor = createThemeEditor()
-            const result = editor.updateTheme('default', {
+            const result = editor.updateTheme('classic', {
                 border: { width: '5px' },
             })
             expect(result).toBe(true)
-            expect(editor.getTheme('default')!.border.width).toBe('5px')
-            expect(editor.getTheme('default')!.border.color).toBe('#000000')
+            expect(editor.getTheme('classic')!.border.width).toBe('5px')
+            expect(editor.getTheme('classic')!.border.color).toBe('#000000')
         })
 
         it('updates shadow variables', () => {
             const editor = createThemeEditor()
-            const result = editor.updateTheme('default', {
+            const result = editor.updateTheme('classic', {
                 shadow: { color: '#FF0000' },
             })
             expect(result).toBe(true)
-            expect(editor.getTheme('default')!.shadow.color).toBe('#FF0000')
+            expect(editor.getTheme('classic')!.shadow.color).toBe('#FF0000')
         })
 
         it('updates spacing variables', () => {
             const editor = createThemeEditor()
-            const result = editor.updateTheme('default', {
+            const result = editor.updateTheme('classic', {
                 spacing: { md: '2rem' },
             })
             expect(result).toBe(true)
-            expect(editor.getTheme('default')!.spacing.md).toBe('2rem')
+            expect(editor.getTheme('classic')!.spacing.md).toBe('2rem')
         })
 
         it('returns false for non-existent theme', () => {
@@ -92,8 +92,8 @@ describe('createThemeEditor', () => {
         it('calls onThemeChange callback', () => {
             const onThemeChange = vi.fn()
             const editor = createThemeEditor({ onThemeChange })
-            editor.updateTheme('default', { colors: { primary: '#FF0000' } })
-            expect(onThemeChange).toHaveBeenCalledWith('default', expect.objectContaining({
+            editor.updateTheme('classic', { colors: { primary: '#FF0000' } })
+            expect(onThemeChange).toHaveBeenCalledWith('classic', expect.objectContaining({
                 colors: expect.objectContaining({ primary: '#FF0000' }),
             }))
         })
@@ -102,7 +102,7 @@ describe('createThemeEditor', () => {
     describe('exportTheme / importTheme', () => {
         it('exports theme as JSON string', () => {
             const editor = createThemeEditor()
-            const json = editor.exportTheme('default')
+            const json = editor.exportTheme('classic')
             expect(json).not.toBeNull()
             const parsed = JSON.parse(json!)
             expect(parsed.colors.primary).toBe('#FF6B6B')
@@ -115,7 +115,7 @@ describe('createThemeEditor', () => {
 
         it('imports theme from valid JSON', () => {
             const editor = createThemeEditor()
-            const json = JSON.stringify(DEFAULT_THEMES.default)
+            const json = JSON.stringify(DEFAULT_THEMES.classic)
             const result = editor.importTheme('imported', json)
             expect(result).toBe(true)
             expect(editor.getTheme('imported')).toBeDefined()
@@ -134,8 +134,8 @@ describe('createThemeEditor', () => {
 
         it('round-trips export -> import', () => {
             const editor = createThemeEditor()
-            editor.updateTheme('default', { colors: { primary: '#ABCDEF' } })
-            const json = editor.exportTheme('default')!
+            editor.updateTheme('classic', { colors: { primary: '#ABCDEF' } })
+            const json = editor.exportTheme('classic')!
             const result = editor.importTheme('roundtrip', json)
             expect(result).toBe(true)
             expect(editor.getTheme('roundtrip')!.colors.primary).toBe('#ABCDEF')
@@ -153,7 +153,7 @@ describe('createThemeEditor', () => {
         it('imports multiple themes', () => {
             const editor = createThemeEditor()
             const data = {
-                theme1: DEFAULT_THEMES.default,
+                theme1: DEFAULT_THEMES.classic,
                 theme2: DEFAULT_THEMES.dark,
             }
             const result = editor.importAllThemes(JSON.stringify(data))
@@ -182,9 +182,9 @@ describe('createThemeEditor', () => {
     describe('generateCSS', () => {
         it('generates CSS variables with default selector', () => {
             const editor = createThemeEditor()
-            const css = editor.generateCSS('default')
+            const css = editor.generateCSS('classic')
             expect(css).not.toBeNull()
-            expect(css).toContain('[data-theme="default"]')
+            expect(css).toContain('[data-theme="classic"]')
             expect(css).toContain('--brutal-primary: #FF6B6B')
             expect(css).toContain('--brutal-bg: #FFFFFF')
             expect(css).toContain('--brutal-border-width: 3px')
@@ -193,26 +193,26 @@ describe('createThemeEditor', () => {
 
         it('generates CSS with custom selector', () => {
             const editor = createThemeEditor()
-            const css = editor.generateCSS('default', { selector: ':root' })
+            const css = editor.generateCSS('classic', { selector: ':root' })
             expect(css).toContain(':root')
         })
 
         it('generates CSS with custom prefix', () => {
             const editor = createThemeEditor()
-            const css = editor.generateCSS('default', { prefix: '--custom' })
+            const css = editor.generateCSS('classic', { prefix: '--custom' })
             expect(css).toContain('--custom-primary:')
             expect(css).not.toContain('--brutal-')
         })
 
         it('generates CSS with spacing variables', () => {
             const editor = createThemeEditor()
-            const css = editor.generateCSS('default')
+            const css = editor.generateCSS('classic')
             expect(css).toContain('--brutal-spacing-')
         })
 
         it('generates CSS with typography variables', () => {
             const editor = createThemeEditor()
-            const css = editor.generateCSS('default')
+            const css = editor.generateCSS('classic')
             expect(css).toContain('--brutal-font-family:')
             expect(css).toContain('--brutal-font-size-')
         })
@@ -224,7 +224,7 @@ describe('createThemeEditor', () => {
 
         it('generates minified CSS', () => {
             const editor = createThemeEditor()
-            const css = editor.generateCSS('default', { minified: true })
+            const css = editor.generateCSS('classic', { minified: true })
             expect(css).not.toContain('\n  ')
         })
     })
@@ -232,19 +232,19 @@ describe('createThemeEditor', () => {
     describe('cloneTheme', () => {
         it('clones existing theme', () => {
             const editor = createThemeEditor()
-            const result = editor.cloneTheme('default', 'myClone')
+            const result = editor.cloneTheme('classic', 'myClone')
             expect(result).toBe(true)
             expect(editor.getTheme('myClone')).toBeDefined()
             expect(editor.getTheme('myClone')!.colors.primary).toBe(
-                editor.getTheme('default')!.colors.primary,
+                editor.getTheme('classic')!.colors.primary,
             )
         })
 
         it('cloned theme is independent', () => {
             const editor = createThemeEditor()
-            editor.cloneTheme('default', 'myClone')
+            editor.cloneTheme('classic', 'myClone')
             editor.updateTheme('myClone', { colors: { primary: '#000000' } })
-            expect(editor.getTheme('default')!.colors.primary).toBe('#FF6B6B')
+            expect(editor.getTheme('classic')!.colors.primary).toBe('#FF6B6B')
             expect(editor.getTheme('myClone')!.colors.primary).toBe('#000000')
         })
 
@@ -256,7 +256,7 @@ describe('createThemeEditor', () => {
         it('calls onThemeChange callback', () => {
             const onThemeChange = vi.fn()
             const editor = createThemeEditor({ onThemeChange })
-            editor.cloneTheme('default', 'myClone')
+            editor.cloneTheme('classic', 'myClone')
             expect(onThemeChange).toHaveBeenCalledWith('myClone', expect.any(Object))
         })
     })
@@ -264,14 +264,14 @@ describe('createThemeEditor', () => {
     describe('removeTheme', () => {
         it('removes custom theme', () => {
             const editor = createThemeEditor()
-            editor.importTheme('custom', JSON.stringify(DEFAULT_THEMES.default))
+            editor.importTheme('custom', JSON.stringify(DEFAULT_THEMES.classic))
             expect(editor.removeTheme('custom')).toBe(true)
             expect(editor.getTheme('custom')).toBeUndefined()
         })
 
         it('does not remove built-in themes', () => {
             const editor = createThemeEditor()
-            expect(editor.removeTheme('default')).toBe(false)
+            expect(editor.removeTheme('classic')).toBe(false)
             expect(editor.removeTheme('dark')).toBe(false)
             expect(editor.removeTheme('pastel')).toBe(false)
         })
@@ -285,17 +285,17 @@ describe('createThemeEditor', () => {
     describe('resetTheme', () => {
         it('resets modified theme to defaults', () => {
             const editor = createThemeEditor()
-            editor.updateTheme('default', { colors: { primary: '#000000' } })
-            expect(editor.getTheme('default')!.colors.primary).toBe('#000000')
+            editor.updateTheme('classic', { colors: { primary: '#000000' } })
+            expect(editor.getTheme('classic')!.colors.primary).toBe('#000000')
 
-            const result = editor.resetTheme('default')
+            const result = editor.resetTheme('classic')
             expect(result).toBe(true)
-            expect(editor.getTheme('default')!.colors.primary).toBe('#FF6B6B')
+            expect(editor.getTheme('classic')!.colors.primary).toBe('#FF6B6B')
         })
 
         it('returns false for non-existent default theme', () => {
             const editor = createThemeEditor()
-            editor.importTheme('custom', JSON.stringify(DEFAULT_THEMES.default))
+            editor.importTheme('custom', JSON.stringify(DEFAULT_THEMES.classic))
             // 'custom' is not in DEFAULT_THEMES, so reset should fail
             expect(editor.resetTheme('custom')).toBe(false)
         })
@@ -304,7 +304,7 @@ describe('createThemeEditor', () => {
     describe('validateTheme', () => {
         it('validates correct theme structure', () => {
             const editor = createThemeEditor()
-            expect(editor.validateTheme(DEFAULT_THEMES.default)).toBe(true)
+            expect(editor.validateTheme(DEFAULT_THEMES.classic)).toBe(true)
         })
 
         it('rejects null', () => {
@@ -321,28 +321,28 @@ describe('createThemeEditor', () => {
         it('rejects missing colors', () => {
             const editor = createThemeEditor()
             expect(editor.validateTheme({
-                border: DEFAULT_THEMES.default.border,
-                shadow: DEFAULT_THEMES.default.shadow,
-                spacing: DEFAULT_THEMES.default.spacing,
-                typography: DEFAULT_THEMES.default.typography,
+                border: DEFAULT_THEMES.classic.border,
+                shadow: DEFAULT_THEMES.classic.shadow,
+                spacing: DEFAULT_THEMES.classic.spacing,
+                typography: DEFAULT_THEMES.classic.typography,
             })).toBe(false)
         })
 
         it('rejects invalid color values', () => {
             const editor = createThemeEditor()
             expect(editor.validateTheme({
-                ...DEFAULT_THEMES.default,
-                colors: { ...DEFAULT_THEMES.default.colors, primary: 123 },
+                ...DEFAULT_THEMES.classic,
+                colors: { ...DEFAULT_THEMES.classic.colors, primary: 123 },
             })).toBe(false)
         })
 
         it('rejects missing border', () => {
             const editor = createThemeEditor()
             expect(editor.validateTheme({
-                colors: DEFAULT_THEMES.default.colors,
-                shadow: DEFAULT_THEMES.default.shadow,
-                spacing: DEFAULT_THEMES.default.spacing,
-                typography: DEFAULT_THEMES.default.typography,
+                colors: DEFAULT_THEMES.classic.colors,
+                shadow: DEFAULT_THEMES.classic.shadow,
+                spacing: DEFAULT_THEMES.classic.spacing,
+                typography: DEFAULT_THEMES.classic.typography,
             })).toBe(false)
         })
     })
@@ -351,13 +351,13 @@ describe('createThemeEditor', () => {
         it('does not apply to DOM by default', () => {
             const editor = createThemeEditor()
             // updateTheme should not throw
-            editor.updateTheme('default', { colors: { primary: '#FF0000' } })
+            editor.updateTheme('classic', { colors: { primary: '#FF0000' } })
         })
 
         it('applies to DOM when autoApply is true', () => {
             const onThemeChange = vi.fn()
             const editor = createThemeEditor({ autoApply: true, onThemeChange })
-            editor.updateTheme('default', { colors: { primary: '#FF0000' } })
+            editor.updateTheme('classic', { colors: { primary: '#FF0000' } })
             expect(onThemeChange).toHaveBeenCalled()
         })
     })
@@ -365,7 +365,7 @@ describe('createThemeEditor', () => {
     describe('previewTheme / clearPreview', () => {
         it('previewTheme returns true for valid theme', () => {
             const editor = createThemeEditor()
-            expect(editor.previewTheme('default')).toBe(true)
+            expect(editor.previewTheme('classic')).toBe(true)
         })
 
         it('previewTheme returns false for invalid theme', () => {
@@ -382,7 +382,7 @@ describe('createThemeEditor', () => {
     describe('importThemeFromFile', () => {
         it('imports from valid file', async () => {
             const editor = createThemeEditor()
-            const json = JSON.stringify(DEFAULT_THEMES.default)
+            const json = JSON.stringify(DEFAULT_THEMES.classic)
             const file = new File([json], 'my-theme.json', { type: 'application/json' })
 
             const result = await editor.importThemeFromFile(file)
