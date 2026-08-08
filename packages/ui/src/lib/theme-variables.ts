@@ -537,6 +537,39 @@ function removeCssVarsFromDom(vars: Record<string, string>): void {
     }
 }
 
+/**
+ * 判断是否为普通对象（用于递归深合并）
+ */
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/**
+ * 将外部主题与默认主题深度合并，补全缺失字段。
+ * 防止注册的主题缺字段时把 'undefined' 字符串写入 CSS 变量。
+ */
+function mergeThemeWithDefaults(overrides: ThemeVariables): ThemeVariables {
+    const merge = (target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> => {
+        const result: Record<string, unknown> = { ...target }
+        for (const key of Object.keys(source)) {
+            // 跳过原型链危险键（外部主题可能来自 JSON.parse）
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue
+            const sourceVal = source[key]
+            const targetVal = result[key]
+            if (isPlainObject(sourceVal) && isPlainObject(targetVal)) {
+                result[key] = merge(targetVal, sourceVal)
+            } else if (sourceVal !== undefined) {
+                result[key] = sourceVal
+            }
+        }
+        return result
+    }
+    return merge(
+        DEFAULT_THEME as unknown as Record<string, unknown>,
+        overrides as unknown as Record<string, unknown>,
+    ) as unknown as ThemeVariables
+}
+
 // ============================================================================
 // 主题创建函数
 // ============================================================================
@@ -565,6 +598,8 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
     const currentTheme = ref<string>(defaultTheme)
     const isDark = ref(false)
     let initialized = false
+    // 记录上一次应用的主题变量键集，切换主题时先移除旧键，避免残留上一主题写入的变量
+    let appliedCssVars: Record<string, string> | null = null
 
     // 计算属性
     const themeVariables = computed<ThemeVariables>(() => {
@@ -613,7 +648,8 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
 
     // 主题管理
     function registerTheme(name: string, variables: ThemeVariables) {
-        themes[name] = variables
+        // 深拷贝并合并默认主题：避免外部对象后续修改无法被响应式跟踪，同时补全缺失字段
+        themes[name] = structuredClone(mergeThemeWithDefaults(variables))
     }
 
     function unregisterTheme(name: string) {
@@ -638,7 +674,11 @@ export function createThemeVariables(options: ThemeOptions = {}): ThemeApi {
     // 应用主题变量
     function applyThemeVariables(variables: ThemeVariables) {
         const cssVars = themeVariablesToCssVars(variables)
+        if (appliedCssVars) {
+            removeCssVarsFromDom(appliedCssVars)
+        }
         applyCssVarsToDom(cssVars)
+        appliedCssVars = cssVars
     }
 
     // 初始化
