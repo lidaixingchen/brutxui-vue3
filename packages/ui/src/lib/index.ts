@@ -49,6 +49,8 @@ export type { IconSize } from './icon-size-variants'
 export { EMAIL_REGEX } from './validation'
 
 // 默认值
+// 注意：AUDIO_*/CANVAS_*/GLITCH_*/HARDCORE_INPUT_* 属于组件内部调优参数，
+// 仅为兼容既有消费方保留导出，不作为稳定的公共 API 契约，后续重构可收敛回组件模块。
 export {
     DEFAULT_AUTOPLAY_INTERVAL_MS,
     HSV_PERCENT_PRECISION,
@@ -91,6 +93,11 @@ export {
     AUDIO_FAIL_DURATION,
     DEFAULT_DIALOG_TRANSITION_MS,
     HARDCORE_INPUT_SHAKE_DELAY_MS,
+    DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX,
+    DATA_TABLE_EXPAND_COLUMN_WIDTH_PX,
+    DATA_TABLE_SELECT_COLUMN_WIDTH_PX,
+    DATA_TABLE_ROW_HEIGHT_FALLBACK_PX,
+    DATA_TABLE_FIXED_COLUMN_Z_INDEX,
     DEFAULT_PAGE_SIZE,
     DEFAULT_AUTOPLAY_DELAY_MS,
 } from './defaults'
@@ -117,7 +124,10 @@ export type {
     ThemeApi,
     ThemeVariablesApi,
 } from './theme-variables'
-export { VALID_THEMES } from '../composables/useTheme'
+// VALID_THEMES 属 useTheme（theme-* class 体系）；DEFAULT_THEMES 属 CSS 变量体系，
+// 两者是两套独立主题系统，命名口径不同（见 ./theme-names）
+export { VALID_THEMES } from './theme-names'
+export type { ThemeName } from './theme-names'
 
 // 主题编辑器
 export { createThemeEditor } from './theme-editor'

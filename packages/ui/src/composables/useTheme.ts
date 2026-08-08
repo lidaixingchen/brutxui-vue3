@@ -1,7 +1,11 @@
 import { ref, inject, provide, computed, onMounted, onUnmounted, getCurrentInstance, type ComputedRef, type InjectionKey, type Ref } from 'vue'
 import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument, matchMedia, getWindow } from '../lib/env'
+import { VALID_THEMES, type ThemeName } from '../lib/theme-names'
 
-export type ThemeName = 'classic' | 'pastel' | 'mono' | 'warm'
+// 从 lib 层引入并转发，避免 lib 反向依赖 composables（ThemeName/VALID_THEMES 定义下沉到 lib/theme-names）
+export { VALID_THEMES } from '../lib/theme-names'
+export type { ThemeName } from '../lib/theme-names'
+
 export type ColorMode = 'light' | 'dark' | 'system'
 export type ResolvedColorMode = 'light' | 'dark'
 
@@ -21,8 +25,7 @@ export interface UseThemeReturn {
 
 const THEME_KEY: InjectionKey<UseThemeReturn> = Symbol('brutx-theme')
 
-// 常量定义
-export const VALID_THEMES: readonly ThemeName[] = ['classic', 'pastel', 'mono', 'warm'] as const
+// 常量定义（VALID_THEMES 从 lib/theme-names 引入并在文件顶部转发）
 const VALID_MODES: readonly ColorMode[] = ['light', 'dark', 'system'] as const
 
 // 类型守卫
