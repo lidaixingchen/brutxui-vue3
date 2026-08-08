@@ -216,6 +216,9 @@ export function withOfflineScope(offline: boolean): () => void {
     offlineScopeCount++;
     process.env[OFFLINE_ENV] = '1';
     return () => {
+        // 防重入：重复调用同一 restore 不再递减，避免计数变负导致后续
+        // BRUTX_OFFLINE 永久残留为 '1'（旧实现幂等，无此回归）
+        if (offlineScopeCount <= 0) return;
         offlineScopeCount--;
         if (offlineScopeCount === 0) {
             if (previous === undefined) delete process.env[OFFLINE_ENV];

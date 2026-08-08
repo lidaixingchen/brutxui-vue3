@@ -188,9 +188,17 @@ export async function readManifest(cwd: string): Promise<BrutxManifest | null> {
     try {
         return validateManifest(await fs.readJson(manifestPath));
     } catch (error) {
-        // 损坏清单（非法 JSON / 校验失败）带上文件路径与原因，避免用户无法定位
+        // 损坏清单（非法 JSON / 校验失败）带上文件路径与原因，避免用户无法定位。
+        // 手动挂载 code 与 cause：调用方（diff.ts）依赖 ENOENT 等原始错误码把
+        // "读取瞬间文件被删"的竞态降级为 null；且 Node <16.9 会静默忽略 Error
+        // 构造器第二参数（约定见 error.ts），故不用 new Error(msg, { cause })
         const detail = error instanceof Error ? error.message : String(error);
-        throw new Error(`Failed to read manifest at ${manifestPath}: ${detail}`, { cause: error });
+        const wrapped = new Error(`Failed to read manifest at ${manifestPath}: ${detail}`);
+        if (error instanceof Error && 'code' in error) {
+            (wrapped as Error & { code?: unknown }).code = (error as Error & { code?: unknown }).code;
+        }
+        (wrapped as Error & { cause?: unknown }).cause = error;
+        throw wrapped;
     }
 }
 

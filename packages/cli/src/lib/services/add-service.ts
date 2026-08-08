@@ -2,8 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import type { AddOptions, BrutalistConfig, RegistryItem } from '../types.js';
 import { REGISTRY_PATH_PREFIXES, UTILS_TEMPLATE } from '../constants.js';
-import { CliError } from '../error.js';
-import { isSafePath, resolveAliasPath, resolveImportAlias, resolveUtilsFilePath, verifyWrittenPath } from '../project.js';
+import { assertSafePath, resolveAliasPath, resolveImportAlias, resolveUtilsFilePath, verifyWrittenPath } from '../project.js';
 import { resolveDeps } from '../registry.js';
 
 export interface ComponentResolutionResult {
@@ -110,12 +109,7 @@ export async function resolveComponentFilePath(
         resolved = path.join(cwd, registryPath);
     }
 
-    if (!(await isSafePath(resolved, cwd))) {
-        throw new CliError(`Security Error: Resolved path "${resolved}" is outside the project directory.`, {
-            code: 'PATH_UNSAFE',
-            exitCode: 2,
-        });
-    }
+    await assertSafePath(resolved, cwd);
 
     return resolved;
 }
@@ -231,12 +225,7 @@ export async function writeComponentFiles(
                 // 写入前对目标路径 realpath 再次校验，收窄 resolveComponentFilePath 预检
                 // 与本处写入之间（pathExists/ensureDir 等 await 操作）的 TOCTOU 窗口，
                 // 避免预检后被替换的符号链接使 writeFile 越界落盘
-                if (!(await isSafePath(targetPath, cwd))) {
-                    throw new CliError(`Security Error: Resolved path "${targetPath}" is outside the project directory.`, {
-                        code: 'PATH_UNSAFE',
-                        exitCode: 2,
-                    });
-                }
+                await assertSafePath(targetPath, cwd);
                 const resolvedContent = resolveImportAlias(file.content, config);
                 await fs.writeFile(targetPath, resolvedContent, 'utf-8');
                 await verifyWrittenPath(targetPath, cwd);

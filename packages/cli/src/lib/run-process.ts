@@ -1,4 +1,5 @@
 import { spawn } from 'child_process';
+import { StringDecoder } from 'string_decoder';
 
 export interface RunProcessOptions {
     cwd?: string;
@@ -17,14 +18,20 @@ interface LineEmitter {
 /**
  * 将流式 chunk 按换行符拆成完整行逐个回调；最后一个不完整行暂存，
  * 由 flush 在流结束时调用以输出结尾无换行的残行。
+ *
+ * 已知限制：以 \r 结尾的进度类输出（长时间无换行）会一直暂存到换行/close 才回调；
+ * 当前 pipe 调用方（包管理器安装）在非 TTY 下无此类输出，如需支持可对 \r 结尾行即时回调。
  */
 function makeLineEmitter(onLine?: (line: string) => void): LineEmitter {
+    // StringDecoder 保持跨 chunk 解码状态：多字节字符（如中文路径/日志）拆到
+    // 相邻 chunk 边界时，先到的半截字节不会变成 U+FFFD 替换符
+    const decoder = new StringDecoder('utf8');
     let pending = '';
     const emit = (line: string): void => {
         if (onLine) onLine(line.trimEnd());
     };
     const emitter = ((chunk: Buffer): void => {
-        pending += chunk.toString();
+        pending += decoder.write(chunk);
         let idx: number;
         while ((idx = pending.indexOf('\n')) !== -1) {
             emit(pending.slice(0, idx));
@@ -32,6 +39,7 @@ function makeLineEmitter(onLine?: (line: string) => void): LineEmitter {
         }
     }) as LineEmitter;
     emitter.flush = (): void => {
+        pending += decoder.end();
         if (pending.length > 0) {
             emit(pending);
             pending = '';

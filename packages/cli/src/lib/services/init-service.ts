@@ -186,8 +186,9 @@ function findNuxtRootBlock(content: string, start: number): { start: number; end
                 continue;
             }
             if (inGenerics) {
+                // 箭头函数类型（() => T）中的 `=>` 不结束泛型：仅当前一字符不是 `=` 时才递减
                 if (ch === '<') genericsDepth++;
-                else if (ch === '>') {
+                else if (ch === '>' && content[i - 1] !== '=') {
                     genericsDepth--;
                     if (genericsDepth === 0) inGenerics = false;
                 }
@@ -210,8 +211,13 @@ function findNuxtRootBlock(content: string, start: number): { start: number; end
             continue;
         }
         if (ch === '}') {
+            if (braceIndex === -1) {
+                // 根块尚未建立就遇到 `}`（泛型提前退出后的类型残留等），
+                // 放弃本次扫描，避免 depth 拉成负数后永远无法配对
+                return null;
+            }
             depth--;
-            if (depth === 0 && braceIndex !== -1) {
+            if (depth === 0) {
                 return { start: braceIndex, end: i };
             }
             i++;
@@ -276,8 +282,11 @@ function hasRootObjectKey(rootBlock: string, key: string): boolean {
 
 export function injectNuxtConfig(content: string, cssPath: string, componentsRelDir: string): string | null {
     // 只定位函数名，不匹配调用括号：泛型形式 defineNuxtConfig<{...}>(...) 下
-    // 括号与泛型段统一由 findNuxtRootBlock 扫描处理
-    const defineMatch = content.match(/defineNuxtConfig\b/);
+    // 括号与泛型段统一由 findNuxtRootBlock 扫描处理。
+    // lookahead 要求后接 `<`（泛型）或 `(`（调用）：字符串字面量里的
+    // "defineNuxtConfig" 字样（后无括号）不会误命中；注释里完整的调用示例
+    // 是既有局限（旧正则同样误匹配），可接受。
+    const defineMatch = content.match(/defineNuxtConfig\b(?=\s*[<(])/);
     if (!defineMatch || defineMatch.index === undefined) {
         return null;
     }
@@ -365,14 +374,15 @@ async function configureNuxtConfig(
             configFile,
         };
     } catch (error) {
-        // 携带底层失败原因（权限/磁盘空间等），避免外层只报固定文案
+        // 携带底层失败原因（权限/磁盘空间等），避免外层只报固定文案；
+        // 非 Error 值（普通对象/字符串）不产生 '[object Object]' 这类无意义信息
         return {
             configured: false,
             status: 'write-failed',
             cssPath,
             componentsRelDir,
             configFile,
-            errorMessage: error instanceof Error ? error.message : String(error),
+            errorMessage: error instanceof Error ? error.message : 'unknown error',
         };
     }
 }

@@ -91,8 +91,13 @@ async function getLocalComponentFiles(
     const resolvedComponent = normalize(path.resolve(componentPath));
     const withinComponents = resolvedComponent === resolvedComponents
         || resolvedComponent.startsWith(resolvedComponents + path.sep);
-    if (!withinComponents || !(await isSafePath(componentPath, cwd))) {
+    if (!withinComponents) {
+        // ../ 等字面穿越：静态解析即越出组件目录
         throw new Error(`Security Error: Component path "${componentPath}" is outside the components directory "${componentsPath}".`);
+    }
+    if (!(await isSafePath(componentPath, cwd))) {
+        // 静态路径在目录内但 realpath 解链后越出项目：符号链接攻击
+        throw new Error(`Security Error: Component path "${componentPath}" resolves outside the project directory "${cwd}" (possible symlink attack).`);
     }
 
     if (!await fs.pathExists(componentPath)) {

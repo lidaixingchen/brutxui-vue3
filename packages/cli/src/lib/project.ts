@@ -4,6 +4,7 @@ import { parse as parseJsonc } from 'jsonc-parser';
 import { initSync, parse as parseModuleImports } from 'es-module-lexer';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
+import { CliError } from './error.js';
 
 initSync();
 
@@ -351,6 +352,19 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
     }
 
     return result;
+}
+
+/**
+ * 断言路径位于项目目录内，不安全时抛出 PATH_UNSAFE 的 CliError。
+ * add-service 的解析期预检与写入前复检共用，避免校验逻辑与错误文案漂移。
+ */
+export async function assertSafePath(targetPath: string, cwd: string): Promise<void> {
+    if (!(await isSafePath(targetPath, cwd))) {
+        throw new CliError(`Security Error: Resolved path "${targetPath}" is outside the project directory.`, {
+            code: 'PATH_UNSAFE',
+            exitCode: 2,
+        });
+    }
 }
 
 export async function isSafePath(targetPath: string, cwd: string): Promise<boolean> {
