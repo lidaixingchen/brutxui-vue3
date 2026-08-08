@@ -30,7 +30,7 @@ const props = withDefaults(defineProps<BeforeAfterProps>(), {
     disabled: false,
     orientation: 'horizontal',
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const emit = defineEmits<{ 'update:modelValue': [value: number] }>()

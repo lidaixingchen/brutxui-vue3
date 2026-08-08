@@ -33,7 +33,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: boolean] }>()
 
 const TOGGLE_SIZE_TO_ICON: Record<NonNullable<ToggleVariantProps['size']>, IconSize> = {
     sm: 'sm',
-    default: 'default',
+    default: 'md',
     lg: 'lg',
 }
 

@@ -36,7 +36,7 @@ const classes = computed(() =>
 )
 
 const closeIconClasses = computed(() =>
-    cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+    cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 )
 </script>
 

@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<ComboboxProps>(), {
     maxDisplay: 3,
     ariaLabel: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const { t } = useLocale()

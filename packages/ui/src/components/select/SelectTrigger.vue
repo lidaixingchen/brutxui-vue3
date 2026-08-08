@@ -42,7 +42,7 @@ const emit = defineEmits<{
 
 const SIZE_TO_ICON: Record<NonNullable<SelectTriggerVariantProps['size']>, IconSize> = {
     sm: 'sm',
-    default: 'default',
+    default: 'md',
     lg: 'lg',
 }
 

@@ -108,7 +108,7 @@ const closeClasses = computed(() =>
     cn(dialogCloseVariants())
 )
 
-const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 const contentStyle = computed(() => {
     const style: Record<string, string> = {}

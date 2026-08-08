@@ -52,7 +52,7 @@ function handleCloseClick(event: MouseEvent) {
 
 const closeIconClasses = computed(() =>
     cn(
-        iconSizeVariants({ size: props.size === 'lg' ? 'default' : 'sm' }),
+        iconSizeVariants({ size: props.size === 'lg' ? 'md' : 'sm' }),
         'stroke-[3]'
     )
 )

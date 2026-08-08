@@ -15,7 +15,7 @@ interface DashboardShellProps {
 const props = withDefaults(defineProps<DashboardShellProps>(), {
     userEmail: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const emit = defineEmits<{

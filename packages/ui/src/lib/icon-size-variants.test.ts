@@ -6,8 +6,8 @@ describe('iconSizeVariants', () => {
         expect(iconSizeVariants()).toBe('h-4 w-4')
     })
 
-    it('returns default size classes for explicit default size', () => {
-        expect(iconSizeVariants({ size: 'default' })).toBe('h-4 w-4')
+    it('returns md size classes for explicit md size', () => {
+        expect(iconSizeVariants({ size: 'md' })).toBe('h-4 w-4')
     })
 
     it('returns xs size classes', () => {

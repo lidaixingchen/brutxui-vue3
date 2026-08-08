@@ -8,7 +8,7 @@ import { INDENT_PER_DEPTH, BASE_INDENT_TREE_SELECT, treeChevronBaseClass, treeCh
 import { iconSizeVariants } from '@/lib/icon-size-variants'
 import type { TreeNode } from './tree-select-types'
 
-const ICON_SIZE_CLASSES = iconSizeVariants({ size: 'default' })
+const ICON_SIZE_CLASSES = iconSizeVariants({ size: 'md' })
 
 const contentId = `tree-select-content-${useId()}`
 

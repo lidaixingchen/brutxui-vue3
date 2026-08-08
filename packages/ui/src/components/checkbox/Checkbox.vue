@@ -37,7 +37,7 @@ const { t } = useLocale()
 
 const CHECKBOX_SIZE_TO_ICON: Record<NonNullable<CheckboxVariantProps['size']>, IconSize> = {
     sm: 'sm',
-    default: 'default',
+    default: 'md',
     lg: 'lg',
 }
 

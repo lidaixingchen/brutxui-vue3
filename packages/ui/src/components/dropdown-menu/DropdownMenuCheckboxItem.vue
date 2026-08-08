@@ -18,7 +18,7 @@ interface DropdownMenuCheckboxItemProps {
 const props = withDefaults(defineProps<DropdownMenuCheckboxItemProps>(), {
     modelValue: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const emit = defineEmits<{

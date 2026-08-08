@@ -142,7 +142,7 @@ const mainIconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'stroke-[2.5]')
 )
 
-const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 /** 紧急变体（error/warning）使用 role="alert" + aria-live="assertive"，其他使用 role="status" + aria-live="polite" */
 const isUrgentVariant = computed(() => props.variant === 'error' || props.variant === 'warning')

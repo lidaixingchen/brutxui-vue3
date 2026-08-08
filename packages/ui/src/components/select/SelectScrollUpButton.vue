@@ -12,7 +12,7 @@ interface SelectScrollUpButtonProps {
 
 const props = withDefaults(defineProps<SelectScrollUpButtonProps>(), {
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const classes = computed(() =>

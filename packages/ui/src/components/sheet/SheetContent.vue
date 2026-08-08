@@ -41,7 +41,7 @@ const closeClasses = computed(() =>
     })
 )
 
-const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 </script>
 
 <template>

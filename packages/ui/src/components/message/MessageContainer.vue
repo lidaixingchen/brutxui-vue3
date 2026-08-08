@@ -40,7 +40,7 @@ function messageClasses(msg: MessageItem): string {
 }
 
 const iconClasses = computed(() => cn(iconSizeVariants({ size: 'xl' }), 'stroke-[2.5]'))
-const closeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+const closeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 
 function handleClose(id: string): void {
     removeMessage(id)

@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<AuthCardProps>(), {
     description: undefined,
     texts: () => ({}),
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const { t } = useLocale()
@@ -66,7 +66,7 @@ const fieldIconClasses = computed(() =>
     cn('absolute left-3 top-1/2 -translate-y-1/2 text-brutal-muted-foreground', iconClasses.value)
 )
 
-const brandIconClasses = cn(iconSizeVariants({ size: 'default' }), 'mr-2')
+const brandIconClasses = cn(iconSizeVariants({ size: 'md' }), 'mr-2')
 
 const emailId = useId()
 const passwordId = useId()

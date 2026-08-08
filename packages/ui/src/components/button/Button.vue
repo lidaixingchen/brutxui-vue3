@@ -87,10 +87,10 @@ const classes = computed(() =>
 
 const BUTTON_SIZE_TO_ICON: Record<NonNullable<ButtonVariantProps['size']>, IconSize> = {
     sm: 'sm',
-    default: 'default',
+    default: 'md',
     lg: 'lg',
     xl: 'xl',
-    icon: 'default',
+    icon: 'md',
 }
 
 const loaderClasses = computed(() =>

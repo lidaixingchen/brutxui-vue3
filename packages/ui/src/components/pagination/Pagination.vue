@@ -143,7 +143,7 @@ const safeCurrentPage = computed(() =>
 
 const PAGINATION_SIZE_TO_ICON: Record<NonNullable<PaginationVariantProps['size']>, IconSize> = {
     sm: 'sm',
-    default: 'default',
+    default: 'md',
     lg: 'lg',
 }
 

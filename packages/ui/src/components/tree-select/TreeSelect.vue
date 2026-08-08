@@ -73,7 +73,7 @@ const props = withDefaults(defineProps<TreeSelectProps>(), {
     maxHeight: '15rem',
     dropdownClass: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
     itemVariant: 'default',
 })
 

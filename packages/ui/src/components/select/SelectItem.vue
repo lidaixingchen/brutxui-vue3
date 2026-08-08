@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<SelectItemProps>(), {
     class: undefined,
     indicatorClass: undefined,
     iconClass: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const classes = computed(() =>

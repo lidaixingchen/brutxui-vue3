@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<FeedbackFormProps>(), {
     successDescription: undefined,
     successConfirmText: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const emit = defineEmits<{

@@ -95,7 +95,7 @@ defineExpose({ open })
                 >
                     <CalendarIcon
                         class="shrink-0 stroke-[3] opacity-70"
-                        :class="iconSizeVariants({ size })"
+                        :class="iconSizeVariants({ size: size === 'default' ? 'md' : size })"
                     />
                     <span class="flex-1 text-left truncate font-mono text-sm">
                         {{ formattedDisplay || resolvedPlaceholder }}

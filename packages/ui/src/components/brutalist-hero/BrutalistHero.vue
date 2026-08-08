@@ -45,7 +45,7 @@ const primaryCtaIconClasses = computed(() =>
     cn(iconSizeVariants({ size: props.iconSize }), 'ml-2 stroke-[3]')
 )
 
-const badgeIconClasses = cn(iconSizeVariants({ size: 'default' }), 'stroke-[3]')
+const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
 </script>
 
 <template>

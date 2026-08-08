@@ -30,7 +30,7 @@ const props = withDefaults(defineProps<NumberInputProps>(), {
     errorMessage: undefined,
     placeholder: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const emit = defineEmits<NumberFieldRootEmits>()

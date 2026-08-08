@@ -15,7 +15,7 @@ interface DropdownMenuSubTriggerProps {
 const props = withDefaults(defineProps<DropdownMenuSubTriggerProps>(), {
     inset: undefined,
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const classes = computed(() =>

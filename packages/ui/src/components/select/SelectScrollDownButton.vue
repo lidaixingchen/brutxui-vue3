@@ -12,7 +12,7 @@ interface SelectScrollDownButtonProps {
 
 const props = withDefaults(defineProps<SelectScrollDownButtonProps>(), {
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const classes = computed(() =>

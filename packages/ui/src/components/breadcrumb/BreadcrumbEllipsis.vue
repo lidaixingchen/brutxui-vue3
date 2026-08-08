@@ -13,7 +13,7 @@ interface BreadcrumbEllipsisProps {
 
 const props = withDefaults(defineProps<BreadcrumbEllipsisProps>(), {
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const { t } = useLocale()

@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<CopyToClipboardProps>(), {
     variant: 'default',
     size: 'default',
     class: undefined,
-    iconSize: 'default',
+    iconSize: 'md',
 })
 
 const { t } = useLocale()
