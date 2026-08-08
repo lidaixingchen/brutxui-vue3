@@ -1056,5 +1056,7 @@
       "examples": []
     }
   },
-  "integrity": "15692835f12352d2d4826c1145313df279ae4d143838ab97ad6f5604a063fd8e"
+  "integrity": "15692835f12352d2d4826c1145313df279ae4d143838ab97ad6f5604a063fd8e",
+  "signature": "ejZ9LlSlOcuep1OkjAv5Ljn5bXBCMYnQY1mObD2cB7i1USdzYBiJVzFE8UmDytpz3XNP/GBWVf6sF3YQdAcrAQ==",
+  "keyId": "official-v1"
 }
