@@ -148,6 +148,40 @@ describe('diff service', () => {
         ]));
     });
 
+    it('matches single-file components (components/ui/<name>.ts) without added/removed misclassification', async () => {
+        await writeComponentFile(tmpDir, 'button', 'button.ts', 'export const button = {};\n');
+        stubRegistryItem(makeRegistryItem('button', [
+            {
+                path: 'components/ui/button.ts',
+                content: 'export const button = {};\n',
+                type: 'registry:ui',
+            },
+        ]));
+
+        const result = await diffComponent(tmpDir, defaultConfig, 'button');
+
+        expect(result.status).toBe('up-to-date');
+        expect(result.files).toEqual([
+            { path: 'components/ui/button.ts', status: 'unchanged' },
+        ]);
+    });
+
+    it('rejects component names that traverse outside the components directory', async () => {
+        stubRegistryItem(makeRegistryItem('button', [
+            {
+                path: 'components/ui/button/Button.vue',
+                content: '<template>button</template>\n',
+                type: 'registry:ui',
+            },
+        ]));
+        // src/components/../.. 指向项目根之外，穿越组件目录边界
+        await expect(diffComponent(tmpDir, defaultConfig, '../..'))
+            .rejects.toThrow(/Security Error.*outside the components directory/);
+        // 仍在项目内但越出组件目录（如 src/）同样拦截
+        await expect(diffComponent(tmpDir, defaultConfig, '..'))
+            .rejects.toThrow(/Security Error.*outside the components directory/);
+    });
+
     it('uses manifest metadata to report registry source and outdated integrity', async () => {
         await writeComponentFile(tmpDir, 'button', 'Button.vue', '<template>button</template>\n');
         const manifestEntry: InstalledComponentManifest = {
