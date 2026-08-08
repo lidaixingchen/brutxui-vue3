@@ -13,6 +13,8 @@ import { zhCN } from '@/locales/zh-CN'
 // 构造器保存回调、observe 记录 target 并触发一次初始通知、disconnect 清理。
 class ResizeObserverMock implements ResizeObserver {
     private callback: ResizeObserverCallback
+    // 观察目标集合：保持与真实 ResizeObserver 一致的 observe/unobserve 语义，
+    // 供需要断言观察目标或模拟尺寸变更的用例使用
     private observedTargets = new Set<Element>()
 
     constructor(callback: ResizeObserverCallback) {

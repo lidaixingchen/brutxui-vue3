@@ -7,7 +7,7 @@ interface MountOptions {
 
 interface MountResult {
     vm: Record<string, unknown> | undefined
-    element: HTMLElement
+    element: Element
     unmount: () => void
     app: App
 }
@@ -32,9 +32,9 @@ export function mount(component: Component, options: MountOptions = {}): MountRe
         throw err
     }
 
-    // 优先使用根组件实例的 $el：对多根节点（fragment）/文本/注释根同样可靠；
-    // 非 HTMLElement（如仅渲染文本）时回退到 host 容器
-    const element = root?.$el instanceof HTMLElement ? root.$el : host
+    // 优先使用根组件实例的 $el：对多根节点（fragment）/文本/注释根以及 SVG 等
+    // 非 HTML 元素根（Element 而非 HTMLElement）同样可靠；非 Element（如仅渲染文本）时回退到 host 容器
+    const element = root?.$el instanceof Element ? root.$el : host
 
     return {
         // app.mount 返回值即根组件实例（ComponentPublicInstance），无需访问 app._instance 私有字段

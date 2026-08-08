@@ -54,6 +54,8 @@ export async function expectNoA11yViolations(
         }
     } finally {
         if (wasFakeTimers) {
+            // 恢复为默认配置的 fake timers；调用方自定义的 toFake/now 配置无法保留，
+            // 且重装会清空已排队的定时器——axe 检测期间不应依赖既有 fake 队列
             vi.useFakeTimers()
         }
     }

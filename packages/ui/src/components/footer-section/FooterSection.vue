@@ -35,7 +35,8 @@ const DEFAULT_LOGO_TEXT = 'BrutxUI'
 
 const resolvedLogoText = computed(() => props.logoText ?? DEFAULT_LOGO_TEXT)
 const resolvedDescription = computed(() => props.description ?? t('footerSection.defaultDescription'))
-// 版权年份动态生成，避免硬编码跨年后过期；语言包文案通过 {year} 占位符插值
+// 版权年份动态生成，避免硬编码跨年后过期；语言包文案通过 {year} 占位符插值。
+// 年份在 computed 首次求值时缓存：组件跨年保持挂载时不自动更新（页面长开至跨年的边界，业界普遍接受）
 const resolvedCopyright = computed(() => props.copyright ?? t('footerSection.defaultCopyright', { year: String(new Date().getFullYear()) }))
 
 const rootClasses = computed(() =>
