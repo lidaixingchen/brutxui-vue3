@@ -164,8 +164,20 @@ function themeVariablesToCssVars(
         [`${p}-shadow-offset-y`]: variables.shadow.offsetY,
         [`${p}-shadow-color`]: variables.shadow.color,
 
-        // 按压偏移
-        [`${p}-pressed-offset`]: '2px',
+        // 间距变量（与 generateCSS 输出保持一致，保证预览与导出的变量集合一致）
+        [`${p}-spacing-xs`]: variables.spacing.xs,
+        [`${p}-spacing-sm`]: variables.spacing.sm,
+        [`${p}-spacing-md`]: variables.spacing.md,
+        [`${p}-spacing-lg`]: variables.spacing.lg,
+        [`${p}-spacing-xl`]: variables.spacing.xl,
+
+        // 排版变量
+        [`${p}-font-family`]: variables.typography.fontFamily,
+        ...Object.fromEntries(
+            Object.entries(variables.typography.fontSize).map(
+                ([size, value]) => [`${p}-font-size-${size}`, value] as const,
+            ),
+        ),
     }
 }
 
@@ -220,7 +232,10 @@ function isValidThemeTypography(typography: unknown): typography is ThemeTypogra
     const t = typography as Record<string, unknown>
     if (typeof t.fontFamily !== 'string') return false
     if (typeof t.fontSize !== 'object' || t.fontSize === null) return false
-    return true
+    // fontSize 必须含全部必需尺寸档且值均为 string，避免 generateCSS 输出 `--brutal-font-size-*: undefined`
+    const requiredSizeKeys = ['sm', 'base', 'lg', 'xl', '2xl'] as const
+    const fontSize = t.fontSize as Record<string, unknown>
+    return requiredSizeKeys.every((key) => typeof fontSize[key] === 'string')
 }
 
 // ============================================================================
@@ -271,32 +286,48 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
         themes[name] = structuredClone(vars)
     }
 
-    // 存储当前预览时应用的变量名，用于清除
+    // 记录 autoApply 等持久操作写入 DOM 的变量（clearPreview 不应清除）
+    let appliedVars: Record<string, string> | null = null
+    // 仅记录 previewTheme 写入的临时预览变量（clearPreview 清除并恢复持久变量）
     let previewedVars: Record<string, string> | null = null
 
     /**
      * 应用主题变量到 DOM（实时预览）
+     * @param isPreview - true 表示 previewTheme 的临时预览；false 表示 autoApply 的持久应用
      */
-    function applyToDom(variables: ThemeVariables): void {
+    function applyToDom(variables: ThemeVariables, isPreview: boolean): void {
         if (!hasDocument) return
         const cssVars = themeVariablesToCssVars(variables, '--brutal')
         const root = getDocument()!.documentElement
         for (const [key, value] of Object.entries(cssVars)) {
             root.style.setProperty(key, value)
         }
-        previewedVars = cssVars
+        if (isPreview) {
+            previewedVars = cssVars
+        } else {
+            // 新的持久应用会覆盖并清空之前的临时预览
+            appliedVars = cssVars
+            previewedVars = null
+        }
     }
 
     /**
-     * 从 DOM 移除预览变量
+     * 从 DOM 移除预览变量并恢复 autoApply 写入的持久变量
      */
     function removeFromDom(): void {
         if (!hasDocument || !previewedVars) return
         const root = getDocument()!.documentElement
+        // 移除预览覆盖的变量
         for (const key of Object.keys(previewedVars)) {
             root.style.removeProperty(key)
         }
         previewedVars = null
+        // 预览曾覆盖 autoApply 写入的持久变量，清除预览后需恢复
+        if (appliedVars) {
+            for (const [key, value] of Object.entries(appliedVars)) {
+                root.style.setProperty(key, value)
+            }
+        }
     }
 
     /**
@@ -328,7 +359,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
 
         // 自动应用（实时预览）
         if (autoApply) {
-            applyToDom(existing)
+            applyToDom(existing, false)
         }
 
         onThemeChange?.(name, existing)
@@ -354,7 +385,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
 
             themes[name] = structuredClone(parsed)
             if (autoApply) {
-                applyToDom(parsed)
+                applyToDom(parsed, false)
             }
             onThemeChange?.(name, parsed)
             return true
@@ -380,7 +411,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
             themes[name] = structuredClone(parsed)
 
             if (autoApply) {
-                applyToDom(parsed)
+                applyToDom(parsed, false)
             }
             onThemeChange?.(name, parsed)
 
@@ -397,8 +428,10 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
         const theme = themes[name]
         if (!theme) return null
 
+        // 主题名可来自外部输入（如 importThemeFromFile 的文件名），用作选择器值前须转义，防止 CSS 选择器注入
+        const safeName = typeof CSS !== 'undefined' && typeof CSS.escape === 'function' ? CSS.escape(name) : name
         const {
-            selector = `[data-theme="${name}"]`,
+            selector = `[data-theme="${safeName}"]`,
             prefix = '--brutal',
             minified = false,
         } = cssOptions ?? {}
@@ -406,14 +439,15 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
         const cssVars = themeVariablesToCssVars(theme, prefix)
         const indent = minified ? '' : '  '
         const newline = minified ? '' : '\n'
-        const sep = minified ? ';' : ';'
+        const sep = ';'
 
         const lines: string[] = []
         lines.push(`${selector} {${newline}`)
 
-        // 颜色变量
+        // 颜色变量（border/shadow/radius/spacing/font 在各自章节单独输出，避免重复）
         const colorEntries = Object.entries(cssVars).filter(([k]) =>
-            !k.includes('border') && !k.includes('shadow') && !k.includes('radius') && !k.includes('pressed'),
+            !k.includes('border') && !k.includes('shadow') && !k.includes('radius')
+            && !k.includes('spacing') && !k.includes('font'),
         )
         for (const [key, value] of colorEntries) {
             lines.push(`${indent}${key}: ${value}${sep}${newline}`)
@@ -463,7 +497,9 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 获取指定主题
      */
     function getTheme(name: string): ThemeVariables | undefined {
-        return themes[name]
+        // 返回深拷贝，避免调用方绕过 updateTheme / onThemeChange 直接修改内部状态（与 getAllThemes 一致）
+        const theme = themes[name]
+        return theme ? structuredClone(theme) : undefined
     }
 
     /**
@@ -499,7 +535,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
 
         themes[name] = structuredClone(defaultTheme)
         if (autoApply) {
-            applyToDom(themes[name])
+            applyToDom(themes[name], false)
         }
         onThemeChange?.(name, themes[name])
         return true
@@ -512,7 +548,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
         const theme = themes[name]
         if (!theme) return false
 
-        applyToDom(theme)
+        applyToDom(theme, true)
         return true
     }
 
