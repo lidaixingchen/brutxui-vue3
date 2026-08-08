@@ -129,6 +129,15 @@ function categorize(commits) {
     return categories;
 }
 
+// 转义裸尖括号为 HTML 实体，避免 markdown-it 的 html:true 把 `Promise<boolean>` 之类
+// 当作未闭合 HTML 标签（会破坏 VitePress/Vue 模板构建）。反引号代码内的尖括号保持原样。
+function escapeBareAngles(text) {
+    return text
+        .split('`')
+        .map((part, index) => (index % 2 === 0 ? part.replace(/</g, '&lt;').replace(/>/g, '&gt;') : part))
+        .join('`');
+}
+
 function renderMarkdown(version, date, categories, compareBase) {
     const lines = [];
     const compareEnd = `v${version}`;
@@ -137,7 +146,7 @@ function renderMarkdown(version, date, categories, compareBase) {
 
     function renderCommit(commit) {
         const scope = commit.scope ? `**${commit.scope}:** ` : '';
-        const header = `* ${scope}${commit.subject} ([${commit.hash.slice(0, 7)}](${REPO_URL}/commit/${commit.hash}))`;
+        const header = `* ${scope}${escapeBareAngles(commit.subject)} ([${commit.hash.slice(0, 7)}](${REPO_URL}/commit/${commit.hash}))`;
         return [header];
     }
 
@@ -204,8 +213,10 @@ function archiveOldestVersion(fullContent, newVersion) {
     }
 
     // 4. 提取该段归档内容并清洗格式
+    //    转义裸尖括号，防止 commit subject 里的 `Promise<boolean>` 之类被 markdown-it
+    //    当作未闭合 HTML 标签，导致 VitePress/Vue 模板构建失败（历史 v0.9.4 / v0.9.8 均踩过）。
     const rawArchiveText = fullContent.slice(oldestStartIndex, oldestEndIndex).trim();
-    const archiveFileContent = `# v${oldestVersion}\n\n> [← 返回主 CHANGELOG](../guide/changelog.md)\n\n${rawArchiveText}\n`;
+    const archiveFileContent = `# v${oldestVersion}\n\n> [← 返回主 CHANGELOG](../guide/changelog.md)\n\n${escapeBareAngles(rawArchiveText)}\n`;
 
     // 5. 自动写入或更新 `apps/docs/changelog/v${oldestVersion}.md`
     if (!existsSync(docsChangelogDir)) {
