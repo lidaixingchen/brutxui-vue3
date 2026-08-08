@@ -23,9 +23,11 @@ export type ColorFormat = 'hex' | 'rgb' | 'hsl'
 
 const HEX_SHORT_RE = /^#([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i
 const HEX_LONG_RE = /^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i
-// alpha 与 hsl 的 s/l 至少要求一位数字（\d+(?:\.\d+)?），避免单独的 "." 被 parseFloat 解析为 NaN
-const RGB_RE = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)$/i
-const HSL_RE = /^hsla?\(\s*(\d{1,3})\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)$/i
+// alpha 与 hsl 的 s/l 数字组：排除单独的 "."（parseFloat 得 NaN），
+// 但兼容 CSS 合法的无前导零小数（如 .5）与整数（如 1、1.5）
+const RGB_RE = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*((?:\d*\.\d+|\d+))\s*)?\)$/i
+// 色相组 (-?\d+)：CSS 允许任意整数色相（含负值），解析时统一按 360 取模
+const HSL_RE = /^hsla?\(\s*(-?\d+)\s*,\s*((?:\d*\.\d+|\d+))%\s*,\s*((?:\d*\.\d+|\d+))%\s*(?:,\s*((?:\d*\.\d+|\d+))\s*)?\)$/i
 
 function clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value))

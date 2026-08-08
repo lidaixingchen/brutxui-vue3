@@ -13,7 +13,8 @@
 import { inject } from 'vue'
 import type { App, Plugin } from 'vue'
 import { getWindow, isClient, isDev } from '@/lib/env'
-import packageJson from '../../package.json'
+// 具名导入仅内联 version 字段，避免整个 package.json（scripts/devDependencies 等）进主 bundle
+import { version as packageVersion } from '../../package.json'
 
 /** Devtools 插件配置选项 */
 export interface DevtoolsPluginOptions {
@@ -233,31 +234,37 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
     /**
      * 记录一次性能测量（条目 + 阈值告警）。
      * 在 measure/measureAsync 的 finally 中调用，保证 fn() 抛异常时也能观测到慢调用。
+     * 内部 try/catch 兜底：记录逻辑自身失败（如 performance.now 不可用、console 被
+     * stub）时静默忽略，确保 fn() 的原始异常/结果优先传播。
      */
     function recordMeasurement(name: string, startTime: number, component: string | undefined): void {
-        const duration = performance.now() - startTime
+        try {
+            const duration = performance.now() - startTime
 
-        performanceEntries.push({
-            name,
-            startTime,
-            duration,
-            component,
-        })
+            performanceEntries.push({
+                name,
+                startTime,
+                duration,
+                component,
+            })
 
-        // 超过阈值发出警告
-        if (duration > options.performanceThreshold) {
-            console.warn(
-                `[${options.libraryName}] 性能警告: ${name} 耗时 ${duration.toFixed(2)}ms (阈值: ${options.performanceThreshold}ms)`
-            )
-        } else {
-            console.log(
-                `[${options.libraryName}] ${name}: ${duration.toFixed(2)}ms`
-            )
+            // 超过阈值发出警告
+            if (duration > options.performanceThreshold) {
+                console.warn(
+                    `[${options.libraryName}] 性能警告: ${name} 耗时 ${duration.toFixed(2)}ms (阈值: ${options.performanceThreshold}ms)`
+                )
+            } else {
+                console.log(
+                    `[${options.libraryName}] ${name}: ${duration.toFixed(2)}ms`
+                )
+            }
+        } catch {
+            // 记录失败不干扰被测函数的结果与异常传播
         }
     }
 
     const context: BrutxUIDevtoolsContext = {
-        version: packageJson.version,
+        version: packageVersion,
         libraryName: options.libraryName,
         components,
         eventLog,
@@ -421,16 +428,19 @@ function createDevtoolsContext(options: Required<DevtoolsPluginOptions>): BrutxU
             // 共享引用（同一对象出现在多条路径）不会被误判为循环，仅路径上重复出现的对象才标记 [Circular]
             const serialize = (value: unknown, stack: unknown[]): unknown => {
                 if (typeof value !== 'object' || value === null) return value
+                // Date 有 toJSON 语义，显式转 ISO 字符串（与 JSON.stringify 行为一致）；
+                // Map/Set 等无 toJSON 的容器在 JSON.stringify 下同样序列化为 {}，行为一致
+                if (value instanceof Date) return value.toISOString()
                 if (stack.includes(value)) return '[Circular]'
                 const nextStack = [...stack, value]
                 if (Array.isArray(value)) {
                     return value.map((item) => serialize(item, nextStack))
                 }
-                const result: Record<string, unknown> = {}
-                for (const [key, item] of Object.entries(value)) {
-                    result[key] = serialize(item, nextStack)
-                }
-                return result
+                // Object.fromEntries 使用 CreateDataProperty 语义：
+                // 正确创建名为 __proto__ 的自有属性，避免触发原型 setter 导致值丢失/原型链污染
+                return Object.fromEntries(
+                    Object.entries(value).map(([key, item]) => [key, serialize(item, nextStack)]),
+                )
             }
 
             return JSON.stringify(serialize({

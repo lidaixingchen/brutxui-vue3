@@ -4,8 +4,8 @@ export interface ColorPreset {
     readonly disabled?: boolean
 }
 
-/** 全局默认色板：冻结防篡改，消费方（如 ColorPicker）只能读取 */
-export const DEFAULT_COLOR_PRESETS: readonly ColorPreset[] = Object.freeze([
+// 数据集中定义，导出时逐元素冻结（Object.freeze 只冻数组本身，元素对象需单独冻结）
+const RAW_COLOR_PRESETS = [
     { label: 'Gray 50', value: '#F9FAFB' },
     { label: 'Gray 200', value: '#E5E7EB' },
     { label: 'Gray 500', value: '#6B7280' },
@@ -46,4 +46,9 @@ export const DEFAULT_COLOR_PRESETS: readonly ColorPreset[] = Object.freeze([
     { label: 'Pink 200', value: '#FBCFE8' },
     { label: 'Pink 500', value: '#EC4899' },
     { label: 'Pink 800', value: '#9D174D' },
-])
+] as const
+
+/** 全局默认色板：数组与元素双重冻结，消费方（如 ColorPicker）只能读取 */
+export const DEFAULT_COLOR_PRESETS: readonly ColorPreset[] = Object.freeze(
+    RAW_COLOR_PRESETS.map((preset) => Object.freeze({ ...preset })),
+)

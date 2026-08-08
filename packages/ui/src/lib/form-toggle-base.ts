@@ -12,8 +12,10 @@ export const formToggleBaseClasses = [
     brutalPress,
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring focus-visible:ring-offset-2',
     // pointer-events-none 会吞掉 disabled 态的光标反馈（cursor-not-allowed 永不生效），
-    // 改为 select-none 保留禁用视觉提示
+    // 改为 select-none 保留禁用视觉提示；但 Chromium 对 disabled 按钮仍命中 :hover，
+    // 需显式抑制 hover/active 位移与阴影，避免禁用态出现交互反馈
     'disabled:cursor-not-allowed disabled:opacity-50 disabled:select-none',
+    'disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-brutal-sm disabled:active:translate-y-0 disabled:active:shadow-none',
 ] as const
 
 // 未选中态统一补充背景，避免各消费方（如 switch-variants）重复硬编码

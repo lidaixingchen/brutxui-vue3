@@ -8,7 +8,7 @@ function warnColumnMisconfiguration(column: object): void {
     if (warnedColumns.has(column)) return
     warnedColumns.add(column)
     console.warn(
-        '[BrutxUI] getCellValue: 列缺少取值配置（accessorFn/accessorKey 缺失或取值缺失），已回退为空字符串，请检查列配置。',
+        '[BrutxUI] getCellValue: 列缺少取值配置（accessorFn/accessorKey 缺失或键取值缺失），已回退为空字符串，请检查列配置。',
         column,
     )
 }
@@ -18,9 +18,11 @@ export function getCellValue<T extends object>(row: T, column: DataTableColumn<T
     if (column.accessorFn) return column.accessorFn(row)
     if (column.accessorKey) {
         const value = row[column.accessorKey]
-        // 运行时行数据可能缺少该字段（如来自 API 的稀疏行或 accessorKey 拼写错误），
-        // 统一收敛为空字符串，避免 String(undefined) → 'undefined' 污染过滤/排序
-        if (value === null || value === undefined) {
+        // 仅 undefined（键缺失 / accessorKey 拼写错误）收敛为空字符串，
+        // 避免 String(undefined) → 'undefined' 污染过滤/排序；
+        // null 是合法数据值（可空字段），透传由排序/过滤逻辑自行处理
+        // （useDataTableSort 依赖 null 排末尾的既有语义）
+        if (value === undefined) {
             if (isDev()) warnColumnMisconfiguration(column)
             return ''
         }
