@@ -13,6 +13,8 @@ export class FileTransaction {
     private committed = false;
     /** commit/rollback 完成后置真，之后的一切写操作抛错，避免产生"半提交"变更 */
     private finished = false;
+    /** rollback 存在失败项时置真，禁止 commit/写操作固化未回滚完成的变更 */
+    private rollbackFailed = false;
 
     async ensureDir(dirPath: string): Promise<void> {
         this.assertActive();
@@ -55,6 +57,10 @@ export class FileTransaction {
         if (this.committed) {
             return [];
         }
+        // 已完成回滚后再次调用视为无操作（与 commit 后回滚一致）
+        if (this.finished) {
+            return [];
+        }
 
         const failures: string[] = [];
         const entries = Array.from(this.snapshots.entries()).reverse();
@@ -73,10 +79,14 @@ export class FileTransaction {
             }
         }
 
-        // 全部回滚成功才清理备份并标记完成；存在失败时保留临时备份，便于调用方基于残留数据重试恢复
+        // 全部回滚成功才清理备份并标记完成；存在失败时保留临时备份便于重试，
+        // 同时置 rollbackFailed 禁止 commit/写操作固化未回滚完成的变更
         if (failures.length === 0) {
             await this.cleanup();
             this.finished = true;
+            this.rollbackFailed = false;
+        } else {
+            this.rollbackFailed = true;
         }
         return failures;
     }
@@ -98,8 +108,17 @@ export class FileTransaction {
         try {
             await fs.copy(resolvedPath, backupPath);
         } catch (error) {
-            // 复制备份失败时清理已创建的临时目录，避免孤儿临时文件残留
-            await this.cleanup();
+            // 复制备份失败：snapshots 中可能存在大量 { existed:false } 的不引用 tempDir
+            // 的条目，需判断是否存在任一成功备份（backupPath）来确认 tempDir 是否孤儿；
+            // 孤儿才可安全移除，已有备份时 tempDir 被 snapshots 引用，需保留供回滚使用
+            if (Array.from(this.snapshots.values()).every((snap) => !snap.backupPath)) {
+                try {
+                    await fs.remove(tempDir);
+                    this.tempDir = null;
+                } catch {
+                    // 移除失败时保留 tempDir 引用，让后续 cleanup/回滚有机会重试清理
+                }
+            }
             throw error;
         }
         this.snapshots.set(resolvedPath, { existed: true, backupPath });
@@ -123,8 +142,8 @@ export class FileTransaction {
     }
 
     private assertActive(): void {
-        if (this.finished) {
-            throw new Error('FileTransaction has been finished (committed or rolled back); further mutations are not allowed');
+        if (this.finished || this.rollbackFailed) {
+            throw new Error('FileTransaction is not active (committed, rolled back, or failed to roll back); further mutations are not allowed');
         }
     }
 
