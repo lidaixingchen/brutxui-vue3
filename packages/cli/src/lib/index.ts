@@ -52,7 +52,6 @@ export {
     fetchWithSources,
     withOfflineScope,
 } from './registry-source.js';
-export type { RegistrySourceStatus } from './types.js';
 export {
     loadTrustedPublicKeys,
     setTrustedPublicKeys,
