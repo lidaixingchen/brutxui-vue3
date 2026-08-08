@@ -1,3 +1,5 @@
+import { floatingContentAnimationClasses } from './floating-animation-classes'
+
 export const floatingContentSideOffsets = {
     popover: 8,
     dropdownMenu: 6,
@@ -13,11 +15,6 @@ export const inverseFloatingSurfaceClasses = [
     'border-3 border-brutal rounded-brutal shadow-brutal',
 ] as const
 
-export const tooltipFloatingAnimationClasses = [
-    'animate-in fade-in-0 zoom-in-95',
-    'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-    'data-[side=bottom]:slide-in-from-top-2',
-    'data-[side=left]:slide-in-from-right-2',
-    'data-[side=right]:slide-in-from-left-2',
-    'data-[side=top]:slide-in-from-bottom-2',
-] as const
+// 直接复用共享动画类：进入动画统一带 data-[state=open]: 前缀（避免关闭态/forceMount 时
+// 无条件进入动画与退场动画叠加），与 floating-animation-classes.ts 保持一致，消除两套写法漂移
+export const tooltipFloatingAnimationClasses = floatingContentAnimationClasses

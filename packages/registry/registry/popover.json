@@ -38,12 +38,12 @@
     },
     {
       "path": "lib/floating-content-variants.ts",
-      "content": "export const floatingContentSideOffsets = {\n    popover: 8,\n    dropdownMenu: 6,\n    tooltip: 6,\n} as const\n\nexport const brutalFloatingSurfaceClasses = [\n    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n] as const\n\nexport const inverseFloatingSurfaceClasses = [\n    'bg-brutal-fg text-brutal-bg',\n    'border-3 border-brutal rounded-brutal shadow-brutal',\n] as const\n\nexport const tooltipFloatingAnimationClasses = [\n    'animate-in fade-in-0 zoom-in-95',\n    'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n",
+      "content": "import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\n\nexport const floatingContentSideOffsets = {\n    popover: 8,\n    dropdownMenu: 6,\n    tooltip: 6,\n} as const\n\nexport const brutalFloatingSurfaceClasses = [\n    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n] as const\n\nexport const inverseFloatingSurfaceClasses = [\n    'bg-brutal-fg text-brutal-bg',\n    'border-3 border-brutal rounded-brutal shadow-brutal',\n] as const\n\n// 直接复用共享动画类：进入动画统一带 data-[state=open]: 前缀（避免关闭态/forceMount 时\n// 无条件进入动画与退场动画叠加），与 floating-animation-classes.ts 保持一致，消除两套写法漂移\nexport const tooltipFloatingAnimationClasses = floatingContentAnimationClasses\n",
       "type": "registry:lib"
     },
     {
       "path": "lib/floating-animation-classes.ts",
-      "content": "export const floatingContentAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n\nexport const centeredModalAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'duration-200',\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',\n    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',\n] as const\n",
+      "content": "/** 进入/退出动画共享片段：fade + zoom，供各浮动表面数组复用，避免两处展开后漂移 */\nexport const fadeZoomAnimationClasses = [\n    'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',\n    'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',\n] as const\n\nexport const floatingContentAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    ...fadeZoomAnimationClasses,\n    'data-[side=bottom]:slide-in-from-top-2',\n    'data-[side=left]:slide-in-from-right-2',\n    'data-[side=right]:slide-in-from-left-2',\n    'data-[side=top]:slide-in-from-bottom-2',\n] as const\n\nexport const centeredModalAnimationClasses = [\n    'data-[state=open]:animate-in data-[state=closed]:animate-out',\n    'duration-200',\n    ...fadeZoomAnimationClasses,\n    'data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',\n    'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',\n] as const\n",
       "type": "registry:lib"
     }
   ],
@@ -110,5 +110,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-799d4c569d4cb66546cc699c91d3fba4f31732714881d987ec36ef73ee0a13d1"
+  "integrity": "sha256-b1f63b596f2fdc93dc9c5399dfe8e9359618f1fe1a7f9e1eb1403137de21c780"
 }

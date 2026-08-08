@@ -10,11 +10,11 @@ export const switchRootVariants = cva(
     {
         variants: {
             variant: {
-                default: `${formToggleVariantColors.default} data-[state=unchecked]:bg-brutal-bg`,
-                primary: `${formToggleVariantColors.primary} data-[state=unchecked]:bg-brutal-bg`,
-                secondary: `${formToggleVariantColors.secondary} data-[state=unchecked]:bg-brutal-bg`,
-                accent: `${formToggleVariantColors.accent} data-[state=unchecked]:bg-brutal-bg`,
-                danger: `${formToggleVariantColors.danger} data-[state=unchecked]:bg-brutal-bg`,
+                default: formToggleVariantColors.default,
+                primary: formToggleVariantColors.primary,
+                secondary: formToggleVariantColors.secondary,
+                accent: formToggleVariantColors.accent,
+                danger: formToggleVariantColors.danger,
             },
             size: {
                 sm: 'h-6 w-10',

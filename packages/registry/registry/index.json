@@ -200,7 +200,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-53f06ca63d8df737e12de01e036bb6c3e7fed3324f925a1468871d95c3f679cb"
+      "integrity": "sha256-43e3cfedbf094de6226e350c39f14e2beb5d5be0cf790c93d59b15033620c138"
     },
     {
       "name": "alert",
@@ -310,7 +310,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-db27c66b415d8c6a7e28539332fd24eb8bac89473127d53a78e7d915b8c1566d"
+      "integrity": "sha256-9f88b8b77220cbf0b0f957de152769f3aa9b1125855245bd69f19583dedc141b"
     },
     {
       "name": "alert-dialog",
@@ -438,7 +438,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-25707c690ac788d5f3e158c497e046d6beaac76d389f3258647a0b2b55560f44"
+      "integrity": "sha256-4ec99bb680911ee23b90dce05e21cea01f2a63f3b82c8bb14438226f649d0d18"
     },
     {
       "name": "auth-card",
@@ -542,7 +542,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-5766bf00f8c1c5c2b571e2e9d84c109973dbf24167c824f300c7cef8a7ceb0b3"
+      "integrity": "sha256-567998e59c1521630c7cedcff0f56d0c4517dcb6037f938735493cf80e1ea829"
     },
     {
       "name": "avatar",
@@ -746,7 +746,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-aa62724ae48988c22e23bdf6527299ae8cbdb82cc533adf0bbfb85ccd3ce2b32"
+      "integrity": "sha256-bffc53e56171c755ced338a556f4f4be17380bf8670be31d59fdf34587fdb2b0"
     },
     {
       "name": "badge",
@@ -850,7 +850,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-0c18da022a0d84603cdcf9f022a8ae564df2904bb0ae8e25c03212ebecffe11c"
+      "integrity": "sha256-1f7db493337b92100d676e0adf22649354aaf3517036532dcc85137a7d9d6f92"
     },
     {
       "name": "before-after",
@@ -958,7 +958,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-605489fcbae2b045e807495415e8816d4e8fa863cfb1b3f6556bcdc7b5448632"
+      "integrity": "sha256-dd3cec51e064dace7cf636015d6948ee944ba569d2a532d947a189eb8d48f892"
     },
     {
       "name": "breadcrumb",
@@ -1087,7 +1087,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-68f378f99ef67debb91c340e14b15de8d43bd4f344d47045fde5036c6181b093"
+      "integrity": "sha256-38bac1ffa4879dfc1185fedcf8df20e1490acdd546685f63678cf2a085779f75"
     },
     {
       "name": "brutalist-hero",
@@ -1186,7 +1186,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-73aeef3e6d29c61da545fcaa76f279e0bf9dcfb065514a08f91d76a791af0d38"
+      "integrity": "sha256-a97a02d887b82d1f93c8fc8025d4d0352b43dd9ef980838a7648c29a9f08757c"
     },
     {
       "name": "button",
@@ -1311,7 +1311,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6ba7a367a5ea0768abeee7425cb872805214838b77d493fdc2ddac38e4a64d90"
+      "integrity": "sha256-efcc01d88c6357746a23200ece8d0f05c82698c07015daccc1393978693ccfd9"
     },
     {
       "name": "calendar",
@@ -1413,7 +1413,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-40716ad66e4ca850f698b88916edf8595da96ee31f51a187e9bdea41cd8f9fc5"
+      "integrity": "sha256-06436f43f0db365753d2adaf544c2199fec2063b7a2a8a1c3a0af432898034f1"
     },
     {
       "name": "card",
@@ -1525,7 +1525,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-32ea09ad7fd933d388ecef4fa33d211b4eef39b19aa579894fe01c678752f071"
+      "integrity": "sha256-15c4424339c1350e6787bcfeb3208b61a1dafbbf0b3afa5b1d043678e854f69f"
     },
     {
       "name": "card-3d",
@@ -1631,7 +1631,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-be27c6390e84625b0f13f062ab38e09e35be99da706fe82262dabd76dc208589"
+      "integrity": "sha256-3cbac8fcf2aea10278a9490d5f0649e63519cdf023fa5cfccb1738cdb57a7c13"
     },
     {
       "name": "carousel",
@@ -1765,7 +1765,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f925947d558621e24181945f304d8ceb32420a59f5ef4c3cdaa39ea3a505efd1"
+      "integrity": "sha256-1ccfc7c17a31e42b2eebb270430987467d35868991d6f663a60f91a4400409bb"
     },
     {
       "name": "cascader",
@@ -1892,7 +1892,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c58049c920d6a15daaba54f9fb32ae207e08c7aa5f8f78d14eba144d09a1f08e"
+      "integrity": "sha256-1f7295ad98116ddb8ceb1f3155c231853fccae4e6a89624d880889e005bf07d9"
     },
     {
       "name": "chat-bubble",
@@ -2106,7 +2106,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6f2ec2734b2050e204332b03727f5bd250005c7c62804b162a3d5bb4fa8706dd"
+      "integrity": "sha256-da5d39ab9d51e5464074aa99538675e3f2fe79de6ee03fee546621d185dd34a1"
     },
     {
       "name": "code-block",
@@ -2217,7 +2217,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-ee1ebb8dfae15c1a586df1d842610fe3caddc521cbe0d3a3871222bdfef350ac"
+      "integrity": "sha256-7177eb9858c24cdcb9ba8cafb127ad5a60c69f14b8ef65557ee789e92d2b5f65"
     },
     {
       "name": "color-mode-switcher",
@@ -2320,7 +2320,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b5f1e265b40d1b7f4314745e838db44d0bddcafeba00cf1efeef565ac3d41b80"
+      "integrity": "sha256-be6c45852fa3c61c0c14d92d166455bfa65f4edbd6047286b4bc4eccf5245beb"
     },
     {
       "name": "color-picker",
@@ -2467,7 +2467,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f4a425cc9ee0d25181b5464d621dfcd57cb53f1ff13df55ca4cf45f7cc8e4b62"
+      "integrity": "sha256-25cc4d965dcc4ad2db89ed0ea8bc651ed7565bafe91a64e35bd1744857ca0b63"
     },
     {
       "name": "combobox",
@@ -2584,7 +2584,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-160b5fcc7bda3851495fae764c600dc24229748cb4a589117d8e8ffa4b5f8d95"
+      "integrity": "sha256-37873aa9eafe83a224dc2b8b8ac8931526ed3ae4c494c99e81cf22c027c3ace1"
     },
     {
       "name": "command",
@@ -2722,7 +2722,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-98b259f92307a688d90585bc6c0418ed43bc76aed208141f831276c486269c2d"
+      "integrity": "sha256-916d9c6c2a287fe9f33f2b5179e89077c7b771624b0ddc4514449df59f02f299"
     },
     {
       "name": "cookie-consent",
@@ -2820,7 +2820,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-ac685ebb572498a4aa0ce71dcc339fbd3fabd956e265db56de00d2d52bc1801a"
+      "integrity": "sha256-d8aeedac97f630b608587d0993ea8e70264ed9b2d8903eac8a1b7a4122c77e70"
     },
     {
       "name": "copy-to-clipboard",
@@ -2932,7 +2932,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-fe79a2c5cc4842de32860bead0fff7e222145f903ce795867564be7b056a6203"
+      "integrity": "sha256-a188c1f0931bb24fbef0ee3e30f0d5e1a8d3621913fbdf67317eec7fabdb6f06"
     },
     {
       "name": "counter",
@@ -3028,7 +3028,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6396088203a3c4340ca8694f28ac0e31aa701e053fcfc3ad8b3b8f901abacf63"
+      "integrity": "sha256-41aacca1571b23b00831a81e41c6bc0fca6b97b0dbe8497a7db12b4bb1403425"
     },
     {
       "name": "dashboard-shell",
@@ -3125,7 +3125,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-7400ee760832a9f82076caa71950fbca5a08f5df4db090e957ae368deaaf3fda"
+      "integrity": "sha256-f1bffbed5bbb04ac2d1b5790cd27a1db8d419a3a0fe96f2210af4982d46b96e2"
     },
     {
       "name": "data-table",
@@ -3203,6 +3203,10 @@
         {
           "path": "lib/date.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "lib/env.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {},
@@ -3268,7 +3272,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b13ef8896f1a628daf29db767b6b01db845b65b1189cdc76b1462425923fd24d"
+      "integrity": "sha256-1a57ab7f49559b1986facdd63f34bde9850aab5fcd917338ade58cffdaf2c197"
     },
     {
       "name": "date-picker",
@@ -3449,7 +3453,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-3504e36011dcabaa088f575f7d5dee0fb4a84240ff23717ad75073bc0135467d"
+      "integrity": "sha256-0d468f141ded1e71c6aa2e2826b61e18a061082bf62fbc58af712b2b846281b6"
     },
     {
       "name": "descriptions",
@@ -3696,7 +3700,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-044774e541f4458db512cb59441a6965affe2f8df2d48826a994ab6d3aa9f0ca"
+      "integrity": "sha256-55aebaf69bc18d6da5aa2f84eacea156459405efe266f5f32bbc5fb20a40f402"
     },
     {
       "name": "dropdown-menu",
@@ -3835,7 +3839,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-134ac8b1376fe5b7714b510232619d4bc6533cc29d24907fd7ec3deb826c6237"
+      "integrity": "sha256-9b7d94150f0405ab427d9edee773d2eec09f86a7a7116b3f706ed2f02a27b337"
     },
     {
       "name": "feedback-form",
@@ -3937,7 +3941,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b4f88c870abe91fc4174e93b762b7fa7482cfbdce7e8fb96adf0326e0f5ea57c"
+      "integrity": "sha256-c902f3fe0a670bb94c89b801de7b7ff50a1888f6abd400300cdc8d2905a60ee8"
     },
     {
       "name": "footer-section",
@@ -4283,7 +4287,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-8035f51cd8898e7178f5eb08d445fc5578802a83313c372c9f9b1e4858a25649"
+      "integrity": "sha256-7c5e6d9fd011784524f8cc6d9fa9df2d67a4afb763f6be72e3e5aab91a6d161a"
     },
     {
       "name": "hardcore-input",
@@ -4395,7 +4399,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-11792d42852003cf6bc670a222bcf9ac8d80bc777f0a69b459bfedad1a3388af"
+      "integrity": "sha256-8a3030813def38ca3f852c82b1ee024e4cbe4db6a44d27ca3b406c7ae7258637"
     },
     {
       "name": "header-section",
@@ -4499,7 +4503,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-120ffa5929a9cebbe70b99eecb4f9e7f1b0b7c9ee4e77beec5e86d1826160635"
+      "integrity": "sha256-2ef813611268765caba34dcff4d567fae751c366e2c8130027a26f3151c50a7a"
     },
     {
       "name": "image",
@@ -4594,7 +4598,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-bfb63086fb27e9c701de9458c75c03f6eced7166c9ea22f2f145364fe509631f"
+      "integrity": "sha256-6786b785c6a63835f39649d487cf3dc583b8ca46c118058bbde837390b35e05c"
     },
     {
       "name": "infinite-scroll",
@@ -4690,7 +4694,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-4c03176b41b88bfc852c909a104083824f8ec30ad2c74076b0b902a7eb88d227"
+      "integrity": "sha256-46edbc401a59ba09564d8013d4a578c7485a5e46cf3cefdbd10b88619d76429b"
     },
     {
       "name": "input",
@@ -4798,7 +4802,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6fcb7bf7547f28d0c36b9c6eea9757d3d0915272140ccfb263a4b1aa04b8fca7"
+      "integrity": "sha256-cf6a0cb4c00b63ad419e30274a1870827c39158a9b7787fe2481283fce66be6a"
     },
     {
       "name": "kanban",
@@ -4911,7 +4915,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c0720c07c3fc04b5441ccf6ecbe7edea45602d0aac65fc68d6a03d20bb5c4606"
+      "integrity": "sha256-1a6bed6064de0f415da9b5c7dcd0bb7bd2a9758207f14368787e9c909b10324b"
     },
     {
       "name": "kbd",
@@ -5189,7 +5193,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-2c6fd47544a939f839aebb91d3d43b7ab79f71ea1c383830395c7d54ae8290c5"
+      "integrity": "sha256-6a213940e42b630567aa0ba4db42eae4853b0a1bb27986d41ac68db776e855a7"
     },
     {
       "name": "marquee",
@@ -5285,7 +5289,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-20dc953587c558c653ff3b0a455d0dff9c5cf8c555a68a80aab9c642e65368d5"
+      "integrity": "sha256-ee8ab1b06c3d46e9e095757df562bead928fb7fc2eddea9f51e6ca301322efdf"
     },
     {
       "name": "menu",
@@ -5387,7 +5391,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-fe05fc90ed08d4fb22cfb2bb9c94c211d95c1c0e6c111cc74b82841111627e74"
+      "integrity": "sha256-55f7f079f505daaf226a8baa91414c6f0af3d116da1a2518c7b968f2a59f5d76"
     },
     {
       "name": "message",
@@ -5504,7 +5508,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-38dc5f7a708c59361131025cae08a67a054cf795911a458ed549f69c217806c8"
+      "integrity": "sha256-576aad6c1ba4acf5931a2f196e7dae3dea13a074af3857aa10eeccdb3092fefd"
     },
     {
       "name": "noise-background",
@@ -5600,7 +5604,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c25dedf057601005a7fea8881831a6965be7b07ba8e0033ec9b795f3a395d294"
+      "integrity": "sha256-8e22c4cfd7d21bbee439af4bf3a148abb2d80bfeb7a07c59dda88ef19e085fea"
     },
     {
       "name": "number-input",
@@ -5706,7 +5710,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-7428af13156b68c48a215b55b33d1bd31c4cc943f8428d718f95edd2bd8ac0e7"
+      "integrity": "sha256-e1f211bb6dbde2dc35f0e7384687538392b27f61822a23bb83eb93a94226de98"
     },
     {
       "name": "pagination",
@@ -5813,7 +5817,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-1d9d3d37e23c9c359e44d282cefd412fdd611f84908811d2970c9c86514a9b68"
+      "integrity": "sha256-776619785fcb9f3f5abbd2977f71687b7c218c3ad969373d781690434742fad4"
     },
     {
       "name": "popconfirm",
@@ -6011,7 +6015,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-799d4c569d4cb66546cc699c91d3fba4f31732714881d987ec36ef73ee0a13d1"
+      "integrity": "sha256-b1f63b596f2fdc93dc9c5399dfe8e9359618f1fe1a7f9e1eb1403137de21c780"
     },
     {
       "name": "pricing-section",
@@ -6300,7 +6304,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-ddd1c1d286bd0a649c4e72594e7ae05d1cbe55f877e2b2a36d0eaccf33aa7b68"
+      "integrity": "sha256-56a61476d5ff1f6a4469cd8db99a51c0bdf4e018e71c9e53ac09b04cd73b7c18"
     },
     {
       "name": "rate",
@@ -6476,7 +6480,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-4e8684f449b2d6022093cc9db3b0bc3fe2d7353c6ba65dd70bc1b589e21d10e2"
+      "integrity": "sha256-9017fb7b8fcdcc91d0c273a6d89fb97d5fb90031038373ff442b4db779573001"
     },
     {
       "name": "scratch-card",
@@ -6590,7 +6594,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-6cdc78485cdd9e1af6158092eaa5dc282f76be4a7e2911f5306a77f23311677a"
+      "integrity": "sha256-e0cf1eecb7102e009e5a810dfa2d8138749b288cca80f4cb8fb588572076dbd3"
     },
     {
       "name": "scroll-area",
@@ -6819,7 +6823,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f3366506ab64f6fd0dc367f6223a07ee3ecfc250cee7b0e02f58b482239eb376"
+      "integrity": "sha256-82eb0571733adaf9e70e42948f103e40e92de07e029d7896347083bba2124307"
     },
     {
       "name": "separator",
@@ -7034,7 +7038,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-0448c91879d1542d3b2abdc60e60842856630f57c54b357f9ed29df13d9a11f2"
+      "integrity": "sha256-0c1a17850a018440633f556fc83fcb0c6509f08bc48d6fbbe060e4f84ada63bd"
     },
     {
       "name": "skeleton",
@@ -7236,7 +7240,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-415de405796ae3ad878c7461e48cf8a824f3dabb280116d0b9a4c44f0ef28f55"
+      "integrity": "sha256-f0800c4298338871fe254ff9d6890143c933b607a8ac285ed5791153dc205ba4"
     },
     {
       "name": "slider",
@@ -7330,7 +7334,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-a83774c5bca2f43e6ca7562582bc6e4c62aa42e995f120fa402267cca2b7ae48"
+      "integrity": "sha256-4a59600636d13ad2d480fd2606a8e89ab184fe386255d1159b346ca5a9176a2a"
     },
     {
       "name": "spinner",
@@ -7540,7 +7544,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-cfd840f606f71a1d73ec59cfe40d3ef05c28752ad2523f74cca2809ddf3cc9c4"
+      "integrity": "sha256-499561a3b35143a65e554478d1d2eecc5a536ba6c4b7081a5190274dc1acf5b8"
     },
     {
       "name": "switch",
@@ -7644,7 +7648,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-97dc1bb6bb4517ae8e55f2f654d9d8f4c4ce9a76b170abc6ab58c555f11dabe9"
+      "integrity": "sha256-ce1abfae1732bd1aeebc5da917d8b4027800b26d5d5f1ca6459902251630ffc7"
     },
     {
       "name": "table",
@@ -7878,7 +7882,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-150f737eeee9b13a58e765b10085c06470d1b1fd801ff7edbbf56bc62d759fcd"
+      "integrity": "sha256-9d8685b68b8fcfa299c4f909864097b2ed2b39cc71fb8cb26535db5b8acdf082"
     },
     {
       "name": "tags-input",
@@ -7995,7 +7999,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-2209ad5b2d7f68734394e44abfb7624aac255b33ade4206ac6c7859dcd9a6edf"
+      "integrity": "sha256-5dcccbad668ec983cd06dd1b7fd5c10a306187888ce25354fd4a9902808edc40"
     },
     {
       "name": "textarea",
@@ -8094,7 +8098,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-f8e0ee8607cf4d5cfd5592ccc5352bc8a63b4e333b6ee09fc130c1c7560f6852"
+      "integrity": "sha256-e2b8e522e0dc9b35781d69444fbb00a7c2d356b90c9e962f706043bbf03b1841"
     },
     {
       "name": "timeline",
@@ -8332,7 +8336,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-409f0dee2567957b4c8394a7013ed0ad940334399205de7e5940318e14825cf6"
+      "integrity": "sha256-9cf9751503c0b0eabd1b3ea7741d430fc8fa0543695242e8a35594b23d2b0001"
     },
     {
       "name": "toggle",
@@ -8431,7 +8435,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b68b59369f59a60c7db642c491e35c5f65e18433676c7f51362a02622ac7d8a7"
+      "integrity": "sha256-ecb6d479a48b04053c001ee88e2379c2ade1e190f6597d72324edc0b700bec57"
     },
     {
       "name": "toggle-group",
@@ -8560,6 +8564,10 @@
         {
           "path": "lib/floating-content-variants.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "lib/floating-animation-classes.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {},
@@ -8625,7 +8633,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b2379f9a5d841b5f7ffb575fd96324f92c147cd4f4103dacb2c728e8a0bb707b"
+      "integrity": "sha256-04064cd23b049ab14bf0058121d14af4b9571563530acd66ca6d789c2638014f"
     },
     {
       "name": "tour",
@@ -8731,7 +8739,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b463b29f8e59e33cd43609794194cb4a5ba573993d82387af7eb82d0fd56f3b0"
+      "integrity": "sha256-b375a4b79efa31185449fd2453300d3e1671c1711a7a6279ac2d467b8fe85613"
     },
     {
       "name": "transfer",
@@ -8974,7 +8982,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-2026a739dd968cf2a697a7ec8e300c918befafb57b3a76b9efed4ea6193db1f3"
+      "integrity": "sha256-730539abf70258407a821c1d5dbf0d8e71c22ed25c2a1cd41021517d7e4b1b2d"
     },
     {
       "name": "tree-view",
@@ -9096,7 +9104,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-bd233cbe5bb4101ec9069f369689b8c14b402b3f9b57855ac4db1465dcce8f50"
+      "integrity": "sha256-014376f3b14d385e9aac6069feca5cb125829cf16e93abd06b4ceb2977d30be0"
     },
     {
       "name": "typewriter-text",
@@ -9192,7 +9200,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-915728d77a79795ee50a9568da74558753209194e575aa062067bb0dbb5a7baa"
+      "integrity": "sha256-6f97a0b05f13a466de7dd4bb0e2cd63ca66a0a3d6a2a09d86ee47c7f2a85801d"
     },
     {
       "name": "upload",
@@ -9486,7 +9494,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-533b589f6e880162fdd38dab1394053662e1cc4c8c1101f1ce18e568f477aa09"
+      "integrity": "sha256-4a9719f2818f984fbbf23961ab6d5ca092b027e6c662495df30d53f5da1353e2"
     }
   ]
 }
