@@ -7,6 +7,7 @@
  */
 
 import type { ThemeVariables } from '../lib/theme-variables'
+import type { DeepPartial } from '../types'
 
 // ============================================================================
 // 预设主题定义
@@ -30,7 +31,8 @@ export const defaultTheme: ThemeVariables = {
         success: '#7FB069',
         successForeground: '#000000',
         info: '#4A90D9',
-        infoForeground: '#FFFFFF',
+        // 白字对比度 3.34:1 不达 WCAG AA（4.5:1），改黑字 6.28:1，与 primary/secondary 黑字风格统一
+        infoForeground: '#000000',
         bg: '#FFFFFF',
         fg: '#000000',
         muted: '#f3f4f6',
@@ -87,7 +89,8 @@ export const darkTheme: ThemeVariables = {
         success: '#7FB069',
         successForeground: '#000000',
         info: '#3B82F6',
-        infoForeground: '#FFFFFF',
+        // 白字对比度 3.68:1 不达 WCAG AA（4.5:1），改黑字 5.71:1
+        infoForeground: '#000000',
         bg: '#141414',
         fg: '#FFFFFF',
         muted: '#1e1e1e',
@@ -137,7 +140,8 @@ export const highContrastTheme: ThemeVariables = {
         primaryForeground: '#FFFFFF',
         secondary: '#006600',
         secondaryForeground: '#FFFFFF',
-        accent: '#CC6600',
+        // 原 #CC6600 白字对比度 3.84:1 不达 WCAG AA（4.5:1），加深为 #A64A00（白字 5.83:1）保持主题内白字一致性
+        accent: '#A64A00',
         accentForeground: '#FFFFFF',
         destructive: '#CC0000',
         destructiveForeground: '#FFFFFF',
@@ -282,46 +286,53 @@ export function getPresetTheme(name: string): ThemeVariables | undefined {
  */
 export function createCustomTheme(
     baseThemeName: PresetThemeName,
-    overrides: Partial<ThemeVariables>
+    overrides: DeepPartial<ThemeVariables>
 ): ThemeVariables {
     const baseTheme = themes[baseThemeName]
-    return deepMerge(baseTheme, overrides)
+    // 运行期校验：类型只约束编译期，用户配置/持久化存储的字符串可能非法，
+    // 非法名称下 themes[name] 为 undefined，深合并会静默生成残缺主题，须显式报错
+    if (!baseTheme) {
+        throw new Error(`[BrutxUI] createCustomTheme: 未知的基础主题 "${baseThemeName}"`)
+    }
+    return deepMerge<ThemeVariables>(baseTheme, overrides)
 }
 
 // ============================================================================
 // 内部工具函数
 // ============================================================================
 
-/**
- * 深度合并对象
- */
-function deepMerge<T extends object>(target: T, source: Partial<T>): T {
-    const result = { ...target } as Record<string, unknown>
-    const sourceRec = source as Record<string, unknown>
+function isMergeableObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
 
-    for (const key of Object.keys(sourceRec)) {
-        const sourceVal = sourceRec[key]
+/** 内部宽松递归合并：键值均为 unknown，避免 DeepPartial 映射类型在递归时的索引签名冲突。 */
+function deepMergeRecord(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>,
+): Record<string, unknown> {
+    const result = { ...target }
+
+    for (const key of Object.keys(source)) {
+        const sourceVal = source[key]
         const targetVal = result[key]
 
-        if (
-            sourceVal !== null &&
-            sourceVal !== undefined &&
-            typeof sourceVal === 'object' &&
-            !Array.isArray(sourceVal) &&
-            typeof targetVal === 'object' &&
-            targetVal !== null &&
-            !Array.isArray(targetVal)
-        ) {
-            result[key] = deepMerge(
-                targetVal as Record<string, unknown>,
-                sourceVal as Record<string, unknown>
-            )
+        if (isMergeableObject(sourceVal) && isMergeableObject(targetVal)) {
+            result[key] = deepMergeRecord(targetVal, sourceVal)
         } else if (sourceVal !== undefined) {
             result[key] = sourceVal
         }
     }
 
-    return result as T
+    return result
+}
+
+/**
+ * 深度合并对象：支持对嵌套字段的部分覆盖（与 DeepPartial 类型一致）。
+ */
+function deepMerge<T extends object>(target: T, source: DeepPartial<T>): T {
+    const targetRec = target as unknown as Record<string, unknown>
+    const sourceRec = source as unknown as Record<string, unknown>
+    return deepMergeRecord({ ...targetRec }, sourceRec) as T
 }
 
 // ============================================================================
