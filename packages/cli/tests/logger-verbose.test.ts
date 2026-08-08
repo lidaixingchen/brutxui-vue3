@@ -68,6 +68,19 @@ describe('Logger verbose levels (P1-8)', () => {
             logger.setVerboseLevel(-5);
             expect(logger.getVerboseLevel()).toBe(VERBOSE_LEVEL_NONE);
         });
+
+        it('does not output verbose for level 0 or negative', () => {
+            const logger = new Logger({ verboseLevel: VERBOSE_LEVEL_TRACE });
+            logger.verbose(0, 'should not show');
+            logger.verbose(-5, 'should not show');
+            expect(logSpy).not.toHaveBeenCalled();
+        });
+
+        it('does not output verbose for NaN level', () => {
+            const logger = new Logger({ verboseLevel: VERBOSE_LEVEL_TRACE });
+            logger.verbose(NaN, 'should not show');
+            expect(logSpy).not.toHaveBeenCalled();
+        });
     });
 
     describe('prefix labels', () => {
@@ -121,6 +134,44 @@ describe('Logger verbose levels (P1-8)', () => {
             const logger = new Logger({ silent: true, verboseLevel: VERBOSE_LEVEL_TRACE });
             logger.verbose(VERBOSE_LEVEL_TRACE, 'should not show');
             expect(logSpy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('DEBUG env parsing', () => {
+        afterEach(() => {
+            delete process.env.DEBUG;
+        });
+
+        it('does not enable debug output when DEBUG is empty', () => {
+            process.env.DEBUG = '';
+            const logger = new Logger();
+            logger.debug('msg');
+            expect(logSpy).not.toHaveBeenCalled();
+        });
+
+        it('does not enable debug output when DEBUG is 0 or false', () => {
+            const logger = new Logger();
+            process.env.DEBUG = '0';
+            logger.debug('msg');
+            expect(logSpy).not.toHaveBeenCalled();
+            process.env.DEBUG = 'false';
+            logger.debug('msg');
+            expect(logSpy).not.toHaveBeenCalled();
+        });
+
+        it('enables debug output when DEBUG is truthy', () => {
+            process.env.DEBUG = '1';
+            const logger = new Logger();
+            logger.debug('msg');
+            expect(logSpy).toHaveBeenCalled();
+            const call = logSpy.mock.calls[0][0] as string;
+            expect(call).toContain('[DEBUG]');
+        });
+
+        it('uses debugEnabled flag when DEBUG unset', () => {
+            const logger = new Logger({ debug: true });
+            logger.debug('msg');
+            expect(logSpy).toHaveBeenCalled();
         });
     });
 

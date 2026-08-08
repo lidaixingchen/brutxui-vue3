@@ -49,7 +49,7 @@ function clampVerboseLevel(level: number): number {
 function isDebugEnvActive(): boolean {
     const value = process.env.DEBUG;
     if (value === undefined) return false;
-    return value !== '0' && value.toLowerCase() !== 'false';
+    return value !== '' && value !== '0' && value.toLowerCase() !== 'false';
 }
 
 function verbosePrefix(level: number): string {
@@ -133,8 +133,9 @@ export class Logger {
      * level=1 步骤（-v），level=2 细节（-vv），level=3 堆栈（-vvv）。
      */
     verbose(level: number, message: string): void {
-        // 非法等级（0/负数/NaN）直接拦截，避免 clamp 归零后与默认等级恒等导致无条件输出
-        if (level < VERBOSE_LEVEL_STEP || this.verboseLevel < level) {
+        // 非法等级（0/负数/NaN）直接拦截：NaN 与任何数值比较恒为 false，
+        // 必须显式 Number.isNaN，否则 NaN 会绕过守卫无条件输出
+        if (Number.isNaN(level) || level < VERBOSE_LEVEL_STEP || this.verboseLevel < level) {
             return;
         }
         this.log(chalk.gray(`${verbosePrefix(level)} ${message}`));
