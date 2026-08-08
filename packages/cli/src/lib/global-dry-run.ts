@@ -14,6 +14,8 @@
  * removeComponents 已支持 dry-run 语义，只需传入合并后的标志。
  */
 
+import { logger } from './logger.js';
+
 const DRY_RUN_ENV = 'BRUTX_DRY_RUN';
 
 /**
@@ -66,8 +68,7 @@ export function resetGlobalDryRun(): void {
  * 统一格式：`[Dry Run] Would <action>: <path>`
  */
 export function printDryRunAction(action: string, target: string): void {
-    // 动态导入避免循环依赖
-    void import('./logger.js').then(({ logger }) => {
-        logger.info(`[Dry Run] Would ${action}: ${target}`);
-    });
+    // logger 仅依赖 chalk，静态导入不会构成循环依赖；
+    // 同步打印保证 dry-run 输出在进程退出前一定可见。
+    logger.info(`[Dry Run] Would ${action}: ${target}`);
 }
