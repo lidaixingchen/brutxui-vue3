@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority'
 import { brutalHoverLiftSm, brutalHoverLiftSmNoX } from '@/lib/brutal-interaction-variants'
-import { treeNodeBaseClasses } from '@/lib/tree-variants'
+import { treeNodeBaseClasses, treeNodeUnselectedClass } from '@/lib/tree-variants'
 
 export const treeSelectTriggerVariants = cva(
     [
@@ -41,7 +41,7 @@ export const treeSelectNodeVariants = cva(
             },
             selected: {
                 true: '',
-                false: '', // no-op: unselected state
+                false: treeNodeUnselectedClass,
             },
         },
         compoundVariants: [
