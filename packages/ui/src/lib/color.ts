@@ -23,8 +23,9 @@ export type ColorFormat = 'hex' | 'rgb' | 'hsl'
 
 const HEX_SHORT_RE = /^#([a-f\d])([a-f\d])([a-f\d])([a-f\d])?$/i
 const HEX_LONG_RE = /^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})?$/i
-const RGB_RE = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*([\d.]+)\s*)?\)$/i
-const HSL_RE = /^hsla?\(\s*(\d{1,3})\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*(?:,\s*([\d.]+)\s*)?\)$/i
+// alpha 与 hsl 的 s/l 至少要求一位数字（\d+(?:\.\d+)?），避免单独的 "." 被 parseFloat 解析为 NaN
+const RGB_RE = /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)$/i
+const HSL_RE = /^hsla?\(\s*(\d{1,3})\s*,\s*(\d+(?:\.\d+)?)%\s*,\s*(\d+(?:\.\d+)?)%\s*(?:,\s*(\d+(?:\.\d+)?)\s*)?\)$/i
 
 function clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value))
@@ -32,6 +33,20 @@ function clamp(value: number, min: number, max: number): number {
 
 function toHex2(value: number): string {
     return clamp(Math.round(value), 0, 255).toString(16).padStart(2, '0')
+}
+
+/**
+ * 计算 RGB 的色相（0-360），三通道须已归一化到 [0,1]。
+ * rgbToHsv / rgbToHsl 共用六段色相分支，避免两处逻辑漂移。
+ */
+function computeHue(r: number, g: number, b: number, max: number, delta: number): number {
+    let h = 0
+    if (delta > 0) {
+        if (max === r) h = 60 * (((g - b) / delta) % 6)
+        else if (max === g) h = 60 * ((b - r) / delta + 2)
+        else h = 60 * ((r - g) / delta + 4)
+    }
+    return h < 0 ? h + 360 : h
 }
 
 export function hsvToRgb(hsv: HSVColor): RGBColor {
@@ -65,13 +80,7 @@ export function rgbToHsv(rgb: RGBColor): HSVColor {
     const max = Math.max(r, g, b)
     const min = Math.min(r, g, b)
     const delta = max - min
-    let h = 0
-    if (delta > 0) {
-        if (max === r) h = 60 * (((g - b) / delta) % 6)
-        else if (max === g) h = 60 * ((b - r) / delta + 2)
-        else h = 60 * ((r - g) / delta + 4)
-    }
-    if (h < 0) h += 360
+    const h = computeHue(r, g, b, max, delta)
     const s = max === 0 ? 0 : (delta / max) * 100
     const v = max * 100
     return {
@@ -89,13 +98,7 @@ export function rgbToHsl(rgb: RGBColor): HSLColor {
     const max = Math.max(r, g, b)
     const min = Math.min(r, g, b)
     const delta = max - min
-    let h = 0
-    if (delta > 0) {
-        if (max === r) h = 60 * (((g - b) / delta) % 6)
-        else if (max === g) h = 60 * ((b - r) / delta + 2)
-        else h = 60 * ((r - g) / delta + 4)
-    }
-    if (h < 0) h += 360
+    const h = computeHue(r, g, b, max, delta)
     const l = (max + min) / 2
     const s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
     return {
@@ -181,15 +184,23 @@ export function parseColor(color: string): HSVColor | null {
         const r = clamp(parseInt(rgbMatch[1], 10), 0, 255)
         const g = clamp(parseInt(rgbMatch[2], 10), 0, 255)
         const b = clamp(parseInt(rgbMatch[3], 10), 0, 255)
-        const a = rgbMatch[4] !== undefined ? clamp(parseFloat(rgbMatch[4]), 0, 1) : 1
+        const parsedA = rgbMatch[4] !== undefined ? parseFloat(rgbMatch[4]) : 1
+        if (!Number.isFinite(parsedA)) return null
+        const a = clamp(parsedA, 0, 1)
         return rgbToHsv({ r, g, b, a })
     }
     const hslMatch = trimmed.match(HSL_RE)
     if (hslMatch) {
-        const h = clamp(parseInt(hslMatch[1], 10), 0, 360)
-        const s = clamp(parseFloat(hslMatch[2]), 0, 100)
-        const l = clamp(parseFloat(hslMatch[3]), 0, 100)
-        const a = hslMatch[4] !== undefined ? clamp(parseFloat(hslMatch[4]), 0, 1) : 1
+        // CSS 语义：色相允许任意数值并按 360 取模（400deg ≡ 40deg），与 hslToRgb 保持一致
+        const h = ((parseInt(hslMatch[1], 10) % 360) + 360) % 360
+        const parsedS = parseFloat(hslMatch[2])
+        const parsedL = parseFloat(hslMatch[3])
+        if (!Number.isFinite(parsedS) || !Number.isFinite(parsedL)) return null
+        const s = clamp(parsedS, 0, 100)
+        const l = clamp(parsedL, 0, 100)
+        const parsedA = hslMatch[4] !== undefined ? parseFloat(hslMatch[4]) : 1
+        if (!Number.isFinite(parsedA)) return null
+        const a = clamp(parsedA, 0, 1)
         return rgbToHsv(hslToRgb({ h, s, l, a }))
     }
     return null

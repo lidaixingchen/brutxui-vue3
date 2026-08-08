@@ -24,6 +24,18 @@ export function canUseDocumentBody(): boolean {
     return hasDocument && document.body !== null
 }
 
+/** Vite/Vitest 环境下由构建工具注入；纯浏览器/SSR 环境可能不存在，须判空 */
+declare const process: { env?: { NODE_ENV?: string } } | undefined
+
+/**
+ * 是否为开发环境。
+ * Vite 构建注入 process.env.NODE_ENV；无 process 的纯浏览器环境（CDN 引入等）视为非开发。
+ * 以函数形式导出：测试等场景会在运行时切换 NODE_ENV，须每次求值而非模块加载时固化。
+ */
+export function isDev(): boolean {
+    return typeof process !== 'undefined' && process.env?.NODE_ENV === 'development'
+}
+
 /** Whether IntersectionObserver is available. */
 export const hasIntersectionObserver = isClient && typeof window.IntersectionObserver !== 'undefined'
 
@@ -96,7 +108,8 @@ export function getCanvas2DContext(canvas: HTMLCanvasElement): CanvasRenderingCo
  */
 export function safeGetStorageItem(key: string): string | null {
     try {
-        if (!hasLocalStorage) return null
+        // 双重守卫：SSR 且带全局 localStorage polyfill 时也不读写服务端存储，保证 SSR 确定性
+        if (!isClient || !hasLocalStorage) return null
         return localStorage.getItem(key)
     } catch {
         return null
@@ -109,7 +122,7 @@ export function safeGetStorageItem(key: string): string | null {
  */
 export function safeSetStorageItem(key: string, value: string): void {
     try {
-        if (!hasLocalStorage) return
+        if (!isClient || !hasLocalStorage) return
         localStorage.setItem(key, value)
     } catch {
         // Storage full or blocked (e.g. Safari private mode)
@@ -145,7 +158,8 @@ export function getNavigator(): Navigator | undefined {
  * Callers must guard the result before attaching listeners.
  */
 export function matchMedia(query: string): MediaQueryList | undefined {
-    return isClient ? window.matchMedia(query) : undefined
+    // 旧浏览器/受限 WebView 可能不存在 window.matchMedia，做能力检测避免 TypeError
+    return isClient && typeof window.matchMedia === 'function' ? window.matchMedia(query) : undefined
 }
 
 /**

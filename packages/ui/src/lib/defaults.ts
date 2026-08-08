@@ -27,15 +27,45 @@ export const DIALOG_MIN_WIDTH_PX = 200
 /** Minimum draggable/resizable dialog height in pixels */
 export const DIALOG_MIN_HEIGHT_PX = 150
 
+/** Default transition duration (ms) for dialog open/close animations */
+export const DEFAULT_DIALOG_TRANSITION_MS = 300
+
 // ── Toast ─────────────────────────────────────────────────────
 
-/** Maximum number of concurrent toasts displayed */
+/**
+ * useToast 全局队列的淘汰上限：超过则移除最旧的 toast。
+ * 注意与 DEFAULT_TOAST_MAX_VISIBLE（单容器可见堆叠数）区分——前者是队列容量，后者是可见数量。
+ */
 export const MAX_TOASTS = 10
+
+/** Default maximum number of visible toasts in the stack */
+export const DEFAULT_TOAST_MAX_VISIBLE = 5
+
+/** Default vertical gap between toast items in pixels */
+export const DEFAULT_TOAST_GAP_PX = 12
 
 // ── DataTable ─────────────────────────────────────────────────
 
 /** Default page size options for paginated tables */
 export const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const
+
+/** Default page size when no pageSize prop is provided */
+export const DEFAULT_PAGE_SIZE = 10
+
+/** Fallback column width (px) when column.width is not a number */
+export const DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX = 150
+
+/** Width (px) of the expand toggle column */
+export const DATA_TABLE_EXPAND_COLUMN_WIDTH_PX = 40
+
+/** Width (px) of the selection checkbox column */
+export const DATA_TABLE_SELECT_COLUMN_WIDTH_PX = 48
+
+/** Fallback row height (px) for virtual scroll when rowHeight is 'auto' or undefined */
+export const DATA_TABLE_ROW_HEIGHT_FALLBACK_PX = 48
+
+/** z-index for sticky/fixed columns so they overlay horizontal scroll content */
+export const DATA_TABLE_FIXED_COLUMN_Z_INDEX = 10
 
 // ── Card3D ────────────────────────────────────────────────────
 
@@ -45,10 +75,10 @@ export const CARD_3D_DEFAULT_PERSPECTIVE_PX = 1000
 // ── SketchyChart ──────────────────────────────────────────────
 
 /** Default chart width in pixels */
-export const SKETCHY_CHART_DEFAULT_WIDTH = 600
+export const SKETCHY_CHART_DEFAULT_WIDTH_PX = 600
 
 /** Default chart height in pixels */
-export const SKETCHY_CHART_DEFAULT_HEIGHT = 400
+export const SKETCHY_CHART_DEFAULT_HEIGHT_PX = 400
 
 // ── Date ──────────────────────────────────────────────────────
 
@@ -62,14 +92,6 @@ export const DEFAULT_MESSAGE_DURATION_MS = 3000
 
 /** Grace period before destroying the message container after the last message is removed */
 export const MESSAGE_GRACE_PERIOD_MS = 500
-
-// ── Toast ─────────────────────────────────────────────────────
-
-/** Default maximum number of visible toasts in the stack */
-export const DEFAULT_TOAST_MAX_VISIBLE = 5
-
-/** Default vertical gap between toast items in pixels */
-export const DEFAULT_TOAST_GAP_PX = 12
 
 // ── GlitchText ────────────────────────────────────────────────
 
@@ -152,37 +174,16 @@ export const AUDIO_FAIL_GAIN_END = 0.001
 /** Duration (s) of the fail sound */
 export const AUDIO_FAIL_DURATION = 0.2
 
-// ── Dialog ────────────────────────────────────────────────────
-
-/** Default transition duration (ms) for dialog open/close animations */
-export const DEFAULT_DIALOG_TRANSITION_MS = 300
-
 // ── HardcoreInput ─────────────────────────────────────────────
 
 /** Delay (ms) before triggering the shake animation reset */
 export const HARDCORE_INPUT_SHAKE_DELAY_MS = 10
 
-// ── DataTable ─────────────────────────────────────────────────
-
-/** Default page size when no pageSize prop is provided */
-export const DEFAULT_PAGE_SIZE = 10
-
-/** Fallback column width (px) when column.width is not a number */
-export const DATA_TABLE_COLUMN_WIDTH_FALLBACK_PX = 150
-
-/** Width (px) of the expand toggle column */
-export const DATA_TABLE_EXPAND_COLUMN_WIDTH_PX = 40
-
-/** Width (px) of the selection checkbox column */
-export const DATA_TABLE_SELECT_COLUMN_WIDTH_PX = 48
-
-/** Fallback row height (px) for virtual scroll when rowHeight is 'auto' or undefined */
-export const DATA_TABLE_ROW_HEIGHT_FALLBACK_PX = 48
-
-/** z-index for sticky/fixed columns so they overlay horizontal scroll content */
-export const DATA_TABLE_FIXED_COLUMN_Z_INDEX = 10
-
 // ── Carousel ──────────────────────────────────────────────────
 
-/** Default autoplay delay in milliseconds */
-export const DEFAULT_AUTOPLAY_DELAY_MS = 3000
+/**
+ * 默认自动播放延迟（毫秒）。
+ * 与 DEFAULT_AUTOPLAY_INTERVAL_MS 同语义（自动播放间隔），保留别名以兼容 Carousel 消费方，
+ * 避免双数据源漂移。
+ */
+export const DEFAULT_AUTOPLAY_DELAY_MS = DEFAULT_AUTOPLAY_INTERVAL_MS

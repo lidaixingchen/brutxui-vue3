@@ -88,7 +88,7 @@ defineExpose({ open })
 
 const contentId = `color-picker-content-${useId()}`
 
-const presetsForPanel = computed<string[] | ColorPreset[] | undefined>(() => props.presets)
+const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(() => props.presets)
 </script>
 
 <template>

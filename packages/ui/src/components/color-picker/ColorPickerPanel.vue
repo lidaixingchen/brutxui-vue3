@@ -27,7 +27,7 @@ interface ColorPickerPanelProps {
     modelValue?: string | null
     format?: ColorFormat
     showAlpha?: boolean
-    presets?: string[] | ColorPreset[]
+    presets?: string[] | readonly ColorPreset[]
     showPresets?: boolean
     presetsLabel?: string
     showHistory?: boolean

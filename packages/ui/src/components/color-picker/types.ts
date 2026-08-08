@@ -7,7 +7,7 @@ export interface ColorPickerProps {
     modelValue?: string | null
     format?: ColorPickerFormat
     showAlpha?: boolean
-    presets?: string[] | ColorPreset[]
+    presets?: string[] | readonly ColorPreset[]
     showPresets?: boolean
     presetsLabel?: string
     showHistory?: boolean
@@ -31,10 +31,10 @@ export interface ColorPickerEmits {
     close: []
 }
 
-export function normalizePresets(presets: string[] | ColorPreset[] | undefined): ColorPreset[] {
+export function normalizePresets(presets: string[] | readonly ColorPreset[] | undefined): readonly ColorPreset[] {
     if (!presets || presets.length === 0) return []
     if (typeof presets[0] === 'string') {
         return (presets as string[]).map((value) => ({ label: value, value }))
     }
-    return presets as ColorPreset[]
+    return presets as readonly ColorPreset[]
 }
