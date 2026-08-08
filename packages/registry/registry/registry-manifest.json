@@ -963,7 +963,7 @@
       "examples": []
     },
     "tour": {
-      "integrity": "sha256-399d9bebb165540cdca7094cdfbba98ea0aeec97c194f4d77637d0ed5cbc182b",
+      "integrity": "sha256-b463b29f8e59e33cd43609794194cb4a5ba573993d82387af7eb82d0fd56f3b0",
       "fileCount": 7,
       "dependencies": [],
       "registryDependencies": [
@@ -1056,5 +1056,5 @@
       "examples": []
     }
   },
-  "integrity": "9ec6bfaa46fc49739ff4fa5a48bd7293eee06c1933052c918496c44a6958c65c"
+  "integrity": "17723e5478eb6342dc71d73fe0b81daa7f5f07c90ef797e036948f7599f694a1"
 }

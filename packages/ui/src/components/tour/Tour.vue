@@ -1,5 +1,4 @@
 <script setup lang="ts">
-/* global ScrollIntoViewOptions */
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import { useThrottle } from '@/composables/useThrottle'

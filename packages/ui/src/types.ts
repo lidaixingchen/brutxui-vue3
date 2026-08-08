@@ -52,6 +52,7 @@ export type EventHandler<T = void> = (payload: T) => void
  */
 export type OptionalEventHandler<T = void> = EventHandler<T> | undefined
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- 条件类型工具需要 any 的任意匹配语义（与 Vue 官方工具类型同款写法） */
 /**
  * 组件 Props 提取工具类型（支持类组件与函数式组件）。
  * 类组件经构造签名匹配（支持带参与无参构造），函数式组件提取其 props 参数。
@@ -125,6 +126,7 @@ export type DeepReadonly<T> = T extends (...args: any[]) => any
         : {
             readonly [P in keyof T]: T[P] extends object ? DeepReadonly<T[P]> : T[P]
         }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * 从数组类型中提取元素类型
