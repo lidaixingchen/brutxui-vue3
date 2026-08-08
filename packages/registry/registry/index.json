@@ -438,7 +438,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e4ce23c0178d66665479830a93796f9169b245923d29906d6eec080df1665bd1"
+      "integrity": "sha256-1c00f3353dbd153612bdffb4b01c4f69fc338b1c84c451a201b58db19d2680a7"
     },
     {
       "name": "auth-card",
@@ -542,7 +542,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-567998e59c1521630c7cedcff0f56d0c4517dcb6037f938735493cf80e1ea829"
+      "integrity": "sha256-2b439dd7311f5bf4848c379ea56b8c1ff151bfa43cf2ab9084a26ed9844af6b9"
     },
     {
       "name": "avatar",
@@ -1413,7 +1413,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-fd8afa1e13a7cec0703d465cd940a7fec5e484bbf7bb0c6157e70ef3f7be209c"
+      "integrity": "sha256-a8bfe40d422146bb31cbdb52a84624ce939d1edb90b615adcfee25e75eeee349"
     },
     {
       "name": "card",
@@ -2255,6 +2255,10 @@
         {
           "path": "lib/env.ts",
           "type": "registry:lib"
+        },
+        {
+          "path": "lib/theme-names.ts",
+          "type": "registry:lib"
         }
       ],
       "tailwind": {},
@@ -2320,7 +2324,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-be6c45852fa3c61c0c14d92d166455bfa65f4edbd6047286b4bc4eccf5245beb"
+      "integrity": "sha256-b3ed7db3c468701627f25294627e35a4236dc0afe432bd55eb0fff6390d8629d"
     },
     {
       "name": "color-picker",
@@ -3272,7 +3276,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-3ae85bce8fac1406b4d6923913712a2d136e47da8d80be3ad590ebc3343ed5bc"
+      "integrity": "sha256-88b9f27b01f11821d62915e33a78b9b22f0e86b4c5a023333238f38c8986496a"
     },
     {
       "name": "date-picker",
@@ -3453,7 +3457,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-5873c86bd36b61f670eb7d7e19e5c028329aceed338071e2156df986b562b508"
+      "integrity": "sha256-cdb12f4ea03fbe49ccc673ccd37f4aaf529475498ef681a49343f7b748df041d"
     },
     {
       "name": "descriptions",
@@ -3700,7 +3704,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-c384eb5be3b43d81bc2c223b811713375c74cbb6b0f4de47ae46550df0307dc8"
+      "integrity": "sha256-caca42fc1bca5df2012ce30a5559ee60943953c63cf026a732b4d7973945559b"
     },
     {
       "name": "dropdown-menu",
@@ -3839,7 +3843,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-046a7e4bce66570f733172faf39c0169db006a3624c2cbc3f1157f8e498aa7e9"
+      "integrity": "sha256-280ce027685c24da9199808495e62986adb00b1ff6f2ee33cf8c61a2e8eebae9"
     },
     {
       "name": "feedback-form",
@@ -5508,7 +5512,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-576aad6c1ba4acf5931a2f196e7dae3dea13a074af3857aa10eeccdb3092fefd"
+      "integrity": "sha256-1b091defb01f6e0f52d4cabf6fe0ca9a1e89b39fc2488874e02c856768049164"
     },
     {
       "name": "noise-background",
@@ -6015,7 +6019,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-b1f63b596f2fdc93dc9c5399dfe8e9359618f1fe1a7f9e1eb1403137de21c780"
+      "integrity": "sha256-2029fc40668b1fe6a265c8b0c268561d2dbad7165eb5c7970355ecd44ec93d7b"
     },
     {
       "name": "pricing-section",
@@ -6594,7 +6598,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-e0cf1eecb7102e009e5a810dfa2d8138749b288cca80f4cb8fb588572076dbd3"
+      "integrity": "sha256-7292df8f6b18d5ba8b16339088ad43a1517213e3a6d7e098d52698c852ea7467"
     },
     {
       "name": "scroll-area",
@@ -7038,7 +7042,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-60657de83dca3d80dacd22a82bb00ed14dba2c7d64407b84740a889f838e68db"
+      "integrity": "sha256-0b95fa507b3dc4ae3f71b7127ba2d79f62542452701eee8c1fc2380b94dad1b9"
     },
     {
       "name": "skeleton",
@@ -8633,7 +8637,7 @@
           "brutal-yellow": "#FFE66D"
         }
       },
-      "integrity": "sha256-04064cd23b049ab14bf0058121d14af4b9571563530acd66ca6d789c2638014f"
+      "integrity": "sha256-195b7dbafd9503ce0953ce2873bb13ed8cc85573dc87f7048d515bb9a453d199"
     },
     {
       "name": "tour",

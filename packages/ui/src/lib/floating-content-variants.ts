@@ -6,13 +6,19 @@ export const floatingContentSideOffsets = {
     tooltip: 6,
 } as const
 
+// 浮动表面共用框架（边框/阴影/圆角），供正/反两种配色变体复用，单一事实来源
+export const floatingSurfaceFrameClasses = [
+    'border-3 border-brutal rounded-brutal shadow-brutal',
+] as const
+
 export const brutalFloatingSurfaceClasses = [
-    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',
+    'bg-brutal-bg text-brutal-fg',
+    ...floatingSurfaceFrameClasses,
 ] as const
 
 export const inverseFloatingSurfaceClasses = [
     'bg-brutal-fg text-brutal-bg',
-    'border-3 border-brutal rounded-brutal shadow-brutal',
+    ...floatingSurfaceFrameClasses,
 ] as const
 
 // 直接复用共享动画类：进入动画统一带 data-[state=open]: 前缀（避免关闭态/forceMount 时

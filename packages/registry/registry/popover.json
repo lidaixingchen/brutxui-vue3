@@ -38,7 +38,7 @@
     },
     {
       "path": "lib/floating-content-variants.ts",
-      "content": "import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\n\nexport const floatingContentSideOffsets = {\n    popover: 8,\n    dropdownMenu: 6,\n    tooltip: 6,\n} as const\n\nexport const brutalFloatingSurfaceClasses = [\n    'bg-brutal-bg text-brutal-fg border-3 border-brutal shadow-brutal rounded-brutal',\n] as const\n\nexport const inverseFloatingSurfaceClasses = [\n    'bg-brutal-fg text-brutal-bg',\n    'border-3 border-brutal rounded-brutal shadow-brutal',\n] as const\n\n// 直接复用共享动画类：进入动画统一带 data-[state=open]: 前缀（避免关闭态/forceMount 时\n// 无条件进入动画与退场动画叠加），与 floating-animation-classes.ts 保持一致，消除两套写法漂移\nexport const tooltipFloatingAnimationClasses = floatingContentAnimationClasses\n",
+      "content": "import { floatingContentAnimationClasses } from '@/lib/floating-animation-classes'\n\nexport const floatingContentSideOffsets = {\n    popover: 8,\n    dropdownMenu: 6,\n    tooltip: 6,\n} as const\n\n// 浮动表面共用框架（边框/阴影/圆角），供正/反两种配色变体复用，单一事实来源\nexport const floatingSurfaceFrameClasses = [\n    'border-3 border-brutal rounded-brutal shadow-brutal',\n] as const\n\nexport const brutalFloatingSurfaceClasses = [\n    'bg-brutal-bg text-brutal-fg',\n    ...floatingSurfaceFrameClasses,\n] as const\n\nexport const inverseFloatingSurfaceClasses = [\n    'bg-brutal-fg text-brutal-bg',\n    ...floatingSurfaceFrameClasses,\n] as const\n\n// 直接复用共享动画类：进入动画统一带 data-[state=open]: 前缀（避免关闭态/forceMount 时\n// 无条件进入动画与退场动画叠加），与 floating-animation-classes.ts 保持一致，消除两套写法漂移\nexport const tooltipFloatingAnimationClasses = floatingContentAnimationClasses\n",
       "type": "registry:lib"
     },
     {
@@ -110,5 +110,5 @@
       "brutal-yellow": "#FFE66D"
     }
   },
-  "integrity": "sha256-b1f63b596f2fdc93dc9c5399dfe8e9359618f1fe1a7f9e1eb1403137de21c780"
+  "integrity": "sha256-2029fc40668b1fe6a265c8b0c268561d2dbad7165eb5c7970355ecd44ec93d7b"
 }

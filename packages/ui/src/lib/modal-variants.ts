@@ -25,12 +25,19 @@ export const CLOSE_BUTTON_BASE_CLASSES = [
     'focus:outline-none focus:ring-2 focus:ring-brutal-ring focus:ring-offset-2',
 ]
 
+// 关闭按钮的定位类：dialog 与 sheet-right 均为右上角，抽取后单一来源，避免调整时漏改
+const CLOSE_BUTTON_TOP_RIGHT = 'absolute right-4 top-4'
+const CLOSE_BUTTON_TOP_LEFT = 'absolute left-4 top-4'
+
+// brutalPress 为按压反馈（active:translate-y + 去阴影），motion 变体仅追加 hover 位移/阴影。
+// 按下瞬间 active 规则整体接管 translate（y 从 hover 的 -0.5 跳到 2px）是有意的粗野风按压反馈，
+// 与 hover 悬浮位移各自绑定伪类，互不覆盖，勿移除 brutalPress 或合并进 motion 变体。
 export const modalCloseButtonVariants = cva(CLOSE_BUTTON_BASE_CLASSES, {
     variants: {
         placement: {
-            dialog: 'absolute right-4 top-4',
-            'sheet-left': 'absolute left-4 top-4',
-            'sheet-right': 'absolute right-4 top-4',
+            dialog: CLOSE_BUTTON_TOP_RIGHT,
+            'sheet-left': CLOSE_BUTTON_TOP_LEFT,
+            'sheet-right': CLOSE_BUTTON_TOP_RIGHT,
         },
         motion: {
             default: brutalHoverLift,
