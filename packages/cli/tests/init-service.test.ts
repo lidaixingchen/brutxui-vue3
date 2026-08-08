@@ -198,4 +198,34 @@ describe('injectNuxtConfig root-key detection', () => {
         const result = injectNuxtConfig('export default {}', 'assets/css/main.css', 'components');
         expect(result).toBeNull();
     });
+
+    it('skips braces inside strings when locating the root block', () => {
+        // 字符串字面量/模板字符串里的括号不应干扰根块配对，缺失的根级 css 应注入
+        const content = [
+            'export default defineNuxtConfig({',
+            "    head: { script: [{ innerHTML: 'if (x) { y }' }] },",
+            '    runtimeConfig: { text: `a } b { c` },',
+            '})',
+            '',
+        ].join('\n');
+        const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
+        expect(result).toContain("components: ['~/components']");
+        expect(result).toContain("css: ['assets/css/main.css']");
+    });
+
+    it('does not treat generic type braces as the root block', () => {
+        // defineNuxtConfig<{...}> 泛型参数里的 { 不是根块起点，注入应落在参数对象内
+        const content = [
+            'export default defineNuxtConfig<{ modules: string[] }>({',
+            "    css: ['assets/css/main.css'],",
+            '})',
+            '',
+        ].join('\n');
+        const result = injectNuxtConfig(content, 'assets/css/main.css', 'components');
+        expect(result).toContain("components: ['~/components']");
+        expect(result).toContain("css: ['assets/css/main.css']");
+        // 注入位置必须在泛型 }> 之后的参数对象内（首行括号后），而非泛型段内
+        const firstLine = result?.split('\n')[0] ?? '';
+        expect(firstLine.endsWith('<{ modules: string[] }>({')).toBe(true);
+    });
 });

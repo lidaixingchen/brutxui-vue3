@@ -11,7 +11,7 @@ import {
     UTILS_TEMPLATE,
 } from '../constants.js';
 import { FileTransaction } from '../file-transaction.js';
-import { isSafePath, resolveAliasPath } from '../project.js';
+import { isSafePath, resolveAliasPath, resolveUtilsFilePath } from '../project.js';
 
 export interface ProjectInitializationSettings {
     tailwind: TailwindConfig;
@@ -37,6 +37,8 @@ export interface NuxtConfigResult {
     cssPath: string;
     componentsRelDir: string;
     configFile?: string;
+    /** write-failed 时的底层失败原因（权限/磁盘空间等），避免外层只报通用文案 */
+    errorMessage?: string;
 }
 
 export interface ProjectInitializationResult {
@@ -131,6 +133,96 @@ async function findNuxtConfig(cwd: string): Promise<string | null> {
 }
 
 /**
+ * 定位 defineNuxtConfig(...) 参数对象 `{ ... }` 根块的首尾索引。
+ *
+ * 从 `defineNuxtConfig` 之后开始扫描，跳过字符串字面量、模板字符串、注释，
+ * 以及参数括号前的泛型参数段（`defineNuxtConfig<{...}>`），避免：
+ *   - 字符串/注释里的括号（如 head: { script: [{ innerHTML: 'if (x) { y }' }] }）干扰配对深度
+ *   - 泛型参数里的 `{`（如 defineNuxtConfig<{ modules: string[] }>）被误认为根块起点
+ *
+ * 返回 { start, end }（根块首尾 `{`/`}` 的索引），未找到返回 null。
+ * 与 hasRootObjectKey 相同的已知限制：模板字符串内嵌套反引号与正则字面量不识别，Nuxt 配置中罕见。
+ */
+function findNuxtRootBlock(content: string, start: number): { start: number; end: number } | null {
+    let braceIndex = -1;
+    let depth = 0;
+    let i = start;
+    let inGenerics = false;
+    let genericsDepth = 0;
+    let inParameters = false;
+
+    while (i < content.length) {
+        const ch = content[i];
+        const next = content[i + 1];
+
+        if (ch === '/' && next === '/') {
+            const nl = content.indexOf('\n', i + 2);
+            i = nl === -1 ? content.length : nl + 1;
+            continue;
+        }
+        if (ch === '/' && next === '*') {
+            const end = content.indexOf('*/', i + 2);
+            i = end === -1 ? content.length : end + 2;
+            continue;
+        }
+        if (ch === '"' || ch === "'" || ch === '`') {
+            const quote = ch;
+            i++;
+            while (i < content.length) {
+                if (content[i] === '\\') { i += 2; continue; }
+                if (content[i] === quote) { i++; break; }
+                i++;
+            }
+            continue;
+        }
+
+        if (!inParameters) {
+            // 参数括号之前：`<` 视为泛型段开始（Nuxt 配置中此处无比较运算），
+            // 泛型内只计数 <>，{ } 与字符串均不参与根块配对
+            if (ch === '<') {
+                inGenerics = true;
+                genericsDepth = 1;
+                i++;
+                continue;
+            }
+            if (inGenerics) {
+                if (ch === '<') genericsDepth++;
+                else if (ch === '>') {
+                    genericsDepth--;
+                    if (genericsDepth === 0) inGenerics = false;
+                }
+                i++;
+                continue;
+            }
+            if (ch === '(') {
+                inParameters = true;
+                i++;
+                continue;
+            }
+            i++;
+            continue;
+        }
+
+        if (ch === '{') {
+            if (braceIndex === -1) braceIndex = i;
+            depth++;
+            i++;
+            continue;
+        }
+        if (ch === '}') {
+            depth--;
+            if (depth === 0 && braceIndex !== -1) {
+                return { start: braceIndex, end: i };
+            }
+            i++;
+            continue;
+        }
+        i++;
+    }
+    return null;
+}
+
+/**
  * 检测 rootBlock（形如 `{ ... }` 的根对象文本）第一层是否存在指定键。
  * 跳过字符串、注释与嵌套对象，避免 /\bkey\s*:/ 因 \s* 跨行而误命中
  * 嵌套对象（如 vite: { css: ... }）或注释里的字面量，导致根级配置漏注入。
@@ -183,29 +275,19 @@ function hasRootObjectKey(rootBlock: string, key: string): boolean {
 }
 
 export function injectNuxtConfig(content: string, cssPath: string, componentsRelDir: string): string | null {
-    const defineMatch = content.match(/defineNuxtConfig\s*\(/);
+    // 只定位函数名，不匹配调用括号：泛型形式 defineNuxtConfig<{...}>(...) 下
+    // 括号与泛型段统一由 findNuxtRootBlock 扫描处理
+    const defineMatch = content.match(/defineNuxtConfig\b/);
     if (!defineMatch || defineMatch.index === undefined) {
         return null;
     }
 
     const afterDefine = defineMatch.index + defineMatch[0].length;
-    const braceIndex = content.indexOf('{', afterDefine);
-    if (braceIndex === -1) {
+    const block = findNuxtRootBlock(content, afterDefine);
+    if (!block) {
         return null;
     }
-
-    let depth = 0;
-    let rootEnd = content.length;
-    for (let i = braceIndex; i < content.length; i++) {
-        if (content[i] === '{') depth++;
-        else if (content[i] === '}') {
-            depth--;
-            if (depth === 0) {
-                rootEnd = i;
-                break;
-            }
-        }
-    }
+    const { start: braceIndex, end: rootEnd } = block;
     const rootBlock = content.slice(braceIndex, rootEnd + 1);
     // 只检测根对象第一层的键名（跳过字符串/注释/嵌套对象），避免误判导致根级配置漏注入
     const hasComponents = hasRootObjectKey(rootBlock, 'components');
@@ -282,13 +364,15 @@ async function configureNuxtConfig(
             componentsRelDir,
             configFile,
         };
-    } catch {
+    } catch (error) {
+        // 携带底层失败原因（权限/磁盘空间等），避免外层只报固定文案
         return {
             configured: false,
             status: 'write-failed',
             cssPath,
             componentsRelDir,
             configFile,
+            errorMessage: error instanceof Error ? error.message : String(error),
         };
     }
 }
@@ -300,9 +384,7 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
     try {
         const config = await createConfigFile(cwd, settings, transaction);
 
-        const utilsPath = settings.sharedBase
-            ? path.join(await resolveAliasPath(settings.sharedBase, cwd), 'utils.ts')
-            : await resolveAliasPath(settings.aliases.utils, cwd) + '.ts';
+        const utilsPath = await resolveUtilsFilePath(settings, cwd);
         await transaction.ensureDir(path.dirname(utilsPath));
         const utilsCreated = !(await fs.pathExists(utilsPath));
         if (utilsCreated) {
@@ -332,7 +414,8 @@ export async function initializeProjectFiles(options: ProjectInitializationOptio
         callbacks?.onNuxtConfig?.(nuxt);
 
         if (nuxt.status === 'write-failed') {
-            throw new Error(`Failed to write Nuxt config at ${nuxt.configFile}`);
+            const detail = nuxt.errorMessage ? `: ${nuxt.errorMessage}` : '';
+            throw new Error(`Failed to write Nuxt config at ${nuxt.configFile}${detail}`);
         }
 
         await transaction.commit();
