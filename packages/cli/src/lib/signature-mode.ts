@@ -15,10 +15,15 @@
 
 const REQUIRE_SIGNATURE_ENV = 'BRUTX_REQUIRE_SIGNATURE';
 
+// 模块级可变单例：同一进程内多个测试用例并发执行时会互相覆盖（一个用例 set 后
+// 另一个用例 reset，前者的行为被改变），该状态非并发安全，仅适合 CLI 单进程场景。
+// 测试隔离通过 setRequireSignature/resetRequireSignature 与 vi.stubEnv 组合管理。
 let globalRequireSignature = false;
 
 /**
  * 检测环境变量是否激活严格签名模式。
+ * 仅接受字面值 '1'（与 BRUTX_DRY_RUN=1 的约定一致）；'true'/'yes'/'on' 等其他真值
+ * 不会生效且无提示，请勿误配。
  */
 export function isRequireSignatureEnvActive(): boolean {
     return process.env[REQUIRE_SIGNATURE_ENV] === '1';
