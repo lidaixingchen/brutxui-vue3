@@ -36,9 +36,26 @@ function resolveVerboseLevel(initial?: number): number {
 }
 
 function clampVerboseLevel(level: number): number {
+    if (Number.isNaN(level)) return VERBOSE_LEVEL_NONE;
     if (level < VERBOSE_LEVEL_NONE) return VERBOSE_LEVEL_NONE;
     if (level > VERBOSE_LEVEL_MAX) return VERBOSE_LEVEL_MAX;
     return level;
+}
+
+/**
+ * DEBUG 环境变量按真值解析：'0'/'false' 视为未启用，
+ * 避免 CI 或生产环境误配为这些值后意外打印调试日志。
+ */
+function isDebugEnvActive(): boolean {
+    const value = process.env.DEBUG;
+    if (value === undefined) return false;
+    return value !== '0' && value.toLowerCase() !== 'false';
+}
+
+function verbosePrefix(level: number): string {
+    if (level >= VERBOSE_LEVEL_TRACE) return '[TRACE]';
+    if (level >= VERBOSE_LEVEL_DETAIL) return '[DETAIL]';
+    return '[STEP]';
 }
 
 export class Logger {
@@ -89,9 +106,8 @@ export class Logger {
     }
 
     error(message: string): void {
-        if (!this.silent) {
-            console.error(chalk.red(message));
-        }
+        // 错误始终输出到 stderr，不受 silent 影响——否则 CI/排障场景下关键失败信息会被静默吞掉
+        console.error(chalk.red(message));
     }
 
     bold(message: string): void {
@@ -107,7 +123,7 @@ export class Logger {
     }
 
     debug(message: string): void {
-        if (this.debugEnabled || process.env.DEBUG) {
+        if (this.debugEnabled || isDebugEnvActive()) {
             this.log(chalk.gray(`[DEBUG] ${message}`));
         }
     }
@@ -117,12 +133,11 @@ export class Logger {
      * level=1 步骤（-v），level=2 细节（-vv），level=3 堆栈（-vvv）。
      */
     verbose(level: number, message: string): void {
-        if (this.verboseLevel >= clampVerboseLevel(level)) {
-            const prefix = level >= VERBOSE_LEVEL_TRACE ? '[TRACE]'
-                : level >= VERBOSE_LEVEL_DETAIL ? '[DETAIL]'
-                : '[STEP]';
-            this.log(chalk.gray(`${prefix} ${message}`));
+        // 非法等级（0/负数/NaN）直接拦截，避免 clamp 归零后与默认等级恒等导致无条件输出
+        if (level < VERBOSE_LEVEL_STEP || this.verboseLevel < level) {
+            return;
         }
+        this.log(chalk.gray(`${verbosePrefix(level)} ${message}`));
     }
 
     newLine(): void {
