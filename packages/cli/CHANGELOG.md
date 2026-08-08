@@ -1,5 +1,14 @@
 # brutx-vue
 
+## 0.9.3
+
+### Patch Changes
+
+- 修复 AI 代码审查（.ocr-reports/ui-core.md）发现的 43 个问题，并沉淀 CLI 稳定性修复：
+
+  - **brutx-ui-vue**：类型声明改用官方 embla 类型并移除 .vue 通配 shim（由 vue-tsc 接管）；v-loading 定位还原去除死代码并补 Spinner 兜底；清理 API 收敛为 `destroyBrutxUI` 统一入口；Transfer/Tour 公共类型抽取到独立 types 模块；语言包类型收窄（months 只读、占位符标注）与 mergeLocale 深合并语义；测试基础设施健壮性（定时器恢复、ResizeObserver mock、axe 检测）；工具类型支持函数式组件与内置类型守卫；主题对比度达标 WCAG AA 与 createCustomTheme 运行时校验；版权年份动态化与非文案默认值移出语言包
+  - **brutx-vue**：本地 registry 组件列表过滤元数据文件、命令白名单与错误码单一数据源、cn 模板自包含、缓存原子写入与损坏防御、审计与 update 命令错误隔离等修复
+
 ## 0.9.2
 
 ### Patch Changes
