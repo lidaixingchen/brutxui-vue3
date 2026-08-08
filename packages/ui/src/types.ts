@@ -28,7 +28,7 @@ export type Alignment = 'start' | 'center' | 'end'
 /**
  * 图标组件类型（支持组件实例、异步组件、函数式组件）。
  * string：图标名或 URL（编译期无法校验具体图标名，按运行时图标方案解析）。
- * 函数式组件返回 VNode，故使用 FunctionalComponent 而非 `() => Component`。
+ * 函数式组件分支使用 FunctionalComponent（返回 VNode 的函数式组件形态）。
  */
 export type IconComponent = string | ConcreteComponent | FunctionalComponent
 
@@ -54,8 +54,7 @@ export type OptionalEventHandler<T = void> = EventHandler<T> | undefined
 
 /**
  * 组件 Props 提取工具类型（支持类组件与函数式组件）。
- * 类组件经构造签名匹配（new () 仅匹配无参构造，改用 `new (...args)` 覆盖带参构造），
- * 函数式组件提取其 props 参数。
+ * 类组件经构造签名匹配（支持带参与无参构造），函数式组件提取其 props 参数。
  */
 export type ComponentProps<C> = C extends new (...args: any[]) => any
     ? InstanceType<C>['$props']
@@ -65,8 +64,10 @@ export type ComponentProps<C> = C extends new (...args: any[]) => any
 
 /**
  * 组件 Emits 提取工具类型（支持类组件与函数式组件）。
- * 注意：类组件实例的 $emit 为重载签名，此处提取事件名联合；
- * 若组件未声明 emits，$emit 为宽松的 string 兜底签名。
+ * 注意：类组件实例的 $emit 为重载签名，条件类型只按最后一个签名匹配，
+ * 实际提取到的是最后一个签名的 event 参数——组件声明了 emits 时可能是
+ * 其中一个事件名，未声明 emits 时为宽松的 string 兜底签名，无法得到
+ * 精确的事件名联合。
  */
 export type ComponentEmits<C> = C extends new (...args: any[]) => any
     ? InstanceType<C>['$emit'] extends (event: infer E, ...args: any[]) => any
@@ -98,7 +99,8 @@ export type MaybeUndefined<T> = T | undefined
 
 /**
  * 深度可选：函数与 Date/Map/Set/RegExp 等内置类型保持原样（避免误递归成畸形对象类型），
- * 数组（含只读数组）逐元素递归并保留只读语义，普通对象逐层可选化。
+ * 数组（含只读数组）逐元素递归并保留只读语义，string/number/boolean 等基本类型
+ * 原样返回，普通对象逐层可选化。
  */
 export type DeepPartial<T> = T extends (...args: any[]) => any
     ? T
@@ -106,9 +108,11 @@ export type DeepPartial<T> = T extends (...args: any[]) => any
         ? readonly DeepPartial<U>[]
         : T extends Date | Map<any, any> | Set<any> | RegExp
             ? T
-            : {
-                [P in keyof T]?: DeepPartial<T[P]>
-            }
+            : T extends object
+                ? {
+                    [P in keyof T]?: DeepPartial<T[P]>
+                }
+                : T
 
 /**
  * 深度只读：函数与 Date/Map/Set/RegExp 等内置类型保持原样

@@ -31,7 +31,7 @@ export const defaultTheme: ThemeVariables = {
         success: '#7FB069',
         successForeground: '#000000',
         info: '#4A90D9',
-        // 白字对比度 3.34:1 不达 WCAG AA（4.5:1），改黑字 6.28:1，与 primary/secondary 黑字风格统一
+        // 黑字对比度 6.28:1 满足 WCAG AA（4.5:1），与 primary/secondary 黑字风格一致
         infoForeground: '#000000',
         bg: '#FFFFFF',
         fg: '#000000',
@@ -89,7 +89,7 @@ export const darkTheme: ThemeVariables = {
         success: '#7FB069',
         successForeground: '#000000',
         info: '#3B82F6',
-        // 白字对比度 3.68:1 不达 WCAG AA（4.5:1），改黑字 5.71:1
+        // 黑字对比度 5.71:1 满足 WCAG AA（4.5:1）
         infoForeground: '#000000',
         bg: '#141414',
         fg: '#FFFFFF',
@@ -140,7 +140,7 @@ export const highContrastTheme: ThemeVariables = {
         primaryForeground: '#FFFFFF',
         secondary: '#006600',
         secondaryForeground: '#FFFFFF',
-        // 原 #CC6600 白字对比度 3.84:1 不达 WCAG AA（4.5:1），加深为 #A64A00（白字 5.83:1）保持主题内白字一致性
+        // 白字对比度 5.83:1 满足 WCAG AA（4.5:1），保持主题内白字一致性
         accent: '#A64A00',
         accentForeground: '#FFFFFF',
         destructive: '#CC0000',
@@ -313,6 +313,9 @@ function deepMergeRecord(
     const result = { ...target }
 
     for (const key of Object.keys(source)) {
+        // 跳过原型链危险键：overrides 可来自用户配置/持久化存储（JSON.parse 会将其
+        // 作为自有可枚举键），__proto__ 等键赋值会改写结果对象原型链（原型链污染向量）
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue
         const sourceVal = source[key]
         const targetVal = result[key]
 

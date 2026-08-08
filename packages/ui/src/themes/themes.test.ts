@@ -236,6 +236,10 @@ describe('createCustomTheme', () => {
             expect(custom.colors).toEqual(themes[name].colors)
         }
     })
+
+    it('should throw for unknown base theme name', () => {
+        expect(() => createCustomTheme('unknown' as PresetThemeName, {})).toThrow(/未知的基础主题/)
+    })
 })
 
 describe('type safety', () => {
