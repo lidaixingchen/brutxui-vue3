@@ -72,7 +72,6 @@ export const zhCN: Locale = {
     dashboardShell: {
         sidebarNavigation: '侧边栏导航',
         signOut: '退出登录',
-        defaultEmail: 'user@example.com',
     },
     brutalistHero: {
         title: '用 BrutxUI 更快构建大胆界面',
@@ -129,14 +128,12 @@ export const zhCN: Locale = {
         step: '第 {index} 步：{title}',
     },
     headerSection: {
-        defaultLogoText: 'BrutxUI',
         defaultCtaText: '开始使用',
         menuLabel: '菜单',
     },
     footerSection: {
-        defaultLogoText: 'BrutxUI',
         defaultDescription: '面向 Vue 3 的新粗野主义 UI 组件库',
-        defaultCopyright: '© 2026 BrutxUI. 保留所有权利。',
+        defaultCopyright: '© {year} BrutxUI. 保留所有权利。',
     },
     feedbackForm: {
         defaultTitle: '发送反馈',
@@ -225,8 +222,6 @@ export const zhCN: Locale = {
     codeBlock: {
         copied: '已复制',
         copy: '复制',
-        defaultLanguage: 'plaintext',
-        defaultFilename: '',
         expand: '展开',
         collapse: '收起',
     },
@@ -367,6 +362,7 @@ export const zhCN: Locale = {
         confirm: '确认',
         cancel: '取消',
     },
+    // 预留语言包键：上传组件暂未消费，为后续提示文案本地化预留（见 types.ts UploadLocale）
     upload: {
         dragText: '点击或拖拽文件到此区域上传',
         browseText: '浏览文件',

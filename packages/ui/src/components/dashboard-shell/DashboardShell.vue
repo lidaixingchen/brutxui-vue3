@@ -26,7 +26,10 @@ const { t } = useLocale()
 
 const sidebarOpen = ref(true)
 
-const displayEmail = computed(() => props.userEmail ?? t('dashboardShell.defaultEmail'))
+// 兜底邮箱属实例配置而非界面文案，不放入语言包（业务侧应通过 userEmail prop 提供）
+const DEFAULT_USER_EMAIL = 'user@example.com'
+
+const displayEmail = computed(() => props.userEmail ?? DEFAULT_USER_EMAIL)
 
 const rootClasses = computed(() => cn('flex h-screen bg-brutal-bg', props.class))
 

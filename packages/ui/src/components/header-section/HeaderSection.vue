@@ -38,7 +38,10 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-const resolvedLogoText = computed(() => props.logoText ?? t('headerSection.defaultLogoText'))
+// 品牌默认值属实例配置而非界面文案，不放入语言包
+const DEFAULT_LOGO_TEXT = 'BrutxUI'
+
+const resolvedLogoText = computed(() => props.logoText ?? DEFAULT_LOGO_TEXT)
 const resolvedCtaText = computed(() => props.ctaText ?? t('headerSection.defaultCtaText'))
 const menuLabel = computed(() => t('headerSection.menuLabel'))
 

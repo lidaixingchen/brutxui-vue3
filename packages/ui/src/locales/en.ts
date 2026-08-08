@@ -72,7 +72,6 @@ export const en: Locale = {
     dashboardShell: {
         sidebarNavigation: 'Sidebar navigation',
         signOut: 'Sign out',
-        defaultEmail: 'user@example.com',
     },
     brutalistHero: {
         title: 'Build Bold Interfaces Faster with BrutxUI',
@@ -129,14 +128,12 @@ export const en: Locale = {
         step: 'Step {index}: {title}',
     },
     headerSection: {
-        defaultLogoText: 'BrutxUI',
         defaultCtaText: 'Get Started',
         menuLabel: 'Menu',
     },
     footerSection: {
-        defaultLogoText: 'BrutxUI',
         defaultDescription: 'Neo-Brutalist UI component library for Vue 3',
-        defaultCopyright: '© 2026 BrutxUI. All rights reserved.',
+        defaultCopyright: '© {year} BrutxUI. All rights reserved.',
     },
     feedbackForm: {
         defaultTitle: 'Send Feedback',
@@ -225,8 +222,6 @@ export const en: Locale = {
     codeBlock: {
         copied: 'Copied',
         copy: 'Copy',
-        defaultLanguage: 'plaintext',
-        defaultFilename: '',
         expand: 'Expand',
         collapse: 'Collapse',
     },
@@ -367,6 +362,7 @@ export const en: Locale = {
         confirm: 'Confirm',
         cancel: 'Cancel',
     },
+    // Reserved locale keys: upload components do not consume these yet, kept for future i18n (see types.ts UploadLocale)
     upload: {
         dragText: 'Click or drag files to this area to upload',
         browseText: 'Browse files',

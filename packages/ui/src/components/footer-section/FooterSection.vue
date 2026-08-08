@@ -30,9 +30,13 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 
-const resolvedLogoText = computed(() => props.logoText ?? t('footerSection.defaultLogoText'))
+// 品牌默认值属实例配置而非界面文案，不放入语言包（避免随 locale 分裂）
+const DEFAULT_LOGO_TEXT = 'BrutxUI'
+
+const resolvedLogoText = computed(() => props.logoText ?? DEFAULT_LOGO_TEXT)
 const resolvedDescription = computed(() => props.description ?? t('footerSection.defaultDescription'))
-const resolvedCopyright = computed(() => props.copyright ?? t('footerSection.defaultCopyright'))
+// 版权年份动态生成，避免硬编码跨年后过期；语言包文案通过 {year} 占位符插值
+const resolvedCopyright = computed(() => props.copyright ?? t('footerSection.defaultCopyright', { year: String(new Date().getFullYear()) }))
 
 const rootClasses = computed(() =>
     cn(

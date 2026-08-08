@@ -27,8 +27,9 @@ const props = withDefaults(defineProps<CodeBlockProps>(), {
 
 const { t } = useLocale()
 
-const resolvedLanguage = computed(() => props.language ?? t('codeBlock.defaultLanguage'))
-const resolvedFilename = computed(() => props.filename ?? t('codeBlock.defaultFilename'))
+// 语言与文件名的默认值属技术哨兵而非界面文案，不放入语言包（翻译者改写会破坏高亮回退逻辑）
+const resolvedLanguage = computed(() => props.language ?? 'plaintext')
+const resolvedFilename = computed(() => props.filename ?? '')
 
 const rootClasses = computed(() =>
     cn(codeBlockRootVariants(), props.class)

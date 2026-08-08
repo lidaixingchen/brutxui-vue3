@@ -3,7 +3,7 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:31669a0c-f709-4bc1-ad72-7c2cacf18778",
+  "serialNumber": "urn:uuid:eaaf9e90-8b49-40c0-90a7-3a0e27851081",
   "metadata": {
     "timestamp": null,
     "tools": [
@@ -352,7 +352,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "a37a32da4c0e7630d4c04996dbc0b8187047f60203376fabf00888445d9719b9"
+          "content": "ee1ebb8dfae15c1a586df1d842610fe3caddc521cbe0d3a3871222bdfef350ac"
         }
       ],
       "dependencies": [
@@ -503,7 +503,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "dbade840846b7cf1f6da6ca801af62ab6f7c6f7fc0974512262f3a8d7028e936"
+          "content": "7400ee760832a9f82076caa71950fbca5a08f5df4db090e957ae368deaaf3fda"
         }
       ],
       "dependencies": [
@@ -641,7 +641,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "93531a1b2217533bc1ce3afb4e44a160d8f49e08be5b83875f6e385307c0636e"
+          "content": "a682a0a5256e190bee817b659b205519aaa2f243a25e4ff09a7caf92e8e09b4c"
         }
       ],
       "dependencies": [
@@ -713,7 +713,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "0449b66a2d724843cd6c3db98379c2fe0747aeaeaf69326ba0ec051a6e4b30e1"
+          "content": "120ffa5929a9cebbe70b99eecb4f9e7f1b0b7c9ee4e77beec5e86d1826160635"
         }
       ],
       "dependencies": [
@@ -848,7 +848,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "2127624f4c5b08fa7b1a5b01dd93ed86621851959665c3e70b8ff962a7ef7ea1"
+          "content": "b8c54adb9ee8601878c7d33bcd54ea41b547a1d56a28ff03c2b5153cdc72ddd5"
         }
       ],
       "dependencies": []
@@ -1579,6 +1579,6 @@
       "name": "vee-validate"
     }
   ],
-  "integrity": "sha256-aa79d27ce5106236699fd63c9603f5d48ee8b91c329a9cb95375c954a614961b",
-  "manifestIntegrity": "49af317665e39e40de8684b8978a52815198d48f50d7ba831d8ac431307ab9a4"
+  "integrity": "sha256-835cada3298799dabee0e089626997b94d1878356cb4e129c0f5eaa908cb1265",
+  "manifestIntegrity": "0fdec3352de22a0acf31bc963b3690938ac26de37b22fd515d8ab8990948623e"
 }

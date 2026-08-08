@@ -82,7 +82,6 @@ export interface AuthCardLocale {
 export interface DashboardShellLocale {
     sidebarNavigation: string
     signOut: string
-    defaultEmail: string
 }
 
 export interface BrutalistHeroLocale {
@@ -154,14 +153,13 @@ export interface StepperLocale {
 }
 
 export interface HeaderSectionLocale {
-    defaultLogoText: string
     defaultCtaText: string
     menuLabel: string
 }
 
 export interface FooterSectionLocale {
-    defaultLogoText: string
     defaultDescription: string
+    /** 版权声明文案，占位符：{year}，如「© {year} BrutxUI. 保留所有权利。」，由组件注入当前年份 */
     defaultCopyright: string
 }
 
@@ -265,8 +263,6 @@ export interface HardcoreInputLocale {
 export interface CodeBlockLocale {
     copied: string
     copy: string
-    defaultLanguage: string
-    defaultFilename: string
     expand: string
     collapse: string
 }
@@ -430,6 +426,8 @@ export interface PopconfirmLocale {
     cancel: string
 }
 
+// 预留语言包键：上传组件（Upload/UploadFileItem/UploadFileList/UploadTrigger）
+// 暂未消费这些文案，为后续提示文案本地化预留；接入组件前请勿删除。
 export interface UploadLocale {
     dragText: string
     browseText: string
