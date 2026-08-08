@@ -32,10 +32,12 @@ export function renderImperative(
     const doc = getDocument()!
     const container = doc.createElement('div')
     let isDestroyed = false
-    // 跟踪未触发的 removeContainer timer，避免快速导航场景下多个 timeout 堆积
-    let pendingRemoveTimer: ReturnType<typeof setTimeout> | null = null
+    // 防止组件在挂载/卸载钩子中重复触发 close 时，options.onClose 副作用被多次执行
+    let isClosing = false
 
     const handleClose = () => {
+        if (isClosing) return
+        isClosing = true
         try {
             options.onClose?.()
         } finally {
@@ -52,32 +54,26 @@ export function renderImperative(
     // 继承全局 App Context 或是手动传入的上下文，防止 i18n / theme 丢失
     vnode.appContext = options.appContext || getGlobalAppContext()
 
-    render(vnode, container)
-
-    // 挂载整个容器而非仅 firstElementChild，避免多根 fragment 场景下丢失其他根节点
+    // 先入 DOM 再渲染：确保组件 mounted 生命周期中容器真实存在于文档流（可做布局/DOM 测量），
+    // 且组件挂载期同步触发 onClose 时，destroy 的容器移除不会先于 appendChild 变成空操作而泄漏节点
     doc.body!.appendChild(container)
+    render(vnode, container)
 
     function destroy() {
         if (isDestroyed) return
         isDestroyed = true
 
-        render(null, container)
-
-        const removeContainer = () => {
-            pendingRemoveTimer = null
-            container.remove()
-        }
-
         const delay = options.transitionDuration ?? DEFAULT_DIALOG_TRANSITION_MS
         if (delay > 0) {
-            // 防御性清理：isDestroyed 已防止重复进入 destroy，但显式跟踪 timer
-            // 可在 isDestroyed 逻辑变更时仍保证不堆积，符合通用 timer 管理最佳实践
-            if (pendingRemoveTimer !== null) {
-                clearTimeout(pendingRemoveTimer)
-            }
-            pendingRemoveTimer = setTimeout(removeContainer, delay)
+            // 延迟到关闭动效结束后再卸载组件并移除容器：立即 render(null) 会让 Vue 的
+            // leave 过渡动画无法播放，与"组件关闭动效结束后提供 GC 销毁"的契约不符
+            setTimeout(() => {
+                render(null, container)
+                container.remove()
+            }, delay)
         } else {
-            removeContainer()
+            render(null, container)
+            container.remove()
         }
     }
 
