@@ -37,8 +37,13 @@ export function resolveRegistrySources(
     config: BrutalistConfig | null,
     override?: string,
 ): string[] {
-    if (override) {
-        return [override];
+    if (override !== undefined) {
+        const trimmed = override.trim();
+        if (trimmed.length === 0) {
+            // 显式传空串（如 --registry ''）是参数错误，静默回退默认源会掩盖问题
+            throw new CliError('Registry override cannot be empty.', { code: 'INVALID_REGISTRY' });
+        }
+        return [trimmed];
     }
     const fromConfig = config?.registries?.filter(url => typeof url === 'string' && url.length > 0);
     if (fromConfig && fromConfig.length > 0) {
@@ -71,7 +76,17 @@ export function buildAuthHeaders(registryUrl: string): Record<string, string> {
         try {
             const parsed = JSON.parse(headersEnv);
             if (typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)) {
-                return parsed as Record<string, string>;
+                // 显式校验值类型：数字/布尔/嵌套对象会被 Headers 隐式 stringify 成
+                // "3"/"[object Object]"，产生非预期 header，故过滤并告警
+                const headers: Record<string, string> = {};
+                for (const [key, value] of Object.entries(parsed)) {
+                    if (typeof value === 'string') {
+                        headers[key] = value;
+                    } else {
+                        logger.warn(`Header "${key}" ignored: value must be a string.`);
+                    }
+                }
+                return headers;
             }
         } catch {
             logger.debug(`BRUTX_REGISTRY_HEADERS is not valid JSON, falling back to BRUTX_REGISTRY_TOKEN.`);
@@ -191,12 +206,20 @@ export async function fetchWithSources<T>(
  * 这是为了避免在所有调用链上新增 offline 参数（侵入性太大）。
  * 底层 cache.ts / registry.ts 通过 isOfflineMode() 读取该环境变量。
  */
+// 嵌套离线作用域的引用计数：多个 withOfflineScope(true) 并发/嵌套时，
+// 只有最外层还原才恢复原环境变量，避免"写-删-写"互相覆盖导致状态残留
+let offlineScopeCount = 0;
+
 export function withOfflineScope(offline: boolean): () => void {
     if (!offline) return () => {};
-    const previous = process.env[OFFLINE_ENV];
+    const previous = offlineScopeCount === 0 ? process.env[OFFLINE_ENV] : undefined;
+    offlineScopeCount++;
     process.env[OFFLINE_ENV] = '1';
     return () => {
-        if (previous === undefined) delete process.env[OFFLINE_ENV];
-        else process.env[OFFLINE_ENV] = previous;
+        offlineScopeCount--;
+        if (offlineScopeCount === 0) {
+            if (previous === undefined) delete process.env[OFFLINE_ENV];
+            else process.env[OFFLINE_ENV] = previous;
+        }
     };
 }

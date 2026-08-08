@@ -10,7 +10,8 @@ export type CliErrorCode =
     | 'REGISTRY_SIGNATURE_INVALID'
     | 'PATH_UNSAFE'
     | 'MANIFEST_READ_FAILED'
-    | 'WRITE_FAILED';
+    | 'WRITE_FAILED'
+    | 'INVALID_REGISTRY';
 
 // 运行时校验的数据源。satisfies 保证每一项都落在 CliErrorCode 联合类型内，
 // 新增错误码必须同时加进联合类型，否则编译期即报错，杜绝两者漂移
@@ -27,6 +28,7 @@ const VALID_ERROR_CODES = [
     'PATH_UNSAFE',
     'MANIFEST_READ_FAILED',
     'WRITE_FAILED',
+    'INVALID_REGISTRY',
 ] as const satisfies readonly CliErrorCode[];
 
 export interface CliErrorOptions {
