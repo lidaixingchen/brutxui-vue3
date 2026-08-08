@@ -45,7 +45,7 @@
       "examples": []
     },
     "auth-card": {
-      "integrity": "sha256-2b439dd7311f5bf4848c379ea56b8c1ff151bfa43cf2ab9084a26ed9844af6b9",
+      "integrity": "sha256-7025c61dd0eda9589aafd84e6790f66c003e13f576bcc93fb29c9a5a3da780b6",
       "fileCount": 5,
       "dependencies": [
         "@lucide/vue"
@@ -613,7 +613,7 @@
       "examples": []
     },
     "message": {
-      "integrity": "sha256-1b091defb01f6e0f52d4cabf6fe0ca9a1e89b39fc2488874e02c856768049164",
+      "integrity": "sha256-2d050fc6d436bedf0bd7d26210281247980c9f3decf03ab72ecdb90c12edb040",
       "fileCount": 9,
       "dependencies": [
         "@lucide/vue"
@@ -742,7 +742,7 @@
       "examples": []
     },
     "scratch-card": {
-      "integrity": "sha256-7292df8f6b18d5ba8b16339088ad43a1517213e3a6d7e098d52698c852ea7467",
+      "integrity": "sha256-404743fbf6ea5cae1c81a51877ef1ac66209810c7afaad7e83850ebd74e822e1",
       "fileCount": 9,
       "dependencies": [],
       "registryDependencies": [
@@ -1056,5 +1056,5 @@
       "examples": []
     }
   },
-  "integrity": "3c9f8b12a6efe7fc927f9079927c872b1694c82d22b11f3f1f51127f59063929"
+  "integrity": "184fed47b02260acea9ab75b0d5bc583b671c019797728de9c0bbb6a2bfc5785"
 }
