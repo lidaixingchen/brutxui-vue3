@@ -31,6 +31,9 @@ const ALIAS_PREFIXES = {
     directives: '@/directives/',
 } as const;
 
+/** 统一为 POSIX 分隔符，避免 Windows 反斜杠干扰路径前缀比较 */
+const toPosix = (p: string): string => p.replace(/\\/g, '/');
+
 function resolveExtension(rawFileName: string, baseDir: string): string | null {
     if (path.extname(rawFileName)) return rawFileName;
     if (fs.existsSync(path.join(baseDir, `${rawFileName}.vue`))) return `${rawFileName}.vue`;
@@ -89,6 +92,7 @@ function classifySpecifier(
     specifier: string,
     componentName: string,
     options: ScanOptions,
+    importingFile: string,
 ): ClassifiedSpecifier {
     // @/ alias patterns
     if (specifier.startsWith(ALIAS_PREFIXES.composables)) {
@@ -120,29 +124,58 @@ function classifySpecifier(
     }
 
     // Relative import patterns (source code uses ../ and ./)
-    if (specifier.startsWith('../composables/')) {
-        const name = specifier.slice('../composables/'.length).split(/[?#]/)[0];
-        return { kind: 'composable', name };
-    }
-    if (specifier.startsWith('../lib/')) {
-        const name = specifier.slice('../lib/'.length).split(/[?#]/)[0];
-        return { kind: 'lib', name };
-    }
-    if (specifier.startsWith('../directives/')) {
-        const name = specifier.slice('../directives/'.length).split(/[?#]/)[0];
-        return { kind: 'directive', name };
-    }
-    if (specifier.startsWith('./')) {
-        const name = specifier.slice('./'.length).split(/[?#]/)[0];
-        return { kind: 'internal', name };
-    }
-    // ../{other-comp}/ pattern — cross-component
-    const crossCompMatch = specifier.match(/^\.\.\/([a-zA-Z0-9-]+)\/(.+)$/);
-    if (crossCompMatch && crossCompMatch[1] !== componentName) {
-        return { kind: 'cross-component', name: crossCompMatch[1] };
+    if (specifier.startsWith('./') || specifier.startsWith('../')) {
+        return classifyRelativeSpecifier(specifier, componentName, options, importingFile);
     }
 
     return { kind: 'other', name: specifier };
+}
+
+/**
+ * 相对导入分类：基于导入文件所在目录做路径规范化，而非字符串前缀匹配。
+ *
+ * 相比前缀匹配，能正确处理：
+ * - 子目录内指向组件根的 `../`（如 `sub/Foo.ts` 导入 `../Button.vue` → 组件内部文件）；
+ * - 跨层导入（如 `../../composables/useX` → composables 兄弟目录）；
+ * 从而避免内部依赖被误判为 cross-component / 被丢进 other 而遍历不完整。
+ */
+function classifyRelativeSpecifier(
+    specifier: string,
+    componentName: string,
+    options: ScanOptions,
+    importingFile: string,
+): ClassifiedSpecifier {
+    const componentRoot = toPosix(path.join(options.componentsDir, componentName));
+    const importingDir = toPosix(path.dirname(path.join(options.componentsDir, componentName, importingFile)));
+    const resolved = toPosix(path.resolve(importingDir, specifier)).split(/[?#]/)[0];
+
+    if (resolved === componentRoot || resolved.startsWith(`${componentRoot}/`)) {
+        const name = resolved === componentRoot ? '' : resolved.slice(componentRoot.length + 1);
+        return { kind: 'internal', name };
+    }
+
+    // 兄弟组件：componentsDir 下的其它组件目录（当前组件已由上面的 componentRoot 分支接管）
+    if (resolved.startsWith(`${toPosix(options.componentsDir)}/`)) {
+        const rest = resolved.slice(toPosix(options.componentsDir).length + 1);
+        return { kind: 'cross-component', name: rest.split('/')[0] ?? '' };
+    }
+
+    if (resolved.startsWith(`${toPosix(options.composablesDir)}/`)) {
+        return { kind: 'composable', name: relativeTo(resolved, options.composablesDir) };
+    }
+    if (resolved.startsWith(`${toPosix(options.libDir)}/`)) {
+        return { kind: 'lib', name: relativeTo(resolved, options.libDir) };
+    }
+    if (resolved.startsWith(`${toPosix(options.directivesDir)}/`)) {
+        return { kind: 'directive', name: relativeTo(resolved, options.directivesDir) };
+    }
+
+    return { kind: 'other', name: specifier };
+}
+
+/** 返回 resolved 相对 dir（去前导分隔符）的路径，供 resolveExtension 复用 */
+function relativeTo(resolved: string, dir: string): string {
+    return resolved.slice(toPosix(dir).length).replace(/^\/+/, '');
 }
 
 function scanComponent(
@@ -159,8 +192,12 @@ function scanComponent(
     const queue = [...diskFiles];
     const visited = new Set<string>();
 
-    while (queue.length > 0) {
-        const file = queue.shift()!;
+    // 用游标代替 queue.shift()：数组头部出队是 O(n)，文件较多时整体退化为 O(n²)；
+    // 遍历顺序不影响结果正确性，游标即可
+    let cursor = 0;
+    while (cursor < queue.length) {
+        const file = queue[cursor];
+        cursor += 1;
         if (visited.has(file)) continue;
         visited.add(file);
 
@@ -173,7 +210,7 @@ function scanComponent(
         const content = fs.readFileSync(filePath, 'utf-8');
 
         for (const specifier of extractModuleSpecifiers(content)) {
-            const classified = classifySpecifier(specifier, componentName, options);
+            const classified = classifySpecifier(specifier, componentName, options, file);
             switch (classified.kind) {
                 case 'composable': {
                     const resolved = resolveExtension(classified.name, options.composablesDir);
@@ -228,12 +265,22 @@ function scanComponent(
     };
 }
 
+/** componentsDir 下不应被当作组件扫描的已知非组件目录（测试/依赖/元数据） */
+const NON_COMPONENT_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__']);
+
 export function scanComponentFiles(options: ScanOptions): Record<string, ComponentFileManifest> {
+    // 显式校验目录存在，避免干净的 ENOENT 错误难以定位
+    if (!fs.existsSync(options.componentsDir)) {
+        throw new Error(`[scan-component-files] Components directory not found: ${options.componentsDir}`);
+    }
+
     const manifest: Record<string, ComponentFileManifest> = {};
     const entries = fs.readdirSync(options.componentsDir, { withFileTypes: true });
     const componentDirs = entries
         .filter((e) => e.isDirectory())
         .map((e) => e.name)
+        // 过滤隐藏目录（.DS_Store 等）与已知非组件目录，避免污染 manifest 或读取到非源码文件抛异常
+        .filter((name) => !name.startsWith('.') && !NON_COMPONENT_DIR_NAMES.has(name))
         .sort();
 
     for (const dir of componentDirs) {
