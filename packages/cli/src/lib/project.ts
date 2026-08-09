@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
+import { createRequire } from 'module';
 import { parse as parseJsonc } from 'jsonc-parser';
 import { initSync, parse as parseModuleImports } from 'es-module-lexer';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
@@ -38,15 +39,39 @@ async function hasVueDependency(cwd: string): Promise<boolean> {
     }
 }
 
-const projectTypeCache = new Map<string, ProjectType>();
+interface ProjectTypeCacheEntry {
+    result: ProjectType;
+    /** package.json 的 mtime（毫秒），用于探测依据变化时使缓存失效 */
+    packageJsonMtimeMs: number | null;
+}
+
+const projectTypeCache = new Map<string, ProjectTypeCacheEntry>();
 
 export function clearProjectTypeCache(): void {
     projectTypeCache.clear();
 }
 
+/**
+ * 读取 package.json 的 mtimeMs 作为依赖变化的失效信号。
+ * package.json 不存在或读取失败时返回 null（此时不启用缓存命中）。
+ */
+async function getPackageJsonMtimeMs(cwd: string): Promise<number | null> {
+    try {
+        const stat = await fs.stat(path.join(cwd, 'package.json'));
+        return stat.mtimeMs;
+    } catch {
+        return null;
+    }
+}
+
 export async function detectProjectType(cwd: string): Promise<ProjectType> {
+    const packageJsonMtimeMs = await getPackageJsonMtimeMs(cwd);
     const cached = projectTypeCache.get(cwd);
-    if (cached) return cached;
+    // 仅在 package.json 特征未变化时命中缓存：init 后新增 vue/nuxt 依赖或
+    // 修改 package.json 会改变 mtime，使缓存失效并重新探测
+    if (cached && cached.packageJsonMtimeMs === packageJsonMtimeMs) {
+        return cached.result;
+    }
 
     const hasNuxt = await hasAnyFile(cwd, CONFIG_FILES.nuxt);
     const hasSrc = await fs.pathExists(path.join(cwd, 'src'));
@@ -56,7 +81,7 @@ export async function detectProjectType(cwd: string): Promise<ProjectType> {
     else if (await hasVueDependency(cwd)) result = hasSrc ? 'vite-vue-src' : 'vite-vue';
     else result = 'unknown';
 
-    projectTypeCache.set(cwd, result);
+    projectTypeCache.set(cwd, { result, packageJsonMtimeMs });
     return result;
 }
 
@@ -118,19 +143,108 @@ export async function detectPackageManager(cwd: string): Promise<PackageManager>
     return 'npm';
 }
 
+/**
+ * 局部扩展类型：types.ts 的 TsConfig 不含 extends 字段，
+ * 递归解析 extends 链时需要读取它（不改动 types.ts）。
+ */
+interface RawTsConfig extends TsConfig {
+    extends?: string | string[];
+}
+
+/**
+ * 解析 extends 指向的配置文件路径。
+ * - 绝对路径或相对路径：以当前配置所在目录为基准
+ * - 包名（如 @vue/tsconfig、@tsconfig/node）：先按 Node 模块解析
+ *   （相对当前配置目录向上查找 node_modules），失败时退化为相对路径
+ *   （与 TypeScript 的 extends fallback 语义一致）
+ * - 路径未带扩展名时自动尝试补 .json
+ * 解析失败（文件缺失）返回 null，由调用方忽略并继续。
+ */
+async function resolveTsConfigExtendsPath(extend: string, baseDir: string): Promise<string | null> {
+    const candidates: string[] = [];
+
+    if (path.isAbsolute(extend)) {
+        candidates.push(extend);
+    } else if (extend.startsWith('.')) {
+        candidates.push(path.resolve(baseDir, extend));
+    } else {
+        try {
+            const requireFromBase = createRequire(path.join(baseDir, '__brutx_resolve_probe__.js'));
+            candidates.push(requireFromBase.resolve(extend));
+        } catch {
+            // 包名不可解析时按相对路径退化，贴近 TypeScript 行为
+            candidates.push(path.resolve(baseDir, extend));
+        }
+    }
+
+    for (const candidate of candidates) {
+        if (await fs.pathExists(candidate)) return candidate;
+        if (!path.extname(candidate)) {
+            const withJson = `${candidate}.json`;
+            if (await fs.pathExists(withJson)) return withJson;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * 递归读取单个 tsconfig 文件并展开其 extends 链。
+ * 合并规则：基座配置先合并（extends 数组按顺序后者覆盖前者），
+ * 当前文件的 compilerOptions 最后合并、整体覆盖基座（含 paths）。
+ * visited 集合以 realpath 记录已解析文件，防止循环引用导致无限递归。
+ */
+async function readTsConfigFile(configPath: string, visited: Set<string>): Promise<TsConfig | null> {
+    let realPath: string;
+    try {
+        realPath = await fs.promises.realpath(configPath);
+    } catch {
+        realPath = path.resolve(configPath);
+    }
+    if (visited.has(realPath)) return null;
+    visited.add(realPath);
+
+    let content: string;
+    try {
+        content = await fs.readFile(configPath, 'utf-8');
+    } catch {
+        return null;
+    }
+    const parsed = parseJsonc(content) as RawTsConfig | undefined;
+    if (!parsed) return null;
+
+    const mergedOptions: NonNullable<TsConfig['compilerOptions']> = {};
+
+    const extendsValue = parsed.extends;
+    const extendsList = typeof extendsValue === 'string'
+        ? [extendsValue]
+        : Array.isArray(extendsValue)
+            ? extendsValue
+            : undefined;
+    if (extendsList) {
+        for (const extend of extendsList) {
+            const extendPath = await resolveTsConfigExtendsPath(extend, path.dirname(configPath));
+            if (!extendPath) continue;
+            const base = await readTsConfigFile(extendPath, visited);
+            if (base?.compilerOptions) {
+                Object.assign(mergedOptions, base.compilerOptions);
+            }
+        }
+    }
+
+    // 当前文件覆盖基座配置
+    Object.assign(mergedOptions, parsed.compilerOptions);
+    return { compilerOptions: mergedOptions };
+}
+
 export async function readTsConfig(cwd: string): Promise<TsConfig | null> {
     for (const configFile of CONFIG_FILES.tsconfig) {
         const configPath = path.join(cwd, configFile);
 
         if (!await fs.pathExists(configPath)) continue;
 
-        try {
-            const content = await fs.readFile(configPath, 'utf-8');
-            const parsed = parseJsonc(content) as TsConfig;
-            return parsed;
-        } catch {
-            continue;
-        }
+        const parsed = await readTsConfigFile(configPath, new Set<string>());
+        if (parsed) return parsed;
     }
 
     return null;
@@ -145,24 +259,30 @@ export async function findCssFile(cwd: string, projectType: ProjectType): Promis
     return findFirstExisting(cwd, locations);
 }
 
+/** 常见别名约定前缀，按优先级顺序匹配（registry 内容以 @/ 书写，@ 最优先） */
+const CONVENTIONAL_ALIAS_PREFIXES = ['@', '~', '#'] as const;
+
 export async function getAliasFromTsConfig(cwd: string): Promise<AliasConfig | null> {
     const tsConfig = await readTsConfig(cwd);
     const paths = tsConfig?.compilerOptions?.paths;
 
     if (!paths) return null;
 
-    for (const alias of Object.keys(paths)) {
-        if (alias.endsWith('/*')) {
-            const prefix = alias.replace('/*', '');
-            return {
-                components: `${prefix}/components`,
-                utils: `${prefix}/lib/utils`,
-                composables: `${prefix}/composables`,
-            };
-        }
-    }
+    const wildcardAliases = Object.keys(paths).filter(alias => alias.endsWith('/*'));
 
-    return null;
+    // 优先采用约定前缀（@/*、~/*、#/*），避免多别名项目中
+    // 第一个以 /* 结尾的条目并非约定别名（如 assets/*）时推导出错误的层级；
+    // 无约定前缀时退回原逻辑：取第一个以 /* 结尾的条目
+    const conventionalPrefix = CONVENTIONAL_ALIAS_PREFIXES
+        .find(prefix => wildcardAliases.includes(`${prefix}/*`));
+    const prefix = conventionalPrefix ?? wildcardAliases[0]?.replace('/*', '');
+    if (!prefix) return null;
+
+    return {
+        components: `${prefix}/components`,
+        utils: `${prefix}/lib/utils`,
+        composables: `${prefix}/composables`,
+    };
 }
 
 export async function resolveAliasPath(alias: string, cwd: string): Promise<string> {
@@ -199,6 +319,9 @@ async function resolveFromTsConfig(
 
     const aliasPattern = `${aliasPrefix}/*`;
     const baseUrl = tsConfig?.compilerOptions?.baseUrl || '.';
+    // baseUrl 允许为绝对路径（TypeScript 语义）；绝对路径时直接以它为基准，
+    // 避免 path.join 把 cwd 与绝对路径简单拼接出 cwd/绝对路径的错误结果
+    const baseDir = path.isAbsolute(baseUrl) ? baseUrl : path.join(cwd, baseUrl);
 
     if (paths[aliasPattern]) {
         const targets = paths[aliasPattern];
@@ -208,13 +331,13 @@ async function resolveFromTsConfig(
         // to the first target to preserve prior single-target behavior.
         for (const targetPath of targets) {
             const resolvedBase = targetPath.replace('/*', '');
-            const candidate = path.join(cwd, baseUrl, resolvedBase, relativePath);
+            const candidate = path.join(baseDir, resolvedBase, relativePath);
             if (await fs.pathExists(candidate)) {
                 return candidate;
             }
         }
         const firstBase = targets[0].replace('/*', '');
-        return path.join(cwd, baseUrl, firstBase, relativePath);
+        return path.join(baseDir, firstBase, relativePath);
     }
 
     return null;
@@ -286,7 +409,11 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
     // paths symmetric so cross-file `@/lib/<x>` imports resolve correctly under
     // any user-customized `aliases.utils` value, not just the default `@/lib/utils`.
     const libAlias = path.dirname(config.aliases.utils);
-    const isVueSfc = /<script[\s>]/i.test(content);
+    // 以完整 <script>...</script> 配对判定 Vue SFC，而非仅含 "<script" 子串：
+    // 普通 .ts/.js 文件中 HTML 模板字符串/文档里的 "<script" 字样会被旧正则误判为
+    // SFC，导致 extractScriptBlocks 提取不到任何块、整个文件的导入被静默跳过。
+    // （调用方无扩展名上下文，无法按 .vue 后缀判定，故用配对检测作后备）
+    const scriptBlocks = extractScriptBlocks(content);
 
     interface Replacement { start: number; end: number; replacement: string }
     const replacements: Replacement[] = [];
@@ -334,8 +461,8 @@ export function resolveImportAlias(content: string, config: BrutalistConfig): st
         } catch { /* ignore parse failures in import rewriting */ }
     };
 
-    if (isVueSfc) {
-        for (const block of extractScriptBlocks(content)) {
+    if (scriptBlocks.length > 0) {
+        for (const block of scriptBlocks) {
             collectReplacements(block.code, block.start);
         }
     } else {

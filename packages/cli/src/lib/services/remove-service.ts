@@ -9,6 +9,7 @@ import { isSafePath, resolveAliasPath } from '../project.js';
 import { logger } from '../logger.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
+const COMPONENT_FILE_EXTENSIONS = [...SCRIPT_EXTENSIONS, '.vue', '.tsx', '.jsx'] as const;
 
 export interface RemovePreparation {
     installed: string[];
@@ -35,12 +36,142 @@ function isInsideDirectory(filePath: string, directoryPath: string): boolean {
     return relative === '' || (relative.length > 0 && !relative.startsWith('..') && !path.isAbsolute(relative));
 }
 
+/**
+ * 剥离 alias 前缀（如 `@/composables/` 或 legacy 的 `composables/`），
+ * 返回相对 alias 根目录的路径；相对导入或无法识别的 specifier（如 ~/...）返回 null，
+ * 避免按文件名猜测解析到无关的同名文件。
+ */
+function stripAliasPrefix(specifier: string, aliasDir: string): string | null {
+    const strip = (rel: string): string | null => {
+        const clean = rel.split(/[?#]/)[0];
+        // 规范化后判断：只拦截会解析到基础目录本身或目录之外的路径
+        // （''、'.'、'./' 会落到目录本身；'..' 前缀会逃逸出目录），
+        // 放行 path.join 会安全规范化的中间 . 段（如 @/hooks/foo/./bar）。
+        const normalized = path.posix.normalize(clean);
+        if (normalized === '' || normalized === '.' || normalized === '..' || normalized.startsWith('../')) return null;
+        return clean;
+    };
+    const prefix = `@/${aliasDir}/`;
+    if (specifier.startsWith(prefix)) {
+        return strip(specifier.slice(prefix.length));
+    }
+    const legacyPrefix = `${aliasDir}/`;
+    if (specifier.startsWith(legacyPrefix)) {
+        return strip(specifier.slice(legacyPrefix.length));
+    }
+    return null;
+}
+
+/** 规范化 import specifier：去查询串、扩展名与尾部 /index，便于跨形式比较。 */
+function normalizeImportTarget(specifier: string): string {
+    let result = specifier.split(/[?#]/)[0];
+    for (const ext of COMPONENT_FILE_EXTENSIONS) {
+        if (result.endsWith(ext)) {
+            result = result.slice(0, -ext.length);
+            break;
+        }
+    }
+    if (result.endsWith('/index')) {
+        result = result.slice(0, -'/index'.length);
+    }
+    return result;
+}
+
+/** 判断 import specifier 是否指向 components 目录下名为 componentName 的组件。 */
+function importTargetsComponent(specifier: string, componentName: string, componentsAliasDir: string): boolean {
+    const stripped = stripAliasPrefix(specifier, componentsAliasDir);
+    if (stripped === null) return false;
+    const target = normalizeImportTarget(stripped);
+    return target === componentName || target.startsWith(`${componentName}/`);
+}
+
+interface AliasDirEntry {
+    aliasDir: string;
+    absDir: string;
+}
+
+/** 解析各 alias 配置对应的绝对目录，供 import 图引用校验（#103）匹配使用。 */
+async function resolveAliasDirs(cwd: string, config: BrutalistConfig, componentsPath: string): Promise<AliasDirEntry[]> {
+    const entries: AliasDirEntry[] = [
+        { aliasDir: config.aliases.components.replace(/^@\//, ''), absDir: componentsPath },
+        { aliasDir: config.aliases.composables.replace(/^@\//, ''), absDir: await resolveAliasPath(config.aliases.composables, cwd) },
+    ];
+    const utilsDirAlias = path.dirname(config.aliases.utils);
+    entries.push({
+        aliasDir: utilsDirAlias.replace(/^@\//, ''),
+        absDir: await resolveAliasPath(utilsDirAlias, cwd),
+    });
+    if (config.sharedBase) {
+        entries.push({
+            aliasDir: config.sharedBase.replace(/^@\//, ''),
+            absDir: await resolveAliasPath(config.sharedBase, cwd),
+        });
+    }
+    return entries;
+}
+
+/** 把以 importer 组件目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
+async function resolveRelativeImport(componentsPath: string, importerComponent: string, specifier: string): Promise<string | null> {
+    const baseDir = path.join(componentsPath, importerComponent);
+    const candidate = path.resolve(baseDir, specifier);
+    if (await fs.pathExists(candidate)) {
+        return candidate;
+    }
+    return resolveScriptFile(path.dirname(candidate), path.basename(candidate));
+}
+
+/**
+ * 判断目标文件是否仍被 remaining 组件以 import 引用：
+ * 覆盖 alias 形式（@/composables/x 等）与相对路径形式（./../x）两类 import，
+ * 供 manifest 孤立判定在删除前用 import 图交叉确认（#103）。
+ */
+async function isReferencedByRemainingComponents(
+    absoluteFile: string,
+    aliasDirs: AliasDirEntry[],
+    componentsPath: string,
+    importMap: Map<string, Set<string>>,
+    remainingComponents: Set<string>
+): Promise<boolean> {
+    const fileTargets = new Set<string>();
+    for (const { absDir } of aliasDirs) {
+        const rel = path.relative(absDir, absoluteFile);
+        if (rel === '' || rel.startsWith('..') || path.isAbsolute(rel)) continue;
+        fileTargets.add(normalizeImportTarget(rel.split(path.sep).join('/')));
+    }
+
+    for (const [specifier, importers] of importMap) {
+        if (![...importers].some(importer => remainingComponents.has(importer))) continue;
+
+        if (specifier.startsWith('.')) {
+            for (const importer of importers) {
+                if (!remainingComponents.has(importer)) continue;
+                const resolved = await resolveRelativeImport(componentsPath, importer, specifier);
+                if (resolved !== null && path.resolve(resolved) === path.resolve(absoluteFile)) {
+                    return true;
+                }
+            }
+            continue;
+        }
+
+        for (const { aliasDir } of aliasDirs) {
+            const stripped = stripAliasPrefix(specifier, aliasDir);
+            if (stripped === null) continue;
+            if (fileTargets.has(normalizeImportTarget(stripped))) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 async function findManifestKnownFiles(
     cwd: string,
     config: BrutalistConfig,
     manifest: BrutxManifest | null,
     removedComponents: string[],
-    remainingComponents: string[]
+    remainingComponents: string[],
+    importMap: Map<string, Set<string>>
 ): Promise<string[]> {
     if (!manifest) {
         return [];
@@ -51,6 +182,8 @@ async function findManifestKnownFiles(
     );
     const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
     const removedComponentDirs = removedComponents.map(component => path.join(componentsPath, component));
+    const remainingSet = new Set(remainingComponents);
+    const aliasDirs = await resolveAliasDirs(cwd, config, componentsPath);
     const knownFiles: string[] = [];
 
     for (const component of removedComponents) {
@@ -64,12 +197,29 @@ async function findManifestKnownFiles(
             if (!await isSafePath(absolutePath, cwd)) continue;
             if (removedComponentDirs.some(dir => isInsideDirectory(absolutePath, dir))) continue;
             if (!await fs.pathExists(absolutePath)) continue;
+            // #103：删除前用 import 图交叉确认——若 remaining 组件仍引用该文件
+            // （如工具函数被移动至共享位置后继续被引用），不判为孤立，避免引用断裂
+            if (await isReferencedByRemainingComponents(absolutePath, aliasDirs, componentsPath, importMap, remainingSet)) {
+                continue;
+            }
 
             knownFiles.push(absolutePath);
         }
     }
 
-    return [...new Set(knownFiles)];
+    const uniqueKnownFiles = [...new Set(knownFiles)];
+
+    // 折中提示：import 图仅覆盖组件间引用，无法确认项目其他（非组件）代码是否仍在引用
+    // 这些位于共享位置的文件；保留删除行为（与既有测试契约一致），仅以 warning 提醒
+    const sharedOrphans = uniqueKnownFiles.filter(file => !isInsideDirectory(file, componentsPath));
+    if (sharedOrphans.length > 0) {
+        logger.warn(
+            `${sharedOrphans.length} shared file(s) declared by the removed component(s) are orphaned based on manifest ownership — ` +
+            `verify they are not imported by non-component code (e.g. App.vue, main.ts).`
+        );
+    }
+
+    return uniqueKnownFiles;
 }
 
 async function scanAllImports(componentsPath: string): Promise<Map<string, Set<string>>> {
@@ -132,11 +282,9 @@ async function findOrphanedFiles(
     cwd: string,
     config: BrutalistConfig,
     remainingComponents: string[],
-    removedComponents: string[]
+    removedComponents: string[],
+    importMap: Map<string, Set<string>>
 ): Promise<string[]> {
-    const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
-    const importMap = await scanAllImports(componentsPath);
-
     const composablesPath = await resolveAliasPath(config.aliases.composables, cwd);
     const utilsAlias = config.aliases.utils;
     const utilsDir = path.dirname(utilsAlias);
@@ -151,29 +299,6 @@ async function findOrphanedFiles(
     const sharedLibPath = sharedBasePath ? path.join(sharedBasePath, 'lib') : null;
 
     const orphaned: string[] = [];
-
-    const stripAliasPrefix = (specifier: string, aliasDir: string): string | null => {
-        const strip = (rel: string): string | null => {
-            const clean = rel.split(/[?#]/)[0];
-            // 规范化后判断：只拦截会解析到基础目录本身或目录之外的路径
-            // （''、'.'、'./' 会落到目录本身；'..' 前缀会逃逸出目录），
-            // 放行 path.join 会安全规范化的中间 . 段（如 @/hooks/foo/./bar）。
-            const normalized = path.posix.normalize(clean);
-            if (normalized === '' || normalized === '.' || normalized === '..' || normalized.startsWith('../')) return null;
-            return clean;
-        };
-        const prefix = `@/${aliasDir}/`;
-        if (specifier.startsWith(prefix)) {
-            return strip(specifier.slice(prefix.length));
-        }
-        const legacyPrefix = `${aliasDir}/`;
-        if (specifier.startsWith(legacyPrefix)) {
-            return strip(specifier.slice(legacyPrefix.length));
-        }
-        // 相对导入或无法识别的 specifier（如 ~/...）不做按文件名猜测，
-        // 避免解析到无关的同名文件并被删除
-        return null;
-    };
 
     /**
      * 统一"取相对路径 + 判空 + 调 resolveScriptFile"的解析模式：
@@ -242,7 +367,8 @@ async function getDependents(
     config: BrutalistConfig,
     componentsToRemove: string[],
     manifest: BrutxManifest | null,
-    useCache: boolean = true
+    useCache: boolean = true,
+    importMap: Map<string, Set<string>> = new Map()
 ): Promise<{ dependents: Map<string, string[]>; failures: string[] }> {
     const dependents = new Map<string, string[]>();
     const failures = new Set<string>();
@@ -262,6 +388,28 @@ async function getDependents(
             } catch (error) {
                 failures.add(other);
                 logger.debug(`Failed to fetch registry item for "${other}" during dependency check: ${error instanceof Error ? error.message : String(error)}`);
+            }
+        }
+    }
+
+    // #102：用组件间真实 import 交叉校验，补齐 registryDependencies 元数据缺失/过期
+    // 导致的依赖漏检（如代码中实际 import 了被删组件但元数据未声明）
+    if (importMap.size > 0) {
+        const removedSet = new Set(componentsToRemove);
+        const componentsAliasDir = config.aliases.components.replace(/^@\//, '');
+        for (const name of componentsToRemove) {
+            for (const [specifier, importers] of importMap) {
+                if (!importTargetsComponent(specifier, name, componentsAliasDir)) continue;
+                for (const importer of importers) {
+                    if (removedSet.has(importer)) continue;
+                    if (!dependents.has(name)) {
+                        dependents.set(name, []);
+                    }
+                    const list = dependents.get(name)!;
+                    if (!list.includes(importer)) {
+                        list.push(importer);
+                    }
+                }
             }
         }
     }
@@ -309,14 +457,19 @@ export async function prepareRemoveComponents(
     const toRemove = components.filter(c => installed.includes(c));
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
+    // 组件间 import 图只需构建一次，供依赖检查（#102）与孤立文件判定（#103）共用，
+    // 避免多次全量扫描组件目录
+    const importMap = toRemove.length > 0
+        ? await scanAllImports(await resolveAliasPath(config.aliases.components, cwd))
+        : new Map<string, Set<string>>();
     const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
-        ? await getDependents(cwd, config, toRemove, manifest, useCache)
+        ? await getDependents(cwd, config, toRemove, manifest, useCache, importMap)
         : { dependents: new Map<string, string[]>(), failures: [] as string[] };
     const orphanedFiles = toRemove.length > 0
         ? [
             ...new Set([
-                ...await findOrphanedFiles(cwd, config, remaining, toRemove),
-                ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining),
+                ...await findOrphanedFiles(cwd, config, remaining, toRemove, importMap),
+                ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining, importMap),
             ]),
         ]
         : [];
@@ -344,8 +497,10 @@ export async function removeComponents(
     let orphanedRemoved = 0;
 
     try {
+        // #104：resolveAliasPath 涉及 tsconfig 解析与异步 IO 且结果与迭代无关，
+        // 提升到循环外只解析一次
+        const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
         for (const comp of componentsToRemove) {
-            const componentsPath = await resolveAliasPath(config.aliases.components, cwd);
             const componentPath = path.join(componentsPath, comp);
 
             if (await fs.pathExists(componentPath)) {
