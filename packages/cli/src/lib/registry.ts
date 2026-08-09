@@ -99,6 +99,13 @@ async function fetchRegistryManifestSummary(source: string): Promise<ManifestSum
                 const integrity = (entry as { integrity?: unknown } | null)?.integrity;
                 if (typeof integrity === 'string' && integrity.length > 0) {
                     itemIntegrities[itemName] = integrity;
+                } else {
+                    // #120：条目存在但 integrity 缺失/类型非法时不能静默丢弃——否则该组件
+                    // 的交叉校验会在无告警的情况下失效，warn 提示声明格式非法
+                    logger.warn(
+                        `Registry manifest declares component "${itemName}" with a missing or invalid integrity value, ` +
+                        `cross-check for this component is skipped.`
+                    );
                 }
             }
         }
@@ -249,7 +256,13 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
             // source 目录本身无法解析（不存在等）时按词法路径比较，后续 readJson 自会报错
             realSource = sourceResolved;
         }
-        if (!realFilePath.startsWith(realSource + path.sep)) {
+        // #120：改用 path.relative 判定越界（与 remove-service 的 isInsideDirectory 同语义）——
+        // startsWith 词法比较在 realSource 为文件系统根目录（如 `/`）时 realSource + path.sep
+        // 为 `//`，任何路径都不以它开头，本地 registry 全部组件被误拒。relative 结果以 `..`
+        // 开头（越界）或为绝对路径（跨盘）即越界；rel 为空串（realFilePath === realSource）
+        // 表示路径相同即 source 目录本身而非组件文件，同样按越界拒绝。
+        const relativeFilePath = path.relative(realSource, realFilePath);
+        if (relativeFilePath === '' || relativeFilePath.startsWith('..') || path.isAbsolute(relativeFilePath)) {
             throw new CliError(
                 `Security Error: Path traversal detected in component name "${name}".`,
                 { code: 'PATH_UNSAFE', exitCode: 2 }
@@ -336,12 +349,17 @@ async function fetchItemWithConditionalRequest(
     let currentRegistryVersion: string | undefined;
     let manifestSummary: ManifestSummaryInternal | null = null;
 
+    // #120：信任锚（manifest）与缓存开关解耦——BRUTX_NO_CACHE=1 / useCache=false 时
+    // 交叉校验不能整体跳过，否则绕过缓存同样绕过了签名背书。离线模式仍不拉 manifest
+    // （manifest 也走网络），直接读缓存。fetchRegistryManifestSummary 有进程级缓存且
+    // 失败降级为 null 不抛错，无性能负担；currentRegistryVersion 仅在缓存写入路径
+    // （setCachedEntry 只存在于 useCache 分支内）被消费，此处在 useCache=false 时取值无害。
+    if (!isOfflineMode()) {
+        manifestSummary = await fetchRegistryManifestSummary(source);
+        currentRegistryVersion = manifestSummary?.registryVersion;
+    }
+
     if (useCache) {
-        // 离线模式下不拉 manifest（manifest 也走网络），直接读缓存。
-        if (!isOfflineMode()) {
-            manifestSummary = await fetchRegistryManifestSummary(source);
-            currentRegistryVersion = manifestSummary?.registryVersion;
-        }
         cachedEntry = await getCachedEntry<RegistryItem>(name, source);
 
         if (cachedEntry) {
@@ -357,6 +375,10 @@ async function fetchItemWithConditionalRequest(
                     // 离线命中显性提示（基础设施闭环 P2）：让用户感知未发起网络请求
                     logger.info(`[OFFLINE CACHE HIT] ${name} (source: ${source})`);
                 }
+                // #120：缓存命中早退前交叉校验——旧版本 CLI 写入的缓存条目未经交叉校验，
+                // 升级后不能静默放行（manifest 未收录该组件时校验内部跳过，不会误伤）。
+                // 离线模式下 manifestSummary 为 null 同样跳过，不破坏离线可用性。
+                verifyManifestItemIntegrity(cachedEntry.data, name, manifestSummary);
                 return cachedEntry.data;
             }
         }
@@ -391,6 +413,9 @@ async function fetchItemWithConditionalRequest(
         } else {
             await touchCachedEntry(name, source).catch(() => {});
         }
+        // #120：304 复用缓存 body 同样未经交叉校验（#117 只补版本绑定），返回前补齐；
+        // manifest 拉取失败（manifestSummary 为 null）时校验内部跳过，不误伤。
+        verifyManifestItemIntegrity(cachedEntry.data, name, manifestSummary);
         return cachedEntry.data;
     }
     if (!res.ok) {
