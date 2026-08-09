@@ -663,7 +663,7 @@
       "examples": []
     },
     "popconfirm": {
-      "integrity": "sha256-f3347d11a5c37f97b0b61926bc287b8858aa7afa089485f06f7b18b46beecaf5",
+      "integrity": "sha256-db5b151eb386f13ad04a660a38a840264eb939404a965aab8b6bca6e43d25767",
       "fileCount": 3,
       "dependencies": [
         "@lucide/vue"
@@ -1056,7 +1056,5 @@
       "examples": []
     }
   },
-  "integrity": "15692835f12352d2d4826c1145313df279ae4d143838ab97ad6f5604a063fd8e",
-  "signature": "ejZ9LlSlOcuep1OkjAv5Ljn5bXBCMYnQY1mObD2cB7i1USdzYBiJVzFE8UmDytpz3XNP/GBWVf6sF3YQdAcrAQ==",
-  "keyId": "official-v1"
+  "integrity": "b20a5399897f93204fa1d66a47121617955dbf5be340a78c7bd2642024041f17"
 }

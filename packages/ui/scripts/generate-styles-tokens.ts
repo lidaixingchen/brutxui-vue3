@@ -63,8 +63,6 @@ const THEME_GROUPS: ThemeGroup[] = [
             { themeVar: '--color-brutal-success-foreground', build: l => `var(--brutal-success-foreground, ${l.successForeground})` },
             { themeVar: '--color-brutal-info', build: l => `var(--brutal-info, ${l.info})` },
             { themeVar: '--color-brutal-info-foreground', build: l => `var(--brutal-info-foreground, ${l.infoForeground})` },
-            { themeVar: '--color-brutal-danger', build: l => `var(--brutal-destructive, ${l.destructive})` },
-            { themeVar: '--color-brutal-warning', build: l => `var(--brutal-accent, ${l.accent})` },
         ],
     },
     {

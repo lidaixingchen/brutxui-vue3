@@ -30,8 +30,6 @@
     --color-brutal-success-foreground: var(--brutal-success-foreground, #000000);
     --color-brutal-info: var(--brutal-info, #4A90D9);
     --color-brutal-info-foreground: var(--brutal-info-foreground, #000000);
-    --color-brutal-danger: var(--brutal-destructive, #EF476F);
-    --color-brutal-warning: var(--brutal-accent, #FFE66D);
 
     /* Static design tokens (not theme-aware) */
     --color-brutal-black: var(--brutal-black, #000000);
@@ -128,13 +126,6 @@
         --brutal-yellow: #FFE66D;
     }
     /* @brutx:root-tokens:end */
-
-    /* Classic theme: light mode inherits all values from :root above.
-       Only the dark override is needed to reset variables when switching themes. */
-    /* Dark classic: only declares values that differ from the .dark base rule. */
-    .dark .theme-classic, .theme-classic.dark {
-        --brutal-info: #3B82F6;
-    }
 
     .theme-pastel {
         --brutal-border-width: 2px;
@@ -306,7 +297,7 @@
     }
 
     .animate-nb-shrink {
-        animation: nb-shrink linear forwards;
+        animation: nb-shrink var(--speed, 3s) linear forwards;
     }
 
     @keyframes indeterminate {
@@ -323,36 +314,37 @@
     }
 
     .border-3 {
-        border-width: var(--brutal-border-width, 3px);
+        border-width: var(--border-width-3);
     }
 
     .border-brutal {
+        border-width: var(--brutal-border-width, 3px);
         border-style: solid;
         border-color: var(--brutal-border-color, #000000);
     }
 
     .shadow-brutal {
-        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-shadow-color, #000000);
+        box-shadow: var(--shadow-brutal);
     }
 
     .shadow-brutal-sm {
-        box-shadow: calc(var(--brutal-shadow-offset-x, 4px) / 2) calc(var(--brutal-shadow-offset-y, 4px) / 2) 0px 0px var(--brutal-shadow-color, #000000);
+        box-shadow: var(--shadow-brutal-sm);
     }
 
     .shadow-brutal-lg {
-        box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 1.5) calc(var(--brutal-shadow-offset-y, 4px) * 1.5) 0px 0px var(--brutal-shadow-color, #000000);
+        box-shadow: var(--shadow-brutal-lg);
     }
 
     .shadow-brutal-xl {
-        box-shadow: calc(var(--brutal-shadow-offset-x, 4px) * 2) calc(var(--brutal-shadow-offset-y, 4px) * 2) 0px 0px var(--brutal-shadow-color, #000000);
+        box-shadow: var(--shadow-brutal-xl);
     }
 
     .shadow-brutal-primary {
-        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-primary, #FF6B6B);
+        box-shadow: var(--shadow-brutal-primary);
     }
 
     .shadow-brutal-secondary {
-        box-shadow: var(--brutal-shadow-offset-x, 4px) var(--brutal-shadow-offset-y, 4px) 0px 0px var(--brutal-secondary, #4ECDC4);
+        box-shadow: var(--shadow-brutal-secondary);
     }
 
     @keyframes fadeIn {
@@ -563,7 +555,10 @@
         --tw-exit-translate-x: -0.5rem;
     }
 
-    .slide-out-to-right,
+    .slide-out-to-right {
+        --tw-exit-translate-x: 0.5rem;
+    }
+
     .slide-out-to-right-full {
         --tw-exit-translate-x: 100%;
     }
@@ -844,7 +839,13 @@
         .animate-marquee-right,
         .animate-nb-shrink,
         .animate-accordion-down,
-        .animate-accordion-up {
+        .animate-accordion-up,
+        .animate-in,
+        .animate-out,
+        .data-\[state\=open\]\:animate-in[data-state="open"],
+        .data-\[state\=closed\]\:animate-out[data-state="closed"],
+        .data-\[state\=open\]\:animate-accordion-down[data-state="open"],
+        .data-\[state\=closed\]\:animate-accordion-up[data-state="closed"] {
             animation: none !important;
         }
     }
@@ -921,7 +922,9 @@
    ============================================ */
 
 /* 1. Prevent popper/portal wrapper from clipping the neo-brutalist box shadows */
-[data-reka-popper-content-wrapper] {
+/* 作用域收窄到日历/日期选择器弹层：reka popper wrapper 是 .brutx-calendar 的祖先，全量命中会
+   给所有浮动弹层（popover/tooltip/dropdown 等）额外加 padding，干扰其位置测量与视觉偏移 */
+[data-reka-popper-content-wrapper]:has(.brutx-calendar) {
     padding-right: 16px !important;
     padding-bottom: 16px !important;
 }
