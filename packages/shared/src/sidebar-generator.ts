@@ -151,6 +151,17 @@ const componentLabelsZh: Record<string, string> = {
     'dashboard-shell': '仪表盘框架',
 }
 
+// 开发期校验：componentLabelsZh 必须覆盖全部组件名，防止新增组件漏写 zh 标签时
+// 中文侧边栏静默退化为英文标题（本地化缺失难以被察觉）
+for (const name of Object.keys(COMPONENT_METADATA)) {
+    if (!(name in componentLabelsZh)) {
+        console.warn(
+            `[sidebar-generator] Missing zh label for component "${name}" — zh sidebar will fall back to its English title. ` +
+            'Add an entry to componentLabelsZh (packages/shared/src/sidebar-generator.ts).'
+        )
+    }
+}
+
 const DEFAULT_CATEGORY_TO_SIDEBAR_GROUP: Record<ComponentCategory, SidebarGroup> = {
     action: 'action',
     form: 'form',
@@ -161,11 +172,23 @@ const DEFAULT_CATEGORY_TO_SIDEBAR_GROUP: Record<ComponentCategory, SidebarGroup>
     layout: 'layout',
     'visual-effect': 'visual-effect',
     utility: 'utility',
+    // marketing 映射到 blocks-sections 仅对区块侧边栏有意义；若未来出现非 block 的
+    // marketing 组件，会在组件侧边栏中落空（不在 COMPONENT_GROUP_ORDER），由
+    // buildFallbackGroup 的孤儿告警暴露为配置错误
     marketing: 'blocks-sections',
 }
 
 function resolveSidebarGroup(entry: ComponentMetadataEntry): SidebarGroup {
-    return entry.sidebarGroup ?? DEFAULT_CATEGORY_TO_SIDEBAR_GROUP[entry.category]
+    const group = entry.sidebarGroup ?? DEFAULT_CATEGORY_TO_SIDEBAR_GROUP[entry.category]
+    // 类型上 Record 覆盖全部 ComponentCategory，indexing 不可能为 undefined；但运行时若
+    // 传入未经类型校验的数据（如注册表 JSON 中的非法 category），显式兜底以免静默产生孤儿条目
+    if (group === undefined) {
+        throw new Error(
+            `[sidebar-generator] Cannot resolve sidebar group for component "${entry.name}" (category "${entry.category}"). ` +
+            'Register the category in DEFAULT_CATEGORY_TO_SIDEBAR_GROUP or set an explicit sidebarGroup.'
+        )
+    }
+    return group
 }
 
 function resolveSlug(entry: ComponentMetadataEntry): string {
@@ -191,7 +214,8 @@ function buildGroup(
 ): SidebarItem | null {
     const items = entries
         .filter(entry => resolveSidebarGroup(entry) === group)
-        .sort((a, b) => a.title.localeCompare(b.title))
+        // 显式指定 'en' collation：标题均为英文，避免排序结果依赖运行环境的默认语言与 ICU 配置
+        .sort((a, b) => a.title.localeCompare(b.title, 'en'))
         .map(entry => ({
             text: getItemText(entry, locale),
             link: getItemLink(entry, locale),
@@ -210,62 +234,71 @@ function buildFallbackGroup(
     validGroups: Set<SidebarGroup>,
     locale: SidebarLocale,
 ): SidebarItem | null {
-    const orphanedEntries = entries
-        .filter(entry => !validGroups.has(resolveSidebarGroup(entry)))
-        .sort((a, b) => a.title.localeCompare(b.title))
+    const orphaned = entries.filter(entry => !validGroups.has(resolveSidebarGroup(entry)))
+
+    if (orphaned.length === 0) return null
+
+    // 配置错误（映射遗漏/拼写错误/新增类别未登记）不应被静默吞掉——列出具体条目以便及早发现
+    console.warn(
+        `[sidebar-generator] ${orphaned.length} entr${orphaned.length === 1 ? 'y' : 'ies'} resolved outside the known sidebar groups ` +
+        `and fell into "Other": ${orphaned.map(entry => entry.name).join(', ')}`
+    )
+
+    const items = orphaned
+        .sort((a, b) => a.title.localeCompare(b.title, 'en'))
         .map(entry => ({
             text: getItemText(entry, locale),
             link: getItemLink(entry, locale),
         }))
 
-    if (orphanedEntries.length === 0) return null
-
     return {
         text: locale === 'en' ? 'Other' : '其他',
-        items: orphanedEntries,
+        items,
     }
 }
 
-export function generateComponentsSidebar(locale: SidebarLocale): SidebarItem[] {
-    const overviewText = locale === 'en' ? 'Overview' : '组件总览'
-    const overviewLink = locale === 'en' ? '/en/components/' : '/components/'
+/**
+ * 组件/区块侧边栏公共构建流程：按固定分组顺序分组 → 兜底分组（捕获落空的孤儿条目）→ 前置 overview。
+ * 抽成单一函数，避免两组侧边栏各自维护一遍过滤/分组/排序/兜底逻辑导致行为漂移。
+ */
+function buildSidebar(
+    entries: ComponentMetadataEntry[],
+    groupOrder: readonly SidebarGroup[],
+    overview: { text: string; link: string },
+    locale: SidebarLocale,
+): SidebarItem[] {
+    const validGroups = new Set(groupOrder)
+    const groups = groupOrder
+        .map(group => buildGroup(group, entries, locale))
+        .filter((group): group is SidebarItem => group !== null)
 
+    const fallback = buildFallbackGroup(entries, validGroups, locale)
+
+    return [
+        { text: overview.text, link: overview.link },
+        ...groups,
+        ...(fallback ? [fallback] : []),
+    ]
+}
+
+export function generateComponentsSidebar(locale: SidebarLocale): SidebarItem[] {
     const entries = Object.values(COMPONENT_METADATA)
         .filter(entry => entry.kind !== 'block')
         .filter(entry => entry.docsHidden !== true)
 
-    const validGroups = new Set(COMPONENT_GROUP_ORDER)
-    const groups = COMPONENT_GROUP_ORDER
-        .map(group => buildGroup(group, entries, locale))
-        .filter((group): group is SidebarItem => group !== null)
-
-    const fallback = buildFallbackGroup(entries, validGroups, locale)
-
-    return [
-        { text: overviewText, link: overviewLink },
-        ...groups,
-        ...(fallback ? [fallback] : []),
-    ]
+    return buildSidebar(entries, COMPONENT_GROUP_ORDER, {
+        text: locale === 'en' ? 'Overview' : '组件总览',
+        link: locale === 'en' ? '/en/components/' : '/components/',
+    }, locale)
 }
 
 export function generateBlocksSidebar(locale: SidebarLocale): SidebarItem[] {
-    const overviewText = locale === 'en' ? 'Overview' : '概览'
-    const overviewLink = locale === 'en' ? '/en/blocks/' : '/blocks/'
-
     const entries = Object.values(COMPONENT_METADATA)
         .filter(entry => entry.kind === 'block')
         .filter(entry => entry.docsHidden !== true)
 
-    const validGroups = new Set(BLOCK_GROUP_ORDER)
-    const groups = BLOCK_GROUP_ORDER
-        .map(group => buildGroup(group, entries, locale))
-        .filter((group): group is SidebarItem => group !== null)
-
-    const fallback = buildFallbackGroup(entries, validGroups, locale)
-
-    return [
-        { text: overviewText, link: overviewLink },
-        ...groups,
-        ...(fallback ? [fallback] : []),
-    ]
+    return buildSidebar(entries, BLOCK_GROUP_ORDER, {
+        text: locale === 'en' ? 'Overview' : '概览',
+        link: locale === 'en' ? '/en/blocks/' : '/blocks/',
+    }, locale)
 }
