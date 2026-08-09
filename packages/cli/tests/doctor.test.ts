@@ -74,7 +74,7 @@ async function setupHealthyProject(cwd: string): Promise<void> {
     await fs.ensureDir(path.join(cwd, 'src', 'styles'));
     await fs.writeFile(
         path.join(cwd, 'src', 'styles', 'globals.css'),
-        ':root { --color-brutal-bg: #fff; }\n.bg-brutal-primary { color: red; }\n.animate-in { animation: fade-in; }',
+        `${constants.BRUTX_CSS_START_MARKER}\n:root { --color-brutal-bg: #fff; }\n.bg-brutal-primary { color: red; }\n.animate-in { animation: fade-in; }\n${constants.BRUTX_CSS_END_MARKER}`,
     );
     await fs.ensureDir(path.join(cwd, 'src', 'components'));
     await fs.ensureDir(path.join(cwd, 'src', 'lib'));
@@ -283,6 +283,24 @@ describe('checkTailwindCss', () => {
             await fs.writeFile(
                 path.join(cwd, 'src', 'styles', 'globals.css'),
                 'body { margin: 0; }',
+            );
+            mockedReadConfigSafe.mockResolvedValue(makeConfig());
+            const results = await runDoctor(cwd, { silent: true });
+            const check = results.find((r) => r.name === 'tailwind.css contains BrutxUI tokens');
+            expect(check?.status).toBe('error');
+            expect(check?.fixId).toBe(FixId.InjectCssTokens);
+        } finally {
+            await fs.remove(cwd);
+        }
+    });
+
+    it('should error when CSS contains legacy tokens but no BrutxUI markers', async () => {
+        const cwd = await createTempProject();
+        try {
+            await setupHealthyProject(cwd);
+            await fs.writeFile(
+                path.join(cwd, 'src', 'styles', 'globals.css'),
+                ':root { --color-brutal-bg: #fff; }\n.bg-brutal-primary { color: red; }\n.animate-in { animation: fade-in; }',
             );
             mockedReadConfigSafe.mockResolvedValue(makeConfig());
             const results = await runDoctor(cwd, { silent: true });

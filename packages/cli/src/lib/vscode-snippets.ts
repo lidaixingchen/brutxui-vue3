@@ -1,8 +1,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import type { BrutalistConfig } from './types.js';
 import { AVAILABLE_COMPONENTS } from './constants.js';
+import { CliError } from './error.js';
 
 interface VscodeSnippet {
     prefix: string;
@@ -14,7 +14,16 @@ interface VscodeSnippetFile {
     [key: string]: VscodeSnippet;
 }
 
+// kebab-case：小写字母/数字开头，可含多段，段间用单个连字符分隔
+const KEBAB_CASE_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 function toPascalCase(str: string): string {
+    if (!KEBAB_CASE_REGEX.test(str)) {
+        throw new CliError(
+            `Invalid component name "${str}": expected kebab-case (e.g. "dropdown-menu").`,
+            { code: 'COMPONENT_NOT_FOUND' },
+        );
+    }
     return str
         .split('-')
         .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
@@ -326,7 +335,7 @@ function buildSnippetForComponent(componentName: string): VscodeSnippet {
     };
 }
 
-export function generateSnippets(config: BrutalistConfig, components?: string[]): string {
+export function generateSnippets(components?: string[]): string {
     const componentList = components ?? AVAILABLE_COMPONENTS;
 
     const snippetFile: VscodeSnippetFile = {};
@@ -340,27 +349,25 @@ export function generateSnippets(config: BrutalistConfig, components?: string[])
 }
 
 export function generateSnippetsForComponents(components: string[]): string {
-    const snippetFile: VscodeSnippetFile = {};
-
-    for (const componentName of components) {
-        const snippetKey = `BrutxUI ${toPascalCase(componentName)}`;
-        snippetFile[snippetKey] = buildSnippetForComponent(componentName);
-    }
-
-    return JSON.stringify(snippetFile, null, 4);
+    return generateSnippets(components);
 }
 
 export async function writeSnippetsFile(
     cwd: string,
-    config: BrutalistConfig,
     components?: string[],
 ): Promise<string> {
     const vscodeDir = path.join(cwd, '.vscode');
-    await fs.ensureDir(vscodeDir);
-
-    const snippetContent = generateSnippets(config, components);
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
-    await fs.writeFile(snippetPath, snippetContent, 'utf-8');
+
+    try {
+        await fs.ensureDir(vscodeDir);
+        await fs.writeFile(snippetPath, generateSnippets(components), 'utf-8');
+    } catch (error) {
+        throw new CliError(
+            `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
+            { code: 'WRITE_FAILED', cause: error },
+        );
+    }
 
     return snippetPath;
 }
@@ -397,8 +404,15 @@ export async function mergeSnippetsFile(
         existingSnippets[snippetKey] = buildSnippetForComponent(componentName);
     }
 
-    await fs.ensureDir(vscodeDir);
-    await fs.writeFile(snippetPath, JSON.stringify(existingSnippets, null, 4), 'utf-8');
+    try {
+        await fs.ensureDir(vscodeDir);
+        await fs.writeFile(snippetPath, JSON.stringify(existingSnippets, null, 4), 'utf-8');
+    } catch (error) {
+        throw new CliError(
+            `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
+            { code: 'WRITE_FAILED', cause: error },
+        );
+    }
 
     return snippetPath;
 }

@@ -8,6 +8,10 @@ import {
     injectNuxtConfig,
     type ProjectInitializationSettings,
 } from '../src/lib/services/init-service.js';
+import {
+    BRUTX_CSS_START_MARKER,
+    BRUTX_CSS_END_MARKER,
+} from '../src/lib/constants.js';
 
 const defaultSettings: ProjectInitializationSettings = {
     tailwind: {
@@ -98,7 +102,7 @@ describe('init service', () => {
         expect(onStyles).toHaveBeenCalledWith({ cssPath: 'src/index.css', added: true });
     });
 
-    it('skips existing complete styles and existing utility helper', async () => {
+    it('injects styles when CSS lacks markers even if it contains legacy tokens', async () => {
         await fs.ensureDir(path.join(tmpDir, 'src', 'lib'));
         await fs.writeFile(path.join(tmpDir, 'src', 'lib', 'utils.ts'), 'export const cn = () => "";\n', 'utf-8');
         await fs.writeFile(
@@ -114,7 +118,10 @@ describe('init service', () => {
         });
 
         expect(result.utilsCreated).toBe(false);
-        expect(result.stylesAdded).toBe(false);
+        expect(result.stylesAdded).toBe(true);
+        const css = await fs.readFile(path.join(tmpDir, 'src', 'index.css'), 'utf-8');
+        expect(css).toContain(BRUTX_CSS_START_MARKER);
+        expect(css).toContain(BRUTX_CSS_END_MARKER);
         expect(await fs.readFile(path.join(tmpDir, 'src', 'lib', 'utils.ts'), 'utf-8'))
             .toBe('export const cn = () => "";\n');
     });

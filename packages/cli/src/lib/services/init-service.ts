@@ -102,13 +102,9 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
         );
         if (markerPattern.test(content)) {
             content = content.replace(markerPattern, brutxBlock);
-        } else if (
-            content.includes('--color-brutal-bg')
-            && content.includes('.bg-brutal-primary')
-            && content.includes('.animate-in')
-        ) {
-            return false;
         } else {
+            // markers 是"是否已注入"的唯一判据：无 markers 即视为未注入，
+            // 即使内容含 --color-brutal-bg 等旧版 token 也一律追加。
             if (!content.endsWith('\n') && content.length > 0) {
                 content += '\n';
             }

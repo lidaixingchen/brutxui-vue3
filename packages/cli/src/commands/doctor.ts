@@ -7,7 +7,7 @@ import type { BrutalistConfig, CheckResult, DoctorOptions, BrutxManifest, Instal
 import { FixId } from '../lib/types.js';
 import { readConfigSafe, CliError, FileTransaction, detectWorkspaceRoot, readManifest, computeInstalledContentHash, resolveRegistrySources, isOfflineRequested, withOfflineScope, getRecentFailures, auditLogExists, countAuditEntries, getCacheStats } from '../lib/index.js';
 import { resolveAliasPath } from '../lib/project.js';
-import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_BODY_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES } from '../lib/constants.js';
+import { SCHEMA_URL, BASE_DEPENDENCIES, getBrutalistCssStyles, UTILS_TEMPLATE, CN_FUNCTION_BODY_TEMPLATE, CURRENT_CONFIG_VERSION, CONFIG_FILES, BRUTX_CSS_START_MARKER, BRUTX_CSS_END_MARKER } from '../lib/constants.js';
 import { logger } from '../lib/logger.js';
 
 const require = createRequire(import.meta.url);
@@ -152,9 +152,10 @@ async function checkTailwindCss(cwd: string, config: BrutalistConfig): Promise<C
     }
 
     const content = await fs.readFile(cssPath, 'utf-8');
-    const hasCompleteBrutalistStyles = content.includes('--color-brutal-bg')
-        && content.includes('.bg-brutal-primary')
-        && content.includes('.animate-in');
+    // 与 init-service 的注入判据保持一致：BRUTX_CSS_START/END_MARKER 均存在才算
+    // 已注入。无 markers 的 CSS（即使残留 --color-brutal-bg 等旧版 token）视为缺失。
+    const hasCompleteBrutalistStyles = content.includes(BRUTX_CSS_START_MARKER)
+        && content.includes(BRUTX_CSS_END_MARKER);
     if (!hasCompleteBrutalistStyles) {
         return {
             name: 'tailwind.css contains BrutxUI tokens',

@@ -318,7 +318,7 @@ export async function init(options: InitOptions): Promise<void> {
             // snippets 写入失败不标记整个初始化失败：初始化主体（配置/组件/样式/依赖）已完成，
             // 仅告警提示手动重试，避免"初始化已成功却又报失败"的矛盾输出
             try {
-                const snippetPath = await writeSnippetsFile(configTarget, initialization.config);
+                const snippetPath = await writeSnippetsFile(configTarget);
                 logger.success(`✓ VS Code snippets generated at ${path.relative(configTarget, snippetPath)}`);
             } catch (error) {
                 const message = error instanceof Error ? error.message : String(error);
