@@ -220,8 +220,6 @@
 }
 
 .border-brutal {
-    border-width: var(--border-width-3);
-    border-style: solid;
     border-color: var(--brutal-border-color, #000000);
 }
 

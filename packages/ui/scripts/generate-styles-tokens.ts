@@ -108,6 +108,16 @@ const THEME_GROUPS: ThemeGroup[] = [
             { themeVar: '--radius-brutal', build: l => `var(--brutal-radius, ${l.radius})` },
         ],
     },
+    {
+        comment: 'Default font family (preflight html/body 继承，可被消费方 @theme 覆盖)',
+        entries: [
+            {
+                themeVar: '--default-font-family',
+                build: () =>
+                    '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+            },
+        ],
+    },
 ];
 
 function formatVarsBlock(selector: string, vars: Record<string, string>): string {

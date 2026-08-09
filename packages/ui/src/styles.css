@@ -46,6 +46,9 @@
     /* Dynamic: border/radius use --brutal-* for theme support */
     --border-width-3: var(--brutal-border-width, 3px);
     --radius-brutal: var(--brutal-radius, 0px);
+
+    /* Default font family (preflight html/body 继承，可被消费方 @theme 覆盖) */
+    --default-font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     /* @brutx:theme-tokens:end */
 }
 
@@ -318,7 +321,6 @@
     }
 
     .border-brutal {
-        border-width: var(--brutal-border-width, 3px);
         border-style: solid;
         border-color: var(--brutal-border-color, #000000);
     }
@@ -820,32 +822,33 @@
        Reduced Motion Support
        ============================================ */
     @media (prefers-reduced-motion: reduce) {
-        .animate-brutal-shake,
-        .animate-brutal-bounce,
-        .animate-brutal-pulse,
-        .animate-brutal-badge-pulse,
-        .animate-brutal-flip,
-        .animate-brutal-slide-up,
-        .animate-brutal-slide-down,
-        .animate-brutal-slide-left,
-        .animate-brutal-slide-right,
-        .animate-brutal-pop,
-        .animate-brutal-rotate,
-        .animate-brutal-swing,
-        .animate-brutal-jello,
-        .animate-brutal-heartbeat,
-        .animate-indeterminate,
-        .animate-marquee-left,
-        .animate-marquee-right,
-        .animate-nb-shrink,
-        .animate-accordion-down,
-        .animate-accordion-up,
-        .animate-in,
-        .animate-out,
-        .data-\[state\=open\]\:animate-in[data-state="open"],
-        .data-\[state\=closed\]\:animate-out[data-state="closed"],
-        .data-\[state\=open\]\:animate-accordion-down[data-state="open"],
-        .data-\[state\=closed\]\:animate-accordion-up[data-state="closed"] {
+        /* 与 preflight 全局兜底保持同一 opt-out 语义：html[data-allow-motion="true"] 时恢复动画 */
+        html:not([data-allow-motion="true"]) .animate-brutal-shake,
+        html:not([data-allow-motion="true"]) .animate-brutal-bounce,
+        html:not([data-allow-motion="true"]) .animate-brutal-pulse,
+        html:not([data-allow-motion="true"]) .animate-brutal-badge-pulse,
+        html:not([data-allow-motion="true"]) .animate-brutal-flip,
+        html:not([data-allow-motion="true"]) .animate-brutal-slide-up,
+        html:not([data-allow-motion="true"]) .animate-brutal-slide-down,
+        html:not([data-allow-motion="true"]) .animate-brutal-slide-left,
+        html:not([data-allow-motion="true"]) .animate-brutal-slide-right,
+        html:not([data-allow-motion="true"]) .animate-brutal-pop,
+        html:not([data-allow-motion="true"]) .animate-brutal-rotate,
+        html:not([data-allow-motion="true"]) .animate-brutal-swing,
+        html:not([data-allow-motion="true"]) .animate-brutal-jello,
+        html:not([data-allow-motion="true"]) .animate-brutal-heartbeat,
+        html:not([data-allow-motion="true"]) .animate-indeterminate,
+        html:not([data-allow-motion="true"]) .animate-marquee-left,
+        html:not([data-allow-motion="true"]) .animate-marquee-right,
+        html:not([data-allow-motion="true"]) .animate-nb-shrink,
+        html:not([data-allow-motion="true"]) .animate-accordion-down,
+        html:not([data-allow-motion="true"]) .animate-accordion-up,
+        html:not([data-allow-motion="true"]) .animate-in,
+        html:not([data-allow-motion="true"]) .animate-out,
+        html:not([data-allow-motion="true"]) .data-\[state\=open\]\:animate-in[data-state="open"],
+        html:not([data-allow-motion="true"]) .data-\[state\=closed\]\:animate-out[data-state="closed"],
+        html:not([data-allow-motion="true"]) .data-\[state\=open\]\:animate-accordion-down[data-state="open"],
+        html:not([data-allow-motion="true"]) .data-\[state\=closed\]\:animate-accordion-up[data-state="closed"] {
             animation: none !important;
         }
     }
