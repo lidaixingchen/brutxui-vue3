@@ -84,6 +84,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - 不写注释，除非被要求；代码注释禁止反应代码变更，仅描绘当下；禁止魔法数字和硬编码值
 - 格式化由 ESLint/Prettier 强制：4 空格缩进、单引号
 - 命名：PascalCase 组件（`Button.vue`）· kebab-case 变体（`button-variants.ts`）· camelCase 组合式函数（`useToast.ts`）
+- 现在是开发早期0.x，所以无需考虑向后兼容性而造成历史包袱，均应进行进行破坏式变更
 
 ### 组件库红线
 
