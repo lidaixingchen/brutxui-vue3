@@ -164,12 +164,28 @@ describe('verifyManifestSignature (P1-6)', () => {
         expect(result).toBe(false);
     });
 
-    it('returns false (skip) when manifest is signed but missing integrity field', () => {
+    it('returns false (warn) when manifest is signed but missing integrity field', () => {
+        // #109：integrity 为必填契约，缺 integrity 无法验签从"debug 跳过"升级为"warn 降级"
+        // （默认模式 warn + 返回 false；严格模式抛 REGISTRY_SIGNATURE_INVALID）
+        const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
         const result = verifyManifestSignature(
             { signature: validSignature, keyId: keyPair.keyId },
             [keyPair],
         );
         expect(result).toBe(false);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy.mock.calls[0][0]).toContain('no integrity field');
+        expect(warnSpy.mock.calls[0][0]).toContain('--require-signature');
+    });
+
+    it('throws REGISTRY_SIGNATURE_INVALID when manifest is signed but missing integrity field (strict mode)', () => {
+        setRequireSignature(true);
+        expect(() => verifyManifestSignature(
+            { signature: validSignature, keyId: keyPair.keyId },
+            [keyPair],
+        )).toThrowError(
+            expect.objectContaining({ code: 'REGISTRY_SIGNATURE_INVALID' })
+        );
     });
 
     it('returns false (skip) when trustedKeys is empty (no public keys configured)', () => {

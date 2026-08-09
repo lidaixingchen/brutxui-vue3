@@ -11,7 +11,7 @@ import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight, isOff
 import { buildAuthHeaders, fetchWithSources } from './registry-source.js';
 import { logger } from './logger.js';
 import { verifyManifestIntegrityAndSignature, setTrustedPublicKeys } from './signature.js';
-import { applyRequireSignatureConfig } from './signature-mode.js';
+import { applyRequireSignatureConfig, isRequireSignature } from './signature-mode.js';
 
 function isUrl(str: string): boolean {
     return str.startsWith('http://') || str.startsWith('https://');
@@ -27,16 +27,26 @@ const GITHUB_RAW_URL_PATTERN = /^https:\/\/raw\.githubusercontent\.com\/([^/]+)\
  * 进程级 registry-manifest 缓存：首次 getItem 时按需拉取一次，
  * 避免每条目多一次请求。key 为 registry source URL。
  */
-const registryManifestCache = new Map<string, RegistryManifestSummary | null>();
+const registryManifestCache = new Map<string, ManifestSummaryInternal | null>();
+
+/**
+ * 拉取的 manifest 摘要（进程级缓存）。在 RegistryManifestSummary 基础上扩展
+ * itemIntegrities：#120 交叉校验所需——manifest.items 中声明的各组件 integrity 映射
+ * （manifest 内容已由完整性复算 + 签名校验背书，可用作 item 校验的信任锚）。
+ */
+interface ManifestSummaryInternal extends RegistryManifestSummary {
+    itemIntegrities?: Record<string, string>;
+}
 
 /**
  * 拉取 registry-manifest.json 获取 registryVersion 与 integrity。
  * 拉取失败时返回 null——缓存版本绑定降级为"不校验版本"，由 integrity 兜底。
  *
  * P1-6：若 manifest 含 signature/keyId 字段且 BRUTX_REGISTRY_PUBLIC_KEYS 已配置，
- * 在此触发签名验证。REGISTRY_SIGNATURE_INVALID 必须冒泡（不降级为 null）。
+ * 在此触发签名验证。严格模式下 REGISTRY_SIGNATURE_INVALID 必须冒泡（不降级为 null）。
+ * 默认模式下签名失败仅 warn（signature.ts 的迁移期设计），integrity 复算仍兜底防篡改。
  */
-async function fetchRegistryManifestSummary(source: string): Promise<RegistryManifestSummary | null> {
+async function fetchRegistryManifestSummary(source: string): Promise<ManifestSummaryInternal | null> {
     const cached = registryManifestCache.get(source);
     if (cached !== undefined) return cached;
 
@@ -60,20 +70,59 @@ async function fetchRegistryManifestSummary(source: string): Promise<RegistryMan
             registryManifestCache.set(source, null);
             return null;
         }
-        // 基础设施闭环 P1：完整性复算 + 签名校验。REGISTRY_SIGNATURE_INVALID 必须冒泡，
-        // 由 catch 块特判放行——签名失败绝不降级为 null（否则篡改的 manifest 会静默通过）。
-        verifyManifestIntegrityAndSignature(manifest);
+        // #109：integrity 为必填契约。manifest 缺失/类型错误的 integrity 与 registryVersion
+        // 缺失同构处理——降级为"不信任该 manifest"（返回 null），不再产出无 integrity 的摘要。
+        if (typeof manifest.integrity !== 'string' || manifest.integrity.length === 0) {
+            logger.warn(`Registry manifest from "${source}" is missing the integrity field, manifest not trusted (version binding skipped).`);
+            registryManifestCache.set(source, null);
+            return null;
+        }
+        // 基础设施闭环 P1：完整性复算 + 签名校验。严格模式下签名失败抛
+        // REGISTRY_SIGNATURE_INVALID，由 catch 块特判冒泡——签名失败绝不降级为 null
+        // （否则篡改的 manifest 会静默通过）。
+        // #116：返回值检查为 P1-6 兜底——即使验签函数未来改为"返回 false 而非抛错"，
+        // 严格模式下签名失败仍必须冒泡，不能被忽略后继续使用 manifest。
+        const signatureValid = verifyManifestIntegrityAndSignature(manifest);
+        if (!signatureValid && isRequireSignature()) {
+            throw new CliError(
+                'Manifest signature verification failed. The manifest may have been tampered with.',
+                { code: 'REGISTRY_SIGNATURE_INVALID' }
+            );
+        }
 
-        const summary: RegistryManifestSummary = {
+        // #120：提取 manifest.items 中声明的各组件 integrity，供 item 与签名 manifest 交叉校验。
+        // 仅收录字符串 integrity 的条目；manifest 无 items/条目缺 integrity 时跳过对应组件
+        // （不误伤未收录该组件的兼容性 registry）。
+        const itemIntegrities: Record<string, string> = {};
+        if (typeof manifest.items === 'object' && manifest.items !== null && !Array.isArray(manifest.items)) {
+            for (const [itemName, entry] of Object.entries(manifest.items as Record<string, unknown>)) {
+                const integrity = (entry as { integrity?: unknown } | null)?.integrity;
+                if (typeof integrity === 'string' && integrity.length > 0) {
+                    itemIntegrities[itemName] = integrity;
+                }
+            }
+        }
+
+        const summary: ManifestSummaryInternal = {
             registryVersion: manifest.registryVersion,
-            integrity: typeof manifest.integrity === 'string' ? manifest.integrity : undefined,
+            // #109：解析层已保证 integrity 为字符串（非字符串时提前降级 null），此处可直接赋值
+            integrity: manifest.integrity,
+            itemIntegrities: Object.keys(itemIntegrities).length > 0 ? itemIntegrities : undefined,
         };
         registryManifestCache.set(source, summary);
         return summary;
     } catch (error) {
-        // 签名失败必须冒泡——降级为 null 会让篡改的 manifest 静默通过
+        // 签名失败必须冒泡（严格模式）——降级为 null 会让篡改的 manifest 静默通过
         if (error instanceof CliError && error.code === 'REGISTRY_SIGNATURE_INVALID') {
             throw error;
+        }
+        // #116：区分异常来源，签名校验不再被静默关闭。
+        // 网络/解析失败（REGISTRY_FETCH_FAILED）为设计内降级，debug 记录供排障；
+        // 其余异常（未来新增错误码、验签侧运行时异常）意味着签名校验可能被静默关闭，必须 warn。
+        if (error instanceof CliError && error.code === 'REGISTRY_FETCH_FAILED') {
+            logger.debug(`Registry manifest fetch failed for "${source}", version binding skipped: ${error.message}`);
+        } else {
+            logger.warn(`Registry manifest verification failed for "${source}": ${error instanceof Error ? error.message : String(error)}`);
         }
         registryManifestCache.set(source, null);
         return null;
@@ -85,8 +134,9 @@ async function fetchWithRetry(url: string, maxRetries: number = 3, headers?: Rec
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        let res: Response;
         try {
-            return await fetch(url, {
+            res = await fetch(url, {
                 headers,
                 signal: AbortSignal.timeout(30000),
             });
@@ -100,7 +150,21 @@ async function fetchWithRetry(url: string, maxRetries: number = 3, headers?: Rec
 
             process.stderr.write(`Network timeout, retrying (attempt ${attempt + 1}/${maxRetries})...\n`);
             await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
+            continue;
         }
+
+        // #119：HTTP 5xx 是瞬时服务端错误，与网络异常一样按退避重试；
+        // 状态码记入 lastError——重试耗尽时统一抛错仍能透出最终失败信息
+        if (res.status >= 500) {
+            lastError = new Error(`HTTP ${res.status} ${res.statusText}`);
+            if (attempt >= maxRetries) break;
+
+            process.stderr.write(`Server error (HTTP ${res.status}), retrying (attempt ${attempt + 1}/${maxRetries})...\n`);
+            await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]));
+            continue;
+        }
+
+        return res;
     }
 
     throw new CliError(
@@ -122,6 +186,24 @@ function verifyRegistryIntegrity(item: RegistryItem, name: string): void {
     }
 }
 
+/**
+ * #120：item 与已签名 manifest 的交叉校验。
+ *
+ * verifyRegistryIntegrity 只保证 item 内部"files ↔ integrity 自洽"——攻击者同时改写
+ * 两者即可保持自洽通过校验（manifest 签名在默认模式下又仅 warn 不拦截）。
+ * 此处将 item.integrity 与 manifest.items 中声明的 integrity（manifest 内容已通过
+ * 完整性复算 + 签名校验背书）比对，封堵该绕过路径。
+ * manifest 未收录该 item（items 缺失/不完整/组件未声明）时跳过，避免误伤兼容性 registry。
+ */
+function verifyManifestItemIntegrity(item: RegistryItem, name: string, summary: ManifestSummaryInternal | null): void {
+    const declared = summary?.itemIntegrities?.[name];
+    if (declared === undefined || declared === item.integrity) return;
+    throw new CliError(
+        `Integrity check failed for component '${name}': its integrity does not match the signed registry manifest. The registry content may have been tampered with.`,
+        { code: 'REGISTRY_INTEGRITY_FAILED' }
+    );
+}
+
 export async function getItem(name: string, source: string = DEFAULT_REGISTRY_URL, useCache: boolean = true): Promise<RegistryItem> {
     if (isUrl(source)) {
         const effectiveUseCache = useCache && process.env.BRUTX_NO_CACHE !== '1';
@@ -133,8 +215,10 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         }
         return await fetchItemWithConditionalRequest(name, source, false);
     } else {
+        const sourceResolved = path.resolve(source);
         const filePath = path.resolve(source, `${name}.json`);
-        if (!filePath.startsWith(path.resolve(source) + path.sep)) {
+        // 词法前缀校验：快速拒绝明显的路径穿越（../、绝对路径等）
+        if (!filePath.startsWith(sourceResolved + path.sep)) {
             throw new CliError(
                 `Security Error: Path traversal detected in component name "${name}".`,
                 { code: 'PATH_UNSAFE', exitCode: 2 }
@@ -146,7 +230,32 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
                 { code: 'COMPONENT_NOT_FOUND' }
             );
         }
-        const data = await fs.readJson(filePath);
+        // #118：词法前缀校验无法识别符号链接——本地 registry 内的 symlink 可指向目录外，
+        // realpath 归一化后再做前缀校验，封堵 PATH_UNSAFE 绕过。
+        let realFilePath: string;
+        try {
+            realFilePath = await fs.realpath(filePath);
+        } catch {
+            // realpath 失败（文件在 pathExists 与 realpath 之间被删除等竞态）按未找到处理
+            throw new CliError(
+                `Component "${name}" not found in local registry: ${filePath}`,
+                { code: 'COMPONENT_NOT_FOUND' }
+            );
+        }
+        let realSource: string;
+        try {
+            realSource = await fs.realpath(sourceResolved);
+        } catch {
+            // source 目录本身无法解析（不存在等）时按词法路径比较，后续 readJson 自会报错
+            realSource = sourceResolved;
+        }
+        if (!realFilePath.startsWith(realSource + path.sep)) {
+            throw new CliError(
+                `Security Error: Path traversal detected in component name "${name}".`,
+                { code: 'PATH_UNSAFE', exitCode: 2 }
+            );
+        }
+        const data = await fs.readJson(realFilePath);
 
         validateRegistryItem(data, { name });
         verifyRegistryIntegrity(data, name);
@@ -225,11 +334,13 @@ async function fetchItemWithConditionalRequest(
 ): Promise<RegistryItem> {
     let cachedEntry: Awaited<ReturnType<typeof getCachedEntry<RegistryItem>>> = null;
     let currentRegistryVersion: string | undefined;
+    let manifestSummary: ManifestSummaryInternal | null = null;
 
     if (useCache) {
         // 离线模式下不拉 manifest（manifest 也走网络），直接读缓存。
         if (!isOfflineMode()) {
-            currentRegistryVersion = (await fetchRegistryManifestSummary(source))?.registryVersion;
+            manifestSummary = await fetchRegistryManifestSummary(source);
+            currentRegistryVersion = manifestSummary?.registryVersion;
         }
         cachedEntry = await getCachedEntry<RegistryItem>(name, source);
 
@@ -266,7 +377,20 @@ async function fetchItemWithConditionalRequest(
 
     const res = await fetchWithRetry(url, 3, headers);
     if (res.status === 304 && cachedEntry) {
-        await touchCachedEntry(name, source).catch(() => {});
+        // #117：304 只 touch 续期 timestamp 会让条目永久携带旧 registryVersion
+        // （touchCachedEntry 不重写 header），后续 versionMatch 恒 false，即使 TTL 未过期
+        // 也永远无法命中缓存分支——用 setCachedEntry 同步写入当前 registryVersion
+        // （etag/lastModified 沿用旧值）。manifest 拉取失败（currentRegistryVersion 为空）
+        // 时退回 touch，避免用 undefined 抹掉条目已有的版本绑定。
+        if (currentRegistryVersion) {
+            await setCachedEntry(name, source, cachedEntry.data, {
+                etag: cachedEntry.etag,
+                lastModified: cachedEntry.lastModified,
+                registryVersion: currentRegistryVersion,
+            }).catch(() => {});
+        } else {
+            await touchCachedEntry(name, source).catch(() => {});
+        }
         return cachedEntry.data;
     }
     if (!res.ok) {
@@ -287,6 +411,7 @@ async function fetchItemWithConditionalRequest(
     const data = await res.json() as RegistryItem;
     validateRegistryItem(data, { name });
     verifyRegistryIntegrity(data, name);
+    verifyManifestItemIntegrity(data, name, manifestSummary);
 
     if (useCache) {
         const etag = res.headers.get('etag') ?? undefined;

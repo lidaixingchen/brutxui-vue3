@@ -131,7 +131,8 @@ export function loadTrustedPublicKeys(): TrustedPublicKey[] {
  *
  * 规则（按顺序短路）：
  *   1. manifest.signature 或 manifest.keyId 缺失 → 跳过验签（debug 日志），返回 false
- *   2. manifest.integrity 缺失 → 跳过验签（debug 日志），返回 false
+ *   2. manifest.integrity 缺失 → 无法验签（warn 降级，见 #109：integrity 为必填契约，
+ *      解析层已保证拉取路径不会产出缺 integrity 的 manifest），返回 false
  *   3. trustedKeys 为空 → 跳过验签（debug 日志），返回 false
  *   4. keyId 匹配的公钥不存在 → handleSignatureFailure()
  *   5. 公钥格式错误 → handleSignatureFailure()
@@ -150,14 +151,16 @@ export function verifyManifestSignature(
     manifest: { integrity?: string; signature?: string; keyId?: string },
     trustedKeys: TrustedPublicKey[] = loadTrustedPublicKeys(),
 ): boolean {
-    // 缺失签名/完整性/信任公钥：严格模式下不得静默放行（否则删除 signature/keyId 即可绕过强制验签），
+    // 缺失签名/信任公钥：严格模式下不得静默放行（否则删除 signature/keyId 即可绕过强制验签），
     // 默认模式保持原有的跳过（debug 日志）语义。
     if (!manifest.signature || !manifest.keyId) {
         return handleSignatureFailure('Manifest is unsigned (signature/keyId missing). Strict signature mode requires a signed manifest.', 'debug');
     }
 
+    // #109：integrity 为必填契约，缺 integrity 无法验签不再是预期内的跳过（debug），
+    // 而是需要用户知晓的降级（默认 warn；严格模式抛 REGISTRY_SIGNATURE_INVALID）。
     if (!manifest.integrity) {
-        return handleSignatureFailure('Manifest has signature but no integrity field, cannot verify. Strict signature mode requires an integrity field.', 'debug');
+        return handleSignatureFailure('Manifest has signature but no integrity field, cannot verify.');
     }
 
     if (trustedKeys.length === 0) {
@@ -198,7 +201,7 @@ export function verifyManifestSignature(
         }
         return true;
     } catch (error) {
-        if (error instanceof CliError) throw error;
+        // crypto.verify 只抛通用 Error——统一走降级路径（warn / 严格模式抛 REGISTRY_SIGNATURE_INVALID）
         return handleSignatureFailure(
             `Manifest signature verification failed: ${error instanceof Error ? error.message : String(error)}`,
         );
@@ -208,6 +211,8 @@ export function verifyManifestSignature(
 /**
  * 已签名 manifest 的字段子集（供 integrity 复算 + 验签）。
  * name/schemaVersion/registryVersion/items 由 build 侧写入，用于复算 integrity。
+ * integrity 保持可选：输入是运行时 JSON 解析值（未定型时是诚实的），
+ * 解析层（registry.ts fetchRegistryManifestSummary）已保证拉取路径的 integrity 必填契约。
  */
 export interface SignedManifestVerifyInput {
     name?: unknown;
@@ -256,7 +261,8 @@ function recomputeManifestIntegrity(manifest: SignedManifestVerifyInput): string
  *
  * 规则（短路顺序）：
  *   1. 未签名（缺 signature/keyId）→ 交给 verifyManifestSignature 跳过（向后兼容旧 registry）
- *   2. 缺 integrity → 交给 verifyManifestSignature（保留原有"无法验证"跳过语义）
+ *   2. 缺 integrity → 交给 verifyManifestSignature，由 handleSignatureFailure 处理
+ *      （#109：integrity 为必填契约，缺 integrity 无法验签走 warn 降级，不再 debug 跳过）
  *   3. trustedKeys 为空 → 跳过（用户未配置任何信任公钥，不强制校验）
  *   4. 复算 integrity 与 manifest.integrity 不一致 → handleSignatureFailure()
  *   5. 剩余校验（keyId 匹配、公钥解析、签名验证）→ 交给 verifyManifestSignature
@@ -267,7 +273,8 @@ export function verifyManifestIntegrityAndSignature(
     manifest: SignedManifestVerifyInput,
     trustedKeys: TrustedPublicKey[] = loadTrustedPublicKeys(),
 ): boolean {
-    // 未签名 / 缺 integrity / 无信任公钥 → 保留原有跳过语义（不额外校验）
+    // 未签名 / 缺 integrity / 无信任公钥 → 交给 verifyManifestSignature 处理
+    // （缺 integrity 由 handleSignatureFailure 走 warn 降级，见 #109）
     if (!manifest.signature || !manifest.keyId || !manifest.integrity) {
         return verifyManifestSignature(manifest, trustedKeys);
     }
