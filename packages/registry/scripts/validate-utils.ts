@@ -702,8 +702,8 @@ function compareStringArrays(
     errors: string[],
     itemName: string,
     fieldName: 'dependencies' | 'registryDependencies' | 'examples',
-    manifestValues: string[],
-    indexValues: string[]
+    manifestValues: readonly string[],
+    indexValues: readonly string[]
 ): void {
     const sortedManifestValues = [...manifestValues].sort()
     const sortedIndexValues = [...indexValues].sort()
