@@ -21,7 +21,6 @@ const AUTO_GEN_HEADER = `/**
 `;
 
 const TEST_FILE_PATTERN = /\.(test|spec)\.(ts|js|tsx|jsx)$/;
-const BROWSER_TEST_PATTERN = /\.browser\.test\.(ts|js)$/;
 const SKIP_FILES = new Set(['index.ts']);
 
 function vueFileNameToExportName(fileName: string): string {
@@ -58,10 +57,21 @@ export function buildComponentIndexContent(files: string[]): string {
     const lines: string[] = [AUTO_GEN_HEADER];
 
     const sortedFiles = [...files].sort();
+    // 同名 `.vue` 与 `.ts` 会产生重叠导出（Button.vue → export { default as Button }，
+    // Button.ts → export *，其具名导出可能与 Button 重名造成 TS2308），生成前检测并告警
+    const seenBaseNames = new Set<string>();
+
     for (const file of sortedFiles) {
         if (SKIP_FILES.has(file)) continue;
         if (TEST_FILE_PATTERN.test(file)) continue;
-        if (BROWSER_TEST_PATTERN.test(file)) continue;
+
+        if (file.endsWith('.vue') || file.endsWith('.ts')) {
+            const baseName = file.replace(/\.(vue|ts)$/, '');
+            if (seenBaseNames.has(baseName)) {
+                console.warn(`[buildComponentIndexContent] Ambiguous exports: "${file}" shares the base name "${baseName}" with another file. Rename one of them to avoid duplicate or overlapping exports.`);
+            }
+            seenBaseNames.add(baseName);
+        }
 
         if (file.endsWith('.vue')) {
             const exportName = vueFileNameToExportName(file);
@@ -69,6 +79,10 @@ export function buildComponentIndexContent(files: string[]): string {
             lines.push(`export type * from './${file}'`);
         } else if (file.endsWith('.ts')) {
             lines.push(`export * from '${tsFileNameToModuleSpec(file)}'`);
+        } else if (file.endsWith('.css')) {
+            // 有意跳过：副作用导入由 vite 处理
+        } else {
+            console.warn(`[buildComponentIndexContent] Skipping unrecognized file: ${file}`);
         }
     }
 

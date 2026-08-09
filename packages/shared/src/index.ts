@@ -23,6 +23,8 @@ export type {
 } from './registry.js';
 export {
     REGISTRY_FILE_TYPES,
+    REGISTRY_ITEM_SCHEMA_URL,
+    RegistryIntegrityMismatchError,
     computeRegistryIntegrity,
     computeRegistryManifestIntegrity,
     validateRegistryIntegrity,

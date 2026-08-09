@@ -13,6 +13,14 @@
 
 export type ThemeMode = 'light' | 'dark';
 
+/**
+ * 原始色板：black/yellow 作为品牌基础色供特殊场景直接引用（如原始色值输出）。
+ * 与主题语义令牌（border/fg/accent 等）重合时统一引用此处的单一事实来源，
+ * 避免调整主题色时多处置放导致漂移。
+ */
+const PALETTE_BLACK = '#000000';
+const PALETTE_YELLOW = '#FFE66D';
+
 export interface ThemeTokens {
     borderWidth: string;
     borderColor: string;
@@ -44,39 +52,39 @@ export interface ThemeTokens {
     yellow: string;
 }
 
-export const BASE_THEME: Record<ThemeMode, ThemeTokens> = {
-    light: {
+export const BASE_THEME: Readonly<Record<ThemeMode, Readonly<ThemeTokens>>> = Object.freeze({
+    light: Object.freeze({
         borderWidth: '3px',
-        borderColor: '#000000',
+        borderColor: PALETTE_BLACK,
         shadowOffsetX: '4px',
         shadowOffsetY: '4px',
-        shadowColor: '#000000',
+        shadowColor: PALETTE_BLACK,
         radius: '0px',
         pressedOffset: '2px',
         bg: '#ffffff',
-        fg: '#000000',
+        fg: PALETTE_BLACK,
         primary: '#FF6B6B',
-        primaryForeground: '#000000',
+        primaryForeground: PALETTE_BLACK,
         secondary: '#4ECDC4',
-        secondaryForeground: '#000000',
-        accent: '#FFE66D',
-        accentForeground: '#000000',
+        secondaryForeground: PALETTE_BLACK,
+        accent: PALETTE_YELLOW,
+        accentForeground: PALETTE_BLACK,
         destructive: '#EF476F',
         destructiveForeground: '#ffffff',
         success: '#7FB069',
-        successForeground: '#000000',
+        successForeground: PALETTE_BLACK,
         muted: '#f3f4f6',
         mutedForeground: '#4B5563',
-        ring: '#000000',
+        ring: PALETTE_BLACK,
         info: '#4A90D9',
         // 黑字对比度 6.28:1 满足 WCAG AA（4.5:1），与 primary/secondary 黑字风格一致
-        infoForeground: '#000000',
+        infoForeground: PALETTE_BLACK,
         overlay: 'rgba(0, 0, 0, 0.5)',
         placeholder: '#9CA3AF',
-        black: '#000000',
-        yellow: '#FFE66D',
-    },
-    dark: {
+        black: PALETTE_BLACK,
+        yellow: PALETTE_YELLOW,
+    }),
+    dark: Object.freeze({
         borderWidth: '3px',
         borderColor: '#ffffff',
         shadowOffsetX: '4px',
@@ -87,27 +95,27 @@ export const BASE_THEME: Record<ThemeMode, ThemeTokens> = {
         bg: '#141414',
         fg: '#ffffff',
         primary: '#FF6B6B',
-        primaryForeground: '#000000',
+        primaryForeground: PALETTE_BLACK,
         secondary: '#4ECDC4',
-        secondaryForeground: '#000000',
-        accent: '#FFE66D',
-        accentForeground: '#000000',
+        secondaryForeground: PALETTE_BLACK,
+        accent: PALETTE_YELLOW,
+        accentForeground: PALETTE_BLACK,
         destructive: '#EF476F',
         destructiveForeground: '#ffffff',
         success: '#7FB069',
-        successForeground: '#000000',
+        successForeground: PALETTE_BLACK,
         muted: '#1e1e1e',
         mutedForeground: '#9CA3AF',
         ring: '#ffffff',
         info: '#3B82F6',
         // 黑字对比度 5.71:1 满足 WCAG AA（4.5:1）
-        infoForeground: '#000000',
+        infoForeground: PALETTE_BLACK,
         overlay: 'rgba(0, 0, 0, 0.7)',
         placeholder: '#6B7280',
-        black: '#000000',
-        yellow: '#FFE66D',
-    },
-};
+        black: PALETTE_BLACK,
+        yellow: PALETTE_YELLOW,
+    }),
+});
 
 const TOKEN_TO_CSS_VAR: Record<keyof ThemeTokens, string> = {
     borderWidth: 'brutal-border-width',
@@ -143,7 +151,12 @@ const TOKEN_TO_CSS_VAR: Record<keyof ThemeTokens, string> = {
 export function toCssVars(tokens: ThemeTokens): Record<string, string> {
     const result: Record<string, string> = {};
     for (const key of Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>) {
-        result[TOKEN_TO_CSS_VAR[key]] = tokens[key];
+        const value = tokens[key];
+        if (value === undefined) {
+            // 缺值会静默产出 "--brutal-*: undefined" 的脏样式，显式抛错暴露调用方数据问题
+            throw new Error(`Missing design token value for key: ${key}`);
+        }
+        result[TOKEN_TO_CSS_VAR[key]] = value;
     }
     return result;
 }

@@ -92,14 +92,20 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     transfer: 'form',
     'tree-select': 'form',
     'tree-view': 'data-display',
+    'typewriter-text': 'visual-effect',
+    'glitch-text': 'visual-effect',
     upload: 'form',
     'virtual-scroll': 'utility',
     watermark: 'utility',
 };
 
-export const COMPONENT_METADATA: Record<string, ComponentMetadataEntry> = createComponentMetadata();
-export const AVAILABLE_COMPONENTS = Object.keys(COMPONENT_METADATA);
-export const COMPONENTS_BY_CATEGORY: Record<ComponentCategory, string[]> = createComponentsByCategory();
+/**
+ * 元数据导出均为只读（Object.freeze + Readonly 类型），
+ * 防止运行时篡改破坏元数据与分类分组（COMPONENTS_BY_CATEGORY）之间的一致性。
+ */
+export const COMPONENT_METADATA: Readonly<Record<string, ComponentMetadataEntry>> = Object.freeze(createComponentMetadata());
+export const AVAILABLE_COMPONENTS: readonly string[] = Object.freeze(Object.keys(COMPONENT_METADATA));
+export const COMPONENTS_BY_CATEGORY: Readonly<Record<ComponentCategory, readonly string[]>> = Object.freeze(createComponentsByCategory());
 
 export function getComponentsByCategory(category: ComponentCategory): string[] {
     return [...COMPONENTS_BY_CATEGORY[category]];
@@ -115,7 +121,7 @@ function createComponentMetadata(): Record<string, ComponentMetadataEntry> {
             description: meta.description ?? `A highly customizable neo-brutalist ${formatTitle(name)} component built with Brutx design tokens for Vue 3.`,
             category: meta.category ?? inferCategory(name),
             examples: [...(meta.examples ?? [])],
-            dependencies: [...meta.dependencies],
+            dependencies: [...(meta.dependencies ?? [])],
             status: meta.status,
             replacement: meta.replacement,
             sidebarGroup: meta.sidebarGroup,
@@ -148,9 +154,9 @@ function inferCategory(name: string): ComponentCategory {
         return 'layout';
     }
 
-    if (name.includes('glitch') || name.includes('scratch') || name.includes('noise') || name.includes('typewriter')) {
-        return 'visual-effect';
-    }
+    // 新增组件必须显式登记在 CATEGORY_OVERRIDES 或命中上述后缀规则；
+    // 落到默认分类通常意味着漏登记，开发期告警以便及早发现（防止静默归入 utility）
+    console.warn(`[component-metadata] Component "${name}" has no explicit category — falling back to "utility". Register it in CATEGORY_OVERRIDES (packages/shared/src/component-metadata.ts) if a different category is intended.`);
 
     return 'utility';
 }
