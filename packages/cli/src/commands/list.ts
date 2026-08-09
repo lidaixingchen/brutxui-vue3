@@ -15,7 +15,7 @@ async function attachUpdateInfo(
     return Promise.all(infos.map(async (info) => {
         // 显式请求 --check-updates 但缺少本地 integrity（旧版本/手工编辑的 manifest）：
         // 如实写入 updateCheckError，表格显示 'unknown'，避免用户误以为根本没执行检查
-        if (!info.installedIntegrity) {
+        if (!info.integrity) {
             return {
                 ...info,
                 updateCheckError: 'missing installed integrity, cannot compare',
@@ -34,7 +34,7 @@ async function attachUpdateInfo(
             return {
                 ...info,
                 latestIntegrity: latest.integrity,
-                updateAvailable: latest.integrity !== info.installedIntegrity,
+                updateAvailable: latest.integrity !== info.integrity,
             };
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
@@ -115,7 +115,7 @@ function printTable(infos: InstalledComponentInfo[], showUpdates: boolean): void
         const update = formatUpdate(info);
         const updateStr = info.updateAvailable ? chalk.yellow(update.padEnd(updateWidth)) : update.padEnd(updateWidth);
         const updateColumn = showUpdates ? updateStr : '';
-        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.fileCount).padEnd(filesWidth)}${categoryStr}${statusStr}${versionStr}${sourceStr}${updateColumn}${depsStr}`);
+        logger.log(`  ${info.name.padEnd(nameWidth)}${String(info.files.length).padEnd(filesWidth)}${categoryStr}${statusStr}${versionStr}${sourceStr}${updateColumn}${depsStr}`);
     }
 
     logger.newLine();
@@ -157,7 +157,13 @@ async function listInner(options: ListOptions, cwd: string): Promise<void> {
     }
 
     if (options.json) {
-        console.log(JSON.stringify(infos, null, 2));
+        // #107：fileCount 已从类型层移除（恒等于 files.length），JSON 输出仍保留该键
+        // 以便下游消费者继续读取——输出契约保持不变，仅改为读取时派生
+        const output = infos.map((info) => ({
+            ...info,
+            fileCount: info.files.length,
+        }));
+        console.log(JSON.stringify(output, null, 2));
         return;
     }
 

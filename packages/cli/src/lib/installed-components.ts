@@ -133,7 +133,6 @@ async function getScannedComponentNames(componentsPath: string): Promise<string[
 interface ComponentScanBase {
     name: string;
     files: string[];
-    fileCount: number;
     dependencies: string[];
 }
 
@@ -154,7 +153,7 @@ function withManifestDefaults(
         replacement: manifestEntry?.replacement,
         registryDependencies: manifestEntry?.registryDependencies,
         registrySource: manifestEntry?.registrySource,
-        installedIntegrity: manifestEntry?.integrity,
+        integrity: manifestEntry?.integrity,
         installedAt: manifestEntry?.installedAt,
         manifestFiles: manifestEntry?.files,
         managed: manifestEntry !== undefined,
@@ -167,7 +166,6 @@ function createManifestInfo(entry: InstalledComponentManifest): InstalledCompone
             {
                 name: entry.name,
                 files: entry.files,
-                fileCount: entry.files.length,
                 dependencies: entry.dependencies,
             },
             entry,
@@ -210,7 +208,7 @@ export async function getInstalledComponentInfos(cwd: string, config: BrutalistC
 
             const dependencies = await extractDependencies(componentDir);
             return withManifestDefaults(
-                { name, files, fileCount: files.length, dependencies },
+                { name, files, dependencies },
                 manifestEntry,
             );
         } catch (error) {

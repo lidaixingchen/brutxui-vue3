@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import { computeRegistryIntegrity } from 'brutx-shared-vue';
+import { MANIFEST_VERSION } from './types.js';
 import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
 import type { FileTransaction } from './file-transaction.js';
 
@@ -119,7 +120,7 @@ function validateManifest(value: unknown): BrutxManifest {
         throw new Error('Invalid manifest: expected an object.');
     }
 
-    if (value.version !== 1) {
+    if (value.version !== MANIFEST_VERSION) {
         throw new Error('Invalid manifest: unsupported version.');
     }
 
@@ -133,14 +134,14 @@ function validateManifest(value: unknown): BrutxManifest {
     }
 
     return {
-        version: 1,
+        version: MANIFEST_VERSION,
         components,
     };
 }
 
 function createEmptyManifest(): BrutxManifest {
     return {
-        version: 1,
+        version: MANIFEST_VERSION,
         components: {},
     };
 }

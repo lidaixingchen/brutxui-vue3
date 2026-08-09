@@ -195,7 +195,7 @@ describe('list command', () => {
 
             expect(button.managed).toBe(true);
             expect(button.registrySource).toBe('https://example.test/registry');
-            expect(button.installedIntegrity).toBe('sha256-button');
+            expect(button.integrity).toBe('sha256-button');
             expect(button.installedAt).toBe('2026-07-07T00:00:00.000Z');
             expect(button.dependencies).toEqual(['vue']);
             expect(button.registryDependencies).toEqual(['primitive']);
@@ -240,7 +240,7 @@ describe('list command', () => {
                 category: 'action',
                 examples: ['button-demo'],
                 registrySource: 'https://example.test/registry',
-                installedIntegrity: 'sha256-button',
+                integrity: 'sha256-button',
                 installedAt: '2026-07-07T00:00:00.000Z',
                 manifestFiles: ['src/components/button/Button.vue'],
                 managed: true,

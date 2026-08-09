@@ -1,4 +1,4 @@
-import type { RegistryFile, RegistryItem } from 'brutx-shared-vue';
+import type { RegistryItem } from 'brutx-shared-vue';
 
 export type ProjectType =
     | 'vite-vue'
@@ -30,9 +30,22 @@ export interface TsConfig {
     };
 }
 
+/**
+ * 路径别名配置（components.json 的 aliases 字段，P0-1）。
+ *
+ * 路径语义约定：
+ * - 推荐写法为 `@/` 或 `~/` 前缀别名（如默认值 '@/components'、'@/lib/utils'），
+ *   由 resolveAliasPath 依据 tsconfig paths 或项目类型（src/ 根）解析；
+ * - 也支持相对项目根的普通路径（如 'src/components'），此时直接相对 cwd 解析；
+ * - 禁止通配符（`*`）与绝对路径（`/` 开头）：仅 tsconfig paths 的 key 侧使用 `*`，
+ *   本字段为字面别名值，解析结果必须落在项目目录内，否则 resolveAliasPath 抛错。
+ */
 export interface AliasConfig {
+    /** 组件目录别名，如 '@/components' */
     components: string;
+    /** 工具函数目录别名，如 '@/lib/utils' */
     utils: string;
+    /** 组合式函数目录别名，如 '@/composables' */
     composables: string;
 }
 
@@ -97,109 +110,112 @@ export interface CreateOptions {
     yes?: boolean;
 }
 
-export interface AddOptions {
+/**
+ * 各命令共享的 CLI 选项基础接口（单一来源）。
+ * cwd/silent/registry/cache/offline/json/dryRun 等公共字段在此声明一次，
+ * 命令特有字段在各命令接口中声明并 extends 本接口，避免逐命令重复导致漂移。
+ */
+export interface BaseCommandOptions {
+    /** 工作目录，默认 process.cwd() */
+    cwd?: string;
+    /** 静默模式：抑制输出与交互提示 */
+    silent?: boolean;
+    /** registry 源覆盖（HTTP URL 或本地目录路径） */
+    registry?: string;
+    /** 是否使用缓存（默认 true；false 时强制直连 registry） */
+    cache?: boolean;
+    /** 离线模式：只读缓存、禁止网络请求 */
+    offline?: boolean;
+    /** JSON 结构化输出 */
+    json?: boolean;
+    /** 演练模式：模拟执行但不实际写入磁盘 */
+    dryRun?: boolean;
+}
+
+export interface AddOptions extends BaseCommandOptions {
     all?: boolean;
     overwrite?: boolean;
     path?: string;
-    cwd?: string;
     yes?: boolean;
-    silent?: boolean;
-    dryRun?: boolean;
-    registry?: string;
     vscode?: boolean;
-    cache?: boolean;
-    offline?: boolean;
 }
 
-export type { RegistryFile, RegistryItem };
+export type { RegistryItem };
 
-export interface DoctorOptions {
-    cwd?: string;
+export interface DoctorOptions extends BaseCommandOptions {
     fix?: boolean;
-    json?: boolean;
-    silent?: boolean;
     yes?: boolean;
     fixOnly?: string;
-    offline?: boolean;
     /** 生成用户项目 SBOM（CycloneDX 格式）后退出，不运行常规检查 */
     sbom?: boolean;
     /** SBOM 输出文件路径，默认 ./brutx-sbom.json */
     sbomOutput?: string;
 }
 
-export interface DiffOptions {
+export interface DiffOptions extends BaseCommandOptions {
     components?: string[];
     all?: boolean;
-    cwd?: string;
-    registry?: string;
-    json?: boolean;
-    silent?: boolean;
-    cache?: boolean;
-    offline?: boolean;
 }
 
-export interface UpdateOptions {
+export interface UpdateOptions extends BaseCommandOptions {
     components?: string[];
     all?: boolean;
-    cwd?: string;
     yes?: boolean;
-    silent?: boolean;
-    dryRun?: boolean;
-    registry?: string;
-    cache?: boolean;
     acrossVersions?: boolean;
-    offline?: boolean;
 }
 
-export interface ListOptions {
-    cwd?: string;
-    json?: boolean;
-    silent?: boolean;
-    registry?: string;
+export interface ListOptions extends BaseCommandOptions {
     checkUpdates?: boolean;
-    cache?: boolean;
-    offline?: boolean;
 }
 
-export interface InfoOptions {
-    cwd?: string;
-    json?: boolean;
-    silent?: boolean;
-    registry?: string;
-    offline?: boolean;
-}
+/** info 命令选项：无特有字段，直接复用公共选项 */
+export type InfoOptions = BaseCommandOptions;
 
-export interface RemoveOptions {
-    cwd?: string;
+export interface RemoveOptions extends BaseCommandOptions {
     yes?: boolean;
-    silent?: boolean;
-    dryRun?: boolean;
-    cache?: boolean;
 }
 
-export interface InstalledComponentInfo {
+/**
+ * 从 InstalledComponentManifest（单一事实来源）派生的、Info 消费的字段子集。
+ * 本地手工组件可能无 manifest 记录，故共享字段在 Info 中一律可选（Partial 化）；
+ * 新增 Manifest 字段且 Info 需要消费时，扩展本 Pick 而非在 Info 中重复声明，
+ * 避免两处并行结构字段漂移（字段名与必填性以 Manifest 为准）。
+ */
+type ManifestInfoFields = Pick<
+    InstalledComponentManifest,
+    | 'registrySource'
+    | 'integrity'
+    | 'installedAt'
+    | 'category'
+    | 'examples'
+    | 'status'
+    | 'replacement'
+    | 'registryDependencies'
+    | 'version'
+>;
+
+export interface InstalledComponentInfo extends Partial<ManifestInfoFields> {
     name: string;
     files: string[];
-    fileCount: number;
     dependencies: string[];
-    category?: RegistryItem['category'];
-    examples?: string[];
-    status?: RegistryItem['status'];
-    replacement?: string;
-    registryDependencies?: string[];
-    registrySource?: string;
-    installedIntegrity?: string;
     latestIntegrity?: string;
     updateAvailable?: boolean;
     updateCheckError?: string;
-    installedAt?: string;
     manifestFiles?: string[];
     managed?: boolean;
-    version?: string;
 }
 
+/**
+ * 当前受支持的 .brutx/manifest.json 版本。
+ * 新增版本时同步扩展 ManifestVersion 联合，并在 manifest.ts 解析层实现对应迁移/校验。
+ */
+export const MANIFEST_VERSION = 1 as const;
+
+/** 受支持的 manifest 版本（字面量联合，随 MANIFEST_VERSION 演进）。 */
+export type ManifestVersion = typeof MANIFEST_VERSION;
+
 export interface BrutxManifest {
-    version: 1;
+    version: ManifestVersion;
     components: Record<string, InstalledComponentManifest>;
 }
 
@@ -268,9 +284,10 @@ export interface DiffResult {
 /**
  * registry-manifest.json 的摘要（CLI 侧消费的字段子集）。
  * 用于缓存版本绑定：registry 版本变化时旧缓存条目自动跳过。
- * integrity 字段为 manifest 自身完整性哈希（v2.2 补强），CLI 拉取后必须先校验。
+ * integrity 为必填契约：manifest 自身完整性哈希（v2.2 补强），
+ * CLI 拉取后必须先校验，缺失即视为无效 manifest（解析层降级为不信任）。
  */
 export interface RegistryManifestSummary {
     registryVersion: string;
-    integrity?: string;
+    integrity: string;
 }
