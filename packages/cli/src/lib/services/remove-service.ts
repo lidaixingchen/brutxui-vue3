@@ -10,6 +10,10 @@ import { logger } from '../logger.js';
 
 const SCRIPT_EXTENSIONS = ['.ts', '.js', '.mts', '.mjs'] as const;
 const COMPONENT_FILE_EXTENSIONS = [...SCRIPT_EXTENSIONS, '.vue', '.tsx', '.jsx'] as const;
+/** 声明文件后缀需整体剥离：`foo.d.ts` 不能被常规 `.ts` 剥离成 `foo.d`。 */
+const DECLARATION_FILE_SUFFIXES = ['.d.ts', '.d.mts', '.d.cts'] as const;
+/** 引用判定并发批量大小：避免一次打开过多文件句柄。 */
+const REFERENCE_CHECK_BATCH_SIZE = 10;
 
 export interface RemovePreparation {
     installed: string[];
@@ -65,6 +69,14 @@ function stripAliasPrefix(specifier: string, aliasDir: string): string | null {
 /** 规范化 import specifier：去查询串、扩展名与尾部 /index，便于跨形式比较。 */
 function normalizeImportTarget(specifier: string): string {
     let result = specifier.split(/[?#]/)[0];
+    // 声明后缀整体优先剥离：`foo.d.ts` → `foo`，与源码 `@/types/foo` 的无扩展名形式对齐，
+    // 避免先被常规 `.ts` 截断成 `foo.d` 导致声明文件被误判为未被引用
+    for (const suffix of DECLARATION_FILE_SUFFIXES) {
+        if (result.endsWith(suffix)) {
+            result = result.slice(0, -suffix.length);
+            break;
+        }
+    }
     for (const ext of COMPONENT_FILE_EXTENSIONS) {
         if (result.endsWith(ext)) {
             result = result.slice(0, -ext.length);
@@ -110,11 +122,55 @@ async function resolveAliasDirs(cwd: string, config: BrutalistConfig, components
     return entries;
 }
 
-/** 把以 importer 组件目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
-async function resolveRelativeImport(componentsPath: string, importerComponent: string, specifier: string): Promise<string | null> {
-    const baseDir = path.join(componentsPath, importerComponent);
-    const candidate = path.resolve(baseDir, specifier);
-    if (await fs.pathExists(candidate)) {
+/**
+ * 组件间 import 图：specifier → 组件名集合（#102 依赖检查、孤立判定共用）。
+ * 相对导入额外记录 importer 文件路径集合：其解析基准是 importer 实际文件所在目录，
+ * 而非组件根目录（#B）。
+ */
+interface ImportGraph {
+    /** import specifier → 发起该 import 的组件名集合 */
+    byComponent: Map<string, Set<string>>;
+    /** 相对 import specifier → 发起该 import 的文件绝对路径集合 */
+    byImporterFile: Map<string, Set<string>>;
+}
+
+/** 由 importer 文件绝对路径推导所属组件名（componentsPath 下第一层目录）；不在组件目录内时返回 null。 */
+function importerComponentName(componentsPath: string, importerFile: string): string | null {
+    const relative = path.relative(componentsPath, importerFile);
+    if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative)) {
+        return null;
+    }
+    return relative.split(path.sep)[0];
+}
+
+/** 相对 import 解析结果缓存：结果只取决于 (importerFile, specifier)，组件路径固定时进程内稳定（#D）。 */
+const relativeImportResolveCache = new Map<string, Map<string, Promise<string | null>>>();
+
+/** 把以 importer 文件所在目录为基准的相对 import 解析为绝对路径，无法解析时返回 null。 */
+function resolveRelativeImport(importerFile: string, specifier: string): Promise<string | null> {
+    let importerEntries = relativeImportResolveCache.get(importerFile);
+    if (!importerEntries) {
+        importerEntries = new Map<string, Promise<string | null>>();
+        relativeImportResolveCache.set(importerFile, importerEntries);
+    }
+    const cached = importerEntries.get(specifier);
+    if (cached) {
+        return cached;
+    }
+    const promise = resolveRelativeImportUncached(importerFile, specifier);
+    importerEntries.set(specifier, promise);
+    return promise;
+}
+
+async function resolveRelativeImportUncached(importerFile: string, specifier: string): Promise<string | null> {
+    const candidate = path.resolve(path.dirname(importerFile), specifier);
+    const stat = await fs.stat(candidate).catch(() => null);
+    if (stat !== null) {
+        if (stat.isDirectory()) {
+            // 目录导入（`./shared` 指向 shared/index.*）：先判断目录，避免把目录路径
+            // 直接当解析结果与目标文件比较（pathExists 对目录返回 true 会短路）
+            return resolveScriptFile(candidate, 'index');
+        }
         return candidate;
     }
     return resolveScriptFile(path.dirname(candidate), path.basename(candidate));
@@ -129,23 +185,33 @@ async function isReferencedByRemainingComponents(
     absoluteFile: string,
     aliasDirs: AliasDirEntry[],
     componentsPath: string,
-    importMap: Map<string, Set<string>>,
+    importGraph: ImportGraph,
     remainingComponents: Set<string>
 ): Promise<boolean> {
-    const fileTargets = new Set<string>();
-    for (const { absDir } of aliasDirs) {
+    // 以 aliasDir 为维度存储规范化目标（#C）：`composables/index` 与 `@/components/index`
+    // 规范化后同为 `index`，合并进同一 Set 会丢失 alias 身份造成误匹配，孤立清理被静默跳过
+    const fileTargets = new Map<string, Set<string>>();
+    for (const { aliasDir, absDir } of aliasDirs) {
         const rel = path.relative(absDir, absoluteFile);
         if (rel === '' || rel.startsWith('..') || path.isAbsolute(rel)) continue;
-        fileTargets.add(normalizeImportTarget(rel.split(path.sep).join('/')));
+        if (!fileTargets.has(aliasDir)) {
+            fileTargets.set(aliasDir, new Set());
+        }
+        fileTargets.get(aliasDir)!.add(normalizeImportTarget(rel.split(path.sep).join('/')));
     }
 
-    for (const [specifier, importers] of importMap) {
+    for (const [specifier, importers] of importGraph.byComponent) {
         if (![...importers].some(importer => remainingComponents.has(importer))) continue;
 
         if (specifier.startsWith('.')) {
-            for (const importer of importers) {
-                if (!remainingComponents.has(importer)) continue;
-                const resolved = await resolveRelativeImport(componentsPath, importer, specifier);
+            const importerFiles = importGraph.byImporterFile.get(specifier);
+            if (!importerFiles) continue;
+            for (const importerFile of importerFiles) {
+                // 相对导入按 importer 实际文件所在目录解析（#B），
+                // 归属组件由文件路径推导，限定 remaining 组件内的 importer
+                const componentName = importerComponentName(componentsPath, importerFile);
+                if (componentName === null || !remainingComponents.has(componentName)) continue;
+                const resolved = await resolveRelativeImport(importerFile, specifier);
                 if (resolved !== null && path.resolve(resolved) === path.resolve(absoluteFile)) {
                     return true;
                 }
@@ -156,7 +222,8 @@ async function isReferencedByRemainingComponents(
         for (const { aliasDir } of aliasDirs) {
             const stripped = stripAliasPrefix(specifier, aliasDir);
             if (stripped === null) continue;
-            if (fileTargets.has(normalizeImportTarget(stripped))) {
+            // 限定同一 alias 域内比较（stripAliasPrefix 已按 aliasDir 剥离，配对自然成立）
+            if (fileTargets.get(aliasDir)?.has(normalizeImportTarget(stripped))) {
                 return true;
             }
         }
@@ -171,7 +238,7 @@ async function findManifestKnownFiles(
     manifest: BrutxManifest | null,
     removedComponents: string[],
     remainingComponents: string[],
-    importMap: Map<string, Set<string>>
+    importGraph: ImportGraph
 ): Promise<string[]> {
     if (!manifest) {
         return [];
@@ -184,8 +251,10 @@ async function findManifestKnownFiles(
     const removedComponentDirs = removedComponents.map(component => path.join(componentsPath, component));
     const remainingSet = new Set(remainingComponents);
     const aliasDirs = await resolveAliasDirs(cwd, config, componentsPath);
-    const knownFiles: string[] = [];
 
+    // 先收集通过前置安全检查的候选文件，再小批量并发执行引用判定（#D），
+    // 避免逐文件串行等待 import 图磁盘 IO
+    const candidateFiles: string[] = [];
     for (const component of removedComponents) {
         const entry = manifest.components[component];
         if (!entry) continue;
@@ -197,13 +266,22 @@ async function findManifestKnownFiles(
             if (!await isSafePath(absolutePath, cwd)) continue;
             if (removedComponentDirs.some(dir => isInsideDirectory(absolutePath, dir))) continue;
             if (!await fs.pathExists(absolutePath)) continue;
+            candidateFiles.push(absolutePath);
+        }
+    }
+
+    const knownFiles: string[] = [];
+    for (let offset = 0; offset < candidateFiles.length; offset += REFERENCE_CHECK_BATCH_SIZE) {
+        const batch = candidateFiles.slice(offset, offset + REFERENCE_CHECK_BATCH_SIZE);
+        const referencedFlags = await Promise.all(
+            batch.map(file => isReferencedByRemainingComponents(file, aliasDirs, componentsPath, importGraph, remainingSet))
+        );
+        for (let i = 0; i < batch.length; i++) {
             // #103：删除前用 import 图交叉确认——若 remaining 组件仍引用该文件
             // （如工具函数被移动至共享位置后继续被引用），不判为孤立，避免引用断裂
-            if (await isReferencedByRemainingComponents(absolutePath, aliasDirs, componentsPath, importMap, remainingSet)) {
-                continue;
+            if (!referencedFlags[i]) {
+                knownFiles.push(batch[i]);
             }
-
-            knownFiles.push(absolutePath);
         }
     }
 
@@ -222,11 +300,12 @@ async function findManifestKnownFiles(
     return uniqueKnownFiles;
 }
 
-async function scanAllImports(componentsPath: string): Promise<Map<string, Set<string>>> {
-    const importMap = new Map<string, Set<string>>();
+async function scanAllImports(componentsPath: string): Promise<ImportGraph> {
+    const byComponent = new Map<string, Set<string>>();
+    const byImporterFile = new Map<string, Set<string>>();
 
     if (!await fs.pathExists(componentsPath)) {
-        return importMap;
+        return { byComponent, byImporterFile };
     }
 
     async function scanDir(dir: string, componentName: string): Promise<void> {
@@ -247,10 +326,17 @@ async function scanAllImports(componentsPath: string): Promise<Map<string, Set<s
 
             while ((match = importRegex.exec(content)) !== null) {
                 const importPath = match[1];
-                if (!importMap.has(importPath)) {
-                    importMap.set(importPath, new Set());
+                if (!byComponent.has(importPath)) {
+                    byComponent.set(importPath, new Set());
                 }
-                importMap.get(importPath)!.add(componentName);
+                byComponent.get(importPath)!.add(componentName);
+                // 相对导入按 importer 实际文件所在目录解析（#B），单独记录文件路径
+                if (importPath.startsWith('.')) {
+                    if (!byImporterFile.has(importPath)) {
+                        byImporterFile.set(importPath, new Set());
+                    }
+                    byImporterFile.get(importPath)!.add(fullPath);
+                }
             }
         }
     }
@@ -261,7 +347,7 @@ async function scanAllImports(componentsPath: string): Promise<Map<string, Set<s
         await scanDir(path.join(componentsPath, dir.name), dir.name);
     }
 
-    return importMap;
+    return { byComponent, byImporterFile };
 }
 
 async function resolveScriptFile(baseDir: string, fileName: string): Promise<string | null> {
@@ -458,18 +544,19 @@ export async function prepareRemoveComponents(
     const notFound = components.filter(c => !installed.includes(c));
     const remaining = installed.filter(c => !toRemove.includes(c));
     // 组件间 import 图只需构建一次，供依赖检查（#102）与孤立文件判定（#103）共用，
-    // 避免多次全量扫描组件目录
-    const importMap = toRemove.length > 0
+    // 避免多次全量扫描组件目录；相对导入另按 importer 文件路径记录（#B）
+    const emptyImportGraph: ImportGraph = { byComponent: new Map(), byImporterFile: new Map() };
+    const importGraph = toRemove.length > 0
         ? await scanAllImports(await resolveAliasPath(config.aliases.components, cwd))
-        : new Map<string, Set<string>>();
+        : emptyImportGraph;
     const { dependents, failures: dependencyCheckFailures } = toRemove.length > 0
-        ? await getDependents(cwd, config, toRemove, manifest, useCache, importMap)
+        ? await getDependents(cwd, config, toRemove, manifest, useCache, importGraph.byComponent)
         : { dependents: new Map<string, string[]>(), failures: [] as string[] };
     const orphanedFiles = toRemove.length > 0
         ? [
             ...new Set([
-                ...await findOrphanedFiles(cwd, config, remaining, toRemove, importMap),
-                ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining, importMap),
+                ...await findOrphanedFiles(cwd, config, remaining, toRemove, importGraph.byComponent),
+                ...await findManifestKnownFiles(cwd, config, manifest, toRemove, remaining, importGraph),
             ]),
         ]
         : [];
