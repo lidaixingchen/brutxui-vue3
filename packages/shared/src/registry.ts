@@ -1,5 +1,7 @@
 import crypto from 'node:crypto';
-import type { ComponentCategory } from './types.js';
+import { CATEGORIES, type ComponentCategory } from './types.js';
+
+export const REGISTRY_ITEM_SCHEMA_URL = 'https://ui.shadcn.com/schema/registry-item.json';
 
 export const REGISTRY_FILE_TYPES = [
     'registry:ui',
@@ -70,9 +72,32 @@ export interface ValidateRegistryItemOptions {
     requireSchema?: boolean;
 }
 
-export function computeRegistryIntegrity(files: Array<Pick<RegistryFile, 'content'>>): string {
-    const allContent = files.map(file => file.content).join('\0');
-    return 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
+/**
+ * integrity 与实际 files 内容不匹配时抛出的可辨识错误（区别于其它结构校验错误）。
+ * 消费方（如 CLI 验签链路）可据此将错误归类为完整性校验失败而不是普通数据错误。
+ */
+export class RegistryIntegrityMismatchError extends Error {
+    constructor(context: string) {
+        super(`Invalid registry data for "${context}": integrity does not match file contents.`);
+        this.name = 'RegistryIntegrityMismatchError';
+    }
+}
+
+/**
+ * 计算 registry item 的完整性哈希。
+ *
+ * 覆盖每个文件的 path/type/content 全部字段（防止互换同一 item 内不同 path 的文件内容而不被发现），
+ * 并先序列化再排序，使结果与 files 数组顺序无关（files 顺序本身无语义，重排不应触发误报）。
+ *
+ * 注意：CLI 侧对已安装文件的漂移检测哈希（computeInstalledContentHash）是与本函数
+ * 相互独立的契约（只覆盖 content），改动本算法不会影响已安装项目的 manifest。
+ */
+export function computeRegistryIntegrity(files: Array<Pick<RegistryFile, 'path' | 'type' | 'content'>>): string {
+    const serialized = files
+        .map(file => JSON.stringify([file.path, file.type, file.content]))
+        .sort()
+        .join('\n');
+    return 'sha256-' + crypto.createHash('sha256').update(serialized).digest('hex');
 }
 
 /**
@@ -126,7 +151,7 @@ export function validateRegistryItem(
         throw new Error(`Invalid registry data for "${context}": expected an object.`);
     }
 
-    if (options.requireSchema && data.$schema !== 'https://ui.shadcn.com/schema/registry-item.json') {
+    if (options.requireSchema && data.$schema !== REGISTRY_ITEM_SCHEMA_URL) {
         throw new Error(`Invalid registry data for "${context}": missing or invalid $schema.`);
     }
 
@@ -153,8 +178,23 @@ export function validateRegistryItem(
         throw new Error(`Invalid registry data for "${context}": "files" must not be empty.`);
     }
 
+    // 逐文件校验并收集（断言函数逐个收窄元素类型），同时拦截重复 path——
+    // 同一 item 出现相同 path 时下游安装会互相覆盖，且哈希无法暴露该问题
+    const files: RegistryFile[] = [];
+    const seenPaths = new Set<string>();
     for (const file of data.files) {
         validateRegistryFile(file, context);
+        if (seenPaths.has(file.path)) {
+            throw new Error(`Invalid registry data for "${context}": duplicate file path "${file.path}".`);
+        }
+        seenPaths.add(file.path);
+        files.push(file);
+    }
+
+    // 完整性自洽：integrity 必须与实际 files 内容匹配，防止调用方只做结构校验
+    // 而跳过内容校验（validateRegistryIntegrity）时被篡改数据通过
+    if (data.integrity !== computeRegistryIntegrity(files)) {
+        throw new RegistryIntegrityMismatchError(context);
     }
 }
 
@@ -197,7 +237,7 @@ function validateRegistryFile(file: unknown, context: string): asserts file is R
         throw new Error(`Invalid registry file in "${context}": expected an object.`);
     }
 
-    assertNonEmptyString(file.path, `"path"`, context, 'Invalid registry file');
+    assertSafeRegistryPath(file.path, `"path"`, context, 'Invalid registry file');
     assertNonEmptyString(file.content, `"content"`, context, 'Invalid registry file');
     assertRegistryType(file.type, `"type"`, context, 'Invalid registry file');
 }
@@ -238,7 +278,7 @@ function validateRegistryIndexFile(file: unknown, context: string): asserts file
         throw new Error(`Invalid registry index file in "${context}": expected an object.`);
     }
 
-    assertNonEmptyString(file.path, `"path"`, context, 'Invalid registry index file');
+    assertSafeRegistryPath(file.path, `"path"`, context, 'Invalid registry index file');
     assertRegistryType(file.type, `"type"`, context, 'Invalid registry index file');
 }
 
@@ -250,6 +290,19 @@ function assertNonEmptyString(
 ): asserts value is string {
     if (typeof value !== 'string' || value.length === 0) {
         throw new Error(`${prefix} for "${context}": ${field} must be a non-empty string.`);
+    }
+}
+
+function assertSafeRegistryPath(
+    value: unknown,
+    field: string,
+    context: string,
+    prefix = 'Invalid registry data'
+): asserts value is string {
+    assertNonEmptyString(value, field, context, prefix);
+    // 拒绝绝对路径与穿越路径（registry 文件最终会写入磁盘，恶意 path 可在安装侧造成路径穿越）
+    if (value.startsWith('/') || value.split('/').includes('..')) {
+        throw new Error(`${prefix} for "${context}": ${field} must be a relative path without ".." segments.`);
     }
 }
 
@@ -279,21 +332,9 @@ function assertCategory(
     context: string,
     prefix = 'Invalid registry data'
 ): asserts value is ComponentCategory | undefined {
-    const categories: ComponentCategory[] = [
-        'action',
-        'data-display',
-        'feedback',
-        'form',
-        'layout',
-        'marketing',
-        'navigation',
-        'overlay',
-        'utility',
-        'visual-effect',
-    ];
-
-    if (value !== undefined && (typeof value !== 'string' || !categories.includes(value as ComponentCategory))) {
-        throw new Error(`${prefix} for "${context}": "category" must be one of: ${categories.join(', ')}.`);
+    // 类别数组由 types.ts 的 CATEGORIES 单一来源派生，避免与类型联合重复维护而漂移
+    if (value !== undefined && (typeof value !== 'string' || !CATEGORIES.includes(value as ComponentCategory))) {
+        throw new Error(`${prefix} for "${context}": "category" must be one of: ${CATEGORIES.join(', ')}.`);
     }
 }
 

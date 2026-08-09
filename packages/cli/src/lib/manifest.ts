@@ -1,6 +1,6 @@
+import crypto from 'node:crypto';
 import fs from 'fs-extra';
 import path from 'path';
-import { computeRegistryIntegrity } from 'brutx-shared-vue';
 import { MANIFEST_VERSION } from './types.js';
 import type { BrutxManifest, InstalledComponentManifest, RegistryItem } from './types.js';
 import type { FileTransaction } from './file-transaction.js';
@@ -160,13 +160,17 @@ export function getManifestPath(cwd: string): string {
 }
 
 /**
- * 按给定绝对路径顺序读取磁盘文件内容，用 computeRegistryIntegrity 算 hash。
+ * 按给定绝对路径顺序读取磁盘文件内容，计算已安装内容的漂移检测哈希。
  * 顺序敏感：files 数组顺序必须与安装时写入磁盘的顺序一致（即 registry item.files 顺序）。
  * 此 hash 用于 doctor 漂移检测——规避 resolveImportAlias 改写磁盘内容导致
  * 磁盘 hash ≠ registry integrity 的问题。
+ *
+ * 注意：这是与 registry item 完整性哈希（computeRegistryIntegrity，覆盖 path/type/content）
+ * 相互独立的契约——漂移检测只需按内容哈希即可发现文件被修改，path/type 由 manifest
+ * 的 files 列表锁定。独立实现也保证 registry item 哈希算法演进时不会破坏既有安装项目。
  */
 export async function computeInstalledContentHash(files: string[]): Promise<string> {
-    // 文件相互独立，并行读取（数组顺序由映射结果保持，不影响 computeRegistryIntegrity 的顺序敏感）；
+    // 文件相互独立，并行读取（数组顺序由映射结果保持，不影响本函数的顺序敏感）；
     // 读取失败时带上文件路径，便于 doctor 定位具体组件而非静默跳过
     const contents = await Promise.all(files.map(async (filePath) => {
         try {
@@ -176,7 +180,8 @@ export async function computeInstalledContentHash(files: string[]): Promise<stri
             throw new Error(`Failed to read file for integrity check: ${filePath} (${detail})`, { cause: error });
         }
     }));
-    return computeRegistryIntegrity(contents.map(content => ({ content })));
+    const allContent = contents.join('\0');
+    return 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
 }
 
 export async function readManifest(cwd: string): Promise<BrutxManifest | null> {

@@ -241,7 +241,7 @@ describe('resolveDeps with mocked fetch', () => {
         expect(resolved.map(r => r.name)).toEqual(['button', 'popover', 'combobox']);
     });
 
-    it('should verify remote integrity with null-separated file contents', async () => {
+    it('should verify remote integrity with serialized path/type/content hash', async () => {
         const files = [
             { path: 'components/ui/button/Button.vue', content: 'one', type: 'registry:ui' },
             { path: 'components/ui/button/button-variants.ts', content: 'two', type: 'registry:lib' },
