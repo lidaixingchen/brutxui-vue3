@@ -2,7 +2,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import {
     RegistryIntegrityMismatchError,
-    validateRegistryIntegrity,
     validateRegistryItem,
 } from 'brutx-shared-vue';
 import type { RegistryItem, BrutalistConfig, RegistryManifestSummary, TrustedPublicKey } from './types.js';
@@ -183,17 +182,6 @@ async function fetchWithRetry(url: string, maxRetries: number = 3, headers?: Rec
     );
 }
 
-function verifyRegistryIntegrity(item: RegistryItem, name: string): void {
-    try {
-        validateRegistryIntegrity(item, name);
-    } catch (error) {
-        throw new CliError(
-            `Integrity check failed for component '${name}'. The registry content may have been tampered with.`,
-            { code: 'REGISTRY_INTEGRITY_FAILED', cause: error }
-        );
-    }
-}
-
 /**
  * 结构校验 + integrity 内容自校验（validateRegistryItem 现会校验 integrity 与 files 内容匹配）。
  * 内容不匹配是安全事件，统一归类为 REGISTRY_INTEGRITY_FAILED（而非普通数据错误）。
@@ -290,7 +278,6 @@ export async function getItem(name: string, source: string = DEFAULT_REGISTRY_UR
         const data = await fs.readJson(realFilePath);
 
         validateItemWithIntegrity(data, name);
-        verifyRegistryIntegrity(data, name);
         return data;
     }
 }
@@ -454,7 +441,6 @@ async function fetchItemWithConditionalRequest(
 
     const data = await res.json() as RegistryItem;
     validateItemWithIntegrity(data, name);
-    verifyRegistryIntegrity(data, name);
     verifyManifestItemIntegrity(data, name, manifestSummary);
 
     if (useCache) {

@@ -56,7 +56,9 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
         expect(secondRun.code, secondRun.stderr || secondRun.stdout).toBe(0);
 
         const secondCss = await fs.readFile(cssPath, 'utf-8');
-        expect(secondCss.match(/--color-brutal-bg/g)).toHaveLength(1);
+        // 第二次 init 不应重复注入：匹配次数与第一次一致（模板内含 --color-brutal-bg
+        // 定义与多处 var() 引用，断言绝对次数会随模板引用数漂移，故对比相对次数）
+        expect(secondCss.match(/--color-brutal-bg/g)!.length).toBe(firstCss.match(/--color-brutal-bg/g)!.length);
 
         const installLog = await readInstallLog(project);
         if (installLog.length > 0) {
@@ -224,7 +226,8 @@ describe('brutx-vue CLI integration', { timeout: 10000 }, () => {
         ]);
 
         expect(result.code).not.toBe(0);
-        expect(`${result.stdout}\n${result.stderr}`).toMatch(/Security Error|Malicious component file path/);
+        // getItem 阶段 validateRegistryItem 的路径校验会先于安装侧拦截穿越路径
+        expect(`${result.stdout}\n${result.stderr}`).toMatch(/Security Error|Malicious component file path|normalized relative path/);
         expect(await fs.pathExists(outsideFile)).toBe(false);
     });
 

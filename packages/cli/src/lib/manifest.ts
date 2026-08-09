@@ -168,6 +168,11 @@ export function getManifestPath(cwd: string): string {
  * 注意：这是与 registry item 完整性哈希（computeRegistryIntegrity，覆盖 path/type/content）
  * 相互独立的契约——漂移检测只需按内容哈希即可发现文件被修改，path/type 由 manifest
  * 的 files 列表锁定。独立实现也保证 registry item 哈希算法演进时不会破坏既有安装项目。
+ *
+ * BREAKING（v0.1 前）：2026-08 起由 NUL 分隔改为长度前缀自描述拼接（`${len}:${content}`），
+ * 消除内容含 NUL 字节时的边界歧义（如 ["ab\0c","d"] 与 ["ab","c\0d"] 拼接相同导致哈希碰撞）。
+ * 既有 manifest 的 installedContentHash 由旧算法生成，doctor 会报一次漂移警告，
+ * 执行 update 后以新算法重写。
  */
 export async function computeInstalledContentHash(files: string[]): Promise<string> {
     // 文件相互独立，并行读取（数组顺序由映射结果保持，不影响本函数的顺序敏感）；
@@ -180,7 +185,7 @@ export async function computeInstalledContentHash(files: string[]): Promise<stri
             throw new Error(`Failed to read file for integrity check: ${filePath} (${detail})`, { cause: error });
         }
     }));
-    const allContent = contents.join('\0');
+    const allContent = contents.map(content => `${content.length}:${content}`).join('');
     return 'sha256-' + crypto.createHash('sha256').update(allContent).digest('hex');
 }
 
