@@ -164,7 +164,9 @@ export function extractScriptBlocks(code: string): string[] {
             case 'text': {
                 const ch = code[i];
                 if (ch === '\'' || ch === '"' || ch === '`') {
-                    // 模板文本或纯 TS/JS 中的字符串字面量：整段跳过，避免其中的 `<script>` 文本被误判为标签
+                    // 模板文本或纯 TS/JS 中的字符串字面量：整段跳过，避免其中的 `<script>` 文本被误判为标签。
+                    // 已知限制：模板文本中的未闭合撇号（如 `don't`）与 `<script>` 同处一行时，撇号会与后续
+                    // script 体中的引号配对而吞掉开标签——实际 Vue SFC 中 `<script>` 几乎总独立成行，风险可忽略
                     i = skipQuotedString(code, i);
                 } else if (code.startsWith('<!--', i)) {
                     state = 'html-comment';
@@ -245,6 +247,9 @@ export function extractScriptBlocks(code: string): string[] {
 /**
  * 从 from 起 JS-aware 扫描，返回第一个不在字符串/注释内的 `</script` 索引；无则 -1。
  * 字符串字面量、`//` 行注释、块注释中的 `</script>` 均不作为闭合标签。
+ *
+ * 已知限制：正则字面量（如 `/<\/script>/`）未做特殊识别，其中的 `</script>` 会被当作闭合——
+ * 与旧实现一致（非本次引入），完整识别需区分除号与正则的上下文。
  */
 function findScriptClose(code: string, from: number): number {
     let i = from;
@@ -258,9 +263,11 @@ function findScriptClose(code: string, from: number): number {
         } else if (ch === '/' && code[i + 1] === '*') {
             const end = code.indexOf('*/', i + 2);
             i = end === -1 ? code.length : end + 2;
-        } else if (ch === '<' && code.startsWith('</script', i)) {
+        } else if (ch === '<' && code.slice(i, i + '</script'.length).toLowerCase() === '</script') {
+            // 大小写不敏感（开标签已由 tagName.toLowerCase() === 'script' 支持大写，此处对称处理）
             const after = code[i + '</script'.length] ?? '';
-            if (!/[a-zA-Z]/.test(after)) return i;
+            // `\b` 语义：script 后须为 word char（[a-zA-Z0-9_]）之外的字符，避免 `</script1>` 被误判为闭合
+            if (!/\w/.test(after)) return i;
             i += '</script'.length;
         } else {
             i += 1;

@@ -154,7 +154,8 @@ const componentLabelsZh: Record<string, string> = {
 // 开发期校验：componentLabelsZh 必须覆盖全部组件名，防止新增组件漏写 zh 标签时
 // 中文侧边栏静默退化为英文标题（本地化缺失难以被察觉）
 for (const name of Object.keys(COMPONENT_METADATA)) {
-    if (!(name in componentLabelsZh)) {
+    // Object.hasOwn 仅查自有属性，避免组件名与 Object.prototype 内置属性（如 toString）同名时误判已覆盖
+    if (!Object.hasOwn(componentLabelsZh, name)) {
         console.warn(
             `[sidebar-generator] Missing zh label for component "${name}" — zh sidebar will fall back to its English title. ` +
             'Add an entry to componentLabelsZh (packages/shared/src/sidebar-generator.ts).'

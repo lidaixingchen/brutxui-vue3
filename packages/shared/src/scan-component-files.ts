@@ -145,8 +145,14 @@ function classifyRelativeSpecifier(
     options: ScanOptions,
     importingFile: string,
 ): ClassifiedSpecifier {
-    const componentRoot = toPosix(path.join(options.componentsDir, componentName));
-    const importingDir = toPosix(path.dirname(path.join(options.componentsDir, componentName, importingFile)));
+    // 统一用 path.resolve 归一化：传入相对 componentsDir 时基于同一 cwd 转绝对，
+    // 避免 path.join（保持相对）与 path.resolve（转绝对）混用导致前缀判断整体失配
+    const componentsDir = toPosix(path.resolve(options.componentsDir));
+    const composablesDir = toPosix(path.resolve(options.composablesDir));
+    const libDir = toPosix(path.resolve(options.libDir));
+    const directivesDir = toPosix(path.resolve(options.directivesDir));
+    const componentRoot = toPosix(path.resolve(options.componentsDir, componentName));
+    const importingDir = toPosix(path.dirname(path.resolve(options.componentsDir, componentName, importingFile)));
     const resolved = toPosix(path.resolve(importingDir, specifier)).split(/[?#]/)[0];
 
     if (resolved === componentRoot || resolved.startsWith(`${componentRoot}/`)) {
@@ -154,20 +160,22 @@ function classifyRelativeSpecifier(
         return { kind: 'internal', name };
     }
 
-    // 兄弟组件：componentsDir 下的其它组件目录（当前组件已由上面的 componentRoot 分支接管）
-    if (resolved.startsWith(`${toPosix(options.componentsDir)}/`)) {
-        const rest = resolved.slice(toPosix(options.componentsDir).length + 1);
-        return { kind: 'cross-component', name: rest.split('/')[0] ?? '' };
+    // 先匹配更具体的公共目录（composables/lib/directives），再匹配兄弟组件目录——
+    // 若未来公共目录被置于 componentsDir 内部，避免被 componentsDir 分支误标为 cross-component
+    if (resolved.startsWith(`${composablesDir}/`)) {
+        return { kind: 'composable', name: relativeTo(resolved, composablesDir) };
+    }
+    if (resolved.startsWith(`${libDir}/`)) {
+        return { kind: 'lib', name: relativeTo(resolved, libDir) };
+    }
+    if (resolved.startsWith(`${directivesDir}/`)) {
+        return { kind: 'directive', name: relativeTo(resolved, directivesDir) };
     }
 
-    if (resolved.startsWith(`${toPosix(options.composablesDir)}/`)) {
-        return { kind: 'composable', name: relativeTo(resolved, options.composablesDir) };
-    }
-    if (resolved.startsWith(`${toPosix(options.libDir)}/`)) {
-        return { kind: 'lib', name: relativeTo(resolved, options.libDir) };
-    }
-    if (resolved.startsWith(`${toPosix(options.directivesDir)}/`)) {
-        return { kind: 'directive', name: relativeTo(resolved, options.directivesDir) };
+    // 兄弟组件：componentsDir 下的其它组件目录（当前组件已由上面的 componentRoot 分支接管）
+    if (resolved.startsWith(`${componentsDir}/`)) {
+        const rest = resolved.slice(componentsDir.length + 1);
+        return { kind: 'cross-component', name: rest.split('/')[0] ?? '' };
     }
 
     return { kind: 'other', name: specifier };
@@ -269,9 +277,16 @@ function scanComponent(
 const NON_COMPONENT_DIR_NAMES = new Set(['node_modules', '__tests__', '__snapshots__']);
 
 export function scanComponentFiles(options: ScanOptions): Record<string, ComponentFileManifest> {
-    // 显式校验目录存在，避免干净的 ENOENT 错误难以定位
-    if (!fs.existsSync(options.componentsDir)) {
-        throw new Error(`[scan-component-files] Components directory not found: ${options.componentsDir}`);
+    // 显式校验路径存在且为目录：existsSync 对普通文件也返回 true，但 readdirSync 会抛 ENOTDIR，
+    // 用 statSync().isDirectory() 区分「不存在」与「不是目录」，报错更清晰
+    let componentsDirIsDirectory = false;
+    try {
+        componentsDirIsDirectory = fs.statSync(options.componentsDir).isDirectory();
+    } catch {
+        // statSync 抛错说明路径不存在，保持 false
+    }
+    if (!componentsDirIsDirectory) {
+        throw new Error(`[scan-component-files] Components directory not found or is not a directory: ${options.componentsDir}`);
     }
 
     const manifest: Record<string, ComponentFileManifest> = {};
