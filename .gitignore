@@ -81,4 +81,5 @@ DEV_*.md
 
 # OCR scan reports
 .ocr-reports
+.ocr-reviews
 
