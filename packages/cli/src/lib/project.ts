@@ -6,6 +6,7 @@ import { initSync, parse as parseModuleImports } from 'es-module-lexer';
 import type { ProjectType, TsConfig, AliasConfig, PackageManager, BrutalistConfig } from './types.js';
 import { CONFIG_FILES, CSS_LOCATIONS, DEFAULT_ALIASES } from './constants.js';
 import { CliError } from './error.js';
+import { logger } from './logger.js';
 
 initSync();
 
@@ -68,8 +69,10 @@ export async function detectProjectType(cwd: string): Promise<ProjectType> {
     const packageJsonMtimeMs = await getPackageJsonMtimeMs(cwd);
     const cached = projectTypeCache.get(cwd);
     // 仅在 package.json 特征未变化时命中缓存：init 后新增 vue/nuxt 依赖或
-    // 修改 package.json 会改变 mtime，使缓存失效并重新探测
-    if (cached && cached.packageJsonMtimeMs === packageJsonMtimeMs) {
+    // 修改 package.json 会改变 mtime，使缓存失效并重新探测；
+    // package.json 始终不存在（mtime 为 null）时不启用缓存命中，与
+    // getPackageJsonMtimeMs 的语义一致
+    if (packageJsonMtimeMs !== null && cached && cached.packageJsonMtimeMs === packageJsonMtimeMs) {
         return cached.result;
     }
 
@@ -155,8 +158,8 @@ interface RawTsConfig extends TsConfig {
  * 解析 extends 指向的配置文件路径。
  * - 绝对路径或相对路径：以当前配置所在目录为基准
  * - 包名（如 @vue/tsconfig、@tsconfig/node）：先按 Node 模块解析
- *   （相对当前配置目录向上查找 node_modules），失败时退化为相对路径
- *   （与 TypeScript 的 extends fallback 语义一致）
+ *   （相对当前配置目录向上查找 node_modules），失败时输出 warn 提示并
+ *   退化为相对路径（与 TypeScript 的 extends fallback 语义一致）
  * - 路径未带扩展名时自动尝试补 .json
  * 解析失败（文件缺失）返回 null，由调用方忽略并继续。
  */
@@ -169,10 +172,14 @@ async function resolveTsConfigExtendsPath(extend: string, baseDir: string): Prom
         candidates.push(path.resolve(baseDir, extend));
     } else {
         try {
-            const requireFromBase = createRequire(path.join(baseDir, '__brutx_resolve_probe__.js'));
+            // createRequire 只需 baseDir 内任意真实路径作基准即可按该目录解析，
+            // 用 package.json 而非魔法探测文件名
+            const requireFromBase = createRequire(path.join(baseDir, 'package.json'));
             candidates.push(requireFromBase.resolve(extend));
         } catch {
-            // 包名不可解析时按相对路径退化，贴近 TypeScript 行为
+            // 包名不可解析（包不存在/未安装/未导出）时按相对路径退化，
+            // 贴近 TypeScript 行为；输出 warn 提示避免静默误判
+            logger.warn(`Unable to resolve tsconfig extends package "${extend}" from "${baseDir}", falling back to relative path resolution.`);
             candidates.push(path.resolve(baseDir, extend));
         }
     }
@@ -216,11 +223,12 @@ async function readTsConfigFile(configPath: string, visited: Set<string>): Promi
     const mergedOptions: NonNullable<TsConfig['compilerOptions']> = {};
 
     const extendsValue = parsed.extends;
-    const extendsList = typeof extendsValue === 'string'
-        ? [extendsValue]
-        : Array.isArray(extendsValue)
-            ? extendsValue
-            : undefined;
+    let extendsList: string[] | undefined;
+    if (typeof extendsValue === 'string') {
+        extendsList = [extendsValue];
+    } else if (Array.isArray(extendsValue)) {
+        extendsList = extendsValue;
+    }
     if (extendsList) {
         for (const extend of extendsList) {
             const extendPath = await resolveTsConfigExtendsPath(extend, path.dirname(configPath));

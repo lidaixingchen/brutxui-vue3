@@ -205,14 +205,14 @@ export interface InstalledComponentInfo extends Partial<ManifestInfoFields> {
     managed?: boolean;
 }
 
+/** 受支持的 manifest 版本（显式字面量联合，新增版本时手动扩展，如 `1 | 2`）。 */
+export type ManifestVersion = 1;
+
 /**
  * 当前受支持的 .brutx/manifest.json 版本。
- * 新增版本时同步扩展 ManifestVersion 联合，并在 manifest.ts 解析层实现对应迁移/校验。
+ * 类型锚定 ManifestVersion 联合：新增版本时同步扩展联合，并在 manifest.ts 解析层实现对应迁移/校验。
  */
-export const MANIFEST_VERSION = 1 as const;
-
-/** 受支持的 manifest 版本（字面量联合，随 MANIFEST_VERSION 演进）。 */
-export type ManifestVersion = typeof MANIFEST_VERSION;
+export const MANIFEST_VERSION: ManifestVersion = 1 as const;
 
 export interface BrutxManifest {
     version: ManifestVersion;
