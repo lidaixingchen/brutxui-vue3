@@ -201,7 +201,9 @@ export function verifyManifestSignature(
         }
         return true;
     } catch (error) {
-        // crypto.verify 只抛通用 Error——统一走降级路径（warn / 严格模式抛 REGISTRY_SIGNATURE_INVALID）
+        // try 内 if (!valid) 分支在严格模式会抛 CliError(REGISTRY_SIGNATURE_INVALID)，
+        // 此处透传避免被再次包装成双层消息；crypto.verify 自身的通用异常走统一降级路径
+        if (error instanceof CliError) throw error;
         return handleSignatureFailure(
             `Manifest signature verification failed: ${error instanceof Error ? error.message : String(error)}`,
         );

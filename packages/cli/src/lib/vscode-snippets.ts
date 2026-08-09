@@ -21,7 +21,7 @@ function toPascalCase(str: string): string {
     if (!KEBAB_CASE_REGEX.test(str)) {
         throw new CliError(
             `Invalid component name "${str}": expected kebab-case (e.g. "dropdown-menu").`,
-            { code: 'COMPONENT_NOT_FOUND' },
+            { code: 'INVALID_COMPONENT_NAME' },
         );
     }
     return str
@@ -352,6 +352,23 @@ export function generateSnippetsForComponents(components: string[]): string {
     return generateSnippets(components);
 }
 
+/**
+ * 统一写 VS Code snippets 文件：ensureDir + writeFile，失败包装为 WRITE_FAILED。
+ * 注意：不在此函数内生成/序列化内容——内容生成（generateSnippets 等）在调用方先行完成，
+ * 其抛出的业务错误（如 INVALID_COMPONENT_NAME）应透传，不能被包装成 WRITE_FAILED 掩盖。
+ */
+async function writeSnippetFile(snippetPath: string, content: string): Promise<void> {
+    try {
+        await fs.ensureDir(path.dirname(snippetPath));
+        await fs.writeFile(snippetPath, content, 'utf-8');
+    } catch (error) {
+        throw new CliError(
+            `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
+            { code: 'WRITE_FAILED', cause: error },
+        );
+    }
+}
+
 export async function writeSnippetsFile(
     cwd: string,
     components?: string[],
@@ -359,15 +376,10 @@ export async function writeSnippetsFile(
     const vscodeDir = path.join(cwd, '.vscode');
     const snippetPath = path.join(vscodeDir, 'brutx.code-snippets');
 
-    try {
-        await fs.ensureDir(vscodeDir);
-        await fs.writeFile(snippetPath, generateSnippets(components), 'utf-8');
-    } catch (error) {
-        throw new CliError(
-            `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
-            { code: 'WRITE_FAILED', cause: error },
-        );
-    }
+    // 内容生成在 try 之外：组件名校验失败抛出的 CliError(INVALID_COMPONENT_NAME)
+    // 应透传给调用方，不被 WRITE_FAILED 包装掩盖（与 mergeSnippetsFile 的 CliError 透传一致）
+    const snippetContent = generateSnippets(components);
+    await writeSnippetFile(snippetPath, snippetContent);
 
     return snippetPath;
 }
@@ -404,15 +416,7 @@ export async function mergeSnippetsFile(
         existingSnippets[snippetKey] = buildSnippetForComponent(componentName);
     }
 
-    try {
-        await fs.ensureDir(vscodeDir);
-        await fs.writeFile(snippetPath, JSON.stringify(existingSnippets, null, 4), 'utf-8');
-    } catch (error) {
-        throw new CliError(
-            `Failed to write VS Code snippets file "${snippetPath}": ${error instanceof Error ? error.message : String(error)}`,
-            { code: 'WRITE_FAILED', cause: error },
-        );
-    }
+    await writeSnippetFile(snippetPath, JSON.stringify(existingSnippets, null, 4));
 
     return snippetPath;
 }
