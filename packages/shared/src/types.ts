@@ -1,5 +1,5 @@
 /** 组件基础类别（ComponentCategory 与 SidebarGroup 共享的部分，单一来源） */
-export const BASE_CATEGORIES = [
+export const BASE_CATEGORIES = Object.freeze([
     'action',
     'data-display',
     'feedback',
@@ -9,12 +9,12 @@ export const BASE_CATEGORIES = [
     'overlay',
     'utility',
     'visual-effect',
-] as const;
+] as const);
 
 export type BaseCategory = typeof BASE_CATEGORIES[number];
 
 /** 完整组件类别 = 基础类别 + marketing（区块专用） */
-export const CATEGORIES = [...BASE_CATEGORIES, 'marketing'] as const;
+export const CATEGORIES = Object.freeze([...BASE_CATEGORIES, 'marketing'] as const);
 
 export type ComponentCategory = typeof CATEGORIES[number];
 

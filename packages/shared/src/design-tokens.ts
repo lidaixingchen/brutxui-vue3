@@ -14,9 +14,9 @@
 export type ThemeMode = 'light' | 'dark';
 
 /**
- * 原始色板：black/yellow 作为品牌基础色供特殊场景直接引用（如原始色值输出）。
- * 与主题语义令牌（border/fg/accent 等）重合时统一引用此处的单一事实来源，
- * 避免调整主题色时多处置放导致漂移。
+ * 原始色板：black/yellow 作为品牌基础色，供本文件内的主题令牌引用（单一事实来源）。
+ * 与语义令牌（border/fg/accent 等）重合处统一引用此处的常量，避免调整主题色时
+ * 多处置放导致漂移。外部如需原始色值，通过 BASE_THEME 的语义令牌读取。
  */
 const PALETTE_BLACK = '#000000';
 const PALETTE_YELLOW = '#FFE66D';
@@ -152,8 +152,8 @@ export function toCssVars(tokens: ThemeTokens): Record<string, string> {
     const result: Record<string, string> = {};
     for (const key of Object.keys(TOKEN_TO_CSS_VAR) as Array<keyof ThemeTokens>) {
         const value = tokens[key];
-        if (value === undefined) {
-            // 缺值会静默产出 "--brutal-*: undefined" 的脏样式，显式抛错暴露调用方数据问题
+        if (value === undefined || value === null) {
+            // 缺值/null 会静默产出 "--brutal-*: undefined/null" 的脏样式，显式抛错暴露调用方数据问题
             throw new Error(`Missing design token value for key: ${key}`);
         }
         result[TOKEN_TO_CSS_VAR[key]] = value;

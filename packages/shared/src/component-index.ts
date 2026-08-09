@@ -58,19 +58,22 @@ export function buildComponentIndexContent(files: string[]): string {
 
     const sortedFiles = [...files].sort();
     // 同名 `.vue` 与 `.ts` 会产生重叠导出（Button.vue → export { default as Button }，
-    // Button.ts → export *，其具名导出可能与 Button 重名造成 TS2308），生成前检测并告警
-    const seenBaseNames = new Set<string>();
+    // Button.ts → export *，其具名导出可能与 Button 重名造成 TS2308）。
+    // 检测键按 PascalCase 归一化（与 vueFileNameToExportName 的导出标识符对齐），
+    // 使 button.vue 与 Button.ts 这类大小写变体冲突也能命中；.ts 侧具名导出按
+    // 命名约定即为 PascalCase 文件名，该启发式偏保守（宁多告警不漏报）
+    const seenExportKeys = new Set<string>();
 
     for (const file of sortedFiles) {
         if (SKIP_FILES.has(file)) continue;
         if (TEST_FILE_PATTERN.test(file)) continue;
 
         if (file.endsWith('.vue') || file.endsWith('.ts')) {
-            const baseName = file.replace(/\.(vue|ts)$/, '');
-            if (seenBaseNames.has(baseName)) {
-                console.warn(`[buildComponentIndexContent] Ambiguous exports: "${file}" shares the base name "${baseName}" with another file. Rename one of them to avoid duplicate or overlapping exports.`);
+            const exportKey = vueFileNameToExportName(file.replace(/\.(vue|ts)$/, ''));
+            if (seenExportKeys.has(exportKey)) {
+                console.warn(`[buildComponentIndexContent] Ambiguous exports: "${file}" conflicts with another file exporting "${exportKey}". Rename one of them to avoid duplicate or overlapping exports.`);
             }
-            seenBaseNames.add(baseName);
+            seenExportKeys.add(exportKey);
         }
 
         if (file.endsWith('.vue')) {

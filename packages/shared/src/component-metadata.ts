@@ -6,8 +6,10 @@ export interface ComponentMetadataEntry {
     title: string;
     description: string;
     category: ComponentCategory;
-    examples: string[];
-    dependencies: string[];
+    /** 只读数组：导出时已被 Object.freeze，消费方不得修改 */
+    examples: readonly string[];
+    /** 只读数组：导出时已被 Object.freeze，消费方不得修改 */
+    dependencies: readonly string[];
     status?: 'stable' | 'legacy' | 'deprecated';
     replacement?: string;
     sidebarGroup?: SidebarGroup;
@@ -48,6 +50,7 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     'dropdown-menu': 'overlay',
     'feedback-form': 'marketing',
     form: 'form',
+    'glitch-text': 'visual-effect',
     'hardcore-input': 'form',
     image: 'data-display',
     'infinite-scroll': 'utility',
@@ -93,17 +96,17 @@ const CATEGORY_OVERRIDES: Record<string, ComponentCategory> = {
     'tree-select': 'form',
     'tree-view': 'data-display',
     'typewriter-text': 'visual-effect',
-    'glitch-text': 'visual-effect',
     upload: 'form',
     'virtual-scroll': 'utility',
     watermark: 'utility',
 };
 
 /**
- * 元数据导出均为只读（Object.freeze + Readonly 类型），
- * 防止运行时篡改破坏元数据与分类分组（COMPONENTS_BY_CATEGORY）之间的一致性。
+ * 元数据导出均为深只读（递归 Object.freeze + Readonly 类型，见 createComponentMetadata /
+ * createComponentsByCategory 内部的冻结），防止运行时篡改破坏元数据与分类分组
+ * （COMPONENTS_BY_CATEGORY）之间的一致性——包括 entry 内的 examples/dependencies 数组。
  */
-export const COMPONENT_METADATA: Readonly<Record<string, ComponentMetadataEntry>> = Object.freeze(createComponentMetadata());
+export const COMPONENT_METADATA: Readonly<Record<string, Readonly<ComponentMetadataEntry>>> = Object.freeze(createComponentMetadata());
 export const AVAILABLE_COMPONENTS: readonly string[] = Object.freeze(Object.keys(COMPONENT_METADATA));
 export const COMPONENTS_BY_CATEGORY: Readonly<Record<ComponentCategory, readonly string[]>> = Object.freeze(createComponentsByCategory());
 
@@ -111,24 +114,25 @@ export function getComponentsByCategory(category: ComponentCategory): string[] {
     return [...COMPONENTS_BY_CATEGORY[category]];
 }
 
-function createComponentMetadata(): Record<string, ComponentMetadataEntry> {
-    const metadata: Record<string, ComponentMetadataEntry> = {};
+function createComponentMetadata(): Record<string, Readonly<ComponentMetadataEntry>> {
+    const metadata: Record<string, Readonly<ComponentMetadataEntry>> = {};
 
     for (const [name, meta] of Object.entries(COMPONENTS)) {
-        metadata[name] = {
+        // 构造时同步冻结 entry 与数组，避免导出后运行时篡改（Object.freeze 为浅冻结，需逐层处理）
+        metadata[name] = Object.freeze({
             name,
             title: meta.title ?? formatTitle(name),
             description: meta.description ?? `A highly customizable neo-brutalist ${formatTitle(name)} component built with Brutx design tokens for Vue 3.`,
             category: meta.category ?? inferCategory(name),
-            examples: [...(meta.examples ?? [])],
-            dependencies: [...(meta.dependencies ?? [])],
+            examples: Object.freeze([...(meta.examples ?? [])]),
+            dependencies: Object.freeze([...(meta.dependencies ?? [])]),
             status: meta.status,
             replacement: meta.replacement,
             sidebarGroup: meta.sidebarGroup,
             kind: meta.kind,
             docsHidden: meta.docsHidden,
             docsSlug: meta.docsSlug,
-        };
+        });
     }
 
     return metadata;
@@ -161,7 +165,7 @@ function inferCategory(name: string): ComponentCategory {
     return 'utility';
 }
 
-function createComponentsByCategory(): Record<ComponentCategory, string[]> {
+function createComponentsByCategory(): Record<ComponentCategory, readonly string[]> {
     const groups: Record<ComponentCategory, string[]> = {
         action: [],
         'data-display': [],
@@ -184,7 +188,23 @@ function createComponentsByCategory(): Record<ComponentCategory, string[]> {
         names.sort();
     }
 
-    return groups;
+    // 分组数组同样冻结，防止运行时改写分组与 COMPONENT_METADATA 失步
+    const frozen: Record<ComponentCategory, readonly string[]> = {
+        action: [],
+        'data-display': [],
+        feedback: [],
+        form: [],
+        layout: [],
+        marketing: [],
+        navigation: [],
+        overlay: [],
+        utility: [],
+        'visual-effect': [],
+    };
+    for (const [category, names] of Object.entries(groups) as Array<[ComponentCategory, string[]]>) {
+        frozen[category] = Object.freeze(names);
+    }
+    return frozen;
 }
 
 export type { RegistryComponentMeta };

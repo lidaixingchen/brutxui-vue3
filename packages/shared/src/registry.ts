@@ -300,9 +300,13 @@ function assertSafeRegistryPath(
     prefix = 'Invalid registry data'
 ): asserts value is string {
     assertNonEmptyString(value, field, context, prefix);
-    // 拒绝绝对路径与穿越路径（registry 文件最终会写入磁盘，恶意 path 可在安装侧造成路径穿越）
-    if (value.startsWith('/') || value.split('/').includes('..')) {
-        throw new Error(`${prefix} for "${context}": ${field} must be a relative path without ".." segments.`);
+    // 拒绝绝对路径与穿越路径（registry 文件最终会写入磁盘，恶意 path 可在安装侧造成路径穿越）。
+    // 与安装侧解析语义对齐：同时按 / 与 \ 归一化分段（Windows 下 path.join 会接受 \ 分隔符），
+    // 并显式拒绝 "." 段——"./foo" 与 "foo" 归一化后指向同一文件，允许其一即可绕过重复 path
+    // 检测且产生不同哈希；盘符前缀（C:\evil）与 UNC 起始（\\server）同样拒绝
+    const segments = value.split(/[\\/]/);
+    if (value.startsWith('/') || value.startsWith('\\') || /^[a-zA-Z]:[\\/]/.test(value) || segments.includes('..') || segments.includes('.')) {
+        throw new Error(`${prefix} for "${context}": ${field} must be a normalized relative path (no leading "/", no ".." or "." segments, no drive letters).`);
     }
 }
 
