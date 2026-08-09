@@ -13,7 +13,11 @@ export interface ComponentMetadataEntry {
     status?: 'stable' | 'legacy' | 'deprecated';
     replacement?: string;
     sidebarGroup?: SidebarGroup;
-    kind?: ComponentKind;
+    /**
+     * 规范化后的组件类型：createComponentMetadata 构造时会把源数据缺失的 kind 统一为 'component'，
+     * 消费方无需再依赖『kind 缺省即 component』的隐式约定
+     */
+    kind: ComponentKind;
     docsHidden?: boolean;
     docsSlug?: string;
 }
@@ -129,7 +133,8 @@ function createComponentMetadata(): Record<string, Readonly<ComponentMetadataEnt
             status: meta.status,
             replacement: meta.replacement,
             sidebarGroup: meta.sidebarGroup,
-            kind: meta.kind,
+            // kind 缺省即 'component'：在构造边界显式化，消费方无需依赖隐式默认值
+            kind: meta.kind ?? 'component',
             docsHidden: meta.docsHidden,
             docsSlug: meta.docsSlug,
         });

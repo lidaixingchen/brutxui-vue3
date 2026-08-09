@@ -58,6 +58,9 @@ export const COMPONENTS: Record<string, RegistryComponentMeta> = {
     timeline: { dependencies: ['reka-ui', '@lucide/vue'], description: 'Vertical timeline with connected events and content.' },
     carousel: { dependencies: ['embla-carousel-vue', '@lucide/vue'], description: 'Image and content carousel with navigation and autoplay.' },
     'tree-view': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Hierarchical tree with expandable nodes and selection.' },
+    // docsSlug 'kanban-board' 是刻意覆盖：注册键为 'kanban'，但文档页（components/kanban-board.md）按完整组件名命名，
+    // 与『键名即文档名』的其余条目不同。链路可用（sidebar 的 resolveSlug 用 docsSlug ?? name 生成链接），
+    // 重命名/新增文档时需同步该字段
     kanban: { dependencies: ['@lucide/vue'], description: 'Drag-and-drop kanban board with columns and cards.', sidebarGroup: 'utility', docsSlug: 'kanban-board' },
     'chat-bubble': { dependencies: ['reka-ui', '@lucide/vue'], description: 'Chat message bubbles with avatar and timestamp.' },
     kbd: { dependencies: [], description: 'Keyboard shortcut key display element.' },

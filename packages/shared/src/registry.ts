@@ -222,13 +222,13 @@ export function validateRegistryIndex(data: unknown): asserts data is RegistryIn
 
     const seenNames = new Set<string>();
     for (const item of data.items) {
+        // validateRegistryIndexItem 断言已把 item 收窄为 RegistryIndexItem（name 必为 string），
+        // 无需再做冗余的 typeof 判空
         validateRegistryIndexItem(item);
-        if (typeof item === 'object' && item !== null && typeof item.name === 'string') {
-            if (seenNames.has(item.name)) {
-                throw new Error(`Invalid registry index: duplicate item name "${item.name}".`);
-            }
-            seenNames.add(item.name);
+        if (seenNames.has(item.name)) {
+            throw new Error(`Invalid registry index: duplicate item name "${item.name}".`);
         }
+        seenNames.add(item.name);
     }
 }
 
