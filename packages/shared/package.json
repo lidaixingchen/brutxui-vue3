@@ -13,8 +13,9 @@
         "node": ">=22.5"
     },
     "scripts": {
+        "test": "vitest run",
         "typecheck": "tsc --noEmit",
-        "lint": "eslint src"
+        "lint": "eslint src tests"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
@@ -22,6 +23,7 @@
         "eslint": "^10.4.1",
         "globals": "^17.6.0",
         "typescript": "^6.0.3",
-        "typescript-eslint": "^8.60.1"
+        "typescript-eslint": "^8.60.1",
+        "vitest": "^4.1.10"
     }
 }
