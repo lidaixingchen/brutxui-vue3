@@ -64,7 +64,7 @@ function handleCancel() {
                     <slot name="icon">
                         <component
                             :is="icon || TriangleAlert"
-                            class="h-5 w-5 text-brutal-warning"
+                            class="h-5 w-5 text-brutal-accent"
                         />
                     </slot>
                 </div>

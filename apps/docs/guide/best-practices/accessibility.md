@@ -209,7 +209,7 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
 
   <!-- 图标提供 aria-hidden -->
   <div class="flex items-center gap-2">
-    <IconStar class="h-4 w-4 text-brutal-warning" aria-hidden="true" />
+    <IconStar class="h-4 w-4 text-brutal-accent" aria-hidden="true" />
     <span>收藏</span>
   </div>
 

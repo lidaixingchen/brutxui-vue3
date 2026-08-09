@@ -213,7 +213,7 @@ useEventListener(window, 'keydown', (event: KeyboardEvent) => {
 
   <!-- Decorative icons must be hidden from screen readers -->
   <div class="flex items-center gap-2">
-    <IconStar class="h-4 w-4 text-brutal-warning" aria-hidden="true" />
+    <IconStar class="h-4 w-4 text-brutal-accent" aria-hidden="true" />
     <span>Favorite</span>
   </div>
 

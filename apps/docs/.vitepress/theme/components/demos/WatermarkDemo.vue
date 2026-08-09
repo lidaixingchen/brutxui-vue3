@@ -40,7 +40,7 @@ const textContent = ref('BrutxUI Watermark')
                     :font="{ color: 'rgba(239, 68, 68, 0.15)', fontSize: 16, fontWeight: 'bold' }"
                 >
                     <div class="relative z-10 max-w-sm text-center">
-                        <h4 class="text-lg font-black mb-2 text-brutal-danger">红色醒目警告水印</h4>
+                        <h4 class="text-lg font-black mb-2 text-brutal-destructive">红色醒目警告水印</h4>
                         <p class="text-xs font-bold opacity-75 leading-relaxed">
                             此处平铺的是红色倾斜的 Confidential 英文防篡改水印，间距加宽为 100x100 像素网格，多层防护。
                         </p>
