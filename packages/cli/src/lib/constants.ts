@@ -140,6 +140,32 @@ export const DOCS_URL = 'https://lidaixingchen.github.io/brutxui-vue3/';
 export const BRUTX_CSS_START_MARKER = '/* brutx-ui:start */';
 export const BRUTX_CSS_END_MARKER = '/* brutx-ui:end */';
 
+function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// START → END 有序块匹配（非贪婪、跨行）。"是否已注入 BrutxUI tokens"的唯一判据：
+// marker 顺序颠倒或分散（END 出现在 START 之前）时视为未注入，
+// 与 init-service 的注入/替换行为保持一致，避免 doctor 误判已注入而 init 实际重复追加。
+const BRUTX_CSS_BLOCK_PATTERN = new RegExp(
+    `${escapeRegex(BRUTX_CSS_START_MARKER)}[\\s\\S]*?${escapeRegex(BRUTX_CSS_END_MARKER)}`,
+);
+
+/**
+ * 判断 CSS 内容是否已包含完整的 BrutxUI tokens 块（BRUTX_CSS_START_MARKER ... BRUTX_CSS_END_MARKER 按序出现）。
+ */
+export function hasBrutxCssBlock(content: string): boolean {
+    return BRUTX_CSS_BLOCK_PATTERN.test(content);
+}
+
+/**
+ * 将 CSS 内容中已存在的 BrutxUI tokens 块整体替换为 replacement。
+ * 块不存在时原样返回（调用方应先用 hasBrutxCssBlock 判断或自行处理追加分支）。
+ */
+export function replaceBrutxCssBlock(content: string, replacement: string): string {
+    return content.replace(BRUTX_CSS_BLOCK_PATTERN, replacement);
+}
+
 let _brutalistCssStyles: string | undefined;
 
 export async function getBrutalistCssStyles(): Promise<string> {

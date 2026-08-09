@@ -7,6 +7,8 @@ import {
     BRUTX_CSS_START_MARKER,
     BRUTX_CSS_END_MARKER,
     getBrutalistCssStyles,
+    hasBrutxCssBlock,
+    replaceBrutxCssBlock,
     SCHEMA_URL,
     UTILS_TEMPLATE,
 } from '../constants.js';
@@ -17,10 +19,6 @@ export interface ProjectInitializationSettings {
     tailwind: TailwindConfig;
     aliases: AliasConfig;
     sharedBase?: string;
-}
-
-function escapeRegex(str: string): string {
-    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 export type NuxtConfigStatus =
@@ -97,11 +95,10 @@ async function addBrutalistStyles(cwd: string, cssPath: string, transaction: Fil
     let content: string;
     if (await fs.pathExists(fullPath)) {
         content = await fs.readFile(fullPath, 'utf-8');
-        const markerPattern = new RegExp(
-            `${escapeRegex(BRUTX_CSS_START_MARKER)}[\\s\\S]*?${escapeRegex(BRUTX_CSS_END_MARKER)}`
-        );
-        if (markerPattern.test(content)) {
-            content = content.replace(markerPattern, brutxBlock);
+        // 是否已注入的判据与 doctor 共用（constants.hasBrutxCssBlock）：
+        // START → END 按序出现才算已注入，顺序颠倒或分散时视为未注入，走追加分支
+        if (hasBrutxCssBlock(content)) {
+            content = replaceBrutxCssBlock(content, brutxBlock);
         } else {
             // markers 是"是否已注入"的唯一判据：无 markers 即视为未注入，
             // 即使内容含 --color-brutal-bg 等旧版 token 也一律追加。
