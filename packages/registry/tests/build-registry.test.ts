@@ -176,13 +176,30 @@ describe('build-registry helpers', () => {
         expect(getFileType('lib/data-table-utils.ts')).toBe('registry:lib');
         expect(getFileType('lib/chart.css')).toBe('registry:lib');
 
+        // integrity 覆盖 path/type/content 且与数组顺序无关（files 顺序无语义，重排不应改变哈希）
+        const files = [
+            { path: 'a.vue', content: 'one', type: 'registry:ui' },
+            { path: 'b.ts', content: 'two', type: 'registry:lib' },
+        ];
+        const integrity = computeRegistryIntegrity(files);
+        expect(integrity).toMatch(/^sha256-[a-f0-9]{64}$/);
+        expect(computeRegistryIntegrity(files)).toBe(integrity);
+        expect(computeRegistryIntegrity([...files].reverse())).toBe(integrity);
+        // path 参与哈希：内容相同但 path 互换必须暴露
         expect(computeRegistryIntegrity([
-            { content: 'one' },
-            { content: 'two' },
-        ])).toBe('sha256-a0ef70c43442d404b1ed004b6649348633dda30e2ffac547c29a2b753abafa89');
+            { ...files[0], path: 'c.vue' },
+            files[1],
+        ])).not.toBe(integrity);
     });
 
     it('validates registry metadata fields for docs consumption', () => {
+        const files = [
+            {
+                path: 'components/ui/button/Button.vue',
+                content: '<template><button /></template>',
+                type: 'registry:ui',
+            },
+        ];
         const item = {
             name: 'button',
             type: 'registry:ui',
@@ -192,16 +209,11 @@ describe('build-registry helpers', () => {
             examples: ['button-demo'],
             dependencies: [],
             registryDependencies: [],
-            files: [
-                {
-                    path: 'components/ui/button/Button.vue',
-                    content: '<template><button /></template>',
-                    type: 'registry:ui',
-                },
-            ],
+            files,
             tailwind: {},
             cssVars: {},
-            integrity: 'sha256-c4e1425d648b9bfa18bb0f9acbc2f166f177133b659035bf6ab1228c2c8fdb70',
+            // validateRegistryItem 会自校验 integrity 与 files 内容匹配，必须用真实哈希
+            integrity: computeRegistryIntegrity(files),
         };
 
         expect(() => validateRegistryItem(item)).not.toThrow();
@@ -209,6 +221,11 @@ describe('build-registry helpers', () => {
             ...item,
             category: 'unknown',
         })).toThrow('"category" must be one of');
+        // integrity 与内容不匹配必须被拒绝
+        expect(() => validateRegistryItem({
+            ...item,
+            integrity: 'sha256-' + 'a'.repeat(64),
+        })).toThrow('integrity does not match file contents');
     });
 
     it('validates registry index version metadata', () => {
