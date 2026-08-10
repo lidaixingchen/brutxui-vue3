@@ -1,14 +1,15 @@
 # CLI 基础设施全链路闭环改进计划
 
 > 方案类型：优化
-> 状态：done
+> 状态：archived
 > 日期：2026-07-28
+> 修订记录：2026-08-11 归档 —— 全部闭环落地，移入 archive/2026/
 > 修订记录：2026-08-11 落地核查确认 —— 签名链（CI 自动签发/内置公钥/严格模式）、源管理（registry list/add/remove）、离线可观测全部闭环；默认源由双源 CDN 收敛为单源 Release 系架构演进决策
 
 本文旨在解决 `cli/manifest` (4ce99d7) 与 `cli/registry` (b084a17) 引入的两项核心基础设施（Ed25519 签名校验、多 Registry 源与离线韧性）在落地后面临的**“CLI 引擎就绪，但全链路未闭环”**问题，提出具体的闭环深化方案。
 
 > [!NOTE]
-> **文件路径厘清**：本计划中涉及签名签发的 Manifest 均为编译后发布的注册表产物 [packages/registry/registry/registry-manifest.json](../../packages/registry/registry/registry-manifest.json)，切勿与 UI 包前置 AST 扫描生出的 [packages/ui/registry-manifest.json](../../packages/ui/registry-manifest.json) 混淆。
+> **文件路径厘清**：本计划中涉及签名签发的 Manifest 均为编译后发布的注册表产物 [packages/registry/registry/registry-manifest.json](../../../packages/registry/registry/registry-manifest.json)，切勿与 UI 包前置 AST 扫描生出的 [packages/ui/registry-manifest.json](../../../packages/ui/registry-manifest.json) 混淆。
 
 ---
 
@@ -114,6 +115,6 @@
 
 ## 5. 相关参考文档
 
-- [AGENTS.md](../../AGENTS.md)
-- [RELEASE.md](../guides/RELEASE.md)
-- [AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md](辅助包改进方案-v2.md)
+- [AGENTS.md](../../../AGENTS.md)
+- [RELEASE.md](../../guides/RELEASE.md)
+- [AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md](../../plans/辅助包改进方案-v2.md)

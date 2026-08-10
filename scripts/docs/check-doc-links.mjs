@@ -79,6 +79,9 @@ const MIGRATE = {
   'docs/ARCHITECTURE_OPTIMIZATION_PLAN_V2.md': 'docs/archive/2026/架构优化方案-v2.md',
   'docs/AUXILIARY_PACKAGES_IMPROVEMENT_PLAN.md': 'docs/archive/2026/辅助包改进方案-v1.md',
   'docs/superpowers/component/component-extension-plan.md': 'docs/archive/2026/组件拓展方案.md',
+  // 归档阶段（done 方案落地核查确认后移入 archive/2026/）
+  'docs/plans/CLI基础设施闭环方案.md': 'docs/archive/2026/CLI基础设施闭环方案.md',
+  'docs/plans/registry产物发布时构建方案.md': 'docs/archive/2026/registry产物发布时构建方案.md',
 }
 
 /** 本次删除的文件（check 时其被引用视作死链；fix 不生成） */
