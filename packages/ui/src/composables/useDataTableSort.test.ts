@@ -1,3 +1,4 @@
+import { ref } from 'vue'
 import { useDataTableSort } from './useDataTableSort'
 import type { DataTableColumn } from '@/components/data-table/types'
 
@@ -161,18 +162,6 @@ describe('useDataTableSort', () => {
         expect(data).toEqual(snapshot)
     })
 
-    it('toggles to asc when column matches but direction is null', () => {
-        const { sortState, toggleSort } = useDataTableSort({
-            columns: () => columns,
-            sortable: () => true,
-        })
-
-        // Manually set state to column='name', direction=null (line 31 scenario)
-        sortState.value = { column: 'name', direction: null }
-        toggleSort('name')
-        expect(sortState.value).toEqual({ column: 'name', direction: 'asc' })
-    })
-
     it('sorts ascending by number', () => {
         const cols: DataTableColumn<Row>[] = [
             { id: 'age', header: 'Age', accessorKey: 'age', sortable: true },
@@ -250,14 +239,19 @@ describe('useDataTableSort', () => {
     })
 
     it('returns original data when sort column is not found in visibleColumns', () => {
-        const { sortState, sortedData } = useDataTableSort({
-            columns: () => columns,
+        const columnsRef = ref([...columns])
+        const { sortState, toggleSort, sortedData } = useDataTableSort({
+            columns: columnsRef,
             sortable: () => true,
         })
 
-        // Set sortState to a column that doesn't exist in visibleColumns
-        sortState.value = { column: 'nonexistent', direction: 'asc' }
+        // 先排序列，随后隐藏该列，使 sortState 指向不再可见的列
+        toggleSort('name')
+        columnsRef.value = columnsRef.value.map((c) =>
+            c.id === 'name' ? { ...c, hidden: true } : c
+        )
         const result = sortedData(data)
+        expect(sortState.value.column).toBe('name')
         expect(result).toEqual(data)
     })
 

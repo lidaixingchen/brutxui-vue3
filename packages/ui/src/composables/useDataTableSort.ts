@@ -1,4 +1,4 @@
-import { ref, computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
+import { readonly, ref, computed, toValue, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
 import type { DataTableColumn, DataTableSortState } from '@/components/data-table/types'
 import { getCellValue } from '@/lib/data-table-utils'
 
@@ -8,7 +8,8 @@ export interface UseDataTableSortOptions<T extends object> {
 }
 
 export interface UseDataTableSortReturn<T> {
-    sortState: Ref<DataTableSortState>
+    /** 只读视图：修改请经 toggleSort */
+    sortState: DeepReadonly<Ref<DataTableSortState>>
     toggleSort: (columnId: string) => void
     sortedData: (data: T[]) => T[]
 }
@@ -117,5 +118,5 @@ export function useDataTableSort<T extends object>(
         })
     }
 
-    return { sortState, toggleSort, sortedData }
+    return { sortState: readonly(sortState), toggleSort, sortedData }
 }

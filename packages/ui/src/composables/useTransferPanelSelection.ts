@@ -1,4 +1,4 @@
-import { computed, ref, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { readonly, computed, ref, toValue, type ComputedRef, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export type TransferPanelKey = string | number
 
@@ -12,7 +12,8 @@ export interface UseTransferPanelSelectionOptions<TItem extends TransferPanelIte
 }
 
 export interface UseTransferPanelSelectionReturn<TItem extends TransferPanelItem> {
-    checked: Ref<TransferPanelKey[]>
+    /** 只读视图：修改请经 handleAllCheckChange / toggleItem / removeKeys / pruneKeys */
+    checked: DeepReadonly<Ref<TransferPanelKey[]>>
     allChecked: ComputedRef<boolean>
     indeterminate: ComputedRef<boolean>
     enabledKeys: ComputedRef<TransferPanelKey[]>
@@ -74,7 +75,7 @@ export function useTransferPanelSelection<TItem extends TransferPanelItem>(
     }
 
     return {
-        checked,
+        checked: readonly(checked),
         allChecked,
         indeterminate,
         enabledKeys,

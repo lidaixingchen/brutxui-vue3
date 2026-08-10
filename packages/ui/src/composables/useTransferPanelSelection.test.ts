@@ -49,7 +49,10 @@ describe('useTransferPanelSelection', () => {
     it('deselects visible enabled keys when all-check is false', () => {
         const selection = useTransferPanelSelection({ items })
 
-        selection.checked.value = [1, 3, 4]
+        // 预置选中：1/3 为当前面板 enabled keys，4 为面板外残留选择
+        selection.toggleItem({ key: 1 })
+        selection.toggleItem({ key: 3 })
+        selection.toggleItem({ key: 4 })
         selection.handleAllCheckChange(false)
 
         expect(selection.checked.value).toEqual([4])
