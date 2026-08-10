@@ -14,8 +14,11 @@ export interface UseAnimationReturn {
  * animation/transition 样式、CSS 类组合等方式应用的动画不在本函数控制范围，
  * 需自行做减少动态处理。
  *
- * SSR/挂载前行为：matchMedia 不可用、无法获知用户偏好时（服务端渲染阶段）
- * 保守返回空类名，避免减少动态用户首屏加载时看到动画闪烁。
+ * SSR/挂载前行为：服务端无法获知用户偏好，保守返回空类名，
+ * 避免减少动态用户首屏加载时看到动画闪烁。
+ * 已知限制：非减少动态用户在 hydration 时客户端类名与 SSR 空类名不一致
+ * （Vue dev 模式会有 class 属性不匹配警告，功能不受影响），
+ * 这是 SSR 无偏好信息的固有取舍；减少动态用户则完全一致无警告。
  */
 export function useAnimation(animationClass: MaybeRefOrGetter<string> = ''): UseAnimationReturn {
     const prefersReduced = useReducedMotion()
