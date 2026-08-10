@@ -54,11 +54,14 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
             cancelAnimationFrame(dragEndRafId)
             dragEndRafId = null
         }
+        // 鼠标拖拽与键盘抓取互斥：开始拖拽时清掉键盘抓取态，避免残留干扰后续键盘操作
+        grabbedCard.value = null
         draggingCard.value = { cardId, fromColumn }
         isDragging.value = true
     }
 
     function onDragEnd() {
+        grabbedCard.value = null
         draggingCard.value = null
         dragOverColumn.value = null
         if (dragEndRafId !== null) {
@@ -83,6 +86,9 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     }
 
     function onDrop(e: DragEvent, toColumnId: string) {
+        // drop 事件默认行为（拖拽链接/文本时可能触发导航或文本插入）需被阻止，
+        // 与 onDragOver 中的 preventDefault 保持一致
+        e.preventDefault()
         if (draggingColumn.value) return
         if (!draggingCard.value) return
         // 目标列不存在时清理拖拽状态，避免卡片只从源列移除而静默丢失
@@ -95,14 +101,19 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
 
         const sourceColumn = options.columns.value.find((col) => col.id === fromColumn)
         const card = sourceColumn?.cards.find((c) => c.id === cardId)
-        if (!card) {
+        if (!sourceColumn || !card) {
             draggingCard.value = null
             dragOverColumn.value = null
             return
         }
 
         const columnEl = e.currentTarget
-        if (!(columnEl instanceof HTMLElement)) return
+        if (!(columnEl instanceof HTMLElement)) {
+            // 无法计算插入位置时同样清理拖拽状态，避免状态残留
+            draggingCard.value = null
+            dragOverColumn.value = null
+            return
+        }
         const cardEls = Array.from(columnEl.querySelectorAll('[data-card-id]'))
         let insertIndex = cardEls.length
         const mouseY = e.clientY
@@ -114,17 +125,20 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
             }
         }
 
+        // 实际插入位置：同列向下移动时源卡片移除会让后续元素前移一位，
+        // 统一在 map 前计算，onCardMove 收到与最终数组顺序一致的位置（跨列时即 insertIndex）
         const isSameColumn = fromColumn === toColumnId
+        let adjustedIndex = insertIndex
+        if (isSameColumn) {
+            const originalIndex = sourceColumn.cards.findIndex((c) => c.id === cardId)
+            if (originalIndex !== -1 && originalIndex < insertIndex) {
+                adjustedIndex = insertIndex - 1
+            }
+        }
+
         const newColumns = options.columns.value.map((col) => {
             if (col.id === toColumnId) {
                 const newCards = col.cards.filter((c) => c.id !== cardId)
-                let adjustedIndex = insertIndex
-                if (isSameColumn) {
-                    const originalIndex = col.cards.findIndex((c) => c.id === cardId)
-                    if (originalIndex !== -1 && originalIndex < insertIndex) {
-                        adjustedIndex = insertIndex - 1
-                    }
-                }
                 newCards.splice(adjustedIndex, 0, card)
                 return { ...col, cards: newCards }
             }
@@ -135,7 +149,7 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
         })
 
         options.columns.value = newColumns
-        options.onCardMove?.(cardId, fromColumn, toColumnId, insertIndex)
+        options.onCardMove?.(cardId, fromColumn, toColumnId, adjustedIndex)
         draggingCard.value = null
         dragOverColumn.value = null
         return newColumns
@@ -180,6 +194,8 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
             return { ...c, cards: newCards }
         })
         options.columns.value = newColumns
+        // 与 onDrop / moveCardToAdjacentColumn 一致，通知外部持久化列内排序
+        options.onCardMove?.(cardId, columnId, columnId, newIndex)
         return newColumns
     }
 

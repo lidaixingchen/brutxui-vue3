@@ -53,6 +53,13 @@ describe('useKanban', () => {
             expect(isDragging.value).toBe(true)
         })
 
+        it('clears grabbedCard when drag starts', () => {
+            const { grabbedCard, onCardKeydown, onDragStart } = createKanban()
+            onCardKeydown({ key: ' ', preventDefault: vi.fn() } as unknown as KeyboardEvent, 'a', 'todo')
+            expect(grabbedCard.value).toEqual({ cardId: 'a', columnId: 'todo' })
+            onDragStart('a', 'todo')
+            expect(grabbedCard.value).toBeNull()
+        })
     })
 
     describe('onDragEnd', () => {
@@ -62,6 +69,14 @@ describe('useKanban', () => {
             onDragEnd()
             expect(draggingCard.value).toBeNull()
             expect(dragOverColumn.value).toBeNull()
+        })
+
+        it('clears grabbedCard when drag ends', () => {
+            const { grabbedCard, onCardKeydown, onDragStart, onDragEnd } = createKanban()
+            onCardKeydown({ key: ' ', preventDefault: vi.fn() } as unknown as KeyboardEvent, 'a', 'todo')
+            onDragStart('a', 'todo')
+            onDragEnd()
+            expect(grabbedCard.value).toBeNull()
         })
 
         it('resets isDragging after requestAnimationFrame', () => {
@@ -103,8 +118,18 @@ describe('useKanban', () => {
             return {
                 clientY,
                 currentTarget,
+                preventDefault: vi.fn(),
             } as unknown as DragEvent
         }
+
+        it('calls preventDefault on drop', () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { onDragStart, onDrop } = useKanban({ columns })
+            onDragStart('a', 'todo')
+            const event = createDropEvent(100)
+            onDrop(event, 'doing')
+            expect(event.preventDefault).toHaveBeenCalled()
+        })
 
         it('does nothing when no card is being dragged', () => {
             const { onDrop } = createKanban()
@@ -127,9 +152,19 @@ describe('useKanban', () => {
             const columns = ref<KanbanColumn[]>(createDefaultColumns())
             const { onDragStart, onDrop } = useKanban({ columns })
             onDragStart('a', 'todo')
-            const event = { clientY: 100, currentTarget: {} } as unknown as DragEvent
+            const event = { clientY: 100, currentTarget: {}, preventDefault: vi.fn() } as unknown as DragEvent
             const result = onDrop(event, 'doing')
             expect(result).toBeUndefined()
+        })
+
+        it('resets drag state when currentTarget is not HTMLElement', () => {
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { draggingCard, dragOverColumn, onDragStart, onDrop } = useKanban({ columns })
+            onDragStart('a', 'todo')
+            const event = { clientY: 100, currentTarget: {}, preventDefault: vi.fn() } as unknown as DragEvent
+            onDrop(event, 'doing')
+            expect(draggingCard.value).toBeNull()
+            expect(dragOverColumn.value).toBeNull()
         })
 
         it('moves card to empty column', () => {
@@ -192,6 +227,23 @@ describe('useKanban', () => {
             const result = onDrop(event, 'todo')
             expect(result).toBeDefined()
             expect(result![0].cards.map((c: KanbanCard) => c.id)).toEqual(['b', 'a', 'c'])
+        })
+
+        it('calls onCardMove with adjusted index for same-column downward move', () => {
+            const onCardMove = vi.fn()
+            const columns = ref<KanbanColumn[]>([
+                createColumn('todo', 'To Do', [createCard('a'), createCard('b'), createCard('c')]),
+            ])
+            const { onDragStart, onDrop } = useKanban({ columns, onCardMove })
+            onDragStart('a', 'todo')
+            // 同列向下移动：实际插入位置为 insertIndex - 1（卡片 a 移除后元素前移）
+            const event = createDropEvent(200, [
+                { cardId: 'a', rect: { top: 100, height: 40 } },
+                { cardId: 'b', rect: { top: 150, height: 40 } },
+                { cardId: 'c', rect: { top: 200, height: 40 } },
+            ])
+            onDrop(event, 'todo')
+            expect(onCardMove).toHaveBeenCalledWith('a', 'todo', 'todo', 1)
         })
 
         it('resets draggingCard and dragOverColumn after drop', () => {
@@ -280,6 +332,24 @@ describe('useKanban', () => {
             const { moveCardInColumn } = useKanban({ columns })
             moveCardInColumn('b', 'todo', -1)
             expect(cols[0].cards.map(c => c.id)).toEqual(['a', 'b', 'c'])
+        })
+
+        it('calls onCardMove callback when moving within column', () => {
+            const onCardMove = vi.fn()
+            const columns = ref<KanbanColumn[]>([
+                createColumn('todo', 'To Do', [createCard('a'), createCard('b'), createCard('c')]),
+            ])
+            const { moveCardInColumn } = useKanban({ columns, onCardMove })
+            moveCardInColumn('b', 'todo', 1)
+            expect(onCardMove).toHaveBeenCalledWith('b', 'todo', 'todo', 2)
+        })
+
+        it('does not call onCardMove when move is out of bounds', () => {
+            const onCardMove = vi.fn()
+            const columns = ref<KanbanColumn[]>(createDefaultColumns())
+            const { moveCardInColumn } = useKanban({ columns, onCardMove })
+            moveCardInColumn('a', 'todo', -1)
+            expect(onCardMove).not.toHaveBeenCalled()
         })
     })
 
