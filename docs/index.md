@@ -56,4 +56,17 @@
 - **方案计划** → `plans/`，命名 `<中文主题>方案.md`（功能设计类用 `<主题>设计.md`），标题下补 frontmatter（`方案类型 / 状态 / 日期 / 关联文档 / 修订记录`），状态取 `draft | active | done`。
 - **审计 / 扫描报告** → `reports/`，快照型命名 `<YYYY-MM-DD>-<中文主题>报告.md`（日期前置便于排序），结论型不带日期。
 - **旧方案被新版本取代** → 立即移入 `archive/YYYY/`，文件名保留版本号。
-- **链接一律相对路径**，禁止 `file:///` 绝对链接（历史遗留已清零）；新增文档可用 `node scripts/docs/check-doc-links.mjs check` 校验。
+- **链接一律相对路径**，禁止 `file:///` 绝对链接（历史遗留已清零）；校验方式见下方「链接校验工具」。
+
+## 链接校验工具
+
+新增、移动或重命名文档后，用 [check-doc-links.mjs](../scripts/docs/check-doc-links.mjs) 维护链接健康：
+
+```bash
+node scripts/docs/check-doc-links.mjs check        # 校验：0 死链、0 处 file:///
+node scripts/docs/check-doc-links.mjs fix --dry    # 预览链接改写（文档移动后重算深度，不落盘）
+node scripts/docs/check-doc-links.mjs fix          # 执行改写
+```
+
+- **校验口径**：文档间 `.md` 互链 0 死链 + 0 处 `file:///` 为硬指标；指向源码的相对链接失效属历史快照告警（不阻塞）。
+- **文档移动 / 重命名后**：先 `fix --dry` 预览改写，确认无误后 `fix` 执行。
