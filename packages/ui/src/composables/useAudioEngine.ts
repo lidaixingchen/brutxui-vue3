@@ -48,21 +48,7 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
         return audioCtx
     }
 
-    const playSound = (type: 'type' | 'success' | 'fail') => {
-        if (!enabled.value) return
-        if (type === 'type') {
-            const now = Date.now()
-            if (now - lastTypeSoundTime < AUDIO_TYPE_THROTTLE_MS) return
-            lastTypeSoundTime = now
-        }
-        
-        const ctx = getCtx()
-        if (!ctx) return
-        
-        if (ctx.state === 'suspended') {
-            void ctx.resume().catch(() => {})
-        }
-
+    const scheduleSound = (ctx: AudioContext, type: 'type' | 'success' | 'fail') => {
         try {
             const osc = ctx.createOscillator()
             const gain = ctx.createGain()
@@ -98,14 +84,46 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
                 osc.start()
                 osc.stop(ctx.currentTime + AUDIO_FAIL_DURATION)
             }
-        } catch {
-            audioUnavailable = true
+        } catch (err) {
+            // 单次调度失败（如参数非法）不应永久禁用音效，记录日志便于排查
+            console.warn('[useAudioEngine] sound scheduling failed', err)
+        }
+    }
+
+    const playSound = (type: 'type' | 'success' | 'fail') => {
+        if (!enabled.value) return
+        if (type === 'type') {
+            const now = Date.now()
+            if (now - lastTypeSoundTime < AUDIO_TYPE_THROTTLE_MS) return
+            lastTypeSoundTime = now
+        }
+
+        const ctx = getCtx()
+        if (!ctx) return
+
+        // ctx.resume() 是异步的：若在 resume 完成前就基于当前（可能仍冻结的）currentTime
+        // 调度节点，resume 被自动播放策略拒绝或延迟时节点永远不会播放，
+        // 且 stop 事件未到达、onended 不触发，osc/gain 的 disconnect 清理永远不会执行。
+        // 因此等待 resume 成功后再创建与调度节点。
+        if (ctx.state === 'suspended') {
+            void ctx.resume()
+                .then(() => scheduleSound(ctx, type))
+                .catch((err: unknown) => {
+                    console.warn('[useAudioEngine] audio context resume failed', err)
+                })
+        } else {
+            scheduleSound(ctx, type)
         }
     }
 
     const dispose = () => {
-        void audioCtx?.close().catch(() => {})
+        // 置为不可用，阻止 dispose 后外部仍持有 playSound 引用时重建 AudioContext
+        audioUnavailable = true
+        const ctx = audioCtx
         audioCtx = null
+        if (ctx && ctx.state !== 'closed') {
+            void ctx.close().catch(() => {})
+        }
     }
 
     onUnmounted(() => {
