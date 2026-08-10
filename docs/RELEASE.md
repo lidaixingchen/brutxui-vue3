@@ -1,209 +1,78 @@
 # 发布流程
 
-## 版本发布
+> 发布系统**原理**与一次性配置（供应链签名、归档机制、脚本工作原理）见 [发布架构与原理](./RELEASE_ARCHITECTURE.md)。本文档只讲"每次发布怎么做"。
 
-> [!IMPORTANT]
-> **发布前置检查（防坑指南）**
-> 1. **检查工作区（`git status`）**：在开始发布流程前，**必须**运行 `git status` 审视工作区。确保所有应当包含在本次发布的实质性改动（组件源码、测试、文档、registry 构建脚本等）已被全部提交或妥善 staged。**严禁在工作区留有未提交组件代码的情况下直接运行发布和打 tag**，这会导致发布产物不完整。
-> 2. **注册表产物发布时构建（无需本地提交）**：注册表 JSON 产物**不入库**、git 不跟踪。tag 触发发布时，`publish.yml` 基于最新源码自动构建并上传为 GitHub Release 资产，本地无需重新编译或提交产物。
-> 3. **CI 自动校验（已机械化）**：`publish.yml` 在发布前执行 `git diff --exit-code` 校验 `packages/ui/registry-manifest.json`、`packages/ui/src/styles.css` 与 commit 一致（registry 产物不入库，不参与该门禁；产物构建与上传由发布流程自动完成）。
+## 速查清单（TL;DR）
 
-- 提交信息格式固定为 `release: bump version to <ui-version> for ui and <cli-version> for cli`。如果只发布其中一个包，仍保持该格式，并填写当前实际版本。
-- **⚠️ `[skip ci]` 陷阱（已配置规避，仍需注意）**：changeset 2.31 在 `"commit": true` 时，`pnpm version-packages` 生成的 `RELEASING` 提交**默认带 `[skip ci]`**（见 `.changeset/config.json` 的 `commit.skipCI` 归一化逻辑）。若 tag 指向该提交，`publish.yml`（由 `v*` tag 触发）会被 `[skip ci]` **静默跳过，npm 不会发布**。已通过 `"commit": ["@changesets/cli/commit", { "skipCI": false }]` 关闭此行为；即便如此，发布时仍建议让 tag 指向不含 `[skip ci]` 的 `release: bump version to ...` 提交（见上），并**发布后核对 GitHub Actions 的 Publish run 是否成功、npm 是否真的出新版本**。
-- 哪个 NPM 包版本发生变化就发布哪个包；当前公开发布包为 `brutx-ui-vue`（`packages/ui/`）和 `brutx-vue`（`packages/cli/`）。
-- tag 命名固定以 UI 包版本为主，格式为 `v<ui-version>`，例如 `v0.6.6`。CLI 版本不单独创建 tag。
-- 推送 `main` 和对应的 `v*` tag 后，由云端自动发布。
-- 任何影响组件安装、注册表生成或发布产物的改动，都必须同步检查 `packages/ui/`、`packages/shared/`、`packages/registry/`、`packages/cli/` 四处：源码文件、组件元数据、registry 构建脚本（JSON 产物不入库、发布时构建上传）、CLI 安装复制逻辑必须保持一致。
-- 发布前必须执行完整检查：`pnpm release`（`turbo run build test typecheck lint && changeset publish`）。
-- 如果本地验证 release tag，设置 `RELEASE_TAG=v<ui-version>` 后再运行 `pnpm release`；GitHub Actions 中会自动读取 `GITHUB_REF_NAME`。
-- 发布前必须检查 `pnpm-lock.yaml` 是否需要同步。若只修改包自身 `version` 且运行 pnpm 后 lockfile 无变化，可以不提交 lockfile；若修改 `dependencies`、`devDependencies`、`peerDependencies` 或 lockfile 自动变化，必须提交同步后的 `pnpm-lock.yaml`。
-
-## Changelog 自动生成
-
-项目使用 changeset 管理变更日志。
-
-### 使用方法
+发布前先 `git status` 审视工作区，确保本次发布改动全部已提交，然后：
 
 ```bash
-pnpm changeset        # 交互式声明变更（PR 时使用）
-pnpm version-packages # bump 版本号 + 生成 CHANGELOG（合并 changeset 后使用）
-pnpm release          # turbo run build test typecheck lint && changeset publish
+pnpm changeset             # ① 声明变更（PR 时已声明则跳过）
+pnpm release:prepare       # ② 守卫 + bump 版本 + 生成包/根 CHANGELOG + 自动提交（一条命令）
+pnpm release               # ③ 门禁（build/test/typecheck/lint）+ changeset publish
+pnpm release:tag           # ④ 自动读 ui 版本打 annotated tag v<version>
+git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 ```
 
-### 工作原理
+> 发布后核对 GitHub Actions 的 **Publish** run 是否成功、npm 是否真的出新版本（`brutx-ui-vue` / `brutx-vue`）。
+> 发布后发现问题需补修：提交修复 commit → `pnpm release:tag --force`（重打 tag 指向最新 commit）→ 重新推送。
 
-1. **声明变更**：PR 时通过 `pnpm changeset` 交互式生成 `.changeset/*.md` 文件，描述变更类型（major/minor/patch）和变更内容
-2. **版本提升**：合并 PR 后运行 `pnpm version-packages`，changeset 读取 `.changeset/*.md`，自动 bump 受影响包的版本号并生成 CHANGELOG
-3. **发布**：`pnpm release` 先运行 turbo 构建/测试/类型检查/lint 门禁，通过后 `changeset publish` 发布到 npm
+## 版本发布（操作手册）
 
-### Commit 格式要求
+### 核心命令
 
-```text
-<type>(<scope>): <subject>
+|命令|作用|
+|---|---|
+|`pnpm changeset`|交互式声明变更（PR 时使用）|
+|`pnpm release:prepare`|版本准备：守卫 + `version-packages` + 根 CHANGELOG + 自动提交（合并了原三步）|
+|`pnpm release`|门禁 `turbo run build test typecheck lint` + `changeset publish`|
+|`pnpm release:tag`|读 `packages/ui/package.json` 版本打 annotated tag `v<version>`；`--force` 覆盖重打|
+|`pnpm changelog[:dry]`|单独生成/预览根 CHANGELOG（`release:prepare` 已内置，一般无需手动）|
 
-type: feat | fix | docs | style | refactor | perf | test | build | ci | chore | revert
-scope: ui | cli | docs | registry | shared | deps | theme（可选，支持并推荐使用如 `ui/toast` 的子 Scope）
-```
+### 发布步骤
 
-Breaking Change 标记方式：
+1. **前置检查**
+   - 工作区必须干净（`release:prepare` 会自动拦截已跟踪文件的未提交改动，未跟踪文件仅警告）——严禁在留有未提交组件代码时发布，否则产物不完整
+   - 有未声明的变更先 `pnpm changeset`
+   - 检查 `pnpm-lock.yaml`：若只改包自身 `version` 且 lockfile 无变化，可不提交 lockfile；若改了 `dependencies` / `devDependencies` / `peerDependencies` 或 lockfile 自动变化，必须提交同步后的 lockfile
+   - **四处一致**：任何影响组件安装、注册表生成或发布产物的改动，都要同步检查 `packages/ui/`、`packages/shared/`、`packages/registry/`、`packages/cli/`（源码、组件元数据、registry 构建脚本、CLI 安装复制逻辑）
 
-- `feat(ui)!: 重命名 Button API`（加 `!`）
-- commit body 中写 `BREAKING CHANGE: description`
+2. **`pnpm release:prepare`**：一条命令完成版本准备
+   - 守卫：工作区干净 + 存在待发布 changeset
+   - `pnpm version-packages`（changeset）→ bump 版本、生成各包 CHANGELOG、自动生成 `RELEASING` commit（`[skip ci]` 已配置关闭）
+   - `pnpm changelog` → 更新根 CHANGELOG + 自动归档旧版本
+   - 自动提交根 CHANGELOG（`docs: 更新根 CHANGELOG 至 <version>[并归档 ...]`）
 
+3. **`pnpm release`**：门禁（build/test/typecheck/lint）通过后 `changeset publish` 发布。失败先修复，通过后再打 tag
 
-## 根 CHANGELOG.md 生成
+4. **`pnpm release:tag`**：自动读取 UI 包版本打 `v<version>` tag。tag 命名以 UI 包版本为主（如 `v0.10.0`），CLI 版本不单独打 tag
 
-根仓库的 [CHANGELOG.md](../CHANGELOG.md) 由 [scripts/release/generate-changelog.mjs](../scripts/release/generate-changelog.mjs) 维护，与 changeset 各包独立 CHANGELOG 互补：脚本汇总两个 tag 之间的 conventional commits，按类型分组并生成单行条目（与 v0.9.4 起的精简风格一致）。
+5. **推送**：`git pushp origin main --tags`（直连为 `git push origin main --tags`）。推送后由云端自动发布（`publish.yml`）
 
-### 使用方法
+6. **发布后核对**：确认 GitHub Actions 的 Publish run 成功，npm 上 `brutx-ui-vue` / `brutx-vue` 出新版本
 
-```bash
-pnpm changelog                          # 生成新版本段并插入到 CHANGELOG.md 顶部
-pnpm changelog:dry                      # 干跑：仅打印到 stdout，不写文件
-pnpm changelog -- --from v0.9.4         # 显式指定起始 tag
-pnpm changelog -- --version 0.9.6 --date 2026-08-01
-pnpm changelog -- --scope ui            # 仅生成 ui scope 的条目
-```
+### 发布后修复
 
-### 工作原理
+- tag 已打但发布失败 / 需补修：提交修复 commit → `pnpm release:tag --force` 重打 tag（指向最新 commit）→ 重新推送
+- tag 重推会重跑 CI；npm 已发布版本由 `EPUBLISHCONFLICT` 幂等跳过，不会重复发布
 
-1. **解析范围**：默认从 `packages/ui/package.json` 读取版本号，组装 `v<version>` tag。若该 tag 已存在 → 起点取上一个 tag、终点取该 tag；否则起点取最新 tag、终点取 `HEAD`（开发中未打 tag 场景）
-2. **收集 commits**：`git log <from>..<to>` 按 `%H%x1f%s%x1f%b%x1f%an%x1f%ae` 分隔提取
-3. **解析与过滤**：按 [Conventional Commits](https://www.conventionalcommits.org/zh-hans/v1.0.0/) 正则拆解 type/scope/subject；`release` 类型一律剔除；`chore` 类型仅在标记为 breaking 时保留
-4. **分类与渲染**：breaking 独立置顶；其余按 `feat / fix / refactor / perf / docs / ci / build / test / style / revert / chore` 顺序成段。每个条目格式 `* **scope:** subject ([sha7](commit-url))`，body 默认不展开
-5. **写入**：`stripUnreleasedSection` 移除旧的 `## [Unreleased]` 段，再在保留的文件头之后插入 `## [Unreleased](.../compare/v<version>...HEAD)` 与新版本段
+## 防坑 Checklist
 
-### 注意事项
+- [ ] 工作区干净（有未提交改动时 `release:prepare` 会中止）
+- [ ] 四处一致：ui / shared / registry / cli 的源码、元数据、构建脚本、CLI 复制逻辑
+- [ ] lockfile 已同步（依赖变更时）
+- [ ] 发布后核对 Publish run 与 npm 版本
 
-- 该脚本仅维护根 `CHANGELOG.md`；各包（`packages/ui/CHANGELOG.md`、`packages/cli/CHANGELOG.md`）仍由 changeset 在 `pnpm version-packages` 时生成
-- 生成的条目依赖 commit message 质量——请严格遵守 [提交信息规范](./COMMIT_CONVENTION.md)
-- dependabot 等 bot 的 PR body 默认会被忽略（脚本只取 subject + body，不展开多行表格）
-- 推荐在 `pnpm version-packages` 之后、`git commit` 之前运行 `pnpm changelog:dry` 预览，确认无误后再 `pnpm changelog` 写入并随版本提升 commit 一起提交
+## Changelog 体系概览
 
-## CHANGELOG 归档机制
-
-为避免根 [CHANGELOG.md](../CHANGELOG.md) 随版本累积无限增长，自 v0.9.5 起引入归档机制：根文件仅保留**最近 3 个版本**的完整段落，更早的版本归档至独立文件。
-
-### 目录结构
-
-```
-CHANGELOG.md                                  # 根文件：保留最近 3 个版本 + 归档索引段
-apps/docs/changelog/                          # 归档目录（VitePress srcDir 下，可在文档站点访问）
-├── index.md                                  # 归档索引页
-├── v0.9.2.md                                 # 各版本独立文件
-├── v0.9.1.md
-└── ...
-```
-
-### 根文件格式
-
-根 `CHANGELOG.md` 末尾的"归档版本"段仅保留版本号链接与日期，不展开内容：
-
-```markdown
-## 归档版本
-
-> 以下版本已归档至 [`../apps/docs/changelog/`](../apps/docs/changelog/)，点击版本号查看完整变更记录：
-
-* **[0.9.2](apps/docs/changelog/v0.9.2.md)** - 2026-07-08
-* **[0.9.1](apps/docs/changelog/v0.9.1.md)** - 2026-07-06
-...
-```
-
-### 归档文件格式
-
-每个归档文件以 `v<version>.md` 命名，包含返回根 CHANGELOG 的链接和原版本段完整内容：
-
-```markdown
-# v<version>
-
-> [← 返回主 CHANGELOG](../guide/changelog.md)
-
-## [<version>](https://github.com/lidaixingchen/brutxui-vue3/compare/v<previous>...v<version>) - <date>
-
-[原版本段完整内容]
-```
-
-### VitePress 集成
-
-归档目录通过 [apps/docs/.vitepress/config.ts](../apps/docs/.vitepress/config.ts) 中的 `generateChangelogSidebar()` 函数自动生成侧边栏：
-
-- 扫描 `apps/docs/changelog/` 下的 `v*.md` 文件
-- 按 major 版本分组（如 `v0.x`、`v1.x`）
-- 当前 major 默认展开，更早的 major 折叠
-- 归档版本增长时侧边栏自动更新，无需手动维护
-
-访问入口：文档站点侧边栏的"归档版本"分组（路径 `/changelog/`）。
-
-### 维护流程与自动归档
-
-发布新版本时：
-
-1. 运行 `pnpm changelog` 会自动：
-   - 生成新版本段并写入根 `CHANGELOG.md` 顶部。
-   - 自动运行 **滑动窗口裁剪与递归归档逻辑**：若主日志文件中的版本数超过 3 个，脚本会自动将超出范围的最旧版本切分并写入 `apps/docs/changelog/v<version>.md` 独立文件。
-   - 自动在主 `CHANGELOG.md` 末尾的“归档版本”段追加该版本的链接条目。
-   - 自动将该版本连入文档站归档索引 [apps/docs/changelog/index.md](apps/docs/changelog/index.md)。
-2. 侧边栏会自动包含并更新新归档文件，无需任何手动维护。
+- **各包 CHANGELOG**（`packages/ui/CHANGELOG.md` 等）：由 changeset 在 `version-packages` 时生成
+- **根 CHANGELOG.md**：由脚本 `scripts/release/generate-changelog.mjs` 汇总两 tag 间 conventional commits；根文件仅保留最近 3 个版本，更早自动归档至 `apps/docs/changelog/`
+- 工作原理与注意事项见 [发布架构与原理](./RELEASE_ARCHITECTURE.md#根-changelogmd-生成)
 
 ## Breaking Change 迁移文档规范
 
-任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](./AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
-
-### Commit 标记
-
-- 标题行使用 `!` 标记 breaking：`feat(ui)!: 重命名 Button 的 variant 属性`
-- 或在 commit body 中显式写 `BREAKING CHANGE: <描述>`
-
-### 迁移指南模板
-
-每个 breaking change 必须在 CHANGELOG 与 release notes 中按以下结构记录：
-
-```markdown
-#### ⚠️ Breaking Change: <组件名> — <变更概述>
-
-**影响范围**
-- <受影响的 props / slots / events / 方法列表>
-
-**变更原因**
-- <为什么这个 breaking 是必要的>
-
-**迁移步骤**
-
-Before（旧 API）：
-\`\`\`vue
-<template>
-  <Button variant="primary" />
-</template>
-\`\`\`
-
-After（新 API）：
-\`\`\`vue
-<template>
-  <Button variant="default" />
-</template>
-\`\`\`
-
-**自动迁移可行性**
-- <评估是否需要 codemod：例如"全局替换 `variant="primary"` 为 `variant="default"` 即可"，或"涉及类型推断，需手动检查">
-```
-
-### 落地要求
-
-- 没有 breaking change 的 release 可以省略此章节。
-- 单个 release 含多个 breaking change 时，每个组件独立成段。
-- 迁移步骤必须给出可复制的 before/after 代码片段，不允许仅文字描述。
-- "自动迁移可行性" 字段用于在未来累积 codemod 候选清单——当评估为"需要 codemod"的 case 累计 ≥ 3 个时，触发 Item 9 启动条件。
+任何包含 breaking change 的发布必须提供迁移指南（影响范围 / 变更原因 / before-after 迁移代码 / 自动迁移可行性评估），在 CHANGELOG 与 release notes 中按模板记录。完整模板与落地要求见 [发布架构与原理](./RELEASE_ARCHITECTURE.md#breaking-change-迁移文档规范)。
 
 ## 供应链安全
 
-GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dependabot.yml](../.github/dependabot.yml) 自动管理升级（每周一开 PR）。
-
-### Registry manifest 自动签名
-
-发布链路会对 `registry-manifest.json` 做 Ed25519 签名，CLI 零配置即可验签官方 Registry：
-
-- **Secret 配置**：仓库需配置 `BRUTX_REGISTRY_PRIVATE_KEY`（PKCS8 DER base64 单行）与 `BRUTX_REGISTRY_KEY_ID`（`official-v1`）。私钥对应公钥硬编码于 CLI 的 `OFFICIAL_PUBLIC_KEYS`（`packages/cli/src/lib/constants.ts`），**二者必须匹配**，否则 CLI 严格模式验签会失败。
-- **发布时**：`publish.yml` 注入私钥环境变量，`brutx-registry-vue build` 自动签名（`signManifestFromEnv`）。
-- **签名与分发**：签名在发布流程中由 `publish.yml` 注入私钥自动完成，签名 manifest 随产物一起上传为 GitHub Release 资产（`releases/latest/download`），CLI 默认源即指向该端点。产物不入库，"push 到 main 即回填签名"的 `sign-manifest` job / `registry-sign.yml` 机制已随产物移出 git 一并拆除。
-- **未签名回退**：Fork / 本地 build 未注入私钥时保持未签名，CLI 向后兼容跳过。
-- **幂等性**：manifest 的 `buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 均不参与 integrity 计算，签名只覆盖 integrity，跨发布稳定（发布时注入的 `gitCommit` 不影响签名）。
+GitHub Actions 使用 SHA pin 锁定第三方 Action（dependabot 每周一自动升级）；`registry-manifest.json` 发布时由 CI 注入私钥自动做 Ed25519 签名，CLI 零配置验签官方 Registry。详见 [发布架构与原理](./RELEASE_ARCHITECTURE.md#供应链安全)。
