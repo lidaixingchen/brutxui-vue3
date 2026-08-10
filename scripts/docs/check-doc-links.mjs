@@ -82,6 +82,9 @@ const MIGRATE = {
   // 归档阶段（done 方案落地核查确认后移入 archive/2026/）
   'docs/plans/CLI基础设施闭环方案.md': 'docs/archive/2026/CLI基础设施闭环方案.md',
   'docs/plans/registry产物发布时构建方案.md': 'docs/archive/2026/registry产物发布时构建方案.md',
+  'docs/plans/composables状态只读化方案.md': 'docs/archive/2026/composables状态只读化方案.md',
+  'docs/plans/changelog自动化设计.md': 'docs/archive/2026/changelog自动化设计.md',
+  'docs/plans/文档目录改造方案.md': 'docs/archive/2026/文档目录改造方案.md',
 }
 
 /** 本次删除的文件（check 时其被引用视作死链；fix 不生成） */

@@ -1,6 +1,6 @@
 # docs/ 文档目录
 
-> 本文档是 `docs/` 目录的索引。文档按生命周期分三类落位，规则见 [文档目录改造方案](plans/文档目录改造方案.md)。
+> 本文档是 `docs/` 目录的索引。文档按生命周期分三类落位，规则见 [文档目录改造方案](archive/2026/文档目录改造方案.md)。
 > `README-en.md` 为项目英文简介（与根 README 对应），**不是**目录索引。
 
 ## 目录总览
@@ -20,9 +20,6 @@
 | [架构优化方案-v3](plans/架构优化方案-v3.md) | **active** | 现行架构方向，三大方向推进中（v1/v2 已归档） |
 | [辅助包改进方案-v2](plans/辅助包改进方案-v2.md) | done | P0/P1 已全部落地（v1 已归档） |
 | [组件深化与拓展方案](plans/组件深化与拓展方案.md) | **active** | v2.0，Statistic 与键盘导航未落地 |
-| [composables状态只读化方案](plans/composables状态只读化方案.md) | done | 已全量落地（M1-M7 回归通过） |
-| [changelog自动化设计](plans/changelog自动化设计.md) | done | 已落地 |
-| [文档目录改造方案](plans/文档目录改造方案.md) | done | 本次 docs/ 改造 |
 
 状态机：`draft → active → done → archived`。同主题只保留一份 active/done，被新版本取代后旧版立即移入 `archive/YYYY/`。
 
@@ -36,6 +33,9 @@
 - [组件拓展方案](archive/2026/组件拓展方案.md)（被组件深化与拓展方案 v2.0 取代）
 - [CLI基础设施闭环方案](archive/2026/CLI基础设施闭环方案.md)（已闭环完结）
 - [registry产物发布时构建方案](archive/2026/registry产物发布时构建方案.md)（已落地完结）
+- [composables状态只读化方案](archive/2026/composables状态只读化方案.md)（M1-M7 已全量落地）
+- [changelog自动化设计](archive/2026/changelog自动化设计.md)（自动化脚本已落地）
+- [文档目录改造方案](archive/2026/文档目录改造方案.md)（docs 目录改造已完成）
 
 ## 报告索引
 

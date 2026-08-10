@@ -1,8 +1,9 @@
 # BrutxUI Composables 内部状态只读化重构方案
 
 > 方案类型：重构
-> 状态：done
+> 状态：archived
 > 日期：2026-08-10
+> 修订记录：2026-08-11 归档 —— M1-M7 全量落地，移入 archive/2026/
 > 落地说明：M1-M7 全量回归通过（完整套件 3371 + SSR 195 + typecheck 全绿）
 > 关联文档：`.ocr-reports/ui-composables-part1.md` #27（内部可变状态直接暴露为可写引用）
 > 目标范围：`packages/ui/src/composables/*`
