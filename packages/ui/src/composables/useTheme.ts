@@ -56,7 +56,9 @@ export function createTheme(): UseThemeReturn {
         return colorMode.value
     })
 
-    function applyTheme(name: ThemeName) {
+    // 仅应用主题类到 DOM（不持久化）：供 initTheme 在「无用户保存值」时使用，
+    // 避免把从未主动选择的默认值写入 localStorage 被后续会话误认为用户偏好
+    function applyThemeToDom(name: ThemeName) {
         if (!hasDocument) return
         const root = getDocument()!.documentElement
         // 移除所有旧主题类，避免切换时残留其他 theme-* 类
@@ -64,6 +66,11 @@ export function createTheme(): UseThemeReturn {
             root.classList.remove(getThemeClass(themeName))
         }
         root.classList.add(getThemeClass(name))
+    }
+
+    function applyTheme(name: ThemeName) {
+        if (!hasDocument) return
+        applyThemeToDom(name)
         theme.value = name
         safeSetStorageItem('brutx-theme', name)
     }
@@ -133,18 +140,24 @@ export function createTheme(): UseThemeReturn {
             }
         }
 
-        // 第二步：应用保存的主题（复用 applyTheme，避免重复 DOM 操作与持久化逻辑）
+        // 第二步：应用保存的主题；无保存值时仅应用默认主题的 DOM 效果，不写入 storage
         const savedThemeRaw = safeGetStorageItem('brutx-theme')
         const savedTheme = isValidTheme(savedThemeRaw) ? savedThemeRaw : null
-        applyTheme(savedTheme ?? theme.value)
+        if (savedTheme) {
+            applyTheme(savedTheme)
+        } else {
+            applyThemeToDom(theme.value)
+        }
 
-        // 第三步：应用保存的颜色模式（复用 applyColorMode，避免重复逻辑）
+        // 第三步：应用保存的颜色模式；无保存值且系统为暗色时仅应用 system 模式的 DOM 效果，
+        // 不持久化（用户并未主动选择，持久化会让后续会话误认为是用户偏好）
         const savedModeRaw = safeGetStorageItem('brutx-color-mode')
         const savedMode = isValidColorMode(savedModeRaw) ? savedModeRaw : null
         if (savedMode) {
             applyColorMode(savedMode)
         } else if (isSystemDark.value) {
-            applyColorMode('system')
+            colorMode.value = 'system'
+            applyResolvedMode('dark')
         }
     }
 
@@ -152,6 +165,9 @@ export function createTheme(): UseThemeReturn {
     function destroy() {
         mediaQuery?.removeEventListener('change', onSystemDarkChange)
         mediaQuery = null
+        // 重置初始化标志：销毁后再次 initTheme 需重新注册 mediaQuery 监听，
+        // 否则系统暗色变化不再生效
+        initialized = false
     }
 
     return {
@@ -195,13 +211,19 @@ export function useTheme(): UseThemeReturn {
     }
     if (!fallbackInstance) {
         fallbackInstance = createTheme()
+        // 注意与 provideTheme（延迟到 onMounted 再 init）的时序差异：fallback 在 setup 中
+        // 立即 init，保证首个消费方在 setup 期间就能读到已初始化的主题状态
         fallbackInstance.initTheme()
     }
     // 组件级清理：引用计数归零时销毁单例，释放 mediaQuery 监听器。
     // 仅当在组件 setup 上下文中调用时才注册清理（与 provideTheme 行为一致）。
     if (getCurrentInstance()) {
+        // 捕获本次 setup 使用的实例：若外部（beforeunload/显式调用）先 destroyFallback
+        // 导致单例被重建，本组件卸载时不得误减新实例的引用计数或误销毁新单例
+        const instance = fallbackInstance
         fallbackRefCount++
         onUnmounted(() => {
+            if (fallbackInstance !== instance) return
             fallbackRefCount--
             if (fallbackRefCount <= 0) {
                 destroyFallback()
