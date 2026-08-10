@@ -21,13 +21,3 @@ export const SECTION_ORDER = [
     '⏪ Reverts',
     '🧹 Chores',
 ];
-
-/**
- * 返回 section 标题行（`### ⚠️ Breaking Changes`）对应的排序优先级。
- * 未收录的标题统一排在已知段落之后，且保持稳定（调用方用稳定排序保持其相对顺序）。
- */
-export function sectionRank(sectionHeaderLine) {
-    const label = sectionHeaderLine.replace(/^###\s*/, '').trim();
-    const index = SECTION_ORDER.indexOf(label);
-    return index === -1 ? SECTION_ORDER.length : index;
-}
