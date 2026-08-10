@@ -1,4 +1,4 @@
-import { shallowRef } from 'vue'
+import { readonly, shallowRef, type DeepReadonly, type Ref } from 'vue'
 import { renderImperative, type RenderImperativeReturn } from '../lib/render-imperative'
 import { isClient } from '../lib/env'
 import { DEFAULT_MESSAGE_DURATION_MS, MESSAGE_GRACE_PERIOD_MS, DEFAULT_DIALOG_TRANSITION_MS } from '../lib/defaults'
@@ -31,7 +31,10 @@ export interface UseMessageReturn {
     show: (options: MessageOptions) => () => void
 }
 
-export const messageStore = shallowRef<MessageItem[]>([])
+const messageStoreRef = shallowRef<MessageItem[]>([])
+// 只读视图：消息列表仅能经 useMessage()/removeMessage/destroyMessageSystem 修改，
+// 外部直写会绕过 duration 定时器与 GC，故导出 readonly 代理
+export const messageStore: DeepReadonly<Ref<MessageItem[]>> = readonly(messageStoreRef)
 
 let instance: RenderImperativeReturn | null = null
 let graceTimer: ReturnType<typeof setTimeout> | null = null
@@ -48,7 +51,7 @@ function clearTimer(id: string): void {
 
 export function removeMessage(id: string): void {
     clearTimer(id)
-    messageStore.value = messageStore.value.filter(m => m.id !== id)
+    messageStoreRef.value = messageStoreRef.value.filter(m => m.id !== id)
     scheduleGC()
 }
 
@@ -57,10 +60,10 @@ function scheduleGC(): void {
         clearTimeout(graceTimer)
         graceTimer = null
     }
-    if (messageStore.value.length > 0) return
+    if (messageStoreRef.value.length > 0) return
     graceTimer = setTimeout(() => {
         graceTimer = null
-        if (messageStore.value.length === 0 && instance) {
+        if (messageStoreRef.value.length === 0 && instance) {
             instance.destroy()
             instance = null
         }
@@ -98,7 +101,7 @@ function addMessage(options: MessageOptions): () => void {
         closable: options.closable ?? true,
     }
 
-    messageStore.value = [...messageStore.value, item]
+    messageStoreRef.value = [...messageStoreRef.value, item]
     ensureMounted()
 
     if (item.duration > 0) {
@@ -143,7 +146,7 @@ export function destroyMessageSystem(): void {
     timerMap.forEach((timer) => clearTimeout(timer))
     timerMap.clear()
     cancelGraceTimer()
-    messageStore.value = []
+    messageStoreRef.value = []
     messageIdCounter = 0
     if (instance) {
         instance.destroy()
