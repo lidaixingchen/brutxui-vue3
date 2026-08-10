@@ -24,6 +24,10 @@
         },
         "brutx-registry-vue#build": {
             "cache": false,
+            "env": [
+                "BRUTX_REGISTRY_PRIVATE_KEY",
+                "BRUTX_REGISTRY_KEY_ID"
+            ],
             "inputs": [
                 "../../packages/ui/src/**",
                 "../../packages/shared/src/**",
