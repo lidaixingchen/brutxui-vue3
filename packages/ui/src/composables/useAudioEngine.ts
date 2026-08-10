@@ -107,7 +107,12 @@ export function useAudioEngine(enabled: Ref<boolean>): UseAudioEngineReturn {
         // 因此等待 resume 成功后再创建与调度节点。
         if (ctx.state === 'suspended') {
             void ctx.resume()
-                .then(() => scheduleSound(ctx, type))
+                .then(() => {
+                    // resume 等待期间可能已 dispose（引用置空）或上下文被外部关闭：
+                    // 跳过本次调度，避免在已关闭的上下文上创建节点
+                    if (audioCtx !== ctx || ctx.state === 'closed') return
+                    scheduleSound(ctx, type)
+                })
                 .catch((err: unknown) => {
                     console.warn('[useAudioEngine] audio context resume failed', err)
                 })
