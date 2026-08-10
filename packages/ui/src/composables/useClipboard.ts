@@ -1,12 +1,12 @@
-import { ref, onUnmounted, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
+import { onUnmounted, readonly, ref, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 import { getNavigator } from '../lib/env'
 
 export const DEFAULT_COPIED_DURATION = 2000
 
 export interface UseClipboardReturn {
     copy: (text: string) => Promise<boolean>
-    copied: Ref<boolean>
-    isSupported: Ref<boolean>
+    copied: Readonly<Ref<boolean>>
+    isSupported: Readonly<Ref<boolean>>
 }
 
 export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = {}): UseClipboardReturn {
@@ -61,7 +61,7 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
 
     return {
         copy,
-        copied,
-        isSupported,
+        copied: readonly(copied),
+        isSupported: readonly(isSupported),
     }
 }

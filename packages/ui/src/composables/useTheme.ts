@@ -1,4 +1,4 @@
-import { ref, inject, provide, computed, onMounted, onUnmounted, getCurrentInstance, type ComputedRef, type InjectionKey, type Ref } from 'vue'
+import { computed, getCurrentInstance, inject, onMounted, onUnmounted, provide, readonly, ref, type ComputedRef, type InjectionKey, type Ref } from 'vue'
 import { hasDocument, isClient, safeGetStorageItem, safeSetStorageItem, getDocument, matchMedia, getWindow } from '../lib/env'
 import { VALID_THEMES, type ThemeName } from '../lib/theme-names'
 
@@ -13,7 +13,7 @@ export interface UseThemeReturn {
     theme: Ref<ThemeName>
     colorMode: Ref<ColorMode>
     resolvedColorMode: ComputedRef<ResolvedColorMode>
-    isSystemDark: Ref<boolean>
+    isSystemDark: Readonly<Ref<boolean>>
     setTheme: (name: ThemeName) => void
     setCustomVariable: (name: `--${string}`, value: string) => void
     removeCustomVariable: (name: `--${string}`) => void
@@ -158,7 +158,7 @@ export function createTheme(): UseThemeReturn {
         theme,
         colorMode,
         resolvedColorMode,
-        isSystemDark,
+        isSystemDark: readonly(isSystemDark),
         setTheme,
         setCustomVariable,
         removeCustomVariable,

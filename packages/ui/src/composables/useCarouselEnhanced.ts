@@ -1,4 +1,4 @@
-import { ref, computed, onUnmounted, toValue, type MaybeRefOrGetter } from 'vue'
+import { computed, onUnmounted, readonly, ref, toValue, type MaybeRefOrGetter } from 'vue'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS } from '../lib/defaults'
 import { useCarousel, type UseCarouselOptions } from './useCarousel'
 import { useReducedMotion } from './useReducedMotion'
@@ -112,7 +112,7 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
         scrollTo: carousel.scrollTo,
 
         // 增强功能
-        autoplayProgress,
+        autoplayProgress: readonly(autoplayProgress),
         startAutoplay,
         stopAutoplay,
     }

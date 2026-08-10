@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, onMounted, shallowRef, toValue, watch, type MaybeRefOrGetter } from 'vue'
+import { computed, onBeforeUnmount, onMounted, readonly, shallowRef, toValue, watch, type MaybeRefOrGetter } from 'vue'
 import { DEFAULT_AUTOPLAY_INTERVAL_MS, GLITCH_AUTOPLAY_ACTIVE_DURATION_MS, GLITCH_MIN_INTERVAL_MS } from '@/lib/defaults'
 import { useReducedMotion } from './useReducedMotion'
 
@@ -136,7 +136,7 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     })
 
     return {
-        isActive,
+        isActive: readonly(isActive),
         isGlitching,
         prefersReducedMotion,
         onMouseEnter,

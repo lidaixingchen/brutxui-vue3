@@ -4,7 +4,7 @@ import { isClient } from '../lib/env'
 
 export interface UseAnimationReturn {
     animationClass: ComputedRef<string>
-    prefersReduced: Ref<boolean>
+    prefersReduced: Readonly<Ref<boolean>>
 }
 
 /**

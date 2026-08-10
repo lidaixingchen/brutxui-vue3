@@ -125,7 +125,9 @@ describe('useTheme', () => {
 
             it('should apply system mode based on isSystemDark', () => {
                 const theme = scope.run(() => createTheme())!
-                theme.isSystemDark.value = true
+                theme.initTheme()
+                const callback = mockAddEventListener.mock.calls[0]?.[1] as (e: MediaQueryListEvent) => void
+                callback({ matches: true } as MediaQueryListEvent)
                 theme.applyColorMode('system')
                 expect(document.documentElement.classList.contains('dark')).toBe(true)
             })
@@ -171,14 +173,16 @@ describe('useTheme', () => {
 
             it('should return dark when system + isSystemDark', () => {
                 const theme = scope.run(() => createTheme())!
-                theme.isSystemDark.value = true
+                theme.initTheme()
+                const callback = mockAddEventListener.mock.calls[0]?.[1] as (e: MediaQueryListEvent) => void
+                callback({ matches: true } as MediaQueryListEvent)
                 theme.applyColorMode('system')
                 expect(theme.resolvedColorMode.value).toBe('dark')
             })
 
             it('should return light when system + not isSystemDark', () => {
                 const theme = scope.run(() => createTheme())!
-                theme.isSystemDark.value = false
+                theme.initTheme()
                 theme.applyColorMode('system')
                 expect(theme.resolvedColorMode.value).toBe('light')
             })
