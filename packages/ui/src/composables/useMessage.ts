@@ -147,7 +147,8 @@ export function destroyMessageSystem(): void {
     timerMap.clear()
     cancelGraceTimer()
     messageStoreRef.value = []
-    messageIdCounter = 0
+    // 注意：messageIdCounter 保持单调递增，不归零——旧消息 close() 闭包捕获的 id（msg-N）
+    // 若在新消息创建后才被调用，归零会使其按相同 id 误删无关的新消息，破坏数据完整性
     if (instance) {
         instance.destroy()
         instance = null

@@ -20,15 +20,27 @@ export function useDialog(): UseDialogReturn {
         if (currentInstance) {
             currentInstance.close()
         }
-        const instance = showDialog(options)
+        let instance: DialogInstance
+        try {
+            instance = showDialog(options)
+        } catch (error) {
+            // showDialog 同步抛错（如渲染/组件 setup 失败）时恢复状态：
+            // 旧实例已被 close，调用方拿不到新实例，isOpen 不应停留在 true
+            currentInstance = null
+            isOpen.value = false
+            throw error
+        }
         currentInstance = instance
         isOpen.value = true
-        instance.promise.finally(() => {
+        const cleanup = () => {
             if (currentInstance === instance) {
                 isOpen.value = false
                 currentInstance = null
             }
-        })
+        }
+        // then(onFulfilled, onRejected) 显式处理两种终态：
+        // .finally() 返回的新 Promise 在 reject 时会产生未处理的 rejection
+        instance.promise.then(cleanup, cleanup)
         return instance
     }
 

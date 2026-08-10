@@ -27,6 +27,10 @@ export function useMessageBox(): UseMessageBoxReturn {
         } catch {
             // 用户点击取消或关闭
             return false
+        } finally {
+            // 显式清理 DOM 容器，不依赖底层 close→过渡动画→自动 destroy 的定时机制
+            // （对已销毁的实例幂等）
+            instance.destroy()
         }
     }
 
