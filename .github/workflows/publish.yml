@@ -80,6 +80,24 @@ jobs:
             # Release 资产必须先于 npm publish 就绪：CLI 默认源指向 releases/latest/download，
             # 若 CLI 先发布而资产未上传，用户零配置拉取即 404，且 upload 失败会留下不可回滚状态。
             # 幂等写法：tag 重推/重跑时 release 已存在，直接 create 会失败阻断后续发布。
+            #
+            # 边界防御：tag 被删除再重推时（发布中途修复后重打 tag），GitHub 会把旧 release
+            # 自动转成 Draft 孤儿；其 tag_name 与新 tag 相同但 create 仍会成功，导致同名双 release。
+            # 因此先清理同名 Draft 再 create/edit（无同名 draft 时跳过，幂等）。
+            - name: Clean up orphan draft release for tag
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  TAG: ${{ github.ref_name }}
+              run: |
+                  draft_id=$(gh api --paginate "repos/{owner}/{repo}/releases" \
+                      -q ".[] | select(.tag_name == \"$TAG\" and .draft == true) | .id" | head -1)
+                  if [ -n "$draft_id" ]; then
+                    gh api -X DELETE "repos/{owner}/{repo}/releases/$draft_id"
+                    echo "已删除同名 Draft release: $draft_id"
+                  else
+                    echo "无同名 Draft release，跳过"
+                  fi
+
             - name: Create GitHub Release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
