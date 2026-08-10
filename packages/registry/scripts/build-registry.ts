@@ -48,7 +48,8 @@ export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
         const cause = error instanceof Error ? error.message : String(error);
         throw new Error(
             `Failed to read ${path.relative(process.cwd(), MANIFEST_PATH)} (${cause}). ` +
-            `Run pnpm --filter brutx-ui-vue prebuild:scan first to generate the UI registry manifest.`
+            `Run pnpm --filter brutx-ui-vue prebuild:scan first to generate the UI registry manifest.`,
+            { cause: error }
         );
     }
     const manifest = JSON.parse(manifestRaw) as RegistryManifest;
