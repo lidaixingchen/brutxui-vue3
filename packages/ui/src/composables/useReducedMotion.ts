@@ -1,7 +1,7 @@
-import { ref, onMounted, onUnmounted, type Ref } from 'vue'
+import { readonly, ref, onMounted, onUnmounted, type Ref } from 'vue'
 import { isClient, matchMedia } from '../lib/env'
 
-export function useReducedMotion(): Ref<boolean> {
+export function useReducedMotion(): Readonly<Ref<boolean>> {
     const prefersReduced = ref(false)
     let mediaQuery: MediaQueryList | null = null
 
@@ -36,5 +36,5 @@ export function useReducedMotion(): Ref<boolean> {
         mediaQuery?.removeEventListener('change', onChange)
     })
 
-    return prefersReduced
+    return readonly(prefersReduced)
 }

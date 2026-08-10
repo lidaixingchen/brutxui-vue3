@@ -14,7 +14,7 @@ async function emulateReducedMotion(value: 'reduce' | 'no-preference') {
 }
 
 function mountProbe() {
-    let prefersReduced: Ref<boolean> | undefined
+    let prefersReduced: Readonly<Ref<boolean>> | undefined
     const wrapper = mount(defineComponent({
         setup() {
             prefersReduced = useReducedMotion()

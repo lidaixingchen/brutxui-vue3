@@ -41,7 +41,7 @@ function createMockMediaQuery(matches: boolean) {
     } as unknown as MockMediaQueryList
 }
 
-function createWrapperWith(composable: () => Ref<boolean>) {
+function createWrapperWith(composable: () => Readonly<Ref<boolean>>) {
     return defineComponent({
         setup() {
             const prefersReduced = composable()
