@@ -1,11 +1,12 @@
 import { beforeEach, afterEach, vi } from 'vitest'
 import { effectScope, nextTick, ref } from 'vue'
+import type { useAnimation as UseAnimationFn } from './useAnimation'
 
 // useReducedMotion 已只读化：prefersReduced 无法在测试中直写，
 // 改为 mock 其来源，通过 reducedMotionMock 驱动偏好值。
 // 注意：必须动态 import useAnimation——静态 import 会在模块体执行前
 // 触发 vi.mock 工厂（此时 reducedMotionMock 尚处于 TDZ）
-let reducedMotionMock = ref(false)
+const reducedMotionMock = ref(false)
 
 vi.mock('./useReducedMotion', () => ({
     useReducedMotion: () => reducedMotionMock,
@@ -13,7 +14,7 @@ vi.mock('./useReducedMotion', () => ({
 
 describe('useAnimation', () => {
     let scope: ReturnType<typeof effectScope>
-    let useAnimation: Awaited<ReturnType<typeof import('./useAnimation')>>['useAnimation']
+    let useAnimation: typeof UseAnimationFn
 
     beforeEach(async () => {
         scope = effectScope(true)
@@ -26,7 +27,7 @@ describe('useAnimation', () => {
         scope.stop()
     })
 
-    function createAnimation(animationClass: Parameters<typeof import('./useAnimation').useAnimation>[0] = '') {
+    function createAnimation(animationClass: Parameters<typeof UseAnimationFn>[0] = '') {
         return scope.run(() => useAnimation(animationClass))!
     }
 
