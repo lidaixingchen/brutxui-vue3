@@ -1,6 +1,6 @@
 # BrutxUI Composables 内部状态只读化重构方案
 
-> 状态：**已完成**（2026-08-10，M1-M6 全量回归通过：完整套件 3366 + SSR 195 + typecheck 全绿）
+> 状态：**已完成**（2026-08-10，M1-M7 全量回归通过：完整套件 3371 + SSR 195 + typecheck 全绿）
 > 关联：`.ocr-reports/ui-composables-part1.md` #27（内部可变状态直接暴露为可写引用）
 > 目标范围：`packages/ui/src/composables/*`
 
@@ -75,12 +75,18 @@ return { history: readonly(history), addToHistory, clearHistory }
 | `useDialogEnhanced` | `position`/`size`/`contentStyle` | `Ref<{...}>`/`Ref<CSSProperties>` | ⚠️ 拖拽/缩放方法，无独立 setter | 待查 | 待查 | **P1（决策点）** |
 | `useColorHistory` | `history` | `DeepReadonly<Ref<string[]>>` | ✅ | — | — | **已完成（范本）** |
 
-### 3.2 B 类候选（可选，本次不强制）
+### 3.2 B 类候选（已全部纳入）
 
-- `useStepper.currentStep`（有 `goToStep`/`nextStep`/`previousStep`）
-- `useFormFieldValidation.validationState` / `errorMessage`（有 `validate`/`reset`）
-- `useKanban` 拖拽临时状态（`draggingCard`/`grabbedCard`/`dragOverColumn`/`isDragging`，标量/null）
-- `useCanvasInteraction` / `useCarousel` 的若干内部标量
+> 原为"可选、本次不强制"，经 M5 + M7 全部落地，仅 `useCanvasInteraction`/`useCarousel` 的部分内部标量因语义判定豁免。
+
+- `useStepper.currentStep` ✅（M5，有 `goToStep`/`nextStep`/`previousStep`）
+- `useFormFieldValidation.validationState` / `errorMessage` ✅（M5，有 `validate`/`reset`）
+- `useKanban` 拖拽临时状态（`draggingCard`/`grabbedCard`/`dragOverColumn`/`isDragging`，标量/null）✅（M5）
+- `useReducedMotion` 返回值（根依赖）✅（M7）
+- `useAnimation.prefersReduced`、`useGlitchEffect.isActive`、`useCarouselEnhanced.autoplayProgress` ✅（M7）
+- `useClearable.isHovering/isFocused`、`useClipboard.copied/isSupported` ✅（M7，均有配套方法）
+- `useTheme.isSystemDark` ✅（M7，mediaQuery 驱动的系统派生状态）
+- `useCanvasInteraction` / `useCarousel` 的若干内部标量：`isRevealed`/`selectedIndex` 等已只读化（M5）；`brushRadius`/`percentage`/`fadeDuration` 为公开配置入参、`ctx` 为能力引用，豁免
 
 ### 3.3 明确不改
 
@@ -228,8 +234,27 @@ return { history: readonly(history), addToHistory, clearHistory }
 | M4 | `useDataTableFilter.filterState` 补 setter + DataTable v-model 改 setter 回调 | `66514cd0` |
 | M5 | B 类标量状态只读化（validationState/currentStep/拖拽状态/selectedIndex/isRevealed） | `d96d4d13` |
 | M6 | 全量回归 + 方案文档收尾 | 回归通过 |
+| M7 | 同类遗留收尾：`messageStore` + 8 个 B 类标量只读化 | 见下 |
 
-**回归基线**：完整套件 147 文件 / 3366 测试 + SSR 195 + `vue-tsc --noEmit` 全绿。相较改造前 3372 测试净减少 6 个，均为删除的"靠直写构造不可达状态"的防御分支测试（sortState 非法状态 1、useKanban draggingColumn 3、scratch-card isRevealed 重置 2）。
+**回归基线**：完整套件 147 文件 / 3371 测试 + SSR 195 + `vue-tsc --noEmit` 全绿。相较 M1-M6 后 3366 测试净增 5 个（含用户提交的 data-table 列过滤/全局搜索 UI 链路测试）；M7 自身未删/增测试。
+
+**M7（同类遗留收尾，2026-08-10）**——方案 §3 未覆盖的同类"内部可变状态暴露为可写 ref"：
+
+| 状态 | 处理 | 测试适配 |
+|---|---|---|
+| `useMessage.messageStore`（A 类，模块级 `shallowRef<MessageItem[]>`） | 内部改名 `messageStoreRef` 保持可变，导出 `readonly(messageStoreRef)` 为 `DeepReadonly<Ref<MessageItem[]>>`（与 `useToast.toasts` 同构）；`addMessage`/`removeMessage`/`destroyMessageSystem` 操作内部 ref | 消费方 MessageContainer/测试仅读，零改动 |
+| `useReducedMotion`（B 类，根依赖） | `readonly(prefersReduced)` + `Readonly<Ref<boolean>>` | `useReducedMotion.test`/`browser.test` 类型标注改 `Readonly<Ref<boolean>>` |
+| `useAnimation.prefersReduced` | 转发只读视图，接口改 `Readonly<Ref<boolean>>` | `useAnimation.test` 6 处直写改 vi.mock `useReducedMotion` + 动态 import（vi.hoisted 引用 vue `ref` 触发 TDZ，改用惰性 vi.mock 工厂） |
+| `useGlitchEffect.isActive` | `readonly(isActive)` | 消费方 Button 只读解构，零改动 |
+| `useClearable.isHovering/isFocused` | `readonly()` + `Readonly<Ref<boolean>>` | 消费方 Input/SelectTrigger 不接收该状态，零改动 |
+| `useClipboard.copied/isSupported` | `readonly()` + `Readonly<Ref<boolean>>` | 消费方 CopyToClipboard 只读，测试只读断言 |
+| `useCarouselEnhanced.autoplayProgress` | `readonly()` | 消费方 Carousel 模板只读，测试只读断言 |
+| `useTheme.isSystemDark` | `readonly()` + `Readonly<Ref<boolean>>` | `useTheme.test` 3 处直写改经 `initTheme` + `mockAddEventListener` 回调驱动（与 `onSystemDarkChange` 测试同模式） |
+
+**关键修正**：
+
+- `messageStore` 是**模块级**导出，不能像 composables 那样"内部可变 + 返回边界只读"——必须在模块内拆出 `messageStoreRef`（内部可变）+ 导出 `messageStore`（只读视图），否则内部写入也被拦截。
+- `vi.hoisted` 回调引用 vue 的 `ref` 会在提升阶段触发 TDZ（`Cannot access '__vi_import_0__' before initialization`）；改用顶层 `let reducedMotionMock = ref(false)` + 惰性 `vi.mock` 工厂 + **动态 import** 被测模块，确保 ref 先于工厂初始化。
 
 **执行中的关键修正**：
 
