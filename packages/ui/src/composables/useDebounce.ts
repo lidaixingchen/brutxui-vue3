@@ -85,17 +85,25 @@ export function useDebounce<T extends (...args: any[]) => unknown>(
             if (immediate && timeoutId === null) {
                 fn(...args)
             }
-        } finally {
-            // 无论立即执行是否抛错，都重新调度 trailing 定时器：
-            // 保证 timeoutId/lastArgs 能在 delay 后复位，避免状态残留导致 flush 重复执行
-            timeoutId = setTimeout(() => {
+        } catch (error) {
+            // 立即执行抛错：复位 lastArgs 后重抛，不调度定时器——
+            // 否则 timeoutId 残留非空，immediate 模式下调用方捕获异常后重试会被静默丢弃
+            lastArgs = null
+            throw error
+        }
+
+        timeoutId = setTimeout(() => {
+            try {
                 if (!immediate) {
                     fn(...args)
                 }
+            } finally {
+                // trailing 回调抛错时也保证状态复位，避免 timeoutId/lastArgs 残留
+                // 导致 flush 重复执行已调用过的 fn
                 timeoutId = null
                 lastArgs = null
-            }, delay)
-        }
+            }
+        }, delay)
     }) as T
 
     onUnmounted(() => {

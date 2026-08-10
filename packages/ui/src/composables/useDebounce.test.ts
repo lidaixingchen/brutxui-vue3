@@ -252,6 +252,45 @@ describe('useDebounce', () => {
         })
     })
 
+    describe('异常处理', () => {
+        it('immediate 模式首次调用抛错后状态复位，重试可立即执行', () => {
+            const fn = vi.fn()
+            fn.mockImplementationOnce(() => {
+                throw new Error('boom')
+            })
+            const { debounced, flush } = useDebounce(fn, 300, { immediate: true })
+
+            expect(() => debounced('first')).toThrow('boom')
+            // 抛错后 lastArgs 已复位，flush 不应重复执行已失败且未调度的调用
+            flush()
+            expect(fn).toHaveBeenCalledTimes(1)
+            // timeoutId 未被污染（抛错时不调度定时器），重试仍走立即执行分支
+            debounced('retry')
+            expect(fn).toHaveBeenCalledTimes(2)
+            expect(fn).toHaveBeenLastCalledWith('retry')
+        })
+
+        it('trailing 回调抛错后状态复位，后续 flush 不重复执行', () => {
+            const fn = vi.fn()
+            fn.mockImplementationOnce(() => {
+                throw new Error('boom')
+            })
+            const { debounced, flush } = useDebounce(fn, 300)
+
+            debounced('first')
+            // trailing 回调抛错（异常向上传播），但 timeoutId/lastArgs 由 finally 复位
+            expect(() => vi.advanceTimersByTime(300)).toThrow('boom')
+            flush()
+            expect(fn).toHaveBeenCalledTimes(1)
+
+            // 状态复位后可以正常继续防抖
+            debounced('second')
+            vi.advanceTimersByTime(300)
+            expect(fn).toHaveBeenCalledTimes(2)
+            expect(fn).toHaveBeenLastCalledWith('second')
+        })
+    })
+
     describe('边界情况', () => {
         it('delay 为 0 时立即执行', () => {
             const fn = vi.fn()

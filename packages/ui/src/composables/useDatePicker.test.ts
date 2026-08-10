@@ -154,6 +154,48 @@ describe('useDatePicker', () => {
         expect(emitted).toContainEqual(['change', null])
     })
 
+    it('panel clear followed by update(null) does not emit duplicate change on close', async () => {
+        const emitted: Array<[string, unknown]> = []
+        const modelValue = ref<Date | null>(new Date(2026, 0, 1))
+        const { open, handlePanelClear, handlePanelUpdate } = createDatePicker({
+            modelValue,
+            emit: (event: string, ...args: unknown[]) => emitted.push([event, args[0]]),
+        })
+        open.value = true
+        await nextTick()
+        // 模拟面板清除按钮：handleClear 依次 emit('clear')（→handlePanelClear）和
+        // emit('update:modelValue', null)（→handlePanelUpdate）——后者不得中和抑制标志
+        handlePanelClear()
+        handlePanelUpdate(null)
+        open.value = false
+        await nextTick()
+        const changeEvents = emitted.filter(([e]) => e === 'change')
+        expect(changeEvents.length).toBe(1)
+        expect(changeEvents[0][1]).toBeNull()
+    })
+
+    it('panel clear then picking a new date emits change-on-close', async () => {
+        const emitted: Array<[string, unknown]> = []
+        const modelValue = ref<Date | null>(new Date(2026, 0, 1))
+        const { open, handlePanelClear, handlePanelUpdate } = createDatePicker({
+            modelValue,
+            emit: (event: string, ...args: unknown[]) => emitted.push([event, args[0]]),
+        })
+        open.value = true
+        await nextTick()
+        handlePanelClear()
+        handlePanelUpdate(null)
+        // clear 之后用户选了新日期：抑制标志应被重置，关闭面板时正常 emit change-on-close
+        const newDate = new Date(2026, 5, 26)
+        handlePanelUpdate(newDate)
+        open.value = false
+        await nextTick()
+        const changeEvents = emitted.filter(([e]) => e === 'change')
+        expect(changeEvents.length).toBe(2)
+        expect(changeEvents[0][1]).toBeNull()
+        expect(changeEvents[1][1]).toEqual(newDate)
+    })
+
     it('handleClearClick stops propagation and clears value', () => {
         const emitted: Array<[string, unknown]> = []
         const { handleClearClick, displayValue } = createDatePicker({

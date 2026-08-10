@@ -85,9 +85,10 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
 
     function handlePanelUpdate(value: Date | null) {
         displayValue.value = value
-        // clear 之后用户又选了新值：取消 suppressCloseChange，
-        // 避免关闭面板时吞掉应有的 change-on-close
-        suppressCloseChange = false
+        // 仅在新值非空时取消抑制：面板清除按钮会先 emit('clear') 再 emit('update:modelValue', null)，
+        // 若此处无条件重置，会把 handlePanelClear 刚置位的 suppressCloseChange 中和掉，
+        // 关闭面板时仍会重复 emit change(null)
+        if (value !== null) suppressCloseChange = false
         options.emit('update:modelValue', value)
     }
 
