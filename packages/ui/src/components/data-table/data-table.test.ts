@@ -754,3 +754,115 @@ describe('DataTable virtualScroll column width warning', () => {
         wrapper.unmount()
     })
 })
+
+// ── 列过滤 UI 交互（绑定链路：DataTableColumnFilter emit → DataTable setter → 过滤）──
+// 原生表格与虚拟滚动两个分支都要覆盖，防止只读化后 v-model 绑定遗漏导致列过滤静默失效
+
+describe('DataTable filter UI binding links', () => {
+    const filterCols: DataTableColumn<TestRow>[] = [
+        { id: 'name', header: 'Name', accessorKey: 'name', filterType: 'text' },
+        { id: 'age', header: 'Age', accessorKey: 'age', filterType: 'multi-select', filterOptions: [{ label: '25', value: 25 }, { label: '30', value: 30 }] },
+        { id: 'email', header: 'Email', accessorKey: 'email', filterType: 'date-range' },
+    ]
+
+    function openColumnFilter(wrapper: ReturnType<typeof mountDataTable>, columnId: string) {
+        return wrapper.get(`[aria-label="Filter ${columnId}"]`).trigger('click')
+    }
+
+    function popoverInput(): HTMLInputElement {
+        const content = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        const input = content?.querySelector<HTMLInputElement>('input')
+        if (!input) throw new Error('filter popover input not found')
+        return input
+    }
+
+    it('global search input drives filtered rows via setGlobalFilter', async () => {
+        const wrapper = mountDataTable({ data: testData, columns: testColumns, rowKey: 'id', filterable: true })
+        const input = wrapper.find<HTMLInputElement>('input[placeholder="Filter..."]')
+        expect(input.exists()).toBe(true)
+        await input.setValue('alice')
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('Alice')
+    })
+
+    it('native table: text column filter via popover UI', async () => {
+        const wrapper = mountDataTable({ data: testData, columns: filterCols, rowKey: 'id', filterable: true })
+        await openColumnFilter(wrapper, 'name')
+        await nextTick()
+        const input = popoverInput()
+        input.value = 'Bob'
+        input.dispatchEvent(new Event('input'))
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('Bob')
+        wrapper.unmount()
+    })
+
+    it('virtual scroll: text column filter via popover UI', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: filterCols.map((c) => ({ ...c, width: 100 })),
+            rowKey: 'id',
+            filterable: true,
+            virtualScroll: { enabled: true, rowHeight: 'auto' },
+        })
+        await openColumnFilter(wrapper, 'name')
+        await nextTick()
+        const input = popoverInput()
+        input.value = 'Alice'
+        input.dispatchEvent(new Event('input'))
+        await nextTick()
+        expect(wrapper.findAll('[role="row"]')).toHaveLength(1)
+        wrapper.unmount()
+    })
+
+    it('native table: multi-select column filter via popover UI', async () => {
+        const wrapper = mountDataTable({ data: testData, columns: filterCols, rowKey: 'id', filterable: true })
+        await openColumnFilter(wrapper, 'age')
+        await nextTick()
+        const content = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        expect(content).not.toBeNull()
+        const checkboxes = content!.querySelectorAll<HTMLElement>('[role="checkbox"]')
+        expect(checkboxes.length).toBeGreaterThan(0)
+        // 勾选 25 → 仅 Alice
+        checkboxes[0].click()
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('Alice')
+        wrapper.unmount()
+    })
+
+    it('native table: date-range column filter via popover UI', async () => {
+        const dateData = [
+            { id: 1, name: 'A', email: 'a@example.com', age: 20, date: '2026-01-01' },
+            { id: 2, name: 'B', email: 'b@example.com', age: 30, date: '2026-06-01' },
+        ]
+        const cols: DataTableColumn<TestRow & { date: string }>[] = [
+            { id: 'name', header: 'Name', accessorKey: 'name' },
+            { id: 'date', header: 'Date', accessorKey: 'date', filterType: 'date-range' as const },
+        ]
+        const wrapper = mountDataTable({
+            data: dateData,
+            columns: cols as unknown as DataTableColumn<TestRow>[],
+            rowKey: 'id',
+            filterable: true,
+        })
+        await openColumnFilter(wrapper, 'date')
+        await nextTick()
+        const inputs = document.body.querySelectorAll<HTMLInputElement>('[role="dialog"] input')
+        expect(inputs.length).toBe(2)
+        // 两次输入之间 flush 一次，模拟真实用户先填 start 再填 end 的时间差：
+        // handleDateRangeChange 基于 props.filterState 构造 next，若同一 tick 连续触发，
+        // 第二次会读到尚未反映第一次改动的旧 props 而覆盖丢失
+        inputs[0].value = '2026-02-01'
+        inputs[0].dispatchEvent(new Event('input'))
+        await nextTick()
+        inputs[1].value = '2026-07-01'
+        inputs[1].dispatchEvent(new Event('input'))
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('B')
+        wrapper.unmount()
+    })
+})
