@@ -12,7 +12,12 @@ export interface UseTransferPanelSelectionOptions<TItem extends TransferPanelIte
 }
 
 export interface UseTransferPanelSelectionReturn<TItem extends TransferPanelItem> {
-    /** 只读视图：修改请经 handleAllCheckChange / toggleItem / removeKeys / pruneKeys */
+    /**
+     * 只读视图：修改请经 handleAllCheckChange / toggleItem / removeKeys / pruneKeys。
+     * 注意：checked 允许持有当前 items 之外的 key（跨面板 transfer 场景中，一侧面板的
+     * 选中可能引用另一侧的面板项），因此它不会随 items 变化自动裁剪——请在 items
+     * 变更时显式调用 pruneKeys 清理已删除项的残留 key。
+     */
     checked: DeepReadonly<Ref<TransferPanelKey[]>>
     allChecked: ComputedRef<boolean>
     indeterminate: ComputedRef<boolean>
@@ -26,6 +31,9 @@ export interface UseTransferPanelSelectionReturn<TItem extends TransferPanelItem
 export function useTransferPanelSelection<TItem extends TransferPanelItem>(
     options: UseTransferPanelSelectionOptions<TItem>,
 ): UseTransferPanelSelectionReturn<TItem> {
+    // 设计约定：checked 可持有当前 items 之外的面板 key（跨面板 Transfer 中，本面板的选中集
+    // 可能引用对侧面板的条目），因此不随 items 变化自动裁剪；条目被删除/失效后由调用方经
+    // pruneKeys 显式清理。toggleItem 不做 key 存在性校验是同一约定的延续。
     const checked = ref<TransferPanelKey[]>([])
 
     const enabledKeys = computed(() =>
@@ -45,6 +53,8 @@ export function useTransferPanelSelection<TItem extends TransferPanelItem>(
         return checkedCount > 0 && checkedCount < enabledKeys.value.length
     })
 
+    // 交互约定：半选态（indeterminate）点击视为全选，与 element-plus 等主流组件库一致。
+    // 如需「点击半选 → 取消全选」的策略，请在调用方先归一化参数再传入。
     function handleAllCheckChange(nextChecked: boolean | 'indeterminate') {
         if (nextChecked === true || nextChecked === 'indeterminate') {
             checked.value = Array.from(new Set([...checked.value, ...enabledKeys.value]))
