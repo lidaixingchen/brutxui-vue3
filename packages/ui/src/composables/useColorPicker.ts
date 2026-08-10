@@ -44,13 +44,23 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
             options.emitUpdateOpen?.(val)
         },
     })
-    const displayValue = ref<string | null>(toValue(options.modelValue) ?? null)
+    // 空字符串与 null 统一归一化为 null（与 normalizedDisplay 的判空语义一致）
+    const displayValue = ref<string | null>(toValue(options.modelValue) || null)
+
+    // 面板内确认关闭（handlePanelConfirm）时跳过 displayValue 重置，
+    // 避免父组件异步/延迟更新 modelValue 时用旧值覆盖刚确认的颜色
+    let skipResetOnClose = false
 
     watch(open, (isOpen) => {
         if (isOpen) {
+            skipResetOnClose = false
             options.emit('open')
         } else {
             options.emit('close')
+            if (skipResetOnClose) {
+                skipResetOnClose = false
+                return
+            }
             const currentModel = toValue(options.modelValue) ?? null
             if (displayValue.value !== currentModel) {
                 displayValue.value = currentModel
@@ -59,11 +69,12 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
     })
 
     watch(() => toValue(options.modelValue), (value) => {
-        displayValue.value = value ?? null
+        displayValue.value = value || null
     })
 
     const normalizedDisplay = computed(() => {
-        const value = toValue(options.modelValue)
+        // 基于 displayValue 计算显示：面板内编辑未提交时，触发器文本同步展示待选颜色
+        const value = displayValue.value
         if (!value) return null
         const hsv = parseColor(value)
         if (!hsv) return null
@@ -71,7 +82,8 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
     })
 
     const swatchStyle = computed(() => ({
-        backgroundColor: toValue(options.modelValue) ?? 'transparent',
+        // 基于 displayValue（含空串归一化）计算色块：面板内编辑未提交时同步展示待选颜色
+        backgroundColor: displayValue.value || 'transparent',
     }))
 
     function handlePanelUpdate(value: string | null) {
@@ -83,25 +95,35 @@ export function useColorPicker(options: UseColorPickerOptions): UseColorPickerRe
         displayValue.value = value
         options.emit('update:modelValue', value)
         options.emit('change', value)
+        skipResetOnClose = true
         open.value = false
     }
 
-    function handlePanelClear() {
+    function clearValue() {
         displayValue.value = null
         options.emit('update:modelValue', null)
         options.emit('change', null)
+    }
+
+    function handlePanelClear() {
+        clearValue()
     }
 
     function handleClearClick(event: Event) {
         event.stopPropagation()
-        displayValue.value = null
-        options.emit('update:modelValue', null)
-        options.emit('change', null)
+        clearValue()
     }
 
     function handleTriggerKeydown(event: KeyboardEvent) {
         if (toValue(options.disabled)) return
-        if ((event.key === 'Enter' || event.key === ' ') && !open.value) {
+        if (open.value) {
+            // 面板打开后按 Escape 关闭，未确认的值由 watch(open) 在关闭时回退到 modelValue
+            if (event.key === 'Escape') {
+                open.value = false
+            }
+            return
+        }
+        if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault()
             open.value = true
         }
