@@ -15,10 +15,11 @@ export interface UseThrottleOptions {
  */
 export interface UseThrottleReturn<T extends (...args: never[]) => unknown> {
     /**
-     * 节流后的函数。签名与原函数参数一致，但返回类型为 `ReturnType<T> | void`——
-     * 节流实现会丢弃被抑制的调用及其返回值，直接声明原返回类型不健全。
+     * 节流后的函数。签名与原函数参数一致，但返回类型恒为 `void`：
+     * 节流实现丢弃被抑制的调用及其返回值（前缘/尾部路径都不返回 fn 的结果），
+     * 调用方不应依赖返回值。
      */
-    throttled: (...args: Parameters<T>) => ReturnType<T> | void
+    throttled: (...args: Parameters<T>) => void
     /** 取消待执行的尾部调用 */
     cancel: () => void
     /** 立即执行待执行的尾部调用 */
@@ -91,8 +92,10 @@ export function useThrottle<T extends (...args: never[]) => unknown>(
 
         const remaining = delay - (now - lastCallTime)
 
-        // 前缘分支：窗口已过（含 delay 为 0），或 leading 且为首次调用
-        if (remaining <= 0 || (isFirstCall && leading)) {
+        // 前缘分支：窗口已过（含 delay 为 0）、时钟回拨兜底（remaining > delay，系统
+        // 时间向前调整时 now < lastCallTime 会算出超大 remaining，应视为窗口已过立即执行），
+        // 或 leading 且为首次调用
+        if (remaining <= 0 || remaining > delay || (isFirstCall && leading)) {
             if (timeoutId !== null) {
                 clearTimeout(timeoutId)
                 timeoutId = null
