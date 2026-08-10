@@ -669,7 +669,11 @@ export async function resolveDeps(
         const match = baseSource.match(GITHUB_RAW_URL_PATTERN);
         if (!match) {
             // 默认源忽略版本：Release 资产 URL 固定指向 latest，无历史版本可寻址。
+            // warn 让用户感知显式版本已被忽略（否则会无感知拿到 latest）
             if (DEFAULT_REGISTRY_SOURCES.some((source) => source === baseSource)) {
+                logger.warn(
+                    `@version "${version}" is ignored: default Release registry has no versioned assets, fetching latest instead.`
+                );
                 return baseSource;
             }
             throw new CliError(

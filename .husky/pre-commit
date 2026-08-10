@@ -7,6 +7,12 @@ STAGED_UI=$(git diff --cached --name-only | grep -E '^packages/ui/src/' | grep -
 
 if [ -n "$STAGED_UI" ]; then
     echo "[pre-commit] ui 源码已变更，自动重新生成 registry 文件..."
+    # 先重新生成 ui 侧生成文件（prebuild:scan / prebuild:tokens），再跑 registry build 验证一致性；
+    # 否则 manifest/styles.css 可能基于旧源码生成，被静默纳入本次提交
+    if ! pnpm --filter brutx-ui-vue prebuild:scan || ! pnpm --filter brutx-ui-vue prebuild:tokens; then
+        echo "[pre-commit] ui 生成文件重新生成失败，已中止提交，请先修复构建错误" >&2
+        exit 1
+    fi
     if ! pnpm --filter brutx-registry-vue build; then
         echo "[pre-commit] registry 生成失败，已中止提交，请先修复构建错误" >&2
         exit 1

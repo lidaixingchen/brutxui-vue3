@@ -91,7 +91,8 @@ jobs:
                   || gh release edit "$TAG" --title "Release $TAG"
 
             # 上传前校验：产物齐全（index.json / registry-manifest.json / registry-sbom.json）、
-            # 数量 = 90（排除本地可能遗留的 deps.json）、manifest 含 signature 且 keyId = official-v1
+            # 数量与 index.json 的 items 派生一致（排除本地可能遗留的 deps.json）、
+            # manifest 含 signature 且 keyId = official-v1
             - name: Verify registry artifacts ready for upload
               run: |
                   for f in index.json registry-manifest.json registry-sbom.json; do
@@ -100,9 +101,12 @@ jobs:
                       exit 1
                     fi
                   done
+                  # 期望数量 = index.json 的 items 数（组件 + locale-zh-cn）+ 3 个固定文件（index/manifest/sbom），
+                  # 从构建产物派生而非硬编码，避免与组件清单脱节
+                  expected=$(node -e "const i = require('./packages/registry/registry/index.json'); console.log(i.items.length + 3)")
                   count=$(ls packages/registry/registry/*.json | grep -v 'deps\.json$' | wc -l)
-                  if [ "$count" -ne 90 ]; then
-                    echo "::error::registry 产物数量异常：期望 90 个 json（不含 deps.json），实际 $count"
+                  if [ "$count" -ne "$expected" ]; then
+                    echo "::error::registry 产物数量异常：期望 $expected 个 json（index items + 3 固定文件，不含 deps.json），实际 $count"
                     exit 1
                   fi
                   node -e "
@@ -115,13 +119,25 @@ jobs:
                   "
 
             # 上传 registry 产物为 Release 资产（扁平命名，可寻址 releases/latest/download/{name}.json）
-            # --clobber：重推/重跑时覆盖同名资产，配合幂等 create 保证可重复执行
+            # --clobber：重推/重跑时覆盖同名资产，配合幂等 create 保证可重复执行。
+            # 文件列表与校验步骤同源过滤（排除本地可能遗留的 deps.json），保证上传集合与校验集合一致。
             - name: Upload registry artifacts to Release
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAG: ${{ github.ref_name }}
               run: |
-                  gh release upload "$TAG" packages/registry/registry/*.json --clobber
+                  files=$(ls packages/registry/registry/*.json | grep -v 'deps\.json$')
+                  gh release upload "$TAG" $files --clobber
+                  # 清理 Release 中已不存在的旧资产（组件删除/重命名后 --clobber 无法删除，
+                  # 旧 JSON 会继续可寻址并与 index/manifest 版本漂移）
+                  current=$(echo "$files" | xargs -n1 basename)
+                  existing=$(gh release view "$TAG" --json assets -q '.assets[].name' 2>/dev/null || true)
+                  for name in $existing; do
+                    if ! echo "$current" | grep -qx "$name"; then
+                      echo "::warning::删除 Release 中已移除的旧资产: $name"
+                      gh release delete-asset "$TAG" "$name" -y
+                    fi
+                  done
 
             - name: Publish brutx-ui-vue
               working-directory: packages/ui
