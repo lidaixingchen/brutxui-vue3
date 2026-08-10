@@ -336,27 +336,33 @@ describe('build-registry helpers', () => {
     });
 });
 
-describe('registry build snapshots', () => {
-    const summarize = (item: ReturnType<typeof buildRegistryItem>) => ({
-        name: item.name,
-        type: item.type,
-        title: item.title,
-        category: item.category,
-        status: item.status,
-        replacement: item.replacement,
-        dependencies: item.dependencies,
-        registryDependencies: item.registryDependencies,
-        files: item.files.map(f => ({ path: f.path, type: f.type })),
-        fileCount: item.files.length,
-        integrity: item.integrity,
+// 产物不入库后（见 docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md），integrity 是
+// ui 源码的内容哈希，随源码改动而变；用快照固化具体 integrity 值会使测试与
+// 源码哈希耦合，任何 composables/组件改动都导致快照失效。故改为结构断言：
+// 校验构建产物的关键字段与依赖关系，integrity 只校验格式，不断言具体值。
+describe('registry build items', () => {
+    it('builds button with expected structure', () => {
+        const item = buildRegistryItem('button');
+        expect(item.name).toBe('button');
+        expect(item.type).toBe('registry:ui');
+        expect(item.title).toBe('Button');
+        expect(item.category).toBe('action');
+        expect(item.files.some(f => f.path === 'components/ui/button/Button.vue' && f.type === 'registry:ui')).toBe(true);
+        expect(item.files.some(f => f.path === 'composables/useGlitchEffect.ts' && f.type === 'registry:hook')).toBe(true);
+        expect(item.registryDependencies).toContain('locale-zh-cn');
+        expect(item.integrity).toMatch(/^sha256-[a-f0-9]{64}$/);
     });
 
-    it('matches snapshot for simple component (button)', () => {
-        expect(summarize(buildRegistryItem('button'))).toMatchSnapshot();
-    });
-
-    it('matches snapshot for multi-dependency component (data-table)', () => {
-        expect(summarize(buildRegistryItem('data-table'))).toMatchSnapshot();
+    it('builds data-table with expected structure', () => {
+        const item = buildRegistryItem('data-table');
+        expect(item.name).toBe('data-table');
+        expect(item.type).toBe('registry:ui');
+        expect(item.title).toBe('Data Table');
+        expect(item.category).toBe('data-display');
+        expect(item.files.some(f => f.path === 'components/ui/data-table/DataTable.vue' && f.type === 'registry:ui')).toBe(true);
+        expect(item.files.some(f => f.path === 'composables/useDataTableFilter.ts' && f.type === 'registry:hook')).toBe(true);
+        expect(item.registryDependencies).toEqual(expect.arrayContaining(['input', 'button', 'checkbox']));
+        expect(item.integrity).toMatch(/^sha256-[a-f0-9]{64}$/);
     });
 });
 
