@@ -47,52 +47,58 @@ export { useMessageBox } from './useMessageBox'
 export type { UseMessageBoxReturn, MessageBoxOptions } from './useMessageBox'
 
 export { useStepper } from './useStepper'
+export type { Step, UseStepperOptions, UseStepperReturn } from './useStepper'
 
 // 表单/输入类
 export { useFormFieldValidation } from './useFormFieldValidation'
-export type { UseFormFieldValidationOptions, ValidationState, ValidationRule, ValidateOn } from './useFormFieldValidation'
+export type { UseFormFieldValidationOptions, UseFormFieldValidationReturn, ValidationState, ValidationRule, ValidateOn } from './useFormFieldValidation'
 
 export { useColorPicker } from './useColorPicker'
-export type { UseColorPickerOptions } from './useColorPicker'
+export type { UseColorPickerOptions, UseColorPickerReturn } from './useColorPicker'
 
 export { useColorHistory } from './useColorHistory'
 export type { UseColorHistoryOptions, UseColorHistoryReturn } from './useColorHistory'
 
 export { useDatePicker } from './useDatePicker'
-export type { UseDatePickerOptions } from './useDatePicker'
+export type { UseDatePickerOptions, UseDatePickerReturn } from './useDatePicker'
 
 export { useUpload } from './useUpload'
 export type { UseUploadOptions, UseUploadReturn } from './useUpload'
 
 // DataTable 类
 export { useDataTableSort } from './useDataTableSort'
-export type { UseDataTableSortOptions } from './useDataTableSort'
+export type { UseDataTableSortOptions, UseDataTableSortReturn } from './useDataTableSort'
 
 export { useDataTableFilter } from './useDataTableFilter'
-export type { UseDataTableFilterOptions } from './useDataTableFilter'
+export type { UseDataTableFilterOptions, UseDataTableFilterReturn } from './useDataTableFilter'
 
 export { useDataTableSelection } from './useDataTableSelection'
-export type { UseDataTableSelectionOptions } from './useDataTableSelection'
+export type { UseDataTableSelectionOptions, UseDataTableSelectionReturn } from './useDataTableSelection'
 
 export { useDataTablePagination } from './useDataTablePagination'
-export type { UseDataTablePaginationOptions } from './useDataTablePagination'
+export type { UseDataTablePaginationOptions, UseDataTablePaginationReturn } from './useDataTablePagination'
 
 // 动画/Canvas 类
 export { useAnimation } from './useAnimation'
+export type { UseAnimationReturn } from './useAnimation'
 export { useReducedMotion } from './useReducedMotion'
 export { useGlitchEffect } from './useGlitchEffect'
 export type { GlitchTrigger, UseGlitchEffectOptions } from './useGlitchEffect'
 export { useCanvasInteraction } from './useCanvasInteraction'
+export type { UseCanvasInteractionReturn } from './useCanvasInteraction'
 
 // 轮播/画板类
 export { useCarousel } from './useCarousel'
-export type { UseCarouselOptions } from './useCarousel'
+export type { UseCarouselOptions, UseCarouselReturn } from './useCarousel'
 
 export { useCarouselEnhanced } from './useCarouselEnhanced'
+export type { UseCarouselEnhancedOptions } from './useCarouselEnhanced'
 export { useKanban } from './useKanban'
+export type { KanbanCard, KanbanColumn, UseKanbanOptions, UseKanbanReturn } from './useKanban'
 
 // 音频类
 export { useAudioEngine } from './useAudioEngine'
+export type { UseAudioEngineReturn } from './useAudioEngine'
 
 // 工具类
 export { useDebounce } from './useDebounce'
@@ -102,3 +108,4 @@ export { useThrottle } from './useThrottle'
 export type { UseThrottleOptions, UseThrottleReturn } from './useThrottle'
 
 export { useClipboard } from './useClipboard'
+export type { UseClipboardReturn } from './useClipboard'
