@@ -9,8 +9,7 @@
                 ".vitepress/dist/**",
                 "registry-manifest.json",
                 "exports-manifest.json",
-                "src/components/*/index.ts",
-                "registry/**"
+                "src/components/*/index.ts"
             ],
             "inputs": [
                 "src/**",
@@ -73,9 +72,12 @@
             "inputs": [
                 "scripts/**",
                 "registry/**",
+                "../../packages/ui/registry-manifest.json",
                 "../../packages/ui/src/components/**",
                 "../../packages/ui/src/composables/**",
                 "../../packages/ui/src/directives/**",
+                "../../packages/ui/src/locales/**",
+                "../../packages/ui/src/lib/**",
                 "../../apps/docs/**/*.md",
                 "../../packages/shared/src/**"
             ]

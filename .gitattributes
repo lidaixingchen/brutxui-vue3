@@ -20,9 +20,8 @@
 *.yaml text eol=lf
 
 # 2. 隐藏/折叠自动生成的文件 (GitHub/GitLab Linguist)
-# 告诉 Git 和 GitHub：这些是自动生成的组件注册表 JSON，在 Diff 和语言统计中予以折叠和忽略。
-# 这样做能极大提升 Pull Request (PR) 的审查体验，避免成千上万行自动生成的 JSON 掩盖了实际的 Vue/TS 代码改动。
-packages/registry/registry/**/*.json linguist-generated=true
+# 告诉 Git 和 GitHub：registry-manifest.json 是自动生成的 UI 包组件清单，在 Diff 和语言统计中予以折叠和忽略。
+# registry 构建产物已移出 git（发布时构建，见 docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md），无需 linguist 标记。
 packages/ui/registry-manifest.json linguist-generated=true
 
 # 3. 锁文件和二进制文件

@@ -62,6 +62,10 @@ packages/registry/bench.json
 packages/registry/registry/deps.dot
 packages/registry/registry/deps.json
 
+# Registry artifacts (built at publish time, see docs/REGISTRY_ARTIFACTS_PUBLISH_TIME_PLAN.md)
+packages/registry/registry/
+packages/registry/.registry-cache.json
+
 # Auto-generated component index.ts (derived from registry-manifest.json by prebuild:component-index)
 packages/ui/src/components/*/index.ts
 
