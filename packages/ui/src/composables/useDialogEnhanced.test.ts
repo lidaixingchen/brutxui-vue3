@@ -154,6 +154,37 @@ describe('useDialogEnhanced', () => {
         expect(result.size.value).toEqual({ width: 0, height: 0 })
     })
 
+    it('remasures size via ResizeObserver when content becomes visible', () => {
+        // 挂载时隐藏（零尺寸）的场景：rAF 一次性测量得到 0，RO 在内容可见后补测。
+        // 用对象属性承载回调，避免 let 变量在闭包赋值下的控制流收窄问题
+        const capture: { callback: ResizeObserverCallback | null } = { callback: null }
+        const observed: Element[] = []
+        class RecordingResizeObserver {
+            constructor(cb: ResizeObserverCallback) {
+                capture.callback = cb
+            }
+
+            observe(target: Element) {
+                observed.push(target)
+            }
+
+            unobserve() {}
+
+            disconnect() {}
+        }
+        vi.stubGlobal('ResizeObserver', RecordingResizeObserver)
+
+        const { result } = createWrapper({ resizable: true })
+        // onMounted 的 setupSizeObserver 观察 contentRef
+        expect(observed).toContain(result.contentRef.value!)
+
+        // 模拟内容从隐藏变为可见：observer 回调携带非零 contentRect
+        capture.callback?.([{ contentRect: { width: 320, height: 180 } }] as unknown as ResizeObserverEntry[], null as unknown as ResizeObserver)
+        expect(result.size.value).toEqual({ width: 320, height: 180 })
+
+        vi.unstubAllGlobals()
+    })
+
     it('initSize cancels pending rAF when called again before previous fires', () => {
         // 重置同步 rAF mock，改用延迟版本以便观察取消行为
         rafSpy.mockRestore()
@@ -281,8 +312,8 @@ describe('useDialogEnhanced', () => {
         result.onDragStart(e)
         expect(result.isDragging.value).toBe(true)
         expect(e.preventDefault).toHaveBeenCalled()
-        expect(addSpy).toHaveBeenCalledWith('mousemove', expect.any(Function))
-        expect(addSpy).toHaveBeenCalledWith('mouseup', expect.any(Function))
+        expect(addSpy).toHaveBeenCalledWith('pointermove', expect.any(Function))
+        expect(addSpy).toHaveBeenCalledWith('pointerup', expect.any(Function))
         addSpy.mockRestore()
     })
 
@@ -361,7 +392,7 @@ describe('useDialogEnhanced', () => {
         expect(result.isDragging.value).toBe(true)
 
         // Move
-        const moveEvent = new MouseEvent('mousemove', { clientX: 150, clientY: 130 })
+        const moveEvent = new PointerEvent('pointermove', { clientX: 150, clientY: 130 })
         // onDragMove is registered via addEventListener, so we dispatch on document
         document.dispatchEvent(moveEvent)
         // Position should have been updated: newX = 150 - 100 = 50, newY = 130 - 100 = 30
@@ -373,7 +404,7 @@ describe('useDialogEnhanced', () => {
     it('onDragMove does nothing when not dragging', () => {
         const { result } = createWrapper({ draggable: true })
         // Dispatch move without starting drag
-        const moveEvent = new MouseEvent('mousemove', { clientX: 200, clientY: 200 })
+        const moveEvent = new PointerEvent('pointermove', { clientX: 200, clientY: 200 })
         document.dispatchEvent(moveEvent)
         // Position should remain unchanged
         expect(result.position.value).toEqual({ x: 0, y: 0 })
@@ -393,10 +424,10 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'preventDefault')
         result.onDragStart(startEvent)
 
-        document.dispatchEvent(new MouseEvent('mouseup'))
+        document.dispatchEvent(new PointerEvent('pointerup'))
         expect(result.isDragging.value).toBe(false)
-        expect(removeSpy).toHaveBeenCalledWith('mousemove', expect.any(Function))
-        expect(removeSpy).toHaveBeenCalledWith('mouseup', expect.any(Function))
+        expect(removeSpy).toHaveBeenCalledWith('pointermove', expect.any(Function))
+        expect(removeSpy).toHaveBeenCalledWith('pointerup', expect.any(Function))
         removeSpy.mockRestore()
     })
 
@@ -421,7 +452,7 @@ describe('useDialogEnhanced', () => {
         result.onDragStart(startEvent)
 
         // Move far right
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 9000, clientY: 0 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 9000, clientY: 0 }))
         // Should be clamped: x = min(9000, 800 - 100) = 700, y = max(-50, 0 - 50) = -50
         expect(result.position.value.x).toBeLessThanOrEqual(800 - 100)
         expect(result.position.value.y).toBeGreaterThanOrEqual(-50)
@@ -446,7 +477,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'preventDefault')
         result.onDragStart(startEvent)
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 600, clientY: 500 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 600, clientY: 500 }))
         // Position should be constrained within parent
         expect(result.position.value.x).toBeLessThanOrEqual(500 - 100)
     })
@@ -465,29 +496,24 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'preventDefault')
         result.onDragStart(startEvent)
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 5000, clientY: 5000 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 5000, clientY: 5000 }))
         expect(result.position.value.x).toBeLessThanOrEqual(400 - 100)
         expect(result.position.value.y).toBeLessThanOrEqual(300 - 50)
     })
 
     it('constrainPosition returns raw position when no contentRef rect', () => {
-        const { result } = createWrapper({ draggable: true, bounds: 'viewport' })
+        // 通过 HTMLElement dragHandle 启动拖拽（不依赖 contentRef 存在）：
+        // 字符串 dragHandle 在 contentRef 为 null 时命中不到元素，会命中「未命中禁止拖动」守卫
+        const handle = document.createElement('div')
+        const { result } = createWrapper({ draggable: true, bounds: 'viewport', dragHandle: handle })
         result.contentRef.value = null
 
         const startEvent = new MouseEvent('mousedown', { clientX: 0, clientY: 0 })
-        // target must be HTMLElement for the drag to start, but getDragHandle returns contentRef which is null
-        // so handle check will fail and drag won't start. We test the fallback indirectly via the
-        // contentRef=null guard in getDragHandle.
-        const div = document.createElement('div')
-        Object.defineProperty(startEvent, 'target', { value: div })
-        // getDragHandle returns null since draggable is true but contentRef is null
-        // So handle is null, and `handle && !handle.contains(target)` is false, so drag proceeds
-        // But constrainPosition won't have rect
+        Object.defineProperty(startEvent, 'target', { value: handle })
         vi.spyOn(startEvent, 'preventDefault')
         result.onDragStart(startEvent)
-        // Drag starts, then move
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 100, clientY: 100 }))
-        // Without rect, position should be raw: 100 - 0 = 100
+        // contentRef 为 null 时起点尺寸缓存为 null，constrainPosition 无法读取布局 → 返回原始坐标
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 100, clientY: 100 }))
         expect(result.position.value).toEqual({ x: 100, y: 100 })
     })
 
@@ -511,8 +537,8 @@ describe('useDialogEnhanced', () => {
         expect(result.isResizing.value).toBe(true)
         expect(e.preventDefault).toHaveBeenCalled()
         expect(e.stopPropagation).toHaveBeenCalled()
-        expect(addSpy).toHaveBeenCalledWith('mousemove', expect.any(Function))
-        expect(addSpy).toHaveBeenCalledWith('mouseup', expect.any(Function))
+        expect(addSpy).toHaveBeenCalledWith('pointermove', expect.any(Function))
+        expect(addSpy).toHaveBeenCalledWith('pointerup', expect.any(Function))
         addSpy.mockRestore()
     })
 
@@ -527,7 +553,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'se')
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 150, clientY: 130 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 150, clientY: 130 }))
         // se: width = 300 + 50 = 350, height = 200 + 30 = 230
         expect(result.size.value.width).toBe(350)
         expect(result.size.value.height).toBe(230)
@@ -542,7 +568,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'sw')
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 150, clientY: 130 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 150, clientY: 130 }))
         // sw: width = 300 - 50 = 250, height = 200 + 30 = 230
         expect(result.size.value.width).toBe(250)
         expect(result.size.value.height).toBe(230)
@@ -557,7 +583,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'ne')
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 150, clientY: 130 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 150, clientY: 130 }))
         // ne: width = 300 + 50 = 350, height = 200 - 30 = 170
         expect(result.size.value.width).toBe(350)
         expect(result.size.value.height).toBe(170)
@@ -572,7 +598,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'nw')
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 150, clientY: 130 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 150, clientY: 130 }))
         // nw: width = 300 - 50 = 250, height = 200 - 30 = 170
         expect(result.size.value.width).toBe(250)
         expect(result.size.value.height).toBe(170)
@@ -588,7 +614,7 @@ describe('useDialogEnhanced', () => {
         result.onResizeStart(startEvent, 'nw')
 
         // Drag significantly to shrink
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 500, clientY: 500 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 500, clientY: 500 }))
         // nw: width = 300 - 400 = -100, clamped to 200; height = 200 - 400 = -200, clamped to 100
         expect(result.size.value.width).toBeGreaterThanOrEqual(200)
         expect(result.size.value.height).toBeGreaterThanOrEqual(100)
@@ -603,7 +629,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'se')
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, clientY: 300 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 300 }))
         // se: width = 300 + 200 = 500, clamped to 400; height = 200 + 200 = 400, clamped to 300
         expect(result.size.value.width).toBeLessThanOrEqual(400)
         expect(result.size.value.height).toBeLessThanOrEqual(300)
@@ -618,7 +644,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'se')
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 200, clientY: 100 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 200, clientY: 100 }))
         // se: width = 300 + 100 = 400, height = 400 / 2 = 200
         expect(result.size.value.width).toBe(400)
         expect(result.size.value.height).toBe(200)
@@ -635,7 +661,7 @@ describe('useDialogEnhanced', () => {
 
         // Shrink width a lot: width = 300 - 280 = 20, clamped to minWidth(150 default)
         // height = 150 / 10 = 15, clamped to minHeight 50
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 380, clientY: 380 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 380, clientY: 380 }))
         expect(result.size.value.height).toBeGreaterThanOrEqual(50)
     })
 
@@ -649,14 +675,14 @@ describe('useDialogEnhanced', () => {
         result.onResizeStart(startEvent, 'se')
 
         // Increase a lot: width = 300 + 200 = 500, height = 500 / 1 = 500, clamped to 250
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, clientY: 300 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 300 }))
         expect(result.size.value.height).toBeLessThanOrEqual(250)
     })
 
     it('onResizeMove does nothing when not resizing', () => {
         const { result } = createWrapper({ resizable: true })
         result.setSize({ width: 300, height: 200 })
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 200, clientY: 200 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 200, clientY: 200 }))
         expect(result.size.value).toEqual({ width: 300, height: 200 })
     })
 
@@ -671,10 +697,10 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'stopPropagation')
         result.onResizeStart(startEvent, 'se')
 
-        document.dispatchEvent(new MouseEvent('mouseup'))
+        document.dispatchEvent(new PointerEvent('pointerup'))
         expect(result.isResizing.value).toBe(false)
-        expect(removeSpy).toHaveBeenCalledWith('mousemove', expect.any(Function))
-        expect(removeSpy).toHaveBeenCalledWith('mouseup', expect.any(Function))
+        expect(removeSpy).toHaveBeenCalledWith('pointermove', expect.any(Function))
+        expect(removeSpy).toHaveBeenCalledWith('pointerup', expect.any(Function))
         removeSpy.mockRestore()
     })
 
@@ -805,17 +831,17 @@ describe('useDialogEnhanced', () => {
         expect(result.isDragging.value).toBe(true)
     })
 
-    it('getDragHandle returns null for string selector with no match', () => {
+    it('getDragHandle returns null for string selector with no match → prevents drag', () => {
         const { result } = createWrapper({ draggable: true, dragHandle: '.no-match' })
         const div = document.createElement('div')
         result.contentRef.value = div
-        // getDragHandle returns null, so `handle && !handle.contains(target)` is false
-        // Drag proceeds (handle is null, so no containment check)
+        // dragHandle 选择器未命中时安全降级为禁止拖动，而非静默放开整个对话框
+        // （与「未指定 dragHandle → 全区域可拖」的默认行为区分开）
         const e = new MouseEvent('mousedown', { clientX: 10, clientY: 10 })
         Object.defineProperty(e, 'target', { value: div })
         vi.spyOn(e, 'preventDefault')
         result.onDragStart(e)
-        expect(result.isDragging.value).toBe(true)
+        expect(result.isDragging.value).toBe(false)
     })
 
     it('constrainPosition falls through when bounds=parent and no parentElement', () => {
@@ -832,7 +858,7 @@ describe('useDialogEnhanced', () => {
         vi.spyOn(startEvent, 'preventDefault')
         result.onDragStart(startEvent)
 
-        document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, clientY: 250 }))
+        document.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 250 }))
         // Falls through to raw position: 300 - 0 = 300, 250 - 0 = 250
         expect(result.position.value).toEqual({ x: 300, y: 250 })
     })

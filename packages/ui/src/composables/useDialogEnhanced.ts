@@ -1,5 +1,5 @@
 import { ref, readonly, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, type ComputedRef, type DeepReadonly, type CSSProperties, type MaybeRefOrGetter } from 'vue'
-import { getViewportSize, getDocument, requestAnimationFrame, cancelAnimationFrame } from '@/lib/env'
+import { getViewportSize, getDocument, requestAnimationFrame, cancelAnimationFrame, getResizeObserverCtor } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import type { ResizeCorner } from '@/types'
 export type { ResizeCorner }
@@ -86,6 +86,9 @@ export function useDialogEnhanced(
     const size = ref({ width: 0, height: 0 })
     const dragStart = ref({ x: 0, y: 0 })
     const resizeStart = ref({ x: 0, y: 0, width: 0, height: 0, corner: 'se', startX: 0, startY: 0 })
+    // 拖拽起点尺寸缓存：onDragStart 读取一次布局，onDragMove 复用，避免每帧 getBoundingClientRect 强制 reflow。
+    // null 表示起点无法测量（contentRef 不存在），此时 constrainPosition 回退到实时读取（返回原始坐标）
+    let dragStartSize: { width: number; height: number } | null = null
 
     // ── Content Style ──────────────────────────────────────────────
 
@@ -182,6 +185,11 @@ export function useDialogEnhanced(
             newHeight = newWidth / opt.aspectRatio
             if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
             if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
+            // 高度被 min/maxHeight 裁剪后按比例反推宽度，并重新应用 min/maxWidth，
+            // 避免宽高比失真（如 aspectRatio=2 且 maxHeight 生效时高度被压上限而宽度不变）
+            newWidth = newHeight * opt.aspectRatio
+            if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
+            if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
         }
         return { width: newWidth, height: newHeight }
     }
@@ -212,17 +220,23 @@ export function useDialogEnhanced(
         const target = e.target
         if (!(target instanceof HTMLElement) || isInteractiveElement(target)) return
 
+        // dragHandle 选择器未命中（返回 null）时安全降级为禁止拖动，而不是静默放开整个对话框；
+        // 与「未指定 dragHandle → 全区域可拖」的默认行为区分开
         const handle = getDragHandle()
-        if (handle && !handle.contains(target)) return
+        if (!handle || !handle.contains(target)) return
 
         isDragging.value = true
         dragStart.value = {
             x: e.clientX - position.value.x,
             y: e.clientY - position.value.y,
         }
+        // 缓存起点尺寸供 onDragMove 约束计算，避免每帧读取布局（拖动期间宽高不变，仅 transform 变化）
+        const rect = contentRef.value?.getBoundingClientRect()
+        dragStartSize = rect ? { width: rect.width, height: rect.height } : null
 
-        doc.addEventListener('mousemove', onDragMove)
-        doc.addEventListener('mouseup', onDragEnd)
+        // 使用 pointer 事件以兼容触屏/触控笔/鼠标；PointerEvent 是 MouseEvent 子类，参数类型不变
+        doc.addEventListener('pointermove', onDragMove)
+        doc.addEventListener('pointerup', onDragEnd)
         e.preventDefault()
     }
 
@@ -231,7 +245,9 @@ export function useDialogEnhanced(
 
         const newX = e.clientX - dragStart.value.x
         const newY = e.clientY - dragStart.value.y
-        const constrained = constrainPosition(newX, newY)
+        const constrained = dragStartSize
+            ? constrainPosition(newX, newY, dragStartSize.width, dragStartSize.height)
+            : constrainPosition(newX, newY)
         position.value = constrained
     }
 
@@ -239,8 +255,9 @@ export function useDialogEnhanced(
         const doc = getDocument()
         if (!doc) return
         isDragging.value = false
-        doc.removeEventListener('mousemove', onDragMove)
-        doc.removeEventListener('mouseup', onDragEnd)
+        dragStartSize = null
+        doc.removeEventListener('pointermove', onDragMove)
+        doc.removeEventListener('pointerup', onDragEnd)
     }
 
     // ── Resize Handlers ────────────────────────────────────────────
@@ -262,8 +279,8 @@ export function useDialogEnhanced(
             startY: position.value.y,
         }
 
-        doc.addEventListener('mousemove', onResizeMove)
-        doc.addEventListener('mouseup', onResizeEnd)
+        doc.addEventListener('pointermove', onResizeMove)
+        doc.addEventListener('pointerup', onResizeEnd)
         e.preventDefault()
         e.stopPropagation()
     }
@@ -333,8 +350,8 @@ export function useDialogEnhanced(
         const doc = getDocument()
         if (!doc) return
         isResizing.value = false
-        doc.removeEventListener('mousemove', onResizeMove)
-        doc.removeEventListener('mouseup', onResizeEnd)
+        doc.removeEventListener('pointermove', onResizeMove)
+        doc.removeEventListener('pointerup', onResizeEnd)
     }
 
     // ── Close Handling ─────────────────────────────────────────────
@@ -361,6 +378,9 @@ export function useDialogEnhanced(
             if (result !== false) {
                 performClose()
             }
+        } catch (error) {
+            // beforeClose 抛出/拒绝时记录错误并给出控制台反馈，避免 unhandled promise rejection
+            console.error('[useDialogEnhanced] beforeClose 执行失败:', error)
         } finally {
             isClosing = false
         }
@@ -377,6 +397,7 @@ export function useDialogEnhanced(
     }
 
     let sizeRafId: number | null = null
+    let resizeObserver: ResizeObserver | null = null
 
     function initSize(): void {
         // 取消前一个未触发的 rAF，避免 contentRef 变化时多个 rAF 堆积
@@ -396,6 +417,26 @@ export function useDialogEnhanced(
         }
     }
 
+    // 挂载时 contentRef 可能处于隐藏/零尺寸（display:none、异步内容未就绪），rAF 一次性测量会得到 0
+    // 且之后不再重测。ResizeObserver 持续观察内容尺寸，可见后自动恢复实际尺寸。
+    function setupSizeObserver(): void {
+        resizeObserver?.disconnect()
+        resizeObserver = null
+        const Ctor = getResizeObserverCtor()
+        const el = contentRef.value
+        if (!Ctor || !el) return
+        resizeObserver = new Ctor((entries) => {
+            // 缩放交互期间由 onResizeMove 直接写 size，observer 仅作兜底恢复测量，避免相互覆盖
+            if (isResizing.value) return
+            for (const entry of entries) {
+                if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+                    size.value = { width: entry.contentRect.width, height: entry.contentRect.height }
+                }
+            }
+        })
+        resizeObserver.observe(el)
+    }
+
     // ── Watchers & Lifecycle ───────────────────────────────────────
 
     // Watch x/y values (not the object reference) so that re-renders with an
@@ -412,6 +453,7 @@ export function useDialogEnhanced(
     onMounted(() => {
         initPosition()
         initSize()
+        setupSizeObserver()
         opt.onOpen?.()
     })
 
@@ -419,12 +461,14 @@ export function useDialogEnhanced(
         if (sizeRafId !== null) {
             cancelAnimationFrame(sizeRafId)
         }
+        resizeObserver?.disconnect()
+        resizeObserver = null
         const doc = getDocument()
         if (!doc) return
-        doc.removeEventListener('mousemove', onDragMove)
-        doc.removeEventListener('mouseup', onDragEnd)
-        doc.removeEventListener('mousemove', onResizeMove)
-        doc.removeEventListener('mouseup', onResizeEnd)
+        doc.removeEventListener('pointermove', onDragMove)
+        doc.removeEventListener('pointerup', onDragEnd)
+        doc.removeEventListener('pointermove', onResizeMove)
+        doc.removeEventListener('pointerup', onResizeEnd)
     })
 
     return {

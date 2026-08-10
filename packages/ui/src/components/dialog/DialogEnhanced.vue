@@ -190,7 +190,7 @@ onBeforeUnmount(() => {
             :class="contentClasses"
             :style="contentStyle"
             :force-mount="props.forceMount === true ? true : undefined"
-            @mousedown="onDragStart"
+            @pointerdown="onDragStart"
             @escape-key-down="handleEscapeKeyDown"
             @pointer-down-outside="handlePointerDownOutside"
         >
@@ -208,19 +208,19 @@ onBeforeUnmount(() => {
             <template v-if="resizable">
                 <div
                     class="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
-                    @mousedown="(e: MouseEvent) => onResizeStart(e, 'se' as ResizeCorner)"
+                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'se' as ResizeCorner)"
                 />
                 <div
                     class="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize"
-                    @mousedown="(e: MouseEvent) => onResizeStart(e, 'sw' as ResizeCorner)"
+                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'sw' as ResizeCorner)"
                 />
                 <div
                     class="absolute top-0 right-0 w-4 h-4 cursor-ne-resize"
-                    @mousedown="(e: MouseEvent) => onResizeStart(e, 'ne' as ResizeCorner)"
+                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'ne' as ResizeCorner)"
                 />
                 <div
                     class="absolute top-0 left-0 w-4 h-4 cursor-nw-resize"
-                    @mousedown="(e: MouseEvent) => onResizeStart(e, 'nw' as ResizeCorner)"
+                    @pointerdown="(e: PointerEvent) => onResizeStart(e, 'nw' as ResizeCorner)"
                 />
             </template>
         </DialogContentPrimitive>
