@@ -1,9 +1,10 @@
 # Registry 产物发布时构建计划（产物不入库）
 
 > 方案类型：重构 / 流程改造
-> 状态：**active**（已定稿：分发端点选型 GitHub Release 资产）
+> 状态：done
 > 日期：2026-08-09
 > 关联文档：[CLI基础设施闭环方案.md](CLI基础设施闭环方案.md)、[RELEASE.md](../guides/RELEASE.md)
+> 修订记录：2026-08-11 落地核查确认 —— T1-T14 全部落地（提交 39630e1f/50d27d70/44d21852），产物移出 git 跟踪、发布时构建 + 签名 + GitHub Release 资产分发生效；T15/T16 为可选 P2 演进
 > 修订记录：2026-08-10 全面审查后修正 —— 修正 CLI 侧 4 处行号（§3 拼接 :262→:401；T2 resolveVersionedSource :504-515→:659-670；§2.3 signature.ts 两处 :150-211/:274-297）；§1.1 归因补充 SBOM timestamp 消费点（:817）、gitCommit 双来源与"可复现构建"注释位置（:806）；§2.3 限定默认/严格模式语义、签名双环境变量；§3 增补预发布 tag 抢占 latest 风险；T1 增 create 幂等化、上传 glob 与数量校验、keyId 断言、GH_TOKEN 表述修正；T2 同步 @version 改动面与 DEFAULT_REGISTRY_URL 使用点；T3 补 COMPONENT_GUIDE.md 与 README Pages URL 并整理加粗；T5 补门禁 exclude 说明；T11 修正输入源缺失范围并增加 turbo gitignored 哈希实测验证；T13 补 :39 第二处过时注释与 :45 死配置；T14 精确 AGENTS.md 表格行号（:7-11）；§2.2 "三类"→"四路径"；§7 新增旧版 CLI 断供与预发布两条风险；§8 验证项补 keyId；§9 附录行号同步。
 > 修订记录：2026-08-09 全面修正 —— 依据源码核验修正 §1.1 冲突归因、产物数量口径（86 组件）、若干行号引用；修正 T1/T2/T16 的 Release 资产扁平命名与按需拉取约束；修正 T10 误删范围（保留 ui manifest 的 linguist 标记）；T5/T6/T7 改为按路径细分保留 ui 侧生成文件的防漂移保护；T11 修正缓存键输入源缺口并考虑 Turbo Remote Cache 放大；补充发布顺序原子性、upload GH_TOKEN、英文文档与测试同步等遗漏。
 

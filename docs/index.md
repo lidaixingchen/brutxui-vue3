@@ -17,11 +17,11 @@
 
 | 方案 | 状态 | 说明 |
 | --- | --- | --- |
-| [架构优化方案-v3](plans/架构优化方案-v3.md) | **active** | 现行架构方向（v1/v2 已归档） |
-| [辅助包改进方案-v2](plans/辅助包改进方案-v2.md) | **active** | 现行辅助包方向（v1 已归档） |
-| [CLI基础设施闭环方案](plans/CLI基础设施闭环方案.md) | **active** | CLI 签名校验与多源离线韧性闭环 |
-| [registry产物发布时构建方案](plans/registry产物发布时构建方案.md) | **active** | 产物不入库，发布时构建 + 签名 |
-| [组件深化与拓展方案](plans/组件深化与拓展方案.md) | **active** | v2.0（旧「组件拓展方案」已归档） |
+| [架构优化方案-v3](plans/架构优化方案-v3.md) | **active** | 现行架构方向，三大方向推进中（v1/v2 已归档） |
+| [辅助包改进方案-v2](plans/辅助包改进方案-v2.md) | done | P0/P1 已全部落地（v1 已归档） |
+| [CLI基础设施闭环方案](plans/CLI基础设施闭环方案.md) | done | 签名校验与多源离线韧性已闭环 |
+| [registry产物发布时构建方案](plans/registry产物发布时构建方案.md) | done | 产物不入库、发布时构建已落地 |
+| [组件深化与拓展方案](plans/组件深化与拓展方案.md) | **active** | v2.0，Statistic 与键盘导航未落地 |
 | [composables状态只读化方案](plans/composables状态只读化方案.md) | done | 已全量落地（M1-M7 回归通过） |
 | [changelog自动化设计](plans/changelog自动化设计.md) | done | 已落地 |
 | [文档目录改造方案](plans/文档目录改造方案.md) | done | 本次 docs/ 改造 |
