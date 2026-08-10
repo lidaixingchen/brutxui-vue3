@@ -62,7 +62,11 @@ export function useDataTableSelection<T extends object>(
     function toggleAllSelection() {
         if (toValue(options.selectable) !== true) return
         if (isAllSelected.value) {
-            selectedRows.value = new Set()
+            // 与"全选"逻辑对称：仅从选择集中移除当前可见行，
+            // 保留其它页/已被过滤掉的跨页选择（displayData 只是子集时不应清空全部）
+            const newSelection = new Set(selectedRows.value)
+            toValue(options.displayData).forEach((row) => newSelection.delete(getRowKey(row)))
+            selectedRows.value = newSelection
         } else {
             const newSelection = new Set(selectedRows.value)
             toValue(options.displayData).forEach((row) => newSelection.add(getRowKey(row)))
