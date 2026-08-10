@@ -22,15 +22,18 @@ export function useClipboard(options: { duration?: MaybeRefOrGetter<number> } = 
     })
 
     async function copy(text: string) {
-        if (!isSupported.value) return false
-
         // 每次 copy 动态检测 clipboard 能力：isSupported 是初始化时的快照，
         // 运行期间发生权限变更、API 失效等情况时同步刷新该状态，
-        // 避免依赖它渲染的 UI（如禁用复制按钮）与实际不一致
+        // 避免依赖它渲染的 UI（如禁用复制按钮）与实际不一致。
+        // 不通过 isSupported 快速短路：若某次检测失败置 false，权限恢复后
+        // 仍能重新进入动态检测并恢复 true（双向同步）
         const writeText = getNavigator()?.clipboard?.writeText
         if (!writeText) {
             isSupported.value = false
             return false
+        }
+        if (!isSupported.value) {
+            isSupported.value = true
         }
 
         try {
