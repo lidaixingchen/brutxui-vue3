@@ -447,7 +447,7 @@ describe('DialogEnhanced', () => {
             expect(el.style.margin).toBe('0px')
         })
 
-        it('handles full drag lifecycle: mousedown -> mousemove -> mouseup', async () => {
+        it('handles full drag lifecycle: pointerdown -> pointermove -> pointerup', async () => {
             const wrapper = mountDialog({ draggable: true })
             const content = wrapper.find('[data-testid="content-primitive"]')
             const el = content.element as HTMLElement
@@ -457,23 +457,23 @@ describe('DialogEnhanced', () => {
                 x: 100, y: 100, toJSON: () => ({}),
             }))
 
-            await content.trigger('mousedown', { clientX: 200, clientY: 200 })
+            await content.trigger('pointerdown', { clientX: 200, clientY: 200 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 250, clientY: 260 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 250, clientY: 260 }))
             await nextTick()
 
             expect(el.style.transform).toContain('translate')
             expect(el.style.position).toBe('fixed')
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
             await nextTick()
         })
 
-        it('ignores mousemove when not dragging', async () => {
+        it('ignores pointermove when not dragging', async () => {
             const wrapper = mountDialog({ draggable: true })
             const el = wrapper.find('[data-testid="content-primitive"]').element as HTMLElement
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, clientY: 300 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 300 }))
             await nextTick()
 
             expect(el.style.transform).toContain('translate(calc(-50% + 0px), calc(-50% + 0px))')
@@ -484,7 +484,7 @@ describe('DialogEnhanced', () => {
                 { draggable: true },
                 { slots: { default: '<input data-testid="inner-input" />' } },
             )
-            await wrapper.find('[data-testid="inner-input"]').trigger('mousedown', {
+            await wrapper.find('[data-testid="inner-input"]').trigger('pointerdown', {
                 clientX: 200,
                 clientY: 200,
             })
@@ -496,7 +496,7 @@ describe('DialogEnhanced', () => {
                 { draggable: true },
                 { slots: { default: '<button data-testid="inner-btn">OK</button>' } },
             )
-            await wrapper.find('[data-testid="inner-btn"]').trigger('mousedown', {
+            await wrapper.find('[data-testid="inner-btn"]').trigger('pointerdown', {
                 clientX: 200,
                 clientY: 200,
             })
@@ -507,7 +507,7 @@ describe('DialogEnhanced', () => {
                 { draggable: true },
                 { slots: { default: '<textarea data-testid="inner-ta" />' } },
             )
-            await wrapper.find('[data-testid="inner-ta"]').trigger('mousedown', {
+            await wrapper.find('[data-testid="inner-ta"]').trigger('pointerdown', {
                 clientX: 200,
                 clientY: 200,
             })
@@ -518,7 +518,7 @@ describe('DialogEnhanced', () => {
                 { draggable: true },
                 { slots: { default: '<select data-testid="inner-sel" />' } },
             )
-            await wrapper.find('[data-testid="inner-sel"]').trigger('mousedown', {
+            await wrapper.find('[data-testid="inner-sel"]').trigger('pointerdown', {
                 clientX: 200,
                 clientY: 200,
             })
@@ -529,7 +529,7 @@ describe('DialogEnhanced', () => {
                 { draggable: true },
                 { slots: { default: '<a data-testid="inner-a" href="#">Link</a>' } },
             )
-            await wrapper.find('[data-testid="inner-a"]').trigger('mousedown', {
+            await wrapper.find('[data-testid="inner-a"]').trigger('pointerdown', {
                 clientX: 200,
                 clientY: 200,
             })
@@ -546,8 +546,8 @@ describe('DialogEnhanced', () => {
             )
             const handle = wrapper.find('[data-testid="handle"]')
             expect(handle.exists()).toBe(true)
-            await handle.trigger('mousedown', { clientX: 150, clientY: 150 })
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            await handle.trigger('pointerdown', { clientX: 150, clientY: 150 })
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('uses HTMLElement dragHandle', async () => {
@@ -555,17 +555,17 @@ describe('DialogEnhanced', () => {
             document.body.appendChild(handleEl)
             const wrapper = mountDialog({ draggable: true, dragHandle: handleEl })
             const content = wrapper.find('[data-testid="content-primitive"]')
-            // Trigger mousedown on content to exercise getDragHandle returning the HTMLElement
-            await content.trigger('mousedown', { clientX: 100, clientY: 100 })
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            // Trigger pointerdown on content to exercise getDragHandle returning the HTMLElement
+            await content.trigger('pointerdown', { clientX: 100, clientY: 100 })
+            document.dispatchEvent(new PointerEvent('pointerup'))
             document.body.removeChild(handleEl)
         })
 
         it('uses contentRef as drag handle when no dragHandle prop', async () => {
             const wrapper = mountDialog({ draggable: true })
             const content = wrapper.find('[data-testid="content-primitive"]')
-            await content.trigger('mousedown', { clientX: 100, clientY: 100 })
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            await content.trigger('pointerdown', { clientX: 100, clientY: 100 })
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('cleans up document listeners on unmount', () => {
@@ -576,11 +576,11 @@ describe('DialogEnhanced', () => {
             removeSpy.mockRestore()
         })
 
-        it('does not start drag when draggable is false and mousedown fires', async () => {
+        it('does not start drag when draggable is false and pointerdown fires', async () => {
             const wrapper = mountDialog({ draggable: false })
             const content = wrapper.find('[data-testid="content-primitive"]')
             // onDragStart returns early when draggable is false
-            await content.trigger('mousedown', { clientX: 100, clientY: 100 })
+            await content.trigger('pointerdown', { clientX: 100, clientY: 100 })
             expect(content.classes()).not.toContain('cursor-move')
         })
     })
@@ -613,12 +613,12 @@ describe('DialogEnhanced', () => {
             const content = wrapper.find('[data-testid="content-primitive"]')
 
             const seHandle = content.find('.cursor-se-resize')
-            await seHandle.trigger('mousedown', { clientX: 500, clientY: 400 })
+            await seHandle.trigger('pointerdown', { clientX: 500, clientY: 400 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 550, clientY: 450 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 550, clientY: 450 }))
             await nextTick()
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
             await nextTick()
         })
 
@@ -626,35 +626,35 @@ describe('DialogEnhanced', () => {
             const wrapper = mountDialog({ resizable: true, minWidth: 100, minHeight: 100 })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.find('.cursor-sw-resize').trigger('mousedown', { clientX: 100, clientY: 400 })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 50, clientY: 450 }))
+            await content.find('.cursor-sw-resize').trigger('pointerdown', { clientX: 100, clientY: 400 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 50, clientY: 450 }))
             await nextTick()
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('handles NE resize', async () => {
             const wrapper = mountDialog({ resizable: true, minWidth: 100, minHeight: 100 })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.find('.cursor-ne-resize').trigger('mousedown', { clientX: 500, clientY: 100 })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 550, clientY: 50 }))
+            await content.find('.cursor-ne-resize').trigger('pointerdown', { clientX: 500, clientY: 100 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 550, clientY: 50 }))
             await nextTick()
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('handles NW resize', async () => {
             const wrapper = mountDialog({ resizable: true, minWidth: 100, minHeight: 100 })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.find('.cursor-nw-resize').trigger('mousedown', { clientX: 100, clientY: 100 })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 50, clientY: 50 }))
+            await content.find('.cursor-nw-resize').trigger('pointerdown', { clientX: 100, clientY: 100 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 50, clientY: 50 }))
             await nextTick()
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('ignores resize move when not resizing', async () => {
             const wrapper = mountDialog({ resizable: true })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 300, clientY: 300 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 300, clientY: 300 }))
             await nextTick()
             expect(wrapper.exists()).toBe(true)
         })
@@ -663,20 +663,20 @@ describe('DialogEnhanced', () => {
             const wrapper = mountDialog({ resizable: true, minWidth: 200, minHeight: 150 })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.find('.cursor-se-resize').trigger('mousedown', { clientX: 500, clientY: 400 })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 100, clientY: 100 }))
+            await content.find('.cursor-se-resize').trigger('pointerdown', { clientX: 500, clientY: 400 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 100, clientY: 100 }))
             await nextTick()
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('respects maxWidth and maxHeight constraints', async () => {
             const wrapper = mountDialog({ resizable: true, maxWidth: 800, maxHeight: 600 })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.find('.cursor-se-resize').trigger('mousedown', { clientX: 500, clientY: 400 })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 5000, clientY: 5000 }))
+            await content.find('.cursor-se-resize').trigger('pointerdown', { clientX: 500, clientY: 400 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 5000, clientY: 5000 }))
             await nextTick()
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('applies aspect ratio during resize', async () => {
@@ -688,10 +688,10 @@ describe('DialogEnhanced', () => {
             })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.find('.cursor-se-resize').trigger('mousedown', { clientX: 500, clientY: 400 })
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 600, clientY: 500 }))
+            await content.find('.cursor-se-resize').trigger('pointerdown', { clientX: 500, clientY: 400 })
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 600, clientY: 500 }))
             await nextTick()
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('cleans up resize listeners on unmount', () => {
@@ -862,12 +862,12 @@ describe('DialogEnhanced', () => {
                 x: 100, y: 100, toJSON: () => ({}),
             }))
 
-            await content.trigger('mousedown', { clientX: 200, clientY: 200 })
+            await content.trigger('pointerdown', { clientX: 200, clientY: 200 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 99999, clientY: 99999 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 99999, clientY: 99999 }))
             await nextTick()
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('constrains to parent bounds', async () => {
@@ -887,12 +887,12 @@ describe('DialogEnhanced', () => {
             }))
             Object.defineProperty(el, 'parentElement', { value: parentEl, configurable: true })
 
-            await content.trigger('mousedown', { clientX: 200, clientY: 200 })
+            await content.trigger('pointerdown', { clientX: 200, clientY: 200 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 99999, clientY: 99999 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 99999, clientY: 99999 }))
             await nextTick()
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('falls back when parentRect is not available (parent bounds)', async () => {
@@ -907,12 +907,12 @@ describe('DialogEnhanced', () => {
 
             Object.defineProperty(el, 'parentElement', { value: null, configurable: true })
 
-            await content.trigger('mousedown', { clientX: 200, clientY: 200 })
+            await content.trigger('pointerdown', { clientX: 200, clientY: 200 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 250, clientY: 250 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 250, clientY: 250 }))
             await nextTick()
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('constrains to custom object bounds', async () => {
@@ -928,24 +928,24 @@ describe('DialogEnhanced', () => {
                 x: 100, y: 100, toJSON: () => ({}),
             }))
 
-            await content.trigger('mousedown', { clientX: 200, clientY: 200 })
+            await content.trigger('pointerdown', { clientX: 200, clientY: 200 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 99999, clientY: 99999 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 99999, clientY: 99999 }))
             await nextTick()
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
 
         it('returns raw position when getBoundingClientRect returns falsy', async () => {
             const wrapper = mountDialog({ draggable: true })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.trigger('mousedown', { clientX: 200, clientY: 200 })
+            await content.trigger('pointerdown', { clientX: 200, clientY: 200 })
 
-            document.dispatchEvent(new MouseEvent('mousemove', { clientX: 250, clientY: 260 }))
+            document.dispatchEvent(new PointerEvent('pointermove', { clientX: 250, clientY: 260 }))
             await nextTick()
 
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
     })
 
@@ -1023,8 +1023,8 @@ describe('DialogEnhanced', () => {
             const wrapper = mountDialog({ draggable: true, dragHandle: '.nonexistent' })
             const content = wrapper.find('[data-testid="content-primitive"]')
 
-            await content.trigger('mousedown', { clientX: 100, clientY: 100 })
-            document.dispatchEvent(new MouseEvent('mouseup'))
+            await content.trigger('pointerdown', { clientX: 100, clientY: 100 })
+            document.dispatchEvent(new PointerEvent('pointerup'))
         })
     })
 

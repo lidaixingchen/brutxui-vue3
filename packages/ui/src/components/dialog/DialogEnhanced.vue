@@ -98,6 +98,9 @@ const contentClasses = computed(() =>
     cn(
         dialogContentVariants(),
         props.draggable && 'cursor-move',
+        // 触屏上若不加 touch-action: none，手指按下拖动会被浏览器判定为滚动手势，
+        // 触发 pointercancel 打断 pointer 事件流（拖拽/缩放均依赖 pointer 事件）
+        (props.draggable || props.resizable) && 'touch-none',
         props.resizable && 'overflow-hidden',
         props.fullscreen && 'w-screen h-screen max-w-none max-h-none rounded-none inset-0',
         props.class

@@ -234,9 +234,12 @@ export function useDialogEnhanced(
         const rect = contentRef.value?.getBoundingClientRect()
         dragStartSize = rect ? { width: rect.width, height: rect.height } : null
 
-        // 使用 pointer 事件以兼容触屏/触控笔/鼠标；PointerEvent 是 MouseEvent 子类，参数类型不变
+        // 使用 pointer 事件以兼容触屏/触控笔/鼠标；PointerEvent 是 MouseEvent 子类，参数类型不变。
+        // pointercancel 在浏览器接管手势时（如触屏滚动）触发，与 pointerup 同样结束拖拽，
+        // 避免 isDragging/doc 监听器残留导致状态卡死
         doc.addEventListener('pointermove', onDragMove)
         doc.addEventListener('pointerup', onDragEnd)
+        doc.addEventListener('pointercancel', onDragEnd)
         e.preventDefault()
     }
 
@@ -258,6 +261,7 @@ export function useDialogEnhanced(
         dragStartSize = null
         doc.removeEventListener('pointermove', onDragMove)
         doc.removeEventListener('pointerup', onDragEnd)
+        doc.removeEventListener('pointercancel', onDragEnd)
     }
 
     // ── Resize Handlers ────────────────────────────────────────────
@@ -281,6 +285,7 @@ export function useDialogEnhanced(
 
         doc.addEventListener('pointermove', onResizeMove)
         doc.addEventListener('pointerup', onResizeEnd)
+        doc.addEventListener('pointercancel', onResizeEnd)
         e.preventDefault()
         e.stopPropagation()
     }
@@ -352,6 +357,7 @@ export function useDialogEnhanced(
         isResizing.value = false
         doc.removeEventListener('pointermove', onResizeMove)
         doc.removeEventListener('pointerup', onResizeEnd)
+        doc.removeEventListener('pointercancel', onResizeEnd)
     }
 
     // ── Close Handling ─────────────────────────────────────────────
@@ -429,8 +435,14 @@ export function useDialogEnhanced(
             // 缩放交互期间由 onResizeMove 直接写 size，observer 仅作兜底恢复测量，避免相互覆盖
             if (isResizing.value) return
             for (const entry of entries) {
-                if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
-                    size.value = { width: entry.contentRect.width, height: entry.contentRect.height }
+                // 必须用 borderBoxSize（border-box）而非 contentRect（content-box）：
+                // size 最终写入 style.width/height 且 preflight 是 box-sizing: border-box，
+                // 用 contentRect 会每帧收缩 padding+border 的量，形成自我增强的收缩循环
+                const borderBox = entry.borderBoxSize?.[0]
+                const width = borderBox ? borderBox.inlineSize : entry.contentRect.width
+                const height = borderBox ? borderBox.blockSize : entry.contentRect.height
+                if (width > 0 && height > 0) {
+                    size.value = { width, height }
                 }
             }
         })
@@ -438,6 +450,13 @@ export function useDialogEnhanced(
     }
 
     // ── Watchers & Lifecycle ───────────────────────────────────────
+
+    // contentRef 可能晚于 onMounted 出现（对话框默认 open 后才渲染内容，reka-ui
+    // 挂载时 contentRef 为 null），此时 onMounted 里的 setupSizeObserver 直接 return；
+    // 监听 contentRef 出现/变化时重绑 observer，保证「隐藏/零尺寸后自动恢复」兜底生效
+    watch(contentRef, (el) => {
+        if (el) setupSizeObserver()
+    })
 
     // Watch x/y values (not the object reference) so that re-renders with an
     // inline object prop of the same values don't clobber the user's drag offset.
@@ -467,8 +486,10 @@ export function useDialogEnhanced(
         if (!doc) return
         doc.removeEventListener('pointermove', onDragMove)
         doc.removeEventListener('pointerup', onDragEnd)
+        doc.removeEventListener('pointercancel', onDragEnd)
         doc.removeEventListener('pointermove', onResizeMove)
         doc.removeEventListener('pointerup', onResizeEnd)
+        doc.removeEventListener('pointercancel', onResizeEnd)
     })
 
     return {
