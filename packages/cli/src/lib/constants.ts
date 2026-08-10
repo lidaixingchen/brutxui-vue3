@@ -99,13 +99,13 @@ export const REGISTRY_PATH_PREFIXES = {
 export const SCHEMA_URL = 'https://lidaixingchen.github.io/brutxui-vue3/schema.json';
 
 /**
- * 默认多 registry 源（基础设施闭环 P0）：GitHub Raw 主源 + jsDelivr CDN 镜像。
- * 未配置自定义源时，resolveRegistrySources 返回此数组的副本，
- * 使多源 fallback 引擎在零配置下即可提供 CDN 冗余高可用。
+ * 默认 registry 源（产物发布时构建方案）：GitHub Release 资产，扁平命名，无目录层级。
+ * 产物移出 git main 分支后 raw/jsDelivr 路径不再存在；Release 资产不可被 jsDelivr 镜像，
+ * 故默认源为单元素数组（多源 fallback 引擎退化为单源尝试，可靠性由 GitHub 可用性兜底）。
+ * 未配置自定义源时，resolveRegistrySources 返回此数组的副本。
  */
 export const DEFAULT_REGISTRY_SOURCES = [
-    'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry',
-    'https://cdn.jsdelivr.net/gh/lidaixingchen/brutxui-vue3@main/packages/registry/registry',
+    'https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download',
 ] as const;
 
 /**

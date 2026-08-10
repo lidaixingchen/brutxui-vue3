@@ -108,7 +108,9 @@ npx brutx-vue@latest add button@1.2.0 \
   --registry https://raw.githubusercontent.com/<you>/<fork>/main/registry
 ```
 
-若 `--registry` 不是 GitHub raw URL 结构（如本地路径、自建 HTTP registry），使用 `@version` 会抛 `REGISTRY_VERSION_UNSUPPORTED` 错误。此时请移除 `@version` 或将 `--registry` 切换为 GitHub raw URL。
+**默认源上忽略版本**：默认源为 GitHub Release 资产（`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`），不存在 git ref 概念，因此显式传入的 `@version` 会被**忽略**，始终按 latest 拉取。如需锁定历史版本，请通过 `--registry` 显式切换到 GitHub raw URL 源。
+
+若 `--registry` 是其他非 raw 结构（如本地路径、自建 HTTP registry），使用 `@version` 会抛 `REGISTRY_VERSION_UNSUPPORTED` 错误。此时请移除 `@version` 或将 `--registry` 切换为 GitHub raw URL。
 
 #### 版本混用提示
 
@@ -503,7 +505,7 @@ npx brutx-vue@latest registry add https://mirror.example.com
 
 ### registry remove
 
-从 `components.json` 移除指定源。移除最后一个自定义源后自动删除 `registries` 字段，恢复官方默认多源：
+从 `components.json` 移除指定源。移除最后一个自定义源后自动删除 `registries` 字段，恢复官方默认源：
 
 ```bash
 npx brutx-vue@latest registry remove https://mirror.example.com
@@ -545,7 +547,7 @@ npx brutx-vue@latest registry remove https://mirror.example.com
 | `aliases.utils`       | 工具函数导入别名                    |
 | `aliases.composables` | 组合式函数导入别名                   |
 | `sharedBase`          | monorepo 共享基础目录（可选）          |
-| `registries`          | 多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用官方默认双源（GitHub Raw + jsDelivr CDN） |
+| `registries`          | 多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用官方默认源（GitHub Release 资产） |
 | `requireSignature`    | 项目级严格签名模式：为 `true` 时强制 manifest 签名校验（优先级低于 `BRUTX_REQUIRE_SIGNATURE` 环境变量与 `--require-signature` flag，见[供应链安全](#供应链安全签名与-sbom)） |
 | `trustedPublicKeys`   | 项目级追加信任公钥数组（`{ keyId, publicKey }`），在官方 Root 公钥之外追加信任 |
 
@@ -716,23 +718,22 @@ npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
 
 读取 `.brutx/components.json` manifest 中已安装组件的版本、依赖、`registryDependencies` 与 integrity，生成 CycloneDX 1.5 格式 SBOM。无组件安装时报错退出。
 
-## 默认多源与离线模式
+## 默认源与离线模式
 
 ### 多源 Fallback
 
-默认注册表源为**双源**：GitHub Raw 主源 + jsDelivr CDN 镜像。未配置 `registries` 时，CLI 按序尝试：
+默认注册表源为**单源**：GitHub Release 资产，指向发布时构建上传的最新产物：
 
-1. `https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry`
-2. `https://cdn.jsdelivr.net/gh/lidaixingchen/brutxui-vue3@main/packages/registry/registry`
+`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`
 
-主源超时/失败时自动切换到镜像源并输出警告。可通过 `components.json` 的 `registries` 字段（[见配置](#componentsjson-配置文件)）或 `--registry` 命令临时覆盖整个源列表。若所有源均因签名/完整性校验失败，CLI 透出原始错误码 `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED`（而非泛化网络错误），并提示可能存在源间一致性延迟。
+多源 fallback 能力保留：可通过 `components.json` 的 `registries` 字段（[见配置](#componentsjson-配置文件)）或 `--registry` 命令配置多个源，CLI 按序 fallback，主源超时/失败时自动切换到后续源并输出警告。若所有源均因签名/完整性校验失败，CLI 透出原始错误码 `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED`（而非泛化网络错误），并提示可能存在源间一致性延迟。
 
 ### 离线模式
 
-`--offline` flag 或 `BRUTX_OFFLINE=1` 环境变量激活离线模式：**不发起任何网络请求**，只读本地缓存（TTL 过期也复用，integrity 仍校验）。多源下依次尝试各源缓存，命中时输出：
+`--offline` flag 或 `BRUTX_OFFLINE=1` 环境变量激活离线模式：**不发起任何网络请求**，只读本地缓存（TTL 过期也复用，integrity 仍校验）。缓存命中时输出：
 
 ```text
-[OFFLINE CACHE HIT] button (source: https://raw.githubusercontent.com/...)
+[OFFLINE CACHE HIT] button (source: https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download)
 ```
 
 缓存未命中时抛 `REGISTRY_OFFLINE_UNAVAILABLE`。先在线执行一次 `brutx add` 或 `brutx list --check-updates` 可预热缓存供离线使用。

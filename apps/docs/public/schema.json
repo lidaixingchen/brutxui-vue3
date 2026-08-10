@@ -70,7 +70,7 @@
                 "type": "string",
                 "minLength": 1
             },
-            "description": "多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用默认官方双源（GitHub Raw + jsDelivr CDN）。命令行 --registry 临时覆盖整个列表。"
+            "description": "多 registry 源列表（主源 + 镜像），CLI 按序 fallback；未配置时使用默认官方源（GitHub Release 资产，releases/latest/download）。命令行 --registry 临时覆盖整个列表。"
         },
         "requireSignature": {
             "type": "boolean",

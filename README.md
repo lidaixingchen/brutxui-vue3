@@ -59,9 +59,9 @@ BrutxUI 旨在与 `shadcn/ui` 协同工作，而非替代它：
 
 ## 安装与注册表工作流
 
-安装 BrutxUI 组件有两种常见方式：
+安装 BrutxUI 组件推荐使用 Brutx-Vue CLI：
 
-### 方式 A：Brutx-Vue CLI（推荐）
+### Brutx-Vue CLI（推荐）
 
 Brutx-Vue CLI 负责 Tailwind 检测、CSS 令牌注入和包管理器检测。
 
@@ -81,19 +81,7 @@ npx brutx-vue@latest add --all --overwrite
 
 > **升级提示：** 始终使用 `npx brutx-vue@latest` 确保运行最新版 CLI。升级组件时加 `--overwrite` 会覆盖本地修改，请提前备份或使用版本控制。
 >
-> **供应链安全：** 官方 Registry 的 manifest 使用 Ed25519 签名，CLI 内置官方公钥，零配置开箱即验；强制校验用 `--require-signature`。默认多源（GitHub Raw + jsDelivr CDN）自动 fallback，`--offline` 完全离线使用本地缓存。
-
-### 方式 B：官方 `shadcn` CLI
-
-由于 BrutxUI 遵循 shadcn/ui JSON 注册表模式，你可以使用官方 shadcn CLI 安装 BrutxUI 组件：
-
-```bash
-# 安装 Brutx Button
-npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/button.json
-
-# 安装 Brutx Pricing Section 定价区块
-npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/pricing-section.json
-```
+> **供应链安全：** 官方 Registry 的 manifest 使用 Ed25519 签名，CLI 内置官方公钥，零配置开箱即验；强制校验用 `--require-signature`。默认源为 GitHub Release 资产（发布时构建上传），`--offline` 完全离线使用本地缓存。
 
 ---
 

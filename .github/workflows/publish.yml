@@ -61,26 +61,67 @@ jobs:
                     exit 1
                   fi
 
-            # 生成物一致性门禁：build 后校验自动生成文件与 commit 一致
-            # 防止漏跑 prebuild-scan / generate-styles-tokens / registry build 的 tag 通过发布
+            # 生成物一致性门禁：build 后校验 ui 侧自动生成文件与 commit 一致
+            # 防止漏跑 prebuild-scan / generate-styles-tokens 的 tag 通过发布
+            # （registry 产物为发布时构建、不入库，不在此检查范围，其完整性由上传前校验兜底）
             - name: Verify generated artifacts consistency
               run: |
                   git diff --exit-code -- \
                     packages/ui/registry-manifest.json \
                     packages/ui/src/styles.css \
-                    packages/registry/registry \
-                    ':(exclude)packages/registry/registry/registry-manifest.json' \
-                    ':(exclude)packages/registry/registry/registry-sbom.json' \
                   || {
                     echo "::error::Generated artifacts are stale — run 'pnpm build' and commit the result before tagging"
                     git diff --stat -- \
                       packages/ui/registry-manifest.json \
-                      packages/ui/src/styles.css \
-                      packages/registry/registry \
-                      ':(exclude)packages/registry/registry/registry-manifest.json' \
-                      ':(exclude)packages/registry/registry/registry-sbom.json'
+                      packages/ui/src/styles.css
                     exit 1
                   }
+
+            # Release 资产必须先于 npm publish 就绪：CLI 默认源指向 releases/latest/download，
+            # 若 CLI 先发布而资产未上传，用户零配置拉取即 404，且 upload 失败会留下不可回滚状态。
+            # 幂等写法：tag 重推/重跑时 release 已存在，直接 create 会失败阻断后续发布。
+            - name: Create GitHub Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  TAG: ${{ github.ref_name }}
+              run: |
+                  gh release create "$TAG" \
+                      --title "Release $TAG" \
+                      --generate-notes \
+                  || gh release edit "$TAG" --title "Release $TAG"
+
+            # 上传前校验：产物齐全（index.json / registry-manifest.json / registry-sbom.json）、
+            # 数量 = 90（排除本地可能遗留的 deps.json）、manifest 含 signature 且 keyId = official-v1
+            - name: Verify registry artifacts ready for upload
+              run: |
+                  for f in index.json registry-manifest.json registry-sbom.json; do
+                    if [ ! -f "packages/registry/registry/$f" ]; then
+                      echo "::error::registry 产物缺失：packages/registry/registry/$f 不存在（请确认 Release gate 已构建）"
+                      exit 1
+                    fi
+                  done
+                  count=$(ls packages/registry/registry/*.json | grep -v 'deps\.json$' | wc -l)
+                  if [ "$count" -ne 90 ]; then
+                    echo "::error::registry 产物数量异常：期望 90 个 json（不含 deps.json），实际 $count"
+                    exit 1
+                  fi
+                  node -e "
+                  const m = require('./packages/registry/registry/registry-manifest.json');
+                  if (!m.signature || m.keyId !== 'official-v1') {
+                    console.error('::error::registry-manifest.json 缺少官方签名或 keyId 非 official-v1');
+                    process.exit(1);
+                  }
+                  console.log('Registry manifest verified (keyId: ' + m.keyId + ')');
+                  "
+
+            # 上传 registry 产物为 Release 资产（扁平命名，可寻址 releases/latest/download/{name}.json）
+            # --clobber：重推/重跑时覆盖同名资产，配合幂等 create 保证可重复执行
+            - name: Upload registry artifacts to Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  TAG: ${{ github.ref_name }}
+              run: |
+                  gh release upload "$TAG" packages/registry/registry/*.json --clobber
 
             - name: Publish brutx-ui-vue
               working-directory: packages/ui
@@ -119,12 +160,3 @@ jobs:
                   fi
                   cat /tmp/publish-cli.log >&2
                   exit $status
-
-            - name: Create GitHub Release
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  TAG: ${{ github.ref_name }}
-              run: |
-                  gh release create "$TAG" \
-                      --title "Release $TAG" \
-                      --generate-notes

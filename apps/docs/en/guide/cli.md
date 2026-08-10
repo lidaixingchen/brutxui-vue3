@@ -93,7 +93,9 @@ npx brutx-vue@latest add button@1.2.0 \
   --registry https://raw.githubusercontent.com/<you>/<fork>/main/registry
 ```
 
-If `--registry` is not a GitHub raw URL (e.g. a local path or self-hosted HTTP registry), using `@version` throws a `REGISTRY_VERSION_UNSUPPORTED` error. Remove `@version` or switch `--registry` to a GitHub raw URL.
+**Version is ignored on the default source**: the default source is a GitHub Release asset (`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`), which has no git ref concept, so an explicit `@version` is **ignored** and the latest release is always fetched. To pin a historical version, explicitly switch `--registry` to a GitHub raw URL source.
+
+If `--registry` has some other non-raw structure (e.g. a local path or self-hosted HTTP registry), using `@version` throws a `REGISTRY_VERSION_UNSUPPORTED` error. Remove `@version` or switch `--registry` to a GitHub raw URL.
 
 #### Version mismatch warning
 
@@ -537,7 +539,7 @@ npx brutx-vue@latest registry add https://mirror.example.com
 
 ### registry remove
 
-Remove a source from `components.json`. Removing the last custom source deletes the `registries` field and restores the official default multi-source:
+Remove a source from `components.json`. Removing the last custom source deletes the `registries` field and restores the official default source:
 
 ```bash
 npx brutx-vue@latest registry remove https://mirror.example.com
@@ -579,7 +581,7 @@ The `components.json` file is created by `brutx-vue init` and stores your projec
 | `aliases.utils` | Import alias for the utility file containing `cn()` (e.g. `@/lib/utils`). |
 | `aliases.composables` | Import alias for the composables directory (e.g. `@/composables`). |
 | `sharedBase` | Optional monorepo shared base directory. |
-| `registries` | Multi-registry source list (primary + mirrors), tried in order; defaults to the official dual sources (GitHub Raw + jsDelivr CDN) when unset. |
+| `registries` | Multi-registry source list (primary + mirrors), tried in order; defaults to the official source (GitHub Release assets) when unset. |
 | `requireSignature` | Project-level strict signature mode: when `true`, enforces manifest signature verification (lower priority than the `BRUTX_REQUIRE_SIGNATURE` env var and the `--require-signature` flag, see [Supply Chain Security](#supply-chain-security-signature-sbom)). |
 | `trustedPublicKeys` | Project-level additional trusted public keys (`{ keyId, publicKey }` array), appended on top of the official root keys. |
 
@@ -750,23 +752,22 @@ npx brutx-vue@latest doctor --sbom --sbom-output ./reports/sbom.json
 
 It reads installed component versions, dependencies, `registryDependencies`, and integrity from the `.brutx/components.json` manifest and emits a CycloneDX 1.5 SBOM. Errors out if no components are installed.
 
-## Default Multi-Source & Offline Mode
+## Default Source & Offline Mode
 
 ### Multi-Source Fallback
 
-The default registry is **dual-source**: GitHub Raw primary + jsDelivr CDN mirror. When `registries` is not configured, the CLI tries, in order:
+The default registry is **single-source**: a GitHub Release asset pointing at the latest release built and uploaded at publish time:
 
-1. `https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry`
-2. `https://cdn.jsdelivr.net/gh/lidaixingchen/brutxui-vue3@main/packages/registry/registry`
+`https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download`
 
-When the primary source times out or fails, the CLI automatically falls back to the mirror and prints a warning. Override the whole source list via the `registries` field in `components.json` (see [configuration](#componentsjson-configuration-file)) or the `--registry` flag. If every source fails signature/integrity verification, the CLI surfaces the original error codes `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED` (instead of a generic network error) and hints at possible inter-source consistency lag.
+Multi-source fallback remains available: configure multiple sources via the `registries` field in `components.json` (see [configuration](#componentsjson-configuration-file)) or the `--registry` flag, and the CLI tries them in order, automatically falling back to the next source when the primary times out or fails, printing a warning. If every source fails signature/integrity verification, the CLI surfaces the original error codes `REGISTRY_SIGNATURE_INVALID` / `REGISTRY_INTEGRITY_FAILED` (instead of a generic network error) and hints at possible inter-source consistency lag.
 
 ### Offline Mode
 
-Activate offline mode with the `--offline` flag or the `BRUTX_OFFLINE=1` environment variable: **no network requests are made**, only the local cache is read (TTL-expired entries are still reused; integrity is still verified). With multiple sources, each source's cache is tried in turn; on a hit the CLI prints:
+Activate offline mode with the `--offline` flag or the `BRUTX_OFFLINE=1` environment variable: **no network requests are made**, only the local cache is read (TTL-expired entries are still reused; integrity is still verified). On a cache hit the CLI prints:
 
 ```text
-[OFFLINE CACHE HIT] button (source: https://raw.githubusercontent.com/...)
+[OFFLINE CACHE HIT] button (source: https://github.com/lidaixingchen/brutxui-vue3/releases/latest/download)
 ```
 
 A cache miss throws `REGISTRY_OFFLINE_UNAVAILABLE`. Run `brutx add` or `brutx list --check-updates` once online to warm the cache for offline use.

@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
-# 自动同步生成文件：检测暂存的 ui 源码变更，重新生成 registry 并纳入本次提交。
-# 从根源消除「生成文件未随源码更新」导致的 CI 漂移（registry/*.json 是 ui 源码的快照）。
+# 自动同步生成文件：检测暂存的 ui 源码变更，重新生成 registry 产物并同步 ui 侧生成文件。
+# 从根源消除「生成文件未随源码更新」导致的 CI 漂移（registry/*.json 为 ui 源码快照，
+# 但产物为发布时构建、不入库；仅 ui/registry-manifest.json 与 styles.css 仍入库跟踪）。
 
 STAGED_UI=$(git diff --cached --name-only | grep -E '^packages/ui/src/' | grep -vE '\.(test|spec)\.(ts|tsx|vue)$' | grep -v '__snapshots__' || true)
 
@@ -10,6 +11,6 @@ if [ -n "$STAGED_UI" ]; then
         echo "[pre-commit] registry 生成失败，已中止提交，请先修复构建错误" >&2
         exit 1
     fi
-    # 将重新生成的 registry 产物纳入本次提交（无变化时 git add 为 no-op）
-    git add packages/registry/registry packages/registry/.registry-cache.json packages/ui/registry-manifest.json packages/ui/src/styles.css
+    # 仅将 ui 侧生成文件纳入本次提交（registry 产物为发布时构建，不入库；无变化时 git add 为 no-op）
+    git add packages/ui/registry-manifest.json packages/ui/src/styles.css
 fi

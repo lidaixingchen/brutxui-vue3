@@ -5,7 +5,14 @@ import {
     validateRegistryItem,
 } from 'brutx-shared-vue';
 import type { RegistryItem, BrutalistConfig, RegistryManifestSummary, TrustedPublicKey } from './types.js';
-import { DEFAULT_REGISTRY_URL, SCHEMA_URL, DEFAULT_ALIASES, DEFAULT_TAILWIND_CONFIG, CURRENT_CONFIG_VERSION } from './constants.js';
+import {
+    DEFAULT_REGISTRY_URL,
+    DEFAULT_REGISTRY_SOURCES,
+    SCHEMA_URL,
+    DEFAULT_ALIASES,
+    DEFAULT_TAILWIND_CONFIG,
+    CURRENT_CONFIG_VERSION,
+} from './constants.js';
 import { CliError } from './error.js';
 import { getCachedEntry, setCachedEntry, touchCachedEntry, dedupeInflight, isOfflineMode } from './cache.js';
 import { buildAuthHeaders, fetchWithSources } from './registry-source.js';
@@ -653,12 +660,18 @@ export async function resolveDeps(
 
     /**
      * 把 @version 解析为相对当前 source 的 ref URL。
-     * 仅支持 GitHub raw URL 结构（raw.githubusercontent.com/{owner}/{repo}/{ref}/...），
-     * 其他结构显式报错而非静默忽略（v2.2 补强：去硬编码，与 --registry 一致）。
+     * 仅支持 GitHub raw URL 结构（raw.githubusercontent.com/{owner}/{repo}/{ref}/...）；
+     * 默认源（GitHub Release 资产端点，releases/latest/download）无版本化能力，
+     * 忽略版本按 latest 拉取（产物发布时构建方案 T2 降级语义）；
+     * 其他自定义结构仍显式报错而非静默忽略（v2.2 补强：去硬编码，与 --registry 一致）。
      */
     function resolveVersionedSource(baseSource: string, version: string): string {
         const match = baseSource.match(GITHUB_RAW_URL_PATTERN);
         if (!match) {
+            // 默认源忽略版本：Release 资产 URL 固定指向 latest，无历史版本可寻址。
+            if (DEFAULT_REGISTRY_SOURCES.some((source) => source === baseSource)) {
+                return baseSource;
+            }
             throw new CliError(
                 `@version syntax requires a GitHub raw URL registry, but got: ${baseSource}. ` +
                 `Use --registry to specify a GitHub raw URL, or remove @version from the component name.`,

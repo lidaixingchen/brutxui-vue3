@@ -10,7 +10,7 @@ import type { BrutalistConfig } from './types.js';
  * 解析优先级（高 → 低）：
  *   1. 命令行 --registry（覆盖整个源列表）
  *   2. components.json 的 registries 数组（主源 + 镜像）
- *   3. DEFAULT_REGISTRY_SOURCES（GitHub Raw 主源 + jsDelivr CDN 镜像）
+ *   3. DEFAULT_REGISTRY_SOURCES（GitHub Release 资产，releases/latest/download）
  *
  * 离线模式（BRUTX_OFFLINE=1 或 --offline）：
  *   - 不发网络请求，只读缓存
@@ -31,7 +31,7 @@ const OFFLINE_ENV = 'BRUTX_OFFLINE';
  * 返回按优先级排列的 registry 源列表。
  * - override 非空时只返回 [override]
  * - 否则取 config.registries（过滤空串）
- * - 都没有时返回 DEFAULT_REGISTRY_SOURCES 副本（GitHub Raw + jsDelivr CDN）
+ * - 都没有时返回 DEFAULT_REGISTRY_SOURCES 副本（GitHub Release 资产）
  */
 export function resolveRegistrySources(
     config: BrutalistConfig | null,

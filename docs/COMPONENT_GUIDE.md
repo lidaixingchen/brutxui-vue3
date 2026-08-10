@@ -19,7 +19,7 @@
 
 ## 注册表模式
 
-注册表是**生成式**的：`packages/ui/scripts/prebuild-scan.ts` 通过 AST 扫描 `packages/ui/src/components/` 自动生成 `packages/ui/registry-manifest.json`（组件文件清单）；`packages/registry/scripts/build-registry.ts` 读取该清单与 `packages/shared/src/component-metadata.ts` 中的人工元数据，合并后从源码读取、重写导入路径、提取依赖，自动生成 `packages/registry/registry/*.json` 和 `index.json`。**不要手动编写 registry JSON**——未在 `COMPONENTS` 中登记的组件不会进入 `index.json`，CLI 也无法安装。
+注册表是**生成式**的：`packages/ui/scripts/prebuild-scan.ts` 通过 AST 扫描 `packages/ui/src/components/` 自动生成 `packages/ui/registry-manifest.json`（组件文件清单）；`packages/registry/scripts/build-registry.ts` 读取该清单与 `packages/shared/src/component-metadata.ts` 中的人工元数据，合并后从源码读取、重写导入路径、提取依赖，自动生成 `packages/registry/registry/*.json` 和 `index.json`（**这些产物不入库**，git 不跟踪，发布时由 CI 基于最新源码构建并上传为 GitHub Release 资产）。**不要手动编写 registry JSON**——未在 `COMPONENTS` 中登记的组件不会进入 `index.json`，CLI 也无法安装。
 
 - 新增组件时，只需在 `packages/shared/src/components.ts` 的 `COMPONENTS` 中添加元数据条目，然后运行 `pnpm --filter brutx-ui-vue prebuild:scan`（或直接 `pnpm build`）生成清单，再运行 `pnpm --filter brutx-registry-vue build` 生成 JSON。文件映射由 AST 扫描器自动发现，无需手动登记。
 - `pnpm --filter brutx-registry-vue validate` 会执行三道一致性校验：① 源码目录 ↔ `registry-manifest.json`（防止清单与源码不同步）；② `{name}.json` ↔ `index.json`（防止手写孤儿 JSON）；③ 字段完整性。

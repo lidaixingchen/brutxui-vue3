@@ -29,7 +29,7 @@ export function getCliErrorAdvice(error: CliError): string[] {
             ];
         case 'REGISTRY_VERSION_UNSUPPORTED':
             return [
-                'The @version syntax requires a GitHub raw URL registry.',
+                'The @version syntax requires a GitHub raw URL registry (default Release sources ignore the version and fetch latest).',
                 'Use --registry to specify a GitHub raw URL, or remove @version from the component name.',
             ];
         case 'REGISTRY_OFFLINE_UNAVAILABLE':

@@ -277,9 +277,27 @@ describe('resolveDeps with mocked fetch', () => {
         await expect(registry.resolveDeps(['a'], 'https://registry.mock')).rejects.toThrow('Circular dependency detected: a');
     });
 
-    it('should correctly parse version-pinned names like component@version', async () => {
+    it('should resolve version-pinned names like component@version on GitHub raw sources', async () => {
         vi.stubGlobal('fetch', async (url: string) => {
             expect(url).toContain('/v0.2.1/');
+            const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
+            return {
+                ok: true,
+                json: async () => mockRegistry[name],
+                headers: new Map(),
+                status: 200,
+            };
+        });
+
+        const raw = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
+        const resolved = await registry.resolveDeps(['button@v0.2.1'], raw);
+        expect(resolved.map(r => r.name)).toEqual(['button']);
+    });
+
+    it('should ignore version and fetch latest on the default Release source', async () => {
+        vi.stubGlobal('fetch', async (url: string) => {
+            expect(url).toContain('releases/latest/download');
+            expect(url).not.toContain('/v0.2.1/');
             const name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.json'));
             return {
                 ok: true,
@@ -385,6 +403,8 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
 
     it('should resolve both button@v1 and button@v2 without silently dropping either (bug 4 fix)', async () => {
         const fetchedUrls: string[] = [];
+        // 版本化能力仅在 GitHub raw 源生效（默认 Release 源忽略版本，见 T2 降级语义），显式传 raw 源
+        const raw = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
         vi.stubGlobal('fetch', async (url: string) => {
             fetchedUrls.push(url);
             // parentA/parentB 本身不带 @version，走默认 ref（main）；它们的依赖 button@v1/v2 走版本化 ref
@@ -407,7 +427,7 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
             };
         });
 
-        const resolved = await registry.resolveDeps(['parentA', 'parentB']);
+        const resolved = await registry.resolveDeps(['parentA', 'parentB'], raw);
         const names = resolved.map(r => r.name);
 
         // 两个 button 实例都应被解析（不同 version）
@@ -418,6 +438,8 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
 
     it('should still deduplicate same-version dependencies (button@v1 appears once)', async () => {
         const fetchedUrls: string[] = [];
+        // 版本化能力仅在 GitHub raw 源生效（默认 Release 源忽略版本，见 T2 降级语义），显式传 raw 源
+        const raw = 'https://raw.githubusercontent.com/lidaixingchen/brutxui-vue3/main/packages/registry/registry';
         const parentC = createRegistryItem('parentC', { registryDependencies: ['button@v1'] });
         vi.stubGlobal('fetch', async (url: string) => {
             fetchedUrls.push(url);
@@ -438,7 +460,7 @@ describe('resolveDeps version-pinned deduplication (P0-3)', () => {
             };
         });
 
-        const resolved = await registry.resolveDeps(['parentA', 'parentC']);
+        const resolved = await registry.resolveDeps(['parentA', 'parentC'], raw);
         const buttonFetchCount = fetchedUrls.filter(u => u.endsWith('/button.json') && u.includes('/v1/')).length;
         expect(buttonFetchCount).toBe(1);
         const names = resolved.map(r => r.name);

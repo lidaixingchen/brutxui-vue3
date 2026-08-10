@@ -216,7 +216,7 @@ async function addInner(
     }
 
     // 多源解析（基础设施闭环 P0）：--registry 覆盖整个源列表，否则用 config.registries，
-    // 未配置时回退到官方默认多源（GitHub Raw + jsDelivr CDN）。
+    // 未配置时回退到官方默认源（GitHub Release 资产，releases/latest/download）。
     const sources = resolveRegistrySources(config, options.registry);
 
     const spinner = options.silent ? null : ora('Resolving components and checking dependencies...').start();

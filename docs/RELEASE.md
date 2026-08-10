@@ -4,16 +4,16 @@
 
 > [!IMPORTANT]
 > **发布前置检查（防坑指南）**
-> 1. **检查工作区（`git status`）**：在开始发布流程前，**必须**运行 `git status` 审视工作区。确保所有应当包含在本次发布的实质性改动（组件源码、测试、文档、注册表等）已被全部提交或妥善 staged。**严禁在工作区留有未提交组件代码的情况下直接运行发布和打 tag**，这会导致发布产物不完整。
-> 2. **重新编译注册表**：若工作区包含组件的增删改，必须先运行 `pnpm --filter brutx-registry-vue build` 重新编译并生成注册表最新的 JSON 描述文件，再进行发布门禁检查。
-> 3. **CI 自动校验（已机械化）**：`publish.yml` 在发布前执行 `git diff --exit-code` 校验 `registry-manifest.json`、`styles.css`、`packages/registry/registry` 与 commit 一致。若漏做上述重建步骤，tag 触发的发布将被门禁拦截而非产出滞后产物。
+> 1. **检查工作区（`git status`）**：在开始发布流程前，**必须**运行 `git status` 审视工作区。确保所有应当包含在本次发布的实质性改动（组件源码、测试、文档、registry 构建脚本等）已被全部提交或妥善 staged。**严禁在工作区留有未提交组件代码的情况下直接运行发布和打 tag**，这会导致发布产物不完整。
+> 2. **注册表产物发布时构建（无需本地提交）**：注册表 JSON 产物**不入库**、git 不跟踪。tag 触发发布时，`publish.yml` 基于最新源码自动构建并上传为 GitHub Release 资产，本地无需重新编译或提交产物。
+> 3. **CI 自动校验（已机械化）**：`publish.yml` 在发布前执行 `git diff --exit-code` 校验 `packages/ui/registry-manifest.json`、`packages/ui/src/styles.css` 与 commit 一致（registry 产物不入库，不参与该门禁；产物构建与上传由发布流程自动完成）。
 
 - 提交信息格式固定为 `release: bump version to <ui-version> for ui and <cli-version> for cli`。如果只发布其中一个包，仍保持该格式，并填写当前实际版本。
 - **⚠️ `[skip ci]` 陷阱（已配置规避，仍需注意）**：changeset 2.31 在 `"commit": true` 时，`pnpm version-packages` 生成的 `RELEASING` 提交**默认带 `[skip ci]`**（见 `.changeset/config.json` 的 `commit.skipCI` 归一化逻辑）。若 tag 指向该提交，`publish.yml`（由 `v*` tag 触发）会被 `[skip ci]` **静默跳过，npm 不会发布**。已通过 `"commit": ["@changesets/cli/commit", { "skipCI": false }]` 关闭此行为；即便如此，发布时仍建议让 tag 指向不含 `[skip ci]` 的 `release: bump version to ...` 提交（见上），并**发布后核对 GitHub Actions 的 Publish run 是否成功、npm 是否真的出新版本**。
 - 哪个 NPM 包版本发生变化就发布哪个包；当前公开发布包为 `brutx-ui-vue`（`packages/ui/`）和 `brutx-vue`（`packages/cli/`）。
 - tag 命名固定以 UI 包版本为主，格式为 `v<ui-version>`，例如 `v0.6.6`。CLI 版本不单独创建 tag。
 - 推送 `main` 和对应的 `v*` tag 后，由云端自动发布。
-- 任何影响组件安装、注册表生成或发布产物的改动，都必须同步检查 `packages/ui/`、`packages/shared/`、`packages/registry/`、`packages/cli/` 四处：源码文件、组件元数据、registry 构建脚本/JSON、CLI 安装复制逻辑必须保持一致。
+- 任何影响组件安装、注册表生成或发布产物的改动，都必须同步检查 `packages/ui/`、`packages/shared/`、`packages/registry/`、`packages/cli/` 四处：源码文件、组件元数据、registry 构建脚本（JSON 产物不入库、发布时构建上传）、CLI 安装复制逻辑必须保持一致。
 - 发布前必须执行完整检查：`pnpm release`（`turbo run build test typecheck lint && changeset publish`）。
 - 如果本地验证 release tag，设置 `RELEASE_TAG=v<ui-version>` 后再运行 `pnpm release`；GitHub Actions 中会自动读取 `GITHUB_REF_NAME`。
 - 发布前必须检查 `pnpm-lock.yaml` 是否需要同步。若只修改包自身 `version` 且运行 pnpm 后 lockfile 无变化，可以不提交 lockfile；若修改 `dependencies`、`devDependencies`、`peerDependencies` 或 lockfile 自动变化，必须提交同步后的 `pnpm-lock.yaml`。
@@ -204,6 +204,6 @@ GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dep
 
 - **Secret 配置**：仓库需配置 `BRUTX_REGISTRY_PRIVATE_KEY`（PKCS8 DER base64 单行）与 `BRUTX_REGISTRY_KEY_ID`（`official-v1`）。私钥对应公钥硬编码于 CLI 的 `OFFICIAL_PUBLIC_KEYS`（`packages/cli/src/lib/constants.ts`），**二者必须匹配**，否则 CLI 严格模式验签会失败。
 - **发布时**：`publish.yml` 注入私钥环境变量，`brutx-registry-vue build` 自动签名（`signManifestFromEnv`）。
-- **main 同步**：`ci.yml` 的 `sign-manifest` job 在每次 push 到 main 时用官方私钥重建并提交带签名 manifest，保证 GitHub Raw / jsDelivr CDN 上的线上产物始终已签名。该 job 需 `BRUTX_REGISTRY_PRIVATE_KEY` Secret 已配置，且 main 未被分支保护禁用 bot 直推（GITHUB_TOKEN 无法绕过）。
+- **签名与分发**：签名在发布流程中由 `publish.yml` 注入私钥自动完成，签名 manifest 随产物一起上传为 GitHub Release 资产（`releases/latest/download`），CLI 默认源即指向该端点。产物不入库，"push 到 main 即回填签名"的 `sign-manifest` job / `registry-sign.yml` 机制已随产物移出 git 一并拆除。
 - **未签名回退**：Fork / 本地 build 未注入私钥时保持未签名，CLI 向后兼容跳过。
-- **幂等性**：manifest 的 `buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 均不参与 integrity 计算，签名稳定；`sign-manifest` job 已 `unset GITHUB_SHA`，产物完全幂等（首次补签后不再产生提交抖动）。
+- **幂等性**：manifest 的 `buildTimestamp`/`gitCommit`/`integrity`/`signature`/`keyId` 均不参与 integrity 计算，签名只覆盖 integrity，跨发布稳定（发布时注入的 `gitCommit` 不影响签名）。

@@ -83,7 +83,7 @@ describe('registry command (基础设施闭环 P1 源管理)', () => {
             } as Response);
             await registryList({ cwd: tmpDir, json: true });
             expect(console.log).toHaveBeenCalledWith(
-                expect.stringContaining('raw.githubusercontent.com'),
+                expect.stringContaining('releases/latest/download'),
             );
             fetchSpy.mockRestore();
         });

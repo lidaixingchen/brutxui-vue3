@@ -59,9 +59,9 @@ BrutxUI is designed to work alongside `shadcn/ui`, not replace it:
 
 ## Installation & Registry Workflow
 
-There are two common ways to install BrutxUI components:
+We recommend installing BrutxUI components with the Brutx-Vue CLI:
 
-### Option A: Brutx-Vue CLI (Recommended)
+### Brutx-Vue CLI (Recommended)
 
 The Brutx-Vue CLI handles Tailwind detection, CSS token injection, and package manager detection.
 
@@ -80,18 +80,6 @@ npx brutx-vue@latest add --all --overwrite
 ```
 
 > **Upgrade Tip:** Always use `npx brutx-vue@latest` to ensure you're running the latest CLI version. When upgrading components, adding `--overwrite` will overwrite local modifications — make sure to back up or use version control beforehand.
-
-### Option B: Official `shadcn` CLI
-
-Since BrutxUI follows the shadcn/ui JSON registry pattern, you can use the official shadcn CLI to install BrutxUI components:
-
-```bash
-# Install Brutx Button
-npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/button.json
-
-# Install Brutx Pricing Section block
-npx shadcn@latest add https://lidaixingchen.github.io/brutxui-vue3/registry/pricing-section.json
-```
 
 ---
 
