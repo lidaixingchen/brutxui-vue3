@@ -237,8 +237,9 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
         try {
             e.target.setPointerCapture(e.pointerId)
         } catch {
-            isScratching = false
-            return
+            // 捕获失败（如 pointerId 已失效、部分触控/异常环境）时降级继续：
+            // 仅放弃指针捕获，后续 pointermove 依赖常规事件流（元素内移动）继续工作，
+            // 避免本次 pointerdown 的首笔刮擦被丢弃导致用户首笔操作无响应
         }
         scratch(e.clientX, e.clientY)
     }

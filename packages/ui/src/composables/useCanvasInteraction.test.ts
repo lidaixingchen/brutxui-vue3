@@ -509,11 +509,32 @@ describe('useCanvasInteraction', () => {
         expect(onProgress).not.toHaveBeenCalled()
     })
 
-    it('handlePointerDown catches setPointerCapture error and resets isScratching', () => {
+    it('handlePointerDown catches setPointerCapture error and degrades to normal event flow', () => {
         const onProgress = vi.fn()
-        const { handlePointerDown, handlePointerMove } = useCanvasInteraction(
-            createDefaultOptions({ onProgress }) as Parameters<typeof useCanvasInteraction>[0],
+        // 画布像素不透明，保证 scratch 可写入且 ctx 可用（与「scratch draws a circle」测试同构）
+        const pixelData = new Uint8ClampedArray(100 * 100 * 4)
+        for (let i = 3; i < pixelData.length; i += 4) {
+            pixelData[i] = 255
+        }
+        const canvas = createMockCanvas({
+            ctx: {
+                scale: vi.fn(),
+                save: vi.fn(),
+                restore: vi.fn(),
+                beginPath: vi.fn(),
+                arc: vi.fn(),
+                fill: vi.fn(),
+                drawImage: vi.fn(),
+                getImageData: vi.fn(() => ({ data: pixelData })),
+                globalCompositeOperation: '',
+            },
+        })
+        const canvasRef = ref(canvas)
+        const { syncCanvasSize, handlePointerDown, handlePointerMove } = useCanvasInteraction(
+            createDefaultOptions({ canvasRef, onProgress }) as Parameters<typeof useCanvasInteraction>[0],
         )
+        syncCanvasSize()
+
         const target = createPointerTarget()
         target.setPointerCapture = vi.fn(() => {
             throw new Error('capture failed')
@@ -524,9 +545,12 @@ describe('useCanvasInteraction', () => {
             clientX: 50,
             clientY: 50,
         } as unknown as PointerEvent)
-        // isScratching should be false after catch, so handlePointerMove should be no-op
-        handlePointerMove({ clientX: 55, clientY: 55 } as unknown as PointerEvent)
-        expect(onProgress).not.toHaveBeenCalled()
+        // 捕获失败应降级继续（不中断刮擦）：首笔已执行，后续 pointermove
+        // 依赖常规事件流仍应触发进度上报
+        for (let i = 0; i < 10; i++) {
+            handlePointerMove({ clientX: 55, clientY: 55 } as unknown as PointerEvent)
+        }
+        expect(onProgress).toHaveBeenCalled()
     })
 
     // ─── handlePointerMove ───────────────────────────────────────────────
