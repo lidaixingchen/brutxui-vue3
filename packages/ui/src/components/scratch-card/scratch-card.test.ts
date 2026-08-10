@@ -106,7 +106,9 @@ describe('ScratchCard', () => {
         canvas.element.dispatchEvent(createPointerEvent('pointerdown', { clientX: 50, clientY: 50 }))
         await wrapper.vm.$nextTick()
 
-        canvas.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 60, clientY: 60 }))
+        // buttons: 1 表达"拖动中"：PointerEvent 构造默认 buttons 为 0（未按下），
+        // 与真实拖动场景不符（useCanvasInteraction 以 buttons===0 兜底结束刮擦）
+        canvas.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 60, clientY: 60, buttons: 1 }))
         await wrapper.vm.$nextTick()
 
         canvas.element.dispatchEvent(createPointerEvent('pointerup'))

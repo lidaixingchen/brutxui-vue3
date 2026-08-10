@@ -246,6 +246,13 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
 
     const handlePointerMove = (e: PointerEvent) => {
         if (!isScratching) return
+        // buttons === 0 表示指针未按下：捕获失败降级（无指针捕获）时 pointerup
+        // 若发生在元素外可能未送达，此处兜底结束刮擦，避免 isScratching 泄漏
+        // 导致后续未按下的移动持续刮擦覆盖层
+        if (e.buttons === 0) {
+            isScratching = false
+            return
+        }
         scratch(e.clientX, e.clientY)
     }
 
