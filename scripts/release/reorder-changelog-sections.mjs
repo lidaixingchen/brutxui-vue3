@@ -18,39 +18,76 @@ import { SECTION_ORDER, sectionRank } from './changelog-sections.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
-/** 提取全文所有 section 标题（用于 before/after 对比摘要） */
-function extractSectionOrder(content) {
-    const labels = [];
-    for (const match of content.matchAll(/^###\s+([^\r\n]+)/gm)) {
-        labels.push(match[1].trim());
+/**
+ * 按版本块提取 section 标题序列（用于 before/after 对比摘要）。
+ * 返回数组的每个元素是一个版本块内的 section 标题列表；
+ * 按块比较可避免多版本块文件中同标签重复出现导致 indexOf 误判。
+ */
+function extractBlocksSectionOrder(content) {
+    const blocks = [];
+    let current = null;
+    for (const line of content.split('\n')) {
+        if (/^##\s/.test(line)) {
+            current = [];
+            blocks.push(current);
+        } else if (/^###\s/.test(line) && current) {
+            current.push(line.replace(/^###\s*/, '').trim());
+        }
     }
-    return labels;
+    return blocks;
 }
 
-/** 重排单个版本块内的 section；无 section 的块（Unreleased、归档列表）原样返回 */
+/**
+ * 重排单个版本块内的 section。
+ * 仅处理版本块（`## [x.y.z]`），`## 归档版本` 等非版本块原样保留，
+ * 避免将来非版本块内出现 `### ` 子标题时被误重排。
+ */
 function reorderBlock(blockLines) {
-    // 剥离块尾空行，重排后放回块尾，避免空行被 section 吞掉
-    let end = blockLines.length;
-    while (end > 0 && blockLines[end - 1].trim() === '') end--;
-    const trailing = blockLines.slice(end);
-    const body = blockLines.slice(0, end);
+    if (!/^## \[/.test(blockLines[0])) return blockLines;
 
     const sectionStarts = [];
-    for (let i = 0; i < body.length; i++) {
-        if (/^###\s/.test(body[i])) sectionStarts.push(i);
+    for (let i = 0; i < blockLines.length; i++) {
+        if (/^###\s/.test(blockLines[i])) sectionStarts.push(i);
     }
-    if (sectionStarts.length === 0) return [...body, ...trailing];
+    if (sectionStarts.length === 0) return blockLines;
 
-    const preamble = body.slice(0, sectionStarts[0]);
+    const preamble = blockLines.slice(0, sectionStarts[0]);
     const sections = [];
     for (let s = 0; s < sectionStarts.length; s++) {
         const start = sectionStarts[s];
-        const sectionEnd = s + 1 < sectionStarts.length ? sectionStarts[s + 1] : body.length;
-        sections.push(body.slice(start, sectionEnd));
+        const sectionEnd = s + 1 < sectionStarts.length ? sectionStarts[s + 1] : blockLines.length;
+        sections.push(blockLines.slice(start, sectionEnd));
     }
+
+    // 剥离每个 section 尾部空行，重排后统一补一个空行分隔——
+    // 否则原最后 section 无尾随空行时，重排后其下一条 `### ` 会紧贴上一节
+    const trimmed = sections.map((section) => {
+        let bodyEnd = section.length;
+        while (bodyEnd > 0 && section[bodyEnd - 1].trim() === '') bodyEnd--;
+        return section.slice(0, bodyEnd);
+    });
     // 稳定排序：同优先级（含未收录标题）保持原相对顺序
-    const ordered = sections.slice().sort((a, b) => sectionRank(a[0]) - sectionRank(b[0]));
-    return [...preamble, ...ordered.flat(), ...trailing];
+    const ordered = trimmed.slice().sort((a, b) => sectionRank(a[0]) - sectionRank(b[0]));
+
+    // 顺序未变则保持原样：只修复"重排导致的空行紧贴"，不额外改动已合规文件的格式
+    if (ordered.map((section) => section[0]).join('\n') === sections.map((section) => section[0]).join('\n')) {
+        return blockLines;
+    }
+
+    // 重组：preamble + 每 section（后跟一个空行），并折叠连续空行，保证 section 间恰好一个空行
+    const result = [...preamble];
+    for (const section of ordered) {
+        result.push(...section);
+        result.push('');
+    }
+    const collapsed = [];
+    for (const line of result) {
+        if (line.trim() === '' && collapsed.length > 0 && collapsed[collapsed.length - 1].trim() === '') {
+            continue;
+        }
+        collapsed.push(line);
+    }
+    return collapsed;
 }
 
 /** 整文件重排：按 `## ` 切块，块间内容（头部/前言）保持不动 */
@@ -79,7 +116,8 @@ function main() {
     const isDryRun = process.argv.includes('--dry-run');
 
     const docsChangelogDir = path.join(repoRoot, 'apps/docs/changelog');
-    const files = [path.join(repoRoot, 'CHANGELOG.md')];
+    const rootChangelog = path.join(repoRoot, 'CHANGELOG.md');
+    const files = existsSync(rootChangelog) ? [rootChangelog] : [];
     if (existsSync(docsChangelogDir)) {
         files.push(
             ...readdirSync(docsChangelogDir)
@@ -100,10 +138,13 @@ function main() {
         }
 
         changedCount++;
-        const before = extractSectionOrder(original);
-        const after = extractSectionOrder(updated);
-        const moved = before.filter((label) => before.indexOf(label) !== after.indexOf(label));
-        console.log(`[重排] ${relative}（${moved.length} 个段落位置变化）`);
+        const beforeBlocks = extractBlocksSectionOrder(original);
+        const afterBlocks = extractBlocksSectionOrder(updated);
+        // 按版本块比较 section 序列，避免多版本块文件中同标签首次出现位置未变导致的误判
+        const movedBlocks = beforeBlocks.filter(
+            (labels, index) => labels.join('\n') !== (afterBlocks[index] || []).join('\n'),
+        ).length;
+        console.log(`[重排] ${relative}（${movedBlocks} 个版本块段落位置变化）`);
         if (!isDryRun) {
             writeFileSync(file, updated, 'utf-8');
         }

@@ -22,6 +22,14 @@ const TYPE_LABELS = {
     revert: '⏪ Reverts',
 };
 
+// 单一数据源校验：TYPE_LABELS 的标签必须全部被 SECTION_ORDER 收录，
+// 否则该分类会被兜底逻辑静默追加到末尾、偏离固定顺序且无告警
+for (const label of Object.values(TYPE_LABELS)) {
+    if (!SECTION_ORDER.includes(label)) {
+        throw new Error(`CHANGELOG 标签「${label}」未收录于 SECTION_ORDER，请同步更新 changelog-sections.mjs`);
+    }
+}
+
 const EXCLUDED_TYPES = ['release', 'RELEASING'];
 
 const COMMIT_PATTERN = /^(\w+)(?:\(([^)]+)\))?\s*(!)?\s*:\s*(.+)$/;

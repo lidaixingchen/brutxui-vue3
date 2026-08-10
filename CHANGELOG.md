@@ -14,6 +14,7 @@
 
 * **composables:** 补齐 index.ts 聚合入口的类型导出 ([1da7de1](https://github.com/lidaixingchen/brutxui-vue3/commit/1da7de146f5105d13788954800d5d89e79ad39d9))
 * **registry:** 产物发布时构建——发布通道上线与入库机制拆除 ([39630e1](https://github.com/lidaixingchen/brutxui-vue3/commit/39630e1f5eca732e6e015a4e30d38662247405a9))
+
 ### ♻️ Code Refactoring
 
 * **composables:** B 类标量内部状态只读化收尾 ([ce0221f](https://github.com/lidaixingchen/brutxui-vue3/commit/ce0221fcf675877a015cd2751ada3a331e1bcfcc))
@@ -115,7 +116,6 @@
 * **shared:** 补充依赖提取器的 vitest 测试基础设施 ([89e7637](https://github.com/lidaixingchen/brutxui-vue3/commit/89e7637df9bfb975ef02854591f2019c28a96527))
 * **registry:** 适配新完整性哈希算法更新测试与快照 ([c89c435](https://github.com/lidaixingchen/brutxui-vue3/commit/c89c43554b9c519aabb6d012e61393b7420118a4))
 
-
 ## [0.9.12](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.11...v0.9.12) - 2026-08-09
 
 ### ⚠️ Breaking Changes
@@ -180,10 +180,10 @@
 ### ⚡ Performance
 
 * **cli:** 并行化缓存清理的 stat 与删除 ([e9a36d7](https://github.com/lidaixingchen/brutxui-vue3/commit/e9a36d7d259a99a0d02a0c4ee3b3d6aa0b5856f7))
+
 ### 🔧 CI
 
 * **registry:** main push 后自动签名 registry manifest 并回填 ([084000a](https://github.com/lidaixingchen/brutxui-vue3/commit/084000a32c725f152235fcd41f2d245d7983c673))
-
 
 ## [0.9.11](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.10...v0.9.11) - 2026-08-08
 
@@ -243,7 +243,6 @@
 * **cli:** 更新 404 错误码与组件名校验相关测试 ([393cc74](https://github.com/lidaixingchen/brutxui-vue3/commit/393cc74a6c2f8316bef749719fd2111c8dc3eb85))
 * **cli:** 补充 create 名称校验与 info 状态判定的测试 ([d5fea34](https://github.com/lidaixingchen/brutxui-vue3/commit/d5fea3433e45e1cc0f5cddac9f90414acc36d891))
 * **ui:** 统一测试文件命名为 kebab-case ([223192e](https://github.com/lidaixingchen/brutxui-vue3/commit/223192ed8d43bae4f76efd5abc11d45eeefac4f3))
-
 
 ## 归档版本
 
