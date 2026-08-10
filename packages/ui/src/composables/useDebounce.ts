@@ -50,6 +50,9 @@ export function useDebounce<T extends (...args: any[]) => unknown>(
 
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let lastArgs: Parameters<T> | null = null
+    // 卸载标志：debounced 可能被外部（事件监听器/store 回调）持有并在卸载后调用，
+    // 若允许其重建定时器将不再有清理时机，导致定时器泄漏与卸载后的意外执行
+    let disposed = false
 
     function cancel(): void {
         if (timeoutId !== null) {
@@ -70,26 +73,33 @@ export function useDebounce<T extends (...args: any[]) => unknown>(
     }
 
     const debounced = ((...args: Parameters<T>) => {
+        if (disposed) return
+
         lastArgs = args
 
         if (timeoutId !== null) {
             clearTimeout(timeoutId)
         }
 
-        if (immediate && timeoutId === null) {
-            fn(...args)
-        }
-
-        timeoutId = setTimeout(() => {
-            if (!immediate) {
+        try {
+            if (immediate && timeoutId === null) {
                 fn(...args)
             }
-            timeoutId = null
-            lastArgs = null
-        }, delay)
+        } finally {
+            // 无论立即执行是否抛错，都重新调度 trailing 定时器：
+            // 保证 timeoutId/lastArgs 能在 delay 后复位，避免状态残留导致 flush 重复执行
+            timeoutId = setTimeout(() => {
+                if (!immediate) {
+                    fn(...args)
+                }
+                timeoutId = null
+                lastArgs = null
+            }, delay)
+        }
     }) as T
 
     onUnmounted(() => {
+        disposed = true
         cancel()
     })
 

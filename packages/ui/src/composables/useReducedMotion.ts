@@ -21,14 +21,9 @@ export function useReducedMotion(): Readonly<Ref<boolean>> {
     }
 
     onMounted(() => {
-        // 兜底：setup 阶段 matchMedia 不可用（能力检测失败）时挂载后再查
-        if (isClient && !mediaQuery) {
-            const mq = matchMedia('(prefers-reduced-motion: reduce)')
-            if (mq) {
-                mediaQuery = mq
-                prefersReduced.value = mq.matches
-            }
-        }
+        // 查询已在 setup 阶段完成（客户端同步执行），挂载后仅注册变更监听。
+        // onMounted 只在客户端执行，此处不再重复查询——能力检测结果在两次查询间不会变化，
+        // 原兜底分支为死代码（isClient 恒为 true，matchMedia 失败时两次都会失败）
         mediaQuery?.addEventListener('change', onChange)
     })
 

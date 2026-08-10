@@ -44,6 +44,9 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
     function startAutoplay() {
         // 禁用时不启动 autoplay，避免定时器持续 tick 占用资源
         if (isDisabled.value) return
+        // 用户开启「减少动态效果」时不启动：回调只会因 prefersReducedMotion 提前 return，
+        // 定时器会在组件整个生命周期内空转，纯浪费定时器资源
+        if (prefersReducedMotion.value) return
         stopAutoplay()
         // interval 下界同时钳制为激活时长：若 interval 小于激活时长，tick 会反复清掉未到期的 stop
         // 定时器并重新调度，isActive 永远无法置回 false，故障效果将持续开启
@@ -90,10 +93,18 @@ export function useGlitchEffect(options: UseGlitchEffectOptions = {}) {
         }
     }
 
+    /**
+     * 无条件开启故障效果：编程强制接口，不受 disabled / trigger 限制
+     * （与 onClick/onMouseEnter 等事件处理器的拦截逻辑不同，供外部程序化控制使用）。
+     */
     function play() {
         isActive.value = true
     }
 
+    /**
+     * 无条件关闭故障效果：编程强制接口，不受 disabled / trigger 限制
+     * （与 onClick/onMouseEnter 等事件处理器的拦截逻辑不同，供外部程序化控制使用）。
+     */
     function stop() {
         isActive.value = false
     }
