@@ -1,5 +1,15 @@
 # brutx-vue
 
+## 0.10.0
+
+### Minor Changes
+
+- 发布 UI 与 CLI 的 0.10.0 中版本更新。
+
+  - **brutx-ui-vue**：补齐 composables 聚合入口的类型导出；DataTable 列过滤改为增量 patch 合并，避免并发更新互相覆盖；composables 内部状态全库只读化重构（对外行为经 setter 收敛）；按代码审查逐轮修复 useDialogEnhanced、useThrottle、useTheme、useUpload、useToast、useDataTable\*、useKanban、useCarousel\*、useClipboard、useColorHistory、useAudioEngine、useCanvasInteraction、useReducedMotion、useAnimation、useMessage、useMessageBox 等交互与生命周期缺陷。
+
+  - **brutx-vue**：registry 完整性哈希算法升级为覆盖 path/type/content 的顺序无关哈希并自校验，可发现字段互换篡改（旧哈希不再匹配，registry 产物已重建）；registry 产物改为发布时构建，入库机制拆除；按代码审查修复 manifest 签名验证与缓存安全加固、CSS 注入 markers 统一判据、组件移除依赖图校验、diff 类型改官方类型等稳定性问题。
+
 ## 0.9.4
 
 ### Patch Changes
