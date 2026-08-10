@@ -30,7 +30,13 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
             try {
                 const parsed: unknown = JSON.parse(raw)
                 if (Array.isArray(parsed)) {
-                    history.value = parsed.filter((item) => typeof item === 'string').slice(0, getMaxItems())
+                    // 与 addToHistory 的写入校验保持一致：非法颜色（空串、无效 hex 等）
+                    // 不得注入 history，避免被篡改或旧版本写入的数据导致下游取色/渲染出错
+                    history.value = parsed
+                        .filter((item): item is string => typeof item === 'string')
+                        .map((item) => normalizeColor(item))
+                        .filter((item): item is string => !!item)
+                        .slice(0, getMaxItems())
                 }
             } catch {
                 history.value = []
@@ -41,7 +47,22 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
     function saveHistory() {
         const storageKey = getStorageKey()
         if (!storageKey || !hasLocalStorage) return
-        safeSetStorageItem(storageKey, JSON.stringify(history.value))
+        // 写入前先与现有存储合并，避免多标签页共用 storageKey 时全量覆盖丢失其他标签页新增的历史
+        let merged = history.value
+        const raw = safeGetStorageItem(storageKey)
+        if (raw) {
+            try {
+                const existing: unknown = JSON.parse(raw)
+                if (Array.isArray(existing)) {
+                    const existingValid = existing.filter((item): item is string => typeof item === 'string')
+                    // 当前历史在前（新值优先），去重后再按 maxItems 裁剪
+                    merged = [...new Set([...history.value, ...existingValid])].slice(0, getMaxItems())
+                }
+            } catch {
+                // 存储数据非法时直接以当前历史覆盖
+            }
+        }
+        safeSetStorageItem(storageKey, JSON.stringify(merged))
     }
 
     function addToHistory(color: string) {
@@ -54,7 +75,11 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
 
     function clearHistory() {
         history.value = []
-        saveHistory()
+        const storageKey = getStorageKey()
+        if (!storageKey || !hasLocalStorage) return
+        // 清除语义：全量覆盖写空数组（不走 saveHistory 的合并逻辑，
+        // 否则其他标签页残留数据会阻止清空持久化生效）
+        safeSetStorageItem(storageKey, JSON.stringify([]))
     }
 
     loadHistory()
@@ -65,6 +90,18 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
         () => {
             history.value = []
             loadHistory()
+        }
+    )
+
+    // maxItems 变化时重新裁剪已有 history 并持久化，
+    // 避免新配置（如 maxItems 从 8 改为 5）要等下一次 addToHistory 才生效
+    watch(
+        () => options.maxItems,
+        () => {
+            if (history.value.length > getMaxItems()) {
+                history.value = history.value.slice(0, getMaxItems())
+                saveHistory()
+            }
         }
     )
 
