@@ -1,4 +1,4 @@
-import { ref, inject, provide, getCurrentScope, onScopeDispose, type InjectionKey, type Ref } from 'vue'
+import { ref, inject, provide, readonly, getCurrentScope, onScopeDispose, type InjectionKey, type DeepReadonly, type Ref } from 'vue'
 import { MAX_TOASTS } from '../lib/defaults'
 import type { VariantProps } from 'class-variance-authority'
 import { toastVariants } from '../components/toast/toast-variants'
@@ -44,7 +44,8 @@ export interface PromiseToastOptions<T> {
 }
 
 export interface UseToastReturn {
-    toasts: Ref<ToastItem[]>
+    /** 只读视图：修改请经 addToast / removeToast / clearToasts */
+    toasts: DeepReadonly<Ref<readonly ToastItem[]>>
     addToast: (toast: Omit<ToastItem, 'id'>) => string
     removeToast: (id: string) => void
     clearToasts: () => void
@@ -175,7 +176,7 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
     }
 
     return {
-        toasts,
+        toasts: readonly(toasts),
         addToast,
         removeToast,
         clearToasts,
