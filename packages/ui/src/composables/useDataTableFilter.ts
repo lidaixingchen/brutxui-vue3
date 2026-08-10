@@ -72,7 +72,9 @@ export function useDataTableFilter<T extends object>(
     }
 
     function setFilterState(state: DataTableFilterState): void {
-        filterState.value = state
+        // 浅拷贝隔离：避免直接持有调用方传入的对象引用，
+        // 否则内部对 columns 的原地清理（隐藏列）会反向污染调用方持有的同一对象
+        filterState.value = { global: state.global ?? '', columns: { ...(state.columns ?? {}) } }
     }
 
     function clearFilters(): void {

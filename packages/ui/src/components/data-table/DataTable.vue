@@ -663,7 +663,8 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 <!-- Column Filter UI (Native Table) -->
                                 <DataTableColumnFilter
                                     v-if="props.filterable && column.filterType"
-                                    v-model:filter-state="filter.filterState.value"
+                                    :filter-state="filter.filterState.value"
+                                    @update:filter-state="filter.setFilterState"
                                     :column="column"
                                     :header-label="getHeaderLabel(column)"
                                 />

@@ -1,4 +1,4 @@
-import { type Ref, ref, readonly, onUnmounted } from 'vue'
+import { type Ref, ref, readonly, onUnmounted, type DeepReadonly } from 'vue'
 import { requestAnimationFrame, cancelAnimationFrame } from '../lib/env'
 import type { MoveDirection } from '@/types'
 
@@ -25,9 +25,9 @@ export interface UseKanbanOptions {
 
 export interface UseKanbanReturn {
     /** 只读视图：拖拽状态由 onDragStart/onDragEnd/onDragOver/onDrop 等维护 */
-    draggingCard: Readonly<Ref<{ cardId: string; fromColumn: string } | null>>
+    draggingCard: DeepReadonly<Ref<{ cardId: string; fromColumn: string } | null>>
     draggingColumn: Readonly<Ref<string | null>>
-    grabbedCard: Readonly<Ref<{ cardId: string; columnId: string } | null>>
+    grabbedCard: DeepReadonly<Ref<{ cardId: string; columnId: string } | null>>
     dragOverColumn: Readonly<Ref<string | null>>
     isDragging: Readonly<Ref<boolean>>
     onDragStart: (cardId: string, fromColumn: string) => void

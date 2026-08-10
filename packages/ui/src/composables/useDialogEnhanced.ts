@@ -190,13 +190,15 @@ export function useDialogEnhanced(
 
     function setPosition(next: { x: number; y: number }): void {
         // 程序化精确设置：与 initPosition 一致不强制 clamp，
-        // bounds 约束仅作用于拖拽交互路径（onDragMove）
+        // bounds 约束仅作用于拖拽交互路径（onDragMove）；拒绝 NaN/Infinity 污染内部状态
+        if (!Number.isFinite(next.x) || !Number.isFinite(next.y)) return
         position.value = { x: next.x, y: next.y }
     }
 
     function setSize(next: { width: number; height: number }): void {
         // 程序化精确设置：与 initSize 一致不强制 clamp（如 0 尺寸表示隐藏），
-        // min/max/aspectRatio 约束仅作用于缩放交互路径（onResizeMove）
+        // min/max/aspectRatio 约束仅作用于缩放交互路径（onResizeMove）；拒绝 NaN/Infinity
+        if (!Number.isFinite(next.width) || !Number.isFinite(next.height)) return
         size.value = { width: next.width, height: next.height }
     }
 
