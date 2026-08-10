@@ -852,12 +852,45 @@ describe('DataTable filter UI binding links', () => {
         await nextTick()
         const inputs = document.body.querySelectorAll<HTMLInputElement>('[role="dialog"] input')
         expect(inputs.length).toBe(2)
-        // 两次输入之间 flush 一次，模拟真实用户先填 start 再填 end 的时间差：
-        // handleDateRangeChange 基于 props.filterState 构造 next，若同一 tick 连续触发，
-        // 第二次会读到尚未反映第一次改动的旧 props 而覆盖丢失
+        // 两次输入之间 flush 一次，对应真实用户先填 start 再填 end 的时序路径；
+        // 同一 tick 同步连续触发由下方 "same-tick triggers" 测试锁定
         inputs[0].value = '2026-02-01'
         inputs[0].dispatchEvent(new Event('input'))
         await nextTick()
+        inputs[1].value = '2026-07-01'
+        inputs[1].dispatchEvent(new Event('input'))
+        await nextTick()
+        expect(wrapper.findAll('tbody tr')).toHaveLength(1)
+        expect(wrapper.text()).toContain('B')
+        wrapper.unmount()
+    })
+
+    it('native table: date-range same-tick start/end triggers keep both bounds', async () => {
+        // start/end 在同一 tick 内同步连续触发（程序化/自动化驱动）时，
+        // 父级按列函数式合并 + 子组件 pending 缓冲保证两个边界都不丢失。
+        // 数据设计：A 早于范围、B 在范围内、C 晚于范围——任一边界丢失都会导致行数偏差
+        const dateData = [
+            { id: 1, name: 'A', email: 'a@example.com', age: 20, date: '2026-01-01' },
+            { id: 2, name: 'B', email: 'b@example.com', age: 30, date: '2026-06-01' },
+            { id: 3, name: 'C', email: 'c@example.com', age: 40, date: '2026-12-01' },
+        ]
+        const cols: DataTableColumn<TestRow & { date: string }>[] = [
+            { id: 'name', header: 'Name', accessorKey: 'name' },
+            { id: 'date', header: 'Date', accessorKey: 'date', filterType: 'date-range' as const },
+        ]
+        const wrapper = mountDataTable({
+            data: dateData,
+            columns: cols as unknown as DataTableColumn<TestRow>[],
+            rowKey: 'id',
+            filterable: true,
+        })
+        await openColumnFilter(wrapper, 'date')
+        await nextTick()
+        const inputs = document.body.querySelectorAll<HTMLInputElement>('[role="dialog"] input')
+        expect(inputs.length).toBe(2)
+        // 同步连续触发，两次输入之间不 flush
+        inputs[0].value = '2026-02-01'
+        inputs[0].dispatchEvent(new Event('input'))
         inputs[1].value = '2026-07-01'
         inputs[1].dispatchEvent(new Event('input'))
         await nextTick()

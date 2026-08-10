@@ -19,7 +19,7 @@ import {
     dataTableEmptyVariants,
     dataTableLoadingVariants,
 } from './data-table-variants'
-import type { DataTableColumn, DataTableProps, DataTableFilterState } from './types'
+import type { DataTableColumn, DataTableProps, DataTableFilterState, DataTableFilterValue } from './types'
 import Input from '../input/Input.vue'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -170,6 +170,30 @@ const filter = useDataTableFilter<T>({
     columns: () => props.columns,
     filterable: () => props.filterable,
 })
+
+/**
+ * DataTableColumnFilter 增量 patch 处理器。
+ * 子组件 emit 的 update:filterState 只携带发生变化的列（不含 global），
+ * 此处基于当前内部状态按列函数式合并，而非整体替换：
+ * 子组件 props 回流存在调度延迟，若以滞后快照整体替换，同一 tick 内连续
+ * 触发（如 date-range 的 start/end 同步写入）会互相覆盖丢失。
+ */
+function applyColumnFilterPatch(patch: DataTableFilterState) {
+    if (patch.global !== undefined) {
+        filter.setGlobalFilter(patch.global)
+    }
+    for (const [columnId, value] of Object.entries(patch.columns)) {
+        if (value === null || value === undefined || value === '') {
+            // 空过滤条件：保持原 delete 语义，从状态中移除该列；
+            // filterState 为只读视图，spread 后断言回可变类型再修改
+            const columns = { ...filter.filterState.value.columns } as Record<string, DataTableFilterValue>
+            delete columns[columnId]
+            filter.setFilterState({ ...filter.filterState.value, columns })
+        } else {
+            filter.setColumnFilter(columnId, value)
+        }
+    }
+}
 
 const sort = useDataTableSort<T>({
     columns: () => props.columns,
@@ -664,7 +688,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                 <DataTableColumnFilter
                                     v-if="props.filterable && column.filterType"
                                     :filter-state="filter.filterState.value"
-                                    @update:filter-state="filter.setFilterState"
+                                    @update:filter-state="applyColumnFilterPatch"
                                     :column="column"
                                     :header-label="getHeaderLabel(column)"
                                 />

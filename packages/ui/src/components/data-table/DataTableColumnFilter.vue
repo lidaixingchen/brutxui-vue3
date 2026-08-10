@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, type DeepReadonly } from 'vue'
+import { computed, watch, type DeepReadonly } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from './types'
 import Input from '../input/Input.vue'
@@ -30,16 +30,10 @@ const { t } = useLocale()
 type MultiSelectValue = Array<string | number | boolean>
 
 function updateFilterValue(val: DataTableFilterValue) {
-    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
-    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
-    if (val === undefined || val === null || val === '') {
-        delete columns[props.column.id]
-    } else {
-        columns[props.column.id] = val
-    }
+    // 只 emit 本列增量，父级（DataTable.vue）基于当前状态按列函数式合并；
+    // 避免基于滞后 props 重建全量快照，导致同一 tick 内多次更新互相覆盖
     emit('update:filterState', {
-        ...props.filterState,
-        columns,
+        columns: { [props.column.id]: val === undefined || val === null || val === '' ? null : val },
     })
 }
 
@@ -70,9 +64,7 @@ function isMultiSelectChecked(value: string | number | boolean): boolean {
 }
 
 function handleMultiSelectChange(value: string | number | boolean, checked: boolean | 'indeterminate') {
-    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
-    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
-    const current = columns[props.column.id]
+    const current = props.filterState.columns?.[props.column.id]
     const vals: MultiSelectValue = Array.isArray(current) ? [...(current as MultiSelectValue)] : []
     if (checked === true || checked === 'indeterminate') {
         if (!vals.includes(value)) {
@@ -84,14 +76,9 @@ function handleMultiSelectChange(value: string | number | boolean, checked: bool
             vals.splice(idx, 1)
         }
     }
-    if (vals.length === 0) {
-        delete columns[props.column.id]
-    } else {
-        columns[props.column.id] = [...vals]
-    }
+    // 只 emit 本列增量（空选清空时传 null，父级删除该列）
     emit('update:filterState', {
-        ...props.filterState,
-        columns,
+        columns: { [props.column.id]: vals.length === 0 ? null : [...vals] },
     })
 }
 
@@ -104,31 +91,40 @@ function getDateRangeVal(bound: 'start' | 'end'): string {
     return ''
 }
 
-function handleDateRangeChange(bound: 'start' | 'end', val: string) {
-    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
-    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
-    const current = columns[props.column.id]
-    let next: { start: string | null; end: string | null }
-    if (current && typeof current === 'object' && !Array.isArray(current)) {
-        next = { ...(current as { start: string | null; end: string | null }) }
-    } else {
-        next = { start: null, end: null }
+// 同一 tick 内 start/end 连续触发时，props 尚未回流（滞后一次更新），
+// 以最近一次 emit 的本列范围为基准合并；props 回流后经 watch 重置，
+// 外部程序化设置（setFilterState / setColumnFilter）仍以 props 为准
+let pendingRange: { start: string | null; end: string | null } | null = null
+
+watch(
+    () => props.filterState.columns?.[props.column.id],
+    () => {
+        pendingRange = null
+    },
+)
+
+function readCurrentRange(): { start: string | null; end: string | null } {
+    const val = props.filterState.columns?.[props.column.id]
+    if (val && typeof val === 'object' && !Array.isArray(val)) {
+        return { ...(val as { start: string | null; end: string | null }) }
     }
-    next[bound] = val || null
-    columns[props.column.id] = next
+    return { start: null, end: null }
+}
+
+function handleDateRangeChange(bound: 'start' | 'end', val: string) {
+    const base = pendingRange ?? readCurrentRange()
+    const next = { ...base, [bound]: val || null }
+    pendingRange = next
+    // 只 emit 本列增量，父级按列函数式合并
     emit('update:filterState', {
-        ...props.filterState,
-        columns,
+        columns: { [props.column.id]: next },
     })
 }
 
 function resetColumnFilter() {
-    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
-    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
-    delete columns[props.column.id]
+    // 传 null 表示清除本列，父级按 delete 语义从状态中移除
     emit('update:filterState', {
-        ...props.filterState,
-        columns,
+        columns: { [props.column.id]: null },
     })
 }
 </script>
