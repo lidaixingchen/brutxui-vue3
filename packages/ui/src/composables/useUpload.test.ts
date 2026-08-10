@@ -1,9 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { useUpload } from './useUpload'
 
-function createFile(name: string, size: number, type = 'text/plain'): File {
+// lastModified 默认用非 0 固定值：happy-dom 的 File 构造对 lastModified: 0 按 falsy 处理
+// 会回退到 Date.now()，导致同名同尺寸文件时间戳不稳定、无法作为去重标识
+function createFile(name: string, size: number, type = 'text/plain', lastModified = 1): File {
     const buffer = new ArrayBuffer(size)
-    return new File([buffer], name, { type })
+    return new File([buffer], name, { type, lastModified })
 }
 
 describe('useUpload', () => {
@@ -79,6 +81,13 @@ describe('useUpload', () => {
             expect(matchesAccept(createFile('a.txt', 10, 'text/plain'))).toBe(false)
         })
 
+        it('matches all files when accept is the wildcard */*', () => {
+            const { matchesAccept } = useUpload({ accept: '*/*' })
+            expect(matchesAccept(createFile('a.png', 10, 'image/png'))).toBe(true)
+            expect(matchesAccept(createFile('a.txt', 10, 'text/plain'))).toBe(true)
+            expect(matchesAccept(createFile('a.bin', 10, 'application/octet-stream'))).toBe(true)
+        })
+
         it('matches any token in a comma-separated list', () => {
             const { matchesAccept } = useUpload({ accept: '.pdf, image/*, text/plain' })
             expect(matchesAccept(createFile('a.pdf', 10, 'application/pdf'))).toBe(true)
@@ -142,6 +151,17 @@ describe('useUpload', () => {
             expect(selectedFiles.value).toEqual(initial)
         })
 
+        it('initialFiles 同样经过 maxSize/accept 校验', () => {
+            const valid = createFile('valid.pdf', 100, 'application/pdf')
+            const oversized = createFile('big.pdf', 9999, 'application/pdf')
+            const { selectedFiles } = useUpload({
+                initialFiles: [valid, oversized],
+                maxSize: 1000,
+                accept: '.pdf',
+            })
+            expect(selectedFiles.value).toEqual([valid])
+        })
+
         it('addFiles appends valid files when multiple is true', () => {
             const { selectedFiles, addFiles } = useUpload({ maxSize: 2048 })
             const small = createFile('small.txt', 1024)
@@ -186,6 +206,26 @@ describe('useUpload', () => {
             const added = addFiles(dt.files)
             expect(added).toHaveLength(1)
             expect(selectedFiles.value).toHaveLength(1)
+        })
+
+        it('addFiles 多选模式按 name+size+lastModified 去重', () => {
+            const { selectedFiles, addFiles } = useUpload()
+            const file = createFile('a.txt', 10)
+
+            // 同一文件重复添加（handleFileChange 重置 input.value 后可再次触发）应被去重
+            const added1 = addFiles([file])
+            const added2 = addFiles([file])
+            expect(added1).toHaveLength(1)
+            expect(added2).toHaveLength(0)
+            expect(selectedFiles.value).toHaveLength(1)
+
+            // 引用不同但标识相同的文件同样去重
+            addFiles([createFile('a.txt', 10)])
+            expect(selectedFiles.value).toHaveLength(1)
+
+            // 标识不同的文件正常追加
+            addFiles([createFile('b.txt', 10)])
+            expect(selectedFiles.value).toHaveLength(2)
         })
     })
 

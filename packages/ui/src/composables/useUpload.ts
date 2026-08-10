@@ -20,7 +20,10 @@ export interface UseUploadReturn {
 }
 
 export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
-    const selectedFiles = ref<File[]>([...toValue(options.initialFiles ?? [])])
+    // 初始文件同样经 isFileValid 校验（与 addFiles 行为一致），
+    // 避免 initialFiles 绕过 maxSize/accept 约束展示非法文件
+    const initialFiles = toValue(options.initialFiles)
+    const selectedFiles = ref<File[]>(initialFiles ? initialFiles.filter(isFileValid) : [])
 
     function validateFileSize(file: File): boolean {
         const max = toValue(options.maxSize)
@@ -40,6 +43,9 @@ export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
         const fileName = file.name.toLowerCase()
         return tokens.some((token) => {
             if (token.startsWith('.')) return fileName.endsWith(token)
+            // HTML 规范的通配 MIME 类型：接受任意文件类型（*/* 落到 endsWith('/*')
+            // 分支会执行 fileType.startsWith('*') 恒为 false，全部误拒绝，需特判）
+            if (token === '*/*') return true
             if (token.endsWith('/*')) return fileType.startsWith(token.slice(0, -1))
             return fileType === token
         })
@@ -56,7 +62,17 @@ export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
     function addFiles(files: FileList | File[]): File[] {
         const isMultiple = toValue(options.multiple) ?? true
         const valid = filterValidFiles(Array.from(files))
-        const toAdd = isMultiple ? valid : valid.slice(0, 1)
+        // 多选模式按 name+size+lastModified 标识去重：handleFileChange 已重置 input.value，
+        // 同一文件可再次触发 change 事件，不去重会导致列表出现重复项
+        const toAdd = isMultiple
+            ? valid.filter(
+                (file) => !selectedFiles.value.some(
+                    (item) => file.name === item.name
+                        && file.size === item.size
+                        && file.lastModified === item.lastModified,
+                ),
+            )
+            : valid.slice(0, 1)
         if (isMultiple) {
             selectedFiles.value.push(...toAdd)
         } else if (toAdd.length > 0) {
