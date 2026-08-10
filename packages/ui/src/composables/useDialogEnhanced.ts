@@ -1,4 +1,4 @@
-import { ref, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, type ComputedRef, type CSSProperties, type MaybeRefOrGetter } from 'vue'
+import { ref, readonly, computed, watch, onMounted, onBeforeUnmount, toValue, type Ref, type ComputedRef, type DeepReadonly, type CSSProperties, type MaybeRefOrGetter } from 'vue'
 import { getViewportSize, getDocument, requestAnimationFrame, cancelAnimationFrame } from '@/lib/env'
 import { DIALOG_MIN_WIDTH_PX, DIALOG_MIN_HEIGHT_PX } from '@/lib/defaults'
 import type { ResizeCorner } from '@/types'
@@ -31,9 +31,13 @@ export interface UseDialogEnhancedReturn {
     contentRef: Ref<HTMLElement | null>
     isDragging: Ref<boolean>
     isResizing: Ref<boolean>
-    position: Ref<{ x: number; y: number }>
-    size: Ref<{ width: number; height: number }>
-    contentStyle: Ref<CSSProperties>
+    /** 只读视图：修改请经 setPosition */
+    position: DeepReadonly<Ref<{ x: number; y: number }>>
+    /** 只读视图：修改请经 setSize */
+    size: DeepReadonly<Ref<{ width: number; height: number }>>
+    contentStyle: ComputedRef<CSSProperties>
+    setPosition: (position: { x: number; y: number }) => void
+    setSize: (size: { width: number; height: number }) => void
     onDragStart: (e: MouseEvent) => void
     onResizeStart: (e: MouseEvent, corner: ResizeCorner) => void
     handleClose: () => Promise<void>
@@ -164,6 +168,38 @@ export function useDialogEnhanced(
         return { x: newX, y: newY }
     }
 
+    // ── Size Constraints ──────────────────────────────────────────
+
+    function constrainSize(width: number, height: number): { width: number; height: number } {
+        let newWidth = width
+        let newHeight = height
+        if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
+        if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
+        if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
+        if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
+
+        if (opt.aspectRatio) {
+            newHeight = newWidth / opt.aspectRatio
+            if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
+            if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
+        }
+        return { width: newWidth, height: newHeight }
+    }
+
+    // ── Programmatic Setters ──────────────────────────────────────
+
+    function setPosition(next: { x: number; y: number }): void {
+        // 程序化精确设置：与 initPosition 一致不强制 clamp，
+        // bounds 约束仅作用于拖拽交互路径（onDragMove）
+        position.value = { x: next.x, y: next.y }
+    }
+
+    function setSize(next: { width: number; height: number }): void {
+        // 程序化精确设置：与 initSize 一致不强制 clamp（如 0 尺寸表示隐藏），
+        // min/max/aspectRatio 约束仅作用于缩放交互路径（onResizeMove）
+        size.value = { width: next.width, height: next.height }
+    }
+
     // ── Drag Handlers ──────────────────────────────────────────────
 
     function onDragStart(e: MouseEvent) {
@@ -258,16 +294,9 @@ export function useDialogEnhanced(
                 break
         }
 
-        if (opt.minWidth) newWidth = Math.max(opt.minWidth, newWidth)
-        if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
-        if (opt.maxWidth) newWidth = Math.min(opt.maxWidth, newWidth)
-        if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
-
-        if (opt.aspectRatio) {
-            newHeight = newWidth / opt.aspectRatio
-            if (opt.minHeight) newHeight = Math.max(opt.minHeight, newHeight)
-            if (opt.maxHeight) newHeight = Math.min(opt.maxHeight, newHeight)
-        }
+        const constrained = constrainSize(newWidth, newHeight)
+        newWidth = constrained.width
+        newHeight = constrained.height
 
         // 对话框中心锚定，仅改尺寸会围绕中心对称缩放（拖 'sw' 角时右侧对边会移动）。
         // 按最终 clamp 后的尺寸差 deltaW/2、deltaH/2 补偿各角对应的位置，使被拖拽边缘跟随光标、对边保持不动
@@ -400,9 +429,11 @@ export function useDialogEnhanced(
         contentRef,
         isDragging,
         isResizing,
-        position,
-        size,
+        position: readonly(position),
+        size: readonly(size),
         contentStyle,
+        setPosition,
+        setSize,
         onDragStart,
         onResizeStart,
         handleClose,

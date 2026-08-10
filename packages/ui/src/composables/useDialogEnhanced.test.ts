@@ -116,14 +116,14 @@ describe('useDialogEnhanced', () => {
 
     it('initPosition resets to {0,0} when no initialPosition', () => {
         const { result } = createWrapper()
-        result.position.value = { x: 200, y: 300 }
+        result.setPosition({ x: 200, y: 300 })
         result.initPosition()
         expect(result.position.value).toEqual({ x: 0, y: 0 })
     })
 
     it('initPosition sets initialPosition when provided', () => {
         const { result } = createWrapper({ initialPosition: { x: 10, y: 20 } })
-        result.position.value = { x: 0, y: 0 }
+        result.setPosition({ x: 0, y: 0 })
         result.initPosition()
         expect(result.position.value).toEqual({ x: 10, y: 20 })
     })
@@ -195,7 +195,7 @@ describe('useDialogEnhanced', () => {
 
     it('contentStyle has transform and fixed positioning when draggable=true', () => {
         const { result } = createWrapper({ draggable: true })
-        result.position.value = { x: 30, y: 60 }
+        result.setPosition({ x: 30, y: 60 })
         const style = result.contentStyle.value
         expect(style.transform).toBe('translate(calc(-50% + 30px), calc(-50% + 60px))')
         expect(style.position).toBe('fixed')
@@ -214,7 +214,7 @@ describe('useDialogEnhanced', () => {
 
     it('contentStyle includes width/height when resizable with positive size', () => {
         const { result } = createWrapper({ resizable: true })
-        result.size.value = { width: 500, height: 400 }
+        result.setSize({ width: 500, height: 400 })
         const style = result.contentStyle.value
         expect(style.width).toBe('500px')
         expect(style.height).toBe('400px')
@@ -222,7 +222,7 @@ describe('useDialogEnhanced', () => {
 
     it('contentStyle omits width/height when resizable but size is zero', () => {
         const { result } = createWrapper({ resizable: true })
-        result.size.value = { width: 0, height: 0 }
+        result.setSize({ width: 0, height: 0 })
         const style = result.contentStyle.value
         expect(style.width).toBeUndefined()
         expect(style.height).toBeUndefined()
@@ -230,7 +230,7 @@ describe('useDialogEnhanced', () => {
 
     it('contentStyle omits width/height when resizable=false', () => {
         const { result } = createWrapper({ resizable: false })
-        result.size.value = { width: 500, height: 400 }
+        result.setSize({ width: 500, height: 400 })
         const style = result.contentStyle.value
         expect(style.width).toBeUndefined()
         expect(style.height).toBeUndefined()
@@ -238,8 +238,8 @@ describe('useDialogEnhanced', () => {
 
     it('contentStyle combines draggable and resizable styles', () => {
         const { result } = createWrapper({ draggable: true, resizable: true })
-        result.position.value = { x: 10, y: 20 }
-        result.size.value = { width: 300, height: 200 }
+        result.setPosition({ x: 10, y: 20 })
+        result.setSize({ width: 300, height: 200 })
         const style = result.contentStyle.value
         expect(style.transform).toBe('translate(calc(-50% + 10px), calc(-50% + 20px))')
         expect(style.width).toBe('300px')
@@ -502,7 +502,7 @@ describe('useDialogEnhanced', () => {
 
     it('onResizeStart activates resizing on se corner', () => {
         const { result } = createWrapper({ resizable: true })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
         const addSpy = vi.spyOn(document, 'addEventListener')
         const e = new MouseEvent('mousedown', { clientX: 50, clientY: 50 })
         vi.spyOn(e, 'preventDefault')
@@ -520,7 +520,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize flow with se corner increases width/height', () => {
         const { result } = createWrapper({ resizable: true, minWidth: 100, minHeight: 50 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -535,7 +535,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize flow with sw corner decreases width, increases height', () => {
         const { result } = createWrapper({ resizable: true, minWidth: 100, minHeight: 50 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -550,7 +550,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize flow with ne corner increases width, decreases height', () => {
         const { result } = createWrapper({ resizable: true, minWidth: 100, minHeight: 50 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -565,7 +565,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize flow with nw corner decreases width/height', () => {
         const { result } = createWrapper({ resizable: true, minWidth: 100, minHeight: 50 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -580,7 +580,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize enforces minWidth and minHeight', () => {
         const { result } = createWrapper({ resizable: true, minWidth: 200, minHeight: 100 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -596,7 +596,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize enforces maxWidth and maxHeight', () => {
         const { result } = createWrapper({ resizable: true, maxWidth: 400, maxHeight: 300 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -611,7 +611,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize applies aspectRatio', () => {
         const { result } = createWrapper({ resizable: true, aspectRatio: 2 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -626,7 +626,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize with aspectRatio clamps height to minHeight', () => {
         const { result } = createWrapper({ resizable: true, aspectRatio: 10, minHeight: 50 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -641,7 +641,7 @@ describe('useDialogEnhanced', () => {
 
     it('resize with aspectRatio clamps height to maxHeight', () => {
         const { result } = createWrapper({ resizable: true, aspectRatio: 1, maxHeight: 250 })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
 
         const startEvent = new MouseEvent('mousedown', { clientX: 100, clientY: 100 })
         vi.spyOn(startEvent, 'preventDefault')
@@ -655,7 +655,7 @@ describe('useDialogEnhanced', () => {
 
     it('onResizeMove does nothing when not resizing', () => {
         const { result } = createWrapper({ resizable: true })
-        result.size.value = { width: 300, height: 200 }
+        result.setSize({ width: 300, height: 200 })
         document.dispatchEvent(new MouseEvent('mousemove', { clientX: 200, clientY: 200 }))
         expect(result.size.value).toEqual({ width: 300, height: 200 })
     })
