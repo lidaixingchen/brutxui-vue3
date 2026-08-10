@@ -1,4 +1,4 @@
-import { ref, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
 
 export type ValidationState = 'default' | 'success' | 'error'
 export type ValidationRule<TValue> = (value: TValue) => boolean | string
@@ -12,8 +12,10 @@ export interface UseFormFieldValidationOptions<TValue = string> {
 }
 
 export interface UseFormFieldValidationReturn<TValue = string> {
-    validationState: Ref<ValidationState>
-    errorMessage: Ref<string>
+    /** 只读视图：修改请经 validate / reset */
+    validationState: Readonly<Ref<ValidationState>>
+    /** 只读视图：修改请经 validate / reset */
+    errorMessage: Readonly<Ref<string>>
     validate: (value: TValue) => boolean
     reset: () => void
     shouldValidateOnInput: () => boolean
@@ -87,8 +89,8 @@ export function useFormFieldValidation<TValue = string>(options: UseFormFieldVal
     const shouldValidateOnBlur = () => toValue(options.validateOn) === 'blur'
 
     return {
-        validationState,
-        errorMessage,
+        validationState: readonly(validationState),
+        errorMessage: readonly(errorMessage),
         validate,
         reset,
         shouldValidateOnInput,

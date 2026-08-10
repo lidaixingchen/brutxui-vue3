@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted, type Ref } from 'vue'
+import { ref, readonly, onMounted, onUnmounted, type Ref } from 'vue'
 import { CANVAS_SAMPLE_GRID_SIZE, CANVAS_PROGRESS_CHECK_FRAME_INTERVAL, CANVAS_PROGRESS_THROTTLE_MS, CANVAS_PROGRESS_SAMPLE_WIDTH, CANVAS_PROGRESS_SAMPLE_MAX_HEIGHT, CANVAS_ALPHA_CLEARED_THRESHOLD } from '../lib/defaults'
 import { createCanvasElement, getCanvas2DContext, getDevicePixelRatio, getResizeObserverCtor } from '../lib/env'
 
@@ -17,8 +17,10 @@ interface UseCanvasInteractionOptions {
 }
 
 export interface UseCanvasInteractionReturn {
+    /** 画布 2D 上下文（能力引用，外部可能设置绘制属性，保持可写） */
     ctx: Ref<CanvasRenderingContext2D | null>
-    isRevealed: Ref<boolean>
+    /** 只读视图：完成态由 revealAll / 内部进度判定维护 */
+    isRevealed: Readonly<Ref<boolean>>
     revealAll: () => void
     syncCanvasSize: () => void
     handlePointerDown: (e: PointerEvent) => void
@@ -292,7 +294,7 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
 
     return {
         ctx,
-        isRevealed,
+        isRevealed: readonly(isRevealed),
         revealAll,
         syncCanvasSize,
         handlePointerDown,

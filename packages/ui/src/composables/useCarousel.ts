@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onUnmounted, watch, toValue, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, readonly, computed, onMounted, onUnmounted, watch, toValue, type ComputedRef, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
 import useEmblaCarousel from 'embla-carousel-vue'
 import { DEFAULT_AUTOPLAY_DELAY_MS } from '../lib/defaults'
 import { useReducedMotion } from './useReducedMotion'
@@ -17,8 +17,10 @@ export interface UseCarouselOptions {
 
 export interface UseCarouselReturn {
     emblaRef: Ref<HTMLElement | undefined>
-    selectedIndex: Ref<number>
-    scrollSnaps: Ref<number[]>
+    /** 只读视图：切换请经 scrollPrev / scrollNext / scrollTo */
+    selectedIndex: Readonly<Ref<number>>
+    /** 只读视图：由 embla 内部维护 */
+    scrollSnaps: DeepReadonly<Ref<readonly number[]>>
     canScrollPrev: ComputedRef<boolean>
     canScrollNext: ComputedRef<boolean>
     scrollPrev: () => void
@@ -178,8 +180,8 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
 
     return {
         emblaRef,
-        selectedIndex,
-        scrollSnaps,
+        selectedIndex: readonly(selectedIndex),
+        scrollSnaps: readonly(scrollSnaps),
         canScrollPrev,
         canScrollNext,
         scrollPrev,

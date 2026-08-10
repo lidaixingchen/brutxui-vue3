@@ -1,4 +1,4 @@
-import { type Ref, ref, onUnmounted } from 'vue'
+import { type Ref, ref, readonly, onUnmounted } from 'vue'
 import { requestAnimationFrame, cancelAnimationFrame } from '../lib/env'
 import type { MoveDirection } from '@/types'
 
@@ -24,11 +24,12 @@ export interface UseKanbanOptions {
 }
 
 export interface UseKanbanReturn {
-    draggingCard: Ref<{ cardId: string; fromColumn: string } | null>
-    draggingColumn: Ref<string | null>
-    grabbedCard: Ref<{ cardId: string; columnId: string } | null>
-    dragOverColumn: Ref<string | null>
-    isDragging: Ref<boolean>
+    /** 只读视图：拖拽状态由 onDragStart/onDragEnd/onDragOver/onDrop 等维护 */
+    draggingCard: Readonly<Ref<{ cardId: string; fromColumn: string } | null>>
+    draggingColumn: Readonly<Ref<string | null>>
+    grabbedCard: Readonly<Ref<{ cardId: string; columnId: string } | null>>
+    dragOverColumn: Readonly<Ref<string | null>>
+    isDragging: Readonly<Ref<boolean>>
     onDragStart: (cardId: string, fromColumn: string) => void
     onDragEnd: () => void
     onDragOver: (e: DragEvent, columnId: string) => void
@@ -226,11 +227,11 @@ export function useKanban(options: UseKanbanOptions): UseKanbanReturn {
     }
 
     return {
-        draggingCard,
-        draggingColumn,
-        grabbedCard,
-        dragOverColumn,
-        isDragging,
+        draggingCard: readonly(draggingCard),
+        draggingColumn: readonly(draggingColumn),
+        grabbedCard: readonly(grabbedCard),
+        dragOverColumn: readonly(dragOverColumn),
+        isDragging: readonly(isDragging),
         onDragStart,
         onDragEnd,
         onDragOver,

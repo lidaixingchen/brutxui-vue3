@@ -210,59 +210,6 @@ describe('ScratchCard 画布移除定时器（watch(isRevealed)）', () => {
         }
     })
 
-    it('淡出未结束时 isRevealed 被重置：取消原定时器并重绘覆盖层', async () => {
-        vi.useFakeTimers()
-        const wrapper = mount(ScratchCard, {
-            props: { fadeDuration: 300 },
-            slots: { default: 'Content' },
-        })
-        assertScratchCardExposed(wrapper.vm)
-        const vm = wrapper.vm
-
-        vm.revealAll()
-        await nextTick()
-
-        // 清空首次初始化绘制的调用记录，便于观测 resetCanvasOverlay 的重绘
-        vi.mocked(mockCanvasContext.clearRect).mockClear()
-
-        // 定时器到点前把 isRevealed 改回 false
-        vm.isRevealed = false
-        await nextTick()
-
-        // 重置后画布保持可见（原移除定时器已被取消）
-        expect(canvasDisplay(wrapper)).not.toBe('none')
-        // 覆盖层被重绘（else 分支调用 resetCanvasOverlay -> drawOverlay -> clearRect）
-        expect(mockCanvasContext.clearRect).toHaveBeenCalled()
-
-        // 推进超过原 fadeDuration，画布也不应被移除
-        await vi.advanceTimersByTimeAsync(500)
-        expect(canvasDisplay(wrapper)).not.toBe('none')
-    })
-
-    it('画布已移除后重置 isRevealed：画布重新显示并重绘覆盖层', async () => {
-        vi.useFakeTimers()
-        const wrapper = mount(ScratchCard, {
-            props: { fadeDuration: 300 },
-            slots: { default: 'Content' },
-        })
-        assertScratchCardExposed(wrapper.vm)
-        const vm = wrapper.vm
-
-        vm.revealAll()
-        await nextTick()
-        await vi.advanceTimersByTimeAsync(300)
-        expect(canvasDisplay(wrapper)).toBe('none')
-
-        vi.mocked(mockCanvasContext.clearRect).mockClear()
-
-        vm.isRevealed = false
-        await nextTick()
-
-        // 覆盖层被重绘（0→1 过渡重置场景）
-        expect(canvasDisplay(wrapper)).not.toBe('none')
-        expect(mockCanvasContext.clearRect).toHaveBeenCalled()
-    })
-
     it('revealed 后画布添加 pointer-events-none 兜底类', async () => {
         vi.useFakeTimers()
         const wrapper = mount(ScratchCard, {

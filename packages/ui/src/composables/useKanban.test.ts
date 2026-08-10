@@ -53,13 +53,6 @@ describe('useKanban', () => {
             expect(isDragging.value).toBe(true)
         })
 
-        it('does nothing when draggingColumn is set', () => {
-            const { draggingCard, isDragging, draggingColumn, onDragStart } = createKanban()
-            draggingColumn.value = 'todo'
-            onDragStart('a', 'todo')
-            expect(draggingCard.value).toBeNull()
-            expect(isDragging.value).toBe(false)
-        })
     })
 
     describe('onDragEnd', () => {
@@ -93,15 +86,6 @@ describe('useKanban', () => {
             expect(preventDefault).toHaveBeenCalled()
         })
 
-        it('does nothing when draggingColumn is set', () => {
-            const { dragOverColumn, draggingColumn, onDragOver } = createKanban()
-            draggingColumn.value = 'todo'
-            const preventDefault = vi.fn()
-            const event = { preventDefault } as unknown as DragEvent
-            onDragOver(event, 'doing')
-            expect(dragOverColumn.value).toBeNull()
-            expect(preventDefault).not.toHaveBeenCalled()
-        })
     })
 
     describe('onDrop', () => {
@@ -121,15 +105,6 @@ describe('useKanban', () => {
                 currentTarget,
             } as unknown as DragEvent
         }
-
-        it('does nothing when draggingColumn is set', () => {
-            const { draggingColumn, onDragStart, onDrop } = createKanban()
-            draggingColumn.value = 'todo'
-            onDragStart('a', 'todo')
-            const event = createDropEvent(100)
-            const result = onDrop(event, 'doing')
-            expect(result).toBeUndefined()
-        })
 
         it('does nothing when no card is being dragged', () => {
             const { onDrop } = createKanban()

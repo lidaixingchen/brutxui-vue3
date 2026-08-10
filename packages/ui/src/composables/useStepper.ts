@@ -1,4 +1,4 @@
-import { type Ref, ref, computed, watch, type ComputedRef } from 'vue'
+import { type Ref, ref, readonly, computed, watch, type ComputedRef } from 'vue'
 
 export interface Step {
     id: string | number
@@ -14,7 +14,8 @@ export interface UseStepperOptions {
 }
 
 export interface UseStepperReturn {
-    currentStep: Ref<number>
+    /** 只读视图：修改请经 goToStep / nextStep / previousStep */
+    currentStep: Readonly<Ref<number>>
     totalSteps: ComputedRef<number>
     isFirstStep: ComputedRef<boolean>
     isLastStep: ComputedRef<boolean>
@@ -85,7 +86,7 @@ export function useStepper(options: UseStepperOptions): UseStepperReturn {
     }
 
     return {
-        currentStep,
+        currentStep: readonly(currentStep),
         totalSteps,
         isFirstStep,
         isLastStep,
