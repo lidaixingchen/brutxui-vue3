@@ -74,16 +74,33 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
     function addToast(toast: Omit<ToastItem, 'id'>) {
         const isGroupingEnabled = toast.grouping ?? globalGrouping
         if (isGroupingEnabled) {
+            // 匹配键包含 description/size，避免标题与变体相同但内容不同的 toast 被误合并
             const existingIndex = toasts.value.findIndex(
-                (t) => t.title === toast.title && t.variant === toast.variant
+                (t) => t.title === toast.title
+                    && t.variant === toast.variant
+                    && t.description === toast.description
+                    && t.size === toast.size
             )
-            if (existingIndex !== -1) {
+            // 已有 toast 自身关闭分组（grouping: false）时不强行合并
+            if (existingIndex !== -1 && toasts.value[existingIndex].grouping !== false) {
                 const existing = toasts.value[existingIndex]
                 const updatedCount = (existing.count ?? 1) + 1
 
+                // 仅覆盖新 toast 显式提供的字段：description/size/duration 等未提供时
+                // 保留已有值，避免被 undefined 覆盖造成信息丢失
+                // （key 为联合类型时索引赋值需经 Record 断言，TS 无法逐键窄化 value）
+                const mergedFields = (Object.keys(toast) as (keyof Omit<ToastItem, 'id'>)[])
+                    .reduce<Partial<Omit<ToastItem, 'id'>>>((acc, key) => {
+                        const value = toast[key]
+                        if (value !== undefined) {
+                            (acc as Record<string, unknown>)[key] = value
+                        }
+                        return acc
+                    }, {})
+
                 const updatedToast: ToastItem = {
                     ...existing,
-                    ...toast,
+                    ...mergedFields,
                     id: existing.id,
                     count: updatedCount,
                 }
@@ -108,7 +125,11 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
         toasts.value = toasts.value.filter((t) => t.id !== id)
     }
 
-    // 保留为 no-op 以维持 API 兼容性；定时器已迁移至 Toast.vue 渲染层
+    /**
+     * @deprecated 定时器已迁移至 Toast.vue 渲染层（由渲染层的 duration 定时器驱动离场，
+     * 动画完成后 emit('close') 经 @close="removeToast(toast.id)" 回到状态层）。
+     * 调用本方法没有任何效果；如需要清除当前所有 toast，请使用 clearToasts()。
+     */
     function clearAllTimers() {}
 
     function clearToasts() {
@@ -141,7 +162,11 @@ export function createToast(isFallback = false, globalOptions?: { grouping?: boo
         promiseOrFn: Promise<T> | (() => Promise<T>),
         options: PromiseToastOptions<T>
     ): Promise<T> {
-        const promiseValue = typeof promiseOrFn === 'function' ? promiseOrFn() : promiseOrFn
+        // 函数形态经 Promise.resolve().then() 求值：同步抛错被转为 rejection 由下方 catch 捕获，
+        // 保证 loading/error toast 都会展示（若在 try 外直接调用，同步异常会绕过 toast 反馈层）
+        const promiseValue = typeof promiseOrFn === 'function'
+            ? Promise.resolve().then(promiseOrFn)
+            : Promise.resolve(promiseOrFn)
         const loadingId = addToast({
             variant: options.loadingVariant ?? 'default',
             title: options.loading,
@@ -214,6 +239,10 @@ export function useToast(): UseToastReturn {
     if (typeof console !== 'undefined') {
         console.warn('[BrutxUI] useToast() called without provideToast(). Falling back to shared singleton. Call provideToast() in your root component.')
     }
+    // 已知限制：fallback 单例由 createToast(true) 创建，不注册 onScopeDispose，toasts 仅靠
+    // beforeunload 清空。长生命周期 SPA 中，经 fallback 创建的所有 toast 会一直残留直到
+    // 手动 clearToasts；且所有 fallback 消费者共享该单例状态，一处的 clearToasts 会清空全部。
+    // 请在应用根部调用 provideToast() 以获得按作用域隔离的 toast 实例。
     if (!fallbackInstance) {
         fallbackInstance = createToast(true)
     }
