@@ -23,14 +23,27 @@ export function useDataTableSelection<T extends object>(
 ): UseDataTableSelectionReturn<T> {
     const selectedRows = shallowRef<Set<string | number>>(new Set())
 
+    // 非标量 key 的兜底序列化结果按行对象缓存，避免 computed 重算时反复 JSON.stringify；
+    // 仅缓存兜底路径，标量 key 仍是廉价的属性读取，降低行内容变化导致陈旧 key 的风险
+    const nonScalarKeyCache = new WeakMap<object, string>()
+    let warnedNonScalarKey = false
+
     function getRowKey(row: T): string | number {
         const key = toValue(options.rowKey)
         if (typeof key === 'function') return key(row)
         const value = row[key]
         if (typeof value !== 'string' && typeof value !== 'number') {
-            console.warn(`[useDataTableSelection] rowKey property "${String(key)}" returned a non-string/number value. Using JSON.stringify for stable identity.`)
+            // 非标量 key 只在首次出现时告警一次，避免每行每次 computed 重算都刷屏
+            if (!warnedNonScalarKey) {
+                warnedNonScalarKey = true
+                console.warn(`[useDataTableSelection] rowKey property "${String(key)}" returned a non-string/number value. Using JSON.stringify for stable identity.`)
+            }
+            const cached = nonScalarKeyCache.get(row)
+            if (cached !== undefined) return cached
             // 带 json: 前缀，避免与合法的字面字符串（如 "true"）碰撞
-            return `json:${JSON.stringify(value)}`
+            const result = `json:${JSON.stringify(value)}`
+            nonScalarKeyCache.set(row, result)
+            return result
         }
         return value
     }
