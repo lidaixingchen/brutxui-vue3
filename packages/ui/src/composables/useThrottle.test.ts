@@ -1,13 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useThrottle } from './useThrottle'
 
-// 模拟 Vue 的 onUnmounted 生命周期
+// 模拟 Vue 的 onUnmounted 生命周期与组件实例状态：
+// useThrottle 仅在存在活动组件实例（getCurrentInstance 非空）时注册卸载清理，
+// 测试通过 hasActiveInstance 开关控制两条路径
 let unmountCallbacks: (() => void)[] = []
+let hasActiveInstance = true
 
 vi.mock('vue', async () => {
     const actual = await vi.importActual('vue')
     return {
         ...actual,
+        getCurrentInstance: () => (hasActiveInstance ? {} : null),
         onUnmounted: (cb: () => void) => {
             unmountCallbacks.push(cb)
         },
@@ -18,6 +22,7 @@ describe('useThrottle', () => {
     beforeEach(() => {
         vi.useFakeTimers()
         unmountCallbacks = []
+        hasActiveInstance = true
     })
 
     afterEach(() => {
@@ -262,6 +267,14 @@ describe('useThrottle', () => {
             expect(() => {
                 unmountCallbacks.forEach(cb => cb())
             }).not.toThrow()
+        })
+
+        it('非组件上下文不注册 onUnmounted 清理（由调用方显式 cancel）', () => {
+            hasActiveInstance = false
+            const fn = vi.fn()
+            useThrottle(fn, 300)
+
+            expect(unmountCallbacks).toHaveLength(0)
         })
     })
 
