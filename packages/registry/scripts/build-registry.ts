@@ -39,7 +39,18 @@ const MANIFEST_PATH = path.resolve(__dirname, '../../ui/registry-manifest.json')
 const OUTPUT_DIR = path.resolve(__dirname, '../registry');
 
 export function loadMergedRegistry(): Record<string, MergedRegistryEntry> {
-    const manifestRaw = fs.readFileSync(MANIFEST_PATH, 'utf-8');
+    // 包装读取错误：模块顶层调用（import 期）早于 validate 的 REGISTRY_DIR 检查，
+    // ui manifest 缺失时给出可操作的提示（产物发布时构建方案 T12）。
+    let manifestRaw: string;
+    try {
+        manifestRaw = fs.readFileSync(MANIFEST_PATH, 'utf-8');
+    } catch (error) {
+        const cause = error instanceof Error ? error.message : String(error);
+        throw new Error(
+            `Failed to read ${path.relative(process.cwd(), MANIFEST_PATH)} (${cause}). ` +
+            `Run pnpm --filter brutx-ui-vue prebuild:scan first to generate the UI registry manifest.`
+        );
+    }
     const manifest = JSON.parse(manifestRaw) as RegistryManifest;
     const merged: Record<string, MergedRegistryEntry> = {};
 

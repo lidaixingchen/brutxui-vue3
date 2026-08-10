@@ -143,9 +143,9 @@ pnpm build
    pnpm --filter brutx-registry-vue validate
    ```
 
-   会执行三道一致性校验（源码目录 ↔ `registry-manifest.json`、`{name}.json` ↔ `index.json`、字段完整性）。
+   会执行三道一致性校验（源码目录 ↔ `registry-manifest.json`、`{name}.json` ↔ `index.json`、字段完整性）。validate 对比的是现有产物，需先执行上一步的 build，否则校验的是旧产物。
 
-6. 提交 `packages/registry/registry/` 下生成的 JSON 文件。
+6. **无需提交产物**：`packages/registry/registry/` 下的 JSON 产物**不入库**（git 不跟踪），发布时由 CI 基于最新源码构建并上传为 GitHub Release 资产。本地开发时用 `pnpm --filter brutx-registry-vue build` 生成后，可直接通过 `--registry` 指向本地产物目录使用。
 
 ---
 
