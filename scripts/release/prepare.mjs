@@ -22,7 +22,11 @@ const ARCHIVE_FILE_RE = /^v\d+\.\d+\.\d+\.md$/;
 // ---------- helpers ----------
 
 function git(args, opts = {}) {
-    return spawnSync('git', args, { cwd: repoRoot, encoding: 'utf-8', ...opts });
+    const result = spawnSync('git', args, { cwd: repoRoot, encoding: 'utf-8', ...opts });
+    if (result.error) {
+        fail(`执行 git 失败: git ${args.join(' ')}（${result.error.message}）`);
+    }
+    return result;
 }
 
 function gitOk(args) {
@@ -131,7 +135,8 @@ function prepare(dryRun) {
     const suffix = archivedNew.length ? `并归档 ${archivedNew.join(', ')}` : '';
     const commitMsg = `docs: 更新根 CHANGELOG 至 ${version}${suffix}`;
 
-    const addPaths = ['CHANGELOG.md'];
+    const addPaths = [];
+    if (existsSync(path.join(repoRoot, 'CHANGELOG.md'))) addPaths.push('CHANGELOG.md');
     if (existsSync(ARCHIVE_DIR)) addPaths.push('apps/docs/changelog');
     const add = git(['add', '--', ...addPaths]);
     if (add.status !== 0) fail(`git add 根 CHANGELOG 失败：${add.stderr}`);
@@ -166,9 +171,13 @@ function tag(force, dryRun) {
         fail(`tag ${tagName} 已存在。若需重打（如发布后补修、门禁修复后再提交），用 --force 覆盖。`);
     }
 
+    // 重打 tag 后远程已有同名 tag，普通 push 会因 non-fast-forward 被拒（publish.yml 由 push v* 触发，
+    // tag 推不上去则补修不生效，故 --force 重打场景的推送提示必须带 --force）
+    const pushHint = force ? 'git pushp origin main --tags --force' : 'git pushp origin main --tags';
+
     if (dryRun) {
         step(`[dry-run] 将打 annotated tag: git tag -a ${tagName} -m "Release ${tagName}"${force && exists ? ' --force' : ''}`);
-        logNext('推送并触发 CI 发布', 'git pushp origin main --tags');
+        logNext('推送并触发 CI 发布', pushHint);
         return;
     }
 
@@ -179,7 +188,7 @@ function tag(force, dryRun) {
 
     const head = git(['rev-parse', '--short', 'HEAD']).stdout.trim();
     step(`已打 annotated tag ${tagName} -> ${head}`);
-    logNext('推送并触发 CI 发布', 'git pushp origin main --tags');
+    logNext('推送并触发 CI 发布', pushHint);
 }
 
 // ---------- entry ----------
