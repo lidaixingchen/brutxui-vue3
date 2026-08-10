@@ -182,10 +182,14 @@ export function useCanvasInteraction(options: UseCanvasInteractionOptions): UseC
     }
 
     const checkProgress = () => {
+        // 已揭晓后不再上报进度：避免 onCompleted（经 setTimeout 延迟触发）与
+        // 后续进度上报的时序混淆，调用方难以判断"已完成"与"进度上报"的顺序
+        if (isRevealed.value) return
         const percent = calculateProgress()
         onProgress(percent)
 
-        if (percent >= percentage.value) {
+        // percentage <= 0 时跳过自动完成判定：任意一次轻触（首次 checkProgress）都会立即 revealAll 是误判
+        if (percentage.value > 0 && percent >= percentage.value) {
             revealAll()
         }
     }
