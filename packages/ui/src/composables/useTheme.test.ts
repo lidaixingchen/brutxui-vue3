@@ -254,7 +254,8 @@ describe('useTheme', () => {
 
                 const theme = scope.run(() => createTheme())!
                 theme.initTheme()
-                expect(theme.colorMode.value).toBe('light')
+                // 无有效保存值：按 system 语义处理（跟随系统，不持久化）
+                expect(theme.colorMode.value).toBe('system')
             })
 
             it('should apply system mode if system is dark and no saved mode', () => {
@@ -269,7 +270,7 @@ describe('useTheme', () => {
                 expect(theme.colorMode.value).toBe('system')
             })
 
-            it('should not apply system mode if system is not dark', () => {
+            it('should use system mode and clean dark class when system is not dark', () => {
                 mockMatchMedia.mockReturnValue({
                     matches: false,
                     addEventListener: mockAddEventListener,
@@ -278,8 +279,9 @@ describe('useTheme', () => {
 
                 const theme = scope.run(() => createTheme())!
                 theme.initTheme()
-                // No saved mode, system is not dark -> colorMode stays 'light'
-                expect(theme.colorMode.value).toBe('light')
+                // 无保存值统一按 system 语义处理（与暗色分支对称），亮色系统不残留 dark 类
+                expect(theme.colorMode.value).toBe('system')
+                expect(document.documentElement.classList.contains('dark')).toBe(false)
             })
 
             it('should register system dark mode listener', () => {
@@ -305,7 +307,8 @@ describe('useTheme', () => {
                 const theme = scope.run(() => createTheme())!
                 theme.initTheme()
                 expect(theme.theme.value).toBe('classic')
-                expect(theme.colorMode.value).toBe('light')
+                // 无保存值：colorMode 按 system 语义处理（跟随系统，不持久化）
+                expect(theme.colorMode.value).toBe('system')
             })
 
             it('should handle empty string saved values as invalid', () => {
@@ -315,7 +318,8 @@ describe('useTheme', () => {
                 theme.initTheme()
                 // '' is not a valid theme or color mode, so defaults are used
                 expect(theme.theme.value).toBe('classic')
-                expect(theme.colorMode.value).toBe('light')
+                // 无保存值：colorMode 按 system 语义处理（跟随系统，不持久化）
+                expect(theme.colorMode.value).toBe('system')
             })
         })
 
@@ -350,10 +354,12 @@ describe('useTheme', () => {
             it('should not apply resolved mode when colorMode is not system', () => {
                 const theme = scope.run(() => createTheme())!
                 theme.initTheme()
+                // 显式退出 system 语义（initTheme 无保存值时会置为 'system'），
+                // 验证非 system 模式下系统暗色变化只更新 isSystemDark、不应用 DOM
+                theme.applyColorMode('light')
 
                 const callback = mockAddEventListener.mock.calls[0]?.[1] as (e: MediaQueryListEvent) => void
 
-                // colorMode is 'light' by default, not 'system'
                 callback({ matches: true } as MediaQueryListEvent)
                 // isSystemDark should still update
                 expect(theme.isSystemDark.value).toBe(true)
@@ -522,14 +528,16 @@ describe('useTheme', () => {
             expect(() => {
                 theme.setTheme('mono')
                 theme.applyColorMode('dark')
+                // colorMode.value IS updated (set before DOM ops in applyColorMode)
+                expect(theme.colorMode.value).toBe('dark')
                 theme.setCustomVariable('--test', 'value')
                 theme.removeCustomVariable('--test')
                 theme.initTheme()
                 theme.destroy()
             }).not.toThrow()
 
-            // colorMode.value IS updated (set before DOM ops in applyColorMode)
-            expect(theme.colorMode.value).toBe('dark')
+            // initTheme 无保存值统一按 system 语义处理（SSR 下 DOM 操作被守卫跳过）
+            expect(theme.colorMode.value).toBe('system')
             // theme.value is NOT updated because applyTheme returns early before setting it
             expect(theme.theme.value).toBe('classic')
         })

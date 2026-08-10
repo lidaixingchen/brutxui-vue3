@@ -155,9 +155,12 @@ export function createTheme(): UseThemeReturn {
         const savedMode = isValidColorMode(savedModeRaw) ? savedModeRaw : null
         if (savedMode) {
             applyColorMode(savedMode)
-        } else if (isSystemDark.value) {
+        } else {
+            // 无保存值：统一按 system 语义处理（不持久化，用户并未主动选择）。
+            // 亮色分支同样应用 DOM 效果，清理可能残留的 dark 类（destroy 后重新
+            // initTheme 的场景），且两分支行为对称（colorMode='system' 都会持续跟随系统）
             colorMode.value = 'system'
-            applyResolvedMode('dark')
+            applyResolvedMode(isSystemDark.value ? 'dark' : 'light')
         }
     }
 
