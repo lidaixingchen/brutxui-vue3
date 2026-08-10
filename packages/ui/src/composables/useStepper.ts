@@ -15,6 +15,11 @@ export interface UseStepperOptions {
      * 如需完整的线性流程约束（如未完成前置步骤不可前进），请在调用方侧校验。
      */
     linear?: boolean
+    /**
+     * 步骤导航通知：任意导航路径（goToStep/nextStep/previousStep/键盘操作）成功后触发。
+     * 语义为「导航意图通知」而非「步骤变化通知」——目标步与当前步相同时也会触发，
+     * 调用方如需去重应自行比较，或由外部状态管理做幂等处理。
+     */
     onChange?: (step: number) => void
 }
 

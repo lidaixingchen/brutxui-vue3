@@ -12,6 +12,18 @@ export interface LocaleOptions {
     fallbackLocale?: MaybeRef<Partial<Locale>>
 }
 
+/**
+ * 注入语言包到当前组件子树。
+ *
+ * 接受两种形态：
+ * - `MaybeRef<Locale>`：直接传语言包对象（ref/computed 或纯对象，如 `provideLocale(en)`）；
+ *   注意 `Locale` 类型顶层不含 `locale`/`fallbackLocale` 键，纯对象形态依赖此键集合保证
+ *   与 `LocaleOptions` 结构互斥，不会互相混淆。
+ * - `LocaleOptions`：`{ locale, fallbackLocale? }` 结构，locale 必填。
+ *
+ * 运行时以对象是否含顶层 `locale` 键区分两种形态（isRef 方案无法区分「纯对象语言包」
+ * 与 LocaleOptions，会破坏 `provideLocale(en)` 这类文档用法，故不采用）。
+ */
 export function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions): void {
     // 检查是否是 LocaleOptions 格式（包含 locale 属性）
     if (
