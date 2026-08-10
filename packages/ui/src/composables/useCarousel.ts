@@ -73,6 +73,9 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
                 // 会导致末页重复调用 scrollNext（空转）或无法及时停止
                 if (!(toValue(options.loop) ?? false) && !emblaApi.value.canScrollNext()) {
                     stopAutoplay()
+                    // 内部自动停止同样上报，保证 onAutoplayChange 反映真实运行态
+                    // （useCarouselEnhanced 依赖该回调停止进度计时器）
+                    options.onAutoplayChange?.(false)
                 } else {
                     emblaApi.value.scrollNext()
                 }

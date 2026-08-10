@@ -45,8 +45,15 @@ export function useCarouselEnhanced(options: UseCarouselEnhancedOptions = {}) {
         // 同时保证进度复位与实际轮播切换同步
         let tick = 0
         progressTimer = setInterval(() => {
-            tick = (tick + 1) % steps
-            autoplayProgress.value = (tick / steps) * 100
+            tick += 1
+            if (tick >= steps) {
+                // 本 tick 完成一个进度循环：显示满格（轮播切换瞬间），下一 tick 重新爬升。
+                // 覆盖 steps=1 退化（delay≈interval 时取模恒 0 导致进度不显示）
+                tick = 0
+                autoplayProgress.value = 100
+            } else {
+                autoplayProgress.value = (tick / steps) * 100
+            }
         }, interval)
     }
 
