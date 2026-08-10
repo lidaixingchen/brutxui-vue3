@@ -21,9 +21,9 @@ export function provideLocale(localeOrOptions: MaybeRef<Locale> | LocaleOptions)
     ) {
         const options = localeOrOptions as LocaleOptions
         provide(LOCALE_INJECTION_KEY, options.locale)
-        if (options.fallbackLocale) {
-            provide(FALLBACK_LOCALE_INJECTION_KEY, options.fallbackLocale)
-        }
+        // 未提供 fallbackLocale 时显式注入空对象：
+        // 避免后代组件静默继承祖先作用域注入的 fallback，与「只使用新 locale + 内置 zhCN」的预期一致
+        provide(FALLBACK_LOCALE_INJECTION_KEY, options.fallbackLocale ?? {})
     } else {
         // 直接传入 MaybeRef<Locale> 格式（向后兼容）
         provide(LOCALE_INJECTION_KEY, localeOrOptions as MaybeRef<Locale>)
@@ -35,6 +35,8 @@ function resolveByPath(obj: unknown, path: string): string | undefined {
     let result: unknown = obj
     for (const key of keys) {
         if (typeof result !== 'object' || result === null) return undefined
+        // 仅读取自身属性，避免命中原型链（theme-editor 等场景的普通对象以外部可控名称作键）
+        if (!Object.prototype.hasOwnProperty.call(result, key)) return undefined
         result = (result as Record<string, unknown>)[key]
     }
     return typeof result === 'string' ? result : undefined
@@ -42,9 +44,10 @@ function resolveByPath(obj: unknown, path: string): string | undefined {
 
 function interpolate(template: string, params?: Record<string, string | number>): string {
     if (!params) return template
-    return Object.entries(params).reduce(
-        (str, [k, v]) => str.split(`{${k}}`).join(String(v)),
-        template,
+    // 单次正则遍历替换，结果与参数插入顺序无关：
+    // 避免参数值本身包含其他占位符（如 {a} 的值为 '{b}'）时产生残留或意外二次替换
+    return template.replace(/\{([^{}]+)\}/g, (_, key) =>
+        Object.prototype.hasOwnProperty.call(params, key) ? String(params[key]) : `{${key}}`,
     )
 }
 

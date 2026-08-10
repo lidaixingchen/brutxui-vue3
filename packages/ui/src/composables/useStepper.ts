@@ -9,6 +9,11 @@ export interface Step {
 export interface UseStepperOptions {
     steps: Ref<Step[]>
     initialStep?: number
+    /**
+     * 线性模式：仅限制相邻步骤跳转（跨多步被阻止，`force` 参数可绕过），
+     * 不校验前置步骤的完成状态，也不阻止任意回退。
+     * 如需完整的线性流程约束（如未完成前置步骤不可前进），请在调用方侧校验。
+     */
     linear?: boolean
     onChange?: (step: number) => void
 }

@@ -66,11 +66,12 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
         }
     })
 
-    if (options.openProp !== undefined) {
-        watch(() => toValue(options.openProp), (val) => {
-            if (val !== undefined) internalOpen.value = val
-        }, { immediate: true })
-    }
+    // 无条件注册：openProp 为 undefined（非受控）时 watcher 无副作用（val 恒为 undefined 不写入），
+    // 但运行期从非受控切换到受控（openProp 传入值为 undefined 的 ref 或动态引入）时，
+    // 注册条件与取值能保持一致，internalOpen 不会与受控值脱节
+    watch(() => toValue(options.openProp), (val) => {
+        if (val !== undefined) internalOpen.value = val
+    }, { immediate: true })
 
     watch(() => toValue(options.modelValue), (value) => {
         displayValue.value = value ?? null
@@ -84,6 +85,9 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
 
     function handlePanelUpdate(value: Date | null) {
         displayValue.value = value
+        // clear 之后用户又选了新值：取消 suppressCloseChange，
+        // 避免关闭面板时吞掉应有的 change-on-close
+        suppressCloseChange = false
         options.emit('update:modelValue', value)
     }
 
@@ -99,6 +103,9 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
         displayValue.value = null
         options.emit('update:modelValue', null)
         options.emit('change', null)
+        // 已在此处 emit change(null)，面板随后关闭时不再重复 emit
+        // （否则 displayValue(null) 与父组件尚未同步的旧 modelValue 的差异会触发重复 change）
+        suppressCloseChange = true
     }
 
     function handleClearClick(event: Event) {
@@ -106,6 +113,7 @@ export function useDatePicker(options: UseDatePickerOptions): UseDatePickerRetur
         displayValue.value = null
         options.emit('update:modelValue', null)
         options.emit('change', null)
+        suppressCloseChange = true
     }
 
     function handleTriggerKeydown(event: KeyboardEvent) {
