@@ -68,7 +68,10 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
         if (!toValue(options.autoplay) || prefersReducedMotion.value) return
         autoplayTimer = setInterval(() => {
             if (emblaApi.value && scrollSnaps.value.length > 0) {
-                if (!(toValue(options.loop) ?? false) && selectedIndex.value === scrollSnaps.value.length - 1) {
+                // 用 canScrollNext() 同步判断是否到达末尾：selectedIndex 由 'select' 事件异步更新，
+                // 动画时长大于 autoplayDelay 时定时器触发时索引可能尚未更新到末页，
+                // 会导致末页重复调用 scrollNext（空转）或无法及时停止
+                if (!(toValue(options.loop) ?? false) && !emblaApi.value.canScrollNext()) {
                     stopAutoplay()
                 } else {
                     emblaApi.value.scrollNext()
@@ -102,17 +105,28 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
     }
 
     onMounted(() => {
-        if (!emblaApi.value) return
+        // 挂载阶段 emblaApi 通常已由 ref 回调填充并触发 watch(emblaApi) 完成初始化，
+        // 增加 cachedApi 守卫避免同一实例上 init/select/reInit 监听器重复注册
+        if (!emblaApi.value || cachedApi === emblaApi.value) return
         initCarousel(emblaApi.value)
     })
 
     watch(emblaApi, (api) => {
         if (!api || cachedApi === api) return
+        // API 实例被替换时先解绑旧实例监听器，避免旧实例残留、卸载后仍收到回调
+        if (cachedApi) {
+            cachedApi.off('init', onInit)
+            cachedApi.off('select', onSelect)
+            cachedApi.off('reInit', onInit)
+        }
         initCarousel(api)
     })
 
     watch(() => toValue(options.autoplay), (val) => {
         if (val) {
+            // prefersReducedMotion 时 startAutoplay 直接 return（定时器并未启动），
+            // 不应上报启用，避免外部回调收到与实际启停状态不一致的通知
+            if (prefersReducedMotion.value) return
             startAutoplay()
             options.onAutoplayChange?.(true)
         } else {
@@ -123,6 +137,9 @@ export function useCarousel(options: UseCarouselOptions = {}): UseCarouselReturn
 
     watch(() => toValue(options.loop), () => {
         if (emblaApi.value) emblaApi.value.reInit({ loop: toValue(options.loop) ?? false })
+        // loop 由 false 切 true 前，非 loop 模式自动播放可能已在末页 stopAutoplay()，
+        // 而 autoplay 值本身未变化、其 watcher 不会再次触发，需在此主动恢复
+        if (toValue(options.autoplay) && !prefersReducedMotion.value) startAutoplay()
     })
 
     watch(() => toValue(options.autoplayDelay), () => {

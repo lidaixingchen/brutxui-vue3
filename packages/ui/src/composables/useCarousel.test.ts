@@ -21,6 +21,8 @@ function createMockEmblaApi(overrides: Partial<EmblaCarouselType> = {}): MockEmb
         scrollNext: vi.fn(),
         scrollTo: vi.fn(),
         reInit: vi.fn(),
+        // 自动播放末页判断基于 canScrollNext()：默认可继续滚动，末页场景由测试 override
+        canScrollNext: vi.fn().mockReturnValue(true),
         on: vi.fn((event: EventName, handler: EventHandler) => {
             if (!listeners[event]) listeners[event] = []
             listeners[event].push(handler)
@@ -494,6 +496,7 @@ describe('useCarousel', () => {
             const api = createMockEmblaApi({
                 scrollSnapList: vi.fn().mockReturnValue([0, 0.5, 1]),
                 selectedScrollSnap: vi.fn().mockReturnValue(2),
+                canScrollNext: vi.fn().mockReturnValue(false),
             })
             mockEmblaApi.value = api
             const { wrapper, carousel } = mountWithCarousel({
