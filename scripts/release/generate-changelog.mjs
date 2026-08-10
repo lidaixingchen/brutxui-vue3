@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { BREAKING_SECTION_LABEL, SECTION_ORDER } from './changelog-sections.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -112,10 +113,10 @@ function categorize(commits) {
 
     for (const commit of commits) {
         if (commit.isBreaking) {
-            if (!categories.has('breaking')) {
-                categories.set('breaking', []);
+            if (!categories.has(BREAKING_SECTION_LABEL)) {
+                categories.set(BREAKING_SECTION_LABEL, []);
             }
-            categories.get('breaking').push(commit);
+            categories.get(BREAKING_SECTION_LABEL).push(commit);
             continue;
         }
 
@@ -150,17 +151,21 @@ function renderMarkdown(version, date, categories, compareBase) {
         return [header];
     }
 
-    if (categories.has('breaking')) {
-        lines.push('### ⚠️ Breaking Changes');
+    for (const label of SECTION_ORDER) {
+        const commits = categories.get(label);
+        if (!commits) continue;
+
+        lines.push(`### ${label}`);
         lines.push('');
-        for (const commit of categories.get('breaking')) {
+        for (const commit of commits) {
             lines.push(...renderCommit(commit));
         }
         lines.push('');
     }
 
+    // 兜底：SECTION_ORDER 未收录的分类（理论上不出现）追加在末尾，保持原相对顺序
     for (const [label, commits] of categories) {
-        if (label === 'breaking') continue;
+        if (SECTION_ORDER.includes(label)) continue;
 
         lines.push(`### ${label}`);
         lines.push('');

@@ -10,6 +10,30 @@
 
 * **shared,cli:** registry 完整性哈希覆盖 path/type/content 并自校验 ([7f247f7](https://github.com/lidaixingchen/brutxui-vue3/commit/7f247f7dc1e7ae2d4fa3a3afd7eb4716a17212ee))
 
+### ✨ Features
+
+* **composables:** 补齐 index.ts 聚合入口的类型导出 ([1da7de1](https://github.com/lidaixingchen/brutxui-vue3/commit/1da7de146f5105d13788954800d5d89e79ad39d9))
+* **registry:** 产物发布时构建——发布通道上线与入库机制拆除 ([39630e1](https://github.com/lidaixingchen/brutxui-vue3/commit/39630e1f5eca732e6e015a4e30d38662247405a9))
+### ♻️ Code Refactoring
+
+* **composables:** B 类标量内部状态只读化收尾 ([ce0221f](https://github.com/lidaixingchen/brutxui-vue3/commit/ce0221fcf675877a015cd2751ada3a331e1bcfcc))
+* **composables:** useReducedMotion 返回只读化（根依赖） ([e7f9412](https://github.com/lidaixingchen/brutxui-vue3/commit/e7f941296befefa19182737c6914a149c128633d))
+* **composables:** useMessage.messageStore 只读化 ([84e7b5d](https://github.com/lidaixingchen/brutxui-vue3/commit/84e7b5d40a37f72d792fddf00d0ffd084be7a5b1))
+* **composables:** B 类内部标量状态只读化 ([d96d4d1](https://github.com/lidaixingchen/brutxui-vue3/commit/d96d4d13b8b98d69401c7b35bff04bd6f3c3b79f))
+* **composables:** useDataTableFilter 补 setter 并只读化，DataTable 改 setter 回调 ([66514cd](https://github.com/lidaixingchen/brutxui-vue3/commit/66514cd00003b74d0af68c9e5b3eed48548c1857))
+* **composables:** useDialogEnhanced position/size 只读化并补 setter ([edeb706](https://github.com/lidaixingchen/brutxui-vue3/commit/edeb706c65acc046853efde11488679cc2215e4e))
+* **composables:** useToast.toasts 只读化 ([02e4709](https://github.com/lidaixingchen/brutxui-vue3/commit/02e4709a8fd47d85e157759c148235a1bd3cc3cf))
+* **composables:** selectedRows/sortState/checked 只读化，仅经方法修改 ([5695853](https://github.com/lidaixingchen/brutxui-vue3/commit/5695853fd7e73b0a236669b76a5eeb2abbf7636c))
+* **registry:** 适配元数据只读数组类型 ([40babfc](https://github.com/lidaixingchen/brutxui-vue3/commit/40babfc3c9d4f84d3bcd4fc97bec7c7592ce160c))
+* **cli:** 消除冗余完整性校验并修复漂移检测哈希边界 ([afe346d](https://github.com/lidaixingchen/brutxui-vue3/commit/afe346db9aa7b9baf9864f2ed15d298456671b36))
+* **ui,docs:** 移除 danger/warning 别名统一到语义色 ([1f24730](https://github.com/lidaixingchen/brutxui-vue3/commit/1f2473027a3e413b0b73e55d0e2b31a4aab3a2c2))
+* **cli:** 注入样式统一引用 @theme 令牌 ([188ca11](https://github.com/lidaixingchen/brutxui-vue3/commit/188ca1101dcc1f41606593d7c4db79bb4177b5f8))
+* **cli:** 类型契约与 tsconfig 解析健壮性 ([37a1cff](https://github.com/lidaixingchen/brutxui-vue3/commit/37a1cffd49924820d87d43940d8e593eec416cea))
+* **cli:** 样式注入判据统一为 markers 有序匹配 ([13c1265](https://github.com/lidaixingchen/brutxui-vue3/commit/13c1265051700d72568586ed1a5213e3b7df23f4))
+* **cli:** 移除手写 diff 类型 shim 改用官方类型 ([b0aa2f9](https://github.com/lidaixingchen/brutxui-vue3/commit/b0aa2f9c15b2a6773251a83b5c07b0db8b77a20d))
+* **cli:** CSS 注入改 markers 唯一判据并清理片段生成 ([9e9ecbb](https://github.com/lidaixingchen/brutxui-vue3/commit/9e9ecbba5da974e7a031d287071bddbbdf69e82b))
+* **cli:** 统一组件清单类型结构与命令选项基类 ([1ea7b25](https://github.com/lidaixingchen/brutxui-vue3/commit/1ea7b254d5e3c54f9eb6bfd84f55897f0d68c2a3))
+
 ### 🐛 Bug Fixes
 
 * **composables:** 选择/显示/上传审查修复——空标签过滤、resolveBaseClass、同批去重 (#1-#4/#7) ([74e236e](https://github.com/lidaixingchen/brutxui-vue3/commit/74e236eef12c4293aab8274003e80c4a9a1823e5))
@@ -91,30 +115,6 @@
 * **shared:** 补充依赖提取器的 vitest 测试基础设施 ([89e7637](https://github.com/lidaixingchen/brutxui-vue3/commit/89e7637df9bfb975ef02854591f2019c28a96527))
 * **registry:** 适配新完整性哈希算法更新测试与快照 ([c89c435](https://github.com/lidaixingchen/brutxui-vue3/commit/c89c43554b9c519aabb6d012e61393b7420118a4))
 
-### ♻️ Code Refactoring
-
-* **composables:** B 类标量内部状态只读化收尾 ([ce0221f](https://github.com/lidaixingchen/brutxui-vue3/commit/ce0221fcf675877a015cd2751ada3a331e1bcfcc))
-* **composables:** useReducedMotion 返回只读化（根依赖） ([e7f9412](https://github.com/lidaixingchen/brutxui-vue3/commit/e7f941296befefa19182737c6914a149c128633d))
-* **composables:** useMessage.messageStore 只读化 ([84e7b5d](https://github.com/lidaixingchen/brutxui-vue3/commit/84e7b5d40a37f72d792fddf00d0ffd084be7a5b1))
-* **composables:** B 类内部标量状态只读化 ([d96d4d1](https://github.com/lidaixingchen/brutxui-vue3/commit/d96d4d13b8b98d69401c7b35bff04bd6f3c3b79f))
-* **composables:** useDataTableFilter 补 setter 并只读化，DataTable 改 setter 回调 ([66514cd](https://github.com/lidaixingchen/brutxui-vue3/commit/66514cd00003b74d0af68c9e5b3eed48548c1857))
-* **composables:** useDialogEnhanced position/size 只读化并补 setter ([edeb706](https://github.com/lidaixingchen/brutxui-vue3/commit/edeb706c65acc046853efde11488679cc2215e4e))
-* **composables:** useToast.toasts 只读化 ([02e4709](https://github.com/lidaixingchen/brutxui-vue3/commit/02e4709a8fd47d85e157759c148235a1bd3cc3cf))
-* **composables:** selectedRows/sortState/checked 只读化，仅经方法修改 ([5695853](https://github.com/lidaixingchen/brutxui-vue3/commit/5695853fd7e73b0a236669b76a5eeb2abbf7636c))
-* **registry:** 适配元数据只读数组类型 ([40babfc](https://github.com/lidaixingchen/brutxui-vue3/commit/40babfc3c9d4f84d3bcd4fc97bec7c7592ce160c))
-* **cli:** 消除冗余完整性校验并修复漂移检测哈希边界 ([afe346d](https://github.com/lidaixingchen/brutxui-vue3/commit/afe346db9aa7b9baf9864f2ed15d298456671b36))
-* **ui,docs:** 移除 danger/warning 别名统一到语义色 ([1f24730](https://github.com/lidaixingchen/brutxui-vue3/commit/1f2473027a3e413b0b73e55d0e2b31a4aab3a2c2))
-* **cli:** 注入样式统一引用 @theme 令牌 ([188ca11](https://github.com/lidaixingchen/brutxui-vue3/commit/188ca1101dcc1f41606593d7c4db79bb4177b5f8))
-* **cli:** 类型契约与 tsconfig 解析健壮性 ([37a1cff](https://github.com/lidaixingchen/brutxui-vue3/commit/37a1cffd49924820d87d43940d8e593eec416cea))
-* **cli:** 样式注入判据统一为 markers 有序匹配 ([13c1265](https://github.com/lidaixingchen/brutxui-vue3/commit/13c1265051700d72568586ed1a5213e3b7df23f4))
-* **cli:** 移除手写 diff 类型 shim 改用官方类型 ([b0aa2f9](https://github.com/lidaixingchen/brutxui-vue3/commit/b0aa2f9c15b2a6773251a83b5c07b0db8b77a20d))
-* **cli:** CSS 注入改 markers 唯一判据并清理片段生成 ([9e9ecbb](https://github.com/lidaixingchen/brutxui-vue3/commit/9e9ecbba5da974e7a031d287071bddbbdf69e82b))
-* **cli:** 统一组件清单类型结构与命令选项基类 ([1ea7b25](https://github.com/lidaixingchen/brutxui-vue3/commit/1ea7b254d5e3c54f9eb6bfd84f55897f0d68c2a3))
-
-### ✨ Features
-
-* **composables:** 补齐 index.ts 聚合入口的类型导出 ([1da7de1](https://github.com/lidaixingchen/brutxui-vue3/commit/1da7de146f5105d13788954800d5d89e79ad39d9))
-* **registry:** 产物发布时构建——发布通道上线与入库机制拆除 ([39630e1](https://github.com/lidaixingchen/brutxui-vue3/commit/39630e1f5eca732e6e015a4e30d38662247405a9))
 
 ## [0.9.12](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.11...v0.9.12) - 2026-08-09
 
@@ -123,11 +123,13 @@
 * **ui:** 精简 lib 聚合导出，移除内部调优参数 ([55ad9ee](https://github.com/lidaixingchen/brutxui-vue3/commit/55ad9ee2dabd84dfa8e038849e028e44c695dcbe))
 * **ui:** 统一两套主题系统命名为 classic ([b14da42](https://github.com/lidaixingchen/brutxui-vue3/commit/b14da42d5395ce67dd5281d8a161857515ed2734))
 
-### 📝 Documentation
+### ♻️ Code Refactoring
 
-* **registry:** Registry 产物发布时构建计划定稿（方案 B：GitHub Release 资产） ([4e5c83d](https://github.com/lidaixingchen/brutxui-vue3/commit/4e5c83dfeb7e245615979aec76f97eee0d1546cd))
-* **cli:** signature 模式并发与真值语义说明 ([4693644](https://github.com/lidaixingchen/brutxui-vue3/commit/4693644c57a06425845cc74e10314ef32263620c))
-* 更新根 CHANGELOG 至 0.9.11 并归档 0.9.8 ([3a5bf30](https://github.com/lidaixingchen/brutxui-vue3/commit/3a5bf30709532db953e68d660c91253d463cc983))
+* **ui:** VALID_THEMES 下沉 lib 层并整理聚合导出 ([dfdb1ab](https://github.com/lidaixingchen/brutxui-vue3/commit/dfdb1ab9ffec8fb83d187d6766c8f7a031032a1b))
+* **ui:** 抽取浮动表面与关闭按钮公共样式常量 ([ecc8c3c](https://github.com/lidaixingchen/brutxui-vue3/commit/ecc8c3cd1845fad3ddd1e8bd1e4974d32f3dd312))
+* **ui:** iconSize 尺寸档位 default 改名 md 并全量迁移 ([9a8d882](https://github.com/lidaixingchen/brutxui-vue3/commit/9a8d882a3cc44937910c3ef2243ed8fd1118d6eb))
+* **ui:** 收敛交互变体与动画常量，修复禁用态样式冲突 ([a7fad43](https://github.com/lidaixingchen/brutxui-vue3/commit/a7fad4355f919001ff6a502f91b1e54b51eff80f))
+* **cli:** 移除 lib/index.ts 中重复的 RegistrySourceStatus 重导出 ([ed5880b](https://github.com/lidaixingchen/brutxui-vue3/commit/ed5880b0ee9d21d455ab38f35c3ac20bdcd18b95))
 
 ### 🐛 Bug Fixes
 
@@ -169,23 +171,26 @@
 * **cli:** doctor 非交互修复需显式 --yes，SBOM hash 转 hex ([7e09349](https://github.com/lidaixingchen/brutxui-vue3/commit/7e0934949e5fa148fac9ea2bbf05b5bfbf854303))
 * **changelog:** 转义归档 changelog 中的裸尖括号，修复 vitepress 构建 ([2809b0a](https://github.com/lidaixingchen/brutxui-vue3/commit/2809b0a3da042407aaf511aee4ad789dd5177a2d))
 
-### ♻️ Code Refactoring
+### 📝 Documentation
 
-* **ui:** VALID_THEMES 下沉 lib 层并整理聚合导出 ([dfdb1ab](https://github.com/lidaixingchen/brutxui-vue3/commit/dfdb1ab9ffec8fb83d187d6766c8f7a031032a1b))
-* **ui:** 抽取浮动表面与关闭按钮公共样式常量 ([ecc8c3c](https://github.com/lidaixingchen/brutxui-vue3/commit/ecc8c3cd1845fad3ddd1e8bd1e4974d32f3dd312))
-* **ui:** iconSize 尺寸档位 default 改名 md 并全量迁移 ([9a8d882](https://github.com/lidaixingchen/brutxui-vue3/commit/9a8d882a3cc44937910c3ef2243ed8fd1118d6eb))
-* **ui:** 收敛交互变体与动画常量，修复禁用态样式冲突 ([a7fad43](https://github.com/lidaixingchen/brutxui-vue3/commit/a7fad4355f919001ff6a502f91b1e54b51eff80f))
-* **cli:** 移除 lib/index.ts 中重复的 RegistrySourceStatus 重导出 ([ed5880b](https://github.com/lidaixingchen/brutxui-vue3/commit/ed5880b0ee9d21d455ab38f35c3ac20bdcd18b95))
-
-### 🔧 CI
-
-* **registry:** main push 后自动签名 registry manifest 并回填 ([084000a](https://github.com/lidaixingchen/brutxui-vue3/commit/084000a32c725f152235fcd41f2d245d7983c673))
+* **registry:** Registry 产物发布时构建计划定稿（方案 B：GitHub Release 资产） ([4e5c83d](https://github.com/lidaixingchen/brutxui-vue3/commit/4e5c83dfeb7e245615979aec76f97eee0d1546cd))
+* **cli:** signature 模式并发与真值语义说明 ([4693644](https://github.com/lidaixingchen/brutxui-vue3/commit/4693644c57a06425845cc74e10314ef32263620c))
+* 更新根 CHANGELOG 至 0.9.11 并归档 0.9.8 ([3a5bf30](https://github.com/lidaixingchen/brutxui-vue3/commit/3a5bf30709532db953e68d660c91253d463cc983))
 
 ### ⚡ Performance
 
 * **cli:** 并行化缓存清理的 stat 与删除 ([e9a36d7](https://github.com/lidaixingchen/brutxui-vue3/commit/e9a36d7d259a99a0d02a0c4ee3b3d6aa0b5856f7))
+### 🔧 CI
+
+* **registry:** main push 后自动签名 registry manifest 并回填 ([084000a](https://github.com/lidaixingchen/brutxui-vue3/commit/084000a32c725f152235fcd41f2d245d7983c673))
+
 
 ## [0.9.11](https://github.com/lidaixingchen/brutxui-vue3/compare/v0.9.10...v0.9.11) - 2026-08-08
+
+### ♻️ Code Refactoring
+
+* **ui:** 收敛清理 API 命名并抽取 Transfer/Tour 公共类型 ([2e9031b](https://github.com/lidaixingchen/brutxui-vue3/commit/2e9031b14b0c10c994f9b4b3585ed714614fe6e6))
+* **cli:** 显式界定公共 API 面并补充 MANIFEST_READ_FAILED 错误码 ([643a0b7](https://github.com/lidaixingchen/brutxui-vue3/commit/643a0b7f7ad58db80c78ec05dc2d9402f4a7ce6b))
 
 ### 🐛 Bug Fixes
 
@@ -231,11 +236,6 @@
 
 * 更新 AI 协作约定，代码注释仅描绘当下 ([cefca6e](https://github.com/lidaixingchen/brutxui-vue3/commit/cefca6ecc0ee4af0bb276cfce7be31984edeb72d))
 * **agents:** 优化 AGENTS.md 结构与规范 ([a1b8807](https://github.com/lidaixingchen/brutxui-vue3/commit/a1b880724ff498b33fc8af3b25cb086acc11745a))
-
-### ♻️ Code Refactoring
-
-* **ui:** 收敛清理 API 命名并抽取 Transfer/Tour 公共类型 ([2e9031b](https://github.com/lidaixingchen/brutxui-vue3/commit/2e9031b14b0c10c994f9b4b3585ed714614fe6e6))
-* **cli:** 显式界定公共 API 面并补充 MANIFEST_READ_FAILED 错误码 ([643a0b7](https://github.com/lidaixingchen/brutxui-vue3/commit/643a0b7f7ad58db80c78ec05dc2d9402f4a7ce6b))
 
 ### ✅ Tests
 
