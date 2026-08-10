@@ -1,9 +1,13 @@
 # CLI 基础设施全链路闭环改进计划
 
+> 方案类型：优化
+> 状态：**active**
+> 日期：2026-07-28
+
 本文旨在解决 `cli/manifest` (4ce99d7) 与 `cli/registry` (b084a17) 引入的两项核心基础设施（Ed25519 签名校验、多 Registry 源与离线韧性）在落地后面临的**“CLI 引擎就绪，但全链路未闭环”**问题，提出具体的闭环深化方案。
 
 > [!NOTE]
-> **文件路径厘清**：本计划中涉及签名签发的 Manifest 均为编译后发布的注册表产物 [packages/registry/registry/registry-manifest.json](file:///e:/project/brutxui-vue3/packages/registry/registry/registry-manifest.json)，切勿与 UI 包前置 AST 扫描生出的 [packages/ui/registry-manifest.json](file:///e:/project/brutxui-vue3/packages/ui/registry-manifest.json) 混淆。
+> **文件路径厘清**：本计划中涉及签名签发的 Manifest 均为编译后发布的注册表产物 [packages/registry/registry/registry-manifest.json](../../packages/registry/registry/registry-manifest.json)，切勿与 UI 包前置 AST 扫描生出的 [packages/ui/registry-manifest.json](../../packages/ui/registry-manifest.json) 混淆。
 
 ---
 
@@ -109,6 +113,6 @@
 
 ## 5. 相关参考文档
 
-- [AGENTS.md](../AGENTS.md)
-- [RELEASE.md](./RELEASE.md)
-- [AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md](./AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md)
+- [AGENTS.md](../../AGENTS.md)
+- [RELEASE.md](../guides/RELEASE.md)
+- [AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md](辅助包改进方案-v2.md)

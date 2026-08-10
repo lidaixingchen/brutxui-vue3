@@ -7,7 +7,7 @@
 
   Use it when you want visible borders, strong shadows, accessible primitives, and component code you can edit directly.
 
-  English · [中文](README.md)
+  English · [中文](../README.md)
 
   ### Component Registry (`brutx-ui-vue`)
   [![npm version](https://img.shields.io/npm/v/brutx-ui-vue.svg?style=flat-square&color=FF6B6B)](https://www.npmjs.com/package/brutx-ui-vue)
@@ -220,4 +220,4 @@ This project is developed and maintained based on the original neo-brutalist pro
 
 ## License
 
-BrutxUI is open-source software licensed under the [MIT License](LICENSE).
+BrutxUI is open-source software licensed under the [MIT License](../LICENSE).

@@ -1,6 +1,6 @@
 # 发布架构与原理
 
-> 本文档解释发布**系统**的工作原理与一次性配置；**每次发布的操作手册见 [RELEASE.md](./RELEASE.md)**。
+> 本文档解释发布**系统**的工作原理与一次性配置；**每次发布的操作手册见 [RELEASE.md](RELEASE.md)**。
 > 结构性问题（谁调用谁、改动破坏面）优先用 CodeGraph 查询。
 
 ## 版本发布链路
@@ -42,19 +42,19 @@ Breaking Change 标记方式：
 - `feat(ui)!: 重命名 Button API`（加 `!`）
 - commit body 中写 `BREAKING CHANGE: description`
 
-根 CHANGELOG 生成依赖 commit message 质量，请严格遵守 [提交信息规范](./COMMIT_CONVENTION.md)。
+根 CHANGELOG 生成依赖 commit message 质量，请严格遵守 [提交信息规范](COMMIT_CONVENTION.md)。
 
 ## 根 CHANGELOG.md 生成
 
-根仓库的 [CHANGELOG.md](../CHANGELOG.md) 由 [scripts/release/generate-changelog.mjs](../scripts/release/generate-changelog.mjs) 维护，与 changeset 各包独立 CHANGELOG 互补：脚本汇总两个 tag 之间的 conventional commits，按类型分组生成单行条目。
+根仓库的 [CHANGELOG.md](../../CHANGELOG.md) 由 [scripts/release/generate-changelog.mjs](../../scripts/release/generate-changelog.mjs) 维护，与 changeset 各包独立 CHANGELOG 互补：脚本汇总两个 tag 之间的 conventional commits，按类型分组生成单行条目。
 
 ### 脚本工作原理
 
 1. **解析范围**：默认从 `packages/ui/package.json` 读取版本号，组装 `v<version>` tag。若该 tag 已存在 → 起点取上一个 tag、终点取该 tag；否则起点取最新 tag、终点取 `HEAD`（发布前未打 tag 场景）
 2. **收集 commits**：`git log <from>..<to>` 按 `%H%x1f%s%x1f%b%x1f%an%x1f%ae` 分隔提取
 3. **解析与过滤**：按 [Conventional Commits](https://www.conventionalcommits.org/zh-hans/v1.0.0/) 正则拆解 type/scope/subject；`release`/`RELEASING` 类型一律剔除；`chore` 类型仅在标记为 breaking 时保留
-4. **分类与渲染**：按 [scripts/release/changelog-sections.mjs](../scripts/release/changelog-sections.mjs) 的 `SECTION_ORDER` 固定顺序渲染（破坏性变更 → 新功能 → 重构 → 修复 → 文档 → 测试 → 其余兜底），不依赖提交在 git log 中的出现顺序，保证跨版本稳定一致。条目格式 `* **scope:** subject ([sha7](commit-url))`，body 默认不展开
-5. **写入**：`stripUnreleasedSection` 移除旧的 `## [Unreleased]` 段，再在文件头之后插入 `## [Unreleased](.../compare/v<version>...HEAD)` 与新版本段
+4. **分类与渲染**：按 [scripts/release/changelog-sections.mjs](../../scripts/release/changelog-sections.mjs) 的 `SECTION_ORDER` 固定顺序渲染（破坏性变更 → 新功能 → 重构 → 修复 → 文档 → 测试 → 其余兜底），不依赖提交在 git log 中的出现顺序，保证跨版本稳定一致。条目格式 `* **scope:** subject ([sha7](../../../../commit-url))`，body 默认不展开
+5. **写入**：`stripUnreleasedSection` 移除旧的 `## [Unreleased]` 段，再在文件头之后插入 `## [Unreleased](../../../../.../compare/v<version>...HEAD)` 与新版本段
 
 ### 注意事项
 
@@ -64,7 +64,7 @@ Breaking Change 标记方式：
 
 ## CHANGELOG 归档机制
 
-为避免根 [CHANGELOG.md](../CHANGELOG.md) 随版本累积无限增长，自 v0.9.5 起引入归档机制：根文件仅保留**最近 3 个版本**的完整段落，更早的版本归档至独立文件。
+为避免根 [CHANGELOG.md](../../CHANGELOG.md) 随版本累积无限增长，自 v0.9.5 起引入归档机制：根文件仅保留**最近 3 个版本**的完整段落，更早的版本归档至独立文件。
 
 ### 目录结构
 
@@ -107,7 +107,7 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 
 ### VitePress 集成
 
-归档目录通过 [apps/docs/.vitepress/config.ts](../apps/docs/.vitepress/config.ts) 中的 `generateChangelogSidebar()` 函数自动生成侧边栏：
+归档目录通过 [apps/docs/.vitepress/config.ts](../../apps/docs/.vitepress/config.ts) 中的 `generateChangelogSidebar()` 函数自动生成侧边栏：
 
 - 扫描 `apps/docs/changelog/` 下的 `v*.md` 文件
 - 按 major 版本分组（如 `v0.x`、`v1.x`）
@@ -123,13 +123,13 @@ apps/docs/changelog/                          # 归档目录（VitePress srcDir 
 1. 生成新版本段并写入根 `CHANGELOG.md` 顶部
 2. 滑动窗口裁剪：若主日志版本数超过 3 个，自动将最旧版本切分并写入 `apps/docs/changelog/v<version>.md`
 3. 在根 `CHANGELOG.md` 末尾的"归档版本"段追加该版本的链接条目
-4. 将该版本连入文档站归档索引 [apps/docs/changelog/index.md](../apps/docs/changelog/index.md)
+4. 将该版本连入文档站归档索引 [apps/docs/changelog/index.md](../../apps/docs/changelog/index.md)
 
 侧边栏自动包含并更新新归档文件，无需手动维护。
 
 ## Breaking Change 迁移文档规范
 
-任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](./AUXILIARY_PACKAGES_IMPROVEMENT_PLAN_V2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
+任何包含 breaking change 的发布都必须提供迁移指南，让用户能低成本完成手动的版本升级。本规范是 v2.2 改进计划 [Item 9（组件迁移引擎）](../plans/辅助包改进方案-v2.md#9-组件迁移引擎) 暂缓期间的轻量替代方案——在缺少 codemod 自动迁移的前提下，把"迁移成本"压到最低。
 
 ### Commit 标记
 
@@ -178,7 +178,7 @@ After（新 API）：
 
 ## 供应链安全
 
-GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dependabot.yml](../.github/dependabot.yml) 自动管理升级（每周一开 PR）。
+GitHub Actions 工作流使用 SHA pin 锁定第三方 Action，由 [.github/dependabot.yml](../../.github/dependabot.yml) 自动管理升级（每周一开 PR）。
 
 ### Registry manifest 自动签名
 

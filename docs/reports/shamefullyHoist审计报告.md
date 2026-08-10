@@ -1,6 +1,6 @@
 # shamefullyHoist 审计报告
 
-> 对应方案：[ARCHITECTURE_OPTIMIZATION_PLAN_V2.md §1.4](../ARCHITECTURE_OPTIMIZATION_PLAN_V2.md#14-shamefullyhoist-治理)
+> 对应方案：[ARCHITECTURE_OPTIMIZATION_PLAN_V2.md §1.4](../archive/2026/架构优化方案-v2.md#14-shamefullyhoist-治理)
 > 阶段：P0 审计阶段（评估移除可行性）
 > 日期：2026-07-17
 > 仓库状态：`pnpm-workspace.yaml` 当前为 `shamefullyHoist: true`
@@ -48,8 +48,8 @@
 
 ### 2.3 基线产物
 
-- [hoist-deps-list.txt](./hoist-deps-list.txt)：聚合去重后的所有直接依赖清单（52 个），每行附 `# used by: <pkg1>, <pkg2>` 标注实际声明该依赖的子包。
-- [hoist-scan-output.txt](./hoist-scan-output.txt)：扫描工具的原始 stdout 输出，作为可复现的审计证据。
+- `hoist-deps-list.txt`：聚合去重后的所有直接依赖清单（52 个），每行附 `# used by: <pkg1>, <pkg2>` 标注实际声明该依赖的子包。
+- `hoist-scan-output.txt`：扫描工具的原始 stdout 输出，作为可复现的审计证据。
 
 ## 3. 审计结果
 
@@ -64,7 +64,7 @@
 | `docs` | 0 |
 | **合计** | **0** |
 
-完整扫描输出见 [hoist-scan-output.txt](./hoist-scan-output.txt)。
+完整扫描输出见 `hoist-scan-output.txt`。
 
 ### 3.2 已排除的误报
 

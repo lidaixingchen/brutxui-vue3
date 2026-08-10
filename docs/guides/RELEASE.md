@@ -1,6 +1,6 @@
 # 发布流程
 
-> 发布系统**原理**与一次性配置（供应链签名、归档机制、脚本工作原理）见 [发布架构与原理](./RELEASE_ARCHITECTURE.md)。本文档只讲"每次发布怎么做"。
+> 发布系统**原理**与一次性配置（供应链签名、归档机制、脚本工作原理）见 [发布架构与原理](RELEASE_ARCHITECTURE.md)。本文档只讲"每次发布怎么做"。
 
 ## 速查清单（TL;DR）
 
@@ -67,12 +67,12 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 
 - **各包 CHANGELOG**（`packages/ui/CHANGELOG.md` 等）：由 changeset 在 `version-packages` 时生成
 - **根 CHANGELOG.md**：由脚本 `scripts/release/generate-changelog.mjs` 汇总两 tag 间 conventional commits；根文件仅保留最近 3 个版本，更早自动归档至 `apps/docs/changelog/`
-- 工作原理与注意事项见 [发布架构与原理](./RELEASE_ARCHITECTURE.md#根-changelogmd-生成)
+- 工作原理与注意事项见 [发布架构与原理](RELEASE_ARCHITECTURE.md#根-changelogmd-生成)
 
 ## Breaking Change 迁移文档规范
 
-任何包含 breaking change 的发布必须提供迁移指南（影响范围 / 变更原因 / before-after 迁移代码 / 自动迁移可行性评估），在 CHANGELOG 与 release notes 中按模板记录。完整模板与落地要求见 [发布架构与原理](./RELEASE_ARCHITECTURE.md#breaking-change-迁移文档规范)。
+任何包含 breaking change 的发布必须提供迁移指南（影响范围 / 变更原因 / before-after 迁移代码 / 自动迁移可行性评估），在 CHANGELOG 与 release notes 中按模板记录。完整模板与落地要求见 [发布架构与原理](RELEASE_ARCHITECTURE.md#breaking-change-迁移文档规范)。
 
 ## 供应链安全
 
-GitHub Actions 使用 SHA pin 锁定第三方 Action（dependabot 每周一自动升级）；`registry-manifest.json` 发布时由 CI 注入私钥自动做 Ed25519 签名，CLI 零配置验签官方 Registry。详见 [发布架构与原理](./RELEASE_ARCHITECTURE.md#供应链安全)。
+GitHub Actions 使用 SHA pin 锁定第三方 Action（dependabot 每周一自动升级）；`registry-manifest.json` 发布时由 CI 注入私钥自动做 Ed25519 签名，CLI 零配置验签官方 Registry。详见 [发布架构与原理](RELEASE_ARCHITECTURE.md#供应链安全)。

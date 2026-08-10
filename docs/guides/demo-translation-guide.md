@@ -37,4 +37,4 @@
 - 33个纯英文文件（需要完整翻译）
 - 65个混合语言文件（需要统一）
 
-详见 [demo-language-report.md](demo-language-report.md)
+详见 `demo-language-report.md`

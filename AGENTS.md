@@ -100,7 +100,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 
 ## 目录结构（要点）
 
-- `apps/docs/` VitePress 文档站；`docs/` 方案文档；`skills/brutxui/` AI 技能（参考文档在 `references/`）
+- `apps/docs/` VitePress 文档站；`docs/` 文档目录（`guides/` 规范、`plans/` 方案、`reports/` 报告、`archive/` 归档，索引见 `docs/index.md`）；`skills/brutxui/` AI 技能（参考文档在 `references/`）
 - `packages/ui/`：组件 `src/components/`、组合式函数 `src/composables/`、语言包 `src/locales/`、工具 `src/lib/utils.ts`
 - `packages/cli/`：`src/commands/` + `src/lib/`
 - `packages/registry/` + `packages/shared/`：构建脚本与组件元数据（自动生成文件见上方表格）
@@ -109,13 +109,23 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 
 ## 详细文档
 
-- [提交信息规范](docs/COMMIT_CONVENTION.md)（含 Shell 注意事项）
-- [发布流程与 Changelog](docs/RELEASE.md)
-- [组件开发指南](docs/COMPONENT_GUIDE.md)
-- [视觉系统指南](docs/VISUAL_SYSTEM.md)
-- [CVA 变体声明规范](docs/CVA.md)
-- [组件文档模板](docs/COMPONENT_DOC_TEMPLATE.md)
+- [提交信息规范](docs/guides/COMMIT_CONVENTION.md)（含 Shell 注意事项）
+- [发布流程与 Changelog](docs/guides/RELEASE.md)
+- [组件开发指南](docs/guides/COMPONENT_GUIDE.md)
+- [视觉系统指南](docs/guides/VISUAL_SYSTEM.md)
+- [CVA 变体声明规范](docs/guides/CVA.md)
+- [组件文档模板](docs/guides/COMPONENT_DOC_TEMPLATE.md)
 - [AI 技能描述](skills/brutxui/SKILL.md)
+
+## docs/ 文档落位约定
+
+`docs/` 按生命周期分四类，索引见 [docs/index.md](docs/index.md)：
+
+- **规范 / 操作手册** → `docs/guides/`，英文 kebab-case 命名，标题可保持英文。
+- **方案计划** → `docs/plans/`，中文命名 `<中文主题>方案.md`（功能设计类用 `<主题>设计.md`）；标题下补 frontmatter（`方案类型 / 状态 / 日期 / 关联文档 / 修订记录`），状态取 `draft | active | done`。
+- **审计 / 扫描报告** → `docs/reports/`，快照型命名 `<YYYY-MM-DD>-<中文主题>报告.md`（日期前置便于排序），结论型不带日期。
+- **旧方案被新版本取代** → 立即移入 `docs/archive/YYYY/`，文件名保留版本号。
+- **链接一律相对路径**，禁止 `file:///` 绝对链接；新增 / 修改文档后跑 `node scripts/docs/check-doc-links.mjs check` 校验（文档间互链 0 死链、0 处 `file:///`；源码引用失效属历史快照告警，不计失败）。
 
 ## AGENTS.md 维护约定
 

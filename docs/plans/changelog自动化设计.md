@@ -1,5 +1,9 @@
 # Changelog 自动化设计
 
+> 方案类型：功能设计
+> 状态：done
+> 日期：2026-06-30
+
 ## 背景
 
 BrutxUI 已经在使用 Conventional Commits 规范（从 git log 可见 `feat`、`fix`、`docs`、`style`、`refactor`、`test`、`build`、`ci`、`chore`、`release` 等前缀），但目前没有自动化的 CHANGELOG 生成机制。每次发版时需要手动编写版本说明，容易遗漏变更、格式不一致，且无法追溯到具体 commit。
