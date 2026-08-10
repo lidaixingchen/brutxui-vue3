@@ -54,7 +54,12 @@ export function useColorHistory(options: UseColorHistoryOptions = {}): UseColorH
             try {
                 const existing: unknown = JSON.parse(raw)
                 if (Array.isArray(existing)) {
-                    const existingValid = existing.filter((item): item is string => typeof item === 'string')
+                    // 与 loadHistory 的校验一致：非法颜色（空串、无效 hex 等）
+                    // 不得合并写回存储，避免占用 maxItems 位置且两侧校验不一致
+                    const existingValid = existing
+                        .filter((item): item is string => typeof item === 'string')
+                        .map((item) => normalizeColor(item))
+                        .filter((item): item is string => !!item)
                     // 当前历史在前（新值优先），去重后再按 maxItems 裁剪
                     merged = [...new Set([...history.value, ...existingValid])].slice(0, getMaxItems())
                 }
