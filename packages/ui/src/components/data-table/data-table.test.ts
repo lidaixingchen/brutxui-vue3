@@ -817,6 +817,42 @@ describe('DataTable filter UI binding links', () => {
         wrapper.unmount()
     })
 
+    it('virtual scroll: column filter does not reset global search', async () => {
+        const wrapper = mountDataTable({
+            data: testData,
+            columns: filterCols.map((c) => ({ ...c, width: 100 })),
+            rowKey: 'id',
+            filterable: true,
+            virtualScroll: { enabled: true, rowHeight: 'auto' },
+        })
+        // 先设全局搜索 Bob → 1 行
+        const search = wrapper.find<HTMLInputElement>('input[placeholder="Filter..."]')
+        await search.setValue('Bob')
+        await nextTick()
+        expect(wrapper.findAll('[role="row"]')).toHaveLength(1)
+
+        // 再设 age 多选过滤 = 25（Alice）：global='Bob' AND age=25 → 0 行。
+        // 若虚拟滚动分支仍绑定 setFilterState（整体替换），global 会被重置为 '',
+        // 只剩 age=25 → Alice 1 行——该断言即暴露此回归
+        await openColumnFilter(wrapper, 'age')
+        await nextTick()
+        const content = document.body.querySelector<HTMLElement>('[role="dialog"]')
+        expect(content).not.toBeNull()
+        const checkboxes = content!.querySelectorAll<HTMLElement>('[role="checkbox"]')
+        checkboxes[0].click()
+        await nextTick()
+        // global='Bob' AND age=25 → 0 数据行 → 虚拟滚动渲染空态。
+        // 虚拟滚动布局为「表头（1 role=row）+ 内容行（此处空态 1 role=row）」共 2 行。
+        // 若虚拟滚动分支仍用 setFilterState 整体替换（513 bug），global 被重置为 '',
+        // 只剩 age=25 → 渲染 Alice 数据行（而非空态）——文本断言即暴露回归
+        expect(wrapper.findAll('[role="row"]')).toHaveLength(2)
+        expect(wrapper.text()).not.toContain('Alice')
+        // 关闭 popover（reka-ui dismissable 监听 outside pointerdown），避免 teleport 残留污染后续测试
+        document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 0, clientY: 0 }))
+        await nextTick()
+        wrapper.unmount()
+    })
+
     it('native table: multi-select column filter via popover UI', async () => {
         const wrapper = mountDataTable({ data: testData, columns: filterCols, rowKey: 'id', filterable: true })
         await openColumnFilter(wrapper, 'age')

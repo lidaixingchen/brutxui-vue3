@@ -510,7 +510,7 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     <DataTableColumnFilter
                                         v-if="props.filterable && column.filterType"
                                         :filter-state="filter.filterState.value"
-                                        @update:filter-state="filter.setFilterState"
+                                        @update:filter-state="applyColumnFilterPatch"
                                         :column="column"
                                         :header-label="getHeaderLabel(column)"
                                     />

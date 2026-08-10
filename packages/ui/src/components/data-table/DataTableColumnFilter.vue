@@ -29,6 +29,11 @@ const { t } = useLocale()
 
 type MultiSelectValue = Array<string | number | boolean>
 
+// 同 tick 内连续多选变更时 props 尚未回流（滞后一次更新），以最近一次
+// emit 的本列选区为基准合并；props 回流后经 watch 重置，外部程序化
+// 设置（setFilterState / setColumnFilter）仍以 props 为准
+let pendingMultiSelect: MultiSelectValue | null = null
+
 function updateFilterValue(val: DataTableFilterValue) {
     // 只 emit 本列增量，父级（DataTable.vue）基于当前状态按列函数式合并；
     // 避免基于滞后 props 重建全量快照，导致同一 tick 内多次更新互相覆盖
@@ -63,9 +68,14 @@ function isMultiSelectChecked(value: string | number | boolean): boolean {
     return (vals as MultiSelectValue).includes(value)
 }
 
+function readCurrentMultiSelect(): MultiSelectValue {
+    const val = props.filterState.columns?.[props.column.id]
+    return Array.isArray(val) ? [...(val as MultiSelectValue)] : []
+}
+
 function handleMultiSelectChange(value: string | number | boolean, checked: boolean | 'indeterminate') {
-    const current = props.filterState.columns?.[props.column.id]
-    const vals: MultiSelectValue = Array.isArray(current) ? [...(current as MultiSelectValue)] : []
+    const base = pendingMultiSelect ?? readCurrentMultiSelect()
+    const vals = [...base]
     if (checked === true || checked === 'indeterminate') {
         if (!vals.includes(value)) {
             vals.push(value)
@@ -76,7 +86,9 @@ function handleMultiSelectChange(value: string | number | boolean, checked: bool
             vals.splice(idx, 1)
         }
     }
-    // 只 emit 本列增量（空选清空时传 null，父级删除该列）
+    pendingMultiSelect = vals.length === 0 ? null : vals
+    // 只 emit 本列增量（空选清空时传 null，父级删除该列）；
+    // 用新数组快照而非 pendingMultiSelect 引用，避免父级共享同一数组引用
     emit('update:filterState', {
         columns: { [props.column.id]: vals.length === 0 ? null : [...vals] },
     })
@@ -100,6 +112,7 @@ watch(
     () => props.filterState.columns?.[props.column.id],
     () => {
         pendingRange = null
+        pendingMultiSelect = null
     },
 )
 
