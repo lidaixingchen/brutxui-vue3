@@ -1,4 +1,4 @@
-import { ref, computed, watch, toValue, isRef, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
+import { ref, computed, watch, toValue, isRef, isReadonly, type ComputedRef, type MaybeRefOrGetter, type Ref } from 'vue'
 import { DEFAULT_PAGE_SIZE } from '../lib/defaults'
 
 export { DEFAULT_PAGE_SIZE }
@@ -73,11 +73,16 @@ export function useDataTablePagination(options: UseDataTablePaginationOptions): 
         // 本地修改不再会被外部变化无条件覆盖，父组件也能感知到分页大小变更；
         // 若外部是 getter（无法回写），本地修改保持当前行为。
         // 注：isRef 的类型守卫对 MaybeRefOrGetter 联合中的 ComputedRef 分支
-        // 收窄后 value 仍为只读，这里显式断言；传 ComputedRef 属于调用方传入只读源，
-        // 赋值会被 Vue 拦截，与语义一致
+        // 收窄后 value 仍为只读，这里显式断言。readonly(ref) 经 isReadonly 预检
+        // 直接跳过（写入会警告）；ComputedRef 传入时 Vue 会 throw，由 try/catch
+        // 静默兜底——两者均属于调用方传入只读源，回写失败不影响本地分页状态
         const external = options.pageSize
-        if (isRef(external)) {
-            ;(external as Ref<number | undefined>).value = size
+        if (isRef(external) && !isReadonly(external)) {
+            try {
+                ;(external as Ref<number | undefined>).value = size
+            } catch {
+                // ComputedRef 等只读源：忽略回写失败
+            }
         }
         currentPageSize.value = size
         currentPage.value = 1
