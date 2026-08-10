@@ -40,69 +40,70 @@ describe('useDataTableFilter', () => {
     })
 
     it('global filter is case-insensitive', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setGlobalFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.global = 'ALICE'
+        setGlobalFilter('ALICE')
         expect(filteredData(data).map((r) => r.id)).toEqual([1])
     })
 
     it('global filter matches across visible columns', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setGlobalFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.global = 'example.com'
+        setGlobalFilter('example.com')
         expect(filteredData(data)).toHaveLength(3)
     })
 
     it('global filter does not match hidden columns', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setGlobalFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.global = 'Alice'
+        setGlobalFilter('Alice')
         const result = filteredData(data)
         expect(result).toHaveLength(1)
         expect(result[0].name).toBe('Alice')
     })
 
     it('column-level filter', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setColumnFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.columns = { age: '30' }
+        setColumnFilter('age', '30')
         expect(filteredData(data).map((r) => r.id)).toEqual([2])
     })
 
     it('empty column filter value is skipped', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setColumnFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.columns = { age: '' }
+        setColumnFilter('age', '')
         expect(filteredData(data)).toHaveLength(3)
     })
 
     it('multiple column filters stack (AND)', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setColumnFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.columns = { name: 'a', email: 'example' }
+        setColumnFilter('name', 'a')
+        setColumnFilter('email', 'example')
         const result = filteredData(data).map((r) => r.name)
         expect(result).toEqual(['Alice', 'Charlie'])
     })
 
     it('global and column filters stack', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setGlobalFilter, setColumnFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.global = 'example'
-        filterState.value.columns = { name: 'b' }
+        setGlobalFilter('example')
+        setColumnFilter('name', 'b')
         expect(filteredData(data).map((r) => r.id)).toEqual([2])
     })
 
@@ -110,20 +111,20 @@ describe('useDataTableFilter', () => {
         const cols: DataTableColumn<Row>[] = [
             { id: 'upper', header: 'Upper', accessorFn: (row) => row.name.toUpperCase() },
         ]
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setGlobalFilter, filteredData } = useDataTableFilter({
             columns: () => cols,
             filterable: () => true,
         })
-        filterState.value.global = 'ALICE'
+        setGlobalFilter('ALICE')
         expect(filteredData(data).map((r) => r.id)).toEqual([1])
     })
 
     it('does not mutate input array', () => {
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setGlobalFilter, filteredData } = useDataTableFilter({
             columns: () => columns,
             filterable: () => true,
         })
-        filterState.value.global = 'a'
+        setGlobalFilter('a')
         const snapshot = [...data]
         filteredData(data)
         expect(data).toEqual(snapshot)
@@ -139,12 +140,12 @@ describe('useDataTableFilter', () => {
             { id: 3, name: 'End', email: 'end@example.com', age: 3, createdAt: '2026-01-03T23:00:00' },
             { id: 4, name: 'After', email: 'after@example.com', age: 4, createdAt: '2026-01-04' },
         ]
-        const { filterState, filteredData } = useDataTableFilter({
+        const { setColumnFilter, filteredData } = useDataTableFilter({
             columns: () => dateColumns,
             filterable: () => true,
         })
 
-        filterState.value.columns = { createdAt: { start: '2026-01-02', end: '2026-01-03' } }
+        setColumnFilter('createdAt', { start: '2026-01-02', end: '2026-01-03' })
 
         expect(filteredData(dateData).map((row) => row.id)).toEqual([2, 3])
     })

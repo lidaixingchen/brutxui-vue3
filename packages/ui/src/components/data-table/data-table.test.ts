@@ -630,7 +630,7 @@ describe('DataTable virtual scroll & column filtering options', () => {
             filterable: true,
         })
         const vm = wrapper.vm as any
-        vm.filter.filterState.value.columns.name = 'Alice'
+        vm.filter.setFilterState({ global: '', columns: { name: 'Alice' } })
         await nextTick()
         expect(wrapper.findAll('tbody tr')).toHaveLength(1)
         expect(wrapper.text()).toContain('Alice')
@@ -644,7 +644,7 @@ describe('DataTable virtual scroll & column filtering options', () => {
             filterable: true,
         })
         const vm = wrapper.vm as any
-        vm.filter.filterState.value.columns.email = 'bob@example.com'
+        vm.filter.setFilterState({ global: '', columns: { email: 'bob@example.com' } })
         await nextTick()
         expect(wrapper.findAll('tbody tr')).toHaveLength(1)
         expect(wrapper.text()).toContain('Bob')
@@ -658,7 +658,7 @@ describe('DataTable virtual scroll & column filtering options', () => {
             filterable: true,
         })
         const vm = wrapper.vm as any
-        vm.filter.filterState.value.columns.age = [25, 35]
+        vm.filter.setFilterState({ global: '', columns: { age: [25, 35] } })
         await nextTick()
         // Alice (25) and Charlie (35) should remain
         expect(wrapper.findAll('tbody tr')).toHaveLength(2)
@@ -686,7 +686,7 @@ describe('DataTable virtual scroll & column filtering options', () => {
             global: globalProvide,
         })
         const vm = wrapper.vm as any
-        vm.filter.filterState.value.columns.date = { start: '2026-02-01', end: '2026-07-01' }
+        vm.filter.setFilterState({ global: '', columns: { date: { start: '2026-02-01', end: '2026-07-01' } } })
         await nextTick()
         expect(wrapper.findAll('tbody tr')).toHaveLength(1)
         expect(wrapper.text()).toContain('B')

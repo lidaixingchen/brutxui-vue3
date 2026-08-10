@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type DeepReadonly } from 'vue'
 import { useLocale } from '@/composables/useLocale'
 import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from './types'
 import Input from '../input/Input.vue'
@@ -17,7 +17,7 @@ import PopoverContent from '../popover/PopoverContent.vue'
 const props = defineProps<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     column: DataTableColumn<any>
-    filterState: DataTableFilterState
+    filterState: DeepReadonly<DataTableFilterState>
     headerLabel: string
 }>()
 
@@ -30,7 +30,8 @@ const { t } = useLocale()
 type MultiSelectValue = Array<string | number | boolean>
 
 function updateFilterValue(val: DataTableFilterValue) {
-    const columns = { ...(props.filterState.columns || {}) }
+    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
+    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
     if (val === undefined || val === null || val === '') {
         delete columns[props.column.id]
     } else {
@@ -69,7 +70,8 @@ function isMultiSelectChecked(value: string | number | boolean): boolean {
 }
 
 function handleMultiSelectChange(value: string | number | boolean, checked: boolean | 'indeterminate') {
-    const columns = { ...(props.filterState.columns || {}) }
+    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
+    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
     const current = columns[props.column.id]
     const vals: MultiSelectValue = Array.isArray(current) ? [...(current as MultiSelectValue)] : []
     if (checked === true || checked === 'indeterminate') {
@@ -103,7 +105,8 @@ function getDateRangeVal(bound: 'start' | 'end'): string {
 }
 
 function handleDateRangeChange(bound: 'start' | 'end', val: string) {
-    const columns = { ...(props.filterState.columns || {}) }
+    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
+    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
     const current = columns[props.column.id]
     let next: { start: string | null; end: string | null }
     if (current && typeof current === 'object' && !Array.isArray(current)) {
@@ -120,7 +123,8 @@ function handleDateRangeChange(bound: 'start' | 'end', val: string) {
 }
 
 function resetColumnFilter() {
-    const columns = { ...(props.filterState.columns || {}) }
+    // props.filterState 为只读视图，spread 出的 columns 需断言回可变类型后再修改/emit
+    const columns = { ...(props.filterState.columns || {}) } as Record<string, DataTableFilterValue>
     delete columns[props.column.id]
     emit('update:filterState', {
         ...props.filterState,

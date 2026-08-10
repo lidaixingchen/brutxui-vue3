@@ -1,5 +1,5 @@
-import { ref, computed, toValue, type MaybeRefOrGetter, type Ref } from 'vue'
-import type { DataTableColumn, DataTableFilterState } from '@/components/data-table/types'
+import { ref, readonly, computed, toValue, type DeepReadonly, type MaybeRefOrGetter, type Ref } from 'vue'
+import type { DataTableColumn, DataTableFilterState, DataTableFilterValue } from '@/components/data-table/types'
 import { getCellValue } from '@/lib/data-table-utils'
 import { parseFormattedDate } from '@/lib/date'
 
@@ -9,7 +9,12 @@ export interface UseDataTableFilterOptions<T extends object> {
 }
 
 export interface UseDataTableFilterReturn<T> {
-    filterState: Ref<DataTableFilterState>
+    /** 只读视图：修改请经 setGlobalFilter / setColumnFilter / setFilterState / clearFilters */
+    filterState: DeepReadonly<Ref<DataTableFilterState>>
+    setGlobalFilter: (value: string) => void
+    setColumnFilter: (columnId: string, value: DataTableFilterValue) => void
+    setFilterState: (state: DataTableFilterState) => void
+    clearFilters: () => void
     filteredData: (data: T[]) => T[]
 }
 
@@ -54,6 +59,25 @@ export function useDataTableFilter<T extends object>(
     options: UseDataTableFilterOptions<T>,
 ): UseDataTableFilterReturn<T> {
     const filterState = ref<DataTableFilterState>({ global: '', columns: {} })
+
+    function setGlobalFilter(value: string): void {
+        filterState.value = { ...filterState.value, global: value }
+    }
+
+    function setColumnFilter(columnId: string, value: DataTableFilterValue): void {
+        filterState.value = {
+            ...filterState.value,
+            columns: { ...filterState.value.columns, [columnId]: value },
+        }
+    }
+
+    function setFilterState(state: DataTableFilterState): void {
+        filterState.value = state
+    }
+
+    function clearFilters(): void {
+        filterState.value = { global: '', columns: {} }
+    }
 
     const visibleColumns = computed(() =>
         toValue(options.columns).filter((col) => !col.hidden),
@@ -149,5 +173,12 @@ export function useDataTableFilter<T extends object>(
         return result
     }
 
-    return { filterState, filteredData }
+    return {
+        filterState: readonly(filterState),
+        setGlobalFilter,
+        setColumnFilter,
+        setFilterState,
+        clearFilters,
+        filteredData,
+    }
 }

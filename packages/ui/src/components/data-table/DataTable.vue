@@ -265,7 +265,8 @@ watch(() => props.data, (newData, oldData) => {
 })
 
 watch(filter.filterState, (newState) => {
-    emit('filter', newState)
+    // filterState 对外为只读视图，emit 的是监听快照，下游只读消费
+    emit('filter', newState as DataTableFilterState)
 }, { deep: true })
 
 const warnedColumns = new Set<string>()
@@ -336,9 +337,8 @@ defineExpose({
     },
     filter: {
         filterState: filter.filterState,
-        setGlobalFilter: (value: string) => {
-            filter.filterState.value = { ...filter.filterState.value, global: value }
-        },
+        setGlobalFilter: filter.setGlobalFilter,
+        setFilterState: filter.setFilterState,
     },
     selection: {
         toggleRow: selection.toggleRowSelection,
@@ -419,7 +419,8 @@ function getCellClasses(column: DataTableColumn<T>): string {
         <div v-if="filterable || slots.toolbar" :class="toolbarClasses">
             <div v-if="filterable" class="flex items-center gap-2">
                 <Input
-                    v-model="filter.filterState.value.global"
+                    :model-value="filter.filterState.value.global"
+                    @update:model-value="filter.setGlobalFilter"
                     size="sm"
                     :placeholder="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
                     :aria-label="filterPlaceholder ?? t('dataTable.filterPlaceholder')"
@@ -484,7 +485,8 @@ function getCellClasses(column: DataTableColumn<T>): string {
                                     <!-- Column Filter UI -->
                                     <DataTableColumnFilter
                                         v-if="props.filterable && column.filterType"
-                                        v-model:filter-state="filter.filterState.value"
+                                        :filter-state="filter.filterState.value"
+                                        @update:filter-state="filter.setFilterState"
                                         :column="column"
                                         :header-label="getHeaderLabel(column)"
                                     />
