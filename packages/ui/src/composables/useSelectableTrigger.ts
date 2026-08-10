@@ -27,6 +27,20 @@ export interface UseSelectableTriggerReturn {
     triggerClasses: ComputedRef<string>
 }
 
+// 解析 baseClass：按函数形参个数做 arity 分派——`() => T` 是无参 getter（与
+// MaybeRefOrGetter 中的 getter 形态一致，如 `() => cascaderTriggerVariants(...)`），
+// 只有声明了形参的 `(state) => T` 才接收 state 对象。
+// 注意：状态回调禁止使用默认参数/rest 参数（Function.length 会退化为 0，被误判为零参 getter）
+function resolveBaseClass(
+    base: SelectableTriggerClass | undefined,
+    state: SelectableTriggerState,
+): string | false | null | undefined {
+    if (typeof base !== 'function') return toValue(base)
+    return base.length > 0
+        ? (base as (state: SelectableTriggerState) => string | false | null | undefined)(state)
+        : (base as () => string | false | null | undefined)()
+}
+
 export function useSelectableTrigger<TValue = unknown>(
     options: UseSelectableTriggerOptions<TValue> = {}
 ): UseSelectableTriggerReturn {
@@ -46,14 +60,7 @@ export function useSelectableTrigger<TValue = unknown>(
 
     const triggerClasses = computed(() => {
         const state = { hasValue: hasValue.value }
-        // 按函数形参个数做 arity 分派：`() => T` 是无参 getter（与 MaybeRefOrGetter 中
-        // 的 getter 形态一致，如 `() => cascaderTriggerVariants(...)`），不能当状态回调调用；
-        // 只有声明了形参的 `(state) => T` 才接收 state 对象。避免 getter 被静默传入 state 造成语义错位
-        const baseClass = typeof options.baseClass === 'function'
-            ? (options.baseClass.length > 0
-                ? (options.baseClass as (state: SelectableTriggerState) => string | false | null | undefined)(state)
-                : (options.baseClass as () => string | false | null | undefined)())
-            : toValue(options.baseClass)
+        const baseClass = resolveBaseClass(options.baseClass, state)
         const emptyClass = options.emptyClass === undefined
             ? DEFAULT_EMPTY_CLASS
             : toValue(options.emptyClass)

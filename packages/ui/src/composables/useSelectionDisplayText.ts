@@ -20,15 +20,18 @@ function defaultGetLabel<TItem>(item: TItem): string {
     if (typeof item === 'number' || typeof item === 'boolean') return String(item)
     if (item && typeof item === 'object' && 'label' in item) {
         const label = (item as { label?: unknown }).label
-        // 空白/纯空格标签视为无效，避免多选列表渲染出 "A, , C" 畸形文案
+        // 空白/纯空格标签视为无效
         if (typeof label === 'string' && label.trim() !== '') return label
     }
-    // 对象缺少可用 label 时回退到 String()，避免单选模式显示空白（该空串会掩盖
-    // "已选中" 状态）；null/undefined 仍返回空串
-    return typeof item === 'object' && item !== null ? String(item) : ''
+    // 无可用 label 返回空串，由调用侧决定回退：
+    // 单选路径回退 placeholder，多选列表路径过滤空标签项（不把 [object Object]
+    // 之类的内部对象表示暴露给用户）
+    return ''
 }
 
-// ListFormat 无状态，提升为模块级单例避免每次 computed 重算都重新构造
+// ListFormat 无状态，提升为模块级单例避免每次 computed 重算都重新构造。
+// 注意：实例在模块加载时以当时的默认 locale 创建，宿主应用运行时动态切换 locale
+// 不会反映到默认列表文案中；动态 locale 场景请通过 formatList 覆盖
 const listFormatter =
     typeof Intl !== 'undefined' && 'ListFormat' in Intl
         ? new Intl.ListFormat(undefined, { style: 'long', type: 'conjunction' })
@@ -55,7 +58,10 @@ export function useSelectionDisplayText<TItem>(
                 console.warn('[useSelectionDisplayText] multiple is false but multiple items are selected; only the first item is displayed.')
             }
             const selected = items[0]
-            return selected ? getLabel(selected) : placeholder
+            // 选中项无可用标签（getLabel 返回空串）时回退 placeholder，
+            // 避免显示空白掩盖「已选中」状态
+            const label = selected ? getLabel(selected) : ''
+            return label || placeholder
         }
 
         if (items.length === 0) return placeholder
@@ -63,7 +69,8 @@ export function useSelectionDisplayText<TItem>(
         const maxDisplay = toValue(options.maxDisplay) ?? 3
         if (items.length <= maxDisplay) {
             const formatList = options.formatList ?? defaultFormatList
-            return formatList(items.map(getLabel))
+            // 过滤无可用标签的项（getLabel 返回空串），避免渲染出 "A, , C" 畸形文案
+            return formatList(items.map(getLabel).filter((label) => label !== ''))
         }
 
         return options.formatCount?.(items.length) ?? `${items.length} selected`

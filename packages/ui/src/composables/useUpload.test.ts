@@ -227,6 +227,14 @@ describe('useUpload', () => {
             addFiles([createFile('b.txt', 10)])
             expect(selectedFiles.value).toHaveLength(2)
         })
+
+        it('addFiles 同批内重复文件只保留一个', () => {
+            const { selectedFiles, addFiles } = useUpload()
+            const file = createFile('a.txt', 10)
+            const added = addFiles([file, file])
+            expect(added).toHaveLength(1)
+            expect(selectedFiles.value).toHaveLength(1)
+        })
     })
 
     describe('removeFile / clearFiles', () => {
