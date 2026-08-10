@@ -47,7 +47,7 @@ const SIZE_TO_ICON: Record<NonNullable<SelectTriggerVariantProps['size']>, IconS
 }
 
 // 使用 useClearable composable
-const { showClear, handleClear: handleClearEvent, onMouseEnter, onMouseLeave } = useClearable({
+const { showClear, handleClear: handleClearEvent, onMouseEnter, onMouseLeave, onFocus, onBlur } = useClearable({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
     disabled: () => props.disabled,
@@ -94,6 +94,8 @@ function handleKeyDown(e: KeyboardEvent) {
         class="w-full"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
+        @focusin="onFocus"
+        @focusout="onBlur"
     >
         <SelectTriggerPrimitive
             :id="id"

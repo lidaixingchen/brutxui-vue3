@@ -114,7 +114,7 @@ const passwordToggleLabel = computed(() =>
 )
 
 // 使用 useClearable composable
-const { showClear, handleClear: handleClearEvent, onMouseEnter, onMouseLeave } = useClearable({
+const { showClear, handleClear: handleClearEvent, onMouseEnter, onMouseLeave, onFocus, onBlur } = useClearable({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
     disabled: () => props.disabled,
@@ -217,6 +217,8 @@ defineExpose({
             :class="inputContainerClasses"
             @mouseenter="onMouseEnter"
             @mouseleave="onMouseLeave"
+            @focusin="onFocus"
+            @focusout="onBlur"
         >
             <!-- 前置插槽：仅在存在时渲染，防止出现空灰色块 -->
             <div
