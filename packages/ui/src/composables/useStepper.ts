@@ -73,6 +73,9 @@ export function useStepper(options: UseStepperOptions): UseStepperReturn {
     }
 
     function handleKeydown(e: KeyboardEvent) {
+        // 忽略带修饰键的按键：避免拦截浏览器全局快捷键（Alt+方向键前进后退、
+        // Ctrl+Home/End、Shift+滚动等），也避免误处理输入框内的组合键
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
         switch (e.key) {
             case 'ArrowRight':
             case 'ArrowDown':
