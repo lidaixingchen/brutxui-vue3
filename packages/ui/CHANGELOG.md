@@ -1,5 +1,17 @@
 # brutx-ui-vue
 
+## 0.10.1
+
+### Patch Changes
+
+- 基于代码审查（open-code-review）逐轮修复多个组件的缺陷与可访问性问题：
+
+  - **可访问性**：alert 关闭按钮阻止冒泡并自动关联 `aria-describedby`、移除冗余 `aria-live`；avatar 状态圆点改 sr-only 播报、默认 alt 语义化；auth-card 防重复提交与错误即时清除；badge 关闭图标显式 `aria-hidden`；breadcrumb 省略号 sr-only 仅在无自定义插槽时渲染、当前页去除 link 语义；before-after 焦点态改 outline 保留偏移投影；input 聚焦反馈改 `focus-within`、只读禁用后缀交互、`aria-invalid` 按变体推导。
+  - **样式与类契约**：button 仅 `effect="glitch"` 按钮输出 glitch 类（消除普通按钮 DOM 污染）、关闭按钮透明度过渡改用 `transition-opacity`；accordion、breadcrumb、avatar 变体与结构收敛。
+  - **i18n 一致性**：brutalist-hero 空字符串回退默认文案、CLI 终端演示抽为 `terminal` 插槽。
+  - **组件契约**：backtop 非法选择器容错、MutationObserver 动态 target 支持销毁重建后重新绑定；before-after 值越界 clamp 归一；avatar `delayMs`/`asChild` 透传；input 新增 `autocomplete` prop 支持密码管理器识别。
+  - **测试与文档**：各组件补充边界用例并同步中英文档。
+
 ## 0.10.0
 
 ### Minor Changes
