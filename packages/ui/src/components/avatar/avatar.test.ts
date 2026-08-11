@@ -1,6 +1,8 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import { defineComponent } from 'vue'
+import { defineComponent, h } from 'vue'
 import { AvatarRoot } from 'reka-ui'
+import { en } from '@/locales/en'
+import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Avatar from './Avatar.vue'
 import AvatarImage from './AvatarImage.vue'
 import AvatarFallback from './AvatarFallback.vue'
@@ -37,6 +39,16 @@ const AvatarWithFallback = defineComponent({
             <AvatarFallback :class="fallbackClass">JD</AvatarFallback>
         </Avatar>
     `,
+})
+
+// reka AvatarFallback 依赖 AvatarRoot context（缺失即抛错，见 createContext），
+// 单独 mount 时必须 stub，才能触达 AvatarFallback.vue 自身的 inject 兜底分支。
+const AvatarFallbackStub = defineComponent({
+    name: 'AvatarFallbackStub',
+    props: { class: String, delayMs: { type: Number, default: undefined } },
+    setup(props, { slots }) {
+        return () => h('div', { 'data-testid': 'fallback-stub', class: props.class, 'data-delay-ms': props.delayMs }, slots.default?.())
+    },
 })
 
 describe('Avatar', () => {
@@ -83,7 +95,7 @@ describe('Avatar', () => {
 
     it('applies default variant background', () => {
         const wrapper = mount(Avatar)
-        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('bg-brutal-muted')
+        expect(wrapper.findComponent(AvatarRoot).classes()).toContain('bg-brutal-muted/20')
     })
 
     it('applies primary variant background', () => {
@@ -135,23 +147,39 @@ describe('Avatar', () => {
         expect(root.element.contains(statusDot.element)).toBe(false)
     })
 
-    it('status indicator has role and localized aria-label for accessibility', () => {
+    it('status indicator has role and sr-only label for accessibility', () => {
         const wrapper = mount(Avatar, { props: { status: 'busy' } })
         const statusDot = wrapper.find('.absolute.rounded-full')
         expect(statusDot.attributes('role')).toBe('status')
-        expect(statusDot.attributes('aria-label')).toBe('忙碌')
+        expect(statusDot.find('.sr-only').text()).toBe('忙碌')
     })
 
-    it('status indicator aria-label is localized for online', () => {
+    it('status indicator sr-only label is localized for online', () => {
         const wrapper = mount(Avatar, { props: { status: 'online' } })
         const statusDot = wrapper.find('.absolute.rounded-full')
-        expect(statusDot.attributes('aria-label')).toBe('在线')
+        expect(statusDot.find('.sr-only').text()).toBe('在线')
     })
 
-    it('status indicator aria-label is localized for offline', () => {
+    it('status indicator sr-only label is localized for offline', () => {
         const wrapper = mount(Avatar, { props: { status: 'offline' } })
         const statusDot = wrapper.find('.absolute.rounded-full')
-        expect(statusDot.attributes('aria-label')).toBe('离线')
+        expect(statusDot.find('.sr-only').text()).toBe('离线')
+    })
+
+    it('updates status label when status changes', async () => {
+        const wrapper = mount(Avatar, { props: { status: 'online' } })
+        expect(wrapper.find('.sr-only').text()).toBe('在线')
+
+        await wrapper.setProps({ status: 'busy' })
+        expect(wrapper.find('.sr-only').text()).toBe('忙碌')
+    })
+
+    it('localizes status label via injected locale', () => {
+        const wrapper = mount(Avatar, {
+            props: { status: 'busy' },
+            global: { provide: { [LOCALE_INJECTION_KEY]: en } },
+        })
+        expect(wrapper.find('.sr-only').text()).toBe('Busy')
     })
 })
 
@@ -226,5 +254,34 @@ describe('AvatarFallback', () => {
         const fallback = wrapper.find('.font-bold')
         expect(fallback.classes()).toContain('bg-brutal-accent')
         expect(fallback.classes()).toContain('text-brutal-accent-foreground')
+    })
+
+    it('renders default variant when used outside Avatar (inject fallback)', () => {
+        const wrapper = mount(AvatarFallback, {
+            slots: { default: 'JD' },
+            global: { stubs: { AvatarFallback: AvatarFallbackStub } },
+        })
+        const fallback = wrapper.find('[data-testid="fallback-stub"]')
+        expect(fallback.exists()).toBe(true)
+        expect(fallback.classes()).toContain('bg-brutal-muted')
+        expect(fallback.classes()).toContain('text-brutal-muted-foreground')
+    })
+
+    it('forwards delayMs to reka fallback', () => {
+        const wrapper = mount(AvatarFallback, {
+            props: { delayMs: 300 },
+            global: { stubs: { AvatarFallback: AvatarFallbackStub } },
+        })
+        const fallback = wrapper.find('[data-testid="fallback-stub"]')
+        expect(fallback.attributes('data-delay-ms')).toBe('300')
+    })
+
+    it('custom class overrides variant background via cn merge', () => {
+        const wrapper = mount(AvatarWithFallback, {
+            props: { fallbackClass: 'bg-red-500' },
+        })
+        const fallback = wrapper.find('.font-bold')
+        expect(fallback.classes()).toContain('bg-red-500')
+        expect(fallback.classes()).not.toContain('bg-brutal-muted')
     })
 })

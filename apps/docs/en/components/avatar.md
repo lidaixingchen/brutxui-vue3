@@ -87,7 +87,7 @@ Controls the background color of the avatar root container and `AvatarFallback`,
 
 | Variant | Root Container Background | Fallback Background |
 | --- | --- | --- |
-| `default` | `bg-brutal-muted` | `bg-brutal-muted` |
+| `default` | `bg-brutal-muted/20` | `bg-brutal-muted` |
 | `primary` | `bg-brutal-primary/20` | `bg-brutal-primary` |
 | `secondary` | `bg-brutal-secondary/20` | `bg-brutal-secondary` |
 | `accent` | `bg-brutal-accent/20` | `bg-brutal-accent` |
@@ -168,13 +168,16 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `src` | `string` | — | Image URL |
-| `alt` | `string` | — | Alternative text |
+| `alt` | `string` | `''` | Alternative text; defaults to an empty string, which marks the image as decorative (skipped by screen readers) — pass it explicitly for meaningful images |
 | `class` | `string` | — | Additional class name |
 
 ### AvatarFallback
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
+| `delayMs` | `number` | — | Delay in milliseconds before the fallback appears while the image loads; renders immediately when omitted |
+| `as` | `string \| Component` | `'span'` | Render as a specified element |
+| `asChild` | `boolean` | `false` | Whether to render the default slot content as the child element (`as` is ignored when `true`) |
 | `class` | `string` | — | Additional class name |
 
 ## Slots
@@ -193,7 +196,7 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 
 ## Accessibility
 
-- **ARIA Attributes**: The status dot uses `role="status"` and `aria-label` attributes for screen reader support
+- **ARIA Attributes**: The status dot uses `role="status"` (a live region) with an inner `sr-only` text carrying the status label; label changes on status or language switches are announced by screen readers
 - **Internationalization**: Status labels provide localized text via i18n:
   - `online` -> "Online"
   - `offline` -> "Offline"

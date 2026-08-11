@@ -86,7 +86,7 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 
 | 变体 | 根容器背景 | 回退背景 |
 | --- | --- | --- |
-| `default` | `bg-brutal-muted` | `bg-brutal-muted` |
+| `default` | `bg-brutal-muted/20` | `bg-brutal-muted` |
 | `primary` | `bg-brutal-primary/20` | `bg-brutal-primary` |
 | `secondary` | `bg-brutal-secondary/20` | `bg-brutal-secondary` |
 | `accent` | `bg-brutal-accent/20` | `bg-brutal-accent` |
@@ -167,13 +167,16 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `src` | `string` | — | 图片地址 |
-| `alt` | `string` | — | 替代文本 |
+| `alt` | `string` | `''` | 替代文本；默认空字符串语义化为装饰性图片（读屏跳过），需语义化时必须显式传入 |
 | `class` | `string` | — | 附加类名 |
 
 ### AvatarFallback
 
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
+| `delayMs` | `number` | — | 图片加载期间回退内容延迟出现的时长（毫秒）；不传则立即渲染 |
+| `as` | `string \| Component` | `'span'` | 渲染为指定元素 |
+| `asChild` | `boolean` | `false` | 是否将默认插槽内容作为子元素渲染（作为 `true` 时忽略 `as`） |
 | `class` | `string` | — | 附加类名 |
 
 ## 插槽
@@ -192,7 +195,7 @@ import { Avatar, AvatarFallback } from 'brutx-ui-vue'
 
 ## 可访问性
 
-- **ARIA 属性**：状态圆点使用 `role="status"` 和 `aria-label` 属性，支持屏幕阅读器
+- **ARIA 属性**：状态圆点使用 `role="status"`（live region），其内 `sr-only` 文本承载状态标签；状态或语言切换时文本更新会被屏幕阅读器播报
 - **国际化**：状态标签通过 i18n 提供本地化文本：
   - `online` → "在线"
   - `offline` → "离线"
