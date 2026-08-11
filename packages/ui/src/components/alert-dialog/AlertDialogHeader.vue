@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
 import { sectionHeaderVariants } from '@/lib/modal-variants'
 
 interface AlertDialogHeaderProps {
-    class?: string
+    class?: ClassValue
 }
 
 const props = defineProps<AlertDialogHeaderProps>()
@@ -15,7 +16,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <header :class="classes">
         <slot />
-    </div>
+    </header>
 </template>

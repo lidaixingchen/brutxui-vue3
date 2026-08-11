@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ClassValue } from 'clsx'
 import { AlertDialogDescription as AlertDialogDescriptionPrimitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { alertDialogDescriptionVariants } from './alert-dialog-variants'
 
 interface AlertDialogDescriptionProps {
-    class?: string
+    class?: ClassValue
 }
 
 const props = defineProps<AlertDialogDescriptionProps>()

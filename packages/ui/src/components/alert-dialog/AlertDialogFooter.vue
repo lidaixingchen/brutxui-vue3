@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
 import { sectionFooterVariants } from '@/lib/modal-variants'
 
 interface AlertDialogFooterProps {
-    class?: string
+    class?: ClassValue
 }
 
 const props = defineProps<AlertDialogFooterProps>()
@@ -15,7 +16,7 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <div :class="classes">
+    <div v-if="$slots.default" :class="classes">
         <slot />
     </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type ButtonHTMLAttributes } from 'vue'
+import type { ClassValue } from 'clsx'
 import { AlertDialogAction as AlertDialogActionPrimitive, type PrimitiveProps, useForwardProps } from 'reka-ui'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
@@ -7,9 +8,11 @@ import { buttonVariants } from '../button/button-variants'
 
 type ButtonVariantProps = VariantProps<typeof buttonVariants>
 
-interface AlertDialogActionProps extends PrimitiveProps {
+// HTMLButtonAttributes 补全原生 button 属性（type/disabled/name/form/aria-* 等）的类型面，
+// 与运行时「除 class/variant 外全透传」的转发行为保持一致；@vue-ignore 抑制 Vue 编译器对全局属性扩展的展开告警。
+interface AlertDialogActionProps extends PrimitiveProps, /* @vue-ignore */ Omit<ButtonHTMLAttributes, 'class'> {
     variant?: NonNullable<ButtonVariantProps['variant']>
-    class?: string
+    class?: ClassValue
 }
 
 const props = withDefaults(defineProps<AlertDialogActionProps>(), {

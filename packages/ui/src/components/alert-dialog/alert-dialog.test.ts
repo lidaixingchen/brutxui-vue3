@@ -14,7 +14,9 @@ const primitiveStub = {
 describe('AlertDialogContent', () => {
     const contentStubs = {
         AlertDialogPortal: primitiveStub,
-        AlertDialogOverlay: primitiveStub,
+        AlertDialogOverlay: {
+            template: '<div data-testid="alert-dialog-overlay"><slot /></div>',
+        },
         AlertDialogContent: {
             template: '<div data-testid="alert-dialog-content"><slot /></div>',
         },
@@ -41,6 +43,25 @@ describe('AlertDialogContent', () => {
         const content = wrapper.find('[data-testid="alert-dialog-content"]')
         expect(content.classes()).toContain('custom-content')
     })
+
+    it('forwards attrs to content primitive (Teleport 根节点下 aria-*/data-* 不丢失)', () => {
+        const wrapper = mount(AlertDialogContent, {
+            attrs: { 'data-custom': 'foo', 'aria-label': 'Custom dialog' },
+            global: { stubs: contentStubs },
+        })
+        const content = wrapper.find('[data-testid="alert-dialog-content"]')
+        expect(content.attributes('data-custom')).toBe('foo')
+        expect(content.attributes('aria-label')).toBe('Custom dialog')
+    })
+
+    it('merges overlayClass into overlay', () => {
+        const wrapper = mount(AlertDialogContent, {
+            props: { overlayClass: 'custom-overlay' },
+            global: { stubs: contentStubs },
+        })
+        const overlay = wrapper.find('[data-testid="alert-dialog-overlay"]')
+        expect(overlay.classes()).toContain('custom-overlay')
+    })
 })
 
 describe('AlertDialogHeader', () => {
@@ -57,6 +78,25 @@ describe('AlertDialogHeader', () => {
         })
         expect(wrapper.classes()).toContain('custom-header')
     })
+
+    it('accepts array/object class forms', () => {
+        const wrapper = mount(AlertDialogHeader, {
+            props: { class: ['custom-header', { 'foo': true, 'bar': false }] },
+            slots: { default: 'Header text' },
+        })
+        expect(wrapper.classes()).toContain('custom-header')
+        expect(wrapper.classes()).toContain('foo')
+        expect(wrapper.classes()).not.toContain('bar')
+    })
+
+    it('forwards attrs to root element', () => {
+        const wrapper = mount(AlertDialogHeader, {
+            attrs: { 'data-testid': 'header-root', 'aria-label': 'header' },
+            slots: { default: 'Header text' },
+        })
+        expect(wrapper.attributes('data-testid')).toBe('header-root')
+        expect(wrapper.attributes('aria-label')).toBe('header')
+    })
 })
 
 describe('AlertDialogFooter', () => {
@@ -70,8 +110,23 @@ describe('AlertDialogFooter', () => {
     it('applies custom class', () => {
         const wrapper = mount(AlertDialogFooter, {
             props: { class: 'custom-footer' },
+            slots: { default: 'Footer text' },
         })
         expect(wrapper.classes()).toContain('custom-footer')
+    })
+
+    it('renders nothing when default slot is empty', () => {
+        const wrapper = mount(AlertDialogFooter)
+        expect(wrapper.find('div').exists()).toBe(false)
+    })
+
+    it('accepts array/object class forms', () => {
+        const wrapper = mount(AlertDialogFooter, {
+            props: { class: ['custom-footer', { 'baz': true }] },
+            slots: { default: 'Footer text' },
+        })
+        expect(wrapper.classes()).toContain('custom-footer')
+        expect(wrapper.classes()).toContain('baz')
     })
 })
 
@@ -90,6 +145,13 @@ describe('AlertDialogTitle', () => {
             global: { stubs: { AlertDialogTitle: primitiveStub } },
         })
         expect(wrapper.classes()).toContain('custom-title')
+    })
+
+    it('renders default fallback when slot is empty', () => {
+        const wrapper = mount(AlertDialogTitle, {
+            global: { stubs: { AlertDialogTitle: primitiveStub } },
+        })
+        expect(wrapper.text()).toContain('Alert')
     })
 })
 
