@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import Command from './Command.vue'
 import CommandDialog from './CommandDialog.vue'
 import CommandInput from './CommandInput.vue'
@@ -149,11 +149,77 @@ describe('CommandInput', () => {
         })
         await nextTick()
         await nextTick()
+        // 未命中项按 v-if 卸载，不再残留 DOM（reka 键盘导航不会命中隐藏项）
         const items = wrapper.findAll('[data-slot="command-item"]')
-        const alphaItem = items.find(i => i.text().includes('Alpha'))
-        const betaItem = items.find(i => i.text().includes('Beta'))
-        expect(alphaItem?.attributes('style') ?? '').not.toContain('display: none')
-        expect(betaItem?.attributes('style')).toContain('display: none')
+        expect(items.length).toBe(1)
+        expect(items[0].text()).toContain('Alpha')
+    })
+
+    it('reflects externally reset filterSearch back to the input', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput model-value="alpha" />
+                    <CommandList>
+                        <CommandItem value="alpha item">Alpha</CommandItem>
+                        <CommandItem value="beta item">Beta</CommandItem>
+                    </CommandList>
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandItem },
+            },
+        })
+        await nextTick()
+        await nextTick()
+        const input = wrapper.find('input')
+        expect(input.element.value).toBe('alpha')
+
+        // 外部（如 Command 暴露的 filterSearch）重置搜索词时，输入框应同步回显
+        ;(wrapper as any).vm.filterSearch = 'bet'
+        await nextTick()
+        await nextTick()
+        expect(input.element.value).toBe('bet')
+        expect((wrapper as any).vm.filterSearch).toBe('bet')
+    })
+
+    it('does not echo update:modelValue when parent drives modelValue', async () => {
+        const Harness = defineComponent({
+            components: { Command, CommandInput },
+            template: `
+                <Command>
+                    <CommandInput
+                        :model-value="modelValue"
+                        @update:model-value="onUpdate"
+                    />
+                </Command>
+            `,
+            setup() {
+                const modelValue = ref('alpha')
+                const updates: string[] = []
+                function onUpdate(value: string) {
+                    updates.push(value)
+                    modelValue.value = value
+                }
+                return { modelValue, updates, onUpdate }
+            },
+        })
+
+        const wrapper = mount(Harness, {
+            ...localeProvide,
+            global: { components: { Command, CommandInput } },
+        })
+        await nextTick()
+        expect(wrapper.find('input').element.value).toBe('alpha')
+
+        // 模拟父组件驱动 modelValue 变化：输入框应更新，但不回显 update:modelValue（无多余循环）
+        ;(wrapper.vm as any).modelValue = 'beta'
+        await nextTick()
+        await nextTick()
+        expect(wrapper.find('input').element.value).toBe('beta')
+        expect((wrapper.vm as any).updates).toEqual([])
     })
 })
 
@@ -613,11 +679,14 @@ describe('Command filtering', () => {
 })
 
 describe('CommandSeparator', () => {
-    it('renders with separator styling', () => {
+    it('renders as native hr with separator semantics', () => {
         const wrapper = mount(CommandSeparator)
+        expect(wrapper.element.tagName).toBe('HR')
         expect(wrapper.classes()).toContain('h-[3px]')
         expect(wrapper.classes()).toContain('bg-brutal-fg')
         expect(wrapper.attributes('role')).toBe('separator')
+        expect(wrapper.attributes('data-slot')).toBe('command-separator')
+        expect(wrapper.attributes('aria-orientation')).toBe('horizontal')
     })
 
     it('applies custom class', () => {
@@ -645,7 +714,9 @@ describe('CommandShortcut', () => {
 
     it('has default styling classes', () => {
         const wrapper = mount(CommandShortcut)
-        expect(wrapper.classes()).toContain('ml-auto')
+        expect(wrapper.classes()).toContain('ms-auto')
+        expect(wrapper.classes()).toContain('inline-flex')
+        expect(wrapper.classes()).toContain('items-center')
         expect(wrapper.classes()).toContain('text-xs')
         expect(wrapper.classes()).toContain('font-black')
         expect(wrapper.classes()).toContain('bg-brutal-muted')
