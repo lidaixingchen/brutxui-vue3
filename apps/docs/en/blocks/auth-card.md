@@ -24,8 +24,14 @@ A Neo-Brutalist authentication card featuring social login buttons, an email/pas
 <script setup>
 import AuthCard from '@/components/ui/auth-card/AuthCard.vue'
 
-function handleLogin({ email, password }) {
-    console.log('Login submitted:', email, password)
+async function handleLogin({ email, password }) {
+    // Security constraint: `password` is plaintext. Submit only over HTTPS,
+    // and never log it or send it to analytics or devtools.
+    await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    })
 }
 
 function handleForgotPassword() {
@@ -78,6 +84,8 @@ interface AuthCardTexts {
 | `title` | `string` | locale: `authCard.welcomeBack` | Card title |
 | `description` | `string` | locale: `authCard.signInToContinue` | Card description |
 | `texts` | `AuthCardTexts` | `{}` | Custom text overrides |
+| `submitting` | `boolean` | `false` | Set to `true` during async submission: disables submit/social buttons and prevents duplicate triggers |
+| `passwordMinLength` | `number` | `6` | Minimum password length; override when it differs from your backend policy |
 | `class` | `string` | — | Custom CSS class |
 
 ## Events
@@ -88,6 +96,8 @@ interface AuthCardTexts {
 | `forgotPassword` | — | Emitted when the forgot password link is clicked |
 | `googleClick` | — | Emitted when the Google login button is clicked |
 | `githubClick` | — | Emitted when the GitHub login button is clicked |
+
+> **Security constraint**: the `login-submit` payload carries a plaintext password. Submit only over HTTPS, and never log this payload or send it to analytics or devtools.
 
 ## Accessibility
 

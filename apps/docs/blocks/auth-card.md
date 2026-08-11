@@ -23,8 +23,14 @@ description: 新粗野主义风格的认证卡片，包含社交登录按钮、�
 <script setup>
 import AuthCard from '@/components/ui/auth-card/AuthCard.vue'
 
-function handleLogin({ email, password }) {
-    console.log('Login submitted:', email, password)
+async function handleLogin({ email, password }) {
+    // 安全约束：password 为明文，仅可在 HTTPS 下提交给后端，
+    // 不要打印到日志、埋点或开发工具中
+    await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+    })
 }
 
 function handleForgotPassword() {
@@ -77,6 +83,8 @@ interface AuthCardTexts {
 | `title` | `string` | locale: `authCard.welcomeBack` | 卡片标题 |
 | `description` | `string` | locale: `authCard.signInToContinue` | 卡片描述 |
 | `texts` | `AuthCardTexts` | `{}` | 自定义文本 |
+| `submitting` | `boolean` | `false` | 异步提交期间置 `true`：禁用提交/社交登录按钮并防止重复触发 |
+| `passwordMinLength` | `number` | `6` | 密码最小长度，与后端策略不一致时覆盖 |
 | `class` | `string` | — | 自定义样式类 |
 
 ## 事件
@@ -87,6 +95,8 @@ interface AuthCardTexts {
 | `forgotPassword` | — | 点击忘记密码链接时触发 |
 | `googleClick` | — | 点击 Google 登录按钮时触发 |
 | `githubClick` | — | 点击 GitHub 登录按钮时触发 |
+
+> **安全约束**：`login-submit` 载荷携带明文密码，调用方必须仅在 HTTPS 下提交，且不得将该 payload 打印到日志、埋点或开发工具中。
 
 ## 可访问性
 
