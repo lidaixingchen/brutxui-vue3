@@ -48,11 +48,11 @@ describe('Accordion', () => {
     it('forwards update:modelValue exactly once', () => {
         const onUpdate = vi.fn()
         const rootStub = defineComponent({
-            template: '<div><slot /></div>',
             emits: ['update:modelValue'],
             created() {
                 this.$emit('update:modelValue', 'item-2')
             },
+            template: '<div><slot /></div>',
         })
         mount(Accordion, {
             props: { type: 'single', modelValue: 'item-1', 'onUpdate:modelValue': onUpdate },
@@ -217,6 +217,14 @@ describe('AccordionTrigger', () => {
         expect(container.find('.custom-icon').exists()).toBe(true)
     })
 
+    it('does not render icon container when #icon slot is empty', () => {
+        const wrapper = mount(AccordionTrigger, {
+            slots: { icon: '' },
+            global: { stubs: triggerStubs },
+        })
+        expect(wrapper.find('[data-accordion-icon]').exists()).toBe(false)
+    })
+
     it('applies default variant hover lift via context', () => {
         const wrapper = mount(AccordionTrigger, {
             global: { stubs: triggerStubs },
@@ -232,6 +240,32 @@ describe('AccordionTrigger', () => {
             global: {
                 stubs: triggerStubs,
                 provide: { [accordionItemKey]: { variant: ref('interactive') } },
+            },
+        })
+        const trigger = wrapper.find('[data-testid="accordion-trigger"]')
+        expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
+        expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
+        expect(trigger.classes()).toContain('hover:bg-brutal-muted')
+    })
+
+    it('applies flat variant without hover lift via context', () => {
+        const wrapper = mount(AccordionTrigger, {
+            global: {
+                stubs: triggerStubs,
+                provide: { [accordionItemKey]: { variant: ref('flat') } },
+            },
+        })
+        const trigger = wrapper.find('[data-testid="accordion-trigger"]')
+        expect(trigger.classes()).not.toContain('hover:shadow-brutal-sm')
+        expect(trigger.classes()).not.toContain('hover:-translate-y-0.5')
+        expect(trigger.classes()).toContain('hover:bg-brutal-muted')
+    })
+
+    it('applies ghost variant without hover lift via context', () => {
+        const wrapper = mount(AccordionTrigger, {
+            global: {
+                stubs: triggerStubs,
+                provide: { [accordionItemKey]: { variant: ref('ghost') } },
             },
         })
         const trigger = wrapper.find('[data-testid="accordion-trigger"]')
