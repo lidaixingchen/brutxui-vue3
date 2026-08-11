@@ -65,14 +65,14 @@ Use the `variant` prop on `AccordionItem` to set different neo-brutalist styles:
 
 ### Content Area Styling
 
-`AccordionContent` styling automatically inherits the `variant` of its parent `AccordionItem` (synchronized via `provide`/`inject`, no manual specification needed). All variants share the base classes `border-t-3 border-brutal p-6 bg-brutal-bg text-brutal-fg`, with variant-specific differences applied as follows:
+`AccordionContent` styling automatically inherits the `variant` of its parent `AccordionItem` (synchronized via `provide`/`inject`, no manual specification needed). All variants share the base classes `border-t-3 p-6 bg-brutal-bg text-brutal-fg`, with the border color declared explicitly per variant (avoiding unreliable overrides when both base and variant carry a border-color class), then variant-specific differences are applied as follows:
 
 | Variant | Content Area Difference | Visual Effect |
 | ------ | ---------------- | ---------- |
-| `default` | (no additional styles) | Black thick separator line at top + default background |
-| `flat` | `bg-brutal-muted/30` | Background replaced with semi-transparent muted color, matching the flat style |
+| `default` | `border-brutal` | Black thick separator line at top + default background |
+| `flat` | `border-brutal bg-brutal-muted/30` | Background replaced with semi-transparent muted color, matching the flat style |
 | `ghost` | `border-transparent` | Top border transparent, overall more minimal and lightweight |
-| `interactive` | `hover:bg-brutal-muted/20` | Slight highlight on hover in the content area, enhancing interactive feedback |
+| `interactive` | `border-brutal hover:bg-brutal-muted/20` | Slight highlight on hover in the content area, enhancing interactive feedback |
 
 > Note: The variant applies across all three layers -- `AccordionItem` (container), `AccordionTrigger` (trigger), and `AccordionContent` (content area) -- to maintain visual consistency.
 
@@ -137,7 +137,7 @@ Use the `variant` prop on `AccordionItem` to set different neo-brutalist styles:
 | `Accordion#default` | — | Accordion content, typically contains `AccordionItem` |
 | `AccordionItem#default` | — | Panel item content, typically contains `AccordionTrigger` and `AccordionContent` |
 | `AccordionTrigger#default` | — | Trigger text content |
-| `AccordionTrigger#icon` | — | Custom expand/collapse icon, defaults to `ChevronDown` |
+| `AccordionTrigger#icon` | — | Custom expand/collapse icon, defaults to `ChevronDown`; custom icons get the same appearance as the default one (border/background/shadow), and the expand rotation animation applies to the icon container, so non-SVG icons work too |
 | `AccordionContent#default` | — | Content displayed when the panel is expanded |
 
 ## Accessibility
