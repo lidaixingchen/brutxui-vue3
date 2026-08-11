@@ -83,6 +83,7 @@ export const timePickerPanelVariants = cva(
 )
 
 export const timePickerTriggerVariants = cva([
-    'w-12 px-0 justify-center gap-0.5 font-mono text-sm rounded-brutal shadow-brutal-sm',
+    // inline-flex 使 justify-center / gap-0.5 自包含生效，不再依赖被合并进 SelectTrigger 的 flex 容器
+    'inline-flex items-center w-12 px-0 justify-center gap-0.5 font-mono text-sm rounded-brutal shadow-brutal-sm',
     'hover:shadow-brutal',
 ])
