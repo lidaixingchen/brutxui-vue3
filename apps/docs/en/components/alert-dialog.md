@@ -70,6 +70,7 @@ import { Button } from 'brutx-ui-vue'
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `class` | `string` | — | Custom CSS class |
+| `overlayClass` | `string` | — | Custom CSS class for the overlay (merged into overlay for wrapper customization) |
 
 ### AlertDialogHeader
 

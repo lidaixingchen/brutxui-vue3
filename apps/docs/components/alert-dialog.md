@@ -69,6 +69,7 @@ import { Button } from 'brutx-ui-vue'
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `class` | `string` | — | 自定义样式类 |
+| `overlayClass` | `string` | — | 遮罩层自定义样式类（合并进 overlay，供二次封装定制遮罩样式） |
 
 ### AlertDialogHeader
 
