@@ -18,14 +18,12 @@ const props = withDefaults(defineProps<AccordionItemProps>(), {
     class: undefined,
 })
 
-// 只读取真正需要转发的 key：variant/class 变化无需触发转发链重算
-const forwardedKeys = Object.keys(props).filter((key) => key !== 'class' && key !== 'variant')
-
-const delegatedProps = computed(() =>
-    Object.fromEntries(
-        forwardedKeys.map((key) => [key, props[key as keyof typeof props]])
-    ) as Omit<AccordionItemProps, 'class' | 'variant'>
-)
+// 与 Accordion.vue / AccordionTrigger.vue 一致的解构转发模式；
+// as Omit 断言保证 v-bind 的类型检查在 vue-tsc 下成立（转发的 props 不含 class/variant）
+const delegatedProps = computed(() => {
+    const { class: _, variant: __, ...delegated } = props
+    return delegated as Omit<AccordionItemProps, 'class' | 'variant'>
+})
 
 const forwardedProps = useForwardProps(delegatedProps)
 

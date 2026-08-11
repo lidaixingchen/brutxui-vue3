@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { AccordionHeader, AccordionTrigger, type AccordionTriggerProps, useForwardProps } from 'reka-ui'
-import { computed, inject } from 'vue'
+import { Comment, computed, inject, useSlots } from 'vue'
 import { ChevronDown } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { accordionTriggerVariants, accordionTriggerIconClasses } from './accordion-variants'
@@ -32,6 +32,15 @@ const classes = computed(() =>
     )
 )
 
+const slots = useSlots()
+
+// 空 #icon 槽（如 <template #icon></template> 用于隐藏默认箭头）时不渲染图标容器，
+// 避免出现带边框样式的空盒子；无 #icon 槽时渲染默认 ChevronDown
+const hasIconContent = computed(() => {
+    if (!slots.icon) return true
+    return slots.icon().some((vnode) => vnode.type !== Comment)
+})
+
 const iconClasses = computed(() => cn('inline-flex items-center justify-center', accordionTriggerIconClasses))
 
 const defaultIconClasses = computed(() => iconSizeVariants({ size: props.iconSize }))
@@ -41,7 +50,7 @@ const defaultIconClasses = computed(() => iconSizeVariants({ size: props.iconSiz
     <AccordionHeader class="flex !m-0">
         <AccordionTrigger v-bind="forwarded" :class="classes">
             <slot />
-            <span data-accordion-icon :class="iconClasses">
+            <span v-if="hasIconContent" data-accordion-icon :class="iconClasses">
                 <slot name="icon">
                     <ChevronDown :class="defaultIconClasses" />
                 </slot>
