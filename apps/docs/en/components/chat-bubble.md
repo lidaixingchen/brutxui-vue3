@@ -176,14 +176,17 @@ type MessageStatus = 'sending' | 'sent' | 'delivered' | 'read' | 'failed'
 |------|------|--------|------|
 | `messages` | `ChatMessage[]` | — | Message array (required) |
 | `groupByTime` | `boolean` | `false` | Whether to group by time (today/yesterday/date) |
-| `groupInterval` | `number` | `5` | Time grouping interval (minutes) within the same date; adjacent messages exceeding this gap are split into a new group |
+| `groupInterval` | `number` | `5` | Time grouping interval (minutes) within the same date, clamped to a minimum of 1; adjacent messages whose gap **exceeds** this interval (strictly `>`) are split into a new group |
 | `showAvatar` | `boolean` | `true` | Whether to show avatars |
 | `showStatus` | `boolean` | `true` | Whether to show message status |
 | `showTimestamp` | `boolean` | `true` | Whether to show timestamps |
-| `dateFormat` | `(date: Date) => string` | — | Custom date formatting function |
+| `dateFormat` | `(date: Date) => string` | — | Custom date formatting function, also used for group date labels (non today/yesterday) and interval-split group time labels |
 | `class` | `string` | — | Custom CSS class |
 
-> **Note:** When `groupByTime` is `true`, messages are automatically grouped by date labels (today/yesterday/specific date), with dividers and date labels between groups; within the same date, adjacent messages whose time gap exceeds `groupInterval` minutes are further split into separate groups (showing only the group spacing, without repeating the date label).
+> **Note:** When `groupByTime` is `true`:
+> - Messages are **stably sorted by timestamp ascending** before grouping (messages without/invalid timestamps sink to the end, keeping their relative order), so unordered input still yields continuous, non-jumping date groups;
+> - Groups are separated by dividers and date labels (today/yesterday/specific date);
+> - Within the same date, adjacent messages whose time gap exceeds `groupInterval` minutes are further split into separate groups that show the specific time (HH:mm, customizable via `dateFormat`), without repeating the date label.
 
 ## Slots
 

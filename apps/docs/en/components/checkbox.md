@@ -108,12 +108,18 @@ import { Checkbox } from 'brutx-ui-vue'
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `checked` | `boolean \| 'indeterminate'` | — | Checked state |
+| `checked` | `boolean \| 'indeterminate'` | — | Checked state; omitting it puts the component in uncontrolled mode |
+| `defaultValue` | `boolean \| 'indeterminate'` | — | Initial checked state in uncontrolled mode; only effective while `checked` is undefined |
 | `disabled` | `boolean` | `false` | Whether disabled |
 | `variant` | `'default' \| 'primary' \| 'secondary' \| 'accent' \| 'danger'` | `'default'` | Color variant |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Size |
 | `ariaLabel` | `string` | Locale default (`checkbox.check`) | Accessibility label |
+| `name` | `string` | — | Form field name; when provided, renders a hidden input submitted with the owning `<form>` as a name/value pair |
+| `value` | `string \| number \| bigint \| object \| null` | `'on'` | Value submitted with the form |
+| `required` | `boolean` | `false` | Native form required flag, passed through to the hidden input |
 | `class` | `string` | — | Custom style class |
+
+> **Controlled vs. uncontrolled:** When `checked` is omitted (or undefined), the component maintains its own internal state and notifies the parent via `update:checked`; use `defaultValue` to declare the initial state. Once `checked` is explicitly provided, the component becomes controlled and the prop is authoritative.
 
 ## Events
 
