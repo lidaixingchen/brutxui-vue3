@@ -1,4 +1,5 @@
 import type { ColorPreset } from '@/lib/default-presets'
+import type { ClassValue } from 'clsx'
 
 export type ColorPickerSize = 'sm' | 'default' | 'lg'
 export type ColorPickerFormat = 'hex' | 'rgb' | 'hsl'
@@ -21,7 +22,9 @@ export interface ColorPickerProps {
     name?: string
     id?: string
     ariaLabel?: string
-    class?: string
+    // 放宽为 ClassValue：Vue 中 class 是特殊 prop，声明后不再自动透传，
+    // 组件内部手动绑定到根元素（triggerClasses）；ClassValue 支持数组/对象绑定
+    class?: ClassValue
 }
 
 export interface ColorPickerEmits {
@@ -33,8 +36,8 @@ export interface ColorPickerEmits {
 
 export function normalizePresets(presets: string[] | readonly ColorPreset[] | undefined): readonly ColorPreset[] {
     if (!presets || presets.length === 0) return []
-    if (typeof presets[0] === 'string') {
-        return (presets as string[]).map((value) => ({ label: value, value }))
-    }
-    return presets as readonly ColorPreset[]
+    // 逐元素归一化：允许混合数组（部分 string、部分 ColorPreset），
+    // 不依赖首元素类型做整体分支判断，避免 `as string[]` 危险断言导致
+    // 对象被 map 成 '[object Object]' 或字符串原样混入结果
+    return presets.map((item) => (typeof item === 'string' ? { label: item, value: item } : item))
 }

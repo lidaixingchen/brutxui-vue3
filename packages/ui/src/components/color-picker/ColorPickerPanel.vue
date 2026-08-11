@@ -82,7 +82,17 @@ function syncFromModel() {
     }
 }
 
-watch(() => props.modelValue, syncFromModel, { immediate: true })
+// 内部 emit 后父级回写同一值时跳过 watch 同步，避免自覆盖回环
+// （拖拽/输入过程中父级把刚发出的值回写进来，再同步会扰动滑块/光标）
+let lastEmittedPanel: string | null | undefined
+
+watch(() => props.modelValue, (val) => {
+    if (val === lastEmittedPanel) {
+        lastEmittedPanel = undefined
+        return
+    }
+    syncFromModel()
+}, { immediate: true })
 
 const formattedValue = computed(() => {
     if (!props.modelValue) return ''
@@ -96,6 +106,7 @@ const hexPreview = computed(() => {
 
 function emitUpdate() {
     const value = formatColor(hsv.value, props.format, props.showAlpha)
+    lastEmittedPanel = value
     emit('update:modelValue', value)
 }
 
@@ -107,7 +118,14 @@ const { history, addToHistory, clearHistory } = useColorHistory({
 const svPadEl = ref<HTMLDivElement | null>(null)
 const hueSliderEl = ref<HTMLDivElement | null>(null)
 const alphaSliderEl = ref<HTMLDivElement | null>(null)
-const dragging = ref<'sv' | 'hue' | 'alpha' | null>(null)
+
+interface DragSession {
+    id: number
+    target: 'sv' | 'hue' | 'alpha'
+}
+// 按 pointerId 维护独立拖拽会话：多点触控时不同滑块互不干扰，
+// pointercancel/lostpointercapture 统一清理，避免会话悬空后悬停移动误触发拖拽
+const activeDrag = ref<DragSession | null>(null)
 
 function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
     const el = target === 'sv' ? svPadEl.value : target === 'hue' ? hueSliderEl.value : alphaSliderEl.value
@@ -131,22 +149,28 @@ function updateFromPointer(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) 
 
 function handlePointerDown(target: 'sv' | 'hue' | 'alpha', event: PointerEvent) {
     event.preventDefault()
-    dragging.value = target
+    activeDrag.value = { id: event.pointerId, target }
     const el = event.currentTarget
-    if (!(el instanceof HTMLElement)) return
-    el.setPointerCapture(event.pointerId)
+    if (el instanceof HTMLElement) {
+        try {
+            el.setPointerCapture(event.pointerId)
+        } catch {
+            // 指针非活跃（已释放/元素被移除）时可能抛 DOMException，忽略
+        }
+    }
     updateFromPointer(target, event)
 }
 
 function handlePointerMove(event: PointerEvent) {
-    if (!dragging.value) return
-    updateFromPointer(dragging.value, event)
+    const session = activeDrag.value
+    if (!session || event.pointerId !== session.id) return
+    updateFromPointer(session.target, event)
 }
 
 function handlePointerUp(event: PointerEvent) {
-    if (!dragging.value) return
-    const target = dragging.value
-    dragging.value = null
+    const session = activeDrag.value
+    if (!session || event.pointerId !== session.id) return
+    activeDrag.value = null
     const el = event.currentTarget
     if (el instanceof HTMLElement) {
         try {
@@ -155,8 +179,13 @@ function handlePointerUp(event: PointerEvent) {
             // pointer already released
         }
     }
-    if (target === 'sv' || target === 'hue' || target === 'alpha') {
-        confirmSelection()
+    confirmSelection()
+}
+
+// 系统手势/滚动等取消指针，或指针捕获丢失：清理会话，后续悬停移动不再误触发
+function handlePointerCancel(event: PointerEvent) {
+    if (activeDrag.value?.id === event.pointerId) {
+        activeDrag.value = null
     }
 }
 
@@ -182,8 +211,9 @@ const alphaThumbStyle = computed(() => ({
 }))
 
 const svThumbStyle = computed(() => ({
-    left: `${hsv.value.s}%`,
-    top: `${100 - hsv.value.v}%`,
+    // 由 HSV_COMPONENT_MAX 派生定位，避免硬编码 100 与 updateFromPointer 的归一化漂移
+    left: `${(hsv.value.s / HSV_COMPONENT_MAX) * 100}%`,
+    top: `${(1 - hsv.value.v / HSV_COMPONENT_MAX) * 100}%`,
 }))
 
 const alphaTrackBackground = computed(() => {
@@ -213,12 +243,16 @@ function handleInputUpdate(value: string | null) {
     const parsed = parseColor(value)
     if (parsed) {
         hsv.value = { ...parsed }
-        emit('update:modelValue', formatColor(hsv.value, props.format, props.showAlpha))
+        const formatted = formatColor(hsv.value, props.format, props.showAlpha)
+        lastEmittedPanel = formatted
+        emit('update:modelValue', formatted)
     }
 }
 
 function handleInputConfirm(value: string | null) {
-    if (value) {
+    // 与 confirmSelection 一致：先校验再 emit/写历史，非法或空值一律透传 null，
+    // 避免脏数据进入历史记录或透传给外层 confirm 消费者
+    if (value && isValidColor(value)) {
         emit('confirm', value)
         addToHistory(value)
     } else {
@@ -253,9 +287,10 @@ function handleKeydownSv(event: KeyboardEvent) {
     const step = event.shiftKey ? 10 : 1
     let s = hsv.value.s
     let v = hsv.value.v
+    // 边界用 HSV_COMPONENT_MAX 派生，与滑块定位/指针换算保持一致
     if (event.key === 'ArrowLeft') s = Math.max(0, s - step)
-    else if (event.key === 'ArrowRight') s = Math.min(100, s + step)
-    else if (event.key === 'ArrowUp') v = Math.min(100, v + step)
+    else if (event.key === 'ArrowRight') s = Math.min(HSV_COMPONENT_MAX, s + step)
+    else if (event.key === 'ArrowUp') v = Math.min(HSV_COMPONENT_MAX, v + step)
     else if (event.key === 'ArrowDown') v = Math.max(0, v - step)
     else return
     event.preventDefault()
@@ -292,6 +327,8 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
             @pointerdown="handlePointerDown('sv', $event)"
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
+            @pointercancel="handlePointerCancel"
+            @lostpointercapture="handlePointerCancel"
             @keydown="handleKeydownSv"
         >
             <div class="absolute inset-0 pointer-events-none" style="background: linear-gradient(to right, #fff, rgba(255,255,255,0))" />
@@ -316,6 +353,8 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 @pointerdown="handlePointerDown('hue', $event)"
                 @pointermove="handlePointerMove"
                 @pointerup="handlePointerUp"
+                @pointercancel="handlePointerCancel"
+                @lostpointercapture="handlePointerCancel"
                 @keydown="handleKeydownHue"
             >
                 <div
@@ -338,6 +377,8 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
                 @pointerdown="handlePointerDown('alpha', $event)"
                 @pointermove="handlePointerMove"
                 @pointerup="handlePointerUp"
+                @pointercancel="handlePointerCancel"
+                @lostpointercapture="handlePointerCancel"
                 @keydown="handleKeydownAlpha"
             >
                 <div
@@ -380,7 +421,9 @@ const normalizedModelValue = computed(() => (props.modelValue ? normalizeColor(p
             <span class="block text-xs font-bold uppercase tracking-tight text-brutal-fg mb-2">
                 {{ resolvedPresetsLabel }}
             </span>
-            <div role="listbox" :aria-label="resolvedPresetsLabel" class="flex flex-wrap gap-1.5">
+            <!-- 色块为原生 button（aria-pressed 表达选中态），容器用 group 而非 listbox，
+                 避免「option 语义但无 listbox 键盘导航」的半吊子实现 -->
+            <div role="group" :aria-label="resolvedPresetsLabel" class="flex flex-wrap gap-1.5">
                 <ColorPickerSwatch
                     v-for="preset in normalizedPresets"
                     :key="preset.value"

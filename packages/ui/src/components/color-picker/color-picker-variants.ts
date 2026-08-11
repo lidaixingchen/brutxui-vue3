@@ -32,6 +32,7 @@ export const colorPickerSwatchVariants = cva(
         'inline-flex items-center justify-center',
         'border-2 border-brutal',
         'cursor-pointer',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brutal-ring',
         'transition-transform duration-100',
         'hover:scale-110', /* 组件私有：特定缩放效果，不抽取 */
         'active:scale-95', /* 组件私有：特定缩放效果，不抽取 */
@@ -46,7 +47,9 @@ export const colorPickerSwatchVariants = cva(
             },
             selected: {
                 true: 'ring-2 ring-brutal-ring ring-offset-2 ring-offset-brutal-bg',
-                false: '', // no-op: unselected uses base swatch style
+                // 保留 false 分支：defaultVariants 与消费方均显式传入 selected=false，
+                // CVA 的变体类型由此 key 推导，移除会导致类型不匹配或解析异常
+                false: '',
             },
         },
         defaultVariants: {

@@ -86,18 +86,23 @@ const ICON_SIZE_CLASSES = {
 
 defineExpose({ open })
 
+// 手动维护 contentId 并绑定到面板根节点：reka 的 rootContext.contentId 是普通属性（非响应式），
+// 触发器经 as-child 读取时可能仍是空串（内容挂载发生在触发渲染之后），内置接线不可靠。
+// 即使 reka 覆盖按钮的 aria-controls 为它自己的 contentId，其内容元素也带同 id，引用仍有效。
 const contentId = `color-picker-content-${useId()}`
 
 const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(() => props.presets)
 </script>
 
 <template>
+    <!-- 原生表单提交：触发器按钮是 type="button"，name 不随表单提交，
+         渲染隐藏 input 携带当前颜色值，值随 modelValue 变化同步 -->
+    <input v-if="name" type="hidden" :name="name" :value="modelValue ?? ''" />
     <PopoverRoot v-model:open="open">
         <PopoverTrigger as-child>
             <button
                 :id="id"
                 type="button"
-                :name="name"
                 role="combobox"
                 :aria-expanded="open"
                 :aria-controls="open ? contentId : undefined"
@@ -141,6 +146,7 @@ const presetsForPanel = computed<string[] | readonly ColorPreset[] | undefined>(
         </PopoverTrigger>
         <PopoverContent class="w-auto p-0 border-none shadow-none bg-transparent" align="start">
             <ColorPickerPanel
+                :id="contentId"
                 :model-value="displayValue"
                 :format="format"
                 :show-alpha="showAlpha"

@@ -6,6 +6,7 @@ import ColorPickerInput from './ColorPickerInput.vue'
 import ColorPickerPanel from './ColorPickerPanel.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
+import { normalizePresets } from './types'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
 
@@ -246,10 +247,10 @@ describe('ColorPicker', () => {
     it('renders default presets in panel', async () => {
         wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
         await openPanel(wrapper)
-        const listbox = document.body.querySelector('[role="listbox"]')
-        expect(listbox).not.toBeNull()
-        const options = document.body.querySelectorAll('[role="option"]')
-        expect(options.length).toBeGreaterThan(0)
+        const presetsGroup = document.body.querySelector('[role="group"][aria-label="Presets"]')
+        expect(presetsGroup).not.toBeNull()
+        const swatches = presetsGroup!.querySelectorAll('button[aria-pressed]')
+        expect(swatches.length).toBeGreaterThan(0)
     })
 
     it('renders custom presets when provided', async () => {
@@ -259,8 +260,8 @@ describe('ColorPicker', () => {
             attachTo: document.body,
         })
         await openPanel(wrapper)
-        const options = document.body.querySelectorAll('[role="option"]')
-        expect(options.length).toBe(3)
+        const presetsGroup = document.body.querySelector('[role="group"][aria-label="Presets"]')
+        expect(presetsGroup!.querySelectorAll('button[aria-pressed]').length).toBe(3)
     })
 
     it('does not render presets when showPresets false', async () => {
@@ -270,8 +271,8 @@ describe('ColorPicker', () => {
             attachTo: document.body,
         })
         await openPanel(wrapper)
-        const listbox = document.body.querySelector('[role="listbox"]')
-        expect(listbox).toBeNull()
+        const presetsGroup = document.body.querySelector('[role="group"][aria-label="Presets"]')
+        expect(presetsGroup).toBeNull()
     })
 
     it('emits update:modelValue when preset selected', async () => {
@@ -281,9 +282,9 @@ describe('ColorPicker', () => {
             attachTo: document.body,
         })
         await openPanel(wrapper)
-        const options = document.body.querySelectorAll('[role="option"]')
-        const firstOption = options[0] as HTMLElement
-        firstOption.click()
+        const presetsGroup = document.body.querySelector('[role="group"][aria-label="Presets"]')
+        const firstSwatch = presetsGroup!.querySelector('button[aria-pressed]') as HTMLElement
+        firstSwatch.click()
         await nextTick()
         expect(wrapper.emitted('update:modelValue')).toBeTruthy()
     })
@@ -295,7 +296,8 @@ describe('ColorPicker', () => {
             attachTo: document.body,
         })
         await openPanel(wrapper)
-        const historyGroup = document.body.querySelector('[role="group"]')
+        // 历史区用 aria-labelledby，预设区用 aria-label，据此区分
+        const historyGroup = document.body.querySelector('[role="group"][aria-labelledby]')
         expect(historyGroup).toBeNull()
     })
 
@@ -319,6 +321,42 @@ describe('ColorPicker', () => {
         await nextTick()
         expect(wrapper.emitted('open')).toBeTruthy()
     })
+
+    it('renders a hidden input for form submission when name is set', () => {
+        wrapper = mount(ColorPicker, {
+            ...localeProvide,
+            props: { name: 'color', modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        const hidden = wrapper.find('input[type="hidden"]')
+        expect(hidden.exists()).toBe(true)
+        expect(hidden.attributes('name')).toBe('color')
+        expect(hidden.attributes('value')).toBe('#ff0000')
+    })
+
+    it('does not render a hidden input without name', () => {
+        wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        expect(wrapper.find('input[type="hidden"]').exists()).toBe(false)
+    })
+
+    it('points aria-controls to the rendered content id', async () => {
+        wrapper = mount(ColorPicker, { ...localeProvide, attachTo: document.body })
+        await openPanel(wrapper)
+        const trigger = document.body.querySelector('[role="combobox"]')
+        const controls = trigger!.getAttribute('aria-controls')
+        expect(controls).toBeTruthy()
+        // aria-controls 引用的元素真实存在（reka 内部将同一 contentId 落到内容元素）
+        expect(document.body.querySelector(`#${controls}`)).not.toBeNull()
+    })
+
+    it('normalizes mixed presets per element', () => {
+        // 运行时混合数组来自未类型化的 JS 消费方；as any 模拟该输入
+        const mixed = ['#ff0000', { label: 'Green', value: '#00ff00' }] as any
+        expect(normalizePresets(mixed)).toEqual([
+            { label: '#ff0000', value: '#ff0000' },
+            { label: 'Green', value: '#00ff00' },
+        ])
+    })
 })
 
 describe('ColorPickerSwatch', () => {
@@ -327,7 +365,7 @@ describe('ColorPickerSwatch', () => {
             props: { value: '#ff0000' },
             attachTo: document.body,
         })
-        const swatch = wrapper.find('[role="option"]')
+        const swatch = wrapper.find('button[aria-pressed]')
         expect(swatch.exists()).toBe(true)
         expect(swatch.attributes('style')).toContain('background-color')
     })
@@ -337,7 +375,7 @@ describe('ColorPickerSwatch', () => {
             props: { value: '#ff0000' },
             attachTo: document.body,
         })
-        await wrapper.find('[role="option"]').trigger('click')
+        await wrapper.find('button[aria-pressed]').trigger('click')
         expect(wrapper.emitted('select')).toBeTruthy()
         expect(wrapper.emitted('select')![0]).toEqual(['#ff0000'])
     })
@@ -347,7 +385,7 @@ describe('ColorPickerSwatch', () => {
             props: { value: '#ff0000', disabled: true },
             attachTo: document.body,
         })
-        await wrapper.find('[role="option"]').trigger('click')
+        await wrapper.find('button[aria-pressed]').trigger('click')
         expect(wrapper.emitted('select')).toBeFalsy()
     })
 
@@ -356,17 +394,38 @@ describe('ColorPickerSwatch', () => {
             props: { value: '#ff0000', selected: true },
             attachTo: document.body,
         })
-        const swatch = wrapper.find('[role="option"]')
+        const swatch = wrapper.find('button[aria-pressed]')
         expect(swatch.classes()).toContain('ring-2')
     })
 
-    it('sets aria-selected attribute', () => {
+    it('sets aria-pressed attribute', () => {
         wrapper = mount(ColorPickerSwatch, {
             props: { value: '#ff0000', selected: true },
             attachTo: document.body,
         })
-        const swatch = wrapper.find('[role="option"]')
-        expect(swatch.attributes('aria-selected')).toBe('true')
+        const swatch = wrapper.find('button[aria-pressed]')
+        expect(swatch.attributes('aria-pressed')).toBe('true')
+    })
+
+    it('renders transparent and does not emit select for invalid value', async () => {
+        wrapper = mount(ColorPickerSwatch, {
+            props: { value: 'not-a-color' },
+            attachTo: document.body,
+        })
+        const swatch = wrapper.find('button[aria-pressed]')
+        expect(swatch.attributes('style')).toContain('transparent')
+        await swatch.trigger('click')
+        expect(wrapper.emitted('select')).toBeFalsy()
+    })
+
+    it('has focus-visible ring class', () => {
+        wrapper = mount(ColorPickerSwatch, {
+            props: { value: '#ff0000' },
+            attachTo: document.body,
+        })
+        const swatch = wrapper.find('button[aria-pressed]')
+        expect(swatch.classes()).toContain('focus-visible:ring-2')
+        expect(swatch.classes()).toContain('focus-visible:ring-brutal-ring')
     })
 })
 
@@ -498,6 +557,34 @@ describe('ColorPickerInput', () => {
         expect(emitted).toBeTruthy()
         expect(emitted![0]).toEqual([null])
     })
+
+    it('confirms once when Enter is pressed then blurred', async () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        await input.setValue('#00ff00')
+        await input.trigger('keydown', { key: 'Enter' })
+        expect(wrapper.emitted('confirm')?.length).toBe(1)
+        // Enter 已确认，随后的原生 blur 不再重复 confirm
+        await input.trigger('blur')
+        expect(wrapper.emitted('confirm')?.length).toBe(1)
+    })
+
+    it('keeps the user-typed text when the parent echoes the same normalized value', async () => {
+        wrapper = mount(ColorPickerInput, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input')
+        await input.setValue('#FF0000')
+        // 父级回写归一化后的同值，不得把输入框覆盖回小写（避免光标跳动）
+        await wrapper.setProps({ modelValue: '#ff0000' })
+        expect((input.element as HTMLInputElement).value).toBe('#FF0000')
+    })
 })
 
 describe('ColorPickerPanel pointer interaction', () => {
@@ -568,6 +655,52 @@ describe('ColorPickerPanel pointer interaction', () => {
 
         const emitted = wrapper.emitted('update:modelValue')
         expect(emitted).toBeTruthy()
+    })
+
+    it('stops dragging after pointercancel', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        await nextTick()
+
+        const svSlider = wrapper.find('[aria-label="Saturation"]')
+        await svSlider.trigger('pointerdown', {
+            pointerId: 1,
+            pointerType: 'mouse',
+            clientX: 0,
+            clientY: 0,
+        })
+        const countAfterDown = wrapper.emitted('update:modelValue')?.length ?? 0
+        // 指针被系统取消后，悬停移动不再驱动滑块
+        await svSlider.trigger('pointercancel', { pointerId: 1 })
+        await svSlider.trigger('pointermove', {
+            pointerId: 1,
+            pointerType: 'mouse',
+            clientX: 50,
+            clientY: 0,
+        })
+        expect(wrapper.emitted('update:modelValue')?.length ?? 0).toBe(countAfterDown)
+    })
+
+    it('keeps the correct drag session per pointerId under multi-touch', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        await nextTick()
+
+        const svSlider = wrapper.find('[aria-label="Saturation"]')
+        const hueSlider = wrapper.find('[aria-label="Hue"]')
+        await svSlider.trigger('pointerdown', { pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0 })
+        await hueSlider.trigger('pointerdown', { pointerId: 2, pointerType: 'touch', clientX: 50, clientY: 0 })
+        const count = wrapper.emitted('update:modelValue')?.length ?? 0
+        // 释放 sv 会话（id1），hue（id2）仍在拖拽，其 move 继续生效
+        await svSlider.trigger('pointerup', { pointerId: 1 })
+        await hueSlider.trigger('pointermove', { pointerId: 2, pointerType: 'touch', clientX: 60, clientY: 0 })
+        expect(wrapper.emitted('update:modelValue')?.length ?? 0).toBeGreaterThan(count)
     })
 })
 
