@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { defineComponent, nextTick } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import CookieConsent from './CookieConsent.vue'
@@ -100,5 +101,54 @@ describe('CookieConsent', () => {
             ...localeProvide,
         })
         expect(wrapper.find('[class*="my-consent"]').exists()).toBe(true)
+    })
+
+    it('falls back to default title for empty string', () => {
+        const wrapper = mount(CookieConsent, {
+            props: { title: '', description: '', acceptText: '', declineText: '' },
+            ...localeProvide,
+        })
+        expect(wrapper.text()).toContain('We use cookies')
+        expect(wrapper.text()).toContain('Accept')
+        expect(wrapper.text()).toContain('Decline')
+    })
+
+    it('marks banner as a region labelled by the title', () => {
+        const wrapper = mount(CookieConsent, { ...localeProvide })
+        const root = wrapper.find('div.fixed')
+        expect(root.attributes('role')).toBe('region')
+        const title = root.find('h3')
+        expect(root.attributes('aria-labelledby')).toBe(title.attributes('id'))
+    })
+
+    it('updates modelValue before accept handler reads it', async () => {
+        const Parent = defineComponent({
+            components: { CookieConsent },
+            data() {
+                return { show: true, seenInAccept: true }
+            },
+            template: '<CookieConsent v-model="show" @accept="seenInAccept = show" />',
+        })
+        const wrapper = mount(Parent, { ...localeProvide })
+        const acceptButton = wrapper.findAll('button').find(b => b.text().includes('Accept'))!
+        await acceptButton.trigger('click')
+        await nextTick()
+        // update:modelValue 先于 accept 触发，回调里读到的 modelValue 应为已更新的 false
+        expect(wrapper.vm.seenInAccept).toBe(false)
+    })
+
+    it('updates modelValue before decline handler reads it', async () => {
+        const Parent = defineComponent({
+            components: { CookieConsent },
+            data() {
+                return { show: true, seenInDecline: true }
+            },
+            template: '<CookieConsent v-model="show" @decline="seenInDecline = show" />',
+        })
+        const wrapper = mount(Parent, { ...localeProvide })
+        const declineButton = wrapper.findAll('button').find(b => b.text().includes('Decline'))!
+        await declineButton.trigger('click')
+        await nextTick()
+        expect(wrapper.vm.seenInDecline).toBe(false)
     })
 })
