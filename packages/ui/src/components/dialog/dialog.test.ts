@@ -217,8 +217,14 @@ describe('DialogFooter', () => {
     it('applies custom class', () => {
         const wrapper = mount(DialogFooter, {
             props: { class: 'custom-footer' },
+            slots: { default: 'Footer text' },
         })
         expect(wrapper.classes()).toContain('custom-footer')
+    })
+
+    it('renders nothing when default slot is empty', () => {
+        const wrapper = mount(DialogFooter)
+        expect(wrapper.find('div').exists()).toBe(false)
     })
 })
 

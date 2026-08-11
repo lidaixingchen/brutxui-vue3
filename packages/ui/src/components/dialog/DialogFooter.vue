@@ -13,7 +13,7 @@ const classes = computed(() => cn(sectionFooterVariants(), props.class))
 </script>
 
 <template>
-    <div :class="classes">
+    <div v-if="$slots.default" :class="classes">
         <slot />
     </div>
 </template>

@@ -13,7 +13,7 @@ const classes = computed(() => cn(sectionHeaderVariants(), props.class))
 </script>
 
 <template>
-    <div :class="classes">
+    <header :class="classes">
         <slot />
-    </div>
+    </header>
 </template>
