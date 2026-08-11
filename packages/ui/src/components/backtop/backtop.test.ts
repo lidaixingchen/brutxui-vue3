@@ -204,6 +204,44 @@ describe('Backtop.vue', () => {
         wrapper.unmount()
     })
 
+    it('rebinds scroll listener when selector target is removed and re-added', async () => {
+        const wrapper = mount(Backtop, {
+            props: { target: '.rebox', visibilityHeight: 200 },
+            global: { provide: localeProvide },
+            attachTo: document.body,
+        })
+        expect(wrapper.find('button').exists()).toBe(false)
+
+        const first = document.createElement('div')
+        first.className = 'rebox'
+        first.scrollTop = 300
+        document.body.appendChild(first)
+        await flushPromises()
+        await nextTick()
+        first.dispatchEvent(new Event('scroll'))
+        await nextTick()
+        expect(wrapper.find('button').exists()).toBe(true)
+
+        // 目标被条件渲染销毁：观察器保持存活（解绑 + 隐藏）
+        first.remove()
+        await flushPromises()
+        await nextTick()
+
+        // 目标重建（新 DOM 节点）：观察器自动为新节点重新绑定滚动监听
+        const second = document.createElement('div')
+        second.className = 'rebox'
+        second.scrollTop = 300
+        const secondAddSpy = vi.spyOn(second, 'addEventListener')
+        document.body.appendChild(second)
+        await flushPromises()
+        await nextTick()
+
+        expect(secondAddSpy).toHaveBeenCalledWith('scroll', expect.any(Function), expect.objectContaining({ passive: true }))
+
+        second.remove()
+        wrapper.unmount()
+    })
+
     it('rebinds scroll listener when target changes', async () => {
         const first = document.createElement('div')
         first.className = 'first-box'

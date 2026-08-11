@@ -92,6 +92,17 @@ function stopObserving() {
     observer = null
 }
 
+function syncContainerWithTarget() {
+    const el = getScrollContainer()
+    if (el && !container) {
+        bindContainer()
+    } else if (!el && container) {
+        // 目标被条件渲染销毁：解绑并保持观察，待重建后自动重新绑定
+        unbindContainer()
+        visible.value = false
+    }
+}
+
 function observeDynamicTarget() {
     if (typeof props.target !== 'string') return
     const doc = getDocument()
@@ -103,14 +114,13 @@ function observeDynamicTarget() {
     } catch {
         return
     }
-    stopObserving()
-    observer = new MutationObserverCtor(() => {
-        if (getScrollContainer()) {
-            stopObserving()
-            bindContainer()
-        }
-    })
-    observer.observe(doc.body, { childList: true, subtree: true })
+    // 观察器在字符串 target 模式下常驻组件生命周期：既等待目标首次渲染，也覆盖目标被
+    // v-if 销毁重建后自动重新绑定（见 syncContainerWithTarget）。每次回调仅一次 querySelector，
+    // 开销可忽略；不设超时/重试上限——目标可能延迟渲染，超时与动态 target 契约相悖。
+    if (!observer) {
+        observer = new MutationObserverCtor(syncContainerWithTarget)
+        observer.observe(doc.body, { childList: true, subtree: true })
+    }
 }
 
 function bindContainer() {
@@ -119,7 +129,7 @@ function bindContainer() {
     if (container) {
         container.addEventListener('scroll', throttledScroll, { passive: true })
         handleScroll()
-        stopObserving()
+        // 观察器保持存活（见 observeDynamicTarget），目标匹配后不再断开
     } else {
         // 字符串选择器未匹配到元素（目标仍在动态渲染中）：重置显隐并监听 DOM，
         // 待元素出现后自动绑定滚动监听
@@ -130,9 +140,14 @@ function bindContainer() {
 
 onMounted(() => {
     bindContainer()
+    // 即使目标在挂载时已存在也确保观察器就位，覆盖后续销毁重建的重新绑定场景
+    observeDynamicTarget()
 })
 
 watch(() => props.target, () => {
+    if (typeof props.target !== 'string') {
+        stopObserving()
+    }
     bindContainer()
 })
 
