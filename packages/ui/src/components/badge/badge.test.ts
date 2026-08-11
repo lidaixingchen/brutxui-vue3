@@ -121,6 +121,16 @@ describe('Badge', () => {
             expect(wrapper.emitted('close')).toBeTruthy()
             expect(wrapper.emitted('close')!.length).toBe(1)
         })
+
+        it('marks close icon as aria-hidden', () => {
+            const wrapper = mount(Badge, {
+                props: { closable: true },
+                ...globalProvide,
+            })
+            const icon = wrapper.find('button[aria-label="Close"] svg')
+            expect(icon.exists()).toBe(true)
+            expect(icon.attributes('aria-hidden')).toBe('true')
+        })
     })
 
     describe('dot', () => {
@@ -152,6 +162,49 @@ describe('Badge', () => {
                 ...globalProvide,
             })
             expect(wrapper.find('.rounded-full.bg-current.animate-brutal-badge-pulse').exists()).toBe(false)
+        })
+
+        it('renders dot with pulse animation when only pulse is set (pulse implies dot)', () => {
+            const wrapper = mount(Badge, {
+                props: { pulse: true },
+                ...globalProvide,
+            })
+            expect(wrapper.find('.rounded-full.bg-current.animate-brutal-badge-pulse').exists()).toBe(true)
+        })
+    })
+
+    describe('dot size classes', () => {
+        it('applies sm size dot classes', () => {
+            const wrapper = mount(Badge, {
+                props: { dot: true, size: 'sm' },
+                ...globalProvide,
+            })
+            const dot = wrapper.find('.rounded-full.bg-current')
+            expect(dot.classes()).toContain('h-1.5')
+            expect(dot.classes()).toContain('w-1.5')
+            expect(dot.classes()).toContain('mr-1')
+        })
+
+        it('applies default size dot classes', () => {
+            const wrapper = mount(Badge, {
+                props: { dot: true, size: 'default' },
+                ...globalProvide,
+            })
+            const dot = wrapper.find('.rounded-full.bg-current')
+            expect(dot.classes()).toContain('h-2')
+            expect(dot.classes()).toContain('w-2')
+            expect(dot.classes()).toContain('mr-1.5')
+        })
+
+        it('applies lg size dot classes', () => {
+            const wrapper = mount(Badge, {
+                props: { dot: true, size: 'lg' },
+                ...globalProvide,
+            })
+            const dot = wrapper.find('.rounded-full.bg-current')
+            expect(dot.classes()).toContain('h-2.5')
+            expect(dot.classes()).toContain('w-2.5')
+            expect(dot.classes()).toContain('mr-2')
         })
     })
 
