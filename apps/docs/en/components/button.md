@@ -134,6 +134,8 @@ import { RouterLink } from 'vue-router'
 </template>
 ```
 
+> Note: when building a glitch button directly with the exported `buttonVariants({ effect: 'glitch' })`, pass `glitchSpeed` and `glitchDirection` explicitly — the `medium`/`horizontal` defaults are provided by the `<Button>` component, not by the raw utility function.
+
 ## Variants
 
 | Variant | Description |

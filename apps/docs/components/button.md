@@ -133,6 +133,8 @@ import { RouterLink } from 'vue-router'
 </template>
 ```
 
+> 提示：若直接使用导出的 `buttonVariants({ effect: 'glitch' })` 构建 glitch 按钮，需显式传入 `glitchSpeed` 与 `glitchDirection`（`medium`/`horizontal` 默认值由 `<Button>` 组件提供，原始工具函数不注入默认 glitch 类）。
+
 ## 变体
 
 | 变体 | 说明 |
