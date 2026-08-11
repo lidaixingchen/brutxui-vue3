@@ -273,6 +273,7 @@ defineExpose({
                         type="button"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
                         :aria-label="t('input.clear')"
+                        @mousedown.prevent
                         @click="handleClear"
                     >
                         <X class="h-3.5 w-3.5 text-brutal-placeholder" />

@@ -508,5 +508,14 @@ describe('Input', () => {
             const wrapper = mount(Input, { props: { variant: 'error', ariaInvalid: false } })
             expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
         })
+
+        it('keeps only the variant focus-within shadow after twMerge', () => {
+            // cn(twMerge) 合并 base 的 focus-within:shadow-brutal-lg 与变体的彩色阴影，
+            // DOM 上只保留变体类，避免同一 box-shadow 双类导致 CSS 顺序不确定
+            const wrapper = mount(Input, { props: { variant: 'error' } })
+            const classes = wrapper.find('.brutal-input-container').classes().join(' ')
+            expect(classes).toContain('focus-within:shadow-brutal-primary')
+            expect(classes).not.toContain('focus-within:shadow-brutal-lg')
+        })
     })
 })

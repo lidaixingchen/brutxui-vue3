@@ -7,7 +7,9 @@ import { brutalPress, brutalHoverLiftSm } from '@/lib/brutal-interaction-variant
 const itemLiftClasses = [
     'mb-4',
     'data-[state=closed]:shadow-brutal-sm',
-    'data-[state=open]:shadow-brutal data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5',
+    'data-[state=open]:shadow-brutal',
+    'data-[state=open]:-translate-x-0.5',
+    'data-[state=open]:-translate-y-0.5',
 ]
 
 export const accordionItemVariants = cva(

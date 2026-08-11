@@ -231,4 +231,29 @@ describe('AuthCard', () => {
         const wrapper = mount(AuthCard, { ...localeProvide })
         expect(wrapper.findAll('svg[aria-hidden="true"]').length).toBe(4)
     })
+
+    it('counts password length by Unicode code points', async () => {
+        // 'ab😀' 为 3 个码点（含代理对），按码点计数应 < 4 被拒；UTF-16 码元计为 4 会误放行
+        const wrapper = mount(AuthCard, { props: { passwordMinLength: 4 }, ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('test@example.com')
+        await inputs[1].setValue('ab😀')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Password must be at least 4 characters')
+    })
+
+    it('marks invalid fields with error variant and aria-describedby', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('invalid-email')
+        await wrapper.find('form').trigger('submit')
+        // Input 的 variant=error 推导 aria-invalid，两个字段均标记无效
+        expect(inputs[0].attributes('aria-invalid')).toBe('true')
+        expect(inputs[1].attributes('aria-invalid')).toBe('true')
+        // 错误文本与输入框通过 aria-describedby 关联
+        const describedBy = inputs[0].attributes('aria-describedby')
+        expect(describedBy).toBeTruthy()
+        expect(wrapper.find(`[id="${describedBy}"]`).exists()).toBe(true)
+    })
 })

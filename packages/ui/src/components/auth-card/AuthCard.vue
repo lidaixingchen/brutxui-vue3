@@ -77,6 +77,8 @@ const brandIconClasses = cn(iconSizeVariants({ size: 'md' }), 'mr-2')
 
 const emailId = useId()
 const passwordId = useId()
+const emailErrorId = useId()
+const passwordErrorId = useId()
 
 const email = ref('')
 const password = ref('')
@@ -116,7 +118,8 @@ function handleSubmit() {
     if (!password.value) {
         passwordError.value = t('authCard.passwordRequired')
         valid = false
-    } else if (password.value.length < props.passwordMinLength) {
+    // 按 Unicode 码点计数（[...str] 拆分代理对），避免 emoji 等补充平面字符按 UTF-16 码元多计
+    } else if ([...password.value].length < props.passwordMinLength) {
         passwordError.value = t('authCard.passwordTooShort', { min: props.passwordMinLength })
         valid = false
     }
@@ -161,9 +164,19 @@ function handleSubmit() {
 </LabelRoot>
                     <div class="relative">
                         <Mail :class="fieldIconClasses" aria-hidden="true" />
-                        <Input :id="emailId" v-model="email" type="email" autocomplete="email" :placeholder="t('authCard.emailPlaceholder')" size="default" class="pl-10" />
+                        <Input
+                            :id="emailId"
+                            v-model="email"
+                            type="email"
+                            autocomplete="email"
+                            :variant="emailError ? 'error' : 'default'"
+                            :aria-describedby="emailError ? emailErrorId : undefined"
+                            :placeholder="t('authCard.emailPlaceholder')"
+                            size="default"
+                            class="pl-10"
+                        />
                     </div>
-                    <p v-if="emailError" class="text-sm font-bold text-brutal-destructive">
+                    <p v-if="emailError" :id="emailErrorId" class="text-sm font-bold text-brutal-destructive">
 {{ emailError }}
 </p>
                 </div>
@@ -184,12 +197,14 @@ function handleSubmit() {
                             type="password"
                             show-password
                             autocomplete="current-password"
+                            :variant="passwordError ? 'error' : 'default'"
+                            :aria-describedby="passwordError ? passwordErrorId : undefined"
                             :placeholder="t('authCard.passwordPlaceholder')"
                             size="default"
                             class="pl-10"
                         />
                     </div>
-                    <p v-if="passwordError" class="text-sm font-bold text-brutal-destructive">
+                    <p v-if="passwordError" :id="passwordErrorId" class="text-sm font-bold text-brutal-destructive">
 {{ passwordError }}
 </p>
                 </div>
