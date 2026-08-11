@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, watch, defineAsyncComponent } from 'vue'
+import { type ClassValue } from 'clsx'
 import { TooltipRoot as Tooltip, TooltipTrigger } from 'reka-ui'
 import TooltipContent from '../tooltip/TooltipContent.vue'
 import TooltipProvider from '../tooltip/TooltipProvider.vue'
@@ -68,10 +69,19 @@ const rootClasses = computed(() =>
 )
 
 const vCalendarModelValue = computed<Date | DateRangeValue | null>(() => {
-    if (props.isRange && Array.isArray(props.modelValue) && props.modelValue.length === 2) {
-        return { start: props.modelValue[0], end: props.modelValue[1] }
+    if (props.isRange) {
+        if (Array.isArray(props.modelValue)) {
+            if (props.modelValue.length === 2) {
+                return { start: props.modelValue[0], end: props.modelValue[1] }
+            }
+            // 边界输入：单元素数组按 [start, start] 归一化，避免首次渲染无选中态且交互后 emit null 反向清空父级
+            if (props.modelValue.length === 1 && props.modelValue[0] instanceof Date) {
+                const date = props.modelValue[0]
+                return { start: date, end: date }
+            }
+        }
+        return null
     }
-    if (props.isRange) return null
     if (props.modelValue instanceof Date) return props.modelValue
     return null
 })
@@ -94,7 +104,8 @@ function handleUpdate(value: Date | DateRangeValue | null) {
 }
 
 function handleDrag(value: DateRangeValue) {
-    if (props.disabled) return
+    // 非 range 模式拖拽事件（如误触 drag-attribute 命中）不得破坏 update:modelValue 的单日期契约
+    if (props.disabled || !props.isRange) return
     if (value && typeof value === 'object' && 'start' in value && 'end' in value) {
         const [start, end] = [value.start, value.end].sort((a, b) => a.getTime() - b.getTime())
         emit('update:modelValue', [start, end])
@@ -135,8 +146,9 @@ watch([dayBaseClasses, dayOutsideClasses, dayDisabledClasses], () => {
     dayClassesCache.clear()
 })
 
-function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }, dayPropsClass?: string) {
-    const key = `${day.isToday}-${day.isDisabled}-${day.inMonth}-${dayPropsClass ?? ''}`
+function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?: boolean }, dayPropsClass?: ClassValue) {
+    // JSON.stringify 稳定序列化：dayPropsClass 可能为数组/对象，模板字符串拼接会碰撞成 [object Object]
+    const key = `${day.isToday}-${day.isDisabled}-${day.inMonth}-${JSON.stringify(dayPropsClass ?? '')}`
     const cached = dayClassesCache.get(key)
     if (cached !== undefined) return cached
 
@@ -157,27 +169,38 @@ function getDayClasses(day: { isToday?: boolean; isDisabled?: boolean; inMonth?:
     return result
 }
 
-function isSameDay(date1: Date | string, date2: Date) {
-    let d1: Date
-    if (typeof date1 === 'string') {
-        d1 = date1.includes('T')
-            ? new Date(date1)
-            : (parseFormattedDate(date1, 'YYYY-MM-DD') ?? new Date(date1))
-    } else {
-        d1 = date1
+function parseEventDate(date: Date | string): Date | null {
+    if (typeof date === 'string') {
+        const parsed = date.includes('T')
+            ? new Date(date)
+            : (parseFormattedDate(date, 'YYYY-MM-DD') ?? new Date(date))
+        return parsed instanceof Date && !isNaN(parsed.getTime()) ? parsed : null
     }
-    if (!(d1 instanceof Date) || isNaN(d1.getTime())) return false
-    return (
-        d1.getFullYear() === date2.getFullYear() &&
-        d1.getMonth() === date2.getMonth() &&
-        d1.getDate() === date2.getDate()
-    )
+    return date instanceof Date && !isNaN(date.getTime()) ? date : null
 }
+
+function toDayKey(date: Date): string {
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
+// 预按日期分组，避免每个日格多次全量 filter（O(日格数 × 事件数)）
+const eventsByDay = computed(() => {
+    const map = new Map<string, CalendarEvent[]>()
+    for (const event of props.events) {
+        const date = parseEventDate(event.date)
+        if (!date) continue
+        const key = toDayKey(date)
+        const list = map.get(key)
+        if (list) list.push(event)
+        else map.set(key, [event])
+    }
+    return map
+})
 
 function getDayEvents(day: { date?: Date; startDate?: Date }) {
     const dayDate = day.date || day.startDate
-    if (!dayDate || !props.events) return []
-    return props.events.filter(event => isSameDay(event.date, dayDate))
+    if (!dayDate) return []
+    return eventsByDay.value.get(toDayKey(dayDate)) ?? []
 }
 </script>
 
@@ -227,8 +250,8 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
                         <TooltipContent>
                             <div class="flex flex-col gap-1 text-xs">
                                 <div
-                                    v-for="event in getDayEvents(day)"
-                                    :key="event.title"
+                                    v-for="(event, index) in getDayEvents(day)"
+                                    :key="`${event.title}-${index}`"
                                     class="font-bold"
                                     data-testid="calendar-tooltip-event-title"
                                 >
@@ -253,7 +276,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
                             </span>
                         </div>
                         <div class="flex flex-col gap-1 w-full items-stretch" data-testid="calendar-event-list">
-                            <template v-for="event in getDayEvents(day)" :key="event.title">
+                            <template v-for="(event, index) in getDayEvents(day)" :key="`${event.title}-${index}`">
                                 <component
                                     :is="eventRenderer(event)"
                                     v-if="eventRenderer"

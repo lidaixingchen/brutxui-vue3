@@ -11,6 +11,8 @@ function assertCalendarExposed(vm: unknown): asserts vm is CalendarExposed {
     expect(vm).toHaveProperty('rootClasses')
 }
 
+type DayPropsClass = string | Record<string, boolean> | string[]
+
 const { dayRef } = vi.hoisted(() => ({
     dayRef: {
         label: '15',
@@ -18,6 +20,7 @@ const { dayRef } = vi.hoisted(() => ({
         isDisabled: false,
         inMonth: true,
         startDate: new Date(2026, 5, 15),
+        propsClass: 'vc-day' as DayPropsClass,
     },
 }))
 
@@ -27,14 +30,14 @@ vi.mock('v-calendar', () => ({
         props: ['modelValue', 'mode', 'isRange', 'disabled', 'class', 'selectAttribute', 'dragAttribute', 'trimWeeks', 'firstDayOfWeek', 'popover'],
         emits: ['update:model-value', 'drag'],
         data() {
-            return { day: { ...dayRef } }
+            return { day: { ...dayRef }, dayPropsClass: dayRef.propsClass }
         },
         template: `
             <div class="v-date-picker-stub">
                 <slot name="header-prev-button"></slot>
                 <slot name="header-title" :title="'June 2026'"></slot>
                 <slot name="header-next-button"></slot>
-                <slot name="day-content" :day="day" :day-props="{ class: 'vc-day' }" :day-events="{}"></slot>
+                <slot name="day-content" :day="day" :day-props="{ class: dayPropsClass }" :day-events="{}"></slot>
             </div>
         `,
     },
@@ -48,6 +51,7 @@ const defaultDay = {
     isDisabled: false,
     inMonth: true,
     startDate: new Date(2026, 5, 15),
+    propsClass: 'vc-day',
 }
 
 function resetDay() {
@@ -109,6 +113,13 @@ describe('Calendar', () => {
             const wrapper = await mountCalendar({ isRange: true, modelValue: [] as Date[] })
             const stub = await findVDatePicker(wrapper)
             expect(stub.props('modelValue')).toBeNull()
+        })
+
+        it('normalizes single-element array to [start, start] when isRange', async () => {
+            const date = new Date(2026, 0, 1)
+            const wrapper = await mountCalendar({ isRange: true, modelValue: [date] })
+            const stub = await findVDatePicker(wrapper)
+            expect(stub.props('modelValue')).toEqual({ start: date, end: date })
         })
 
         it('returns Date when modelValue is a Date instance and not isRange', async () => {
@@ -277,6 +288,14 @@ describe('Calendar', () => {
             expect(wrapper.emitted('update:modelValue')![0]).toEqual([[start, end]])
         })
 
+        it('does not emit on drag when not isRange', async () => {
+            const wrapper = await mountCalendar()
+            const stub = await findVDatePicker(wrapper)
+            stub.vm.$emit('drag', { start: new Date(2026, 0, 1), end: new Date(2026, 0, 15) })
+            await nextTick()
+            expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+        })
+
         it('renders event dot in default mode when day has events', async () => {
             const events = [
                 { date: new Date(2026, 5, 15), title: 'Meeting' },
@@ -305,6 +324,30 @@ describe('Calendar', () => {
             expect(badges[0].text()).toBe('Meeting')
             expect(badges[1].text()).toBe('Lunch')
             expect(wrapper.find('[data-testid="calendar-event-dot"]').exists()).toBe(false)
+        })
+
+        it('renders duplicate-title events in card mode', async () => {
+            const events = [
+                { date: new Date(2026, 5, 15), title: 'Same' },
+                { date: new Date(2026, 5, 15), title: 'Same' }
+            ]
+            const wrapper = await mountCalendar({ events, mode: 'card' })
+            const badges = wrapper.findAll('[data-testid="calendar-card-event-badge"]')
+            expect(badges).toHaveLength(2)
+            expect(badges[0].text()).toBe('Same')
+            expect(badges[1].text()).toBe('Same')
+        })
+
+        it('does not collide day-class cache across object dayPropsClass shapes', async () => {
+            dayRef.propsClass = { 'custom-obj-a': true }
+            const first = await mountCalendar()
+            expect(first.find('.custom-obj-a').exists()).toBe(true)
+            first.unmount()
+
+            dayRef.propsClass = { 'custom-obj-b': true }
+            const second = await mountCalendar()
+            expect(second.find('.custom-obj-b').exists()).toBe(true)
+            expect(second.find('.custom-obj-a').exists()).toBe(false)
         })
 
         it('supports custom event renderer via eventRenderer prop', async () => {

@@ -189,7 +189,8 @@
     "composables": [],
     "directives": [],
     "lib": [
-      "brutal-interaction-variants.ts"
+      "brutal-interaction-variants.ts",
+      "env.ts"
     ]
   },
   "card-3d": {
