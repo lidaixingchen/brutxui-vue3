@@ -46,6 +46,7 @@ export const baseButtonVariants = {
                 'shadow-brutal',
                 brutalHoverLift,
             ],
+            /* 键名沿用 danger（全库组件变体键惯例），样式映射 v0.9.0 重命名的 brutal-destructive token */
             danger: [
                 'bg-brutal-destructive text-brutal-destructive-foreground',
                 'shadow-brutal',
@@ -62,6 +63,8 @@ export const baseButtonVariants = {
                 'hover:bg-brutal-fg hover:text-brutal-bg', /* 组件私有：悬浮反色，不抽取 */
                 brutalHoverLift,
             ],
+            /* ghost/link 为低强调变体：刻意不引用 brutalHoverLift（位移+阴影），
+               悬浮反馈仅用背景/下划线保持克制，与 outline 的悬浮反色+位移+阴影形成强度梯度 */
             ghost: [
                 'bg-transparent text-brutal-fg border-transparent',
                 'shadow-none',

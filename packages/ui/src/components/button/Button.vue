@@ -76,8 +76,13 @@ const classes = computed(() =>
             variant: props.variant,
             size: props.size,
             effect: props.effect,
-            glitchSpeed: props.glitchSpeed,
-            glitchDirection: props.glitchDirection,
+            // 仅 glitch 按钮携带 glitchSpeed/glitchDirection 类，普通按钮零污染
+            ...(props.effect === 'glitch'
+                ? {
+                      glitchSpeed: props.glitchSpeed,
+                      glitchDirection: props.glitchDirection,
+                  }
+                : {}),
         }),
         props.effect === 'glitch' && isGlitching.value ? 'is-glitching' : '',
         props.asChild && isDisabled.value && 'pointer-events-none',

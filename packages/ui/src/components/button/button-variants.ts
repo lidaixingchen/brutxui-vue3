@@ -31,11 +31,12 @@ export const buttonVariants = cva(
                 both: 'glitch-both',
             },
         },
+        // glitchSpeed/glitchDirection 不设无条件默认值：否则所有按钮（含 effect: 'none'）都会被
+        // 注入 glitch-horizontal / [--glitch-duration:...] 类造成 DOM 污染。
+        // 由 Button.vue 仅在 effect === 'glitch' 时透传这两个变体，普通按钮不再输出任何 glitch 类。
         defaultVariants: {
             ...baseButtonVariants.defaultVariants,
             effect: 'none',
-            glitchSpeed: 'medium',
-            glitchDirection: 'horizontal',
         },
     }
 )
