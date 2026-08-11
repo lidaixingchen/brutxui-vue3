@@ -107,7 +107,11 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 
 | Slot | Scope | Description |
 |------|--------|------|
-| `default` | `{ copied: boolean }` | Custom button content; `copied` indicates whether a copy was just successful |
+| `default` | `{ copied: boolean; failed: boolean }` | Custom button content; `copied` indicates whether a copy was just successful, `failed` whether the last copy failed (e.g. clipboard permission denied) |
+
+::: tip Copy failure feedback
+On a failed copy the default label switches to "Copy failed" (customizable by overriding the locale `copyToClipboard.copyFailed`) and enters a red destructive state; a visually-hidden `role="status"` live region announces success/failure to screen readers.
+:::
 
 ```vue
 <script setup>
@@ -126,4 +130,4 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 ## Accessibility
 
 - **Keyboard**: Supports `Enter` / `Space` to trigger the copy operation
-- **ARIA Attributes**: The button includes a text description of the copy state
+- **ARIA Attributes**: The button includes a text description of the copy state; success/failure is announced via a visually-hidden `role="status"` live region, perceivable by screen readers even when the button is not focused

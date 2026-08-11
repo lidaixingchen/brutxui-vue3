@@ -100,7 +100,7 @@ async function handleOpen() {
 
 ### 创建选项
 
-设置 `creative` 为 `true` 时，若搜索无匹配项且输入框非空，列表顶部显示「创建 '{query}'」选项（文本取自 locale `combobox.create`）。点击该项触发 `create` 事件，参数为当前搜索文本。
+设置 `creative` 为 `true` 时，若搜索无匹配项且输入框非空，列表顶部显示「创建 '{query}'」选项（文本取自 locale `combobox.create`）。点击该项触发 `create` 事件，参数为去除首尾空格后的搜索文本（显示与事件参数均使用 trim 后的查询，避免创建出带脏空格的 value/label）。
 
 - `Combobox`（单选）：创建后关闭下拉。
 - `Combobox`（`multiple`）：创建后**不关闭**下拉，便于继续选择或创建多项。
@@ -149,7 +149,7 @@ interface ComboboxOption {
 | `options` | `ComboboxOption[]` | —（必填） | 选项列表 |
 | `multiple` | `boolean` | `false` | 是否启用多选模式 |
 | `modelValue` | `string \| string[] \| undefined` | 单选：`undefined`；多选：`[]` | 选中值，支持 v-model。多选模式下为 `string[]` |
-| `open` | `boolean` | `undefined` | 下拉是否展开 |
+| `open` | `boolean` | `undefined` | 下拉是否展开。传入后为受控模式：关闭动作仅当父组件绑定 `v-model:open` 或监听 `update:open` 并回写时才生效 |
 | `placeholder` | `string` | locale: `combobox.placeholder` / `combobox.multiPlaceholder` | 占位符文本，根据模式自动切换 |
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` | 搜索框占位符 |
 | `emptyText` | `string` | locale: `combobox.emptyText` | 无匹配结果时的提示文本 |
@@ -167,7 +167,7 @@ interface ComboboxOption {
 |------|------|------|
 | `update:modelValue` | `string \| string[] \| undefined` | 选中值变化时触发。单选模式下再次选择相同选项会取消选中（值变为 `undefined`）；多选模式下切换选中/取消选中对应选项 |
 | `update:open` | `boolean` | 下拉展开/关闭状态变化时触发 |
-| `create` | `string` | 点击「创建」选项时触发，参数为当前搜索文本 |
+| `create` | `string` | 点击「创建」选项时触发，参数为去除首尾空格后的搜索文本。组件不更新 `modelValue`——需在回调中把新选项加入 `options` 并同步 `modelValue`（见常见问题） |
 
 ## 交互
 

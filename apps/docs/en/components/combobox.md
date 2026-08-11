@@ -101,7 +101,7 @@ async function handleOpen() {
 
 ### Creating Options
 
-When `creative` is set to `true`, if no search matches are found and the input is non-empty, a "Create '{query}'" option appears at the top of the list (text from locale `combobox.create`). Clicking it triggers the `create` event with the current search text as the argument.
+When `creative` is set to `true`, if no search matches are found and the input is non-empty, a "Create '{query}'" option appears at the top of the list (text from locale `combobox.create`). Clicking it triggers the `create` event with the search text trimmed of leading/trailing whitespace as the argument (both the label and the emitted payload use the trimmed query, avoiding dirty values with stray spaces).
 
 - `Combobox` (single-select): Closes the dropdown after creation.
 - `Combobox` (`multiple`): Does **not** close the dropdown after creation, allowing continued selection or creation of multiple items.
@@ -150,7 +150,7 @@ interface ComboboxOption {
 | `options` | `ComboboxOption[]` | — (required) | Options list |
 | `multiple` | `boolean` | `false` | Whether to enable multi-select mode |
 | `modelValue` | `string \| string[] \| undefined` | Single: `undefined`; Multi: `[]` | Selected value, supports v-model. In multi-select mode this is `string[]` |
-| `open` | `boolean` | `undefined` | Whether the dropdown is expanded |
+| `open` | `boolean` | `undefined` | Whether the dropdown is expanded. When set (controlled), closing is only effective if the parent binds `v-model:open` or listens to `update:open` and writes it back |
 | `placeholder` | `string` | locale: `combobox.placeholder` / `combobox.multiPlaceholder` | Placeholder text, switches automatically based on mode |
 | `searchPlaceholder` | `string` | locale: `combobox.searchPlaceholder` | Search box placeholder |
 | `emptyText` | `string` | locale: `combobox.emptyText` | Text shown when no matches found |
@@ -168,7 +168,7 @@ interface ComboboxOption {
 |-------|---------|-------------|
 | `update:modelValue` | `string \| string[] \| undefined` | Triggered when the selected value changes. In single-select mode, selecting the same option again deselects it (value becomes `undefined`); in multi-select mode, toggles selection/deselection of the corresponding option |
 | `update:open` | `boolean` | Triggered when the dropdown open/close state changes |
-| `create` | `string` | Triggered when the "Create" option is clicked; payload is the current search text |
+| `create` | `string` | Triggered when the "Create" option is clicked; payload is the search text with leading/trailing whitespace trimmed. The component does not update `modelValue` — add the new option to `options` and sync `modelValue` in the handler (see FAQ) |
 
 ## Accessibility
 

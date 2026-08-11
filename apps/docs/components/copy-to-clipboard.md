@@ -106,7 +106,11 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 
 | 插槽 | 作用域 | 说明 |
 |------|--------|------|
-| `default` | `{ copied: boolean }` | 自定义按钮内容，`copied` 表示是否刚复制成功 |
+| `default` | `{ copied: boolean; failed: boolean }` | 自定义按钮内容。`copied` 表示是否刚复制成功；`failed` 表示最近一次复制是否失败（剪贴板权限被拒等场景） |
+
+::: tip 复制失败反馈
+组件默认文案会在复制失败时切换为「复制失败」（可通过覆盖 locale `copyToClipboard.copyFailed` 自定义），并进入红色破坏态；屏幕阅读器经隐藏的 `role="status"` live region 播报成功/失败状态。
+:::
 
 ```vue
 <script setup>
@@ -125,4 +129,4 @@ import { CopyToClipboard } from 'brutx-ui-vue'
 ## 可访问性
 
 - **键盘操作**：支持 `Enter` / `Space` 触发复制操作
-- **ARIA 属性**：按钮包含复制状态的文本描述
+- **ARIA 属性**：按钮包含复制状态的文本描述；成功/失败状态经隐藏的 `role="status"` live region 播报，按钮未聚焦时也可被屏幕阅读器感知

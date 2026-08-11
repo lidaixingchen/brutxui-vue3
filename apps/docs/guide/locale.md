@@ -278,7 +278,7 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | Carousel | `carousel.previousSlide`、`carousel.nextSlide`、`carousel.goToSlide` | `goToSlide`: `{index}` |
 | Spinner | `spinner.loading` | — |
 | Button | `submitButton.submitting` | — |
-| CopyToClipboard | `copyToClipboard.copy`、`copyToClipboard.copied` | — |
+| CopyToClipboard | `copyToClipboard.copy`、`copyToClipboard.copied`、`copyToClipboard.copyFailed` | — |
 | BeforeAfter | `beforeAfter.before`、`beforeAfter.after` | — |
 | AuthCard | `authCard.welcomeBack`、`authCard.signInToContinue`、`authCard.google`、`authCard.github`、`authCard.orEmailLogin`、`authCard.email`、`authCard.password`、`authCard.forgotPassword`、`authCard.signIn`、`authCard.noAccount`、`authCard.register`、`authCard.emailPlaceholder`、`authCard.passwordPlaceholder` | — |
 | DashboardShell | `dashboardShell.sidebarNavigation`、`dashboardShell.signOut`、`dashboardShell.defaultEmail` | — |

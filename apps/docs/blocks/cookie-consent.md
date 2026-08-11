@@ -89,5 +89,5 @@ import CookieConsent from '@/components/ui/cookie-consent/CookieConsent.vue'
 ## 可访问性
 
 - **键盘操作**：接受/拒绝按钮支持 `Tab` 聚焦，`Enter` / `Space` 触发点击
-- **ARIA 属性**：横幅使用 `role="dialog"` 或 `role="alertdialog"`，按钮提供明确的文本标签
-- **焦点管理**：横幅显示时焦点自动锁定在操作按钮区域
+- **ARIA 属性**：横幅根节点标注为 `region` 并通过 `aria-labelledby` 关联标题，出现时经 `aria-live` 播报；按钮提供明确的文本标签
+- **定位覆盖**：默认 `fixed bottom-0` 定位可通过 `class` 属性覆盖（`cn` 基于 tailwind-merge，传 `absolute` 等同组定位类会胜出），无需 `!important`

@@ -90,5 +90,5 @@ import CookieConsent from '@/components/ui/cookie-consent/CookieConsent.vue'
 ## Accessibility
 
 - **Keyboard**: Accept/decline buttons support `Tab` focus, `Enter` / `Space` to trigger click
-- **ARIA**: Banner uses `role="dialog"` or `role="alertdialog"`; buttons provide clear text labels
-- **Focus Management**: When the banner is displayed, focus is automatically locked to the action button area
+- **ARIA**: The banner root is marked as a `region` labelled by the title via `aria-labelledby`, and announced through `aria-live` when it appears; buttons provide clear text labels
+- **Positioning override**: The default `fixed bottom-0` positioning can be overridden via the `class` prop (`cn` is tailwind-merge based; passing `absolute` in the same positioning group wins), no `!important` needed
