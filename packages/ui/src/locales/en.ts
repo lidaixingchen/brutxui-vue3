@@ -44,6 +44,7 @@ export const en: Locale = {
     copyToClipboard: {
         copy: 'Copy',
         copied: 'Copied',
+        copyFailed: 'Copy failed',
     },
     beforeAfter: {
         before: 'Before',

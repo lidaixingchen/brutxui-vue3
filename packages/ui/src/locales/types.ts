@@ -51,6 +51,8 @@ export interface SubmitButtonLocale {
 export interface CopyToClipboardLocale {
     copy: string
     copied: string
+    /** 复制失败反馈文案（剪贴板权限被拒等场景） */
+    copyFailed: string
 }
 
 export interface BeforeAfterLocale {

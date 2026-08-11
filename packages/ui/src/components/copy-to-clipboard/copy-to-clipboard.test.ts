@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { vi } from 'vitest'
-import { ref, type Component } from 'vue'
+import { h, nextTick, ref, type Component } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
@@ -93,29 +93,6 @@ describe('CopyToClipboard', () => {
         expect(button.classes()).toContain('shadow-brutal')
     })
 
-    it('has disabled attribute when clipboard not supported', async () => {
-        vi.doUnmock('../../composables/useClipboard')
-        Object.defineProperty(globalThis.navigator, 'clipboard', {
-            configurable: true,
-            value: undefined,
-        })
-        vi.resetModules()
-
-        try {
-            const CopyToClipboard = await loadCopyToClipboard()
-            const wrapper = mount(CopyToClipboard, {
-                props: { text: 'hello' },
-                ...localeProvide,
-            })
-            const button = wrapper.find('button')
-            expect(button.attributes('disabled')).toBeDefined()
-        } finally {
-            restoreClipboard()
-            mockUseClipboard()
-            vi.resetModules()
-        }
-    })
-
     it('renders slot content', async () => {
         const CopyToClipboard = await loadCopyToClipboard()
         const wrapper = mount(CopyToClipboard, {
@@ -198,5 +175,85 @@ describe('CopyToClipboard', () => {
         const button = wrapper.find('button')
         expect(button.classes()).toContain('bg-brutal-success')
         expect(button.classes()).not.toContain('bg-brutal-primary')
+    })
+
+    it('shows Copied text and pressed classes in copied state', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        mockCopied.value = true
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        const button = wrapper.find('button')
+        expect(wrapper.text()).toContain('Copied')
+        expect(button.classes()).toContain('bg-brutal-success')
+        // 保持按下态：位移 + 去阴影 + 禁过渡（transition-none 覆盖 base 的 transition-all）
+        expect(button.classes()).toContain('transition-none')
+        expect(button.classes()).not.toContain('transition-all')
+    })
+
+    it('shows copy failed feedback when copy fails', async () => {
+        mockCopy.mockResolvedValue(false)
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        await wrapper.find('button').trigger('click')
+        await nextTick()
+        expect(wrapper.text()).toContain('Copy failed')
+        expect(wrapper.find('button').classes()).toContain('bg-brutal-destructive')
+    })
+
+    it('passes copied and failed to scoped slot', async () => {
+        mockCopied.value = true
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            slots: {
+                default: ({ copied, failed }: { copied: boolean; failed: boolean }) =>
+                    h('span', `slot:${copied}:${failed}`),
+            },
+            ...localeProvide,
+        })
+        expect(wrapper.find('button').text()).toBe('slot:true:false')
+    })
+
+    it('renders a visually-hidden live region for copy status', async () => {
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        const status = wrapper.find('[role="status"]')
+        expect(status.exists()).toBe(true)
+        expect(status.classes()).toContain('sr-only')
+    })
+
+    // 必须放在本 describe 最后：vi.resetModules() 清空模块注册表后，后续动态 import
+    // 会拿到新的 useLocale 模块实例（新的 LOCALE_INJECTION_KEY Symbol），与测试文件
+    // 静态导入的旧 Symbol 失配，locale 注入静默失效（回退 zhCN）——该测试自身用真实
+    // useClipboard 检测 isSupported，需要 resetModules，故放在末尾避免污染其他测试
+    it('has disabled attribute when clipboard not supported', async () => {
+        vi.doUnmock('../../composables/useClipboard')
+        Object.defineProperty(globalThis.navigator, 'clipboard', {
+            configurable: true,
+            value: undefined,
+        })
+        vi.resetModules()
+
+        try {
+            const CopyToClipboard = await loadCopyToClipboard()
+            const wrapper = mount(CopyToClipboard, {
+                props: { text: 'hello' },
+                ...localeProvide,
+            })
+            const button = wrapper.find('button')
+            expect(button.attributes('disabled')).toBeDefined()
+        } finally {
+            restoreClipboard()
+            mockUseClipboard()
+            vi.resetModules()
+        }
     })
 })
