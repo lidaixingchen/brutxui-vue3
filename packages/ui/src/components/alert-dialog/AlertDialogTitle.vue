@@ -18,7 +18,9 @@ const classes = computed(() =>
 
 <template>
     <AlertDialogTitlePrimitive :class="classes">
-        <!-- 无插槽内容时提供默认占位，避免空标题导致对话框可访问名称缺失 -->
+        <!-- 兜底占位文本：仅当调用方未提供标题内容时显示，保证可访问名称非空。
+             业务方应始终传入有意义的标题；占位为英文且未接入 i18n（AlertDialog 组件族无
+             locale 依赖），如需本地化请通过插槽内容覆盖 -->
         <slot>Alert</slot>
     </AlertDialogTitlePrimitive>
 </template>

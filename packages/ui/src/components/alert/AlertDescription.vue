@@ -11,7 +11,10 @@ interface AlertDescriptionProps {
 
 const props = defineProps<AlertDescriptionProps>()
 
-const resolvedId = computed(() => props.id ?? `alert-description-${useId()}`)
+// useId 须在 setup 只调用一次（Vue 约定）：放进 computed getter 会在 id prop 变化重算时
+// 生成新 id，导致 onMounted 注册与 onBeforeUnmount 清理的 id 不一致（父级 aria-describedby 残留过期 id）
+const generatedId = useId()
+const resolvedId = computed(() => props.id ?? `alert-description-${generatedId}`)
 
 // 挂载时把描述 id 注册到父级 Alert，卸载时移除；独立使用（未注入）时仅渲染 id、不参与关联
 const descriptionIds = inject(alertDescriptionIdsKey, null)
