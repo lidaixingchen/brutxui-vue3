@@ -140,14 +140,16 @@ const selected = ref([]) // 二维数组，如 [['zh', 'bj', 'hd'], ['us', 'ny']
 ```ts
 type CascaderValue = string | number
 
-interface CascaderOption {
+interface CascaderOption<T = unknown> {
     value: CascaderValue
     label: string
-    children?: CascaderOption[]
+    children?: CascaderOption<T>[]
     disabled?: boolean
-    data?: unknown
+    data?: T
 }
 ```
+
+`CascaderOption` 支持泛型注入业务数据类型：`CascaderOption<MyData>[]` 中 `data` 字段将获得类型推断；默认 `unknown` 保持宽松语义。
 
 ## 导出类型
 
@@ -158,11 +160,11 @@ import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
 ## 可访问性
 
 - **键盘操作**：
-  - `ArrowDown` / `ArrowUp`：在当前选项列中上下移动聚焦
+  - `ArrowDown` / `ArrowUp`：在当前选项列中上下移动聚焦，自动跳过 `disabled` 选项
   - `ArrowRight`：展开当前选项的子菜单列并聚焦首项
   - `ArrowLeft`：收起当前级子菜单，并退回到上一选项列
   - `Enter` / `Space`：确认选择或在多选下切换 Checkbox 勾选
   - `Escape`：关闭级联选择器下拉面板
 - **ARIA 属性**：触发器使用 `role="combobox"` 配合 `aria-expanded` 与 `aria-disabled` 声明状态。下拉列表项设置 `role="menuitem"`
-- **焦点管理**：展开时焦点自动流转至已选路径的最末一级选项或第一列选项中，退出时焦点恢复至触发器按钮
+- **焦点管理**：展开时焦点自动流转至已选路径的最末一级选项；无选中值时不高亮任何项（`aria-activedescendant` 保持未定义），直到用户开始键盘导航，避免焦点仍在触发器时误报首个选项
 - **动效降级**：下拉弹窗面板的过渡效果支持 `prefers-reduced-motion` 系统降级，在低动效设备上自动简化动效

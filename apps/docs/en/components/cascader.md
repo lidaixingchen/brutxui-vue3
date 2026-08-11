@@ -140,14 +140,16 @@ By default, only leaf nodes can be selected. Set `checkStrictly` to `true` to al
 ```ts
 type CascaderValue = string | number
 
-interface CascaderOption {
+interface CascaderOption<T = unknown> {
     value: CascaderValue
     label: string
-    children?: CascaderOption[]
+    children?: CascaderOption<T>[]
     disabled?: boolean
-    data?: unknown
+    data?: T
 }
 ```
+
+`CascaderOption` supports a generic for the business data type: in `CascaderOption<MyData>[]` the `data` field gets type inference; it defaults to `unknown` to stay permissive.
 
 ## Exported Types
 
@@ -158,12 +160,12 @@ import type { CascaderOption, CascaderValue } from 'brutx-ui-vue'
 ## Accessibility
 
 - **Keyboard Interaction**:
-  - `ArrowDown` / `ArrowUp`: Move focus up and down within the active column
+  - `ArrowDown` / `ArrowUp`: Move focus up and down within the active column, skipping `disabled` options
   - `ArrowRight`: Expand the focused option's sub-column and focus the first item
   - `ArrowLeft`: Collapse the active sub-column, returning to parent option column
   - `Enter` / `Space`: Select option, or toggle Checkbox state in multi-select mode
   - `Escape`: Close dropdown panel
 - **ARIA Attributes**: The trigger has `role="combobox"`, `aria-expanded` and `aria-disabled` indicators. Option items have `role="menuitem"`
-- **Focus Management**: Upon opening, the focus automatically moves to the last selected value's option item or the first item in the list. Restores focus back to the trigger on close
+- **Focus Management**: Upon opening, focus moves to the last selected value's option item; with no selected value no item is highlighted (`aria-activedescendant` stays undefined) until keyboard navigation begins, avoiding misreporting the first option while focus is still on the trigger
 - **Reduced Motion**: Transition animations support `prefers-reduced-motion` settings and automatically downgrade (if applicable)
 
