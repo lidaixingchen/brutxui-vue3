@@ -72,7 +72,7 @@ import { Backtop } from 'brutx-ui-vue'
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `visibilityHeight` | `number` | `200` | 滚动高度达到该数值（像素）后才展示回到顶部按钮 |
-| `target` | `string \| HTMLElement` | `undefined` | 监听滚动高度并执行返回滚动的目标容器。为空时默认监听全局 `window` |
+| `target` | `string \| HTMLElement` | `undefined` | 监听滚动高度并执行返回滚动的目标容器。为空时默认监听全局 `window`。传入 `target` 时按钮 `absolute` 定位，须置于已定位容器（如 `position: relative`）内，否则相对初始包含块定位会错位 |
 | `right` | `number` | `40` | 按钮距离视口/容器右侧的偏置距离（像素） |
 | `bottom` | `number` | `40` | 按钮距离视口/容器底部的偏置距离（像素） |
 | `variant` | `'primary' \| 'secondary' \| 'accent'` | `'primary'` | 配色变体款式（其中 primary 默认渲染粗野高亮黄） |

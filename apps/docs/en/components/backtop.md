@@ -70,7 +70,7 @@ Apply customized alignment offsets via `right` or `bottom` coordinates, and togg
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `visibilityHeight` | `number` | `200` | Minimum scroll height (in pixels) required to show the shortcut button |
-| `target` | `string \| HTMLElement` | `undefined` | The scroll viewport container element or selector ID. Resolves to `window` if empty |
+| `target` | `string \| HTMLElement` | `undefined` | The scroll viewport container element or selector ID. Resolves to `window` if empty. When set, the button is positioned `absolute` and the component must be placed inside a positioned container (e.g. `position: relative`) — otherwise it resolves against the initial containing block and may be misplaced |
 | `right` | `number` | `40` | Offset pixel distance from the right edge of viewport/container |
 | `bottom` | `number` | `40` | Offset pixel distance from the bottom edge of viewport/container |
 | `variant` | `'primary' \| 'secondary' \| 'accent'` | `'primary'` | Theme color layout variation (primary renders yellow background) |
