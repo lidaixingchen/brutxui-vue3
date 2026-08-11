@@ -63,6 +63,12 @@ function handleSecondary() {
 | `primaryCta` | — | 点击主 CTA 按钮时触发 |
 | `secondaryCta` | — | 点击次 CTA 按钮时触发 |
 
+## 插槽
+
+| 插槽 | 说明 |
+| ---- | ---- |
+| `terminal` | 替换右侧代码预览卡片的内容。默认展示 brutxui CLI 安装演示，复用到其他项目时可传入自定义终端/代码内容 |
+
 ## 可访问性
 
 - **键盘操作**：支持 `Tab` 在按钮间导航，`Enter` 触发操作

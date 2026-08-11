@@ -64,6 +64,12 @@ function handleSecondary() {
 | `primaryCta` | — | Emitted when the primary CTA button is clicked |
 | `secondaryCta` | — | Emitted when the secondary CTA button is clicked |
 
+## Slots
+
+| Slot | Description |
+| ---- | ---- |
+| `terminal` | Replaces the content of the decorative code preview card. Shows the brutxui CLI install demo by default; pass custom terminal/code content when reusing in other projects |
+
 ## Accessibility
 
 - **Keyboard**: Supports `Tab` to navigate between buttons, `Enter` to trigger actions

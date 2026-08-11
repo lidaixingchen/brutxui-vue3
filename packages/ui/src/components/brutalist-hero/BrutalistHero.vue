@@ -29,10 +29,11 @@ const props = withDefaults(defineProps<BrutalistHeroProps>(), {
 
 const { t } = useLocale()
 
-const resolvedTitle = computed(() => props.title ?? t('brutalistHero.title'))
-const resolvedSubtitle = computed(() => props.subtitle ?? t('brutalistHero.defaultSubtitle'))
-const resolvedPrimaryCtaText = computed(() => props.primaryCtaText ?? t('brutalistHero.primaryCtaText'))
-const resolvedSecondaryCtaText = computed(() => props.secondaryCtaText ?? t('brutalistHero.secondaryCtaText'))
+// 空字符串视为未提供：与 subtitle 的 v-if 语义一致，title="" 不会渲染空白标题/空 CTA 按钮
+const resolvedTitle = computed(() => props.title || t('brutalistHero.title'))
+const resolvedSubtitle = computed(() => props.subtitle || t('brutalistHero.defaultSubtitle'))
+const resolvedPrimaryCtaText = computed(() => props.primaryCtaText || t('brutalistHero.primaryCtaText'))
+const resolvedSecondaryCtaText = computed(() => props.secondaryCtaText || t('brutalistHero.secondaryCtaText'))
 
 const emit = defineEmits<{
     'primary-cta': []
@@ -77,29 +78,32 @@ const badgeIconClasses = cn(iconSizeVariants({ size: 'md' }), 'stroke-[3]')
                 <div class="absolute inset-0 bg-brutal-primary border-3 border-brutal translate-x-3 translate-y-3" />
                 <Card variant="default" padding="default" class="relative bg-brutal-bg font-mono text-sm">
                     <CardContent>
-                        <div class="space-y-1">
-                            <p class="text-brutal-muted-foreground">
+                        <!-- terminal 插槽：允许调用方替换 CLI 演示内容（默认展示 brutxui 安装命令） -->
+                        <slot name="terminal">
+                            <div class="space-y-1">
+                                <p class="text-brutal-muted-foreground">
 $ npx brutxui init
 </p>
-                            <p class="text-brutal-success font-bold">
+                                <p class="text-brutal-success font-bold">
 ✓ Project initialized
 </p>
-                            <p class="text-brutal-muted-foreground">
+                                <p class="text-brutal-muted-foreground">
 $ npx brutxui add button
 </p>
-                            <p class="text-brutal-success font-bold">
+                                <p class="text-brutal-success font-bold">
 ✓ Button component added
 </p>
-                            <p class="text-brutal-muted-foreground">
+                                <p class="text-brutal-muted-foreground">
 $ npx brutxui add card dialog
 </p>
-                            <p class="text-brutal-success font-bold">
+                                <p class="text-brutal-success font-bold">
 ✓ 2 components added
 </p>
-                            <p class="text-brutal-accent font-bold animate-pulse">
+                                <p class="text-brutal-accent font-bold animate-pulse">
 █
 </p>
-                        </div>
+                            </div>
+                        </slot>
                     </CardContent>
                 </Card>
             </div>
