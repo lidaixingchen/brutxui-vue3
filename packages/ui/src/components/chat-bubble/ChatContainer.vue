@@ -35,6 +35,19 @@ const props = withDefaults(defineProps<ChatContainerProps>(), {
     class: undefined,
 });
 
+// 时间戳 → 毫秒数；缺失或非法时间戳返回 null（参与排序时沉底、分组时并入当前组）
+function toTimestampMs(message: ChatMessage): number | null {
+    const timestamp = message.timestamp;
+    if (timestamp instanceof Date) {
+        return Number.isNaN(timestamp.getTime()) ? null : timestamp.getTime();
+    }
+    if (typeof timestamp === 'string' && timestamp) {
+        const parsed = new Date(timestamp);
+        return Number.isNaN(parsed.getTime()) ? null : parsed.getTime();
+    }
+    return null;
+}
+
 function getDateLabel(date: Date): string {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -48,7 +61,13 @@ function getDateLabel(date: Date): string {
     if (messageDate.getTime() === yesterday.getTime()) {
         return t('chatBubble.yesterday');
     }
-    return date.toLocaleDateString();
+    // 非今天/昨天分支优先走 dateFormat，与消息内时间戳格式保持一致；缺失时回退系统日期格式
+    return props.dateFormat?.(date) ?? date.toLocaleDateString();
+}
+
+// 时间间隔切分产生的组，展示具体时刻（HH:mm 或 dateFormat 自定义格式），使分段在视觉上可感知
+function getIntervalLabel(date: Date): string {
+    return props.dateFormat?.(date) ?? date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
@@ -56,14 +75,27 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
         return [{ label: '', messages }];
     }
 
+    // 分组状态机隐含「消息按时间升序」的前置条件：此处对副本做稳定排序，保证乱序输入
+    // （如先「昨天」后「今天」）仍能得到连续、不来回跳变的日期分组。无/非法时间戳的消息
+    // 沉底排在最后，且相互间保持原始相对顺序（依赖 Array.prototype.sort 的稳定性）。
+    const sorted = [...messages].sort((a, b) => {
+        const timeA = toTimestampMs(a);
+        const timeB = toTimestampMs(b);
+        if (timeA === null && timeB === null) return 0;
+        if (timeA === null) return 1;
+        if (timeB === null) return -1;
+        return timeA - timeB;
+    });
+
     const groups: ChatMessageGroup[] = [];
     let currentGroup: ChatMessage[] = [];
     let currentDisplayLabel = '';
     let currentDateLabel = '';
     let lastTimestamp: Date | null = null;
-    const intervalMs = props.groupInterval * MS_PER_MINUTE;
+    // groupInterval 下限约束为 1 分钟：传 0/负数会让任意相邻时间差都触发切分，退化为逐条成组且无标签
+    const intervalMs = Math.max(props.groupInterval, 1) * MS_PER_MINUTE;
 
-    for (const message of messages) {
+    for (const message of sorted) {
         const timestamp = message.timestamp;
         let date: Date | null = null;
 
@@ -80,6 +112,7 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
         const dateLabel = date ? getDateLabel(date) : '';
 
         const isNewDate = dateLabel !== currentDateLabel;
+        // 边界采用严格 >：时间差恰好等于 intervalMs 仍归入同组（interval 视为组内最大间隔）
         const exceedsInterval =
             date !== null &&
             lastTimestamp !== null &&
@@ -98,7 +131,8 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
                 groups.push({ label: currentDisplayLabel, messages: currentGroup });
             }
             currentGroup = [message];
-            currentDisplayLabel = '';
+            // 间隔切分产生的组展示具体时刻，而非空白标签，让分组边界可见
+            currentDisplayLabel = date ? getIntervalLabel(date) : '';
         } else {
             currentGroup.push(message);
         }

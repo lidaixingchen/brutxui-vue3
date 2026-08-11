@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, type Component } from 'vue';
 import { type VariantProps } from 'class-variance-authority';
 import { Check, CheckCheck, AlertCircle, Loader2 } from '@lucide/vue';
 import { cn } from '@/lib/utils';
 import { chatBubbleVariants, chatAvatarVariants } from './chat-bubble-variants';
-import type { ChatMessage } from './types';
+import type { ChatMessage, MessageStatus } from './types';
 
 type ChatBubbleCvaProps = VariantProps<typeof chatBubbleVariants>;
 
 interface ChatBubbleProps {
     message: ChatMessage;
+    /** sent 气泡的配色；**仅对 `variant='sent'` 生效**，received/system 传此值会被静默忽略 */
     color?: NonNullable<ChatBubbleCvaProps['color']>;
     size?: NonNullable<ChatBubbleCvaProps['size']>;
     showAvatar?: boolean;
@@ -58,14 +59,17 @@ const contentWrapperClass = computed(() =>
     cn('flex flex-col gap-1', isSent.value ? 'items-end' : 'items-start')
 );
 
+// 按 Unicode 码点截取（Array.from），避免 emoji 等非 BMP 字符被 UTF-16 代理对从中间切断产生乱码
+const toInitials = (input: string): string => Array.from(input).slice(0, 2).join('').toUpperCase();
+
 const initials = computed(() => {
     const name = props.message.name?.trim();
     if (!name) return '?';
     const words = name.split(/\s+/).filter(Boolean);
     if (words.length === 1) {
-        return words[0].slice(0, 2).toUpperCase();
+        return toInitials(words[0]);
     }
-    return words.map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    return toInitials(words.map(w => Array.from(w)[0] ?? '').join(''));
 });
 
 const formattedTimestamp = computed(() => {
@@ -75,34 +79,28 @@ const formattedTimestamp = computed(() => {
     return props.message.timestamp.toLocaleString();
 });
 
+// 同时监听 message 引用与 avatar 字符串：父组件整体替换 message 对象（如服务端重发同 URL 头像）
+// 而 avatar 值不变时，也要重置错误态，避免头像占位符无法恢复为正常图片。
 const avatarError = ref(false);
-watch(() => props.message.avatar, () => {
-    avatarError.value = false;
-});
-
-const statusIcon = computed(() => {
-    if (!props.message.status) return null;
-    switch (props.message.status) {
-        case 'sending': return Loader2;
-        case 'sent': return Check;
-        case 'delivered': return CheckCheck;
-        case 'read': return CheckCheck;
-        case 'failed': return AlertCircle;
-        default: return null;
+watch(
+    () => [props.message, props.message.avatar],
+    () => {
+        avatarError.value = false;
     }
-});
+);
 
-const statusClass = computed(() => {
-    if (!props.message.status) return '';
-    switch (props.message.status) {
-        case 'sending': return 'text-brutal-fg/50 animate-spin';
-        case 'sent': return 'text-brutal-fg/50';
-        case 'delivered': return 'text-brutal-fg/70';
-        case 'read': return 'text-brutal-primary';
-        case 'failed': return 'text-brutal-destructive';
-        default: return '';
-    }
-});
+// 单一配置表：Record<MessageStatus, ...> 对闭联合类型做穷尽性检查，
+// 未来新增状态时漏配图标或样式会在编译期报错，而非静默失效。
+const STATUS_META: Record<MessageStatus, { icon: Component; className: string }> = {
+    sending: { icon: Loader2, className: 'text-brutal-fg/50 animate-spin' },
+    sent: { icon: Check, className: 'text-brutal-fg/50' },
+    delivered: { icon: CheckCheck, className: 'text-brutal-fg/70' },
+    read: { icon: CheckCheck, className: 'text-brutal-primary' },
+    failed: { icon: AlertCircle, className: 'text-brutal-destructive' },
+};
+
+const statusIcon = computed(() => (props.message.status ? STATUS_META[props.message.status].icon : null));
+const statusClass = computed(() => (props.message.status ? STATUS_META[props.message.status].className : ''));
 </script>
 
 <template>

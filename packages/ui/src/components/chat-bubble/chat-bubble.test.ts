@@ -1,5 +1,7 @@
 import { mount } from '@vue/test-utils'
 import ChatBubble from './ChatBubble.vue'
+import ChatContainer from './ChatContainer.vue'
+import { CheckCheck } from '@lucide/vue'
 
 describe('ChatBubble', () => {
     it('renders received message by default', () => {
@@ -261,5 +263,135 @@ describe('ChatBubble variant and color combination', () => {
         expect(bubble.classes()).toContain('text-brutal-accent-foreground')
         expect(bubble.classes()).toContain('text-base')
         expect(bubble.classes()).toContain('ml-auto')
+    })
+})
+
+describe('ChatBubble initials (Unicode code points)', () => {
+    it('keeps emoji intact when truncating a single-word name', () => {
+        const wrapper = mount(ChatBubble, {
+            props: {
+                message: { id: 'e1', content: 'Hi', name: '😀😀' },
+            },
+        })
+        expect(wrapper.find('[title="😀😀"]').text()).toBe('😀😀')
+    })
+
+    it('takes the first code point of each word for multi-word names', () => {
+        const wrapper = mount(ChatBubble, {
+            props: {
+                message: { id: 'e2', content: 'Hi', name: '😀 Bob' },
+            },
+        })
+        expect(wrapper.find('[title="😀 Bob"]').text()).toBe('😀B')
+    })
+})
+
+describe('ChatBubble avatar error recovery', () => {
+    it('resets avatarError when the whole message object is replaced', async () => {
+        const message = { id: '1', content: 'Hi', name: 'Alice', avatar: 'https://example.com/a.png' }
+        const wrapper = mount(ChatBubble, { props: { message } })
+
+        const img = wrapper.find('img')
+        await img.trigger('error')
+        expect(wrapper.find('img').exists()).toBe(false)
+        expect(wrapper.find('[title="Alice"]').text()).toBe('AL')
+
+        // 服务端重发同 URL：新 message 对象、avatar 字符串不变，也应重置错误态
+        await wrapper.setProps({ message: { ...message, content: 'Hi (resend)' } })
+        expect(wrapper.find('img').exists()).toBe(true)
+    })
+})
+
+describe('ChatBubble status meta', () => {
+    it('renders read status with primary color via STATUS_META', () => {
+        const wrapper = mount(ChatBubble, {
+            props: {
+                message: { id: '1', content: 'Hi', variant: 'sent', status: 'read' },
+            },
+        })
+        const check = wrapper.findComponent(CheckCheck)
+        expect(check.exists()).toBe(true)
+        expect(check.classes()).toContain('text-brutal-primary')
+    })
+})
+
+describe('ChatContainer time grouping', () => {
+    // 相对「今天」构造确定时间，避免依赖具体运行日期
+    function dateAt(dayOffset: number, hours: number, minutes = 0, seconds = 0): Date {
+        const now = new Date()
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayOffset, hours, minutes, seconds)
+    }
+
+    it('groups unordered messages chronologically', () => {
+        const wrapper = mount(ChatContainer, {
+            props: {
+                messages: [
+                    { id: 'a', content: 'today', timestamp: dateAt(0, 10) },
+                    { id: 'b', content: 'yesterday', timestamp: dateAt(-1, 9) },
+                    { id: 'c', content: 'today2', timestamp: dateAt(0, 11) },
+                ],
+                groupByTime: true,
+                // 间隔放大到一天，避免默认 5 分钟把今天 10:00/11:00 拆成两个组
+                groupInterval: 1440,
+            },
+        })
+        const labels = wrapper.findAll('span.px-2').map(w => w.text())
+        expect(labels).toEqual(['昨天', '今天'])
+        // 渲染顺序跟随排序结果：昨天组在前
+        const bubbles = wrapper.findAll('.px-4')
+        expect(bubbles[0].text()).toContain('yesterday')
+        expect(bubbles[1].text()).toContain('today')
+    })
+
+    it('clamps groupInterval to a minimum of 1 minute', () => {
+        const wrapper = mount(ChatContainer, {
+            props: {
+                messages: [
+                    { id: 'a', content: 'first', timestamp: dateAt(0, 10, 0) },
+                    { id: 'b', content: 'second', timestamp: dateAt(0, 10, 0, 30) },
+                ],
+                groupByTime: true,
+                groupInterval: 0,
+            },
+        })
+        // 30s < 1min：即便 groupInterval=0 被钳制到 1 分钟，两条消息仍归同一组
+        const labels = wrapper.findAll('span.px-2').map(w => w.text())
+        expect(labels).toEqual(['今天'])
+        expect(wrapper.findAll('.px-4')).toHaveLength(2)
+    })
+
+    it('uses dateFormat for non today/yesterday group date labels', () => {
+        const dateFormat = (d: Date) => `自定义:${d.getDate()}`
+        const wrapper = mount(ChatContainer, {
+            props: {
+                messages: [
+                    { id: 'a', content: 'old', timestamp: dateAt(-3, 9) },
+                    { id: 'b', content: 'old2', timestamp: dateAt(-3, 10) },
+                ],
+                groupByTime: true,
+                groupInterval: 1440,
+                dateFormat,
+            },
+        })
+        const labels = wrapper.findAll('span.px-2').map(w => w.text())
+        expect(labels).toEqual([`自定义:${dateAt(-3, 9).getDate()}`])
+    })
+
+    it('shows a time label for interval-split groups', () => {
+        const dateFormat = (d: Date) => `T${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`
+        const wrapper = mount(ChatContainer, {
+            props: {
+                messages: [
+                    { id: 'a', content: 'm1', timestamp: dateAt(0, 10, 0) },
+                    { id: 'b', content: 'm2', timestamp: dateAt(0, 10, 3) },
+                ],
+                groupByTime: true,
+                groupInterval: 1,
+                dateFormat,
+            },
+        })
+        const labels = wrapper.findAll('span.px-2').map(w => w.text())
+        // 第一组为日期标签「今天」，间隔切分的第二组展示具体时刻（经 dateFormat）
+        expect(labels).toEqual(['今天', 'T10:03'])
     })
 })
