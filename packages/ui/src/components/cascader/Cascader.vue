@@ -9,7 +9,7 @@ import { useLocale } from '@/composables/useLocale'
 import { useClearableSelection } from '@/composables/useClearableSelection'
 import { useSelectableTrigger } from '@/composables/useSelectableTrigger'
 import { useSelectionDisplayText } from '@/composables/useSelectionDisplayText'
-import { cascaderTriggerVariants, cascaderItemVariants } from './cascader-variants'
+import { cascaderTriggerVariants, cascaderItemVariants, cascaderContentVariants } from './cascader-variants'
 import type { CascaderOption, CascaderValue } from './cascader-types'
 
 interface CascaderProps {
@@ -123,16 +123,34 @@ function getOptionPath(option: CascaderOption, colIdx: number): CascaderValue[] 
     return [...activePath.value.slice(0, colIdx), option.value]
 }
 
+// 子树叶子路径缓存：同一 option 的叶子集合只依赖其子树（父路径由树位置唯一决定），
+// 渲染期间稳定。缓存避免每个可见选项每次渲染都递归整棵子树（activePath 变化触发
+// 全列重渲染时接近 O(n²)）；options 更新时清空。
+const leafPathsCache = new Map<CascaderOption, CascaderValue[][]>()
+
+watch(() => props.options, () => {
+    leafPathsCache.clear()
+})
+
 // Find all leaf paths of a given option node recursively
 function getLeafPaths(option: CascaderOption, parentPath: CascaderValue[]): CascaderValue[][] {
+    // disabled 节点不可被勾选：跳过该节点及其整个子树（含其可选后代叶子），
+    // 与 handleItemClick/toggleCheckbox 对 option.disabled 的拦截语义保持一致
+    if (option.disabled) return []
+    const cached = leafPathsCache.get(option)
+    if (cached) return cached
+
     const currentPath = [...parentPath, option.value]
     if (!option.children || option.children.length === 0) {
-        return [currentPath]
+        const leaf = [currentPath]
+        leafPathsCache.set(option, leaf)
+        return leaf
     }
     const paths: CascaderValue[][] = []
     for (const child of option.children) {
         paths.push(...getLeafPaths(child, currentPath))
     }
+    leafPathsCache.set(option, paths)
     return paths
 }
 
@@ -345,7 +363,8 @@ const {
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
     disabled: () => props.disabled,
-    emptyValue: () => [] as CascaderValue[],
+    // 清空值形状与模式契约一致：多选为 CascaderValue[][]，单选为 CascaderValue[]
+    emptyValue: () => props.multiple ? [] as CascaderValue[][] : [] as CascaderValue[],
     onClear: (emptyValue) => {
         emit('update:modelValue', emptyValue)
         emit('change', emptyValue)
@@ -375,7 +394,11 @@ watch(open, (isOpen) => {
         
         if (valPath && valPath.length > 0) {
             activePath.value = [...valPath]
-            activeColumnIndex.value = valPath.length - 1
+            // 预选路径可能包含已失效的中间节点：columns 按 activePath 展开，实际列数
+            // 可能少于 valPath 长度。clamp 到最后一列，避免 activeColumnIndex 指向
+            // 不存在的列导致高亮/键盘导航失效
+            const maxColumn = Math.max(0, columns.value.length - 1)
+            activeColumnIndex.value = Math.min(valPath.length - 1, maxColumn)
             const currentOptions = columns.value[activeColumnIndex.value] || []
             const activeVal = valPath[activeColumnIndex.value]
             const foundIndex = currentOptions.findIndex(o => o.value === activeVal)
@@ -384,7 +407,9 @@ watch(open, (isOpen) => {
         } else {
             activePath.value = []
             activeColumnIndex.value = 0
-            activeItemIndex.value = 0
+            // 无选中值时不预置高亮：实际焦点仍在触发按钮上，aria-activedescendant
+            // 应保持 undefined，直到用户真正开始键盘导航
+            activeItemIndex.value = -1
         }
     } else {
         activePath.value = []
@@ -407,28 +432,39 @@ function handleKeyDown(e: KeyboardEvent) {
     
     const currentColumnOptions = columns.value[activeColumnIndex.value] || []
     if (currentColumnOptions.length === 0) return
-    
+
+    // 从当前项沿指定方向查找下一个非 disabled 项（循环）；找不到则保持原位置不变
+    const findNavigableIndex = (direction: 1 | -1): number => {
+        const len = currentColumnOptions.length
+        if (len === 0) return activeItemIndex.value
+        const start = activeItemIndex.value === -1
+            ? (direction === 1 ? -1 : len)
+            : activeItemIndex.value
+        for (let step = 1; step <= len; step++) {
+            const candidateIdx = (start + direction * step + len) % len
+            const candidate = currentColumnOptions[candidateIdx]
+            if (candidate && !candidate.disabled) return candidateIdx
+        }
+        return activeItemIndex.value
+    }
+
     switch (e.key) {
         case 'ArrowDown': {
             e.preventDefault()
-            if (activeItemIndex.value === -1) {
-                activeItemIndex.value = 0
-            } else {
-                activeItemIndex.value = (activeItemIndex.value + 1) % currentColumnOptions.length
+            activeItemIndex.value = findNavigableIndex(1)
+            if (activeItemIndex.value >= 0) {
+                const activeVal = currentColumnOptions[activeItemIndex.value].value
+                activePath.value = [...activePath.value.slice(0, activeColumnIndex.value), activeVal]
             }
-            const activeVal = currentColumnOptions[activeItemIndex.value].value
-            activePath.value = [...activePath.value.slice(0, activeColumnIndex.value), activeVal]
             break
         }
         case 'ArrowUp': {
             e.preventDefault()
-            if (activeItemIndex.value === -1) {
-                activeItemIndex.value = currentColumnOptions.length - 1
-            } else {
-                activeItemIndex.value = (activeItemIndex.value - 1 + currentColumnOptions.length) % currentColumnOptions.length
+            activeItemIndex.value = findNavigableIndex(-1)
+            if (activeItemIndex.value >= 0) {
+                const activeVal = currentColumnOptions[activeItemIndex.value].value
+                activePath.value = [...activePath.value.slice(0, activeColumnIndex.value), activeVal]
             }
-            const activeVal = currentColumnOptions[activeItemIndex.value].value
-            activePath.value = [...activePath.value.slice(0, activeColumnIndex.value), activeVal]
             break
         }
         case 'ArrowRight': {
@@ -477,7 +513,9 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
     return cn(
         cascaderItemVariants({
             selected: isSelected,
-            active: isActive || isTrailActive,
+            // active 与 selected 互斥：选中项固定显示 selected 高亮（bg-brutal-primary），
+            // 避免同元素叠加 active（bg-brutal-muted）导致背景色由样式表顺序决定
+            active: (isActive || isTrailActive) && !isSelected,
             trail: onSelectedTrail && !isSelected,
         }),
         option.disabled && 'opacity-50 pointer-events-none'
@@ -518,7 +556,7 @@ function getItemClasses(option: CascaderOption, colIdx: number) {
                 </span>
             </div>
         </PopoverTrigger>
-        <PopoverContent :class="cn('p-0 !w-auto', dropdownClass)" align="start">
+        <PopoverContent :class="cn(cascaderContentVariants(), 'p-0 !w-auto', dropdownClass)" align="start">
             <div v-if="options.length === 0" class="px-4 py-6 text-sm text-brutal-muted-foreground text-center">
                 {{ resolvedEmptyText }}
             </div>

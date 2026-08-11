@@ -278,9 +278,10 @@ describe('Cascader', () => {
             expect(vm.activeColumnIndex).toBe(2)
         })
 
-        it('does not highlight any item when modelValue path not found in options', async () => {
-            // 预选值在当前列选项中未找到时，activeItemIndex 应为 -1（无高亮），
-            // 而非错误高亮首项（0）。
+        it('clamps activeColumnIndex when the preselected middle node is missing from options', async () => {
+            // 预选路径中间节点失效时，columns 实际列数少于 valPath 长度：
+            // activeColumnIndex 应 clamp 到最后一列（而非指向不存在的列），
+            // 且 'nonexistent' 不在该列选项中，activeItemIndex 应为 -1（无高亮）。
             wrapper = mount(Cascader, {
                 ...localeProvide,
                 props: { options, modelValue: ['zh', 'nonexistent', 'hd'] },
@@ -291,9 +292,104 @@ describe('Cascader', () => {
             await nextTick()
 
             expect(vm.activePath).toEqual(['zh', 'nonexistent', 'hd'])
-            expect(vm.activeColumnIndex).toBe(2)
+            // columns = [options, zh.children]，实际最后一列索引为 1
+            expect(vm.activeColumnIndex).toBe(1)
             // 'nonexistent' 不在 columns[1]（zh 的子选项 bj/sh）中
             expect(vm.activeItemIndex).toBe(-1)
+        })
+
+        it('keeps selected style when the selected item is also active', async () => {
+            // 选中项同时处于 active 状态时，应固定显示 selected 高亮（bg-brutal-primary），
+            // 不叠加 active 的 bg-brutal-muted，避免背景色由样式表顺序决定
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options, modelValue: ['zh', 'bj', 'hd'] },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+
+            vm.activePath = ['zh', 'bj', 'hd']
+            vm.activeColumnIndex = 2
+            await nextTick()
+
+            const classes = vm.getItemClasses(options[0]!.children![0]!.children![0], 2)
+            expect(classes).toContain('bg-brutal-primary')
+            expect(classes).not.toContain('bg-brutal-muted')
+        })
+    })
+
+    describe('keyboard navigation and disabled options', () => {
+        it('does not preset active item when opening without a value', async () => {
+            // 无选中值时 activeItemIndex 应为 -1：实际焦点在触发按钮上，
+            // aria-activedescendant 应保持 undefined，直到用户真正开始导航
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+
+            expect(vm.activeItemIndex).toBe(-1)
+        })
+
+        it('skips disabled items during ArrowDown/ArrowUp navigation', async () => {
+            const withDisabled: CascaderOption[] = [
+                { value: 'a', label: 'A' },
+                { value: 'b', label: 'B', disabled: true },
+                { value: 'c', label: 'C' },
+            ]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: withDisabled },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+            vm.activeColumnIndex = 0
+            vm.activeItemIndex = -1
+
+            // 直接调用 handleKeyDown：happy-dom 中 trigger('keydown') 会触发 reka 的
+            // focusOutside dismiss（测试环境假象），绕过以聚焦于导航逻辑本身
+            const key = (k: string) => ({ key: k, preventDefault: () => {} }) as any
+
+            // 从 -1 起 ArrowDown 落到第一个非 disabled 项
+            vm.handleKeyDown(key('ArrowDown'))
+            expect(vm.activeItemIndex).toBe(0)
+
+            // 再 ArrowDown：跳过 disabled 的 'b'，落到 'c'
+            vm.handleKeyDown(key('ArrowDown'))
+            expect(vm.activeItemIndex).toBe(2)
+
+            // ArrowUp 从 2 回退：跳过 'b'，回到 'a'
+            vm.handleKeyDown(key('ArrowUp'))
+            expect(vm.activeItemIndex).toBe(0)
+        })
+
+        it('does not select disabled descendant leaves when checking a parent', async () => {
+            const withDisabledLeaf: CascaderOption[] = [
+                {
+                    value: 'p',
+                    label: 'Parent',
+                    children: [
+                        { value: 'ok', label: 'OK' },
+                        { value: 'no', label: 'Disabled', disabled: true },
+                    ],
+                },
+            ]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: withDisabledLeaf, multiple: true, modelValue: [] },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.activePath = ['p']
+            vm.toggleCheckbox(withDisabledLeaf[0], 0, true)
+            expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toEqual([['p', 'ok']])
         })
     })
 })

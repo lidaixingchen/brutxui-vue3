@@ -13,7 +13,9 @@ export const cascaderTriggerVariants = cva(
         'focus:outline-none focus:shadow-brutal-lg focus:-translate-x-0.5 focus:-translate-y-0.5',
         'active:translate-y-[var(--brutal-pressed-offset,2px)] active:translate-x-0 active:shadow-none', /* 组件私有：重置 X 轴位移，不抽取 */
         'disabled:cursor-not-allowed disabled:opacity-50',
-        '[&>span]:line-clamp-1',
+        // 限定到首个文本 span：line-clamp 会设置 display:-webkit-box，若命中图标容器
+        // span（flex 布局）会覆盖其 display，导致图标被裁剪/布局异常
+        '[&>span:first-child]:line-clamp-1',
     ],
     {
         variants: {
