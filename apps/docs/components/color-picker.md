@@ -260,11 +260,11 @@ const color = ref(null)
 | `disabled` | `boolean` | `false` | 禁用状态 |
 | `clearable` | `boolean` | `false` | 是否可清除 |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | 输入框尺寸 |
-| `name` | `string` | — | 表单字段名 |
+| `name` | `string` | — | 表单字段名；提供时渲染隐藏 `<input type="hidden">`，随所属 `<form>` 提交当前颜色值 |
 | `id` | `string` | — | 组件 ID |
 | `ariaLabel` | `string` | — | 无障碍标签 |
 | `open` | `boolean` | — | 面板是否打开，支持 v-model:open 双向绑定 |
-| `class` | `string` | — | 自定义类名 |
+| `class` | `ClassValue` | — | 自定义类名（支持数组/对象绑定） |
 
 ## 事件
 
@@ -303,6 +303,10 @@ const color = ref(null)
 | 按键 | 操作 |
 |------|------|
 | `←` / `→` | 调整透明度（步长 0.01，Shift 步长 0.1） |
+
+### 预设与历史色块
+
+预设与历史色块是原生 `<button>` 元素（可 Tab 聚焦，Enter/Space 激活），选中态以 `aria-pressed` 表达，并带有 `focus-visible` 焦点环。非法色值会被过滤（历史）或渲染为透明且不可选中（预设）。
 
 ## 常见问题
 

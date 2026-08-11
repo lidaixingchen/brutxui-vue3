@@ -261,11 +261,11 @@ const color = ref(null)
 | `disabled` | `boolean` | `false` | Disabled state |
 | `clearable` | `boolean` | `false` | Whether clearable |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Input size |
-| `name` | `string` | — | Form field name |
+| `name` | `string` | — | Form field name; when provided, renders a hidden `<input type="hidden">` submitted with the owning form carrying the current color value |
 | `id` | `string` | — | Component ID |
 | `ariaLabel` | `string` | — | Accessibility label |
 | `open` | `boolean` | — | Whether the panel is open, supports v-model:open two-way binding |
-| `class` | `string` | — | Custom CSS class |
+| `class` | `ClassValue` | — | Custom CSS class (supports array/object bindings) |
 
 ## Events
 
@@ -304,6 +304,10 @@ const color = ref(null)
 | Key | Action |
 |-----|--------|
 | `Left` / `Right` | Adjust opacity (step 0.01, Shift step 0.1) |
+
+### Preset & History Swatches
+
+Preset and history color swatches are native `<button>` elements (Tab-focusable, activated with Enter/Space). The selected state is expressed via `aria-pressed`, and a `focus-visible` ring provides keyboard focus feedback. Invalid color values are filtered out (history) or rendered transparent and non-selectable (presets).
 
 ## FAQ
 
