@@ -192,7 +192,7 @@ const url = ref('')
 | `ariaLabel` | `string` | — | ARIA label |
 | `ariaLabelledby` | `string` | — | ARIA label reference ID |
 | `ariaDescribedby` | `string` | — | ARIA description reference ID |
-| `ariaInvalid` | `boolean` | — | ARIA invalid state |
+| `ariaInvalid` | `boolean` | — | ARIA invalid state; derived from `variant` when not explicitly set (`true` for `error`) |
 | `ariaRequired` | `boolean` | — | ARIA required state |
 | `class` | `string` | — | Custom CSS class |
 

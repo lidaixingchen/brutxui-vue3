@@ -214,7 +214,7 @@ const url = ref('')
 | `ariaLabel` | `string` | — | ARIA 标签 |
 | `ariaLabelledby` | `string` | — | ARIA 标签引用 ID |
 | `ariaDescribedby` | `string` | — | ARIA 描述引用 ID |
-| `ariaInvalid` | `boolean` | — | ARIA 无效状态 |
+| `ariaInvalid` | `boolean` | — | ARIA 无效状态；未显式传入时根据 `variant` 推导（`error` 时为 `true`） |
 | `ariaRequired` | `boolean` | — | ARIA 必填状态 |
 | `class` | `string` | — | 自定义 CSS 类名 |
 
