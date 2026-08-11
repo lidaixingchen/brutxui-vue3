@@ -77,6 +77,10 @@ provide(avatarKey, {
         <AvatarRoot :class="classes">
             <slot />
         </AvatarRoot>
-        <span v-if="status !== 'none'" :class="statusClasses" role="status" :aria-label="statusLabel" />
+        <!-- role="status" 为 live region：读屏仅播报文本内容变化，故以 sr-only 文本承载 statusLabel，
+             状态切换或语言切换时文本更新才会被播报（纯 aria-label 无内容则读屏不播报）。 -->
+        <span v-if="status !== 'none'" :class="statusClasses" role="status">
+            <span class="sr-only">{{ statusLabel }}</span>
+        </span>
     </span>
 </template>

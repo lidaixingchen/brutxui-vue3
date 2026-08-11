@@ -9,7 +9,11 @@ interface AvatarImageProps {
     class?: string
 }
 
-const props = defineProps<AvatarImageProps>()
+// alt 默认空字符串：未显式提供时输出 alt=""（语义化为装饰性图片），
+// 读屏跳过该图而不会读出文件名；需语义化图片时必须显式传 alt。
+const props = withDefaults(defineProps<AvatarImageProps>(), {
+    alt: '',
+})
 
 const classes = computed(() =>
     cn('aspect-square h-full w-full object-cover', props.class)
