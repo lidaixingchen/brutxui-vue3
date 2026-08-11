@@ -116,11 +116,11 @@ const passwordToggleLabel = computed(() =>
     passwordVisible.value ? t('input.hidePassword') : t('input.showPassword')
 )
 
-// 使用 useClearable composable
+// 使用 useClearable composable（readonly 与 disabled 同等对待：只读输入不可清除）
 const { showClear, handleClear: handleClearEvent, onMouseEnter, onMouseLeave, onFocus, onBlur } = useClearable({
     modelValue: () => props.modelValue,
     clearable: () => props.clearable,
-    disabled: () => props.disabled,
+    disabled: () => props.disabled || props.readonly,
     onClear: () => {
         emit('update:modelValue', '')
         emit('clear')
@@ -133,9 +133,9 @@ const actualType = computed(() => {
     return passwordVisible.value ? 'text' : 'password'
 })
 
-// 是否显示密码切换按钮
+// 是否显示密码切换按钮（disabled/readonly 下隐藏，只读输入不可交互）
 const showPasswordToggle = computed(() => {
-    return props.type === 'password' && props.showPassword
+    return props.type === 'password' && props.showPassword && !props.disabled && !props.readonly
 })
 
 // 是否显示字数统计
@@ -148,7 +148,10 @@ const currentLength = computed(() => {
     return props.modelValue?.length ?? 0
 })
 
-const hasSuffix = computed(() => props.suffixIcon || showClear.value || showPasswordToggle.value)
+// clearable/showPassword 优先于 suffixIcon：后缀图标被隐藏时，padding 计算同步排除，避免右侧多余留白
+const showSuffixIcon = computed(() => props.suffixIcon && !showClear.value && !showPasswordToggle.value)
+
+const hasSuffix = computed(() => showSuffixIcon.value || showClear.value || showPasswordToggle.value)
 
 // 容器样式
 const inputContainerClasses = computed(() =>
@@ -254,7 +257,7 @@ defineExpose({
                     :aria-label="ariaLabel"
                     :aria-labelledby="ariaLabelledby"
                     :aria-describedby="ariaDescribedby"
-                    :aria-invalid="ariaInvalid"
+                    :aria-invalid="ariaInvalid ?? (variant === 'error')"
                     :aria-errormessage="ariaErrormessage"
                     :aria-required="ariaRequired"
                     @compositionstart="isComposing = true"
@@ -269,6 +272,7 @@ defineExpose({
                         v-if="showClear"
                         type="button"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
+                        :aria-label="t('input.clear')"
                         @click="handleClear"
                     >
                         <X class="h-3.5 w-3.5 text-brutal-placeholder" />
@@ -278,6 +282,7 @@ defineExpose({
                         type="button"
                         class="p-0.5 hover:bg-brutal-muted rounded-brutal transition-colors"
                         :aria-label="passwordToggleLabel"
+                        @mousedown.prevent
                         @click="togglePasswordVisibility"
                     >
                         <Eye v-if="!passwordVisible" class="h-3.5 w-3.5 text-brutal-placeholder" />
@@ -285,7 +290,7 @@ defineExpose({
                     </button>
                     <component
                         :is="suffixIcon"
-                        v-if="suffixIcon && !showClear && !showPasswordToggle"
+                        v-if="showSuffixIcon"
                         class="h-4 w-4 text-brutal-placeholder"
                     />
                 </div>

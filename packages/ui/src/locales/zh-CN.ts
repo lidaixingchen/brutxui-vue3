@@ -332,6 +332,7 @@ export const zhCN: Locale = {
         placeholder: '请输入...',
         showPassword: '显示密码',
         hidePassword: '隐藏密码',
+        clear: '清除',
     },
     numberInput: {
         placeholder: '请输入数字...',

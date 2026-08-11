@@ -332,6 +332,7 @@ export const en: Locale = {
         placeholder: 'Type here...',
         showPassword: 'Show password',
         hidePassword: 'Hide password',
+        clear: 'Clear',
     },
     numberInput: {
         placeholder: 'Enter a number...',

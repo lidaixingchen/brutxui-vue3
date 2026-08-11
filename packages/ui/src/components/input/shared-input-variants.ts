@@ -9,15 +9,9 @@ export const validationBorderColors: Record<InputVariant, string> = {
 }
 
 export const inputVariantClasses: Record<InputVariant, string> = {
+    // default 无额外聚焦类：聚焦反馈由 inputContainerVariants 基础类的 focus-within:* 统一提供
     default: validationBorderColors.default,
-    error: `${validationBorderColors.error} focus:shadow-brutal-primary`,
-    success: `${validationBorderColors.success} focus:shadow-brutal-secondary`,
-}
-
-export interface BaseInputProps {
-    modelValue?: string
-    disabled?: boolean
-    readonly?: boolean
-    placeholder?: string
-    errorMessage?: string
+    // 容器为 div（不可聚焦），聚焦反馈须用 focus-within:* 才会在内部 input 聚焦时命中
+    error: `${validationBorderColors.error} focus-within:shadow-brutal-primary`,
+    success: `${validationBorderColors.success} focus-within:shadow-brutal-secondary`,
 }

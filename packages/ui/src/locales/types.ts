@@ -386,6 +386,7 @@ export interface InputLocale {
     placeholder: string
     showPassword: string
     hidePassword: string
+    clear: string
 }
 
 export interface NumberInputLocale {

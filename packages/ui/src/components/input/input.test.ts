@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
+import { Mail } from '@lucide/vue'
 import Input from './Input.vue'
 
 describe('Input', () => {
@@ -427,6 +428,85 @@ describe('Input', () => {
             await wrapper.find('input').setValue('hello')
 
             expect(wrapper.emitted('update:modelValue')![0]).toEqual(['hello'])
+        })
+    })
+
+    // 新增测试：容器聚焦反馈（不可聚焦，须用 focus-within）、只读语义与后缀优先级
+    describe('focus feedback & suffix priority', () => {
+        it('uses focus-within shadow for error variant', () => {
+            const wrapper = mount(Input, { props: { variant: 'error' } })
+            expect(wrapper.find('.brutal-input-container').classes()).toContain('focus-within:shadow-brutal-primary')
+        })
+
+        it('uses focus-within shadow for success variant', () => {
+            const wrapper = mount(Input, { props: { variant: 'success' } })
+            expect(wrapper.find('.brutal-input-container').classes()).toContain('focus-within:shadow-brutal-secondary')
+        })
+
+        it('does not show clear button when readonly', async () => {
+            const wrapper = mount(Input, {
+                props: { clearable: true, modelValue: 'hello', readonly: true },
+            })
+            await wrapper.find('.brutal-input-container').trigger('mouseenter')
+            await nextTick()
+            expect(wrapper.find('button').exists()).toBe(false)
+        })
+
+        it('does not show password toggle when disabled or readonly', () => {
+            const disabledWrapper = mount(Input, {
+                props: { type: 'password', showPassword: true, disabled: true },
+            })
+            expect(disabledWrapper.find('button').exists()).toBe(false)
+
+            const readonlyWrapper = mount(Input, {
+                props: { type: 'password', showPassword: true, readonly: true },
+            })
+            expect(readonlyWrapper.find('button').exists()).toBe(false)
+        })
+
+        it('gives the clear button an accessible label', async () => {
+            const wrapper = mount(Input, {
+                props: { clearable: true, modelValue: 'hello' },
+            })
+            await wrapper.find('.brutal-input-container').trigger('mouseenter')
+            await nextTick()
+            expect(wrapper.find('button').attributes('aria-label')).toBeTruthy()
+        })
+
+        it('hides suffix icon when password toggle is shown', () => {
+            const wrapper = mount(Input, {
+                props: { type: 'password', showPassword: true, suffixIcon: Mail },
+            })
+            expect(wrapper.find('.lucide-mail').exists()).toBe(false)
+            expect(wrapper.find('button').exists()).toBe(true)
+        })
+
+        it('hides suffix icon when clear button is shown', async () => {
+            const wrapper = mount(Input, {
+                props: { clearable: true, modelValue: 'hello', suffixIcon: Mail },
+            })
+            await wrapper.find('.brutal-input-container').trigger('mouseenter')
+            await nextTick()
+            expect(wrapper.find('button').exists()).toBe(true)
+            expect(wrapper.find('.lucide-mail').exists()).toBe(false)
+        })
+
+        it('shows suffix icon and keeps suffix padding when no suffix control is active', () => {
+            const wrapper = mount(Input, {
+                props: { clearable: true, suffixIcon: Mail },
+            })
+            expect(wrapper.find('.lucide-mail').exists()).toBe(true)
+            expect(wrapper.find('input').classes()).toContain('pr-9')
+        })
+
+        it('derives aria-invalid from error variant', () => {
+            const wrapper = mount(Input, { props: { variant: 'error' } })
+            expect(wrapper.find('input').attributes('aria-invalid')).toBe('true')
+        })
+
+        it('keeps explicit ariaInvalid override', () => {
+            const wrapper = mount(Input, { props: { variant: 'error', ariaInvalid: false } })
+            expect(wrapper.find('input').attributes('aria-invalid')).toBe('false')
         })
     })
 })
