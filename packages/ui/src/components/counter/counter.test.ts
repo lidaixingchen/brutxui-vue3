@@ -108,6 +108,13 @@ describe('Counter', () => {
         expect(wrapper.text()).toContain('1.234,56')
     })
 
+    it('keeps custom decimal separator when thousands separator is disabled', () => {
+        const wrapper = mount(Counter, {
+            props: { to: 1234.56, decimals: 2, separator: '', decimalSeparator: ',' },
+        })
+        expect(wrapper.text()).toContain('1234,56')
+    })
+
     it('shows prefix in display', () => {
         const wrapper = mount(Counter, {
             props: { to: 100, prefix: '$' },

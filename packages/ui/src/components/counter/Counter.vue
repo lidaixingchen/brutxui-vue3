@@ -79,7 +79,8 @@ function easingFn(t: number): number {
 
 function formatNumber(val: number): string {
     const fixed = val.toFixed(props.decimals);
-    if (!props.separator) return fixed;
+    // separator 为空串时仅取消千分位，仍需应用自定义 decimalSeparator（toFixed 恒产出 '.'）
+    if (!props.separator) return fixed.replace('.', props.decimalSeparator);
     const [int, dec] = fixed.split('.');
     const formatted = int.replace(/\B(?=(\d{3})+(?!\d))/g, props.separator);
     return dec !== undefined ? `${formatted}${props.decimalSeparator}${dec}` : formatted;
@@ -194,20 +195,33 @@ watch(() => props.duration, (newDuration, oldDuration) => {
     startTime = now - oldProgress * newDuration;
 });
 
-watch(() => [props.to, props.prefix, props.suffix, props.separator, props.decimalSeparator, props.decimals, props.size, props.variant] as const, () => {
+// 影响渲染宽度（字号/自定义组件/是否渲染组件/文本内容）的属性变化时须重新测量缩放
+watch(() => [
+    props.to,
+    props.prefix, props.suffix,
+    props.prefixComponent, props.suffixComponent,
+    props.animatePrefix, props.animateSuffix,
+    props.separator, props.decimalSeparator, props.decimals,
+    props.size, props.variant,
+    props.class, props.valueStyle,
+] as const, () => {
     scheduleUpdateScale();
 });
 
 const formattedCurrent = computed(() => formatNumber(current.value));
 
+const finalNumber = computed(() => formatNumber(props.to));
+
 const finalDisplayValue = computed(() =>
-    `${props.prefix}${formatNumber(props.to)}${props.suffix}`
+    `${props.prefix}${finalNumber.value}${props.suffix}`
 );
 
 const hasCustomPrefix = computed(() => !!props.prefixComponent);
 const hasCustomSuffix = computed(() => !!props.suffixComponent);
 const hasContainer = computed(() => props.card || !!props.title || !!slots.title);
 
+// scale 仅做视觉缩放；布局盒由外层 max-w-full 约束到容器宽，
+// 且缩放后视觉宽度 = naturalWidth * scaleFactor = 容器宽，布局盒与视觉宽度一致，无需额外设置 width
 const scaleStyle = computed(() => {
     if (scaleFactor.value >= 1) return undefined;
     return {
@@ -243,7 +257,15 @@ const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 upperca
 
         <span class="relative inline-flex max-w-full min-w-0 items-center" :style="valueStyle">
             <span ref="measureRef" :class="measureClasses" aria-hidden="true">
-                {{ finalDisplayValue }}
+                <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
+                    <component :is="prefixComponent" />
+                </span>
+                <span v-else-if="prefix">{{ prefix }}</span>
+                {{ finalNumber }}
+                <span v-if="animateSuffix && hasCustomSuffix" class="inline-flex">
+                    <component :is="suffixComponent" />
+                </span>
+                <span v-else-if="suffix">{{ suffix }}</span>
             </span>
             <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="isAnimating ? 'off' : 'polite'" :aria-label="finalDisplayValue">
                 <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
@@ -261,7 +283,15 @@ const titleClasses = 'text-xs font-bold text-gray-500 dark:text-gray-400 upperca
 
     <span v-else class="relative inline-flex max-w-full min-w-0 items-center" :style="valueStyle">
         <span ref="measureRef" :class="measureClasses" aria-hidden="true">
-            {{ finalDisplayValue }}
+            <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
+                <component :is="prefixComponent" />
+            </span>
+            <span v-else-if="prefix">{{ prefix }}</span>
+            {{ finalNumber }}
+            <span v-if="animateSuffix && hasCustomSuffix" class="inline-flex">
+                <component :is="suffixComponent" />
+            </span>
+            <span v-else-if="suffix">{{ suffix }}</span>
         </span>
         <span ref="rootRef" :class="classes" :style="scaleStyle" :aria-live="isAnimating ? 'off' : 'polite'" :aria-label="finalDisplayValue">
             <span v-if="animatePrefix && hasCustomPrefix" class="inline-flex">
