@@ -182,6 +182,7 @@ const url = ref('')
 | `readonly` | `boolean` | `false` | Whether readonly |
 | `placeholder` | `string` | — | Placeholder text |
 | `maxlength` | `number` | — | Maximum input length |
+| `autocomplete` | `string` | — | Autofill hint for browser password managers (e.g. `email` / `current-password`) |
 | `clearable` | `boolean` | `false` | Show clear button on hover |
 | `showPassword` | `boolean` | `false` | Show password toggle button (for `type="password"`) |
 | `showWordLimit` | `boolean` | `false` | Show word count (requires `maxlength`) |

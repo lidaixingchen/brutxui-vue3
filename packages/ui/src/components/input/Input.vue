@@ -44,6 +44,8 @@ interface InputProps {
     placeholder?: string
     /** 最大长度 */
     maxlength?: number
+    /** 自动填充提示（浏览器密码管理器识别，如 email / current-password） */
+    autocomplete?: string
     /** 显示清除按钮 */
     clearable?: boolean
     /** 密码显隐切换按钮 */
@@ -80,6 +82,7 @@ const props = withDefaults(defineProps<InputProps>(), {
     readonly: false,
     placeholder: undefined,
     maxlength: undefined,
+    autocomplete: undefined,
     clearable: false,
     showPassword: false,
     showWordLimit: false,
@@ -246,6 +249,7 @@ defineExpose({
                     :readonly="readonly"
                     :placeholder="placeholder"
                     :maxlength="maxlength"
+                    :autocomplete="autocomplete"
                     :class="inputClasses"
                     :aria-label="ariaLabel"
                     :aria-labelledby="ariaLabelledby"

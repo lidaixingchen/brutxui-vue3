@@ -204,6 +204,7 @@ const url = ref('')
 | `readonly` | `boolean` | `false` | 是否只读 |
 | `placeholder` | `string` | — | 占位符文本 |
 | `maxlength` | `number` | — | 最大输入长度 |
+| `autocomplete` | `string` | — | 自动填充提示（浏览器密码管理器识别，如 `email` / `current-password`） |
 | `clearable` | `boolean` | `false` | 悬停时显示清除按钮 |
 | `showPassword` | `boolean` | `false` | 显示密码切换按钮（仅 `type="password"` 有效） |
 | `showWordLimit` | `boolean` | `false` | 显示字数统计（需配合 `maxlength`） |
