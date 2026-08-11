@@ -68,6 +68,8 @@ const emit = defineEmits<{
 }>()
 
 const internalOpen = ref(false)
+// 受控/非受控统一：props.open 传入时为受控模式，get 读 props、set 只 emit update:open，
+// 关闭动作需父组件绑定 v-model:open 或监听 update:open 回写才生效（契约见文档 open 属性）
 const open = computed<boolean>({
     get: () => props.open !== undefined ? props.open : internalOpen.value,
     set: (val) => {
@@ -93,16 +95,19 @@ const displayText = useSelectionDisplayText({
     placeholder: resolvedPlaceholder,
     multiple: () => props.multiple,
     maxDisplay: () => props.maxDisplay,
-    getLabel: (option) => option.label,
+    // 不传 getLabel：defaultGetLabel 对非字符串/缺失 label 已安全兜底（返回 ''），
+    // 传 (option) => option.label 会绕过该兜底，运行时 label 异常时直接抛错
     formatList: (labels) => labels.join(', '),
     formatCount: (count) => t('combobox.selectedCount', { count }),
 })
 
 const filteredOptions = computed(() => {
     if (!searchQuery.value) return props.options
-    const query = searchQuery.value.toLowerCase()
+    const query = searchQuery.value.trim().toLowerCase()
+    // label 的 string 类型仅编译期保证，异步/第三方数据运行时可能缺失或非字符串：
+    // String(option.label ?? '') 兜底，避免调用 .toLowerCase() 抛 TypeError 致组件崩溃
     return props.options.filter((option) =>
-        option.label.toLowerCase().includes(query)
+        String(option.label ?? '').toLowerCase().includes(query)
     )
 })
 
@@ -111,7 +116,7 @@ const showCreateItem = computed(() =>
 )
 
 const createItemLabel = computed(() =>
-    t('combobox.create', { query: searchQuery.value })
+    t('combobox.create', { query: searchQuery.value.trim() })
 )
 
 const { triggerClasses } = useSelectableTrigger<string | string[]>({
@@ -159,9 +164,13 @@ function handleSelect(value: string) {
     }
 }
 
+// creative 契约：组件只 emit 'create'，由父组件在回调中把新选项加入 options 并同步 modelValue
+// （见 docs 常见问题）。这里对查询文本去首尾空格，避免创建出带脏空格的 value/label；
+// 多选模式不自动合并 modelValue 也源于此——新选项的 value 由父组件决定，可能与文本不同
 function handleCreate() {
-    if (!searchQuery.value.trim()) return
-    emit('create', searchQuery.value)
+    const value = searchQuery.value.trim()
+    if (!value) return
+    emit('create', value)
     if (!props.multiple) {
         open.value = false
     }

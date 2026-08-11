@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import Combobox from './Combobox.vue'
+import type { ComboboxOption } from './combobox-types'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 
@@ -332,6 +333,61 @@ describe('Combobox', () => {
         expect(document.body.textContent).toContain('No results')
         const items = document.body.querySelectorAll('[data-slot="command-item"]')
         expect(items.length).toBe(0)
+    })
+
+    it('trims whitespace when emitting create', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, creative: true },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = '  mango  '
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        const createItem = document.body.querySelector('[data-slot="command-item"]') as HTMLElement
+        createItem.click()
+        await nextTick()
+        expect(wrapper.emitted('create')).toBeTruthy()
+        expect(wrapper.emitted('create')![0]).toEqual(['mango'])
+    })
+
+    it('does not crash when option label is missing at runtime', async () => {
+        const badOptions = [
+            { value: 'x', label: undefined },
+            { value: 'y', label: 'Y' },
+        ] as unknown as ComboboxOption[]
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options: badOptions },
+            attachTo: document.body,
+        })
+        await openCombobox(wrapper)
+        const input = document.body.querySelector('[data-slot="command-input"] input') as HTMLInputElement
+        input.value = 'y'
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        await nextTick()
+        // 不应因缺失 label 抛 TypeError，匹配项仍正常渲染
+        const items = document.body.querySelectorAll('[data-slot="command-item"]')
+        expect(items.length).toBe(1)
+        expect(items[0].textContent).toContain('Y')
+    })
+
+    it('respects controlled open prop', async () => {
+        wrapper = mount(Combobox, {
+            ...localeProvide,
+            props: { options, open: false },
+            attachTo: document.body,
+        })
+        const trigger = wrapper.find('[role="combobox"]')
+        await trigger.trigger('click')
+        await nextTick()
+        await nextTick()
+        // 受控模式：发出 update:open 但父组件未回写时，下拉保持关闭
+        expect(wrapper.emitted('update:open')).toBeTruthy()
+        expect(wrapper.emitted('update:open')![0]).toEqual([true])
+        expect(trigger.attributes('aria-expanded')).toBe('false')
     })
 })
 
