@@ -152,4 +152,90 @@ describe('Card3D clickable', () => {
         await card.trigger('click')
         expect(wrapper.emitted('click')).toBeUndefined()
     })
+
+    it('adds button role and tabindex when clickable', () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.attributes('role')).toBe('button')
+        expect(card.attributes('tabindex')).toBe('0')
+    })
+
+    it('does not add button semantics when not clickable', () => {
+        const wrapper = mount(Card3D)
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.attributes('role')).toBeUndefined()
+        expect(card.attributes('tabindex')).toBeUndefined()
+    })
+
+    it('removes focusability and marks aria-disabled when disabled', () => {
+        const wrapper = mount(Card3D, { props: { clickable: true, disabled: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.attributes('role')).toBe('button')
+        expect(card.attributes('tabindex')).toBe('-1')
+        expect(card.attributes('aria-disabled')).toBe('true')
+    })
+
+    it('emits click on Enter keydown and Space keyup', async () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+
+        await card.trigger('keydown', { key: 'Enter' })
+        expect(wrapper.emitted('click')).toHaveLength(1)
+        expect(wrapper.emitted('click')![0][0]).toBeInstanceOf(KeyboardEvent)
+
+        // 空格激活移到 keyup（keydown 阶段仅阻止滚动）
+        await card.trigger('keydown', { key: ' ' })
+        expect(wrapper.emitted('click')).toHaveLength(1)
+
+        await card.trigger('keyup', { key: ' ' })
+        expect(wrapper.emitted('click')).toHaveLength(2)
+    })
+
+    it('does not emit click on keyboard when disabled', async () => {
+        const wrapper = mount(Card3D, { props: { clickable: true, disabled: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        await card.trigger('keydown', { key: 'Enter' })
+        await card.trigger('keyup', { key: ' ' })
+        expect(wrapper.emitted('click')).toBeUndefined()
+    })
+})
+
+describe('Card3D hover state reset', () => {
+    it('resets hover state when disabled toggles true while hovering', async () => {
+        const wrapper = mount(Card3D)
+        const card = wrapper.find('[role="group"] > div:first-child')
+
+        vi.spyOn(card.element, 'getBoundingClientRect').mockReturnValue({
+            width: 200,
+            height: 200,
+            left: 0,
+            top: 0,
+            right: 200,
+            bottom: 200,
+            x: 0,
+            y: 0,
+            toJSON: () => ({}),
+        } as DOMRect)
+
+        card.element.dispatchEvent(createPointerEvent('pointermove', { clientX: 100, clientY: 100 }))
+        await wrapper.vm.$nextTick()
+
+        // 悬停过程中禁用 → 重置悬停状态
+        await wrapper.setProps({ disabled: true })
+        await wrapper.vm.$nextTick()
+
+        // 恢复启用且指针仍停留（不再触发 pointermove）→ 不应残留旧的 transform
+        await wrapper.setProps({ disabled: false })
+        await wrapper.vm.$nextTick()
+
+        const style = card.attributes('style') || ''
+        expect(style).toContain('rotateX(0deg)')
+        expect(style).toContain('rotateY(0deg)')
+    })
+
+    it('applies pointer-events-none to shadow layer', () => {
+        const wrapper = mount(Card3D)
+        const shadow = wrapper.find('[aria-hidden="true"]')
+        expect(shadow.classes()).toContain('pointer-events-none')
+    })
 })

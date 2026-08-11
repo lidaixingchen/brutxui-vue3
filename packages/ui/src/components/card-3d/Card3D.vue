@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { getComputedStyle } from '@/lib/env'
+import { getComputedStyle, requestAnimationFrame } from '@/lib/env'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
 import { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './card-3d-variants'
@@ -35,7 +35,8 @@ const props = withDefaults(defineProps<Card3DProps>(), {
 })
 
 const emit = defineEmits<{
-    click: [event: MouseEvent]
+    // 键盘激活（Enter/Space）时发出 KeyboardEvent，指针点击时发出 MouseEvent
+    click: [event: MouseEvent | KeyboardEvent]
 }>()
 
 const cardRef = ref<HTMLDivElement | null>(null)
@@ -57,8 +58,9 @@ const readOffsetFromCSSVar = (): number => {
     return Number.isNaN(parsed) ? CSS_VAR_OFFSET_FALLBACK : parsed
 }
 
-// 阴影偏移量（响应式）
-const initialOffset = ref(CSS_VAR_OFFSET_FALLBACK)
+// 阴影偏移量（响应式）；显式标注 number，避免 CARD3D_SHADOW_OFFSETS 的 as const 使
+// DEFAULT_CARD3D_OFFSET_PX 收窄为字面量类型，导致运行时读取值无法赋值
+const initialOffset = ref<number>(CSS_VAR_OFFSET_FALLBACK)
 
 // 在挂载后从 CSS 变量读取初始偏移量
 onMounted(() => {
@@ -119,6 +121,18 @@ watch(initialOffset, (newVal) => {
     }
 })
 
+// 悬停过程中 disabled / prefers-reduced-motion 变 true 时统一重置悬停状态：
+// 否则开关恢复且指针仍停留在卡片上（不再触发 pointermove）时，卡片会残留旧的 transform 值
+watch([() => props.disabled, prefersReducedMotion], ([disabled, reduced]) => {
+    if (disabled || reduced) {
+        isHovered.value = false
+        rx.value = 0
+        ry.value = 0
+        sx.value = initialOffset.value
+        sy.value = initialOffset.value
+    }
+})
+
 const cardStyles = computed(() => {
     if (props.disabled || prefersReducedMotion.value) {
         return {}
@@ -152,9 +166,47 @@ const cardClasses = computed(() =>
     )
 )
 
+// 键盘激活（Enter keydown / Space keyup）后，浏览器会对 role="button" 的元素合成 click，
+// 用标志位吞掉这次合成 click，避免与键盘 emit 重复触发
+let suppressSyntheticClick = false
+
+const cardAttrs = computed(() => props.clickable
+    ? {
+        tabindex: props.disabled ? -1 : 0,
+        role: 'button' as const,
+        'aria-disabled': props.disabled || undefined,
+        'aria-label': t('card3d.ariaLabel'),
+    }
+    : {})
+
 const handleClick = (event: MouseEvent) => {
     if (props.disabled || !props.clickable) return
+    if (suppressSyntheticClick) {
+        suppressSyntheticClick = false
+        return
+    }
     emit('click', event)
+}
+
+const handleKeydown = (event: KeyboardEvent) => {
+    if (props.disabled || !props.clickable || event.repeat) return
+    if (event.key === 'Enter') {
+        event.preventDefault()
+        suppressSyntheticClick = true
+        emit('click', event)
+        requestAnimationFrame(() => { suppressSyntheticClick = false })
+    } else if (event.key === ' ') {
+        // 阻止页面滚动；激活移到 keyup，符合 WAI-ARIA button 模式（可移开焦点取消）
+        event.preventDefault()
+    }
+}
+
+const handleKeyup = (event: KeyboardEvent) => {
+    if (props.disabled || !props.clickable || event.repeat || event.key !== ' ') return
+    event.preventDefault()
+    suppressSyntheticClick = true
+    emit('click', event)
+    requestAnimationFrame(() => { suppressSyntheticClick = false })
 }
 
 const shadowClasses = computed(() =>
@@ -168,9 +220,12 @@ const shadowClasses = computed(() =>
             ref="cardRef"
             :class="cardClasses"
             :style="cardStyles"
+            v-bind="cardAttrs"
             @pointermove="handlePointerMove"
             @pointerleave="handlePointerLeave"
             @click="handleClick"
+            @keydown="handleKeydown"
+            @keyup="handleKeyup"
         >
             <slot />
         </div>
