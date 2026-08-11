@@ -288,6 +288,14 @@ describe('BreadcrumbEllipsis', () => {
         expect(wrapper.text()).toContain('…')
     })
 
+    it('does not render sr-only text when custom default slot is provided', () => {
+        const wrapper = mount(BreadcrumbEllipsis, {
+            slots: { default: '<span>…</span>' },
+            ...localeProvide,
+        })
+        expect(wrapper.find('.sr-only').exists()).toBe(false)
+    })
+
     it('applies custom class', () => {
         const wrapper = mount(BreadcrumbEllipsis, { props: { class: 'my-ellipsis' }, ...localeProvide })
         expect(wrapper.classes()).toContain('my-ellipsis')

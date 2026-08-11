@@ -38,6 +38,7 @@ const iconClasses = computed(() =>
                 <MoreHorizontal :class="iconClasses" />
             </span>
         </slot>
-        <span class="sr-only">{{ t('breadcrumb.more') }}</span>
+        <!-- sr-only「More」仅在未提供 default slot 时渲染：自定义 slot 由调用方提供可访问名称，避免读屏重复播报 -->
+        <span v-if="!$slots.default" class="sr-only">{{ t('breadcrumb.more') }}</span>
     </span>
 </template>
