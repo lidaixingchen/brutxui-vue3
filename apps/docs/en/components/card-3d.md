@@ -66,7 +66,7 @@ Control the card background and text color via the `variant` prop.
 
 ## Clickable
 
-Setting `clickable` to `true` changes the card cursor to `pointer` and triggers a `click` event on click.
+Setting `clickable` to `true` changes the card cursor to `pointer`, adds `role="button"`, `tabindex="0"` and Enter/Space key support, and triggers a `click` event.
 
 ```vue
 <script setup>
@@ -95,14 +95,14 @@ function handleClick(event) {
 | `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | Shadow size variant |
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | Card background color variant |
 | `disabled` | `boolean` | `false` | Disables 3D effect, card stays static |
-| `clickable` | `boolean` | `false` | Enables click; when true, cursor is pointer and click events are triggered |
+| `clickable` | `boolean` | `false` | Enables click; when true, adds `role="button"`, `tabindex="0"`, keyboard support and triggers click events |
 | `class` | `string` | — | External class override |
 
 ## Events
 
 | Event | Payload | Description |
 |------|------|------|
-| `click` | `MouseEvent` | Triggered when the card is clicked, only when `clickable` is `true` and `disabled` is `false` |
+| `click` | `MouseEvent \| KeyboardEvent` | Triggered only when `clickable` is `true` and `disabled` is `false`; pointer click emits `MouseEvent`, Enter/Space keyboard activation emits `KeyboardEvent` |
 
 ## Slots
 

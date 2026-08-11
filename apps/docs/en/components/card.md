@@ -127,6 +127,7 @@ Compose new card templates directly from the `Card` sub-components.
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | Card variant type |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | Card padding |
 | `interactive` | `boolean` | `false` | Whether clickable, adds `role="button"`, `tabindex="0"` and keyboard support |
+| `disabled` | `boolean` | `false` | Disables interaction: `tabindex="-1"`, `aria-disabled="true"`, and `activate` is never emitted |
 | `class` | `string` | — | Custom CSS class |
 
 ### Card Events
@@ -139,7 +140,7 @@ Compose new card templates directly from the `Card` sub-components.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `as` | `string` | `'h3'` | Rendered HTML element |
+| `as` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | Rendered heading element; invalid values fall back to `h3` |
 | `class` | `string` | — | Custom CSS class |
 
 ### CardHeader / CardDescription / CardContent / CardFooter
@@ -159,6 +160,8 @@ Compose new card templates directly from the `Card` sub-components.
 - **Semantic structure**: `CardTitle` renders as an `h3` heading element by default, customizable to an appropriate heading level via the `as` prop
 - **Interactive feedback**: The `interactive` variant provides hover effects; it is recommended to use it with keyboard focus styles
 - **Clickable cards**: Setting the `interactive` prop (or using `variant="interactive"`) adds `role="button"` and `tabindex="0"` to the card, with Enter/Space key support to trigger the `activate` event (dispatching native event parameter)
+- **Disabled state**: An `interactive` card with `disabled` is not focusable (`tabindex="-1"`), is marked `aria-disabled="true"`, and neither clicks nor keys trigger `activate`
+- **Nested interactive elements**: Clicks on interactive elements nested inside the card (buttons/links) do not trigger the card `activate` (avoiding double-firing of "child action + card activation"); also avoid nesting interactive elements inside an `interactive` card, which would create invalid ARIA nesting
 - **Content organization**: The `CardHeader`, `CardContent`, and `CardFooter` sub-components provide a clear content structure, making it easier for assistive technologies to understand the page layout
 
 ### Clickable Card

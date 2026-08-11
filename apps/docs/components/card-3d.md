@@ -65,7 +65,7 @@ import { Card3D } from 'brutx-ui-vue'
 
 ## 可点击
 
-设置 `clickable` 为 `true` 后，卡片光标变为 `pointer` 并在点击时触发 `click` 事件。
+设置 `clickable` 为 `true` 后，卡片光标变为 `pointer`，添加 `role="button"`、`tabindex="0"` 并支持 Enter/Space 键触发 `click` 事件。
 
 ```vue
 <script setup>
@@ -94,14 +94,14 @@ function handleClick(event) {
 | `shadow` | `'default' \| 'lg' \| 'xl'` | `'default'` | 阴影大小变体 |
 | `variant` | `'default' \| 'primary' \| 'accent' \| 'muted'` | `'default'` | 卡片背景色变体 |
 | `disabled` | `boolean` | `false` | 禁用 3D 效果，卡片保持静态 |
-| `clickable` | `boolean` | `false` | 是否启用点击，true 时光标为 pointer 并触发 click 事件 |
+| `clickable` | `boolean` | `false` | 是否启用点击，true 时添加 `role="button"`、`tabindex="0"`、键盘支持并触发 click 事件 |
 | `class` | `string` | — | 外部类覆盖 |
 
 ## 事件
 
 | 事件 | 参数 | 说明 |
 |------|------|------|
-| `click` | `MouseEvent` | 仅当 `clickable` 为 `true` 且 `disabled` 为 `false` 时点击卡片触发 |
+| `click` | `MouseEvent \| KeyboardEvent` | 仅当 `clickable` 为 `true` 且 `disabled` 为 `false` 时，指针点击发出 `MouseEvent`、Enter/Space 键盘激活发出 `KeyboardEvent` |
 
 ## 插槽
 

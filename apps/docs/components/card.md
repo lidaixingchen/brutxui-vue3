@@ -126,6 +126,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 | `variant` | `'default' \| 'elevated' \| 'flat' \| 'interactive' \| 'primary' \| 'secondary'` | `'default'` | 卡片变体类型 |
 | `padding` | `'none' \| 'sm' \| 'default' \| 'lg'` | `'default'` | 卡片内边距 |
 | `interactive` | `boolean` | `false` | 是否可点击，添加 `role="button"`、`tabindex="0"` 和键盘支持 |
+| `disabled` | `boolean` | `false` | 禁用交互：`tabindex="-1"`、`aria-disabled="true"`，且不触发 `activate` |
 | `class` | `string` | — | 自定义 CSS 类 |
 
 #### 事件
@@ -138,7 +139,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 
 | 属性 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `as` | `string` | `'h3'` | 渲染的 HTML 元素 |
+| `as` | `'h1' \| 'h2' \| 'h3' \| 'h4' \| 'h5' \| 'h6'` | `'h3'` | 渲染的标题元素；非法值回退到 `h3` |
 | `class` | `string` | — | 自定义 CSS 类 |
 
 ### CardHeader / CardDescription / CardContent / CardFooter
@@ -158,6 +159,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, 
 - **语义化结构**：`CardTitle` 默认渲染为 `h3` 标题元素，可通过 `as` 属性自定义为合适的标题层级
 - **交互反馈**：`interactive` 变体提供悬停效果，建议配合键盘焦点样式使用
 - **可点击卡片**：设置 `interactive` 属性（或使用 `variant="interactive"`）后，卡片会添加 `role="button"` 和 `tabindex="0"`，支持 Enter/Space 键触发 `activate` 事件（派发原生事件参数）
+- **禁用状态**：`interactive` 卡片设置 `disabled` 后不可聚焦（`tabindex="-1"`）并标记 `aria-disabled="true"`，点击与键盘均不再触发 `activate`
+- **嵌套交互元素**：卡片内部若包含按钮/链接等交互元素，点击这些元素不会触发卡片 `activate`（避免"子元素动作 + 卡片激活"双重触发）；同时应避免在 `interactive` 卡片内再嵌套交互元素，以免形成无效 ARIA 嵌套
 - **内容组织**：通过 `CardHeader`、`CardContent`、`CardFooter` 子组件提供清晰的内容结构，便于辅助技术理解页面布局
 
 ### 可点击卡片
