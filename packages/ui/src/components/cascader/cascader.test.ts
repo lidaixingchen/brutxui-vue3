@@ -241,11 +241,12 @@ describe('Cascader', () => {
 
             const checkbox = wrapper.findComponent({ name: 'Checkbox' })
             expect(checkbox.exists()).toBe(true)
-            // Default variant green background comes from the Checkbox component itself;
-            // Cascader should not override it with custom color classes.
+            // Default variant 的绿色选中背景与匹配前景色都来自 Checkbox 组件自身；
+            // Cascader 不应以自定义颜色类覆盖它们。
             const checkboxClass = checkbox.classes().join(' ')
+            expect(checkboxClass).toContain('data-[state=checked]:bg-brutal-success')
+            expect(checkboxClass).toContain('data-[state=checked]:text-brutal-success-foreground')
             expect(checkboxClass).not.toContain('data-[state=checked]:bg-brutal-bg')
-            expect(checkboxClass).not.toContain('data-[state=checked]:text-brutal-success')
         })
     })
 

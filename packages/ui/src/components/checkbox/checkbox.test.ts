@@ -101,4 +101,66 @@ describe('Checkbox', () => {
         const minus = wrapper.findComponent(Minus)
         expect(minus.exists()).toBe(false)
     })
+
+    it('sets checked-state foreground on root for icon contrast', () => {
+        const wrapper = mount(Checkbox, {
+            props: { checked: true, variant: 'primary' },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="checkbox"]')
+        // 图标以 text-current 继承根元素前景色，须与选中背景的 -foreground 匹配
+        expect(el.classes()).toContain('data-[state=checked]:text-brutal-primary-foreground')
+    })
+
+    it('uses defaultValue as the uncontrolled initial state', () => {
+        const wrapper = mount(Checkbox, {
+            props: { defaultValue: true },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="checkbox"]')
+        expect(el.attributes('aria-checked')).toBe('true')
+    })
+
+    it('emits update:checked when toggled from defaultValue', async () => {
+        const wrapper = mount(Checkbox, {
+            props: { defaultValue: true },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="checkbox"]')
+        await el.trigger('click')
+        expect(wrapper.emitted('update:checked')?.[0]).toEqual([false])
+    })
+
+    it('falls back to a valid icon size for an unknown dynamic size', () => {
+        const wrapper = mount(Checkbox, {
+            props: { checked: true, size: 'unknown-size' as any },
+            attachTo: document.body,
+        })
+        const svg = wrapper.find('svg')
+        expect(svg.exists()).toBe(true)
+        const indicator = svg.element.parentElement as HTMLElement
+        // 兜底到 iconSizeVariants 默认中号
+        expect(indicator.classList.contains('h-4')).toBe(true)
+        expect(indicator.classList.contains('w-4')).toBe(true)
+    })
+
+    it('renders a hidden form input when name is provided', () => {
+        const wrapper = mount(Checkbox, {
+            props: { name: 'terms', value: 'yes', required: true, checked: true },
+            attachTo: document.body,
+        })
+        const input = wrapper.find('input[type="checkbox"]')
+        expect(input.exists()).toBe(true)
+        expect(input.attributes('name')).toBe('terms')
+        expect(input.attributes('value')).toBe('yes')
+        expect(input.attributes('required')).toBeDefined()
+        expect(input.attributes('checked')).toBeDefined()
+    })
+
+    it('does not render a hidden form input without name', () => {
+        const wrapper = mount(Checkbox, {
+            attachTo: document.body,
+        })
+        expect(wrapper.find('input[type="checkbox"]').exists()).toBe(false)
+    })
 })
