@@ -110,6 +110,39 @@ describe('Button', () => {
         expect(wrapper.classes()).toContain('custom-class')
     })
 
+    describe('glitch effect', () => {
+        it('does not emit glitch classes on plain buttons', () => {
+            const wrapper = mount(Button)
+            const classes = wrapper.classes().join(' ')
+            expect(classes).not.toContain('glitch-button')
+            expect(classes).not.toContain('glitch-horizontal')
+            expect(classes).not.toContain('glitch-vertical')
+            expect(classes).not.toContain('glitch-both')
+            expect(classes).not.toContain('[--glitch-duration')
+        })
+
+        it('applies glitch classes when effect is glitch', () => {
+            const wrapper = mount(Button, {
+                props: { effect: 'glitch' },
+            })
+            const classes = wrapper.classes()
+            expect(classes).toContain('glitch-button')
+            expect(classes).toContain('glitch-horizontal')
+            expect(classes).toContain('[--glitch-duration:300ms]')
+        })
+
+        it('honors explicit glitch speed and direction overrides', () => {
+            const wrapper = mount(Button, {
+                props: { effect: 'glitch', glitchSpeed: 'fast', glitchDirection: 'vertical' },
+            })
+            const classes = wrapper.classes()
+            expect(classes).toContain('[--glitch-duration:100ms]')
+            expect(classes).toContain('glitch-vertical')
+            expect(classes).not.toContain('glitch-horizontal')
+            expect(classes).not.toContain('[--glitch-duration:300ms]')
+        })
+    })
+
     it('emits click event when clicked', async () => {
         const onClick = vi.fn()
         const wrapper = mount(Button, {
