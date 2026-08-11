@@ -62,7 +62,7 @@ import { DollarSign, Percent } from 'lucide-vue-next'
 
 ## 变体
 
-`variant` 仅影响数字文字颜色，方便在不同背景上突出展示统计数值。
+`variant` 仅影响数字文字颜色，方便在不同背景上突出展示统计数值。`accent` 为亮黄色，在浅色背景上对比度偏低，建议在深色或彩色背景上使用。
 
 | 变体 | 说明 |
 |------|------|
@@ -138,7 +138,7 @@ const counterRef = ref()
 | `suffixComponent` | `Component` | — | 自定义后缀组件 |
 | `animatePrefix` | `boolean` | `true` | 是否显示自定义前缀组件（false 时显示文本前缀） |
 | `animateSuffix` | `boolean` | `true` | 是否显示自定义后缀组件（false 时显示文本后缀） |
-| `separator` | `string` | `','` | 千位分隔符，传空字符串可禁用 |
+| `separator` | `string` | `','` | 千位分隔符，传空字符串可禁用千分位（仍应用自定义小数分隔符） |
 | `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | 缓动函数 |
 | `autoStart` | `boolean` | `true` | 是否挂载后自动播放 |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 字号预设 |

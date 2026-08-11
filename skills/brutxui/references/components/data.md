@@ -313,7 +313,7 @@ const data: User[] = [
 | `suffixComponent` | `Component` | — | 自定义后缀组件 |
 | `animatePrefix` | `boolean` | `true` | 是否显示自定义前缀组件 |
 | `animateSuffix` | `boolean` | `true` | 是否显示自定义后缀组件 |
-| `separator` | `string` | `','` | 千位分隔符 |
+| `separator` | `string` | `','` | 千位分隔符，传空字符串可禁用千分位（仍应用自定义小数分隔符） |
 | `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | 缓动函数 |
 | `autoStart` | `boolean` | `true` | 是否挂载后自动播放 |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | 字号预设 |

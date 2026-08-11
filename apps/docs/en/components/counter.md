@@ -63,7 +63,7 @@ import { DollarSign, Percent } from 'lucide-vue-next'
 
 ## Variants
 
-`variant` only affects the number text color, making it easy to highlight statistics on different backgrounds.
+`variant` only affects the number text color, making it easy to highlight statistics on different backgrounds. `accent` is a bright yellow that has low contrast on light backgrounds; use it on dark or colored backgrounds.
 
 | Variant | Description |
 |------|------|
@@ -139,7 +139,7 @@ const counterRef = ref()
 | `suffixComponent` | `Component` | — | Custom suffix component |
 | `animatePrefix` | `boolean` | `true` | Whether to show the custom prefix component (false shows text prefix) |
 | `animateSuffix` | `boolean` | `true` | Whether to show the custom suffix component (false shows text suffix) |
-| `separator` | `string` | `','` | Thousand separator, pass an empty string to disable |
+| `separator` | `string` | `','` | Thousand separator; pass an empty string to disable grouping (the custom `decimalSeparator` still applies) |
 | `easing` | `'linear' \| 'ease-out' \| 'ease-in-out'` | `'ease-out'` | Easing function |
 | `autoStart` | `boolean` | `true` | Whether to auto-play after mount |
 | `size` | `'sm' \| 'md' \| 'lg' \| 'xl'` | `'md'` | Font size preset |
