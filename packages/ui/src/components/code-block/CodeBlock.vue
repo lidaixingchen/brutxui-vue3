@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, useSlots } from 'vue'
+import { computed, onBeforeUpdate, ref, watch, useSlots } from 'vue'
 import CopyToClipboard from '../copy-to-clipboard/CopyToClipboard.vue'
 import Button from '../button/Button.vue'
 import { cn } from '@/lib/utils'
@@ -8,6 +8,12 @@ import { codeBlockRootVariants, codeBlockHeaderVariants, codeBlockLanguageVarian
 import { Prism, resolveLanguage, loadLanguage, isLanguageLoaded, getGrammar } from './prism-languages'
 
 const slots = useSlots()
+// useSlots() 返回随更新原地变化但非响应式的对象：用 ref 在渲染前同步，作为 watch 依赖，
+// 保证插槽状态变化时触发重新高亮（slot 移除后需补算 highlightedHtml，避免 v-html 分支显示空内容）
+const hasDefaultSlot = ref(Boolean(slots.default))
+onBeforeUpdate(() => {
+    hasDefaultSlot.value = Boolean(slots.default)
+})
 interface CodeBlockProps {
     code: string
     language?: string
@@ -35,7 +41,13 @@ const rootClasses = computed(() =>
     cn(codeBlockRootVariants(), props.class)
 )
 
-const lines = computed(() => props.code.split('\n'))
+// 行号以「渲染出的实际行数」为准：丢弃 split 产生的末尾空片段（'a\nb\n' → ['a','b']），
+// 避免末尾换行多出一个无内容的行号；空串（['']）同样被丢弃，退化为无行号
+const lines = computed(() => {
+    const arr = props.code.split('\n')
+    if (arr.length > 0 && arr[arr.length - 1] === '') arr.pop()
+    return arr
+})
 
 const LINE_HEIGHT_REM = 1.25
 
@@ -69,8 +81,13 @@ const resolvedPrismLang = computed(() => resolveLanguage(resolvedLanguage.value)
 let highlightVersion = 0
 
 watch(
-    [() => props.code, resolvedPrismLang],
+    [() => props.code, resolvedPrismLang, hasDefaultSlot],
     async ([code, lang]) => {
+        // 存在默认插槽时不渲染 highlightedHtml（模板走 <slot /> 分支），
+        // 跳过无谓的语言加载与 Prism.highlight 计算；hasDefaultSlot 作为 watch 源，
+        // 插槽移除时经 onBeforeUpdate 同步触发补算
+        if (hasDefaultSlot.value) return
+
         const version = ++highlightVersion
 
         try {
@@ -142,8 +159,11 @@ function escapeHtml(str: string): string {
                 <span v-for="(_, i) in lines" :key="i">{{ i + 1 }}</span>
             </div>
 
+            <!-- 使用默认插槽时，复制按钮文本与行号仍基于 code prop（契约见 docs/components/code-block.md）：
+                 若插槽内容与 code 不一致，行号与复制内容会与展示不符 -->
             <pre v-if="slots.default" class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold"><slot /></code></pre>
-            <!-- eslint-disable-next-line vue/no-v-html -- 安全假设：prismjs highlight() 已对用户输入进行 HTML 转义 -->
+            <!-- 安全假设依赖已修复 XSS 漏洞的 Prism >= 1.27（lockfile 锁定 1.30.0，CVE-2021-32786/23647 均已修复），升级或替换库前需复核 -->
+            <!-- eslint-disable-next-line vue/no-v-html -- prismjs highlight() 已对用户输入进行 HTML 转义 -->
             <pre v-else class="flex-1 min-w-0 m-0" :style="clipStyle"><code class="block whitespace-pre font-bold" :class="`language-${resolvedPrismLang}`" v-html="highlightedHtml" /></pre>
         </div>
 

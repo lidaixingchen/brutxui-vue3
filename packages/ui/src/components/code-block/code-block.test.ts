@@ -1,7 +1,22 @@
 import { mount } from '@vue/test-utils'
+import { h, defineComponent, nextTick } from 'vue'
 import { vi } from 'vitest'
 import CodeBlock from './CodeBlock.vue'
-import { loadLanguage } from './prism-languages'
+import { loadLanguage, isLanguageLoaded } from './prism-languages'
+
+// 渲染函数包装器：仅在 showSlot 时向 CodeBlock 传递 default 插槽。
+// 与 `<template v-if>` 不同（后者 slot 函数恒存在），此处能真实地让
+// `slots.default` 在挂载后从存在变为缺失，用于验证插槽移除后的补算路径。
+const SlotToggleWrapper = defineComponent({
+    props: { showSlot: { type: Boolean, default: true } },
+    setup(props) {
+        return () => h(
+            CodeBlock,
+            { code: 'const x = 1', language: 'rust' },
+            props.showSlot ? { default: () => h('span', 'custom') } : undefined,
+        )
+    },
+})
 
 describe('CodeBlock', () => {
     it('renders code content', () => {
@@ -165,6 +180,46 @@ describe('CodeBlock', () => {
         await vi.waitFor(() => {
             expect(wrapper.find('code').classes()).toContain('language-typescript')
         })
+    })
+
+    it('shows no line numbers for empty code', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: '', showLineNumbers: true },
+        })
+        const lineNumbersCol = wrapper.find('[class*="border-r-3"]')
+        expect(lineNumbersCol.findAll('span')).toHaveLength(0)
+    })
+
+    it('does not show a phantom line number for trailing newline', () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'a\nb\n', showLineNumbers: true },
+        })
+        const lineNumbersCol = wrapper.find('[class*="border-r-3"]')
+        expect(lineNumbersCol.findAll('span')).toHaveLength(2)
+    })
+
+    it('does not load language or highlight when default slot is present', async () => {
+        const wrapper = mount(CodeBlock, {
+            props: { code: 'const x = 1', language: 'python' },
+            slots: { default: '<span class="slot-content">Custom Code</span>' },
+        })
+        await nextTick()
+        // 存在插槽时走 <slot /> 分支，语言不应被加载、highlightedHtml 不应被计算
+        expect(isLanguageLoaded('python')).toBe(false)
+        expect(wrapper.find('.token').exists()).toBe(false)
+        expect(wrapper.find('.slot-content').exists()).toBe(true)
+    })
+
+    it('re-highlights when default slot is removed', async () => {
+        const wrapper = mount(SlotToggleWrapper)
+        await nextTick()
+        expect(isLanguageLoaded('rust')).toBe(false)
+
+        await wrapper.setProps({ showSlot: false })
+        await vi.waitFor(() => {
+            expect(isLanguageLoaded('rust')).toBe(true)
+        })
+        expect(wrapper.find('.token').exists()).toBe(true)
     })
 })
 

@@ -1,8 +1,10 @@
 import { cva } from 'class-variance-authority'
 import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 
+// 根容器不设背景：头部（bg-brutal-muted）与正文（bg-brutal-bg）完整铺满容器内部，
+// 根上的背景永不可见且易与正文变体漏改导致配色不一致，交由子层各自声明。
 export const codeBlockRootVariants = cva(
-    'border-3 border-brutal bg-brutal-bg text-brutal-fg rounded-brutal shadow-brutal overflow-hidden'
+    'border-3 border-brutal text-brutal-fg rounded-brutal shadow-brutal overflow-hidden'
 )
 
 export const codeBlockHeaderVariants = cva(
@@ -17,8 +19,10 @@ export const codeBlockBodyVariants = cva(
     'relative flex items-stretch p-4 overflow-x-auto text-sm font-mono bg-brutal-bg'
 )
 
+// 行号列位于 overflow-x-auto 的正文容器内：sticky left-0 使超宽代码横向滚动时行号仍贴左可见，
+// 配同底色与 z-index 防止代码从下方透出；显式声明 font-mono，不依赖正文继承（独立使用也不丢对齐）。
 export const codeBlockLineNumbersVariants = cva(
-    'flex flex-col text-right text-brutal-fg/40 select-none pr-4 mr-4 border-r-3 border-brutal font-bold'
+    'sticky left-0 z-10 bg-brutal-bg flex flex-col text-right font-mono text-brutal-fg/40 select-none pr-4 mr-4 border-r-3 border-brutal font-bold'
 )
 
 export const codeBlockCopyButtonVariants = cva(

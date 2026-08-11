@@ -20,7 +20,8 @@ pre[class*="language-"] {
 }
 
 /* --- Token 颜色映射 --- */
-/* 所有颜色均通过 --brutal-code-* 变量，默认值确保 WCAG AA 对比度 >= 4.5:1 */
+/* 所有颜色均通过 --brutal-code-* 变量；默认值仅面向纯白/纯黑背景近似达标（如
+   #00838f 白底约 4.52:1），实际 WCAG AA 对比度随 --brutal-bg 变化，请结合背景色校准。 */
 
 .token.comment,
 .token.prolog,
@@ -77,8 +78,12 @@ pre[class*="language-"] {
 }
 
 /* --- 暗色模式覆盖 --- */
+/* `.dark` 是全库暗色模式的唯一权威选择器：与 styles.css 的 :root/.dark token 覆盖及
+   useTheme（增删 html.dark 类）保持一致。消费方若用其他方式切换暗色（data-theme /
+   prefers-color-scheme 等），需自行把 .dark 类应用到根元素，或覆盖 --brutal-code-* 变量。 */
 
 .dark {
+    --brutal-code-foreground: #f3f4f6;
     --brutal-code-comment: #9ca3af;
     --brutal-code-punctuation: #d1d5db;
     --brutal-code-number: #ef5350;
@@ -105,6 +110,13 @@ pre[class*="language-"] {
 /* --- 高亮行（Prism line-highlight 插件兼容） --- */
 
 .line-highlight {
+    /* 补全插件核心定位规则：插件 JS 只负责计算 top/height 内联样式，若消费方未引入插件自带 CSS，
+       缺少定位会让高亮条成为文档流中的静态块并撑开行高 */
+    position: absolute;
+    left: 0;
+    right: 0;
+    padding: inherit 0;
+    pointer-events: none;
     background: var(--brutal-accent);
     opacity: 0.15;
 }
