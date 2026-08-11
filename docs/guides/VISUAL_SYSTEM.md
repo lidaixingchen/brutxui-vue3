@@ -30,6 +30,7 @@
 4. **按压：** `active:translate-y-[var(--brutal-pressed-offset,2px)] active:shadow-none transition-all`——交互元素必须在按压时产生位移，不能感觉迟钝
 5. **悬停：** `hover:shadow-brutal-lg hover:-translate-x-0.5 hover:-translate-y-0.5`
 6. **颜色：** 使用 `--brutal-*` CSS 变量——禁止硬编码任意颜色
+7. **焦点态：** 分场景——带偏移投影（`shadow-brutal`）的交互元素用 `outline` 系列（`focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2`），禁止 ring 与 shadow 同存（ring 基于 box-shadow，聚焦瞬间阴影会"跳动"）；无偏移投影的元素沿用 `FOCUS_RING_CLASSES` 基座（ring 支持主题令牌适配与背景隔离）
 
 ## CVA 变体文件
 

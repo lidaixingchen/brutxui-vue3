@@ -12,6 +12,11 @@
 - 可翻译文本使用 `t('componentName.key')` 访问，含插值的使用 `t('key', { param: value })`
 - `PricingSection` 是定价区主实现，支持一次性价格与订阅切换；`SaaSPricing` 仅作为基于它的 SaaS 兼容封装，避免新增或维护第二套定价逻辑
 - 创建或修改组件时，优先复用现有 BrutxUI 组件，禁止用 native HTML 元素替代已有组件（如用 `Button` 而非 `<button>`、`Select` 系列而非 `<select>`/`<option>`、`Badge` 而非手写 badge `<div>`、`Input` 而非 `<input>`），防止重复造轮子；仅在特殊 ARIA 角色、内联图标切换等无对应组件的场景下方可使用 native 元素
+- 变体键 `danger` 是统一惯例（alert/badge/button/checkbox/counter/progress/radio-group/switch/tags-input/timeline）：语义键 `danger` 映射 `brutal-destructive` token，勿重命名
+- 焦点态分场景：带偏移投影（`shadow-brutal`）的交互元素用 `focus:outline focus:outline-[3px] focus:outline-brutal-ring focus:outline-offset-2`（ring 与 shadow 同存时聚焦瞬间阴影跳动）；无偏移投影的元素沿用 `@/lib/utils` 的 `FOCUS_RING_CLASSES` 基座（ring 支持主题令牌适配与背景隔离，outline 无法替代）
+- 过渡只声明实际变化的属性：交互反馈默认 `transition-all`（位移+阴影+颜色统一过渡，全库惯例）；仅位移/阴影时用 `transition-[transform,box-shadow]`（brutal-interaction-variants 的 WithTransition 变体）；需要颜色过渡时显式加 `color`（参考 breadcrumb 的 `transition-[transform,box-shadow,color]`）；opacity 变化用 `transition-opacity`（`transition-colors` 不过渡 opacity）
+- 共享 variants 波及：`input`/`textarea`/`number-input`/`hardcore-input` 共享 `shared-input-variants`；`checkbox`/`switch` 共享 `formToggleVariantColors`（改选中态前景色在组件侧拼接，不动共享）；`dialog`/`alert-dialog` 是镜像组件，行为改动需同步
+- 多输入构成一个过滤条件（DataTable 模式）：子组件 emit 增量（空值传 null）、父级按列函数式合并；勿用本地 draft 常驻（违反单向数据流，外部程序化设置会与 draft 冲突）
 
 ## Neo-Brutalist 视觉系统
 

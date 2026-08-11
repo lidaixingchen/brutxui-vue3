@@ -51,6 +51,8 @@ pnpm --filter brutx-registry-vue build:watch    # watch 增量 rebuild（或设 
 pnpm --filter brutx-registry-vue validate       # 校验完整性 + 依赖图；加 -- --graph 导出 deps.dot/json
 ```
 
+> registry 构建读取 `packages/ui` / `packages/shared` 源码生成 JSON；turbo.json 已对 `brutx-registry-vue#build` 设 `"cache": false` 并列入跨包 inputs——勿改回缓存，否则跨包源码变更不会使缓存失效，CI 会检出旧产物 drift。
+
 ### 开发自检约定
 
 - **包管理器限定**：开发阶段仅允许 `pnpm`，严禁 `npm`/`yarn`（避免不一致 lockfile）。
@@ -91,6 +93,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - **类合并**：用 `computed()` 包裹 `cn(...)` 计算类名，严禁在 `<template>` 内联调用 `cn()`。
 - **原语复用**：以 reka-ui（原 radix-vue）无头原语为基础，优先复用库内已有组件（`Button` 代替 `<button>`，`Input` 代替 `<input>`），严禁用 native 元素替代。
 - **国际化文本**：文本 props 默认值设为 `undefined`，通过 `useLocale().t()` 提供默认值，优先级 `props > t() > zh-CN 默认文本`。
+- **Composable 状态只读**：composable 内部状态可变、返回边界 `readonly()`（集合/数组/对象用 `DeepReadonly<Ref<T>>`，标量用 `Readonly<Ref<T>>`）；模块级状态须拆「内部可变 ref + 导出的 readonly 视图」，否则内部写入也被拦截；`useDialogEnhanced` 的 `setPosition`/`setSize` 不强制 clamp（clamp 仅交互路径）。公开配置类状态（v-model 绑定、defineExpose 编程控制如 Combobox.searchQuery）豁免。
 
 ## 测试
 
@@ -127,6 +130,15 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - **旧方案被新版本取代** → 立即移入 `docs/archive/YYYY/`，文件名保留版本号。
 - **链接一律相对路径**，禁止 `file:///` 绝对链接；新增 / 修改文档后跑 `node scripts/docs/check-doc-links.mjs check` 校验（文档间互链 0 死链、0 处 `file:///`；源码引用失效属历史快照告警，不计失败）。
 
+## 处理 AI 代码审查报告（open-code-review）
+
+`.ocr-reports/*.md` 基于代码快照生成，未考虑既有测试/文档声明的设计契约。报告建议与测试契约冲突时**先判断哪个是对的**，不是自动跳过、也不是无脑采纳：
+
+- **测试固化设计决策 → 不改代码**：测试名/注释声明了设计意图（`intentionally`/`by design`）即刻意选择，跳过并在代码注释记录理由。
+- **测试固化缺陷行为 → 修复 + 更新断言**：测试只是对异常路径的记录、无设计意图，且该行为恰是报告指出的缺陷，则修代码 + 改测试。
+- **跳过后的责任**：报告指出的缺口是真实 API 局限，跳过 = 暂不处理，应注释为已知限制；需求演进时应「改代码 + 更新测试」，勿拿测试当挡箭牌。
+- 报告基于旧快照是常态，逐条按现行代码核实。
+
 ## AGENTS.md 维护约定
 
 - 编写或修改本文件时，对项目约定、发布流程、命令用途、包职责或用户偏好不确定，先询问用户，不要自行补全。
@@ -140,3 +152,4 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - **最新状态原则**：只保留最新 API 与编码规范，严禁包含历史版本变迁描述（废弃/不再支持/从某版本起改为什么）。
 - **定位对齐原则**：按受众（库开发者 vs. 库使用者）裁剪内容，分发给使用者的技能包只保留使用与集成规范，不混入内部开发规范（如多语言 key 翻译、原生原语隔离）。
 - **路径可移植原则**：仓库内文档关联链接统一用相对路径，禁止硬编码本机绝对路径（如 `file:///e:/...`）。
+- **非 Claude Code 可调用**：`skills/brutxui/` 面向库使用者/其他 AI，Claude Code harness 不加载它，无需尝试触发；Claude Code 需要组件规范时直接读 `skills/brutxui/SKILL.md` 或对应 references。

@@ -61,6 +61,7 @@ git pushp origin main --tags   # ⑤ 推送后 CI 自动发布
 - [ ] 工作区干净（有未提交改动时 `release:prepare` 会中止）
 - [ ] 四处一致：ui / shared / registry / cli 的源码、元数据、构建脚本、CLI 复制逻辑
 - [ ] lockfile 已同步（依赖变更时）
+- [ ] 本地手动发版（备用通道）：账号启用安全密钥 2FA 时 `pnpm publish --otp` 无效，须 `cd packages/ui && npm publish --registry https://registry.npmjs.org` 走浏览器交互验证（不传 `--otp`）
 - [ ] 发布后核对 Publish run 与 npm 版本
 
 ## Changelog 体系概览
