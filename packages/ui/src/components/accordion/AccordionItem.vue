@@ -18,10 +18,14 @@ const props = withDefaults(defineProps<AccordionItemProps>(), {
     class: undefined,
 })
 
-const delegatedProps = computed(() => {
-    const { class: _, variant: __, ...delegated } = props
-    return delegated
-})
+// 只读取真正需要转发的 key：variant/class 变化无需触发转发链重算
+const forwardedKeys = Object.keys(props).filter((key) => key !== 'class' && key !== 'variant')
+
+const delegatedProps = computed(() =>
+    Object.fromEntries(
+        forwardedKeys.map((key) => [key, props[key as keyof typeof props]])
+    ) as Omit<AccordionItemProps, 'class' | 'variant'>
+)
 
 const forwardedProps = useForwardProps(delegatedProps)
 

@@ -20,6 +20,7 @@
       "Alert.vue",
       "AlertDescription.vue",
       "AlertTitle.vue",
+      "alert-context.ts",
       "alert-variants.ts"
     ],
     "composables": [
