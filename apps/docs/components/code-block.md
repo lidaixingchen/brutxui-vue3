@@ -118,7 +118,9 @@ import 'prismjs/components/prism-dart'
 
 ## 自定义高亮配色
 
-高亮颜色通过 `--brutal-code-*` CSS 变量控制，与 `--brutal-primary` 等设计令牌解耦，确保所有主题下对比度达标。可通过覆盖这些变量自定义配色：
+高亮颜色通过 `--brutal-code-*` CSS 变量控制，与 `--brutal-primary` 等设计令牌解耦，便于在任意主题下结合背景色校准对比度。可通过覆盖这些变量自定义配色：
+
+基础代码文本色由 `--brutal-code-foreground` 控制，亮色下默认跟随 `--brutal-fg`，暗色下主题已覆盖为 `#f3f4f6`：
 
 ```css
 :root {
@@ -133,6 +135,7 @@ import 'prismjs/components/prism-dart'
 }
 
 .dark {
+    --brutal-code-foreground: #f3f4f6;
     --brutal-code-keyword: #26c6da;
     --brutal-code-function: #ff7043;
     --brutal-code-string: #66bb6a;

@@ -115,7 +115,9 @@ import 'prismjs/components/prism-dart'
 
 ## Custom Highlight Colors
 
-Highlight colors are controlled via `--brutal-code-*` CSS variables, decoupled from `--brutal-primary` and other design tokens, ensuring sufficient contrast across all themes. Customize colors by overriding these variables:
+Highlight colors are controlled via `--brutal-code-*` CSS variables, decoupled from `--brutal-primary` and other design tokens, making it easy to calibrate contrast against any background. Customize colors by overriding these variables:
+
+The base code text color is controlled by `--brutal-code-foreground` — it follows `--brutal-fg` by default in light mode, and the theme overrides it to `#f3f4f6` in dark mode:
 
 ```css
 :root {
@@ -130,6 +132,7 @@ Highlight colors are controlled via `--brutal-code-*` CSS variables, decoupled f
 }
 
 .dark {
+    --brutal-code-foreground: #f3f4f6;
     --brutal-code-keyword: #26c6da;
     --brutal-code-function: #ff7043;
     --brutal-code-string: #66bb6a;
