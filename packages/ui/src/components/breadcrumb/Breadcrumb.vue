@@ -17,7 +17,8 @@ const rootClasses = computed(() => cn(props.class))
 </script>
 
 <template>
-    <nav :aria-label="t('breadcrumb.label')" :class="rootClasses">
+    <nav :aria-label="t('breadcrumb.label') || undefined" :class="rootClasses">
+        <!-- 翻译缺失/返回空串时省略 aria-label，避免无意义的空可访问名称 -->
         <slot />
     </nav>
 </template>

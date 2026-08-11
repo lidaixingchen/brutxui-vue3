@@ -32,11 +32,12 @@ const iconClasses = computed(() =>
         role="presentation"
         :class="classes"
     >
-        <span aria-hidden="true">
-            <slot>
+        <!-- aria-hidden 仅作用于默认图标；自定义 slot 内容（如可聚焦元素）不被隐藏，避免 aria-hidden-focus 冲突 -->
+        <slot>
+            <span aria-hidden="true">
                 <MoreHorizontal :class="iconClasses" />
-            </slot>
-        </span>
+            </span>
+        </slot>
         <span class="sr-only">{{ t('breadcrumb.more') }}</span>
     </span>
 </template>
