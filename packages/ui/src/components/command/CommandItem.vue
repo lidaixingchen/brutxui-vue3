@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount, ref, type ComponentPublicInstance } from 'vue'
+import { computed, onBeforeUnmount, onUpdated, ref, type ComponentPublicInstance } from 'vue'
 import { ListboxItem, useId } from 'reka-ui'
+import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
 import { commandItemVariants } from './command-variants'
 import { injectCommandRootContext, injectCommandGroupContext } from './command-context'
@@ -8,7 +9,7 @@ import { injectCommandRootContext, injectCommandGroupContext } from './command-c
 interface CommandItemProps {
     value: string
     disabled?: boolean
-    class?: string
+    class?: ClassValue
 }
 
 const props = defineProps<CommandItemProps>()
@@ -21,47 +22,63 @@ const id = useId(undefined, 'brutx-command-item')
 
 const itemRef = ref<ComponentPublicInstance | null>(null)
 
+// setup 阶段同步注册（先以 value 兜底索引文本）：
+// - 让过滤计算在首次渲染前即可看到本项，消除「未注册即放行」与闪烁窗口；
+// - 条目元素随后按 v-if 卸载（隐藏）时 CommandItem 组件仍保持挂载，索引不会随隐藏丢失。
+rootContext.allItems.value.set(id, props.value)
+const groupId = groupContext?.id
+if (groupId) {
+    const group = rootContext.allGroups.value.get(groupId)
+    if (group) {
+        group.add(id)
+    }
+    else {
+        rootContext.allGroups.value.set(groupId, new Set([id]))
+    }
+}
+
 const isRender = computed(() => {
     if (!rootContext.filterSearch.value) return true
-    const filteredCurrentItem = rootContext.filterState.value.items.get(id)
-    if (filteredCurrentItem === undefined) return true
-    return filteredCurrentItem > 0
+    const items = rootContext.filterState.value.items
+    // disableFilter 或过滤计算尚未产出条目（防御分支）时不做过滤
+    if (items.size === 0) return true
+    return (items.get(id) ?? 0) > 0
 })
+
+function syncIndexText() {
+    const el = itemRef.value?.$el as HTMLElement | undefined
+    if (!el) return
+    // innerText 优先：反映渲染后的可见文本，避免把 v-show 隐藏内容或模板缩进/换行计入搜索索引
+    const text = el.innerText || el.textContent || props.value
+    if (rootContext.allItems.value.get(id) !== text)
+        rootContext.allItems.value.set(id, text)
+}
 
 const classes = computed(() =>
     cn(commandItemVariants(), props.class)
 )
 
-onMounted(() => {
-    const el = itemRef.value?.$el as HTMLElement | undefined
-    rootContext.allItems.value.set(
-        id,
-        el?.textContent || el?.innerText || props.value
-    )
+// onUpdated 覆盖首次挂载与后续插槽内容变化（异步请求 / 国际化切换 / 条件渲染）时的索引同步
+onUpdated(syncIndexText)
 
-    const groupId = groupContext?.id
-    if (groupId) {
-        if (!rootContext.allGroups.value.has(groupId)) {
-            rootContext.allGroups.value.set(groupId, new Set([id]))
-        }
-        else {
-            rootContext.allGroups.value.get(groupId)?.add(id)
-        }
-    }
-})
-
+// 条目元素用 v-if 而非 v-show：display:none 的项仍会被 reka Listbox 键盘导航命中，
+// 卸载可见性不匹配的项可使其从导航集合中移除（setup 同步注册保证隐藏后索引仍在，无死锁）。
 onBeforeUnmount(() => {
     rootContext.allItems.value.delete(id)
     const groupId = groupContext?.id
     if (groupId) {
-        rootContext.allGroups.value.get(groupId)?.delete(id)
+        const group = rootContext.allGroups.value.get(groupId)
+        group?.delete(id)
+        // 分组内条目清空后同步移除分组键，避免空分组残留在 allGroups 中污染无搜索时的分组集合
+        if (group?.size === 0)
+            rootContext.allGroups.value.delete(groupId)
     }
 })
 </script>
 
 <template>
     <ListboxItem
-        v-show="isRender"
+        v-if="isRender"
         :id="id"
         ref="itemRef"
         :value="value"

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { ListboxRoot, useFilter } from 'reka-ui'
+import type { ClassValue } from 'clsx'
 import { cn } from '@/lib/utils'
 import { provideCommandRootContext } from './command-context'
 
 interface CommandProps {
-    class?: string
+    class?: ClassValue
     disableFilter?: boolean
 }
 
@@ -26,9 +27,15 @@ const filterState = computed<{
     groups: Set<string>
 }>(() => {
     if (props.disableFilter || !filterSearch.value) {
+        // 未过滤分支同样把全部条目写入 items（值为 1），统一「score > 0 即可见」的语义：
+        // 下游无需再靠 filterSearch 空值兜底即可区分「未启用过滤」与「无匹配结果」
+        const allItemsMap = new Map<string, number>()
+        for (const id of allItems.value.keys()) {
+            allItemsMap.set(id, 1)
+        }
         return {
             count: allItems.value.size,
-            items: new Map(),
+            items: allItemsMap,
             groups: new Set(allGroups.value.keys()),
         }
     }
@@ -38,6 +45,7 @@ const filterState = computed<{
     const filteredGroups = new Set<string>()
 
     for (const [id, value] of allItems.value) {
+        // contains 只返回 0/1，此处作为「命中标记」（1=可见 0=隐藏），非相关度分数
         const score = contains(value, filterSearch.value)
         filteredItems.set(id, score ? 1 : 0)
         if (score)
@@ -46,7 +54,8 @@ const filterState = computed<{
 
     for (const [groupId, group] of allGroups.value) {
         for (const itemId of group) {
-            if (filteredItems.get(itemId)! > 0) {
+            // 组内条目可能晚于分组注册，get 返回 undefined 时按未命中处理
+            if ((filteredItems.get(itemId) ?? 0) > 0) {
                 filteredGroups.add(groupId)
                 break
             }
