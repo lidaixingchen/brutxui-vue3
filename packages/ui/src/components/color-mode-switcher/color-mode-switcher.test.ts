@@ -21,8 +21,13 @@ const primitiveStub = {
     template: '<div><slot /></div>',
 }
 
+// SelectRoot 暴露 model-value 供断言下拉展示值
 const selectStubs = {
-    SelectRoot: primitiveStub,
+    SelectRoot: {
+        name: 'SelectRoot',
+        props: ['modelValue'],
+        template: '<div data-test="select-root" :data-model-value="String(modelValue)"><slot /></div>',
+    },
     SelectValue: primitiveStub,
     SelectTrigger: primitiveStub,
     SelectContent: primitiveStub,
@@ -79,6 +84,39 @@ describe('ColorModeSwitcher', () => {
         })
         await wrapper.find('button').trigger('click')
         // With showSystem=false, only light/dark cycle
+        expect(mockApplyColorMode).toHaveBeenCalledWith('dark')
+    })
+
+    it('keeps current mode when showSystem=false and colorMode is system', async () => {
+        mockColorMode.value = 'system'
+        const wrapper = mount(ColorModeSwitcher, {
+            props: { display: 'icon', showSystem: false },
+            global: { stubs: selectStubs },
+        })
+        await wrapper.find('button').trigger('click')
+        // 当前模式不在可选列表（system 被隐藏），保持现状，不得跳转
+        expect(mockApplyColorMode).not.toHaveBeenCalled()
+    })
+
+    it('normalizes select model-value when colorMode is system but system is hidden', () => {
+        mockColorMode.value = 'system'
+        const wrapper = mount(ColorModeSwitcher, {
+            props: { display: 'select', showSystem: false },
+            global: { stubs: selectStubs },
+        })
+        const root = wrapper.find('[data-test="select-root"]')
+        expect(root.attributes('data-model-value')).toBe('light')
+    })
+
+    it('rejects programmatic system value when system is hidden', async () => {
+        const wrapper = mount(ColorModeSwitcher, {
+            props: { display: 'select', showSystem: false },
+            global: { stubs: selectStubs },
+        })
+        const selectRoot = wrapper.findComponent({ name: 'SelectRoot' })
+        selectRoot.vm.$emit('update:modelValue', 'system')
+        expect(mockApplyColorMode).not.toHaveBeenCalled()
+        selectRoot.vm.$emit('update:modelValue', 'dark')
         expect(mockApplyColorMode).toHaveBeenCalledWith('dark')
     })
 })

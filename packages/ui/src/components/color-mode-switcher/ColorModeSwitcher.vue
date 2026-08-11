@@ -49,6 +49,9 @@ const iconMap: Record<ColorMode, Component> = {
 const toggleColorModeLocal = () => {
     const modes = availableModes.value
     const currentIndex = modes.indexOf(colorMode.value)
+    // 当前模式不在可选列表（如 showSystem=false 但 colorMode=system）时保持现状：
+    // 否则 (-1+1) % len = 0 会意外切到列表首项，跳过中间模式
+    if (currentIndex === -1) return
     const nextIndex = (currentIndex + 1) % modes.length
     applyColorMode(modes[nextIndex])
 }
@@ -62,9 +65,17 @@ const labelFor = (mode: ColorMode) => t(`colorModeSwitcher.${mode}`)
 
 const currentLabel = computed(() => labelFor(colorMode.value))
 
+// 下拉展示值：当 colorMode 不在 availableModes（如 showSystem=false 但 colorMode=system）时，
+// 归一化到列表首项，避免 SelectValue 渲染出一个没有对应 SelectItem 的选中态
+const normalizedSelectValue = computed<ColorMode>(() =>
+    availableModes.value.includes(colorMode.value) ? colorMode.value : (availableModes.value[0] ?? 'light')
+)
+
+// 与 availableModes 保持一致：showSystem=false 时程序化传入的 'system' 不再被接受，
+// 形成统一的边界（UI 隐藏的选项，代码路径也不得触发）
 const handleValueChange = (value: AcceptableValue) => {
     if (typeof value !== 'string') return
-    const mode = allModes.find(m => m === value)
+    const mode = availableModes.value.find(m => m === value)
     if (mode) applyColorMode(mode)
 }
 </script>
@@ -98,7 +109,7 @@ const handleValueChange = (value: AcceptableValue) => {
     <SelectRoot
         v-else
         :class="props.class"
-        :model-value="colorMode"
+        :model-value="normalizedSelectValue"
         @update:model-value="handleValueChange"
     >
         <SelectTrigger
