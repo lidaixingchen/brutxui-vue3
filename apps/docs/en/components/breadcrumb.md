@@ -54,7 +54,7 @@ import {
 
 ### Collapsed Ellipsis
 
-When there are many page levels, use `BreadcrumbEllipsis` to collapse less important intermediate pages.
+When there are many page levels, use `BreadcrumbEllipsis` to collapse less important intermediate pages. It is a **purely presentational ellipsis indicator** (`role="presentation"`, no interactive semantics); wrap it with a `DropdownMenu` or similar trigger if click-to-expand behavior is needed.
 
 ```vue
 <template>
@@ -65,7 +65,7 @@ When there are many page levels, use `BreadcrumbEllipsis` to collapse less impor
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-                <!-- Collapsed ellipsis button -->
+                <!-- Collapsed ellipsis indicator (presentational, non-interactive) -->
                 <BreadcrumbEllipsis />
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -87,7 +87,7 @@ When there are many page levels, use `BreadcrumbEllipsis` to collapse less impor
 | `BreadcrumbLink` | Clickable link item |
 | `BreadcrumbPage` | Current page indicator (non-clickable) |
 | `BreadcrumbSeparator` | Separator, renders a forward slash `/` by default |
-| `BreadcrumbEllipsis` | Ellipsis button for collapsing intermediate levels |
+| `BreadcrumbEllipsis` | Ellipsis indicator (presentational) for collapsing intermediate levels |
 
 ## Props
 

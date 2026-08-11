@@ -53,7 +53,7 @@ import {
 
 ### 折叠省略
 
-当页面层级非常多时，可以使用 `BreadcrumbEllipsis` 来折叠中间不太重要的页面。
+当页面层级非常多时，可以使用 `BreadcrumbEllipsis` 来折叠中间不太重要的页面。该组件为**纯展示省略号指示**（`role="presentation"`，无可交互语义）；如需点击展开等交互，请自行包裹 `DropdownMenu` 等触发组件。
 
 ```vue
 <template>
@@ -64,7 +64,7 @@ import {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-                <!-- 折叠省略按钮 -->
+                <!-- 折叠省略指示（纯展示，无交互） -->
                 <BreadcrumbEllipsis />
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -86,7 +86,7 @@ import {
 | `BreadcrumbLink` | 可点击的链接项 |
 | `BreadcrumbPage` | 当前页面标识（不可点击） |
 | `BreadcrumbSeparator` | 分隔符，默认渲染正斜杠 `/` |
-| `BreadcrumbEllipsis` | 省略号按钮，用于折叠中间层级 |
+| `BreadcrumbEllipsis` | 省略号指示（纯展示），用于折叠中间层级 |
 
 ## Props
 

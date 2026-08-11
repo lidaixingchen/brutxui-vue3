@@ -1,4 +1,5 @@
 import { mount } from '@vue/test-utils'
+import { defineComponent, h } from 'vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
 import Breadcrumb from './Breadcrumb.vue'
@@ -10,6 +11,14 @@ import BreadcrumbSeparator from './BreadcrumbSeparator.vue'
 import BreadcrumbEllipsis from './BreadcrumbEllipsis.vue'
 
 const localeProvide = { global: { provide: { [LOCALE_INJECTION_KEY]: en } } }
+
+// 模拟 router-link 等自定义组件：inheritAttrs 透传 class 到根元素，验证 asChild class 合并
+const RouterLinkStub = defineComponent({
+    name: 'RouterLinkStub',
+    props: { to: { type: String, required: true } },
+    inheritAttrs: true,
+    template: '<a :href="to"><slot /></a>',
+})
 
 describe('Breadcrumb', () => {
     it('renders nav element with aria-label', () => {
@@ -58,6 +67,24 @@ describe('BreadcrumbList', () => {
         const wrapper = mount(BreadcrumbList, { props: { class: 'my-list' }, ...localeProvide })
         expect(wrapper.classes()).toContain('my-list')
     })
+
+    it('keeps breadcrumb-list static hook class', () => {
+        // styles.css @layer base 以 .breadcrumb-list 重置外部 Markdown 样式污染，误删会回归
+        const wrapper = mount(BreadcrumbList, { ...localeProvide })
+        expect(wrapper.classes()).toContain('breadcrumb-list')
+    })
+
+    it('lets custom gap override base gap via twMerge', () => {
+        const wrapper = mount(BreadcrumbList, { props: { class: 'gap-4' }, ...localeProvide })
+        expect(wrapper.classes()).toContain('gap-4')
+        expect(wrapper.classes()).not.toContain('gap-2.5')
+    })
+
+    it('renders empty slot', () => {
+        const wrapper = mount(BreadcrumbList, { ...localeProvide })
+        expect(wrapper.element.tagName).toBe('OL')
+        expect(wrapper.text()).toBe('')
+    })
 })
 
 describe('BreadcrumbItem', () => {
@@ -98,7 +125,7 @@ describe('BreadcrumbLink', () => {
 
     it('applies variant classes', () => {
         const wrapper = mount(BreadcrumbLink, { ...localeProvide })
-        expect(wrapper.classes()).toContain('transition-colors')
+        expect(wrapper.classes()).toContain('transition-[transform,box-shadow,color]')
         expect(wrapper.classes()).toContain('cursor-pointer')
     })
 
@@ -123,6 +150,31 @@ describe('BreadcrumbLink', () => {
         })
         expect(wrapper.element.tagName).toBe('SPAN')
     })
+
+    it('merges variant classes onto as-child native element', () => {
+        const wrapper = mount(BreadcrumbLink, {
+            props: { asChild: true },
+            slots: { default: '<a href="/home">Home</a>' },
+            ...localeProvide,
+        })
+        const anchor = wrapper.find('a')
+        expect(anchor.exists()).toBe(true)
+        expect(anchor.attributes('href')).toBe('/home')
+        expect(anchor.classes()).toContain('transition-[transform,box-shadow,color]')
+        expect(anchor.classes()).toContain('cursor-pointer')
+    })
+
+    it('merges variant classes onto as-child custom component', () => {
+        const wrapper = mount(BreadcrumbLink, {
+            props: { asChild: true },
+            slots: { default: h(RouterLinkStub, { to: '/home' }, () => 'Home') },
+            ...localeProvide,
+        })
+        const anchor = wrapper.find('a')
+        expect(anchor.exists()).toBe(true)
+        expect(anchor.attributes('href')).toBe('/home')
+        expect(anchor.classes()).toContain('cursor-pointer')
+    })
 })
 
 describe('BreadcrumbPage', () => {
@@ -131,11 +183,11 @@ describe('BreadcrumbPage', () => {
         expect(wrapper.element.tagName).toBe('SPAN')
     })
 
-    it('applies aria attributes', () => {
+    it('applies aria-current without link role', () => {
         const wrapper = mount(BreadcrumbPage, { ...localeProvide })
-        expect(wrapper.attributes('role')).toBe('link')
-        expect(wrapper.attributes('aria-disabled')).toBe('true')
         expect(wrapper.attributes('aria-current')).toBe('page')
+        expect(wrapper.attributes('role')).toBeUndefined()
+        expect(wrapper.attributes('aria-disabled')).toBeUndefined()
     })
 
     it('applies variant classes', () => {
@@ -168,10 +220,10 @@ describe('BreadcrumbSeparator', () => {
         expect(wrapper.element.tagName).toBe('LI')
     })
 
-    it('applies aria attributes', () => {
+    it('applies aria-hidden without presentation role', () => {
         const wrapper = mount(BreadcrumbSeparator, { ...localeProvide })
-        expect(wrapper.attributes('role')).toBe('presentation')
         expect(wrapper.attributes('aria-hidden')).toBe('true')
+        expect(wrapper.attributes('role')).toBeUndefined()
     })
 
     it('renders default separator text', () => {
