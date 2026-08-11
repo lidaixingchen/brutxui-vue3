@@ -3,7 +3,7 @@ import { ref, onMounted, onBeforeUnmount, computed, watch, type CSSProperties } 
 import { ArrowUp } from '@lucide/vue'
 import { useThrottle } from '@/composables/useThrottle'
 import { cn } from '@/lib/utils'
-import { getWindow, getDocument } from '@/lib/env'
+import { getWindow, getDocument, getMutationObserverCtor } from '@/lib/env'
 import Button from '../button/Button.vue'
 import type { ButtonVariant } from '../button/shared-button-variants'
 
@@ -31,7 +31,10 @@ const emit = defineEmits<{
 
 const visible = ref(false)
 let container: HTMLElement | Window | null = null
+let observer: MutationObserver | null = null
 
+// target 模式下按钮 absolute 定位，相对最近的定位祖先（须把组件置于 position: relative 等已定位容器内，
+// 否则相对初始包含块定位会错位）；无 target 监听 window 时 fixed 相对视口固定。
 const positionClass = computed(() => (props.target ? 'absolute' : 'fixed'))
 
 const styles = computed<CSSProperties>(() => ({
@@ -43,7 +46,13 @@ function getScrollContainer(): HTMLElement | Window | null {
     if (!props.target) return getWindow() ?? null
     if (typeof props.target === 'string') {
         const doc = getDocument()
-        return doc ? doc.querySelector(props.target) as HTMLElement : null
+        if (!doc) return null
+        try {
+            return doc.querySelector(props.target) as HTMLElement | null
+        } catch {
+            // 非法 CSS 选择器（如未闭合括号）会抛 DOMException，按未匹配处理回退为 null
+            return null
+        }
     }
     return props.target
 }
@@ -67,27 +76,55 @@ function handleClick(event: MouseEvent) {
 
 function scrollToTop() {
     if (!container) return
-    if (container instanceof Window) {
-        getWindow()?.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        })
-    } else {
-        container.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        })
+    // Window 与 HTMLElement 的 scrollTo 均接受 ScrollToOptions，无需按实例分支
+    container.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function unbindContainer() {
+    if (container) {
+        container.removeEventListener('scroll', throttledScroll)
+        container = null
     }
 }
 
-function bindContainer() {
-    if (container) {
-        container.removeEventListener('scroll', throttledScroll)
+function stopObserving() {
+    observer?.disconnect()
+    observer = null
+}
+
+function observeDynamicTarget() {
+    if (typeof props.target !== 'string') return
+    const doc = getDocument()
+    const MutationObserverCtor = getMutationObserverCtor()
+    if (!doc?.body || !MutationObserverCtor) return
+    // 选择器语法非法时不可能匹配到元素，无需开启监听
+    try {
+        doc.querySelector(props.target)
+    } catch {
+        return
     }
+    stopObserving()
+    observer = new MutationObserverCtor(() => {
+        if (getScrollContainer()) {
+            stopObserving()
+            bindContainer()
+        }
+    })
+    observer.observe(doc.body, { childList: true, subtree: true })
+}
+
+function bindContainer() {
+    unbindContainer()
     container = getScrollContainer()
     if (container) {
         container.addEventListener('scroll', throttledScroll, { passive: true })
         handleScroll()
+        stopObserving()
+    } else {
+        // 字符串选择器未匹配到元素（目标仍在动态渲染中）：重置显隐并监听 DOM，
+        // 待元素出现后自动绑定滚动监听
+        visible.value = false
+        observeDynamicTarget()
     }
 }
 
@@ -100,9 +137,8 @@ watch(() => props.target, () => {
 })
 
 onBeforeUnmount(() => {
-    if (container) {
-        container.removeEventListener('scroll', throttledScroll)
-    }
+    unbindContainer()
+    stopObserving()
     cancelThrottle()
 })
 </script>
