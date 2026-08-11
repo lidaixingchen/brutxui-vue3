@@ -19,6 +19,14 @@ describe('BrutalistHero', () => {
         expect(wrapper.find('h1').text()).toBe('Custom Hero Title')
     })
 
+    it('falls back to default title when title is empty string', () => {
+        const wrapper = mount(BrutalistHero, {
+            props: { title: '' },
+            ...localeProvide,
+        })
+        expect(wrapper.find('h1').text()).toBe('Build Bold Interfaces Faster with BrutxUI')
+    })
+
     it('shows subtitle when provided', () => {
         const wrapper = mount(BrutalistHero, {
             props: { subtitle: 'A custom subtitle' },
@@ -49,6 +57,14 @@ describe('BrutalistHero', () => {
             ...localeProvide,
         })
         expect(wrapper.text()).toContain('Start Free')
+    })
+
+    it('falls back to default primary CTA text when primaryCtaText is empty string', () => {
+        const wrapper = mount(BrutalistHero, {
+            props: { primaryCtaText: '' },
+            ...localeProvide,
+        })
+        expect(wrapper.text()).toContain('Get Started Now')
     })
 
     it('shows custom secondary CTA text', () => {
@@ -87,6 +103,15 @@ describe('BrutalistHero', () => {
     it('renders terminal code block', () => {
         const wrapper = mount(BrutalistHero, { ...localeProvide })
         expect(wrapper.text()).toContain('npx brutxui init')
+    })
+
+    it('allows overriding terminal content via slot', () => {
+        const wrapper = mount(BrutalistHero, {
+            slots: { terminal: '<p class="custom-terminal">my terminal content</p>' },
+            ...localeProvide,
+        })
+        expect(wrapper.text()).toContain('my terminal content')
+        expect(wrapper.text()).not.toContain('npx brutxui init')
     })
 
     it('renders primary CTA icon with default lg size from shared iconSizeVariants', () => {
