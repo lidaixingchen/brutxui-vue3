@@ -298,7 +298,7 @@ function mergeLocale(base: Locale, override: DeepPartial<Locale>): Locale
 | SketchyChart | `sketchyChart.lineAriaLabel`, `sketchyChart.barAriaLabel`, `sketchyChart.pieAriaLabel` | — |
 | Card3D | `card3d.ariaLabel` | — |
 | HardcoreInput | `hardcoreInput.invalidInput` | — |
-| CodeBlock | `codeBlock.copied`, `codeBlock.copy`, `codeBlock.defaultLanguage`, `codeBlock.defaultFilename` | — |
+| CodeBlock | `codeBlock.copy`, `codeBlock.copied`, `codeBlock.expand`, `codeBlock.collapse` | — |
 | Calendar | `calendar.previousMonth`, `calendar.nextMonth` | — |
 | Kanban | `kanban.dropCardsHere`, `kanban.addCard`, `kanban.cardGrabbed`, `kanban.cardReleased`, `kanban.cardMoved`, `kanban.cardMovedToColumn` | `cardMovedToColumn`: `{column}` |
 | Timeline | `timeline.label` | — |
