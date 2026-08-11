@@ -1,3 +1,4 @@
+import { h, nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
@@ -48,9 +49,27 @@ describe('Alert', () => {
         expect(wrapper.attributes('role')).toBe('alert')
     })
 
-    it('has aria-live="assertive"', () => {
+    it('does not set redundant aria-live (role="alert" implies assertive)', () => {
         const wrapper = mount(Alert)
-        expect(wrapper.attributes('aria-live')).toBe('assertive')
+        expect(wrapper.attributes('aria-live')).toBeUndefined()
+    })
+
+    it('associates description id via aria-describedby', async () => {
+        const wrapper = mount(Alert, {
+            slots: {
+                default: () => h(AlertDescription, null, { default: () => 'Helpful text' }),
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+            },
+        })
+        // AlertDescription 在 onMounted 注册描述 id，触发 Alert 的 aria-describedby 更新（nextTick 微任务）
+        await nextTick()
+        const describedBy = wrapper.attributes('aria-describedby')
+        expect(describedBy).toBeTruthy()
+        const desc = wrapper.find(`#${describedBy}`)
+        expect(desc.exists()).toBe(true)
+        expect(desc.text()).toBe('Helpful text')
     })
 
     it('applies custom class', () => {
@@ -126,6 +145,16 @@ describe('AlertTitle', () => {
         const wrapper = mount(AlertTitle, { props: { class: 'my-title' } })
         expect(wrapper.classes()).toContain('my-title')
     })
+
+    it('renders as child element when asChild is true (class merged, as ignored)', () => {
+        const wrapper = mount(AlertTitle, {
+            props: { asChild: true },
+            slots: { default: '<h2 class="custom-h2">Title</h2>' },
+        })
+        expect(wrapper.element.tagName).toBe('H2')
+        expect(wrapper.classes()).toContain('custom-h2')
+        expect(wrapper.classes()).toContain('mb-1')
+    })
 })
 
 describe('AlertDescription', () => {
@@ -144,5 +173,27 @@ describe('AlertDescription', () => {
     it('applies custom class', () => {
         const wrapper = mount(AlertDescription, { props: { class: 'my-desc' } })
         expect(wrapper.classes()).toContain('my-desc')
+    })
+
+    it('renders with auto-generated id', () => {
+        const wrapper = mount(AlertDescription)
+        expect(wrapper.attributes('id')).toBeTruthy()
+    })
+
+    it('respects explicit id prop', () => {
+        const wrapper = mount(AlertDescription, { props: { id: 'my-desc' } })
+        expect(wrapper.attributes('id')).toBe('my-desc')
+    })
+
+    it('keeps default classes when no class provided', () => {
+        const wrapper = mount(AlertDescription)
+        expect(wrapper.classes()).toContain('text-sm')
+        expect(wrapper.classes()).toContain('font-medium')
+    })
+
+    it('merges user class overriding default text-sm via tailwind-merge', () => {
+        const wrapper = mount(AlertDescription, { props: { class: 'text-base' } })
+        expect(wrapper.classes()).toContain('text-base')
+        expect(wrapper.classes()).not.toContain('text-sm')
     })
 })
