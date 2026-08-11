@@ -4,10 +4,16 @@ import { cn } from '@/lib/utils';
 
 interface CarouselItemProps {
     class?: string;
+    /**
+     * 标记当前项不可见（WAI-ARIA Carousel 模式）：非可见 slide 应设为 true，
+     * 供父级在滚动切换时同步传入（如 `:aria-hidden="i !== currentIndex"`）
+     */
+    ariaHidden?: boolean;
 }
 
 const props = withDefaults(defineProps<CarouselItemProps>(), {
     class: undefined,
+    ariaHidden: undefined,
 });
 
 const itemClass = computed(() =>
@@ -16,7 +22,12 @@ const itemClass = computed(() =>
 </script>
 
 <template>
-    <div :class="itemClass">
+    <div
+        :class="itemClass"
+        role="group"
+        aria-roledescription="slide"
+        :aria-hidden="ariaHidden || undefined"
+    >
         <slot />
     </div>
 </template>

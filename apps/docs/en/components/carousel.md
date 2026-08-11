@@ -170,6 +170,7 @@ const carouselRef = ref()
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `class` | `string` | — | Single slide container custom style class |
+| `ariaHidden` | `boolean` | `false` | Marks the slide as hidden (WAI-ARIA Carousel pattern). Slides outside the viewport should be `true` (hidden from screen readers together with their focusable content), synced by the parent on scroll |
 
 ## Slots
 

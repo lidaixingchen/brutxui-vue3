@@ -26,7 +26,6 @@ const props = withDefaults(defineProps<CarouselProps>(), {
     class: undefined,
 });
 
-// @ts-expect-error vue-tsc does not recognize string-based template ref "emblaRef" as a usage of the destructured variable, causing TS6133.
 const { emblaRef, selectedIndex, scrollSnaps, canScrollPrev, canScrollNext, scrollPrev, scrollNext, scrollTo, startAutoplay, stopAutoplay, autoplayProgress } = useCarouselEnhanced({
     loop: () => props.loop,
     autoplay: () => props.autoplay,
@@ -60,12 +59,15 @@ const thumbnailContainerClasses = computed(() => {
     const position = props.thumbnails?.position ?? 'bottom'
     if (position === 'left' || position === 'right') {
         return cn(
-            'flex flex-col gap-2',
+            'flex flex-col',
             position === 'left' ? 'order-first' : 'order-last'
         )
     }
-    return 'flex flex-row gap-2 justify-center'
+    return 'flex flex-row justify-center'
 })
+
+// 消费 thumbnails.gap 配置（默认 8px，与 Tailwind gap-2 等价）
+const thumbnailGapStyle = computed(() => ({ gap: `${props.thumbnails?.gap ?? 8}px` }))
 
 const containerClasses = computed(() => {
     const position = props.thumbnails?.position ?? 'bottom'
@@ -87,22 +89,42 @@ const parallaxStyle = computed(() => {
     if (!props.parallax?.enabled) return undefined
     return {
         '--parallax-scale': props.parallax.scale ?? 1.1,
+        // opacity 关闭时变量为 1（无过渡变化），开启时为 0，供 CSS 过渡到 1
+        '--parallax-opacity': props.parallax.opacity === true ? 0 : 1,
         '--parallax-duration': `${props.parallax.duration ?? 300}ms`,
         '--parallax-easing': props.parallax.easing ?? 'ease-out',
     }
 })
 
+// 未配置 autoplayIndicator 时默认悬停暂停（与多数轮播惯例一致，属有意设计）
 const shouldPauseOnHover = computed(() =>
     props.autoplayIndicator ? !!props.autoplayIndicator.pauseOnHover : true
 )
 
+// 消费 autoplayIndicator.position：progress/fraction 靠边贴边，dots 留出呼吸间距
+const indicatorBarPositionClasses = computed(() =>
+    props.autoplayIndicator?.position === 'bottom'
+        ? 'absolute bottom-0 left-0 right-0 z-10'
+        : 'absolute top-0 left-0 right-0 z-10'
+)
+const dotsPositionClasses = computed(() =>
+    props.autoplayIndicator?.position === 'top'
+        ? 'absolute top-3 left-1/2 -translate-x-1/2 flex gap-2 z-10'
+        : 'absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10'
+)
+
 function handleMouseEnter() {
-    if (shouldPauseOnHover.value) stopAutoplay()
+    // 仅在自动播放激活时暂停：不依赖 composable 内部 autoplay 守卫（语义不清，守卫调整即失效）
+    if (props.autoplay && shouldPauseOnHover.value) stopAutoplay()
 }
 
 function handleMouseLeave() {
-    if (shouldPauseOnHover.value) startAutoplay()
+    if (props.autoplay && shouldPauseOnHover.value) startAutoplay()
 }
+
+// 模板 ref="emblaRef" 消费该变量，vue-tsc 无法识别字符串模板 ref 的用法（TS6133 误报），
+// 显式引用消除报错，替代 @ts-expect-error（避免 vue-tsc/TS 升级后该注释自身成为编译错误）
+void emblaRef;
 
 const exposedSelectedIndex: ComputedRef<number> = computed(() => selectedIndex.value);
 
@@ -121,7 +143,7 @@ defineExpose({
 <template>
     <div :class="wrapperClass" :style="parallaxStyle">
         <div :class="carouselFrameClass" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
-            <div v-if="autoplayIndicator && autoplay" class="absolute top-0 left-0 right-0 z-10">
+            <div v-if="autoplayIndicator && autoplay" :class="indicatorBarPositionClasses">
                 <div v-if="autoplayIndicator.type === 'progress'" class="h-1 bg-brutal-fg/20">
                     <div
                         class="h-full bg-brutal-primary transition-all duration-100"
@@ -169,7 +191,7 @@ defineExpose({
             </Button>
 
             <div
-                v-if="showDots && scrollSnaps.length > 1 && !thumbnails?.show"
+                v-if="showDots && scrollSnaps.length > 1 && !thumbnails?.show && (autoplayIndicator?.type !== 'dots' || !autoplay)"
                 class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10"
             >
                 <button
@@ -184,7 +206,7 @@ defineExpose({
 
             <div
                 v-if="autoplayIndicator?.type === 'dots' && autoplay && scrollSnaps.length > 1"
-                class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-10"
+                :class="dotsPositionClasses"
             >
                 <div
                     v-for="(_, i) in scrollSnaps"
@@ -195,13 +217,13 @@ defineExpose({
             </div>
         </div>
 
-        <div v-if="thumbnails?.show && scrollSnaps.length > 1" :class="thumbnailContainerClasses">
+        <div v-if="thumbnails?.show && scrollSnaps.length > 1" :class="thumbnailContainerClasses" :style="thumbnailGapStyle">
             <slot name="thumbnail" :index="selectedIndex" :scroll-to="scrollTo">
                 <button
                     v-for="(_, i) in scrollSnaps"
                     :key="i"
                     type="button"
-                    :class="i === selectedIndex ? thumbnailActiveClasses : thumbnailClasses"
+                    :class="i === selectedIndex && thumbnails?.highlightCurrent !== false ? thumbnailActiveClasses : thumbnailClasses"
                     :aria-label="t('carousel.goToSlide', { index: i + 1 })"
                     @click="scrollTo(i)"
                 >

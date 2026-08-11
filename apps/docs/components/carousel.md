@@ -169,6 +169,7 @@ const carouselRef = ref()
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `class` | `string` | — | 单张幻灯片容器自定义样式类 |
+| `ariaHidden` | `boolean` | `false` | 标记当前幻灯片不可见（WAI-ARIA Carousel 模式）。视口外的 slide 应设为 `true`（连同内部可聚焦内容一起对屏幕阅读器隐藏），由父级在滚动切换时同步传入 |
 
 ## 插槽
 
