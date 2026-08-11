@@ -141,7 +141,7 @@ const filteredItems = computed(() =>
 
 ## Command Dialog
 
-Use `CommandDialog` to create a modal command palette:
+Use `CommandDialog` to create a modal command palette. Note that `CommandDialog` is a **fully controlled component**: you must bind `v-model:open` (or listen to `update:open`), otherwise user interactions (such as `Escape` or clicking the overlay) will not change the open/close state.
 
 ```vue
 <script setup>
@@ -173,7 +173,7 @@ const open = ref(false)
 | `Command` | Root container, manages filter state, built on `ListboxRoot` |
 | `CommandDialog` | Modal dialog wrapper, built on `DialogRoot` |
 | `CommandInput` | Search input field, automatically filters items on input |
-| `CommandList` | Scrollable list container, built on `ListboxContent` |
+| `CommandList` | Scrollable list container, built on `ListboxContent`, must be used inside `Command` |
 | `CommandEmpty` | Displayed when there are no matching results |
 | `CommandGroup` | Grouped section with title, automatically hidden when filtered empty |
 | `CommandItem` | Selectable item, built on `ListboxItem`, supports `@select` event |
@@ -182,7 +182,7 @@ const open = ref(false)
 
 ## Programmatic Control
 
-`Command` exposes a `filterSearch` reactive reference via `defineExpose`, allowing parent components to programmatically read or set the search keyword, thereby triggering item filtering without relying on `CommandInput`.
+`Command` exposes a `filterSearch` reactive reference via `defineExpose`, allowing parent components to programmatically read or set the search keyword, thereby triggering item filtering without relying on `CommandInput`. When a `CommandInput` is present, writing `filterSearch` externally is also reflected back into the input.
 
 > Note: Writing to `filterSearch` only triggers filtering logic when internal filtering is enabled (i.e., `disable-filter` is not set); when `disableFilter` is `true`, internal filtering is disabled and writes will not affect item display.
 
@@ -225,7 +225,7 @@ const commandRef = ref()
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `disableFilter` | `boolean` | `false` | Disables internal search filtering, for scenarios where external filtering is used |
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandInput
 
@@ -233,7 +233,7 @@ const commandRef = ref()
 |------|------|--------|------|
 | `modelValue` | `string` | — | Input field value, supports `v-model` |
 | `placeholder` | `string` | `t('command.placeholder')` | Placeholder text |
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandItem
 
@@ -241,38 +241,38 @@ const commandRef = ref()
 |------|------|--------|------|
 | `value` | `string` | — | Unique identifier value for the item |
 | `disabled` | `boolean` | — | Whether the item is disabled |
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandGroup
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
 | `title` | `string` | — | Group title text |
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandList
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandEmpty
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandSeparator
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandShortcut
 
 | Prop | Type | Default | Description |
 |------|------|--------|------|
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ### CommandDialog
 
@@ -281,7 +281,7 @@ const commandRef = ref()
 | `open` | `boolean` | `false` | Whether the dialog is open, supports `v-model:open` |
 | `title` | `string` | `t('command.dialogTitle')` | Dialog title (for accessibility) |
 | `description` | `string` | `t('command.dialogDescription')` | Dialog description (for accessibility) |
-| `class` | `string` | — | Custom CSS class name |
+| `class` | `ClassValue` | — | Custom CSS class name |
 
 ## Events
 

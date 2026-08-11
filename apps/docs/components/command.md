@@ -140,7 +140,7 @@ const filteredItems = computed(() =>
 
 ## 命令对话框
 
-使用 `CommandDialog` 实现模态命令面板：
+使用 `CommandDialog` 实现模态命令面板。注意 `CommandDialog` 是**完全受控组件**：必须绑定 `v-model:open`（或监听 `update:open`），否则用户操作（如 Escape / 点击遮罩）不会改变开合状态。
 
 ```vue
 <script setup>
@@ -172,7 +172,7 @@ const open = ref(false)
 | `Command` | 根容器，管理过滤状态，基于 `ListboxRoot` 构建 |
 | `CommandDialog` | 模态对话框包装器，基于 `DialogRoot` 构建 |
 | `CommandInput` | 搜索输入框，输入时自动过滤项目 |
-| `CommandList` | 可滚动列表容器，基于 `ListboxContent` 构建 |
+| `CommandList` | 可滚动列表容器，基于 `ListboxContent` 构建，必须在 `Command` 内使用 |
 | `CommandEmpty` | 无匹配结果时显示 |
 | `CommandGroup` | 带标题的分组区域，过滤为空时自动隐藏 |
 | `CommandItem` | 可选项，基于 `ListboxItem` 构建，支持 `@select` 事件 |
@@ -181,7 +181,7 @@ const open = ref(false)
 
 ## 程序化控制
 
-`Command` 通过 `defineExpose` 暴露 `filterSearch` 响应式引用，允许父组件程序化读取或设置搜索关键词，从而在不依赖 `CommandInput` 的情况下触发项目过滤。
+`Command` 通过 `defineExpose` 暴露 `filterSearch` 响应式引用，允许父组件程序化读取或设置搜索关键词，从而在不依赖 `CommandInput` 的情况下触发项目过滤。当内部存在 `CommandInput` 时，外部写入 `filterSearch` 会同步回显到输入框。
 
 > 注意：仅当内部过滤启用时（即未设置 `disable-filter`）写入 `filterSearch` 才会触发过滤逻辑；`disable-filter` 为 `true` 时内部过滤被禁用，写入不会影响项目显示。
 
@@ -224,7 +224,7 @@ const commandRef = ref()
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `disableFilter` | `boolean` | `false` | 禁用内部搜索过滤，适用于外部自行过滤的场景 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandInput
 
@@ -232,7 +232,7 @@ const commandRef = ref()
 |------|------|--------|------|
 | `modelValue` | `string` | — | 输入框的值，支持 `v-model` |
 | `placeholder` | `string` | `t('command.placeholder')` | 占位符文本 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandItem
 
@@ -240,38 +240,38 @@ const commandRef = ref()
 |------|------|--------|------|
 | `value` | `string` | — | 项目的唯一标识值 |
 | `disabled` | `boolean` | — | 是否禁用该项目 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandGroup
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `title` | `string` | — | 分组标题文本 |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandList
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandEmpty
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandSeparator
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandShortcut
 
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ### CommandDialog
 
@@ -280,7 +280,7 @@ const commandRef = ref()
 | `open` | `boolean` | `false` | 对话框是否打开，支持 `v-model:open` |
 | `title` | `string` | `t('command.dialogTitle')` | 对话框标题（无障碍访问用） |
 | `description` | `string` | `t('command.dialogDescription')` | 对话框描述（无障碍访问用） |
-| `class` | `string` | — | 自定义 CSS 类名 |
+| `class` | `ClassValue` | — | 自定义 CSS 类名 |
 
 ## 事件
 
