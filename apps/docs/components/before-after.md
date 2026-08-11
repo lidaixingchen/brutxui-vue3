@@ -49,6 +49,8 @@ const modified = '/images/after.jpg'
 />
 ```
 
+> **浏览器兼容提示**：垂直模式下分割线/手柄位置（`top: <value>%`，值大靠下）与原生垂直 range 的 value 递增方向在 Chromium 中一致；WebKit（Safari）下垂直滑块的递增方向可能相反（向下拖 value 减小、分割线反而上移），`orient` 属性在部分浏览器不被支持。跨浏览器场景建议实测验证。
+
 ## 变体
 
 | 变体 | 说明 |
@@ -80,6 +82,7 @@ const modified = '/images/after.jpg'
 ## 可访问性
 
 - **键盘操作**：支持键盘方向键控制分割线位置；`disabled` 状态下禁用键盘交互
+- **焦点指示**：透明 range input 自身无可见焦点，键盘焦点态经 `has-[:focus-visible]` 变体呈现在容器外环（`ring-brutal-ring`），Tab 聚焦时可感知当前位置
 - **动效降级**：组件尊重 `prefers-reduced-motion` 系统设置。当用户启用"减少动态效果"时（通过 `useReducedMotion` 监听 `prefers-reduced-motion: reduce`）：
   - **移除滑块过渡**：分割线、拖拽手柄以及 `clip-path` 裁剪层不再应用过渡样式，拖动时位置变化即时生效，不带有缓动动画
   - **交互能力保留**：拖拽、键盘方向键、`disabled` 等行为完全不受影响，仅去除视觉过渡

@@ -50,6 +50,8 @@ Switch the divider direction via the `orientation` prop. Default `horizontal` is
 />
 ```
 
+> **Browser compatibility note**: In vertical mode, the divider/handle position (`top: <value>%`, larger value = lower) matches the native vertical range's value direction in Chromium; WebKit (Safari) may render the vertical slider's increment direction reversed (dragging down decreases the value and moves the divider up), and the `orient` attribute is unsupported in some browsers. Verify in target browsers for cross-browser scenarios.
+
 ## Variants
 
 | Variant | Description |
@@ -81,6 +83,7 @@ Switch the divider direction via the `orientation` prop. Default `horizontal` is
 ## Accessibility
 
 - **Keyboard control**: Supports keyboard arrow keys to control divider position; keyboard interaction is disabled in `disabled` state
+- **Focus indicator**: The transparent range input has no visible focus by itself; keyboard focus state is surfaced on the container ring via the `has-[:focus-visible]` variant (`ring-brutal-ring`), so the current position is perceivable when tabbing
 - **Motion reduction**: The component respects the `prefers-reduced-motion` system setting. When the user enables "reduce motion" (via `useReducedMotion` listening for `prefers-reduced-motion: reduce`):
   - **Slider transition removal**: The divider, drag handle, and `clip-path` clipping layer no longer apply transition styles. Position changes take effect immediately during dragging without easing animations
   - **Interaction preserved**: Dragging, keyboard arrow keys, `disabled` and other behaviors are completely unaffected; only visual transitions are removed

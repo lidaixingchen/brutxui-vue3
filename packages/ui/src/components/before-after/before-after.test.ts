@@ -245,3 +245,68 @@ describe('BeforeAfter orientation', () => {
         expect(icon.classes()).toContain('rotate-90')
     })
 })
+
+describe('BeforeAfter value normalization', () => {
+    const baseProps = { before: '/before.jpg', after: '/after.jpg' }
+
+    it('clamps defaultValue above 100', () => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, defaultValue: 150 },
+            ...localeProvide,
+        })
+        const input = wrapper.find('input[type="range"]')
+        expect((input.element as HTMLInputElement).value).toBe('100')
+    })
+
+    it('clamps defaultValue below 0', () => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, defaultValue: -20 },
+            ...localeProvide,
+        })
+        const input = wrapper.find('input[type="range"]')
+        expect((input.element as HTMLInputElement).value).toBe('0')
+    })
+
+    it('clamps modelValue out of range', () => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, modelValue: 150 },
+            ...localeProvide,
+        })
+        const input = wrapper.find('input[type="range"]')
+        expect((input.element as HTMLInputElement).value).toBe('100')
+    })
+
+    it('does not reset dragged value when defaultValue changes in uncontrolled mode', async () => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, defaultValue: 50 },
+            ...localeProvide,
+        })
+        const input = wrapper.find('input[type="range"]')
+        await input.setValue('30')
+        expect((input.element as HTMLInputElement).value).toBe('30')
+
+        // defaultValue 仅作初始值，后续更新不应重置用户拖动结果
+        await wrapper.setProps({ defaultValue: 80 })
+        expect((input.element as HTMLInputElement).value).toBe('30')
+    })
+
+    it('syncs modelValue changes in controlled mode', async () => {
+        const wrapper = mount(BeforeAfter, {
+            props: { ...baseProps, modelValue: 50 },
+            ...localeProvide,
+        })
+        await wrapper.setProps({ modelValue: 75 })
+        const input = wrapper.find('input[type="range"]')
+        expect((input.element as HTMLInputElement).value).toBe('75')
+    })
+
+    it('applies has-focus-visible ring on root', () => {
+        const wrapper = mount(BeforeAfter, {
+            props: baseProps,
+            ...localeProvide,
+        })
+        const classes = wrapper.classes()
+        expect(classes).toContain('has-[:focus-visible]:ring-3')
+        expect(classes).toContain('has-[:focus-visible]:ring-brutal-ring')
+    })
+})
