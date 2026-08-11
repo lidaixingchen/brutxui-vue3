@@ -66,6 +66,7 @@ export const en: Locale = {
         passwordPlaceholder: '••••••••',
         invalidEmail: 'Please enter a valid email address',
         passwordRequired: 'Please enter your password',
+        passwordTooShort: 'Password must be at least {min} characters',
         showPassword: 'Show password',
         hidePassword: 'Hide password',
     },

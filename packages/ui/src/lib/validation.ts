@@ -9,3 +9,11 @@
  * 注意：仅作前端提示用途，不校验邮箱是否真实存在，也不应作为后端级别的严格校验。
  */
 export const EMAIL_REGEX = /^[a-zA-Z0-9_%+-]+(?:\.[a-zA-Z0-9_%+-]+)*@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
+
+/**
+ * 密码最小长度默认值（AuthCard 校验用）。
+ *
+ * 仅作安全默认值：调用方若与后端策略不一致，可通过 AuthCard 的
+ * `passwordMinLength` prop 覆盖，保持前后端一致。
+ */
+export const PASSWORD_MIN_LENGTH = 6

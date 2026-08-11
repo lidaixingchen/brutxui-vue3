@@ -75,6 +75,7 @@ export interface AuthCardLocale {
     passwordPlaceholder: string
     invalidEmail: string
     passwordRequired: string
+    passwordTooShort: string
     showPassword: string
     hidePassword: string
 }

@@ -135,4 +135,100 @@ describe('AuthCard', () => {
         })
         expect(wrapper.find('[class*="my-auth"]').exists()).toBe(true)
     })
+
+    it('rejects emails with internal whitespace', async () => {
+        // 首尾空白会被浏览器 email input 的 value sanitization 自动 trim，到不了组件；
+        // 此处用中间空格验证 EMAIL_REGEX 的边界
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('te st@example.com')
+        await inputs[1].setValue('password123')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Please enter a valid email address')
+    })
+
+    it('rejects emails with consecutive @', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('a@@b.com')
+        await inputs[1].setValue('password123')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Please enter a valid email address')
+    })
+
+    it('accepts emails with uppercase domain', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('Test@Example.COM')
+        await inputs[1].setValue('password123')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeTruthy()
+        expect(wrapper.emitted('login-submit')![0]).toEqual([
+            { email: 'Test@Example.COM', password: 'password123' },
+        ])
+    })
+
+    it('requires password when email is valid but password is empty', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('test@example.com')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Please enter your password')
+    })
+
+    it('rejects passwords shorter than the minimum length', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('test@example.com')
+        await inputs[1].setValue('abc12')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Password must be at least 6 characters')
+    })
+
+    it('respects a custom passwordMinLength prop', async () => {
+        const wrapper = mount(AuthCard, { props: { passwordMinLength: 10 }, ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('test@example.com')
+        await inputs[1].setValue('shortpwd')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+        expect(wrapper.text()).toContain('Password must be at least 10 characters')
+    })
+
+    it('clears the field error when the user fixes the input', async () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        await inputs[0].setValue('invalid-email')
+        await inputs[1].setValue('password123')
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.text()).toContain('Please enter a valid email address')
+        await inputs[0].setValue('test@example.com')
+        expect(wrapper.text()).not.toContain('Please enter a valid email address')
+    })
+
+    it('disables submit and social buttons and blocks submission while submitting', async () => {
+        const wrapper = mount(AuthCard, { props: { submitting: true }, ...localeProvide })
+        const buttons = wrapper.findAll('button')
+        expect(buttons.find(b => b.text().includes('Sign In'))?.attributes('disabled')).toBeDefined()
+        expect(buttons.find(b => b.text().includes('Google'))?.attributes('disabled')).toBeDefined()
+        expect(buttons.find(b => b.text().includes('GitHub'))?.attributes('disabled')).toBeDefined()
+        await wrapper.find('form').trigger('submit')
+        expect(wrapper.emitted('login-submit')).toBeFalsy()
+    })
+
+    it('sets autocomplete attributes for password managers', () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        const inputs = wrapper.findAll('input')
+        expect(inputs[0].attributes('autocomplete')).toBe('email')
+        expect(inputs[1].attributes('autocomplete')).toBe('current-password')
+    })
+
+    it('marks decorative icons as aria-hidden', () => {
+        const wrapper = mount(AuthCard, { ...localeProvide })
+        expect(wrapper.findAll('svg[aria-hidden="true"]').length).toBe(4)
+    })
 })

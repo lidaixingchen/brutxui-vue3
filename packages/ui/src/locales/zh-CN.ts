@@ -66,6 +66,7 @@ export const zhCN: Locale = {
         passwordPlaceholder: '••••••••',
         invalidEmail: '请输入有效的邮箱地址',
         passwordRequired: '请输入密码',
+        passwordTooShort: '密码至少需要 {min} 个字符',
         showPassword: '显示密码',
         hidePassword: '隐藏密码',
     },
