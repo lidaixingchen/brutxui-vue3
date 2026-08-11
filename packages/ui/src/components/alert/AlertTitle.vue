@@ -7,6 +7,8 @@ interface AlertTitleProps extends PrimitiveProps {
     class?: string
 }
 
+// 默认标题层级 h5（与 CardTitle 默认 h3 一致，均为硬编码默认值）。
+// 调用方应根据实际文档大纲通过 as / asChild 调整层级，避免标题跳级。
 const props = withDefaults(defineProps<AlertTitleProps>(), {
     as: 'h5',
     asChild: undefined,
