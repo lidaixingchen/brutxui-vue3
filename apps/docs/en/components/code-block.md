@@ -158,6 +158,10 @@ Highlight colors are controlled via `--brutal-code-*` CSS variables, decoupled f
 |------|--------|------|
 | `default` | — | Optional. Used for custom code content. When using this slot, built-in Prism syntax highlighting is skipped and slot content is rendered directly (suitable for other highlighters like Shiki) |
 
+::: warning Slot / `code` prop contract
+When using the default slot, **the text copied by the copy button and the line numbers are still derived from the `code` prop** (not the slot's rendered content). If the slot content differs from `code`, line numbers will misalign with what is shown and copying will copy `code`'s text. Keep `code` consistent with the slot content (e.g., pass the same code text), or only use the slot when line numbers / copy are not needed.
+:::
+
 ## Accessibility
 
 - **Keyboard Operation**: Copy and expand/collapse buttons support Tab focus and Enter/Space activation
