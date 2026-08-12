@@ -85,7 +85,9 @@ watch(
     async ([code, lang]) => {
         // 存在默认插槽时不渲染 highlightedHtml（模板走 <slot /> 分支），
         // 跳过无谓的语言加载与 Prism.highlight 计算；hasDefaultSlot 作为 watch 源，
-        // 插槽移除时经 onBeforeUpdate 同步触发补算
+        // 插槽移除时经 onBeforeUpdate 同步触发补算。
+        // 限制：若语言此前从未加载，补算需异步 loadLanguage 动态导入，加载完成前
+        // v-html 分支会先渲染约一拍的空内容，加载完成后即补全；已加载语言则同步补算无此窗口
         if (hasDefaultSlot.value) return
 
         const version = ++highlightVersion

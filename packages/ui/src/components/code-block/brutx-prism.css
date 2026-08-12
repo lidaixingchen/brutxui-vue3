@@ -109,13 +109,19 @@ pre[class*="language-"] {
 
 /* --- 高亮行（Prism line-highlight 插件兼容） --- */
 
+/* 高亮条（.line-highlight）为 absolute 定位，包含块必须是定位祖先；
+   Prism 插件自带 CSS 通过 pre[data-line] { position: relative } 提供该条件，
+   本主题内建等价规则，消费方无需引入插件自带 CSS */
+pre[class*="language-"] {
+    position: relative;
+}
+
 .line-highlight {
     /* 补全插件核心定位规则：插件 JS 只负责计算 top/height 内联样式，若消费方未引入插件自带 CSS，
        缺少定位会让高亮条成为文档流中的静态块并撑开行高 */
     position: absolute;
     left: 0;
     right: 0;
-    padding: inherit 0;
     pointer-events: none;
     background: var(--brutal-accent);
     opacity: 0.15;
