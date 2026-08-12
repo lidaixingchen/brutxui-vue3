@@ -58,8 +58,6 @@ const CHECKBOX_SIZE_TO_ICON: Record<NonNullable<CheckboxVariantProps['size']>, I
 
 const resolvedAriaLabel = computed(() => props.ariaLabel ?? t('checkbox.check'))
 
-const isIndeterminate = computed(() => props.checked === 'indeterminate')
-
 const classes = computed(() =>
     cn(checkboxVariants({ variant: props.variant, size: props.size }), props.class)
 )
@@ -76,6 +74,7 @@ const checkClasses = computed(() =>
 
 <template>
     <CheckboxRoot
+        v-slot="{ state }"
         :class="classes"
         :model-value="checked"
         :default-value="defaultValue"
@@ -87,7 +86,9 @@ const checkClasses = computed(() =>
         @update:model-value="(val: boolean | 'indeterminate') => emit('update:checked', val)"
     >
         <CheckboxIndicator :class="checkClasses">
-            <Minus v-if="isIndeterminate" class="h-full w-full" />
+            <!-- 图标跟随 reka-ui 内部实际 state（受控/非受控一致），
+                 defaultValue: 'indeterminate' 时初始即显示 Minus，切换后同步真实状态 -->
+            <Minus v-if="state === 'indeterminate'" class="h-full w-full" />
             <Check v-else class="h-full w-full" />
         </CheckboxIndicator>
     </CheckboxRoot>

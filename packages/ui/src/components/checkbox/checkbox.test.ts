@@ -121,6 +121,28 @@ describe('Checkbox', () => {
         expect(el.attributes('aria-checked')).toBe('true')
     })
 
+    it('renders Minus icon with mixed aria when defaultValue is indeterminate', () => {
+        const wrapper = mount(Checkbox, {
+            props: { defaultValue: 'indeterminate' },
+            attachTo: document.body,
+        })
+        const minus = wrapper.findComponent(Minus)
+        expect(minus.exists()).toBe(true)
+        expect(wrapper.find('[role="checkbox"]').attributes('aria-checked')).toBe('mixed')
+    })
+
+    it('tracks actual state after toggling from an indeterminate defaultValue', async () => {
+        const wrapper = mount(Checkbox, {
+            props: { defaultValue: 'indeterminate' },
+            attachTo: document.body,
+        })
+        const el = wrapper.find('[role="checkbox"]')
+        await el.trigger('click')
+        // reka-ui 内部从 indeterminate 切换到 checked，图标应随之变为 Check 而非停留在 Minus
+        expect(wrapper.findComponent(Minus).exists()).toBe(false)
+        expect(wrapper.emitted('update:checked')?.[0]).toEqual([true])
+    })
+
     it('emits update:checked when toggled from defaultValue', async () => {
         const wrapper = mount(Checkbox, {
             props: { defaultValue: true },
