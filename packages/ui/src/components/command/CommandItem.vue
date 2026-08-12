@@ -45,12 +45,33 @@ const isRender = computed(() => {
     return (items.get(id) ?? 0) > 0
 })
 
+// 索引文本读取：递归收集可见文本节点，跳过 hidden 属性 / aria-hidden="true" / sr-only 的
+// 子元素（如仅 hover 显示的快捷键、装饰徽标），避免把屏幕不可见文本计入搜索索引——这是
+// 原 innerText 语义（只取渲染可见文本）在 v-if 卸载改造后的延续。不做 getComputedStyle
+// 判定：那会触发强制同步布局，违背用 textContent 换性能的初衷；纯 CSS display:none 的
+// 隐藏内容仍会被计入，属已接受的行为边界。
+function getSearchableText(el: HTMLElement): string {
+    let text = ''
+    for (const node of el.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            text += node.textContent ?? ''
+            continue
+        }
+        if (node.nodeType !== Node.ELEMENT_NODE) continue
+        const child = node as HTMLElement
+        if (child.hidden || child.getAttribute('aria-hidden') === 'true') continue
+        if (child.classList.contains('sr-only')) continue
+        text += getSearchableText(child)
+    }
+    return text
+}
+
 function syncIndexText() {
     const el = itemRef.value?.$el as HTMLElement | undefined
     if (!el) return
-    // 条目已由 v-show 改为 v-if：隐藏项被卸载、itemRef 为 null，不再存在「隐藏文本被索引」问题，
-    // 用 textContent（避免 innerText 读取触发强制同步布局）并 trim 去除模板缩进/换行即可
-    const text = el.textContent?.trim() || props.value
+    // 条目已由 v-show 改为 v-if：隐藏项被卸载、itemRef 为 null，隐藏项不再残留 DOM。
+    // 读取时跳过显式隐藏子元素并 trim，避免把不可见文本计入搜索索引
+    const text = getSearchableText(el).trim() || props.value
     if (rootContext.allItems.value.get(id) !== text)
         rootContext.allItems.value.set(id, text)
 }

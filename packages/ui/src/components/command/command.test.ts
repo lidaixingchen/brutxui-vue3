@@ -714,6 +714,43 @@ describe('Command filtering', () => {
         expect(wrapper.find('[data-slot="command-empty"]').exists()).toBe(false)
     })
 
+    it('does not index hidden child text (sr-only) into search', async () => {
+        const wrapper = mount(Command, {
+            ...localeProvide,
+            slots: {
+                default: `
+                    <CommandInput />
+                    <CommandList>
+                        <CommandGroup title="Actions">
+                            <CommandItem value="open-settings">Open Settings<span class="sr-only">hidden-keyword</span></CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                    <CommandEmpty />
+                `,
+            },
+            global: {
+                provide: { [LOCALE_INJECTION_KEY]: en },
+                components: { CommandInput, CommandList, CommandGroup, CommandItem, CommandEmpty },
+            },
+        })
+        await nextTick()
+        await nextTick()
+
+        const input = wrapper.find('input')
+        // 屏幕不可见文本不入搜索索引：搜 sr-only 隐藏关键词不命中，展示空状态
+        await input.setValue('hidden-keyword')
+        await nextTick()
+        await nextTick()
+        expect(wrapper.findAll('[data-slot="command-item"]').length).toBe(0)
+        expect(wrapper.find('[data-slot="command-empty"]').exists()).toBe(true)
+
+        // 可见标签仍可命中
+        await input.setValue('Open Settings')
+        await nextTick()
+        await nextTick()
+        expect(wrapper.findAll('[data-slot="command-item"]').length).toBe(1)
+    })
+
     it('hides group when all items are filtered out', async () => {
         const wrapper = mount(Command, {
             ...localeProvide,
