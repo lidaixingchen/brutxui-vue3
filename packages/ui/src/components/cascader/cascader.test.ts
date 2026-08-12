@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import Cascader from './Cascader.vue'
 import { en } from '@/locales/en'
 import { LOCALE_INJECTION_KEY } from '@/composables/useLocale'
@@ -133,6 +133,57 @@ describe('Cascader', () => {
         vm.activePath = ['zh', 'bj']
         vm.toggleCheckbox(optionBj, 1, false)
         expect(wrapper.emitted('update:modelValue')?.[1]?.[0]).toEqual([])
+    })
+
+    it('invalidates leaf cache when options mutate in place', async () => {
+        // 父组件原地变更（不改 options 引用）时，deep watch 应清空叶子缓存，
+        // 否则新加入的叶子不会计入勾选统计
+        const optsRef = ref<CascaderOption[]>([
+            { value: 'p', label: 'P', children: [{ value: 'a', label: 'A' }] },
+        ])
+        wrapper = mount(Cascader, {
+            ...localeProvide,
+            props: { options: optsRef.value, multiple: true, modelValue: [] },
+            attachTo: document.body,
+        })
+        const vm = wrapper.vm as any
+        vm.activePath = ['p']
+
+        // 首次计算并缓存 'p' 的叶子集合（此时只有 'a'）
+        expect(vm.getOptionCheckState(optsRef.value[0], 0)).toBe('unchecked')
+
+        // 原地 push 新叶子（引用不变），deep watch 应在 nextTick 后清空缓存
+        optsRef.value[0].children!.push({ value: 'b', label: 'B' })
+        await nextTick()
+
+        vm.toggleCheckbox(optsRef.value[0], 0, true)
+        expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toEqual([['p', 'a'], ['p', 'b']])
+    })
+
+    it('computes correct leaf paths when an option subtree is shared across parents', async () => {
+        // 同一 option 对象引用挂在两个父节点下：缓存若含父路径会串数据，
+        // 应按当前父路径拼接出各自的完整叶子路径
+        const sharedSubtree: CascaderOption[] = [
+            { value: 'mid', label: 'Mid', children: [{ value: 'leaf', label: 'Leaf' }] },
+        ]
+        const opts: CascaderOption[] = [
+            { value: 'p1', label: 'P1', children: sharedSubtree },
+            { value: 'p2', label: 'P2', children: sharedSubtree },
+        ]
+        wrapper = mount(Cascader, {
+            ...localeProvide,
+            props: { options: opts, multiple: true, modelValue: [] },
+            attachTo: document.body,
+        })
+        const vm = wrapper.vm as any
+
+        vm.activePath = ['p1', 'mid']
+        vm.toggleCheckbox(opts[0]!.children![0], 1, true)
+        expect(wrapper.emitted('update:modelValue')?.[0]?.[0]).toEqual([['p1', 'mid', 'leaf']])
+
+        vm.activePath = ['p2', 'mid']
+        vm.toggleCheckbox(opts[1]!.children![0], 1, true)
+        expect(wrapper.emitted('update:modelValue')?.[1]?.[0]).toEqual([['p2', 'mid', 'leaf']])
     })
 
     describe('trail highlighting', () => {
@@ -369,6 +420,30 @@ describe('Cascader', () => {
             // ArrowUp 从 2 回退：跳过 'b'，回到 'a'
             vm.handleKeyDown(key('ArrowUp'))
             expect(vm.activeItemIndex).toBe(0)
+        })
+
+        it('clears highlight when the whole column is disabled', async () => {
+            // 全列均为 disabled 时，ArrowDown 不应停留在原 disabled 项（高亮与
+            // activePath 均无变化的「无响应」），而应返回 -1 清除高亮，让焦点
+            // 保持在触发按钮（aria-activedescendant 回到 undefined）
+            const allDisabled: CascaderOption[] = [
+                { value: 'a', label: 'A', disabled: true },
+                { value: 'b', label: 'B', disabled: true },
+            ]
+            wrapper = mount(Cascader, {
+                ...localeProvide,
+                props: { options: allDisabled },
+                attachTo: document.body,
+            })
+            const vm = wrapper.vm as any
+            vm.open = true
+            await nextTick()
+            vm.activeColumnIndex = 0
+            vm.activeItemIndex = 0
+
+            const key = (k: string) => ({ key: k, preventDefault: () => {} }) as any
+            vm.handleKeyDown(key('ArrowDown'))
+            expect(vm.activeItemIndex).toBe(-1)
         })
 
         it('does not select disabled descendant leaves when checking a parent', async () => {
