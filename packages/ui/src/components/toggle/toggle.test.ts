@@ -22,6 +22,16 @@ describe('Toggle', () => {
         expect(wrapper.classes()).toContain('border-brutal')
     })
 
+    it('applies pressed-state classes when on (保持按下语义，复用 brutalPressedStateOn)', async () => {
+        const wrapper = mount(Toggle, {
+            props: { modelValue: true },
+            attachTo: document.body,
+        })
+        expect(wrapper.classes()).toContain('data-[state=on]:translate-y-[var(--brutal-pressed-offset,2px)]')
+        expect(wrapper.classes()).toContain('data-[state=on]:translate-x-0')
+        expect(wrapper.classes()).toContain('data-[state=on]:shadow-none')
+    })
+
     it('applies size classes', async () => {
         const wrapper = mount(Toggle, {
             attachTo: document.body,
