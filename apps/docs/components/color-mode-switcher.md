@@ -63,7 +63,7 @@ import { ColorModeSwitcher } from 'brutx-ui-vue'
 </template>
 ```
 
-> **边界行为：** 若当前模式恰为被隐藏的 `system`（如未持久化偏好且系统为暗色时 `useTheme` 默认置为 system），图标/按钮点击会**保持现状**而不跳转；下拉选择模式的展示值会归一化到首个可用选项（light），且程序化传入 `system` 不再被接受。
+> **边界行为：** 若当前模式恰为被隐藏的 `system`（如未持久化偏好且系统为暗色时 `useTheme` 默认置为 system），图标/按钮点击会**保持现状**而不跳转；下拉选择模式的展示值回退为实际解析出的亮暗模式（`resolvedColorMode`），与页面实际主题一致，避免「页面暗色而下拉框显示 light」的感知偏差；程序化传入 `system` 不再被接受。
 
 ## 变体
 

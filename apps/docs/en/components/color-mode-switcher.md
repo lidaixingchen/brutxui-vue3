@@ -64,7 +64,7 @@ Control whether the "system" option is displayed via the `showSystem` prop. When
 </template>
 ```
 
-> **Edge behavior:** If the current mode happens to be the hidden `system` (e.g. no persisted preference and the system is dark, `useTheme` defaults to `system`), icon/button clicks **stay as-is** without jumping; the select mode normalizes the displayed value to the first available option (light), and programmatically passing `system` is no longer accepted.
+> **Edge behavior:** If the current mode happens to be the hidden `system` (e.g. no persisted preference and the system is dark, `useTheme` defaults to `system`), icon/button clicks **stay as-is** without jumping; the select mode falls back to displaying the resolved color mode (`resolvedColorMode`), matching the actual page theme and avoiding the perceived mismatch of "a dark page with `light` shown in the dropdown"; programmatically passing `system` is no longer accepted.
 
 ## Variants
 
