@@ -42,13 +42,14 @@ const SCAN_ROOTS = [join(ROOT, 'docs', 'guides'), join(ROOT, 'skills')]
 /** 合法历史语境目录（changelog / 审查报告） */
 const EXCLUDE_DIRS = [join(ROOT, 'apps', 'docs'), join(ROOT, 'docs', 'reports')]
 
+/** 目录不可读时返回 null（区别于空目录，避免检查 1 静默空转通过） */
 function walkMd(dir, base = dir) {
     const out = []
     let entries
     try {
         entries = readdirSync(dir)
     } catch {
-        return out
+        return null
     }
     for (const name of entries) {
         if (SKIP_DIRS.has(name)) continue
@@ -60,7 +61,8 @@ function walkMd(dir, base = dir) {
             continue
         }
         if (s.isDirectory()) {
-            out.push(...walkMd(p, base))
+            const sub = walkMd(p, base)
+            if (sub) out.push(...sub)
         } else if (name.endsWith('.md')) {
             out.push(p)
         }
@@ -71,15 +73,24 @@ function walkMd(dir, base = dir) {
 const isExcluded = (abs) =>
     EXCLUDE_DIRS.some((dir) => abs.toLowerCase().startsWith(dir.toLowerCase() + sep) || abs === dir)
 
-/** 检查 1：已删除符号引用 */
+/** 转义正则元字符，防止符号黑名单中的 `.`/`[`/`+` 等破坏 \b 边界匹配 */
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/** 检查 1：已删除符号引用。返回 { violations, missingRoots }。 */
 function checkRemovedSymbols() {
     const violations = []
+    const missingRoots = []
     for (const root of SCAN_ROOTS) {
-        for (const abs of walkMd(root)) {
+        const files = walkMd(root)
+        if (files === null) {
+            missingRoots.push(relative(ROOT, root).split(sep).join('/'))
+            continue
+        }
+        for (const abs of files) {
             if (isExcluded(abs)) continue
             const content = readFileSync(abs, 'utf-8')
             for (const sym of REMOVED_SYMBOLS) {
-                const re = new RegExp(`\\b${sym}\\b`, 'g')
+                const re = new RegExp(`\\b${escapeRegExp(sym)}\\b`, 'g')
                 let m
                 while ((m = re.exec(content)) !== null) {
                     const lineStart = content.lastIndexOf('\n', m.index) + 1
@@ -90,7 +101,7 @@ function checkRemovedSymbols() {
             }
         }
     }
-    return violations
+    return { violations, missingRoots }
 }
 
 /** 解析 components.ts 的 COMPONENTS 键 */
@@ -137,10 +148,13 @@ const docMissing = checkComponentDocs()
 console.log('=== guide/skill 引用校验 ===\n')
 
 console.log(`检查 1 — 已删除符号引用（扫描 ${SCAN_ROOTS.map((r) => relative(ROOT, r)).join('、')}，排除 apps/docs 与 docs/reports）`)
-if (removed.length === 0) {
+if (removed.missingRoots.length > 0) {
+    console.log(`  ✗ 扫描目录缺失：${removed.missingRoots.join('、')}——检查 1 无法校验，视为失败`)
+}
+if (removed.violations.length === 0) {
     console.log('  ✓ 无已删除符号引用')
 } else {
-    for (const v of removed) {
+    for (const v of removed.violations) {
         console.log(`  ✗ ${v.rel}:${v.line} → 命中已删除符号 ${v.sym}`)
     }
 }
@@ -164,9 +178,21 @@ if (docMissing.length === 0) {
     }
 }
 
-if (removed.length > 0 && !REPORT) {
+if (removed.missingRoots.length > 0) {
+    console.log('\n结论：检查 1 扫描目录缺失，无法校验，exit 1')
+    process.exit(1)
+}
+if (removed.violations.length > 0 && !REPORT) {
     console.log('\n结论：检查 1 命中已删除符号，exit 1')
     process.exit(1)
 }
-console.log('\n结论：通过')
+if (docMissing.length > 0 && STRICT_CHECK2) {
+    console.log('\n结论：检查 2 存在缺失文档（--strict-check2），exit 1')
+    process.exit(1)
+}
+if (removed.violations.length > 0) {
+    console.log('\n结论：存在风险（--report 只报不阻塞）')
+} else {
+    console.log('\n结论：通过')
+}
 process.exit(0)

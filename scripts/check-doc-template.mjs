@@ -8,67 +8,47 @@
  *   - en：`## Preview` 或 `## Demo`（二选一）/ `## Installation` / `## Usage` / `## Props` / `## Accessibility`
  *   - 预览节须含 `<ComponentPreview>`；安装节须含 `<InstallationTabs>`
  *
- * DOC_EXCEPTIONS：登记「已知未达标、待补节」的文档（相对路径 key）。已达标仍列例外
- * 即报错（自清空逼收敛）——补节完成后必须从清单移除。
+ * DOC_EXCEPTIONS：登记「已知未达标、待补节」的文档（key 为相对仓库根路径，
+ * 如 apps/docs/components/xxx.md）。已达标仍列例外即报错（自清空逼收敛）——补节完成后必须从清单移除。
  *
  * 用法：
  *   node scripts/check-doc-template.mjs    # 违规即 exit 1
  */
 import { readdirSync, readFileSync } from 'node:fs'
 import { join, relative } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const ROOT = process.cwd()
+// 基于脚本位置推导仓库根，避免依赖执行目录（从任意 cwd 调用结果一致）
+const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const ZH_DIR = join(ROOT, 'apps', 'docs', 'components')
 const EN_DIR = join(ROOT, 'apps', 'docs', 'en', 'components')
 
-/**
- * 已知未达标、待补节的文档（补节后须移除，否则自清空报错）。
- * 相对 apps/docs/ 的路径。
- */
+/** 已知未达标、待补节的文档（补节后须移除，否则自清空报错）。key 为相对仓库根路径。 */
 const DOC_EXCEPTIONS = new Set([
     // 待补节：已列入的本方案补节清单之外的存量缺口
 ])
 
 const ZH_REQUIRED = ['## 预览', '## 安装', '## 用法', '## Props', '## 可访问性']
+const ZH_PREVIEW = ['## 预览']
 const EN_PREVIEW_ALT = ['## Demo', '## Preview']
 const EN_REQUIRED = ['## Installation', '## Usage', '## Props', '## Accessibility']
+
+/** 标题归一化：去首尾空白、压缩内部连续空白，使多空格标题与单空格标题一致。 */
+const norm = (s) => s.trim().replace(/\s+/g, ' ')
 
 function headings(content) {
     const set = new Set()
     for (const line of content.split('\n')) {
         const m = /^##\s+(.+)$/.exec(line.trim())
-        if (m) set.add('## ' + m[1])
+        if (m) set.add(norm('## ' + m[1]))
     }
     return set
 }
 
-function checkFile(file, requiredList, previewAlts) {
-    const content = readFileSync(file, 'utf-8')
-    const hs = headings(content)
-    const missing = requiredList.filter((h) => !hs.has(h))
-    const hasPreview = previewAlts ? previewAlts.some((h) => hs.has(h)) : true
-    const previewName = previewAlts ? previewAlts.find((h) => hs.has(h)) : null
-    const problems = []
-    if (missing.length > 0) problems.push(`缺必须章节：${missing.join('、')}`)
-    if (previewAlts && !hasPreview) problems.push(`缺预览章节（${previewAlts.join(' 或 ')}）`)
-    if (hasPreview) {
-        const previewContent = extractSection(content, previewName)
-        if (previewContent !== null && !previewContent.includes('<ComponentPreview')) {
-            problems.push('预览节缺少 <ComponentPreview>')
-        }
-    }
-    if (hs.has('## 安装') && !extractSection(content, '## 安装').includes('<InstallationTabs')) {
-        problems.push('安装节缺少 <InstallationTabs>')
-    }
-    if (hs.has('## Installation') && !extractSection(content, '## Installation').includes('<InstallationTabs')) {
-        problems.push('安装节缺少 <InstallationTabs>')
-    }
-    return problems
-}
-
 function extractSection(content, heading) {
     const lines = content.split('\n')
-    const startIdx = lines.findIndex((l) => l.trim() === heading)
+    const target = norm(heading)
+    const startIdx = lines.findIndex((l) => norm(l) === target)
     if (startIdx === -1) return null
     let endIdx = lines.length
     for (let i = startIdx + 1; i < lines.length; i++) {
@@ -80,23 +60,53 @@ function extractSection(content, heading) {
     return lines.slice(startIdx, endIdx).join('\n')
 }
 
+function checkFile(file, requiredList, previewAlts) {
+    const content = readFileSync(file, 'utf-8')
+    const hs = headings(content)
+    const missing = requiredList.filter((h) => !hs.has(norm(h)))
+    const hasPreview = previewAlts ? previewAlts.some((h) => hs.has(norm(h))) : true
+    const previewName = previewAlts ? previewAlts.find((h) => hs.has(norm(h))) : null
+    const problems = []
+    if (missing.length > 0) problems.push(`缺必须章节：${missing.join('、')}`)
+    if (previewAlts && !hasPreview) problems.push(`缺预览章节（${previewAlts.join(' 或 ')}）`)
+    if (hasPreview) {
+        const previewContent = extractSection(content, previewName)
+        if (previewContent !== null && !previewContent.includes('<ComponentPreview')) {
+            problems.push('预览节缺少 <ComponentPreview>')
+        }
+    }
+    const installSection = extractSection(content, '## 安装')
+    if (hs.has('## 安装') && (installSection === null || !installSection.includes('<InstallationTabs'))) {
+        problems.push('安装节缺少 <InstallationTabs>')
+    }
+    const enInstall = extractSection(content, '## Installation')
+    if (hs.has('## Installation') && (enInstall === null || !enInstall.includes('<InstallationTabs'))) {
+        problems.push('安装节缺少 <InstallationTabs>')
+    }
+    return problems
+}
+
 function walkMd(dir) {
     let entries
     try {
         entries = readdirSync(dir)
     } catch {
-        return []
+        return null
     }
     return entries.filter((f) => f.endsWith('.md') && f !== 'index.md').sort()
 }
 
 const zhFiles = walkMd(ZH_DIR)
 const enFiles = walkMd(EN_DIR)
+if (zhFiles === null || enFiles === null) {
+    console.error('✗ 文档目录缺失或不可读，无法执行 lint（检查 apps/docs/components 与 en/ 路径）')
+    process.exit(1)
+}
 const violations = []
 
 for (const f of zhFiles) {
     const rel = relative(ROOT, join(ZH_DIR, f)).split('\\').join('/')
-    const problems = checkFile(join(ZH_DIR, f), ZH_REQUIRED, null)
+    const problems = checkFile(join(ZH_DIR, f), ZH_REQUIRED, ZH_PREVIEW)
     if (problems.length > 0 && !DOC_EXCEPTIONS.has(rel)) {
         violations.push({ rel, problems })
     } else if (problems.length === 0 && DOC_EXCEPTIONS.has(rel)) {
