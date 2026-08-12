@@ -1,12 +1,11 @@
 import { cva } from 'class-variance-authority'
 
-// 阴影偏移量（px）单一配置表：default 派生 DEFAULT_CARD3D_OFFSET_PX 作为组件回退值。
-// 下方 shadow 变体的 arbitrary property 类因 Tailwind v4 只在源码中扫描字面量类名，
-// 必须静态完整写出（运行时拼接的类名不会被识别），修改偏移量时需同步配置表与类名字面量。
+// 阴影偏移量（px）：仅 default 派生 DEFAULT_CARD3D_OFFSET_PX，作为组件读取
+// --card3d-offset 失败时的 JS 回退值。lg/xl 不在此配置，由下方 shadow 变体的
+// arbitrary property 类名（静态字面量）单独定义——Tailwind v4 只在源码中扫描
+// 完整类名，运行时拼接无法识别，故配置表只维护 default 的 JS 回退关系。
 export const CARD3D_SHADOW_OFFSETS = {
     default: 4,
-    lg: 8,
-    xl: 12,
 } as const
 
 export const DEFAULT_CARD3D_OFFSET_PX = CARD3D_SHADOW_OFFSETS.default

@@ -132,25 +132,51 @@ describe('Card3D clickable', () => {
         expect(card.classes()).toContain('cursor-pointer')
     })
 
-    it('emits click event when clickable and clicked', async () => {
+    it('emits click event when clickable and clicked with a real mouse click', async () => {
         const wrapper = mount(Card3D, { props: { clickable: true } })
         const card = wrapper.find('[role="group"] > div:first-child')
-        await card.trigger('click')
+        // 真实鼠标 click 的 detail >= 1；detail 为 0 的 click 是键盘激活的合成事件
+        await card.trigger('click', { detail: 1 })
         expect(wrapper.emitted('click')).toHaveLength(1)
+    })
+
+    it('ignores keyboard-synthesized click (detail 0) to avoid duplicate emit', async () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        await card.trigger('click', { detail: 0 })
+        expect(wrapper.emitted('click')).toBeUndefined()
     })
 
     it('does not emit click when not clickable', async () => {
         const wrapper = mount(Card3D)
         const card = wrapper.find('[role="group"] > div:first-child')
-        await card.trigger('click')
+        await card.trigger('click', { detail: 1 })
         expect(wrapper.emitted('click')).toBeUndefined()
     })
 
     it('does not emit click when disabled even if clickable', async () => {
         const wrapper = mount(Card3D, { props: { clickable: true, disabled: true } })
         const card = wrapper.find('[role="group"] > div:first-child')
-        await card.trigger('click')
+        await card.trigger('click', { detail: 1 })
         expect(wrapper.emitted('click')).toBeUndefined()
+    })
+
+    it('uses slot content as accessible name by default (no aria-label override)', () => {
+        const wrapper = mount(Card3D, {
+            props: { clickable: true },
+            slots: { default: 'Product card' },
+        })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.attributes('aria-label')).toBeUndefined()
+    })
+
+    it('uses ariaLabel prop as the accessible name when provided', () => {
+        const wrapper = mount(Card3D, {
+            props: { clickable: true, ariaLabel: '展开详情' },
+            slots: { default: 'Product card' },
+        })
+        const card = wrapper.find('[role="group"] > div:first-child')
+        expect(card.attributes('aria-label')).toBe('展开详情')
     })
 
     it('adds button role and tabindex when clickable', () => {
@@ -189,6 +215,42 @@ describe('Card3D clickable', () => {
 
         await card.trigger('keyup', { key: ' ' })
         expect(wrapper.emitted('click')).toHaveLength(2)
+    })
+
+    it('does not double-emit when browser synthesizes a click after Enter keydown', async () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+
+        await card.trigger('keydown', { key: 'Enter' })
+        expect(wrapper.emitted('click')).toHaveLength(1)
+
+        // 浏览器对 role="button" 合成 click（detail 恒为 0），不应重复 emit
+        await card.trigger('click', { detail: 0 })
+        expect(wrapper.emitted('click')).toHaveLength(1)
+    })
+
+    it('prevents default on repeated Enter keydown without re-emitting', () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+
+        const event = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, repeat: true })
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+        card.element.dispatchEvent(event)
+
+        expect(preventDefaultSpy).toHaveBeenCalled()
+        expect(wrapper.emitted('click')).toBeUndefined()
+    })
+
+    it('prevents default on repeated Space keydown to avoid page scroll', () => {
+        const wrapper = mount(Card3D, { props: { clickable: true } })
+        const card = wrapper.find('[role="group"] > div:first-child')
+
+        const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true, repeat: true })
+        const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+        card.element.dispatchEvent(event)
+
+        expect(preventDefaultSpy).toHaveBeenCalled()
+        expect(wrapper.emitted('click')).toBeUndefined()
     })
 
     it('does not emit click on keyboard when disabled', async () => {

@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
-import { getComputedStyle, requestAnimationFrame } from '@/lib/env'
+import { getComputedStyle } from '@/lib/env'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useLocale } from '@/composables/useLocale'
 import { card3dVariants, card3dShadowClasses, DEFAULT_CARD3D_OFFSET_PX } from './card-3d-variants'
@@ -19,6 +19,7 @@ interface Card3DProps {
     variant?: NonNullable<Card3DVariantProps['variant']>
     disabled?: boolean
     clickable?: boolean
+    ariaLabel?: string
     class?: string
 }
 
@@ -31,6 +32,7 @@ const props = withDefaults(defineProps<Card3DProps>(), {
     variant: 'default',
     disabled: false,
     clickable: false,
+    ariaLabel: undefined,
     class: undefined,
 })
 
@@ -166,35 +168,32 @@ const cardClasses = computed(() =>
     )
 )
 
-// 键盘激活（Enter keydown / Space keyup）后，浏览器会对 role="button" 的元素合成 click，
-// 用标志位吞掉这次合成 click，避免与键盘 emit 重复触发
-let suppressSyntheticClick = false
-
 const cardAttrs = computed(() => props.clickable
     ? {
         tabindex: props.disabled ? -1 : 0,
         role: 'button' as const,
         'aria-disabled': props.disabled || undefined,
-        'aria-label': t('card3d.ariaLabel'),
+        // 仅显式提供 ariaLabel 时设置；未提供则由 slot 内容充当可访问名称，
+        // 避免通用文案覆盖卡片实际内容（外层 role="group" 已带通用组标签）
+        'aria-label': props.ariaLabel,
     }
     : {})
 
 const handleClick = (event: MouseEvent) => {
     if (props.disabled || !props.clickable) return
-    if (suppressSyntheticClick) {
-        suppressSyntheticClick = false
-        return
-    }
+    // 键盘激活（Enter keydown / Space keyup）由浏览器合成 click，其 detail 恒为 0，
+    // 且已在键盘处理器中 emit，这里跳过避免重复触发；真实鼠标 click 的 detail >= 1
+    if (event.detail === 0) return
     emit('click', event)
 }
 
 const handleKeydown = (event: KeyboardEvent) => {
-    if (props.disabled || !props.clickable || event.repeat) return
+    if (props.disabled || !props.clickable) return
     if (event.key === 'Enter') {
         event.preventDefault()
-        suppressSyntheticClick = true
+        // 长按触发的重复 keydown 仍要阻止默认行为，但跳过 emit 避免重复触发
+        if (event.repeat) return
         emit('click', event)
-        requestAnimationFrame(() => { suppressSyntheticClick = false })
     } else if (event.key === ' ') {
         // 阻止页面滚动；激活移到 keyup，符合 WAI-ARIA button 模式（可移开焦点取消）
         event.preventDefault()
@@ -204,9 +203,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 const handleKeyup = (event: KeyboardEvent) => {
     if (props.disabled || !props.clickable || event.repeat || event.key !== ' ') return
     event.preventDefault()
-    suppressSyntheticClick = true
     emit('click', event)
-    requestAnimationFrame(() => { suppressSyntheticClick = false })
 }
 
 const shadowClasses = computed(() =>
