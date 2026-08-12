@@ -205,6 +205,71 @@ describe('CopyToClipboard', () => {
         expect(wrapper.find('button').classes()).toContain('bg-brutal-destructive')
     })
 
+    it('failed state wins over copied for style, text and announcement', async () => {
+        // 成功反馈窗口（copied=true）内再次点击失败：copied 由 useClipboard 定时器控制、
+        // 组件侧无法清零，必须保证 failed 在模板/state/live region 三处渲染路径统一优先，
+        // 避免「失败文案 + 成功样式 + 已复制播报」各自为政
+        mockCopied.value = true
+        mockCopy.mockResolvedValue(false)
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        await wrapper.find('button').trigger('click')
+        await nextTick()
+        expect(wrapper.text()).toContain('Copy failed')
+        expect(wrapper.find('button').classes()).toContain('bg-brutal-destructive')
+        expect(wrapper.find('[role="status"]').text()).toContain('Copy failed')
+    })
+
+    it('clears failed feedback when a later copy succeeds', async () => {
+        mockCopy.mockResolvedValue(false)
+        const CopyToClipboard = await loadCopyToClipboard()
+        const wrapper = mount(CopyToClipboard, {
+            props: { text: 'hello' },
+            ...localeProvide,
+        })
+        await wrapper.find('button').trigger('click')
+        await nextTick()
+        expect(wrapper.text()).toContain('Copy failed')
+
+        // 反馈窗口内再次点击成功：failed 需彻底清除（含定时器），不得随 copied 恢复而复活
+        mockCopy.mockResolvedValue(true)
+        mockCopied.value = true
+        await wrapper.find('button').trigger('click')
+        await nextTick()
+        expect(wrapper.text()).toContain('Copied')
+        expect(wrapper.find('button').classes()).toContain('bg-brutal-success')
+
+        // copied 定时器到期（模拟置回 false）后应回到 idle，而非跳回失败态
+        mockCopied.value = false
+        await nextTick()
+        expect(wrapper.text()).not.toContain('Copy failed')
+        expect(wrapper.find('button').classes()).not.toContain('bg-brutal-destructive')
+    })
+
+    it('resets failed feedback after props.duration', async () => {
+        vi.useFakeTimers()
+        try {
+            mockCopy.mockResolvedValue(false)
+            const CopyToClipboard = await loadCopyToClipboard()
+            const wrapper = mount(CopyToClipboard, {
+                props: { text: 'hello', duration: 500 },
+                ...localeProvide,
+            })
+            await wrapper.find('button').trigger('click')
+            await nextTick()
+            expect(wrapper.text()).toContain('Copy failed')
+            vi.advanceTimersByTime(500)
+            await nextTick()
+            expect(wrapper.text()).toContain('Copy')
+            expect(wrapper.text()).not.toContain('Copy failed')
+        } finally {
+            vi.useRealTimers()
+        }
+    })
+
     it('passes copied and failed to scoped slot', async () => {
         mockCopied.value = true
         const CopyToClipboard = await loadCopyToClipboard()

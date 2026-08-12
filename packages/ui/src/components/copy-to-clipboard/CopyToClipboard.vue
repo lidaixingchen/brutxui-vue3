@@ -44,18 +44,26 @@ onUnmounted(() => {
 const handleCopy = async () => {
     if (!isSupported.value) return
     const succeeded = await copy(props.text)
-    if (!succeeded) {
-        failed.value = true
+    if (succeeded) {
+        // 清除失败反馈残留：copied 由 useClipboard 内部定时器控制，此处只需同步清理
+        // 组件自有的 failed 状态（含定时器），保证两者互斥
         if (failedTimeoutId) clearTimeout(failedTimeoutId)
-        failedTimeoutId = setTimeout(() => {
-            failed.value = false
-        }, DEFAULT_COPIED_DURATION)
+        failed.value = false
+        return
     }
+    failed.value = true
+    if (failedTimeoutId) clearTimeout(failedTimeoutId)
+    // 失败反馈时长复用 props.duration，与成功态保持一致；下限保护防止 0/负数导致反馈瞬间消失
+    failedTimeoutId = setTimeout(() => {
+        failed.value = false
+    }, Math.max(props.duration, 100))
 }
 
+// 状态优先级需与模板 v-if 顺序保持一致：failed 优先于 copied，避免二者同时为真时
+// 样式/文案/live region 播报各自为政（copied 由 useClipboard 定时器控制，组件侧无法清零）
 const state = computed<'idle' | 'copied' | 'failed'>(() => {
-    if (copied.value) return 'copied'
     if (failed.value) return 'failed'
+    if (copied.value) return 'copied'
     return 'idle'
 })
 
@@ -71,9 +79,10 @@ const classes = computed(() =>
 )
 
 // 视觉隐藏的 live region：让屏幕阅读器在按钮未聚焦时也能感知复制成功/失败状态变化
+// 优先级与模板/state 一致：failed 优先
 const statusAnnouncement = computed(() => {
-    if (copied.value) return t('copyToClipboard.copied')
     if (failed.value) return t('copyToClipboard.copyFailed')
+    if (copied.value) return t('copyToClipboard.copied')
     return ''
 })
 
