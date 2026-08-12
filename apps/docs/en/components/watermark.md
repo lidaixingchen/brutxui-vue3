@@ -89,3 +89,9 @@ interface WatermarkFont {
 
 - **JSDOM SVG Fallback**: Automatically switches to drawing pure inline vector SVG watermarks if the renderer fails to initialize 2D Canvas contexts (e.g. under headless test setups), maintaining page structure validity.
 - **Anti-tamper Guard**: Listens to changes using `MutationObserver` on the target nodes. Any external tampering of style strings or DOM element deletion will be reverted, rebuilding a pristine watermark layout inside 50ms.
+
+## Accessibility
+
+- **Decorative layer**: The watermark is a decorative background layer and does not carry semantic content; pair it with `aria-hidden` and `pointer-events-none` so it is not announced by assistive technology and does not intercept pointer events.
+- **Contrast**: Watermark text color tokens should keep reasonable contrast against the background, but as a decorative layer it is not required to meet WCAG text-contrast thresholds.
+- **Reduced motion**: Tamper-guard rebuild and Canvas drawing introduce no forced motion and respect `prefers-reduced-motion`.

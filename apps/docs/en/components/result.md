@@ -91,3 +91,10 @@ Inject buttons inside the `#extra` slot layout to allow further navigation or re
 | `title` | Customize/override the result title content |
 | `subTitle` | Customize/override the secondary description content |
 | `extra` | Custom footer action area layout |
+
+## Accessibility
+
+- **Semantic structure**: The heading level is set via `titleAs` (`h2`/`h3`); the subtitle is rendered as a `<p>` description.
+- **Decorative icons**: The status icon is marked `aria-hidden` so assistive technology does not announce meaningless icon names.
+- **Color is not the only signal**: Status colors (`--brutal-status-*`) are decorative; the copy (title/subtitle) carries the meaning. Foreground follows the `*-foreground` token for contrast (success/info black-on-color 8.6:1 / 5.8:1, passing WCAG AA).
+- **Reduced motion**: Respects `prefers-reduced-motion`; no motion-critical behavior.

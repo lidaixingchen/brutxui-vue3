@@ -89,3 +89,9 @@ interface WatermarkFont {
 
 - **Canvas 兼容兜底**：在不支持 Canvas 渲染的无浏览器测试环境（如 JSDOM）下，自动降级为生成纯矢量 SVG 的 Base64 水印图层，保障组件渲染通过。
 - **防止恶意篡改**：采用基于 `MutationObserver` 的防篡改防火墙，一旦用户强行在 Devtools 中修改样式（如 `display: none`）或强制 `remove()` 节点，组件将拦截该变动，并在 50ms 内摧毁原位置垃圾，重新生成干净的 DOM 节点，保障高安全要求。
+
+## 可访问性
+
+- **装饰层语义**：水印是装饰性背景层，不参与语义内容；建议结合 `aria-hidden` 与 `pointer-events-none` 使用，避免被辅助技术朗读或被指针事件拦截。
+- **对比度考虑**：水印文本颜色（`--brutal-watermark-color` 等令牌）需与背景保持足够对比，但作为装饰层不承担信息传达职责，不强制 WCAG 文本对比。
+- **动效降级**：防篡改重建、Canvas 绘制均无强制动效，尊重 `prefers-reduced-motion`。

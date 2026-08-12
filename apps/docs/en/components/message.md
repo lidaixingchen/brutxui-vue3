@@ -198,6 +198,18 @@ async function promptEmail() {
 </template>
 ```
 
+## Props
+
+Message is invoked as a function (`message.success(options)` / `useMessage()` `show(options)`); the argument is `MessageOptions`. Key options:
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'info' \| 'success' \| 'warning' \| 'error'` | `'info'` | Message type |
+| `title` | `string` | `''` | Title text |
+| `description` | `string` | — | Description text |
+| `duration` | `number` | `3000` | Auto-close delay (ms); `0` disables auto-close |
+| `closable` | `boolean` | `true` | Whether to show the close button |
+
 ## Data Types
 
 ### MessageType
