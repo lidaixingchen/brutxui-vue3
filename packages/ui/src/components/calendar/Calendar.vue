@@ -18,7 +18,7 @@ const DatePicker = defineAsyncComponent(async () => {
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
 import { parseFormattedDate } from '@/lib/date'
-import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 
 export interface CalendarEvent {
     date: Date | string
@@ -129,11 +129,15 @@ const dragAttribute = computed(() => ({
 const dayBaseClasses = computed(() => {
     const isCard = props.mode === 'card'
     return cn(
-        'flex font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10 relative',
+        // 日格子期望 hover 平滑（背景/文字/位移/阴影），用 breadcrumb 模型的显式过渡属性列表；
+        // 原 transition-all 会被 brutalPressWithTransition 的 transition-[transform,box-shadow] 经
+        // twMerge 同组静默移除（死类），改用完整过渡属性并保留 brutalPress（无 transition），
+        // 让过渡统一由本行声明（见裁决报告 §C5）
+        'flex font-semibold transition-[transform,box-shadow,background-color,color] duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10 relative',
         isCard
             ? 'h-auto min-h-16 flex-col items-stretch justify-start p-1 text-[10px] sm:text-xs'
             : 'h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs',
-        brutalPressWithTransition
+        brutalPress
     )
 })
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
@@ -285,7 +289,7 @@ function getDayEvents(day: { date?: Date; startDate?: Date }) {
                                 />
                                 <div
                                     v-else
-                                    class="text-[9px] sm:text-[10px] leading-tight px-1.5 py-0.5 bg-brutal-bg text-brutal-fg border border-brutal shadow-[1px_1px_0px_rgba(0,0,0,1)] rounded font-mono truncate text-left"
+                                    class="text-[9px] sm:text-[10px] leading-tight px-1.5 py-0.5 bg-brutal-bg text-brutal-fg border border-brutal shadow-[1px_1px_0px_var(--brutal-shadow-color,#000000)] rounded font-mono truncate text-left"
                                     :title="event.title"
                                     data-testid="calendar-card-event-badge"
                                 >

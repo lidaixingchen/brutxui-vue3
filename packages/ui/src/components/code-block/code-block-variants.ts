@@ -1,5 +1,4 @@
 import { cva } from 'class-variance-authority'
-import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
 
 // 根容器不设背景：头部（bg-brutal-muted）与正文（bg-brutal-bg）完整铺满容器内部，
 // 根上的背景永不可见且易与正文变体漏改导致配色不一致，交由子层各自声明。
@@ -26,5 +25,8 @@ export const codeBlockLineNumbersVariants = cva(
 )
 
 export const codeBlockCopyButtonVariants = cva(
-    `h-7 px-3 text-xs border-3 border-brutal shadow-brutal-sm ${brutalPressWithTransition} bg-brutal-bg hover:bg-brutal-muted`
+    // 窄化 overlay 竞争类：bg/shadow/transition/hover 交还 CopyToClipboard variants 按状态接管，
+    // 只保留尺寸/文字/边框，避免 twMerge 击穿 copied/failed 的 bg-brutal-success/destructive、
+    // shadow-none 与 transition-none（见裁决报告 §C5）
+    'h-7 px-3 text-xs border-3 border-brutal'
 )

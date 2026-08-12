@@ -13,7 +13,7 @@ const DatePicker = defineAsyncComponent(async () => {
 })
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import { cn } from '@/lib/utils'
-import { brutalPressWithTransition } from '@/lib/brutal-interaction-variants'
+import { brutalPress } from '@/lib/brutal-interaction-variants'
 import { useLocale } from '@/composables/useLocale'
 import { datePickerPanelVariants, datePickerShortcutVariants } from './date-picker-variants'
 import { type DatePickerShortcut, resolveShortcutValue } from './types'
@@ -100,8 +100,10 @@ const selectAttribute = computed(() => ({
 
 const dayBaseClasses = computed(() =>
     cn(
-        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-all duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
-        brutalPressWithTransition
+        // 日格子期望 hover 平滑：breadcrumb 模型显式过渡属性列表，避免 transition-all 被
+        // brutalPress 的 transition-[transform,box-shadow] 经 twMerge 同组静默移除（见裁决报告 §C5）
+        'flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center text-[10px] sm:text-xs font-semibold transition-[transform,box-shadow,background-color,color] duration-100 hover:bg-brutal-secondary hover:text-brutal-secondary-foreground hover:font-bold hover:shadow-brutal-sm cursor-pointer border-3 border-brutal/10',
+        brutalPress
     )
 )
 const dayOutsideClasses = computed(() => 'text-brutal-muted-foreground opacity-40')
