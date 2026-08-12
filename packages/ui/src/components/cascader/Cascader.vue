@@ -137,20 +137,29 @@ watch(() => props.options, () => {
     leafPathsCache.clear()
 }, { deep: true })
 
-// 递归计算 option 到其全部叶子后代的相对路径（不含祖先前缀）。
+// 递归计算 option 到其全部叶子后代的相对路径（不含祖先前缀），并在每个 option 上都写缓存：
+// 相对路径与父路径无关，可安全按 option 缓存。这样首次多列渲染时，子列的 getLeafPaths 命中
+// 父列递归时已写入的缓存，避免「getLeafPaths(A) 已遍历 B/C 子树、渲染子列又各自重算一遍」的
+// 重复递归（首渲染递归总量从 深度×节点数 收敛回 O(节点数)）。
 // disabled 节点不可被勾选：跳过该节点及其整个子树（含其可选后代叶子），
 // 与 handleItemClick/toggleCheckbox 对 option.disabled 的拦截语义保持一致
 function getRelativeLeafPaths(option: CascaderOption): CascaderValue[][] {
-    if (option.disabled) return []
-    if (!option.children || option.children.length === 0) {
-        return [[option.value]]
-    }
-    const paths: CascaderValue[][] = []
-    for (const child of option.children) {
-        for (const leaf of getRelativeLeafPaths(child)) {
-            paths.push([option.value, ...leaf])
+    const cached = leafPathsCache.get(option)
+    if (cached) return cached
+    let paths: CascaderValue[][]
+    if (option.disabled) {
+        paths = []
+    } else if (!option.children || option.children.length === 0) {
+        paths = [[option.value]]
+    } else {
+        paths = []
+        for (const child of option.children) {
+            for (const leaf of getRelativeLeafPaths(child)) {
+                paths.push([option.value, ...leaf])
+            }
         }
     }
+    leafPathsCache.set(option, paths)
     return paths
 }
 
@@ -158,13 +167,7 @@ function getRelativeLeafPaths(option: CascaderOption): CascaderValue[][] {
 function getLeafPaths(option: CascaderOption, parentPath: CascaderValue[]): CascaderValue[][] {
     // disabled 节点不可被勾选：跳过该节点及其整个子树
     if (option.disabled) return []
-    const cached = leafPathsCache.get(option)
-    if (cached) {
-        return cached.map(leaf => [...parentPath, ...leaf])
-    }
-    const relativePaths = getRelativeLeafPaths(option)
-    leafPathsCache.set(option, relativePaths)
-    return relativePaths.map(leaf => [...parentPath, ...leaf])
+    return getRelativeLeafPaths(option).map(leaf => [...parentPath, ...leaf])
 }
 
 // Check if a specific path is selected
