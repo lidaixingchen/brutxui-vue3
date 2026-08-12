@@ -33,8 +33,12 @@ const isInteractive = computed(() => props.interactive || props.variant === 'int
 
 const classes = computed(() =>
     cn(
-        cardVariants({ variant: props.variant, padding: props.padding }),
-        (props.interactive && props.variant !== 'interactive') &&
+        // 禁用时剥离 interactive 变体的交互样式（悬停/按压/手型），保持视觉禁用
+        cardVariants({
+            variant: props.disabled && props.variant === 'interactive' ? 'default' : props.variant,
+            padding: props.padding,
+        }),
+        props.interactive && !props.disabled && props.variant !== 'interactive' &&
             `cursor-pointer ${brutalHoverLiftNoX} transition-all`,
         props.class
     )
@@ -44,8 +48,23 @@ const classes = computed(() =>
 // 用标志位吞掉这次合成 click，避免与键盘 emit 重复触发
 let suppressSyntheticClick = false
 
+// 事件目标是否为卡片内部的嵌套交互元素（如内部按钮/链接/输入框）。
+// 键盘 Enter/Space 与点击事件都会从子元素冒泡到卡片根节点，命中嵌套控件时须忽略，
+// 避免"子元素动作 + 卡片 activate"双重触发。
+// closest 的选择器包含 [role="button"]，会命中卡片自身（根 div 同为 role="button"），
+// 因此须排除 currentTarget——否则事件落在卡片内部普通元素（如 <span>）时也会被误判
+function isEventFromNestedInteractive(
+    target: EventTarget | null,
+    currentTarget: EventTarget | null,
+): boolean {
+    if (target === currentTarget || !(target instanceof Element)) return false
+    const nestedInteractive = target.closest('a, button, input, select, textarea, [role="button"]')
+    return !!nestedInteractive && nestedInteractive !== currentTarget
+}
+
 function onKeydown(e: KeyboardEvent) {
     if (!isInteractive.value || props.disabled || e.repeat) return
+    if (isEventFromNestedInteractive(e.target, e.currentTarget)) return
     if (e.key === 'Enter' || e.key === ' ') e.preventDefault()
     if (e.key === 'Enter') {
         suppressSyntheticClick = true
@@ -56,6 +75,7 @@ function onKeydown(e: KeyboardEvent) {
 
 function onKeyup(e: KeyboardEvent) {
     if (!isInteractive.value || props.disabled || e.repeat || e.key !== ' ') return
+    if (isEventFromNestedInteractive(e.target, e.currentTarget)) return
     e.preventDefault()
     suppressSyntheticClick = true
     emit('activate', e)
@@ -66,14 +86,7 @@ function onClick(e: MouseEvent) {
     if (!isInteractive.value || props.disabled) return
     // 忽略中键/右键激活
     if (e.button !== 0) return
-    // 点击来自卡片内部交互元素时忽略：避免"子元素动作 + 卡片激活"双重触发。
-    // closest 的选择器包含 [role="button"]，会命中卡片自身（根 div 同为 role="button"），
-    // 因此须排除 currentTarget——否则点击卡片内部普通文本（如 <span>）也会被误判为嵌套交互
-    const target = e.target as HTMLElement
-    if (target !== e.currentTarget) {
-        const nestedInteractive = target.closest('a, button, input, select, textarea, [role="button"]')
-        if (nestedInteractive && nestedInteractive !== e.currentTarget) return
-    }
+    if (isEventFromNestedInteractive(e.target, e.currentTarget)) return
     if (suppressSyntheticClick) {
         suppressSyntheticClick = false
         return

@@ -1,3 +1,7 @@
+// process 在 Vitest 环境中运行时存在，但 tsconfig 未包含 node 类型
+declare const process: { env: { NODE_ENV: string | undefined } }
+
+import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import Card from './Card.vue'
 import CardHeader from './CardHeader.vue'
@@ -130,6 +134,20 @@ describe('Card', () => {
         expect(wrapper.emitted('activate')).toBeUndefined()
     })
 
+    it('does not emit activate on Enter/Space when keyboard focus is on a nested interactive element', async () => {
+        // 键盘事件会从内部控件冒泡到卡片根节点，命中嵌套交互元素时须忽略，
+        // 否则会打断嵌套控件自身激活并额外触发卡片 activate
+        const wrapper = mount(Card, {
+            props: { interactive: true },
+            slots: { default: '<button class="inner-btn">Action</button>' },
+        })
+        const innerBtn = wrapper.find('button.inner-btn')
+        await innerBtn.trigger('keydown', { key: 'Enter' })
+        await innerBtn.trigger('keydown', { key: ' ' })
+        await innerBtn.trigger('keyup', { key: ' ' })
+        expect(wrapper.emitted('activate')).toBeUndefined()
+    })
+
     it('emits activate when clicking the card background (not a nested interactive element)', async () => {
         const wrapper = mount(Card, {
             props: { interactive: true },
@@ -162,6 +180,20 @@ describe('Card', () => {
         expect(wrapper.attributes('role')).toBe('button')
         expect(wrapper.attributes('tabindex')).toBe('-1')
         expect(wrapper.attributes('aria-disabled')).toBe('true')
+    })
+
+    it('does not apply pointer cursor / hover lift classes when disabled', () => {
+        const wrapper = mount(Card, { props: { interactive: true, disabled: true } })
+        expect(wrapper.classes()).not.toContain('cursor-pointer')
+        expect(wrapper.classes()).not.toContain('hover:shadow-brutal-lg')
+    })
+
+    it('does not apply interactive variant hover / press classes when disabled', () => {
+        const wrapper = mount(Card, { props: { variant: 'interactive', disabled: true } })
+        expect(wrapper.classes()).toContain('shadow-brutal')
+        expect(wrapper.classes()).not.toContain('cursor-pointer')
+        expect(wrapper.classes()).not.toContain('hover:shadow-brutal-lg')
+        expect(wrapper.classes()).not.toContain('active:shadow-none')
     })
 
     it('does not emit activate when disabled', async () => {
@@ -226,10 +258,19 @@ describe('CardTitle', () => {
         expect(wrapper.element.tagName).toBe('H1')
     })
 
-    it('falls back to h3 for invalid as values', () => {
+    it('falls back to h3 for invalid as values and warns in development', () => {
         // JS 调用方可绕过 TS 联合类型传入任意字符串，运行时须校验并回退 h3
-        const wrapper = mount(CardTitle, { props: { as: 'div' } as any })
-        expect(wrapper.element.tagName).toBe('H3')
+        const originalNodeEnv = process.env.NODE_ENV
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+        try {
+            process.env.NODE_ENV = 'development'
+            const wrapper = mount(CardTitle, { props: { as: 'div' } as any })
+            expect(wrapper.element.tagName).toBe('H3')
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('非法 as 值'))
+        } finally {
+            process.env.NODE_ENV = originalNodeEnv
+            warnSpy.mockRestore()
+        }
     })
 })
 
