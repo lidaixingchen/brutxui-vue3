@@ -75,22 +75,25 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
         return [{ label: '', messages }];
     }
 
-    // 分组状态机隐含「消息按时间升序」的前置条件：此处对副本做稳定排序，保证乱序输入
-    // （如先「昨天」后「今天」）仍能得到连续、不来回跳变的日期分组。无/非法时间戳的消息
-    // 沉底排在最后，且相互间保持原始相对顺序（依赖 Array.prototype.sort 的稳定性）。
-    const sorted = [...messages].sort((a, b) => {
-        const timeA = toTimestampMs(a);
-        const timeB = toTimestampMs(b);
-        if (timeA === null && timeB === null) return 0;
-        if (timeA === null) return 1;
-        if (timeB === null) return -1;
-        return timeA - timeB;
+    // 分组状态机隐含「消息按时间升序」的前置条件：此处对副本做排序，保证乱序输入
+    // （如先「昨天」后「今天」）仍能得到连续、不来回跳变的日期分组。带有效时间戳的
+    // 消息按时间升序排列；无有效时间戳的消息（缺失，或 string 展示型时间戳如 '14:30'、
+    // '昨天' 无法被 new Date 解析）按原索引固定在原位、不沉底，避免视觉顺序被静默改变。
+    const withTimeMs = [...messages].map((message) => ({ message, timeMs: toTimestampMs(message) }));
+    const datedSorted = withTimeMs
+        .filter((item) => item.timeMs !== null)
+        .sort((a, b) => a.timeMs! - b.timeMs!);
+    let datedCursor = 0;
+    const sorted = withTimeMs.map((item) => {
+        // 无有效时间戳的消息留在原索引位置；其余位置由带时间戳消息按时间升序填充
+        if (item.timeMs === null) return item.message;
+        return datedSorted[datedCursor++].message;
     });
 
     const groups: ChatMessageGroup[] = [];
     let currentGroup: ChatMessage[] = [];
     let currentDisplayLabel = '';
-    let currentDateLabel = '';
+    let currentDateKey = '';
     let lastTimestamp: Date | null = null;
     // groupInterval 下限约束为 1 分钟：传 0/负数会让任意相邻时间差都触发切分，退化为逐条成组且无标签
     const intervalMs = Math.max(props.groupInterval, 1) * MS_PER_MINUTE;
@@ -109,9 +112,13 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
             date = null;
         }
 
+        // 分组边界基于真实日历日期（年月日），而非展示字符串：dateFormat 是展示层
+        // 格式化函数，若调用方传入时间维度格式（HH:mm、toLocaleString 等），不同日期
+        // 可能被格式化出相同字符串而误合并进同一组、或同一日期被拆成多个「新日期」组。
+        const dateKey = date ? `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}` : '';
         const dateLabel = date ? getDateLabel(date) : '';
 
-        const isNewDate = dateLabel !== currentDateLabel;
+        const isNewDate = dateKey !== currentDateKey;
         // 边界采用严格 >：时间差恰好等于 intervalMs 仍归入同组（interval 视为组内最大间隔）
         const exceedsInterval =
             date !== null &&
@@ -124,7 +131,7 @@ function groupMessages(messages: ChatMessage[]): ChatMessageGroup[] {
                 groups.push({ label: currentDisplayLabel, messages: currentGroup });
             }
             currentGroup = [message];
-            currentDateLabel = dateLabel;
+            currentDateKey = dateKey;
             currentDisplayLabel = dateLabel;
         } else if (exceedsInterval) {
             if (currentGroup.length > 0) {

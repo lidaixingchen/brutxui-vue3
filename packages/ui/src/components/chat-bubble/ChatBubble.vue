@@ -99,8 +99,10 @@ const STATUS_META: Record<MessageStatus, { icon: Component; className: string }>
     failed: { icon: AlertCircle, className: 'text-brutal-destructive' },
 };
 
-const statusIcon = computed(() => (props.message.status ? STATUS_META[props.message.status].icon : null));
-const statusClass = computed(() => (props.message.status ? STATUS_META[props.message.status].className : ''));
+// 消息数据通常来自后端 API，status 运行时可能拿到联合类型之外的未知值；
+// 用可选链兜底避免 STATUS_META[...] 为 undefined 时访问 .icon/.className 抛 TypeError
+const statusIcon = computed(() => (props.message.status ? STATUS_META[props.message.status]?.icon ?? null : null));
+const statusClass = computed(() => (props.message.status ? STATUS_META[props.message.status]?.className ?? '' : ''));
 </script>
 
 <template>

@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import ChatBubble from './ChatBubble.vue'
 import ChatContainer from './ChatContainer.vue'
 import { CheckCheck } from '@lucide/vue'
+import type { MessageStatus } from './types'
 
 describe('ChatBubble', () => {
     it('renders received message by default', () => {
@@ -313,6 +314,18 @@ describe('ChatBubble status meta', () => {
         expect(check.exists()).toBe(true)
         expect(check.classes()).toContain('text-brutal-primary')
     })
+
+    it('does not crash on unknown runtime status values', () => {
+        // 消息数据通常来自后端 API，status 可能在运行时拿到联合类型之外的未知值
+        const wrapper = mount(ChatBubble, {
+            props: {
+                message: { id: 'u1', content: 'Hi', variant: 'sent', status: 'queued' as MessageStatus },
+            },
+        })
+        // 未知状态被兜底忽略：不渲染状态图标，组件正常渲染
+        expect(wrapper.find('svg').exists()).toBe(false)
+        expect(wrapper.find('.px-4').text()).toBe('Hi')
+    })
 })
 
 describe('ChatContainer time grouping', () => {
@@ -393,5 +406,44 @@ describe('ChatContainer time grouping', () => {
         const labels = wrapper.findAll('span.px-2').map(w => w.text())
         // 第一组为日期标签「今天」，间隔切分的第二组展示具体时刻（经 dateFormat）
         expect(labels).toEqual(['今天', 'T10:03'])
+    })
+
+    it('groups by real calendar date, not display string', () => {
+        // dateFormat 传时间维度格式：不同日期即使格式化结果相同也不合并，
+        // 同一日期的不同时刻不因展示字符串不同被拆成多个「新日期」组
+        const timeFormat = (d: Date) => `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`
+        const wrapper = mount(ChatContainer, {
+            props: {
+                messages: [
+                    { id: 'a', content: 'day1-a', timestamp: dateAt(-2, 10) },
+                    { id: 'b', content: 'day1-b', timestamp: dateAt(-2, 11) },
+                    { id: 'c', content: 'day2', timestamp: dateAt(-1, 10) },
+                ],
+                groupByTime: true,
+                groupInterval: 1440,
+                dateFormat: timeFormat,
+            },
+        })
+        const labels = wrapper.findAll('span.px-2').map(w => w.text())
+        // 前天（-2）同一天的两条消息归一组并展示具体时刻；昨天（-1）单独成组
+        expect(labels).toEqual([timeFormat(dateAt(-2, 10)), '昨天'])
+        expect(wrapper.findAll('.px-4')).toHaveLength(3)
+    })
+
+    it('keeps messages with unparseable display timestamps in their original position', () => {
+        const wrapper = mount(ChatContainer, {
+            props: {
+                messages: [
+                    { id: 'a', content: 'first', timestamp: dateAt(0, 10) },
+                    { id: 'b', content: 'display-time', timestamp: '14:30' },
+                    { id: 'c', content: 'third', timestamp: dateAt(0, 11) },
+                ],
+                groupByTime: true,
+                groupInterval: 1440,
+            },
+        })
+        // '14:30' 无法被 new Date 解析：不沉底，按原索引保留原位（first, display-time, third）
+        const bubbles = wrapper.findAll('.px-4').map(w => w.text())
+        expect(bubbles).toEqual(['first', 'display-time', 'third'])
     })
 })

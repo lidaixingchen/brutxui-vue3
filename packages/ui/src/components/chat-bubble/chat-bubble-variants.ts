@@ -14,10 +14,11 @@ export const chatBubbleVariants = cva(
             variant: {
                 sent: 'ml-auto',
                 received: 'bg-brutal-bg text-brutal-fg mr-auto shadow-brutal',
-                // system 强制 text-xs / 无阴影，且忽略 size prop —— 与 ChatBubble.vue 中
-                // isSystem && 'text-xs' 尾置类配合，经 tailwind-merge 恒定胜过 size 变体的字号。
+                // system 强制 text-xs / 无阴影，且忽略 size prop —— 字号恒为 text-xs 由
+                // ChatBubble.vue 中 isSystem && 'text-xs' 尾置类保证（经 tailwind-merge
+                // 恒定胜过 size 变体的字号），故变体串中不再重复声明 text-xs，避免失效类。
                 // shadow-none 保留为显式「无阴影」声明，防止未来 base 恢复阴影时波及 system。
-                system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none text-xs',
+                system: 'bg-brutal-muted text-brutal-fg mx-auto text-center italic border-dashed shadow-none',
             },
             // color 变体仅对 variant='sent' 生效（见 compoundVariants）；received/system 传 color 会被静默忽略，
             // 这是已固化的设计（组件文档与测试均锁定），调用方不应依赖 received/system 的 color 效果。
