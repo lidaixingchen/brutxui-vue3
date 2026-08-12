@@ -8,9 +8,73 @@ import {
     MONO_THEME,
     WARM_THEME,
     DEFAULT_THEMES,
+    themeVariablesToCssVars,
     type ThemeVariables,
 } from './theme-variables'
 import { VALID_THEMES } from './theme-names'
+// 经子路径 import design-tokens：避免走 brutx-shared-vue 主入口拉入 registry.ts
+// （registry.ts 依赖 node:crypto，ui 的 vue-tsc 类型检查无 node 类型会报错）
+import { BASE_THEME, CSS_VARS, type ThemeTokens } from 'brutx-shared-vue/design-tokens'
+
+// ============================================================================
+// 与 shared 单一事实来源（packages/shared/src/design-tokens.ts）交叉校验的辅助函数。
+// ui 运行时受 registry:lib 自包含约束不可 import shared，仅测试环境可——故以断言测试兜底：
+// 改 shared 只重生成 styles.css，theme-variables 预设/--brutal-* 命名会静默陈旧，此测试应变红。
+// ============================================================================
+
+/** 与 shared BASE_THEME 语义令牌重叠的字段名（不含 status 系、black、yellow、pressedOffset 等 ThemeVariables 无对应项） */
+const OVERLAP_TOKEN_KEYS = [
+    'borderWidth', 'borderColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowColor',
+    'radius', 'bg', 'fg', 'primary', 'primaryForeground', 'secondary',
+    'secondaryForeground', 'accent', 'accentForeground', 'destructive',
+    'destructiveForeground', 'success', 'successForeground', 'muted',
+    'mutedForeground', 'ring', 'info', 'infoForeground', 'overlay', 'placeholder',
+] as const
+
+/** 将 ThemeVariables 的嵌套结构展平为与 shared 令牌同名的平铺子集（theme.colors 键名与令牌名一致） */
+function flattenThemeToTokens(theme: ThemeVariables): Record<string, string> {
+    const flat: Record<string, string> = {
+        ...theme.colors,
+        borderWidth: theme.border.width,
+        borderColor: theme.border.color,
+        radius: theme.border.radius,
+        shadowOffsetX: theme.shadow.offsetX,
+        shadowOffsetY: theme.shadow.offsetY,
+        shadowColor: theme.shadow.color,
+    }
+    const result: Record<string, string> = {}
+    for (const key of OVERLAP_TOKEN_KEYS) {
+        result[key] = flat[key]
+    }
+    return result
+}
+
+/** 从 shared BASE_THEME 的令牌中挑选与 ThemeVariables 重叠的子集 */
+function pickTokenSubset(tokens: ThemeTokens): Record<string, string> {
+    const result: Record<string, string> = {}
+    for (const key of OVERLAP_TOKEN_KEYS) {
+        result[key] = tokens[key]
+    }
+    return result
+}
+
+/** CSS 颜色值大小写归一化：十六进制色值大小写不敏感（预设用大写、shared 用小写），比较时统一排除大小写差异 */
+function normalizeCssValue(value: string): string {
+    return value.toLowerCase()
+}
+
+function normalizeTokenSubset(subset: Record<string, string>): Record<string, string> {
+    const result: Record<string, string> = {}
+    for (const [key, value] of Object.entries(subset)) {
+        result[key] = normalizeCssValue(value)
+    }
+    return result
+}
+
+/** camelCase 令牌名 → kebab-case CSS 变量后缀（如 primaryForeground → primary-foreground） */
+function kebabCase(name: string): string {
+    return name.replace(/([A-Z])/g, (ch) => `-${ch.toLowerCase()}`)
+}
 
 // Mock env module
 vi.mock('./env', () => ({
@@ -125,6 +189,37 @@ describe('theme-variables', () => {
             expect(PASTEL_THEME).toBe(DEFAULT_THEMES.pastel)
             expect(MONO_THEME).toBe(DEFAULT_THEMES.mono)
             expect(WARM_THEME).toBe(DEFAULT_THEMES.warm)
+        })
+    })
+
+    describe('预设主题 ↔ shared BASE_THEME 交叉校验（§10.3 P1）', () => {
+        // pastel/mono/warm 无 shared 对应令牌（BASE_THEME 仅 light/dark），交叉校验仅覆盖 classic/dark
+        it('classic（DEFAULT_THEME）与 BASE_THEME.light 语义令牌一致', () => {
+            expect(normalizeTokenSubset(flattenThemeToTokens(DEFAULT_THEME)))
+                .toEqual(normalizeTokenSubset(pickTokenSubset(BASE_THEME.light)))
+        })
+
+        it('dark（DARK_THEME）与 BASE_THEME.dark 语义令牌一致', () => {
+            expect(normalizeTokenSubset(flattenThemeToTokens(DARK_THEME)))
+                .toEqual(normalizeTokenSubset(pickTokenSubset(BASE_THEME.dark)))
+        })
+
+        it('themeVariablesToCssVars 的 --brutal-* 命名与 shared CSS_VARS 对齐（light/dark）', () => {
+            for (const [name, theme, sharedVars] of [
+                ['classic', DEFAULT_THEME, CSS_VARS.light],
+                ['dark', DARK_THEME, CSS_VARS.dark],
+            ] as const) {
+                const cssVars = themeVariablesToCssVars(theme)
+                for (const key of OVERLAP_TOKEN_KEYS) {
+                    const cssKey = `--brutal-${kebabCase(key)}`
+                    const sharedCssKey = `brutal-${kebabCase(key)}`
+                    expect(cssVars[cssKey], `主题 ${name} 应产出 CSS 变量 ${cssKey}`).toBeDefined()
+                    expect(
+                        normalizeCssValue(cssVars[cssKey]!),
+                        `主题 ${name} 的 ${cssKey} 应与 shared ${sharedCssKey} 值一致`,
+                    ).toBe(normalizeCssValue(sharedVars[sharedCssKey]))
+                }
+            }
         })
     })
 

@@ -472,53 +472,57 @@ const DEFAULT_THEMES: Record<string, ThemeVariables> = {
 // ============================================================================
 
 /**
- * 将主题变量转换为 CSS 变量映射
+ * 将主题变量转换为 CSS 变量映射（跨模块单一实现）。
+ *
+ * prefix 默认 '--brutal' 供本模块内部（applyThemeVariables/销毁清理）使用；
+ * theme-editor 传自定义 prefix 复用同一份键列表，消除两处逐字重复导致的键列表漂移。
  */
-function themeVariablesToCssVars(variables: ThemeVariables): Record<string, string> {
+export function themeVariablesToCssVars(variables: ThemeVariables, prefix = '--brutal'): Record<string, string> {
+    const p = prefix
     return {
         // 颜色变量
-        '--brutal-primary': variables.colors.primary,
-        '--brutal-primary-foreground': variables.colors.primaryForeground,
-        '--brutal-secondary': variables.colors.secondary,
-        '--brutal-secondary-foreground': variables.colors.secondaryForeground,
-        '--brutal-accent': variables.colors.accent,
-        '--brutal-accent-foreground': variables.colors.accentForeground,
-        '--brutal-destructive': variables.colors.destructive,
-        '--brutal-destructive-foreground': variables.colors.destructiveForeground,
-        '--brutal-success': variables.colors.success,
-        '--brutal-success-foreground': variables.colors.successForeground,
-        '--brutal-info': variables.colors.info,
-        '--brutal-info-foreground': variables.colors.infoForeground,
-        '--brutal-bg': variables.colors.bg,
-        '--brutal-fg': variables.colors.fg,
-        '--brutal-muted': variables.colors.muted,
-        '--brutal-muted-foreground': variables.colors.mutedForeground,
-        '--brutal-ring': variables.colors.ring,
-        '--brutal-overlay': variables.colors.overlay,
-        '--brutal-placeholder': variables.colors.placeholder,
+        [`${p}-primary`]: variables.colors.primary,
+        [`${p}-primary-foreground`]: variables.colors.primaryForeground,
+        [`${p}-secondary`]: variables.colors.secondary,
+        [`${p}-secondary-foreground`]: variables.colors.secondaryForeground,
+        [`${p}-accent`]: variables.colors.accent,
+        [`${p}-accent-foreground`]: variables.colors.accentForeground,
+        [`${p}-destructive`]: variables.colors.destructive,
+        [`${p}-destructive-foreground`]: variables.colors.destructiveForeground,
+        [`${p}-success`]: variables.colors.success,
+        [`${p}-success-foreground`]: variables.colors.successForeground,
+        [`${p}-info`]: variables.colors.info,
+        [`${p}-info-foreground`]: variables.colors.infoForeground,
+        [`${p}-bg`]: variables.colors.bg,
+        [`${p}-fg`]: variables.colors.fg,
+        [`${p}-muted`]: variables.colors.muted,
+        [`${p}-muted-foreground`]: variables.colors.mutedForeground,
+        [`${p}-ring`]: variables.colors.ring,
+        [`${p}-overlay`]: variables.colors.overlay,
+        [`${p}-placeholder`]: variables.colors.placeholder,
 
         // 边框变量
-        '--brutal-border-width': variables.border.width,
-        '--brutal-border-color': variables.border.color,
-        '--brutal-radius': variables.border.radius,
+        [`${p}-border-width`]: variables.border.width,
+        [`${p}-border-color`]: variables.border.color,
+        [`${p}-radius`]: variables.border.radius,
 
         // 阴影变量
-        '--brutal-shadow-offset-x': variables.shadow.offsetX,
-        '--brutal-shadow-offset-y': variables.shadow.offsetY,
-        '--brutal-shadow-color': variables.shadow.color,
+        [`${p}-shadow-offset-x`]: variables.shadow.offsetX,
+        [`${p}-shadow-offset-y`]: variables.shadow.offsetY,
+        [`${p}-shadow-color`]: variables.shadow.color,
 
         // 间距变量
-        '--brutal-spacing-xs': variables.spacing.xs,
-        '--brutal-spacing-sm': variables.spacing.sm,
-        '--brutal-spacing-md': variables.spacing.md,
-        '--brutal-spacing-lg': variables.spacing.lg,
-        '--brutal-spacing-xl': variables.spacing.xl,
+        [`${p}-spacing-xs`]: variables.spacing.xs,
+        [`${p}-spacing-sm`]: variables.spacing.sm,
+        [`${p}-spacing-md`]: variables.spacing.md,
+        [`${p}-spacing-lg`]: variables.spacing.lg,
+        [`${p}-spacing-xl`]: variables.spacing.xl,
 
         // 排版变量
-        '--brutal-font-family': variables.typography.fontFamily,
+        [`${p}-font-family`]: variables.typography.fontFamily,
         ...Object.fromEntries(
             Object.entries(variables.typography.fontSize).map(
-                ([size, value]) => [`--brutal-font-size-${size}`, value] as const,
+                ([size, value]) => [`${p}-font-size-${size}`, value] as const,
             ),
         ),
     }
@@ -560,28 +564,36 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 /**
+ * 递归深合并两个普通对象（跨 theme-variables/theme-editor/themes 复用的共享核心）。
+ * 仅合并 isPlainObject 的纯对象，跳过原型链危险键（外部输入可能来自 JSON.parse），忽略 undefined 源值。
+ */
+export function deepMergeRecords(
+    target: Record<string, unknown>,
+    source: Record<string, unknown>,
+): Record<string, unknown> {
+    const result: Record<string, unknown> = { ...target }
+    for (const key of Object.keys(source)) {
+        // 跳过原型链危险键（外部主题可能来自 JSON.parse）
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue
+        const sourceVal = source[key]
+        const targetVal = result[key]
+        if (isPlainObject(sourceVal) && isPlainObject(targetVal)) {
+            result[key] = deepMergeRecords(targetVal, sourceVal)
+        } else if (sourceVal !== undefined) {
+            result[key] = sourceVal
+        }
+    }
+    return result
+}
+
+/**
  * 将外部主题与基线主题深度合并，补全缺失字段。
  * 防止注册的主题缺字段时把 'undefined' 字符串写入 CSS 变量。
  * @param overrides - 外部传入的主题（可为部分字段）
  * @param base - 合并基线：覆盖已有主题时传该主题现有值，新增主题默认用 DEFAULT_THEME（classic）
  */
 function mergeThemeWithDefaults(overrides: ThemeVariables, base: ThemeVariables = DEFAULT_THEME): ThemeVariables {
-    const merge = (target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> => {
-        const result: Record<string, unknown> = { ...target }
-        for (const key of Object.keys(source)) {
-            // 跳过原型链危险键（外部主题可能来自 JSON.parse）
-            if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue
-            const sourceVal = source[key]
-            const targetVal = result[key]
-            if (isPlainObject(sourceVal) && isPlainObject(targetVal)) {
-                result[key] = merge(targetVal, sourceVal)
-            } else if (sourceVal !== undefined) {
-                result[key] = sourceVal
-            }
-        }
-        return result
-    }
-    return merge(
+    return deepMergeRecords(
         base as unknown as Record<string, unknown>,
         overrides as unknown as Record<string, unknown>,
     ) as unknown as ThemeVariables

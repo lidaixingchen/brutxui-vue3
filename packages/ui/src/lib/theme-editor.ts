@@ -9,6 +9,8 @@
 import { hasDocument, getDocument } from './env'
 import {
     DEFAULT_THEMES,
+    deepMergeRecords,
+    themeVariablesToCssVars,
     type ThemeVariables,
     type ThemeColors,
     type ThemeBorder,
@@ -97,31 +99,14 @@ export interface ThemeEditorReturn {
 // ============================================================================
 
 /**
- * 深度合并对象（只合并存在的属性）
+ * 深度合并对象（只合并存在的属性）。
+ * 递归核心复用 theme-variables 的 deepMergeRecords（跨模块单一实现，含原型链危险键防护）。
  */
 function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
-    const result = { ...target }
-    for (const key of Object.keys(source) as Array<keyof T>) {
-        const sourceVal = source[key]
-        const targetVal = target[key]
-        if (
-            sourceVal !== undefined &&
-            typeof sourceVal === 'object' &&
-            sourceVal !== null &&
-            !Array.isArray(sourceVal) &&
-            typeof targetVal === 'object' &&
-            targetVal !== null &&
-            !Array.isArray(targetVal)
-        ) {
-            result[key] = deepMerge(
-                targetVal as Record<string, unknown>,
-                sourceVal as Record<string, unknown>,
-            ) as T[keyof T]
-        } else if (sourceVal !== undefined) {
-            result[key] = sourceVal as T[keyof T]
-        }
-    }
-    return result
+    return deepMergeRecords(
+        target as unknown as Record<string, unknown>,
+        source as unknown as Record<string, unknown>,
+    ) as T
 }
 
 /**
@@ -141,60 +126,13 @@ function escapeCssStringLiteral(value: string): string {
 }
 
 /**
- * 将主题变量转换为 CSS 变量映射
+ * 判断主题名是否为原型链危险键（__proto__/constructor/prototype）。
+ * 主题名可来自外部输入（importTheme 任意 name、importThemeFromFile 文件名、importAllThemes JSON 键），
+ * 直接写入 themes[name] 会触发原型 setter 造成原型链污染；
+ * 与 theme-variables mergeThemeWithDefaults / themes createCustomTheme 的跳过逻辑保持一致。
  */
-function themeVariablesToCssVars(
-    variables: ThemeVariables,
-    prefix: string,
-): Record<string, string> {
-    const p = prefix
-    return {
-        // 颜色变量
-        [`${p}-primary`]: variables.colors.primary,
-        [`${p}-primary-foreground`]: variables.colors.primaryForeground,
-        [`${p}-secondary`]: variables.colors.secondary,
-        [`${p}-secondary-foreground`]: variables.colors.secondaryForeground,
-        [`${p}-accent`]: variables.colors.accent,
-        [`${p}-accent-foreground`]: variables.colors.accentForeground,
-        [`${p}-destructive`]: variables.colors.destructive,
-        [`${p}-destructive-foreground`]: variables.colors.destructiveForeground,
-        [`${p}-success`]: variables.colors.success,
-        [`${p}-success-foreground`]: variables.colors.successForeground,
-        [`${p}-info`]: variables.colors.info,
-        [`${p}-info-foreground`]: variables.colors.infoForeground,
-        [`${p}-bg`]: variables.colors.bg,
-        [`${p}-fg`]: variables.colors.fg,
-        [`${p}-muted`]: variables.colors.muted,
-        [`${p}-muted-foreground`]: variables.colors.mutedForeground,
-        [`${p}-ring`]: variables.colors.ring,
-        [`${p}-overlay`]: variables.colors.overlay,
-        [`${p}-placeholder`]: variables.colors.placeholder,
-
-        // 边框变量
-        [`${p}-border-width`]: variables.border.width,
-        [`${p}-border-color`]: variables.border.color,
-        [`${p}-radius`]: variables.border.radius,
-
-        // 阴影变量
-        [`${p}-shadow-offset-x`]: variables.shadow.offsetX,
-        [`${p}-shadow-offset-y`]: variables.shadow.offsetY,
-        [`${p}-shadow-color`]: variables.shadow.color,
-
-        // 间距变量（与 generateCSS 输出保持一致，保证预览与导出的变量集合一致）
-        [`${p}-spacing-xs`]: variables.spacing.xs,
-        [`${p}-spacing-sm`]: variables.spacing.sm,
-        [`${p}-spacing-md`]: variables.spacing.md,
-        [`${p}-spacing-lg`]: variables.spacing.lg,
-        [`${p}-spacing-xl`]: variables.spacing.xl,
-
-        // 排版变量
-        [`${p}-font-family`]: variables.typography.fontFamily,
-        ...Object.fromEntries(
-            Object.entries(variables.typography.fontSize).map(
-                ([size, value]) => [`${p}-font-size-${size}`, value] as const,
-            ),
-        ),
-    }
+function isUnsafeThemeKey(name: string): boolean {
+    return name === '__proto__' || name === 'constructor' || name === 'prototype'
 }
 
 /**
@@ -376,6 +314,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 更新主题变量（支持部分更新）
      */
     function updateTheme(name: string, variables: PartialThemeVariables): boolean {
+        // name 外部可控，写入前拦截原型链危险键（themes['__proto__'] 取到 Object.prototype，对其写属性即污染原型）
+        if (isUnsafeThemeKey(name)) return false
         const existing = themes[name]
         if (!existing) return false
 
@@ -412,6 +352,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 导出主题为 JSON 字符串
      */
     function exportTheme(name: string): string | null {
+        if (isUnsafeThemeKey(name)) return null
         const theme = themes[name]
         if (!theme) return null
         return JSON.stringify(theme, null, 2)
@@ -421,6 +362,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 从 JSON 字符串导入主题
      */
     function importTheme(name: string, json: string): boolean {
+        // name 为外部可控参数，直接写入 themes[name] 前须拦截原型链危险键，防止原型链污染
+        if (isUnsafeThemeKey(name)) return false
         try {
             const parsed: unknown = JSON.parse(json)
             if (!validateTheme(parsed)) return false
@@ -450,6 +393,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
 
             // 使用文件名（去掉扩展名）作为主题名
             const name = file.name.replace(/\.json$/i, '')
+            // 文件名同样外部可控，须拦截原型链危险键
+            if (isUnsafeThemeKey(name)) return null
             themes[name] = structuredClone(parsed)
 
             if (autoApply) {
@@ -467,6 +412,7 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 生成主题的 CSS 变量代码
      */
     function generateCSS(name: string, cssOptions?: CSSGenerateOptions): string | null {
+        if (isUnsafeThemeKey(name)) return null
         const theme = themes[name]
         if (!theme) return null
 
@@ -542,6 +488,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      */
     function getTheme(name: string): ThemeVariables | undefined {
         // 返回深拷贝，避免调用方绕过 updateTheme / onThemeChange 直接修改内部状态（与 getAllThemes 一致）
+        // 危险键直接返回 undefined：themes['__proto__'] 取到 Object.prototype，structuredClone 会抛 DataCloneError
+        if (isUnsafeThemeKey(name)) return undefined
         const theme = themes[name]
         return theme ? structuredClone(theme) : undefined
     }
@@ -550,6 +498,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 复制主题
      */
     function cloneTheme(source: string, target: string): boolean {
+        // target 可能来自外部输入，写入前须拦截原型链危险键
+        if (isUnsafeThemeKey(target)) return false
         const sourceTheme = themes[source]
         if (!sourceTheme) return false
 
@@ -562,7 +512,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 删除主题
      */
     function removeTheme(name: string): boolean {
-        // 不允许删除内置主题
+        // 不允许删除内置主题；危险键直接拒绝（__proto__ 恒在原型链上，in 守卫不足以拦截 delete 语义）
+        if (isUnsafeThemeKey(name)) return false
         if (name in DEFAULT_THEMES) return false
         if (!themes[name]) return false
 
@@ -574,6 +525,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 重置主题为默认值
      */
     function resetTheme(name: string): boolean {
+        // name 外部可控，写入前拦截原型链危险键（themes[name] 赋值 '__proto__' 会触发原型 setter 污染）
+        if (isUnsafeThemeKey(name)) return false
         const defaultTheme = DEFAULT_THEMES[name]
         if (!defaultTheme) return false
 
@@ -589,6 +542,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
      * 实时预览主题（应用到 DOM）
      */
     function previewTheme(name: string): boolean {
+        // 危险键返回 false：themes['__proto__'] 取到 Object.prototype，非 ThemeVariables 结构，applyToDom 会出错
+        if (isUnsafeThemeKey(name)) return false
         const theme = themes[name]
         if (!theme) return false
 
@@ -624,6 +579,8 @@ export function createThemeEditor(options: ThemeEditorOptions = {}): ThemeEditor
             }
 
             for (const [name, value] of entries) {
+                // JSON 键外部可控，跳过原型链危险键，防止 themes[name] 赋值污染原型链
+                if (isUnsafeThemeKey(name)) continue
                 themes[name] = structuredClone(value) as ThemeVariables
             }
 

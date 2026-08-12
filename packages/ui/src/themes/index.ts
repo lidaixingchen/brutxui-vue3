@@ -6,7 +6,7 @@
  * 所有主题均基于 ThemeVariables 类型定义，与 CSS 变量 (--brutal-*) 对应。
  */
 
-import type { ThemeVariables } from '../lib/theme-variables'
+import { deepMergeRecords, type ThemeVariables } from '../lib/theme-variables'
 import type { DeepPartial } from '../types'
 
 // ============================================================================
@@ -301,41 +301,15 @@ export function createCustomTheme(
 // 内部工具函数
 // ============================================================================
 
-function isMergeableObject(value: unknown): value is Record<string, unknown> {
-    return typeof value === 'object' && value !== null && !Array.isArray(value)
-}
-
-/** 内部宽松递归合并：键值均为 unknown，避免 DeepPartial 映射类型在递归时的索引签名冲突。 */
-function deepMergeRecord(
-    target: Record<string, unknown>,
-    source: Record<string, unknown>,
-): Record<string, unknown> {
-    const result = { ...target }
-
-    for (const key of Object.keys(source)) {
-        // 跳过原型链危险键：overrides 可来自用户配置/持久化存储（JSON.parse 会将其
-        // 作为自有可枚举键），__proto__ 等键赋值会改写结果对象原型链（原型链污染向量）
-        if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue
-        const sourceVal = source[key]
-        const targetVal = result[key]
-
-        if (isMergeableObject(sourceVal) && isMergeableObject(targetVal)) {
-            result[key] = deepMergeRecord(targetVal, sourceVal)
-        } else if (sourceVal !== undefined) {
-            result[key] = sourceVal
-        }
-    }
-
-    return result
-}
-
 /**
  * 深度合并对象：支持对嵌套字段的部分覆盖（与 DeepPartial 类型一致）。
+ * 递归核心复用 theme-variables 的 deepMergeRecords（跨模块单一实现，含原型链危险键防护
+ * 与 undefined 源值忽略；overrides 可来自用户配置/持久化存储的 JSON.parse）。
  */
 function deepMerge<T extends object>(target: T, source: DeepPartial<T>): T {
     const targetRec = target as unknown as Record<string, unknown>
     const sourceRec = source as unknown as Record<string, unknown>
-    return deepMergeRecord({ ...targetRec }, sourceRec) as T
+    return deepMergeRecords(targetRec, sourceRec) as T
 }
 
 // ============================================================================
