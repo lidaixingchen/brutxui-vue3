@@ -180,6 +180,9 @@ function handlePointerUp(event: PointerEvent) {
             // pointer already released
         }
     }
+    // 多指拖拽时（如一指拖 SV 面板、另一指拖色相条），任意一根手指抬起不代表手势结束：
+    // 仅当所有活动会话都结束时才确认，避免把中间态颜色提前写入历史记录
+    if (activeDrags.size > 0) return
     confirmSelection()
 }
 

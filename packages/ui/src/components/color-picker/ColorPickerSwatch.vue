@@ -32,7 +32,9 @@ const classes = computed(() =>
     cn(
         colorPickerSwatchVariants({ size: props.size, selected: props.selected }),
         props.disabled && 'pointer-events-none',
-        !isColorValid.value && 'opacity-40'
+        // 非法色值的弱化由模板 :disabled="disabled || !isColorValid" 覆盖到
+        // disabled:opacity-50（变体基础类，特异性高于普通 opacity 类）统一处理，
+        // 不再附加 opacity-40，避免两处透明度声明互相覆盖导致视觉漂移
     )
 )
 

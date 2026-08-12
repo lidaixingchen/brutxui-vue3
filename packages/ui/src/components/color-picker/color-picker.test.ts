@@ -741,6 +741,28 @@ describe('ColorPickerPanel pointer interaction', () => {
         expect(wrapper.emitted('update:modelValue')?.length ?? 0).toBeGreaterThan(count)
     })
 
+    it('confirms only when the last active drag session ends under multi-touch', async () => {
+        wrapper = mount(ColorPickerPanel, {
+            ...localeProvide,
+            props: { modelValue: '#ff0000' },
+            attachTo: document.body,
+        })
+        await nextTick()
+
+        const svSlider = wrapper.find('[aria-label="Saturation"]')
+        const hueSlider = wrapper.find('[aria-label="Hue"]')
+        await svSlider.trigger('pointerdown', { pointerId: 1, pointerType: 'touch', clientX: 0, clientY: 0 })
+        await hueSlider.trigger('pointerdown', { pointerId: 2, pointerType: 'touch', clientX: 50, clientY: 0 })
+
+        // 释放第一个会话（sv）：hue 仍在拖拽，手势未结束，不应提前 confirm 中间态颜色
+        await svSlider.trigger('pointerup', { pointerId: 1 })
+        expect(wrapper.emitted('confirm')).toBeUndefined()
+
+        // 释放最后一个会话（hue）：整个手势结束，才确认一次
+        await hueSlider.trigger('pointerup', { pointerId: 2 })
+        expect(wrapper.emitted('confirm')).toHaveLength(1)
+    })
+
     it('re-syncs hsv when an externally written value equals a previously emitted value', async () => {
         wrapper = mount(ColorPickerPanel, {
             ...localeProvide,
