@@ -179,11 +179,17 @@ const cardAttrs = computed(() => props.clickable
     }
     : {})
 
+// 标记键盘激活即将合成的 click：Enter keydown / Space keyup 的 emit 之后，浏览器会对
+// role="button" 元素再派发一个 detail 恒为 0 的合成 click。仅当此标志位置位时才吞掉
+// 那一次 click，避免把程序化 .click() / 辅助技术合成 click（detail 同为 0）一并误吞。
+let suppressSyntheticClick = false
+
 const handleClick = (event: MouseEvent) => {
     if (props.disabled || !props.clickable) return
-    // 键盘激活（Enter keydown / Space keyup）由浏览器合成 click，其 detail 恒为 0，
-    // 且已在键盘处理器中 emit，这里跳过避免重复触发；真实鼠标 click 的 detail >= 1
-    if (event.detail === 0) return
+    // 先清标志位：无论是否吞掉本次 click，键盘 emit 产生的合成 click 只应被吞一次
+    const swallowSynthetic = event.detail === 0 && suppressSyntheticClick
+    suppressSyntheticClick = false
+    if (swallowSynthetic) return
     emit('click', event)
 }
 
@@ -193,6 +199,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         event.preventDefault()
         // 长按触发的重复 keydown 仍要阻止默认行为，但跳过 emit 避免重复触发
         if (event.repeat) return
+        suppressSyntheticClick = true
         emit('click', event)
     } else if (event.key === ' ') {
         // 阻止页面滚动；激活移到 keyup，符合 WAI-ARIA button 模式（可移开焦点取消）
@@ -203,6 +210,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 const handleKeyup = (event: KeyboardEvent) => {
     if (props.disabled || !props.clickable || event.repeat || event.key !== ' ') return
     event.preventDefault()
+    suppressSyntheticClick = true
     emit('click', event)
 }
 
