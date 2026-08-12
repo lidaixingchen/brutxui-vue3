@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { type VariantProps } from 'class-variance-authority'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from '@lucide/vue'
-import { cn } from '@/lib/utils'
+import { cn, FOCUS_OUTLINE_CLASSES } from '@/lib/utils'
 import { paginationVariants, paginationButtonVariants } from './pagination-variants'
 import { iconSizeVariants, type IconSize } from '@/lib/icon-size-variants'
 import { useLocale } from '@/composables/useLocale'
@@ -189,8 +189,7 @@ const dotsClasses = computed(() =>
     cn(
         'flex items-center justify-center font-black text-brutal-fg cursor-pointer',
         'hover:bg-brutal-muted transition-colors duration-150',
-        // 与 lib/utils FOCUS_OUTLINE_CLASSES 保持一致
-        'focus-visible:outline-2 focus-visible:outline-brutal-ring focus-visible:outline-offset-2',
+        FOCUS_OUTLINE_CLASSES,
         dotsSizeClasses.value,
     )
 )
