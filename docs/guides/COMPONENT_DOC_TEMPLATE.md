@@ -2,6 +2,8 @@
 
 本文件是 BrutxUI 组件文档的标准模板。新建组件文档时，请复制 `apps/docs/components/` 下的对应文件并按此模板填写。
 
+**英文镜像强制要求**：每个组件文档必须成对维护——中文 `apps/docs/components/{name}.md` + 英文 `apps/docs/en/components/{name}.md`（同文件名、英文内容），与 COMPONENT_GUIDE Workflow Checklist 第 7 步一致；提交前运行 `pnpm check:i18n:strict` 校验镜像对称性。
+
 ---
 
 ## 模板
@@ -255,6 +257,16 @@ A: 使用 `v-model` 绑定值，或通过 `@change` 事件手动更新表单状�
 | 15 | 样式定制 | 按需 | 支持 CSS 变量自定义时必须 |
 | 16 | 常见问题 | 推荐 | 复杂组件建议添加 |
 
+> **CI 强制说明**：本章节规范（必须章节、`<ComponentPreview>`、`<InstallationTabs>`）由 `pnpm check:doc-template` 强制校验，缺必章节或组件缺失即 CI 失败。
+
+---
+
+## 中英文镜像同步
+
+- 组件文档**成对维护**：中文 `apps/docs/components/{name}.md` + 英文 `apps/docs/en/components/{name}.md`，同文件名、英文内容，章节结构一致（仅正文语言差异）。
+- 只补一侧、漏镜像另一侧会在 `pnpm check:i18n:strict` 上报「一侧缺失」；提交前必须运行该命令。
+- 组件命名或文档文件移动时，同步移动两侧文件。
+
 ---
 
 ## 格式规范
@@ -324,6 +336,7 @@ A: 使用 `v-model` 绑定值，或通过 `@change` 事件手动更新表单状�
 | 类型 | 格式 | 示例 |
 | ---- | ---- | ---- |
 | 文档文件 | kebab-case.md | `alert-dialog.md` |
+| 文档英文镜像 | 与中文同名 | `apps/docs/en/components/alert-dialog.md` |
 | Demo 文件 | PascalCaseDemo.vue | `AlertDialogDemo.vue` |
 | 组件名 | PascalCase | `AlertDialog` |
 | 安装名 | kebab-case | `alert-dialog` |

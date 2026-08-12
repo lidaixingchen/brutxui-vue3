@@ -1,0 +1,78 @@
+# Tailwind v4 机制说明
+
+> 版本基线：Tailwind CSS ^4.3（packages/ui/package.json）、tailwind-merge ^3.6.0、`cn()` = `twMerge(clsx(...))`。
+> 凡规则文本引用本文件的机制，解释一律以本文件为准，其它 guide 只引用、不重复抄写。
+> 新增/修改 Tailwind v4 相关规则措辞前，先核验本文件的机制事实（含各节「实证」），再据此落笔。
+
+## §1 `--tw-outline-style` 是元素级变量（@property inherits:false）
+
+```css
+@property --tw-outline-style { syntax: "*"; inherits: false; initial-value: solid; }
+```
+
+`inherits: false` 两个后果：
+
+1. **变量不跨元素继承**——只作用于设置它的元素，子元素读取的是自己的 initial-value；
+2. **未显式设置的元素读取得到 initial-value: solid**。
+
+outline 工具类拆写（产物实证）：
+
+- `outline-none` 写 `--tw-outline-style: none` + `outline-style: var(--tw-outline-style)`（重置该变量）；
+- `outline-<n>` 只写 `outline-style: var(--tw-outline-style)` + `outline-width: <n>`（不重置该变量）；
+- 颜色类只写 `outline-color`。
+
+**陷阱**：同一元素上 `outline-none` 与 `outline-<n>` 并存时，`outline-<n>` 读到被置为 `none` 的变量 → 焦点环静默不渲染；`focus-visible:outline-2` 不把 style 恢复为 solid。twMerge 不帮忙（不同类组，两个都保留，实证见 §2）。
+
+**不跨元素**：内层 `outline-none` 不泄漏到容器，容器 `focus-within:outline-2` 与内层 `focus:outline-none` 互不干扰。
+
+**推论规则**：
+
+- 承载焦点 outline 的元素不得带任何 `outline-none`；
+- 合法例外仅一种：容器 focus-within 方案的内层 input/textarea；
+- 不可聚焦元素上的惰性 `outline-none` 属死类，应删除。
+
+**实证**：`node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.log(twMerge('focus:outline-none','focus-visible:outline-2'))"` → `"focus:outline-none focus-visible:outline-2"`（两保留，twMerge 不帮忙）。
+
+## §2 twMerge 同组静默移除
+
+transition 族（`transition`、`transition-none`、`transition-all`、`transition-colors`、`transition-opacity`、`transition-shadow`、`transition-transform`、`transition-[...]`）同属一组：**后写者胜、先写者被静默移除**。
+
+**实证**：
+
+```text
+node --input-type=module -e "import { twMerge } from 'tailwind-merge'; console.log(twMerge('transition-all duration-150','transition-[transform,box-shadow]'))"
+→ "duration-150 transition-[transform,box-shadow]"   # transition-all 被静默移除
+```
+
+**推论规则**：
+
+- 同一交互元素只声明一份 transition；
+- 组件 base 声明 `transition-all` 又被 WithTransition 变体经 `cn()` 拼接时，源码里的 `transition-all` 是死类；
+- 需要更多属性过渡时，用完整属性列表的任意值覆盖（如 `transition-[transform,box-shadow,color]`），而非 `transition-all`。
+
+## §3 @utility vs 普通 @layer utilities 的变体支持
+
+只有被工具引擎注册的类才支持变体写法（`hover:*`、`data-[...]:*` 等），注册途径仅两种：
+
+- **@theme 令牌派生**（`--color-*` / `--shadow-*` 等）；
+- **@utility 指令**。
+
+普通 `@layer utilities` 手写类**不进工具引擎**，带变体写法（`hover:border-brutal`、`data-[highlighted]:border-brutal`）会被**静默丢弃**。
+
+**实证**：`grep -c 'hover:border-brutal' packages/ui/dist/styles.css` = 0；`data-[highlighted]:border-brutal` 在 dist 中 0 命中，而 `.border-brutal` 基础类存在——正是普通 @layer utilities 手写类不带变体支持的证据。全库 6+ 处引用因此失效。
+
+**规则**：需要变体支持的自定义工具类必须用 `@utility` 或 `@theme` 派生；禁止写带变体的手写 `@layer utilities` 类。
+
+**现状**：`styles.css` 的 `@utility shadow-brutal*` 经工具引擎注册，变体按需生成；`.border-3`、`.border-brutal` 为手写 `@layer utilities` 类，不带变体支持。
+
+## §4 @source 静态扫描字面量要求
+
+`styles.css` 声明 `@source "../**/*.vue"` 与 `@source "../**/*.ts"`，Tailwind 按**源码字面量**逐个匹配，无法从 `${expr}` 动态拼接推断。
+
+**规则**：
+
+- 每个类名必须是**完整字面量**；
+- 允许「完整字面量常量 + `${}` 组合」，但每个片段本身须为完整字面量；
+- 禁止字面量缺一截的拼接（如 `h-[var(--sep-thickness,${DEFAULT_THICKNESS})]` 把变量值嵌入任意值内部）——`${}` 内的值不会进入 Tailwind 扫描结果，产物缺失该类。
+
+**验证**：`grep -rnE '\$\{' packages/ui/src` 逐一核验（排除非类名上下文，如对象键、console 文案），并由 `check:class-literals` 门禁以类名上下文为界自动拦截（见 COMPONENT_GUIDE cn() 规则）。

@@ -23,7 +23,7 @@
 
 - `type`：英文，必填，标识提交类型
 - `scope`：英文，可选，标注影响范围
-- 描述：中文，简洁明了，不超过 50 字符
+- 描述：中文，简洁明了，不超过 50 字符（由 commitlint 钩子强制，见「兜底验证」）
 - 格式：`type(scope): 描述` 或 `type: 描述`
 
 ### 正文（可选但推荐）
@@ -31,6 +31,7 @@
 - 简单提交（如 typo 修复）可省略正文
 - 复杂修改必须写明：**问题原因** + **修复方案**
 - 使用中文撰写
+- **Breaking Change 标注**：若属破坏性变更，正文首行写 `BREAKING CHANGE: <影响与迁移说明>`（见「Breaking Change 标注」章节）
 
 ## Type 类型
 
@@ -61,3 +62,26 @@
 | `theme` | 主题及令牌变更 |
 
 > **说明**：推荐在必要时使用具体的子 Scope 来精确标识受影响的组件或模块，例如 `ui/toast`、`cli/add`。
+
+## Breaking Change 标注
+
+破坏性变更（移除/改名 prop、更改默认行为、组件合并或删除、token 重命名）必须显式标注，二选一：
+
+1. **标题行 `!`**（推荐）：`feat(ui)!: 移除 xxx prop`
+2. **正文首行**：`BREAKING CHANGE: <影响与迁移说明>`
+
+`generate-changelog.mjs` 识别 `!` 与 `/BREAKING[ -]CHANGE:/`，归入根 CHANGELOG 的 `⚠️ Breaking Changes` 段置顶；两种标注等价。每个 breaking change 须遵循 [RELEASE.md](RELEASE.md)「Breaking Change 迁移文档规范」；发布时 changeset 声明 major bump。
+
+## 兜底验证
+
+提交信息由 `commitlint` 钩子（`.husky/commit-msg`）强制，规则与本节一致：`type-enum`（feat/fix/refactor/docs/style/test/chore/perf/ci/build/revert）、`type-case`、`type-empty`、`scope-case`、`subject-empty`、`header-max-length` 100、`description-max-length` ≤ 50（按 code point 计数，中文=1）。
+
+自检命令：
+
+```bash
+pnpm exec commitlint --edit "$1"
+echo "feat(ui): 修复按钮焦点环" | pnpm exec commitlint   # 通过
+echo "feat(ui): 这是一条超过五十个字符的超长提交描述信息违反了描述长度限制" | pnpm exec commitlint   # exit 1
+```
+
+历史提交不追溯；仅强制新提交。

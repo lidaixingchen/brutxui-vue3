@@ -118,6 +118,7 @@ Vue 3（`<script setup>`）· TypeScript（strict）· Tailwind CSS v4 · reka-u
 - [视觉系统指南](docs/guides/VISUAL_SYSTEM.md)
 - [CVA 变体声明规范](docs/guides/CVA.md)
 - [组件文档模板](docs/guides/COMPONENT_DOC_TEMPLATE.md)
+- [Tailwind v4 机制说明](docs/guides/tailwind-v4-mechanisms.md)
 - [AI 技能描述](skills/brutxui/SKILL.md)
 
 ## docs/ 文档落位约定
